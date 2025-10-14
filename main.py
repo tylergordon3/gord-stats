@@ -1,17 +1,18 @@
-from sleeper_wrapper import League, Drafts
+from sleeper_wrapper import League, Drafts, Players
 import pandas as pd
+import json
 
-league_id = 1257466498994143232
+league = League(league_id="1257466498994143232")
+draft = Drafts(draft_id="1257466498994143233")
+players = Players()
+
 users_names = ['Austin', 'Jackson', 'Tyler', 'Colin', 'Max', 'Trevor', 'Matt', 'Mark', 'George', 'Everett']
-league = League(league_id)
 users = league.map_users_to_team_name(league.get_users())
 
 users_dict = {k: (v1, v2) for k, v1, v2 in zip(users_names, users.values(), users.keys())}
 usersDF = pd.DataFrame.from_dict(users_dict, orient='index', columns=['Name', 'ID']) 
 
-draft = Drafts(draft_id="1257466498994143233")
 allPicks = pd.DataFrame(draft.get_all_picks())
-
 apMeta = allPicks['metadata'].apply(pd.Series)
 apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated', 'years_exp', 'status', 'injury_status', 'number', 'player_id'])
 
@@ -29,3 +30,4 @@ print(draftDF)
 
 print(draftDF.loc[draftDF['teamName'] == "Big Gourds"])
 
+all_players = players.get_all_players(sport="nfl")
