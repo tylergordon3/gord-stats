@@ -1,25 +1,31 @@
 from sleeper_wrapper import League, Drafts
+import pandas as pd
 
 league_id = 1257466498994143232
-
-# creates the league object and stores its basic data
+users_names = ['Austin', 'Jackson', 'Tyler', 'Colin', 'Max', 'Trevor', 'Matt', 'Mark', 'George', 'Everett']
 league = League(league_id)
-rosters = league.get_rosters()
-users = league.get_users()
+users = league.map_users_to_team_name(league.get_users())
 
-# gets the matchups for the first week
-matchups = league.get_matchups(week=5)
-
-# retrieves the standings and returns them with user information
-standings = league.get_standings(rosters=rosters, users=users)
-
+users_dict = {k: (v1, v2) for k, v1, v2 in zip(users_names, users.values(), users.keys())}
+usersDF = pd.DataFrame.from_dict(users_dict, orient='index', columns=['Name', 'ID']) 
 
 draft = Drafts(draft_id="1257466498994143233")
-allPicks = draft.get_all_picks()
+allPicks = pd.DataFrame(draft.get_all_picks())
 
-# allPicks format - dict
-# dict_keys(['draft_id', 'draft_slot', 'is_keeper', 'metadata', 'pick_no', 'picked_by', 'player_id', 'reactions', 'roster_id', 'round'])
-# metadata dict_keys(['first_name', 'injury_status', 'last_name', 'news_updated', 'number', 'player_id', 'position', 'sport', 'status', 'team', 'team_abbr', 'team_changed_at', 'years_exp'])
+apMeta = allPicks['metadata'].apply(pd.Series)
+apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated', 'years_exp', 'status', 'injury_status', 'number', 'player_id'])
 
-for pick in allPicks:
-    print(pick['metadata'].keys())
+draftDF = pd.concat([allPicks, apMeta], axis=1)
+draftDF = draftDF.drop(columns=['metadata', 'reactions', 'is_keeper', 'draft_id', 'draft_slot', 'roster_id'])
+
+# DRAFTDF COLUMNS
+# Index(['pick_no', 'picked_by', 'player_id', 'roster_id', 'round', 'first_name',
+#       'last_name', 'position', 'team'],
+#      dtype='object')
+
+draftDF['teamName'] = draftDF['picked_by']
+draftDF['teamName'] = draftDF['teamName'].replace(pd.unique(draftDF['teamName']), usersDF['Name'])
+print(draftDF)
+
+print(draftDF.loc[draftDF['teamName'] == "Big Gourds"])
+
