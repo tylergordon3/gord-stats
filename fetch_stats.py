@@ -1,3 +1,6 @@
+'''
+    This module fetches general NFL and player stats. 
+'''
 import nflreadpy as nfl
 import pandas as pd
 # Load current season play-by-play data
