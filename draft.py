@@ -4,22 +4,23 @@
 import json
 import pandas as pd
 from sleeper_wrapper import League, Drafts, Players
-import fetch_rosters
+import fantasy_rosters
+import constants as c
 
-league = League(league_id="1257466498994143232")
-draft = Drafts(draft_id="1257466498994143233")
+league = League(c.LEAGUEID)
+draft = Drafts(c.DRAFTID)
 players = Players()
 
-rosters = fetch_rosters.get(league)
+rosters = fantasy_rosters.get(league)
 print(rosters[rosters['team_name'] == 'Big Gourds'])
 
 allPicks = pd.DataFrame(draft.get_all_picks())
 apMeta = allPicks['metadata'].apply(pd.Series)
-apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated', 
+apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated',
                               'years_exp', 'status', 'injury_status', 'number', 'player_id'])
 
 draftDF = pd.concat([allPicks, apMeta], axis=1)
-draftDF = draftDF.drop(columns=['metadata', 'reactions', 'is_keeper', 
+draftDF = draftDF.drop(columns=['metadata', 'reactions', 'is_keeper',
                                 'draft_id', 'draft_slot', 'roster_id'])
 
 draftDF['teamName'] = draftDF['picked_by']

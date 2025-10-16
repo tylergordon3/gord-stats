@@ -4,6 +4,7 @@
 from sleeper_wrapper import League
 import pandas as pd
 
+
 def get(league) -> pd.DataFrame:
     """Provides DataFrame with user and roster info:
 
@@ -25,14 +26,17 @@ def get(league) -> pd.DataFrame:
                                     'metadata', 'taxi', 'player_map'])
     details = rosters.settings.apply(pd.Series)
     details['roster_id'] = rosters.roster_id
-    rosters = pd.merge(rosters, details, on='roster_id', how ='inner')
+    rosters = pd.merge(rosters, details, on='roster_id', how='inner')
     rosters = rosters.drop(columns=['settings', 'waiver_position'])
 
     rosters['PF'] = rosters['fpts'] + rosters['fpts_decimal']/10
-    rosters['PA'] = rosters['fpts_against'] + rosters['fpts_against_decimal']/10
-    rosters = pd.merge(rosters, users, on='owner_id', how ='inner')
-    rosters = rosters.drop(columns=['fpts', 'fpts_decimal', 'fpts_against', 'fpts_against_decimal'])
+    rosters['PA'] = rosters['fpts_against'] + \
+        rosters['fpts_against_decimal']/10
+    rosters = pd.merge(rosters, users, on='owner_id', how='inner')
+    rosters = rosters.drop(
+        columns=['fpts', 'fpts_decimal', 'fpts_against', 'fpts_against_decimal'])
     return rosters
 
+
 myLeague = League(league_id="1257466498994143232")
-teams = get(myLeague)
+teams = get(league=myLeague)
