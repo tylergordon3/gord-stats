@@ -60,6 +60,7 @@ def getTeam(rosters, team_name, week):
     wk_me = wk[wk.name_match.isin(team['search_full_name'])]
     
     # fantasy stats for players on chosen team
+    print("RESULTS FOR WEEK: ", week)
     print(wk_me)
 
     return wk_me
