@@ -37,23 +37,23 @@ fg_made", "fg_att", "fg_missed", "fg_blocked", "fg_long", "fg_pct", "fg_made_0_1
                         "fg_made_distance", "fg_missed_distance", "fg_blocked_distance", "pat_made",
                         "pat_att", "pat_missed", "pat_blocked",
 '''
-def kicker_fpts(team_df):
+def kicker_fpts(player):
     # 0-39  +3 pts
     # 40-49 +4 pts
     # 50+   +5 pts
     # PAT   +1 pts
     # missed PAT/XP -1 pts
-    kicker_df = team_df[team_df.position == "K"]
     # df = df[['a','b']]
-    kicker_df = kicker_df[["fg_made", "fg_att", "fg_missed", "fg_blocked", "fg_long", "fg_pct", "fg_made_0_19",
-                        "fg_made_20_29", "fg_made_30_39", "fg_made_40_49", "fg_made_50_59", "fg_made_60_",
-                        "fg_missed_0_19", "fg_missed_20_29", "fg_missed_30_39", "fg_missed_40_49", "fg_missed_50_59",
-                        "fg_missed_60_", "fg_made_list", "fg_missed_list", "fg_blocked_list",
-                        "fg_made_distance", "fg_missed_distance", "fg_blocked_distance", "pat_made",
-                        "pat_att", "pat_missed", "pat_blocked"]]
-    range3 = 3 * (kicker_df["fg_made_0_19"] + kicker_df["fg_made_20_29"] + kicker_df["fg_made_30_39"])
-    range4 = 4 * kicker_df["fg_made_40_49"]
-    range5 = 5* (kicker_df["fg_made_50_59"] + kicker_df["fg_made_60_"])
-    kicker_df['fpts'] = range3 + range4 + range5 + kicker_df['pat_made'] - kicker_df['pat_missed'] - kicker_df['fg_missed']
-    print(kicker_df)
-    return team_df
+    #kicker_df = kicker_df[["full_name","fg_made", "fg_att", "fg_missed", "fg_blocked", "fg_long", "fg_pct", "fg_made_0_19",
+    #                    "fg_made_20_29", "fg_made_30_39", "fg_made_40_49", "fg_made_50_59", "fg_made_60_",
+    #                    "fg_missed_0_19", "fg_missed_20_29", "fg_missed_30_39", "fg_missed_40_49", "fg_missed_50_59",
+    #                    "fg_missed_60_", "fg_made_list", "fg_missed_list", "fg_blocked_list",
+    #                    "fg_made_distance", "fg_missed_distance", "fg_blocked_distance", "pat_made",
+    #                    "pat_att", "pat_missed", "pat_blocked", "fantasy_points", "fantasy_points_ppr"]]
+
+    range3 = 3 * (player["fg_made_0_19"] + player["fg_made_20_29"] + player["fg_made_30_39"])
+    range4 = 4 * (player["fg_made_40_49"]) 
+    range5 = 5* (player["fg_made_50_59"] + player["fg_made_60_"])
+    value = range3 + range4 + range5 +  player["pat_made"] + player['pat_missed'] - player['fg_missed']
+    
+    return value

@@ -2,6 +2,7 @@ import nflreadpy as nfl
 from sleeper_wrapper import League
 import constants as c
 import fantasy_rosters, fantasy_stats
+import player_db as db
 
 week = nfl.get_current_week()
 prev_week = week
@@ -10,6 +11,5 @@ prev_week = week
 league = League(c.LEAGUEID)
 rosters = fantasy_rosters.get(league)
 
-team_last_week = fantasy_rosters.getTeam(rosters, "Big Gourds", week=week)
-
-kicker = fantasy_stats.kicker_fpts(team_last_week)
+players = db.get(7)
+print(players)

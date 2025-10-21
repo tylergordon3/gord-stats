@@ -3,9 +3,11 @@ import pandas as pd
 import nflreadpy as nfl
 import constants as c
 import re
+import fantasy_stats as fs
+import numpy as np
 
-
-def get():
+def get(week):
+    # Week returns specific week, 0 returns all
     with open('players.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
             sleeper_players = pd.DataFrame.from_dict(data, orient='index')
@@ -64,7 +66,20 @@ def get():
     #    "fg_made_distance", "fg_missed_distance", "fg_blocked_distance", "pat_made",
     #    "pat_att", "pat_missed", "pat_blocked", "pat_pct", "gwfg_made", "gwfg_att", "gwfg_missed",
     #    "gwfg_blocked", "gwfg_distance", "fantasy_points", "fantasy_points_ppr"
+    
+    merged_players['fantasy_points'] = np.where(merged_players.position == "K", fs.kicker_fpts(merged_players), merged_players['fantasy_points'])
+    merged_players['fantasy_points_ppr'] = np.where(merged_players.position == "K", fs.kicker_fpts(merged_players), merged_players['fantasy_points_ppr'])
 
+    if (week <= 0): 
+        print("Returning player database for entire season.")
+        return merged_players
+    else: 
+        print("Returning player database for week: ", week)
+        return merged_players[merged_players['week'] == week]
+   
+#ps = get(7)
+#ps2 = ps.sort_values(by='fantasy_points_ppr', ascending=False)
+#ps2 = ps2.head(50)
+#print(ps2)
 
-    merged_players.to_csv('output.csv', index=False)
-get()
+ 

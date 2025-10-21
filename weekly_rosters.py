@@ -7,5 +7,3 @@ import pandas as pd
 
 league = League(c.LEAGUEID)
 
-week1 = pd.DataFrame(league.get_matchups(1))
-print(pd.DataFrame(week1))
