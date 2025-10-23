@@ -13,19 +13,23 @@ def get(week):
             data = json.load(file)
             sleeper_players = pd.DataFrame.from_dict(data, orient='index')
 
-
+    defenses = sleeper_players[sleeper_players['position'] == 'DEF']
+    defenses = defenses.dropna(axis=1, how='all')
+    stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
+    stats_defenses = stats_defenses.to_pandas()
+    
+    def_fpts = stats.def_fpts(stats_defenses)
     stats_players = nfl.load_player_stats(nfl.get_current_season(), 'week')
     stats_players = stats_players.to_pandas()
     stats_players.columns = c.player_stats_headers
     stats_players = stats_players.iloc[:-1]
     stats_players['cleaned_name'] = stats_players['player_display_name'].str.split()
     stats_players = stats_players[~stats_players['cleaned_name'].isnull()]
-   
     stats_players['cleaned_name'] = stats_players['cleaned_name'].apply(lambda lst: lst.str.join('') if len(lst) < 2 else ''.join(lst[:2]))
     
     
     stats_players['search_full_name'] = [re.sub(r'\s+', '', str(x)).lower() for x in stats_players['cleaned_name']]
-    print(stats_players[stats_players['team'] == 'ARI'])
+    
     merged_players =  pd.merge(sleeper_players, stats_players, on='search_full_name', how='inner')
     merged_players = merged_players.drop(columns=['competitions', 'team_abbr', 'high_school', 'practice_participation', 'opta_id', 'birth_country', 'injury_start_date', 'birth_state',
                                  'height', 'team_changed_at', 'practice_description', 'birth_city', 'fantasy_positions', 'position_x', 'injury_notes',
@@ -85,3 +89,6 @@ def get(week):
         #print("Returning player database for week: ", week)
         return merged_players[merged_players['week'] == week]
  
+
+db = get(1)
+print(db)

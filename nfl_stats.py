@@ -5,6 +5,7 @@ import nflreadpy as nfl
 import pandas as pd
 import constants as c
 
+import json
 
 def get(week) -> pd.DataFrame:
     """Returns NFL fantasy player stats for a given week.
@@ -57,3 +58,37 @@ def kicker_fpts(player):
     value = range3 + range4 + range5 +  player["pat_made"] + player['pat_missed'] - player['fg_missed']
     
     return value
+
+'''
+    TD          6pts
+    PA 0        10pts
+    PA 1-6      7pts
+    PA 7-13     4pts
+    PA 14-20    1pts
+    PA 28-34    -1pts
+    PA 35+      -4pts
+    Sacks       1pts per
+    INTs        2pts per
+    FR          2pts per
+    ST FR       1pts per
+    SAF         2pts per
+    FF          1pts per
+    BK          2pts per
+'''
+def def_fpts(def_df):
+    df = def_df[['team', 'week', 'special_teams_tds', 'def_fumbles_forced', 'def_sacks',
+                 'def_interceptions', 'def_tds', 'def_fumbles',
+                 'def_safeties']]
+    sched_stats = nfl.load_schedules(nfl.get_current_season())
+    df_sched = sched_stats.to_pandas()
+    print(df)
+
+
+with open('players.json', 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            sleeper_players = pd.DataFrame.from_dict(data, orient='index')
+defenses = sleeper_players[sleeper_players['position'] == 'DEF']
+defenses = defenses.dropna(axis=1, how='all')
+stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
+stats_defenses = stats_defenses.to_pandas()
+print(def_fpts(stats_defenses))
