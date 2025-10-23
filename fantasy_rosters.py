@@ -5,7 +5,7 @@ from sleeper_wrapper import League
 import pandas as pd
 import re
 import json
-import fantasy_stats
+import nfl_stats
 
 
 def get(league) -> pd.DataFrame:

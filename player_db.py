@@ -3,8 +3,9 @@ import pandas as pd
 import nflreadpy as nfl
 import constants as c
 import re
-import fantasy_stats as fs
+import nfl_stats as stats
 import numpy as np
+import json
 
 def get(week):
     # Week returns specific week, 0 returns all
@@ -16,8 +17,15 @@ def get(week):
     stats_players = nfl.load_player_stats(nfl.get_current_season(), 'week')
     stats_players = stats_players.to_pandas()
     stats_players.columns = c.player_stats_headers
-    stats_players['search_full_name'] = [re.sub(r'\s+', '', str(x)).lower() for x in stats_players['player_display_name']]
-
+    stats_players = stats_players.iloc[:-1]
+    stats_players['cleaned_name'] = stats_players['player_display_name'].str.split()
+    stats_players = stats_players[~stats_players['cleaned_name'].isnull()]
+   
+    stats_players['cleaned_name'] = stats_players['cleaned_name'].apply(lambda lst: lst.str.join('') if len(lst) < 2 else ''.join(lst[:2]))
+    
+    
+    stats_players['search_full_name'] = [re.sub(r'\s+', '', str(x)).lower() for x in stats_players['cleaned_name']]
+    print(stats_players[stats_players['team'] == 'ARI'])
     merged_players =  pd.merge(sleeper_players, stats_players, on='search_full_name', how='inner')
     merged_players = merged_players.drop(columns=['competitions', 'team_abbr', 'high_school', 'practice_participation', 'opta_id', 'birth_country', 'injury_start_date', 'birth_state',
                                  'height', 'team_changed_at', 'practice_description', 'birth_city', 'fantasy_positions', 'position_x', 'injury_notes',
@@ -67,19 +75,13 @@ def get(week):
     #    "pat_att", "pat_missed", "pat_blocked", "pat_pct", "gwfg_made", "gwfg_att", "gwfg_missed",
     #    "gwfg_blocked", "gwfg_distance", "fantasy_points", "fantasy_points_ppr"
     
-    merged_players['fantasy_points'] = np.where(merged_players.position == "K", fs.kicker_fpts(merged_players), merged_players['fantasy_points'])
-    merged_players['fantasy_points_ppr'] = np.where(merged_players.position == "K", fs.kicker_fpts(merged_players), merged_players['fantasy_points_ppr'])
+    merged_players['fantasy_points'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points'])
+    merged_players['fantasy_points_ppr'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points_ppr'])
 
     if (week <= 0): 
-        print("Returning player database for entire season.")
+        #print("Returning player database for entire season.")
         return merged_players
     else: 
-        print("Returning player database for week: ", week)
+        #print("Returning player database for week: ", week)
         return merged_players[merged_players['week'] == week]
-   
-#ps = get(7)
-#ps2 = ps.sort_values(by='fantasy_points_ppr', ascending=False)
-#ps2 = ps2.head(50)
-#print(ps2)
-
  

@@ -1,7 +1,7 @@
 import nflreadpy as nfl
 from sleeper_wrapper import League
 import constants as c
-import fantasy_rosters, fantasy_stats
+import fantasy_rosters, nfl_stats
 import player_db as db
 import fantasy_rosters as fr
 import numpy as np
@@ -17,8 +17,8 @@ print(leagueData)
 
 
 players = db.get(7)
-print(BigGourds)
+#print(BigGourds)
 
 # merged_players[~merged_players.position.isin(spec_teams_remove)]
 team = players[players.sleeper_id.isin(values=BigGourds.players)]
-print(team)
+#print(team)
