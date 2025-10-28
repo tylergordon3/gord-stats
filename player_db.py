@@ -101,4 +101,3 @@ def get(week):
  
 db = get(8)
 
-print(db)

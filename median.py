@@ -1,24 +1,25 @@
 import nflreadpy as nfl
 from sleeper_wrapper import League
 import constants as c
-import fantasy_rosters, nfl_stats
-import player_db as db
-import fantasy_rosters as fr
 import numpy as np
+import pandas as pd
+import nfl_stats as stats
 
-#stats = fantasy_stats.get(prev_week)
 league = League(c.LEAGUEID)
-rosters = fantasy_rosters.get(league)
 
-leagueData = fr.get(league)
+def median(league, week):
+    nfl_schedule = nfl.load_team_stats(nfl.get_current_season(), 'week')
+    schedule_df = nfl_schedule.to_pandas()
+    filter_schedule = schedule_df[schedule_df['week'] == week]
+   
+    getMondayGames(filter_schedule)
+    matchup_dict = league.get_matchups(week)
+    matchups = pd.DataFrame(matchup_dict)
 
-BigGourds = leagueData.loc[1]
-print(leagueData)
+    
+    
+def getMondayGames(filter_schedule_df):
+    print(filter_schedule_df)
+    print(np.array(filter_schedule_df['team']))
 
-
-players = db.get(7)
-#print(BigGourds)
-
-# merged_players[~merged_players.position.isin(spec_teams_remove)]
-team = players[players.sleeper_id.isin(values=BigGourds.players)]
-#print(team)
+median(league, 8)

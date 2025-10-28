@@ -26,5 +26,8 @@ player_stats_headers = ["player_id", "player_name", "player_display_name", "posi
                         "fg_made_distance", "fg_missed_distance", "fg_blocked_distance", "pat_made",
                         "pat_att", "pat_missed", "pat_blocked", "pat_pct", "gwfg_made", "gwfg_att", "gwfg_missed",
                         "gwfg_blocked", "gwfg_distance", "fantasy_points", "fantasy_points_ppr"]
-LEAGUEID = "1257466498994143232"
-DRAFTID = "1257466498994143233"
+LEAGUEID    = "1257466498994143232"
+DRAFTID     = "1257466498994143233"
+TEAMS       = ['ARI' 'ATL' 'BAL' 'BUF' 'CAR' 'CHI' 'CIN' 'CLE' 'DAL' 'DEN' 'DET' 'GB'
+                'HOU' 'IND' 'JAX' 'KC' 'LA' 'LAC' 'LV' 'MIA' 'MIN' 'NE' 'NO' 'NYG' 'NYJ'
+                'PHI' 'PIT' 'SEA' 'SF' 'TB' 'TEN' 'WAS']
