@@ -76,12 +76,59 @@ def kicker_fpts(player):
     BK          2pts per
 '''
 def def_fpts(def_df):
-    df = def_df[['team', 'week', 'special_teams_tds', 'def_fumbles_forced', 'def_sacks',
-                 'def_interceptions', 'def_tds', 'def_fumbles',
-                 'def_safeties']]
+    defense_df = def_df[['team', 'week', 'special_teams_tds', 'def_fumbles_forced', 'def_sacks',
+                 'def_interceptions', 'def_tds', 'fumble_recovery_opp',
+                 'def_safeties']].copy()
+
     sched_stats = nfl.load_schedules(nfl.get_current_season())
     df_sched = sched_stats.to_pandas()
-    print(df)
+    df_sched_clean = df_sched[df_sched['week'] <= nfl.get_current_week()]
+    score_given_up_h = df_sched_clean[['week', 'home_team', 'away_score']]
+    score_given_up_a = df_sched_clean[['week', 'away_team', 'home_score']]
+    score_given_up_h = score_given_up_h.rename(columns={"home_team" : "team", "away_score" : "PA"})
+    score_given_up_a = score_given_up_a.rename(columns={"away_team" : "team", "home_score" : "PA"})
+    def_PA = pd.concat([score_given_up_a, score_given_up_h], ignore_index=True)
+    # PA 0        10pts PA 1-6      7pts
+    # PA 7-13     4pts  PA 14-20    1pts
+    # PA 28-34    -1pts PA 35+      -4pts
+    def_PA['fantasy_points'] = def_PA['PA'].apply(lambda x: pa_adj(x))
+   
+    defense_df['fantasy_points'] = defense_df.apply(def_pts, axis=1)
+    def_fpts = pd.concat([def_PA[['week', 'team', 'fantasy_points']], defense_df[['week', 'team', 'fantasy_points']]], ignore_index=True)
+    
+    pts = def_fpts.groupby(['week', 'team']).agg(fpts=('fantasy_points', 'sum')).reset_index()
+    return pts
+   
+
+    
+def def_pts(df):
+  
+    sacks = df['def_sacks']
+    ints = 2*(df['def_interceptions'])
+    fr = 2*(df['fumble_recovery_opp'])
+    ff = df['def_fumbles_forced'] 
+    safety = 2*(df['def_safeties'])
+    tds = 6 * (df['def_tds'] + df['special_teams_tds'])
+    values = sacks + ints + fr + ff + safety + tds
+    return values
+
+def pa_adj(pa):
+    if pa == 0:
+          return 10
+    elif (1 <= pa) & (pa <= 6):
+          return 7
+    elif (7 <= pa) & (pa <= 13):
+          return 4
+    elif (14 <= pa) & (pa <= 20):
+          return 1
+    elif (21 <= pa) & (pa <= 27):
+          return 0
+    elif (28 <= pa) & (pa <= 34):
+          return -1
+    if 35 <= pa:
+          return -4
+    else:
+        return None
 
 
 with open('players.json', 'r', encoding='utf-8') as file:
@@ -91,4 +138,4 @@ defenses = sleeper_players[sleeper_players['position'] == 'DEF']
 defenses = defenses.dropna(axis=1, how='all')
 stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
 stats_defenses = stats_defenses.to_pandas()
-print(def_fpts(stats_defenses))
+def_fpts(stats_defenses)

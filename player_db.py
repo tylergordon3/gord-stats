@@ -19,6 +19,7 @@ def get(week):
     stats_defenses = stats_defenses.to_pandas()
     
     def_fpts = stats.def_fpts(stats_defenses)
+    
     stats_players = nfl.load_player_stats(nfl.get_current_season(), 'week')
     stats_players = stats_players.to_pandas()
     stats_players.columns = c.player_stats_headers
@@ -82,6 +83,7 @@ def get(week):
     merged_players['fantasy_points'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points'])
     merged_players['fantasy_points_ppr'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points_ppr'])
 
+    print(pd.concat([merged_players, def_fpts]))
     if (week <= 0): 
         #print("Returning player database for entire season.")
         return merged_players
@@ -90,5 +92,4 @@ def get(week):
         return merged_players[merged_players['week'] == week]
  
 
-db = get(1)
-print(db)
+db = get(8)
