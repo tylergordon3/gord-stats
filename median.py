@@ -12,14 +12,16 @@ def median(league, week):
     schedule_df = nfl_schedule.to_pandas()
     filter_schedule = schedule_df[schedule_df['week'] == week]
    
-    getMondayGames(filter_schedule)
+    monday_arr = getMondayGames(filter_schedule, week)
     matchup_dict = league.get_matchups(week)
     matchups = pd.DataFrame(matchup_dict)
-
+    print('MONDAY: ', monday_arr)
+    print(matchups)
     
     
-def getMondayGames(filter_schedule_df):
-    print(filter_schedule_df)
-    print(np.array(filter_schedule_df['team']))
+def getMondayGames(filter_schedule_df, week):
+    on_bye = c.BYES.get(week)
+    monday_game = [item for item in c.TEAMS if (item not in on_bye) & (item not in np.array(filter_schedule_df['team']))]
+    return monday_game
 
-median(league, 8)
+median(league, 9)

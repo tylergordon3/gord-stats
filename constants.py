@@ -28,6 +28,19 @@ player_stats_headers = ["player_id", "player_name", "player_display_name", "posi
                         "gwfg_blocked", "gwfg_distance", "fantasy_points", "fantasy_points_ppr"]
 LEAGUEID    = "1257466498994143232"
 DRAFTID     = "1257466498994143233"
-TEAMS       = ['ARI' 'ATL' 'BAL' 'BUF' 'CAR' 'CHI' 'CIN' 'CLE' 'DAL' 'DEN' 'DET' 'GB'
-                'HOU' 'IND' 'JAX' 'KC' 'LA' 'LAC' 'LV' 'MIA' 'MIN' 'NE' 'NO' 'NYG' 'NYJ'
-                'PHI' 'PIT' 'SEA' 'SF' 'TB' 'TEN' 'WAS']
+TEAMS       = ['ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'GB',
+                'HOU', 'IND', 'JAX', 'KC', 'LA', 'LAC', 'LV', 'MIA', 'MIN', 'NE', 'NO', 'NYG', 'NYJ',
+                'PHI', 'PIT', 'SEA', 'SF', 'TB', 'TEN', 'WAS']
+BYES = nfl_2025_bye_weeks = {
+    5: ["ATL", "CHI", "GB", "PIT"],
+    6: ["HOU", "MIN"],
+    7: ["BAL", "BUF"],
+    8: ["ARI", "DET", "JAX", "LVR", "LAR", "SEA"],
+    9: ["CLE", "NYJ", "PHI", "TB"],
+    10: ["CIN", "DAL", "KC", "TEN"],
+    11: ["IND", "NO"],
+    12: ["DEN", "LAC", "MIA", "WAS"],
+    13: [], # No teams on bye in Week 13 (Thanksgiving week)
+    14: ["CAR", "NE", "NYG", "SF"],
+    # Weeks 1, 2, 3, 4, 15, 16, 17, and 18 also have no teams on bye
+}
