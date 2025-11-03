@@ -1,0 +1,6 @@
+{
+    "python.analysis.autoImportCompletions": true,
+    "python.defaultInterpreterPath": "/home/tgordon/miniconda3/envs/cbb-env/bin/python",
+    
+
+}
