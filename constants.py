@@ -44,3 +44,13 @@ BYES = nfl_2025_bye_weeks = {
     14: ["CAR", "NE", "NYG", "SF"],
     # Weeks 1, 2, 3, 4, 15, 16, 17, and 18 also have no teams on bye
 }
+
+MAX = {
+    # Since 2020
+  "QB" : 51.9, #Josh Allen 2024
+  "RB" : 56.2, #Alvin Kamara 2020
+  "WR" : 57.9, #Tyreek Hill 2020
+  "TE" : 45.0, #Darren Waller 2020
+  "DEF": 32.0, #Buffalo D/ST 2023
+  "K"  : 26.0  #Jake Moody 2024
+}
