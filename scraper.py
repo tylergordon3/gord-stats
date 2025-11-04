@@ -81,7 +81,7 @@ output = {
 }
 
 # Save to JSON file
-with open("kenpom_preseason.json", "w", encoding="utf-8") as f:
+with open("kenpom_11.4.json", "w", encoding="utf-8") as f:
     json.dump(output, f, indent=4)
 
 
@@ -148,5 +148,5 @@ output = {
     "rows": rows
 }
 
-with open("torvik_preseason.json", "w", encoding="utf-8") as f:
+with open("torvik_11.4.json", "w", encoding="utf-8") as f:
     json.dump(output, f, indent=4)
