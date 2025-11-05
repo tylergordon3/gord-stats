@@ -19,7 +19,7 @@ def get(week):
     stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
     stats_defenses = stats_defenses.to_pandas()
     def_fpts = stats.def_fpts(stats_defenses)
-    def_fpts = def_fpts.rename(columns={'fpts':'fantasy_points', 'team' : 'search_full_name'})
+    def_fpts = def_fpts.rename(columns={'fpts':'fantasy_points', 'team' : 'search_full_name', 'team1' : 'team'})
     def_fpts['position'] = 'DEF'
 
     # Getting all other players stats

@@ -16,6 +16,7 @@ def median(league, week):
     starters = matchup_df[['roster_id', 'matchup_id', 'starters']].copy()
     all_players = pdb.get(week)
     weeks_players = all_players[all_players['team'].isin(monday_teams)]
+    print(weeks_players)
     starters['to_play_monday'] = starters['starters'].apply(lambda x: getMondayPlayers(x, weeks_players))
     rosters = fr.get(league)
     combined = pd.merge(starters, rosters, on='roster_id')
@@ -23,27 +24,37 @@ def median(league, week):
     print(tabulate(printable, headers='keys', tablefmt='psql'))
     matchup_df['to_play_monday'] = combined['to_play_monday']
     matchup_df['team'] = combined['team_name']
+    matchup_df['points'] = [99.28, 126.88, 82.02, 112.32, 99.2, 100.92, 157.56, 145.54, 158.1, 102.8]
     matchup_df['max_pts'] = matchup_df['to_play_monday'].apply(lambda x: getHypotheticalMaxPts(x, weeks_players))
     matchup_df['max_pts'] = matchup_df['max_pts'] + matchup_df['points']
     prep_for_median = ruleOutAlreadySet(matchup_df)
-    print(prep_for_median)
+    #print(prep_for_median)
     calculated = calculate(prep_for_median)
-    print(calculated)
+    #print(calculated)
 
 def calculate(input_df):
     df = input_df
-    df.apply(lambda row: printInfo(row, df), axis=1)
+    df.apply(lambda row: printSetup(row, df), axis=1)
     return "DONE"
 
-def printInfo(row, df):
+def printSetup(row, df):
     if ((row['status'] == "L") | (row['status'] == "W")):
-        print(row['team'], "has:", row["status"], "vs the median.")
+        print('\n',row['team'], "has:", row["status"], "vs the median.")
     elif (row['rank'] > 5):
-        print(row['team'], ' see matchups above.')
+        print('\n',row['team'], ' see matchups above.')
     else:
         check = df[(df["status"] == "tbd") & (df['rank'] > row['rank'])]
-        print(row['team'], ":\n", check, "\n")
+        printMedianScenarios(row, check)
 
+def printMedianScenarios(currTeam, df):
+    toLoseMedian = 6-currTeam['rank']
+    print('\n',currTeam['team'], 'loses median if', int(toLoseMedian), '/', len(df), 'pass.')
+    for team in df.itertuples(index=True):
+        diff = round(currTeam['points'] - team.points, 2)
+        if currTeam['num_to_play'] > 0:
+            print(team.team, team.to_play_monday,'outscores',currTeam['to_play_monday'],'by',diff)
+        else:
+            print(team.team, team.to_play_monday,'scores',diff)
 def getHypotheticalMaxPts(row, weeks_players):
     positions = weeks_players[weeks_players['cleaned_name'].isin(row)]['position']
     max_pts = 0
@@ -69,13 +80,15 @@ def setWinners(team, df):
     num_above = search.shape[0]
     if ((9-num_above) < (6-rank)):
         return "W"
+    elif (team['num_to_play'] == 0):
+        return
     else: 
         return team['status']
 
 def getMondayPlayers(starters, weeks_players):
     starters_series = pd.Series(starters)
-    monday = starters_series[starters_series.isin(weeks_players['sleeper_id'])]
-    monday_names = weeks_players[weeks_players['sleeper_id'].isin(monday)]['cleaned_name']
+    monday = starters_series[(starters_series.isin(weeks_players['sleeper_id'])) | (starters_series.isin(weeks_players['team']))]
+    monday_names = weeks_players[(weeks_players['sleeper_id'].isin(monday)) | (weeks_players['cleaned_name'].isin(monday))]['cleaned_name']
     #return {A: B for A, B in zip(monday, monday_names)}
     return list(monday_names)
 

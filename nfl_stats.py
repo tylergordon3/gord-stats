@@ -97,6 +97,8 @@ def def_fpts(def_df):
     def_fpts = pd.concat([def_PA[['week', 'team', 'fantasy_points']], defense_df[['week', 'team', 'fantasy_points']]], ignore_index=True)
     
     pts = def_fpts.groupby(['week', 'team']).agg(fpts=('fantasy_points', 'sum')).reset_index()
+    pts['cleaned_name'] = pts['team']
+    pts['team1'] = pts['team']
     return pts
    
 
