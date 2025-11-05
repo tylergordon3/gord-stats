@@ -34,6 +34,7 @@ def calculate(input_df):
     df = input_df
     see_above = []
     df.apply(lambda row: printSetup(row, df, see_above), axis=1)
+    print('--------------------------------------------------------------------------------------------------')
     print('See above for points needed: ')
     for item in see_above:
         print(item)
@@ -41,7 +42,7 @@ def calculate(input_df):
 
 def printSetup(row, df, see_above):
     if ((row['status'] == "L") | (row['status'] == "W")):
-        print(row['team'], "has:", row["status"], "vs the median.\n")
+        print(row['team'], "has:", row["status"], "vs the median.")
     elif (row['rank'] > 5):
         see_above.append(row['team'])
         return 
@@ -55,10 +56,10 @@ def printMedianScenarios(currTeam, df):
     for team in df.itertuples(index=True):
         diff = round(currTeam['points'] - team.points, 2)
         if currTeam['num_to_play'] > 0:
-            print(team.team, team.to_play_monday,'outscores',currTeam['to_play_monday'],'by',diff)
+            print(team.team,':', ', '.join(team.to_play_monday),'outscore(s)',', '.join(currTeam['to_play_monday']),'by',diff)
         else:
-            print(team.team, team.to_play_monday,'scores',diff)
-    print('\n')
+            print(team.team,":", ', '.join(team.to_play_monday),'scores',diff)
+    print('--------------------------------------------------------------------------------------------------')
 
 def getHypotheticalMaxPts(row, weeks_players):
     positions = weeks_players[weeks_players['cleaned_name'].isin(row)]['position']
