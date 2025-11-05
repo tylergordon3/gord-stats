@@ -11,18 +11,33 @@ import player as p
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
 
-week = 1
-wk1 = pd.DataFrame.from_dict(league.get_matchups(week))
-db = pdb.get(week)
 
-wk1 = wk1[['roster_id', 'players_points', 'matchup_id']]
-roster_id = 2
-team = wk1[wk1.roster_id == roster_id]
-key = roster_id - 1
-ps = team.players_points.get(key)
+def bestball(week, players):
+    matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
+    db = pdb.get(week)
 
-players = []
-for id, pts in ps.items():
-    this_player = db[db.sleeper_id == id]
-    print(this_player['full_name'], ", ID: ", id)
-    print('Pts: ' ,pts, '\n')
+    df = matchup_df[['roster_id', 'players_points', 'matchup_id']]
+    roster_id = 2
+    team = df[df.roster_id == roster_id]
+    key = roster_id - 1
+    ps = team.players_points.get(key)
+
+    for id, pts in ps.items():
+        player = pdb.getFromID(id, db)
+        name = player['cleaned_name']
+        print(id, name.item() if not name.empty else ":(", pts)
+
+    return players
+    
+
+
+# Starters: *Caleb, *CMC, *Monangai, *BTJ, *Marv, *Kraft, *Chase Brown, *Javonte, *Eddy, *NE
+# Bench: Baker, *Tyrone, *Juan, *Jameson, Fannin, *CLE
+# IR: Rhamondre
+players = {}
+players = bestball(7, players)
+print("\n")
+players = bestball(8, players)
+print("\n")
+players = bestball(9, players)
+print (players)

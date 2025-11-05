@@ -21,6 +21,7 @@ def get(week):
     def_fpts = stats.def_fpts(stats_defenses)
     def_fpts = def_fpts.rename(columns={'fpts':'fantasy_points', 'team' : 'search_full_name', 'team1' : 'team'})
     def_fpts['position'] = 'DEF'
+    def_fpts['fantasy_points_ppr'] = def_fpts['fantasy_points']
 
     # Getting all other players stats
     stats_players = nfl.load_player_stats(nfl.get_current_season(), 'week')
@@ -91,6 +92,7 @@ def get(week):
     merged_players['fantasy_points'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points'])
     merged_players['fantasy_points_ppr'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points_ppr'])
 
+
     
     if (week <= 0): 
         #print("Returning player database for entire season.")
@@ -100,4 +102,8 @@ def get(week):
         return merged_players[merged_players['week'] == week]
  
 db = get(8)
+print(db[db['position'] == 'DEF'])
 
+def getFromID(id, db):
+    player = db[db['sleeper_id'] == id]
+    return player

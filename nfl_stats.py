@@ -59,22 +59,6 @@ def kicker_fpts(player):
     
     return value
 
-'''
-    TD          6pts
-    PA 0        10pts
-    PA 1-6      7pts
-    PA 7-13     4pts
-    PA 14-20    1pts
-    PA 28-34    -1pts
-    PA 35+      -4pts
-    Sacks       1pts per
-    INTs        2pts per
-    FR          2pts per
-    ST FR       1pts per
-    SAF         2pts per
-    FF          1pts per
-    BK          2pts per
-'''
 def def_fpts(def_df):
     defense_df = def_df[['team', 'week', 'special_teams_tds', 'def_fumbles_forced', 'def_sacks',
                  'def_interceptions', 'def_tds', 'fumble_recovery_opp',
@@ -99,12 +83,12 @@ def def_fpts(def_df):
     pts = def_fpts.groupby(['week', 'team']).agg(fpts=('fantasy_points', 'sum')).reset_index()
     pts['cleaned_name'] = pts['team']
     pts['team1'] = pts['team']
+    # pts['sleeper_id'] = pts['team']
     return pts
    
 
     
 def def_pts(df):
-  
     sacks = df['def_sacks']
     ints = 2*(df['def_interceptions'])
     fr = 2*(df['fumble_recovery_opp'])
