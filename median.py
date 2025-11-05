@@ -24,39 +24,34 @@ def median(league, week):
     print(tabulate(printable, headers='keys', tablefmt='psql'))
     matchup_df['to_play_monday'] = combined['to_play_monday']
     matchup_df['team'] = combined['team_name']
-    matchup_df['max_pts'] = matchup_df['to_play_monday'].apply(lambda x: getPositions(x, weeks_players))
-    median_calc = getMedianCalcs(matchup_df)
+    matchup_df['max_pts'] = matchup_df['to_play_monday'].apply(lambda x: getHypotheticalMaxPts(x, weeks_players))
+    matchup_df['max_pts'] = matchup_df['max_pts'] + matchup_df['points']
+    prep_for_median = ruleOutAlreadySet(matchup_df)
+    calculated = calculate(prep_for_median)
+    print(calculated)
 
-def getPositions(row, weeks_players):
+def calculate(input_df):
+    df = input_df
+    return df
+
+
+def getHypotheticalMaxPts(row, weeks_players):
     positions = weeks_players[weeks_players['cleaned_name'].isin(row)]['position']
     max_pts = 0
     for player in positions:
         max_pts = max_pts + c.MAX.get(player)
     return max_pts
 
-def getMedianCalcs(matchup_df):
+def ruleOutAlreadySet(matchup_df):
     curr_points = matchup_df[['roster_id', 'matchup_id', 'team', 'points', 'to_play_monday', 'max_pts']]
     df = curr_points.sort_values(by='points', ascending=False)
     df['rank'] = df['points'].rank(ascending=False)
     df['num_to_play'] = df['to_play_monday'].apply(lambda row: len(row))
-    num_left = df['num_to_play'].value_counts().get(0, 0)
-    median = df[df['rank'] == 5]['points']
-    df['status'] = df.apply(lambda x: getStatus(x, num_left, list(median)), axis=1)
-    print(df)
-
-def getStatus(row, num_left, median):
-    if (row['num_to_play'] == 0):
-        num_left = num_left - 1
-   
-    if (row['rank'] > 5):
-        if ((row['points'] + row['max_pts']) < median[0]):
-            return "LOCK_BELOW"
-    #   if (row['num_to_play'] == 0):
-    #        return "LOCK_BELOW"
-    
-    elif ((6-row['rank']) > num_left):
-       return "LOCK_ABOVE"
-    
+    median = list(df[df['rank'] == 5]['points'])
+    df['status'] = df.apply(lambda team: "L" if (team['max_pts'] < median[0]) else "tbd", axis=1)
+    num_L = df['status'].value_counts().get("L")
+    df['status'] = df.apply(lambda team: "W" if ((6-team['rank']) > (9-num_L)) else team['status'], axis=1)
+    return df
 
 def getMondayPlayers(starters, weeks_players):
     starters_series = pd.Series(starters)
@@ -71,5 +66,5 @@ def getMondayGames(week):
     monday_teams = monday_df['home_team'].to_list() + monday_df['away_team'].to_list()
     return monday_teams
 
-median(league, 9)
+median(league, 8)
 
