@@ -13,7 +13,6 @@ league = League(c.LEAGUEID)
 def median(league, week):
     monday_teams = getMondayGames(week)
     matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
-    
     starters = matchup_df[['roster_id', 'matchup_id', 'starters']].copy()
     all_players = pdb.get(week)
     weeks_players = all_players[all_players['team'].isin(monday_teams)]
@@ -27,13 +26,23 @@ def median(league, week):
     matchup_df['max_pts'] = matchup_df['to_play_monday'].apply(lambda x: getHypotheticalMaxPts(x, weeks_players))
     matchup_df['max_pts'] = matchup_df['max_pts'] + matchup_df['points']
     prep_for_median = ruleOutAlreadySet(matchup_df)
+    print(prep_for_median)
     calculated = calculate(prep_for_median)
     print(calculated)
 
 def calculate(input_df):
     df = input_df
-    return df
+    df.apply(lambda row: printInfo(row, df), axis=1)
+    return "DONE"
 
+def printInfo(row, df):
+    if ((row['status'] == "L") | (row['status'] == "W")):
+        print(row['team'], "has:", row["status"], "vs the median.")
+    elif (row['rank'] > 5):
+        print(row['team'], ' see matchups above.')
+    else:
+        check = df[(df["status"] == "tbd") & (df['rank'] > row['rank'])]
+        print(row['team'], ":\n", check, "\n")
 
 def getHypotheticalMaxPts(row, weeks_players):
     positions = weeks_players[weeks_players['cleaned_name'].isin(row)]['position']
@@ -49,9 +58,19 @@ def ruleOutAlreadySet(matchup_df):
     df['num_to_play'] = df['to_play_monday'].apply(lambda row: len(row))
     median = list(df[df['rank'] == 5]['points'])
     df['status'] = df.apply(lambda team: "L" if (team['max_pts'] < median[0]) else "tbd", axis=1)
-    num_L = df['status'].value_counts().get("L")
-    df['status'] = df.apply(lambda team: "W" if ((6-team['rank']) > (9-num_L)) else team['status'], axis=1)
+    df['status'] = df.apply(lambda team: setWinners(team, df), axis=1)
     return df
+
+def setWinners(team, df):
+    rank = team['rank']
+    if rank > 5:
+        return team['status']
+    search = df[(df['rank'] > rank) & ((df['num_to_play'] == 0) | (df['status'] == "L"))]
+    num_above = search.shape[0]
+    if ((9-num_above) < (6-rank)):
+        return "W"
+    else: 
+        return team['status']
 
 def getMondayPlayers(starters, weeks_players):
     starters_series = pd.Series(starters)
