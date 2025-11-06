@@ -71,6 +71,8 @@ def def_fpts(def_df):
     score_given_up_a = df_sched_clean[['week', 'away_team', 'home_score']]
     score_given_up_h = score_given_up_h.rename(columns={"home_team" : "team", "away_score" : "PA"})
     score_given_up_a = score_given_up_a.rename(columns={"away_team" : "team", "home_score" : "PA"})
+    score_given_up_h['team'] = score_given_up_h['team'].replace('LA', 'LAR')
+    score_given_up_a['team'] = score_given_up_a['team'].replace('LA', 'LAR')
     def_PA = pd.concat([score_given_up_a, score_given_up_h], ignore_index=True)
     # PA 0        10pts PA 1-6      7pts
     # PA 7-13     4pts  PA 14-20    1pts

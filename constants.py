@@ -29,7 +29,7 @@ player_stats_headers = ["player_id", "player_name", "player_display_name", "posi
 LEAGUEID    = "1257466498994143232"
 DRAFTID     = "1257466498994143233"
 TEAMS       = ['ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'GB',
-                'HOU', 'IND', 'JAX', 'KC', 'LA', 'LAC', 'LV', 'MIA', 'MIN', 'NE', 'NO', 'NYG', 'NYJ',
+                'HOU', 'IND', 'JAX', 'KC', 'LAC', 'LAR', 'LV', 'MIA', 'MIN', 'NE', 'NO', 'NYG', 'NYJ',
                 'PHI', 'PIT', 'SEA', 'SF', 'TB', 'TEN', 'WAS']
 BYES = nfl_2025_bye_weeks = {
     5: ["ATL", "CHI", "GB", "PIT"],

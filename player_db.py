@@ -18,6 +18,7 @@ def get(week):
     defenses = defenses.dropna(axis=1, how='all')
     stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
     stats_defenses = stats_defenses.to_pandas()
+    stats_defenses['team'] = stats_defenses['team'].replace('LA', 'LAR')
     def_fpts = stats.def_fpts(stats_defenses)
     def_fpts = def_fpts.rename(columns={'fpts':'fantasy_points', 'team' : 'search_full_name', 'team1' : 'team'})
     def_fpts['position'] = 'DEF'
@@ -28,6 +29,7 @@ def get(week):
     stats_players = stats_players.to_pandas()
     stats_players.columns = c.player_stats_headers
     stats_players = stats_players.iloc[:-1]
+    stats_players['team'] = stats_players['team'].replace('LA', 'LAR')
  
     stats_players['cleaned_name'] = stats_players['player_display_name'].str.split()
     stats_players = stats_players[~stats_players['cleaned_name'].isnull()]
@@ -92,18 +94,17 @@ def get(week):
     merged_players['fantasy_points'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points'])
     merged_players['fantasy_points_ppr'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points_ppr'])
 
+    merged_players['team'] = merged_players['team'].replace('LA', 'LAR')
 
-    
     if (week <= 0): 
         #print("Returning player database for entire season.")
         return merged_players
     else: 
         #print("Returning player database for week: ", week)
         return merged_players[merged_players['week'] == week]
- 
-db = get(8)
-print(db[db['position'] == 'DEF'])
-
+    
 def getFromID(id, db):
+    if id in c.TEAMS:
+        return db[db['cleaned_name'] == id]
     player = db[db['sleeper_id'] == id]
     return player
