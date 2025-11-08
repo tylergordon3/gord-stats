@@ -2,9 +2,7 @@ import nflreadpy as nfl
 from sleeper_wrapper import League
 from tabulate import tabulate
 import constants as c
-import numpy as np
 import pandas as pd
-import nfl_stats as stats
 import fantasy_rosters as fr
 import player_db as pdb
 
