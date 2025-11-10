@@ -5,83 +5,111 @@
   </head>
   <body>
     <h3>Week 10 Median</h3>
- <table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>team</th>
-      <th>points</th>
-      <th>to_play_monday</th>
-      <th>max_pts</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Lotta Cox (Balls Too)</td>
-      <td>169.80</td>
-      <td>[]</td>
-      <td>169.80</td>
-    </tr>
-    <tr>
-      <td>Professional Fratson</td>
-      <td>167.38</td>
-      <td>[]</td>
-      <td>167.38</td>
-    </tr>
-    <tr>
-      <td>Clanker Barrel</td>
-      <td>166.00</td>
-      <td>[]</td>
-      <td>166.00</td>
-    </tr>
-    <tr>
-      <td>Strictly Dickly</td>
-      <td>160.32</td>
-      <td>[]</td>
-      <td>160.32</td>
-    </tr>
-    <tr>
-      <td>Big Booty Bowers</td>
-      <td>138.40</td>
-      <td>[]</td>
-      <td>138.40</td>
-    </tr>
-    <tr>
-      <td>Kraft YAC-N-Cheese</td>
-      <td>127.12</td>
-      <td>[]</td>
-      <td>127.12</td>
-    </tr>
-    <tr>
-      <td>Mark Andrews on 1/19/25</td>
-      <td>102.44</td>
-      <td>[DeVontaSmith, PHI]</td>
-      <td>192.34</td>
-    </tr>
-    <tr>
-      <td>The Jackson 5</td>
-      <td>88.44</td>
-      <td>[AJBrown, RomeoDoubs]</td>
-      <td>204.24</td>
-    </tr>
-    <tr>
-      <td>LGBBQ+</td>
-      <td>77.12</td>
-      <td>[DallasGoedert, JoshJacobs]</td>
-      <td>178.32</td>
-    </tr>
-    <tr>
-      <td>padgett</td>
-      <td>69.40</td>
-      <td>[JalenHurts, SaquonBarkley]</td>
-      <td>177.50</td>
-    </tr>
-  </tbody>
-</table>
-<p>Note: max_pts refers to a hypothetical max score where remaining players score the highest pt total for that position since 2020.<br>
-  "QB" : 51.9 - Josh Allen   2024 | "RB" : 56.2 - Alvin Kamara 2020<br>
-  "WR" : 57.9 - Tyreek Hill  2020 | "TE" : 45.0 - Darren Waller 2020<br>
-  "DEF": 32.0 - Buffalo D/ST 2023 | "K"  : 26.0 - Jake Moody 2024<br></p>
-<p><strong>Lotta Cox (Balls Too)</strong> has: <span style="color: #339966;">W vs the median.</span></p>
-<p><br /><strong>Professional Fratson loses median if 4 / 4 pass.</strong><br />Mark Andrews on 1/19/25 : DeVontaSmith, PHI scores 64.94<br />The Jackson 5 : AJBrown, RomeoDoubs scores 78.94<br />LGBBQ+ : DallasGoedert, JoshJacobs scores 90.26<br />padgett : JalenHurts, SaquonBarkley scores 97.98<br />--------------------------------------------------------------------------------------------------<br /><strong>Clanker Barrel loses median if 3 / 4 pass.</strong><br />Mark Andrews on 1/19/25 : DeVontaSmith, PHI scores 63.56<br />The Jackson 5 : AJBrown, RomeoDoubs scores 77.56<br />LGBBQ+ : DallasGoedert, JoshJacobs scores 88.88<br />padgett : JalenHurts, SaquonBarkley scores 96.6<br />--------------------------------------------------------------------------------------------------<br /><strong>Strictly Dickly loses median if 2 / 4 pass.</strong><br />Mark Andrews on 1/19/25 : DeVontaSmith, PHI scores 57.88<br />The Jackson 5 : AJBrown, RomeoDoubs scores 71.88<br />LGBBQ+ : DallasGoedert, JoshJacobs scores 83.2<br />padgett : JalenHurts, SaquonBarkley scores 90.92<br />--------------------------------------------------------------------------------------------------<br /><strong>Big Booty Bowers loses median if 1 / 4 pass.</strong><br />Mark Andrews on 1/19/25 : DeVontaSmith, PHI scores 35.96<br />The Jackson 5 : AJBrown, RomeoDoubs scores 49.96<br />LGBBQ+ : DallasGoedert, JoshJacobs scores 61.28<br />padgett : JalenHurts, SaquonBarkley scores 69.0<br />--------------------------------------------------------------------------------------------------<br /><strong>Kraft YAC-N-Cheese</strong> has:<span style="color: #ff0000;"> L vs the median.</span><br />--------------------------------------------------------------------------------------------------<br />See above for points needed: <br /><strong>Mark Andrews on 1/19/25</strong><br /><strong>The Jackson 5</strong><br /><strong>LGBBQ+</strong><br /><strong>padgett</strong></p>
-</body>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th>team</th>
+          <th>points</th>
+          <th>to_play_monday</th>
+          <th>max_pts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Lotta Cox (Balls Too)</td>
+          <td>169.80</td>
+          <td>[]</td>
+          <td>169.80</td>
+        </tr>
+        <tr>
+          <td>Professional Fratson</td>
+          <td>167.38</td>
+          <td>[]</td>
+          <td>167.38</td>
+        </tr>
+        <tr>
+          <td>Clanker Barrel</td>
+          <td>166.00</td>
+          <td>[]</td>
+          <td>166.00</td>
+        </tr>
+        <tr>
+          <td>Strictly Dickly</td>
+          <td>160.32</td>
+          <td>[]</td>
+          <td>160.32</td>
+        </tr>
+        <tr>
+          <td>Big Booty Bowers</td>
+          <td>138.40</td>
+          <td>[]</td>
+          <td>138.40</td>
+        </tr>
+        <tr>
+          <td>Kraft YAC-N-Cheese</td>
+          <td>127.12</td>
+          <td>[]</td>
+          <td>127.12</td>
+        </tr>
+        <tr>
+          <td>Mark Andrews on 1/19/25</td>
+          <td>102.44</td>
+          <td>[DeVontaSmith, PHI]</td>
+          <td>192.34</td>
+        </tr>
+        <tr>
+          <td>The Jackson 5</td>
+          <td>88.44</td>
+          <td>[AJBrown, RomeoDoubs]</td>
+          <td>204.24</td>
+        </tr>
+        <tr>
+          <td>LGBBQ+</td>
+          <td>77.12</td>
+          <td>[DallasGoedert, JoshJacobs]</td>
+          <td>178.32</td>
+        </tr>
+        <tr>
+          <td>padgett</td>
+          <td>69.40</td>
+          <td>[JalenHurts, SaquonBarkley]</td>
+          <td>177.50</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Note: max_pts refers to a hypothetical max score where remaining players
+      score the highest pt total for that position since 2020.<br>
+      "QB" : 51.9 - Josh Allen 2024 | "RB" : 56.2 - Alvin Kamara 2020<br>
+      "WR" : 57.9 - Tyreek Hill 2020 | "TE" : 45.0 - Darren Waller 2020<br>
+      "DEF": 32.0 - Buffalo D/ST 2023 | "K" : 26.0 - Jake Moody 2024<br></p>
+    <p><strong>Lotta Cox (Balls Too)</strong> has: <span
+        style="color: #339966;">W vs the median.</span><br>
+        <strong>Kraft
+        YAC-N-Cheese</strong> has:<span style="color: #ff0000;"> L vs the
+        median.</span>
+      <br /><strong>Professional Fratson loses median if 4 / 4
+        pass.</strong><br />Mark Andrews on 1/19/25 : DeVontaSmith, PHI scores
+      64.94<br />The Jackson 5 : AJBrown, RomeoDoubs scores 78.94<br />LGBBQ+ :
+      DallasGoedert, JoshJacobs scores 90.26<br />padgett : JalenHurts,
+      SaquonBarkley scores 97.98
+      <br />--------------------------------------------------------------------------------------------------<br /><strong>Clanker
+        Barrel loses median if 3 / 4 pass.</strong><br />Mark Andrews on 1/19/25
+      : DeVontaSmith, PHI scores 63.56<br />The Jackson 5 : AJBrown, RomeoDoubs
+      scores 77.56<br />LGBBQ+ : DallasGoedert, JoshJacobs scores
+      88.88<br />padgett : JalenHurts, SaquonBarkley scores
+      96.6<br />--------------------------------------------------------------------------------------------------<br /><strong>Strictly
+        Dickly loses median if 2 / 4 pass.</strong><br />Mark Andrews on 1/19/25
+      : DeVontaSmith, PHI scores 57.88<br />The Jackson 5 : AJBrown, RomeoDoubs
+      scores 71.88<br />LGBBQ+ : DallasGoedert, JoshJacobs scores
+      83.2<br />padgett : JalenHurts, SaquonBarkley scores
+      90.92<br />--------------------------------------------------------------------------------------------------<br /><strong>Big
+        Booty Bowers loses median if 1 / 4 pass.</strong><br />Mark Andrews on
+      1/19/25 : DeVontaSmith, PHI scores 35.96<br />The Jackson 5 : AJBrown,
+      RomeoDoubs scores 49.96<br />LGBBQ+ : DallasGoedert, JoshJacobs scores
+      61.28<br />padgett : JalenHurts, SaquonBarkley scores
+      69.0<br>--------------------------------------------------------------------------------------------------<br />See
+      above for points needed: <br /><strong>Mark Andrews on
+        1/19/25</strong><br /><strong>The Jackson
+        5</strong><br /><strong>LGBBQ+</strong><br /><strong>padgett</strong></p>
+  </body>
 </html>
