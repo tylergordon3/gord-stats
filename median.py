@@ -29,7 +29,7 @@ def median(league, week):
     matchup_df['max_pts'] = matchup_df['to_play_monday'].apply(lambda x: getHypotheticalMaxPts(x, db))
     matchup_df['max_pts'] = matchup_df['max_pts'] + matchup_df['points']
     prep_for_median = ruleOutAlreadySet(matchup_df)
-    print(prep_for_median)
+    print(prep_for_median.to_html())
     calculate(prep_for_median)
     #print(calculated)
 
