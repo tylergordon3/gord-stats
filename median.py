@@ -9,22 +9,27 @@ import player_db as pdb
 league = League(c.LEAGUEID)
 
 def median(league, week):
-    monday_teams = getMondayGames(week)
+    #monday_teams = getMondayGames(week)
+
     matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
     starters = matchup_df[['roster_id', 'matchup_id', 'starters']].copy()
+
     all_players = pdb.get(week)
-    weeks_players = all_players[all_players['team'].isin(monday_teams)]
-    starters['to_play_monday'] = starters['starters'].apply(lambda x: getMondayPlayers(x, weeks_players))
+    db = pdb.get(0)
+
+    #weeks_players = all_players[all_players['team'].isin(monday_teams)]
+    weeks_players = all_players
+    starters['to_play_monday'] = starters['starters'].apply(lambda x: getMondayPlayers(x, weeks_players, db))
     rosters = fr.get(league)
     combined = pd.merge(starters, rosters, on='roster_id')
     #printable = combined[["team_name", "to_play_monday"]].copy()
     #print(tabulate(printable, headers='keys', tablefmt='psql'))
     matchup_df['to_play_monday'] = combined['to_play_monday']
     matchup_df['team'] = combined['team_name']
-    matchup_df['max_pts'] = matchup_df['to_play_monday'].apply(lambda x: getHypotheticalMaxPts(x, weeks_players))
+    matchup_df['max_pts'] = matchup_df['to_play_monday'].apply(lambda x: getHypotheticalMaxPts(x, db))
     matchup_df['max_pts'] = matchup_df['max_pts'] + matchup_df['points']
     prep_for_median = ruleOutAlreadySet(matchup_df)
-    #print(prep_for_median)
+    print(prep_for_median)
     calculate(prep_for_median)
     #print(calculated)
 
@@ -59,11 +64,17 @@ def printMedianScenarios(currTeam, df):
             print(team.team,":", ', '.join(team.to_play_monday),'scores',diff)
     print('--------------------------------------------------------------------------------------------------')
 
-def getHypotheticalMaxPts(row, weeks_players):
-    positions = weeks_players[weeks_players['cleaned_name'].isin(row)]['position']
+def getHypotheticalMaxPts(row, db):
+    players = db[db['cleaned_name'].isin(row)]#['position']
+    names = pd.unique(players['cleaned_name'])
+    positions = []
+    for x in names:
+        common = players[players.cleaned_name == x]['position'].mode()
+        positions.append(common)
+
     max_pts = 0
     for player in positions:
-        max_pts = max_pts + c.MAX.get(player)
+       max_pts = max_pts + c.MAX.get(list(player)[0])
     return max_pts
 
 def ruleOutAlreadySet(matchup_df):
@@ -89,12 +100,15 @@ def setWinners(team, df):
     else: 
         return team['status']
 
-def getMondayPlayers(starters, weeks_players):
+def getMondayPlayers(starters, weeks_players, db):
     starters_series = pd.Series(starters)
-    monday = starters_series[(starters_series.isin(weeks_players['sleeper_id'])) | (starters_series.isin(weeks_players['team']))]
-    monday_names = weeks_players[(weeks_players['sleeper_id'].isin(monday)) | (weeks_players['cleaned_name'].isin(monday))]['cleaned_name']
-    #return {A: B for A, B in zip(monday, monday_names)}
-    return list(monday_names)
+    
+    to_play = starters_series[~(starters_series.isin(weeks_players['sleeper_id']))]
+    
+    to_play_names = db[(db['sleeper_id'].isin(to_play))]['cleaned_name']
+    names = pd.unique(to_play_names)
+
+    return list(names)
 
 def getMondayGames(week):
     schedule = nfl.load_schedules(nfl.get_current_season())
@@ -102,5 +116,5 @@ def getMondayGames(week):
     monday_teams = monday_df['home_team'].to_list() + monday_df['away_team'].to_list()
     return monday_teams
 
-median(league, 8)
+median(league, 10)
 

@@ -78,11 +78,11 @@ def def_fpts(def_df):
     # PA 7-13     4pts  PA 14-20    1pts
     # PA 28-34    -1pts PA 35+      -4pts
     def_PA['fantasy_points'] = def_PA['PA'].apply(lambda x: pa_adj(x))
-   
     defense_df['fantasy_points'] = defense_df.apply(def_pts, axis=1)
     def_fpts = pd.concat([def_PA[['week', 'team', 'fantasy_points']], defense_df[['week', 'team', 'fantasy_points']]], ignore_index=True)
-    
+    def_fpts = def_fpts.dropna()
     pts = def_fpts.groupby(['week', 'team']).agg(fpts=('fantasy_points', 'sum')).reset_index()
+
     pts['cleaned_name'] = pts['team']
     pts['team1'] = pts['team']
     # pts['sleeper_id'] = pts['team']

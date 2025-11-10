@@ -59,6 +59,6 @@ def findBestball(df):
 
     return bestball
 
-week = bestball(2)
+week = bestball(10)
 print(week)
 
