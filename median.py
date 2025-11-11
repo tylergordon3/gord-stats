@@ -32,7 +32,13 @@ def median(league, week):
     #temp = prep_for_median.drop(columns=["roster_id","matchup_id","status","rank","num_to_play"])
     #print(temp.to_html(index=False))
     calculate(prep_for_median)
+    save_to_html(input)
     #print(calculated)
+
+
+def save_to_html(input):
+    table = input.drop(columns=["roster_id","matchup_id","status","rank","num_to_play"]).to_html()
+    return input
 
 def calculate(input_df):
     df = input_df
