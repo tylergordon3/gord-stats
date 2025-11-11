@@ -1,5 +1,5 @@
-import nflreadpy as nfl
 from sleeper_wrapper import League
+import datetime
 import constants as c
 import pandas as pd
 import fantasy_rosters as fr
@@ -133,6 +133,8 @@ def save_to_html(input):
 
 def consoleOutput(input_df):
     df = input_df
+    time = datetime.datetime.now()
+    print(time.strftime("As of: %m/%d/%y %I:%M %p"))
     see_above = []
     df.apply(lambda row: doConsoleOutput(row, df, see_above), axis=1)
     print('--------------------------------------------------------------------------------------------------')
