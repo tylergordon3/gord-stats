@@ -1,0 +1,1 @@
+Fantasy football insights landing page.
