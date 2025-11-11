@@ -4,6 +4,7 @@ import constants as c
 import pandas as pd
 import fantasy_rosters as fr
 import player_db as pdb
+import os
 
 league = League(c.LEAGUEID)
 
@@ -36,10 +37,11 @@ def median(league, week):
  
     # If week has not occured return string otherwise output to html for webpage
     if prep_for_median.empty: 
-        save_to_html("No median yet!")
+        save_to_html("No median yet!", week)
     else:
+        save_to_html(prep_for_median, week)
         consoleOutput(prep_for_median)
-        save_to_html(input)
+       
 
 def getHypotheticalMaxPts(row, db):
     # Get position for each player still to play
@@ -125,10 +127,17 @@ def getToPlay(starters, weeks_players, db):
     return list(names)
 
 # ------ Functions for printing to console and HTML formatting --------
-def save_to_html(input):
+def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         return input
     table = input.drop(columns=["roster_id","matchup_id","status","rank","num_to_play"]).to_html()
+
+    file = f"week{week}_median.html"
+    median_path = "docs/median/"
+    filename = os.path.join(median_path, file)
+    print(file)
+    with open(filename, 'w') as f:
+        f.write(table)
     return input
 
 def consoleOutput(input_df):
