@@ -12,7 +12,6 @@ def get(week):
     with open('players.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
             sleeper_players = pd.DataFrame.from_dict(data, orient='index')
-
     # Getting defense fantasy pts
     defenses = sleeper_players[sleeper_players['position'] == 'DEF']
     defenses = defenses.dropna(axis=1, how='all')
@@ -23,15 +22,21 @@ def get(week):
     def_fpts = def_fpts.rename(columns={'fpts':'fantasy_points', 'team' : 'search_full_name', 'team1' : 'team'})
     def_fpts['position'] = 'DEF'
     def_fpts['fantasy_points_ppr'] = def_fpts['fantasy_points']
-
+    
     # Getting all other players stats
     stats_players = nfl.load_player_stats(nfl.get_current_season(), 'week')
     stats_players = stats_players.to_pandas()
     stats_players.columns = c.player_stats_headers
     stats_players = stats_players.iloc[:-1]
+    # Special cases - seperate into own function TBC
+    stats_players['player_display_name'] = stats_players['player_display_name'].replace('Mike Badgley', 'Michael Badgley')
+    stats_players['player_display_name'] = stats_players['player_display_name'].replace('Amon-Ra St. Brown', 'AmonRa StBrown')
     stats_players['team'] = stats_players['team'].replace('LA', 'LAR')
     
     stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace(".", "") if not x == None else x)
+    stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace("'", "") if not x == None else x)
+    stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace("-", "") if not x == None else x)
+    
     stats_players['cleaned_name'] = stats_players['player_display_name'].str.split()
     
     stats_players = stats_players[~stats_players['cleaned_name'].isnull()]
@@ -41,16 +46,16 @@ def get(week):
     stats_players['search_full_name'] = [re.sub(r'\s+', '', str(x)).lower() for x in stats_players['cleaned_name']]
     
     stats_players = pd.concat([stats_players, def_fpts])
-    
+
     merged_players =  pd.merge(sleeper_players, stats_players, on='search_full_name', how='inner')
-    
+   
     merged_players = merged_players.drop(columns=['competitions', 'team_abbr', 'high_school', 'practice_participation', 'opta_id', 'birth_country', 'injury_start_date', 'birth_state',
                                  'height', 'team_changed_at', 'practice_description', 'birth_city', 'fantasy_positions', 'position_x', 'injury_notes',
                                  'pandascore_id', 'sport', 'metadata', 'news_updated', 'search_rank', 'team_y', 'depth_chart_order', 'hashtag', 'player_name',
                                  'search_first_name', 'search_last_name', 'player_display_name'])
     
     merged_players = merged_players.rename(columns={"position_y" : "position", "team_x" : "team", "player_id_x" : "sleeper_id", "player_id_y" : "nflstats_id"})
-    
+
     merged_players = pd.concat([merged_players, def_fpts])
     
     # positions is position_y

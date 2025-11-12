@@ -1,35 +1,58 @@
-import nflreadpy as nfl
 from sleeper_wrapper import League
 import constants as c
-import player_db as db
 import fantasy_rosters as fr
 import player_db as pdb
-import numpy as np
 import pandas as pd
-import player as p
+import os
 
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
 
 
 def bestball(week):
+    # Filter matchups to what we need
     matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
+    matchups = getMatchups(matchup_df)
+    
     db = pdb.get(week)
     df = matchup_df[['roster_id', 'players_points', 'matchup_id']]
-    week_results = []
+
+    combined = pd.DataFrame()
+    # Iterate through roster to find best ball lineup
     for roster_id in df['roster_id']:
+        # Team info we need
         team = df[df.roster_id == roster_id]
         key = roster_id - 1
+
+        # Get the dict of teams players
         ps = team.players_points.get(key)
         raw_df = pd.DataFrame(ps.items())
         raw_df.columns = ['id', 'points']
+
+        # Call to cleanup data frame
         valid_df = createDataframe(raw_df, db)
+        # Find lineup and return as a DF with players
         best_df = findBestball(valid_df)
-        rosters = fr.get(league)
-        this_team = rosters[rosters['roster_id'] == roster_id]
-        print(list(this_team['team_name'])[0], '\n', best_df)
-        week_results.append({list(this_team['team_name'])[0] : best_df})
-    return week_results
+
+        # Add roster_id to each player for safety
+        best_df['roster_id'] = roster_id
+
+        # Add players to data frame with all players
+        combined = pd.concat([combined, best_df])
+    # end roster iteration
+    # Send to HTML and return
+    bestball_to_html(combined, matchups, week)
+    return combined
+
+def getMatchups(matchup_df):
+    num_matches = max(matchup_df['matchup_id'])
+
+    matchups = {}
+    for i in range(num_matches):
+        vals = matchup_df[matchup_df['matchup_id'] == (i+1)]['roster_id']
+        matchups[(i+1)] = list(vals)
+    return matchups
+
 
 def createDataframe(df,db):
     df['obj'] = df['id'].apply(lambda x: pdb.getFromID(x, db))
@@ -50,7 +73,8 @@ def findBestball(df):
     bestball = pd.DataFrame()
     for pos, amt in lineup.items():
         if pos == 'FLEX':
-            pos_df = df[df['position'].isin(["RB", "TE", "WR"])]
+            pos_df = df[df['position'].isin(["RB", "TE", "WR"])].copy()
+            pos_df['position'] = 'FLEX'
         else:
             pos_df = df[df['position'] == pos]
         pos_df = pos_df.sort_values(by='points', ascending=False)
@@ -59,6 +83,85 @@ def findBestball(df):
 
     return bestball
 
-week = bestball(10)
-print(week)
+def bestball_to_html(results, matchups, week):
+    file = f"week{week}_bestball.html"
+    median_path = "docs/bestball/"
+    filename = os.path.join(median_path, file)
+    index_link = '<a href="../bestball">BestBall Home</a>'
+  
+    formatted = formatMatchups(results, matchups, week)
+    html = index_link + "<br>" + formatted
+
+    with open(filename, 'w') as f:
+        f.write(html)
+        print("Wrote to ", filename)
+
+def formatMatchups(results, matchups, week):
+    css_style = """
+        <style>
+            .flex-container {
+                display: flex;
+                justify-content: space-around; /* Distributes space evenly */
+                flex-wrap: wrap; /* Allows items to wrap if screen is too small */
+            }
+            .flex-item {
+                margin: 10px; /* Adds space between tables */
+                border: 1px solid #ddd;
+                padding: 10px;
+            }
+            /* Optional: Basic table styling */
+            .flex-item table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+            .flex-item th, .flex-item td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: center;
+            }
+        </style>
+        """
+    formatted = css_style
+    for match_id, teams in matchups.items():
+        matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
+        teamA = results[results['roster_id'] == teams[0]]
+        teamB = results[results['roster_id'] == teams[1]]
+        teamAName = fr.getTeamName(league, teams[0])
+        teamBName = fr.getTeamName(league, teams[1])
+        teamA_total = teamA['points'].sum()
+        teamB_total = teamB['points'].sum()
+        originalA = list(matchup_df[matchup_df['roster_id'] == teams[0]]['points'])[0]
+        originalB = list(matchup_df[matchup_df['roster_id'] == teams[1]]['points'])[0]
+        teamA = teamA.reset_index(drop=True)
+        teamB = teamB.reset_index(drop=True)
+        teamA = teamA.drop(columns=['id', 'roster_id'],axis=0)
+        teamB = teamB.drop(columns=['id', 'roster_id'],axis=0)
+        teamA = teamA.iloc[:, [2, 1, 0]]
+        teamB = teamB.iloc[:, [0, 1, 2]]
+        
+        html_df1 = teamA.to_html(index=False)
+        html_df2 = teamB.to_html(index=False)
+        full_html = f"""
+            {css_style}
+            <div class="flex-container">
+                <div class="flex-item">
+                    <div style="text-align: center;">
+                    <p><strong>{teamAName} </strong></p>
+                    <p>Best Lineup: <strong>{teamA_total:.2f} pts</strong></p>
+                    <p>Original:  {originalA:.2f} </p>
+                        {html_df1}
+                    </div>
+                </div>
+                <div class="flex-item">
+                    <div style="text-align: center;">
+                    <p><strong>{teamBName}</strong></p> 
+                    <p>Best Lineup: <strong>{teamB_total:.2f} pts</strong></p>
+                    <p>Original: {originalB:.2f} </p>
+                        {html_df2}
+                    </div>
+                </div>
+            </div>
+            """
+        formatted = formatted + full_html
+    return formatted
 

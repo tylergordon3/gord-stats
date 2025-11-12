@@ -3,9 +3,7 @@
 """
 from sleeper_wrapper import League
 import pandas as pd
-import re
-import json
-import nfl_stats
+import constants as c
 
 
 def get(league) -> pd.DataFrame:
@@ -41,3 +39,7 @@ def get(league) -> pd.DataFrame:
     
     
     return rosters
+
+def getTeamName(league, roster_id):
+    roster = get(league)
+    return list(roster[roster['roster_id'] == roster_id]['team_name'])[0]
