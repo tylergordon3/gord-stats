@@ -10,4 +10,4 @@ Median Status landing page.
 [Week 2](/week2_median.html/)   
 [Week 1](/week1_median.html/)   
 
-[Monday Morning Output Example](/wk10.html/)
+[Monday Morning Output Example](/example.html/)
