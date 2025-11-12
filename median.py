@@ -136,9 +136,9 @@ def save_to_html(input, week):
     s = s.set_table_styles([
     {
         'selector': '.col_heading',
-        'props': 'background-color: yellow; color: black;'
+        'props': 'background-color: yellow; font-weight : bold'
     }])
-    table = s.to_html()
+    table = s.to_html(index=False)
     time_obj = datetime.datetime.now()
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     file = f"week{week}_median.html"
@@ -152,7 +152,7 @@ def save_to_html(input, week):
 
 def highlightRows(row):
     if row['rank'] <= 5:
-        return ['background-color: green'] * len(row)
+        return ['background-color: lightgreen'] * len(row)
     else:
         return [''] * len(row)
 
@@ -193,4 +193,4 @@ def printMedianScenarios(currTeam, df):
 #week = 11
 #for i in range(week):
 #    median(league, i)
-median(league, 1)
+median(league, 10)
