@@ -136,7 +136,7 @@ def save_to_html(input, week):
     file = f"week{week}_median.html"
     median_path = "docs/median/"
     filename = os.path.join(median_path, file)
-    index_link = '<a href="../Median">Median Home</a>'
+    index_link = '<a href="../median">Median Home</a>'
     output = index_link + "<br>" + time + "<br>" + table
     with open(filename, 'w') as f:
         f.write(output)
@@ -174,10 +174,6 @@ def printMedianScenarios(currTeam, df):
         else:
             print(team.team,":", ', '.join(team.to_play_monday),'scores',diff)
     print('--------------------------------------------------------------------------------------------------')
-
-median(league, 1)
-median(league, 2)
-median(league, 3)
 
 median(league, 6)
 median(league, 7)
