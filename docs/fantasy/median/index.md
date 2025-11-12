@@ -1,4 +1,4 @@
-Median Status landing page.
+Median Status landing page.  
 [Week 6](/week6_median.html/)   
 [Week 7](/week7_median.html/)   
 [Week 8](/week8_median.html/)  
