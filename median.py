@@ -1,4 +1,5 @@
 from sleeper_wrapper import League
+from pytz import timezone
 import datetime
 import constants as c
 import pandas as pd
@@ -40,7 +41,7 @@ def median(league, week):
         save_to_html("No median yet!", week)
     else:
         save_to_html(prep_for_median, week)
-        consoleOutput(prep_for_median)
+        #consoleOutput(prep_for_median)
        
 
 def getHypotheticalMaxPts(row, db):
@@ -130,16 +131,21 @@ def getToPlay(starters, weeks_players, db):
 def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         return input
-
     input = input.drop(columns=["roster_id","matchup_id","status","num_to_play"])
+    cols = list(input)
+    cols.insert(0, cols.pop(cols.index('rank')))
+    input = input.loc[:, cols]
+    input['rank'] = input['rank'].astype('Int64')
     s = input.style \
         .apply(highlightRows, axis=1) \
         .format(precision = 2) \
+        .hide(axis='index') \
         .set_table_styles([
             { 'selector': '.col_heading', 'props': 'font-weight : bold'}
         ])
     table = s.to_html(index=False)
-    time_obj = datetime.datetime.now()
+    tz = timezone('EST')
+    time_obj = datetime.datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     file = f"week{week}_median.html"
     median_path = "docs/median/"
@@ -148,7 +154,8 @@ def save_to_html(input, week):
     output = index_link + "<br>" + time + "<br>" + table
     with open(filename, 'w') as f:
         f.write(output)
-    return input
+        print("Wrote to ", filename)
+    return
 
 def highlightRows(row):
     if row['rank'] <= 5:
@@ -158,8 +165,6 @@ def highlightRows(row):
 
 def consoleOutput(input_df):
     df = input_df
-    time = datetime.datetime.now()
-    print(time.strftime("As of: %m/%d/%y %I:%M %p"))
     see_above = []
     df.apply(lambda row: doConsoleOutput(row, df, see_above), axis=1)
     print('--------------------------------------------------------------------------------------------------')
@@ -193,4 +198,4 @@ def printMedianScenarios(currTeam, df):
 #week = 11
 #for i in range(week):
 #    median(league, i)
-median(league, 10)
+median(league, 1)
