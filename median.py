@@ -130,7 +130,15 @@ def getToPlay(starters, weeks_players, db):
 def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         return input
-    table = input.drop(columns=["roster_id","matchup_id","status","rank","num_to_play"]).to_html()
+    input = input.reset_index(drop=True)
+    input = input.drop(columns=["roster_id","matchup_id","status","num_to_play"])
+    s = input.style.apply(highlightRows, axis=1)
+    s = s.set_table_styles([
+    {
+        'selector': '.col_heading',
+        'props': 'background-color: yellow; color: black;'
+    }])
+    table = s.to_html()
     time_obj = datetime.datetime.now()
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     file = f"week{week}_median.html"
@@ -141,6 +149,12 @@ def save_to_html(input, week):
     with open(filename, 'w') as f:
         f.write(output)
     return input
+
+def highlightRows(row):
+    if row['rank'] <= 5:
+        return ['background-color: green'] * len(row)
+    else:
+        return [''] * len(row)
 
 def consoleOutput(input_df):
     df = input_df
@@ -175,5 +189,8 @@ def printMedianScenarios(currTeam, df):
             print(team.team,":", ', '.join(team.to_play_monday),'scores',diff)
     print('--------------------------------------------------------------------------------------------------')
 
-
-
+# Up to but not including...
+#week = 11
+#for i in range(week):
+#    median(league, i)
+median(league, 1)
