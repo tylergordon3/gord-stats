@@ -198,4 +198,4 @@ def printMedianScenarios(currTeam, df):
 #week = 11
 #for i in range(week):
 #    median(league, i)
-median(league, 1)
+median(league, 9)
