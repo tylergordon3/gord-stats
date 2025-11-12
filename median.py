@@ -175,6 +175,10 @@ def printMedianScenarios(currTeam, df):
             print(team.team,":", ', '.join(team.to_play_monday),'scores',diff)
     print('--------------------------------------------------------------------------------------------------')
 
+median(league, 1)
+median(league, 2)
+median(league, 3)
+
 median(league, 6)
 median(league, 7)
 median(league, 8)
