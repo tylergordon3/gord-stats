@@ -130,14 +130,14 @@ def getToPlay(starters, weeks_players, db):
 def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         return input
-    input = input.reset_index(drop=True)
+
     input = input.drop(columns=["roster_id","matchup_id","status","num_to_play"])
-    s = input.style.apply(highlightRows, axis=1)
-    s = s.set_table_styles([
-    {
-        'selector': '.col_heading',
-        'props': 'background-color: yellow; font-weight : bold'
-    }])
+    s = input.style \
+        .apply(highlightRows, axis=1) \
+        .format(precision = 2) \
+        .set_table_styles([
+            { 'selector': '.col_heading', 'props': 'font-weight : bold'}
+        ])
     table = s.to_html(index=False)
     time_obj = datetime.datetime.now()
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
