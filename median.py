@@ -132,7 +132,7 @@ def save_to_html(input, week):
         return input
     table = input.drop(columns=["roster_id","matchup_id","status","rank","num_to_play"]).to_html()
     time_obj = datetime.datetime.now()
-    time = time_obj.strftime("Last Update: %m/%d/%y %I:%M %p")
+    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     file = f"week{week}_median.html"
     median_path = "docs/median/"
     filename = os.path.join(median_path, file)
@@ -175,6 +175,9 @@ def printMedianScenarios(currTeam, df):
             print(team.team,":", ', '.join(team.to_play_monday),'scores',diff)
     print('--------------------------------------------------------------------------------------------------')
 
-
+median(league, 6)
+median(league, 7)
 median(league, 8)
+median(league, 9)
+median(league, 10)
 
