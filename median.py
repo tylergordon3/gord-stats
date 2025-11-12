@@ -131,13 +131,15 @@ def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         return input
     table = input.drop(columns=["roster_id","matchup_id","status","rank","num_to_play"]).to_html()
-
+    time_obj = datetime.datetime.now()
+    time = time_obj.strftime("Updated: %m/%d/%y %I:%M %p")
     file = f"week{week}_median.html"
     median_path = "docs/median/"
     filename = os.path.join(median_path, file)
-    print(file)
+    index_link = '<a href="docs/median/index.md">Median Home</a>'
+    output = index_link + "<br>" + time + "<br>" + table
     with open(filename, 'w') as f:
-        f.write(table)
+        f.write(output)
     return input
 
 def consoleOutput(input_df):
@@ -174,5 +176,5 @@ def printMedianScenarios(currTeam, df):
     print('--------------------------------------------------------------------------------------------------')
 
 
-median(league, 10)
+median(league, 9)
 
