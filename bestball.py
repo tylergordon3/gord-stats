@@ -178,62 +178,57 @@ def bestball_season():
         matchups = getMatchups(matchup_df)
         szn_matchups[week] = matchups
         
+    updateSummary(season_combined, szn_matchups)
 
-    FILENAME = "data/bestball_season.json"
-    with open(FILENAME, 'w', encoding="utf-8") as f:
-        json.dump(season_combined.to_json(orient='records'), f, indent=4)
-        print(f"Bestball data successfully saved to {FILENAME}")
-
-    with open("data/matchups.json", 'w', encoding="utf-8") as f:
-        json.dump(szn_matchups, f, indent=4)
-        print(f"Matchups data successfully saved to data/matchups.json")
+#def bestball_week_html(week):
+#    matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
+#    matchups = getMatchups(matchup_df)
     
-
-def bestball_week_html(week):
-    matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
-    matchups = getMatchups(matchup_df)
-    
-    with open('data/bestball_season.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            all = pd.read_json(StringIO(data))
-    bestball_to_html(all[all['week'] == week], matchups, week)
+#    with open('data/bestball_season.json', 'r', encoding='utf-8') as file:
+#            data = json.load(file)
+#            all = pd.read_json(StringIO(data))
+#    bestball_to_html(all[all['week'] == week], matchups, week)
 
 def weeklyTeam(results, roster_id, matchup_df):
     # too lazy, return as array
     team_df = results[results['roster_id'] == roster_id]
     name = fr.getTeamName(league, roster_id)
-    new_total = team_df['points'].sum()
+    new_total = round(float(team_df['points'].sum()),2)
     original_total = list(matchup_df[matchup_df['roster_id'] == roster_id]['points'])[0]
-    print(f'Name: {name}, new score: {new_total}, original score: {original_total}')
     return [name, new_total, original_total]
 
-def getResults(season_df, matchups):
+def getResults(season_df, matchups_dict):
     last_week = season_df['week'].max() + 1
-
+    outcomes = pd.DataFrame()
     for week in range(1, last_week):
-        matchups_arr = matchups.get(str(week))
-        
-        
-    
-        #teamA = weeklyTeam(results, teams[0], matchup_df)
-        #teamB = weeklyTeam(results, teams[1], matchup_df)
+        matchups_arr = matchups_dict.get(week)
+        matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
+        week_df = season_df[season_df['week'] == week]
+        for teams in matchups_arr:
+            teamA = weeklyTeam(week_df, teams[0], matchup_df)
+            teamB = weeklyTeam(week_df, teams[1], matchup_df)
+            new_winner = teamA[0] if int(teamA[1]) > int(teamB[1]) else teamB[0]
+            old_winner = teamA[0] if int(teamA[2]) > int(teamB[2]) else teamB[0]
+            to_add = {'week' : week, 'roster_id' : teams, 'names': [teamA[0], teamB[0]],
+                      'score' : [teamA[2], teamB[2]], 'bb_score' : [teamA[1], teamB[1]],
+                      'winner' : old_winner, 'bb_winner' : new_winner}
+            to_add_df = pd.DataFrame(to_add)
+            outcomes = pd.concat([outcomes, to_add_df])
+    outcomes = outcomes.reset_index(drop=True)
 
-        #new_winner = teamA[0] if int(teamA[1]) > int(teamB[1]) else teamB[0]
-        #old_winner = teamA[0] if int(teamA[2]) > int(teamB[2]) else teamB[0]
-        #print(f'New: {new_winner} | Old: {old_winner}\n')
+    def calcMedian(group):
+        median = group.median()
+        return group.apply(lambda x: 1 if x > median else 0)
+    outcomes['median'] = outcomes.groupby('week')['score'].transform(calcMedian)
+    outcomes['bb_median'] = outcomes.groupby('week')['bb_score'].transform(calcMedian)
 
-def updateSummary(doHtml):
-    with open('data/bestball_season.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            # All is dataframe with bestball lineups for every week
-            all = pd.read_json(StringIO(data))
-    with open('data/matchups.json', 'r', encoding='utf-8') as match_file:
-            json_string = match_file.read()
-            matchups = json.loads(json_string)
-    
-    outcomes = getResults(all, matchups)
+    return outcomes
+   
 
+def updateSummary(season, matchups):
+    outcomes = getResults(season, matchups)
+    with open('data/bestball.json', 'w', encoding="utf-8") as f:
+        json.dump(outcomes.to_json(), f, indent=4)
+        print(f"Bestball data successfully saved to data/outcomes.json")
 
-#bestball_season()
-doHTML = False
-updateSummary(doHTML)
+bestball_season()
