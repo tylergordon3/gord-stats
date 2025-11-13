@@ -7,6 +7,7 @@ import os
 import nflreadpy as nfl
 import json
 from io import StringIO
+from tabulate import tabulate
 
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
@@ -248,11 +249,12 @@ def update():
     summary_df['bb_PF'] = df.groupby('roster_id')['bb_score'].sum()
     summary_df['bb_PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
     summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8]]
-    summary_df = summary_df.sort_values(by="bb_wins")
+    summary_df = summary_df.sort_values(by="bb_wins", ascending=False)
+    tabled = tabulate(summary_df, tablefmt="html")
     path = "docs/bestball/summary_bestball.html"
     index_link = '<a href="../bestball">BestBall Home</a>'
-    html = index_link + summary_df.to_html()
-
+    #html = index_link + summary_df.to_html()
+    html = index_link + tabled
     with open(path, 'w') as f:
         f.write(html)
         print("Wrote to ", path)
