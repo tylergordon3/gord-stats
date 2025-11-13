@@ -4,16 +4,17 @@ import fantasy_rosters as fr
 import player_db as pdb
 import pandas as pd
 import os
+import nflreadpy as nfl
+import json
+from io import StringIO
 
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
 
-
 def bestball(week):
     # Filter matchups to what we need
     matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
-    matchups = getMatchups(matchup_df)
-    
+
     db = pdb.get(week)
     df = matchup_df[['roster_id', 'players_points', 'matchup_id']]
 
@@ -36,12 +37,12 @@ def bestball(week):
 
         # Add roster_id to each player for safety
         best_df['roster_id'] = roster_id
-
+        best_df['week'] = week
         # Add players to data frame with all players
         combined = pd.concat([combined, best_df])
     # end roster iteration
     # Send to HTML and return
-    bestball_to_html(combined, matchups, week)
+    #bestball_to_html(combined, matchups, week)
     return combined
 
 def getMatchups(matchup_df):
@@ -90,11 +91,13 @@ def bestball_to_html(results, matchups, week):
     index_link = '<a href="../bestball">BestBall Home</a>'
   
     formatted = formatMatchups(results, matchups, week)
+    getWeekResults(results, matchups, week)
     html = index_link + "<br>" + formatted
 
     with open(filename, 'w') as f:
         f.write(html)
         print("Wrote to ", filename)
+
 
 def formatMatchups(results, matchups, week):
     css_style = """
@@ -165,3 +168,46 @@ def formatMatchups(results, matchups, week):
         formatted = formatted + full_html
     return formatted
 
+def bestball_season():
+    season_combined = pd.DataFrame()
+    for week in range(1,nfl.get_current_week()):
+        print(f'Getting bestball results for week {week}')
+        weekly_results = bestball(week)
+        season_combined = pd.concat([season_combined, weekly_results])
+   
+    FILENAME = "data/bestball_season.json"
+    with open(FILENAME, 'w', encoding="utf-8") as f:
+        json.dump(season_combined.to_json(orient='records'), f, indent=4)
+        print(f"Bestball data successfully saved to {FILENAME}")
+
+def bestball_week_html(week):
+    matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
+    matchups = getMatchups(matchup_df)
+    
+    with open('data/bestball_season.json', 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            #all = pd.DataFrame.from_dict(data, orient='records')
+            all = pd.read_json(StringIO(data))
+    bestball_to_html(all[all['week'] == week], matchups, week)
+
+def weeklyTeam(results, roster_id, matchup_df):
+    # too lazy, return as array
+    team_df = results[results['roster_id'] == roster_id]
+    name = fr.getTeamName(league, roster_id)
+    new_total = team_df['points'].sum()
+    original_total = list(matchup_df[matchup_df['roster_id'] == roster_id]['points'])[0]
+    print(f'Name: {name}, new score: {new_total}, original score: {original_total}')
+    return [name, new_total, original_total]
+
+def getWeekResults(results, matchups, week):
+    for _, teams in matchups.items():
+        matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
+    
+        teamA = weeklyTeam(results, teams[0], matchup_df)
+        teamB = weeklyTeam(results, teams[1], matchup_df)
+
+        new_winner = teamA[0] if int(teamA[1]) > int(teamB[1]) else teamB[0]
+        old_winner = teamA[0] if int(teamA[2]) > int(teamB[2]) else teamB[0]
+        print(f'New: {new_winner} | Old: {old_winner}\n')
+#bestball_season()
+bestball_week_html(2)

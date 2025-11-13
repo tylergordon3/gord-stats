@@ -119,7 +119,7 @@ def pa_adj(pa):
         return None
 
 
-with open('players.json', 'r', encoding='utf-8') as file:
+with open('data/players.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
             sleeper_players = pd.DataFrame.from_dict(data, orient='index')
 defenses = sleeper_players[sleeper_players['position'] == 'DEF']

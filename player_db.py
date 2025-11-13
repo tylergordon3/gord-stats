@@ -9,7 +9,7 @@ import json
 
 def get(week):
     # Week returns specific week, 0 returns all
-    with open('players.json', 'r', encoding='utf-8') as file:
+    with open('data/players.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
             sleeper_players = pd.DataFrame.from_dict(data, orient='index')
     # Getting defense fantasy pts
