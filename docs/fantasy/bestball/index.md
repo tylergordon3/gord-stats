@@ -1,6 +1,6 @@
 BestBall stats landing page.
 
-Under Construction: Summary page with statistics
+[STANDINGS](/summary_bestball.html/)  
 
 [Week 10](/week10_bestball.html/)  
 [Week 9](/week9_bestball.html/)  

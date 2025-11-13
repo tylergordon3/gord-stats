@@ -176,18 +176,8 @@ def bestball_season():
         season_combined = pd.concat([season_combined, weekly_results])
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         matchups = getMatchups(matchup_df)
-        szn_matchups[week] = matchups
-        
-    updateSummary(season_combined, szn_matchups)
-
-#def bestball_week_html(week):
-#    matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
-#    matchups = getMatchups(matchup_df)
-    
-#    with open('data/bestball_season.json', 'r', encoding='utf-8') as file:
-#            data = json.load(file)
-#            all = pd.read_json(StringIO(data))
-#    bestball_to_html(all[all['week'] == week], matchups, week)
+        szn_matchups[week] = matchups       
+    saveSummary(season_combined, szn_matchups)
 
 def weeklyTeam(results, roster_id, matchup_df):
     # too lazy, return as array
@@ -197,6 +187,13 @@ def weeklyTeam(results, roster_id, matchup_df):
     original_total = list(matchup_df[matchup_df['roster_id'] == roster_id]['points'])[0]
     return [name, new_total, original_total]
 
+def check(this_score, opp_score):
+    if this_score > opp_score:
+        return 1
+    else:
+        return 0
+
+
 def getResults(season_df, matchups_dict):
     last_week = season_df['week'].max() + 1
     outcomes = pd.DataFrame()
@@ -205,13 +202,17 @@ def getResults(season_df, matchups_dict):
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         week_df = season_df[season_df['week'] == week]
         for teams in matchups_arr:
+            # [name, new_total, original_total]
             teamA = weeklyTeam(week_df, teams[0], matchup_df)
             teamB = weeklyTeam(week_df, teams[1], matchup_df)
-            new_winner = teamA[0] if int(teamA[1]) > int(teamB[1]) else teamB[0]
-            old_winner = teamA[0] if int(teamA[2]) > int(teamB[2]) else teamB[0]
+            teamA_original = check(teamA[2], teamB[2])
+            teamA_bb = check(teamA[1], teamB[1])
+            teamB_original = check(teamB[2], teamA[2])
+            teamB_bb = check(teamB[1], teamA[1])
             to_add = {'week' : week, 'roster_id' : teams, 'names': [teamA[0], teamB[0]],
                       'score' : [teamA[2], teamB[2]], 'bb_score' : [teamA[1], teamB[1]],
-                      'winner' : old_winner, 'bb_winner' : new_winner}
+                      'opp_score' : [teamB[2], teamA[2]], 'bb_opp_score' : [teamB[1], teamA[1]],
+                      'winner' : [teamA_original, teamB_original], 'bb_winner' : [teamA_bb, teamB_bb]}
             to_add_df = pd.DataFrame(to_add)
             outcomes = pd.concat([outcomes, to_add_df])
     outcomes = outcomes.reset_index(drop=True)
@@ -221,14 +222,43 @@ def getResults(season_df, matchups_dict):
         return group.apply(lambda x: 1 if x > median else 0)
     outcomes['median'] = outcomes.groupby('week')['score'].transform(calcMedian)
     outcomes['bb_median'] = outcomes.groupby('week')['bb_score'].transform(calcMedian)
-
+    
     return outcomes
    
 
-def updateSummary(season, matchups):
+def saveSummary(season, matchups):
     outcomes = getResults(season, matchups)
     with open('data/bestball.json', 'w', encoding="utf-8") as f:
         json.dump(outcomes.to_json(), f, indent=4)
         print(f"Bestball data successfully saved to data/outcomes.json")
 
-bestball_season()
+def update():
+    with open('data/bestball.json', 'r', encoding="utf-8") as read_file:
+        json_f = json.load(read_file)
+        df = pd.read_json(StringIO(json_f))
+        print(f"Bestball data successfully read from data/outcomes.json")
+    last_wk = df['week'].max()
+    summary_df = rosters[[ 'roster_id', 'wins', 'team_name', 'PF', 'PA']].copy()
+    summary_df = summary_df.set_index('roster_id', drop=True)
+
+    summary_df['bb_wins'] = df.groupby('roster_id')['bb_median'].sum() + df.groupby('roster_id')['bb_winner'].sum()
+    summary_df['loss'] = (last_wk * 2) - summary_df['wins']
+    summary_df['bb_loss'] = (last_wk * 2) - summary_df['bb_wins']
+    summary_df['bb_PF'] = df.groupby('roster_id')['bb_score'].sum()
+    summary_df['bb_PF'] = df.groupby('roster_id')['bb_score'].sum()
+    summary_df['bb_PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
+    summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8]]
+
+    path = "docs/bestball/summary_bestball.html"
+    index_link = '<a href="../bestball">BestBall Home</a>'
+    html = index_link + summary_df.to_html()
+
+    with open(path, 'w') as f:
+        f.write(html)
+        print("Wrote to ", path)
+
+update_season = False
+if update_season:
+    bestball_season()
+update()
+
