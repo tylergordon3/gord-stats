@@ -200,6 +200,7 @@ def getResults(season_df, matchups_dict):
     outcomes = pd.DataFrame()
     for week in range(1, last_week):
         matchups_arr = matchups_dict.get(week)
+        print(matchups_arr)
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         week_df = season_df[season_df['week'] == week]
         for teams in matchups_arr:
@@ -233,6 +234,15 @@ def saveSummary(season, matchups):
         json.dump(outcomes.to_json(), f, indent=4)
         print(f"Bestball data successfully saved to data/outcomes.json")
 
+def matchesSummaryHTML(df):
+    df['match_id'] = (df.groupby('week').cumcount()) //2
+    matchups = df.groupby(['week', 'match_id'])
+    for (week, matchup_id), matchup in matchups:
+        print(f"Week {week} – Matchup {matchup_id}")
+        print(matchup)
+        print("-" * 40)
+    return
+
 def update():
     with open('data/bestball.json', 'r', encoding="utf-8") as read_file:
         json_f = json.load(read_file)
@@ -250,14 +260,13 @@ def update():
     summary_df['bb_PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
     summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8]]
     summary_df = summary_df.sort_values(by="bb_wins", ascending=False)
-    #tabled = tabulate(summary_df, tablefmt="pretty", showindex=False)
     path = "docs/bestball/summary_bestball.html"
     index_link = '<a href="../bestball">BestBall Home</a>'
-    html = index_link + summary_df.to_html(classes='table table-stripped')
-    #html = index_link + tabled
+    matches = matchesSummaryHTML(df)
+    html = index_link + summary_df.to_html(classes='table table-stripped') #+ matches
     with open(path, 'w') as f:
         f.write(html)
-        print("Wrote to ", path)
+        print("Wrote to", path)
 
 update_season = False
 if update_season:

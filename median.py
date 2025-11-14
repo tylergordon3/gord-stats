@@ -130,6 +130,7 @@ def getToPlay(starters, weeks_players, db):
 # ------ Functions for printing to console and HTML formatting --------
 def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
+        print(f"No Data for week {week} yet.")
         return input
     input = input.drop(columns=["roster_id","matchup_id","status","num_to_play"])
     cols = list(input)
@@ -198,4 +199,4 @@ def printMedianScenarios(currTeam, df):
 #week = 11
 #for i in range(week):
 #    median(league, i)
-median(league, 9)
+median(league, 11)
