@@ -271,10 +271,20 @@ def update():
     summary_df = summary_df.sort_values(by='BestBall Wins', ascending=False)
     path = "docs/bestball/summary_bestball.html"
     index_link = '<a href="../bestball">BestBall Home</a>'
-    summary_df = summary_df.style.background_gradient(cmap='Blues', subset=['Change'])
-    #matches = matchesSummaryHTML(df)
-    #html_table = build_table(summary_df, 'orange_light', font_size='medium')
-    html = index_link + summary_df.to_html(classes='table table-stripped', index=False) #+ matches
+    styler = (
+    summary_df
+    .style
+    .hide(axis="index")
+    .format("{:.2f}", subset=summary_df.select_dtypes(include="number").columns)
+    .background_gradient(cmap="RdYlGn", subset=["Change"])
+    .set_table_styles([
+        {"selector": "td, th", "props": [
+            ("border", "1px solid #ccc"),
+            ("padding", "6px 10px")   # ⬅️ add spacing
+        ]}
+    ])
+    )
+    html = index_link + styler.to_html()
     #html = index_link + html_table
     with open(path, 'w') as f:
         f.write(html)
