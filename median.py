@@ -136,6 +136,7 @@ def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         print(f"No Data for week {week} yet.")
         return input
+    scenarios = consoleOutput(input)
     input = input.drop(columns=["roster_id","matchup_id","status","num_to_play"])
     cols = list(input)
     cols.insert(0, cols.pop(cols.index('rank')))
@@ -156,7 +157,7 @@ def save_to_html(input, week):
     median_path = "docs/median/"
     filename = os.path.join(median_path, file)
     index_link = '<a href="../median">Median Home</a>'
-    output = index_link + "<br>" + time + "<br>" + table
+    output = index_link + "<br>" + time + "<br>" + table + scenarios
     with open(filename, 'w') as f:
         f.write(output)
         print("Wrote to ", filename)
@@ -168,39 +169,46 @@ def highlightRows(row):
     else:
         return [''] * len(row)
 
+#def scenarios(df):
+
+
 def consoleOutput(input_df):
+    html = ''
     df = input_df
     see_above = []
-    df.apply(lambda row: doConsoleOutput(row, df, see_above), axis=1)
-    print('--------------------------------------------------------------------------------------------------')
-    print('See above for points needed: ')
+    output = df.apply(lambda row: doConsoleOutput(row, df, see_above), axis=1)
+    output_html = "".join(output.tolist())
+    html += '<br>--------------------------------------------------------------------------------------------------'
+    html += output_html
+    html += '<p><strong>See above for points needed: </strong></p>'
     for item in see_above:
-        print(item)
-    return
+        html += f'<p>{item}</p>'
+    return html
 
 def doConsoleOutput(row, df, see_above):
+    html = ''
     if ((row['status'] == "L") | (row['status'] == "W")):
-        print(row['team'], "has:", row["status"], "vs the median.")
+        html += f'<p>{row['team']}, has:, {row['status']}, vs the median.</p>'
+        return html
     elif (row['rank'] > 5):
         see_above.append(row['team'])
-        return 
+        return html
     else:
         check = df[(df["status"] == "tbd") & (df['rank'] > row['rank'])]
-        printMedianScenarios(row, check)
+        html += printMedianScenarios(row, check)
+        return html
 
 def printMedianScenarios(currTeam, df):
+    html = ''
     toLoseMedian = 6-currTeam['rank']
-    print(currTeam['team'], 'loses median if', int(toLoseMedian), '/', len(df), 'pass.')
+    html += f"<p><strong>{currTeam['team']} loses median if {int(toLoseMedian)} / {len(df)} pass.</strong></p>"
     for team in df.itertuples(index=True):
         diff = round(currTeam['points'] - team.points, 2)
         if currTeam['num_to_play'] > 0:
-            print(team.team,':', ', '.join(team.to_play_monday),'outscore(s)',', '.join(currTeam['to_play_monday']),'by',diff)
+            html += f'<p>{team.team} : {', '.join(team.to_play)} outscore(s) {', '.join(currTeam['to_play'])} by {diff}</p>'
         else:
-            print(team.team,":", ', '.join(team.to_play_monday),'scores',diff)
-    print('--------------------------------------------------------------------------------------------------')
+            html += f'{team.team} :  {', '.join(team.to_play)} scores {diff}</p>'
+    html += '<p>--------------------------------------------------------------------------------------------------</p>'
+    return html
 
-# Up to but not including...
-#week = 11
-#for i in range(week):
-#    median(league, i)
 median(league, 11)
