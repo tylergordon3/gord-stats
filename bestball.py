@@ -8,6 +8,7 @@ import nflreadpy as nfl
 import json
 from io import StringIO
 from tabulate import tabulate
+from pretty_html_table import build_table
 
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
@@ -240,10 +241,10 @@ def matchesSummaryHTML(df):
     #to_html = pd.DataFrame()
     html=''
     for (week, matchup_id), matchup in matchups:
-        print(f"\nWeek {week} Matchup #: {matchup_id}")
-        print("-" * 40)
-        print(f"Original: {matchup['names'].iloc[0]} {matchup['score'].iloc[0]} | {matchup['score'].iloc[1]} {matchup['names'].iloc[1]}")
-        print(f"BestBall: {matchup['names'].iloc[0]} {matchup['bb_score'].iloc[0]} | {matchup['bb_score'].iloc[1]} {matchup['names'].iloc[1]}")
+        #print(f"\nWeek {week} Matchup #: {matchup_id}")
+        #print("-" * 40)
+        #print(f"Original: {matchup['names'].iloc[0]} {matchup['score'].iloc[0]} | {matchup['score'].iloc[1]} {matchup['names'].iloc[1]}")
+        #print(f"BestBall: {matchup['names'].iloc[0]} {matchup['bb_score'].iloc[0]} | {matchup['bb_score'].iloc[1]} {matchup['names'].iloc[1]}")
         html += f"<p> Week {week} Matchup #: {matchup_id}</p>"
         html += ("-" * 40)
         html += f"<p>Original: {matchup['names'].iloc[0]} {matchup['score'].iloc[0]} | {matchup['score'].iloc[1]} {matchup['names'].iloc[1]}</p>"
@@ -269,8 +270,10 @@ def update():
     summary_df = summary_df.sort_values(by="bb_wins", ascending=False)
     path = "docs/bestball/summary_bestball.html"
     index_link = '<a href="../bestball">BestBall Home</a>'
-    matches = matchesSummaryHTML(df)
-    html = index_link + summary_df.to_html(classes='table table-stripped') + matches
+    #matches = matchesSummaryHTML(df)
+    html_table = build_table(summary_df, 'orange_light', font_size='medium')
+    #html = index_link + summary_df.to_html(classes='table table-stripped', index=False) #+ matches
+    html = index_link + html_table
     with open(path, 'w') as f:
         f.write(html)
         print("Wrote to", path)
