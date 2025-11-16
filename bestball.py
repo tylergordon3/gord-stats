@@ -260,20 +260,22 @@ def update():
     summary_df = rosters[[ 'roster_id', 'wins', 'team_name', 'PF', 'PA']].copy()
     summary_df = summary_df.set_index('roster_id', drop=True)
 
-    summary_df['bb_wins'] = df.groupby('roster_id')['bb_median'].sum() + df.groupby('roster_id')['bb_winner'].sum()
-    summary_df['loss'] = (last_wk * 2) - summary_df['wins']
-    summary_df['bb_loss'] = (last_wk * 2) - summary_df['bb_wins']
-    summary_df['bb_PF'] = df.groupby('roster_id')['bb_score'].sum()
-    summary_df['bb_PF'] = df.groupby('roster_id')['bb_score'].sum()
-    summary_df['bb_PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
-    summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8]]
-    summary_df = summary_df.sort_values(by="bb_wins", ascending=False)
+    summary_df = summary_df.rename(columns={'wins' : 'Wins', 'team_name' : 'Team'})
+    summary_df['BestBall Wins'] = df.groupby('roster_id')['bb_median'].sum() + df.groupby('roster_id')['bb_winner'].sum()
+    summary_df['Losses'] = (last_wk * 2) - summary_df['Wins']
+    summary_df['BestBall Losses'] = (last_wk * 2) - summary_df['BestBall Wins']
+    summary_df['Bestball PF'] = df.groupby('roster_id')['bb_score'].sum()
+    summary_df['BestBall PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
+    summary_df['Change'] = summary_df['BestBall Wins'] - summary_df['Wins']
+    summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
+    summary_df = summary_df.sort_values(by='BestBall Wins', ascending=False)
     path = "docs/bestball/summary_bestball.html"
     index_link = '<a href="../bestball">BestBall Home</a>'
+    summary_df = summary_df.style.background_gradient(cmap='Blues', subset=['Change'])
     #matches = matchesSummaryHTML(df)
-    html_table = build_table(summary_df, 'orange_light', font_size='medium')
-    #html = index_link + summary_df.to_html(classes='table table-stripped', index=False) #+ matches
-    html = index_link + html_table
+    #html_table = build_table(summary_df, 'orange_light', font_size='medium')
+    html = index_link + summary_df.to_html(classes='table table-stripped', index=False) #+ matches
+    #html = index_link + html_table
     with open(path, 'w') as f:
         f.write(html)
         print("Wrote to", path)
