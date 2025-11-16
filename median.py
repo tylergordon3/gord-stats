@@ -20,7 +20,6 @@ def median(league, week):
 
     # Add df column for players who have not played yet this week
     starters['to_play'] = starters['starters'].apply(lambda x: getToPlay(x, weeks_players, db))
-
     # Combine this week matchups with league info
     rosters = fr.get(league)
     combined = pd.merge(starters, rosters, on='roster_id')
@@ -35,7 +34,6 @@ def median(league, week):
 
     # Remove teams already locked in above or below median 
     prep_for_median = ruleOutAlreadySet(matchup_df)
- 
     # If week has not occured return string otherwise output to html for webpage
     if prep_for_median.empty: 
         save_to_html("No median yet!", week)
@@ -71,11 +69,17 @@ def ruleOutAlreadySet(matchup_df):
 
     # Get current median or 5th place team
     median = list(df[df['rank'] == 5]['points'])
-
+    
     # Calculate teams locked below median and then teams locked above median
     if len(median) != 0:
         df['status'] = df.apply(lambda team: "L" if (team['max_pts'] < median[0]) else "tbd", axis=1)
         df['status'] = df.apply(lambda team: setWinners(team, df), axis=1)
+        return df
+    elif df['points'].sum() > 0:
+        new_median = df['points'].median()
+        df['status'] = df.apply(lambda team: "L" if (team['max_pts'] < new_median) else "tbd", axis=1)
+        df['status'] = df.apply(lambda team: setWinners(team, df), axis=1)
+        print(df)
         return df
     else:
         return pd.DataFrame()

@@ -200,7 +200,6 @@ def getResults(season_df, matchups_dict):
     outcomes = pd.DataFrame()
     for week in range(1, last_week):
         matchups_arr = matchups_dict.get(week)
-        print(matchups_arr)
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         week_df = season_df[season_df['week'] == week]
         for teams in matchups_arr:
@@ -268,7 +267,7 @@ def update():
         f.write(html)
         print("Wrote to", path)
 
-update_season = False
+update_season = True
 if update_season:
     bestball_season()
 update()
