@@ -235,12 +235,20 @@ def saveSummary(season, matchups):
 
 def matchesSummaryHTML(df):
     df['match_id'] = (df.groupby('week').cumcount()) //2
+    print(df)
     matchups = df.groupby(['week', 'match_id'])
+    #to_html = pd.DataFrame()
+    html=''
     for (week, matchup_id), matchup in matchups:
-        print(f"Week {week} – Matchup {matchup_id}")
-        print(matchup)
+        print(f"\nWeek {week} Matchup #: {matchup_id}")
         print("-" * 40)
-    return
+        print(f"Original: {matchup['names'].iloc[0]} {matchup['score'].iloc[0]} | {matchup['score'].iloc[1]} {matchup['names'].iloc[1]}")
+        print(f"BestBall: {matchup['names'].iloc[0]} {matchup['bb_score'].iloc[0]} | {matchup['bb_score'].iloc[1]} {matchup['names'].iloc[1]}")
+        html += f"<p> Week {week} Matchup #: {matchup_id}</p>"
+        html += ("-" * 40)
+        html += f"<p>Original: {matchup['names'].iloc[0]} {matchup['score'].iloc[0]} | {matchup['score'].iloc[1]} {matchup['names'].iloc[1]}</p>"
+        html += f"<p>BestBall: {matchup['names'].iloc[0]} {matchup['bb_score'].iloc[0]} | {matchup['bb_score'].iloc[1]} {matchup['names'].iloc[1]}</p>"
+    return html
 
 def update():
     with open('data/bestball.json', 'r', encoding="utf-8") as read_file:
@@ -262,12 +270,12 @@ def update():
     path = "docs/bestball/summary_bestball.html"
     index_link = '<a href="../bestball">BestBall Home</a>'
     matches = matchesSummaryHTML(df)
-    html = index_link + summary_df.to_html(classes='table table-stripped') #+ matches
+    html = index_link + summary_df.to_html(classes='table table-stripped') + matches
     with open(path, 'w') as f:
         f.write(html)
         print("Wrote to", path)
 
-update_season = True
+update_season = False
 if update_season:
     bestball_season()
 update()
