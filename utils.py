@@ -1,4 +1,5 @@
 import json
+import pickle
 
 def save_json_data(data, filename):
     """
@@ -44,3 +45,13 @@ def save_to_html(path, data):
     with open(path, 'w') as f:
         f.write(data)
     return
+
+def write_to_pickle(model, path):
+    with open(path, 'wb') as file:
+        pickle.dump(model, file)
+
+def read_from_pickle(name):
+    filename = f'models/{name}_model.pkl'
+    with open(filename, 'rb') as file:
+        loaded_model = pickle.load(file)
+    return loaded_model
