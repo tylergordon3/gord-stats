@@ -3,6 +3,7 @@
 '''
 import json
 import time
+import utils
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -85,74 +86,7 @@ def kenpom(date):
     }
 
     # Save to JSON file
-    with open(f"data/kenpom{date}.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=4)
-
-# ---------------------------- TORVIK BELOW ****************************
-
-# --- Set up Selenium options ---
-def torvik_selenium(date):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode (no browser window)
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.binary_location = "/usr/bin/chromium-browser"
-    chrome_options.add_argument("start-maximized")
-    chrome_options.add_argument(
-        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    )
-
-    # --- Set path to your chromedriver ---
-    service = Service("/usr/bin/chromedriver")  # Make sure chromedriver is in your PATH or give full path
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-
-    # --- Open the target URL ---
-    driver.get(TORVIK)
-
-    # Wait for page to fully load (adjust time or use explicit waits)
-    time.sleep(5)
-
-    # --- Get the page source and parse with BeautifulSoup ---
-    html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
-
-    # --- Close the browser ---
-    driver.quit()
-
-    # --- Extract table headers ---
-    table = soup.find("table")  # assumes one main table; adjust if multiple
-    headers = []
-
-    # Try <th> first
-    header_row = table.find("tr")
-    if header_row:
-        # Grab text from either <th> or <td>
-        headers = [cell.get_text(strip=True) for cell in header_row.find_all(["th", "td"])]
-
-    # --- Extract table rows ---
-    rows = []
-    for row in table.find_all("tr"):
-        cols = [col.get_text(strip=True) for col in row.find_all("td")]
-        if any(cols):  # skip empty rows
-            rows.append(cols)
-
-    # Remove first row from rows if it was used as headers
-    if rows and rows[0] == headers:
-        rows = rows[1:]
-
-    # --- Convert everything to strings to avoid JSON errors ---
-    headers = [str(h) for h in headers]
-    rows = [[str(c) for c in r] for r in rows]
-
-    # --- Save to JSON ---
-    output = {
-        "headers": headers,
-        "rows": rows
-    }
-
-    with open(f"data/torvik{date}.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=4)
+    utils.save_json_data(output, f"data/kenpom{date}.json")
 
 def torvik(date):
     with sync_playwright() as p:
@@ -193,6 +127,6 @@ def torvik(date):
             "headers": headers,
             "rows": rows
         }
-        with open(f"data/torvik{date}.json", "w", encoding="utf-8") as f:
-            json.dump(output, f, indent=4)
+        utils.save_json_data(output, f"data/torvik{date}.json")
         browser.close()
+        
