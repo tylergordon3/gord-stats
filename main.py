@@ -3,6 +3,8 @@ from datetime import datetime
 import utils
 import scraper
 import model
+from io import StringIO
+import pandas as pd
 
 today = datetime.today().strftime("%Y-%m-%d")
 torvik_path = f"data/torvik{today}.json"
@@ -23,4 +25,8 @@ if not os.path.exists(dataset_path):
     print(f"Saved dataset to json.")
 
 data = utils.load_json_data(dataset_path)
+df = pd.read_json(StringIO(data))
+
+update_about = 0
+model.run(df, update_about)
     

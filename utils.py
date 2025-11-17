@@ -39,3 +39,8 @@ def load_json_data(filename):
     except IOError as e:
         print(f"Error loading data from {filename}: {e}")
         return None
+    
+def save_to_html(path, data):
+    with open(path, 'w') as f:
+        f.write(data)
+    return
