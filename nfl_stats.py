@@ -1,5 +1,12 @@
 '''
     This module fetches general NFL and player stats. 
+
+    nflreadpy pipeline updates: 
+      - Daily        5:00 ET (9:00 UTC)
+      - TNF          12:30 AM ET (5:30 AM UTC)
+      - Sunday       5:00 PM ET (10:00 PM UTC)
+                     8:00 ET (0:00 UTC)
+                     12:30 ET (5:30 UTC)
 '''
 import nflreadpy as nfl
 import pandas as pd

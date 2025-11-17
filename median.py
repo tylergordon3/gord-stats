@@ -169,9 +169,6 @@ def highlightRows(row):
     else:
         return [''] * len(row)
 
-#def scenarios(df):
-
-
 def consoleOutput(input_df):
     html = ''
     df = input_df
