@@ -15,6 +15,7 @@ title: Fantasy Stats
 url: https://tgordonff.com
 # protocol & hostname for your site (it does not end with a '/')
 repository: https://tylergordon3.github.io
+site_branch: master
 
 
 # color scheme setting
