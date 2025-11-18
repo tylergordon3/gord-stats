@@ -12,9 +12,9 @@ timezone: America/New_York
 # main title
 title: Fantasy Stats 
 
-
+url: https://tgordonff.com
 # protocol & hostname for your site (it does not end with a '/')
-url: https://tylergordon3.github.io
+repository: https://tylergordon3.github.io
 
 
 # color scheme setting
