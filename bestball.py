@@ -9,6 +9,7 @@ import json
 from io import StringIO
 from tabulate import tabulate
 from pretty_html_table import build_table
+import utilities
 
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
@@ -126,7 +127,7 @@ def formatMatchups(results, matchups, week):
         </style>
         """
     formatted = css_style
-    for match_id, teams in matchups.items():
+    for teams in matchups:
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         teamA = results[results['roster_id'] == teams[0]]
         teamB = results[results['roster_id'] == teams[1]]
@@ -172,12 +173,13 @@ def formatMatchups(results, matchups, week):
 def bestball_season():
     season_combined = pd.DataFrame()
     szn_matchups = {}
-    for week in range(1,nfl.get_current_week()):
+    for week in range(1,utilities.get_week() + 1):
         print(f'Getting bestball results for week {week}')
         weekly_results = bestball(week)
         season_combined = pd.concat([season_combined, weekly_results])
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         matchups = getMatchups(matchup_df)
+        bestball_to_html(weekly_results, matchups, week)
         szn_matchups[week] = matchups       
     saveSummary(season_combined, szn_matchups)
 
@@ -290,7 +292,7 @@ def update():
         f.write(html)
         print("Wrote to", path)
 
-update_season = False
+update_season = True
 if update_season:
     bestball_season()
 update()
