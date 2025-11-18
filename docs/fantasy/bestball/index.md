@@ -1,3 +1,7 @@
+---
+layout: default
+title: Best Ball
+---
 BestBall stats landing page.
 
 [STANDINGS](/summary_bestball.html/)  

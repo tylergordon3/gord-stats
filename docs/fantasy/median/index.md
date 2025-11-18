@@ -1,3 +1,7 @@
+---
+layout: default
+title: Median
+---
 Median Status landing page.  
 [Week 11](/week11_median.html/)  
 [Week 10](/week10_median.html/)  
