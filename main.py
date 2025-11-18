@@ -21,13 +21,12 @@ if not os.path.exists(dataset_path):
     model.initDataset()
     print(f"Saved dataset to json.")
 
-df = utils.load_json_data(dataset_path)
-
 update_about = 0
 save_model = 0
 if save_model:
+    df = utils.load_json_data(dataset_path)
     model.trainModelsAndSave(df, update_about)
 
-predictions.predict()
+predictions.predict(today)
 
     
