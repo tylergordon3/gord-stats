@@ -1,3 +1,4 @@
+<embed type="text/html" src="nav.html">
 Fantasy football insights landing page.
 
 [Check your status vs the median!](median/)
