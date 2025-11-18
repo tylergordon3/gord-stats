@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Home
+permalink: /home/
 ---
 Fantasy football insights landing page.
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Best Ball
+permalink: /bestball/
 ---
 BestBall stats landing page.
 
