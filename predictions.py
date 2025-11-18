@@ -1,4 +1,6 @@
 import utils
+import pandas as pd
+import numpy as np
 from sklearn import preprocessing
 from pretty_html_table import build_table
 
@@ -17,10 +19,16 @@ def predict(date):
     scaler = preprocessing.StandardScaler()
     x_predict = scaler.fit_transform(cbb_now)
     forest_predict = randomForest.predict(x_predict)
-    torvik_data['POSTSEASON'] = forest_predict
-    df = torvik_data
-    #df = torvik_data.drop(columns=['ADJOE', 'ADJDE', 'BARTHAG', 'EFG_O', 'EFG_D', 'TOR', 'TORD',
-        #'ORB', 'DRB', 'FTR', 'FTRD', '2P_O', '2P_D', '3P_O', '3P_D', 'ADJ_T', 'WAB'])
+    torvik_data['RF'] = forest_predict
+
+    dt_predict = decisionTree.predict(x_predict)
+    torvik_data['DT'] = dt_predict
+
+    svc_predict = supportVC.predict(x_predict)
+    torvik_data['SVC'] = svc_predict
+    torvik_data['Sum'] = torvik_data[['RF', 'DT', 'SVC']].sum(1)
+    df = torvik_data[['Rk', 'Team', 'RF', 'DT', 'SVC', 'Sum']].copy()
+
     def strip(team):
         for i, char in enumerate(team):
             if char == '(':
@@ -28,13 +36,29 @@ def predict(date):
             if team[i:i+3] == 'vs.':
                 return team[:i]
         return team
-    march_madness = df[df["POSTSEASON"] == True].copy()
-    march_madness['Team'] = march_madness['Team'].apply(lambda x: strip(x))
-    march_madness = march_madness.drop(columns=['POSTSEASON'])
-    html_table_blue_light = build_table(march_madness.head(64), 'green_dark')
-    html = '<a href="index.html" title="Home">Home</a>'
-    html += f'<p>Prediction for {date}</p>'
-    html += html_table_blue_light
-    # Save to html file
+
+    df_filter = df[df['Sum'] > 0].copy()
+    df_filter['Team'] = df_filter['Team'].apply(lambda x: strip(x))
+    df_filter = df_filter.drop(columns=['Sum'])
+    teams = df_filter[['Team', 'Rk']].copy()
+
+    rf_filter = df_filter[df_filter['RF'] == 1].head(64)
+    df_rf = rf_filter[['Team', 'Rk', 'RF']].copy()
+    
+    dt_filter = df_filter[df_filter['DT'] == 1].head(64)
+    df_dt = dt_filter[['Team', 'Rk', 'DT']].copy()
+
+    svc_filter = df_filter[df_filter['SVC'] == 1].head(64)
+    df_svc = svc_filter[['Team', 'Rk', 'SVC']].copy()
+
+    comb1 = pd.merge(teams, df_rf, "left", ["Team", "Rk"])
+    comb2 = pd.merge(comb1, df_svc, "left", ["Team", "Rk"])
+    combined = pd.merge(comb2, df_dt, "left", ["Team", "Rk"])
+    df_clean = combined.dropna(subset=['RF', 'DT', 'SVC'], how= 'all')
+    df_clean.replace(np.nan, False, inplace=True)
+    df_clean['Num Models Made'] = df_clean[['RF', 'DT', 'SVC']].sum(1)
+    lnk = f'<p><a href="index.html" title=Home">Home</a></p>'
+    html = lnk + build_table(df_clean, 'green_dark')
+    
     with open(f'docs/predict_{date}.html', 'w') as f: 
-        f.write(html)  
+       f.write(html)  
