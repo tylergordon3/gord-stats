@@ -1,0 +1,11 @@
+docs_list_title: someName
+docs:
+
+- title: Home
+  url: index.md
+
+- title: Median
+  url: /median/index.md
+
+- title: BestBall
+  url: /bestball/index.md

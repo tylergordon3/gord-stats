@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Median
-permalink: /median/
 ---
 Median Status landing page.  
 [Week 11](/week11_median.html/)  

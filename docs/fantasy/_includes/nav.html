@@ -1,8 +1,9 @@
 <div id="nav">
     <nav>
-        <a href="/home/"</a>Home</a> |
-        <a href="/median/">Median</a> |
-        <a href="/bestball/">Best Ball</a> 
-        
+       {% for item in data.nav.docs %}
+            <li>
+                <a href="{{ item.url | absolute_url }}">{{ item.title }}</a>
+            </li>
+        {% endfor %}
     </nav>
 </div>
