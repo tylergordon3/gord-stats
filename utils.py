@@ -1,5 +1,11 @@
 import json
 import pickle
+import pandas as pd
+from io import StringIO
+from pathlib import Path
+from datetime import date
+import constants
+
 
 def save_json_data(data, filename):
     """
@@ -29,8 +35,12 @@ def load_json_data(filename):
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             data = json.load(f)
+        headers = data["headers"]
+        rows = data["rows"]
+
+        df = pd.DataFrame(rows, columns=headers)
         print(f"Data successfully loaded from {filename}")
-        return data
+        return df
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found.")
         return None
@@ -55,3 +65,19 @@ def read_from_pickle(name):
     with open(filename, 'rb') as file:
         loaded_model = pickle.load(file)
     return loaded_model
+
+def get_recent_data():
+    today  = date.today()
+    def parse_date(fname):
+        # filename format: kenpomYYYY-MM-DD.json
+        try:
+            return date.fromisoformat(fname[6:16])
+        except ValueError:
+            raise ValueError(f"Invalid date in filename: {fname}")
+
+    kenpom_files = Path('data/').glob("kenpom*.json")
+    kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - today).days))
+
+    torvik_files = Path('data/').glob("torvik*.json")
+    torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - today).days))
+    return [kenpom, torvik]

@@ -48,7 +48,7 @@ def initDataset():
 
     utils.save_json_data(cbb_full.to_json(), "model_data/cbb_data.json")
 
-def run(df, update_about):
+def trainModelsAndSave(df, update_about):
     
     [cbb, ind, dep] = chiSquared(df)
     [X_train, X_test, y_train, y_test, features] = splitData(cbb, ind)

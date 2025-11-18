@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from datetime import datetime
 
 from playwright.sync_api import sync_playwright
 
@@ -102,11 +103,11 @@ def torvik(date):
         headers = []
 
         # Try <th> first
-        header_row = table.find("tr")
+        table_rows = table.find_all("tr")
+        header_row = table_rows[1]
         if header_row:
             # Grab text from either <th> or <td>
             headers = [cell.get_text(strip=True) for cell in header_row.find_all(["th", "td"])]
-
         # --- Extract table rows ---
         rows = []
         for row in table.find_all("tr"):
@@ -129,4 +130,3 @@ def torvik(date):
         }
         utils.save_json_data(output, f"data/torvik{date}.json")
         browser.close()
-        

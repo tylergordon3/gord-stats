@@ -1,0 +1,7 @@
+_pycache_
+_pycache_/*
+__pycache__/constants.cpython-311.pyc
+__pycache__/model.cpython-311.pyc
+__pycache__/predictions.cpython-311.pyc
+__pycache__/scraper.cpython-311.pyc
+__pycache__/utils.cpython-311.pyc
