@@ -1,11 +1,11 @@
-docs_list_title: someName
+docs_list_title: FantasyFootballLinks
 docs:
 
 - title: Home
-  url: index.md
+  url: /index.html
 
 - title: Median
-  url: /median/index.md
+  url: /median/median.html
 
 - title: BestBall
-  url: /bestball/index.md
+  url: /bestball/bestball.html

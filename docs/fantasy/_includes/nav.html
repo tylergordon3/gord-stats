@@ -1,9 +1,9 @@
 <div id="nav">
     <nav>
-       {% for item in data.nav.docs %}
-            <li>
-                <a href="{{ item.url | absolute_url }}">{{ item.title }}</a>
-            </li>
+        {% for item in site.data.nav.docs %}
+        
+           <a href="{{ item.url | absolute_url }}">{{ item.title }}</a> | 
+       
         {% endfor %}
     </nav>
 </div>
