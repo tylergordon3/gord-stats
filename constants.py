@@ -54,9 +54,3 @@ MAX = {
   "DEF": 32.0, #Buffalo D/ST 2023
   "K"  : 26.0  #Jake Moody 2024
 }
-
-default_fm = '''
----
-layout: default
---- 
-'''

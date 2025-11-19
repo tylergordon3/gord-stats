@@ -157,7 +157,7 @@ def save_to_html(input, week):
     median_path = "docs/median/"
     filename = os.path.join(median_path, file)
     index_link = '<a href="../median">Median Home</a>'
-    output = c.default_fm + "<br>" + time + "<br>" + table + scenarios
+    output = time + "<br>" + table + scenarios
     with open(filename, 'w') as f:
         f.write(output)
         print("Wrote to ", filename)
