@@ -292,8 +292,9 @@ def update():
         f.write(html)
         print("Wrote to", path)
 
-update_season = True
-if update_season:
-    bestball_season()
-update()
+def main():
+    update_season = True
+    if update_season:
+        bestball_season()
+    update()
 
