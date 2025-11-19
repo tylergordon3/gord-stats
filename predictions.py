@@ -57,8 +57,25 @@ def predict(date):
     df_clean = combined.dropna(subset=['RF', 'DT', 'SVC'], how= 'all')
     df_clean.replace(np.nan, False, inplace=True)
     df_clean['Num Models Made'] = df_clean[['RF', 'DT', 'SVC']].sum(1)
+    df_clean['Rk'] = pd.to_numeric(df_clean['Rk'])
+    df_clean['WeightedScore'] = (10 * df_clean['Num Models Made']) + (80-df_clean['Rk'])
+    df_clean = df_clean.rename(columns={'Rk' : 'Torvik Rank'})
+    df_final = df_clean.drop(columns=['Num Models Made'])
+    top64 = df_final.sort_values("WeightedScore", ascending=False).head(64)
+    top64['MM Rank'] = range(1, 65)
+    top64['Est. Seed'] = np.repeat(range(1,17), 4)
+    top64 = top64[[
+        'MM Rank',
+        'Torvik Rank',
+        'Est. Seed',
+        'Team',
+        'RF',
+        'DT',
+        'SVC',
+        'WeightedScore'
+    ]]
     lnk = f'<p><a href="index.html" title=Home">Home</a></p>'
-    html = lnk + build_table(df_clean, 'green_dark')
+    html = lnk + build_table(top64, 'green_dark')
     
     with open(f'docs/predict_{date}.html', 'w') as f: 
        f.write(html)  
