@@ -7,6 +7,7 @@ import fantasy_rosters as fr
 import bestball as bb
 import pandas as pd
 import numpy as np
+import re
 import os
 from sleeper_wrapper import League
 
@@ -15,6 +16,16 @@ def getTeamIndex(rosters, roster_id):
     index = (np.where(roster_bool))[0][0]
     return index
 
+def getVals(str_list):
+    pattern = r"(\d{1,2})-(\d{1,2})"
+    wins = 0
+    loss = 0
+    for record in str_list:
+        match = re.search(pattern, record)
+        wins += int(match.group(1))
+        loss += int(match.group(2))
+    return f'{wins}-{loss}'
+    
 def saveSchedules():
     yr = util.getYrStr()
     wk = util.get_week()
@@ -34,6 +45,7 @@ def saveSchedules():
     rosters['myScores'] = rosters.apply(lambda x: np.repeat(x['roster_id'], 14), axis=1)
     rosters['myScores'] = rosters['myScores'].apply(lambda x: getScoreArr(x))
     rosters['wins_vs'] = rosters.apply(lambda x: recordsVsAll(rosters, x), axis=1)
+    rosters['total'] = rosters['wins_vs'].apply(lambda x: getVals(x))
     util.save_df_to_json(rosters, f'data/rost{yr}_{wk}.json')
     
 def getScore(roster_id, week):
@@ -68,21 +80,24 @@ def recordVsHelper(team_scores, opp_scores):
     bool_arr = (diff1 > diff2)
     wins = bool_arr.sum()
     loss = len(diff1) - wins
-    return f'{wins} {loss}'
-
+    return f'{wins}-{loss}'
 
 def dfVsAllSched(rosters):
     yr = util.getYrStr()
     wk = util.get_week()
     rosters = util.load_df_from_json(f'data/rost{yr}_{wk}.json')
+    print(rosters)
     all_results = {}
     for index, row in rosters.iterrows():
         # index, value in enumerate(my_array)
         arr = {}
+        total = row['total']
         for idx, val in enumerate(row['wins_vs']):
             name = rosters[rosters['roster_id'] == idx+1]['team_name']
             arr[list(name)[0]] = val
+        arr['Total'] = total
         all_results[row['roster_id']] = arr
+    print(all_results)
     all_df = pd.DataFrame.from_dict(all_results, orient='index')
     dict = fr.mapNameToId(rosters)
     df = all_df.rename(index = dict)
