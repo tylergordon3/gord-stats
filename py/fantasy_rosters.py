@@ -43,3 +43,6 @@ def get(league) -> pd.DataFrame:
 def getTeamName(league, roster_id):
     roster = get(league)
     return list(roster[roster['roster_id'] == roster_id]['team_name'])[0]
+
+def mapNameToId(rosters):
+    return dict(zip(rosters['roster_id'], rosters['team_name']))

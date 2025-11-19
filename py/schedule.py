@@ -57,15 +57,21 @@ def recordsVsAll(all, team):
     return list(wins_vs_each_arr)
 
 def recordVsHelper(team_scores, opp_scores):
+    wk = util.get_week()
     # For current team calculate wins vs 1 opponents schedule
-    np_team = np.array(team_scores, dtype='float32')
-    np_opp= np.array(opp_scores, dtype='float32')
-    bool_arr = (np_team > np_opp)
+    np_team = np.array(team_scores[:wk], dtype='float32')
+    
+    np_opp= np.array(opp_scores[:wk], dtype='float32')
+    same = (np_team != np_opp)
+    diff1 = np_team[same]
+    diff2 = np_opp[same]
+    bool_arr = (diff1 > diff2)
     wins = bool_arr.sum()
-    return wins
+    loss = len(diff1) - wins
+    return f'{wins} {loss}'
 
 
-def dictVsAllSched(rosters):
+def dfVsAllSched(rosters):
     yr = util.getYrStr()
     wk = util.get_week()
     rosters = util.load_df_from_json(f'data/rost{yr}_{wk}.json')
@@ -73,11 +79,16 @@ def dictVsAllSched(rosters):
     for index, row in rosters.iterrows():
         # index, value in enumerate(my_array)
         arr = {}
-        for index, val in enumerate(row['wins_vs']):
-            name = rosters[rosters['roster_id'] == index+1]['team_name']
+        for idx, val in enumerate(row['wins_vs']):
+            name = rosters[rosters['roster_id'] == idx+1]['team_name']
             arr[list(name)[0]] = val
         all_results[row['roster_id']] = arr
-    return all_results
+    all_df = pd.DataFrame.from_dict(all_results, orient='index')
+    dict = fr.mapNameToId(rosters)
+    df = all_df.rename(index = dict)
+
+    return df
+
 
 def Sos():
     return
@@ -90,6 +101,8 @@ def main():
     if not os.path.exists(checkPath) or (update == True):
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
-    all = dictVsAllSched(rosters)
+    df = dfVsAllSched(rosters)
+    ## Columns are teams, rows are schedules
+    print(df)
 
 main()
