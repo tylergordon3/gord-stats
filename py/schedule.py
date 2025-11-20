@@ -115,15 +115,31 @@ def dfVsAllSched(rosters):
     add_df = add_df.rename(columns={0 : "Schedule Total"})
     return pd.concat([df, add_df.T])
 
-def highlightActualRecords(val):
-    [wins, loss] = getIndValues(val)
-    if wins > loss:
-        color = 'lightgreen'
-    elif wins < loss:
-        color = 'red'
-    else:
-        color = 'lightyellow'
-    return f'background-color: {color}'
+def highlightSpec(styles):
+    def getColor(val):
+        [wins, loss] = getIndValues(val)
+        if wins > loss:
+            color = '#648fff'
+        elif wins < loss:
+            color = '#dc267f'
+        else: 
+            color = '#ffb000'
+        return f'background-color: {color}'
+    ret = map(getColor, list(styles))
+    return list(ret)
+
+def highlightActualRecords(df):
+    # each row
+    styles = pd.DataFrame('', index=df.index, columns=df.columns)
+    styles = df.apply(lambda x: highlightSpec(x))
+    
+    for idx in df.index:
+        for col in df.columns:
+            if idx == col:
+                styles.loc[idx, col] = 'background-color: lightgray'
+            elif (idx == 'Schedule Total') & (col == 'Team Total Record'):
+                styles.loc[idx, col] = 'background-color: lightgray'
+    return styles
 
 def Sos():
     return
@@ -138,13 +154,13 @@ def main():
     rosters = util.load_df_from_json(checkPath)
     df = dfVsAllSched(rosters)
     styled_df = df.style \
-        .map(highlightActualRecords) \
+        .apply(highlightActualRecords, axis=None) \
         .set_table_styles([
         {"selector": "", "props": [("border", "1px solid black")]},  # Entire table border
         {"selector": "tbody td", "props": [("border", "1px solid black")]}, # Borders for data cells
         {"selector": "th", "props": [("border", "1px solid black")]} # Borders for header cells
         ])
-    
+
     ## Columns are teams, rows are schedules
     html = '''
     <h2>Records vs Every Schedule</h2>
