@@ -10,6 +10,7 @@ import numpy as np
 import re
 import os
 from sleeper_wrapper import League
+from pretty_html_table import build_table
 
 def getTeamIndex(rosters, roster_id):
     roster_bool = rosters['roster_id'] == roster_id
@@ -86,7 +87,6 @@ def dfVsAllSched(rosters):
     yr = util.getYrStr()
     wk = util.get_week()
     rosters = util.load_df_from_json(f'data/rost{yr}_{wk}.json')
-    print(rosters)
     all_results = {}
     for index, row in rosters.iterrows():
         # index, value in enumerate(my_array)
@@ -95,9 +95,8 @@ def dfVsAllSched(rosters):
         for idx, val in enumerate(row['wins_vs']):
             name = rosters[rosters['roster_id'] == idx+1]['team_name']
             arr[list(name)[0]] = val
-        arr['Total'] = total
+        arr['Total Record'] = total
         all_results[row['roster_id']] = arr
-    print(all_results)
     all_df = pd.DataFrame.from_dict(all_results, orient='index')
     dict = fr.mapNameToId(rosters)
     df = all_df.rename(index = dict)
@@ -118,6 +117,14 @@ def main():
     rosters = util.load_df_from_json(checkPath)
     df = dfVsAllSched(rosters)
     ## Columns are teams, rows are schedules
-    print(df)
+    html = '''
+    <h2>Records vs Every Schedule</h2>
+    <p>Columns represent a team's schedule</p>
+    <p>Rows represent a team's record against each schedule</p>
+    '''
+    html += df.to_html(justify='center', col_space=8)
 
+    # Save to html file
+    with open('./docs/schedule/allSchedules.html', 'w') as f:
+        f.write(html)
 main()
