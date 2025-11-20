@@ -27,6 +27,14 @@ def getVals(str_list):
         loss += int(match.group(2))
     return f'{wins}-{loss}'
     
+def getIndValues(str):
+    pattern = r"(\d{1,2})-(\d{1,2})"
+    match = re.search(pattern, str)
+    wins = int(match.group(1))
+    loss = int(match.group(2))
+    return [wins, loss]
+    
+
 def saveSchedules():
     yr = util.getYrStr()
     wk = util.get_week()
@@ -95,14 +103,27 @@ def dfVsAllSched(rosters):
         for idx, val in enumerate(row['wins_vs']):
             name = rosters[rosters['roster_id'] == idx+1]['team_name']
             arr[list(name)[0]] = val
-        arr['Total Record'] = total
+        arr['Team Total Record'] = total
         all_results[row['roster_id']] = arr
     all_df = pd.DataFrame.from_dict(all_results, orient='index')
     dict = fr.mapNameToId(rosters)
     df = all_df.rename(index = dict)
+    to_add ={}
+    total_row = df.apply(lambda x: getVals(x))
+    to_add['Totals'] = total_row
+    add_df = pd.DataFrame(total_row)
+    add_df = add_df.rename(columns={0 : "Schedule Total"})
+    return pd.concat([df, add_df.T])
 
-    return df
-
+def highlightActualRecords(val):
+    [wins, loss] = getIndValues(val)
+    if wins > loss:
+        color = 'lightgreen'
+    elif wins < loss:
+        color = 'red'
+    else:
+        color = 'lightyellow'
+    return f'background-color: {color}'
 
 def Sos():
     return
@@ -116,13 +137,21 @@ def main():
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
     df = dfVsAllSched(rosters)
+    styled_df = df.style \
+        .map(highlightActualRecords) \
+        .set_table_styles([
+        {"selector": "", "props": [("border", "1px solid black")]},  # Entire table border
+        {"selector": "tbody td", "props": [("border", "1px solid black")]}, # Borders for data cells
+        {"selector": "th", "props": [("border", "1px solid black")]} # Borders for header cells
+        ])
+    
     ## Columns are teams, rows are schedules
     html = '''
     <h2>Records vs Every Schedule</h2>
     <p>Columns represent a team's schedule</p>
     <p>Rows represent a team's record against each schedule</p>
     '''
-    html += df.to_html(justify='center', col_space=8)
+    html += styled_df.to_html()
 
     # Save to html file
     with open('./docs/schedule/allSchedules.html', 'w') as f:
