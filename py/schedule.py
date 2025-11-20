@@ -119,11 +119,11 @@ def highlightSpec(styles):
     def getColor(val):
         [wins, loss] = getIndValues(val)
         if wins > loss:
-            color = '#648fff'
+            color = '#CCDDAA'
         elif wins < loss:
-            color = '#dc267f'
+            color = '#FFCCCC'
         else: 
-            color = '#ffb000'
+            color = "#F1EABE"
         return f'background-color: {color}'
     ret = map(getColor, list(styles))
     return list(ret)
@@ -138,8 +138,29 @@ def highlightActualRecords(df):
             if idx == col:
                 styles.loc[idx, col] = 'background-color: lightgray'
             elif (idx == 'Schedule Total') & (col == 'Team Total Record'):
-                styles.loc[idx, col] = 'background-color: lightgray'
+                styles.loc[idx, col] = 'background-color: #DDDDDD'
     return styles
+
+def style_last_row(row):
+    # Apply border-top and border-bottom to all cells in the last row
+    return ['border-top: 3px solid black !important; border-bottom: 3px solid black !important;' for _ in row]
+
+def style_last_col(col):
+    # Apply border-left and border-right to all cells in the last column
+    return ['border-left: 3px solid black !important; border-right: 3px solid black !important;' for _ in col]
+    
+light_grid_style_data = {
+    'selector': 'td',
+    'props': [
+        ('border', '1px solid black')
+    ]
+}
+light_grid_style_header = {
+    'selector': 'th',
+    'props': [
+        ('border', '1px solid black')
+    ]
+}
 
 def Sos():
     return
@@ -154,21 +175,63 @@ def main():
     rosters = util.load_df_from_json(checkPath)
     df = dfVsAllSched(rosters)
     styled_df = df.style \
+        .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
         .apply(highlightActualRecords, axis=None) \
-        .set_table_styles([
-        {"selector": "", "props": [("border", "1px solid black")]},  # Entire table border
-        {"selector": "tbody td", "props": [("border", "1px solid black")]}, # Borders for data cells
-        {"selector": "th", "props": [("border", "1px solid black")]} # Borders for header cells
-        ])
+        .apply(style_last_row, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
+        .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:]) \
+        
+        
 
     ## Columns are teams, rows are schedules
     html = '''
     <h2>Records vs Every Schedule</h2>
-    <p>Columns represent a team's schedule</p>
-    <p>Rows represent a team's record against each schedule</p>
+    <p>Total column to right is that team's cumulative record
+    if they played against every schedule</p>
+    <p>Total column on bottom is the cumulative record of everyone if they played
+    against your specific schedule.</p>
+    <p><strong>Example:</strong>
+    <p> Green on right means your team is performing well </p>
+    </p> Red on bottom means your schedule has been hard </p>
     '''
-    html += styled_df.to_html()
-
+   
+    legend_html = """
+        <div class="legend-container">
+            <div class="legend-item">
+                <span class="legend-color-box category-A"></span> Above .500
+            </div>
+            <div class="legend-item">
+                <span class="legend-color-box category-B"></span> Below .500
+            </div>
+            <div class="legend-item">
+                <span class="legend-color-box category-C"></span> .500
+            </div>
+        </div>
+        <style>
+            .legend-container {
+                display: flex;
+                justify-content: space-evenly;
+                margin-top: 20px;
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+            .legend-item {
+                display: inline-flex;
+                align-items: center;
+                margin-bottom: 5px;
+            }
+            .legend-color-box {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+                border: 1px solid #000;
+            }
+            .category-A { background-color: #CCDDAA; }
+            .category-B { background-color: #FFCCCC; }
+            .category-C { background-color: #F1EABE; }
+        </style>
+        """
+    html += legend_html
+    html += styled_df.to_html() 
     # Save to html file
     with open('./docs/schedule/allSchedules.html', 'w') as f:
         f.write(html)
