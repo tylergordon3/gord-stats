@@ -170,7 +170,6 @@ def getAllLeague(rosters):
 #def getRecord(rosters, team):
 
 def allSchedulesHTML(df):
-    return_html = ''
     styled_df = df.style \
         .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
         .apply(highlightActualRecords, axis=None) \
@@ -178,7 +177,7 @@ def allSchedulesHTML(df):
         .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:]) \
         
     ## Columns are teams, rows are schedules
-    html = '''
+    return_html = '''
     <h2>Records vs Every Schedule</h2>
     <p>Total column to right is that team's cumulative record
     if they played against every schedule</p>
