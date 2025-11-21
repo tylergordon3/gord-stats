@@ -1,0 +1,10 @@
+.simple-nav a {
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid #4a5a68;
+  text-decoration: none;
+}
+
+.simple-nav a:last-child {
+  border-right: none;
+}

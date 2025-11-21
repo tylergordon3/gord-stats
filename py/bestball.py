@@ -10,6 +10,7 @@ from io import StringIO
 from tabulate import tabulate
 from pretty_html_table import build_table
 import utilities
+import html_builder as htmb
 
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
@@ -91,13 +92,12 @@ def bestball_to_html(results, matchups, week):
     file = f"week{week}_bestball.html"
     median_path = "docs/bestball/"
     filename = os.path.join(median_path, file)
-    index_link = '<a href="../bestball">BestBall Home</a>'
-  
-    formatted = formatMatchups(results, matchups, week)
-    html = index_link + "<br>" + formatted
+   
+    html = formatMatchups(results, matchups, week)
 
+    return_html = htmb.add_front_matter(html, f'Week {week} Best Ball')
     with open(filename, 'w') as f:
-        f.write(html)
+        f.write(return_html)
         print("Wrote to ", filename)
 
 
@@ -286,15 +286,19 @@ def update():
         ]}
     ])
     )
-    html = index_link + styler.to_html()
+    html = htmb.add_front_matter(styler.to_html(), 'BestBall Summary')
+    
     #html = index_link + html_table
     with open(path, 'w') as f:
         f.write(html)
         print("Wrote to", path)
 
 def main():
-    update_season = True
+    update_season = False
     if update_season:
         bestball_season()
     update()
+    htmb.generate_landing('docs/bestball/', 'bestball', 'Best Ball')
 
+
+main()

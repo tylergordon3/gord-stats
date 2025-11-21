@@ -6,6 +6,8 @@ import pandas as pd
 import fantasy_rosters as fr
 import player_db as pdb
 import os
+import html_builder as htmb
+import utilities
 
 league = League(c.LEAGUEID)
 
@@ -79,7 +81,6 @@ def ruleOutAlreadySet(matchup_df):
         new_median = df['points'].median()
         df['status'] = df.apply(lambda team: "L" if (team['max_pts'] < new_median) else "tbd", axis=1)
         df['status'] = df.apply(lambda team: setWinners(team, df), axis=1)
-        print(df)
         return df
     else:
         return pd.DataFrame()
@@ -135,13 +136,13 @@ def getToPlay(starters, weeks_players, db):
 def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         print(f"No Data for week {week} yet.")
-        return input
+        return 
     scenarios = consoleOutput(input)
     input = input.drop(columns=["roster_id","matchup_id","status","num_to_play"])
     cols = list(input)
     cols.insert(0, cols.pop(cols.index('rank')))
     input = input.loc[:, cols]
-    input['rank'] = input['rank'].astype('Int64')
+    input['rank'] = input['rank'].astype('int64')
     s = input.style \
         .apply(highlightRows, axis=1) \
         .format(precision = 2) \
@@ -156,10 +157,10 @@ def save_to_html(input, week):
     file = f"week{week}_median.html"
     median_path = "docs/median/"
     filename = os.path.join(median_path, file)
-    index_link = '<a href="../median">Median Home</a>'
     output = time + "<br>" + table + scenarios
+    fm = htmb.add_front_matter(output,'Median')
     with open(filename, 'w') as f:
-        f.write(output)
+        f.write(fm)
         print("Wrote to ", filename)
     return
 
@@ -208,4 +209,11 @@ def printMedianScenarios(currTeam, df):
     html += '<p>--------------------------------------------------------------------------------------------------</p>'
     return html
 
-median(league, 11)
+def main():
+    update_all = False
+    if update_all:
+        for week in range(1,utilities.get_week() + 1):
+            median(league, week)
+    htmb.generate_landing('docs/median', 'median', 'Median')
+
+main()

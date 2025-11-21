@@ -11,6 +11,7 @@ import re
 import os
 from sleeper_wrapper import League
 from pretty_html_table import build_table
+import html_builder as htmb
 
 def getTeamIndex(rosters, roster_id):
     roster_bool = rosters['roster_id'] == roster_id
@@ -168,19 +169,8 @@ def getAllLeague(rosters):
 
 #def getRecord(rosters, team):
 
-def Sos():
-    return
-    
-def main():
-    update = False
-    yr = util.getYrStr()
-    wk = util.get_week()
-    checkPath = f'data/rost{yr}_{wk}.json'
-    if not os.path.exists(checkPath) or (update == True):
-       saveSchedules()
-    rosters = util.load_df_from_json(checkPath)
-    df = dfVsAllSched(rosters)
-    df_allLeague = getAllLeague(rosters)
+def allSchedulesHTML(df):
+    return_html = ''
     styled_df = df.style \
         .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
         .apply(highlightActualRecords, axis=None) \
@@ -235,9 +225,31 @@ def main():
             .category-C { background-color: #F1EABE; }
         </style>
         """
-    html += legend_html
-    html += styled_df.to_html() 
+    return_html += legend_html
+    return_html += styled_df.to_html()
+    return return_html
+
+def Sos():
+    return
+    
+def main():
+    html = ''
+    update = False
+    yr = util.getYrStr()
+    wk = util.get_week()
+    checkPath = f'data/rost{yr}_{wk}.json'
+    if not os.path.exists(checkPath) or (update == True):
+       saveSchedules()
+    rosters = util.load_df_from_json(checkPath)
+
+    # Get all schedules
+    df = dfVsAllSched(rosters)
+    html += allSchedulesHTML(df)
+
+    #df_allLeague = getAllLeague(rosters)
+   
+    output = htmb.add_front_matter(html, 'Schedule Stats')
     # Save to html file
-    with open('./docs/schedule/allSchedules.html', 'w') as f:
-        f.write(html)
+    with open('./docs/schedule/schedule.html', 'w') as f:
+        f.write(output)
 main()
