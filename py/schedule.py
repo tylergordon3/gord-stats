@@ -175,6 +175,7 @@ def allSchedulesHTML(df):
         .apply(highlightActualRecords, axis=None) \
         .apply(style_last_row, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
         .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:]) \
+        .set_table_attributes('class="table-responsive"')
         
     ## Columns are teams, rows are schedules
     return_html = '''

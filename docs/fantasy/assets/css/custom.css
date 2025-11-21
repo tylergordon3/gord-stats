@@ -8,3 +8,20 @@
 .simple-nav a:last-child {
   border-right: none;
 }
+
+.table-responsive {
+  word-wrap: break-word;
+  white-space: normal;
+  table-layout:fixed;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Adds smooth scrolling on iOS */
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inner_custom {
+  position: relative;
+  width: 80%;
+  padding: 20px 10px;
+  margin: 0 auto;
+}
