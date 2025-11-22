@@ -12,7 +12,6 @@
 .table-responsive {
   word-wrap: break-word;
   white-space: normal;
-  table-layout:fixed;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch; /* Adds smooth scrolling on iOS */
   width: 100%;
