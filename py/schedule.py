@@ -174,8 +174,8 @@ def allSchedulesHTML(df):
         .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
         .apply(highlightActualRecords, axis=None) \
         .apply(style_last_row, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
-        .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:]) \
-        .set_table_attributes('class="table-responsive"')
+        .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:]) #\
+        #.set_table_attributes('class="table"')
         
     ## Columns are teams, rows are schedules
     return_html = '''
