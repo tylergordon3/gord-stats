@@ -294,7 +294,7 @@ def update():
         print("Wrote to", path)
 
 def main():
-    update_season = False
+    update_season = True
     if update_season:
         bestball_season()
     update()

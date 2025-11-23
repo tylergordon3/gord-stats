@@ -210,7 +210,7 @@ def printMedianScenarios(currTeam, df):
     return html
 
 def main():
-    update_all = False
+    update_all = True
     if update_all:
         for week in range(1,utilities.get_week() + 1):
             median(league, week)
