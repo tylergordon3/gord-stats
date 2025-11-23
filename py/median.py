@@ -209,11 +209,9 @@ def printMedianScenarios(currTeam, df):
     html += '<p>--------------------------------------------------------------------------------------------------</p>'
     return html
 
-def main():
+def median_main(update_all):
     update_all = True
     if update_all:
         for week in range(1,utilities.get_week() + 1):
             median(league, week)
     htmb.generate_landing('docs/median', 'median', 'Median')
-
-main()

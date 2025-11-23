@@ -232,13 +232,12 @@ def allSchedulesHTML(df):
 def Sos():
     return
     
-def main():
+def schedule_main(update_all):
     html = ''
-    update = False
     yr = util.getYrStr()
     wk = util.get_week()
     checkPath = f'data/rost{yr}_{wk}.json'
-    if not os.path.exists(checkPath) or (update == True):
+    if not os.path.exists(checkPath) or (update_all == True):
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
 
@@ -252,4 +251,3 @@ def main():
     # Save to html file
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
-main()

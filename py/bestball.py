@@ -98,7 +98,7 @@ def bestball_to_html(results, matchups, week):
     return_html = htmb.add_front_matter(html, f'Week {week} Best Ball')
     with open(filename, 'w') as f:
         f.write(return_html)
-        print("Wrote to ", filename)
+        print("Wrote to", filename)
 
 
 def formatMatchups(results, matchups, week):
@@ -272,7 +272,6 @@ def update():
     summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
     summary_df = summary_df.sort_values(by='BestBall Wins', ascending=False)
     path = "docs/bestball/summary_bestball.html"
-    index_link = '<a href="../bestball">BestBall Home</a>'
     styler = (
     summary_df
     .style
@@ -282,7 +281,7 @@ def update():
     .set_table_styles([
         {"selector": "td, th", "props": [
             ("border", "1px solid #ccc"),
-            ("padding", "6px 10px")   # ⬅️ add spacing
+            ("padding", "6px 10px")
         ]}
     ])
     )
@@ -293,12 +292,8 @@ def update():
         f.write(html)
         print("Wrote to", path)
 
-def main():
-    update_season = True
-    if update_season:
+def bestball_main(update_all):
+    if update_all:
         bestball_season()
     update()
     htmb.generate_landing('docs/bestball/', 'bestball', 'Best Ball')
-
-
-main()

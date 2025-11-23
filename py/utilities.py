@@ -49,8 +49,7 @@ def get_week():
     approx_weeks = days_diff / 7
     
     adjustment = 0 if today.weekday() < 4 else 1
-   
-    return math.ceil(approx_weeks) + adjustment
+    return math.floor(approx_weeks) + adjustment
 
 
 def save_df_to_json(df, filename):
