@@ -1,6 +1,7 @@
 import median
 import schedule
 import bestball
+import players_to_json
 
 # median_main -> args: bool update_all
 #   Calculates median for every week if true
@@ -16,7 +17,7 @@ import bestball
 
 update_all = True 
 # update_all = False
-
+players_to_json.player_json()
 median.median_main(update_all)
 bestball.bestball_main(update_all)
 schedule.schedule_main(update_all)
