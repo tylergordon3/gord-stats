@@ -336,7 +336,7 @@ def SoS(rosters):
         final_df
         .style
         .hide(axis="index") 
-        .format( lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x) 
+        .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"]))
     return styler
