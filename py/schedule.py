@@ -332,11 +332,14 @@ def SoS(rosters):
     SOS_dict = rosters[['roster_id', 'SOS']].copy().to_dict()['SOS']
     rosters['SOV'] = rosters.apply(lambda row: calcSOV(row, SOS_dict), axis=1)
     final_df = rosters[['team_name', 'OW', 'OOW', 'SOS', 'SOV']].sort_values(by='SOS', ascending=False)
-    final_df.style \
-        .format('{:.3f}') \
-        .background_gradient(cmap="RdYlGn", subset=["SOS"]) \
-        .background_gradient(cmap="RdYlGn", subset=["SOV"])
-    return final_df
+    styler = (
+        final_df
+        .style
+        .hide(axis="index") 
+        .format( lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x) 
+        .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
+        .background_gradient(cmap="RdYlGn", subset=["SOV"]))
+    return styler
 
 def schedule_main(update_all):
     html = ''
@@ -354,7 +357,7 @@ def schedule_main(update_all):
     sos_df = SoS(rosters)
     html += '<h2>Strength of Schedule & Victory</h2>'
     html += '<p>Sorted by SOS</p>'
-    html += sos_df.to_html(index=False)
+    html += sos_df.to_html()
     # Get all schedules
     allSched_df = dfVsAllSched(rosters)
     allSched_html = allSchedulesHTML(allSched_df)
@@ -372,6 +375,3 @@ def schedule_main(update_all):
     # Save to html file
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
-
-rosters = util.load_df_from_json('data/rost2526_11.json')
-SoS(rosters)
