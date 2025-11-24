@@ -292,10 +292,9 @@ def calc_rotisserie(df):
 
 def calcSos(row, dict):
     week = util.get_week() -1
-    row_this = [dict[id-1] for id in row]
-    row_this = row_this[:week]
-    sos = sum(row_this)/len(row_this)
-    return sos
+    opp_win = [dict[id-1] for id in row]
+    opp_win =  opp_win[:week]
+    return opp_win
 
 def calcAdvSos(row, pf_dict, scores_dict):
     week = util.get_week() -1
@@ -308,19 +307,41 @@ def calcAdvSos(row, pf_dict, scores_dict):
         tot += pt_ratio
     return tot/len(row)
 
+# Overall Opponent Winning Percentage of Opponent
+# Add up OW and divide by games
+def calcOOW(row, dict):
+    week = util.get_week() -1
+    opp_win = [dict[id-1] for id in row]
+    opp_win =  opp_win[:week]
+    return sum(opp_win)/len(opp_win)
+    
+# Overall Opponent Winning Percentage [OW%], 
+# Add up oppenent win %
+# Divide by games
+def calcOW(row):
+    return sum(row)/len(row)
+
 def SoS(rosters):
     rosters['win%'] = rosters['wins'] / (rosters['losses'] + rosters['wins'])
     rosters['opps'] = rosters['sched']
     comp_dict = (rosters[['roster_id', 'win%']].copy().to_dict())['win%']
-    rosters['sos'] = rosters['opps'].apply(lambda row: calcSos(row, comp_dict))
+    rosters['opp_win%_arr'] = rosters['opps'].apply(lambda row: calcSos(row, comp_dict))
+    rosters['OW'] = rosters['opp_win%_arr'].apply(lambda row: calcOW(row))
+    
+    oow_dict = rosters[['roster_id', 'OW']].copy().to_dict()['OW']
+    rosters['OOW'] = rosters['opps'].apply(lambda row: calcOOW(row, oow_dict))
+    
+    rosters['SOS'] = ((2 * rosters['OW']) + rosters['OOW'])/3
 
-    adv_dict = (rosters[['roster_id', 'PF', 'myScores']].copy().to_dict())
-    PF_dict = adv_dict['PF']
-    score_dict = adv_dict['myScores']
-    rosters['pt_ratio'] = rosters['opps'].apply(lambda row: calcAdvSos(row, PF_dict, score_dict))
-    rosters['adv'] = rosters['sos'] + (rosters['sos'] * rosters['pt_ratio'])
-    final_df = rosters[['team_name', 'sos', 'adv']].sort_values(by='adv', ascending=False)
-    final_df = final_df.rename(columns={'team_name':'Teams', 'sos':'SoS', 'adv':'Advanced SoS'})
+
+    #adv_dict = (rosters[['roster_id', 'PF', 'myScores']].copy().to_dict())
+    #PF_dict = adv_dict['PF']
+    #score_dict = adv_dict['myScores']
+    #rosters['pt_ratio'] = rosters['opps'].apply(lambda row: calcAdvSos(row, PF_dict, score_dict))
+    #rosters['adv'] = rosters['sos'] + (rosters['sos'] * rosters['pt_ratio'])
+    final_df = rosters[['team_name', 'OW', 'OOW', 'SOS']].sort_values(by='SOS', ascending=False)
+    #final_df = final_df.rename(columns={'team_name':'Teams', 'sos':'SoS', 'adv':'Advanced SoS'})
+    
     return final_df
 
 def schedule_main(update_all):
@@ -355,5 +376,5 @@ def schedule_main(update_all):
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
 
-#rosters = util.load_df_from_json('data/rost2526_11.json')
-#SoS(rosters)
+rosters = util.load_df_from_json('data/rost2526_11.json')
+SoS(rosters)
