@@ -213,3 +213,5 @@ def median_main(update_all):
         for week in range(1,utilities.get_week() + 1):
             median(league, week)
     htmb.generate_landing('docs/median', 'median', 'Median')
+
+median(league,12)

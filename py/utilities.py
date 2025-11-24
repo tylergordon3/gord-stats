@@ -48,9 +48,8 @@ def get_week():
     days_diff = (today - first_thursday).days
     approx_weeks = days_diff / 7
     
-    adjustment = 0 if today.weekday() < 4 else 1
-    return math.floor(approx_weeks) + adjustment
-
+    weeks = math.ceil(approx_weeks) 
+    return math.ceil(weeks)
 
 def save_df_to_json(df, filename):
     """
@@ -90,3 +89,5 @@ def  load_df_from_json(filename):
     except IOError as e:
         print(f"Error loading data from {filename}: {e}")
         return None
+    
+get_week()
