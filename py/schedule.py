@@ -320,7 +320,7 @@ def SoS(rosters):
     rosters['pt_ratio'] = rosters['opps'].apply(lambda row: calcAdvSos(row, PF_dict, score_dict))
     rosters['adv'] = rosters['sos'] + (rosters['sos'] * rosters['pt_ratio'])
     final_df = rosters[['team_name', 'sos', 'adv']].sort_values(by='adv', ascending=False)
-    final_df.rename(columns={'team_name':'Teams', 'sos':'SoS', 'adv':'Advanced SoS'})
+    final_df = final_df.rename(columns={'team_name':'Teams', 'sos':'SoS', 'adv':'Advanced SoS'})
     return final_df
 
 def schedule_main(update_all):
@@ -336,7 +336,7 @@ def schedule_main(update_all):
     html += rotisserie_styled.to_html()
 
     sos_df = SoS(rosters)
-    html += sos_df.to_html()
+    html += sos_df.to_html(index=False)
     # Get all schedules
     allSched_df = dfVsAllSched(rosters)
     allSched_html = allSchedulesHTML(allSched_df)
