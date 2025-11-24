@@ -77,5 +77,5 @@ def predict(date):
     lnk = f'<p><a href="index.html" title=Home">Home</a></p>'
     html = lnk + build_table(top64, 'green_dark')
     
-    with open(f'docs/predict_{date}.html', 'w') as f: 
+    with open(f'/home/tgordon/cbb-model/docs/predict_{date}.html', 'w') as f: 
        f.write(html)  

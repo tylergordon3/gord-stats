@@ -46,7 +46,7 @@ def initDataset():
     )
     cbb_full['TOURNEY'] = np.where(cbb_full['POSTSEASON'].notnull(), True, False)
 
-    utils.save_json_data(cbb_full.to_json(), "model_data/cbb_data.json")
+    utils.save_json_data(cbb_full.to_json(), "/model_data/cbb_data.json")
 
 def trainModelsAndSave(df, update_about):
     
@@ -182,7 +182,7 @@ def updateAbout(ind, dep, features, X_train, y_train):
     html += aboutSVC(features, X_train, y_train)
     html += aboutForest(features, X_train, y_train)
     html += aboutDecisionTree(features, X_train, y_train)
-    utils.save_to_html('docs/about.html', html)
+    utils.save_to_html('/docs/about.html', html)
 
 def aboutSVC(features, X_train, y_train):
     # Train SVC

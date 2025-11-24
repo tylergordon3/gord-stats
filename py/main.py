@@ -4,9 +4,9 @@ from datetime import datetime
 
 
 today = datetime.today().strftime("%Y-%m-%d")
-torvik_path = f"data/torvik{today}.json"
-kenpom_path = f"data/kenpom{today}.json"
-dataset_path = f"model_data/cbb_data.json"
+torvik_path = f"/home/tgordon/cbb-model/data/torvik{today}.json"
+kenpom_path = f"/home/tgordon/cbb-model/data/kenpom{today}.json"
+dataset_path = f"/home/tgordon/cbb-model/model_data/cbb_data.json"
 
 # Update data if not done for today
 if not os.path.exists(torvik_path):

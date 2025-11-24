@@ -87,7 +87,7 @@ def kenpom(date):
     }
 
     # Save to JSON file
-    utils.save_json_data(output, f"data/kenpom{date}.json")
+    utils.save_json_data(output, f"/data/kenpom{date}.json")
 
 def torvik(date):
     with sync_playwright() as p:
@@ -128,5 +128,5 @@ def torvik(date):
             "headers": headers,
             "rows": rows
         }
-        utils.save_json_data(output, f"data/torvik{date}.json")
+        utils.save_json_data(output, f"/data/torvik{date}.json")
         browser.close()
