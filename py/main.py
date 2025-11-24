@@ -28,5 +28,6 @@ if save_model:
     model.trainModelsAndSave(df, update_about)
 
 predictions.predict(today)
+predictions.predict("2025-11-18")
 
     

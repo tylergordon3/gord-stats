@@ -2,6 +2,7 @@ import utils
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing
+import html_builder as htmb
 from pretty_html_table import build_table
 
 def predict(date):
@@ -74,8 +75,9 @@ def predict(date):
         'SVC',
         'WeightedScore'
     ]]
-    lnk = f'<p><a href="index.html" title=Home">Home</a></p>'
-    html = lnk + build_table(top64, 'green_dark')
     
+    tab = build_table(top64, 'green_dark')
+    html = htmb.add_front_matter(tab,f'Prediction - {date}')
+
     with open(f'/home/tgordon/cbb-model/docs/predict_{date}.html', 'w') as f: 
        f.write(html)  
