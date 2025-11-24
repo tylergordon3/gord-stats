@@ -20,7 +20,6 @@ th:first-child,
 td:first-child {
   position: sticky;
   left: 0;
-  background-color: #fff; /* matches table background */
   z-index: 2;
   box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
 }
@@ -29,7 +28,6 @@ td:first-child {
 thead th {
   position: sticky;
   top: 0;
-  background-color: #f1f1f1;
   z-index: 3;
 }
 
