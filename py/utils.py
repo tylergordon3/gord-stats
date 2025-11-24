@@ -74,7 +74,6 @@ def read_from_pickle(name):
     return loaded_model
 
 def get_recent_data(input_date):
-    print(input_date)
     def parse_date(fname):
         # filename format: kenpomYYYY-MM-DD.json
         try:
