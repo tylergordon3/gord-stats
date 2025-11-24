@@ -289,7 +289,40 @@ def calc_rotisserie(df):
     styled = pivot.style.apply(highlight_week, subset=week_cols)
     styled = styled.format({'Win %': '{:.3f}'})
     return styled
-    
+
+def calcSos(row, dict):
+    week = util.get_week() -1
+    row_this = [dict[id-1] for id in row]
+    row_this = row_this[:week]
+    sos = sum(row_this)/len(row_this)
+    return sos
+
+def calcAdvSos(row, pf_dict, scores_dict):
+    week = util.get_week() -1
+    row = row[:week]
+    tot = 0
+    for index, id in enumerate(row):
+        opp_pf = pf_dict[id-1]
+        score = scores_dict[id-1][index]
+        pt_ratio = score / opp_pf
+        tot += pt_ratio
+    return tot/len(row)
+
+def SoS(rosters):
+    rosters['win%'] = rosters['wins'] / (rosters['losses'] + rosters['wins'])
+    rosters['opps'] = rosters['sched']
+    comp_dict = (rosters[['roster_id', 'win%']].copy().to_dict())['win%']
+    rosters['sos'] = rosters['opps'].apply(lambda row: calcSos(row, comp_dict))
+
+    adv_dict = (rosters[['roster_id', 'PF', 'myScores']].copy().to_dict())
+    PF_dict = adv_dict['PF']
+    score_dict = adv_dict['myScores']
+    rosters['pt_ratio'] = rosters['opps'].apply(lambda row: calcAdvSos(row, PF_dict, score_dict))
+    rosters['adv'] = rosters['sos'] + (rosters['sos'] * rosters['pt_ratio'])
+    final_df = rosters[['team_name', 'sos', 'adv']].sort_values(by='adv', ascending=False)
+    final_df.rename(columns={'team_name':'Teams', 'sos':'SoS', 'adv':'Advanced SoS'})
+    return final_df
+
 def schedule_main(update_all):
     html = ''
     yr = util.getYrStr()
@@ -299,6 +332,11 @@ def schedule_main(update_all):
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
 
+    rotisserie_styled = calc_rotisserie(rosters)
+    html += rotisserie_styled.to_html()
+
+    sos_df = SoS(rosters)
+    html += sos_df.to_html()
     # Get all schedules
     allSched_df = dfVsAllSched(rosters)
     allSched_html = allSchedulesHTML(allSched_df)
@@ -311,10 +349,11 @@ def schedule_main(update_all):
     new_html = "\n".join(lines)
     html += new_html
 
-    rotisserie_styled = calc_rotisserie(rosters)
-    html += rotisserie_styled.to_html()
-
+ 
     output = htmb.add_front_matter(html, 'Schedule Stats')
     # Save to html file
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
+
+#rosters = util.load_df_from_json('data/rost2526_11.json')
+#SoS(rosters)
