@@ -25,6 +25,14 @@ td:first-child {
   box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
 }
 
+/* Freeze header row */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f1f1f1;
+  z-index: 3;
+}
+
 .inner_custom {
   position: relative;
   width: 80%;

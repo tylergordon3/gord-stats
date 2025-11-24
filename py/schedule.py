@@ -301,7 +301,15 @@ def schedule_main(update_all):
 
     # Get all schedules
     allSched_df = dfVsAllSched(rosters)
-    html += allSchedulesHTML(allSched_df)
+    allSched_html = allSchedulesHTML(allSched_df)
+    lines = allSched_html.split("\n")
+    for i, line in enumerate(lines):
+        if "<td>" in line:
+            # Only the first <td> in each row
+            line = line.replace("<td>", '<td class="first-col">', 1)
+            lines[i] = line
+    new_html = "\n".join(lines)
+    html += new_html
 
     rotisserie_styled = calc_rotisserie(rosters)
     html += rotisserie_styled.to_html()
