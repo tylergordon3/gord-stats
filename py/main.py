@@ -2,12 +2,10 @@ import os
 import model, scraper, utils, predictions
 from datetime import datetime
 
-
 today = datetime.today().strftime("%Y-%m-%d")
-torvik_path = f"/home/tgordon/cbb-model/data/torvik{today}.json"
-kenpom_path = f"/home/tgordon/cbb-model/data/kenpom{today}.json"
-dataset_path = f"/home/tgordon/cbb-model/model_data/cbb_data.json"
-
+torvik_path = utils.get_path(f"data/torvik{today}.json")
+kenpom_path = utils.get_path(f"data/kenpom{today}.json")
+dataset_path = utils.get_path("model_data/cbb_data.json")
 # Update data if not done for today
 if not os.path.exists(torvik_path):
     scraper.torvik(today)
@@ -28,6 +26,5 @@ if save_model:
     model.trainModelsAndSave(df, update_about)
 
 predictions.predict(today)
-predictions.predict("2025-11-18")
 
     

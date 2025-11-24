@@ -78,6 +78,6 @@ def predict(date):
     
     tab = build_table(top64, 'green_dark')
     html = htmb.add_front_matter(tab,f'Prediction - {date}')
-
-    with open(f'/home/tgordon/cbb-model/docs/predict_{date}.html', 'w') as f: 
+    path = utils.get_path(f'docs/predict_{date}.html')
+    with open(path, 'w') as f: 
        f.write(html)  

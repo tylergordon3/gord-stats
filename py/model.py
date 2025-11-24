@@ -45,8 +45,8 @@ def initDataset():
         "cbb.csv",
     )
     cbb_full['TOURNEY'] = np.where(cbb_full['POSTSEASON'].notnull(), True, False)
-
-    utils.save_json_data(cbb_full.to_json(), "/model_data/cbb_data.json")
+    path = utils.get_path( "/model_data/cbb_data.json")
+    utils.save_json_data(cbb_full.to_json(), path)
 
 def trainModelsAndSave(df, update_about):
     
@@ -92,19 +92,19 @@ def runModels(X_train, X_test, y_train, y_test):
     init_forest = RandomForestClassifier(random_state=13)
     init_forest.fit(X_train, y_train)
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
-    forest_file = 'models/forest_model.pkl'
+    forest_file = utils.get_path('models/forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
 
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
-    svc_file = 'models/svc_model.pkl'
+    svc_file = utils.get_path('models/svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
 
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
-    dt_file = 'models/dt_model.pkl'
+    dt_file = utils.get_path('models/dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
 
     print('Done with run models.')

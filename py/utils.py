@@ -1,11 +1,18 @@
 import json
 import pickle
 import pandas as pd
+import os
 from io import StringIO
 from pathlib import Path
 from datetime import date
 import constants
+from pathlib import Path
 
+def root():
+    return Path(__file__).parent.parent
+
+def get_path(local_path):
+    return os.path.join(root(), Path(local_path))
 
 def save_json_data(data, filename):
     """
@@ -61,7 +68,7 @@ def write_to_pickle(model, path):
         pickle.dump(model, file)
 
 def read_from_pickle(name):
-    filename = f'/home/tgordon/cbb-model/models/{name}_model.pkl'
+    filename = get_path(f'models/{name}_model.pkl')
     with open(filename, 'rb') as file:
         loaded_model = pickle.load(file)
     return loaded_model
@@ -74,10 +81,10 @@ def get_recent_data():
             return date.fromisoformat(fname[6:16])
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
-
-    kenpom_files = Path('/home/tgordon/cbb-model/data/').glob("kenpom*.json")
+    path = get_path('data/')
+    kenpom_files = Path(path).glob("kenpom*.json")
     kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - today).days))
 
-    torvik_files = Path('/home/tgordon/cbb-model/data/').glob("torvik*.json")
+    torvik_files = Path(path).glob("torvik*.json")
     torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - today).days))
     return [kenpom, torvik]

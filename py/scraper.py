@@ -1,7 +1,6 @@
 '''
     Scraping Torvik and Kenpom
 '''
-import json
 import time
 import utils
 import requests
@@ -87,7 +86,8 @@ def kenpom(date):
     }
 
     # Save to JSON file
-    utils.save_json_data(output, f"/data/kenpom{date}.json")
+    path = utils.get_path(f"data/kenpom{date}.json")
+    utils.save_json_data(output, path)
 
 def torvik(date):
     with sync_playwright() as p:
@@ -128,5 +128,6 @@ def torvik(date):
             "headers": headers,
             "rows": rows
         }
-        utils.save_json_data(output, f"/data/torvik{date}.json")
+        path = utils.get_path(f"data/torvik{date}.json")
+        utils.save_json_data(output, path)
         browser.close()
