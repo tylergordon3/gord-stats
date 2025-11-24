@@ -163,12 +163,6 @@ light_grid_style_header = {
     ]
 }
 
-def getAllLeague(rosters):
-    allScores = rosters['myScores']
-    print(allScores)
-
-#def getRecord(rosters, team):
-
 def allSchedulesHTML(df):
     styled_df = df.style \
         .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
@@ -229,8 +223,72 @@ def allSchedulesHTML(df):
     return_html += styled_df.to_html()
     return return_html
 
-def Sos():
-    return
+
+def highlight_week(col):
+    max_w = col.apply(lambda x: int(x.split('-')[0])).max()
+    min_w = col.apply(lambda x: int(x.split('-')[0])).min()
+    return ['background-color: #c8e6c9' if int(x.split('-')[0]) == max_w
+            else 'background-color: #ffcdd2' if int(x.split('-')[0]) == min_w
+            else '' for x in col]
+
+def rotisserie_records(weeks_df, team_lookup):
+    records = []
+
+    for week in weeks_df.columns:
+        week_scores = weeks_df[week]
+
+        for team in week_scores.index:  # team = roster_id
+            team_score = week_scores.loc[team]
+
+            others = week_scores.drop(team)
+
+            wins = (team_score > others).sum()
+            losses = (team_score < others).sum()
+            ties = (team_score == others).sum()
+
+            records.append({
+                'roster_id': team,
+                'team_name': team_lookup[team],
+                'week': int(week),
+                'wins': wins,
+                'losses': losses,
+                'ties': ties
+            })
+
+    return pd.DataFrame(records)
+
+def calc_rotisserie(df):
+    '''
+        Calculate record for each week if team's played everyone
+    '''
+    weeks_df = (
+        df.set_index('roster_id')['myScores']
+        .apply(pd.Series)
+    )
+    weeks_df.columns = [f"{i+1}" for i in weeks_df.columns]
+    team_lookup = df.set_index('roster_id')['team_name'].to_dict()
+    records = rotisserie_records(weeks_df, team_lookup)
+    week = util.get_week() - 1
+    valid_records = records[records['week'] <= week].copy()
+    valid_records['wl'] = valid_records['wins'].astype(str) + "-" + valid_records['losses'].astype(str)
+    pivot = valid_records.pivot(
+        index='team_name',
+        columns='week',
+        values='wl'
+        )
+    total_wins = valid_records.groupby('team_name')['wins'].sum()
+    total_losses = valid_records.groupby('team_name')['losses'].sum()
+
+    pivot['Total'] = total_wins.astype(str) + "-" + total_losses.astype(str)
+    pivot["Win %"] = (total_wins / (total_wins + total_losses)).round(3)
+    pivot = pivot.loc[
+    total_wins.sort_values(ascending=False).index
+    ]
+    week_cols = [c for c in pivot.columns if str(c).isdigit() or c.startswith('week_')]
+
+    styled = pivot.style.apply(highlight_week, subset=week_cols)
+    styled = styled.format({'Win%': "{:.3f}"})
+    return styled
     
 def schedule_main(update_all):
     html = ''
@@ -242,12 +300,15 @@ def schedule_main(update_all):
     rosters = util.load_df_from_json(checkPath)
 
     # Get all schedules
-    df = dfVsAllSched(rosters)
-    html += allSchedulesHTML(df)
+    allSched_df = dfVsAllSched(rosters)
+    html += allSchedulesHTML(allSched_df)
 
-    #df_allLeague = getAllLeague(rosters)
-   
+    rotisserie_styled = calc_rotisserie(rosters)
+    html += rotisserie_styled.to_html()
+
     output = htmb.add_front_matter(html, 'Schedule Stats')
     # Save to html file
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
+
+schedule_main(True)
