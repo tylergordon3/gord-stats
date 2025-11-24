@@ -10,7 +10,7 @@ def predict(date):
     decisionTree = utils.read_from_pickle('dt')
     supportVC = utils.read_from_pickle('svc')
     
-    [kenpom_path, torvik_path] = utils.get_recent_data()
+    [kenpom_path, torvik_path] = utils.get_recent_data(date)
     kenpom_data = utils.load_json_data(kenpom_path)
     torvik_data = utils.load_json_data(torvik_path)
 

@@ -73,8 +73,8 @@ def read_from_pickle(name):
         loaded_model = pickle.load(file)
     return loaded_model
 
-def get_recent_data():
-    today  = date.today()
+def get_recent_data(input_date):
+    print(input_date)
     def parse_date(fname):
         # filename format: kenpomYYYY-MM-DD.json
         try:
@@ -83,8 +83,8 @@ def get_recent_data():
             raise ValueError(f"Invalid date in filename: {fname}")
     path = get_path('data/')
     kenpom_files = Path(path).glob("kenpom*.json")
-    kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - today).days))
+    kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
 
     torvik_files = Path(path).glob("torvik*.json")
-    torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - today).days))
+    torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return [kenpom, torvik]

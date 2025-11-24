@@ -1,6 +1,6 @@
 import os
 import model, scraper, utils, predictions
-from datetime import datetime
+from datetime import datetime, date
 
 today = datetime.today().strftime("%Y-%m-%d")
 torvik_path = utils.get_path(f"data/torvik{today}.json")
@@ -25,6 +25,5 @@ if save_model:
     df = utils.load_json_data(dataset_path)
     model.trainModelsAndSave(df, update_about)
 
-predictions.predict(today)
-
+predictions.predict(date.today())
     
