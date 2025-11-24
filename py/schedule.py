@@ -231,7 +231,7 @@ def highlight_week(col):
             else 'background-color: #ffcdd2' if int(x.split('-')[0]) == min_w
             else '' for x in col]
 
-def rotisserie_records(weeks_df, team_lookup):
+def allplay_records(weeks_df, team_lookup):
     records = []
 
     for week in weeks_df.columns:
@@ -257,7 +257,7 @@ def rotisserie_records(weeks_df, team_lookup):
 
     return pd.DataFrame(records)
 
-def calc_rotisserie(df):
+def calc_allplay(df):
     '''
         Calculate record for each week if team's played everyone
     '''
@@ -267,7 +267,7 @@ def calc_rotisserie(df):
     )
     weeks_df.columns = [f"{i+1}" for i in weeks_df.columns]
     team_lookup = df.set_index('roster_id')['team_name'].to_dict()
-    records = rotisserie_records(weeks_df, team_lookup)
+    records = allplay_records(weeks_df, team_lookup)
     week = util.get_week() - 1
     valid_records = records[records['week'] <= week].copy()
     valid_records['wl'] = valid_records['wins'].astype(str) + "-" + valid_records['losses'].astype(str)
@@ -296,17 +296,6 @@ def calcSos(row, dict):
     opp_win =  opp_win[:week]
     return opp_win
 
-def calcAdvSos(row, pf_dict, scores_dict):
-    week = util.get_week() -1
-    row = row[:week]
-    tot = 0
-    for index, id in enumerate(row):
-        opp_pf = pf_dict[id-1]
-        score = scores_dict[id-1][index]
-        pt_ratio = score / opp_pf
-        tot += pt_ratio
-    return tot/len(row)
-
 # Overall Opponent Winning Percentage of Opponent
 # Add up OW and divide by games
 def calcOOW(row, dict):
@@ -321,6 +310,14 @@ def calcOOW(row, dict):
 def calcOW(row):
     return sum(row)/len(row)
 
+def calcSOV(row, SOS_dict):
+    win_arr = (np.array(row['myScores']) > np.array(row['sched_score']))
+    opponents = np.array(row['opps'])
+    arr = opponents[win_arr]
+    sov = [SOS_dict[id-1] for id in arr]
+    sov_ret = sum(sov)/len(sov)
+    return sov_ret
+
 def SoS(rosters):
     rosters['win%'] = rosters['wins'] / (rosters['losses'] + rosters['wins'])
     rosters['opps'] = rosters['sched']
@@ -332,16 +329,13 @@ def SoS(rosters):
     rosters['OOW'] = rosters['opps'].apply(lambda row: calcOOW(row, oow_dict))
     
     rosters['SOS'] = ((2 * rosters['OW']) + rosters['OOW'])/3
-
-
-    #adv_dict = (rosters[['roster_id', 'PF', 'myScores']].copy().to_dict())
-    #PF_dict = adv_dict['PF']
-    #score_dict = adv_dict['myScores']
-    #rosters['pt_ratio'] = rosters['opps'].apply(lambda row: calcAdvSos(row, PF_dict, score_dict))
-    #rosters['adv'] = rosters['sos'] + (rosters['sos'] * rosters['pt_ratio'])
-    final_df = rosters[['team_name', 'OW', 'OOW', 'SOS']].sort_values(by='SOS', ascending=False)
-    #final_df = final_df.rename(columns={'team_name':'Teams', 'sos':'SoS', 'adv':'Advanced SoS'})
-    
+    SOS_dict = rosters[['roster_id', 'SOS']].copy().to_dict()['SOS']
+    rosters['SOV'] = rosters.apply(lambda row: calcSOV(row, SOS_dict), axis=1)
+    final_df = rosters[['team_name', 'OW', 'OOW', 'SOS', 'SOV']].sort_values(by='SOS', ascending=False)
+    final_df.style \
+        .format('{:.3f}') \
+        .background_gradient(cmap="RdYlGn", subset=["SOS"]) \
+        .background_gradient(cmap="RdYlGn", subset=["SOV"])
     return final_df
 
 def schedule_main(update_all):
@@ -352,11 +346,14 @@ def schedule_main(update_all):
     if not os.path.exists(checkPath) or (update_all == True):
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
-
-    rotisserie_styled = calc_rotisserie(rosters)
-    html += rotisserie_styled.to_html()
+    html += '<h2>All-Play Standings</h2>'
+    html += '<p>Whole league goes H2H, every week.</p>'
+    allplay_styled = calc_allplay(rosters)
+    html += allplay_styled.to_html()
 
     sos_df = SoS(rosters)
+    html += '<h2>Strength of Schedule & Victory</h2>'
+    html += '<p>Sorted by SOS</p>'
     html += sos_df.to_html(index=False)
     # Get all schedules
     allSched_df = dfVsAllSched(rosters)
