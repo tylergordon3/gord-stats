@@ -274,8 +274,8 @@ def update():
     .hide(axis="index")
     .format("{:.2f}", subset=summary_df.select_dtypes(include="number").columns)
     .background_gradient(cmap="RdYlGn", subset=["Change"])
-    .background_gradient(cmap="RdYlGn", subset=["BestBall PF"], low=0.5, high=0.5)
-    .background_gradient(cmap="RdYlGn", subset=["BestBall PA"], low=0.5, high=0.5)
+    .background_gradient(cmap="RdYlGn", subset=["BestBall PF"])
+    .background_gradient(cmap="RdYlGn_r", subset=["BestBall PA"])
     .set_table_styles([
         {"selector": "td, th", "props": [
             ("border", "1px solid #ccc"),
