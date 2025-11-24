@@ -10,12 +10,9 @@
 }
 
 .table-responsive {
-  word-wrap: break-word;
-  white-space: normal;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* Adds smooth scrolling on iOS */
   width: 100%;
-  border-collapse: collapse;
+  overflow-x: auto; /* horizontal scroll if table is too wide */
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
 
 .inner_custom {
