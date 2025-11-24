@@ -287,7 +287,7 @@ def calc_rotisserie(df):
     week_cols = [c for c in pivot.columns if str(c).isdigit() or c.startswith('week_')]
 
     styled = pivot.style.apply(highlight_week, subset=week_cols)
-    styled = styled.format({'Win%': "{:.3f}"})
+    styled = styled.format({'Win %': '{:.3f}'})
     return styled
     
 def schedule_main(update_all):
