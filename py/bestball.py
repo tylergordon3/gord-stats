@@ -240,13 +240,9 @@ def matchesSummaryHTML(df):
     df['match_id'] = (df.groupby('week').cumcount()) //2
     print(df)
     matchups = df.groupby(['week', 'match_id'])
-    #to_html = pd.DataFrame()
     html=''
     for (week, matchup_id), matchup in matchups:
-        #print(f"\nWeek {week} Matchup #: {matchup_id}")
-        #print("-" * 40)
-        #print(f"Original: {matchup['names'].iloc[0]} {matchup['score'].iloc[0]} | {matchup['score'].iloc[1]} {matchup['names'].iloc[1]}")
-        #print(f"BestBall: {matchup['names'].iloc[0]} {matchup['bb_score'].iloc[0]} | {matchup['bb_score'].iloc[1]} {matchup['names'].iloc[1]}")
+
         html += f"<p> Week {week} Matchup #: {matchup_id}</p>"
         html += ("-" * 40)
         html += f"<p>Original: {matchup['names'].iloc[0]} {matchup['score'].iloc[0]} | {matchup['score'].iloc[1]} {matchup['names'].iloc[1]}</p>"
@@ -266,7 +262,7 @@ def update():
     summary_df['BestBall Wins'] = df.groupby('roster_id')['bb_median'].sum() + df.groupby('roster_id')['bb_winner'].sum()
     summary_df['Losses'] = (last_wk * 2) - summary_df['Wins']
     summary_df['BestBall Losses'] = (last_wk * 2) - summary_df['BestBall Wins']
-    summary_df['Bestball PF'] = df.groupby('roster_id')['bb_score'].sum()
+    summary_df['BestBall PF'] = df.groupby('roster_id')['bb_score'].sum()
     summary_df['BestBall PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
     summary_df['Change'] = summary_df['BestBall Wins'] - summary_df['Wins']
     summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
@@ -278,6 +274,8 @@ def update():
     .hide(axis="index")
     .format("{:.2f}", subset=summary_df.select_dtypes(include="number").columns)
     .background_gradient(cmap="RdYlGn", subset=["Change"])
+    .background_gradient(cmap="RdYlGn", subset=["BestBall PF"], low=0.5, high=0.5)
+    .background_gradient(cmap="RdYlGn", subset=["BestBall PA"], low=0.5, high=0.5)
     .set_table_styles([
         {"selector": "td, th", "props": [
             ("border", "1px solid #ccc"),
@@ -287,7 +285,6 @@ def update():
     )
     html = htmb.add_front_matter(styler.to_html(), 'BestBall Summary')
     
-    #html = index_link + html_table
     with open(path, 'w') as f:
         f.write(html)
         print("Wrote to", path)

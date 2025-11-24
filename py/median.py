@@ -176,7 +176,6 @@ def consoleOutput(input_df):
     see_above = []
     output = df.apply(lambda row: doConsoleOutput(row, df, see_above), axis=1)
     output_html = "".join(output.tolist())
-    html += '<br>--------------------------------------------------------------------------------------------------'
     html += output_html
     html += '<p><strong>See above for points needed: </strong></p>'
     for item in see_above:
@@ -206,7 +205,6 @@ def printMedianScenarios(currTeam, df):
             html += f'<p>{team.team} : {', '.join(team.to_play)} outscore(s) {', '.join(currTeam['to_play'])} by {diff}</p>'
         else:
             html += f'{team.team} :  {', '.join(team.to_play)} scores {diff}</p>'
-    html += '<p>--------------------------------------------------------------------------------------------------</p>'
     return html
 
 def median_main(update_all):

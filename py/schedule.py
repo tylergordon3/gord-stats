@@ -318,5 +318,3 @@ def schedule_main(update_all):
     # Save to html file
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
-
-schedule_main(True)
