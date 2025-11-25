@@ -41,11 +41,9 @@ def load_json_data(filename):
     """
     try:
         with open(filename, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        headers = data["headers"]
-        rows = data["rows"]
-
-        df = pd.DataFrame(rows, columns=headers)
+            data = json.loads(json.load(f))
+            
+        df = pd.DataFrame(data)
         print(f"Data successfully loaded from {filename}")
         return df
     except FileNotFoundError:

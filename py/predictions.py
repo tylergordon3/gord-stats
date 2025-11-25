@@ -1,6 +1,8 @@
 import utils
 import pandas as pd
 import numpy as np
+import json
+import constants
 from sklearn import preprocessing
 import html_builder as htmb
 from pretty_html_table import build_table
@@ -15,8 +17,13 @@ def predict(date):
     supportVC_kenpom = utils.read_from_pickle('kp_svc')
     
     [kenpom_path, torvik_path] = utils.get_recent_data(date)
-    kenpom_data = utils.load_json_data(kenpom_path)
-    torvik_data = utils.load_json_data(torvik_path)
+    with open(kenpom_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    kenpom_data = pd.DataFrame(data['rows'], columns=data['headers'])
+    
+    with open(torvik_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    torvik_data = pd.DataFrame(data['rows'], columns=data['headers'])
 
     torvik_teams = torvik_data['Team']
     kenpom_teams = kenpom_data['Team']
@@ -104,6 +111,7 @@ def predict(date):
     svc_filter_kenpom = df_kenpom_filter[df_kenpom_filter['SVC'] == 1].head(64)
     df_kenpom_svc = svc_filter_kenpom[['Team', 'Rk', 'SVC']].copy()
 
+    
     # Torvik Final Clean
     comb1_torvik = pd.merge(torvik_teams, df_torvik_rf, "left", ["Team", "Rk"])
     comb2_torvik = pd.merge(comb1_torvik, df_torvik_svc, "left", ["Team", "Rk"])
@@ -142,24 +150,30 @@ def predict(date):
     df_kenpom_clean = df_kenpom_clean.rename(columns={'Rk' : 'Kenpom Rank'})
     df_kenpom_final = df_kenpom_clean.drop(columns=['Num Models Made'])
     
-    top64_kenpom = df_kenpom_final.sort_values("WeightedScore", ascending=False).head(64)
-    top64_kenpom['MM Rank'] = range(1, 65)
-    top64_kenpom['Est. Seed'] = np.repeat(range(1,17), 4)
-    top64_kenpom = top64_kenpom[[
-        'MM Rank',
-        'Kenpom Rank',
-        'Est. Seed',
-        'Team',
-        'RF',
-        'DT',
-        'SVC',
-        'WeightedScore'
-    ]]
+    main = pd.merge(combined_kenpom, combined_torvik, "left", "Team")
+    main['Rk_y'].replace(np.nan, 0, inplace=True)
+    main['Rk_x'].replace(np.nan, 0, inplace=True)
+    main.replace(np.nan, False, inplace=True)
     
-    tab = build_table(top64_torvik, 'green_dark')
-    tab2 = build_table(top64_kenpom, 'blue_dark')
-    tab += tab2
-    html = htmb.add_front_matter(tab,f'Prediction - {date}')
+    main['Num KP Models'] = main[['RF_x', 'SVC_x', 'DT_x']].sum(1)
+    main['Num TOR Models'] = main[['RF_y', 'SVC_y', 'DT_y']].sum(1)
+    main['Rk_y'] = pd.to_numeric(main['Rk_y'])
+    main['Rk_x'] = pd.to_numeric(main['Rk_x'])
+    main['WeightedScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
+            ((10 * main['Num TOR Models']) + (80-main['Rk_y'])))/2
+
+    main64 = main.sort_values("WeightedScore", ascending=False).head(64)
+    main64 =  main64.drop(columns=['RF_x', 'SVC_x', 'DT_x', 'RF_y', 'SVC_y', 'DT_y'])
+    main64['Overall Rank'] = range(1, 65)
+    main64 = main64.rename(columns={
+        'Rk_x' : 'Kenpom Rank', 
+        'Rk_y' : 'Torvik Rank',
+        'Num KP Models' : '# Models Kenpom',
+        'Num TOR Models' : '# Models Torvik'
+    })
+        
+    tab = build_table(main64, 'green_dark')
+    html = htmb.add_front_matter(tab, f'Prediction - {date}')
     path = utils.get_path(f'docs/current_model.html')
     with open(path, 'w') as f: 
        f.write(html)  

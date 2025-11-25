@@ -49,10 +49,10 @@ def initDataset():
     utils.save_json_data(cbb_full.to_json(), path)
 
 def trainModelsAndSave(df, update_about):
-    
+
     [cbb, ind, dep] = chiSquared(df)
     [X_train, X_test, y_train, y_test, features] = splitData(cbb, ind)
-
+    
     if update_about: updateAbout(ind, dep, features, X_train, y_train)
 
     #[svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
@@ -74,6 +74,7 @@ def splitData(cbb, ind):
 def chiSquared(df):
     cbb = df.drop(columns=['TEAM', 'CONF', 'POSTSEASON', 'SEED', 'YEAR', 
                            'G', 'W', 'BARTHAG', 'WAB'])
+   
     cbb_features = cbb.iloc[:,:-1]
     ind = []
     dep = []
@@ -94,19 +95,19 @@ def runModels(X_train, X_test, y_train, y_test):
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
     forest_file = utils.get_path('models/forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
-
+    print('RunModelsTorvik : Wrote Forest')
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
     svc_file = utils.get_path('models/svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
-
+    print('RunModelsTorvik : Wrote SVC')
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
     dt_file = utils.get_path('models/dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
-
+    print('RunModelsTorvik : Wrote DT')
     print('Done with run models.')
 
 def trainDT(init_dt, X_train, y_train, X_test, y_test):

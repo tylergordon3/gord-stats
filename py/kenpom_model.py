@@ -13,9 +13,11 @@ import base64
 from io import BytesIO
 from sklearn.metrics import classification_report, confusion_matrix
 import warnings
+import time
 warnings.filterwarnings("ignore")
 
 def trainModelsAndSave(df): 
+    start = time.time()
     [cbb, ind] = chiSquared(df)
  
     [X_train, X_test, y_train, y_test] = splitData(cbb, ind)
@@ -24,9 +26,8 @@ def trainModelsAndSave(df):
     runModels(X_train, X_test, y_train, y_test)
 
 def splitData(cbb, ind):
-    print(ind)
     cbb = cbb.drop(columns=ind)
-    cbb_features = cbb.iloc[:,:-1]
+    cbb_features = cbb.iloc[:,1:]
     cbb_label = cbb['Tourney']
 
     X = cbb_features.values
@@ -43,6 +44,7 @@ def chiSquared(df):
                            'SOS_NetRtg_Rk', 'SOS_ORtg_Rk', 'SOS_DRtg_Rk', 
                            'NCSOS_NetRtg_Rk', "AdjT_Rk"])
     cbb_features = cbb.iloc[:,:-1]
+    
     ind = []
     dep = []
     pval = []
@@ -62,19 +64,19 @@ def runModels(X_train, X_test, y_train, y_test):
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
     forest_file = utils.get_path('models/kp_forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
-
+    print('RunModelsKenpom : Wrote Forest')
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
     svc_file = utils.get_path('models/kp_svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
-
+    print('RunModelsKenpom : Wrote SVC')
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
     dt_file = utils.get_path('models/kp_dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
-
+    print('RunModelsKenpom : Wrote DT')
     print('Done with run models for Kenpom.')
 
 def trainDT(init_dt, X_train, y_train, X_test, y_test):
