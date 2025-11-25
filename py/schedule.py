@@ -370,11 +370,9 @@ def schedule_main(update_all):
     # Strength of Schedule Stats
     sos_df = SoS(rosters)
     html += '<h2>Strength of Schedule & Victory</h2>'
+    html += "<p><strong>OW%:</strong> Overall Opponent Winning Percentage - Sum of opponent's winning percentage</p>"
+    html += "<p><strong>OOW%:</strong> Overall Winning Percentage of Opponent's Opponents - Sum of each opponent's OW%</p>"
     html += '<p>Sorted by SOS</p>'
-    html += "<p><strong>OW%:</strong>Overall Opponent Winning Percentage</p>"
-    html += "<p>- Sum of opponent's winning percentage</p>"
-    html += "<p><strong>OOW%:</strong>Overall Winning Percentage of Opponent's Opponents</p>"
-    html += "<p>- Sum of each opponent's OW%"
     html += sos_df.to_html()
 
     # All-Play Stats
