@@ -338,7 +338,8 @@ def SoS(rosters):
         .hide(axis="index") 
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
-        .background_gradient(cmap="RdYlGn", subset=["SOV"]))
+        .background_gradient(cmap="RdYlGn", subset=["SOV"])
+        .set_table_attributes('class="table-responsive"'))
     return styler
 
 def schedule_main(update_all):
