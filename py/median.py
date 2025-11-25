@@ -172,6 +172,7 @@ def save_to_html(input, week):
         </div>
         <style>
             .legend-container {
+                width: max-content;
                 display: flex;
                 justify-content: space-evenly;
                 padding: 10px;
@@ -194,9 +195,9 @@ def save_to_html(input, week):
         </style>
         """
     table_div = f'''
-        <div class ="table_wrapper">
-        {legend_html}
-        {table}
+        <div class="table-wrapper">
+            {legend_html}
+            {table}
         </div>
 '''
     output = time + "<br>" + table_div + scenarios

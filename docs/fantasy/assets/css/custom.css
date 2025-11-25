@@ -15,7 +15,6 @@
   -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
 
-
 /* Freeze first column */
 th:first-child,
 td:first-child {
@@ -43,4 +42,5 @@ thead th {
 .table-wrapper {
   width: max-content;   /* matches table width exactly */
   margin-bottom: 1rem;
+  width: max-content;
 }
