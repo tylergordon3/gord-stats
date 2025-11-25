@@ -195,7 +195,7 @@ def save_to_html(input, week):
         </style>
         """
     table_div = f'''
-        <div class ="container">
+        <div class ="custom_container">
         {legend_html}
         {table}
         </div>
@@ -267,6 +267,3 @@ def median_main(update_all):
         for week in range(1,utilities.get_week() + 1):
             median(league, week)
     htmb.generate_landing('docs/median', 'median', 'Median')
-
-median(league,11)
-median(league,12)

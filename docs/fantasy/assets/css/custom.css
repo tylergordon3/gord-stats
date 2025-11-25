@@ -39,7 +39,7 @@ thead th {
   overflow: auto;
 }
 
-.container {
+.container_custom {
   display: flex;
   flex-direction: column; /* Stacks elements vertically */
   align-items: stretch; /* Makes flex items fill the container's width */
