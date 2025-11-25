@@ -16,8 +16,12 @@ from playwright.sync_api import sync_playwright
 TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
+
+#def kenpom_historic_combined():
+
 def kenpom_historic():
     # https://kenpom.com/index.php?y=2025
+    all = []
     for year in range(2013, 2026):
         file = f'model_data/kenpom/kenpom{year}.html'
         with open(file) as fp:
@@ -88,21 +92,26 @@ def kenpom_historic():
                 else:
                     team = team[:-1]
                 row.insert(2, seed)
+                row.insert(3, True)
                 row[1] = team
             else:
                 row.insert(2, -1)
+                row.insert(3, False)
             return row
         [[sep_names(row) for row in rows]]
         final_headers.insert(2, 'Seed')
+        final_headers.insert(3, 'TOURNEY')
         # --- Save to JSON ---
         output = {
             "headers": final_headers,
             "rows": rows
         }
-
+        [all.append(row) for row in rows]
         # Save to JSON file
         path = utils.get_path(f"model_data/kenpom{year}.json")
         utils.save_json_data(output, path)
+    path = utils.get_path(f"model_data/kenpom_all.json")
+    utils.save_json_data(all, path)
 
 def kenpom(date):
     kenpom_resp = requests.get(KENPOM, timeout=10).text

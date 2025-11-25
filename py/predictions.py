@@ -81,3 +81,4 @@ def predict(date):
     path = utils.get_path(f'docs/current_model.html')
     with open(path, 'w') as f: 
        f.write(html)  
+       print(f'Wrote to: {path} for {date}')

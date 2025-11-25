@@ -1,6 +1,7 @@
-kenpom = [
-        "Rk",
+kenpom = ["Rk",
         "Team",
+        "Seed",
+        "TOURNEY",
         "Conf",
         "W-L",
         "NetRtg",
@@ -19,8 +20,7 @@ kenpom = [
         "SOS_DRtg",
         "SOS_DRtg_Rk",
         "NCSOS_NetRtg",
-        "NCSOS_NetRtg_Rk"
-    ]
+        "NCSOS_NetRtg_Rk"]
 
 torvik =  [
         "Rk",
