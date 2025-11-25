@@ -47,10 +47,25 @@ def get_week():
     today = date.today()
     days_diff = (today - first_thursday).days
     approx_weeks = days_diff / 7
-    
     weeks = math.ceil(approx_weeks) 
     return math.ceil(weeks)
 
+def get_last_completed_week():
+    year = get_current_season()
+    sept_year = year[0]
+    first_thursday = date(sept_year, 9, 1)
+    while  first_thursday.weekday() != 3:  
+        first_thursday += timedelta(days=1)
+    today = date.today()
+    days_diff = (today - first_thursday).days
+    approx_weeks = days_diff / 7
+    if (today.weekday() > 0) & (today.weekday() < 4):
+        weeks = math.ceil(approx_weeks)
+    else:
+        weeks = math.floor(approx_weeks)
+    return weeks
+
+get_last_completed_week()
 def save_df_to_json(df, filename):
     """
     Saves Python DataFrame to a JSON file.

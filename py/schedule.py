@@ -268,7 +268,7 @@ def calc_allplay(df):
     weeks_df.columns = [f"{i+1}" for i in weeks_df.columns]
     team_lookup = df.set_index('roster_id')['team_name'].to_dict()
     records = allplay_records(weeks_df, team_lookup)
-    week = util.get_week() - 1
+    week = util.get_last_completed_week()
     valid_records = records[records['week'] <= week].copy()
     valid_records['wl'] = valid_records['wins'].astype(str) + "-" + valid_records['losses'].astype(str)
     pivot = valid_records.pivot(
@@ -376,3 +376,5 @@ def schedule_main(update_all):
     # Save to html file
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
+
+schedule_main(True)
