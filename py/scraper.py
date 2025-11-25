@@ -18,87 +18,92 @@ KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 def kenpom_historic():
     # https://kenpom.com/index.php?y=2025
-    # for yr in range(2013, 2026):
-    file = 'model_data/kenpom13.html'
-    with open(file) as fp:
-        soup = BeautifulSoup(fp, 'html.parser')
-    table = soup.find("table")
+    for year in range(2013, 2026):
+        file = f'model_data/kenpom/kenpom{year}.html'
+        with open(file) as fp:
+            soup = BeautifulSoup(fp, 'html.parser')
+        table = soup.find("table")
 
-    # --- Extract headers considering multi-row and colspan ---
-    header_rows = table.find_all("tr")[:2]  # first two rows usually contain headers
-    header_matrix = []
+        # --- Extract headers considering multi-row and colspan ---
+        header_rows = table.find_all("tr")[:2]  # first two rows usually contain headers
+        header_matrix = []
 
-    for hr in header_rows:
-        row_headers = []
-        for cell in hr.find_all(["th", "td"]):
-            text = cell.get_text(strip=True)
-            colspan = int(cell.get("colspan", 1))
-            row_headers.extend([text]*colspan if text else [""]*colspan)
-        header_matrix.append(row_headers)
-    
-    # --- Merge multi-row headers and handle ranking columns ---
-    num_cols = max(len(r) for r in header_matrix)
-    final_headers = []
-    seen = {}  # track occurrences for rank columns
-
-    # Define replacements for readability
-    replacements = {
-        "Strength of Schedule": "SOS",
-        "NCSOS": "NCSOS"
-    }
-
-    for col_idx in range(num_cols):
-        parts = []
-        for row in header_matrix:
-            if col_idx < len(row) and row[col_idx]:
-                parts.append(row[col_idx])
-        base_header = "_".join(parts) if parts else ""
+        for hr in header_rows:
+            row_headers = []
+            for cell in hr.find_all(["th", "td"]):
+                text = cell.get_text(strip=True)
+                colspan = int(cell.get("colspan", 1))
+                row_headers.extend([text]*colspan if text else [""]*colspan)
+            header_matrix.append(row_headers)
         
-        # Apply replacements for readability
-        for long_name, short_name in replacements.items():
-            base_header = base_header.replace(long_name, short_name)
-        # Handle rank duplicates
-        if base_header in seen:
-            final_headers.append(f"{base_header}_Rk")
-            seen[base_header] += 1
-        else:
-            final_headers.append(base_header)
-            seen[base_header] = 1
-   
-    # --- Extract table rows ---
-    rows = []
-    for row in table.find_all("tr")[len(header_rows):]:
-        cols = [col.get_text(strip=True) for col in row.find_all("td")]
-        if any(cols):
-            rows.append(cols)
+        # --- Merge multi-row headers and handle ranking columns ---
+        num_cols = max(len(r) for r in header_matrix)
+        final_headers = []
+        seen = {}  # track occurrences for rank columns
 
-    # --- Convert to strings ---
-    final_headers = [str(h) for h in final_headers]
-    rows = [[str(c) for c in r] for r in rows]
-    
-    test = rows[26][1]
-    
-    rm_space = test.replace(" ", "")
-    pat="(\D+)([0-9]{1,2})"
-    match = re.match(pat, rm_space)
-    
-    seed = match.group(2)
-    if int(seed) > 9:
-        print('doubledigit')
-    else:
-        print('single')
-    print(rm_space)
-    # --- Save to JSON ---
-    output = {
-        "headers": final_headers,
-        "rows": rows
-    }
+        # Define replacements for readability
+        replacements = {
+            "Strength of Schedule": "SOS",
+            "NCSOS": "NCSOS"
+        }
 
-    # Save to JSON file
-    path = utils.get_path(f"data/kenpom2013.json")
-    utils.save_json_data(output, path)
+        for col_idx in range(num_cols):
+            parts = []
+            for row in header_matrix:
+                if col_idx < len(row) and row[col_idx]:
+                    parts.append(row[col_idx])
+            base_header = "_".join(parts) if parts else ""
+            
+            # Apply replacements for readability
+            for long_name, short_name in replacements.items():
+                base_header = base_header.replace(long_name, short_name)
+            # Handle rank duplicates
+            if base_header in seen:
+                final_headers.append(f"{base_header}_Rk")
+                seen[base_header] += 1
+            else:
+                final_headers.append(base_header)
+                seen[base_header] = 1
+    
+        # --- Extract table rows ---
+        rows = []
+        for row in table.find_all("tr")[len(header_rows):]:
+            cols = [col.get_text(strip=True) for col in row.find_all("td")]
+            if any(cols):
+                rows.append(cols)
 
-kenpom_historic()
+        # --- Convert to strings ---
+        final_headers = [str(h) for h in final_headers]
+        rows = [[str(c) for c in r] for r in rows]
+        def sep_names(row):
+            team = row[1]
+            rm_space = team.replace(" ", "")
+            pat="(\D+)([0-9]{1,2})"
+            match = re.match(pat, rm_space)
+            
+            if match != None:
+                seed = match.group(2)
+                if int(seed) > 9:
+                    team = team[:-2]
+                else:
+                    team = team[:-1]
+                row.insert(2, seed)
+                row[1] = team
+            else:
+                row.insert(2, -1)
+            return row
+        [[sep_names(row) for row in rows]]
+        final_headers.insert(2, 'Seed')
+        # --- Save to JSON ---
+        output = {
+            "headers": final_headers,
+            "rows": rows
+        }
+
+        # Save to JSON file
+        path = utils.get_path(f"model_data/kenpom{year}.json")
+        utils.save_json_data(output, path)
+
 def kenpom(date):
     kenpom_resp = requests.get(KENPOM, timeout=10).text
     #torvik_pre_resp = requests.get(TORVIK_PRE, timeout=10).text
