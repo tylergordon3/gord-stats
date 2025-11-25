@@ -38,7 +38,7 @@ def getIndValues(str):
 
 def saveSchedules():
     yr = util.getYrStr()
-    wk = util.get_week()
+    wk = util.get_last_completed_week()
     league = League(cons.LEAGUEID)
     rosters = fr.get(league)
     rosters['sched'] = [[] for _ in range(len(rosters))]
@@ -79,7 +79,7 @@ def recordsVsAll(all, team):
     return list(wins_vs_each_arr)
 
 def recordVsHelper(team_scores, opp_scores):
-    wk = util.get_week()
+    wk = util.get_last_completed_week()
     # For current team calculate wins vs 1 opponents schedule
     np_team = np.array(team_scores[:wk], dtype='float32')
     
@@ -94,7 +94,7 @@ def recordVsHelper(team_scores, opp_scores):
 
 def dfVsAllSched(rosters):
     yr = util.getYrStr()
-    wk = util.get_week()
+    wk = util.get_last_completed_week()
     rosters = util.load_df_from_json(f'data/rost{yr}_{wk}.json')
     all_results = {}
     for index, row in rosters.iterrows():
@@ -291,7 +291,7 @@ def calc_allplay(df):
     return styled
 
 def calcSos(row, dict):
-    week = util.get_week() -1
+    week = util.get_last_completed_week()
     opp_win = [dict[id-1] for id in row]
     opp_win =  opp_win[:week]
     return opp_win
@@ -299,7 +299,7 @@ def calcSos(row, dict):
 # Overall Opponent Winning Percentage of Opponent
 # Add up OW and divide by games
 def calcOOW(row, dict):
-    week = util.get_week() -1
+    week = util.get_last_completed_week()
     opp_win = [dict[id-1] for id in row]
     opp_win =  opp_win[:week]
     return sum(opp_win)/len(opp_win)
