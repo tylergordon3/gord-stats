@@ -15,6 +15,12 @@
   -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
 
+.custom-table-responsive {
+  width: 60%;
+  overflow-x: auto; /* horizontal scroll if table is too wide */
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+}
+
 /* Freeze first column */
 th:first-child,
 td:first-child {
