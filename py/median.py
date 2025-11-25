@@ -151,7 +151,7 @@ def save_to_html(input, week):
         .set_table_styles([
             { 'selector': '.col_heading', 'props': 'font-weight : bold'}
         ])
-    table = s.to_html(index=False, classes='custom-table-responsive')
+    table = s.to_html(index=False, classes='table-responsive')
     tz = timezone('EST')
     time_obj = datetime.datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
@@ -195,7 +195,7 @@ def save_to_html(input, week):
         </style>
         """
     table_div = f'''
-        <div class ="custom_container">
+        <div class ="table_wrapper">
         {legend_html}
         {table}
         </div>

@@ -15,11 +15,6 @@
   -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
 
-.custom-table-responsive {
-  width: 60%;
-  overflow-x: auto; /* horizontal scroll if table is too wide */
-  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
-}
 
 /* Freeze first column */
 th:first-child,
@@ -45,8 +40,7 @@ thead th {
   overflow: auto;
 }
 
-.container_custom {
-  display: flex;
-  flex-direction: column; /* Stacks elements vertically */
-  align-items: stretch; /* Makes flex items fill the container's width */
+.table-wrapper {
+  width: max-content;   /* matches table width exactly */
+  margin-bottom: 1rem;
 }
