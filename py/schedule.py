@@ -1,17 +1,16 @@
 '''
     Module to calculate schedule related stats
 '''
-import utilities as util
-import constants as cons
-import fantasy_rosters as fr
-import bestball as bb
-import pandas as pd
-import numpy as np
 import re
 import os
-from sleeper_wrapper import League
-from pretty_html_table import build_table
+import pandas as pd
+import numpy as np
+import bestball as bb
+import constants as cons
+import fantasy_rosters as fr
 import html_builder as htmb
+import utilities as util
+from sleeper_wrapper import League
 
 def getTeamIndex(rosters, roster_id):
     roster_bool = rosters['roster_id'] == roster_id
@@ -35,7 +34,6 @@ def getIndValues(str):
     loss = int(match.group(2))
     return [wins, loss]
     
-
 def saveSchedules():
     yr = util.getYrStr()
     wk = util.get_last_completed_week()
@@ -164,14 +162,14 @@ light_grid_style_header = {
 }
 
 def allSchedulesHTML(df):
+    # HTML for All-Play Stats
     styled_df = df.style \
         .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
         .apply(highlightActualRecords, axis=None) \
         .apply(style_last_row, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
-        .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:]) #\
-        #.set_table_attributes('class="table"')
+        .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:])
         
-    ## Columns are teams, rows are schedules
+    # Columns are teams, rows are schedules
     return_html = '''
     <h2>Records vs Every Schedule</h2>
     <p>Total column to right is that team's cumulative record
@@ -182,7 +180,6 @@ def allSchedulesHTML(df):
     <p> Green on right means your team is performing well </p>
     </p> Red on bottom means your schedule has been hard </p>
     '''
-   
     legend_html = """
         <div class="legend-container">
             <div class="legend-item">
@@ -223,7 +220,6 @@ def allSchedulesHTML(df):
     return_html += styled_df.to_html()
     return return_html
 
-
 def highlight_week(col):
     max_w = col.apply(lambda x: int(x.split('-')[0])).max()
     min_w = col.apply(lambda x: int(x.split('-')[0])).min()
@@ -231,6 +227,7 @@ def highlight_week(col):
             else 'background-color: #ffcdd2' if int(x.split('-')[0]) == min_w
             else '' for x in col]
 
+#       ****** ALLPLAY ******
 def allplay_records(weeks_df, team_lookup):
     records = []
 
@@ -290,48 +287,59 @@ def calc_allplay(df):
     styled = styled.format({'Win %': '{:.3f}'})
     return styled
 
-def calcSos(row, dict):
+#       ****** SOS ******
+
+# Overall Opponent Winning Percentage [OW%], 
+# Add up oppenent win %
+# Divide by games
+def calcOW(row, dict):
     week = util.get_last_completed_week()
     opp_win = [dict[id-1] for id in row]
     opp_win =  opp_win[:week]
-    return opp_win
+    return sum(opp_win)/len(opp_win)
 
-# Overall Opponent Winning Percentage of Opponent
-# Add up OW and divide by games
+# Overall Opponent Winning Percentage of Opponent's Opponents[OOW%]
+# Add up OW and divide by games 
 def calcOOW(row, dict):
     week = util.get_last_completed_week()
     opp_win = [dict[id-1] for id in row]
     opp_win =  opp_win[:week]
     return sum(opp_win)/len(opp_win)
     
-# Overall Opponent Winning Percentage [OW%], 
-# Add up oppenent win %
-# Divide by games
-def calcOW(row):
-    return sum(row)/len(row)
-
+# Calculate Strength of Victory
+# Average win % of defeated opponents
 def calcSOV(row, SOS_dict):
-    win_arr = (np.array(row['myScores']) > np.array(row['sched_score']))
-    opponents = np.array(row['opps'])
+    win_arr = (np.array(row['myScores']) > np.array(row['sched_score'])) 
+    opponents = np.array(row['sched'])
     arr = opponents[win_arr]
     sov = [SOS_dict[id-1] for id in arr]
     sov_ret = sum(sov)/len(sov)
     return sov_ret
 
 def SoS(rosters):
-    rosters['win%'] = rosters['wins'] / (rosters['losses'] + rosters['wins'])
-    rosters['opps'] = rosters['sched']
-    comp_dict = (rosters[['roster_id', 'win%']].copy().to_dict())['win%']
-    rosters['opp_win%_arr'] = rosters['opps'].apply(lambda row: calcSos(row, comp_dict))
-    rosters['OW'] = rosters['opp_win%_arr'].apply(lambda row: calcOW(row))
+    # Calculate Win % of each team
+    rosters['Win%'] = rosters['wins'] / (rosters['losses'] + rosters['wins'])
     
-    oow_dict = rosters[['roster_id', 'OW']].copy().to_dict()['OW']
-    rosters['OOW'] = rosters['opps'].apply(lambda row: calcOOW(row, oow_dict))
+    # Calculate overall opponent win %
+    # Overall Opponent Winning Percentage [OW%]
+    rosters['OW%'] = rosters['sched']
+    ow_dict = (rosters[['roster_id', 'Win%']].copy().to_dict())['Win%']
+    rosters['OW%'] = rosters['OW%'].apply(lambda row: calcOW(row, ow_dict))
+
+    # Calculate Overall Opponent Winning Percentage of the opponents faced [OOW%]
+    rosters['OOW%'] = rosters['sched']
+    oow_dict = rosters[['roster_id', 'OW%']].copy().to_dict()['OW%']
+    rosters['OOW%'] = rosters['OOW%'].apply(lambda row: calcOOW(row, oow_dict))
     
-    rosters['SOS'] = ((2 * rosters['OW']) + rosters['OOW'])/3
+    # Calculate Strength of Schedule
+    # (2 * OW) + OOW divided by 3
+    rosters['SOS'] = ((2 * rosters['OW%']) + rosters['OOW%'])/3
     SOS_dict = rosters[['roster_id', 'SOS']].copy().to_dict()['SOS']
+
+    # Calculate Strength of Victory
+    # Sum of winning % of defeated opponents
     rosters['SOV'] = rosters.apply(lambda row: calcSOV(row, SOS_dict), axis=1)
-    final_df = rosters[['team_name', 'OW', 'OOW', 'SOS', 'SOV']].sort_values(by='SOS', ascending=False)
+    final_df = rosters[['team_name', 'OW%', 'OOW%', 'SOS', 'SOV']].sort_values(by='SOS', ascending=False)
     styler = (
         final_df
         .style
@@ -342,7 +350,9 @@ def SoS(rosters):
         .set_table_attributes('class="table-responsive"'))
     return styler
 
+#       ****** MAIN ******
 def schedule_main(update_all):
+    # Set up
     html = ''
     yr = util.getYrStr()
     wk = util.get_week()
@@ -350,31 +360,35 @@ def schedule_main(update_all):
     if not os.path.exists(checkPath) or (update_all == True):
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
+
+    # All Play Standings
     html += '<h2>All-Play Standings</h2>'
     html += '<p>Whole league goes H2H, every week.</p>'
     allplay_styled = calc_allplay(rosters)
     html += allplay_styled.to_html()
 
+    # Strength of Schedule Stats
     sos_df = SoS(rosters)
     html += '<h2>Strength of Schedule & Victory</h2>'
     html += '<p>Sorted by SOS</p>'
+    html += "<p><strong>OW%:</strong>Overall Opponent Winning Percentage</p>"
+    html += "<p>- Sum of opponent's winning percentage</p>"
+    html += "<p><strong>OOW%:</strong>Overall Winning Percentage of Opponent's Opponents</p>"
+    html += "<p>- Sum of each opponent's OW%"
     html += sos_df.to_html()
-    # Get all schedules
+
+    # All-Play Stats
     allSched_df = dfVsAllSched(rosters)
     allSched_html = allSchedulesHTML(allSched_df)
     lines = allSched_html.split("\n")
+    # Make first row and column freeze on scroll
     for i, line in enumerate(lines):
         if "<td>" in line:
-            # Only the first <td> in each row
             line = line.replace("<td>", '<td class="first-col">', 1)
             lines[i] = line
     new_html = "\n".join(lines)
     html += new_html
 
- 
     output = htmb.add_front_matter(html, 'Schedule Stats')
-    # Save to html file
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
-
-schedule_main(True)
