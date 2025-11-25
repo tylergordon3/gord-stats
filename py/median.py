@@ -174,7 +174,6 @@ def save_to_html(input, week):
             .legend-container {
                 display: flex;
                 justify-content: space-evenly;
-                width: 60%;
                 padding: 10px;
                 border: 1px solid #ccc;
             }
