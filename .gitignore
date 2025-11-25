@@ -6,3 +6,5 @@ __pycache__/predictions.cpython-311.pyc
 __pycache__/scraper.cpython-311.pyc
 __pycache__/utils.cpython-311.pyc
 venv/*
+py/__pycache__/
+py/__pycache__/*

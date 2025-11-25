@@ -2,7 +2,7 @@ import kagglehub
 import numpy as np
 import utils
 import pandas as pd
-
+from datetime import datetime
 from scipy.stats import chi2_contingency
 from kagglehub import KaggleDatasetAdapter
 from sklearn import tree, preprocessing, svm
@@ -49,10 +49,10 @@ def initDataset():
     utils.save_json_data(cbb_full.to_json(), path)
 
 def trainModelsAndSave(df, update_about):
-
+    start = datetime.now()
     [cbb, ind, dep] = chiSquared(df)
     [X_train, X_test, y_train, y_test, features] = splitData(cbb, ind)
-    
+    print(f'Torvik data set split took: {(datetime.now() - start).total_seconds()}')
     if update_about: updateAbout(ind, dep, features, X_train, y_train)
 
     #[svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
@@ -90,25 +90,25 @@ def chiSquared(df):
 
 
 def runModels(X_train, X_test, y_train, y_test):
+    start = datetime.now()
     init_forest = RandomForestClassifier(random_state=13)
     init_forest.fit(X_train, y_train)
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
     forest_file = utils.get_path('models/forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
-    print('RunModelsTorvik : Wrote Forest')
+    print(f'Torvik Forest Model Training took: {(datetime.now() - start).total_seconds()}')
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
     svc_file = utils.get_path('models/svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
-    print('RunModelsTorvik : Wrote SVC')
+    print(f'Torvik SVC Model Training took: {(datetime.now() - start).total_seconds()}')
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
     dt_file = utils.get_path('models/dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
-    print('RunModelsTorvik : Wrote DT')
-    print('Done with run models.')
+    print(f'Torvik Decision Tree Model Training took: {(datetime.now() - start).total_seconds()}')
 
 def trainDT(init_dt, X_train, y_train, X_test, y_test):
     params = dtParams(init_dt, X_train, y_train)

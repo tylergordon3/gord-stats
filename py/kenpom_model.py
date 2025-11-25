@@ -1,8 +1,7 @@
-import kagglehub
 import numpy as np
 import utils
 import pandas as pd
-
+from datetime import datetime
 from scipy.stats import chi2_contingency
 from kagglehub import KaggleDatasetAdapter
 from sklearn import tree, preprocessing, svm
@@ -13,15 +12,14 @@ import base64
 from io import BytesIO
 from sklearn.metrics import classification_report, confusion_matrix
 import warnings
-import time
+
 warnings.filterwarnings("ignore")
 
 def trainModelsAndSave(df): 
-    start = time.time()
+    start = datetime.now()
     [cbb, ind] = chiSquared(df)
- 
     [X_train, X_test, y_train, y_test] = splitData(cbb, ind)
-
+    print(f'Kenpom data set split took: {(datetime.now() - start).total_seconds()}')
     #[svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
     runModels(X_train, X_test, y_train, y_test)
 
@@ -59,25 +57,25 @@ def chiSquared(df):
 
 
 def runModels(X_train, X_test, y_train, y_test):
+    start = datetime.now()
     init_forest = RandomForestClassifier(random_state=13)
     init_forest.fit(X_train, y_train)
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
     forest_file = utils.get_path('models/kp_forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
-    print('RunModelsKenpom : Wrote Forest')
+    print(f'Kenpom Forest Model Training took: {(datetime.now() - start).total_seconds()}')
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
     svc_file = utils.get_path('models/kp_svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
-    print('RunModelsKenpom : Wrote SVC')
+    print(f'Kenpom SVC Model Training took: {(datetime.now() - start).total_seconds()}')
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
     dt_file = utils.get_path('models/kp_dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
-    print('RunModelsKenpom : Wrote DT')
-    print('Done with run models for Kenpom.')
+    print(f'Kenpom Decision Tree Model Training took: {(datetime.now() - start).total_seconds()}')
 
 def trainDT(init_dt, X_train, y_train, X_test, y_test):
     params = dtParams(init_dt, X_train, y_train)

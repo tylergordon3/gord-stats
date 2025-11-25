@@ -3,6 +3,7 @@ import model, scraper, utils, predictions, constants, kenpom_model
 import pandas as pd
 from datetime import datetime, date
 
+start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
 torvik_path = utils.get_path(f"data/torvik{today}.json")
 kenpom_path = utils.get_path(f"data/kenpom{today}.json")
@@ -33,7 +34,8 @@ if save_model:
         data = json.load(f)
     kenpom_df = pd.DataFrame(data, columns=constants.kenpom)
     model.trainModelsAndSave(torvik_df, update_about)
+    print(f'Torvik training took: {(datetime.now() - start).total_seconds()}')
     kenpom_model.trainModelsAndSave(kenpom_df)
-
+    print(f'Kenpom training took: {(datetime.now() - start).total_seconds()}')
 predictions.predict(date.today())
     
