@@ -136,15 +136,16 @@ def getToPlay(starters, weeks_players, db):
 def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
         print(f"No Data for week {week} yet.")
-        return 
+        return
     scenarios = consoleOutput(input)
-    input = input.drop(columns=["roster_id","matchup_id","status","num_to_play"])
+    save_status = input[['team', 'status']]
+    input = input.drop(columns=["roster_id","matchup_id","num_to_play", "status"])
     cols = list(input)
     cols.insert(0, cols.pop(cols.index('rank')))
     input = input.loc[:, cols]
     input['rank'] = input['rank'].astype('int64')
     s = input.style \
-        .apply(highlightRows, axis=1) \
+        .apply(highlightRows, axis=1, save_status=save_status) \
         .format(precision = 2) \
         .hide(axis='index') \
         .set_table_styles([
@@ -157,15 +158,68 @@ def save_to_html(input, week):
     file = f"week{week}_median.html"
     median_path = "docs/median/"
     filename = os.path.join(median_path, file)
-    output = time + "<br>" + table + scenarios
+    legend_html = """
+        <div class="legend-container">
+            <div class="legend-item">
+                <span class="legend-color-box category-A"></span>Locked Above Median
+            </div>
+            <div class="legend-item">
+                <span class="legend-color-box category-B"></span>Locked Below Median
+            </div>
+            <div class="legend-item">
+                <span class="legend-color-box category-C"></span>Above Median (not locked)
+            </div>
+        </div>
+        <style>
+            .legend-container {
+                display: flex;
+                justify-content: space-evenly;
+                margin-top: 20px;
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+            .legend-item {
+                display: inline-flex;
+                align-items: center;
+                margin-bottom: 5px;
+            }
+            .legend-color-box {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+                border: 1px solid #000;
+            }
+            .category-A { background-color: #3CB371; }
+            .category-B { background-color: #FF8080; }
+            .category-C { background-color: lightgreen; }
+        </style>
+        """
+    table_div = f'''
+        <div class ="container">
+        {legend_html}
+        {table}
+        </div>
+'''
+    output = time + "<br>" + table_div + scenarios
     fm = htmb.add_front_matter(output,'Median')
     with open(filename, 'w') as f:
         f.write(fm)
         print("Wrote to ", filename)
     return
 
-def highlightRows(row):
-    if row['rank'] <= 5:
+def highlightRows(row, save_status):
+    name = row['team']
+    status_df = save_status[save_status['team'] == name]
+    if status_df.empty:
+        status = None
+    else:
+        status = status_df['status'].iloc[0]
+
+    if status == "W":
+        return ['background-color: #3CB371'] * len(row)
+    elif status == "L":
+        return ['background-color:  #FF8080'] * len(row)
+    elif row['rank'] <= 5:
         return ['background-color: lightgreen'] * len(row)
     else:
         return [''] * len(row)
@@ -185,7 +239,7 @@ def consoleOutput(input_df):
 def doConsoleOutput(row, df, see_above):
     html = ''
     if ((row['status'] == "L") | (row['status'] == "W")):
-        html += f'<p>{row['team']}, has:, {row['status']}, vs the median.</p>'
+        html += f'<p>{row['team']}, has: {row['status']}, vs the median.</p>'
         return html
     elif (row['rank'] > 5):
         see_above.append(row['team'])
@@ -208,9 +262,11 @@ def printMedianScenarios(currTeam, df):
     return html
 
 def median_main(update_all):
+    
     if update_all:
         for week in range(1,utilities.get_week() + 1):
             median(league, week)
     htmb.generate_landing('docs/median', 'median', 'Median')
 
+median(league,11)
 median(league,12)
