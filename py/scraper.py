@@ -93,14 +93,17 @@ def kenpom_historic():
                     team = team[:-1]
                 row.insert(2, seed)
                 row.insert(3, True)
+                row.insert(4, year)
                 row[1] = team
             else:
                 row.insert(2, -1)
                 row.insert(3, False)
+                row.insert(4, year)
             return row
         [[sep_names(row) for row in rows]]
         final_headers.insert(2, 'Seed')
-        final_headers.insert(3, 'TOURNEY')
+        final_headers.insert(3, 'Tourney')
+        final_headers.insert(4, 'Year')
         # --- Save to JSON ---
         output = {
             "headers": final_headers,

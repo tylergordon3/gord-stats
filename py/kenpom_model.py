@@ -15,20 +15,19 @@ from sklearn.metrics import classification_report, confusion_matrix
 import warnings
 warnings.filterwarnings("ignore")
 
-def trainModelsAndSave(df):
-    
+def trainModelsAndSave(df): 
     [cbb, ind] = chiSquared(df)
-    print(cbb)
-    print(ind)
-    #[X_train, X_test, y_train, y_test] = splitData(cbb, ind)
+ 
+    [X_train, X_test, y_train, y_test] = splitData(cbb, ind)
 
     #[svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
-    #runModels(X_train, X_test, y_train, y_test)
+    runModels(X_train, X_test, y_train, y_test)
 
 def splitData(cbb, ind):
+    print(ind)
     cbb = cbb.drop(columns=ind)
     cbb_features = cbb.iloc[:,:-1]
-    cbb_label = cbb['TOURNEY']
+    cbb_label = cbb['Tourney']
 
     X = cbb_features.values
     y = cbb_label.values  
@@ -39,42 +38,44 @@ def splitData(cbb, ind):
     return [X_train, X_test, y_train, y_test]
 
 def chiSquared(df):
-    cbb = df.drop(columns=['TEAM', 'CONF', 'POSTSEASON', 'SEED', 'YEAR', 
-                           'G', 'W', 'BARTHAG', 'WAB'])
+    cbb = df.drop(columns=['Rk','Team', 'Seed', 'Conf', 'Year', 
+                           'W-L', 'Luck_Rk', 'ORtg_Rk', 'DRtg_Rk',
+                           'SOS_NetRtg_Rk', 'SOS_ORtg_Rk', 'SOS_DRtg_Rk', 
+                           'NCSOS_NetRtg_Rk', "AdjT_Rk"])
     cbb_features = cbb.iloc[:,:-1]
     ind = []
     dep = []
     pval = []
     for col in cbb_features:
-        csq = chi2_contingency(pd.crosstab(cbb[col], cbb['TOURNEY']))
+        csq = chi2_contingency(pd.crosstab(cbb[col], cbb['Tourney']))
         pval.append(csq[1])
         if csq[1] > .05:
             ind.append(col)
         else:
             dep.append(col)
-    return [cbb, ind, dep]
+    return [cbb, ind]
 
 
 def runModels(X_train, X_test, y_train, y_test):
     init_forest = RandomForestClassifier(random_state=13)
     init_forest.fit(X_train, y_train)
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
-    forest_file = utils.get_path('models/forest_model.pkl')
+    forest_file = utils.get_path('models/kp_forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
 
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
-    svc_file = utils.get_path('models/svc_model.pkl')
+    svc_file = utils.get_path('models/kp_svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
 
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
-    dt_file = utils.get_path('models/dt_model.pkl')
+    dt_file = utils.get_path('models/kp_dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
 
-    print('Done with run models.')
+    print('Done with run models for Kenpom.')
 
 def trainDT(init_dt, X_train, y_train, X_test, y_test):
     params = dtParams(init_dt, X_train, y_train)

@@ -22,18 +22,18 @@ if not os.path.exists(torvik_dataset_path):
     print(f"Saved dataset to json.")
 
 if not os.path.exists(kenpom_dataset_path):
-   scraper.kenpom_historic()
-print(f"Saved dataset to json.")
+    scraper.kenpom_historic()
+    print(f"Saved dataset to json.")
 
 update_about = 0
-save_model = 1
+save_model = 0
 if save_model:
-    #torvik_df = utils.load_json_data(torvik_dataset_path)
+    torvik_df = utils.load_json_data(torvik_dataset_path)
     with open('model_data/kenpom_all.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
     kenpom_df = pd.DataFrame(data, columns=constants.kenpom)
-    #model.trainModelsAndSave(torvik_df, update_about)
-    #kenpom_model.trainModelsAndSave(kenpom_df)
+    model.trainModelsAndSave(torvik_df, update_about)
+    kenpom_model.trainModelsAndSave(kenpom_df)
 
 predictions.predict(date.today())
     
