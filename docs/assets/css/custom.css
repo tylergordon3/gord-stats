@@ -9,14 +9,6 @@
   border-right: none;
 }
 
-.inner-custom {
-  position: static;
-  width: 80%;
-  padding: 20px 10px;
-  margin: 0 auto;
-  overflow: auto;
-}
-
 .sticky-table {
     width: 100%;
     overflow-x: auto;          /* allows horizontal scroll on small screens */
