@@ -188,7 +188,4 @@ def predict(date):
     with open(path, 'w') as f: 
        f.write(html)  
        print(f'Wrote to: {path} for {date}')
-       
-from datetime import date
-predict(date.today())
     
