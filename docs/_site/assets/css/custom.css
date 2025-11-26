@@ -8,3 +8,27 @@
 .simple-nav a:last-child {
   border-right: none;
 }
+
+.sticky-table table {
+    border-collapse: separate;
+    border-spacing: 0;      /* keeps normal table layout */
+    width: 100%;
+}
+
+.sticky-table th,
+.sticky-table td {
+    padding: 6px 8px;
+    border: 1px solid #ccc;   /* normal borders */
+}
+
+.sticky-table th {
+    position: sticky;
+    top: 0;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+    z-index: 2;
+    border-right: 1px solid #ccc;
+}
+
+.sticky-table th:last-child {
+    border-right: none;             /* keep right edge clean */
+}

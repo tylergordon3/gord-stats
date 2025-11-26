@@ -8,3 +8,6 @@ __pycache__/utils.cpython-311.pyc
 venv/*
 py/__pycache__/
 py/__pycache__/*
+docs/_site/
+docs/.jekyll-cache/
+docs/.sass-cache/

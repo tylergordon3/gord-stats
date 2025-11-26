@@ -5,7 +5,6 @@ import json
 import constants
 from sklearn import preprocessing
 import html_builder as htmb
-from pretty_html_table import build_table
 
 def predict(date):
     randomForest = utils.read_from_pickle('forest')
@@ -116,49 +115,19 @@ def predict(date):
     comb1_torvik = pd.merge(torvik_teams, df_torvik_rf, "left", ["Team", "Rk"])
     comb2_torvik = pd.merge(comb1_torvik, df_torvik_svc, "left", ["Team", "Rk"])
     combined_torvik = pd.merge(comb2_torvik, df_torvik_dt, "left", ["Team", "Rk"])
-    df_torvik_clean = combined_torvik.dropna(subset=['RF', 'DT', 'SVC'], how= 'all')
-    df_torvik_clean.replace(np.nan, False, inplace=True)
-    df_torvik_clean['Num Models Made'] = df_torvik_clean[['RF', 'DT', 'SVC']].sum(1)
-    df_torvik_clean['Rk'] = pd.to_numeric(df_torvik_clean['Rk'])
-    df_torvik_clean['WeightedScore'] = (10 * df_torvik_clean['Num Models Made']) + (80-df_torvik_clean['Rk'])
-    df_torvik_clean = df_torvik_clean.rename(columns={'Rk' : 'Torvik Rank'})
-    df_torvik_final = df_torvik_clean.drop(columns=['Num Models Made'])
-
-    top64_torvik = df_torvik_final.sort_values("WeightedScore", ascending=False).head(64)
-    top64_torvik['MM Rank'] = range(1, 65)
-    top64_torvik['Est. Seed'] = np.repeat(range(1,17), 4)
-    top64_torvik = top64_torvik[[
-        'MM Rank',
-        'Torvik Rank',
-        'Est. Seed',
-        'Team',
-        'RF',
-        'DT',
-        'SVC',
-        'WeightedScore'
-    ]]
-
+    
     # Kenpom Final Clean
     comb1_kenpom = pd.merge(kenpom_teams, df_kenpom_rf, "left", ["Team", "Rk"])
     comb2_kenpom = pd.merge(comb1_kenpom, df_kenpom_svc, "left", ["Team", "Rk"])
     combined_kenpom = pd.merge(comb2_kenpom, df_kenpom_dt, "left", ["Team", "Rk"])
-    df_kenpom_clean = combined_kenpom.dropna(subset=['RF', 'DT', 'SVC'], how= 'all')
-    df_kenpom_clean.replace(np.nan, False, inplace=True)
-    df_kenpom_clean['Num Models Made'] = df_kenpom_clean[['RF', 'DT', 'SVC']].sum(1)
-    df_kenpom_clean['Rk'] = pd.to_numeric(df_kenpom_clean['Rk'])
-    df_kenpom_clean['WeightedScore'] = (10 * df_kenpom_clean['Num Models Made']) + (80-df_kenpom_clean['Rk'])
-    df_kenpom_clean = df_kenpom_clean.rename(columns={'Rk' : 'Kenpom Rank'})
-    df_kenpom_final = df_kenpom_clean.drop(columns=['Num Models Made'])
-    
-    main = pd.merge(combined_kenpom, combined_torvik, "left", "Team")
-    main['Rk_y'].replace(np.nan, 0, inplace=True)
-    main['Rk_x'].replace(np.nan, 0, inplace=True)
-    main.replace(np.nan, False, inplace=True)
+   
+    main = pd.merge(combined_kenpom, combined_torvik, on="Team", how='outer')
     
     main['Num KP Models'] = main[['RF_x', 'SVC_x', 'DT_x']].sum(1)
     main['Num TOR Models'] = main[['RF_y', 'SVC_y', 'DT_y']].sum(1)
     main['Rk_y'] = pd.to_numeric(main['Rk_y'])
     main['Rk_x'] = pd.to_numeric(main['Rk_x'])
+    
     main['WeightedScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
             ((10 * main['Num TOR Models']) + (80-main['Rk_y'])))/2
 
@@ -171,10 +140,35 @@ def predict(date):
         'Num KP Models' : '# Models Kenpom',
         'Num TOR Models' : '# Models Torvik'
     })
-        
-    tab = build_table(main64, 'green_dark')
-    html = htmb.add_front_matter(tab, f'Prediction - {date}')
+
+    def stars(count, max_count=3):
+        filled = '★' * count
+        empty = '☆' * (max_count - count)
+        return f"({filled}{empty})"
+
+    main64['Kenpom Rank'] = main64['Kenpom Rank'].astype(int)
+    main64['Torvik Rank'] = main64['Torvik Rank'].astype(int)
+
+    main64['Kenpom'] = main64['Kenpom Rank'].astype(str)+ ' ' + main64['# Models Kenpom'].apply(stars)
+    main64['Torvik'] = main64['Torvik Rank'].astype(str)+ ' ' + main64['# Models Torvik'].apply(stars)
+
+    main64 = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik'])
+    main64['WeightedScore'] = main64['WeightedScore'].astype(float).round(3)
+    styler = (
+        main64
+        .style
+        .hide(axis="index") 
+        .format({'WeightedScore' : "{:.1f}"})
+        .set_table_attributes('class="sticky-table"'))
+ 
+    df_html = styler.to_html()
+
     path = utils.get_path(f'docs/current_model.html')
+    html = htmb.add_front_matter(df_html, f'Prediction - {date}')
     with open(path, 'w') as f: 
        f.write(html)  
        print(f'Wrote to: {path} for {date}')
+       
+from datetime import date
+predict(date.today())
+    
