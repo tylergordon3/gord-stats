@@ -131,9 +131,15 @@ def predict(date):
     main['WeightedScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
             ((10 * main['Num TOR Models']) + (80-main['Rk_y'])))/2
 
+    #max_rank = main[['Rk_x', 'Rk_y']].max().max()
+    #main['Normalized'] = (((max_rank - main['Rk_x']) / (max_rank - 1) * 100) +
+    #((max_rank - main['Rk_y']) / (max_rank - 1) * 100))/2
+
     main64 = main.sort_values("WeightedScore", ascending=False).head(64)
     main64 =  main64.drop(columns=['RF_x', 'SVC_x', 'DT_x', 'RF_y', 'SVC_y', 'DT_y'])
-    main64['Overall Rank'] = range(1, 65)
+    main64['Overall'] = range(1, 65)
+    main64['Seed'] = ((main64['Overall'] - 1) // 4 + 1).astype(int)
+    main64['Overall Rank'] = main64['Overall'].astype(str) + ' (Seed ' + main64['Seed'].astype(str) + ')'
     main64 = main64.rename(columns={
         'Rk_x' : 'Kenpom Rank', 
         'Rk_y' : 'Torvik Rank',
@@ -151,12 +157,15 @@ def predict(date):
 
     main64['Kenpom'] = main64['Kenpom Rank'].astype(str) + ' ' + main64['# Models Kenpom'].apply(stars)
     main64['Torvik'] = main64['Torvik Rank'].astype(str) + ' ' + main64['# Models Torvik'].apply(stars)
+   
     # Create Styler object for HTML table
+    #styler = main64[['Kenpom', 'Torvik', 'WeightedScore', 'Normalized', 'Overall Rank']].style
     styler = main64[['Kenpom', 'Torvik', 'WeightedScore', 'Overall Rank']].style
 
-    
 
-    df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik'])
+    df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed', 'Overall'])
+    #df = df[['Team', 'Kenpom', 'Torvik', 'WeightedScore', 'Normalized', 'Overall Rank']]
+    df = df[['Team', 'Kenpom', 'Torvik', 'WeightedScore', 'Overall Rank']]
     styler = (
         df
         .style
