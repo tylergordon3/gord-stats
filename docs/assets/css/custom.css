@@ -9,12 +9,6 @@
   border-right: none;
 }
 
-.sticky-table {
-    width: 100%;
-    overflow-x: auto;          /* allows horizontal scroll on small screens */
-    -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
-}
-
 .sticky-table table {
     border-collapse: separate;
     border-spacing: 0;      /* keeps normal table layout */
