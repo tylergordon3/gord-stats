@@ -10,18 +10,19 @@
 }
 
 .sticky-table table {
-    display: flex;
-    border-collapse: separate;
-    border-spacing: 0;      /* keeps normal table layout */
-    width: 100%;
-    font-family: monospace; 
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center; 
-    overflow-x: auto;
-   -webkit-overflow-scrolling: touch;
-   table-layout: auto;      /* lets columns shrink */
-   word-wrap: break-word;   
+  width: 100% !important;
+  max-width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: auto !important;  
+
+  border-spacing: 0;      /* keeps normal table layout */
+  width: 100%;
+  max-width: 100%;
+  font-family: monospace; 
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center; 
+  font-size: inherit;
 }
 
 .custom-inner {
@@ -46,4 +47,21 @@
 
 .sticky-table th:last-child {
     border-right: none;             /* keep right edge clean */
+}
+
+/* Reduce padding/headings on smaller screens */
+@media (max-width: 480px) {
+  table th,
+  table td {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 320px) {
+  table th,
+  table td {
+    padding: 3px 4px !important;
+    font-size: 11px !important;
+  }
 }
