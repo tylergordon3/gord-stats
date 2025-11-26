@@ -55,5 +55,5 @@ title: Bracket Gordology
     <p><a href="history.html" title="Model History">Model History</a></p>
 '''
     with open('../docs/index.html', 'w') as f: 
-       f.write(index)  
+       f.write(index.lstrip())  
        print(f'Wrote to: {path} for {day}')
