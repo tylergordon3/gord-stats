@@ -19,7 +19,6 @@
 .sticky-table th,
 .sticky-table td {
     padding: 6px 8px;
-    border: 1px solid #ccc;   /* normal borders */
 }
 
 .sticky-table th {
