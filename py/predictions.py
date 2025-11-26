@@ -149,17 +149,28 @@ def predict(date):
     main64['Kenpom Rank'] = main64['Kenpom Rank'].astype(int)
     main64['Torvik Rank'] = main64['Torvik Rank'].astype(int)
 
-    main64['Kenpom'] = main64['Kenpom Rank'].astype(str)+ ' ' + main64['# Models Kenpom'].apply(stars)
-    main64['Torvik'] = main64['Torvik Rank'].astype(str)+ ' ' + main64['# Models Torvik'].apply(stars)
+    main64['Kenpom'] = main64['Kenpom Rank'].astype(str) + ' ' + main64['# Models Kenpom'].apply(stars)
+    main64['Torvik'] = main64['Torvik Rank'].astype(str) + ' ' + main64['# Models Torvik'].apply(stars)
+    # Create Styler object for HTML table
+    styler = main64[['Kenpom', 'Torvik', 'WeightedScore', 'Overall Rank']].style
 
-    main64 = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik'])
-    main64['WeightedScore'] = main64['WeightedScore'].astype(float).round(3)
+    
+
+    df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik'])
     styler = (
-        main64
+        df
         .style
         .hide(axis="index") 
         .format({'WeightedScore' : "{:.1f}"})
-        .set_table_attributes('class="sticky-table"'))
+        .set_table_attributes('class="sticky-table"')
+        .background_gradient(
+            subset=['Kenpom'],
+            cmap='cividis',  # green = better (lower rank)
+            gmap=main64['Kenpom Rank'])
+        .background_gradient(
+            subset=['Torvik'],
+            cmap='cividis',
+            gmap=main64['Torvik Rank']))
  
     df_html = styler.to_html()
 
