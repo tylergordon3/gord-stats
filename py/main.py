@@ -1,5 +1,6 @@
 import os, json
 import model, scraper, utils, predictions, constants, kenpom_model
+import generate_home
 import pandas as pd
 from datetime import datetime, date
 
@@ -37,5 +38,8 @@ if save_model:
     print(f'Torvik training took: {(datetime.now() - start).total_seconds()}')
     kenpom_model.trainModelsAndSave(kenpom_df)
     print(f'Kenpom training took: {(datetime.now() - start).total_seconds()}')
+
 predictions.predict(date.today())
-    
+generate_home.generate_home_about()
+
+

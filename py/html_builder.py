@@ -1,5 +1,3 @@
-import os
-
 def add_front_matter(html, title):
     fm = f"""---
 layout: default

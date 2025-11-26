@@ -131,10 +131,6 @@ def predict(date):
     main['WeightedScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
             ((10 * main['Num TOR Models']) + (80-main['Rk_y'])))/2
 
-    #max_rank = main[['Rk_x', 'Rk_y']].max().max()
-    #main['Normalized'] = (((max_rank - main['Rk_x']) / (max_rank - 1) * 100) +
-    #((max_rank - main['Rk_y']) / (max_rank - 1) * 100))/2
-
     main64 = main.sort_values("WeightedScore", ascending=False).head(64)
     main64 =  main64.drop(columns=['RF_x', 'SVC_x', 'DT_x', 'RF_y', 'SVC_y', 'DT_y'])
     main64['Overall'] = range(1, 65)
@@ -164,7 +160,6 @@ def predict(date):
 
 
     df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed', 'Overall'])
-    #df = df[['Team', 'Kenpom', 'Torvik', 'WeightedScore', 'Normalized', 'Overall Rank']]
     df = df[['Team', 'Kenpom', 'Torvik', 'WeightedScore', 'Overall Rank']]
     styler = (
         df
@@ -183,9 +178,11 @@ def predict(date):
  
     df_html = styler.to_html()
 
-    path = utils.get_path(f'docs/current_model.html')
+    path = utils.get_path(f'docs/predict_{date}.html')
     html = htmb.add_front_matter(df_html, f'Prediction - {date}')
     with open(path, 'w') as f: 
        f.write(html)  
        print(f'Wrote to: {path} for {date}')
+
+
     
