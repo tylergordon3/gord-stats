@@ -273,6 +273,7 @@ def calc_allplay(df):
         columns='week',
         values='wl'
         )
+    pivot.index.name = None
     total_wins = valid_records.groupby('team_name')['wins'].sum()
     total_losses = valid_records.groupby('team_name')['losses'].sum()
 
@@ -285,7 +286,7 @@ def calc_allplay(df):
 
     styled = pivot.style \
         .apply(highlight_week, subset=week_cols) \
-        .set_table_attributes('class="sticky-table')
+        .set_table_attributes('class="sticky-table"')
     styled = styled.format({'Win %': '{:.3f}'})
     return styled
 
@@ -349,7 +350,7 @@ def SoS(rosters):
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .set_table_attributes('class="table-responsive"'))
+        .set_table_attributes('class="sticky-table"'))
     return styler
 
 #       ****** MAIN ******
@@ -379,16 +380,17 @@ def schedule_main(update_all):
 
     # All-Play Stats
     allSched_df = dfVsAllSched(rosters)
-    allSched_html = allSchedulesHTML(allSched_df)
-    lines = allSched_html.split("\n")
+    #allSched_html = allSchedulesHTML(allSched_df)
+    html += allSchedulesHTML(allSched_df)
+    lines = html.split("\n")
     # Make first row and column freeze on scroll
     for i, line in enumerate(lines):
         if "<td>" in line:
             line = line.replace("<td>", '<td class="first-col">', 1)
             lines[i] = line
     new_html = "\n".join(lines)
-    html += new_html
+    #html += new_html
 
-    output = htmb.add_front_matter(html, 'Schedule Stats')
+    output = htmb.add_front_matter(new_html, 'Schedule Stats')
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
