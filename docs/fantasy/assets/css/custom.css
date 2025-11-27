@@ -42,5 +42,4 @@ thead th {
 .table-wrapper {
   width: max-content;   /* matches table width exactly */
   margin-bottom: 1rem;
-  width: max-content;
 }
