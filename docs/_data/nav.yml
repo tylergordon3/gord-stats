@@ -8,7 +8,7 @@ docs:
   url: /about.html
 
 - title: Current Model
-  url: /current_model.html
+  url:  /__TODAY__.html
 
 - title: Model History
   url: /history.html

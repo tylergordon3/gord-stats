@@ -1,7 +1,11 @@
 <div id="nav">
   <nav class="simple-nav">
     {% for item in site.data.nav.docs %}
-      <a href="{{ item.url | absolute_url }}">{{ item.title }}</a>
+      {% if item.url contains "__TODAY__" %}
+        <a href="/predict_{{ site.time | date: '%Y-%m-%d' }}.html">{{ item.title }}</a>
+      {% else %}
+        <a href="{{ item.url | absolute_url }}">{{ item.title }}</a>
+      {% endif %}
     {% endfor %}
   </nav>
 </div>
