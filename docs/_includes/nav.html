@@ -2,9 +2,11 @@
   <nav class="simple-nav">
     {% for item in site.data.nav.docs %}
       {% if item.url contains "__TODAY__" %}
-        <a href="/predict_{{ site.time | date: '%Y-%m-%d' }}.html">{{ item.title }}</a>
+        <a href="{{ 'predict_' | append: (site.time | date: '%Y-%m-%d') | append: '.html' | relative_url }}">
+          {{ item.title }}
+        </a>
       {% else %}
-        <a href="{{ item.url | absolute_url }}">{{ item.title }}</a>
+        <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
       {% endif %}
     {% endfor %}
   </nav>

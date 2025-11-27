@@ -12,6 +12,9 @@ collections:
   posts:
     output          : true
   
+url: "https://tylergordon3.github.io"
+baseurl: "/cbb-model"
+
 # Handling Reading
 safe                : false
 include             : [".htaccess"]
