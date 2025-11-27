@@ -50,7 +50,7 @@ host                : 127.0.0.1
 show_dir_listing    : false
 
 # Outputting
-permalink           : date
+# permalink           : date
 paginate_path       : /page:num
 timezone            : null
 
