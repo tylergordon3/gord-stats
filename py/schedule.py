@@ -283,7 +283,9 @@ def calc_allplay(df):
     ]
     week_cols = [c for c in pivot.columns if str(c).isdigit() or c.startswith('week_')]
 
-    styled = pivot.style.apply(highlight_week, subset=week_cols)
+    styled = pivot.style \
+        .apply(highlight_week, subset=week_cols) \
+        .set_table_attributes('class="sticky-table')
     styled = styled.format({'Win %': '{:.3f}'})
     return styled
 
