@@ -199,6 +199,7 @@ def allSchedulesHTML(df):
                 margin-top: 20px;
                 padding: 10px;
                 border: 1px solid #ccc;
+                width: 100%;
             }
             .legend-item {
                 display: inline-flex;
@@ -279,13 +280,13 @@ def calc_allplay(df):
 
     pivot['Total'] = total_wins.astype(str) + "-" + total_losses.astype(str)
     pivot["Win %"] = (total_wins / (total_wins + total_losses)).round(3)
-    pivot = pivot.loc[
-    total_wins.sort_values(ascending=False).index
-    ]
+    pivot = pivot.sort_values(by="Win %", ascending=False)
     week_cols = [c for c in pivot.columns if str(c).isdigit() or c.startswith('week_')]
 
     styled = pivot.style \
         .apply(highlight_week, subset=week_cols) \
+        .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
+        .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, pivot.columns[-1]:]) \
         .set_table_attributes('class="sticky-table"')
     styled = styled.format({'Win %': '{:.3f}'})
     return styled
@@ -350,7 +351,10 @@ def SoS(rosters):
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .set_table_attributes('class="sticky-table"'))
+        .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False)
+        )
+    
+        #.set_table_attributes('class="sticky-table"'))
     return styler
 
 #       ****** MAIN ******

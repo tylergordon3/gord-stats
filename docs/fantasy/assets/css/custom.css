@@ -16,8 +16,8 @@
 }
 
 /* Freeze first column */
-th:first-child,
-td:first-child {
+.sticky-table th:first-child,
+.sticky-table td:first-child {
   position: sticky;
   left: 0;
   z-index: 2;
@@ -31,12 +31,11 @@ thead th {
   z-index: 3;
 }
 
-.inner_custom {
+.custom-inner {
   position: relative;
-  width: 80%;
+  max-width: 800px;
   padding: 20px 10px;
   margin: 0 auto;
-  overflow: auto;
 }
 
 .table-wrapper {
@@ -75,4 +74,21 @@ thead th {
 
 .sticky-table th:last-child {
     border-right: none;             /* keep right edge clean */
+}
+
+/* Reduce padding/headings on smaller screens */
+@media (max-width: 480px) {
+  table th,
+  table td {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 320px) {
+  table th,
+  table td {
+    padding: 3px 4px !important;
+    font-size: 11px !important;
+  }
 }
