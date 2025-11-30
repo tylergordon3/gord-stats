@@ -203,6 +203,7 @@ def save_to_html(input, week):
             .legend-container {
                 width: max-content;
                 display: flex;
+                flex-direction: column;
                 justify-content: space-evenly;
                 padding: 10px;
                 gap: 20px;
