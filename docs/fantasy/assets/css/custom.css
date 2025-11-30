@@ -92,3 +92,14 @@ thead th {
     font-size: 11px !important;
   }
 }
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* smooth iOS scroll */
+}
+
+.table-scroll table {
+    width: 100%;
+    border-collapse: collapse;
+}
