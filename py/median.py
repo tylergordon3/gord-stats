@@ -8,6 +8,7 @@ import player_db as pdb
 import os
 import html_builder as htmb
 import utilities
+import re
 
 league = League(c.LEAGUEID)
 
@@ -132,6 +133,24 @@ def getToPlay(starters, weeks_players, db):
     names = pd.unique(to_play_names)
     return list(names)
 
+def pretty_players(list):
+    str = ''
+    for name in list:
+        if name.isupper():
+            str += name
+            str += ', '
+            continue
+        parts = re.findall(r'[A-Z][a-z]*', name)
+        if len(parts) == 0:
+            str += name
+            str += ', '
+            continue
+        first = parts[0][0] + "." 
+        last = parts[-1]
+        str += f"{first} {last}, "
+    return str[:-2]
+            
+
 # ------ Functions for printing to console and HTML formatting --------
 def save_to_html(input, week):
     if not isinstance(input, pd.DataFrame):
@@ -139,11 +158,21 @@ def save_to_html(input, week):
         return
     scenarios = consoleOutput(input)
     save_status = input[['team', 'status']]
-    input = input.drop(columns=["roster_id","matchup_id","num_to_play", "status"])
+    input['Players'] = input['to_play'].apply(pretty_players)
+    input = input.sort_values(["rank", "max_pts"], ascending=[True, False])
+    input = input.drop(columns=["roster_id","matchup_id","num_to_play", "status", 'to_play'])
     cols = list(input)
     cols.insert(0, cols.pop(cols.index('rank')))
     input = input.loc[:, cols]
     input['rank'] = input['rank'].astype('int64')
+    input = input.rename(columns={
+                "team": "Team",
+                "Players": "Players",
+                "points" : "Points",
+                "max_pts" : "Max Points", 
+                "rank" : "Rank"})
+    input = input[["Rank", "Team", 'Players', "Points", "Max Points"]]
+    
     s = input.style \
         .apply(highlightRows, axis=1, save_status=save_status) \
         .format(precision = 2) \
@@ -151,7 +180,7 @@ def save_to_html(input, week):
         .set_table_styles([
             { 'selector': '.col_heading', 'props': 'font-weight : bold'}
         ])
-    table = s.to_html(index=False, classes='table-responsive')
+    table = s.to_html(index=False, classes='sticky-table')
     tz = timezone('EST')
     time_obj = datetime.datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
@@ -176,7 +205,7 @@ def save_to_html(input, week):
                 display: flex;
                 justify-content: space-evenly;
                 padding: 10px;
-                border: 1px solid #ccc;
+                gap: 20px;
             }
             .legend-item {
                 display: inline-flex;
@@ -208,7 +237,7 @@ def save_to_html(input, week):
     return
 
 def highlightRows(row, save_status):
-    name = row['team']
+    name = row['Team']
     status_df = save_status[save_status['team'] == name]
     if status_df.empty:
         status = None
@@ -219,7 +248,7 @@ def highlightRows(row, save_status):
         return ['background-color: #3CB371'] * len(row)
     elif status == "L":
         return ['background-color:  #FF8080'] * len(row)
-    elif row['rank'] <= 5:
+    elif row['Rank'] <= 5:
         return ['background-color: lightgreen'] * len(row)
     else:
         return [''] * len(row)
