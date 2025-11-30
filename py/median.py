@@ -260,9 +260,9 @@ def consoleOutput(input_df):
     output = df.apply(lambda row: doConsoleOutput(row, df, see_above), axis=1)
     output_html = "".join(output.tolist())
     html += output_html
-    html += '<p><strong>See above for points needed: </strong></p>'
-    for item in see_above:
-        html += f'<p>{item}</p>'
+    #html += '<p><strong>See above for points needed: </strong></p>'
+    #for item in see_above:
+    #    html += f'<p>{item}</p>'
     return html
 
 def doConsoleOutput(row, df, see_above):
@@ -281,13 +281,18 @@ def doConsoleOutput(row, df, see_above):
 def printMedianScenarios(currTeam, df):
     html = ''
     toLoseMedian = 6-currTeam['rank']
-    html += f"<p><strong>{currTeam['team']} loses median if {int(toLoseMedian)} / {len(df)} pass.</strong></p>"
+    if currTeam['num_to_play'] > 0:
+        html += f"<p><strong>{currTeam['team']} loses median if {int(toLoseMedian)} / {len(df)} pass."
+        html += f" Remaining players: {pretty_players(currTeam['to_play'])}</strong></p>"
+    else:
+        html += f"<p><strong>{currTeam['team']} loses median if {int(toLoseMedian)} / {len(df)} pass.</strong></p>"
+    
     for team in df.itertuples(index=True):
         diff = round(currTeam['points'] - team.points, 2)
         if currTeam['num_to_play'] > 0:
-            html += f'<p>{team.team} : {', '.join(team.to_play)} outscore(s) {', '.join(currTeam['to_play'])} by {diff}</p>'
+            html += f'<p><u>{team.team}:</u> {pretty_players(team.to_play)} outscore(s) remaining players by <strong>{diff}</strong></p>'
         else:
-            html += f'{team.team} :  {', '.join(team.to_play)} scores {diff}</p>'
+            html += f'<u>{team.team}:</u>  {pretty_players(team.to_play)} scores <strong>{diff}</strong></p>'
     return html
 
 def median_main(update_all):
