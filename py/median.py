@@ -224,8 +224,8 @@ def save_to_html(input, week):
         </style>
         """
     table_div = f'''
+        {legend_html}
         <div class="table-scroll">
-            {legend_html}
             {table}
         </div>
 '''
