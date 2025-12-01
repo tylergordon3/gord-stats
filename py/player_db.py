@@ -11,7 +11,7 @@ from io import StringIO
 import utilities as util
 
 
-def scrape_injuries(updateAll):
+def scrape_injuries(updateAll=False):
     # Player	Position	Injuries	Practice Status	Game Status
     curr_week = util.get_last_completed_week() + 1
    
@@ -29,8 +29,6 @@ def scrape_injuries(updateAll):
         yr = util.getYrStr()
         path = f'data/injuries{yr}_{week}.json'
         util.save_df_to_json(df, path)
-
-scrape_injuries()
 
 def get(week):
     # Week returns specific week, 0 returns all

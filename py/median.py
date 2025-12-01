@@ -7,7 +7,7 @@ import fantasy_rosters as fr
 import player_db as pdb
 import os
 import html_builder as htmb
-import utilities
+import utilities as util
 import re
 
 league = League(c.LEAGUEID)
@@ -22,7 +22,7 @@ def median(league, week):
     db = pdb.get(0)
 
     # Add df column for players who have not played yet this week
-    starters['to_play'] = starters['starters'].apply(lambda x: getToPlay(x, weeks_players, db))
+    starters['to_play'] = starters['starters'].apply(lambda x: getToPlay(x, weeks_players, db, week))
     # Combine this week matchups with league info
     rosters = fr.get(league)
     combined = pd.merge(starters, rosters, on='roster_id')
@@ -121,18 +121,18 @@ def setWinners(team, df):
     else: 
         return team['status']
 
-def getToPlay(starters, weeks_players, db):
+def getToPlay(starters, weeks_players, db, week):
     # Grab team's starters as a series
     starters_series = pd.Series(starters)
     # Filter out players who have already played this week
     to_play = starters_series[~(starters_series.isin(weeks_players['sleeper_id']))]
-
-    to_play_inj_dropped = pdb.checkForInjury(to_play, db)
-  
-    to_play_names = db[(db['sleeper_id'].isin(to_play_inj_dropped))]['cleaned_name']
-    
+    yr = util.getYrStr()
+    to_play_names = db[(db['sleeper_id'].isin(to_play))]['cleaned_name']
+    inj = util.load_df_from_json(f'data/injuries{yr}_{week}.json')
+    inj = inj['cleaned_name']
+    to_play_noinj = to_play_names[~(to_play_names.isin(inj))]
     # Return names of players who haven't played
-    names = pd.unique(to_play_names)
+    names = pd.unique(to_play_noinj)
     return list(names)
 
 def pretty_players(list):
@@ -298,8 +298,6 @@ def printMedianScenarios(currTeam, df):
 def median_main(update_all):
     
     if update_all:
-        for week in range(1,utilities.get_week() + 1):
+        for week in range(1,util.get_week() + 1):
             median(league, week)
     htmb.generate_landing('docs/median', 'median', 'Median')
-
-median(league, 13)
