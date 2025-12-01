@@ -127,12 +127,15 @@ def getToPlay(starters, weeks_players, db, week):
     # Filter out players who have already played this week
     to_play = starters_series[~(starters_series.isin(weeks_players['sleeper_id']))]
     yr = util.getYrStr()
-    to_play_names = db[(db['sleeper_id'].isin(to_play))]['cleaned_name']
-    inj = util.load_df_from_json(f'data/injuries{yr}_{week}.json')
-    inj = inj['cleaned_name']
-    to_play_noinj = to_play_names[~(to_play_names.isin(inj))]
-    # Return names of players who haven't played
-    names = pd.unique(to_play_noinj)
+    if week <= util.get_last_completed_week():
+        names = pd.Series()
+    else:
+        to_play_names = db[(db['sleeper_id'].isin(to_play))]['cleaned_name']
+        inj = util.load_df_from_json(f'data/injuries{yr}_{week}.json')
+        inj = inj['cleaned_name']
+        to_play_noinj = to_play_names[~(to_play_names.isin(inj))]
+        # Return names of players who haven't played
+        names = pd.unique(to_play_noinj)
     return list(names)
 
 def pretty_players(list):
