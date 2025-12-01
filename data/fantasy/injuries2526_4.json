@@ -1,0 +1,506 @@
+[
+    {
+        "Player":"Josh Jones",
+        "Position":"T",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JoshJones"
+    },
+    {
+        "Player":"Zay Jones",
+        "Position":"WR",
+        "Injuries":"Concussion",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ZayJones"
+    },
+    {
+        "Player":"Donovan Jackson",
+        "Position":"G",
+        "Injuries":"Wrist",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"DonovanJackson"
+    },
+    {
+        "Player":"J.J. McCarthy",
+        "Position":"QB",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"J.J.McCarthy"
+    },
+    {
+        "Player":"Andrew Van Ginkel",
+        "Position":"LB",
+        "Injuries":"Neck",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"AndrewVan"
+    },
+    {
+        "Player":"Ben Yurosek",
+        "Position":"TE",
+        "Injuries":"Knee",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"BenYurosek"
+    },
+    {
+        "Player":"Alex Highsmith",
+        "Position":"LB",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"AlexHighsmith"
+    },
+    {
+        "Player":"John Bates",
+        "Position":"TE",
+        "Injuries":"Calf, Groin",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JohnBates"
+    },
+    {
+        "Player":"Noah Brown",
+        "Position":"WR",
+        "Injuries":"Groin, Knee",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"NoahBrown"
+    },
+    {
+        "Player":"Percy Butler",
+        "Position":"S",
+        "Injuries":"Hip",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"PercyButler"
+    },
+    {
+        "Player":"Jayden Daniels",
+        "Position":"QB",
+        "Injuries":"Knee, Not injury related - resting player",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JaydenDaniels"
+    },
+    {
+        "Player":"Terry McLaurin",
+        "Position":"WR",
+        "Injuries":"Quadricep",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"TerryMcLaurin"
+    },
+    {
+        "Player":"Nate Carter",
+        "Position":"RB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"NateCarter"
+    },
+    {
+        "Player":"KhaDarel Hodge",
+        "Position":"WR",
+        "Injuries":"Groin",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"KhaDarelHodge"
+    },
+    {
+        "Player":"A.J. Terrell",
+        "Position":"CB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"A.J.Terrell"
+    },
+    {
+        "Player":"Mekhi Becton",
+        "Position":"G",
+        "Injuries":"Concussion",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"MekhiBecton"
+    },
+    {
+        "Player":"Derius Davis",
+        "Position":"WR",
+        "Injuries":"Knee",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"DeriusDavis"
+    },
+    {
+        "Player":"Will Dissly",
+        "Position":"TE",
+        "Injuries":"Knee",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"WillDissly"
+    },
+    {
+        "Player":"Graham Gano",
+        "Position":"K",
+        "Injuries":"Groin",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"GrahamGano"
+    },
+    {
+        "Player":"Chauncey Golston",
+        "Position":"DE",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ChaunceyGolston"
+    },
+    {
+        "Player":"Tyrone Tracy Jr.",
+        "Position":"RB",
+        "Injuries":"Shoulder",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"TyroneTracy"
+    },
+    {
+        "Player":"Dillon Radunz",
+        "Position":"G",
+        "Injuries":"Toe",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"DillonRadunz"
+    },
+    {
+        "Player":"Chase Young",
+        "Position":"DE",
+        "Injuries":"Calf",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ChaseYoung"
+    },
+    {
+        "Player":"Matt Milano",
+        "Position":"LB",
+        "Injuries":"Pectoral",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"MattMilano"
+    },
+    {
+        "Player":"Ed Oliver",
+        "Position":"DT",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"EdOliver"
+    },
+    {
+        "Player":"JC Latham",
+        "Position":"T",
+        "Injuries":"Hip",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JCLatham"
+    },
+    {
+        "Player":"Bryce Oliver",
+        "Position":"WR",
+        "Injuries":"Knee",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"BryceOliver"
+    },
+    {
+        "Player":"Mike Evans",
+        "Position":"WR",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"MikeEvans"
+    },
+    {
+        "Player":"Christian Izien",
+        "Position":"S",
+        "Injuries":"Quadricep",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ChristianIzien"
+    },
+    {
+        "Player":"Mike Hall Jr.",
+        "Position":"DT",
+        "Injuries":"Knee",
+        "Practice Status":"Limited Participation in Practice",
+        "Game Status":"Out",
+        "cleaned_name":"MikeHall"
+    },
+    {
+        "Player":"Zach Cunningham",
+        "Position":"LB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ZachCunningham"
+    },
+    {
+        "Player":"Daniel Thomas",
+        "Position":"S",
+        "Injuries":"Forearm",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"DanielThomas"
+    },
+    {
+        "Player":"Sione Vaki",
+        "Position":"RB",
+        "Injuries":"Groin",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"SioneVaki"
+    },
+    {
+        "Player":"Patrick Jones II",
+        "Position":"LB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"PatrickJones"
+    },
+    {
+        "Player":"Xavier Legette",
+        "Position":"WR",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"XavierLegette"
+    },
+    {
+        "Player":"Ja'Tavion Sanders",
+        "Position":"TE",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"Ja'TavionSanders"
+    },
+    {
+        "Player":"D.J. Wonnum",
+        "Position":"LB",
+        "Injuries":"Hip",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"D.J.Wonnum"
+    },
+    {
+        "Player":"Jared Wilson",
+        "Position":"G",
+        "Injuries":"Ankle, Knee",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JaredWilson"
+    },
+    {
+        "Player":"Matt Goncalves",
+        "Position":"G",
+        "Injuries":"Toe",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"MattGoncalves"
+    },
+    {
+        "Player":"Kenny Moore II",
+        "Position":"CB",
+        "Injuries":"Achilles",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"KennyMoore"
+    },
+    {
+        "Player":"Alec Pierce",
+        "Position":"WR",
+        "Injuries":"Concussion",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"AlecPierce"
+    },
+    {
+        "Player":"Yasir Abdullah",
+        "Position":"LB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Limited Participation in Practice",
+        "Game Status":"Out",
+        "cleaned_name":"YasirAbdullah"
+    },
+    {
+        "Player":"Wyatt Milum",
+        "Position":"G",
+        "Injuries":"Knee",
+        "Practice Status":"Limited Participation in Practice",
+        "Game Status":"Out",
+        "cleaned_name":"WyattMilum"
+    },
+    {
+        "Player":"Jordan Watkins",
+        "Position":"WR",
+        "Injuries":"Calf",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JordanWatkins"
+    },
+    {
+        "Player":"CJ West",
+        "Position":"DT",
+        "Injuries":"Thumb",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"CJWest"
+    },
+    {
+        "Player":"T.J. Edwards",
+        "Position":"LB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"T.J.Edwards"
+    },
+    {
+        "Player":"Grady Jarrett",
+        "Position":"DT",
+        "Injuries":"Knee",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"GradyJarrett"
+    },
+    {
+        "Player":"Darnell Wright",
+        "Position":"T",
+        "Injuries":"Elbow",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"DarnellWright"
+    },
+    {
+        "Player":"Michael Mayer",
+        "Position":"TE",
+        "Injuries":"Concussion",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"MichaelMayer"
+    },
+    {
+        "Player":"Nnamdi Madubuike",
+        "Position":"DT",
+        "Injuries":"Neck",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"NnamdiMadubuike"
+    },
+    {
+        "Player":"Patrick Ricard",
+        "Position":"FB",
+        "Injuries":"Calf",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"PatrickRicard"
+    },
+    {
+        "Player":"Broderick Washington",
+        "Position":"DE",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"BroderickWashington"
+    },
+    {
+        "Player":"Anthony Belton",
+        "Position":"T",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"AnthonyBelton"
+    },
+    {
+        "Player":"Zach Tom",
+        "Position":"T",
+        "Injuries":"Oblique",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ZachTom"
+    },
+    {
+        "Player":"Tyler Booker",
+        "Position":"G",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"TylerBooker"
+    },
+    {
+        "Player":"CeeDee Lamb",
+        "Position":"WR",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"CeeDeeLamb"
+    },
+    {
+        "Player":"Jarvis Brownlee Jr.",
+        "Position":"CB",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JarvisBrownlee"
+    },
+    {
+        "Player":"Jermaine Johnson II",
+        "Position":"DE",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JermaineJohnson"
+    },
+    {
+        "Player":"Kene Nwangwu",
+        "Position":"RB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"KeneNwangwu"
+    },
+    {
+        "Player":"Storm Duck",
+        "Position":"CB",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"StormDuck"
+    },
+    {
+        "Player":"Jason Marshall Jr.",
+        "Position":"CB",
+        "Injuries":"Hamstring",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JasonMarshall"
+    },
+    {
+        "Player":"Noah Fant",
+        "Position":"TE",
+        "Injuries":"Concussion",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"NoahFant"
+    },
+    {
+        "Player":"Shemar Stewart",
+        "Position":"DE",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ShemarStewart"
+    }
+]

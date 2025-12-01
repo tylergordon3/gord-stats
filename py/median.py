@@ -233,7 +233,7 @@ def save_to_html(input, week):
         </div>
 '''
     output = time + "<br>" + table_div + scenarios
-    fm = htmb.add_front_matter(output,'Median')
+    fm = htmb.add_front_matter(output,f'Median - Week {week}')
     with open(filename, 'w') as f:
         f.write(fm)
         print("Wrote to ", filename)

@@ -104,5 +104,3 @@ def  load_df_from_json(filename):
     except IOError as e:
         print(f"Error loading data from {filename}: {e}")
         return None
-    
-get_week()
