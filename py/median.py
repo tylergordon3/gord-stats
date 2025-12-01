@@ -263,15 +263,12 @@ def consoleOutput(input_df):
     output = df.apply(lambda row: doConsoleOutput(row, df, see_above), axis=1)
     output_html = "".join(output.tolist())
     html += output_html
-    #html += '<p><strong>See above for points needed: </strong></p>'
-    #for item in see_above:
-    #    html += f'<p>{item}</p>'
     return html
 
 def doConsoleOutput(row, df, see_above):
     html = ''
     if ((row['status'] == "L") | (row['status'] == "W")):
-        html += f'<p>{row['team']}, has: {row['status']}, vs the median.</p>'
+        html += f'<p><strong>{row['team']}</strong>, has: <strong>{row['status']}</strong> vs the median.</p>'
         return html
     elif (row['rank'] > 5):
         see_above.append(row['team'])
