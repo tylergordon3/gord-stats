@@ -119,3 +119,11 @@ def getFromID(id, db):
         return db[db['cleaned_name'] == id]
     player = db[db['sleeper_id'] == id]
     return player
+
+def checkForInjury(id, db):
+    for i in id:
+        df = db[db['sleeper_id'] == i]
+        df = df.iloc[-1, :]
+        if df['injury_status'] == "Out":
+            id = id.drop(id.index)
+    return id

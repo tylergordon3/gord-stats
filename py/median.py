@@ -124,11 +124,13 @@ def setWinners(team, df):
 def getToPlay(starters, weeks_players, db):
     # Grab team's starters as a series
     starters_series = pd.Series(starters)
-    
     # Filter out players who have already played this week
     to_play = starters_series[~(starters_series.isin(weeks_players['sleeper_id']))]
-    to_play_names = db[(db['sleeper_id'].isin(to_play))]['cleaned_name']
 
+    to_play_inj_dropped = pdb.checkForInjury(to_play, db)
+  
+    to_play_names = db[(db['sleeper_id'].isin(to_play_inj_dropped))]['cleaned_name']
+    
     # Return names of players who haven't played
     names = pd.unique(to_play_names)
     return list(names)
@@ -302,3 +304,5 @@ def median_main(update_all):
         for week in range(1,utilities.get_week() + 1):
             median(league, week)
     htmb.generate_landing('docs/median', 'median', 'Median')
+
+median(league, 13)
