@@ -146,18 +146,24 @@ def predict(date):
     
     main['GordScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
             ((10 * main['Num TOR Models']) + (80-main['Rk_y'])))/2
-    main64 = main.sort_values("GordScore", ascending=False).head(64)
+    main64 = main.sort_values("GordScore", ascending=False)
     main64 =  main64.drop(columns=['RF_x', 'SVC_x', 'DT_x', 'RF_y', 'SVC_y', 'DT_y'])
-    main64['Overall'] = range(1, len(main64)+1)
-    main64['Seed'] = ((main64['Overall'] - 1) // 4 + 1).astype(int)
-    main64['Overall'] = main64['Overall'].astype(str) + ' (Seed ' + main64['Seed'].astype(str) + ')'
     main64 = main64.rename(columns={
         'Rk_x' : 'Kenpom Rank', 
         'Rk_y' : 'Torvik Rank',
         'Num KP Models' : '# Models Kenpom',
         'Num TOR Models' : '# Models Torvik'
     })
-
+    
+    bestByConf = main64.loc[main64.groupby(by='Conf')['GordScore'].idxmax()]
+    main64 = main64.drop(index=bestByConf.index)
+    main64 = main64.head(68-len(bestByConf))
+    main64 = pd.concat([main64, bestByConf])
+    main64 = main64.sort_values(by='GordScore', ascending=False)
+    main64['Overall'] = range(1, len(main64)+1)
+    main64['Seed'] = ((main64['Overall'] - 1) // 4 + 1).astype(int)
+    main64['Overall'] = main64['Overall'].astype(str) + ' (Seed ' + main64['Seed'].astype(str) + ')'
+    
     def stars(count, max_count=3):
         filled = '★' * count
         empty = '☆' * (max_count - count)
