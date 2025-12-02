@@ -24,9 +24,32 @@ def predict(date):
     with open(torvik_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     torvik_data = pd.DataFrame(data['rows'], columns=data['headers'])
+    torvik_data['Conf'] = torvik_data['Conf'].replace('Pat', 'PL')
 
+    dict = {
+            "SIU Edwardsville" : "SIUE",
+            "Cal St. Northridge" : "CSUN",
+            "McNeese St.": "McNeese",
+            "Nicholls St.": "Nicholls",
+            "Southeast Missouri" : "SEMO",
+            "Southeast Missouri St." : "SEMO",
+            "Kansas City" : "UMKC"
+        }
+    def strip(team):
+        for i, char in enumerate(team):
+            if char == '(':
+                return team[:i]
+            if team[i:i+3] == 'vs.':
+                return team[:i]
+        return team
+    
+    torvik_data['Team'] = torvik_data['Team'].apply(lambda x: strip(x))
+    torvik_data['Team'] = torvik_data['Team'].replace(dict)
+    kenpom_data['Team'] = kenpom_data['Team'].replace(dict)
+ 
     torvik_teams = torvik_data['Team']
     kenpom_teams = kenpom_data['Team']
+
    
     torvik_today = torvik_data.drop(columns=['Barthag', 'WAB','Team', 'Conf', 'Rec', 'G', 'Rk', 'FTR', '3PR', '3PRD'])
     kenpom_today = kenpom_data.drop(columns=['Rk','Team', 'Conf', 
@@ -68,47 +91,40 @@ def predict(date):
     kenpom_data['Sum'] = kenpom_data[['RF', 'DT', 'SVC']].sum(1)
     df_kenpom = kenpom_data[['Rk', 'Team', 'Conf', 'RF', 'DT', 'SVC', 'Sum']].copy()
     
-    def strip(team):
-        for i, char in enumerate(team):
-            if char == '(':
-                return team[:i]
-            if team[i:i+3] == 'vs.':
-                return team[:i]
-        return team
+  
 
     # Torvik Clean
-    df_torvik_filter = df_torvik[df_torvik['Sum'] > 0].copy()
-    df_torvik_filter['Team'] = df_torvik_filter['Team'].apply(lambda x: strip(x))
+    df_torvik_filter = df_torvik.copy()
     df_torvik_filter = df_torvik_filter.drop(columns=['Sum'])
     torvik_teams = df_torvik_filter[['Team', 'Conf', 'Rk']].copy()
     # Kenpom Clean
-    df_kenpom_filter = df_kenpom[df_kenpom['Sum'] > 0].copy()
+    df_kenpom_filter = df_kenpom.copy()
     df_kenpom_filter = df_kenpom_filter.drop(columns=['Sum'])
     kenpom_teams = df_kenpom_filter[['Team', 'Conf', 'Rk']].copy()
 
     # Pull out Top 64
     # Random Forest
     #   Torvik
-    rf_filter_torvik = df_torvik_filter[df_torvik_filter['RF'] == 1].head(64)
+    rf_filter_torvik = df_torvik_filter[df_torvik_filter['RF'] == 1]
     df_torvik_rf = rf_filter_torvik[['Team', 'Conf', 'Rk', 'RF']].copy()
     #   Kenpom
-    rf_filter_kenpom = df_kenpom_filter[df_kenpom_filter['RF'] == 1].head(64)
+    rf_filter_kenpom = df_kenpom_filter[df_kenpom_filter['RF'] == 1]
     df_kenpom_rf = rf_filter_kenpom[['Team', 'Conf', 'Rk', 'RF']].copy()
 
     # Decision Tree
     #   Torvik
-    dt_filter_torvik = df_torvik_filter[df_torvik_filter['DT'] == 1].head(64)
+    dt_filter_torvik = df_torvik_filter[df_torvik_filter['DT'] == 1]
     df_torvik_dt = dt_filter_torvik[['Team', 'Conf', 'Rk', 'DT']].copy()
     #   Kenpom
-    dt_filter_kenpom = df_kenpom_filter[df_kenpom_filter['DT'] == 1].head(64)
+    dt_filter_kenpom = df_kenpom_filter[df_kenpom_filter['DT'] == 1]
     df_kenpom_dt = dt_filter_kenpom[['Team', 'Conf', 'Rk', 'DT']].copy()
 
     # SVC
     #   Torvik
-    svc_filter_torvik = df_torvik_filter[df_torvik_filter['SVC'] == 1].head(64)
+    svc_filter_torvik = df_torvik_filter[df_torvik_filter['SVC'] == 1]
     df_torvik_svc = svc_filter_torvik[['Team', 'Conf', 'Rk', 'SVC']].copy()
     #   Kenpom
-    svc_filter_kenpom = df_kenpom_filter[df_kenpom_filter['SVC'] == 1].head(64)
+    svc_filter_kenpom = df_kenpom_filter[df_kenpom_filter['SVC'] == 1]
     df_kenpom_svc = svc_filter_kenpom[['Team', 'Conf', 'Rk', 'SVC']].copy()
 
     
@@ -130,10 +146,9 @@ def predict(date):
     
     main['GordScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
             ((10 * main['Num TOR Models']) + (80-main['Rk_y'])))/2
-
     main64 = main.sort_values("GordScore", ascending=False).head(64)
     main64 =  main64.drop(columns=['RF_x', 'SVC_x', 'DT_x', 'RF_y', 'SVC_y', 'DT_y'])
-    main64['Overall'] = range(1, 65)
+    main64['Overall'] = range(1, len(main64)+1)
     main64['Seed'] = ((main64['Overall'] - 1) // 4 + 1).astype(int)
     main64['Overall'] = main64['Overall'].astype(str) + ' (Seed ' + main64['Seed'].astype(str) + ')'
     main64 = main64.rename(columns={
@@ -147,17 +162,14 @@ def predict(date):
         filled = '★' * count
         empty = '☆' * (max_count - count)
         return f"({filled}{empty})"
-
+    
     main64['Kenpom Rank'] = main64['Kenpom Rank'].astype(int)
     main64['Torvik Rank'] = main64['Torvik Rank'].astype(int)
 
     main64['Kenpom'] = main64['Kenpom Rank'].astype(str) + ' ' + main64['# Models Kenpom'].apply(stars)
     main64['Torvik'] = main64['Torvik Rank'].astype(str) + ' ' + main64['# Models Torvik'].apply(stars)
    
-    # Create Styler object for HTML table
-    #styler = main64[['Kenpom', 'Torvik', 'WeightedScore', 'Normalized', 'Overall Rank']].style
     styler = main64[['Kenpom', 'Torvik', 'GordScore', 'Overall']].style
-
 
     df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed'])
     df = df[['Team', 'Conf', 'Kenpom', 'Torvik', 'GordScore', 'Overall']]
