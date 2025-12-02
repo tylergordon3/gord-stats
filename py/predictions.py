@@ -2,6 +2,7 @@ import utils
 import pandas as pd
 import numpy as np
 import json
+import os
 import constants
 from sklearn import preprocessing
 import html_builder as htmb
@@ -62,10 +63,10 @@ def predict(date):
     kenpom_data['SVC'] = svc_predict_kenpom
 
     torvik_data['Sum'] = torvik_data[['RF', 'DT', 'SVC']].sum(1)
-    df_torvik = torvik_data[['Rk', 'Team', 'RF', 'DT', 'SVC', 'Sum']].copy()
+    df_torvik = torvik_data[['Rk', 'Team', 'Conf', 'RF', 'DT', 'SVC', 'Sum']].copy()
 
     kenpom_data['Sum'] = kenpom_data[['RF', 'DT', 'SVC']].sum(1)
-    df_kenpom = kenpom_data[['Rk', 'Team', 'RF', 'DT', 'SVC', 'Sum']].copy()
+    df_kenpom = kenpom_data[['Rk', 'Team', 'Conf', 'RF', 'DT', 'SVC', 'Sum']].copy()
     
     def strip(team):
         for i, char in enumerate(team):
@@ -79,63 +80,62 @@ def predict(date):
     df_torvik_filter = df_torvik[df_torvik['Sum'] > 0].copy()
     df_torvik_filter['Team'] = df_torvik_filter['Team'].apply(lambda x: strip(x))
     df_torvik_filter = df_torvik_filter.drop(columns=['Sum'])
-    torvik_teams = df_torvik_filter[['Team', 'Rk']].copy()
+    torvik_teams = df_torvik_filter[['Team', 'Conf', 'Rk']].copy()
     # Kenpom Clean
     df_kenpom_filter = df_kenpom[df_kenpom['Sum'] > 0].copy()
     df_kenpom_filter = df_kenpom_filter.drop(columns=['Sum'])
-    kenpom_teams = df_kenpom_filter[['Team', 'Rk']].copy()
+    kenpom_teams = df_kenpom_filter[['Team', 'Conf', 'Rk']].copy()
 
     # Pull out Top 64
     # Random Forest
     #   Torvik
     rf_filter_torvik = df_torvik_filter[df_torvik_filter['RF'] == 1].head(64)
-    df_torvik_rf = rf_filter_torvik[['Team', 'Rk', 'RF']].copy()
+    df_torvik_rf = rf_filter_torvik[['Team', 'Conf', 'Rk', 'RF']].copy()
     #   Kenpom
     rf_filter_kenpom = df_kenpom_filter[df_kenpom_filter['RF'] == 1].head(64)
-    df_kenpom_rf = rf_filter_kenpom[['Team', 'Rk', 'RF']].copy()
+    df_kenpom_rf = rf_filter_kenpom[['Team', 'Conf', 'Rk', 'RF']].copy()
 
     # Decision Tree
     #   Torvik
     dt_filter_torvik = df_torvik_filter[df_torvik_filter['DT'] == 1].head(64)
-    df_torvik_dt = dt_filter_torvik[['Team', 'Rk', 'DT']].copy()
+    df_torvik_dt = dt_filter_torvik[['Team', 'Conf', 'Rk', 'DT']].copy()
     #   Kenpom
     dt_filter_kenpom = df_kenpom_filter[df_kenpom_filter['DT'] == 1].head(64)
-    df_kenpom_dt = dt_filter_kenpom[['Team', 'Rk', 'DT']].copy()
+    df_kenpom_dt = dt_filter_kenpom[['Team', 'Conf', 'Rk', 'DT']].copy()
 
     # SVC
     #   Torvik
     svc_filter_torvik = df_torvik_filter[df_torvik_filter['SVC'] == 1].head(64)
-    df_torvik_svc = svc_filter_torvik[['Team', 'Rk', 'SVC']].copy()
+    df_torvik_svc = svc_filter_torvik[['Team', 'Conf', 'Rk', 'SVC']].copy()
     #   Kenpom
     svc_filter_kenpom = df_kenpom_filter[df_kenpom_filter['SVC'] == 1].head(64)
-    df_kenpom_svc = svc_filter_kenpom[['Team', 'Rk', 'SVC']].copy()
+    df_kenpom_svc = svc_filter_kenpom[['Team', 'Conf', 'Rk', 'SVC']].copy()
 
     
     # Torvik Final Clean
-    comb1_torvik = pd.merge(torvik_teams, df_torvik_rf, "left", ["Team", "Rk"])
-    comb2_torvik = pd.merge(comb1_torvik, df_torvik_svc, "left", ["Team", "Rk"])
-    combined_torvik = pd.merge(comb2_torvik, df_torvik_dt, "left", ["Team", "Rk"])
+    comb1_torvik = pd.merge(torvik_teams, df_torvik_rf, "left", ["Team", 'Conf',  "Rk"])
+    comb2_torvik = pd.merge(comb1_torvik, df_torvik_svc, "left", ["Team", 'Conf', "Rk"])
+    combined_torvik = pd.merge(comb2_torvik, df_torvik_dt, "left", ["Team", 'Conf', "Rk"])
     
     # Kenpom Final Clean
-    comb1_kenpom = pd.merge(kenpom_teams, df_kenpom_rf, "left", ["Team", "Rk"])
-    comb2_kenpom = pd.merge(comb1_kenpom, df_kenpom_svc, "left", ["Team", "Rk"])
-    combined_kenpom = pd.merge(comb2_kenpom, df_kenpom_dt, "left", ["Team", "Rk"])
+    comb1_kenpom = pd.merge(kenpom_teams, df_kenpom_rf, "left", ["Team", 'Conf', "Rk"])
+    comb2_kenpom = pd.merge(comb1_kenpom, df_kenpom_svc, "left", ["Team", 'Conf', "Rk"])
+    combined_kenpom = pd.merge(comb2_kenpom, df_kenpom_dt, "left", ["Team", 'Conf',  "Rk"])
    
-    main = pd.merge(combined_kenpom, combined_torvik, on="Team", how='outer')
-    
+    main = pd.merge(combined_kenpom, combined_torvik, on=["Team", 'Conf'], how='outer')
     main['Num KP Models'] = main[['RF_x', 'SVC_x', 'DT_x']].sum(1)
     main['Num TOR Models'] = main[['RF_y', 'SVC_y', 'DT_y']].sum(1)
     main['Rk_y'] = pd.to_numeric(main['Rk_y'])
     main['Rk_x'] = pd.to_numeric(main['Rk_x'])
     
-    main['WeightedScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
+    main['GordScore'] = (((10 * main['Num KP Models']) + (80-main['Rk_x'])) + \
             ((10 * main['Num TOR Models']) + (80-main['Rk_y'])))/2
 
-    main64 = main.sort_values("WeightedScore", ascending=False).head(64)
+    main64 = main.sort_values("GordScore", ascending=False).head(64)
     main64 =  main64.drop(columns=['RF_x', 'SVC_x', 'DT_x', 'RF_y', 'SVC_y', 'DT_y'])
     main64['Overall'] = range(1, 65)
     main64['Seed'] = ((main64['Overall'] - 1) // 4 + 1).astype(int)
-    main64['Overall Rank'] = main64['Overall'].astype(str) + ' (Seed ' + main64['Seed'].astype(str) + ')'
+    main64['Overall'] = main64['Overall'].astype(str) + ' (Seed ' + main64['Seed'].astype(str) + ')'
     main64 = main64.rename(columns={
         'Rk_x' : 'Kenpom Rank', 
         'Rk_y' : 'Torvik Rank',
@@ -156,16 +156,16 @@ def predict(date):
    
     # Create Styler object for HTML table
     #styler = main64[['Kenpom', 'Torvik', 'WeightedScore', 'Normalized', 'Overall Rank']].style
-    styler = main64[['Kenpom', 'Torvik', 'WeightedScore', 'Overall Rank']].style
+    styler = main64[['Kenpom', 'Torvik', 'GordScore', 'Overall']].style
 
 
-    df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed', 'Overall'])
-    df = df[['Team', 'Kenpom', 'Torvik', 'WeightedScore', 'Overall Rank']]
+    df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed'])
+    df = df[['Team', 'Conf', 'Kenpom', 'Torvik', 'GordScore', 'Overall']]
     styler = (
         df
         .style
         .hide(axis="index") 
-        .format({'WeightedScore' : "{:.1f}"})
+        .format({'GordScore' : "{:.1f}"})
         .set_table_attributes('class="sticky-table"')
         .background_gradient(
             subset=['Kenpom'],
@@ -177,7 +177,7 @@ def predict(date):
             gmap=main64['Torvik Rank']))
  
     df_html = styler.to_html()
-
+    
     path = utils.get_path(f'docs/predict_{date}.html')
     html = htmb.add_front_matter(df_html, f'Prediction - {date}')
     with open(path, 'w') as f: 

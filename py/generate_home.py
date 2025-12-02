@@ -1,6 +1,8 @@
 from datetime import date
-import os
 import predictions
+import utils
+import os
+from os.path import exists
 
 def update_html(dates):
     for day in dates:
@@ -10,11 +12,12 @@ def generate_home_about():
     update = False
 
     today = date.today()
-    path = '../docs/'
-    all_entries = os.listdir(path)
+    mypath = utils.get_path('docs/')
+    all_entries = os.listdir(mypath)
     valid = []
     for filename in all_entries:
-        if os.path.isfile(filename):
+        filepath = os.path.join(mypath, filename)
+        if os.path.isfile(filepath):
             ifdate = filename[8:-5]
             try: 
                 get_date = date.fromisoformat(ifdate)
@@ -24,7 +27,7 @@ def generate_home_about():
     dates = sorted(valid)
     if update:
         update_html(dates)
-    history = '../docs/history.html'
+    history = utils.get_path('docs/history.html')
     html = f"""---
 layout: default
 title: History
@@ -36,10 +39,10 @@ title: History
             title = f'Prediction - {day}'
             line = f'<p><a href="{link}" title="{title}">{title}</a></p>'
             html += line
-    
+
     with open(history, 'w') as f: 
        f.write(html)  
-       print(f'Wrote to: {path} for {day}')
+       print(f'Wrote to: {mypath} for {today}')
 
     recent = sorted(dates, reverse=True)[0]
     index = f'''
@@ -54,6 +57,6 @@ title: Bracket Gordology
     <p><a href="predict_{recent}.html" title="Current Model">Current Model</a></p>
     <p><a href="history.html" title="Model History">Model History</a></p>
 '''
-    with open('../docs/index.html', 'w') as f: 
+    with open(utils.get_path('docs/index.html'), 'w') as f: 
        f.write(index.lstrip())  
-       print(f'Wrote to: {path} for {day}')
+       print(f'Wrote to: {mypath} for {day}')
