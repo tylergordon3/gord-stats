@@ -372,7 +372,9 @@ def schedule_main(update_all):
     html += '<h2>All-Play Standings</h2>'
     html += '<p>Whole league goes H2H, every week.</p>'
     allplay_styled = calc_allplay(rosters)
+    html += '<div class="table-scroll">'
     html += allplay_styled.to_html()
+    html += '</div>'
 
     # Strength of Schedule Stats
     sos_df = SoS(rosters)
@@ -380,12 +382,16 @@ def schedule_main(update_all):
     html += "<p><strong>OW%:</strong> Overall Opponent Winning Percentage - Sum of opponent's winning percentage</p>"
     html += "<p><strong>OOW%:</strong> Overall Winning Percentage of Opponent's Opponents - Sum of each opponent's OW%</p>"
     html += '<p>Sorted by SOS</p>'
+    html += '<div class="table-scroll">'
     html += sos_df.to_html()
+    html += '</div>'
 
     # All-Play Stats
     allSched_df = dfVsAllSched(rosters)
     #allSched_html = allSchedulesHTML(allSched_df)
+    html += '<div class="table-scroll">'
     html += allSchedulesHTML(allSched_df)
+    html += '</div>'
     lines = html.split("\n")
     # Make first row and column freeze on scroll
     for i, line in enumerate(lines):
