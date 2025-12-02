@@ -155,14 +155,28 @@ def predict(date):
         'Num TOR Models' : '# Models Torvik'
     })
     
+    def seed(x):
+        current_team_index = 0
+        seed = []
+        seed_num = 1
+        while current_team_index < len(x):
+            if seed_num == 11 or seed_num == 16:
+                num_teams_in_seed = 6
+            else:
+                num_teams_in_seed = 4
+            seed += (np.repeat(seed_num, num_teams_in_seed).tolist())
+            current_team_index += num_teams_in_seed
+            seed_num += 1
+        return seed
+
     bestByConf = main64.loc[main64.groupby(by='Conf')['GordScore'].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
     main64 = main64.head(68-len(bestByConf))
     main64 = pd.concat([main64, bestByConf])
     main64 = main64.sort_values(by='GordScore', ascending=False)
     main64['Overall'] = range(1, len(main64)+1)
-    main64['Seed'] = ((main64['Overall'] - 1) // 4 + 1).astype(int)
-    main64['Overall'] = main64['Overall'].astype(str) + ' (Seed ' + main64['Seed'].astype(str) + ')'
+    main64['Seed'] = seed(main64['Overall'])
+    main64['Overall'] = '#' + main64['Overall'].astype(str) + ' - '+ main64['Seed'].astype(str) + ' Seed'
     
     def stars(count, max_count=3):
         filled = '★' * count
