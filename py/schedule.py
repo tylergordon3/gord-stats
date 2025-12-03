@@ -320,6 +320,16 @@ def calcSOV(row, SOS_dict):
     sov_ret = sum(sov)/len(sov)
     return sov_ret
 
+def calcLuck(row, luck_dict):
+    oppsPF = [luck_dict[opp-1] for opp in row['sched']]
+    opps_scores = row['sched_score']
+    res = 0
+    for tot, pts in zip(oppsPF, opps_scores):
+        ratio = pts / tot
+        res += ratio
+    return (res/len(oppsPF))
+    
+
 def SoS(rosters):
     # Calculate Win % of each team
     rosters['Win%'] = rosters['wins'] / (rosters['losses'] + rosters['wins'])
@@ -343,7 +353,14 @@ def SoS(rosters):
     # Calculate Strength of Victory
     # Sum of winning % of defeated opponents
     rosters['SOV'] = rosters.apply(lambda row: calcSOV(row, SOS_dict), axis=1)
-    final_df = rosters[['team_name', 'OW%', 'OOW%', 'SOS', 'SOV']].sort_values(by='SOS', ascending=False)
+
+    # Calculating Scoring Luck
+    # % of opponent points scored against you
+    # Higher % = Opponents tend to score higher against you compared to normal
+    luck_dict = rosters[['roster_id', 'PF']].copy().to_dict()['PF']
+    rosters['Luck'] = rosters.apply(lambda row: calcLuck(row, luck_dict), axis=1)
+    
+    final_df = rosters[['team_name', 'SOS', 'SOV', 'Luck']].sort_values(by='SOS', ascending=False)
     styler = (
         final_df
         .style
@@ -351,6 +368,7 @@ def SoS(rosters):
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
+        .background_gradient(cmap="RdYlGn", subset=["Luck"])
         .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False)
         )
     
@@ -367,7 +385,6 @@ def schedule_main(update_all):
     if not os.path.exists(checkPath) or (update_all == True):
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
-
     # All Play Standings
     html += '<h2>All-Play Standings</h2>'
     html += '<p>Whole league goes H2H, every week.</p>'
@@ -379,9 +396,9 @@ def schedule_main(update_all):
     # Strength of Schedule Stats
     sos_df = SoS(rosters)
     html += '<h2>Strength of Schedule & Victory</h2>'
-    html += "<p><strong>OW%:</strong> Overall Opponent Winning Percentage - Sum of opponent's winning percentage</p>"
-    html += "<p><strong>OOW%:</strong> Overall Winning Percentage of Opponent's Opponents - Sum of each opponent's OW%</p>"
-    html += '<p>Sorted by SOS</p>'
+    html += "<p><strong>SOS:</strong> Strength of Schedule - Difficulty of Schedule (<a href=https://hackastat.eu/en/learn-a-stat-strength-of-schedule-sos/>Learn More</a>)</p>"
+    html += "<p><strong>SOV:</strong> Strength of Victory - Combined Win-Loss percentage of defeated opponents</p>"
+    html += '<p>*Sorted by SOS</p>'
     html += '<div class="table-scroll">'
     html += sos_df.to_html()
     html += '</div>'
@@ -404,3 +421,5 @@ def schedule_main(update_all):
     output = htmb.add_front_matter(new_html, 'Schedule Stats')
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
+
+schedule_main(False)
