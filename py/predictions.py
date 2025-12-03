@@ -2,8 +2,8 @@ import utils
 import pandas as pd
 import numpy as np
 import json
-import os
-import constants
+import change
+import math
 from sklearn import preprocessing
 import html_builder as htmb
 
@@ -175,8 +175,16 @@ def predict(date):
     main64 = pd.concat([main64, bestByConf])
     main64 = main64.sort_values(by='GordScore', ascending=False)
     main64['Overall'] = range(1, len(main64)+1)
+    last_week = change.change()
+    main64 = pd.merge(main64, last_week, 'left', 'Team')
+    main64['vs Last Wk'] = main64['vs Last Wk'].fillna('NR')
+    def calcWkDelta(row):
+        if row['vs Last Wk'] != 'NR':
+            row['vs Last Wk'] = int(row['vs Last Wk']) - row['Overall']
+        return row['vs Last Wk']
+    main64['vs Last Wk'] = main64.apply(lambda row: calcWkDelta(row), axis=1)
     main64['Seed'] = seed(main64['Overall'])
-    main64['Overall'] = main64['Seed'].astype(str) + ' Seed' + '(#' + main64['Overall'].astype(str) + ')' 
+    main64['Overall'] = main64['Seed'].astype(str) + ' Seed ' + '(#' + main64['Overall'].astype(str) + ')' 
     
     def stars(count, max_count=3):
         filled = '★' * count
@@ -189,15 +197,26 @@ def predict(date):
     main64['Kenpom'] = main64['Kenpom Rank'].astype(str) + ' ' + main64['# Models Kenpom'].apply(stars)
     main64['Torvik'] = main64['Torvik Rank'].astype(str) + ' ' + main64['# Models Torvik'].apply(stars)
    
-    styler = main64[['Kenpom', 'Torvik', 'GordScore', 'Overall']].style
+    styler = main64[['Kenpom', 'Torvik', 'GordScore', 'Overall', 'vs Last Wk']].style
 
     df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed'])
-    df = df[['Team', 'Conf', 'Kenpom', 'Torvik', 'GordScore', 'Overall']]
+    df = df[['Team', 'Conf', 'Kenpom', 'Torvik', 'GordScore', 'Overall', 'vs Last Wk']]
+    def _format_arrow(val):
+        if val == 'NR':
+            return val
+        return f"{'↑' if int(val) > 0 else '↓'} {abs(val):.0f}" if int(val) != 0 else f"{val:.0f}"
+
+    def _color_arrow(val):
+        if val == 'NR':
+            return "color: black"
+        return "color: green" if int(val) > 0 else "color: red" if int(val) < 0 else "color: black"
+    
     styler = (
         df
         .style
         .hide(axis="index") 
         .format({'GordScore' : "{:.1f}"})
+        .format(_format_arrow, subset=["vs Last Wk"]).applymap(_color_arrow, subset=["vs Last Wk"])
         .set_table_attributes('class="sticky-table"')
         .background_gradient(
             subset=['Kenpom'],
@@ -207,7 +226,7 @@ def predict(date):
             subset=['Torvik'],
             cmap='cividis',
             gmap=main64['Torvik Rank']))
- 
+   
     df_html = styler.to_html()
     
     path = utils.get_path(f'docs/predict_{date}.html')

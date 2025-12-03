@@ -8,9 +8,7 @@ def update_html(dates):
     for day in dates:
         predictions.predict(day)
 
-def generate_home_about():
-    update = False
-
+def generate_home_about(update=False):
     today = date.today()
     mypath = utils.get_path('docs/')
     all_entries = os.listdir(mypath)

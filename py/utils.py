@@ -85,3 +85,15 @@ def get_recent_data(input_date):
     torvik_files = Path(path).glob("torvik*.json")
     torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return [kenpom, torvik]
+
+def get_recent_html(input_date):
+    def parse_date(fname):
+        # filename format: predict_YYYY:MM:DD.html
+        try:
+            return date.fromisoformat(fname[8:18])
+        except ValueError:
+            raise ValueError(f"Invalid date in filename: {fname}")
+    path = get_path('docs/')
+    html_files = Path(path).glob("predict*.html")
+    html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
+    return html
