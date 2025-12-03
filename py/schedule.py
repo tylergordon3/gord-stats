@@ -197,8 +197,8 @@ def allSchedulesHTML(df):
                 display: flex;
                 justify-content: space-evenly;
                 margin-top: 20px;
+                flex-direction: column;
                 padding: 10px;
-                border: 1px solid #ccc;
                 width: 100%;
             }
             .legend-item {
@@ -217,9 +217,16 @@ def allSchedulesHTML(df):
             .category-C { background-color: #F1EABE; }
         </style>
         """
-    return_html += legend_html
-    return_html += styled_df.to_html()
-    return return_html
+    table = styled_df.to_html(index=False, classes='sticky-table')
+
+    table_div = f'''
+        {legend_html}
+        <div class="table-scroll">
+            {table}
+        </div>
+'''
+
+    return table_div
 
 def highlight_week(col):
     max_w = col.apply(lambda x: int(x.split('-')[0])).max()
