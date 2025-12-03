@@ -225,8 +225,8 @@ def allSchedulesHTML(df):
             {table}
         </div>
 '''
-
-    return table_div
+    html = return_html + table_div
+    return html
 
 def highlight_week(col):
     max_w = col.apply(lambda x: int(x.split('-')[0])).max()
@@ -420,10 +420,7 @@ def schedule_main(update_all):
 
     # All-Play Stats
     allSched_df = dfVsAllSched(rosters)
-    #allSched_html = allSchedulesHTML(allSched_df)
-    html += '<div class="table-scroll">'
     html += allSchedulesHTML(allSched_df)
-    html += '</div>'
     lines = html.split("\n")
     # Make first row and column freeze on scroll
     for i, line in enumerate(lines):
