@@ -358,9 +358,14 @@ def SoS(rosters):
     # % of opponent points scored against you
     # Higher % = Opponents tend to score higher against you compared to normal
     luck_dict = rosters[['roster_id', 'PF']].copy().to_dict()['PF']
-    rosters['Luck'] = rosters.apply(lambda row: calcLuck(row, luck_dict), axis=1)
-    
-    final_df = rosters[['team_name', 'SOS', 'SOV', 'Luck']].sort_values(by='SOS', ascending=False)
+    rosters['Scoring Luck'] = rosters.apply(lambda row: calcLuck(row, luck_dict), axis=1)
+    table_style = {
+        "selector": "th.col_heading,td",
+        "props": [
+        ("width", "100px"), # px instead of %
+        ("text-align", "center"), # optional ?
+    ]}
+    final_df = rosters[['team_name', 'SOS', 'SOV', 'Scoring Luck']].sort_values(by='SOS', ascending=False)
     styler = (
         final_df
         .style
@@ -368,11 +373,11 @@ def SoS(rosters):
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .background_gradient(cmap="RdYlGn", subset=["Luck"])
-        .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False)
+        .background_gradient(cmap="RdYlGn_r", subset=["Scoring Luck"])
+        .format('{:.2%}', subset=['Scoring Luck'])
+        .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
-    
-        #.set_table_attributes('class="sticky-table"'))
+
     return styler
 
 #       ****** MAIN ******
@@ -398,6 +403,9 @@ def schedule_main(update_all):
     html += '<h2>Strength of Schedule & Victory</h2>'
     html += "<p><strong>SOS:</strong> Strength of Schedule - Difficulty of Schedule (<a href=https://hackastat.eu/en/learn-a-stat-strength-of-schedule-sos/>Learn More</a>)</p>"
     html += "<p><strong>SOV:</strong> Strength of Victory - Combined Win-Loss percentage of defeated opponents</p>"
+    html += "<p><strong>Scoring Luck:</strong> Average percentage of an opponent's points scored on you vs their total PF for season.</p>"
+    html += f"<p>Luck Example: After week 13, if an opponent scored same amount of points every game, their ratio per game would be 7.69% (~7.69 * 13 = 100)</p>"
+    html += f"<p>More Examples: Week 4: 25% | Week 8: 12.5% | Week 12: 8.33% | Week 13: 7.69% | Week 14: 7.14% </p>"
     html += '<p>*Sorted by SOS</p>'
     html += '<div class="table-scroll">'
     html += sos_df.to_html()
@@ -421,5 +429,3 @@ def schedule_main(update_all):
     output = htmb.add_front_matter(new_html, 'Schedule Stats')
     with open('./docs/schedule/schedule.html', 'w') as f:
         f.write(output)
-
-schedule_main(False)
