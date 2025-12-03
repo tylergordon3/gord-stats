@@ -175,14 +175,18 @@ def predict(date):
     main64 = pd.concat([main64, bestByConf])
     main64 = main64.sort_values(by='GordScore', ascending=False)
     main64['Overall'] = range(1, len(main64)+1)
-    last_week = change.change()
+    last_week = change.change(date)
     main64 = pd.merge(main64, last_week, 'left', 'Team')
+ 
     main64['vs Last Wk'] = main64['vs Last Wk'].fillna('NR')
     def calcWkDelta(row):
         if row['vs Last Wk'] != 'NR':
             row['vs Last Wk'] = int(row['vs Last Wk']) - row['Overall']
+            if row['vs Last Wk'] == 0:
+                row['vs Last Wk'] = '-'
         return row['vs Last Wk']
     main64['vs Last Wk'] = main64.apply(lambda row: calcWkDelta(row), axis=1)
+ 
     main64['Seed'] = seed(main64['Overall'])
     main64['Overall'] = main64['Seed'].astype(str) + ' Seed ' + '(#' + main64['Overall'].astype(str) + ')' 
     
@@ -202,12 +206,12 @@ def predict(date):
     df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed'])
     df = df[['Team', 'Conf', 'Kenpom', 'Torvik', 'GordScore', 'Overall', 'vs Last Wk']]
     def _format_arrow(val):
-        if val == 'NR':
+        if (val == 'NR') | (val == '-'):
             return val
         return f"{'↑' if int(val) > 0 else '↓'} {abs(val):.0f}" if int(val) != 0 else f"{val:.0f}"
 
     def _color_arrow(val):
-        if val == 'NR':
+        if (val == 'NR') | (val == '-'):
             return "color: black"
         return "color: green" if int(val) > 0 else "color: red" if int(val) < 0 else "color: black"
     

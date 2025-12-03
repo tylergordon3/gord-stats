@@ -7,13 +7,15 @@ from datetime import date, timedelta
 from bs4 import BeautifulSoup
 from io import StringIO
 
-def change():
-    today = date.today()
-    week_ago = today - timedelta(days=7)
+def change(date):
+    week_ago = date - timedelta(days=7)
     week_ago_path = utils.get_recent_html(week_ago)
     with open(week_ago_path) as fp:
-            soup = BeautifulSoup(fp, 'html.parser')
+        soup = BeautifulSoup(fp, 'html.parser')
     table = soup.find("table")
     df = pd.read_html(StringIO(table.prettify()))[0]
-    df['vs Last Wk'] = df['Overall'].apply(lambda x: x.split()[0])
+    def getOvr(x):
+        splt = x.split()
+        return splt[2][2:-1]
+    df['vs Last Wk'] = df['Overall'].apply(lambda x: getOvr(x))
     return df[['Team', 'vs Last Wk']].copy()
