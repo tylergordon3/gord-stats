@@ -176,7 +176,7 @@ def predict(date):
     main64 = main64.sort_values(by='GordScore', ascending=False)
     main64['Overall'] = range(1, len(main64)+1)
     main64['Seed'] = seed(main64['Overall'])
-    main64['Overall'] = '#' + main64['Overall'].astype(str) + ' - '+ main64['Seed'].astype(str) + ' Seed'
+    main64['Overall'] = main64['Seed'].astype(str) + ' Seed' + '(#' + main64['Overall'].astype(str) + ')' 
     
     def stars(count, max_count=3):
         filled = '★' * count
