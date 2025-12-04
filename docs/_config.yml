@@ -52,7 +52,7 @@ show_dir_listing    : false
 # Outputting
 # permalink           : date
 paginate_path       : /page:num
-timezone            : null
+timezone: America/New_York
 
 quiet               : false
 verbose             : false
