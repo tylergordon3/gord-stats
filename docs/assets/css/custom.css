@@ -74,4 +74,10 @@ and (max-width : 320px) {
     padding: 3px 4px !important;
     font-size: 11px !important;
   }
+
+  .custom-inner {
+    width: 90%;
+    margin: 0 auto; /* Centers the content */
+    padding: 1rem;
+  }
 }
