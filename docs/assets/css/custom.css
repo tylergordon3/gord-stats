@@ -13,7 +13,7 @@
   width: 100% !important;
   max-width: 100% !important;
   border-collapse: collapse !important;
-  table-layout: auto !important;  
+  table-layout: fixed !important;  
 
   border-spacing: 0;      /* keeps normal table layout */
   width: 100%;
