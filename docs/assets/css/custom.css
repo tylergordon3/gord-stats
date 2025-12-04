@@ -46,6 +46,10 @@
   font-size: inherit;
 }
 
+.sticky-table th {
+  font-weight: bold;
+}
+
 .sticky-table th,
 .sticky-table td {
   padding: 6px 8px;
@@ -58,6 +62,7 @@
 
   min-width: 70px; /* prevents columns from collapsing to nothing */
   background: white;
+  color: black;
 }
 /* -----------------------------
    STICKY HEADER
