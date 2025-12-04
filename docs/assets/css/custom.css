@@ -78,8 +78,13 @@
   z-index: 2;
   box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
   background: #373737;
+  border-bottom: 1px solid #ccc;
+  color: #fff;
 }
 
+.sticky-table td:last-child {
+  border-bottom: none;
+}
 
 .sticky-table th:last-child {
   border-right: none;
