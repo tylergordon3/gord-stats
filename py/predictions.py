@@ -172,6 +172,8 @@ def predict(date):
     bestByConf = main64.loc[main64.groupby(by='Conf')['GordScore'].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
     main64 = main64.head(68-len(bestByConf))
+    main64['ConfChamp'] = 0
+    bestByConf['ConfChamp'] = 1
     main64 = pd.concat([main64, bestByConf])
     main64 = main64.sort_values(by='GordScore', ascending=False)
     main64['Overall'] = range(1, len(main64)+1)
@@ -202,8 +204,8 @@ def predict(date):
     main64['Torvik'] = main64['Torvik Rank'].astype(str) + ' ' + main64['# Models Torvik'].apply(stars)
    
     styler = main64[['Kenpom', 'Torvik', 'GordScore', 'Overall', 'vs Last Wk']].style
-
-    df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed'])
+    conf_champ_dict = pd.Series(main64.ConfChamp.values,index=main64.Team).to_dict()
+    df = main64.drop(columns=['Kenpom Rank','# Models Kenpom', 'Torvik Rank', '# Models Torvik', 'Seed', 'ConfChamp'])
     df = df[['Team', 'Conf', 'Kenpom', 'Torvik', 'GordScore', 'Overall', 'vs Last Wk']]
     def _format_arrow(val):
         if (val == 'NR') | (val == '-'):
@@ -214,6 +216,14 @@ def predict(date):
         if (val == 'NR') | (val == '-'):
             return "color: black"
         return "color: green" if int(val) > 0 else "color: red" if int(val) < 0 else "color: black"
+    
+    def bold_row(row, conf_champ_dict):
+        val = conf_champ_dict[row['Team']]
+        if val: 
+            return [f"font-weight: bold"] * len(row)
+        else:
+            return [f"font-weight: normal"] * len(row)
+       
     
     styler = (
         df
@@ -229,7 +239,8 @@ def predict(date):
         .background_gradient(
             subset=['Torvik'],
             cmap='cividis',
-            gmap=main64['Torvik Rank']))
+            gmap=main64['Torvik Rank'])
+        .apply(lambda x: bold_row(x, conf_champ_dict), axis =1))
     
     df_html = '<div class="table-container">'
     df_html += styler.to_html()
