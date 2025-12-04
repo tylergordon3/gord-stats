@@ -70,6 +70,16 @@
   border-right: 1px solid #ccc;
 }
 
+/* Freeze first column */
+.sticky-table th:first-child,
+.sticky-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
+}
+
+
 .sticky-table th:last-child {
   border-right: none;
 }
@@ -90,11 +100,4 @@
     padding: 3px 4px;
     font-size: 11px;
   }
-}
-
-.sticky-table td:first-child,
-.sticky-table th:first-child {
-  position: static !important;
-  left: auto !important;
-  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
 }
