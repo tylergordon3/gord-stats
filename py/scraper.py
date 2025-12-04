@@ -4,6 +4,7 @@
 import time
 import utils
 import re
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -11,13 +12,43 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from datetime import datetime
 
+import random
+
+
 from playwright.sync_api import sync_playwright
 
 TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 
-#def kenpom_historic_combined():
+
+def getHTML(link, retries=5, base_delay=1.0):
+    for attempt in range(retries):
+        response = requests.get(link)
+        if response.status_code == 429 : 
+            if attempt < retries - 1:
+                delay = base_delay * (2 ** attempt) + random.uniform(0, 0.2)
+                time.sleep(delay)
+                continue
+        if response.status_code == 200:
+            content = response.text()
+            return BeautifulSoup(content, "html.parser")
+    return None  # if all retries fail
+
+def pull_sportsDB():
+    #https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=English_Premier_League
+    #https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?s=Soccer&c=Spain
+    # {strLeague} {strCountry} {strSport}
+    strLeague = 'NCAA_Division_I_Basketball_Mens'
+    league = f'https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l={strLeague}'
+    teams = pd.read_json(utils.get_path('data/team_list.json'))
+    link = 'https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t='
+    for team in list(teams[0]):
+        web = link + team
+        res = getHTML(web)
+        print(res)
+
+pull_sportsDB()
 
 def kenpom_historic():
     # https://kenpom.com/index.php?y=2025

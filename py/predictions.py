@@ -25,7 +25,7 @@ def predict(date):
         data = json.load(f)
     torvik_data = pd.DataFrame(data['rows'], columns=data['headers'])
     torvik_data['Conf'] = torvik_data['Conf'].replace('Pat', 'PL')
-
+    
     dict = {
             "SIU Edwardsville" : "SIUE",
             "Cal St. Northridge" : "CSUN",
@@ -44,6 +44,15 @@ def predict(date):
         return team
     
     torvik_data['Team'] = torvik_data['Team'].apply(lambda x: strip(x))
+    teams = torvik_data['Team']
+    modded = []
+    for team in list(teams):
+        mod = team.replace('St.', 'State')
+        mod_space = mod.replace(' ', '_')
+        modded.append(mod_space)
+        
+
+    utils.save_json_data(modded, utils.get_path('data/team_list.json'))
     torvik_data['Team'] = torvik_data['Team'].replace(dict)
     kenpom_data['Team'] = kenpom_data['Team'].replace(dict)
  
