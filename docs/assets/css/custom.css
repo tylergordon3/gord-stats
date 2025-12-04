@@ -77,14 +77,13 @@
 }
 
 /* Freeze first column */
-.sticky-table th:first-child,
 .sticky-table td:first-child {
   position: sticky;
   left: 0;
   z-index: 2;
   box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
   background: white;
-  color: #fff;
+  color: black;
 }
 
 .sticky-table td:last-child {
