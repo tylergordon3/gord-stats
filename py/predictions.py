@@ -230,9 +230,11 @@ def predict(date):
             subset=['Torvik'],
             cmap='cividis',
             gmap=main64['Torvik Rank']))
-   
-    df_html = styler.to_html()
     
+    df_html = '<div class="table-container">'
+    df_html += styler.to_html()
+    df_html += '<div>'
+
     path = utils.get_path(f'docs/predict_{date}.html')
     html = htmb.add_front_matter(df_html, f'Prediction - {date}')
     with open(path, 'w') as f: 
