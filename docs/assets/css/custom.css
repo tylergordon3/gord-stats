@@ -48,6 +48,7 @@
 
 .sticky-table th {
   font-weight: bold;
+  background: #D3D3D3
 }
 
 .sticky-table th,
@@ -61,8 +62,11 @@
   text-overflow: ellipsis;
 
   min-width: 70px; /* prevents columns from collapsing to nothing */
-  background: white;
   color: black;
+}
+
+.sticky-table td {
+  background: white;
 }
 /* -----------------------------
    STICKY HEADER
@@ -90,7 +94,7 @@
   box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
   color: black;
   border-right: 1px solid black;
-  background: white
+  background: #D3D3D3
 }
 
 .sticky-table td:last-child {
