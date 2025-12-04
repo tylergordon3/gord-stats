@@ -84,6 +84,7 @@
   box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
   color: black;
   border-right: 1px solid black;
+  background: white
 }
 
 .sticky-table td:last-child {
