@@ -132,10 +132,12 @@ def getToPlay(starters, weeks_players, db, week):
     else:
         to_play_names = db[(db['sleeper_id'].isin(to_play))]['cleaned_name']
         inj = util.load_df_from_json(f'data/injuries{yr}_{week}.json')
-        inj = inj['cleaned_name']
-        to_play_noinj = to_play_names[~(to_play_names.isin(inj))]
-        # Return names of players who haven't played
-        names = pd.unique(to_play_noinj)
+        if inj is not None:
+            inj = inj['cleaned_name']
+            to_play_noinj = to_play_names[~(to_play_names.isin(inj))]
+            names = pd.unique(to_play_noinj)
+        else:
+            names = pd.unique(to_play_names)
     return list(names)
 
 def pretty_players(list):
