@@ -47,9 +47,9 @@ def predict(date):
     teams = torvik_data['Team']
     modded = []
     for team in list(teams):
-        mod = team.replace('St.', 'State')
-        mod_space = mod.replace(' ', '_')
-        modded.append(mod_space)
+        #mod = team.replace('St.', 'State')
+        #mod_space = mod.replace(' ', '_')
+        modded.append(team)
         
 
     utils.save_json_data(modded, utils.get_path('data/team_list.json'))
