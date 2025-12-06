@@ -230,7 +230,10 @@ def predict(date):
     def bold_row(row, conf_champ_dict):
         val = conf_champ_dict[row['Team']]
         if val: 
-            return [f"font-weight: bold"] * len(row)
+            ret = [f"font-weight: bold"] * len(row)
+            ret[2] = "font-weight: normal" 
+            ret[3] = "font-weight: normal"
+            return ret
         else:
             return [f"font-weight: normal"] * len(row)
        
