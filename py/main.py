@@ -40,6 +40,6 @@ if save_model:
     print(f'Kenpom training took: {(datetime.now() - start).total_seconds()}')
 
 predictions.predict(date.today())
-generate_home.generate_home_about()
+generate_home.generate_home_about(True)
 
 

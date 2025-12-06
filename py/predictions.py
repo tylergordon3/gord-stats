@@ -3,9 +3,10 @@ import pandas as pd
 import numpy as np
 import json
 import change
-import math
+import datetime
 from sklearn import preprocessing
 import html_builder as htmb
+from pytz import timezone
 
 def predict(date):
     randomForest = utils.read_from_pickle('forest')
@@ -250,8 +251,11 @@ def predict(date):
             cmap='cividis',
             gmap=main64['Torvik Rank'])
         .apply(lambda x: bold_row(x, conf_champ_dict), axis =1))
-    
-    df_html = '<div class="table-container">'
+    tz = timezone('EST')
+    time_obj = datetime.datetime.now(tz)
+    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
+    df_html = f"<p>Updated: {time}</p>"
+    df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += '<div>'
     path = utils.get_path(f'docs/predict_{date}.html')
