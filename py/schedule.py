@@ -33,10 +33,24 @@ def getIndValues(str):
     wins = int(match.group(1))
     loss = int(match.group(2))
     return [wins, loss]
-    
+
+def getScore(roster_id, week):
+    league = League(cons.LEAGUEID)
+    matchup_df = pd.DataFrame.from_dict(league.get_matchups(week+1))
+    score = list(matchup_df[matchup_df['roster_id'] == roster_id]['points'])[0]
+    return score
+
+def getScoreArr(team):
+    scores = [getScore(id, index) for index, id in enumerate(team)]
+    return scores
+
+def schedScores(rosters):
+    rosters['sched_score'] = rosters['sched'].apply(lambda x: getScoreArr(x))
+    return rosters
+
 def saveSchedules():
     yr = util.getYrStr()
-    wk = util.get_last_completed_week()
+    wk = util.get_week()
     league = League(cons.LEAGUEID)
     rosters = fr.get(league)
     rosters['sched'] = [[] for _ in range(len(rosters))]
@@ -55,20 +69,6 @@ def saveSchedules():
     rosters['wins_vs'] = rosters.apply(lambda x: recordsVsAll(rosters, x), axis=1)
     rosters['total'] = rosters['wins_vs'].apply(lambda x: getVals(x))
     util.save_df_to_json(rosters, f'data/rost{yr}_{wk}.json')
-    
-def getScore(roster_id, week):
-    league = League(cons.LEAGUEID)
-    matchup_df = pd.DataFrame.from_dict(league.get_matchups(week+1))
-    score = list(matchup_df[matchup_df['roster_id'] == roster_id]['points'])[0]
-    return score
-
-def getScoreArr(team):
-    scores = [getScore(id, index) for index, id in enumerate(team)]
-    return scores
-
-def schedScores(rosters):
-    rosters['sched_score'] = rosters['sched'].apply(lambda x: getScoreArr(x))
-    return rosters
 
 def recordsVsAll(all, team):
     # For current team, calculate wins vs each schedule

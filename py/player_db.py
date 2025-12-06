@@ -11,9 +11,9 @@ from io import StringIO
 import utilities as util
 
 
-def scrape_injuries(updateAll=False):
+def scrape_injuries(updateAll=False, curr_week=util.get_last_completed_week() + 1):
     # Player	Position	Injuries	Practice Status	Game Status
-    curr_week = util.get_last_completed_week() + 1
+    #curr_week = util.get_last_completed_week() + 1
    
     for week in range(1, curr_week+1):
         web = f'https://www.nfl.com/injuries/league/{nfl.get_current_season()}/reg{week}'
