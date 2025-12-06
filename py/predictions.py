@@ -254,7 +254,7 @@ def predict(date):
     tz = timezone('EST')
     time_obj = datetime.datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
-    df_html = f"<p>Updated: {time}</p>"
+    df_html = f"<p>{time}</p>"
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += '<div>'
