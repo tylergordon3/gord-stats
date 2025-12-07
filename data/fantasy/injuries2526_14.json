@@ -64,6 +64,14 @@
         "cleaned_name":"SauceGardner"
     },
     {
+        "Player":"Tyquan Lewis",
+        "Position":"DE",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"TyquanLewis"
+    },
+    {
         "Player":"Walker Little",
         "Position":"T",
         "Injuries":"Concussion",
@@ -80,12 +88,28 @@
         "cleaned_name":"AndrewWingard"
     },
     {
+        "Player":"Jermaine Burton",
+        "Position":"WR",
+        "Injuries":"Not injury related - other",
+        "Practice Status":"Full Participation in Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JermaineBurton"
+    },
+    {
         "Player":"Trey Hendrickson",
         "Position":"DE",
         "Injuries":"Hip, Pelvis",
         "Practice Status":"Did Not Participate In Practice",
         "Game Status":"Out",
         "cleaned_name":"TreyHendrickson"
+    },
+    {
+        "Player":"Shaka Heyward",
+        "Position":"LB",
+        "Injuries":"Fibula",
+        "Practice Status":"Limited Participation in Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ShakaHeyward"
     },
     {
         "Player":"Terrel Bernard",
@@ -120,6 +144,14 @@
         "cleaned_name":"JustinFields"
     },
     {
+        "Player":"Cam Jones",
+        "Position":"LB",
+        "Injuries":"Hip",
+        "Practice Status":"Full Participation in Practice",
+        "Game Status":"Out",
+        "cleaned_name":"CamJones"
+    },
+    {
         "Player":"Marcelino McCrary-Ball",
         "Position":"LB",
         "Injuries":"Hamstring",
@@ -142,6 +174,14 @@
         "Practice Status":"Limited Participation in Practice",
         "Game Status":"Out",
         "cleaned_name":"LloydCushenberry"
+    },
+    {
+        "Player":"Shy Tuttle",
+        "Position":"DT",
+        "Injuries":"Concussion",
+        "Practice Status":"Full Participation in Practice",
+        "Game Status":"Out",
+        "cleaned_name":"ShyTuttle"
     },
     {
         "Player":"Brenden Bates",
@@ -456,6 +496,14 @@
         "cleaned_name":"TreyBenson"
     },
     {
+        "Player":"Evan Brown",
+        "Position":"G",
+        "Injuries":"Not injury related - personal matter",
+        "Practice Status":null,
+        "Game Status":"Out",
+        "cleaned_name":"EvanBrown"
+    },
+    {
         "Player":"L.J. Collier",
         "Position":"DE",
         "Injuries":"Knee, Not injury related - personal matter",
@@ -550,5 +598,29 @@
         "Practice Status":"Did Not Participate In Practice",
         "Game Status":"Out",
         "cleaned_name":"ChristianRoland-Wallace"
+    },
+    {
+        "Player":"Jalen Carter",
+        "Position":"DT",
+        "Injuries":"Shoulder",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"JalenCarter"
+    },
+    {
+        "Player":"Lane Johnson",
+        "Position":"T",
+        "Injuries":"Foot",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"LaneJohnson"
+    },
+    {
+        "Player":"Tucker Fisk",
+        "Position":"TE",
+        "Injuries":"Ankle",
+        "Practice Status":"Did Not Participate In Practice",
+        "Game Status":"Out",
+        "cleaned_name":"TuckerFisk"
     }
 ]
