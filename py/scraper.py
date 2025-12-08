@@ -13,6 +13,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from datetime import datetime
 import os
+from io import StringIO
 import random
 
 
@@ -38,6 +39,16 @@ def getHTML(link, retries=5, base_delay=1.0):
             content = response.text
             return BeautifulSoup(content, "html.parser")
     return None  # if all retries fail
+
+def get_schedule():
+    link = 'https://www.thesportsdb.com/league/4607-ncaa-division-i-basketball-mens'
+    page = getHTML(link)
+    
+    table = page.find_all("table")[0]
+    rows = table.find_all("tr")
+    for row in rows:
+        data = row.find_all("td")
+get_schedule()
 
 def pull_sportsDB():
     strLeague = 'NCAA_Division_I_Basketball_Mens'
