@@ -1,6 +1,7 @@
 import median
 import schedule
 import bestball
+import player_db
 import players_to_json
 
 # median_main -> args: bool update_all
@@ -18,6 +19,7 @@ import players_to_json
 update_all = True
 # update_all = False
 players_to_json.player_json()
+player_db.scrape_injuries(update_all)
 median.median_main(update_all)
 bestball.bestball_main(update_all)
 schedule.schedule_main(update_all)

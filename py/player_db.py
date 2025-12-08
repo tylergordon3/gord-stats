@@ -14,9 +14,23 @@ import utilities as util
 def scrape_injuries(updateAll=False, curr_week=util.get_last_completed_week() + 1):
     # Player	Position	Injuries	Practice Status	Game Status
     #curr_week = util.get_last_completed_week() + 1
-   
-    for week in range(1, curr_week+1):
-        web = f'https://www.nfl.com/injuries/league/{nfl.get_current_season()}/reg{week}'
+    if updateAll:
+        for week in range(1, curr_week+1):
+            web = f'https://www.nfl.com/injuries/league/{nfl.get_current_season()}/reg{week}'
+            resp = requests.get(web, timeout=10).text
+            list = pd.read_html(StringIO(resp))
+            df = pd.DataFrame()
+            for team in list:
+                df = pd.concat([df, team])
+            df = df.reset_index(drop=True)
+            df = df[df["Game Status"] == 'Out']
+            df['cleaned_name'] = df['Player'].str.split()
+            df['cleaned_name'] = df['cleaned_name'].apply(lambda lst: lst.str.join('') if len(lst) < 2 else ''.join(lst[:2]))
+            yr = util.getYrStr()
+            path = f'data/injuries{yr}_{week}.json'
+            util.save_df_to_json(df, path)
+    else:
+        web = f'https://www.nfl.com/injuries/league/{nfl.get_current_season()}/reg{curr_week}'
         resp = requests.get(web, timeout=10).text
         list = pd.read_html(StringIO(resp))
         df = pd.DataFrame()
@@ -27,7 +41,7 @@ def scrape_injuries(updateAll=False, curr_week=util.get_last_completed_week() + 
         df['cleaned_name'] = df['Player'].str.split()
         df['cleaned_name'] = df['cleaned_name'].apply(lambda lst: lst.str.join('') if len(lst) < 2 else ''.join(lst[:2]))
         yr = util.getYrStr()
-        path = f'data/injuries{yr}_{week}.json'
+        path = f'data/injuries{yr}_{curr_week}.json'
         util.save_df_to_json(df, path)
 
 def get(week):
