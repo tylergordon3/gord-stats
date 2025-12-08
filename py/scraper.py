@@ -37,17 +37,26 @@ def getHTML(link, retries=5, base_delay=1.0):
                 continue
         if response.status_code == 200:
             content = response.text
-            return BeautifulSoup(content, "html.parser")
+            return BeautifulSoup(content, "lxml")
+    print('getHTML returning None')
     return None  # if all retries fail
 
 def get_schedule():
-    link = 'https://www.thesportsdb.com/league/4607-ncaa-division-i-basketball-mens'
-    page = getHTML(link)
-    
-    table = page.find_all("table")[0]
-    rows = table.find_all("tr")
-    for row in rows:
-        data = row.find_all("td")
+    base_link = 'https://www.cbssports.com/college-basketball/schedule/'
+    soup = getHTML(base_link)
+    # spans = soup.find_all('span', {'class' : 'blue'}
+    #spans = soup.find_all('span', {'class' : "TeamName"})
+    links = soup.find_all('a')
+    for link in links:
+        print(link)
+        try:
+            team_link = link.get("href").split('/')[-2]
+            get_num_words = len(link.string.split())
+            team_link_sep = team_link.split('-')
+            unformat_team = team_link_sep[:get_num_words]
+        except:
+            continue
+
 get_schedule()
 
 def pull_sportsDB():
