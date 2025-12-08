@@ -71,7 +71,7 @@ thead th {
   overflow: hidden;
   text-overflow: ellipsis;
 
-  min-width: 60px; /* prevents columns from collapsing to nothing */
+  min-width: 30px; /* prevents columns from collapsing to nothing */
 }
 
 .sticky-table th {
@@ -81,10 +81,6 @@ thead th {
     z-index: 2;
     color: white;
     border-right: 1px solid #ccc;
-}
-
-.sticky-table th {
-  color: black;
 }
 
 .sticky-table th:last-child {
