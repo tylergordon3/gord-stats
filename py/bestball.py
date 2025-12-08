@@ -7,8 +7,6 @@ import os
 import nflreadpy as nfl
 import json
 from io import StringIO
-from tabulate import tabulate
-from pretty_html_table import build_table
 import utilities
 import html_builder as htmb
 
@@ -283,7 +281,14 @@ def update():
         ]}
     ])
     )
-    html = htmb.add_front_matter(styler.to_html(), 'BestBall Summary')
+
+    table = styler.to_html(index=False, classes='sticky-table')
+    table_with_scroll = f'''
+        <div class="table-scroll">
+            {table}
+        </div>
+'''
+    html = htmb.add_front_matter(table_with_scroll, 'BestBall Summary')
     
     with open(path, 'w') as f:
         f.write(html)
