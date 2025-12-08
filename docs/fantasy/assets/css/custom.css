@@ -76,6 +76,19 @@ thead th {
     border-right: none;             /* keep right edge clean */
 }
 
+/* Freeze first column */
+.sticky-table th:first-child,
+.sticky-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
+  color: black;
+  border-right: 1px solid black;
+  background: #D3D3D3
+}
+
+
 /* Reduce padding/headings on smaller screens */
 @media (max-width: 480px) {
   table th,

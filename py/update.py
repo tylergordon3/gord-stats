@@ -17,7 +17,7 @@ import players_to_json
 #   Always generates landing page
 
 # update_all = True
-update_all = False
+update_all = True
 players_to_json.player_json()
 player_db.scrape_injuries(update_all)
 median.median_main(update_all)
