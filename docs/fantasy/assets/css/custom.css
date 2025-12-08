@@ -63,7 +63,16 @@ thead th {
 
 .sticky-table th,
 .sticky-table td {
-    padding: 6px 8px;
+  padding: 6px 8px;
+  font-size: inherit;
+
+  /* Default: keep columns readable */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  min-width: 70px; /* prevents columns from collapsing to nothing */
+  color: black;
 }
 
 .sticky-table th {
