@@ -17,7 +17,7 @@ def change(date):
     df = pd.read_html(StringIO(table.prettify()))[0]
     def getOvr(x):
         splt = x.split()
-        return splt[2][2:-1]
+        return splt[0][1:]
     if today_path == week_ago_path:
         df['vs Last Wk'] = 'NR'
     else:

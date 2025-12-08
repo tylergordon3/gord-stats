@@ -200,7 +200,7 @@ def predict(date):
     main64['vs Last Wk'] = main64.apply(lambda row: calcWkDelta(row), axis=1)
  
     main64['Seed'] = seed(main64['Overall'])
-    main64['Overall'] = main64['Seed'].astype(str) + ' Seed ' + '(#' + main64['Overall'].astype(str) + ')' 
+    main64['Overall'] = '#' + main64['Overall'].astype(str) +' (Seed ' + main64['Seed'].astype(str) + ')' 
     
     def stars(count, max_count=3):
         filled = '★' * count

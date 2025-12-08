@@ -31,21 +31,21 @@
 
 /* -----------------------------
    TABLE BASE STYLING
------------------------------- */
-.sticky-table table {
-  width: 100% !important;
-  max-width: 100% !important;
-  border-collapse: collapse !important;
+   ------------------------------ */
+   .sticky-table table {
+     width: 100% !important;
+       max-width: 100% !important;
+         border-collapse: collapse !important;
 
-  /* THIS allows the table to shrink normally */
-  table-layout: auto !important;
+           /* THIS allows the table to shrink normally */
+             table-layout: auto !important;
 
-  font-family: monospace;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: inherit;
-}
-
+               font-family: monospace;
+                 margin-left: auto;
+                   margin-right: auto;
+                     font-size: inherit;
+                     }
+                     
 .sticky-table th {
   font-weight: bold;
   background: #D3D3D3
