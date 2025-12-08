@@ -146,7 +146,7 @@ def style_last_row(row):
 
 def style_last_col(col):
     # Apply border-left and border-right to all cells in the last column
-    return ['border-left: 3px solid black !important; border-right: 3px solid black !important;' for _ in col]
+    return ['font-weight: bold' for _ in col]
     
 light_grid_style_data = {
     'selector': 'td',
@@ -292,6 +292,7 @@ def calc_allplay(df):
 
     styled = pivot.style \
         .apply(highlight_week, subset=week_cols) \
+        .apply(highlightSpec, subset=['Total']) \
         .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
         .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, pivot.columns[-1]:]) \
         .set_table_attributes('class="sticky-table"')
