@@ -43,21 +43,23 @@ thead th {
   margin-bottom: 1rem;
 }
 
+/* -----------------------------
+   TABLE BASE STYLING
+------------------------------ */
 .sticky-table table {
   width: 100% !important;
   max-width: 100% !important;
   border-collapse: collapse !important;
-  table-layout: auto !important;  
 
-  border-spacing: 0;      /* keeps normal table layout */
-  width: 100%;
-  max-width: 100%;
-  font-family: monospace; 
+  /* THIS allows the table to shrink normally */
+  table-layout: auto !important;
+
+  font-family: monospace;
   margin-left: auto;
   margin-right: auto;
-  justify-content: center; 
   font-size: inherit;
 }
+
 
 .sticky-table th,
 .sticky-table td {
@@ -83,9 +85,9 @@ thead th {
   left: 0;
   z-index: 3;
   box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
-  color: black;
+  color: #fff;
   border-right: 1px solid black;
-  background: #D3D3D3
+  background: #373737
 }
 
 
