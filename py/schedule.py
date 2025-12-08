@@ -378,7 +378,7 @@ def SoS(rosters):
         .style
         .hide(axis="index") 
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
-        .background_gradient(cmap="RdYlGn", subset=["SOS"]) 
+        .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .background_gradient(cmap="RdYlGn_r", subset=["Scoring Luck"])
         .format('{:.2%}', subset=['Scoring Luck'])

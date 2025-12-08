@@ -16,8 +16,8 @@ import players_to_json
 #   If true - Updates all best ball pages
 #   Always generates landing page
 
-update_all = True
-# update_all = False
+# update_all = True
+update_all = False
 players_to_json.player_json()
 player_db.scrape_injuries(update_all)
 median.median_main(update_all)
