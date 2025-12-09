@@ -130,8 +130,10 @@ thead th {
 
 /* DIVS FOR PLAYOFF BRACKET */
 .round-container {
+  display: inline-block;
   width: 30%;
-  border: 2px solid #f00;
+  border: solid #000;
+  border-width: 0 1px;
   padding: 10px;
 }
 
@@ -143,4 +145,8 @@ thead th {
 .playoff-matchup {
   height: 16%;
   border: 2px solid rgb(18, 47, 211);
+}
+
+.inner-text{
+  text-align:center;
 }
