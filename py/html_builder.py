@@ -1,4 +1,5 @@
 import os
+import schedule
 
 def add_front_matter(html, title):
     fm = f"""---
@@ -49,3 +50,65 @@ def generate_landing(folder, file, title):
         f.write(fm)
 
     print(f"Landing page generated: {output_file}")
+
+def generate_index():
+    #  htmb.generate_landing('docs/median', 'median', 'Median')
+    standings = schedule.standings()
+    table_style = {
+        "selector": "th.col_heading,td",
+        "props": [
+        ("width", "100px"), # px instead of %
+        ("text-align", "center"), # optional ?
+    ]}
+    light_grid_style_data = {
+        'selector': 'td',
+        'props': [
+            ('border', '1px solid black')
+        ]
+    }
+    light_grid_style_header = {
+        'selector': 'th',
+        'props': [
+            ('border', '1px solid black')
+        ]
+    }
+    styler = (
+        standings
+        .style
+        .hide(axis="index") 
+        .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
+        .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
+        .background_gradient(cmap="RdYlGn", subset=["SOV"])
+        .background_gradient(cmap="RdYlGn_r", subset=["Scoring Luck"])
+        .format('{:.2%}', subset=['Scoring Luck'])
+        .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
+        )
+    page=f'''
+---
+layout: default
+title: Home
+---
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Home</title>
+  </head>
+  <body>
+    <h1>Home</h1>
+    <p><a href="median/median.html">Median</a></p>
+    <p><a href="bestball/bestball.html">Best Ball</a></p>
+    <p><a href="schedule/schedule.html">Schedule Stats</a></p>
+    <h1>Regular Season Standings</h1>
+    {styler}
+    <br><h3>Site Update Log</h3>
+    <p>Tue 12/09/25 -  7 am - Site updated for week 14, regular season completed</p>
+    <p>Sun 12/07/25 -  9 pm - Updated stats for all week 14 games up to SNF</p>
+    <p>Tue 12/02/25 - 12 pm - Updated all pages post week 13, updated playoff scenarios on home.</p>
+    <p>Mon 12/01/25 -  7 am - Updated week 13 pages with all games prior to MNF & playoff scenarios.</p>
+    <p>Sun 11/30/25 -  9 pm - Updated Edited median to (hopefully) stop including injured players as "To Play"</p>
+  </body>
+</html>
+'''
+    with open('docs/index.html', "w", encoding="utf-8") as f:
+        f.write(page)

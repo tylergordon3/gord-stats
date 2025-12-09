@@ -3,7 +3,7 @@ import schedule
 import bestball
 import player_db
 import players_to_json
-
+import html_builder as htmb
 # median_main -> args: bool update_all
 #   Calculates median for every week if true
 #   Always generates the landing page
@@ -17,9 +17,10 @@ import players_to_json
 #   Always generates landing page
 
 # update_all = True
-update_all = True
+update_all = False
 players_to_json.player_json()
 player_db.scrape_injuries()
 median.median_main(update_all)
 bestball.bestball_main(update_all)
 schedule.schedule_main(update_all)
+htmb.generate_index()

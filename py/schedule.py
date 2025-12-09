@@ -390,7 +390,16 @@ def SoS(rosters):
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
 
-    return styler
+    return [rosters, styler]
+
+def standings():
+    yr = util.getYrStr()
+    wk = util.get_week()
+    checkPath = f'data/rost{yr}_{wk}.json'
+    rosters = util.load_df_from_json(checkPath)
+    [rosters, _] = SoS(rosters)
+    rosters = rosters.sort_values(['wins', 'PF'],ascending=False)
+    return rosters[['team_name', 'wins', 'losses', 'PF', 'PA', 'SOS', 'SOV', 'Scoring Luck']].copy()
 
 #       ****** MAIN ******
 def schedule_main(update_all):
@@ -411,7 +420,7 @@ def schedule_main(update_all):
     html += '</div>'
 
     # Strength of Schedule Stats
-    sos_df = SoS(rosters)
+    [rosters, sos_df] = SoS(rosters)
     html += '<h2>Strength of Schedule & Victory</h2>'
     html += "<p><strong>SOS:</strong> Strength of Schedule - Difficulty of Schedule (<a href=https://hackastat.eu/en/learn-a-stat-strength-of-schedule-sos/>Learn More</a>)</p>"
     html += "<p><strong>SOV:</strong> Strength of Victory - Combined Win-Loss percentage of defeated opponents</p>"
