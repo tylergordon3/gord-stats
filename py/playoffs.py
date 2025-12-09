@@ -49,12 +49,12 @@ def format():
    
     df = playoff_stats(df)
     '''
-        r1      r2      r3
-    1   m1      -       -
-    2   -       m3      -
-    3   -       -       m6
-    4   -       m4      - 
-    5   m2      -       -
+        r1      r2      r3      Container for round                                          
+    1   m1      -       -           - Divs                                                          
+    2   -       m3      -               - Div for 'empty' - aka just blank for structure                
+    3   -       -       m6              - Div for matchups                                         
+    4   -       m4      -                   - one div for each team                                 
+    5   m2      -       -                       - Seed? Name, current score                          
     6   -       m5      m7
     '''
     print(df)

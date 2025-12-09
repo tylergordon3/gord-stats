@@ -127,3 +127,20 @@ thead th {
     width: 100%;
     border-collapse: collapse;
 }
+
+/* DIVS FOR PLAYOFF BRACKET */
+.round-container {
+  width: 30%;
+  border: 2px solid #f00;
+  padding: 10px;
+}
+
+.playoff-space {
+  height: 16%;
+  border: 2px solid rgb(36, 35, 35);
+}
+
+.playoff-matchup {
+  height: 16%;
+  border: 2px solid rgb(18, 47, 211);
+}
