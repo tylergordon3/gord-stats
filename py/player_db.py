@@ -30,7 +30,7 @@ def scrape_injuries(updateAll=False, curr_week=util.get_last_completed_week() + 
             path = f'data/injuries{yr}_{week}.json'
             util.save_df_to_json(df, path)
     else:
-        web = f'https://www.nfl.com/injuries/league/{nfl.get_current_season()}/reg{curr_week}'
+        web = f'https://www.nfl.com/injuries/league/{nfl.get_current_season()}/reg{curr_week-1}'
         resp = requests.get(web, timeout=10).text
         list = pd.read_html(StringIO(resp))
         df = pd.DataFrame()
