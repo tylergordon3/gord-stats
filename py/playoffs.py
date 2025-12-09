@@ -19,7 +19,14 @@ def playoff_stats(df):
     df['t2_name'] = df.apply(lambda x: (list(rosters[rosters['roster_id'] == x.t2].team_name))[0] \
                                 if len((list(rosters[rosters['roster_id'] == x.t2].team_name))) > 0 \
                                 else None, axis=1 )
-    print(df)
+
+    df['t1_pts'] = df.apply(lambda x: (list(rosters[rosters['roster_id'] == x.t1].myScores))[0][x.r + 13] \
+                               if len((list(rosters[rosters['roster_id'] == x.t1].myScores))) > 0 \
+                                else None, axis=1 )
+
+    df['t2_pts'] = df.apply(lambda x: (list(rosters[rosters['roster_id'] == x.t2].myScores))[0][x.r + 13] \
+                               if len((list(rosters[rosters['roster_id'] == x.t2].myScores))) > 0 \
+                            else None, axis=1 )
     return df
 
 def format():
@@ -41,7 +48,17 @@ def format():
         df.loc[len(df)] = match
    
     df = playoff_stats(df)
-    
+    '''
+        r1      r2      r3
+    1   m1      -       -
+    2   -       m3      -
+    3   -       -       m6
+    4   -       m4      - 
+    5   m2      -       -
+    6   -       m5      m7
+    '''
+    print(df)
+
 
 
 format()
