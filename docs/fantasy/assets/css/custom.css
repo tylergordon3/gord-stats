@@ -137,10 +137,12 @@ thead th {
 
 .playoff-space {
   border: 1px solid rgb(33, 30, 209);
+  display:inline-block
 }
 
 .playoff-matchup {
   border: 1px solid rgb(211, 18, 18);
+  display:inline-block
 }
 
 .inner-text{
