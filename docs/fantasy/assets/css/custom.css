@@ -132,18 +132,14 @@ thead th {
 .round-container {
   display: inline-block;
   width: 30%;
-  border: solid #000;
-  border-width: 0 1px;
   padding: 10px;
 }
 
 .playoff-space {
-  height: 16%;
   border: 1px solid rgb(33, 30, 209);
 }
 
 .playoff-matchup {
-  height: 16%;
   border: 1px solid rgb(211, 18, 18);
 }
 
