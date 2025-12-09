@@ -95,7 +95,9 @@ def generate_index():
     <p><a href="bestball/bestball.html">Best Ball</a></p>
     <p><a href="schedule/schedule.html">Schedule Stats</a></p>
     <h1>Regular Season Standings</h1>
-    {styler.to_html()}
+    <div class="table-scroll">
+    {styler.to_html(classes='sticky-table')}
+    </div>
     <br><h3>Site Update Log</h3>
     <p>Tue 12/09/25 -  7 am - Site updated for week 14, regular season completed</p>
     <p>Sun 12/07/25 -  9 pm - Updated stats for all week 14 games up to SNF</p>
