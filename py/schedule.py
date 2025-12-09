@@ -55,7 +55,7 @@ def saveSchedules():
     rosters = fr.get(league)
     rosters['sched'] = [[] for _ in range(len(rosters))]
     # Playoffs begin week 15
-    for week in range(1,15):
+    for week in range(1,18):
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         matchups = bb.getMatchups(matchup_df)
         for teamA, teamB in matchups:
@@ -64,7 +64,7 @@ def saveSchedules():
             indexB = getTeamIndex(rosters, teamB)
             rosters.loc[indexB,:]['sched'].append(teamA)
     rosters = schedScores(rosters)
-    rosters['myScores'] = rosters.apply(lambda x: np.repeat(x['roster_id'], 14), axis=1)
+    rosters['myScores'] = rosters.apply(lambda x: np.repeat(x['roster_id'], 17), axis=1)
     rosters['myScores'] = rosters['myScores'].apply(lambda x: getScoreArr(x))
     rosters['wins_vs'] = rosters.apply(lambda x: recordsVsAll(rosters, x), axis=1)
     rosters['total'] = rosters['wins_vs'].apply(lambda x: getVals(x))

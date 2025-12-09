@@ -4,6 +4,24 @@ import pandas as pd
 import utilities as util
 
 league = League(c.LEAGUEID)
+
+def playoff_stats(df): 
+    # Get most recent roster info
+    wk = util.get_last_completed_week()
+    yr = util.getYrStr()
+    path = f'data/rost{yr}_{wk}.json'
+    rosters = util.load_df_from_json(path)
+
+    # Update df 
+    df['t1_name'] = df.apply(lambda x: (list(rosters[rosters['roster_id'] == x.t1].team_name))[0] \
+                                if len((list(rosters[rosters['roster_id'] == x.t1].team_name))) > 0 \
+                                else None, axis=1 )
+    df['t2_name'] = df.apply(lambda x: (list(rosters[rosters['roster_id'] == x.t2].team_name))[0] \
+                                if len((list(rosters[rosters['roster_id'] == x.t2].team_name))) > 0 \
+                                else None, axis=1 )
+    print(df)
+    return df
+
 def format():
     # r       [int]    Round
     # m       [int]    Match ID - unique for all matchups
@@ -21,10 +39,9 @@ def format():
     for match in playoff_win_list:
         # df.loc[len(df)] = new_row
         df.loc[len(df)] = match
-    wk = util.get_last_completed_week()
-    yr = util.getYrStr()
-    path = f'data/rost{yr}_{wk}.json'
-    rosters = util.load_df_from_json(path)
-    df['names'] = df.apply(lambda x: (list(rosters[rosters['roster_id'] == x.t2].team_name)), axis=1 )
-    print(df['names'])
+   
+    df = playoff_stats(df)
+    
+
+
 format()
