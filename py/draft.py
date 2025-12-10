@@ -73,6 +73,8 @@ df = df.rename(columns={
 df = df[['Pick', 'round', 'Team', 
          'name', 'team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
 
+df_best = df.sort_values(by='Final Δ', ascending=False)
+
 styler = (
         df
         .style
@@ -81,10 +83,22 @@ styler = (
         .background_gradient(cmap="RdYlGn", subset=["Final Δ"])
         )
 
+styler_best = (
+        df_best
+        .style
+        .hide(axis="index") 
+        )
+
 html = f'''
+    <h3>All Draft Stats</h3>
     <div class="table-scroll">
         {styler.to_html()}
-    </div>'''
+    </div>
+    <h3>Biggest Draft Steals</h3>
+    <div class="table-scroll">
+        {styler_best.to_html()}
+    </div>
+    '''
 
 page = htmb.add_front_matter(html, 'Draft')
 with open('docs/draft.html', "w", encoding="utf-8") as f:
