@@ -110,13 +110,13 @@ html = f'''
     </div>
     </details>
     <details>
-    <summary><h4>Biggest Draft Steals</h4></summary>
+    <summary><strong>Biggest Draft Steals</strong></summary>
     <div class="table-scroll">
         {styler_best.to_html(max_rows=40)}
     </div>
     </details>
     <details>
-    <summary><h3>Biggest Draft Misses</h3></summary>
+    <summary><strong>Biggest Draft Misses</strong></summary>
     <div class="table-scroll">
         {styler_worst.to_html(max_rows=40)}
     </div>
