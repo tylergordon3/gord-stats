@@ -89,14 +89,14 @@ styler = (
         )
 
 styler_best = (
-        df_best
+        df_best[:round(len(df_best)*.25)]
         .style
         .hide(axis="index")
         .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
         )
 
 styler_worst = (
-        df_worst
+        df_worst[:round(len(df_worst)*.25)]
         .style
         .hide(axis="index") 
         .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
