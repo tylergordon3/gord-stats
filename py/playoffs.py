@@ -5,6 +5,80 @@ import utilities as util
 
 league = League(c.LEAGUEID)
 
+css = '''
+ <div class="playoff-container">
+    <div class="round-container">
+      <h3 class="inner-text">Round 1</h3>
+      <div class="playoff-matchup">
+        <p class="inner-text">Matchup 1</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-matchup">
+        <p class="inner-text">Matchup 2</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+    </div>
+    <div class="round-container">
+      <h3 class="inner-text">Round 2</h3>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-matchup">
+        <p class="inner-text">Matchup 3</p>
+      </div>
+      <div class="playoff-space"></div>
+      <div class="playoff-matchup">
+        <p class="inner-text">Matchup 4</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-matchup">
+        <p class="inner-text">Matchup 5</p>
+      </div>
+    </div>
+    <div class="round-container">
+      <h3 class="inner-text">Round 3</h3>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-matchup">
+        <p class="inner-text">Matchup 6</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-space">
+        <p class="inner-text">&nbsp;</p>
+      </div>
+      <div class="playoff-matchup">
+        <p class="inner-text">Matchup 7</p>
+      </div>
+    </div>
+  </div>
+'''
 def playoff_stats(df): 
     # Get most recent roster info
     wk = util.get_last_completed_week()
