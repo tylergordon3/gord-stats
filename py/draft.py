@@ -104,19 +104,23 @@ styler_worst = (
 
 html = f'''
     <details>
-    <summary><h3>All Draft Stats</h3></summary>
+    <summary><strong>All Draft Stats</strong></summary>
     <div class="table-scroll">
         {styler.to_html()}
     </div>
     </details>
-    <h3>Biggest Draft Steals</h3>
+    <details>
+    <summary><h4>Biggest Draft Steals</h4></summary>
     <div class="table-scroll">
         {styler_best.to_html(max_rows=40)}
     </div>
-    <h3>Biggest Draft Misses</h3>
+    </details>
+    <details>
+    <summary><h3>Biggest Draft Misses</h3></summary>
     <div class="table-scroll">
         {styler_worst.to_html(max_rows=40)}
     </div>
+    </details>
     '''
 
 page = htmb.add_front_matter(html, 'Draft')
