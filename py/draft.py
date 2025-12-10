@@ -57,10 +57,11 @@ df['final_rank'] = df.apply(lambda x: final_rank(x, df), axis=1)
 df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] == x.position]), axis=1)
 df['overall_diff'] = df['pick_no'] - df['final_rank']
 df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
-
+print(df.columns)
+df = df.drop(columns=['player_id', 'roster_id'])
 html = f'''
     <div class="table-scroll">
-        {df.to_html()}
+        {df.to_html(index=False)}
     </div>'''
 
 page = htmb.add_front_matter(html, 'Draft')
