@@ -63,7 +63,12 @@ df = df.rename(columns={
         "pos_diff" : "Pos Change",
         "overall_diff" : "Ovr Change",
         "final_pos_rank" : "Pos Final",
-        "pos_rank" : "Pos Start"
+        "pos_rank" : "Pos Start",
+        "pick_no" : "Pick",
+        "positon" : "Pos",
+        "team_name" : "Team",
+        "final_rank" : "Final",
+        "total_pts" : "Pts"
     })
 html = f'''
     <div class="table-scroll">
