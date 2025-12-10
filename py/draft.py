@@ -89,14 +89,14 @@ styler = (
         )
 
 styler_best = (
-        df_best[:round(len(df_best)*.25)]
+        df_best
         .style
         .hide(axis="index")
         .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
         )
 
 styler_worst = (
-        df_worst[:round(len(df_worst)*.25)]
+        df_worst
         .style
         .hide(axis="index") 
         .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
@@ -109,11 +109,11 @@ html = f'''
     </div>
     <h3>Biggest Draft Steals</h3>
     <div class="table-scroll">
-        {styler_best.to_html()}
+        {styler_best.to_html(max_rows=40)}
     </div>
     <h3>Biggest Draft Misses</h3>
     <div class="table-scroll">
-        {styler_worst.to_html()}
+        {styler_worst.to_html(max_rows=40)}
     </div>
     '''
 
