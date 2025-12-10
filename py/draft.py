@@ -57,8 +57,14 @@ df['final_rank'] = df.apply(lambda x: final_rank(x, df), axis=1)
 df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] == x.position]), axis=1)
 df['overall_diff'] = df['pick_no'] - df['final_rank']
 df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
-df['name'] = df['first_name'][:1] + df['last_name']
+df['name'] = df['first_name'] + df['last_name']
 df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name'])
+df = df.rename(columns={
+        "pos_diff" : "Pos Change",
+        "overall_diff" : "Ovr Change",
+        "final_pos_rank" : "Pos Final",
+        "pos_rank" : "Pos Start"
+    })
 html = f'''
     <div class="table-scroll">
         {df.to_html(index=False)}
