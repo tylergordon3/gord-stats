@@ -65,7 +65,7 @@ df = df.rename(columns={
         "final_pos_rank" : "PosFinal",
         "pos_rank" : "PosStart",
         "pick_no" : "Pick",
-        "positon" : "Pos",
+        "position" : "Pos",
         "team_name" : "Owner",
         "final_rank" : "Final",
         "total_pts" : "Pts",
@@ -75,7 +75,7 @@ df = df.rename(columns={
 
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
-         'Name', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
+         'Name', 'Pos', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
 
 df_best = df.sort_values(by='Final Δ', ascending=False)
 df_worst = df.sort_values(by='Final Δ')
@@ -91,13 +91,15 @@ styler = (
 styler_best = (
         df_best
         .style
-        .hide(axis="index") 
+        .hide(axis="index")
+        .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
         )
 
 styler_worst = (
         df_worst
         .style
         .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
         )
 
 html = f'''
