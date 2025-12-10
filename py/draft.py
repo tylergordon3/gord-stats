@@ -58,7 +58,11 @@ df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] ==
 df['overall_diff'] = df['pick_no'] - df['final_rank']
 df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
 
-html = df.to_html()
+html = f'''
+    <div class="table-scroll">
+        {df.to_html()}
+    </div>'''
+
 page = htmb.add_front_matter(html, 'Draft')
 with open('docs/draft.html', "w", encoding="utf-8") as f:
     f.write(page)
