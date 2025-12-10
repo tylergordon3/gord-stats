@@ -103,10 +103,12 @@ styler_worst = (
         )
 
 html = f'''
-    <h3>All Draft Stats</h3>
+    <details>
+    <summary><h3>All Draft Stats</h3></summary>
     <div class="table-scroll">
         {styler.to_html()}
     </div>
+    </details>
     <h3>Biggest Draft Steals</h3>
     <div class="table-scroll">
         {styler_best.to_html(max_rows=40)}
