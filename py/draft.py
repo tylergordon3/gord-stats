@@ -77,6 +77,8 @@ df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
          'Name', 'Pos', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
 
+#df_summary = 
+
 df_best = df.sort_values(by='Final Δ', ascending=False)
 df_worst = df.sort_values(by='Final Δ')
 
