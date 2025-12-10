@@ -72,7 +72,8 @@ df = df.rename(columns={
         "name" : "Name",
         "team" : "Team"
     })
-df['Pick'] = f'{df['round']}.{df['Pick']}'
+
+df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
          'Name', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
 
