@@ -60,16 +60,18 @@ df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
 df['name'] = df['first_name'] + df['last_name']
 df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name'])
 df = df.rename(columns={
-        "pos_diff" : "Pos Change",
-        "overall_diff" : "Ovr Change",
-        "final_pos_rank" : "Pos Final",
-        "pos_rank" : "Pos Start",
+        "pos_diff" : "Pos Δ",
+        "overall_diff" : "Final Δ",
+        "final_pos_rank" : "PosFinal",
+        "pos_rank" : "PosStart",
         "pick_no" : "Pick",
         "positon" : "Pos",
         "team_name" : "Team",
         "final_rank" : "Final",
         "total_pts" : "Pts"
     })
+df = df[['Pick', 'round', 'Team', 
+         'name', 'team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
 html = f'''
     <div class="table-scroll">
         {df.to_html(index=False)}
