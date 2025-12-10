@@ -1,19 +1,18 @@
 '''
     This module is used for gathering draft data for a league.
 '''
-import json
+
 import pandas as pd
 from sleeper_wrapper import League, Drafts, Players
 import fantasy_rosters
 import constants as c
-
+import player_db as pdb
+import html_builder as htmb
 league = League(c.LEAGUEID)
 draft = Drafts(c.DRAFTID)
 players = Players()
 
 rosters = fantasy_rosters.get(league)
-print(rosters[rosters['team_name'] == 'Big Gourds'])
-
 allPicks = pd.DataFrame(draft.get_all_picks())
 apMeta = allPicks['metadata'].apply(pd.Series)
 apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated',
@@ -23,18 +22,43 @@ draftDF = pd.concat([allPicks, apMeta], axis=1)
 draftDF = draftDF.drop(columns=['metadata', 'reactions', 'is_keeper',
                                 'draft_id', 'draft_slot', 'roster_id'])
 
-draftDF['teamName'] = draftDF['picked_by']
+draftDF['roster_id'] = draftDF['picked_by'].apply(lambda x: list(rosters[rosters['owner_id'] == x].roster_id)[0])
+draftDF['team_name'] = draftDF['roster_id'].apply(lambda x: list(rosters[rosters['roster_id'] == x].team_name)[0])
 
 # DRAFTDF COLUMNS
 # Index(['pick_no', 'picked_by', 'player_id', 'roster_id', 'round', 'first_name',
 #       'last_name', 'position', 'team', 'teamName],
 #      dtype='object')
+df = draftDF[['pick_no', 'roster_id', 'team_name', 'player_id', 'first_name', 'last_name', 'round', 'position', 'team']].copy()
 
-try:
-    with open('players.json', 'r', encoding='utf-8') as file:
-        data = json.load(file)
-    playersDF = pd.DataFrame.from_dict(data, orient='index')
-except FileNotFoundError:
-    print("Error: The file 'your_file.json' was not found.")
-except json.JSONDecodeError:
-    print("Error: Failed to decode JSON from the file. Check for valid JSON format.")
+def pos_rank(row, position_df):
+    this_rank = row.pick_no
+    return len(position_df[position_df['pick_no'] < this_rank]) + 1
+
+df['pos_rank'] = df.apply(lambda x: pos_rank(x, df[df['position'] == x.position]), axis=1)
+
+players = pdb.get(week=0)
+
+def sum_pts(id):
+    sleeper = str(id)
+    pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'].sum()
+    return pts
+
+def final_rank(row, df):
+    this_rank = row.total_pts
+    return len(df[df['total_pts'] > this_rank]) + 1
+
+def final_pos_rank(row, df):
+    this_rank = row.total_pts
+    return len(df[df['total_pts'] > this_rank]) + 1
+
+df['total_pts'] = df.apply(lambda x: sum_pts(x['player_id']), axis=1)
+df['final_rank'] = df.apply(lambda x: final_rank(x, df), axis=1)
+df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] == x.position]), axis=1)
+df['overall_diff'] = df['pick_no'] - df['final_rank']
+df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
+
+html = df.to_html()
+page = htmb.add_front_matter(html, 'Draft')
+with open('docs/draft.html', "w", encoding="utf-8") as f:
+    f.write(page)

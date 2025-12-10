@@ -65,7 +65,6 @@ def get_last_completed_week():
         weeks = math.floor(approx_weeks)
     return weeks
 
-get_last_completed_week()
 def save_df_to_json(df, filename):
     """
     Saves Python DataFrame to a JSON file.
