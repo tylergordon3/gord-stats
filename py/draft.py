@@ -66,14 +66,18 @@ df = df.rename(columns={
         "pos_rank" : "PosStart",
         "pick_no" : "Pick",
         "positon" : "Pos",
-        "team_name" : "Team",
+        "team_name" : "Owner",
         "final_rank" : "Final",
-        "total_pts" : "Pts"
+        "total_pts" : "Pts",
+        "name" : "Name",
+        "team" : "Team"
     })
-df = df[['Pick', 'round', 'Team', 
-         'name', 'team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
+df['Pick'] = f'{df['round']}.{df['Pick']}'
+df = df[['Pick', 'Owner', 
+         'Name', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
 
 df_best = df.sort_values(by='Final Δ', ascending=False)
+df_worst = df.sort_values(by='Final Δ')
 
 styler = (
         df
@@ -89,6 +93,12 @@ styler_best = (
         .hide(axis="index") 
         )
 
+styler_worst = (
+        df_worst
+        .style
+        .hide(axis="index") 
+        )
+
 html = f'''
     <h3>All Draft Stats</h3>
     <div class="table-scroll">
@@ -97,6 +107,10 @@ html = f'''
     <h3>Biggest Draft Steals</h3>
     <div class="table-scroll">
         {styler_best.to_html()}
+    </div>
+    <h3>Biggest Draft Misses</h3>
+    <div class="table-scroll">
+        {styler_worst.to_html()}
     </div>
     '''
 
