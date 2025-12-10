@@ -72,9 +72,18 @@ df = df.rename(columns={
     })
 df = df[['Pick', 'round', 'Team', 
          'name', 'team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
+
+styler = (
+        df
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Pos Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["Final Δ"])
+        )
+
 html = f'''
     <div class="table-scroll">
-        {df.to_html(index=False)}
+        {styler.to_html()}
     </div>'''
 
 page = htmb.add_front_matter(html, 'Draft')
