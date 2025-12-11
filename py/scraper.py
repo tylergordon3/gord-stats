@@ -25,6 +25,12 @@ TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 
+def getMasterTeams():
+    df_back = pd.read_json(utils.get_path('data/teams/master.json'))
+    return df_back
+
+def saveMasterTeams(df):
+    df.to_json(utils.get_path('data/teams/master.json'))
 
 def getHTML(link, retries=5, base_delay=1.0):
     for attempt in range(retries):
@@ -45,7 +51,8 @@ def get_schedule():
     base_link = 'https://www.cbssports.com/college-basketball/schedule/'
     soup = getHTML(base_link)
     links = soup.find_all('a')
-    teams = get_teams()
+    teams = getMasterTeams()
+    print(teams)
     missing = []
     for link in links:
         look_for = 'college-basketball/teams/'
@@ -54,33 +61,70 @@ def get_schedule():
             team_link = link.get('href')[idx:]
             abb = team_link.split('/')[0]
             
-            lookup = teams[teams['abbr'] == abb]
-            if lookup.empty:
-                mask = teams['abbr'].str.contains(abb, na=False)
-                filtered_df = teams[mask]
-                if filtered_df.empty:
-                    if abb not in missing:
-                        missing.append(abb)
-                else:
-                    print(filtered_df.name)
-            else:
-                print(lookup.name)
-    print(missing)
+            s_exploded = teams['names'].explode()
 
+            # Check which exploded values are the search value
+            boolean_mask_exploded = s_exploded == abb
 
+            # Map the boolean mask back to the original DataFrame's index to find rows
+            # with at least one match, then use .any(level=0) (or .any(by='id') in newer pandas)
+            # Note: For simplicity, a direct check if the value is present in the exploded series
+            # and then finding the IDs is often more practical.
 
-def get_teams():
-    path = utils.get_path('data/teams/team_table.html')
+            # To get the row IDs where the value is present:
+            matching_ids = s_exploded[boolean_mask_exploded].index.unique()
+            # matching_ids will be [2]
+
+            # To get a boolean Series aligned with the original DF:
+            # Use groupby and any to check if any match occurred within each original list
+            boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
+
+            # Filter the original DataFrame
+            df_result = teams[boolean_mask_original]
+            if not df_result.empty:
+                print(df_result)
+            
+
+get_schedule()
+
+def update_master():
+    master = getMasterTeams()
+    path = utils.get_path('data/teams/redditCFB.html')
     with open(path, 'r', encoding='utf-8') as f:
         html_content = f.read()
-    alphabetical = []
     soup = BeautifulSoup(html_content, 'lxml') 
     rows = soup.find_all('tr')
     team_data = pd.DataFrame()
     for team in rows:
         data = team.find_all('td')
         name = data[0].text
-        alphabetical.append(name)
+        abbr = data[1].text
+        team_add = {
+            "team" : name.strip(),
+            "names" : [name.strip(), abbr.strip()]
+        }
+        new = pd.DataFrame([team_add])
+        team_data = pd.concat([team_data, new], ignore_index=True)
+    df = team_data.sort_values(by='team')
+    df = df.reset_index(drop=True)
+    df['Index'] = df.index
+    merged = pd.merge(master, df, how='left', on='team')
+    merged['names'] = merged.apply(lambda x: list(set(x.names_x + x.names_y)) 
+                                if isinstance(x.names_x, list) and isinstance(x.names_y, list) else x.names_x, axis=1)
+    merged = merged.drop(columns=['names_x', 'names_y', 'Index_y'])
+    merged = merged.rename(columns={'Index_x' : 'index'})
+    saveMasterTeams(merged)
+
+def init_master_dict():
+    path = utils.get_path('data/teams/team_table.html')
+    with open(path, 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    soup = BeautifulSoup(html_content, 'lxml') 
+    rows = soup.find_all('tr')
+    team_data = pd.DataFrame()
+    for team in rows:
+        data = team.find_all('td')
+        name = data[0].text
         mascot = data[1].text
         abbr = data[2].text
  
@@ -91,17 +135,13 @@ def get_teams():
 
         new = pd.DataFrame([team_add])
         team_data = pd.concat([team_data, new], ignore_index=True)
-    alphabetical.sort()
-    teams = {}
-    for index, team in enumerate(alphabetical):
-        teams[index] = [{"team" : team}, {"other" : []}]
-    print(teams)
-   
+    df = team_data.sort_values(by='team')
+    df = df.reset_index(drop=True)
+    df['Index'] = df.index
+    saveMasterTeams(df)
 
-    return team_data
 
-get_teams()
-
+    
 def pull_sportsDB():
     strLeague = 'NCAA_Division_I_Basketball_Mens'
     teams = pd.read_json(utils.get_path('data/team_list.json'))
