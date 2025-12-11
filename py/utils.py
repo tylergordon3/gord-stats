@@ -8,6 +8,11 @@ from datetime import date
 import constants
 from pathlib import Path
 
+def find_team():
+    # Assumptions:
+    # State (from St., St)
+    # St (from Saint)
+    return
 def root():
     return Path(__file__).parent.parent
 

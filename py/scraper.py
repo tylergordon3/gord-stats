@@ -44,19 +44,63 @@ def getHTML(link, retries=5, base_delay=1.0):
 def get_schedule():
     base_link = 'https://www.cbssports.com/college-basketball/schedule/'
     soup = getHTML(base_link)
-    # spans = soup.find_all('span', {'class' : 'blue'}
-    #spans = soup.find_all('span', {'class' : "TeamName"})
     links = soup.find_all('a')
+    teams = get_teams()
+    missing = []
     for link in links:
-        print(link)
-        try:
-            team_link = link.get("href").split('/')[-2]
-            get_num_words = len(link.string.split())
-            team_link_sep = team_link.split('-')
-            unformat_team = team_link_sep[:get_num_words]
-        except:
-            continue
+        look_for = 'college-basketball/teams/'
+        if look_for in link.get("href"):
+            idx = link.get("href").find(look_for) + len(look_for)
+            team_link = link.get('href')[idx:]
+            abb = team_link.split('/')[0]
+            
+            lookup = teams[teams['abbr'] == abb]
+            if lookup.empty:
+                mask = teams['abbr'].str.contains(abb, na=False)
+                filtered_df = teams[mask]
+                if filtered_df.empty:
+                    if abb not in missing:
+                        missing.append(abb)
+                else:
+                    print(filtered_df.name)
+            else:
+                print(lookup.name)
+    print(missing)
 
+
+
+def get_teams():
+    path = utils.get_path('data/teams/team_table.html')
+    with open(path, 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    alphabetical = []
+    soup = BeautifulSoup(html_content, 'lxml') 
+    rows = soup.find_all('tr')
+    team_data = pd.DataFrame()
+    for team in rows:
+        data = team.find_all('td')
+        name = data[0].text
+        alphabetical.append(name)
+        mascot = data[1].text
+        abbr = data[2].text
+ 
+        team_add = {
+            "team" : name,
+            "names" : [name, mascot, abbr]
+        }
+
+        new = pd.DataFrame([team_add])
+        team_data = pd.concat([team_data, new], ignore_index=True)
+    alphabetical.sort()
+    teams = {}
+    for index, team in enumerate(alphabetical):
+        teams[index] = [{"team" : team}, {"other" : []}]
+    print(teams)
+   
+
+    return team_data
+
+get_teams()
 
 def pull_sportsDB():
     strLeague = 'NCAA_Division_I_Basketball_Mens'
