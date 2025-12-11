@@ -1,1 +1,2696 @@
-{"team":{"0":"Abilene Christian","1":"Air Force","2":"Akron","3":"Alabama","4":"Alabama A&M","5":"Alabama State","6":"Albany","7":"Alcorn State","8":"American University","9":"Appalachian State","10":"Arizona","11":"Arizona State","12":"Arkansas","13":"Arkansas State","14":"Arkansas-Pine Bluff","15":"Army West Point","16":"Auburn","17":"Austin Peay","18":"Ball State","19":"Baylor","20":"Bellarmine","21":"Belmont","22":"Bethune-Cookman","23":"Binghamton","24":"Boise State","25":"Boston College","26":"Boston University","27":"Bowling Green","28":"Bradley","29":"Brigham Young","30":"Brown","31":"Bryant","32":"Bucknell","33":"Buffalo","34":"Butler","35":"Cal Poly","36":"Cal State Bakersfield","37":"Cal State Fullerton","38":"Cal State Northridge","39":"California","40":"California Baptist","41":"Campbell","42":"Canisius","43":"Central Arkansas","44":"Central Connecticut State","45":"Central Michigan","46":"Charleston","47":"Charleston Southern","48":"Charlotte","49":"Chattanooga","50":"Chicago State","51":"Cincinnati","52":"Clemson","53":"Cleveland State","54":"Coastal Carolina","55":"Colgate","56":"Colorado","57":"Colorado State","58":"Columbia","59":"Coppin State","60":"Cornell","61":"Creighton","62":"Dartmouth","63":"Davidson","64":"Dayton","65":"DePaul","66":"Delaware","67":"Delaware State","68":"Denver","69":"Detroit-Mercy","70":"Drake","71":"Drexel","72":"Duke","73":"Duquesne","74":"East Carolina","75":"East Tennessee State","76":"East Texas A&M","77":"Eastern Illinois","78":"Eastern Kentucky","79":"Eastern Michigan","80":"Eastern Washington","81":"Elon","82":"Evansville","83":"Fairfield","84":"Fairleigh Dickinson","85":"Florida","86":"Florida A&M","87":"Florida Atlantic","88":"Florida Gulf Coast","89":"Florida International","90":"Florida State","91":"Fordham","92":"Fort Wayne","93":"Fresno State","94":"Furman","95":"Gardner-Webb","96":"George Mason","97":"George Washington","98":"Georgetown","99":"Georgia","100":"Georgia Southern","101":"Georgia State","102":"Georgia Tech","103":"Gonzaga","104":"Grambling State","105":"Grand Canyon","106":"Green Bay","107":"Hampton","108":"Harvard","109":"Hawaii","110":"High Point","111":"Hofstra","112":"Holy Cross","113":"Houston","114":"Houston Christian","115":"Howard","116":"IU Indy","117":"Idaho","118":"Idaho State","119":"Illinois","120":"Illinois State","121":"Illinois-Chicago","122":"Incarnate Word","123":"Indiana","124":"Indiana State","125":"Iona","126":"Iowa","127":"Iowa State","128":"Jackson State","129":"Jacksonville","130":"Jacksonville State","131":"James Madison","132":"Kansas","133":"Kansas State","134":"Kennesaw State","135":"Kent State","136":"Kentucky","137":"LSU","138":"La Salle","139":"Lafayette","140":"Lamar","141":"Le Moyne","142":"Lehigh","143":"Liberty","144":"Lindenwood","145":"Lipscomb","146":"Little Rock","147":"Long Beach State","148":"Long Island","149":"Longwood","150":"Louisiana","151":"Louisiana Tech","152":"Louisiana-Monroe","153":"Louisville","154":"Loyola (IL)","155":"Loyola (MD)","156":"Loyola Marymount","157":"Maine","158":"Manhattan","159":"Marist","160":"Marquette","161":"Marshall","162":"Maryland","163":"Maryland-Eastern Shore","164":"Massachusetts","165":"McNeese State","166":"Memphis","167":"Mercer","168":"Mercyhurst","169":"Merrimack College","170":"Miami (FL)","171":"Miami (OH)","172":"Michigan","173":"Michigan State","174":"Middle Tennessee State","175":"Milwaukee","176":"Minnesota","177":"Mississippi State","178":"Mississippi Valley State","179":"Missouri","180":"Missouri State","181":"Monmouth","182":"Montana","183":"Montana State","184":"Morehead State","185":"Morgan State","186":"Mount St. Mary's","187":"Murray State","188":"N.J.I.T.","189":"NC State","190":"Navy","191":"Nebraska","192":"Nevada","193":"New Hampshire","194":"New Haven","195":"New Mexico","196":"New Mexico State","197":"New Orleans","198":"Niagara","199":"Nicholls State","200":"Norfolk State","201":"North Alabama","202":"North Carolina","203":"North Carolina A&T","204":"North Carolina Central","205":"North Dakota","206":"North Dakota State","207":"North Florida","208":"North Texas","209":"Northeastern","210":"Northern Arizona","211":"Northern Colorado","212":"Northern Illinois","213":"Northern Iowa","214":"Northern Kentucky","215":"Northwestern","216":"Northwestern State","217":"Notre Dame","218":"Oakland","219":"Ohio","220":"Ohio State","221":"Oklahoma","222":"Oklahoma State","223":"Old Dominion","224":"Ole Miss","225":"Omaha","226":"Oral Roberts","227":"Oregon","228":"Oregon State","229":"Pacific","230":"Penn State","231":"Pennsylvania","232":"Pepperdine","233":"Pittsburgh","234":"Portland","235":"Portland State","236":"Prairie View A&M","237":"Presbyterian","238":"Princeton","239":"Providence","240":"Purdue","241":"Queens University","242":"Quinnipiac","243":"Radford","244":"Rhode Island","245":"Rice","246":"Richmond","247":"Rider","248":"Robert Morris","249":"Rutgers","250":"SIU-Edwardsville","251":"Sacramento State","252":"Sacred Heart","253":"Saint Joseph's","254":"Saint Louis","255":"Saint Mary's","256":"Saint Peter's","257":"Sam Houston State","258":"Samford","259":"San Diego","260":"San Diego State","261":"San Francisco","262":"San Jose State","263":"Santa Clara","264":"Seattle","265":"Seton Hall","266":"Siena","267":"South Alabama","268":"South Carolina","269":"South Carolina State","270":"South Dakota","271":"South Dakota State","272":"South Florida","273":"Southeast Missouri State","274":"Southeastern Louisiana","275":"Southern","276":"Southern Illinois","277":"Southern Indiana","278":"Southern Methodist","279":"Southern Mississippi","280":"Southern Utah","281":"St. Bonaventure","282":"St. Francis (PA)","283":"St. John's","284":"St. Thomas","285":"Stanford","286":"Stephen F. Austin","287":"Stetson","288":"Stonehill","289":"Stony Brook","290":"Syracuse","291":"TCU","292":"Tarleton State","293":"Temple","294":"Tennessee","295":"Tennessee State","296":"Tennessee Tech","297":"Tennessee-Martin","298":"Texas","299":"Texas A&M","300":"Texas A&M-CC","301":"Texas Southern","302":"Texas State","303":"Texas Tech","304":"Texas-Arlington","305":"Texas-RGV","306":"Texas-San Antonio","307":"The Citadel","308":"Toledo","309":"Towson","310":"Troy","311":"Tulane","312":"Tulsa","313":"UAB","314":"UC Davis","315":"UC Irvine","316":"UC Riverside","317":"UC San Diego","318":"UC Santa Barbara","319":"UCF","320":"UCLA","321":"UConn","322":"UMBC","323":"UMKC","324":"UMass Lowell","325":"UNC Asheville","326":"UNC Greensboro","327":"UNC Wilmington","328":"UNLV","329":"USC","330":"USC Upstate","331":"UTEP","332":"Utah","333":"Utah State","334":"Utah Tech","335":"Utah Valley","336":"VCU","337":"Valparaiso","338":"Vanderbilt","339":"Vermont","340":"Villanova","341":"Virginia","342":"Virginia Military","343":"Virginia Tech","344":"Wagner","345":"Wake Forest","346":"Washington","347":"Washington State","348":"Weber State","349":"West Georgia","350":"West Virginia","351":"Western Carolina","352":"Western Illinois","353":"Western Kentucky","354":"Western Michigan","355":"Wichita State","356":"William & Mary","357":"Winthrop","358":"Wisconsin","359":"Wofford","360":"Wright State","361":"Wyoming","362":"Xavier","363":"Yale","364":"Youngstown State"},"index":{"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"10":10,"11":11,"12":12,"13":13,"14":14,"15":15,"16":16,"17":17,"18":18,"19":19,"20":20,"21":21,"22":22,"23":23,"24":24,"25":25,"26":26,"27":27,"28":28,"29":29,"30":30,"31":31,"32":32,"33":33,"34":34,"35":35,"36":36,"37":37,"38":38,"39":39,"40":40,"41":41,"42":42,"43":43,"44":44,"45":45,"46":46,"47":47,"48":48,"49":49,"50":50,"51":51,"52":52,"53":53,"54":54,"55":55,"56":56,"57":57,"58":58,"59":59,"60":60,"61":61,"62":62,"63":63,"64":64,"65":65,"66":66,"67":67,"68":68,"69":69,"70":70,"71":71,"72":72,"73":73,"74":74,"75":75,"76":76,"77":77,"78":78,"79":79,"80":80,"81":81,"82":82,"83":83,"84":84,"85":85,"86":86,"87":87,"88":88,"89":89,"90":90,"91":91,"92":92,"93":93,"94":94,"95":95,"96":96,"97":97,"98":98,"99":99,"100":100,"101":101,"102":102,"103":103,"104":104,"105":105,"106":106,"107":107,"108":108,"109":109,"110":110,"111":111,"112":112,"113":113,"114":114,"115":115,"116":116,"117":117,"118":118,"119":119,"120":120,"121":121,"122":122,"123":123,"124":124,"125":125,"126":126,"127":127,"128":128,"129":129,"130":130,"131":131,"132":132,"133":133,"134":134,"135":135,"136":136,"137":137,"138":138,"139":139,"140":140,"141":141,"142":142,"143":143,"144":144,"145":145,"146":146,"147":147,"148":148,"149":149,"150":150,"151":151,"152":152,"153":153,"154":154,"155":155,"156":156,"157":157,"158":158,"159":159,"160":160,"161":161,"162":162,"163":163,"164":164,"165":165,"166":166,"167":167,"168":168,"169":169,"170":170,"171":171,"172":172,"173":173,"174":174,"175":175,"176":176,"177":177,"178":178,"179":179,"180":180,"181":181,"182":182,"183":183,"184":184,"185":185,"186":186,"187":187,"188":188,"189":189,"190":190,"191":191,"192":192,"193":193,"194":194,"195":195,"196":196,"197":197,"198":198,"199":199,"200":200,"201":201,"202":202,"203":203,"204":204,"205":205,"206":206,"207":207,"208":208,"209":209,"210":210,"211":211,"212":212,"213":213,"214":214,"215":215,"216":216,"217":217,"218":218,"219":219,"220":220,"221":221,"222":222,"223":223,"224":224,"225":225,"226":226,"227":227,"228":228,"229":229,"230":230,"231":231,"232":232,"233":233,"234":234,"235":235,"236":236,"237":237,"238":238,"239":239,"240":240,"241":241,"242":242,"243":243,"244":244,"245":245,"246":246,"247":247,"248":248,"249":249,"250":250,"251":251,"252":252,"253":253,"254":254,"255":255,"256":256,"257":257,"258":258,"259":259,"260":260,"261":261,"262":262,"263":263,"264":264,"265":265,"266":266,"267":267,"268":268,"269":269,"270":270,"271":271,"272":272,"273":273,"274":274,"275":275,"276":276,"277":277,"278":278,"279":279,"280":280,"281":281,"282":282,"283":283,"284":284,"285":285,"286":286,"287":287,"288":288,"289":289,"290":290,"291":291,"292":292,"293":293,"294":294,"295":295,"296":296,"297":297,"298":298,"299":299,"300":300,"301":301,"302":302,"303":303,"304":304,"305":305,"306":306,"307":307,"308":308,"309":309,"310":310,"311":311,"312":312,"313":313,"314":314,"315":315,"316":316,"317":317,"318":318,"319":319,"320":320,"321":321,"322":322,"323":323,"324":324,"325":325,"326":326,"327":327,"328":328,"329":329,"330":330,"331":331,"332":332,"333":333,"334":334,"335":335,"336":336,"337":337,"338":338,"339":339,"340":340,"341":341,"342":342,"343":343,"344":344,"345":345,"346":346,"347":347,"348":348,"349":349,"350":350,"351":351,"352":352,"353":353,"354":354,"355":355,"356":356,"357":357,"358":358,"359":359,"360":360,"361":361,"362":362,"363":363,"364":364},"names":{"0":["ACU","Wildcats","Abilene Christian"],"1":["AFA","AF","Falcons","Air Force"],"2":["AKR","Zips","Akron"],"3":["Crimson Tide","ALA or BAMA","UA","Alabama"],"4":["Alabama A&M","Bulldogs","AAMU"],"5":["Hornets","Alabama State","ALAST","ALST"],"6":["ALBNY","Great Danes","Albany","ALBY"],"7":["ALCN","Braves","ALCST","Alcorn State"],"8":["American University","Eagles","AMERU"],"9":["APP","Mountaineers","Appalachian State","APPST"],"10":["ARIZ","ARZ","Wildcats","Arizona"],"11":["ASU","Arizona State","Sun Devils"],"12":["ARK","Razorbacks","Arkansas"],"13":["ARST","Red Wolves","Arkansas State","ARKST"],"14":["Golden Lions","Arkansas-Pine Bluff","UAPB","ARPB"],"15":["Army West Point","Black Knights","USMA"],"16":["Tigers","AUB","Auburn"],"17":["Governors","APSU","Austin Peay","PEAY"],"18":["Ball State","Cardinals","BLLST","BALL"],"19":["Baylor","Bears","BAY","BAYL"],"20":["Bellarmine","Knights","BELL"],"21":["Belmont","Bruins","BLMNT"],"22":["BTHCK","Bethune-Cookman","Wildcats","COOK"],"23":["Binghamton","Bearcats","BNGH"],"24":["BOISE","Boise State","BSU","Broncos"],"25":["Eagles","BOS","Boston College","BC"],"26":["Boston University","Terriers","BSTN"],"27":["Bowling Green","Falcons","BGSU"],"28":["Bradley","Braves","BRDLY"],"29":["Brigham Young","Cougars","BYU"],"30":["BRWN","Bears","Brown"],"31":["Bryant","BRYNT","Bulldogs","BRY"],"32":["Bison","Bucknell","BUCK"],"33":["BUFF","Bulls","Buffalo"],"34":["Butler","BUT","BTLR","Bulldogs"],"35":["Mustangs","POLY","CP","Cal Poly"],"36":["Cal State Bakersfield","Roadrunners","CSUB"],"37":["Cal State Fullerton","Titans","CSFUL"],"38":["Cal State Northridge","Matadors","CSUN"],"39":["California","Golden Bears","Cal"],"40":["California Baptist","Lancers","CALBU"],"41":["CAMP","Fighting Camels","Campbell","CAM"],"42":["Canisius","Golden Griffins","CAN"],"43":["Central Arkansas","Bears","UCA"],"44":["Central Connecticut State","Blue Devils","CCSU"],"45":["Central Michigan","CMU","Chippewas"],"46":["Charleston","Cougars","C of C"],"47":["Charleston Southern","CHSO","CHASO","Buccaneers"],"48":["CHAR","49ers","Charlotte"],"49":["Mocs","CHATT","Chattanooga","CHAT"],"50":["Chicago State","Cougars","CHIST"],"51":["Cincinnati","Bearcats","CIN","CINCY"],"52":["Tigers","Clemson","CLEM"],"53":["Cleveland State","Vikings","CLEST"],"54":["Coastal Carolina","Chanticleers","CCU","CCAR"],"55":["COLGT","Colgate","COLG","Raiders"],"56":["COLO","Buffaloes","Colorado"],"57":["COLST","CSU","Colorado State","Rams"],"58":["COM","Lions","Columbia","CLMB"],"59":["Coppin State","Eagles","COPST"],"60":["COR","Big Red","Cornell"],"61":["Creighton","Bluejays","CREI"],"62":["DART","Big Green","Dartmouth"],"63":["DAV","Wildcats","Davidson"],"64":["Flyers","DAY","Dayton"],"65":["DePaul","Blue Demons","DEP"],"66":["Fightin Blue Hens","Delaware","DEL"],"67":["Delaware State","Hornets","DESU","DSU"],"68":["Denver","Pioneers","DEN"],"69":["Detroit-Mercy","Titans","UDM"],"70":["DRAKE","Drake","Bulldogs","DRKE"],"71":["Drexel","Dragons","DREX"],"72":["Blue Devils","Duke","DUKE"],"73":["Dukes","Duquesne","DUQ"],"74":["East Carolina","Pirates","ECAR"],"75":["East Tennessee State","Buccaneers","ETSU"],"76":["East Texas A&M","Lions","TAMUC"],"77":["Eastern Illinois","EIU","Panthers"],"78":["Colonels","EKY","EKU","Eastern Kentucky"],"79":["Eagles","EMU","EMICH","Eastern Michigan"],"80":["Eastern Washington","Eagles","EWASH","EWU"],"81":["Phoenix","ELON","Elon"],"82":["Evansville","Purple Aces","UE"],"83":["Fairfield","Stags","FAIR"],"84":["Fairleigh Dickinson","Knights","FDU"],"85":["FLA","Florida","FLA or UF","Gators"],"86":["FAMU","Rattlers","Florida A&M"],"87":["Florida Atlantic","Owls","FAU"],"88":["Florida Gulf Coast","Eagles","FGCU"],"89":["Florida International","Golden Panthers","FIU"],"90":["FSU","Florida State","Seminoles","FLAST"],"91":["Fordham","FOR","Rams","FORD"],"92":["Fort Wayne","Mastodons","IPFW"],"93":["FRES","Bulldogs","Fresno State","FRSNO"],"94":["Paladins","Furman","FUR","FRMN"],"95":["WEBB","Runnin' Bulldogs","Gardner-Webb","GWU"],"96":["George Mason","Patriots","GMU"],"97":["George Washington","Revolutionaries","GW"],"98":["Hoyas","GTOWN","GTWN","Georgetown"],"99":["Georgia","UGA","Bulldogs"],"100":["Eagles","Georgia Southern","GASO"],"101":["Georgia State","GAST or GSU","GAST","Panthers"],"102":["Yellow Jackets","GT","Georgia Tech"],"103":["Gonzaga","Bulldogs","ZAGS"],"104":["Grambling State","GRAM","Tigers","GRAMB"],"105":["Grand Canyon","Antelopes","GCU"],"106":["Green Bay","Phoenix","UWGB"],"107":["Hampton","Pirates","HAMP","HMPTN"],"108":["HARV","Crimson","Harvard","HAR"],"109":["Rainbow Warriors","HAW","Hawaii"],"110":["High Point","Panthers","HP"],"111":["Hofstra","Pride","HOF"],"112":["Holy Cross","Crusaders","HC"],"113":["Cougars","Houston","HOU","U of H"],"114":["Houston Christian","Huskies","HCU"],"115":["Bison","HOW","HWRD","Howard"],"116":["IU Indy","Jaguars","IUI"],"117":["Vandals","IDAHO","Idaho","IDHO"],"118":["IDST","Idaho State","Bengals","IDHST"],"119":["ILL","Fighting Illini","Illinois"],"120":["ILLST","ILST","Redbirds","Illinois State"],"121":["Illinois-Chicago","Flames","UIC"],"122":["Cardinals","IW","UIW","Incarnate Word"],"123":["Hoosiers","Indiana","IU","IND"],"124":["INST","Indiana State","INDST","Sycamores"],"125":["Iona","Gaels","IONA"],"126":["Iowa","Hawkeyes","IOWA"],"127":["Cyclones","ISU","Iowa State","IWAST"],"128":["Tigers","JKSN","Jackson State","JKST"],"129":["JAC","Jacksonville","Dolphins"],"130":["JKSNV","Gamecocks","JVST","Jacksonville State"],"131":["Dukes","JMU","James Madison"],"132":["Jayhawks","Kansas","KU"],"133":["KSU","Wildcats","Kansas State"],"134":["KENN","Kennesaw State","Owls"],"135":["Golden Flashes","KENT","Kent State"],"136":["UK","Kentucky","Wildcats"],"137":["LSU","Tigers"],"138":["La Salle","Explorers","LASAL"],"139":["Lafayette","Leopards","LAF","LAFAY"],"140":["LAMAR","Lamar","LAM","Cardinals"],"141":["Le Moyne","Dolphins","MOYNE"],"142":["LEHI","Mountain Hawks","LEH","Lehigh"],"143":["LIB","LBRTY","Liberty","Flames"],"144":["Lindenwood","Lions","LIND"],"145":["Lipscomb","Bisons","LIP"],"146":["Little Rock","Trojans","UALR"],"147":["Long Beach State","Beach","LBSU"],"148":["Long Island","Sharks","LIU"],"149":["Longwood","Lancers","LONG"],"150":["Louisiana","Ragin' Cajuns","LA"],"151":["LT","Louisiana Tech","Bulldogs","LATCH"],"152":["Louisiana-Monroe","Warhawks","ULM"],"153":["LVILL","Louisville","LOU","Cardinals"],"154":["Loyola (IL)","Ramblers","L-IL"],"155":["Loyola (MD)","Greyhounds","L-MD"],"156":["Loyola Marymount","Lions","LOYMR"],"157":["Maine","MAINE or MNE","Black Bears","MAINE"],"158":["Manhattan","Jaspers","MAN"],"159":["Marist","MRST","Red Foxes"],"160":["Marquette","Golden Eagles","MARQ"],"161":["MARSH","Thundering Herd","Marshall","MRSH"],"162":["Maryland","Terrapins","UMD"],"163":["Maryland-Eastern Shore","Hawks","UMES"],"164":["Massachusetts","Minutemen","UMass"],"165":["MCNST","Cowboys","McNeese State","MCNS"],"166":["Tigers","MEM","MEMP","Memphis"],"167":["MER","Bears","Mercer"],"168":["Mercyhurst","Lakers","MC"],"169":["Merrimack College","Warriors","MERRI"],"170":["MIA","Miami (FL)","UMFL","Hurricanes"],"171":["Miami (OH)","RedHawks","M-OH","MIAMI"],"172":["Wolverines","MICH","Michigan"],"173":["MCHST","MSU","Spartans","Michigan State"],"174":["Middle Tennessee State","Blue Raiders","MTSU"],"175":["Milwaukee","Panthers","UWM"],"176":["MINN","Minnesota","Golden Gophers"],"177":["MSST","MISST","Bulldogs","Mississippi State"],"178":["Mississippi Valley State","Delta Devils","MVSU"],"179":["Missouri","MIZ or MIZZ","Tigers","MZZOU"],"180":["MOST","Bears","MZZST","Missouri State"],"181":["Hawks","MONM","Monmouth"],"182":["Montana","MONT","Grizzlies"],"183":["MTST","Fighting Bobcats","MTSTU","Montana State"],"184":["Eagles","Morehead State","MORE","MRHD"],"185":["MORG","Bears","MORST","Morgan State"],"186":["Mount St. Mary's","Mountaineers","MSMU"],"187":["MURR","Murray State","MRRY","Racers"],"188":["N.J.I.T.","Highlanders","NJIT"],"189":["Wolfpack","NC State","NCST"],"190":["USNA","NAVY","Midshipmen","Navy"],"191":["Nebraska","UNL","Cornhuskers","NEB"],"192":["Wolf Pack","UNR","Nevada","NEV"],"193":["Wildcats","UNH","NEWHA","New Hampshire"],"194":["New Haven","Chargers","UNH"],"195":["UNM","Lobos","New Mexico"],"196":["New Mexico State","NMSU","Aggies"],"197":["New Orleans","Privateers","NEWOR"],"198":["Niagara","Purple Eagles","NIAG"],"199":["Colonels","NICH","Nicholls State"],"200":["NORF","Spartans","Norfolk State"],"201":["North Alabama","Lions","UNA"],"202":["UNC","North Carolina","Tar Heels"],"203":["North Carolina A&T","NCAT","Aggies","NC A&T"],"204":["North Carolina Central","Eagles","NCCU"],"205":["North Dakota","UND","Fighting Hawks"],"206":["Bison","North Dakota State","NDSU"],"207":["North Florida","Ospreys","UNF"],"208":["Mean Green","UNT","North Texas"],"209":["Northeastern","Huskies","NEU"],"210":["Northern Arizona","Lumberjacks","NAU"],"211":["Northern Colorado","Bears","UNCO","NOCOL"],"212":["NIU","Northern Illinois","Huskies"],"213":["UNI","Northern Iowa","Panthers"],"214":["Northern Kentucky","Norse","NKU"],"215":["NW","Northwestern","Wildcats","NWU"],"216":["NSU","Demons","Northwestern State","NWST"],"217":["Notre Dame","Fighting Irish","ND"],"218":["Oakland","Golden Grizzlies","OAKL"],"219":["Bobcats","OHIO","Ohio"],"220":["Ohio State","Buckeyes","OSU"],"221":["Oklahoma","OKLA or OU","Sooners","OKLA"],"222":["OKST","Cowboys","Oklahoma State"],"223":["ODU","Old Dominion","Monarchs"],"224":["MISS","Rebels","Ole Miss"],"225":["Omaha","Mavericks","OMAHA"],"226":["Oral Roberts","Golden Eagles","ORU"],"227":["OREG","ORE or UO","Ducks","Oregon"],"228":["Beavers","Oregon State","ORST"],"229":["Pacific","Tigers","PACI"],"230":["Nittany Lions","PENST","Penn State","PSU"],"231":["Pennsylvania","Quakers","PENN"],"232":["Pepperdine","Waves","PEPP"],"233":["Panthers","PITT","Pittsburgh"],"234":["Portland","Pilots","UP"],"235":["PRST","PORTL","Vikings","Portland State"],"236":["Prairie View A&M","Panthers","PV","PVAMU"],"237":["PRE","Blue Hose","PRSBY","Presbyterian"],"238":["Tigers","Princeton","PRIN"],"239":["Providence","Friars","PROV"],"240":["Boilermakers","PUR","PURD","Purdue"],"241":["Queens University","Royals","QUC"],"242":["Quinnipiac","Bobcats","QUIN"],"243":["Radford","Highlanders","RADF"],"244":["Rhode Island","Rams","URI"],"245":["Rice","RICE","Owls"],"246":["RICH","Richmond","Spiders"],"247":["Rider","Broncs","RIDER"],"248":["Robert Morris","Colonials","RMU"],"249":["RUTG","Scarlet Knights","Rutgers"],"250":["SIU-Edwardsville","Cougars","SIUE"],"251":["CSUS","Hornets","Sacramento State","SAC"],"252":["SHU","Pioneers","HEART","Sacred Heart"],"253":["Saint Joseph's","Hawks","STJOE"],"254":["Saint Louis","Billikens","STLOU"],"255":["Saint Mary's","Gaels","STMRY"],"256":["Saint Peter's","Peacocks","STPC"],"257":["SHSU","Sam Houston State","Bearkats"],"258":["SAM","SAMF","Bulldogs","Samford"],"259":["San Diego","Toreros","USD","SAND"],"260":["Aztecs","SDSU","San Diego State"],"261":["San Francisco","Dons","SANFR"],"262":["San Jose State","Spartans","SJSU"],"263":["Santa Clara","Broncos","SCU"],"264":["Seattle","Redhawks","SEA"],"265":["Seton Hall","Pirates","SETON"],"266":["Siena","Saints","SIENA"],"267":["Jaguars","South Alabama","USA"],"268":["SOCAR","Gamecocks","South Carolina","SC or SCAR"],"269":["South Carolina State","SCSU","Bulldogs","SCST"],"270":["SDAK","SODAK","South Dakota","Coyotes"],"271":["Jackrabbits","South Dakota State","SDSU","SDKSU"],"272":["South Florida","USF","Bulls","USOFL"],"273":["Southeast Missouri State","Redhawks","SEMO"],"274":["Southeastern Louisiana","Lions","SELU","SELA"],"275":["Southern","Jaguars","SUBR"],"276":["SOILL","SIU","Salukis","Southern Illinois"],"277":["Southern Indiana","Screaming Eagles","USI"],"278":["Southern Methodist","Mustangs","SMU"],"279":["Southern Mississippi","Golden Eagles","SOMIS"],"280":["Thunderbirds","SUU","Southern Utah"],"281":["St. Bonaventure","Bonnies","STBN"],"282":["SFU","Red Flash","St. Francis (PA)","STFPA"],"283":["St. John's","Red Storm","STJ"],"284":["St. Thomas","Tommies","STTOM"],"285":["Stanford","STAN","Cardinal"],"286":["Lumberjacks","Stephen F. Austin","SFA"],"287":["Stetson","Hatters","STET"],"288":["Stonehill","Skyhawks","STONE"],"289":["SB","Seawolves","STON","Stony Brook"],"290":["SYR","SYRA","Syracuse","Orange"],"291":["TCU","Horned Frogs"],"292":["Tarleton State","Texans","TARST"],"293":["Temple","TEM","Owls"],"294":["Volunteers","Tennessee","TENN"],"295":["Tigers","TNST","Tennessee State"],"296":["Golden Eagles","TNTC","TNTCH","Tennessee Tech"],"297":["Skyhawks","UTM","Tennessee-Martin"],"298":["Longhorns","Texas","TEX","TEXAS"],"299":["Texas A&M","Aggies","TAMU"],"300":["Texas A&M-CC","Islanders","TAMU-CC"],"301":["Tigers","Texas Southern","TEXSO","TXSO"],"302":["Texas State","Bobcats","TXST"],"303":["Red Raiders","Texas Tech","TTU","TXTCH"],"304":["Texas-Arlington","Mavericks","UTA"],"305":["Texas-RGV","Vaqueros","UTRGV"],"306":["Texas-San Antonio","Roadrunners","UTSA"],"307":["The Citadel","CTDL","CIT","Bulldogs"],"308":["U of T","TOL or TOLEDO","Rockets","Toledo"],"309":["Tigers","TOWS","Towson"],"310":["Troy","Trojans","TROY"],"311":["Green Wave","Tulane","TULN","TULAN"],"312":["Tulsa","TLSA","TULSA","Golden Hurricane"],"313":["UAB","Blazers","UAB"],"314":["UC Davis","Aggies","UCD"],"315":["UC Irvine","Anteaters","UCI"],"316":["UC Riverside","Highlanders","UCR"],"317":["UC San Diego","Tritons","UCSD"],"318":["UC Santa Barbara","Gauchos","UCSB"],"319":["UCF","Knights"],"320":["Bruins","UCLA"],"321":["UConn","Huskies","CONN"],"322":["UMBC","Retrievers","UMBC"],"323":["UMKC","Kangaroos","UMKC"],"324":["UMass Lowell","River Hawks","UML"],"325":["UNC Asheville","Bulldogs","UNCA"],"326":["UNC Greensboro","Spartans","UNCG"],"327":["UNC Wilmington","Seahawks","UNCW"],"328":["Runnin' Rebels","UNLV"],"329":["Trojans","USC"],"330":["USC Upstate","Spartans","USCU"],"331":["UTEP","Miners"],"332":["U of U","Utah","Utes","UTAH"],"333":["Utah State","Aggies","USU"],"334":["Utah Tech","Trailblazers","UTECH"],"335":["Utah Valley","Wolverines","UVU"],"336":["VCU","Rams","VCU"],"337":["VALP","Beacons","VAL","Valparaiso"],"338":["VAN","VANDY","Vanderbilt","Commodores"],"339":["Vermont","Catamounts","UVM"],"340":["Wildcats","NOVA","VILL","Villanova"],"341":["UVA","Cavaliers","Virginia"],"342":["Virginia Military","Keydets","VMI"],"343":["Hokies","VT","Virginia Tech"],"344":["Wagner","Seahawks","WAGNR","WAG"],"345":["WAKE","Wake Forest","Demon Deacons","WF"],"346":["UWASH","WASH or UW","Huskies","Washington"],"347":["Cougars","WSU","Washington State"],"348":["WEB","WEBER","Weber State","Wildcats"],"349":["West Georgia","Wolves","UWG"],"350":["Mountaineers","WVU","West Virginia"],"351":["Catamounts","WCU","Western Carolina"],"352":["Western Illinois","Leathernecks","WIU"],"353":["Western Kentucky","Hilltoppers","WKU"],"354":["WMY","WMU","Western Michigan","Broncos"],"355":["Wichita State","Shockers","WICHI"],"356":["William & Mary","W&M","Tribe"],"357":["Winthrop","Eagles","WIN"],"358":["WIS","UWISC","Badgers","Wisconsin"],"359":["Wofford","WOF","WOFF","Terriers"],"360":["Wright State","Raiders","WRST"],"361":["WYO","Cowboys","Wyoming","UWYOM"],"362":["Xavier","Musketeers","XAV"],"363":["Yale","Bulldogs","YALE"],"364":["Penguins","YSU","Youngstown State"]}}
+{
+    "team": {
+        "0": "Abilene Christian",
+        "1": "Air Force",
+        "2": "Akron",
+        "3": "Alabama",
+        "4": "Alabama A&M",
+        "5": "Alabama State",
+        "6": "Albany",
+        "7": "Alcorn State",
+        "8": "American University",
+        "9": "Appalachian State",
+        "10": "Arizona",
+        "11": "Arizona State",
+        "12": "Arkansas",
+        "13": "Arkansas State",
+        "14": "Arkansas-Pine Bluff",
+        "15": "Army West Point",
+        "16": "Auburn",
+        "17": "Austin Peay",
+        "18": "Ball State",
+        "19": "Baylor",
+        "20": "Bellarmine",
+        "21": "Belmont",
+        "22": "Bethune-Cookman",
+        "23": "Binghamton",
+        "24": "Boise State",
+        "25": "Boston College",
+        "26": "Boston University",
+        "27": "Bowling Green",
+        "28": "Bradley",
+        "29": "Brigham Young",
+        "30": "Brown",
+        "31": "Bryant",
+        "32": "Bucknell",
+        "33": "Buffalo",
+        "34": "Butler",
+        "35": "Cal Poly",
+        "36": "Cal State Bakersfield",
+        "37": "Cal State Fullerton",
+        "38": "Cal State Northridge",
+        "39": "California",
+        "40": "California Baptist",
+        "41": "Campbell",
+        "42": "Canisius",
+        "43": "Central Arkansas",
+        "44": "Central Connecticut State",
+        "45": "Central Michigan",
+        "46": "Charleston",
+        "47": "Charleston Southern",
+        "48": "Charlotte",
+        "49": "Chattanooga",
+        "50": "Chicago State",
+        "51": "Cincinnati",
+        "52": "Clemson",
+        "53": "Cleveland State",
+        "54": "Coastal Carolina",
+        "55": "Colgate",
+        "56": "Colorado",
+        "57": "Colorado State",
+        "58": "Columbia",
+        "59": "Coppin State",
+        "60": "Cornell",
+        "61": "Creighton",
+        "62": "Dartmouth",
+        "63": "Davidson",
+        "64": "Dayton",
+        "65": "DePaul",
+        "66": "Delaware",
+        "67": "Delaware State",
+        "68": "Denver",
+        "69": "Detroit-Mercy",
+        "70": "Drake",
+        "71": "Drexel",
+        "72": "Duke",
+        "73": "Duquesne",
+        "74": "East Carolina",
+        "75": "East Tennessee State",
+        "76": "East Texas A&M",
+        "77": "Eastern Illinois",
+        "78": "Eastern Kentucky",
+        "79": "Eastern Michigan",
+        "80": "Eastern Washington",
+        "81": "Elon",
+        "82": "Evansville",
+        "83": "Fairfield",
+        "84": "Fairleigh Dickinson",
+        "85": "Florida",
+        "86": "Florida A&M",
+        "87": "Florida Atlantic",
+        "88": "Florida Gulf Coast",
+        "89": "Florida International",
+        "90": "Florida State",
+        "91": "Fordham",
+        "92": "Fort Wayne",
+        "93": "Fresno State",
+        "94": "Furman",
+        "95": "Gardner-Webb",
+        "96": "George Mason",
+        "97": "George Washington",
+        "98": "Georgetown",
+        "99": "Georgia",
+        "100": "Georgia Southern",
+        "101": "Georgia State",
+        "102": "Georgia Tech",
+        "103": "Gonzaga",
+        "104": "Grambling State",
+        "105": "Grand Canyon",
+        "106": "Green Bay",
+        "107": "Hampton",
+        "108": "Harvard",
+        "109": "Hawaii",
+        "110": "High Point",
+        "111": "Hofstra",
+        "112": "Holy Cross",
+        "113": "Houston",
+        "114": "Houston Christian",
+        "115": "Howard",
+        "116": "IU Indy",
+        "117": "Idaho",
+        "118": "Idaho State",
+        "119": "Illinois",
+        "120": "Illinois State",
+        "121": "Illinois-Chicago",
+        "122": "Incarnate Word",
+        "123": "Indiana",
+        "124": "Indiana State",
+        "125": "Iona",
+        "126": "Iowa",
+        "127": "Iowa State",
+        "128": "Jackson State",
+        "129": "Jacksonville",
+        "130": "Jacksonville State",
+        "131": "James Madison",
+        "132": "Kansas",
+        "133": "Kansas State",
+        "134": "Kennesaw State",
+        "135": "Kent State",
+        "136": "Kentucky",
+        "137": "LSU",
+        "138": "La Salle",
+        "139": "Lafayette",
+        "140": "Lamar",
+        "141": "Le Moyne",
+        "142": "Lehigh",
+        "143": "Liberty",
+        "144": "Lindenwood",
+        "145": "Lipscomb",
+        "146": "Little Rock",
+        "147": "Long Beach State",
+        "148": "Long Island",
+        "149": "Longwood",
+        "150": "Louisiana",
+        "151": "Louisiana Tech",
+        "152": "Louisiana-Monroe",
+        "153": "Louisville",
+        "154": "Loyola (IL)",
+        "155": "Loyola (MD)",
+        "156": "Loyola Marymount",
+        "157": "Maine",
+        "158": "Manhattan",
+        "159": "Marist",
+        "160": "Marquette",
+        "161": "Marshall",
+        "162": "Maryland",
+        "163": "Maryland-Eastern Shore",
+        "164": "Massachusetts",
+        "165": "McNeese State",
+        "166": "Memphis",
+        "167": "Mercer",
+        "168": "Mercyhurst",
+        "169": "Merrimack College",
+        "170": "Miami (FL)",
+        "171": "Miami (OH)",
+        "172": "Michigan",
+        "173": "Michigan State",
+        "174": "Middle Tennessee State",
+        "175": "Milwaukee",
+        "176": "Minnesota",
+        "177": "Mississippi State",
+        "178": "Mississippi Valley State",
+        "179": "Missouri",
+        "180": "Missouri State",
+        "181": "Monmouth",
+        "182": "Montana",
+        "183": "Montana State",
+        "184": "Morehead State",
+        "185": "Morgan State",
+        "186": "Mount St. Mary's",
+        "187": "Murray State",
+        "188": "N.J.I.T.",
+        "189": "NC State",
+        "190": "Navy",
+        "191": "Nebraska",
+        "192": "Nevada",
+        "193": "New Hampshire",
+        "194": "New Haven",
+        "195": "New Mexico",
+        "196": "New Mexico State",
+        "197": "New Orleans",
+        "198": "Niagara",
+        "199": "Nicholls State",
+        "200": "Norfolk State",
+        "201": "North Alabama",
+        "202": "North Carolina",
+        "203": "North Carolina A&T",
+        "204": "North Carolina Central",
+        "205": "North Dakota",
+        "206": "North Dakota State",
+        "207": "North Florida",
+        "208": "North Texas",
+        "209": "Northeastern",
+        "210": "Northern Arizona",
+        "211": "Northern Colorado",
+        "212": "Northern Illinois",
+        "213": "Northern Iowa",
+        "214": "Northern Kentucky",
+        "215": "Northwestern",
+        "216": "Northwestern State",
+        "217": "Notre Dame",
+        "218": "Oakland",
+        "219": "Ohio",
+        "220": "Ohio State",
+        "221": "Oklahoma",
+        "222": "Oklahoma State",
+        "223": "Old Dominion",
+        "224": "Ole Miss",
+        "225": "Omaha",
+        "226": "Oral Roberts",
+        "227": "Oregon",
+        "228": "Oregon State",
+        "229": "Pacific",
+        "230": "Penn State",
+        "231": "Pennsylvania",
+        "232": "Pepperdine",
+        "233": "Pittsburgh",
+        "234": "Portland",
+        "235": "Portland State",
+        "236": "Prairie View A&M",
+        "237": "Presbyterian",
+        "238": "Princeton",
+        "239": "Providence",
+        "240": "Purdue",
+        "241": "Queens University",
+        "242": "Quinnipiac",
+        "243": "Radford",
+        "244": "Rhode Island",
+        "245": "Rice",
+        "246": "Richmond",
+        "247": "Rider",
+        "248": "Robert Morris",
+        "249": "Rutgers",
+        "250": "SIU-Edwardsville",
+        "251": "Sacramento State",
+        "252": "Sacred Heart",
+        "253": "Saint Joseph's",
+        "254": "Saint Louis",
+        "255": "Saint Mary's",
+        "256": "Saint Peter's",
+        "257": "Sam Houston State",
+        "258": "Samford",
+        "259": "San Diego",
+        "260": "San Diego State",
+        "261": "San Francisco",
+        "262": "San Jose State",
+        "263": "Santa Clara",
+        "264": "Seattle",
+        "265": "Seton Hall",
+        "266": "Siena",
+        "267": "South Alabama",
+        "268": "South Carolina",
+        "269": "South Carolina State",
+        "270": "South Dakota",
+        "271": "South Dakota State",
+        "272": "South Florida",
+        "273": "Southeast Missouri State",
+        "274": "Southeastern Louisiana",
+        "275": "Southern",
+        "276": "Southern Illinois",
+        "277": "Southern Indiana",
+        "278": "Southern Methodist",
+        "279": "Southern Mississippi",
+        "280": "Southern Utah",
+        "281": "St. Bonaventure",
+        "282": "St. Francis (PA)",
+        "283": "St. John's",
+        "284": "St. Thomas",
+        "285": "Stanford",
+        "286": "Stephen F. Austin",
+        "287": "Stetson",
+        "288": "Stonehill",
+        "289": "Stony Brook",
+        "290": "Syracuse",
+        "291": "TCU",
+        "292": "Tarleton State",
+        "293": "Temple",
+        "294": "Tennessee",
+        "295": "Tennessee State",
+        "296": "Tennessee Tech",
+        "297": "Tennessee-Martin",
+        "298": "Texas",
+        "299": "Texas A&M",
+        "300": "Texas A&M-CC",
+        "301": "Texas Southern",
+        "302": "Texas State",
+        "303": "Texas Tech",
+        "304": "Texas-Arlington",
+        "305": "Texas-RGV",
+        "306": "Texas-San Antonio",
+        "307": "The Citadel",
+        "308": "Toledo",
+        "309": "Towson",
+        "310": "Troy",
+        "311": "Tulane",
+        "312": "Tulsa",
+        "313": "UAB",
+        "314": "UC Davis",
+        "315": "UC Irvine",
+        "316": "UC Riverside",
+        "317": "UC San Diego",
+        "318": "UC Santa Barbara",
+        "319": "UCF",
+        "320": "UCLA",
+        "321": "UConn",
+        "322": "UMBC",
+        "323": "UMKC",
+        "324": "UMass Lowell",
+        "325": "UNC Asheville",
+        "326": "UNC Greensboro",
+        "327": "UNC Wilmington",
+        "328": "UNLV",
+        "329": "USC",
+        "330": "USC Upstate",
+        "331": "UTEP",
+        "332": "Utah",
+        "333": "Utah State",
+        "334": "Utah Tech",
+        "335": "Utah Valley",
+        "336": "VCU",
+        "337": "Valparaiso",
+        "338": "Vanderbilt",
+        "339": "Vermont",
+        "340": "Villanova",
+        "341": "Virginia",
+        "342": "Virginia Military",
+        "343": "Virginia Tech",
+        "344": "Wagner",
+        "345": "Wake Forest",
+        "346": "Washington",
+        "347": "Washington State",
+        "348": "Weber State",
+        "349": "West Georgia",
+        "350": "West Virginia",
+        "351": "Western Carolina",
+        "352": "Western Illinois",
+        "353": "Western Kentucky",
+        "354": "Western Michigan",
+        "355": "Wichita State",
+        "356": "William & Mary",
+        "357": "Winthrop",
+        "358": "Wisconsin",
+        "359": "Wofford",
+        "360": "Wright State",
+        "361": "Wyoming",
+        "362": "Xavier",
+        "363": "Yale",
+        "364": "Youngstown State"
+    },
+    "index": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "7": 7,
+        "8": 8,
+        "9": 9,
+        "10": 10,
+        "11": 11,
+        "12": 12,
+        "13": 13,
+        "14": 14,
+        "15": 15,
+        "16": 16,
+        "17": 17,
+        "18": 18,
+        "19": 19,
+        "20": 20,
+        "21": 21,
+        "22": 22,
+        "23": 23,
+        "24": 24,
+        "25": 25,
+        "26": 26,
+        "27": 27,
+        "28": 28,
+        "29": 29,
+        "30": 30,
+        "31": 31,
+        "32": 32,
+        "33": 33,
+        "34": 34,
+        "35": 35,
+        "36": 36,
+        "37": 37,
+        "38": 38,
+        "39": 39,
+        "40": 40,
+        "41": 41,
+        "42": 42,
+        "43": 43,
+        "44": 44,
+        "45": 45,
+        "46": 46,
+        "47": 47,
+        "48": 48,
+        "49": 49,
+        "50": 50,
+        "51": 51,
+        "52": 52,
+        "53": 53,
+        "54": 54,
+        "55": 55,
+        "56": 56,
+        "57": 57,
+        "58": 58,
+        "59": 59,
+        "60": 60,
+        "61": 61,
+        "62": 62,
+        "63": 63,
+        "64": 64,
+        "65": 65,
+        "66": 66,
+        "67": 67,
+        "68": 68,
+        "69": 69,
+        "70": 70,
+        "71": 71,
+        "72": 72,
+        "73": 73,
+        "74": 74,
+        "75": 75,
+        "76": 76,
+        "77": 77,
+        "78": 78,
+        "79": 79,
+        "80": 80,
+        "81": 81,
+        "82": 82,
+        "83": 83,
+        "84": 84,
+        "85": 85,
+        "86": 86,
+        "87": 87,
+        "88": 88,
+        "89": 89,
+        "90": 90,
+        "91": 91,
+        "92": 92,
+        "93": 93,
+        "94": 94,
+        "95": 95,
+        "96": 96,
+        "97": 97,
+        "98": 98,
+        "99": 99,
+        "100": 100,
+        "101": 101,
+        "102": 102,
+        "103": 103,
+        "104": 104,
+        "105": 105,
+        "106": 106,
+        "107": 107,
+        "108": 108,
+        "109": 109,
+        "110": 110,
+        "111": 111,
+        "112": 112,
+        "113": 113,
+        "114": 114,
+        "115": 115,
+        "116": 116,
+        "117": 117,
+        "118": 118,
+        "119": 119,
+        "120": 120,
+        "121": 121,
+        "122": 122,
+        "123": 123,
+        "124": 124,
+        "125": 125,
+        "126": 126,
+        "127": 127,
+        "128": 128,
+        "129": 129,
+        "130": 130,
+        "131": 131,
+        "132": 132,
+        "133": 133,
+        "134": 134,
+        "135": 135,
+        "136": 136,
+        "137": 137,
+        "138": 138,
+        "139": 139,
+        "140": 140,
+        "141": 141,
+        "142": 142,
+        "143": 143,
+        "144": 144,
+        "145": 145,
+        "146": 146,
+        "147": 147,
+        "148": 148,
+        "149": 149,
+        "150": 150,
+        "151": 151,
+        "152": 152,
+        "153": 153,
+        "154": 154,
+        "155": 155,
+        "156": 156,
+        "157": 157,
+        "158": 158,
+        "159": 159,
+        "160": 160,
+        "161": 161,
+        "162": 162,
+        "163": 163,
+        "164": 164,
+        "165": 165,
+        "166": 166,
+        "167": 167,
+        "168": 168,
+        "169": 169,
+        "170": 170,
+        "171": 171,
+        "172": 172,
+        "173": 173,
+        "174": 174,
+        "175": 175,
+        "176": 176,
+        "177": 177,
+        "178": 178,
+        "179": 179,
+        "180": 180,
+        "181": 181,
+        "182": 182,
+        "183": 183,
+        "184": 184,
+        "185": 185,
+        "186": 186,
+        "187": 187,
+        "188": 188,
+        "189": 189,
+        "190": 190,
+        "191": 191,
+        "192": 192,
+        "193": 193,
+        "194": 194,
+        "195": 195,
+        "196": 196,
+        "197": 197,
+        "198": 198,
+        "199": 199,
+        "200": 200,
+        "201": 201,
+        "202": 202,
+        "203": 203,
+        "204": 204,
+        "205": 205,
+        "206": 206,
+        "207": 207,
+        "208": 208,
+        "209": 209,
+        "210": 210,
+        "211": 211,
+        "212": 212,
+        "213": 213,
+        "214": 214,
+        "215": 215,
+        "216": 216,
+        "217": 217,
+        "218": 218,
+        "219": 219,
+        "220": 220,
+        "221": 221,
+        "222": 222,
+        "223": 223,
+        "224": 224,
+        "225": 225,
+        "226": 226,
+        "227": 227,
+        "228": 228,
+        "229": 229,
+        "230": 230,
+        "231": 231,
+        "232": 232,
+        "233": 233,
+        "234": 234,
+        "235": 235,
+        "236": 236,
+        "237": 237,
+        "238": 238,
+        "239": 239,
+        "240": 240,
+        "241": 241,
+        "242": 242,
+        "243": 243,
+        "244": 244,
+        "245": 245,
+        "246": 246,
+        "247": 247,
+        "248": 248,
+        "249": 249,
+        "250": 250,
+        "251": 251,
+        "252": 252,
+        "253": 253,
+        "254": 254,
+        "255": 255,
+        "256": 256,
+        "257": 257,
+        "258": 258,
+        "259": 259,
+        "260": 260,
+        "261": 261,
+        "262": 262,
+        "263": 263,
+        "264": 264,
+        "265": 265,
+        "266": 266,
+        "267": 267,
+        "268": 268,
+        "269": 269,
+        "270": 270,
+        "271": 271,
+        "272": 272,
+        "273": 273,
+        "274": 274,
+        "275": 275,
+        "276": 276,
+        "277": 277,
+        "278": 278,
+        "279": 279,
+        "280": 280,
+        "281": 281,
+        "282": 282,
+        "283": 283,
+        "284": 284,
+        "285": 285,
+        "286": 286,
+        "287": 287,
+        "288": 288,
+        "289": 289,
+        "290": 290,
+        "291": 291,
+        "292": 292,
+        "293": 293,
+        "294": 294,
+        "295": 295,
+        "296": 296,
+        "297": 297,
+        "298": 298,
+        "299": 299,
+        "300": 300,
+        "301": 301,
+        "302": 302,
+        "303": 303,
+        "304": 304,
+        "305": 305,
+        "306": 306,
+        "307": 307,
+        "308": 308,
+        "309": 309,
+        "310": 310,
+        "311": 311,
+        "312": 312,
+        "313": 313,
+        "314": 314,
+        "315": 315,
+        "316": 316,
+        "317": 317,
+        "318": 318,
+        "319": 319,
+        "320": 320,
+        "321": 321,
+        "322": 322,
+        "323": 323,
+        "324": 324,
+        "325": 325,
+        "326": 326,
+        "327": 327,
+        "328": 328,
+        "329": 329,
+        "330": 330,
+        "331": 331,
+        "332": 332,
+        "333": 333,
+        "334": 334,
+        "335": 335,
+        "336": 336,
+        "337": 337,
+        "338": 338,
+        "339": 339,
+        "340": 340,
+        "341": 341,
+        "342": 342,
+        "343": 343,
+        "344": 344,
+        "345": 345,
+        "346": 346,
+        "347": 347,
+        "348": 348,
+        "349": 349,
+        "350": 350,
+        "351": 351,
+        "352": 352,
+        "353": 353,
+        "354": 354,
+        "355": 355,
+        "356": 356,
+        "357": 357,
+        "358": 358,
+        "359": 359,
+        "360": 360,
+        "361": 361,
+        "362": 362,
+        "363": 363,
+        "364": 364
+    },
+    "names": {
+        "0": [
+            "ACU",
+            "Wildcats",
+            "Abilene Christian"
+        ],
+        "1": [
+            "AFA",
+            "AF",
+            "Falcons",
+            "Air Force"
+        ],
+        "2": [
+            "AKR",
+            "Zips",
+            "Akron"
+        ],
+        "3": [
+            "Crimson Tide",
+            "ALA or BAMA",
+            "UA",
+            "Alabama"
+        ],
+        "4": [
+            "Alabama A&M",
+            "Bulldogs",
+            "AAMU"
+        ],
+        "5": [
+            "Hornets",
+            "Alabama State",
+            "ALAST",
+            "ALST"
+        ],
+        "6": [
+            "ALBNY",
+            "Great Danes",
+            "Albany",
+            "ALBY"
+        ],
+        "7": [
+            "ALCN",
+            "Braves",
+            "ALCST",
+            "Alcorn State"
+        ],
+        "8": [
+            "American University",
+            "Eagles",
+            "AMERU"
+        ],
+        "9": [
+            "APP",
+            "Mountaineers",
+            "Appalachian State",
+            "APPST"
+        ],
+        "10": [
+            "ARIZ",
+            "ARZ",
+            "Wildcats",
+            "Arizona"
+        ],
+        "11": [
+            "ASU",
+            "Arizona State",
+            "Sun Devils"
+        ],
+        "12": [
+            "ARK",
+            "Razorbacks",
+            "Arkansas"
+        ],
+        "13": [
+            "ARST",
+            "Red Wolves",
+            "Arkansas State",
+            "ARKST"
+        ],
+        "14": [
+            "Golden Lions",
+            "Arkansas-Pine Bluff",
+            "UAPB",
+            "ARPB"
+        ],
+        "15": [
+            "Army West Point",
+            "Black Knights",
+            "USMA"
+        ],
+        "16": [
+            "Tigers",
+            "AUB",
+            "Auburn"
+        ],
+        "17": [
+            "Governors",
+            "APSU",
+            "Austin Peay",
+            "PEAY"
+        ],
+        "18": [
+            "Ball State",
+            "Cardinals",
+            "BLLST",
+            "BALL"
+        ],
+        "19": [
+            "Baylor",
+            "Bears",
+            "BAY",
+            "BAYL"
+        ],
+        "20": [
+            "Bellarmine",
+            "Knights",
+            "BELL"
+        ],
+        "21": [
+            "Belmont",
+            "Bruins",
+            "BLMNT"
+        ],
+        "22": [
+            "BTHCK",
+            "Bethune-Cookman",
+            "Wildcats",
+            "COOK"
+        ],
+        "23": [
+            "Binghamton",
+            "Bearcats",
+            "BNGH"
+        ],
+        "24": [
+            "BOISE",
+            "Boise State",
+            "BSU",
+            "Broncos"
+        ],
+        "25": [
+            "Eagles",
+            "BOS",
+            "Boston College",
+            "BC"
+        ],
+        "26": [
+            "Boston University",
+            "Terriers",
+            "BSTN"
+        ],
+        "27": [
+            "Bowling Green",
+            "Falcons",
+            "BGSU"
+        ],
+        "28": [
+            "Bradley",
+            "Braves",
+            "BRDLY"
+        ],
+        "29": [
+            "Brigham Young",
+            "Cougars",
+            "BYU"
+        ],
+        "30": [
+            "BRWN",
+            "Bears",
+            "Brown"
+        ],
+        "31": [
+            "Bryant",
+            "BRYNT",
+            "Bulldogs",
+            "BRY"
+        ],
+        "32": [
+            "Bison",
+            "Bucknell",
+            "BUCK"
+        ],
+        "33": [
+            "BUFF",
+            "Bulls",
+            "Buffalo"
+        ],
+        "34": [
+            "Butler",
+            "BUT",
+            "BTLR",
+            "Bulldogs"
+        ],
+        "35": [
+            "Mustangs",
+            "POLY",
+            "CP",
+            "Cal Poly"
+        ],
+        "36": [
+            "Cal State Bakersfield",
+            "Roadrunners",
+            "CSUB",
+            "CSBAK"
+        ],
+        "37": [
+            "Cal State Fullerton",
+            "Titans",
+            "CSFUL"
+        ],
+        "38": [
+            "Cal State Northridge",
+            "Matadors",
+            "CSUN"
+        ],
+        "39": [
+            "California",
+            "Golden Bears",
+            "Cal"
+        ],
+        "40": [
+            "California Baptist",
+            "Lancers",
+            "CALBU"
+        ],
+        "41": [
+            "CAMP",
+            "Fighting Camels",
+            "Campbell",
+            "CAM"
+        ],
+        "42": [
+            "Canisius",
+            "Golden Griffins",
+            "CAN"
+        ],
+        "43": [
+            "Central Arkansas",
+            "Bears",
+            "UCA"
+        ],
+        "44": [
+            "Central Connecticut State",
+            "Blue Devils",
+            "CCSU"
+        ],
+        "45": [
+            "Central Michigan",
+            "CMU",
+            "Chippewas"
+        ],
+        "46": [
+            "Charleston",
+            "Cougars",
+            "C of C"
+        ],
+        "47": [
+            "Charleston Southern",
+            "CHSO",
+            "CHASO",
+            "Buccaneers"
+        ],
+        "48": [
+            "CHAR",
+            "49ers",
+            "Charlotte"
+        ],
+        "49": [
+            "Mocs",
+            "CHATT",
+            "Chattanooga",
+            "CHAT"
+        ],
+        "50": [
+            "Chicago State",
+            "Cougars",
+            "CHIST"
+        ],
+        "51": [
+            "Cincinnati",
+            "Bearcats",
+            "CIN",
+            "CINCY"
+        ],
+        "52": [
+            "Tigers",
+            "Clemson",
+            "CLEM"
+        ],
+        "53": [
+            "Cleveland State",
+            "Vikings",
+            "CLEST"
+        ],
+        "54": [
+            "Coastal Carolina",
+            "Chanticleers",
+            "CCU",
+            "CCAR"
+        ],
+        "55": [
+            "COLGT",
+            "Colgate",
+            "COLG",
+            "Raiders"
+        ],
+        "56": [
+            "COLO",
+            "Buffaloes",
+            "Colorado"
+        ],
+        "57": [
+            "COLST",
+            "CSU",
+            "Colorado State",
+            "Rams"
+        ],
+        "58": [
+            "COM",
+            "Lions",
+            "Columbia",
+            "CLMB"
+        ],
+        "59": [
+            "Coppin State",
+            "Eagles",
+            "COPST"
+        ],
+        "60": [
+            "COR",
+            "Big Red",
+            "Cornell"
+        ],
+        "61": [
+            "Creighton",
+            "Bluejays",
+            "CREI"
+        ],
+        "62": [
+            "DART",
+            "Big Green",
+            "Dartmouth"
+        ],
+        "63": [
+            "DAV",
+            "Wildcats",
+            "Davidson"
+        ],
+        "64": [
+            "Flyers",
+            "DAY",
+            "Dayton"
+        ],
+        "65": [
+            "DePaul",
+            "Blue Demons",
+            "DEP"
+        ],
+        "66": [
+            "Fightin Blue Hens",
+            "Delaware",
+            "DEL"
+        ],
+        "67": [
+            "Delaware State",
+            "Hornets",
+            "DESU",
+            "DSU"
+        ],
+        "68": [
+            "DENVER",
+            "Denver",
+            "Pioneers",
+            "DEN"
+        ],
+        "69": [
+            "Detroit-Mercy",
+            "Titans",
+            "UDM"
+        ],
+        "70": [
+            "DRAKE",
+            "Drake",
+            "Bulldogs",
+            "DRKE"
+        ],
+        "71": [
+            "Drexel",
+            "Dragons",
+            "DREX"
+        ],
+        "72": [
+            "Blue Devils",
+            "Duke",
+            "DUKE"
+        ],
+        "73": [
+            "Dukes",
+            "Duquesne",
+            "DUQ"
+        ],
+        "74": [
+            "East Carolina",
+            "Pirates",
+            "ECAR",
+            "ECU"
+        ],
+        "75": [
+            "East Tennessee State",
+            "Buccaneers",
+            "ETSU"
+        ],
+        "76": [
+            "East Texas A&M",
+            "Lions",
+            "TAMUC"
+        ],
+        "77": [
+            "Eastern Illinois",
+            "EIU",
+            "Panthers"
+        ],
+        "78": [
+            "Colonels",
+            "EKY",
+            "EKU",
+            "Eastern Kentucky"
+        ],
+        "79": [
+            "Eagles",
+            "EMU",
+            "EMICH",
+            "Eastern Michigan"
+        ],
+        "80": [
+            "Eastern Washington",
+            "Eagles",
+            "EWASH",
+            "EWU"
+        ],
+        "81": [
+            "Phoenix",
+            "ELON",
+            "Elon"
+        ],
+        "82": [
+            "Evansville",
+            "Purple Aces",
+            "UE"
+        ],
+        "83": [
+            "Fairfield",
+            "Stags",
+            "FAIR"
+        ],
+        "84": [
+            "Fairleigh Dickinson",
+            "Knights",
+            "FDU"
+        ],
+        "85": [
+            "FLA",
+            "Florida",
+            "FLA or UF",
+            "Gators"
+        ],
+        "86": [
+            "FAMU",
+            "Rattlers",
+            "Florida A&M"
+        ],
+        "87": [
+            "Florida Atlantic",
+            "Owls",
+            "FAU"
+        ],
+        "88": [
+            "Florida Gulf Coast",
+            "Eagles",
+            "FGCU"
+        ],
+        "89": [
+            "Florida International",
+            "Golden Panthers",
+            "FIU"
+        ],
+        "90": [
+            "FSU",
+            "Florida State",
+            "Seminoles",
+            "FLAST"
+        ],
+        "91": [
+            "Fordham",
+            "FOR",
+            "Rams",
+            "FORD"
+        ],
+        "92": [
+            "Fort Wayne",
+            "Mastodons",
+            "IPFW"
+        ],
+        "93": [
+            "FRES",
+            "Bulldogs",
+            "Fresno State",
+            "FRSNO"
+        ],
+        "94": [
+            "Paladins",
+            "Furman",
+            "FUR",
+            "FRMN"
+        ],
+        "95": [
+            "WEBB",
+            "Runnin' Bulldogs",
+            "Gardner-Webb",
+            "GWU"
+        ],
+        "96": [
+            "George Mason",
+            "Patriots",
+            "GMU"
+        ],
+        "97": [
+            "George Washington",
+            "Revolutionaries",
+            "GW"
+        ],
+        "98": [
+            "Hoyas",
+            "GTOWN",
+            "GTWN",
+            "Georgetown"
+        ],
+        "99": [
+            "Georgia",
+            "UGA",
+            "Bulldogs"
+        ],
+        "100": [
+            "Eagles",
+            "Georgia Southern",
+            "GASO",
+            "GASOU"
+        ],
+        "101": [
+            "Georgia State",
+            "GAST or GSU",
+            "GAST",
+            "Panthers"
+        ],
+        "102": [
+            "Yellow Jackets",
+            "GT",
+            "Georgia Tech"
+        ],
+        "103": [
+            "Gonzaga",
+            "Bulldogs",
+            "ZAGS"
+        ],
+        "104": [
+            "Grambling State",
+            "GRAM",
+            "Tigers",
+            "GRAMB"
+        ],
+        "105": [
+            "Grand Canyon",
+            "Antelopes",
+            "GCU"
+        ],
+        "106": [
+            "Green Bay",
+            "Phoenix",
+            "UWGB",
+            "WISGB"
+        ],
+        "107": [
+            "Hampton",
+            "Pirates",
+            "HAMP",
+            "HMPTN"
+        ],
+        "108": [
+            "HARV",
+            "Crimson",
+            "Harvard",
+            "HAR"
+        ],
+        "109": [
+            "HAWAII",
+            "Rainbow Warriors",
+            "HAW",
+            "Hawaii"
+        ],
+        "110": [
+            "High Point",
+            "Panthers",
+            "HP"
+        ],
+        "111": [
+            "Hofstra",
+            "Pride",
+            "HOF"
+        ],
+        "112": [
+            "Holy Cross",
+            "Crusaders",
+            "HC"
+        ],
+        "113": [
+            "Cougars",
+            "Houston",
+            "HOU",
+            "U of H"
+        ],
+        "114": [
+            "Houston Christian",
+            "Huskies",
+            "HCU"
+        ],
+        "115": [
+            "Bison",
+            "HOW",
+            "HWRD",
+            "Howard"
+        ],
+        "116": [
+            "IU Indy",
+            "Jaguars",
+            "IUI"
+        ],
+        "117": [
+            "Vandals",
+            "IDAHO",
+            "Idaho",
+            "IDHO"
+        ],
+        "118": [
+            "IDST",
+            "Idaho State",
+            "Bengals",
+            "IDHST"
+        ],
+        "119": [
+            "ILL",
+            "Fighting Illini",
+            "Illinois"
+        ],
+        "120": [
+            "ILLST",
+            "ILST",
+            "Redbirds",
+            "Illinois State"
+        ],
+        "121": [
+            "Illinois-Chicago",
+            "Flames",
+            "UIC"
+        ],
+        "122": [
+            "Cardinals",
+            "IW",
+            "UIW",
+            "Incarnate Word"
+        ],
+        "123": [
+            "Hoosiers",
+            "Indiana",
+            "IU",
+            "IND"
+        ],
+        "124": [
+            "INST",
+            "Indiana State",
+            "INDST",
+            "Sycamores"
+        ],
+        "125": [
+            "Iona",
+            "Gaels",
+            "IONA"
+        ],
+        "126": [
+            "Iowa",
+            "Hawkeyes",
+            "IOWA"
+        ],
+        "127": [
+            "Cyclones",
+            "ISU",
+            "Iowa State",
+            "IWAST",
+            "IOWAST"
+        ],
+        "128": [
+            "Tigers",
+            "JKSN",
+            "Jackson State",
+            "JKST"
+        ],
+        "129": [
+            "JAC",
+            "Jacksonville",
+            "Dolphins",
+            "JVILLE"
+        ],
+        "130": [
+            "JKSNV",
+            "Gamecocks",
+            "JVST",
+            "Jacksonville State"
+        ],
+        "131": [
+            "Dukes",
+            "JMU",
+            "James Madison"
+        ],
+        "132": [
+            "Jayhawks",
+            "Kansas",
+            "KU"
+        ],
+        "133": [
+            "KSU",
+            "Wildcats",
+            "Kansas State"
+        ],
+        "134": [
+            "KENN",
+            "Kennesaw State",
+            "Owls"
+        ],
+        "135": [
+            "Golden Flashes",
+            "KENT",
+            "Kent State"
+        ],
+        "136": [
+            "UK",
+            "Kentucky",
+            "Wildcats"
+        ],
+        "137": [
+            "LSU",
+            "Tigers"
+        ],
+        "138": [
+            "La Salle",
+            "Explorers",
+            "LASAL"
+        ],
+        "139": [
+            "Lafayette",
+            "Leopards",
+            "LAF",
+            "LAFAY"
+        ],
+        "140": [
+            "LAMAR",
+            "Lamar",
+            "LAM",
+            "Cardinals"
+        ],
+        "141": [
+            "Le Moyne",
+            "Dolphins",
+            "MOYNE"
+        ],
+        "142": [
+            "LEHI",
+            "Mountain Hawks",
+            "LEH",
+            "Lehigh"
+        ],
+        "143": [
+            "LIB",
+            "LBRTY",
+            "Liberty",
+            "Flames"
+        ],
+        "144": [
+            "Lindenwood",
+            "Lions",
+            "LIND"
+        ],
+        "145": [
+            "Lipscomb",
+            "Bisons",
+            "LIP"
+        ],
+        "146": [
+            "Little Rock",
+            "Trojans",
+            "UALR"
+        ],
+        "147": [
+            "Long Beach State",
+            "Beach",
+            "LBSU"
+        ],
+        "148": [
+            "Long Island",
+            "Sharks",
+            "LIU"
+        ],
+        "149": [
+            "Longwood",
+            "Lancers",
+            "LONG"
+        ],
+        "150": [
+            "Louisiana",
+            "Ragin' Cajuns",
+            "LA"
+        ],
+        "151": [
+            "LT",
+            "Louisiana Tech",
+            "Bulldogs",
+            "LATCH"
+        ],
+        "152": [
+            "Louisiana-Monroe",
+            "Warhawks",
+            "ULM"
+        ],
+        "153": [
+            "LVILL",
+            "Louisville",
+            "LOU",
+            "Cardinals"
+        ],
+        "154": [
+            "Loyola (IL)",
+            "Ramblers",
+            "L-IL"
+        ],
+        "155": [
+            "Loyola (MD)",
+            "Greyhounds",
+            "L-MD"
+        ],
+        "156": [
+            "Loyola Marymount",
+            "Lions",
+            "LOYMR"
+        ],
+        "157": [
+            "Maine",
+            "MAINE or MNE",
+            "Black Bears",
+            "MAINE"
+        ],
+        "158": [
+            "Manhattan",
+            "Jaspers",
+            "MAN"
+        ],
+        "159": [
+            "Marist",
+            "MRST",
+            "Red Foxes"
+        ],
+        "160": [
+            "Marquette",
+            "Golden Eagles",
+            "MARQ"
+        ],
+        "161": [
+            "MARSH",
+            "Thundering Herd",
+            "Marshall",
+            "MRSH"
+        ],
+        "162": [
+            "Maryland",
+            "Terrapins",
+            "UMD"
+        ],
+        "163": [
+            "Maryland-Eastern Shore",
+            "Hawks",
+            "UMES"
+        ],
+        "164": [
+            "Massachusetts",
+            "Minutemen",
+            "UMass"
+        ],
+        "165": [
+            "MCNST",
+            "Cowboys",
+            "McNeese State",
+            "MCNS"
+        ],
+        "166": [
+            "Tigers",
+            "MEM",
+            "MEMP",
+            "Memphis"
+        ],
+        "167": [
+            "MER",
+            "Bears",
+            "Mercer"
+        ],
+        "168": [
+            "Mercyhurst",
+            "Lakers",
+            "MC"
+        ],
+        "169": [
+            "Merrimack College",
+            "Warriors",
+            "MERRI"
+        ],
+        "170": [
+            "MIA",
+            "Miami (FL)",
+            "UMFL",
+            "Hurricanes"
+        ],
+        "171": [
+            "Miami (OH)",
+            "RedHawks",
+            "M-OH",
+            "MIAMI"
+        ],
+        "172": [
+            "Wolverines",
+            "MICH",
+            "Michigan"
+        ],
+        "173": [
+            "MCHST",
+            "MSU",
+            "Spartans",
+            "Michigan State"
+        ],
+        "174": [
+            "Middle Tennessee State",
+            "Blue Raiders",
+            "MTSU"
+        ],
+        "175": [
+            "Milwaukee",
+            "Panthers",
+            "UWM"
+        ],
+        "176": [
+            "MINN",
+            "Minnesota",
+            "Golden Gophers"
+        ],
+        "177": [
+            "MSST",
+            "MISST",
+            "Bulldogs",
+            "Mississippi State"
+        ],
+        "178": [
+            "Mississippi Valley State",
+            "Delta Devils",
+            "MVSU"
+        ],
+        "179": [
+            "Missouri",
+            "MIZ or MIZZ",
+            "Tigers",
+            "MZZOU",
+            "MIZZOU"
+        ],
+        "180": [
+            "MOST",
+            "Bears",
+            "MZZST",
+            "Missouri State"
+        ],
+        "181": [
+            "Hawks",
+            "MONM",
+            "Monmouth"
+        ],
+        "182": [
+            "Montana",
+            "MONT",
+            "Grizzlies"
+        ],
+        "183": [
+            "MTST",
+            "Fighting Bobcats",
+            "MTSTU",
+            "Montana State"
+        ],
+        "184": [
+            "Eagles",
+            "Morehead State",
+            "MORE",
+            "MRHD"
+        ],
+        "185": [
+            "MORG",
+            "Bears",
+            "MORST",
+            "Morgan State"
+        ],
+        "186": [
+            "Mount St. Mary's",
+            "Mountaineers",
+            "MSMU"
+        ],
+        "187": [
+            "MURR",
+            "Murray State",
+            "MRRY",
+            "Racers"
+        ],
+        "188": [
+            "N.J.I.T.",
+            "Highlanders",
+            "NJIT"
+        ],
+        "189": [
+            "Wolfpack",
+            "NC State",
+            "NCST"
+        ],
+        "190": [
+            "USNA",
+            "NAVY",
+            "Midshipmen",
+            "Navy"
+        ],
+        "191": [
+            "Nebraska",
+            "UNL",
+            "Cornhuskers",
+            "NEB"
+        ],
+        "192": [
+            "Wolf Pack",
+            "UNR",
+            "Nevada",
+            "NEV"
+        ],
+        "193": [
+            "Wildcats",
+            "UNH",
+            "NEWHA",
+            "New Hampshire"
+        ],
+        "194": [
+            "New Haven",
+            "Chargers",
+            "UNH"
+        ],
+        "195": [
+            "UNM",
+            "Lobos",
+            "New Mexico"
+        ],
+        "196": [
+            "New Mexico State",
+            "NMSU",
+            "Aggies"
+        ],
+        "197": [
+            "New Orleans",
+            "Privateers",
+            "NEWOR"
+        ],
+        "198": [
+            "Niagara",
+            "Purple Eagles",
+            "NIAG"
+        ],
+        "199": [
+            "Colonels",
+            "NICH",
+            "Nicholls State"
+        ],
+        "200": [
+            "NORF",
+            "Spartans",
+            "Norfolk State"
+        ],
+        "201": [
+            "North Alabama",
+            "Lions",
+            "UNA"
+        ],
+        "202": [
+            "UNC",
+            "North Carolina",
+            "Tar Heels"
+        ],
+        "203": [
+            "North Carolina A&T",
+            "NCAT",
+            "Aggies",
+            "NC A&T"
+        ],
+        "204": [
+            "North Carolina Central",
+            "Eagles",
+            "NCCU"
+        ],
+        "205": [
+            "North Dakota",
+            "UND",
+            "Fighting Hawks"
+        ],
+        "206": [
+            "Bison",
+            "North Dakota State",
+            "NDSU",
+            "NDAKST"
+        ],
+        "207": [
+            "North Florida",
+            "Ospreys",
+            "UNF"
+        ],
+        "208": [
+            "Mean Green",
+            "UNT",
+            "North Texas"
+        ],
+        "209": [
+            "Northeastern",
+            "Huskies",
+            "NEU"
+        ],
+        "210": [
+            "Northern Arizona",
+            "Lumberjacks",
+            "NAU"
+        ],
+        "211": [
+            "Northern Colorado",
+            "Bears",
+            "UNCO",
+            "NOCOL"
+        ],
+        "212": [
+            "NIU",
+            "Northern Illinois",
+            "Huskies"
+        ],
+        "213": [
+            "UNI",
+            "Northern Iowa",
+            "Panthers"
+        ],
+        "214": [
+            "Northern Kentucky",
+            "Norse",
+            "NKU"
+        ],
+        "215": [
+            "NW",
+            "Northwestern",
+            "Wildcats",
+            "NWU"
+        ],
+        "216": [
+            "NSU",
+            "Demons",
+            "Northwestern State",
+            "NWST"
+        ],
+        "217": [
+            "Notre Dame",
+            "Fighting Irish",
+            "ND"
+        ],
+        "218": [
+            "Oakland",
+            "Golden Grizzlies",
+            "OAKL"
+        ],
+        "219": [
+            "Bobcats",
+            "OHIO",
+            "Ohio"
+        ],
+        "220": [
+            "Ohio State",
+            "Buckeyes",
+            "OSU"
+        ],
+        "221": [
+            "Oklahoma",
+            "OKLA or OU",
+            "Sooners",
+            "OKLA"
+        ],
+        "222": [
+            "OKST",
+            "Cowboys",
+            "Oklahoma State"
+        ],
+        "223": [
+            "ODU",
+            "Old Dominion",
+            "Monarchs"
+        ],
+        "224": [
+            "MISS",
+            "Rebels",
+            "Ole Miss"
+        ],
+        "225": [
+            "Omaha",
+            "Mavericks",
+            "OMAHA"
+        ],
+        "226": [
+            "Oral Roberts",
+            "Golden Eagles",
+            "ORU"
+        ],
+        "227": [
+            "OREG",
+            "ORE or UO",
+            "Ducks",
+            "Oregon"
+        ],
+        "228": [
+            "Beavers",
+            "Oregon State",
+            "ORST"
+        ],
+        "229": [
+            "Pacific",
+            "Tigers",
+            "PACI"
+        ],
+        "230": [
+            "Nittany Lions",
+            "PENST",
+            "Penn State",
+            "PSU"
+        ],
+        "231": [
+            "Pennsylvania",
+            "Quakers",
+            "PENN"
+        ],
+        "232": [
+            "Pepperdine",
+            "Waves",
+            "PEPP"
+        ],
+        "233": [
+            "Panthers",
+            "PITT",
+            "Pittsburgh"
+        ],
+        "234": [
+            "Portland",
+            "Pilots",
+            "UP"
+        ],
+        "235": [
+            "PRST",
+            "PORTL",
+            "Vikings",
+            "Portland State"
+        ],
+        "236": [
+            "Prairie View A&M",
+            "Panthers",
+            "PV",
+            "PVAMU"
+        ],
+        "237": [
+            "PRE",
+            "Blue Hose",
+            "PRSBY",
+            "Presbyterian"
+        ],
+        "238": [
+            "Tigers",
+            "Princeton",
+            "PRIN"
+        ],
+        "239": [
+            "Providence",
+            "Friars",
+            "PROV"
+        ],
+        "240": [
+            "Boilermakers",
+            "PUR",
+            "PURD",
+            "Purdue"
+        ],
+        "241": [
+            "Queens University",
+            "Royals",
+            "QUC"
+        ],
+        "242": [
+            "Quinnipiac",
+            "Bobcats",
+            "QUIN"
+        ],
+        "243": [
+            "Radford",
+            "Highlanders",
+            "RADF"
+        ],
+        "244": [
+            "Rhode Island",
+            "Rams",
+            "URI"
+        ],
+        "245": [
+            "Rice",
+            "RICE",
+            "Owls"
+        ],
+        "246": [
+            "RICH",
+            "Richmond",
+            "Spiders"
+        ],
+        "247": [
+            "Rider",
+            "Broncs",
+            "RIDER"
+        ],
+        "248": [
+            "Robert Morris",
+            "Colonials",
+            "RMU"
+        ],
+        "249": [
+            "RUTG",
+            "Scarlet Knights",
+            "Rutgers"
+        ],
+        "250": [
+            "SIU-Edwardsville",
+            "Cougars",
+            "SIUE"
+        ],
+        "251": [
+            "CSUS",
+            "Hornets",
+            "Sacramento State",
+            "SAC"
+        ],
+        "252": [
+            "SHU",
+            "Pioneers",
+            "HEART",
+            "Sacred Heart"
+        ],
+        "253": [
+            "Saint Joseph's",
+            "Hawks",
+            "STJOE",
+            "STJOES"
+        ],
+        "254": [
+            "Saint Louis",
+            "Billikens",
+            "STLOU"
+        ],
+        "255": [
+            "Saint Mary's",
+            "Gaels",
+            "STMRY"
+        ],
+        "256": [
+            "Saint Peter's",
+            "Peacocks",
+            "STPC"
+        ],
+        "257": [
+            "SHSU",
+            "Sam Houston State",
+            "Bearkats"
+        ],
+        "258": [
+            "SAM",
+            "SAMF",
+            "Bulldogs",
+            "Samford"
+        ],
+        "259": [
+            "San Diego",
+            "Toreros",
+            "USD",
+            "SAND"
+        ],
+        "260": [
+            "Aztecs",
+            "SDSU",
+            "San Diego State"
+        ],
+        "261": [
+            "San Francisco",
+            "Dons",
+            "SANFR"
+        ],
+        "262": [
+            "San Jose State",
+            "Spartans",
+            "SJSU"
+        ],
+        "263": [
+            "Santa Clara",
+            "Broncos",
+            "SCU"
+        ],
+        "264": [
+            "Seattle",
+            "Redhawks",
+            "SEA"
+        ],
+        "265": [
+            "Seton Hall",
+            "Pirates",
+            "SETON"
+        ],
+        "266": [
+            "Siena",
+            "Saints",
+            "SIENA"
+        ],
+        "267": [
+            "Jaguars",
+            "South Alabama",
+            "USA"
+        ],
+        "268": [
+            "SOCAR",
+            "Gamecocks",
+            "South Carolina",
+            "SC or SCAR"
+        ],
+        "269": [
+            "South Carolina State",
+            "SCSU",
+            "Bulldogs",
+            "SCST"
+        ],
+        "270": [
+            "SDAK",
+            "SODAK",
+            "South Dakota",
+            "Coyotes"
+        ],
+        "271": [
+            "Jackrabbits",
+            "South Dakota State",
+            "SDSU",
+            "SDKSU"
+        ],
+        "272": [
+            "South Florida",
+            "USF",
+            "Bulls",
+            "USOFL"
+        ],
+        "273": [
+            "Southeast Missouri State",
+            "Redhawks",
+            "SEMO"
+        ],
+        "274": [
+            "Southeastern Louisiana",
+            "Lions",
+            "SELU",
+            "SELA"
+        ],
+        "275": [
+            "Southern",
+            "Jaguars",
+            "SUBR"
+        ],
+        "276": [
+            "SOILL",
+            "SIU",
+            "Salukis",
+            "Southern Illinois"
+        ],
+        "277": [
+            "Southern Indiana",
+            "Screaming Eagles",
+            "USI"
+        ],
+        "278": [
+            "Southern Methodist",
+            "Mustangs",
+            "SMU"
+        ],
+        "279": [
+            "Southern Mississippi",
+            "Golden Eagles",
+            "SOMIS"
+        ],
+        "280": [
+            "Thunderbirds",
+            "SUU",
+            "Southern Utah"
+        ],
+        "281": [
+            "St. Bonaventure",
+            "Bonnies",
+            "STBN"
+        ],
+        "282": [
+            "SFU",
+            "Red Flash",
+            "St. Francis (PA)",
+            "STFPA"
+        ],
+        "283": [
+            "St. John's",
+            "Red Storm",
+            "STJ"
+        ],
+        "284": [
+            "St. Thomas",
+            "Tommies",
+            "STTOM",
+            "STTHMN"
+        ],
+        "285": [
+            "Stanford",
+            "STAN",
+            "Cardinal"
+        ],
+        "286": [
+            "Lumberjacks",
+            "Stephen F. Austin",
+            "SFA"
+        ],
+        "287": [
+            "Stetson",
+            "Hatters",
+            "STET"
+        ],
+        "288": [
+            "Stonehill",
+            "Skyhawks",
+            "STONE"
+        ],
+        "289": [
+            "SB",
+            "Seawolves",
+            "STON",
+            "Stony Brook"
+        ],
+        "290": [
+            "SYR",
+            "SYRA",
+            "Syracuse",
+            "Orange",
+            "CUSE"
+        ],
+        "291": [
+            "TCU",
+            "Horned Frogs"
+        ],
+        "292": [
+            "Tarleton State",
+            "Texans",
+            "TARST"
+        ],
+        "293": [
+            "Temple",
+            "TEM",
+            "Owls"
+        ],
+        "294": [
+            "Volunteers",
+            "Tennessee",
+            "TENN"
+        ],
+        "295": [
+            "Tigers",
+            "TNST",
+            "Tennessee State"
+        ],
+        "296": [
+            "Golden Eagles",
+            "TNTC",
+            "TNTCH",
+            "Tennessee Tech"
+        ],
+        "297": [
+            "Skyhawks",
+            "UTM",
+            "Tennessee-Martin"
+        ],
+        "298": [
+            "Longhorns",
+            "Texas",
+            "TEX",
+            "TEXAS"
+        ],
+        "299": [
+            "Texas A&M",
+            "Aggies",
+            "TAMU"
+        ],
+        "300": [
+            "Texas A&M-CC",
+            "Islanders",
+            "TAMU-CC"
+        ],
+        "301": [
+            "Tigers",
+            "Texas Southern",
+            "TEXSO",
+            "TXSO"
+        ],
+        "302": [
+            "Texas State",
+            "Bobcats",
+            "TXST"
+        ],
+        "303": [
+            "Red Raiders",
+            "Texas Tech",
+            "TTU",
+            "TXTCH"
+        ],
+        "304": [
+            "Texas-Arlington",
+            "Mavericks",
+            "UTA",
+            "TXARL"
+        ],
+        "305": [
+            "Texas-RGV",
+            "Vaqueros",
+            "UTRGV",
+            "TEXPA"
+        ],
+        "306": [
+            "Texas-San Antonio",
+            "Roadrunners",
+            "UTSA"
+        ],
+        "307": [
+            "The Citadel",
+            "CTDL",
+            "CIT",
+            "Bulldogs"
+        ],
+        "308": [
+            "U of T",
+            "TOL or TOLEDO",
+            "Rockets",
+            "Toledo"
+        ],
+        "309": [
+            "Tigers",
+            "TOWS",
+            "Towson"
+        ],
+        "310": [
+            "Troy",
+            "Trojans",
+            "TROY"
+        ],
+        "311": [
+            "Green Wave",
+            "Tulane",
+            "TULN",
+            "TULAN"
+        ],
+        "312": [
+            "Tulsa",
+            "TLSA",
+            "TULSA",
+            "Golden Hurricane"
+        ],
+        "313": [
+            "UAB",
+            "Blazers",
+            "UAB"
+        ],
+        "314": [
+            "UC Davis",
+            "Aggies",
+            "UCD"
+        ],
+        "315": [
+            "UC Irvine",
+            "Anteaters",
+            "UCI"
+        ],
+        "316": [
+            "UC Riverside",
+            "Highlanders",
+            "UCR"
+        ],
+        "317": [
+            "UC San Diego",
+            "Tritons",
+            "UCSD"
+        ],
+        "318": [
+            "UC Santa Barbara",
+            "Gauchos",
+            "UCSB"
+        ],
+        "319": [
+            "UCF",
+            "Knights"
+        ],
+        "320": [
+            "Bruins",
+            "UCLA"
+        ],
+        "321": [
+            "UConn",
+            "Huskies",
+            "CONN"
+        ],
+        "322": [
+            "UMBC",
+            "Retrievers",
+            "UMBC"
+        ],
+        "323": [
+            "UMKC",
+            "Kangaroos",
+            "UMKC"
+        ],
+        "324": [
+            "UMass Lowell",
+            "River Hawks",
+            "UML"
+        ],
+        "325": [
+            "UNC Asheville",
+            "Bulldogs",
+            "UNCA"
+        ],
+        "326": [
+            "UNC Greensboro",
+            "Spartans",
+            "UNCG"
+        ],
+        "327": [
+            "UNC Wilmington",
+            "Seahawks",
+            "UNCW"
+        ],
+        "328": [
+            "Runnin' Rebels",
+            "UNLV"
+        ],
+        "329": [
+            "Trojans",
+            "USC"
+        ],
+        "330": [
+            "USC Upstate",
+            "Spartans",
+            "USCU"
+        ],
+        "331": [
+            "UTEP",
+            "Miners"
+        ],
+        "332": [
+            "U of U",
+            "Utah",
+            "Utes",
+            "UTAH"
+        ],
+        "333": [
+            "Utah State",
+            "Aggies",
+            "USU"
+        ],
+        "334": [
+            "Utah Tech",
+            "Trailblazers",
+            "UTECH"
+        ],
+        "335": [
+            "Utah Valley",
+            "Wolverines",
+            "UVU"
+        ],
+        "336": [
+            "VCU",
+            "Rams",
+            "VCU"
+        ],
+        "337": [
+            "VALP",
+            "Beacons",
+            "VAL",
+            "Valparaiso"
+        ],
+        "338": [
+            "VAN",
+            "VANDY",
+            "Vanderbilt",
+            "Commodores"
+        ],
+        "339": [
+            "Vermont",
+            "Catamounts",
+            "UVM"
+        ],
+        "340": [
+            "Wildcats",
+            "NOVA",
+            "VILL",
+            "Villanova"
+        ],
+        "341": [
+            "UVA",
+            "Cavaliers",
+            "Virginia"
+        ],
+        "342": [
+            "Virginia Military",
+            "Keydets",
+            "VMI"
+        ],
+        "343": [
+            "Hokies",
+            "VT",
+            "Virginia Tech",
+            "VATECH"
+        ],
+        "344": [
+            "Wagner",
+            "Seahawks",
+            "WAGNR",
+            "WAG",
+            "WAGNER"
+        ],
+        "345": [
+            "WAKE",
+            "Wake Forest",
+            "Demon Deacons",
+            "WF"
+        ],
+        "346": [
+            "UWASH",
+            "WASH or UW",
+            "Huskies",
+            "Washington"
+        ],
+        "347": [
+            "Cougars",
+            "WSU",
+            "Washington State"
+        ],
+        "348": [
+            "WEB",
+            "WEBER",
+            "Weber State",
+            "Wildcats"
+        ],
+        "349": [
+            "West Georgia",
+            "Wolves",
+            "UWG"
+        ],
+        "350": [
+            "Mountaineers",
+            "WVU",
+            "West Virginia"
+        ],
+        "351": [
+            "Catamounts",
+            "WCU",
+            "Western Carolina",
+            "WCAR"
+        ],
+        "352": [
+            "Western Illinois",
+            "Leathernecks",
+            "WIU"
+        ],
+        "353": [
+            "Western Kentucky",
+            "Hilltoppers",
+            "WKU"
+        ],
+        "354": [
+            "WMY",
+            "WMU",
+            "Western Michigan",
+            "Broncos"
+        ],
+        "355": [
+            "Wichita State",
+            "Shockers",
+            "WICHI"
+        ],
+        "356": [
+            "William & Mary",
+            "W&M",
+            "Tribe"
+        ],
+        "357": [
+            "Winthrop",
+            "Eagles",
+            "WIN"
+        ],
+        "358": [
+            "WIS",
+            "UWISC",
+            "Badgers",
+            "Wisconsin"
+        ],
+        "359": [
+            "Wofford",
+            "WOF",
+            "WOFF",
+            "Terriers"
+        ],
+        "360": [
+            "Wright State",
+            "Raiders",
+            "WRST"
+        ],
+        "361": [
+            "WYO",
+            "Cowboys",
+            "Wyoming",
+            "UWYOM"
+        ],
+        "362": [
+            "Xavier",
+            "Musketeers",
+            "XAV"
+        ],
+        "363": [
+            "Yale",
+            "Bulldogs",
+            "YALE"
+        ],
+        "364": [
+            "Penguins",
+            "YSU",
+            "Youngstown State"
+        ]
+    }
+}

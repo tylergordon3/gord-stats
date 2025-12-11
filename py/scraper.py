@@ -52,8 +52,7 @@ def get_schedule():
     soup = getHTML(base_link)
     links = soup.find_all('a')
     teams = getMasterTeams()
-    print(teams)
-    missing = []
+
     for link in links:
         look_for = 'college-basketball/teams/'
         if look_for in link.get("href"):
@@ -81,10 +80,7 @@ def get_schedule():
 
             # Filter the original DataFrame
             df_result = teams[boolean_mask_original]
-            if not df_result.empty:
-                print(df_result)
-            else:
-                print('no match: ', abb)
+            print(df_result)
             
 
 get_schedule()
