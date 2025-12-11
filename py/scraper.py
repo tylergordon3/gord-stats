@@ -83,6 +83,8 @@ def get_schedule():
             df_result = teams[boolean_mask_original]
             if not df_result.empty:
                 print(df_result)
+            else:
+                print('no match: ', abb)
             
 
 get_schedule()
