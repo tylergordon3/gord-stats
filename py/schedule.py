@@ -340,7 +340,10 @@ def calcLuck(row, luck_dict):
         ratio = pts / tot
         res += ratio
     return (res/len(oppsPF))
-    
+
+def calcPythag(row):
+    ratio = 2.37
+    return (row['PF']**ratio)/((row['PF']**ratio) + (row['PA']**ratio))*14
 
 def SoS(rosters):
     # Calculate Win % of each team
@@ -371,13 +374,16 @@ def SoS(rosters):
     # Higher % = Opponents tend to score higher against you compared to normal
     luck_dict = rosters[['roster_id', 'PF']].copy().to_dict()['PF']
     rosters['Scoring Luck'] = rosters.apply(lambda row: calcLuck(row, luck_dict), axis=1)
+
+    rosters['Expected Wins'] = rosters.apply(lambda row: calcPythag(row), axis=1)
+
     table_style = {
         "selector": "th.col_heading,td",
         "props": [
         ("width", "100px"), # px instead of %
         ("text-align", "center"), # optional ?
     ]}
-    final_df = rosters[['team_name', 'SOS', 'SOV', 'Scoring Luck']].sort_values(by='SOS', ascending=False)
+    final_df = rosters[['team_name', 'SOS', 'SOV', 'Scoring Luck', 'Expected Wins']].sort_values(by='SOS', ascending=False)
     styler = (
         final_df
         .style
@@ -386,6 +392,7 @@ def SoS(rosters):
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .background_gradient(cmap="RdYlGn_r", subset=["Scoring Luck"])
+        .background_gradient(cmap="RdYlGn", subset=["Expected Wins"])
         .format('{:.2%}', subset=['Scoring Luck'])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
@@ -399,7 +406,7 @@ def standings():
     rosters = util.load_df_from_json(checkPath)
     [rosters, _] = SoS(rosters)
     rosters = rosters.sort_values(['wins', 'PF'],ascending=False)
-    return rosters[['team_name', 'wins', 'losses', 'PF', 'PA', 'SOS', 'SOV', 'Scoring Luck']].copy()
+    return rosters[['team_name', 'wins', 'losses', 'PF', 'PA', 'SOS', 'SOV', 'Scoring Luck', 'Expected Wins']].copy()
 
 #       ****** MAIN ******
 def schedule_main(update_all):

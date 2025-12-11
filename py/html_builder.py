@@ -80,9 +80,11 @@ def generate_index():
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .background_gradient(cmap="RdYlGn_r", subset=["Scoring Luck"])
+        .background_gradient(cmap="RdYlGn", subset=["Expected Wins"])
         .format('{:.2%}', subset=['Scoring Luck'])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
+    
     page=f'''
 <!DOCTYPE html>
 <html>
