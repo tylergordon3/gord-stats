@@ -44,6 +44,11 @@ def sum_pts(id):
     pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'].sum()
     return pts
 
+def num_games(id):
+    sleeper = str(id)
+    pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'].count()
+    return pts
+
 def final_rank(row, df):
     this_rank = row.total_pts
     return len(df[df['total_pts'] > this_rank]) + 1
@@ -53,12 +58,18 @@ def final_pos_rank(row, df):
     return len(df[df['total_pts'] > this_rank]) + 1
 
 df['total_pts'] = df.apply(lambda x: sum_pts(x['player_id']), axis=1)
+df['num_games'] = df.apply(lambda x: num_games(x['player_id']), axis=1)
 df['final_rank'] = df.apply(lambda x: final_rank(x, df), axis=1)
 df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] == x.position]), axis=1)
 df['overall_diff'] = df['pick_no'] - df['final_rank']
 df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
 df['name'] = df['first_name'] + df['last_name']
 df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name'])
+
+df =  df[~df['position'].isin(['K', 'DEF'])]
+df = df[~((df['num_games'] < 8))]
+
+
 df = df.rename(columns={
         "pos_diff" : "Pos Δ",
         "overall_diff" : "Final Δ",
@@ -70,14 +81,15 @@ df = df.rename(columns={
         "final_rank" : "Final",
         "total_pts" : "Pts",
         "name" : "Name",
-        "team" : "Team"
+        "team" : "Team",
+        "num_games" : "# G"
     })
 
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
-         'Name', 'Pos', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ' ]]
+         'Name', 'Pos', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ', '# G']]
 
-#df_summary = 
+
 
 df_best = df.sort_values(by='Final Δ', ascending=False)
 df_worst = df.sort_values(by='Final Δ')
@@ -105,6 +117,7 @@ styler_worst = (
         )
 
 html = f'''
+    <p>Note: Does not include defenses, kickers, or players who missed 7 or more weeks for injury</p>
     <details>
     <summary><strong>All Draft Stats</strong></summary>
     <div class="table-scroll">
