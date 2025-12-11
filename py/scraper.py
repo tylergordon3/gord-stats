@@ -47,44 +47,62 @@ def getHTML(link, retries=5, base_delay=1.0):
     print('getHTML returning None')
     return None  # if all retries fail
 
+def check():
+    base_link = 'https://www.cbssports.com/college-basketball/schedule/'
+    soup = getHTML(base_link)
+
+    names = soup.find_all("span", class_="TeamName")
+                  
+    games = soup.find_all("div", class_ = "CellGame")
+    times = [game.find('a').text.strip() for game in games]
+    code_names = []
+    for name in names:
+        atag = name.find('a')
+        if atag is None:
+            code_names.append('NA')
+        else:
+            url = atag['href']
+            look_for = 'college-basketball/teams/'
+            idx = url.find(look_for) + len(look_for)
+            team_code = url[idx:].split('/')[0]
+            code_names.append(team_code)
+    #name_code = [name.find('a').text for name in names]
+   
+    names_1 = names[::2]
+    names_2 = names[1::2]
+    codes_1 = code_names[::2]
+    codes_2 = code_names[1::2]
+
+    for team1, team2, time, codes_1, codes_2 in zip(names_1, names_2, times, codes_1, codes_2):
+        print(team1.text.strip(), ' @ ', team2.text.strip(), '[', time, ']', codes_1, codes_2)
+
 def get_schedule():
     base_link = 'https://www.cbssports.com/college-basketball/schedule/'
     soup = getHTML(base_link)
     links = soup.find_all('a')
     teams = getMasterTeams()
-
+    games = []
     for link in links:
         look_for = 'college-basketball/teams/'
         if look_for in link.get("href"):
             idx = link.get("href").find(look_for) + len(look_for)
             team_link = link.get('href')[idx:]
             abb = team_link.split('/')[0]
-            
+ 
             s_exploded = teams['names'].explode()
-
-            # Check which exploded values are the search value
             boolean_mask_exploded = s_exploded == abb
-
-            # Map the boolean mask back to the original DataFrame's index to find rows
-            # with at least one match, then use .any(level=0) (or .any(by='id') in newer pandas)
-            # Note: For simplicity, a direct check if the value is present in the exploded series
-            # and then finding the IDs is often more practical.
-
             # To get the row IDs where the value is present:
-            matching_ids = s_exploded[boolean_mask_exploded].index.unique()
-            # matching_ids will be [2]
-
-            # To get a boolean Series aligned with the original DF:
-            # Use groupby and any to check if any match occurred within each original list
+            #matching_ids = s_exploded[boolean_mask_exploded].index.unique()
             boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
-
-            # Filter the original DataFrame
             df_result = teams[boolean_mask_original]
-            print(df_result)
-            
-
-get_schedule()
-
+            try:
+                tm = list(df_result.team)[0]
+                if tm not in games:
+                    games.append(tm)
+            except:
+                continue
+    return games
+check()
 def update_master():
     master = getMasterTeams()
     path = utils.get_path('data/teams/redditCFB.html')
