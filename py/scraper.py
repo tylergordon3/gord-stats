@@ -57,7 +57,6 @@ def get_schedule():
         except:
             continue
 
-get_schedule()
 
 def pull_sportsDB():
     strLeague = 'NCAA_Division_I_Basketball_Mens'
