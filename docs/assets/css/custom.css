@@ -191,3 +191,13 @@
   background: #ffecec;
   color: #b00020;
 }
+
+@media (max-width: 360px) {
+  .teams {
+    font-size: 14px;
+  }
+}
+
+.team strong {
+  color: #000;
+}
