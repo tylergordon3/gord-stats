@@ -3,6 +3,8 @@ import predictions
 import utils
 import os
 from os.path import exists
+from pytz import timezone
+import datetime
 
 def update_html(dates):
     for day in dates:
@@ -42,7 +44,9 @@ title: History
        f.write(html)  
        print(f'Wrote to: {mypath} for {today}')
 
-    
+    tz = timezone('EST')
+    time_obj = datetime.datetime.now(tz)
+    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     recent = sorted(dates, reverse=True)[0]
     index = f'''
 ---
@@ -56,9 +60,8 @@ title: Bracket Gordology
     <p><a href="predict_{recent}.html" title="Current Model">Current Model</a></p>
     <p><a href="history.html" title="Model History">Model History</a></p>
     <h3>Today's Games</h3>
-    <div class="table-container">
+    <p>{time}</p>
     {gamesToday}
-    <div>
 '''
     with open(utils.get_path('docs/index.html'), 'w') as f: 
        f.write(index.lstrip())  

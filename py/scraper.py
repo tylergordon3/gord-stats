@@ -132,14 +132,33 @@ def today_games(rank_df):
 
     output_df = sched_df[['team1_rank', 'team1', 'team2', 'team2_rank', 'time']]
     output_df = output_df.rename(columns={"team1_rank" : "A Rank", "team1" : "Away", "team2" : "Home", "team2_rank" : "H Rank", "time" : "Time/Final"})
-    styler = (
-        output_df
-        .style
-        .hide(axis="index") 
-        .set_table_attributes('class="sticky-table"')
+
+    def fmt_team(team, rank):
+        if rank == "N/A":
+            return team
+        return f"<strong>#{rank}</strong> {team}"
+    
+    output_df["matchup_html"] = output_df.apply(
+        lambda r: f"""
+        <div class="matchup">
+        <span class="team">{fmt_team(r['Away'], r['A Rank'])}</span>
+        <span class="at">@</span>
+        <span class="team">{fmt_team(r['Home'], r['H Rank'])}</span>
+        <span class="time">{r['Time/Final']}</span>
+        </div>
+        """,
+        axis=1
     )
-    return styler.to_html()
-   
+
+    html = "\n".join(output_df["matchup_html"])
+
+    #styler = (
+    #    output_df
+    #    .style
+    #    .hide(axis="index") 
+    #    .set_table_attributes('class="sticky-table"')
+    #)
+    return html
 
 def update_master():
     master = getMasterTeams()
