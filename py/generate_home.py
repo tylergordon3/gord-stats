@@ -56,9 +56,9 @@ title: Bracket Gordology
     <p><a href="predict_{recent}.html" title="Current Model">Current Model</a></p>
     <p><a href="history.html" title="Model History">Model History</a></p>
     <h3>Today's Games</h3>
-    '<div class="table-container">'
+    <div class="table-container">
     {gamesToday}
-    '<div>'
+    <div>
 '''
     with open(utils.get_path('docs/index.html'), 'w') as f: 
        f.write(index.lstrip())  
