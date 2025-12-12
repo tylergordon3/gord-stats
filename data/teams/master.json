@@ -788,7 +788,8 @@
             "APP",
             "Mountaineers",
             "Appalachian State",
-            "APPST"
+            "APPST",
+            "App. St."
         ],
         "10": [
             "ARIZ",
@@ -936,7 +937,8 @@
             "Cal State Bakersfield",
             "Roadrunners",
             "CSUB",
-            "CSBAK"
+            "CSBAK",
+            "Cal-Baker."
         ],
         "37": [
             "Cal State Fullerton",
@@ -1854,7 +1856,8 @@
             "Bison",
             "North Dakota State",
             "NDSU",
-            "NDAKST"
+            "NDAKST",
+            "N. Dak. St."
         ],
         "207": [
             "North Florida",
@@ -2381,7 +2384,8 @@
             "Texas-RGV",
             "Vaqueros",
             "UTRGV",
-            "TEXPA"
+            "TEXPA",
+            "UT-Rio Grande Valley"
         ],
         "306": [
             "Texas-San Antonio",

@@ -178,6 +178,11 @@ def predict(date):
             current_team_index += num_teams_in_seed
             seed_num += 1
         return seed
+    
+    # Saving to another df for schedule home
+    save_df = main64.copy()
+    save_df = save_df.sort_values(by='GordScore', ascending=False)
+    save_df['Overall'] = range(1, len(save_df)+1)
 
     bestByConf = main64.loc[main64.groupby(by='Conf')['GordScore'].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
@@ -266,6 +271,8 @@ def predict(date):
     with open(path, 'w') as f: 
        f.write(html)  
        print(f'Wrote to: {path} for {date}')
+
+    return save_df
 
 
     

@@ -42,6 +42,7 @@ title: History
        f.write(html)  
        print(f'Wrote to: {mypath} for {today}')
 
+    
     recent = sorted(dates, reverse=True)[0]
     index = f'''
 ---

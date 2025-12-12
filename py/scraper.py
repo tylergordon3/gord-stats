@@ -47,7 +47,44 @@ def getHTML(link, retries=5, base_delay=1.0):
     print('getHTML returning None')
     return None  # if all retries fail
 
-def check():
+def get_rank1(row, rank_df, master):
+    code_name = getNameFromCode(row.code1, master)
+    rank_row = rank_df.loc[
+        (rank_df['Team'] == row.team1) | (rank_df['Team'] == code_name)
+    ]
+ 
+    if rank_row.empty:
+        pass
+    else:
+        return list(rank_row['Overall'])[0]
+
+
+def get_rank2(row, rank_df, master):
+    code_name = getNameFromCode(row.code2, master)
+    rank_row = rank_df.loc[
+        (rank_df['Team'] == row.team2) | (rank_df['Team'] == code_name)
+    ]
+ 
+    if rank_row.empty:
+        pass
+    else:
+        return list(rank_row['Overall'])[0]
+
+def getNameFromCode(code, master):
+    s_exploded = master['names'].explode()
+    boolean_mask_exploded = s_exploded == code
+    # To get the row IDs where the value is present:
+    #matching_ids = s_exploded[boolean_mask_exploded].index.unique()
+    boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
+    df_result = master[boolean_mask_original]
+
+    if df_result.empty:
+        return None
+    else:
+        return list(df_result['team'])[0]
+    
+    
+def today_games(rank_df):
     base_link = 'https://www.cbssports.com/college-basketball/schedule/'
     soup = getHTML(base_link)
 
@@ -66,15 +103,22 @@ def check():
             idx = url.find(look_for) + len(look_for)
             team_code = url[idx:].split('/')[0]
             code_names.append(team_code)
-    #name_code = [name.find('a').text for name in names]
-   
+ 
     names_1 = names[::2]
     names_2 = names[1::2]
     codes_1 = code_names[::2]
     codes_2 = code_names[1::2]
 
+    sched_df = pd.DataFrame()
     for team1, team2, time, codes_1, codes_2 in zip(names_1, names_2, times, codes_1, codes_2):
-        print(team1.text.strip(), ' @ ', team2.text.strip(), '[', time, ']', codes_1, codes_2)
+        dict = {'team1' : team1.text.strip(), 'code1' : codes_1, 'team2' : team2.text.strip(), 'code2': codes_2, 'time' : time}
+        add = pd.DataFrame([dict])
+        sched_df = pd.concat([sched_df, add], ignore_index=True)
+    master = getMasterTeams()
+    
+    sched_df['team1_rank'] = sched_df.apply(lambda x: get_rank1(x, rank_df, master), axis = 1)
+    sched_df['team2_rank'] = sched_df.apply(lambda x: get_rank2(x, rank_df, master), axis = 1)
+    print(sched_df)
 
 def get_schedule():
     base_link = 'https://www.cbssports.com/college-basketball/schedule/'
@@ -102,7 +146,7 @@ def get_schedule():
             except:
                 continue
     return games
-check()
+
 def update_master():
     master = getMasterTeams()
     path = utils.get_path('data/teams/redditCFB.html')
