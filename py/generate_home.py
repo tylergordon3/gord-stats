@@ -8,7 +8,7 @@ def update_html(dates):
     for day in dates:
         predictions.predict(day)
 
-def generate_home_about(update=False):
+def generate_home_about(gamesToday, update=False):
     today = date.today()
     mypath = utils.get_path('docs/')
     all_entries = os.listdir(mypath)
@@ -55,6 +55,8 @@ title: Bracket Gordology
     <p>Predictions as of now use Torvik and Kenpom data from 2013 to present.</p>
     <p><a href="predict_{recent}.html" title="Current Model">Current Model</a></p>
     <p><a href="history.html" title="Model History">Model History</a></p>
+    <h3>Today's Games</h3>
+    {gamesToday}
 '''
     with open(utils.get_path('docs/index.html'), 'w') as f: 
        f.write(index.lstrip())  

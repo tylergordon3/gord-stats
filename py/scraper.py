@@ -48,11 +48,12 @@ def getHTML(link, retries=5, base_delay=1.0):
     return None  # if all retries fail
 
 def get_rank1(row, rank_df, master):
-    code_name = getNameFromCode(row.code1, master)
+    [index, code_name] = getNameFromCode(row.code1, master)
+
     rank_row = rank_df.loc[
-        (rank_df['Team'] == row.team1) | (rank_df['Team'] == code_name)
+        (rank_df['Team'] == row.team1) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
     ]
- 
+
     if rank_row.empty:
         pass
     else:
@@ -60,13 +61,13 @@ def get_rank1(row, rank_df, master):
 
 
 def get_rank2(row, rank_df, master):
-    code_name = getNameFromCode(row.code2, master)
+    [index, code_name]  = getNameFromCode(row.code2, master)
     rank_row = rank_df.loc[
-        (rank_df['Team'] == row.team2) | (rank_df['Team'] == code_name)
+        (rank_df['Team'] == row.team2) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
     ]
  
     if rank_row.empty:
-        pass
+        return 
     else:
         return list(rank_row['Overall'])[0]
 
@@ -77,14 +78,18 @@ def getNameFromCode(code, master):
     #matching_ids = s_exploded[boolean_mask_exploded].index.unique()
     boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
     df_result = master[boolean_mask_original]
-
     if df_result.empty:
-        return None
+        return [None, None]
     else:
-        return list(df_result['team'])[0]
+        return [list(df_result['index'])[0], list(df_result['team'])[0]]
     
     
 def today_games(rank_df):
+    rank_df['index'] = (
+        rank_df['Team']
+       .rank(method="dense")
+        .astype(int)
+    ) - 1
     base_link = 'https://www.cbssports.com/college-basketball/schedule/'
     soup = getHTML(base_link)
 
@@ -118,34 +123,23 @@ def today_games(rank_df):
     
     sched_df['team1_rank'] = sched_df.apply(lambda x: get_rank1(x, rank_df, master), axis = 1)
     sched_df['team2_rank'] = sched_df.apply(lambda x: get_rank2(x, rank_df, master), axis = 1)
-    print(sched_df)
+    sched_df["team1_rank"] = sched_df["team1_rank"].apply(
+        lambda x: int(x) if pd.notna(x) else "N/A"
+    )
+    sched_df["team2_rank"] = sched_df["team2_rank"].apply(
+        lambda x: int(x) if pd.notna(x) else "N/A"
+    )
 
-def get_schedule():
-    base_link = 'https://www.cbssports.com/college-basketball/schedule/'
-    soup = getHTML(base_link)
-    links = soup.find_all('a')
-    teams = getMasterTeams()
-    games = []
-    for link in links:
-        look_for = 'college-basketball/teams/'
-        if look_for in link.get("href"):
-            idx = link.get("href").find(look_for) + len(look_for)
-            team_link = link.get('href')[idx:]
-            abb = team_link.split('/')[0]
- 
-            s_exploded = teams['names'].explode()
-            boolean_mask_exploded = s_exploded == abb
-            # To get the row IDs where the value is present:
-            #matching_ids = s_exploded[boolean_mask_exploded].index.unique()
-            boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
-            df_result = teams[boolean_mask_original]
-            try:
-                tm = list(df_result.team)[0]
-                if tm not in games:
-                    games.append(tm)
-            except:
-                continue
-    return games
+    output_df = sched_df[['team1_rank', 'team1', 'team2', 'team2_rank', 'time']]
+    output_df = output_df.rename(columns={"team1_rank" : "A Rank", "team1" : "Away", "team2" : "Home", "team2_rank" : "H Rank", "time" : "Time/Final"})
+    styler = (
+        output_df
+        .style
+        .hide(axis="index") 
+        .set_table_attributes('class="sticky-table"')
+    )
+    return styler.to_html()
+   
 
 def update_master():
     master = getMasterTeams()

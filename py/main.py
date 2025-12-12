@@ -43,7 +43,7 @@ if save_model:
 today_df = predictions.predict(date.today())
 
 games = scraper.today_games(today_df)
-generate_home.generate_home_about(False)
+generate_home.generate_home_about(games, False)
 
 
 
