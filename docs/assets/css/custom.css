@@ -143,3 +143,51 @@
 .matchup-list tr:hover {
   background: #f6f6f6;
 }
+
+.matchup {
+  padding: 12px 14px;
+  border-bottom: 1px solid #ddd;
+  font-family: system-ui, sans-serif;
+}
+
+/* Teams line */
+.teams {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.team {
+  white-space: nowrap;
+}
+
+.at {
+  color: #777;
+}
+
+/* Time / Score badge */
+.meta {
+  margin-top: 6px;
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #444;
+  background: #f1f1f1;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Final games */
+.meta.final {
+  background: #e9f2ff;
+  color: #1b4fc7;
+}
+
+/* Live games */
+.meta.live {
+  background: #ffecec;
+  color: #b00020;
+}

@@ -138,13 +138,25 @@ def today_games(rank_df):
             return team
         return f"<strong>#{rank}</strong> {team}"
     
+    def meta_class(val):
+        val = str(val).lower()
+        if "final" in val:
+            return "meta final"
+        if ":" not in val:
+            return "meta live"
+        return "meta"
+    
     output_df["matchup_html"] = output_df.apply(
         lambda r: f"""
         <div class="matchup">
-        <span class="team">{fmt_team(r['Away'], r['A Rank'])}</span>
-        <span class="at">@</span>
-        <span class="team">{fmt_team(r['Home'], r['H Rank'])}</span>
-        <span class="time">{r['Time/Final']}</span>
+        <div class="teams">
+            <span class="team">{fmt_team(r['Away'], r['A Rank'])}</span>
+            <span class="at">@</span>
+            <span class="team">{fmt_team(r['Home'], r['H Rank'])}</span>
+        </div>
+        <div class="{meta_class(r['Time/Final'])}">
+            {r['Time/Final']}
+        </div>
         </div>
         """,
         axis=1
@@ -152,12 +164,6 @@ def today_games(rank_df):
 
     html = "\n".join(output_df["matchup_html"])
 
-    #styler = (
-    #    output_df
-    #    .style
-    #    .hide(axis="index") 
-    #    .set_table_attributes('class="sticky-table"')
-    #)
     return html
 
 def update_master():
