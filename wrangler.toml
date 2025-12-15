@@ -1,0 +1,2 @@
+name = "gordstats-cbb"
+pages_build_output_dir = "docs/_site"

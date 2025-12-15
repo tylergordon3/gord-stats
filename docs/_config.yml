@@ -12,8 +12,8 @@ collections:
   posts:
     output          : true
   
-url: "https://tylergordon3.github.io"
-baseurl: "/cbb-model"
+url: "https://gordstats.com"
+baseurl: ""
 
 # Handling Reading
 safe                : false
@@ -61,3 +61,9 @@ liquid:
   error_mode        : warn
   strict_filters    : false
   strict_variables  : false
+
+repository: tgordon3/cbb-model
+
+github:
+  api_url: https://api.github.com
+  skip_api: true
