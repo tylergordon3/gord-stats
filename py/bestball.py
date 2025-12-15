@@ -51,7 +51,7 @@ def getMatchups(matchup_df):
     num_matches = max(matchup_df['matchup_id'])
 
     matchups = []
-    for i in range(num_matches):
+    for i in range(int(num_matches)):
         vals = matchup_df[matchup_df['matchup_id'] == (i+1)]['roster_id']
         matchups.append(list(vals))
     return matchups
@@ -171,7 +171,8 @@ def formatMatchups(results, matchups, week):
 def bestball_season():
     season_combined = pd.DataFrame()
     szn_matchups = {}
-    for week in range(1,utilities.get_week() + 1):
+    week = min(14, utilities.get_week())
+    for week in range(1,week + 1):
         print(f'Getting bestball results for week {week}')
         weekly_results = bestball(week)
         season_combined = pd.concat([season_combined, weekly_results])

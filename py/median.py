@@ -303,7 +303,7 @@ def printMedianScenarios(currTeam, df):
 def median_main(update_all):
     
     if update_all:
-        for week in range(1,util.get_week() + 1):
-            #pdb.scrape_injuries(False, week)
+        week = min(14, util.get_week())
+        for week in range(week + 1):
             median(league, week)
     htmb.generate_landing('docs/median', 'median', 'Median')

@@ -51,11 +51,12 @@ def schedScores(rosters):
 def saveSchedules():
     yr = util.getYrStr()
     wk = util.get_week()
+    week = min(14, wk)
     league = League(cons.LEAGUEID)
     rosters = fr.get(league)
     rosters['sched'] = [[] for _ in range(len(rosters))]
     # Playoffs begin week 15
-    for week in range(1,18):
+    for week in range(1,15):
         matchup_df = pd.DataFrame.from_dict(league.get_matchups(week))
         matchups = bb.getMatchups(matchup_df)
         for teamA, teamB in matchups:
@@ -64,11 +65,11 @@ def saveSchedules():
             indexB = getTeamIndex(rosters, teamB)
             rosters.loc[indexB,:]['sched'].append(teamA)
     rosters = schedScores(rosters)
-    rosters['myScores'] = rosters.apply(lambda x: np.repeat(x['roster_id'], 17), axis=1)
+    rosters['myScores'] = rosters.apply(lambda x: np.repeat(x['roster_id'], 14), axis=1)
     rosters['myScores'] = rosters['myScores'].apply(lambda x: getScoreArr(x))
     rosters['wins_vs'] = rosters.apply(lambda x: recordsVsAll(rosters, x), axis=1)
     rosters['total'] = rosters['wins_vs'].apply(lambda x: getVals(x))
-    util.save_df_to_json(rosters, f'data/rost{yr}_{wk}.json')
+    util.save_df_to_json(rosters, f'data/rost{yr}_{week}.json')
 
 def recordsVsAll(all, team):
     # For current team, calculate wins vs each schedule
@@ -402,7 +403,8 @@ def SoS(rosters):
 def standings():
     yr = util.getYrStr()
     wk = util.get_week()
-    checkPath = f'data/rost{yr}_{wk}.json'
+    week = min(14, wk)
+    checkPath = f'data/rost{yr}_{week}.json'
     rosters = util.load_df_from_json(checkPath)
     [rosters, _] = SoS(rosters)
     rosters = rosters.sort_values(['wins', 'PF'],ascending=False)
@@ -414,7 +416,8 @@ def schedule_main(update_all):
     html = ''
     yr = util.getYrStr()
     wk = util.get_week()
-    checkPath = f'data/rost{yr}_{wk}.json'
+    week = min(14, wk)
+    checkPath = f'data/rost{yr}_{week}.json'
     if not os.path.exists(checkPath) or (update_all == True):
        saveSchedules()
     rosters = util.load_df_from_json(checkPath)
