@@ -376,7 +376,7 @@ def SoS(rosters):
     luck_dict = rosters[['roster_id', 'PF']].copy().to_dict()['PF']
     rosters['Scoring Luck'] = rosters.apply(lambda row: calcLuck(row, luck_dict), axis=1)
 
-    rosters['Expected Wins'] = rosters.apply(lambda row: calcPythag(row), axis=1)
+    rosters['Expected (H2H) Wins'] = rosters.apply(lambda row: calcPythag(row), axis=1)
 
     table_style = {
         "selector": "th.col_heading,td",
@@ -384,7 +384,7 @@ def SoS(rosters):
         ("width", "100px"), # px instead of %
         ("text-align", "center"), # optional ?
     ]}
-    final_df = rosters[['team_name', 'SOS', 'SOV', 'Scoring Luck', 'Expected Wins']].sort_values(by='SOS', ascending=False)
+    final_df = rosters[['team_name', 'SOS', 'SOV', 'Expected (H2H) Wins']].sort_values(by='SOS', ascending=False)
     styler = (
         final_df
         .style
@@ -392,9 +392,7 @@ def SoS(rosters):
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .background_gradient(cmap="RdYlGn_r", subset=["Scoring Luck"])
-        .background_gradient(cmap="RdYlGn", subset=["Expected Wins"])
-        .format('{:.2%}', subset=['Scoring Luck'])
+        .background_gradient(cmap="RdYlGn", subset=["Expected (H2H) Wins"])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
 
@@ -408,7 +406,7 @@ def standings():
     rosters = util.load_df_from_json(checkPath)
     [rosters, _] = SoS(rosters)
     rosters = rosters.sort_values(['wins', 'PF'],ascending=False)
-    return rosters[['team_name', 'wins', 'losses', 'PF', 'PA', 'SOS', 'SOV', 'Scoring Luck', 'Expected Wins']].copy()
+    return rosters[['team_name', 'wins', 'losses', 'PF', 'PA', 'SOS', 'SOV', 'Expected (H2H) Wins']].copy()
 
 #       ****** MAIN ******
 def schedule_main(update_all):

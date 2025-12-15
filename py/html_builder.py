@@ -79,9 +79,7 @@ def generate_index():
         .format( lambda x: f"{x:.3f}" if isinstance(x, float) else x) 
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .background_gradient(cmap="RdYlGn_r", subset=["Scoring Luck"])
-        .background_gradient(cmap="RdYlGn", subset=["Expected Wins"])
-        .format('{:.2%}', subset=['Scoring Luck'])
+        .background_gradient(cmap="RdYlGn", subset=["Expected (H2H) Wins"])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
     
@@ -100,8 +98,6 @@ def generate_index():
     <p><strong>Hardest Schedule:</strong> padgett</p>
     <p><strong>Weakest (H2H) Wins:</strong> Clanker Barrel</p>
     <p><strong>Strongest (H2H) Wins:</strong> The Standard & Lotta Cox</p>
-    <p><strong>Easiest Scoring Ratio (opp pts / opp total pts):</strong> Strictly Dickly</p>
-    <p><strong>Hardest Scoring Ratio (opp pts / opp total pts):</strong> padgett</p>
     <h1>Regular Season Standings</h1>
     <div class="table-scroll">
     {styler.to_html(classes='sticky-table')}
