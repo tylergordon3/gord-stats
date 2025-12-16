@@ -96,7 +96,13 @@ def today_games(rank_df):
     names = soup.find_all("span", class_="TeamName")
                   
     games = soup.find_all("div", class_ = "CellGame")
-    times = [game.find('a').text.strip() for game in games]
+    
+    #times = [game.find('a').text.strip() for game in games]
+    times = [
+        game.find('a').text.strip()
+        for game in games
+        if game.find('a') is not None
+    ]
     code_names = []
     for name in names:
         atag = name.find('a')
