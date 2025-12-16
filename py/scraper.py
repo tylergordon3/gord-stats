@@ -125,6 +125,7 @@ def today_games(rank_df):
         dict = {'team1' : team1.text.strip(), 'code1' : codes_1, 'team2' : team2.text.strip(), 'code2': codes_2, 'time' : time}
         add = pd.DataFrame([dict])
         sched_df = pd.concat([sched_df, add], ignore_index=True)
+    print(sched_df)
     master = getMasterTeams()
     
     sched_df['team1_rank'] = sched_df.apply(lambda x: get_rank1(x, rank_df, master), axis = 1)

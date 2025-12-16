@@ -1297,7 +1297,8 @@
         "102": [
             "Yellow Jackets",
             "GT",
-            "Georgia Tech"
+            "Georgia Tech",
+            "GATECH"
         ],
         "103": [
             "Gonzaga",
@@ -1592,7 +1593,8 @@
         "156": [
             "Loyola Marymount",
             "Lions",
-            "LOYMR"
+            "LOYMR",
+            "LOYMRY"
         ],
         "157": [
             "Maine",
@@ -1674,7 +1676,8 @@
             "Miami (OH)",
             "RedHawks",
             "M-OH",
-            "MIAMI"
+            "MIAMI",
+            "MIAOH"
         ],
         "172": [
             "Wolverines",
@@ -1892,12 +1895,14 @@
             "Northern Colorado",
             "Bears",
             "UNCO",
-            "NOCOL"
+            "NOCOL",
+            "NCOLO"
         ],
         "214": [
             "NIU",
             "Northern Illinois",
-            "Huskies"
+            "Huskies",
+            "NILL"
         ],
         "215": [
             "UNI",
@@ -1966,7 +1971,8 @@
         "193": [
             "Omaha",
             "Mavericks",
-            "OMAHA"
+            "OMAHA",
+            "OMA"
         ],
         "226": [
             "Oral Roberts",
@@ -2237,7 +2243,8 @@
         "278": [
             "Southern",
             "Jaguars",
-            "SUBR"
+            "SUBR",
+            "STHRN"
         ],
         "279": [
             "SOILL",
@@ -2507,7 +2514,8 @@
         "322": [
             "UNC Asheville",
             "Bulldogs",
-            "UNCA"
+            "UNCA",
+            "NCASHV"
         ],
         "323": [
             "UNC Greensboro",
@@ -2531,7 +2539,8 @@
         "327": [
             "USC Upstate",
             "Spartans",
-            "USCU"
+            "USCU",
+            "USCUP"
         ],
         "330": [
             "UTEP",
