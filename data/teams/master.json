@@ -808,7 +808,8 @@
             "alst",
             "alabama st.",
             "alabamast",
-            "ALABAMA ST."
+            "ALABAMA ST.",
+            "alabama st"
         ],
         "6": [
             "ALBNY",
@@ -836,7 +837,8 @@
             "ALCORN STATE",
             "alcorn st.",
             "ALCORN ST.",
-            "alcornst"
+            "alcornst",
+            "alcorn st"
         ],
         "8": [
             "American University",
@@ -868,7 +870,8 @@
             "APP. ST.",
             "appalachian st.",
             "APPALACHIAN ST.",
-            "appalachianst"
+            "appalachianst",
+            "appalachian st"
         ],
         "10": [
             "ARIZ",
@@ -894,7 +897,8 @@
             "SUN DEVILS",
             "arizona st.",
             "ARIZONA ST.",
-            "arizonast"
+            "arizonast",
+            "arizona st"
         ],
         "12": [
             "ARK",
@@ -936,7 +940,8 @@
             "arkst",
             "arkansas st.",
             "ARKANSAS ST.",
-            "arkansasst"
+            "arkansasst",
+            "arkansas st"
         ],
         "15": [
             "Army West Point",
@@ -998,7 +1003,8 @@
             "ball",
             "ball st.",
             "BALL ST.",
-            "ballst"
+            "ballst",
+            "ball st"
         ],
         "20": [
             "Baylor",
@@ -1072,7 +1078,8 @@
             "BRONCOS",
             "boise st.",
             "BOISE ST.",
-            "boisest"
+            "boisest",
+            "boise st"
         ],
         "26": [
             "Eagles",
@@ -1227,7 +1234,8 @@
             "CAL-BAKER.",
             "cal st. bakersfield",
             "CAL ST. BAKERSFIELD",
-            "calstbakersfield"
+            "calstbakersfield",
+            "cal st bakersfield"
         ],
         "39": [
             "Cal State Fullerton",
@@ -1241,7 +1249,8 @@
             "csful",
             "cal st. fullerton",
             "CAL ST. FULLERTON",
-            "calstfullerton"
+            "calstfullerton",
+            "cal st fullerton"
         ],
         "40": [
             "California",
@@ -1369,7 +1378,8 @@
             "chist",
             "chicago st.",
             "CHICAGO ST.",
-            "chicagost"
+            "chicagost",
+            "chicago st"
         ],
         "51": [
             "Cincinnati",
@@ -1405,7 +1415,8 @@
             "clest",
             "cleveland st.",
             "CLEVELAND ST.",
-            "clevelandst"
+            "clevelandst",
+            "cleveland st"
         ],
         "54": [
             "Coastal Carolina",
@@ -1456,7 +1467,8 @@
             "RAMS",
             "colorado st.",
             "COLORADO ST.",
-            "coloradost"
+            "coloradost",
+            "colorado st"
         ],
         "58": [
             "COM",
@@ -1495,7 +1507,8 @@
             "copst",
             "coppin st.",
             "COPPIN ST.",
-            "coppinst"
+            "coppinst",
+            "coppin st"
         ],
         "61": [
             "COR",
@@ -1581,7 +1594,8 @@
             "dsu",
             "delaware st.",
             "DELAWARE ST.",
-            "delawarest"
+            "delawarest",
+            "delaware st"
         ],
         "69": [
             "DENVER",
@@ -1673,7 +1687,8 @@
             "etnst",
             "east tennessee st.",
             "EAST TENNESSEE ST.",
-            "easttennesseest"
+            "easttennesseest",
+            "east tennessee st"
         ],
         "77": [
             "East Texas A&M",
@@ -1845,7 +1860,8 @@
             "flast",
             "florida st.",
             "FLORIDA ST.",
-            "floridast"
+            "floridast",
+            "florida st"
         ],
         "92": [
             "Fordham",
@@ -1873,7 +1889,8 @@
             "frsno",
             "fresno st.",
             "FRESNO ST.",
-            "fresnost"
+            "fresnost",
+            "fresno st"
         ],
         "94": [
             "Paladins",
@@ -1977,7 +1994,8 @@
             "PANTHERS",
             "georgia st.",
             "GEORGIA ST.",
-            "georgiast"
+            "georgiast",
+            "georgia st"
         ],
         "102": [
             "Yellow Jackets",
@@ -2016,7 +2034,8 @@
             "gramb",
             "grambling st.",
             "GRAMBLING ST.",
-            "gramblingst"
+            "gramblingst",
+            "grambling st"
         ],
         "105": [
             "Grand Canyon",
@@ -2179,7 +2198,8 @@
             "idhst",
             "idaho st.",
             "IDAHO ST.",
-            "idahost"
+            "idahost",
+            "idaho st"
         ],
         "119": [
             "ILL",
@@ -2219,7 +2239,8 @@
             "ILLINOIS STATE",
             "illinois st.",
             "ILLINOIS ST.",
-            "illinoisst"
+            "illinoisst",
+            "illinois st"
         ],
         "122": [
             "Cardinals",
@@ -2260,7 +2281,8 @@
             "SYCAMORES",
             "indiana st.",
             "INDIANA ST.",
-            "indianast"
+            "indianast",
+            "indiana st"
         ],
         "125": [
             "Iona",
@@ -2293,7 +2315,8 @@
             "iwast",
             "iowast",
             "iowa st.",
-            "IOWA ST."
+            "IOWA ST.",
+            "iowa st"
         ],
         "128": [
             "Tigers",
@@ -2309,7 +2332,8 @@
             "jkst",
             "jackson st.",
             "JACKSON ST.",
-            "jacksonst"
+            "jacksonst",
+            "jackson st"
         ],
         "129": [
             "JAC",
@@ -2337,7 +2361,8 @@
             "JACKSONVILLE STATE",
             "jacksonville st.",
             "JACKSONVILLE ST.",
-            "jacksonvillest"
+            "jacksonvillest",
+            "jacksonville st"
         ],
         "131": [
             "Dukes",
@@ -2372,7 +2397,8 @@
             "KANSAS STATE",
             "kansas st.",
             "KANSAS ST.",
-            "kansasst"
+            "kansasst",
+            "kansas st"
         ],
         "134": [
             "KENN",
@@ -2386,7 +2412,8 @@
             "OWLS",
             "kennesaw st.",
             "KENNESAW ST.",
-            "kennesawst"
+            "kennesawst",
+            "kennesaw st"
         ],
         "135": [
             "Golden Flashes",
@@ -2400,7 +2427,8 @@
             "KENT STATE",
             "kent st.",
             "KENT ST.",
-            "kentst"
+            "kentst",
+            "kent st"
         ],
         "136": [
             "UK",
@@ -2541,7 +2569,8 @@
             "lbsu",
             "long beach st.",
             "LONG BEACH ST.",
-            "longbeachst"
+            "longbeachst",
+            "long beach st"
         ],
         "149": [
             "Longwood",
@@ -2852,7 +2881,8 @@
             "MICHIGAN STATE",
             "michigan st.",
             "MICHIGAN ST.",
-            "michiganst"
+            "michiganst",
+            "michigan st"
         ],
         "174": [
             "Middle Tennessee State",
@@ -2915,7 +2945,8 @@
             "MISSISSIPPI STATE",
             "mississippi st.",
             "MISSISSIPPI ST.",
-            "mississippist"
+            "mississippist",
+            "mississippi st"
         ],
         "179": [
             "Mississippi Valley State",
@@ -2929,7 +2960,8 @@
             "mvsu",
             "mississippi valley st.",
             "MISSISSIPPI VALLEY ST.",
-            "mississippivalleyst"
+            "mississippivalleyst",
+            "mississippi valley st"
         ],
         "180": [
             "Missouri",
@@ -2961,7 +2993,8 @@
             "MISSOURI STATE",
             "missouri st.",
             "MISSOURI ST.",
-            "missourist"
+            "missourist",
+            "missouri st"
         ],
         "182": [
             "Hawks",
@@ -2997,7 +3030,8 @@
             "MONTANA STATE",
             "montana st.",
             "MONTANA ST.",
-            "montanast"
+            "montanast",
+            "montana st"
         ],
         "185": [
             "Eagles",
@@ -3013,7 +3047,8 @@
             "mrhd",
             "morehead st.",
             "MOREHEAD ST.",
-            "moreheadst"
+            "moreheadst",
+            "morehead st"
         ],
         "186": [
             "MORG",
@@ -3029,7 +3064,8 @@
             "MORGAN STATE",
             "morgan st.",
             "MORGAN ST.",
-            "morganst"
+            "morganst",
+            "morgan st"
         ],
         "187": [
             "Mount St. Mary's",
@@ -3040,7 +3076,9 @@
             "mountaineers",
             "MOUNTAINEERS",
             "msmu",
-            "mountstmary's"
+            "mountstmary's",
+            "mount st mary's",
+            "mount st marys"
         ],
         "188": [
             "MURR",
@@ -3056,7 +3094,8 @@
             "RACERS",
             "murray st.",
             "MURRAY ST.",
-            "murrayst"
+            "murrayst",
+            "murray st"
         ],
         "189": [
             "Wolfpack",
@@ -3176,7 +3215,8 @@
             "AGGIES",
             "new mexico st.",
             "NEW MEXICO ST.",
-            "newmexicost"
+            "newmexicost",
+            "new mexico st"
         ],
         "199": [
             "New Orleans",
@@ -3224,7 +3264,8 @@
             "NORFOLK STATE",
             "norfolk st.",
             "NORFOLK ST.",
-            "norfolkst"
+            "norfolkst",
+            "norfolk st"
         ],
         "203": [
             "North Alabama",
@@ -3300,7 +3341,8 @@
             "N. DAK. ST.",
             "north dakota st.",
             "NORTH DAKOTA ST.",
-            "northdakotast"
+            "northdakotast",
+            "north dakota st"
         ],
         "209": [
             "North Florida",
@@ -3421,7 +3463,8 @@
             "nwst",
             "northwestern st.",
             "NORTHWESTERN ST.",
-            "northwesternst"
+            "northwesternst",
+            "northwestern st"
         ],
         "219": [
             "Notre Dame",
@@ -3464,7 +3507,8 @@
             "osu",
             "ohio st.",
             "OHIO ST.",
-            "ohiost"
+            "ohiost",
+            "ohio st"
         ],
         "223": [
             "Oklahoma",
@@ -3491,7 +3535,8 @@
             "OKLAHOMA STATE",
             "oklahoma st.",
             "OKLAHOMA ST.",
-            "oklahomast"
+            "oklahomast",
+            "oklahoma st"
         ],
         "225": [
             "ODU",
@@ -3541,7 +3586,8 @@
             "orst",
             "oregon st.",
             "OREGON ST.",
-            "oregonst"
+            "oregonst",
+            "oregon st"
         ],
         "229": [
             "Pacific",
@@ -3578,7 +3624,8 @@
             "psu",
             "penn st.",
             "PENN ST.",
-            "pennst"
+            "pennst",
+            "penn st"
         ],
         "232": [
             "Pepperdine",
@@ -3624,7 +3671,8 @@
             "PORTLAND STATE",
             "portland st.",
             "PORTLAND ST.",
-            "portlandst"
+            "portlandst",
+            "portland st"
         ],
         "236": [
             "Prairie View A&M",
@@ -3834,7 +3882,8 @@
             "sac",
             "sacramento st.",
             "SACRAMENTO ST.",
-            "sacramentost"
+            "sacramentost",
+            "sacramento st"
         ],
         "255": [
             "SHU",
@@ -3876,7 +3925,8 @@
             "HAWKS",
             "stjoe",
             "stjoes",
-            "saintjoseph's"
+            "saintjoseph's",
+            "saint josephs"
         ],
         "258": [
             "Saint Louis",
@@ -3898,7 +3948,8 @@
             "gaels",
             "GAELS",
             "stmry",
-            "saintmary's"
+            "saintmary's",
+            "saint marys"
         ],
         "260": [
             "Saint Peter's",
@@ -3909,7 +3960,8 @@
             "peacocks",
             "PEACOCKS",
             "stpc",
-            "saintpeter's"
+            "saintpeter's",
+            "saint peters"
         ],
         "261": [
             "SHSU",
@@ -3923,7 +3975,8 @@
             "BEARKATS",
             "sam houston st.",
             "SAM HOUSTON ST.",
-            "samhoustonst"
+            "samhoustonst",
+            "sam houston st"
         ],
         "262": [
             "SAM",
@@ -3962,7 +4015,8 @@
             "SAN DIEGO STATE",
             "san diego st.",
             "SAN DIEGO ST.",
-            "sandiegost"
+            "sandiegost",
+            "san diego st"
         ],
         "265": [
             "San Francisco",
@@ -3987,7 +4041,8 @@
             "sjsu",
             "san jose st.",
             "SAN JOSE ST.",
-            "sanjosest"
+            "sanjosest",
+            "san jose st"
         ],
         "267": [
             "Santa Clara",
@@ -4069,7 +4124,8 @@
             "scst",
             "south carolina st.",
             "SOUTH CAROLINA ST.",
-            "southcarolinast"
+            "southcarolinast",
+            "south carolina st"
         ],
         "274": [
             "SDAK",
@@ -4103,7 +4159,8 @@
             "S. DAK. ST.",
             "south dakota st.",
             "SOUTH DAKOTA ST.",
-            "southdakotast"
+            "southdakotast",
+            "south dakota st"
         ],
         "276": [
             "South Florida",
@@ -4201,7 +4258,8 @@
             "bonnies",
             "BONNIES",
             "stbn",
-            "stbonaventure"
+            "stbonaventure",
+            "st bonaventure"
         ],
         "284": [
             "St. John's",
@@ -4212,7 +4270,9 @@
             "red storm",
             "RED STORM",
             "stj",
-            "stjohn's"
+            "stjohn's",
+            "st john's",
+            "st johns"
         ],
         "285": [
             "St. Thomas",
@@ -4225,7 +4285,8 @@
             "TOMMIES",
             "sttom",
             "stthmn",
-            "stthomas"
+            "stthomas",
+            "st thomas"
         ],
         "286": [
             "Stanford",
@@ -4246,7 +4307,8 @@
             "stephen f. austin",
             "STEPHEN F. AUSTIN",
             "sfa",
-            "stephenfaustin"
+            "stephenfaustin",
+            "stephen f austin"
         ],
         "288": [
             "Stetson",
@@ -4316,7 +4378,8 @@
             "tarst",
             "tarleton st.",
             "TARLETON ST.",
-            "tarletonst"
+            "tarletonst",
+            "tarleton st"
         ],
         "294": [
             "Temple",
@@ -4364,7 +4427,8 @@
             "TENNESSEE STATE",
             "tennessee st.",
             "TENNESSEE ST.",
-            "tennesseest"
+            "tennesseest",
+            "tennessee st"
         ],
         "298": [
             "Golden Eagles",
@@ -4443,7 +4507,8 @@
             "txst",
             "texas st.",
             "TEXAS ST.",
-            "texasst"
+            "texasst",
+            "texas st"
         ],
         "304": [
             "Red Raiders",
@@ -4767,7 +4832,8 @@
             "usu",
             "utah st.",
             "UTAH ST.",
-            "utahst"
+            "utahst",
+            "utah st"
         ],
         "334": [
             "Utah Tech",
@@ -4929,7 +4995,8 @@
             "WASHINGTON STATE",
             "washington st.",
             "WASHINGTON ST.",
-            "washingtonst"
+            "washingtonst",
+            "washington st"
         ],
         "348": [
             "WEB",
@@ -4945,7 +5012,8 @@
             "WILDCATS",
             "weber st.",
             "WEBER ST.",
-            "weberst"
+            "weberst",
+            "weber st"
         ],
         "349": [
             "West Georgia",
@@ -5029,7 +5097,8 @@
             "wichi",
             "wichita st.",
             "WICHITA ST.",
-            "wichitast"
+            "wichitast",
+            "wichita st"
         ],
         "356": [
             "William & Mary",
@@ -5088,7 +5157,8 @@
             "wrst",
             "wright st.",
             "WRIGHT ST.",
-            "wrightst"
+            "wrightst",
+            "wright st"
         ],
         "361": [
             "WYO",
@@ -5132,7 +5202,8 @@
             "YOUNGSTOWN STATE",
             "youngstown st.",
             "YOUNGSTOWN ST.",
-            "youngstownst"
+            "youngstownst",
+            "youngstown st"
         ]
     }
 }

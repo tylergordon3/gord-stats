@@ -6,10 +6,11 @@ import scraper
 
 def upd():
     master = scraper.getMasterTeams()
+    print(len(master))
     for index, row in master.iterrows():
         new = row['team'].lower()
         new = new.replace('.', '')
-        new = new.replace(' ', '')
+        new = new.replace('\'', '')
         namearr = row['names']
         if new in row.names:
             pass
@@ -36,9 +37,12 @@ def check(row):
     if df_result.empty:
         return ''
     else:
-        return matching_ids
+        return list(matching_ids)[0]
     
 master['team'] = master['team'].replace('.','')
 master['check'] = master.apply(lambda x: check(x), axis=1)
-print(master[master['check'] == ''])
+#print(master[master['check'] == ''])
+master = master.drop(columns=['names'])
+print(len(master))
+#print(master.to_string())
 
