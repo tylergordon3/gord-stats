@@ -76,20 +76,39 @@ def read_from_pickle(name):
         loaded_model = pickle.load(file)
     return loaded_model
 
-def get_recent_data(input_date):
+def read_from_pickle_w(name):
+    filename = get_path(f'models_w/{name}_model.pkl')
+    with open(filename, 'rb') as file:
+        loaded_model = pickle.load(file)
+    return loaded_model
+
+def get_recent_data(input_date, women=0):
     def parse_date(fname):
         # filename format: kenpomYYYY-MM-DD.json
         try:
             return date.fromisoformat(fname[6:16])
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
-    path = get_path('data/')
-    kenpom_files = Path(path).glob("kenpom*.json")
-    kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
+    def parse_date_w(fname):
+        # filename format: torvik_wYYYY-MM-DD.json
+        try:
+            return date.fromisoformat(fname[8:18])
+        except ValueError:
+            raise ValueError(f"Invalid date in filename: {fname}")
+    if women:
+        path = get_path('data_w/')
+    
+        torvik_files = Path(path).glob("torvik_w*.json")
+        torvik = min(torvik_files, key=lambda p: abs((parse_date_w(p.name) - input_date).days))
+        return torvik
+    else:
+        path = get_path('data/')
+        kenpom_files = Path(path).glob("kenpom*.json")
+        kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
 
-    torvik_files = Path(path).glob("torvik*.json")
-    torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
-    return [kenpom, torvik]
+        torvik_files = Path(path).glob("torvik*.json")
+        torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
+        return [kenpom, torvik]
 
 def get_recent_html(input_date):
     def parse_date(fname):
@@ -99,6 +118,18 @@ def get_recent_html(input_date):
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
     path = get_path('docs/')
-    html_files = Path(path).glob("predict*.html")
+    html_files = Path(path).glob("predict_[0-9]*.html")
+    html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
+    return html
+
+def get_recent_html_w(input_date):
+    def parse_date(fname):
+        # filename format: predict_wYYYY-MM-DD.html
+        try:
+            return date.fromisoformat(fname[9:19])
+        except ValueError:
+            raise ValueError(f"Invalid date in filename: {fname}")
+    path = get_path('docs/')
+    html_files = Path(path).glob("predict_w*.html")
     html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return html

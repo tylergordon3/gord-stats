@@ -43,7 +43,7 @@ if not os.path.exists(kenpom_dataset_path):
 
 update_about = 0
 save_model = 0
-save_model_w = 1
+save_model_w = 0
 if save_model:
     torvik_df = utils.load_json_data(torvik_dataset_path)
     with open("model_data/kenpom_all.json", "r", encoding="utf-8") as f:
@@ -60,13 +60,12 @@ if save_model_w:
     torvik_w_df = pd.DataFrame(data, columns=constants.torvik_women)
     
     torvik_w_df['TOURNEY'] = np.where(torvik_w_df['Tourney'].map({"True" : True, "False" : False}), True, False)
-    print(torvik_w_df)
-    print(torvik_w_df.columns)
     model.trainModelsAndSave(torvik_w_df, update_about)
     print(f"Torvik Women's training took: {(datetime.now() - start).total_seconds()}")
 
 
 today_df = predictions.predict(date.today())
+today_w_df = predictions.predict_w(date.today())
 
 games = scraper.today_games(today_df)
 generate_home.generate_home_about(games, False)

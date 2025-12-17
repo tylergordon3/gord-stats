@@ -4,9 +4,180 @@ import numpy as np
 import json
 import change
 import datetime
+from datetime import date
 from sklearn import preprocessing
 import html_builder as htmb
 from pytz import timezone
+
+def predict_w(date):
+    randomForest = utils.read_from_pickle_w('wtor_forest')
+    decisionTree = utils.read_from_pickle_w('tor_dt')
+    supportVC = utils.read_from_pickle_w('tor_svc')
+    torvik_path = utils.get_recent_data(date, 1)
+    with open(torvik_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    torvik_data = pd.DataFrame(data['rows'], columns=data['headers'])
+    torvik_data['Conf'] = torvik_data['Conf'].replace('Pat', 'PL')
+    dict = {
+            "SIU Edwardsville" : "SIUE",
+            "Cal St. Northridge" : "CSUN",
+            "McNeese St.": "McNeese",
+            "Nicholls St.": "Nicholls",
+            "Southeast Missouri" : "SEMO",
+            "Southeast Missouri St." : "SEMO",
+            "Kansas City" : "UMKC"
+        }
+    def strip(team):
+        for i, char in enumerate(team):
+            if char == '(':
+                return team[:i]
+            if team[i:i+3] == 'vs.':
+                return team[:i]
+        return team
+    
+    torvik_data['Team'] = torvik_data['Team'].apply(lambda x: strip(x))
+    torvik_data['Team'] = torvik_data['Team'].replace(dict)
+
+    # ind:  ['AdjOE', 'AdjDE', 'TORD', 'FTR', 'FTRD', '3P%D', '3PR', '3PRD', 'Adj T.'] 
+    # dep: ['EFG%', 'EFGD%', 'TOR', 'ORB', 'DRB', '2P%', '2P%D', '3P%']
+    torvik_today = torvik_data.drop(columns=['Barthag', 'WAB','Team', 'Conf', 'Rec', 'G', 'Rk', 'FTR', '3PR', '3PRD',
+                                             'AdjOE', 'AdjDE', 'TORD', 'FTR', 'FTRD', '3P%D', 'Adj T.'])
+
+    scaler = preprocessing.StandardScaler()
+    x_predict_torvik = scaler.fit_transform(torvik_today)
+
+     # Forest
+    #   Torvik
+    forest_predict_torvik = randomForest.predict(x_predict_torvik)
+    torvik_data['RF'] = forest_predict_torvik
+
+     # DT
+    #   Torvik
+    dt_predict_torvik = decisionTree.predict(x_predict_torvik)
+    torvik_data['DT'] = dt_predict_torvik
+
+     # SVC
+    #   Torvik
+    svc_predict_torvik = supportVC.predict(x_predict_torvik)
+    torvik_data['SVC'] = svc_predict_torvik
+
+    torvik_data['Sum'] = torvik_data[['RF', 'DT', 'SVC']].sum(1)
+    df_torvik = torvik_data[['Rk', 'Team', 'Conf', 'RF', 'DT', 'SVC', 'Sum']].copy()
+
+    df_torvik_filter = df_torvik.copy()
+    df_torvik_filter = df_torvik_filter.drop(columns=['Sum'])
+    torvik_teams = df_torvik_filter[['Team', 'Conf', 'Rk']].copy()
+    df_torvik['Rk'] = pd.to_numeric(df_torvik['Rk'])
+    df_torvik['GordScore'] = ((10 * df_torvik['Sum']) + (80-df_torvik['Rk']))
+    
+    df_torvik = df_torvik.sort_values("GordScore", ascending=False)
+    df_torvik =  df_torvik.drop(columns=['RF', 'SVC', 'DT'])
+    df_torvik = df_torvik.rename(columns={
+        'Rk' : 'Torvik Rank',
+        'Sum' : '# Models Torvik'
+    })
+    
+    def seed(x):
+        current_team_index = 0
+        seed = []
+        seed_num = 1
+        while current_team_index < len(x):
+            if seed_num == 11 or seed_num == 16:
+                num_teams_in_seed = 6
+            else:
+                num_teams_in_seed = 4
+            seed += (np.repeat(seed_num, num_teams_in_seed).tolist())
+            current_team_index += num_teams_in_seed
+            seed_num += 1
+        return seed
+    main64 = df_torvik.copy()
+    # Saving to another df for schedule home
+    save_df = df_torvik.copy()
+    save_df = save_df.sort_values(by='GordScore', ascending=False)
+    save_df['Overall'] = range(1, len(save_df)+1)
+
+    bestByConf = main64.loc[main64.groupby(by='Conf')['GordScore'].idxmax()]
+    main64 = main64.drop(index=bestByConf.index)
+    main64 = main64.head(68-len(bestByConf))
+    main64['ConfChamp'] = 0
+    bestByConf['ConfChamp'] = 1
+    main64 = pd.concat([main64, bestByConf])
+    main64 = main64.sort_values(by='GordScore', ascending=False)
+    main64['Overall'] = range(1, len(main64)+1)
+    last_week = change.change_w(date)
+    main64 = pd.merge(main64, last_week, 'left', 'Team')
+ 
+    main64['vs Last Wk'] = main64['vs Last Wk'].fillna('NR')
+    def calcWkDelta(row):
+        if row['vs Last Wk'] != 'NR':
+            row['vs Last Wk'] = int(row['vs Last Wk']) - row['Overall']
+            if row['vs Last Wk'] == 0:
+                row['vs Last Wk'] = '-'
+        return row['vs Last Wk']
+    main64['vs Last Wk'] = main64.apply(lambda row: calcWkDelta(row), axis=1)
+ 
+    main64['Seed'] = seed(main64['Overall'])
+    main64['Overall'] = '#' + main64['Overall'].astype(str) +' (Seed ' + main64['Seed'].astype(str) + ')' 
+    
+    def stars(count, max_count=3):
+        filled = '★' * count
+        empty = '☆' * (max_count - count)
+        return f"({filled}{empty})"
+    
+    main64['Torvik Rank'] = main64['Torvik Rank'].astype(int)
+    main64['Torvik'] = main64['Torvik Rank'].astype(str) + ' ' + main64['# Models Torvik'].apply(stars)
+   
+    styler = main64[['Torvik', 'GordScore', 'Overall', 'vs Last Wk']].style
+    conf_champ_dict = pd.Series(main64.ConfChamp.values,index=main64.Team).to_dict()
+    df = main64.drop(columns=['Torvik Rank', '# Models Torvik', 'Seed', 'ConfChamp'])
+    df = df[['Team', 'Conf', 'Torvik', 'GordScore', 'Overall', 'vs Last Wk']]
+    def _format_arrow(val):
+        if (val == 'NR') | (val == '-'):
+            return val
+        return f"{'↑' if int(val) > 0 else '↓'} {abs(val):.0f}" if int(val) != 0 else f"{val:.0f}"
+
+    def _color_arrow(val):
+        if (val == 'NR') | (val == '-'):
+            return "color: black"
+        return "color: green" if int(val) > 0 else "color: red" if int(val) < 0 else "color: black"
+    
+    def bold_row(row, conf_champ_dict):
+        val = conf_champ_dict[row['Team']]
+        if val: 
+            ret = [f"font-weight: bold"] * len(row)
+            ret[2] = "font-weight: normal" 
+            ret[3] = "font-weight: normal"
+            return ret
+        else:
+            return [f"font-weight: normal"] * len(row)
+       
+    
+    styler = (
+        df
+        .style
+        .hide(axis="index") 
+        .format({'GordScore' : "{:.1f}"})
+        .format(_format_arrow, subset=["vs Last Wk"]).applymap(_color_arrow, subset=["vs Last Wk"])
+        .set_table_attributes('class="sticky-table"')
+        .background_gradient(
+            subset=['Torvik'],
+            cmap='cividis',
+            gmap=main64['Torvik Rank'])
+        .apply(lambda x: bold_row(x, conf_champ_dict), axis =1))
+    tz = timezone('EST')
+    time_obj = datetime.datetime.now(tz)
+    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
+    df_html = f"<p>{time}</p>"
+    df_html += '<div class="table-container">'
+    df_html += styler.to_html()
+    df_html += '<div>'
+    path = utils.get_path(f'docs/predict_w{date}.html')
+    html = htmb.add_front_matter(df_html, f'NCAAW Prediction- {date}')
+    with open(path, 'w') as f: 
+       f.write(html)  
+       print(f'Wrote to: {path} for {date}')
+
+    return save_df
 
 def predict(date):
     randomForest = utils.read_from_pickle('forest')

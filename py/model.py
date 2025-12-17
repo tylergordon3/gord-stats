@@ -80,8 +80,6 @@ def chiSquared(df):
          cbb = df.drop(columns=['Team', 'Conf', 'Finish', 'Seed', 'Year', 
                             'G', 'Rec', 'Barthag', 'WAB', 'Tourney', 'Rk'])
     cbb_features = cbb.iloc[:,:-1]
-    print(cbb)
-    print(cbb_features)  
     ind = []
     dep = []
     pval = []
@@ -92,7 +90,6 @@ def chiSquared(df):
             ind.append(col)
         else:
             dep.append(col)
-    print(f'ind:  {ind} || dep: {dep}')
     return [cbb, ind, dep]
 
 
