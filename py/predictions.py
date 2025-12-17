@@ -8,6 +8,8 @@ from datetime import date
 from sklearn import preprocessing
 import html_builder as htmb
 from pytz import timezone
+import scraper
+import re
 
 def predict_w(date):
     randomForest = utils.read_from_pickle_w('wtor_forest')
@@ -404,7 +406,9 @@ def predict(date):
         return "color: green" if int(val) > 0 else "color: red" if int(val) < 0 else "color: black"
     
     def bold_row(row, conf_champ_dict):
-        val = conf_champ_dict[row['Team']]
+        pattern = r'(^.*?)(?=<)'
+        check = re.findall(pattern, row['Team'])
+        val = conf_champ_dict[check[0]]
         if val: 
             ret = [f"font-weight: bold"] * len(row)
             ret[2] = "font-weight: normal" 
@@ -412,8 +416,19 @@ def predict(date):
             return ret
         else:
             return [f"font-weight: normal"] * len(row)
-       
     
+    def image_formatter(url):
+        return f'<img src="{url}" width="100" >'
+    
+    def getUrl(x, save_df, master):
+        save = list(save_df[save_df['Team'] == x['Team']].index)[0]
+        link = master.at[save, "path"]
+        return link
+
+    master = scraper.getMasterTeams()
+    df['img'] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
+    df['Team'] = df.apply(lambda x: x.Team + image_formatter(x.img), axis=1)
+    print(df)
     styler = (
         df
         .style

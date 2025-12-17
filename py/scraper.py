@@ -49,12 +49,6 @@ def get_image_name(team):
         if file in names:
             return files[index]
 
-master = getMasterTeams()
-master['path'] = master.apply(lambda x: get_image_name(x.team), axis=1)
-saveMasterTeams(master)
-
-
-
 def getHTML(link, retries=5, base_delay=1.0):
     for attempt in range(retries):
         response = requests.get(link)
