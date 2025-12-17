@@ -737,984 +737,2199 @@
         "0": [
             "ACU",
             "Wildcats",
-            "Abilene Christian"
+            "Abilene Christian",
+            "acu",
+            "wildcats",
+            "WILDCATS",
+            "abilene christian",
+            "ABILENE CHRISTIAN",
+            "abilenechristian"
         ],
         "1": [
             "AFA",
             "AF",
             "Falcons",
-            "Air Force"
+            "Air Force",
+            "afa",
+            "af",
+            "falcons",
+            "FALCONS",
+            "air force",
+            "AIR FORCE",
+            "airforce"
         ],
         "2": [
             "AKR",
             "Zips",
-            "Akron"
+            "Akron",
+            "akr",
+            "zips",
+            "ZIPS",
+            "akron",
+            "AKRON"
         ],
         "3": [
             "Crimson Tide",
-            "ALA or BAMA",
+            "ALA",
+            "BAMA",
             "UA",
-            "Alabama"
+            "Alabama",
+            "crimson tide",
+            "CRIMSON TIDE",
+            "ala",
+            "bama",
+            "ua",
+            "alabama",
+            "ALABAMA"
         ],
         "4": [
             "Alabama A&M",
             "Bulldogs",
-            "AAMU"
+            "AAMU",
+            "alabama a&m",
+            "ALABAMA A&M",
+            "bulldogs",
+            "BULLDOGS",
+            "aamu",
+            "alabamaaandm",
+            "alabamaa&m"
         ],
         "5": [
             "Hornets",
             "Alabama State",
             "ALAST",
-            "ALST"
+            "ALST",
+            "Alabama St.",
+            "hornets",
+            "HORNETS",
+            "alabama state",
+            "ALABAMA STATE",
+            "alast",
+            "alst",
+            "alabama st.",
+            "alabamast",
+            "ALABAMA ST."
         ],
         "6": [
             "ALBNY",
             "Great Danes",
             "Albany",
-            "ALBY"
+            "ALBY",
+            "albny",
+            "great danes",
+            "GREAT DANES",
+            "albany",
+            "ALBANY",
+            "alby"
         ],
         "7": [
             "ALCN",
             "Braves",
             "ALCST",
-            "Alcorn State"
+            "Alcorn State",
+            "Alcorn St.",
+            "alcn",
+            "braves",
+            "BRAVES",
+            "alcst",
+            "alcorn state",
+            "ALCORN STATE",
+            "alcorn st.",
+            "ALCORN ST.",
+            "alcornst"
         ],
         "8": [
             "American University",
             "Eagles",
-            "AMERU"
+            "AMERU",
+            "American",
+            "american university",
+            "AMERICAN UNIVERSITY",
+            "eagles",
+            "EAGLES",
+            "ameru",
+            "american",
+            "AMERICAN"
         ],
         "9": [
             "APP",
             "Mountaineers",
             "Appalachian State",
             "APPST",
-            "App. St."
+            "App. St.",
+            "Appalachian St.",
+            "app",
+            "mountaineers",
+            "MOUNTAINEERS",
+            "appalachian state",
+            "APPALACHIAN STATE",
+            "appst",
+            "app. st.",
+            "APP. ST.",
+            "appalachian st.",
+            "APPALACHIAN ST.",
+            "appalachianst"
         ],
         "10": [
             "ARIZ",
             "ARZ",
             "Wildcats",
-            "Arizona"
+            "Arizona",
+            "ariz",
+            "arz",
+            "wildcats",
+            "WILDCATS",
+            "arizona",
+            "ARIZONA"
         ],
         "11": [
             "ASU",
             "Arizona State",
-            "Sun Devils"
+            "Sun Devils",
+            "Arizona St.",
+            "asu",
+            "arizona state",
+            "ARIZONA STATE",
+            "sun devils",
+            "SUN DEVILS",
+            "arizona st.",
+            "ARIZONA ST.",
+            "arizonast"
         ],
         "12": [
             "ARK",
             "Razorbacks",
-            "Arkansas"
+            "Arkansas",
+            "ark",
+            "razorbacks",
+            "RAZORBACKS",
+            "arkansas",
+            "ARKANSAS"
         ],
         "13": [
             "Golden Lions",
             "Arkansas-Pine Bluff",
             "UAPB",
-            "ARPB"
+            "ARPB",
+            "Arkansas Pine Bluff",
+            "golden lions",
+            "GOLDEN LIONS",
+            "arkansas-pine bluff",
+            "ARKANSAS-PINE BLUFF",
+            "uapb",
+            "arpb",
+            "arkansas pine bluff",
+            "ARKANSAS PINE BLUFF",
+            "arkansaspinebluff"
         ],
         "14": [
             "ARST",
             "Red Wolves",
             "Arkansas State",
-            "ARKST"
+            "ARKST",
+            "Arkansas St.",
+            "arst",
+            "red wolves",
+            "RED WOLVES",
+            "arkansas state",
+            "ARKANSAS STATE",
+            "arkst",
+            "arkansas st.",
+            "ARKANSAS ST.",
+            "arkansasst"
         ],
         "15": [
             "Army West Point",
             "Black Knights",
-            "USMA"
+            "USMA",
+            "Army",
+            "army west point",
+            "ARMY WEST POINT",
+            "black knights",
+            "BLACK KNIGHTS",
+            "usma",
+            "army",
+            "ARMY"
         ],
         "16": [
             "Tigers",
             "AUB",
-            "Auburn"
+            "Auburn",
+            "tigers",
+            "TIGERS",
+            "aub",
+            "auburn",
+            "AUBURN"
         ],
         "17": [
             "Governors",
             "APSU",
             "Austin Peay",
-            "PEAY"
+            "PEAY",
+            "governors",
+            "GOVERNORS",
+            "apsu",
+            "austin peay",
+            "AUSTIN PEAY",
+            "peay",
+            "austinpeay"
+        ],
+        "18": [
+            "Brigham Young",
+            "Cougars",
+            "BYU",
+            "brigham young",
+            "BRIGHAM YOUNG",
+            "cougars",
+            "COUGARS",
+            "byu"
         ],
         "19": [
             "Ball State",
             "Cardinals",
             "BLLST",
-            "BALL"
+            "BALL",
+            "Ball St.",
+            "ball state",
+            "BALL STATE",
+            "cardinals",
+            "CARDINALS",
+            "bllst",
+            "ball",
+            "ball st.",
+            "BALL ST.",
+            "ballst"
         ],
         "20": [
             "Baylor",
             "Bears",
             "BAY",
-            "BAYL"
+            "BAYL",
+            "baylor",
+            "BAYLOR",
+            "bears",
+            "BEARS",
+            "bay",
+            "bayl"
         ],
         "21": [
             "Bellarmine",
             "Knights",
-            "BELL"
+            "BELL",
+            "bellarmine",
+            "BELLARMINE",
+            "knights",
+            "KNIGHTS",
+            "bell"
         ],
         "22": [
             "Belmont",
             "Bruins",
-            "BLMNT"
+            "BLMNT",
+            "belmont",
+            "BELMONT",
+            "bruins",
+            "BRUINS",
+            "blmnt"
         ],
         "23": [
             "BTHCK",
             "Bethune-Cookman",
             "Wildcats",
-            "COOK"
+            "COOK",
+            "Bethune Cookman",
+            "bthck",
+            "bethune-cookman",
+            "BETHUNE-COOKMAN",
+            "wildcats",
+            "WILDCATS",
+            "cook",
+            "bethune cookman",
+            "BETHUNE COOKMAN",
+            "bethunecookman"
         ],
         "24": [
             "Binghamton",
             "Bearcats",
-            "BNGH"
+            "BNGH",
+            "binghamton",
+            "BINGHAMTON",
+            "bearcats",
+            "BEARCATS",
+            "bngh"
         ],
         "25": [
             "BOISE",
             "Boise State",
             "BSU",
-            "Broncos"
+            "Broncos",
+            "Boise St.",
+            "boise",
+            "boise state",
+            "BOISE STATE",
+            "bsu",
+            "broncos",
+            "BRONCOS",
+            "boise st.",
+            "BOISE ST.",
+            "boisest"
         ],
         "26": [
             "Eagles",
             "BOS",
             "Boston College",
-            "BC"
+            "BC",
+            "eagles",
+            "EAGLES",
+            "bos",
+            "boston college",
+            "BOSTON COLLEGE",
+            "bc",
+            "bostoncollege"
         ],
         "27": [
             "Boston University",
             "Terriers",
-            "BSTN"
+            "BSTN",
+            "boston university",
+            "BOSTON UNIVERSITY",
+            "terriers",
+            "TERRIERS",
+            "bstn",
+            "bostonuniversity"
         ],
         "28": [
             "Bowling Green",
             "Falcons",
-            "BGSU"
+            "BGSU",
+            "bowling green",
+            "BOWLING GREEN",
+            "falcons",
+            "FALCONS",
+            "bgsu",
+            "bowlinggreen"
         ],
         "29": [
             "Bradley",
             "Braves",
-            "BRDLY"
-        ],
-        "18": [
-            "Brigham Young",
-            "Cougars",
-            "BYU"
+            "BRDLY",
+            "bradley",
+            "BRADLEY",
+            "braves",
+            "BRAVES",
+            "brdly"
         ],
         "30": [
             "BRWN",
             "Bears",
-            "Brown"
+            "Brown",
+            "brwn",
+            "bears",
+            "BEARS",
+            "brown",
+            "BROWN"
         ],
         "31": [
             "Bryant",
             "BRYNT",
             "Bulldogs",
-            "BRY"
+            "BRY",
+            "bryant",
+            "BRYANT",
+            "brynt",
+            "bulldogs",
+            "BULLDOGS",
+            "bry"
         ],
         "32": [
             "Bison",
             "Bucknell",
-            "BUCK"
+            "BUCK",
+            "bison",
+            "BISON",
+            "bucknell",
+            "BUCKNELL",
+            "buck"
         ],
         "33": [
             "BUFF",
             "Bulls",
-            "Buffalo"
+            "Buffalo",
+            "buff",
+            "bulls",
+            "BULLS",
+            "buffalo",
+            "BUFFALO"
         ],
         "34": [
             "Butler",
             "BUT",
             "BTLR",
-            "Bulldogs"
+            "Bulldogs",
+            "butler",
+            "BUTLER",
+            "but",
+            "btlr",
+            "bulldogs",
+            "BULLDOGS"
+        ],
+        "35": [
+            "Cal State Northridge",
+            "Matadors",
+            "CSUN",
+            "cal state northridge",
+            "CAL STATE NORTHRIDGE",
+            "matadors",
+            "MATADORS",
+            "csun"
+        ],
+        "36": [
+            "California Baptist",
+            "Lancers",
+            "CALBU",
+            "Cal Baptist",
+            "california baptist",
+            "CALIFORNIA BAPTIST",
+            "lancers",
+            "LANCERS",
+            "calbu",
+            "cal baptist",
+            "CAL BAPTIST",
+            "calbaptist"
         ],
         "37": [
             "Mustangs",
             "POLY",
             "CP",
-            "Cal Poly"
+            "Cal Poly",
+            "mustangs",
+            "MUSTANGS",
+            "poly",
+            "cp",
+            "cal poly",
+            "CAL POLY",
+            "calpoly"
         ],
         "38": [
             "Cal State Bakersfield",
             "Roadrunners",
             "CSUB",
             "CSBAK",
-            "Cal-Baker."
+            "Cal-Baker.",
+            "Cal St. Bakersfield",
+            "cal state bakersfield",
+            "CAL STATE BAKERSFIELD",
+            "roadrunners",
+            "ROADRUNNERS",
+            "csub",
+            "csbak",
+            "cal-baker.",
+            "CAL-BAKER.",
+            "cal st. bakersfield",
+            "CAL ST. BAKERSFIELD",
+            "calstbakersfield"
         ],
         "39": [
             "Cal State Fullerton",
             "Titans",
-            "CSFUL"
-        ],
-        "35": [
-            "Cal State Northridge",
-            "Matadors",
-            "CSUN"
+            "CSFUL",
+            "Cal St. Fullerton",
+            "cal state fullerton",
+            "CAL STATE FULLERTON",
+            "titans",
+            "TITANS",
+            "csful",
+            "cal st. fullerton",
+            "CAL ST. FULLERTON",
+            "calstfullerton"
         ],
         "40": [
             "California",
             "Golden Bears",
-            "Cal"
-        ],
-        "36": [
-            "California Baptist",
-            "Lancers",
-            "CALBU"
+            "Cal",
+            "california",
+            "CALIFORNIA",
+            "golden bears",
+            "GOLDEN BEARS",
+            "cal",
+            "CAL"
         ],
         "41": [
             "CAMP",
             "Fighting Camels",
             "Campbell",
-            "CAM"
+            "CAM",
+            "camp",
+            "fighting camels",
+            "FIGHTING CAMELS",
+            "campbell",
+            "CAMPBELL",
+            "cam"
         ],
         "42": [
             "Canisius",
             "Golden Griffins",
-            "CAN"
+            "CAN",
+            "canisius",
+            "CANISIUS",
+            "golden griffins",
+            "GOLDEN GRIFFINS",
+            "can"
         ],
         "43": [
             "Central Arkansas",
             "Bears",
-            "UCA"
+            "UCA",
+            "central arkansas",
+            "CENTRAL ARKANSAS",
+            "bears",
+            "BEARS",
+            "uca",
+            "centralarkansas"
         ],
         "44": [
             "Central Connecticut State",
             "Blue Devils",
-            "CCSU"
+            "CCSU",
+            "Central Connecticut",
+            "central connecticut state",
+            "CENTRAL CONNECTICUT STATE",
+            "blue devils",
+            "BLUE DEVILS",
+            "ccsu",
+            "central connecticut",
+            "CENTRAL CONNECTICUT",
+            "centralconnecticut"
         ],
         "45": [
             "Central Michigan",
             "CMU",
-            "Chippewas"
+            "Chippewas",
+            "central michigan",
+            "CENTRAL MICHIGAN",
+            "cmu",
+            "chippewas",
+            "CHIPPEWAS",
+            "centralmichigan"
         ],
         "46": [
             "Charleston",
             "Cougars",
-            "C of C"
+            "C of C",
+            "charleston",
+            "CHARLESTON",
+            "cougars",
+            "COUGARS",
+            "c of c",
+            "C OF C"
         ],
         "47": [
             "Charleston Southern",
             "CHSO",
             "CHASO",
-            "Buccaneers"
+            "Buccaneers",
+            "charleston southern",
+            "CHARLESTON SOUTHERN",
+            "chso",
+            "chaso",
+            "buccaneers",
+            "BUCCANEERS",
+            "charlestonsouthern"
         ],
         "48": [
             "CHAR",
             "49ers",
-            "Charlotte"
+            "Charlotte",
+            "char",
+            "49ERS",
+            "charlotte",
+            "CHARLOTTE"
         ],
         "49": [
             "Mocs",
             "CHATT",
             "Chattanooga",
-            "CHAT"
+            "CHAT",
+            "mocs",
+            "MOCS",
+            "chatt",
+            "chattanooga",
+            "CHATTANOOGA",
+            "chat"
         ],
         "50": [
             "Chicago State",
             "Cougars",
-            "CHIST"
+            "CHIST",
+            "Chicago St.",
+            "chicago state",
+            "CHICAGO STATE",
+            "cougars",
+            "COUGARS",
+            "chist",
+            "chicago st.",
+            "CHICAGO ST.",
+            "chicagost"
         ],
         "51": [
             "Cincinnati",
             "Bearcats",
             "CIN",
-            "CINCY"
+            "CINCY",
+            "cincinnati",
+            "CINCINNATI",
+            "bearcats",
+            "BEARCATS",
+            "cin",
+            "cincy"
         ],
         "52": [
             "Tigers",
             "Clemson",
-            "CLEM"
+            "CLEM",
+            "tigers",
+            "TIGERS",
+            "clemson",
+            "CLEMSON",
+            "clem"
         ],
         "53": [
             "Cleveland State",
             "Vikings",
-            "CLEST"
+            "CLEST",
+            "Cleveland St.",
+            "cleveland state",
+            "CLEVELAND STATE",
+            "vikings",
+            "VIKINGS",
+            "clest",
+            "cleveland st.",
+            "CLEVELAND ST.",
+            "clevelandst"
         ],
         "54": [
             "Coastal Carolina",
             "Chanticleers",
             "CCU",
-            "CCAR"
+            "CCAR",
+            "coastal carolina",
+            "COASTAL CAROLINA",
+            "chanticleers",
+            "CHANTICLEERS",
+            "ccu",
+            "ccar",
+            "coastalcarolina"
         ],
         "55": [
             "COLGT",
             "Colgate",
             "COLG",
-            "Raiders"
+            "Raiders",
+            "colgt",
+            "colgate",
+            "COLGATE",
+            "colg",
+            "raiders",
+            "RAIDERS"
         ],
         "56": [
             "COLO",
             "Buffaloes",
-            "Colorado"
+            "Colorado",
+            "colo",
+            "buffaloes",
+            "BUFFALOES",
+            "colorado",
+            "COLORADO"
         ],
         "57": [
             "COLST",
             "CSU",
             "Colorado State",
-            "Rams"
+            "Rams",
+            "Colorado St.",
+            "colst",
+            "csu",
+            "colorado state",
+            "COLORADO STATE",
+            "rams",
+            "RAMS",
+            "colorado st.",
+            "COLORADO ST.",
+            "coloradost"
         ],
         "58": [
             "COM",
             "Lions",
             "Columbia",
-            "CLMB"
+            "CLMB",
+            "com",
+            "lions",
+            "LIONS",
+            "columbia",
+            "COLUMBIA",
+            "clmb"
+        ],
+        "59": [
+            "UConn",
+            "Huskies",
+            "CONN",
+            "UCONN",
+            "Connecticut",
+            "uconn",
+            "huskies",
+            "HUSKIES",
+            "conn",
+            "connecticut",
+            "CONNECTICUT"
         ],
         "60": [
             "Coppin State",
             "Eagles",
-            "COPST"
+            "COPST",
+            "Coppin St.",
+            "coppin state",
+            "COPPIN STATE",
+            "eagles",
+            "EAGLES",
+            "copst",
+            "coppin st.",
+            "COPPIN ST.",
+            "coppinst"
         ],
         "61": [
             "COR",
             "Big Red",
-            "Cornell"
+            "Cornell",
+            "cor",
+            "big red",
+            "BIG RED",
+            "cornell",
+            "CORNELL"
         ],
         "62": [
             "Creighton",
             "Bluejays",
-            "CREI"
+            "CREI",
+            "creighton",
+            "CREIGHTON",
+            "bluejays",
+            "BLUEJAYS",
+            "crei"
         ],
         "63": [
             "DART",
             "Big Green",
-            "Dartmouth"
+            "Dartmouth",
+            "dart",
+            "big green",
+            "BIG GREEN",
+            "dartmouth",
+            "DARTMOUTH"
         ],
         "64": [
             "DAV",
             "Wildcats",
-            "Davidson"
+            "Davidson",
+            "dav",
+            "wildcats",
+            "WILDCATS",
+            "davidson",
+            "DAVIDSON"
         ],
         "65": [
             "Flyers",
             "DAY",
-            "Dayton"
+            "Dayton",
+            "flyers",
+            "FLYERS",
+            "day",
+            "dayton",
+            "DAYTON"
         ],
         "66": [
             "DePaul",
             "Blue Demons",
-            "DEP"
+            "DEP",
+            "depaul",
+            "DEPAUL",
+            "blue demons",
+            "BLUE DEMONS",
+            "dep"
         ],
         "67": [
             "Fightin Blue Hens",
             "Delaware",
-            "DEL"
+            "DEL",
+            "fightin blue hens",
+            "FIGHTIN BLUE HENS",
+            "delaware",
+            "DELAWARE",
+            "del"
         ],
         "68": [
             "Delaware State",
             "Hornets",
             "DESU",
-            "DSU"
+            "DSU",
+            "Delaware St.",
+            "delaware state",
+            "DELAWARE STATE",
+            "hornets",
+            "HORNETS",
+            "desu",
+            "dsu",
+            "delaware st.",
+            "DELAWARE ST.",
+            "delawarest"
         ],
         "69": [
             "DENVER",
             "Denver",
             "Pioneers",
-            "DEN"
+            "DEN",
+            "denver",
+            "pioneers",
+            "PIONEERS",
+            "den"
         ],
         "70": [
             "Detroit-Mercy",
             "Titans",
-            "UDM"
+            "UDM",
+            "Detroit Mercy",
+            "detroit-mercy",
+            "DETROIT-MERCY",
+            "titans",
+            "TITANS",
+            "udm",
+            "detroit mercy",
+            "DETROIT MERCY",
+            "detroitmercy"
         ],
         "71": [
             "DRAKE",
             "Drake",
             "Bulldogs",
-            "DRKE"
+            "DRKE",
+            "drake",
+            "bulldogs",
+            "BULLDOGS",
+            "drke"
         ],
         "72": [
             "Drexel",
             "Dragons",
-            "DREX"
+            "DREX",
+            "drexel",
+            "DREXEL",
+            "dragons",
+            "DRAGONS",
+            "drex"
         ],
         "73": [
             "Blue Devils",
             "Duke",
-            "DUKE"
+            "DUKE",
+            "blue devils",
+            "BLUE DEVILS",
+            "duke"
         ],
         "74": [
             "Dukes",
             "Duquesne",
-            "DUQ"
+            "DUQ",
+            "dukes",
+            "DUKES",
+            "duquesne",
+            "DUQUESNE",
+            "duq"
         ],
         "75": [
             "East Carolina",
             "Pirates",
             "ECAR",
-            "ECU"
+            "ECU",
+            "east carolina",
+            "EAST CAROLINA",
+            "pirates",
+            "PIRATES",
+            "ecar",
+            "ecu",
+            "eastcarolina"
         ],
         "76": [
             "East Tennessee State",
             "Buccaneers",
             "ETSU",
             "ETNST",
-            "ETSU"
+            "ETSU",
+            "East Tennessee St.",
+            "east tennessee state",
+            "EAST TENNESSEE STATE",
+            "buccaneers",
+            "BUCCANEERS",
+            "etsu",
+            "etnst",
+            "east tennessee st.",
+            "EAST TENNESSEE ST.",
+            "easttennesseest"
         ],
         "77": [
             "East Texas A&M",
             "Lions",
-            "TAMUC"
+            "TAMUC",
+            "east texas a&m",
+            "EAST TEXAS A&M",
+            "lions",
+            "LIONS",
+            "tamuc",
+            "easttexasa&m"
         ],
         "78": [
             "Eastern Illinois",
             "EIU",
-            "Panthers"
+            "Panthers",
+            "eastern illinois",
+            "EASTERN ILLINOIS",
+            "eiu",
+            "panthers",
+            "PANTHERS",
+            "easternillinois"
         ],
         "79": [
             "Colonels",
             "EKY",
             "EKU",
-            "Eastern Kentucky"
+            "Eastern Kentucky",
+            "colonels",
+            "COLONELS",
+            "eky",
+            "eku",
+            "eastern kentucky",
+            "EASTERN KENTUCKY",
+            "easternkentucky"
         ],
         "80": [
             "Eagles",
             "EMU",
             "EMICH",
-            "Eastern Michigan"
+            "Eastern Michigan",
+            "eagles",
+            "EAGLES",
+            "emu",
+            "emich",
+            "eastern michigan",
+            "EASTERN MICHIGAN",
+            "easternmichigan"
         ],
         "81": [
             "Eastern Washington",
             "Eagles",
             "EWASH",
-            "EWU"
+            "EWU",
+            "eastern washington",
+            "EASTERN WASHINGTON",
+            "eagles",
+            "EAGLES",
+            "ewash",
+            "ewu",
+            "easternwashington"
         ],
         "82": [
             "Phoenix",
             "ELON",
-            "Elon"
+            "Elon",
+            "phoenix",
+            "PHOENIX",
+            "elon"
         ],
         "83": [
             "Evansville",
             "Purple Aces",
-            "UE"
+            "UE",
+            "evansville",
+            "EVANSVILLE",
+            "purple aces",
+            "PURPLE ACES",
+            "ue"
+        ],
+        "84": [
+            "Florida International",
+            "Golden Panthers",
+            "FIU",
+            "florida international",
+            "FLORIDA INTERNATIONAL",
+            "golden panthers",
+            "GOLDEN PANTHERS",
+            "fiu"
         ],
         "85": [
             "Fairfield",
             "Stags",
-            "FAIR"
+            "FAIR",
+            "fairfield",
+            "FAIRFIELD",
+            "stags",
+            "STAGS",
+            "fair"
         ],
         "86": [
             "Fairleigh Dickinson",
             "Knights",
-            "FDU"
+            "FDU",
+            "fairleigh dickinson",
+            "FAIRLEIGH DICKINSON",
+            "knights",
+            "KNIGHTS",
+            "fdu",
+            "fairleighdickinson"
         ],
         "87": [
             "FLA",
             "Florida",
             "FLA",
             "UF",
-            "Gators"
+            "Gators",
+            "fla",
+            "florida",
+            "FLORIDA",
+            "uf",
+            "gators",
+            "GATORS"
         ],
         "88": [
             "FAMU",
             "Rattlers",
-            "Florida A&M"
+            "Florida A&M",
+            "famu",
+            "rattlers",
+            "RATTLERS",
+            "florida a&m",
+            "FLORIDA A&M",
+            "floridaa&m"
         ],
         "89": [
             "Florida Atlantic",
             "Owls",
-            "FAU"
+            "FAU",
+            "florida atlantic",
+            "FLORIDA ATLANTIC",
+            "owls",
+            "OWLS",
+            "fau",
+            "floridaatlantic"
         ],
         "90": [
             "Florida Gulf Coast",
             "Eagles",
-            "FGCU"
-        ],
-        "84": [
-            "Florida International",
-            "Golden Panthers",
-            "FIU"
+            "FGCU",
+            "florida gulf coast",
+            "FLORIDA GULF COAST",
+            "eagles",
+            "EAGLES",
+            "fgcu",
+            "floridagulfcoast"
         ],
         "91": [
             "FSU",
             "Florida State",
             "Seminoles",
-            "FLAST"
+            "FLAST",
+            "Florida St.",
+            "fsu",
+            "florida state",
+            "FLORIDA STATE",
+            "seminoles",
+            "SEMINOLES",
+            "flast",
+            "florida st.",
+            "FLORIDA ST.",
+            "floridast"
         ],
         "92": [
             "Fordham",
             "FOR",
             "Rams",
-            "FORD"
-        ],
-        "241": [
-            "Fort Wayne",
-            "Mastodons",
-            "IPFW",
-            "Purdue Fort Wayne"
+            "FORD",
+            "fordham",
+            "FORDHAM",
+            "for",
+            "rams",
+            "RAMS",
+            "ford"
         ],
         "93": [
             "FRES",
             "Bulldogs",
             "Fresno State",
-            "FRSNO"
+            "FRSNO",
+            "Fresno St.",
+            "fres",
+            "bulldogs",
+            "BULLDOGS",
+            "fresno state",
+            "FRESNO STATE",
+            "frsno",
+            "fresno st.",
+            "FRESNO ST.",
+            "fresnost"
         ],
         "94": [
             "Paladins",
             "Furman",
             "FUR",
-            "FRMN"
+            "FRMN",
+            "paladins",
+            "PALADINS",
+            "furman",
+            "FURMAN",
+            "fur",
+            "frmn"
         ],
         "95": [
             "WEBB",
             "Runnin' Bulldogs",
             "Gardner-Webb",
             "GWU",
-            "GWEBB"
+            "GWEBB",
+            "Gardner Webb",
+            "webb",
+            "runnin' bulldogs",
+            "RUNNIN' BULLDOGS",
+            "gardner-webb",
+            "GARDNER-WEBB",
+            "gwu",
+            "gwebb",
+            "gardner webb",
+            "GARDNER WEBB",
+            "gardnerwebb"
         ],
         "96": [
             "George Mason",
             "Patriots",
-            "GMU"
+            "GMU",
+            "george mason",
+            "GEORGE MASON",
+            "patriots",
+            "PATRIOTS",
+            "gmu",
+            "georgemason"
         ],
         "97": [
             "George Washington",
             "Revolutionaries",
-            "GW"
+            "GW",
+            "george washington",
+            "GEORGE WASHINGTON",
+            "revolutionaries",
+            "REVOLUTIONARIES",
+            "gw",
+            "georgewashington"
         ],
         "98": [
             "Hoyas",
             "GTOWN",
             "GTWN",
-            "Georgetown"
+            "Georgetown",
+            "hoyas",
+            "HOYAS",
+            "gtown",
+            "gtwn",
+            "georgetown",
+            "GEORGETOWN"
         ],
         "99": [
             "Georgia",
             "UGA",
-            "Bulldogs"
+            "Bulldogs",
+            "georgia",
+            "GEORGIA",
+            "uga",
+            "bulldogs",
+            "BULLDOGS"
         ],
         "100": [
             "Eagles",
             "Georgia Southern",
             "GASO",
-            "GASOU"
+            "GASOU",
+            "eagles",
+            "EAGLES",
+            "georgia southern",
+            "GEORGIA SOUTHERN",
+            "gaso",
+            "gasou",
+            "georgiasouthern"
         ],
         "101": [
             "Georgia State",
-            "GAST or GSU",
             "GAST",
-            "Panthers"
+            "GSU",
+            "GAST",
+            "Panthers",
+            "Georgia St.",
+            "georgia state",
+            "GEORGIA STATE",
+            "gast",
+            "gsu",
+            "panthers",
+            "PANTHERS",
+            "georgia st.",
+            "GEORGIA ST.",
+            "georgiast"
         ],
         "102": [
             "Yellow Jackets",
             "GT",
             "Georgia Tech",
-            "GATECH"
+            "GATECH",
+            "yellow jackets",
+            "YELLOW JACKETS",
+            "gt",
+            "georgia tech",
+            "GEORGIA TECH",
+            "gatech",
+            "georgiatech"
         ],
         "103": [
             "Gonzaga",
             "Bulldogs",
-            "ZAGS"
+            "ZAGS",
+            "gonzaga",
+            "GONZAGA",
+            "bulldogs",
+            "BULLDOGS",
+            "zags"
         ],
         "104": [
             "Grambling State",
             "GRAM",
             "Tigers",
-            "GRAMB"
+            "GRAMB",
+            "Grambling St.",
+            "grambling state",
+            "GRAMBLING STATE",
+            "gram",
+            "tigers",
+            "TIGERS",
+            "gramb",
+            "grambling st.",
+            "GRAMBLING ST.",
+            "gramblingst"
         ],
         "105": [
             "Grand Canyon",
             "Antelopes",
-            "GCU"
+            "GCU",
+            "grand canyon",
+            "GRAND CANYON",
+            "antelopes",
+            "ANTELOPES",
+            "gcu",
+            "grandcanyon"
         ],
         "106": [
             "Green Bay",
             "Phoenix",
             "UWGB",
-            "WISGB"
+            "WISGB",
+            "green bay",
+            "GREEN BAY",
+            "phoenix",
+            "PHOENIX",
+            "uwgb",
+            "wisgb",
+            "greenbay"
         ],
         "107": [
             "Hampton",
             "Pirates",
             "HAMP",
-            "HMPTN"
+            "HMPTN",
+            "hampton",
+            "HAMPTON",
+            "pirates",
+            "PIRATES",
+            "hamp",
+            "hmptn"
         ],
         "108": [
             "HARV",
             "Crimson",
             "Harvard",
-            "HAR"
+            "HAR",
+            "harv",
+            "crimson",
+            "CRIMSON",
+            "harvard",
+            "HARVARD",
+            "har"
         ],
         "109": [
             "HAWAII",
             "Rainbow Warriors",
             "HAW",
-            "Hawaii"
+            "Hawaii",
+            "hawaii",
+            "rainbow warriors",
+            "RAINBOW WARRIORS",
+            "haw"
         ],
         "110": [
             "High Point",
             "Panthers",
-            "HP"
+            "HP",
+            "high point",
+            "HIGH POINT",
+            "panthers",
+            "PANTHERS",
+            "hp",
+            "highpoint"
         ],
         "111": [
             "Hofstra",
             "Pride",
-            "HOF"
+            "HOF",
+            "hofstra",
+            "HOFSTRA",
+            "pride",
+            "PRIDE",
+            "hof"
         ],
         "112": [
             "Holy Cross",
             "Crusaders",
-            "HC"
+            "HC",
+            "holy cross",
+            "HOLY CROSS",
+            "crusaders",
+            "CRUSADERS",
+            "hc",
+            "holycross"
         ],
         "113": [
             "Cougars",
             "Houston",
             "HOU",
-            "U of H"
+            "U of H",
+            "cougars",
+            "COUGARS",
+            "houston",
+            "HOUSTON",
+            "hou",
+            "u of h",
+            "U OF H"
         ],
         "114": [
             "Houston Christian",
             "Huskies",
-            "HCU"
+            "HCU",
+            "houston christian",
+            "HOUSTON CHRISTIAN",
+            "huskies",
+            "HUSKIES",
+            "hcu",
+            "houstonchristian"
         ],
         "115": [
             "Bison",
             "HOW",
             "HWRD",
-            "Howard"
+            "Howard",
+            "bison",
+            "BISON",
+            "how",
+            "hwrd",
+            "howard",
+            "HOWARD"
         ],
         "116": [
             "IU Indy",
             "Jaguars",
-            "IUI"
+            "IUI",
+            "iu indy",
+            "IU INDY",
+            "jaguars",
+            "JAGUARS",
+            "iui",
+            "iuindy"
         ],
         "117": [
             "Vandals",
             "IDAHO",
             "Idaho",
-            "IDHO"
+            "IDHO",
+            "vandals",
+            "VANDALS",
+            "idaho",
+            "idho"
         ],
         "118": [
             "IDST",
             "Idaho State",
             "Bengals",
-            "IDHST"
+            "IDHST",
+            "Idaho St.",
+            "idst",
+            "idaho state",
+            "IDAHO STATE",
+            "bengals",
+            "BENGALS",
+            "idhst",
+            "idaho st.",
+            "IDAHO ST.",
+            "idahost"
         ],
         "119": [
             "ILL",
             "Fighting Illini",
-            "Illinois"
+            "Illinois",
+            "ill",
+            "fighting illini",
+            "FIGHTING ILLINI",
+            "illinois",
+            "ILLINOIS"
+        ],
+        "120": [
+            "Illinois-Chicago",
+            "Flames",
+            "UIC",
+            "Illinois Chicago",
+            "illinois-chicago",
+            "ILLINOIS-CHICAGO",
+            "flames",
+            "FLAMES",
+            "uic",
+            "illinois chicago",
+            "ILLINOIS CHICAGO",
+            "illinoischicago"
         ],
         "121": [
             "ILLST",
             "ILST",
             "Redbirds",
-            "Illinois State"
-        ],
-        "120": [
-            "Illinois-Chicago",
-            "Flames",
-            "UIC"
+            "Illinois State",
+            "Illinois St.",
+            "illst",
+            "ilst",
+            "redbirds",
+            "REDBIRDS",
+            "illinois state",
+            "ILLINOIS STATE",
+            "illinois st.",
+            "ILLINOIS ST.",
+            "illinoisst"
         ],
         "122": [
             "Cardinals",
             "IW",
             "UIW",
-            "Incarnate Word"
+            "Incarnate Word",
+            "cardinals",
+            "CARDINALS",
+            "iw",
+            "uiw",
+            "incarnate word",
+            "INCARNATE WORD",
+            "incarnateword"
         ],
         "123": [
             "Hoosiers",
             "Indiana",
             "IU",
-            "IND"
+            "IND",
+            "hoosiers",
+            "HOOSIERS",
+            "indiana",
+            "INDIANA",
+            "iu",
+            "ind"
         ],
         "124": [
             "INST",
             "Indiana State",
             "INDST",
-            "Sycamores"
+            "Sycamores",
+            "Indiana St.",
+            "inst",
+            "indiana state",
+            "INDIANA STATE",
+            "indst",
+            "sycamores",
+            "SYCAMORES",
+            "indiana st.",
+            "INDIANA ST.",
+            "indianast"
         ],
         "125": [
             "Iona",
             "Gaels",
-            "IONA"
+            "IONA",
+            "iona",
+            "gaels",
+            "GAELS"
         ],
         "126": [
             "Iowa",
             "Hawkeyes",
-            "IOWA"
+            "IOWA",
+            "iowa",
+            "hawkeyes",
+            "HAWKEYES"
         ],
         "127": [
             "Cyclones",
             "ISU",
             "Iowa State",
             "IWAST",
-            "IOWAST"
+            "IOWAST",
+            "Iowa St.",
+            "cyclones",
+            "CYCLONES",
+            "isu",
+            "iowa state",
+            "IOWA STATE",
+            "iwast",
+            "iowast",
+            "iowa st.",
+            "IOWA ST."
         ],
         "128": [
             "Tigers",
             "JKSN",
             "Jackson State",
-            "JKST"
+            "JKST",
+            "Jackson St.",
+            "tigers",
+            "TIGERS",
+            "jksn",
+            "jackson state",
+            "JACKSON STATE",
+            "jkst",
+            "jackson st.",
+            "JACKSON ST.",
+            "jacksonst"
         ],
         "129": [
             "JAC",
             "Jacksonville",
             "Dolphins",
-            "JVILLE"
+            "JVILLE",
+            "jac",
+            "jacksonville",
+            "JACKSONVILLE",
+            "dolphins",
+            "DOLPHINS",
+            "jville"
         ],
         "130": [
             "JKSNV",
             "Gamecocks",
             "JVST",
-            "Jacksonville State"
+            "Jacksonville State",
+            "Jacksonville St.",
+            "jksnv",
+            "gamecocks",
+            "GAMECOCKS",
+            "jvst",
+            "jacksonville state",
+            "JACKSONVILLE STATE",
+            "jacksonville st.",
+            "JACKSONVILLE ST.",
+            "jacksonvillest"
         ],
         "131": [
             "Dukes",
             "JMU",
-            "James Madison"
+            "James Madison",
+            "dukes",
+            "DUKES",
+            "jmu",
+            "james madison",
+            "JAMES MADISON",
+            "jamesmadison"
         ],
         "132": [
             "Jayhawks",
             "Kansas",
-            "KU"
+            "KU",
+            "jayhawks",
+            "JAYHAWKS",
+            "kansas",
+            "KANSAS",
+            "ku"
         ],
         "133": [
             "KSU",
             "Wildcats",
-            "Kansas State"
+            "Kansas State",
+            "Kansas St.",
+            "ksu",
+            "wildcats",
+            "WILDCATS",
+            "kansas state",
+            "KANSAS STATE",
+            "kansas st.",
+            "KANSAS ST.",
+            "kansasst"
         ],
         "134": [
             "KENN",
             "Kennesaw State",
-            "Owls"
+            "Owls",
+            "Kennesaw St.",
+            "kenn",
+            "kennesaw state",
+            "KENNESAW STATE",
+            "owls",
+            "OWLS",
+            "kennesaw st.",
+            "KENNESAW ST.",
+            "kennesawst"
         ],
         "135": [
             "Golden Flashes",
             "KENT",
-            "Kent State"
+            "Kent State",
+            "Kent St.",
+            "golden flashes",
+            "GOLDEN FLASHES",
+            "kent",
+            "kent state",
+            "KENT STATE",
+            "kent st.",
+            "KENT ST.",
+            "kentst"
         ],
         "136": [
             "UK",
             "Kentucky",
-            "Wildcats"
+            "Wildcats",
+            "uk",
+            "kentucky",
+            "KENTUCKY",
+            "wildcats",
+            "WILDCATS"
+        ],
+        "137": [
+            "Long Island",
+            "Sharks",
+            "LIU",
+            "long island",
+            "LONG ISLAND",
+            "sharks",
+            "SHARKS",
+            "liu"
         ],
         "138": [
             "LSU",
-            "Tigers"
+            "Tigers",
+            "lsu",
+            "tigers",
+            "TIGERS"
         ],
         "139": [
             "La Salle",
             "Explorers",
-            "LASAL"
+            "LASAL",
+            "la salle",
+            "LA SALLE",
+            "explorers",
+            "EXPLORERS",
+            "lasal",
+            "lasalle"
         ],
         "140": [
             "Lafayette",
             "Leopards",
             "LAF",
-            "LAFAY"
+            "LAFAY",
+            "lafayette",
+            "LAFAYETTE",
+            "leopards",
+            "LEOPARDS",
+            "laf",
+            "lafay"
         ],
         "141": [
             "LAMAR",
             "Lamar",
             "LAM",
-            "Cardinals"
+            "Cardinals",
+            "lamar",
+            "lam",
+            "cardinals",
+            "CARDINALS"
         ],
         "142": [
             "Le Moyne",
             "Dolphins",
-            "MOYNE"
+            "MOYNE",
+            "le moyne",
+            "LE MOYNE",
+            "dolphins",
+            "DOLPHINS",
+            "moyne",
+            "lemoyne"
         ],
         "143": [
             "LEHI",
             "Mountain Hawks",
             "LEH",
-            "Lehigh"
+            "Lehigh",
+            "lehi",
+            "mountain hawks",
+            "MOUNTAIN HAWKS",
+            "leh",
+            "lehigh",
+            "LEHIGH"
         ],
         "144": [
             "LIB",
             "LBRTY",
             "Liberty",
-            "Flames"
+            "Flames",
+            "lib",
+            "lbrty",
+            "liberty",
+            "LIBERTY",
+            "flames",
+            "FLAMES"
         ],
         "145": [
             "Lindenwood",
             "Lions",
-            "LIND"
+            "LIND",
+            "lindenwood",
+            "LINDENWOOD",
+            "lions",
+            "LIONS",
+            "lind"
         ],
         "146": [
             "Lipscomb",
             "Bisons",
-            "LIP"
+            "LIP",
+            "lipscomb",
+            "LIPSCOMB",
+            "bisons",
+            "BISONS",
+            "lip"
         ],
         "147": [
             "Little Rock",
             "Trojans",
-            "UALR"
+            "UALR",
+            "little rock",
+            "LITTLE ROCK",
+            "trojans",
+            "TROJANS",
+            "ualr",
+            "arkansas-littlerock",
+            "littlerock"
         ],
         "148": [
             "Long Beach State",
             "Beach",
-            "LBSU"
-        ],
-        "137": [
-            "Long Island",
-            "Sharks",
-            "LIU"
+            "LBSU",
+            "Long Beach St.",
+            "long beach state",
+            "LONG BEACH STATE",
+            "beach",
+            "BEACH",
+            "lbsu",
+            "long beach st.",
+            "LONG BEACH ST.",
+            "longbeachst"
         ],
         "149": [
             "Longwood",
             "Lancers",
-            "LONG"
+            "LONG",
+            "longwood",
+            "LONGWOOD",
+            "lancers",
+            "LANCERS",
+            "long"
         ],
         "150": [
             "Louisiana",
             "Ragin' Cajuns",
-            "LA"
+            "LA",
+            "louisiana",
+            "LOUISIANA",
+            "ragin' cajuns",
+            "RAGIN' CAJUNS",
+            "la"
+        ],
+        "151": [
+            "Louisiana-Monroe",
+            "Warhawks",
+            "ULM",
+            "Louisiana Monroe",
+            "louisiana-monroe",
+            "LOUISIANA-MONROE",
+            "warhawks",
+            "WARHAWKS",
+            "ulm",
+            "louisiana monroe",
+            "LOUISIANA MONROE",
+            "louisianamonroe"
         ],
         "152": [
             "LT",
             "Louisiana Tech",
             "Bulldogs",
-            "LATCH"
-        ],
-        "151": [
-            "Louisiana-Monroe",
-            "Warhawks",
-            "ULM"
+            "LATCH",
+            "lt",
+            "louisiana tech",
+            "LOUISIANA TECH",
+            "bulldogs",
+            "BULLDOGS",
+            "latch",
+            "louisianatech"
         ],
         "153": [
             "LVILL",
             "Louisville",
             "LOU",
-            "Cardinals"
+            "Cardinals",
+            "lvill",
+            "louisville",
+            "LOUISVILLE",
+            "lou",
+            "cardinals",
+            "CARDINALS"
         ],
         "154": [
             "Loyola (IL)",
             "Ramblers",
             "L-IL",
-            "Loyola Chicago"
+            "Loyola Chicago",
+            "loyola (il)",
+            "LOYOLA (IL)",
+            "ramblers",
+            "RAMBLERS",
+            "l-il",
+            "loyola chicago",
+            "LOYOLA CHICAGO",
+            "loyolachicago"
         ],
         "155": [
             "Loyola (MD)",
             "Greyhounds",
             "L-MD",
-            "Loyola MD"
+            "Loyola MD",
+            "loyola (md)",
+            "LOYOLA (MD)",
+            "greyhounds",
+            "GREYHOUNDS",
+            "l-md",
+            "loyola md",
+            "LOYOLA MD",
+            "loyolamd"
         ],
         "156": [
             "Loyola Marymount",
             "Lions",
             "LOYMR",
-            "LOYMRY"
+            "LOYMRY",
+            "loyola marymount",
+            "LOYOLA MARYMOUNT",
+            "lions",
+            "LIONS",
+            "loymr",
+            "loymry",
+            "loyolamarymount"
         ],
         "157": [
             "Maine",
-            "MAINE or MNE",
+            "MAINE",
+            "MNE",
             "Black Bears",
-            "MAINE"
+            "MAINE",
+            "maine",
+            "mne",
+            "black bears",
+            "BLACK BEARS"
         ],
         "158": [
             "Manhattan",
             "Jaspers",
-            "MAN"
+            "MAN",
+            "manhattan",
+            "MANHATTAN",
+            "jaspers",
+            "JASPERS",
+            "man"
         ],
         "159": [
             "Marist",
             "MRST",
-            "Red Foxes"
+            "Red Foxes",
+            "marist",
+            "MARIST",
+            "mrst",
+            "red foxes",
+            "RED FOXES"
         ],
         "160": [
             "Marquette",
             "Golden Eagles",
-            "MARQ"
+            "MARQ",
+            "marquette",
+            "MARQUETTE",
+            "golden eagles",
+            "GOLDEN EAGLES",
+            "marq"
         ],
         "161": [
             "MARSH",
             "Thundering Herd",
             "Marshall",
-            "MRSH"
+            "MRSH",
+            "marsh",
+            "thundering herd",
+            "THUNDERING HERD",
+            "marshall",
+            "MARSHALL",
+            "mrsh"
         ],
         "162": [
             "Maryland",
             "Terrapins",
-            "UMD"
+            "UMD",
+            "maryland",
+            "MARYLAND",
+            "terrapins",
+            "TERRAPINS",
+            "umd"
         ],
         "163": [
             "Maryland-Eastern Shore",
             "Hawks",
             "UMES",
-            "Md.-E. Shore"
+            "Md.-E. Shore",
+            "Maryland Eastern Shore",
+            "maryland-eastern shore",
+            "MARYLAND-EASTERN SHORE",
+            "hawks",
+            "HAWKS",
+            "umes",
+            "md.-e. shore",
+            "MD.-E. SHORE",
+            "maryland eastern shore",
+            "MARYLAND EASTERN SHORE",
+            "marylandeasternshore"
         ],
         "164": [
             "Massachusetts",
             "Minutemen",
-            "UMass"
+            "UMass",
+            "massachusetts",
+            "MASSACHUSETTS",
+            "minutemen",
+            "MINUTEMEN",
+            "umass",
+            "UMASS"
         ],
         "165": [
             "MCNST",
             "Cowboys",
             "McNeese State",
-            "MCNS"
+            "MCNS",
+            "McNeese",
+            "mcnst",
+            "cowboys",
+            "COWBOYS",
+            "mcneese state",
+            "MCNEESE STATE",
+            "mcns",
+            "mcneese",
+            "MCNEESE"
         ],
         "166": [
             "Tigers",
             "MEM",
             "MEMP",
-            "Memphis"
+            "Memphis",
+            "tigers",
+            "TIGERS",
+            "mem",
+            "memp",
+            "memphis",
+            "MEMPHIS"
         ],
         "167": [
             "MER",
             "Bears",
-            "Mercer"
+            "Mercer",
+            "mer",
+            "bears",
+            "BEARS",
+            "mercer",
+            "MERCER"
         ],
         "168": [
             "Mercyhurst",
             "Lakers",
-            "MC"
+            "MC",
+            "mercyhurst",
+            "MERCYHURST",
+            "lakers",
+            "LAKERS",
+            "mc"
         ],
         "169": [
             "Merrimack College",
             "Warriors",
-            "MERRI"
+            "MERRI",
+            "Merrimack",
+            "merrimack college",
+            "MERRIMACK COLLEGE",
+            "warriors",
+            "WARRIORS",
+            "merri",
+            "merrimack",
+            "MERRIMACK"
         ],
         "170": [
             "MIA",
             "Miami (FL)",
             "UMFL",
-            "Hurricanes"
+            "Hurricanes",
+            "Miami FL",
+            "mia",
+            "miami (fl)",
+            "MIAMI (FL)",
+            "umfl",
+            "hurricanes",
+            "HURRICANES",
+            "miami fl",
+            "MIAMI FL",
+            "miamifl"
         ],
         "171": [
             "Miami (OH)",
             "RedHawks",
             "M-OH",
             "MIAMI",
-            "MIAOH"
+            "MIAOH",
+            "Miami OH",
+            "miami (oh)",
+            "MIAMI (OH)",
+            "redhawks",
+            "REDHAWKS",
+            "m-oh",
+            "miami",
+            "miaoh",
+            "miami oh",
+            "MIAMI OH",
+            "miamioh"
         ],
         "172": [
             "Wolverines",
             "MICH",
-            "Michigan"
+            "Michigan",
+            "wolverines",
+            "WOLVERINES",
+            "mich",
+            "michigan",
+            "MICHIGAN"
         ],
         "173": [
             "MCHST",
             "MSU",
             "Spartans",
-            "Michigan State"
+            "Michigan State",
+            "Michigan St.",
+            "mchst",
+            "msu",
+            "spartans",
+            "SPARTANS",
+            "michigan state",
+            "MICHIGAN STATE",
+            "michigan st.",
+            "MICHIGAN ST.",
+            "michiganst"
         ],
         "174": [
             "Middle Tennessee State",
             "Blue Raiders",
-            "MTSU"
+            "MTSU",
+            "Middle Tennessee",
+            "middle tennessee state",
+            "MIDDLE TENNESSEE STATE",
+            "blue raiders",
+            "BLUE RAIDERS",
+            "mtsu",
+            "middle tennessee",
+            "MIDDLE TENNESSEE",
+            "middletennessee"
         ],
         "175": [
             "Milwaukee",
             "Panthers",
-            "UWM"
+            "UWM",
+            "milwaukee",
+            "MILWAUKEE",
+            "panthers",
+            "PANTHERS",
+            "uwm"
         ],
         "176": [
             "MINN",
             "Minnesota",
-            "Golden Gophers"
+            "Golden Gophers",
+            "minn",
+            "minnesota",
+            "MINNESOTA",
+            "golden gophers",
+            "GOLDEN GOPHERS"
+        ],
+        "177": [
+            "MISS",
+            "Rebels",
+            "Ole Miss",
+            "Mississippi",
+            "miss",
+            "rebels",
+            "REBELS",
+            "ole miss",
+            "OLE MISS",
+            "mississippi",
+            "MISSISSIPPI"
         ],
         "178": [
             "MSST",
             "MISST",
             "Bulldogs",
-            "Mississippi State"
+            "Mississippi State",
+            "Mississippi St.",
+            "msst",
+            "misst",
+            "bulldogs",
+            "BULLDOGS",
+            "mississippi state",
+            "MISSISSIPPI STATE",
+            "mississippi st.",
+            "MISSISSIPPI ST.",
+            "mississippist"
         ],
         "179": [
             "Mississippi Valley State",
             "Delta Devils",
-            "MVSU"
+            "MVSU",
+            "Mississippi Valley St.",
+            "mississippi valley state",
+            "MISSISSIPPI VALLEY STATE",
+            "delta devils",
+            "DELTA DEVILS",
+            "mvsu",
+            "mississippi valley st.",
+            "MISSISSIPPI VALLEY ST.",
+            "mississippivalleyst"
         ],
         "180": [
             "Missouri",
@@ -1722,498 +2937,1152 @@
             "MIZZ",
             "Tigers",
             "MZZOU",
-            "MIZZOU"
+            "MIZZOU",
+            "missouri",
+            "MISSOURI",
+            "miz",
+            "mizz",
+            "tigers",
+            "TIGERS",
+            "mzzou",
+            "mizzou"
         ],
         "181": [
             "MOST",
             "Bears",
             "MZZST",
-            "Missouri State"
+            "Missouri State",
+            "Missouri St.",
+            "most",
+            "bears",
+            "BEARS",
+            "mzzst",
+            "missouri state",
+            "MISSOURI STATE",
+            "missouri st.",
+            "MISSOURI ST.",
+            "missourist"
         ],
         "182": [
             "Hawks",
             "MONM",
-            "Monmouth"
+            "Monmouth",
+            "hawks",
+            "HAWKS",
+            "monm",
+            "monmouth",
+            "MONMOUTH"
         ],
         "183": [
             "Montana",
             "MONT",
-            "Grizzlies"
+            "Grizzlies",
+            "montana",
+            "MONTANA",
+            "mont",
+            "grizzlies",
+            "GRIZZLIES"
         ],
         "184": [
             "MTST",
             "Fighting Bobcats",
             "MTSTU",
-            "Montana State"
+            "Montana State",
+            "Montana St.",
+            "mtst",
+            "fighting bobcats",
+            "FIGHTING BOBCATS",
+            "mtstu",
+            "montana state",
+            "MONTANA STATE",
+            "montana st.",
+            "MONTANA ST.",
+            "montanast"
         ],
         "185": [
             "Eagles",
             "Morehead State",
             "MORE",
-            "MRHD"
+            "MRHD",
+            "Morehead St.",
+            "eagles",
+            "EAGLES",
+            "morehead state",
+            "MOREHEAD STATE",
+            "more",
+            "mrhd",
+            "morehead st.",
+            "MOREHEAD ST.",
+            "moreheadst"
         ],
         "186": [
             "MORG",
             "Bears",
             "MORST",
-            "Morgan State"
+            "Morgan State",
+            "Morgan St.",
+            "morg",
+            "bears",
+            "BEARS",
+            "morst",
+            "morgan state",
+            "MORGAN STATE",
+            "morgan st.",
+            "MORGAN ST.",
+            "morganst"
         ],
         "187": [
             "Mount St. Mary's",
             "Mountaineers",
-            "MSMU"
+            "MSMU",
+            "mount st. mary's",
+            "MOUNT ST. MARY'S",
+            "mountaineers",
+            "MOUNTAINEERS",
+            "msmu",
+            "mountstmary's"
         ],
         "188": [
             "MURR",
             "Murray State",
             "MRRY",
-            "Racers"
-        ],
-        "190": [
-            "N.J.I.T.",
-            "Highlanders",
-            "NJIT"
+            "Racers",
+            "Murray St.",
+            "murr",
+            "murray state",
+            "MURRAY STATE",
+            "mrry",
+            "racers",
+            "RACERS",
+            "murray st.",
+            "MURRAY ST.",
+            "murrayst"
         ],
         "189": [
             "Wolfpack",
             "NC State",
-            "NCST"
+            "NCST",
+            "N.C. State",
+            "wolfpack",
+            "WOLFPACK",
+            "nc state",
+            "NC STATE",
+            "ncst",
+            "n.c. state",
+            "N.C. STATE",
+            "ncstate"
+        ],
+        "190": [
+            "N.J.I.T.",
+            "Highlanders",
+            "NJIT",
+            "n.j.i.t.",
+            "highlanders",
+            "HIGHLANDERS",
+            "njit"
         ],
         "191": [
             "USNA",
             "NAVY",
             "Midshipmen",
-            "Navy"
+            "Navy",
+            "usna",
+            "navy",
+            "midshipmen",
+            "MIDSHIPMEN"
         ],
         "192": [
             "Nebraska",
             "UNL",
             "Cornhuskers",
-            "NEB"
+            "NEB",
+            "nebraska",
+            "NEBRASKA",
+            "unl",
+            "cornhuskers",
+            "CORNHUSKERS",
+            "neb"
+        ],
+        "193": [
+            "Omaha",
+            "Mavericks",
+            "OMAHA",
+            "OMA",
+            "Nebraska Omaha",
+            "omaha",
+            "mavericks",
+            "MAVERICKS",
+            "oma",
+            "nebraska omaha",
+            "NEBRASKA OMAHA",
+            "nebraskaomaha"
         ],
         "194": [
             "Wolf Pack",
             "UNR",
             "Nevada",
-            "NEV"
+            "NEV",
+            "wolf pack",
+            "WOLF PACK",
+            "unr",
+            "nevada",
+            "NEVADA",
+            "nev"
         ],
         "195": [
             "Wildcats",
             "UNH",
             "NEWHA",
-            "New Hampshire"
+            "New Hampshire",
+            "wildcats",
+            "WILDCATS",
+            "unh",
+            "newha",
+            "new hampshire",
+            "NEW HAMPSHIRE",
+            "newhampshire"
         ],
         "196": [
             "New Haven",
             "Chargers",
-            "UNH"
+            "UNH",
+            "new haven",
+            "NEW HAVEN",
+            "chargers",
+            "CHARGERS",
+            "unh",
+            "newhaven"
         ],
         "197": [
             "UNM",
             "Lobos",
-            "New Mexico"
+            "New Mexico",
+            "unm",
+            "lobos",
+            "LOBOS",
+            "new mexico",
+            "NEW MEXICO",
+            "newmexico"
         ],
         "198": [
             "New Mexico State",
             "NMSU",
-            "Aggies"
+            "Aggies",
+            "New Mexico St.",
+            "new mexico state",
+            "NEW MEXICO STATE",
+            "nmsu",
+            "aggies",
+            "AGGIES",
+            "new mexico st.",
+            "NEW MEXICO ST.",
+            "newmexicost"
         ],
         "199": [
             "New Orleans",
             "Privateers",
-            "NEWOR"
+            "NEWOR",
+            "new orleans",
+            "NEW ORLEANS",
+            "privateers",
+            "PRIVATEERS",
+            "newor",
+            "neworleans"
         ],
         "200": [
             "Niagara",
             "Purple Eagles",
-            "NIAG"
+            "NIAG",
+            "niagara",
+            "NIAGARA",
+            "purple eagles",
+            "PURPLE EAGLES",
+            "niag"
         ],
         "201": [
             "Colonels",
             "NICH",
-            "Nicholls State"
+            "Nicholls State",
+            "Nicholls",
+            "colonels",
+            "COLONELS",
+            "nich",
+            "nicholls state",
+            "NICHOLLS STATE",
+            "nicholls",
+            "NICHOLLS"
         ],
         "202": [
             "NORF",
             "Spartans",
-            "Norfolk State"
+            "Norfolk State",
+            "Norfolk St.",
+            "norf",
+            "spartans",
+            "SPARTANS",
+            "norfolk state",
+            "NORFOLK STATE",
+            "norfolk st.",
+            "NORFOLK ST.",
+            "norfolkst"
         ],
         "203": [
             "North Alabama",
             "Lions",
-            "UNA"
+            "UNA",
+            "north alabama",
+            "NORTH ALABAMA",
+            "lions",
+            "LIONS",
+            "una",
+            "northalabama"
         ],
         "204": [
             "UNC",
             "North Carolina",
-            "Tar Heels"
+            "Tar Heels",
+            "unc",
+            "north carolina",
+            "NORTH CAROLINA",
+            "tar heels",
+            "TAR HEELS",
+            "northcarolina"
         ],
         "205": [
             "North Carolina A&T",
             "NCAT",
             "Aggies",
-            "NC A&T"
+            "NC A&T",
+            "north carolina a&t",
+            "NORTH CAROLINA A&T",
+            "ncat",
+            "aggies",
+            "AGGIES",
+            "nc a&t",
+            "northcarolinaa&t"
         ],
         "206": [
             "North Carolina Central",
             "Eagles",
-            "NCCU"
+            "NCCU",
+            "north carolina central",
+            "NORTH CAROLINA CENTRAL",
+            "eagles",
+            "EAGLES",
+            "nccu",
+            "northcarolinacentral"
         ],
         "207": [
             "North Dakota",
             "UND",
-            "Fighting Hawks"
+            "Fighting Hawks",
+            "north dakota",
+            "NORTH DAKOTA",
+            "und",
+            "fighting hawks",
+            "FIGHTING HAWKS",
+            "northdakota"
         ],
         "208": [
             "Bison",
             "North Dakota State",
             "NDSU",
             "NDAKST",
-            "N. Dak. St."
+            "N. Dak. St.",
+            "North Dakota St.",
+            "bison",
+            "BISON",
+            "north dakota state",
+            "NORTH DAKOTA STATE",
+            "ndsu",
+            "ndakst",
+            "n. dak. st.",
+            "N. DAK. ST.",
+            "north dakota st.",
+            "NORTH DAKOTA ST.",
+            "northdakotast"
         ],
         "209": [
             "North Florida",
             "Ospreys",
-            "UNF"
+            "UNF",
+            "north florida",
+            "NORTH FLORIDA",
+            "ospreys",
+            "OSPREYS",
+            "unf",
+            "northflorida"
         ],
         "210": [
             "Mean Green",
             "UNT",
-            "North Texas"
+            "North Texas",
+            "mean green",
+            "MEAN GREEN",
+            "unt",
+            "north texas",
+            "NORTH TEXAS",
+            "northtexas"
         ],
         "211": [
             "Northeastern",
             "Huskies",
-            "NEU"
+            "NEU",
+            "northeastern",
+            "NORTHEASTERN",
+            "huskies",
+            "HUSKIES",
+            "neu"
         ],
         "212": [
             "Northern Arizona",
             "Lumberjacks",
-            "NAU"
+            "NAU",
+            "northern arizona",
+            "NORTHERN ARIZONA",
+            "lumberjacks",
+            "LUMBERJACKS",
+            "nau",
+            "northernarizona"
         ],
         "213": [
             "Northern Colorado",
             "Bears",
             "UNCO",
             "NOCOL",
-            "NCOLO"
+            "NCOLO",
+            "northern colorado",
+            "NORTHERN COLORADO",
+            "bears",
+            "BEARS",
+            "unco",
+            "nocol",
+            "ncolo",
+            "northerncolorado"
         ],
         "214": [
             "NIU",
             "Northern Illinois",
             "Huskies",
-            "NILL"
+            "NILL",
+            "niu",
+            "northern illinois",
+            "NORTHERN ILLINOIS",
+            "huskies",
+            "HUSKIES",
+            "nill",
+            "northernillinois"
         ],
         "215": [
             "UNI",
             "Northern Iowa",
-            "Panthers"
+            "Panthers",
+            "uni",
+            "northern iowa",
+            "NORTHERN IOWA",
+            "panthers",
+            "PANTHERS",
+            "northerniowa"
         ],
         "216": [
             "Northern Kentucky",
             "Norse",
-            "NKU"
+            "NKU",
+            "northern kentucky",
+            "NORTHERN KENTUCKY",
+            "norse",
+            "NORSE",
+            "nku",
+            "northernkentucky"
         ],
         "217": [
             "NW",
             "Northwestern",
             "Wildcats",
-            "NWU"
+            "NWU",
+            "nw",
+            "northwestern",
+            "NORTHWESTERN",
+            "wildcats",
+            "WILDCATS",
+            "nwu"
         ],
         "218": [
             "NSU",
             "Demons",
             "Northwestern State",
-            "NWST"
+            "NWST",
+            "Northwestern St.",
+            "nsu",
+            "demons",
+            "DEMONS",
+            "northwestern state",
+            "NORTHWESTERN STATE",
+            "nwst",
+            "northwestern st.",
+            "NORTHWESTERN ST.",
+            "northwesternst"
         ],
         "219": [
             "Notre Dame",
             "Fighting Irish",
-            "ND"
+            "ND",
+            "notre dame",
+            "NOTRE DAME",
+            "fighting irish",
+            "FIGHTING IRISH",
+            "nd",
+            "notredame"
         ],
         "220": [
             "Oakland",
             "Golden Grizzlies",
-            "OAKL"
+            "OAKL",
+            "oakland",
+            "OAKLAND",
+            "golden grizzlies",
+            "GOLDEN GRIZZLIES",
+            "oakl"
         ],
         "221": [
             "Bobcats",
             "OHIO",
-            "Ohio"
+            "Ohio",
+            "bobcats",
+            "BOBCATS",
+            "ohio"
         ],
         "222": [
             "Ohio State",
             "Buckeyes",
-            "OSU"
+            "OSU",
+            "Ohio St.",
+            "ohio state",
+            "OHIO STATE",
+            "buckeyes",
+            "BUCKEYES",
+            "osu",
+            "ohio st.",
+            "OHIO ST.",
+            "ohiost"
         ],
         "223": [
             "Oklahoma",
-            "OKLA or OU",
+            "OKLA",
+            "OU",
             "Sooners",
-            "OKLA"
+            "OKLA",
+            "oklahoma",
+            "OKLAHOMA",
+            "okla",
+            "ou",
+            "sooners",
+            "SOONERS"
         ],
         "224": [
             "OKST",
             "Cowboys",
-            "Oklahoma State"
+            "Oklahoma State",
+            "Oklahoma St.",
+            "okst",
+            "cowboys",
+            "COWBOYS",
+            "oklahoma state",
+            "OKLAHOMA STATE",
+            "oklahoma st.",
+            "OKLAHOMA ST.",
+            "oklahomast"
         ],
         "225": [
             "ODU",
             "Old Dominion",
-            "Monarchs"
-        ],
-        "177": [
-            "MISS",
-            "Rebels",
-            "Ole Miss",
-            "Mississippi"
-        ],
-        "193": [
-            "Omaha",
-            "Mavericks",
-            "OMAHA",
-            "OMA"
+            "Monarchs",
+            "odu",
+            "old dominion",
+            "OLD DOMINION",
+            "monarchs",
+            "MONARCHS",
+            "olddominion"
         ],
         "226": [
             "Oral Roberts",
             "Golden Eagles",
-            "ORU"
+            "ORU",
+            "oral roberts",
+            "ORAL ROBERTS",
+            "golden eagles",
+            "GOLDEN EAGLES",
+            "oru",
+            "oralroberts"
         ],
         "227": [
             "OREG",
-            "ORE or UO",
+            "ORE",
+            "UO",
             "Ducks",
-            "Oregon"
+            "Oregon",
+            "oreg",
+            "ore",
+            "uo",
+            "ducks",
+            "DUCKS",
+            "oregon",
+            "OREGON"
         ],
         "228": [
             "Beavers",
             "Oregon State",
-            "ORST"
+            "ORST",
+            "Oregon St.",
+            "beavers",
+            "BEAVERS",
+            "oregon state",
+            "OREGON STATE",
+            "orst",
+            "oregon st.",
+            "OREGON ST.",
+            "oregonst"
         ],
         "229": [
             "Pacific",
             "Tigers",
-            "PACI"
+            "PACI",
+            "pacific",
+            "PACIFIC",
+            "tigers",
+            "TIGERS",
+            "paci"
+        ],
+        "230": [
+            "Pennsylvania",
+            "Quakers",
+            "PENN",
+            "Penn",
+            "pennsylvania",
+            "PENNSYLVANIA",
+            "quakers",
+            "QUAKERS",
+            "penn"
         ],
         "231": [
             "Nittany Lions",
             "PENST",
             "Penn State",
-            "PSU"
-        ],
-        "230": [
-            "Pennsylvania",
-            "Quakers",
-            "PENN"
+            "PSU",
+            "Penn St.",
+            "nittany lions",
+            "NITTANY LIONS",
+            "penst",
+            "penn state",
+            "PENN STATE",
+            "psu",
+            "penn st.",
+            "PENN ST.",
+            "pennst"
         ],
         "232": [
             "Pepperdine",
             "Waves",
-            "PEPP"
+            "PEPP",
+            "pepperdine",
+            "PEPPERDINE",
+            "waves",
+            "WAVES",
+            "pepp"
         ],
         "233": [
             "Panthers",
             "PITT",
-            "Pittsburgh"
+            "Pittsburgh",
+            "panthers",
+            "PANTHERS",
+            "pitt",
+            "pittsburgh",
+            "PITTSBURGH"
         ],
         "234": [
             "Portland",
             "Pilots",
-            "UP"
+            "UP",
+            "portland",
+            "PORTLAND",
+            "pilots",
+            "PILOTS",
+            "up"
         ],
         "235": [
             "PRST",
             "PORTL",
             "Vikings",
-            "Portland State"
+            "Portland State",
+            "Portland St.",
+            "prst",
+            "portl",
+            "vikings",
+            "VIKINGS",
+            "portland state",
+            "PORTLAND STATE",
+            "portland st.",
+            "PORTLAND ST.",
+            "portlandst"
         ],
         "236": [
             "Prairie View A&M",
             "Panthers",
             "PV",
-            "PVAMU"
+            "PVAMU",
+            "prairie view a&m",
+            "PRAIRIE VIEW A&M",
+            "panthers",
+            "PANTHERS",
+            "pv",
+            "pvamu",
+            "prairieviewa&m"
         ],
         "237": [
             "PRE",
             "Blue Hose",
             "PRSBY",
-            "Presbyterian"
+            "Presbyterian",
+            "pre",
+            "blue hose",
+            "BLUE HOSE",
+            "prsby",
+            "presbyterian",
+            "PRESBYTERIAN"
         ],
         "238": [
             "Tigers",
             "Princeton",
-            "PRIN"
+            "PRIN",
+            "tigers",
+            "TIGERS",
+            "princeton",
+            "PRINCETON",
+            "prin"
         ],
         "239": [
             "Providence",
             "Friars",
-            "PROV"
+            "PROV",
+            "providence",
+            "PROVIDENCE",
+            "friars",
+            "FRIARS",
+            "prov"
         ],
         "240": [
             "Boilermakers",
             "PUR",
             "PURD",
-            "Purdue"
+            "Purdue",
+            "boilermakers",
+            "BOILERMAKERS",
+            "pur",
+            "purd",
+            "purdue",
+            "PURDUE"
+        ],
+        "241": [
+            "Fort Wayne",
+            "Mastodons",
+            "IPFW",
+            "Purdue Fort Wayne",
+            "fort wayne",
+            "FORT WAYNE",
+            "mastodons",
+            "MASTODONS",
+            "ipfw",
+            "purdue fort wayne",
+            "PURDUE FORT WAYNE",
+            "purduefortwayne"
         ],
         "242": [
             "Queens University",
             "Royals",
             "QUC",
-            "QUEENC"
+            "QUEENC",
+            "Queens",
+            "queens university",
+            "QUEENS UNIVERSITY",
+            "royals",
+            "ROYALS",
+            "quc",
+            "queenc",
+            "queens",
+            "QUEENS"
         ],
         "243": [
             "Quinnipiac",
             "Bobcats",
-            "QUIN"
+            "QUIN",
+            "quinnipiac",
+            "QUINNIPIAC",
+            "bobcats",
+            "BOBCATS",
+            "quin"
         ],
         "244": [
             "Radford",
             "Highlanders",
-            "RADF"
+            "RADF",
+            "radford",
+            "RADFORD",
+            "highlanders",
+            "HIGHLANDERS",
+            "radf"
         ],
         "245": [
             "Rhode Island",
             "Rams",
-            "URI"
+            "URI",
+            "rhode island",
+            "RHODE ISLAND",
+            "rams",
+            "RAMS",
+            "uri",
+            "rhodeisland"
         ],
         "246": [
             "Rice",
             "RICE",
-            "Owls"
+            "Owls",
+            "rice",
+            "owls",
+            "OWLS"
         ],
         "247": [
             "RICH",
             "Richmond",
-            "Spiders"
+            "Spiders",
+            "rich",
+            "richmond",
+            "RICHMOND",
+            "spiders",
+            "SPIDERS"
         ],
         "248": [
             "Rider",
             "Broncs",
-            "RIDER"
+            "RIDER",
+            "rider",
+            "broncs",
+            "BRONCS"
         ],
         "249": [
             "Robert Morris",
             "Colonials",
-            "RMU"
+            "RMU",
+            "robert morris",
+            "ROBERT MORRIS",
+            "colonials",
+            "COLONIALS",
+            "rmu",
+            "robertmorris"
         ],
         "250": [
             "RUTG",
             "Scarlet Knights",
-            "Rutgers"
+            "Rutgers",
+            "rutg",
+            "scarlet knights",
+            "SCARLET KNIGHTS",
+            "rutgers",
+            "RUTGERS"
+        ],
+        "251": [
+            "Southeast Missouri State",
+            "Redhawks",
+            "SEMO",
+            "southeast missouri state",
+            "SOUTHEAST MISSOURI STATE",
+            "redhawks",
+            "REDHAWKS",
+            "semo"
         ],
         "252": [
             "SIU-Edwardsville",
             "Cougars",
-            "SIUE"
+            "SIUE",
+            "siu-edwardsville",
+            "SIU-EDWARDSVILLE",
+            "cougars",
+            "COUGARS",
+            "siue"
+        ],
+        "253": [
+            "Southern Methodist",
+            "Mustangs",
+            "SMU",
+            "southern methodist",
+            "SOUTHERN METHODIST",
+            "mustangs",
+            "MUSTANGS",
+            "smu"
         ],
         "254": [
             "CSUS",
             "Hornets",
             "Sacramento State",
-            "SAC"
+            "SAC",
+            "Sacramento St.",
+            "csus",
+            "hornets",
+            "HORNETS",
+            "sacramento state",
+            "SACRAMENTO STATE",
+            "sac",
+            "sacramento st.",
+            "SACRAMENTO ST.",
+            "sacramentost"
         ],
         "255": [
             "SHU",
             "Pioneers",
             "HEART",
-            "Sacred Heart"
+            "Sacred Heart",
+            "shu",
+            "pioneers",
+            "PIONEERS",
+            "heart",
+            "sacred heart",
+            "SACRED HEART",
+            "sacredheart"
+        ],
+        "256": [
+            "SFU",
+            "Red Flash",
+            "St. Francis (PA)",
+            "STFPA",
+            "Saint Francis",
+            "sfu",
+            "red flash",
+            "RED FLASH",
+            "st. francis (pa)",
+            "ST. FRANCIS (PA)",
+            "stfpa",
+            "saint francis",
+            "SAINT FRANCIS",
+            "saintfrancis"
         ],
         "257": [
             "Saint Joseph's",
             "Hawks",
             "STJOE",
-            "STJOES"
+            "STJOES",
+            "saint joseph's",
+            "SAINT JOSEPH'S",
+            "hawks",
+            "HAWKS",
+            "stjoe",
+            "stjoes",
+            "saintjoseph's"
         ],
         "258": [
             "Saint Louis",
             "Billikens",
-            "STLOU"
+            "STLOU",
+            "saint louis",
+            "SAINT LOUIS",
+            "billikens",
+            "BILLIKENS",
+            "stlou",
+            "saintlouis"
         ],
         "259": [
             "Saint Mary's",
             "Gaels",
-            "STMRY"
+            "STMRY",
+            "saint mary's",
+            "SAINT MARY'S",
+            "gaels",
+            "GAELS",
+            "stmry",
+            "saintmary's"
         ],
         "260": [
             "Saint Peter's",
             "Peacocks",
-            "STPC"
+            "STPC",
+            "saint peter's",
+            "SAINT PETER'S",
+            "peacocks",
+            "PEACOCKS",
+            "stpc",
+            "saintpeter's"
         ],
         "261": [
             "SHSU",
             "Sam Houston State",
-            "Bearkats"
+            "Bearkats",
+            "Sam Houston St.",
+            "shsu",
+            "sam houston state",
+            "SAM HOUSTON STATE",
+            "bearkats",
+            "BEARKATS",
+            "sam houston st.",
+            "SAM HOUSTON ST.",
+            "samhoustonst"
         ],
         "262": [
             "SAM",
             "SAMF",
             "Bulldogs",
-            "Samford"
+            "Samford",
+            "sam",
+            "samf",
+            "bulldogs",
+            "BULLDOGS",
+            "samford",
+            "SAMFORD"
         ],
         "263": [
             "San Diego",
             "Toreros",
             "USD",
-            "SAND"
+            "SAND",
+            "san diego",
+            "SAN DIEGO",
+            "toreros",
+            "TOREROS",
+            "usd",
+            "sand",
+            "sandiego"
         ],
         "264": [
             "Aztecs",
             "SDSU",
-            "San Diego State"
+            "San Diego State",
+            "San Diego St.",
+            "aztecs",
+            "AZTECS",
+            "sdsu",
+            "san diego state",
+            "SAN DIEGO STATE",
+            "san diego st.",
+            "SAN DIEGO ST.",
+            "sandiegost"
         ],
         "265": [
             "San Francisco",
             "Dons",
-            "SANFR"
+            "SANFR",
+            "san francisco",
+            "SAN FRANCISCO",
+            "dons",
+            "DONS",
+            "sanfr",
+            "sanfrancisco"
         ],
         "266": [
             "San Jose State",
             "Spartans",
-            "SJSU"
+            "SJSU",
+            "San Jose St.",
+            "san jose state",
+            "SAN JOSE STATE",
+            "spartans",
+            "SPARTANS",
+            "sjsu",
+            "san jose st.",
+            "SAN JOSE ST.",
+            "sanjosest"
         ],
         "267": [
             "Santa Clara",
             "Broncos",
-            "SCU"
+            "SCU",
+            "santa clara",
+            "SANTA CLARA",
+            "broncos",
+            "BRONCOS",
+            "scu",
+            "santaclara"
         ],
         "268": [
             "Seattle",
             "Redhawks",
-            "SEA"
+            "SEA",
+            "seattle",
+            "SEATTLE",
+            "redhawks",
+            "REDHAWKS",
+            "sea"
         ],
         "269": [
             "Seton Hall",
             "Pirates",
-            "SETON"
+            "SETON",
+            "seton hall",
+            "SETON HALL",
+            "pirates",
+            "PIRATES",
+            "seton",
+            "setonhall"
         ],
         "270": [
             "Siena",
             "Saints",
-            "SIENA"
+            "SIENA",
+            "siena",
+            "saints",
+            "SAINTS"
         ],
         "271": [
             "Jaguars",
             "South Alabama",
-            "USA"
+            "USA",
+            "jaguars",
+            "JAGUARS",
+            "south alabama",
+            "SOUTH ALABAMA",
+            "usa",
+            "southalabama"
         ],
         "272": [
             "SOCAR",
             "Gamecocks",
             "South Carolina",
             "SC",
-            "SCAR"
+            "SCAR",
+            "socar",
+            "gamecocks",
+            "GAMECOCKS",
+            "south carolina",
+            "SOUTH CAROLINA",
+            "sc",
+            "scar",
+            "southcarolina"
         ],
         "273": [
             "South Carolina State",
             "SCSU",
             "Bulldogs",
-            "SCST"
+            "SCST",
+            "South Carolina St.",
+            "south carolina state",
+            "SOUTH CAROLINA STATE",
+            "scsu",
+            "bulldogs",
+            "BULLDOGS",
+            "scst",
+            "south carolina st.",
+            "SOUTH CAROLINA ST.",
+            "southcarolinast"
         ],
         "274": [
             "SDAK",
             "SODAK",
             "South Dakota",
-            "Coyotes"
+            "Coyotes",
+            "sdak",
+            "sodak",
+            "south dakota",
+            "SOUTH DAKOTA",
+            "coyotes",
+            "COYOTES",
+            "southdakota"
         ],
         "275": [
             "Jackrabbits",
@@ -2221,511 +4090,1049 @@
             "SDSU",
             "SDKSU",
             "SDAKST",
-            "S. Dak. St."
+            "S. Dak. St.",
+            "South Dakota St.",
+            "jackrabbits",
+            "JACKRABBITS",
+            "south dakota state",
+            "SOUTH DAKOTA STATE",
+            "sdsu",
+            "sdksu",
+            "sdakst",
+            "s. dak. st.",
+            "S. DAK. ST.",
+            "south dakota st.",
+            "SOUTH DAKOTA ST.",
+            "southdakotast"
         ],
         "276": [
             "South Florida",
             "USF",
             "Bulls",
-            "USOFL"
-        ],
-        "251": [
-            "Southeast Missouri State",
-            "Redhawks",
-            "SEMO"
+            "USOFL",
+            "south florida",
+            "SOUTH FLORIDA",
+            "usf",
+            "bulls",
+            "BULLS",
+            "usofl",
+            "southflorida"
         ],
         "277": [
             "Southeastern Louisiana",
             "Lions",
             "SELU",
-            "SELA"
+            "SELA",
+            "southeastern louisiana",
+            "SOUTHEASTERN LOUISIANA",
+            "lions",
+            "LIONS",
+            "selu",
+            "sela",
+            "southeasternlouisiana"
         ],
         "278": [
             "Southern",
             "Jaguars",
             "SUBR",
-            "STHRN"
+            "STHRN",
+            "southern",
+            "SOUTHERN",
+            "jaguars",
+            "JAGUARS",
+            "subr",
+            "sthrn"
         ],
         "279": [
             "SOILL",
             "SIU",
             "Salukis",
-            "Southern Illinois"
+            "Southern Illinois",
+            "soill",
+            "siu",
+            "salukis",
+            "SALUKIS",
+            "southern illinois",
+            "SOUTHERN ILLINOIS",
+            "southernillinois"
         ],
         "280": [
             "Southern Indiana",
             "Screaming Eagles",
-            "USI"
-        ],
-        "253": [
-            "Southern Methodist",
-            "Mustangs",
-            "SMU"
+            "USI",
+            "southern indiana",
+            "SOUTHERN INDIANA",
+            "screaming eagles",
+            "SCREAMING EAGLES",
+            "usi",
+            "southernindiana"
         ],
         "281": [
             "Southern Mississippi",
             "Golden Eagles",
-            "SOMIS"
+            "SOMIS",
+            "Southern Miss",
+            "southern mississippi",
+            "SOUTHERN MISSISSIPPI",
+            "golden eagles",
+            "GOLDEN EAGLES",
+            "somis",
+            "southern miss",
+            "SOUTHERN MISS",
+            "southernmiss"
         ],
         "282": [
             "Thunderbirds",
             "SUU",
-            "Southern Utah"
+            "Southern Utah",
+            "thunderbirds",
+            "THUNDERBIRDS",
+            "suu",
+            "southern utah",
+            "SOUTHERN UTAH",
+            "southernutah"
         ],
         "283": [
             "St. Bonaventure",
             "Bonnies",
-            "STBN"
-        ],
-        "256": [
-            "SFU",
-            "Red Flash",
-            "St. Francis (PA)",
-            "STFPA"
+            "STBN",
+            "st. bonaventure",
+            "ST. BONAVENTURE",
+            "bonnies",
+            "BONNIES",
+            "stbn",
+            "stbonaventure"
         ],
         "284": [
             "St. John's",
             "Red Storm",
-            "STJ"
+            "STJ",
+            "st. john's",
+            "ST. JOHN'S",
+            "red storm",
+            "RED STORM",
+            "stj",
+            "stjohn's"
         ],
         "285": [
             "St. Thomas",
             "Tommies",
             "STTOM",
-            "STTHMN"
+            "STTHMN",
+            "st. thomas",
+            "ST. THOMAS",
+            "tommies",
+            "TOMMIES",
+            "sttom",
+            "stthmn",
+            "stthomas"
         ],
         "286": [
             "Stanford",
             "STAN",
-            "Cardinal"
+            "Cardinal",
+            "stanford",
+            "STANFORD",
+            "stan",
+            "cardinal",
+            "CARDINAL"
         ],
         "287": [
             "Lumberjacks",
             "Stephen F. Austin",
-            "SFA"
+            "SFA",
+            "lumberjacks",
+            "LUMBERJACKS",
+            "stephen f. austin",
+            "STEPHEN F. AUSTIN",
+            "sfa",
+            "stephenfaustin"
         ],
         "288": [
             "Stetson",
             "Hatters",
-            "STET"
+            "STET",
+            "stetson",
+            "STETSON",
+            "hatters",
+            "HATTERS",
+            "stet"
         ],
         "289": [
             "Stonehill",
             "Skyhawks",
             "STONE",
-            "STONEH"
+            "STONEH",
+            "stonehill",
+            "STONEHILL",
+            "skyhawks",
+            "SKYHAWKS",
+            "stone",
+            "stoneh"
         ],
         "290": [
             "SB",
             "Seawolves",
             "STON",
-            "Stony Brook"
+            "Stony Brook",
+            "sb",
+            "seawolves",
+            "SEAWOLVES",
+            "ston",
+            "stony brook",
+            "STONY BROOK",
+            "stonybrook"
         ],
         "291": [
             "SYR",
             "SYRA",
             "Syracuse",
             "Orange",
-            "CUSE"
+            "CUSE",
+            "syr",
+            "syra",
+            "syracuse",
+            "SYRACUSE",
+            "orange",
+            "ORANGE",
+            "cuse"
         ],
         "292": [
             "TCU",
-            "Horned Frogs"
+            "Horned Frogs",
+            "tcu",
+            "horned frogs",
+            "HORNED FROGS"
         ],
-        "2923": [
+        "293": [
             "Tarleton State",
             "Texans",
-            "TARST"
+            "TARST",
+            "Tarleton St.",
+            "tarleton state",
+            "TARLETON STATE",
+            "texans",
+            "TEXANS",
+            "tarst",
+            "tarleton st.",
+            "TARLETON ST.",
+            "tarletonst"
         ],
         "294": [
             "Temple",
             "TEM",
-            "Owls"
+            "Owls",
+            "temple",
+            "TEMPLE",
+            "tem",
+            "owls",
+            "OWLS"
         ],
         "295": [
             "Volunteers",
             "Tennessee",
-            "TENN"
+            "TENN",
+            "volunteers",
+            "VOLUNTEERS",
+            "tennessee",
+            "TENNESSEE",
+            "tenn"
+        ],
+        "296": [
+            "Skyhawks",
+            "UTM",
+            "Tennessee-Martin",
+            "Tennessee Martin",
+            "skyhawks",
+            "SKYHAWKS",
+            "utm",
+            "tennessee-martin",
+            "TENNESSEE-MARTIN",
+            "tennessee martin",
+            "TENNESSEE MARTIN",
+            "tennesseemartin"
         ],
         "297": [
             "Tigers",
             "TNST",
-            "Tennessee State"
+            "Tennessee State",
+            "Tennessee St.",
+            "tigers",
+            "TIGERS",
+            "tnst",
+            "tennessee state",
+            "TENNESSEE STATE",
+            "tennessee st.",
+            "TENNESSEE ST.",
+            "tennesseest"
         ],
         "298": [
             "Golden Eagles",
             "TNTC",
             "TNTCH",
-            "Tennessee Tech"
-        ],
-        "296": [
-            "Skyhawks",
-            "UTM",
-            "Tennessee-Martin"
+            "Tennessee Tech",
+            "golden eagles",
+            "GOLDEN EAGLES",
+            "tntc",
+            "tntch",
+            "tennessee tech",
+            "TENNESSEE TECH",
+            "tennesseetech"
         ],
         "299": [
             "Longhorns",
             "Texas",
             "TEX",
-            "TEXAS"
+            "TEXAS",
+            "longhorns",
+            "LONGHORNS",
+            "texas",
+            "tex"
         ],
         "300": [
             "Texas A&M",
             "Aggies",
-            "TAMU"
+            "TAMU",
+            "texas a&m",
+            "TEXAS A&M",
+            "aggies",
+            "AGGIES",
+            "tamu",
+            "texasa&m"
         ],
         "301": [
             "Texas A&M-CC",
             "Islanders",
             "TAMU-CC",
             "TX A&M-CC",
-            "TXAMCC"
+            "TXAMCC",
+            "Texas A&M Corpus Chris",
+            "texas a&m-cc",
+            "TEXAS A&M-CC",
+            "islanders",
+            "ISLANDERS",
+            "tamu-cc",
+            "tx a&m-cc",
+            "txamcc",
+            "texas a&m corpus chris",
+            "TEXAS A&M CORPUS CHRIS",
+            "texasa&mcorpuschris"
         ],
         "302": [
             "Tigers",
             "Texas Southern",
             "TEXSO",
-            "TXSO"
+            "TXSO",
+            "tigers",
+            "TIGERS",
+            "texas southern",
+            "TEXAS SOUTHERN",
+            "texso",
+            "txso",
+            "texassouthern"
         ],
         "303": [
             "Texas State",
             "Bobcats",
-            "TXST"
+            "TXST",
+            "Texas St.",
+            "texas state",
+            "TEXAS STATE",
+            "bobcats",
+            "BOBCATS",
+            "txst",
+            "texas st.",
+            "TEXAS ST.",
+            "texasst"
         ],
         "304": [
             "Red Raiders",
             "Texas Tech",
             "TTU",
-            "TXTCH"
-        ],
-        "328": [
-            "Texas-Arlington",
-            "Mavericks",
-            "UTA",
-            "TXARL"
-        ],
-        "329": [
-            "Texas-RGV",
-            "Vaqueros",
-            "UTRGV",
-            "TEXPA",
-            "UT-Rio Grande Valley"
-        ],
-        "331": [
-            "Texas-San Antonio",
-            "Roadrunners",
-            "UTSA"
+            "TXTCH",
+            "red raiders",
+            "RED RAIDERS",
+            "texas tech",
+            "TEXAS TECH",
+            "ttu",
+            "txtch",
+            "texastech"
         ],
         "305": [
             "The Citadel",
             "CTDL",
             "CIT",
-            "Bulldogs"
+            "Bulldogs",
+            "the citadel",
+            "THE CITADEL",
+            "ctdl",
+            "cit",
+            "bulldogs",
+            "BULLDOGS",
+            "thecitadel"
         ],
         "306": [
             "U of T",
             "TOL",
             "TOLEDO",
             "Rockets",
-            "Toledo"
+            "Toledo",
+            "u of t",
+            "U OF T",
+            "tol",
+            "toledo",
+            "rockets",
+            "ROCKETS"
         ],
         "307": [
             "Tigers",
             "TOWS",
-            "Towson"
+            "Towson",
+            "tigers",
+            "TIGERS",
+            "tows",
+            "towson",
+            "TOWSON"
         ],
         "308": [
             "Troy",
             "Trojans",
-            "TROY"
+            "TROY",
+            "troy",
+            "trojans",
+            "TROJANS"
         ],
         "309": [
             "Green Wave",
             "Tulane",
             "TULN",
-            "TULAN"
+            "TULAN",
+            "green wave",
+            "GREEN WAVE",
+            "tulane",
+            "TULANE",
+            "tuln",
+            "tulan"
         ],
         "310": [
             "Tulsa",
             "TLSA",
             "TULSA",
-            "Golden Hurricane"
+            "Golden Hurricane",
+            "tulsa",
+            "tlsa",
+            "golden hurricane",
+            "GOLDEN HURRICANE"
         ],
         "311": [
             "UAB",
             "Blazers",
-            "UAB"
+            "UAB",
+            "uab",
+            "blazers",
+            "BLAZERS"
         ],
         "312": [
             "UC Davis",
             "Aggies",
-            "UCD"
+            "UCD",
+            "uc davis",
+            "UC DAVIS",
+            "aggies",
+            "AGGIES",
+            "ucd",
+            "ucdavis"
         ],
         "313": [
             "UC Irvine",
             "Anteaters",
-            "UCI"
+            "UCI",
+            "uc irvine",
+            "UC IRVINE",
+            "anteaters",
+            "ANTEATERS",
+            "uci",
+            "ucirvine"
         ],
         "314": [
             "UC Riverside",
             "Highlanders",
-            "UCR"
+            "UCR",
+            "uc riverside",
+            "UC RIVERSIDE",
+            "highlanders",
+            "HIGHLANDERS",
+            "ucr",
+            "ucriverside"
         ],
         "315": [
             "UC San Diego",
             "Tritons",
-            "UCSD"
+            "UCSD",
+            "uc san diego",
+            "UC SAN DIEGO",
+            "tritons",
+            "TRITONS",
+            "ucsd",
+            "ucsandiego"
         ],
         "316": [
             "UC Santa Barbara",
             "Gauchos",
-            "UCSB"
+            "UCSB",
+            "uc santa barbara",
+            "UC SANTA BARBARA",
+            "gauchos",
+            "GAUCHOS",
+            "ucsb",
+            "ucsantabarbara"
         ],
         "317": [
             "UCF",
-            "Knights"
+            "Knights",
+            "ucf",
+            "knights",
+            "KNIGHTS"
         ],
         "318": [
             "Bruins",
-            "UCLA"
-        ],
-        "59": [
-            "UConn",
-            "Huskies",
-            "CONN",
-            "UCONN",
-            "Connecticut"
+            "UCLA",
+            "bruins",
+            "BRUINS",
+            "ucla"
         ],
         "319": [
             "UMBC",
             "Retrievers",
-            "UMBC"
+            "UMBC",
+            "umbc",
+            "retrievers",
+            "RETRIEVERS"
         ],
         "320": [
             "UMKC",
             "Kangaroos",
-            "UMKC"
+            "UMKC",
+            "umkc",
+            "kangaroos",
+            "KANGAROOS"
         ],
         "321": [
             "UMass Lowell",
             "River Hawks",
-            "UML"
+            "UML",
+            "umass lowell",
+            "UMASS LOWELL",
+            "river hawks",
+            "RIVER HAWKS",
+            "uml",
+            "umasslowell"
         ],
         "322": [
             "UNC Asheville",
             "Bulldogs",
             "UNCA",
-            "NCASHV"
+            "NCASHV",
+            "unc asheville",
+            "UNC ASHEVILLE",
+            "bulldogs",
+            "BULLDOGS",
+            "unca",
+            "ncashv",
+            "uncasheville"
         ],
         "323": [
             "UNC Greensboro",
             "Spartans",
             "UNCG",
-            "NCGRN"
+            "NCGRN",
+            "unc greensboro",
+            "UNC GREENSBORO",
+            "spartans",
+            "SPARTANS",
+            "uncg",
+            "ncgrn",
+            "uncgreensboro"
         ],
         "324": [
             "UNC Wilmington",
             "Seahawks",
-            "UNCW"
+            "UNCW",
+            "unc wilmington",
+            "UNC WILMINGTON",
+            "seahawks",
+            "SEAHAWKS",
+            "uncw",
+            "uncwilmington"
         ],
         "325": [
             "Runnin' Rebels",
-            "UNLV"
+            "UNLV",
+            "runnin' rebels",
+            "RUNNIN' REBELS",
+            "unlv"
         ],
         "326": [
             "Trojans",
-            "USC"
+            "USC",
+            "trojans",
+            "TROJANS",
+            "usc"
         ],
         "327": [
             "USC Upstate",
             "Spartans",
             "USCU",
-            "USCUP"
+            "USCUP",
+            "usc upstate",
+            "USC UPSTATE",
+            "spartans",
+            "SPARTANS",
+            "uscu",
+            "uscup",
+            "uscupstate"
+        ],
+        "328": [
+            "Texas-Arlington",
+            "Mavericks",
+            "UTA",
+            "TXARL",
+            "UT Arlington",
+            "texas-arlington",
+            "TEXAS-ARLINGTON",
+            "mavericks",
+            "MAVERICKS",
+            "uta",
+            "txarl",
+            "ut arlington",
+            "UT ARLINGTON",
+            "utarlington"
+        ],
+        "329": [
+            "Texas-RGV",
+            "Vaqueros",
+            "UTRGV",
+            "TEXPA",
+            "UT-Rio Grande Valley",
+            "UT Rio Grande Valley",
+            "texas-rgv",
+            "TEXAS-RGV",
+            "vaqueros",
+            "VAQUEROS",
+            "utrgv",
+            "texpa",
+            "ut-rio grande valley",
+            "UT-RIO GRANDE VALLEY",
+            "ut rio grande valley",
+            "UT RIO GRANDE VALLEY",
+            "utriograndevalley"
         ],
         "330": [
             "UTEP",
-            "Miners"
+            "Miners",
+            "utep",
+            "miners",
+            "MINERS"
+        ],
+        "331": [
+            "Texas-San Antonio",
+            "Roadrunners",
+            "UTSA",
+            "texas-san antonio",
+            "TEXAS-SAN ANTONIO",
+            "roadrunners",
+            "ROADRUNNERS",
+            "utsa"
         ],
         "332": [
             "U of U",
             "Utah",
             "Utes",
-            "UTAH"
+            "UTAH",
+            "u of u",
+            "U OF U",
+            "utah",
+            "utes",
+            "UTES"
         ],
         "333": [
             "Utah State",
             "Aggies",
-            "USU"
+            "USU",
+            "Utah St.",
+            "utah state",
+            "UTAH STATE",
+            "aggies",
+            "AGGIES",
+            "usu",
+            "utah st.",
+            "UTAH ST.",
+            "utahst"
         ],
         "334": [
             "Utah Tech",
             "Trailblazers",
-            "UTECH"
+            "UTECH",
+            "utah tech",
+            "UTAH TECH",
+            "trailblazers",
+            "TRAILBLAZERS",
+            "utech",
+            "utahtech"
         ],
         "335": [
             "Utah Valley",
             "Wolverines",
-            "UVU"
+            "UVU",
+            "utah valley",
+            "UTAH VALLEY",
+            "wolverines",
+            "WOLVERINES",
+            "uvu",
+            "utahvalley"
         ],
         "336": [
             "VCU",
             "Rams",
-            "VCU"
+            "VCU",
+            "vcu",
+            "rams",
+            "RAMS"
+        ],
+        "337": [
+            "Virginia Military",
+            "Keydets",
+            "VMI",
+            "virginia military",
+            "VIRGINIA MILITARY",
+            "keydets",
+            "KEYDETS",
+            "vmi"
         ],
         "338": [
             "VALP",
             "Beacons",
             "VAL",
-            "Valparaiso"
+            "Valparaiso",
+            "valp",
+            "beacons",
+            "BEACONS",
+            "val",
+            "valparaiso",
+            "VALPARAISO"
         ],
         "339": [
             "VAN",
             "VANDY",
             "Vanderbilt",
-            "Commodores"
+            "Commodores",
+            "van",
+            "vandy",
+            "vanderbilt",
+            "VANDERBILT",
+            "commodores",
+            "COMMODORES"
         ],
         "340": [
             "Vermont",
             "Catamounts",
-            "UVM"
+            "UVM",
+            "vermont",
+            "VERMONT",
+            "catamounts",
+            "CATAMOUNTS",
+            "uvm"
         ],
         "341": [
             "Wildcats",
             "NOVA",
             "VILL",
-            "Villanova"
+            "Villanova",
+            "wildcats",
+            "WILDCATS",
+            "nova",
+            "vill",
+            "villanova",
+            "VILLANOVA"
         ],
         "342": [
             "UVA",
             "Cavaliers",
-            "Virginia"
-        ],
-        "337": [
-            "Virginia Military",
-            "Keydets",
-            "VMI"
+            "Virginia",
+            "uva",
+            "cavaliers",
+            "CAVALIERS",
+            "virginia",
+            "VIRGINIA"
         ],
         "343": [
             "Hokies",
             "VT",
             "Virginia Tech",
-            "VATECH"
+            "VATECH",
+            "hokies",
+            "HOKIES",
+            "vt",
+            "virginia tech",
+            "VIRGINIA TECH",
+            "vatech",
+            "virginiatech"
         ],
         "344": [
             "Wagner",
             "Seahawks",
             "WAGNR",
             "WAG",
-            "WAGNER"
+            "WAGNER",
+            "wagner",
+            "seahawks",
+            "SEAHAWKS",
+            "wagnr",
+            "wag"
         ],
         "345": [
             "WAKE",
             "Wake Forest",
             "Demon Deacons",
-            "WF"
+            "WF",
+            "wake",
+            "wake forest",
+            "WAKE FOREST",
+            "demon deacons",
+            "DEMON DEACONS",
+            "wf",
+            "wakeforest"
         ],
         "346": [
             "UWASH",
             "WASH",
             "UW",
             "Huskies",
-            "Washington"
+            "Washington",
+            "uwash",
+            "wash",
+            "uw",
+            "huskies",
+            "HUSKIES",
+            "washington",
+            "WASHINGTON"
         ],
         "347": [
             "Cougars",
             "WSU",
-            "Washington State"
+            "Washington State",
+            "Washington St.",
+            "cougars",
+            "COUGARS",
+            "wsu",
+            "washington state",
+            "WASHINGTON STATE",
+            "washington st.",
+            "WASHINGTON ST.",
+            "washingtonst"
         ],
         "348": [
             "WEB",
             "WEBER",
             "Weber State",
-            "Wildcats"
+            "Wildcats",
+            "Weber St.",
+            "web",
+            "weber",
+            "weber state",
+            "WEBER STATE",
+            "wildcats",
+            "WILDCATS",
+            "weber st.",
+            "WEBER ST.",
+            "weberst"
         ],
         "349": [
             "West Georgia",
             "Wolves",
-            "UWG"
+            "UWG",
+            "west georgia",
+            "WEST GEORGIA",
+            "wolves",
+            "WOLVES",
+            "uwg",
+            "westgeorgia"
         ],
         "350": [
             "Mountaineers",
             "WVU",
-            "West Virginia"
+            "West Virginia",
+            "mountaineers",
+            "MOUNTAINEERS",
+            "wvu",
+            "west virginia",
+            "WEST VIRGINIA",
+            "westvirginia"
         ],
         "351": [
             "Catamounts",
             "WCU",
             "Western Carolina",
-            "WCAR"
+            "WCAR",
+            "catamounts",
+            "CATAMOUNTS",
+            "wcu",
+            "western carolina",
+            "WESTERN CAROLINA",
+            "wcar",
+            "westerncarolina"
         ],
         "352": [
             "Western Illinois",
             "Leathernecks",
-            "WIU"
+            "WIU",
+            "western illinois",
+            "WESTERN ILLINOIS",
+            "leathernecks",
+            "LEATHERNECKS",
+            "wiu",
+            "westernillinois"
         ],
         "353": [
             "Western Kentucky",
             "Hilltoppers",
-            "WKU"
+            "WKU",
+            "western kentucky",
+            "WESTERN KENTUCKY",
+            "hilltoppers",
+            "HILLTOPPERS",
+            "wku",
+            "westernkentucky"
         ],
         "354": [
             "WMY",
             "WMU",
             "Western Michigan",
-            "Broncos"
+            "Broncos",
+            "wmy",
+            "wmu",
+            "western michigan",
+            "WESTERN MICHIGAN",
+            "broncos",
+            "BRONCOS",
+            "westernmichigan"
         ],
         "355": [
             "Wichita State",
             "Shockers",
-            "WICHI"
+            "WICHI",
+            "Wichita St.",
+            "wichita state",
+            "WICHITA STATE",
+            "shockers",
+            "SHOCKERS",
+            "wichi",
+            "wichita st.",
+            "WICHITA ST.",
+            "wichitast"
         ],
         "356": [
             "William & Mary",
             "W&M",
-            "Tribe"
+            "Tribe",
+            "william & mary",
+            "WILLIAM & MARY",
+            "w&m",
+            "tribe",
+            "TRIBE",
+            "william&mary"
         ],
         "357": [
             "Winthrop",
             "Eagles",
-            "WIN"
+            "WIN",
+            "winthrop",
+            "WINTHROP",
+            "eagles",
+            "EAGLES",
+            "win"
         ],
         "358": [
             "WIS",
             "UWISC",
             "Badgers",
-            "Wisconsin"
+            "Wisconsin",
+            "wis",
+            "uwisc",
+            "badgers",
+            "BADGERS",
+            "wisconsin",
+            "WISCONSIN"
         ],
         "359": [
             "Wofford",
             "WOF",
             "WOFF",
-            "Terriers"
+            "Terriers",
+            "wofford",
+            "WOFFORD",
+            "wof",
+            "woff",
+            "terriers",
+            "TERRIERS"
         ],
         "360": [
             "Wright State",
             "Raiders",
-            "WRST"
+            "WRST",
+            "Wright St.",
+            "wright state",
+            "WRIGHT STATE",
+            "raiders",
+            "RAIDERS",
+            "wrst",
+            "wright st.",
+            "WRIGHT ST.",
+            "wrightst"
         ],
         "361": [
             "WYO",
             "Cowboys",
             "Wyoming",
-            "UWYOM"
+            "UWYOM",
+            "wyo",
+            "cowboys",
+            "COWBOYS",
+            "wyoming",
+            "WYOMING",
+            "uwyom"
         ],
         "362": [
             "Xavier",
             "Musketeers",
-            "XAV"
+            "XAV",
+            "xavier",
+            "XAVIER",
+            "musketeers",
+            "MUSKETEERS",
+            "xav"
         ],
         "363": [
             "Yale",
             "Bulldogs",
-            "YALE"
+            "YALE",
+            "yale",
+            "bulldogs",
+            "BULLDOGS"
         ],
         "364": [
             "Penguins",
             "YSU",
-            "Youngstown State"
+            "Youngstown State",
+            "Youngstown St.",
+            "penguins",
+            "PENGUINS",
+            "ysu",
+            "youngstown state",
+            "YOUNGSTOWN STATE",
+            "youngstown st.",
+            "YOUNGSTOWN ST.",
+            "youngstownst"
         ]
     }
 }
