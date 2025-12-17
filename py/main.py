@@ -38,18 +38,15 @@ update_about = 0
 save_model = 0
 if save_model:
     torvik_df = utils.load_json_data(torvik_dataset_path)
-    with open('model_data/kenpom_all.json', 'r', encoding='utf-8') as f:
+    with open("model_data/kenpom_all.json", "r", encoding="utf-8") as f:
         data = json.load(f)
     kenpom_df = pd.DataFrame(data, columns=constants.kenpom)
     model.trainModelsAndSave(torvik_df, update_about)
-    print(f'Torvik training took: {(datetime.now() - start).total_seconds()}')
+    print(f"Torvik training took: {(datetime.now() - start).total_seconds()}")
     kenpom_model.trainModelsAndSave(kenpom_df)
-    print(f'Kenpom training took: {(datetime.now() - start).total_seconds()}')
+    print(f"Kenpom training took: {(datetime.now() - start).total_seconds()}")
 
 today_df = predictions.predict(date.today())
 
 games = scraper.today_games(today_df)
 generate_home.generate_home_about(games, False)
-
-
-
