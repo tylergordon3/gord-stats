@@ -27,6 +27,8 @@ KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 
 
+
+
 def getMasterTeams():
     df_back = pd.read_json(utils.get_path("data/teams/master.json"))
     return df_back
@@ -34,6 +36,23 @@ def getMasterTeams():
 
 def saveMasterTeams(df):
     df.to_json(utils.get_path("data/teams/master.json"))
+
+def get_image_name(team):
+    master = getMasterTeams()
+    names = list(master[master['team'] == team]['names'])[0]
+    dict_idx = list(master[master['team'] == team]['index'])[0]
+    img_path = utils.get_path('docs/assets/images')
+    files = os.listdir(img_path)
+    files_strip = [x[:-4] for x in files]
+    master['path'] = ''
+    for index, file in enumerate(files_strip):
+        if file in names:
+            return files[index]
+
+master = getMasterTeams()
+master['path'] = master.apply(lambda x: get_image_name(x.team), axis=1)
+saveMasterTeams(master)
+
 
 
 def getHTML(link, retries=5, base_delay=1.0):
