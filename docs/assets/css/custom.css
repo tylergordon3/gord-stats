@@ -181,15 +181,20 @@
 }
 
 /* Final games */
-.meta.final {
-  background: #e9f2ff;
-  color: #1b4fc7;
+.meta-final {
+  background: #16a34a;
+  color: white;
 }
 
 /* Live games */
-.meta.live {
-  background: #ffecec;
-  color: #b00020;
+.meta-live {
+  color: #ffecec;
+  background: #db8946;
+}
+
+.meta-upcoming {
+  background: #e5e7eb;
+  color: #111827;
 }
 
 @media (max-width: 360px) {

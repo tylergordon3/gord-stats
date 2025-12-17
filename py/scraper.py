@@ -47,29 +47,48 @@ def getHTML(link, retries=5, base_delay=1.0):
     print('getHTML returning None')
     return None  # if all retries fail
 
-def get_rank1(row, rank_df, master):
-    [index, code_name] = getNameFromCode(row.code1, master)
+def get_rank(row, rank_df, master, bin):
+    if bin == 1:
+        [index, code_name] = getNameFromCode(row.code1, master)
 
-    rank_row = rank_df.loc[
-        (rank_df['Team'] == row.team1) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
-    ]
+        rank_row = rank_df.loc[
+            (rank_df['Team'] == row.team1) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
+        ]
 
-    if rank_row.empty:
-        pass
+        if rank_row.empty:
+            pass
+        else:
+            return list(rank_row['Overall'])[0]
+    else: 
+        [index, code_name]  = getNameFromCode(row.code2, master)
+        rank_row = rank_df.loc[
+            (rank_df['Team'] == row.team2) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
+        ]
+    
+        if rank_row.empty:
+            return 
+        else:
+            return list(rank_row['Overall'])[0]
+
+def getConf(row, rank_df, master, bin):
+    if bin == 1:
+        [index, code_name]  = getNameFromCode(row.code1, master)
+        rank_row = rank_df.loc[
+            (rank_df['Team'] == row.team1) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
+        ]
+        if rank_row.empty:
+            return 
+        else:
+            return list(rank_row['Conf'])[0]
     else:
-        return list(rank_row['Overall'])[0]
-
-
-def get_rank2(row, rank_df, master):
-    [index, code_name]  = getNameFromCode(row.code2, master)
-    rank_row = rank_df.loc[
-        (rank_df['Team'] == row.team2) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
-    ]
- 
-    if rank_row.empty:
-        return 
-    else:
-        return list(rank_row['Overall'])[0]
+        [index, code_name]  = getNameFromCode(row.code2, master)
+        rank_row = rank_df.loc[
+            (rank_df['Team'] == row.team2) | (rank_df['Team'] == code_name) | (rank_df['index'] == index)
+        ]
+        if rank_row.empty:
+            return 
+        else:
+            return list(rank_row['Conf'])[0]
 
 def getNameFromCode(code, master):
     s_exploded = master['names'].explode()
@@ -97,7 +116,6 @@ def today_games(rank_df):
                   
     games = soup.find_all("div", class_ = "CellGame")
     
-    #times = [game.find('a').text.strip() for game in games]
     times = [
         game.find('a').text.strip()
         for game in games
@@ -125,20 +143,29 @@ def today_games(rank_df):
         dict = {'team1' : team1.text.strip(), 'code1' : codes_1, 'team2' : team2.text.strip(), 'code2': codes_2, 'time' : time}
         add = pd.DataFrame([dict])
         sched_df = pd.concat([sched_df, add], ignore_index=True)
-    print(sched_df)
+
     master = getMasterTeams()
-    
-    sched_df['team1_rank'] = sched_df.apply(lambda x: get_rank1(x, rank_df, master), axis = 1)
-    sched_df['team2_rank'] = sched_df.apply(lambda x: get_rank2(x, rank_df, master), axis = 1)
+    sched_df['team1_rank'] = sched_df.apply(lambda x: get_rank(x, rank_df, master, 1), axis = 1)
+    sched_df['team2_rank'] = sched_df.apply(lambda x: get_rank(x, rank_df, master, 2), axis = 1)
     sched_df["team1_rank"] = sched_df["team1_rank"].apply(
         lambda x: int(x) if pd.notna(x) else "N/A"
     )
     sched_df["team2_rank"] = sched_df["team2_rank"].apply(
         lambda x: int(x) if pd.notna(x) else "N/A"
     )
+    sched_df['team1_conf'] = sched_df.apply(lambda x: getConf(x, rank_df, master, 1), axis=1)
+    sched_df['team2_conf'] = sched_df.apply(lambda x: getConf(x, rank_df, master, 2), axis=1)
+    
+    power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
 
+    p5_df = sched_df[(sched_df['team1_conf'].isin(power_conf))  & (sched_df['team2_conf'].isin(power_conf))]
+    sched_df = sched_df.drop(index=p5_df.index)
+  
     output_df = sched_df[['team1_rank', 'team1', 'team2', 'team2_rank', 'time']]
     output_df = output_df.rename(columns={"team1_rank" : "A Rank", "team1" : "Away", "team2" : "Home", "team2_rank" : "H Rank", "time" : "Time/Final"})
+
+    p5_df = p5_df[['team1_rank', 'team1', 'team2', 'team2_rank', 'time']]
+    p5_df = p5_df.rename(columns={"team1_rank" : "A Rank", "team1" : "Away", "team2" : "Home", "team2_rank" : "H Rank", "time" : "Time/Final"})
 
     def fmt_team(team, rank):
         if rank == "N/A":
@@ -147,11 +174,12 @@ def today_games(rank_df):
     
     def meta_class(val):
         val = str(val).lower()
-        if "final" in val:
-            return "meta final"
-        if ":" not in val:
-            return "meta live"
-        return "meta"
+
+        if ":" in val:
+            return "meta meta-upcoming"    # GREEN
+        if "," not in val:
+            return "meta meta-final"    # GREEN
+        return "meta meta-live"    # scheduled
     
     output_df["matchup_html"] = output_df.apply(
         lambda r: f"""
@@ -169,8 +197,31 @@ def today_games(rank_df):
         axis=1
     )
 
-    html = "\n".join(output_df["matchup_html"])
+    p5_df["matchup_html"] = p5_df.apply(
+        lambda r: f"""
+        <div class="matchup">
+        <div class="teams">
+            <span class="team">{fmt_team(r['Away'], r['A Rank'])}</span>
+            <span class="at">@</span>
+            <span class="team">{fmt_team(r['Home'], r['H Rank'])}</span>
+        </div>
+        <div class="{meta_class(r['Time/Final'])}">
+            {r['Time/Final']}
+        </div>
+        </div>
+        """,
+        axis=1
+    )
 
+    html_other = "\n".join(output_df["matchup_html"])
+    html_p5 = "\n".join(p5_df["matchup_html"])
+
+    html = f'''
+    <h3>Power 5 Games</h3>
+    {html_p5}
+    <h3>All Other D1 Games</h3>
+    {html_other}
+    '''
     return html
 
 def update_master():
