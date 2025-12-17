@@ -57,7 +57,7 @@ torvik_women = [
     "Team",
     "Seed",
     "Finish",
-    "TOURNEY",
+    "Tourney",
     "Year",
     "Conf",
     "G",

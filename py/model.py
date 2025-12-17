@@ -72,20 +72,27 @@ def splitData(cbb, ind):
     return [X_train, X_test, y_train, y_test, cbb_features]
 
 def chiSquared(df):
-    cbb = df.drop(columns=['TEAM', 'CONF', 'POSTSEASON', 'SEED', 'YEAR', 
-                           'G', 'W', 'BARTHAG', 'WAB'])
-   
+    try:
+        cbb = df.drop(columns=['TEAM', 'CONF', 'POSTSEASON', 'SEED', 'YEAR', 
+                            'G', 'W', 'BARTHAG', 'WAB'])
+    except:
+         # women's data - I'm lazy!
+         cbb = df.drop(columns=['Team', 'Conf', 'Finish', 'Seed', 'Year', 
+                            'G', 'Rec', 'Barthag', 'WAB', 'Tourney', 'Rk'])
     cbb_features = cbb.iloc[:,:-1]
+    print(cbb)
+    print(cbb_features)  
     ind = []
     dep = []
     pval = []
     for col in cbb_features:
-        csq = chi2_contingency(pd.crosstab(cbb[col], cbb['TOURNEY']))
+        csq = chi2_contingency(pd.crosstab(cbb[col], cbb['TOURNEY'].astype(bool)))
         pval.append(csq[1])
         if csq[1] > .05:
             ind.append(col)
         else:
             dep.append(col)
+    print(f'ind:  {ind} || dep: {dep}')
     return [cbb, ind, dep]
 
 
@@ -94,19 +101,19 @@ def runModels(X_train, X_test, y_train, y_test):
     init_forest = RandomForestClassifier(random_state=13)
     init_forest.fit(X_train, y_train)
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
-    forest_file = utils.get_path('models/forest_model.pkl')
+    forest_file = utils.get_path('models_w/wtor_forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
     print(f'Torvik Forest Model Training took: {(datetime.now() - start).total_seconds()}')
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
-    svc_file = utils.get_path('models/svc_model.pkl')
+    svc_file = utils.get_path('models_w/tor_svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
     print(f'Torvik SVC Model Training took: {(datetime.now() - start).total_seconds()}')
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
-    dt_file = utils.get_path('models/dt_model.pkl')
+    dt_file = utils.get_path('models_w/tor_dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
     print(f'Torvik Decision Tree Model Training took: {(datetime.now() - start).total_seconds()}')
 

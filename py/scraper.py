@@ -629,7 +629,7 @@ def torvik_w_hist():
                 if any(headers):
                     headers.insert(2, "Seed")
                     headers.insert(3, "Finish")
-                    headers.insert(4, "TOURNEY")
+                    headers.insert(4, "Tourney")
                     headers.insert(5, "Year")
             # --- Extract table rows ---
             rows = []
@@ -645,8 +645,8 @@ def torvik_w_hist():
                         cols.insert(4, True)
                         cols.insert(5, year)
                     else:
-                        cols.insert(2, "")
-                        cols.insert(3, "")
+                        cols.insert(2, False)
+                        cols.insert(3, False)
                         cols.insert(4, False)
                         cols.insert(5, year)
                     rows.append(cols)
