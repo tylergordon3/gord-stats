@@ -418,17 +418,18 @@ def predict(date):
             return [f"font-weight: normal"] * len(row)
     
     def image_formatter(url):
-        return f'<img src="{url}" width="100" >'
+        return f'<img src="{url}" width="30" >'
     
     def getUrl(x, save_df, master):
         save = list(save_df[save_df['Team'] == x['Team']].index)[0]
-        link = master.at[save, "path"]
-        return link
+        link = 'docs/assets/images/' + master.at[save, "path"]
+        path = utils.get_path(link)
+        return path
 
     master = scraper.getMasterTeams()
     df['img'] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
     df['Team'] = df.apply(lambda x: x.Team + image_formatter(x.img), axis=1)
-    print(df)
+    df = df.drop(columns=['img'])
     styler = (
         df
         .style
