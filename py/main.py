@@ -11,6 +11,8 @@ torvik_path = utils.get_path(f"data/torvik{today}.json")
 kenpom_path = utils.get_path(f"data/kenpom{today}.json")
 torvik_dataset_path = utils.get_path("model_data/cbb_data.json")
 kenpom_dataset_path = utils.get_path("model_data/kenpom_all.json")
+
+torvik_w_path = utils.get_path(f"data_w/torvik_w{today}.json")
 # Update data if not done for today
 if not os.path.exists(torvik_path):
     scraper.torvik(today)
@@ -19,6 +21,10 @@ if not os.path.exists(torvik_path):
 if not os.path.exists(kenpom_path):
     scraper.kenpom(today)
     print(f"Scraped Kenpom for: {today}")
+
+if not os.path.exists(torvik_w_path):
+    scraper.torvik_w(today)
+    print(f"Scraped Women's Torvik for: {today}")
 
 if not os.path.exists(torvik_dataset_path):
     model.initDataset()

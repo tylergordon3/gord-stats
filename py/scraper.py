@@ -516,3 +516,107 @@ def torvik(date):
         path = utils.get_path(f"data/torvik{date}.json")
         utils.save_json_data(output, path)
         browser.close()
+
+def torvik_w(date):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True) # Runs without a UI
+        page = browser.new_page()
+        page.goto("https://barttorvik.com/ncaaw/#")
+        time.sleep(5)
+        # --- Get the page source and parse with BeautifulSoup ---
+        html = page.content()
+        soup = BeautifulSoup(html, "html.parser")
+        # --- Extract table headers ---
+        table = soup.find("table")  # assumes one main table; adjust if multiple
+        headers = []
+
+        # Try <th> first
+        table_rows = table.find_all("tr")
+        header_row = table_rows[1]
+        if header_row:
+            # Grab text from either <th> or <td>
+            headers = [cell.get_text(strip=True) for cell in header_row.find_all(["th", "td"])]
+        # --- Extract table rows ---
+        rows = []
+        for row in table.find_all("tr"):
+            cols = [col.get_text(strip=True) for col in row.find_all("td")]
+            if any(cols):  # skip empty rows
+                pattern = r'(^[^\\(]+)'
+                match = re.findall(pattern, cols[1])
+                if any(match):
+                    cols[1] = match[0]
+                rows.append(cols)
+
+        # Remove first row from rows if it was used as headers
+        if rows and rows[0] == headers:
+            rows = rows[1:]
+
+        # --- Convert everything to strings to avoid JSON errors ---
+        headers = [str(h) for h in headers]
+        rows = [[str(c) for c in r] for r in rows]
+
+        # --- Save to JSON ---
+        output = {
+            "headers": headers,
+            "rows": rows
+        }
+        path = utils.get_path(f"data_w/torvik_w{date}.json")
+        utils.save_json_data(output, path)
+        browser.close()
+
+def torvik_w_hist():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True) # Runs without a UI
+        page = browser.new_page()
+        year = 2021
+        link = f'https://barttorvik.com/ncaaw/trank.php?year={year}#'
+        page.goto(link)
+        time.sleep(5)
+        # --- Get the page source and parse with BeautifulSoup ---
+        html = page.content()
+        soup = BeautifulSoup(html, "html.parser")
+        # --- Extract table headers ---
+        table = soup.find("table")  # assumes one main table; adjust if multiple
+        headers = []
+
+        # Try <th> first
+        table_rows = table.find_all("tr")
+        header_row = table_rows[1]
+        if header_row:
+            # Grab text from either <th> or <td>
+            headers = [cell.get_text(strip=True) for cell in header_row.find_all(["th", "td"])]
+            if any(headers):
+                headers.insert(2, 'seed')
+                headers.insert(3, 'finish')
+        # --- Extract table rows ---
+        rows = []
+        for row in table.find_all("tr"):
+            cols = [col.get_text(strip=True) for col in row.find_all("td")]
+            if any(cols):  # skip empty rows
+                pattern = r'^([^\d]*)(\d{1,2}) seed,([A-Za-z]*)'
+                match = re.findall(pattern, cols[1])
+                if any(match):
+                    cols[1] = match[0][0]
+                    cols.insert(2, match[0][1])
+                    cols.insert(3, match[0][2])
+                else:
+                    cols.insert(2, '')
+                    cols.insert(3, '')
+                rows.append(cols)
+
+        # Remove first row from rows if it was used as headers
+        if rows and rows[0] == headers:
+            rows = rows[1:]
+
+        # --- Convert everything to strings to avoid JSON errors ---
+        headers = [str(h) for h in headers]
+        rows = [[str(c) for c in r] for r in rows]
+
+        # --- Save to JSON ---
+        output = {
+            "headers": headers,
+            "rows": rows
+        }
+        path = utils.get_path(f"model_data_w/torvik_w{year}.json")
+        utils.save_json_data(output, path)
+        browser.close()
