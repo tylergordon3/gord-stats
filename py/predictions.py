@@ -36,7 +36,7 @@ def seed_helper(x):
     return seed
 
 
-def clean_teams(df, kenpom_bool = False):
+def clean_teams(df, kenpom_bool=False):
     """
     Cleans Torvik team names
 
@@ -64,11 +64,11 @@ def clean_teams(df, kenpom_bool = False):
             if team[i : i + 3] == "vs.":
                 return team[:i]
         return team
-    
+
     if kenpom_bool:
         df["Team"] = df["Team"].replace(dict)
         return df
-    
+
     df["Conf"] = df["Conf"].replace("Pat", "PL")
     df["Team"] = df["Team"].apply(lambda x: strip(x))
     df["Team"] = df["Team"].replace(dict)
@@ -178,20 +178,20 @@ def bold_row(row, conf_champ_dict):
 
 
 def image_formatter(url):
-    '''
+    """
     Creates html for team logo
-    
+
     :param url: Path to team logo
     :return: Logo HTML
     :rtype: str
-    '''
+    """
     return f'<img src="{url}" class="team-logo" >'
 
 
 def getUrl(x, save_df, master):
-    '''
+    """
     Finds path/url for team logo
-    
+
     :param x: Row for current team
     :type x: Series
     :param save_df: Predictions DataFrame with all D1 teams
@@ -200,13 +200,15 @@ def getUrl(x, save_df, master):
     :type master: DataFrame
     :return: Link/Path to logo
     :rtype: str
-    '''
+    """
     save = list(save_df[save_df["Team"] == x["Team"]].index)[0]
     link = "/assets/images/" + master.at[save, "path"]
     return link
 
+
 def predByConf(df):
     print(df)
+
 
 def predict_w(date):
     randomForest = utils.read_from_pickle("wtor_forest")
@@ -302,7 +304,7 @@ def predict_w(date):
     conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
     df = main64.drop(columns=["Torvik Rank", "# Models Torvik", "Seed", "ConfChamp"])
     df = df[["Team", "Conf", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
-    
+
     styler = (
         df.style.hide(axis="index")
         .format({"GordScore": "{:.1f}"})
@@ -525,7 +527,7 @@ def predict(date):
         ]
     )
     df = df[["Team", "Conf", "Kenpom", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
-    conf_dict = df.groupby("Conf")['Team'].count()
+    conf_dict = df.groupby("Conf")["Team"].count()
     labels = []
     sizes = []
 
@@ -535,7 +537,7 @@ def predict(date):
 
     # Plot
     fig = px.pie(values=sizes, labels=labels, title="Conference Breakdown")
-    fig_html = fig.to_html()
+    fig_html = fig.to_html(full_html=False, include_plotlyjs="cdn")
 
     master = scraper.getMasterTeams()
     df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
