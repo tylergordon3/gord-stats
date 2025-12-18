@@ -27,8 +27,6 @@ KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 
 
-
-
 def getMasterTeams():
     df_back = pd.read_json(utils.get_path("data/teams/master.json"))
     return df_back
@@ -39,7 +37,10 @@ def saveMasterTeams(df):
 
 def get_image_name(team):
     master = getMasterTeams()
-    names = list(master[master['team'] == team]['names'])[0]
+    try:
+        names = list(master[master['team'] == team]['names'])[0]
+    except:
+        return None
     dict_idx = list(master[master['team'] == team]['index'])[0]
     img_path = utils.get_path('docs/assets/images')
     files = os.listdir(img_path)
@@ -237,14 +238,25 @@ def today_games(rank_df):
         if "," not in val:
             return "meta meta-final"  # GREEN
         return "meta meta-live"  # scheduled
-
+    
+    def getUrl(name):
+        if name is None:
+            return None
+        link = f'/assets/images/{name}' 
+        return link
+    
+    def image_formatter(url):
+        if url is None:
+            return ''
+        return f'<img src="{url}" class="team-logo" >'
+    
     output_df["matchup_html"] = output_df.apply(
         lambda r: f"""
         <div class="matchup">
         <div class="teams">
-            <span class="team">{fmt_team(r['Away'], r['A Rank'])}</span>
+            <span class="team">{image_formatter(getUrl(get_image_name(r['Away'])))}{fmt_team(r['Away'], r['A Rank'])}</span>
             <span class="at">@</span>
-            <span class="team">{fmt_team(r['Home'], r['H Rank'])}</span>
+            <span class="team">{image_formatter(getUrl(get_image_name(r['Home'])))}{fmt_team(r['Home'], r['H Rank'])}</span>
         </div>
         <div class="{meta_class(r['Time/Final'])}">
             {r['Time/Final']}
@@ -258,9 +270,9 @@ def today_games(rank_df):
         lambda r: f"""
         <div class="matchup">
         <div class="teams">
-            <span class="team">{fmt_team(r['Away'], r['A Rank'])}</span>
+            <span class="team">{image_formatter(getUrl(get_image_name(r['Away'])))}{fmt_team(r['Away'], r['A Rank'])}</span>
             <span class="at">@</span>
-            <span class="team">{fmt_team(r['Home'], r['H Rank'])}</span>
+            <span class="team">{image_formatter(getUrl(get_image_name(r['Home'])))}{fmt_team(r['Home'], r['H Rank'])}</span>
         </div>
         <div class="{meta_class(r['Time/Final'])}">
             {r['Time/Final']}
