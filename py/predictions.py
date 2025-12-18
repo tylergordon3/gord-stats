@@ -527,18 +527,18 @@ def predict(date):
         ]
     )
     df = df[["Team", "Conf", "Kenpom", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
-    conf_dict = df.groupby("Conf")["Team"].count()
-    labels = []
-    sizes = []
-
-    for x, y in conf_dict.items():
-        labels.append(x)
-        sizes.append(y)
-
-    # Plot
-    fig = px.pie(values=sizes, labels=labels, title="Conference Breakdown")
-    fig_html = fig.to_html(full_html=False, include_plotlyjs="cdn")
-
+    conf_dict = (df.groupby("Conf")["Team"]
+                 .count()
+                 .reset_index()
+    )
+    conf_dict = conf_dict.rename(columns={'Team' : 'Count'})
+    conf_dict = conf_dict.sort_values(by="Count", ascending = False)
+    conf = pd.DataFrame(conf_dict)
+    print(conf)
+    conf_styler = (
+        conf.style.hide(axis='index')
+        .set_table_attributes('class="sticky-table"')
+    )
     master = scraper.getMasterTeams()
     df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
     df["Team"] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
@@ -565,8 +565,8 @@ def predict(date):
     df_html = f"<p>{time}</p>"
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
-    df_html += "<div>"
-    df_html += fig_html
+    df_html += "</div>"
+    df_html += conf_styler.to_html()
     path = utils.get_path(f"docs/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"Prediction - {date}")
     with open(path, "w") as f:

@@ -53,12 +53,9 @@ title: History
 layout: default
 title: Bracket Gordology
 ---
-    <p><a href="about.html" title="About the Model">About the Model</a></p>
-    <p><a href="tgordon_final.html" title="Original Project">Original Project</a></p>
-
-    <p>Predictions as of now use Torvik and Kenpom data from 2013 to present.</p>
-    <p><a href="predict_{recent}.html" title="Current Model">Current Model</a></p>
-    <p><a href="history.html" title="Model History">Model History</a></p>
+    <p>Using machine learning to predict the NCAA March Madness field.</p>
+    <p>Data Sources: <a href='https://kenpom.com/'>Kenpom</a> | <a href='https://barttorvik.com/#'>Torvik</a></p>
+    <p>Today's scores and schedule from: <a href='https://www.cbssports.com/college-basketball/scoreboard/'>CBS Sports</a></p>
     <h3>Today's Games</h3>
     <p>{time}</p>
     {gamesToday}
