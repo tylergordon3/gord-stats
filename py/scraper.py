@@ -38,10 +38,20 @@ def saveMasterTeams(df):
 def get_image_name(team):
     master = getMasterTeams()
     try:
-        names = list(master[master['team'] == team]['names'])[0]
+        s_exploded = master["names"].explode()
+        boolean_mask_exploded = s_exploded == team
+        # To get the row IDs where the value is present:
+        # matching_ids = s_exploded[boolean_mask_exploded].index.unique()
+        boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
+        df_result = master[boolean_mask_original]
+        if df_result.empty:
+            print(f'get_image_name::df result empty for: {team}')
+            return None
+        else:
+            names = list(df_result.names)[0]
     except:
+        print(f'get_image_name::names list invalid for: {team}')
         return None
-    dict_idx = list(master[master['team'] == team]['index'])[0]
     img_path = utils.get_path('docs/assets/images')
     files = os.listdir(img_path)
     files_strip = [x[:-4] for x in files]

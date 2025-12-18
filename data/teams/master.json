@@ -821,7 +821,8 @@
             "GREAT DANES",
             "albany",
             "ALBANY",
-            "alby"
+            "alby",
+            "UAlbany"
         ],
         "7": [
             "ALCN",
@@ -924,7 +925,9 @@
             "arpb",
             "arkansas pine bluff",
             "ARKANSAS PINE BLUFF",
-            "arkansaspinebluff"
+            "arkansaspinebluff",
+            "ARKPB",
+            "Ark.-Pine Bluff"
         ],
         "14": [
             "ARST",
@@ -1052,7 +1055,9 @@
             "cook",
             "bethune cookman",
             "BETHUNE COOKMAN",
-            "bethunecookman"
+            "bethunecookman",
+            "BCU",
+            "Bethune-Cook."
         ],
         "24": [
             "Binghamton",
@@ -1294,7 +1299,10 @@
             "bears",
             "BEARS",
             "uca",
-            "centralarkansas"
+            "centralarkansas",
+            "CARK",
+            "Cent. Arkansas",
+            "Cent Arkansas"
         ],
         "44": [
             "Central Connecticut State",
@@ -1319,7 +1327,8 @@
             "cmu",
             "chippewas",
             "CHIPPEWAS",
-            "centralmichigan"
+            "centralmichigan",
+            "C. Michigan"
         ],
         "46": [
             "Charleston",
@@ -1416,7 +1425,9 @@
             "cleveland st.",
             "CLEVELAND ST.",
             "clevelandst",
-            "cleveland st"
+            "cleveland st",
+            "CLEVST",
+            "Clev. St."
         ],
         "54": [
             "Coastal Carolina",
@@ -1723,7 +1734,8 @@
             "eku",
             "eastern kentucky",
             "EASTERN KENTUCKY",
-            "easternkentucky"
+            "easternkentucky",
+            "E. Kentucky"
         ],
         "80": [
             "Eagles",
@@ -1749,7 +1761,8 @@
             "EAGLES",
             "ewash",
             "ewu",
-            "easternwashington"
+            "easternwashington",
+            "E. Washington"
         ],
         "82": [
             "Phoenix",
@@ -2149,7 +2162,9 @@
             "huskies",
             "HUSKIES",
             "hcu",
-            "houstonchristian"
+            "houstonchristian",
+            "HOUBP",
+            "Houston Chr."
         ],
         "115": [
             "Bison",
@@ -2223,7 +2238,9 @@
             "uic",
             "illinois chicago",
             "ILLINOIS CHICAGO",
-            "illinoischicago"
+            "illinoischicago",
+            "ILLCHI",
+            "illchi"
         ],
         "121": [
             "ILLST",
@@ -2362,7 +2379,10 @@
             "jacksonville st.",
             "JACKSONVILLE ST.",
             "jacksonvillest",
-            "jacksonville st"
+            "jacksonville st",
+            "JAXST",
+            "Jax. State",
+            "Jax State"
         ],
         "131": [
             "Dukes",
@@ -2604,7 +2624,9 @@
             "ulm",
             "louisiana monroe",
             "LOUISIANA MONROE",
-            "louisianamonroe"
+            "louisianamonroe",
+            "LAMON",
+            "UL-Monroe"
         ],
         "152": [
             "LT",
@@ -2617,7 +2639,9 @@
             "bulldogs",
             "BULLDOGS",
             "latch",
-            "louisianatech"
+            "louisianatech",
+            "LATECH",
+            "LA. Tech"
         ],
         "153": [
             "LVILL",
@@ -2643,7 +2667,9 @@
             "l-il",
             "loyola chicago",
             "LOYOLA CHICAGO",
-            "loyolachicago"
+            "loyolachicago",
+            "LOYCHI",
+            "Loyola Chi."
         ],
         "155": [
             "Loyola (MD)",
@@ -2896,7 +2922,8 @@
             "mtsu",
             "middle tennessee",
             "MIDDLE TENNESSEE",
-            "middletennessee"
+            "middletennessee",
+            "Middle Tenn."
         ],
         "175": [
             "Milwaukee",
@@ -3179,7 +3206,10 @@
             "newha",
             "new hampshire",
             "NEW HAMPSHIRE",
-            "newhampshire"
+            "newhampshire",
+            "NH",
+            "nh",
+            "New Hamp."
         ],
         "196": [
             "New Haven",
@@ -3311,7 +3341,8 @@
             "eagles",
             "EAGLES",
             "nccu",
-            "northcarolinacentral"
+            "northcarolinacentral",
+            "NC Central"
         ],
         "207": [
             "North Dakota",
@@ -3424,7 +3455,10 @@
             "NORTHERN IOWA",
             "panthers",
             "PANTHERS",
-            "northerniowa"
+            "northerniowa",
+            "NIOWA",
+            "niowa",
+            "N. Iowa"
         ],
         "216": [
             "Northern Kentucky",
@@ -3435,7 +3469,10 @@
             "norse",
             "NORSE",
             "nku",
-            "northernkentucky"
+            "northernkentucky",
+            "NKY",
+            "nky",
+            "N. Kentucky"
         ],
         "217": [
             "NW",
@@ -3976,7 +4013,9 @@
             "sam houston st.",
             "SAM HOUSTON ST.",
             "samhoustonst",
-            "sam houston st"
+            "sam houston st",
+            "SAMHOU",
+            "Sam Houston"
         ],
         "262": [
             "SAM",
@@ -4027,7 +4066,9 @@
             "dons",
             "DONS",
             "sanfr",
-            "sanfrancisco"
+            "sanfrancisco",
+            "SANFRAN",
+            "San Fran."
         ],
         "266": [
             "San Jose State",
@@ -4308,7 +4349,8 @@
             "STEPHEN F. AUSTIN",
             "sfa",
             "stephenfaustin",
-            "stephen f austin"
+            "stephen f austin",
+            "SF Austin"
         ],
         "288": [
             "Stetson",
@@ -4493,7 +4535,8 @@
             "TEXAS SOUTHERN",
             "texso",
             "txso",
-            "texassouthern"
+            "texassouthern",
+            "Texas So."
         ],
         "303": [
             "Texas State",
@@ -4755,7 +4798,8 @@
             "SPARTANS",
             "uscu",
             "uscup",
-            "uscupstate"
+            "uscupstate",
+            "SC Upstate"
         ],
         "328": [
             "Texas-Arlington",
@@ -4996,7 +5040,9 @@
             "washington st.",
             "WASHINGTON ST.",
             "washingtonst",
-            "washington st"
+            "washington st",
+            "WASHST",
+            "Wash. St."
         ],
         "348": [
             "WEB",
@@ -5024,7 +5070,9 @@
             "wolves",
             "WOLVES",
             "uwg",
-            "westgeorgia"
+            "westgeorgia",
+            "WESTGA",
+            "W. Georgia"
         ],
         "350": [
             "Mountaineers",
