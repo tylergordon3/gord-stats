@@ -76,12 +76,6 @@ def read_from_pickle(name):
         loaded_model = pickle.load(file)
     return loaded_model
 
-def read_from_pickle_w(name):
-    filename = get_path(f'models_w/{name}_model.pkl')
-    with open(filename, 'rb') as file:
-        loaded_model = pickle.load(file)
-    return loaded_model
-
 def get_recent_data(input_date, women=0):
     def parse_date(fname):
         # filename format: kenpomYYYY-MM-DD.json

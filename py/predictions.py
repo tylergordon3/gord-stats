@@ -12,9 +12,9 @@ import scraper
 import re
 
 def predict_w(date):
-    randomForest = utils.read_from_pickle_w('wtor_forest')
-    decisionTree = utils.read_from_pickle_w('tor_dt')
-    supportVC = utils.read_from_pickle_w('tor_svc')
+    randomForest = utils.read_from_pickle('wtor_forest')
+    decisionTree = utils.read_from_pickle('wtor_dt')
+    supportVC = utils.read_from_pickle('wtor_svc')
     torvik_path = utils.get_recent_data(date, 1)
     with open(torvik_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -182,13 +182,13 @@ def predict_w(date):
     return save_df
 
 def predict(date):
-    randomForest = utils.read_from_pickle('forest')
-    decisionTree = utils.read_from_pickle('dt')
-    supportVC = utils.read_from_pickle('svc')
+    randomForest = utils.read_from_pickle('mtor_forest')
+    decisionTree = utils.read_from_pickle('mtor_dt')
+    supportVC = utils.read_from_pickle('mtor_svc')
     
-    randomForest_kenpom = utils.read_from_pickle('kp_forest')
-    decisionTree_kenpom = utils.read_from_pickle('kp_dt')
-    supportVC_kenpom = utils.read_from_pickle('kp_svc')
+    randomForest_kenpom = utils.read_from_pickle('mkp_forest')
+    decisionTree_kenpom = utils.read_from_pickle('mkp_dt')
+    supportVC_kenpom = utils.read_from_pickle('mkp_svc')
     
     [kenpom_path, torvik_path] = utils.get_recent_data(date)
     with open(kenpom_path, 'r', encoding='utf-8') as f:

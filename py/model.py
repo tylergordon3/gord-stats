@@ -48,15 +48,14 @@ def initDataset():
     path = utils.get_path( "/model_data/cbb_data.json")
     utils.save_json_data(cbb_full.to_json(), path)
 
-def trainModelsAndSave(df, update_about):
+def trainModelsAndSave(df, update_about, gender='M'):
     start = datetime.now()
-    [cbb, ind, dep] = chiSquared(df)
+    [cbb, ind, dep] = chiSquared(df, gender)
     [X_train, X_test, y_train, y_test, features] = splitData(cbb, ind)
     print(f'Torvik data set split took: {(datetime.now() - start).total_seconds()}')
     if update_about: updateAbout(ind, dep, features, X_train, y_train)
 
-    #[svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
-    runModels(X_train, X_test, y_train, y_test)
+    runModels(X_train, X_test, y_train, y_test, gender)
 
 def splitData(cbb, ind):
     cbb = cbb.drop(columns=ind)
@@ -71,12 +70,11 @@ def splitData(cbb, ind):
     X_test = scaler.fit_transform(X_test)
     return [X_train, X_test, y_train, y_test, cbb_features]
 
-def chiSquared(df):
-    try:
+def chiSquared(df, gender):
+    if gender == 'M':
         cbb = df.drop(columns=['TEAM', 'CONF', 'POSTSEASON', 'SEED', 'YEAR', 
                             'G', 'W', 'BARTHAG', 'WAB'])
-    except:
-         # women's data - I'm lazy!
+    elif gender == 'W':
          cbb = df.drop(columns=['Team', 'Conf', 'Finish', 'Seed', 'Year', 
                             'G', 'Rec', 'Barthag', 'WAB', 'Tourney', 'Rk'])
     cbb_features = cbb.iloc[:,:-1]
@@ -93,24 +91,28 @@ def chiSquared(df):
     return [cbb, ind, dep]
 
 
-def runModels(X_train, X_test, y_train, y_test):
+def runModels(X_train, X_test, y_train, y_test, gender):
+    if gender == 'M':
+        prepend = 'mtor'
+    elif gender == 'W':
+        prepend = 'wtor'
     start = datetime.now()
     init_forest = RandomForestClassifier(random_state=13)
     init_forest.fit(X_train, y_train)
     forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
-    forest_file = utils.get_path('models_w/wtor_forest_model.pkl')
+    forest_file = utils.get_path(f'models/{prepend}_forest_model.pkl')
     utils.write_to_pickle(forest, forest_file)
     print(f'Torvik Forest Model Training took: {(datetime.now() - start).total_seconds()}')
     init_svc = svm.SVC(random_state=13, kernel='linear')
     init_svc.fit(X_train, y_train)
     svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
-    svc_file = utils.get_path('models_w/tor_svc_model.pkl')
+    svc_file = utils.get_path(f'models/{prepend}_svc_model.pkl')
     utils.write_to_pickle(svc, svc_file)
     print(f'Torvik SVC Model Training took: {(datetime.now() - start).total_seconds()}')
     init_dt = tree.DecisionTreeClassifier(random_state=13)
     init_dt.fit(X_train, y_train)
     dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
-    dt_file = utils.get_path('models_w/tor_dt_model.pkl')
+    dt_file = utils.get_path(f'models/{prepend}_dt_model.pkl')
     utils.write_to_pickle(dt, dt_file)
     print(f'Torvik Decision Tree Model Training took: {(datetime.now() - start).total_seconds()}')
 

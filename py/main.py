@@ -42,27 +42,26 @@ if not os.path.exists(kenpom_dataset_path):
     print(f"Saved dataset to json.")
 
 update_about = 0
-save_model = 0
-save_model_w = 0
+save_model = 1
+save_model_w = 1
 if save_model:
     torvik_df = utils.load_json_data(torvik_dataset_path)
-    with open("model_data/kenpom_all.json", "r", encoding="utf-8") as f:
+    with open(utils.get_path("model_data/kenpom_all.json"), "r", encoding="utf-8") as f:
         data = json.load(f)
     kenpom_df = pd.DataFrame(data, columns=constants.kenpom)
-    model.trainModelsAndSave(torvik_df, update_about)
+    model.trainModelsAndSave(torvik_df, update_about, gender='M')
     print(f"Torvik Men's training took: {(datetime.now() - start).total_seconds()}")
     kenpom_model.trainModelsAndSave(kenpom_df)
     print(f"Kenpom Men's training took: {(datetime.now() - start).total_seconds()}")
 
 if save_model_w:
-    with open("model_data_w/torvik_w_all.json", "r", encoding="utf-8") as f:
+    with open(utils.get_path("model_data_w/torvik_w_all.json"), "r", encoding="utf-8") as f:
         data = json.load(f)
     torvik_w_df = pd.DataFrame(data, columns=constants.torvik_women)
     
     torvik_w_df['TOURNEY'] = np.where(torvik_w_df['Tourney'].map({"True" : True, "False" : False}), True, False)
-    model.trainModelsAndSave(torvik_w_df, update_about)
+    model.trainModelsAndSave(torvik_w_df, update_about, gender='W')
     print(f"Torvik Women's training took: {(datetime.now() - start).total_seconds()}")
-
 
 today_df = predictions.predict(date.today())
 today_w_df = predictions.predict_w(date.today())
