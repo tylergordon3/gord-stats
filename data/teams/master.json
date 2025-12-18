@@ -1316,7 +1316,8 @@
             "ccsu",
             "central connecticut",
             "CENTRAL CONNECTICUT",
-            "centralconnecticut"
+            "centralconnecticut",
+            "CCTST"
         ],
         "45": [
             "Central Michigan",
@@ -3580,7 +3581,9 @@
             "OKLAHOMA ST.",
             "oklahomast",
             "oklahoma st",
-            "Okla. St."
+            "Okla. St.",
+            "oklast",
+            "OKLAST"
         ],
         "225": [
             "ODU",
@@ -4262,7 +4265,8 @@
             "southern illinois",
             "SOUTHERN ILLINOIS",
             "southernillinois",
-            "S. Illinois"
+            "S. Illinois",
+            "SILL"
         ],
         "280": [
             "Southern Indiana",
@@ -4274,7 +4278,8 @@
             "SCREAMING EAGLES",
             "usi",
             "southernindiana",
-            "So. Indiana"
+            "So. Indiana",
+            "SOINDI"
         ],
         "281": [
             "Southern Mississippi",
@@ -4289,7 +4294,8 @@
             "southern miss",
             "SOUTHERN MISS",
             "southernmiss",
-            "So. Miss"
+            "So. Miss",
+            "USM"
         ],
         "282": [
             "Thunderbirds",
@@ -4301,7 +4307,8 @@
             "southern utah",
             "SOUTHERN UTAH",
             "southernutah",
-            "So. Utah"
+            "So. Utah",
+            "SUTAH"
         ],
         "283": [
             "St. Bonaventure",
@@ -4469,7 +4476,8 @@
             "tennessee martin",
             "TENNESSEE MARTIN",
             "tennesseemartin",
-            "UT Martin"
+            "UT Martin",
+            "TNMART"
         ],
         "297": [
             "Tigers",
@@ -4498,7 +4506,8 @@
             "tennessee tech",
             "TENNESSEE TECH",
             "tennesseetech",
-            "Tenn. Tech"
+            "Tenn. Tech",
+            "TNTECH"
         ],
         "299": [
             "Longhorns",
@@ -5126,7 +5135,8 @@
             "LEATHERNECKS",
             "wiu",
             "westernillinois",
-            "W. Illinois"
+            "W. Illinois",
+            "WILL"
         ],
         "353": [
             "Western Kentucky",

@@ -479,7 +479,7 @@ def predict(date):
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
 
-    predByConf(save_df)
+    #predByConf(save_df)
 
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
@@ -534,7 +534,6 @@ def predict(date):
     conf_dict = conf_dict.rename(columns={'Team' : 'Count'})
     conf_dict = conf_dict.sort_values(by="Count", ascending = False)
     conf = pd.DataFrame(conf_dict)
-    print(conf)
     conf_styler = (
         conf.style.hide(axis='index')
         .set_table_attributes('class="sticky-table"')
