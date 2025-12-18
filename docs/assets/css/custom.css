@@ -48,12 +48,13 @@
                      
 .sticky-table th {
   font-weight: bold;
-  background: #D3D3D3
+  background: #D3D3D3;
+  padding: 6px 8px;
 }
 
 .sticky-table th,
 .sticky-table td {
-  padding: 6px 8px;
+  
   font-size: inherit;
 
   /* Default: keep columns readable */
@@ -67,6 +68,7 @@
 
 .sticky-table td {
   background: white;
+  padding: 1x 4px;
 }
 /* -----------------------------
    STICKY HEADER
