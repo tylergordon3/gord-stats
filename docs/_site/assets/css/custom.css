@@ -206,3 +206,12 @@
 .team strong {
   color: #000;
 }
+
+.team-logo {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  vertical-align: middle;
+  margin-left: 6px;   /* space between text and image */
+  height: 30px;       /* keep consistent sizing */
+}

@@ -406,7 +406,7 @@ def predict(date):
         return "color: green" if int(val) > 0 else "color: red" if int(val) < 0 else "color: black"
     
     def bold_row(row, conf_champ_dict):
-        pattern = r'(^.*?)(?=<)'
+        pattern = r'(?:[^>]+?>)(.*)'
         check = re.findall(pattern, row['Team'])
         val = conf_champ_dict[check[0]]
         if val: 
@@ -418,17 +418,16 @@ def predict(date):
             return [f"font-weight: normal"] * len(row)
     
     def image_formatter(url):
-        return f'<img src="{url}" width="30" >'
+        return f'<img src="{url}" class="team-logo" >'
     
     def getUrl(x, save_df, master):
         save = list(save_df[save_df['Team'] == x['Team']].index)[0]
-        link = 'docs/assets/images/' + master.at[save, "path"]
-        path = utils.get_path(link)
-        return path
+        link = '/assets/images/' + master.at[save, "path"]
+        return link
 
     master = scraper.getMasterTeams()
     df['img'] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    df['Team'] = df.apply(lambda x: x.Team + image_formatter(x.img), axis=1)
+    df['Team'] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
     df = df.drop(columns=['img'])
     styler = (
         df
