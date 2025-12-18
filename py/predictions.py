@@ -4,7 +4,6 @@ import numpy as np
 import json
 import change
 import datetime
-from datetime import date
 from sklearn import preprocessing
 import html_builder as htmb
 from pytz import timezone
@@ -35,12 +34,14 @@ def seed_helper(x):
     return seed
 
 
-def clean_teams(df):
+def clean_teams(df, kenpom_bool = False):
     """
     Cleans Torvik team names
 
     :param df: Torvik data
     :type df: DataFrame
+    :param kenpom_bool: Bool for if Kenpom
+    :type kenpom_bool: bool
     :return: Torvik data with clean names
     :rtype: DataFrame
     """
@@ -61,7 +62,12 @@ def clean_teams(df):
             if team[i : i + 3] == "vs.":
                 return team[:i]
         return team
-
+    
+    if kenpom_bool:
+        df["Team"] = df["Team"].replace(dict)
+        return df
+    
+    df["Conf"] = df["Conf"].replace("Pat", "PL")
     df["Team"] = df["Team"].apply(lambda x: strip(x))
     df["Team"] = df["Team"].replace(dict)
     return df
@@ -100,10 +106,25 @@ def stars(count, max_count=3):
 
 
 def predict_model(model, fitted_data):
+    """
+    Predict on data
+
+    :param model: Model read from pkl
+    :param fitted_data: Data set fitted
+    :return: Predictions
+    """
     return model.predict(fitted_data)
 
 
 def _format_arrow(val):
+    """
+    Format arrow for change since last week
+
+    :param val: Change since previous week
+    :type val: int
+    :return: Correspondng arrow with value
+    :rtype: str
+    """
     if (val == "NR") | (val == "-"):
         return val
     return (
@@ -114,6 +135,13 @@ def _format_arrow(val):
 
 
 def _color_arrow(val):
+    """
+    Colors arrow based on direction
+
+    :param val: Change since previous week
+    :type val: int
+    :return: Color of arrow
+    """
     if (val == "NR") | (val == "-"):
         return "color: black"
     return (
@@ -124,6 +152,14 @@ def _color_arrow(val):
 
 
 def bold_row(row, conf_champ_dict):
+    """
+    Bolds row if team is projected conference winner
+
+    :param row: Row of main dataframe
+    :type row: Series
+    :param conf_champ_dict: Dict with all conference champs
+    :type conf_champ_dict: dict
+    """
     try:
         pattern = r"(?:[^>]+?>)(.*)"
         check = re.findall(pattern, row["Team"])
@@ -140,10 +176,29 @@ def bold_row(row, conf_champ_dict):
 
 
 def image_formatter(url):
+    '''
+    Creates html for team logo
+    
+    :param url: Path to team logo
+    :return: Logo HTML
+    :rtype: str
+    '''
     return f'<img src="{url}" class="team-logo" >'
 
 
 def getUrl(x, save_df, master):
+    '''
+    Finds path/url for team logo
+    
+    :param x: Row for current team
+    :type x: Series
+    :param save_df: Predictions DataFrame with all D1 teams
+    :type save_df: DataFrame
+    :param master: Master Team Name DataFrame
+    :type master: DataFrame
+    :return: Link/Path to logo
+    :rtype: str
+    '''
     save = list(save_df[save_df["Team"] == x["Team"]].index)[0]
     link = "/assets/images/" + master.at[save, "path"]
     return link
@@ -159,7 +214,6 @@ def predict_w(date):
         data = json.load(f)
 
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
-    torvik_data["Conf"] = torvik_data["Conf"].replace("Pat", "PL")
     torvik_data = clean_teams(torvik_data)
 
     torvik_today = torvik_data.drop(
@@ -270,6 +324,7 @@ def predict_w(date):
         print(f"Wrote to: {path} for {date}")
     return save_df
 
+
 def predict(date):
     randomForest = utils.read_from_pickle("mtor_forest")
     decisionTree = utils.read_from_pickle("mtor_dt")
@@ -287,21 +342,9 @@ def predict(date):
     with open(torvik_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
-    torvik_data["Conf"] = torvik_data["Conf"].replace("Pat", "PL")
-
-    dict = {
-        "SIU Edwardsville": "SIUE",
-        "Cal St. Northridge": "CSUN",
-        "McNeese St.": "McNeese",
-        "Nicholls St.": "Nicholls",
-        "Southeast Missouri": "SEMO",
-        "Southeast Missouri St.": "SEMO",
-        "Kansas City": "UMKC",
-    }
 
     torvik_data = clean_teams(torvik_data)
-
-    kenpom_data["Team"] = kenpom_data["Team"].replace(dict)
+    kenpom_data = clean_teams(kenpom_data, True)
 
     torvik_teams = torvik_data["Team"]
     kenpom_teams = kenpom_data["Team"]
