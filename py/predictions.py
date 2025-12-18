@@ -315,7 +315,7 @@ def predict_w(date):
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"""<p>{time}</p>
         <div class="table-container">
-        styler.to_html()
+        {styler.to_html()}
         <div>"""
     path = utils.get_path(f"docs/predict_w{date}.html")
     html = htmb.add_front_matter(df_html, f"NCAAW Prediction- {date}")
