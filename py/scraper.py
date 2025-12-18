@@ -2,40 +2,50 @@
 Scraping Torvik and Kenpom
 """
 
-import time
 import utils
-import re
-import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-import utils
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from datetime import datetime
 import os
-from io import StringIO
 import random
-
-
+import time
+import re
+import requests
+import random
+import pandas as pd
+from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
-
-import os
 
 TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 
-
+# 
 def getMasterTeams():
+    '''
+    Helper function for getting master teams DF
+
+    :return: Master DataFrame
+    :rtype: DataFrame
+    '''
     df_back = pd.read_json(utils.get_path("data/teams/master.json"))
     return df_back
 
-
 def saveMasterTeams(df):
+    '''
+    Helper function for saving master teams DF
+    
+    :param df: Master DF to save
+    :type df: DataFrame
+    '''
     df.to_json(utils.get_path("data/teams/master.json"))
 
 def get_image_name(team):
+    '''
+    Returns file path for logo
+    
+    :param team: Name of team
+    :type team: str
+    :return: Path to image
+    :rtype: str
+    '''
     master = getMasterTeams()
     try:
         s_exploded = master["names"].explode()
@@ -61,6 +71,18 @@ def get_image_name(team):
             return files[index]
 
 def getHTML(link, retries=5, base_delay=1.0):
+    '''
+    Retrieves HTML for provided link
+    
+    :param link: Link to request
+    :type link: str
+    :param retries: Max # of retries allowed
+    :type retries: int
+    :param base_delay: Starting delay, randomly increments each retry 
+    :type base_delay: float
+    :return: Parsed HTML for webpage | None
+    :rtype: BeautiulSoup | NoneType
+    '''
     for attempt in range(retries):
         response = requests.get(link)
         if response.status_code == 429:
@@ -73,7 +95,7 @@ def getHTML(link, retries=5, base_delay=1.0):
             content = response.text
             return BeautifulSoup(content, "lxml")
     print("getHTML returning None")
-    return None  # if all retries fail
+    return None
 
 
 def get_rank(row, rank_df, master, bin):
@@ -358,33 +380,6 @@ def init_master_dict():
     df["Index"] = df.index
     saveMasterTeams(df)
 
-
-def pull_sportsDB():
-    strLeague = "NCAA_Division_I_Basketball_Mens"
-    teams = pd.read_json(utils.get_path("data/team_list.json"))
-    link = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t="
-
-    for team in list(teams[0]):
-        check = utils.get_path(f"docs/assets/images/{team}.png")
-        if not os.path.exists(check):
-            print(f"Querying for: {team}")
-            web = link + team
-            try:
-                pattern = r"\"strBadge\":\"(https:\\\/\\\/r2\.thesportsdb\.com\\\/images\\\/media\\\/team\\\/badge\\\/[A-Za-z0-9]+\.png)\""
-                badge = re.findall(pattern, requests.get(web).text)
-                cl = badge[0].replace("\\/", "/")
-                img_data = requests.get(cl).content
-                with open(
-                    utils.get_path(f"docs/assets/images/{team}.png"), "wb"
-                ) as handler:
-                    handler.write(img_data)
-                print(f"Done for: {team}")
-            except:
-                print(f"Error for: {team}")
-            print(f"Sleeping for 8 seconds")
-            time.sleep(8)
-
-
 def kenpom_historic():
     # https://kenpom.com/index.php?y=2025
     all = []
@@ -478,7 +473,7 @@ def kenpom_historic():
     path = utils.get_path(f"model_data/kenpom_all.json")
     utils.save_json_data(all, path)
 
-
+# Get Kenpom data for TODAY   
 def kenpom(date):
     kenpom_resp = requests.get(KENPOM, timeout=10).text
     # torvik_pre_resp = requests.get(TORVIK_PRE, timeout=10).text
@@ -544,7 +539,7 @@ def kenpom(date):
     path = utils.get_path(f"data/kenpom{date}.json")
     utils.save_json_data(output, path)
 
-
+# Get Torvik data for TODAY
 def torvik(date):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)  # Runs without a UI
@@ -587,7 +582,7 @@ def torvik(date):
         utils.save_json_data(output, path)
         browser.close()
 
-
+# Get women's Torvik data TODAY
 def torvik_w(date):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)  # Runs without a UI
@@ -634,7 +629,7 @@ def torvik_w(date):
         utils.save_json_data(output, path)
         browser.close()
 
-
+# Get HISTORICAL Women's Torvik Data
 def torvik_w_hist():
     years = [2021, 2022, 2023, 2024, 2025]
     all = []
