@@ -1352,7 +1352,8 @@
             "chaso",
             "buccaneers",
             "BUCCANEERS",
-            "charlestonsouthern"
+            "charlestonsouthern",
+            "Charleston So."
         ],
         "48": [
             "CHAR",
@@ -1440,7 +1441,8 @@
             "CHANTICLEERS",
             "ccu",
             "ccar",
-            "coastalcarolina"
+            "coastalcarolina",
+            "C. Carolina"
         ],
         "55": [
             "COLGT",
@@ -1721,7 +1723,8 @@
             "eiu",
             "panthers",
             "PANTHERS",
-            "easternillinois"
+            "easternillinois",
+            "E. Illinois"
         ],
         "79": [
             "Colonels",
@@ -1990,7 +1993,8 @@
             "GEORGIA SOUTHERN",
             "gaso",
             "gasou",
-            "georgiasouthern"
+            "georgiasouthern",
+            "Ga. Southern"
         ],
         "101": [
             "Georgia State",
@@ -2590,7 +2594,8 @@
             "long beach st.",
             "LONG BEACH ST.",
             "longbeachst",
-            "long beach st"
+            "long beach st",
+            "LNGBCH"
         ],
         "149": [
             "Longwood",
@@ -3416,7 +3421,8 @@
             "lumberjacks",
             "LUMBERJACKS",
             "nau",
-            "northernarizona"
+            "northernarizona",
+            "N. Arizona"
         ],
         "213": [
             "Northern Colorado",
@@ -3573,7 +3579,8 @@
             "oklahoma st.",
             "OKLAHOMA ST.",
             "oklahomast",
-            "oklahoma st"
+            "oklahoma st",
+            "Okla. St."
         ],
         "225": [
             "ODU",
@@ -3672,7 +3679,8 @@
             "PEPPERDINE",
             "waves",
             "WAVES",
-            "pepp"
+            "pepp",
+            "PEPPER"
         ],
         "233": [
             "Panthers",
@@ -3883,7 +3891,8 @@
             "SOUTHEAST MISSOURI STATE",
             "redhawks",
             "REDHAWKS",
-            "semo"
+            "semo",
+            "SE Missouri St."
         ],
         "252": [
             "SIU-Edwardsville",
@@ -4252,7 +4261,8 @@
             "SALUKIS",
             "southern illinois",
             "SOUTHERN ILLINOIS",
-            "southernillinois"
+            "southernillinois",
+            "S. Illinois"
         ],
         "280": [
             "Southern Indiana",
@@ -4263,7 +4273,8 @@
             "screaming eagles",
             "SCREAMING EAGLES",
             "usi",
-            "southernindiana"
+            "southernindiana",
+            "So. Indiana"
         ],
         "281": [
             "Southern Mississippi",
@@ -4277,7 +4288,8 @@
             "somis",
             "southern miss",
             "SOUTHERN MISS",
-            "southernmiss"
+            "southernmiss",
+            "So. Miss"
         ],
         "282": [
             "Thunderbirds",
@@ -4288,7 +4300,8 @@
             "suu",
             "southern utah",
             "SOUTHERN UTAH",
-            "southernutah"
+            "southernutah",
+            "So. Utah"
         ],
         "283": [
             "St. Bonaventure",
@@ -4455,7 +4468,8 @@
             "TENNESSEE-MARTIN",
             "tennessee martin",
             "TENNESSEE MARTIN",
-            "tennesseemartin"
+            "tennesseemartin",
+            "UT Martin"
         ],
         "297": [
             "Tigers",
@@ -4483,7 +4497,8 @@
             "tntch",
             "tennessee tech",
             "TENNESSEE TECH",
-            "tennesseetech"
+            "tennesseetech",
+            "Tenn. Tech"
         ],
         "299": [
             "Longhorns",
@@ -4723,7 +4738,8 @@
             "UMKC",
             "umkc",
             "kangaroos",
-            "KANGAROOS"
+            "KANGAROOS",
+            "Kansas City"
         ],
         "321": [
             "UMass Lowell",
@@ -4747,7 +4763,8 @@
             "BULLDOGS",
             "unca",
             "ncashv",
-            "uncasheville"
+            "uncasheville",
+            "UNC-Ash."
         ],
         "323": [
             "UNC Greensboro",
@@ -5096,7 +5113,8 @@
             "western carolina",
             "WESTERN CAROLINA",
             "wcar",
-            "westerncarolina"
+            "westerncarolina",
+            "W. Carolina"
         ],
         "352": [
             "Western Illinois",
@@ -5107,7 +5125,8 @@
             "leathernecks",
             "LEATHERNECKS",
             "wiu",
-            "westernillinois"
+            "westernillinois",
+            "W. Illinois"
         ],
         "353": [
             "Western Kentucky",
