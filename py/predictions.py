@@ -9,6 +9,8 @@ import html_builder as htmb
 from pytz import timezone
 import scraper
 import re
+import matplotlib.pyplot as plt
+import plotly.express as px
 
 
 def seed_helper(x):
@@ -203,6 +205,8 @@ def getUrl(x, save_df, master):
     link = "/assets/images/" + master.at[save, "path"]
     return link
 
+def predByConf(df):
+    print(df)
 
 def predict_w(date):
     randomForest = utils.read_from_pickle("wtor_forest")
@@ -298,7 +302,7 @@ def predict_w(date):
     conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
     df = main64.drop(columns=["Torvik Rank", "# Models Torvik", "Seed", "ConfChamp"])
     df = df[["Team", "Conf", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
-
+    
     styler = (
         df.style.hide(axis="index")
         .format({"GordScore": "{:.1f}"})
@@ -473,6 +477,8 @@ def predict(date):
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
 
+    predByConf(save_df)
+
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
     main64 = main64.head(68 - len(bestByConf))
@@ -519,6 +525,17 @@ def predict(date):
         ]
     )
     df = df[["Team", "Conf", "Kenpom", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
+    conf_dict = df.groupby("Conf")['Team'].count()
+    labels = []
+    sizes = []
+
+    for x, y in conf_dict.items():
+        labels.append(x)
+        sizes.append(y)
+
+    # Plot
+    fig = px.pie(values=sizes, labels=labels, title="Conference Breakdown")
+    fig_html = fig.to_html()
 
     master = scraper.getMasterTeams()
     df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
@@ -547,6 +564,7 @@ def predict(date):
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += "<div>"
+    df_html += f"{fig_html}"
     path = utils.get_path(f"docs/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"Prediction - {date}")
     with open(path, "w") as f:
