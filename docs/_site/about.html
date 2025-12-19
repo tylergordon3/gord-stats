@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="stylesheet" type="text/css" media="screen"
-    href="/assets/css/style.css?v=db76dee142cded9af47f68f770b6d467c29cc92b">
+    href="/assets/css/style.css?v=98dcd4f4f2495e6fd4a6c1e005f994dd4ad648f9">
   <link rel="stylesheet" href="/assets/css/custom.css">
   <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>About | cbb-model</title>
@@ -42,7 +42,8 @@
   <div id="header_wrap" class="outer">
     <header class="inner">
       <h1 id="project_title">Bracket Gordology</h1>
-      <div id="nav">
+      <div class="header-row">
+        <div id="nav">
   <div class="nav-inner">
     <nav class="simple-nav">
       
@@ -61,7 +62,7 @@
 
       
       
-      <a href="/predict_2025-12-18.html">Current Model</a>
+      <a href="/predict_2025-12-19.html">Current Model</a>
 
       
 
@@ -80,10 +81,11 @@
   </div>
 </div>
 
-      <!-- LEAGUE TOGGLE -->
-      <div class="league-toggle">
-        <a id="men-link" href="#">Men</a>
-        <a id="women-link" href="#">Women</a>
+        <!-- LEAGUE TOGGLE -->
+        <div class="league-toggle">
+          <a id="men-link" href="#">Men</a>
+          <a id="women-link" href="#">Women</a>
+        </div>
       </div>
     </header>
   </div>
@@ -101,6 +103,28 @@
       <p class="copyright">Maintained by Tyler Gordon
     </footer>
   </div>
+  <script>
+(function () {
+  const path = location.pathname;
+  const league = path.startsWith("/women/") ? "women" : "men";
+
+  document.querySelectorAll('.simple-nav a').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('http')) return;
+
+    // Skip index.html already under league
+    if (href === "/index.html") {
+      a.href = "/" + league + "/index.html";
+      return;
+    }
+
+    // Rewrite root-level links to league context
+    if (href.startsWith("/")) {
+      a.href = "/" + league + href;
+    }
+  });
+})();
+</script>
   <script>
     (function () {
       const path = window.location.pathname;

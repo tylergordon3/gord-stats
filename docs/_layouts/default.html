@@ -18,12 +18,14 @@
   <div id="header_wrap" class="outer">
     <header class="inner">
       <h1 id="project_title">Bracket Gordology</h1>
-      {% include nav.html %}
+      <div class="header-row">
+        {% include nav.html %}
 
-      <!-- LEAGUE TOGGLE -->
-      <div class="league-toggle">
-        <a id="men-link" href="#">Men</a>
-        <a id="women-link" href="#">Women</a>
+        <!-- LEAGUE TOGGLE -->
+        <div class="league-toggle">
+          <a id="men-link" href="#">Men</a>
+          <a id="women-link" href="#">Women</a>
+        </div>
       </div>
     </header>
   </div>
@@ -41,6 +43,28 @@
       <p class="copyright">Maintained by Tyler Gordon
     </footer>
   </div>
+  <script>
+(function () {
+  const path = location.pathname;
+  const league = path.startsWith("/women/") ? "women" : "men";
+
+  document.querySelectorAll('.simple-nav a').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('http')) return;
+
+    // Skip index.html already under league
+    if (href === "/index.html") {
+      a.href = "/" + league + "/index.html";
+      return;
+    }
+
+    // Rewrite root-level links to league context
+    if (href.startsWith("/")) {
+      a.href = "/" + league + href;
+    }
+  });
+})();
+</script>
   <script>
     (function () {
       const path = window.location.pathname;

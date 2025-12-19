@@ -1,0 +1,284 @@
+/* -----------------------------
+   NAV
+------------------------------ */
+.simple-nav a {
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid #4a5a68;
+  text-decoration: none;
+}
+
+.simple-nav a:last-child {
+  border-right: none;
+}
+
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.league-toggle {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.league-toggle a {
+  text-decoration: none;
+  color: #6b7280;
+}
+
+.league-toggle a.active {
+  font-weight: 700;
+  color: #111;
+  border-bottom: 2px solid #111;
+}
+
+@media (max-width: 600px) {
+  .nav-inner {
+    flex-wrap: wrap;
+  }
+
+  .league-toggle {
+    width: 100%;
+    justify-content: center;
+    margin-top: 6px;
+  }
+}
+
+/* -----------------------------
+   TABLE WRAPPER – prevents overflow
+------------------------------ */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.custom-inner {
+  position: relative;
+  max-width: 800px;
+  padding: 20px 10px;
+  margin: 0 auto;
+}
+
+
+/* -----------------------------
+   TABLE BASE STYLING
+   ------------------------------ */
+   .sticky-table table {
+     width: 100% !important;
+       max-width: 100% !important;
+         border-collapse: collapse !important;
+
+           /* THIS allows the table to shrink normally */
+             table-layout: auto !important;
+
+               font-family: monospace;
+                 margin-left: auto;
+                   margin-right: auto;
+                     font-size: inherit;
+                     }
+                     
+.sticky-table th {
+  font-weight: bold;
+  background: #D3D3D3;
+  padding: 6px 8px;
+}
+
+.sticky-table th,
+.sticky-table td {
+  
+  font-size: inherit;
+
+  /* Default: keep columns readable */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  min-width: 70px; /* prevents columns from collapsing to nothing */
+  color: black;
+}
+
+.sticky-table td {
+  background: white;
+  padding: 1x 4px;
+}
+/* -----------------------------
+   STICKY HEADER
+------------------------------ */
+.sticky-table thead {
+  position: sticky;
+  top: 0;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+  z-index: 2;
+}
+.sticky-table th {
+  position: sticky;
+  top: 0;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+  z-index: 2;
+  border-right: 1px solid #ccc;
+}
+
+/* Freeze first column */
+.sticky-table th:first-child,
+.sticky-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
+  color: black;
+  border-right: 1px solid black;
+  background: #D3D3D3
+}
+
+.sticky-table td:last-child {
+  border-bottom: none;
+}
+
+.sticky-table th:last-child {
+  border-right: none;
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .sticky-table th,
+  .sticky-table td {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+}
+
+/* Extremely small phones (old iPhones) */
+@media (max-width: 320px) {
+  .sticky-table th,
+  .sticky-table td {
+    padding: 3px 4px;
+    font-size: 11px;
+  }
+}
+
+
+/* GAMES */
+.matchup-list {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+.matchup-list td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #ddd;
+  font-family: system-ui, sans-serif;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.matchup-list tr:hover {
+  background: #f6f6f6;
+}
+
+.matchup {
+  padding: 12px 14px;
+  border-bottom: 1px solid #ddd;
+  font-family: system-ui, sans-serif;
+}
+
+/* Teams line */
+.teams {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.team {
+  white-space: nowrap;
+}
+
+.at {
+  color: #777;
+}
+
+/* Time / Score badge */
+.meta {
+  margin-top: 6px;
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #444;
+  background: #f1f1f1;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Final games */
+.meta-final {
+  background: #16a34a;
+  color: white;
+}
+
+/* Live games */
+.meta-live {
+  color: #ffecec;
+  background: #db8946;
+}
+
+.meta-upcoming {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+@media (max-width: 360px) {
+  .teams {
+    font-size: 14px;
+  }
+}
+
+.team strong {
+  color: #000;
+}
+
+.team-logo {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  vertical-align: middle;
+  margin-left: 6px;   /* space between text and image */
+  height: 30px;       /* keep consistent sizing */
+}
+
+.conf-table {
+  width: 100%;
+  max-width: 400px;
+  border-collapse: collapse;
+  margin: 0 auto;
+  font-family: monospace;
+}
+
+.conf-table th,
+.conf-table td {
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.conf-table th {
+  border-bottom: 2px solid #4a5a68;
+}
+
+.conf-table tr:not(:last-child) td {
+  border-bottom: 1px solid #2c3945;
+}

@@ -120,7 +120,7 @@ def get_recent_html_w(input_date):
     def parse_date(fname):
         # filename format: predict_wYYYY-MM-DD.html
         try:
-            return date.fromisoformat(fname[9:19])
+            return date.fromisoformat(fname[8:18])
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
     path = get_path('docs/women/')

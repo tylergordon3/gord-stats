@@ -19,10 +19,18 @@
   gap: 12px;
 }
 
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
 .league-toggle {
   display: flex;
   gap: 10px;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .league-toggle a {

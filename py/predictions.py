@@ -535,10 +535,6 @@ def predict(date):
     for conference, bids in conf.items():
         grouped[bids].append(conference)
 
-    for bids in sorted(grouped.keys(), reverse=True):
-        conferences = ", ".join(sorted(grouped[bids]))
-        print(f"{bids}: {conferences}")
-
     master = scraper.getMasterTeams()
     df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
     df["Team"] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
