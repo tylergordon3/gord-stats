@@ -221,6 +221,7 @@ def predict_w(date):
 
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
     torvik_data = clean_teams(torvik_data)
+    torvik_teams = torvik_data["Team"]
 
     torvik_today = torvik_data.drop(
         columns=[
@@ -255,6 +256,8 @@ def predict_w(date):
     torvik_data["Sum"] = torvik_data[["RF", "DT", "SVC"]].sum(1)
     df_torvik = torvik_data[["Rk", "Team", "Conf", "RF", "DT", "SVC", "Sum"]].copy()
 
+    print(df_torvik.to_string())
+
     df_torvik_filter = df_torvik.copy()
     df_torvik_filter = df_torvik_filter.drop(columns=["Sum"])
     df_torvik["Rk"] = pd.to_numeric(df_torvik["Rk"])
@@ -271,6 +274,7 @@ def predict_w(date):
     save_df = df_torvik.copy()
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
+    print(save_df['Team'].to_string())
 
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
@@ -305,6 +309,21 @@ def predict_w(date):
     df = main64.drop(columns=["Torvik Rank", "# Models Torvik", "Seed", "ConfChamp"])
     df = df[["Team", "Conf", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
 
+    conf = (df.groupby("Conf")
+                .size()
+                .astype(int)
+                .to_dict()
+    )
+
+    grouped = defaultdict(list)
+    for conference, bids in conf.items():
+        grouped[bids].append(conference)
+
+    master = scraper.getMasterTeams()
+    df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
+    df["Team"] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
+    df = df.drop(columns=["img"])
+
     styler = (
         df.style.hide(axis="index")
         .format({"GordScore": "{:.1f}"})
@@ -316,6 +335,12 @@ def predict_w(date):
         )
         .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
     )
+
+    conf_html =  "<h3>Bid Breakdown by Conference</h3>"
+    for bids in sorted(grouped.keys(), reverse=True):
+        confs = ", ".join(grouped[bids])
+        conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
+
     tz = timezone("EST")
     time_obj = datetime.datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
@@ -323,8 +348,10 @@ def predict_w(date):
         <div class="table-container">
         {styler.to_html()}
         <div>"""
+    df_html += conf_html
     path = utils.get_path(f"docs/women/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"NCAAW Prediction- {date}")
+    
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")
@@ -478,6 +505,7 @@ def predict(date):
     save_df = main64.copy()
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
+    print(save_df['Team'].to_string())
 
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)

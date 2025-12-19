@@ -21,11 +21,6 @@
       <div class="header-row">
         {% include nav.html %}
 
-        <!-- LEAGUE TOGGLE -->
-        <div class="league-toggle">
-          <a id="men-link" href="#">Men</a>
-          <a id="women-link" href="#">Women</a>
-        </div>
       </div>
     </header>
   </div>
@@ -50,7 +45,7 @@
 
   // Map generic nav links → league-specific filenames
   const rewriteMap = {
-    "/history.html": `/${league}/${league}_history.html`,
+    "/history.html": `/${league}/history.html`,
     "/index.html": `/${league}/index.html`
   };
 
