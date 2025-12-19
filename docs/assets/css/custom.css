@@ -283,3 +283,54 @@
 .conf-table tr:not(:last-child) td {
   border-bottom: 1px solid #2c3945;
 }
+
+.league-toggle {
+  display: flex;
+  align-items: center;
+}
+
+#league-toggle-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 110px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #4a5a68;
+  border-radius: 16px;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+#league-toggle-btn .option {
+  flex: 1;
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
+  color: #6b7280;
+}
+
+#league-toggle-btn .slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 52px;
+  height: 26px;
+  background: #111;
+  border-radius: 13px;
+  transition: transform 0.2s ease;
+  z-index: 1;
+}
+
+/* Women active */
+#league-toggle-btn.women .slider {
+  transform: translateX(54px);
+}
+
+#league-toggle-btn.men .men,
+#league-toggle-btn.women .women {
+  color: #fff;
+  font-weight: 600;
+}

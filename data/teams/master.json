@@ -743,7 +743,8 @@
             "WILDCATS",
             "abilene christian",
             "ABILENE CHRISTIAN",
-            "abilenechristian"
+            "abilenechristian",
+            "Abilene Chr."
         ],
         "1": [
             "AFA",
@@ -1193,7 +1194,8 @@
             "CAL STATE NORTHRIDGE",
             "matadors",
             "MATADORS",
-            "csun"
+            "csun",
+            "CSNorthridge"
         ],
         "36": [
             "California Baptist",
@@ -1752,7 +1754,8 @@
             "emich",
             "eastern michigan",
             "EASTERN MICHIGAN",
-            "easternmichigan"
+            "easternmichigan",
+            "E. Michigan"
         ],
         "81": [
             "Eastern Washington",
@@ -2702,7 +2705,8 @@
             "LIONS",
             "loymr",
             "loymry",
-            "loyolamarymount"
+            "loyolamarymount",
+            "LMU"
         ],
         "157": [
             "Maine",
@@ -2994,7 +2998,8 @@
             "mississippi valley st.",
             "MISSISSIPPI VALLEY ST.",
             "mississippivalleyst",
-            "mississippi valley st"
+            "mississippi valley st",
+            "Miss Valley St."
         ],
         "180": [
             "Missouri",
@@ -3111,7 +3116,8 @@
             "msmu",
             "mountstmary's",
             "mount st mary's",
-            "mount st marys"
+            "mount st marys",
+            "Mt St Mary's"
         ],
         "188": [
             "MURR",
@@ -3312,7 +3318,8 @@
             "lions",
             "LIONS",
             "una",
-            "northalabama"
+            "northalabama",
+            "N. Alabama"
         ],
         "204": [
             "UNC",
@@ -4010,7 +4017,8 @@
             "PEACOCKS",
             "stpc",
             "saintpeter's",
-            "saint peters"
+            "saint peters",
+            "St. Peter's"
         ],
         "261": [
             "SHSU",
@@ -4239,7 +4247,8 @@
             "LIONS",
             "selu",
             "sela",
-            "southeasternlouisiana"
+            "southeasternlouisiana",
+            "SE Louisiana"
         ],
         "278": [
             "Southern",
@@ -4825,7 +4834,8 @@
             "uscu",
             "uscup",
             "uscupstate",
-            "SC Upstate"
+            "SC Upstate",
+            "SC State"
         ],
         "328": [
             "Texas-Arlington",
@@ -5147,7 +5157,8 @@
             "hilltoppers",
             "HILLTOPPERS",
             "wku",
-            "westernkentucky"
+            "westernkentucky",
+            "W. Kentucky"
         ],
         "354": [
             "WMY",

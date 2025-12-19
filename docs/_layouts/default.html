@@ -38,90 +38,130 @@
       <p class="copyright">Maintained by Tyler Gordon
     </footer>
   </div>
-  <<script>
-(function () {
-  const path = location.pathname;
-  const league = path.startsWith("/women/") ? "women" : "men";
-
-  // Map generic nav links → league-specific filenames
-  const rewriteMap = {
-    "/history.html": `/${league}/history.html`
-  };
-
-  document.querySelectorAll('.simple-nav a').forEach(a => {
-    const href = a.getAttribute('href');
-
-    if (!href || href.startsWith('http')) return;
-
-    // 🚫 NEVER rewrite Home (two layers of safety)
-    if (a.classList.contains("nav-home")) return;
-    if (href === "/index.html") return;
-
-    // Exact rewrite (history, etc.)
-    if (rewriteMap[href]) {
-      a.href = rewriteMap[href];
-      return;
-    }
-
-    // Predict pages
-    if (href.startsWith("predict_")) {
-      a.href = `/${league}/${href}`;
-      return;
-    }
-
-    // Default: prepend league
-    if (href.startsWith("/")) {
-      a.href = `/${league}${href}`;
-    }
-  });
-})();
-</script>
   <script>
+    /**
+     * LEAGUE-AWARE NAV REWRITE
+     * --------------------------------------------------
+     * Converts generic nav.yml links into league-specific URLs.
+     *
+     * Examples:
+     *   /history.html          → /men/history.html or /women/history.html
+     *   predict_YYYY-MM-DD.html → /men/predict_YYYY-MM-DD.html
+     *
+     * Safety rules:
+     *   - NEVER rewrite Home (/index.html)
+     *   - NEVER rewrite links marked with .nav-home
+     *   - NEVER touch external (http/https) links
+     *
+     * This allows nav.yml to remain league-agnostic while
+     * the site stays context-aware.
+     */
     (function () {
-      const path = window.location.pathname;
+      const path = location.pathname;
+      const league = path.startsWith("/women/") ? "women" : "men";
 
-      function swapLeague(target) {
-        // /men/foo.html → /women/foo.html
-        if (path.startsWith("/men/")) {
-          return path.replace("/men/", "/" + target + "/");
+      // Explicit filename rewrites (extend as needed)
+      const rewriteMap = {
+        "/history.html": `/${league}/history.html`
+      };
+
+      document.querySelectorAll('.simple-nav a').forEach(a => {
+        const href = a.getAttribute('href');
+
+        if (!href || href.startsWith('http')) return;
+
+        // 🚫 NEVER rewrite Home (two layers of safety)
+        if (a.classList.contains("nav-home")) return;
+        if (href === "/index.html") return;
+
+        // Exact filename rewrites
+        if (rewriteMap[href]) {
+          a.href = rewriteMap[href];
+          return;
         }
 
-        // /women/foo.html → /men/foo.html
-        if (path.startsWith("/women/")) {
-          return path.replace("/women/", "/" + target + "/");
+        // Daily prediction pages
+        if (href.startsWith("predict_")) {
+          a.href = `/${league}/${href}`;
+          return;
         }
 
-        // fallback (root or legacy pages)
-        return "/" + target + "/index.html";
-      }
-
-      const men = document.getElementById("men-link");
-      const women = document.getElementById("women-link");
-
-      if (!men || !women) return;
-
-      men.href = swapLeague("men");
-      women.href = swapLeague("women");
-
-      // Active state
-      if (path.startsWith("/women/")) {
-        women.classList.add("active");
-      } else {
-        men.classList.add("active");
-      }
+        // Default: prepend league to root-relative links
+        if (href.startsWith("/")) {
+          a.href = `/${league}${href}`;
+        }
+      });
     })();
   </script>
   <script>
-(function () {
-  const path = window.location.pathname;
-  const league = path.startsWith("/women/") ? "women" : "men";
+    /**
+     * LEAGUE TOGGLE BUTTON
+     * --------------------------------------------------
+     * Controls the Men/Women pill-style toggle.
+     *
+     * Behavior:
+     *   - Detects current league from URL path
+     *   - Visually activates the toggle state
+     *   - Clicking switches leagues but keeps the same page
+     *
+     * Examples:
+     *   /men/rankings.html   → /women/rankings.html
+     *   /women/index.html   → /men/index.html
+     *
+     * Fallback:
+     *   - If not in /men/ or /women/, routes to /{league}/index.html
+     */
+    (function () {
+      const path = window.location.pathname;
+      const isWomen = path.startsWith("/women/");
+      const league = isWomen ? "women" : "men";
 
-  // Handle Today's Scores link
-  document.querySelectorAll(".today-scores-link").forEach(link => {
-    link.href = `/${league}/index.html`;
-  });
-})();
-</script>
+      const btn = document.getElementById("league-toggle-btn");
+      if (!btn) return;
+
+      // Set initial visual state
+      btn.classList.add(league);
+
+      function swapLeague(target) {
+        if (path.startsWith("/men/")) {
+          return path.replace("/men/", "/" + target + "/");
+        }
+        if (path.startsWith("/women/")) {
+          return path.replace("/women/", "/" + target + "/");
+        }
+        return "/" + target + "/index.html";
+      }
+
+      btn.addEventListener("click", () => {
+        const target = league === "men" ? "women" : "men";
+        location.href = swapLeague(target);
+      });
+    })();
+  </script>
+
+  <script>
+    /**
+     * TODAY'S SCORES ROUTING
+     * --------------------------------------------------
+     * Forces the "Today's Scores" nav item to point to
+     * the current league's dashboard:
+     *
+     *   Men   → /men/index.html
+     *   Women → /women/index.html
+     *
+     * This keeps "Home" (root index.html) and "Today"
+     * as two distinct navigation concepts.
+     */
+    (function () {
+      const path = window.location.pathname;
+      const league = path.startsWith("/women/") ? "women" : "men";
+
+      document.querySelectorAll(".today-scores-link").forEach(link => {
+        link.href = `/${league}/index.html`;
+      });
+    })();
+  </script>
+
 </body>
 
 </html>

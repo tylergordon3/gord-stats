@@ -1,20 +1,31 @@
-<nav class="simple-nav">
-  {% for item in site.data.nav.docs %}
+<div id="nav">
+  <div class="nav-inner">
+    <nav class="simple-nav">
+      {% for item in site.data.nav.docs %}
 
-    {% if item.url contains "__TODAY__" %}
+      {% if item.url contains "__TODAY__" %}
       {% capture today_url %}
-        predict_{{ site.time | date: '%Y-%m-%d' }}.html
+      predict_{{ site.time | date: '%Y-%m-%d' }}.html
       {% endcapture %}
       <a href="{{ today_url | strip | relative_url }}">{{ item.title }}</a>
 
-    {% else %}
-      <a
-        href="{{ item.url | relative_url }}"
-        {% if item.title == "Home" %}class="nav-home"{% endif %}
-      >
-        {{ item.title }}
-      </a>
-    {% endif %}
+      {% elsif item.url == "__TODAY_SCORES__" %}
+      <a href="#" class="today-scores-link">{{ item.title }}</a>
 
-  {% endfor %}
-</nav>
+      {% else %}
+      <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+
+      {% endif %}
+
+      {% endfor %}
+    </nav>
+
+    <div class="league-toggle">
+      <button id="league-toggle-btn" aria-label="Toggle Men/Women">
+        <span class="option men">Men</span>
+        <span class="option women">Women</span>
+        <span class="slider"></span>
+      </button>
+    </div>
+  </div>
+</div>
