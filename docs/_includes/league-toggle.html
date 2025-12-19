@@ -1,0 +1,9 @@
+<div class="league-toggle">
+  {% if page.league == "men" %}
+    <span class="active">Men</span>
+    <a href="/women{{ page.url | remove_first:'/men' }}">Women</a>
+  {% else %}
+    <a href="/men{{ page.url | remove_first:'/women' }}">Men</a>
+    <span class="active">Women</span>
+  {% endif %}
+</div>

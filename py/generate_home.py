@@ -12,7 +12,7 @@ def update_html(dates):
 
 def generate_home_about(gamesToday, update=False):
     today = date.today()
-    mypath = utils.get_path('docs/')
+    mypath = utils.get_path('docs/men/')
     all_entries = os.listdir(mypath)
     valid = []
     for filename in all_entries:
@@ -27,7 +27,7 @@ def generate_home_about(gamesToday, update=False):
     dates = sorted(valid)
     if update:
         update_html(dates)
-    history = utils.get_path('docs/history.html')
+    history = utils.get_path('docs/men/men_history.html')
     html = f"""---
 layout: default
 title: History
@@ -60,6 +60,6 @@ title: Bracket Gordology
     <p>{time}</p>
     {gamesToday}
 '''
-    with open(utils.get_path('docs/index.html'), 'w') as f: 
+    with open(utils.get_path('docs/men/men_index.html'), 'w') as f: 
        f.write(index.lstrip())  
        print(f'Wrote to: {mypath} for {day}')

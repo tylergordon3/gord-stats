@@ -11,7 +11,7 @@ import scraper
 import re
 import matplotlib.pyplot as plt
 import plotly.express as px
-
+from collections import defaultdict
 
 def seed_helper(x):
     """
@@ -323,7 +323,7 @@ def predict_w(date):
         <div class="table-container">
         {styler.to_html()}
         <div>"""
-    path = utils.get_path(f"docs/predict_w{date}.html")
+    path = utils.get_path(f"docs/women/predict_w{date}.html")
     html = htmb.add_front_matter(df_html, f"NCAAW Prediction- {date}")
     with open(path, "w") as f:
         f.write(html)
@@ -479,8 +479,6 @@ def predict(date):
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
 
-    #predByConf(save_df)
-
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
     main64 = main64.head(68 - len(bestByConf))
@@ -527,17 +525,20 @@ def predict(date):
         ]
     )
     df = df[["Team", "Conf", "Kenpom", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
-    conf_dict = (df.groupby("Conf")["Team"]
-                 .count()
-                 .reset_index()
+    conf = (df.groupby("Conf")
+                .size()
+                .astype(int)
+                .to_dict()
     )
-    conf_dict = conf_dict.rename(columns={'Team' : 'Count'})
-    conf_dict = conf_dict.sort_values(by="Count", ascending = False)
-    conf = pd.DataFrame(conf_dict)
-    conf_styler = (
-        conf.style.hide(axis='index')
-        .set_table_attributes('class="sticky-table"')
-    )
+
+    grouped = defaultdict(list)
+    for conference, bids in conf.items():
+        grouped[bids].append(conference)
+
+    for bids in sorted(grouped.keys(), reverse=True):
+        conferences = ", ".join(sorted(grouped[bids]))
+        print(f"{bids}: {conferences}")
+
     master = scraper.getMasterTeams()
     df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
     df["Team"] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
@@ -558,6 +559,11 @@ def predict(date):
         )
         .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
     )
+    conf_html =  "<h3>Bid Breakdown by Conference</h3>"
+    for bids in sorted(grouped.keys(), reverse=True):
+        confs = ", ".join(grouped[bids])
+        conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
+   
     tz = timezone("EST")
     time_obj = datetime.datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
@@ -565,8 +571,8 @@ def predict(date):
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += "</div>"
-    df_html += conf_styler.to_html()
-    path = utils.get_path(f"docs/predict_{date}.html")
+    df_html += conf_html
+    path = utils.get_path(f"docs/men/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"Prediction - {date}")
     with open(path, "w") as f:
         f.write(html)

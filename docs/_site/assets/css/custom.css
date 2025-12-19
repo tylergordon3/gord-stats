@@ -217,3 +217,25 @@
   margin-left: 6px;   /* space between text and image */
   height: 30px;       /* keep consistent sizing */
 }
+
+.conf-table {
+  width: 100%;
+  max-width: 400px;
+  border-collapse: collapse;
+  margin: 0 auto;
+  font-family: monospace;
+}
+
+.conf-table th,
+.conf-table td {
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.conf-table th {
+  border-bottom: 2px solid #4a5a68;
+}
+
+.conf-table tr:not(:last-child) td {
+  border-bottom: 1px solid #2c3945;
+}

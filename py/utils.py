@@ -111,7 +111,7 @@ def get_recent_html(input_date):
             return date.fromisoformat(fname[8:18])
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
-    path = get_path('docs/')
+    path = get_path('docs/men/')
     html_files = Path(path).glob("predict_[0-9]*.html")
     html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return html
@@ -123,7 +123,7 @@ def get_recent_html_w(input_date):
             return date.fromisoformat(fname[9:19])
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
-    path = get_path('docs/')
+    path = get_path('docs/women/')
     html_files = Path(path).glob("predict_w*.html")
     html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return html
