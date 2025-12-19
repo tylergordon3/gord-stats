@@ -107,6 +107,17 @@
       }
     })();
   </script>
+  <script>
+(function () {
+  const path = window.location.pathname;
+  const league = path.startsWith("/women/") ? "women" : "men";
+
+  // Handle Today's Scores link
+  document.querySelectorAll(".today-scores-link").forEach(link => {
+    link.href = `/${league}/index.html`;
+  });
+})();
+</script>
 </body>
 
 </html>

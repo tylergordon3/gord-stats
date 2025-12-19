@@ -32,9 +32,9 @@ def render_home(men_rankings, men_games_html, women_rankings, women_games_html):
     men_games = getPower5(men_soup)
     women_games = getPower5(women_soup)
 
-    test = men_games + women_games
+    html = "<h3>Men's Power 5 Today</h3>" + men_games + "<h3>Women's Power 5 Today</h3>" + women_games
     path =  utils.get_path('docs/index.html')
-    html = htmb.add_front_matter(test, "GordStats Home")
+    html = htmb.add_front_matter(html, "GordStats Home")
 
     with open(path, "w") as f:
         f.write(html)

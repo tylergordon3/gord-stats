@@ -1,8 +1,11 @@
-docs_list_title: FantasyFootballLinks
+docs_list_title: CBBSTATS
 docs:
 
 - title: Home
   url: /index.html
+
+- title: Today's Scores
+  url: "__TODAY_SCORES__"
 
 - title: About
   url: /about.html
