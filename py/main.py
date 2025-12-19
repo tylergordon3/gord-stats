@@ -5,6 +5,7 @@ import pandas as pd
 import scraper
 from datetime import datetime, date
 import numpy as np
+from render import render_home as rh
 
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
@@ -70,8 +71,10 @@ if save_model_w:
 today_df = predictions.predict(date.today())
 today_w_df = predictions.predict_w(date.today())
 
-games = scraper.today_games(today_df)
+games = scraper.today_games(today_df, 'M')
 generate_home.generate_home_about(games, 'M', False)
 
-games_women = scraper.today_games(today_w_df)
+games_women = scraper.today_games(today_w_df, 'W')
 generate_home.generate_home_about(games_women, 'W', False)
+
+rh.render_home(today_df, games, today_w_df, games_women)

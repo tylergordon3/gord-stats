@@ -163,19 +163,55 @@ def getNameFromCode(code, master):
     else:
         return [list(df_result["index"])[0], list(df_result["team"])[0]]
 
+def game_status(soup, gender):
+    if gender == "M":
+        games = soup.find_all("div", class_="CellGame")
+        times = [
+                game.find("a").text.strip() for game in games if game.find("a") is not None
+            ]
+        return times
+    elif gender == "W":
+        GAME_STATES = {"pregame", "ingame", "postgame"}
+        cards = soup.select("div.single-score-card.womenscollegebasketball")
+        ordered_games = []
 
-def today_games(rank_df):
+        for idx, card in enumerate(cards):
+            classes = set(card.get("class", []))
+            state = next((c for c in classes if c in GAME_STATES), "unknown")
+
+            if (state == 'postgame') | (state == 'ingame'):
+                totals = [total.text for total in card.find_all("td", class_='total')]
+                teams = [name.text for name in card.find_all("span", class_='team-name-link')]
+                if (state == 'postgame'):
+                    ordered_games.append(f'{teams[0]} {totals[0]} - {teams[1]} {totals[1]}')
+                elif (state == 'ingame'):
+                    time = card.find("div", class_='game-status emphasis').text
+                    ordered_games.append(f'{teams[0]} {totals[0]}, {teams[1]} {totals[1]} - {time}')
+            else: 
+                time = card.find("span", class_='formatter').text
+                ordered_games.append(time)
+        return ordered_games
+
+def today_games(rank_df, gender):
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
-    base_link = "https://www.cbssports.com/college-basketball/schedule/"
-    soup = getHTML(base_link)
+    if gender == 'M':
+        look_for = "college-basketball/teams/"
+        name_class = "TeamName"
+        soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
+    elif gender == 'W':
+        look_for = "womens-college-basketball/teams/"
+        name_class = "team-name-link"
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            page = browser.new_page()
+            page.goto("https://www.cbssports.com/womens-college-basketball/scoreboard/")
 
-    names = soup.find_all("span", class_="TeamName")
+            html = page.content()
+            soup = BeautifulSoup(html, "html.parser")
 
-    games = soup.find_all("div", class_="CellGame")
+    names = soup.find_all("span", class_=name_class)
+    times = game_status(soup, gender)
 
-    times = [
-        game.find("a").text.strip() for game in games if game.find("a") is not None
-    ]
     code_names = []
     for name in names:
         atag = name.find("a")
@@ -183,7 +219,6 @@ def today_games(rank_df):
             code_names.append("NA")
         else:
             url = atag["href"]
-            look_for = "college-basketball/teams/"
             idx = url.find(look_for) + len(look_for)
             team_code = url[idx:].split("/")[0]
             code_names.append(team_code)

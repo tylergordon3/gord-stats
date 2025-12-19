@@ -256,8 +256,6 @@ def predict_w(date):
     torvik_data["Sum"] = torvik_data[["RF", "DT", "SVC"]].sum(1)
     df_torvik = torvik_data[["Rk", "Team", "Conf", "RF", "DT", "SVC", "Sum"]].copy()
 
-    print(df_torvik.to_string())
-
     df_torvik_filter = df_torvik.copy()
     df_torvik_filter = df_torvik_filter.drop(columns=["Sum"])
     df_torvik["Rk"] = pd.to_numeric(df_torvik["Rk"])
@@ -274,7 +272,6 @@ def predict_w(date):
     save_df = df_torvik.copy()
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
-    print(save_df['Team'].to_string())
 
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
@@ -505,8 +502,6 @@ def predict(date):
     save_df = main64.copy()
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
-    print(save_df['Team'].to_string())
-
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
     main64 = main64.head(68 - len(bestByConf))
