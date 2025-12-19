@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="stylesheet" type="text/css" media="screen"
-    href="/assets/css/style.css?v=98dcd4f4f2495e6fd4a6c1e005f994dd4ad648f9">
+    href="/assets/css/style.css?v=15bfa59d8d5c4a85a3c5e6831d58f49f83fc1907">
   <link rel="stylesheet" href="/assets/css/custom.css">
   <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>About | cbb-model</title>
@@ -108,19 +108,31 @@
   const path = location.pathname;
   const league = path.startsWith("/women/") ? "women" : "men";
 
+  // Map generic nav links → league-specific filenames
+  const rewriteMap = {
+    "/history.html": `/${league}/${league}_history.html`,
+    "/index.html": `/${league}/index.html`
+  };
+
   document.querySelectorAll('.simple-nav a').forEach(a => {
     const href = a.getAttribute('href');
     if (!href || href.startsWith('http')) return;
 
-    // Skip index.html already under league
-    if (href === "/index.html") {
-      a.href = "/" + league + "/index.html";
+    // Exact rewrite (history, index, etc.)
+    if (rewriteMap[href]) {
+      a.href = rewriteMap[href];
       return;
     }
 
-    // Rewrite root-level links to league context
+    // Predict pages: predict_YYYY-MM-DD.html
+    if (href.startsWith("predict_")) {
+      a.href = `/${league}/${href}`;
+      return;
+    }
+
+    // Default: prepend league
     if (href.startsWith("/")) {
-      a.href = "/" + league + href;
+      a.href = `/${league}${href}`;
     }
   });
 })();

@@ -48,19 +48,31 @@
   const path = location.pathname;
   const league = path.startsWith("/women/") ? "women" : "men";
 
+  // Map generic nav links → league-specific filenames
+  const rewriteMap = {
+    "/history.html": `/${league}/${league}_history.html`,
+    "/index.html": `/${league}/index.html`
+  };
+
   document.querySelectorAll('.simple-nav a').forEach(a => {
     const href = a.getAttribute('href');
     if (!href || href.startsWith('http')) return;
 
-    // Skip index.html already under league
-    if (href === "/index.html") {
-      a.href = "/" + league + "/index.html";
+    // Exact rewrite (history, index, etc.)
+    if (rewriteMap[href]) {
+      a.href = rewriteMap[href];
       return;
     }
 
-    // Rewrite root-level links to league context
+    // Predict pages: predict_YYYY-MM-DD.html
+    if (href.startsWith("predict_")) {
+      a.href = `/${league}/${href}`;
+      return;
+    }
+
+    // Default: prepend league
     if (href.startsWith("/")) {
-      a.href = "/" + league + href;
+      a.href = `/${league}${href}`;
     }
   });
 })();
