@@ -38,28 +38,32 @@
       <p class="copyright">Maintained by Tyler Gordon
     </footer>
   </div>
-  <script>
+  <<script>
 (function () {
   const path = location.pathname;
   const league = path.startsWith("/women/") ? "women" : "men";
 
   // Map generic nav links → league-specific filenames
   const rewriteMap = {
-    "/history.html": `/${league}/history.html`,
-    "/index.html": `/${league}/index.html`
+    "/history.html": `/${league}/history.html`
   };
 
   document.querySelectorAll('.simple-nav a').forEach(a => {
     const href = a.getAttribute('href');
+
     if (!href || href.startsWith('http')) return;
 
-    // Exact rewrite (history, index, etc.)
+    // 🚫 NEVER rewrite Home (two layers of safety)
+    if (a.classList.contains("nav-home")) return;
+    if (href === "/index.html") return;
+
+    // Exact rewrite (history, etc.)
     if (rewriteMap[href]) {
       a.href = rewriteMap[href];
       return;
     }
 
-    // Predict pages: predict_YYYY-MM-DD.html
+    // Predict pages
     if (href.startsWith("predict_")) {
       a.href = `/${league}/${href}`;
       return;
