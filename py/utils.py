@@ -124,6 +124,6 @@ def get_recent_html_w(input_date):
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
     path = get_path('docs/women/')
-    html_files = Path(path).glob("predict_w*.html")
+    html_files = Path(path).glob("predict_*.html")
     html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return html

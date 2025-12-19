@@ -323,7 +323,7 @@ def predict_w(date):
         <div class="table-container">
         {styler.to_html()}
         <div>"""
-    path = utils.get_path(f"docs/women/predict_w{date}.html")
+    path = utils.get_path(f"docs/women/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"NCAAW Prediction- {date}")
     with open(path, "w") as f:
         f.write(html)

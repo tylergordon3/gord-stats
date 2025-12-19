@@ -1,38 +1,81 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="{{ site.lang | default: " en-US" }}">
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" media="screen" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
-{% seo %}
-    {% include head-custom.html %}
-  </head>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" media="screen"
+    href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+  {% seo %}
+  {% include head-custom.html %}
+</head>
 
-  <body>
+<body>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <h1 id="project_title">Bracket Gordology</h1>
-          {% include nav.html %}
-        </header>
-    </div>
+  <!-- HEADER -->
+  <div id="header_wrap" class="outer">
+    <header class="inner">
+      <h1 id="project_title">Bracket Gordology</h1>
+      {% include nav.html %}
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="custom-inner">
-        {{ content }}
-      </section>
-    </div>
+      <!-- LEAGUE TOGGLE -->
+      <div class="league-toggle">
+        <a id="men-link" href="#">Men</a>
+        <a id="women-link" href="#">Women</a>
+      </div>
+    </header>
+  </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Maintained by Tyler Gordon
-      </footer>
-    </div>
-  </body>
+  <!-- MAIN CONTENT -->
+  <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="custom-inner">
+      {{ content }}
+    </section>
+  </div>
+
+  <!-- FOOTER  -->
+  <div id="footer_wrap" class="outer">
+    <footer class="inner">
+      <p class="copyright">Maintained by Tyler Gordon
+    </footer>
+  </div>
+  <script>
+    (function () {
+      const path = window.location.pathname;
+
+      function swapLeague(target) {
+        // /men/foo.html → /women/foo.html
+        if (path.startsWith("/men/")) {
+          return path.replace("/men/", "/" + target + "/");
+        }
+
+        // /women/foo.html → /men/foo.html
+        if (path.startsWith("/women/")) {
+          return path.replace("/women/", "/" + target + "/");
+        }
+
+        // fallback (root or legacy pages)
+        return "/" + target + "/index.html";
+      }
+
+      const men = document.getElementById("men-link");
+      const women = document.getElementById("women-link");
+
+      if (!men || !women) return;
+
+      men.href = swapLeague("men");
+      women.href = swapLeague("women");
+
+      // Active state
+      if (path.startsWith("/women/")) {
+        women.classList.add("active");
+      } else {
+        men.classList.add("active");
+      }
+    })();
+  </script>
+</body>
+
 </html>

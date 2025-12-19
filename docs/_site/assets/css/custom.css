@@ -12,6 +12,42 @@
   border-right: none;
 }
 
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.league-toggle {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.league-toggle a {
+  text-decoration: none;
+  color: #6b7280;
+}
+
+.league-toggle a.active {
+  font-weight: 700;
+  color: #111;
+  border-bottom: 2px solid #111;
+}
+
+@media (max-width: 600px) {
+  .nav-inner {
+    flex-wrap: wrap;
+  }
+
+  .league-toggle {
+    width: 100%;
+    justify-content: center;
+    margin-top: 6px;
+  }
+}
+
 /* -----------------------------
    TABLE WRAPPER – prevents overflow
 ------------------------------ */
