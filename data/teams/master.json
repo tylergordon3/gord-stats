@@ -744,7 +744,8 @@
             "abilene christian",
             "ABILENE CHRISTIAN",
             "abilenechristian",
-            "Abilene Chr."
+            "Abilene Chr.",
+            "ABIL"
         ],
         "1": [
             "AFA",
@@ -1195,7 +1196,8 @@
             "matadors",
             "MATADORS",
             "csun",
-            "CSNorthridge"
+            "CSNorthridge",
+            "CSN"
         ],
         "36": [
             "California Baptist",
@@ -3117,7 +3119,8 @@
             "mountstmary's",
             "mount st mary's",
             "mount st marys",
-            "Mt St Mary's"
+            "Mt St Mary's",
+            "MOUNT"
         ],
         "188": [
             "MURR",
@@ -3319,7 +3322,8 @@
             "LIONS",
             "una",
             "northalabama",
-            "N. Alabama"
+            "N. Alabama",
+            "NALAB"
         ],
         "204": [
             "UNC",
@@ -4248,7 +4252,8 @@
             "selu",
             "sela",
             "southeasternlouisiana",
-            "SE Louisiana"
+            "SE Louisiana",
+            "SELOU"
         ],
         "278": [
             "Southern",
@@ -5158,7 +5163,8 @@
             "HILLTOPPERS",
             "wku",
             "westernkentucky",
-            "W. Kentucky"
+            "W. Kentucky",
+            "WKY"
         ],
         "354": [
             "WMY",

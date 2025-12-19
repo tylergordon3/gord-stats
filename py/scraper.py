@@ -194,6 +194,7 @@ def game_status(soup, gender):
 
 def today_games(rank_df, gender):
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
+    master = getMasterTeams()
     if gender == 'M':
         look_for = "college-basketball/teams/"
         name_class = "TeamName"
@@ -213,21 +214,31 @@ def today_games(rank_df, gender):
     times = game_status(soup, gender)
 
     code_names = []
-    for name in names:
-        atag = name.find("a")
-        if atag is None:
-            code_names.append("NA")
-        else:
-            url = atag["href"]
-            idx = url.find(look_for) + len(look_for)
-            team_code = url[idx:].split("/")[0]
-            code_names.append(team_code)
+    if gender == "M":
+        for name in names:
+            atag = name.find("a")
+            if atag is None:
+                code_names.append("NA")
+            else:
+                url = atag["href"]
+                idx = url.find(look_for) + len(look_for)
+                team_code = url[idx:].split("/")[0]
+                code_names.append(team_code)
+
+    if gender == 'W':
+        for name in names:
+            [_, team] = getNameFromCode(name.text, master)
+            if team is None:
+                code_names.append("NA")
+            else:
+                code_names.append(team)
 
     names_1 = names[::2]
     names_2 = names[1::2]
     codes_1 = code_names[::2]
     codes_2 = code_names[1::2]
-
+   
+        
     sched_df = pd.DataFrame()
     for team1, team2, time, codes_1, codes_2 in zip(
         names_1, names_2, times, codes_1, codes_2
@@ -241,8 +252,7 @@ def today_games(rank_df, gender):
         }
         add = pd.DataFrame([dict])
         sched_df = pd.concat([sched_df, add], ignore_index=True)
-
-    master = getMasterTeams()
+   
     sched_df["team1_rank"] = sched_df.apply(
         lambda x: get_rank(x, rank_df, master, 1), axis=1
     )
