@@ -10,9 +10,13 @@ def update_html(dates):
     for day in dates:
         predictions.predict(day)
 
-def generate_home_about(gamesToday, update=False):
+def generate_home_about(gamesToday, gender, update=False):
+    if gender == 'M':
+        path = 'docs/men/'
+    elif gender == 'W':
+        path = 'docs/women/'
     today = date.today()
-    mypath = utils.get_path('docs/men/')
+    mypath = utils.get_path(path)
     all_entries = os.listdir(mypath)
     valid = []
     for filename in all_entries:
@@ -27,7 +31,8 @@ def generate_home_about(gamesToday, update=False):
     dates = sorted(valid)
     if update:
         update_html(dates)
-    history = utils.get_path('docs/men/men_history.html')
+    hist_path = path + 'history.html'
+    history = utils.get_path(hist_path)
     html = f"""---
 layout: default
 title: History
@@ -60,6 +65,7 @@ title: Bracket Gordology
     <p>{time}</p>
     {gamesToday}
 '''
-    with open(utils.get_path('docs/men/men_index.html'), 'w') as f: 
+    save_path = path + 'index.html'
+    with open(utils.get_path(save_path), 'w') as f: 
        f.write(index.lstrip())  
        print(f'Wrote to: {mypath} for {day}')

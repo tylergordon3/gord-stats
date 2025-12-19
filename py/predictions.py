@@ -569,7 +569,7 @@ def predict(date):
     df_html += "</div>"
     df_html += conf_html
     path = utils.get_path(f"docs/men/predict_{date}.html")
-    html = htmb.add_front_matter(df_html, f"Prediction - {date}")
+    html = htmb.add_front_matter(df_html, f"NCAAM Prediction - {date}")
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")
