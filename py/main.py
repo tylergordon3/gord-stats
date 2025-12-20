@@ -74,6 +74,7 @@ today_w_df = predictions.predict_w(date.today())
 games = scraper.today_games(today_df, 'M')
 generate_home.generate_home_about(games, 'M', False)
 
+scraper.get_women_cbs(date.today())
 games_women = scraper.today_games(today_w_df, 'W')
 generate_home.generate_home_about(games_women, 'W', False)
 

@@ -188,7 +188,7 @@ def image_formatter(url):
     return f'<img src="{url}" class="team-logo" >'
 
 
-def getUrl(x, save_df, master):
+def getUrl(x, save_df, master, gender='M'):
     """
     Finds path/url for team logo
 
@@ -201,8 +201,11 @@ def getUrl(x, save_df, master):
     :return: Link/Path to logo
     :rtype: str
     """
-    save = list(save_df[save_df["Team"] == x["Team"]].index)[0]
-    link = "/assets/images/" + master.at[save, "path"]
+    if gender == 'M':
+        saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
+    elif gender == 'W':
+        saved_index = list(save_df[save_df["Team"] == x["Team"]]['Index'])[0]
+    link = "/assets/images/" + master.at[saved_index, "path"]
     return link
 
 
@@ -211,6 +214,8 @@ def predByConf(df):
 
 
 def predict_w(date):
+    master = scraper.getMasterTeams()
+
     randomForest = utils.read_from_pickle("wtor_forest")
     decisionTree = utils.read_from_pickle("wtor_dt")
     supportVC = utils.read_from_pickle("wtor_svc")
@@ -221,8 +226,7 @@ def predict_w(date):
 
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
     torvik_data = clean_teams(torvik_data)
-    torvik_teams = torvik_data["Team"]
-
+    
     torvik_today = torvik_data.drop(
         columns=[
             "Barthag",
@@ -261,15 +265,17 @@ def predict_w(date):
     df_torvik["Rk"] = pd.to_numeric(df_torvik["Rk"])
     df_torvik["GordScore"] = (10 * df_torvik["Sum"]) + (80 - df_torvik["Rk"])
 
-    df_torvik = df_torvik.sort_values("GordScore", ascending=False)
+    #df_torvik = df_torvik.sort_values("GordScore", ascending=False)
     df_torvik = df_torvik.drop(columns=["RF", "SVC", "DT"])
     df_torvik = df_torvik.rename(
         columns={"Rk": "Torvik Rank", "Sum": "# Models Torvik"}
     )
-
     main64 = df_torvik.copy()
+
     # Saving to another df for schedule home
-    save_df = df_torvik.copy()
+    save_df = main64.copy()
+    
+    save_df["Index"] = save_df.apply(lambda x: scraper.getNameFromCode(x['Team'], master)[0], axis = 1)
     save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
 
@@ -316,8 +322,7 @@ def predict_w(date):
     for conference, bids in conf.items():
         grouped[bids].append(conference)
 
-    master = scraper.getMasterTeams()
-    df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
+    df["img"] = df.apply(lambda x: getUrl(x, save_df, master, 'W'), axis=1)
     df["Team"] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
     df = df.drop(columns=["img"])
 
