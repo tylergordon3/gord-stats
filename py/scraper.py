@@ -7,11 +7,12 @@ import os
 import random
 import time
 import re
-import requests
-import random
-from datetime import date, timedelta
+from datetime import date
 import pandas as pd
 from bs4 import BeautifulSoup
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from playwright.sync_api import sync_playwright
 
 TORVIK_PRE = "https://barttorvik.com/trankpre.php"
@@ -126,26 +127,69 @@ def get_rank(row, rank_df, master, bin):
         else:
             return list(rank_row["Overall"])[0]
 
+ESPN_W_URL = (
+    "https://site.api.espn.com/apis/site/v2/sports/"
+    "basketball/womens-college-basketball/scoreboard"
+)
 
-def get_women_cbs(today):
-    url = f"https://www.cbssports.com/womens-college-basketball/scoreboard/"
-    check_path = utils.get_path(f'data_w/cbs{today}.html')
-    old_path = utils.get_path(f'data_w/cbs{today - timedelta(days=1)}.html')
+def fetch_espn_women_scoreboard(params=None, timeout=20):
+    session = requests.Session()
 
-    if not os.path.isfile(check_path):
-        if os.path.isfile(old_path):
-            os.remove(old_path)
-        with sync_playwright() as p:
-            browser = p.chromium.launch()
-            page = browser.new_page()
-            page.goto(url)
-            html = page.content()
-            soup = BeautifulSoup(html, "html.parser")
-        with open(check_path, "w", encoding="utf-8") as f:
-            f.write(soup.prettify())
-            print(f"Women's scores saved to: {check_path} for {today}")
-    else:
-        print("Women's scores already saved today.")
+    retries = Retry(
+        total=5,
+        backoff_factor=0.7,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET"],
+        raise_on_status=False,
+    )
+
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+
+    r = session.get(
+        ESPN_W_URL,
+        params=params or {},
+        timeout=timeout,
+        headers={"User-Agent": "Mozilla/5.0"},
+    )
+    r.raise_for_status()
+    return r.json()
+
+def parse_espn_teams_and_times(data):
+    teams = []
+    times_scores = []
+
+    for event in data.get("events", []):
+        competition = event["competitions"][0]
+        status = competition["status"]["type"]
+        state = status["state"]  # pre / in / post
+
+        competitors = competition["competitors"]
+        away = next(c for c in competitors if c["homeAway"] == "away")
+        home = next(c for c in competitors if c["homeAway"] == "home")
+
+        away_name = away["team"]["abbreviation"]
+        home_name = home["team"]["abbreviation"]
+
+        teams.extend([away_name, home_name])
+
+        # Decide time / score display
+        if state == "pre":
+            # Scheduled
+            time_str = status.get("shortDetail")  # "7:00 PM"
+            times_scores.extend([time_str, time_str])
+
+        elif state == "post":
+            # Final
+            away_score = away.get("score")
+            home_score = home.get("score")
+            score_str = f"{away_score}-{home_score}"
+            times_scores.extend([score_str, score_str])
+
+        else:
+            # In progress
+            live_str = status.get("shortDetail")  # "3Q 4:21"
+            times_scores.extend([live_str, live_str])
+    return teams, times_scores
 
 def getConf(row, rank_df, master, bin):
     if bin == 1:
@@ -214,23 +258,19 @@ def game_status(soup, gender):
         return ordered_games
 
 def today_games(rank_df, gender):
-    today = date.today()
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
     master = getMasterTeams()
     if gender == 'M':
         look_for = "college-basketball/teams/"
         name_class = "TeamName"
         soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
+        names = soup.find_all("span", class_=name_class)
+        times = game_status(soup, gender)
     elif gender == 'W':
         look_for = "womens-college-basketball/teams/"
         name_class = "team-name-link"
-        path = utils.get_path(f'data_w/cbs{today}.html')
-        with open(path, 'r', encoding='utf-8') as file:
-            html_content = file.read()
-            soup = BeautifulSoup(html_content, 'html.parser')
-
-    names = soup.find_all("span", class_=name_class)
-    times = game_status(soup, gender)
+        json = fetch_espn_women_scoreboard()
+        [names, times] = parse_espn_teams_and_times(json)
 
     code_names = []
     if gender == "M":
@@ -246,7 +286,7 @@ def today_games(rank_df, gender):
 
     if gender == 'W':
         for name in names:
-            [_, team] = getNameFromCode(name.text, master)
+            [_, team] = getNameFromCode(name, master)
             if team is None:
                 code_names.append("NA")
             else:
@@ -262,10 +302,13 @@ def today_games(rank_df, gender):
     for team1, team2, time, codes_1, codes_2 in zip(
         names_1, names_2, times, codes_1, codes_2
     ):
+        if gender == 'M':
+            team1 = team1.text.strip()
+            team2 = team2.text.strip()
         dict = {
-            "team1": team1.text.strip(),
+            "team1": team1,
             "code1": codes_1,
-            "team2": team2.text.strip(),
+            "team2": team2,
             "code2": codes_2,
             "time": time,
         }
