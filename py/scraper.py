@@ -176,19 +176,20 @@ def parse_espn_teams_and_times(data):
         if state == "pre":
             # Scheduled
             time_str = status.get("shortDetail")  # "7:00 PM"
-            times_scores.extend([time_str, time_str])
+            times_scores.extend([time_str])
 
         elif state == "post":
             # Final
             away_score = away.get("score")
             home_score = home.get("score")
-            score_str = f"{away_score}-{home_score}"
-            times_scores.extend([score_str, score_str])
+            score_str = f"{away_name} {away_score}- {home_name} {home_score}"
+            times_scores.extend([score_str])
 
         else:
             # In progress
             live_str = status.get("shortDetail")  # "3Q 4:21"
-            times_scores.extend([live_str, live_str])
+            times_scores.extend([f'{away_name} {live_str} {home_name}'])
+
     return teams, times_scores
 
 def getConf(row, rank_df, master, bin):
@@ -296,8 +297,7 @@ def today_games(rank_df, gender):
     names_2 = names[1::2]
     codes_1 = code_names[::2]
     codes_2 = code_names[1::2]
-   
-        
+
     sched_df = pd.DataFrame()
     for team1, team2, time, codes_1, codes_2 in zip(
         names_1, names_2, times, codes_1, codes_2
@@ -314,7 +314,7 @@ def today_games(rank_df, gender):
         }
         add = pd.DataFrame([dict])
         sched_df = pd.concat([sched_df, add], ignore_index=True)
-   
+
     sched_df["team1_rank"] = sched_df.apply(
         lambda x: get_rank(x, rank_df, master, 1), axis=1
     )
