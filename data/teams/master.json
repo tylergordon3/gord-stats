@@ -1110,7 +1110,8 @@
             "terriers",
             "TERRIERS",
             "bstn",
-            "bostonuniversity"
+            "bostonuniversity",
+            "Boston U."
         ],
         "28": [
             "Bowling Green",
@@ -1211,7 +1212,8 @@
             "calbu",
             "cal baptist",
             "CAL BAPTIST",
-            "calbaptist"
+            "calbaptist",
+            "CBU"
         ],
         "37": [
             "Mustangs",
@@ -1259,7 +1261,8 @@
             "cal st. fullerton",
             "CAL ST. FULLERTON",
             "calstfullerton",
-            "cal st fullerton"
+            "cal st fullerton",
+            "CS Fullerton"
         ],
         "40": [
             "California",
@@ -1358,7 +1361,8 @@
             "buccaneers",
             "BUCCANEERS",
             "charlestonsouthern",
-            "Charleston So."
+            "Charleston So.",
+            "CHARSO"
         ],
         "48": [
             "CHAR",
@@ -2694,7 +2698,8 @@
             "l-md",
             "loyola md",
             "LOYOLA MD",
-            "loyolamd"
+            "loyolamd",
+            "Loyola-Md."
         ],
         "156": [
             "Loyola Marymount",
@@ -2877,13 +2882,13 @@
             "HURRICANES",
             "miami fl",
             "MIAMI FL",
-            "miamifl"
+            "miamifl",
+            "Miami"
         ],
         "171": [
             "Miami (OH)",
             "RedHawks",
             "M-OH",
-            "MIAMI",
             "MIAOH",
             "Miami OH",
             "miami (oh)",
@@ -2891,7 +2896,6 @@
             "redhawks",
             "REDHAWKS",
             "m-oh",
-            "miami",
             "miaoh",
             "miami oh",
             "MIAMI OH",
@@ -3263,7 +3267,9 @@
             "new mexico st.",
             "NEW MEXICO ST.",
             "newmexicost",
-            "new mexico st"
+            "new mexico st",
+            "N. Mex. St.",
+            "NMEXST"
         ],
         "199": [
             "New Orleans",
@@ -3542,7 +3548,8 @@
             "OAKLAND",
             "golden grizzlies",
             "GOLDEN GRIZZLIES",
-            "oakl"
+            "oakl",
+            "OAK"
         ],
         "221": [
             "Bobcats",
@@ -3657,7 +3664,8 @@
             "PACIFIC",
             "tigers",
             "TIGERS",
-            "paci"
+            "paci",
+            "PAC"
         ],
         "230": [
             "Pennsylvania",
@@ -4206,7 +4214,8 @@
             "SOUTH DAKOTA",
             "coyotes",
             "COYOTES",
-            "southdakota"
+            "southdakota",
+            "SDST"
         ],
         "275": [
             "Jackrabbits",
@@ -4268,7 +4277,8 @@
             "jaguars",
             "JAGUARS",
             "subr",
-            "sthrn"
+            "sthrn",
+            "Southern U."
         ],
         "279": [
             "SOILL",

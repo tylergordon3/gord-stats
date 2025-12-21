@@ -6,8 +6,9 @@ import utils
 import os
 import random
 import time
+import json
 import re
-from datetime import date
+from datetime import date, timedelta
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
@@ -216,6 +217,41 @@ def getConf(row, rank_df, master, bin):
         else:
             return list(rank_row["Conf"])[0]
 
+def slow_scrape_times():
+    time_dict = {}
+
+    today = date.today()
+    day_iter = today + timedelta(days=1)
+    end_date = date(2026, 3, 8)
+    
+    while day_iter <= end_date:
+        str_iter = day_iter.strftime(f'%Y%m%d')
+        print(f"Sleeping for 8 seconds then checking: {str_iter}")
+        time.sleep(8)
+        url = f'https://www.cbssports.com/college-basketball/schedule/ALL/{str_iter}'
+        soup = getHTML(url)
+        if soup is None:
+            print(f"Skipping {str_iter} - Error with getting HTML")
+            day_iter += timedelta(days=1)
+            continue
+
+        times = [a.get_text(strip=True)
+            for a in soup.select('a[href="/college-basketball/scoreboard/"]')]
+        if len(times) == 0:
+            print(f"Skipping {str_iter} - NO GAMES")
+            day_iter += timedelta(days=1)
+            continue
+
+        time_dict[day_iter] = times[0]
+        day_iter += timedelta(days=1)
+
+    json_ready = {
+        d.isoformat(): v
+        for d, v in time_dict.items()
+    }
+
+    with open(utils.get_path('data/times.json'), "w") as f:
+        json.dump(json_ready, f, indent=2)
 
 def getNameFromCode(code, master):
     s_exploded = master["names"].explode()
