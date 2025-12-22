@@ -435,8 +435,6 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame):
         )
         live_upcoming["Away Score"] = live_upcoming["Away Score"].astype("Int64")
         live_upcoming["Home Score"] = live_upcoming["Home Score"].astype("Int64")
-        print(live_upcoming.to_string())
-        print(done.to_string())
 
 def today_games(rank_df, gender):
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
