@@ -294,6 +294,150 @@ def game_status(soup, gender):
                 ordered_games.append(time)
         return ordered_games
 
+def parse_rank(team):
+    """
+    Returns (clean_team_name, rank or None)
+    """
+    if pd.isna(team):
+        return team, None
+
+    match = re.match(r"^\s*(\d+)\s+(.*)", team)
+    if match:
+        return match.group(2), int(match.group(1))
+    else:
+        return team, None
+
+def parse_live(row, master):
+    if pd.isna(row['Time/TV']):
+        return None, None, None
+
+    # Extract the two scores
+    match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)\s\s(.+)", row['Time/TV'])
+   
+    if not match:
+        return None, None, None
+
+    code1 = match.group(1)
+    score1 = int(match.group(2))
+    code2 = match.group(3)
+    score2 = int(match.group(4))
+    status = match.group(5)
+    tv = match.group(6)
+
+    team1 = getNameFromCode(code1, master)
+    team2 = getNameFromCode(code2, master)
+    team1_name = team1[1]
+    team2_name = team2[1]
+    home = row['Home']
+    away = row['Away']
+
+    home_check = getNameFromCode(home, master)[1]
+    away_check = getNameFromCode(away, master)[1]
+
+    if (team1_name == home_check) | (team2_name == away_check):
+        home_score = score1
+        away_score = score2
+    elif (team1_name == away_check) | (team2_name == home_check):
+        home_score = score2
+        away_score = score1
+    else:
+        print(f'Err: Team1N: {team1_name}, Team2N: {team2_name}, Home: {home}, Away: {away}')
+ 
+    return away_score, home_score, status, tv
+
+
+def parse_results(row, master):
+
+    if pd.isna(row['Result']):
+        return None, None, None, None
+
+    # Extract the two scores
+    match = re.search(r"([A-Z]+)\s([0-9]+)\s-\s([A-Z]+)\s([0-9]+)",row['Result'])
+   
+    if not match:
+        return None, None, None, None
+    code1 = match.group(1)
+    score1 = int(match.group(2))
+    code2 = match.group(3)
+    score2 = int(match.group(4))
+    
+    team1 = getNameFromCode(code1, master)
+    team2 = getNameFromCode(code2, master)
+    team1_name = team1[1]
+    team2_name = team2[1]
+    home = row['Home']
+    away = row['Away']
+
+    home_check = getNameFromCode(home, master)[1]
+    away_check = getNameFromCode(away, master)[1]
+
+
+    if (team1_name == home_check) | (team2_name == away_check):
+        home_score = score1
+        away_score = score2
+    elif (team1_name == away_check) | (team2_name == home_check):
+        home_score = score2
+        away_score = score1
+    else:
+        print(f'Err: Team1N: {team1_name}, Team2N: {team2_name}, Home: {home}, Away: {away}')
+    # Home team is listed first in your Result column
+    home_win = home_score > away_score
+    away_win = away_score > home_score
+
+    return away_score, home_score, away_win, home_win
+
+
+def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame):
+    table = soup.find_all('table')
+    if table:
+        dfs = pd.read_html(str(table))
+        # df[0] - finished games
+        # Away, Home, Results w AP Rank
+        done = dfs[0]
+        done[["Away", "Away Rank"]] = (
+            done["Away"]
+            .apply(lambda x: pd.Series(parse_rank(x)))
+        )
+        done[["Home", "Home Rank"]] = (
+            done["Home"]
+            .apply(lambda x: pd.Series(parse_rank(x)))
+        )
+        done["Away Rank"] = done["Away Rank"].astype("Int64")
+        done["Home Rank"] = done["Home Rank"].astype("Int64")
+
+        done[["Away Score", "Home Score", "Away Win", "Home Win"]] = (
+            done.apply(lambda x: pd.Series(parse_results(x, master)), axis=1)
+        )
+        done["Away Score"] = done["Away Score"].astype("Int64")
+        done["Home Score"] = done["Home Score"].astype("Int64")
+
+        done["Away Win"] = done["Away Win"].astype("boolean")
+        done["Home Win"] = done["Home Win"].astype("boolean")
+
+
+        # df[1] - active & upcoming
+        # Away, Home, Time/TV, Streaming, Venue, Tickets
+        live_upcoming = dfs[1]
+        live_upcoming = live_upcoming.drop(columns=['Buy Tickets'])
+        live_upcoming [["Away", "Away Rank"]] = (
+            live_upcoming ["Away"]
+            .apply(lambda x: pd.Series(parse_rank(x)))
+        )
+        live_upcoming [["Home", "Home Rank"]] = (
+            live_upcoming ["Home"]
+            .apply(lambda x: pd.Series(parse_rank(x)))
+        )
+        live_upcoming["Away Rank"] = live_upcoming["Away Rank"].astype("Int64")
+        live_upcoming["Home Rank"] = live_upcoming["Home Rank"].astype("Int64")
+        live_upcoming[["Away Score", "Home Score", "Status", "TV"]] = (
+            live_upcoming
+            .apply(lambda x: pd.Series(parse_live(x, master)), axis=1)
+        )
+        live_upcoming["Away Score"] = live_upcoming["Away Score"].astype("Int64")
+        live_upcoming["Home Score"] = live_upcoming["Home Score"].astype("Int64")
+        print(live_upcoming.to_string())
+        print(done.to_string())
+
 def today_games(rank_df, gender):
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
     master = getMasterTeams()
@@ -301,6 +445,7 @@ def today_games(rank_df, gender):
         look_for = "college-basketball/teams/"
         name_class = "TeamName"
         soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
+        parse_mens_cbs(soup, master)
         names = soup.find_all("span", class_=name_class)
         times = game_status(soup, gender)
     elif gender == 'W':
