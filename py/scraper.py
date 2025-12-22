@@ -414,7 +414,6 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame):
         done["Away Win"] = done["Away Win"].astype("boolean")
         done["Home Win"] = done["Home Win"].astype("boolean")
 
-
         # df[1] - active & upcoming
         # Away, Home, Time/TV, Streaming, Venue, Tickets
         live_upcoming = dfs[1]
@@ -443,7 +442,7 @@ def today_games(rank_df, gender):
         look_for = "college-basketball/teams/"
         name_class = "TeamName"
         soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
-        parse_mens_cbs(soup, master)
+       # parse_mens_cbs(soup, master)
         names = soup.find_all("span", class_=name_class)
         times = game_status(soup, gender)
     elif gender == 'W':
