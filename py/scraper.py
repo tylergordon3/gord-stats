@@ -20,7 +20,6 @@ TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 
-
 def getMasterTeams():
     '''
     Helper function for getting master teams DF
@@ -128,6 +127,38 @@ def get_rank(row, rank_df, master, bin):
         else:
             return list(rank_row["Overall"])[0]
 
+def parse_arena_gender(team):
+    if pd.isna(team):
+        return pd.NA, True, True
+
+    team_lower = team.lower()
+
+    if " men" in team_lower:
+        return team.replace(" men", ""), True, False
+    elif " women" in team_lower:
+        return team.replace(" women", ""), False, True
+    else:
+        return team, True, True
+
+# ARENAS
+def arenas():
+    
+    path = utils.get_path('arenas.html')
+    dfs = pd.read_html(path)
+    active = dfs[1]
+    offsite = dfs[3]
+    combo = pd.concat([active, offsite])
+    combo = combo.reset_index(drop=True)
+    combo["City"] = combo["City"].str.replace(r"\[.*?\]", "", regex=True).str.strip()
+    combo["Arena"] = combo["Arena"].str.replace(r"\[.*?\]", "", regex=True).str.strip()
+    combo["Team"] = combo["Team"].str.replace(r"\[.*?\]", "", regex=True).str.strip()
+    combo = combo.drop(columns=['Image', 'Conference', 'Opened', 'Capacity'])
+    combo[["Team", "men_home", "women_home"]] = (
+        combo["Team"]
+        .apply(lambda x: pd.Series(parse_arena_gender(x)))
+    )
+    combo.to_json(utils.get_path('data/teams/arenas.json'))
+
 ESPN_W_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/"
     "basketball/womens-college-basketball/scoreboard"
@@ -216,6 +247,17 @@ def getConf(row, rank_df, master, bin):
             return
         else:
             return list(rank_row["Conf"])[0]
+
+def getConference(team, rank_df):
+    master = getMasterTeams()
+    [index, code_name] = getNameFromCode(team, master)
+    rank_row = rank_df.loc[
+            (rank_df["Team"] == team)
+            | (rank_df["Team"] == code_name)]
+    if rank_row.empty:
+        return
+    else:
+        return list(rank_row["Conf"])[0]
 
 def slow_scrape_times():
     time_dict = {}
@@ -315,7 +357,7 @@ def parse_live(row, master):
     match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)\s\s(.+)", row['Time/TV'])
    
     if not match:
-        return None, None, None
+        return None, None, None, None
 
     code1 = match.group(1)
     score1 = int(match.group(2))
@@ -342,6 +384,7 @@ def parse_live(row, master):
         away_score = score1
     else:
         print(f'Err: Team1N: {team1_name}, Team2N: {team2_name}, Home: {home}, Away: {away}')
+        return None, None, None, None
  
     return away_score, home_score, status, tv
 
@@ -386,14 +429,26 @@ def parse_results(row, master):
 
     return away_score, home_score, away_win, home_win
 
+def get_p5(df):
+    power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
+    specific = ['Gonzaga']
 
-def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame):
+    p5 = df[
+        ((df["Away Conf"].isin(power_conf)) | df['Away'].isin(specific))
+        & (df["Home Conf"].isin(power_conf) | df['Home'].isin(specific))
+    ]
+
+    return p5
+
+def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
     table = soup.find_all('table')
+
     if table:
         dfs = pd.read_html(str(table))
         # df[0] - finished games
         # Away, Home, Results w AP Rank
         done = dfs[0]
+       
         done[["Away", "Away Rank"]] = (
             done["Away"]
             .apply(lambda x: pd.Series(parse_rank(x)))
@@ -435,14 +490,63 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame):
         live_upcoming["Away Score"] = live_upcoming["Away Score"].astype("Int64")
         live_upcoming["Home Score"] = live_upcoming["Home Score"].astype("Int64")
 
+        def check(row, arenas):
+            dict_path = utils.get_path('data/teams/neutral.json')
+            with open(dict_path, 'r') as file:
+                data_dict = json.load(file)
+            venue = row['Venue']
+            team = row['Home']
+            match = arenas[arenas['Arena'] == venue]
+            neutral = data_dict.get(venue)
+            # {'City': 'St. Louis', 'State': 'MO'}
+            if not match.empty:
+                city = list(match['City'])[0]
+                state = list(match['State'])[0]
+                return f'{city}, {state}'
+            elif neutral is not None:
+                city = neutral['City']
+                state = neutral['State']
+                return f'{city}, {state}'
+            else:
+                print(f'No match for: {venue}, team: {team}')
+                data_dict[row['Venue']] = {"City" : None, "State" : None}
+            
+                with open(dict_path, "w") as json_file:
+                    json.dump(data_dict, json_file, indent=4)
+
+                return None
+
+        arenas = pd.read_json(utils.get_path('data/teams/arenas.json'))
+        
+        live_upcoming['Location'] = live_upcoming.apply(lambda x: check(x, arenas), axis=1 )
+
+        power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
+
+        live_upcoming["Home Conf"] = live_upcoming['Home'].apply(lambda x: getConference(x, rank_df))
+        live_upcoming["Away Conf"] = live_upcoming['Away'].apply(lambda x: getConference(x, rank_df))
+
+        done["Home Conf"] = done['Home'].apply(lambda x: getConference(x, rank_df))
+        done["Away Conf"] = done['Away'].apply(lambda x: getConference(x, rank_df))
+
+        p5_live = get_p5(live_upcoming)
+        p5_done = get_p5(done)
+
+        done = done.drop(index=p5_done.index)
+        live_upcoming = live_upcoming.drop(index=p5_live.index)
+        print(p5_live)
+        print(p5_done)
+        print(done)
+        print(live_upcoming)
+
 def today_games(rank_df, gender):
+
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
     master = getMasterTeams()
     if gender == 'M':
         look_for = "college-basketball/teams/"
         name_class = "TeamName"
         soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
-       # parse_mens_cbs(soup, master)
+        parse_mens_cbs(soup, master, rank_df)
         names = soup.find_all("span", class_=name_class)
         times = game_status(soup, gender)
     elif gender == 'W':
