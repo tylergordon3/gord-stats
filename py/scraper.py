@@ -546,7 +546,7 @@ def today_games(rank_df, gender):
         look_for = "college-basketball/teams/"
         name_class = "TeamName"
         soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
-        parse_mens_cbs(soup, master, rank_df)
+        #parse_mens_cbs(soup, master, rank_df)
         names = soup.find_all("span", class_=name_class)
         times = game_status(soup, gender)
     elif gender == 'W':
