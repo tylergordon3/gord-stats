@@ -77,30 +77,27 @@ def read_from_pickle(name):
     return loaded_model
 
 def get_recent_data(input_date, women=0):
+    # Helper function to parse data from file
     def parse_date(fname):
-        # filename format: kenpomYYYY-MM-DD.json
         try:
             return date.fromisoformat(fname[6:16])
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
-    def parse_date_w(fname):
-        # filename format: torvik_wYYYY-MM-DD.json
-        try:
-            return date.fromisoformat(fname[8:18])
-        except ValueError:
-            raise ValueError(f"Invalid date in filename: {fname}")
+    # Process if women
     if women:
-        path = get_path('data_w/')
+        path = get_path('data/women/')
     
-        torvik_files = Path(path).glob("torvik_w*.json")
-        torvik = min(torvik_files, key=lambda p: abs((parse_date_w(p.name) - input_date).days))
+        torvik_files = Path(path).glob("torvik*.json")
+        torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
         return torvik
     else:
-        path = get_path('data/')
-        kenpom_files = Path(path).glob("kenpom*.json")
+        # Get last data for kenpom and torvik for the men
+        path_kp = get_path('data/men/kenpom/')
+        kenpom_files = Path(path_kp).glob("kenpom*.json")
         kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
 
-        torvik_files = Path(path).glob("torvik*.json")
+        path_tor = get_path('data/men/torvik/')
+        torvik_files = Path(path_tor).glob("torvik*.json")
         torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
         return [kenpom, torvik]
 

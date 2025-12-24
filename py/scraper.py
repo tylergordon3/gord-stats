@@ -924,7 +924,7 @@ def kenpom(date):
     output = {"headers": final_headers, "rows": rows}
 
     # Save to JSON file
-    path = utils.get_path(f"data/kenpom{date}.json")
+    path = utils.get_path(f"data/men/kenpom/kenpom{date}.json")
     utils.save_json_data(output, path)
 
 # Get Torvik data for TODAY
@@ -966,7 +966,7 @@ def torvik(date):
 
         # --- Save to JSON ---
         output = {"headers": headers, "rows": rows}
-        path = utils.get_path(f"data/torvik{date}.json")
+        path = utils.get_path(f"data/men/torvik/torvik{date}.json")
         utils.save_json_data(output, path)
         browser.close()
 
@@ -1013,7 +1013,7 @@ def torvik_w(date):
 
         # --- Save to JSON ---
         output = {"headers": headers, "rows": rows}
-        path = utils.get_path(f"data_w/torvik_w{date}.json")
+        path = utils.get_path(f"data/women/torvik{date}.json")
         utils.save_json_data(output, path)
         browser.close()
 

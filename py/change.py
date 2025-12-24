@@ -3,7 +3,7 @@
 '''
 import utils
 import pandas as pd
-from datetime import date, timedelta
+from datetime import timedelta
 from bs4 import BeautifulSoup
 from io import StringIO
 

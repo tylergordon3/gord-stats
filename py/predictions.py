@@ -9,8 +9,6 @@ import html_builder as htmb
 from pytz import timezone
 import scraper
 import re
-import matplotlib.pyplot as plt
-import plotly.express as px
 from collections import defaultdict
 
 def seed_helper(x):

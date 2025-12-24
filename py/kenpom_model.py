@@ -1,16 +1,11 @@
-import numpy as np
 import utils
 import pandas as pd
 from datetime import datetime
 from scipy.stats import chi2_contingency
-from kagglehub import KaggleDatasetAdapter
 from sklearn import tree, preprocessing, svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
-import matplotlib.pyplot as plt
-import base64
-from io import BytesIO
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report
 import warnings
 
 warnings.filterwarnings("ignore")
