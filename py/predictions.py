@@ -489,12 +489,12 @@ def predict(date):
 
     count = len(main)
     
-    def weighted(team, count, weight = 0.55):
+    def weighted(team, count, weight = 0.6):
         kp_norm_rank = 1 - ((team['Rk_x'] -1) / (count - 1))
         tor_norm_rank = 1 - ((team['Rk_y'] -1) / (count - 1))
 
         q = (0.5 * tor_norm_rank) + (0.5 * kp_norm_rank)
-        v = (team["Num KP Models"] + team["Num TOR Models"]) / 6
+        v = math.pow((team["Num KP Models"] + team["Num TOR Models"]) / 6, 1.25)
         calc = (weight * v) + ((1 - weight) * q)
         return calc
        
@@ -528,7 +528,7 @@ def predict(date):
     main64["ConfChamp"] = 0
     bestByConf["ConfChamp"] = 1
     main64 = pd.concat([main64, bestByConf])
-    main64 = main64.sort_values(by="GordScore", ascending=False)
+    main64 = main64.sort_values(by="Power Rtg", ascending=False)
     main64["Overall"] = range(1, len(main64) + 1)
     last_week = change.change(date)
     main64 = pd.merge(main64, last_week, "left", "Team")
@@ -584,7 +584,7 @@ def predict(date):
     df = df.drop(columns=["img"])
     styler = (
         df.style.hide(axis="index")
-        .format({"Power Rtg": "{:.3f}"})
+        .format({"Power Rtg": "{:.4f}"})
         .format(_format_arrow, subset=["vs Last Wk"])
         .applymap(_color_arrow, subset=["vs Last Wk"])
         .set_table_attributes('class="sticky-table"')
