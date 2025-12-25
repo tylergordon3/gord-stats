@@ -10,6 +10,7 @@ from pytz import timezone
 import scraper
 import re
 from collections import defaultdict
+import math
 
 def seed_helper(x):
     """
@@ -486,11 +487,25 @@ def predict(date):
     main["Rk_y"] = pd.to_numeric(main["Rk_y"])
     main["Rk_x"] = pd.to_numeric(main["Rk_x"])
 
+    count = len(main)
+    
+    def weighted(team, count, weight = 0.55):
+        kp_norm_rank = 1 - ((team['Rk_x'] -1) / (count - 1))
+        tor_norm_rank = 1 - ((team['Rk_y'] -1) / (count - 1))
+
+        q = (0.5 * tor_norm_rank) + (0.5 * kp_norm_rank)
+        v = (team["Num KP Models"] + team["Num TOR Models"]) / 6
+        calc = (weight * v) + ((1 - weight) * q)
+        return calc
+       
+    main['Power Rtg'] = main.apply(lambda x: weighted(x, count), axis=1)
+
     main["GordScore"] = (
         ((10 * main["Num KP Models"]) + (80 - main["Rk_x"]))
         + ((10 * main["Num TOR Models"]) + (80 - main["Rk_y"]))
     ) / 2
-    main64 = main.sort_values("GordScore", ascending=False)
+    #main64 = main.sort_values("GordScore", ascending=False)
+    main64 = main.sort_values("Power Rtg", ascending=False)
     main64 = main64.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y"])
     main64 = main64.rename(
         columns={
@@ -503,9 +518,11 @@ def predict(date):
 
     # Saving to another df for schedule home
     save_df = main64.copy()
-    save_df = save_df.sort_values(by="GordScore", ascending=False)
+    #save_df = save_df.sort_values(by="GordScore", ascending=False)
+    save_df = save_df.sort_values("Power Rtg", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
-    bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
+    #bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
+    bestByConf = main64.loc[main64.groupby(by="Conf")["Power Rtg"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
     main64 = main64.head(68 - len(bestByConf))
     main64["ConfChamp"] = 0
@@ -538,7 +555,7 @@ def predict(date):
         main64["Torvik Rank"].astype(str) + " " + main64["# Models Torvik"].apply(stars)
     )
 
-    styler = main64[["Kenpom", "Torvik", "GordScore", "Overall", "vs Last Wk"]].style
+    styler = main64[["Kenpom", "Torvik", "Power Rtg", "Overall", "vs Last Wk"]].style
     conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
     df = main64.drop(
         columns=[
@@ -550,7 +567,7 @@ def predict(date):
             "ConfChamp",
         ]
     )
-    df = df[["Team", "Conf", "Kenpom", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
+    df = df[["Team", "Conf", "Kenpom", "Torvik", "Power Rtg", "Overall", "vs Last Wk"]]
     conf = (df.groupby("Conf")
                 .size()
                 .astype(int)
@@ -567,7 +584,7 @@ def predict(date):
     df = df.drop(columns=["img"])
     styler = (
         df.style.hide(axis="index")
-        .format({"GordScore": "{:.1f}"})
+        .format({"Power Rtg": "{:.3f}"})
         .format(_format_arrow, subset=["vs Last Wk"])
         .applymap(_color_arrow, subset=["vs Last Wk"])
         .set_table_attributes('class="sticky-table"')
