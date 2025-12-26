@@ -489,22 +489,21 @@ def predict(date):
 
     count = len(main)
     
-    def weighted(team, count, weight = 0.6):
+    def weighted(team, count, weight = 0.55):
         kp_norm_rank = 1 - ((team['Rk_x'] -1) / (count - 1))
         tor_norm_rank = 1 - ((team['Rk_y'] -1) / (count - 1))
-
+        elite_rank = max(kp_norm_rank, tor_norm_rank)
         q = (0.5 * tor_norm_rank) + (0.5 * kp_norm_rank)
-        v = math.pow((team["Num KP Models"] + team["Num TOR Models"]) / 6, 1.25)
-        calc = (weight * v) + ((1 - weight) * q)
+
+        missing = team["Num KP Models"] + team["Num TOR Models"]
+        penalty = ((6 - missing) * (1 - elite_rank)) * .03
+
+        v = math.pow(missing / 6, 1)
+        calc = ((weight * v) + ((1 - weight) * q)) - penalty
         return calc
        
     main['Power Rtg'] = main.apply(lambda x: weighted(x, count), axis=1)
 
-    main["GordScore"] = (
-        ((10 * main["Num KP Models"]) + (80 - main["Rk_x"]))
-        + ((10 * main["Num TOR Models"]) + (80 - main["Rk_y"]))
-    ) / 2
-    #main64 = main.sort_values("GordScore", ascending=False)
     main64 = main.sort_values("Power Rtg", ascending=False)
     main64 = main64.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y"])
     main64 = main64.rename(
@@ -518,12 +517,13 @@ def predict(date):
 
     # Saving to another df for schedule home
     save_df = main64.copy()
-    #save_df = save_df.sort_values(by="GordScore", ascending=False)
     save_df = save_df.sort_values("Power Rtg", ascending=False)
     save_df["Overall"] = range(1, len(save_df) + 1)
-    #bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
+
     bestByConf = main64.loc[main64.groupby(by="Conf")["Power Rtg"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
+    main64 = main64.head(76 - len(bestByConf))
+    outside8 = main64[-8:]
     main64 = main64.head(68 - len(bestByConf))
     main64["ConfChamp"] = 0
     bestByConf["ConfChamp"] = 1
@@ -573,7 +573,7 @@ def predict(date):
                 .astype(int)
                 .to_dict()
     )
-
+    
     grouped = defaultdict(list)
     for conference, bids in conf.items():
         grouped[bids].append(conference)
@@ -598,6 +598,8 @@ def predict(date):
         )
         .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
     )
+
+
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
     for bids in sorted(grouped.keys(), reverse=True):
         confs = ", ".join(grouped[bids])
@@ -609,6 +611,10 @@ def predict(date):
     df_html = f"<p>{time}</p>"
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
+    df_html += "</div>"
+    df_html += "<h3>First Four Out & Next 4 Out"
+    df_html += '<div class="table-container">'
+    df_html += outside8.to_html(index=False)
     df_html += "</div>"
     df_html += conf_html
     path = utils.get_path(f"docs/men/predict_{date}.html")
