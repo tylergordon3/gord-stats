@@ -432,7 +432,6 @@ def parse_live(row, master):
 
 
 def parse_results(row, master):
-
     if pd.isna(row['Result']):
         return None, None, None, None
 
@@ -481,15 +480,46 @@ def get_p5(df):
 
     return p5
 
+def check(row, arenas):
+    dict_path = utils.get_path('data/teams/neutral.json')
+    with open(dict_path, 'r') as file:
+        data_dict = json.load(file)
+    venue = row['Venue']
+    team = row['Home']
+    match = arenas[arenas['Arena'] == venue]
+    neutral = data_dict.get(venue)
+    # {'City': 'St. Louis', 'State': 'MO'}
+    if not match.empty:
+        city = list(match['City'])[0]
+        state = list(match['State'])[0]
+        return f'{city}, {state}'
+    elif neutral is not None:
+        city = neutral['City']
+        state = neutral['State']
+        return f'{city}, {state}'
+    else:
+        print(f'No match for: {venue}, team: {team}')
+        data_dict[row['Venue']] = {"City" : None, "State" : None}
+    
+        with open(dict_path, "w") as json_file:
+            json.dump(data_dict, json_file, indent=4)
+
+        return None
+    
 def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
-    table = soup.find_all('table')
     arenas = pd.read_json(utils.get_path('data/teams/arenas.json'))
-    if table:
-        dfs = pd.read_html(str(table))
+
+    # if empty -> empty list
+    tables = soup.find_all('table')
+    if tables:
+        dfs = pd.read_html(str(tables))
+    else:
+        dfs = []
+        print('parse_mens_cbs::No tables found in soup.')
+
+    def getDone(done):
         # df[0] - finished games
         # Away, Home, Results w AP Rank
-        done = dfs[0]
-       
         done[["Away", "Away Rank"]] = (
             done["Away"]
             .apply(lambda x: pd.Series(parse_rank(x)))
@@ -516,80 +546,66 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
         done['Model Away'] = done['Model Away'].astype("Int64") 
         done["Model Home"] = done["Model Home"].astype("string").fillna("")
         done["Model Away"] = done["Model Away"].astype("string").fillna("")
-        # df[1] - active & upcoming
-        # Away, Home, Time/TV, Streaming, Venue, Tickets
-        try:
-            live_upcoming = dfs[1]
-            live_upcoming = live_upcoming.drop(columns=['Buy Tickets'])
-            live_upcoming [["Away", "Away Rank"]] = (
-                live_upcoming ["Away"]
-                .apply(lambda x: pd.Series(parse_rank(x)))
-            )
-            live_upcoming [["Home", "Home Rank"]] = (
-                live_upcoming ["Home"]
-                .apply(lambda x: pd.Series(parse_rank(x)))
-            )
-            live_upcoming["Away Rank"] = live_upcoming["Away Rank"].astype("Int64")
-            live_upcoming["Home Rank"] = live_upcoming["Home Rank"].astype("Int64")
-            live_upcoming[["Away Score", "Home Score", "Status", "TV"]] = (
-                live_upcoming
-                .apply(lambda x: pd.Series(parse_live(x, master)), axis=1)
-            )
-            live_upcoming["Away Score"] = live_upcoming["Away Score"].astype("Int64")
-            live_upcoming["Home Score"] = live_upcoming["Home Score"].astype("Int64")
-
-            def check(row, arenas):
-                dict_path = utils.get_path('data/teams/neutral.json')
-                with open(dict_path, 'r') as file:
-                    data_dict = json.load(file)
-                venue = row['Venue']
-                team = row['Home']
-                match = arenas[arenas['Arena'] == venue]
-                neutral = data_dict.get(venue)
-                # {'City': 'St. Louis', 'State': 'MO'}
-                if not match.empty:
-                    city = list(match['City'])[0]
-                    state = list(match['State'])[0]
-                    return f'{city}, {state}'
-                elif neutral is not None:
-                    city = neutral['City']
-                    state = neutral['State']
-                    return f'{city}, {state}'
-                else:
-                    print(f'No match for: {venue}, team: {team}')
-                    data_dict[row['Venue']] = {"City" : None, "State" : None}
-                
-                    with open(dict_path, "w") as json_file:
-                        json.dump(data_dict, json_file, indent=4)
-
-                    return None
-
-            live_upcoming['Location'] = live_upcoming.apply(lambda x: check(x, arenas), axis=1 )
-
-            live_upcoming["Home Conf"] = live_upcoming['Home'].apply(lambda x: getConference(x, rank_df))
-            live_upcoming["Away Conf"] = live_upcoming['Away'].apply(lambda x: getConference(x, rank_df))
-
-            live_upcoming['Model Home'] = live_upcoming.apply(lambda x: get_rank_men(x['Home'], rank_df, master), axis=1)
-            live_upcoming['Model Away'] = live_upcoming.apply(lambda x: get_rank_men(x['Away'], rank_df, master), axis=1)
-            live_upcoming['Model Home'] = live_upcoming['Model Home'].astype("Int64") 
-            live_upcoming['Model Away'] = live_upcoming['Model Away'].astype("Int64") 
-            live_upcoming["Model Home"] = live_upcoming["Model Home"].astype("string").fillna("")
-            live_upcoming["Model Away"] = live_upcoming["Model Away"].astype("string").fillna("")
-            p5_live = get_p5(live_upcoming)
-            live_upcoming = live_upcoming.drop(index=p5_live.index)
-        except:
-            p5_live = pd.DataFrame()
-            live_upcoming = pd.DataFrame()
-            print('No live or upcoming games.')
-
         done["Home Conf"] = done['Home'].apply(lambda x: getConference(x, rank_df))
         done["Away Conf"] = done['Away'].apply(lambda x: getConference(x, rank_df))
-
         p5_done = get_p5(done)
         done = done.drop(index=p5_done.index)
+        return [p5_done, done]
 
-        return [p5_live, p5_done, done, live_upcoming]
+    def getLive(live_upcoming):
+        # df[1] - active & upcoming
+        # Away, Home, Time/TV, Streaming, Venue, Tickets
+        live_upcoming = live_upcoming.drop(columns=['Buy Tickets'])
+        live_upcoming [["Away", "Away Rank"]] = (
+            live_upcoming ["Away"]
+            .apply(lambda x: pd.Series(parse_rank(x)))
+        )
+        live_upcoming [["Home", "Home Rank"]] = (
+            live_upcoming ["Home"]
+            .apply(lambda x: pd.Series(parse_rank(x)))
+        )
+        live_upcoming["Away Rank"] = live_upcoming["Away Rank"].astype("Int64")
+        live_upcoming["Home Rank"] = live_upcoming["Home Rank"].astype("Int64")
+        live_upcoming[["Away Score", "Home Score", "Status", "TV"]] = (
+            live_upcoming
+            .apply(lambda x: pd.Series(parse_live(x, master)), axis=1)
+        )
+        live_upcoming["Away Score"] = live_upcoming["Away Score"].astype("Int64")
+        live_upcoming["Home Score"] = live_upcoming["Home Score"].astype("Int64")
 
+        live_upcoming['Location'] = live_upcoming.apply(lambda x: check(x, arenas), axis=1 )
+
+        live_upcoming["Home Conf"] = live_upcoming['Home'].apply(lambda x: getConference(x, rank_df))
+        live_upcoming["Away Conf"] = live_upcoming['Away'].apply(lambda x: getConference(x, rank_df))
+
+        live_upcoming['Model Home'] = live_upcoming.apply(lambda x: get_rank_men(x['Home'], rank_df, master), axis=1)
+        live_upcoming['Model Away'] = live_upcoming.apply(lambda x: get_rank_men(x['Away'], rank_df, master), axis=1)
+        live_upcoming['Model Home'] = live_upcoming['Model Home'].astype("Int64") 
+        live_upcoming['Model Away'] = live_upcoming['Model Away'].astype("Int64") 
+        live_upcoming["Model Home"] = live_upcoming["Model Home"].astype("string").fillna("")
+        live_upcoming["Model Away"] = live_upcoming["Model Away"].astype("string").fillna("")
+        p5_live = get_p5(live_upcoming)
+        live_upcoming = live_upcoming.drop(index=p5_live.index)
+        return [p5_live, live_upcoming]
+         
+    if len(dfs) == 2:
+        [p5done, done] = getDone(dfs[0])
+        [p5live, live_upcoming] = getLive(dfs[1])
+    elif len(dfs) == 1:
+        if 'Time/TV' in dfs[0].columns:
+            [p5done, done] = [pd.DataFrame(), pd.DataFrame()]
+            [p5live, live_upcoming] = getLive(dfs[0])
+        else:
+            [p5done, done] = getDone(dfs[0])
+            [p5live, live_upcoming] = [pd.DataFrame(), pd.DataFrame()]
+    elif len(dfs) > 2:
+        print('parse_mens_cbs::More than two tables found in soup. Err.')
+    elif len(dfs) < 1:
+        print('parse_mens_cbs::No tables found in soup. Err.')
+    else:
+        print('parse_mens_cbs::Hit else statement. Err.')
+
+    return [p5live, p5done, done, live_upcoming]
 
 def today_games_help_women(rank_df, master):
     json = fetch_espn_women_scoreboard()
@@ -762,6 +778,7 @@ def today_games_help_men(p5live, p5done, done, live):
     Status, TV, Location, Home Conf, Away Conf
     '''
     html_live = ''
+    html_done = ''
     if len(live) > 0:
         live["Home Rank"] = live["Home Rank"].astype("string").fillna("")
         live["Away Rank"] = live["Away Rank"].astype("string").fillna("")

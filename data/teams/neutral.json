@@ -6,5 +6,65 @@
     "Enterprise Center": {
         "City": "St. Louis",
         "State": "MO"
+    },
+    "Bob Carpenter Center Acierno Arena": {
+        "City": null,
+        "State": null
+    },
+    "William Pitt Center - West Gym": {
+        "City": null,
+        "State": null
+    },
+    "Foster Pavillion": {
+        "City": null,
+        "State": null
+    },
+    "Events Center": {
+        "City": null,
+        "State": null
+    },
+    "Carver-Hawkeye Arena": {
+        "City": null,
+        "State": null
+    },
+    "Stephen C. O'Connell Center": {
+        "City": null,
+        "State": null
+    },
+    "Memorial Gym": {
+        "City": null,
+        "State": null
+    },
+    "Breslin Center": {
+        "City": null,
+        "State": null
+    },
+    "John E. Worthen Arena": {
+        "City": null,
+        "State": null
+    },
+    "Texas A&M-Commerce Field House": {
+        "City": null,
+        "State": null
+    },
+    "The Pavilion at Ole Miss": {
+        "City": null,
+        "State": null
+    },
+    "UW-Milwaukee Panther Arena": {
+        "City": null,
+        "State": null
+    },
+    "Ed & Rae Schollmaier Arena": {
+        "City": null,
+        "State": null
+    },
+    "James H. Hilton Coliseum": {
+        "City": null,
+        "State": null
+    },
+    "Hilliard Center": {
+        "City": null,
+        "State": null
     }
 }
