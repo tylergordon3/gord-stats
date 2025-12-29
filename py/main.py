@@ -6,6 +6,8 @@ import scraper
 from datetime import datetime, date
 import numpy as np
 from render import render_home as rh
+import re
+from pathlib import Path
 
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
@@ -68,6 +70,15 @@ if save_model_w:
     model.trainModelsAndSave(torvik_w_df, update_about, gender="W")
     print(f"Torvik Women's training took: {(datetime.now() - start).total_seconds()}")
 
+update_mens_all = 1
+if update_mens_all:
+    path = utils.get_path('data/men/kenpom/')
+    files = os.listdir(path)
+    files_strip = [x[6:-5] for x in files]
+    date_lst = [datetime.strptime(x, "%Y-%m-%d").date() for x in files_strip]
+    for day in date_lst:
+        predictions.predict(day)
+
 today_df = predictions.predict(date.today())
 today_w_df = predictions.predict_w(date.today())
 
@@ -78,3 +89,5 @@ games_women = scraper.today_games(today_w_df, 'W')
 generate_home.generate_home_about(games_women, 'W', False)
 
 rh.render_home(today_df, games, today_w_df, games_women)
+
+
