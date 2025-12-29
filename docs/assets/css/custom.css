@@ -363,6 +363,14 @@
   column-gap: 10px;
 }
 
+.team-row.winner {
+  background-color: rgba(34, 197, 94, 0.12); /* light green */
+}
+
+.team-row.loser {
+  background-color: rgba(239, 68, 68, 0.12); /* light red */
+}
+
 .team-left {
   display: flex;
   align-items: center;

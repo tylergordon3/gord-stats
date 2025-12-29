@@ -744,6 +744,13 @@ def rank_formatter(model, team, ap):
 
     return ap_html + team + model_html
 
+def format_result(res):
+    if res:
+        return 'winner'
+    else:
+        return 'loser'
+
+
 def today_games_help_men(p5live, p5done, done, live):
     '''
     DONE COLS: 
@@ -803,7 +810,7 @@ def today_games_help_men(p5live, p5done, done, live):
             <article class="game-card">
                 <div class="game-main">
                     <div class="teams">
-                        <div class="team-row">
+                        <div class="team-row {format_result(r['Away Win'])}">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Away'])))}
                                 <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
@@ -812,7 +819,7 @@ def today_games_help_men(p5live, p5done, done, live):
                                 <span class="score">{r['Away Score']}</span>
                             </div>
                         </div>
-                        <div class="team-row">
+                        <div class="team-row {format_result(r['Home Win'])}">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Home'])))}
                                 <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
