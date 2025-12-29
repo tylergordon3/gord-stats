@@ -20,6 +20,31 @@ TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"
 TORVIK = "https://barttorvik.com/#"
 
+def fmt_team(team, rank):
+    if rank == "N/A":
+        return team
+    return f"<strong>#{rank}</strong> {team}"
+
+def meta_class(val):
+    val = str(val).lower()
+
+    if ":" in val:
+        return "meta meta-upcoming"  # GREEN
+    if "," not in val:
+        return "meta meta-final"  # GREEN
+    return "meta meta-live"  # scheduled
+
+def getUrl(name):
+    if name is None:
+        return f'/assets/images/default.png' 
+    link = f'/assets/images/{name}' 
+    return link
+
+def image_formatter(url):
+    if url is None:
+        return ''
+    return f'<img src="{url}" class="team-logo" >'
+
 def getMasterTeams():
     '''
     Helper function for getting master teams DF
@@ -126,6 +151,23 @@ def get_rank(row, rank_df, master, bin):
             return
         else:
             return list(rank_row["Overall"])[0]
+
+def get_rank_men(team, rank_df, master):
+
+    [index, code_name] = getNameFromCode(team, master)
+
+    rank_row = rank_df.loc[
+        (rank_df["Team"] == team)
+        | (rank_df["Team"] == code_name)
+        | (rank_df["index"] == index)
+    ]
+
+    if rank_row.empty:
+        pass
+    else:
+        return list(rank_row["Overall"])[0]
+
+    return None
 
 def parse_arena_gender(team):
     if pd.isna(team):
@@ -414,7 +456,6 @@ def parse_results(row, master):
     home_check = getNameFromCode(home, master)[1]
     away_check = getNameFromCode(away, master)[1]
 
-
     if (team1_name == home_check) | (team2_name == away_check):
         home_score = score1
         away_score = score2
@@ -442,7 +483,7 @@ def get_p5(df):
 
 def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
     table = soup.find_all('table')
-
+    arenas = pd.read_json(utils.get_path('data/teams/arenas.json'))
     if table:
         dfs = pd.read_html(str(table))
         # df[0] - finished games
@@ -469,111 +510,97 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
         done["Away Win"] = done["Away Win"].astype("boolean")
         done["Home Win"] = done["Home Win"].astype("boolean")
 
+        done['Model Home'] = done.apply(lambda x: get_rank_men(x['Home'], rank_df, master), axis=1)
+        done['Model Away'] = done.apply(lambda x: get_rank_men(x['Away'], rank_df, master), axis=1)
+        done['Model Home'] = done['Model Home'].astype("Int64") 
+        done['Model Away'] = done['Model Away'].astype("Int64") 
+        done["Model Home"] = done["Model Home"].astype("string").fillna("")
+        done["Model Away"] = done["Model Away"].astype("string").fillna("")
         # df[1] - active & upcoming
         # Away, Home, Time/TV, Streaming, Venue, Tickets
-        live_upcoming = dfs[1]
-        live_upcoming = live_upcoming.drop(columns=['Buy Tickets'])
-        live_upcoming [["Away", "Away Rank"]] = (
-            live_upcoming ["Away"]
-            .apply(lambda x: pd.Series(parse_rank(x)))
-        )
-        live_upcoming [["Home", "Home Rank"]] = (
-            live_upcoming ["Home"]
-            .apply(lambda x: pd.Series(parse_rank(x)))
-        )
-        live_upcoming["Away Rank"] = live_upcoming["Away Rank"].astype("Int64")
-        live_upcoming["Home Rank"] = live_upcoming["Home Rank"].astype("Int64")
-        live_upcoming[["Away Score", "Home Score", "Status", "TV"]] = (
-            live_upcoming
-            .apply(lambda x: pd.Series(parse_live(x, master)), axis=1)
-        )
-        live_upcoming["Away Score"] = live_upcoming["Away Score"].astype("Int64")
-        live_upcoming["Home Score"] = live_upcoming["Home Score"].astype("Int64")
+        try:
+            live_upcoming = dfs[1]
+            live_upcoming = live_upcoming.drop(columns=['Buy Tickets'])
+            live_upcoming [["Away", "Away Rank"]] = (
+                live_upcoming ["Away"]
+                .apply(lambda x: pd.Series(parse_rank(x)))
+            )
+            live_upcoming [["Home", "Home Rank"]] = (
+                live_upcoming ["Home"]
+                .apply(lambda x: pd.Series(parse_rank(x)))
+            )
+            live_upcoming["Away Rank"] = live_upcoming["Away Rank"].astype("Int64")
+            live_upcoming["Home Rank"] = live_upcoming["Home Rank"].astype("Int64")
+            live_upcoming[["Away Score", "Home Score", "Status", "TV"]] = (
+                live_upcoming
+                .apply(lambda x: pd.Series(parse_live(x, master)), axis=1)
+            )
+            live_upcoming["Away Score"] = live_upcoming["Away Score"].astype("Int64")
+            live_upcoming["Home Score"] = live_upcoming["Home Score"].astype("Int64")
 
-        def check(row, arenas):
-            dict_path = utils.get_path('data/teams/neutral.json')
-            with open(dict_path, 'r') as file:
-                data_dict = json.load(file)
-            venue = row['Venue']
-            team = row['Home']
-            match = arenas[arenas['Arena'] == venue]
-            neutral = data_dict.get(venue)
-            # {'City': 'St. Louis', 'State': 'MO'}
-            if not match.empty:
-                city = list(match['City'])[0]
-                state = list(match['State'])[0]
-                return f'{city}, {state}'
-            elif neutral is not None:
-                city = neutral['City']
-                state = neutral['State']
-                return f'{city}, {state}'
-            else:
-                print(f'No match for: {venue}, team: {team}')
-                data_dict[row['Venue']] = {"City" : None, "State" : None}
-            
-                with open(dict_path, "w") as json_file:
-                    json.dump(data_dict, json_file, indent=4)
+            def check(row, arenas):
+                dict_path = utils.get_path('data/teams/neutral.json')
+                with open(dict_path, 'r') as file:
+                    data_dict = json.load(file)
+                venue = row['Venue']
+                team = row['Home']
+                match = arenas[arenas['Arena'] == venue]
+                neutral = data_dict.get(venue)
+                # {'City': 'St. Louis', 'State': 'MO'}
+                if not match.empty:
+                    city = list(match['City'])[0]
+                    state = list(match['State'])[0]
+                    return f'{city}, {state}'
+                elif neutral is not None:
+                    city = neutral['City']
+                    state = neutral['State']
+                    return f'{city}, {state}'
+                else:
+                    print(f'No match for: {venue}, team: {team}')
+                    data_dict[row['Venue']] = {"City" : None, "State" : None}
+                
+                    with open(dict_path, "w") as json_file:
+                        json.dump(data_dict, json_file, indent=4)
 
-                return None
+                    return None
 
-        arenas = pd.read_json(utils.get_path('data/teams/arenas.json'))
-        
-        live_upcoming['Location'] = live_upcoming.apply(lambda x: check(x, arenas), axis=1 )
+            live_upcoming['Location'] = live_upcoming.apply(lambda x: check(x, arenas), axis=1 )
 
-        power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
+            live_upcoming["Home Conf"] = live_upcoming['Home'].apply(lambda x: getConference(x, rank_df))
+            live_upcoming["Away Conf"] = live_upcoming['Away'].apply(lambda x: getConference(x, rank_df))
 
-        live_upcoming["Home Conf"] = live_upcoming['Home'].apply(lambda x: getConference(x, rank_df))
-        live_upcoming["Away Conf"] = live_upcoming['Away'].apply(lambda x: getConference(x, rank_df))
+            live_upcoming['Model Home'] = live_upcoming.apply(lambda x: get_rank_men(x['Home'], rank_df, master), axis=1)
+            live_upcoming['Model Away'] = live_upcoming.apply(lambda x: get_rank_men(x['Away'], rank_df, master), axis=1)
+            live_upcoming['Model Home'] = live_upcoming['Model Home'].astype("Int64") 
+            live_upcoming['Model Away'] = live_upcoming['Model Away'].astype("Int64") 
+            live_upcoming["Model Home"] = live_upcoming["Model Home"].astype("string").fillna("")
+            live_upcoming["Model Away"] = live_upcoming["Model Away"].astype("string").fillna("")
+            p5_live = get_p5(live_upcoming)
+            live_upcoming = live_upcoming.drop(index=p5_live.index)
+        except:
+            p5_live = pd.DataFrame()
+            live_upcoming = pd.DataFrame()
+            print('No live or upcoming games.')
 
         done["Home Conf"] = done['Home'].apply(lambda x: getConference(x, rank_df))
         done["Away Conf"] = done['Away'].apply(lambda x: getConference(x, rank_df))
 
-        p5_live = get_p5(live_upcoming)
         p5_done = get_p5(done)
-
         done = done.drop(index=p5_done.index)
-        live_upcoming = live_upcoming.drop(index=p5_live.index)
-        print(p5_live)
-        print(p5_done)
-        print(done)
-        print(live_upcoming)
 
-def today_games(rank_df, gender):
+        return [p5_live, p5_done, done, live_upcoming]
 
-    rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
-    master = getMasterTeams()
-    if gender == 'M':
-        look_for = "college-basketball/teams/"
-        name_class = "TeamName"
-        soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
-        #parse_mens_cbs(soup, master, rank_df)
-        names = soup.find_all("span", class_=name_class)
-        times = game_status(soup, gender)
-    elif gender == 'W':
-        look_for = "womens-college-basketball/teams/"
-        name_class = "team-name-link"
-        json = fetch_espn_women_scoreboard()
-        [names, times] = parse_espn_teams_and_times(json)
 
+def today_games_help_women(rank_df, master):
+    json = fetch_espn_women_scoreboard()
+    [names, times] = parse_espn_teams_and_times(json)
     code_names = []
-    if gender == "M":
-        for name in names:
-            atag = name.find("a")
-            if atag is None:
-                code_names.append("NA")
-            else:
-                url = atag["href"]
-                idx = url.find(look_for) + len(look_for)
-                team_code = url[idx:].split("/")[0]
-                code_names.append(team_code)
-
-    if gender == 'W':
-        for name in names:
-            [_, team] = getNameFromCode(name, master)
-            if team is None:
-                code_names.append("NA")
-            else:
-                code_names.append(team)
+    for name in names:
+        [_, team] = getNameFromCode(name, master)
+        if team is None:
+            code_names.append("NA")
+        else:
+            code_names.append(team)
 
     names_1 = names[::2]
     names_2 = names[1::2]
@@ -584,9 +611,6 @@ def today_games(rank_df, gender):
     for team1, team2, time, codes_1, codes_2 in zip(
         names_1, names_2, times, codes_1, codes_2
     ):
-        if gender == 'M':
-            team1 = team1.text.strip()
-            team2 = team2.text.strip()
         dict = {
             "team1": team1,
             "code1": codes_1,
@@ -645,31 +669,6 @@ def today_games(rank_df, gender):
         }
     )
 
-    def fmt_team(team, rank):
-        if rank == "N/A":
-            return team
-        return f"<strong>#{rank}</strong> {team}"
-
-    def meta_class(val):
-        val = str(val).lower()
-
-        if ":" in val:
-            return "meta meta-upcoming"  # GREEN
-        if "," not in val:
-            return "meta meta-final"  # GREEN
-        return "meta meta-live"  # scheduled
-    
-    def getUrl(name):
-        if name is None:
-            return None
-        link = f'/assets/images/{name}' 
-        return link
-    
-    def image_formatter(url):
-        if url is None:
-            return ''
-        return f'<img src="{url}" class="team-logo" >'
-    
     output_df["matchup_html"] = output_df.apply(
         lambda r: f"""
         <div class="matchup">
@@ -705,12 +704,145 @@ def today_games(rank_df, gender):
     html_other = "\n".join(output_df["matchup_html"])
     html_p5 = "\n".join(p5_df["matchup_html"])
 
+    if not html_p5:
+        html_p5 = f"No women's power 5 games today."
+
+    if not html_other:
+        html_p5 = f"No other women's games today."
+
     html = f"""
-    <h3>Power 5 Games</h3>
+    <h3>Women's Power 5 Games</h3>
     {html_p5}
-    <h3>All Other D1 Games</h3>
+    <h3>All Other Women's D1 Games</h3>
     {html_other}
     """
+    return html
+
+def fmt_team_live(ap_rank, team, score, model_rank):
+    if ap_rank == "":
+        ap_rank_html = ""
+    else:
+        ap_rank_html = f" <strong> ({ap_rank})</strong>"
+
+    if model_rank == "":
+        model_rank_html = ""
+    else:
+        model_rank_html = f"<strong> #{model_rank}</strong>"
+    html = model_rank_html + ' ' + ap_rank_html + ' ' + team 
+    return html
+
+def rank_formatter(model, team, ap):
+    if model == "":
+        model_html = ""
+    else: 
+        model_html = f" <strong>#{model}</strong>"
+
+    if ap == "":
+        ap_html = ""
+    else: 
+        ap_html = f" <strong>({ap})</strong> "
+
+    return ap_html + team + model_html
+
+def today_games_help_men(p5live, p5done, done, live):
+    '''
+    DONE COLS: 
+    Away, Home, Result, Away Rank, Home Rank, Away Score, Home Score, 
+    Away Win, Home Win, Home Conf, Away Conf
+    
+    LIVE COLS:
+    Away, Home, Time/TV, Streaming, Venue, Away Rank, Home Rank, Away Score, Home Score,
+    Status, TV, Location, Home Conf, Away Conf
+    '''
+    html_live = ''
+    if len(live) > 0:
+        live["Home Rank"] = live["Home Rank"].astype("string").fillna("")
+        live["Away Rank"] = live["Away Rank"].astype("string").fillna("")
+        live["matchup_html"] = live.apply(
+            lambda r: f"""
+            <article class="game-card">
+                <div class="game-meta">
+                    <div><span class="arena">{r['Status']}, {r['TV']}</span></div>
+                </div>
+                <div class="game-main">
+                    <div class="teams">
+                        <div class="team-row">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Away'])))}
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Away Score']}</span>
+                            </div>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Home'])))}
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Home Score']}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-meta">
+                        <div><span class="arena">{r['Venue']}, {r['Location']}</span></div>
+                    </div>
+                </div>
+            </article>
+            """,
+            axis=1,
+        )
+        html_live = "<div class=\"scoreboard\">" + "\n".join(live["matchup_html"]) + "</div>"
+
+    if len(done) > 0:
+        done["Home Rank"] = done["Home Rank"].astype("string").fillna("")
+        done["Away Rank"] = done["Away Rank"].astype("string").fillna("")
+        done["matchup_html"] = done.apply(
+            lambda r: f"""
+            <article class="game-card">
+                <div class="game-main">
+                    <div class="teams">
+                        <div class="team-row">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Away'])))}
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Away Score']}</span>
+                            </div>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Home'])))}
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Home Score']}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            """,
+            axis=1,
+        )
+        html_done = "<div class=\"scoreboard\">" + "\n".join(done["matchup_html"]) + "</div>"
+  
+    return html_live + html_done
+
+def today_games(rank_df, gender):
+    rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
+    master = getMasterTeams()
+
+    if gender == 'M':
+        soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
+        [p5live, p5done, done, live] = parse_mens_cbs(soup, master, rank_df)
+        html = today_games_help_men(p5live, p5done, done, live)
+
+    elif gender == 'W':
+        html = today_games_help_women(rank_df, master)
+    
     return html
 
 

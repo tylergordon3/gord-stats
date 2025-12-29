@@ -334,3 +334,83 @@
   color: #fff;
   font-weight: 600;
 }
+
+/* Layout container */
+.scoreboard {
+  display: grid;
+  gap: 12px;
+  max-width: 520px;
+}
+
+/* Card */
+.game-card {
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 14px;
+  padding: 12px 12px 10px;
+  background: #fff;
+}
+
+/* Two rows, score aligned by fixed right column */
+.teams {
+  display: grid;
+  gap: 8px;
+}
+
+.team-row {
+  display: grid;
+  grid-template-columns: 1fr 52px; /* right column fixed for alignment */
+  align-items: center;
+  column-gap: 10px;
+}
+
+.team-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
+}
+
+.team-name {
+  font-size: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-right {
+  text-align: right;
+}
+
+.score {
+  font-variant-numeric: tabular-nums; /* keeps digits same width */
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Meta line: smaller text below */
+.game-meta {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.8;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dot { opacity: 0.6; }
+
+/* Mobile tweaks */
+@media (max-width: 420px) {
+  .team-row { grid-template-columns: 1fr 44px; }
+  .team-name { font-size: 15px; }
+  .score { font-size: 17px; }
+}

@@ -20,17 +20,27 @@ def render_home(men_rankings, men_games_html, women_rankings, women_games_html):
     women_soup = BeautifulSoup(women_games_html, "html.parser")
 
     def getPower5(soup):
+        if (soup is None) | (soup.find('h3') is None):
+            return ""
         h3 = soup.find('h3')
         content = []
         for elem in h3.next_siblings:
             if elem.name == "h3":
                 break
             content.append(str(elem))
+
+        if len(content) == 1:
+            return ""
         result = "".join(content)
         return result
     
     men_games = getPower5(men_soup)
     women_games = getPower5(women_soup)
+    
+    if men_games == "":
+        men_games = "No men's power 5 games today."
+    if women_games == "":
+        women_games = "No women's power 5 games today."
 
     html = "<h3>Men's Power 5 Games Today</h3>" + men_games + "<h3>Women's P5 Games Today</h3>" + women_games
     path =  utils.get_path('docs/index.html')

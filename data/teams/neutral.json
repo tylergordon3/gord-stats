@@ -1,10 +1,10 @@
 {
     "McDonough Arena": {
-        "City": null,
-        "State": null
+        "City": "Washington",
+        "State": "DC"
     },
     "Enterprise Center": {
-        "City": null,
-        "State": null
+        "City": "St. Louis",
+        "State": "MO"
     }
 }

@@ -1884,7 +1884,8 @@
             "eagles",
             "EAGLES",
             "fgcu",
-            "floridagulfcoast"
+            "floridagulfcoast",
+            "FGC"
         ],
         "91": [
             "FSU",
@@ -2051,7 +2052,8 @@
             "georgia tech",
             "GEORGIA TECH",
             "gatech",
-            "georgiatech"
+            "georgiatech",
+            "Ga. Tech"
         ],
         "103": [
             "Gonzaga",
@@ -2643,7 +2645,8 @@
             "LOUISIANA",
             "ragin' cajuns",
             "RAGIN' CAJUNS",
-            "la"
+            "la",
+            "UL"
         ],
         "151": [
             "Louisiana-Monroe",
@@ -4414,7 +4417,8 @@
             "sttom",
             "stthmn",
             "stthomas",
-            "st thomas"
+            "st thomas",
+            "St. Thomas (MN)"
         ],
         "286": [
             "Stanford",
