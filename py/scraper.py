@@ -724,7 +724,7 @@ def today_games_help_women(rank_df, master):
         html_p5 = f"No women's power 5 games today."
 
     if not html_other:
-        html_p5 = f"No other women's games today."
+        html_other = f"No other women's games today."
 
     html = f"""
     <h3>Women's Power 5 Games</h3>
@@ -766,6 +766,14 @@ def format_result(res):
     else:
         return 'loser'
 
+def fmt_live(row):
+    # live game -> Status, Tv
+    # upcoming -> Status/TV None, use TIme/TV
+    if (row['Status'] is None) & (row['TV'] is None):
+        html = row['Time/TV']
+    else: 
+        html = row['Status'] + row['TV']
+    return html
 
 def today_games_help_men(p5live, p5done, done, live):
     '''
@@ -786,7 +794,7 @@ def today_games_help_men(p5live, p5done, done, live):
             lambda r: f"""
             <article class="game-card">
                 <div class="game-meta">
-                    <div><span class="arena">{r['Status']}, {r['TV']}</span></div>
+                    <div><span class="arena">{fmt_live(r)}</span></div>
                 </div>
                 <div class="game-main">
                     <div class="teams">
@@ -869,7 +877,6 @@ def today_games(rank_df, gender):
     
     return html
 
-
 def update_master():
     master = getMasterTeams()
     path = utils.get_path("data/teams/redditCFB.html")
@@ -900,7 +907,6 @@ def update_master():
     merged = merged.drop(columns=["names_x", "names_y", "Index_y"])
     merged = merged.rename(columns={"Index_x": "index"})
     saveMasterTeams(merged)
-
 
 def init_master_dict():
     path = utils.get_path("data/teams/team_table.html")
