@@ -1217,7 +1217,8 @@
             "cal baptist",
             "CAL BAPTIST",
             "calbaptist",
-            "CBU"
+            "CBU",
+            "CALBPTST"
         ],
         "37": [
             "Mustangs",
@@ -2890,7 +2891,8 @@
             "WARRIORS",
             "merri",
             "merrimack",
-            "MERRIMACK"
+            "MERRIMACK",
+            "MERMAK"
         ],
         "170": [
             "MIA",
@@ -3018,7 +3020,9 @@
             "mississippi st.",
             "MISSISSIPPI ST.",
             "mississippist",
-            "mississippi st"
+            "mississippi st",
+            "MISSST",
+            "Miss. St."
         ],
         "179": [
             "Mississippi Valley State",
@@ -4008,6 +4012,7 @@
             "heart",
             "sacred heart",
             "SACRED HEART",
+            "SACHRT",
             "sacredheart"
         ],
         "256": [
@@ -5003,7 +5008,8 @@
             "wolverines",
             "WOLVERINES",
             "uvu",
-            "utahvalley"
+            "utahvalley",
+            "UTVALL"
         ],
         "336": [
             "VCU",

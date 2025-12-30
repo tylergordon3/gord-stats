@@ -436,8 +436,8 @@ def parse_results(row, master):
         return None, None, None, None
 
     # Extract the two scores
-    match = re.search(r"([A-Z]+)\s([0-9]+)\s-\s([A-Z]+)\s([0-9]+)",row['Result'])
-   
+    match = re.search(r"(\D*)\s([0-9]+)\s-\s(\D*)\s([0-9]+)",row['Result'])
+
     if not match:
         return None, None, None, None
     code1 = match.group(1)
@@ -604,7 +604,6 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
         print('parse_mens_cbs::No tables found in soup. Err.')
     else:
         print('parse_mens_cbs::Hit else statement. Err.')
-
     return [p5live, p5done, done, live_upcoming]
 
 def today_games_help_women(rank_df, master):
@@ -772,7 +771,7 @@ def fmt_live(row):
     if (row['Status'] is None) & (row['TV'] is None):
         html = row['Time/TV']
     else: 
-        html = row['Status'] + row['TV']
+        html = f"{row['Status']} {row['TV']}"
     return html
 
 def today_games_help_men(p5live, p5done, done, live):
