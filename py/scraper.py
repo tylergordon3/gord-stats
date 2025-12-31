@@ -718,7 +718,6 @@ def today_games_help_women(rank_df, master):
 
     #df = parsed.drop(index=p5_df.index)
     df = parsed.copy()
-    print(df.to_string())
     if len(df) > 0:
         df["matchup_html"] = df.apply(
                 lambda r: f"""
