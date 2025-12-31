@@ -472,10 +472,11 @@ def parse_results(row, master):
 def get_p5(df):
     power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
     specific = ['Gonzaga']
-
+    
     p5 = df[
-        ((df["Away Conf"].isin(power_conf)) | df['Away'].isin(specific))
-        & (df["Home Conf"].isin(power_conf) | df['Home'].isin(specific))
+        (((df["Away Conf"].isin(power_conf)) | df['Away'].isin(specific))
+        & (df["Home Conf"].isin(power_conf) | df['Home'].isin(specific))) |
+        ((pd.notna(df['Away Rank'])) | (pd.notna(df['Home Rank'])))
     ]
 
     return p5
@@ -786,6 +787,8 @@ def today_games_help_men(p5live, p5done, done, live):
     '''
     html_live = ''
     html_done = ''
+    html_p5live = ''
+    html_p5done = ''
     if len(live) > 0:
         live["Home Rank"] = live["Home Rank"].astype("string").fillna("")
         live["Away Rank"] = live["Away Rank"].astype("string").fillna("")
@@ -826,6 +829,46 @@ def today_games_help_men(p5live, p5done, done, live):
         )
         html_live = "<div class=\"scoreboard\">" + "\n".join(live["matchup_html"]) + "</div>"
 
+    if len(p5live) > 0:
+        p5live["Home Rank"] = p5live["Home Rank"].astype("string").fillna("")
+        p5live["Away Rank"] = p5live["Away Rank"].astype("string").fillna("")
+        p5live["matchup_html"] = p5live.apply(
+            lambda r: f"""
+            <article class="game-card">
+                <div class="game-meta">
+                    <div><span class="arena">{fmt_live(r)}</span></div>
+                </div>
+                <div class="game-main">
+                    <div class="teams">
+                        <div class="team-row">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Away'])))}
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Away Score']}</span>
+                            </div>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Home'])))}
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Home Score']}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-meta">
+                        <div><span class="arena">{r['Venue']}, {r['Location']}</span></div>
+                    </div>
+                </div>
+            </article>
+            """,
+            axis=1,
+        )
+        html_p5live = "<div class=\"scoreboard\">" + "\n".join(p5live["matchup_html"]) + "</div>"
+
     if len(done) > 0:
         done["Home Rank"] = done["Home Rank"].astype("string").fillna("")
         done["Away Rank"] = done["Away Rank"].astype("string").fillna("")
@@ -859,8 +902,50 @@ def today_games_help_men(p5live, p5done, done, live):
             axis=1,
         )
         html_done = "<div class=\"scoreboard\">" + "\n".join(done["matchup_html"]) + "</div>"
-  
-    return html_live + html_done
+    
+    if len(p5done) > 0:
+        p5done["Home Rank"] = p5done["Home Rank"].astype("string").fillna("")
+        p5done["Away Rank"] = p5done["Away Rank"].astype("string").fillna("")
+        p5done["matchup_html"] = p5done.apply(
+            lambda r: f"""
+            <article class="game-card">
+                <div class="game-main">
+                    <div class="teams">
+                        <div class="team-row {format_result(r['Away Win'])}">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Away'])))}
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Away Score']}</span>
+                            </div>
+                        </div>
+                        <div class="team-row {format_result(r['Home Win'])}">
+                            <div class="team-left">
+                                {image_formatter(getUrl(get_image_name(r['Home'])))}
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                            </div>
+                            <div class="team-right">
+                                <span class="score">{r['Home Score']}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            """,
+            axis=1,
+        )
+        html_p5done = "<div class=\"scoreboard\">" + "\n".join(p5done["matchup_html"]) + "</div>"
+    
+    html = f'''
+    <h3>Power 5 Matchups & Top 25 Teams</h3>
+    {html_p5live}
+    {html_p5done}
+    <h3>All Other Games</h3>
+    {html_live}
+    {html_done}
+    '''
+    return html
 
 def today_games(rank_df, gender):
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1

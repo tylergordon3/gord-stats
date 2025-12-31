@@ -13,8 +13,10 @@ def update_html(dates):
 def generate_home_about(gamesToday, gender, update=False):
     if gender == 'M':
         path = 'docs/men/'
+        gender_title = "Mens"
     elif gender == 'W':
         path = 'docs/women/'
+        gender_title = "Womens"
     today = date.today()
     mypath = utils.get_path(path)
     all_entries = os.listdir(mypath)
@@ -61,7 +63,7 @@ title: Bracket Gordology
     <p>Using machine learning to predict the NCAA March Madness field.</p>
     <p>Data Sources: <a href='https://kenpom.com/'>Kenpom</a> | <a href='https://barttorvik.com/#'>Torvik</a></p>
     <p>Today's scores and schedule from: <a href='https://www.cbssports.com/college-basketball/scoreboard/'>CBS Sports</a></p>
-    <h3>Today's Games</h3>
+    <h3>Today's {gender_title} Games</h3>
     <p>{time}</p>
     {gamesToday}
 '''
