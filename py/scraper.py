@@ -169,6 +169,23 @@ def get_rank_men(team, rank_df, master):
 
     return None
 
+def get_rank_women(team, rank_df, master):
+
+    [index, code_name] = getNameFromCode(team, master)
+
+    rank_row = rank_df.loc[
+        (rank_df["Team"] == team)
+        | (rank_df["Team"] == code_name)
+        | (rank_df["index"] == index)
+    ]
+
+    if rank_row.empty:
+        pass
+    else:
+        return list(rank_row["Overall"])[0]
+
+    return None
+
 def parse_arena_gender(team):
     if pd.isna(team):
         return pd.NA, True, True
@@ -231,19 +248,44 @@ def fetch_espn_women_scoreboard(params=None, timeout=20):
 def parse_espn_teams_and_times(data):
     teams = []
     times_scores = []
-
+    parsed = pd.DataFrame()
     for event in data.get("events", []):
         competition = event["competitions"][0]
         status = competition["status"]["type"]
         state = status["state"]  # pre / in / post
-
+        
         competitors = competition["competitors"]
+        '''
+            each competitor scores:
+            uid
+            type
+            order
+            homeAway
+            winner
+            team
+            score
+            linescores
+            statistics
+            leaders
+            curatedRank
+            records
+        '''
+        # DF -> State away, home , away score, home score
         away = next(c for c in competitors if c["homeAway"] == "away")
         home = next(c for c in competitors if c["homeAway"] == "home")
-
+        
         away_name = away["team"]["abbreviation"]
         home_name = home["team"]["abbreviation"]
 
+        away_score = away.get("score")
+        home_score = home.get("score")
+
+        time_str = status.get("shortDetail") 
+
+        row = {"State" : state, "Home Code": home_name, "Away Code": away_name, 
+               "Home Score": home_score, "Away Score": away_score, "Status": time_str}
+        add = pd.DataFrame([row])
+        parsed = pd.concat([parsed, add])
         teams.extend([away_name, home_name])
 
         # Decide time / score display
@@ -261,10 +303,27 @@ def parse_espn_teams_and_times(data):
 
         else:
             # In progress
+            away_score = away.get("score")
+            home_score = home.get("score")
             live_str = status.get("shortDetail")  # "3Q 4:21"
-            times_scores.extend([f'{away_name} {live_str} {home_name}'])
+            if live_str == 'Halftime':
+                times_scores.extend([f'{away_name} {away_score} {live_str} {home_name} {home_score}'])
+            else:
+                times_scores.extend([f'{away_name} {live_str} {home_name}'])
 
-    return teams, times_scores
+    return parsed, teams, times_scores
+
+def get_conf_women(team, rank_df, master):
+    [index, code_name] = getNameFromCode(team, master)
+    rank_row = rank_df.loc[
+        (rank_df["Team"] == team)
+        | (rank_df["Team"] == code_name)
+        #| (rank_df["index"] == index)
+    ]
+    if rank_row.empty:
+        return
+    else:
+        return list(rank_row["Conf"])[0]
 
 def getConf(row, rank_df, master, bin):
     if bin == 1:
@@ -609,7 +668,8 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
 
 def today_games_help_women(rank_df, master):
     json = fetch_espn_women_scoreboard()
-    [names, times] = parse_espn_teams_and_times(json)
+
+    [parsed, names, times] = parse_espn_teams_and_times(json)
     code_names = []
     for name in names:
         [_, team] = getNameFromCode(name, master)
@@ -618,107 +678,119 @@ def today_games_help_women(rank_df, master):
         else:
             code_names.append(team)
 
-    names_1 = names[::2]
-    names_2 = names[1::2]
-    codes_1 = code_names[::2]
-    codes_2 = code_names[1::2]
+    def getName(code, master):
+        [_, team] = getNameFromCode(code, master)
+        if team is None:
+            return code
+        else:
+            return team
 
-    sched_df = pd.DataFrame()
-    for team1, team2, time, codes_1, codes_2 in zip(
-        names_1, names_2, times, codes_1, codes_2
-    ):
-        dict = {
-            "team1": team1,
-            "code1": codes_1,
-            "team2": team2,
-            "code2": codes_2,
-            "time": time,
-        }
-        add = pd.DataFrame([dict])
-        sched_df = pd.concat([sched_df, add], ignore_index=True)
+    parsed['Home'] = parsed.apply(lambda x: getName(x['Home Code'], master), axis=1)
+    parsed['Away'] = parsed.apply(lambda x: getName(x['Away Code'], master), axis=1)
 
-    sched_df["team1_rank"] = sched_df.apply(
-        lambda x: get_rank(x, rank_df, master, 1), axis=1
+    parsed["Model Rank Home"] = parsed.apply(
+        lambda x: get_rank_women(x['Home'], rank_df, master), axis=1
     )
-    sched_df["team2_rank"] = sched_df.apply(
-        lambda x: get_rank(x, rank_df, master, 2), axis=1
+    parsed["Model Rank Away"] = parsed.apply(
+        lambda x: get_rank_women(x['Away'], rank_df, master), axis=1
     )
-    sched_df["team1_rank"] = sched_df["team1_rank"].apply(
-        lambda x: int(x) if pd.notna(x) else "N/A"
+    
+    parsed["Model Rank Home"] = parsed["Model Rank Home"].apply(
+        lambda x: int(x) if pd.notna(x) else ""
     )
-    sched_df["team2_rank"] = sched_df["team2_rank"].apply(
-        lambda x: int(x) if pd.notna(x) else "N/A"
+    parsed["Model Rank Away"] =  parsed["Model Rank Away"].apply(
+        lambda x: int(x) if pd.notna(x) else ""
     )
-    sched_df["team1_conf"] = sched_df.apply(
-        lambda x: getConf(x, rank_df, master, 1), axis=1
+
+    parsed["Home Conf"] = parsed.apply(
+        lambda x: get_conf_women(x['Home'], rank_df, master), axis=1
     )
-    sched_df["team2_conf"] = sched_df.apply(
-        lambda x: getConf(x, rank_df, master, 2), axis=1
+    parsed["Away Conf"] = parsed.apply(
+        lambda x: get_conf_women(x['Away'], rank_df, master), axis=1
     )
+
     power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
 
-    p5_df = sched_df[
-        (sched_df["team1_conf"].isin(power_conf))
-        & (sched_df["team2_conf"].isin(power_conf))
+    p5_df = parsed[
+        (parsed["Home Conf"].isin(power_conf))
+        & (parsed["Away Conf"].isin(power_conf))
     ]
-    sched_df = sched_df.drop(index=p5_df.index)
 
-    output_df = sched_df[["team1_rank", "team1", "team2", "team2_rank", "time"]]
-    output_df = output_df.rename(
-        columns={
-            "team1_rank": "A Rank",
-            "team1": "Away",
-            "team2": "Home",
-            "team2_rank": "H Rank",
-            "time": "Time/Final",
-        }
-    )
+    df = parsed.drop(index=p5_df.index)
 
-    p5_df = p5_df[["team1_rank", "team1", "team2", "team2_rank", "time"]]
-    p5_df = p5_df.rename(
-        columns={
-            "team1_rank": "A Rank",
-            "team1": "Away",
-            "team2": "Home",
-            "team2_rank": "H Rank",
-            "time": "Time/Final",
-        }
-    )
+    if len(df) > 0:
+        df["matchup_html"] = df.apply(
+                lambda r: f"""
+                <article class="game-card">
+                    <div class="game-meta">
+                        <div><span class="arena">{r['Status']}</span></div>
+                    </div>
+                    <div class="game-main">
+                        <div class="teams">
+                            <div class="team-row">
+                                <div class="team-left">
+                                    {image_formatter(getUrl(get_image_name(r['Away'])))}
+                                    <span class="team-name">{rank_formatter(r['Model Rank Away'], r['Away'], "")}</span>
+                                </div>
+                                <div class="team-right">
+                                    <span class="score">{r['Away Score']}</span>
+                                </div>
+                            </div>
+                            <div class="team-row">
+                                <div class="team-left">
+                                    {image_formatter(getUrl(get_image_name(r['Home'])))}
+                                    <span class="team-name">{rank_formatter(r['Model Rank Home'], r['Home'], "")}</span>
+                                </div>
+                                <div class="team-right">
+                                    <span class="score">{r['Home Score']}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                """,
+                axis=1,
+            )
+        html_other = "<div class=\"scoreboard\">" + "\n".join(df["matchup_html"]) + "</div>"
+    else:
+        html_other = ''
 
-    output_df["matchup_html"] = output_df.apply(
-        lambda r: f"""
-        <div class="matchup">
-        <div class="teams">
-            <span class="team">{image_formatter(getUrl(get_image_name(r['Away'])))}{fmt_team(r['Away'], r['A Rank'])}</span>
-            <span class="at">@</span>
-            <span class="team">{image_formatter(getUrl(get_image_name(r['Home'])))}{fmt_team(r['Home'], r['H Rank'])}</span>
-        </div>
-        <div class="{meta_class(r['Time/Final'])}">
-            {r['Time/Final']}
-        </div>
-        </div>
-        """,
-        axis=1,
-    )
-
-    p5_df["matchup_html"] = p5_df.apply(
-        lambda r: f"""
-        <div class="matchup">
-        <div class="teams">
-            <span class="team">{image_formatter(getUrl(get_image_name(r['Away'])))}{fmt_team(r['Away'], r['A Rank'])}</span>
-            <span class="at">@</span>
-            <span class="team">{image_formatter(getUrl(get_image_name(r['Home'])))}{fmt_team(r['Home'], r['H Rank'])}</span>
-        </div>
-        <div class="{meta_class(r['Time/Final'])}">
-            {r['Time/Final']}
-        </div>
-        </div>
-        """,
-        axis=1,
-    )
-
-    html_other = "\n".join(output_df["matchup_html"])
-    html_p5 = "\n".join(p5_df["matchup_html"])
+    if len(p5_df) > 0:
+        p5_df["matchup_html"] = p5_df.apply(
+                lambda r: f"""
+                <article class="game-card">
+                    <div class="game-meta">
+                        <div><span class="arena">{r['Status']}</span></div>
+                    </div>
+                    <div class="game-main">
+                        <div class="teams">
+                            <div class="team-row">
+                                <div class="team-left">
+                                    {image_formatter(getUrl(get_image_name(r['Away'])))}
+                                    <span class="team-name">{rank_formatter(r['Model Rank Away'], r['Away'], "")}</span>
+                                </div>
+                                <div class="team-right">
+                                    <span class="score">{r['Away Score']}</span>
+                                </div>
+                            </div>
+                            <div class="team-row">
+                                <div class="team-left">
+                                    {image_formatter(getUrl(get_image_name(r['Home'])))}
+                                    <span class="team-name">{rank_formatter(r['Model Rank Home'], r['Home'], "")}</span>
+                                </div>
+                                <div class="team-right">
+                                    <span class="score">{r['Home Score']}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                """,
+                axis=1,
+            )
+        html_p5 = "<div class=\"scoreboard\">" + "\n".join(p5_df["matchup_html"]) + "</div>"
+    else:
+        html_p5 = ''
 
     if not html_p5:
         html_p5 = f"No women's power 5 games today."

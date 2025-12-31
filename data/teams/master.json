@@ -1071,7 +1071,8 @@
             "BINGHAMTON",
             "bearcats",
             "BEARCATS",
-            "bngh"
+            "bngh",
+            "BING"
         ],
         "25": [
             "BOISE",
@@ -1393,7 +1394,8 @@
             "chatt",
             "chattanooga",
             "CHATTANOOGA",
-            "chat"
+            "chat",
+            "UTC"
         ],
         "50": [
             "Chicago State",
@@ -1932,7 +1934,8 @@
             "fresno st.",
             "FRESNO ST.",
             "fresnost",
-            "fresno st"
+            "fresno st",
+            "FRESNO"
         ],
         "94": [
             "Paladins",
@@ -2065,7 +2068,8 @@
             "bulldogs",
             "BULLDOGS",
             "zags",
-            "GONZAG"
+            "GONZAG",
+            "GONZ"
         ],
         "104": [
             "Grambling State",
@@ -2106,7 +2110,8 @@
             "PHOENIX",
             "uwgb",
             "wisgb",
-            "greenbay"
+            "greenbay",
+            "GB"
         ],
         "107": [
             "Hampton",
@@ -2396,7 +2401,8 @@
             "JACKSONVILLE",
             "dolphins",
             "DOLPHINS",
-            "jville"
+            "jville",
+            "JAX"
         ],
         "130": [
             "JKSNV",
@@ -2554,7 +2560,8 @@
             "dolphins",
             "DOLPHINS",
             "moyne",
-            "lemoyne"
+            "lemoyne",
+            "LEM"
         ],
         "143": [
             "LEHI",
@@ -3765,7 +3772,8 @@
             "PORTLAND",
             "pilots",
             "PILOTS",
-            "up"
+            "up",
+            "PORT"
         ],
         "235": [
             "PRST",
@@ -4066,7 +4074,8 @@
             "GAELS",
             "stmry",
             "saintmary's",
-            "saint marys"
+            "saint marys",
+            "SMC"
         ],
         "260": [
             "Saint Peter's",
@@ -4136,7 +4145,8 @@
             "san diego st.",
             "SAN DIEGO ST.",
             "sandiegost",
-            "san diego st"
+            "san diego st",
+            "SDGST"
         ],
         "265": [
             "San Francisco",
@@ -4149,7 +4159,8 @@
             "sanfr",
             "sanfrancisco",
             "SANFRAN",
-            "San Fran."
+            "San Fran.",
+            "SF"
         ],
         "266": [
             "San Jose State",
@@ -4164,7 +4175,8 @@
             "san jose st.",
             "SAN JOSE ST.",
             "sanjosest",
-            "san jose st"
+            "san jose st",
+            "SJST"
         ],
         "267": [
             "Santa Clara",
@@ -4175,7 +4187,8 @@
             "broncos",
             "BRONCOS",
             "scu",
-            "santaclara"
+            "santaclara",
+            "SNCLRA"
         ],
         "268": [
             "Seattle",
@@ -4702,7 +4715,8 @@
             "TIGERS",
             "tows",
             "towson",
-            "TOWSON"
+            "TOWSON",
+            "TOW"
         ],
         "308": [
             "Troy",
@@ -4985,7 +4999,8 @@
             "utah st.",
             "UTAH ST.",
             "utahst",
-            "utah st"
+            "utah st",
+            "UTAHST"
         ],
         "334": [
             "Utah Tech",
@@ -5264,7 +5279,8 @@
             "WICHITA ST.",
             "wichitast",
             "wichita st",
-            "WICHST"
+            "WICHST",
+            "WICH"
         ],
         "356": [
             "William & Mary",
