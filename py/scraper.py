@@ -711,13 +711,14 @@ def today_games_help_women(rank_df, master):
 
     power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
 
-    p5_df = parsed[
-        (parsed["Home Conf"].isin(power_conf))
-        & (parsed["Away Conf"].isin(power_conf))
-    ]
+    #p5_df = parsed[
+    #    (parsed["Home Conf"].isin(power_conf))
+    #    & (parsed["Away Conf"].isin(power_conf))
+    #]
 
-    df = parsed.drop(index=p5_df.index)
-
+    #df = parsed.drop(index=p5_df.index)
+    df = parsed.copy()
+    print(df.to_string())
     if len(df) > 0:
         df["matchup_html"] = df.apply(
                 lambda r: f"""
@@ -753,8 +754,8 @@ def today_games_help_women(rank_df, master):
             )
         html_other = "<div class=\"scoreboard\">" + "\n".join(df["matchup_html"]) + "</div>"
     else:
-        html_other = ''
-
+        html_other = 'No games today.'
+    '''
     if len(p5_df) > 0:
         p5_df["matchup_html"] = p5_df.apply(
                 lambda r: f"""
@@ -791,17 +792,15 @@ def today_games_help_women(rank_df, master):
         html_p5 = "<div class=\"scoreboard\">" + "\n".join(p5_df["matchup_html"]) + "</div>"
     else:
         html_p5 = ''
-
-    if not html_p5:
-        html_p5 = f"No women's power 5 games today."
+    '''
+    #if not html_p5:
+    #    html_p5 = f"No women's power 5 games today."
 
     if not html_other:
         html_other = f"No other women's games today."
 
     html = f"""
-    <h3>Women's Power 5 Games</h3>
-    {html_p5}
-    <h3>All Other Women's D1 Games</h3>
+    <h3>Women's Games</h3>
     {html_other}
     """
     return html
