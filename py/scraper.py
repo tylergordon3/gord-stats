@@ -282,8 +282,19 @@ def parse_espn_teams_and_times(data):
 
         time_str = status.get("shortDetail") 
 
+        if state == 'post':
+            if away_score > home_score:
+                away_win = True
+                home_win = False
+            elif home_score > away_score:
+                away_win = False
+                home_win = True
+        else:
+            away_win = None
+            home_win = None
+
         row = {"State" : state, "Home Code": home_name, "Away Code": away_name, 
-               "Home Score": home_score, "Away Score": away_score, "Status": time_str}
+               "Home Score": home_score, "Away Score": away_score, "Status": time_str, "Home Win" : home_win, "Away Win" : away_win}
         add = pd.DataFrame([row])
         parsed = pd.concat([parsed, add])
         teams.extend([away_name, home_name])
@@ -727,7 +738,7 @@ def today_games_help_women(rank_df, master):
                     </div>
                     <div class="game-main">
                         <div class="teams">
-                            <div class="team-row">
+                        <div class="team-row {format_result(r['Away Win'])}">
                                 <div class="team-left">
                                     {image_formatter(getUrl(get_image_name(r['Away'])))}
                                     <span class="team-name">{rank_formatter(r['Model Rank Away'], r['Away'], "")}</span>
@@ -736,7 +747,7 @@ def today_games_help_women(rank_df, master):
                                     <span class="score">{r['Away Score']}</span>
                                 </div>
                             </div>
-                            <div class="team-row">
+                            <div class="team-row {format_result(r['Home Win'])}">
                                 <div class="team-left">
                                     {image_formatter(getUrl(get_image_name(r['Home'])))}
                                     <span class="team-name">{rank_formatter(r['Model Rank Home'], r['Home'], "")}</span>
@@ -833,8 +844,10 @@ def rank_formatter(model, team, ap):
 def format_result(res):
     if res:
         return 'winner'
-    else:
+    elif not res:
         return 'loser'
+    else:
+        return ''
 
 def fmt_live(row):
     # live game -> Status, Tv
