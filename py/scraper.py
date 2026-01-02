@@ -276,7 +276,8 @@ def parse_espn_teams_and_times(data):
         
         away_name = away["team"]["abbreviation"]
         home_name = home["team"]["abbreviation"]
-
+       # print(home.get("curatedRank"))
+       # print(away.get("curatedRank"))
         away_score = away.get("score")
         home_score = home.get("score")
 
