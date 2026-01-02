@@ -723,13 +723,8 @@ def today_games_help_women(rank_df, master):
 
     power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
 
-    #p5_df = parsed[
-    #    (parsed["Home Conf"].isin(power_conf))
-    #    & (parsed["Away Conf"].isin(power_conf))
-    #]
-
-    #df = parsed.drop(index=p5_df.index)
     df = parsed.copy()
+
     if len(df) > 0:
         df["matchup_html"] = df.apply(
                 lambda r: f"""
@@ -766,47 +761,7 @@ def today_games_help_women(rank_df, master):
         html_other = "<div class=\"scoreboard\">" + "\n".join(df["matchup_html"]) + "</div>"
     else:
         html_other = 'No games today.'
-    '''
-    if len(p5_df) > 0:
-        p5_df["matchup_html"] = p5_df.apply(
-                lambda r: f"""
-                <article class="game-card">
-                    <div class="game-meta">
-                        <div><span class="arena">{r['Status']}</span></div>
-                    </div>
-                    <div class="game-main">
-                        <div class="teams">
-                            <div class="team-row">
-                                <div class="team-left">
-                                    {image_formatter(getUrl(get_image_name(r['Away'])))}
-                                    <span class="team-name">{rank_formatter(r['Model Rank Away'], r['Away'], "")}</span>
-                                </div>
-                                <div class="team-right">
-                                    <span class="score">{r['Away Score']}</span>
-                                </div>
-                            </div>
-                            <div class="team-row">
-                                <div class="team-left">
-                                    {image_formatter(getUrl(get_image_name(r['Home'])))}
-                                    <span class="team-name">{rank_formatter(r['Model Rank Home'], r['Home'], "")}</span>
-                                </div>
-                                <div class="team-right">
-                                    <span class="score">{r['Home Score']}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                """,
-                axis=1,
-            )
-        html_p5 = "<div class=\"scoreboard\">" + "\n".join(p5_df["matchup_html"]) + "</div>"
-    else:
-        html_p5 = ''
-    '''
-    #if not html_p5:
-    #    html_p5 = f"No women's power 5 games today."
-
+   
     if not html_other:
         html_other = f"No other women's games today."
 
@@ -845,7 +800,7 @@ def rank_formatter(model, team, ap):
 def format_result(res):
     if res:
         return 'winner'
-    elif not res:
+    elif res == False:
         return 'loser'
     else:
         return ''

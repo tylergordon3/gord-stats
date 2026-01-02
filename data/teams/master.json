@@ -1043,7 +1043,8 @@
             "BELMONT",
             "bruins",
             "BRUINS",
-            "blmnt"
+            "blmnt",
+            "BEL"
         ],
         "23": [
             "BTHCK",
@@ -1357,7 +1358,8 @@
             "COUGARS",
             "c of c",
             "C OF C",
-            "CHARLS"
+            "CHARLS",
+            "COFC"
         ],
         "47": [
             "Charleston Southern",
@@ -1410,7 +1412,8 @@
             "chicago st.",
             "CHICAGO ST.",
             "chicagost",
-            "chicago st"
+            "chicago st",
+            "CHST"
         ],
         "51": [
             "Cincinnati",
@@ -1449,7 +1452,8 @@
             "clevelandst",
             "cleveland st",
             "CLEVST",
-            "Clev. St."
+            "Clev. St.",
+            "CLE"
         ],
         "54": [
             "Coastal Carolina",
@@ -1656,7 +1660,10 @@
             "udm",
             "detroit mercy",
             "DETROIT MERCY",
-            "detroitmercy"
+            "detroitmercy",
+            "DTROIT",
+            "DETM",
+            "Detroit"
         ],
         "71": [
             "DRAKE",
@@ -2226,7 +2233,8 @@
             "jaguars",
             "JAGUARS",
             "iui",
-            "iuindy"
+            "iuindy",
+            "IUIN"
         ],
         "117": [
             "Vandals",
@@ -2422,7 +2430,8 @@
             "jacksonville st",
             "JAXST",
             "Jax. State",
-            "Jax State"
+            "Jax State",
+            "JXST"
         ],
         "131": [
             "Dukes",
@@ -2886,7 +2895,8 @@
             "MERCYHURST",
             "lakers",
             "LAKERS",
-            "mc"
+            "mc",
+            "MERC"
         ],
         "169": [
             "Merrimack College",
@@ -3186,7 +3196,8 @@
             "MURRAY ST.",
             "murrayst",
             "murray st",
-            "MURYST"
+            "MURYST",
+            "MUR"
         ],
         "189": [
             "Wolfpack",
@@ -3285,7 +3296,8 @@
             "chargers",
             "CHARGERS",
             "unh",
-            "newhaven"
+            "newhaven",
+            "NHVN"
         ],
         "197": [
             "UNM",
@@ -3478,7 +3490,8 @@
             "huskies",
             "HUSKIES",
             "neu",
-            "NEAST"
+            "NEAST",
+            "NE"
         ],
         "212": [
             "Northern Arizona",
@@ -4041,7 +4054,8 @@
             "stfpa",
             "saint francis",
             "SAINT FRANCIS",
-            "saintfrancis"
+            "saintfrancis",
+            "SFPA"
         ],
         "257": [
             "Saint Joseph's",
@@ -4487,7 +4501,8 @@
             "skyhawks",
             "SKYHAWKS",
             "stone",
-            "stoneh"
+            "stoneh",
+            "STO"
         ],
         "290": [
             "SB",
@@ -4501,7 +4516,8 @@
             "stony brook",
             "STONY BROOK",
             "stonybrook",
-            "STNYBRK"
+            "STNYBRK",
+            "STBK"
         ],
         "291": [
             "SYR",
