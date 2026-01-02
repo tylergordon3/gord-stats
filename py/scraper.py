@@ -274,8 +274,7 @@ def parse_espn_teams_and_times(data):
         
         away_name = away["team"]["abbreviation"]
         home_name = home["team"]["abbreviation"]
-       # print(home.get("curatedRank"))
-       # print(away.get("curatedRank"))
+       
         away_score = away.get("score")
         home_score = home.get("score")
 
@@ -297,8 +296,28 @@ def parse_espn_teams_and_times(data):
             away_win = None
             home_win = None
 
+        home_rank = home.get("curatedRank")['current']
+        away_rank = away.get("curatedRank")['current']
+        if home_rank == 99:
+            home_rank = ''
+        
+        if away_rank == 99:
+            away_rank = ''
+
+        try:
+            home_record = home.get("records")[0]['summary']
+        except:
+            home_record = '0-0'
+
+        try:
+            away_record = away.get("records")[0]['summary']
+        except:
+            away_record = '0-0'
+    
         row = {"State" : state, "Home Code": home_name, "Away Code": away_name, 
-               "Home Score": home_score, "Away Score": away_score, "Status": time_str, "Home Win" : home_win, "Away Win" : away_win}
+               "Home Score": home_score, "Away Score": away_score, "Status": time_str, 
+               "Home Win" : home_win, "Away Win" : away_win, "Home AP" : home_rank, "Away AP" : away_rank,
+               "Home Record" : home_record, "Away Record" : away_record}
         add = pd.DataFrame([row])
         parsed = pd.concat([parsed, add])
       
@@ -709,7 +728,7 @@ def today_games_help_women(rank_df, master):
                         <div class="team-row {format_result(r['Away Win'])}">
                                 <div class="team-left">
                                     {image_formatter(getUrl(get_image_name(r['Away'])))}
-                                    <span class="team-name">{rank_formatter(r['Model Rank Away'], r['Away'], "")}</span>
+                                    <span class="team-name">{rank_formatter(r['Model Rank Away'], r['Away'], r['Away AP'])}  ({r['Away Record']})</span>
                                 </div>
                                 <div class="team-right">
                                     <span class="score">{r['Away Score']}</span>
@@ -718,7 +737,7 @@ def today_games_help_women(rank_df, master):
                             <div class="team-row {format_result(r['Home Win'])}">
                                 <div class="team-left">
                                     {image_formatter(getUrl(get_image_name(r['Home'])))}
-                                    <span class="team-name">{rank_formatter(r['Model Rank Home'], r['Home'], "")}</span>
+                                    <span class="team-name">{rank_formatter(r['Model Rank Home'], r['Home'], r['Home AP'])}  ({r['Home Record']})</span>
                                 </div>
                                 <div class="team-right">
                                     <span class="score">{r['Home Score']}</span>
