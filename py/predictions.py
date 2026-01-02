@@ -599,6 +599,42 @@ def predict(date):
         .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
     )
 
+    outside8["Kenpom"] = (
+        outside8["Kenpom Rank"].astype(str) + " " + outside8["# Models Kenpom"].apply(stars)
+    )
+    outside8["Torvik"] = (
+        outside8["Torvik Rank"].astype(str) + " " + outside8["# Models Torvik"].apply(stars)
+    )
+
+    outside8 = outside8.drop(
+        columns=[
+            "Kenpom Rank",
+            "# Models Kenpom",
+            "Torvik Rank",
+            "# Models Torvik",
+        ]
+    )
+
+    outside8 = outside8[["Team", "Conf", "Kenpom", "Torvik", "Power Rtg"]]
+
+    outside8["img"] = outside8.apply(lambda x: getUrl(x, save_df, master), axis=1)
+    outside8["Team"] = outside8.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
+    outside8 = outside8.drop(columns=["img"])
+
+    out8_styler = (
+        outside8.style.hide(axis="index")
+        .format({"Power Rtg": "{:.4f}"})
+        .set_table_attributes('class="sticky-table"')
+        .background_gradient(
+            subset=["Kenpom"],
+            cmap="cividis",  # green = better (lower rank)
+            gmap=main64["Kenpom Rank"],
+        )
+        .background_gradient(
+            subset=["Torvik"], cmap="cividis", gmap=main64["Torvik Rank"]
+        )
+    )
+
 
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
     for bids in sorted(grouped.keys(), reverse=True):
@@ -612,9 +648,9 @@ def predict(date):
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += "</div>"
-    df_html += "<h3>First Four Out & Next 4 Out"
+    df_html += "<h3>First Four Out & Next 4 Out</h3>"
     df_html += '<div class="table-container">'
-    df_html += outside8.to_html(index=False)
+    df_html += out8_styler.to_html()
     df_html += "</div>"
     df_html += conf_html
     path = utils.get_path(f"docs/men/predict_{date}.html")

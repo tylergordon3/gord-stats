@@ -246,8 +246,6 @@ def fetch_espn_women_scoreboard(params=None, timeout=20):
     return r.json()
 
 def parse_espn_teams_and_times(data):
-    teams = []
-    times_scores = []
     parsed = pd.DataFrame()
     for event in data.get("events", []):
         competition = event["competitions"][0]
@@ -290,6 +288,11 @@ def parse_espn_teams_and_times(data):
             elif home_score > away_score:
                 away_win = False
                 home_win = True
+        elif state == 'pre':
+            away_win = None
+            home_win = None
+            away_score = ''
+            home_score = ''
         else:
             away_win = None
             home_win = None
@@ -298,32 +301,8 @@ def parse_espn_teams_and_times(data):
                "Home Score": home_score, "Away Score": away_score, "Status": time_str, "Home Win" : home_win, "Away Win" : away_win}
         add = pd.DataFrame([row])
         parsed = pd.concat([parsed, add])
-        teams.extend([away_name, home_name])
-
-        # Decide time / score display
-        if state == "pre":
-            # Scheduled
-            time_str = status.get("shortDetail")  # "7:00 PM"
-            times_scores.extend([time_str])
-
-        elif state == "post":
-            # Final
-            away_score = away.get("score")
-            home_score = home.get("score")
-            score_str = f"{away_name} {away_score}- {home_name} {home_score}"
-            times_scores.extend([score_str])
-
-        else:
-            # In progress
-            away_score = away.get("score")
-            home_score = home.get("score")
-            live_str = status.get("shortDetail")  # "3Q 4:21"
-            if live_str == 'Halftime':
-                times_scores.extend([f'{away_name} {away_score} {live_str} {home_name} {home_score}'])
-            else:
-                times_scores.extend([f'{away_name} {live_str} {home_name}'])
-
-    return parsed, teams, times_scores
+      
+    return parsed
 
 def get_conf_women(team, rank_df, master):
     [index, code_name] = getNameFromCode(team, master)
@@ -681,15 +660,8 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
 def today_games_help_women(rank_df, master):
     json = fetch_espn_women_scoreboard()
 
-    [parsed, names, times] = parse_espn_teams_and_times(json)
-    code_names = []
-    for name in names:
-        [_, team] = getNameFromCode(name, master)
-        if team is None:
-            code_names.append("NA")
-        else:
-            code_names.append(team)
-
+    parsed = parse_espn_teams_and_times(json)
+   
     def getName(code, master):
         [_, team] = getNameFromCode(code, master)
         if team is None:
