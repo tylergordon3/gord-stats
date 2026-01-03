@@ -6,5 +6,9 @@
     "Enterprise Center": {
         "City": "St. Louis",
         "State": "MO"
+    },
+    "F.G. Clark Activity Center": {
+        "City": null,
+        "State": null
     }
 }
