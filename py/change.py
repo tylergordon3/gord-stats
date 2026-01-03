@@ -19,10 +19,10 @@ def change(date):
         splt = x.split()
         return splt[0][1:]
     if today_path == week_ago_path:
-        df['vs Last Wk'] = 'NR'
+        df['Last Wk'] = 'NR'
     else:
-        df['vs Last Wk'] = df['Overall'].apply(lambda x: getOvr(x))
-    return df[['Team', 'vs Last Wk']].copy()
+        df['Last Wk'] = df['Ovr'].apply(lambda x: getOvr(x))
+    return df[['Team', 'Last Wk']].copy()
 
 def change_w(date):
     week_ago = date - timedelta(days=7)
@@ -36,7 +36,7 @@ def change_w(date):
         splt = x.split()
         return splt[0][1:]
     if today_path == week_ago_path:
-        df['vs Last Wk'] = 'NR'
+        df['Last Wk'] = 'NR'
     else:
-        df['vs Last Wk'] = df['Overall'].apply(lambda x: getOvr(x))
-    return df[['Team', 'vs Last Wk']].copy()
+        df['Last Wk'] = df['Overall'].apply(lambda x: getOvr(x))
+    return df[['Team', 'Last Wk']].copy()

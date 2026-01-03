@@ -16,7 +16,7 @@ def seed_helper(x):
     """
     Calculates would-be seed based on rank
 
-    :param x: DataFrame column containing overall rank
+    :param x: DataFrame column containing Ovr rank
     :type x: Series
     :return: List with seed for each team
     :rtype: List[int]
@@ -83,11 +83,11 @@ def calcWkDelta(row):
     :return: Row with updated vs Last Week
     :rtype: Series
     """
-    if row["vs Last Wk"] != "NR":
-        row["vs Last Wk"] = int(row["vs Last Wk"]) - row["Overall"]
-        if row["vs Last Wk"] == 0:
-            row["vs Last Wk"] = "-"
-    return row["vs Last Wk"]
+    if row["Last Wk"] != "NR":
+        row["Last Wk"] = int(row["Last Wk"]) - row["Ovr"]
+        if row["Last Wk"] == 0:
+            row["Last Wk"] = "-"
+    return row["Last Wk"]
 
 
 def stars(count, max_count=3):
@@ -161,19 +161,25 @@ def bold_row(row, conf_champ_dict):
     :param conf_champ_dict: Dict with all conference champs
     :type conf_champ_dict: dict
     """
-    try:
-        pattern = r"(?:[^>]+?>)(.*)"
-        check = re.findall(pattern, row["Team"])
-        val = conf_champ_dict[check[0]]
-    except:
-        val = conf_champ_dict[row["Team"]]
+    pattern = r">\s*([^<(]+)"
+
+    matches = re.findall(pattern, row["Team"])
+
+    if matches:
+        team = matches[0].strip()
+    else:
+        # fallback: strip HTML + record
+        team = row["Team"].split(">")[-1].split(" (")[0].strip()
+
+    val = conf_champ_dict.get(team, False)
+
     if val:
-        ret = [f"font-weight: bold"] * len(row)
+        ret = ["font-weight: bold"] * len(row)
         ret[2] = "font-weight: normal"
         ret[3] = "font-weight: normal"
         return ret
     else:
-        return [f"font-weight: normal"] * len(row)
+        return ["font-weight: normal"] * len(row)
 
 
 def image_formatter(url):
@@ -206,6 +212,26 @@ def getUrl(x, save_df, master, gender='M'):
         saved_index = list(save_df[save_df["Team"] == x["Team"]]['Index'])[0]
     link = "/assets/images/" + master.at[saved_index, "path"]
     return link
+
+
+def getRecord(x, winloss):
+    """
+    Gets record and returns formatted with name
+
+    :param x: Row for current team
+    :type x: Series
+    :param save_df: Predictions DataFrame with all D1 teams
+    :type save_df: DataFrame
+    :param master: Master Team Name DataFrame
+    :type master: DataFrame
+    :return: Link/Path to logo
+    :rtype: str
+    """
+  
+    idx = list(winloss[winloss["Team"] == x["Team"]].index)[0]
+    val = list(winloss.loc[idx])[1]
+    text = f"{x['Team']} ({val})"
+    return text
 
 
 def predByConf(df):
@@ -276,7 +302,7 @@ def predict_w(date):
     
     save_df["Index"] = save_df.apply(lambda x: scraper.getNameFromCode(x['Team'], master)[0], axis = 1)
     save_df = save_df.sort_values(by="GordScore", ascending=False)
-    save_df["Overall"] = range(1, len(save_df) + 1)
+    save_df["Ovr"] = range(1, len(save_df) + 1)
 
     bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
@@ -285,17 +311,17 @@ def predict_w(date):
     bestByConf["ConfChamp"] = 1
     main64 = pd.concat([main64, bestByConf])
     main64 = main64.sort_values(by="GordScore", ascending=False)
-    main64["Overall"] = range(1, len(main64) + 1)
+    main64["Ovr"] = range(1, len(main64) + 1)
     last_week = change.change_w(date)
     main64 = pd.merge(main64, last_week, "left", "Team")
 
-    main64["vs Last Wk"] = main64["vs Last Wk"].fillna("NR")
-    main64["vs Last Wk"] = main64.apply(lambda row: calcWkDelta(row), axis=1)
+    main64["Last Wk"] = main64["Last Wk"].fillna("NR")
+    main64["Last Wk"] = main64.apply(lambda row: calcWkDelta(row), axis=1)
 
-    main64["Seed"] = seed_helper(main64["Overall"])
-    main64["Overall"] = (
+    main64["Seed"] = seed_helper(main64["Ovr"])
+    main64["Ovr"] = (
         "#"
-        + main64["Overall"].astype(str)
+        + main64["Ovr"].astype(str)
         + " (Seed "
         + main64["Seed"].astype(str)
         + ")"
@@ -306,10 +332,10 @@ def predict_w(date):
         main64["Torvik Rank"].astype(str) + " " + main64["# Models Torvik"].apply(stars)
     )
 
-    styler = main64[["Torvik", "GordScore", "Overall", "vs Last Wk"]].style
+    styler = main64[["Torvik", "GordScore", "Ovr", "Last Wk"]].style
     conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
     df = main64.drop(columns=["Torvik Rank", "# Models Torvik", "Seed", "ConfChamp"])
-    df = df[["Team", "Conf", "Torvik", "GordScore", "Overall", "vs Last Wk"]]
+    df = df[["Team", "Conf", "Torvik", "GordScore", "Ovr", "Last Wk"]]
 
     conf = (df.groupby("Conf")
                 .size()
@@ -328,8 +354,8 @@ def predict_w(date):
     styler = (
         df.style.hide(axis="index")
         .format({"GordScore": "{:.1f}"})
-        .format(_format_arrow, subset=["vs Last Wk"])
-        .applymap(_color_arrow, subset=["vs Last Wk"])
+        .format(_format_arrow, subset=["Last Wk"])
+        .applymap(_color_arrow, subset=["Last Wk"])
         .set_table_attributes('class="sticky-table"')
         .background_gradient(
             subset=["Torvik"], cmap="cividis", gmap=main64["Torvik Rank"]
@@ -382,6 +408,8 @@ def predict(date):
 
     torvik_teams = torvik_data["Team"]
     kenpom_teams = kenpom_data["Team"]
+
+    winloss = kenpom_data[['Team', "W-L"]]
 
     torvik_today = torvik_data.drop(
         columns=[
@@ -502,9 +530,9 @@ def predict(date):
         calc = ((weight * v) + ((1 - weight) * q)) - penalty
         return calc
        
-    main['Power Rtg'] = main.apply(lambda x: weighted(x, count), axis=1)
+    main['Rtg'] = main.apply(lambda x: weighted(x, count), axis=1)
 
-    main64 = main.sort_values("Power Rtg", ascending=False)
+    main64 = main.sort_values("Rtg", ascending=False)
     main64 = main64.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y"])
     main64 = main64.rename(
         columns={
@@ -517,10 +545,10 @@ def predict(date):
 
     # Saving to another df for schedule home
     save_df = main64.copy()
-    save_df = save_df.sort_values("Power Rtg", ascending=False)
-    save_df["Overall"] = range(1, len(save_df) + 1)
+    save_df = save_df.sort_values("Rtg", ascending=False)
+    save_df["Ovr"] = range(1, len(save_df) + 1)
 
-    bestByConf = main64.loc[main64.groupby(by="Conf")["Power Rtg"].idxmax()]
+    bestByConf = main64.loc[main64.groupby(by="Conf")["Rtg"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
     main64 = main64.head(76 - len(bestByConf))
     outside8 = main64[-8:]
@@ -528,18 +556,18 @@ def predict(date):
     main64["ConfChamp"] = 0
     bestByConf["ConfChamp"] = 1
     main64 = pd.concat([main64, bestByConf])
-    main64 = main64.sort_values(by="Power Rtg", ascending=False)
-    main64["Overall"] = range(1, len(main64) + 1)
+    main64 = main64.sort_values(by="Rtg", ascending=False)
+    main64["Ovr"] = range(1, len(main64) + 1)
     last_week = change.change(date)
     main64 = pd.merge(main64, last_week, "left", "Team")
 
-    main64["vs Last Wk"] = main64["vs Last Wk"].fillna("NR")
-    main64["vs Last Wk"] = main64.apply(lambda row: calcWkDelta(row), axis=1)
+    main64["Last Wk"] = main64["Last Wk"].fillna("NR")
+    main64["Last Wk"] = main64.apply(lambda row: calcWkDelta(row), axis=1)
 
-    main64["Seed"] = seed_helper(main64["Overall"])
-    main64["Overall"] = (
+    main64["Seed"] = seed_helper(main64["Ovr"])
+    main64["Ovr"] = (
         "#"
-        + main64["Overall"].astype(str)
+        + main64["Ovr"].astype(str)
         + " (Seed "
         + main64["Seed"].astype(str)
         + ")"
@@ -555,7 +583,7 @@ def predict(date):
         main64["Torvik Rank"].astype(str) + " " + main64["# Models Torvik"].apply(stars)
     )
 
-    styler = main64[["Kenpom", "Torvik", "Power Rtg", "Overall", "vs Last Wk"]].style
+    styler = main64[["Kenpom", "Torvik", "Rtg", "Ovr", "Last Wk"]].style
     conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
     df = main64.drop(
         columns=[
@@ -567,7 +595,7 @@ def predict(date):
             "ConfChamp",
         ]
     )
-    df = df[["Team", "Conf", "Kenpom", "Torvik", "Power Rtg", "Overall", "vs Last Wk"]]
+    df = df[["Team", "Conf", "Kenpom", "Torvik", "Rtg", "Ovr", "Last Wk"]]
     conf = (df.groupby("Conf")
                 .size()
                 .astype(int)
@@ -580,13 +608,13 @@ def predict(date):
 
     master = scraper.getMasterTeams()
     df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    df["Team"] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
+    df["Team"] = df.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
     df = df.drop(columns=["img"])
     styler = (
         df.style.hide(axis="index")
-        .format({"Power Rtg": "{:.4f}"})
-        .format(_format_arrow, subset=["vs Last Wk"])
-        .applymap(_color_arrow, subset=["vs Last Wk"])
+        .format({"Rtg": "{:.4f}"})
+        .format(_format_arrow, subset=["Last Wk"])
+        .applymap(_color_arrow, subset=["Last Wk"])
         .set_table_attributes('class="sticky-table"')
         .background_gradient(
             subset=["Kenpom"],
@@ -615,15 +643,15 @@ def predict(date):
         ]
     )
 
-    outside8 = outside8[["Team", "Conf", "Kenpom", "Torvik", "Power Rtg"]]
+    outside8 = outside8[["Team", "Conf", "Kenpom", "Torvik", "Rtg"]]
 
     outside8["img"] = outside8.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    outside8["Team"] = outside8.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
+    outside8["Team"] = outside8.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
     outside8 = outside8.drop(columns=["img"])
 
     out8_styler = (
         outside8.style.hide(axis="index")
-        .format({"Power Rtg": "{:.4f}"})
+        .format({"Rtg": "{:.4f}"})
         .set_table_attributes('class="sticky-table"')
         .background_gradient(
             subset=["Kenpom"],
@@ -634,7 +662,6 @@ def predict(date):
             subset=["Torvik"], cmap="cividis", gmap=main64["Torvik Rank"]
         )
     )
-
 
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
     for bids in sorted(grouped.keys(), reverse=True):

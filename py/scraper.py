@@ -138,7 +138,7 @@ def get_rank(row, rank_df, master, bin):
         if rank_row.empty:
             pass
         else:
-            return list(rank_row["Overall"])[0]
+            return list(rank_row["Ovr"])[0]
     else:
         [index, code_name] = getNameFromCode(row.code2, master)
         rank_row = rank_df.loc[
@@ -150,7 +150,7 @@ def get_rank(row, rank_df, master, bin):
         if rank_row.empty:
             return
         else:
-            return list(rank_row["Overall"])[0]
+            return list(rank_row["Ovr"])[0]
 
 def get_rank_men(team, rank_df, master):
 
@@ -165,7 +165,7 @@ def get_rank_men(team, rank_df, master):
     if rank_row.empty:
         pass
     else:
-        return list(rank_row["Overall"])[0]
+        return list(rank_row["Ovr"])[0]
 
     return None
 
@@ -182,7 +182,7 @@ def get_rank_women(team, rank_df, master):
     if rank_row.empty:
         pass
     else:
-        return list(rank_row["Overall"])[0]
+        return list(rank_row["Ovr"])[0]
 
     return None
 
@@ -578,7 +578,6 @@ def check(row, arenas):
     
 def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
     arenas = pd.read_json(utils.get_path('data/teams/arenas.json'))
-    records = soup.find_all("span", class_="record")
     
     # if empty -> empty list
     tables = soup.find_all('table')
@@ -712,8 +711,6 @@ def today_games_help_women(rank_df, master):
     parsed["Away Conf"] = parsed.apply(
         lambda x: get_conf_women(x['Away'], rank_df, master), axis=1
     )
-
-    power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
 
     df = parsed.copy()
 

@@ -80,6 +80,8 @@ def parse_espn_teams_and_times(data):
         
         away_name = away["team"]["abbreviation"]
         home_name = home["team"]["abbreviation"]
+
+        print(home['statistics'])
        
         away_score = away.get("score")
         home_score = home.get("score")
@@ -164,8 +166,6 @@ def today_games_help_women(rank_df, master):
     parsed["Away Conf"] = parsed.apply(
         lambda x: get_conf_women(x['Away'], rank_df, master), axis=1
     )
-
-    power_conf = ["ACC", "B10", "B12", "SEC", "BE"]
 
     df = parsed.copy()
 
