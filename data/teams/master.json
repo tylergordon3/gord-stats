@@ -1333,6 +1333,7 @@
             "central connecticut",
             "CENTRAL CONNECTICUT",
             "centralconnecticut",
+            "CCTST",
             "CCTST"
         ],
         "45": [
@@ -1413,7 +1414,8 @@
             "CHICAGO ST.",
             "chicagost",
             "chicago st",
-            "CHST"
+            "CHST",
+            "CHIST"
         ],
         "51": [
             "Cincinnati",
@@ -2570,7 +2572,8 @@
             "DOLPHINS",
             "moyne",
             "lemoyne",
-            "LEM"
+            "LEM",
+            "LEMOYN"
         ],
         "143": [
             "LEHI",
@@ -2708,7 +2711,8 @@
             "LOUISVILLE",
             "lou",
             "cardinals",
-            "CARDINALS"
+            "CARDINALS",
+            "LVILLE"
         ],
         "154": [
             "Loyola (IL)",
@@ -2896,7 +2900,8 @@
             "lakers",
             "LAKERS",
             "mc",
-            "MERC"
+            "MERC",
+            "MERCYH"
         ],
         "169": [
             "Merrimack College",
@@ -3297,7 +3302,8 @@
             "CHARGERS",
             "unh",
             "newhaven",
-            "NHVN"
+            "NHVN",
+            "NHAV"
         ],
         "197": [
             "UNM",
@@ -3635,7 +3641,8 @@
             "ohio st.",
             "OHIO ST.",
             "ohiost",
-            "ohio st"
+            "ohio st",
+            "OHIOST"
         ],
         "223": [
             "Oklahoma",
@@ -3976,7 +3983,8 @@
             "scarlet knights",
             "SCARLET KNIGHTS",
             "rutgers",
-            "RUTGERS"
+            "RUTGERS",
+            "RUT"
         ],
         "251": [
             "Southeast Missouri State",
@@ -4055,7 +4063,8 @@
             "saint francis",
             "SAINT FRANCIS",
             "saintfrancis",
-            "SFPA"
+            "SFPA",
+            "SFTRPA"
         ],
         "257": [
             "Saint Joseph's",
@@ -4466,7 +4475,8 @@
             "STANFORD",
             "stan",
             "cardinal",
-            "CARDINAL"
+            "CARDINAL",
+            "STNFRD"
         ],
         "287": [
             "Lumberjacks",

@@ -578,7 +578,8 @@ def check(row, arenas):
     
 def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
     arenas = pd.read_json(utils.get_path('data/teams/arenas.json'))
-
+    records = soup.find_all("span", class_="record")
+    
     # if empty -> empty list
     tables = soup.find_all('table')
     if tables:
@@ -657,7 +658,7 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
         p5_live = get_p5(live_upcoming)
         live_upcoming = live_upcoming.drop(index=p5_live.index)
         return [p5_live, live_upcoming]
-         
+
     if len(dfs) == 2:
         [p5done, done] = getDone(dfs[0])
         [p5live, live_upcoming] = getLive(dfs[1])
@@ -969,10 +970,10 @@ def today_games_help_men(p5live, p5done, done, live):
     
     html = f'''
     <h3>Power 5 Matchups & Top 25 Teams</h3>
-    {html_p5live}
+    {html_p5live}<br>
     {html_p5done}
     <h3>All Other Games</h3>
-    {html_live}
+    {html_live}<br>
     {html_done}
     '''
     return html
