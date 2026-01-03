@@ -152,6 +152,22 @@ def get_rank(row, rank_df, master, bin):
         else:
             return list(rank_row["Ovr"])[0]
 
+def get_record_men(team, rank_df, master):
+    
+    [index, code_name] = getNameFromCode(team, master)
+
+    rank_row = rank_df.loc[
+        (rank_df["Team"] == team)
+        | (rank_df["Team"] == code_name)
+        | (rank_df["index"] == index)
+    ]
+
+    if rank_row.empty:
+        pass
+    else:
+        return list(rank_row["Record"])[0]
+
+    return None
 def get_rank_men(team, rank_df, master):
 
     [index, code_name] = getNameFromCode(team, master)
@@ -465,8 +481,11 @@ def parse_live(row, master):
         return None, None, None
 
     # Extract the two scores
-    match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)\s\s(.+)", row['Time/TV'])
-   
+    if pd.isna(row['Streaming']):
+        match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)", row['Time/TV'])
+    else:
+        match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)\s\s(.+)", row['Time/TV'])
+
     if not match:
         return None, None, None, None
 
@@ -475,7 +494,10 @@ def parse_live(row, master):
     code2 = match.group(3)
     score2 = int(match.group(4))
     status = match.group(5)
-    tv = match.group(6)
+    if pd.isna(row['Streaming']):
+        tv = ''
+    else:
+        tv = match.group(6)
 
     team1 = getNameFromCode(code1, master)
     team2 = getNameFromCode(code2, master)
@@ -503,12 +525,13 @@ def parse_live(row, master):
 def parse_results(row, master):
     if pd.isna(row['Result']):
         return None, None, None, None
-
+    
     # Extract the two scores
     match = re.search(r"(\D*)\s([0-9]+)\s-\s(\D*)\s([0-9]+)",row['Result'])
 
     if not match:
         return None, None, None, None
+    
     code1 = match.group(1)
     score1 = int(match.group(2))
     code2 = match.group(3)
@@ -578,7 +601,7 @@ def check(row, arenas):
     
 def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
     arenas = pd.read_json(utils.get_path('data/teams/arenas.json'))
-    
+
     # if empty -> empty list
     tables = soup.find_all('table')
     if tables:
@@ -612,6 +635,10 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
 
         done['Model Home'] = done.apply(lambda x: get_rank_men(x['Home'], rank_df, master), axis=1)
         done['Model Away'] = done.apply(lambda x: get_rank_men(x['Away'], rank_df, master), axis=1)
+
+        done['Record Home'] = done.apply(lambda x: get_record_men(x['Home'], rank_df, master), axis=1)
+        done['Record Away'] = done.apply(lambda x: get_record_men(x['Away'], rank_df, master), axis=1)
+
         done['Model Home'] = done['Model Home'].astype("Int64") 
         done['Model Away'] = done['Model Away'].astype("Int64") 
         done["Model Home"] = done["Model Home"].astype("string").fillna("")
@@ -650,10 +677,15 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
 
         live_upcoming['Model Home'] = live_upcoming.apply(lambda x: get_rank_men(x['Home'], rank_df, master), axis=1)
         live_upcoming['Model Away'] = live_upcoming.apply(lambda x: get_rank_men(x['Away'], rank_df, master), axis=1)
+
+        live_upcoming['Record Home'] = live_upcoming.apply(lambda x: get_record_men(x['Home'], rank_df, master), axis=1)
+        live_upcoming['Record Away'] = live_upcoming.apply(lambda x: get_record_men(x['Away'], rank_df, master), axis=1)
+
         live_upcoming['Model Home'] = live_upcoming['Model Home'].astype("Int64") 
         live_upcoming['Model Away'] = live_upcoming['Model Away'].astype("Int64") 
         live_upcoming["Model Home"] = live_upcoming["Model Home"].astype("string").fillna("")
         live_upcoming["Model Away"] = live_upcoming["Model Away"].astype("string").fillna("")
+
         p5_live = get_p5(live_upcoming)
         live_upcoming = live_upcoming.drop(index=p5_live.index)
         return [p5_live, live_upcoming]
@@ -831,7 +863,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Away'])))}
-                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])} ({r['Record Away']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Away Score']}</span>
@@ -840,7 +872,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Home'])))}
-                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])} ({r['Record Home']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Home Score']}</span>
@@ -871,7 +903,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Away'])))}
-                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])} ({r['Record Away']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Away Score']}</span>
@@ -880,7 +912,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Home'])))}
-                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])} ({r['Record Home']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Home Score']}</span>
@@ -908,7 +940,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row {format_result(r['Away Win'])}">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Away'])))}
-                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])} ({r['Record Away']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Away Score']}</span>
@@ -917,7 +949,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row {format_result(r['Home Win'])}">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Home'])))}
-                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])} ({r['Record Home']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Home Score']}</span>
@@ -942,7 +974,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row {format_result(r['Away Win'])}">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Away'])))}
-                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Away'], r['Away'], r['Away Rank'])} ({r['Record Away']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Away Score']}</span>
@@ -951,7 +983,7 @@ def today_games_help_men(p5live, p5done, done, live):
                         <div class="team-row {format_result(r['Home Win'])}">
                             <div class="team-left">
                                 {image_formatter(getUrl(get_image_name(r['Home'])))}
-                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])}</span>
+                                <span class="team-name">{rank_formatter(r['Model Home'], r['Home'], r['Home Rank'])} ({r['Record Home']}</span>
                             </div>
                             <div class="team-right">
                                 <span class="score">{r['Home Score']}</span>

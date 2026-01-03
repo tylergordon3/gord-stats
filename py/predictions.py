@@ -233,6 +233,10 @@ def getRecord(x, winloss):
     text = f"{x['Team']} ({val})"
     return text
 
+def getRecordOnly(x, winloss):
+    idx = list(winloss[winloss["Team"] == x["Team"]].index)[0]
+    val = list(winloss.loc[idx])[1]
+    return val
 
 def predByConf(df):
     print(df)
@@ -547,6 +551,7 @@ def predict(date):
     save_df = main64.copy()
     save_df = save_df.sort_values("Rtg", ascending=False)
     save_df["Ovr"] = range(1, len(save_df) + 1)
+    save_df["Record"] = save_df.apply(lambda x: getRecordOnly(x, winloss), axis=1)
 
     bestByConf = main64.loc[main64.groupby(by="Conf")["Rtg"].idxmax()]
     main64 = main64.drop(index=bestByConf.index)
