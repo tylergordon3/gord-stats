@@ -38,5 +38,5 @@ def change_w(date):
     if today_path == week_ago_path:
         df['Last Wk'] = 'NR'
     else:
-        df['Last Wk'] = df['Overall'].apply(lambda x: getOvr(x))
+        df['Last Wk'] = df['Ovr'].apply(lambda x: getOvr(x))
     return df[['Team', 'Last Wk']].copy()

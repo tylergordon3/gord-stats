@@ -559,6 +559,7 @@ def predict(date):
     main64 = main64.sort_values(by="Rtg", ascending=False)
     main64["Ovr"] = range(1, len(main64) + 1)
     last_week = change.change(date)
+    last_week["Team"] = last_week["Team"].str.replace(r"\s*\([^)]*\)", "", regex=True)
     main64 = pd.merge(main64, last_week, "left", "Team")
 
     main64["Last Wk"] = main64["Last Wk"].fillna("NR")
