@@ -32,8 +32,9 @@ unpublished         : false
 
 # Plugins
 
-plugins: 
+plugins:
   - jekyll-remote-theme
+  - jekyll-seo-tag
 remote_theme: pages-themes/slate@v0.2.0
 
 # Conversion
@@ -64,6 +65,4 @@ liquid:
 
 repository: tgordon3/cbb-model
 
-github:
-  api_url: https://api.github.com
-  skip_api: true
+github: false
