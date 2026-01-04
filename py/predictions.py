@@ -238,8 +238,14 @@ def getRecordOnly(x, winloss):
     val = list(winloss.loc[idx])[1]
     return val
 
-def predByConf(df):
-    print(df)
+def getWinPer(record):
+    m = re.search(r"(\d+)-(\d+)", record)
+    wins, losses = map(int, m.groups())
+    total = wins + losses
+    return wins / total if total else 0.0
+
+def predByConf():
+    return
 
 
 def predict_w(date):
@@ -535,9 +541,11 @@ def predict(date):
         return calc
        
     main['Rtg'] = main.apply(lambda x: weighted(x, count), axis=1)
+    main["Win"] = main.apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
+    main["Win"] = main["Win"].round(4)
 
-    main64 = main.sort_values("Rtg", ascending=False)
-    main64 = main64.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y"])
+    main64 = main.sort_values(by=["Rtg", "Win"], ascending=[False, False])
+    main64 = main64.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y", "Win"])
     main64 = main64.rename(
         columns={
             "Rk_x": "Kenpom Rank",
@@ -561,7 +569,12 @@ def predict(date):
     main64["ConfChamp"] = 0
     bestByConf["ConfChamp"] = 1
     main64 = pd.concat([main64, bestByConf])
-    main64 = main64.sort_values(by="Rtg", ascending=False)
+
+    main64["Win"] = main64.apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
+    main64["Win"] = main64["Win"].round(4)
+
+    main64 = main64.sort_values(by=["Rtg", "Win"], ascending=[False, False])
+ 
     main64["Ovr"] = range(1, len(main64) + 1)
     last_week = change.change(date)
     last_week["Team"] = last_week["Team"].str.replace(r"\s*\([^)]*\)", "", regex=True)
@@ -599,6 +612,7 @@ def predict(date):
             "# Models Torvik",
             "Seed",
             "ConfChamp",
+            "Win"
         ]
     )
     df = df[["Team", "Conf", "Kenpom", "Torvik", "Rtg", "Ovr", "Last Wk"]]

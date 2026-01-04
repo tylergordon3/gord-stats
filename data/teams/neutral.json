@@ -7,28 +7,8 @@
         "City": "St. Louis",
         "State": "MO"
     },
-    "F.G. Clark Activity Center": {
-        "City": null,
-        "State": null
-    },
-    "Rose Hill Gym": {
-        "City": null,
-        "State": null
-    },
-    "Fogelman Arena in Devlin Fieldhouse": {
-        "City": null,
-        "State": null
-    },
-    "McCann Center": {
-        "City": null,
-        "State": null
-    },
-    "The Super Pit": {
-        "City": null,
-        "State": null
-    },
-    "Beasley Coliseum": {
-        "City": null,
-        "State": null
+    "Spokane Veterans Memorial Arena": {
+        "City": "Spokane",
+        "State": "Washington"
     }
 }
