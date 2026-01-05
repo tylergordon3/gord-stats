@@ -399,13 +399,39 @@ def SoS(rosters):
         ("text-align", "center"), # optional ?
     ]}
 
+    def _font_color_for_bg(rgb):
+        """
+        Return '#ffffff' (white) if the background rgb is "dark",
+        otherwise '#000000' (black).  Uses the ITU‑BT.601 luma formula.
+        """
+        # rgb is a tuple/list of three floats in [0, 1]
+        r, g, b = rgb
+        # luma = 0.299 R + 0.587 G + 0.114 B  (standard TV luminance)
+        luminance = 0.299 * r + 0.587 * g + 0.114 * b
+        return "#ffffff" if luminance < 0.5 else "#000000"
+
     def bg_from_pythag_str(series, cmap='RdYlGn'):
         numeric_values = series.str.extract(r'([+-]?[0-9]*[.]?[0-9]+) \(([+-]?[0-9]*[.]?[0-9]+)\)').astype(float).squeeze()
-        numeric_values = numeric_values.iloc[:, 1] - numeric_values.loc[:, 0]
-        norm = Normalize(vmin=numeric_values.min(), vmax=numeric_values.max())
-        cmap = plt.cm.get_cmap(cmap)
-        colors = [mcolors.rgb2hex(c) for c in cmap(norm(numeric_values))]
-        return ['background-color: %s' % color for color in colors]
+        diff = numeric_values.iloc[:, 1] - numeric_values.loc[:, 0]
+        norm = Normalize(vmin=diff.min(), vmax=diff.max())
+        cmap_obj = plt.cm.get_cmap(cmap)
+        styles = []
+        for val in diff:
+            # a) normalised value → colour (as RGBA)
+            rgba = cmap_obj(norm(val))
+
+            # b) drop the alpha channel, keep only RGB (0‑1 range)
+            rgb = rgba[:3]
+
+            # c) background as hex string
+            bg_hex = mcolors.rgb2hex(rgb)
+
+            # d) font colour based on luminance
+            fg_hex = _font_color_for_bg(rgb)
+
+            # e) combine both CSS rules
+            styles.append(f'background-color:{bg_hex};color:{fg_hex}')
+        return styles
 
 
     final_df = rosters[['team_name', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(by='SOS', ascending=False)
@@ -418,7 +444,6 @@ def SoS(rosters):
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .apply(bg_from_pythag_str, subset=["Exp W (Actual)"])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
-        .set_properties(subset=['Exp W (Actual)'], **{'color': 'white'})
         )
 
     return [rosters, styler]
