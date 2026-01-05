@@ -400,9 +400,8 @@ def SoS(rosters):
     ]}
 
     def bg_from_pythag_str(series, cmap='RdYlGn'):
-        pattern = r'(\d+) \(\d+\)'
-        #match = re.search(pattern)
-        numeric_values = series.str.extract(r'(\d+)').astype(float).squeeze()
+        numeric_values = series.str.extract(r'([+-]?[0-9]*[.]?[0-9]+) \(([+-]?[0-9]*[.]?[0-9]+)\)').astype(float).squeeze()
+        numeric_values = numeric_values.iloc[:, 1] - numeric_values.loc[:, 0]
         norm = Normalize(vmin=numeric_values.min(), vmax=numeric_values.max())
         cmap = plt.cm.get_cmap(cmap)
         colors = [mcolors.rgb2hex(c) for c in cmap(norm(numeric_values))]
