@@ -1,6 +1,7 @@
 """
     Contains various static definitions
 """
+import os
 player_stats_headers = ["player_id", "player_name", "player_display_name", "position", "position_group",
                         "headshot_url", "season", "week", "season_type", "team", "opponent_team", "completions",
                         "attempts", "passing_yards", "passing_tds", "passing_interceptions", "sacks_suffered",

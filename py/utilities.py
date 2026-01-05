@@ -2,6 +2,7 @@ from datetime import date, timedelta
 import math
 import pandas as pd
 import json
+from pathlib import Path
 
 def getToday():
    today = date.today()
@@ -103,3 +104,6 @@ def  load_df_from_json(filename):
     except IOError as e:
         print(f"Error loading data from {filename}: {e}")
         return None
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
