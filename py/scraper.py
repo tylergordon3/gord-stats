@@ -745,7 +745,8 @@ def today_games_help_women(rank_df, master):
     )
 
     df = parsed.copy()
-
+    sort_map = {"in" : 0, "pre" : 1, "post" : 2}
+    df = df.sort_values(by="State", key=lambda s: s.map(sort_map))
     if len(df) > 0:
         df["matchup_html"] = df.apply(
                 lambda r: f"""
