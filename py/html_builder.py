@@ -106,10 +106,8 @@ def generate_index():
     <p><a href="median/median.html">Median</a></p>
     <p><a href="bestball/bestball.html">Best Ball</a></p>
     <p><a href="schedule/schedule.html">Schedule Stats</a></p>
-    <p><strong>Easiest Schedule:</strong> Big Booty Bowers</p>
-    <p><strong>Hardest Schedule:</strong> padgett</p>
-    <p><strong>Weakest (H2H) Wins:</strong> Clanker Barrel</p>
-    <p><strong>Strongest (H2H) Wins:</strong> The Standard & Lotta Cox</p>
+    <p>Schedule: <strong>Easiest:</strong> Big Booty Bowers | <strong>Hardest:</strong> padgett</p>
+    <p>H2H Wins: <strong>Weakest:</strong> Clanker Barrel | <strong>Strongest:</strong> The Standard & Lotta Cox</p>
     <h1>Regular Season Standings</h1>
     <div class="table-scroll">
     {styler.to_html(classes='sticky-table')}
