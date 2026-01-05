@@ -56,7 +56,7 @@ def generate_landing(folder, file, title):
     print(f"Landing page generated: {output_file}")
 
 def bg_from_pythag_str(series, cmap='RdYlGn'):
-        numeric_values = series.str.extract(r'(\d+) \((\d+)\)').astype(float).squeeze()
+        numeric_values = series.str.extract(r'([+-]?[0-9]*[.]?[0-9]+) \(([+-]?[0-9]*[.]?[0-9]+)\)').astype(float).squeeze()
         numeric_values = numeric_values.iloc[:, 1] - numeric_values.loc[:, 0]
         norm = Normalize(vmin=numeric_values.min(), vmax=numeric_values.max())
         cmap = plt.cm.get_cmap(cmap)
