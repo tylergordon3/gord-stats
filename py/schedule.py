@@ -418,6 +418,7 @@ def SoS(rosters):
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .apply(bg_from_pythag_str, subset=["Exp W (Actual)"])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
+        .set_properties(subset=['Exp W (Actual)'], **{'color': 'white'})
         )
 
     return [rosters, styler]

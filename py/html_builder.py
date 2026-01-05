@@ -92,6 +92,7 @@ def generate_index():
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .apply(bg_from_pythag_str, subset=["Exp W (Actual)"])
+        .set_properties(subset=['Exp W (Actual)'], **{'color': 'white'})
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
     
@@ -103,12 +104,12 @@ def generate_index():
     <title>Home</title>
   </head>
   <body>
-    <p><a href="median/median.html">Median</a></p>
-    <p><a href="bestball/bestball.html">Best Ball</a></p>
-    <p><a href="schedule/schedule.html">Schedule Stats</a></p>
-    <p>Schedule: <strong>Easiest:</strong> Big Booty Bowers | <strong>Hardest:</strong> padgett</p>
-    <p>H2H Wins: <strong>Weakest:</strong> Clanker Barrel | <strong>Strongest:</strong> The Standard & Lotta Cox</p>
+    <p><strong>Schedule:</strong> <strong>Easiest:</strong> Big Booty Bowers | <strong>Hardest:</strong> padgett</p>
+    <p><strong>H2H Wins:</strong> <strong>Weakest:</strong> Clanker Barrel | <strong>Strongest:</strong> The Standard & Lotta Cox</p>
     <h1>Regular Season Standings</h1>
+    <p><strong>SOS:</strong> Green = easier schedule, red = harder schedule</p>
+    <p><strong>SOV:</strong> Green = better victories, red = easier victories</p>
+    <p><strong>Exp W (Actual):</strong> Expected H2H wins using Pythagorean Wins versus actual H2H wins. Green = outperformed expectations, red = underperformed.</p>
     <div class="table-scroll">
     {styler.to_html(classes='sticky-table')}
     </div>
