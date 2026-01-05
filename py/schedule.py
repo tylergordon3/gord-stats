@@ -10,6 +10,9 @@ import constants as cons
 import fantasy_rosters as fr
 import html_builder as htmb
 import utilities as util
+import matplotlib.colors as mcolors
+from matplotlib.colors import Normalize
+import matplotlib.pyplot as plt
 from sleeper_wrapper import League
 
 def getTeamIndex(rosters, roster_id):
@@ -48,6 +51,13 @@ def schedScores(rosters):
     rosters['sched_score'] = rosters['sched'].apply(lambda x: getScoreArr(x))
     return rosters
 
+def calch2h(team):
+    me = np.asarray(team['myScores'])
+    opp = np.asarray(team['sched_score'])
+    res = me > opp
+    res = res.astype(int)
+    return sum(res)
+
 def saveSchedules():
     yr = util.getYrStr()
     wk = util.get_week()
@@ -69,6 +79,7 @@ def saveSchedules():
     rosters['myScores'] = rosters['myScores'].apply(lambda x: getScoreArr(x))
     rosters['wins_vs'] = rosters.apply(lambda x: recordsVsAll(rosters, x), axis=1)
     rosters['total'] = rosters['wins_vs'].apply(lambda x: getVals(x))
+    rosters['h2hW'] = rosters.apply(lambda x: calch2h(x), axis=1)
     util.save_df_to_json(rosters, f'data/rost{yr}_{week}.json')
 
 def recordsVsAll(all, team):
@@ -93,7 +104,7 @@ def recordVsHelper(team_scores, opp_scores):
 
 def dfVsAllSched(rosters):
     yr = util.getYrStr()
-    wk = util.get_last_completed_week()
+    wk = min(14, util.get_last_completed_week())
     rosters = util.load_df_from_json(f'data/rost{yr}_{wk}.json')
     all_results = {}
     for index, row in rosters.iterrows():
@@ -344,7 +355,10 @@ def calcLuck(row, luck_dict):
 
 def calcPythag(row):
     ratio = 2.37
-    return (row['PF']**ratio)/((row['PF']**ratio) + (row['PA']**ratio))*14
+    exp = (row['PF']**ratio)/((row['PF']**ratio) + (row['PA']**ratio))*14
+    h2h = row['h2hW']
+    val = f'{exp:.1f} ({h2h})'
+    return val
 
 def SoS(rosters):
     # Calculate Win % of each team
@@ -376,7 +390,7 @@ def SoS(rosters):
     luck_dict = rosters[['roster_id', 'PF']].copy().to_dict()['PF']
     rosters['Scoring Luck'] = rosters.apply(lambda row: calcLuck(row, luck_dict), axis=1)
 
-    rosters['Expected (H2H) Wins'] = rosters.apply(lambda row: calcPythag(row), axis=1)
+    rosters['Exp W (Actual)'] = rosters.apply(lambda row: calcPythag(row), axis=1)
 
     table_style = {
         "selector": "th.col_heading,td",
@@ -384,7 +398,18 @@ def SoS(rosters):
         ("width", "100px"), # px instead of %
         ("text-align", "center"), # optional ?
     ]}
-    final_df = rosters[['team_name', 'SOS', 'SOV', 'Expected (H2H) Wins']].sort_values(by='SOS', ascending=False)
+
+    def bg_from_pythag_str(series, cmap='RdYlGn'):
+        pattern = r'(\d+) \(\d+\)'
+        #match = re.search(pattern)
+        numeric_values = series.str.extract(r'(\d+)').astype(float).squeeze()
+        norm = Normalize(vmin=numeric_values.min(), vmax=numeric_values.max())
+        cmap = plt.cm.get_cmap(cmap)
+        colors = [mcolors.rgb2hex(c) for c in cmap(norm(numeric_values))]
+        return ['background-color: %s' % color for color in colors]
+
+
+    final_df = rosters[['team_name', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(by='SOS', ascending=False)
     styler = (
         final_df
         .style
@@ -392,7 +417,7 @@ def SoS(rosters):
         .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .background_gradient(cmap="RdYlGn", subset=["Expected (H2H) Wins"])
+        .apply(bg_from_pythag_str, subset=["Exp W (Actual)"])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
 
@@ -406,7 +431,7 @@ def standings():
     rosters = util.load_df_from_json(checkPath)
     [rosters, _] = SoS(rosters)
     rosters = rosters.sort_values(['wins', 'PF'],ascending=False)
-    return rosters[['team_name', 'wins', 'losses', 'PF', 'PA', 'SOS', 'SOV', 'Expected (H2H) Wins']].copy()
+    return rosters[['team_name', 'wins', 'losses', 'PF', 'PA', 'SOS', 'SOV', 'Exp W (Actual)']].copy()
 
 #       ****** MAIN ******
 def schedule_main(update_all):

@@ -1,5 +1,9 @@
 import os
 import schedule
+import matplotlib.colors as mcolors
+from matplotlib.colors import Normalize
+import matplotlib.pyplot as plt
+
 
 def add_front_matter(html, title):
     fm = f"""---
@@ -51,6 +55,13 @@ def generate_landing(folder, file, title):
 
     print(f"Landing page generated: {output_file}")
 
+def bg_from_pythag_str(series, cmap='RdYlGn'):
+        numeric_values = series.str.extract(r'(\d+)').astype(float).squeeze()
+        norm = Normalize(vmin=numeric_values.min(), vmax=numeric_values.max())
+        cmap = plt.cm.get_cmap(cmap)
+        colors = [mcolors.rgb2hex(c) for c in cmap(norm(numeric_values))]
+        return ['background-color: %s' % color for color in colors]
+
 def generate_index():
     #  htmb.generate_landing('docs/median', 'median', 'Median')
     standings = schedule.standings()
@@ -79,7 +90,7 @@ def generate_index():
         .format( lambda x: f"{x:.3f}" if isinstance(x, float) else x) 
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .background_gradient(cmap="RdYlGn", subset=["Expected (H2H) Wins"])
+        .apply(bg_from_pythag_str, subset=["Exp W (Actual)"])
         .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
         )
     
