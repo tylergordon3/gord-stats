@@ -58,4 +58,53 @@ fi
 # Always allow both (harmless if missing)
 export PATH="$HOME/.gem/ruby/3.3.0/bin:$HOME/gems/bin:$PATH"
 
-# Ensure project-
+# Ensure project-local gems
+export BUNDLE_PATH="vendor/bundle"
+export BUNDLE_WITHOUT="development:test"
+
+# Sanity check
+if ! command -v bundle >/dev/null 2>&1; then
+  echo "ERROR: Bundler not found"
+  echo "PATH=$PATH"
+  exit 1
+fi
+
+echo "Bundler path: $(which bundle)"
+echo "Bundler version: $(bundle -v)"
+
+# Ensure correct Bundler version for lockfile
+bundle _2.7.2_ install
+
+### Clean Jekyll build
+echo "Cleaning old Jekyll build..."
+bundle _2.7.2_ exec jekyll clean \
+  --source docs \
+  --destination docs/_site
+
+### Build Jekyll site
+echo "Building Jekyll site..."
+JEKYLL_ENV=production bundle _2.7.2_ exec jekyll build \
+  --source docs \
+  --destination docs/_site
+
+### Bootstrap Node.js 20 (WSL-safe)
+export NVM_DIR="$HOME/.nvm"
+
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  source "$NVM_DIR/nvm.sh"
+  nvm use 20
+else
+  echo "ERROR: nvm not found; Node 20 required for Wrangler"
+  node -v || true
+  exit 1
+fi
+
+echo "Node version: $(node -v)"
+
+### Deploy to Cloudflare Pages
+echo "Deploying to Cloudflare Pages..."
+wrangler pages deploy docs/_site \
+  --project-name=gordstats-cbb \
+  --commit-dirty=true
+
+echo "Deployment complete!"
