@@ -1,8 +1,29 @@
 #!/usr/bin/env bash
 set -e
 
+HOSTNAME="$(hostname | tr '[:upper:]' '[:lower:]')"
+
+if [[ "$HOSTNAME" == *"pi"* || "$HOSTNAME" == *"raspberry"* ]]; then
+  IS_PI=true
+  TARGET_BRANCH="pi-generated"
+else
+  IS_PI=false
+  TARGET_BRANCH="main"
+fi
+
+echo "🖥️ Host: $HOSTNAME"
+echo "🌱 Target branch: $TARGET_BRANCH"
+
 # Always run from repo root
 cd "$(dirname "$0")"
+
+# Ensure correct git branch
+CURRENT_BRANCH="$(git branch --show-current)"
+
+if [ "$CURRENT_BRANCH" != "$TARGET_BRANCH" ]; then
+  echo "🔁 Switching to $TARGET_BRANCH"
+  git checkout "$TARGET_BRANCH"
+fi
 
 ### 🐍 HARD-BOOTSTRAP CONDA (no PATH required)
 CONDA_BASE="$HOME/miniconda3"
