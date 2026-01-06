@@ -87,15 +87,31 @@ JEKYLL_ENV=production bundle _2.7.2_ exec jekyll build \
   --source docs \
   --destination docs/_site
 
-### Bootstrap Node.js 20 (WSL-safe)
-export NVM_DIR="$HOME/.nvm"
+### Node.js / Wrangler setup
 
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-  source "$NVM_DIR/nvm.sh"
-  nvm use 20
+if $IS_PI; then
+  # Raspberry Pi: use system-installed Node
+  if ! command -v node >/dev/null 2>&1; then
+    echo "ERROR: Node.js not found on Raspberry Pi"
+    exit 1
+  fi
 else
-  echo "ERROR: nvm not found; Node 20 required for Wrangler"
-  node -v || true
+  # Desktop / WSL: use nvm if available
+  export NVM_DIR="$HOME/.nvm"
+  if [ -s "$NVM_DIR/nvm.sh" ]; then
+    source "$NVM_DIR/nvm.sh"
+    nvm use 20
+  else
+    echo "ERROR: nvm not found on non-Pi system"
+    exit 1
+  fi
+fi
+
+echo "Node version: $(node -v)"
+
+# Verify Wrangler
+if ! command -v wrangler >/dev/null 2>&1; then
+  echo "ERROR: wrangler not found"
   exit 1
 fi
 
