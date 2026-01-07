@@ -3,6 +3,7 @@
 '''
 
 import pandas as pd
+import re
 from sleeper_wrapper import League, Drafts, Players
 import fantasy_rosters
 import constants as c
@@ -89,10 +90,22 @@ df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
          'Name', 'Pos', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ', '# G']]
 
-
-
 df_best = df.sort_values(by='Final Δ', ascending=False)
 df_worst = df.sort_values(by='Final Δ')
+
+def get_over(pick_str):
+    pattern = r'(\d+).(\d+)'
+    match = re.search(pattern, pick_str)
+    round = match.group(1)
+    pick_no = match.group(2)
+    return pick_no
+
+# df["matchup_html"] = df.apply(lambda r: f"""...
+df['html'] = df.apply(lambda p: f'''
+    <strong>{p['Pick']}</strong> {p['Name']} ({p['Pos']}), {p['Owner']} | Position: {p['PosStart']} -> {p['PosFinal']} ({p['Pos Δ']}) | Overall: {get_over(p['Pick'])} -> ({p['Final']}) ({p['Final Δ']})
+                      
+                      ''', axis=1)
+html = "\n".join(df["html"])
 
 styler = (
         df
@@ -116,13 +129,11 @@ styler_worst = (
         .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
         )
 
-html = f'''
+full_html = f'''
     <p>Note: Does not include defenses, kickers, or players who missed 7 or more weeks for injury</p>
     <details>
     <summary><strong>All Draft Stats</strong></summary>
-    <div class="table-scroll">
-        {styler.to_html()}
-    </div>
+    {html}
     </details>
     <details>
     <summary><strong>Biggest Draft Steals</strong></summary>
@@ -138,6 +149,6 @@ html = f'''
     </details>
     '''
 
-page = htmb.add_front_matter(html, 'Draft')
+page = htmb.add_front_matter(full_html, 'Draft')
 with open('docs/draft.html', "w", encoding="utf-8") as f:
     f.write(page)

@@ -19,7 +19,7 @@ import html_builder as htmb
 # update_all = True
 update_all = False
 players_to_json.player_json()
-player_db.scrape_injuries()
+#player_db.scrape_injuries()
 #median.median_main(update_all)
 #bestball.bestball_main(update_all)
 schedule.schedule_main(update_all)
