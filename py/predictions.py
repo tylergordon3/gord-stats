@@ -74,7 +74,7 @@ def clean_teams(df, kenpom_bool=False):
     return df
 
 
-def calcWkDelta(row):
+def calcWkDelta(row, label):
     """
     Calculate rank difference over last week
 
@@ -83,11 +83,11 @@ def calcWkDelta(row):
     :return: Row with updated vs Last Week
     :rtype: Series
     """
-    if row["Last Wk"] != "NR":
-        row["Last Wk"] = int(row["Last Wk"]) - row["Ovr"]
-        if row["Last Wk"] == 0:
-            row["Last Wk"] = "-"
-    return row["Last Wk"]
+    if row[label] != "NR":
+        row[label] = int(row[label]) - row["Ovr"]
+        if row[label] == 0:
+            row[label] = "-"
+    return row[label]
 
 
 def stars(count, max_count=3):
@@ -326,7 +326,7 @@ def predict_w(date):
     main64 = pd.merge(main64, last_week, "left", "Team")
 
     main64["Last Wk"] = main64["Last Wk"].fillna("NR")
-    main64["Last Wk"] = main64.apply(lambda row: calcWkDelta(row), axis=1)
+    main64["Last Wk"] = main64.apply(lambda row: calcWkDelta(row, "Last Wk"), axis=1)
 
     main64["Seed"] = seed_helper(main64["Ovr"])
     main64["Ovr"] = (
@@ -576,12 +576,17 @@ def predict(date):
     main64 = main64.sort_values(by=["Rtg", "Win"], ascending=[False, False])
  
     main64["Ovr"] = range(1, len(main64) + 1)
-    last_week = change.change(date)
-    last_week["Team"] = last_week["Team"].str.replace(r"\s*\([^)]*\)", "", regex=True)
-    main64 = pd.merge(main64, last_week, "left", "Team")
+    delta = change.change(date)
+    
+    main64 = pd.merge(main64, delta, "left", "Team")
 
-    main64["Last Wk"] = main64["Last Wk"].fillna("NR")
-    main64["Last Wk"] = main64.apply(lambda row: calcWkDelta(row), axis=1)
+    main64["Δ 7d"] = main64["Δ 7d"].fillna("NR")
+    main64["Δ 14d"] = main64["Δ 14d"].fillna("NR")
+    main64["Δ 1mo"] = main64["Δ 1mo"].fillna("NR")
+
+    main64["Δ 7d"] = main64.apply(lambda row: calcWkDelta(row, "Δ 7d"), axis=1)
+    main64["Δ 14d"] = main64.apply(lambda row: calcWkDelta(row, "Δ 14d"), axis=1)
+    main64["Δ 1mo"] = main64.apply(lambda row: calcWkDelta(row, "Δ 1mo"), axis=1)
 
     main64["Seed"] = seed_helper(main64["Ovr"])
     main64["Ovr"] = (
@@ -602,7 +607,7 @@ def predict(date):
         main64["Torvik Rank"].astype(str) + " " + main64["# Models Torvik"].apply(stars)
     )
 
-    styler = main64[["Kenpom", "Torvik", "Rtg", "Ovr", "Last Wk"]].style
+    styler = main64[["Kenpom", "Torvik", "Rtg", "Ovr", "Δ 7d", "Δ 14d", "Δ 1mo"]].style
     conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
     df = main64.drop(
         columns=[
@@ -612,10 +617,10 @@ def predict(date):
             "# Models Torvik",
             "Seed",
             "ConfChamp",
-            "Win"
+            "Win",
         ]
     )
-    df = df[["Team", "Conf", "Kenpom", "Torvik", "Rtg", "Ovr", "Last Wk"]]
+    df = df[["Team", "Conf", "Kenpom", "Torvik", "Rtg", "Ovr", "Δ 7d", "Δ 14d", "Δ 1mo"]]
     conf = (df.groupby("Conf")
                 .size()
                 .astype(int)
@@ -633,9 +638,9 @@ def predict(date):
     styler = (
         df.style.hide(axis="index")
         .format({"Rtg": "{:.4f}"})
-        .format(_format_arrow, subset=["Last Wk"])
-        .applymap(_color_arrow, subset=["Last Wk"])
-        .set_table_attributes('class="sticky-table"')
+        .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .applymap(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .set_table_attributes('class="sticky-table rank-table"')
         .background_gradient(
             subset=["Kenpom"],
             cmap="cividis",  # green = better (lower rank)
@@ -692,9 +697,16 @@ def predict(date):
     time_obj = datetime.datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
+    df_html +=  f'''
+                <div class="change-toggle">
+                    <button onclick="setChange('7d', this)">1 Week</button>
+                    <button onclick="setChange('14d', this)" class="active">2 Weeks</button>
+                    <button onclick="setChange('1mo', this)">1 Month</button>
+                </div>'''
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += "</div>"
+    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
     df_html += "<h3>First Four Out & Next 4 Out</h3>"
     df_html += '<div class="table-container">'
     df_html += out8_styler.to_html()
