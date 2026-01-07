@@ -173,3 +173,7 @@ thead th {
   text-align:center;
   color: rgb(255, 255, 255);
 }
+
+.hidden-col, .hidden-div {
+  display: none;
+}
