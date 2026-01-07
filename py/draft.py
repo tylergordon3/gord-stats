@@ -102,9 +102,7 @@ def get_over(pick_str):
 
 # df["matchup_html"] = df.apply(lambda r: f"""...
 df['html'] = df.apply(lambda p: f'''
-    <strong>{p['Pick']}</strong> {p['Name']} ({p['Pos']}), {p['Owner']} | Position: {p['PosStart']} -> {p['PosFinal']} ({p['Pos Δ']}) | Overall: {get_over(p['Pick'])} -> ({p['Final']}) ({p['Final Δ']})
-                      
-                      ''', axis=1)
+    <p><strong>{p['Pick']}</strong> {p['Name']} ({p['Pos']}), {p['Owner']} | Position: {p['PosStart']} -> {p['PosFinal']} ({p['Pos Δ']}) | Overall: {get_over(p['Pick'])} -> ({p['Final']}) ({p['Final Δ']})</p>''', axis=1)
 html = "\n".join(df["html"])
 
 styler = (
