@@ -19,7 +19,7 @@ function setChangeT(type, btn) {
 
   // active button styling
   if (btn.classList.contains("type-toggle")) {
-    document.querySelectorAll(" button.type-toggle").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".type-toggle button").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
   }
 }
@@ -30,7 +30,7 @@ function setChangeI(inj, btn) {
     div.classList.add("hidden-div");
   })
 
-  const type = document.querySelectorAll(".active.type-toggle").getAttribute('data-key')
+  const type = document.querySelectorAll(".type-toggle button.active").getAttribute('data-key')
 
   // Get all tables with the class "table-scroll"
   const target = document.querySelector(`.table-scroll.${type}.${inj}`);
@@ -38,7 +38,7 @@ function setChangeI(inj, btn) {
 
   // active button styling
   if (btn.classList.contains("injury-toggle")) {
-    document.querySelectorAll("button.injuy-toggle").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".injuy-toggle button.").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
   }
 }
