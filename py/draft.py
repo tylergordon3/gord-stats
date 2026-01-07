@@ -58,6 +58,13 @@ def final_pos_rank(row, df):
     this_rank = row.total_pts
     return len(df[df['total_pts'] > this_rank]) + 1
 
+def get_over(pick_str):
+    pattern = r'(\d+).(\d+)'
+    match = re.search(pattern, pick_str)
+    round = match.group(1)
+    pick_no = match.group(2)
+    return pick_no
+
 df['total_pts'] = df.apply(lambda x: sum_pts(x['player_id']), axis=1)
 df['num_games'] = df.apply(lambda x: num_games(x['player_id']), axis=1)
 df['final_rank'] = df.apply(lambda x: final_rank(x, df), axis=1)
@@ -65,21 +72,21 @@ df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] ==
 df['overall_diff'] = df['pick_no'] - df['final_rank']
 df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
 df['name'] = df['first_name'] + df['last_name']
-df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name'])
+df['Position Rk'] = f'{df['pos_rank']} -> {df['final_pos_rank']}'
+df['Overall Rk'] = f'{df['pick_no']} -> {df['final_rank']}'
+df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name', 'pos_rank', 'final_pos_rank',
+                      'final_rank'])
 
 df =  df[~df['position'].isin(['K', 'DEF'])]
 df = df[~((df['num_games'] < 8))]
 
-
 df = df.rename(columns={
         "pos_diff" : "Pos Δ",
-        "overall_diff" : "Final Δ",
-        "final_pos_rank" : "PosFinal",
+        "overall_diff" : "Overall Δ",
         "pos_rank" : "PosStart",
         "pick_no" : "Pick",
         "position" : "Pos",
         "team_name" : "Owner",
-        "final_rank" : "Final",
         "total_pts" : "Pts",
         "name" : "Name",
         "team" : "Team",
@@ -88,50 +95,40 @@ df = df.rename(columns={
 
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
-         'Name', 'Pos', 'Team', 'PosStart', 'PosFinal', 'Pos Δ', 'Final', 'Final Δ', '# G']]
+         'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
 
-df_best = df.sort_values(by='Final Δ', ascending=False)
-df_worst = df.sort_values(by='Final Δ')
-
-def get_over(pick_str):
-    pattern = r'(\d+).(\d+)'
-    match = re.search(pattern, pick_str)
-    round = match.group(1)
-    pick_no = match.group(2)
-    return pick_no
-
-# df["matchup_html"] = df.apply(lambda r: f"""...
-df['html'] = df.apply(lambda p: f'''
-    <p><strong>{p['Pick']}</strong> {p['Name']} ({p['Pos']}), {p['Owner']} | Position: {p['PosStart']} -> {p['PosFinal']} ({p['Pos Δ']}) | Overall: {get_over(p['Pick'])} -> ({p['Final']}) ({p['Final Δ']})</p>''', axis=1)
-html = "\n".join(df["html"])
+df_best = df.sort_values(by='Overall Δ', ascending=False)
+df_worst = df.sort_values(by='Overall Δ')
 
 styler = (
         df
         .style
         .hide(axis="index") 
         .background_gradient(cmap="RdYlGn", subset=["Pos Δ"]) 
-        .background_gradient(cmap="RdYlGn", subset=["Final Δ"])
+        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"])
         )
 
 styler_best = (
         df_best
         .style
         .hide(axis="index")
-        .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
         )
 
 styler_worst = (
         df_worst
         .style
         .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Final Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
         )
 
 full_html = f'''
     <p>Note: Does not include defenses, kickers, or players who missed 7 or more weeks for injury</p>
     <details>
     <summary><strong>All Draft Stats</strong></summary>
-    {html}
+    <div class="table-scroll">
+        {styler.to_html()}
+    </div>
     </details>
     <details>
     <summary><strong>Biggest Draft Steals</strong></summary>
