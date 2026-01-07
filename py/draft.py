@@ -203,12 +203,12 @@ df_html +=  f'''
             <button data-key="noinj" onclick="setChangeI('noinj', this)" class="injury-toggle">No Injuries</button>
             </div>'''
 df_html += f'''
-        <div id="all" class="table-scroll all inj">{styler.to_html()}</div>
-        <div id="best" class="table-scroll best inj hidden-div">{styler_best.to_html(max_rows=40)}</div>
-        <div id="worst" class="table-scroll worst inj hidden-div">{styler_worst.to_html(max_rows=40)}</div>
-        <div id="all-noinj" class="table-scroll all noinj hidden-div">{styler_no_inj.to_html()}</div>
-        <div id="best-noinj" class="table-scroll best noinj hidden-div">{styler_best_no_inj.to_html(max_rows=40)}</div>
-        <div id="worst-noinj" class="table-scroll worst noinj hidden-div">{styler_worst_no_inj.to_html(max_rows=40)}</div>
+        <div class="table-scroll all inj">{styler.to_html()}</div>
+        <div class="table-scroll best inj hidden-div">{styler_best.to_html(max_rows=40)}</div>
+        <div class="table-scroll worst inj hidden-div">{styler_worst.to_html(max_rows=40)}</div>
+        <div class="table-scroll all noinj hidden-div">{styler_no_inj.to_html()}</div>
+        <div class="table-scroll best noinj hidden-div">{styler_best_no_inj.to_html(max_rows=40)}</div>
+        <div class="table-scroll worst noinj hidden-div">{styler_worst_no_inj.to_html(max_rows=40)}</div>
         <script src='/assets/js/rank-toggle.js'></script>
         '''
 
