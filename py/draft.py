@@ -154,7 +154,8 @@ tz = timezone("EST")
 time_obj = datetime.datetime.now(tz)
 time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
-df_html += "<a href='docs/draft_team.html'>Team Draft Breakdown</a>"
+# <a href="week13_median.html">Week13</a>
+df_html += "<a href='draft_team.html'>Team Draft Breakdown</a>"
 df_html +=  f'''
 <div class="type-toggle">
 <button onclick="setChange('all', this)" class="active">All</button>
