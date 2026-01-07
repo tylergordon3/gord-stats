@@ -72,8 +72,8 @@ df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] ==
 df['overall_diff'] = df['pick_no'] - df['final_rank']
 df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
 df['name'] = df['first_name'] + df['last_name']
-df['Position Rk'] = f'{df['pos_rank']} -> {df['final_pos_rank']}'
-df['Overall Rk'] = f'{df['pick_no']} -> {df['final_rank']}'
+df['Position Rk'] = df.apply(lambda x: f'{x['pos_rank']} -> {x['final_pos_rank']}', axis=1)
+df['Overall Rk'] = df.apply(lambda x: f'{x['pick_no']} -> {x['final_rank']}', axis =1)
 df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name', 'pos_rank', 'final_pos_rank',
                       'final_rank'])
 
@@ -83,7 +83,6 @@ df = df[~((df['num_games'] < 8))]
 df = df.rename(columns={
         "pos_diff" : "Pos Δ",
         "overall_diff" : "Overall Δ",
-        "pos_rank" : "PosStart",
         "pick_no" : "Pick",
         "position" : "Pos",
         "team_name" : "Owner",
