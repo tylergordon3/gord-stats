@@ -177,3 +177,15 @@ thead th {
 .hidden-col, .hidden-div {
   display: none;
 }
+
+.injury-toggle button.active {
+  background: #333;
+  color: white;
+  font-weight: 600;
+}
+
+.type-toggle button.active {
+  background: #333;
+  color: white;
+  font-weight: 600;
+}
