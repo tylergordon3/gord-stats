@@ -193,10 +193,10 @@ time_obj = datetime.datetime.now(tz)
 time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
 df_html +=  f'''
-            <div class="type-btn" id="typeButtonGroup">
-            <button type="button" data-option="all">All</button>
-            <button type="button" data-option="worst">Worst</button>
-            <button type="button" data-option="best">Best</button>
+            <div class="type-toggle">
+            <button onclick="setChange('all', this)" class="active">All</button>
+            <button onclick="setChange('worst', this)">Worst</button>
+            <button onclick="setChange('best', this)">Best</button>
             </div>'''
 df_html += f'''
         <div class="table-scroll all inj">{styler.to_html()}</div>

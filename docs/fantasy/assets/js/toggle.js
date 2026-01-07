@@ -1,10 +1,11 @@
-const buttonGroup = document.getElementById('typeButtonGroup');
-const buttons = buttonGroup.querySelectorAll('button');
+function setChange(type, btn) {
+  // active button styling
+  document.querySelectorAll(".type-toggle button").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+}
 
-buttons.forEach(button => {
-    button.addEventListener('click', function() {
-        buttons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        const selectedOption = this.getAttribute('data-option');
-    });
+// default = whatever button has class active (yours is 2 Weeks)
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultBtn = document.querySelector(".type-toggle button.active");
+  if (defaultBtn) defaultBtn.click();
 });
