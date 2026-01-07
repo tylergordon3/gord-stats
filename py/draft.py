@@ -193,23 +193,16 @@ time_obj = datetime.datetime.now(tz)
 time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
 df_html +=  f'''
-            <div class="type-toggle">
-                <button data-key="all" onclick="setChangeT('all', this)" class="active type-toggle">All</button>
-                <button data-key="best" onclick="setChangeT('best', this)" class="type-toggle">Best</button>
-                <button data-key="worst" onclick="setChangeT('worst', this)" class="type-toggle">Worst</button>
-            </div>
-            <div class="injury-toggle">
-            <button data-key="inj" onclick="setChangeI('inj', this)" class="active injury-toggle">Injuries</button>
-            <button data-key="noinj" onclick="setChangeI('noinj', this)" class="injury-toggle">No Injuries</button>
+            <div class="type-btn" id="typeButtonGroup">
+            <button type="button" data-option="all">All</button>
+            <button type="button" data-option="worst">Worst</button>
+            <button type="button" data-option="best">Best</button>
             </div>'''
 df_html += f'''
         <div class="table-scroll all inj">{styler.to_html()}</div>
         <div class="table-scroll best inj hidden-div">{styler_best.to_html(max_rows=40)}</div>
         <div class="table-scroll worst inj hidden-div">{styler_worst.to_html(max_rows=40)}</div>
-        <div class="table-scroll all noinj hidden-div">{styler_no_inj.to_html()}</div>
-        <div class="table-scroll best noinj hidden-div">{styler_best_no_inj.to_html(max_rows=40)}</div>
-        <div class="table-scroll worst noinj hidden-div">{styler_worst_no_inj.to_html(max_rows=40)}</div>
-        <script src='/assets/js/rank-toggle.js'></script>
+        <script src='/assets/js/toggle.js'></script>
         '''
 
 page = htmb.add_front_matter(df_html, 'Draft')
