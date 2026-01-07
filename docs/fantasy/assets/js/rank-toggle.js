@@ -19,7 +19,7 @@ function setChangeT(type, btn) {
 
   // active button styling
   if (btn.classList.contains("type-toggle")) {
-    document.querySelectorAll(".type-toggle button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(" button.type-toggle").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
   }
 }
@@ -38,7 +38,7 @@ function setChangeI(inj, btn) {
 
   // active button styling
   if (btn.classList.contains("injury-toggle")) {
-    document.querySelectorAll(".injuy-toggle button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll("button.injuy-toggle").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
   }
 }
