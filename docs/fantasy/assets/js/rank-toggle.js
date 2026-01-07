@@ -37,8 +37,8 @@ function setChangeI(inj, btn) {
   if (target) target.classList.remove("hidden-div");
 
   // active button styling
-  if (btn.classList.contains("inj-toggle")) {
-    document.querySelectorAll(".inj-toggle button").forEach(b => b.classList.remove("active"));
+  if (btn.classList.contains("injury-toggle")) {
+    document.querySelectorAll(".injuy-toggle button").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
   }
 }
