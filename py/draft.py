@@ -212,6 +212,6 @@ df_html += f'''
         "<script src='/assets/js/rank-toggle.js'></script>"
         '''
 
-page = htmb.add_front_matter(full_html, 'Draft')
+page = htmb.add_front_matter(df_html, 'Draft')
 with open('docs/draft.html', "w", encoding="utf-8") as f:
     f.write(page)
