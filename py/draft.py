@@ -61,7 +61,7 @@ def final_pos_rank(row, df):
 def get_over(pick_str):
     pattern = r'(\d+).(\d+)'
     match = re.search(pattern, pick_str)
-    round = match.group(1)
+    # round = match.group(1)
     pick_no = match.group(2)
     return pick_no
 
@@ -78,7 +78,6 @@ df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name', 'pos_
                       'final_rank'])
 
 df =  df[~df['position'].isin(['K', 'DEF'])]
-df = df[~((df['num_games'] < 8))]
 
 df = df.rename(columns={
         "pos_diff" : "Pos Δ",
@@ -95,7 +94,6 @@ df = df.rename(columns={
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
          'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
-
 df_best = df.sort_values(by='Overall Δ', ascending=False)
 df_worst = df.sort_values(by='Overall Δ')
 
@@ -121,8 +119,34 @@ styler_worst = (
         .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
         )
 
+df_no_inj = df[~((df['# G'] < 8))]
+df_no_inj_best = df_no_inj.sort_values(by='Overall Δ', ascending=False)
+df_no_inj_worst = df_no_inj.sort_values(by='Overall Δ')
+
+styler_no_inj = (
+        df_no_inj
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Pos Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"])
+        )
+
+styler_best_no_inj = (
+        df_no_inj_best
+        .style
+        .hide(axis="index")
+        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
+        )
+
+styler_worst_no_inj = (
+        df_no_inj_worst
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
+        )
+
 full_html = f'''
-    <p>Note: Does not include defenses, kickers, or players who missed 7 or more weeks for injury</p>
+    <p>Note: Does not include defenses or kickers.</p>
     <details>
     <summary><strong>All Draft Stats</strong></summary>
     <div class="table-scroll">
@@ -139,6 +163,25 @@ full_html = f'''
     <summary><strong>Biggest Draft Misses</strong></summary>
     <div class="table-scroll">
         {styler_worst.to_html(max_rows=40)}
+    </div>
+    </details>
+    <p>Note: Does not include defenses or kickers, <strong>OR</strong> players who played in less than 8 games. (~57% of regular season)</p>
+    <details>
+    <summary><strong>All Draft Stats</strong></summary>
+    <div class="table-scroll">
+        {styler_no_inj.to_html()}
+    </div>
+    </details>
+    <details>
+    <summary><strong>Biggest Draft Steals</strong></summary>
+    <div class="table-scroll">
+        {styler_best_no_inj.to_html(max_rows=40)}
+    </div>
+    </details>
+    <details>
+    <summary><strong>Biggest Draft Misses</strong></summary>
+    <div class="table-scroll">
+        {styler_worst_no_inj.to_html(max_rows=40)}
     </div>
     </details>
     '''
