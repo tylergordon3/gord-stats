@@ -199,8 +199,8 @@ df_html +=  f'''
                 <button data-key="worst" onclick="setChangeT('worst', this)" class="type-toggle">Worst</button>
             </div>
             <div class="injury-toggle">
-            <button data-key="injuries" onclick="setChangeI('inj', this)" class="active injury-toggle">Injuries</button>
-            <button data-key="noinjuries" onclick="setChangeI('noinj', this)" class="injury-toggle">No Injuries</button>
+            <button data-key="inj" onclick="setChangeI('inj', this)" class="active injury-toggle">Injuries</button>
+            <button data-key="noinj" onclick="setChangeI('noinj', this)" class="injury-toggle">No Injuries</button>
             </div>'''
 df_html += f'''
         <div id="all" class="table-scroll all inj">{styler.to_html()}</div>
