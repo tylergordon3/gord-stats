@@ -195,12 +195,12 @@ df_html = f"<p>{time}</p>"
 df_html +=  f'''
             <div class="type-toggle">
                 <button data-key="all" onclick="setChangeT('all', this)" class="active type-toggle">All</button>
-                <button data-key="best" onclick="setChangeT('best', this)" class="type-toggle>Best</button>
-                <button data-key="worst" onclick="setChangeT('worst', this)" class="type-toggle>Worst</button>
+                <button data-key="best" onclick="setChangeT('best', this)" class="type-toggle">Best</button>
+                <button data-key="worst" onclick="setChangeT('worst', this)" class="type-toggle">Worst</button>
             </div>
             <div class="injury-toggle">
-            <button data-key="injuries" class="active injury-toggle">Injuries</button>
-            <button data-key="noinjuries class="injury-toggle">No Injuries</button>
+            <button data-key="injuries" onclick="setChangeI('inj', this)" class="active injury-toggle">Injuries</button>
+            <button data-key="noinjuries onclick="setChangeI('noinj', this)" class="injury-toggle">No Injuries</button>
             </div>'''
 df_html += f'''
         <div id="all" class="table-scroll all inj">{styler.to_html()}</div>
