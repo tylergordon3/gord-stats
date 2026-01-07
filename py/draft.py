@@ -96,6 +96,8 @@ df = df.rename(columns={
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df = df[['Pick', 'Owner', 
          'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
+
+team_breakdown = df.copy()
 df_best = df.sort_values(by='Overall Δ', ascending=False)
 df_worst = df.sort_values(by='Overall Δ')
 
@@ -122,6 +124,7 @@ styler_worst = (
         )
 
 df_no_inj = df[~((df['# G'] < 8))]
+team_breakdown_noinj = df_no_inj .copy()
 df_no_inj_best = df_no_inj.sort_values(by='Overall Δ', ascending=False)
 df_no_inj_worst = df_no_inj.sort_values(by='Overall Δ')
 
@@ -151,6 +154,7 @@ tz = timezone("EST")
 time_obj = datetime.datetime.now(tz)
 time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
+df_html += "<a href='docs/draft_team.html'>Team Draft Breakdown</a>"
 df_html +=  f'''
 <div class="type-toggle">
 <button onclick="setChange('all', this)" class="active">All</button>
@@ -166,4 +170,75 @@ df_html += f'''
 
 page = htmb.add_front_matter(df_html, 'Draft')
 with open('docs/draft.html', "w", encoding="utf-8") as f:
+    f.write(page)
+
+def byTeam(df):
+    grouped = df.groupby(by=['Owner', 'Pos']).agg(
+        pos_delt = ("Pos Δ", 'sum'),
+        ovr_delt = ("Overall Δ", 'sum')
+    )
+
+    grouped_tot = df.groupby(by=['Owner']).agg(
+        ovr_delt = ("Overall Δ", 'sum')
+    )
+
+    df_result = grouped.reset_index()
+    df_result = df_result.rename(columns={'pos_delt':'Total Pos Δ', 'ovr_delt':' Total Ovr Δ'})
+    qb = df_result[df_result['Pos'] == 'QB'].sort_values(by='Total Pos Δ', ascending=False)
+    rb = df_result[df_result['Pos'] == 'RB'].sort_values(by='Total Pos Δ', ascending=False)
+    wr = df_result[df_result['Pos'] == 'WR'].sort_values(by='Total Pos Δ', ascending=False)
+    te = df_result[df_result['Pos'] == 'TE'].sort_values(by='Total Pos Δ', ascending=False)
+
+    grouped_tot = df.groupby(by=['Owner']).agg(
+        ovr_delt = ("Overall Δ", 'sum')
+    )
+
+    df_result2 = grouped_tot.reset_index()
+    df_result2 = df_result2.rename(columns={'ovr_delt':' Total Ovr Δ'})
+
+    return [qb, rb, wr, te, df_result2]
+
+qb_all, rb_all, wr_all, te_all, ovr_all = byTeam(team_breakdown)
+qb, rb, wr, te, ovr = byTeam(team_breakdown_noinj)
+
+qb = pd.merge(qb_all, qb, 'left', on='Owner')
+rb = pd.merge(rb_all, rb, 'left', on='Owner')
+wr = pd.merge(wr_all, wr, 'left', on='Owner')
+te = pd.merge(te_all, te, 'left', on='Owner')
+ovr = pd.merge(ovr_all, ovr, 'left', on='Owner')
+
+html = ''
+for df in [qb, rb, wr, te, ovr]:
+    df = df.rename(columns={
+        "Pos_x" : "Pos",
+        "Total Pos Δ_x": "Sum Pos Δ",
+        " Total Ovr Δ_x": "Sum Δ",
+        "Total Pos Δ_y": "No Injury Sum Pos Δ",
+        " Total Ovr Δ_y": "No Injury Sum Δ"
+    })
+    df = df.reset_index(drop=True)
+ 
+    if 'Pos_y' in df.columns:
+        df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
+        df = df.sort_values(by='Sum Pos Δ', ascending=False)
+        styler = (
+        df
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Sum Pos Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Pos Δ"])
+        )
+    else:
+        df = df.sort_values(by='Sum Δ', ascending=False)
+        styler = (
+        df
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Sum Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Δ"])
+        )
+    html += styler.to_html()
+
+page = htmb.add_front_matter(html, 'Draft - Team Breakdown')
+with open('docs/draft_team.html', "w", encoding="utf-8") as f:
     f.write(page)
