@@ -194,13 +194,13 @@ time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
 df_html +=  f'''
             <div class="type-toggle">
-                <button data-key="all" class="active">All</button>
-                <button data-key="best">Best</button>
-                <button data-key="worst">Worst</button>
+                <button data-key="all" class="active type-toggle">All</button>
+                <button data-key="best" class="type-toggle>Best</button>
+                <button data-key="worst" class="type-toggle>Worst</button>
             </div>
             <div class="injury-toggle">
-            <button data-key="injuries" class="active">Injuries</button>
-            <button data-key="noinjuries">No Injuries</button>
+            <button data-key="injuries" class="active injury-toggle">Injuries</button>
+            <button data-key="noinjuries class="injury-toggle">No Injuries</button>
             </div>'''
 df_html += f'''
         <div id="all" class="table-scroll all inj">{styler.to_html()}</div>
