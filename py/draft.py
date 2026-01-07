@@ -209,7 +209,7 @@ df_html += f'''
         <div id="all-noinj" class="table-scroll all noinj hidden-div">{styler_no_inj.to_html()}</div>
         <div id="best-noinj" class="table-scroll best noinj hidden-div">{styler_best_no_inj.to_html(max_rows=40)}</div>
         <div id="worst-noinj" class="table-scroll worst noinj hidden-div">{styler_worst_no_inj.to_html(max_rows=40)}</div>
-        "<script src='/assets/js/rank-toggle.js'></script>"
+        <script src='/assets/js/rank-toggle.js'></script>
         '''
 
 page = htmb.add_front_matter(df_html, 'Draft')
