@@ -174,14 +174,16 @@ thead th {
   color: rgb(255, 255, 255);
 }
 
-.hidden-col, .hidden-div {
-  display: none;
+.type-toggle {
+  margin-bottom: 8px;
 }
 
-.injury-toggle button.active {
-  background: #333;
-  color: white;
-  font-weight: 600;
+.type-toggle button {
+  padding: 4px 10px;
+  margin-right: 4px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
 }
 
 .type-toggle button.active {
