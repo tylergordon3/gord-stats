@@ -14,7 +14,7 @@ def find_opponents(team, week_df):
     else:
         h2h_win = 1
 
-    return [opp, h2h_win]
+    return [opp, opp_score, h2h_win]
 
 def calc_totals(team, season_df):
     
@@ -39,3 +39,15 @@ def calc_totals(team, season_df):
         med_loss = len(prev_weeks)
 
     return [h2h_wins, med_wins, h2h_loss, med_loss]
+
+def calc_point_totals(team, season_df):
+    roster_id = team['roster_id']
+    if season_df.empty:
+        pf = team['points']
+        pa = team['opp_points']
+    else:
+        prev_weeks = season_df[season_df['roster_id'] == roster_id]
+        pf = prev_weeks['points'].sum() + team['points']
+        pa = prev_weeks['opp_points'].sum() + team['opp_points']
+    return [pf, pa]
+   

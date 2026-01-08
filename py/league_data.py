@@ -44,7 +44,7 @@ def get_season(end_week):
             # starters_dict   {int str : float}
             # bench_dict      {int str : float}
             matchup_df['week'] = week
-            matchup_df[['opp', 'win']] = matchup_df.apply(lambda x:
+            matchup_df[['opp', 'opp_points', 'win']] = matchup_df.apply(lambda x:
                 league_util.find_opponents(x, matchup_df), axis=1, result_type='expand')
             matchup_df['point_ranks'] = matchup_df['points'].rank()
             median_rank = len(matchup_df) / 2
@@ -59,6 +59,8 @@ def get_season(end_week):
             matchup_df['total_wins'] = matchup_df.apply(lambda x: x['h2h_wins'] + x['median_wins'], axis=1)
             matchup_df['total_loss'] = matchup_df.apply(lambda x: x['h2h_loss'] + x['median_loss'], axis=1)
             matchup_df['record'] = matchup_df.apply(lambda x: f'{x['total_wins']}-{x['total_loss']}', axis=1)
+            matchup_df[['PF', 'PA']] = matchup_df.apply(lambda x: league_util.calc_point_totals(x, season), 
+                                                        axis=1, result_type='expand')
             matchup_df = pd.merge(matchup_df, teams, how='left', on='roster_id')
             season = pd.concat([season, matchup_df])
             pbar.update(1)

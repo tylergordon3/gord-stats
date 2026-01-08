@@ -1,7 +1,16 @@
 """
     Contains various static definitions
 """
-import os
+
+import nflreadpy as nfl
+import utilities as utils
+from pathlib import Path
+
+SEASON_STR = utils.getYrStr()
+SEASON = nfl.get_current_season()
+INJ_PATH = utils.get_project_root() / Path("data") / Path("injuries") / Path(f'{SEASON_STR}.json')
+SEASON_PATH = utils.get_project_root() / Path("data") / Path("season") / Path(f'{SEASON_STR}.json')
+
 player_stats_headers = ["player_id", "player_name", "player_display_name", "position", "position_group",
                         "headshot_url", "season", "week", "season_type", "team", "opponent_team", "completions",
                         "attempts", "passing_yards", "passing_tds", "passing_interceptions", "sacks_suffered",
