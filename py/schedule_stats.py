@@ -3,7 +3,8 @@ import constants
 import html_util
 
 def load_stats():
-    return pd.read_json(constants.SEASON_PATH)
+    df = pd.read_json(constants.SEASON_PATH)
+    return df[df['week'] < 15]
 
 def process_roto(group_df):
     def record(team, df):
@@ -21,8 +22,7 @@ def process_roto(group_df):
     return group_df
 
 def calc_roto():
-    season = load_stats()
-    regular_season = season[season['week'] < 15]
+    regular_season = load_stats()
     df = regular_season.groupby('week')
     results = []
     for _, group in df:
