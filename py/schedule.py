@@ -473,12 +473,8 @@ def schedule_main(update_all):
     # All Play Standings
     html += '<h2>All-Play Standings</h2>'
     html += '<p>Whole league goes H2H, every week.</p>'
-    allplay_styled = calc_allplay(rosters)
-    html += '<br><div class="table-scroll">'
-    html += schedule_stats.calc_roto().to_html()
-    html += '</div>'
     html += '<div class="table-scroll">'
-    html += allplay_styled.to_html()
+    html += schedule_stats.calc_roto().to_html()
     html += '</div>'
 
     # Strength of Schedule Stats
