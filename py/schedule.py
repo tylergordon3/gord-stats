@@ -14,6 +14,7 @@ import matplotlib.colors as mcolors
 from matplotlib.colors import Normalize
 import matplotlib.pyplot as plt
 from sleeper_wrapper import League
+import schedule_stats
 
 def getTeamIndex(rosters, roster_id):
     roster_bool = rosters['roster_id'] == roster_id
@@ -473,6 +474,9 @@ def schedule_main(update_all):
     html += '<h2>All-Play Standings</h2>'
     html += '<p>Whole league goes H2H, every week.</p>'
     allplay_styled = calc_allplay(rosters)
+    html += '<div class="table-scroll">'
+    html += schedule_stats.calc_roto().to_html()
+    html += '</div>'
     html += '<div class="table-scroll">'
     html += allplay_styled.to_html()
     html += '</div>'
