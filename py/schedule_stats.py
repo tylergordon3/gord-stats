@@ -47,6 +47,7 @@ def calc_roto():
     
     styler = roto_return.style \
         .apply(html_util.highlight_roto, subset=[c for c in roto_return.columns[:-2]]) \
+        .apply(html_util.highlight_on_record, subset=['Total']) \
         .set_table_styles([html_util.light_grid_style_data, html_util.light_grid_style_header], overwrite=False) \
         .set_table_attributes('class="sticky-table"')
     return styler
