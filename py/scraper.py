@@ -391,7 +391,7 @@ def slow_scrape_times():
     time_dict = {}
 
     today = date.today()
-    day_iter = today + timedelta(days=1)
+    day_iter = today + timedelta(days=0)
     end_date = date(2026, 3, 8)
     
     total_size = (end_date-today).days
