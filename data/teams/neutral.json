@@ -10,5 +10,33 @@
     "Spokane Veterans Memorial Arena": {
         "City": "Spokane",
         "State": "Washington"
+    },
+    "Rupp Arena at Central Bank Center": {
+        "City": null,
+        "State": null
+    },
+    "UTSA Convocation Center": {
+        "City": null,
+        "State": null
+    },
+    "Memorial Gym": {
+        "City": null,
+        "State": null
+    },
+    "Ted Grant Court": {
+        "City": null,
+        "State": null
+    },
+    "Roy L Patrick Gymnasium": {
+        "City": null,
+        "State": null
+    },
+    "Swisher Gym": {
+        "City": null,
+        "State": null
+    },
+    "Groniger Arena": {
+        "City": null,
+        "State": null
     }
 }
