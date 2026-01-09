@@ -8,13 +8,14 @@ import random
 import time
 import json
 import re
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from playwright.sync_api import sync_playwright
+from tqdm import tqdm
 
 TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"
@@ -393,37 +394,67 @@ def slow_scrape_times():
     day_iter = today + timedelta(days=1)
     end_date = date(2026, 3, 8)
     
-    while day_iter <= end_date:
-        str_iter = day_iter.strftime(f'%Y%m%d')
-        print(f"Sleeping for 8 seconds then checking: {str_iter}")
-        time.sleep(2)
-        url = f'https://www.cbssports.com/college-basketball/schedule/ALL/{str_iter}'
-        soup = getHTML(url)
-        if soup is None:
-            print(f"Skipping {str_iter} - Error with getting HTML")
-            day_iter += timedelta(days=1)
-            continue
+    total_size = (end_date-today).days
 
-        times = [a.get_text(strip=True)
-            for a in soup.select('a[href="/college-basketball/scoreboard/"]')]
-        if len(times) == 0:
-            print(f"Skipping {str_iter} - NO GAMES")
-            day_iter += timedelta(days=1)
-            continue
-        if times[0] != 'TBA':
-            time_dict[day_iter] = [times[0], times[-1:]]
+    with tqdm(total=total_size, desc="Scraping times") as pbar:
+        prev_day = None
+
+        while day_iter <= end_date:
             
-        day_iter += timedelta(days=1)
+            str_iter = day_iter.strftime(f'%Y%m%d')
+            time.sleep(1)
+            url = f'https://www.cbssports.com/college-basketball/schedule/ALL/{str_iter}'
+            soup = getHTML(url)
 
-    json_ready = {
-        d.isoformat(): v
-        for d, v in time_dict.items()
-    }
-    print(json_ready)
-    with open(utils.get_path('data/times.json'), "w") as f:
-        json.dump(json_ready, f, indent=2)
+            if soup is None:
+                print(f"Skipping {str_iter} - Error with getting HTML")
+                day_iter += timedelta(days=1)
+                pbar.update(1)
+                continue
+            
+            times = [a.get_text(strip=True)
+                for a in soup.select('a[href="/college-basketball/scoreboard/"]')]
+            
+            if len(times) == 0:
+                day_iter += timedelta(days=1)
+                pbar.update(1)
+                continue
 
-#slow_scrape_times()
+            times = [t for t in times if t != "TBA"]
+
+            has_midnight = "12:00 am" in times
+            times = [t for t in times if t != "12:00 am"]
+
+             # If midnight exists, patch previous day
+            if has_midnight and prev_day in time_dict:
+                time_dict[prev_day][1] = "11:59 pm"
+            
+            if len(times) == 0:
+                day_iter += timedelta(days=1)
+                pbar.update(1)
+                continue
+
+            sorted_times = sorted(
+                times,
+                key=lambda t: datetime.strptime(t, "%I:%M %p")
+            )
+
+            time_dict[day_iter] = [sorted_times[0], sorted_times[-1]]
+            prev_day = day_iter
+
+            day_iter += timedelta(days=1)
+            pbar.update(1)
+
+        json_ready = {
+            d.isoformat(): v
+            for d, v in time_dict.items()
+        }
+        print(json_ready)
+        with open(utils.get_path('data/times.json'), "w") as f:
+            json.dump(json_ready, f, indent=2)
+
+slow_scrape_times()
+
 def getNameFromCode(code, master):
     s_exploded = master["names"].explode()
     boolean_mask_exploded = s_exploded == code
