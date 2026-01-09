@@ -396,7 +396,7 @@ def slow_scrape_times():
     while day_iter <= end_date:
         str_iter = day_iter.strftime(f'%Y%m%d')
         print(f"Sleeping for 8 seconds then checking: {str_iter}")
-        time.sleep(8)
+        time.sleep(2)
         url = f'https://www.cbssports.com/college-basketball/schedule/ALL/{str_iter}'
         soup = getHTML(url)
         if soup is None:
@@ -410,18 +410,20 @@ def slow_scrape_times():
             print(f"Skipping {str_iter} - NO GAMES")
             day_iter += timedelta(days=1)
             continue
-
-        time_dict[day_iter] = times[0]
+        if times[0] != 'TBA':
+            time_dict[day_iter] = [times[0], times[-1:]]
+            
         day_iter += timedelta(days=1)
 
     json_ready = {
         d.isoformat(): v
         for d, v in time_dict.items()
     }
-
+    print(json_ready)
     with open(utils.get_path('data/times.json'), "w") as f:
         json.dump(json_ready, f, indent=2)
 
+#slow_scrape_times()
 def getNameFromCode(code, master):
     s_exploded = master["names"].explode()
     boolean_mask_exploded = s_exploded == code
