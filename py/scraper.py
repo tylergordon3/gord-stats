@@ -453,8 +453,6 @@ def slow_scrape_times():
         with open(utils.get_path('data/times.json'), "w") as f:
             json.dump(json_ready, f, indent=2)
 
-slow_scrape_times()
-
 def getNameFromCode(code, master):
     s_exploded = master["names"].explode()
     boolean_mask_exploded = s_exploded == code
