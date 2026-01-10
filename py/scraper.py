@@ -515,7 +515,7 @@ def parse_live(row, master):
     if pd.isna(row['Streaming']):
         match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)", row['Time/TV'])
     else:
-        match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)\s\s(.+)", row['Time/TV'])
+        match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)\s\s(.+)?", row['Time/TV'])
 
     if not match:
         return None, None, None, None
