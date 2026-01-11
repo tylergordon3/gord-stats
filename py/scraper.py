@@ -512,10 +512,10 @@ def parse_live(row, master):
         return None, None, None
 
     # Extract the two scores
-    if pd.isna(row['Streaming']):
-        match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)", row['Time/TV'])
-    else:
-        match = re.search(r"([A-Z]+)\s([0-9]+),\s([A-Z]+)\s([0-9]+)\s-\s(\w+)\s\s(.+)?", row['Time/TV'])
+    # MORGAN 66, SCST 63 - 2nd  ESP+
+    # ARKPB 60, TEXSO 52 - 2nd
+    pattern = r"([A-Z]+)\s(\d+),\s([A-Z]+)\s(\d+)\s-\s(\w+)(?:\s\s(.+))?$"
+    match = re.search(pattern, row['Time/TV'])
 
     if not match:
         return None, None, None, None
@@ -525,10 +525,8 @@ def parse_live(row, master):
     code2 = match.group(3)
     score2 = int(match.group(4))
     status = match.group(5)
-    if pd.isna(row['Streaming']):
-        tv = ''
-    else:
-        tv = match.group(6)
+
+    tv = match.group(6) if match.group(6) else ''
 
     team1 = getNameFromCode(code1, master)
     team2 = getNameFromCode(code2, master)
