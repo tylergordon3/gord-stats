@@ -112,9 +112,11 @@ def schedule_metrics(standings=False):
     return styler
 
 def schedule_compare():
+
     reg_season = load_stats()
     roster_ids = pd.unique(reg_season['roster_id'])
     all = {}
+
     for id in roster_ids:
         schedule = reg_season[reg_season['roster_id'] == id]['opp_points'].to_numpy()
         this_schedule = {}
@@ -127,10 +129,11 @@ def schedule_compare():
         all[int(id)] = this_schedule
     print(all)
 
+
 def reg_season_stats():
     roto = calc_roto()
     metrics = schedule_metrics()
     sched_comp = schedule_compare()
    
 
-
+schedule_compare()
