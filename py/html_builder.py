@@ -1,9 +1,5 @@
 import os
-import schedule
-import matplotlib.colors as mcolors
-from matplotlib.colors import Normalize
-import matplotlib.pyplot as plt
-
+import schedule_stats
 
 def add_front_matter(html, title):
     fm = f"""---
@@ -55,71 +51,8 @@ def generate_landing(folder, file, title):
 
     print(f"Landing page generated: {output_file}")
 
-def _font_color_for_bg(rgb):
-    """
-    Return '#ffffff' (white) if the background rgb is "dark",
-    otherwise '#000000' (black).  Uses the ITU‑BT.601 luma formula.
-    """
-    # rgb is a tuple/list of three floats in [0, 1]
-    r, g, b = rgb
-    # luma = 0.299 R + 0.587 G + 0.114 B  (standard TV luminance)
-    luminance = 0.299 * r + 0.587 * g + 0.114 * b
-    return "#ffffff" if luminance < 0.5 else "#000000"
-
-def bg_from_pythag_str(series, cmap='RdYlGn'):
-        numeric_values = series.str.extract(r'([+-]?[0-9]*[.]?[0-9]+) \(([+-]?[0-9]*[.]?[0-9]+)\)').astype(float).squeeze()
-        diff = numeric_values.iloc[:, 1] - numeric_values.loc[:, 0]
-        norm = Normalize(vmin=diff.min(), vmax=diff.max())
-        cmap_obj = plt.cm.get_cmap(cmap)
-        styles = []
-        for val in diff:
-            # a) normalised value → colour (as RGBA)
-            rgba = cmap_obj(norm(val))
-
-            # b) drop the alpha channel, keep only RGB (0‑1 range)
-            rgb = rgba[:3]
-
-            # c) background as hex string
-            bg_hex = mcolors.rgb2hex(rgb)
-
-            # d) font colour based on luminance
-            fg_hex = _font_color_for_bg(rgb)
-
-            # e) combine both CSS rules
-            styles.append(f'background-color:{bg_hex};color:{fg_hex}')
-        return styles
-
 def generate_index():
-    #  htmb.generate_landing('docs/median', 'median', 'Median')
-    standings = schedule.standings()
-    table_style = {
-        "selector": "th.col_heading,td",
-        "props": [
-        ("width", "100px"), # px instead of %
-        ("text-align", "center"), # optional ?
-    ]}
-    light_grid_style_data = {
-        'selector': 'td',
-        'props': [
-            ('border', '1px solid black')
-        ]
-    }
-    light_grid_style_header = {
-        'selector': 'th',
-        'props': [
-            ('border', '1px solid black')
-        ]
-    }
-    styler = (
-        standings
-        .style
-        .hide(axis="index") 
-        .format( lambda x: f"{x:.3f}" if isinstance(x, float) else x) 
-        .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
-        .background_gradient(cmap="RdYlGn", subset=["SOV"])
-        .apply(bg_from_pythag_str, subset=["Exp W (Actual)"])
-        .set_table_styles([light_grid_style_data, light_grid_style_header, table_style], overwrite=False)
-        )
+    standings = schedule_stats.schedule_metrics(standings=True)
     
     page=f'''
 <!DOCTYPE html>
@@ -137,7 +70,7 @@ def generate_index():
     <p><strong>Exp W (Actual):</strong> Expected H2H wins using Pythagorean Wins versus actual H2H wins.</p> 
     <p>Green = outperformed expectations, red = underperformed.</p>
     <div class="table-scroll">
-    {styler.to_html(classes='sticky-table')}
+    {standings.to_html()}
     </div>
   </body>
 </html>

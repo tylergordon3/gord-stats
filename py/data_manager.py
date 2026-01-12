@@ -24,5 +24,3 @@ def main():
     szn_data = league_data.get_season(utils.get_last_completed_week())
     szn_data = szn_data.reset_index(drop=True)
     szn_data.to_json(f'{season_path}/{SEASON_STR}.json')
-
-main()

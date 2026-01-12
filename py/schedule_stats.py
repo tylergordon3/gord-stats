@@ -67,7 +67,7 @@ def calc_sov(team, season, dict):
     sov = sum(arr)/len(arr)
     return sov
 
-def schedule_metrics():
+def schedule_metrics(standings=False):
     reg_season = load_stats()
     # Winning Percentage
     reg_season['W%'] = reg_season['total_wins'] / (reg_season['total_wins'] + reg_season['total_loss'])
@@ -92,7 +92,13 @@ def schedule_metrics():
            f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*14:.1f} ({x['h2h_wins']})', 
            axis=1)
     
-    df = curr_winp[['team_name', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(by='SOS', ascending=False)
+    if standings:
+        df = curr_winp[['team_name', 'record', 'total_wins', 'PF', 'PA', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(['total_wins', 'PF'],ascending=False)
+        df = df.rename(columns={"team_name":"Team", 'record' : 'Record'})
+        df = df.drop(columns=['total_wins'])
+    else:
+        df = curr_winp[['team_name', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(by='SOS', ascending=False)
+        df = df.rename(columns={"team_name":"Team"})
     styler = (
        df
         .style
