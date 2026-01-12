@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import constants
 import html_util
 
@@ -21,9 +22,9 @@ def process_roto(group_df):
         record(team, group_df), axis=1, result_type='expand')
     return group_df
 
-def calc_roto():
-    regular_season = load_stats()
-    df = regular_season.groupby('week')
+def calc_roto(reg_season):
+    # reg_season = load_stats()
+    df = reg_season.groupby('week')
     results = []
     for _, group in df:
         result = process_roto(group)
@@ -52,11 +53,26 @@ def calc_roto():
         .set_table_attributes('class="sticky-table"')
     return styler
 
+def calc_ow(team, season, dict):
+    only_team = season[season['roster_id'] == team['roster_id']].copy()
+    opps = only_team['opp'].to_numpy()
+    arr = [dict[x] for x in opps]
+    ow = sum(arr) / len(arr)
+    return ow
+
+def schedule_metrics(reg_season):
+    # Winning Percentage
+    reg_season['W%'] = reg_season['total_wins'] / (reg_season['total_wins'] + reg_season['total_loss'])
+    # Overall Opponent Winning Percentage [OW%]
+    curr_winp = reg_season[reg_season['week'] == (len(reg_season)/10)].copy()
+    winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['W%']))
+    curr_winp['OppOvrW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, winp_dict), axis=1)
+    print(curr_winp)
+
 def reg_season_stats():
     season = load_stats()
-    regular_season = season[season['week'] < 15]
-    roto = calc_roto()
-
+    # roto = calc_roto(season)
+    metrics = schedule_metrics(season)
    
 
 reg_season_stats()
