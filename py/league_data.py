@@ -48,7 +48,6 @@ def get_season(end_week):
                 league_util.find_opponents(x, matchup_df), axis=1, result_type='expand')
             matchup_df['point_ranks'] = matchup_df['points'].rank()
             median_rank = len(matchup_df) / 2
-
             matchup_df['median'] = matchup_df.apply(lambda x:
                 1 if x['point_ranks'] > median_rank else 0, axis=1)
 

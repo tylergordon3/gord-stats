@@ -482,12 +482,10 @@ def schedule_main(update_all):
     html += '<h2>Strength of Schedule & Victory</h2>'
     html += "<p><strong>SOS:</strong> Strength of Schedule - Difficulty of Schedule (<a href=https://hackastat.eu/en/learn-a-stat-strength-of-schedule-sos/>Learn More</a>)</p>"
     html += "<p><strong>SOV:</strong> Strength of Victory - Combined Win-Loss percentage of defeated opponents</p>"
-    html += "<p><strong>Scoring Luck:</strong> Average percentage of an opponent's points scored on you vs their total PF for season.</p>"
-    html += f"<p>Luck Example: After week 13, if an opponent scored same amount of points every game, their ratio per game would be 7.69% (~7.69 * 13 = 100)</p>"
-    html += f"<p>More Examples: Week 4: 25% | Week 8: 12.5% | Week 12: 8.33% | Week 13: 7.69% | Week 14: 7.14% </p>"
+    html += "<p><strong>SOV:</strong> Expected Wins (vs Actual), used Pythagorean Expectation to estimate wins based on PF and PA</p>"
     html += '<p>*Sorted by SOS</p>'
     html += '<div class="table-scroll">'
-    html += sos_df.to_html()
+    html += schedule_stats.schedule_metrics().to_html()
     html += '</div>'
 
     # All-Play Stats

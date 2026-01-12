@@ -6,6 +6,7 @@ import nflreadpy as nfl
 import utilities as utils
 from pathlib import Path
 
+EXPW_RATIO = 2.37
 SEASON_STR = utils.getYrStr()
 SEASON = nfl.get_current_season()
 INJ_PATH = utils.get_project_root() / Path("data") / Path("injuries") / Path(f'{SEASON_STR}.json')

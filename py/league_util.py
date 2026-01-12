@@ -35,8 +35,8 @@ def calc_totals(team, season_df):
     else:
         h2h_wins = prev_weeks['win'].sum() + team['win']
         h2h_loss = len(prev_weeks) - h2h_wins + 1
-        med_wins = prev_weeks['median'].sum()
-        med_loss = len(prev_weeks)
+        med_wins = prev_weeks['median'].sum() + team['median']
+        med_loss = len(prev_weeks) -med_wins + 1
 
     return [h2h_wins, med_wins, h2h_loss, med_loss]
 

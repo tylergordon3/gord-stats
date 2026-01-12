@@ -22,8 +22,8 @@ def process_roto(group_df):
         record(team, group_df), axis=1, result_type='expand')
     return group_df
 
-def calc_roto(reg_season):
-    # reg_season = load_stats()
+def calc_roto():
+    reg_season = load_stats()
     df = reg_season.groupby('week')
     results = []
     for _, group in df:
@@ -60,21 +60,58 @@ def calc_ow(team, season, dict):
     ow = sum(arr) / len(arr)
     return ow
 
-def schedule_metrics(reg_season):
+def calc_sov(team, season, dict):
+    only_team = season[season['roster_id'] == team['roster_id']].copy()
+    filter = only_team[only_team['win'] == 1]['opp'].tolist()
+    arr = [dict[x] for x in filter]
+    sov = sum(arr)/len(arr)
+    return sov
+
+def schedule_metrics():
+    reg_season = load_stats()
     # Winning Percentage
     reg_season['W%'] = reg_season['total_wins'] / (reg_season['total_wins'] + reg_season['total_loss'])
+
     # Overall Opponent Winning Percentage [OW%]
     curr_winp = reg_season[reg_season['week'] == (len(reg_season)/10)].copy()
     winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['W%']))
-    curr_winp['OppOvrW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, winp_dict), axis=1)
-    print(curr_winp)
+    curr_winp['OW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, winp_dict), axis=1)
+
+    # Calculate Overall Opponent Winning Percentage of the opponents faced [OOW%]
+    oow_winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['OW%']))
+    curr_winp['OOW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, oow_winp_dict), axis=1)
+
+    # Calculate Strength of Schedule - (2 * OW) + OOW divided by 3
+    curr_winp['SOS'] = ((curr_winp['OW%'] * 2) + curr_winp['OOW%'])/3
+
+    # Calculate Strength of Victory - Average win % of defeated opponents
+    curr_winp['SOV'] = curr_winp.apply(lambda x: calc_sov(x, reg_season, winp_dict), axis=1)
+
+    # Calculate Strength of Victory - Average win % of defeated opponents
+    curr_winp['Exp W (Actual)'] = curr_winp.apply(lambda x:
+           f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*14:.1f} ({x['h2h_wins']})', 
+           axis=1)
+    
+    df = curr_winp[['team_name', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(by='SOS', ascending=False)
+    styler = (
+       df
+        .style
+        .hide(axis="index") 
+        .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
+        .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
+        .background_gradient(cmap="RdYlGn", subset=["SOV"])
+        .apply(html_util.bg_from_pythag_str, subset=["Exp W (Actual)"])
+        .set_table_styles([html_util.light_grid_style_data, html_util.light_grid_style_header, html_util.table_style], overwrite=False)
+        )
+    return styler
 
 def reg_season_stats():
     season = load_stats()
-    # roto = calc_roto(season)
+
+    roto = calc_roto(season)
     metrics = schedule_metrics(season)
    
 
-reg_season_stats()
+
 
 
