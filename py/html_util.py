@@ -119,6 +119,4 @@ def highlightActualRecords(df):
         for col in df.columns:
             if idx == col:
                 styles.loc[idx, col] = 'background-color: #373737'
-            elif (idx == 'Schedule Total') & (col == 'Team Total Record'):
-                styles.loc[idx, col] = 'background-color: #DDDDDD'
     return styles
