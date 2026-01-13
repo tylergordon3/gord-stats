@@ -8,7 +8,7 @@ def get_season(end_week):
     # Fantasy season: 1-14 reg, 15-17 post
     if end_week > 17: end_week = 17
     league = League(constants.LEAGUEID)
-    teams = get_teams(league)
+    teams = league_util.get_teams(league)
     season = pd.DataFrame()
     with tqdm(total=end_week, desc="Loading season") as pbar:
         for week in range(1,end_week+1):
@@ -64,15 +64,5 @@ def get_season(end_week):
             season = pd.concat([season, matchup_df])
             pbar.update(1)
     return season
-
-
-def get_teams(league) -> pd.DataFrame:
-    users = league.map_users_to_team_name(league.get_users())
-    users = pd.Series(users).to_frame().reset_index()
-    users.columns = ['owner_id', 'team_name']
-    rosters = pd.DataFrame.from_dict(league.get_rosters())
-    users = pd.merge(users, rosters[['owner_id', 'roster_id']].copy(), 
-                     'left', on='owner_id')
-    return users
 
    

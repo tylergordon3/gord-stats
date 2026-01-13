@@ -1,5 +1,5 @@
 import pandas as pd
-import numpy as np
+import league_util
 import constants
 import html_util
 
@@ -112,22 +112,28 @@ def schedule_metrics(standings=False):
     return styler
 
 def schedule_compare():
-
     reg_season = load_stats()
     roster_ids = pd.unique(reg_season['roster_id'])
     all = {}
-
+    df = pd.DataFrame()
+    indexes = []
     for id in roster_ids:
         schedule = reg_season[reg_season['roster_id'] == id]['opp_points'].to_numpy()
         this_schedule = {}
+        indexes.append(league_util.team_from_id(id))
         for check_id in roster_ids:
             if check_id == id:
                 continue
             to_compare = reg_season[reg_season['roster_id'] == check_id]['points'].to_numpy()
             wins = int(sum(to_compare > schedule))
-            this_schedule[int(check_id)] = wins
+            this_schedule[league_util.team_from_id(check_id)] = wins
         all[int(id)] = this_schedule
-    print(all)
+        df = pd.concat([df, pd.DataFrame([this_schedule])])
+    df.index = indexes
+    df.index.name = 'Schedules'
+    df.columns.name = 'Teams'
+    output = df.copy()
+    print(df)
 
 
 def reg_season_stats():

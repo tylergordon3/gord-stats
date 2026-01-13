@@ -1,3 +1,6 @@
+import pandas as pd
+import constants
+from sleeper_wrapper import League
 
 def find_opponents(team, week_df):
     this_id = team['matchup_id']
@@ -50,4 +53,16 @@ def calc_point_totals(team, season_df):
         pf = prev_weeks['points'].sum() + team['points']
         pa = prev_weeks['opp_points'].sum() + team['opp_points']
     return [pf, pa]
-   
+
+def get_teams(league) -> pd.DataFrame:
+    users = league.map_users_to_team_name(league.get_users())
+    users = pd.Series(users).to_frame().reset_index()
+    users.columns = ['owner_id', 'team_name']
+    rosters = pd.DataFrame.from_dict(league.get_rosters())
+    users = pd.merge(users, rosters[['owner_id', 'roster_id']].copy(), 
+                     'left', on='owner_id')
+    return users
+
+def team_from_id(roster_id):
+    teams = get_teams(League(constants.LEAGUEID))
+    return list(teams[teams['roster_id'] == roster_id]['team_name'])[0]
