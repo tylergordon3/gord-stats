@@ -26,7 +26,6 @@ def schedule_main():
 
     # All-Play Stats
     html += '<h2>Records vs Every Schedule</h2>'
-    html += '<p>How To Read:</p>'
     html += '<p>Left to right - All teams (columns) compared to 1 schedule (row) </p>'
     html += '<p>Top to bottom - 1 team (column) compared to every schedule (row)</p> '
     html += '<div class="table-scroll">'
