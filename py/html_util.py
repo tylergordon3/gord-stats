@@ -86,8 +86,11 @@ def style_last_col(col):
     # Apply border-left and border-right to all cells in the last column
     return ['font-weight: bold' for _ in col]
 
-def style_total(var):
-    return ['font-weight: bold border-top: 3px solid black !important; border-bottom: 3px solid black !important;' for _ in var]
+def style_total_right(var):
+    return ['font-weight: bold border-left: 3px solid black !important;' for _ in var]
+
+def style_total_bottom(var):
+    return ['font-weight: bold border-top: 3px solid black !important;' for _ in var]
 
 def _font_color_for_bg(rgb):
         """

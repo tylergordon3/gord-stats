@@ -157,8 +157,8 @@ def schedule_compare():
     styled_df = df.style \
         .set_table_styles([html_util.light_grid_style_data, html_util.light_grid_style_header], overwrite=False) \
         .apply(html_util.highlightActualRecords, axis=None) \
-        .apply(html_util.style_total, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
-        .apply(html_util.style_total, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:])
+        .apply(html_util.style_total_right, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
+        .apply(html_util.style_total_bottom, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:])
     return styled_df
    
 
