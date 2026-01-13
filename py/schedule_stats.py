@@ -103,7 +103,7 @@ def schedule_metrics(standings=False):
        df
         .style
         .hide(axis="index") 
-        .format( lambda x: f"{x:.3f}" if isinstance(x, (int, float)) else x) 
+        .format( lambda x: f"{x:.3f}" if isinstance(x, float) else x) 
         .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .apply(html_util.bg_from_pythag_str, subset=["Exp W (Actual)"])
