@@ -281,9 +281,10 @@ def update():
             ("padding", "6px 10px")
         ]}
     ])
+    .set_table_attributes('class="sticky-table"')
     )
 
-    table = styler.to_html(index=False, classes='sticky-table')
+    table = styler.to_html(index=False)
     table_with_scroll = f'''
         <div class="table-scroll">
             {table}
@@ -300,3 +301,5 @@ def bestball_main(update_all):
         bestball_season()
     update()
     htmb.generate_landing('docs/bestball/', 'bestball', 'Best Ball')
+
+bestball_main(False)
