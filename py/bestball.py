@@ -272,7 +272,7 @@ def update():
     #summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
     summary_df = summary_df.sort_values(by='BestBall Wins', ascending=False)
     summary_df = summary_df.drop(columns=['BestBall Losses', 'BestBall Wins', 'Wins', 'Losses'])
-    summary_df = summary_df[['Record', 'PF', 'PA', 'BB Record', 'BB PF', 'BB PA', 'Change']]
+    summary_df = summary_df[['Team', 'Record', 'PF', 'PA', 'BB Record', 'BB PF', 'BB PA', 'Change']]
     path = "docs/bestball/bestball.html"
     styler = (
     summary_df
