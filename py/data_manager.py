@@ -1,4 +1,5 @@
 import injuries
+import player
 import league_data as league_data
 import nflreadpy as nfl
 import utilities as utils
@@ -13,6 +14,8 @@ def main():
     # Note: Fantasy regular season goes to week 14
     curr_overall_week = utils.get_last_completed_week()
     
+    player.player_json()
+
     data_path = utils.get_project_root() / Path("data")
     inj_path = data_path / Path("injuries") / Path(f'{SEASON_STR}.json')
     if (inj_path.exists() == False) | (curr_overall_week < 18):
