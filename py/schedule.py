@@ -27,7 +27,7 @@ def schedule_main():
     # All-Play Stats
     html += '<h2>Records vs Every Schedule</h2>'
     html += '<div class="table-scroll">'
-    html += schedule_stats.schedule_compare().to_html(index=False, classes='sticky-table')
+    html += schedule_stats.schedule_compare().to_html(index=False)
     html += '</div>'
     lines = html.split("\n")
     
