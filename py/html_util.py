@@ -2,6 +2,7 @@ import re
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
+import pandas as pd
 
 
 light_grid_style_data = {
@@ -74,6 +75,17 @@ def bg_from_pythag_str(series, cmap='RdYlGn'):
             styles.append(f'background-color:{bg_hex};color:{fg_hex}')
         return styles
 
+def style_last_row(row):
+    # Apply border-top and border-bottom to all cells in the last row
+    return ['border-top: 3px solid black !important; border-bottom: 3px solid black !important;' for _ in row]
+
+def allPlay_border(col):
+    return ['border-left: 3px solid black !important;' for _ in col]
+
+def style_last_col(col):
+    # Apply border-left and border-right to all cells in the last column
+    return ['font-weight: bold' for _ in col]
+
 def _font_color_for_bg(rgb):
         """
         Return '#ffffff' (white) if the background rgb is "dark",
@@ -84,3 +96,29 @@ def _font_color_for_bg(rgb):
         # luma = 0.299 R + 0.587 G + 0.114 B  (standard TV luminance)
         luminance = 0.299 * r + 0.587 * g + 0.114 * b
         return "#ffffff" if luminance < 0.5 else "#000000"
+
+def highlightSpec(styles):
+    def getColor(val):
+        [wins, loss] = getIndValues(val)
+        if wins > loss:
+            color = '#CCDDAA'
+        elif wins < loss:
+            color = '#FFCCCC'
+        else: 
+            color = "#F1EABE"
+        return f'background-color: {color}'
+    ret = map(getColor, list(styles))
+    return list(ret)
+
+def highlightActualRecords(df):
+    # each row
+    styles = pd.DataFrame('', index=df.index, columns=df.columns)
+    styles = df.apply(lambda x: highlightSpec(x))
+    
+    for idx in df.index:
+        for col in df.columns:
+            if idx == col:
+                styles.loc[idx, col] = 'background-color: lightgray'
+            elif (idx == 'Schedule Total') & (col == 'Team Total Record'):
+                styles.loc[idx, col] = 'background-color: #DDDDDD'
+    return styles

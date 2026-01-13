@@ -230,8 +230,8 @@ def allSchedulesHTML(df):
             .category-C { background-color: #F1EABE; }
         </style>
         """
-    table = styled_df.to_html(index=False, classes='sticky-table')
-
+    #table = styled_df.to_html(index=False, classes='sticky-table')
+    table = schedule_stats.schedule_compare().to_html(index=False, classes='sticky-table')
     table_div = f'''
         {legend_html}
         <div class="table-scroll">

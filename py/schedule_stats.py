@@ -122,19 +122,22 @@ def schedule_compare():
         this_schedule = {}
         indexes.append(league_util.team_from_id(id))
         for check_id in roster_ids:
-            if check_id == id:
-                continue
             to_compare = reg_season[reg_season['roster_id'] == check_id]['points'].to_numpy()
             wins = int(sum(to_compare > schedule))
-            this_schedule[league_util.team_from_id(check_id)] = wins
+            losses = int(sum(to_compare < schedule))
+            this_schedule[league_util.team_from_id(check_id)] = f'{wins}-{losses}'
         all[int(id)] = this_schedule
         df = pd.concat([df, pd.DataFrame([this_schedule])])
     df.index = indexes
     df.index.name = 'Schedules'
     df.columns.name = 'Teams'
     output = df.copy()
-    print(df)
-
+    styled_df = df.style \
+        .set_table_styles([html_util.light_grid_style_data, html_util.light_grid_style_header], overwrite=False) \
+        .apply(html_util.highlightActualRecords, axis=None) \
+        .apply(html_util.style_last_row, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
+        .apply(html_util.style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:])
+    return styled_df
 
 def reg_season_stats():
     roto = calc_roto()
