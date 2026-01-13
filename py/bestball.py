@@ -268,8 +268,8 @@ def update():
     
     summary_df['BB PF'] = df.groupby('roster_id')['bb_score'].sum()
     summary_df['BB PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
-    summary_df['Change'] = int(summary_df['BestBall Wins'] - summary_df['Wins'])
-    summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
+    summary_df['Change'] = summary_df['BestBall Wins'] - summary_df['Wins']
+    #summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
     summary_df = summary_df.sort_values(by='BestBall Wins', ascending=False)
     summary_df = summary_df.drop(columns=['BestBall Losses', 'BestBall Wins', 'Wins', 'Losses'])
     summary_df = summary_df[['Record', 'PF', 'PA', 'BB Record', 'BB PF', 'BB PA', 'Change']]
@@ -280,8 +280,8 @@ def update():
     .hide(axis="index")
     .format("{:.2f}", subset=summary_df.select_dtypes(include="number").columns)
     .background_gradient(cmap="RdYlGn", subset=["Change"])
-    .background_gradient(cmap="RdYlGn", subset=["BestBall PF"])
-    .background_gradient(cmap="RdYlGn_r", subset=["BestBall PA"])
+    .background_gradient(cmap="RdYlGn", subset=["BB PF"])
+    .background_gradient(cmap="RdYlGn_r", subset=["BB PA"])
     .set_table_styles([
         {"selector": "td, th", "props": [
             ("border", "1px solid #ccc"),
