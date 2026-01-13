@@ -57,7 +57,7 @@ def get_season(end_week):
                 league_util.calc_totals(x, season), axis=1, result_type='expand')
             matchup_df['total_wins'] = matchup_df.apply(lambda x: x['h2h_wins'] + x['median_wins'], axis=1)
             matchup_df['total_loss'] = matchup_df.apply(lambda x: x['h2h_loss'] + x['median_loss'], axis=1)
-            matchup_df['record'] = matchup_df.apply(lambda x: f'{x['total_wins']}-{x['total_loss']}', axis=1)
+            matchup_df['record'] = matchup_df.apply(lambda x: f'{int(x['total_wins'])}-{int(x['total_loss'])}', axis=1)
             matchup_df[['PF', 'PA']] = matchup_df.apply(lambda x: league_util.calc_point_totals(x, season), 
                                                         axis=1, result_type='expand')
             matchup_df = pd.merge(matchup_df, teams, how='left', on='roster_id')
