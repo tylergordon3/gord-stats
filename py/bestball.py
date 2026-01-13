@@ -266,7 +266,7 @@ def update():
     summary_df['Change'] = summary_df['BestBall Wins'] - summary_df['Wins']
     summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
     summary_df = summary_df.sort_values(by='BestBall Wins', ascending=False)
-    path = "docs/bestball/summary_bestball.html"
+    path = "docs/bestball/bestball.html"
     styler = (
     summary_df
     .style
@@ -300,6 +300,6 @@ def bestball_main(update_all):
     if update_all:
         bestball_season()
     update()
-    htmb.generate_landing('docs/bestball/', 'bestball', 'Best Ball')
+    #htmb.generate_landing('docs/bestball/', 'bestball', 'Best Ball')
 
 bestball_main(False)
