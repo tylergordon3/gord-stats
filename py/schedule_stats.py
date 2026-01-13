@@ -108,6 +108,7 @@ def schedule_metrics(standings=False):
         .background_gradient(cmap="RdYlGn", subset=["SOV"])
         .apply(html_util.bg_from_pythag_str, subset=["Exp W (Actual)"])
         .set_table_styles([html_util.light_grid_style_data, html_util.light_grid_style_header, html_util.table_style], overwrite=False)
+        .set_table_attributes('class="sticky-table"')
         )
     return styler
 

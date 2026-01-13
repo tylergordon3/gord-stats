@@ -13,7 +13,6 @@ import html_builder as htmb
 #   If true - Updates all best ball pages
 #   Always generates landing page
 
-update_all = False
 
 data_manager.main()
 
