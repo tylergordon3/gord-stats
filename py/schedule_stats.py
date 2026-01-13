@@ -145,4 +145,3 @@ def reg_season_stats():
     sched_comp = schedule_compare()
    
 
-schedule_compare()

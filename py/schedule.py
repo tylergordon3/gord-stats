@@ -100,30 +100,6 @@ def recordVsHelper(team_scores, opp_scores):
     loss = len(diff1) - wins
     return f'{wins}-{loss}'
 
-def dfVsAllSched(rosters):
-    yr = util.getYrStr()
-    wk = min(14, util.get_last_completed_week())
-    rosters = util.load_df_from_json(f'data/rost{yr}_{wk}.json')
-    all_results = {}
-    for index, row in rosters.iterrows():
-        # index, value in enumerate(my_array)
-        arr = {}
-        total = row['total']
-        for idx, val in enumerate(row['wins_vs']):
-            name = rosters[rosters['roster_id'] == idx+1]['team_name']
-            arr[list(name)[0]] = val
-        arr['Team Total Record'] = total
-        all_results[row['roster_id']] = arr
-    all_df = pd.DataFrame.from_dict(all_results, orient='index')
-    dict = fr.mapNameToId(rosters)
-    df = all_df.rename(index = dict)
-    to_add ={}
-    total_row = df.apply(lambda x: getVals(x))
-    to_add['Totals'] = total_row
-    add_df = pd.DataFrame(total_row)
-    add_df = add_df.rename(columns={0 : "Schedule Total"})
-    return pd.concat([df, add_df.T])
-
 def highlightSpec(styles):
     def getColor(val):
         [wins, loss] = getIndValues(val)
@@ -150,106 +126,11 @@ def highlightActualRecords(df):
                 styles.loc[idx, col] = 'background-color: #DDDDDD'
     return styles
 
-def style_last_row(row):
-    # Apply border-top and border-bottom to all cells in the last row
-    return ['border-top: 3px solid black !important; border-bottom: 3px solid black !important;' for _ in row]
-
-def allPlay_border(col):
-    return ['border-left: 3px solid black !important;' for _ in col]
-
-def style_last_col(col):
-    # Apply border-left and border-right to all cells in the last column
-    return ['font-weight: bold' for _ in col]
-    
-light_grid_style_data = {
-    'selector': 'td',
-    'props': [
-        ('border', '1px solid black')
-    ]
-}
-light_grid_style_header = {
-    'selector': 'th',
-    'props': [
-        ('border', '1px solid black')
-    ]
-}
-
-def allSchedulesHTML(df):
-    # HTML for All-Play Stats
-    styled_df = df.style \
-        .set_table_styles([light_grid_style_data, light_grid_style_header], overwrite=False) \
-        .apply(highlightActualRecords, axis=None) \
-        .apply(style_last_row, axis=1, subset=pd.IndexSlice[df.index[-1]:, :]) \
-        .apply(style_last_col, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:])
-        
-    # Columns are teams, rows are schedules
-    return_html = '''
-    <h2>Records vs Every Schedule</h2>
-    <p>Total column to right is that team's cumulative record
-    if they played against every schedule</p>
-    <p>Total column on bottom is the cumulative record of everyone if they played
-    against your specific schedule.</p>
-    <p><strong>Example:</strong>
-    <p> Green on right means your team is performing well </p>
-    </p> Red on bottom means your schedule has been hard </p>
-    '''
-    legend_html = """
-        <div class="legend-container">
-            <div class="legend-item">
-                <span class="legend-color-box category-A"></span> Above .500
-            </div>
-            <div class="legend-item">
-                <span class="legend-color-box category-B"></span> Below .500
-            </div>
-            <div class="legend-item">
-                <span class="legend-color-box category-C"></span> .500
-            </div>
-        </div>
-        <style>
-            .legend-container {
-                display: flex;
-                justify-content: space-evenly;
-                margin-top: 20px;
-                flex-direction: column;
-                padding: 10px;
-                width: 100%;
-            }
-            .legend-item {
-                display: inline-flex;
-                align-items: center;
-                margin-bottom: 5px;
-            }
-            .legend-color-box {
-                width: 20px;
-                height: 20px;
-                margin-right: 10px;
-                border: 1px solid #000;
-            }
-            .category-A { background-color: #CCDDAA; }
-            .category-B { background-color: #FFCCCC; }
-            .category-C { background-color: #F1EABE; }
-        </style>
-        """
-    #table = styled_df.to_html(index=False, classes='sticky-table')
-    table = schedule_stats.schedule_compare().to_html(index=False, classes='sticky-table')
-    table_div = f'''
-        {legend_html}
-        <div class="table-scroll">
-            {table}
-        </div>
-'''
-    html = return_html + table_div
-    return html
-
 #       ****** MAIN ******
 def schedule_main():
     # Set up
     html = ''
-    yr = util.getYrStr()
     wk = util.get_week()
-    week = min(14, wk)
-    checkPath = f'data/rost{yr}_{week}.json'
-    rosters = util.load_df_from_json(checkPath)
     # All Play Standings
     html += '<h2>All-Play Standings</h2>'
     html += '<p>Whole league goes H2H, every week.</p>'
@@ -267,8 +148,10 @@ def schedule_main():
     html += '</div>'
 
     # All-Play Stats
-    allSched_df = dfVsAllSched(rosters)
-    html += allSchedulesHTML(allSched_df)
+    html += '<h2>Records vs Every Schedule</h2>'
+    html += '<div class="table-scroll">'
+    html += schedule_stats.schedule_compare().to_html(index=False, classes='sticky-table')
+    html += '</div>'
     lines = html.split("\n")
     # Make first row and column freeze on scroll
     for i, line in enumerate(lines):
