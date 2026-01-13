@@ -66,3 +66,6 @@ def get_teams(league) -> pd.DataFrame:
 def team_from_id(roster_id):
     teams = get_teams(League(constants.LEAGUEID))
     return list(teams[teams['roster_id'] == roster_id]['team_name'])[0]
+
+def name_from_id(roster_id):
+    return constants.NAME_MAP[str(roster_id)]

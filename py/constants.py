@@ -6,6 +6,19 @@ import nflreadpy as nfl
 import utilities as utils
 from pathlib import Path
 
+NAME_MAP = {
+    "1" : "Colin",
+    "2" : "Tyler",
+    "3" : "Jackson",
+    "4" : "Max",
+    "5" : "Austin",
+    "6" : "Trevor",
+    "7" : "Padgett",
+    "8" : "Mark",
+    "9" : "George",
+    "10" : "Everett"
+}
+
 EXPW_RATIO = 2.37
 SEASON_STR = utils.getYrStr()
 SEASON = nfl.get_current_season()

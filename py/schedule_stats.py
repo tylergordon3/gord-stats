@@ -120,12 +120,12 @@ def schedule_compare():
     for id in roster_ids:
         schedule = reg_season[reg_season['roster_id'] == id]['opp_points'].to_numpy()
         this_schedule = {}
-        indexes.append(league_util.team_from_id(id))
+        indexes.append(league_util.name_from_id(id))
         for check_id in roster_ids:
             to_compare = reg_season[reg_season['roster_id'] == check_id]['points'].to_numpy()
             wins = int(sum(to_compare > schedule))
             losses = int(sum(to_compare < schedule))
-            this_schedule[league_util.team_from_id(check_id)] = f'{wins}-{losses}'
+            this_schedule[league_util.name_from_id(check_id)] = f'{wins}-{losses}'
         all[int(id)] = this_schedule
         df = pd.concat([df, pd.DataFrame([this_schedule])])
     df.index = indexes
