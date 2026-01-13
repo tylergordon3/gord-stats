@@ -114,20 +114,42 @@ def schedule_metrics(standings=False):
 def schedule_compare():
     reg_season = load_stats()
     roster_ids = pd.unique(reg_season['roster_id'])
-    all = {}
+
     df = pd.DataFrame()
     indexes = []
+
+    names_arr = [league_util.name_from_id(x) for x in roster_ids]
+    team_totals = dict.fromkeys(names_arr, [0,0])
+    
     for id in roster_ids:
         schedule = reg_season[reg_season['roster_id'] == id]['opp_points'].to_numpy()
+        schedule_name = league_util.name_from_id(id)
         this_schedule = {}
-        indexes.append(league_util.name_from_id(id))
+        
+        this_sched_w = 0
+        this_sched_l = 0
+        indexes.append(schedule_name)
         for check_id in roster_ids:
+            this_team_name = league_util.name_from_id(check_id)
             to_compare = reg_season[reg_season['roster_id'] == check_id]['points'].to_numpy()
             wins = int(sum(to_compare > schedule))
             losses = int(sum(to_compare < schedule))
-            this_schedule[league_util.name_from_id(check_id)] = f'{wins}-{losses}'
-        all[int(id)] = this_schedule
+            this_schedule[this_team_name] = f'{wins}-{losses}'
+            
+            this_sched_w += wins
+            this_sched_l += losses
+           
+            [team_w, team_l] = team_totals[this_team_name]
+            team_totals[this_team_name] = [team_w+wins, team_l+losses]
+        # end looping through this schedule
+        this_schedule['Schedule Totals'] = f'{this_sched_w}-{this_sched_l}'
         df = pd.concat([df, pd.DataFrame([this_schedule])])
+    for team, record in team_totals.items():
+        team_totals[team] = f'{record[0]}-{record[1]}'
+    team_totals['Schedule Totals'] = f'{0}-{0}'
+    df = pd.concat([df, pd.DataFrame([team_totals])])
+    indexes.append("Team Totals")
+    # all teams been looped
     df.index = indexes
     df.index.name = 'Schedules'
     df.columns.name = 'Teams'
