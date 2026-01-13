@@ -262,8 +262,8 @@ def update():
     summary_df['Losses'] = (last_wk * 2) - summary_df['Wins']
     summary_df['BestBall Losses'] = (last_wk * 2) - summary_df['BestBall Wins']
 
-    summary_df['Record'] = summary_df.apply(lambda x: f'{x['Wins']}-{x['Losses']}')
-    summary_df['BB Record'] = summary_df.apply(lambda x: f'{x['BestBall Wins']}-{x['BestBall Losses']}')
+    summary_df['Record'] = summary_df.apply(lambda x: f'{x['Wins']}-{x['Losses']}', axis=1)
+    summary_df['BB Record'] = summary_df.apply(lambda x: f'{x['BestBall Wins']}-{x['BestBall Losses']}', axis=1)
     
     
     summary_df['BB PF'] = df.groupby('roster_id')['bb_score'].sum()
