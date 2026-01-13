@@ -23,6 +23,7 @@ table_style = {
         "props": [
         ("width", "100px"), # px instead of %
         ("text-align", "center"), # optional ?
+        ("table-layout","fixed"),
     ]}
 
 def highlight_roto(col):
@@ -123,7 +124,6 @@ def highlightActualRecords(df):
     
     for idx in df.index:
         for col in df.columns:
-            print(f'Col: {col} idx: {idx}')
             if ((idx == col) | ((idx == "Team Totals") & (col == "Schedule Totals"))):
                 styles.loc[idx, col] = 'background-color: #373737'
     return styles
