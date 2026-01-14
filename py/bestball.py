@@ -265,14 +265,13 @@ def update():
     summary_df['Record'] = summary_df.apply(lambda x: f'{x['Wins']}-{x['Losses']}', axis=1)
     summary_df['BB Record'] = summary_df.apply(lambda x: f'{x['BestBall Wins']}-{x['BestBall Losses']}', axis=1)
     
-    
     summary_df['BB PF'] = df.groupby('roster_id')['bb_score'].sum()
     summary_df['BB PA'] = df.groupby('roster_id')['bb_opp_score'].sum()
     summary_df['Change'] = summary_df['BestBall Wins'] - summary_df['Wins']
-    #summary_df = summary_df.iloc[:, [1, 0, 5, 2, 3, 4, 6, 7, 8, 9]]
+
     summary_df = summary_df.sort_values(by='BestBall Wins', ascending=False)
     summary_df = summary_df.drop(columns=['BestBall Losses', 'BestBall Wins', 'Wins', 'Losses'])
-    summary_df = summary_df[['Team', 'Record', 'PF', 'PA', 'BB Record', 'BB PF', 'BB PA', 'Change']]
+    summary_df = summary_df[['Team', 'Change', 'BB Record', 'BB PF', 'BB PA', 'Record', 'PF', 'PA']]
     path = "docs/bestball/bestball.html"
     styler = (
     summary_df
@@ -282,12 +281,6 @@ def update():
     .background_gradient(cmap="RdYlGn", subset=["Change"])
     .background_gradient(cmap="RdYlGn", subset=["BB PF"])
     .background_gradient(cmap="RdYlGn_r", subset=["BB PA"])
-    .set_table_styles([
-        {"selector": "td, th", "props": [
-            ("border", "1px solid #ccc"),
-            ("padding", "6px 10px")
-        ]}
-    ])
     .set_table_attributes('class="sticky-table"')
     )
 
