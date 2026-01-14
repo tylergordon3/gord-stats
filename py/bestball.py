@@ -1,14 +1,14 @@
-from sleeper_wrapper import League
+import os
+import json
+import pandas as pd
+import html_util
+import utilities
 import constants as c
 import fantasy_rosters as fr
 import player_db as pdb
-import pandas as pd
-import os
-import nflreadpy as nfl
-import json
-from io import StringIO
-import utilities
 import html_builder as htmb
+from io import StringIO
+from sleeper_wrapper import League
 
 league = League(c.LEAGUEID)
 rosters = fr.get(league)
@@ -281,6 +281,7 @@ def update():
     .background_gradient(cmap="RdYlGn", subset=["Change"])
     .background_gradient(cmap="RdYlGn", subset=["BB PF"])
     .background_gradient(cmap="RdYlGn_r", subset=["BB PA"])
+    .set_table_styles([html_util.light_grid_style_data, html_util.light_grid_style_header, html_util.table_style], overwrite=False)
     .set_table_attributes('class="sticky-table"')
     )
 
