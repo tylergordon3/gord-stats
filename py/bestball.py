@@ -291,7 +291,7 @@ def update():
             {table}
         </div>
 '''
-    html = htmb.add_front_matter(table_with_scroll, 'BestBall Summary')
+    html = htmb.add_front_matter(table_with_scroll, 'BestBall 2025 Summary')
     
     with open(path, 'w') as f:
         f.write(html)
