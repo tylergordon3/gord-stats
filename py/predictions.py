@@ -594,9 +594,8 @@ def predict(date):
     tourney_idx = pd.Index.union(conf_win_idx, atlarge_idx)
     mask = main.index.isin(tourney_idx)
     main['Seed'] = None
-   
-    main['Seed'][mask] = seed_helper(main["Ovr"][mask].copy())
-   
+    main.loc[mask, 'Seed']= seed_helper(main["Ovr"][mask])
+
     main["Ovr"] = main.apply(lambda x: f'#{x["Ovr"]} (Seed {x["Seed"]})' if x["Seed"] else f'#{x["Ovr"]}', axis=1)
     
     main["Kenpom Rank"] = main["Kenpom Rank"].astype(int)
@@ -637,58 +636,22 @@ def predict(date):
     df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
     df["Team"] = df.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
     df = df.drop(columns=["img"])
-    print(df.to_string())
+
     styler = (
         df.style.hide(axis="index")
         .format({"Rtg": "{:.4f}"})
         .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .applymap(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
         .set_table_attributes('class="sticky-table rank-table"')
         .background_gradient(
             subset=["Kenpom"],
             cmap="cividis",  # green = better (lower rank)
-            gmap=df["Kenpom Rank"],
+            gmap=main["Kenpom Rank"],
         )
         .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=df["Torvik Rank"]
+            subset=["Torvik"], cmap="cividis", gmap=main["Torvik Rank"]
         )
         .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
-    )
-
-    outside8["Kenpom"] = (
-        outside8["Kenpom Rank"].astype(str) + " " + outside8["# Models Kenpom"].apply(stars)
-    )
-    outside8["Torvik"] = (
-        outside8["Torvik Rank"].astype(str) + " " + outside8["# Models Torvik"].apply(stars)
-    )
-
-    outside8 = outside8.drop(
-        columns=[
-            "Kenpom Rank",
-            "# Models Kenpom",
-            "Torvik Rank",
-            "# Models Torvik",
-        ]
-    )
-
-    outside8 = outside8[["Team", "Conf", "Kenpom", "Torvik", "Rtg"]]
-
-    outside8["img"] = outside8.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    outside8["Team"] = outside8.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
-    outside8 = outside8.drop(columns=["img"])
-
-    out8_styler = (
-        outside8.style.hide(axis="index")
-        .format({"Rtg": "{:.4f}"})
-        .set_table_attributes('class="sticky-table"')
-        .background_gradient(
-            subset=["Kenpom"],
-            cmap="cividis",  # green = better (lower rank)
-            gmap=main64["Kenpom Rank"],
-        )
-        .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=main64["Torvik Rank"]
-        )
     )
 
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
@@ -697,7 +660,7 @@ def predict(date):
         conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
    
     tz = timezone("EST")
-    time_obj = datetime.datetime.now(tz)
+    time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
     df_html +=  f'''
@@ -711,10 +674,7 @@ def predict(date):
     df_html += "</div>"
     df_html += "<script src='/assets/js/rank-toggle.js'></script>"
     df_html += "<h3>First Four Out & Next 4 Out</h3>"
-    df_html += '<div class="table-container">'
-    df_html += out8_styler.to_html()
-    df_html += "</div>"
-    df_html += conf_html
+    
     path = utils.get_path(f"docs/men/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"NCAAM Prediction - {date}")
     with open(path, "w") as f:
