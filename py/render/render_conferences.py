@@ -21,10 +21,17 @@ def main(df):
         html += f'<h3>{k}</h3>'
         html += styler.to_html()
 
-    path = utils.get_path(f"docs/conference.html")
+    path = utils.get_path(f"docs/men/conference.html")
     html = htmb.add_front_matter(html, f"Conferences")
     with open(path, "w") as f:
         f.write(html)
+        print(f"Wrote to: {path}")
+        
+    path = utils.get_path(f"docs/women/conference.html")
+    html_w = 'Not available yet.'
+    html_w = htmb.add_front_matter(html, f"Conferences")
+    with open(path, "w") as f:
+        f.write(html_w)
         print(f"Wrote to: {path}")
 
     return
