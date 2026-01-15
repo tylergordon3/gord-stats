@@ -11,6 +11,7 @@ import scraper
 import re
 from collections import defaultdict
 import math
+import html_util
 
 def seed_helper(x):
     """
@@ -608,8 +609,6 @@ def predict(date):
         main["Torvik Rank"].astype(str) + " " + main["# Models Torvik"].apply(stars)
     )
 
-    conf_champ_dict = pd.Series(main.ConfChamp.values, index=main.Team).to_dict()
-    
     conf = (main.groupby("Conf")
                 .size()
                 .astype(int)
@@ -620,54 +619,11 @@ def predict(date):
     for conference, bids in conf.items():
         grouped[bids].append(conference)
 
-    master = scraper.getMasterTeams()
-    main["img"] = main.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    main["Team"] = main.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
-    main = main.drop(columns=["img"])
-
-    copy = main.copy()
-    
     march_df = main[main['Ovr'].str.contains(r"\bSeed\b", na=False)]
     first_out = main.drop(march_df.index)[:8]
-    
-    cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
-    
-    march_df = march_df[cols]
-    main = main[cols]
-    first_out = first_out[cols]
-    
-    styler = (
-        march_df.style.hide(axis="index")
-        .format({"Rtg": "{:.4f}"})
-        .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .set_table_attributes('class="sticky-table rank-table"')
-        .background_gradient(
-            subset=["Kenpom"],
-            cmap="cividis", 
-            gmap=copy['Kenpom Rank'],
-        )
-        .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
-        )
-        .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
-    )
 
-    first_out_styler = (
-        first_out.style.hide(axis="index")
-        .format({"Rtg": "{:.4f}"})
-        .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .set_table_attributes('class="sticky-table rank-table"')
-        .background_gradient(
-            subset=["Kenpom"],
-            cmap="cividis", 
-            gmap=copy['Kenpom Rank'],
-        )
-        .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
-        )
-    )
+    march_df = html_util.style_bracketology(march_df)
+    first_out = html_util.style_bracketology(first_out)
     
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
     for bids in sorted(grouped.keys(), reverse=True):
@@ -685,11 +641,11 @@ def predict(date):
                 <button data-period="1mo">1 Month</button>
                 </div>'''
     df_html += '<div class="table-container">'
-    df_html += styler.to_html()
+    df_html += march_df.to_html()
     df_html += "</div>"
     df_html += "<h3>First Four Out & Next 4 Out</h3>"
     df_html += '<div class="table-container">'
-    df_html += first_out_styler.to_html()
+    df_html += first_out.to_html()
     df_html += "</div>"
     df_html += "<script src='/assets/js/rank-toggle.js'></script>"
     
