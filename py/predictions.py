@@ -381,7 +381,7 @@ def predict_w(date):
         conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
 
     tz = timezone("EST")
-    time_obj = datetime.datetime.now(tz)
+    time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"""<p>{time}</p>
         <div class="table-container">
@@ -702,5 +702,3 @@ def predict(date):
         print(f"Wrote to: {path} for {date}")
 
     return save_df
-
-predict(date.today())
