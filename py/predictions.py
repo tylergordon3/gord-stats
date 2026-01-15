@@ -568,7 +568,6 @@ def predict(date):
     all_sorted["Win"] = all_sorted["Win"].round(4)
     all_sorted = all_sorted.sort_values(by=["Rtg", "Win"], ascending=[False, False])
     all_sorted["Ovr"] = range(1, len(all_sorted) + 1)
-
     # Saving to another df for schedule home
     save_df = all_sorted.copy()
 
@@ -579,7 +578,7 @@ def predict(date):
    
     delta = change.change(date)
     
-    main = pd.merge(all_sorted, delta, "left", "Team")
+    main = pd.merge(all_sorted.reset_index(), delta, "left", "Team").set_index("index")
 
     main["Δ 7d"] = main["Δ 7d"].fillna("NR")
     main["Δ 14d"] = main["Δ 14d"].fillna("NR")

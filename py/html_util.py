@@ -94,7 +94,9 @@ def getUrl(x, save_df, master, gender='M'):
         saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
     elif gender == 'W':
         saved_index = list(save_df[save_df["Team"] == x["Team"]]['Index'])[0]
+
     link = "/assets/images/" + master.at[saved_index, "path"]
+
     return link
 
 def style_bracketology(df, original=None):
@@ -105,7 +107,7 @@ def style_bracketology(df, original=None):
 
     df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'M'), axis=1)
     df["Team"] = df.apply(lambda x: image_formatter(x.Logo) + x.Team, axis=1)
-
+ 
     if original is not None:
         copy = original.copy()
     else:
