@@ -608,7 +608,6 @@ def predict(date):
         main["Torvik Rank"].astype(str) + " " + main["# Models Torvik"].apply(stars)
     )
 
-    
     conf_champ_dict = pd.Series(main.ConfChamp.values, index=main.Team).to_dict()
     
     conf = (main.groupby("Conf")
@@ -680,10 +679,10 @@ def predict(date):
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
     df_html +=  f'''
-                <div class="change-toggle">
-                    <button onclick="setChange('7d', this)">1 Week</button>
-                    <button onclick="setChange('14d', this)" class="active">2 Weeks</button>
-                    <button onclick="setChange('1mo', this)">1 Month</button>
+                <div class="change-toggle global-toggle">
+                <button data-period="7d">1 Week</button>
+                <button data-period="14d" class="active">2 Weeks</button>
+                <button data-period="1mo">1 Month</button>
                 </div>'''
     df_html += '<div class="table-container">'
     df_html += styler.to_html()

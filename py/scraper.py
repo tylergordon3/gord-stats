@@ -720,8 +720,8 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
         return [p5_live, live_upcoming]
 
     if len(dfs) == 2:
-        [p5done, done] = getDone(dfs[1])
-        [p5live, live_upcoming] = getLive(dfs[0])
+        [p5done, done] = getDone(dfs[0])
+        [p5live, live_upcoming] = getLive(dfs[1])
     elif len(dfs) == 1:
         if 'Time/TV' in dfs[0].columns:
             [p5done, done] = [pd.DataFrame(), pd.DataFrame()]
