@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import change
-import datetime
+from datetime import datetime, date
 from sklearn import preprocessing
 import html_builder as htmb
 from pytz import timezone
@@ -21,6 +21,7 @@ def seed_helper(x):
     :return: List with seed for each team
     :rtype: List[int]
     """
+
     current_team_index = 0
     seed = []
     seed_num = 1
@@ -32,6 +33,7 @@ def seed_helper(x):
         seed += np.repeat(seed_num, num_teams_in_seed).tolist()
         current_team_index += num_teams_in_seed
         seed_num += 1
+
     return seed
 
 
@@ -395,7 +397,7 @@ def predict_w(date):
     return save_df
 
 
-def predict(date):
+def full_prediction(date) -> pd.DataFrame:
     randomForest = utils.read_from_pickle("mtor_forest")
     decisionTree = utils.read_from_pickle("mtor_dt")
     supportVC = utils.read_from_pickle("mtor_svc")
@@ -544,9 +546,9 @@ def predict(date):
     main["Win"] = main.apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
     main["Win"] = main["Win"].round(4)
 
-    main64 = main.sort_values(by=["Rtg", "Win"], ascending=[False, False])
-    main64 = main64.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y", "Win"])
-    main64 = main64.rename(
+    main_sorted = main.sort_values(by=["Rtg", "Win"], ascending=[False, False])
+    main_sorted = main_sorted.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y", "Win"])
+    main_sorted = main_sorted.rename(
         columns={
             "Rk_x": "Kenpom Rank",
             "Rk_y": "Torvik Rank",
@@ -554,74 +556,62 @@ def predict(date):
             "Num TOR Models": "# Models Torvik",
         }
     )
+    return [main_sorted, winloss]
+
+def predict(date):
+    [all_sorted, winloss] = full_prediction(date)
+
+    all_sorted = all_sorted.sort_values("Rtg", ascending=False)
+    all_sorted["Record"] = all_sorted.apply(lambda x: getRecordOnly(x, winloss), axis=1)
+    all_sorted["Win"] = all_sorted.apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
+    all_sorted["Win"] = all_sorted["Win"].round(4)
+    all_sorted = all_sorted.sort_values(by=["Rtg", "Win"], ascending=[False, False])
+    all_sorted["Ovr"] = range(1, len(all_sorted) + 1)
 
     # Saving to another df for schedule home
-    save_df = main64.copy()
-    save_df = save_df.sort_values("Rtg", ascending=False)
-    save_df["Ovr"] = range(1, len(save_df) + 1)
-    save_df["Record"] = save_df.apply(lambda x: getRecordOnly(x, winloss), axis=1)
+    save_df = all_sorted.copy()
 
-    bestByConf = main64.loc[main64.groupby(by="Conf")["Rtg"].idxmax()]
-    main64 = main64.drop(index=bestByConf.index)
-    main64 = main64.head(76 - len(bestByConf))
-    outside8 = main64[-8:]
-    main64 = main64.head(68 - len(bestByConf))
-    main64["ConfChamp"] = 0
-    bestByConf["ConfChamp"] = 1
-    main64 = pd.concat([main64, bestByConf])
+    conf_winners = all_sorted.loc[all_sorted.groupby(by="Conf")["Rtg"].idxmax()]
 
-    main64["Win"] = main64.apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
-    main64["Win"] = main64["Win"].round(4)
-
-    main64 = main64.sort_values(by=["Rtg", "Win"], ascending=[False, False])
- 
-    main64["Ovr"] = range(1, len(main64) + 1)
+    all_sorted['ConfChamp'] = 0
+    all_sorted.loc[conf_winners.index, 'ConfChamp'] = 1
+   
     delta = change.change(date)
     
-    main64 = pd.merge(main64, delta, "left", "Team")
+    main = pd.merge(all_sorted, delta, "left", "Team")
 
-    main64["Δ 7d"] = main64["Δ 7d"].fillna("NR")
-    main64["Δ 14d"] = main64["Δ 14d"].fillna("NR")
-    main64["Δ 1mo"] = main64["Δ 1mo"].fillna("NR")
+    main["Δ 7d"] = main["Δ 7d"].fillna("NR")
+    main["Δ 14d"] = main["Δ 14d"].fillna("NR")
+    main["Δ 1mo"] = main["Δ 1mo"].fillna("NR")
 
-    main64["Δ 7d"] = main64.apply(lambda row: calcWkDelta(row, "Δ 7d"), axis=1)
-    main64["Δ 14d"] = main64.apply(lambda row: calcWkDelta(row, "Δ 14d"), axis=1)
-    main64["Δ 1mo"] = main64.apply(lambda row: calcWkDelta(row, "Δ 1mo"), axis=1)
+    main["Δ 7d"] = main.apply(lambda row: calcWkDelta(row, "Δ 7d"), axis=1)
+    main["Δ 14d"] = main.apply(lambda row: calcWkDelta(row, "Δ 14d"), axis=1)
+    main["Δ 1mo"] = main.apply(lambda row: calcWkDelta(row, "Δ 1mo"), axis=1)
 
-    main64["Seed"] = seed_helper(main64["Ovr"])
-    main64["Ovr"] = (
-        "#"
-        + main64["Ovr"].astype(str)
-        + " (Seed "
-        + main64["Seed"].astype(str)
-        + ")"
+    conf_win_idx = main[main['ConfChamp'] == 1].index
+    dropped = main.drop(index=conf_win_idx)
+    atlarge_idx = dropped.head(68 - len(conf_winners)).index
+    tourney_idx = pd.Index.union(conf_win_idx, atlarge_idx)
+    mask = main.index.isin(tourney_idx)
+    main['Seed'] = None
+    main.loc[mask, 'Seed']= seed_helper(main["Ovr"][mask])
+
+    main["Ovr"] = main.apply(lambda x: f'#{x["Ovr"]} (Seed {x["Seed"]})' if x["Seed"] else f'#{x["Ovr"]}', axis=1)
+    
+    main["Kenpom Rank"] = main["Kenpom Rank"].astype(int)
+    main["Torvik Rank"] = main["Torvik Rank"].astype(int)
+
+    main["Kenpom"] = (
+        main["Kenpom Rank"].astype(str) + " " + main["# Models Kenpom"].apply(stars)
+    )
+    main["Torvik"] = (
+        main["Torvik Rank"].astype(str) + " " + main["# Models Torvik"].apply(stars)
     )
 
-    main64["Kenpom Rank"] = main64["Kenpom Rank"].astype(int)
-    main64["Torvik Rank"] = main64["Torvik Rank"].astype(int)
-
-    main64["Kenpom"] = (
-        main64["Kenpom Rank"].astype(str) + " " + main64["# Models Kenpom"].apply(stars)
-    )
-    main64["Torvik"] = (
-        main64["Torvik Rank"].astype(str) + " " + main64["# Models Torvik"].apply(stars)
-    )
-
-    styler = main64[["Kenpom", "Torvik", "Rtg", "Ovr", "Δ 7d", "Δ 14d", "Δ 1mo"]].style
-    conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
-    df = main64.drop(
-        columns=[
-            "Kenpom Rank",
-            "# Models Kenpom",
-            "Torvik Rank",
-            "# Models Torvik",
-            "Seed",
-            "ConfChamp",
-            "Win",
-        ]
-    )
-    df = df[["Team", "Conf", "Kenpom", "Torvik", "Rtg", "Ovr", "Δ 7d", "Δ 14d", "Δ 1mo"]]
-    conf = (df.groupby("Conf")
+    
+    conf_champ_dict = pd.Series(main.ConfChamp.values, index=main.Team).to_dict()
+    
+    conf = (main.groupby("Conf")
                 .size()
                 .astype(int)
                 .to_dict()
@@ -632,69 +622,61 @@ def predict(date):
         grouped[bids].append(conference)
 
     master = scraper.getMasterTeams()
-    df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    df["Team"] = df.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
-    df = df.drop(columns=["img"])
+    main["img"] = main.apply(lambda x: getUrl(x, save_df, master), axis=1)
+    main["Team"] = main.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
+    main = main.drop(columns=["img"])
+
+    copy = main.copy()
+    
+    march_df = main[main['Ovr'].str.contains(r"\bSeed\b", na=False)]
+    first_out = main.drop(march_df.index)[:8]
+    
+    cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
+    
+    march_df = march_df[cols]
+    main = main[cols]
+    first_out = first_out[cols]
+    
     styler = (
-        df.style.hide(axis="index")
+        march_df.style.hide(axis="index")
         .format({"Rtg": "{:.4f}"})
         .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .applymap(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
         .set_table_attributes('class="sticky-table rank-table"')
         .background_gradient(
             subset=["Kenpom"],
-            cmap="cividis",  # green = better (lower rank)
-            gmap=main64["Kenpom Rank"],
+            cmap="cividis", 
+            gmap=copy['Kenpom Rank'],
         )
         .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=main64["Torvik Rank"]
+            subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
         )
         .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
     )
 
-    outside8["Kenpom"] = (
-        outside8["Kenpom Rank"].astype(str) + " " + outside8["# Models Kenpom"].apply(stars)
-    )
-    outside8["Torvik"] = (
-        outside8["Torvik Rank"].astype(str) + " " + outside8["# Models Torvik"].apply(stars)
-    )
-
-    outside8 = outside8.drop(
-        columns=[
-            "Kenpom Rank",
-            "# Models Kenpom",
-            "Torvik Rank",
-            "# Models Torvik",
-        ]
-    )
-
-    outside8 = outside8[["Team", "Conf", "Kenpom", "Torvik", "Rtg"]]
-
-    outside8["img"] = outside8.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    outside8["Team"] = outside8.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
-    outside8 = outside8.drop(columns=["img"])
-
-    out8_styler = (
-        outside8.style.hide(axis="index")
+    first_out_styler = (
+        first_out.style.hide(axis="index")
         .format({"Rtg": "{:.4f}"})
-        .set_table_attributes('class="sticky-table"')
+        .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .set_table_attributes('class="sticky-table rank-table"')
         .background_gradient(
             subset=["Kenpom"],
-            cmap="cividis",  # green = better (lower rank)
-            gmap=main64["Kenpom Rank"],
+            cmap="cividis", 
+            gmap=copy['Kenpom Rank'],
         )
         .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=main64["Torvik Rank"]
+            subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
         )
     )
-
+    
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
     for bids in sorted(grouped.keys(), reverse=True):
         confs = ", ".join(grouped[bids])
         conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
    
     tz = timezone("EST")
-    time_obj = datetime.datetime.now(tz)
+    time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
     df_html +=  f'''
@@ -706,12 +688,13 @@ def predict(date):
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += "</div>"
-    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
     df_html += "<h3>First Four Out & Next 4 Out</h3>"
     df_html += '<div class="table-container">'
-    df_html += out8_styler.to_html()
+    df_html += first_out_styler.to_html()
     df_html += "</div>"
-    df_html += conf_html
+    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
+    
+    # MAIN -> DF with Conf col data
     path = utils.get_path(f"docs/men/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"NCAAM Prediction - {date}")
     with open(path, "w") as f:
@@ -719,3 +702,5 @@ def predict(date):
         print(f"Wrote to: {path} for {date}")
 
     return save_df
+
+predict(date.today())
