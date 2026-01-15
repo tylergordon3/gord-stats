@@ -29,7 +29,7 @@ def main(df):
         
     path = utils.get_path(f"docs/women/conference.html")
     html_w = 'Not available yet.'
-    html_w = htmb.add_front_matter(html, f"Conferences")
+    html_w = htmb.add_front_matter(html_w, f"Conferences")
     with open(path, "w") as f:
         f.write(html_w)
         print(f"Wrote to: {path}")
