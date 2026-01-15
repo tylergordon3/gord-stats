@@ -608,21 +608,10 @@ def predict(date):
         main["Torvik Rank"].astype(str) + " " + main["# Models Torvik"].apply(stars)
     )
 
-    styler = main[["Kenpom", "Torvik", "Rtg", "Ovr", "Δ 7d", "Δ 14d", "Δ 1mo"]].style
+    
     conf_champ_dict = pd.Series(main.ConfChamp.values, index=main.Team).to_dict()
-    df = main.drop(
-        columns=[
-            "Kenpom Rank",
-            "# Models Kenpom",
-            "Torvik Rank",
-            "# Models Torvik",
-            "Seed",
-            "ConfChamp",
-            "Win",
-        ]
-    )
-    df = df[["Team", "Conf", "Kenpom", "Torvik", "Rtg", "Ovr", "Δ 7d", "Δ 14d", "Δ 1mo"]]
-    conf = (df.groupby("Conf")
+    
+    conf = (main.groupby("Conf")
                 .size()
                 .astype(int)
                 .to_dict()
@@ -633,27 +622,54 @@ def predict(date):
         grouped[bids].append(conference)
 
     master = scraper.getMasterTeams()
-    df["img"] = df.apply(lambda x: getUrl(x, save_df, master), axis=1)
-    df["Team"] = df.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
-    df = df.drop(columns=["img"])
+    main["img"] = main.apply(lambda x: getUrl(x, save_df, master), axis=1)
+    main["Team"] = main.apply(lambda x: image_formatter(x.img) + getRecord(x, winloss), axis=1)
+    main = main.drop(columns=["img"])
 
+    copy = main.copy()
+    
+    march_df = main[main['Ovr'].str.contains(r"\bSeed\b", na=False)]
+    first_out = main.drop(march_df.index)[:8]
+    
+    cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
+    
+    march_df = march_df[cols]
+    main = main[cols]
+    first_out = first_out[cols]
+    
     styler = (
-        df.style.hide(axis="index")
+        march_df.style.hide(axis="index")
         .format({"Rtg": "{:.4f}"})
         .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
         .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
         .set_table_attributes('class="sticky-table rank-table"')
         .background_gradient(
             subset=["Kenpom"],
-            cmap="cividis",  # green = better (lower rank)
-            gmap=main["Kenpom Rank"],
+            cmap="cividis", 
+            gmap=copy['Kenpom Rank'],
         )
         .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=main["Torvik Rank"]
+            subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
         )
         .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
     )
 
+    first_out_styler = (
+        first_out.style.hide(axis="index")
+        .format({"Rtg": "{:.4f}"})
+        .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .set_table_attributes('class="sticky-table rank-table"')
+        .background_gradient(
+            subset=["Kenpom"],
+            cmap="cividis", 
+            gmap=copy['Kenpom Rank'],
+        )
+        .background_gradient(
+            subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
+        )
+    )
+    
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
     for bids in sorted(grouped.keys(), reverse=True):
         confs = ", ".join(grouped[bids])
@@ -672,9 +688,13 @@ def predict(date):
     df_html += '<div class="table-container">'
     df_html += styler.to_html()
     df_html += "</div>"
-    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
     df_html += "<h3>First Four Out & Next 4 Out</h3>"
+    df_html += '<div class="table-container">'
+    df_html += first_out_styler.to_html()
+    df_html += "</div>"
+    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
     
+    # MAIN -> DF with Conf col data
     path = utils.get_path(f"docs/men/predict_{date}.html")
     html = htmb.add_front_matter(df_html, f"NCAAM Prediction - {date}")
     with open(path, "w") as f:
