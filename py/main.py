@@ -71,7 +71,7 @@ if save_model_w:
     model.trainModelsAndSave(torvik_w_df, update_about, gender="W")
     print(f"Torvik Women's training took: {(datetime.now() - start).total_seconds()}")
 
-update_mens_all = 1
+update_mens_all = 0
 if update_mens_all:
     path = utils.get_path('data/men/kenpom/')
     files = os.listdir(path)
@@ -80,7 +80,7 @@ if update_mens_all:
     for day in sorted(date_lst):
        predictions.predict(day)
 
-update_womens_all = 1
+update_womens_all = 0
 if update_womens_all:
     path = utils.get_path('data/women/')
     files = os.listdir(path)

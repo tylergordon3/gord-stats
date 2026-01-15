@@ -466,3 +466,77 @@
   color: white;
   font-weight: 600;
 }
+
+/* =========================
+   MOBILE NAV (SAFE LAYER)
+   ========================= */
+@media (max-width: 767px) {
+
+  /* Hide desktop inline nav */
+  .simple-nav {
+    display: none;
+  }
+
+  /* Hamburger */
+  .nav-menu-btn {
+    display: block;
+    font-size: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  /* Drawer */
+  .mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 240px;
+    height: 100%;
+    background: #fff;
+    padding: 20px;
+    display: block;
+    transition: left 0.25s ease;
+    z-index: 2000;
+  }
+
+  .mobile-drawer a {
+    display: block;
+    padding: 12px 0;
+    font-size: 16px;
+    text-decoration: none;
+  }
+
+  .mobile-drawer.open {
+    left: 0;
+  }
+
+  /* Overlay */
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    z-index: 1500;
+  }
+
+  .nav-overlay.show {
+    display: block;
+  }
+
+  /* League toggle spacing */
+  .league-toggle {
+    margin-left: auto;
+  }
+}
+
+/* =========================
+   DESKTOP — untouched
+   ========================= */
+@media (min-width: 768px) {
+  .nav-menu-btn,
+  .nav-overlay {
+    display: none;
+  }
+}
