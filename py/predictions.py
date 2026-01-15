@@ -700,4 +700,4 @@ def predict(date):
         f.write(html)
         print(f"Wrote to: {path} for {date}")
 
-    return save_df
+    return [save_df, main]

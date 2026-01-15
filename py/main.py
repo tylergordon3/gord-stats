@@ -6,6 +6,7 @@ import scraper
 from datetime import datetime, date
 import numpy as np
 from render import render_home as rh
+from render import render_conferences as rc
 import re
 from pathlib import Path
 
@@ -88,8 +89,10 @@ if update_womens_all:
     for day in sorted(date_lst):
        predictions.predict_w(day)
 
-today_df = predictions.predict(date.today())
+[today_df, main] = predictions.predict(date.today())
 today_w_df = predictions.predict_w(date.today())
+
+rc.main(main)
 
 games = scraper.today_games(today_df, 'M')
 generate_home.generate_home_about(games, 'M', False)
