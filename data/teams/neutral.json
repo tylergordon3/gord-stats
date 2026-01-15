@@ -10,5 +10,25 @@
     "Spokane Veterans Memorial Arena": {
         "City": "Spokane",
         "State": "Washington"
+    },
+    "Holmes Convocation Center": {
+        "City": null,
+        "State": null
+    },
+    "Hill Convocation Center": {
+        "City": null,
+        "State": null
+    },
+    "Gentry Center": {
+        "City": null,
+        "State": null
+    },
+    "Hornet Pavilion": {
+        "City": null,
+        "State": null
+    },
+    "Wallis Beasley Performing Arts Coliseum": {
+        "City": null,
+        "State": null
     }
 }
