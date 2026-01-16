@@ -1,7 +1,8 @@
 """
 Scraping Torvik and Kenpom
 """
-
+import json
+from pathlib import Path
 import utils
 import os
 import random
@@ -47,23 +48,19 @@ def image_formatter(url):
     return f'<img src="{url}" class="team-logo" >'
 
 def getTeamRanks():
-    '''
-    Helper function for getting team ranks df
+    path = Path(utils.get_path("data/teams/ranks.json"))
 
-    :return: Master DataFrame
-    :rtype: DataFrame
-    '''
-    df_back = pd.read_json(utils.get_path("data/teams/ranks.json"))
-    return df_back
+    if not path.exists():
+        return {}
 
-def saveTeamRanks(df):
-    '''
-    Helper function for saving teams ranks DF
-    
-    :param df: Master DF to save
-    :type df: DataFrame
-    '''
-    df.to_json(utils.get_path("data/teams/ranks.json"))
+    with open(path, "r") as f:
+        return json.load(f)
+
+def saveTeamRanks(data):
+    path = Path(utils.get_path("data/teams/ranks.json"))
+
+    with open(path, "w") as f:
+        json.dump(data, f, indent=2)
 
 def getMasterTeams():
     '''

@@ -571,7 +571,9 @@ def predict(date):
     
     
     save_ranks = scraper.getTeamRanks()
-    save_ranks[date] = all_sorted[['Team', 'Ovr']]
+    data = dict(zip(all_sorted['Team'], all_sorted['Ovr']))
+    date_key = date.isoformat()
+    save_ranks[date_key] = data
     scraper.saveTeamRanks(save_ranks)
     
     # Saving to another df for schedule home
