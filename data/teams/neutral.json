@@ -10,5 +10,9 @@
     "Spokane Veterans Memorial Arena": {
         "City": "Spokane",
         "State": "Washington"
+    },
+    "Hornet Pavilion": {
+        "City": null,
+        "State": null
     }
 }

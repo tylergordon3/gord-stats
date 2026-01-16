@@ -21,14 +21,24 @@ def main(df):
     <button data-period="14d" class="active">2 Weeks</button>
     <button data-period="1mo">1 Month</button>
     </div>
+    <div class="conference-filter">
+    <label for="conference-select"><strong>Conference:</strong></label>
+    <select id="conference-select">
+    <option value="ALL">All Conferences</option>
+    </select>
+    </div>
     '''
     for k, v in conf_dict.items():
-        styler = html_util.style_bracketology(v, df)
-        html += f'<h3>{k}</h3>'
+        styler = html_util.style_bracketology(
+            df=v, 
+            original=df,
+            conference=k)
+        
         html += '<div class="table-container">'
         html += styler.to_html()
         html += "</div>"
     html += "<script src='/assets/js/rank-toggle.js'></script>"
+    html += "<script src='/assets/js/conf-toggle.js'></script>"
     path = utils.get_path(f"docs/men/conference.html")
     html = htmb.add_front_matter(html, f"Conferences")
     

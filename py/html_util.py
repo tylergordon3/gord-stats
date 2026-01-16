@@ -99,7 +99,7 @@ def getUrl(x, save_df, master, gender='M'):
 
     return link
 
-def style_bracketology(df, original=None):
+def style_bracketology(df, original=None, conference=None):
     master = scraper.getMasterTeams()
 
     output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
@@ -116,13 +116,23 @@ def style_bracketology(df, original=None):
     conf_champ_dict = pd.Series(df.ConfChamp.values, index=df.Team).to_dict()
 
     df = df[output_cols]
-    
+    # Build table attributes
+    classes = ["sticky-table", "rank-table"]
+    attrs = []
+
+    if conference:
+        attrs.append(f'data-conference="{conference}"')
+
+    table_attr = f'class="{" ".join(classes)}"'
+    if attrs:
+        table_attr += " " + " ".join(attrs)
+        
     styler = (
         df.style.hide(axis="index")
         .format({"Rtg": "{:.4f}"})
         .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
         .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .set_table_attributes('class="sticky-table rank-table"')
+        .set_table_attributes(table_attr)
         .background_gradient(
             subset=["Kenpom"],
             cmap="cividis", 
