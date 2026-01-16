@@ -1,6 +1,6 @@
-/* -----------------------------
-   NAV
------------------------------- */
+/* =========================================================
+   GLOBAL NAVIGATION
+   ========================================================= */
 .simple-nav a {
   margin-right: 12px;
   padding-right: 12px;
@@ -12,13 +12,7 @@
   border-right: none;
 }
 
-.nav-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
+.nav-inner,
 .header-row {
   display: flex;
   justify-content: space-between;
@@ -26,6 +20,7 @@
   gap: 12px;
 }
 
+/* League (Men / Women) toggle */
 .league-toggle {
   display: flex;
   gap: 10px;
@@ -56,15 +51,9 @@
   }
 }
 
-/* -----------------------------
-   TABLE WRAPPER – prevents overflow
------------------------------- */
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
+/* =========================================================
+   LAYOUT WRAPPERS
+   ========================================================= */
 .custom-inner {
   position: relative;
   max-width: 900px;
@@ -72,66 +61,113 @@
   margin: 0 auto;
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-/* -----------------------------
+/* =========================================================
+   FILTER BAR (Period + Conference)
+   ========================================================= */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  background: #fff;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Shared filter layout */
+.change-toggle,
+.conference-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Labels */
+.filter-bar label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* Dropdowns */
+.filter-bar select {
+  height: 32px;
+  padding: 4px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Mobile stacking */
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+/* =========================================================
    TABLE BASE STYLING
-   ------------------------------ */
+   ========================================================= */
+.rank-table,
 .sticky-table table {
-  width: 100% !important;
-  max-width: 100% !important;
-  border-collapse: collapse !important;
-
-  /* THIS allows the table to shrink normally */
-  table-layout: auto !important;
-
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
   font-family: monospace;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: inherit;
 }
 
-.sticky-table th {
-  font-weight: bold;
-  background: #D3D3D3;
-  padding: 6px 8px;
-}
-
+.rank-table th,
+.rank-table td,
 .sticky-table th,
 .sticky-table td {
-
-  font-size: inherit;
-
-  /* Default: keep columns readable */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
   min-width: 70px;
-  /* prevents columns from collapsing to nothing */
-  color: black;
+  padding: 6px 8px;
+  font-size: inherit;
+  color: #000;
 }
 
+/* Header cells */
+.rank-table th,
+.sticky-table th {
+  font-weight: 700;
+  background: #d3d3d3;
+  border-right: 1px solid #ccc;
+}
+
+/* Body cells */
+.rank-table td,
 .sticky-table td {
-  background: white;
-  padding: 1x 4px;
+  background: #fff;
 }
 
-/* -----------------------------
-   STICKY HEADER
------------------------------- */
-.sticky-table thead {
-  position: sticky;
-  top: 0;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.2);
-  z-index: 2;
-}
-
+/* =========================================================
+   STICKY TABLE HEADERS & FIRST COLUMN
+   ========================================================= */
+.sticky-table thead,
 .sticky-table th {
   position: sticky;
   top: 0;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.2);
   z-index: 2;
-  border-right: 1px solid #ccc;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.2);
 }
 
 /* Freeze first column */
@@ -140,34 +176,42 @@
   position: sticky;
   left: 0;
   z-index: 3;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.2);
-  /* optional shadow */
-  color: black;
-  border-right: 1px solid black;
-  background: #D3D3D3
+  background: #d3d3d3;
+  border-right: 1px solid #000;
 }
 
-.sticky-table td:last-child {
-  border-bottom: none;
+/* Active period column */
+.sticky-table th.active-col,
+.sticky-table td.active-col {
+  border-right: 1px solid #373737 !important;
 }
 
-.sticky-table th:last-child {
-  border-right: none;
+/* Hidden period columns */
+.hidden-col {
+  display: none !important;
 }
 
-/* Small phones */
-@media (max-width: 480px) {
-
+/* =========================================================
+   MOBILE TABLE COMPRESSION
+   ========================================================= */
+@media (max-width: 767px) {
+  .rank-table th,
+  .rank-table td,
   .sticky-table th,
   .sticky-table td {
     padding: 4px 6px;
     font-size: 12px;
   }
+
+  .rank-table td:first-child,
+  .sticky-table td:first-child {
+    max-width: 140px;
+  }
 }
 
-/* Extremely small phones (old iPhones) */
-@media (max-width: 320px) {
-
+@media (max-width: 360px) {
+  .rank-table th,
+  .rank-table td,
   .sticky-table th,
   .sticky-table td {
     padding: 3px 4px;
@@ -175,190 +219,35 @@
   }
 }
 
-
-/* GAMES */
-.matchup-list {
-  width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
-  border-collapse: collapse;
+/* =========================================================
+   CONFERENCE BLOCKS
+   ========================================================= */
+.conference-block {
+  margin-bottom: 28px;
 }
 
-.matchup-list td {
-  padding: 10px 14px;
-  border-bottom: 1px solid #ddd;
-  font-family: system-ui, sans-serif;
-  font-size: 15px;
-  white-space: nowrap;
+.conference-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
 }
 
-.matchup-list tr:hover {
-  background: #f6f6f6;
-}
-
-.matchup {
-  padding: 12px 14px;
-  border-bottom: 1px solid #ddd;
-  font-family: system-ui, sans-serif;
-}
-
-/* Teams line */
-.teams {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  font-size: 15px;
-}
-
-.team {
-  white-space: nowrap;
-}
-
-.at {
-  color: #777;
-}
-
-/* Time / Score badge */
-.meta {
-  margin-top: 6px;
-  display: inline-block;
-  padding: 3px 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #444;
-  background: #f1f1f1;
-  border-radius: 6px;
-  letter-spacing: 0.3px;
-}
-
-/* Final games */
-.meta-final {
-  background: #16a34a;
-  color: white;
-}
-
-/* Live games */
-.meta-live {
-  color: #ffecec;
-  background: #db8946;
-}
-
-.meta-upcoming {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-@media (max-width: 360px) {
-  .teams {
-    font-size: 14px;
-  }
-}
-
-.team strong {
-  color: #000;
-}
-
-.team-logo {
-  border: none;
-  outline: none;
-  box-shadow: none;
-  vertical-align: middle;
-  margin-left: 6px;
-  /* space between text and image */
-  height: 30px;
-  /* keep consistent sizing */
-}
-
-.conf-table {
-  width: 100%;
-  max-width: 400px;
-  border-collapse: collapse;
-  margin: 0 auto;
-  font-family: monospace;
-}
-
-.conf-table th,
-.conf-table td {
-  padding: 6px 10px;
-  text-align: left;
-}
-
-.conf-table th {
-  border-bottom: 2px solid #4a5a68;
-}
-
-.conf-table tr:not(:last-child) td {
-  border-bottom: 1px solid #2c3945;
-}
-
-.league-toggle {
-  display: flex;
-  align-items: center;
-}
-
-#league-toggle-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  width: 110px;
-  height: 32px;
-  padding: 0;
-  border: 1px solid #4a5a68;
-  border-radius: 16px;
-  background: #f8f9fa;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-#league-toggle-btn .option {
-  flex: 1;
-  text-align: center;
-  z-index: 2;
-  pointer-events: none;
-  color: #6b7280;
-}
-
-#league-toggle-btn .slider {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 52px;
-  height: 26px;
-  background: #111;
-  border-radius: 13px;
-  transition: transform 0.2s ease;
-  z-index: 1;
-}
-
-/* Women active */
-#league-toggle-btn.women .slider {
-  transform: translateX(54px);
-}
-
-#league-toggle-btn.men .men,
-#league-toggle-btn.women .women {
-  color: #fff;
-  font-weight: 600;
-}
-
-/* Layout container */
+/* =========================================================
+   GAME / SCOREBOARD STYLES
+   ========================================================= */
 .scoreboard {
   display: grid;
   gap: 12px;
   max-width: 520px;
 }
 
-/* Card */
 .game-card {
-  border: 1px solid rgba(0, 0, 0, .12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 14px;
-  padding: 12px 12px 10px;
+  padding: 12px;
   background: #fff;
 }
 
-/* Two rows, score aligned by fixed right column */
 .teams {
   display: grid;
   gap: 8px;
@@ -367,19 +256,16 @@
 .team-row {
   display: grid;
   grid-template-columns: 1fr 52px;
-  /* right column fixed for alignment */
   align-items: center;
   column-gap: 10px;
 }
 
 .team-row.winner {
   background-color: rgba(34, 197, 94, 0.12);
-  /* light green */
 }
 
 .team-row.loser {
   background-color: rgba(239, 68, 68, 0.12);
-  /* light red */
 }
 
 .team-left {
@@ -389,109 +275,31 @@
   min-width: 0;
 }
 
-.logo {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  display: block;
-}
-
 .team-name {
   font-size: 16px;
-  font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.team-right {
-  text-align: right;
-}
-
 .score {
   font-variant-numeric: tabular-nums;
-  /* keeps digits same width */
   font-size: 18px;
   font-weight: 700;
 }
 
-/* Meta line: smaller text below */
-.game-meta {
-  margin-top: 10px;
-  font-size: 12px;
-  opacity: 0.8;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.dot {
-  opacity: 0.6;
-}
-
-/* Mobile tweaks */
-@media (max-width: 420px) {
-  .team-row {
-    grid-template-columns: 1fr 44px;
-  }
-
-  .team-name {
-    font-size: 15px;
-  }
-
-  .score {
-    font-size: 17px;
-  }
-}
-
-.change-toggle select {
-  padding: 6px 10px;
-  font-size: 14px;
-}
-
-
-.hidden-col {
-  display: none !important;
-}
-
-.change-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.change-toggle label {
-  font-weight: 600;
-}
-
-.change-toggle select {
-  padding: 4px 8px;
-  font-size: 14px;
-}
-
-.change-toggle,
-.conference-filter {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
+/* =========================================================
+   MOBILE NAVIGATION
+   ========================================================= */
 @media (max-width: 767px) {
-
-  /* Hide desktop nav */
   .simple-nav {
     display: none;
   }
 
-  /* Bottom app-style nav */
   .bottom-nav {
     position: fixed;
     left: 0;
     right: 0;
-
-    /* 👇 THIS IS THE FIX */
     bottom: 0;
     height: 64px;
 
@@ -504,21 +312,6 @@
     z-index: 9999;
   }
 
-  .bottom-nav a {
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    color: #555;
-    font-size: 11px;
-  }
-
-  .bottom-nav .icon {
-    display: block;
-    font-size: 20px;
-    line-height: 1.1;
-  }
-
-  /* 🔑 Dynamic viewport-safe spacing */
   body {
     padding-bottom: calc(64px + env(safe-area-inset-bottom));
     min-height: 100dvh;
@@ -526,18 +319,7 @@
   }
 }
 
-
-/* =========================
-   DESKTOP ONLY
-   ========================= */
 @media (min-width: 768px) {
-
-  /* Show desktop nav */
-  .simple-nav {
-    display: flex;
-  }
-
-  /* Kill mobile nav completely */
   .bottom-nav {
     display: none !important;
   }
@@ -545,140 +327,4 @@
   body {
     padding-bottom: 0;
   }
-}
-
-.sticky-table th.active-col,
-.sticky-table td.active-col {
-  border-right: 1px solid #373737 !important;
-}
-
-/* Mobile-friendly conference dropdown */
-#conference-select {
-  width: 100%;
-  max-width: 100%;
-  padding: 10px 14px;
-  font-size: 16px;            /* prevents iOS zoom */
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  background-color: #fff;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.conference-filter {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.conference-filter label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.conference-filter {
-  position: relative;
-}
-
-.conference-filter::after {
-  content: "▾";
-  position: absolute;
-  right: 14px;
-  top: 36px;
-  pointer-events: none;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-@media (max-width: 767px) {
-  .conference-filter, .change-toggle {
-    position: sticky;
-    top: 0;
-    background: #fff;
-    padding: 8px 0;
-    z-index: 5;
-  }
-}
-
-/* =========================
-   MOBILE TABLE COMPRESSION
-   ========================= */
-@media (max-width: 767px) {
-
-  /* All data tables */
-  .sticky-table th,
-  .sticky-table td,
-  .rank-table th,
-  .rank-table td,
-  .conf-table th,
-  .conf-table td {
-    padding: 4px 6px;      /* tighter rows */
-    font-size: 12px;       /* smaller but readable */
-  }
-
-  /* Header cells slightly bolder */
-  .sticky-table th,
-  .rank-table th,
-  .conf-table th {
-    font-weight: 600;
-  }
-
-  /* Team column: allow truncation instead of overflow */
-  .sticky-table td:first-child,
-  .rank-table td:first-child,
-  .conf-table td:first-child {
-    max-width: 140px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Reduce logo size inside tables */
-  .team-logo,
-  .logo {
-    height: 22px;
-    width: 22px;
-  }
-}
-
-@media (max-width: 360px) {
-  .sticky-table th,
-  .sticky-table td,
-  .rank-table th,
-  .rank-table td,
-  .conf-table th,
-  .conf-table td {
-    padding: 3px 4px;
-    font-size: 11px;
-  }
-}
-
-.conference-block {
-  margin-bottom: 28px;
-}
-
-.conference-title {
-  margin: 0 0 8px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.table-container {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.filter-bar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  background: white;
-  padding: 6px 0;
 }
