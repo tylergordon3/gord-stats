@@ -445,6 +445,50 @@
   }
 }
 
+/* =========================
+   FILTER BAR (Period + Conference)
+   ========================= */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  background: #fff;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.filter-bar label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.filter-bar select {
+  height: 32px;
+  padding: 4px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+
 .change-toggle select {
   padding: 6px 10px;
   font-size: 14px;
@@ -453,13 +497,6 @@
 
 .hidden-col {
   display: none !important;
-}
-
-.change-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
 }
 
 .change-toggle label {
@@ -471,6 +508,7 @@
   font-size: 14px;
 }
 
+/* Shared layout for filter controls */
 .change-toggle,
 .conference-filter {
   display: flex;
@@ -565,12 +603,6 @@
   -webkit-appearance: none;
 }
 
-.conference-filter {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
 
 .conference-filter label {
   font-size: 13px;
@@ -582,25 +614,6 @@
   position: relative;
 }
 
-.conference-filter::after {
-  content: "▾";
-  position: absolute;
-  right: 14px;
-  top: 36px;
-  pointer-events: none;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-@media (max-width: 767px) {
-  .conference-filter, .change-toggle {
-    position: sticky;
-    top: 0;
-    background: #fff;
-    padding: 8px 0;
-    z-index: 5;
-  }
-}
 
 /* =========================
    MOBILE TABLE COMPRESSION
