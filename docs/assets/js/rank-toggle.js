@@ -31,19 +31,31 @@ function setChange(period, btn) {
     // skip tables missing this period
     if (indices[period] === undefined) return;
 
-    // toggle headers
+    // clear previous active column
+    headers.forEach(th => th.classList.remove("active-col"));
+    rows.forEach(row =>
+      Array.from(row.children).forEach(td =>
+        td.classList.remove("active-col")
+      )
+    );
+
+    // toggle headers + mark active
     for (const [key, idx] of Object.entries(indices)) {
-      headers[idx].classList.toggle("hidden-col", key !== period);
+      const isActive = key === period;
+      headers[idx].classList.toggle("hidden-col", !isActive);
+      headers[idx].classList.toggle("active-col", isActive);
     }
 
-    // toggle rows
+    // toggle rows + mark active
     rows.forEach(row => {
       for (const [key, idx] of Object.entries(indices)) {
-        if (row.children[idx]) {
-          row.children[idx].classList.toggle("hidden-col", key !== period);
-        }
+        if (!row.children[idx]) continue;
+        const isActive = key === period;
+        row.children[idx].classList.toggle("hidden-col", !isActive);
+        row.children[idx].classList.toggle("active-col", isActive);
       }
     });
+
   });
 
   // active button styling (global)
