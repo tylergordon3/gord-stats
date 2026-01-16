@@ -469,16 +469,28 @@
   white-space: nowrap;
 }
 
+/* Dropdowns inside the filter bar: avoid vertical clipping */
 .filter-bar select {
-  height: 32px;
-  padding: 4px 10px;
+  box-sizing: border-box;
+  height: auto;          /* important: don’t force height */
+  min-height: 36px;      /* enough room for text on all browsers */
+  padding: 6px 12px;
+  line-height: 1.2;
+
   font-size: 14px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
-  background-color: #fff;
+  background: #fff;
 
   appearance: none;
   -webkit-appearance: none;
+}
+
+/* iOS: prevent zoom + keep text from clipping */
+@media (max-width: 767px) {
+  .filter-bar select {
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -488,7 +500,6 @@
   }
 }
 
-/* Period selector: compact */
 .change-toggle select {
   width: 120px;
 }
@@ -500,6 +511,7 @@
 .conference-filter select {
   width: 100%;
   min-width: 180px;
+  max-width: 280px;
 }
 
 .hidden-col {
@@ -590,30 +602,6 @@
 .sticky-table th.active-col,
 .sticky-table td.active-col {
   border-right: 1px solid #373737 !important;
-}
-
-/* Mobile-friendly conference dropdown */
-#conference-select {
-  width: 100%;
-  max-width: 100%;
-  padding: 10px 14px;
-  font-size: 16px;            /* prevents iOS zoom */
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  background-color: #fff;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-
-.conference-filter label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.conference-filter {
-  position: relative;
 }
 
 
