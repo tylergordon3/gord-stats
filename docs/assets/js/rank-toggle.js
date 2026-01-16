@@ -1,17 +1,14 @@
+/* ---------- utils ---------- */
 function normText(s) {
   return (s || "")
     .replace(/\u00A0/g, " ")
     .replace(/\s+/g, " ")
-    .trim();
+    .trim()
+    .toLowerCase();
 }
 
-const COLS = {
-  "7d": "Δ 7d",
-  "14d": "Δ 14d",
-  "1mo": "Δ 1mo"
-};
-
-function setChange(period, btn) {
+/* ---------- core ---------- */
+function setChange(period) {
   const tables = document.querySelectorAll(".rank-table");
   if (!tables.length) return;
 
@@ -19,71 +16,53 @@ function setChange(period, btn) {
     const headers = Array.from(table.querySelectorAll("thead th"));
     const rows = Array.from(table.querySelectorAll("tbody tr"));
 
-    // find column indices per table
+    // find delta columns by period
     const indices = {};
     headers.forEach((th, i) => {
       const t = normText(th.textContent);
-      for (const [key, name] of Object.entries(COLS)) {
-        if (t === name) indices[key] = i;
-      }
+      if (!t.startsWith("δ")) return;
+
+      if (t.includes("7d")) indices["7d"] = i;
+      if (t.includes("14d")) indices["14d"] = i;
+      if (t.includes("1mo")) indices["1mo"] = i;
     });
 
-    // skip tables missing this period
     if (indices[period] === undefined) return;
 
-    // clear previous active column
-    headers.forEach(th => th.classList.remove("active-col"));
-    rows.forEach(row =>
-      Array.from(row.children).forEach(td =>
-        td.classList.remove("active-col")
-      )
-    );
-
-    // toggle headers + mark active
-    for (const [key, idx] of Object.entries(indices)) {
-      const isActive = key === period;
-      headers[idx].classList.toggle("hidden-col", !isActive);
-      headers[idx].classList.toggle("active-col", isActive);
-    }
-
-    // toggle rows + mark active
-    rows.forEach(row => {
-      for (const [key, idx] of Object.entries(indices)) {
-        if (!row.children[idx]) continue;
-        const isActive = key === period;
-        row.children[idx].classList.toggle("hidden-col", !isActive);
-        row.children[idx].classList.toggle("active-col", isActive);
-      }
+    // toggle headers
+    headers.forEach((th, i) => {
+      const isDelta = Object.values(indices).includes(i);
+      if (!isDelta) return;
+      th.classList.toggle("hidden-col", i !== indices[period]);
     });
 
+    // toggle rows
+    rows.forEach(row => {
+      Object.values(indices).forEach(i => {
+        const cell = row.children[i];
+        if (!cell) return;
+        cell.classList.toggle("hidden-col", i !== indices[period]);
+      });
+    });
   });
 
-  // active button styling (global)
-  document
-    .querySelectorAll(".change-toggle button")
-    .forEach(b => b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
+  localStorage.setItem("rankPeriod", period);
 }
 
-// global click handler
-document.addEventListener("click", e => {
-  const btn = e.target.closest(".change-toggle button[data-period]");
-  if (!btn) return;
-  setChange(btn.dataset.period, btn);
-});
-
-// initialize on load
-document.addEventListener("DOMContentLoaded", () => {
-  const defaultBtn = document.querySelector(".change-toggle button.active");
-  if (defaultBtn) {
-    setChange(defaultBtn.dataset.period, defaultBtn);
+/* ---------- events ---------- */
+document.addEventListener("change", e => {
+  if (e.target.id === "period-select") {
+    setChange(e.target.value);
   }
 });
 
-const weekSelect = document.getElementById("week-select");
+/* ---------- init ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const select = document.getElementById("period-select");
+  if (!select) return;
 
-if (weekSelect) {
-  weekSelect.addEventListener("change", e => {
-    setChange(e.target.value);
-  });
-}
+  const saved = localStorage.getItem("rankPeriod");
+  if (saved) select.value = saved;
+
+  setChange(select.value);
+});

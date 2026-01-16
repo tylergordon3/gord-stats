@@ -450,27 +450,27 @@
   font-size: 14px;
 }
 
-.change-toggle {
-  margin-bottom: 8px;
-}
-
-.change-toggle button {
-  padding: 4px 10px;
-  margin-right: 4px;
-  border: 1px solid #ccc;
-  background: #f5f5f5;
-  cursor: pointer;
-}
 
 .hidden-col {
   display: none !important;
 }
 
-.change-toggle button.active {
-  background: #333;
-  color: white;
+.change-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.change-toggle label {
   font-weight: 600;
 }
+
+.change-toggle select {
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
 
 @media (max-width: 767px) {
 
