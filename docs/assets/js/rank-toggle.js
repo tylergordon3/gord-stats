@@ -79,3 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     setChange(defaultBtn.dataset.period, defaultBtn);
   }
 });
+
+const weekSelect = document.getElementById("week-select");
+
+if (weekSelect) {
+  weekSelect.addEventListener("change", e => {
+    setChange(e.target.value);
+  });
+}

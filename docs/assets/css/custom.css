@@ -445,6 +445,11 @@
   }
 }
 
+.change-toggle select {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
 .change-toggle {
   margin-bottom: 8px;
 }

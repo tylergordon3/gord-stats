@@ -16,11 +16,8 @@ def main(df):
         conf_dict[key] = conf_df
 
     html = '''
-    <div class="change-toggle global-toggle">
-    <button data-period="7d">1 Week</button>
-    <button data-period="14d" class="active">2 Weeks</button>
-    <button data-period="1mo">1 Month</button>
-    </div>
+    {% include global-toggle.html %}
+
     <div class="conference-filter">
     <label for="conference-select"><strong>Conference:</strong></label>
     <select id="conference-select">

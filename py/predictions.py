@@ -633,12 +633,7 @@ def predict(date):
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
-    df_html +=  f'''
-                <div class="change-toggle global-toggle">
-                <button data-period="7d">1 Week</button>
-                <button data-period="14d" class="active">2 Weeks</button>
-                <button data-period="1mo">1 Month</button>
-                </div>'''
+    df_html +=  '''{% include global-toggle.html %} '''
     df_html += '<div class="table-container">'
     df_html += march_df.to_html()
     df_html += "</div>"
