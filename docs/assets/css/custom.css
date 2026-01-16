@@ -587,7 +587,7 @@
 }
 
 @media (max-width: 767px) {
-  .conference-filter {
+  .conference-filter, .change-toggle {
     position: sticky;
     top: 0;
     background: #fff;
