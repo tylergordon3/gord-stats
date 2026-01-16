@@ -488,12 +488,19 @@
   }
 }
 
-
+/* Period selector: compact */
 .change-toggle select {
-  padding: 6px 10px;
-  font-size: 14px;
+  width: 120px;
 }
 
+.conference-filter {
+  flex: 1;
+}
+
+.conference-filter select {
+  width: 100%;
+  min-width: 180px;
+}
 
 .hidden-col {
   display: none !important;
@@ -501,11 +508,6 @@
 
 .change-toggle label {
   font-weight: 600;
-}
-
-.change-toggle select {
-  padding: 4px 8px;
-  font-size: 14px;
 }
 
 /* Shared layout for filter controls */

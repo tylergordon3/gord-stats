@@ -633,7 +633,9 @@ def predict(date):
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
+    df += '<div class="filter-bar">'
     df_html +=  '''{% include global-toggle.html %} '''
+    df += '</div>'
     df_html += '<div class="table-container">'
     df_html += march_df.to_html()
     df_html += "</div>"
