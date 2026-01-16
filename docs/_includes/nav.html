@@ -1,28 +1,39 @@
+{% capture today_date %}{{ site.time | date: '%Y-%m-%d' }}{% endcapture %}
+
+{% capture men_home %}/docs/men/{% endcapture %}
+{% capture women_home %}/docs/women/{% endcapture %}
+
+{% capture men_conf %}/docs/men/conference.html{% endcapture %}
+{% capture women_conf %}/docs/women/conference.html{% endcapture %}
+
+{% capture men_bracket %}/docs/men/predict_{{ today_date }}.html{% endcapture %}
+{% capture women_bracket %}/docs/women/predict_{{ today_date }}.html{% endcapture %}
+
 <div id="nav">
   <div class="nav-inner">
-    <button class="nav-menu-btn" aria-label="Open menu">☰</button>
-    <nav class="simple-nav mobile-drawer" id="mobile-drawer">
+
+    <!-- Desktop / shared navigation -->
+    <nav class="simple-nav">
       {% assign nav = site.data.nav %}
       {% for item in nav.main %}
 
+        {% if item.url contains "__TODAY__" %}
+          {% capture today_url %}
+            predict_{{ site.time | date: '%Y-%m-%d' }}.html
+          {% endcapture %}
+          <a href="{{ today_url | strip | relative_url }}">{{ item.title }}</a>
 
-      {% if item.url contains "__TODAY__" %}
-      {% capture today_url %}
-      predict_{{ site.time | date: '%Y-%m-%d' }}.html
-      {% endcapture %}
-      <a href="{{ today_url | strip | relative_url }}">{{ item.title }}</a>
+        {% elsif item.url == "__TODAY_SCORES__" %}
+          <a href="#" class="today-scores-link">{{ item.title }}</a>
 
-      {% elsif item.url == "__TODAY_SCORES__" %}
-      <a href="#" class="today-scores-link">{{ item.title }}</a>
-
-      {% else %}
-      <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
-
-      {% endif %}
+        {% else %}
+          <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+        {% endif %}
 
       {% endfor %}
     </nav>
 
+    <!-- League toggle (stays top-right) -->
     <div class="league-toggle">
       <button id="league-toggle-btn" aria-label="Toggle Men/Women">
         <span class="option men">Men</span>
@@ -30,6 +41,75 @@
         <span class="slider"></span>
       </button>
     </div>
+
   </div>
 </div>
-<div class="nav-overlay"></div>
+<!-- =========================
+     Mobile Bottom Navigation
+     ========================= -->
+<nav class="bottom-nav">
+  <!-- Root home -->
+  <a href="/index.html" class="nav-home">
+    <span class="icon">🏠</span>
+    <span class="label">Home</span>
+  </a>
+
+  <!-- Scores (handled by today-scores JS) -->
+  <a href="/index.html" class="today-scores-link">
+    <span class="icon">🏀</span>
+    <span class="label">Scores</span>
+  </a>
+
+  <!-- Bracketology (JS will rewrite predict_*) -->
+  <a href="predict_{{ site.time | date: '%Y-%m-%d' }}.html">
+    <span class="icon">🧮</span>
+    <span class="label">Bracketology</span>
+  </a>
+
+  <!-- Conferences -->
+  <a href="/conference.html">
+    <span class="icon">🏆</span>
+    <span class="label">Conferences</span>
+  </a>
+</nav>
+
+<script>
+(function () {
+  // This function MUST match what your site already uses
+  function getLeague() {
+    try {
+      const stored = localStorage.getItem("league");
+      if (stored === "men" || stored === "women") return stored;
+    } catch (e) {}
+
+    const btn = document.getElementById("league-toggle-btn");
+    if (btn && btn.classList.contains("women")) return "women";
+    return "men";
+  }
+
+  document.querySelectorAll(".league-route").forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+
+      const page = link.dataset.page;
+      const league = getLeague();
+      let target;
+
+      if (page === "conference") {
+        target = `/docs/${league}/conference.html`;
+      }
+
+      if (page === "bracketology") {
+        // Redirect to today's existing bracket file
+        const today = new Date().toISOString().slice(0, 10);
+        target = `/docs/${league}/predict_${today}.html`;
+      }
+
+      if (target) {
+        window.location.href = target;
+      }
+    });
+  });
+})();
+</script>
+

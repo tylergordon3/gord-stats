@@ -467,76 +467,72 @@
   font-weight: 600;
 }
 
-/* =========================
-   MOBILE NAV (SAFE LAYER)
-   ========================= */
 @media (max-width: 767px) {
 
-  /* Hide desktop inline nav */
+  /* Hide desktop nav */
   .simple-nav {
     display: none;
   }
 
-  /* Hamburger */
-  .nav-menu-btn {
-    display: block;
-    font-size: 22px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-right: 10px;
-  }
-
-  /* Drawer */
-  .mobile-drawer {
+  /* Bottom app-style nav */
+  .bottom-nav {
     position: fixed;
-    top: 0;
-    left: -260px;
-    width: 240px;
-    height: 100%;
-    background: #fff;
-    padding: 20px;
-    display: block;
-    transition: left 0.25s ease;
-    z-index: 2000;
-  }
-
-  .mobile-drawer a {
-    display: block;
-    padding: 12px 0;
-    font-size: 16px;
-    text-decoration: none;
-  }
-
-  .mobile-drawer.open {
     left: 0;
+    right: 0;
+
+    /* 👇 THIS IS THE FIX */
+    bottom: 0;
+    height: 64px;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    background: #fff;
+    border-top: 1px solid #ddd;
+    z-index: 9999;
   }
 
-  /* Overlay */
-  .nav-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    display: none;
-    z-index: 1500;
+  .bottom-nav a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: #555;
+    font-size: 11px;
   }
 
-  .nav-overlay.show {
+  .bottom-nav .icon {
     display: block;
+    font-size: 20px;
+    line-height: 1.1;
   }
 
-  /* League toggle spacing */
-  .league-toggle {
-    margin-left: auto;
+  /* 🔑 Dynamic viewport-safe spacing */
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
 }
+
 
 /* =========================
-   DESKTOP — untouched
+   DESKTOP ONLY
    ========================= */
 @media (min-width: 768px) {
-  .nav-menu-btn,
-  .nav-overlay {
-    display: none;
+
+  /* Show desktop nav */
+  .simple-nav {
+    display: flex;
+  }
+
+  /* Kill mobile nav completely */
+  .bottom-nav {
+    display: none !important;
+  }
+
+  body {
+    padding-bottom: 0;
   }
 }
+

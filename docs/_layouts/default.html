@@ -65,7 +65,7 @@
         "/history.html": `/${league}/history.html`
       };
 
-      document.querySelectorAll('.simple-nav a').forEach(a => {
+      document.querySelectorAll('.simple-nav a, .bottom-nav a').forEach(a => {
         const href = a.getAttribute('href');
 
         if (!href || href.startsWith('http')) return;
@@ -161,8 +161,5 @@
       });
     })();
   </script>
-  <script src="{{ '/assets/js/nav.js' | relative_url }}"></script>
-
 </body>
-
 </html>
