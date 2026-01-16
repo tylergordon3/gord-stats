@@ -540,3 +540,53 @@
 .sticky-table td.active-col {
   border-right: 1px solid #373737 !important;
 }
+
+/* Mobile-friendly conference dropdown */
+#conference-select {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 14px;
+  font-size: 16px;            /* prevents iOS zoom */
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.conference-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.conference-filter label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.conference-filter {
+  position: relative;
+}
+
+.conference-filter::after {
+  content: "▾";
+  position: absolute;
+  right: 14px;
+  top: 36px;
+  pointer-events: none;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+@media (max-width: 767px) {
+  .conference-filter {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 8px 0;
+    z-index: 5;
+  }
+}
