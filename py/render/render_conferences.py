@@ -16,6 +16,7 @@ def main(df):
         conf_dict[key] = conf_df
 
     html = '''
+    <div class="filter-bar">
     {% include global-toggle.html %}
 
     <div class="conference-filter">
@@ -23,6 +24,7 @@ def main(df):
     <select id="conference-select">
     <option value="ALL">All Conferences</option>
     </select>
+    </div>
     </div>
     '''
     for k, v in conf_dict.items():
