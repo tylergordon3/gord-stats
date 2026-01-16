@@ -46,6 +46,25 @@ def image_formatter(url):
         return ''
     return f'<img src="{url}" class="team-logo" >'
 
+def getTeamRanks():
+    '''
+    Helper function for getting team ranks df
+
+    :return: Master DataFrame
+    :rtype: DataFrame
+    '''
+    df_back = pd.read_json(utils.get_path("data/teams/ranks.json"))
+    return df_back
+
+def saveTeamRanks(df):
+    '''
+    Helper function for saving teams ranks DF
+    
+    :param df: Master DF to save
+    :type df: DataFrame
+    '''
+    df.to_json(utils.get_path("data/teams/ranks.json"))
+
 def getMasterTeams():
     '''
     Helper function for getting master teams DF

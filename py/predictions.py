@@ -568,6 +568,12 @@ def predict(date):
     all_sorted["Win"] = all_sorted["Win"].round(4)
     all_sorted = all_sorted.sort_values(by=["Rtg", "Win"], ascending=[False, False])
     all_sorted["Ovr"] = range(1, len(all_sorted) + 1)
+    
+    
+    save_ranks = scraper.getTeamRanks()
+    save_ranks[date] = all_sorted[['Team', 'Ovr']]
+    scraper.saveTeamRanks(save_ranks)
+    
     # Saving to another df for schedule home
     save_df = all_sorted.copy()
 
