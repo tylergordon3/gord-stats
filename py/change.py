@@ -3,9 +3,35 @@
 '''
 import utils
 import pandas as pd
+import scraper
 from datetime import timedelta, date
 from bs4 import BeautifulSoup
 from io import StringIO
+
+def closest_date(dates, target):
+    return min(dates, key=lambda d: abs(d - target))
+
+
+def new_change(date):
+    delta7 = date - timedelta(days=7)
+    delta14 = date - timedelta(days=14)
+    delta30 = date - timedelta(days=30)
+    ranks = scraper.getTeamRanks()
+    keys = ranks.keys()
+    date_keys = [date.fromisoformat(k) for k in keys]
+    
+    d7 = closest_date(date_keys, delta7)
+    d14 = closest_date(date_keys, delta14)
+    d30 = closest_date(date_keys, delta30)
+    
+    d7_dict = ranks[d7.isoformat()]
+    d14_dict = ranks[d14.isoformat()]
+    d30_dict = ranks[d30.isoformat()]
+    today = ranks[date.isoformat()]
+    
+    print(d7_dict)
+    
+#new_change(date.today())
 
 def change(date):
     today_path = utils.get_recent_html(date)
