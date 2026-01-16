@@ -60,9 +60,6 @@ title: History
 layout: default
 title: Bracket Gordology
 ---
-    <p>Using machine learning to predict the NCAA March Madness field.</p>
-    <p>Data Sources: <a href='https://kenpom.com/'>Kenpom</a> | <a href='https://barttorvik.com/#'>Torvik</a></p>
-    <p>Today's scores and schedule from: <a href='https://www.cbssports.com/college-basketball/scoreboard/'>CBS Sports</a></p>
     <h3>Today's {gender_title} Games</h3>
     <p>{time}</p>
     {gamesToday}

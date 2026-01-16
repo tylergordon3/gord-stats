@@ -590,3 +590,71 @@
     z-index: 5;
   }
 }
+
+/* =========================
+   MOBILE TABLE COMPRESSION
+   ========================= */
+@media (max-width: 767px) {
+
+  /* All data tables */
+  .sticky-table th,
+  .sticky-table td,
+  .rank-table th,
+  .rank-table td,
+  .conf-table th,
+  .conf-table td {
+    padding: 4px 6px;      /* tighter rows */
+    font-size: 12px;       /* smaller but readable */
+  }
+
+  /* Header cells slightly bolder */
+  .sticky-table th,
+  .rank-table th,
+  .conf-table th {
+    font-weight: 600;
+  }
+
+  /* Team column: allow truncation instead of overflow */
+  .sticky-table td:first-child,
+  .rank-table td:first-child,
+  .conf-table td:first-child {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Reduce logo size inside tables */
+  .team-logo,
+  .logo {
+    height: 22px;
+    width: 22px;
+  }
+}
+
+@media (max-width: 360px) {
+  .sticky-table th,
+  .sticky-table td,
+  .rank-table th,
+  .rank-table td,
+  .conf-table th,
+  .conf-table td {
+    padding: 3px 4px;
+    font-size: 11px;
+  }
+}
+
+.conference-block {
+  margin-bottom: 28px;
+}
+
+.conference-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

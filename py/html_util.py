@@ -122,6 +122,7 @@ def style_bracketology(df, original=None, conference=None):
 
     if conference:
         attrs.append(f'data-conference="{conference}"')
+        df = df.drop(columns=['Conf'])
 
     table_attr = f'class="{" ".join(classes)}"'
     if attrs:

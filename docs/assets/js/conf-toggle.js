@@ -1,13 +1,36 @@
+(function () {
+  const tables = document.querySelectorAll(".rank-table[data-conference]");
+  if (!tables.length) return;
 
+  tables.forEach(table => {
+    const conf = table.dataset.conference;
+
+    const block = document.createElement("div");
+    block.className = "conference-block";
+    block.dataset.conference = conf;
+
+    const title = document.createElement("h2");
+    title.className = "conference-title";
+    title.textContent = conf;
+
+    const container = document.createElement("div");
+    container.className = "table-container";
+
+    table.parentNode.insertBefore(block, table);
+    container.appendChild(table);
+    block.appendChild(title);
+    block.appendChild(container);
+  });
+})();
 (function () {
   const select = document.getElementById("conference-select");
-  const tables = Array.from(document.querySelectorAll(".rank-table[data-conference]"));
+  const blocks = Array.from(document.querySelectorAll(".conference-block"));
 
-  if (!select || !tables.length) return;
+  if (!select || !blocks.length) return;
 
-  // Collect unique conferences from tables
+  // Collect unique conferences
   const conferences = [...new Set(
-    tables.map(t => t.dataset.conference)
+    blocks.map(b => b.dataset.conference)
   )].sort();
 
   // Populate dropdown
@@ -18,59 +41,24 @@
     select.appendChild(opt);
   });
 
+  // Restore previous selection
+  const saved = localStorage.getItem("conference");
+  if (saved) select.value = saved;
+
   function updateConference() {
-  const selected = select.value;
+    const selected = select.value;
 
-  tables.forEach(table => {
-    const conf = table.dataset.conference;
-    const show = selected === "ALL" || conf === selected;
+    blocks.forEach(block => {
+      const conf = block.dataset.conference;
+      block.style.display =
+        selected === "ALL" || conf === selected ? "" : "none";
+    });
 
-    table.style.display = show ? "" : "none";
+    localStorage.setItem("conference", selected);
+  }
 
-    const title = document.querySelector(
-      `.conference-title[data-conference="${conf}"]`
-    );
-    if (title) {
-      title.style.display = show ? "" : "none";
-    }
-  });
-}
-
-  // Event
   select.addEventListener("change", updateConference);
 
   // Initialize
   updateConference();
-
-    // Restore previous selection
-    const saved = localStorage.getItem("conference");
-    if (saved) select.value = saved;
-
-    // Save on change
-    select.addEventListener("change", () => {
-    localStorage.setItem("conference", select.value);
-    });
 })();
-
-(function () {
-  const tables = document.querySelectorAll(".rank-table[data-conference]");
-  if (!tables.length) return;
-
-  tables.forEach(table => {
-    const conf = table.dataset.conference;
-
-    // Create heading
-    const h = document.createElement("h2");
-    h.className = "conference-title";
-    h.textContent = conf;
-
-    // Insert heading before table
-    table.parentNode.insertBefore(h, table);
-
-    // Link heading to table for filtering
-    table.dataset.titleId = conf;
-    h.dataset.conference = conf;
-  });
-})();
-
-
