@@ -594,6 +594,10 @@ def predict(date):
     #main["Δ 14d"] = main["Δ 14d"].fillna("NR")
     #main["Δ 1mo"] = main["Δ 1mo"].fillna("NR")
 
+    main["Δ 1d"] = main.replace(to_replace=0, value='-')
+    main["Δ 7d"] = main.replace(to_replace=0, value='-')
+    main["Δ 14d"] = main.replace(to_replace=0, value='-')
+    main["Δ 1mo"] = main.replace(to_replace=0, value='-')
     #main["Δ 7d"] = main.apply(lambda row: calcWkDelta(row, "Δ 7d"), axis=1)
     #main["Δ 14d"] = main.apply(lambda row: calcWkDelta(row, "Δ 14d"), axis=1)
     #main["Δ 1mo"] = main.apply(lambda row: calcWkDelta(row, "Δ 1mo"), axis=1)
