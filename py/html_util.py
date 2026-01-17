@@ -90,6 +90,7 @@ def getUrl(x, save_df, master, gender='M'):
     :return: Link/Path to logo
     :rtype: str
     """
+   
     if gender == 'M':
         saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
     elif gender == 'W':
@@ -104,7 +105,7 @@ def style_bracketology(df, gender='M',original=None, conference=None):
 
     if gender == 'W':
         output_cols = ['Team', 'Conf', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
-        df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'W'), axis=1)
+        df["Logo"] = df.apply(lambda x: scraper.get_image_name(x['Team']), axis=1)
         df["Team"] = df.apply(lambda x: image_formatter(x.Logo) + x.Team, axis=1)
     else:
         output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']

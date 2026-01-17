@@ -263,6 +263,7 @@ def predict_w(date):
         data = json.load(f)
 
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
+
     torvik_data = clean_teams(torvik_data)
     winloss = torvik_data[['Team', 'Rec']].copy()
     torvik_today = torvik_data.drop(
@@ -308,14 +309,14 @@ def predict_w(date):
     df_torvik = df_torvik.rename(
         columns={"Rk": "Torvik Rank", "Sum": "# Models Torvik"}
     )
-    
+
     df_torvik = df_torvik.sort_values("Rtg", ascending=False)
     df_torvik["Record"] = df_torvik .apply(lambda x: getRecordOnly(x, winloss), axis=1)
     df_torvik["Win"] = df_torvik .apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
     df_torvik ["Win"] = df_torvik["Win"].round(4)
     df_torvik = df_torvik .sort_values(by=["Rtg", "Win"], ascending=[False, False])
     df_torvik ["Ovr"] = range(1, len(df_torvik) + 1)
-    
+
     save_ranks = scraper.getWTeamRanks()
     data = dict(zip(df_torvik['Team'], df_torvik['Ovr']))
     date_key = date.isoformat()
@@ -324,7 +325,7 @@ def predict_w(date):
 
     # Saving to another df for schedule home
     save_df = df_torvik.copy()
-    
+
     conf_winners = df_torvik.loc[df_torvik.groupby(by="Conf")["Rtg"].idxmax()]
 
     df_torvik['ConfChamp'] = 0
@@ -333,7 +334,7 @@ def predict_w(date):
     delta = change.new_change(date, 'W')
     
     main = pd.merge(df_torvik.reset_index(), delta, "left", "Team").set_index("index")
-
+   
     main["Δ 1d"] = main["Δ 1d"].replace(to_replace=0, value='-')
     main["Δ 7d"] = main["Δ 7d"].replace(to_replace=0, value='-')
     main["Δ 14d"] = main["Δ 14d"].replace(to_replace=0, value='-')
