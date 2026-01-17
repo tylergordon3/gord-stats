@@ -92,7 +92,8 @@ if update_womens_all:
 [today_df, main] = predictions.predict(date.today())
 [today_w_df, main_w] = predictions.predict_w(date.today())
 
-rc.main(main)
+rc.main(main, 'M')
+rc.main(main_w, 'W')
 
 games = scraper.today_games(today_df, 'M')
 generate_home.generate_home_about(games, 'M', False)
