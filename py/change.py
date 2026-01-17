@@ -31,7 +31,7 @@ def new_change(date):
     
     print(d7_dict)
     
-#new_change(date.today())
+new_change(date.today())
 
 def change(date):
     today_path = utils.get_recent_html(date)
