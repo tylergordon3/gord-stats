@@ -61,6 +61,21 @@ def saveTeamRanks(data):
 
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
+        
+def getWTeamRanks():
+    path = Path(utils.get_path("data/teams/wranks.json"))
+
+    if not path.exists():
+        return {}
+
+    with open(path, "r") as f:
+        return json.load(f)
+
+def saveWTeamRanks(data):
+    path = Path(utils.get_path("data/teams/wranks.json"))
+
+    with open(path, "w") as f:
+        json.dump(data, f, indent=2)
 
 def getMasterTeams():
     '''

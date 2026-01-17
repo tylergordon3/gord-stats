@@ -264,7 +264,7 @@ def predict_w(date):
 
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
     torvik_data = clean_teams(torvik_data)
-    
+    winloss = torvik_data[['Team', 'Rec']].copy()
     torvik_today = torvik_data.drop(
         columns=[
             "Barthag",
@@ -301,56 +301,61 @@ def predict_w(date):
     df_torvik_filter = df_torvik.copy()
     df_torvik_filter = df_torvik_filter.drop(columns=["Sum"])
     df_torvik["Rk"] = pd.to_numeric(df_torvik["Rk"])
-    df_torvik["GordScore"] = (10 * df_torvik["Sum"]) + (80 - df_torvik["Rk"])
+    df_torvik["Rtg"] = (10 * df_torvik["Sum"]) + (80 - df_torvik["Rk"])
 
     #df_torvik = df_torvik.sort_values("GordScore", ascending=False)
     df_torvik = df_torvik.drop(columns=["RF", "SVC", "DT"])
     df_torvik = df_torvik.rename(
         columns={"Rk": "Torvik Rank", "Sum": "# Models Torvik"}
     )
-    main64 = df_torvik.copy()
+    
+    df_torvik = df_torvik.sort_values("Rtg", ascending=False)
+    df_torvik["Record"] = df_torvik .apply(lambda x: getRecordOnly(x, winloss), axis=1)
+    df_torvik["Win"] = df_torvik .apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
+    df_torvik ["Win"] = df_torvik["Win"].round(4)
+    df_torvik = df_torvik .sort_values(by=["Rtg", "Win"], ascending=[False, False])
+    df_torvik ["Ovr"] = range(1, len(df_torvik) + 1)
+    
+    save_ranks = scraper.getWTeamRanks()
+    data = dict(zip(df_torvik['Team'], df_torvik['Ovr']))
+    date_key = date.isoformat()
+    save_ranks[date_key] = data
+    scraper.saveWTeamRanks(save_ranks)
 
     # Saving to another df for schedule home
-    save_df = main64.copy()
+    save_df = df_torvik.copy()
     
-    save_df["Index"] = save_df.apply(lambda x: scraper.getNameFromCode(x['Team'], master)[0], axis = 1)
-    save_df = save_df.sort_values(by="GordScore", ascending=False)
-    save_df["Ovr"] = range(1, len(save_df) + 1)
+    conf_winners = df_torvik.loc[df_torvik.groupby(by="Conf")["Rtg"].idxmax()]
 
-    bestByConf = main64.loc[main64.groupby(by="Conf")["GordScore"].idxmax()]
-    main64 = main64.drop(index=bestByConf.index)
-    main64 = main64.head(68 - len(bestByConf))
-    main64["ConfChamp"] = 0
-    bestByConf["ConfChamp"] = 1
-    main64 = pd.concat([main64, bestByConf])
-    main64 = main64.sort_values(by="GordScore", ascending=False)
-    main64["Ovr"] = range(1, len(main64) + 1)
-    last_week = change.change_w(date)
-    main64 = pd.merge(main64, last_week, "left", "Team")
+    df_torvik['ConfChamp'] = 0
+    df_torvik.loc[conf_winners.index, 'ConfChamp'] = 1
+   
+    delta = change.new_change(date, 'W')
+    
+    main = pd.merge(df_torvik.reset_index(), delta, "left", "Team").set_index("index")
 
-    main64["Last Wk"] = main64["Last Wk"].fillna("NR")
-    main64["Last Wk"] = main64.apply(lambda row: calcWkDelta(row, "Last Wk"), axis=1)
-
-    main64["Seed"] = seed_helper(main64["Ovr"])
-    main64["Ovr"] = (
-        "#"
-        + main64["Ovr"].astype(str)
-        + " (Seed "
-        + main64["Seed"].astype(str)
-        + ")"
+    main["Δ 1d"] = main["Δ 1d"].replace(to_replace=0, value='-')
+    main["Δ 7d"] = main["Δ 7d"].replace(to_replace=0, value='-')
+    main["Δ 14d"] = main["Δ 14d"].replace(to_replace=0, value='-')
+    main["Δ 1mo"] = main["Δ 1mo"].replace(to_replace=0, value='-')
+    
+    conf_win_idx = main[main['ConfChamp'] == 1].index
+    dropped = main.drop(index=conf_win_idx)
+    atlarge_idx = dropped.head(68 - len(conf_winners)).index
+    tourney_idx = pd.Index.union(conf_win_idx, atlarge_idx)
+    mask = main.index.isin(tourney_idx)
+    main['Seed'] = None
+    main.loc[mask, 'Seed']= seed_helper(main["Ovr"][mask])
+    
+    main["Ovr"] = main.apply(lambda x: f'#{x["Ovr"]} (Seed {x["Seed"]})' if x["Seed"] else f'#{x["Ovr"]}', axis=1)
+    
+    main["Torvik Rank"] = main["Torvik Rank"].astype(int)
+    
+    main["Torvik"] = (
+        main["Torvik Rank"].astype(str) + " " + main["# Models Torvik"].apply(stars)
     )
 
-    main64["Torvik Rank"] = main64["Torvik Rank"].astype(int)
-    main64["Torvik"] = (
-        main64["Torvik Rank"].astype(str) + " " + main64["# Models Torvik"].apply(stars)
-    )
-
-    styler = main64[["Torvik", "GordScore", "Ovr", "Last Wk"]].style
-    conf_champ_dict = pd.Series(main64.ConfChamp.values, index=main64.Team).to_dict()
-    df = main64.drop(columns=["Torvik Rank", "# Models Torvik", "Seed", "ConfChamp"])
-    df = df[["Team", "Conf", "Torvik", "GordScore", "Ovr", "Last Wk"]]
-
-    conf = (df.groupby("Conf")
+    conf = (main.groupby("Conf")
                 .size()
                 .astype(int)
                 .to_dict()
@@ -360,22 +365,12 @@ def predict_w(date):
     for conference, bids in conf.items():
         grouped[bids].append(conference)
 
-    df["img"] = df.apply(lambda x: getUrl(x, save_df, master, 'W'), axis=1)
-    df["Team"] = df.apply(lambda x: image_formatter(x.img) + x.Team, axis=1)
-    df = df.drop(columns=["img"])
+    march_df = main[main['Ovr'].str.contains(r"\bSeed\b", na=False)]
+    first_out = main.drop(march_df.index)[:8]
 
-    styler = (
-        df.style.hide(axis="index")
-        .format({"GordScore": "{:.1f}"})
-        .format(_format_arrow, subset=["Last Wk"])
-        .applymap(_color_arrow, subset=["Last Wk"])
-        .set_table_attributes('class="sticky-table"')
-        .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=main64["Torvik Rank"]
-        )
-        .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
-    )
-
+    march_df = html_util.style_bracketology(march_df, gender='W')
+    first_out = html_util.style_bracketology(first_out, gender='W')
+    
     conf_html =  "<h3>Bid Breakdown by Conference</h3>"
     for bids in sorted(grouped.keys(), reverse=True):
         confs = ", ".join(grouped[bids])
@@ -384,19 +379,27 @@ def predict_w(date):
     tz = timezone("EST")
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
-    df_html = f"""<p>{time}</p>
-        <div class="table-container">
-        {styler.to_html()}
-        <div>"""
-    df_html += conf_html
-    path = utils.get_path(f"docs/women/predict_{date}.html")
-    html = htmb.add_front_matter(df_html, f"NCAAW Prediction- {date}")
+    df_html = f"<p>{time}</p>"
+    df_html += '<div class="filter-bar">'
+    df_html +=  '''{% include global-toggle.html %} '''
+    df_html += '</div>'
+    df_html += '<div class="table-container">'
+    df_html += march_df.to_html()
+    df_html += "</div>"
+    df_html += "<h3>First Four Out & Next 4 Out</h3>"
+    df_html += '<div class="table-container">'
+    df_html += first_out.to_html()
+    df_html += "</div>"
+    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
     
+    # MAIN -> DF with Conf col data
+    path = utils.get_path(f"docs/women/predict_{date}.html")
+    html = htmb.add_front_matter(df_html, f"NCAAW Bracketology", date)
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")
-    return save_df
 
+    return [save_df, main]
 
 def full_prediction(date) -> pd.DataFrame:
     randomForest = utils.read_from_pickle("mtor_forest")
@@ -584,23 +587,14 @@ def predict(date):
     all_sorted['ConfChamp'] = 0
     all_sorted.loc[conf_winners.index, 'ConfChamp'] = 1
    
-    #delta = change.change(date)
     delta = change.new_change(date)
     
-   # main = pd.merge(all_sorted.reset_index(), delta, "left", "Team").set_index("index")
     main = pd.merge(all_sorted.reset_index(), delta, "left", "Team").set_index("index")
-
-    #main["Δ 7d"] = main["Δ 7d"].fillna("NR")
-    #main["Δ 14d"] = main["Δ 14d"].fillna("NR")
-    #main["Δ 1mo"] = main["Δ 1mo"].fillna("NR")
 
     main["Δ 1d"] = main["Δ 1d"].replace(to_replace=0, value='-')
     main["Δ 7d"] = main["Δ 7d"].replace(to_replace=0, value='-')
     main["Δ 14d"] = main["Δ 14d"].replace(to_replace=0, value='-')
     main["Δ 1mo"] = main["Δ 1mo"].replace(to_replace=0, value='-')
-    #main["Δ 7d"] = main.apply(lambda row: calcWkDelta(row, "Δ 7d"), axis=1)
-    #main["Δ 14d"] = main.apply(lambda row: calcWkDelta(row, "Δ 14d"), axis=1)
-    #main["Δ 1mo"] = main.apply(lambda row: calcWkDelta(row, "Δ 1mo"), axis=1)
 
     conf_win_idx = main[main['ConfChamp'] == 1].index
     dropped = main.drop(index=conf_win_idx)

@@ -93,20 +93,23 @@ def getUrl(x, save_df, master, gender='M'):
     if gender == 'M':
         saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
     elif gender == 'W':
-        saved_index = list(save_df[save_df["Team"] == x["Team"]]['Index'])[0]
+        saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
 
     link = "/assets/images/" + master.at[saved_index, "path"]
 
     return link
 
-def style_bracketology(df, original=None, conference=None):
+def style_bracketology(df, gender='M',original=None, conference=None):
     master = scraper.getMasterTeams()
 
-    output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
-    # need_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 7d', 'Δ 14d', 'Δ 1mo', 'Kenpom Rank', 'Torvik Rank', 'ConfChamp']
-
-    df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'M'), axis=1)
-    df["Team"] = df.apply(lambda x: image_formatter(x.Logo) + x.Team, axis=1)
+    if gender == 'W':
+        output_cols = ['Team', 'Conf', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
+        df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'W'), axis=1)
+        df["Team"] = df.apply(lambda x: image_formatter(x.Logo) + x.Team, axis=1)
+    else:
+        output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
+        df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'M'), axis=1)
+        df["Team"] = df.apply(lambda x: image_formatter(x.Logo) + x.Team, axis=1)
  
     if original is not None:
         copy = original.copy()
@@ -127,23 +130,37 @@ def style_bracketology(df, original=None, conference=None):
     table_attr = f'class="{" ".join(classes)}"'
     if attrs:
         table_attr += " " + " ".join(attrs)
-        
-    styler = (
-        df.style.hide(axis="index")
-        .format({"Rtg": "{:.4f}"})
-        .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
-        .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
-        .set_table_attributes(table_attr)
-        .background_gradient(
-            subset=["Kenpom"],
-            cmap="cividis", 
-            gmap=copy['Kenpom Rank'],
-        )
-        .background_gradient(
-            subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
-        )
-        .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
-    )
+    
+    if gender == 'W':
+        styler = (
+            df.style.hide(axis="index")
+                .format({"Rtg": "{:.4f}"})
+                .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
+                .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
+                .set_table_attributes(table_attr)
+                .background_gradient(
+                    subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
+                )
+                .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
+            )
+
+    else:    
+        styler = (
+                df.style.hide(axis="index")
+                .format({"Rtg": "{:.4f}"})
+                .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
+                .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
+                .set_table_attributes(table_attr)
+                .background_gradient(
+                    subset=["Kenpom"],
+                    cmap="cividis", 
+                    gmap=copy['Kenpom Rank'],
+                )
+                .background_gradient(
+                    subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
+                )
+                .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
+            )
 
     return styler
 

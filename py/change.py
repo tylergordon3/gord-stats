@@ -12,12 +12,15 @@ def closest_date(dates, target):
     return min(dates, key=lambda d: abs(d - target))
 
 
-def new_change(date):
+def new_change(date, gender='M'):
     delta1 = date - timedelta(days=1)
     delta7 = date - timedelta(days=7)
     delta14 = date - timedelta(days=14)
     delta30 = date - timedelta(days=30)
-    ranks = scraper.getTeamRanks()
+    if gender == 'W':
+        ranks = scraper.getWTeamRanks()
+    else:
+        ranks = scraper.getTeamRanks()
     keys = ranks.keys()
     date_keys = [date.fromisoformat(k) for k in keys]
      
