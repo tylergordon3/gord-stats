@@ -21,7 +21,7 @@ function setChange(period) {
     headers.forEach((th, i) => {
       const t = normText(th.textContent);
       if (!t.startsWith("δ")) return;
-
+      if (t.includes("1d")) indices["1d"] = i;
       if (t.includes("7d")) indices["7d"] = i;
       if (t.includes("14d")) indices["14d"] = i;
       if (t.includes("1mo")) indices["1mo"] = i;

@@ -102,7 +102,7 @@ def getUrl(x, save_df, master, gender='M'):
 def style_bracketology(df, original=None, conference=None):
     master = scraper.getMasterTeams()
 
-    output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
+    output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
     # need_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 7d', 'Δ 14d', 'Δ 1mo', 'Kenpom Rank', 'Torvik Rank', 'ConfChamp']
 
     df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'M'), axis=1)
@@ -131,8 +131,8 @@ def style_bracketology(df, original=None, conference=None):
     styler = (
         df.style.hide(axis="index")
         .format({"Rtg": "{:.4f}"})
-        .format(_format_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
-        .map(_color_arrow, subset=["Δ 7d", "Δ 14d", "Δ 1mo"])
+        .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
+        .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
         .set_table_attributes(table_attr)
         .background_gradient(
             subset=["Kenpom"],

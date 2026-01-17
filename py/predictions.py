@@ -584,17 +584,19 @@ def predict(date):
     all_sorted['ConfChamp'] = 0
     all_sorted.loc[conf_winners.index, 'ConfChamp'] = 1
    
-    delta = change.change(date)
+    #delta = change.change(date)
+    delta = change.new_change(date)
     
+   # main = pd.merge(all_sorted.reset_index(), delta, "left", "Team").set_index("index")
     main = pd.merge(all_sorted.reset_index(), delta, "left", "Team").set_index("index")
 
-    main["Δ 7d"] = main["Δ 7d"].fillna("NR")
-    main["Δ 14d"] = main["Δ 14d"].fillna("NR")
-    main["Δ 1mo"] = main["Δ 1mo"].fillna("NR")
+    #main["Δ 7d"] = main["Δ 7d"].fillna("NR")
+    #main["Δ 14d"] = main["Δ 14d"].fillna("NR")
+    #main["Δ 1mo"] = main["Δ 1mo"].fillna("NR")
 
-    main["Δ 7d"] = main.apply(lambda row: calcWkDelta(row, "Δ 7d"), axis=1)
-    main["Δ 14d"] = main.apply(lambda row: calcWkDelta(row, "Δ 14d"), axis=1)
-    main["Δ 1mo"] = main.apply(lambda row: calcWkDelta(row, "Δ 1mo"), axis=1)
+    #main["Δ 7d"] = main.apply(lambda row: calcWkDelta(row, "Δ 7d"), axis=1)
+    #main["Δ 14d"] = main.apply(lambda row: calcWkDelta(row, "Δ 14d"), axis=1)
+    #main["Δ 1mo"] = main.apply(lambda row: calcWkDelta(row, "Δ 1mo"), axis=1)
 
     conf_win_idx = main[main['ConfChamp'] == 1].index
     dropped = main.drop(index=conf_win_idx)
