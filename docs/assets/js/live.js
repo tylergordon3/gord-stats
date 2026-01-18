@@ -35,15 +35,25 @@ function safe(v, fallback = "") {
 
 function formatMeta(g) {
   const parts = [];
+
+  // ---- tip-off time (PRE games only) ----
+  if ((g.status === "pre" || g.status === "scheduled") && g.start_time) {
+    parts.push(`Tip-off: ${g.start_time}`);
+  }
+
   const period = safe(g.period);
   const clock = safe(g.clock);
 
-  if (period || clock) parts.push([period, clock].filter(Boolean).join(" • "));
+  if (period || clock) {
+    parts.push([period, clock].filter(Boolean).join(" • "));
+  }
 
   // optional: venue/location
   const venue = safe(g.venue);
   const loc = safe(g.location);
-  if (venue || loc) parts.push([venue, loc].filter(Boolean).join(" — "));
+  if (venue || loc) {
+    parts.push([venue, loc].filter(Boolean).join(" — "));
+  }
 
   // optional: betting
   const spread = safe(g.spread_close, null);

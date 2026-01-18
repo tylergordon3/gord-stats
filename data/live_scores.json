@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-18T22:07:33.558671",
+  "generated": "2026-01-18T22:30:44.318191",
   "games": {
     "2452878": {
       "date": "2026-01-19",
@@ -1440,7 +1440,7 @@
       "venue": "FedExForum",
       "location": "Memphis, TN, USA",
       "spread_close": "MEM -20.5",
-      "total_close": 147.5
+      "total_close": 146.5
     },
     "2458308": {
       "date": "2026-01-18",
@@ -1449,9 +1449,9 @@
       "status": "in_progress",
       "home_team": "TULN",
       "away_team": "UNT",
-      "home_score": 0,
-      "away_score": 0,
-      "clock": "19:17",
+      "home_score": 17,
+      "away_score": 22,
+      "clock": "7:50",
       "period": "1st",
       "overtime": false,
       "home_rank": null,
@@ -1480,7 +1480,7 @@
       "venue": "EagleBank Arena",
       "location": "Fairfax, VA, USA",
       "spread_close": "GMU -3.5",
-      "total_close": 156.5
+      "total_close": 155.5
     },
     "2458545": {
       "date": "2026-01-19",
