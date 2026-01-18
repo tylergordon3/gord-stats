@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-18T22:30:44.318191",
+  "generated": "2026-01-18T22:40:39.825840",
   "games": {
     "2452878": {
       "date": "2026-01-19",
@@ -99,8 +99,8 @@
       "conference": "Southland",
       "venue": "Alice P. McDermott Convocation Center",
       "location": "San Antonio, TX, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "UIW -8.5",
+      "total_close": 141.5
     },
     "2453031": {
       "date": "2026-01-19",
@@ -219,8 +219,8 @@
       "conference": "America East",
       "venue": "NJIT Wellness and Events Center",
       "location": "Newark, NJ, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "NJIT -1.5",
+      "total_close": 134.5
     },
     "2453042": {
       "date": "2026-01-19",
@@ -259,8 +259,8 @@
       "conference": "Northeast",
       "venue": "Bogota Savings Bank Center",
       "location": "Hackensack, NJ, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "FDU -1.5",
+      "total_close": 141.5
     },
     "2453046": {
       "date": "2026-01-19",
@@ -320,7 +320,7 @@
       "venue": "DeGol Arena",
       "location": "Loretto, PA, USA",
       "spread_close": "STONEH -1.5",
-      "total_close": 142.5
+      "total_close": 141.5
     },
     "2453051": {
       "date": "2026-01-19",
@@ -339,8 +339,8 @@
       "conference": "America East",
       "venue": "Skip Chappelle Court at Memorial Gymnasium",
       "location": "Orono, ME, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "ME -1.5",
+      "total_close": 127.5
     },
     "2453053": {
       "date": "2026-01-19",
@@ -479,8 +479,8 @@
       "conference": "Northeast",
       "venue": "Mercyhurst Athletic Center",
       "location": "Erie, PA, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "CCSU -1.5",
+      "total_close": 137.5
     },
     "2453066": {
       "date": "2026-01-19",
@@ -499,8 +499,8 @@
       "conference": "America East",
       "venue": "Binghamton University Events Center",
       "location": "Binghamton, NY, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "UMBC -5.5",
+      "total_close": 141.5
     },
     "2453068": {
       "date": "2026-01-19",
@@ -579,8 +579,8 @@
       "conference": "Southland",
       "venue": "Hilliard Center",
       "location": "Corpus Christi, TX, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "MCNS -7.5",
+      "total_close": 141.5
     },
     "2453077": {
       "date": "2026-01-20",
@@ -1440,7 +1440,7 @@
       "venue": "FedExForum",
       "location": "Memphis, TN, USA",
       "spread_close": "MEM -20.5",
-      "total_close": 146.5
+      "total_close": 147.5
     },
     "2458308": {
       "date": "2026-01-18",
@@ -1450,8 +1450,8 @@
       "home_team": "TULN",
       "away_team": "UNT",
       "home_score": 17,
-      "away_score": 22,
-      "clock": "7:50",
+      "away_score": 28,
+      "clock": "4:25",
       "period": "1st",
       "overtime": false,
       "home_rank": null,

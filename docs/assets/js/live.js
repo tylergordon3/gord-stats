@@ -24,7 +24,7 @@ function statusLabel(status) {
   if (s === "in_progress" || s === "live") return { text: "LIVE", cls: "st-live" };
   if (s === "halftime") return { text: "HT", cls: "st-ht" };
   if (s === "final") return { text: "FINAL", cls: "st-final" };
-  if (s === "pre" || s === "scheduled") return { text: "PRE", cls: "st-pre" };
+  if (s === "pre_game" || s === "scheduled") return { text: "PRE", cls: "st-pre" };
   if (s === "delay" || s === "delayed") return { text: "DELAY", cls: "st-delay" };
   return { text: status.toString().toUpperCase(), cls: "st-unk" };
 }
@@ -37,7 +37,7 @@ function formatMeta(g) {
   const parts = [];
 
   // ---- tip-off time (PRE games only) ----
-  if ((g.status === "pre" || g.status === "scheduled") && g.start_time) {
+  if ((g.status === "pre_game") && g.start_time) {
     parts.push(`Tip-off: ${g.start_time}`);
   }
 
