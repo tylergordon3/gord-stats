@@ -18,18 +18,26 @@ def task():
     
     push_scores.push(payload)
 
-BASE_DELAY = 30
-MAX_DELAY = 1200  # cap at 20 minutes
+BASE_INTERVAL = 30        # always wait this after success
+BASE_BACKOFF = 30         # starting backoff on failure
+MAX_BACKOFF = 1200        # cap at 20 minutes
+
 attempt = 0
 
 while True:
     try:
         task()
-        attempt = 0  # reset on success
-        time.sleep(60)
+
+        # success → reset backoff and wait normal interval
+        attempt = 0
+        time.sleep(BASE_INTERVAL)
+
     except Exception as e:
-        delay = min(BASE_DELAY * (2 ** attempt), MAX_DELAY)
+        # failure → exponential backoff
+        delay = min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
         delay += random.uniform(0, 1)  # jitter
+
         print(f"❌ {e} — retrying in {delay:.1f}s")
+
         time.sleep(delay)
         attempt += 1
