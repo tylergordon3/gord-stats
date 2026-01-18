@@ -664,6 +664,7 @@ def parse_mens_cbs(soup: BeautifulSoup, master: pd.DataFrame, rank_df):
 
     # if empty -> empty list
     tables = soup.find_all('table')
+
     if tables:
         dfs = pd.read_html(str(tables))
     else:
@@ -1074,6 +1075,14 @@ def today_games(rank_df, gender):
 
     if gender == 'M':
         soup = getHTML("https://www.cbssports.com/college-basketball/schedule/")
+        
+        # Optional: Use prettify() for a nicely formatted, readable HTML output
+        html_content = soup.prettify("utf-8")
+        response = requests.get("https://www.cbssports.com/college-basketball/schedule/")
+        print(response.content)
+        # Write the content to a file   
+        with open("output_page.html", "wb") as file:
+            file.write(html_content)
         [p5live, p5done, done, live] = parse_mens_cbs(soup, master, rank_df)
         html = today_games_help_men(p5live, p5done, done, live)
 
