@@ -1,0 +1,86 @@
+---
+layout: default
+title: Live Scores Test
+permalink: /test-live-scores/
+---
+
+<h1>Live Scores Test</h1>
+
+<p>
+  This page fetches live data from the Cloudflare Worker.
+</p>
+
+<h2>Rendered Scores</h2>
+<div id="games"></div>
+
+<hr>
+
+<h2>Raw JSON (debug)</h2>
+<pre id="raw"></pre>
+
+<script>
+const WORKER_URL =
+  "https://cbb-live-scores.tmgordon33.workers.dev/scores?league=men";
+
+const POLL_INTERVAL = 30000;
+let lastGenerated = null;
+
+async function pollScores() {
+  try {
+    const res = await fetch(WORKER_URL);
+    const data = await res.json();
+
+    // Debug output
+    document.getElementById("raw").textContent =
+      JSON.stringify(data, null, 2);
+
+    if (data.generated === lastGenerated) return;
+    lastGenerated = data.generated;
+
+    renderGames(data.games);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderGames(games) {
+  const container = document.getElementById("games");
+  container.innerHTML = "";
+
+  const ids = Object.keys(games);
+  if (!ids.length) {
+    container.textContent = "No games currently.";
+    return;
+  }
+
+  for (const id of ids) {
+    const g = games[id];
+    const row = document.createElement("div");
+    row.className = "game";
+
+    row.innerHTML = `
+      <strong>${g.away_team}</strong>
+      ${g.away_score ?? "-"}
+      @
+      ${g.home_score ?? "-"}
+      <strong>${g.home_team}</strong>
+      <span style="margin-left:10px;color:#666">
+        ${g.status} ${g.clock ?? ""}
+      </span>
+    `;
+
+    container.appendChild(row);
+  }
+}
+
+pollScores();
+setInterval(pollScores, POLL_INTERVAL);
+</script>
+
+<style>
+.game {
+  padding: 4px 0;
+  border-bottom: 1px solid #ddd;
+  font-family: system-ui, sans-serif;
+}
+</style>

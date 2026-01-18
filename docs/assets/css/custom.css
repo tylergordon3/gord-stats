@@ -685,3 +685,24 @@
   background: white;
   padding: 6px 0;
 }
+
+/* =========================
+   LIVE POLLING
+   ========================= */
+.game {
+  display: grid;
+  grid-template-columns: 80px 40px 80px 40px 80px 80px;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid #ddd;
+  font-family: monospace;
+}
+
+.score {
+  text-align: center;
+  font-weight: bold;
+}
+
+.status {
+  color: #666;
+}
