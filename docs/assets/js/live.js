@@ -17,6 +17,44 @@ async function pollScores() {
   renderGames(data.games);
 }
 
+function statusRank(g) {
+  const s = (g.status || "").toLowerCase();
+
+  if (
+    s === "in_progress" ||
+    s === "live" ||
+    s === "halftime" ||
+    s === "delay"
+  ) return 0; // LIVE
+
+  if (
+    s === "pre" ||
+    s === "scheduled" ||
+    s === "pre_game" ||
+    s === "not_started"
+  ) return 1; // PRE
+
+  if (s === "final") return 2; // FINAL
+
+  return 3;
+}
+
+function gameTime(g) {
+  return g.start_time_utc
+    ? new Date(g.start_time_utc).getTime()
+    : Infinity;
+}
+
+function formatDateHeader(isoDate) {
+  const d = new Date(isoDate + "T00:00:00");
+  return d.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric"
+  });
+}
+
+
 function statusLabel(status) {
   if (!status) return { text: "—", cls: "st-unk" };
 
@@ -74,95 +112,103 @@ function renderGames(games) {
 
   const ids = Object.keys(games || {});
   if (!ids.length) {
-    container.innerHTML = `<div class="scoreboard-empty">No games right now.</div>`;
+    container.innerHTML =
+      `<div class="scoreboard-empty">No games right now.</div>`;
     return;
   }
 
-  // Optional: simple sort (live first, then by date if present)
-  ids.sort((a, b) => {
-    const ga = games[a];
-    const gb = games[b];
+  // ---- group by date ----
+  const byDate = {};
 
-    // --- status priority ---
-    const statusRank = (g) => {
-      const s = (g.status || "").toLowerCase();
-      if (s === "in_progress" || s === "live" || s === "halftime" || s === "delay") return 0;
-      if (s === "pre" || s === "scheduled" || s === "pre_game") return 1;
-      if (s === "final") return 2;
-      return 3;
-    };
-
-    const ra = statusRank(ga);
-    const rb = statusRank(gb);
-    if (ra !== rb) return ra - rb;
-
-    // --- time ordering ---
-    const ta = ga.start_time_utc ? new Date(ga.start_time_utc).getTime() : Infinity;
-    const tb = gb.start_time_utc ? new Date(gb.start_time_utc).getTime() : Infinity;
-
-    return ta - tb;
-});
-
-
-  const html = ids.map((id) => {
+  for (const id of ids) {
     const g = games[id];
+    const dateKey = g.date || "unknown";
 
-    const startTime =
-      (g.status === "pre" || g.status === "scheduled")
-        ? safe(g.start_time, "")
-        : "";
+    if (!byDate[dateKey]) byDate[dateKey] = [];
+    byDate[dateKey].push({ id, g });
+  }
 
-    const awayTeam = safe(g.away_team, "AWAY");
-    const homeTeam = safe(g.home_team, "HOME");
+  // ---- sort dates chronologically ----
+  const dates = Object.keys(byDate).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
 
-    const awayRank = safe(g.away_rank, null);
-    const homeRank = safe(g.home_rank, null);
+  // ---- build HTML ----
+  let html = "";
 
-    const awayScore = safe(g.away_score, "—");
-    const homeScore = safe(g.home_score, "—");
+  for (const date of dates) {
+    const gamesForDay = byDate[date];
 
-    const { text: stText, cls: stCls } = statusLabel(g.status);
-    const metaLines = formatMeta(g);
+    // ---- sort within the day ----
+    gamesForDay.sort((a, b) => {
+      const ra = statusRank(a.g);
+      const rb = statusRank(b.g);
+      if (ra !== rb) return ra - rb;
 
-    return `
-      <article class="game-card" id="game-${id}">
-        <header class="game-head">
-          <span class="status-pill ${stCls}">
-            ${startTime ? startTime : stText}
-          </span>
-          <span class="game-id">#${id}</span>
-        </header>
+      return gameTime(a.g) - gameTime(b.g);
+    });
 
-        <div class="teams">
-          <div class="team-row">
-            <div class="team-left">
-              ${awayRank ? `<span class="rank">#${awayRank}</span>` : `<span class="rank rank-empty"></span>`}
-              <span class="team">${awayTeam}</span>
-            </div>
-            <div class="score">${awayScore}</div>
-          </div>
-
-          <div class="team-row">
-            <div class="team-left">
-              ${homeRank ? `<span class="rank">#${homeRank}</span>` : `<span class="rank rank-empty"></span>`}
-              <span class="team">${homeTeam}</span>
-            </div>
-            <div class="score">${homeScore}</div>
-          </div>
-        </div>
-
-        ${metaLines.length ? `
-          <div class="meta">
-            ${metaLines.map(line => `<div class="meta-line">${line}</div>`).join("")}
-          </div>
-        ` : ""}
-
-      </article>
+    // ---- date header ----
+    html += `
+      <h2 class="date-header">${formatDateHeader(date)}</h2>
+      <div class="scoreboard-grid">
     `;
-  }).join("");
 
-  container.innerHTML = `<div class="scoreboard-grid">${html}</div>`;
+    for (const { id, g } of gamesForDay) {
+      const awayTeam = safe(g.away_team, "AWAY");
+      const homeTeam = safe(g.home_team, "HOME");
+
+      const awayRank = safe(g.away_rank, null);
+      const homeRank = safe(g.home_rank, null);
+
+      const awayScore = safe(g.away_score, "—");
+      const homeScore = safe(g.home_score, "—");
+
+      const { text: stText, cls: stCls } = statusLabel(g.status);
+      const metaLines = formatMeta(g);
+
+      html += `
+        <article class="game-card" id="game-${id}">
+          <header class="game-head">
+            <span class="status-pill ${stCls}">${stText}</span>
+            <span class="game-id">#${id}</span>
+          </header>
+
+          <div class="teams">
+            <div class="team-row">
+              <div class="team-left">
+                ${awayRank ? `<span class="rank">#${awayRank}</span>` : `<span class="rank rank-empty"></span>`}
+                <span class="team">${awayTeam}</span>
+              </div>
+              <div class="score">${awayScore}</div>
+            </div>
+
+            <div class="team-row">
+              <div class="team-left">
+                ${homeRank ? `<span class="rank">#${homeRank}</span>` : `<span class="rank rank-empty"></span>`}
+                <span class="team">${homeTeam}</span>
+              </div>
+              <div class="score">${homeScore}</div>
+            </div>
+          </div>
+
+          ${metaLines.length ? `
+            <div class="meta">
+              ${metaLines.map(line =>
+                `<div class="meta-line">${line}</div>`
+              ).join("")}
+            </div>
+          ` : ""}
+        </article>
+      `;
+    }
+
+    html += `</div>`;
+  }
+
+  container.innerHTML = html;
 }
+
 
 
 pollScores();

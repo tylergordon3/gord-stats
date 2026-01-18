@@ -808,3 +808,10 @@
 .st-pre   { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
 .st-delay { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
 .st-unk   { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }
+
+.date-header {
+  margin: 24px 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
