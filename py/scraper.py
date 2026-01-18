@@ -480,7 +480,6 @@ def slow_scrape_times():
             d.isoformat(): v
             for d, v in time_dict.items()
         }
-        print(json_ready)
         with open(utils.get_path('data/times.json'), "w") as f:
             json.dump(json_ready, f, indent=2)
 
@@ -1079,7 +1078,6 @@ def today_games(rank_df, gender):
         # Optional: Use prettify() for a nicely formatted, readable HTML output
         html_content = soup.prettify("utf-8")
         response = requests.get("https://www.cbssports.com/college-basketball/schedule/")
-        print(response.content)
         # Write the content to a file   
         with open("output_page.html", "wb") as file:
             file.write(html_content)

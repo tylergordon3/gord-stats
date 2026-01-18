@@ -706,3 +706,105 @@
 .status {
   color: #666;
 }
+
+/* Scoreboard layout */
+.scoreboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.game-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.game-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.status-pill {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid #e5e7eb;
+}
+
+.game-id {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.teams {
+  display: grid;
+  gap: 6px;
+}
+
+.team-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.team-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.rank {
+  font-size: 12px;
+  color: #6b7280;
+  width: 34px;
+  flex: 0 0 34px;
+}
+
+.rank-empty { visibility: hidden; }
+
+.team {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.score {
+  font-size: 18px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.meta {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #e5e7eb;
+  color: #4b5563;
+  font-size: 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.meta-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.scoreboard-empty {
+  padding: 10px 0;
+  color: #6b7280;
+}
+
+/* Status colors */
+.st-live  { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+.st-ht    { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.st-final { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+.st-pre   { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+.st-delay { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.st-unk   { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }

@@ -3,6 +3,7 @@ import time
 import json
 from datetime import datetime
 from push_scores import push
+import utils
 
 # =========================
 # CONFIG
@@ -277,8 +278,8 @@ def get_current_live_dataset():
 
 if __name__ == "__main__":
     payload = get_current_live_dataset()
-
-    with open("data/live_scores.json", "w") as f:
+    path = utils.get_path('data/live_scores.json')
+    with open(path, "w") as f:
         json.dump(payload, f, indent=2)
 
     print(
