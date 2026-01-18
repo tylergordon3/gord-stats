@@ -83,6 +83,8 @@ function renderGames(games) {
   const html = ids.map((id) => {
     const g = games[id];
 
+    const startTime = safe(g.start_time, "")
+
     const awayTeam = safe(g.away_team, "AWAY");
     const homeTeam = safe(g.home_team, "HOME");
 
@@ -98,7 +100,7 @@ function renderGames(games) {
     return `
       <article class="game-card" id="game-${id}">
         <header class="game-head">
-          <span class="status-pill ${stCls}">${stText}</span>
+          <span class="status-pill ${stCls}">${stText} ${startTime}</span>
           <span class="game-id">#${id}</span>
         </header>
 

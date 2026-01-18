@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from push_scores import push
 import utils
+import pytz
 
 # =========================
 # CONFIG
@@ -108,13 +109,26 @@ def fetch_events_by_ids(event_ids):
 # EVENT FORMATTER
 # =========================
 
+from datetime import datetime
+import pytz
+
+EASTERN = pytz.timezone("US/Eastern")
+
 def format_event(g):
-    # ---- date ----
-    game_date = None
+    # ---- parse datetime ----
+    dt = None
     if g.get("game_date"):
-        game_date = datetime.strptime(
+        dt = datetime.strptime(
             g["game_date"], "%a, %d %b %Y %H:%M:%S %z"
-        ).date().isoformat()
+        )
+
+    dt_local = dt.astimezone(EASTERN) if dt else None
+
+    game_date = dt_local.date().isoformat() if dt_local else None
+    start_time = (
+        dt_local.strftime("%I:%M %p").lstrip("0")
+        if dt_local else None
+    )
 
     # ---- teams ----
     home = g["home_team"]
@@ -143,26 +157,37 @@ def format_event(g):
         total_close = None
 
     return {
+        # timing
         "date": game_date,
+        "start_time": start_time,
+        "start_time_utc": dt.isoformat() if dt else None,
+
+        # status
         "status": g.get("status"),
 
+        # teams
         "home_team": home.get("abbreviation"),
         "away_team": away.get("abbreviation"),
 
+        # scores
         "home_score": home_score,
         "away_score": away_score,
 
+        # live info
         "clock": clock,
         "period": period,
         "overtime": overtime,
 
+        # ranks
         "home_rank": g.get("home_ranking"),
         "away_rank": g.get("away_ranking"),
 
+        # meta
         "conference": g.get("home_conference"),
         "venue": g.get("stadium"),
         "location": g.get("location"),
 
+        # betting
         "spread_close": spread_close,
         "total_close": total_close,
     }
