@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-18T22:40:39.825840",
+  "generated": "2026-01-18T22:49:29.422639",
   "games": {
     "2452878": {
       "date": "2026-01-19",
@@ -40,7 +40,7 @@
       "venue": "SECU Arena",
       "location": "Towson, MD, USA",
       "spread_close": "TOWS -6.5",
-      "total_close": 123.5
+      "total_close": 124.5
     },
     "2453025": {
       "date": "2026-01-18",
@@ -340,7 +340,7 @@
       "venue": "Skip Chappelle Court at Memorial Gymnasium",
       "location": "Orono, ME, USA",
       "spread_close": "ME -1.5",
-      "total_close": 127.5
+      "total_close": 128.5
     },
     "2453053": {
       "date": "2026-01-19",
@@ -1340,7 +1340,7 @@
       "venue": "Fertitta Center",
       "location": "Houston, TX, USA",
       "spread_close": "HOU -18.5",
-      "total_close": 142.5
+      "total_close": 141.5
     },
     "2458298": {
       "date": "2026-01-18",
@@ -1449,9 +1449,9 @@
       "status": "in_progress",
       "home_team": "TULN",
       "away_team": "UNT",
-      "home_score": 17,
-      "away_score": 28,
-      "clock": "4:25",
+      "home_score": 24,
+      "away_score": 35,
+      "clock": "1:15",
       "period": "1st",
       "overtime": false,
       "home_rank": null,
@@ -1679,8 +1679,8 @@
       "conference": "Southwestern Athletic",
       "venue": "Harrison HPER Complex",
       "location": "Itta Bena, MS, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "FAMU -11.5",
+      "total_close": 141.5
     },
     "2459477": {
       "date": "2026-01-19",

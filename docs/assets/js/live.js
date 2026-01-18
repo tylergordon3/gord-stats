@@ -80,15 +80,29 @@ function renderGames(games) {
 
   // Optional: simple sort (live first, then by date if present)
   ids.sort((a, b) => {
-    const ga = games[a], gb = games[b];
-    const sa = String(ga.status || ""), sb = String(gb.status || "");
-    const liveA = (sa === "in_progress" || sa === "halftime" || sa === "delay") ? 0 : 1;
-    const liveB = (sb === "in_progress" || sb === "halftime" || sb === "delay") ? 0 : 1;
-    if (liveA !== liveB) return liveA - liveB;
+    const ga = games[a];
+    const gb = games[b];
 
-    // fallback: keep stable order
-    return 0;
-  });
+    // --- status priority ---
+    const statusRank = (g) => {
+      const s = (g.status || "").toLowerCase();
+      if (s === "in_progress" || s === "live" || s === "halftime" || s === "delay") return 0;
+      if (s === "pre" || s === "scheduled" || s === "pre_game") return 1;
+      if (s === "final") return 2;
+      return 3;
+    };
+
+    const ra = statusRank(ga);
+    const rb = statusRank(gb);
+    if (ra !== rb) return ra - rb;
+
+    // --- time ordering ---
+    const ta = ga.start_time_utc ? new Date(ga.start_time_utc).getTime() : Infinity;
+    const tb = gb.start_time_utc ? new Date(gb.start_time_utc).getTime() : Infinity;
+
+    return ta - tb;
+});
+
 
   const html = ids.map((id) => {
     const g = games[id];
