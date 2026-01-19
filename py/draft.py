@@ -123,7 +123,7 @@ styler_worst = (
         .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
         )
 
-df_no_inj = df[~((df['# G'] < 7))]
+df_no_inj = df[~((df['# G'] < 10))]
 team_breakdown_noinj = df_no_inj .copy()
 df_no_inj_best = df_no_inj.sort_values(by='Overall Δ', ascending=False)
 df_no_inj_worst = df_no_inj.sort_values(by='Overall Δ')
@@ -175,7 +175,7 @@ df_html +=  f'''
         {styler_worst.to_html(max_rows=40)}
     </div>
     </details>
-    <p>The following tables only include players who played in 7 or more games</p>
+    <p>The following tables only include players who played in 10 or more games. (~64.5% game requirement)</p>
     <p> - Only inlcudes fantasy regular season (weeks 1-14)</p>
     <details>
     <summary><strong>Biggest OVERALL Steals (Injury adjusted)</strong></summary>
