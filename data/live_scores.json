@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-19T02:06:25.785625",
+  "generated": "2026-01-19T04:02:22.448482",
   "games": {
     "2452878": {
       "date": "2026-01-19",
@@ -19,8 +19,8 @@
       "conference": "CAA",
       "venue": "OceanFirst Bank Center",
       "location": "West Long Branch, NJ, USA",
-      "spread_close": "MONM -4.5",
-      "total_close": 147.5
+      "spread_close": "MONM -3.5",
+      "total_close": 146.5
     },
     "2452912": {
       "date": "2026-01-19",
@@ -180,7 +180,7 @@
       "venue": "Alumni Gymnasium",
       "location": "Lawrenceville, NJ, USA",
       "spread_close": "SHU -3.5",
-      "total_close": 140.5
+      "total_close": 141.5
     },
     "2453038": {
       "date": "2026-01-19",
@@ -239,7 +239,7 @@
       "conference": "Southland",
       "venue": "Sharp Gymnasium",
       "location": "Houston, TX, USA",
-      "spread_close": "HCU -2.5",
+      "spread_close": "HCU -3.5",
       "total_close": 139.5
     },
     "2453044": {
@@ -400,7 +400,7 @@
       "venue": "Yanitelli Center",
       "location": "Jersey City, NJ, USA",
       "spread_close": "SPU -3.5",
-      "total_close": 145.5
+      "total_close": 144.5
     },
     "2453058": {
       "date": "2026-01-19",
@@ -1479,7 +1479,7 @@
       "conference": "Atlantic 10",
       "venue": "EagleBank Arena",
       "location": "Fairfax, VA, USA",
-      "spread_close": "GMU -3.5",
+      "spread_close": "GMU -2.5",
       "total_close": 154.5
     },
     "2458545": {
@@ -1579,7 +1579,7 @@
       "conference": "Ivy",
       "venue": "Paul Bailey Pizzitola Sports Center",
       "location": "Providence, RI, USA",
-      "spread_close": "COR -2.5",
+      "spread_close": "COR -1.5",
       "total_close": 163.5
     },
     "2458916": {
@@ -1599,8 +1599,8 @@
       "conference": "Ivy",
       "venue": "Edward Leede Arena",
       "location": "Hanover, NH, USA",
-      "spread_close": " ",
-      "total_close": 144.5
+      "spread_close": "DART -1.5",
+      "total_close": 145.5
     },
     "2459067": {
       "date": "2026-01-18",
@@ -1659,8 +1659,8 @@
       "conference": "Southwestern Athletic",
       "venue": "H.O. Clemmons Arena",
       "location": "Pine Bluff, AR, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "BCU -2.5",
+      "total_close": 153.5
     },
     "2459476": {
       "date": "2026-01-19",
@@ -1680,7 +1680,7 @@
       "venue": "Harrison HPER Complex",
       "location": "Itta Bena, MS, USA",
       "spread_close": "FAMU -12.5",
-      "total_close": 141.5
+      "total_close": 140.5
     },
     "2459477": {
       "date": "2026-01-19",
@@ -1699,8 +1699,8 @@
       "conference": "Southwestern Athletic",
       "venue": "Lee E. Williams Athletic and Assembly Center",
       "location": "Jackson, MS, USA",
-      "spread_close": "JAST -1.5",
-      "total_close": 154.5
+      "spread_close": "JAST -2.5",
+      "total_close": 156.5
     },
     "2459743": {
       "date": "2026-01-19",
