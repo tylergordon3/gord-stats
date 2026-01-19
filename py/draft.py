@@ -228,7 +228,7 @@ for df in [qb, rb, wr, te, ovr]:
     df = df.reset_index(drop=True)
     if 'Pos_y' in df.columns:
         df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
-        pos = df['Pos']
+        pos = list(df['Pos'])[0]
         df = df.drop(columns=['Pos'])
         df = df.sort_values(by='Sum Pos Δ', ascending=False)
         styler = (
