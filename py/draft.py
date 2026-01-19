@@ -175,9 +175,9 @@ df_html +=  f'''
         {styler_worst.to_html(max_rows=40)}
     </div>
     </details>
-     <details>
     <p>The following tables only include players who played in 7 or more games</p>
-    <p> - Only inlcudes fantasy regular season (weeks 1-14)
+    <p> - Only inlcudes fantasy regular season (weeks 1-14)</p>
+    <details>
     <summary><strong>Biggest OVERALL Steals (Injury adjusted)</strong></summary>
     <div class="table-scroll">
         {styler_best_no_inj.to_html(max_rows=40)}
