@@ -226,9 +226,10 @@ for df in [qb, rb, wr, te, ovr]:
         " Total Ovr Δ_y": "No Injury Sum Δ"
     })
     df = df.reset_index(drop=True)
- 
     if 'Pos_y' in df.columns:
         df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
+        pos = df['Pos']
+        df = df.drop(columns=['Pos'])
         df = df.sort_values(by='Sum Pos Δ', ascending=False)
         styler = (
         df
@@ -237,6 +238,7 @@ for df in [qb, rb, wr, te, ovr]:
         .background_gradient(cmap="RdYlGn", subset=["Sum Pos Δ"]) 
         .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Pos Δ"])
         )
+        html += f'<h2>{pos}</h2>'
     else:
         df = df.sort_values(by='Sum Δ', ascending=False)
         styler = (
@@ -246,6 +248,7 @@ for df in [qb, rb, wr, te, ovr]:
         .background_gradient(cmap="RdYlGn", subset=["Sum Δ"]) 
         .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Δ"])
         )
+        html += f'<h2>Overall</h2>'
     html += styler.to_html()
 
 page = htmb.add_front_matter(html, 'Draft - Team Breakdown')
