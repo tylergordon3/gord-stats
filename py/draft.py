@@ -154,20 +154,28 @@ tz = timezone("EST")
 time_obj = datetime.datetime.now(tz)
 time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
-# <a href="week13_median.html">Week13</a>
 df_html += "<a href='draft_team.html'>Team Draft Breakdown</a>"
 df_html +=  f'''
-<div class="type-toggle">
-<button onclick="setChange('all', this)" class="active">All</button>
-<button onclick="setChange('worst', this)">Worst</button>
-<button onclick="setChange('best', this)">Best</button>
-</div>'''
-df_html += f'''
-<div class="table-scroll all inj">{styler.to_html()}</div>
-<div class="table-scroll best inj hidden-div">{styler_best.to_html(max_rows=40)}</div>
-<div class="table-scroll worst inj hidden-div">{styler_worst.to_html(max_rows=40)}</div>
-<script src='/assets/js/toggle.js'></script>
-'''
+    <p>Note: Does not include defenses, kickers, or players who missed 7 or more weeks for injury</p>
+    <details>
+    <summary><strong>All Draft Stats</strong></summary>
+    <div class="table-scroll">
+        {styler.to_html()}
+    </div>
+    </details>
+    <details>
+    <summary><strong>Biggest Draft Steals</strong></summary>
+    <div class="table-scroll">
+        {styler_best.to_html(max_rows=40)}
+    </div>
+    </details>
+    <details>
+    <summary><strong>Biggest Draft Misses</strong></summary>
+    <div class="table-scroll">
+        {styler_worst.to_html(max_rows=40)}
+    </div>
+    </details>
+    '''
 
 page = htmb.add_front_matter(df_html, 'Draft')
 with open('docs/draft.html', "w", encoding="utf-8") as f:

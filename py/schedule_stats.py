@@ -251,7 +251,5 @@ def weekly_rankings():
     combined_plot.layout.updatemenus[0].buttons[0]['args'][1]['transition']['redraw'] = False
 
     combined_plot.write_html("your_plot.html")
-    
-weekly_rankings()
    
 
