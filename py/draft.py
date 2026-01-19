@@ -123,7 +123,7 @@ styler_worst = (
         .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
         )
 
-df_no_inj = df[~((df['# G'] < 8))]
+df_no_inj = df[~((df['# G'] < 7))]
 team_breakdown_noinj = df_no_inj .copy()
 df_no_inj_best = df_no_inj.sort_values(by='Overall Δ', ascending=False)
 df_no_inj_worst = df_no_inj.sort_values(by='Overall Δ')
@@ -156,23 +156,37 @@ time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
 df_html += "<a href='draft_team.html'>Team Draft Breakdown</a>"
 df_html +=  f'''
-    <p>Note: Does not include defenses, kickers, or players who missed 7 or more weeks for injury</p>
+    <p>Note: Does not include defenses or kickers.</p>
     <details>
-    <summary><strong>All Draft Stats</strong></summary>
+    <summary><strong>Full Draft</strong></summary>
     <div class="table-scroll">
         {styler.to_html()}
     </div>
     </details>
     <details>
-    <summary><strong>Biggest Draft Steals</strong></summary>
+    <summary><strong>Biggest OVERALL Steals</strong></summary>
     <div class="table-scroll">
         {styler_best.to_html(max_rows=40)}
     </div>
     </details>
     <details>
-    <summary><strong>Biggest Draft Misses</strong></summary>
+    <summary><strong>Biggest OVERALL Busts</strong></summary>
     <div class="table-scroll">
         {styler_worst.to_html(max_rows=40)}
+    </div>
+    </details>
+     <details>
+    <p>The following tables only include players who played in 7 or more games</p>
+    <p> - Only inlcudes fantasy regular season (weeks 1-14)
+    <summary><strong>Biggest OVERALL Steals (Injury adjusted)</strong></summary>
+    <div class="table-scroll">
+        {styler_best_no_inj.to_html(max_rows=40)}
+    </div>
+    </details>
+    <details>
+    <summary><strong>Biggest OVERALL Busts (Injury adjusted)</strong></summary>
+    <div class="table-scroll">
+        {styler_worst_no_inj.to_html(max_rows=40)}
     </div>
     </details>
     '''
