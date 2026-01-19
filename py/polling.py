@@ -170,7 +170,7 @@ def calculate_rate():
         now=now,
         zones=zones,
         daily_plan=plan,
-        default_idle=300  # 5 minutes
+        default_idle=3600  # 1 hr
     )
     
     return interval
