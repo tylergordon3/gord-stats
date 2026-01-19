@@ -166,13 +166,13 @@ df_html +=  f'''
     <details>
     <summary><strong>Biggest OVERALL Steals</strong></summary>
     <div class="table-scroll">
-        {styler_best.to_html(max_rows=40)}
+        {styler_best.to_html(max_rows=15)}
     </div>
     </details>
     <details>
     <summary><strong>Biggest OVERALL Busts</strong></summary>
     <div class="table-scroll">
-        {styler_worst.to_html(max_rows=40)}
+        {styler_worst.to_html(max_rows=15)}
     </div>
     </details>
     <p>The following tables only include players who played in 10 or more games. (~64.5% game requirement)</p>
@@ -180,13 +180,13 @@ df_html +=  f'''
     <details>
     <summary><strong>Biggest OVERALL Steals (Injury adjusted)</strong></summary>
     <div class="table-scroll">
-        {styler_best_no_inj.to_html(max_rows=40)}
+        {styler_best_no_inj.to_html(max_rows=15)}
     </div>
     </details>
     <details>
     <summary><strong>Biggest OVERALL Busts (Injury adjusted)</strong></summary>
     <div class="table-scroll">
-        {styler_worst_no_inj.to_html(max_rows=40)}
+        {styler_worst_no_inj.to_html(max_rows=15)}
     </div>
     </details>
     '''

@@ -6,7 +6,7 @@ from sleeper_wrapper import League
 
 def get_season(end_week):
     # Fantasy season: 1-14 reg, 15-17 post
-    if end_week > 17: end_week = 17
+    if end_week > 14: end_week = 14
     league = League(constants.LEAGUEID)
     teams = league_util.get_teams(league)
     season = pd.DataFrame()
