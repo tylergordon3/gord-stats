@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-19T04:02:22.448482",
+  "generated": "2026-01-19T04:29:43.260914",
   "games": {
     "2452878": {
       "date": "2026-01-19",
@@ -300,7 +300,7 @@
       "venue": "Broadview Center",
       "location": "Guilderland, NY, USA",
       "spread_close": "UVM -5.5",
-      "total_close": 141.5
+      "total_close": 144.5
     },
     "2453049": {
       "date": "2026-01-19",
@@ -319,7 +319,7 @@
       "conference": "Northeast",
       "venue": "DeGol Arena",
       "location": "Loretto, PA, USA",
-      "spread_close": "STONEH -1.5",
+      "spread_close": "STONEH -2.5",
       "total_close": 141.5
     },
     "2453051": {
@@ -360,7 +360,7 @@
       "venue": "McCann Arena",
       "location": "Poughkeepsie, NY, USA",
       "spread_close": "MRST -6.5",
-      "total_close": 137.5
+      "total_close": 136.5
     },
     "2453055": {
       "date": "2026-01-19",
@@ -419,7 +419,7 @@
       "conference": "Metro Atlantic Athletic",
       "venue": "M&T Bank Arena",
       "location": "Hamden, CT, USA",
-      "spread_close": "QUIN -13.5",
+      "spread_close": "QUIN -12.5",
       "total_close": 153.5
     },
     "2453060": {

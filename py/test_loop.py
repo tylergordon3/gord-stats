@@ -4,6 +4,7 @@ import time
 import json
 import random
 import push_scores
+import polling
 
 
 def task():
@@ -30,7 +31,8 @@ while True:
 
         # success → reset backoff and wait normal interval
         attempt = 0
-        time.sleep(BASE_INTERVAL)
+        poll_rate = polling.calculate_rate()
+        time.sleep(poll_rate)
 
     except Exception as e:
         # failure → exponential backoff
