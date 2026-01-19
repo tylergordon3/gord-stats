@@ -174,5 +174,3 @@ def calculate_rate():
     )
     
     return interval
-
-calculate_rate()

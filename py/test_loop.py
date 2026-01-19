@@ -32,6 +32,7 @@ while True:
         # success → reset backoff and wait normal interval
         attempt = 0
         poll_rate = polling.calculate_rate()
+        print(f'Sleeping for {poll_rate}')
         time.sleep(poll_rate)
 
     except Exception as e:
