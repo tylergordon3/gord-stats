@@ -34,6 +34,7 @@ async function loadTeamLogos() {
     if (!team || !path) continue;
     let full_path = LOGO_BASE + path;
     // primary team name
+    console.log(full_path);
     map[normalize(team)] = full_path;
 
     // aliases / abbreviations
