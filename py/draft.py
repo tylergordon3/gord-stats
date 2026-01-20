@@ -49,7 +49,7 @@ def sum_pts(id):
 
 def num_games(id):
     sleeper = str(id)
-    pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'][:15].count()
+    pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'][:14].count()
     return pts
 
 def final_rank(row, df):
