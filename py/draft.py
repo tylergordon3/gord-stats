@@ -257,6 +257,9 @@ styler = (
         )
 html += "<p>Number of games drafted players missed over the course of the 14 week regular season.</p>"
 html += styler.to_html()
+html += "<h1>Drafted Position Change</h1>"
+html += "<p>Sorted by: Sum Pos Δ, or the total change from draft position to final ranking amongst position group.</p>"
+html += "<p>No Injury Sum Pos Δ - same as Sum Pos Δ but only includes players with 10 or more games played. "
 for df in [qb, rb, wr, te, ovr]:
     df = df.rename(columns={
         "Pos_x" : "Pos",
