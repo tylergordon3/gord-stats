@@ -4,6 +4,7 @@
 
 import pandas as pd
 import re
+import numpy as np
 from pytz import timezone
 import datetime
 from sleeper_wrapper import League, Drafts, Players
@@ -197,14 +198,15 @@ with open('docs/draft.html', "w", encoding="utf-8") as f:
 
 def byTeam(df):
     grouped = df.groupby(by=['Owner', 'Pos']).agg(
-        pos_delt = ("Pos Δ", 'sum'),
-        ovr_delt = ("Overall Δ", 'sum')
+        pos_delt = ("Pos Δ", "sum"),
+        ovr_delt = ("Overall Δ", "sum")
     )
-
+    grouped['pos_delt'] = grouped['pos_delt'].fillna(0)
+    grouped['ovr_delt'] = grouped['ovr_delt'].fillna(0)
     grouped_tot = df.groupby(by=['Owner']).agg(
         ovr_delt = ("Overall Δ", 'sum')
     )
-
+    grouped_tot = grouped_tot.fillna(0)
     df_result = grouped.reset_index()
     df_result = df_result.rename(columns={'pos_delt':'Total Pos Δ', 'ovr_delt':' Total Ovr Δ'})
     qb = df_result[df_result['Pos'] == 'QB'].sort_values(by='Total Pos Δ', ascending=False)
@@ -241,11 +243,13 @@ missing['Games Missed'] = missing['tot_games'] - missing['num_games']
 missing = missing.sort_values(by='Games Missed', ascending=False)
 missing = missing.drop(columns=['tot_players'])
 missing = missing.rename(columns={'num_games':'G Played', 'tot_games':'G Tot'})
+missing = missing[['Games Missed', 'G Tot', 'G Played']].copy()
 styler = (
         missing
         .style
         .background_gradient(cmap="RdYlGn_r", subset=["Games Missed"]) 
         )
+html += "<p>Number of games drafted players missed over the course of the 14 week regular season.</p>"
 html += styler.to_html()
 for df in [qb, rb, wr, te, ovr]:
     df = df.rename(columns={
