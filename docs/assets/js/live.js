@@ -41,6 +41,7 @@ async function loadTeamLogos() {
     if (Array.isArray(aliases)) {
       for (const n of aliases) {
         map[normalize(n)] = full_path;
+        map[n] = team;
       }
     }
   }
@@ -126,6 +127,15 @@ function statusLabel(status) {
 
 function safe(v, fallback = "") {
   return (v === null || v === undefined) ? fallback : v;
+}
+
+function getTeamName(team) {
+  print_name = TEAM_LOGO_MAP[team]
+  if (!print_name) {
+    return team;
+  }
+
+  return print_name
 }
 
 function formatMeta(g) {
@@ -243,7 +253,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                ${awayTeam}
+                ${getTeamName(awayTeam)}
               </span>
               </div>
               <div class="score">${awayScore}</div>
@@ -260,7 +270,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                ${homeTeam}
+                ${getTeamName(homeTeam)}
               </span>
               </div>
               <div class="score">${homeScore}</div>
