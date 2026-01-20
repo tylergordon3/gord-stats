@@ -116,7 +116,7 @@ import pytz
 
 EASTERN = pytz.timezone("US/Eastern")
 
-def format_event(g, ranks, master):
+def format_event(g, ranks):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -135,7 +135,10 @@ def format_event(g, ranks, master):
     # ---- teams ----
     home = g["home_team"]
     away = g["away_team"]
-
+    
+    home_model = ranks[scraper.getNameFromCode(home)]
+    away_model = ranks[scraper.getNameFromCode(away)]
+    
     # ---- score / progress ----
     box = g.get("box_score") or {}
     score = box.get("score") or {}
@@ -174,6 +177,9 @@ def format_event(g, ranks, master):
         # scores
         "home_score": home_score,
         "away_score": away_score,
+        
+        "away_model" : away_model,
+        "home_model" : home_model,
 
         # live info
         "clock": clock,

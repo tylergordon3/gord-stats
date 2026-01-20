@@ -232,6 +232,9 @@ function renderGames(games) {
       const awayRank = safe(g.away_rank, null);
       const homeRank = safe(g.home_rank, null);
 
+      const homeModel = safe(g.home_model, null);
+      const awayModel = safe(g.away_model, null);
+
       const awayScore = safe(g.away_score, "—");
       const homeScore = safe(g.home_score, "—");
 
@@ -248,7 +251,7 @@ function renderGames(games) {
           <div class="teams">
             <div class="team-row">
               <div class="team-left">
-                ${awayRank ? `<span class="rank">#${awayRank}</span>` : `<span class="rank rank-empty"></span>`}
+                ${awayRank ? `<span class="rank">(#${awayRank}) ${awayModel}</span>` : `<span class="rank">${awayModel}</span>`}
                 <span class="team">
                 <img
                   class="team-logo"
@@ -265,7 +268,7 @@ function renderGames(games) {
 
             <div class="team-row">
               <div class="team-left">
-                ${homeRank ? `<span class="rank">#${homeRank}</span>` : `<span class="rank rank-empty"></span>`}
+                ${homeRank ? `<span class="rank">(#${homeRank}) ${homeModel}</span>` : `<span class="rank"> ${homeModel}</span>`}
                 <span class="team">
                 <img
                   class="team-logo"

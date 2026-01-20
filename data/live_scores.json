@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-20T22:37:06.707245",
+  "generated": "2026-01-20T23:46:44.690375",
   "games": {
     "2453077": {
       "date": "2026-01-20",
@@ -46,13 +46,13 @@
       "date": "2026-01-20",
       "start_time": "6:30 PM",
       "start_time_utc": "2026-01-20T23:30:00+00:00",
-      "status": "pre_game",
+      "status": "in_progress",
       "home_team": "BUF",
       "away_team": "AKR",
-      "home_score": 0,
-      "away_score": 0,
-      "clock": "0:00",
-      "period": null,
+      "home_score": 4,
+      "away_score": 19,
+      "clock": "12:13",
+      "period": "1st",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
@@ -60,7 +60,7 @@
       "venue": "Alumni Arena",
       "location": "Buffalo, NY, USA",
       "spread_close": "AKR -7.5",
-      "total_close": 167.5
+      "total_close": 166.5
     },
     "2453084": {
       "date": "2026-01-20",
@@ -120,7 +120,7 @@
       "venue": "Littlejohn Coliseum",
       "location": "Clemson, SC, USA",
       "spread_close": "CLEM -2.5",
-      "total_close": 141.5
+      "total_close": 142.5
     },
     "2453096": {
       "date": "2026-01-20",
@@ -259,20 +259,20 @@
       "conference": "Southeastern",
       "venue": "Colonial Life Arena",
       "location": "Columbia, SC, USA",
-      "spread_close": "OKLA -1.5",
+      "spread_close": "OKLA -2.5",
       "total_close": 150.5
     },
     "2453109": {
       "date": "2026-01-20",
       "start_time": "6:00 PM",
       "start_time_utc": "2026-01-20T23:00:00+00:00",
-      "status": "pre_game",
+      "status": "half_over",
       "home_team": "MASS",
       "away_team": "TOL",
-      "home_score": 0,
-      "away_score": 0,
+      "home_score": 35,
+      "away_score": 34,
       "clock": "0:00",
-      "period": null,
+      "period": "1st",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
@@ -409,9 +409,9 @@
       "status": "pre_game",
       "home_team": "VMI",
       "away_team": "UNCG",
-      "home_score": null,
-      "away_score": null,
-      "clock": null,
+      "home_score": 0,
+      "away_score": 0,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -419,8 +419,8 @@
       "conference": "Southern",
       "venue": "Cameron Hall",
       "location": "Lexington, VA, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "UNCG -1.5",
+      "total_close": 152.5
     },
     "2453124": {
       "date": "2026-01-21",
@@ -429,9 +429,9 @@
       "status": "pre_game",
       "home_team": "WINT",
       "away_team": "RAD",
-      "home_score": null,
-      "away_score": null,
-      "clock": null,
+      "home_score": 0,
+      "away_score": 0,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -459,8 +459,8 @@
       "conference": "Southern",
       "venue": "McKenzie Arena",
       "location": "Chattanooga, TN, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "ETSU -4.5",
+      "total_close": 146.5
     },
     "2453128": {
       "date": "2026-01-21",
@@ -549,9 +549,9 @@
       "status": "pre_game",
       "home_team": "SCUP",
       "away_team": "UNCA",
-      "home_score": null,
-      "away_score": null,
-      "clock": null,
+      "home_score": 0,
+      "away_score": 0,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -619,7 +619,7 @@
       "conference": "Horizon",
       "venue": "Nutter Center",
       "location": "Fairborn, OH, USA",
-      "spread_close": null,
+      "spread_close": "WRST -16.5",
       "total_close": null
     },
     "2453144": {
@@ -659,8 +659,8 @@
       "conference": "Sun Belt",
       "venue": "Chartway Arena",
       "location": "Norfolk, VA, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "TROY -5.5",
+      "total_close": 152.5
     },
     "2453148": {
       "date": "2026-01-21",
@@ -679,8 +679,8 @@
       "conference": "Western Athletic",
       "venue": "Dale E. and Sarah Ann Fowler Events Center",
       "location": "Riverside, CA, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "CABP -7.5",
+      "total_close": 141.5
     },
     "2453150": {
       "date": "2026-01-21",
@@ -689,9 +689,9 @@
       "status": "pre_game",
       "home_team": "WOFF",
       "away_team": "SAM",
-      "home_score": null,
-      "away_score": null,
-      "clock": null,
+      "home_score": 0,
+      "away_score": 0,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -699,8 +699,8 @@
       "conference": "Southern",
       "venue": "Jerry Richardson Indoor Stadium",
       "location": "Spartanburg, SC, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "WOFF -3.5",
+      "total_close": 157.5
     },
     "2453152": {
       "date": "2026-01-22",
@@ -1506,13 +1506,13 @@
       "date": "2026-01-20",
       "start_time": "6:30 PM",
       "start_time_utc": "2026-01-20T23:30:00+00:00",
-      "status": "pre_game",
+      "status": "in_progress",
       "home_team": "OSU",
       "away_team": "MINN",
-      "home_score": 0,
-      "away_score": 0,
-      "clock": "0:00",
-      "period": null,
+      "home_score": 12,
+      "away_score": 6,
+      "clock": "13:43",
+      "period": "1st",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
@@ -1699,8 +1699,8 @@
       "conference": "American",
       "venue": "Donald W. Reynolds Center",
       "location": "Tulsa, OK, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "TLSA -5.5",
+      "total_close": 153.5
     },
     "2458314": {
       "date": "2026-01-21",
@@ -1719,8 +1719,8 @@
       "conference": "American",
       "venue": "Eleanor R. Baldwin Arena",
       "location": "Boca Raton, FL, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "FAU -10.5",
+      "total_close": 154.5
     },
     "2458316": {
       "date": "2026-01-21",
@@ -1829,9 +1829,9 @@
       "status": "pre_game",
       "home_team": "BU",
       "away_team": "LAF",
-      "home_score": null,
-      "away_score": null,
-      "clock": null,
+      "home_score": 0,
+      "away_score": 0,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -1959,8 +1959,8 @@
       "conference": "West Coast",
       "venue": "McCarthey Athletic Center",
       "location": "Spokane, WA, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "GONZ -28.5",
+      "total_close": 146.5
     },
     "2459074": {
       "date": "2026-01-21",
@@ -1979,8 +1979,8 @@
       "conference": "West Coast",
       "venue": "Redhawk Center",
       "location": "Seattle, WA, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "SEA -4.5",
+      "total_close": 135.5
     },
     "2459075": {
       "date": "2026-01-21",
@@ -1999,8 +1999,8 @@
       "conference": "West Coast",
       "venue": "University Credit Union Pavilion",
       "location": "Moraga, CA, USA",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "SMC -18.5",
+      "total_close": 142.5
     },
     "2459077": {
       "date": "2026-01-21",
@@ -2160,7 +2160,7 @@
       "venue": "Credit Union 1 Arena",
       "location": "Chicago, IL, USA",
       "spread_close": "UIC -8.5",
-      "total_close": 137.5
+      "total_close": 138.5
     },
     "2459959": {
       "date": "2026-01-20",
@@ -2246,7 +2246,7 @@
       "date": "2026-01-20",
       "start_time": "6:00 PM",
       "start_time_utc": "2026-01-20T23:00:00+00:00",
-      "status": "pre_game",
+      "status": "delayed",
       "home_team": "MORG",
       "away_team": "UVALYN",
       "home_score": 0,
