@@ -39,7 +39,7 @@ async function loadTeamLogos() {
     // aliases / abbreviations
     if (Array.isArray(aliases)) {
       for (const n of aliases) {
-        map[normalize(n)] = path;
+        map[normalize(n)] = full_path;
       }
     }
   }
