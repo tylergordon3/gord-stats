@@ -265,6 +265,9 @@ for df in [qb, rb, wr, te, ovr]:
         "Total Pos Δ_y": "No Injury Sum Pos Δ",
         " Total Ovr Δ_y": "No Injury Sum Δ"
     })
+
+    if 'No Injury Sum Pos Δ' in df.columns:
+        df['No Injury Sum Pos Δ'] = df['No Injury Sum Pos Δ'].astype(int)
     df = df.reset_index(drop=True)
     if 'Pos_y' in df.columns:
         df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
