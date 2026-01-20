@@ -9,37 +9,58 @@ let lastGenerated = null;
 let TEAM_LOGO_MAP = {};
 let TEAM_LOGO_READY = false;
 
+function normalize(s) {
+  return String(s)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+}
+
 async function loadTeamLogos() {
   const res = await fetch("/assets/data/master.json");
-  const rows = await res.json();
+  const data = await res.json();
 
   const map = {};
 
-  for (const row of rows) {
-    if (!row.path) continue;
+  const teams = data.team;
+  const names = data.names;
+  const paths = data.path;
 
-    // main team name
-    map[row.team.toLowerCase()] = row.path;
+  for (const i in teams) {
+    const team = teams[i];
+    const path = paths?.[i];
+    const aliases = names?.[i];
+
+    if (!team || !path) continue;
+
+    // primary team name
+    map[normalize(team)] = path;
 
     // aliases / abbreviations
-    if (Array.isArray(row.names)) {
-      for (const n of row.names) {
-        map[String(n).toLowerCase()] = row.path;
+    if (Array.isArray(aliases)) {
+      for (const n of aliases) {
+        map[normalize(n)] = path;
       }
     }
   }
 
   TEAM_LOGO_MAP = map;
   TEAM_LOGO_READY = true;
+
+  console.log("Loaded team logos:", Object.keys(map).length);
 }
 
 function teamLogo(teamName) {
-  if (!teamName) return "/assets/images/default.png";
+  if (!TEAM_LOGO_READY || !teamName) {
+    return "/assets/images/default.png";
+  }
+
   return (
-    TEAM_LOGO_MAP[teamName.toLowerCase()] ||
+    TEAM_LOGO_MAP[normalize(teamName)] ||
     "/assets/images/default.png"
   );
 }
+
 
 async function pollScores() {
   const res = await fetch(WORKER_URL);
@@ -51,18 +72,6 @@ async function pollScores() {
   }
 
   renderGames(data.games);
-}
-
-function slugifyTeam(name) {
-  return String(name)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function teamLogo(teamName) {
-  if (!teamName) return `${LOGO_BASE}/default.png`;
-  return `${LOGO_BASE}/${slugifyTeam(teamName)}.png`;
 }
 
 function statusRank(g) {
