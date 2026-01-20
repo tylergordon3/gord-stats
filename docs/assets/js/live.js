@@ -275,5 +275,10 @@ function renderGames(games) {
   container.innerHTML = html;
 }
 
-pollScores();
-setInterval(pollScores, POLL_INTERVAL);
+async function start() {
+  await loadTeamLogos();
+  await pollScores();
+  setInterval(pollScores, POLL_INTERVAL);
+}
+
+start();
