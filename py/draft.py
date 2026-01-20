@@ -206,7 +206,7 @@ def byTeam(df):
     grouped_tot = df.groupby(by=['Owner']).agg(
         ovr_delt = ("Overall Δ", 'sum')
     )
-    grouped_tot = grouped_tot.fillna(0)
+    grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
     df_result = grouped.reset_index()
     df_result = df_result.rename(columns={'pos_delt':'Total Pos Δ', 'ovr_delt':' Total Ovr Δ'})
     qb = df_result[df_result['Pos'] == 'QB'].sort_values(by='Total Pos Δ', ascending=False)
@@ -217,7 +217,8 @@ def byTeam(df):
     grouped_tot = df.groupby(by=['Owner']).agg(
         ovr_delt = ("Overall Δ", 'sum')
     )
-
+    grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
+    
     df_result2 = grouped_tot.reset_index()
     df_result2 = df_result2.rename(columns={'ovr_delt':' Total Ovr Δ'})
 
