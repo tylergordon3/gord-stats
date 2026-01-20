@@ -244,8 +244,7 @@ missing = missing.rename(columns={'num_games':'G Played', 'tot_games':'G Tot'})
 styler = (
         missing
         .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Games Missed"]) 
+        .background_gradient(cmap="RdYlGn_r", subset=["Games Missed"]) 
         )
 html += styler.to_html()
 for df in [qb, rb, wr, te, ovr]:
