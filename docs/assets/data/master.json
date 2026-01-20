@@ -1317,16 +1317,14 @@
         ],
         "46": [
             "Charleston",
-            "Cougars",
             "C of C",
             "charleston",
             "CHARLESTON",
-            "cougars",
-            "COUGARS",
             "c of c",
             "C OF C",
             "CHARLS",
-            "COFC"
+            "COFC",
+            "COC"
         ],
         "47": [
             "Charleston Southern",
@@ -1467,15 +1465,13 @@
         ],
         "58": [
             "COM",
-            "Lions",
             "Columbia",
             "CLMB",
             "com",
-            "lions",
-            "LIONS",
             "columbia",
             "COLUMBIA",
-            "clmb"
+            "clmb",
+            "Colum"
         ],
         "59": [
             "UConn",
@@ -2097,13 +2093,11 @@
         ],
         "111": [
             "Hofstra",
-            "Pride",
             "HOF",
             "hofstra",
             "HOFSTRA",
-            "pride",
-            "PRIDE",
-            "hof"
+            "hof",
+            "HOFS"
         ],
         "112": [
             "Holy Cross",
@@ -2302,13 +2296,10 @@
             "iowa st"
         ],
         "128": [
-            "Tigers",
             "JKSN",
             "Jackson State",
             "JKST",
             "Jackson St.",
-            "tigers",
-            "TIGERS",
             "jksn",
             "jackson state",
             "JACKSON STATE",
@@ -2317,7 +2308,8 @@
             "JACKSON ST.",
             "jacksonst",
             "jackson st",
-            "JACKST"
+            "JACKST",
+            "JAST"
         ],
         "129": [
             "JAC",
@@ -3583,14 +3575,12 @@
         ],
         "232": [
             "Pepperdine",
-            "Waves",
             "PEPP",
             "pepperdine",
             "PEPPERDINE",
-            "waves",
-            "WAVES",
             "pepp",
-            "PEPPER"
+            "PEPPER",
+            "PEP"
         ],
         "233": [
             "Panthers",
@@ -3658,14 +3648,12 @@
             "PRES"
         ],
         "238": [
-            "Tigers",
             "Princeton",
             "PRIN",
-            "tigers",
-            "TIGERS",
             "princeton",
             "PRINCETON",
-            "prin"
+            "prin",
+            "Prince"
         ],
         "239": [
             "Providence",
@@ -3875,14 +3863,12 @@
         ],
         "258": [
             "Saint Louis",
-            "Billikens",
             "STLOU",
             "saint louis",
             "SAINT LOUIS",
-            "billikens",
-            "BILLIKENS",
             "stlou",
-            "saintlouis"
+            "saintlouis",
+            "SLU"
         ],
         "259": [
             "Saint Mary's",
@@ -4133,16 +4119,14 @@
         ],
         "278": [
             "Southern",
-            "Jaguars",
             "SUBR",
             "STHRN",
             "southern",
             "SOUTHERN",
-            "jaguars",
-            "JAGUARS",
             "subr",
             "sthrn",
-            "Southern U."
+            "Southern U.",
+            "SOU"
         ],
         "279": [
             "SOILL",
@@ -4200,31 +4184,27 @@
         ],
         "283": [
             "St. Bonaventure",
-            "Bonnies",
             "STBN",
             "st. bonaventure",
             "ST. BONAVENTURE",
-            "bonnies",
-            "BONNIES",
             "stbn",
             "stbonaventure",
             "st bonaventure",
             "St. Bona.",
-            "STBON"
+            "STBON",
+            "SBU"
         ],
         "284": [
             "St. John's",
-            "Red Storm",
             "STJ",
             "st. john's",
             "ST. JOHN'S",
-            "red storm",
-            "RED STORM",
             "stj",
             "stjohn's",
             "st john's",
             "st johns",
-            "STJOHN"
+            "STJOHN",
+            "SJU"
         ],
         "285": [
             "St. Thomas",
@@ -4746,19 +4726,17 @@
         ],
         "333": [
             "Utah State",
-            "Aggies",
             "USU",
             "Utah St.",
             "utah state",
             "UTAH STATE",
-            "aggies",
-            "AGGIES",
             "usu",
             "utah st.",
             "UTAH ST.",
             "utahst",
             "utah st",
-            "UTAHST"
+            "UTAHST",
+            "UTST"
         ],
         "334": [
             "Utah Tech",

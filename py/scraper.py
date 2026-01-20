@@ -48,7 +48,7 @@ def image_formatter(url):
     return f'<img src="{url}" class="team-logo" >'
 
 def getTeamRanks():
-    path = Path(utils.get_path("data/teams/ranks.json"))
+    path = Path(utils.get_path("docs/assets/data/ranks.json"))
 
     if not path.exists():
         return {}
@@ -57,13 +57,13 @@ def getTeamRanks():
         return json.load(f)
 
 def saveTeamRanks(data):
-    path = Path(utils.get_path("data/teams/ranks.json"))
+    path = Path(utils.get_path("docs/assets/data/ranks.json"))
 
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
         
 def getWTeamRanks():
-    path = Path(utils.get_path("data/teams/wranks.json"))
+    path = Path(utils.get_path("docs/assets/data/wranks.json"))
 
     if not path.exists():
         return {}
@@ -72,7 +72,7 @@ def getWTeamRanks():
         return json.load(f)
 
 def saveWTeamRanks(data):
-    path = Path(utils.get_path("data/teams/wranks.json"))
+    path = Path(utils.get_path("docs/assets/data/wranks.json"))
 
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
@@ -84,7 +84,7 @@ def getMasterTeams():
     :return: Master DataFrame
     :rtype: DataFrame
     '''
-    df_back = pd.read_json(utils.get_path("data/teams/master.json"))
+    df_back = pd.read_json(utils.get_path("docs/assets/data/master.json"))
     return df_back
 
 def saveMasterTeams(df):
@@ -94,7 +94,7 @@ def saveMasterTeams(df):
     :param df: Master DF to save
     :type df: DataFrame
     '''
-    df.to_json(utils.get_path("data/teams/master.json"))
+    df.to_json(utils.get_path("docs/assets/data/master.json"))
 
 def get_image_name(team):
     '''
