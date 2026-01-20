@@ -2,7 +2,7 @@ const WORKER_URL =
   "https://cbb-live-scores.tmgordon33.workers.dev/scores?league=men";
 
 const POLL_INTERVAL = 30000;
-const LOGO_BASE = "/assets/images";
+const LOGO_BASE = "/assets/images/";
 
 let lastGenerated = null;
 
@@ -32,7 +32,7 @@ async function loadTeamLogos() {
     const aliases = names?.[i];
 
     if (!team || !path) continue;
-
+    let full_path = LOGO_BASE + path;
     // primary team name
     map[normalize(team)] = path;
 
@@ -110,7 +110,6 @@ function formatDateHeader(isoDate) {
     day: "numeric"
   });
 }
-
 
 function statusLabel(status) {
   if (!status) return { text: "—", cls: "st-unk" };
