@@ -7,6 +7,7 @@ const LOGO_BASE = "/assets/images/";
 let lastGenerated = null;
 
 let TEAM_LOGO_MAP = {};
+let TEAM_NAME_MAP = {};
 let TEAM_LOGO_READY = false;
 
 function normalize(s) {
@@ -21,6 +22,8 @@ async function loadTeamLogos() {
   const data = await res.json();
 
   const map = {};
+
+  const name_map = {};
 
   const teams = data.team;
   const names = data.names;
@@ -41,12 +44,13 @@ async function loadTeamLogos() {
     if (Array.isArray(aliases)) {
       for (const n of aliases) {
         map[normalize(n)] = full_path;
-        map[n] = team;
+        name_map[n] = team;
       }
     }
   }
 
   TEAM_LOGO_MAP = map;
+  TEAM_NAME_MAP = name_map;
   TEAM_LOGO_READY = true;
 
   console.log("Loaded team logos:", Object.keys(map).length);
@@ -130,7 +134,7 @@ function safe(v, fallback = "") {
 }
 
 function getTeamName(team) {
-  print_name = TEAM_LOGO_MAP[team]
+  print_name = TEAM_NAME_MAP[team];
   if (!print_name) {
     return team;
   }

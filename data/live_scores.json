@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-20T21:21:17.249921",
+  "generated": "2026-01-20T21:59:26.616769",
   "games": {
     "2453077": {
       "date": "2026-01-20",
@@ -40,7 +40,7 @@
       "venue": "Bud Walton Arena",
       "location": "Fayetteville, AR, USA",
       "spread_close": "ARK -1.5",
-      "total_close": 174.5
+      "total_close": 175.5
     },
     "2453083": {
       "date": "2026-01-20",
@@ -60,7 +60,7 @@
       "venue": "Alumni Arena",
       "location": "Buffalo, NY, USA",
       "spread_close": "AKR -7.5",
-      "total_close": 168.5
+      "total_close": 167.5
     },
     "2453084": {
       "date": "2026-01-20",
@@ -160,7 +160,7 @@
       "venue": "The Sandy and John Black Pavilion at Ole Miss",
       "location": "Oxford, MS, USA",
       "spread_close": "AUB -3.5",
-      "total_close": 150.5
+      "total_close": 151.5
     },
     "2453099": {
       "date": "2026-01-20",
@@ -220,7 +220,7 @@
       "venue": "Memorial Athletic and Convocation Center",
       "location": "Kent, OH, USA",
       "spread_close": "KENT -1.5",
-      "total_close": 166.5
+      "total_close": 167.5
     },
     "2453105": {
       "date": "2026-01-20",
@@ -1560,7 +1560,7 @@
       "venue": "Bramlage Coliseum",
       "location": "Manhattan, KS, USA",
       "spread_close": "KSU -9.5",
-      "total_close": 167.5
+      "total_close": 166.5
     },
     "2458045": {
       "date": "2026-01-20",
@@ -1580,7 +1580,7 @@
       "venue": "CU Events Center",
       "location": "Boulder, CO, USA",
       "spread_close": "KU -4.5",
-      "total_close": 155.5
+      "total_close": 154.5
     },
     "2458046": {
       "date": "2026-01-20",
@@ -1779,8 +1779,8 @@
       "conference": "Atlantic 10",
       "venue": "Reilly Center",
       "location": "St. Bonaventure, NY, USA",
-      "spread_close": "SBU -11.5",
-      "total_close": 148.5
+      "spread_close": "SBU -10.5",
+      "total_close": 147.5
     },
     "2458735": {
       "date": "2026-01-21",
@@ -2160,7 +2160,7 @@
       "venue": "Credit Union 1 Arena",
       "location": "Chicago, IL, USA",
       "spread_close": "UIC -8.5",
-      "total_close": 138.5
+      "total_close": 137.5
     },
     "2459959": {
       "date": "2026-01-20",
@@ -2220,7 +2220,7 @@
       "venue": "Lawlor Events Center",
       "location": "Reno, NV, USA",
       "spread_close": "NEV -17.5",
-      "total_close": 142.5
+      "total_close": 140.5
     },
     "2459962": {
       "date": "2026-01-20",
