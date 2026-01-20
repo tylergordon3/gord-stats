@@ -231,6 +231,23 @@ te = pd.merge(te_all, te, 'left', on='Owner')
 ovr = pd.merge(ovr_all, ovr, 'left', on='Owner')
 
 html = ''
+
+missing = team_breakdown.groupby(by=['Owner']).agg(
+        num_games = ("# G", 'sum'),
+        tot_players = ("# G", 'count')
+    )
+missing['tot_games'] = missing['tot_players'] * 14
+missing['Games Missed'] = missing['tot_games'] - missing['num_games']
+missing = missing.sort_values(by='Games Missed', ascending=False)
+missing = missing.drop(columns=['tot_players'])
+missing = missing.rename(columns={'num_games':'G Played', 'tot_games':'G Tot'})
+styler = (
+        missing
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Games Missed"]) 
+        )
+html += styler.to_html()
 for df in [qb, rb, wr, te, ovr]:
     df = df.rename(columns={
         "Pos_x" : "Pos",
