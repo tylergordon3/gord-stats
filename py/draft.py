@@ -218,7 +218,7 @@ def byTeam(df):
         ovr_delt = ("Overall Δ", 'sum')
     )
     grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
-    
+
     df_result2 = grouped_tot.reset_index()
     df_result2 = df_result2.rename(columns={'ovr_delt':' Total Ovr Δ'})
 
@@ -233,6 +233,11 @@ wr = pd.merge(wr_all, wr, 'left', on='Owner')
 te = pd.merge(te_all, te, 'left', on='Owner')
 ovr = pd.merge(ovr_all, ovr, 'left', on='Owner')
 
+qb = qb.fillna(0)
+rb = rb.fillna(0)
+wr = wr.fillna(0)
+te = te.fillna(0)
+ovr = ovr.fillna(0)
 html = ''
 
 missing = team_breakdown.groupby(by=['Owner']).agg(
