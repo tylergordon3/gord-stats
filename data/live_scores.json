@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-20T21:59:26.616769",
+  "generated": "2026-01-20T22:37:06.707245",
   "games": {
     "2453077": {
       "date": "2026-01-20",
@@ -199,7 +199,7 @@
       "conference": "Southeastern",
       "venue": "Exactech Arena at the Stephen C. O'Connell Center",
       "location": "Gainesville, FL, USA",
-      "spread_close": "FLA -16.5",
+      "spread_close": "FLA -15.5",
       "total_close": 157.5
     },
     "2453103": {
@@ -2179,7 +2179,7 @@
       "conference": "Mountain West",
       "venue": "Arena-Auditorium",
       "location": "Laramie, WY, USA",
-      "spread_close": "WYO -1.5",
+      "spread_close": "BSU -1.5",
       "total_close": 142.5
     },
     "2459960": {
@@ -2220,7 +2220,7 @@
       "venue": "Lawlor Events Center",
       "location": "Reno, NV, USA",
       "spread_close": "NEV -17.5",
-      "total_close": 140.5
+      "total_close": 139.5
     },
     "2459962": {
       "date": "2026-01-20",

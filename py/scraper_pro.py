@@ -5,6 +5,8 @@ from datetime import datetime
 from push_scores import push
 import utils
 import pytz
+import pandas as pd
+import scraper
 
 # =========================
 # CONFIG
@@ -114,7 +116,7 @@ import pytz
 
 EASTERN = pytz.timezone("US/Eastern")
 
-def format_event(g):
+def format_event(g, ranks, master):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -283,13 +285,16 @@ def get_current_live_dataset():
     events = fetch_events_by_ids(event_ids)
 
     games = {}
-
+    ranks_dict = scraper.getTeamRanks()
+    date = datetime.today().date().isoformat()
+    ranks = ranks_dict[date]
+  
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
-        games[str(game_id)] = format_event(g)
+        games[str(game_id)] = format_event(g, ranks)
 
     return {
         "league": "men",
