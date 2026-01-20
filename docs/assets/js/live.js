@@ -1,9 +1,45 @@
-console.log("live.js loaded");
 const WORKER_URL =
   "https://cbb-live-scores.tmgordon33.workers.dev/scores?league=men";
 
 const POLL_INTERVAL = 30000;
+const LOGO_BASE = "/assets/images";
+
 let lastGenerated = null;
+
+let TEAM_LOGO_MAP = {};
+let TEAM_LOGO_READY = false;
+
+async function loadTeamLogos() {
+  const res = await fetch("/assets/data/master.json");
+  const rows = await res.json();
+
+  const map = {};
+
+  for (const row of rows) {
+    if (!row.path) continue;
+
+    // main team name
+    map[row.team.toLowerCase()] = row.path;
+
+    // aliases / abbreviations
+    if (Array.isArray(row.names)) {
+      for (const n of row.names) {
+        map[String(n).toLowerCase()] = row.path;
+      }
+    }
+  }
+
+  TEAM_LOGO_MAP = map;
+  TEAM_LOGO_READY = true;
+}
+
+function teamLogo(teamName) {
+  if (!teamName) return "/assets/images/default.png";
+  return (
+    TEAM_LOGO_MAP[teamName.toLowerCase()] ||
+    "/assets/images/default.png"
+  );
+}
 
 async function pollScores() {
   const res = await fetch(WORKER_URL);
@@ -15,6 +51,18 @@ async function pollScores() {
   }
 
   renderGames(data.games);
+}
+
+function slugifyTeam(name) {
+  return String(name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function teamLogo(teamName) {
+  if (!teamName) return `${LOGO_BASE}/default.png`;
+  return `${LOGO_BASE}/${slugifyTeam(teamName)}.png`;
 }
 
 function statusRank(g) {
@@ -178,7 +226,16 @@ function renderGames(games) {
             <div class="team-row">
               <div class="team-left">
                 ${awayRank ? `<span class="rank">#${awayRank}</span>` : `<span class="rank rank-empty"></span>`}
-                <span class="team">${awayTeam}</span>
+                <span class="team">
+                <img
+                  class="team-logo"
+                  src="${teamLogo(awayTeam)}"
+                  alt="${awayTeam}"
+                  loading="lazy"
+                  onerror="this.src='/assets/images/default.png'"
+                />
+                ${awayTeam}
+              </span>
               </div>
               <div class="score">${awayScore}</div>
             </div>
@@ -186,7 +243,16 @@ function renderGames(games) {
             <div class="team-row">
               <div class="team-left">
                 ${homeRank ? `<span class="rank">#${homeRank}</span>` : `<span class="rank rank-empty"></span>`}
-                <span class="team">${homeTeam}</span>
+                <span class="team">
+                <img
+                  class="team-logo"
+                  src="${teamLogo(homeTeam)}"
+                  alt="${homeTeam}"
+                  loading="lazy"
+                  onerror="this.src='/assets/images/default.png'"
+                />
+                ${homeTeam}
+              </span>
               </div>
               <div class="score">${homeScore}</div>
             </div>
@@ -195,8 +261,8 @@ function renderGames(games) {
           ${metaLines.length ? `
             <div class="meta">
               ${metaLines.map(line =>
-                `<div class="meta-line">${line}</div>`
-              ).join("")}
+        `<div class="meta-line">${line}</div>`
+      ).join("")}
             </div>
           ` : ""}
         </article>
@@ -208,8 +274,6 @@ function renderGames(games) {
 
   container.innerHTML = html;
 }
-
-
 
 pollScores();
 setInterval(pollScores, POLL_INTERVAL);

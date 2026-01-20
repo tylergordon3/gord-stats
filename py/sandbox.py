@@ -11,8 +11,13 @@ master = pd.read_json(utils.get_path("data/teams/master_new.json"))
 # df.loc[row, col]
 team = "Southern Indiana"
 short = 'USI'
-master.loc[master['team'] == team, 'short'] = short
-print(master[['team', 'short']].to_string())
 
-master.to_json(utils.get_path("data/teams/master_new.json"))
+master = scraper.getMasterTeams()
+
+print(master.columns)
+
+#master.loc[master['team'] == team, 'short'] = short
+#print(master[['team', 'short']].to_string())
+
+#master.to_json(utils.get_path("data/teams/master_new.json"))
 
