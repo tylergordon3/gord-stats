@@ -259,7 +259,8 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                <strong>${'#' + awayModel}</strong>${' ' + getTeamName(awayTeam)}
+                <strong>#${awayModel}</strong>
+                <span class="team-name">${getTeamName(awayTeam)}</span>
               </span>
               </div>
               <div class="score">${awayScore}</div>
@@ -275,7 +276,8 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                <strong>#${'#' + homeModel}</strong> ${' ' + getTeamName(homeTeam)}
+                <strong>#${homeModel}</strong>
+                <span class="team-name">${getTeamName(homeTeam)}</span>
               </span>
               </div>
               <div class="score">${homeScore}</div>

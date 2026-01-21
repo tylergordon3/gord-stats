@@ -754,6 +754,10 @@
   align-items: center;
 }
 
+.team-name {
+  margin-left: 4px;
+}
+
 .team-left {
   display: flex;
   align-items: center;
@@ -771,6 +775,9 @@
 .rank-empty { visibility: hidden; }
 
 .team {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
