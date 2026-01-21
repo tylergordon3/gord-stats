@@ -275,11 +275,12 @@ missing = team_breakdown.groupby(by=['Owner']).agg(
     )
 missing['tot_games'] = missing['tot_players'] * 14
 missing['Total Games Missed'] = missing['tot_games'] - missing['num_games']
+missing["% of Games Missed"] = missing['num_games'] / missing['tot_games']
+missing["% of Games Missed"] = missing["% of Games Missed"].apply(lambda x: f'{x:.2%}')
 missing = missing.sort_values(by='Total Games Missed', ascending=False)
-missing = missing.drop(columns=['tot_players'])
-missing = missing.rename(columns={'num_games':'Total Games Played', 'tot_games':'Total Games'})
+missing = missing.drop(columns=['tot_players', 'num_games', 'tot_games'])
 missing = missing.reset_index(names=['Owners'])
-missing = missing[['Owners', 'Total Games Missed', 'Total Games', 'Total Games Played']].copy()
+missing = missing[['Owners', 'Total Games Missed', '% of Games Missed']].copy()
 missing_styler = default_style(missing, ["Total Games Missed"], opt_styler="RdYlGn_r")
 
 html = ''
