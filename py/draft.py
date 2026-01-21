@@ -186,7 +186,7 @@ df_html +=  f'''
     </details>
     '''
 
-page = htmb.add_front_matter(df_html, 'Draft')
+page = htmb.add_front_matter(df_html, 'Draft', subnav='draft_nav')
 with open('docs/draft.html', "w", encoding="utf-8") as f:
     f.write(page)
 
@@ -296,6 +296,6 @@ html += '<h1>Drafted Position Change in first 4 rounds</h1>'
 html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
 html = format_breakdown(lottery_combined, html)
 
-page = htmb.add_front_matter(html, 'Draft - Team Breakdown')
+page = htmb.add_front_matter(html, 'Draft - Team Breakdown', subnav='draft_nav')
 with open('docs/draft_team.html', "w", encoding="utf-8") as f:
     f.write(page)

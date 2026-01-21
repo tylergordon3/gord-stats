@@ -1,12 +1,20 @@
 import os
 import schedule_stats
 
-def add_front_matter(html, title):
-    fm = f"""---
+def add_front_matter(html, title, subnav=None):
+    if subnav:
+        fm = f"""---
+layout: default
+title: {title}
+subnav_id: {subnav}
+---
+"""
+    else:
+        fm = f"""---
 layout: default
 title: {title}
 ---
-"""
+"""  
     header = f'<h1>{title}</h1>'
     new_html = fm + header + html
     return new_html.lstrip()
