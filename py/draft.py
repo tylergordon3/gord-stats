@@ -107,13 +107,14 @@ team_breakdown = df.copy()
 df_best = df.sort_values(by='Overall Δ', ascending=False)
 df_worst = df.sort_values(by='Overall Δ')
 
-styler = (
-        df
+
+def default_style(df):
+    return (df
         .style
         .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Pos Δ"]) 
-        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"])
-        )
+        .background_gradient(cmap="RdYlGn", subset=["Pos Δ", "Overall Δ"]))
+
+styler = default_style(df)
 
 styler_best = (
         df_best
