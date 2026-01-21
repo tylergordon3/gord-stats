@@ -157,12 +157,11 @@ function formatMeta(g) {
     parts.push([period, clock].filter(Boolean).join(" • "));
   }
 
-  // optional: venue/location
   const venue = safe(g.venue);
   const loc = safe(g.location);
-  if (venue || loc) {
-    parts.push([venue, loc].filter(Boolean).join(" — "));
-  }
+
+  if (venue) parts.push({ type: "venue", text: venue });
+  if (loc) parts.push({ type: "location", text: loc });
 
   // optional: betting
   const spread = safe(g.spread_close, null);
@@ -176,6 +175,28 @@ function formatMeta(g) {
 
   return parts.filter(Boolean);
 }
+
+function renderTopRight(g) {
+  // PRE games: show tip-off
+  if (g.status === "pre_game" && g.start_time) {
+    return `<span class="game-time">${g.start_time}</span>`;
+  }
+
+  // LIVE / FINAL games: show period + clock
+  const period = safe(g.period);
+  const clock = safe(g.clock);
+
+  if (period || clock) {
+    return `
+      <span class="game-time">
+        ${[period, clock].filter(Boolean).join(" • ")}
+      </span>
+    `;
+  }
+
+  return `<span class="game-time">—</span>`;
+}
+
 
 function renderGames(games) {
   const container = document.getElementById("games");
@@ -244,9 +265,12 @@ function renderGames(games) {
       html += `
         <article class="game-card" id="game-${id}">
           <header class="game-head">
-            <span class="status-pill ${stCls}">${stText}</span>
-            <span class="game-id">#${id}</span>
-          </header>
+          <span class="status-pill ${stCls}">${stText}</span>
+
+          <div class="game-top-right">
+            ${renderTopRight(g)}
+          </div>
+        </header>
 
           <div class="teams">
             <div class="team-row">
@@ -259,7 +283,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                <strong>#${awayModel}</strong>
+                <strong>${awayModel ? `#${awayModel}` : ''}</strong>
                 <span class="team-name">${getTeamName(awayTeam)}</span>
               </span>
               </div>
@@ -276,7 +300,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                <strong>#${homeModel}</strong>
+                <strong>${homeModel ? `#${homeModel}` : ''}</strong>
                 <span class="team-name">${getTeamName(homeTeam)}</span>
               </span>
               </div>
@@ -286,9 +310,11 @@ function renderGames(games) {
 
           ${metaLines.length ? `
             <div class="meta">
-              ${metaLines.map(line =>
-        `<div class="meta-line">${line}</div>`
-      ).join("")}
+              ${metaLines.map(m => `
+              <div class="meta-line meta-${m.type || "misc"}">
+                ${m.text || m}
+              </div>
+            `).join("")}
             </div>
           ` : ""}
         </article>

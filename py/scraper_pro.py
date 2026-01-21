@@ -196,7 +196,7 @@ def format_event(g, ranks, master):
         # meta
         "conference": g.get("home_conference"),
         "venue": g.get("stadium"),
-        "location": g.get("location"),
+        "location": g.get("location")[:-5],
 
         # betting
         "spread_close": spread_close,
