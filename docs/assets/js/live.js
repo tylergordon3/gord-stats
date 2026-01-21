@@ -145,13 +145,6 @@ function getTeamName(team) {
 function formatMeta(g) {
   const parts = [];
 
-  const period = safe(g.period);
-  const clock = safe(g.clock);
-
-  if (period || clock) {
-    parts.push([period, clock].filter(Boolean).join(" • "));
-  }
-
   const venue = safe(g.venue);
   const loc = safe(g.location);
 
