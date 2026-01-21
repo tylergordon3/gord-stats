@@ -116,7 +116,7 @@ import pytz
 
 EASTERN = pytz.timezone("US/Eastern")
 
-def format_event(g, ranks):
+def format_event(g, ranks, master):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -136,9 +136,12 @@ def format_event(g, ranks):
     home = g["home_team"]
     away = g["away_team"]
     
-    home_model = ranks[scraper.getNameFromCode(home)]
-    away_model = ranks[scraper.getNameFromCode(away)]
-    
+    home_name = scraper.getNameFromCode(home.get("abbreviation"), master)[1]
+    away_name = scraper.getNameFromCode(away.get("abbreviation"), master)[1]
+
+    home_model = ranks[home_name] if home_name else ''
+    away_model = ranks[away_name] if away_name else ''
+
     # ---- score / progress ----
     box = g.get("box_score") or {}
     score = box.get("score") or {}
@@ -178,7 +181,7 @@ def format_event(g, ranks):
         "home_score": home_score,
         "away_score": away_score,
         
-        "away_model" : away_model,
+        "away_model" : away_model ,
         "home_model" : home_model,
 
         # live info
@@ -294,13 +297,13 @@ def get_current_live_dataset():
     ranks_dict = scraper.getTeamRanks()
     date = datetime.today().date().isoformat()
     ranks = ranks_dict[date]
-  
+    master = scraper.getMasterTeams()
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
-        games[str(game_id)] = format_event(g, ranks)
+        games[str(game_id)] = format_event(g, ranks, master)
 
     return {
         "league": "men",

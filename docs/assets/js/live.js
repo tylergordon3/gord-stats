@@ -251,7 +251,6 @@ function renderGames(games) {
           <div class="teams">
             <div class="team-row">
               <div class="team-left">
-                ${awayRank ? `<span class="rank">(#${awayRank}) ${awayModel}</span>` : `<span class="rank">${awayModel}</span>`}
                 <span class="team">
                 <img
                   class="team-logo"
@@ -260,7 +259,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                ${getTeamName(awayTeam)}
+                <strong>${'#' + awayModel}</strong>${' ' + getTeamName(awayTeam)}
               </span>
               </div>
               <div class="score">${awayScore}</div>
@@ -268,7 +267,6 @@ function renderGames(games) {
 
             <div class="team-row">
               <div class="team-left">
-                ${homeRank ? `<span class="rank">(#${homeRank}) ${homeModel}</span>` : `<span class="rank"> ${homeModel}</span>`}
                 <span class="team">
                 <img
                   class="team-logo"
@@ -277,7 +275,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
-                ${getTeamName(homeTeam)}
+                <strong>#${'#' + homeModel}</strong> ${' ' + getTeamName(homeTeam)}
               </span>
               </div>
               <div class="score">${homeScore}</div>
