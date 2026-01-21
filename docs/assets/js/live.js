@@ -145,11 +145,6 @@ function getTeamName(team) {
 function formatMeta(g) {
   const parts = [];
 
-  // ---- tip-off time (PRE games only) ----
-  if ((g.status === "pre_game") && g.start_time) {
-    parts.push(`Tip-off: ${g.start_time}`);
-  }
-
   const period = safe(g.period);
   const clock = safe(g.clock);
 

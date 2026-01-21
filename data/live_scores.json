@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-21T03:03:48.067316",
+  "generated": "2026-01-21T03:08:20.100271",
   "games": {
     "2453077": {
       "date": "2026-01-20",
@@ -20,7 +20,7 @@
       "away_rank": null,
       "conference": "Mid-American",
       "venue": "McGuirk Arena",
-      "location": "Mount Pleasant, MI,",
+      "location": "Mount Pleasant, MI",
       "spread_close": "BALL -1.5",
       "total_close": 142.5
     },
@@ -42,7 +42,7 @@
       "away_rank": 15,
       "conference": "Southeastern",
       "venue": "Bud Walton Arena",
-      "location": "Fayetteville, AR,",
+      "location": "Fayetteville, AR",
       "spread_close": "ARK -1.5",
       "total_close": 174.5
     },
@@ -64,7 +64,7 @@
       "away_rank": null,
       "conference": "Mid-American",
       "venue": "Alumni Arena",
-      "location": "Buffalo, NY,",
+      "location": "Buffalo, NY",
       "spread_close": "AKR -7.5",
       "total_close": 166.5
     },
@@ -86,7 +86,7 @@
       "away_rank": null,
       "conference": "Atlantic Coast",
       "venue": "Lawrence Joel Veterans Memorial Coliseum",
-      "location": "Winston-Salem, NC,",
+      "location": "Winston-Salem, NC",
       "spread_close": "SMU -1.5",
       "total_close": 157.5
     },
@@ -108,7 +108,7 @@
       "away_rank": null,
       "conference": "Mid-American",
       "venue": "University Arena",
-      "location": "Kalamazoo, MI,",
+      "location": "Kalamazoo, MI",
       "spread_close": "BGSU -6.5",
       "total_close": 152.5
     },
@@ -130,7 +130,7 @@
       "away_rank": null,
       "conference": "Atlantic Coast",
       "venue": "Littlejohn Coliseum",
-      "location": "Clemson, SC,",
+      "location": "Clemson, SC",
       "spread_close": "CLEM -2.5",
       "total_close": 142.5
     },
@@ -142,17 +142,17 @@
       "home_team": "SEMO",
       "away_team": "UTM",
       "home_score": 56,
-      "away_score": 25,
+      "away_score": 30,
       "away_model": 208,
       "home_model": 275,
-      "clock": "12:48",
+      "clock": "11:23",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
       "conference": "Ohio Valley",
       "venue": "Show Me Center",
-      "location": "Cape Girardeau, MO,",
+      "location": "Cape Girardeau, MO",
       "spread_close": "SEMO -2.5",
       "total_close": 142.5
     },
@@ -160,7 +160,7 @@
       "date": "2026-01-20",
       "start_time": "9:00 PM",
       "start_time_utc": "2026-01-21T02:00:00+00:00",
-      "status": "in_progress",
+      "status": "half_over",
       "home_team": "MISS",
       "away_team": "AUB",
       "home_score": 27,
@@ -174,7 +174,7 @@
       "away_rank": null,
       "conference": "Southeastern",
       "venue": "The Sandy and John Black Pavilion at Ole Miss",
-      "location": "Oxford, MS,",
+      "location": "Oxford, MS",
       "spread_close": "AUB -3.5",
       "total_close": 151.5
     },
@@ -196,7 +196,7 @@
       "away_rank": null,
       "conference": "Mid-American",
       "venue": "Convocation Center Ohio",
-      "location": "Athens, OH,",
+      "location": "Athens, OH",
       "spread_close": "OHIO -12.5",
       "total_close": 154.5
     },
@@ -218,7 +218,7 @@
       "away_rank": null,
       "conference": "Southeastern",
       "venue": "Exactech Arena at the Stephen C. O'Connell Center",
-      "location": "Gainesville, FL,",
+      "location": "Gainesville, FL",
       "spread_close": "FLA -15.5",
       "total_close": 157.5
     },
@@ -240,7 +240,7 @@
       "away_rank": 25,
       "conference": "Mid-American",
       "venue": "Memorial Athletic and Convocation Center",
-      "location": "Kent, OH,",
+      "location": "Kent, OH",
       "spread_close": "KENT -1.5",
       "total_close": 166.5
     },
@@ -262,7 +262,7 @@
       "away_rank": null,
       "conference": "Atlantic Coast",
       "venue": "Watsco Center",
-      "location": "Coral Gables, FL,",
+      "location": "Coral Gables, FL",
       "spread_close": "MIA -11.5",
       "total_close": 165.5
     },
@@ -284,7 +284,7 @@
       "away_rank": null,
       "conference": "Southeastern",
       "venue": "Colonial Life Arena",
-      "location": "Columbia, SC,",
+      "location": "Columbia, SC",
       "spread_close": "OKLA -2.5",
       "total_close": 150.5
     },
@@ -306,7 +306,7 @@
       "away_rank": null,
       "conference": "Mid-American",
       "venue": "William D. Mullins Center",
-      "location": "Amherst, MA,",
+      "location": "Amherst, MA",
       "spread_close": "MASS -2.5",
       "total_close": 163.5
     },
@@ -328,7 +328,7 @@
       "away_rank": 21,
       "conference": "Southeastern",
       "venue": "Mizzou Arena",
-      "location": "Columbia, MO,",
+      "location": "Columbia, MO",
       "spread_close": "MIZZ -1.5",
       "total_close": 164.5
     },
@@ -350,7 +350,7 @@
       "away_rank": null,
       "conference": "Big South",
       "venue": "Joan Perry Brock Center",
-      "location": "Farmville, VA,",
+      "location": "Farmville, VA",
       "spread_close": null,
       "total_close": null
     },
@@ -372,7 +372,7 @@
       "away_rank": null,
       "conference": "Southern",
       "venue": "McAlister Field House",
-      "location": "Charleston, SC,",
+      "location": "Charleston, SC",
       "spread_close": null,
       "total_close": null
     },
@@ -394,7 +394,7 @@
       "away_rank": null,
       "conference": "Atlantic Sun",
       "venue": "Curry Arena",
-      "location": "Charlotte, NC,",
+      "location": "Charlotte, NC",
       "spread_close": null,
       "total_close": null
     },
@@ -416,7 +416,7 @@
       "away_rank": null,
       "conference": "Conference USA",
       "venue": "E. A. Diddle Arena",
-      "location": "Bowling Green, KY,",
+      "location": "Bowling Green, KY",
       "spread_close": "LIB -1.5",
       "total_close": 148.5
     },
@@ -438,7 +438,7 @@
       "away_rank": null,
       "conference": "Big South",
       "venue": "Templeton Physical Education Center",
-      "location": "Clinton, SC,",
+      "location": "Clinton, SC",
       "spread_close": "CHSO -1.5",
       "total_close": 149.5
     },
@@ -460,7 +460,7 @@
       "away_rank": null,
       "conference": "Southern",
       "venue": "Cameron Hall",
-      "location": "Lexington, VA,",
+      "location": "Lexington, VA",
       "spread_close": "UNCG -1.5",
       "total_close": 152.5
     },
@@ -482,7 +482,7 @@
       "away_rank": null,
       "conference": "Big South",
       "venue": "Winthrop Coliseum",
-      "location": "Rock Hill, SC,",
+      "location": "Rock Hill, SC",
       "spread_close": "WINT -10.5",
       "total_close": 164.5
     },
@@ -504,7 +504,7 @@
       "away_rank": null,
       "conference": "Southern",
       "venue": "McKenzie Arena",
-      "location": "Chattanooga, TN,",
+      "location": "Chattanooga, TN",
       "spread_close": "ETSU -4.5",
       "total_close": 146.5
     },
@@ -526,7 +526,7 @@
       "away_rank": null,
       "conference": "Summit League",
       "venue": "Baxter Arena",
-      "location": "Omaha, NE,",
+      "location": "Omaha, NE",
       "spread_close": "NEOM -5.5",
       "total_close": 160.5
     },
@@ -548,7 +548,7 @@
       "away_rank": null,
       "conference": "Western Athletic",
       "venue": "America First Event Center",
-      "location": "Cedar City, UT,",
+      "location": "Cedar City, UT",
       "spread_close": null,
       "total_close": null
     },
@@ -570,7 +570,7 @@
       "away_rank": null,
       "conference": "Southern",
       "venue": "Hawkins Arena",
-      "location": "Macon, GA,",
+      "location": "Macon, GA",
       "spread_close": null,
       "total_close": null
     },
@@ -592,7 +592,7 @@
       "away_rank": null,
       "conference": "Conference USA",
       "venue": "Bernard G. Johnson Coliseum",
-      "location": "Huntsville, TX,",
+      "location": "Huntsville, TX",
       "spread_close": "SHSU -6.5",
       "total_close": 166.5
     },
@@ -614,7 +614,7 @@
       "away_rank": null,
       "conference": "Big South",
       "venue": "G.B. Hodge Center",
-      "location": "Spartanburg, SC,",
+      "location": "Spartanburg, SC",
       "spread_close": null,
       "total_close": null
     },
@@ -636,7 +636,7 @@
       "away_rank": null,
       "conference": "Horizon",
       "venue": "Calihan Hall",
-      "location": "Detroit, MI,",
+      "location": "Detroit, MI",
       "spread_close": null,
       "total_close": null
     },
@@ -658,7 +658,7 @@
       "away_rank": null,
       "conference": "Western Athletic",
       "venue": "College Park Center",
-      "location": "Arlington, TX,",
+      "location": "Arlington, TX",
       "spread_close": "UTA -3.5",
       "total_close": 147.5
     },
@@ -680,7 +680,7 @@
       "away_rank": null,
       "conference": "Horizon",
       "venue": "Nutter Center",
-      "location": "Fairborn, OH,",
+      "location": "Fairborn, OH",
       "spread_close": "WRST -16.5",
       "total_close": null
     },
@@ -702,7 +702,7 @@
       "away_rank": null,
       "conference": "Horizon",
       "venue": "Athletics Center O'rena",
-      "location": "Rochester, MI,",
+      "location": "Rochester, MI",
       "spread_close": "OAK -16.5",
       "total_close": 178.5
     },
@@ -724,7 +724,7 @@
       "away_rank": null,
       "conference": "Sun Belt",
       "venue": "Chartway Arena",
-      "location": "Norfolk, VA,",
+      "location": "Norfolk, VA",
       "spread_close": "TROY -5.5",
       "total_close": 152.5
     },
@@ -746,8 +746,8 @@
       "away_rank": null,
       "conference": "Western Athletic",
       "venue": "Dale E. and Sarah Ann Fowler Events Center",
-      "location": "Riverside, CA,",
-      "spread_close": "CABP -7.5",
+      "location": "Riverside, CA",
+      "spread_close": "CABP -8.5",
       "total_close": 141.5
     },
     "2453150": {
@@ -768,7 +768,7 @@
       "away_rank": null,
       "conference": "Southern",
       "venue": "Jerry Richardson Indoor Stadium",
-      "location": "Spartanburg, SC,",
+      "location": "Spartanburg, SC",
       "spread_close": "WOFF -3.5",
       "total_close": 157.5
     },
@@ -790,7 +790,7 @@
       "away_rank": null,
       "conference": "CAA",
       "venue": "Hampton Convocation Center",
-      "location": "Hampton, VA,",
+      "location": "Hampton, VA",
       "spread_close": null,
       "total_close": null
     },
@@ -812,7 +812,7 @@
       "away_rank": null,
       "conference": "CAA",
       "venue": "Cabot Center",
-      "location": "Boston, MA,",
+      "location": "Boston, MA",
       "spread_close": null,
       "total_close": null
     },
@@ -834,7 +834,7 @@
       "away_rank": null,
       "conference": "Big Sky",
       "venue": "ICCU Arena",
-      "location": "Moscow, ID,",
+      "location": "Moscow, ID",
       "spread_close": null,
       "total_close": null
     },
@@ -856,7 +856,7 @@
       "away_rank": null,
       "conference": "Metro Atlantic Athletic",
       "venue": "Leo D. Mahoney Arena",
-      "location": "Fairfield, CT,",
+      "location": "Fairfield, CT",
       "spread_close": null,
       "total_close": null
     },
@@ -878,7 +878,7 @@
       "away_rank": null,
       "conference": "America East",
       "venue": "Lundholm Gymnasium",
-      "location": "Durham, NH,",
+      "location": "Durham, NH",
       "spread_close": null,
       "total_close": null
     },
@@ -900,7 +900,7 @@
       "away_rank": null,
       "conference": "Big Sky",
       "venue": "Dahlberg Arena",
-      "location": "Missoula, MT,",
+      "location": "Missoula, MT",
       "spread_close": null,
       "total_close": null
     },
@@ -922,7 +922,7 @@
       "away_rank": null,
       "conference": "Big West",
       "venue": "University Credit Union Center",
-      "location": "Davis, CA,",
+      "location": "Davis, CA",
       "spread_close": null,
       "total_close": null
     },
@@ -944,7 +944,7 @@
       "away_rank": null,
       "conference": "America East",
       "venue": "Kennedy Family Athletic Complex",
-      "location": "Lowell, MA,",
+      "location": "Lowell, MA",
       "spread_close": null,
       "total_close": null
     },
@@ -966,7 +966,7 @@
       "away_rank": null,
       "conference": "Big Sky",
       "venue": "Reese Court",
-      "location": "Cheney, WA,",
+      "location": "Cheney, WA",
       "spread_close": null,
       "total_close": null
     },
@@ -988,7 +988,7 @@
       "away_rank": null,
       "conference": "Big West",
       "venue": "The Thunderdome",
-      "location": "Santa Barbara, CA,",
+      "location": "Santa Barbara, CA",
       "spread_close": null,
       "total_close": null
     },
@@ -1010,7 +1010,7 @@
       "away_rank": null,
       "conference": "Big Sky",
       "venue": "Worthington Arena",
-      "location": "Bozeman, MT,",
+      "location": "Bozeman, MT",
       "spread_close": null,
       "total_close": null
     },
@@ -1032,7 +1032,7 @@
       "away_rank": null,
       "conference": "CAA",
       "venue": "Schar Center",
-      "location": "Elon, NC,",
+      "location": "Elon, NC",
       "spread_close": null,
       "total_close": null
     },
@@ -1054,7 +1054,7 @@
       "away_rank": null,
       "conference": "Metro Atlantic Athletic",
       "venue": "Hynes Athletics Center",
-      "location": "New Rochelle, NY,",
+      "location": "New Rochelle, NY",
       "spread_close": null,
       "total_close": null
     },
@@ -1076,7 +1076,7 @@
       "away_rank": null,
       "conference": "America East",
       "venue": "Skip Chappelle Court at Memorial Gymnasium",
-      "location": "Orono, ME,",
+      "location": "Orono, ME",
       "spread_close": null,
       "total_close": null
     },
@@ -1098,7 +1098,7 @@
       "away_rank": null,
       "conference": "Big West",
       "venue": "Titan Gym",
-      "location": "Fullerton, CA,",
+      "location": "Fullerton, CA",
       "spread_close": null,
       "total_close": null
     },
@@ -1120,7 +1120,7 @@
       "away_rank": null,
       "conference": "Metro Atlantic Athletic",
       "venue": "William H. Pitt Center",
-      "location": "Fairfield, CT,",
+      "location": "Fairfield, CT",
       "spread_close": null,
       "total_close": null
     },
@@ -1142,7 +1142,7 @@
       "away_rank": null,
       "conference": "CAA",
       "venue": "TD Arena",
-      "location": "Charleston, SC,",
+      "location": "Charleston, SC",
       "spread_close": null,
       "total_close": null
     },
@@ -1164,7 +1164,7 @@
       "away_rank": null,
       "conference": "CAA",
       "venue": "Kaplan Arena",
-      "location": "Williamsburg, VA,",
+      "location": "Williamsburg, VA",
       "spread_close": null,
       "total_close": null
     },
@@ -1186,7 +1186,7 @@
       "away_rank": null,
       "conference": "Big West",
       "venue": "SRC Arena",
-      "location": "Riverside, CA,",
+      "location": "Riverside, CA",
       "spread_close": null,
       "total_close": null
     },
@@ -1208,7 +1208,7 @@
       "away_rank": null,
       "conference": "America East",
       "venue": "Chesapeake Employers Insurance Arena",
-      "location": "Baltimore, MD,",
+      "location": "Baltimore, MD",
       "spread_close": null,
       "total_close": null
     },
@@ -1230,7 +1230,7 @@
       "away_rank": null,
       "conference": "Metro Atlantic Athletic",
       "venue": "MVP Arena",
-      "location": "Albany, NY,",
+      "location": "Albany, NY",
       "spread_close": null,
       "total_close": null
     },
@@ -1252,7 +1252,7 @@
       "away_rank": null,
       "conference": "Metro Atlantic Athletic",
       "venue": "Knott Arena",
-      "location": "Emmitsburg, MD,",
+      "location": "Emmitsburg, MD",
       "spread_close": null,
       "total_close": null
     },
@@ -1274,7 +1274,7 @@
       "away_rank": null,
       "conference": "CAA",
       "venue": "Corbett Sports Center",
-      "location": "Greensboro, NC,",
+      "location": "Greensboro, NC",
       "spread_close": null,
       "total_close": null
     },
@@ -1296,7 +1296,7 @@
       "away_rank": null,
       "conference": "Northeast",
       "venue": "DeGol Arena",
-      "location": "Loretto, PA,",
+      "location": "Loretto, PA",
       "spread_close": null,
       "total_close": null
     },
@@ -1318,7 +1318,7 @@
       "away_rank": null,
       "conference": "Northeast",
       "venue": "Jeffery P. Hazell Athletics Center",
-      "location": "West Haven, CT,",
+      "location": "West Haven, CT",
       "spread_close": null,
       "total_close": null
     },
@@ -1340,7 +1340,7 @@
       "away_rank": null,
       "conference": "Northeast",
       "venue": "Ted Grant Court",
-      "location": "Syracuse, NY,",
+      "location": "Syracuse, NY",
       "spread_close": null,
       "total_close": null
     },
@@ -1362,7 +1362,7 @@
       "away_rank": null,
       "conference": "Northeast",
       "venue": "William H. Detrick Gymnasium",
-      "location": "New Britain, CT,",
+      "location": "New Britain, CT",
       "spread_close": null,
       "total_close": null
     },
@@ -1384,7 +1384,7 @@
       "away_rank": null,
       "conference": "Northeast",
       "venue": "Merkert Gymnasium",
-      "location": "South Easton, MA,",
+      "location": "South Easton, MA",
       "spread_close": null,
       "total_close": null
     },
@@ -1406,7 +1406,7 @@
       "away_rank": null,
       "conference": "Southland",
       "venue": "Townsley Law Arena",
-      "location": "Lake Charles, LA,",
+      "location": "Lake Charles, LA",
       "spread_close": null,
       "total_close": null
     },
@@ -1428,7 +1428,7 @@
       "away_rank": null,
       "conference": "Southland",
       "venue": "Sharp Gymnasium",
-      "location": "Houston, TX,",
+      "location": "Houston, TX",
       "spread_close": null,
       "total_close": null
     },
@@ -1450,7 +1450,7 @@
       "away_rank": null,
       "conference": "Southland",
       "venue": "Montagne Center",
-      "location": "Beaumont, TX,",
+      "location": "Beaumont, TX",
       "spread_close": null,
       "total_close": null
     },
@@ -1472,7 +1472,7 @@
       "away_rank": null,
       "conference": "Southland",
       "venue": "Prather Coliseum",
-      "location": "Natchitoches, LA,",
+      "location": "Natchitoches, LA",
       "spread_close": null,
       "total_close": null
     },
@@ -1494,7 +1494,7 @@
       "away_rank": null,
       "conference": "Southland",
       "venue": "Alice P. McDermott Convocation Center",
-      "location": "San Antonio, TX,",
+      "location": "San Antonio, TX",
       "spread_close": null,
       "total_close": null
     },
@@ -1516,7 +1516,7 @@
       "away_rank": null,
       "conference": "Southland",
       "venue": "University Center (LA)",
-      "location": "Hammond, LA,",
+      "location": "Hammond, LA",
       "spread_close": null,
       "total_close": null
     },
@@ -1538,7 +1538,7 @@
       "away_rank": null,
       "conference": "Big East",
       "venue": "Hinkle Fieldhouse",
-      "location": "Indianapolis, IN,",
+      "location": "Indianapolis, IN",
       "spread_close": "BUT -7.5",
       "total_close": 148.5
     },
@@ -1560,7 +1560,7 @@
       "away_rank": null,
       "conference": "Big East",
       "venue": "Madison Square Garden",
-      "location": "New York, NY,",
+      "location": "New York, NY",
       "spread_close": "SJU -11.5",
       "total_close": 143.5
     },
@@ -1568,21 +1568,21 @@
       "date": "2026-01-20",
       "start_time": "10:00 PM",
       "start_time_utc": "2026-01-21T03:00:00+00:00",
-      "status": "pre_game",
+      "status": "in_progress",
       "home_team": "UCLA",
       "away_team": "PUR",
-      "home_score": 0,
-      "away_score": 0,
+      "home_score": 3,
+      "away_score": 7,
       "away_model": 4,
       "home_model": 39,
-      "clock": "0:00",
-      "period": null,
+      "clock": "16:37",
+      "period": "1st",
       "overtime": false,
       "home_rank": null,
       "away_rank": 4,
       "conference": "Big Ten",
       "venue": "Pauley Pavilion",
-      "location": "Los Angeles, CA,",
+      "location": "Los Angeles, CA",
       "spread_close": "PUR -5.5",
       "total_close": 146.5
     },
@@ -1593,18 +1593,18 @@
       "status": "in_progress",
       "home_team": "IOWA",
       "away_team": "RUT",
-      "home_score": 39,
-      "away_score": 43,
+      "home_score": 44,
+      "away_score": 45,
       "away_model": 164,
       "home_model": 17,
-      "clock": "10:17",
+      "clock": "8:23",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
       "conference": "Big Ten",
       "venue": "Carver-Hawkeye Arena",
-      "location": "Iowa City, IA,",
+      "location": "Iowa City, IA",
       "spread_close": "IOWA -17.5",
       "total_close": 140.5
     },
@@ -1626,7 +1626,7 @@
       "away_rank": null,
       "conference": "Big Ten",
       "venue": "Crisler Center",
-      "location": "Ann Arbor, MI,",
+      "location": "Ann Arbor, MI",
       "spread_close": "MICH -16.5",
       "total_close": 163.5
     },
@@ -1648,7 +1648,7 @@
       "away_rank": null,
       "conference": "Mid Eastern Athletic",
       "venue": "Smith-Hammond-Middleton Memorial Center",
-      "location": "Orangeburg, SC,",
+      "location": "Orangeburg, SC",
       "spread_close": null,
       "total_close": null
     },
@@ -1670,7 +1670,7 @@
       "away_rank": null,
       "conference": "Big Ten",
       "venue": "Value City Arena",
-      "location": "Columbus, OH,",
+      "location": "Columbus, OH",
       "spread_close": "OSU -7.5",
       "total_close": 144.5
     },
@@ -1678,7 +1678,7 @@
       "date": "2026-01-20",
       "start_time": "9:00 PM",
       "start_time_utc": "2026-01-21T02:00:00+00:00",
-      "status": "half_over",
+      "status": "in_progress",
       "home_team": "ORE",
       "away_team": "MSU",
       "home_score": 26,
@@ -1692,7 +1692,7 @@
       "away_rank": 10,
       "conference": "Big Ten",
       "venue": "Matthew Knight Arena",
-      "location": "Eugene, OR,",
+      "location": "Eugene, OR",
       "spread_close": "MSU -10.5",
       "total_close": 139.5
     },
@@ -1704,17 +1704,17 @@
       "home_team": "KSU",
       "away_team": "UTAH",
       "home_score": 46,
-      "away_score": 43,
+      "away_score": 47,
       "away_model": 115,
       "home_model": 102,
-      "clock": "0:00",
-      "period": "1st",
+      "clock": "18:35",
+      "period": "2nd",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
       "conference": "Big 12",
       "venue": "Bramlage Coliseum",
-      "location": "Manhattan, KS,",
+      "location": "Manhattan, KS",
       "spread_close": "KSU -10.5",
       "total_close": 167.5
     },
@@ -1736,7 +1736,7 @@
       "away_rank": 19,
       "conference": "Big 12",
       "venue": "CU Events Center",
-      "location": "Boulder, CO,",
+      "location": "Boulder, CO",
       "spread_close": "KU -4.5",
       "total_close": 155.5
     },
@@ -1747,18 +1747,18 @@
       "status": "in_progress",
       "home_team": "TCU",
       "away_team": "OKST",
-      "home_score": 67,
+      "home_score": 68,
       "away_score": 65,
       "away_model": 65,
       "home_model": 68,
-      "clock": "0:06",
+      "clock": "0:00",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
       "conference": "Big 12",
       "venue": "Ed and Rae Schollmaier Arena",
-      "location": "Fort Worth, TX,",
+      "location": "Fort Worth, TX",
       "spread_close": "TCU -8.5",
       "total_close": 161.5
     },
@@ -1780,7 +1780,7 @@
       "away_rank": 12,
       "conference": "Big 12",
       "venue": "Foster Pavilion",
-      "location": "Waco, TX,",
+      "location": "Waco, TX",
       "spread_close": "TTU -1.5",
       "total_close": 154.5
     },
@@ -1802,7 +1802,7 @@
       "away_rank": null,
       "conference": "Big 12",
       "venue": "James H. Hilton Coliseum",
-      "location": "Ames, IA,",
+      "location": "Ames, IA",
       "spread_close": "ISU -14.5",
       "total_close": 156.5
     },
@@ -1824,7 +1824,7 @@
       "away_rank": null,
       "conference": "American",
       "venue": "UNT Coliseum",
-      "location": "Denton, TX,",
+      "location": "Denton, TX",
       "spread_close": "UNT -16.5",
       "total_close": 138.5
     },
@@ -1846,7 +1846,7 @@
       "away_rank": null,
       "conference": "American",
       "venue": "Tudor Fieldhouse",
-      "location": "Houston, TX,",
+      "location": "Houston, TX",
       "spread_close": null,
       "total_close": null
     },
@@ -1868,7 +1868,7 @@
       "away_rank": null,
       "conference": "American",
       "venue": "Donald W. Reynolds Center",
-      "location": "Tulsa, OK,",
+      "location": "Tulsa, OK",
       "spread_close": "TLSA -5.5",
       "total_close": 153.5
     },
@@ -1890,7 +1890,7 @@
       "away_rank": null,
       "conference": "American",
       "venue": "Eleanor R. Baldwin Arena",
-      "location": "Boca Raton, FL,",
+      "location": "Boca Raton, FL",
       "spread_close": "FAU -10.5",
       "total_close": 155.5
     },
@@ -1912,7 +1912,7 @@
       "away_rank": null,
       "conference": "American",
       "venue": "Charles Koch Arena",
-      "location": "Wichita, KS,",
+      "location": "Wichita, KS",
       "spread_close": null,
       "total_close": null
     },
@@ -1934,7 +1934,7 @@
       "away_rank": 24,
       "conference": "Atlantic 10",
       "venue": "UPMC Cooper Fieldhouse",
-      "location": "Pittsburgh, PA,",
+      "location": "Pittsburgh, PA",
       "spread_close": "SLU -9.5",
       "total_close": 165.5
     },
@@ -1956,7 +1956,7 @@
       "away_rank": null,
       "conference": "Atlantic 10",
       "venue": "Reilly Center",
-      "location": "St. Bonaventure, NY,",
+      "location": "St. Bonaventure, NY",
       "spread_close": "SBU -10.5",
       "total_close": 146.5
     },
@@ -1978,7 +1978,7 @@
       "away_rank": null,
       "conference": "Patriot League",
       "venue": "Sojka Pavilion",
-      "location": "Lewisburg, PA,",
+      "location": "Lewisburg, PA",
       "spread_close": null,
       "total_close": null
     },
@@ -2000,7 +2000,7 @@
       "away_rank": null,
       "conference": "Patriot League",
       "venue": "Navy Alumni Hall",
-      "location": "Annapolis, MD,",
+      "location": "Annapolis, MD",
       "spread_close": "NAVY -9.5",
       "total_close": 131.5
     },
@@ -2022,9 +2022,9 @@
       "away_rank": null,
       "conference": "Patriot League",
       "venue": "Case Gym",
-      "location": "Boston, MA,",
-      "spread_close": "BU -4.5",
-      "total_close": 145.5
+      "location": "Boston, MA",
+      "spread_close": "BU -3.5",
+      "total_close": 146.5
     },
     "2458742": {
       "date": "2026-01-21",
@@ -2044,7 +2044,7 @@
       "away_rank": null,
       "conference": "Patriot League",
       "venue": "Bender Arena",
-      "location": "Washington, DC,",
+      "location": "Washington, DC",
       "spread_close": null,
       "total_close": null
     },
@@ -2066,7 +2066,7 @@
       "away_rank": null,
       "conference": "Ivy",
       "venue": "Edward Leede Arena",
-      "location": "Hanover, NH,",
+      "location": "Hanover, NH",
       "spread_close": null,
       "total_close": null
     },
@@ -2088,7 +2088,7 @@
       "away_rank": null,
       "conference": "Ivy",
       "venue": "The Palestra",
-      "location": "Philadelphia, PA,",
+      "location": "Philadelphia, PA",
       "spread_close": null,
       "total_close": null
     },
@@ -2110,7 +2110,7 @@
       "away_rank": null,
       "conference": "Ivy",
       "venue": "Lavietes Pavilion",
-      "location": "Allston, MA,",
+      "location": "Allston, MA",
       "spread_close": null,
       "total_close": null
     },
@@ -2132,7 +2132,7 @@
       "away_rank": null,
       "conference": "Ivy",
       "venue": "Jadwin Gymnasium",
-      "location": "Princeton, NJ,",
+      "location": "Princeton, NJ",
       "spread_close": null,
       "total_close": null
     },
@@ -2154,7 +2154,7 @@
       "away_rank": null,
       "conference": "West Coast",
       "venue": "McCarthey Athletic Center",
-      "location": "Spokane, WA,",
+      "location": "Spokane, WA",
       "spread_close": "GONZ -28.5",
       "total_close": 146.5
     },
@@ -2176,7 +2176,7 @@
       "away_rank": null,
       "conference": "West Coast",
       "venue": "Redhawk Center",
-      "location": "Seattle, WA,",
+      "location": "Seattle, WA",
       "spread_close": "SEA -4.5",
       "total_close": 136.5
     },
@@ -2198,7 +2198,7 @@
       "away_rank": null,
       "conference": "West Coast",
       "venue": "University Credit Union Pavilion",
-      "location": "Moraga, CA,",
+      "location": "Moraga, CA",
       "spread_close": "SMC -18.5",
       "total_close": 142.5
     },
@@ -2220,7 +2220,7 @@
       "away_rank": null,
       "conference": "West Coast",
       "venue": "Jenny Craig Pavilion",
-      "location": "San Diego, CA,",
+      "location": "San Diego, CA",
       "spread_close": null,
       "total_close": null
     },
@@ -2242,7 +2242,7 @@
       "away_rank": null,
       "conference": "Southwestern Athletic",
       "venue": "Moore Gymnasium",
-      "location": "Daytona Beach, FL,",
+      "location": "Daytona Beach, FL",
       "spread_close": null,
       "total_close": null
     },
@@ -2264,7 +2264,7 @@
       "away_rank": null,
       "conference": "Southwestern Athletic",
       "venue": "Fredrick C. Hobdy Assembly Center",
-      "location": "Grambling, LA,",
+      "location": "Grambling, LA",
       "spread_close": null,
       "total_close": null
     },
@@ -2286,7 +2286,7 @@
       "away_rank": null,
       "conference": "Southwestern Athletic",
       "venue": "H&PE Arena",
-      "location": "Houston, TX,",
+      "location": "Houston, TX",
       "spread_close": null,
       "total_close": null
     },
@@ -2308,7 +2308,7 @@
       "away_rank": null,
       "conference": "Southwestern Athletic",
       "venue": "William J. Nicks Building",
-      "location": "Prairie View, TX,",
+      "location": "Prairie View, TX",
       "spread_close": null,
       "total_close": null
     },
@@ -2330,7 +2330,7 @@
       "away_rank": null,
       "conference": "Southwestern Athletic",
       "venue": "F.G. Clark Activity Center",
-      "location": "Baton Rouge, LA,",
+      "location": "Baton Rouge, LA",
       "spread_close": null,
       "total_close": null
     },
@@ -2352,7 +2352,7 @@
       "away_rank": null,
       "conference": "Southwestern Athletic",
       "venue": "Al Lawson Center",
-      "location": "Tallahassee, FL,",
+      "location": "Tallahassee, FL",
       "spread_close": null,
       "total_close": null
     },
@@ -2374,7 +2374,7 @@
       "away_rank": null,
       "conference": "Missouri Valley",
       "venue": "Credit Union 1 Arena",
-      "location": "Chicago, IL,",
+      "location": "Chicago, IL",
       "spread_close": "UIC -8.5",
       "total_close": 138.5
     },
@@ -2385,18 +2385,18 @@
       "status": "in_progress",
       "home_team": "WYO",
       "away_team": "BSU",
-      "home_score": 41,
+      "home_score": 43,
       "away_score": 59,
       "away_model": 99,
       "home_model": 88,
-      "clock": "8:27",
+      "clock": "7:18",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
       "conference": "Mountain West",
       "venue": "Arena-Auditorium",
-      "location": "Laramie, WY,",
+      "location": "Laramie, WY",
       "spread_close": "BSU -1.5",
       "total_close": 142.5
     },
@@ -2407,18 +2407,18 @@
       "status": "in_progress",
       "home_team": "CSU",
       "away_team": "AF",
-      "home_score": 43,
-      "away_score": 21,
+      "home_score": 48,
+      "away_score": 24,
       "away_model": 341,
       "home_model": 106,
-      "clock": "18:10",
+      "clock": "16:24",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
       "conference": "Mountain West",
       "venue": "Moby Arena",
-      "location": "Fort Collins, CO,",
+      "location": "Fort Collins, CO",
       "spread_close": "CSU -19.5",
       "total_close": 133.5
     },
@@ -2426,21 +2426,21 @@
       "date": "2026-01-20",
       "start_time": "10:00 PM",
       "start_time_utc": "2026-01-21T03:00:00+00:00",
-      "status": "pre_game",
+      "status": "in_progress",
       "home_team": "NEV",
       "away_team": "SJSU",
       "home_score": 0,
       "away_score": 0,
       "away_model": 235,
       "home_model": 66,
-      "clock": "0:00",
-      "period": null,
+      "clock": "19:34",
+      "period": "1st",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
       "conference": "Mountain West",
       "venue": "Lawlor Events Center",
-      "location": "Reno, NV,",
+      "location": "Reno, NV",
       "spread_close": "NEV -16.5",
       "total_close": 138.5
     },
@@ -2462,7 +2462,7 @@
       "away_rank": null,
       "conference": "Mountain West",
       "venue": "Dee Glen Smith Spectrum",
-      "location": "Logan, UT,",
+      "location": "Logan, UT",
       "spread_close": "UTST -15.5",
       "total_close": 157.5
     },
@@ -2484,7 +2484,7 @@
       "away_rank": null,
       "conference": "Mid Eastern Athletic",
       "venue": "Talmadge L. Hill Field House",
-      "location": "Baltimore, MD,",
+      "location": "Baltimore, MD",
       "spread_close": null,
       "total_close": null
     }
