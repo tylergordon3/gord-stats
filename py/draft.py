@@ -274,20 +274,21 @@ missing = team_breakdown.groupby(by=['Owner']).agg(
         tot_players = ("Games Played", 'count')
     )
 missing['tot_games'] = missing['tot_players'] * 14
-missing['Games Missed'] = missing['tot_games'] - missing['num_games']
-missing = missing.sort_values(by='Games Missed', ascending=False)
+missing['Total Games Missed'] = missing['tot_games'] - missing['num_games']
+missing = missing.sort_values(by='Total Games Missed', ascending=False)
 missing = missing.drop(columns=['tot_players'])
-missing = missing.rename(columns={'num_games':'G Played', 'tot_games':'G Tot'})
+missing = missing.rename(columns={'num_games':'Total Games Played', 'tot_games':'Total Games'})
 missing = missing.reset_index(names=['Owners'])
-missing = missing[['Owners', 'Games Missed', 'G Tot', 'G Played']].copy()
-missing_styler = default_style(missing, ["Games Missed"], opt_styler="RdYlGn_r")
+missing = missing[['Owners', 'Total Games Missed', 'Total Games', 'Total Games Played']].copy()
+missing_styler = default_style(missing, ["Total Games Missed"], opt_styler="RdYlGn_r")
 
 html = ''
-html += "<p>Number of games drafted players missed over the course of the 14 week regular season.</p>"
+html += "<p>Number of games drafted players missed over the course of the 14 week regular season."
+html += "Missed is defined as not starting or playing an entire game. If a player leaves a game due to injury, this is counted as a game played.</p>"
 html += table_html(missing_styler)
 html += '''<h1>Drafted Position Change</h1>
-        <p>Sorted by: Sum Pos Δ, or the total change from draft position to final ranking amongst position group.</p>
-        <p>No Injury Sum Pos Δ - same as Sum Pos Δ but only includes players with 10 or more games played.</p> '''
+        <p>Sorted by: Total Pos. Rank Δ, or the total change from draft position to final ranking amongst position group.</p>
+        <p>Total Pos. Rank Δ w/o Injuries - change in draft position to final ranking among position group. Not counting players with less than 10 games played.</p> '''
 html = format_breakdown(combined, html)
 
 html += '<h1>Drafted Position Change in first 4 rounds</h1>'
