@@ -98,15 +98,15 @@ df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name', 'pos_
 df =  df[~df['position'].isin(['K', 'DEF'])]
 
 df = df.rename(columns={
-        "pos_diff" : "Pos Δ",
-        "overall_diff" : "Overall Δ",
+        "pos_diff" : "Pos. Rank Δ",
+        "overall_diff" : "Overall Rank Δ",
         "pick_no" : "Pick",
-        "position" : "Pos",
+        "position" : "Pos.",
         "team_name" : "Owner",
-        "total_pts" : "Pts",
+        "total_pts" : "Pts.",
         "name" : "Name",
         "team" : "Team",
-        "num_games" : "# G"
+        "num_games" : "Games Played"
     })
 
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
@@ -114,37 +114,36 @@ df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 df_lottery = df[df['round'] < 5]
 
 df = df[['Pick', 'Owner', 
-         'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
+         'Name', 'Pos.', 'Team', 'Position Rk', 'Pos. Rank Δ', 'Overall Rk', 'Overall Rank Δ', 'Games Played']]
 
 # ------------------
 # Copies for lottery
 # ------------------
 df_lottery = df_lottery[['Pick', 'Owner', 
-         'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
-df_lottery_no_injuries = df_lottery[~((df_lottery['# G'] < 10))]
+         'Name', 'Pos.', 'Team', 'Position Rk', 'Pos. Rank Δ', 'Overall Rk', 'Overall Rank Δ', 'Games Played']]
+df_lottery_no_injuries = df_lottery[~((df_lottery['Games Played'] < 10))]
 
 # ------------------
 # DataFrames including injuries
 # ------------------
-df_best = df.sort_values(by='Overall Δ', ascending=False)
-df_worst = df.sort_values(by='Overall Δ')
+df_best = df.sort_values(by='Overall Rank Δ', ascending=False)
+df_worst = df.sort_values(by='Overall Rank Δ')
 
-styler = default_style(df, ["Pos Δ", "Overall Δ"])
-styler_best = default_style(df_best.head(CUTOFF_ROWS), ["Overall Δ"])
-styler_worst = default_style(df_worst.head(CUTOFF_ROWS), ["Overall Δ"])
+styler = default_style(df, ["Pos. Rank Δ", "Overall Rank Δ"])
+styler_best = default_style(df_best.head(CUTOFF_ROWS), ["Overall Rank Δ"])
+styler_worst = default_style(df_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"])
 
 # ------------------
 # DataFrames removing injuries
 # ------------------
-df_no_injuries = df[~((df['# G'] < 10))]
-df_lottery_no_injuries = df_lottery[~((df_lottery['# G'] < 10))]
+df_no_injuries = df[~((df['Games Played'] < 10))]
 
-df_no_injuries_best = df_no_injuries.sort_values(by='Overall Δ', ascending=False)
-df_no_injuries_worst = df_no_injuries.sort_values(by='Overall Δ')
+df_no_injuries_best = df_no_injuries.sort_values(by='Overall Rank Δ', ascending=False)
+df_no_injuries_worst = df_no_injuries.sort_values(by='Overall Rank Δ')
 
-styler_no_injuries = default_style(df_no_injuries, ["Pos Δ", "Overall Δ"])
-styler_best_no_injuries = default_style(df_no_injuries_best.head(CUTOFF_ROWS), ["Overall Δ"])
-styler_worst_no_injuries = default_style(df_no_injuries_worst.head(CUTOFF_ROWS), ["Overall Δ"])
+styler_no_injuries = default_style(df_no_injuries, ["Pos. Rank Δ", "Overall Rank Δ"])
+styler_best_no_injuries = default_style(df_no_injuries_best.head(CUTOFF_ROWS), ["Overall Rank Δ"])
+styler_worst_no_injuries = default_style(df_no_injuries_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"])
 
 # ------------------
 # Copies for below
@@ -159,6 +158,7 @@ tz = timezone("EST")
 time_obj = datetime.datetime.now(tz)
 time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 df_html = f"<p>{time}</p>"
+df_html += '<p>Δ = Delta = Change/Difference</p>'
 df_html += "<a href='draft_team.html'>Team Draft Breakdown</a>"
 df_html +=  f'''
     <p>Note: Does not include defenses or kickers.</p>
@@ -194,30 +194,30 @@ with open('docs/draft.html', "w", encoding="utf-8") as f:
 # Team Breakdowns
 # ------------------
 def byTeam(df):
-    grouped = df.groupby(by=['Owner', 'Pos']).agg(
-        pos_delt = ("Pos Δ", "sum"),
-        ovr_delt = ("Overall Δ", "sum")
+    grouped = df.groupby(by=['Owner', 'Pos.']).agg(
+        pos_delt = ("Pos. Rank Δ", "sum"),
+        ovr_delt = ("Overall Rank Δ", "sum")
     )
     grouped['pos_delt'] = grouped['pos_delt'].fillna(0)
     grouped['ovr_delt'] = grouped['ovr_delt'].fillna(0)
     grouped_tot = df.groupby(by=['Owner']).agg(
-        ovr_delt = ("Overall Δ", 'sum')
+        ovr_delt = ("Overall Rank Δ", 'sum')
     )
     grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
     df_result = grouped.reset_index()
-    df_result = df_result.rename(columns={'pos_delt':'Total Pos Δ', 'ovr_delt':' Total Ovr Δ'})
-    qb = df_result[df_result['Pos'] == 'QB'].sort_values(by='Total Pos Δ', ascending=False)
-    rb = df_result[df_result['Pos'] == 'RB'].sort_values(by='Total Pos Δ', ascending=False)
-    wr = df_result[df_result['Pos'] == 'WR'].sort_values(by='Total Pos Δ', ascending=False)
-    te = df_result[df_result['Pos'] == 'TE'].sort_values(by='Total Pos Δ', ascending=False)
+    df_result = df_result.rename(columns={'pos_delt':'Total Pos. Rank Δ', 'ovr_delt':' Total Ovr. Rank Δ'})
+    qb = df_result[df_result['Pos.'] == 'QB'].sort_values(by='Total Pos. Rank Δ', ascending=False)
+    rb = df_result[df_result['Pos.'] == 'RB'].sort_values(by='Total Pos. Rank Δ', ascending=False)
+    wr = df_result[df_result['Pos.'] == 'WR'].sort_values(by='Total Pos. Rank Δ', ascending=False)
+    te = df_result[df_result['Pos.'] == 'TE'].sort_values(by='Total Pos. Rank Δ', ascending=False)
 
     grouped_tot = df.groupby(by=['Owner']).agg(
-        ovr_delt = ("Overall Δ", 'sum')
+        ovr_delt = ("Overall Rank Δ", 'sum')
     )
     grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
 
     overall = grouped_tot.reset_index()
-    overall = overall.rename(columns={'ovr_delt':' Total Ovr Δ'})
+    overall = overall.rename(columns={'ovr_delt':' Total Ovr. Rank Δ'})
 
     return [qb, rb, wr, te, overall]
 
@@ -233,26 +233,26 @@ def format_breakdown(df_list, html):
     for df in df_list:
         html += '<details>'
         df = df.rename(columns={
-            "Pos_x" : "Pos",
-            "Total Pos Δ_x": "Sum Pos Δ",
-            " Total Ovr Δ_x": "Sum Δ",
-            "Total Pos Δ_y": "No Injury Sum Pos Δ",
-            " Total Ovr Δ_y": "No Injury Sum Δ"
+            "Pos._x" : "Pos.",
+            "Total Pos. Rank Δ_x": "Total Pos. Rank Δ",
+            " Total Ovr. Rank Δ_x": "Total Ovr. Rank Δ",
+            "Total Pos. Rank Δ_y": "Total Pos. Rank Δ w/o Injuries",
+            " Total Ovr. Rank Δ_y": "Total Ovr. Rank Δ w/o Injuries"
         })
 
-        if 'No Injury Sum Pos Δ' in df.columns:
-            df['No Injury Sum Pos Δ'] = df['No Injury Sum Pos Δ'].astype(int)
+        if 'Total Pos. Rank Δ w/o Injuries' in df.columns:
+            df['Total Pos. Rank Δ w/o Injuries'] = df['Total Pos. Rank Δ w/o Injuries'].astype(int)
         df = df.reset_index(drop=True)
-        if 'Pos_y' in df.columns:
-            df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
-            pos = list(df['Pos'])[0]
-            df = df.drop(columns=['Pos'])
-            df = df.sort_values(by='Sum Pos Δ', ascending=False)
-            styler = default_style(df, ["Sum Pos Δ", "No Injury Sum Pos Δ"])
+        if 'Pos._y' in df.columns:
+            df = df.drop(columns=['Pos._y', 'Total Ovr. Rank Δ w/o Injuries', 'Total Ovr. Rank Δ'])
+            pos = list(df['Pos.'])[0]
+            df = df.drop(columns=['Pos.'])
+            df = df.sort_values(by='Total Pos. Rank Δ', ascending=False)
+            styler = default_style(df, ["Total Pos. Rank Δ", "Total Pos. Rank Δ w/o Injuries"])
             html += f'<summary><strong>{pos}</strong></summary>'
         else:
-            df = df.sort_values(by='Sum Δ', ascending=False)
-            styler = default_style(df, ["Sum Δ", "No Injury Sum Δ"])
+            df = df.sort_values(by='Total Ovr. Rank Δ', ascending=False)
+            styler = default_style(df, ["Total Ovr. Rank Δ", "Total Ovr. Rank Δ w/o Injuries"])
             html += f'<summary><strong>Overall</strong></summary>'
         html += table_html(styler)
         html += '</details>'
@@ -270,8 +270,8 @@ lottery_combined = merge_breakdowns(lottery_breakdown, lottery_breakdown_no_inju
 # Missed Games due to Injury
 # ------------------
 missing = team_breakdown.groupby(by=['Owner']).agg(
-        num_games = ("# G", 'sum'),
-        tot_players = ("# G", 'count')
+        num_games = ("Games Played", 'sum'),
+        tot_players = ("Games Played", 'count')
     )
 missing['tot_games'] = missing['tot_players'] * 14
 missing['Games Missed'] = missing['tot_games'] - missing['num_games']
