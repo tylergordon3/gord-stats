@@ -95,7 +95,12 @@ df = df.rename(columns={
     })
 
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
+
+df_prem = df[df['round'] < 5]
+
 df = df[['Pick', 'Owner', 
+         'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
+df_prem = df_prem[['Pick', 'Owner', 
          'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
 
 team_breakdown = df.copy()
@@ -125,6 +130,7 @@ styler_worst = (
         )
 
 df_no_inj = df[~((df['# G'] < 10))]
+df_prem_noinj = df_prem[~((df_prem['# G'] < 10))]
 team_breakdown_noinj = df_no_inj .copy()
 df_no_inj_best = df_no_inj.sort_values(by='Overall Δ', ascending=False)
 df_no_inj_worst = df_no_inj.sort_values(by='Overall Δ')
@@ -227,6 +233,9 @@ def byTeam(df):
 qb_all, rb_all, wr_all, te_all, ovr_all = byTeam(team_breakdown)
 qb, rb, wr, te, ovr = byTeam(team_breakdown_noinj)
 
+qb_p, rb_p, wr_p, te_p, ovr_p = byTeam(df_prem)
+qb_p_ni, rb_p_ni, wr_p_ni, te_p_ni, ovr_p_ni = byTeam(df_prem_noinj)
+
 qb = pd.merge(qb_all, qb, 'left', on='Owner')
 rb = pd.merge(rb_all, rb, 'left', on='Owner')
 wr = pd.merge(wr_all, wr, 'left', on='Owner')
@@ -238,6 +247,18 @@ rb = rb.fillna(0)
 wr = wr.fillna(0)
 te = te.fillna(0)
 ovr = ovr.fillna(0)
+
+qb_p = pd.merge(qb_p, qb_p_ni, 'left', on='Owner')
+rb_p = pd.merge(rb_p, rb_p_ni, 'left', on='Owner')
+wr_p = pd.merge(wr_p, wr_p_ni, 'left', on='Owner')
+te_p = pd.merge(te_p, te_p_ni, 'left', on='Owner')
+ovr_p = pd.merge(ovr_p, ovr_p_ni, 'left', on='Owner')
+
+qb_p = qb_p.fillna(0)
+rb_p = rb_p.fillna(0)
+wr_p = wr_p.fillna(0)
+te_p = te_p.fillna(0)
+ovr_p = ovr_p.fillna(0)
 html = ''
 
 missing = team_breakdown.groupby(by=['Owner']).agg(
@@ -272,6 +293,46 @@ for df in [qb, rb, wr, te, ovr]:
     if 'No Injury Sum Pos Δ' in df.columns:
         df['No Injury Sum Pos Δ'] = df['No Injury Sum Pos Δ'].astype(int)
     df = df.reset_index(drop=True)
+    if 'Pos_y' in df.columns:
+        df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
+        pos = list(df['Pos'])[0]
+        df = df.drop(columns=['Pos'])
+        df = df.sort_values(by='Sum Pos Δ', ascending=False)
+        styler = (
+        df
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Sum Pos Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Pos Δ"])
+        )
+        html += f'<h2>{pos}</h2>'
+    else:
+        df = df.sort_values(by='Sum Δ', ascending=False)
+        styler = (
+        df
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=["Sum Δ"]) 
+        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Δ"])
+        )
+        html += f'<h2>Overall</h2>'
+    html += styler.to_html()
+
+html += '<h1>Drafted Position Change in first 4 rounds</h1>'
+html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
+for df in [qb_p, rb_p, wr_p, te_p, ovr_p]:
+    df = df.rename(columns={
+        "Pos_x" : "Pos",
+        "Total Pos Δ_x": "Sum Pos Δ",
+        " Total Ovr Δ_x": "Sum Δ",
+        "Total Pos Δ_y": "No Injury Sum Pos Δ",
+        " Total Ovr Δ_y": "No Injury Sum Δ"
+    })
+
+    if 'No Injury Sum Pos Δ' in df.columns:
+        df['No Injury Sum Pos Δ'] = df['No Injury Sum Pos Δ'].astype(int)
+    df = df.reset_index(drop=True)
+
     if 'Pos_y' in df.columns:
         df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
         pos = list(df['Pos'])[0]
