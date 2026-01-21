@@ -271,6 +271,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
+                ${awayRank ? `(AP ${awayRank})` : ''}
                 <strong>${awayModel ? `#${awayModel}` : ''}</strong>
                 <span class="team-name">${getTeamName(awayTeam)}</span>
               </span>
@@ -288,6 +289,7 @@ function renderGames(games) {
                   loading="lazy"
                   onerror="this.src='/assets/images/default.png'"
                 />
+                ${homeRank ? `(AP ${homeRank})` : ''}
                 <strong>${homeModel ? `#${homeModel}` : ''}</strong>
                 <span class="team-name">${getTeamName(homeTeam)}</span>
               </span>
