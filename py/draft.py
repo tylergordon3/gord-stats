@@ -278,7 +278,8 @@ missing['Games Missed'] = missing['tot_games'] - missing['num_games']
 missing = missing.sort_values(by='Games Missed', ascending=False)
 missing = missing.drop(columns=['tot_players'])
 missing = missing.rename(columns={'num_games':'G Played', 'tot_games':'G Tot'})
-missing = missing[['Games Missed', 'G Tot', 'G Played']].copy()
+missing = missing.reset_index(names=['Owners'])
+missing = missing[['Owners', 'Games Missed', 'G Tot', 'G Played']].copy()
 missing_styler = default_style(missing, ["Games Missed"], opt_styler="RdYlGn_r")
 
 html = ''
