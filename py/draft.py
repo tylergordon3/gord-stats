@@ -1,10 +1,8 @@
 '''
     This module is used for gathering draft data for a league.
 '''
-
 import pandas as pd
 import re
-import numpy as np
 from pytz import timezone
 import datetime
 from sleeper_wrapper import League, Drafts, Players
@@ -12,37 +10,20 @@ import fantasy_rosters
 import constants as c
 import player_db as pdb
 import html_builder as htmb
+
+# ------------------
+# Globals
+# ------------------
 league = League(c.LEAGUEID)
 draft = Drafts(c.DRAFTID)
 players = Players()
-
 rosters = fantasy_rosters.get(league)
 allPicks = pd.DataFrame(draft.get_all_picks())
-apMeta = allPicks['metadata'].apply(pd.Series)
-apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated',
-                              'years_exp', 'status', 'injury_status', 'number', 'player_id'])
+CUTOFF_ROWS = 15
 
-draftDF = pd.concat([allPicks, apMeta], axis=1)
-draftDF = draftDF.drop(columns=['metadata', 'reactions', 'is_keeper',
-                                'draft_id', 'draft_slot', 'roster_id'])
-
-draftDF['roster_id'] = draftDF['picked_by'].apply(lambda x: list(rosters[rosters['owner_id'] == x].roster_id)[0])
-draftDF['team_name'] = draftDF['roster_id'].apply(lambda x: list(rosters[rosters['roster_id'] == x].team_name)[0])
-
-# DRAFTDF COLUMNS
-# Index(['pick_no', 'picked_by', 'player_id', 'roster_id', 'round', 'first_name',
-#       'last_name', 'position', 'team', 'teamName],
-#      dtype='object')
-df = draftDF[['pick_no', 'roster_id', 'team_name', 'player_id', 'first_name', 'last_name', 'round', 'position', 'team']].copy()
-
-def pos_rank(row, position_df):
-    this_rank = row.pick_no
-    return len(position_df[position_df['pick_no'] < this_rank]) + 1
-
-df['pos_rank'] = df.apply(lambda x: pos_rank(x, df[df['position'] == x.position]), axis=1)
-
-players = pdb.get(week=0)
-
+# ------------------
+# Helper Functions
+# ------------------
 def sum_pts(id):
     sleeper = str(id)
     pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'].sum()
@@ -64,9 +45,43 @@ def final_pos_rank(row, df):
 def get_over(pick_str):
     pattern = r'(\d+).(\d+)'
     match = re.search(pattern, pick_str)
-    # round = match.group(1)
     pick_no = match.group(2)
     return pick_no
+
+def default_style(df, cols, opt_styler="RdYlGn"):
+    return (df
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap=opt_styler, subset=cols))
+
+def table_html(styler):
+    return f'''<div class="table-scroll">
+            {styler.to_html()}
+            </div>'''
+
+def pos_rank(row, position_df):
+    this_rank = row.pick_no
+    return len(position_df[position_df['pick_no'] < this_rank]) + 1
+
+# ------------------
+# Main Logic
+# ------------------
+apMeta = allPicks['metadata'].apply(pd.Series)
+apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated',
+                              'years_exp', 'status', 'injury_status', 'number', 'player_id'])
+
+draftDF = pd.concat([allPicks, apMeta], axis=1)
+draftDF = draftDF.drop(columns=['metadata', 'reactions', 'is_keeper',
+                                'draft_id', 'draft_slot', 'roster_id'])
+
+draftDF['roster_id'] = draftDF['picked_by'].apply(lambda x: list(rosters[rosters['owner_id'] == x].roster_id)[0])
+draftDF['team_name'] = draftDF['roster_id'].apply(lambda x: list(rosters[rosters['roster_id'] == x].team_name)[0])
+
+df = draftDF[['pick_no', 'roster_id', 'team_name', 'player_id', 'first_name', 'last_name', 'round', 'position', 'team']].copy()
+
+df['pos_rank'] = df.apply(lambda x: pos_rank(x, df[df['position'] == x.position]), axis=1)
+
+players = pdb.get(week=0)
 
 df['total_pts'] = df.apply(lambda x: sum_pts(x['player_id']), axis=1)
 df['num_games'] = df.apply(lambda x: num_games(x['player_id']), axis=1)
@@ -96,68 +111,50 @@ df = df.rename(columns={
 
 df['Pick'] = df.apply(lambda x: f'{x['round']}.{x['Pick']}', axis=1)
 
-df_prem = df[df['round'] < 5]
+df_lottery = df[df['round'] < 5]
 
 df = df[['Pick', 'Owner', 
          'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
-df_prem = df_prem[['Pick', 'Owner', 
-         'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
 
-team_breakdown = df.copy()
+# ------------------
+# Copies for lottery
+# ------------------
+df_lottery = df_lottery[['Pick', 'Owner', 
+         'Name', 'Pos', 'Team', 'Position Rk', 'Pos Δ', 'Overall Rk', 'Overall Δ', '# G']]
+df_lottery_no_injuries = df_lottery[~((df_lottery['# G'] < 10))]
+
+# ------------------
+# DataFrames including injuries
+# ------------------
 df_best = df.sort_values(by='Overall Δ', ascending=False)
 df_worst = df.sort_values(by='Overall Δ')
 
+styler = default_style(df, ["Pos Δ", "Overall Δ"])
+styler_best = default_style(df_best.head(CUTOFF_ROWS), ["Overall Δ"])
+styler_worst = default_style(df_worst.head(CUTOFF_ROWS), ["Overall Δ"])
 
-def default_style(df):
-    return (df
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Pos Δ", "Overall Δ"]))
+# ------------------
+# DataFrames removing injuries
+# ------------------
+df_no_injuries = df[~((df['# G'] < 10))]
+df_lottery_no_injuries = df_lottery[~((df_lottery['# G'] < 10))]
 
-styler = default_style(df)
+df_no_injuries_best = df_no_injuries.sort_values(by='Overall Δ', ascending=False)
+df_no_injuries_worst = df_no_injuries.sort_values(by='Overall Δ')
 
-styler_best = (
-        df_best
-        .style
-        .hide(axis="index")
-        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
-        )
+styler_no_injuries = default_style(df_no_injuries, ["Pos Δ", "Overall Δ"])
+styler_best_no_injuries = default_style(df_no_injuries_best.head(CUTOFF_ROWS), ["Overall Δ"])
+styler_worst_no_injuries = default_style(df_no_injuries_worst.head(CUTOFF_ROWS), ["Overall Δ"])
 
-styler_worst = (
-        df_worst
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
-        )
+# ------------------
+# Copies for below
+# ------------------
+team_breakdown = df.copy()
+team_breakdown_noinj = df_no_injuries.copy()
 
-df_no_inj = df[~((df['# G'] < 10))]
-df_prem_noinj = df_prem[~((df_prem['# G'] < 10))]
-team_breakdown_noinj = df_no_inj .copy()
-df_no_inj_best = df_no_inj.sort_values(by='Overall Δ', ascending=False)
-df_no_inj_worst = df_no_inj.sort_values(by='Overall Δ')
-
-styler_no_inj = (
-        df_no_inj
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Pos Δ"]) 
-        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"])
-        )
-
-styler_best_no_inj = (
-        df_no_inj_best
-        .style
-        .hide(axis="index")
-        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
-        )
-
-styler_worst_no_inj = (
-        df_no_inj_worst
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Overall Δ"]) 
-        )
-
+# ------------------
+# Main Draft Page HTML
+# ------------------
 tz = timezone("EST")
 time_obj = datetime.datetime.now(tz)
 time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
@@ -167,35 +164,25 @@ df_html +=  f'''
     <p>Note: Does not include defenses or kickers.</p>
     <details>
     <summary><strong>Full Draft</strong></summary>
-    <div class="table-scroll">
-        {styler.to_html()}
-    </div>
+    {table_html(styler)}
     </details>
     <details>
     <summary><strong>Biggest OVERALL Steals</strong></summary>
-    <div class="table-scroll">
-        {styler_best.to_html(max_rows=15)}
-    </div>
+    {table_html(styler_best)}
     </details>
     <details>
     <summary><strong>Biggest OVERALL Busts</strong></summary>
-    <div class="table-scroll">
-        {styler_worst.to_html(max_rows=15)}
-    </div>
+    {table_html(styler_worst)}
     </details>
     <p>The following tables only include players who played in 10 or more games. (~64.5% game requirement)</p>
     <p> - Only inlcudes fantasy regular season (weeks 1-14)</p>
     <details>
     <summary><strong>Biggest OVERALL Steals (Injury adjusted)</strong></summary>
-    <div class="table-scroll">
-        {styler_best_no_inj.to_html(max_rows=15)}
-    </div>
+    {table_html(styler_best_no_injuries)}
     </details>
     <details>
     <summary><strong>Biggest OVERALL Busts (Injury adjusted)</strong></summary>
-    <div class="table-scroll">
-        {styler_worst_no_inj.to_html(max_rows=15)}
-    </div>
+    {table_html(styler_worst_no_injuries)}
     </details>
     '''
 
@@ -203,6 +190,9 @@ page = htmb.add_front_matter(df_html, 'Draft')
 with open('docs/draft.html', "w", encoding="utf-8") as f:
     f.write(page)
 
+# ------------------
+# Team Breakdowns
+# ------------------
 def byTeam(df):
     grouped = df.groupby(by=['Owner', 'Pos']).agg(
         pos_delt = ("Pos Δ", "sum"),
@@ -226,42 +216,59 @@ def byTeam(df):
     )
     grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
 
-    df_result2 = grouped_tot.reset_index()
-    df_result2 = df_result2.rename(columns={'ovr_delt':' Total Ovr Δ'})
+    overall = grouped_tot.reset_index()
+    overall = overall.rename(columns={'ovr_delt':' Total Ovr Δ'})
 
-    return [qb, rb, wr, te, df_result2]
+    return [qb, rb, wr, te, overall]
 
-qb_all, rb_all, wr_all, te_all, ovr_all = byTeam(team_breakdown)
-qb, rb, wr, te, ovr = byTeam(team_breakdown_noinj)
+def merge_breakdowns(all, injuries):
+    combined_list = []
+    for all_df, inj_df in zip(all, injuries):
+        combined = pd.merge(all_df, inj_df, 'left', on='Owner')
+        combined = combined.fillna(0)
+        combined_list.append(combined)
+    return combined_list
 
-qb_p, rb_p, wr_p, te_p, ovr_p = byTeam(df_prem)
-qb_p_ni, rb_p_ni, wr_p_ni, te_p_ni, ovr_p_ni = byTeam(df_prem_noinj)
+def format_breakdown(df_list, html):
+    for df in df_list:
+        html += '<details>'
+        df = df.rename(columns={
+            "Pos_x" : "Pos",
+            "Total Pos Δ_x": "Sum Pos Δ",
+            " Total Ovr Δ_x": "Sum Δ",
+            "Total Pos Δ_y": "No Injury Sum Pos Δ",
+            " Total Ovr Δ_y": "No Injury Sum Δ"
+        })
 
-qb = pd.merge(qb_all, qb, 'left', on='Owner')
-rb = pd.merge(rb_all, rb, 'left', on='Owner')
-wr = pd.merge(wr_all, wr, 'left', on='Owner')
-te = pd.merge(te_all, te, 'left', on='Owner')
-ovr = pd.merge(ovr_all, ovr, 'left', on='Owner')
+        if 'No Injury Sum Pos Δ' in df.columns:
+            df['No Injury Sum Pos Δ'] = df['No Injury Sum Pos Δ'].astype(int)
+        df = df.reset_index(drop=True)
+        if 'Pos_y' in df.columns:
+            df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
+            pos = list(df['Pos'])[0]
+            df = df.drop(columns=['Pos'])
+            df = df.sort_values(by='Sum Pos Δ', ascending=False)
+            styler = default_style(df, ["Sum Pos Δ", "No Injury Sum Pos Δ"])
+            html += f'<summary><strong>{pos}</strong></summary>'
+        else:
+            df = df.sort_values(by='Sum Δ', ascending=False)
+            styler = default_style(df, ["Sum Δ", "No Injury Sum Δ"])
+            html += f'<summary><strong>Overall</strong></summary>'
+        html += table_html(styler)
+        html += '</details>'
+    return html
 
-qb = qb.fillna(0)
-rb = rb.fillna(0)
-wr = wr.fillna(0)
-te = te.fillna(0)
-ovr = ovr.fillna(0)
+breakdown = byTeam(team_breakdown)
+breakdown_no_injuries = byTeam(team_breakdown_noinj)
+combined = merge_breakdowns(breakdown, breakdown_no_injuries)
 
-qb_p = pd.merge(qb_p, qb_p_ni, 'left', on='Owner')
-rb_p = pd.merge(rb_p, rb_p_ni, 'left', on='Owner')
-wr_p = pd.merge(wr_p, wr_p_ni, 'left', on='Owner')
-te_p = pd.merge(te_p, te_p_ni, 'left', on='Owner')
-ovr_p = pd.merge(ovr_p, ovr_p_ni, 'left', on='Owner')
+lottery_breakdown = byTeam(df_lottery)
+lottery_breakdown_no_injuries = byTeam(df_lottery_no_injuries)
+lottery_combined = merge_breakdowns(lottery_breakdown, lottery_breakdown_no_injuries)
 
-qb_p = qb_p.fillna(0)
-rb_p = rb_p.fillna(0)
-wr_p = wr_p.fillna(0)
-te_p = te_p.fillna(0)
-ovr_p = ovr_p.fillna(0)
-html = ''
-
+# ------------------
+# Missed Games due to Injury
+# ------------------
 missing = team_breakdown.groupby(by=['Owner']).agg(
         num_games = ("# G", 'sum'),
         tot_players = ("# G", 'count')
@@ -272,96 +279,19 @@ missing = missing.sort_values(by='Games Missed', ascending=False)
 missing = missing.drop(columns=['tot_players'])
 missing = missing.rename(columns={'num_games':'G Played', 'tot_games':'G Tot'})
 missing = missing[['Games Missed', 'G Tot', 'G Played']].copy()
-styler = (
-        missing
-        .style
-        .background_gradient(cmap="RdYlGn_r", subset=["Games Missed"]) 
-        )
-html += "<p>Number of games drafted players missed over the course of the 14 week regular season.</p>"
-html += styler.to_html()
-html += "<h1>Drafted Position Change</h1>"
-html += "<p>Sorted by: Sum Pos Δ, or the total change from draft position to final ranking amongst position group.</p>"
-html += "<p>No Injury Sum Pos Δ - same as Sum Pos Δ but only includes players with 10 or more games played. "
-for df in [qb, rb, wr, te, ovr]:
-    html += '<details>'
-    df = df.rename(columns={
-        "Pos_x" : "Pos",
-        "Total Pos Δ_x": "Sum Pos Δ",
-        " Total Ovr Δ_x": "Sum Δ",
-        "Total Pos Δ_y": "No Injury Sum Pos Δ",
-        " Total Ovr Δ_y": "No Injury Sum Δ"
-    })
+missing_styler = default_style(missing, ["Games Missed"], opt_styler="RdYlGn_r")
 
-    if 'No Injury Sum Pos Δ' in df.columns:
-        df['No Injury Sum Pos Δ'] = df['No Injury Sum Pos Δ'].astype(int)
-    df = df.reset_index(drop=True)
-    if 'Pos_y' in df.columns:
-        df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
-        pos = list(df['Pos'])[0]
-        df = df.drop(columns=['Pos'])
-        df = df.sort_values(by='Sum Pos Δ', ascending=False)
-        styler = (
-        df
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Sum Pos Δ"]) 
-        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Pos Δ"])
-        )
-        html += f'<summary><strong>{pos}</strong></summary>'
-    else:
-        df = df.sort_values(by='Sum Δ', ascending=False)
-        styler = (
-        df
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Sum Δ"]) 
-        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Δ"])
-        )
-        html += f'<summary><strong>Overall</strong></summary>'
-    html += styler.to_html()
-    html += '</details>'
+html = ''
+html += "<p>Number of games drafted players missed over the course of the 14 week regular season.</p>"
+html += table_html(missing_styler)
+html += '''<h1>Drafted Position Change</h1>
+        <p>Sorted by: Sum Pos Δ, or the total change from draft position to final ranking amongst position group.</p>
+        <p>No Injury Sum Pos Δ - same as Sum Pos Δ but only includes players with 10 or more games played.</p> '''
+html = format_breakdown(combined, html)
 
 html += '<h1>Drafted Position Change in first 4 rounds</h1>'
 html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
-for df in [qb_p, rb_p, wr_p, te_p, ovr_p]:
-    html += '<details>'
-    df = df.rename(columns={
-        "Pos_x" : "Pos",
-        "Total Pos Δ_x": "Sum Pos Δ",
-        " Total Ovr Δ_x": "Sum Δ",
-        "Total Pos Δ_y": "No Injury Sum Pos Δ",
-        " Total Ovr Δ_y": "No Injury Sum Δ"
-    })
-
-    if 'No Injury Sum Pos Δ' in df.columns:
-        df['No Injury Sum Pos Δ'] = df['No Injury Sum Pos Δ'].astype(int)
-    df = df.reset_index(drop=True)
-
-    if 'Pos_y' in df.columns:
-        df = df.drop(columns=['Pos_y', 'No Injury Sum Δ', 'Sum Δ'])
-        pos = list(df['Pos'])[0]
-        df = df.drop(columns=['Pos'])
-        df = df.sort_values(by='Sum Pos Δ', ascending=False)
-        styler = (
-        df
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Sum Pos Δ"]) 
-        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Pos Δ"])
-        )
-        html += f'<summary><strong>{pos}</strong></summary>'
-    else:
-        df = df.sort_values(by='Sum Δ', ascending=False)
-        styler = (
-        df
-        .style
-        .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=["Sum Δ"]) 
-        .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Δ"])
-        )
-        html += f'<summary><strong>Overall</strong></summary>'
-    html += styler.to_html()
-    html += '</details>'
+html = format_breakdown(lottery_combined, html)
 
 page = htmb.add_front_matter(html, 'Draft - Team Breakdown')
 with open('docs/draft_team.html', "w", encoding="utf-8") as f:
