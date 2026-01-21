@@ -282,6 +282,7 @@ html += "<h1>Drafted Position Change</h1>"
 html += "<p>Sorted by: Sum Pos Δ, or the total change from draft position to final ranking amongst position group.</p>"
 html += "<p>No Injury Sum Pos Δ - same as Sum Pos Δ but only includes players with 10 or more games played. "
 for df in [qb, rb, wr, te, ovr]:
+    html += '<details>'
     df = df.rename(columns={
         "Pos_x" : "Pos",
         "Total Pos Δ_x": "Sum Pos Δ",
@@ -305,7 +306,7 @@ for df in [qb, rb, wr, te, ovr]:
         .background_gradient(cmap="RdYlGn", subset=["Sum Pos Δ"]) 
         .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Pos Δ"])
         )
-        html += f'<h2>{pos}</h2>'
+        html += f'<summary><strong>{pos}</strong></summary>'
     else:
         df = df.sort_values(by='Sum Δ', ascending=False)
         styler = (
@@ -315,8 +316,9 @@ for df in [qb, rb, wr, te, ovr]:
         .background_gradient(cmap="RdYlGn", subset=["Sum Δ"]) 
         .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Δ"])
         )
-        html += f'<h2>Overall</h2>'
+        html += f'<summary><strong>Overall</strong></summary>'
     html += styler.to_html()
+    html += '</details>'
 
 html += '<h1>Drafted Position Change in first 4 rounds</h1>'
 html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
