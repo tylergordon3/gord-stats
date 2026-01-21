@@ -130,8 +130,8 @@ df_best = df.sort_values(by='Overall Rank Δ', ascending=False)
 df_worst = df.sort_values(by='Overall Rank Δ')
 
 styler = default_style(df, ["Pos. Rank Δ", "Overall Rank Δ"])
-styler_best = default_style(df_best.head(CUTOFF_ROWS), ["Overall Rank Δ"])
-styler_worst = default_style(df_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"])
+styler_best = default_style(df_best.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Greens')
+styler_worst = default_style(df_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Reds_r')
 
 # ------------------
 # DataFrames removing injuries
@@ -143,7 +143,7 @@ df_no_injuries_worst = df_no_injuries.sort_values(by='Overall Rank Δ')
 
 styler_no_injuries = default_style(df_no_injuries, ["Pos. Rank Δ", "Overall Rank Δ"])
 styler_best_no_injuries = default_style(df_no_injuries_best.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Greens')
-styler_worst_no_injuries = default_style(df_no_injuries_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Reds')
+styler_worst_no_injuries = default_style(df_no_injuries_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Reds_r')
 
 # ------------------
 # Copies for below
