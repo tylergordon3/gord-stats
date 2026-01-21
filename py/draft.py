@@ -142,8 +142,8 @@ df_no_injuries_best = df_no_injuries.sort_values(by='Overall Rank Δ', ascending
 df_no_injuries_worst = df_no_injuries.sort_values(by='Overall Rank Δ')
 
 styler_no_injuries = default_style(df_no_injuries, ["Pos. Rank Δ", "Overall Rank Δ"])
-styler_best_no_injuries = default_style(df_no_injuries_best.head(CUTOFF_ROWS), ["Overall Rank Δ"])
-styler_worst_no_injuries = default_style(df_no_injuries_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"])
+styler_best_no_injuries = default_style(df_no_injuries_best.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Greens')
+styler_worst_no_injuries = default_style(df_no_injuries_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Reds')
 
 # ------------------
 # Copies for below
