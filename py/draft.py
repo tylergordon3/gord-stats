@@ -323,6 +323,7 @@ for df in [qb, rb, wr, te, ovr]:
 html += '<h1>Drafted Position Change in first 4 rounds</h1>'
 html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
 for df in [qb_p, rb_p, wr_p, te_p, ovr_p]:
+    html += '<details>'
     df = df.rename(columns={
         "Pos_x" : "Pos",
         "Total Pos Δ_x": "Sum Pos Δ",
@@ -347,7 +348,7 @@ for df in [qb_p, rb_p, wr_p, te_p, ovr_p]:
         .background_gradient(cmap="RdYlGn", subset=["Sum Pos Δ"]) 
         .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Pos Δ"])
         )
-        html += f'<h2>{pos}</h2>'
+        html += f'<summary><strong>{pos}</strong></summary>'
     else:
         df = df.sort_values(by='Sum Δ', ascending=False)
         styler = (
@@ -357,8 +358,9 @@ for df in [qb_p, rb_p, wr_p, te_p, ovr_p]:
         .background_gradient(cmap="RdYlGn", subset=["Sum Δ"]) 
         .background_gradient(cmap="RdYlGn", subset=["No Injury Sum Δ"])
         )
-        html += f'<h2>Overall</h2>'
+        html += f'<summary><strong>Overall</strong></summary>'
     html += styler.to_html()
+    html += '</details>'
 
 page = htmb.add_front_matter(html, 'Draft - Team Breakdown')
 with open('docs/draft_team.html', "w", encoding="utf-8") as f:
