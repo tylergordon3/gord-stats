@@ -16,14 +16,35 @@ import html_builder as htmb
 # ------------------
 league = League(c.LEAGUEID)
 draft = Drafts(c.DRAFTID)
-players = Players()
+#players = Players()
 rosters = fantasy_rosters.get(league)
 allPicks = pd.DataFrame(draft.get_all_picks())
 CUTOFF_ROWS = 15
 
+players = pdb.get(week=0)
+players = players[players['week'] < 15]
+final_ranks = players.groupby(by=['cleaned_name']).agg(
+        tot_pts = ("fantasy_points_ppr", 'sum'),
+        tot_games = ("fantasy_points_ppr", 'count'),
+        pos = ("position", "first")
+    )
+
+final_ranks['overall'] = final_ranks['tot_pts'].rank(ascending=False).astype(int)
+final_ranks = final_ranks.sort_values(by='overall')
+
+final_ranks['pos_rank'] = final_ranks.groupby('pos')['tot_pts'].rank(ascending=False).astype(int)
+
 # ------------------
 # Helper Functions
 # ------------------
+def get_final_rank_missed_szn(position, pts):
+    filtered = final_ranks[final_ranks['pos'] == position]
+    same_pts = filtered[filtered['tot_pts'] == pts]
+    if not same_pts.empty:
+        return list(same_pts.head(1)['pos_rank'])[0]
+    else:
+        return 999
+    
 def sum_pts(id):
     sleeper = str(id)
     pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'].sum()
@@ -31,7 +52,7 @@ def sum_pts(id):
 
 def num_games(id):
     sleeper = str(id)
-    pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'][:14].count()
+    pts = players[players['sleeper_id'] == sleeper]['fantasy_points_ppr'][:13].count()
     return pts
 
 def final_rank(row, df):
@@ -79,17 +100,26 @@ draftDF['team_name'] = draftDF['roster_id'].apply(lambda x: list(rosters[rosters
 
 df = draftDF[['pick_no', 'roster_id', 'team_name', 'player_id', 'first_name', 'last_name', 'round', 'position', 'team']].copy()
 
-df['pos_rank'] = df.apply(lambda x: pos_rank(x, df[df['position'] == x.position]), axis=1)
+df['name'] = df['first_name']+ ' ' + df['last_name']
+df['name'] = df['name'].replace('Mike Badgley', 'Michael Badgley')
+df['name'] = df['name'].replace('Amon-Ra St. Brown', 'AmonRa StBrown')
+df['name'] = df['name'].apply(lambda x: x.replace(".", "") if not x == None else x)
+df['name'] = df['name'].apply(lambda x: x.replace("'", "") if not x == None else x)
+df['name'] = df['name'].apply(lambda x: x.replace("-", "") if not x == None else x)
+df['name'] = df['name'].str.split()
 
-players = pdb.get(week=0)
+df['name'] = df['name'].apply(lambda lst: lst.str.join('') if len(lst) < 2 else ''.join(lst[:2]))
+df['name'] = df.apply(lambda x: x['team'] if x['position'] == 'DEF' else x['name'], axis=1)
+df['pos_rank'] = df.apply(lambda x: pos_rank(x, df[df['position'] == x.position]), axis=1)
 
 df['total_pts'] = df.apply(lambda x: sum_pts(x['player_id']), axis=1)
 df['num_games'] = df.apply(lambda x: num_games(x['player_id']), axis=1)
 df['final_rank'] = df.apply(lambda x: final_rank(x, df), axis=1)
-df['final_pos_rank'] = df.apply(lambda x: final_pos_rank(x, df[df['position'] == x.position]), axis=1)
+df['final_pos_rank'] = df.apply(lambda x: list(final_ranks[final_ranks.index == x['name']]['pos_rank']), axis=1)
+df['final_pos_rank'] = df.apply(lambda x: x['final_pos_rank'][0] if len(x['final_pos_rank']) > 0 else get_final_rank_missed_szn(x['position'], x['total_pts']), axis=1)
 df['overall_diff'] = df['pick_no'] - df['final_rank']
 df['pos_diff'] = df['pos_rank'] - df['final_pos_rank']
-df['name'] = df['first_name'] + df['last_name']
+
 df['Position Rk'] = df.apply(lambda x: f'{x['pos_rank']} -> {x['final_pos_rank']}', axis=1)
 df['Overall Rk'] = df.apply(lambda x: f'{x['pick_no']} -> {x['final_rank']}', axis =1)
 df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name', 'pos_rank', 'final_pos_rank',
@@ -299,3 +329,15 @@ html = format_breakdown(lottery_combined, html)
 page = htmb.add_front_matter(html, 'Draft - Team Breakdown', subnav='draft_nav')
 with open('docs/draft_team.html', "w", encoding="utf-8") as f:
     f.write(page)
+
+# ------------------
+# Position Rankings
+# ------------------
+
+def original_draft(position, number):
+    pos_filter = df[df['Pos.'] == position]
+    top_x = pos_filter.head(number)
+    return top_x
+
+
+

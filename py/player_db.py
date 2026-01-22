@@ -13,6 +13,9 @@ def get(week):
             data = json.load(file)
             sleeper_players = pd.DataFrame.from_dict(data, orient='index')
     # Getting defense fantasy pts
+    drop_pos = ['OL', 'CB', 'LB', 'FS', 'DE', 'DT', 'T', 'DL', 'DB', 'OT',
+    'G', None, 'C', 'SS', 'LS', 'P', 'ILB', 'NT', 'OLB', 'S', 'OG']
+    sleeper_players = sleeper_players[~sleeper_players['position'].isin(drop_pos)]
     defenses = sleeper_players[sleeper_players['position'] == 'DEF']
     defenses = defenses.dropna(axis=1, how='all')
     stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
@@ -42,13 +45,9 @@ def get(week):
     stats_players = stats_players[~stats_players['cleaned_name'].isnull()]
     
     stats_players['cleaned_name'] = stats_players['cleaned_name'].apply(lambda lst: lst.str.join('') if len(lst) < 2 else ''.join(lst[:2]))
-    
     stats_players['search_full_name'] = [re.sub(r'\s+', '', str(x)).lower() for x in stats_players['cleaned_name']]
-    
     stats_players = pd.concat([stats_players, def_fpts])
-
     merged_players =  pd.merge(sleeper_players, stats_players, on='search_full_name', how='inner')
-   
     merged_players = merged_players.drop(columns=['competitions', 'team_abbr', 'high_school', 'practice_participation', 'opta_id', 'birth_country', 'injury_start_date', 'birth_state',
                                  'height', 'team_changed_at', 'practice_description', 'birth_city', 'fantasy_positions', 'position_x', 'injury_notes',
                                  'pandascore_id', 'sport', 'metadata', 'news_updated', 'search_rank', 'team_y', 'depth_chart_order', 'hashtag', 'player_name',
