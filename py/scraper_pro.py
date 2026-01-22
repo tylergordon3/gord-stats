@@ -141,7 +141,7 @@ def format_event(g, ranks, master):
 
     home_model = ranks[home_name]['Ovr'] if home_name else ''
     away_model = ranks[away_name]['Ovr'] if away_name else ''
-    
+
     home_record = ranks[home_name]['Record'] if home_name else ''
     away_record = ranks[away_name]['Record'] if away_name else ''
 
