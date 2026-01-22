@@ -884,7 +884,8 @@
             "wildcats",
             "WILDCATS",
             "arizona",
-            "ARIZONA"
+            "ARIZONA",
+            "ARI"
         ],
         "11": [
             "ASU",
@@ -2008,14 +2009,11 @@
         "104": [
             "Grambling State",
             "GRAM",
-            "Tigers",
             "GRAMB",
             "Grambling St.",
             "grambling state",
             "GRAMBLING STATE",
             "gram",
-            "tigers",
-            "TIGERS",
             "gramb",
             "grambling st.",
             "GRAMBLING ST.",
@@ -2024,15 +2022,13 @@
         ],
         "105": [
             "Grand Canyon",
-            "Antelopes",
             "GCU",
             "grand canyon",
             "GRAND CANYON",
-            "antelopes",
-            "ANTELOPES",
             "gcu",
             "grandcanyon",
-            "GC"
+            "GC",
+            "GCAN"
         ],
         "106": [
             "Green Bay",
@@ -2439,7 +2435,8 @@
             "EXPLORERS",
             "lasal",
             "lasalle",
-            "LSALLE"
+            "LSALLE",
+            "LAS"
         ],
         "140": [
             "Lafayette",
@@ -2501,7 +2498,8 @@
             "lions",
             "LIONS",
             "lind",
-            "LINDEN"
+            "LINDEN",
+            "LINW"
         ],
         "146": [
             "Lipscomb",
@@ -4345,27 +4343,22 @@
             "TNMART"
         ],
         "297": [
-            "Tigers",
             "TNST",
             "Tennessee State",
             "Tennessee St.",
-            "tigers",
-            "TIGERS",
             "tnst",
             "tennessee state",
             "TENNESSEE STATE",
             "tennessee st.",
             "TENNESSEE ST.",
             "tennesseest",
-            "tennessee st"
+            "tennessee st",
+            "TennSt"
         ],
         "298": [
-            "Golden Eagles",
             "TNTC",
             "TNTCH",
             "Tennessee Tech",
-            "golden eagles",
-            "GOLDEN EAGLES",
             "tntc",
             "tntch",
             "tennessee tech",
@@ -4375,12 +4368,9 @@
             "TNTECH"
         ],
         "299": [
-            "Longhorns",
             "Texas",
             "TEX",
             "TEXAS",
-            "longhorns",
-            "LONGHORNS",
             "texas",
             "tex"
         ],
