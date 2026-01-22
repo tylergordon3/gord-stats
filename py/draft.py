@@ -10,6 +10,7 @@ import fantasy_rosters
 import constants as c
 import player_db as pdb
 import html_builder as htmb
+import numpy as np
 
 # ------------------
 # Globals
