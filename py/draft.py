@@ -163,8 +163,8 @@ df_worst = df.sort_values(by='Overall Rank Δ')
 styler = (df
         .style
         .hide(axis="index") 
-        .background_gradient(cmap="RdYlGn", subset=['Pos. Rank Δ'], vmin=-70)
-        .background_gradient(cmap="RdYlGn", subset=['Overall Rank Δ'], vmin=-80))
+        .background_gradient(cmap="RdYlGn", subset=['Pos. Rank Δ'], vmin=-60)
+        .background_gradient(cmap="RdYlGn", subset=['Overall Rank Δ'], vmin=-75))
 styler_best = default_style(df_best.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Greens')
 styler_worst = default_style(df_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Reds_r')
 
