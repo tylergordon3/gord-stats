@@ -3305,15 +3305,13 @@
             "northflorida"
         ],
         "210": [
-            "Mean Green",
             "UNT",
             "North Texas",
-            "mean green",
-            "MEAN GREEN",
             "unt",
             "north texas",
             "NORTH TEXAS",
-            "northtexas"
+            "northtexas",
+            "NTEXAS"
         ],
         "211": [
             "Northeastern",
@@ -4695,13 +4693,11 @@
         ],
         "331": [
             "Texas-San Antonio",
-            "Roadrunners",
             "UTSA",
             "texas-san antonio",
             "TEXAS-SAN ANTONIO",
-            "roadrunners",
-            "ROADRUNNERS",
-            "utsa"
+            "utsa",
+            "TXSA"
         ],
         "332": [
             "U of U",

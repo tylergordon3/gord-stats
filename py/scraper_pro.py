@@ -139,8 +139,11 @@ def format_event(g, ranks, master):
     home_name = scraper.getNameFromCode(home.get("abbreviation"), master)[1]
     away_name = scraper.getNameFromCode(away.get("abbreviation"), master)[1]
 
-    home_model = ranks[home_name] if home_name else ''
-    away_model = ranks[away_name] if away_name else ''
+    home_model = ranks[home_name['Ovr']] if home_name else ''
+    away_model = ranks[away_name['Ovr']] if away_name else ''
+    
+    home_record = ranks[home_name['Record']] if home_name else ''
+    away_record = ranks[away_name['Record']] if away_name else ''
 
     # ---- score / progress ----
     box = g.get("box_score") or {}
@@ -177,6 +180,9 @@ def format_event(g, ranks, master):
         "home_team": home.get("abbreviation"),
         "away_team": away.get("abbreviation"),
 
+        "home_record":home_record,
+        "away_record":away_record,
+        
         # scores
         "home_score": home_score,
         "away_score": away_score,

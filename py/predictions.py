@@ -573,11 +573,15 @@ def predict(date):
     all_sorted = all_sorted.sort_values(by=["Rtg", "Win"], ascending=[False, False])
     all_sorted["Ovr"] = range(1, len(all_sorted) + 1)
     
-    
     save_ranks = scraper.getTeamRanks()
-    data = dict(zip(all_sorted['Team'], all_sorted['Ovr']))
+    #data = dict(zip(all_sorted['Team'], all_sorted['Ovr']))
     date_key = date.isoformat()
-    save_ranks[date_key] = data
+    #save_ranks[date_key] = data
+
+    team_map = (all_sorted.set_index("Team")[["Record", "Ovr"]]
+                .to_dict(orient="index"))
+    save_ranks[date_key] = team_map
+    
     scraper.saveTeamRanks(save_ranks)
     
     # Saving to another df for schedule home
