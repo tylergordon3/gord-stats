@@ -11,7 +11,7 @@ import constants as c
 import player_db as pdb
 import html_builder as htmb
 import numpy as np
-
+import matplotlib as mpl
 # ------------------
 # Globals
 # ------------------
@@ -70,12 +70,11 @@ def get_over(pick_str):
     pick_no = match.group(2)
     return pick_no
 
-def default_style(df, cols, opt_styler="RdYlGn", quant=1):
-    limit = max(df[cols].quantile(quant))
+def default_style(df, cols, opt_styler="RdYlGn"):
     return (df
         .style
         .hide(axis="index") 
-        .background_gradient(cmap=opt_styler, subset=cols, vmax=limit))
+        .background_gradient(cmap=opt_styler, subset=cols))
 
 def table_html(styler):
     return f'''<div class="table-scroll">
@@ -161,7 +160,11 @@ df_lottery_no_injuries = df_lottery[~((df_lottery['Games Played'] < 10))]
 df_best = df.sort_values(by='Overall Rank Δ', ascending=False)
 df_worst = df.sort_values(by='Overall Rank Δ')
 
-styler = default_style(df, ["Pos. Rank Δ", "Overall Rank Δ"], quant=.85)
+styler = (df
+        .style
+        .hide(axis="index") 
+        .background_gradient(cmap="RdYlGn", subset=['Pos. Rank Δ'], vmin=-70)
+        .background_gradient(cmap="RdYlGn", subset=['Overall Rank Δ'], vmin=-80))
 styler_best = default_style(df_best.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Greens')
 styler_worst = default_style(df_worst.head(CUTOFF_ROWS), ["Overall Rank Δ"], opt_styler='Reds_r')
 
