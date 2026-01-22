@@ -2,12 +2,10 @@ import pandas as pd
 import league_util
 import constants
 import html_util
-import matplotlib.pyplot as plt
 import plotly.express as px
 import numpy as np
 
 import plotly.graph_objects as go
-import plotly.io as pio
 
 def load_stats():
     df = pd.read_json(constants.SEASON_PATH)

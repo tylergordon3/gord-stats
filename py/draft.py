@@ -5,13 +5,12 @@ import pandas as pd
 import re
 from pytz import timezone
 import datetime
-from sleeper_wrapper import League, Drafts, Players
+from sleeper_wrapper import League, Drafts
 import fantasy_rosters
 import constants as c
 import player_db as pdb
 import html_builder as htmb
-import numpy as np
-import matplotlib as mpl
+import constants
 # ------------------
 # Globals
 # ------------------
@@ -339,10 +338,35 @@ with open('docs/draft_team.html', "w", encoding="utf-8") as f:
 # Position Rankings
 # ------------------
 
-def original_draft(position, number):
+def original_draft(df, position, number):
     pos_filter = df[df['Pos.'] == position]
-    top_x = pos_filter.head(number)
+    top_x = pos_filter.head(number).copy()
+    top_x['Pos. Rank'] = range(1, len(top_x) + 1)
+    top_x = top_x.rename(columns={'Name':'Draft'})
+    return top_x[['Owner', 'Draft', 'Pos. Rank']]
+
+def final(position, number):
+    final_filter = final_ranks[final_ranks['pos'] == position]
+    top_x = final_filter.head(number)
+    top_x = top_x.rename(columns=
+        {'pos_rank':'Pos. Rank'}
+    )
+    top_x.index.name = 'Final'
+    top_x = top_x.drop(columns=['tot_games', 'pos', 'overall', 'tot_pts'])
+    top_x = top_x.reset_index()
     return top_x
 
+og = original_draft(df, "QB", 10)
+end = final("QB", 10)
 
+comb = pd.merge(og, end, "left", on='Pos. Rank')
+print(comb)
 
+p = pd.read_json(constants.SEASON_PATH)
+end = p[p['week'] == 14]
+end = end[['players_dict', 'team_name']]
+test = list(end[end['team_name']== 'Clanker Barrel']['players_dict'])[0]
+
+p_filter = players[players['week'] < 15]
+#for k in test.keys():
+#    print(pdb.getFromID(k, p_filter))
