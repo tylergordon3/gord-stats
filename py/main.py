@@ -95,12 +95,12 @@ if update_womens_all:
 rc.main(main, 'M')
 rc.main(main_w, 'W')
 
-games = scraper.today_games(today_df, 'M')
-generate_home.generate_home_about(games, 'M', False)
+#games = scraper.today_games(today_df, 'M')
+#generate_home.generate_home_about(games, 'M', False)
 
 games_women = scraper.today_games(today_w_df, 'W')
 generate_home.generate_home_about(games_women, 'W', False)
 
-rh.render_home(today_df, games, today_w_df, games_women)
+rh.render_home(games_women)
 
 

@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import utils
 import html_builder as htmb
 
-def render_home(men_rankings, men_games_html, women_rankings, women_games_html):
+def render_home(women_games_html):
     """
     Creates index.html for home page of our website
     
@@ -16,7 +16,7 @@ def render_home(men_rankings, men_games_html, women_rankings, women_games_html):
     :type women_games: String of HTML
     """
 
-    men_soup = BeautifulSoup(men_games_html, "html.parser")
+    #men_soup = BeautifulSoup(men_games_html, "html.parser")
     women_soup = BeautifulSoup(women_games_html, "html.parser")
 
     def getPower5(soup):
@@ -34,11 +34,11 @@ def render_home(men_rankings, men_games_html, women_rankings, women_games_html):
         result = "".join(content)
         return result
     
-    men_games = getPower5(men_soup)
+    #men_games = getPower5(men_soup)
     women_games = getPower5(women_soup)
     
-    if men_games == "":
-        men_games = "No men's power 5 games today."
+    #if men_games == "":
+    #    men_games = "No men's power 5 games today."
     if women_games == "":
         women_games = "No women's power 5 games today."
     html = '''
@@ -47,7 +47,9 @@ def render_home(men_rankings, men_games_html, women_rankings, women_games_html):
     <p>Today's scores and schedule from: <a href='https://www.cbssports.com/college-basketball/scoreboard/'>CBS Sports</a></p>
     <a href='test-live-scores'>Live Scoreboard (work in progress)</a>
 '''
-    html += "<h3>Men's Power 5 Games Today</h3>" + men_games + "<h3>Women's P5 Games Today</h3>" + women_games
+    #html += "<h3>Men's Power 5 Games Today</h3>" + men_games + "<h3>Women's P5 Games Today</h3>" + women_games
+    html += "See the scores tab for men's scoreboard."
+    html += "<h3>Women's  Games Today</h3>" + women_games
     path =  utils.get_path('docs/index.html')
     html = htmb.add_front_matter(html, "GordStats Home")
 
