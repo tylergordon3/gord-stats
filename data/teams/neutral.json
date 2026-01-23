@@ -10,5 +10,17 @@
     "Spokane Veterans Memorial Arena": {
         "City": "Spokane",
         "State": "Washington"
+    },
+    "Memorial Gym(Maine)": {
+        "City": null,
+        "State": null
+    },
+    "Rec Hall": {
+        "City": null,
+        "State": null
+    },
+    "First Community Arena": {
+        "City": null,
+        "State": null
     }
 }
