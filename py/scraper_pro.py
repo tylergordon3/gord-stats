@@ -33,7 +33,7 @@ LEAGUES = {
         "label": "men"
     },
     "women": {
-        "path": "ncaaw",
+        "path": "wcbk",
         "label": "women"
     }
 }

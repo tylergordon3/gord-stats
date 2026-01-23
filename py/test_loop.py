@@ -9,22 +9,38 @@ import subprocess
 from datetime import datetime, timedelta
 
 def task(poll_rate):
-    payload = scraper_pro.get_current_live_dataset()
+    # --- scrape both leagues ---
+    men = scraper_pro.get_current_live_dataset("men")
+    women = scraper_pro.get_current_live_dataset("women")
 
-    payload['meta'] = {
-        "poll_interval_sec" : poll_rate,
-        "generated" : payload["generated"]
+    # --- combine into ONE payload ---
+    payload = {
+        "generated": datetime.utcnow().isoformat(),
+        "leagues": {
+            "men": men["games"],
+            "women": women["games"]
+        },
+        "meta": {
+            "poll_interval_sec": poll_rate
+        }
     }
-    
-    path = utils.get_path('data/live_scores.json')
+
+    # --- save locally (optional) ---
+    path = utils.get_path("data/live_scores.json")
     with open(path, "w") as f:
         json.dump(payload, f, indent=2)
 
+    total_games = len(men["games"]) + len(women["games"])
+
     print(
-        f"Snapshot saved — {len(payload['games'])} games @ {payload['generated']}"
+        f"Snapshot saved — {total_games} games "
+        f"(men={len(men['games'])}, women={len(women['games'])}) "
+        f"@ {payload['generated']}"
     )
-    
+
+    # --- ONE push ---
     push_scores.push(payload)
+
 
 def maybe_deploy():
     global last_deploy

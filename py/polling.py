@@ -156,29 +156,36 @@ def polling_rate_now(now, zones, daily_plan, default_idle=3600):
 def calculate_rate():
     with open(utils.get_path("data/live_scores.json")) as f:
         data = json.load(f)
-        
-    games = data.get("games", {})
 
+    leagues = data.get("leagues", {})
+
+    # ---- merge all games across leagues ----
+    games = {}
+    for league_games in leagues.values():
+        games.update(league_games)
+
+    # ---- extract start times ----
     utc_times = [
         datetime.fromisoformat(g["start_time_utc"])
         for g in games.values()
         if g.get("start_time_utc")
     ]
-    
+
+    # No upcoming games → idle polling
     if not utc_times:
-        return 1800
-    
+        return 1800  # 30 min
+
+    # Normalize to ET, build zones
     dt_et = normalize_times(utc_times)
     zones = calculate_polling_zones(dt_et)
     plan = daily_polling_plan(zones)
 
     now = datetime.now(ET)
-    
+
     interval = polling_rate_now(
         now=now,
         zones=zones,
         daily_plan=plan,
-        default_idle=3600  # 1 hr
+        default_idle=3600  # 1 hour when idle
     )
-    
     return interval
