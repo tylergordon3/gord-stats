@@ -8,8 +8,14 @@ import polling
 import subprocess
 from datetime import datetime, timedelta
 
-def task():
+def task(poll_rate):
     payload = scraper_pro.get_current_live_dataset()
+
+    payload['meta'] = {
+        "poll_interval_sec" : poll_rate,
+        "generated" : payload["generated"]
+    }
+    
     path = utils.get_path('data/live_scores.json')
     with open(path, "w") as f:
         json.dump(payload, f, indent=2)
@@ -55,13 +61,13 @@ attempt = 0
 
 while True:
     try:
-        task()
+        poll_rate = polling.calculate_rate()
+        task(poll_rate)
 
         attempt = 0
 
-        maybe_deploy()  # 👈 add this
+        # maybe_deploy()  # 👈 add this
 
-        poll_rate = polling.calculate_rate()
         print(f"Sleeping for {poll_rate}")
         time.sleep(poll_rate)
 

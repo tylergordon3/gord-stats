@@ -3,6 +3,7 @@ import utils
 from datetime import datetime, timedelta
 from collections import defaultdict
 from zoneinfo import ZoneInfo
+import json
 
 # -----------------------------
 # Constants
@@ -153,13 +154,20 @@ def polling_rate_now(now, zones, daily_plan, default_idle=3600):
     return default_idle
 
 def calculate_rate():
-    data = pd.read_json(utils.get_path("data/live_scores.json"))
-    games = data["games"]
+    with open(utils.get_path("data/live_scores.json")) as f:
+        data = json.load(f)
+        
+    games = data.get("games", {})
 
     utc_times = [
         datetime.fromisoformat(g["start_time_utc"])
-        for g in games
+        for g in games.values()
+        if g.get("start_time_utc")
     ]
+    
+    if not utc_times:
+        return 1800
+    
     dt_et = normalize_times(utc_times)
     zones = calculate_polling_zones(dt_et)
     plan = daily_polling_plan(zones)

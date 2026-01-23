@@ -72,9 +72,15 @@ async function pollScores() {
   const res = await fetch(WORKER_URL);
   const data = await res.json();
 
-  const raw = document.getElementById("raw");
-  if (raw) {
-    raw.textContent = JSON.stringify(data, null, 2);
+  if (data.meta?.poll_interval_sec) {
+    const el = document.getElementById("poll-rate");
+    if (el) {
+      const sec = data.meta.poll_interval_sec;
+      el.textContent =
+        sec >= 60
+          ? `Polling: every ${Math.round(sec / 60)} min`
+          : `Polling: every ${sec}s`;
+    }
   }
 
   renderGames(data.games);

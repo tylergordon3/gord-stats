@@ -7,6 +7,7 @@ load_dotenv()
 WORKER_INGEST = "https://cbb-live-scores.tmgordon33.workers.dev/ingest"
 INGEST_KEY = os.getenv("INGEST_KEY")
 
+
 def push(payload):
     if not INGEST_KEY:
         raise RuntimeError("INGEST_KEY not set")
@@ -27,3 +28,14 @@ def push(payload):
         res.raise_for_status()
 
     print("✅ PUSH OK")
+
+      # ---- optional: log KV writes from Worker ----
+    try:
+        data = res.json()
+        print(data)
+        writes_today = data.get("meta", {}).get("kv_writes_today")
+        if isinstance(writes_today, int):
+            print(f"🧮 KV writes today: {writes_today}")
+    except Exception:
+        # ignore non-JSON or missing meta
+        pass
