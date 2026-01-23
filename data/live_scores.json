@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-23T22:11:18.201133",
+  "generated": "2026-01-23T22:36:50.879754",
   "games": {
     "2453199": {
       "date": "2026-01-23",
@@ -143,8 +143,8 @@
       "conference": "Northeast",
       "venue": "Merkert Gymnasium",
       "location": "South Easton, MA",
-      "spread_close": "LIU -7.5",
-      "total_close": 138.5
+      "spread_close": "LIU -6.5",
+      "total_close": 137.5
     },
     "2453250": {
       "date": "2026-01-24",
@@ -551,7 +551,7 @@
       "conference": "Mid-American",
       "venue": "Alumni Arena",
       "location": "Buffalo, NY",
-      "spread_close": "MASS -2.5",
+      "spread_close": "MASS -1.5",
       "total_close": 159.5
     },
     "2453294": {
@@ -1104,7 +1104,7 @@
       "venue": "Paul Porter Arena",
       "location": "Boiling Springs, NC",
       "spread_close": "SCUP -11.5",
-      "total_close": 152.5
+      "total_close": 153.5
     },
     "2453350": {
       "date": "2026-01-24",
@@ -1134,16 +1134,16 @@
       "date": "2026-01-23",
       "start_time": "3:00 PM",
       "start_time_utc": "2026-01-23T20:00:00+00:00",
-      "status": "in_progress",
+      "status": "final",
       "home_team": "UNCG",
       "away_team": "FUR",
       "home_record": "7-12",
       "away_record": "13-6",
       "home_score": 66,
-      "away_score": 85,
+      "away_score": 89,
       "away_model": 171,
       "home_model": 300,
-      "clock": "1:01",
+      "clock": "0:00",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
@@ -1343,7 +1343,7 @@
       "conference": "Atlantic Coast",
       "venue": "KFC Yum! Center",
       "location": "Louisville, KY",
-      "spread_close": "LOU -11.5",
+      "spread_close": "LOU -10.5",
       "total_close": 159.5
     },
     "2453389": {
@@ -1776,7 +1776,7 @@
       "venue": "Hinkle Fieldhouse",
       "location": "Indianapolis, IN",
       "spread_close": "BUT -5.5",
-      "total_close": 160.5
+      "total_close": 161.5
     },
     "2457525": {
       "date": "2026-01-23",
@@ -1931,11 +1931,11 @@
       "away_team": "UTAH",
       "home_record": "16-2",
       "away_record": "9-10",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 112,
       "home_model": 17,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": 13,
@@ -2070,25 +2070,25 @@
       "date": "2026-01-23",
       "start_time": "5:30 PM",
       "start_time_utc": "2026-01-23T22:30:00+00:00",
-      "status": "pre_game",
+      "status": "in_progress",
       "home_team": "SBU",
       "away_team": "SLU",
       "home_record": "12-7",
       "away_record": "18-1",
-      "home_score": 0,
-      "away_score": 0,
+      "home_score": 3,
+      "away_score": 10,
       "away_model": 24,
       "home_model": 155,
-      "clock": "0:00",
-      "period": null,
+      "clock": "16:58",
+      "period": "1st",
       "overtime": false,
       "home_rank": null,
       "away_rank": 24,
       "conference": "Atlantic 10",
       "venue": "Reilly Center",
       "location": "St. Bonaventure, NY",
-      "spread_close": "SLU -7.5",
-      "total_close": 158.5
+      "spread_close": "SLU -8.5",
+      "total_close": 159.5
     },
     "2458745": {
       "date": "2026-01-24",
@@ -2531,11 +2531,11 @@
       "away_team": "ALST",
       "home_record": "8-11",
       "away_record": "5-13",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 310,
       "home_model": 237,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -2741,6 +2741,6 @@
   },
   "meta": {
     "poll_interval_sec": 60,
-    "generated": "2026-01-23T22:11:18.201133"
+    "generated": "2026-01-23T22:36:50.879754"
   }
 }
