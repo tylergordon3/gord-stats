@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-23T21:06:01.799604",
+  "generated": "2026-01-23T21:23:53.350885",
   "games": {
     "2453199": {
       "date": "2026-01-23",
@@ -384,22 +384,22 @@
       "venue": "Mizzou Arena",
       "location": "Columbia, MO",
       "spread_close": "MIZZ -4.5",
-      "total_close": 152.5
+      "total_close": 153.5
     },
     "2453277": {
       "date": "2026-01-23",
       "start_time": "2:00 PM",
       "start_time_utc": "2026-01-23T19:00:00+00:00",
-      "status": "in_progress",
+      "status": "final",
       "home_team": "LT",
       "away_team": "KENN",
       "home_record": "10-8",
       "away_record": "12-6",
-      "home_score": 79,
-      "away_score": 70,
+      "home_score": 82,
+      "away_score": 76,
       "away_model": 163,
       "home_model": 261,
-      "clock": "3:03",
+      "clock": "0:00",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
@@ -456,7 +456,7 @@
       "venue": "Petersen Events Center",
       "location": "Pittsburgh, PA",
       "spread_close": "NCST -5.5",
-      "total_close": 146.5
+      "total_close": 145.5
     },
     "2453284": {
       "date": "2026-01-23",
@@ -911,8 +911,8 @@
       "conference": "Atlantic Coast",
       "venue": "Moody Coliseum",
       "location": "Dallas, TX",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "SMU -11.5",
+      "total_close": 165.5
     },
     "2453333": {
       "date": "2026-01-24",
@@ -1139,11 +1139,11 @@
       "away_team": "FUR",
       "home_record": "7-12",
       "away_record": "13-6",
-      "home_score": 35,
-      "away_score": 37,
+      "home_score": 43,
+      "away_score": 44,
       "away_model": 171,
       "home_model": 300,
-      "clock": "18:16",
+      "clock": "15:20",
       "period": "2nd",
       "overtime": false,
       "home_rank": null,
@@ -1967,8 +1967,8 @@
       "conference": "Big 12",
       "venue": "CU Events Center",
       "location": "Boulder, CO",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "COLO -1.5",
+      "total_close": 160.5
     },
     "2458057": {
       "date": "2026-01-24",
@@ -2328,7 +2328,7 @@
       "venue": "McCarthey Athletic Center",
       "location": "Spokane, WA",
       "spread_close": "GONZ -18.5",
-      "total_close": 150.5
+      "total_close": 151.5
     },
     "2459081": {
       "date": "2026-01-24",
