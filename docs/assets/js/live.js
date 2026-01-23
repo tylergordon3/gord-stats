@@ -1,5 +1,4 @@
-const WORKER_URL =
-  "https://cbb-live-scores.tmgordon33.workers.dev/scores?league=men";
+const WORKER_URL = "https://cbb-live-scores.tmgordon33.workers.dev/scores";
 
 const POLL_INTERVAL = 30000;
 const LOGO_BASE = "/assets/images/";
@@ -83,7 +82,7 @@ async function pollScores() {
     }
   }
 
-  renderGames(data.games);
+  renderGames(data.leagues.men);
 }
 
 function statusRank(g) {

@@ -7,7 +7,6 @@ load_dotenv()
 WORKER_INGEST = "https://cbb-live-scores.tmgordon33.workers.dev/ingest"
 INGEST_KEY = os.getenv("INGEST_KEY")
 
-
 def push(payload):
     if not INGEST_KEY:
         raise RuntimeError("INGEST_KEY not set")

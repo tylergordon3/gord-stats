@@ -1,6 +1,6 @@
 {
   "league": "men",
-  "generated": "2026-01-23T22:36:50.879754",
+  "generated": "2026-01-23T23:33:35.396162",
   "games": {
     "2453199": {
       "date": "2026-01-23",
@@ -384,7 +384,7 @@
       "venue": "Mizzou Arena",
       "location": "Columbia, MO",
       "spread_close": "MIZZ -4.5",
-      "total_close": 153.5
+      "total_close": 152.5
     },
     "2453277": {
       "date": "2026-01-23",
@@ -431,7 +431,7 @@
       "conference": "Southeastern",
       "venue": "Exactech Arena at the Stephen C. O'Connell Center",
       "location": "Gainesville, FL",
-      "spread_close": "FLA -9.5",
+      "spread_close": "FLA -11.5",
       "total_close": 163.5
     },
     "2453280": {
@@ -551,7 +551,7 @@
       "conference": "Mid-American",
       "venue": "Alumni Arena",
       "location": "Buffalo, NY",
-      "spread_close": "MASS -1.5",
+      "spread_close": "BUF -1.5",
       "total_close": 159.5
     },
     "2453294": {
@@ -755,11 +755,11 @@
       "away_team": "BC",
       "home_record": "10-8",
       "away_record": "8-10",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 156,
       "home_model": 98,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -864,7 +864,7 @@
       "venue": "Bud Walton Arena",
       "location": "Fayetteville, AR",
       "spread_close": "ARK -10.5",
-      "total_close": 165.5
+      "total_close": 164.5
     },
     "2453328": {
       "date": "2026-01-24",
@@ -887,8 +887,8 @@
       "conference": "Horizon",
       "venue": "Nutter Center",
       "location": "Fairborn, OH",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "WRST -3.5",
+      "total_close": 157.5
     },
     "2453331": {
       "date": "2026-01-24",
@@ -1031,8 +1031,8 @@
       "conference": "Metro Atlantic Athletic",
       "venue": "McCann Arena",
       "location": "Poughkeepsie, NY",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "MRST -2.5",
+      "total_close": 140.5
     },
     "2453345": {
       "date": "2026-01-24",
@@ -1103,7 +1103,7 @@
       "conference": "Big South",
       "venue": "Paul Porter Arena",
       "location": "Boiling Springs, NC",
-      "spread_close": "SCUP -11.5",
+      "spread_close": "SCUP -10.5",
       "total_close": 153.5
     },
     "2453350": {
@@ -1200,7 +1200,7 @@
       "venue": "Freedom Hall Civic Center",
       "location": "Johnson City, TN",
       "spread_close": "ETSU -17.5",
-      "total_close": 139.5
+      "total_close": 140.5
     },
     "2453370": {
       "date": "2026-01-23",
@@ -1248,7 +1248,7 @@
       "venue": "John Paul Jones Arena",
       "location": "Charlottesville, VA",
       "spread_close": "UVA -7.5",
-      "total_close": 149.5
+      "total_close": 150.5
     },
     "2453373": {
       "date": "2026-01-24",
@@ -1343,8 +1343,8 @@
       "conference": "Atlantic Coast",
       "venue": "KFC Yum! Center",
       "location": "Louisville, KY",
-      "spread_close": "LOU -10.5",
-      "total_close": 159.5
+      "spread_close": "LOU -11.5",
+      "total_close": 158.5
     },
     "2453389": {
       "date": "2026-01-24",
@@ -1372,8 +1372,8 @@
     },
     "2453391": {
       "date": "2026-01-24",
-      "start_time": "2:00 PM",
-      "start_time_utc": "2026-01-24T19:00:00+00:00",
+      "start_time": "1:00 PM",
+      "start_time_utc": "2026-01-24T18:00:00+00:00",
       "status": "pre_game",
       "home_team": "RMU",
       "away_team": "GB",
@@ -1415,7 +1415,7 @@
       "conference": "Big South",
       "venue": "Joan Perry Brock Center",
       "location": "Farmville, VA",
-      "spread_close": "CHSO -1.5",
+      "spread_close": "LNWD -1.5",
       "total_close": 155.5
     },
     "2453394": {
@@ -1439,8 +1439,8 @@
       "conference": "Metro Atlantic Athletic",
       "venue": "William H. Pitt Center",
       "location": "Fairfield, CT",
-      "spread_close": null,
-      "total_close": null
+      "spread_close": "SHU -9.5",
+      "total_close": 142.5
     },
     "2453396": {
       "date": "2026-01-24",
@@ -1463,7 +1463,7 @@
       "conference": "Atlantic Coast",
       "venue": "Cameron Indoor Stadium",
       "location": "Durham, NC",
-      "spread_close": "DUKE -17.5",
+      "spread_close": "DUKE -18.5",
       "total_close": 150.5
     },
     "2453398": {
@@ -1475,11 +1475,11 @@
       "away_team": "IDST",
       "home_record": "10-9",
       "away_record": "10-9",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 204,
       "home_model": 153,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -1806,17 +1806,17 @@
       "date": "2026-01-23",
       "start_time": "6:00 PM",
       "start_time_utc": "2026-01-23T23:00:00+00:00",
-      "status": "pre_game",
+      "status": "in_progress",
       "home_team": "RUT",
       "away_team": "IU",
       "home_record": "9-10",
       "away_record": "12-7",
-      "home_score": 0,
-      "away_score": 0,
+      "home_score": 25,
+      "away_score": 33,
       "away_model": 30,
       "home_model": 151,
-      "clock": "0:00",
-      "period": null,
+      "clock": "4:00",
+      "period": "1st",
       "overtime": false,
       "home_rank": null,
       "away_rank": null,
@@ -1847,7 +1847,7 @@
       "conference": "Big 12",
       "venue": "United Supermarkets Arena",
       "location": "Lubbock, TX",
-      "spread_close": "HOU -2.5",
+      "spread_close": "HOU -1.5",
       "total_close": 140.5
     },
     "2458052": {
@@ -1871,8 +1871,8 @@
       "conference": "Big 12",
       "venue": "Desert Financial Arena",
       "location": "Tempe, AZ",
-      "spread_close": "CIN -2.5",
-      "total_close": 151.5
+      "spread_close": "CIN -3.5",
+      "total_close": 150.5
     },
     "2458053": {
       "date": "2026-01-24",
@@ -1895,13 +1895,13 @@
       "conference": "Big 12",
       "venue": "Bramlage Coliseum",
       "location": "Manhattan, KS",
-      "spread_close": "KU -5.5",
-      "total_close": 158.5
+      "spread_close": "KU -4.5",
+      "total_close": 159.5
     },
     "2458054": {
       "date": "2026-01-24",
-      "start_time": "4:00 PM",
-      "start_time_utc": "2026-01-24T21:00:00+00:00",
+      "start_time": "3:00 PM",
+      "start_time_utc": "2026-01-24T20:00:00+00:00",
       "status": "pre_game",
       "home_team": "OKST",
       "away_team": "ISU",
@@ -1920,7 +1920,7 @@
       "venue": "Gallagher-Iba Arena",
       "location": "Stillwater, OK",
       "spread_close": "ISU -9.5",
-      "total_close": 163.5
+      "total_close": 161.5
     },
     "2458055": {
       "date": "2026-01-24",
@@ -1943,8 +1943,8 @@
       "conference": "Big 12",
       "venue": "Marriott Center",
       "location": "Provo, UT",
-      "spread_close": "BYU -18.5",
-      "total_close": 165.5
+      "spread_close": "BYU -19.5",
+      "total_close": 166.5
     },
     "2458056": {
       "date": "2026-01-24",
@@ -1968,7 +1968,7 @@
       "venue": "CU Events Center",
       "location": "Boulder, CO",
       "spread_close": "COLO -1.5",
-      "total_close": 160.5
+      "total_close": 159.5
     },
     "2458057": {
       "date": "2026-01-24",
@@ -1979,11 +1979,11 @@
       "away_team": "TCU",
       "home_record": "11-7",
       "away_record": "12-7",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 68,
       "home_model": 48,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -2063,23 +2063,23 @@
       "conference": "American",
       "venue": "Dale F. Halton Arena",
       "location": "Charlotte, NC",
-      "spread_close": "CHAR -3.5",
+      "spread_close": "CHAR -2.5",
       "total_close": 143.5
     },
     "2458551": {
       "date": "2026-01-23",
       "start_time": "5:30 PM",
       "start_time_utc": "2026-01-23T22:30:00+00:00",
-      "status": "in_progress",
+      "status": "half_over",
       "home_team": "SBU",
       "away_team": "SLU",
       "home_record": "12-7",
       "away_record": "18-1",
-      "home_score": 3,
-      "away_score": 10,
+      "home_score": 26,
+      "away_score": 58,
       "away_model": 24,
       "home_model": 155,
-      "clock": "16:58",
+      "clock": "0:00",
       "period": "1st",
       "overtime": false,
       "home_rank": null,
@@ -2363,11 +2363,11 @@
       "away_team": "PEP",
       "home_record": "8-12",
       "away_record": "6-14",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 272,
       "home_model": 145,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -2555,11 +2555,11 @@
       "away_team": "UAPB",
       "home_record": "7-11",
       "away_record": "6-13",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 294,
       "home_model": 247,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -2579,11 +2579,11 @@
       "away_team": "ALCN",
       "home_record": "7-9",
       "away_record": "3-14",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "away_model": 341,
       "home_model": 299,
-      "clock": null,
+      "clock": "0:00",
       "period": null,
       "overtime": false,
       "home_rank": null,
@@ -2741,6 +2741,6 @@
   },
   "meta": {
     "poll_interval_sec": 60,
-    "generated": "2026-01-23T22:36:50.879754"
+    "generated": "2026-01-23T23:33:35.396162"
   }
 }

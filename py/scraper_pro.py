@@ -27,6 +27,17 @@ LIVE_STATUSES = {"in_progress", "halftime", "delay"}
 
 SKIP_CONFERENCES = {"All Conferences"}
 
+LEAGUES = {
+    "men": {
+        "path": "ncaab",
+        "label": "men"
+    },
+    "women": {
+        "path": "ncaaw",
+        "label": "women"
+    }
+}
+
 # =========================
 # UTILS
 # =========================
@@ -34,14 +45,22 @@ SKIP_CONFERENCES = {"All Conferences"}
 def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i+n]
+        
+def get_rank_dict_for_league(league):
+    if league == "men":
+        return scraper.getTeamRanks()
+    elif league == "women":
+        return scraper.getWTeamRanks()
+    else:
+        raise ValueError(f"Unknown league: {league}")
 
 # =========================
 # CONFERENCE DISCOVERY
 # =========================
 
-def get_conference_strings():
+def get_conference_strings(league_path):
     resp = requests.get(
-        f"{BASE}/ncaab/events/conferences",
+        f"{BASE}/{league_path}/events/conferences",
         headers=HEADERS,
         timeout=10
     )
@@ -60,7 +79,7 @@ def get_conference_strings():
 # SCHEDULE → EVENT IDS
 # =========================
 
-def get_today_event_ids(conference_strings):
+def get_today_event_ids(conference_strings, league_path):
     all_ids = set()
 
     for conf in conference_strings:
@@ -68,7 +87,7 @@ def get_today_event_ids(conference_strings):
             continue
 
         resp = requests.get(
-            f"{BASE}/ncaab/schedule",
+            f"{BASE}/{league_path}/schedule",
             params={
                 "conference": conf,
                 "utc_offset": UTC_OFFSET_SECONDS
@@ -83,21 +102,21 @@ def get_today_event_ids(conference_strings):
         if not current:
             continue
 
-        ids = current.get("event_ids", [])
-        all_ids.update(ids)
+        all_ids.update(current.get("event_ids", []))
 
     return sorted(all_ids)
+
 
 # =========================
 # EVENT HYDRATION
 # =========================
 
-def fetch_events_by_ids(event_ids):
+def fetch_events_by_ids(event_ids, league_path):
     events = []
 
     for batch in chunks(event_ids, BATCH_SIZE):
         resp = requests.get(
-            f"{BASE}/ncaab/events",
+            f"{BASE}/{league_path}/events",
             params={"id.in": ",".join(map(str, batch))},
             headers=HEADERS,
             timeout=10
@@ -281,29 +300,29 @@ def live_poller(initial_events):
     print("✅ All games final — poller exiting")
 
 
-def get_current_live_dataset():
-    """
-    One-shot snapshot of all current games.
-    Safe to call repeatedly.
-    """
+def get_current_live_dataset(league_key):
+    cfg = LEAGUES[league_key]
+    league_path = cfg["path"]
 
-    conferences = get_conference_strings()
-    event_ids = get_today_event_ids(conferences)
+    conferences = get_conference_strings(league_path)
+    event_ids = get_today_event_ids(conferences, league_path)
 
     if not event_ids:
         return {
-            "league": "men",
+            "league": league_key,
             "generated": datetime.utcnow().isoformat(),
             "games": {}
         }
 
-    events = fetch_events_by_ids(event_ids)
+    events = fetch_events_by_ids(event_ids, league_path)
 
     games = {}
-    ranks_dict = scraper.getTeamRanks()
+    ranks_dict = get_rank_dict_for_league(league_key)
+
     date = datetime.today().date().isoformat()
-    ranks = ranks_dict[date]
+    ranks = ranks_dict.get(date, {})
     master = scraper.getMasterTeams()
+
     for g in events:
         game_id = g.get("id")
         if not game_id:
@@ -312,23 +331,36 @@ def get_current_live_dataset():
         games[str(game_id)] = format_event(g, ranks, master)
 
     return {
-        "league": "men",
+        "league": league_key,
         "generated": datetime.utcnow().isoformat(),
         "games": games
     }
+
 
 # =========================
 # MAIN
 # =========================
 
 if __name__ == "__main__":
-    payload = get_current_live_dataset()
-    path = utils.get_path('data/live_scores.json')
-    with open(path, "w") as f:
-        json.dump(payload, f, indent=2)
+    snapshots = {}
+    for league_key in ("men", "women"):
+        snapshots[league_key] = get_current_live_dataset(league_key)
 
-    print(
-        f"Snapshot saved — {len(payload['games'])} games @ {payload['generated']}"
-    )
-    
-    push(payload)
+        payload = {
+            "generated": datetime.utcnow().isoformat(),
+            "leagues": {
+                "men": snapshots["men"]["games"],
+                "women": snapshots["women"]["games"],
+            }
+        }
+        
+        path = utils.get_path(f"data/live_scores_{league_key}.json")
+        with open(path, "w") as f:
+            json.dump(payload, f, indent=2)
+
+        print(
+            f"{league_key.upper()} snapshot — "
+            f"{len(payload['games'])} games @ {payload['generated']}"
+        )
+
+        push(payload)
