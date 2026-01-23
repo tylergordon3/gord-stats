@@ -1027,14 +1027,12 @@
         ],
         "22": [
             "Belmont",
-            "Bruins",
             "BLMNT",
             "belmont",
             "BELMONT",
-            "bruins",
-            "BRUINS",
             "blmnt",
-            "BEL"
+            "BEL",
+            "BELM"
         ],
         "23": [
             "BTHCK",
@@ -1505,14 +1503,12 @@
         ],
         "61": [
             "COR",
-            "Big Red",
             "Cornell",
             "cor",
-            "big red",
-            "BIG RED",
             "cornell",
             "CORNELL",
-            "CORN"
+            "CORN",
+            "Cor"
         ],
         "62": [
             "Creighton",
@@ -1596,12 +1592,10 @@
         "69": [
             "DENVER",
             "Denver",
-            "Pioneers",
             "DEN",
             "denver",
-            "pioneers",
-            "PIONEERS",
-            "den"
+            "den",
+            "DU"
         ],
         "70": [
             "Detroit-Mercy",
@@ -2059,11 +2053,9 @@
             "Harvard",
             "HAR",
             "harv",
-            "crimson",
-            "CRIMSON",
             "harvard",
             "HARVARD",
-            "har"
+            "Harv"
         ],
         "109": [
             "HAWAII",
@@ -2077,15 +2069,13 @@
         ],
         "110": [
             "High Point",
-            "Panthers",
             "HP",
             "high point",
             "HIGH POINT",
-            "panthers",
-            "PANTHERS",
             "hp",
             "highpoint",
-            "HIGHPT"
+            "HIGHPT",
+            "HIPT"
         ],
         "111": [
             "Hofstra",
@@ -2310,15 +2300,13 @@
         "129": [
             "JAC",
             "Jacksonville",
-            "Dolphins",
             "JVILLE",
             "jac",
             "jacksonville",
             "JACKSONVILLE",
-            "dolphins",
-            "DOLPHINS",
             "jville",
-            "JAX"
+            "JAX",
+            "JU"
         ],
         "130": [
             "JKSNV",
@@ -2865,14 +2853,12 @@
         ],
         "175": [
             "Milwaukee",
-            "Panthers",
             "UWM",
             "milwaukee",
             "MILWAUKEE",
-            "panthers",
-            "PANTHERS",
             "uwm",
-            "MILW"
+            "MILW",
+            "MIL"
         ],
         "176": [
             "MINN",
@@ -2944,20 +2930,18 @@
         ],
         "181": [
             "MOST",
-            "Bears",
             "MZZST",
             "Missouri State",
             "Missouri St.",
             "most",
-            "bears",
-            "BEARS",
             "mzzst",
             "missouri state",
             "MISSOURI STATE",
             "missouri st.",
             "MISSOURI ST.",
             "missourist",
-            "missouri st"
+            "missouri st",
+            "MOSU"
         ],
         "182": [
             "MONM",
@@ -3162,19 +3146,17 @@
         "198": [
             "New Mexico State",
             "NMSU",
-            "Aggies",
             "New Mexico St.",
             "new mexico state",
             "NEW MEXICO STATE",
             "nmsu",
-            "aggies",
-            "AGGIES",
             "new mexico st.",
             "NEW MEXICO ST.",
             "newmexicost",
             "new mexico st",
             "N. Mex. St.",
-            "NMEXST"
+            "NMEXST",
+            "NMST"
         ],
         "199": [
             "New Orleans",
@@ -3274,14 +3256,11 @@
             "NDAK"
         ],
         "208": [
-            "Bison",
             "North Dakota State",
             "NDSU",
             "NDAKST",
             "N. Dak. St.",
             "North Dakota St.",
-            "bison",
-            "BISON",
             "north dakota state",
             "NORTH DAKOTA STATE",
             "ndsu",
@@ -3291,7 +3270,8 @@
             "north dakota st.",
             "NORTH DAKOTA ST.",
             "northdakotast",
-            "north dakota st"
+            "north dakota st",
+            "NDST"
         ],
         "209": [
             "North Florida",
@@ -3490,14 +3470,12 @@
         ],
         "226": [
             "Oral Roberts",
-            "Golden Eagles",
             "ORU",
             "oral roberts",
             "ORAL ROBERTS",
-            "golden eagles",
-            "GOLDEN EAGLES",
             "oru",
-            "oralroberts"
+            "oralroberts",
+            "ORAL"
         ],
         "227": [
             "OREG",
@@ -4256,7 +4234,8 @@
             "STONEHILL",
             "stone",
             "stoneh",
-            "STO"
+            "STO",
+            "Stoneh"
         ],
         "290": [
             "SB",
@@ -4892,16 +4871,14 @@
         ],
         "349": [
             "West Georgia",
-            "Wolves",
             "UWG",
             "west georgia",
             "WEST GEORGIA",
-            "wolves",
-            "WOLVES",
             "uwg",
             "westgeorgia",
             "WESTGA",
-            "W. Georgia"
+            "W. Georgia",
+            "WestGA"
         ],
         "350": [
             "Mountaineers",
