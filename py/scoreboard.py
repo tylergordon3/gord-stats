@@ -6,8 +6,6 @@ from render import render_teams as teams
 Used to create and update live scores.
 '''
 
-
-
 def today_games(rank_df, gender):
     rank_df["index"] = (rank_df["Team"].rank(method="dense").astype(int)) - 1
     master = scraper.getMasterTeams()

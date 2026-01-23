@@ -842,8 +842,10 @@
 .st-unk   { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }
 
 .date-header {
-  margin: 24px 0 10px;
-  font-size: 18px;
+  margin: 40px 0 20px;
+  font-size: 26px;
   font-weight: 800;
   color: #111827;
+  text-align: center;
+  letter-spacing: 0.02em;
 }

@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import change
-from datetime import datetime, date
+from datetime import datetime
 from sklearn import preprocessing
 import html_builder as htmb
 from pytz import timezone
@@ -574,9 +574,7 @@ def predict(date):
     all_sorted["Ovr"] = range(1, len(all_sorted) + 1)
     
     save_ranks = scraper.getTeamRanks()
-    #data = dict(zip(all_sorted['Team'], all_sorted['Ovr']))
     date_key = date.isoformat()
-    #save_ranks[date_key] = data
 
     team_map = (all_sorted.set_index("Team")[["Record", "Ovr"]]
                 .to_dict(orient="index"))
