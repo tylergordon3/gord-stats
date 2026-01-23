@@ -241,6 +241,9 @@ function renderGames(games) {
       const awayRank = safe(g.away_rank, null);
       const homeRank = safe(g.home_rank, null);
 
+      const awayRecord = safe(g.away_record, null);
+      const homeRecord = safe(g.home_record, null);
+
       const homeModel = safe(g.home_model, null);
       const awayModel = safe(g.away_model, null);
 
@@ -274,6 +277,7 @@ function renderGames(games) {
                 ${awayRank ? `(${awayRank})` : ''}
                 <span class="team-name">${getTeamName(awayTeam)}</span>
                 <strong>${awayModel ? `#${awayModel}` : ''}</strong>
+                ${awayRecord ? `(${awayRecord})` : ''}
               </span>
               </div>
               <div class="score">${awayScore}</div>
@@ -292,6 +296,7 @@ function renderGames(games) {
                 ${homeRank ? `(${homeRank})` : ''}
                 <span class="team-name">${getTeamName(homeTeam)}</span>
                 <strong>${homeModel ? `#${homeModel}` : ''}</strong>
+                ${homeRecord ? `(${homeRecord})` : ''}
               </span>
               </div>
               <div class="score">${homeScore}</div>
