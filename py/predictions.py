@@ -318,9 +318,12 @@ def predict_w(date):
     df_torvik ["Ovr"] = range(1, len(df_torvik) + 1)
 
     save_ranks = scraper.getWTeamRanks()
-    data = dict(zip(df_torvik['Team'], df_torvik['Ovr']))
     date_key = date.isoformat()
-    save_ranks[date_key] = data
+
+    team_map = (df_torvik .set_index("Team")[["Record", "Ovr"]]
+                .to_dict(orient="index"))
+    save_ranks[date_key] = team_map
+    
     scraper.saveWTeamRanks(save_ranks)
 
     # Saving to another df for schedule home
@@ -330,11 +333,11 @@ def predict_w(date):
 
     df_torvik['ConfChamp'] = 0
     df_torvik.loc[conf_winners.index, 'ConfChamp'] = 1
-   
-    delta = change.new_change(date, 'W')
+    
+    delta = change.new_change(date)
     
     main = pd.merge(df_torvik.reset_index(), delta, "left", "Team").set_index("index")
-   
+
     main["Δ 1d"] = main["Δ 1d"].replace(to_replace=0, value='-')
     main["Δ 7d"] = main["Δ 7d"].replace(to_replace=0, value='-')
     main["Δ 14d"] = main["Δ 14d"].replace(to_replace=0, value='-')
