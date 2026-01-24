@@ -105,10 +105,10 @@ def task(poll_rate):
         f"(men={len(men['games'])}, women={len(women['games'])}) "
         f"@ {payload['generated']}"
     )
-
-    ok = safe_push(payload)
-    if not ok:
-        print("Skipping backoff escalation for Worker error")
+    push_scores.push(payload)
+    #ok = safe_push(payload)
+    #if not ok:
+        #print("Skipping backoff escalation for Worker error")
 
 
 def maybe_deploy():
