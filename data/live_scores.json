@@ -1,5 +1,5 @@
 {
-  "generated": "2026-01-24T03:12:01.089379",
+  "generated": "2026-01-24T03:17:21.115016",
   "leagues": {
     "men": {
       "2453199": {
@@ -174,7 +174,7 @@
         "date": "2026-01-23",
         "start_time": "8:00 PM",
         "start_time_utc": "2026-01-24T01:00:00+00:00",
-        "status": "in_progress",
+        "status": "final",
         "home_team": "OHIO",
         "away_team": "AKR",
         "home_record": "11-9",
@@ -336,7 +336,7 @@
         "venue": "Daskalakis Athletic Center",
         "location": "Philadelphia, PA",
         "spread_close": "DRXL -5.5",
-        "total_close": 143.5
+        "total_close": 141.5
       },
       "2453271": {
         "date": "2026-01-24",
@@ -455,7 +455,7 @@
         "conference": "Atlantic Coast",
         "venue": "Petersen Events Center",
         "location": "Pittsburgh, PA",
-        "spread_close": "NCST -4.5",
+        "spread_close": "NCST -5.5",
         "total_close": 145.5
       },
       "2453284": {
@@ -888,7 +888,7 @@
         "venue": "Nutter Center",
         "location": "Fairborn, OH",
         "spread_close": "WRST -3.5",
-        "total_close": 156.5
+        "total_close": 155.5
       },
       "2453331": {
         "date": "2026-01-24",
@@ -1284,10 +1284,10 @@
         "home_record": "4-14",
         "away_record": "4-15",
         "home_score": 96,
-        "away_score": 58,
+        "away_score": 60,
         "away_model": 358,
         "home_model": 331,
-        "clock": "3:36",
+        "clock": "2:06",
         "period": "2nd",
         "overtime": false,
         "home_rank": null,
@@ -1763,11 +1763,11 @@
         "away_team": "MARQ",
         "home_record": "12-7",
         "away_record": "7-13",
-        "home_score": 79,
-        "away_score": 72,
+        "home_score": 83,
+        "away_score": 74,
         "away_model": 127,
         "home_model": 55,
-        "clock": "2:29",
+        "clock": "1:26",
         "period": "2nd",
         "overtime": false,
         "home_rank": null,
@@ -1787,11 +1787,11 @@
         "away_team": "OSU",
         "home_record": "17-1",
         "away_record": "13-5",
-        "home_score": 71,
-        "away_score": 59,
+        "home_score": 74,
+        "away_score": 62,
         "away_model": 45,
         "home_model": 1,
-        "clock": "2:09",
+        "clock": "0:42",
         "period": "2nd",
         "overtime": false,
         "home_rank": 3,
@@ -2112,7 +2112,7 @@
         "venue": "Navy Alumni Hall",
         "location": "Annapolis, MD",
         "spread_close": "NAVY -10.5",
-        "total_close": null
+        "total_close": 142.5
       },
       "2458747": {
         "date": "2026-01-24",
@@ -2718,7 +2718,7 @@
         "date": "2026-01-23",
         "start_time": "10:00 PM",
         "start_time_utc": "2026-01-24T03:00:00+00:00",
-        "status": "pre_game",
+        "status": "in_progress",
         "home_team": "CSU",
         "away_team": "UTST",
         "home_record": "12-7",
@@ -2727,8 +2727,8 @@
         "away_score": 0,
         "away_model": 43,
         "home_model": 104,
-        "clock": "0:00",
-        "period": null,
+        "clock": "20:00",
+        "period": "1st",
         "overtime": false,
         "home_rank": null,
         "away_rank": null,

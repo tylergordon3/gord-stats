@@ -3,7 +3,7 @@ const LEAGUE = board?.dataset.league || "men"; // default fallback
 
 const WORKER_URL =
   `https://cbb-live-scores.tmgordon33.workers.dev/scores?league=${LEAGUE}`;
-  
+
 const POLL_INTERVAL = 30000;
 const LOGO_BASE = "/assets/images/";
 
@@ -85,8 +85,11 @@ async function pollScores() {
           : `Polling: every ${sec}s`;
     }
   }
-
-  renderGames(data.leagues.men);
+  if (LEAGUE == "men") {
+    renderGames(data.leagues.men);
+  } else if (LEAGUE == "women") {
+    renderGames(data.leagues.women);
+  }
 }
 
 function statusRank(g) {
