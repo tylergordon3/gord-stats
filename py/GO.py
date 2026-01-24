@@ -8,6 +8,23 @@ import polling
 import subprocess
 from datetime import datetime, timedelta, timezone
 
+def safe_push(payload):
+    try:
+        res = push_scores.push(payload)
+
+        if not res:
+            raise RuntimeError("No response from ingest")
+
+        if hasattr(res, "status_code") and res.status_code >= 500:
+            print("⚠️ Worker 5xx — skipping retry this cycle")
+            return False
+
+        return True
+
+    except Exception as e:
+        print(f"⚠️ Push failed: {e}")
+        return False
+    
 def seconds_until_next_boundary(interval_sec):
     """
     Returns seconds until the next wall-clock-aligned boundary
@@ -89,8 +106,9 @@ def task(poll_rate):
         f"@ {payload['generated']}"
     )
 
-    # --- ONE push ---
-    push_scores.push(payload)
+    ok = safe_push(payload)
+    if not ok:
+        print("Skipping backoff escalation for Worker error")
 
 
 def maybe_deploy():
