@@ -761,7 +761,7 @@
 .team-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -803,7 +803,7 @@
 .team {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   font-size: 14px;
   font-weight: 700;
   overflow: hidden;

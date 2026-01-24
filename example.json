@@ -1,0 +1,362 @@
+{
+  "box_score": {
+    "api_uri": "/ncaab/box_scores/241207",
+    "id": 241207,
+    "progress": {
+      "clock_label": "Half",
+      "string": "Half",
+      "status": "in_progress",
+      "event_status": "in_progress",
+      "segment": 1,
+      "segment_string": "1st",
+      "segment_description": "1st Half",
+      "clock": "0:00",
+      "overtime": false
+    },
+    "score": {
+      "home": {
+        "score": 46
+      },
+      "away": {
+        "score": 25
+      },
+      "winning_team": "/ncaab/teams/1070",
+      "losing_team": "/ncaab/teams/954",
+      "tie_game": false
+    },
+    "updated_at": "Sat, 24 Jan 2026 18:52:46 -0000",
+    "has_statistics": true
+  },
+  "important": false,
+  "slot": null,
+  "tournament_name": null,
+  "odd": {
+    "api_uri": "/ncaab/odds/11365944",
+    "away_odd": "T:155.5",
+    "home_odd": "-10.5",
+    "id": 11365944,
+    "line": "TA&M -10.5",
+    "over_under": "155.5",
+    "closing": "TA&M -10.5, o/u 155.5",
+    "eu_away_odd": "T:155.5",
+    "eu_home_odd": "-10.5",
+    "eu_over_under": "155.5"
+  },
+  "subscribable_alerts": [
+    {
+      "key": "live_activity",
+      "display": "Live Activity",
+      "default": true
+    },
+    {
+      "key": "game_start",
+      "display": "Game Start",
+      "default": true
+    },
+    {
+      "key": "game_end",
+      "display": "Game End",
+      "default": true
+    },
+    {
+      "key": "tight_game",
+      "display": "Close Game",
+      "default": true
+    },
+    {
+      "key": "every_five_minutes",
+      "display": "Score - Every 5 Minutes",
+      "default": true
+    },
+    {
+      "key": "segment_end",
+      "display": "Score - Each Half",
+      "default": true
+    },
+    {
+      "key": "line_movement",
+      "display": "Line Movement (Pre-Game)",
+      "default": false
+    },
+    {
+      "key": "over_under_movement",
+      "display": "Over/Under Movement (Pre-Game)",
+      "default": false
+    },
+    {
+      "key": "over_under_watch",
+      "display": "Over/Under Watch (In-Game)",
+      "default": false
+    },
+    {
+      "key": "close_bet",
+      "display": "Close Bet (In-Game)",
+      "default": false
+    }
+  ],
+  "location": "College Station, TX, USA",
+  "stadium": "Reed Arena",
+  "away_conference": "Southeastern",
+  "home_conference": "Southeastern",
+  "has_team_twitter_handles": true,
+  "standings": {
+    "away": {
+      "api_uri": "/ncaab/standings/28658",
+      "streak": "W1",
+      "conference": "Southeastern",
+      "conference_abbreviation": "SEC",
+      "conference_seed": 13,
+      "division": null,
+      "last_ten_games_record": "5-5",
+      "place": 13,
+      "short_record": "11-8",
+      "conference_rank": 13,
+      "division_rank": null,
+      "division_seed": null,
+      "formatted_rank": null,
+      "short_away_record": "1-3",
+      "short_home_record": "10-3",
+      "conference_ranking": 13,
+      "division_ranking": 13
+    },
+    "home": {
+      "api_uri": "/ncaab/standings/28656",
+      "streak": "W2",
+      "conference": "Southeastern",
+      "conference_abbreviation": "SEC",
+      "conference_seed": 1,
+      "division": null,
+      "last_ten_games_record": "8-2",
+      "place": 1,
+      "short_record": "15-4",
+      "conference_rank": 1,
+      "division_rank": null,
+      "division_seed": null,
+      "formatted_rank": null,
+      "short_away_record": "3-2",
+      "short_home_record": "11-1",
+      "conference_ranking": 1,
+      "division_ranking": 1
+    }
+  },
+  "colours": {
+    "away": "73000A",
+    "home": "500000"
+  },
+  "conference_names": [
+    "All Conferences",
+    "SEC"
+  ],
+  "has_play_by_play_records": true,
+  "stubhub_url": null,
+  "away_team": {
+    "id": 954,
+    "abbreviation": "SC",
+    "medium_name": "South Carolina",
+    "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+    "subscribable_alerts": [
+      {
+        "key": "live_activity",
+        "display": "Live Activity",
+        "default": true
+      },
+      {
+        "key": "breaking_news",
+        "display": "Breaking News",
+        "default": true
+      },
+      {
+        "key": "game_start",
+        "display": "Game Start",
+        "default": true
+      },
+      {
+        "key": "game_end",
+        "display": "Game End",
+        "default": true
+      },
+      {
+        "key": "tight_game",
+        "display": "Close Game",
+        "default": false
+      },
+      {
+        "key": "segment_end",
+        "display": "Score - Each Half",
+        "default": false
+      },
+      {
+        "key": "every_five_minutes",
+        "display": "Score - Every 5 Minutes",
+        "default": true
+      },
+      {
+        "key": "line_movement",
+        "display": "Line Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_movement",
+        "display": "Over/Under Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_watch",
+        "display": "Over/Under Watch (In-Game)",
+        "default": false
+      },
+      {
+        "key": "close_bet",
+        "display": "Close Bet (In-Game)",
+        "default": false
+      }
+    ],
+    "colour_1": "73000A",
+    "colour_2": "000000",
+    "division": "NCAA Division I",
+    "full_name": "South Carolina Gamecocks",
+    "name": "South Carolina",
+    "search_name": "South Carolina Gamecocks",
+    "location": "Columbia, South Carolina",
+    "short_name": "SC",
+    "updated_at": "Sat, 24 Jan 2026 08:24:47 -0000",
+    "subscription_count": 57900,
+    "logos": {
+      "large": "https://assets-sports-gcp.thescore.com/basketball/team/954/logo.png",
+      "small": "https://assets-sports-gcp.thescore.com/basketball/team/954/small_logo.png",
+      "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/954/w72xh72_logo.png",
+      "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/954/tiny_logo.png",
+      "facing": null
+    },
+    "api_uri": "/ncaab/teams/954",
+    "resource_uri": "/basketball/teams/954",
+    "conference": "Southeastern",
+    "has_injuries": true,
+    "has_rosters": true,
+    "has_extra_info": true
+  },
+  "home_team": {
+    "id": 1070,
+    "abbreviation": "TA&M",
+    "medium_name": "Texas A&M",
+    "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+    "subscribable_alerts": [
+      {
+        "key": "live_activity",
+        "display": "Live Activity",
+        "default": true
+      },
+      {
+        "key": "breaking_news",
+        "display": "Breaking News",
+        "default": true
+      },
+      {
+        "key": "game_start",
+        "display": "Game Start",
+        "default": true
+      },
+      {
+        "key": "game_end",
+        "display": "Game End",
+        "default": true
+      },
+      {
+        "key": "tight_game",
+        "display": "Close Game",
+        "default": false
+      },
+      {
+        "key": "segment_end",
+        "display": "Score - Each Half",
+        "default": false
+      },
+      {
+        "key": "every_five_minutes",
+        "display": "Score - Every 5 Minutes",
+        "default": true
+      },
+      {
+        "key": "line_movement",
+        "display": "Line Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_movement",
+        "display": "Over/Under Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_watch",
+        "display": "Over/Under Watch (In-Game)",
+        "default": false
+      },
+      {
+        "key": "close_bet",
+        "display": "Close Bet (In-Game)",
+        "default": false
+      }
+    ],
+    "colour_1": "500000",
+    "colour_2": "FFFFFF",
+    "division": "NCAA Division I",
+    "full_name": "Texas A&M Aggies",
+    "name": "Texas A&M",
+    "search_name": "Texas A&M Aggies",
+    "location": "College Station, Texas",
+    "short_name": "TA&M",
+    "updated_at": "Sat, 24 Jan 2026 08:23:27 -0000",
+    "subscription_count": 66688,
+    "logos": {
+      "large": "https://assets-sports-gcp.thescore.com/basketball/team/1070/logo.png",
+      "small": "https://assets-sports-gcp.thescore.com/basketball/team/1070/small_logo.png",
+      "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/1070/w72xh72_logo.png",
+      "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/1070/tiny_logo.png",
+      "facing": null
+    },
+    "api_uri": "/ncaab/teams/1070",
+    "resource_uri": "/basketball/teams/1070",
+    "conference": "Southeastern",
+    "has_injuries": true,
+    "has_rosters": true,
+    "has_extra_info": true
+  },
+  "league": {
+    "api_uri": "/ncaab",
+    "localizations": {},
+    "resource_uri": "/basketball/leagues/1",
+    "daily_rollover_offset": 28800.0,
+    "daily_rollover_time": "13:00:00 +0000",
+    "default_section": "events",
+    "full_name": "NCAA Men's Basketball",
+    "medium_name": "NCAA Men's Basketball",
+    "season_type": "regular",
+    "short_name": "NCAAB",
+    "slug": "ncaab",
+    "sport_name": "basketball",
+    "updated_at": "Sat, 24 Jan 2026 08:07:56 -0000",
+    "subscription_count": 6267228,
+    "id": 1,
+    "sex": "M"
+  },
+  "if_necessary": false,
+  "away_ranking": null,
+  "home_ranking": null,
+  "top_25_rankings": {
+    "home": null,
+    "away": null
+  },
+  "id": 2453253,
+  "event_status": "in_progress",
+  "game_date": "Sat, 24 Jan 2026 18:00:00 -0000",
+  "game_type": "Regular Season",
+  "game_description": null,
+  "tba": false,
+  "updated_at": "Sat, 24 Jan 2026 19:00:12 -0000",
+  "bet_works_id": null,
+  "betradar_id": "62675743",
+  "status": "in_progress",
+  "api_uri": "/ncaab/events/2453253",
+  "resource_uri": "/basketball/events/2453253",
+  "top_match": null
+}

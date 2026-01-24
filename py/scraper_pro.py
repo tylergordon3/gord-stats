@@ -330,7 +330,7 @@ def get_current_live_dataset(league_key):
     ranks = ranks_dict.get(ranks_date, {})
 
     master = scraper.getMasterTeams()
-
+   
     for g in events:
         game_id = g.get("id")
         if not game_id:
