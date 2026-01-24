@@ -1,12 +1,15 @@
 ---
 layout: default
 title: Live Scores
+league: men
 ---
 
-<h1>Live Scoreboard</h1>
-<div class="meta-bar">
-  <span id="poll-rate">Polling: —</span>
-</div>
-<div id="games"></div>
+<h1>NCAAM Live Scoreboard</h1>
+<div id="scoreboard" data-league="{{ page.league }}">
 
-<script src="{{ '/assets/js/live.js' | relative_url }}"></script>
+  <div class="meta-bar">
+    <span id="poll-rate">Polling: —</span>
+  </div>
+  <div id="games"></div>
+
+  <script src="{{ '/assets/js/live.js' | relative_url }}"></script>

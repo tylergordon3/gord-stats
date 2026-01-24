@@ -1,5 +1,9 @@
-const WORKER_URL = "https://cbb-live-scores.tmgordon33.workers.dev/scores";
+const board = document.getElementById("scoreboard");
+const LEAGUE = board?.dataset.league || "men"; // default fallback
 
+const WORKER_URL =
+  `https://cbb-live-scores.tmgordon33.workers.dev/scores?league=${LEAGUE}`;
+  
 const POLL_INTERVAL = 30000;
 const LOGO_BASE = "/assets/images/";
 
