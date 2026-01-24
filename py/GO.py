@@ -16,13 +16,13 @@ def safe_push(payload):
             raise RuntimeError("No response from ingest")
 
         if hasattr(res, "status_code") and res.status_code >= 500:
-            print("⚠️ Worker 5xx — skipping retry this cycle")
+            print("Worker 5xx — skipping retry this cycle")
             return False
 
         return True
 
     except Exception as e:
-        print(f"⚠️ Push failed: {e}")
+        print(f"Push failed: {e}")
         return False
     
 def seconds_until_next_boundary(interval_sec):
