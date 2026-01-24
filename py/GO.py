@@ -97,7 +97,7 @@ def maybe_deploy():
     now = datetime.now(timezone.utc)
 
     if is_deploy_time(now):
-        print(f"🚀 Scheduled deploy @ {now.strftime('%H:%M UTC')}")
+        print(f"Scheduled deploy @ {now.strftime('%H:%M UTC')}")
 
         try:
             subprocess.run(
@@ -107,10 +107,10 @@ def maybe_deploy():
                 stderr=subprocess.STDOUT,
                 text=True,
             )
-            print("✅ Deploy finished successfully")
+            print("Deploy finished successfully")
 
         except subprocess.CalledProcessError as e:
-            print("❌ Deploy failed")
+            print("Deploy failed")
             print(e.stdout)
 
 
@@ -146,7 +146,7 @@ while True:
         delay = min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
         delay += random.uniform(0, 1)
 
-        print(f"❌ {e} — retrying in {delay:.1f}s")
+        print(f"{e} — retrying in {delay:.1f}s")
         time.sleep(delay)
         attempt += 1
 
