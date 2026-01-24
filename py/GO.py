@@ -6,8 +6,59 @@ import random
 import push_scores
 import polling
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
+def seconds_until_next_boundary(interval_sec):
+    """
+    Returns seconds until the next wall-clock-aligned boundary
+    (e.g. :00, :30, etc depending on interval)
+    """
+    now = datetime.now(timezone.utc)
+    epoch = int(now.timestamp())
+    return interval_sec - (epoch % interval_sec)
+
+def seconds_until_next_game():
+    """
+    Returns seconds until the next scheduled game start,
+    or None if no upcoming games.
+    """
+    try:
+        with open(utils.get_path("data/live_scores.json")) as f:
+            data = json.load(f)
+
+        leagues = data.get("leagues", {})
+        now = datetime.now(timezone.utc)
+
+        starts = []
+
+        for league_games in leagues.values():
+            for g in league_games.values():
+                ts = g.get("start_time_utc")
+                if not ts:
+                    continue
+
+                start = datetime.fromisoformat(ts)
+                if start > now:
+                    starts.append((start - now).total_seconds())
+
+        if not starts:
+            return None
+
+        return min(starts)
+
+    except Exception:
+        return None
+
+def is_deploy_time(now):
+    """
+    True if it's exactly on a 3-hour boundary (UTC)
+    """
+    return (
+        now.minute == 0 and
+        now.second < 5 and   # small grace window
+        now.hour % 3 == 0
+    )
+    
 def task(poll_rate):
     # --- scrape both leagues ---
     men = scraper_pro.get_current_live_dataset("men")
@@ -43,12 +94,10 @@ def task(poll_rate):
 
 
 def maybe_deploy():
-    global last_deploy
+    now = datetime.now(timezone.utc)
 
-    now = datetime.utcnow()
-
-    if last_deploy is None or now - last_deploy >= DEPLOY_INTERVAL:
-        print("🚀 Running scheduled deploy...")
+    if is_deploy_time(now):
+        print(f"🚀 Scheduled deploy @ {now.strftime('%H:%M UTC')}")
 
         try:
             subprocess.run(
@@ -58,13 +107,12 @@ def maybe_deploy():
                 stderr=subprocess.STDOUT,
                 text=True,
             )
-
-            last_deploy = now
             print("✅ Deploy finished successfully")
 
         except subprocess.CalledProcessError as e:
             print("❌ Deploy failed")
             print(e.stdout)
+
 
 BASE_INTERVAL = 30        # always wait this after success
 BASE_BACKOFF = 30         # starting backoff on failure
@@ -81,11 +129,18 @@ while True:
         task(poll_rate)
 
         attempt = 0
+        maybe_deploy()
 
-        # maybe_deploy()  # 👈 add this
+        sleep_for = seconds_until_next_boundary(poll_rate)
 
-        print(f"Sleeping for {poll_rate}")
-        time.sleep(poll_rate)
+        next_game_in = seconds_until_next_game()
+        if next_game_in is not None:
+            sleep_for = min(sleep_for, max(5, next_game_in - 60))
+
+        print(f"Sleeping {int(sleep_for)}s")
+        time.sleep(sleep_for)
+
+
 
     except Exception as e:
         delay = min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)

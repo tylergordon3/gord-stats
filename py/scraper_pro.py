@@ -319,8 +319,16 @@ def get_current_live_dataset(league_key):
     games = {}
     ranks_dict = get_rank_dict_for_league(league_key)
 
-    date = datetime.today().date().isoformat()
-    ranks = ranks_dict.get(date, {})
+    today = datetime.today().date().isoformat()
+
+    if today in ranks_dict:
+        ranks_date = today
+    else:
+        # fallback to most recent available date
+        ranks_date = max(ranks_dict.keys())
+
+    ranks = ranks_dict.get(ranks_date, {})
+
     master = scraper.getMasterTeams()
 
     for g in events:

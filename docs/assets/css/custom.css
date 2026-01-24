@@ -842,10 +842,26 @@
 .st-unk   { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }
 
 .date-header {
-  margin: 40px 0 20px;
-  font-size: 26px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  background: #ffffff;
+  padding: 8px 4px;
+  margin: 0 0 10px;
+
+  font-size: 18px;
   font-weight: 800;
   color: #111827;
-  text-align: center;
-  letter-spacing: 0.02em;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.scoreboard-grid {
+  margin-bottom: 24px;
+}
+
+.date-header {
+  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.92);
 }
