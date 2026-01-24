@@ -163,6 +163,11 @@ def format_event(g, ranks, master):
 
     home_record = ranks[home_name]['Record'] if home_name else ''
     away_record = ranks[away_name]['Record'] if away_name else ''
+    
+     # ranks
+    home_ap = g.get("home_ranking")
+    away_ap =  g.get("away_ranking")
+    is_ap = True if (home_ap | away_ap) else False
 
     # ---- score / progress ----
     box = g.get("box_score") or {}
@@ -215,8 +220,9 @@ def format_event(g, ranks, master):
         "overtime": overtime,
 
         # ranks
-        "home_rank": g.get("home_ranking"),
-        "away_rank": g.get("away_ranking"),
+        "home_rank": home_ap,
+        "away_rank": away_ap,
+        "is_ap" : is_ap,
 
         # meta
         "conference": g.get("home_conference"),
@@ -330,14 +336,14 @@ def get_current_live_dataset(league_key):
     ranks = ranks_dict.get(ranks_date, {})
 
     master = scraper.getMasterTeams()
-   
+
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
         games[str(game_id)] = format_event(g, ranks, master)
-
+    
     return {
         "league": league_key,
         "generated": datetime.utcnow().isoformat(),

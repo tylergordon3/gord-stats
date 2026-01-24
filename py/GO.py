@@ -106,10 +106,6 @@ def task(poll_rate):
         f"@ {payload['generated']}"
     )
     push_scores.push(payload)
-    #ok = safe_push(payload)
-    #if not ok:
-        #print("Skipping backoff escalation for Worker error")
-
 
 def maybe_deploy():
     now = datetime.now(timezone.utc)
@@ -157,8 +153,6 @@ while True:
 
         print(f"Sleeping {int(sleep_for)}s")
         time.sleep(sleep_for)
-
-
 
     except Exception as e:
         delay = min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)

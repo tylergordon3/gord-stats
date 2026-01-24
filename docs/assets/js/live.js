@@ -98,7 +98,7 @@ function statusRank(g) {
   if (
     s === "in_progress" ||
     s === "live" ||
-    s === "halftime" ||
+    s === "half_over" ||
     s === "delay"
   ) return 0; // LIVE
 
@@ -134,7 +134,7 @@ function statusLabel(status) {
 
   const s = String(status).toLowerCase();
   if (s === "in_progress" || s === "live") return { text: "LIVE", cls: "st-live" };
-  if (s === "halftime") return { text: "HT", cls: "st-ht" };
+  if (s === "half_over") return { text: "HALFTIME", cls: "st-ht" };
   if (s === "final") return { text: "FINAL", cls: "st-final" };
   if (s === "pre_game" || s === "scheduled") return { text: "PRE", cls: "st-pre" };
   if (s === "delay" || s === "delayed") return { text: "DELAY", cls: "st-delay" };
@@ -197,7 +197,6 @@ function renderTopRight(g) {
   return `<span class="game-time">—</span>`;
 }
 
-
 function renderGames(games) {
   const container = document.getElementById("games");
   if (!container) return;
@@ -252,6 +251,7 @@ function renderGames(games) {
 
       const awayRank = safe(g.away_rank, null);
       const homeRank = safe(g.home_rank, null);
+      const isAP = safe(g.is_ap, null);
 
       const awayRecord = safe(g.away_record, null);
       const homeRecord = safe(g.home_record, null);
@@ -268,7 +268,7 @@ function renderGames(games) {
       html += `
         <article class="game-card" id="game-${id}">
           <header class="game-head">
-          <span class="status-pill ${stCls}">${stText}</span>
+          <span class="status-pill ${stCls}">${stText} <strong>${isAP ? `AP TOP 25` : ''}</strong></span>
 
           <div class="game-top-right">
             ${renderTopRight(g)}

@@ -1,0 +1,1417 @@
+[
+  {
+    "box_score": {
+      "api_uri": "/ncaab/box_scores/241227",
+      "id": 241227,
+      "progress": {
+        "clock_label": "Final",
+        "string": "Final",
+        "status": "final",
+        "event_status": "final",
+        "segment": 2,
+        "segment_string": "2nd",
+        "segment_description": "2nd Half",
+        "clock": "0:00",
+        "overtime": false
+      },
+      "score": {
+        "home": {
+          "score": 76
+        },
+        "away": {
+          "score": 85
+        },
+        "winning_team": "/ncaab/teams/657",
+        "losing_team": "/ncaab/teams/1056",
+        "tie_game": false
+      },
+      "updated_at": "Sat, 24 Jan 2026 21:33:07 -0000",
+      "has_statistics": true
+    },
+    "important": false,
+    "slot": null,
+    "tournament_name": null,
+    "odd": {
+      "api_uri": "/ncaab/odds/11365084",
+      "away_odd": "-1.5",
+      "home_odd": "T:150.5",
+      "id": 11365084,
+      "line": "MIA -1.5",
+      "over_under": "150.5",
+      "closing": "MIA -1.5, o/u 150.5",
+      "eu_away_odd": "-1.5",
+      "eu_home_odd": "T:150.5",
+      "eu_over_under": "150.5"
+    },
+    "subscribable_alerts": [
+      {
+        "key": "live_activity",
+        "display": "Live Activity",
+        "default": true
+      },
+      {
+        "key": "game_start",
+        "display": "Game Start",
+        "default": true
+      },
+      {
+        "key": "game_end",
+        "display": "Game End",
+        "default": true
+      },
+      {
+        "key": "tight_game",
+        "display": "Close Game",
+        "default": true
+      },
+      {
+        "key": "every_five_minutes",
+        "display": "Score - Every 5 Minutes",
+        "default": true
+      },
+      {
+        "key": "segment_end",
+        "display": "Score - Each Half",
+        "default": true
+      },
+      {
+        "key": "line_movement",
+        "display": "Line Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_movement",
+        "display": "Over/Under Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_watch",
+        "display": "Over/Under Watch (In-Game)",
+        "default": false
+      },
+      {
+        "key": "close_bet",
+        "display": "Close Bet (In-Game)",
+        "default": false
+      }
+    ],
+    "location": "Syracuse, NY, USA",
+    "stadium": "JMA Wireless Dome",
+    "away_conference": "Atlantic Coast",
+    "home_conference": "Atlantic Coast",
+    "has_team_twitter_handles": true,
+    "standings": {
+      "away": {
+        "api_uri": "/ncaab/standings/28901",
+        "streak": "L2",
+        "conference": "Atlantic Coast",
+        "conference_abbreviation": "ACC",
+        "conference_seed": 4,
+        "division": null,
+        "last_ten_games_record": "8-2",
+        "place": 4,
+        "short_record": "15-4",
+        "conference_rank": 4,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "3-1",
+        "short_home_record": "11-1",
+        "conference_ranking": 4,
+        "division_ranking": 4
+      },
+      "home": {
+        "api_uri": "/ncaab/standings/28897",
+        "streak": "L2",
+        "conference": "Atlantic Coast",
+        "conference_abbreviation": "ACC",
+        "conference_seed": 11,
+        "division": null,
+        "last_ten_games_record": "6-4",
+        "place": 11,
+        "short_record": "12-7",
+        "conference_rank": 11,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "2-1",
+        "short_home_record": "9-3",
+        "conference_ranking": 11,
+        "division_ranking": 11
+      }
+    },
+    "colours": {
+      "away": "F47321",
+      "home": "D44500"
+    },
+    "conference_names": [
+      "ACC",
+      "All Conferences"
+    ],
+    "has_play_by_play_records": true,
+    "stubhub_url": null,
+    "away_team": {
+      "id": 657,
+      "abbreviation": "MIA",
+      "medium_name": "Miami FL",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "F47321",
+      "colour_2": "005030",
+      "division": "NCAA Division I",
+      "full_name": "Miami Hurricanes",
+      "name": "Miami (FL)",
+      "search_name": "Miami Hurricanes",
+      "location": "Coral Gables, Florida",
+      "short_name": "MIA",
+      "updated_at": "Sat, 24 Jan 2026 08:24:38 -0000",
+      "subscription_count": 101939,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/657/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/657/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/657/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/657/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/657",
+      "resource_uri": "/basketball/teams/657",
+      "conference": "Atlantic Coast",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "home_team": {
+      "id": 1056,
+      "abbreviation": "SYR",
+      "medium_name": "Syracuse",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "D44500",
+      "colour_2": "0D1D37",
+      "division": "NCAA Division I",
+      "full_name": "Syracuse Orange",
+      "name": "Syracuse",
+      "search_name": "Syracuse Orange",
+      "location": "Syracuse, New York",
+      "short_name": "SYR",
+      "updated_at": "Sat, 24 Jan 2026 08:23:26 -0000",
+      "subscription_count": 213958,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/1056/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/1056/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/1056/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/1056/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/1056",
+      "resource_uri": "/basketball/teams/1056",
+      "conference": "Atlantic Coast",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "recap": "/articles/8682099",
+    "recap_data": {
+      "abstract": "SYRACUSE, N.Y. (AP) \u2014 Malik Reneau had a 20-point, 11-rebound double-double, Tre Donaldson and Shelton Henderson each added 16 points, and Miami defeated Syracuse 85-76 on Saturday.\nReneau picked up his sixth double-double of the season, and was 8-for-12 shooting from the floor and 1 for 2 from beyond the arc. He also dished five assists to tie Donaldson for a team-high.",
+      "headline": "Reneau's 20-point, 11-rebound afternoon lifts Miami over Syracuse 85-76"
+    },
+    "league": {
+      "api_uri": "/ncaab",
+      "localizations": {},
+      "resource_uri": "/basketball/leagues/1",
+      "daily_rollover_offset": 28800.0,
+      "daily_rollover_time": "13:00:00 +0000",
+      "default_section": "events",
+      "full_name": "NCAA Men's Basketball",
+      "medium_name": "NCAA Men's Basketball",
+      "season_type": "regular",
+      "short_name": "NCAAB",
+      "slug": "ncaab",
+      "sport_name": "basketball",
+      "updated_at": "Sat, 24 Jan 2026 08:07:56 -0000",
+      "subscription_count": 6267228,
+      "id": 1,
+      "sex": "M"
+    },
+    "if_necessary": false,
+    "away_ranking": null,
+    "home_ranking": null,
+    "top_25_rankings": {
+      "home": null,
+      "away": null
+    },
+    "id": 2453250,
+    "event_status": "final",
+    "game_date": "Sat, 24 Jan 2026 19:00:00 -0000",
+    "game_type": "Regular Season",
+    "game_description": "M. Reneau (MIA): 20 PTS, 11 REB, 5 AST\nN. George (SYR): 13 PTS, 5 AST, 3 STL",
+    "tba": false,
+    "updated_at": "Sat, 24 Jan 2026 21:55:05 -0000",
+    "bet_works_id": null,
+    "betradar_id": "63666629",
+    "status": "final",
+    "api_uri": "/ncaab/events/2453250",
+    "resource_uri": "/basketball/events/2453250",
+    "top_match": null
+  },
+  {
+    "box_score": {
+      "api_uri": "/ncaab/box_scores/241207",
+      "id": 241207,
+      "progress": {
+        "clock_label": "Final",
+        "string": "Final",
+        "status": "final",
+        "event_status": "final",
+        "segment": 2,
+        "segment_string": "2nd",
+        "segment_description": "2nd Half",
+        "clock": "0:00",
+        "overtime": false
+      },
+      "score": {
+        "home": {
+          "score": 92
+        },
+        "away": {
+          "score": 69
+        },
+        "winning_team": "/ncaab/teams/1070",
+        "losing_team": "/ncaab/teams/954",
+        "tie_game": false
+      },
+      "updated_at": "Sat, 24 Jan 2026 20:21:05 -0000",
+      "has_statistics": true
+    },
+    "important": false,
+    "slot": null,
+    "tournament_name": null,
+    "odd": {
+      "api_uri": "/ncaab/odds/11365944",
+      "away_odd": "T:155.5",
+      "home_odd": "-10.5",
+      "id": 11365944,
+      "line": "TA&M -10.5",
+      "over_under": "155.5",
+      "closing": "TA&M -10.5, o/u 155.5",
+      "eu_away_odd": "T:155.5",
+      "eu_home_odd": "-10.5",
+      "eu_over_under": "155.5"
+    },
+    "subscribable_alerts": [
+      {
+        "key": "live_activity",
+        "display": "Live Activity",
+        "default": true
+      },
+      {
+        "key": "game_start",
+        "display": "Game Start",
+        "default": true
+      },
+      {
+        "key": "game_end",
+        "display": "Game End",
+        "default": true
+      },
+      {
+        "key": "tight_game",
+        "display": "Close Game",
+        "default": true
+      },
+      {
+        "key": "every_five_minutes",
+        "display": "Score - Every 5 Minutes",
+        "default": true
+      },
+      {
+        "key": "segment_end",
+        "display": "Score - Each Half",
+        "default": true
+      },
+      {
+        "key": "line_movement",
+        "display": "Line Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_movement",
+        "display": "Over/Under Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_watch",
+        "display": "Over/Under Watch (In-Game)",
+        "default": false
+      },
+      {
+        "key": "close_bet",
+        "display": "Close Bet (In-Game)",
+        "default": false
+      }
+    ],
+    "location": "College Station, TX, USA",
+    "stadium": "Reed Arena",
+    "away_conference": "Southeastern",
+    "home_conference": "Southeastern",
+    "has_team_twitter_handles": true,
+    "standings": {
+      "away": {
+        "api_uri": "/ncaab/standings/28658",
+        "streak": "W1",
+        "conference": "Southeastern",
+        "conference_abbreviation": "SEC",
+        "conference_seed": 13,
+        "division": null,
+        "last_ten_games_record": "5-5",
+        "place": 13,
+        "short_record": "11-8",
+        "conference_rank": 13,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "1-3",
+        "short_home_record": "10-3",
+        "conference_ranking": 13,
+        "division_ranking": 13
+      },
+      "home": {
+        "api_uri": "/ncaab/standings/28656",
+        "streak": "W2",
+        "conference": "Southeastern",
+        "conference_abbreviation": "SEC",
+        "conference_seed": 1,
+        "division": null,
+        "last_ten_games_record": "8-2",
+        "place": 1,
+        "short_record": "15-4",
+        "conference_rank": 1,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "3-2",
+        "short_home_record": "11-1",
+        "conference_ranking": 1,
+        "division_ranking": 1
+      }
+    },
+    "colours": {
+      "away": "73000A",
+      "home": "500000"
+    },
+    "conference_names": [
+      "All Conferences",
+      "SEC"
+    ],
+    "has_play_by_play_records": true,
+    "stubhub_url": null,
+    "away_team": {
+      "id": 954,
+      "abbreviation": "SC",
+      "medium_name": "South Carolina",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "73000A",
+      "colour_2": "000000",
+      "division": "NCAA Division I",
+      "full_name": "South Carolina Gamecocks",
+      "name": "South Carolina",
+      "search_name": "South Carolina Gamecocks",
+      "location": "Columbia, South Carolina",
+      "short_name": "SC",
+      "updated_at": "Sat, 24 Jan 2026 08:24:47 -0000",
+      "subscription_count": 57900,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/954/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/954/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/954/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/954/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/954",
+      "resource_uri": "/basketball/teams/954",
+      "conference": "Southeastern",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "home_team": {
+      "id": 1070,
+      "abbreviation": "TA&M",
+      "medium_name": "Texas A&M",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "500000",
+      "colour_2": "FFFFFF",
+      "division": "NCAA Division I",
+      "full_name": "Texas A&M Aggies",
+      "name": "Texas A&M",
+      "search_name": "Texas A&M Aggies",
+      "location": "College Station, Texas",
+      "short_name": "TA&M",
+      "updated_at": "Sat, 24 Jan 2026 08:23:27 -0000",
+      "subscription_count": 66688,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/1070/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/1070/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/1070/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/1070/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/1070",
+      "resource_uri": "/basketball/teams/1070",
+      "conference": "Southeastern",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "league": {
+      "api_uri": "/ncaab",
+      "localizations": {},
+      "resource_uri": "/basketball/leagues/1",
+      "daily_rollover_offset": 28800.0,
+      "daily_rollover_time": "13:00:00 +0000",
+      "default_section": "events",
+      "full_name": "NCAA Men's Basketball",
+      "medium_name": "NCAA Men's Basketball",
+      "season_type": "regular",
+      "short_name": "NCAAB",
+      "slug": "ncaab",
+      "sport_name": "basketball",
+      "updated_at": "Sat, 24 Jan 2026 08:07:56 -0000",
+      "subscription_count": 6267228,
+      "id": 1,
+      "sex": "M"
+    },
+    "if_necessary": false,
+    "away_ranking": null,
+    "home_ranking": null,
+    "top_25_rankings": {
+      "home": null,
+      "away": null
+    },
+    "id": 2453253,
+    "event_status": "final",
+    "game_date": "Sat, 24 Jan 2026 18:00:00 -0000",
+    "game_type": "Regular Season",
+    "game_description": "M. Johnson (SC): 26 PTS, 5 AST, 4 REB\nR. Griffen (TA&M): 16 PTS, 6 REB, 5 AST",
+    "tba": false,
+    "updated_at": "Sat, 24 Jan 2026 19:55:24 -0000",
+    "bet_works_id": null,
+    "betradar_id": "62675743",
+    "status": "final",
+    "api_uri": "/ncaab/events/2453253",
+    "resource_uri": "/basketball/events/2453253",
+    "top_match": null
+  },
+  {
+    "box_score": {
+      "api_uri": "/ncaab/box_scores/241139",
+      "id": 241139,
+      "progress": {
+        "clock_label": "Final",
+        "string": "Final",
+        "status": "final",
+        "event_status": "final",
+        "segment": 2,
+        "segment_string": "2nd",
+        "segment_description": "2nd Half",
+        "clock": "0:00",
+        "overtime": false
+      },
+      "score": {
+        "home": {
+          "score": 72
+        },
+        "away": {
+          "score": 63
+        },
+        "winning_team": "/ncaab/teams/531",
+        "losing_team": "/ncaab/teams/680",
+        "tie_game": false
+      },
+      "updated_at": "Sat, 24 Jan 2026 18:39:03 -0000",
+      "has_statistics": true
+    },
+    "important": false,
+    "slot": null,
+    "tournament_name": null,
+    "odd": {
+      "api_uri": "/ncaab/odds/11364917",
+      "away_odd": "T:143.5",
+      "home_odd": "-9.5",
+      "id": 11364917,
+      "line": "UK -9.5",
+      "over_under": "143.5",
+      "closing": "UK -9.5, o/u 143.5",
+      "eu_away_odd": "T:143.5",
+      "eu_home_odd": "-9.5",
+      "eu_over_under": "143.5"
+    },
+    "subscribable_alerts": [
+      {
+        "key": "live_activity",
+        "display": "Live Activity",
+        "default": true
+      },
+      {
+        "key": "game_start",
+        "display": "Game Start",
+        "default": true
+      },
+      {
+        "key": "game_end",
+        "display": "Game End",
+        "default": true
+      },
+      {
+        "key": "tight_game",
+        "display": "Close Game",
+        "default": true
+      },
+      {
+        "key": "every_five_minutes",
+        "display": "Score - Every 5 Minutes",
+        "default": true
+      },
+      {
+        "key": "segment_end",
+        "display": "Score - Each Half",
+        "default": true
+      },
+      {
+        "key": "line_movement",
+        "display": "Line Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_movement",
+        "display": "Over/Under Movement (Pre-Game)",
+        "default": false
+      },
+      {
+        "key": "over_under_watch",
+        "display": "Over/Under Watch (In-Game)",
+        "default": false
+      },
+      {
+        "key": "close_bet",
+        "display": "Close Bet (In-Game)",
+        "default": false
+      }
+    ],
+    "location": "Lexington, KY, USA",
+    "stadium": "Rupp Arena",
+    "away_conference": "Southeastern",
+    "home_conference": "Southeastern",
+    "has_team_twitter_handles": true,
+    "standings": {
+      "away": {
+        "api_uri": "/ncaab/standings/28661",
+        "streak": "L1",
+        "conference": "Southeastern",
+        "conference_abbreviation": "SEC",
+        "conference_seed": 9,
+        "division": null,
+        "last_ten_games_record": "6-4",
+        "place": 9,
+        "short_record": "11-8",
+        "conference_rank": 9,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "2-2",
+        "short_home_record": "7-3",
+        "conference_ranking": 9,
+        "division_ranking": 9
+      },
+      "home": {
+        "api_uri": "/ncaab/standings/28665",
+        "streak": "W4",
+        "conference": "Southeastern",
+        "conference_abbreviation": "SEC",
+        "conference_seed": 5,
+        "division": null,
+        "last_ten_games_record": "8-2",
+        "place": 5,
+        "short_record": "13-6",
+        "conference_rank": 5,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "2-2",
+        "short_home_record": "10-2",
+        "conference_ranking": 5,
+        "division_ranking": 5
+      }
+    },
+    "colours": {
+      "away": "13294B",
+      "home": "0033A0"
+    },
+    "conference_names": [
+      "All Conferences",
+      "SEC"
+    ],
+    "has_play_by_play_records": true,
+    "stubhub_url": null,
+    "away_team": {
+      "id": 680,
+      "abbreviation": "MISS",
+      "medium_name": "Ole Miss",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "13294B",
+      "colour_2": "C8102E",
+      "division": "NCAA Division I",
+      "full_name": "Ole Miss Rebels",
+      "name": "Ole Miss",
+      "search_name": "Ole Miss Rebels",
+      "location": "Oxford, Mississippi",
+      "short_name": "MISS",
+      "updated_at": "Sat, 24 Jan 2026 08:24:39 -0000",
+      "subscription_count": 45922,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/680/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/680/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/680/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/680/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/680",
+      "resource_uri": "/basketball/teams/680",
+      "conference": "Southeastern",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "home_team": {
+      "id": 531,
+      "abbreviation": "UK",
+      "medium_name": "Kentucky",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "0033A0",
+      "colour_2": "FFFFFF",
+      "division": "NCAA Division I",
+      "full_name": "Kentucky Wildcats",
+      "name": "Kentucky",
+      "search_name": "Kentucky Wildcats",
+      "location": "Lexington, Kentucky",
+      "short_name": "UK",
+      "updated_at": "Sat, 24 Jan 2026 08:24:35 -0000",
+      "subscription_count": 439215,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/531/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/531/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/531/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/531/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/531",
+      "resource_uri": "/basketball/teams/531",
+      "conference": "Southeastern",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "league": {
+      "api_uri": "/ncaab",
+      "localizations": {},
+      "resource_uri": "/basketball/leagues/1",
+      "daily_rollover_offset": 28800.0,
+      "daily_rollover_time": "13:00:00 +0000",
+      "default_section": "events",
+      "full_name": "NCAA Men's Basketball",
+      "medium_name": "NCAA Men's Basketball",
+      "season_type": "regular",
+      "short_name": "NCAAB",
+      "slug": "ncaab",
+      "sport_name": "basketball",
+      "updated_at": "Sat, 24 Jan 2026 08:07:56 -0000",
+      "subscription_count": 6267228,
+      "id": 1,
+      "sex": "M"
+    },
+    "if_necessary": false,
+    "away_ranking": null,
+    "home_ranking": null,
+    "top_25_rankings": {
+      "home": null,
+      "away": null
+    },
+    "id": 2453255,
+    "event_status": "final",
+    "game_date": "Sat, 24 Jan 2026 16:00:00 -0000",
+    "game_type": "Regular Season",
+    "game_description": "A. Storr (MISS): 20 PTS, 3 STL, 4 REB\nC. Chandler (UK): 12 PTS, 7 REB, 1 STL",
+    "tba": false,
+    "updated_at": "Sat, 24 Jan 2026 18:44:04 -0000",
+    "bet_works_id": null,
+    "betradar_id": "62675737",
+    "status": "final",
+    "api_uri": "/ncaab/events/2453255",
+    "resource_uri": "/basketball/events/2453255",
+    "top_match": null
+  },
+  {
+    "box_score": {
+      "api_uri": "/ncaab/box_scores/241355",
+      "id": 241355,
+      "progress": {
+        "clock_label": "Pre Game",
+        "string": "Pre Game",
+        "status": "pre_game",
+        "event_status": "pre_game",
+        "segment": null,
+        "segment_string": null,
+        "segment_description": null,
+        "clock": "0:00",
+        "overtime": false
+      },
+      "score": {
+        "home": {
+          "score": 0
+        },
+        "away": {
+          "score": 0
+        },
+        "tie_game": true
+      },
+      "updated_at": "Sat, 24 Jan 2026 00:00:25 -0000",
+      "has_statistics": false
+    },
+    "important": false,
+    "slot": null,
+    "tournament_name": null,
+    "odd": {
+      "api_uri": "/ncaab/odds/11377103",
+      "away_odd": "T:152.5",
+      "home_odd": "-7.5",
+      "id": 11377103,
+      "line": "IONA -7.5",
+      "over_under": "152.5",
+      "eu_away_odd": "T:152.5",
+      "eu_home_odd": "-7.5",
+      "eu_over_under": "152.5"
+    },
+    "subscribable_alerts": [
+      {
+        "key": "game_start",
+        "display": "Game Start",
+        "default": true
+      },
+      {
+        "key": "game_end",
+        "display": "Game End",
+        "default": true
+      },
+      {
+        "key": "segment_end",
+        "display": "Score - Each Half",
+        "default": true
+      }
+    ],
+    "location": "New Rochelle, NY, USA",
+    "stadium": "Hynes Athletics Center",
+    "away_conference": "Metro Atlantic Athletic",
+    "home_conference": "Metro Atlantic Athletic",
+    "has_team_twitter_handles": false,
+    "standings": {
+      "away": {
+        "api_uri": "/ncaab/standings/29145",
+        "streak": "L3",
+        "conference": "Metro Atlantic Athletic",
+        "conference_abbreviation": "Metro Atlantic Athletic",
+        "conference_seed": 9,
+        "division": null,
+        "last_ten_games_record": "4-6",
+        "place": 9,
+        "short_record": "8-13",
+        "conference_rank": 9,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "1-9",
+        "short_home_record": "5-4",
+        "conference_ranking": 9,
+        "division_ranking": 9
+      },
+      "home": {
+        "api_uri": "/ncaab/standings/29143",
+        "streak": "W1",
+        "conference": "Metro Atlantic Athletic",
+        "conference_abbreviation": "Metro Atlantic Athletic",
+        "conference_seed": 6,
+        "division": null,
+        "last_ten_games_record": "5-5",
+        "place": 6,
+        "short_record": "13-8",
+        "conference_rank": 6,
+        "division_rank": null,
+        "division_seed": null,
+        "formatted_rank": null,
+        "short_away_record": "4-5",
+        "short_home_record": "8-1",
+        "conference_ranking": 6,
+        "division_ranking": 6
+      }
+    },
+    "colours": {
+      "away": "528C39",
+      "home": "910126"
+    },
+    "conference_names": [
+      "All Conferences",
+      "Metro Atlantic Athletic"
+    ],
+    "has_play_by_play_records": false,
+    "stubhub_url": null,
+    "away_team": {
+      "id": 613,
+      "abbreviation": "MAN",
+      "medium_name": "Manhattan",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "528C39",
+      "colour_2": "FFFFFF",
+      "division": "NCAA Division I",
+      "full_name": "Manhattan Jaspers",
+      "name": "Manhattan",
+      "search_name": "Manhattan Jaspers",
+      "location": "The Bronx, New York",
+      "short_name": "MAN",
+      "updated_at": "Sat, 24 Jan 2026 08:24:37 -0000",
+      "subscription_count": 6421,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/613/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/613/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/613/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/613/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/613",
+      "resource_uri": "/basketball/teams/613",
+      "conference": "Metro Atlantic Athletic",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "home_team": {
+      "id": 499,
+      "abbreviation": "IONA",
+      "medium_name": "Iona",
+      "subscribable_alert_text": "Keep track of this basketball team by adding it to your feed and subscribing to various alerts.",
+      "subscribable_alerts": [
+        {
+          "key": "live_activity",
+          "display": "Live Activity",
+          "default": true
+        },
+        {
+          "key": "breaking_news",
+          "display": "Breaking News",
+          "default": true
+        },
+        {
+          "key": "game_start",
+          "display": "Game Start",
+          "default": true
+        },
+        {
+          "key": "game_end",
+          "display": "Game End",
+          "default": true
+        },
+        {
+          "key": "tight_game",
+          "display": "Close Game",
+          "default": false
+        },
+        {
+          "key": "segment_end",
+          "display": "Score - Each Half",
+          "default": false
+        },
+        {
+          "key": "every_five_minutes",
+          "display": "Score - Every 5 Minutes",
+          "default": true
+        },
+        {
+          "key": "line_movement",
+          "display": "Line Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_movement",
+          "display": "Over/Under Movement (Pre-Game)",
+          "default": false
+        },
+        {
+          "key": "over_under_watch",
+          "display": "Over/Under Watch (In-Game)",
+          "default": false
+        },
+        {
+          "key": "close_bet",
+          "display": "Close Bet (In-Game)",
+          "default": false
+        }
+      ],
+      "colour_1": "910126",
+      "colour_2": "FDC10D",
+      "division": "NCAA Division I",
+      "full_name": "Iona Gaels",
+      "name": "Iona",
+      "search_name": "Iona Gaels",
+      "location": "New Rochelle, New York",
+      "short_name": "IONA",
+      "updated_at": "Sat, 24 Jan 2026 08:24:34 -0000",
+      "subscription_count": 10229,
+      "logos": {
+        "large": "https://assets-sports-gcp.thescore.com/basketball/team/499/logo.png",
+        "small": "https://assets-sports-gcp.thescore.com/basketball/team/499/small_logo.png",
+        "w72xh72": "https://assets-sports-gcp.thescore.com/basketball/team/499/w72xh72_logo.png",
+        "tiny": "https://assets-sports-gcp.thescore.com/basketball/team/499/tiny_logo.png",
+        "facing": null
+      },
+      "api_uri": "/ncaab/teams/499",
+      "resource_uri": "/basketball/teams/499",
+      "conference": "Metro Atlantic Athletic",
+      "has_injuries": true,
+      "has_rosters": true,
+      "has_extra_info": true
+    },
+    "league": {
+      "api_uri": "/ncaab",
+      "localizations": {},
+      "resource_uri": "/basketball/leagues/1",
+      "daily_rollover_offset": 28800.0,
+      "daily_rollover_time": "13:00:00 +0000",
+      "default_section": "events",
+      "full_name": "NCAA Men's Basketball",
+      "medium_name": "NCAA Men's Basketball",
+      "season_type": "regular",
+      "short_name": "NCAAB",
+      "slug": "ncaab",
+      "sport_name": "basketball",
+      "updated_at": "Sat, 24 Jan 2026 08:07:56 -0000",
+      "subscription_count": 6267228,
+      "id": 1,
+      "sex": "M"
+    },
+    "if_necessary": false,
+    "away_ranking": null,
+    "home_ranking": null,
+    "top_25_rankings": {
+      "home": null,
+      "away": null
+    },
+    "id": 2453257,
+    "event_status": "pre_game",
+    "game_date": "Sun, 25 Jan 2026 00:00:00 -0000",
+    "game_type": "Regular Season",
+    "game_description": null,
+    "tba": false,
+    "updated_at": "Mon, 15 Sep 2025 20:00:09 -0000",
+    "bet_works_id": null,
+    "betradar_id": "63151715",
+    "status": "pre_game",
+    "api_uri": "/ncaab/events/2453257",
+    "resource_uri": "/basketball/events/2453257",
+    "top_match": null
+  }
+]
