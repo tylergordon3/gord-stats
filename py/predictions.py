@@ -334,7 +334,7 @@ def predict_w(date):
     df_torvik['ConfChamp'] = 0
     df_torvik.loc[conf_winners.index, 'ConfChamp'] = 1
     
-    delta = change.new_change(date)
+    delta = change.new_change(date, "W")
     
     main = pd.merge(df_torvik.reset_index(), delta, "left", "Team").set_index("index")
 

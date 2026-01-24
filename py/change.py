@@ -35,18 +35,12 @@ def new_change(date, gender='M'):
             for team, info in data.items()
             if "Ovr" in info
         }
-    if gender == "W":
-        d1_dict = ranks[d1.isoformat()]
-        d7_dict = ranks[d7.isoformat()]
-        d14_dict = ranks[d14.isoformat()]
-        d30_dict = ranks[d30.isoformat()]
-        today = ranks[date.isoformat()]
-    else:
-        d1_dict = extract_ovr(ranks[d1.isoformat()])
-        d7_dict = extract_ovr(ranks[d7.isoformat()])
-        d14_dict = extract_ovr(ranks[d14.isoformat()])
-        d30_dict = extract_ovr(ranks[d30.isoformat()])
-        today = extract_ovr(ranks[date.isoformat()])
+
+    d1_dict = extract_ovr(ranks[d1.isoformat()])
+    d7_dict = extract_ovr(ranks[d7.isoformat()])
+    d14_dict = extract_ovr(ranks[d14.isoformat()])
+    d30_dict = extract_ovr(ranks[d30.isoformat()])
+    today = extract_ovr(ranks[date.isoformat()])
     
     df = pd.DataFrame([today])
     df = pd.concat([df, pd.DataFrame([d1_dict])])

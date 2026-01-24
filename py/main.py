@@ -95,9 +95,6 @@ if update_womens_all:
 rc.main(main, 'M')
 rc.main(main_w, 'W')
 
-#games_women = scraper.today_games(today_w_df, 'W')
-#generate_home.generate_home_about(games_women, 'W', False)
-
 rh.render_home()
 
 
