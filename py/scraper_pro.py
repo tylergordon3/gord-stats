@@ -167,7 +167,7 @@ def format_event(g, ranks, master):
      # ranks
     home_ap = g.get("home_ranking")
     away_ap =  g.get("away_ranking")
-    is_ap = True if (home_ap | away_ap) else False
+    is_ap = bool(home_ap or away_ap)
 
     # ---- score / progress ----
     box = g.get("box_score") or {}
