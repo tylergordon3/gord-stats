@@ -269,7 +269,7 @@ def live_poller(initial_events):
         if g["status"] in LIVE_STATUSES
     }
 
-    print(f"🟢 Live games at start: {len(live_ids)}")
+    print(f"Live games at start: {len(live_ids)}")
 
     snapshots = {}
 
@@ -295,9 +295,9 @@ def live_poller(initial_events):
                 print(f"🔴 Game {game_id} FINAL")
                 live_ids.remove(game_id)
 
-        print(f"⏳ Live games remaining: {len(live_ids)}")
+        print(f"Live games remaining: {len(live_ids)}")
 
-    print("✅ All games final — poller exiting")
+    print("All games final — poller exiting")
 
 
 def get_current_live_dataset(league_key):
