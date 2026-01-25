@@ -182,6 +182,10 @@ function renderTopRight(g) {
     return `<span class="game-time">${g.start_time}</span>`;
   }
 
+  if (g.status === "final") {
+    return `<span class="game-time"></span>`;
+  }
+
   // LIVE / FINAL games: show period + clock
   const period = safe(g.period);
   const clock = safe(g.clock);
@@ -266,7 +270,7 @@ function renderGames(games) {
       const metaLines = formatMeta(g);
 
       html += `
-        <article class="game-card" id="game-${id}">
+        <article class="game-card ${isAP ? 'top25' : ''}" id="game-${id}">
           <header class="game-head">
           <span class="status-pill ${stCls}">${stText} </strong></span>
           <div class="game-top-right">
