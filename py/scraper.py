@@ -494,7 +494,7 @@ def getNameFromCode(code, master, ret_abbrev=False):
         return [None, None]
     else:
         if ret_abbrev:
-            return [list(df_result["index"])[0], list(df_result["team"]), list(df_result["short"])[0]]
+            return [list(df_result["index"])[0], list(df_result["team"])[0], list(df_result["short"])[0]]
         return [list(df_result["index"])[0], list(df_result["team"])[0]]
 
 def game_status(soup, gender):
