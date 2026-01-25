@@ -247,10 +247,6 @@ def getWinPer(record):
     total = wins + losses
     return wins / total if total else 0.0
 
-def predByConf():
-    return
-
-
 def predict_w(date):
     master = scraper.getMasterTeams()
 
