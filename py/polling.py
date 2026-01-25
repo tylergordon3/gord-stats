@@ -12,12 +12,23 @@ import json
 ET = ZoneInfo("America/New_York")
 
 ZONE_GAP = timedelta(hours=2, minutes=30)
-
-FREE_WRITE_LIMIT = 1000
 BASELINE_WRITES_PER_DAY = 24
-MAX_POLL_WRITES_PER_DAY = FREE_WRITE_LIMIT - BASELINE_WRITES_PER_DAY  # 976
 
+# -----------------------------
+# Free plan calc
+# -----------------------------
+FREE_WRITE_LIMIT = 1000
+MAX_POLL_WRITES_PER_DAY = FREE_WRITE_LIMIT - BASELINE_WRITES_PER_DAY  # 976
 POLL_OPTIONS = [15, 30, 45, 60]  # seconds (fast → slow)
+
+# -----------------------------
+# Paid plan calc
+# -----------------------------
+PAID_WRITE_LIMIT = 20000
+MAX_WRITES_PER_DAY = PAID_WRITE_LIMIT - BASELINE_WRITES_PER_DAY
+
+MIN_LIVE_INTERVAL = 5
+MAX_LIVE_INTERVAL = 120  
 
 # -----------------------------
 # Time normalization
@@ -109,48 +120,53 @@ def choose_poll_interval(min_required):
     return None  # even 60s is too fast
 
 def daily_polling_plan(zones):
-    """Determine fastest safe polling interval per day."""
+    """Determine dynamic polling interval per day."""
     live_secs = live_seconds_per_day(zones)
     plan = {}
 
     for day, secs in live_secs.items():
-        min_req = min_interval_seconds(secs)
-        chosen = choose_poll_interval(min_req)
+        interval = dynamic_interval_seconds(secs)
 
         plan[day] = {
             "live_hours": secs / 3600,
-            "min_interval_sec": min_req,
-            "chosen_interval_sec": chosen,
-            "fits_free_tier": chosen is not None
+            "live_seconds": secs,
+            "poll_interval_sec": interval,
+            "fits_limit": interval is not None
         }
 
     return plan
 
+def dynamic_interval_seconds(live_seconds):
+    """
+    Compute polling interval (seconds) to stay under daily cap.
+    Returns None if no live time.
+    """
+    if live_seconds <= 0:
+        return None
 
+    interval = live_seconds / MAX_WRITES_PER_DAY
+
+    # Clamp to sane bounds
+    return max(
+        MIN_LIVE_INTERVAL,
+        min(interval, MAX_LIVE_INTERVAL)
+    )
+    
 def polling_rate_now(now, zones, daily_plan, default_idle=3600):
     """
-    now: current ET datetime
-    zones: list of (start, end) ET datetimes
-    daily_plan: output of daily_polling_plan(zones)
-    default_idle: polling interval (seconds) when not live
-                    (3600 sec -> 1 hour)
-
     returns: polling interval in seconds
     """
 
     for start, end in zones:
         if start <= now <= end:
-            day = now.date()
-            plan = daily_plan.get(day)
+            plan = daily_plan.get(now.date())
 
-            # If no plan or over limit → slowest allowed
-            if not plan or not plan["fits_free_tier"]:
-                return max(POLL_OPTIONS)
+            if not plan or not plan["fits_limit"]:
+                return default_idle  # fail safe
 
-            # Use chosen interval for this day
-            return plan["chosen_interval_sec"]
+            return int(plan["poll_interval_sec"])
 
-    # Not in any live zone
+    # Not live
     return default_idle
 
 def calculate_rate():
