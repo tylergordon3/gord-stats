@@ -176,7 +176,7 @@ function formatMeta(g) {
   return parts.filter(Boolean);
 }
 
-function renderTopRight(g) {
+function renderTime(g) {
   // PRE games: show tip-off
   if (g.status === "pre_game" && g.start_time) {
     return `<span class="game-time">${g.start_time}</span>`;
@@ -272,11 +272,13 @@ function renderGames(games) {
       html += `
         <article class="game-card" id="game-${id}">
           <header class="game-head">
+          <div class="game-head-left">
           <span class="status-pill ${stCls}">${stText} </span>
-           ${isAP ? `<div class="game-head-center">TOP 25</div>` : ''}
-          <div class="game-top-right">
-            ${renderTopRight(g)}
           </div>
+           <div class="game-head-center">
+            ${renderTime(g)}
+          </div>
+           ${isAP ? `<div class="game-head-right"><span class="game-badge ap">TOP 25</span></div>` : ''}
         </header>
 
           <div class="teams">
