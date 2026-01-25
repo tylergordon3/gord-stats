@@ -124,3 +124,10 @@ def get_recent_html_w(input_date):
     html_files = Path(path).glob("predict_*.html")
     html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return html
+
+def check_p4(home, away):
+    p4 = ["B10", "B12", "ACC", "SEC"]
+    if ((home in p4) & (away in p4)):
+        return True
+    else:
+        return False

@@ -256,6 +256,7 @@ function renderGames(games) {
       const awayRank = safe(g.away_rank, null);
       const homeRank = safe(g.home_rank, null);
       const isAP = safe(g.is_ap, null);
+      const isP4 = safe(g.is_p4, null);
 
       const awayRecord = safe(g.away_record, null);
       const homeRecord = safe(g.home_record, null);
@@ -279,6 +280,7 @@ function renderGames(games) {
             ${renderTime(g)}
           </div>
            ${isAP ? `<div class="game-head-right"><span class="game-badge ap">TOP 25</span></div>` : ''}
+           ${isP4 ? `<div class="game-head-right"><span class="game-badge p4">P4</span></div>` : ''}
         </header>
 
           <div class="teams">

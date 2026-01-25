@@ -169,6 +169,11 @@ def format_event(g, ranks, master):
     away_ap =  g.get("away_ranking")
     is_ap = bool(home_ap or away_ap)
 
+    # conferences
+    home_conf = g.get("home_conference")
+    away_conf = g.get("away_conference")
+    is_p4 = utils.check_p4(home_conf, away_conf)
+    
     # ---- score / progress ----
     box = g.get("box_score") or {}
     score = box.get("score") or {}
@@ -204,6 +209,7 @@ def format_event(g, ranks, master):
         "home_team": home.get("abbreviation"),
         "away_team": away.get("abbreviation"),
 
+        "is_p4":is_p4,
         "home_record":home_record,
         "away_record":away_record,
         

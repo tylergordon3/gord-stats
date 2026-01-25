@@ -774,6 +774,11 @@
   background: rgba(124, 58, 237, 0.12);
 }
 
+.game-badge.p4 {
+  color: #1c4ce7;
+  background: rgba(124, 58, 237, 0.12);
+}
+
 .status-pill {
   font-size: 12px;
   padding: 3px 8px;
