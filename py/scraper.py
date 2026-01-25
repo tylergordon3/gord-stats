@@ -491,6 +491,8 @@ def getNameFromCode(code, master, ret_abbrev=False):
     boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
     df_result = master[boolean_mask_original]
     if df_result.empty:
+        if ret_abbrev:
+            return [None, None, None]
         return [None, None]
     else:
         if ret_abbrev:
