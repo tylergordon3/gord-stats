@@ -270,9 +270,10 @@ function renderGames(games) {
       const metaLines = formatMeta(g);
 
       html += `
-        <article class="game-card ${isAP ? 'top25' : ''}" id="game-${id}">
+        <article class="game-card" id="game-${id}">
           <header class="game-head">
           <span class="status-pill ${stCls}">${stText} </strong></span>
+           ${isAP ? `<div class="game-head-center">TOP 25</div>` : ''}
           <div class="game-top-right">
             ${renderTopRight(g)}
           </div>

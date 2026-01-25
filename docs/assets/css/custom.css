@@ -355,7 +355,7 @@
   border: 1px solid rgba(0, 0, 0, .12);
   border-radius: 14px;
   padding: 12px 12px 10px;
-  background: #fff;
+  background: #ebe4e4;
 }
 
 .top25 {
@@ -731,6 +731,27 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+}
+
+/* Center overlay text */
+.game-head-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #7c3aed; /* purple-ish */
+  background: rgba(124, 58, 237, 0.12);
+  padding: 3px 8px;
+  border-radius: 999px;
+
+  pointer-events: none; /* 👈 does not block clicks */
+  white-space: nowrap;
 }
 
 .status-pill {
