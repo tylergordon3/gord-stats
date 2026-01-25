@@ -252,6 +252,9 @@ function renderGames(games) {
     for (const { id, g } of gamesForDay) {
       const awayTeam = safe(g.away_team, "AWAY");
       const homeTeam = safe(g.home_team, "HOME");
+      
+      const awayAbb = safe(g.away_abb, null);
+      const homeAbb = safe(g.home_abb, null);
 
       const awayRank = safe(g.away_rank, null);
       const homeRank = safe(g.home_rank, null);
@@ -297,7 +300,7 @@ function renderGames(games) {
                   onerror="this.src='/assets/images/default.png'"
                 />
                 ${awayRank ? `(${awayRank})` : ''}
-                <span class="team-name">${getTeamName(awayTeam)}</span>
+                <span class="team-name">${awayAbb ? awayAbb : getTeamName(awayTeam)}}</span>
                 <strong>${awayModel ? `#${awayModel}` : ''}</strong>
                 ${awayRecord ? `(${awayRecord})` : ''}
               </span>
@@ -316,7 +319,7 @@ function renderGames(games) {
                   onerror="this.src='/assets/images/default.png'"
                 />
                 ${homeRank ? `(${homeRank})` : ''}
-                <span class="team-name">${getTeamName(homeTeam)}</span>
+                <span class="team-name">${homeAbb ? homeAbb : getTeamName(homeTeam)}}</span>
                 <strong>${homeModel ? `#${homeModel}` : ''}</strong>
                 ${homeRecord ? `(${homeRecord})` : ''}
               </span>

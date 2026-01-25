@@ -206,9 +206,12 @@ def format_event(g, ranks, master):
         "status": g.get("status"),
 
         # teams
-        "home_team": home_abb,
-        "away_team": away_abb,
+        "home_team": home_name,
+        "away_team": away_name,
 
+        "home_abb": home_abb,
+        "away_abb": away_abb,   
+        
         "is_p4":is_p4,
         "home_record":home_record,
         "away_record":away_record,
