@@ -126,7 +126,8 @@ def get_recent_html_w(input_date):
     return html
 
 def check_p4(home, away):
-    p4 = ["B10", "B12", "ACC", "SEC"]
+    p4 = ["Big Ten", "B12", "Atlantic Coast", "Southeastern", "Atlantic Coast Women",
+          "Big Ten Women", "Big 12 Women", "Southeastern Women"]
     if ((home in p4) & (away in p4)):
         return True
     else:
