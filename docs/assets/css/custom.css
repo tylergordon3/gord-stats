@@ -359,7 +359,7 @@
 }
 
 .top25 {
-  background: #a193ee;
+  background: #a193ee !important;
 }
 
 /* Two rows, score aligned by fixed right column */
