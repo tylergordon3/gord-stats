@@ -753,9 +753,11 @@
 
 /* RIGHT */
 .game-head-right {
-  justify-self: end;
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 6px;               /* space between badges */
+  justify-self: end;
+  white-space: nowrap;   /* prevents wrapping */
 }
 
 .game-badge {
@@ -775,7 +777,7 @@
 }
 
 .game-badge.p4 {
-  color: #1c4ce7;
+  color: #0ad814;
   background: rgba(124, 58, 237, 0.12);
 }
 

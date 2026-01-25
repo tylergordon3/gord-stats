@@ -279,8 +279,10 @@ function renderGames(games) {
            <div class="game-head-center">
             ${renderTime(g)}
           </div>
-           ${isAP ? `<div class="game-head-right"><span class="game-badge ap">TOP 25</span></div>` : ''}
-           ${isP4 ? `<div class="game-head-right"><span class="game-badge p4">P4</span></div>` : ''}
+          <div class="game-head-right">
+           ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
+           ${isP4 ? `<span class="game-badge p4">P4</span>` : ''}
+           </div>
         </header>
 
           <div class="teams">
