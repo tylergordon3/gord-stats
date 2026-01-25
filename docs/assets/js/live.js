@@ -31,20 +31,17 @@ async function loadTeamLogos() {
   const teams = data.team;
   const names = data.names;
   const paths = data.path;
-  const abbs = data.short;
 
   for (const i in teams) {
     const team = teams[i];
     const path = paths?.[i];
     const aliases = names?.[i];
-    const short = abbs[i];
 
     if (!team || !path) continue;
     let full_path = LOGO_BASE + path;
     // primary team name
     console.log(full_path);
     map[normalize(team)] = full_path;
-    map[short] = full_path;
 
     // aliases / abbreviations
     if (Array.isArray(aliases)) {
