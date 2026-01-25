@@ -319,7 +319,7 @@ function renderGames(games) {
                   onerror="this.src='/assets/images/default.png'"
                 />
                 ${homeRank ? `(${homeRank})` : ''}
-                <span class="team-name">${homeAbb ? homeAbb : getTeamName(homeTeam)}}</span>
+                <span class="team-name">${homeAbb ? homeAbb : getTeamName(homeTeam)}</span>
                 <strong>${homeModel ? `#${homeModel}` : ''}</strong>
                 ${homeRecord ? `(${homeRecord})` : ''}
               </span>
