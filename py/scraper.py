@@ -483,7 +483,7 @@ def slow_scrape_times():
         with open(utils.get_path('data/times.json'), "w") as f:
             json.dump(json_ready, f, indent=2)
 
-def getNameFromCode(code, master):
+def getNameFromCode(code, master, ret_abbrev=False):
     s_exploded = master["names"].explode()
     boolean_mask_exploded = s_exploded == code
     # To get the row IDs where the value is present:
@@ -493,6 +493,8 @@ def getNameFromCode(code, master):
     if df_result.empty:
         return [None, None]
     else:
+        if ret_abbrev:
+            return [list(df_result["index"])[0], list(df_result["team"]), list(df_result["short"])[0]]
         return [list(df_result["index"])[0], list(df_result["team"])[0]]
 
 def game_status(soup, gender):
