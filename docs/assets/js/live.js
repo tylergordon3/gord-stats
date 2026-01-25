@@ -272,7 +272,7 @@ function renderGames(games) {
       html += `
         <article class="game-card" id="game-${id}">
           <header class="game-head">
-          <span class="status-pill ${stCls}">${stText} </strong></span>
+          <span class="status-pill ${stCls}">${stText} </span>
            ${isAP ? `<div class="game-head-center">TOP 25</div>` : ''}
           <div class="game-top-right">
             ${renderTopRight(g)}
