@@ -358,6 +358,10 @@
   background: #fff;
 }
 
+.top25 {
+  background: #a193ee;
+}
+
 /* Two rows, score aligned by fixed right column */
 .teams {
   display: grid;
