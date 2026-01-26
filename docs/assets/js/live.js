@@ -300,7 +300,7 @@ function renderGames(games) {
                   onerror="this.src='/assets/images/default.png'"
                 />
                 ${awayRank ? `(${awayRank})` : ''}
-                <span class="team-name">${awayAbb ? awayAbb : getTeamName(awayTeam)}}</span>
+                <span class="team-name">${awayAbb ? awayAbb : getTeamName(awayTeam)}</span>
                 <strong>${awayModel ? `#${awayModel}` : ''}</strong>
                 ${awayRecord ? `(${awayRecord})` : ''}
               </span>
