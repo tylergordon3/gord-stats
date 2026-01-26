@@ -5,11 +5,20 @@ league: women
 ---
 
 <h1>NCAAW Live Scoreboard</h1>
+
 <div id="scoreboard" data-league="{{ page.league }}">
 
   <div class="meta-bar">
+    <button class="legend-btn" id="open-legend" aria-label="Open legend">
+      ℹ️ Legend
+    </button>
     <span id="poll-rate">Polling: —</span>
   </div>
+
   <div id="games"></div>
 
-  <script src="{{ '/assets/js/live.js' | relative_url }}"></script>
+</div>
+
+{% include modal.html %}
+
+<script src="{{ '/assets/js/live.js' | relative_url }}"></script>

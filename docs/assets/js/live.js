@@ -417,3 +417,21 @@ async function start() {
 }
 
 start();
+
+const legendOverlay = document.getElementById("legend-overlay");
+const openLegend = document.getElementById("open-legend");
+const closeLegend = document.getElementById("close-legend");
+
+openLegend?.addEventListener("click", () => {
+  legendOverlay.hidden = false;
+});
+
+closeLegend?.addEventListener("click", () => {
+  legendOverlay.hidden = true;
+});
+
+legendOverlay?.addEventListener("click", (e) => {
+  if (e.target === legendOverlay) {
+    legendOverlay.hidden = true;
+  }
+});
