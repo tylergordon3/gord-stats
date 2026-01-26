@@ -116,19 +116,8 @@ function applyMedalsToGames(games, medalByDate) {
 }
 
 function enrichGame(g) {
-  const homeRank = Number(g.home_rank);
-  const awayRank = Number(g.away_rank);
-  conf = ["Big Ten Women", "Big Ten", "Big 12", "Big 12 Women",
-     "Atlantic Coast", "Atlantic Coast Women", "Big East Women",
-     "Big East", "Southeastern Women", "Southeastern"]
-  
-  g.isAP =
-    (homeRank > 0 && homeRank <= 25) ||
-    (awayRank > 0 && awayRank <= 25);
-
-  g.isP5 =
-    conf.includes(g.home_conf) ||
-    conf.includes(g.away_conf);
+  g.isP5 = g.is_p5 === true;
+  g.isAP = g.is_ap === true;
 
   g.top3Count =
     (Number(g.home_model) <= 3 ? 1 : 0) +
