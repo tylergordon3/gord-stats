@@ -74,14 +74,14 @@ async function pollScores() {
   const res = await fetch(WORKER_URL);
   const data = await res.json();
 
-  let bottom3ByDate = {};
+  let medalByDate = {};
 
   if (LEAGUE === "men") {
-    bottom3ByDate = getBottom3ByDate(data.leagues.men);
-    renderGames(data.leagues.men, bottom3ByDate);
-  } else if (LEAGUE === "women") {
-    bottom3ByDate = getBottom3ByDate(data.leagues.women);
-    renderGames(data.leagues.women, bottom3ByDate);
+    medalByDate = getBottom3MedalsByDate(data.leagues.men);
+    renderGames(data.leagues.men, medalByDate);
+  } else {
+    medalByDate = getBottom3MedalsByDate(data.leagues.women);
+    renderGames(data.leagues.women, medalByDate);
   }
 
   if (data.meta?.poll_interval_sec) {
@@ -220,11 +220,11 @@ function getLowestRatings(games, n = 3) {
   return new Set(vals.slice(0, n));
 }
 
-function getBottom3ByDate(games) {
+function getBottom3MedalsByDate(games) {
   const byDate = {};
   const result = {};
 
-  // --- group ratings by date ---
+  // group by date
   for (const id in games) {
     const g = games[id];
     const date = g.date;
@@ -237,20 +237,25 @@ function getBottom3ByDate(games) {
     byDate[date].push({ id, rating });
   }
 
-  // --- find bottom 3 per date ---
+  // assign medals
   for (const date in byDate) {
     byDate[date].sort((a, b) => a.rating - b.rating);
 
-    result[date] = new Set(
-      byDate[date].slice(0, 3).map(x => x.id)
-    );
+    result[date] = new Map();
+
+    const medals = ["🥇", "🥈", "🥉"];
+
+    byDate[date]
+      .slice(0, 3)
+      .forEach((g, i) => {
+        result[date].set(g.id, medals[i]);
+      });
   }
 
-  return result; // { "2026-01-25": Set(gameIds) }
+  return result;
 }
 
-
-function renderGames(games, bottom3ByDate = {}) {
+function renderGames(games, medalByDate = {}) {
   const container = document.getElementById("games");
   if (!container) return;
 
@@ -322,7 +327,7 @@ function renderGames(games, bottom3ByDate = {}) {
       const { text: stText, cls: stCls } = statusLabel(g.status);
       const metaLines = formatMeta(g);
       
-      const rating = safe(g.rating, null);
+      const medal = medalByDate[date]?.get(id);
       const isBottom3 = bottom3ByDate[date]?.has(id);
       
       html += `
@@ -337,7 +342,7 @@ function renderGames(games, bottom3ByDate = {}) {
           <div class="game-head-right">
            ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
            ${isP4 ? `<span class="game-badge p4">P4</span>` : ''}
-           ${isBottom3 ? `<span class="game-badge star" title="Bottom 3 rating">⭐</span>` : ""}
+           ${isBottom3 ? `<span class="game-badge medal" title="Bottom 3 rating">${medal}</span>` : ""}
            </div>
         </header>
 
