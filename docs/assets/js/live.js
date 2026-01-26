@@ -282,6 +282,7 @@ function getBottom3MedalsByDate(games) {
 
 function renderGames(games, medalByDate = {}) {
   if (!games) return;
+  console.log("renderGames", Object.keys(games).length, "games");
 
   // enrich once
   Object.values(games).forEach(enrichGame);
