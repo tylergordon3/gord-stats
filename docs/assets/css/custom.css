@@ -788,8 +788,27 @@
 
 .game-badge.medal {
   padding: 0;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-1px);
+}
+
+.game-badge.medal.gold {
+  font-size: 20px;
+  filter: drop-shadow(0 0 5px rgba(250, 204, 21, 1));
+}
+
+.game-badge.medal.silver {
+  font-size: 18px;
+  filter: drop-shadow(0 0 4px rgba(209, 213, 219, 0.9));
+}
+
+.game-badge.medal.bronze {
+  font-size: 17px;
+  filter: drop-shadow(0 0 4px rgba(180, 83, 9, 0.85));
 }
 
 .status-pill {
