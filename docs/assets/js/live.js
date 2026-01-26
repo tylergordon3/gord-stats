@@ -13,7 +13,7 @@ let TEAM_LOGO_MAP = {};
 let TEAM_NAME_MAP = {};
 let TEAM_LOGO_READY = false;
 
-let currentSort = null;
+let currentFilter = null;
 let LAST_GAMES = null;
 let LAST_MEDALS = null;
 
@@ -282,26 +282,25 @@ function getBottom3MedalsByDate(games) {
 
 function renderGames(games, medalByDate = {}) {
   if (!games) return;
-  console.log("renderGames", Object.keys(games).length, "games");
 
   // enrich once
   Object.values(games).forEach(enrichGame);
 
-  const sortedIds = sortGameIds(games);
+  const filteredIds = filterGameIds(games);
 
   const container = document.getElementById("games");
   if (!container) return;
 
-  if (!sortedIds.length) {
-    container.innerHTML =
-      `<div class="scoreboard-empty">No games right now.</div>`;
+  if (!filteredIds.length) {
+  container.innerHTML =
+    `<div class="scoreboard-empty">No games match this filter.</div>`;
     return;
   }
 
   /// ---- group by date ----
   const byDate = {};
 
-  for (const id of sortedIds) {
+  for (const id of filteredIds) {
     const g = games[id];
     if (!g) continue;
 
@@ -310,7 +309,6 @@ function renderGames(games, medalByDate = {}) {
 
     byDate[dateKey].push({ id, g });
   }
-
 
   // ---- sort dates chronologically ----
   const dates = Object.keys(byDate).sort(
@@ -488,12 +486,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.querySelectorAll(".sort-chip").forEach(btn => {
   btn.addEventListener("click", () => {
-    const sort = btn.dataset.sort;
+    const filter = btn.dataset.sort;
 
-    currentSort = currentSort === sort ? null : sort;
+    // toggle on/off
+    currentFilter = currentFilter === filter ? null : filter;
 
     document.querySelectorAll(".sort-chip").forEach(b =>
-      b.classList.toggle("active", b.dataset.sort === currentSort)
+      b.classList.toggle("active", b.dataset.sort === currentFilter)
     );
 
     if (LAST_GAMES && LAST_MEDALS) {
@@ -502,29 +501,28 @@ document.querySelectorAll(".sort-chip").forEach(btn => {
   });
 });
 
-
-function sortGameIds(games) {
+function filterGameIds(games) {
   const ids = Object.keys(games || {});
 
-  if (!currentSort) return ids;
+  if (!currentFilter) return ids;
 
-  return ids.sort((a, b) => {
-    const A = games[a];
-    const B = games[b];
+  return ids.filter(id => {
+    const g = games[id];
 
-    switch (currentSort) {
+    switch (currentFilter) {
       case "ap25":
-        return (B.isAP === true) - (A.isAP === true);
+        return g.isAP === true;
 
       case "p4":
-        return (B.isP4 === true) - (A.isP4 === true);
+        return g.isP4 === true;
 
       case "top3":
-        return (B.top3Count || 0) - (A.top3Count || 0);
+        return (g.top3Count || 0) > 0;
 
       default:
-        return 0;
+        return true;
     }
   });
 }
+
 
