@@ -503,22 +503,28 @@ document.querySelectorAll(".sort-chip").forEach(btn => {
 });
 
 
-function sortGames(games) {
-  if (!currentSort) return games;
+function sortGameIds(games) {
+  const ids = Object.keys(games || {});
 
-  const copy = [...games];
+  if (!currentSort) return ids;
 
-  switch (currentSort) {
-    case "ap25":
-      return copy.sort((a, b) => b.isAP - a.isAP);
+  return ids.sort((a, b) => {
+    const A = games[a];
+    const B = games[b];
 
-    case "p4":
-      return copy.sort((a, b) => b.isP4 - a.isP4);
+    switch (currentSort) {
+      case "ap25":
+        return (B.isAP === true) - (A.isAP === true);
 
-    case "top3":
-      return copy.sort((a, b) => b.top3Count - a.top3Count);
+      case "p4":
+        return (B.isP4 === true) - (A.isP4 === true);
 
-    default:
-      return copy;
-  }
+      case "top3":
+        return (B.top3Count || 0) - (A.top3Count || 0);
+
+      default:
+        return 0;
+    }
+  });
 }
+
