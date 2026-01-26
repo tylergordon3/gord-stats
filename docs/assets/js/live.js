@@ -418,20 +418,35 @@ async function start() {
 
 start();
 
-const legendOverlay = document.getElementById("legend-overlay");
-const openLegend = document.getElementById("open-legend");
-const closeLegend = document.getElementById("close-legend");
+document.addEventListener("DOMContentLoaded", () => {
+  const legendOverlay = document.getElementById("legend-overlay");
+  const openLegend = document.getElementById("open-legend");
+  const closeLegend = document.getElementById("close-legend");
 
-openLegend?.addEventListener("click", () => {
-  legendOverlay.hidden = false;
-});
+  if (!legendOverlay || !openLegend || !closeLegend) return;
 
-closeLegend?.addEventListener("click", () => {
-  legendOverlay.hidden = true;
-});
+  openLegend.addEventListener("click", () => {
+    legendOverlay.hidden = false;
+    document.body.style.overflow = "hidden";
+  });
 
-legendOverlay?.addEventListener("click", (e) => {
-  if (e.target === legendOverlay) {
+  closeLegend.addEventListener("click", () => {
     legendOverlay.hidden = true;
-  }
+    document.body.style.overflow = "";
+  });
+
+  legendOverlay.addEventListener("click", (e) => {
+    if (e.target === legendOverlay) {
+      legendOverlay.hidden = true;
+      document.body.style.overflow = "";
+    }
+  });
+
+  // ESC key support (nice UX)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !legendOverlay.hidden) {
+      legendOverlay.hidden = true;
+      document.body.style.overflow = "";
+    }
+  });
 });
