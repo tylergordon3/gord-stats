@@ -783,7 +783,7 @@
 
 .game-badge.p4 {
   background: rgba(16, 185, 129, 0.12);
-  color: #b91010;
+  color: #10b981;
 }
 
 .game-badge.medal {
@@ -1078,4 +1078,47 @@
 .date-header {
   backdrop-filter: blur(4px);
   background: rgba(255, 255, 255, 0.92);
+}
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 16px;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+/* Chip base */
+.sort-chip {
+  border: none;
+  background: rgba(17, 24, 39, 0.06);
+  color: #111827;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  padding: 5px 10px;
+  border-radius: 999px;
+
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+/* Hover */
+.sort-chip:hover {
+  background: rgba(17, 24, 39, 0.12);
+}
+
+/* Active state */
+.sort-chip.active {
+  background: rgba(124, 58, 237, 0.15);
+  color: #7c3aed;
 }

@@ -5,13 +5,19 @@ league: women
 ---
 
 <h1>NCAAW Live Scoreboard</h1>
-
 <div id="scoreboard" data-league="{{ page.league }}">
 
   <div class="meta-bar">
     <button class="legend-btn" id="open-legend" aria-label="Open legend">
       ℹ️ Legend
     </button>
+    <div class="sort-bar">
+      <span class="sort-label">Sort:</span>
+
+      <button class="sort-chip" data-sort="ap25">AP 25</button>
+      <button class="sort-chip" data-sort="p4">P4</button>
+      <button class="sort-chip" data-sort="top3">Top 3</button>
+    </div>
     <span id="poll-rate">Polling: —</span>
   </div>
 

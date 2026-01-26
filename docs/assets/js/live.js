@@ -13,6 +13,10 @@ let TEAM_LOGO_MAP = {};
 let TEAM_NAME_MAP = {};
 let TEAM_LOGO_READY = false;
 
+let currentSort = null;
+let LAST_GAMES = null;
+let LAST_MEDALS = null;
+
 function normalize(s) {
   return String(s)
     .toLowerCase()
@@ -76,13 +80,15 @@ async function pollScores() {
 
   let medalByDate = {};
 
-  if (LEAGUE === "men") {
-    medalByDate = getBottom3MedalsByDate(data.leagues.men);
-    renderGames(data.leagues.men, medalByDate);
-  } else {
-    medalByDate = getBottom3MedalsByDate(data.leagues.women);
-    renderGames(data.leagues.women, medalByDate);
-  }
+  const games =
+  LEAGUE === "men" ? data.leagues.men : data.leagues.women;
+
+  medalByDate = getBottom3MedalsByDate(games);
+
+  LAST_GAMES = games;
+  LAST_MEDALS = medalByDate;
+
+  renderGames(games, medalByDate);
 
   if (data.meta?.poll_interval_sec) {
     const el = document.getElementById("poll-rate");
@@ -94,6 +100,25 @@ async function pollScores() {
           : `Polling: every ${sec}s`;
     }
   }
+}
+
+function enrichGame(g) {
+  const homeRank = Number(g.home_rank);
+  const awayRank = Number(g.away_rank);
+
+  g.isAP =
+    (homeRank > 0 && homeRank <= 25) ||
+    (awayRank > 0 && awayRank <= 25);
+
+  g.isP4 =
+    ["ACC", "B10", "B12", "SEC"].includes(g.home_conf) ||
+    ["ACC", "B10", "B12", "SEC"].includes(g.away_conf);
+
+  g.top3Count =
+    (Number(g.home_model) <= 3 ? 1 : 0) +
+    (Number(g.away_model) <= 3 ? 1 : 0);
+
+  return g;
 }
 
 function statusRank(g) {
@@ -255,12 +280,44 @@ function getBottom3MedalsByDate(games) {
   return result;
 }
 
+function sortGameIds(games) {
+  const ids = Object.keys(games);
+
+  if (!currentSort) return ids;
+
+  return ids.sort((a, b) => {
+    const A = games[a];
+    const B = games[b];
+
+    switch (currentSort) {
+      case "ap25":
+        return (B.isAP === true) - (A.isAP === true);
+
+      case "p4":
+        return (B.isP4 === true) - (A.isP4 === true);
+
+      case "top3":
+        return (B.top3Count || 0) - (A.top3Count || 0);
+
+      default:
+        return 0;
+    }
+  });
+}
+
+
 function renderGames(games, medalByDate = {}) {
+  if (!games) return;
+
+  // enrich once
+  Object.values(games).forEach(enrichGame);
+
+  const sortedIds = sortGameIds(games);
+
   const container = document.getElementById("games");
   if (!container) return;
 
-  const ids = Object.keys(games || {});
-  if (!ids.length) {
+  if (!sortedIds.length) {
     container.innerHTML =
       `<div class="scoreboard-empty">No games right now.</div>`;
     return;
@@ -450,3 +507,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+document.querySelectorAll(".sort-chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const sort = btn.dataset.sort;
+
+    currentSort = currentSort === sort ? null : sort;
+
+    document.querySelectorAll(".sort-chip").forEach(b =>
+      b.classList.toggle("active", b.dataset.sort === currentSort)
+    );
+
+    if (LAST_GAMES && LAST_MEDALS) {
+      renderGames(LAST_GAMES, LAST_MEDALS);
+    }
+  });
+});
+
+
+function sortGames(games) {
+  if (!currentSort) return games;
+
+  const copy = [...games];
+
+  switch (currentSort) {
+    case "ap25":
+      return copy.sort((a, b) => b.isAP - a.isAP);
+
+    case "p4":
+      return copy.sort((a, b) => b.isP4 - a.isP4);
+
+    case "top3":
+      return copy.sort((a, b) => b.top3Count - a.top3Count);
+
+    default:
+      return copy;
+  }
+}

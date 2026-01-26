@@ -1241,15 +1241,14 @@ def kenpom_historic():
 
 # Get Kenpom data for TODAY   
 def kenpom(date):
-    #kenpom_resp = requests.get(KENPOM, timeout=10).text
+    kenpom_resp = requests.get(KENPOM, timeout=10).text
     # torvik_pre_resp = requests.get(TORVIK_PRE, timeout=10).text
-    with open(utils.get_path('kenpom_12126.html'), 'r', encoding='utf-8') as f:
-            html = f.read()
-    kenpom_soup = BeautifulSoup(html, "html.parser")
+
+    kenpom_soup = BeautifulSoup(kenpom_resp, "html.parser")
     # torvik_soup = BeautifulSoup(torvik_pre_resp, 'html.parser')
 
     table = kenpom_soup.find("table")
-
+   
     # --- Extract headers considering multi-row and colspan ---
     header_rows = table.find_all("tr")[:2]  # first two rows usually contain headers
     header_matrix = []
