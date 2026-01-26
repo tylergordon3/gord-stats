@@ -328,8 +328,7 @@ function renderGames(games, medalByDate = {}) {
       const metaLines = formatMeta(g);
       
       const medal = medalByDate[date]?.get(id);
-      const isBottom3 = bottom3ByDate[date]?.has(id);
-      
+
       html += `
         <article class="game-card" id="game-${id}">
           <header class="game-head">
@@ -342,7 +341,7 @@ function renderGames(games, medalByDate = {}) {
           <div class="game-head-right">
            ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
            ${isP4 ? `<span class="game-badge p4">P4</span>` : ''}
-           ${isBottom3 ? `<span class="game-badge medal" title="Bottom 3 rating">${medal}</span>` : ""}
+           ${medal ? `<span class="game-badge medal" title="Bottom 3 rating">${medal}</span>` : ""}
            </div>
         </header>
 

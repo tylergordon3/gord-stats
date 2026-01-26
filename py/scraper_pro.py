@@ -400,7 +400,7 @@ if __name__ == "__main__":
 
         print(
             f"{league_key.upper()} snapshot — "
-            f"{len(payload['games'])} games @ {payload['generated']}"
+            f"{len(payload['leagues'][league_key])} games @ {payload['generated']}"
         )
 
         push(payload)
