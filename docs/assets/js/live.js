@@ -280,32 +280,6 @@ function getBottom3MedalsByDate(games) {
   return result;
 }
 
-function sortGameIds(games) {
-  const ids = Object.keys(games);
-
-  if (!currentSort) return ids;
-
-  return ids.sort((a, b) => {
-    const A = games[a];
-    const B = games[b];
-
-    switch (currentSort) {
-      case "ap25":
-        return (B.isAP === true) - (A.isAP === true);
-
-      case "p4":
-        return (B.isP4 === true) - (A.isP4 === true);
-
-      case "top3":
-        return (B.top3Count || 0) - (A.top3Count || 0);
-
-      default:
-        return 0;
-    }
-  });
-}
-
-
 function renderGames(games, medalByDate = {}) {
   if (!games) return;
 
@@ -323,16 +297,19 @@ function renderGames(games, medalByDate = {}) {
     return;
   }
 
-  // ---- group by date ----
+  /// ---- group by date ----
   const byDate = {};
 
-  for (const id of ids) {
+  for (const id of sortedIds) {
     const g = games[id];
-    const dateKey = g.date || "unknown";
+    if (!g) continue;
 
+    const dateKey = g.date || "unknown";
     if (!byDate[dateKey]) byDate[dateKey] = [];
+
     byDate[dateKey].push({ id, g });
   }
+
 
   // ---- sort dates chronologically ----
   const dates = Object.keys(byDate).sort(
@@ -369,8 +346,8 @@ function renderGames(games, medalByDate = {}) {
 
       const awayRank = safe(g.away_rank, null);
       const homeRank = safe(g.home_rank, null);
-      const isAP = safe(g.is_ap, null);
-      const isP4 = safe(g.is_p4, null);
+      const isAP = g.isAP;
+      const isP4 = g.isP4;
 
       const awayRecord = safe(g.away_record, null);
       const homeRecord = safe(g.home_record, null);
