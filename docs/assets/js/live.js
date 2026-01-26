@@ -70,10 +70,19 @@ function teamLogo(teamName) {
   );
 }
 
-
 async function pollScores() {
   const res = await fetch(WORKER_URL);
   const data = await res.json();
+
+  let lowestRatings = new Set();
+
+  if (LEAGUE === "men") {
+    lowestRatings = getLowestRatings(data.leagues.men, 3);
+    renderGames(data.leagues.men, lowestRatings);
+  } else if (LEAGUE === "women") {
+    lowestRatings = getLowestRatings(data.leagues.women, 3);
+    renderGames(data.leagues.women, lowestRatings);
+  }
 
   if (data.meta?.poll_interval_sec) {
     const el = document.getElementById("poll-rate");
@@ -84,11 +93,6 @@ async function pollScores() {
           ? `Polling: every ${Math.round(sec / 60)} min`
           : `Polling: every ${sec}s`;
     }
-  }
-  if (LEAGUE == "men") {
-    renderGames(data.leagues.men);
-  } else if (LEAGUE == "women") {
-    renderGames(data.leagues.women);
   }
 }
 
@@ -201,7 +205,22 @@ function renderTime(g) {
   return `<span class="game-time">—</span>`;
 }
 
-function renderGames(games) {
+function getLowestRatings(games, n = 3) {
+  const vals = [];
+
+  for (const id in games) {
+    const r = games[id]?.rating;
+    if (typeof r === "number" && !Number.isNaN(r)) {
+      vals.push(r);
+    }
+  }
+
+  vals.sort((a, b) => a - b);
+
+  return new Set(vals.slice(0, n));
+}
+
+function renderGames(games, lowestRatings = new Set()) {
   const container = document.getElementById("games");
   if (!container) return;
 
@@ -272,6 +291,9 @@ function renderGames(games) {
 
       const { text: stText, cls: stCls } = statusLabel(g.status);
       const metaLines = formatMeta(g);
+      
+      const rating = safe(g.rating, null);
+      const isBottom3 = rating !== null && lowestRatings.has(rating);
 
       html += `
         <article class="game-card" id="game-${id}">
@@ -285,6 +307,7 @@ function renderGames(games) {
           <div class="game-head-right">
            ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
            ${isP4 ? `<span class="game-badge p4">P4</span>` : ''}
+           ${isBottom3 ? `<span class="game-badge star" title="Bottom 3 rating">⭐</span>` : ""}
            </div>
         </header>
 

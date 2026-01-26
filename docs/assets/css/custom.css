@@ -781,6 +781,14 @@
   background: rgba(124, 58, 237, 0.12);
 }
 
+.game-badge.star {
+  background: transparent;
+  color: #facc15; /* gold */
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
 .status-pill {
   font-size: 12px;
   padding: 3px 8px;

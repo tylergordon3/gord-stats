@@ -164,6 +164,8 @@ def format_event(g, ranks, master):
     home_record = ranks[home_name]['Record'] if home_name else ''
     away_record = ranks[away_name]['Record'] if away_name else ''
     
+    rating = (float(home_model) + float(away_model)) / 2
+    
      # ranks
     home_ap = g.get("home_ranking")
     away_ap =  g.get("away_ranking")
@@ -205,6 +207,7 @@ def format_event(g, ranks, master):
         # status
         "status": g.get("status"),
 
+        "rating":rating,
         # teams
         "home_team": home_name,
         "away_team": away_name,
@@ -358,7 +361,6 @@ def get_current_live_dataset(league_key):
         "generated": datetime.utcnow().isoformat(),
         "games": games
     }
-
 
 # =========================
 # MAIN
