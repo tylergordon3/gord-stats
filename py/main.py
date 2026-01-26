@@ -30,9 +30,9 @@ if not os.path.exists(torvik_path):
     scraper.torvik(today)
     print(f"Scraped Torvik for: {today}")
 
-if not os.path.exists(kenpom_path):
-    scrape.kenpom_now()
-    print(f"Scraped Kenpom for: {today}")
+#if not os.path.exists(kenpom_path):
+    #scraper.kenpom(today)
+    #print(f"Scraped Kenpom for: {today}")
 
 if not os.path.exists(torvik_w_path):
     scraper.torvik_w(today)
@@ -90,10 +90,10 @@ if update_womens_all:
     for day in sorted(date_lst):
        predictions.predict_w(day)
 
-[today_df, main] = predictions.predict(date.today())
+#[today_df, main] = predictions.predict(date.today())
 [today_w_df, main_w] = predictions.predict_w(date.today())
 
-rc.main(main, 'M')
+#rc.main(main, 'M')
 rc.main(main_w, 'W')
 
 rh.render_home()
