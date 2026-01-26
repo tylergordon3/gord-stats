@@ -74,14 +74,14 @@ async function pollScores() {
   const res = await fetch(WORKER_URL);
   const data = await res.json();
 
-  let lowestRatings = new Set();
+  let bottom3ByDate = {};
 
   if (LEAGUE === "men") {
-    lowestRatings = getLowestRatings(data.leagues.men, 3);
-    renderGames(data.leagues.men, lowestRatings);
+    bottom3ByDate = getBottom3ByDate(data.leagues.men);
+    renderGames(data.leagues.men, bottom3ByDate);
   } else if (LEAGUE === "women") {
-    lowestRatings = getLowestRatings(data.leagues.women, 3);
-    renderGames(data.leagues.women, lowestRatings);
+    bottom3ByDate = getBottom3ByDate(data.leagues.women);
+    renderGames(data.leagues.women, bottom3ByDate);
   }
 
   if (data.meta?.poll_interval_sec) {
@@ -220,7 +220,37 @@ function getLowestRatings(games, n = 3) {
   return new Set(vals.slice(0, n));
 }
 
-function renderGames(games, lowestRatings = new Set()) {
+function getBottom3ByDate(games) {
+  const byDate = {};
+  const result = {};
+
+  // --- group ratings by date ---
+  for (const id in games) {
+    const g = games[id];
+    const date = g.date;
+    const rating = g.rating;
+
+    if (!date) continue;
+    if (typeof rating !== "number" || Number.isNaN(rating)) continue;
+
+    if (!byDate[date]) byDate[date] = [];
+    byDate[date].push({ id, rating });
+  }
+
+  // --- find bottom 3 per date ---
+  for (const date in byDate) {
+    byDate[date].sort((a, b) => a.rating - b.rating);
+
+    result[date] = new Set(
+      byDate[date].slice(0, 3).map(x => x.id)
+    );
+  }
+
+  return result; // { "2026-01-25": Set(gameIds) }
+}
+
+
+function renderGames(games, bottom3ByDate = {}) {
   const container = document.getElementById("games");
   if (!container) return;
 
@@ -293,8 +323,8 @@ function renderGames(games, lowestRatings = new Set()) {
       const metaLines = formatMeta(g);
       
       const rating = safe(g.rating, null);
-      const isBottom3 = rating !== null && lowestRatings.has(rating);
-
+      const isBottom3 = bottom3ByDate[date]?.has(id);
+      
       html += `
         <article class="game-card" id="game-${id}">
           <header class="game-head">

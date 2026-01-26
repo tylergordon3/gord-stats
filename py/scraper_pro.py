@@ -54,6 +54,12 @@ def get_rank_dict_for_league(league):
     else:
         raise ValueError(f"Unknown league: {league}")
 
+def safe_float(x):
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return None
+    
 # =========================
 # CONFERENCE DISCOVERY
 # =========================
@@ -164,8 +170,17 @@ def format_event(g, ranks, master):
     home_record = ranks[home_name]['Record'] if home_name else ''
     away_record = ranks[away_name]['Record'] if away_name else ''
     
-    rating = (float(home_model) + float(away_model)) / 2
-    
+    def safe_float(x):
+        try:
+            return float(x)
+        except (TypeError, ValueError):
+            return None
+
+    hm = safe_float(home_model)
+    am = safe_float(away_model)
+
+    rating = (hm + am) / 2 if hm is not None and am is not None else None
+        
      # ranks
     home_ap = g.get("home_ranking")
     away_ap =  g.get("away_ranking")
