@@ -1,16 +1,18 @@
 import os, json
 import model, scraper, utils, predictions, constants, kenpom_model
+import generate_home
 import pandas as pd
 import scraper
 import scrape
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 import numpy as np
 from render import render_home as rh
 from render import render_conferences as rc
+import re
+from pathlib import Path
 
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
-today_kp_date = (date.fromisoformat(today) - timedelta(days=1)).strftime("%Y-%m-%d")
 
 # Men's Data Setup
 torvik_path = utils.get_path(f"data/men/torvik/torvik{today}.json")
@@ -29,7 +31,7 @@ if not os.path.exists(torvik_path):
     print(f"Scraped Torvik for: {today}")
 
 if not os.path.exists(kenpom_path):
-    scrape.kenpom_for_date(today_kp_date)
+    scrape.kenpom_now()
     print(f"Scraped Kenpom for: {today}")
 
 if not os.path.exists(torvik_w_path):

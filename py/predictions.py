@@ -458,7 +458,6 @@ def full_prediction(date) -> pd.DataFrame:
             "AdjT",
         ]
     )
-    
     scaler = preprocessing.StandardScaler()
 
     x_predict_torvik = scaler.fit_transform(torvik_today)
