@@ -189,7 +189,7 @@ def format_event(g, ranks, master):
     # conferences
     home_conf = g.get("home_conference")
     away_conf = g.get("away_conference")
-    is_p4 = utils.check_p4(home_conf, away_conf)
+    is_p5 = utils.check_p5(home_conf, away_conf)
     
     # ---- score / progress ----
     box = g.get("box_score") or {}
@@ -230,7 +230,7 @@ def format_event(g, ranks, master):
         "home_abb": home_abb,
         "away_abb": away_abb,   
         
-        "is_p4":is_p4,
+        "is_p5":is_p5,
         "home_record":home_record,
         "away_record":away_record,
         

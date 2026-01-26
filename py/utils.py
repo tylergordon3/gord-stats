@@ -125,10 +125,11 @@ def get_recent_html_w(input_date):
     html = min(html_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
     return html
 
-def check_p4(home, away):
-    p4 = ["Big Ten", "Big 12", "Atlantic Coast", "Southeastern", "Atlantic Coast Women",
-          "Big Ten Women", "Big 12 Women", "Southeastern Women"]
-    if ((home in p4) & (away in p4)):
+def check_p5(home, away):
+    p5 = ["Big Ten Women", "Big Ten", "Big 12", "Big 12 Women",
+     "Atlantic Coast", "Atlantic Coast Women", "Big East Women",
+     "Big East", "Southeastern Women", "Southeastern"]
+    if ((home in p5) & (away in p5)):
         return True
     else:
         return False

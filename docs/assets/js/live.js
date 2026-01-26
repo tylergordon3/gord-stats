@@ -84,6 +84,7 @@ async function pollScores() {
   LEAGUE === "men" ? data.leagues.men : data.leagues.women;
 
   medalByDate = getBottom3MedalsByDate(games);
+  applyMedalsToGames(games, medalByDate);
 
   LAST_GAMES = games;
   LAST_MEDALS = medalByDate;
@@ -102,17 +103,32 @@ async function pollScores() {
   }
 }
 
+function applyMedalsToGames(games, medalByDate) {
+  for (const date in medalByDate) {
+    const medalMap = medalByDate[date];
+
+    for (const [id] of medalMap.entries()) {
+      if (games[id]) {
+        games[id].hasMedal = true;
+      }
+    }
+  }
+}
+
 function enrichGame(g) {
   const homeRank = Number(g.home_rank);
   const awayRank = Number(g.away_rank);
-
+  conf = ["Big Ten Women", "Big Ten", "Big 12", "Big 12 Women",
+     "Atlantic Coast", "Atlantic Coast Women", "Big East Women",
+     "Big East", "Southeastern Women", "Southeastern"]
+  
   g.isAP =
     (homeRank > 0 && homeRank <= 25) ||
     (awayRank > 0 && awayRank <= 25);
 
-  g.isP4 =
-    ["ACC", "B10", "B12", "SEC"].includes(g.home_conf) ||
-    ["ACC", "B10", "B12", "SEC"].includes(g.away_conf);
+  g.isP5 =
+    conf.includes(g.home_conf) ||
+    conf.includes(g.away_conf);
 
   g.top3Count =
     (Number(g.home_model) <= 3 ? 1 : 0) +
@@ -280,8 +296,38 @@ function getBottom3MedalsByDate(games) {
   return result;
 }
 
+function filterGameIds(games) {
+  const ids = Object.keys(games || {});
+
+  if (!currentFilter) return ids;
+
+  return ids.filter(id => {
+    const g = games[id];
+
+    switch (currentFilter) {
+      case "ap25":
+        return g.isAP === true;
+
+      case "p5":
+        return g.isP5 === true;
+
+      case "top3":
+        return g.hasMedal === true;
+
+      default:
+        return true;
+    }
+  });
+}
+
 function renderGames(games, medalByDate = {}) {
   if (!games) return;
+  console.log(
+    "renderGames",
+    Object.keys(games || {}).length,
+    "filter:",
+    currentFilter
+  );
 
   // enrich once
   Object.values(games).forEach(enrichGame);
@@ -346,7 +392,7 @@ function renderGames(games, medalByDate = {}) {
       const awayRank = safe(g.away_rank, null);
       const homeRank = safe(g.home_rank, null);
       const isAP = g.isAP;
-      const isP4 = g.isP4;
+      const isP5 = g.isP5;
 
       const awayRecord = safe(g.away_record, null);
       const homeRecord = safe(g.home_record, null);
@@ -379,7 +425,7 @@ function renderGames(games, medalByDate = {}) {
           </div>
           <div class="game-head-right">
            ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
-           ${isP4 ? `<span class="game-badge p4">P4</span>` : ''}
+           ${isP5 ? `<span class="game-badge p5">P5</span>` : ''}
            ${medal ? `<span class="game-badge medal  ${medalClass}" title="Bottom 3 rating">${medal}</span>` : ""}
            </div>
         </header>
@@ -500,29 +546,4 @@ document.querySelectorAll(".sort-chip").forEach(btn => {
     }
   });
 });
-
-function filterGameIds(games) {
-  const ids = Object.keys(games || {});
-
-  if (!currentFilter) return ids;
-
-  return ids.filter(id => {
-    const g = games[id];
-
-    switch (currentFilter) {
-      case "ap25":
-        return g.isAP === true;
-
-      case "p4":
-        return g.isP4 === true;
-
-      case "top3":
-        return (g.top3Count || 0) > 0;
-
-      default:
-        return true;
-    }
-  });
-}
-
 
