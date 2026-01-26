@@ -90,15 +90,18 @@ def load_old_ranks_for_date(date):
     }
 
 def parse(data, prev_ranks):
-    headers = list(data[0].keys())
-    headers.append("PrevRk")
+    # Base headers from API
+    base_headers = list(data[0].keys())
 
+    headers = base_headers + ["PrevRk"]
     rows = []
+
     for row in data:
-        team_key = norm_team(row["TeamName"])
+        team_key = norm_team(row.get("TeamName", ""))
         prev_rank = prev_ranks.get(team_key)
 
-        vals = list(row.values())
+        # 🔑 build row by header order
+        vals = [row.get(h) for h in base_headers]
         vals.append(prev_rank)
 
         rows.append(vals)
@@ -146,3 +149,5 @@ def kenpom_historic():
         print(d.isoformat())  # YYYY-MM-DD
         kenpom_for_date(d.isoformat())
         d += timedelta(days=1)
+        
+kenpom_historic()
