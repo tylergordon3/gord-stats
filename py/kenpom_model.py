@@ -10,7 +10,6 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-
 def trainModelsAndSave(df):
     start = datetime.now()
     [cbb, ind] = chiSquared(df)
@@ -18,7 +17,6 @@ def trainModelsAndSave(df):
     print(f"Kenpom data set split took: {(datetime.now() - start).total_seconds()}")
     # [svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
     runModels(X_train, X_test, y_train, y_test)
-
 
 def splitData(cbb, ind):
     cbb = cbb.drop(columns=ind)
