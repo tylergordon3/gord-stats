@@ -40,10 +40,9 @@ def kenpom_by_year(year):
     merge2 = pd.merge(merge1, dist, how='outer')
     merge3 = pd.merge(merge2, height, how='outer')
     combo = pd.merge(merge3, misc, how='outer')
-    path = utils.get_path(f"model_data/kenpom/kenpom_api/{year}.json")
+    path = utils.get_path(f"model_data/kenpom_api/{year}.json")
     utils.save_json_data(combo.to_json(), path)
     return combo
-
 
 def update_all(start=2010, end=2026):
     all = pd.DataFrame()
@@ -53,5 +52,5 @@ def update_all(start=2010, end=2026):
             all = pd.concat([all, df])
             pbar.update(1)
     all = all.reset_index(drop=True)
-    path = utils.get_path(f"model_data/kenpom/kenpom_api/all.json")
+    path = utils.get_path(f"model_data/kenpom_api/all.json")
     utils.save_json_data(all.to_json(), path)
