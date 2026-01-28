@@ -83,49 +83,50 @@ def split_data(input_df, features):
     X_test = scaler.fit_transform(X_test)
     return [X_train, X_test, y_train, y_test]
 
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+
+def automate_refinement(X, y, feature_names, threshold=4.0):
+    if isinstance(X, np.ndarray):
+        X = pd.DataFrame(X, columns=feature_names)
+    
+    current_features = list(X.columns)
+    
+    while True:
+        print(f"\nEvaluating model with {len(current_features)} features...")
+        X_train_curr = X[current_features]
+        
+        # 1. Automate Hyperparameter Tuning
+        param_grid = {'C': np.logspace(-3, 3, 7), 'penalty': ['l1', 'l2'], 'solver': ['liblinear']}
+        grid = GridSearchCV(LogisticRegression(max_iter=2000), param_grid, cv=5, scoring='roc_auc')
+        grid.fit(X_train_curr, y)
+        
+        best_model = grid.best_estimator_
+        coeffs = pd.Series(best_model.coef_[0], index=current_features)
+        
+        # 2. Identify the most "aggressive" feature
+        max_coef = coeffs.abs().max()
+        top_feature = coeffs.abs().idxmax()
+        
+        print(f"Top Feature: {top_feature} | Absolute Coef: {max_coef:.4f}")
+        
+        # 3. Check against threshold (e.g., 4.0 in log-odds is massive)
+        if max_coef > threshold:
+            print(f"DROPPING '{top_feature}': Likely data leakage or causing separation.")
+            current_features.remove(top_feature)
+        else:
+            print("Model is stable. No features exceed the leakage threshold.")
+            return best_model, current_features
+
 def main():
     start = datetime.now()
     df = load_data()
     selected_features = feature_selection(df)
-    selected_features = selected_features[1:]
-    # Ensure features match data
     [X_train, X_test, y_train, y_test] = split_data(df, selected_features)
+    best_clf, final_feature_list = automate_refinement(X_train, y_train, selected_features, threshold=4.0)
     
-    # 1. GRID SEARCH (Find the best hyperparameters)
-    log_reg = LogisticRegression(max_iter=1000)
-    param_grid = {
-        'C': np.logspace(-4, 4, 10),
-        'penalty': ['l1', 'l2'],
-        'solver': ['liblinear']
-    }
-    
-    grid_search = GridSearchCV(log_reg, param_grid, cv=5, scoring='roc_auc', n_jobs=-1)
-    grid_search.fit(X_train, y_train)
-    
-    print(f"Best Parameters: {grid_search.best_params_}")
-    best_clf = grid_search.best_estimator_ # Use this model moving forward
-    sk_probs = best_clf.predict_proba(X_test)[:, 1]
-
-    # 2. STATSMODELS (Statistical Insight)
-    X_train_sm = sm.add_constant(X_train)
-    X_test_sm = sm.add_constant(X_test)
-    
-    # To match your Grid Search 'l1' and C=0.359
-    # alpha in statsmodels is roughly 1 / (N * C)
-    # Let's use alpha=1.0 for simplicity as it produced a stable result
-    logit_res = sm.Logit(y_train, X_train_sm).fit_regularized(
-        method='l1', 
-        alpha=1.0, 
-        L1_wt=1.0  # Changed to 1.0 to match the 'l1' penalty found by Grid Search
-    )
-    print(logit_res.summary())
-    print("\n--- Statsmodels Coefficients ---")
-    print(logit_res.params) # Manual print since .summary() is unavailable
-    
-    sm_probs = logit_res.predict(X_test_sm)
-    brier = brier_score_loss(y_test, sm_probs)
-    print(f"Brier Score: {brier:.4f}")
-    print(f"Time elapsed: {datetime.now() - start}")
 
 if __name__ == "__main__":
     main()
