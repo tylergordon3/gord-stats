@@ -1,24 +1,18 @@
 import json
 import warnings
 import utils
-from io import StringIO
 import pandas as pd
+import numpy as np
+from io import StringIO
 from datetime import datetime
-from sklearn.metrics import accuracy_score, roc_curve
+
 from sklearn import tree, preprocessing, svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report, roc_auc_score, brier_score_loss
 from sklearn.feature_selection import SelectFromModel
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-import statsmodels.api as sm
-from sklearn.calibration import calibration_curve
-from sklearn.metrics import RocCurveDisplay, roc_auc_score
-import matplotlib.pyplot as plt
-import numpy as np
-from sklearn.metrics import brier_score_loss
 
 warnings.filterwarnings("ignore")
 
@@ -48,45 +42,31 @@ def load_data():
 def feature_selection(df):
     X = df.drop('Tourney', axis=1)
     y = df["Tourney"]
-
-    # 1. Scaling is vital for L1 feature selection
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    # 2. Use Logistic Regression with L1 penalty
-    # Solver 'liblinear' or 'saga' is required for L1
-    # C controls sparsity: smaller C = fewer features selected
     selector = SelectFromModel(
         estimator=LogisticRegression(penalty='l1', solver='liblinear', C=0.1),
         threshold=1e-5
     )
 
-    X_new = selector.fit_transform(X_scaled, y)
+    selector.fit(X_scaled, y)
 
-    # 3. See which features survived
-    selected_features = X.columns[selector.get_support()]
-    #print(f"Kept {len(selected_features)} (out of {len(X.columns)}) features: {list(selected_features)}")
-
-    return selected_features
+    return X.columns[selector.get_support()]
 
 def split_data(input_df, features):
-    label = input_df['Tourney']
-    df = input_df[features]
+    y = input_df['Tourney'].values
+    X = input_df[features].values
 
-    X = df.values
-    y = label.values
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.25, stratify=y, random_state=13
     )
-    scaler = preprocessing.StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.fit_transform(X_test)
-    return [X_train, X_test, y_train, y_test]
 
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import GridSearchCV
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    return [X_train, X_test, y_train, y_test]
 
 def automate_refinement(X, y, feature_names, threshold=4.0):
     if isinstance(X, np.ndarray):
@@ -98,21 +78,16 @@ def automate_refinement(X, y, feature_names, threshold=4.0):
         print(f"\nEvaluating model with {len(current_features)} features...")
         X_train_curr = X[current_features]
         
-        # 1. Automate Hyperparameter Tuning
-        param_grid = {'C': np.logspace(-3, 3, 7), 'penalty': ['l1', 'l2'], 'solver': ['liblinear']}
+        param_grid = {'C': np.logspace(-3, 2, 6), 'penalty': ['l1', 'l2'], 'solver': ['liblinear']}
         grid = GridSearchCV(LogisticRegression(max_iter=2000), param_grid, cv=5, scoring='roc_auc')
         grid.fit(X_train_curr, y)
         
         best_model = grid.best_estimator_
         coeffs = pd.Series(best_model.coef_[0], index=current_features)
-        
-        # 2. Identify the most "aggressive" feature
+
         max_coef = coeffs.abs().max()
         top_feature = coeffs.abs().idxmax()
-        
-        print(f"Top Feature: {top_feature} | Absolute Coef: {max_coef:.4f}")
-        
-        # 3. Check against threshold (e.g., 4.0 in log-odds is massive)
+    
         if max_coef > threshold:
             print(f"DROPPING '{top_feature}': Likely data leakage or causing separation.")
             current_features.remove(top_feature)
@@ -125,8 +100,30 @@ def main():
     df = load_data()
     selected_features = feature_selection(df)
     [X_train, X_test, y_train, y_test] = split_data(df, selected_features)
-    best_clf, final_feature_list = automate_refinement(X_train, y_train, selected_features, threshold=4.0)
+    best_clf, final_features = automate_refinement(X_train, y_train, selected_features, threshold=4.0)
     
+    X_test_df = pd.DataFrame(X_test, columns=selected_features)
+    X_test_final = X_test_df[final_features]
+    
+    # 4. Final Evaluation
+    y_pred = best_clf.predict(X_test_final)
+    y_probs = best_clf.predict_proba(X_test_final)[:, 1]
+    
+    print("\n" + "="*30)
+    print("FINAL MODEL PERFORMANCE")
+    print("="*30)
+    print(f"Final Features: {final_features}")
+    print(classification_report(y_test, y_pred))
+    print(f"ROC-AUC Score: {roc_auc_score(y_test, y_probs):.4f}")
+    print(f"Brier Score:   {brier_score_loss(y_test, y_probs):.4f}")
+    
+    # 5. Output Odds Ratios for Interpretation
+    coeffs = pd.Series(best_clf.coef_[0], index=final_features)
+    odds_ratios = np.exp(coeffs).sort_values(ascending=False)
+    print("\nTop Odds Ratios (Impact per 1-SD increase):")
+    print(odds_ratios.head(5))
+    
+    print(f"\nExecution Time: {datetime.now() - start}")
 
 if __name__ == "__main__":
     main()
