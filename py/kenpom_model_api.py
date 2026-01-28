@@ -4,7 +4,7 @@ import utils
 from io import StringIO
 import pandas as pd
 from datetime import datetime
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, roc_curve
 from sklearn import tree, preprocessing, svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -17,8 +17,8 @@ import statsmodels.api as sm
 from sklearn.calibration import calibration_curve
 from sklearn.metrics import RocCurveDisplay, roc_auc_score
 import matplotlib.pyplot as plt
-import os
-import webbrowser
+import numpy as np
+from sklearn.metrics import brier_score_loss
 
 warnings.filterwarnings("ignore")
 
@@ -86,57 +86,46 @@ def split_data(input_df, features):
 def main():
     start = datetime.now()
     df = load_data()
-
     selected_features = feature_selection(df)
-    
     selected_features = selected_features[1:]
+    # Ensure features match data
     [X_train, X_test, y_train, y_test] = split_data(df, selected_features)
-    clf = LogisticRegression(penalty='l2', C=1.0, solver='liblinear')
-    clf.fit(X_train, y_train)
-    # ... inside your main() ...
+    
+    # 1. GRID SEARCH (Find the best hyperparameters)
+    log_reg = LogisticRegression(max_iter=1000)
+    param_grid = {
+        'C': np.logspace(-4, 4, 10),
+        'penalty': ['l1', 'l2'],
+        'solver': ['liblinear']
+    }
+    
+    grid_search = GridSearchCV(log_reg, param_grid, cv=5, scoring='roc_auc', n_jobs=-1)
+    grid_search.fit(X_train, y_train)
+    
+    print(f"Best Parameters: {grid_search.best_params_}")
+    best_clf = grid_search.best_estimator_ # Use this model moving forward
+    sk_probs = best_clf.predict_proba(X_test)[:, 1]
 
-    # 1. PREPARE STATSMODELS DATA
+    # 2. STATSMODELS (Statistical Insight)
     X_train_sm = sm.add_constant(X_train)
     X_test_sm = sm.add_constant(X_test)
-
-    # 2. FIT STATSMODELS LOGIT (Regularized for your quasi-separation)
-    logit_model = sm.Logit(y_train, X_train_sm).fit_regularized(method='l1', alpha=1.0, L1_wt=0.0)
-    print(logit_model.summary())
-    sm_probs = logit_model.predict(X_test_sm)
-    feature_names = ['const'] + list(selected_features)
     
-    # 3. COMBINED CALIBRATION PLOT
-    plt.figure(figsize=(10, 7))
-    # Sklearn Curve
-    sk_prob_true, sk_prob_pred = calibration_curve(y_test, sm_probs, n_bins=10)
-    plt.plot(sk_prob_pred, sk_prob_true, marker='o', label='Sklearn (L2)')
-    # Statsmodels Curve
-    sm_prob_true, sm_prob_pred = calibration_curve(y_test, sm_probs, n_bins=10)
-    plt.plot(sm_prob_pred, sm_prob_true, marker='s', label='Statsmodels (L1/L2)')
-
-    plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Perfectly Calibrated')
-    plt.title('Calibration Curve: Sklearn vs Statsmodels')
-    plt.legend()
-    plt.savefig('calibration_comparison.png')
-    plt.close()
-
-    # 4. COMBINED ROC PLOT
-    plt.figure(figsize=(10, 7))
-    # Use sklearn display for the first one
-    ax = plt.gca()
-    RocCurveDisplay.from_estimator(clf, X_test, y_test, ax=ax, name='Sklearn')
-
-    # Add Statsmodels manually
-    from sklearn.metrics import roc_curve
-    fpr, tpr, _ = roc_curve(y_test, sm_probs)
-    auc_sm = roc_auc_score(y_test, sm_probs)
-    plt.plot(fpr, tpr, label=f'Statsmodels (AUC = {auc_sm:.3f})')
-
-    plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
-    plt.title('ROC Curve Comparison')
-    plt.legend()
-    plt.savefig('roc_comparison.png')
-    plt.close()
+    # To match your Grid Search 'l1' and C=0.359
+    # alpha in statsmodels is roughly 1 / (N * C)
+    # Let's use alpha=1.0 for simplicity as it produced a stable result
+    logit_res = sm.Logit(y_train, X_train_sm).fit_regularized(
+        method='l1', 
+        alpha=1.0, 
+        L1_wt=1.0  # Changed to 1.0 to match the 'l1' penalty found by Grid Search
+    )
+    print(logit_res.summary())
+    print("\n--- Statsmodels Coefficients ---")
+    print(logit_res.params) # Manual print since .summary() is unavailable
+    
+    sm_probs = logit_res.predict(X_test_sm)
+    brier = brier_score_loss(y_test, sm_probs)
+    print(f"Brier Score: {brier:.4f}")
+    print(f"Time elapsed: {datetime.now() - start}")
 
 if __name__ == "__main__":
     main()
