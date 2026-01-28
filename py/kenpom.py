@@ -20,7 +20,7 @@ def kenpom_now():
     ratings = pd.DataFrame(kenpom.get_ratings(2026))
     ff = pd.DataFrame(kenpom.get_four_factors(2026))
     dist = pd.DataFrame(kenpom.get_point_distribution(2026))
-    height = pd.DataFrame(kenpom.get_point_distribution(2026))
+    height = pd.DataFrame(kenpom.get_height(2026))
     misc = pd.DataFrame(kenpom.get_misc_stats(2026))
 
     merge1 = pd.merge(ratings, ff, how='outer')
@@ -34,7 +34,7 @@ def kenpom_by_year(year):
     ratings = pd.DataFrame(kenpom.get_ratings(year=year))
     ff = pd.DataFrame(kenpom.get_four_factors(year=year))
     dist = pd.DataFrame(kenpom.get_point_distribution(year=year))
-    height = pd.DataFrame(kenpom.get_point_distribution(year=year))
+    height = pd.DataFrame(kenpom.get_height(year=year))
     misc = pd.DataFrame(kenpom.get_misc_stats(year=year))
 
     merge1 = pd.merge(ratings, ff, how='outer')
@@ -58,3 +58,5 @@ def update_all(start=2010, end=2026):
     path = utils.get_path(f"model_data/kenpom_api/all.json")
     utils.save_json_data(all.to_json(), path)
     return arr
+
+kenpom_now()
