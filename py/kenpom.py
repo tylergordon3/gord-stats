@@ -9,9 +9,7 @@ import utils
 from dotenv import load_dotenv
 from datetime import datetime
 import pytz
-import json
 from tqdm import tqdm
-from io import StringIO
 
 load_dotenv() 
 kenpom = kenpom_wrapper.KenpomData()
@@ -60,25 +58,3 @@ def update_all(start=2010, end=2026):
     path = utils.get_path(f"model_data/kenpom_api/all.json")
     utils.save_json_data(all.to_json(), path)
     return arr
-
-with open(utils.get_path(f"model_data/kenpom_api/all.json"), 'r') as f:
-    data = json.load(f)
-
-df = pd.read_json(StringIO(data))
-
-objs = []
-vals = []
-ranks = []
-exceptions = ['Season', 'Seed']
-for col in df.columns:
-    if col in exceptions:
-        objs.append(col)
-    elif df[col].dtype == float or df[col].dtype == bool :
-        vals.append(col)
-    elif df[col].dtype == int:
-        ranks.append(col)
-    else:
-        objs.append(col)
-to_drop = objs + ranks
-filtered = df.drop(columns=to_drop)
-print(filtered.columns)

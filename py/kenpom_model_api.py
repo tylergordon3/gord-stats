@@ -1,16 +1,76 @@
+import json
+import warnings
 import utils
+from io import StringIO
 import pandas as pd
 from datetime import datetime
-from scipy.stats import chi2_contingency
+
 from sklearn import tree, preprocessing, svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report
-import warnings
+
+from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
 
 warnings.filterwarnings("ignore")
 
+def filter_api_data(df):
+    objs = []
+    vals = []
+    ranks = []
+    exceptions = ['Season', 'Seed']
+    for col in df.columns:
+        if col in exceptions:
+            objs.append(col)
+        elif df[col].dtype == float or df[col].dtype == bool :
+            vals.append(col)
+        elif df[col].dtype == int:
+            ranks.append(col)
+        else:
+            objs.append(col)
+    to_drop = objs + ranks
+    return df.drop(columns=to_drop)
 
+def load_data():
+    with open(utils.get_path(f"model_data/kenpom_api/all.json"), 'r') as f:
+        data = json.load(f)
+    filtered = filter_api_data(pd.read_json(StringIO(data)))
+    return filtered
+
+def feature_selection(df):
+    X = df.drop('Tourney', axis=1)
+    y = df["Tourney"]
+    
+    # 1. Scaling is vital for L1 feature selection
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # 2. Use Logistic Regression with L1 penalty
+    # Solver 'liblinear' or 'saga' is required for L1
+    # C controls sparsity: smaller C = fewer features selected
+    selector = SelectFromModel(
+        estimator=LogisticRegression(penalty='l1', solver='liblinear', C=0.1),
+        threshold=1e-5
+    )
+
+    X_new = selector.fit_transform(X_scaled, y)
+
+    # 3. See which features survived
+    selected_features = X.columns[selector.get_support()]
+    print(f"Kept {len(selected_features)} (out of {len(X.columns)}) features: {list(selected_features)}")
+    return selected_features
+
+def main():
+    start = datetime.now()
+    # Get DF with all of our data
+    input_df = load_data()
+    selected_features = feature_selection(input_df)
+
+
+main()
+'''
 def trainModelsAndSave(df):
     start = datetime.now()
     [cbb, ind] = chiSquared(df)
@@ -18,7 +78,6 @@ def trainModelsAndSave(df):
     print(f"Kenpom data set split took: {(datetime.now() - start).total_seconds()}")
     # [svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
     runModels(X_train, X_test, y_train, y_test)
-
 
 def splitData(cbb, ind):
     cbb = cbb.drop(columns=ind)
@@ -34,41 +93,6 @@ def splitData(cbb, ind):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.fit_transform(X_test)
     return [X_train, X_test, y_train, y_test]
-
-
-def chiSquared(df):
-    cbb = df.drop(
-        columns=[
-            "Rk",
-            "Team",
-            "Seed",
-            "Conf",
-            "Year",
-            "W-L",
-            "Luck_Rk",
-            "ORtg_Rk",
-            "DRtg_Rk",
-            "SOS_NetRtg_Rk",
-            "SOS_ORtg_Rk",
-            "SOS_DRtg_Rk",
-            "NCSOS_NetRtg_Rk",
-            "AdjT_Rk",
-        ]
-    )
-    cbb_features = cbb.iloc[:, :-1]
-
-    ind = []
-    dep = []
-    pval = []
-    for col in cbb_features:
-        csq = chi2_contingency(pd.crosstab(cbb[col], cbb["Tourney"]))
-        pval.append(csq[1])
-        if csq[1] > 0.05:
-            ind.append(col)
-        else:
-            dep.append(col)
-    return [cbb, ind]
-
 
 def runModels(X_train, X_test, y_train, y_test):
     start = datetime.now()
@@ -95,7 +119,6 @@ def runModels(X_train, X_test, y_train, y_test):
         f"Kenpom Decision Tree Model Training took: {(datetime.now() - start).total_seconds()}"
     )
 
-
 def trainDT(init_dt, X_train, y_train, X_test, y_test):
     params = dtParams(init_dt, X_train, y_train)
     dt_model = tree.DecisionTreeClassifier(
@@ -110,7 +133,6 @@ def trainDT(init_dt, X_train, y_train, X_test, y_test):
     print(classification_report(y_test, dt_pred))
     return dt_model
 
-
 def dtParams(init_dt, X_train, y_train):
     dt_params = {
         "ccp_alpha": [0.1, 0.01, 0.001],
@@ -123,7 +145,6 @@ def dtParams(init_dt, X_train, y_train):
     params = CV_dt.best_params_
     return params
 
-
 def trainSVC(init_svc, X_train, y_train, X_test, y_test):
     params = svcParams(init_svc, X_train, y_train)
     svc_model = svm.SVC(
@@ -134,7 +155,6 @@ def trainSVC(init_svc, X_train, y_train, X_test, y_test):
     print(classification_report(y_test, svc_pred))
     return svc_model
 
-
 def svcParams(init_svc, X_train, y_train):
     svc_params = {
         "C": [0.1, 1, 10, 100],
@@ -144,7 +164,6 @@ def svcParams(init_svc, X_train, y_train):
     CV_svc.fit(X_train, y_train)
     params = CV_svc.best_params_
     return params
-
 
 def trainForest(init_forest, X_train, y_train, X_test, y_test):
     params = forestParams(init_forest, X_train, y_train)
@@ -158,7 +177,6 @@ def trainForest(init_forest, X_train, y_train, X_test, y_test):
     forest_model.fit(X_train, y_train)
     return forest_model
 
-
 def forestParams(init_forest, X_train, y_train):
     forest_params = {
         "n_estimators": [100, 300, 500],
@@ -170,3 +188,4 @@ def forestParams(init_forest, X_train, y_train):
     CV_forest.fit(X_train, y_train)
     params = CV_forest.best_params_
     return params
+'''
