@@ -4,15 +4,21 @@ import utils
 from io import StringIO
 import pandas as pd
 from datetime import datetime
-
+from sklearn.metrics import accuracy_score
 from sklearn import tree, preprocessing, svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report
-
+from sklearn.metrics import confusion_matrix
 from sklearn.feature_selection import SelectFromModel
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+import statsmodels.api as sm
+from sklearn.calibration import calibration_curve
+from sklearn.metrics import RocCurveDisplay, roc_auc_score
+import matplotlib.pyplot as plt
+import os
+import webbrowser
 
 warnings.filterwarnings("ignore")
 
@@ -42,7 +48,7 @@ def load_data():
 def feature_selection(df):
     X = df.drop('Tourney', axis=1)
     y = df["Tourney"]
-    
+
     # 1. Scaling is vital for L1 feature selection
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -59,33 +65,16 @@ def feature_selection(df):
 
     # 3. See which features survived
     selected_features = X.columns[selector.get_support()]
-    print(f"Kept {len(selected_features)} (out of {len(X.columns)}) features: {list(selected_features)}")
+    #print(f"Kept {len(selected_features)} (out of {len(X.columns)}) features: {list(selected_features)}")
+
     return selected_features
 
-def main():
-    start = datetime.now()
-    # Get DF with all of our data
-    input_df = load_data()
-    selected_features = feature_selection(input_df)
+def split_data(input_df, features):
+    label = input_df['Tourney']
+    df = input_df[features]
 
-
-main()
-'''
-def trainModelsAndSave(df):
-    start = datetime.now()
-    [cbb, ind] = chiSquared(df)
-    [X_train, X_test, y_train, y_test] = splitData(cbb, ind)
-    print(f"Kenpom data set split took: {(datetime.now() - start).total_seconds()}")
-    # [svc, forest, tree, html] = runModels(X_train, X_test, y_train, y_test)
-    runModels(X_train, X_test, y_train, y_test)
-
-def splitData(cbb, ind):
-    cbb = cbb.drop(columns=ind)
-    cbb_features = cbb.iloc[:, 1:]
-    cbb_label = cbb["Tourney"]
-
-    X = cbb_features.values
-    y = cbb_label.values
+    X = df.values
+    y = label.values
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.25, stratify=y, random_state=13
     )
@@ -94,6 +83,64 @@ def splitData(cbb, ind):
     X_test = scaler.fit_transform(X_test)
     return [X_train, X_test, y_train, y_test]
 
+def main():
+    start = datetime.now()
+    df = load_data()
+
+    selected_features = feature_selection(df)
+    
+    selected_features = selected_features[1:]
+    [X_train, X_test, y_train, y_test] = split_data(df, selected_features)
+    clf = LogisticRegression(penalty='l2', C=1.0, solver='liblinear')
+    clf.fit(X_train, y_train)
+    # ... inside your main() ...
+
+    # 1. PREPARE STATSMODELS DATA
+    X_train_sm = sm.add_constant(X_train)
+    X_test_sm = sm.add_constant(X_test)
+
+    # 2. FIT STATSMODELS LOGIT (Regularized for your quasi-separation)
+    logit_model = sm.Logit(y_train, X_train_sm).fit_regularized(method='l1', alpha=1.0, L1_wt=0.0)
+    print(logit_model.summary())
+    sm_probs = logit_model.predict(X_test_sm)
+    feature_names = ['const'] + list(selected_features)
+    
+    # 3. COMBINED CALIBRATION PLOT
+    plt.figure(figsize=(10, 7))
+    # Sklearn Curve
+    sk_prob_true, sk_prob_pred = calibration_curve(y_test, sm_probs, n_bins=10)
+    plt.plot(sk_prob_pred, sk_prob_true, marker='o', label='Sklearn (L2)')
+    # Statsmodels Curve
+    sm_prob_true, sm_prob_pred = calibration_curve(y_test, sm_probs, n_bins=10)
+    plt.plot(sm_prob_pred, sm_prob_true, marker='s', label='Statsmodels (L1/L2)')
+
+    plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Perfectly Calibrated')
+    plt.title('Calibration Curve: Sklearn vs Statsmodels')
+    plt.legend()
+    plt.savefig('calibration_comparison.png')
+    plt.close()
+
+    # 4. COMBINED ROC PLOT
+    plt.figure(figsize=(10, 7))
+    # Use sklearn display for the first one
+    ax = plt.gca()
+    RocCurveDisplay.from_estimator(clf, X_test, y_test, ax=ax, name='Sklearn')
+
+    # Add Statsmodels manually
+    from sklearn.metrics import roc_curve
+    fpr, tpr, _ = roc_curve(y_test, sm_probs)
+    auc_sm = roc_auc_score(y_test, sm_probs)
+    plt.plot(fpr, tpr, label=f'Statsmodels (AUC = {auc_sm:.3f})')
+
+    plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+    plt.title('ROC Curve Comparison')
+    plt.legend()
+    plt.savefig('roc_comparison.png')
+    plt.close()
+
+if __name__ == "__main__":
+    main()
+'''
 def runModels(X_train, X_test, y_train, y_test):
     start = datetime.now()
     init_forest = RandomForestClassifier(random_state=13)
