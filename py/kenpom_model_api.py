@@ -10,7 +10,7 @@ from sklearn import tree, preprocessing, svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report, roc_auc_score, brier_score_loss
-from sklearn.feature_selection import SelectFromModel
+from sklearn.feature_selection import SelectFromModel, RFE
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
@@ -39,20 +39,29 @@ def load_data():
     filtered = filter_api_data(pd.read_json(StringIO(data)))
     return filtered
 
-def feature_selection(df):
+def feature_selection(df, n_features=12):
     X = df.drop('Tourney', axis=1)
     y = df["Tourney"]
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    selector = SelectFromModel(
-        estimator=LogisticRegression(penalty='l1', solver='liblinear', C=0.1),
-        threshold=1e-5
-    )
+    # Method 1: Lasso (Your current method)
+    lasso = SelectFromModel(LogisticRegression(penalty='l1', solver='liblinear', C=0.1))
+    lasso.fit(X_scaled, y)
+    
+    # Method 2: RFE (Recursive Elimination)
+    rfe = RFE(estimator=LogisticRegression(max_iter=1000), n_features_to_select=n_features)
+    rfe.fit(X_scaled, y)
 
-    selector.fit(X_scaled, y)
+    # Method 3: Random Forest Importance
+    rf = SelectFromModel(RandomForestClassifier(n_estimators=100), max_features=n_features)
+    rf.fit(X_scaled, y)
 
-    return X.columns[selector.get_support()]
+    # Create a "Voting" mask (Feature must be picked by at least 2 methods)
+    votes = lasso.get_support().astype(int) + rfe.support_.astype(int) + rf.get_support().astype(int)
+    consensus_mask = votes >= 2
+    
+    return X.columns[consensus_mask]
 
 def split_data(input_df, features):
     y = input_df['Tourney'].values
@@ -108,12 +117,15 @@ def main():
     # 4. Final Evaluation
     y_pred = best_clf.predict(X_test_final)
     y_probs = best_clf.predict_proba(X_test_final)[:, 1]
-    
+    n_tourney_teams = sum(y_test)
+    # Sort probabilities and pick the top 'n'
+    thresh = np.sort(y_probs)[-n_tourney_teams]
+    y_pred_adj = (y_probs >= thresh).astype(int)
     print("\n" + "="*30)
     print("FINAL MODEL PERFORMANCE")
     print("="*30)
     print(f"Final Features: {final_features}")
-    print(classification_report(y_test, y_pred))
+    print(classification_report(y_test, y_pred_adj))
     print(f"ROC-AUC Score: {roc_auc_score(y_test, y_probs):.4f}")
     print(f"Brier Score:   {brier_score_loss(y_test, y_probs):.4f}")
     
@@ -122,7 +134,16 @@ def main():
     odds_ratios = np.exp(coeffs).sort_values(ascending=False)
     print("\nTop Odds Ratios (Impact per 1-SD increase):")
     print(odds_ratios.head(5))
-    
+    # After your existing code in main():
+    test_results = pd.DataFrame({
+        'Actual': y_test,
+        'Probability': y_probs,
+        'Predicted': y_pred
+    })
+
+    # Identify the "Snubs" (Model said IN, Committee said OUT)
+    false_positives = test_results[(test_results['Actual'] == 0) & (test_results['Predicted'] == 1)]
+    print(f"\nModel's 'False Alarms' (Bubble teams that missed): {len(false_positives)}")
     print(f"\nExecution Time: {datetime.now() - start}")
 
 if __name__ == "__main__":

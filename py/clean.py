@@ -12,8 +12,8 @@ from sklearn.model_selection import RandomizedSearchCV
 param_grid = [
     {'penalty':['l1','l2','elasticnet','none'],
     'C' : np.logspace(-4,4,20),
-    'solver': ['lbfgs','newton-cg','liblinear','sag','saga', 'newton-cg'],
-    'max_iter'  : [100,500,1000,2500,5000, 7500, 10000]
+    'solver': ['lbfgs','newton-cg','liblinear','sag','saga'],
+    'max_iter'  : [100,1000,2500,5000]
 }
 ]
 
