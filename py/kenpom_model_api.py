@@ -1,67 +1,305 @@
 import json
 import warnings
 import utils
+import joblib
+from pathlib import Path
 import pandas as pd
 import numpy as np
 from io import StringIO
 from datetime import datetime
 
 from sklearn import tree, preprocessing, svm
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV, RepeatedStratifiedKFold
 from sklearn.metrics import classification_report, roc_auc_score, brier_score_loss
 from sklearn.feature_selection import SelectFromModel, RFE
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+from sklearn.calibration import CalibratedClassifierCV
 
 warnings.filterwarnings("ignore")
 
+CURRENT_SEASON = 2026
+MODEL_VERSION = "1.0"
+
+MODEL_DIR = Path(utils.get_path("models"))
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
+
+MODEL_LIMITS = {
+    "logistic": 8,
+    "svc": 10,
+    "gb": 9,
+}
+
+LOGISTIC_GRID = {
+    "C": np.logspace(-3, 2, 8),
+    "penalty": ["l2"],
+    "solver": ["liblinear"],
+}
+
+SVC_GRID = {
+    "C": [0.1, 0.5, 1, 2, 5, 10],
+    "gamma": ["scale", 0.01, 0.05, 0.1],
+    "kernel": ["rbf"],
+}
+
+GB_GRID = {
+    "n_estimators": [200, 300, 400],
+    "learning_rate": [0.03, 0.05, 0.08],
+    "max_depth": [2, 3],
+    "min_samples_leaf": [10, 20],
+}
+
+def update_registry(payload, path):
+    registry_path = MODEL_DIR / "registry.json"
+
+    if registry_path.exists():
+        with open(registry_path) as f:
+            registry = json.load(f)
+    else:
+        registry = {}
+
+    key = payload["model_type"]
+    entry = {
+        "season": payload["season"],
+        "version": payload["version"],
+        "path": str(path.relative_to(MODEL_DIR)),
+        "metrics": payload.get("metrics", {}),
+        "trained_at": payload["trained_at"],
+        "notes": payload.get("notes"),
+    }
+
+    registry.setdefault(key, {"versions": []})
+    registry[key]["versions"].append(entry)
+    registry[key]["latest"] = entry["path"]
+
+    with open(registry_path, "w") as f:
+        json.dump(registry, f, indent=2)
+
+def load_latest(model_type):
+    with open(MODEL_DIR / "registry.json") as f:
+        registry = json.load(f)
+
+    rel_path = registry[model_type]["latest"]
+    payload = joblib.load(MODEL_DIR / rel_path)
+    return payload
+
+def load_version(model_type, season, version):
+    path = MODEL_DIR / str(season) / f"{model_type}_v{version}.pkl"
+    return joblib.load(path)
+
+def save_model(
+    model_type,
+    season,
+    version,
+    model,
+    features,
+    scaler=None,
+    metrics=None,
+    notes=None,
+):
+    path = MODEL_DIR / str(season)
+    path.mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "model": model,
+        "features": features,
+        "scaler": scaler,
+        "model_type": model_type,
+        "season": season,
+        "version": version,
+        "trained_at": datetime.utcnow().isoformat(),
+        "metrics": metrics or {},
+        "notes": notes,
+    }
+
+    fname = f"{model_type}_v{version}.pkl"
+    full_path = path / fname
+
+    joblib.dump(payload, full_path)
+    print(f"Saved {full_path}")
+
+    update_registry(payload, full_path)
+
+def load_model(name):
+    path = MODEL_DIR / f"{name}.pkl"
+    payload = joblib.load(path)
+    return payload["model"], payload["features"], payload["scaler"]
+
+def clip_extremes(X, q=0.01):
+    return X.clip(
+        lower=X.quantile(q),
+        upper=X.quantile(1 - q),
+        axis=1
+    )
+    
 def filter_api_data(df):
-    objs = []
-    vals = []
-    ranks = []
     exceptions = ['Season', 'Seed']
+    keep = []
+
     for col in df.columns:
         if col in exceptions:
-            objs.append(col)
-        elif df[col].dtype == float or df[col].dtype == bool :
-            vals.append(col)
-        elif df[col].dtype == int:
-            ranks.append(col)
-        else:
-            objs.append(col)
-    to_drop = objs + ranks
-    return df.drop(columns=to_drop)
+            continue
+        if df[col].dtype in [float, bool]:
+            keep.append(col)
+
+    return df[keep]
 
 def load_data():
-    with open(utils.get_path(f"model_data/kenpom_api/all.json"), 'r') as f:
+    with open(utils.get_path("model_data/kenpom_api/all.json"), "r") as f:
         data = json.load(f)
-    filtered = filter_api_data(pd.read_json(StringIO(data)))
-    return filtered
 
-def feature_selection(df, n_features=12):
-    X = df.drop('Tourney', axis=1)
-    y = df["Tourney"]
+    df = pd.read_json(StringIO(data))
+    return filter_api_data(df)
+
+def evaluate_model(name, model, scaler, X_test, y_test):
+    if scaler is not None:
+        X_test = scaler.transform(X_test)
+
+    probs = model.predict_proba(X_test)[:, 1]
+
+    auc = roc_auc_score(y_test, probs)
+    brier = brier_score_loss(y_test, probs)
+
+    print(f"\n{name} PERFORMANCE")
+    print("-" * 30)
+    print(f"AUC:   {auc:.4f}")
+    print(f"Brier:{brier:.4f}")
+
+    # Force tournament-size selection
+    n_in = y_test.sum()
+    thresh = np.sort(probs)[-n_in]
+    preds = (probs >= thresh).astype(int)
+
+    print(classification_report(y_test, preds))
+
+    # Bubble-only diagnostics
+    bubble = (probs > 0.25) & (probs < 0.75)
+    if bubble.sum() > 20:
+        bubble_auc = roc_auc_score(y_test[bubble], probs[bubble])
+        print(f"Bubble AUC: {bubble_auc:.4f}")
+
+    return probs
+
+def calibrate(model, X, y, scaler=None):
+    if scaler is not None:
+        X = scaler.transform(X)
+
+    calib = CalibratedClassifierCV(
+        model,
+        method="isotonic",
+        cv=5,
+    )
+    calib.fit(X, y)
+    return calib
+
+def rank_features(X, y, model_type):
+    X = clip_extremes(X)
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-
-    # Method 1: Lasso (Your current method)
-    lasso = SelectFromModel(LogisticRegression(penalty='l1', solver='liblinear', C=0.1))
-    lasso.fit(X_scaled, y)
     
-    # Method 2: RFE (Recursive Elimination)
-    rfe = RFE(estimator=LogisticRegression(max_iter=1000), n_features_to_select=n_features)
-    rfe.fit(X_scaled, y)
-
-    # Method 3: Random Forest Importance
-    rf = SelectFromModel(RandomForestClassifier(n_estimators=100), max_features=n_features)
-    rf.fit(X_scaled, y)
-
-    # Create a "Voting" mask (Feature must be picked by at least 2 methods)
-    votes = lasso.get_support().astype(int) + rfe.support_.astype(int) + rf.get_support().astype(int)
-    consensus_mask = votes >= 2
+    if model_type == 'logistic':
+        model = LogisticRegression(
+            penalty='l1',
+            solver="liblinear",
+            C=0.1,
+            class_weight="balanced",
+            max_iter=3000,
+        )
+        model.fit(X_scaled, y)
+        importance = np.abs(model.coef_[0])
     
-    return X.columns[consensus_mask]
+    elif model_type == "svc":
+        svc = svm.SVC(kernel='linear', class_weight='balanced')
+        svc.fit(X_scaled, y)
+        importance = np.abs(svc.coef_[0])
+    
+    elif model_type == "gb":
+        gb = GradientBoostingClassifier(
+            n_estimators=300,
+            learning_rate=0.05,
+            max_depth=3,
+        )
+        gb.fit(X,y)
+        importance = gb.feature_importances_
+    
+    return (
+        pd.Series(importance, index=X.columns)
+        .sort_values(ascending=False)
+        .index.to_list()
+    )
+
+def auto_feature_select(
+    X, y, model_type, min_features=5, patience=3, eps=0.002
+):
+    ranked = rank_features(X, y, model_type)
+    
+    best_auc = 0
+    no_improve = 0
+    selected = []
+    
+    for i, feat in enumerate(ranked):
+        selected.append(feat)
+        
+        if len(selected) < min_features:
+            continue
+        
+        if len(selected) >= MODEL_LIMITS[model_type]:
+            print(f"Reached {model_type} feature cap")
+            break
+        
+        X_sub = clip_extremes(X[selected])
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X_sub)
+        
+        if model_type == "logistic":
+            model = LogisticRegression(
+                max_iter=3000,
+                class_weight="balanced",
+            )
+        elif model_type == "svc":
+            model = svm.SVC(
+                kernel="rbf",
+                probability=True,
+                class_weight="balanced",
+            )
+        elif model_type == "gb":
+            model = GradientBoostingClassifier(
+                n_estimators=300,
+                max_depth=3,
+                learning_rate=0.05,
+            )
+            
+        cv = RepeatedStratifiedKFold(
+            n_splits=5,
+            n_repeats=3,
+            random_state=13
+        )
+
+        scores = cross_val_score(
+            model,
+            X_scaled,
+            y,
+            cv=cv,
+            scoring="roc_auc",
+            n_jobs=-1,
+        )
+        
+        mean_auc = scores.mean()
+        
+        print(f"{model_type}: {len(selected)} feats → AUC={mean_auc:.4f}")
+        if model_type == "svc" and len(selected) == 7:
+            print("🚨 SVC jump feature:", feat)
+        if mean_auc > best_auc + eps:
+            best_auc = mean_auc
+            no_improve = 0
+        else:
+            no_improve += 1
+
+        if no_improve >= patience and len(selected) >= min_features + 2:
+            print(f"Stopping at {len(selected)} features")
+            break
+    return selected
 
 def split_data(input_df, features):
     y = input_df['Tourney'].values
@@ -77,170 +315,195 @@ def split_data(input_df, features):
 
     return [X_train, X_test, y_train, y_test]
 
-def automate_refinement(X, y, feature_names, threshold=4.0):
-    if isinstance(X, np.ndarray):
-        X = pd.DataFrame(X, columns=feature_names)
-    
-    current_features = list(X.columns)
-    
-    while True:
-        print(f"\nEvaluating model with {len(current_features)} features...")
-        X_train_curr = X[current_features]
-        
-        param_grid = {'C': np.logspace(-3, 2, 6), 'penalty': ['l1', 'l2'], 'solver': ['liblinear']}
-        grid = GridSearchCV(LogisticRegression(max_iter=2000), param_grid, cv=5, scoring='roc_auc')
-        grid.fit(X_train_curr, y)
-        
-        best_model = grid.best_estimator_
-        coeffs = pd.Series(best_model.coef_[0], index=current_features)
+def tune_logistic(X, y):
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
 
-        max_coef = coeffs.abs().max()
-        top_feature = coeffs.abs().idxmax()
-    
-        if max_coef > threshold:
-            print(f"DROPPING '{top_feature}': Likely data leakage or causing separation.")
-            current_features.remove(top_feature)
-        else:
-            print("Model is stable. No features exceed the leakage threshold.")
-            return best_model, current_features
+    model = LogisticRegression(
+        max_iter=5000,
+        class_weight="balanced",
+    )
+
+    cv = RepeatedStratifiedKFold(
+        n_splits=5,
+        n_repeats=3,
+        random_state=13,
+    )
+
+    grid = GridSearchCV(
+        model,
+        LOGISTIC_GRID,
+        scoring="roc_auc",
+        cv=cv,
+        n_jobs=-1,
+    )
+
+    grid.fit(X_scaled, y)
+    return grid.best_estimator_, scaler
+
+def tune_svc(X, y):
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    model = svm.SVC(
+        probability=True,
+        class_weight="balanced",
+    )
+
+    cv = RepeatedStratifiedKFold(
+        n_splits=5,
+        n_repeats=3,
+        random_state=13,
+    )
+
+    grid = GridSearchCV(
+        model,
+        SVC_GRID,
+        scoring="roc_auc",
+        cv=cv,
+        n_jobs=-1,
+    )
+
+    grid.fit(X_scaled, y)
+    return grid.best_estimator_, scaler
+
+def tune_gb(X, y):
+    model = GradientBoostingClassifier()
+
+    cv = RepeatedStratifiedKFold(
+        n_splits=5,
+        n_repeats=3,
+        random_state=13,
+    )
+
+    grid = GridSearchCV(
+        model,
+        GB_GRID,
+        scoring="roc_auc",
+        cv=cv,
+        n_jobs=-1,
+    )
+
+    grid.fit(X, y)
+    return grid.best_estimator_
 
 def main():
     start = datetime.now()
+
     df = load_data()
-    selected_features = feature_selection(df)
-    [X_train, X_test, y_train, y_test] = split_data(df, selected_features)
-    best_clf, final_features = automate_refinement(X_train, y_train, selected_features, threshold=4.0)
-    
-    X_test_df = pd.DataFrame(X_test, columns=selected_features)
-    X_test_final = X_test_df[final_features]
-    
-    # 4. Final Evaluation
-    y_pred = best_clf.predict(X_test_final)
-    y_probs = best_clf.predict_proba(X_test_final)[:, 1]
-    n_tourney_teams = sum(y_test)
-    # Sort probabilities and pick the top 'n'
-    thresh = np.sort(y_probs)[-n_tourney_teams]
-    y_pred_adj = (y_probs >= thresh).astype(int)
-    print("\n" + "="*30)
-    print("FINAL MODEL PERFORMANCE")
-    print("="*30)
-    print(f"Final Features: {final_features}")
-    print(classification_report(y_test, y_pred_adj))
-    print(f"ROC-AUC Score: {roc_auc_score(y_test, y_probs):.4f}")
-    print(f"Brier Score:   {brier_score_loss(y_test, y_probs):.4f}")
-    
-    # 5. Output Odds Ratios for Interpretation
-    coeffs = pd.Series(best_clf.coef_[0], index=final_features)
-    odds_ratios = np.exp(coeffs).sort_values(ascending=False)
-    print("\nTop Odds Ratios (Impact per 1-SD increase):")
-    print(odds_ratios.head(5))
-    # After your existing code in main():
-    test_results = pd.DataFrame({
-        'Actual': y_test,
-        'Probability': y_probs,
-        'Predicted': y_pred
-    })
+    y = np.asarray(df["Tourney"]).ravel()
 
-    # Identify the "Snubs" (Model said IN, Committee said OUT)
-    false_positives = test_results[(test_results['Actual'] == 0) & (test_results['Predicted'] == 1)]
-    print(f"\nModel's 'False Alarms' (Bubble teams that missed): {len(false_positives)}")
+    # -------- SVC --------
+    svc_features = auto_feature_select(df.drop(columns="Tourney"), y, "svc")
+    X_svc = df[svc_features]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_svc, y, test_size=0.25, stratify=y, random_state=13
+    )
+
+    svc_model, svc_scaler = tune_svc(X_train, y_train)
+    svc_model = calibrate(svc_model, X_train, y_train, svc_scaler)
+
+    svc_probs = evaluate_model(
+        "SVC",
+        svc_model,
+        svc_scaler,
+        X_test.values,
+        y_test,
+    )
+
+    # -------- LOGISTIC --------
+    logistic_features = auto_feature_select(df.drop(columns="Tourney"), y, "logistic")
+    X_log = df[logistic_features]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_log, y, test_size=0.25, stratify=y, random_state=13
+    )
+
+    log_model, log_scaler = tune_logistic(X_train, y_train)
+
+    log_probs = evaluate_model(
+        "Logistic",
+        log_model,
+        log_scaler,
+        X_test.values,
+        y_test,
+    )
+
+    # -------- GRADIENT BOOSTING --------
+    gb_features = auto_feature_select(df.drop(columns="Tourney"), y, "gb")
+    X_gb = df[gb_features]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_gb, y, test_size=0.25, stratify=y, random_state=13
+    )
+
+    gb_model = tune_gb(X_train, y_train)
+    gb_model = calibrate(gb_model, X_train, y_train)
+
+    gb_probs = evaluate_model(
+        "Gradient Boosting",
+        gb_model,
+        None,
+        X_test.values,
+        y_test,
+    )
+
+    # -------- ENSEMBLE --------
+    ens_probs = (svc_probs + log_probs + gb_probs) / 3
+
+    print("\nENSEMBLE PERFORMANCE")
+    print("-" * 30)
+    print(f"AUC: {roc_auc_score(y_test, ens_probs):.4f}")
+    print(f"Brier: {brier_score_loss(y_test, ens_probs):.4f}")
+
     print(f"\nExecution Time: {datetime.now() - start}")
+    
 
+    # -------- SAVE VERSIONED MODELS --------
+    save_model(
+        model_type="svc",
+        season=CURRENT_SEASON,
+        version=MODEL_VERSION,
+        model=svc_model,
+        features=svc_features,
+        scaler=svc_scaler,
+        metrics={
+            "auc": roc_auc_score(y_test, svc_probs),
+            "brier": brier_score_loss(y_test, svc_probs),
+        },
+        notes="SVC classifier with Luck; lock detector",
+    )
+
+    save_model(
+        model_type="logistic",
+        season=CURRENT_SEASON,
+        version=MODEL_VERSION,
+        model=log_model,
+        features=logistic_features,
+        scaler=log_scaler,
+        metrics={
+            "auc": roc_auc_score(y_test, log_probs),
+            "brier": brier_score_loss(y_test, log_probs),
+        },
+        notes="Logistic regression calibration anchor",
+    )
+
+    save_model(
+        model_type="gb",
+        season=CURRENT_SEASON,
+        version=MODEL_VERSION,
+        model=gb_model,
+        features=gb_features,
+        scaler=None,  # GB not scaled
+        metrics={
+            "auc": roc_auc_score(y_test, gb_probs),
+            "brier": brier_score_loss(y_test, gb_probs),
+        },
+        notes="Primary tournament selection model",
+    )
+
+
+    
 if __name__ == "__main__":
     main()
-'''
-def runModels(X_train, X_test, y_train, y_test):
-    start = datetime.now()
-    init_forest = RandomForestClassifier(random_state=13)
-    init_forest.fit(X_train, y_train)
-    forest = trainForest(init_forest, X_train, y_train, X_test, y_test)
-    forest_file = utils.get_path("models/mkp_forest_model.pkl")
-    utils.write_to_pickle(forest, forest_file)
-    print(
-        f"Kenpom Forest Model Training took: {(datetime.now() - start).total_seconds()}"
-    )
-    init_svc = svm.SVC(random_state=13, kernel="linear")
-    init_svc.fit(X_train, y_train)
-    svc = trainSVC(init_svc, X_train, y_train, X_test, y_test)
-    svc_file = utils.get_path("models/mkp_svc_model.pkl")
-    utils.write_to_pickle(svc, svc_file)
-    print(f"Kenpom SVC Model Training took: {(datetime.now() - start).total_seconds()}")
-    init_dt = tree.DecisionTreeClassifier(random_state=13)
-    init_dt.fit(X_train, y_train)
-    dt = trainDT(init_dt, X_train, y_train, X_test, y_test)
-    dt_file = utils.get_path("models/mkp_dt_model.pkl")
-    utils.write_to_pickle(dt, dt_file)
-    print(
-        f"Kenpom Decision Tree Model Training took: {(datetime.now() - start).total_seconds()}"
-    )
-
-def trainDT(init_dt, X_train, y_train, X_test, y_test):
-    params = dtParams(init_dt, X_train, y_train)
-    dt_model = tree.DecisionTreeClassifier(
-        criterion=params["criterion"],
-        max_depth=params["max_depth"],
-        max_features=params["max_features"],
-        ccp_alpha=params["ccp_alpha"],
-        random_state=13,
-    )
-    dt_model.fit(X_train, y_train)
-    dt_pred = dt_model.predict(X_test)
-    print(classification_report(y_test, dt_pred))
-    return dt_model
-
-def dtParams(init_dt, X_train, y_train):
-    dt_params = {
-        "ccp_alpha": [0.1, 0.01, 0.001],
-        "criterion": ["gini", "entropy"],
-        "max_depth": [4, 5, 6, 7, 8],
-        "max_features": ["auto", "sqrt", "log2"],
-    }
-    CV_dt = GridSearchCV(estimator=init_dt, param_grid=dt_params)
-    CV_dt.fit(X_train, y_train)
-    params = CV_dt.best_params_
-    return params
-
-def trainSVC(init_svc, X_train, y_train, X_test, y_test):
-    params = svcParams(init_svc, X_train, y_train)
-    svc_model = svm.SVC(
-        C=params["C"], gamma=params["gamma"], kernel="linear", random_state=13
-    )
-    svc_model.fit(X_train, y_train)
-    svc_pred = svc_model.predict(X_test)
-    print(classification_report(y_test, svc_pred))
-    return svc_model
-
-def svcParams(init_svc, X_train, y_train):
-    svc_params = {
-        "C": [0.1, 1, 10, 100],
-        "gamma": ["scale", "auto"],
-    }
-    CV_svc = GridSearchCV(estimator=init_svc, param_grid=svc_params)
-    CV_svc.fit(X_train, y_train)
-    params = CV_svc.best_params_
-    return params
-
-def trainForest(init_forest, X_train, y_train, X_test, y_test):
-    params = forestParams(init_forest, X_train, y_train)
-    forest_model = RandomForestClassifier(
-        criterion=params["criterion"],
-        max_depth=params["max_depth"],
-        max_features=params["max_features"],
-        n_estimators=params["n_estimators"],
-        random_state=13,
-    )
-    forest_model.fit(X_train, y_train)
-    return forest_model
-
-def forestParams(init_forest, X_train, y_train):
-    forest_params = {
-        "n_estimators": [100, 300, 500],
-        "criterion": ["gini", "entropy"],
-        "max_depth": [4, 5, 6, 7, 8],
-        "max_features": ["auto", "sqrt", "log2"],
-    }
-    CV_forest = GridSearchCV(estimator=init_forest, param_grid=forest_params)
-    CV_forest.fit(X_train, y_train)
-    params = CV_forest.best_params_
-    return params
-'''
