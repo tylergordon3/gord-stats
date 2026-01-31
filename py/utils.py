@@ -91,10 +91,15 @@ def get_recent_data(input_date, women=0):
         torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
         return torvik
     else:
-        # Get last data for kenpom and torvik for the men
-        path_kp = get_path('data/men/kenpom/')
-        kenpom_files = Path(path_kp).glob("kenpom*.json")
-        kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
+        if input_date < date(2026, 1, 28):
+            # Get last data for kenpom and torvik for the men
+            path_kp = get_path('data/men/kenpom/')
+            kenpom_files = Path(path_kp).glob("kenpom*.json")
+            kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
+        else:
+            path_kp = get_path('data/men/kenpom_api/')
+            kenpom_files = Path(path_kp).glob("*.json")
+            kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
 
         path_tor = get_path('data/men/torvik/')
         torvik_files = Path(path_tor).glob("torvik*.json")

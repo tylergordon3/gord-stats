@@ -12,6 +12,7 @@ import re
 from collections import defaultdict
 import math
 import html_util
+import kenpom_model_api
 
 def seed_helper(x):
     """
@@ -406,9 +407,13 @@ def full_prediction(date) -> pd.DataFrame:
     decisionTree = utils.read_from_pickle("mtor_dt")
     supportVC = utils.read_from_pickle("mtor_svc")
 
-    randomForest_kenpom = utils.read_from_pickle("mkp_forest")
-    decisionTree_kenpom = utils.read_from_pickle("mkp_dt")
-    supportVC_kenpom = utils.read_from_pickle("mkp_svc")
+    #randomForest_kenpom = utils.read_from_pickle("mkp_forest")
+    #decisionTree_kenpom = utils.read_from_pickle("mkp_dt")
+    #supportVC_kenpom = utils.read_from_pickle("mkp_svc")
+    
+    gb_kp = utils.read_from_pickle("2026/gb_v1.0")
+    logistic_kp = utils.read_from_pickle("2026/logistic_v1.0")
+    svc_kp = utils.read_from_pickle("2026/svc_v1.0")
 
     [kenpom_path, torvik_path] = utils.get_recent_data(date)
     with open(kenpom_path, "r", encoding="utf-8") as f:
@@ -469,15 +474,15 @@ def full_prediction(date) -> pd.DataFrame:
     torvik_data["SVC"] = predict_model(supportVC, x_predict_torvik)
 
     # Kenpom Model Predictions
-    kenpom_data["RF"] = predict_model(randomForest_kenpom, x_predict_kenpom)
-    kenpom_data["DT"] = predict_model(decisionTree_kenpom, x_predict_kenpom)
-    kenpom_data["SVC"] = predict_model(supportVC_kenpom, x_predict_kenpom)
+    kenpom_data["GB"] = predict_model(gb_kp, x_predict_kenpom)
+    kenpom_data["LOG"] = predict_model(logistic_kp, x_predict_kenpom)
+    kenpom_data["SVC"] = predict_model(svc_kp, x_predict_kenpom)
 
     # Sum Models and drop not needed cols
     torvik_data["Sum"] = torvik_data[["RF", "DT", "SVC"]].sum(1)
     df_torvik = torvik_data[["Rk", "Team", "Conf", "RF", "DT", "SVC", "Sum"]].copy()
-    kenpom_data["Sum"] = kenpom_data[["RF", "DT", "SVC"]].sum(1)
-    df_kenpom = kenpom_data[["Rk", "Team", "Conf", "RF", "DT", "SVC", "Sum"]].copy()
+    kenpom_data["Sum"] = kenpom_data[["GB", "LOG", "SVC"]].sum(1)
+    df_kenpom = kenpom_data[["Rk", "Team", "Conf", "GB", "LOG", "SVC", "Sum"]].copy()
 
     # Torvik Clean
     df_torvik_filter = df_torvik.copy()
@@ -492,16 +497,16 @@ def full_prediction(date) -> pd.DataFrame:
     # Random Forest - Torvik
     rf_filter_torvik = df_torvik_filter[df_torvik_filter["RF"] == 1]
     df_torvik_rf = rf_filter_torvik[["Team", "Conf", "Rk", "RF"]].copy()
-    # Random Forest - Kenpom
-    rf_filter_kenpom = df_kenpom_filter[df_kenpom_filter["RF"] == 1]
-    df_kenpom_rf = rf_filter_kenpom[["Team", "Conf", "Rk", "RF"]].copy()
+    # GB - Kenpom
+    gb_filter_kenpom = df_kenpom_filter[df_kenpom_filter["GB"] == 1]
+    df_kenpom_gb = gb_filter_kenpom[["Team", "Conf", "Rk", "GB"]].copy()
 
     # Decision Tree - Torvik
     dt_filter_torvik = df_torvik_filter[df_torvik_filter["DT"] == 1]
     df_torvik_dt = dt_filter_torvik[["Team", "Conf", "Rk", "DT"]].copy()
-    # Decision Tree - Kenpom
-    dt_filter_kenpom = df_kenpom_filter[df_kenpom_filter["DT"] == 1]
-    df_kenpom_dt = dt_filter_kenpom[["Team", "Conf", "Rk", "DT"]].copy()
+    # Log - Kenpom
+    dt_filter_kenpom = df_kenpom_filter[df_kenpom_filter["LOG"] == 1]
+    df_kenpom_log = dt_filter_kenpom[["Team", "Conf", "Rk", "LOG"]].copy()
 
     # SVC - Torvik
     svc_filter_torvik = df_torvik_filter[df_torvik_filter["SVC"] == 1]
@@ -518,16 +523,16 @@ def full_prediction(date) -> pd.DataFrame:
     )
 
     # Kenpom Final Clean
-    comb1_kenpom = pd.merge(kenpom_teams, df_kenpom_rf, "left", ["Team", "Conf", "Rk"])
+    comb1_kenpom = pd.merge(kenpom_teams, df_kenpom_gb, "left", ["Team", "Conf", "Rk"])
     comb2_kenpom = pd.merge(comb1_kenpom, df_kenpom_svc, "left", ["Team", "Conf", "Rk"])
     combined_kenpom = pd.merge(
-        comb2_kenpom, df_kenpom_dt, "left", ["Team", "Conf", "Rk"]
+        comb2_kenpom, df_kenpom_log, "left", ["Team", "Conf", "Rk"]
     )
 
     # Merge models into one DF
     main = pd.merge(combined_kenpom, combined_torvik, on=["Team", "Conf"], how="outer")
-    main["Num KP Models"] = main[["RF_x", "SVC_x", "DT_x"]].sum(1)
-    main["Num TOR Models"] = main[["RF_y", "SVC_y", "DT_y"]].sum(1)
+    main["Num KP Models"] = main[["GB", "SVC_x", "LOG"]].sum(1)
+    main["Num TOR Models"] = main[["RF", "SVC_y", "DT"]].sum(1)
     main["Rk_y"] = pd.to_numeric(main["Rk_y"])
     main["Rk_x"] = pd.to_numeric(main["Rk_x"])
 

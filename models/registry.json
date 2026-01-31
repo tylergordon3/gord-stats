@@ -22,6 +22,17 @@
         },
         "trained_at": "2026-01-30T18:38:37.877106",
         "notes": "Primary tournament selection model"
+      },
+      {
+        "season": 2026,
+        "version": "1.0",
+        "path": "2026/gb_v1.0.pkl",
+        "metrics": {
+          "auc": 0.9632014499378143,
+          "brier": 0.06590159624027775
+        },
+        "trained_at": "2026-01-31T04:57:02.441424",
+        "notes": "Primary tournament selection model"
       }
     ]
   },
@@ -36,6 +47,17 @@
           "brier": 0.06731522180021739
         },
         "trained_at": "2026-01-30T18:38:37.869457",
+        "notes": "SVC classifier with Luck; lock detector"
+      },
+      {
+        "season": 2026,
+        "version": "1.0",
+        "path": "2026/svc_v1.0.pkl",
+        "metrics": {
+          "auc": 0.9601094362888396,
+          "brier": 0.06731522180021941
+        },
+        "trained_at": "2026-01-31T04:57:02.431132",
         "notes": "SVC classifier with Luck; lock detector"
       }
     ],
@@ -52,6 +74,17 @@
           "brier": 0.08459722505988625
         },
         "trained_at": "2026-01-30T18:38:37.875195",
+        "notes": "Logistic regression calibration anchor"
+      },
+      {
+        "season": 2026,
+        "version": "1.0",
+        "path": "2026/logistic_v1.0.pkl",
+        "metrics": {
+          "auc": 0.9566506861692516,
+          "brier": 0.0845972250598862
+        },
+        "trained_at": "2026-01-31T04:57:02.439434",
         "notes": "Logistic regression calibration anchor"
       }
     ],
