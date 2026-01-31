@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 import pytz
 from tqdm import tqdm
+import json
 
 load_dotenv() 
 kenpom = kenpom_wrapper.KenpomData()
@@ -28,7 +29,14 @@ def kenpom_now():
     merge3 = pd.merge(merge2, height, how='outer')
     combo = pd.merge(merge3, misc, how='outer')
     path = utils.get_path(f"data/men/kenpom_api/{str}.json")
-    utils.save_json_data(combo.to_json(), path)
+    payload = {
+    "headers": list(combo.columns),
+    "rows": combo.values.tolist(),
+}
+
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+
 
 def kenpom_by_year(year):
     ratings = pd.DataFrame(kenpom.get_ratings(year=year))
@@ -54,9 +62,5 @@ def update_all(start=2010, end=2026):
             all = pd.concat([all, df])
             pbar.update(1)
     all = all.reset_index(drop=True)
-    arr = all.dtypes
     path = utils.get_path(f"model_data/kenpom_api/all.json")
     utils.save_json_data(all.to_json(), path)
-    return arr
-
-kenpom_now()

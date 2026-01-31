@@ -113,11 +113,12 @@ def save_model(
         "notes": notes,
     }
 
-    fname = f"{model_type}_v{version}.pkl"
+    fname = f"{model_type}_v{version}_model.pkl"
     full_path = path / fname
 
-    joblib.dump(payload, full_path)
-    print(f"Saved {full_path}")
+    utils.write_to_pickle(model, full_path)
+    #joblib.dump(payload, full_path)
+    #print(f"Saved {full_path}")
 
     update_registry(payload, full_path)
 

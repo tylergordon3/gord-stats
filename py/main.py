@@ -50,15 +50,15 @@ if not os.path.exists(kenpom_dataset_path):
     print(f"Saved dataset to json.")
 
 update_about = 0
-save_model = 1
-save_model_w = 1
+save_model = 0
+save_model_w = 0
 if save_model:
-    torvik_df = utils.load_json_data(torvik_dataset_path)
-    with open(utils.get_path("model_data/kenpom_all.json"), "r", encoding="utf-8") as f:
-        data = json.load(f)
-    kenpom_df = pd.DataFrame(data, columns=constants.kenpom)
-    model.trainModelsAndSave(torvik_df, update_about, gender="M")
-    print(f"Torvik Men's training took: {(datetime.now() - start).total_seconds()}")
+    #torvik_df = utils.load_json_data(torvik_dataset_path)
+    #with open(utils.get_path("model_data/kenpom_all.json"), "r", encoding="utf-8") as f:
+    #    data = json.load(f)
+    #kenpom_df = pd.DataFrame(data, columns=constants.kenpom)
+    #model.trainModelsAndSave(torvik_df, update_about, gender="M")
+    #print(f"Torvik Men's training took: {(datetime.now() - start).total_seconds()}")
     kenpom_model_api.main()
     print(f"Kenpom Men's training took: {(datetime.now() - start).total_seconds()}")
 
