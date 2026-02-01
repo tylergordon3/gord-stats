@@ -422,7 +422,8 @@ def full_prediction(date) -> pd.DataFrame:
 
     kenpom_data = kenpom_data.rename(columns={'TeamName' : 'Team', 
                                               'ConfShort' : 'Conf'})
-    kenpom_data["Rk"] = range(1, len(kenpom_data) + 1)
+    #kenpom_data["Rk"] = range(1, len(kenpom_data) + 1)
+    kenpom_data["Rk"] = kenpom_data['RankAdjEM']
     kenpom_data['W-L'] = f"{kenpom_data['Wins']}-{kenpom_data['Losses']}"
     
     torvik_data = clean_teams(torvik_data)
