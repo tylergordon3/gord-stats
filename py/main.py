@@ -50,7 +50,7 @@ if not os.path.exists(kenpom_dataset_path):
     print(f"Saved dataset to json.")
 
 update_about = 0
-save_model = 0
+save_model = 1
 save_model_w = 0
 if save_model:
     #torvik_df = utils.load_json_data(torvik_dataset_path)

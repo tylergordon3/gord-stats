@@ -67,6 +67,7 @@ def update_registry(payload, path):
         "metrics": payload.get("metrics", {}),
         "trained_at": payload["trained_at"],
         "notes": payload.get("notes"),
+        "features":payload.get("features"),
     }
 
     registry.setdefault(key, {"versions": []})

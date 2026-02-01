@@ -424,6 +424,9 @@ def full_prediction(date) -> pd.DataFrame:
         data = json.load(f)
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
 
+    kenpom_data = kenpom_data.rename(columns={'TeamName' : 'Team'})
+    kenpom_data['W-L'] = f"{kenpom_data['Wins']}-{kenpom_data['Losses']}"
+    
     torvik_data = clean_teams(torvik_data)
     kenpom_data = clean_teams(kenpom_data, True)
 
