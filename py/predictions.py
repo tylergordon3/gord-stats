@@ -424,7 +424,8 @@ def full_prediction(date) -> pd.DataFrame:
                                               'ConfShort' : 'Conf'})
     #kenpom_data["Rk"] = range(1, len(kenpom_data) + 1)
     kenpom_data["Rk"] = kenpom_data['RankAdjEM']
-    kenpom_data['W-L'] = f"{kenpom_data['Wins']}-{kenpom_data['Losses']}"
+  
+    kenpom_data['W-L'] = kenpom_data.apply(lambda x: f"{x['Wins']}-{x['Losses']}", axis=1)
     
     torvik_data = clean_teams(torvik_data)
     kenpom_data = clean_teams(kenpom_data, True)
@@ -433,7 +434,6 @@ def full_prediction(date) -> pd.DataFrame:
     kenpom_teams = kenpom_data["Team"]
 
     winloss = kenpom_data[['Team', "W-L"]]
-
     torvik_today = torvik_data.drop(
         columns=[
             "Barthag",
