@@ -407,10 +407,6 @@ def full_prediction(date) -> pd.DataFrame:
     decisionTree = utils.read_from_pickle("mtor_dt")
     supportVC = utils.read_from_pickle("mtor_svc")
 
-    #randomForest_kenpom = utils.read_from_pickle("mkp_forest")
-    #decisionTree_kenpom = utils.read_from_pickle("mkp_dt")
-    #supportVC_kenpom = utils.read_from_pickle("mkp_svc")
-    
     gb_kp = utils.read_from_pickle("2026/gb_v1.0")
     logistic_kp = utils.read_from_pickle("2026/logistic_v1.0")
     svc_kp = utils.read_from_pickle("2026/svc_v1.0")
@@ -424,7 +420,9 @@ def full_prediction(date) -> pd.DataFrame:
         data = json.load(f)
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
 
-    kenpom_data = kenpom_data.rename(columns={'TeamName' : 'Team'})
+    kenpom_data = kenpom_data.rename(columns={'TeamName' : 'Team', 
+                                              'ConfShort' : 'Conf'})
+    kenpom_data["Rk"] = range(1, len(kenpom_data) + 1)
     kenpom_data['W-L'] = f"{kenpom_data['Wins']}-{kenpom_data['Losses']}"
     
     torvik_data = clean_teams(torvik_data)
@@ -449,27 +447,21 @@ def full_prediction(date) -> pd.DataFrame:
             "3PRD",
         ]
     )
-    kenpom_today = kenpom_data.drop(
-        columns=[
-            "Rk",
-            "Team",
-            "Conf",
-            "W-L",
-            "Luck_Rk",
-            "ORtg_Rk",
-            "DRtg_Rk",
-            "SOS_NetRtg_Rk",
-            "SOS_ORtg_Rk",
-            "SOS_DRtg_Rk",
-            "NCSOS_NetRtg_Rk",
-            "AdjT_Rk",
-            "AdjT",
-        ]
-    )
+    
+    svc_features = kenpom_model_api.load_features('svc')
+    logistic_features = kenpom_model_api.load_features("logistic")
+    gb_features = kenpom_model_api.load_features('gb')
+   
+    all_features = list(dict.fromkeys(svc_features + logistic_features + gb_features))
+    
+    kenpom_today_base =  kenpom_data.loc[:, kenpom_data.columns.isin(all_features)]
+   
     scaler = preprocessing.StandardScaler()
 
     x_predict_torvik = scaler.fit_transform(torvik_today)
-    x_predict_kenpom = scaler.fit_transform(kenpom_today)
+    x_predict_kenpom_svc = scaler.fit_transform(kenpom_today_base[svc_features])
+    x_predict_kenpom_gb = scaler.fit_transform(kenpom_today_base[gb_features])
+    x_predict_kenpom_log = scaler.fit_transform(kenpom_today_base[logistic_features])
 
     # Torvik Model Predictions
     torvik_data["RF"] = predict_model(randomForest, x_predict_torvik)
@@ -477,9 +469,9 @@ def full_prediction(date) -> pd.DataFrame:
     torvik_data["SVC"] = predict_model(supportVC, x_predict_torvik)
 
     # Kenpom Model Predictions
-    kenpom_data["GB"] = predict_model(gb_kp, x_predict_kenpom)
-    kenpom_data["LOG"] = predict_model(logistic_kp, x_predict_kenpom)
-    kenpom_data["SVC"] = predict_model(svc_kp, x_predict_kenpom)
+    kenpom_data["GB"] = predict_model(gb_kp, x_predict_kenpom_gb)
+    kenpom_data["LOG"] = predict_model(logistic_kp, x_predict_kenpom_log)
+    kenpom_data["SVC"] = predict_model(svc_kp, x_predict_kenpom_svc)
 
     # Sum Models and drop not needed cols
     torvik_data["Sum"] = torvik_data[["RF", "DT", "SVC"]].sum(1)
@@ -559,7 +551,7 @@ def full_prediction(date) -> pd.DataFrame:
     main["Win"] = main["Win"].round(4)
 
     main_sorted = main.sort_values(by=["Rtg", "Win"], ascending=[False, False])
-    main_sorted = main_sorted.drop(columns=["RF_x", "SVC_x", "DT_x", "RF_y", "SVC_y", "DT_y", "Win"])
+    main_sorted = main_sorted.drop(columns=["RF", "SVC_x", "DT", "LOG", "SVC_y", "GB", "Win"])
     main_sorted = main_sorted.rename(
         columns={
             "Rk_x": "Kenpom Rank",

@@ -77,13 +77,13 @@ def update_registry(payload, path):
     with open(registry_path, "w") as f:
         json.dump(registry, f, indent=2)
 
-def load_latest(model_type):
+def load_features(model_type):
     with open(MODEL_DIR / "registry.json") as f:
         registry = json.load(f)
 
-    rel_path = registry[model_type]["latest"]
-    payload = joblib.load(MODEL_DIR / rel_path)
-    return payload
+    model = registry[model_type]
+    
+    return model['versions'][0]['features']
 
 def load_version(model_type, season, version):
     path = MODEL_DIR / str(season) / f"{model_type}_v{version}.pkl"
