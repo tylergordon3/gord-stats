@@ -5,7 +5,9 @@ import nflreadpy as nfl
 import utilities as utils
 from pathlib import Path
 
+# 2525
 SEASON_STR = utils.getYrStr()
+# 2025
 SEASON = nfl.get_current_season()
 
 def main():

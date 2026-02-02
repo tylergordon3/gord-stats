@@ -191,3 +191,72 @@ thead th {
   color: white;
   font-weight: 600;
 }
+
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  background: #fff;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.filter-bar label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* Dropdowns inside the filter bar: avoid vertical clipping */
+.filter-bar select {
+  box-sizing: border-box;
+  height: auto;
+  /* important: don’t force height */
+  min-height: 36px;
+  /* enough room for text on all browsers */
+  padding: 6px 12px;
+  line-height: 1.2;
+
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* iOS: prevent zoom + keep text from clipping */
+@media (max-width: 767px) {
+  .filter-bar select {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+.change-toggle select {
+  width: 120px;
+}
+
+.change-toggle label {
+  font-weight: 600;
+}
+
+/* Shared layout for filter controls */
+.change-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
