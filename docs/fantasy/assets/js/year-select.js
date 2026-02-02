@@ -23,17 +23,28 @@ function getYear() {
     });
 }
 
-// Initialization and Event Listening
 document.addEventListener('DOMContentLoaded', () => {
     const selector = document.getElementById('year-select');
     
-    // 1. Run on page load based on your getYear() logic
-    updateNavLinks(getYear());
+    // 1. Get existing year from storage or fall back to the dropdown's default selection
+    let currentYear = localStorage.getItem("year");
 
-    // 2. Run whenever the user changes the dropdown
+    if (!currentYear) {
+        // If storage is empty, initialize it with the current dropdown value (e.g., "2526")
+        currentYear = selector.value;
+        localStorage.setItem("year", currentYear);
+    } else {
+        // If storage has a value, make sure the dropdown matches it
+        selector.value = currentYear;
+    }
+
+    // 2. Initial run to update navigation links based on this year
+    updateNavLinks(currentYear);
+
+    // 3. Listen for future changes
     selector.addEventListener('change', (e) => {
-        const yearValue = e.target.value;
-        localStorage.setItem("year", yearValue); // Sync with your getYear() logic
-        updateNavLinks(yearValue);
+        const newValue = e.target.value;
+        localStorage.setItem("year", newValue);
+        updateNavLinks(newValue);
     });
 });
