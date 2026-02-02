@@ -1,7 +1,11 @@
 <div id="nav">
   <nav class="simple-nav">
     {% for item in site.data.nav.docs %}
-      <a href="{{ item.url | absolute_url }}">{{ item.title }}</a>
+      <a href="{{ item.url | absolute_url }}" 
+         class="dynamic-nav-item" 
+         data-url-template="{{ item.url | absolute_url }}">
+         {{ item.title }}
+      </a>
     {% endfor %}
   </nav>
 </div>
