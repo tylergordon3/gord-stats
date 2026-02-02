@@ -252,6 +252,7 @@ thead th {
 
 .change-toggle label {
   font-weight: 600;
+  color: #fff
 }
 
 /* Shared layout for filter controls */
