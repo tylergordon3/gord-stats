@@ -48,3 +48,25 @@ document.addEventListener('DOMContentLoaded', () => {
         updateNavLinks(newValue);
     });
 });
+
+selector.addEventListener('change', (e) => {
+    const newYear = e.target.value;
+    const oldYear = localStorage.getItem("year") || "2526"; // Fallback to your default
+    
+    localStorage.setItem("year", newYear);
+
+    // Get the current URL path
+    let currentPath = window.location.pathname;
+
+    // If the current URL contains the old year, swap it and redirect
+    if (currentPath.includes(oldYear)) {
+        const newPath = currentPath.replace(oldYear, newYear);
+        window.location.href = newPath;
+    } else if (currentPath.includes("YEAR_VAL")) {
+        // Handle cases where the placeholder might still be in the URL
+        window.location.href = currentPath.replace("YEAR_VAL", newYear);
+    } else {
+        // If we aren't on a year-specific page, just update the nav links
+        updateNavLinks(newYear);
+    }
+});
