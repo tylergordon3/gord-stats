@@ -3,6 +3,5 @@
     {% for item in site.data.nav.docs %}
       <a href="{{ item.url | absolute_url }}">{{ item.title }}</a>
     {% endfor %}
-    {% include year-toggle.html %}
   </nav>
 </div>
