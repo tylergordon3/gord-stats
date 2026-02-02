@@ -5,7 +5,11 @@
       <ul>
         {% for item in nav_items %}
           <li {% if page.url contains item.url %}class="active"{% endif %}>
-            <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+            <a href="{{ item.url | relative_url }}" 
+               class="dynamic-nav-item" 
+               data-url-template="{{ item.url | relative_url }}">
+               {{ item.title }}
+            </a>
           </li>
         {% endfor %}
       </ul>
