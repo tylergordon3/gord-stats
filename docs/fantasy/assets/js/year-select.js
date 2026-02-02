@@ -11,10 +11,6 @@ function getYear() {
             return value
         }
     } catch (e) {}
-
-    const btn = document.getElementById("league-toggle-btn");
-    if (btn && btn.classList.contains("women")) return "women";
-    return "men";
   }
 
   function updateNavLinks(selectedYear) {
