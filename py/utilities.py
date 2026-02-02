@@ -30,8 +30,8 @@ def get_current_season():
     elif month < 2:
         return [year-1, year]
     else:
-        print('It\'s the offseason!')
-        return [year, year]
+        # if offseason -> returns previous year
+        return [year-1, year]
 
 def get_week():
     '''
