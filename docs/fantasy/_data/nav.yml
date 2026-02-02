@@ -5,7 +5,10 @@ docs:
   url: /index.html
 
 - title: BestBall
-  url: /YEAR_VAL/bestball/bestball.html
+  url: /YEAR_VAL/bestball/bestball
+
+- title: BestBall
+  url: /YEAR_VAL/median
 
 - title: Schedule Stats
   url: /YEAR_VAL/schedule/schedule.html
