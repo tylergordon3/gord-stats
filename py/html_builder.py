@@ -70,8 +70,6 @@ def generate_index():
     <title>Home</title>
   </head>
   <body>
-    <p><strong>Schedule:</strong> <strong>Easiest:</strong> Big Booty Bowers | <strong>Hardest:</strong> padgett</p>
-    <p><strong>H2H Wins:</strong> <strong>Weakest:</strong> Clanker Barrel | <strong>Strongest:</strong> The Standard & Lotta Cox</p>
     <h1>All Time Metrics</h1>
     <p><strong>SOS:</strong> Green = easier schedule, red = harder schedule</p>
     <p><strong>SOV:</strong> Green = better victories, red = easier victories</p>
