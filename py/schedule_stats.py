@@ -5,7 +5,7 @@ import html_util
 import plotly.express as px
 import league_data
 import numpy as np
-
+import archive
 import plotly.graph_objects as go
 
 def load_stats(season):
@@ -51,7 +51,7 @@ def calc_roto(season):
     roto_return = roto_return.drop(columns=['win', 'loss'])
     roto_return.index.name = 'Team'
     roto_return.columns.name = 'Week'
-    
+    archive.save_statistic(season, 'roto_df', roto_return.to_dict(orient='records'))
     styler = roto_return.style \
         .apply(html_util.highlight_roto, subset=[c for c in roto_return.columns[:-2]]) \
         .apply(html_util.highlight_on_record, subset=['Total']) \
@@ -97,7 +97,7 @@ def schedule_metrics(season, standings=False):
     curr_winp['Exp W (Actual)'] = curr_winp.apply(lambda x:
            f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*14:.1f} ({x['h2h_wins']})', 
            axis=1)
-    
+    archive.save_statistic(season, 'metrics_df', curr_winp.to_dict(orient='records'))
     if standings:
         df = curr_winp[['team_name', 'record', 'total_wins', 'PF', 'PA', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(['total_wins', 'PF'],ascending=False)
         df = df.rename(columns={"team_name":"Team", 'record' : 'Record'})
