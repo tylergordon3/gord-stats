@@ -9,6 +9,26 @@ import archive
 import plotly.graph_objects as go
 from io import StringIO
 
+champs = {
+        'Tyler' : 0,
+        'Colin' : 1,
+        'Jackson' : 1,
+        'Austin' : 1,
+        'George' : 0,
+        'Everett' : 0,
+        'Trevor' : 0,
+        'Max' : 0,
+        'Mark' : 0,
+        'Padgett' : 0
+    }
+
+def crowns(row):
+    val = champs[row['Team']]
+    if val > 0: 
+        return f'👑'
+    else: 
+        return f'-'
+    
 def load_stats(season):
     path = league_data.get_season_path(season=season)
     df = pd.read_json(path)
@@ -323,7 +343,8 @@ def all_time_metrics():
            axis=1)
     grouped['Team'] = grouped.apply(lambda x: league_util.name_from_id(x['roster_id']), axis=1)
     grouped['Record'] = grouped.apply(lambda x: f'{x['total_wins']}-{x['total_loss']}', axis=1)
-    grouped = grouped[['Team', 'Record', 'total_wins', 'PF', 'PA', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(['total_wins', 'PF'],ascending=False)
+    grouped['Titles'] = grouped.apply(lambda x: crowns(x), axis=1)
+    grouped = grouped[['Team', 'Titles', 'Record', 'total_wins', 'PF', 'PA', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(['total_wins', 'PF'],ascending=False)
     
     grouped = grouped.drop(columns=['total_wins'])
     styler = (
