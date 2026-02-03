@@ -23,7 +23,7 @@ def main(season_str=SEASON_STR, season=SEASON):
 
     data_path = utils.get_project_root() / Path("data")
     inj_path = data_path / Path("injuries") / Path(f'{season_str}.json')
-    if (inj_path.exists() == False) | (curr_overall_week < 18):
+    if (inj_path.exists() == False) | ((curr_overall_week < 18) and (season_str == SEASON_STR)):
         injury_df = injuries.scrape_injuries_all(season, 1, curr_overall_week)
         injury_df = injury_df.reset_index(drop=True)
         injury_df.to_json(inj_path)

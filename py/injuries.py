@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from tqdm import tqdm
 from io import StringIO
+import time
 
 def scrape_injuries_all(year, start_week, end_week):
     if start_week < 1: start_week = 1
@@ -23,6 +24,7 @@ def scrape_injuries(year, week):
     web = f'https://www.nfl.com/injuries/league/{year}/reg{week}'
     resp = requests.get(web, timeout=10).text
     list = pd.read_html(StringIO(resp))
+    time.sleep(3)
     df = pd.DataFrame()
     for team in list:
         df = pd.concat([df, team])

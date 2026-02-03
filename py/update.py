@@ -14,10 +14,10 @@ import html_builder as htmb
 #   Always generates landing page
 
 
-data_manager.main(season_str='2526', season='2025')
+data_manager.main(season_str='2425', season='2024')
 
 #median.median_main(update_all)
 #bestball.bestball_main(update_all)
 
-schedule.schedule_main(season_str='2526')
-htmb.generate_index()
+schedule.schedule_main(season_str='2425')
+#htmb.generate_index()
