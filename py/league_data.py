@@ -20,6 +20,21 @@ def get_league_id(season):
             return constants.LEAGUEID_2025
         case "2526":
             return constants.LEAGUEID_2025
+        
+def get_draft_id(season):
+    match season:
+        case "2023":
+            return constants.DRAFTID_2023
+        case "2324":
+            return constants.DRAFTID_2023
+        case "2024":
+            return constants.DRAFTID_2024
+        case "2425":
+            return constants.DRAFTID_2024
+        case "2025":
+            return constants.DRAFTID_2025
+        case "2526":
+            return constants.DRAFTID_2025
 
 def get_season_path(season):
     season_str = ''

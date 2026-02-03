@@ -50,10 +50,13 @@ player_stats_headers = ["player_id", "player_name", "player_display_name", "posi
                         "fg_made_distance", "fg_missed_distance", "fg_blocked_distance", "pat_made",
                         "pat_att", "pat_missed", "pat_blocked", "pat_pct", "gwfg_made", "gwfg_att", "gwfg_missed",
                         "gwfg_blocked", "gwfg_distance", "fantasy_points", "fantasy_points_ppr"]
-LEAGUEID_2025    = "1257466498994143232"
+LEAGUEID_2025 = "1257466498994143232"
 LEAGUEID_2024 = "1121158268379820032"
 LEAGUEID_2023 = '994410685717102592'
-DRAFTID     = "1257466498994143233"
+DRAFTID_2025 = "1257466498994143233"
+DRAFTID_2024 = "1121158268379820033"
+DRAFTID_2023 = "994410687084507136"
+
 TEAMS       = ['ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'GB',
                 'HOU', 'IND', 'JAX', 'KC', 'LAC', 'LAR', 'LV', 'MIA', 'MIN', 'NE', 'NO', 'NYG', 'NYJ',
                 'PHI', 'PIT', 'SEA', 'SF', 'TB', 'TEN', 'WAS']
