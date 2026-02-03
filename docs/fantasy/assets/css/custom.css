@@ -293,15 +293,3 @@ thead th {
   border-color: #ffcc00; /* Contrast color for focus */
   box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3);
 }
-
-/* Custom Arrow Icon */
-.select-wrapper::after {
-  content: "▼";
-  font-size: 0.7rem;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  position: absolute;
-  color: #0F79D0;
-  pointer-events: none;
-}
