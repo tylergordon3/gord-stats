@@ -321,6 +321,11 @@ def all_time_metrics():
     grouped['Exp W (Actual)'] = grouped.apply(lambda x:
            f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*42:.1f} ({x['h2h_wins']})', 
            axis=1)
+    grouped['Team'] = grouped.apply(lambda x: league_util.name_from_id(x['roster_id']), axis=1)
+    grouped['Record'] = grouped.apply(lambda x: f'{x['total_wins']}-{x['total_loss']}', axis=1)
+    grouped = grouped[['Team', 'Record', 'total_wins', 'PF', 'PA', 'SOS', 'SOV', 'Exp W (Actual)']].sort_values(['total_wins', 'PF'],ascending=False)
+    # grouped = grouped.rename(columns={"team_name":"Team", 'record' : 'Record'})
+    grouped = grouped.drop(columns=['total_wins'])
     styler = (
        grouped
         .style
