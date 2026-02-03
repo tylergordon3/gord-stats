@@ -13,6 +13,9 @@ def load_stats(season):
     df = pd.read_json(path)
     return df[df['week'] < 15]
 
+def get_opponent_dict(group_df):
+    print(group_df.groups.keys())
+
 def process_roto(group_df):
     def record(team, df):
         wins = 0
@@ -82,7 +85,11 @@ def schedule_metrics(season, standings=False):
     curr_winp = reg_season[reg_season['week'] == (len(reg_season)/10)].copy()
     winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['W%']))
     curr_winp['OW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, winp_dict), axis=1)
+    
+    group = reg_season.groupby(by='roster_id')['opp'].apply(list)
 
+    archive.save_statistic(season, 'opponents', group.to_json())
+    
     # Calculate Overall Opponent Winning Percentage of the opponents faced [OOW%]
     oow_winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['OW%']))
     curr_winp['OOW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, oow_winp_dict), axis=1)
@@ -260,7 +267,7 @@ def all_time_metrics():
     all = pd.DataFrame()
     for df in dfs:
         all = pd.concat([all, df])
-
+    
     filter = all[['roster_id', 'median_wins', 'h2h_loss',
                   'median_loss', 'total_wins', 'total_loss',
                   'PF', 'PA']]
@@ -290,6 +297,6 @@ def all_time_metrics():
     #       axis=1)
 
 
-    print(grouped.head())
+    #print(grouped.head())
 all_time_metrics()
 
