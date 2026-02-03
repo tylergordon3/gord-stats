@@ -4,9 +4,7 @@ import constants
 import html_util
 import plotly.express as px
 import league_data
-import numpy as np
 import archive
-import plotly.graph_objects as go
 from io import StringIO
 
 champs = {
@@ -198,89 +196,6 @@ def schedule_compare(season):
         .set_table_attributes('class="sticky-table"')
     return styled_df
 
-def weekly_rankings(season):
-    reg_season = load_stats(season)
-    df = reg_season.sort_values(by=['week', 'total_wins', 'PF'], ascending=[True, False, False])
-    # df_sorted['Rank'] = df_sorted.groupby('Category')['Score1'].rank(method='min', ascending=True)
-    df['Rank'] = df.groupby('week')['total_wins'].rank(method='first', ascending=False)
-    #df['Frame'] = df['week']
-    #df.pivot(index="week", columns="team_name", values="Rank").plot()
-    df_indexed = pd.DataFrame()
-    N_UNIQUE_TEAMS = 10
-    for index in np.arange(start=0, stop=len(df)+1, step = N_UNIQUE_TEAMS):
-        df_slicing = df.iloc[:index].copy()
-        df_slicing['frame'] = (index//N_UNIQUE_TEAMS)
-        df_indexed = pd.concat([df_indexed, df_slicing])
-
-    scatter_plot = px.scatter(
-        df_indexed,
-        x='week',
-        y='Rank',
-        color='team_name',
-        animation_frame='frame'
-    )
-
-    for frame in scatter_plot.frames:
-        for data in frame.data:
-            data.update(mode='markers',
-                showlegend=True,
-                opacity=1)
-            data['x'] = np.take(data['x'], [-1])
-            data['y'] = np.take(data['y'], [-1])
-    line_plot = px.line(
-        df_indexed,
-        x='week',
-        y='Rank',
-        color='team_name',
-        animation_frame='frame'
-    )
-    line_plot.update_traces(showlegend=False) 
-    for frame in line_plot.frames:
-        for data in frame.data:
-            data.update(mode='lines', opacity=0.8, showlegend=False) 
-
-    combined_plot = go.Figure(
-        data=line_plot.data + scatter_plot.data,
-        frames=[
-            go.Frame(data=line_plot.data + scatter_plot.data, name=scatter_plot.name)
-            for line_plot, scatter_plot in zip(line_plot.frames, scatter_plot.frames)
-        ],
-        layout=line_plot.layout
-    )
-
-    combined_plot.update_yaxes(
-        gridcolor='#7a98cf',
-        griddash='dot',
-        gridwidth=0.5,
-        linewidth=2,
-        tickwidth=2
-    )
-
-    combined_plot.update_xaxes(
-        title_font=dict(size=16),
-        linewidth=2,
-        tickwidth=2
-    )
-
-    combined_plot.update_traces(
-        line=dict(width=5),
-        marker=dict(size=25))
-        
-    combined_plot.update_layout(
-        title="<b>Team Rankings 2025</b>",
-        xaxis_title="<b>Week</b>",
-        yaxis_title="<b>Rank</b>",
-        xaxis_range=[df_indexed['week'].min() - 1,
-                 df_indexed['week'].max() + 1]
-    )
-
-    combined_plot['layout'].pop("sliders")
-    combined_plot.layout.updatemenus[0].buttons[0]['args'][1]['frame']['duration'] = 120
-    combined_plot.layout.updatemenus[0].buttons[0]['args'][1]['transition']['duration'] = 50
-    combined_plot.layout.updatemenus[0].buttons[0]['args'][1]['transition']['redraw'] = False
-
-    combined_plot.write_html("your_plot.html")
-
 def all_time_opp(roster, sched_dict, winp_dict):
     sched = sched_dict[roster]
     arr = [winp_dict[x] for x in sched]
@@ -299,7 +214,7 @@ def all_time_sov(roster, sched_dict, ifWin_dict, winp_dict):
 def all_time_metrics():
     history = archive._open()
     keys = history.keys()
-    years = [league_data.formal_to_abbrev(k) for k in history.keys()]
+
     dfs = [pd.DataFrame(history[key]['metrics_df']) for key in keys]
     all = pd.DataFrame()
     opponents = [pd.read_json(StringIO(history[key]['opponents'])) for key in keys]
