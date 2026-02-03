@@ -7,6 +7,7 @@ import league_data
 import numpy as np
 import archive
 import plotly.graph_objects as go
+from io import StringIO
 
 def load_stats(season):
     path = league_data.get_season_path(season=season)
@@ -87,8 +88,9 @@ def schedule_metrics(season, standings=False):
     curr_winp['OW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, winp_dict), axis=1)
     
     group = reg_season.groupby(by='roster_id')['opp'].apply(list)
-
+    if_win = reg_season.groupby(by='roster_id')['win'].apply(list)
     archive.save_statistic(season, 'opponents', group.to_json())
+    archive.save_statistic(season, 'if_win', if_win.to_json())
     
     # Calculate Overall Opponent Winning Percentage of the opponents faced [OOW%]
     oow_winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['OW%']))
@@ -258,15 +260,27 @@ def weekly_rankings(season):
     combined_plot.layout.updatemenus[0].buttons[0]['args'][1]['transition']['redraw'] = False
 
     combined_plot.write_html("your_plot.html")
-   
+
+def all_time_opp(roster, sched_dict, winp_dict):
+    sched = sched_dict[roster]
+    arr = [winp_dict[x] for x in sched]
+    return (sum(arr) / len(arr))
+    
+
 def all_time_metrics():
     history = archive._open()
     keys = history.keys()
     years = [league_data.formal_to_abbrev(k) for k in history.keys()]
     dfs = [pd.DataFrame(history[key]['metrics_df']) for key in keys]
     all = pd.DataFrame()
-    for df in dfs:
-        all = pd.concat([all, df])
+    opponents = [pd.read_json(StringIO(history[key]['opponents'])) for key in keys]
+    all_opps = pd.DataFrame()
+
+    for i in range(0, len(dfs)):
+        all = pd.concat([all, dfs[i]])
+        all_opps = pd.concat([all_opps, opponents[i]])
+    
+    opps_dict = all_opps.to_dict(orient='list')
     
     filter = all[['roster_id', 'median_wins', 'h2h_loss',
                   'median_loss', 'total_wins', 'total_loss',
@@ -276,26 +290,29 @@ def all_time_metrics():
     grouped['Win %'] = grouped['total_wins'] / (grouped['total_wins'] + grouped['total_loss'])
     
     # Overall Opponent Winning Percentage [OW%]
-    #curr_winp = reg_season[reg_season['week'] == (len(reg_season)/10)].copy()
-    # winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['W%']))
-    # curr_winp['OW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, winp_dict), axis=1)
     winper = dict(zip(grouped['roster_id'], grouped['Win %']))
-    grouped['OW%'] = grouped.apply(lambda x: calc_ow)
+    grouped['OW%'] = grouped.apply(lambda x: all_time_opp(x['roster_id'], sched_dict=opps_dict, 
+                                                          winp_dict=winper), axis=1)
+    
     # Calculate Overall Opponent Winning Percentage of the opponents faced [OOW%]
     # oow_winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['OW%']))
     # curr_winp['OOW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, oow_winp_dict), axis=1)
+    oow_winper = dict(zip(grouped['roster_id'], grouped['OW%']))
+    grouped['OOW%'] = grouped.apply(lambda x: all_time_opp(x['roster_id'], sched_dict=opps_dict, 
+                                                          winp_dict=oow_winper), axis=1)
 
     # Calculate Strength of Schedule - (2 * OW) + OOW divided by 3
-    # curr_winp['SOS'] = ((curr_winp['OW%'] * 2) + curr_winp['OOW%'])/3
+    grouped['SOS'] = ((grouped['OW%'] * 2) + grouped['OOW%'])/3
 
+    
     # Calculate Strength of Victory - Average win % of defeated opponents
-    # curr_winp['SOV'] = curr_winp.apply(lambda x: calc_sov(x, reg_season, winp_dict), axis=1)
+    # grouped['SOV'] = grouped.apply(lambda x: calc_sov(x, reg_season, winp_dict), axis=1)
 
     # Calculate Strength of Victory - Average win % of defeated opponents
     # curr_winp['Exp W (Actual)'] = curr_winp.apply(lambda x:
     #       f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*14:.1f} ({x['h2h_wins']})', 
     #       axis=1)
-
+    print(grouped[['Win %', 'OW%', 'OOW%', 'SOS']])
 
     #print(grouped.head())
 all_time_metrics()
