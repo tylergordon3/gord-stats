@@ -68,6 +68,15 @@ def get_formal_season(season):
         case "2526":
             return "2025-2026"
 
+def formal_to_abbrev(season):
+    match season:
+        case "2023-2024":
+            return "2324"
+        case "2024-2025":
+            return "2425"
+        case "2025-2026":
+            return "2526"
+
 def get_season(end_week, season):
     # Fantasy season: 1-14 reg, 15-17 post
     if end_week > 14: end_week = 14

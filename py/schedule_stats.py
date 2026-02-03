@@ -252,4 +252,44 @@ def weekly_rankings(season):
 
     combined_plot.write_html("your_plot.html")
    
+def all_time_metrics():
+    history = archive._open()
+    keys = history.keys()
+    years = [league_data.formal_to_abbrev(k) for k in history.keys()]
+    dfs = [pd.DataFrame(history[key]['metrics_df']) for key in keys]
+    all = pd.DataFrame()
+    for df in dfs:
+        all = pd.concat([all, df])
+
+    filter = all[['roster_id', 'median_wins', 'h2h_loss',
+                  'median_loss', 'total_wins', 'total_loss',
+                  'PF', 'PA']]
+    grouped = filter.groupby(by='roster_id').sum()
+    grouped = grouped.reset_index()
+    grouped['Win %'] = grouped['total_wins'] / (grouped['total_wins'] + grouped['total_loss'])
+    
+    # Overall Opponent Winning Percentage [OW%]
+    #curr_winp = reg_season[reg_season['week'] == (len(reg_season)/10)].copy()
+    # winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['W%']))
+    # curr_winp['OW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, winp_dict), axis=1)
+    winper = dict(zip(grouped['roster_id'], grouped['Win %']))
+    grouped['OW%'] = grouped.apply(lambda x: calc_ow)
+    # Calculate Overall Opponent Winning Percentage of the opponents faced [OOW%]
+    # oow_winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['OW%']))
+    # curr_winp['OOW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, oow_winp_dict), axis=1)
+
+    # Calculate Strength of Schedule - (2 * OW) + OOW divided by 3
+    # curr_winp['SOS'] = ((curr_winp['OW%'] * 2) + curr_winp['OOW%'])/3
+
+    # Calculate Strength of Victory - Average win % of defeated opponents
+    # curr_winp['SOV'] = curr_winp.apply(lambda x: calc_sov(x, reg_season, winp_dict), axis=1)
+
+    # Calculate Strength of Victory - Average win % of defeated opponents
+    # curr_winp['Exp W (Actual)'] = curr_winp.apply(lambda x:
+    #       f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*14:.1f} ({x['h2h_wins']})', 
+    #       axis=1)
+
+
+    print(grouped.head())
+all_time_metrics()
 
