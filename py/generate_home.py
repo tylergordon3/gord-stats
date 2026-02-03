@@ -2,7 +2,6 @@ from datetime import date
 import predictions
 import utils
 import os
-from os.path import exists
 from pytz import timezone
 import datetime
 

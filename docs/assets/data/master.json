@@ -4367,8 +4367,7 @@
             "txamcc",
             "texas a&m corpus chris",
             "TEXAS A&M CORPUS CHRIS",
-            "texasa&mcorpuschris",
-            "TAMC"
+            "texasa&mcorpuschris"
         ],
         "302": [
             "Tigers",
@@ -5432,7 +5431,7 @@
         "20": "Baylor",
         "21": "Bellarmine",
         "22": "Belmont",
-        "23": "Bethune Cookman",
+        "23": "B-CU",
         "24": "Binghamton",
         "25": "Boise St.",
         "26": "BC",
@@ -5486,7 +5485,7 @@
         "74": "Duquesne",
         "75": "ECU",
         "76": "East Tennessee St.",
-        "77": "East Texas A&M",
+        "77": "ETAMU",
         "78": "EIU",
         "79": "EKU",
         "80": "EMU",
@@ -5523,7 +5522,7 @@
         "111": "Hofstra",
         "112": "Holy Cross",
         "113": "Houston",
-        "114": "Houston Christian",
+        "114": "HCU",
         "115": "Howard",
         "116": "IU Indy",
         "117": "Idaho",

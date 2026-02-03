@@ -4,7 +4,7 @@
 import utils
 import pandas as pd
 import scraper
-from datetime import timedelta, date
+from datetime import timedelta
 from bs4 import BeautifulSoup
 from io import StringIO
 

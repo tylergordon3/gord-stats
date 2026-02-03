@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
-from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.inspection import permutation_importance
 import kenpom_model_api
-from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
 
 param_grid = [
