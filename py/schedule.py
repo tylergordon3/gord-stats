@@ -3,6 +3,7 @@
 '''
 import schedule_stats
 import html_builder as htmb
+import league_data
 
 #       ****** MAIN ******
 def schedule_main(season_str):
@@ -39,7 +40,7 @@ def schedule_main(season_str):
             line = line.replace("<td>", '<td class="first-col">', 1)
             lines[i] = line
     new_html = "\n".join(lines)
-
-    output = htmb.add_front_matter(new_html, 'Schedule Stats')
+    formal_season = league_data.get_formal_season(season_str)
+    output = htmb.add_front_matter(new_html, f'Schedule Stats {formal_season}')
     with open(f'./docs/{season_str}/schedule/index.html', 'w') as f:
         f.write(output)

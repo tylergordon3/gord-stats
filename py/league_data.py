@@ -37,7 +37,21 @@ def get_season_path(season):
         case "2526":
             season_str = '2526'
     return utils.get_project_root() / Path("data") / Path("season") / Path(f'{season_str}.json')
-    
+
+def get_formal_season(season):
+    match season:
+        case "2023":
+            return "2023-2024"
+        case "2324":
+            return "2023-2024"
+        case "2024":
+            return "2024-2025"
+        case "2425":
+            return "2024-2025"
+        case "2025":
+            return "2025-2026"
+        case "2526":
+            return "2025-2026"
 
 def get_season(end_week, season):
     # Fantasy season: 1-14 reg, 15-17 post
