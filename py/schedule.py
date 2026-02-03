@@ -41,5 +41,5 @@ def schedule_main(season_str):
     new_html = "\n".join(lines)
 
     output = htmb.add_front_matter(new_html, 'Schedule Stats')
-    with open(f'./docs/{season_str}/schedule/schedule.html', 'w') as f:
+    with open(f'./docs/{season_str}/schedule/index.html', 'w') as f:
         f.write(output)
