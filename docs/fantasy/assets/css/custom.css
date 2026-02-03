@@ -246,18 +246,64 @@ thead th {
   }
 }
 
-.change-toggle select {
-  width: 120px;
-}
-
-.change-toggle label {
-  font-weight: 600;
-  color: #0F79D0
-}
-
-/* Shared layout for filter controls */
+/* Container layout */
 .change-toggle {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.change-toggle label {
+  font-weight: 700;
+  color: #0F79D0;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+/* The "Button" wrapper */
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select-wrapper select {
+  appearance: none; /* Removes default browser arrow */
+  -webkit-appearance: none;
+  background-color: #ffffff;
+  border: 2px solid #0F79D0;
+  border-radius: 6px;
+  padding: 8px 35px 8px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Hover & Focus states for visibility */
+.select-wrapper select:hover {
+  border-color: #0b5ea1;
+  background-color: #f0f7ff;
+  transform: translateY(-1px);
+}
+
+.select-wrapper select:focus {
+  outline: none;
+  border-color: #ffcc00; /* Contrast color for focus */
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3);
+}
+
+/* Custom Arrow Icon */
+.select-wrapper::after {
+  content: "▼";
+  font-size: 0.7rem;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  position: absolute;
+  color: #0F79D0;
+  pointer-events: none;
 }
