@@ -12,7 +12,7 @@ def schedule_main(season_str):
     html += '<h2>All-Play Standings</h2>'
     html += '<p>Whole league goes H2H, every week.</p>'
     html += '<div class="table-scroll">'
-    html += schedule_stats.calc_roto().to_html()
+    html += schedule_stats.calc_roto(season_str).to_html()
     html += '</div>'
 
     html += '<h2>Strength of Schedule & Victory</h2>'
@@ -21,7 +21,7 @@ def schedule_main(season_str):
     html += "<p><strong>Exp Wins:</strong> Expected Wins (vs Actual), used Pythagorean Expectation to estimate wins based on PF and PA</p>"
     html += '<p>*Sorted by SOS</p>'
     html += '<div class="table-scroll">'
-    html += schedule_stats.schedule_metrics().to_html()
+    html += schedule_stats.schedule_metrics(season_str).to_html()
     html += '</div>'
 
     # All-Play Stats
@@ -29,7 +29,7 @@ def schedule_main(season_str):
     html += '<p>Left to right - All teams (columns) compared to 1 schedule (row) </p>'
     html += '<p>Top to bottom - 1 team (column) compared to every schedule (row)</p> '
     html += '<div class="table-scroll">'
-    html += schedule_stats.schedule_compare().to_html(index=False)
+    html += schedule_stats.schedule_compare(season_str).to_html(index=False)
     html += '</div>'
     lines = html.split("\n")
     

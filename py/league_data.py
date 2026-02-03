@@ -3,6 +3,8 @@ from tqdm import tqdm
 import pandas as pd
 import league_util
 from sleeper_wrapper import League
+import utilities as utils
+from pathlib import Path
 
 def get_league_id(season):
     match season:
@@ -18,6 +20,24 @@ def get_league_id(season):
             return constants.LEAGUEID_2025
         case "2526":
             return constants.LEAGUEID_2025
+
+def get_season_path(season):
+    season_str = ''
+    match season:
+        case "2023":
+            season_str = '2324'
+        case "2324":
+            season_str = '2324'
+        case "2024":
+            season_str = '2425'
+        case "2425":
+            season_str = '2425'
+        case "2025":
+            season_str = '2526'
+        case "2526":
+            season_str = '2526'
+    return utils.get_project_root() / Path("data") / Path("season") / Path(f'{season_str}.json')
+    
 
 def get_season(end_week, season):
     # Fantasy season: 1-14 reg, 15-17 post

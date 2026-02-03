@@ -3,12 +3,14 @@ import league_util
 import constants
 import html_util
 import plotly.express as px
+import league_data
 import numpy as np
 
 import plotly.graph_objects as go
 
-def load_stats():
-    df = pd.read_json(constants.SEASON_PATH)
+def load_stats(season):
+    path = league_data.get_season_path(season=season)
+    df = pd.read_json(path)
     return df[df['week'] < 15]
 
 def process_roto(group_df):
@@ -26,8 +28,8 @@ def process_roto(group_df):
         record(team, group_df), axis=1, result_type='expand')
     return group_df
 
-def calc_roto():
-    reg_season = load_stats()
+def calc_roto(season):
+    reg_season = load_stats(season)
     df = reg_season.groupby('week')
     results = []
     for _, group in df:
@@ -71,8 +73,8 @@ def calc_sov(team, season, dict):
     sov = sum(arr)/len(arr)
     return sov
 
-def schedule_metrics(standings=False):
-    reg_season = load_stats()
+def schedule_metrics(season, standings=False):
+    reg_season = load_stats(season)
     # Winning Percentage
     reg_season['W%'] = reg_season['total_wins'] / (reg_season['total_wins'] + reg_season['total_loss'])
 
@@ -116,8 +118,8 @@ def schedule_metrics(standings=False):
         )
     return styler
 
-def schedule_compare():
-    reg_season = load_stats()
+def schedule_compare(season):
+    reg_season = load_stats(season)
     roster_ids = pd.unique(reg_season['roster_id'])
 
     df = pd.DataFrame()
@@ -167,8 +169,8 @@ def schedule_compare():
         .set_table_attributes('class="sticky-table"')
     return styled_df
 
-def weekly_rankings():
-    reg_season = load_stats()
+def weekly_rankings(season):
+    reg_season = load_stats(season)
     df = reg_season.sort_values(by=['week', 'total_wins', 'PF'], ascending=[True, False, False])
     # df_sorted['Rank'] = df_sorted.groupby('Category')['Score1'].rank(method='min', ascending=True)
     df['Rank'] = df.groupby('week')['total_wins'].rank(method='first', ascending=False)
