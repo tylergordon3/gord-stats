@@ -64,3 +64,5 @@ def update_all(start=2010, end=2026):
     all = all.reset_index(drop=True)
     path = utils.get_path(f"model_data/kenpom_api/all.json")
     utils.save_json_data(all.to_json(), path)
+
+kenpom_now()
