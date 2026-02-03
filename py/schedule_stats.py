@@ -265,7 +265,16 @@ def all_time_opp(roster, sched_dict, winp_dict):
     sched = sched_dict[roster]
     arr = [winp_dict[x] for x in sched]
     return (sum(arr) / len(arr))
-    
+
+def all_time_sov(roster, sched_dict, ifWin_dict, winp_dict):
+    sched = sched_dict[roster]
+    wins = ifWin_dict[roster]
+    filtered = []
+    for opp, ifWin in zip(sched, wins):
+        if ifWin == 1:
+            filtered.append(opp)
+    arr = [winp_dict[x] for x in filtered]
+    return (sum(arr) / len(arr))
 
 def all_time_metrics():
     history = archive._open()
@@ -274,15 +283,17 @@ def all_time_metrics():
     dfs = [pd.DataFrame(history[key]['metrics_df']) for key in keys]
     all = pd.DataFrame()
     opponents = [pd.read_json(StringIO(history[key]['opponents'])) for key in keys]
+    if_win = [pd.read_json(StringIO(history[key]['if_win'])) for key in keys]
     all_opps = pd.DataFrame()
-
+    all_if_win = pd.DataFrame()
     for i in range(0, len(dfs)):
         all = pd.concat([all, dfs[i]])
         all_opps = pd.concat([all_opps, opponents[i]])
+        all_if_win = pd.concat([all_if_win, if_win[i]])
     
     opps_dict = all_opps.to_dict(orient='list')
     
-    filter = all[['roster_id', 'median_wins', 'h2h_loss',
+    filter = all[['roster_id', 'median_wins', 'h2h_loss', 'h2h_wins',
                   'median_loss', 'total_wins', 'total_loss',
                   'PF', 'PA']]
     grouped = filter.groupby(by='roster_id').sum()
@@ -295,8 +306,6 @@ def all_time_metrics():
                                                           winp_dict=winper), axis=1)
     
     # Calculate Overall Opponent Winning Percentage of the opponents faced [OOW%]
-    # oow_winp_dict = dict(zip(curr_winp['roster_id'], curr_winp['OW%']))
-    # curr_winp['OOW%'] = curr_winp.apply(lambda x: calc_ow(x, reg_season, oow_winp_dict), axis=1)
     oow_winper = dict(zip(grouped['roster_id'], grouped['OW%']))
     grouped['OOW%'] = grouped.apply(lambda x: all_time_opp(x['roster_id'], sched_dict=opps_dict, 
                                                           winp_dict=oow_winper), axis=1)
@@ -304,16 +313,25 @@ def all_time_metrics():
     # Calculate Strength of Schedule - (2 * OW) + OOW divided by 3
     grouped['SOS'] = ((grouped['OW%'] * 2) + grouped['OOW%'])/3
 
+    # Calculate Strength of Victory - Average win % of defeated opponents
+    grouped['SOV'] = grouped.apply(lambda x: all_time_sov(x['roster_id'], sched_dict=opps_dict,
+                                                          ifWin_dict=all_if_win,
+                                                          winp_dict=winper), axis=1)
     
-    # Calculate Strength of Victory - Average win % of defeated opponents
-    # grouped['SOV'] = grouped.apply(lambda x: calc_sov(x, reg_season, winp_dict), axis=1)
+    grouped['Exp W (Actual)'] = grouped.apply(lambda x:
+           f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*42:.1f} ({x['h2h_wins']})', 
+           axis=1)
+    styler = (
+       grouped
+        .style
+        .hide(axis="index") 
+        .format( lambda x: f"{x:.3f}" if isinstance(x, float) else x) 
+        .background_gradient(cmap="RdYlGn_r", subset=["SOS"]) 
+        .background_gradient(cmap="RdYlGn", subset=["SOV"])
+        .apply(html_util.bg_from_pythag_str, subset=["Exp W (Actual)"])
+        .set_table_styles([html_util.light_grid_style_data, html_util.light_grid_style_header, html_util.table_style], overwrite=False)
+        .set_table_attributes('class="sticky-table"')
+        )
+    return styler
 
-    # Calculate Strength of Victory - Average win % of defeated opponents
-    # curr_winp['Exp W (Actual)'] = curr_winp.apply(lambda x:
-    #       f'{(x['PF']**constants.EXPW_RATIO)/((x['PF']**constants.EXPW_RATIO) + (x['PA']**constants.EXPW_RATIO))*14:.1f} ({x['h2h_wins']})', 
-    #       axis=1)
-    print(grouped[['Win %', 'OW%', 'OOW%', 'SOS']])
-
-    #print(grouped.head())
-all_time_metrics()
 

@@ -60,7 +60,7 @@ def generate_landing(folder, file, title):
     print(f"Landing page generated: {output_file}")
 
 def generate_index():
-    standings = schedule_stats.schedule_metrics(standings=True)
+    standings = schedule_stats.all_time_metrics()
     
     page=f'''
 <!DOCTYPE html>
@@ -72,7 +72,7 @@ def generate_index():
   <body>
     <p><strong>Schedule:</strong> <strong>Easiest:</strong> Big Booty Bowers | <strong>Hardest:</strong> padgett</p>
     <p><strong>H2H Wins:</strong> <strong>Weakest:</strong> Clanker Barrel | <strong>Strongest:</strong> The Standard & Lotta Cox</p>
-    <h1>Regular Season Standings</h1>
+    <h1>All Time Metrics</h1>
     <p><strong>SOS:</strong> Green = easier schedule, red = harder schedule</p>
     <p><strong>SOV:</strong> Green = better victories, red = easier victories</p>
     <p><strong>Exp W (Actual):</strong> Expected H2H wins using Pythagorean Wins versus actual H2H wins.</p> 
