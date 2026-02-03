@@ -5,7 +5,7 @@ import schedule_stats
 import html_builder as htmb
 
 #       ****** MAIN ******
-def schedule_main():
+def schedule_main(season_str):
     # Set up
     html = ''
     # All Play Standings
@@ -41,5 +41,5 @@ def schedule_main():
     new_html = "\n".join(lines)
 
     output = htmb.add_front_matter(new_html, 'Schedule Stats')
-    with open('./docs/schedule/schedule.html', 'w') as f:
+    with open(f'./docs/{season_str}/schedule/schedule.html', 'w') as f:
         f.write(output)

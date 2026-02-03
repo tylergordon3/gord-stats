@@ -4,10 +4,25 @@ import pandas as pd
 import league_util
 from sleeper_wrapper import League
 
-def get_season(end_week):
+def get_league_id(season):
+    match season:
+        case "2023":
+            return constants.LEAGUEID_2023
+        case "2324":
+            return constants.LEAGUEID_2023
+        case "2024":
+            return constants.LEAGUEID_2024
+        case "2425":
+            return constants.LEAGUEID_2024
+        case "2025":
+            return constants.LEAGUEID_2025
+        case "2526":
+            return constants.LEAGUEID_2025
+
+def get_season(end_week, season):
     # Fantasy season: 1-14 reg, 15-17 post
     if end_week > 14: end_week = 14
-    league = League(constants.LEAGUEID)
+    league = League(get_league_id(season))
     teams = league_util.get_teams(league)
     season = pd.DataFrame()
     with tqdm(total=end_week, desc="Loading season") as pbar:
