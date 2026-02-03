@@ -180,9 +180,9 @@ def main(season_str):
 
     final_ranks['pos_rank'] = final_ranks.groupby('pos')['tot_pts'].rank(ascending=False).astype(int)
     apMeta = allPicks['metadata'].apply(pd.Series)
-    print(apMeta.columns)
+    
     apMeta = apMeta.drop(columns=['team_abbr', 'team_changed_at', 'sport', 'news_updated',
-                                'years_exp', 'status', 'injury_status', 'number', 'player_id'])
+                                'years_exp', 'status', 'injury_status', 'number', 'player_id'], errors='ignore')
 
     draftDF = pd.concat([allPicks, apMeta], axis=1)
     draftDF = draftDF.drop(columns=['metadata', 'reactions', 'is_keeper',
