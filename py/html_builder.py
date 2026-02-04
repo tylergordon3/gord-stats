@@ -72,9 +72,10 @@ def generate_index():
   </head>
   <body>
     <h1>All-Time Metrics</h1>
-    <p>SOS - <strong>Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
-    <p><strong>SOV:</strong> Green = better victories, red = easier victories</p>
-    <p><strong>Exp W (Actual):</strong> Expected H2H wins using Pythagorean Wins versus actual H2H wins.</p> 
+    <p><strong>SOS - Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
+    <p><strong>SOV - Strength of Victory</strong>: Green, More wins vs. good teams -> Red, Less wins vs. good teams</p>
+    <p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green, Outperformed expectations -> Red, underperformed.\n
+    *Expected Wins calculated using Pythagorean Wins formula using a constant of 2.37.</p> 
     <p>Green = outperformed expectations, red = underperformed.</p>
     <div class="table-scroll">
     {standings.to_html()}
