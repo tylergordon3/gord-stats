@@ -400,6 +400,7 @@ def all_time_missed():
 
     grouped = grouped.reset_index(names='roster_id')
     grouped["% of Games Missed"] = grouped['Total Games Missed'] / grouped['tot_games']
+    grouped["% of Games Missed"] = grouped["% of Games Missed"].apply(lambda x: f'{x:.2%}')
     grouped['Team'] = grouped.apply(lambda x: league_util.name_from_id(int(x['roster_id'])), axis=1)
     grouped = grouped.drop(columns=['tot_games', 'roster_id', 'Owner'])
     
