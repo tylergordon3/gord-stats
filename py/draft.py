@@ -14,6 +14,7 @@ import player_db as pdb
 import html_builder as htmb
 import constants
 import archive
+import numpy as np
 # ------------------
 # Globals
 # ------------------
@@ -394,13 +395,16 @@ def all_time_missed():
     for i in range(0, len(dfs)):
         all = pd.concat([all, dfs[i]])
     
+    breakdown = all.groupby('roster_id').agg(list)
+    breakdown = breakdown.reset_index(names='roster_id')
+    breakdown = breakdown[['roster_id', 'tot_games', 'Total Games Missed']].copy()
+
+    breakdown['Total'] = breakdown['Total Games Missed'].apply(lambda x: sum(x))
+    breakdown['% missed total'] = breakdown.apply(lambda x: np.asarray(x['Total Games Missed']) / x['Total'], axis=1) 
+   
     grouped = all.groupby(by='roster_id').sum()
     grouped = grouped.reset_index(names='roster_id')
-    breakdown = grouped[['roster_id', '% of Games Missed', 'tot_games']].copy()
-    breakdown['% of Games Missed'] = breakdown['% of Games Missed'].apply(lambda x: x.split('%')[:-1])
-    breakdown['flt'] = breakdown['% of Games Missed'].apply(lambda x:
-                        [float(num) for num in x])
-    breakdown['total'] = breakdown.apply(lambda x: sum(x['flt']), axis=1)
+
     grouped = grouped.drop(columns=['% of Games Missed'])
     grouped["% of Games Missed"] = grouped['Total Games Missed'] / grouped['tot_games']
     grouped["% of Games Missed"] = grouped["% of Games Missed"].apply(lambda x: f'{x:.2%}')
@@ -410,5 +414,5 @@ def all_time_missed():
     grouped = grouped.sort_values(by='Total Games Missed', ascending=False)
     grouped = grouped[['Team', 'Total Games Missed', '% of Games Missed']].copy()
     missing_styler = default_style(grouped, ["Total Games Missed"], opt_styler="RdYlGn_r")
-    print(breakdown)
+    print(breakdown.to_string())
     return missing_styler
