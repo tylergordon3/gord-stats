@@ -76,7 +76,6 @@ def generate_index():
     <p><strong>SOV - Strength of Victory</strong>: Green, More wins vs. good teams -> Red, Less wins vs. good teams</p>
     <p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green, Outperformed expectations -> Red, underperformed.\n
     *Expected Wins calculated using Pythagorean Wins formula using a constant of 2.37.</p> 
-    <p>Green = outperformed expectations, red = underperformed.</p>
     <div class="table-scroll">
     {standings.to_html()}
     </div>
@@ -84,9 +83,10 @@ def generate_index():
     <div class="table-scroll">
     {missed_games.to_html()}
     </div>
-    <p>Currently only factors in players drafted by team. Trades, drops, additions will not be properly reflected.</p>
-    <p>Players on IR when drafted not counted. Kickers and D/ST not counted.</p>
-    <p>Future versions will account for these nuances, however this is still a good look at raw injury luck.</p>
+    <p>Currently only factors in players drafted by team.\nTrades, drops, additions will not be properly reflected.\n
+    Players on IR when drafted not counted. Kickers and D/ST not counted.\n
+    Future versions will account for these nuances, however this is still a good look at raw injury luck.\n
+    Season-by-season breakdown can be found in the 'Drafts' section.</p>
   </body>
 </html>
 '''
