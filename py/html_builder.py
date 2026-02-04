@@ -74,7 +74,7 @@ def generate_index():
     <h1>All-Time Metrics</h1>
     <p><strong>SOS - Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
     <p><strong>SOV - Strength of Victory</strong>: Green, More wins vs. good teams -> Red, Less wins vs. good teams</p>
-    <p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green, Outperformed expectations -> Red, underperformed.\n
+    <p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green, Outperformed expectations -> Red, underperformed.<br>
     *Expected Wins calculated using Pythagorean Wins formula using a constant of 2.37.</p> 
     <div class="table-scroll">
     {standings.to_html()}
@@ -83,10 +83,10 @@ def generate_index():
     <div class="table-scroll">
     {missed_games.to_html()}
     </div>
-    <p>Currently only factors in players drafted by team.\n
-    Trades, drops, additions will not be properly reflected.\n
-    Players on IR when drafted not counted. Kickers and D/ST not counted.\n
-    Future versions will account for these nuances, however this is still a good look at raw injury luck.\n
+    <p>Currently only factors in players drafted by team.<br>
+    Trades, drops, additions will not be properly reflected.<br>
+    Players on IR when drafted not counted. Kickers and D/ST not counted.<br>
+    Future versions will account for these nuances, however this is still a good look at raw injury luck.<br>
     Season-by-season breakdown can be found in the 'Drafts' section.</p>
   </body>
 </html>
