@@ -72,7 +72,7 @@ def generate_index():
   </head>
   <body>
     <h1>All-Time Metrics</h1>
-    <p><strong>SOS:</strong> Green = easier schedule, red = harder schedule</p>
+    <p>SOS - <strong>Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
     <p><strong>SOV:</strong> Green = better victories, red = easier victories</p>
     <p><strong>Exp W (Actual):</strong> Expected H2H wins using Pythagorean Wins versus actual H2H wins.</p> 
     <p>Green = outperformed expectations, red = underperformed.</p>
@@ -83,6 +83,9 @@ def generate_index():
     <div class="table-scroll">
     {missed_games.to_html()}
     </div>
+    <p>Currently only factors in players drafted by team. Trades, drops, additions will not be properly reflected.</p>
+    <p>Players on IR when drafted not counted. Kickers and D/ST not counted.</p>
+    <p>Future versions will account for these nuances, however this is still a good look at raw injury luck.</p>
   </body>
 </html>
 '''
