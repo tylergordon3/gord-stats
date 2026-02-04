@@ -7,6 +7,7 @@ from pytz import timezone
 import datetime
 from sleeper_wrapper import League, Drafts
 import league_data
+import league_util
 import fantasy_rosters
 import constants as c
 import player_db as pdb
@@ -217,7 +218,8 @@ def main(season_str):
 
     df['Position Rk'] = df.apply(lambda x: f'{x['pos_rank']} -> {x['final_pos_rank']}', axis=1)
     df['Overall Rk'] = df.apply(lambda x: f'{x['pick_no']} -> {x['final_rank']}', axis =1)
-    df = df.drop(columns=['player_id', 'roster_id', 'first_name', 'last_name', 'pos_rank', 'final_pos_rank',
+ 
+    df = df.drop(columns=['player_id', 'first_name', 'last_name', 'pos_rank', 'final_pos_rank',
                         'final_rank'])
 
     df =  df[~df['position'].isin(['K', 'DEF'])]
@@ -239,7 +241,7 @@ def main(season_str):
     df_lottery = df[df['round'] < 5]
 
     df = df[['Pick', 'Owner', 
-            'Name', 'Pos.', 'Team', 'Position Rk', 'Pos. Rank Δ', 'Overall Rk', 'Overall Rank Δ', 'Games Played']]
+            'Name', 'Pos.', 'Team', 'Position Rk', 'Pos. Rank Δ', 'Overall Rk', 'Overall Rank Δ', 'Games Played', 'roster_id']]
 
     # ------------------
     # Copies for lottery
@@ -330,19 +332,22 @@ def main(season_str):
     # ------------------
     # Missed Games due to Injury
     # ------------------
-    missing = team_breakdown.groupby(by=['Owner']).agg(
+    
+    missing = team_breakdown.groupby(by=['Owner', 'roster_id']).agg(
             num_games = ("Games Played", 'sum'),
             tot_players = ("Games Played", 'count')
         )
     missing['tot_games'] = missing['tot_players'] * 14
+
     missing['Total Games Missed'] = missing['tot_games'] - missing['num_games']
     missing["% of Games Missed"] = missing['Total Games Missed'] / missing['tot_games']
     missing["% of Games Missed"] = missing["% of Games Missed"].apply(lambda x: f'{x:.2%}')
+    archive.save_statistic(season_str, 'missing_df', missing.to_dict(orient='records'))
     missing = missing.sort_values(by='Total Games Missed', ascending=False)
     missing = missing.drop(columns=['tot_players', 'num_games', 'tot_games'])
-    missing = missing.reset_index(names=['Owners'])
+    missing = missing.reset_index(names=['Owners', 'roster_id'])
     missing = missing[['Owners', 'Total Games Missed', '% of Games Missed']].copy()
-    archive.save_statistic(season_str, 'missing_df', missing.to_dict(orient='records'))
+    
     missing_styler = default_style(missing, ["Total Games Missed"], opt_styler="RdYlGn_r")
 
     html = ''
@@ -377,3 +382,24 @@ def main(season_str):
     p_filter = players[players['week'] < 15]
     #for k in test.keys():
     #    print(pdb.getFromID(k, p_filter))
+
+def all_time_missed():
+    history = archive._open()
+    keys = history.keys()
+    all = pd.DataFrame()
+    dfs = [pd.DataFrame(history[key]['missing_df']) for key in keys]
+
+    for i in range(0, len(dfs)):
+        df = dfs[i].reset_index(names=['Owners', 'roster_id'])
+        all = pd.concat([all, df[['Owners', 'tot_games', 'Total Games Missed']].copy()])
+
+    grouped = all.groupby(by='Owners').sum()
+    grouped = grouped.reset_index(names='roster_id')
+    grouped["% of Games Missed"] = grouped['Total Games Missed'] / grouped['tot_games']
+    grouped['Team'] = grouped.apply(lambda x: league_util.name_from_id(int(x['roster_id'])+1), axis=1)
+    grouped = grouped.drop(columns=['tot_games', 'roster_id'])
+    
+    grouped = grouped.sort_values(by='Total Games Missed', ascending=False)
+    grouped = grouped[['Team', 'Total Games Missed', '% of Games Missed']].copy()
+    missing_styler = default_style(grouped, ["Total Games Missed"], opt_styler="RdYlGn_r")
+    return missing_styler

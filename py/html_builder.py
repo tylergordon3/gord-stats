@@ -1,5 +1,6 @@
 import os
 import schedule_stats
+import draft
 
 def add_front_matter(html, title, subnav=None):
     if subnav:
@@ -61,7 +62,7 @@ def generate_landing(folder, file, title):
 
 def generate_index():
     standings = schedule_stats.all_time_metrics()
-    
+    missed_games = draft.all_time_missed()
     page=f'''
 <!DOCTYPE html>
 <html>
@@ -70,13 +71,17 @@ def generate_index():
     <title>Home</title>
   </head>
   <body>
-    <h1>All Time Metrics</h1>
+    <h1>All-Time Metrics</h1>
     <p><strong>SOS:</strong> Green = easier schedule, red = harder schedule</p>
     <p><strong>SOV:</strong> Green = better victories, red = easier victories</p>
     <p><strong>Exp W (Actual):</strong> Expected H2H wins using Pythagorean Wins versus actual H2H wins.</p> 
     <p>Green = outperformed expectations, red = underperformed.</p>
     <div class="table-scroll">
     {standings.to_html()}
+    </div>
+    <h1>All-Time Injury Impacts</h1>
+    <div class="table-scroll">
+    {missed_games.to_html()}
     </div>
   </body>
 </html>
