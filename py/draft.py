@@ -344,7 +344,6 @@ def main(season_str):
     missing["% of Games Missed"] = missing["% of Games Missed"].apply(lambda x: f'{x:.2%}')
     copy = missing.copy()
     copy = copy.reset_index()
-    print(copy)
     archive.save_statistic(season_str, 'missing_df', copy.to_dict(orient='records'))
     missing = missing.sort_values(by='Total Games Missed', ascending=False)
     missing = missing.drop(columns=['tot_players', 'num_games', 'tot_games'])
@@ -393,15 +392,16 @@ def all_time_missed():
     dfs = [pd.DataFrame(history[key]['missing_df']) for key in keys]
 
     for i in range(0, len(dfs)):
-        print(dfs[i])
-        df = dfs[i].reset_index(names=['Owners', 'roster_id'])
-        all = pd.concat([all, df[['Owners', 'tot_games', 'Total Games Missed']].copy()])
+        all = pd.concat([all, dfs[i]])
+    
+    grouped = all.groupby(by='roster_id').sum()
 
-    grouped = all.groupby(by='Owners').sum()
+    grouped = grouped.drop(columns=['% of Games Missed'])
+
     grouped = grouped.reset_index(names='roster_id')
     grouped["% of Games Missed"] = grouped['Total Games Missed'] / grouped['tot_games']
-    grouped['Team'] = grouped.apply(lambda x: league_util.name_from_id(int(x['roster_id'])+1), axis=1)
-    grouped = grouped.drop(columns=['tot_games', 'roster_id'])
+    grouped['Team'] = grouped.apply(lambda x: league_util.name_from_id(int(x['roster_id'])), axis=1)
+    grouped = grouped.drop(columns=['tot_games', 'roster_id', 'Owner'])
     
     grouped = grouped.sort_values(by='Total Games Missed', ascending=False)
     grouped = grouped[['Team', 'Total Games Missed', '% of Games Missed']].copy()
