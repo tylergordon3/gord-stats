@@ -15,6 +15,7 @@ import html_builder as htmb
 import constants
 import archive
 import numpy as np
+import matplotlib.pyplot as plt
 # ------------------
 # Globals
 # ------------------
@@ -400,8 +401,17 @@ def all_time_missed():
     breakdown = breakdown[['roster_id', 'tot_games', 'Total Games Missed']].copy()
 
     breakdown['Total'] = breakdown['Total Games Missed'].apply(lambda x: sum(x))
-    breakdown['% missed total'] = breakdown.apply(lambda x: np.asarray(x['Total Games Missed']) / x['Total'], axis=1) 
-   
+    #breakdown['% missed total'] = breakdown.apply(lambda x: np.asarray(x['Total Games Missed']) / x['Total'], axis=1) 
+    breakdown['Team'] = breakdown['roster_id'].apply(lambda x: league_util.name_from_id(x))
+    breakdown = breakdown.drop(columns=['tot_games',  'roster_id'])
+    
+    teams = list(breakdown['Team'])
+    arr = []
+    for i in range(0, len(dfs)):
+        arr.append([])
+        breakdown['Total Games Missed'].apply(lambda x: arr[i].append(x[i]))
+
+
     grouped = all.groupby(by='roster_id').sum()
     grouped = grouped.reset_index(names='roster_id')
 
