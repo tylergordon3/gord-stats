@@ -824,6 +824,8 @@
         "if_win": "{\"1\":[0,1,0,1,0,0,0,0,1,0,1,1,0,0],\"2\":[0,0,0,0,0,1,0,1,1,0,1,0,1,1],\"3\":[1,1,1,0,1,1,1,0,1,1,0,1,1,0],\"4\":[0,1,1,0,1,1,1,1,0,1,0,1,1,1],\"5\":[1,0,0,1,1,1,1,0,0,1,1,0,0,1],\"6\":[1,0,1,1,1,0,1,0,1,1,1,0,0,1],\"7\":[0,1,0,1,0,0,0,1,0,0,1,0,0,0],\"8\":[1,0,1,0,1,0,1,1,0,1,0,1,1,0],\"9\":[1,1,0,1,0,1,0,1,1,0,0,1,0,1],\"10\":[0,0,1,0,0,0,0,0,0,0,0,0,1,0]}",
         "missing_df": [
             {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
                 "num_games": 153,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -831,6 +833,8 @@
                 "% of Games Missed": "15.93%"
             },
             {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
                 "num_games": 151,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -838,6 +842,8 @@
                 "% of Games Missed": "17.03%"
             },
             {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
                 "num_games": 137,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -845,6 +851,8 @@
                 "% of Games Missed": "24.73%"
             },
             {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
                 "num_games": 138,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -852,6 +860,8 @@
                 "% of Games Missed": "24.18%"
             },
             {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
                 "num_games": 113,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -859,6 +869,8 @@
                 "% of Games Missed": "37.91%"
             },
             {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
                 "num_games": 139,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -866,6 +878,8 @@
                 "% of Games Missed": "23.63%"
             },
             {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
                 "num_games": 134,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -873,6 +887,8 @@
                 "% of Games Missed": "26.37%"
             },
             {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
                 "num_games": 127,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -880,6 +896,8 @@
                 "% of Games Missed": "30.22%"
             },
             {
+                "Owner": "The Standard",
+                "roster_id": 6,
                 "num_games": 150,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -887,6 +905,8 @@
                 "% of Games Missed": "17.58%"
             },
             {
+                "Owner": "padgett",
+                "roster_id": 7,
                 "num_games": 159,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1730,6 +1750,8 @@
         "if_win": "{\"1\":[1,1,1,0,0,0,0,0,1,1,1,1,1,1],\"2\":[0,1,1,0,0,1,1,1,0,0,0,1,1,1],\"3\":[1,0,0,1,1,0,1,0,0,0,1,0,1,0],\"4\":[1,1,0,0,0,1,1,1,1,1,0,0,0,0],\"5\":[0,1,1,1,1,0,1,0,1,0,0,1,0,0],\"6\":[1,0,0,1,0,1,0,0,1,1,0,0,0,1],\"7\":[0,0,1,0,0,1,0,1,1,0,0,1,1,1],\"8\":[0,0,0,1,1,1,1,0,0,1,1,0,0,1],\"9\":[0,1,0,1,1,0,0,1,0,0,1,1,0,0],\"10\":[1,0,1,0,1,0,0,1,0,1,1,0,1,0]}",
         "missing_df": [
             {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
                 "num_games": 115,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1737,6 +1759,8 @@
                 "% of Games Missed": "36.81%"
             },
             {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
                 "num_games": 130,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1744,6 +1768,8 @@
                 "% of Games Missed": "28.57%"
             },
             {
+                "Owner": "Fratson",
+                "roster_id": 3,
                 "num_games": 126,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1751,6 +1777,8 @@
                 "% of Games Missed": "30.77%"
             },
             {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
                 "num_games": 136,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1758,6 +1786,8 @@
                 "% of Games Missed": "25.27%"
             },
             {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
                 "num_games": 144,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1765,6 +1795,8 @@
                 "% of Games Missed": "20.88%"
             },
             {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
                 "num_games": 145,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1772,6 +1804,8 @@
                 "% of Games Missed": "20.33%"
             },
             {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
                 "num_games": 121,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1779,6 +1813,8 @@
                 "% of Games Missed": "33.52%"
             },
             {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
                 "num_games": 102,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1786,6 +1822,8 @@
                 "% of Games Missed": "43.96%"
             },
             {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
                 "num_games": 137,
                 "tot_players": 13,
                 "tot_games": 182,
@@ -1793,6 +1831,8 @@
                 "% of Games Missed": "24.73%"
             },
             {
+                "Owner": "padgett",
+                "roster_id": 7,
                 "num_games": 123,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2618,6 +2658,8 @@
         "if_win": "{\"1\":[1,1,1,1,0,0,0,0,0,1,1,1,1,0],\"2\":[0,1,1,0,1,0,0,0,1,0,1,0,1,0],\"3\":[0,0,1,1,0,1,1,1,1,1,1,1,0,1],\"4\":[1,0,1,0,1,1,1,1,0,1,0,0,1,0],\"5\":[0,1,1,1,1,1,0,0,1,0,0,1,0,1],\"6\":[1,1,0,0,0,0,1,1,1,0,1,0,1,0],\"7\":[1,0,0,0,0,0,0,0,0,1,0,1,1,1],\"8\":[0,0,0,1,1,0,1,1,1,0,0,0,0,0],\"9\":[1,1,0,0,0,1,0,1,0,1,1,1,0,1],\"10\":[0,0,0,1,1,1,1,0,0,0,0,0,0,1]}",
         "missing_df": [
             {
+                "Owner": "Fratson",
+                "roster_id": 3,
                 "num_games": 122,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2625,6 +2667,8 @@
                 "% of Games Missed": "27.38%"
             },
             {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
                 "num_games": 111,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2632,6 +2676,8 @@
                 "% of Games Missed": "33.93%"
             },
             {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
                 "num_games": 105,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2639,6 +2685,8 @@
                 "% of Games Missed": "37.50%"
             },
             {
+                "Owner": "Matt",
+                "roster_id": 7,
                 "num_games": 113,
                 "tot_players": 11,
                 "tot_games": 154,
@@ -2646,6 +2694,8 @@
                 "% of Games Missed": "26.62%"
             },
             {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
                 "num_games": 128,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2653,6 +2703,8 @@
                 "% of Games Missed": "23.81%"
             },
             {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
                 "num_games": 72,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2660,6 +2712,8 @@
                 "% of Games Missed": "57.14%"
             },
             {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
                 "num_games": 115,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2667,6 +2721,8 @@
                 "% of Games Missed": "31.55%"
             },
             {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
                 "num_games": 124,
                 "tot_players": 12,
                 "tot_games": 168,
@@ -2674,6 +2730,8 @@
                 "% of Games Missed": "26.19%"
             },
             {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
                 "num_games": 136,
                 "tot_players": 14,
                 "tot_games": 196,
@@ -2681,6 +2739,8 @@
                 "% of Games Missed": "30.61%"
             },
             {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
                 "num_games": 117,
                 "tot_players": 13,
                 "tot_games": 182,

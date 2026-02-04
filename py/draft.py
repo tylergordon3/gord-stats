@@ -342,7 +342,10 @@ def main(season_str):
     missing['Total Games Missed'] = missing['tot_games'] - missing['num_games']
     missing["% of Games Missed"] = missing['Total Games Missed'] / missing['tot_games']
     missing["% of Games Missed"] = missing["% of Games Missed"].apply(lambda x: f'{x:.2%}')
-    archive.save_statistic(season_str, 'missing_df', missing.to_dict(orient='records'))
+    copy = missing.copy()
+    copy = copy.reset_index()
+    print(copy)
+    archive.save_statistic(season_str, 'missing_df', copy.to_dict(orient='records'))
     missing = missing.sort_values(by='Total Games Missed', ascending=False)
     missing = missing.drop(columns=['tot_players', 'num_games', 'tot_games'])
     missing = missing.reset_index(names=['Owners', 'roster_id'])
@@ -390,6 +393,7 @@ def all_time_missed():
     dfs = [pd.DataFrame(history[key]['missing_df']) for key in keys]
 
     for i in range(0, len(dfs)):
+        print(dfs[i])
         df = dfs[i].reset_index(names=['Owners', 'roster_id'])
         all = pd.concat([all, df[['Owners', 'tot_games', 'Total Games Missed']].copy()])
 
