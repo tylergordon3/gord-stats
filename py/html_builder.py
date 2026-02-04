@@ -83,7 +83,8 @@ def generate_index():
     <div class="table-scroll">
     {missed_games.to_html()}
     </div>
-    <p>Currently only factors in players drafted by team.\nTrades, drops, additions will not be properly reflected.\n
+    <p>Currently only factors in players drafted by team.\n
+    Trades, drops, additions will not be properly reflected.\n
     Players on IR when drafted not counted. Kickers and D/ST not counted.\n
     Future versions will account for these nuances, however this is still a good look at raw injury luck.\n
     Season-by-season breakdown can be found in the 'Drafts' section.</p>
