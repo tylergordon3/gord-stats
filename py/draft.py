@@ -395,10 +395,13 @@ def all_time_missed():
         all = pd.concat([all, dfs[i]])
     
     grouped = all.groupby(by='roster_id').sum()
-
-    grouped = grouped.drop(columns=['% of Games Missed'])
-
     grouped = grouped.reset_index(names='roster_id')
+    breakdown = grouped[['roster_id', '% of Games Missed', 'tot_games']].copy()
+    breakdown['% of Games Missed'] = breakdown['% of Games Missed'].apply(lambda x: x.split('%')[:-1])
+    breakdown['flt'] = breakdown['% of Games Missed'].apply(lambda x:
+                        [float(num) for num in x])
+    breakdown['total'] = breakdown.apply(lambda x: sum(x['flt']), axis=1)
+    grouped = grouped.drop(columns=['% of Games Missed'])
     grouped["% of Games Missed"] = grouped['Total Games Missed'] / grouped['tot_games']
     grouped["% of Games Missed"] = grouped["% of Games Missed"].apply(lambda x: f'{x:.2%}')
     grouped['Team'] = grouped.apply(lambda x: league_util.name_from_id(int(x['roster_id'])), axis=1)
@@ -407,4 +410,5 @@ def all_time_missed():
     grouped = grouped.sort_values(by='Total Games Missed', ascending=False)
     grouped = grouped[['Team', 'Total Games Missed', '% of Games Missed']].copy()
     missing_styler = default_style(grouped, ["Total Games Missed"], opt_styler="RdYlGn_r")
+    print(breakdown)
     return missing_styler
