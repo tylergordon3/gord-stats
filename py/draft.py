@@ -12,6 +12,7 @@ import constants as c
 import player_db as pdb
 import html_builder as htmb
 import constants
+import archive
 # ------------------
 # Globals
 # ------------------
@@ -341,6 +342,7 @@ def main(season_str):
     missing = missing.drop(columns=['tot_players', 'num_games', 'tot_games'])
     missing = missing.reset_index(names=['Owners'])
     missing = missing[['Owners', 'Total Games Missed', '% of Games Missed']].copy()
+    archive.save_statistic(season_str, 'missing_df', missing.to_dict(orient='records'))
     missing_styler = default_style(missing, ["Total Games Missed"], opt_styler="RdYlGn_r")
 
     html = ''
