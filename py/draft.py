@@ -409,7 +409,7 @@ def all_time_missed():
     out = pd.concat([breakdown, values_df], axis=1)
     out = out.drop(columns=['Total Games Missed'])
 
-    ax = out.plot(x='Team', kind='bar', stacked=True, title='Games Missed for Injury by Season')
+    ax = out.plot(x='Team', kind='bar', stacked=True, title='Games Missed for Injury by Season', rot=45)
     buf = io.BytesIO()
     plt.savefig(buf, format='png', bbox_inches='tight') # 'tight' prevents cropped labels
     buf.seek(0)
