@@ -408,9 +408,11 @@ def main(season_str):
     html += '<h1>Player Rank Change</h2>'
     html += '<p>Change in position & overall rank from where a player was drafted to where they finished ranked (based on fpts).<p>'
     html += '<h3>Rank Changes, All Players</h3>'
+    html += '<div style="display: flex; gap: 10px;">'
     html += f'<img src="data:image/png;base64,{pos_img}" alt="Position Rank Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img}" alt="Overall Rank Change"/>'
-
+    html += '</div>'
+    
     pos_img_no_inj, ovr_img_no_inj = draft_plot(breakdown_no_injuries)
 
     html += '<h3>Rank Changes, Injured Players Removed</h3>'
