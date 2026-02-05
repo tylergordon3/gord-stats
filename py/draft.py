@@ -412,26 +412,32 @@ def main(season_str):
     html += f'<img src="data:image/png;base64,{pos_img}" alt="Position Rank Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img}" alt="Overall Rank Change"/>'
     html += '</div>'
-    
+
     pos_img_no_inj, ovr_img_no_inj = draft_plot(breakdown_no_injuries)
 
     html += '<h3>Rank Changes, Injured Players Removed</h3>'
     html += '<p>Players who played in less than 10 games excluded from data.</p>'
+    html += '<div style="display: flex; gap: 10px;">'
     html += f'<img src="data:image/png;base64,{pos_img_no_inj}" alt="Position Rank No Inj Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img_no_inj}" alt="Overall Rank No Inj Change"/>'
+    html += '</div>'
 
     pos_img_lottery, ovr_img_lottery = draft_plot(lottery_breakdown)
 
     html += '<h3>Rank Changes, All Players, First 4 Rounds of Draft</h3>'
+    html += '<div style="display: flex; gap: 10px;">'
     html += f'<img src="data:image/png;base64,{pos_img_lottery}" alt="Position Rank Lottery Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img_lottery}" alt="Overall Rank Lottery Change"/>'
+    html += '</div>'
 
     pos_img_lottery_no_inj, ovr_img_lottery_no_inj = draft_plot(lottery_breakdown_no_injuries)
 
     html += '<h3>Rank Changes, All Players, First 4 Rounds of Draft, Injured Players Removed</h3>'
     html += '<p>Players who played in less than 10 games excluded from data.</p>'
+    html += '<div style="display: flex; gap: 10px;">'
     html += f'<img src="data:image/png;base64,{pos_img_lottery_no_inj}" alt="Position Rank No Inj Lottery Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img_lottery_no_inj}" alt="Overall Rank No Inj Lottery Change"/>'
+    html += '</div>'
 
     page = htmb.add_front_matter(html, f'Draft Team Breakdown - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
     with open(f'docs/{season_str}/draft/draft_team.html', "w", encoding="utf-8") as f:
