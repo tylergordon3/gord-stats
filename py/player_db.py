@@ -34,6 +34,7 @@ def get(week):
     # Special cases - seperate into own function TBC
     stats_players['player_display_name'] = stats_players['player_display_name'].replace('Mike Badgley', 'Michael Badgley')
     stats_players['player_display_name'] = stats_players['player_display_name'].replace('Amon-Ra St. Brown', 'AmonRa StBrown')
+    stats_players['player_display_name'] = stats_players['player_display_name'].replace('ChigoziemOkonkwo', 'ChigOkonkwo')
     stats_players['team'] = stats_players['team'].replace('LA', 'LAR')
     
     stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace(".", "") if not x == None else x)
