@@ -88,7 +88,7 @@ if update_womens_all:
 [today_df, main] = predictions.predict(date.today())
 [today_w_df, main_w] = predictions.predict_w(date.today())
 
-#rc.main(main, 'M')
+rc.main(main, 'M')
 rc.main(main_w, 'W')
 
 rh.render_home()
