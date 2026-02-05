@@ -404,7 +404,7 @@ def all_time_missed():
 
     breakdown['Total'] = breakdown['Total Games Missed'].apply(lambda x: sum(x))
     breakdown['Team'] = breakdown['roster_id'].apply(lambda x: league_util.name_from_id(x))
-    breakdown = breakdown.drop(columns=['tot_games',  'roster_id'])
+    breakdown = breakdown.drop(columns=['tot_games',  'roster_id', 'Total'])
     values_df = pd.DataFrame(breakdown['Total Games Missed'].tolist(), columns=keys)
     out = pd.concat([breakdown, values_df], axis=1)
     out = out.drop(columns=['Total Games Missed'])
