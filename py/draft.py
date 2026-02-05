@@ -213,7 +213,7 @@ def main(season_str):
     df['name'] = df['name'].replace('Mike Badgley', 'Michael Badgley')
     df['name'] = df['name'].replace('Amon-Ra St. Brown', 'AmonRa StBrown')
     df['name'] = df['name'].replace('Chigoziem Okonkwo', 'Chig Okonkwo')
-
+    df['name'] = df['name'].replace( 'Hollywood Brown', 'Marquise Brown')
     df['name'] = df['name'].apply(lambda x: x.replace(".", "") if not x == None else x)
     df['name'] = df['name'].apply(lambda x: x.replace("'", "") if not x == None else x)
     df['name'] = df['name'].apply(lambda x: x.replace("-", "") if not x == None else x)

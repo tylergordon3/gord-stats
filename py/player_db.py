@@ -35,6 +35,8 @@ def get(week):
     stats_players['player_display_name'] = stats_players['player_display_name'].replace('Mike Badgley', 'Michael Badgley')
     stats_players['player_display_name'] = stats_players['player_display_name'].replace('Amon-Ra St. Brown', 'AmonRa StBrown')
     stats_players['player_display_name'] = stats_players['player_display_name'].replace('Chigoziem Okonkwo', 'ChigOkonkwo')
+    
+    stats_players['player_display_name'] = stats_players['player_display_name'].replace('Hollywood Brown', 'Marquise Brown')
     stats_players['team'] = stats_players['team'].replace('LA', 'LAR')
     
     stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace(".", "") if not x == None else x)
