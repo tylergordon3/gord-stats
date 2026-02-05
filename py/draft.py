@@ -373,23 +373,13 @@ def main(season_str):
     with open(f'docs/{season_str}/draft/draft_team.html', "w", encoding="utf-8") as f:
         f.write(page)
 
-    og = original_draft(df, "QB", 10)
-
-    end = final(final_ranks, "QB", 10)
-
-    comb = pd.merge(og, end, "left", on='Pos. Rank')
-    #print(comb)
-
-    p = pd.read_json(constants.SEASON_PATH)
-    end = p[p['week'] == 14]
-    end = end[['players_dict', 'team_name']]
-    test = list(end[end['team_name']== 'Clanker Barrel']['players_dict'])[0]
-
-    p_filter = players[players['week'] < 15]
-    #for k in test.keys():
-    #    print(pdb.getFromID(k, p_filter))
+    #og = original_draft(df, "QB", 10)
+    #end = final(final_ranks, "QB", 10)
 
 def all_time_missed():
+    ##############################
+    # Unpack archived data
+    ###############################
     history = archive._open()
     keys = history.keys()
     all = pd.DataFrame()
@@ -397,7 +387,10 @@ def all_time_missed():
 
     for i in range(0, len(dfs)):
         all = pd.concat([all, dfs[i]])
-    
+
+    ##############################
+    # Injury Breakdown by Year Plot 
+    ###############################
     breakdown = all.groupby('roster_id').agg(list)
     breakdown = breakdown.reset_index(names='roster_id')
     breakdown = breakdown[['roster_id', 'tot_games', 'Total Games Missed']].copy()
@@ -409,20 +402,22 @@ def all_time_missed():
     out = pd.concat([breakdown, values_df], axis=1)
     out = out.drop(columns=['Total Games Missed'])
 
+    # Saving plot to base64 html
     ax = out.plot(x='Team', kind='bar', stacked=True, title='Games Missed for Injury by Season', rot=45)
     buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight') # 'tight' prevents cropped labels
+    plt.savefig(buf, format='png', bbox_inches='tight') 
     buf.seek(0)
     img_base64 = base64.b64encode(buf.read()).decode('utf-8')
     buf.close()
-    plt.close() # Clean up memory to avoid overlaps
+    plt.close()
 
-    teams = list(breakdown['Team'])
+    ##############################
+    # Injury Breakdown DataFrame
+    ###############################
     arr = []
     for i in range(0, len(dfs)):
         arr.append([])
         breakdown['Total Games Missed'].apply(lambda x: arr[i].append(x[i]))
-
 
     grouped = all.groupby(by='roster_id').sum()
     grouped = grouped.reset_index(names='roster_id')
