@@ -372,14 +372,14 @@ def main(season_str):
     html += "<p>Number of games drafted players missed over the course of the 14 week regular season."
     html += "Missed is defined as not starting or playing an entire game. If a player leaves a game due to injury, this is counted as a game played.</p>"
     html += table_html(missing_styler)
-    html += '''<h1>Drafted Position Change</h1>
-            <p>Sorted by: Total Pos. Rank Δ, or the total change from draft position to final ranking amongst position group.</p>
-            <p>Total Pos. Rank Δ w/o Injuries - change in draft position to final ranking among position group. Not counting players with less than 10 games played.</p> '''
-    html = format_breakdown(combined, html)
+    # html += '''<h1>Drafted Position Change</h1>
+    #        <p>Sorted by: Total Pos. Rank Δ, or the total change from draft position to final ranking amongst position group.</p>
+    #        <p>Total Pos. Rank Δ w/o Injuries - change in draft position to final ranking among position group. Not counting players with less than 10 games played.</p> '''
+    # html = format_breakdown(combined, html)
 
-    html += '<h1>Drafted Position Change in first 4 rounds</h1>'
-    html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
-    html = format_breakdown(lottery_combined, html)
+    # html += '<h1>Drafted Position Change in first 4 rounds</h1>'
+    # html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
+    # html = format_breakdown(lottery_combined, html)
 
     def draft_plot(dfs):
         overall_df = pd.DataFrame()
@@ -399,7 +399,7 @@ def main(season_str):
             aggfunc='sum'
         )
         pos_group = pos_group.rename_axis(None, axis=1).reset_index()
-        pos_img = save_base64(pos_group, 'Team', 'Pos. Rank Change', rot=45)
+        pos_img = save_base64(pos_group, 'Team', 'Positional Rank Change', rot=45)
 
         ovr_group = overall_df.groupby(by=['Team', 'Pos.'], as_index=False).sum()
         ovr_group = ovr_group.pivot_table(
