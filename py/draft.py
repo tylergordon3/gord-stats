@@ -400,7 +400,7 @@ def main(season_str):
     html += '<h1>Player Rank Change</h2>'
     html += '<p>Change in position & overall rank from where a player was drafted to where they finished ranked (based on fpts).<p>'
     html += '<h3>Rank Changes, All Players</h3>'
-    html += '<div style="display: flex; gap: 10px;">'
+    html += '<div class="img-pair">'
     html += f'<img src="data:image/png;base64,{pos_img}" alt="Position Rank Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img}" alt="Overall Rank Change"/>'
     html += '</div>'
@@ -409,7 +409,7 @@ def main(season_str):
 
     html += '<h3>Rank Changes, Injured Players Removed</h3>'
     html += '<p>Players who played in less than 10 games excluded from data.</p>'
-    html += '<div style="display: flex; gap: 10px;">'
+    html += '<div class="img-pair">'
     html += f'<img src="data:image/png;base64,{pos_img_no_inj}" alt="Position Rank No Inj Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img_no_inj}" alt="Overall Rank No Inj Change"/>'
     html += '</div>'
@@ -417,7 +417,7 @@ def main(season_str):
     pos_img_lottery, ovr_img_lottery = draft_plot(lottery_breakdown)
 
     html += '<h3>Rank Changes, All Players, First 4 Rounds of Draft</h3>'
-    html += '<div style="display: flex; gap: 10px;">'
+    html += '<div class="img-pair">'
     html += f'<img src="data:image/png;base64,{pos_img_lottery}" alt="Position Rank Lottery Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img_lottery}" alt="Overall Rank Lottery Change"/>'
     html += '</div>'
@@ -426,7 +426,7 @@ def main(season_str):
 
     html += '<h3>Rank Changes, All Players, First 4 Rounds of Draft, Injured Players Removed</h3>'
     html += '<p>Players who played in less than 10 games excluded from data.</p>'
-    html += '<div style="display: flex; gap: 10px;">'
+    html += '<div class="img-pair">'
     html += f'<img src="data:image/png;base64,{pos_img_lottery_no_inj}" alt="Position Rank No Inj Lottery Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img_lottery_no_inj}" alt="Overall Rank No Inj Lottery Change"/>'
     html += '</div>'

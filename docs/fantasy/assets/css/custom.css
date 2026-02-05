@@ -293,3 +293,40 @@ thead th {
   border-color: #ffcc00; /* Contrast color for focus */
   box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3);
 }
+
+.img-pair {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.img-pair img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 📱 Mobile: stack vertically */
+@media (max-width: 768px) {
+  .img-pair {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* 💻 Desktop: side-by-side */
+@media (min-width: 769px) {
+  .img-pair {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 768px) {
+  .img-pair img {
+    max-width: 95%;
+  }
+}
+
+.img-pair img {
+  flex: 1;
+  max-width: 48%;
+}
