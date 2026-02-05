@@ -16,6 +16,8 @@ import constants
 import archive
 import numpy as np
 import matplotlib.pyplot as plt
+import io
+import base64
 # ------------------
 # Globals
 # ------------------
@@ -401,10 +403,20 @@ def all_time_missed():
     breakdown = breakdown[['roster_id', 'tot_games', 'Total Games Missed']].copy()
 
     breakdown['Total'] = breakdown['Total Games Missed'].apply(lambda x: sum(x))
-    #breakdown['% missed total'] = breakdown.apply(lambda x: np.asarray(x['Total Games Missed']) / x['Total'], axis=1) 
     breakdown['Team'] = breakdown['roster_id'].apply(lambda x: league_util.name_from_id(x))
     breakdown = breakdown.drop(columns=['tot_games',  'roster_id'])
-    
+    values_df = pd.DataFrame(breakdown['Total Games Missed'].tolist(), columns=keys)
+    out = pd.concat([breakdown, values_df], axis=1)
+    out = out.drop(columns=['Total Games Missed'])
+
+    ax = out.plot(x='Team', kind='bar', stacked=True, title='Games Missed for Injury by Season')
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight') # 'tight' prevents cropped labels
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    buf.close()
+    plt.close() # Clean up memory to avoid overlaps
+
     teams = list(breakdown['Team'])
     arr = []
     for i in range(0, len(dfs)):
@@ -424,5 +436,5 @@ def all_time_missed():
     grouped = grouped.sort_values(by='Total Games Missed', ascending=False)
     grouped = grouped[['Team', 'Total Games Missed', '% of Games Missed']].copy()
     missing_styler = default_style(grouped, ["Total Games Missed"], opt_styler="RdYlGn_r")
-    print(breakdown.to_string())
-    return missing_styler
+
+    return img_base64, missing_styler

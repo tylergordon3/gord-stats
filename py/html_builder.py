@@ -62,7 +62,7 @@ def generate_landing(folder, file, title):
 
 def generate_index():
     standings = schedule_stats.all_time_metrics()
-    missed_games = draft.all_time_missed()
+    img_base64, missed_games = draft.all_time_missed()
     page=f'''
 <!DOCTYPE html>
 <html>
@@ -88,6 +88,8 @@ def generate_index():
     Players on IR when drafted not counted. Kickers and D/ST not counted.<br>
     Future versions will account for these nuances, however this is still a good look at raw injury luck.<br>
     Season-by-season breakdown can be found in the 'Drafts' section.</p>
+    <h1>Injury Breakdown by Season</h1>
+    <img src="data:image/png;base64,{img_base64}" alt="Games Missed Plot"/>'
   </body>
 </html>
 '''
