@@ -389,9 +389,9 @@ def main(season_str):
             overall_df = pd.concat([overall_df, add_ovr])
             positional_df = pd.concat([positional_df, add_pos])
         
-        pos_group = positional_df.groupby(by=['Team', 'Pos.']).sum().unstack()
+        pos_group = positional_df.groupby(by=['Team', 'Pos.']).sum().unstack(level='Pos.')
         pos_group = pos_group.reset_index(names='Team')
-        ovr_group = overall_df.groupby(by=['Team', 'Pos.']).sum().unstack()
+        ovr_group = overall_df.groupby(by=['Team', 'Pos.']).sum().unstack(level='Pos.')
         ovr_group = ovr_group.reset_index(names='Team')
         pos_img = save_base64(pos_group, 'Team', 'Pos. Rank Change', rot=45)
         return pos_img
