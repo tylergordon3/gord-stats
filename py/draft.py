@@ -333,17 +333,15 @@ def main(season_str):
         </details>
         '''
 
-    page = htmb.add_front_matter(df_html, f'Draft - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
-    with open(f'docs/{season_str}/draft/index.html', "w", encoding="utf-8") as f:
-        f.write(page)
+    html = df_html
 
     breakdown = byTeam(team_breakdown)
     breakdown_no_injuries = byTeam(team_breakdown_noinj)
-    combined = merge_breakdowns(breakdown, breakdown_no_injuries)
+    #combined = merge_breakdowns(breakdown, breakdown_no_injuries)
 
     lottery_breakdown = byTeam(df_lottery)
     lottery_breakdown_no_injuries = byTeam(df_lottery_no_injuries)
-    lottery_combined = merge_breakdowns(lottery_breakdown, lottery_breakdown_no_injuries)
+    #ottery_combined = merge_breakdowns(lottery_breakdown, lottery_breakdown_no_injuries)
 
     # ------------------
     # Missed Games due to Injury
@@ -439,8 +437,8 @@ def main(season_str):
     html += f'<img src="data:image/png;base64,{ovr_img_lottery_no_inj}" alt="Overall Rank No Inj Lottery Change"/>'
     html += '</div>'
 
-    page = htmb.add_front_matter(html, f'Draft Team Breakdown - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
-    with open(f'docs/{season_str}/draft/draft_team.html', "w", encoding="utf-8") as f:
+    page = htmb.add_front_matter(html, f'Draft - {league_data.get_formal_season(season_str)}')
+    with open(f'docs/{season_str}/draft/index.html', "w", encoding="utf-8") as f:
         f.write(page)
 
     #og = original_draft(df, "QB", 10)
