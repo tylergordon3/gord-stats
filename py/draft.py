@@ -74,6 +74,16 @@ def pos_rank(row, position_df):
     this_rank = row.pick_no
     return len(position_df[position_df['pick_no'] < this_rank]) + 1
 
+def save_base64(df, x_col, title, rot):
+    # Saving plot to base64 html
+    _ = df.plot(x=x_col, kind='bar', stacked=True, title=title, rot=rot)
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight') 
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    buf.close()
+    plt.close()
+    return img_base64
 # ------------------
 # Team Breakdowns
 # ------------------
@@ -373,18 +383,20 @@ def main(season_str):
         overall_df = pd.DataFrame()
         positional_df = pd.DataFrame()
         for i in range (0, len(dfs)-1):
-            add_pos = dfs[i][['roster_id', 'Pos.', 'Total Pos. Rank Δ']].copy()
-            add_ovr = dfs[i][['roster_id', 'Pos.', ' Total Ovr. Rank Δ']].copy()
+            dfs[i]['Team'] = dfs[i]['roster_id'].apply(lambda x: league_util.name_from_id(x))
+            add_pos = dfs[i][['Team', 'Pos.', 'Total Pos. Rank Δ']].copy()
+            add_ovr = dfs[i][['Team', 'Pos.', ' Total Ovr. Rank Δ']].copy()
             overall_df = pd.concat([overall_df, add_ovr])
             positional_df = pd.concat([positional_df, add_pos])
         
-        pos_group = positional_df.groupby(by=['roster_id', 'Pos.']).sum()
-        ovr_group = overall_df.groupby(by=['roster_id', 'Pos.']).sum()
-        print(ovr_group)
-    
-
-        return
-    plot = draft_plot(breakdown)
+        pos_group = positional_df.groupby(by=['Team', 'Pos.']).sum().unstack()
+        pos_group = pos_group.reset_index(names='Team')
+        ovr_group = overall_df.groupby(by=['Team', 'Pos.']).sum().unstack()
+        ovr_group = ovr_group.reset_index(names='Team')
+        pos_img = save_base64(pos_group, 'Team', 'Pos. Rank Change', rot=45)
+        return pos_img
+    pos_img = draft_plot(breakdown)
+    html += f'<img src="data:image/png;base64,{pos_img}" alt="Position Rank Change"/>'
     page = htmb.add_front_matter(html, f'Draft Team Breakdown - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
     with open(f'docs/{season_str}/draft/draft_team.html', "w", encoding="utf-8") as f:
         f.write(page)
