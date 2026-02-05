@@ -373,11 +373,16 @@ def main(season_str):
         overall_df = pd.DataFrame()
         positional_df = pd.DataFrame()
         for i in range (0, len(dfs)-1):
-            pos = list(dfs[i]['Pos.'].mode())[0]
-            print(pos)
-            print(dfs[i].columns)
-            #values_df = pd.DataFrame(breakdown['Total Games Missed'].tolist(), columns=dfs[i].columns)
-            #overall_df = pd.concat([overall_df, values_df], axis=1)
+            add_pos = dfs[i][['roster_id', 'Pos.', 'Total Pos. Rank Δ']].copy()
+            add_ovr = dfs[i][['roster_id', 'Pos.', ' Total Ovr. Rank Δ']].copy()
+            overall_df = pd.concat([overall_df, add_ovr])
+            positional_df = pd.concat([positional_df, add_pos])
+        
+        pos_group = positional_df.groupby(by=['roster_id', 'Pos.']).sum()
+        ovr_group = overall_df.groupby(by=['roster_id', 'Pos.']).sum()
+        print(ovr_group)
+    
+
         return
     plot = draft_plot(breakdown)
     page = htmb.add_front_matter(html, f'Draft Team Breakdown - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
