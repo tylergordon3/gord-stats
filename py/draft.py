@@ -392,10 +392,6 @@ def main(season_str):
             positional_df = pd.concat([positional_df, add_pos])
         
         pos_group = positional_df.groupby(by=['Team', 'Pos.'], as_index=False).sum() #.unstack()
-        #pos_group = pos_group.reset_index(names='Team')
-        ovr_group = overall_df.groupby(by=['Team', 'Pos.']).sum().unstack()
-        ovr_group = ovr_group.reset_index(names='Team')
-        #pos_group = pos_group.rename_axis(None, axis=1)
         pos_group = pos_group.pivot_table(
             index='Team', 
             columns='Pos.', 
@@ -403,11 +399,25 @@ def main(season_str):
             aggfunc='sum'
         )
         pos_group = pos_group.rename_axis(None, axis=1).reset_index()
-        print(pos_group)
         pos_img = save_base64(pos_group, 'Team', 'Pos. Rank Change', rot=45)
-        return pos_img
-    pos_img = draft_plot(breakdown)
+
+        ovr_group = overall_df.groupby(by=['Team', 'Pos.'], as_index=False).sum()
+        ovr_group = ovr_group.pivot_table(
+            index='Team', 
+            columns='Pos.', 
+            values=' Total Ovr. Rank Δ', 
+            aggfunc='sum'
+        )
+        ovr_group = ovr_group.rename_axis(None, axis=1).reset_index()
+        ovr_img = save_base64(ovr_group, 'Team', 'Overall Rank Change', rot=45)
+        
+        return pos_img, ovr_img
+    pos_img, ovr_img = draft_plot(breakdown)
+    html += '<h1>Player Rank Change</h2>'
+    html += '<p>Change in position & overall rank from where a player was drafted to where they finished ranked (based on fpts).<p>'
+    html += '<h3>Rank Changes, All Players</h3>'
     html += f'<img src="data:image/png;base64,{pos_img}" alt="Position Rank Change"/>'
+    html += f'<img src="data:image/png;base64,{ovr_img}" alt="Overall Rank Change"/>'
     page = htmb.add_front_matter(html, f'Draft Team Breakdown - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
     with open(f'docs/{season_str}/draft/draft_team.html', "w", encoding="utf-8") as f:
         f.write(page)
