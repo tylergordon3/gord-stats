@@ -78,13 +78,13 @@ def pos_rank(row, position_df):
 # Team Breakdowns
 # ------------------
 def byTeam(df):
-    grouped = df.groupby(by=['Owner', 'Pos.']).agg(
+    grouped = df.groupby(by=['roster_id', 'Pos.']).agg(
         pos_delt = ("Pos. Rank Δ", "sum"),
         ovr_delt = ("Overall Rank Δ", "sum")
     )
     grouped['pos_delt'] = grouped['pos_delt'].fillna(0)
     grouped['ovr_delt'] = grouped['ovr_delt'].fillna(0)
-    grouped_tot = df.groupby(by=['Owner']).agg(
+    grouped_tot = df.groupby(by=['roster_id']).agg(
         ovr_delt = ("Overall Rank Δ", 'sum')
     )
     grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
@@ -95,7 +95,7 @@ def byTeam(df):
     wr = df_result[df_result['Pos.'] == 'WR'].sort_values(by='Total Pos. Rank Δ', ascending=False)
     te = df_result[df_result['Pos.'] == 'TE'].sort_values(by='Total Pos. Rank Δ', ascending=False)
 
-    grouped_tot = df.groupby(by=['Owner']).agg(
+    grouped_tot = df.groupby(by=['roster_id']).agg(
         ovr_delt = ("Overall Rank Δ", 'sum')
     )
     grouped_tot['ovr_delt'] = grouped_tot['ovr_delt'].fillna(0)
@@ -108,7 +108,7 @@ def byTeam(df):
 def merge_breakdowns(all, injuries):
     combined_list = []
     for all_df, inj_df in zip(all, injuries):
-        combined = pd.merge(all_df, inj_df, 'left', on='Owner')
+        combined = pd.merge(all_df, inj_df, 'left', on='roster_id')
         combined = combined.fillna(0)
         combined_list.append(combined)
     return combined_list
@@ -251,7 +251,7 @@ def main(season_str):
     # Copies for lottery
     # ------------------
     df_lottery = df_lottery[['Pick', 'Owner', 
-            'Name', 'Pos.', 'Team', 'Position Rk', 'Pos. Rank Δ', 'Overall Rk', 'Overall Rank Δ', 'Games Played']]
+            'Name', 'Pos.', 'Team', 'Position Rk', 'Pos. Rank Δ', 'Overall Rk', 'Overall Rank Δ', 'Games Played', 'roster_id']]
     df_lottery_no_injuries = df_lottery[~((df_lottery['Games Played'] < 10))]
 
     # ------------------
@@ -369,6 +369,17 @@ def main(season_str):
     html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
     html = format_breakdown(lottery_combined, html)
 
+    def draft_plot(dfs):
+        overall_df = pd.DataFrame()
+        positional_df = pd.DataFrame()
+        for i in range (0, len(dfs)-1):
+            pos = list(dfs[i]['Pos.'].mode())[0]
+            print(pos)
+            print(dfs[i].columns)
+            #values_df = pd.DataFrame(breakdown['Total Games Missed'].tolist(), columns=dfs[i].columns)
+            #overall_df = pd.concat([overall_df, values_df], axis=1)
+        return
+    plot = draft_plot(breakdown)
     page = htmb.add_front_matter(html, f'Draft Team Breakdown - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
     with open(f'docs/{season_str}/draft/draft_team.html', "w", encoding="utf-8") as f:
         f.write(page)
