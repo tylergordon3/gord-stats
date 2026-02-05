@@ -372,14 +372,6 @@ def main(season_str):
     html += "<p>Number of games drafted players missed over the course of the 14 week regular season."
     html += "Missed is defined as not starting or playing an entire game. If a player leaves a game due to injury, this is counted as a game played.</p>"
     html += table_html(missing_styler)
-    # html += '''<h1>Drafted Position Change</h1>
-    #        <p>Sorted by: Total Pos. Rank Δ, or the total change from draft position to final ranking amongst position group.</p>
-    #        <p>Total Pos. Rank Δ w/o Injuries - change in draft position to final ranking among position group. Not counting players with less than 10 games played.</p> '''
-    # html = format_breakdown(combined, html)
-
-    # html += '<h1>Drafted Position Change in first 4 rounds</h1>'
-    # html += '<p>Same as above, but now only using picks in rounds 1-4</p>'
-    # html = format_breakdown(lottery_combined, html)
 
     def draft_plot(dfs):
         overall_df = pd.DataFrame()
@@ -418,6 +410,14 @@ def main(season_str):
     html += '<h3>Rank Changes, All Players</h3>'
     html += f'<img src="data:image/png;base64,{pos_img}" alt="Position Rank Change"/>'
     html += f'<img src="data:image/png;base64,{ovr_img}" alt="Overall Rank Change"/>'
+
+    pos_img_no_inj, ovr_img_no_inj = draft_plot(breakdown_no_injuries)
+
+    html += '<h3>Rank Changes, Injured Players Removed</h3>'
+    html += '<p>Players who played in less than 10 games excluded from data.</p>'
+    html += f'<img src="data:image/png;base64,{pos_img_no_inj}" alt="Position Rank No Inj Change"/>'
+    html += f'<img src="data:image/png;base64,{ovr_img_no_inj}" alt="Overall Rank No Inj Change"/>'
+
     page = htmb.add_front_matter(html, f'Draft Team Breakdown - {league_data.get_formal_season(season_str)}', subnav='draft_nav')
     with open(f'docs/{season_str}/draft/draft_team.html', "w", encoding="utf-8") as f:
         f.write(page)
