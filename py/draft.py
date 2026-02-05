@@ -389,10 +389,19 @@ def main(season_str):
             overall_df = pd.concat([overall_df, add_ovr])
             positional_df = pd.concat([positional_df, add_pos])
         
-        pos_group = positional_df.groupby(by=['Team', 'Pos.']).sum().unstack(level='Pos.')
-        pos_group = pos_group.reset_index(names='Team')
-        ovr_group = overall_df.groupby(by=['Team', 'Pos.']).sum().unstack(level='Pos.')
+        pos_group = positional_df.groupby(by=['Team', 'Pos.'], as_index=False).sum() #.unstack()
+        #pos_group = pos_group.reset_index(names='Team')
+        ovr_group = overall_df.groupby(by=['Team', 'Pos.']).sum().unstack()
         ovr_group = ovr_group.reset_index(names='Team')
+        #pos_group = pos_group.rename_axis(None, axis=1)
+        pos_group = pos_group.pivot_table(
+            index='Team', 
+            columns='Pos.', 
+            values='Total Pos. Rank Δ', 
+            aggfunc='sum'
+        )
+        pos_group = pos_group.rename_axis(None, axis=1).reset_index()
+        print(pos_group)
         pos_img = save_base64(pos_group, 'Team', 'Pos. Rank Change', rot=45)
         return pos_img
     pos_img = draft_plot(breakdown)
