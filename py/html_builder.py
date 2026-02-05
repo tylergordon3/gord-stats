@@ -80,15 +80,13 @@ def generate_index():
     {standings.to_html()}
     </div>
     <h1>All-Time Injury Impacts</h1>
+    <p>A 'missed game' in this context is defined as a player who was <strong>drafted</strong> by a team and did not play for the entirety of the game.<br>
+    Players traded, or picked up on the waiver wire, are counted for the team who originally drafted them (or not at all if not drafted).<br>
+    Players who did not play or the entire season, such as Joe MIxon who was on IR for the entire 2025-2026 season, are also not considered.</p>
     <div class="table-scroll">
     {missed_games.to_html()}
     </div>
-    <p>Currently only factors in players drafted by team.<br>
-    Trades, drops, additions will not be properly reflected.<br>
-    Players on IR when drafted not counted. Kickers and D/ST not counted.<br>
-    Future versions will account for these nuances, however this is still a good look at raw injury luck.<br>
-    Season-by-season breakdown can be found in the 'Drafts' section.</p>
-    <h1>Injury Breakdown by Season</h1>
+    <h2>Injury Breakdown by Season</h2>
     <img src="data:image/png;base64,{img_base64}" alt="Games Missed Plot"/>'
   </body>
 </html>
