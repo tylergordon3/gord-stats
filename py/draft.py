@@ -301,11 +301,7 @@ def main(season_str):
     # ------------------
     # Main Draft Page HTML
     # ------------------
-    tz = timezone("EST")
-    time_obj = datetime.datetime.now(tz)
-    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
-    df_html = f"<p>{time}</p>"
-    df_html += '<p>Δ = Delta = Change/Difference</p>'
+    df_html = ''
     df_html +=  f'''
         <p>Note: Does not include defenses or kickers.</p>
         <details>
@@ -365,7 +361,6 @@ def main(season_str):
     
     missing_styler = default_style(missing, ["Total Games Missed"], opt_styler="RdYlGn_r")
 
-    html = ''
     html += "<p>Number of games drafted players missed over the course of the 14 week regular season."
     html += "Missed is defined as not starting or playing an entire game. If a player leaves a game due to injury, this is counted as a game played.</p>"
     html += table_html(missing_styler)
