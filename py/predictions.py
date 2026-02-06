@@ -407,9 +407,9 @@ def full_prediction(date) -> pd.DataFrame:
     decisionTree = utils.read_from_pickle("mtor_dt")
     supportVC = utils.read_from_pickle("mtor_svc")
 
-    gb_kp = utils.read_from_pickle("2026/gb_v1.0")
-    logistic_kp = utils.read_from_pickle("2026/logistic_v1.0")
-    svc_kp = utils.read_from_pickle("2026/svc_v1.0")
+    gb_kp = utils.read_from_pickle("2026/gb_v1.1")
+    logistic_kp = utils.read_from_pickle("2026/logistic_v1.1")
+    svc_kp = utils.read_from_pickle("2026/svc_v1.1")
 
     [kenpom_path, torvik_path] = utils.get_recent_data(date)
     with open(kenpom_path, "r", encoding="utf-8") as f:

@@ -1,6 +1,6 @@
 {
   "gb": {
-    "latest": "2026/gb_v1.0_model.pkl",
+    "latest": "2026/gb_v1.1_model.pkl",
     "versions": [
       {
         "season": 2026,
@@ -22,6 +22,27 @@
           "Avg2PADist",
           "OppAvg2PADist",
           "NCSOS"
+        ]
+      },
+      {
+        "season": 2026,
+        "version": "1.1",
+        "path": "2026/gb_v1.1_model.pkl",
+        "metrics": {
+          "auc": 0.96461125934115,
+          "brier": 0.06256212769699014
+        },
+        "trained_at": "2026-02-06T19:33:38.710287",
+        "notes": "Primary tournament selection model",
+        "features": [
+          "AdjEM",
+          "Pythag",
+          "Luck",
+          "OE",
+          "DE",
+          "SOS",
+          "Avg2PADist",
+          "OppAvg2PADist"
         ]
       }
     ]
@@ -50,9 +71,32 @@
           "OE",
           "TO_Pct"
         ]
+      },
+      {
+        "season": 2026,
+        "version": "1.1",
+        "path": "2026/svc_v1.1_model.pkl",
+        "metrics": {
+          "auc": 0.9601094362888396,
+          "brier": 0.06731522180021941
+        },
+        "trained_at": "2026-02-06T19:33:38.704438",
+        "notes": "SVC classifier with Luck; lock detector",
+        "features": [
+          "Pythag",
+          "AdjEM",
+          "AdjDE",
+          "AdjOE",
+          "SOS",
+          "Tempo",
+          "Luck",
+          "DefFg3",
+          "OE",
+          "TO_Pct"
+        ]
       }
     ],
-    "latest": "2026/svc_v1.0_model.pkl"
+    "latest": "2026/svc_v1.1_model.pkl"
   },
   "logistic": {
     "versions": [
@@ -76,8 +120,29 @@
           "OppAvg2PADist",
           "OR_Pct"
         ]
+      },
+      {
+        "season": 2026,
+        "version": "1.1",
+        "path": "2026/logistic_v1.1_model.pkl",
+        "metrics": {
+          "auc": 0.9566506861692516,
+          "brier": 0.0845972250598862
+        },
+        "trained_at": "2026-02-06T19:33:38.708407",
+        "notes": "Logistic regression calibration anchor",
+        "features": [
+          "AdjEM",
+          "Luck",
+          "SOS",
+          "OE",
+          "NCSOS",
+          "DE",
+          "OppAvg2PADist",
+          "OR_Pct"
+        ]
       }
     ],
-    "latest": "2026/logistic_v1.0_model.pkl"
+    "latest": "2026/logistic_v1.1_model.pkl"
   }
 }

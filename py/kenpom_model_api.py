@@ -9,7 +9,7 @@ from io import StringIO
 from datetime import datetime
 
 from sklearn import tree, preprocessing, svm
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier, HistGradientBoostingClassifier
 from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV, RepeatedStratifiedKFold
 from sklearn.metrics import classification_report, roc_auc_score, brier_score_loss
 from sklearn.feature_selection import SelectFromModel, RFE
@@ -20,7 +20,7 @@ from sklearn.calibration import CalibratedClassifierCV
 warnings.filterwarnings("ignore")
 
 CURRENT_SEASON = 2026
-MODEL_VERSION = "1.0"
+MODEL_VERSION = "1.1"
 
 MODEL_DIR = Path(utils.get_path("models"))
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
@@ -28,7 +28,7 @@ MODEL_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_LIMITS = {
     "logistic": 8,
     "svc": 10,
-    "gb": 9,
+    "gb": 8,
 }
 
 LOGISTIC_GRID = {
@@ -44,10 +44,13 @@ SVC_GRID = {
 }
 
 GB_GRID = {
-    "n_estimators": [200, 300, 400],
-    "learning_rate": [0.03, 0.05, 0.08],
-    "max_depth": [2, 3],
-    "min_samples_leaf": [10, 20],
+    "learning_rate": (0.01, 0.3),
+    "max_iter": (50, 500),
+    "max_depth": (2, 12),
+    "max_leaf_nodes": (15, 255),
+    "min_samples_leaf": (10, 200),
+    "l2_regularization": (0.0, 5.0),
+    "max_bins": (64, 255),
 }
 
 def update_registry(payload, path):
@@ -82,8 +85,8 @@ def load_features(model_type):
         registry = json.load(f)
 
     model = registry[model_type]
-    
-    return model['versions'][0]['features']
+
+    return model['versions'][1]['features']
 
 def load_version(model_type, season, version):
     path = MODEL_DIR / str(season) / f"{model_type}_v{version}.pkl"
@@ -118,8 +121,6 @@ def save_model(
     full_path = path / fname
 
     utils.write_to_pickle(model, full_path)
-    #joblib.dump(payload, full_path)
-    #print(f"Saved {full_path}")
 
     update_registry(payload, full_path)
 
@@ -370,7 +371,7 @@ def tune_svc(X, y):
     return grid.best_estimator_, scaler
 
 def tune_gb(X, y):
-    model = GradientBoostingClassifier()
+    model = HistGradientBoostingClassifier()
 
     cv = RepeatedStratifiedKFold(
         n_splits=5,
