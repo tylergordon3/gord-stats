@@ -15,6 +15,7 @@ today = datetime.today().strftime("%Y-%m-%d")
 # Men's Data Setup
 torvik_path = utils.get_path(f"data/men/torvik/torvik{today}.json")
 kenpom_path = utils.get_path(f"data/men/kenpom_api/{today}.json")
+
 torvik_dataset_path = utils.get_path("model_data/torvik/cbb_data.json")
 kenpom_dataset_path = utils.get_path("model_data/kenpom_api/all.json")
 
