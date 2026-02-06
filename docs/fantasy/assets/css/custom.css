@@ -298,35 +298,33 @@ thead th {
   display: flex;
   gap: 12px;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .img-pair img {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: auto;          /* 🔒 preserve aspect ratio */
+  object-fit: contain;  /* extra safety */
 }
 
-/* 📱 Mobile: stack vertically */
+/* 📱 Mobile: stack, no stretching */
 @media (max-width: 768px) {
   .img-pair {
     flex-direction: column;
-    align-items: center;
+  }
+
+  .img-pair img {
+    max-width: 100%;
   }
 }
 
-/* 💻 Desktop: side-by-side */
+/* 💻 Desktop: inline, capped width */
 @media (min-width: 769px) {
   .img-pair {
     flex-direction: row;
   }
-}
 
-@media (max-width: 768px) {
   .img-pair img {
-    max-width: 95%;
+    max-width: 48%;      /* side-by-side without distortion */
   }
-}
-
-.img-pair img {
-  flex: 1;
-  max-width: 48%;
 }
