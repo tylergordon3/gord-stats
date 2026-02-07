@@ -1,6 +1,6 @@
 {
   "gb": {
-    "latest": "2026/gb_v1.1_model.pkl",
+    "latest": "2026/gb_v2.0_model.pkl",
     "versions": [
       {
         "season": 2026,
@@ -43,6 +43,27 @@
           "SOS",
           "Avg2PADist",
           "OppAvg2PADist"
+        ]
+      },
+      {
+        "season": 2026,
+        "version": "2.0",
+        "path": "2026/gb_v2.0_model.pkl",
+        "metrics": {
+          "auc": 0.94907183487176,
+          "brier": 0.05508699747306427
+        },
+        "trained_at": "2026-02-07T17:35:53.717262",
+        "notes": "Primary tournament selection model",
+        "features": [
+          "WAB",
+          "BARTHAG",
+          "3P_O",
+          "FTRD",
+          "TOR",
+          "ADJ_T",
+          "EFG_D",
+          "FTR"
         ]
       }
     ]
@@ -94,9 +115,30 @@
           "OE",
           "TO_Pct"
         ]
+      },
+      {
+        "season": 2026,
+        "version": "2.0",
+        "path": "2026/svc_v2.0_model.pkl",
+        "metrics": {
+          "auc": 0.9495555025716135,
+          "brier": 0.05563889296504866
+        },
+        "trained_at": "2026-02-07T17:35:53.710132",
+        "notes": "SVC classifier with Luck; lock detector",
+        "features": [
+          "BARTHAG",
+          "WAB",
+          "ADJDE",
+          "ADJOE",
+          "EFG_D",
+          "TOR",
+          "EFG_O",
+          "ORB"
+        ]
       }
     ],
-    "latest": "2026/svc_v1.1_model.pkl"
+    "latest": "2026/svc_v2.0_model.pkl"
   },
   "logistic": {
     "versions": [
@@ -141,8 +183,29 @@
           "OppAvg2PADist",
           "OR_Pct"
         ]
+      },
+      {
+        "season": 2026,
+        "version": "2.0",
+        "path": "2026/logistic_v2.0_model.pkl",
+        "metrics": {
+          "auc": 0.9484519227494125,
+          "brier": 0.0929788148157247
+        },
+        "trained_at": "2026-02-07T17:35:53.715266",
+        "notes": "Logistic regression calibration anchor",
+        "features": [
+          "WAB",
+          "BARTHAG",
+          "EFG_O",
+          "TOR",
+          "EFG_D",
+          "ORB",
+          "FTR",
+          "TORD"
+        ]
       }
     ],
-    "latest": "2026/logistic_v1.1_model.pkl"
+    "latest": "2026/logistic_v2.0_model.pkl"
   }
 }

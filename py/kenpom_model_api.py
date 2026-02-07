@@ -8,11 +8,10 @@ import numpy as np
 from io import StringIO
 from datetime import datetime
 
-from sklearn import tree, preprocessing, svm
+from sklearn import svm
 from sklearn.ensemble import GradientBoostingClassifier, HistGradientBoostingClassifier
 from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV, RepeatedStratifiedKFold
 from sklearn.metrics import classification_report, roc_auc_score, brier_score_loss
-from sklearn.feature_selection import SelectFromModel, RFE
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.calibration import CalibratedClassifierCV
@@ -20,7 +19,7 @@ from sklearn.calibration import CalibratedClassifierCV
 warnings.filterwarnings("ignore")
 
 CURRENT_SEASON = 2026
-MODEL_VERSION = "1.1"
+MODEL_VERSION = "2.0"
 
 MODEL_DIR = Path(utils.get_path("models"))
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
@@ -137,8 +136,11 @@ def clip_extremes(X, q=0.01):
     )
     
 def filter_api_data(df):
-    exceptions = ['Season', 'Seed']
+    exceptions = ['Season', 'Seed', 'SEED']
     keep = []
+    
+    if 'TOURNEY' in df.columns:
+        df = df.rename(columns={'TOURNEY' : 'Tourney'});
 
     for col in df.columns:
         if col in exceptions:
@@ -150,6 +152,13 @@ def filter_api_data(df):
 
 def load_data():
     with open(utils.get_path("model_data/kenpom_api/all.json"), "r") as f:
+        data = json.load(f)
+
+    df = pd.read_json(StringIO(data))
+    return filter_api_data(df)
+
+def load_data_tor():
+    with open(utils.get_path("model_data/torvik/cbb_data.json"), "r") as f:
         data = json.load(f)
 
     df = pd.read_json(StringIO(data))
@@ -393,7 +402,7 @@ def tune_gb(X, y):
 def main():
     start = datetime.now()
 
-    df = load_data()
+    df = load_data_tor()
     y = np.asarray(df["Tourney"]).ravel()
 
     # -------- SVC --------
