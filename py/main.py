@@ -13,14 +13,14 @@ start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
 
 # Men's Data Setup
-torvik_path = utils.get_path(f"data/men/torvik/torvik{today}.json")
+torvik_path = utils.get_path(f"data/men/torvik/{today}.json")
 kenpom_path = utils.get_path(f"data/men/kenpom_api/{today}.json")
 
 torvik_dataset_path = utils.get_path("model_data/torvik/cbb_data.json")
 kenpom_dataset_path = utils.get_path("model_data/kenpom_api/all.json")
 
 # Women's Data Setup
-torvik_w_path = utils.get_path(f"data/women/torvik{today}.json")
+torvik_w_path = utils.get_path(f"data/women/torvik/{today}.json")
 
 torvik_w_dataset_path = utils.get_path("model_data_w/torvik_w_all.json")
 

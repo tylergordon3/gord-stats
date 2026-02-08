@@ -6,9 +6,9 @@ import utils, scraper, kenpom, bpi
 from datetime import datetime
 
 ESPN_PATH = utils.get_path(f"data/men/espn")
-TORVIK_MEN_PATH = utils.get_path(f"data/men/torvik/torvik")
+TORVIK_MEN_PATH = utils.get_path(f"data/men/torvik")
 KENPOM_PATH = utils.get_path(f"data/men/kenpom_api")
-TORVIK_WOMEN_PATH = utils.get_path(f"data/women/torvik/torvik")
+TORVIK_WOMEN_PATH = utils.get_path(f"data/women/torvik")
 
 RETRY_SLEEP = 300
 MAX_RETRIES = 5
