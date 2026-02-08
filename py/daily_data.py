@@ -31,14 +31,13 @@ def main():
     success = True
     
     for name, (path, func) in targets.items():
-        print(path)
         if check_scrape(path):
             continue
         
         try: 
             func()
             if check_scrape(path):
-                print(f"Scraped {name} for {today}.")
+                print(f"Scraped {name} for {today} in daily_data.")
             else: 
                 print(f"Ran {name} for {today} but encountered an error.")
                 success = False
