@@ -2,7 +2,7 @@ import os
 import re
 import utils
 
-FOLDER = utils.get_path("data/women/")  # <-- change this
+FOLDER = utils.get_path("data/men/torvik")  # <-- change this
 
 pattern = re.compile(r"torvik(\d{4}-\d{2}-\d{2})\.json$")
 
@@ -21,4 +21,3 @@ for filename in os.listdir(FOLDER):
 
     os.rename(old_path, new_path)
     print(f"✅ {filename} → {date_str}.json")
-
