@@ -28,7 +28,7 @@ def save_json_data(data, filename):
     try:
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
-        #print(f"Data successfully saved to {filename}")
+        print(f"Data successfully saved to {filename}")
     except IOError as e:
         print(f"Error saving data to {filename}: {e}")
 
