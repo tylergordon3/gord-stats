@@ -5,9 +5,10 @@ Source: https://github.com/pseudo-r/Public-ESPN-API?tab=readme-ov-file#base-urls
 
 import requests
 import json
-from typing import Dict, Any
 import pandas as pd
 import utils
+from datetime import datetime
+import pytz
 
 
 def save_id(dict):
@@ -55,7 +56,6 @@ RESUME_COLUMNS = [
 
 def parse_team_entry(entry):
     team = entry["team"]
-    
     row = {
         "team_id": team["id"],
         "team": team["nickname"],
@@ -77,18 +77,33 @@ def parse_team_entry(entry):
 
     return row
 
-teams = []
 
-r = requests.get(BASE, params={**params, "page": 1})
-data = r.json()
+def main():
+    teams = []
 
-pages = data["pagination"]["pages"]
-teams.extend(data["teams"])
+    r = requests.get(BASE, params={**params, "page": 1})
+    data = r.json()
 
-for page in range(2, pages + 1):
-    r = requests.get(BASE, params={**params, "page": page})
-    teams.extend(r.json()["teams"])
+    pages = data["pagination"]["pages"]
+    teams.extend(data["teams"])
 
-rows = [parse_team_entry(t) for t in teams]
-df = pd.DataFrame(rows)
-print(df.describe())
+    for page in range(2, pages + 1):
+        r = requests.get(BASE, params={**params, "page": page})
+        teams.extend(r.json()["teams"])
+
+    rows = [parse_team_entry(t) for t in teams]
+    df = pd.DataFrame(rows)
+
+    now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
+    str = now.strftime("%Y-%m-%d")
+
+    payload = {
+            "headers": list(df.columns),
+            "rows": df.values.tolist(),
+        }
+
+    path = utils.get_path(f"data/men/espn/{str}.json")
+
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+        print(f'Scraped ESPN data for: {str}')

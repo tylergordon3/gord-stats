@@ -1,20 +1,24 @@
-
-import utils
 import os
-import pandas as pd
-import scraper
+import re
+import utils
 
-master = pd.read_json(utils.get_path("docs/assets/data/master.json"))
+FOLDER = utils.get_path("data/women/")  # <-- change this
 
+pattern = re.compile(r"torvik(\d{4}-\d{2}-\d{2})\.json$")
 
-# df.loc[row, col]
+for filename in os.listdir(FOLDER):
+    match = pattern.match(filename)
+    if not match:
+        continue
 
-#team = "Southern Indiana"
-#short = 'USI'
-#master.loc[master['team'] == team, 'short'] = short
-#print(master[['team', 'short']].to_string())
+    date_str = match.group(1)
+    old_path = os.path.join(FOLDER, filename)
+    new_path = os.path.join(FOLDER, f"{date_str}.json")
 
-print(master)
-scraper.saveMasterTeams(master)
-#master.to_json(utils.get_path("data/teams/master_new.json"))
+    if os.path.exists(new_path):
+        print(f"⚠️ Skipping (already exists): {new_path}")
+        continue
+
+    os.rename(old_path, new_path)
+    print(f"✅ {filename} → {date_str}.json")
 
