@@ -1344,7 +1344,7 @@ def torvik(date):
 
         # --- Save to JSON ---
         output = {"headers": headers, "rows": rows}
-        path = utils.get_path(f"data/men/torvik/torvik{date}.json")
+        path = utils.get_path(f"data/men/torvik/{date}.json")
         utils.save_json_data(output, path)
         browser.close()
 
@@ -1391,7 +1391,7 @@ def torvik_w(date):
 
         # --- Save to JSON ---
         output = {"headers": headers, "rows": rows}
-        path = utils.get_path(f"data/women/torvik{date}.json")
+        path = utils.get_path(f"data/women/torvik/{date}.json")
         utils.save_json_data(output, path)
         browser.close()
 
