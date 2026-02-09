@@ -78,19 +78,14 @@ def get_recent_data(input_date, women=0):
     # Helper function to parse data from file
     def parse_date(fname):
         try:
-            return date.fromisoformat(fname[6:16])
-        except ValueError:
-            raise ValueError(f"Invalid date in filename: {fname}")
-    def parse_date_kp(fname):
-        try:
             return date.fromisoformat(fname[:10])
         except ValueError:
             raise ValueError(f"Invalid date in filename: {fname}")
     # Process if women
     if women:
-        path = get_path('data/women/')
+        path = get_path('data/women/torvik/')
     
-        torvik_files = Path(path).glob("torvik*.json")
+        torvik_files = Path(path).glob("*.json")
         torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
         return torvik
     else:
@@ -102,10 +97,10 @@ def get_recent_data(input_date, women=0):
         else:
             path_kp = get_path('data/men/kenpom_api/')
             kenpom_files = Path(path_kp).glob("*.json")
-            kenpom = min(kenpom_files, key=lambda p: abs((parse_date_kp(p.name) - input_date).days))
+            kenpom = min(kenpom_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
 
         path_tor = get_path('data/men/torvik/')
-        torvik_files = Path(path_tor).glob("torvik*.json")
+        torvik_files = Path(path_tor).glob("*.json")
         torvik = min(torvik_files, key=lambda p: abs((parse_date(p.name) - input_date).days))
         return [kenpom, torvik]
 
