@@ -9,6 +9,7 @@ def update_html(dates):
     for day in dates:
         predictions.predict(day)
 
+
 def generate_home_about(gamesToday, gender, update=False):
     if gender == 'M':
         path = 'docs/men/'

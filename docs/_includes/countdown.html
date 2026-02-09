@@ -1,0 +1,30 @@
+<div id="timer" class="timer-container">
+    <div class="time-box"><span id="days">00</span><div class="label">Days</div></div>
+    <div class="time-box"><span id="hours">00</span><div class="label">Hours</div></div>
+    <div class="time-box"><span id="minutes">00</span><div class="label">Mins</div></div>
+    <div class="time-box"><span id="seconds">00</span><div class="label">Secs</div></div>
+</div>
+<script>
+    const targetDate = new Date("March 15, 2026 18:00:00").getTime();
+
+    const timerInterval = setInterval(function() {
+        const now = new Date().getTime(); // Fixed syntax error: now = new Date().getTime()
+        const distance = targetDate - now;
+
+        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Update individual elements
+        document.getElementById("days").innerText = d;
+        document.getElementById("hours").innerText = h;
+        document.getElementById("minutes").innerText = m;
+        document.getElementById("seconds").innerText = s;
+
+        if (distance < 0) {
+            clearInterval(timerInterval);
+            document.getElementById("timer").innerHTML = "EXPIRED";
+        }
+    }, 1000);
+</script>
