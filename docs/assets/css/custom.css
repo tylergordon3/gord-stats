@@ -1123,31 +1123,118 @@
   color: #7c3aed;
 }
 
+:root {
+  --timer-bg: #1f2933;        /* dark slate */
+  --timer-box: #111827;       /* box color */
+  --timer-text: #e5e7eb;      /* main text */
+  --timer-muted: #9ca3af;     /* labels */
+  --timer-accent: #38bdf8;    /* accent (blue, tweakable) */
+}
+
+.countdown-wrapper {
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.countdown-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--timer-muted);
+  margin-bottom: 0.75rem;
+}
+
 .timer-container {
-    display: flex;
-    gap: 15px;
-    font-family: 'Courier New', Courier, monospace; /* Prevents text jumping */
-    justify-content: center;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .time-box {
-    background: #222;
-    color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    min-width: 80px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  background: linear-gradient(
+    180deg,
+    #1f2933,
+    var(--timer-box)
+  );
+  color: var(--timer-text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  min-width: 70px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.35);
 }
 
 .time-box span {
-    display: block;
-    font-size: 2.5rem;
-    font-weight: bold;
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--timer-accent);
+  line-height: 1.1;
 }
 
 .label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: #888;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--timer-muted);
+}
+
+/* Mobile tightening */
+@media (max-width: 480px) {
+  .timer-container {
+    gap: 8px;
+  }
+
+  .time-box {
+    min-width: 60px;
+    padding: 8px;
+  }
+
+  .time-box span {
+    font-size: 1.3rem;
+  }
+}
+
+.countdown-top {
+  margin: 1.25rem 0 1.75rem;
+  text-align: center;
+}
+
+.countdown-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.timer-compact {
+  display: inline-flex;
+  gap: 8px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.time-pill {
+  background: #111827;
+  border-radius: 999px;
+  padding: 6px 10px;
+  min-width: 54px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+
+.time-pill span {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #38bdf8;
+  line-height: 1;
+}
+
+.pill-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: #9ca3af;
+  letter-spacing: 0.1em;
 }
