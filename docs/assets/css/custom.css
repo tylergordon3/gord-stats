@@ -1123,118 +1123,90 @@
   color: #7c3aed;
 }
 
-:root {
-  --timer-bg: #1f2933;        /* dark slate */
-  --timer-box: #111827;       /* box color */
-  --timer-text: #e5e7eb;      /* main text */
-  --timer-muted: #9ca3af;     /* labels */
-  --timer-accent: #38bdf8;    /* accent (blue, tweakable) */
-}
-
-.countdown-wrapper {
-  margin: 2rem auto;
-  text-align: center;
-}
-
-.countdown-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--timer-muted);
-  margin-bottom: 0.75rem;
-}
-
-.timer-container {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.time-box {
-  background: linear-gradient(
-    180deg,
-    #1f2933,
-    var(--timer-box)
-  );
-  color: var(--timer-text);
-  padding: 10px 12px;
-  border-radius: 10px;
-  min-width: 70px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.35);
-}
-
-.time-box span {
-  display: block;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--timer-accent);
-  line-height: 1.1;
-}
-
-.label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--timer-muted);
-}
-
-/* Mobile tightening */
-@media (max-width: 480px) {
-  .timer-container {
-    gap: 8px;
-  }
-
-  .time-box {
-    min-width: 60px;
-    padding: 8px;
-  }
-
-  .time-box span {
-    font-size: 1.3rem;
-  }
-}
-
 .countdown-top {
-  margin: 1.25rem 0 1.75rem;
+  margin: 0.75rem 0 1.25rem;
   text-align: center;
 }
 
 .countdown-label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #9ca3af;
-  margin-bottom: 6px;
+  letter-spacing: 0.14em;
+  color: var(--timer-muted);
+  margin-bottom: 4px;
 }
 
 .timer-compact {
   display: inline-flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
   font-family: 'Courier New', Courier, monospace;
 }
 
 .time-pill {
-  background: #111827;
+  background: var(--timer-box);
   border-radius: 999px;
   padding: 6px 10px;
-  min-width: 54px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+  min-width: 56px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
 }
 
+
 .time-pill span {
-  display: block;
   font-size: 1.25rem;
-  font-weight: 700;
-  color: #38bdf8;
+  font-weight: 800;
+  color: #000000; /* full white */
   line-height: 1;
 }
 
 .pill-label {
   font-size: 0.6rem;
-  text-transform: uppercase;
-  color: #9ca3af;
+  color: #000000; /* lighter gray */
   letter-spacing: 0.1em;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 1rem;
+}
+
+.home-left {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.home-right {
+  background: #0b1220;
+  border-radius: 12px;
+  padding: 12px;
+  max-width: 420px;
+}
+
+.twitter-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f3f4f6;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 900px) {
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-right {
+    margin-top: 1.5rem;
+  }
 }
