@@ -9,6 +9,7 @@ def render_home():
     <p>Today's scores and schedule from: <a href='https://www.cbssports.com/college-basketball/scoreboard/'>CBS Sports</a></p>
 '''
     html += "See the scores tab for men's scoreboard."
+    html +=  '''{% include countdown.html %} '''
     path =  utils.get_path('docs/index.html')
     html = htmb.add_front_matter(html, "GordStats Home")
 
