@@ -9,7 +9,8 @@ ESPN_PATH = utils.get_path(f"data/men/espn")
 TORVIK_MEN_PATH = utils.get_path(f"data/men/torvik")
 KENPOM_PATH = utils.get_path(f"data/men/kenpom_api")
 TORVIK_WOMEN_PATH = utils.get_path(f"data/women/torvik")
-NET_RANKINGS = utils.get_path(f"data/men/net")
+NET_RANKINGS_MEN = utils.get_path(f"data/men/net")
+NET_RANKINGS_WOMEN = utils.get_path(f"data/women/net")
 
 RETRY_SLEEP = 300
 MAX_RETRIES = 5
@@ -25,8 +26,9 @@ def main():
     targets = {
         "Men's Torvik": (TORVIK_MEN_PATH + file, lambda: scraper.torvik(today)),
         "KenPom": (KENPOM_PATH + file, kenpom.kenpom_now),
+        "Men's Net Rankings" : (NET_RANKINGS_MEN+file, lambda: net.main("M")),
         "ESPN BPI": (ESPN_PATH + file, bpi.main),
-        "Net Rankings" : (NET_RANKINGS+file, net.net_ranks),
+        "Women's Net Rankings" : (NET_RANKINGS_WOMEN+file, lambda: net.main("W")),
         "Women's Torvik": (TORVIK_WOMEN_PATH + file, lambda: scraper.torvik_w(today)),
     }
     

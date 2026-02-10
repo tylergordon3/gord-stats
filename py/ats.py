@@ -6,23 +6,13 @@ import json
 from datetime import datetime
 import pytz
 
-URL="https://www.ncaa.com/rankings/basketball-men/d1/ncaa-mens-basketball-net-rankings"
-URL_W = "https://www.ncaa.com/rankings/basketball-women/d1/ncaa-womens-basketball-net-rankings"
+URL="https://www.teamrankings.com/ncb/trends/ats_trends/"
 
-def main(gender):
-    now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
-    str = now.strftime("%Y-%m-%d")
-    if gender == "M":
-        resp = requests.get(URL)
-        path = utils.get_path(f"data/men/net/{str}.json")
-    elif gender == "W":
-        resp = requests.get(URL_W)
-        path = utils.get_path(f"data/women/net/{str}.json")
-    else:
-        print("Invalid gender given to net.main()!")
-        return None
+def main():
+    resp = requests.get(URL)
     soup = BeautifulSoup(resp.content, 'html.parser')
     table = soup.find("table")
+
     headers = table.find_all("tr")[0]
     rows = table.find_all("tr")[1:]
 
@@ -44,10 +34,17 @@ def main(gender):
         table_data.append(row_data)
     df = pd.DataFrame(columns=cols, data=table_data)
 
+    now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
+    str = now.strftime("%Y-%m-%d")
     payload = {
             "headers": list(df.columns),
             "rows": df.values.tolist(),
         }
+
+    path = utils.get_path(f"data/men/ats/{str}.json")
+
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=4)
-        print(f'Scraped NET data for: {str}')
+        print(f'Scraped ATS data for: {str}')
+
+main()
