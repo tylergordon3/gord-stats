@@ -1,37 +1,31 @@
 '''
 Used to collect daily needed data
 '''
-import os, pytz, time
-import utils, scraper, kenpom, bpi, net
+import pytz, time
+import scraper, kenpom, bpi, net
 from datetime import datetime
-
-ESPN_PATH = utils.get_path(f"data/men/espn")
-TORVIK_MEN_PATH = utils.get_path(f"data/men/torvik")
-KENPOM_PATH = utils.get_path(f"data/men/kenpom_api")
-TORVIK_WOMEN_PATH = utils.get_path(f"data/women/torvik")
-NET_RANKINGS_MEN = utils.get_path(f"data/men/net")
-NET_RANKINGS_WOMEN = utils.get_path(f"data/women/net")
+from lib import paths
+from pathlib import Path
 
 RETRY_SLEEP = 300
 MAX_RETRIES = 5
 
 def check_scrape(path):
-    return os.path.exists(path) and os.path.getsize(path) > 0
+    return path.exists()
 
 def main():
     now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
     today = now.strftime("%Y-%m-%d")
-    file = f"/{today}.json"
-    
+    fp = Path(f'{today}.json')
     targets = {
-        "Men's Torvik": (TORVIK_MEN_PATH + file, lambda: scraper.torvik(today)),
-        "KenPom": (KENPOM_PATH + file, kenpom.kenpom_now),
-        "Men's Net Rankings" : (NET_RANKINGS_MEN+file, lambda: net.main("M")),
-        "ESPN BPI": (ESPN_PATH + file, bpi.main),
-        "Women's Net Rankings" : (NET_RANKINGS_WOMEN+file, lambda: net.main("W")),
-        "Women's Torvik": (TORVIK_WOMEN_PATH + file, lambda: scraper.torvik_w(today)),
+        "Men's Torvik": (paths.M_TOR_DIR / fp, lambda: scraper.torvik(today)),
+        "KenPom": (paths.M_KEN_DIR / fp, kenpom.kenpom_now),
+        "Men's Net Rankings" : (paths.M_NET_DIR / fp, lambda: net.main("M")),
+        "ESPN BPI": (paths.M_ESPN_DIR / fp, bpi.main),
+        "Women's Net Rankings" : (paths.W_NET_DIR / fp, lambda: net.main("W")),
+        "Women's Torvik": (paths.W_TOR_DIR / fp, lambda: scraper.torvik_w(today)),
     }
-    
+
     success = True
     
     for name, (path, func) in targets.items():

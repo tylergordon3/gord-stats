@@ -23,3 +23,5 @@ py/render/__pycache__/render_home.cpython-311.pyc
 py/render/__pycache__
 .sass-cache
 .env
+py/lib/__pycache__/paths.cpython-311.pyc
+py/lib/__pycache__

@@ -3,10 +3,20 @@ Holds Pathing information as constants
 '''
 from pathlib import Path
 
+def get_project_root() -> Path:
+    # Start from the current file's directory
+    current_file_dir = Path(__file__).resolve().parent
+    # Traverse parents until a marker file (e.g., '.git') is found
+    for parent in current_file_dir.parents:
+        if (parent / '.git').exists():
+            return parent
+    # Fallback to current working directory if no marker is found
+    return Path.cwd()
+
 # -----
 # Bases
 # -----
-ROOT = Path("cbb-model")
+ROOT = get_project_root()
 SRC = ROOT / Path("py")
 DATA = ROOT / Path("data")
 DOCS = ROOT / Path("docs")
@@ -20,13 +30,13 @@ OTHER_DATA = DATA / Path("refs")
 
 M_KEN_DIR = M_DATA / Path("kenpom_api")
 M_KEN_OLD_DIR = M_DATA / Path("kenpom")
-M_ATS = M_DATA / Path("ats")
-M_ESPN = M_DATA / Path("espn")
-M_NET = M_DATA / Path("net")
-M_TOR = M_DATA / Path("torvik")
+M_ATS_DIR = M_DATA / Path("ats")
+M_ESPN_DIR = M_DATA / Path("espn")
+M_NET_DIR = M_DATA / Path("net")
+M_TOR_DIR = M_DATA / Path("torvik")
 
-W_TOR = W_DATA / Path("torvik")
-W_NET = W_DATA / Path("net")
+W_TOR_DIR = W_DATA / Path("torvik")
+W_NET_DIR = W_DATA / Path("net")
 
 # --------------
 # Website Assets
