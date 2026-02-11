@@ -86,11 +86,11 @@ if update_mens_v2:
     for day in sorted(date_lst):
        predictions.predict(day)
 
-update_womens_all = 0
+update_womens_all = 1
 if update_womens_all:
-    path = utils.get_path('data/women/')
+    path = utils.get_path('data/women/torvik')
     files = os.listdir(path)
-    files_strip = [x[6:-5] for x in files]
+    files_strip = [x[:-5] for x in files]
     date_lst = [datetime.strptime(x, "%Y-%m-%d").date() for x in files_strip]
     for day in sorted(date_lst):
        predictions.predict_w(day)

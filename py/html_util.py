@@ -13,6 +13,8 @@ def _format_arrow(val):
     """
     if (val == "NR") | (val == "-"):
         return val
+    elif (val == "NaN"):
+        return 'NR'
     return (
         f"{'↑' if int(val) > 0 else '↓'} {abs(val):.0f}"
         if int(val) != 0
@@ -30,6 +32,7 @@ def _color_arrow(val):
     """
     if (val == "NR") | (val == "-"):
         return "color: black"
+
     return (
         "color: green"
         if int(val) > 0
@@ -120,6 +123,7 @@ def style_bracketology(df, gender='M',original=None, conference=None):
     conf_champ_dict = pd.Series(df.ConfChamp.values, index=df.Team).to_dict()
 
     df = df[output_cols]
+ 
     # Build table attributes
     classes = ["sticky-table", "rank-table"]
     attrs = []
