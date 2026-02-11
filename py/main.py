@@ -86,7 +86,7 @@ if update_mens_v2:
     for day in sorted(date_lst):
        predictions.predict(day)
 
-update_womens_all = 1
+update_womens_all = 0
 if update_womens_all:
     path = utils.get_path('data/women/torvik')
     files = os.listdir(path)

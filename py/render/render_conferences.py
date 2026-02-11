@@ -10,7 +10,6 @@ def filter(df, conf):
 def main(df, gender):
     confs = pd.unique(df['Conf'])
     conf_dict = dict.fromkeys(confs)
-
     for key in conf_dict.keys():
         conf_df = filter(df, key)
         conf_dict[key] = conf_df
