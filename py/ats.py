@@ -45,6 +45,5 @@ def main():
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=4)
-        print(f'Scraped ATS data for: {str}')
 
 main()

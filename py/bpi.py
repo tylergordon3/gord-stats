@@ -106,4 +106,3 @@ def main():
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
-        print(f'Scraped ESPN data for: {str}')

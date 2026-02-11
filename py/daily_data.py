@@ -41,7 +41,7 @@ def main():
         try: 
             func()
             if check_scrape(path):
-                print(f"Scraped {name} for {today} in daily_data.")
+                print(f"Scraped {name} for {today}.")
             else: 
                 print(f"Ran {name} for {today} but encountered an error.")
                 success = False
