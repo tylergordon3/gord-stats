@@ -44,7 +44,7 @@ def main():
             success = False
     return success
                 
-if __name__ == "__main__":
+def get_data():
     attempts = 0
     
     while attempts < MAX_RETRIES:

@@ -330,7 +330,7 @@ def predict_w(date):
     df_torvik['ConfChamp'] = 0
     df_torvik.loc[conf_winners.index, 'ConfChamp'] = 1
     
-    delta = change.new_change(date, "W")
+    delta = change.change(date, "W")
     
     main = pd.merge(df_torvik.reset_index(), delta, "left", "Team").set_index("index")
 
@@ -589,7 +589,7 @@ def predict(date):
     all_sorted['ConfChamp'] = 0
     all_sorted.loc[conf_winners.index, 'ConfChamp'] = 1
    
-    delta = change.new_change(date)
+    delta = change.change(date)
     
     main = pd.merge(all_sorted.reset_index(), delta, "left", "Team").set_index("index")
 

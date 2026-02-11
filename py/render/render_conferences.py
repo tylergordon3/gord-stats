@@ -1,7 +1,6 @@
 import pandas as pd
 import html_util
 import utils
-import html_builder as htmb
 
 def filter(df, conf):
     if conf not in pd.unique(df['Conf']): return
@@ -42,7 +41,7 @@ def main(df, gender):
         path = utils.get_path(f"docs/men/conference.html")
     elif gender == "W":
         path = utils.get_path(f"docs/women/conference.html")
-    html = htmb.add_front_matter(html, f"Conferences")
+    html = html_util.add_front_matter(html, f"Conferences")
     
     with open(path, "w") as f:
         f.write(html)

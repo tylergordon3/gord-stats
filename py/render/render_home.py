@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import utils
-import html_builder as htmb
+import html_util
 
 def render_home():
     # Use a raw string (r''') to handle any special characters safely
@@ -49,7 +49,7 @@ def render_home():
     # Note: Removed the redundant "html += ..." line as it's already in the block above.
     
     path = utils.get_path('docs/index.html')
-    html = htmb.add_front_matter(html, "GordStats Home")
+    html = html_util.add_front_matter(html, "GordStats Home")
 
     with open(path, "w") as f:
         f.write(html)
