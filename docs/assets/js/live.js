@@ -285,6 +285,77 @@ function getBottom3MedalsByDate(games) {
   return result;
 }
 
+function renderExpandedStats(g) {
+  const awayTeam = safe(g.away_team, "Away");
+  const homeTeam = safe(g.home_team, "Home");
+
+  const awayRank = safe(g.away_rank, "—");
+  const homeRank = safe(g.home_rank, "—");
+
+  const awayModel = safe(g.away_model, "—");
+  const homeModel = safe(g.home_model, "—");
+
+  return `
+    <div class="expanded-grid">
+
+      <div class="expanded-team">
+
+        <div class="expanded-team-header">
+          <img 
+            src="${teamLogo(awayTeam)}"
+            alt="${awayTeam}"
+            class="expanded-logo"
+            onerror="this.src='/assets/images/default.png'"
+          />
+          <div class="expanded-name">
+            ${getTeamName(awayTeam)}
+          </div>
+        </div>
+
+        <div class="expanded-stats-col">
+          <div class="expanded-stat">
+            <span>AP Rank</span>
+            <strong>${awayRank}</strong>
+          </div>
+          <div class="expanded-stat">
+            <span>Model</span>
+            <strong>#${awayModel}</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="expanded-team">
+
+        <div class="expanded-team-header">
+          <img 
+            src="${teamLogo(homeTeam)}"
+            alt="${homeTeam}"
+            class="expanded-logo"
+            onerror="this.src='/assets/images/default.png'"
+          />
+          <div class="expanded-name">
+            ${getTeamName(homeTeam)}
+          </div>
+        </div>
+
+        <div class="expanded-stats-col">
+          <div class="expanded-stat">
+            <span>AP Rank</span>
+            <strong>${homeRank}</strong>
+          </div>
+          <div class="expanded-stat">
+            <span>Model</span>
+            <strong>#${homeModel}</strong>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
 function filterGameIds(games) {
   const ids = Object.keys(games || {});
 
@@ -404,7 +475,7 @@ function renderGames(games, medalByDate = {}) {
         "";
 
       html += `
-        <article class="game-card" id="game-${id}">
+        <article class="game-card" id="game-${id}" data-game-id="${id}">
           <header class="game-head">
           <div class="game-head-left">
           <span class="status-pill ${stCls}">${stText} </span>
@@ -415,7 +486,9 @@ function renderGames(games, medalByDate = {}) {
           <div class="game-head-right">
            ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
            ${isP5 ? `<span class="game-badge p5">P5</span>` : ''}
-           ${medal ? `<span class="game-badge medal  ${medalClass}" title="Bottom 3 rating">${medal}</span>` : ""}
+           ${medal ? `<span class="game-badge medal  ${medalClass}" title="Top 3 rating">${medal}</span>` : ""}
+           <span class="expand-indicator">▼</span>
+
            </div>
         </header>
 
@@ -468,6 +541,9 @@ function renderGames(games, medalByDate = {}) {
             `).join("")}
             </div>
           ` : ""}
+          <div class="game-expand" hidden>
+            ${renderExpandedStats(g)}
+          </div>
         </article>
       `;
     }
@@ -476,6 +552,28 @@ function renderGames(games, medalByDate = {}) {
   }
 
   container.innerHTML = html;
+  container.querySelectorAll(".game-card").forEach(card => {
+  card.addEventListener("click", (e) => {
+      // prevent toggling if clicking a badge
+      if (e.target.closest(".game-badge")) return;
+
+      const expand = card.querySelector(".game-expand");
+      if (!expand) return;
+
+      const isOpen = !expand.hidden;
+
+      // optional: close others (accordion behavior)
+      container.querySelectorAll(".game-expand").forEach(el => {
+        el.hidden = true;
+      });
+
+      expand.hidden = isOpen;
+
+       if (!isOpen) {
+        card.classList.add("open");
+      }
+    });
+  });
 }
 
 async function start() {

@@ -1210,3 +1210,91 @@
     margin-top: 1.5rem;
   }
 }
+
+.game-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-2px);
+}
+
+.game-expand {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  animation: expandFade 0.2s ease;
+}
+
+.expanded-stats {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  opacity: 0.9;
+}
+
+@keyframes expandFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.expand-indicator {
+  transition: transform 0.2s ease;
+}
+
+.game-card.open .expand-indicator {
+  transform: rotate(180deg);
+}
+
+/* Expanded container */
+.expanded-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+/* Each team half */
+.expanded-team {
+  padding: 8px;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+/* Logo + name centered */
+.expanded-team-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.expanded-logo {
+  height: 42px;
+  width: 42px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.expanded-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Vertical stat layout */
+.expanded-stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Each stat row */
+.expanded-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
