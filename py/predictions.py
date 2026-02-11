@@ -5,7 +5,6 @@ import json
 import change
 from datetime import datetime
 from sklearn import preprocessing
-import html_builder as htmb
 from pytz import timezone
 import scraper
 import re
@@ -395,7 +394,7 @@ def predict_w(date):
     
     # MAIN -> DF with Conf col data
     path = utils.get_path(f"docs/women/predict_{date}.html")
-    html = htmb.add_front_matter(df_html, f"NCAAW Bracketology", date)
+    html = html_util.add_front_matter(df_html, f"NCAAW Bracketology", date)
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")
@@ -658,7 +657,7 @@ def predict(date):
     
     # MAIN -> DF with Conf col data
     path = utils.get_path(f"docs/men/predict_{date}.html")
-    html = htmb.add_front_matter(df_html, f"NCAAM Bracketology", date)
+    html = html_util.add_front_matter(df_html, f"NCAAM Bracketology", date)
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")
