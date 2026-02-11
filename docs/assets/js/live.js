@@ -1,299 +1,291 @@
-const board = document.getElementById("scoreboard");
-const LEAGUE = board?.dataset.league || "men"; // default fallback
+const board = document.getElementById('scoreboard')
+const LEAGUE = board?.dataset.league || 'men' // default fallback
 
-const WORKER_URL =
-  `https://cbb-live-scores.tmgordon33.workers.dev/scores?league=${LEAGUE}`;
+const WORKER_URL = `https://cbb-live-scores.tmgordon33.workers.dev/scores?league=${LEAGUE}`
 
-const POLL_INTERVAL = 30000;
-const LOGO_BASE = "/assets/images/";
+const POLL_INTERVAL = 30000
+const LOGO_BASE = '/assets/images/'
 
-let lastGenerated = null;
+let lastGenerated = null
 
-let TEAM_LOGO_MAP = {};
-let TEAM_NAME_MAP = {};
-let TEAM_LOGO_READY = false;
+let TEAM_LOGO_MAP = {}
+let TEAM_NAME_MAP = {}
+let TEAM_LOGO_READY = false
 
-let currentFilter = null;
-let LAST_GAMES = null;
-let LAST_MEDALS = null;
+let currentFilter = null
+let LAST_GAMES = null
+let LAST_MEDALS = null
 
-function normalize(s) {
+let EXPANDED_GAMES = new Set()
+
+function normalize (s) {
   return String(s)
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "")
-    .trim();
+    .replace(/[^a-z0-9]+/g, '')
+    .trim()
 }
 
-async function loadTeamLogos() {
-  const res = await fetch("/assets/data/master.json");
-  const data = await res.json();
+async function loadTeamLogos () {
+  const res = await fetch('/assets/data/master.json')
+  const data = await res.json()
 
-  const map = {};
+  const map = {}
 
-  const name_map = {};
+  const name_map = {}
 
-  const teams = data.team;
-  const names = data.names;
-  const paths = data.path;
+  const teams = data.team
+  const names = data.names
+  const paths = data.path
 
   for (const i in teams) {
-    const team = teams[i];
-    const path = paths?.[i];
-    const aliases = names?.[i];
+    const team = teams[i]
+    const path = paths?.[i]
+    const aliases = names?.[i]
 
-    if (!team || !path) continue;
-    let full_path = LOGO_BASE + path;
+    if (!team || !path) continue
+    let full_path = LOGO_BASE + path
     // primary team name
-    console.log(full_path);
-    map[normalize(team)] = full_path;
+    console.log(full_path)
+    map[normalize(team)] = full_path
 
     // aliases / abbreviations
     if (Array.isArray(aliases)) {
       for (const n of aliases) {
-        map[normalize(n)] = full_path;
-        name_map[n] = team;
+        map[normalize(n)] = full_path
+        name_map[n] = team
       }
     }
   }
 
-  TEAM_LOGO_MAP = map;
-  TEAM_NAME_MAP = name_map;
-  TEAM_LOGO_READY = true;
+  TEAM_LOGO_MAP = map
+  TEAM_NAME_MAP = name_map
+  TEAM_LOGO_READY = true
 
-  console.log("Loaded team logos:", Object.keys(map).length);
+  console.log('Loaded team logos:', Object.keys(map).length)
 }
 
-function teamLogo(teamName) {
+function teamLogo (teamName) {
   if (!TEAM_LOGO_READY || !teamName) {
-    return "/assets/images/default.png";
+    return '/assets/images/default.png'
   }
 
-  return (
-    TEAM_LOGO_MAP[normalize(teamName)] ||
-    "/assets/images/default.png"
-  );
+  return TEAM_LOGO_MAP[normalize(teamName)] || '/assets/images/default.png'
 }
 
-async function pollScores() {
-  const res = await fetch(WORKER_URL);
-  const data = await res.json();
+async function pollScores () {
+  const res = await fetch(WORKER_URL)
+  const data = await res.json()
 
-  let medalByDate = {};
+  let medalByDate = {}
 
-  const games =
-  LEAGUE === "men" ? data.leagues.men : data.leagues.women;
+  const games = LEAGUE === 'men' ? data.leagues.men : data.leagues.women
 
-  medalByDate = getBottom3MedalsByDate(games);
-  applyMedalsToGames(games, medalByDate);
+  medalByDate = getBottom3MedalsByDate(games)
+  applyMedalsToGames(games, medalByDate)
 
-  LAST_GAMES = games;
-  LAST_MEDALS = medalByDate;
+  LAST_GAMES = games
+  LAST_MEDALS = medalByDate
 
-  renderGames(games, medalByDate);
+  renderGames(games, medalByDate)
 
   if (data.meta?.poll_interval_sec) {
-    const el = document.getElementById("poll-rate");
+    const el = document.getElementById('poll-rate')
     if (el) {
-      const sec = data.meta.poll_interval_sec;
+      const sec = data.meta.poll_interval_sec
       el.textContent =
         sec >= 60
           ? `Polling: every ${Math.round(sec / 60)} min`
-          : `Polling: every ${sec}s`;
+          : `Polling: every ${sec}s`
     }
   }
 }
 
-function applyMedalsToGames(games, medalByDate) {
+function applyMedalsToGames (games, medalByDate) {
   for (const date in medalByDate) {
-    const medalMap = medalByDate[date];
+    const medalMap = medalByDate[date]
 
     for (const [id] of medalMap.entries()) {
       if (games[id]) {
-        games[id].hasMedal = true;
+        games[id].hasMedal = true
       }
     }
   }
 }
 
-function enrichGame(g) {
-  g.isP5 = g.is_p5 === true;
-  g.isAP = g.is_ap === true;
+function enrichGame (g) {
+  g.isP5 = g.is_p5 === true
+  g.isAP = g.is_ap === true
 
   g.top3Count =
-    (Number(g.home_model) <= 3 ? 1 : 0) +
-    (Number(g.away_model) <= 3 ? 1 : 0);
+    (Number(g.home_model) <= 3 ? 1 : 0) + (Number(g.away_model) <= 3 ? 1 : 0)
 
-  return g;
+  return g
 }
 
-function statusRank(g) {
-  const s = (g.status || "").toLowerCase();
+function statusRank (g) {
+  const s = (g.status || '').toLowerCase()
+
+  if (s === 'in_progress' || s === 'live' || s === 'half_over' || s === 'delay')
+    return 0 // LIVE
 
   if (
-    s === "in_progress" ||
-    s === "live" ||
-    s === "half_over" ||
-    s === "delay"
-  ) return 0; // LIVE
+    s === 'pre' ||
+    s === 'scheduled' ||
+    s === 'pre_game' ||
+    s === 'not_started'
+  )
+    return 1 // PRE
 
-  if (
-    s === "pre" ||
-    s === "scheduled" ||
-    s === "pre_game" ||
-    s === "not_started"
-  ) return 1; // PRE
+  if (s === 'final') return 2 // FINAL
 
-  if (s === "final") return 2; // FINAL
-
-  return 3;
+  return 3
 }
 
-function gameTime(g) {
-  return g.start_time_utc
-    ? new Date(g.start_time_utc).getTime()
-    : Infinity;
+function gameTime (g) {
+  return g.start_time_utc ? new Date(g.start_time_utc).getTime() : Infinity
 }
 
-function formatDateHeader(isoDate) {
-  const d = new Date(isoDate + "T00:00:00");
+function formatDateHeader (isoDate) {
+  const d = new Date(isoDate + 'T00:00:00')
   return d.toLocaleDateString(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric"
-  });
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  })
 }
 
-function statusLabel(status) {
-  if (!status) return { text: "—", cls: "st-unk" };
+function statusLabel (status) {
+  if (!status) return { text: '—', cls: 'st-unk' }
 
-  const s = String(status).toLowerCase();
-  if (s === "in_progress" || s === "live") return { text: "LIVE", cls: "st-live" };
-  if (s === "half_over") return { text: "HALFTIME", cls: "st-ht" };
-  if (s === "final") return { text: "FINAL", cls: "st-final" };
-  if (s === "pre_game" || s === "scheduled") return { text: "PRE", cls: "st-pre" };
-  if (s === "delay" || s === "delayed") return { text: "DELAY", cls: "st-delay" };
-  return { text: status.toString().toUpperCase(), cls: "st-unk" };
+  const s = String(status).toLowerCase()
+  if (s === 'in_progress' || s === 'live')
+    return { text: 'LIVE', cls: 'st-live' }
+  if (s === 'half_over') return { text: 'HALFTIME', cls: 'st-ht' }
+  if (s === 'final') return { text: 'FINAL', cls: 'st-final' }
+  if (s === 'pre_game' || s === 'scheduled')
+    return { text: 'PRE', cls: 'st-pre' }
+  if (s === 'delay' || s === 'delayed')
+    return { text: 'DELAY', cls: 'st-delay' }
+  return { text: status.toString().toUpperCase(), cls: 'st-unk' }
 }
 
-function safe(v, fallback = "") {
-  return (v === null || v === undefined) ? fallback : v;
+function safe (v, fallback = '') {
+  return v === null || v === undefined ? fallback : v
 }
 
-function getTeamName(team) {
-  print_name = TEAM_NAME_MAP[team];
+function getTeamName (team) {
+  print_name = TEAM_NAME_MAP[team]
   if (!print_name) {
-    return team;
+    return team
   }
 
   return print_name
 }
 
-function formatMeta(g) {
-  const parts = [];
+function formatMeta (g) {
+  const parts = []
 
-  const venue = safe(g.venue);
-  const loc = safe(g.location);
+  const venue = safe(g.venue)
+  const loc = safe(g.location)
 
-  if (venue) parts.push({ type: "venue", text: venue });
-  if (loc) parts.push({ type: "location", text: loc });
+  if (venue) parts.push({ type: 'venue', text: venue })
+  if (loc) parts.push({ type: 'location', text: loc })
 
   // optional: betting
-  const spread = safe(g.spread_close, null);
-  const total = safe(g.total_close, null);
+  const spread = safe(g.spread_close, null)
+  const total = safe(g.total_close, null)
   if (spread !== null || total !== null) {
-    const bits = [];
-    if (spread !== null && spread !== "") bits.push(`Spread: ${spread}`);
-    if (total !== null && total !== "") bits.push(`O/U: ${total}`);
-    parts.push(bits.join(" • "));
+    const bits = []
+    if (spread !== null && spread !== '') bits.push(`Spread: ${spread}`)
+    if (total !== null && total !== '') bits.push(`O/U: ${total}`)
+    parts.push(bits.join(' • '))
   }
 
-  return parts.filter(Boolean);
+  return parts.filter(Boolean)
 }
 
-function renderTime(g) {
+function renderTime (g) {
   // PRE games: show tip-off
-  if (g.status === "pre_game" && g.start_time) {
-    return `<span class="game-time">${g.start_time}</span>`;
+  if (g.status === 'pre_game' && g.start_time) {
+    return `<span class="game-time">${g.start_time}</span>`
   }
 
-  if (g.status === "final") {
-    return `<span class="game-time"></span>`;
+  if (g.status === 'final') {
+    return `<span class="game-time"></span>`
   }
 
   // LIVE / FINAL games: show period + clock
-  const period = safe(g.period);
-  const clock = safe(g.clock);
+  const period = safe(g.period)
+  const clock = safe(g.clock)
 
   if (period || clock) {
     return `
       <span class="game-time">
-        ${[period, clock].filter(Boolean).join(" • ")}
+        ${[period, clock].filter(Boolean).join(' • ')}
       </span>
-    `;
+    `
   }
 
-  return `<span class="game-time">—</span>`;
+  return `<span class="game-time">—</span>`
 }
 
-function getLowestRatings(games, n = 3) {
-  const vals = [];
+function getLowestRatings (games, n = 3) {
+  const vals = []
 
   for (const id in games) {
-    const r = games[id]?.rating;
-    if (typeof r === "number" && !Number.isNaN(r)) {
-      vals.push(r);
+    const r = games[id]?.rating
+    if (typeof r === 'number' && !Number.isNaN(r)) {
+      vals.push(r)
     }
   }
 
-  vals.sort((a, b) => a - b);
+  vals.sort((a, b) => a - b)
 
-  return new Set(vals.slice(0, n));
+  return new Set(vals.slice(0, n))
 }
 
-function getBottom3MedalsByDate(games) {
-  const byDate = {};
-  const result = {};
+function getBottom3MedalsByDate (games) {
+  const byDate = {}
+  const result = {}
 
   // group by date
   for (const id in games) {
-    const g = games[id];
-    const date = g.date;
-    const rating = g.rating;
+    const g = games[id]
+    const date = g.date
+    const rating = g.rating
 
-    if (!date) continue;
-    if (typeof rating !== "number" || Number.isNaN(rating)) continue;
+    if (!date) continue
+    if (typeof rating !== 'number' || Number.isNaN(rating)) continue
 
-    if (!byDate[date]) byDate[date] = [];
-    byDate[date].push({ id, rating });
+    if (!byDate[date]) byDate[date] = []
+    byDate[date].push({ id, rating })
   }
 
   // assign medals
   for (const date in byDate) {
-    byDate[date].sort((a, b) => a.rating - b.rating);
+    byDate[date].sort((a, b) => a.rating - b.rating)
 
-    result[date] = new Map();
+    result[date] = new Map()
 
-    const medals = ["🥇", "🥈", "🥉"];
+    const medals = ['🥇', '🥈', '🥉']
 
-    byDate[date]
-      .slice(0, 3)
-      .forEach((g, i) => {
-        result[date].set(g.id, medals[i]);
-      });
+    byDate[date].slice(0, 3).forEach((g, i) => {
+      result[date].set(g.id, medals[i])
+    })
   }
 
-  return result;
+  return result
 }
 
-function renderExpandedStats(g) {
-  const awayTeam = safe(g.away_team, "Away");
-  const homeTeam = safe(g.home_team, "Home");
+function renderExpandedStats (g) {
+  const awayTeam = safe(g.away_team, 'Away')
+  const homeTeam = safe(g.home_team, 'Home')
 
-  const awayRank = safe(g.away_rank, "—");
-  const homeRank = safe(g.home_rank, "—");
+  const awayRank = safe(g.away_rank, '—')
+  const homeRank = safe(g.home_rank, '—')
 
-  const awayModel = safe(g.away_model, "—");
-  const homeModel = safe(g.home_model, "—");
+  const awayModel = safe(g.away_model, '—')
+  const homeModel = safe(g.home_model, '—')
 
   return `
     <div class="expanded-grid">
@@ -307,10 +299,11 @@ function renderExpandedStats(g) {
             class="expanded-logo"
             onerror="this.src='/assets/images/default.png'"
           />
-          <div class="expanded-name">
+          <span class="expanded-name">
             ${getTeamName(awayTeam)}
-          </div>
+          </span>
         </div>
+
 
         <div class="expanded-stats-col">
           <div class="expanded-stat">
@@ -334,10 +327,11 @@ function renderExpandedStats(g) {
             class="expanded-logo"
             onerror="this.src='/assets/images/default.png'"
           />
-          <div class="expanded-name">
+          <span class="expanded-name">
             ${getTeamName(homeTeam)}
-          </div>
+          </span>
         </div>
+
 
         <div class="expanded-stats-col">
           <div class="expanded-stat">
@@ -353,126 +347,126 @@ function renderExpandedStats(g) {
       </div>
 
     </div>
-  `;
+  `
 }
 
-function filterGameIds(games) {
-  const ids = Object.keys(games || {});
+function filterGameIds (games) {
+  const ids = Object.keys(games || {})
 
-  if (!currentFilter) return ids;
+  if (!currentFilter) return ids
 
   return ids.filter(id => {
-    const g = games[id];
+    const g = games[id]
 
     switch (currentFilter) {
-      case "ap25":
-        return g.isAP === true;
+      case 'ap25':
+        return g.isAP === true
 
-      case "p5":
-        return g.isP5 === true;
+      case 'p5':
+        return g.isP5 === true
 
-      case "top3":
-        return g.hasMedal === true;
+      case 'top3':
+        return g.hasMedal === true
 
       default:
-        return true;
+        return true
     }
-  });
+  })
 }
 
-function renderGames(games, medalByDate = {}) {
-  if (!games) return;
+function renderGames (games, medalByDate = {}) {
+  if (!games) return
   console.log(
-    "renderGames",
+    'renderGames',
     Object.keys(games || {}).length,
-    "filter:",
+    'filter:',
     currentFilter
-  );
+  )
 
   // enrich once
-  Object.values(games).forEach(enrichGame);
+  Object.values(games).forEach(enrichGame)
 
-  const filteredIds = filterGameIds(games);
+  const filteredIds = filterGameIds(games)
 
-  const container = document.getElementById("games");
-  if (!container) return;
+  const container = document.getElementById('games')
+  if (!container) return
 
   if (!filteredIds.length) {
-  container.innerHTML =
-    `<div class="scoreboard-empty">No games match this filter.</div>`;
-    return;
+    container.innerHTML = `<div class="scoreboard-empty">No games match this filter.</div>`
+    return
   }
 
   /// ---- group by date ----
-  const byDate = {};
+  const byDate = {}
 
   for (const id of filteredIds) {
-    const g = games[id];
-    if (!g) continue;
+    const g = games[id]
+    if (!g) continue
 
-    const dateKey = g.date || "unknown";
-    if (!byDate[dateKey]) byDate[dateKey] = [];
+    const dateKey = g.date || 'unknown'
+    if (!byDate[dateKey]) byDate[dateKey] = []
 
-    byDate[dateKey].push({ id, g });
+    byDate[dateKey].push({ id, g })
   }
 
   // ---- sort dates chronologically ----
-  const dates = Object.keys(byDate).sort(
-    (a, b) => new Date(a) - new Date(b)
-  );
+  const dates = Object.keys(byDate).sort((a, b) => new Date(a) - new Date(b))
 
   // ---- build HTML ----
-  let html = "";
+  let html = ''
 
   for (const date of dates) {
-    const gamesForDay = byDate[date];
+    const gamesForDay = byDate[date]
 
     // ---- sort within the day ----
     gamesForDay.sort((a, b) => {
-      const ra = statusRank(a.g);
-      const rb = statusRank(b.g);
-      if (ra !== rb) return ra - rb;
+      const ra = statusRank(a.g)
+      const rb = statusRank(b.g)
+      if (ra !== rb) return ra - rb
 
-      return gameTime(a.g) - gameTime(b.g);
-    });
+      return gameTime(a.g) - gameTime(b.g)
+    })
 
     // ---- date header ----
     html += `
       <h2 class="date-header">${formatDateHeader(date)}</h2>
       <div class="scoreboard-grid">
-    `;
+    `
 
     for (const { id, g } of gamesForDay) {
-      const awayTeam = safe(g.away_team, "AWAY");
-      const homeTeam = safe(g.home_team, "HOME");
-      
-      const awayAbb = safe(g.away_abb, null);
-      const homeAbb = safe(g.home_abb, null);
+      const awayTeam = safe(g.away_team, 'AWAY')
+      const homeTeam = safe(g.home_team, 'HOME')
 
-      const awayRank = safe(g.away_rank, null);
-      const homeRank = safe(g.home_rank, null);
-      const isAP = g.isAP;
-      const isP5 = g.isP5;
+      const awayAbb = safe(g.away_abb, null)
+      const homeAbb = safe(g.home_abb, null)
 
-      const awayRecord = safe(g.away_record, null);
-      const homeRecord = safe(g.home_record, null);
+      const awayRank = safe(g.away_rank, null)
+      const homeRank = safe(g.home_rank, null)
+      const isAP = g.isAP
+      const isP5 = g.isP5
 
-      const homeModel = safe(g.home_model, null);
-      const awayModel = safe(g.away_model, null);
+      const awayRecord = safe(g.away_record, null)
+      const homeRecord = safe(g.home_record, null)
 
-      const awayScore = safe(g.away_score, "—");
-      const homeScore = safe(g.home_score, "—");
+      const homeModel = safe(g.home_model, null)
+      const awayModel = safe(g.away_model, null)
 
-      const { text: stText, cls: stCls } = statusLabel(g.status);
-      const metaLines = formatMeta(g);
-      
-      const medal = medalByDate[date]?.get(id);
+      const awayScore = safe(g.away_score, '—')
+      const homeScore = safe(g.home_score, '—')
+
+      const { text: stText, cls: stCls } = statusLabel(g.status)
+      const metaLines = formatMeta(g)
+
+      const medal = medalByDate[date]?.get(id)
 
       const medalClass =
-        medal === "🥇" ? "gold" :
-        medal === "🥈" ? "silver" :
-        medal === "🥉" ? "bronze" :
-        "";
+        medal === '🥇'
+          ? 'gold'
+          : medal === '🥈'
+          ? 'silver'
+          : medal === '🥉'
+          ? 'bronze'
+          : ''
 
       html += `
         <article class="game-card" id="game-${id}" data-game-id="${id}">
@@ -486,9 +480,11 @@ function renderGames(games, medalByDate = {}) {
           <div class="game-head-right">
            ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
            ${isP5 ? `<span class="game-badge p5">P5</span>` : ''}
-           ${medal ? `<span class="game-badge medal  ${medalClass}" title="Top 3 rating">${medal}</span>` : ""}
-           <span class="expand-indicator">▼</span>
-
+           ${
+             medal
+               ? `<span class="game-badge medal  ${medalClass}" title="Top 3 rating">${medal}</span>`
+               : ''
+           }
            </div>
         </header>
 
@@ -504,7 +500,9 @@ function renderGames(games, medalByDate = {}) {
                   onerror="this.src='/assets/images/default.png'"
                 />
                 ${awayRank ? `(${awayRank})` : ''}
-                <span class="team-name">${awayAbb ? awayAbb : getTeamName(awayTeam)}</span>
+                <span class="team-name">${
+                  awayAbb ? awayAbb : getTeamName(awayTeam)
+                }</span>
                 <strong>${awayModel ? `#${awayModel}` : ''}</strong>
                 ${awayRecord ? `(${awayRecord})` : ''}
               </span>
@@ -523,7 +521,9 @@ function renderGames(games, medalByDate = {}) {
                   onerror="this.src='/assets/images/default.png'"
                 />
                 ${homeRank ? `(${homeRank})` : ''}
-                <span class="team-name">${homeAbb ? homeAbb : getTeamName(homeTeam)}</span>
+                <span class="team-name">${
+                  homeAbb ? homeAbb : getTeamName(homeTeam)
+                }</span>
                 <strong>${homeModel ? `#${homeModel}` : ''}</strong>
                 ${homeRecord ? `(${homeRecord})` : ''}
               </span>
@@ -532,105 +532,153 @@ function renderGames(games, medalByDate = {}) {
             </div>
           </div>
 
-          ${metaLines.length ? `
+          ${
+            metaLines.length
+              ? `
             <div class="meta">
-              ${metaLines.map(m => `
-              <div class="meta-line meta-${m.type || "misc"}">
+              ${metaLines
+                .map(
+                  m => `
+              <div class="meta-line meta-${m.type || 'misc'}">
                 ${m.text || m}
               </div>
-            `).join("")}
+            `
+                )
+                .join('')}
             </div>
-          ` : ""}
+          `
+              : ''
+          }
+          <div class="expand-toggle">
+            <span class="expand-indicator">▼</span>
+          </div>
+
           <div class="game-expand" hidden>
             ${renderExpandedStats(g)}
           </div>
         </article>
-      `;
+      `
     }
 
-    html += `</div>`;
+    html += `</div>`
   }
 
-  container.innerHTML = html;
-  container.querySelectorAll(".game-card").forEach(card => {
-  card.addEventListener("click", (e) => {
-      // prevent toggling if clicking a badge
-      if (e.target.closest(".game-badge")) return;
+  container.innerHTML = html
+  // Restore expanded state after re-render
+  container.querySelectorAll('.game-card').forEach(card => {
+    const id = card.dataset.gameId
 
-      const expand = card.querySelector(".game-expand");
-      if (!expand) return;
-
-      const isOpen = !expand.hidden;
-
-      // optional: close others (accordion behavior)
-      container.querySelectorAll(".game-expand").forEach(el => {
-        el.hidden = true;
-      });
-
-      expand.hidden = isOpen;
-
-       if (!isOpen) {
-        card.classList.add("open");
+    if (EXPANDED_GAMES.has(id)) {
+      const expand = card.querySelector('.game-expand')
+      if (expand) {
+        expand.hidden = false
+        card.classList.add('open')
       }
-    });
-  });
-}
-
-async function start() {
-  await loadTeamLogos();
-  await pollScores();
-  setInterval(pollScores, POLL_INTERVAL);
-}
-
-start();
-
-document.addEventListener("DOMContentLoaded", () => {
-  const legendOverlay = document.getElementById("legend-overlay");
-  const openLegend = document.getElementById("open-legend");
-  const closeLegend = document.getElementById("close-legend");
-
-  if (!legendOverlay || !openLegend || !closeLegend) return;
-
-  openLegend.addEventListener("click", () => {
-    legendOverlay.hidden = false;
-    document.body.style.overflow = "hidden";
-  });
-
-  closeLegend.addEventListener("click", () => {
-    legendOverlay.hidden = true;
-    document.body.style.overflow = "";
-  });
-
-  legendOverlay.addEventListener("click", (e) => {
-    if (e.target === legendOverlay) {
-      legendOverlay.hidden = true;
-      document.body.style.overflow = "";
     }
-  });
+  })
+
+  container.querySelectorAll('.expand-toggle').forEach(toggle => {
+    toggle.addEventListener('click', e => {
+      const card = toggle.closest('.game-card')
+      const expand = card.querySelector('.game-expand')
+      const id = card.dataset.gameId
+
+      if (!expand || !id) return
+
+      const isOpen = !expand.hidden
+
+      // Close all others (accordion behavior)
+      container.querySelectorAll('.game-expand').forEach(el => {
+        el.hidden = true
+      })
+
+      container.querySelectorAll('.game-card').forEach(c => {
+        c.classList.remove('open')
+      })
+
+      if (isOpen) {
+        // closing
+        expand.hidden = true
+        card.classList.remove('open')
+        EXPANDED_GAMES.delete(id)
+      } else {
+        // opening (accordion style)
+        EXPANDED_GAMES.clear()
+
+        container.querySelectorAll('.game-expand').forEach(el => {
+          el.hidden = true
+        })
+
+        container.querySelectorAll('.game-card').forEach(c => {
+          c.classList.remove('open')
+        })
+
+        expand.hidden = false
+        card.classList.add('open')
+        EXPANDED_GAMES.add(id)
+      }
+
+      e.stopPropagation()
+    })
+  })
+}
+
+async function start () {
+  await loadTeamLogos()
+  await pollScores()
+  setInterval(pollScores, POLL_INTERVAL)
+}
+
+start()
+
+document.addEventListener('DOMContentLoaded', () => {
+  const legendOverlay = document.getElementById('legend-overlay')
+  const openLegend = document.getElementById('open-legend')
+  const closeLegend = document.getElementById('close-legend')
+
+  if (!legendOverlay || !openLegend || !closeLegend) return
+
+  openLegend.addEventListener('click', () => {
+    legendOverlay.hidden = false
+    document.body.style.overflow = 'hidden'
+  })
+
+  closeLegend.addEventListener('click', () => {
+    legendOverlay.hidden = true
+    document.body.style.overflow = ''
+  })
+
+  legendOverlay.addEventListener('click', e => {
+    if (e.target === legendOverlay) {
+      legendOverlay.hidden = true
+      document.body.style.overflow = ''
+    }
+  })
 
   // ESC key support (nice UX)
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !legendOverlay.hidden) {
-      legendOverlay.hidden = true;
-      document.body.style.overflow = "";
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !legendOverlay.hidden) {
+      legendOverlay.hidden = true
+      document.body.style.overflow = ''
     }
-  });
-});
+  })
+})
 
-document.querySelectorAll(".sort-chip").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const filter = btn.dataset.sort;
+document.querySelectorAll('.sort-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const filter = btn.dataset.sort
 
     // toggle on/off
-    currentFilter = currentFilter === filter ? null : filter;
+    currentFilter = currentFilter === filter ? null : filter
 
-    document.querySelectorAll(".sort-chip").forEach(b =>
-      b.classList.toggle("active", b.dataset.sort === currentFilter)
-    );
+    document
+      .querySelectorAll('.sort-chip')
+      .forEach(b =>
+        b.classList.toggle('active', b.dataset.sort === currentFilter)
+      )
 
     if (LAST_GAMES && LAST_MEDALS) {
-      renderGames(LAST_GAMES, LAST_MEDALS);
+      renderGames(LAST_GAMES, LAST_MEDALS)
     }
-  });
-});
-
+  })
+})

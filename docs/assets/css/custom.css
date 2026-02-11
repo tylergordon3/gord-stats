@@ -345,7 +345,7 @@
 
 /* Layout container */
 .scoreboard {
-  display: grid;
+  align-items: start;
   gap: 12px;
   max-width: 520px;
 }
@@ -1265,19 +1265,24 @@
   padding: 8px;
   border-radius: 10px;
   background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-/* Logo + name centered */
+/* Logo + name inline */
 .expanded-team-header {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
 .expanded-logo {
-  height: 42px;
-  width: 42px;
+  height: 22px;   /* smaller */
+  width: 22px;
   object-fit: contain;
-  margin-bottom: 6px;
 }
 
 .expanded-name {
@@ -1297,4 +1302,37 @@
   display: flex;
   justify-content: space-between;
   font-size: 13px;
+}
+
+.expand-indicator {
+  font-size: 14px;
+  opacity: 0.6;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+  pointer-events: none; /* so clicking it still triggers card click */
+}
+
+.game-card:hover .expand-indicator {
+  opacity: 1;
+}
+
+.game-card.open .expand-indicator {
+  transform: rotate(180deg);
+}
+
+.expand-toggle {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 6px;
+  cursor: pointer;
+}
+
+.expand-indicator {
+  font-size: 14px;
+  opacity: 0.6;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.game-card.open .expand-indicator {
+  transform: rotate(180deg);
+  opacity: 1;
 }
