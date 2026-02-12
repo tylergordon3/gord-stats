@@ -1354,7 +1354,7 @@ def torvik_w(date):
         browser = p.chromium.launch(headless=True)  # Runs without a UI
         page = browser.new_page()
         page.goto("https://barttorvik.com/ncaaw/#", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
+        time.sleep(5)
         # --- Get the page source and parse with BeautifulSoup ---
         html = page.content()
         soup = BeautifulSoup(html, "html.parser")
