@@ -8,6 +8,13 @@ import polling
 import subprocess
 from datetime import datetime, timedelta, timezone
 
+DEPLOY_WINDOW_START = 6   # 06:00 UTC
+DEPLOY_WINDOW_END = 9     # 09:00 UTC
+DEPLOY_RETRY_INTERVAL = 300  # 5 minutes between deploy attempts
+
+deploy_success_date = None
+last_deploy_attempt = None
+
 def safe_push(payload):
     try:
         res = push_scores.push(payload)
@@ -66,15 +73,9 @@ def seconds_until_next_game():
     except Exception:
         return None
 
-def is_deploy_time(now):
-    """
-    True if it's exactly on a 3-hour boundary (UTC)
-    """
-    return (
-        now.minute == 0 and
-        now.second < 5 and   # small grace window
-        now.hour % 3 == 0
-    )
+def in_deploy_window(now):
+    return DEPLOY_WINDOW_START <= now.hour < DEPLOY_WINDOW_END
+
     
 def task(poll_rate):
     # --- scrape both leagues ---
@@ -108,24 +109,44 @@ def task(poll_rate):
     push_scores.push(payload)
 
 def maybe_deploy():
+    global deploy_success_date, last_deploy_attempt
+
     now = datetime.now(timezone.utc)
+    today = now.date()
 
-    if is_deploy_time(now):
-        print(f"Scheduled deploy @ {now.strftime('%H:%M UTC')}")
+    # Only operate inside deploy window
+    if not in_deploy_window(now):
+        return
 
-        try:
-            subprocess.run(
-                [DEPLOY_SCRIPT],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-            )
-            print("Deploy finished successfully")
+    # If already deployed successfully today, stop
+    if deploy_success_date == today:
+        return
 
-        except subprocess.CalledProcessError as e:
-            print("Deploy failed")
-            print(e.stdout)
+    # Prevent retry spam (wait 5 min between attempts)
+    if last_deploy_attempt:
+        seconds_since_last = (now - last_deploy_attempt).total_seconds()
+        if seconds_since_last < DEPLOY_RETRY_INTERVAL:
+            return
+
+    print(f"Deploy attempt @ {now.strftime('%H:%M:%S UTC')}")
+
+    last_deploy_attempt = now
+
+    try:
+        subprocess.run(
+            [DEPLOY_SCRIPT],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+
+        print("✅ Deploy successful")
+        deploy_success_date = today
+
+    except subprocess.CalledProcessError as e:
+        print("❌ Deploy failed — will retry within window")
+        print(e.stdout)
 
 
 BASE_INTERVAL = 30        # always wait this after success
