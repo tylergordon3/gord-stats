@@ -11,13 +11,6 @@ import daily_data
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
 
-# Men's Data Setup
-torvik_path = utils.get_path(f"data/men/torvik/{today}.json")
-kenpom_path = utils.get_path(f"data/men/kenpom_api/{today}.json")
-
-# Women's Data Setup
-torvik_w_path = utils.get_path(f"data/women/torvik/{today}.json")
-
 daily_data.get_data()
 
 update_mens = 0
