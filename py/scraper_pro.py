@@ -158,8 +158,10 @@ def format_event(g, ranks, master, ats):
         if dt_local else None
     )
 
-    ats_lookup = {
-        (row[0]): row[1]   # <-- just record
+    ats_lookup = {}
+    if ats:
+        ats_lookup = {
+            row[0]: row[1]
             for row in ats["rows"]
         }
 
@@ -212,8 +214,12 @@ def format_event(g, ranks, master, ats):
                 return ats_lookup[alias]
         return None
     
-    ats_home = get_ats_for_team(home_idx, master, ats_lookup)
-    ats_away = get_ats_for_team(away_idx, master, ats_lookup)
+    if ats_lookup:
+        ats_home = get_ats_for_team(home_idx, master, ats_lookup)
+        ats_away = get_ats_for_team(away_idx, master, ats_lookup)
+    else:
+        ats_home = None
+        ats_away = None
     
     clock = progress.get("clock")
     period = progress.get("segment_string")
@@ -383,7 +389,11 @@ def get_current_live_dataset(league_key):
 
     master = scraper.getMasterTeams()
     
-    ats_dict = ats.get_today_ats()
+    # Only load ATS for men
+    if league_key == "men":
+        ats_dict = ats.get_today_ats()
+    else:
+        ats_dict = None
     
     for g in events:
         game_id = g.get("id")

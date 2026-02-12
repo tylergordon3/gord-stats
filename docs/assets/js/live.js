@@ -319,7 +319,7 @@ function renderExpandedStats (g) {
           </div>
           <div class="expanded-stat">
             <span>ATS</span>
-            <strong>#${atsAway}</strong>
+            <strong>${atsAway}</strong>
           </div>
         </div>
 
@@ -351,7 +351,7 @@ function renderExpandedStats (g) {
           </div>
            <div class="expanded-stat">
             <span>ATS</span>
-            <strong>#${atsHome}</strong>
+            <strong>${atsHome}</strong>
           </div>
         </div>
 
