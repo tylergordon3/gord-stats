@@ -159,30 +159,22 @@ def format_event(g, ranks, master, ats):
     )
 
     ats_lookup = {
-        row[0]: {
-            "ats_record": row[1],
-            "cover_pct": row[2],
-            "mov": row[3],
-            "ats_plus_minus": row[4]
+        (row[0]): row[1]   # <-- just record
+            for row in ats["rows"]
         }
-        for row in ats["rows"]
-    }
-    
+
     # ---- teams ----
     home = g["home_team"]
     away = g["away_team"]
     
-    [_, home_name, home_abb] = scraper.getNameFromCode(home.get("abbreviation"), master, True)
-    [_, away_name, away_abb]= scraper.getNameFromCode(away.get("abbreviation"), master, True)
+    [home_idx, home_name, home_abb] = scraper.getNameFromCode(home.get("abbreviation"), master, True)
+    [away_idx, away_name, away_abb]= scraper.getNameFromCode(away.get("abbreviation"), master, True)
 
     home_model = ranks[home_name]['Ovr'] if home_name else ''
     away_model = ranks[away_name]['Ovr'] if away_name else ''
 
     home_record = ranks[home_name]['Record'] if home_name else ''
     away_record = ranks[away_name]['Record'] if away_name else ''
-    
-    home_ats_name = master["team"][str(home_name)]
-    away_ats_name = master["team"][str(away_name)]
     
     def safe_float(x):
         try:
@@ -213,8 +205,15 @@ def format_event(g, ranks, master, ats):
     home_score = score.get("home", {}).get("score")
     away_score = score.get("away", {}).get("score")
     
-    ats_home = ats_lookup.get(home_ats_name)
-    ats_away = ats_lookup.get(away_ats_name)
+    def get_ats_for_team(idx, master, ats_lookup):
+        aliases = master["names"][idx]
+        for alias in aliases:
+            if alias in ats_lookup:
+                return ats_lookup[alias]
+        return None
+    
+    ats_home = get_ats_for_team(home_idx, master, ats_lookup)
+    ats_away = get_ats_for_team(away_idx, master, ats_lookup)
     
     clock = progress.get("clock")
     period = progress.get("segment_string")
