@@ -46,7 +46,7 @@ def main():
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=4)
-        
+
 def get_today_ats():
     ats_dir = paths.M_ATS_DIR
 
