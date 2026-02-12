@@ -736,16 +736,14 @@
     "names": {
         "0": [
             "ACU",
-            "Wildcats",
             "Abilene Christian",
             "acu",
-            "wildcats",
-            "WILDCATS",
             "abilene christian",
             "ABILENE CHRISTIAN",
             "abilenechristian",
             "Abilene Chr.",
-            "ABIL"
+            "ABIL",
+            "Abl Christian"
         ],
         "1": [
             "AFA",
@@ -809,7 +807,8 @@
             "alabama st.",
             "alabamast",
             "ALABAMA ST.",
-            "alabama st"
+            "alabama st",
+            "Alabama St"
         ],
         "6": [
             "ALBNY",
@@ -838,7 +837,8 @@
             "ALCORN ST.",
             "alcornst",
             "alcorn st",
-            "ALCORN"
+            "ALCORN",
+            "Alcorn St"
         ],
         "8": [
             "American University",
@@ -870,7 +870,9 @@
             "APPALACHIAN ST.",
             "appalachianst",
             "appalachian st",
-            "App St"
+            "App St",
+            "Appalachian St",
+            "App State"
         ],
         "10": [
             "ARIZ",
@@ -907,13 +909,10 @@
             "ARKANSAS"
         ],
         "13": [
-            "Golden Lions",
             "Arkansas-Pine Bluff",
             "UAPB",
             "ARPB",
             "Arkansas Pine Bluff",
-            "golden lions",
-            "GOLDEN LIONS",
             "arkansas-pine bluff",
             "ARKANSAS-PINE BLUFF",
             "uapb",
@@ -922,7 +921,8 @@
             "ARKANSAS PINE BLUFF",
             "arkansaspinebluff",
             "ARKPB",
-            "Ark.-Pine Bluff"
+            "Ark.-Pine Bluff",
+            "AR-Pine Bluff"
         ],
         "14": [
             "ARST",
@@ -939,7 +939,8 @@
             "arkansas st.",
             "ARKANSAS ST.",
             "arkansasst",
-            "arkansas st"
+            "arkansas st",
+            "Arkansas St"
         ],
         "15": [
             "Army West Point",
@@ -996,7 +997,8 @@
             "ball st.",
             "BALL ST.",
             "ballst",
-            "ball st"
+            "ball st",
+            "Ball St"
         ],
         "20": [
             "Baylor",
@@ -1033,20 +1035,18 @@
         "23": [
             "BTHCK",
             "Bethune-Cookman",
-            "Wildcats",
             "COOK",
             "Bethune Cookman",
             "bthck",
             "bethune-cookman",
             "BETHUNE-COOKMAN",
-            "wildcats",
-            "WILDCATS",
             "cook",
             "bethune cookman",
             "BETHUNE COOKMAN",
             "bethunecookman",
             "BCU",
-            "Bethune-Cook."
+            "Bethune-Cook.",
+            "Bethune"
         ],
         "24": [
             "Binghamton",
@@ -1071,7 +1071,8 @@
             "boise st.",
             "BOISE ST.",
             "boisest",
-            "boise st"
+            "boise st",
+            "Boise St"
         ],
         "26": [
             "Eagles",
@@ -1088,16 +1089,14 @@
         ],
         "27": [
             "Boston University",
-            "Terriers",
             "BSTN",
             "boston university",
             "BOSTON UNIVERSITY",
-            "terriers",
-            "TERRIERS",
             "bstn",
             "bostonuniversity",
             "Boston U.",
-            "BU"
+            "BU",
+            "Boston U"
         ],
         "28": [
             "Bowling Green",
@@ -1170,15 +1169,13 @@
         ],
         "35": [
             "Cal State Northridge",
-            "Matadors",
             "CSUN",
             "cal state northridge",
             "CAL STATE NORTHRIDGE",
-            "matadors",
-            "MATADORS",
             "csun",
             "CSNorthridge",
-            "CSN"
+            "CSN",
+            "CS Northridge"
         ],
         "36": [
             "California Baptist",
@@ -1207,15 +1204,12 @@
         ],
         "38": [
             "Cal State Bakersfield",
-            "Roadrunners",
             "CSUB",
             "CSBAK",
             "Cal-Baker.",
             "Cal St. Bakersfield",
             "cal state bakersfield",
             "CAL STATE BAKERSFIELD",
-            "roadrunners",
-            "ROADRUNNERS",
             "csub",
             "csbak",
             "cal-baker.",
@@ -1223,7 +1217,9 @@
             "cal st. bakersfield",
             "CAL ST. BAKERSFIELD",
             "calstbakersfield",
-            "cal st bakersfield"
+            "cal st bakersfield",
+            "Cal St Bakersfield",
+            "CS Bakersfield"
         ],
         "39": [
             "Cal State Fullerton",
@@ -1238,7 +1234,8 @@
             "cal st fullerton",
             "CS Fullerton",
             "CSFULL",
-            "CSUF"
+            "CSUF",
+            "Cal St Fullerton"
         ],
         "40": [
             "California",
@@ -1296,7 +1293,8 @@
             "CENTRAL CONNECTICUT",
             "centralconnecticut",
             "CCTST",
-            "CCTST"
+            "CCTST",
+            "C Connecticut"
         ],
         "45": [
             "Central Michigan",
@@ -1306,7 +1304,8 @@
             "cmu",
             "centralmichigan",
             "C. Michigan",
-            "CMICH"
+            "CMICH",
+            "C Michigan"
         ],
         "46": [
             "Charleston",
@@ -1329,7 +1328,8 @@
             "chaso",
             "charlestonsouthern",
             "Charleston So.",
-            "CHARSO"
+            "CHARSO",
+            "Charleston So"
         ],
         "48": [
             "CHAR",
@@ -1363,7 +1363,8 @@
             "chicagost",
             "chicago st",
             "CHST",
-            "CHIST"
+            "CHIST",
+            "Chicago St"
         ],
         "51": [
             "Cincinnati",
@@ -1398,22 +1399,21 @@
             "CLEVST",
             "Clev. St.",
             "CLE",
-            "CLST"
+            "CLST",
+            "Cleveland St"
         ],
         "54": [
             "Coastal Carolina",
-            "Chanticleers",
             "CCU",
             "CCAR",
             "coastal carolina",
             "COASTAL CAROLINA",
-            "chanticleers",
-            "CHANTICLEERS",
             "ccu",
             "ccar",
             "coastalcarolina",
             "C. Carolina",
-            "CSTCAR"
+            "CSTCAR",
+            "Coastal Car"
         ],
         "55": [
             "COLGT",
@@ -1454,7 +1454,8 @@
             "coloradost",
             "colorado st",
             "COLOST",
-            "Colo. St."
+            "Colo. St.",
+            "Colorado St"
         ],
         "58": [
             "COM",
@@ -1493,7 +1494,8 @@
             "COPPIN ST.",
             "coppinst",
             "coppin st",
-            "COPP"
+            "COPP",
+            "Coppin St"
         ],
         "61": [
             "COR",
@@ -1581,7 +1583,8 @@
             "DELAWARE ST.",
             "delawarest",
             "delaware st",
-            "DELST"
+            "DELST",
+            "Delaware St"
         ],
         "69": [
             "DENVER",
@@ -1644,16 +1647,15 @@
         ],
         "75": [
             "East Carolina",
-            "Pirates",
             "ECAR",
             "ECU",
             "east carolina",
             "EAST CAROLINA",
-            "pirates",
-            "PIRATES",
             "ecar",
             "ecu",
-            "eastcarolina"
+            "eastcarolina",
+            "E Carolina",
+            "E. Carolina"
         ],
         "76": [
             "East Tennessee State",
@@ -1668,7 +1670,9 @@
             "east tennessee st.",
             "EAST TENNESSEE ST.",
             "easttennesseest",
-            "east tennessee st"
+            "east tennessee st",
+            "East Tennessee St",
+            "E Tennessee St"
         ],
         "77": [
             "East Texas A&M",
@@ -1678,34 +1682,31 @@
             "tamuc",
             "easttexasa&m",
             "TAMC",
-            "ETAM"
+            "ETAM",
+            "E Texas A&M"
         ],
         "78": [
             "Eastern Illinois",
             "EIU",
-            "Panthers",
             "eastern illinois",
             "EASTERN ILLINOIS",
             "eiu",
-            "panthers",
-            "PANTHERS",
             "easternillinois",
             "E. Illinois",
-            "EILL"
+            "EILL",
+            "E Illinois"
         ],
         "79": [
-            "Colonels",
             "EKY",
             "EKU",
             "Eastern Kentucky",
-            "colonels",
-            "COLONELS",
             "eky",
             "eku",
             "eastern kentucky",
             "EASTERN KENTUCKY",
             "easternkentucky",
-            "E. Kentucky"
+            "E. Kentucky",
+            "E Kentucky"
         ],
         "80": [
             "EMU",
@@ -1721,17 +1722,15 @@
         ],
         "81": [
             "Eastern Washington",
-            "Eagles",
             "EWASH",
             "EWU",
             "eastern washington",
             "EASTERN WASHINGTON",
-            "eagles",
-            "EAGLES",
             "ewash",
             "ewu",
             "easternwashington",
-            "E. Washington"
+            "E. Washington",
+            "E Washington"
         ],
         "82": [
             "Phoenix",
@@ -1754,13 +1753,11 @@
         ],
         "84": [
             "Florida International",
-            "Golden Panthers",
             "FIU",
             "florida international",
             "FLORIDA INTERNATIONAL",
-            "golden panthers",
-            "GOLDEN PANTHERS",
-            "fiu"
+            "fiu",
+            "Florida Intl"
         ],
         "85": [
             "Fairfield",
@@ -1775,7 +1772,8 @@
             "fairleigh dickinson",
             "FAIRLEIGH DICKINSON",
             "fdu",
-            "fairleighdickinson"
+            "fairleighdickinson",
+            "F Dickinson"
         ],
         "87": [
             "FLA",
@@ -1833,7 +1831,8 @@
             "florida st.",
             "FLORIDA ST.",
             "floridast",
-            "florida st"
+            "florida st",
+            "Florida St"
         ],
         "92": [
             "Fordham",
@@ -1902,16 +1901,14 @@
         ],
         "97": [
             "George Washington",
-            "Revolutionaries",
             "GW",
             "george washington",
             "GEORGE WASHINGTON",
-            "revolutionaries",
-            "REVOLUTIONARIES",
             "gw",
             "georgewashington",
             "George Wash.",
-            "GWASH"
+            "GWASH",
+            "G Washington"
         ],
         "98": [
             "Hoyas",
@@ -1933,18 +1930,16 @@
             "uga"
         ],
         "100": [
-            "Eagles",
             "Georgia Southern",
             "GASO",
             "GASOU",
-            "eagles",
-            "EAGLES",
             "georgia southern",
             "GEORGIA SOUTHERN",
             "gaso",
             "gasou",
             "georgiasouthern",
-            "Ga. Southern"
+            "Ga. Southern",
+            "Georgia So"
         ],
         "101": [
             "Georgia State",
@@ -1962,7 +1957,8 @@
             "georgia st.",
             "GEORGIA ST.",
             "georgiast",
-            "georgia st"
+            "georgia st",
+            "Georgia St"
         ],
         "102": [
             "Yellow Jackets",
@@ -2002,7 +1998,9 @@
             "grambling st.",
             "GRAMBLING ST.",
             "gramblingst",
-            "grambling st"
+            "grambling st",
+            "Grambling St",
+            "Grambling"
         ],
         "105": [
             "Grand Canyon",
@@ -2055,7 +2053,8 @@
             "hawaii",
             "rainbow warriors",
             "RAINBOW WARRIORS",
-            "haw"
+            "haw",
+            "Hawai'i"
         ],
         "110": [
             "High Point",
@@ -2108,7 +2107,8 @@
             "hcu",
             "houstonchristian",
             "HOUBP",
-            "Houston Chr."
+            "Houston Chr.",
+            "Hou Christian"
         ],
         "115": [
             "Bison",
@@ -2156,7 +2156,8 @@
             "idaho st.",
             "IDAHO ST.",
             "idahost",
-            "idaho st"
+            "idaho st",
+            "Idaho St"
         ],
         "119": [
             "ILL",
@@ -2199,7 +2200,8 @@
             "illinois st.",
             "ILLINOIS ST.",
             "illinoisst",
-            "illinois st"
+            "illinois st",
+            "Illinois St"
         ],
         "122": [
             "IW",
@@ -2238,7 +2240,8 @@
             "indiana st.",
             "INDIANA ST.",
             "indianast",
-            "indiana st"
+            "indiana st",
+            "Indiana St"
         ],
         "125": [
             "Iona",
@@ -2269,7 +2272,8 @@
             "iowast",
             "iowa st.",
             "IOWA ST.",
-            "iowa st"
+            "iowa st",
+            "Iowa St"
         ],
         "128": [
             "JKSN",
@@ -2285,7 +2289,8 @@
             "jacksonst",
             "jackson st",
             "JACKST",
-            "JAST"
+            "JAST",
+            "Jackson St"
         ],
         "129": [
             "JAC",
@@ -2317,7 +2322,8 @@
             "JAXST",
             "Jax. State",
             "Jax State",
-            "JXST"
+            "JXST",
+            "Jacksonville St"
         ],
         "131": [
             "JMU",
@@ -2326,7 +2332,8 @@
             "james madison",
             "JAMES MADISON",
             "jamesmadison",
-            "JMAD"
+            "JMAD",
+            "J Madison"
         ],
         "132": [
             "Jayhawks",
@@ -2352,7 +2359,8 @@
             "KANSAS ST.",
             "kansasst",
             "kansas st",
-            "KSTATE"
+            "KSTATE",
+            "Kansas St"
         ],
         "134": [
             "KENN",
@@ -2365,7 +2373,8 @@
             "KENNESAW ST.",
             "kennesawst",
             "kennesaw st",
-            "KENSAW"
+            "KENSAW",
+            "Kennesaw St"
         ],
         "135": [
             "KENT",
@@ -2378,7 +2387,8 @@
             "KENT ST.",
             "kentst",
             "kent st",
-            "KENTST"
+            "KENTST",
+            "Kent St"
         ],
         "136": [
             "UK",
@@ -2537,19 +2547,17 @@
         ],
         "151": [
             "Louisiana-Monroe",
-            "Warhawks",
             "ULM",
             "Louisiana Monroe",
             "louisiana-monroe",
             "LOUISIANA-MONROE",
-            "warhawks",
-            "WARHAWKS",
             "ulm",
             "louisiana monroe",
             "LOUISIANA MONROE",
             "louisianamonroe",
             "LAMON",
-            "UL-Monroe"
+            "UL-Monroe",
+            "UL Monroe"
         ],
         "152": [
             "LT",
@@ -2582,19 +2590,17 @@
         ],
         "154": [
             "Loyola (IL)",
-            "Ramblers",
             "L-IL",
             "Loyola Chicago",
             "loyola (il)",
             "LOYOLA (IL)",
-            "ramblers",
-            "RAMBLERS",
             "l-il",
             "loyola chicago",
             "LOYOLA CHICAGO",
             "loyolachicago",
             "LOYCHI",
-            "Loyola Chi."
+            "Loyola Chi.",
+            "Loyola Chi"
         ],
         "155": [
             "Loyola (MD)",
@@ -2624,7 +2630,8 @@
             "loymr",
             "loymry",
             "loyolamarymount",
-            "LMU"
+            "LMU",
+            "Loyola Mymt"
         ],
         "157": [
             "Maine",
@@ -2688,20 +2695,18 @@
         ],
         "163": [
             "Maryland-Eastern Shore",
-            "Hawks",
             "UMES",
             "Md.-E. Shore",
             "Maryland Eastern Shore",
             "maryland-eastern shore",
             "MARYLAND-EASTERN SHORE",
-            "hawks",
-            "HAWKS",
             "umes",
             "md.-e. shore",
             "MD.-E. SHORE",
             "maryland eastern shore",
             "MARYLAND EASTERN SHORE",
-            "marylandeasternshore"
+            "marylandeasternshore",
+            "Maryland ES"
         ],
         "164": [
             "Massachusetts",
@@ -2820,22 +2825,21 @@
             "MICHIGAN ST.",
             "michiganst",
             "michigan st",
-            "MICHST"
+            "MICHST",
+            "Michigan St"
         ],
         "174": [
             "Middle Tennessee State",
-            "Blue Raiders",
             "MTSU",
             "Middle Tennessee",
             "middle tennessee state",
             "MIDDLE TENNESSEE STATE",
-            "blue raiders",
-            "BLUE RAIDERS",
             "mtsu",
             "middle tennessee",
             "MIDDLE TENNESSEE",
             "middletennessee",
-            "Middle Tenn."
+            "Middle Tenn.",
+            "Middle Tenn"
         ],
         "175": [
             "Milwaukee",
@@ -2883,23 +2887,23 @@
             "mississippist",
             "mississippi st",
             "MISSST",
-            "Miss. St."
+            "Miss. St.",
+            "Mississippi St"
         ],
         "179": [
             "Mississippi Valley State",
-            "Delta Devils",
             "MVSU",
             "Mississippi Valley St.",
             "mississippi valley state",
             "MISSISSIPPI VALLEY STATE",
-            "delta devils",
-            "DELTA DEVILS",
             "mvsu",
             "mississippi valley st.",
             "MISSISSIPPI VALLEY ST.",
             "mississippivalleyst",
             "mississippi valley st",
-            "Miss Valley St."
+            "Miss Valley St.",
+            "Mississippi Valley St",
+            "Miss Valley St"
         ],
         "180": [
             "Missouri",
@@ -2927,7 +2931,8 @@
             "MISSOURI ST.",
             "missourist",
             "missouri st",
-            "MOSU"
+            "MOSU",
+            "Missouri St"
         ],
         "182": [
             "MONM",
@@ -2958,7 +2963,8 @@
             "MONTANA ST.",
             "montanast",
             "montana st",
-            "MONST"
+            "MONST",
+            "Montana St"
         ],
         "185": [
             "Eagles",
@@ -2976,7 +2982,8 @@
             "MOREHEAD ST.",
             "moreheadst",
             "morehead st",
-            "MOREHD"
+            "MOREHD",
+            "Morehead St"
         ],
         "186": [
             "MORG",
@@ -2994,7 +3001,8 @@
             "MORGAN ST.",
             "morganst",
             "morgan st",
-            "MORGAN"
+            "MORGAN",
+            "Morgan St"
         ],
         "187": [
             "Mount St. Mary's",
@@ -3007,7 +3015,8 @@
             "mount st marys",
             "Mt St Mary's",
             "MOUNT",
-            "MSM"
+            "MSM",
+            "Mount St Mary's"
         ],
         "188": [
             "MURR",
@@ -3026,7 +3035,8 @@
             "murrayst",
             "murray st",
             "MURYST",
-            "MUR"
+            "MUR",
+            "Murray St"
         ],
         "189": [
             "NC State",
@@ -3142,7 +3152,8 @@
             "new mexico st",
             "N. Mex. St.",
             "NMEXST",
-            "NMST"
+            "NMST",
+            "New Mexico St"
         ],
         "199": [
             "New Orleans",
@@ -3183,7 +3194,8 @@
             "norfolkst",
             "norfolk st",
             "NORFLK",
-            "NORFST"
+            "NORFST",
+            "Norfolk St"
         ],
         "203": [
             "North Alabama",
@@ -3193,7 +3205,8 @@
             "una",
             "northalabama",
             "N. Alabama",
-            "NALAB"
+            "NALAB",
+            "N Alabama"
         ],
         "204": [
             "UNC",
@@ -3257,18 +3270,18 @@
             "NORTH DAKOTA ST.",
             "northdakotast",
             "north dakota st",
-            "NDST"
+            "NDST",
+            "North Dakota St",
+            "N Dakota St"
         ],
         "209": [
             "North Florida",
-            "Ospreys",
             "UNF",
             "north florida",
             "NORTH FLORIDA",
-            "ospreys",
-            "OSPREYS",
             "unf",
-            "northflorida"
+            "northflorida",
+            "N Florida"
         ],
         "210": [
             "UNT",
@@ -3277,7 +3290,8 @@
             "north texas",
             "NORTH TEXAS",
             "northtexas",
-            "NTEXAS"
+            "NTEXAS",
+            "N Texas"
         ],
         "211": [
             "Northeastern",
@@ -3295,7 +3309,8 @@
             "NORTHERN ARIZONA",
             "nau",
             "northernarizona",
-            "N. Arizona"
+            "N. Arizona",
+            "N Arizona"
         ],
         "213": [
             "Northern Colorado",
@@ -3309,7 +3324,8 @@
             "ncolo",
             "northerncolorado",
             "N. Colorado",
-            "NCO"
+            "NCO",
+            "N Colorado"
         ],
         "214": [
             "NIU",
@@ -3320,35 +3336,32 @@
             "NORTHERN ILLINOIS",
             "nill",
             "northernillinois",
-            "N. Illinois"
+            "N. Illinois",
+            "N Illinois"
         ],
         "215": [
             "UNI",
             "Northern Iowa",
-            "Panthers",
             "uni",
             "northern iowa",
             "NORTHERN IOWA",
-            "panthers",
-            "PANTHERS",
             "northerniowa",
             "NIOWA",
             "niowa",
-            "N. Iowa"
+            "N. Iowa",
+            "N Iowa"
         ],
         "216": [
             "Northern Kentucky",
-            "Norse",
             "NKU",
             "northern kentucky",
             "NORTHERN KENTUCKY",
-            "norse",
-            "NORSE",
             "nku",
             "northernkentucky",
             "NKY",
             "nky",
-            "N. Kentucky"
+            "N. Kentucky",
+            "N Kentucky"
         ],
         "217": [
             "NW",
@@ -3376,7 +3389,9 @@
             "northwestern st.",
             "NORTHWESTERN ST.",
             "northwesternst",
-            "northwestern st"
+            "northwestern st",
+            "Northwestern St",
+            "NW State"
         ],
         "219": [
             "Notre Dame",
@@ -3416,7 +3431,8 @@
             "OHIO ST.",
             "ohiost",
             "ohio st",
-            "OHIOST"
+            "OHIOST",
+            "Ohio St"
         ],
         "223": [
             "Oklahoma",
@@ -3444,7 +3460,8 @@
             "oklahoma st",
             "Okla. St.",
             "oklast",
-            "OKLAST"
+            "OKLAST",
+            "Oklahoma St"
         ],
         "225": [
             "ODU",
@@ -3491,7 +3508,8 @@
             "OREGON ST.",
             "oregonst",
             "oregon st",
-            "OREGST"
+            "OREGST",
+            "Oregon St"
         ],
         "229": [
             "Pacific",
@@ -3531,7 +3549,8 @@
             "penn st.",
             "PENN ST.",
             "pennst",
-            "penn st"
+            "penn st",
+            "Penn St"
         ],
         "232": [
             "Pepperdine",
@@ -3648,7 +3667,8 @@
             "purdue fort wayne",
             "PURDUE FORT WAYNE",
             "purduefortwayne",
-            "PFW"
+            "PFW",
+            "Purdue FW"
         ],
         "242": [
             "Queens University",
@@ -3745,17 +3765,16 @@
             "southeast missouri state",
             "SOUTHEAST MISSOURI STATE",
             "semo",
-            "SE Missouri St."
+            "SE Missouri St.",
+            "SE Missouri St"
         ],
         "252": [
             "SIU-Edwardsville",
-            "Cougars",
             "SIUE",
             "siu-edwardsville",
             "SIU-EDWARDSVILLE",
-            "cougars",
-            "COUGARS",
-            "siue"
+            "siue",
+            "SIU Edward"
         ],
         "253": [
             "Southern Methodist",
@@ -3780,7 +3799,8 @@
             "SACRAMENTO ST.",
             "sacramentost",
             "sacramento st",
-            "SACST"
+            "SACST",
+            "Sacramento St"
         ],
         "255": [
             "SHU",
@@ -3806,7 +3826,8 @@
             "SAINT FRANCIS",
             "saintfrancis",
             "SFPA",
-            "SFTRPA"
+            "SFTRPA",
+            "St Francis PA"
         ],
         "257": [
             "Saint Joseph's",
@@ -3866,7 +3887,8 @@
             "samhoustonst",
             "sam houston st",
             "SAMHOU",
-            "Sam Houston"
+            "Sam Houston",
+            "Sam Houston St"
         ],
         "262": [
             "SAM",
@@ -3904,7 +3926,8 @@
             "SAN DIEGO ST.",
             "sandiegost",
             "san diego st",
-            "SDGST"
+            "SDGST",
+            "San Diego St"
         ],
         "265": [
             "San Francisco",
@@ -3934,7 +3957,8 @@
             "SAN JOSE ST.",
             "sanjosest",
             "san jose st",
-            "SJST"
+            "SJST",
+            "San Jose St"
         ],
         "267": [
             "Santa Clara",
@@ -3983,7 +4007,8 @@
             "SOUTH ALABAMA",
             "usa",
             "southalabama",
-            "SALAB"
+            "SALAB",
+            "S Alabama"
         ],
         "272": [
             "SOCAR",
@@ -4001,19 +4026,18 @@
         "273": [
             "South Carolina State",
             "SCSU",
-            "Bulldogs",
             "SCST",
             "South Carolina St.",
             "south carolina state",
             "SOUTH CAROLINA STATE",
             "scsu",
-            "bulldogs",
-            "BULLDOGS",
             "scst",
             "south carolina st.",
             "SOUTH CAROLINA ST.",
             "southcarolinast",
-            "south carolina st"
+            "south carolina st",
+            "South Carolina St",
+            "S Carolina St"
         ],
         "274": [
             "SDAK",
@@ -4027,15 +4051,12 @@
             "SDST"
         ],
         "275": [
-            "Jackrabbits",
             "South Dakota State",
             "SDSU",
             "SDKSU",
             "SDAKST",
             "S. Dak. St.",
             "South Dakota St.",
-            "jackrabbits",
-            "JACKRABBITS",
             "south dakota state",
             "SOUTH DAKOTA STATE",
             "sdsu",
@@ -4046,21 +4067,21 @@
             "south dakota st.",
             "SOUTH DAKOTA ST.",
             "southdakotast",
-            "south dakota st"
+            "south dakota st",
+            "South Dakota St",
+            "S Dakota St"
         ],
         "276": [
             "South Florida",
             "USF",
-            "Bulls",
             "USOFL",
             "south florida",
             "SOUTH FLORIDA",
             "usf",
-            "bulls",
-            "BULLS",
             "usofl",
             "southflorida",
-            "SFLA"
+            "SFLA",
+            "S Florida"
         ],
         "277": [
             "Southeastern Louisiana",
@@ -4088,17 +4109,15 @@
         "279": [
             "SOILL",
             "SIU",
-            "Salukis",
             "Southern Illinois",
             "soill",
             "siu",
-            "salukis",
-            "SALUKIS",
             "southern illinois",
             "SOUTHERN ILLINOIS",
             "southernillinois",
             "S. Illinois",
-            "SILL"
+            "SILL",
+            "S Illinois"
         ],
         "280": [
             "Southern Indiana",
@@ -4109,7 +4128,8 @@
             "southernindiana",
             "So. Indiana",
             "SOINDI",
-            "SoutIN"
+            "SoutIN",
+            "S Indiana"
         ],
         "281": [
             "Southern Mississippi",
@@ -4135,7 +4155,8 @@
             "SOUTHERN UTAH",
             "southernutah",
             "So. Utah",
-            "SUTAH"
+            "SUTAH",
+            "S Utah"
         ],
         "283": [
             "St. Bonaventure",
@@ -4147,7 +4168,8 @@
             "st bonaventure",
             "St. Bona.",
             "STBON",
-            "SBU"
+            "SBU",
+            "St Bonaventure"
         ],
         "284": [
             "St. John's",
@@ -4159,7 +4181,8 @@
             "st john's",
             "st johns",
             "STJOHN",
-            "SJU"
+            "SJU",
+            "St John's"
         ],
         "285": [
             "St. Thomas",
@@ -4173,7 +4196,8 @@
             "st thomas",
             "St. Thomas (MN)",
             "StThMN",
-            "UST"
+            "UST",
+            "St Thomas"
         ],
         "286": [
             "Stanford",
@@ -4194,7 +4218,8 @@
             "sfa",
             "stephenfaustin",
             "stephen f austin",
-            "SF Austin"
+            "SF Austin",
+            "Stephen F Austin"
         ],
         "288": [
             "Stetson",
@@ -4264,7 +4289,8 @@
             "TARLETON ST.",
             "tarletonst",
             "tarleton st",
-            "TARL"
+            "TARL",
+            "Tarleton St"
         ],
         "294": [
             "Temple",
@@ -4310,7 +4336,8 @@
             "TENNESSEE ST.",
             "tennesseest",
             "tennessee st",
-            "TennSt"
+            "TennSt",
+            "Tennessee St"
         ],
         "298": [
             "TNTC",
@@ -4322,7 +4349,8 @@
             "TENNESSEE TECH",
             "tennesseetech",
             "Tenn. Tech",
-            "TNTECH"
+            "TNTECH",
+            "Tenn Tech"
         ],
         "299": [
             "Texas",
@@ -4371,7 +4399,8 @@
             "texso",
             "txso",
             "texassouthern",
-            "Texas So."
+            "Texas So.",
+            "Texas So"
         ],
         "303": [
             "Texas State",
@@ -4386,7 +4415,8 @@
             "texas st.",
             "TEXAS ST.",
             "texasst",
-            "texas st"
+            "texas st",
+            "Texas St"
         ],
         "304": [
             "Red Raiders",
@@ -4563,7 +4593,8 @@
             "unca",
             "ncashv",
             "uncasheville",
-            "UNC-Ash."
+            "UNC-Ash.",
+            "NC Asheville"
         ],
         "323": [
             "UNC Greensboro",
@@ -4573,7 +4604,8 @@
             "UNC GREENSBORO",
             "uncg",
             "ncgrn",
-            "uncgreensboro"
+            "uncgreensboro",
+            "NC Greensboro"
         ],
         "324": [
             "UNC Wilmington",
@@ -4582,7 +4614,8 @@
             "UNC WILMINGTON",
             "uncw",
             "uncwilmington",
-            "NCWILM"
+            "NCWILM",
+            "NC Wilmington"
         ],
         "325": [
             "Runnin' Rebels",
@@ -4638,7 +4671,8 @@
             "UT-RIO GRANDE VALLEY",
             "ut rio grande valley",
             "UT RIO GRANDE VALLEY",
-            "utriograndevalley"
+            "utriograndevalley",
+            "UT Rio Grande"
         ],
         "330": [
             "UTEP",
@@ -4678,7 +4712,8 @@
             "utahst",
             "utah st",
             "UTAHST",
-            "UTST"
+            "UTST",
+            "Utah St"
         ],
         "334": [
             "Utah Tech",
@@ -4827,7 +4862,8 @@
             "washingtonst",
             "washington st",
             "WASHST",
-            "Wash. St."
+            "Wash. St.",
+            "Washington St"
         ],
         "348": [
             "WEB",
@@ -4844,7 +4880,8 @@
             "weber st.",
             "WEBER ST.",
             "weberst",
-            "weber st"
+            "weber st",
+            "Weber St"
         ],
         "349": [
             "West Georgia",
@@ -4878,20 +4915,19 @@
             "WESTERN CAROLINA",
             "wcar",
             "westerncarolina",
-            "W. Carolina"
+            "W. Carolina",
+            "W Carolina"
         ],
         "352": [
             "Western Illinois",
-            "Leathernecks",
             "WIU",
             "western illinois",
             "WESTERN ILLINOIS",
-            "leathernecks",
-            "LEATHERNECKS",
             "wiu",
             "westernillinois",
             "W. Illinois",
-            "WILL"
+            "WILL",
+            "W Illinois"
         ],
         "353": [
             "Western Kentucky",
@@ -4901,7 +4937,8 @@
             "wku",
             "westernkentucky",
             "W. Kentucky",
-            "WKY"
+            "WKY",
+            "W Kentucky"
         ],
         "354": [
             "WMY",
@@ -4912,7 +4949,8 @@
             "western michigan",
             "WESTERN MICHIGAN",
             "westernmichigan",
-            "W. Michigan"
+            "W. Michigan",
+            "W Michigan"
         ],
         "355": [
             "Wichita State",
@@ -4980,7 +5018,8 @@
             "WRIGHT ST.",
             "wrightst",
             "wright st",
-            "WRIGHT"
+            "WRIGHT",
+            "Wright St"
         ],
         "361": [
             "WYO",
@@ -5026,7 +5065,8 @@
             "YOUNGSTOWN ST.",
             "youngstownst",
             "youngstown st",
-            "YOUNG"
+            "YOUNG",
+            "Youngstown St"
         ]
     },
     "path": {

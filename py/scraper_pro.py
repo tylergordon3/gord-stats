@@ -158,6 +158,16 @@ def format_event(g, ranks, master, ats):
         if dt_local else None
     )
 
+    ats_lookup = {
+        row[0]: {
+            "ats_record": row[1],
+            "cover_pct": row[2],
+            "mov": row[3],
+            "ats_plus_minus": row[4]
+        }
+        for row in ats["rows"]
+    }
+    
     # ---- teams ----
     home = g["home_team"]
     away = g["away_team"]
@@ -170,6 +180,9 @@ def format_event(g, ranks, master, ats):
 
     home_record = ranks[home_name]['Record'] if home_name else ''
     away_record = ranks[away_name]['Record'] if away_name else ''
+    
+    home_ats_name = master["team"][str(home_name)]
+    away_ats_name = master["team"][str(away_name)]
     
     def safe_float(x):
         try:
@@ -199,7 +212,10 @@ def format_event(g, ranks, master, ats):
 
     home_score = score.get("home", {}).get("score")
     away_score = score.get("away", {}).get("score")
-
+    
+    ats_home = ats_lookup.get(home_ats_name)
+    ats_away = ats_lookup.get(away_ats_name)
+    
     clock = progress.get("clock")
     period = progress.get("segment_string")
     overtime = progress.get("overtime", False)
@@ -242,6 +258,9 @@ def format_event(g, ranks, master, ats):
         "away_model" : away_model ,
         "home_model" : home_model,
 
+        "ats_away": ats_away,
+        "ats_home": ats_home,
+        
         # live info
         "clock": clock,
         "period": period,

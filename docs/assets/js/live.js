@@ -287,6 +287,9 @@ function renderExpandedStats (g) {
   const awayModel = safe(g.away_model, '—')
   const homeModel = safe(g.home_model, '—')
 
+  const atsAway = safe(g.ats_away, '-')
+  const atsHome = safe(g.ats_home, '-')
+
   return `
     <div class="expanded-grid">
 
@@ -313,6 +316,10 @@ function renderExpandedStats (g) {
           <div class="expanded-stat">
             <span>Model</span>
             <strong>#${awayModel}</strong>
+          </div>
+          <div class="expanded-stat">
+            <span>ATS</span>
+            <strong>#${atsAway}</strong>
           </div>
         </div>
 
@@ -341,6 +348,10 @@ function renderExpandedStats (g) {
           <div class="expanded-stat">
             <span>Model</span>
             <strong>#${homeModel}</strong>
+          </div>
+           <div class="expanded-stat">
+            <span>ATS</span>
+            <strong>#${atsHome}</strong>
           </div>
         </div>
 

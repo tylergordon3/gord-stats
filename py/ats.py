@@ -75,22 +75,3 @@ def get_today_ats():
         data = json.load(f)
 
     return data
-
-import scraper
-dict = get_today_ats()
-master = scraper.getMasterTeams()
-
-for idx, team_name in master["team"].items():
-    if "." in team_name:
-        no_period = team_name.replace(".", "")
-
-        # Add to names list if not already present
-        if no_period not in master["names"][idx]:
-            master["names"][idx].append(no_period)
-
-scraper.saveMasterTeams(master)
-
-for i in dict["rows"]:
-   [index, team] = scraper.getNameFromCode(i[0], master)
-   if not index or not team:
-       print(i[0])
