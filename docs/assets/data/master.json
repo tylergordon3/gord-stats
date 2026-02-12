@@ -856,14 +856,11 @@
         ],
         "9": [
             "APP",
-            "Mountaineers",
             "Appalachian State",
             "APPST",
             "App. St.",
             "Appalachian St.",
             "app",
-            "mountaineers",
-            "MOUNTAINEERS",
             "appalachian state",
             "APPALACHIAN STATE",
             "appst",
@@ -872,7 +869,8 @@
             "appalachian st.",
             "APPALACHIAN ST.",
             "appalachianst",
-            "appalachian st"
+            "appalachian st",
+            "App St"
         ],
         "10": [
             "ARIZ",
@@ -890,18 +888,16 @@
         "11": [
             "ASU",
             "Arizona State",
-            "Sun Devils",
             "Arizona St.",
             "asu",
             "arizona state",
             "ARIZONA STATE",
-            "sun devils",
-            "SUN DEVILS",
             "arizona st.",
             "ARIZONA ST.",
             "arizonast",
             "arizona st",
-            "ARIZST"
+            "ARIZST",
+            "Arizona St"
         ],
         "12": [
             "ARK",
@@ -1279,17 +1275,15 @@
         ],
         "43": [
             "Central Arkansas",
-            "Bears",
             "UCA",
             "central arkansas",
             "CENTRAL ARKANSAS",
-            "bears",
-            "BEARS",
             "uca",
             "centralarkansas",
             "CARK",
             "Cent. Arkansas",
-            "Cent Arkansas"
+            "Cent Arkansas",
+            "C Arkansas"
         ],
         "44": [
             "Central Connecticut State",
@@ -1714,18 +1708,16 @@
             "E. Kentucky"
         ],
         "80": [
-            "Eagles",
             "EMU",
             "EMICH",
             "Eastern Michigan",
-            "eagles",
-            "EAGLES",
             "emu",
             "emich",
             "eastern michigan",
             "EASTERN MICHIGAN",
             "easternmichigan",
-            "E. Michigan"
+            "E. Michigan",
+            "E Michigan"
         ],
         "81": [
             "Eastern Washington",
@@ -1857,13 +1849,10 @@
         ],
         "93": [
             "FRES",
-            "Bulldogs",
             "Fresno State",
             "FRSNO",
             "Fresno St.",
             "fres",
-            "bulldogs",
-            "BULLDOGS",
             "fresno state",
             "FRESNO STATE",
             "frsno",
@@ -1871,7 +1860,8 @@
             "FRESNO ST.",
             "fresnost",
             "fresno st",
-            "FRESNO"
+            "FRESNO",
+            "Fresno St"
         ],
         "94": [
             "Furman",
@@ -2513,19 +2503,17 @@
         ],
         "148": [
             "Long Beach State",
-            "Beach",
             "LBSU",
             "Long Beach St.",
             "long beach state",
             "LONG BEACH STATE",
-            "beach",
-            "BEACH",
             "lbsu",
             "long beach st.",
             "LONG BEACH ST.",
             "longbeachst",
             "long beach st",
-            "LNGBCH"
+            "LNGBCH",
+            "Long Beach St"
         ],
         "149": [
             "Longwood",
@@ -3591,7 +3579,8 @@
             "PORTLAND ST.",
             "portlandst",
             "portland st",
-            "PORTST"
+            "PORTST",
+            "Portland St"
         ],
         "236": [
             "Prairie View A&M",
@@ -4866,7 +4855,8 @@
             "westgeorgia",
             "WESTGA",
             "W. Georgia",
-            "WestGA"
+            "WestGA",
+            "W Georgia"
         ],
         "350": [
             "Mountaineers",
@@ -4926,20 +4916,18 @@
         ],
         "355": [
             "Wichita State",
-            "Shockers",
             "WICHI",
             "Wichita St.",
             "wichita state",
             "WICHITA STATE",
-            "shockers",
-            "SHOCKERS",
             "wichi",
             "wichita st.",
             "WICHITA ST.",
             "wichitast",
             "wichita st",
             "WICHST",
-            "WICH"
+            "WICH",
+            "Wichita St"
         ],
         "356": [
             "William & Mary",

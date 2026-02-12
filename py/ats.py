@@ -5,6 +5,7 @@ import utils
 import json
 from datetime import datetime
 import pytz
+from lib import paths
 
 URL="https://www.teamrankings.com/ncb/trends/ats_trends/"
 
@@ -45,5 +46,51 @@ def main():
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=4)
+        
+def get_today_ats():
+    ats_dir = paths.M_ATS_DIR
 
-main()
+    # Today's filename
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_file = ats_dir / f"{today_str}.json"
+
+    # If today's file exists, return it
+    if today_file.exists():
+        target_file = today_file
+
+    # Otherwise get most recent file
+    files = sorted(
+        ats_dir.glob("*.json"),
+        key=lambda f: f.name,   # filenames are YYYY-MM-DD.json so this works
+        reverse=True
+    )
+
+    if not files:
+            return None
+
+    target_file = files[0]
+
+    # Load JSON
+    with open(target_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    return data
+
+import scraper
+dict = get_today_ats()
+master = scraper.getMasterTeams()
+
+for idx, team_name in master["team"].items():
+    if "." in team_name:
+        no_period = team_name.replace(".", "")
+
+        # Add to names list if not already present
+        if no_period not in master["names"][idx]:
+            master["names"][idx].append(no_period)
+
+scraper.saveMasterTeams(master)
+
+for i in dict["rows"]:
+   [index, team] = scraper.getNameFromCode(i[0], master)
+   if not index or not team:
+       print(i[0])

@@ -7,6 +7,7 @@ import utils
 import pytz
 import pandas as pd
 import scraper
+import ats
 
 # =========================
 # CONFIG
@@ -141,7 +142,7 @@ import pytz
 
 EASTERN = pytz.timezone("US/Eastern")
 
-def format_event(g, ranks, master):
+def format_event(g, ranks, master, ats):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -363,13 +364,15 @@ def get_current_live_dataset(league_key):
     ranks = ranks_dict.get(ranks_date, {})
 
     master = scraper.getMasterTeams()
-
+    
+    ats_dict = ats.get_today_ats()
+    
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
-        games[str(game_id)] = format_event(g, ranks, master)
+        games[str(game_id)] = format_event(g, ranks, master, ats_dict)
     
     return {
         "league": league_key,
