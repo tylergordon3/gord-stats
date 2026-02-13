@@ -316,9 +316,13 @@ function renderExpandedStats (g) {
   const netAway = safe(g.net_away, '—')
   const netHome = safe(g.net_home, '—')
 
+  const bpiAway = safe(g.bpi_away, '—')
+  const bpiHome = safe(g.bpi_home, '—')
+
   const rankCompare = compareNums(awayRank, homeRank)
   const modelCompare = compareNums(awayModel, homeModel)
   const netCompare = compareNums(netAway, netHome)
+  const bpiCompare = compareNums(bpiAway, bpiHome)
 
   return `
     <div class="expanded-compare">
@@ -384,6 +388,18 @@ function renderExpandedStats (g) {
        ${
          LEAGUE === 'men'
            ? `
+
+      <!-- BPI -->
+      <div class="expanded-row">
+        <div class="value left">
+        <span class="${bpiCompare.left}">#${bpiAway}</span>
+      </div>
+        <div class="label">ESPN BPI</div>
+        <div class="value right">
+        <span class="${bpiCompare.right}">#${bpiHome}</span>
+      </div>
+      </div>
+
       <!-- ATS -->
       <div class="expanded-row">
         <div class="value left">${atsAway}</div>

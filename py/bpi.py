@@ -9,7 +9,7 @@ import pandas as pd
 import utils
 from datetime import datetime
 import pytz
-
+from lib import paths, url
 
 def save_id(dict):
     with open(utils.get_path('docs/assets/data/espn_id.json'), 'w') as file:
@@ -106,3 +106,32 @@ def main():
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
+
+def get_today_bpi():
+    bpi_dir = paths.M_ESPN_DIR
+    
+    # Today's filename
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_file = bpi_dir / f"{today_str}.json"
+
+    # If today's file exists, return it
+    if today_file.exists():
+        target_file = today_file
+
+    # Otherwise get most recent file
+    files = sorted(
+        bpi_dir.glob("*.json"),
+        key=lambda f: f.name,   # filenames are YYYY-MM-DD.json so this works
+        reverse=True
+    )
+
+    if not files:
+            return None
+
+    target_file = files[0]
+
+    # Load JSON
+    with open(target_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    return data

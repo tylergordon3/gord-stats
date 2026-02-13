@@ -7,8 +7,7 @@ import utils
 import pytz
 import pandas as pd
 import scraper
-import ats
-import net
+import ats, net, bpi
 # =========================
 # CONFIG
 # =========================
@@ -142,7 +141,7 @@ import pytz
 
 EASTERN = pytz.timezone("US/Eastern")
 
-def format_event(g, ranks, master, ats, net):
+def format_event(g, ranks, master, ats, net, bpi):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -170,6 +169,13 @@ def format_event(g, ranks, master, ats, net):
         ou_lookup = {
             row[0]: row[6]
             for row in ats["rows"]
+        }
+        
+    bpi_lookup = {}
+    if bpi:
+        bpi_lookup = {
+            row[1]: row[7]
+            for row in bpi["rows"]
         }
         
     net_lookup = {
@@ -219,34 +225,30 @@ def format_event(g, ranks, master, ats, net):
     home_score = score.get("home", {}).get("score")
     away_score = score.get("away", {}).get("score")
     
-    def get_ats_for_team(idx, master, ats_lookup):
+    def get_stat(idx, master, lookup):
         aliases = master["names"][idx]
         for alias in aliases:
-            if alias in ats_lookup:
-                return ats_lookup[alias]
-        return None
-    
-    def get_net_for_team(idx, master, net_lookup):
-        aliases = master["names"][idx]
-        for alias in aliases:
-            if alias in net_lookup:
-                return net_lookup[alias]
+            if alias in lookup:
+                return lookup[alias]
         return None
     
     if ats_lookup:
-        ats_home = get_ats_for_team(home_idx, master, ats_lookup)
-        ats_away = get_ats_for_team(away_idx, master, ats_lookup)
-        ou_home = get_ats_for_team(home_idx, master, ou_lookup)
-        ou_away = get_ats_for_team(away_idx, master, ou_lookup)
-
+        ats_home = get_stat(home_idx, master, ats_lookup)
+        ats_away = get_stat(away_idx, master, ats_lookup)
+        ou_home = get_stat(home_idx, master, ou_lookup)
+        ou_away = get_stat(away_idx, master, ou_lookup)
+        bpi_home = get_stat(home_idx, master, bpi_lookup)
+        bpi_away = get_stat(away_idx, master, bpi_lookup)
     else:
         ats_home = None
         ats_away = None
         ou_home = None
         ou_away = None
+        bpi_home = None
+        bpi_away = None
 
-    net_home = get_net_for_team(home_idx, master, net_lookup)
-    net_away = get_net_for_team(away_idx, master, net_lookup)
+    net_home = get_stat(home_idx, master, net_lookup)
+    net_away = get_stat(away_idx, master, net_lookup)
     
     clock = progress.get("clock")
     period = progress.get("segment_string")
@@ -298,6 +300,9 @@ def format_event(g, ranks, master, ats, net):
         
         "net_away": net_away,
         "net_home": net_home,
+        
+        "bpi_away": bpi_away,
+        "bpi_home": bpi_home,
         
         # live info
         "clock": clock,
@@ -426,16 +431,18 @@ def get_current_live_dataset(league_key):
     if league_key == "men":
         ats_dict = ats.get_today_ats()
         net_dict = net.get_today_net("M")
+        bpi_dict = bpi.get_today_bpi()
     else:
         ats_dict = None
         net_dict = net.get_today_net("W")
-
+        bpi_dict = None
+        
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
-        games[str(game_id)] = format_event(g, ranks, master, ats_dict, net_dict)
+        games[str(game_id)] = format_event(g, ranks, master, ats_dict, net_dict, bpi_dict)
     
     return {
         "league": league_key,
