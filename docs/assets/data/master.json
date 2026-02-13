@@ -1522,13 +1522,11 @@
         ],
         "63": [
             "DART",
-            "Big Green",
             "Dartmouth",
             "dart",
-            "big green",
-            "BIG GREEN",
             "dartmouth",
-            "DARTMOUTH"
+            "DARTMOUTH",
+            "Dart"
         ],
         "64": [
             "DAV",
@@ -2461,7 +2459,8 @@
             "lemoyne",
             "LEM",
             "LEMOYN",
-            "LeMoyn"
+            "LeMoyn",
+            "LMC"
         ],
         "143": [
             "LEHI",
@@ -2764,7 +2763,8 @@
             "mc",
             "MERC",
             "MERCYH",
-            "Mercyh"
+            "Mercyh",
+            "MHU"
         ],
         "169": [
             "Merrimack College",
@@ -4143,7 +4143,9 @@
             "SOINDI",
             "SoutIN",
             "S Indiana",
-            "Southern Ind."
+            "Southern Ind.",
+            "S. Indiana",
+            "SIND"
         ],
         "281": [
             "Southern Mississippi",
@@ -4253,7 +4255,8 @@
             "stone",
             "stoneh",
             "STO",
-            "Stoneh"
+            "Stoneh",
+            "STNH"
         ],
         "290": [
             "SB",
@@ -4791,7 +4794,8 @@
             "UVM",
             "vermont",
             "VERMONT",
-            "uvm"
+            "uvm",
+            "VMT"
         ],
         "341": [
             "Wildcats",

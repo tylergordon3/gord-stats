@@ -173,7 +173,7 @@ def format_event(g, ranks, master, ats, net):
     # ---- teams ----
     home = g["home_team"]
     away = g["away_team"]
-    
+
     [home_idx, home_name, home_abb] = scraper.getNameFromCode(home.get("abbreviation"), master, True)
     [away_idx, away_name, away_abb]= scraper.getNameFromCode(away.get("abbreviation"), master, True)
 
@@ -232,7 +232,7 @@ def format_event(g, ranks, master, ats, net):
     else:
         ats_home = None
         ats_away = None
-        
+
     net_home = get_net_for_team(home_idx, master, net_lookup)
     net_away = get_net_for_team(away_idx, master, net_lookup)
     
@@ -407,15 +407,14 @@ def get_current_live_dataset(league_key):
 
     master = scraper.getMasterTeams()
     
-    net_dict = net.get_today_net()
-    
     # Only load ATS for men
     if league_key == "men":
         ats_dict = ats.get_today_ats()
+        net_dict = net.get_today_net("M")
     else:
         ats_dict = None
+        net_dict = net.get_today_net("W")
 
-    
     for g in events:
         game_id = g.get("id")
         if not game_id:

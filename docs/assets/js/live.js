@@ -290,11 +290,11 @@ function renderExpandedStats(g) {
   const awayModel = safe(g.away_model, '—');
   const homeModel = safe(g.home_model, '—');
 
-  const atsAway = safe(g.ats_away, '-');
-  const atsHome = safe(g.ats_home, '-');
+  const atsAway = safe(g.ats_away, '—');
+  const atsHome = safe(g.ats_home, '—');
 
-  const netAway = safe(g.net_away, '-');
-  const netHome = safe(g.net_home, '-');
+  const netAway = safe(g.net_away, '—');
+  const netHome = safe(g.net_home, '—');
 
   return `
     <div class="expanded-compare">
@@ -348,7 +348,7 @@ function renderExpandedStats(g) {
       <!-- ATS -->
       <div class="expanded-row">
         <div class="value left">${atsAway}</div>
-        <div class="label">ATS/div>
+        <div class="label">ATS</div>
         <div class="value right">${atsHome}</div>
       </div>
 
