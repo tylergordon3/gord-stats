@@ -279,6 +279,12 @@ function getBottom3MedalsByDate (games) {
 
 function renderExpandedStats (g) {
   function compareNums (a, b) {
+    if (a == '—') {
+      a = 99
+    }
+    if (b == '—') {
+      b = 99
+    }
     const na = Number(a)
     const nb = Number(b)
 
@@ -342,17 +348,6 @@ function renderExpandedStats (g) {
         </div>
       </div>
 
-      <!-- MODEL -->
-      <div class="expanded-row">
-        <div class="value left">
-        <span class="${modelCompare.left}">#${awayModel}</span>
-      </div>
-        <div class="label">GORD</div>
-        <div class="value right">
-        <span class="${modelCompare.right}">#${homeModel}</span>
-        </div>
-      </div>
-
       <!-- AP RANK -->
       <div class="expanded-row">
         <div class="value left">
@@ -362,6 +357,17 @@ function renderExpandedStats (g) {
         <div class="value right">
         <span class="${rankCompare.right}">${homeRank}</span>
       </div>
+      </div>
+
+      <!-- MODEL -->
+      <div class="expanded-row">
+        <div class="value left">
+        <span class="${modelCompare.left}">#${awayModel}</span>
+      </div>
+        <div class="label">GORD</div>
+        <div class="value right">
+        <span class="${modelCompare.right}">#${homeModel}</span>
+        </div>
       </div>
 
       <!-- NET -->
