@@ -278,6 +278,17 @@ function getBottom3MedalsByDate (games) {
 }
 
 function renderExpandedStats(g) {
+  function compareNums(a, b) {
+    const na = Number(a);
+    const nb = Number(b);
+
+    if (isNaN(na) || isNaN(nb)) return { left: '', right: '' };
+
+    if (na < nb) return { left: 'better', right: '' };
+    if (nb < na) return { left: '', right: 'better' };
+    return { left: '', right: '' };
+  }
+
   const awayTeam = safe(g.away_team, 'Away');
   const homeTeam = safe(g.home_team, 'Home');
 
@@ -295,6 +306,10 @@ function renderExpandedStats(g) {
 
   const netAway = safe(g.net_away, '—');
   const netHome = safe(g.net_home, '—');
+
+  const rankCompare = compareNums(awayRank, homeRank);
+  const modelCompare = compareNums(awayModel, homeModel);
+  const netCompare = compareNums(netAway, netHome);
 
   return `
     <div class="expanded-compare">
@@ -324,33 +339,35 @@ function renderExpandedStats(g) {
         </div>
       </div>
 
-      <!-- AP RANK -->
-      <div class="expanded-row">
-        <div class="value left">${awayRank}</div>
-        <div class="label">AP Rank</div>
-        <div class="value right">${homeRank}</div>
-      </div>
-
       <!-- MODEL -->
       <div class="expanded-row">
-        <div class="value left">#${awayModel}</div>
-        <div class="label">Model</div>
-        <div class="value right">#${homeModel}</div>
+        <div class="value left ${modelCompare.left}">#${awayModel}</div>
+        <div class="label">GORD</div>
+        <div class="value right ${modelCompare.right}">#${homeModel}</div>
+      </div>
+
+      <!-- AP RANK -->
+      <div class="expanded-row">
+        <div class="value left ${rankCompare.left}">${awayRank}</div>
+        <div class="label">AP Rank</div>
+        <div class="value right ${rankCompare.right}">${homeRank}</div>
       </div>
 
       <!-- NET -->
       <div class="expanded-row">
-        <div class="value left">${netAway}</div>
+        <div class="value left ${netCompare.left}">#${netAway}</div>
         <div class="label">NET</div>
-        <div class="value right">${netHome}</div>
+        <div class="value right ${netCompare.right}">#${netHome}</div>
       </div>
 
+       ${LEAGUE === 'men' ? `
       <!-- ATS -->
       <div class="expanded-row">
         <div class="value left">${atsAway}</div>
         <div class="label">ATS</div>
         <div class="value right">${atsHome}</div>
       </div>
+      ` : ''}
 
     </div>
   `;
