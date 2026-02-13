@@ -53,8 +53,14 @@ def main(gender):
         json.dump(payload, f, indent=4)
         print(f'Scraped NET data for: {str}')
 
-def get_today_net():
-    net_dir = paths.M_NET_DIR
+def get_today_net(gender):
+    if gender == "M":
+        net_dir = paths.M_NET_DIR
+    elif gender == "W":
+        net_dir = paths.W_NET_DIR
+    else:
+        print("Invalid gender given to get_today_net.")
+        return None
 
     # Today's filename
     today_str = datetime.now().strftime("%Y-%m-%d")

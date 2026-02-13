@@ -823,13 +823,10 @@
         ],
         "7": [
             "ALCN",
-            "Braves",
             "ALCST",
             "Alcorn State",
             "Alcorn St.",
             "alcn",
-            "braves",
-            "BRAVES",
             "alcst",
             "alcorn state",
             "ALCORN STATE",
@@ -838,7 +835,8 @@
             "alcornst",
             "alcorn st",
             "ALCORN",
-            "Alcorn St"
+            "Alcorn St",
+            "Alcorn"
         ],
         "8": [
             "American University",
@@ -1219,7 +1217,8 @@
             "calstbakersfield",
             "cal st bakersfield",
             "Cal St Bakersfield",
-            "CS Bakersfield"
+            "CS Bakersfield",
+            "CSU Bakersfield"
         ],
         "39": [
             "Cal State Fullerton",
@@ -1280,7 +1279,8 @@
             "CARK",
             "Cent. Arkansas",
             "Cent Arkansas",
-            "C Arkansas"
+            "C Arkansas",
+            "Central Ark."
         ],
         "44": [
             "Central Connecticut State",
@@ -1294,7 +1294,8 @@
             "centralconnecticut",
             "CCTST",
             "CCTST",
-            "C Connecticut"
+            "C Connecticut",
+            "Central Conn. St."
         ],
         "45": [
             "Central Michigan",
@@ -1305,7 +1306,8 @@
             "centralmichigan",
             "C. Michigan",
             "CMICH",
-            "C Michigan"
+            "C Michigan",
+            "Central Mich."
         ],
         "46": [
             "Charleston",
@@ -1316,7 +1318,8 @@
             "C OF C",
             "CHARLS",
             "COFC",
-            "COC"
+            "COC",
+            "Col. of Charleston"
         ],
         "47": [
             "Charleston Southern",
@@ -1697,7 +1700,8 @@
             "easternillinois",
             "E. Illinois",
             "EILL",
-            "E Illinois"
+            "E Illinois",
+            "Eastern Ill."
         ],
         "79": [
             "EKY",
@@ -1709,7 +1713,8 @@
             "EASTERN KENTUCKY",
             "easternkentucky",
             "E. Kentucky",
-            "E Kentucky"
+            "E Kentucky",
+            "Eastern Ky."
         ],
         "80": [
             "EMU",
@@ -1721,7 +1726,8 @@
             "EASTERN MICHIGAN",
             "easternmichigan",
             "E. Michigan",
-            "E Michigan"
+            "E Michigan",
+            "Eastern Mich."
         ],
         "81": [
             "Eastern Washington",
@@ -1733,7 +1739,8 @@
             "ewu",
             "easternwashington",
             "E. Washington",
-            "E Washington"
+            "E Washington",
+            "Eastern Wash."
         ],
         "82": [
             "Phoenix",
@@ -1801,14 +1808,12 @@
         ],
         "89": [
             "Florida Atlantic",
-            "Owls",
             "FAU",
             "florida atlantic",
             "FLORIDA ATLANTIC",
-            "owls",
-            "OWLS",
             "fau",
-            "floridaatlantic"
+            "floridaatlantic",
+            "Fla. Atlantic"
         ],
         "90": [
             "Florida Gulf Coast",
@@ -2444,7 +2449,8 @@
             "Lamar",
             "LAM",
             "lamar",
-            "lam"
+            "lam",
+            "Lamar University"
         ],
         "142": [
             "Le Moyne",
@@ -2607,19 +2613,17 @@
         ],
         "155": [
             "Loyola (MD)",
-            "Greyhounds",
             "L-MD",
             "Loyola MD",
             "loyola (md)",
             "LOYOLA (MD)",
-            "greyhounds",
-            "GREYHOUNDS",
             "l-md",
             "loyola md",
             "LOYOLA MD",
             "loyolamd",
             "Loyola-Md.",
-            "LOYMD"
+            "LOYMD",
+            "Loyola Maryland"
         ],
         "156": [
             "Loyola Marymount",
@@ -2634,7 +2638,8 @@
             "loymry",
             "loyolamarymount",
             "LMU",
-            "Loyola Mymt"
+            "Loyola Mymt",
+            "LMU (CA)"
         ],
         "157": [
             "Maine",
@@ -2906,7 +2911,8 @@
             "mississippi valley st",
             "Miss Valley St.",
             "Mississippi Valley St",
-            "Miss Valley St"
+            "Miss Valley St",
+            "Mississippi Val."
         ],
         "180": [
             "Missouri",
@@ -3209,7 +3215,8 @@
             "northalabama",
             "N. Alabama",
             "NALAB",
-            "N Alabama"
+            "N Alabama",
+            "North Ala."
         ],
         "204": [
             "UNC",
@@ -3231,19 +3238,18 @@
             "NORTH CAROLINA A&T",
             "ncat",
             "nc a&t",
-            "northcarolinaa&t"
+            "northcarolinaa&t",
+            "N.C. A&T"
         ],
         "206": [
             "North Carolina Central",
-            "Eagles",
             "NCCU",
             "north carolina central",
             "NORTH CAROLINA CENTRAL",
-            "eagles",
-            "EAGLES",
             "nccu",
             "northcarolinacentral",
-            "NC Central"
+            "NC Central",
+            "N.C. Central"
         ],
         "207": [
             "North Dakota",
@@ -3313,7 +3319,8 @@
             "nau",
             "northernarizona",
             "N. Arizona",
-            "N Arizona"
+            "N Arizona",
+            "Northern Ariz."
         ],
         "213": [
             "Northern Colorado",
@@ -3328,7 +3335,8 @@
             "northerncolorado",
             "N. Colorado",
             "NCO",
-            "N Colorado"
+            "N Colorado",
+            "Northern Colo."
         ],
         "214": [
             "NIU",
@@ -3364,7 +3372,8 @@
             "NKY",
             "nky",
             "N. Kentucky",
-            "N Kentucky"
+            "N Kentucky",
+            "Northern Ky."
         ],
         "217": [
             "NW",
@@ -3684,7 +3693,8 @@
             "queenc",
             "queens",
             "QUEENS",
-            "QUR"
+            "QUR",
+            "Queens (NC)"
         ],
         "243": [
             "Quinnipiac",
@@ -3769,7 +3779,8 @@
             "SOUTHEAST MISSOURI STATE",
             "semo",
             "SE Missouri St.",
-            "SE Missouri St"
+            "SE Missouri St",
+            "Southeast Mo. St."
         ],
         "252": [
             "SIU-Edwardsville",
@@ -3855,16 +3866,14 @@
         ],
         "259": [
             "Saint Mary's",
-            "Gaels",
             "STMRY",
             "saint mary's",
             "SAINT MARY'S",
-            "gaels",
-            "GAELS",
             "stmry",
             "saintmary's",
             "saint marys",
-            "SMC"
+            "SMC",
+            "Saint Mary's (CA)"
         ],
         "260": [
             "Saint Peter's",
@@ -3977,13 +3986,11 @@
         ],
         "268": [
             "Seattle",
-            "Redhawks",
             "SEA",
             "seattle",
             "SEATTLE",
-            "redhawks",
-            "REDHAWKS",
-            "sea"
+            "sea",
+            "Seattle U"
         ],
         "269": [
             "Seton Hall",
@@ -4084,7 +4091,8 @@
             "usofl",
             "southflorida",
             "SFLA",
-            "S Florida"
+            "S Florida",
+            "South Fla."
         ],
         "277": [
             "Southeastern Louisiana",
@@ -4096,7 +4104,8 @@
             "sela",
             "southeasternlouisiana",
             "SE Louisiana",
-            "SELOU"
+            "SELOU",
+            "Southeastern La."
         ],
         "278": [
             "Southern",
@@ -4120,7 +4129,8 @@
             "southernillinois",
             "S. Illinois",
             "SILL",
-            "S Illinois"
+            "S Illinois",
+            "Southern Ill."
         ],
         "280": [
             "Southern Indiana",
@@ -4132,23 +4142,22 @@
             "So. Indiana",
             "SOINDI",
             "SoutIN",
-            "S Indiana"
+            "S Indiana",
+            "Southern Ind."
         ],
         "281": [
             "Southern Mississippi",
-            "Golden Eagles",
             "SOMIS",
             "Southern Miss",
             "southern mississippi",
             "SOUTHERN MISSISSIPPI",
-            "golden eagles",
-            "GOLDEN EAGLES",
             "somis",
             "southern miss",
             "SOUTHERN MISS",
             "southernmiss",
             "So. Miss",
-            "USM"
+            "USM",
+            "Southern Miss."
         ],
         "282": [
             "SUU",
@@ -4185,7 +4194,8 @@
             "st johns",
             "STJOHN",
             "SJU",
-            "St John's"
+            "St John's",
+            "St. John's (NY)"
         ],
         "285": [
             "St. Thomas",
@@ -4388,7 +4398,8 @@
             "txamcc",
             "texas a&m corpus chris",
             "TEXAS A&M CORPUS CHRIS",
-            "texasa&mcorpuschris"
+            "texasa&mcorpuschris",
+            "A&M-Corpus Christi"
         ],
         "302": [
             "Tigers",
@@ -4632,7 +4643,8 @@
             "USC",
             "trojans",
             "TROJANS",
-            "usc"
+            "usc",
+            "Southern California"
         ],
         "327": [
             "USC Upstate",
@@ -4896,7 +4908,8 @@
             "WESTGA",
             "W. Georgia",
             "WestGA",
-            "W Georgia"
+            "W Georgia",
+            "West Ga."
         ],
         "350": [
             "Mountaineers",
@@ -4919,7 +4932,8 @@
             "wcar",
             "westerncarolina",
             "W. Carolina",
-            "W Carolina"
+            "W Carolina",
+            "Western Caro."
         ],
         "352": [
             "Western Illinois",
@@ -4930,7 +4944,8 @@
             "westernillinois",
             "W. Illinois",
             "WILL",
-            "W Illinois"
+            "W Illinois",
+            "Western Ill."
         ],
         "353": [
             "Western Kentucky",
@@ -4941,7 +4956,8 @@
             "westernkentucky",
             "W. Kentucky",
             "WKY",
-            "W Kentucky"
+            "W Kentucky",
+            "Western Ky."
         ],
         "354": [
             "WMY",
@@ -4953,7 +4969,8 @@
             "WESTERN MICHIGAN",
             "westernmichigan",
             "W. Michigan",
-            "W Michigan"
+            "W Michigan",
+            "Western Mich."
         ],
         "355": [
             "Wichita State",

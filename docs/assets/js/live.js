@@ -341,14 +341,14 @@ function renderExpandedStats(g) {
       <!-- NET -->
       <div class="expanded-row">
         <div class="value left">${netAway}</div>
-        <div class="label">ATS</div>
+        <div class="label">NET</div>
         <div class="value right">${netHome}</div>
       </div>
 
       <!-- ATS -->
       <div class="expanded-row">
         <div class="value left">${atsAway}</div>
-        <div class="label">ATS</div>
+        <div class="label">ATS/div>
         <div class="value right">${atsHome}</div>
       </div>
 
