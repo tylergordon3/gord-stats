@@ -15,7 +15,7 @@ let TEAM_LOGO_READY = false
 let currentFilter = null
 let LAST_GAMES = null
 let LAST_MEDALS = null
-let EXPAND_ALL = false;
+let EXPAND_ALL = false
 let EXPANDED_GAMES = new Set()
 
 function normalize (s) {
@@ -277,39 +277,39 @@ function getBottom3MedalsByDate (games) {
   return result
 }
 
-function renderExpandedStats(g) {
-  function compareNums(a, b) {
-    const na = Number(a);
-    const nb = Number(b);
+function renderExpandedStats (g) {
+  function compareNums (a, b) {
+    const na = Number(a)
+    const nb = Number(b)
 
-    if (isNaN(na) || isNaN(nb)) return { left: '', right: '' };
+    if (isNaN(na) || isNaN(nb)) return { left: '', right: '' }
 
-    if (na < nb) return { left: 'better', right: '' };
-    if (nb < na) return { left: '', right: 'better' };
-    return { left: '', right: '' };
+    if (na < nb) return { left: 'better', right: '' }
+    if (nb < na) return { left: '', right: 'better' }
+    return { left: '', right: '' }
   }
 
-  const awayTeam = safe(g.away_team, 'Away');
-  const homeTeam = safe(g.home_team, 'Home');
+  const awayTeam = safe(g.away_team, 'Away')
+  const homeTeam = safe(g.home_team, 'Home')
 
   const awayAbb = safe(g.away_abb, 'Away')
   const homeAbb = safe(g.home_abb, 'Home')
 
-  const awayRank = safe(g.away_rank, '—');
-  const homeRank = safe(g.home_rank, '—');
+  const awayRank = safe(g.away_rank, '—')
+  const homeRank = safe(g.home_rank, '—')
 
-  const awayModel = safe(g.away_model, '—');
-  const homeModel = safe(g.home_model, '—');
+  const awayModel = safe(g.away_model, '—')
+  const homeModel = safe(g.home_model, '—')
 
-  const atsAway = safe(g.ats_away, '—');
-  const atsHome = safe(g.ats_home, '—');
+  const atsAway = safe(g.ats_away, '—')
+  const atsHome = safe(g.ats_home, '—')
 
-  const netAway = safe(g.net_away, '—');
-  const netHome = safe(g.net_home, '—');
+  const netAway = safe(g.net_away, '—')
+  const netHome = safe(g.net_home, '—')
 
-  const rankCompare = compareNums(awayRank, homeRank);
-  const modelCompare = compareNums(awayModel, homeModel);
-  const netCompare = compareNums(netAway, netHome);
+  const rankCompare = compareNums(awayRank, homeRank)
+  const modelCompare = compareNums(awayModel, homeModel)
+  const netCompare = compareNums(netAway, netHome)
 
   return `
     <div class="expanded-compare">
@@ -341,36 +341,52 @@ function renderExpandedStats(g) {
 
       <!-- MODEL -->
       <div class="expanded-row">
-        <div class="value left ${modelCompare.left}">#${awayModel}</div>
+        <div class="value left">
+        <span class="${modelCompare.left}">#${awayModel}</span>
+      </div>
         <div class="label">GORD</div>
-        <div class="value right ${modelCompare.right}">#${homeModel}</div>
+        <div class="value right">
+        <span class="${modelCompare.right}">#${homeModel}</span>
+        </div>
       </div>
 
       <!-- AP RANK -->
       <div class="expanded-row">
-        <div class="value left ${rankCompare.left}">${awayRank}</div>
+        <div class="value left">
+          <span class="${rankCompare.left}">${awayRank}</span>
+        </div>
         <div class="label">AP Rank</div>
-        <div class="value right ${rankCompare.right}">${homeRank}</div>
+        <div class="value right">
+        <span class="${rankCompare.right}">${homeRank}</span>
+      </div>
       </div>
 
       <!-- NET -->
       <div class="expanded-row">
-        <div class="value left ${netCompare.left}">#${netAway}</div>
+        <div class="value left">
+        <span class="${netCompare.left}">#${netAway}</span>
+      </div>
         <div class="label">NET</div>
-        <div class="value right ${netCompare.right}">#${netHome}</div>
+        <div class="value right">
+        <span class="${netCompare.right}">#${netHome}</span>
+      </div>
       </div>
 
-       ${LEAGUE === 'men' ? `
+       ${
+         LEAGUE === 'men'
+           ? `
       <!-- ATS -->
       <div class="expanded-row">
         <div class="value left">${atsAway}</div>
         <div class="label">ATS</div>
         <div class="value right">${atsHome}</div>
       </div>
-      ` : ''}
+      `
+           : ''
+       }
 
     </div>
-  `;
+  `
 }
 
 function filterGameIds (games) {
@@ -589,8 +605,8 @@ function renderGames (games, medalByDate = {}) {
   container.innerHTML = html
   // Restore expanded state after re-render
   container.querySelectorAll('.game-card').forEach(card => {
-  const id = card.dataset.gameId
-  const expand = card.querySelector('.game-expand')
+    const id = card.dataset.gameId
+    const expand = card.querySelector('.game-expand')
     if (!expand) return
 
     if (EXPAND_ALL || EXPANDED_GAMES.has(id)) {
@@ -604,7 +620,7 @@ function renderGames (games, medalByDate = {}) {
 
   container.querySelectorAll('.expand-toggle').forEach(toggle => {
     toggle.addEventListener('click', e => {
-      if (EXPAND_ALL) return  
+      if (EXPAND_ALL) return
       const card = toggle.closest('.game-card')
       const expand = card.querySelector('.game-expand')
       const id = card.dataset.gameId
