@@ -304,6 +304,9 @@ function renderExpandedStats (g) {
   const atsAway = safe(g.ats_away, '—')
   const atsHome = safe(g.ats_home, '—')
 
+  const ouAway = safe(g.ou_away, '—')
+  const ouHome = safe(g.ou_home, '—')
+
   const netAway = safe(g.net_away, '—')
   const netHome = safe(g.net_home, '—')
 
@@ -378,8 +381,15 @@ function renderExpandedStats (g) {
       <!-- ATS -->
       <div class="expanded-row">
         <div class="value left">${atsAway}</div>
-        <div class="label">ATS</div>
+        <div class="label">Cover %</div>
         <div class="value right">${atsHome}</div>
+      </div>
+
+      <!-- O/U -->
+      <div class="expanded-row">
+        <div class="value left">${ouAway}</div>
+        <div class="label">Over %</div>
+        <div class="value right">${ouHome}</div>
       </div>
       `
            : ''

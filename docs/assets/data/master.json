@@ -1880,13 +1880,11 @@
         "95": [
             "WEBB",
             "Gardner-Webb",
-            "GWU",
             "GWEBB",
             "Gardner Webb",
             "webb",
             "gardner-webb",
             "GARDNER-WEBB",
-            "gwu",
             "gwebb",
             "gardner webb",
             "GARDNER WEBB",
@@ -1914,7 +1912,8 @@
             "georgewashington",
             "George Wash.",
             "GWASH",
-            "G Washington"
+            "G Washington",
+            "GWU"
         ],
         "98": [
             "Hoyas",

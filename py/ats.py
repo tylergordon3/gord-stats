@@ -5,12 +5,12 @@ import utils
 import json
 from datetime import datetime
 import pytz
-from lib import paths
+from lib import paths, url
 
 URL="https://www.teamrankings.com/ncb/trends/ats_trends/"
 
-def main():
-    resp = requests.get(URL)
+def parse_to_df(url):
+    resp = requests.get(url)
     soup = BeautifulSoup(resp.content, 'html.parser')
     table = soup.find("table")
 
@@ -34,6 +34,13 @@ def main():
             row_data.append(cell_text)
         table_data.append(row_data)
     df = pd.DataFrame(columns=cols, data=table_data)
+    return df
+    
+def main():
+    df_ats = parse_to_df(url.NCAAM_ATS)
+    df_ou = parse_to_df(url.NCAAM_OU)
+    
+    df = pd.merge(df_ats, df_ou, how="inner", on='Team')
 
     now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
     str = now.strftime("%Y-%m-%d")

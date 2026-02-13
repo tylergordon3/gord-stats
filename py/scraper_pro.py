@@ -161,7 +161,14 @@ def format_event(g, ranks, master, ats, net):
     ats_lookup = {}
     if ats:
         ats_lookup = {
-            row[0]: row[1]
+            row[0]: row[2]
+            for row in ats["rows"]
+        }
+        
+    ou_lookup = {}
+    if ats:
+        ou_lookup = {
+            row[0]: row[6]
             for row in ats["rows"]
         }
         
@@ -229,9 +236,13 @@ def format_event(g, ranks, master, ats, net):
     if ats_lookup:
         ats_home = get_ats_for_team(home_idx, master, ats_lookup)
         ats_away = get_ats_for_team(away_idx, master, ats_lookup)
+        ou_home = get_ats_for_team(home_idx, master, ou_lookup)
+        ou_away = get_ats_for_team(away_idx, master, ou_lookup)
     else:
         ats_home = None
         ats_away = None
+        ou_home = None
+        ou_away = None
 
     net_home = get_net_for_team(home_idx, master, net_lookup)
     net_away = get_net_for_team(away_idx, master, net_lookup)
@@ -280,6 +291,9 @@ def format_event(g, ranks, master, ats, net):
 
         "ats_away": ats_away,
         "ats_home": ats_home,
+        
+        "ou_away": ou_away,
+        "ou_home": ou_home,
         
         "net_away": net_away,
         "net_home": net_home,
