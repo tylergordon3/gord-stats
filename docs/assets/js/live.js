@@ -15,7 +15,7 @@ let TEAM_LOGO_READY = false
 let currentFilter = null
 let LAST_GAMES = null
 let LAST_MEDALS = null
-
+let EXPAND_ALL = false;
 let EXPANDED_GAMES = new Set()
 
 function normalize (s) {
@@ -572,19 +572,22 @@ function renderGames (games, medalByDate = {}) {
   container.innerHTML = html
   // Restore expanded state after re-render
   container.querySelectorAll('.game-card').forEach(card => {
-    const id = card.dataset.gameId
+  const id = card.dataset.gameId
+  const expand = card.querySelector('.game-expand')
+    if (!expand) return
 
-    if (EXPANDED_GAMES.has(id)) {
-      const expand = card.querySelector('.game-expand')
-      if (expand) {
-        expand.hidden = false
-        card.classList.add('open')
-      }
+    if (EXPAND_ALL || EXPANDED_GAMES.has(id)) {
+      expand.hidden = false
+      card.classList.add('open')
+    } else {
+      expand.hidden = true
+      card.classList.remove('open')
     }
   })
 
   container.querySelectorAll('.expand-toggle').forEach(toggle => {
     toggle.addEventListener('click', e => {
+      if (EXPAND_ALL) return  
       const card = toggle.closest('.game-card')
       const expand = card.querySelector('.game-expand')
       const id = card.dataset.gameId
@@ -682,6 +685,22 @@ document.querySelectorAll('.sort-chip').forEach(btn => {
       .forEach(b =>
         b.classList.toggle('active', b.dataset.sort === currentFilter)
       )
+
+    if (LAST_GAMES && LAST_MEDALS) {
+      renderGames(LAST_GAMES, LAST_MEDALS)
+    }
+  })
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  const expandBtn = document.getElementById('expand-all-btn')
+  if (!expandBtn) return
+
+  expandBtn.addEventListener('click', () => {
+    EXPAND_ALL = !EXPAND_ALL
+
+    expandBtn.textContent = EXPAND_ALL ? 'Collapse All' : 'Expand All'
+    expandBtn.classList.toggle('active', EXPAND_ALL)
 
     if (LAST_GAMES && LAST_MEDALS) {
       renderGames(LAST_GAMES, LAST_MEDALS)
