@@ -277,88 +277,70 @@ function getBottom3MedalsByDate (games) {
   return result
 }
 
-function renderExpandedStats (g) {
-  const awayTeam = safe(g.away_team, 'Away')
-  const homeTeam = safe(g.home_team, 'Home')
+function renderExpandedStats(g) {
+  const awayTeam = safe(g.away_team, 'Away');
+  const homeTeam = safe(g.home_team, 'Home');
 
-  const awayRank = safe(g.away_rank, '—')
-  const homeRank = safe(g.home_rank, '—')
+  const awayRank = safe(g.away_rank, '—');
+  const homeRank = safe(g.home_rank, '—');
 
-  const awayModel = safe(g.away_model, '—')
-  const homeModel = safe(g.home_model, '—')
+  const awayModel = safe(g.away_model, '—');
+  const homeModel = safe(g.home_model, '—');
 
-  const atsAway = safe(g.ats_away, '-')
-  const atsHome = safe(g.ats_home, '-')
+  const atsAway = safe(g.ats_away, '-');
+  const atsHome = safe(g.ats_home, '-');
 
   return `
-    <div class="expanded-grid">
+    <div class="expanded-compare">
 
-      <div class="expanded-team">
-
-        <div class="expanded-team-header">
+      <!-- HEADER -->
+      <div class="expanded-header">
+        <div class="team-col">
           <img 
             src="${teamLogo(awayTeam)}"
             alt="${awayTeam}"
             class="expanded-logo"
             onerror="this.src='/assets/images/default.png'"
           />
-          <span class="expanded-name">
-            ${getTeamName(awayTeam)}
-          </span>
+          <span>${getTeamName(awayTeam)}</span>
         </div>
 
+        <div></div>
 
-        <div class="expanded-stats-col">
-          <div class="expanded-stat">
-            <span>AP Rank</span>
-            <strong>${awayRank}</strong>
-          </div>
-          <div class="expanded-stat">
-            <span>Model</span>
-            <strong>#${awayModel}</strong>
-          </div>
-          <div class="expanded-stat">
-            <span>ATS</span>
-            <strong>${atsAway}</strong>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="expanded-team">
-
-        <div class="expanded-team-header">
+        <div class="team-col">
           <img 
             src="${teamLogo(homeTeam)}"
             alt="${homeTeam}"
             class="expanded-logo"
             onerror="this.src='/assets/images/default.png'"
           />
-          <span class="expanded-name">
-            ${getTeamName(homeTeam)}
-          </span>
+          <span>${getTeamName(homeTeam)}</span>
         </div>
+      </div>
 
+      <!-- AP RANK -->
+      <div class="expanded-row">
+        <div class="value left">${awayRank}</div>
+        <div class="label">AP Rank</div>
+        <div class="value right">${homeRank}</div>
+      </div>
 
-        <div class="expanded-stats-col">
-          <div class="expanded-stat">
-            <span>AP Rank</span>
-            <strong>${homeRank}</strong>
-          </div>
-          <div class="expanded-stat">
-            <span>Model</span>
-            <strong>#${homeModel}</strong>
-          </div>
-           <div class="expanded-stat">
-            <span>ATS</span>
-            <strong>${atsHome}</strong>
-          </div>
-        </div>
+      <!-- MODEL -->
+      <div class="expanded-row">
+        <div class="value left">#${awayModel}</div>
+        <div class="label">Model</div>
+        <div class="value right">#${homeModel}</div>
+      </div>
 
+      <!-- ATS -->
+      <div class="expanded-row">
+        <div class="value left">${atsAway}</div>
+        <div class="label">ATS</div>
+        <div class="value right">${atsHome}</div>
       </div>
 
     </div>
-  `
+  `;
 }
 
 function filterGameIds (games) {
