@@ -82,3 +82,11 @@ def get_today_ats():
         data = json.load(f)
 
     return data
+
+ats = get_today_ats()
+import scraper
+master = scraper.getMasterTeams()
+for row in ats['rows']:
+    #print(row[0])
+    list = scraper.getNameFromCode(row[0], master)
+    #print(list)

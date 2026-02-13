@@ -238,6 +238,7 @@ def format_event(g, ranks, master, ats, net):
         ats_away = get_ats_for_team(away_idx, master, ats_lookup)
         ou_home = get_ats_for_team(home_idx, master, ou_lookup)
         ou_away = get_ats_for_team(away_idx, master, ou_lookup)
+
     else:
         ats_home = None
         ats_away = None

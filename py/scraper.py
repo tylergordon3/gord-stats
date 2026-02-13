@@ -492,7 +492,9 @@ def getNameFromCode(code, master, ret_abbrev=False):
     df_result = master[boolean_mask_original]
     if df_result.empty:
         if ret_abbrev:
+            print(f"Invalid code: {code}")
             return [None, None, None]
+        print(f"Invalid code: {code}")
         return [None, None]
     else:
         if ret_abbrev:
