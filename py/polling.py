@@ -202,6 +202,6 @@ def calculate_rate():
         now=now,
         zones=zones,
         daily_plan=plan,
-        default_idle=3600  # 1 hour when idle
+        default_idle=1800  # 1 hour when idle
     )
     return interval
