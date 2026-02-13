@@ -281,6 +281,9 @@ function renderExpandedStats(g) {
   const awayTeam = safe(g.away_team, 'Away');
   const homeTeam = safe(g.home_team, 'Home');
 
+  const awayAbb = safe(g.away_abb, 'Away')
+  const homeAbb = safe(g.home_abb, 'Home')
+
   const awayRank = safe(g.away_rank, '—');
   const homeRank = safe(g.home_rank, '—');
 
@@ -289,6 +292,9 @@ function renderExpandedStats(g) {
 
   const atsAway = safe(g.ats_away, '-');
   const atsHome = safe(g.ats_home, '-');
+
+  const netAway = safe(g.net_away, '-');
+  const netHome = safe(g.net_home, '-');
 
   return `
     <div class="expanded-compare">
@@ -302,7 +308,7 @@ function renderExpandedStats(g) {
             class="expanded-logo"
             onerror="this.src='/assets/images/default.png'"
           />
-          <span>${getTeamName(awayTeam)}</span>
+          <span>${awayAbb ? awayAbb : getTeamName(awayTeam)}</span>
         </div>
 
         <div></div>
@@ -314,7 +320,7 @@ function renderExpandedStats(g) {
             class="expanded-logo"
             onerror="this.src='/assets/images/default.png'"
           />
-          <span>${getTeamName(homeTeam)}</span>
+          <span>${homeAbb ? homeAbb : getTeamName(homeTeam)}</span>
         </div>
       </div>
 
@@ -330,6 +336,13 @@ function renderExpandedStats(g) {
         <div class="value left">#${awayModel}</div>
         <div class="label">Model</div>
         <div class="value right">#${homeModel}</div>
+      </div>
+
+      <!-- NET -->
+      <div class="expanded-row">
+        <div class="value left">${netAway}</div>
+        <div class="label">ATS</div>
+        <div class="value right">${netHome}</div>
       </div>
 
       <!-- ATS -->

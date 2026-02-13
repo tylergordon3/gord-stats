@@ -8,7 +8,7 @@ import pytz
 import pandas as pd
 import scraper
 import ats
-
+import net
 # =========================
 # CONFIG
 # =========================
@@ -142,7 +142,7 @@ import pytz
 
 EASTERN = pytz.timezone("US/Eastern")
 
-def format_event(g, ranks, master, ats):
+def format_event(g, ranks, master, ats, net):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -163,6 +163,11 @@ def format_event(g, ranks, master, ats):
         ats_lookup = {
             row[0]: row[1]
             for row in ats["rows"]
+        }
+        
+    net_lookup = {
+            row[1]: row[0]
+            for row in net["rows"]
         }
 
     # ---- teams ----
@@ -214,12 +219,22 @@ def format_event(g, ranks, master, ats):
                 return ats_lookup[alias]
         return None
     
+    def get_net_for_team(idx, master, net_lookup):
+        aliases = master["names"][idx]
+        for alias in aliases:
+            if alias in net_lookup:
+                return net_lookup[alias]
+        return None
+    
     if ats_lookup:
         ats_home = get_ats_for_team(home_idx, master, ats_lookup)
         ats_away = get_ats_for_team(away_idx, master, ats_lookup)
     else:
         ats_home = None
         ats_away = None
+        
+    net_home = get_net_for_team(home_idx, master, net_lookup)
+    net_away = get_net_for_team(away_idx, master, net_lookup)
     
     clock = progress.get("clock")
     period = progress.get("segment_string")
@@ -265,6 +280,9 @@ def format_event(g, ranks, master, ats):
 
         "ats_away": ats_away,
         "ats_home": ats_home,
+        
+        "net_away": net_away,
+        "net_home": net_home,
         
         # live info
         "clock": clock,
@@ -389,18 +407,21 @@ def get_current_live_dataset(league_key):
 
     master = scraper.getMasterTeams()
     
+    net_dict = net.get_today_net()
+    
     # Only load ATS for men
     if league_key == "men":
         ats_dict = ats.get_today_ats()
     else:
         ats_dict = None
+
     
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
-        games[str(game_id)] = format_event(g, ranks, master, ats_dict)
+        games[str(game_id)] = format_event(g, ranks, master, ats_dict, net_dict)
     
     return {
         "league": league_key,
