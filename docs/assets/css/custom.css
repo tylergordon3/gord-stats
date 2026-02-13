@@ -67,7 +67,8 @@
 
 .custom-inner {
   position: relative;
-  max-width: 900px;
+  width: 95%;
+  max-width: 1600px;
   padding: 20px 10px;
   margin: 0 auto;
 }
@@ -76,6 +77,14 @@
 /* -----------------------------
    TABLE BASE STYLING
    ------------------------------ */
+
+.sticky-table {
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
 .sticky-table table {
   width: 100% !important;
   max-width: 100% !important;
@@ -113,7 +122,7 @@
 
 .sticky-table td {
   background: white;
-  padding: 1x 4px;
+  padding: 1px 4px;
 }
 
 /* -----------------------------
@@ -461,10 +470,15 @@
   align-items: center;
   gap: 20px;
 
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto;
+
   background: #fff;
   padding: 8px 0;
   border-bottom: 1px solid #e5e7eb;
 }
+
 
 .filter-bar label {
   font-size: 13px;
@@ -718,11 +732,27 @@
 
 .scoreboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
+  gap: 16px;
   align-items: start;
-  margin-bottom: 24px;
+  width: 95%;
+  max-width: 1600px;
+  margin: 0 auto 24px auto;
+
+  grid-template-columns: 1fr;
 }
+
+@media (min-width: 768px) {
+  .scoreboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1400px) {
+  .scoreboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 
 .game-card {
   border: 1px solid #e5e7eb;
