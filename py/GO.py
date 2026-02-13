@@ -80,7 +80,6 @@ def in_deploy_window(now):
 def task(poll_rate):
     # --- scrape both leagues ---
     men = scraper_pro.get_current_live_dataset("men")
-    print("\nWOMEN\n")
     women = scraper_pro.get_current_live_dataset("women")
 
     # --- combine into ONE payload ---
