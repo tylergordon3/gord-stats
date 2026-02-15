@@ -10,16 +10,24 @@ from datetime import datetime
 
 from sklearn import svm
 from sklearn.ensemble import GradientBoostingClassifier, HistGradientBoostingClassifier
-from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV, RepeatedStratifiedKFold
+from sklearn.model_selection import (
+    cross_val_score,
+    train_test_split,
+    GridSearchCV,
+    RepeatedStratifiedKFold,
+)
 from sklearn.metrics import classification_report, roc_auc_score, brier_score_loss
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.calibration import CalibratedClassifierCV
 
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import uniform, randint
+
 warnings.filterwarnings("ignore")
 
 CURRENT_SEASON = 2026
-MODEL_VERSION = "2.0"
+MODEL_VERSION = "2.1"
 
 MODEL_DIR = Path(utils.get_path("models"))
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
@@ -43,14 +51,13 @@ SVC_GRID = {
 }
 
 GB_GRID = {
-    "learning_rate": (0.01, 0.3),
-    "max_iter": (50, 500),
-    "max_depth": (2, 12),
-    "max_leaf_nodes": (15, 255),
-    "min_samples_leaf": (10, 200),
-    "l2_regularization": (0.0, 5.0),
-    "max_bins": (64, 255),
+    "learning_rate": [0.02, 0.03, 0.05],
+    "max_iter": [150, 200, 250],
+    "max_depth": [3, 4],
+    "min_samples_leaf": [30, 40, 60],
+    "l2_regularization": [0.5, 1.0, 2.0],
 }
+
 
 def update_registry(payload, path):
     registry_path = MODEL_DIR / "registry.json"
@@ -69,7 +76,7 @@ def update_registry(payload, path):
         "metrics": payload.get("metrics", {}),
         "trained_at": payload["trained_at"],
         "notes": payload.get("notes"),
-        "features":payload.get("features"),
+        "features": payload.get("features"),
     }
 
     registry.setdefault(key, {"versions": []})
@@ -79,17 +86,20 @@ def update_registry(payload, path):
     with open(registry_path, "w") as f:
         json.dump(registry, f, indent=2)
 
+
 def load_features(model_type):
     with open(MODEL_DIR / "registry.json") as f:
         registry = json.load(f)
 
     model = registry[model_type]
 
-    return model['versions'][1]['features']
+    return model["versions"][1]["features"]
+
 
 def load_version(model_type, season, version):
     path = MODEL_DIR / str(season) / f"{model_type}_v{version}.pkl"
     return joblib.load(path)
+
 
 def save_model(
     model_type,
@@ -123,24 +133,23 @@ def save_model(
 
     update_registry(payload, full_path)
 
+
 def load_model(name):
     path = MODEL_DIR / f"{name}.pkl"
     payload = joblib.load(path)
     return payload["model"], payload["features"], payload["scaler"]
 
+
 def clip_extremes(X, q=0.01):
-    return X.clip(
-        lower=X.quantile(q),
-        upper=X.quantile(1 - q),
-        axis=1
-    )
-    
+    return X.clip(lower=X.quantile(q), upper=X.quantile(1 - q), axis=1)
+
+
 def filter_api_data(df):
-    exceptions = ['Season', 'Seed', 'SEED']
+    exceptions = ["Season", "Seed", "SEED"]
     keep = []
-    
-    if 'TOURNEY' in df.columns:
-        df = df.rename(columns={'TOURNEY' : 'Tourney'});
+
+    if "TOURNEY" in df.columns:
+        df = df.rename(columns={"TOURNEY": "Tourney"})
 
     for col in df.columns:
         if col in exceptions:
@@ -150,6 +159,7 @@ def filter_api_data(df):
 
     return df[keep]
 
+
 def load_data():
     with open(utils.get_path("model_data/kenpom_api/all.json"), "r") as f:
         data = json.load(f)
@@ -157,12 +167,14 @@ def load_data():
     df = pd.read_json(StringIO(data))
     return filter_api_data(df)
 
+
 def load_data_tor():
-    with open(utils.get_path("model_data/torvik/cbb_data.json"), "r") as f:
+    with open(utils.get_path("model_data/torvik/torvik_all.json"), "r") as f:
         data = json.load(f)
 
     df = pd.read_json(StringIO(data))
     return filter_api_data(df)
+
 
 def evaluate_model(name, model, scaler, X_test, y_test):
     if scaler is not None:
@@ -193,6 +205,7 @@ def evaluate_model(name, model, scaler, X_test, y_test):
 
     return probs
 
+
 def calibrate(model, X, y, scaler=None):
     if scaler is not None:
         X = scaler.transform(X)
@@ -205,14 +218,15 @@ def calibrate(model, X, y, scaler=None):
     calib.fit(X, y)
     return calib
 
+
 def rank_features(X, y, model_type):
     X = clip_extremes(X)
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-    
-    if model_type == 'logistic':
+
+    if model_type == "logistic":
         model = LogisticRegression(
-            penalty='l1',
+            penalty="l1",
             solver="liblinear",
             C=0.1,
             class_weight="balanced",
@@ -220,50 +234,67 @@ def rank_features(X, y, model_type):
         )
         model.fit(X_scaled, y)
         importance = np.abs(model.coef_[0])
-    
+
     elif model_type == "svc":
-        svc = svm.SVC(kernel='linear', class_weight='balanced')
+        svc = svm.SVC(kernel="linear", class_weight="balanced")
         svc.fit(X_scaled, y)
         importance = np.abs(svc.coef_[0])
-    
+
     elif model_type == "gb":
-        gb = GradientBoostingClassifier(
-            n_estimators=300,
-            learning_rate=0.05,
+        gb = HistGradientBoostingClassifier(
+            max_iter=200,
+            learning_rate=0.03,
             max_depth=3,
+            min_samples_leaf=40,
+            l2_regularization=1.0,
+            early_stopping=False,   # important for ranking stability
+            random_state=13,
         )
-        gb.fit(X,y)
-        importance = gb.feature_importances_
-    
+        gb.fit(X, y)
+
+        # Permutation importance is required for HistGB
+        from sklearn.inspection import permutation_importance
+
+        result = permutation_importance(
+            gb,
+            X,
+            y,
+            n_repeats=10,
+            random_state=13,
+            scoring="roc_auc",
+        )
+
+        importance = result.importances_mean
+
+
     return (
         pd.Series(importance, index=X.columns)
         .sort_values(ascending=False)
         .index.to_list()
     )
 
-def auto_feature_select(
-    X, y, model_type, min_features=5, patience=3, eps=0.002
-):
+
+def auto_feature_select(X, y, model_type, min_features=5, patience=3, eps=0.002):
     ranked = rank_features(X, y, model_type)
-    
+
     best_auc = 0
     no_improve = 0
     selected = []
-    
+
     for i, feat in enumerate(ranked):
         selected.append(feat)
-        
+
         if len(selected) < min_features:
             continue
-        
+
         if len(selected) >= MODEL_LIMITS[model_type]:
             print(f"Reached {model_type} feature cap")
             break
-        
+
         X_sub = clip_extremes(X[selected])
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X_sub)
-        
+
         if model_type == "logistic":
             model = LogisticRegression(
                 max_iter=3000,
@@ -281,12 +312,8 @@ def auto_feature_select(
                 max_depth=3,
                 learning_rate=0.05,
             )
-            
-        cv = RepeatedStratifiedKFold(
-            n_splits=5,
-            n_repeats=3,
-            random_state=13
-        )
+
+        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=3, random_state=13)
 
         scores = cross_val_score(
             model,
@@ -296,9 +323,9 @@ def auto_feature_select(
             scoring="roc_auc",
             n_jobs=-1,
         )
-        
+
         mean_auc = scores.mean()
-        
+
         print(f"{model_type}: {len(selected)} feats → AUC={mean_auc:.4f}")
         if model_type == "svc" and len(selected) == 7:
             print("🚨 SVC jump feature:", feat)
@@ -313,8 +340,9 @@ def auto_feature_select(
             break
     return selected
 
+
 def split_data(input_df, features):
-    y = input_df['Tourney'].values
+    y = input_df["Tourney"].values
     X = input_df[features].values
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -326,6 +354,7 @@ def split_data(input_df, features):
     X_test = scaler.transform(X_test)
 
     return [X_train, X_test, y_train, y_test]
+
 
 def tune_logistic(X, y):
     scaler = StandardScaler()
@@ -353,6 +382,7 @@ def tune_logistic(X, y):
     grid.fit(X_scaled, y)
     return grid.best_estimator_, scaler
 
+
 def tune_svc(X, y):
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -379,8 +409,16 @@ def tune_svc(X, y):
     grid.fit(X_scaled, y)
     return grid.best_estimator_, scaler
 
+
 def tune_gb(X, y):
-    model = HistGradientBoostingClassifier()
+    sample_weight = np.where(y == 1, 3.0, 1.0)
+    
+    model = HistGradientBoostingClassifier(
+        early_stopping=True,
+        validation_fraction=0.15,
+        n_iter_no_change=10,
+        random_state=13,
+    )
 
     cv = RepeatedStratifiedKFold(
         n_splits=5,
@@ -395,14 +433,17 @@ def tune_gb(X, y):
         cv=cv,
         n_jobs=-1,
     )
+    
+    grid.fit(X, y, sample_weight=sample_weight)
 
-    grid.fit(X, y)
     return grid.best_estimator_
+
 
 def main():
     start = datetime.now()
 
-    df = load_data_tor()
+    # df = load_data_tor()
+    df = load_data()
     y = np.asarray(df["Tourney"]).ravel()
 
     # -------- SVC --------
@@ -443,7 +484,7 @@ def main():
     )
 
     # -------- GRADIENT BOOSTING --------
-    gb_features = auto_feature_select(df.drop(columns="Tourney"), y, "gb")
+    gb_features = auto_feature_select(df.drop(columns=["Tourney"]), y, "gb")
     X_gb = df[gb_features]
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -470,7 +511,6 @@ def main():
     print(f"Brier: {brier_score_loss(y_test, ens_probs):.4f}")
 
     print(f"\nExecution Time: {datetime.now() - start}")
-    
 
     # -------- SAVE VERSIONED MODELS --------
     save_model(
@@ -516,6 +556,5 @@ def main():
     )
 
 
-    
 if __name__ == "__main__":
     main()

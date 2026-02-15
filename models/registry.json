@@ -1,6 +1,6 @@
 {
   "gb": {
-    "latest": "2026/gb_v2.0_model.pkl",
+    "latest": "2026/gb_v2.1_model.pkl",
     "versions": [
       {
         "season": 2026,
@@ -64,6 +64,27 @@
           "ADJ_T",
           "EFG_D",
           "FTR"
+        ]
+      },
+      {
+        "season": 2026,
+        "version": "2.1",
+        "path": "2026/gb_v2.1_model.pkl",
+        "metrics": {
+          "auc": 0.963536296280548,
+          "brier": 0.06362936076744923
+        },
+        "trained_at": "2026-02-15T21:48:29.152932",
+        "notes": "Primary tournament selection model",
+        "features": [
+          "AdjEM",
+          "Luck",
+          "OE",
+          "Pythag",
+          "DE",
+          "SOS",
+          "NCSOS",
+          "Avg2PADist"
         ]
       }
     ]
@@ -136,9 +157,32 @@
           "EFG_O",
           "ORB"
         ]
+      },
+      {
+        "season": 2026,
+        "version": "2.1",
+        "path": "2026/svc_v2.1_model.pkl",
+        "metrics": {
+          "auc": 0.9601094362888396,
+          "brier": 0.06731522180021739
+        },
+        "trained_at": "2026-02-15T21:48:29.145553",
+        "notes": "SVC classifier with Luck; lock detector",
+        "features": [
+          "Pythag",
+          "AdjEM",
+          "AdjDE",
+          "AdjOE",
+          "SOS",
+          "Tempo",
+          "Luck",
+          "DefFg3",
+          "OE",
+          "TO_Pct"
+        ]
       }
     ],
-    "latest": "2026/svc_v2.0_model.pkl"
+    "latest": "2026/svc_v2.1_model.pkl"
   },
   "logistic": {
     "versions": [
@@ -204,8 +248,29 @@
           "FTR",
           "TORD"
         ]
+      },
+      {
+        "season": 2026,
+        "version": "2.1",
+        "path": "2026/logistic_v2.1_model.pkl",
+        "metrics": {
+          "auc": 0.9566506861692516,
+          "brier": 0.08459722505988625
+        },
+        "trained_at": "2026-02-15T21:48:29.150508",
+        "notes": "Logistic regression calibration anchor",
+        "features": [
+          "AdjEM",
+          "Luck",
+          "SOS",
+          "OE",
+          "NCSOS",
+          "DE",
+          "OppAvg2PADist",
+          "OR_Pct"
+        ]
       }
     ],
-    "latest": "2026/logistic_v2.0_model.pkl"
+    "latest": "2026/logistic_v2.1_model.pkl"
   }
 }

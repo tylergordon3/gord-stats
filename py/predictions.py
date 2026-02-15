@@ -406,9 +406,9 @@ def full_prediction(date) -> pd.DataFrame:
     decisionTree = utils.read_from_pickle("mtor_dt")
     supportVC = utils.read_from_pickle("mtor_svc")
 
-    gb_kp = utils.read_from_pickle("2026/gb_v1.1")
-    logistic_kp = utils.read_from_pickle("2026/logistic_v1.1")
-    svc_kp = utils.read_from_pickle("2026/svc_v1.1")
+    gb_kp = utils.read_from_pickle("2026/gb_v2.1")
+    logistic_kp = utils.read_from_pickle("2026/logistic_v2.1")
+    svc_kp = utils.read_from_pickle("2026/svc_v2.1")
 
     [kenpom_path, torvik_path] = utils.get_recent_data(date)
     with open(kenpom_path, "r", encoding="utf-8") as f:
@@ -472,7 +472,7 @@ def full_prediction(date) -> pd.DataFrame:
     kenpom_data["GB"] = predict_model(gb_kp, x_predict_kenpom_gb)
     kenpom_data["LOG"] = predict_model(logistic_kp, x_predict_kenpom_log)
     kenpom_data["SVC"] = predict_model(svc_kp, x_predict_kenpom_svc)
-
+    # print(kenpom_data[['Team', 'GB', 'LOG', 'SVC']].to_string())
     # Sum Models and drop not needed cols
     torvik_data["Sum"] = torvik_data[["RF", "DT", "SVC"]].sum(1)
     df_torvik = torvik_data[["Rk", "Team", "Conf", "RF", "DT", "SVC", "Sum"]].copy()
