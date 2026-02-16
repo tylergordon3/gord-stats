@@ -19,7 +19,7 @@ def main():
     fp = Path(f'{today}.json')
     targets = {
         "Men's Torvik": (paths.M_TOR_DIR / fp, lambda: scraper.torvik(today)),
-        "Men's ATS": (paths.M_ATS_DIR / fp, lambda: ats.main),
+        "Men's ATS": (paths.M_ATS_DIR / fp, lambda: ats.main()),
         "KenPom": (paths.M_KEN_DIR / fp, kenpom.kenpom_now),
         "Men's Net Rankings" : (paths.M_NET_DIR / fp, lambda: net.main("M")),
         "ESPN BPI": (paths.M_ESPN_DIR / fp, bpi.main),
