@@ -1,6 +1,56 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+########################################
+# LOAD SECRETS
+########################################
+
+ENV_FILE="$HOME/cbb-model/.env"
+
+if [ -f "$ENV_FILE" ]; then
+  set -o allexport
+  source "$ENV_FILE"
+  set +o allexport
+else
+  echo "ERROR: Secret env file not found at $ENV_FILE"
+  exit 1
+fi
+
+if [ -z "${RESEND_API:-}" ]; then
+  echo "ERROR: RESEND_API not set"
+  exit 1
+fi
+
+########################################
+# EMAIL FUNCTION (RESEND)
+########################################
+
+send_email() {
+  curl -s -X POST https://api.resend.com/emails \
+    -H "Authorization: Bearer $RESEND_API" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+{
+  "from": "CBB Deploy <onboarding@resend.dev>",
+  "to": "$RESEND_EMAIL",
+  "subject": "$1",
+  "html": "$2"
+}
+EOF
+}
+
+########################################
+# START TIMER + LOG
+########################################
+
+START_TIME=$(date +%s)
+DEPLOY_LOG=""
+trap 'send_email "CBB Deploy FAILED ❌" "<b>Error at line:</b> $LINENO<br><pre>$DEPLOY_LOG</pre>"; exit 1' ERR
+
+########################################
+# HOST DETECTION
+########################################
+
 HOSTNAME="$(hostname | tr '[:upper:]' '[:lower:]')"
 
 if [[ "$HOSTNAME" == *"pi"* || "$HOSTNAME" == *"raspberry"* ]]; then
@@ -9,157 +59,130 @@ else
   IS_PI=false
 fi
 
-echo "Host: $HOSTNAME"
-echo "Raspberry Pi: $IS_PI"
+DEPLOY_LOG+="<b>Host:</b> $HOSTNAME<br>"
+DEPLOY_LOG+="<b>Start Time:</b> $(date)<br><br>"
 
-# Always run from repo root
 cd "$(dirname "$0")"
 
-### Always deploy from main (for now)
+########################################
+# GIT PREP
+########################################
+
 CURRENT_BRANCH="$(git branch --show-current)"
 
 if [ "$CURRENT_BRANCH" != "main" ]; then
-  echo "Switching to main"
   git checkout main
 fi
 
-### STASH LOCAL CHANGES (if any)
 STASH_CREATED=false
 
 if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
-  echo "Local changes detected. Stashing..."
   git stash push -u -m "auto-deploy-stash-$(date +%s)"
   STASH_CREATED=true
-else
-  echo "No local changes to stash."
+  DEPLOY_LOG+="Local changes stashed.<br>"
 fi
 
 git pull --ff-only
+LATEST_COMMIT=$(git rev-parse --short HEAD)
 
-### HARD-BOOTSTRAP CONDA
+DEPLOY_LOG+="<b>Branch:</b> main<br>"
+DEPLOY_LOG+="<b>Commit:</b> $LATEST_COMMIT<br><br>"
+
+########################################
+# CONDA SETUP
+########################################
+
 CONDA_BASE="$HOME/miniconda3"
 
-if [ ! -f "$CONDA_BASE/etc/profile.d/conda.sh" ]; then
-  echo "ERROR: Conda not found at $CONDA_BASE"
-  exit 1
-fi
-
 source "$CONDA_BASE/etc/profile.d/conda.sh"
+conda activate cbb-env
 
-conda activate cbb-env || {
-  echo "ERROR: Conda env 'cbb-env' not found"
-  conda env list
-  exit 1
-}
+DEPLOY_LOG+="Conda env: $CONDA_DEFAULT_ENV<br>"
 
-echo "Conda active: $CONDA_DEFAULT_ENV"
+########################################
+# DATA GENERATION
+########################################
 
-### Run data generation
-echo "Running data generation..."
 python py/main.py
+DEPLOY_LOG+="Data generation completed.<br>"
 
-### Bundler setup (Pi vs Computer aware)
+########################################
+# BUNDLER SETUP
+########################################
 
-if $IS_PI; then
-  export PATH="$HOME/.gem/ruby/3.3.0/bin:$PATH"
-else
-  export PATH="$HOME/gems/bin:$PATH"
-fi
-
-# Always allow both (harmless if missing)
 export PATH="$HOME/.gem/ruby/3.3.0/bin:$HOME/gems/bin:$PATH"
-
-# Ensure project-local gems
 export BUNDLE_PATH="vendor/bundle"
 export BUNDLE_WITHOUT="development:test"
 
-# Sanity check
-if ! command -v bundle >/dev/null 2>&1; then
-  echo "ERROR: Bundler not found"
-  echo "PATH=$PATH"
-  exit 1
-fi
-
-echo "Bundler path: $(which bundle)"
-echo "Bundler version: $(bundle -v)"
-
-# Ensure correct Bundler version for lockfile
 bundle _2.7.2_ install
 
-### Clean Jekyll build
-echo "Cleaning old Jekyll build..."
-bundle _2.7.2_ exec jekyll clean \
-  --source docs \
-  --destination docs/_site
+########################################
+# JEKYLL BUILD
+########################################
 
-### Build Jekyll site
-echo "Building Jekyll site..."
+bundle _2.7.2_ exec jekyll clean --source docs --destination docs/_site
+
 JEKYLL_ENV=production bundle _2.7.2_ exec jekyll build \
   --source docs \
   --destination docs/_site
 
-### Node.js / Wrangler setup
+DEPLOY_LOG+="Jekyll build complete.<br>"
 
-if $IS_PI; then
-  # Raspberry Pi: use system-installed Node
-  if ! command -v node >/dev/null 2>&1; then
-    echo "ERROR: Node.js not found on Raspberry Pi"
-    exit 1
-  fi
-else
-  # Desktop / WSL: use nvm if available
-  export NVM_DIR="$HOME/.nvm"
-  if [ -s "$NVM_DIR/nvm.sh" ]; then
-    source "$NVM_DIR/nvm.sh"
-    nvm use 20
-  else
-    echo "ERROR: nvm not found on non-Pi system"
-    exit 1
-  fi
-fi
+########################################
+# NODE + WRANGLER
+########################################
 
-echo "Node version: $(node -v)"
-
-# Verify Wrangler
-if ! command -v wrangler >/dev/null 2>&1; then
-  echo "ERROR: wrangler not found"
+if ! command -v node >/dev/null 2>&1; then
+  echo "Node not found"
   exit 1
 fi
 
-echo "Node version: $(node -v)"
-
-### Deploy to Cloudflare Pages
-echo "Deploying to Cloudflare Pages..."
-wrangler pages deploy docs/_site \
-  --project-name=gordstats-cbb \
-  --commit-dirty=true
-
-echo "Deployment complete!"
-
-### RESTORE STASH (if one was created)
-
-if $STASH_CREATED; then
-  echo "Restoring stashed changes..."
-  git stash pop || {
-    echo "WARNING: Stash pop had conflicts. Please resolve manually."
-  }
+if ! command -v wrangler >/dev/null 2>&1; then
+  echo "Wrangler not found"
+  exit 1
 fi
 
-### Commit generated JSON + HTML only
+WRANGLER_OUTPUT=$(wrangler pages deploy docs/_site \
+  --project-name=gordstats-cbb \
+  --commit-dirty=true 2>&1)
 
-echo "Committing generated data files..."
+DEPLOY_LOG+="<b>Wrangler Output:</b><br><pre>$WRANGLER_OUTPUT</pre><br>"
 
-# Add only JSON + HTML changes
+########################################
+# RESTORE STASH
+########################################
+
+if $STASH_CREATED; then
+  git stash pop || true
+fi
+
+########################################
+# COMMIT GENERATED FILES
+########################################
+
 git add docs/**/*.html 2>/dev/null || true
 git add data/**/*.json 2>/dev/null || true
 git add *.json 2>/dev/null || true
 git add *.html 2>/dev/null || true
 
-# Only commit if there are staged changes
 if ! git diff --cached --quiet; then
   git commit -m "Auto-update generated data ($(date '+%Y-%m-%d %H:%M:%S'))"
   git push origin main
-  echo "Generated files committed and pushed."
+  DEPLOY_LOG+="Generated files committed and pushed.<br>"
 else
-  echo "No generated file changes to commit."
+  DEPLOY_LOG+="No generated file changes.<br>"
 fi
+
+########################################
+# FINISH + EMAIL SUCCESS
+########################################
+
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+
+DEPLOY_LOG+="<br><b>Duration:</b> ${DURATION}s<br>"
+DEPLOY_LOG+="<b>Status:</b> ✅ SUCCESS<br>"
+
+send_email "CBB Deploy Successful ✅" "$DEPLOY_LOG"
+
+echo "Deployment complete!"
