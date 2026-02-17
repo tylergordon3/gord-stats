@@ -38,7 +38,6 @@ dependencies:
   - typing_extensions=4.15.0=pyhcf101f3_0
   - attrs=25.4.0=py311h06a4308_2
   - ld_impl_linux-64=2.45=default_hbd61a6d_105
-  - selenium=4.40.0=pyhcf101f3_0
   - platformdirs=4.5.1=pyhcf101f3_0
   - libgfortran-ng=15.2.0=h166f726_7
   - pexpect=4.9.0=pyhd8ed1ab_1
@@ -75,7 +74,6 @@ dependencies:
   - munkres=1.1.4=pyhd8ed1ab_1
   - threadpoolctl=3.6.0=pyhecae5ae_0
   - matplotlib-base=3.10.8=py311h0f3be63_0
-  - selenium-manager=4.40.0=hb17b654_0
   - nest-asyncio=1.6.0=pyhd8ed1ab_1
   - _openmp_mutex=5.1=1_gnu
   - kiwisolver=1.4.9=py311h724c32c_2
@@ -145,4 +143,6 @@ dependencies:
   - scikit-learn=1.2.2
   - pandas
   - scipy
+  - pip:
+    - selenium==4.40.0
 prefix: /home/tgordon/miniconda3/envs/cbb-env
