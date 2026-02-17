@@ -8,6 +8,7 @@ dependencies:
   - python=3.11
   - numpy
   - pandas
+  - jinja2
   - scipy
   - scikit-learn=1.2.2
   - statsmodels=0.14.6
@@ -16,7 +17,11 @@ dependencies:
   - lxml=6.0.2
   - psutil=7.2.2
   - requests=2.32.5
+  - pytz
   - pip
-
   - pip:
       - selenium==4.40.0
+      - kagglehub
+      - playwright
+      - git+https://github.com/tylergordon3/kenpom-py-api-wrapper.git
+      - python-dotenv

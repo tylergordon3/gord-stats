@@ -7,6 +7,11 @@ import push_scores
 import polling
 import subprocess
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
+EASTERN = ZoneInfo("America/New_York")
+DEPLOY_HOUR = 8  # 8 AM Eastern
+DEPLOY_RETRY_INTERVAL = 300  # 5 minutes
 
 DEPLOY_WINDOW_START = 6   # 06:00 UTC
 DEPLOY_WINDOW_END = 9     # 09:00 UTC
@@ -111,26 +116,27 @@ def task(poll_rate):
 def maybe_deploy():
     global deploy_success_date, last_deploy_attempt
 
-    now = datetime.now(timezone.utc)
-    today = now.date()
+    now_utc = datetime.now(timezone.utc)
+    now_et = now_utc.astimezone(EASTERN)
+    today_et = now_et.date()
 
-    # Only operate inside deploy window
-    if not in_deploy_window(now):
+    # If already deployed successfully today (Eastern date), stop
+    if deploy_success_date == today_et:
         return
 
-    # If already deployed successfully today, stop
-    if deploy_success_date == today:
+    # Only trigger after 8:00 AM Eastern
+    if not (DEPLOY_HOUR <= now_et.hour < DEPLOY_HOUR + 2):
         return
 
-    # Prevent retry spam (wait 5 min between attempts)
+    # Prevent retry spam
     if last_deploy_attempt:
-        seconds_since_last = (now - last_deploy_attempt).total_seconds()
+        seconds_since_last = (now_utc - last_deploy_attempt).total_seconds()
         if seconds_since_last < DEPLOY_RETRY_INTERVAL:
             return
 
-    print(f"Deploy attempt @ {now.strftime('%H:%M:%S UTC')}")
+    print(f"Deploy attempt @ {now_et.strftime('%Y-%m-%d %H:%M:%S %Z')}")
 
-    last_deploy_attempt = now
+    last_deploy_attempt = now_utc
 
     try:
         subprocess.run(
@@ -142,12 +148,11 @@ def maybe_deploy():
         )
 
         print("✅ Deploy successful")
-        deploy_success_date = today
+        deploy_success_date = today_et
 
     except subprocess.CalledProcessError as e:
-        print("❌ Deploy failed — will retry within window")
+        print("❌ Deploy failed — will retry")
         print(e.stdout)
-
 
 BASE_INTERVAL = 30        # always wait this after success
 BASE_BACKOFF = 30         # starting backoff on failure
@@ -182,4 +187,3 @@ while True:
         print(f"{e} — retrying in {delay:.1f}s")
         time.sleep(delay)
         attempt += 1
-
