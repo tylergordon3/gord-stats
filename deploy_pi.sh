@@ -23,6 +23,17 @@ if [ "$CURRENT_BRANCH" != "main" ]; then
   git checkout main
 fi
 
+### STASH LOCAL CHANGES (if any)
+STASH_CREATED=false
+
+if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+  echo "Local changes detected. Stashing..."
+  git stash push -u -m "auto-deploy-stash-$(date +%s)"
+  STASH_CREATED=true
+else
+  echo "No local changes to stash."
+fi
+
 git pull --ff-only
 
 ### HARD-BOOTSTRAP CONDA
@@ -124,3 +135,31 @@ wrangler pages deploy docs/_site \
   --commit-dirty=true
 
 echo "Deployment complete!"
+
+### RESTORE STASH (if one was created)
+
+if $STASH_CREATED; then
+  echo "Restoring stashed changes..."
+  git stash pop || {
+    echo "WARNING: Stash pop had conflicts. Please resolve manually."
+  }
+fi
+
+### Commit generated JSON + HTML only
+
+echo "Committing generated data files..."
+
+# Add only JSON + HTML changes
+git add docs/**/*.html 2>/dev/null || true
+git add data/**/*.json 2>/dev/null || true
+git add *.json 2>/dev/null || true
+git add *.html 2>/dev/null || true
+
+# Only commit if there are staged changes
+if ! git diff --cached --quiet; then
+  git commit -m "Auto-update generated data ($(date '+%Y-%m-%d %H:%M:%S'))"
+  git push origin main
+  echo "Generated files committed and pushed."
+else
+  echo "No generated file changes to commit."
+fi
