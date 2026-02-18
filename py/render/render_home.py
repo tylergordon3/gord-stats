@@ -8,7 +8,6 @@ def render_home():
     {% include countdown.html %} 
     <div class="home-grid">
       <div class="home-left">
-        <h1>GordStats Home</h1>
         <p>Using machine learning to predict the NCAA March Madness field.</p>
         <p>
           Data Sources:
@@ -17,9 +16,8 @@ def render_home():
         </p>
         <p>
           Today's scores and schedule from:
-          <a href="https://www.cbssports.com/college-basketball/scoreboard/">CBS Sports</a>
+          <a href="https://www.thescore.com/">TheScore</a>
         </p>
-        <p>See the scores tab for men's scoreboard.</p>
       </div>
 
       <div class="home-right">

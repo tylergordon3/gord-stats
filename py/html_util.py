@@ -58,9 +58,9 @@ def bold_row(row, conf_champ_dict):
     else:
         # fallback: strip HTML + record
         team = row["Team"].split(">")[-1].split(" (")[0].strip()
-
+   
     val = conf_champ_dict.get(team, False)
-
+    
     if val:
         ret = ["font-weight: bold"] * len(row)
         ret[2] = "font-weight: normal"
@@ -103,6 +103,18 @@ def getUrl(x, save_df, master, gender='M'):
 
     return link
 
+def strip_team_html(row):
+    pattern = r">\s*([^<(]+)"
+
+    matches = re.findall(pattern, row)
+
+    if matches:
+        team = matches[0].strip()
+    else:
+        # fallback: strip HTML + record
+        team = row.split(">")[-1].split(" (")[0].strip()
+    return team
+
 def style_bracketology(df, gender='M',original=None, conference=None):
     master = scraper.getMasterTeams()
 
@@ -120,7 +132,9 @@ def style_bracketology(df, gender='M',original=None, conference=None):
     else:
         copy = df.copy()
 
-    conf_champ_dict = pd.Series(df.ConfChamp.values, index=df.Team).to_dict()
+    team_index = df['Team'].apply(lambda x: strip_team_html(x))
+    
+    conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
 
     df = df[output_cols]
  
