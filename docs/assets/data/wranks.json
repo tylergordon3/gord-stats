@@ -88778,19 +88778,19 @@
       "Record": "19-7",
       "Ovr": 21
     },
-    "Tennessee": {
-      "Record": "16-8",
-      "Ovr": 22
-    },
     "Oregon": {
       "Record": "18-9",
+      "Ovr": 22
+    },
+    "Tennessee": {
+      "Record": "16-8",
       "Ovr": 23
     },
-    "Notre Dame": {
+    "USC": {
       "Record": "16-9",
       "Ovr": 24
     },
-    "USC": {
+    "Notre Dame": {
       "Record": "16-9",
       "Ovr": 25
     },
@@ -88950,11 +88950,11 @@
       "Record": "16-11",
       "Ovr": 64
     },
-    "Utah": {
+    "BYU": {
       "Record": "17-10",
       "Ovr": 65
     },
-    "BYU": {
+    "Utah": {
       "Record": "17-10",
       "Ovr": 66
     },
