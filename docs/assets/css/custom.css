@@ -689,6 +689,7 @@
   margin: 0 0 8px;
   font-size: 18px;
   font-weight: 700;
+  justify-content: center;
 }
 
 .table-container {
