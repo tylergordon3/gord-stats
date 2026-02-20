@@ -12,6 +12,7 @@ from collections import defaultdict
 import math
 import html_util
 import kenpom_model_api
+import joblib
 
 def seed_helper(x):
     """
@@ -247,6 +248,49 @@ def getWinPer(record):
     total = wins + losses
     return wins / total if total else 0.0
 
+def predict_womens(date):
+    ensemble = joblib.load("models/2026/womens_2-20-2026.pkl")
+    
+    data_path = utils.get_recent_data(date, 1)
+    with open(data_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    df = pd.DataFrame(data["rows"], columns=data["headers"])
+    df = clean_teams(df)
+    
+    record = df[['Team', 'Rec']].copy()
+    
+    base_models = ensemble["base_models"]
+    meta_model = ensemble["meta_model"]
+    
+    log = base_models["logistic"]
+    rf = base_models["rf"]
+    ada = base_models["ada"]
+    gb = base_models["gb"]
+    hgb = base_models["hgb"]
+    
+    log_probs = log["model"].predict_proba(df[log["features"]])[:, 1]
+    rf_probs = rf["model"].predict_proba(df[rf["features"]])[:, 1]
+    ada_probs = ada["model"].predict_proba(df[ada["features"]])[:, 1]
+    gb_probs = gb["model"].predict_proba(df[gb["features"]])[:, 1]
+    hgb_probs = hgb["model"].predict_proba(df[hgb["features"]])[:, 1]
+    
+    meta_input = np.column_stack([
+        log_probs,
+        rf_probs,
+        ada_probs,
+        gb_probs,
+        hgb_probs,
+    ])
+    
+    final_probs = meta_model.predict_proba(meta_input)[:, 1]
+    
+    df["Tourney_Prob"] = final_probs
+    df = df.sort_values("Tourney_Prob", ascending=False)
+    df["Predicted_Tourney"] = 0
+    df.iloc[:64, df.columns.get_loc("Predicted_Tourney")] = 1
+    
+    
 def predict_w(date):
     master = scraper.getMasterTeams()
 
