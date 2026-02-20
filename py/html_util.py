@@ -119,8 +119,6 @@ def strip_team_html(row):
 def style_bracketology(df, gender='M',original=None, conference=None):
     master = scraper.getMasterTeams()
 
-    conf_champ_dict = pd.Series(df.ConfChamp.values, index=df.Team).to_dict()
-    
     if gender == 'W':
         output_cols = ['Team', 'Conf', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
         df["Logo"] = df.apply(lambda x: "/assets/images/" + scraper.get_image_name(x['Team']), axis=1)
@@ -135,6 +133,10 @@ def style_bracketology(df, gender='M',original=None, conference=None):
     else:
         copy = df.copy()
 
+    team_index = df['Team'].apply(lambda x: strip_team_html(x))
+    
+    conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
+    
     df = df[output_cols]
  
     # Build table attributes
