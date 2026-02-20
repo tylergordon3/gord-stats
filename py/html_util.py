@@ -1,6 +1,7 @@
 import re
 import scraper
 import pandas as pd
+from lib import teams
 
 def _format_arrow(val):
     """
@@ -118,23 +119,21 @@ def strip_team_html(row):
 def style_bracketology(df, gender='M',original=None, conference=None):
     master = scraper.getMasterTeams()
 
+    conf_champ_dict = pd.Series(df.ConfChamp.values, index=df.Team).to_dict()
+    
     if gender == 'W':
         output_cols = ['Team', 'Conf', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
         df["Logo"] = df.apply(lambda x: "/assets/images/" + scraper.get_image_name(x['Team']), axis=1)
-        df["Team"] = df.apply(lambda x: image_formatter(x.Logo) + x.Team, axis=1)
+        df["Team"] = df.apply(lambda x: f'{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})', axis=1)
     else:
         output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
         df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'M'), axis=1)
-        df["Team"] = df.apply(lambda x: image_formatter(x.Logo) + x.Team, axis=1)
+        df["Team"] = df.apply(lambda x: f'{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})', axis=1)
  
     if original is not None:
         copy = original.copy()
     else:
         copy = df.copy()
-
-    team_index = df['Team'].apply(lambda x: strip_team_html(x))
-    
-    conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
 
     df = df[output_cols]
  
