@@ -112,61 +112,79 @@ function applyMedalsToGames (games, medalByDate) {
   }
 }
 
-function parseClockToSeconds(clock) {
-  if (!clock) return Infinity;
+function parseClockToSeconds (clock) {
+  if (!clock || typeof clock !== 'string') return Infinity
 
-  const parts = clock.split(":");
-  if (parts.length !== 2) return Infinity;
+  const parts = clock.split(':')
+  if (parts.length !== 2) return Infinity
 
-  const minutes = Number(parts[0]);
-  const seconds = Number(parts[1]);
+  const minutes = Number(parts[0])
+  const seconds = Number(parts[1])
 
-  if (isNaN(minutes) || isNaN(seconds)) return Infinity;
-
-  return minutes * 60 + seconds;
+  return minutes * 60 + seconds
 }
 
 function enrichGame (g) {
   g.isP5 = g.is_p5 === true
   g.isAP = g.is_ap === true
 
-  g.top3Count =
-    (Number(g.home_model) <= 3 ? 1 : 0) + (Number(g.away_model) <= 3 ? 1 : 0)
-
-  // 🔥 Close & Late detection
   const homeScore = Number(g.home_score)
   const awayScore = Number(g.away_score)
-
   const scoreDiff = Math.abs(homeScore - awayScore)
 
   const isLive = g.status === 'in_progress' || g.status === 'live'
 
-  const isLate =
-    g.period >= 2 && // 2H or later
-    g.clock && // must have clock
-    parseClockToSeconds(g.clock) <= 300 // 2 minutes or less
+  const isFinal = (g.status || "").toLowerCase() === "final";
+
+  const isHalftime = g.status === 'half_over'
+
+  const isLate = g.period >= 2 && g.clock && parseClockToSeconds(g.clock) <= 240
 
   g.isCloseLate = isLive && !isNaN(scoreDiff) && scoreDiff <= 8 && isLate
+
+  // 🟢 Active but NOT halftime
+  g.isActiveLive = isLive && !isHalftime && !g.isCloseLate
+
+  g.homeWon = false;
+  g.awayWon = false;
+
+  if (isFinal && !isNaN(homeScore) && !isNaN(awayScore)) {
+    if (homeScore > awayScore) g.homeWon = true;
+    if (awayScore > homeScore) g.awayWon = true;
+  }
+
   return g
 }
 
-function statusRank (g) {
-  const s = (g.status || '').toLowerCase()
+function gamePriority (g) {
+  const status = (g.status || '').toLowerCase()
 
-  if (s === 'in_progress' || s === 'live' || s === 'half_over' || s === 'delay')
-    return 0 // LIVE
+  const isLive = status === 'in_progress' || status === 'live'
 
-  if (
-    s === 'pre' ||
-    s === 'scheduled' ||
-    s === 'pre_game' ||
-    s === 'not_started'
-  )
-    return 1 // PRE
+  const isHalftime = status === 'half_over'
+  const isFinal = status === 'final'
+  const isPre = status === 'pre_game' || status === 'scheduled'
 
-  if (s === 'final') return 2 // FINAL
+  // 1️⃣ Close late always first
+  if (g.isCloseLate) return 0
 
-  return 3
+  // 2️⃣ Live games (not halftime)
+  if (isLive && !isHalftime) {
+    const remaining = parseClockToSeconds(g.clock)
+    return 1000 + remaining
+    // lower remaining = smaller number = higher priority
+  }
+
+  // 3️⃣ Halftime
+  if (isHalftime) return 5000
+
+  // 4️⃣ Pregame
+  if (isPre) return 8000
+
+  // 5️⃣ Final always bottom
+  if (isFinal) return 10000
+
+  return 20000
 }
 
 function gameTime (g) {
@@ -519,9 +537,10 @@ function renderGames (games, medalByDate = {}) {
 
     // ---- sort within the day ----
     gamesForDay.sort((a, b) => {
-      const ra = statusRank(a.g)
-      const rb = statusRank(b.g)
-      if (ra !== rb) return ra - rb
+      const pa = gamePriority(a.g)
+      const pb = gamePriority(b.g)
+
+      if (pa !== pb) return pa - pb
 
       return gameTime(a.g) - gameTime(b.g)
     })
@@ -568,9 +587,11 @@ function renderGames (games, medalByDate = {}) {
           : ''
 
       html += `
-        <article class="game-card ${g.isCloseLate ? 'close-late' : ''}" 
-         id="game-${id}" 
-         data-game-id="${id}">
+        <article class="game-card 
+          ${g.isCloseLate ? 'close-late' : ''} 
+          ${g.isActiveLive ? 'live-active' : ''}"
+          id="game-${id}" 
+          data-game-id="${id}">
           <header class="game-head">
           <div class="game-head-left">
           <span class="status-pill ${stCls}">${stText} </span>
@@ -590,7 +611,7 @@ function renderGames (games, medalByDate = {}) {
         </header>
 
           <div class="teams">
-            <div class="team-row">
+           <div class="team-row ${g.awayWon ? 'winner' : ''}">
               <div class="team-left">
                 <span class="team">
                 <img
@@ -611,7 +632,7 @@ function renderGames (games, medalByDate = {}) {
               <div class="score">${awayScore}</div>
             </div>
 
-            <div class="team-row">
+            <div class="team-row ${g.homeWon ? 'winner' : ''}">
               <div class="team-left">
                 <span class="team">
                 <img
@@ -768,7 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 })
 
-document.querySelectorAll('.sort-chip').forEach(btn => {
+document.querySelectorAll('.sort-chip[data-sort]').forEach(btn => {
   btn.addEventListener('click', () => {
     const filter = btn.dataset.sort
 
