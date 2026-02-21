@@ -1,9 +1,6 @@
-import os, json
-import model, scraper, utils, predictions, constants
-import pandas as pd
-import scraper
+import os
+import utils, predictions
 from datetime import datetime, date
-import numpy as np
 from render import render_home as rh
 from render import render_conferences as rc
 import daily_data
@@ -11,7 +8,7 @@ import daily_data
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
 
-#daily_data.get_data()
+daily_data.get_data()
 
 update_mens = 0
 if update_mens:
@@ -22,7 +19,7 @@ if update_mens:
     for day in sorted(date_lst):
        predictions.predict(day)
 
-update_womens_all = 1
+update_womens_all = 0
 if update_womens_all:
     path = utils.get_path('data/women/torvik')
     files = os.listdir(path)
