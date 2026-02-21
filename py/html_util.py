@@ -120,7 +120,7 @@ def style_bracketology(df, gender='M',original=None, conference=None):
     master = scraper.getMasterTeams()
 
     if gender == 'W':
-        output_cols = ['Team', 'Conf', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
+        output_cols = ['Team', 'Conf', 'Gord', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
         df["Logo"] = df.apply(lambda x: "/assets/images/" + scraper.get_image_name(x['Team']), axis=1)
         df["Team"] = df.apply(lambda x: f'{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})', axis=1)
     else:
@@ -154,13 +154,9 @@ def style_bracketology(df, gender='M',original=None, conference=None):
     if gender == 'W':
         styler = (
             df.style.hide(axis="index")
-                .format({"Rtg": "{:.4f}"})
                 .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
                 .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
                 .set_table_attributes(table_attr)
-                .background_gradient(
-                    subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
-                )
                 .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
             )
 
