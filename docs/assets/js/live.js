@@ -144,10 +144,9 @@ function enrichGame (g) {
   const isLate =
     g.period >= 2 && // 2H or later
     g.clock && // must have clock
-    parseClockToSeconds(g.clock) <= 120 // 2 minutes or less
+    parseClockToSeconds(g.clock) <= 300 // 2 minutes or less
 
-  g.isCloseLate = isLive && !isNaN(scoreDiff) && scoreDiff <= 5 && isLate
-
+  g.isCloseLate = isLive && !isNaN(scoreDiff) && scoreDiff <= 8 && isLate
   return g
 }
 
