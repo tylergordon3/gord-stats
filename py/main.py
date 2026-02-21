@@ -11,7 +11,7 @@ import daily_data
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
 
-daily_data.get_data()
+#daily_data.get_data()
 
 update_mens = 0
 if update_mens:
