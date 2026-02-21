@@ -112,12 +112,41 @@ function applyMedalsToGames (games, medalByDate) {
   }
 }
 
+function parseClockToSeconds(clock) {
+  if (!clock) return Infinity;
+
+  const parts = clock.split(":");
+  if (parts.length !== 2) return Infinity;
+
+  const minutes = Number(parts[0]);
+  const seconds = Number(parts[1]);
+
+  if (isNaN(minutes) || isNaN(seconds)) return Infinity;
+
+  return minutes * 60 + seconds;
+}
+
 function enrichGame (g) {
   g.isP5 = g.is_p5 === true
   g.isAP = g.is_ap === true
 
   g.top3Count =
     (Number(g.home_model) <= 3 ? 1 : 0) + (Number(g.away_model) <= 3 ? 1 : 0)
+
+  // 🔥 Close & Late detection
+  const homeScore = Number(g.home_score)
+  const awayScore = Number(g.away_score)
+
+  const scoreDiff = Math.abs(homeScore - awayScore)
+
+  const isLive = g.status === 'in_progress' || g.status === 'live'
+
+  const isLate =
+    g.period >= 2 && // 2H or later
+    g.clock && // must have clock
+    parseClockToSeconds(g.clock) <= 120 // 2 minutes or less
+
+  g.isCloseLate = isLive && !isNaN(scoreDiff) && scoreDiff <= 5 && isLate
 
   return g
 }
@@ -540,7 +569,9 @@ function renderGames (games, medalByDate = {}) {
           : ''
 
       html += `
-        <article class="game-card" id="game-${id}" data-game-id="${id}">
+        <article class="game-card ${g.isCloseLate ? 'close-late' : ''}" 
+         id="game-${id}" 
+         data-game-id="${id}">
           <header class="game-head">
           <div class="game-head-left">
           <span class="status-pill ${stCls}">${stText} </span>
