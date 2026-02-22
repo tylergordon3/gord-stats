@@ -132,25 +132,45 @@ function enrichGame (g) {
   const awayScore = Number(g.away_score)
   const scoreDiff = Math.abs(homeScore - awayScore)
 
-  const isLive = g.status === 'in_progress' || g.status === 'live'
+  const status = (g.status || '').toLowerCase()
 
-  const isFinal = (g.status || "").toLowerCase() === "final";
+  const isLive = status === 'in_progress' || status === 'live'
+  const isFinal = status === 'final'
+  const isHalftime = status === 'half_over'
 
-  const isHalftime = g.status === 'half_over'
+  const clockSeconds = g.clock ? parseClockToSeconds(g.clock) : null
 
-  const isLate = g.period >= 2 && g.clock && parseClockToSeconds(g.clock) <= 240
+  const isWomens = LEAGUE === 'men' ? false : true
+
+  // Final regulation period
+  const finalPeriod = isWomens ? 4 : 2
+
+  const periodNum = parseInt(g.period, 10)
+  console.log({
+    period: g.period,
+    gender: g.gender,
+    parsed: parseInt(g.period, 10),
+    finalPeriod,
+    isWomens,
+    clockSeconds,
+    isLive
+  })
+  const isLate =
+    isLive &&
+    periodNum >= finalPeriod &&
+    clockSeconds !== null &&
+    clockSeconds <= 240
 
   g.isCloseLate = isLive && !isNaN(scoreDiff) && scoreDiff <= 8 && isLate
 
-  // 🟢 Active but NOT halftime
   g.isActiveLive = isLive && !isHalftime && !g.isCloseLate
 
-  g.homeWon = false;
-  g.awayWon = false;
+  g.homeWon = false
+  g.awayWon = false
 
   if (isFinal && !isNaN(homeScore) && !isNaN(awayScore)) {
-    if (homeScore > awayScore) g.homeWon = true;
-    if (awayScore > homeScore) g.awayWon = true;
+    if (homeScore > awayScore) g.homeWon = true
+    if (awayScore > homeScore) g.awayWon = true
   }
 
   return g
@@ -165,18 +185,24 @@ function gamePriority (g) {
   const isFinal = status === 'final'
   const isPre = status === 'pre_game' || status === 'scheduled'
 
-  // 1️⃣ Close late always first
-  if (g.isCloseLate) return 0
+  function gameProgressScore (g) {
+    const currentPeriod = Number(g.period) || 1
+    const clockSeconds = g.clock ? parseClockToSeconds(g.clock) : 0
 
-  // 2️⃣ Live games (not halftime)
+    // Estimate % complete
+    const periodLength = LEAGUE === 'men' ? 1200 : 600 // 10 min vs 20 min
+    const secondsIntoGame =
+      (currentPeriod - 1) * periodLength + (periodLength - clockSeconds)
+
+    return secondsIntoGame
+  }
+
   if (isLive && !isHalftime) {
-    const remaining = parseClockToSeconds(g.clock)
-    return 1000 + remaining
-    // lower remaining = smaller number = higher priority
+    return 2400 - gameProgressScore(g)
   }
 
   // 3️⃣ Halftime
-  if (isHalftime) return 5000
+  if (isHalftime) return 1200
 
   // 4️⃣ Pregame
   if (isPre) return 8000
