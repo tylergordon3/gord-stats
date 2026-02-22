@@ -1419,13 +1419,17 @@ h1 {
   color: #065f46;
 }
 
+.game-card {
+  position: relative;
+}
+
 .game-card.close-late::before {
   content: "";
   position: absolute;
   inset: -3px;
   border-radius: 14px;
   pointer-events: none;
-  animation: redOutlinePulse 1.6s ease-in-out infinite;
+  animation: redOutlinePulse 1.6s ease-in-out infinite !important;
 }
 
 @keyframes redOutlinePulse {
