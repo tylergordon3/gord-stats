@@ -30,14 +30,12 @@ import numpy as np
 from ..lib import paths, help
 
 DROP = [
-        "TOURNEY",
         "TEAM",
         "CONF",
         "YEAR",
         "SEED",
         "POSTSEASON",
         "G",
-        "WAB",
         "W"
     ]
 
@@ -56,6 +54,7 @@ def load():
             print(f"Error decoding JSON from {filename}: {e}")
     except IOError as e:
             print(f"Error loading data from {filename}: {e}")
+
     return df
 
 def save_ensemble_model(ensemble_package, version):
@@ -74,19 +73,17 @@ def save_ensemble_model(ensemble_package, version):
 
 def filter_cols(df):
     df = df.copy()
-
     df = df.drop(columns=DROP, errors="ignore")
 
-    df["TOURNEY"] = df["TOURNEY"].map({"True": 1, "False": 0})
+    #df["TOURNEY"] = df["TOURNEY"].map({"True": 1, "False": 0})
+    #print(pd.unique(df["TOURNEY"]))
+    #if "WAB" in df.columns:
+    #    df["WAB"] = df["WAB"].str.replace("+", "", regex=False)
+    #for col in df.columns:
+    #    if col != "TOURNEY":
+    #        df[col] = pd.to_numeric(df[col], errors="coerce")
+    #df = df.dropna()
 
-    if "WAB" in df.columns:
-        df["WAB"] = df["WAB"].str.replace("+", "", regex=False)
-
-    for col in df.columns:
-        if col != "TOURNEY":
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-
-    df = df.dropna()
     return df
 
 
@@ -556,8 +553,8 @@ def train_stacked_ensemble(X, y):
 def main():
     # ----- Setup -----
     df = filter_cols(load())
-    X = df.drop(columns=["Tourney"])
-    y = df["Tourney"].values
+    X = df.drop(columns=["TOURNEY"])
+    y = df["TOURNEY"].values
 
     results = train_stacked_ensemble(X, y)
 
