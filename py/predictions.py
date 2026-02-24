@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import change
-from datetime import datetime
+from datetime import datetime, date
 from sklearn import preprocessing
 from pytz import timezone
 import scraper
@@ -290,7 +290,7 @@ def predict_womens(date):
 
     df = pd.DataFrame(data["rows"], columns=data["headers"])
     df = clean_teams(df)
-    
+
     record = df[["Team", "Rec"]].copy()
 
     base_models = ensemble["base_models"]
@@ -322,7 +322,7 @@ def predict_womens(date):
 
     df["Gord"] = final_probs
     df = df.sort_values("Gord", ascending=False)
-    df = df.rename(columns={"Rk": "Torvik", "Rec":"Record"})
+    df = df.rename(columns={"Rk": "Torvik", "Rec": "Record"})
 
     n = len(df)
     df["Torvik"] = df["Torvik"].astype(float)
@@ -336,14 +336,12 @@ def predict_womens(date):
     )
     net_df = net_df.rename(columns={"Rank": "Net"})
     df = pd.merge(df, net_df[["Net", "Team"]].copy(), "inner", "Team")
-    
+
     df["Net"] = df["Net"].astype(float)
     df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
 
     df["Rank"] = df.apply(
-        lambda x: (
-            0.3 * x["Torvik"] + 0.5 * x["Gord"] + 0.2 * x["Net"]
-        ),
+        lambda x: (0.3 * x["Torvik"] + 0.5 * x["Gord"] + 0.2 * x["Net"]),
         axis=1,
     )
 
@@ -357,10 +355,10 @@ def predict_womens(date):
     save_ranks[date_key] = team_map
     scraper.saveWTeamRanks(save_ranks)
     save_df = df.copy()
-    
+
     conf_winners = df.groupby(by="Conf")["Ovr"].transform("min")
     df["ConfChamp"] = df["Ovr"] == conf_winners
-    
+
     delta = change.change(date, "W")
 
     df = pd.merge(df.reset_index(), delta, "left", "Team").set_index("index")
@@ -369,7 +367,7 @@ def predict_womens(date):
     df["Δ 7d"] = df["Δ 7d"].replace(to_replace=0, value="-")
     df["Δ 14d"] = df["Δ 14d"].replace(to_replace=0, value="-")
     df["Δ 1mo"] = df["Δ 1mo"].replace(to_replace=0, value="-")
-    
+
     conf_win_idx = df[df["ConfChamp"] == 1].index
     dropped = df.drop(index=conf_win_idx)
     atlarge_idx = dropped.head(68 - len(conf_winners)).index
@@ -382,7 +380,7 @@ def predict_womens(date):
         lambda x: f'#{x["Ovr"]} (Seed {x["Seed"]})' if x["Seed"] else f'#{x["Ovr"]}',
         axis=1,
     )
-    
+
     conf = df.groupby("Conf").size().astype(int).to_dict()
 
     grouped = defaultdict(list)
@@ -425,208 +423,118 @@ def predict_womens(date):
 
     return [save_df, df]
 
-def predict_w(date):
-    master = scraper.getMasterTeams()
+def predict_tor(date):
+    ensemble = joblib.load("models/2026/men_tor_2-23-2026.pkl")
+    [_, torvik_path] = utils.get_recent_data(date)
 
-    randomForest = utils.read_from_pickle("wtor_forest")
-    decisionTree = utils.read_from_pickle("wtor_dt")
-    supportVC = utils.read_from_pickle("wtor_svc")
-
-    torvik_path = utils.get_recent_data(date, 1)
+    # Torvik Load/Clean
     with open(torvik_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-
     torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
+    df = clean_teams(torvik_data)
 
-    torvik_data = clean_teams(torvik_data)
-    winloss = torvik_data[["Team", "Rec"]].copy()
-    torvik_today = torvik_data.drop(
-        columns=[
-            "Barthag",
-            "WAB",
-            "Team",
-            "Conf",
-            "Rec",
-            "G",
-            "Rk",
-            "FTR",
-            "3PR",
-            "3PRD",
-            "AdjOE",
-            "AdjDE",
-            "TORD",
-            "FTR",
-            "FTRD",
-            "3P%D",
-            "Adj T.",
+    df.columns = df.columns.str.upper()
+    df = df.rename(columns={
+      "RK" : "Torvik",
+      "EFG%" : "EFG_O",
+      "EFGD%" : "EFG_D",
+      "2P%" : "2P_O",
+      "2P%D" : "2P_D",
+      "3P%" : "3P_O",
+      "3P%D" : "3P_D",
+      "ADJ T." : "ADJ_T",
+      "TEAM" : "Team"  
+    })
+    
+    base_models = ensemble["base_models"]
+    meta_model = ensemble["meta_model"]
+
+    log = base_models["logistic"]
+    svc = base_models["svc"]
+    ada = base_models["ada"]
+    gb = base_models["gb"]
+    hgb = base_models["hgb"]
+
+    log_probs = log["model"].predict_proba(df[log["features"]])[:, 1]
+    svc_probs = svc["model"].predict_proba(df[svc["features"]])[:, 1]
+    ada_probs = ada["model"].predict_proba(df[ada["features"]])[:, 1]
+    gb_probs = gb["model"].predict_proba(df[gb["features"]])[:, 1]
+    hgb_probs = hgb["model"].predict_proba(df[hgb["features"]])[:, 1]
+
+    meta_input = np.column_stack(
+        [
+            log_probs,
+            svc_probs,
+            ada_probs,
+            gb_probs,
+            hgb_probs,
         ]
     )
 
-    scaler = preprocessing.StandardScaler()
-    x_predict_torvik = scaler.fit_transform(torvik_today)
+    final_probs = meta_model.predict_proba(meta_input)[:, 1]
 
-    # Torvik Model Predictions
-    torvik_data["RF"] = predict_model(randomForest, x_predict_torvik)
-    torvik_data["DT"] = predict_model(decisionTree, x_predict_torvik)
-    torvik_data["SVC"] = predict_model(supportVC, x_predict_torvik)
+    df["Gord"] = final_probs
+    df = df.sort_values("Gord", ascending=False)
+    df = df.rename(columns={"Rec": "Record"})
 
-    torvik_data["Sum"] = torvik_data[["RF", "DT", "SVC"]].sum(1)
-    df_torvik = torvik_data[["Rk", "Team", "Conf", "RF", "DT", "SVC", "Sum"]].copy()
+    n = len(df)
+    df["Torvik"] = df["Torvik"].astype(float)
+    df["Torvik"] = 1 - (df["Torvik"] - 1) / (n - 1)
 
-    df_torvik_filter = df_torvik.copy()
-    df_torvik_filter = df_torvik_filter.drop(columns=["Sum"])
-    df_torvik["Rk"] = pd.to_numeric(df_torvik["Rk"])
-    df_torvik["Rtg"] = (10 * df_torvik["Sum"]) + (80 - df_torvik["Rk"])
-
-    # df_torvik = df_torvik.sort_values("GordScore", ascending=False)
-    df_torvik = df_torvik.drop(columns=["RF", "SVC", "DT"])
-    df_torvik = df_torvik.rename(
-        columns={"Rk": "Torvik Rank", "Sum": "# Models Torvik"}
+    net_json = get_recent_file(paths.M_NET_DIR)
+    net_df = pd.DataFrame(net_json["rows"], columns=net_json["headers"])
+    net_df = net_df[["Rank", "School"]].copy()
+    net_df["Team"] = net_df.apply(
+        lambda x: teams.getTeamOfficialName(x["School"]), axis=1
     )
+    net_df = net_df.rename(columns={"Rank": "Net"})
+    df = pd.merge(df, net_df[["Net", "Team"]].copy(), "inner", "Team")
 
-    df_torvik = df_torvik.sort_values("Rtg", ascending=False)
-    df_torvik["Record"] = df_torvik.apply(lambda x: getRecordOnly(x, winloss), axis=1)
-    df_torvik["Win"] = df_torvik.apply(
-        lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1
-    )
-    df_torvik["Win"] = df_torvik["Win"].round(4)
-    df_torvik = df_torvik.sort_values(by=["Rtg", "Win"], ascending=[False, False])
-    df_torvik["Ovr"] = range(1, len(df_torvik) + 1)
+    df["Net"] = df["Net"].astype(float)
+    df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
 
-    save_ranks = scraper.getWTeamRanks()
-    date_key = date.isoformat()
-
-    team_map = df_torvik.set_index("Team")[["Record", "Ovr"]].to_dict(orient="index")
-    save_ranks[date_key] = team_map
-
-    scraper.saveWTeamRanks(save_ranks)
-
-    # Saving to another df for schedule home
-    save_df = df_torvik.copy()
-
-    conf_winners = df_torvik.loc[df_torvik.groupby(by="Conf")["Rtg"].idxmax()]
-
-    df_torvik["ConfChamp"] = 0
-    df_torvik.loc[conf_winners.index, "ConfChamp"] = 1
-
-    delta = change.change(date, "W")
-
-    main = pd.merge(df_torvik.reset_index(), delta, "left", "Team").set_index("index")
-
-    main["Δ 1d"] = main["Δ 1d"].replace(to_replace=0, value="-")
-    main["Δ 7d"] = main["Δ 7d"].replace(to_replace=0, value="-")
-    main["Δ 14d"] = main["Δ 14d"].replace(to_replace=0, value="-")
-    main["Δ 1mo"] = main["Δ 1mo"].replace(to_replace=0, value="-")
-
-    conf_win_idx = main[main["ConfChamp"] == 1].index
-    dropped = main.drop(index=conf_win_idx)
-    atlarge_idx = dropped.head(68 - len(conf_winners)).index
-    tourney_idx = pd.Index.union(conf_win_idx, atlarge_idx)
-    mask = main.index.isin(tourney_idx)
-    main["Seed"] = None
-    main.loc[mask, "Seed"] = seed_helper(main["Ovr"][mask])
-
-    main["Ovr"] = main.apply(
-        lambda x: f'#{x["Ovr"]} (Seed {x["Seed"]})' if x["Seed"] else f'#{x["Ovr"]}',
+    df["Rank"] = df.apply(
+        lambda x: (0.3 * x["Torvik"] + 0.5 * x["Gord"] + 0.2 * x["Net"]),
         axis=1,
     )
+    df = df.drop(columns=["Torvik", "Net"])
+    df = df.sort_values("Rank", ascending=False)
+    df["Ovr"] = range(1, len(df) + 1)
 
-    main["Torvik Rank"] = main["Torvik Rank"].astype(int)
+    print(df.head())
 
-    main["Torvik"] = (
-        main["Torvik Rank"].astype(str) + " " + main["# Models Torvik"].apply(stars)
-    )
-
-    conf = main.groupby("Conf").size().astype(int).to_dict()
-
-    grouped = defaultdict(list)
-    for conference, bids in conf.items():
-        grouped[bids].append(conference)
-
-    march_df = main[main["Ovr"].str.contains(r"\bSeed\b", na=False)]
-    first_out = main.drop(march_df.index)[:8]
-
-    march_df = html_util.style_bracketology(march_df, gender="W")
-    first_out = html_util.style_bracketology(first_out, gender="W")
-
-    conf_html = "<h3>Bid Breakdown by Conference</h3>"
-    for bids in sorted(grouped.keys(), reverse=True):
-        confs = ", ".join(grouped[bids])
-        conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
-
-    tz = timezone("EST")
-    time_obj = datetime.now(tz)
-    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
-    df_html = f"<p>{time}</p>"
-    df_html += '<div class="filter-bar">'
-    df_html += """{% include global-toggle.html %} """
-    df_html += "</div>"
-    df_html += '<div class="table-container">'
-    df_html += march_df.to_html()
-    df_html += "</div>"
-    df_html += "<h3>First Four Out & Next 4 Out</h3>"
-    df_html += '<div class="table-container">'
-    df_html += first_out.to_html()
-    df_html += "</div>"
-    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
-
-    # MAIN -> DF with Conf col data
-    path = utils.get_path(f"docs/women/predict_{date}.html")
-    html = html_util.add_front_matter(df_html, f"NCAAW Bracketology", date)
-    with open(path, "w") as f:
-        f.write(html)
-        print(f"Wrote to: {path} for {date}")
-
-    return [save_df, main]
-
+predict_tor(date(2026, 2, 24))
 
 def full_prediction(date) -> pd.DataFrame:
-    randomForest = utils.read_from_pickle("mtor_forest")
-    decisionTree = utils.read_from_pickle("mtor_dt")
-    supportVC = utils.read_from_pickle("mtor_svc")
-
     gb_kp = utils.read_from_pickle("2026/gb_v2.1")
     logistic_kp = utils.read_from_pickle("2026/logistic_v2.1")
     svc_kp = utils.read_from_pickle("2026/svc_v2.1")
 
     [kenpom_path, torvik_path] = utils.get_recent_data(date)
+
+    # Kenpom Load/Clean
     with open(kenpom_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     kenpom_data = pd.DataFrame(data["rows"], columns=data["headers"])
 
-    with open(torvik_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
-
     kenpom_data = kenpom_data.rename(columns={"TeamName": "Team", "ConfShort": "Conf"})
-    # kenpom_data["Rk"] = range(1, len(kenpom_data) + 1)
     kenpom_data["Rk"] = kenpom_data["RankAdjEM"]
 
     kenpom_data["W-L"] = kenpom_data.apply(
         lambda x: f"{x['Wins']}-{x['Losses']}", axis=1
     )
-
-    torvik_data = clean_teams(torvik_data)
     kenpom_data = clean_teams(kenpom_data, True)
-
-    torvik_teams = torvik_data["Team"]
     kenpom_teams = kenpom_data["Team"]
-
     winloss = kenpom_data[["Team", "W-L"]]
-    torvik_today = torvik_data.drop(
-        columns=[
-            "Barthag",
-            "WAB",
-            "Team",
-            "Conf",
-            "Rec",
-            "G",
-            "Rk",
-            "FTR",
-            "3PR",
-            "3PRD",
-        ]
-    )
+
+    # Torvik Load/Clean
+    with open(torvik_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
+    torvik_data = clean_teams(torvik_data)
+    torvik_teams = torvik_data["Team"]
+
+    torvik_today = torvik_data
 
     svc_features = kenpom_model_api.load_features("svc")
     logistic_features = kenpom_model_api.load_features("logistic")
