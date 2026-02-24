@@ -202,7 +202,7 @@ function gamePriority (g) {
   }
 
   // 3️⃣ Halftime
-  if (isHalftime) return 1200
+  if (isHalftime) return 2400
 
   // 4️⃣ Pregame
   if (isPre) return 8000
