@@ -124,7 +124,7 @@ def style_bracketology(df, gender='M',original=None, conference=None):
         df["Logo"] = df.apply(lambda x: "/assets/images/" + scraper.get_image_name(x['Team']), axis=1)
         df["Team"] = df.apply(lambda x: f'{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})', axis=1)
     else:
-        output_cols = ['Team', 'Conf', 'Kenpom', 'Torvik', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
+        output_cols = ['Team', 'Conf', 'Kenpom', 'Rtg', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
         df["Logo"] = df.apply(lambda x: getUrl(x, df, master, 'M'), axis=1)
         df["Team"] = df.apply(lambda x: f'{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})', axis=1)
  
@@ -171,9 +171,6 @@ def style_bracketology(df, gender='M',original=None, conference=None):
                     subset=["Kenpom"],
                     cmap="cividis", 
                     gmap=copy['Kenpom Rank'],
-                )
-                .background_gradient(
-                    subset=["Torvik"], cmap="cividis", gmap=copy['Torvik Rank']
                 )
                 .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
             )

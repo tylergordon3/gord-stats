@@ -443,7 +443,8 @@ def predict_tor(date):
       "3P%" : "3P_O",
       "3P%D" : "3P_D",
       "ADJ T." : "ADJ_T",
-      "TEAM" : "Team"  
+      "TEAM" : "Team",
+      "CONF" : "Conf"
     })
     
     base_models = ensemble["base_models"]
@@ -473,44 +474,22 @@ def predict_tor(date):
 
     final_probs = meta_model.predict_proba(meta_input)[:, 1]
 
-    df["Gord"] = final_probs
-    df = df.sort_values("Gord", ascending=False)
+    df["GordTor"] = final_probs
+    df = df.sort_values("GordTor", ascending=False)
     df = df.rename(columns={"Rec": "Record"})
 
     n = len(df)
     df["Torvik"] = df["Torvik"].astype(float)
     df["Torvik"] = 1 - (df["Torvik"] - 1) / (n - 1)
 
-    net_json = get_recent_file(paths.M_NET_DIR)
-    net_df = pd.DataFrame(net_json["rows"], columns=net_json["headers"])
-    net_df = net_df[["Rank", "School"]].copy()
-    net_df["Team"] = net_df.apply(
-        lambda x: teams.getTeamOfficialName(x["School"]), axis=1
-    )
-    net_df = net_df.rename(columns={"Rank": "Net"})
-    df = pd.merge(df, net_df[["Net", "Team"]].copy(), "inner", "Team")
-
-    df["Net"] = df["Net"].astype(float)
-    df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
-
-    df["Rank"] = df.apply(
-        lambda x: (0.3 * x["Torvik"] + 0.5 * x["Gord"] + 0.2 * x["Net"]),
-        axis=1,
-    )
-    df = df.drop(columns=["Torvik", "Net"])
-    df = df.sort_values("Rank", ascending=False)
-    df["Ovr"] = range(1, len(df) + 1)
-
-    print(df.head())
-
-predict_tor(date(2026, 2, 24))
+    return df
 
 def full_prediction(date) -> pd.DataFrame:
     gb_kp = utils.read_from_pickle("2026/gb_v2.1")
     logistic_kp = utils.read_from_pickle("2026/logistic_v2.1")
     svc_kp = utils.read_from_pickle("2026/svc_v2.1")
 
-    [kenpom_path, torvik_path] = utils.get_recent_data(date)
+    [kenpom_path, _] = utils.get_recent_data(date)
 
     # Kenpom Load/Clean
     with open(kenpom_path, "r", encoding="utf-8") as f:
@@ -527,15 +506,6 @@ def full_prediction(date) -> pd.DataFrame:
     kenpom_teams = kenpom_data["Team"]
     winloss = kenpom_data[["Team", "W-L"]]
 
-    # Torvik Load/Clean
-    with open(torvik_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    torvik_data = pd.DataFrame(data["rows"], columns=data["headers"])
-    torvik_data = clean_teams(torvik_data)
-    torvik_teams = torvik_data["Team"]
-
-    torvik_today = torvik_data
-
     svc_features = kenpom_model_api.load_features("svc")
     logistic_features = kenpom_model_api.load_features("logistic")
     gb_features = kenpom_model_api.load_features("gb")
@@ -546,64 +516,37 @@ def full_prediction(date) -> pd.DataFrame:
 
     scaler = preprocessing.StandardScaler()
 
-    x_predict_torvik = scaler.fit_transform(torvik_today)
     x_predict_kenpom_svc = scaler.fit_transform(kenpom_today_base[svc_features])
     x_predict_kenpom_gb = scaler.fit_transform(kenpom_today_base[gb_features])
     x_predict_kenpom_log = scaler.fit_transform(kenpom_today_base[logistic_features])
-
-    # Torvik Model Predictions
-    torvik_data["RF"] = predict_model(randomForest, x_predict_torvik)
-    torvik_data["DT"] = predict_model(decisionTree, x_predict_torvik)
-    torvik_data["SVC"] = predict_model(supportVC, x_predict_torvik)
 
     # Kenpom Model Predictions
     kenpom_data["GB"] = predict_model(gb_kp, x_predict_kenpom_gb)
     kenpom_data["LOG"] = predict_model(logistic_kp, x_predict_kenpom_log)
     kenpom_data["SVC"] = predict_model(svc_kp, x_predict_kenpom_svc)
-    # print(kenpom_data[['Team', 'GB', 'LOG', 'SVC']].to_string())
+
     # Sum Models and drop not needed cols
-    torvik_data["Sum"] = torvik_data[["RF", "DT", "SVC"]].sum(1)
-    df_torvik = torvik_data[["Rk", "Team", "Conf", "RF", "DT", "SVC", "Sum"]].copy()
     kenpom_data["Sum"] = kenpom_data[["GB", "LOG", "SVC"]].sum(1)
     df_kenpom = kenpom_data[["Rk", "Team", "Conf", "GB", "LOG", "SVC", "Sum"]].copy()
 
-    # Torvik Clean
-    df_torvik_filter = df_torvik.copy()
-    df_torvik_filter = df_torvik_filter.drop(columns=["Sum"])
-    torvik_teams = df_torvik_filter[["Team", "Conf", "Rk"]].copy()
     # Kenpom Clean
     df_kenpom_filter = df_kenpom.copy()
     df_kenpom_filter = df_kenpom_filter.drop(columns=["Sum"])
     kenpom_teams = df_kenpom_filter[["Team", "Conf", "Rk"]].copy()
 
     # Prep to merge into one DF
-    # Random Forest - Torvik
-    rf_filter_torvik = df_torvik_filter[df_torvik_filter["RF"] == 1]
-    df_torvik_rf = rf_filter_torvik[["Team", "Conf", "Rk", "RF"]].copy()
+   
     # GB - Kenpom
     gb_filter_kenpom = df_kenpom_filter[df_kenpom_filter["GB"] == 1]
     df_kenpom_gb = gb_filter_kenpom[["Team", "Conf", "Rk", "GB"]].copy()
 
-    # Decision Tree - Torvik
-    dt_filter_torvik = df_torvik_filter[df_torvik_filter["DT"] == 1]
-    df_torvik_dt = dt_filter_torvik[["Team", "Conf", "Rk", "DT"]].copy()
     # Log - Kenpom
     dt_filter_kenpom = df_kenpom_filter[df_kenpom_filter["LOG"] == 1]
     df_kenpom_log = dt_filter_kenpom[["Team", "Conf", "Rk", "LOG"]].copy()
 
-    # SVC - Torvik
-    svc_filter_torvik = df_torvik_filter[df_torvik_filter["SVC"] == 1]
-    df_torvik_svc = svc_filter_torvik[["Team", "Conf", "Rk", "SVC"]].copy()
     # SVC - Kenpom
     svc_filter_kenpom = df_kenpom_filter[df_kenpom_filter["SVC"] == 1]
     df_kenpom_svc = svc_filter_kenpom[["Team", "Conf", "Rk", "SVC"]].copy()
-
-    # Torvik Final Clean
-    comb1_torvik = pd.merge(torvik_teams, df_torvik_rf, "left", ["Team", "Conf", "Rk"])
-    comb2_torvik = pd.merge(comb1_torvik, df_torvik_svc, "left", ["Team", "Conf", "Rk"])
-    combined_torvik = pd.merge(
-        comb2_torvik, df_torvik_dt, "left", ["Team", "Conf", "Rk"]
-    )
 
     # Kenpom Final Clean
     comb1_kenpom = pd.merge(kenpom_teams, df_kenpom_gb, "left", ["Team", "Conf", "Rk"])
@@ -612,25 +555,28 @@ def full_prediction(date) -> pd.DataFrame:
         comb2_kenpom, df_kenpom_log, "left", ["Team", "Conf", "Rk"]
     )
 
+    torvik_full = predict_tor(date)
+    torvik = torvik_full[['Torvik', 'Team', 'Conf', 'GordTor']].copy()
+
     # Merge models into one DF
-    main = pd.merge(combined_kenpom, combined_torvik, on=["Team", "Conf"], how="outer")
-    main["Num KP Models"] = main[["GB", "SVC_x", "LOG"]].sum(1)
-    main["Num TOR Models"] = main[["RF", "SVC_y", "DT"]].sum(1)
-    main["Rk_y"] = pd.to_numeric(main["Rk_y"])
-    main["Rk_x"] = pd.to_numeric(main["Rk_x"])
+    main = pd.merge(combined_kenpom, torvik, on=["Team", "Conf"], how="outer")
+    main["Num KP Models"] = main[["GB", "SVC", "LOG"]].sum(1)
+    
+    main["Rk"] = pd.to_numeric(main["Rk"])
 
     count = len(main)
 
     def weighted(team, count, weight=0.55):
-        kp_norm_rank = 1 - ((team["Rk_x"] - 1) / (count - 1))
-        tor_norm_rank = 1 - ((team["Rk_y"] - 1) / (count - 1))
+        kp_norm_rank = 1 - ((team["Rk"] - 1) / (count - 1))
+        tor_norm_rank = 1 - ((team["Torvik"] - 1) / (count - 1))
+        gord_rank = 1 - (team["GordTor"] - 1) / (count - 1)
         elite_rank = max(kp_norm_rank, tor_norm_rank)
-        q = (0.5 * tor_norm_rank) + (0.5 * kp_norm_rank)
+        q = (0.3 * tor_norm_rank) + (0.4 * kp_norm_rank) + (0.3 * gord_rank)
 
-        missing = team["Num KP Models"] + team["Num TOR Models"]
-        penalty = ((6 - missing) * (1 - elite_rank)) * 0.03
+        missing = team["Num KP Models"]
+        penalty = ((3 - missing) * (1 - elite_rank)) * 0.02
 
-        v = math.pow(missing / 6, 1)
+        v = math.pow(missing / 3, 1)
         calc = ((weight * v) + ((1 - weight) * q)) - penalty
         return calc
 
@@ -640,14 +586,12 @@ def full_prediction(date) -> pd.DataFrame:
 
     main_sorted = main.sort_values(by=["Rtg", "Win"], ascending=[False, False])
     main_sorted = main_sorted.drop(
-        columns=["RF", "SVC_x", "DT", "LOG", "SVC_y", "GB", "Win"]
+        columns=["SVC", "LOG", "GB", "Win"]
     )
     main_sorted = main_sorted.rename(
         columns={
-            "Rk_x": "Kenpom Rank",
-            "Rk_y": "Torvik Rank",
-            "Num KP Models": "# Models Kenpom",
-            "Num TOR Models": "# Models Torvik",
+            "Rk": "Kenpom Rank",
+            "Num KP Models": "# Models Kenpom"
         }
     )
     return [main_sorted, winloss]
@@ -704,13 +648,9 @@ def predict(date):
     )
 
     main["Kenpom Rank"] = main["Kenpom Rank"].astype(int)
-    main["Torvik Rank"] = main["Torvik Rank"].astype(int)
-
+    
     main["Kenpom"] = (
         main["Kenpom Rank"].astype(str) + " " + main["# Models Kenpom"].apply(stars)
-    )
-    main["Torvik"] = (
-        main["Torvik Rank"].astype(str) + " " + main["# Models Torvik"].apply(stars)
     )
 
     conf = main.groupby("Conf").size().astype(int).to_dict()

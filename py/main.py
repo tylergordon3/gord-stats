@@ -10,7 +10,7 @@ today = datetime.today().strftime("%Y-%m-%d")
 
 daily_data.get_data()
 
-update_mens = 0
+update_mens = 1
 if update_mens:
     path = utils.get_path('data/men/kenpom_api/')
     files = os.listdir(path)
