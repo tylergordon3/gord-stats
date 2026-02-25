@@ -6,19 +6,15 @@ from datetime import date, timedelta
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
-load_dotenv() 
+load_dotenv()
 
 KENPOM_KEY = os.getenv("KENPOM")
 BASE_URL = "https://kenpom.com/api.php"
 
+
 def norm_team(name: str) -> str:
-    return (
-        name.lower()
-        .replace("&", "and")
-        .replace(".", "")
-        .replace("'", "")
-        .strip()
-    )
+    return name.lower().replace("&", "and").replace(".", "").replace("'", "").strip()
+
 
 def load_html_ranks_for_date(date):
     """
@@ -51,10 +47,12 @@ def load_html_ranks_for_date(date):
 
     return ranks
 
+
 from datetime import date as dt_date
 
 HTML_START = dt_date(2026, 1, 21)
-HTML_END   = dt_date(2026, 1, 25)
+HTML_END = dt_date(2026, 1, 25)
+
 
 def get_prev_ranks_for_date(date_str):
     d = dt_date.fromisoformat(date_str)
@@ -65,6 +63,7 @@ def get_prev_ranks_for_date(date_str):
 
     # ✅ Otherwise use kenpom_old JSON
     return load_old_ranks_for_date(date_str)
+
 
 def load_old_ranks_for_date(date):
     """
@@ -84,10 +83,8 @@ def load_old_ranks_for_date(date):
     team_idx = headers.index("Team")
     rk_idx = headers.index("Rk")
 
-    return {
-        norm_team(row[team_idx]): row[rk_idx]
-        for row in rows
-    }
+    return {norm_team(row[team_idx]): row[rk_idx] for row in rows}
+
 
 def parse(data, prev_ranks):
     headers = list(data[0].keys())
@@ -103,21 +100,13 @@ def parse(data, prev_ranks):
 
         rows.append(vals)
 
-    return {
-        "headers": headers,
-        "rows": rows
-    }
+    return {"headers": headers, "rows": rows}
+
 
 def kenpom_for_date(date):
-    params = {
-        "endpoint": "archive",
-        "d": date
-    }
+    params = {"endpoint": "archive", "d": date}
 
-    headers = {
-        "Authorization": f"Bearer {KENPOM_KEY}",
-        "Accept": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {KENPOM_KEY}", "Accept": "application/json"}
 
     res = requests.get(BASE_URL, params=params, headers=headers)
 

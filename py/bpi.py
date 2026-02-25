@@ -11,10 +11,12 @@ from datetime import datetime
 import pytz
 from lib import paths
 
+
 def save_id(dict):
-    with open(utils.get_path('docs/assets/data/espn_id.json'), 'w') as file:
+    with open(utils.get_path("docs/assets/data/espn_id.json"), "w") as file:
         json.dump(dict, file, indent=4)
         return dict
+
 
 BASE = "https://site.web.api.espn.com/apis/fitt/v3/sports/basketball/mens-college-basketball/powerindex"
 
@@ -23,7 +25,7 @@ params = {
     "limit": 50,
     "sort": "bpi.bpi:desc",
     "lang": "en",
-    "region": "us"
+    "region": "us",
 }
 
 BPI_COLUMNS = [
@@ -41,7 +43,7 @@ BPI_COLUMNS = [
     "conf_wins",
     "conf_losses",
     "adj_margin",
-    "adj_margin_conf"
+    "adj_margin_conf",
 ]
 
 RESUME_COLUMNS = [
@@ -51,8 +53,9 @@ RESUME_COLUMNS = [
     "bad_losses",
     "top50_wins",
     "sor_rank",
-    "rpi_rank"
+    "rpi_rank",
 ]
+
 
 def parse_team_entry(entry):
     team = entry["team"]
@@ -98,18 +101,19 @@ def main():
     str = now.strftime("%Y-%m-%d")
 
     payload = {
-            "headers": list(df.columns),
-            "rows": df.values.tolist(),
-        }
+        "headers": list(df.columns),
+        "rows": df.values.tolist(),
+    }
 
     path = utils.get_path(f"data/men/espn/{str}.json")
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
 
+
 def get_today_bpi():
     bpi_dir = paths.M_ESPN_DIR
-    
+
     # Today's filename
     today_str = datetime.now().strftime("%Y-%m-%d")
     today_file = bpi_dir / f"{today_str}.json"
@@ -121,12 +125,12 @@ def get_today_bpi():
     # Otherwise get most recent file
     files = sorted(
         bpi_dir.glob("*.json"),
-        key=lambda f: f.name,   # filenames are YYYY-MM-DD.json so this works
-        reverse=True
+        key=lambda f: f.name,  # filenames are YYYY-MM-DD.json so this works
+        reverse=True,
     )
 
     if not files:
-            return None
+        return None
 
     target_file = files[0]
 

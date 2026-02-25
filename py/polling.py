@@ -28,11 +28,12 @@ PAID_WRITE_LIMIT = 20000
 MAX_WRITES_PER_DAY = PAID_WRITE_LIMIT - BASELINE_WRITES_PER_DAY
 
 MIN_LIVE_INTERVAL = 10
-MAX_LIVE_INTERVAL = 120  
+MAX_LIVE_INTERVAL = 120
 
 # -----------------------------
 # Time normalization
 # -----------------------------
+
 
 def normalize_times(dt_list):
     """Convert UTC datetimes to ET, shift midnight games, dedupe, sort."""
@@ -49,9 +50,11 @@ def normalize_times(dt_list):
 
     return sorted(set(out))
 
+
 # -----------------------------
 # Polling zone construction
 # -----------------------------
+
 
 def calculate_polling_zones(times):
     """Build continuous polling zones across full ET timeline."""
@@ -71,12 +74,15 @@ def calculate_polling_zones(times):
     zones.append((zone_start, last_time + ZONE_GAP))
     return zones
 
+
 def zone_hours(start, end):
     return (end - start).total_seconds() / 3600
+
 
 # -----------------------------
 # Live time per day
 # -----------------------------
+
 
 def live_seconds_per_day(zones):
     """Return total live seconds per ET day (midnight-safe)."""
@@ -86,7 +92,9 @@ def live_seconds_per_day(zones):
         day = start.date()
         while day <= end.date():
             day_start = datetime.combine(day, datetime.min.time(), tzinfo=ET)
-            day_end = datetime.combine(day + timedelta(days=1), datetime.min.time(), tzinfo=ET)
+            day_end = datetime.combine(
+                day + timedelta(days=1), datetime.min.time(), tzinfo=ET
+            )
 
             seg_start = max(start, day_start)
             seg_end = min(end, day_end)
@@ -98,15 +106,18 @@ def live_seconds_per_day(zones):
 
     return dict(seconds)
 
+
 # -----------------------------
 # Polling interval selection
 # -----------------------------
+
 
 def min_interval_seconds(live_seconds):
     """Minimum polling interval (seconds) to stay under daily cap."""
     if live_seconds <= 0:
         return None
     return live_seconds / MAX_POLL_WRITES_PER_DAY
+
 
 def choose_poll_interval(min_required):
     """Fastest polling interval that fits free tier."""
@@ -118,6 +129,7 @@ def choose_poll_interval(min_required):
             return opt
 
     return None  # even 60s is too fast
+
 
 def daily_polling_plan(zones):
     """Determine dynamic polling interval per day."""
@@ -131,10 +143,11 @@ def daily_polling_plan(zones):
             "live_hours": secs / 3600,
             "live_seconds": secs,
             "poll_interval_sec": interval,
-            "fits_limit": interval is not None
+            "fits_limit": interval is not None,
         }
 
     return plan
+
 
 def dynamic_interval_seconds(live_seconds):
     """
@@ -147,11 +160,9 @@ def dynamic_interval_seconds(live_seconds):
     interval = live_seconds / MAX_WRITES_PER_DAY
 
     # Clamp to sane bounds
-    return max(
-        MIN_LIVE_INTERVAL,
-        min(interval, MAX_LIVE_INTERVAL)
-    )
-    
+    return max(MIN_LIVE_INTERVAL, min(interval, MAX_LIVE_INTERVAL))
+
+
 def polling_rate_now(now, zones, daily_plan, default_idle=3600):
     """
     returns: polling interval in seconds
@@ -168,6 +179,7 @@ def polling_rate_now(now, zones, daily_plan, default_idle=3600):
 
     # Not live
     return default_idle
+
 
 def calculate_rate():
     with open(utils.get_path("data/live_scores.json")) as f:
@@ -199,9 +211,6 @@ def calculate_rate():
     now = datetime.now(ET)
 
     interval = polling_rate_now(
-        now=now,
-        zones=zones,
-        daily_plan=plan,
-        default_idle=1800  # 1 hour when idle
+        now=now, zones=zones, daily_plan=plan, default_idle=1800  # 1 hour when idle
     )
     return interval

@@ -43,8 +43,6 @@ def render_home():
   }(document, "script", "twitter-wjs"));
 </script>
     '''
-    # Note: Removed the redundant "html += ..." line as it's already in the block above.
-    
     path = utils.get_path('docs/index.html')
     html = html_util.add_front_matter(html, "GordStats Home")
 

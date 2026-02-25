@@ -7,6 +7,7 @@ import utils
 import pytz
 import scraper
 import ats, net, bpi
+
 # =========================
 # CONFIG
 # =========================
@@ -15,11 +16,11 @@ BASE = "https://api.thescore.com"
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
     "Accept": "application/json",
-    "Referer": "https://www.thescore.com/"
+    "Referer": "https://www.thescore.com/",
 }
 
-UTC_OFFSET_SECONDS = -18000      # EST
-POLL_INTERVAL = 25               # seconds
+UTC_OFFSET_SECONDS = -18000  # EST
+POLL_INTERVAL = 25  # seconds
 BATCH_SIZE = 90
 
 LIVE_STATUSES = {"in_progress", "halftime", "delay"}
@@ -27,24 +28,20 @@ LIVE_STATUSES = {"in_progress", "halftime", "delay"}
 SKIP_CONFERENCES = {"All Conferences"}
 
 LEAGUES = {
-    "men": {
-        "path": "ncaab",
-        "label": "men"
-    },
-    "women": {
-        "path": "wcbk",
-        "label": "women"
-    }
+    "men": {"path": "ncaab", "label": "men"},
+    "women": {"path": "wcbk", "label": "women"},
 }
 
 # =========================
 # UTILS
 # =========================
 
+
 def chunks(lst, n):
     for i in range(0, len(lst), n):
-        yield lst[i:i+n]
-        
+        yield lst[i : i + n]
+
+
 def get_rank_dict_for_league(league):
     if league == "men":
         return scraper.getTeamRanks()
@@ -53,21 +50,22 @@ def get_rank_dict_for_league(league):
     else:
         raise ValueError(f"Unknown league: {league}")
 
+
 def safe_float(x):
     try:
         return float(x)
     except (TypeError, ValueError):
         return None
-    
+
+
 # =========================
 # CONFERENCE DISCOVERY
 # =========================
 
+
 def get_conference_strings(league_path):
     resp = requests.get(
-        f"{BASE}/{league_path}/events/conferences",
-        headers=HEADERS,
-        timeout=10
+        f"{BASE}/{league_path}/events/conferences", headers=HEADERS, timeout=10
     )
     resp.raise_for_status()
 
@@ -80,9 +78,11 @@ def get_conference_strings(league_path):
 
     return sorted(confs)
 
+
 # =========================
 # SCHEDULE → EVENT IDS
 # =========================
+
 
 def get_today_event_ids(conference_strings, league_path):
     all_ids = set()
@@ -93,12 +93,9 @@ def get_today_event_ids(conference_strings, league_path):
 
         resp = requests.get(
             f"{BASE}/{league_path}/schedule",
-            params={
-                "conference": conf,
-                "utc_offset": UTC_OFFSET_SECONDS
-            },
+            params={"conference": conf, "utc_offset": UTC_OFFSET_SECONDS},
             headers=HEADERS,
-            timeout=10
+            timeout=10,
         )
         resp.raise_for_status()
         sched = resp.json()
@@ -116,6 +113,7 @@ def get_today_event_ids(conference_strings, league_path):
 # EVENT HYDRATION
 # =========================
 
+
 def fetch_events_by_ids(event_ids, league_path):
     events = []
 
@@ -124,12 +122,13 @@ def fetch_events_by_ids(event_ids, league_path):
             f"{BASE}/{league_path}/events",
             params={"id.in": ",".join(map(str, batch))},
             headers=HEADERS,
-            timeout=10
+            timeout=10,
         )
         resp.raise_for_status()
         events.extend(resp.json())
 
     return events
+
 
 # =========================
 # EVENT FORMATTER
@@ -140,61 +139,49 @@ import pytz
 
 EASTERN = pytz.timezone("US/Eastern")
 
+
 def format_event(g, ranks, master, ats, net, bpi):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
-        dt = datetime.strptime(
-            g["game_date"], "%a, %d %b %Y %H:%M:%S %z"
-        )
+        dt = datetime.strptime(g["game_date"], "%a, %d %b %Y %H:%M:%S %z")
 
     dt_local = dt.astimezone(EASTERN) if dt else None
 
     game_date = dt_local.date().isoformat() if dt_local else None
-    start_time = (
-        dt_local.strftime("%I:%M %p").lstrip("0")
-        if dt_local else None
-    )
+    start_time = dt_local.strftime("%I:%M %p").lstrip("0") if dt_local else None
 
     ats_lookup = {}
     if ats:
-        ats_lookup = {
-            row[0]: row[2]
-            for row in ats["rows"]
-        }
-        
+        ats_lookup = {row[0]: row[2] for row in ats["rows"]}
+
     ou_lookup = {}
     if ats:
-        ou_lookup = {
-            row[0]: row[6]
-            for row in ats["rows"]
-        }
-        
+        ou_lookup = {row[0]: row[6] for row in ats["rows"]}
+
     bpi_lookup = {}
     if bpi:
-        bpi_lookup = {
-            row[1]: row[7]
-            for row in bpi["rows"]
-        }
-        
-    net_lookup = {
-            row[1]: row[0]
-            for row in net["rows"]
-        }
+        bpi_lookup = {row[1]: row[7] for row in bpi["rows"]}
+
+    net_lookup = {row[1]: row[0] for row in net["rows"]}
 
     # ---- teams ----
     home = g["home_team"]
     away = g["away_team"]
 
-    [home_idx, home_name, home_abb] = scraper.getNameFromCode(home.get("abbreviation"), master, True)
-    [away_idx, away_name, away_abb]= scraper.getNameFromCode(away.get("abbreviation"), master, True)
+    [home_idx, home_name, home_abb] = scraper.getNameFromCode(
+        home.get("abbreviation"), master, True
+    )
+    [away_idx, away_name, away_abb] = scraper.getNameFromCode(
+        away.get("abbreviation"), master, True
+    )
 
-    home_model = ranks[home_name]['Ovr'] if home_name else ''
-    away_model = ranks[away_name]['Ovr'] if away_name else ''
+    home_model = ranks[home_name]["Ovr"] if home_name else ""
+    away_model = ranks[away_name]["Ovr"] if away_name else ""
 
-    home_record = ranks[home_name]['Record'] if home_name else ''
-    away_record = ranks[away_name]['Record'] if away_name else ''
-    
+    home_record = ranks[home_name]["Record"] if home_name else ""
+    away_record = ranks[away_name]["Record"] if away_name else ""
+
     def safe_float(x):
         try:
             return float(x)
@@ -205,17 +192,17 @@ def format_event(g, ranks, master, ats, net, bpi):
     am = safe_float(away_model)
 
     rating = (hm + am) / 2 if hm is not None and am is not None else None
-        
-     # ranks
+
+    # ranks
     home_ap = g.get("home_ranking")
-    away_ap =  g.get("away_ranking")
+    away_ap = g.get("away_ranking")
     is_ap = bool(home_ap or away_ap)
 
     # conferences
     home_conf = g.get("home_conference")
     away_conf = g.get("away_conference")
     is_p5 = utils.check_p5(home_conf, away_conf)
-    
+
     # ---- score / progress ----
     box = g.get("box_score") or {}
     score = box.get("score") or {}
@@ -223,14 +210,14 @@ def format_event(g, ranks, master, ats, net, bpi):
 
     home_score = score.get("home", {}).get("score")
     away_score = score.get("away", {}).get("score")
-    
+
     def get_stat(idx, master, lookup):
         aliases = master["names"][idx]
         for alias in aliases:
             if alias in lookup:
                 return lookup[alias]
         return None
-    
+
     if ats_lookup:
         ats_home = get_stat(home_idx, master, ats_lookup)
         ats_away = get_stat(away_idx, master, ats_lookup)
@@ -248,7 +235,7 @@ def format_event(g, ranks, master, ats, net, bpi):
 
     net_home = get_stat(home_idx, master, net_lookup)
     net_away = get_stat(away_idx, master, net_lookup)
-    
+
     clock = progress.get("clock")
     period = progress.get("segment_string")
     overtime = progress.get("overtime", False)
@@ -268,64 +255,52 @@ def format_event(g, ranks, master, ats, net, bpi):
         "date": game_date,
         "start_time": start_time,
         "start_time_utc": dt.isoformat() if dt else None,
-
         # status
         "status": g.get("status"),
-
-        "rating":rating,
+        "rating": rating,
         # teams
         "home_team": home_name,
         "away_team": away_name,
-
         "home_abb": home_abb,
-        "away_abb": away_abb,   
-        
-        "is_p5":is_p5,
-        "home_record":home_record,
-        "away_record":away_record,
-        
+        "away_abb": away_abb,
+        "is_p5": is_p5,
+        "home_record": home_record,
+        "away_record": away_record,
         # scores
         "home_score": home_score,
         "away_score": away_score,
-        
-        "away_model" : away_model ,
-        "home_model" : home_model,
-
+        "away_model": away_model,
+        "home_model": home_model,
         "ats_away": ats_away,
         "ats_home": ats_home,
-        
         "ou_away": ou_away,
         "ou_home": ou_home,
-        
         "net_away": net_away,
         "net_home": net_home,
-        
         "bpi_away": bpi_away,
         "bpi_home": bpi_home,
-        
         # live info
         "clock": clock,
         "period": period,
         "overtime": overtime,
-
         # ranks
         "home_rank": home_ap,
         "away_rank": away_ap,
-        "is_ap" : is_ap,
-
+        "is_ap": is_ap,
         # meta
         "conference": g.get("home_conference"),
         "venue": g.get("stadium"),
         "location": g.get("location")[:-5],
-
         # betting
         "spread_close": spread_close,
         "total_close": total_close,
     }
 
+
 # =========================
 # LIVE SNAPSHOT + DELTA
 # =========================
+
 
 def live_snapshot(g):
     box = g.get("box_score") or {}
@@ -340,6 +315,7 @@ def live_snapshot(g):
         "overtime": progress.get("overtime", False),
         "status": g.get("status"),
     }
+
 
 def diff_snapshots(prev, curr):
     delta = {}
@@ -358,11 +334,9 @@ def diff_snapshots(prev, curr):
 # LIVE POLLER
 # =========================
 
+
 def live_poller(initial_events):
-    live_ids = {
-        g["id"] for g in initial_events
-        if g["status"] in LIVE_STATUSES
-    }
+    live_ids = {g["id"] for g in initial_events if g["status"] in LIVE_STATUSES}
 
     print(f"Live games at start: {len(live_ids)}")
 
@@ -406,7 +380,7 @@ def get_current_live_dataset(league_key):
         return {
             "league": league_key,
             "generated": datetime.utcnow().isoformat(),
-            "games": {}
+            "games": {},
         }
 
     events = fetch_events_by_ids(event_ids, league_path)
@@ -425,7 +399,7 @@ def get_current_live_dataset(league_key):
     ranks = ranks_dict.get(ranks_date, {})
 
     master = scraper.getMasterTeams()
-    
+
     # Only load ATS for men
     if league_key == "men":
         ats_dict = ats.get_today_ats()
@@ -435,19 +409,22 @@ def get_current_live_dataset(league_key):
         ats_dict = None
         net_dict = net.get_today_net("W")
         bpi_dict = None
-        
+
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
-        games[str(game_id)] = format_event(g, ranks, master, ats_dict, net_dict, bpi_dict)
-    
+        games[str(game_id)] = format_event(
+            g, ranks, master, ats_dict, net_dict, bpi_dict
+        )
+
     return {
         "league": league_key,
         "generated": datetime.utcnow().isoformat(),
-        "games": games
+        "games": games,
     }
+
 
 # =========================
 # MAIN
@@ -463,9 +440,9 @@ if __name__ == "__main__":
             "leagues": {
                 "men": snapshots["men"]["games"],
                 "women": snapshots["women"]["games"],
-            }
+            },
         }
-        
+
         path = utils.get_path(f"data/live_scores_{league_key}.json")
         with open(path, "w") as f:
             json.dump(payload, f, indent=2)

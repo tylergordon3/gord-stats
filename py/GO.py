@@ -13,12 +13,13 @@ EASTERN = ZoneInfo("America/New_York")
 DEPLOY_HOUR = 8  # 8 AM Eastern
 DEPLOY_RETRY_INTERVAL = 300  # 5 minutes
 
-DEPLOY_WINDOW_START = 6   # 06:00 UTC
-DEPLOY_WINDOW_END = 9     # 09:00 UTC
+DEPLOY_WINDOW_START = 6  # 06:00 UTC
+DEPLOY_WINDOW_END = 9  # 09:00 UTC
 DEPLOY_RETRY_INTERVAL = 300  # 5 minutes between deploy attempts
 
 deploy_success_date = None
 last_deploy_attempt = None
+
 
 def safe_push(payload):
     try:
@@ -36,7 +37,8 @@ def safe_push(payload):
     except Exception as e:
         print(f"Push failed: {e}")
         return False
-    
+
+
 def seconds_until_next_boundary(interval_sec):
     """
     Returns seconds until the next wall-clock-aligned boundary
@@ -45,6 +47,7 @@ def seconds_until_next_boundary(interval_sec):
     now = datetime.now(timezone.utc)
     epoch = int(now.timestamp())
     return interval_sec - (epoch % interval_sec)
+
 
 def seconds_until_next_game():
     """
@@ -78,10 +81,11 @@ def seconds_until_next_game():
     except Exception:
         return None
 
+
 def in_deploy_window(now):
     return DEPLOY_WINDOW_START <= now.hour < DEPLOY_WINDOW_END
 
-    
+
 def task(poll_rate):
     # --- scrape both leagues ---
     men = scraper_pro.get_current_live_dataset("men")
@@ -90,13 +94,8 @@ def task(poll_rate):
     # --- combine into ONE payload ---
     payload = {
         "generated": datetime.utcnow().isoformat(),
-        "leagues": {
-            "men": men["games"],
-            "women": women["games"]
-        },
-        "meta": {
-            "poll_interval_sec": poll_rate
-        }
+        "leagues": {"men": men["games"], "women": women["games"]},
+        "meta": {"poll_interval_sec": poll_rate},
     }
 
     # --- save locally (optional) ---
@@ -112,6 +111,7 @@ def task(poll_rate):
         f"@ {payload['generated']}"
     )
     push_scores.push(payload)
+
 
 def maybe_deploy():
     global deploy_success_date, last_deploy_attempt
@@ -154,9 +154,10 @@ def maybe_deploy():
         print("❌ Deploy failed — will retry")
         print(e.stdout)
 
-BASE_INTERVAL = 30        # always wait this after success
-BASE_BACKOFF = 30         # starting backoff on failure
-MAX_BACKOFF = 1200        # cap at 20 minutes
+
+BASE_INTERVAL = 30  # always wait this after success
+BASE_BACKOFF = 30  # starting backoff on failure
+MAX_BACKOFF = 1200  # cap at 20 minutes
 DEPLOY_INTERVAL = timedelta(hours=6)
 DEPLOY_SCRIPT = "./deploy_pi.sh"
 
@@ -181,7 +182,7 @@ while True:
         time.sleep(sleep_for)
 
     except Exception as e:
-        delay = min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
+        delay = min(BASE_BACKOFF * (2**attempt), MAX_BACKOFF)
         delay += random.uniform(0, 1)
 
         print(f"{e} — retrying in {delay:.1f}s")

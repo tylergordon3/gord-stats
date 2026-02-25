@@ -39,6 +39,7 @@ def kenpom_now():
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
 
+
 def kenpom_by_year(year):
     ratings = pd.DataFrame(kenpom.get_ratings(year=year))
     ff = pd.DataFrame(kenpom.get_four_factors(year=year))

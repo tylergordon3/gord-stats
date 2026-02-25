@@ -7,11 +7,12 @@ from datetime import datetime
 import pytz
 from lib import paths, url
 
-URL="https://www.teamrankings.com/ncb/trends/ats_trends/"
+URL = "https://www.teamrankings.com/ncb/trends/ats_trends/"
+
 
 def parse_to_df(url):
     resp = requests.get(url)
-    soup = BeautifulSoup(resp.content, 'html.parser')
+    soup = BeautifulSoup(resp.content, "html.parser")
     table = soup.find("table")
 
     headers = table.find_all("tr")[0]
@@ -35,23 +36,25 @@ def parse_to_df(url):
         table_data.append(row_data)
     df = pd.DataFrame(columns=cols, data=table_data)
     return df
-    
+
+
 def main():
     df_ats = parse_to_df(url.NCAAM_ATS)
     df_ou = parse_to_df(url.NCAAM_OU)
-    
-    df = pd.merge(df_ats, df_ou, how="inner", on='Team')
+
+    df = pd.merge(df_ats, df_ou, how="inner", on="Team")
 
     now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
     str = now.strftime("%Y-%m-%d")
     payload = {
-            "headers": list(df.columns),
-            "rows": df.values.tolist(),
-        }
+        "headers": list(df.columns),
+        "rows": df.values.tolist(),
+    }
 
     path = utils.get_path(f"data/men/ats/{str}.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=4)
+
 
 def get_today_ats():
     ats_dir = paths.M_ATS_DIR
@@ -67,12 +70,12 @@ def get_today_ats():
     # Otherwise get most recent file
     files = sorted(
         ats_dir.glob("*.json"),
-        key=lambda f: f.name,   # filenames are YYYY-MM-DD.json so this works
-        reverse=True
+        key=lambda f: f.name,  # filenames are YYYY-MM-DD.json so this works
+        reverse=True,
     )
 
     if not files:
-            return None
+        return None
 
     target_file = files[0]
 

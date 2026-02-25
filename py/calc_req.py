@@ -22,6 +22,7 @@ POLL_OPTIONS = [15, 30, 45, 60]  # seconds (fast → slow)
 # Time normalization
 # -----------------------------
 
+
 def normalize_times(dt_list):
     """Convert UTC datetimes to ET, shift midnight games, dedupe, sort."""
     out = []
@@ -37,9 +38,11 @@ def normalize_times(dt_list):
 
     return sorted(set(out))
 
+
 # -----------------------------
 # Polling zone construction
 # -----------------------------
+
 
 def calculate_polling_zones(times):
     """Build continuous polling zones across full ET timeline."""
@@ -59,12 +62,15 @@ def calculate_polling_zones(times):
     zones.append((zone_start, last_time + ZONE_GAP))
     return zones
 
+
 def zone_hours(start, end):
     return (end - start).total_seconds() / 3600
+
 
 # -----------------------------
 # Live time per day
 # -----------------------------
+
 
 def live_seconds_per_day(zones):
     """Return total live seconds per ET day (midnight-safe)."""
@@ -74,7 +80,9 @@ def live_seconds_per_day(zones):
         day = start.date()
         while day <= end.date():
             day_start = datetime.combine(day, datetime.min.time(), tzinfo=ET)
-            day_end = datetime.combine(day + timedelta(days=1), datetime.min.time(), tzinfo=ET)
+            day_end = datetime.combine(
+                day + timedelta(days=1), datetime.min.time(), tzinfo=ET
+            )
 
             seg_start = max(start, day_start)
             seg_end = min(end, day_end)
@@ -86,15 +94,18 @@ def live_seconds_per_day(zones):
 
     return dict(seconds)
 
+
 # -----------------------------
 # Polling interval selection
 # -----------------------------
+
 
 def min_interval_seconds(live_seconds):
     """Minimum polling interval (seconds) to stay under daily cap."""
     if live_seconds <= 0:
         return None
     return live_seconds / MAX_POLL_WRITES_PER_DAY
+
 
 def choose_poll_interval(min_required):
     """Fastest polling interval that fits free tier."""
@@ -106,6 +117,7 @@ def choose_poll_interval(min_required):
             return opt
 
     return None  # even 60s is too fast
+
 
 def daily_polling_plan(zones):
     """Determine fastest safe polling interval per day."""
@@ -120,14 +132,16 @@ def daily_polling_plan(zones):
             "live_hours": secs / 3600,
             "min_interval_sec": min_req,
             "chosen_interval_sec": chosen,
-            "fits_free_tier": chosen is not None
+            "fits_free_tier": chosen is not None,
         }
 
     return plan
 
+
 # -----------------------------
 # Printing helpers
 # -----------------------------
+
 
 def print_zones(zones):
     for i, (start, end) in enumerate(zones, 1):
@@ -142,6 +156,7 @@ def print_zones(zones):
             f"{crosses}"
         )
 
+
 def print_polling_plan(plan):
     print("Date       | Live hrs | Min interval | Chosen | Status")
     print("-" * 60)
@@ -149,8 +164,8 @@ def print_polling_plan(plan):
     for day in sorted(plan):
         row = plan[day]
 
-        min_int = f"{row['min_interval_sec']:.1f}s" if row['min_interval_sec'] else "-"
-        chosen = f"{row['chosen_interval_sec']}s" if row['chosen_interval_sec'] else "-"
+        min_int = f"{row['min_interval_sec']:.1f}s" if row["min_interval_sec"] else "-"
+        chosen = f"{row['chosen_interval_sec']}s" if row["chosen_interval_sec"] else "-"
         status = "OK" if row["fits_free_tier"] else "OVER LIMIT"
 
         print(
@@ -161,6 +176,7 @@ def print_polling_plan(plan):
             f"{status}"
         )
 
+
 # -----------------------------
 # Main execution
 # -----------------------------
@@ -168,10 +184,7 @@ def print_polling_plan(plan):
 data = pd.read_json(utils.get_path("data/live_scores.json"))
 games = data["games"]
 
-utc_times = [
-    datetime.fromisoformat(g["start_time_utc"])
-    for g in games
-]
+utc_times = [datetime.fromisoformat(g["start_time_utc"]) for g in games]
 
 dt_et = normalize_times(utc_times)
 zones = calculate_polling_zones(dt_et)

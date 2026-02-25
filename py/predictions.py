@@ -120,41 +120,6 @@ def predict_model(model, fitted_data):
     return model.predict(fitted_data)
 
 
-def _format_arrow(val):
-    """
-    Format arrow for change since last week
-
-    :param val: Change since previous week
-    :type val: int
-    :return: Correspondng arrow with value
-    :rtype: str
-    """
-    if (val == "NR") | (val == "-"):
-        return val
-    return (
-        f"{'↑' if int(val) > 0 else '↓'} {abs(val):.0f}"
-        if int(val) != 0
-        else f"{val:.0f}"
-    )
-
-
-def _color_arrow(val):
-    """
-    Colors arrow based on direction
-
-    :param val: Change since previous week
-    :type val: int
-    :return: Color of arrow
-    """
-    if (val == "NR") | (val == "-"):
-        return "color: black"
-    return (
-        "color: green"
-        if int(val) > 0
-        else "color: red" if int(val) < 0 else "color: black"
-    )
-
-
 def bold_row(row, conf_champ_dict):
     """
     Bolds row if team is projected conference winner
@@ -288,8 +253,6 @@ def predict_womens(date):
     df = pd.DataFrame(data["rows"], columns=data["headers"])
     df = clean_teams(df)
 
-    record = df[["Team", "Rec"]].copy()
-
     base_models = ensemble["base_models"]
     meta_model = ensemble["meta_model"]
 
@@ -420,6 +383,7 @@ def predict_womens(date):
 
     return [save_df, df]
 
+
 def predict_tor(date):
     ensemble = joblib.load("models/2026/men_tor_2-23-2026.pkl")
     [_, torvik_path] = utils.get_recent_data(date)
@@ -431,19 +395,21 @@ def predict_tor(date):
     df = clean_teams(torvik_data)
 
     df.columns = df.columns.str.upper()
-    df = df.rename(columns={
-      "RK" : "Torvik",
-      "EFG%" : "EFG_O",
-      "EFGD%" : "EFG_D",
-      "2P%" : "2P_O",
-      "2P%D" : "2P_D",
-      "3P%" : "3P_O",
-      "3P%D" : "3P_D",
-      "ADJ T." : "ADJ_T",
-      "TEAM" : "Team",
-      "CONF" : "Conf"
-    })
-    
+    df = df.rename(
+        columns={
+            "RK": "Torvik",
+            "EFG%": "EFG_O",
+            "EFGD%": "EFG_D",
+            "2P%": "2P_O",
+            "2P%D": "2P_D",
+            "3P%": "3P_O",
+            "3P%D": "3P_D",
+            "ADJ T.": "ADJ_T",
+            "TEAM": "Team",
+            "CONF": "Conf",
+        }
+    )
+
     base_models = ensemble["base_models"]
     meta_model = ensemble["meta_model"]
 
@@ -473,8 +439,9 @@ def predict_tor(date):
 
     df["GordTor"] = final_probs
     df = df.sort_values("GordTor", ascending=False)
-    
+
     return df
+
 
 def predict_ken(date):
     ensemble = joblib.load("models/2026/men_ken_2-24-2026.pkl")
@@ -484,15 +451,17 @@ def predict_ken(date):
     with open(kenpom_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     kenpom_data = pd.DataFrame(data["rows"], columns=data["headers"])
-    kenpom_data = kenpom_data.rename(columns={
-      "TeamName" : "Team",
-      "ConfShort" : "Conf",
-    })
-    
+    kenpom_data = kenpom_data.rename(
+        columns={
+            "TeamName": "Team",
+            "ConfShort": "Conf",
+        }
+    )
+
     df = clean_teams(kenpom_data, True)
 
     df["Kenpom"] = df["RankAdjEM"]
-    
+
     base_models = ensemble["base_models"]
     meta_model = ensemble["meta_model"]
 
@@ -523,18 +492,17 @@ def predict_ken(date):
     df["GordKen"] = final_probs
     df = df.sort_values("GordKen", ascending=False)
 
-    df["Record"] = df.apply(
-        lambda x: f"{x['Wins']}-{x['Losses']}", axis=1
-    )
+    df["Record"] = df.apply(lambda x: f"{x['Wins']}-{x['Losses']}", axis=1)
     return df
+
 
 def full_prediction(date) -> pd.DataFrame:
 
     torvik_full = predict_tor(date)
-    torvik = torvik_full[['Torvik', 'Team', 'Conf', 'GordTor']].copy()
+    torvik = torvik_full[["Torvik", "Team", "Conf", "GordTor"]].copy()
 
     kenpom_full = predict_ken(date)
-    kenpom = kenpom_full[['Team', 'Conf', 'Record', 'Kenpom', 'GordKen']].copy()
+    kenpom = kenpom_full[["Team", "Conf", "Record", "Kenpom", "GordKen"]].copy()
 
     df = pd.merge(kenpom, torvik, on=["Team", "Conf"], how="outer")
 
@@ -550,7 +518,7 @@ def full_prediction(date) -> pd.DataFrame:
     n = len(df)
     df["Net"] = df["Net"].astype(float)
     df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
-    
+
     bpi_json = get_recent_file(paths.M_ESPN_DIR)
     bpi_df = pd.DataFrame(bpi_json["rows"], columns=bpi_json["headers"])
     bpi_df = bpi_df[["team", "rank"]].copy()
@@ -559,26 +527,32 @@ def full_prediction(date) -> pd.DataFrame:
     )
     bpi_df = bpi_df.rename(columns={"rank": "BPI"})
     df = pd.merge(df, bpi_df[["BPI", "Team"]].copy(), "inner", "Team")
-    
+
     df["BPI"] = df["BPI"].astype(float)
     df["BPI"] = 1 - (df["BPI"] - 1) / (n - 1)
-    
+
     df["Torvik"] = df["Torvik"].astype(float)
     df["Torvik"] = 1 - (df["Torvik"] - 1) / (n - 1)
-    
+
     df["Kenpom"] = df["Kenpom"].astype(float)
     df["Kenpom"] = 1 - (df["Kenpom"] - 1) / (n - 1)
-    
+
     model_cons = 0.4
     ranks_cons = 0.05
     df["Pwr"] = df.apply(
-        lambda x: (ranks_cons * x["Torvik"] + model_cons * x["GordTor"] + model_cons * x["GordKen"] + ranks_cons * x["Net"] + ranks_cons * x["Kenpom"] + ranks_cons* x["BPI"]),
+        lambda x: (
+            ranks_cons * x["Torvik"]
+            + model_cons * x["GordTor"]
+            + model_cons * x["GordKen"]
+            + ranks_cons * x["Net"]
+            + ranks_cons * x["Kenpom"]
+            + ranks_cons * x["BPI"]
+        ),
         axis=1,
     )
     df = df.sort_values("Pwr", ascending=False)
     df["Ovr"] = range(1, len(df) + 1)
-    
-    
+
     save_ranks = scraper.getTeamRanks()
     date_key = date.isoformat()
     team_map = df.set_index("Team")[["Record", "Ovr"]].to_dict(orient="index")
@@ -590,7 +564,6 @@ def full_prediction(date) -> pd.DataFrame:
 
 def predict(date):
     [df, save_df] = full_prediction(date)
-
 
     conf_winners = df.loc[df.groupby(by="Conf")["Pwr"].idxmax()]
 

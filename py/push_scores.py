@@ -2,10 +2,11 @@ import requests
 import os
 from dotenv import load_dotenv
 
-load_dotenv() 
+load_dotenv()
 
 WORKER_INGEST = "https://cbb-live-scores.tmgordon33.workers.dev/ingest"
 INGEST_KEY = os.getenv("INGEST_KEY")
+
 
 def push(payload):
     if not INGEST_KEY:
@@ -14,10 +15,10 @@ def push(payload):
         WORKER_INGEST,
         headers={
             "Authorization": f"Bearer {INGEST_KEY}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
-        json=payload,          # 👈 important (see below)
-        timeout=20
+        json=payload,  # 👈 important (see below)
+        timeout=20,
     )
 
     if not res.ok:
@@ -26,7 +27,7 @@ def push(payload):
         print("Response:", res.text[:1000])  # truncate
         res.raise_for_status()
 
-      # ---- optional: log KV writes from Worker ----
+    # ---- optional: log KV writes from Worker ----
     try:
         data = res.json()
         writes_today = data.get("meta", {}).get("kv_writes_today")
