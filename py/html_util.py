@@ -118,7 +118,7 @@ def strip_team_html(row):
 
 def style_bracketology(df, gender='M',original=None, conference=None):
     master = scraper.getMasterTeams()
-
+    df = df.copy()
     if gender == 'W':
         output_cols = ['Team', 'Conf', 'Gord', 'Ovr', 'Δ 1d', 'Δ 7d', 'Δ 14d', 'Δ 1mo']
         df["Logo"] = df.apply(lambda x: "/assets/images/" + scraper.get_image_name(x['Team']), axis=1)

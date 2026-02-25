@@ -5,7 +5,6 @@ from datetime import datetime
 from push_scores import push
 import utils
 import pytz
-import pandas as pd
 import scraper
 import ats, net, bpi
 # =========================

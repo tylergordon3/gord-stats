@@ -9,7 +9,7 @@ import pandas as pd
 import utils
 from datetime import datetime
 import pytz
-from lib import paths, url
+from lib import paths
 
 def save_id(dict):
     with open(utils.get_path('docs/assets/data/espn_id.json'), 'w') as file:
