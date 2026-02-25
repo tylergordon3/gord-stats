@@ -476,158 +476,133 @@ def predict_tor(date):
 
     df["GordTor"] = final_probs
     df = df.sort_values("GordTor", ascending=False)
-    df = df.rename(columns={"Rec": "Record"})
-
-    n = len(df)
-    df["Torvik"] = df["Torvik"].astype(float)
-    df["Torvik"] = 1 - (df["Torvik"] - 1) / (n - 1)
-
+    
     return df
 
-def full_prediction(date) -> pd.DataFrame:
-    gb_kp = utils.read_from_pickle("2026/gb_v2.1")
-    logistic_kp = utils.read_from_pickle("2026/logistic_v2.1")
-    svc_kp = utils.read_from_pickle("2026/svc_v2.1")
-
+def predict_ken(date):
+    ensemble = joblib.load("models/2026/men_ken_2-24-2026.pkl")
     [kenpom_path, _] = utils.get_recent_data(date)
 
     # Kenpom Load/Clean
     with open(kenpom_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     kenpom_data = pd.DataFrame(data["rows"], columns=data["headers"])
+    kenpom_data = kenpom_data.rename(columns={
+      "TeamName" : "Team",
+      "ConfShort" : "Conf",
+    })
+    
+    df = clean_teams(kenpom_data, True)
 
-    kenpom_data = kenpom_data.rename(columns={"TeamName": "Team", "ConfShort": "Conf"})
-    kenpom_data["Rk"] = kenpom_data["RankAdjEM"]
+    df["Kenpom"] = df["RankAdjEM"]
+    
+    base_models = ensemble["base_models"]
+    meta_model = ensemble["meta_model"]
 
-    kenpom_data["W-L"] = kenpom_data.apply(
+    log = base_models["logistic"]
+    svc = base_models["svc"]
+    ada = base_models["ada"]
+    gb = base_models["gb"]
+    hgb = base_models["hgb"]
+
+    log_probs = log["model"].predict_proba(df[log["features"]])[:, 1]
+    svc_probs = svc["model"].predict_proba(df[svc["features"]])[:, 1]
+    ada_probs = ada["model"].predict_proba(df[ada["features"]])[:, 1]
+    gb_probs = gb["model"].predict_proba(df[gb["features"]])[:, 1]
+    hgb_probs = hgb["model"].predict_proba(df[hgb["features"]])[:, 1]
+
+    meta_input = np.column_stack(
+        [
+            log_probs,
+            svc_probs,
+            ada_probs,
+            gb_probs,
+            hgb_probs,
+        ]
+    )
+
+    final_probs = meta_model.predict_proba(meta_input)[:, 1]
+
+    df["GordKen"] = final_probs
+    df = df.sort_values("GordKen", ascending=False)
+
+    df["Record"] = df.apply(
         lambda x: f"{x['Wins']}-{x['Losses']}", axis=1
     )
-    kenpom_data = clean_teams(kenpom_data, True)
-    kenpom_teams = kenpom_data["Team"]
-    winloss = kenpom_data[["Team", "W-L"]]
+    return df
 
-    svc_features = kenpom_model_api.load_features("svc")
-    logistic_features = kenpom_model_api.load_features("logistic")
-    gb_features = kenpom_model_api.load_features("gb")
-
-    all_features = list(dict.fromkeys(svc_features + logistic_features + gb_features))
-
-    kenpom_today_base = kenpom_data.loc[:, kenpom_data.columns.isin(all_features)]
-
-    scaler = preprocessing.StandardScaler()
-
-    x_predict_kenpom_svc = scaler.fit_transform(kenpom_today_base[svc_features])
-    x_predict_kenpom_gb = scaler.fit_transform(kenpom_today_base[gb_features])
-    x_predict_kenpom_log = scaler.fit_transform(kenpom_today_base[logistic_features])
-
-    # Kenpom Model Predictions
-    kenpom_data["GB"] = predict_model(gb_kp, x_predict_kenpom_gb)
-    kenpom_data["LOG"] = predict_model(logistic_kp, x_predict_kenpom_log)
-    kenpom_data["SVC"] = predict_model(svc_kp, x_predict_kenpom_svc)
-
-    # Sum Models and drop not needed cols
-    kenpom_data["Sum"] = kenpom_data[["GB", "LOG", "SVC"]].sum(1)
-    df_kenpom = kenpom_data[["Rk", "Team", "Conf", "GB", "LOG", "SVC", "Sum"]].copy()
-
-    # Kenpom Clean
-    df_kenpom_filter = df_kenpom.copy()
-    df_kenpom_filter = df_kenpom_filter.drop(columns=["Sum"])
-    kenpom_teams = df_kenpom_filter[["Team", "Conf", "Rk"]].copy()
-
-    # Prep to merge into one DF
-   
-    # GB - Kenpom
-    gb_filter_kenpom = df_kenpom_filter[df_kenpom_filter["GB"] == 1]
-    df_kenpom_gb = gb_filter_kenpom[["Team", "Conf", "Rk", "GB"]].copy()
-
-    # Log - Kenpom
-    dt_filter_kenpom = df_kenpom_filter[df_kenpom_filter["LOG"] == 1]
-    df_kenpom_log = dt_filter_kenpom[["Team", "Conf", "Rk", "LOG"]].copy()
-
-    # SVC - Kenpom
-    svc_filter_kenpom = df_kenpom_filter[df_kenpom_filter["SVC"] == 1]
-    df_kenpom_svc = svc_filter_kenpom[["Team", "Conf", "Rk", "SVC"]].copy()
-
-    # Kenpom Final Clean
-    comb1_kenpom = pd.merge(kenpom_teams, df_kenpom_gb, "left", ["Team", "Conf", "Rk"])
-    comb2_kenpom = pd.merge(comb1_kenpom, df_kenpom_svc, "left", ["Team", "Conf", "Rk"])
-    combined_kenpom = pd.merge(
-        comb2_kenpom, df_kenpom_log, "left", ["Team", "Conf", "Rk"]
-    )
+def full_prediction(date) -> pd.DataFrame:
 
     torvik_full = predict_tor(date)
     torvik = torvik_full[['Torvik', 'Team', 'Conf', 'GordTor']].copy()
 
-    # Merge models into one DF
-    main = pd.merge(combined_kenpom, torvik, on=["Team", "Conf"], how="outer")
-    main["Num KP Models"] = main[["GB", "SVC", "LOG"]].sum(1)
+    kenpom_full = predict_ken(date)
+    kenpom = kenpom_full[['Team', 'Conf', 'Record', 'Kenpom', 'GordKen']].copy()
+
+    df = pd.merge(kenpom, torvik, on=["Team", "Conf"], how="outer")
+
+    net_json = get_recent_file(paths.M_NET_DIR)
+    net_df = pd.DataFrame(net_json["rows"], columns=net_json["headers"])
+    net_df = net_df[["Rank", "School"]].copy()
+    net_df["Team"] = net_df.apply(
+        lambda x: teams.getTeamOfficialName(x["School"]), axis=1
+    )
+    net_df = net_df.rename(columns={"Rank": "Net"})
+    df = pd.merge(df, net_df[["Net", "Team"]].copy(), "inner", "Team")
+
+    n = len(df)
+    df["Net"] = df["Net"].astype(float)
+    df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
     
-    main["Rk"] = pd.to_numeric(main["Rk"])
-
-    count = len(main)
-
-    def weighted(team, count, weight=0.55):
-        kp_norm_rank = 1 - ((team["Rk"] - 1) / (count - 1))
-        tor_norm_rank = 1 - ((team["Torvik"] - 1) / (count - 1))
-        gord_rank = 1 - (team["GordTor"] - 1) / (count - 1)
-        elite_rank = max(kp_norm_rank, tor_norm_rank)
-        q = (0.3 * tor_norm_rank) + (0.4 * kp_norm_rank) + (0.3 * gord_rank)
-
-        missing = team["Num KP Models"]
-        penalty = ((3 - missing) * (1 - elite_rank)) * 0.02
-
-        v = math.pow(missing / 3, 1)
-        calc = ((weight * v) + ((1 - weight) * q)) - penalty
-        return calc
-
-    main["Rtg"] = main.apply(lambda x: weighted(x, count), axis=1)
-    main["Win"] = main.apply(lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1)
-    main["Win"] = main["Win"].round(4)
-
-    main_sorted = main.sort_values(by=["Rtg", "Win"], ascending=[False, False])
-    main_sorted = main_sorted.drop(
-        columns=["SVC", "LOG", "GB", "Win"]
+    bpi_json = get_recent_file(paths.M_ESPN_DIR)
+    bpi_df = pd.DataFrame(bpi_json["rows"], columns=bpi_json["headers"])
+    bpi_df = bpi_df[["team", "rank"]].copy()
+    bpi_df["Team"] = bpi_df.apply(
+        lambda x: teams.getTeamOfficialName(x["team"]), axis=1
     )
-    main_sorted = main_sorted.rename(
-        columns={
-            "Rk": "Kenpom Rank",
-            "Num KP Models": "# Models Kenpom"
-        }
+    bpi_df = bpi_df.rename(columns={"rank": "BPI"})
+    df = pd.merge(df, bpi_df[["BPI", "Team"]].copy(), "inner", "Team")
+    
+    df["BPI"] = df["BPI"].astype(float)
+    df["BPI"] = 1 - (df["BPI"] - 1) / (n - 1)
+    
+    df["Torvik"] = df["Torvik"].astype(float)
+    df["Torvik"] = 1 - (df["Torvik"] - 1) / (n - 1)
+    
+    df["Kenpom"] = df["Kenpom"].astype(float)
+    df["Kenpom"] = 1 - (df["Kenpom"] - 1) / (n - 1)
+    
+    model_cons = 0.4
+    ranks_cons = 0.05
+    df["Pwr"] = df.apply(
+        lambda x: (ranks_cons * x["Torvik"] + model_cons * x["GordTor"] + model_cons * x["GordKen"] + ranks_cons * x["Net"] + ranks_cons * x["Kenpom"] + ranks_cons* x["BPI"]),
+        axis=1,
     )
-    return [main_sorted, winloss]
+    df = df.sort_values("Pwr", ascending=False)
+    df["Ovr"] = range(1, len(df) + 1)
+    
+    
+    save_ranks = scraper.getTeamRanks()
+    date_key = date.isoformat()
+    team_map = df.set_index("Team")[["Record", "Ovr"]].to_dict(orient="index")
+    save_ranks[date_key] = team_map
+    scraper.saveTeamRanks(save_ranks)
+    save_df = df.copy()
+    return df, save_df
 
 
 def predict(date):
-    [all_sorted, winloss] = full_prediction(date)
+    [df, save_df] = full_prediction(date)
 
-    all_sorted = all_sorted.sort_values("Rtg", ascending=False)
-    all_sorted["Record"] = all_sorted.apply(lambda x: getRecordOnly(x, winloss), axis=1)
-    all_sorted["Win"] = all_sorted.apply(
-        lambda x: getWinPer(getRecordOnly(x, winloss)), axis=1
-    )
-    all_sorted["Win"] = all_sorted["Win"].round(4)
-    all_sorted = all_sorted.sort_values(by=["Rtg", "Win"], ascending=[False, False])
-    all_sorted["Ovr"] = range(1, len(all_sorted) + 1)
 
-    save_ranks = scraper.getTeamRanks()
-    date_key = date.isoformat()
+    conf_winners = df.loc[df.groupby(by="Conf")["Pwr"].idxmax()]
 
-    team_map = all_sorted.set_index("Team")[["Record", "Ovr"]].to_dict(orient="index")
-    save_ranks[date_key] = team_map
-
-    scraper.saveTeamRanks(save_ranks)
-
-    # Saving to another df for schedule home
-    save_df = all_sorted.copy()
-
-    conf_winners = all_sorted.loc[all_sorted.groupby(by="Conf")["Rtg"].idxmax()]
-
-    all_sorted["ConfChamp"] = 0
-    all_sorted.loc[conf_winners.index, "ConfChamp"] = 1
+    df["ConfChamp"] = 0
+    df.loc[conf_winners.index, "ConfChamp"] = 1
 
     delta = change.change(date)
 
-    main = pd.merge(all_sorted.reset_index(), delta, "left", "Team").set_index("index")
+    main = pd.merge(df.reset_index(), delta, "left", "Team").set_index("index")
 
     main["Δ 1d"] = main["Δ 1d"].replace(to_replace=0, value="-")
     main["Δ 7d"] = main["Δ 7d"].replace(to_replace=0, value="-")
@@ -645,12 +620,6 @@ def predict(date):
     main["Ovr"] = main.apply(
         lambda x: f'#{x["Ovr"]} (Seed {x["Seed"]})' if x["Seed"] else f'#{x["Ovr"]}',
         axis=1,
-    )
-
-    main["Kenpom Rank"] = main["Kenpom Rank"].astype(int)
-    
-    main["Kenpom"] = (
-        main["Kenpom Rank"].astype(str) + " " + main["# Models Kenpom"].apply(stars)
     )
 
     conf = main.groupby("Conf").size().astype(int).to_dict()
@@ -674,6 +643,9 @@ def predict(date):
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
+    df_html += f"<p>Pwr is derived from using machine learning models on Kenpom & Torvik data in aggregate to calculate tournament probabilties.</p>"
+    df_html += f"<p>This value is then balanced by rankings from ESPN BPI, NCAA Net, Kenpom and Torvik to help rank/seed teams.</p>"
+    df_html += f"<p>Future plans include using machine learning to specifically rank teams seperately from tournament projections.</p>"
     df_html += '<div class="filter-bar">'
     df_html += """{% include global-toggle.html %} """
     df_html += "</div>"

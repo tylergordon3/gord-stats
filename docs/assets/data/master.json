@@ -743,7 +743,8 @@
             "abilenechristian",
             "Abilene Chr.",
             "ABIL",
-            "Abl Christian"
+            "Abl Christian",
+            "Abilene Chrstn"
         ],
         "1": [
             "AFA",
@@ -1173,7 +1174,8 @@
             "csun",
             "CSNorthridge",
             "CSN",
-            "CS Northridge"
+            "CS Northridge",
+            "CSU Northridge"
         ],
         "36": [
             "California Baptist",
@@ -1187,7 +1189,8 @@
             "calbaptist",
             "CBU",
             "CALBPTST",
-            "CABP"
+            "CABP",
+            "CA Baptist"
         ],
         "37": [
             "POLY",
@@ -1218,7 +1221,8 @@
             "cal st bakersfield",
             "Cal St Bakersfield",
             "CS Bakersfield",
-            "CSU Bakersfield"
+            "CSU Bakersfield",
+            "Bakersfield"
         ],
         "39": [
             "Cal State Fullerton",
@@ -1234,7 +1238,8 @@
             "CS Fullerton",
             "CSFULL",
             "CSUF",
-            "Cal St Fullerton"
+            "Cal St Fullerton",
+            "Fullerton"
         ],
         "40": [
             "California",
@@ -1416,7 +1421,8 @@
             "coastalcarolina",
             "C. Carolina",
             "CSTCAR",
-            "Coastal Car"
+            "Coastal Car",
+            "Coastal"
         ],
         "55": [
             "COLGT",
@@ -1941,7 +1947,8 @@
             "gasou",
             "georgiasouthern",
             "Ga. Southern",
-            "Georgia So"
+            "Georgia So",
+            "GA Southern"
         ],
         "101": [
             "Georgia State",
@@ -2056,7 +2063,8 @@
             "rainbow warriors",
             "RAINBOW WARRIORS",
             "haw",
-            "Hawai'i"
+            "Hawai'i",
+            "Hawai’i"
         ],
         "110": [
             "High Point",
@@ -2709,7 +2717,8 @@
             "maryland eastern shore",
             "MARYLAND EASTERN SHORE",
             "marylandeasternshore",
-            "Maryland ES"
+            "Maryland ES",
+            "MD Eastern"
         ],
         "164": [
             "Massachusetts",
@@ -3400,7 +3409,8 @@
             "northwesternst",
             "northwestern st",
             "Northwestern St",
-            "NW State"
+            "NW State",
+            "N'Western St"
         ],
         "219": [
             "Notre Dame",
@@ -3578,7 +3588,8 @@
             "PANTHERS",
             "pitt",
             "pittsburgh",
-            "PITTSBURGH"
+            "PITTSBURGH",
+            "Pitt"
         ],
         "234": [
             "Portland",
@@ -3777,7 +3788,8 @@
             "semo",
             "SE Missouri St.",
             "SE Missouri St",
-            "Southeast Mo. St."
+            "Southeast Mo. St.",
+            "SE Missouri"
         ],
         "252": [
             "SIU-Edwardsville",
@@ -3967,7 +3979,8 @@
             "sanjosest",
             "san jose st",
             "SJST",
-            "San Jose St"
+            "San Jose St",
+            "San José St"
         ],
         "267": [
             "Santa Clara",
@@ -4044,7 +4057,8 @@
             "southcarolinast",
             "south carolina st",
             "South Carolina St",
-            "S Carolina St"
+            "S Carolina St",
+            "SC State"
         ],
         "274": [
             "SDAK",
@@ -4142,7 +4156,8 @@
             "S Indiana",
             "Southern Ind.",
             "S. Indiana",
-            "SIND"
+            "SIND",
+            "So Indiana"
         ],
         "281": [
             "Southern Mississippi",
@@ -4210,7 +4225,8 @@
             "StThMN",
             "UST",
             "St Thomas",
-            "USTMN"
+            "USTMN",
+            "St Thomas (MN)"
         ],
         "286": [
             "Stanford",
@@ -4558,7 +4574,8 @@
             "uc santa barbara",
             "UC SANTA BARBARA",
             "ucsb",
-            "ucsantabarbara"
+            "ucsantabarbara",
+            "Santa Barbara"
         ],
         "317": [
             "UCF",
@@ -4658,7 +4675,6 @@
             "uscup",
             "uscupstate",
             "SC Upstate",
-            "SC State",
             "SCUP"
         ],
         "328": [
@@ -4960,7 +4976,8 @@
             "W. Kentucky",
             "WKY",
             "W Kentucky",
-            "Western Ky."
+            "Western Ky.",
+            "Western KY"
         ],
         "354": [
             "WMY",

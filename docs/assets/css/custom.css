@@ -696,6 +696,18 @@ h1 {
   text-align: center;
 }
 
+h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+}
+
+p {
+  text-align: center;
+}
+
 .conference-title {
   margin: 0 0 8px;
   font-size: 18px;
