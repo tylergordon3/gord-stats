@@ -146,15 +146,6 @@ function enrichGame (g) {
   const finalPeriod = isWomens ? 4 : 2
 
   const periodNum = parseInt(g.period, 10)
-  console.log({
-    period: g.period,
-    gender: g.gender,
-    parsed: parseInt(g.period, 10),
-    finalPeriod,
-    isWomens,
-    clockSeconds,
-    isLive
-  })
   const isLate =
     isLive &&
     periodNum >= finalPeriod &&
@@ -184,33 +175,41 @@ function gamePriority (g) {
   const isHalftime = status === 'half_over'
   const isFinal = status === 'final'
   const isPre = status === 'pre_game' || status === 'scheduled'
+  const isOT = status === 'OT'
 
   function gameProgressScore (g) {
-    const currentPeriod = Number(g.period) || 1
+    let currentPeriod
+    if (isOT) {
+      currentPeriod = LEAGUE === 'men' ? 3 : 5
+    } else {
+      currentPeriod = parseInt(g.period, 10) || 1
+    }
+
     const clockSeconds = g.clock ? parseClockToSeconds(g.clock) : 0
 
     // Estimate % complete
-    const periodLength = LEAGUE === 'men' ? 1200 : 600 // 10 min vs 20 min
-    const secondsIntoGame =
-      (currentPeriod - 1) * periodLength + (periodLength - clockSeconds)
+    const periodLength = LEAGUE === 'men' ? 1200 : 600 // 1200 sec - 20 min men | 600 sec - 10 min women
 
+    const secondsIntoGame =
+      ((currentPeriod - 1) * periodLength) + (periodLength - clockSeconds)
     return secondsIntoGame
   }
 
   if (isLive && !isHalftime) {
-    return 2400 - gameProgressScore(g)
+    return gameProgressScore(g)
   }
 
+  if (isOT) return 2700
   // 3️⃣ Halftime
-  if (isHalftime) return 2400
+  if (isHalftime) return 0
 
   // 4️⃣ Pregame
-  if (isPre) return 8000
+  if (isPre) return -1
 
   // 5️⃣ Final always bottom
-  if (isFinal) return 10000
+  if (isFinal) return -2
 
-  return 20000
+  return -3
 }
 
 function gameTime (g) {
@@ -566,7 +565,7 @@ function renderGames (games, medalByDate = {}) {
       const pa = gamePriority(a.g)
       const pb = gamePriority(b.g)
 
-      if (pa !== pb) return pa - pb
+      if (pa !== pb) return pb - pa
 
       return gameTime(a.g) - gameTime(b.g)
     })
