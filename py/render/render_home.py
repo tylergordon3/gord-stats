@@ -1,9 +1,10 @@
 import utils
 import html_util
 
+
 def render_home():
     # Use a raw string (r''') to handle any special characters safely
-    html = r'''
+    html = r"""
     {% include countdown.html %} 
     <div class="home-grid">
       <div class="home-left">
@@ -20,14 +21,11 @@ def render_home():
       </div>
 
       <div class="home-right">
-        <div class="twitter-title">Live Updates</div>
-        <a class="twitter-timeline"
-           data-theme="dark"
-           data-height="520"
-           href="https://twitter.com/JonRothstein?ref_src=twsrc%5Etfw">
-           Tweets by JonRothstein
-        </a>
+        <blockquote class="twitter-tweet"><p lang="en" dir="ltr">This is March.</p>&mdash; Jon Rothstein (@JonRothstein) <a href="https://twitter.com/JonRothstein/status/1498523424167243778?ref_src=twsrc%5Etfw">March 1, 2022</a></blockquote> 
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
       </div>
+
+      
     </div>
     
    <script>
@@ -42,8 +40,8 @@ def render_home():
     return t;
   }(document, "script", "twitter-wjs"));
 </script>
-    '''
-    path = utils.get_path('docs/index.html')
+    """
+    path = utils.get_path("docs/index.html")
     html = html_util.add_front_matter(html, "GordStats Home")
 
     with open(path, "w") as f:
