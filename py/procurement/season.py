@@ -26,48 +26,43 @@ LEAGUES = {
     "women": {"path": "wcbk", "label": "women"},
 }
 
-def get_conference_strings(league_path):
+def get_all_events(league_path):
+
     resp = requests.get(
-        f"{BASE}/{league_path}/events/conferences", headers=HEADERS, timeout=10
+        f"{BASE}/{league_path}/schedule",
+        params={"utc_offset": UTC_OFFSET_SECONDS},
+        headers=HEADERS,
+        timeout=10,
     )
+
     resp.raise_for_status()
+    sched = resp.json()
+    file = paths.SCHEDULE_DATA / Path(f"{league_path}_season.json")
+    with open(file, "w") as f:
+        json.dump(sched['current_season'], f, indent=4)
 
-    payload = resp.json()
-    confs = set()
+def save_all():
+    for league_key in ("men", "women"):
+        cfg = LEAGUES[league_key]
+        league_path = cfg["path"]
+        get_all_events(league_path)
 
-    for block in payload:
-        for c in block.get("conferences", []):
-            confs.add(c)
 
-    return sorted(confs)
+def parse(gender="M"):
+    file = paths.SCHEDULE_DATA / Path(f"ncaab_season.json")
+    with open(file, "r") as f:
+        data = json.load(f)
 
-def get_all_events(league_path, conference_strings):
-    all_ids = set()
+    # guid        : ncaab:2025-11-03
+    # id          : 2025-11-03
+    # label       : Nov 3
+    # start_date  : 2025-11-03T08:00:00-05:00
+    # end_date    : 2025-11-04T07:59:59-05:00
+    # season_type : regular
+    # event_ids   : [nums]
+    # print(data[0].keys())
+    filtered = {}
+    for day in data:
+        filtered[day['id']] = day['event_ids']
 
-    for conf in conference_strings:
-        if conf in SKIP_CONFERENCES:
-            continue
-
-        resp = requests.get(
-            f"{BASE}/{league_path}/schedule",
-            params={"utc_offset": UTC_OFFSET_SECONDS},
-            headers=HEADERS,
-            timeout=10,
-        )
-        resp.raise_for_status()
-        sched = resp.json()
-        file = paths.SCHEDULE_DATA / Path("season.json")
-        with open(file, "w") as f:
-            json.dump(sched, f, indent=4)
-        # sched -> dict_keys(['current_season', 'current_group'])
-        
-
-def main():
-    league_key = "men"
-    cfg = LEAGUES[league_key]
-    league_path = cfg["path"]
-    conferences = get_conference_strings(league_path)
-    events = get_all_events(league_path, conferences)
-
-if __name__ == "__main__":
-    main()
+parse()
