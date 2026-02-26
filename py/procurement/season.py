@@ -47,6 +47,24 @@ def save_all():
         league_path = cfg["path"]
         get_all_events(league_path)
 
+def chunks(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]
+
+def fetch_events_by_ids(event_ids, league_path):
+    events = []
+
+    for batch in chunks(event_ids, BATCH_SIZE):
+        resp = requests.get(
+            f"{BASE}/{league_path}/events",
+            params={"id.in": ",".join(map(str, batch))},
+            headers=HEADERS,
+            timeout=10,
+        )
+        resp.raise_for_status()
+        events.extend(resp.json())
+
+    return events
 
 def parse(gender="M"):
     file = paths.SCHEDULE_DATA / Path(f"ncaab_season.json")
@@ -64,5 +82,22 @@ def parse(gender="M"):
     filtered = {}
     for day in data:
         filtered[day['id']] = day['event_ids']
-
+    
+    events = fetch_events_by_ids(filtered["2025-11-03"], 'ncaab')
+    # print(events[0].keys())
+    # dict_keys(['box_score', 'important', 'slot', 'tournament_name', 
+    # 'odd', 'subscribable_alerts', 'location', 'stadium', 
+    # 'away_conference', 'home_conference', 'has_team_twitter_handles', 
+    # 'standings', 'colours', 'conference_names', 'has_play_by_play_records', 
+    # 'stubhub_url', 'away_team', 'home_team', 'league', 'if_necessary', 
+    # 'away_ranking', 'home_ranking', 'top_25_rankings', 'id', 
+    # 'event_status', 'game_date', 'game_type', 'game_description', 'tba', 
+    # 'updated_at', 'bet_works_id', 'betradar_id', 'status', 'api_uri', 
+    # 'resource_uri', 'top_match'])
+    scores = events[0]['box_score']['score']
+    home_score = events[0]['box_score']['score']['home']['score']
+    away_score = events[0]['box_score']['score']['away']['score']
+    away = events[0]['away_team']['medium_name']
+    home = events[0]['home_team']['medium_name']
+    print(f"{home} {home_score} - {away} {away_score} ")
 parse()
