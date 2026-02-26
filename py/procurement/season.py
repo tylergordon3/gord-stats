@@ -1,4 +1,7 @@
 import requests
+import json
+from ..lib import paths
+from pathlib import Path
 # =========================
 # CONFIG
 # =========================
@@ -53,8 +56,11 @@ def get_all_events(league_path, conference_strings):
         )
         resp.raise_for_status()
         sched = resp.json()
-
-        print(sched)
+        file = paths.SCHEDULE_DATA / Path("season.json")
+        with open(file, "w") as f:
+            json.dump(sched, f, indent=4)
+        # sched -> dict_keys(['current_season', 'current_group'])
+        
 
 def main():
     league_key = "men"

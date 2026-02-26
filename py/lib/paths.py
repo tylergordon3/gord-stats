@@ -27,6 +27,7 @@ DOCS = ROOT / Path("docs")
 M_DATA = DATA / Path("men")
 W_DATA = DATA / Path("women")
 OTHER_DATA = DATA / Path("refs")
+SCHEDULE_DATA = DATA / Path("schedule")
 
 M_KEN_DIR = M_DATA / Path("kenpom_api")
 M_KEN_OLD_DIR = M_DATA / Path("kenpom")
