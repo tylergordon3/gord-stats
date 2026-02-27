@@ -1,30 +1,50 @@
-_pycache_
-_pycache_/*
-__pycache__/constants.cpython-311.pyc
-__pycache__/model.cpython-311.pyc
-__pycache__/predictions.cpython-311.pyc
-__pycache__/scraper.cpython-311.pyc
-__pycache__/utils.cpython-311.pyc
-venv/*
-py/__pycache__/
-py/__pycache__/*
+# ========================
+# Python
+# ========================
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# Virtual environments
+.env
+.venv/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Pytest / tooling
+.pytest_cache/
+.mypy_cache/
+
+# VS Code
+.vscode/
+
+# ========================
+# Jekyll / Docs build
+# ========================
+
 docs/_site/
 docs/.jekyll-cache/
 docs/.sass-cache/
-.bundle
-vendor
-py/render/__pycache__/render_home.cpython-311.pyc
-py/render/__pycache__/render_home.cpython-311.pyc
-py/render/__pycache__/render_home.cpython-311.pyc
-.wrangler/*
-py/render/__pycache__/render_home.cpython-311.pyc
-py/render/__pycache__/render_home.cpython-311.pyc
-py/render/__pycache__/render_home.cpython-311.pyc
-py/render/__pycache__
-.sass-cache
-.env
-py/lib/__pycache__/paths.cpython-311.pyc
-py/lib/__pycache__
-.vscode
-py/models/__pycache__
-py/procurement/__pycache__
+.sass-cache/
+
+# Ruby / Bundler
+.bundle/
+vendor/
+
+# ========================
+# Cloudflare Wrangler
+# ========================
+
+.wrangler/
+
+# ========================
+# OS
+# ========================
+
+.DS_Store
+Thumbs.db

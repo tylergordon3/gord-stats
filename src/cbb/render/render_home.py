@@ -1,8 +1,9 @@
----
-layout: default
-title: GordStats Home
----
-<h1>GordStats Home</h1>
+from cbb import html_util
+from cbb.lib import paths
+
+def render_home():
+    # Raw string to preserve formatting
+    html = r"""
     {% include countdown.html %} 
     <div class="home-grid">
       <div class="home-left">
@@ -39,4 +40,13 @@ title: GordStats Home
         return t;
       }(document, "script", "twitter-wjs"));
     </script>
-    
+    """
+
+    path = paths.WEB_HOME
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    html = html_util.add_front_matter(html, "GordStats Home")
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(html)
+        print(f"Wrote to: {path}")
