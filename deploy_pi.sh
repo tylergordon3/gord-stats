@@ -62,7 +62,7 @@ fi
 DEPLOY_LOG+="<b>Host:</b> $HOSTNAME<br>"
 DEPLOY_LOG+="<b>Start Time:</b> $(date)<br><br>"
 
-cd "$(dirname "$0")"
+cd "$(git rev-parse --show-toplevel)"
 
 ########################################
 # GIT PREP
@@ -102,8 +102,8 @@ DEPLOY_LOG+="Conda env: $CONDA_DEFAULT_ENV<br>"
 ########################################
 # DATA GENERATION
 ########################################
-
-python py/main.py
+pip install -e . >/dev/null 2>&1
+python -m cbb.main
 DEPLOY_LOG+="Data generation completed.<br>"
 
 ########################################

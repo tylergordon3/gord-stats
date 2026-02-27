@@ -15,7 +15,7 @@ echo "🖥️ Host: $HOSTNAME"
 echo "🌱 Target branch: $TARGET_BRANCH"
 
 # Always run from repo root
-cd "$(dirname "$0")"
+cd "$(git rev-parse --show-toplevel)"
 
 # Ensure correct git branch
 CURRENT_BRANCH="$(git branch --show-current)"
@@ -56,7 +56,8 @@ fi
 echo "📦 Using bundler: $(which bundle)"
 
 echo "🐍 Running data generation..."
-python py/main.py
+pip install -e . >/dev/null 2>&1
+python -m cbb.main
 
 echo "🧹 Cleaning old Jekyll build..."
 bundle exec jekyll clean \

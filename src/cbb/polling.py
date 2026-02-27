@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from cbb import utils
+from cbb.lib import paths
 
 # -----------------------------
 # Constants
@@ -182,7 +183,12 @@ def polling_rate_now(now, zones, daily_plan, default_idle=3600):
 
 
 def calculate_rate():
-    with open(utils.get_path("data/live_scores.json")) as f:
+    live_path = paths.DATA / "live_scores.json"
+
+    if not live_path.exists():
+        return 1800  # default idle if no data yet
+
+    with open(live_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     leagues = data.get("leagues", {})

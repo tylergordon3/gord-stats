@@ -5,7 +5,8 @@ import time
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from cbb import polling, push_scores, scraper_pro, utils
+from cbb import polling, push_scores, scraper_pro
+from cbb.lib import paths
 
 EASTERN = ZoneInfo("America/New_York")
 DEPLOY_HOUR = 8  # 8 AM Eastern
@@ -53,7 +54,12 @@ def seconds_until_next_game():
     or None if no upcoming games.
     """
     try:
-        with open(utils.get_path("data/live_scores.json")) as f:
+        live_path = paths.DATA / "live_scores.json"
+
+        if not live_path.exists():
+            return None
+
+        with open(live_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         leagues = data.get("leagues", {})
@@ -97,8 +103,11 @@ def task(poll_rate):
     }
 
     # --- save locally (optional) ---
-    path = utils.get_path("data/live_scores.json")
-    with open(path, "w") as f:
+    path = paths.DATA / "live_scores.json"
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
 
     total_games = len(men["games"]) + len(women["games"])
@@ -138,7 +147,7 @@ def maybe_deploy():
 
     try:
         subprocess.run(
-            [DEPLOY_SCRIPT],
+            [str(DEPLOY_SCRIPT)],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -157,7 +166,7 @@ BASE_INTERVAL = 30  # always wait this after success
 BASE_BACKOFF = 30  # starting backoff on failure
 MAX_BACKOFF = 1200  # cap at 20 minutes
 DEPLOY_INTERVAL = timedelta(hours=6)
-DEPLOY_SCRIPT = "./deploy_pi.sh"
+DEPLOY_SCRIPT = paths.ROOT / "deploy_pi.sh"
 
 last_deploy = None
 attempt = 0

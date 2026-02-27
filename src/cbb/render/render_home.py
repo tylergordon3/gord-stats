@@ -1,6 +1,7 @@
 from cbb import html_util
 from cbb.lib import paths
 
+
 def render_home():
     # Raw string to preserve formatting
     html = r"""
