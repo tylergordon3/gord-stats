@@ -1,5 +1,5 @@
 import pandas as pd
-from lib import paths
+from ..lib import paths
 
 def getTeams():
     """
@@ -35,7 +35,7 @@ def getTeamInfo(team):
         df_result = master[boolean_mask_original]
         if df_result.empty:
             print(f"getTeamInfo did not find match for: {team}")
-            return team
+            return None
         else:
             return df_result
     except:
@@ -72,7 +72,7 @@ def getTeamOfficialName(team):
     try:
         return list(result.team)[0]
     except:
-        return team
+        return None
 
 
 def getTeamIndex(team):

@@ -841,17 +841,15 @@
         ],
         "8": [
             "American University",
-            "Eagles",
             "AMERU",
             "American",
             "american university",
             "AMERICAN UNIVERSITY",
-            "eagles",
-            "EAGLES",
             "ameru",
             "american",
             "AMERICAN",
-            "AMER"
+            "AMER",
+            "American U"
         ],
         "9": [
             "APP",
@@ -921,7 +919,8 @@
             "arkansaspinebluff",
             "ARKPB",
             "Ark.-Pine Bluff",
-            "AR-Pine Bluff"
+            "AR-Pine Bluff",
+            "Ark Pine Bluff"
         ],
         "14": [
             "ARST",
@@ -1045,7 +1044,8 @@
             "bethunecookman",
             "BCU",
             "Bethune-Cook.",
-            "Bethune"
+            "Bethune",
+            "Bethune-Cook"
         ],
         "24": [
             "Binghamton",
@@ -1300,7 +1300,8 @@
             "CCTST",
             "CCTST",
             "C Connecticut",
-            "Central Conn. St."
+            "Central Conn. St.",
+            "Central Connecticut St."
         ],
         "45": [
             "Central Michigan",
@@ -1372,7 +1373,8 @@
             "chicago st",
             "CHST",
             "CHIST",
-            "Chicago St"
+            "Chicago St",
+            "Chicago State"
         ],
         "51": [
             "Cincinnati",
@@ -1741,7 +1743,8 @@
             "easternwashington",
             "E. Washington",
             "E Washington",
-            "Eastern Wash."
+            "Eastern Wash.",
+            "Eastern Wash"
         ],
         "82": [
             "Phoenix",
@@ -1916,7 +1919,8 @@
             "George Wash.",
             "GWASH",
             "G Washington",
-            "GWU"
+            "GWU",
+            "George Wash"
         ],
         "98": [
             "Hoyas",
@@ -2086,12 +2090,9 @@
         ],
         "112": [
             "Holy Cross",
-            "Crusaders",
             "HC",
             "holy cross",
             "HOLY CROSS",
-            "crusaders",
-            "CRUSADERS",
             "hc",
             "holycross",
             "HOLY"
@@ -2415,7 +2416,8 @@
             "LIU",
             "long island",
             "LONG ISLAND",
-            "liu"
+            "liu",
+            "LIU Sharks"
         ],
         "138": [
             "LSU",
@@ -2718,7 +2720,8 @@
             "MARYLAND EASTERN SHORE",
             "marylandeasternshore",
             "Maryland ES",
-            "MD Eastern"
+            "MD Eastern",
+            "MD-East Shore"
         ],
         "164": [
             "Massachusetts",
@@ -3245,7 +3248,8 @@
             "ncat",
             "nc a&t",
             "northcarolinaa&t",
-            "N.C. A&T"
+            "N.C. A&T",
+            "N Carolina A&T"
         ],
         "206": [
             "North Carolina Central",
@@ -3255,7 +3259,8 @@
             "nccu",
             "northcarolinacentral",
             "NC Central",
-            "N.C. Central"
+            "N.C. Central",
+            "N Carolina Cent"
         ],
         "207": [
             "North Dakota",
@@ -3789,7 +3794,8 @@
             "SE Missouri St.",
             "SE Missouri St",
             "Southeast Mo. St.",
-            "SE Missouri"
+            "SE Missouri",
+            "SE Missouri State"
         ],
         "252": [
             "SIU-Edwardsville",
@@ -3797,7 +3803,8 @@
             "siu-edwardsville",
             "SIU-EDWARDSVILLE",
             "siue",
-            "SIU Edward"
+            "SIU Edward",
+            "SIU Edwardsville"
         ],
         "253": [
             "Southern Methodist",
@@ -4058,7 +4065,8 @@
             "south carolina st",
             "South Carolina St",
             "S Carolina St",
-            "SC State"
+            "SC State",
+            "S.C. State"
         ],
         "274": [
             "SDAK",
@@ -4127,6 +4135,7 @@
             "subr",
             "sthrn",
             "Southern U.",
+            "Southern U",
             "SOU"
         ],
         "279": [
@@ -4141,7 +4150,8 @@
             "S. Illinois",
             "SILL",
             "S Illinois",
-            "Southern Ill."
+            "Southern Ill.",
+            "Southern Ill"
         ],
         "280": [
             "Southern Indiana",
@@ -4417,7 +4427,8 @@
             "TEXAS A&M CORPUS CHRIS",
             "texasa&mcorpuschris",
             "A&M-Corpus Christi",
-            "TAMC"
+            "TAMC",
+            "Tex A&M CC"
         ],
         "302": [
             "Tigers",
@@ -4471,7 +4482,8 @@
             "THE CITADEL",
             "ctdl",
             "cit",
-            "thecitadel"
+            "thecitadel",
+            "Citadel"
         ],
         "306": [
             "U of T",
@@ -4607,15 +4619,13 @@
         ],
         "321": [
             "UMass Lowell",
-            "River Hawks",
             "UML",
             "umass lowell",
             "UMASS LOWELL",
-            "river hawks",
-            "RIVER HAWKS",
             "uml",
             "umasslowell",
-            "MASLOW"
+            "MASLOW",
+            "MA-Lowell"
         ],
         "322": [
             "UNC Asheville",
@@ -4705,7 +4715,8 @@
             "ut rio grande valley",
             "UT RIO GRANDE VALLEY",
             "utriograndevalley",
-            "UT Rio Grande"
+            "UT Rio Grande",
+            "Tex Rio Grande"
         ],
         "330": [
             "UTEP",
@@ -4765,7 +4776,8 @@
             "UTAH VALLEY",
             "uvu",
             "utahvalley",
-            "UTVALL"
+            "UTVALL",
+            "Utah Valley "
         ],
         "336": [
             "VCU",
@@ -4780,7 +4792,8 @@
             "VMI",
             "virginia military",
             "VIRGINIA MILITARY",
-            "vmi"
+            "vmi",
+            "VA Military"
         ],
         "338": [
             "VALP",

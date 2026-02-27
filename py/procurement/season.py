@@ -1,6 +1,6 @@
 import requests
 import json
-from ..lib import paths
+from ..lib import paths, teams
 from pathlib import Path
 # =========================
 # CONFIG
@@ -83,7 +83,6 @@ def parse(gender="M"):
     for day in data:
         filtered[day['id']] = day['event_ids']
     
-    events = fetch_events_by_ids(filtered["2025-11-03"], 'ncaab')
     # print(events[0].keys())
     # dict_keys(['box_score', 'important', 'slot', 'tournament_name', 
     # 'odd', 'subscribable_alerts', 'location', 'stadium', 
@@ -94,10 +93,29 @@ def parse(gender="M"):
     # 'event_status', 'game_date', 'game_type', 'game_description', 'tba', 
     # 'updated_at', 'bet_works_id', 'betradar_id', 'status', 'api_uri', 
     # 'resource_uri', 'top_match'])
-    scores = events[0]['box_score']['score']
-    home_score = events[0]['box_score']['score']['home']['score']
-    away_score = events[0]['box_score']['score']['away']['score']
-    away = events[0]['away_team']['medium_name']
-    home = events[0]['home_team']['medium_name']
-    print(f"{home} {home_score} - {away} {away_score} ")
+    
+    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    with open(file, "r") as f:
+        all = json.load(f)
+
+    for key in filtered:
+ 
+        games = fetch_events_by_ids(filtered[key], 'ncaab')
+        for g in games:
+  
+            away = g['away_team']['medium_name']
+            home = g['home_team']['medium_name']
+
+            away_check = teams.getTeamOfficialName(away)
+            home_check = teams.getTeamOfficialName(home)
+
+            if away_check != None:
+                all[away_check] = {}
+            if home_check != None:
+                all[home_check] = {}
+    
+
+    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    with open(file, "w") as f:
+        json.dump(all, f, indent=4)
 parse()
