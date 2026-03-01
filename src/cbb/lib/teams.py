@@ -24,7 +24,7 @@ def saveTeams(df):
     df.to_json(paths.MASTER_DICT)
 
 
-def getTeamInfo(team):
+def getTeamInfo(team, debug=True):
     """
     Returns row from team array
     """
@@ -36,12 +36,12 @@ def getTeamInfo(team):
         boolean_mask_original = boolean_mask_exploded.groupby(level=0).any()
         df_result = master[boolean_mask_original]
         if df_result.empty:
-            print(f"getTeamInfo did not find match for: {team}")
+            if debug: print(f"getTeamInfo did not find match for: {team}")
             return None
         else:
             return df_result
     except:
-        print(f"getTeamInfo had an exception for: {team}")
+        if debug: print(f"getTeamInfo had an exception for: {team}")
         return team
 
 
@@ -61,7 +61,7 @@ def getTeamNickname(team):
         return team
 
 
-def getTeamOfficialName(team):
+def getTeamOfficialName(team, debug=True):
     """
     Get official name we are using for team.
 
@@ -70,7 +70,7 @@ def getTeamOfficialName(team):
     :return: Official Name
     :rtype: string
     """
-    result = getTeamInfo(team)
+    result = getTeamInfo(team, debug)
     try:
         return list(result.team)[0]
     except:
