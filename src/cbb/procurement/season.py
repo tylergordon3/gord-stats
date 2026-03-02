@@ -171,5 +171,19 @@ def parse(gender="M"):
     file = paths.SCHEDULE_DATA / Path(f"men_season.json")
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
-save_all()
-parse()
+
+
+def getLastX(x):
+    master = teams.getTeams()
+    team_keys = master['team']
+
+    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    with open(file, "r") as f:
+        all = json.load(f)
+    last_x_dict = {}
+    for team in team_keys:
+        dict = all[team]
+        last_x = list(dict.keys())[-x:]
+        results = [dict[x]['win'] for x in last_x]
+        last_x_dict[team] = results
+    return last_x_dict
