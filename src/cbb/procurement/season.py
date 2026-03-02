@@ -177,3 +177,5 @@ def parse(gender="M"):
     file = paths.SCHEDULE_DATA / Path(f"men_season.json")
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
+save_all()
+parse()
