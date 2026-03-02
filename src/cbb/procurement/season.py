@@ -51,6 +51,7 @@ def save_all():
         cfg = LEAGUES[league_key]
         league_path = cfg["path"]
         get_all_events(league_path)
+        print(f"Done saving for: {league_key}")
 
 
 def chunks(lst, n):
@@ -99,8 +100,6 @@ def parse_g(game):
             away_check,
             home_score,
             away_score,
-            home_score,
-            away_score,
             home_win,
             away_win,
         ]
@@ -112,20 +111,11 @@ def parse(gender="M"):
     with open(file, "r") as f:
         data = json.load(f)
 
-    # guid        : ncaab:2025-11-03
-    # id          : 2025-11-03
-    # label       : Nov 3
-    # start_date  : 2025-11-03T08:00:00-05:00
-    # end_date    : 2025-11-04T07:59:59-05:00
-    # season_type : regular
-    # event_ids   : [nums]
-    # print(data[0].keys())
     filtered = {}
     for day in data:
         filtered[day["id"]] = day["event_ids"]
 
-    # print(events[0].keys())
-    # dict_keys(['box_score', 'important', 'slot', 'tournament_name',
+    # 'box_score', 'important', 'slot', 'tournament_name',
     # 'odd', 'subscribable_alerts', 'location', 'stadium',
     # 'away_conference', 'home_conference', 'has_team_twitter_handles',
     # 'standings', 'colours', 'conference_names', 'has_play_by_play_records',
@@ -133,7 +123,7 @@ def parse(gender="M"):
     # 'away_ranking', 'home_ranking', 'top_25_rankings', 'id',
     # 'event_status', 'game_date', 'game_type', 'game_description', 'tba',
     # 'updated_at', 'bet_works_id', 'betradar_id', 'status', 'api_uri',
-    # 'resource_uri', 'top_match'])
+    # 'resource_uri', 'top_match'
 
     file = paths.SCHEDULE_DATA / Path(f"men_season.json")
     with open(file, "r") as f:
@@ -150,6 +140,10 @@ def parse(gender="M"):
                 home_check = elements[2]
                 away_check = elements[3]
                 
+                # 4 - home score
+                # 5 - away score
+                # 6 - home win
+                # 7 - away win
                 if home_check != None:
                     home = home_check
                 
@@ -158,20 +152,20 @@ def parse(gender="M"):
                 
                 if home_check != None:
                     all[home_check][key] = {
-                        "win" : elements[8],
+                        "win" : elements[6],
                         "location" : "home",
-                        "score" : elements[6],
+                        "score" : elements[4],
                         "opponent" : away,
-                        "opponent_score" : elements[4]
+                        "opponent_score" : elements[5]
                     }
                     
                 if away_check != None:
                     all[away_check][key] = {
-                        "win" : elements[9],
+                        "win" : elements[7],
                         "location" : "away",
-                        "score" : elements[7],
+                        "score" : elements[5],
                         "opponent" : home,
-                        "opponent_score" : elements[5]
+                        "opponent_score" : elements[4]
                     }
 
     file = paths.SCHEDULE_DATA / Path(f"men_season.json")
