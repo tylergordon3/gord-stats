@@ -183,6 +183,14 @@ def format_event(g, ranks, master, ats, net, bpi):
     home_record = ranks[home_name]["Record"] if home_name else ""
     away_record = ranks[away_name]["Record"] if away_name else ""
 
+    home_record_last_ten = g['standings']['home']['last_ten_games_record']
+    away_record_last_ten = g['standings']['away']['last_ten_games_record']
+
+    home_conf_seed = g['standings']['home']['conference_seed']
+    away_conf_seed = g['standings']['away']['conerence_seed']
+
+    game_type = g['game_type']
+
     def safe_float(x):
         try:
             return float(x)
@@ -295,6 +303,13 @@ def format_event(g, ranks, master, ats, net, bpi):
         # betting
         "spread_close": spread_close,
         "total_close": total_close,
+
+        #standings/record
+        "home_last_ten" : home_record_last_ten,
+        "away_last_ten" : away_record_last_ten,
+        "home_conf_seed" : home_conf_seed,
+        "away_conf_seed" : away_conf_seed,
+        "game_type" : game_type,
     }
 
 
