@@ -1,6 +1,7 @@
 """
 Scraping ESPN BPI Data
-Source: https://github.com/pseudo-r/Public-ESPN-API?tab=readme-ov-file#base-urls
+Source:
+https://github.com/pseudo-r/Public-ESPN-API?tab=readme-ov-file#base-urls
 """
 
 import json
@@ -11,7 +12,7 @@ import pytz
 import requests
 
 from cbb import utils
-from cbb.lib import paths
+from cbb.lib import paths, url
 
 
 def save_id(dict):
@@ -19,8 +20,6 @@ def save_id(dict):
         json.dump(dict, file, indent=4)
         return dict
 
-
-BASE = "https://site.web.api.espn.com/apis/fitt/v3/sports/basketball/mens-college-basketball/powerindex"
 
 params = {
     "groups": 50,
@@ -86,14 +85,14 @@ def parse_team_entry(entry):
 def main():
     teams = []
 
-    r = requests.get(BASE, params={**params, "page": 1})
+    r = requests.get(url.NCAAM_BPI, params={**params, "page": 1})
     data = r.json()
 
     pages = data["pagination"]["pages"]
     teams.extend(data["teams"])
 
     for page in range(2, pages + 1):
-        r = requests.get(BASE, params={**params, "page": page})
+        r = requests.get(url.NCAAM_BPI, params={**params, "page": page})
         teams.extend(r.json()["teams"])
 
     rows = [parse_team_entry(t) for t in teams]
@@ -127,7 +126,7 @@ def get_today_bpi():
     # Otherwise get most recent file
     files = sorted(
         bpi_dir.glob("*.json"),
-        key=lambda f: f.name,  # filenames are YYYY-MM-DD.json so this works
+        key=lambda f: f.name,
         reverse=True,
     )
 

@@ -188,8 +188,5 @@ def getLastX(x):
         last_x_dict[team] = results
     return last_x_dict
 
-save_all()
-parse()
-
 def last_night_results():
     return

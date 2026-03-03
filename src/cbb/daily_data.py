@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytz
 
-from cbb import ats, bpi, kenpom, net, scraper
 from cbb.lib import paths
+from cbb.scrape import ats, bpi, kenpom, net, torvik
 
 RETRY_SLEEP = 300
 MAX_RETRIES = 5
@@ -24,13 +24,13 @@ def main():
     today = now.strftime("%Y-%m-%d")
     fp = Path(f"{today}.json")
     targets = {
-        "Men's Torvik": (paths.M_TOR_DIR / fp, lambda: scraper.torvik(today)),
+        "Men's Torvik": (paths.M_TOR_DIR / fp, lambda: torvik.mens_tor(today)),
         "Men's ATS": (paths.M_ATS_DIR / fp, lambda: ats.main()),
         "KenPom": (paths.M_KEN_DIR / fp, kenpom.kenpom_now),
         "Men's Net Rankings": (paths.M_NET_DIR / fp, lambda: net.main("M")),
         "ESPN BPI": (paths.M_ESPN_DIR / fp, bpi.main),
         "Women's Net Rankings": (paths.W_NET_DIR / fp, lambda: net.main("W")),
-        "Women's Torvik": (paths.W_TOR_DIR / fp, lambda: scraper.torvik_w(today)),
+        "Women's Torvik": (paths.W_TOR_DIR / fp, lambda: torvik.womens_tor(today)),
     }
 
     success = True

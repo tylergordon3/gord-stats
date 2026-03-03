@@ -5,8 +5,9 @@ from datetime import datetime
 import pytz
 import requests
 
-from cbb import ats, bpi, net, scraper, utils
+from cbb import scraper, utils
 from cbb.push_scores import push
+from cbb.scrape import ats, bpi, net
 
 # =========================
 # CONFIG

@@ -6,17 +6,23 @@ import pytz
 import requests
 from bs4 import BeautifulSoup
 
-from cbb import utils
 from cbb.lib import paths, url
 
-URL = "https://www.teamrankings.com/ncb/trends/ats_trends/"
 
-
-def parse_to_df(url):
-    resp = requests.get(url)
+def main(gender):
+    now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
+    str = now.strftime("%Y-%m-%d")
+    if gender == "M":
+        resp = requests.get(url.NCAAM_NET)
+        path = paths.M_NET_DIR / f"{str}.json"
+    elif gender == "W":
+        resp = requests.get(url.NCAAW_NET)
+        path = paths.W_NET_DIR / f"{str}.json"
+    else:
+        print("Invalid gender given to net.main()!")
+        return None
     soup = BeautifulSoup(resp.content, "html.parser")
     table = soup.find("table")
-
     headers = table.find_all("tr")[0]
     rows = table.find_all("tr")[1:]
 
@@ -37,34 +43,28 @@ def parse_to_df(url):
             row_data.append(cell_text)
         table_data.append(row_data)
     df = pd.DataFrame(columns=cols, data=table_data)
-    return df
 
-
-def main():
-    df_ats = parse_to_df(url.NCAAM_ATS)
-    df_ou = parse_to_df(url.NCAAM_OU)
-
-    df = pd.merge(df_ats, df_ou, how="inner", on="Team")
-
-    now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
-    str = now.strftime("%Y-%m-%d")
     payload = {
         "headers": list(df.columns),
         "rows": df.values.tolist(),
     }
-
-   # path = utils.get_path(f"data/men/ats/{str}.json")
-    path = paths.M_ATS_DIR / f"{str}.json"
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=4)
+        print(f"Scraped NET data for: {str}")
 
 
-def get_today_ats():
-    ats_dir = paths.M_ATS_DIR
+def get_today_net(gender):
+    if gender == "M":
+        net_dir = paths.M_NET_DIR
+    elif gender == "W":
+        net_dir = paths.W_NET_DIR
+    else:
+        print("Invalid gender given to get_today_net.")
+        return None
 
     # Today's filename
     today_str = datetime.now().strftime("%Y-%m-%d")
-    today_file = ats_dir / f"{today_str}.json"
+    today_file = net_dir / f"{today_str}.json"
 
     # If today's file exists, return it
     if today_file.exists():
@@ -72,7 +72,7 @@ def get_today_ats():
 
     # Otherwise get most recent file
     files = sorted(
-        ats_dir.glob("*.json"),
+        net_dir.glob("*.json"),
         key=lambda f: f.name,  # filenames are YYYY-MM-DD.json so this works
         reverse=True,
     )
