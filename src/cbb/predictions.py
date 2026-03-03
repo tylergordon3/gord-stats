@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 from pytz import timezone
 
-from cbb import change, html_util, scraper, utils
-from cbb.lib import paths, teams
+from cbb import change, scraper, utils
+from cbb.lib import html_util, paths, teams
 
 
 def seed_helper(x):

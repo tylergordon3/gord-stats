@@ -1,4 +1,4 @@
-from cbb import html_util
+from cbb.lib import html_util
 from cbb.lib import paths
 
 

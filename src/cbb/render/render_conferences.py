@@ -1,7 +1,7 @@
 import pandas as pd
 
-from cbb import html_util, utils
-from cbb.lib import paths
+from cbb import utils
+from cbb.lib import html_util, paths
 
 
 def filter(df, conf):
