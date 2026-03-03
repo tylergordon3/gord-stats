@@ -5,7 +5,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from cbb import polling, push_scores, scraper_pro
+from cbb import live_scraper, polling_rate, push_scores
 from cbb.lib import paths
 
 EASTERN = ZoneInfo("America/New_York")
@@ -92,8 +92,8 @@ def in_deploy_window(now):
 
 def task(poll_rate):
     # --- scrape both leagues ---
-    men = scraper_pro.get_current_live_dataset("men")
-    women = scraper_pro.get_current_live_dataset("women")
+    men = live_scraper.get_current_live_dataset("men")
+    women = live_scraper.get_current_live_dataset("women")
 
     # --- combine into ONE payload ---
     payload = {
@@ -173,7 +173,7 @@ attempt = 0
 
 while True:
     try:
-        poll_rate = polling.calculate_rate()
+        poll_rate = polling_rate.calculate_rate()
         task(poll_rate)
 
         attempt = 0

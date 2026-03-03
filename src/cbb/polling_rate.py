@@ -3,7 +3,6 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from cbb import utils
 from cbb.lib import paths
 
 # -----------------------------
