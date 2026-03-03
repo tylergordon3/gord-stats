@@ -390,6 +390,9 @@ function renderExpandedStats (g) {
   const bpiAway = safe(g.bpi_away, '—')
   const bpiHome = safe(g.bpi_home, '—')
 
+  const lastTenHome = safe(g.home_last_ten)
+  const lastTenAway = safe(g.away_last_ten)
+  
   const rankCompare = compareNums(awayRank, homeRank)
   const modelCompare = compareNums(awayModel, homeModel)
   const netCompare = compareNums(netAway, netHome)
@@ -487,6 +490,13 @@ function renderExpandedStats (g) {
       `
            : ''
        }
+      
+      <!-- Last 10 -->
+      <div class="expanded-row">
+        <div class="value left">${lastTenAway}</div>
+        <div class="label">Last 10</div>
+        <div class="value right">${lastTenHome}</div>
+      </div>
 
     </div>
   `
