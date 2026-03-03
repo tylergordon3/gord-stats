@@ -187,3 +187,9 @@ def getLastX(x):
         results = [dict[x]['win'] for x in last_x]
         last_x_dict[team] = results
     return last_x_dict
+
+save_all()
+parse()
+
+def last_night_results():
+    return
