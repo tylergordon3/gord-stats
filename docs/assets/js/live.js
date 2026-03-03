@@ -259,6 +259,17 @@ function formatMeta (g) {
   const venue = safe(g.venue)
   const loc = safe(g.location)
 
+  const tourneyType = safe(g.game_type)
+  const homeConf = safe(g.conference_home)
+  const awayConf = safe(g.conference_away)
+
+  if (tourneyType === "Postseason Tournament")
+  {
+    if (homeConf === awayConf) {
+      parts.push(`${homeConf} CONFERENCE TOURNAMENT`)
+    }
+  }
+
   if (venue) parts.push({ type: 'venue', text: venue })
   if (loc) parts.push({ type: 'location', text: loc })
 

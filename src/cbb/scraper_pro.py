@@ -297,7 +297,8 @@ def format_event(g, ranks, master, ats, net, bpi):
         "away_rank": away_ap,
         "is_ap": is_ap,
         # meta
-        "conference": g.get("home_conference"),
+        "conference_home": g.get("home_conference"),
+        "conference_away": g.get("away_conference"),
         "venue": g.get("stadium"),
         "location": g.get("location")[:-5],
         # betting
