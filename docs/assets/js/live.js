@@ -456,11 +456,8 @@ function renderExpandedStats (g) {
   const lastTenHome = safe(g.home_last_ten, '—')
   const lastTenAway = safe(g.away_last_ten, '—')
 
-  const awayRecord = safe(g.away_record, '—')
-  const homeRecord = safe(g.home_record, '—')
-
   const rankCompare = compareNums(awayRank, homeRank)
-  const recordCompare = compareRecords(awayRecord, homeRecord)
+  const recordCompare = compareRecords(lastTenAway, lastTenHome)
   const modelCompare = compareNums(awayModel, homeModel)
   const netCompare = compareNums(netAway, netHome)
   const bpiCompare = compareNums(bpiAway, bpiHome)
