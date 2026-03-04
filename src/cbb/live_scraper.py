@@ -188,7 +188,7 @@ def format_event(g, ranks, master, ats, net, bpi):
     away_record_last_ten = g['standings']['away']['last_ten_games_record']
 
     home_conf_seed = g['standings']['home']['conference_seed']
-    away_conf_seed = g['standings']['away']['conerence_seed']
+    away_conf_seed = g['standings']['away']['conference_seed']
 
     game_type = g['game_type']
 

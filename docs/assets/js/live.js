@@ -401,8 +401,8 @@ function renderExpandedStats (g) {
   const bpiAway = safe(g.bpi_away, '—')
   const bpiHome = safe(g.bpi_home, '—')
 
-  const lastTenHome = safe(g.home_last_ten)
-  const lastTenAway = safe(g.away_last_ten)
+  const lastTenHome = safe(g.home_last_ten, '—')
+  const lastTenAway = safe(g.away_last_ten, '—')
   
   const rankCompare = compareNums(awayRank, homeRank)
   const modelCompare = compareNums(awayModel, homeModel)
