@@ -191,7 +191,7 @@ function gamePriority (g) {
     const periodLength = LEAGUE === 'men' ? 1200 : 600 // 1200 sec - 20 min men | 600 sec - 10 min women
 
     const secondsIntoGame =
-      ((currentPeriod - 1) * periodLength) + (periodLength - clockSeconds)
+      (currentPeriod - 1) * periodLength + (periodLength - clockSeconds)
     return secondsIntoGame
   }
 
@@ -263,27 +263,50 @@ function formatMeta (g) {
   const homeConf = safe(g.conference_home)
   const awayConf = safe(g.conference_away)
 
-  if (tourneyType === "Postseason Tournament")
-  {
-    if (homeConf === awayConf) {
-      parts.push(`${homeConf} CONFERENCE TOURNAMENT`)
-    }
+  // --- detect conference tournament ---
+  g.isConfTournament = false
+  g.confName = null
+
+  if (tourneyType === 'Postseason Tournament' && homeConf === awayConf) {
+    g.isConfTournament = true
+    g.confName = homeConf
   }
 
-  if (venue) parts.push({ type: 'venue', text: venue })
-  if (loc) parts.push({ type: 'location', text: loc })
+  // --- LOCATION ROW (top) ---
+  if (venue && loc) {
+    parts.push({
+      type: 'location',
+      text: `${venue} • ${loc}`
+    })
+  } else if (venue) {
+    parts.push({
+      type: 'location',
+      text: venue
+    })
+  } else if (loc) {
+    parts.push({
+      type: 'location',
+      text: loc
+    })
+  }
 
-  // optional: betting
+  // --- BETTING ROW (bottom) ---
   const spread = safe(g.spread_close, null)
   const total = safe(g.total_close, null)
+
   if (spread !== null || total !== null) {
     const bits = []
+
     if (spread !== null && spread !== '') bits.push(`Spread: ${spread}`)
     if (total !== null && total !== '') bits.push(`O/U: ${total}`)
-    parts.push(bits.join(' • '))
+
+    parts.push({
+      type: 'betting',
+      text: bits.join(' • ')
+    })
   }
 
-  return parts.filter(Boolean)
+  return parts
 }
 
 function renderTime (g) {
@@ -377,6 +400,35 @@ function renderExpandedStats (g) {
     return { left: '', right: '' }
   }
 
+  function compareRecords(a, b) {
+    function pct(rec) {
+      if (!rec || rec === '—') return null
+
+      const parts = rec.trim().split('-')
+      if (parts.length !== 2) return null
+
+      const w = Number(parts[0])
+      const l = Number(parts[1])
+
+      if (isNaN(w) || isNaN(l)) return null
+
+      return w / (w + l)
+    }
+
+    const pa = pct(a)
+    const pb = pct(b)
+
+    if (pa === null || pb === null) return { left: '', right: '' }
+
+    if (Math.abs(pa - pb) < 0.0001) {
+      return { left: 'better', right: 'better' }
+    }
+
+    if (pa > pb) return { left: 'better', right: '' }
+
+    return { left: '', right: 'better' }
+  }
+
   const awayTeam = safe(g.away_team, 'Away')
   const homeTeam = safe(g.home_team, 'Home')
 
@@ -403,8 +455,12 @@ function renderExpandedStats (g) {
 
   const lastTenHome = safe(g.home_last_ten, '—')
   const lastTenAway = safe(g.away_last_ten, '—')
-  
+
+  const awayRecord = safe(g.away_record, '—')
+  const homeRecord = safe(g.home_record, '—')
+
   const rankCompare = compareNums(awayRank, homeRank)
+  const recordCompare = compareRecords(awayRecord, homeRecord)
   const modelCompare = compareNums(awayModel, homeModel)
   const netCompare = compareNums(netAway, netHome)
   const bpiCompare = compareNums(bpiAway, bpiHome)
@@ -446,6 +502,17 @@ function renderExpandedStats (g) {
         <div class="value right">
         <span class="${rankCompare.right}">${homeRank}</span>
       </div>
+      </div>
+
+       <!-- RECORD LAST TEN -->
+      <div class="expanded-row">
+        <div class="value left">
+          <span class="${recordCompare.left}">${lastTenAway}</span>
+        </div>
+        <div class="label">Record Last 10</div>
+        <div class="value right">
+          <span class="${recordCompare.right}">${lastTenHome}</span>
+        </div>
       </div>
 
       <!-- MODEL -->
@@ -502,13 +569,6 @@ function renderExpandedStats (g) {
            : ''
        }
       
-      <!-- Last 10 -->
-      <div class="expanded-row">
-        <div class="value left">${lastTenAway}</div>
-        <div class="label">Last 10</div>
-        <div class="value right">${lastTenHome}</div>
-      </div>
-
     </div>
   `
 }
@@ -699,10 +759,18 @@ function renderGames (games, medalByDate = {}) {
               <div class="score">${homeScore}</div>
             </div>
           </div>
-
-          ${
-            metaLines.length
-              ? `
+          <div class="tourney-slot">
+            ${
+              g.isConfTournament
+                ? `<div class="tourney-bar conf-${normalize(g.confName)}">
+                    🏆 ${g.confName} Tournament
+                  </div>`
+                : ''
+            }
+          </div>
+            ${
+              metaLines.length
+                ? `
             <div class="meta">
               ${metaLines
                 .map(
@@ -715,8 +783,8 @@ function renderGames (games, medalByDate = {}) {
                 .join('')}
             </div>
           `
-              : ''
-          }
+                : ''
+            }
           <div class="expand-toggle">
             <span class="expand-indicator">▼</span>
           </div>

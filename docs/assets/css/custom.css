@@ -226,6 +226,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  margin-bottom: 4px;
   gap: 6px;
   font-size: 15px;
 }
@@ -238,13 +239,19 @@
   color: #777;
 }
 
-/* Time / Score badge */
 .meta {
   margin-top: 6px;
-  display: inline-block;
-  padding: 3px 8px;
-  font-size: 12px;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+
+  padding: 6px 10px;
+  font-size: 13px;
   font-weight: 600;
+
   color: #444;
   background: #f1f1f1;
   border-radius: 6px;
@@ -266,6 +273,19 @@
 .meta-upcoming {
   background: #e5e7eb;
   color: #111827;
+}
+
+.meta-line {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.meta-line.meta-location {
+  opacity: .85;
+}
+
+.meta-line.meta-betting {
+  font-weight: 700;
 }
 
 @media (max-width: 360px) {
@@ -381,12 +401,6 @@
   background: #ebe7e5 !important;
 }
 
-/* Two rows, score aligned by fixed right column */
-.teams {
-  display: grid;
-  gap: 8px;
-}
-
 .team-row {
   display: grid;
   grid-template-columns: 1fr 52px;
@@ -433,7 +447,7 @@
 
 .score {
   font-variant-numeric: tabular-nums;
-  /* keeps digits same width */
+  padding-left: 4px;
   font-size: 18px;
   font-weight: 700;
 }
@@ -766,7 +780,8 @@ p {
 
 .scoreboard-grid {
   display: grid;
-  gap: 16px;
+  row-gap: 22px;
+  column-gap: 16px;
   align-items: start;
   width: 95%;
   max-width: 1600px;
@@ -1037,15 +1052,6 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
-.meta-line.meta-venue {
-  font-weight: 600;
-}
-
-.meta-line.meta-location {
-  font-size: 12px;
-  color: #666;
-}
-
 .rank-empty {
   visibility: hidden;
 }
@@ -1064,22 +1070,6 @@ p {
   font-size: 18px;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
-}
-
-.meta {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px dashed #e5e7eb;
-  color: #4b5563;
-  font-size: 12px;
-  display: grid;
-  gap: 4px;
-}
-
-.meta-line {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .scoreboard-empty {
@@ -1506,4 +1496,112 @@ p {
   border: 1.5px solid rgba(34, 197, 94, 0.7);
   border-radius: 8px;
   pointer-events: none;
+}
+
+.tourney-bubble {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .4px;
+
+  border-radius: 999px;
+  white-space: nowrap;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.game-card .tourney-bubble {
+  display: block;
+  text-align: center;
+}
+
+/* ACC */
+.tourney-bubble.conf-acc {
+  background: #013ca6;
+  color: white;
+}
+
+/* SEC */
+.tourney-bubble.conf-sec {
+  background: #f4b000;
+  color: #111;
+}
+
+/* Big Ten */
+.tourney-bubble.conf-bigten {
+  background: #003a8f;
+  color: white;
+}
+
+/* Big 12 */
+.tourney-bubble.conf-big12 {
+  background: #d81f26;
+  color: white;
+}
+
+/* Pac-12 */
+.tourney-bubble.conf-pac12 {
+  background: #0056a3;
+  color: white;
+}
+
+/* Mountain West */
+.tourney-bubble.conf-mountainwest {
+  background: #006d75;
+  color: white;
+}
+
+/* American */
+.tourney-bubble.conf-american {
+  background: #002f6c;
+  color: white;
+}
+
+/* WCC */
+.tourney-bubble.conf-westcoast {
+  background: #002d72;
+  color: white;
+}
+
+/* A10 */
+.tourney-bubble.conf-atlantic10 {
+  background: #c41230;
+  color: white;
+}
+
+/* Ivy */
+.tourney-bubble.conf-ivy {
+  background: #115740;
+  color: white;
+}
+
+.tourney-bubble::before {
+  content: "🏆";
+  font-size: 12px;
+}
+
+.tourney-slot {
+  height: 22px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.tourney-bar {
+  width: 100%;
+  text-align: center;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .4px;
+
+  padding: 3px 6px;
+
+  border-radius: 6px;
+
+  border-top: 1px solid rgba(0,0,0,.1);
+  border-bottom: 1px solid rgba(0,0,0,.1);
 }
