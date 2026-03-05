@@ -245,10 +245,9 @@
 
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 3px;
 
-  padding: 6px 10px;
+  padding: 6px 0;  
   font-size: 13px;
   font-weight: 600;
 
@@ -276,8 +275,8 @@
 }
 
 .meta-line {
-  font-size: 13px;
-  line-height: 1.25;
+  width: 100%;
+  text-align: center;
 }
 
 .meta-line.meta-location {
@@ -1519,65 +1518,16 @@ p {
   text-align: center;
 }
 
-/* ACC */
-.tourney-bubble.conf-acc {
-  background: #013ca6;
-  color: white;
-}
-
-/* SEC */
-.tourney-bubble.conf-sec {
-  background: #f4b000;
-  color: #111;
-}
-
-/* Big Ten */
-.tourney-bubble.conf-bigten {
-  background: #003a8f;
-  color: white;
-}
-
-/* Big 12 */
-.tourney-bubble.conf-big12 {
-  background: #d81f26;
-  color: white;
-}
-
-/* Pac-12 */
-.tourney-bubble.conf-pac12 {
-  background: #0056a3;
-  color: white;
-}
-
-/* Mountain West */
-.tourney-bubble.conf-mountainwest {
-  background: #006d75;
-  color: white;
-}
-
-/* American */
-.tourney-bubble.conf-american {
-  background: #002f6c;
-  color: white;
-}
-
-/* WCC */
-.tourney-bubble.conf-westcoast {
-  background: #002d72;
-  color: white;
-}
-
-/* A10 */
-.tourney-bubble.conf-atlantic10 {
-  background: #c41230;
-  color: white;
-}
-
-/* Ivy */
-.tourney-bubble.conf-ivy {
-  background: #115740;
-  color: white;
-}
+.tourney-bar.conf-acc { background:#013ca6; color:white; }
+.tourney-bar.conf-sec { background:#f4b000; color:#111; }
+.tourney-bar.conf-bigten { background:#003a8f; color:white; }
+.tourney-bar.conf-big12 { background:#d81f26; color:white; }
+.tourney-bar.conf-pac12 { background:#0056a3; color:white; }
+.tourney-bar.conf-mountainwest { background:#006d75; color:white; }
+.tourney-bar.conf-american { background:#002f6c; color:white; }
+.tourney-bar.conf-westcoast { background:#002d72; color:white; }
+.tourney-bar.conf-atlantic10 { background:#c41230; color:white; }
+.tourney-bar.conf-ivy { background:#115740; color:white; }
 
 .tourney-bubble::before {
   content: "🏆";
@@ -1591,17 +1541,17 @@ p {
 }
 
 .tourney-bar {
+  margin-top: 6px;
   width: 100%;
-  text-align: center;
 
-  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 6px 0;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: .4px;
-
-  padding: 3px 6px;
 
   border-radius: 6px;
-
-  border-top: 1px solid rgba(0,0,0,.1);
-  border-bottom: 1px solid rgba(0,0,0,.1);
+  letter-spacing: 0.3px;
 }
