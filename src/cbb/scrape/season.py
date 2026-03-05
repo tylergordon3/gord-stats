@@ -116,16 +116,6 @@ def parse(gender="M"):
     for day in data:
         filtered[day["id"]] = day["event_ids"]
 
-    # 'box_score', 'important', 'slot', 'tournament_name',
-    # 'odd', 'subscribable_alerts', 'location', 'stadium',
-    # 'away_conference', 'home_conference', 'has_team_twitter_handles',
-    # 'standings', 'colours', 'conference_names', 'has_play_by_play_records',
-    # 'stubhub_url', 'away_team', 'home_team', 'league', 'if_necessary',
-    # 'away_ranking', 'home_ranking', 'top_25_rankings', 'id',
-    # 'event_status', 'game_date', 'game_type', 'game_description', 'tba',
-    # 'updated_at', 'bet_works_id', 'betradar_id', 'status', 'api_uri',
-    # 'resource_uri', 'top_match'
-
     file = paths.SCHEDULE_DATA / Path(f"men_season.json")
     with open(file, "r") as f:
         all = json.load(f)
@@ -173,9 +163,6 @@ def parse(gender="M"):
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
 
-save_all()
-parse()
-
 def getLastX(x):
     master = teams.getTeams()
     team_keys = master['team']
@@ -192,9 +179,48 @@ def getLastX(x):
     return last_x_dict
 
 def last_night_results():
+    save_all()
     yesterday = date.today() - timedelta(days=1)
     yesterday_str = yesterday.isoformat()
-    print(yesterday_str)
-    return
 
-last_night_results()
+    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    with open(file, "r") as f:
+        all = json.load(f)
+    games = fetch_events_by_ids(yesterday_str, "ncaab")
+    for g in games:
+
+        elements = parse_g(g)
+        if len(elements) > 1:
+            home = elements[0]
+            away = elements[1]
+            home_check = elements[2]
+            away_check = elements[3]
+            
+            if home_check != None:
+                home = home_check
+            
+            if away_check != None:
+                away = away_check
+            
+            if home_check != None:
+                all[home_check][yesterday_str] = {
+                    "win" : elements[6],
+                    "location" : "home",
+                    "score" : elements[4],
+                    "opponent" : away,
+                    "opponent_score" : elements[5]
+                }
+                
+            if away_check != None:
+                all[away_check][yesterday_str] = {
+                    "win" : elements[7],
+                    "location" : "away",
+                    "score" : elements[5],
+                    "opponent" : home,
+                    "opponent_score" : elements[4]
+                }
+
+    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    with open(file, "w") as f:
+        json.dump(all, f, indent=4)
+    return
