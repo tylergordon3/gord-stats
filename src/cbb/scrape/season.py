@@ -228,3 +228,35 @@ def last_night_results(gender="M"):
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
     return
+
+file = paths.SCHEDULE_DATA / Path(f"wcbk_season.json")
+with open(file, "r") as f:
+    data = json.load(f)
+file = paths.SCHEDULE_DATA / Path(f"women_season.json")
+with open(file, "r") as f:
+    all = json.load(f)
+
+filtered = {}
+for day in data:
+    filtered[day["id"]] = day["event_ids"]
+
+for key in filtered:
+
+    games = fetch_events_by_ids(filtered[key], 'wcbk')
+    for g in games:
+
+        away = g['away_team']['medium_name']
+        home = g['home_team']['medium_name']
+
+        away_check = teams.getTeamOfficialName(away)
+        home_check = teams.getTeamOfficialName(home)
+
+        if away_check != None:
+            all[away_check] = {}
+        if home_check != None:
+            all[home_check] = {}
+
+
+file = paths.SCHEDULE_DATA / Path(f"women_season.json")
+with open(file, "w") as f:
+    json.dump(all, f, indent=4)
