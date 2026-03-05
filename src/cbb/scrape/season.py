@@ -1,4 +1,5 @@
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
 import requests
@@ -172,6 +173,8 @@ def parse(gender="M"):
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
 
+save_all()
+parse()
 
 def getLastX(x):
     master = teams.getTeams()
@@ -189,4 +192,9 @@ def getLastX(x):
     return last_x_dict
 
 def last_night_results():
+    yesterday = date.today() - timedelta(days=1)
+    yesterday_str = yesterday.isoformat()
+    print(yesterday_str)
     return
+
+last_night_results()
