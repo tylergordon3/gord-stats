@@ -63,10 +63,11 @@ M_ATS_DIR = M_DATA / "ats"
 M_ESPN_DIR = M_DATA / "espn"
 M_NET_DIR = M_DATA / "net"
 M_TOR_DIR = M_DATA / "torvik"
+M_SCHEDULE = DATA / "schedule" / "men_season.json"
 
 W_TOR_DIR = W_DATA / "torvik"
 W_NET_DIR = W_DATA / "net"
-
+W_SCHEDULE = DATA / "schedule" / "women_season.json"
 
 # --------------
 # Website Assets

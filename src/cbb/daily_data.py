@@ -9,7 +9,7 @@ from pathlib import Path
 import pytz
 
 from cbb.lib import paths
-from cbb.scrape import ats, bpi, kenpom, net, torvik
+from cbb.scrape import ats, bpi, kenpom, net, torvik, season
 
 RETRY_SLEEP = 300
 MAX_RETRIES = 5
@@ -29,8 +29,10 @@ def main():
         "KenPom": (paths.M_KEN_DIR / fp, kenpom.kenpom_now),
         "Men's Net Rankings": (paths.M_NET_DIR / fp, lambda: net.main("M")),
         "ESPN BPI": (paths.M_ESPN_DIR / fp, bpi.main),
+        "Men's Schedules" : (paths.M_SCHEDULE, lambda: season.last_night_results("M")),
         "Women's Net Rankings": (paths.W_NET_DIR / fp, lambda: net.main("W")),
         "Women's Torvik": (paths.W_TOR_DIR / fp, lambda: torvik.womens_tor(today)),
+        "Women's Schedules" : (paths.W_SCHEDULE, lambda: season.last_night_results("W"))
     }
 
     success = True

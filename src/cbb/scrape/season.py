@@ -178,12 +178,15 @@ def getLastX(x):
         last_x_dict[team] = results
     return last_x_dict
 
-def last_night_results():
+def last_night_results(gender="M"):
     save_all()
     yesterday = date.today() - timedelta(days=1)
     yesterday_str = yesterday.isoformat()
-
-    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    if gender == "M":
+        file_name = "men_season.json"
+    elif gender == "W":
+        file_name = "women_season.json"
+    file = paths.SCHEDULE_DATA / Path(file_name)
     with open(file, "r") as f:
         all = json.load(f)
     games = fetch_events_by_ids(yesterday_str, "ncaab")
@@ -220,7 +223,6 @@ def last_night_results():
                     "opponent_score" : elements[4]
                 }
 
-    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
     return
