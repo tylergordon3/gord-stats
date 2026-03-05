@@ -1,5 +1,5 @@
 import json
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from pathlib import Path
 
 import requests
@@ -122,10 +122,12 @@ def parse(gender="M"):
 
     for key in filtered:
         games = fetch_events_by_ids(filtered[key], "ncaab")
+        today= date.today()
+        key_as_date = datetime.fromisoformat(key)
         for g in games:
 
             elements = parse_g(g)
-            if len(elements) > 1:
+            if len(elements) > 1 and key_as_date < today:
                 home = elements[0]
                 away = elements[1]
                 home_check = elements[2]
