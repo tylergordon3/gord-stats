@@ -7,7 +7,7 @@ import requests
 
 from cbb import scraper, utils
 from cbb.push_scores import push
-from cbb.scrape import ats, bpi, net
+from cbb.scrape import ats, bpi, net, torvik
 
 # =========================
 # CONFIG
@@ -142,7 +142,7 @@ import pytz
 EASTERN = pytz.timezone("US/Eastern")
 
 
-def format_event(g, ranks, master, ats, net, bpi):
+def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -423,10 +423,12 @@ def get_current_live_dataset(league_key):
         ats_dict = ats.get_today_ats()
         net_dict = net.get_today_net("M")
         bpi_dict = bpi.get_today_bpi()
+        tor_dict = torvik.get_today_tor("M")
     else:
         ats_dict = None
         net_dict = net.get_today_net("W")
         bpi_dict = None
+        tor_dict = torvik.get_today_tor("W")
 
     for g in events:
         game_id = g.get("id")
@@ -434,7 +436,7 @@ def get_current_live_dataset(league_key):
             continue
 
         games[str(game_id)] = format_event(
-            g, ranks, master, ats_dict, net_dict, bpi_dict
+            g, ranks, master, ats_dict, net_dict, bpi_dict, tor_dict
         )
 
     return {

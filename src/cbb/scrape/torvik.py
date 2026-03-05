@@ -1,5 +1,7 @@
 import re
 import time
+import json
+from datetime import datetime
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
@@ -7,6 +9,37 @@ from playwright.sync_api import sync_playwright
 from cbb import utils
 from cbb.lib import paths, url
 
+def get_today_tor(gender="M"):
+    if gender == "M":
+        dir = paths.M_TOR_DIR
+    elif gender == "W":
+        dir = paths.W_TOR_DIR
+    
+     # Today's filename
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_file = dir / f"{today_str}.json"
+
+    # If today's file exists, return it
+    if today_file.exists():
+        target_file = today_file
+
+    # Otherwise get most recent file
+    files = sorted(
+        dir.glob("*.json"),
+        key=lambda f: f.name,
+        reverse=True,
+    )
+
+    if not files:
+        return None
+
+    target_file = files[0]
+
+    # Load JSON
+    with open(target_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    return data
 
 def mens_tor(date):
     with sync_playwright() as p:

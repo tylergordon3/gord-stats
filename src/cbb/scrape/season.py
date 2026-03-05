@@ -181,7 +181,7 @@ def last_night_results(gender="M"):
         all = json.load(f)
 
     games = fetch_events_by_ids(yesterday_str, league)
-    print(games)
+
     for g in games:
 
         elements = parse_g(g)
