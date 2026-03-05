@@ -108,7 +108,7 @@ def parse_g(game):
         return [None]
 
 def parse(gender="M"):
-    file = paths.SCHEDULE_DATA / Path(f"ncaab_season.json")
+    file = paths.SCHEDULE_DATA / Path(f"wcbk_season.json")
     with open(file, "r") as f:
         data = json.load(f)
 
@@ -116,18 +116,18 @@ def parse(gender="M"):
     for day in data:
         filtered[day["id"]] = day["event_ids"]
 
-    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    file = paths.SCHEDULE_DATA / Path(f"women_season.json")
     with open(file, "r") as f:
         all = json.load(f)
 
     for key in filtered:
-        games = fetch_events_by_ids(filtered[key], "ncaab")
+        games = fetch_events_by_ids(filtered[key], "wcbk")
         today= date.today()
         key_as_date = datetime.fromisoformat(key)
         for g in games:
 
             elements = parse_g(g)
-            if len(elements) > 1 and key_as_date < today:
+            if len(elements) > 1 and key_as_date.date() < today:
                 home = elements[0]
                 away = elements[1]
                 home_check = elements[2]
@@ -161,37 +161,27 @@ def parse(gender="M"):
                         "opponent_score" : elements[4]
                     }
 
-    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
+    file = paths.SCHEDULE_DATA / Path(f"women_season.json")
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
-
-def getLastX(x):
-    master = teams.getTeams()
-    team_keys = master['team']
-
-    file = paths.SCHEDULE_DATA / Path(f"men_season.json")
-    with open(file, "r") as f:
-        all = json.load(f)
-    last_x_dict = {}
-    for team in team_keys:
-        dict = all[team]
-        last_x = list(dict.keys())[-x:]
-        results = [dict[x]['win'] for x in last_x]
-        last_x_dict[team] = results
-    return last_x_dict
 
 def last_night_results(gender="M"):
     save_all()
     yesterday = date.today() - timedelta(days=1)
     yesterday_str = yesterday.isoformat()
+
     if gender == "M":
         file_name = "men_season.json"
+        league = "ncaab"
     elif gender == "W":
         file_name = "women_season.json"
+        league = "wcbk"
     file = paths.SCHEDULE_DATA / Path(file_name)
     with open(file, "r") as f:
         all = json.load(f)
-    games = fetch_events_by_ids(yesterday_str, "ncaab")
+
+    games = fetch_events_by_ids(yesterday_str, league)
+    print(games)
     for g in games:
 
         elements = parse_g(g)
