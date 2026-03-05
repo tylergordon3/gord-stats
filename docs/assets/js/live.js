@@ -453,6 +453,9 @@ function renderExpandedStats (g) {
   const bpiAway = safe(g.bpi_away, '—')
   const bpiHome = safe(g.bpi_home, '—')
 
+  const wabAway = safe(g.wab_away, '—')
+  const wabHome = safe(g.wab_home, '—')
+
   const lastTenHome = safe(g.home_last_ten, '—')
   const lastTenAway = safe(g.away_last_ten, '—')
 
@@ -461,6 +464,7 @@ function renderExpandedStats (g) {
   const modelCompare = compareNums(awayModel, homeModel)
   const netCompare = compareNums(netAway, netHome)
   const bpiCompare = compareNums(bpiAway, bpiHome)
+  const wabCompare = compareNums(wabAway, wabHome)
 
   return `
     <div class="expanded-compare">
@@ -531,6 +535,17 @@ function renderExpandedStats (g) {
         <div class="label">NET</div>
         <div class="value right">
         <span class="${netCompare.right}">#${netHome}</span>
+      </div>
+      </div>
+
+      <!-- WAB -->
+      <div class="expanded-row">
+        <div class="value left">
+        <span class="${wabCompare.left}">${wabAway}</span>
+      </div>
+        <div class="label">NET</div>
+        <div class="value right">
+        <span class="${wabCompare.right}">${wabHome}</span>
       </div>
       </div>
 

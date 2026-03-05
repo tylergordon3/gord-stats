@@ -150,6 +150,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
 
     dt_local = dt.astimezone(EASTERN) if dt else None
 
+  
     game_date = dt_local.date().isoformat() if dt_local else None
     start_time = dt_local.strftime("%I:%M %p").lstrip("0") if dt_local else None
 
@@ -166,6 +167,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
         bpi_lookup = {row[1]: row[7] for row in bpi["rows"]}
 
     net_lookup = {row[1]: row[0] for row in net["rows"]}
+    wab_lookup = {row[1] : row[-1] for row in tor_dict["rows"]}
 
     # ---- teams ----
     home = g["home_team"]
@@ -245,6 +247,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
 
     net_home = get_stat(home_idx, master, net_lookup)
     net_away = get_stat(away_idx, master, net_lookup)
+    wab_home = get_stat(home_idx, master, wab_lookup)
+    wab_away = get_stat(away_idx, master, wab_lookup)
 
     clock = progress.get("clock")
     period = progress.get("segment_string")
@@ -312,6 +316,9 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
         "home_conf_seed" : home_conf_seed,
         "away_conf_seed" : away_conf_seed,
         "game_type" : game_type,
+
+        "wab_home" : wab_home,
+        "wab_away" : wab_away
     }
 
 
