@@ -12,7 +12,7 @@ import pytz
 import requests
 
 from cbb import utils
-from cbb.lib import paths, url
+from cbb.lib import paths, url, teams
 
 
 def save_id(dict):
@@ -140,3 +140,13 @@ def get_today_bpi():
         data = json.load(f)
 
     return data
+
+
+def get_conf_records():
+    bpi = get_today_bpi()
+    
+    conf_records = {teams.getTeamOfficialName(row[1]): f"{int(row[17])}-{int(row[18])}" for row in bpi["rows"]}
+    return conf_records
+ 
+    
+    

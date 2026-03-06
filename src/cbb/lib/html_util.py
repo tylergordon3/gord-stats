@@ -145,7 +145,9 @@ def style_bracketology(df, gender="M", original=None, conference=None):
     team_index = df["Team"].apply(lambda x: strip_team_html(x))
 
     conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
-
+    
+    if conference:
+        output_cols.insert(2, "Conf Record")
     df = df[output_cols]
 
     # Build table attributes

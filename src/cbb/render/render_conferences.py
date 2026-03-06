@@ -1,7 +1,7 @@
 import pandas as pd
 
-from cbb import utils
 from cbb.lib import html_util, paths
+from cbb.scrape import bpi
 
 
 def filter(df, conf):
@@ -15,7 +15,7 @@ def main(df, gender):
     conf_dict = dict.fromkeys(confs)
 
     for key in conf_dict.keys():
-        conf_df = filter(df, key)
+        conf_df = filter(df, key).copy()
         conf_dict[key] = conf_df
 
     html = """
@@ -30,8 +30,10 @@ def main(df, gender):
     </div>
     </div>
     """
-
+    
+    conf_record_dict = bpi.get_conf_records()
     for k, v in conf_dict.items():
+        v['Conf Record'] = v.apply(lambda x: conf_record_dict[x.Team], axis=1)
         styler = html_util.style_bracketology(
             df=v,
             gender=gender,
