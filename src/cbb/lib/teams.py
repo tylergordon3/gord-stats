@@ -91,3 +91,11 @@ def getTeamIndex(team):
         return list(result.index)[0]
     except:
         return None
+
+def cleanTorvikNames(team):
+    for i, char in enumerate(team):
+        if char == "(":
+            return team[:i]
+        if team[i : i + 3] == "vs.":
+            return team[:i]
+    return team

@@ -400,6 +400,23 @@ function renderExpandedStats (g) {
     return { left: '', right: '' }
   }
 
+  function compareNumsGreater (a, b) {
+    if (a == '—') {
+      a = -999
+    }
+    if (b == '—') {
+      b = -999
+    }
+    const na = Number(a)
+    const nb = Number(b)
+
+    if (isNaN(na) || isNaN(nb)) return { left: '', right: '' }
+
+    if (na > nb) return { left: 'better', right: '' }
+    if (nb > na) return { left: '', right: 'better' }
+    return { left: '', right: '' }
+  }
+
   function compareRecords(a, b) {
     function pct(rec) {
       if (!rec || rec === '—') return null
@@ -455,7 +472,6 @@ function renderExpandedStats (g) {
 
   const wabAway = safe(g.wab_away, '—')
   const wabHome = safe(g.wab_home, '—')
-
   const lastTenHome = safe(g.home_last_ten, '—')
   const lastTenAway = safe(g.away_last_ten, '—')
 
@@ -464,7 +480,7 @@ function renderExpandedStats (g) {
   const modelCompare = compareNums(awayModel, homeModel)
   const netCompare = compareNums(netAway, netHome)
   const bpiCompare = compareNums(bpiAway, bpiHome)
-  const wabCompare = compareNums(wabAway, wabHome)
+  const wabCompare = compareNumsGreater(wabAway, wabHome)
 
   return `
     <div class="expanded-compare">

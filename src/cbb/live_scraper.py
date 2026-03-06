@@ -7,6 +7,7 @@ import requests
 
 from cbb import scraper, utils
 from cbb.push_scores import push
+from cbb.lib import teams
 from cbb.scrape import ats, bpi, net, torvik
 
 # =========================
@@ -167,7 +168,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
         bpi_lookup = {row[1]: row[7] for row in bpi["rows"]}
 
     net_lookup = {row[1]: row[0] for row in net["rows"]}
-    wab_lookup = {row[1] : row[-1] for row in tor_dict["rows"]}
+    wab_lookup = {teams.cleanTorvikNames(row[1]) : row[-1] for row in tor_dict["rows"]}
 
     # ---- teams ----
     home = g["home_team"]
@@ -249,7 +250,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     net_away = get_stat(away_idx, master, net_lookup)
     wab_home = get_stat(home_idx, master, wab_lookup)
     wab_away = get_stat(away_idx, master, wab_lookup)
-
+  
     clock = progress.get("clock")
     period = progress.get("segment_string")
     overtime = progress.get("overtime", False)
