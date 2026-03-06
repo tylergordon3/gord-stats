@@ -543,7 +543,7 @@ function renderExpandedStats (g) {
         <div class="value left">
         <span class="${wabCompare.left}">${wabAway}</span>
       </div>
-        <div class="label">NET</div>
+        <div class="label">WAB</div>
         <div class="value right">
         <span class="${wabCompare.right}">${wabHome}</span>
       </div>
