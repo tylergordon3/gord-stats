@@ -4,10 +4,11 @@ from datetime import datetime
 
 import pytz
 import requests
+import re
 
 from cbb import scraper, utils
 from cbb.push_scores import push
-from cbb.lib import teams
+from cbb.lib import teams, constants
 from cbb.scrape import ats, bpi, net, torvik
 
 # =========================
@@ -59,7 +60,6 @@ def safe_float(x):
     except (TypeError, ValueError):
         return None
 
-
 # =========================
 # CONFERENCE DISCOVERY
 # =========================
@@ -80,7 +80,12 @@ def get_conference_strings(league_path):
 
     return sorted(confs)
 
-
+def normalize_conf_name(conf: str) -> str:
+    for name, vals in constants.CONF_MAP.items():
+        if conf.strip() in vals:
+            return name
+    return conf
+    
 # =========================
 # SCHEDULE → EVENT IDS
 # =========================
@@ -193,8 +198,6 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     home_conf_seed = g['standings']['home']['conference_seed']
     away_conf_seed = g['standings']['away']['conference_seed']
 
-    game_type = g['game_type']
-
     def safe_float(x):
         try:
             return float(x)
@@ -212,10 +215,12 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     is_ap = bool(home_ap or away_ap)
 
     # conferences
-    home_conf = g.get("home_conference")
-    away_conf = g.get("away_conference")
+    home_conf = normalize_conf_name(g.get("home_conference"))
+    away_conf = normalize_conf_name(g.get("away_conference"))
     is_p5 = utils.check_p5(home_conf, away_conf)
-
+    
+    game_type = g['game_type']
+   
     # ---- score / progress ----
     box = g.get("box_score") or {}
     score = box.get("score") or {}
@@ -303,8 +308,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
         "away_rank": away_ap,
         "is_ap": is_ap,
         # meta
-        "conference_home": g.get("home_conference"),
-        "conference_away": g.get("away_conference"),
+        "conference_home": home_conf,
+        "conference_away": away_conf,
         "venue": g.get("stadium"),
         "location": g.get("location")[:-5],
         # betting

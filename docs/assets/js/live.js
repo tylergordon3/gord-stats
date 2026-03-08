@@ -18,11 +18,29 @@ let LAST_MEDALS = null
 let EXPAND_ALL = false
 let EXPANDED_GAMES = new Set()
 
-function normalize (s) {
+const CONF_CLASSES = new Set([
+  "acc",
+  "sec",
+  "bigten",
+  "big12",
+  "bigeast"
+])
+
+function normalize(s) {
   return String(s)
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '')
+    .replace(/[^a-z0-9]+/g, "")
     .trim()
+}
+
+function getConfClass(conf) {
+  const key = normalize(conf)
+
+  if (CONF_CLASSES.has(key)) {
+    return `conf-${key}`
+  }
+
+  return "conf" // default class
 }
 
 async function loadTeamLogos () {
@@ -790,7 +808,7 @@ function renderGames (games, medalByDate = {}) {
           <div class="tourney-slot">
             ${
               g.isConfTournament
-                ? `<div class="tourney-bar conf-${normalize(g.confName)}">
+                ? `<div class="tourney-bar ${getConfClass(g.confName)}">
                     🏆 ${g.confName} Tournament
                   </div>`
                 : ''
