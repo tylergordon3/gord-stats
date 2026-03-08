@@ -69,6 +69,8 @@ W_TOR_DIR = W_DATA / "torvik"
 W_NET_DIR = W_DATA / "net"
 W_SCHEDULE = DATA / "schedule" / "women_season.json"
 
+BIDS_FILE = DATA / "teams" / "bids.json"
+
 # --------------
 # Website Assets
 # --------------

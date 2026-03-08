@@ -1,6 +1,6 @@
 import pandas as pd
 
-from . import paths
+from . import paths, constants
 
 
 def getTeams():
@@ -99,3 +99,9 @@ def cleanTorvikNames(team):
         if team[i : i + 3] == "vs.":
             return team[:i]
     return team
+
+def normalize_conf(name):
+    for key, vals in constants.CONF_MAP.items():
+        if name in vals:
+            return key
+    return name

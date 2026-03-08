@@ -315,10 +315,33 @@ def predict_womens(date):
     scraper.saveWTeamRanks(save_ranks)
     save_df = df.copy()
 
-    conf_winners = df.groupby(by="Conf")["Ovr"].transform("min")
-    df["ConfChamp"] = df["Ovr"] == conf_winners
+    with open(paths.BIDS_FILE) as f:
+        CHAMPS = json.load(f)
+    
+    year = "2026"
+    gender = "Women"
+    manual = CHAMPS[gender][year]
+    
+    df["ConfChamp"] = 0
+    df['Bid'] = 0
+    
+    for conf in df["Conf"].unique():
 
-    delta = change.change(date, "W")
+        manual_team = manual.get(conf)
+
+        if manual_team:  
+            # use manual champ
+            idx = df.loc[df["Team"] == manual_team].index
+            df.loc[idx, "Bid"] = 1
+
+        else:
+            # fallback to power rating
+            idx = df.loc[df["Conf"] == conf, "Ovr"].idxmax()
+            idx = [idx]
+
+        df.loc[idx, "ConfChamp"] = 1
+
+    delta = change.change(date, "W")    
 
     df = pd.merge(df.reset_index(), delta, "left", "Team").set_index("index")
 
@@ -329,7 +352,7 @@ def predict_womens(date):
 
     conf_win_idx = df[df["ConfChamp"] == 1].index
     dropped = df.drop(index=conf_win_idx)
-    atlarge_idx = dropped.head(68 - len(conf_winners)).index
+    atlarge_idx = dropped.head(68 - len(conf_win_idx)).index
     tourney_idx = pd.Index.union(conf_win_idx, atlarge_idx)
     mask = df.index.isin(tourney_idx)
     df["Seed"] = None
@@ -563,12 +586,31 @@ def full_prediction(date) -> pd.DataFrame:
 
 
 def predict(date):
+    with open(paths.BIDS_FILE) as f:
+        CHAMPS = json.load(f)
     [df, save_df] = full_prediction(date)
 
-    conf_winners = df.loc[df.groupby(by="Conf")["Pwr"].idxmax()]
-
+    year = "2026"
+    gender = "Men"
+    manual = CHAMPS[gender][year]
+    
     df["ConfChamp"] = 0
-    df.loc[conf_winners.index, "ConfChamp"] = 1
+    df['Bid'] = 0
+    
+    for conf in df["Conf"].unique():
+        manual_team = manual.get(conf)
+
+        if manual_team:  
+            # use manual champ
+            idx = df.loc[df["Team"] == manual_team].index
+            df.loc[idx, "Bid"] = 1
+
+        else:
+            # fallback to power rating
+            idx = df.loc[df["Conf"] == conf, "Pwr"].idxmax()
+            idx = [idx]
+
+        df.loc[idx, "ConfChamp"] = 1
 
     delta = change.change(date)
 
@@ -580,11 +622,13 @@ def predict(date):
     main["Δ 1mo"] = main["Δ 1mo"].replace(to_replace=0, value="-")
 
     conf_win_idx = main[main["ConfChamp"] == 1].index
+
     dropped = main.drop(index=conf_win_idx)
-    atlarge_idx = dropped.head(68 - len(conf_winners)).index
+    atlarge_idx = dropped.head(68 - len(conf_win_idx)).index
     tourney_idx = pd.Index.union(conf_win_idx, atlarge_idx)
     mask = main.index.isin(tourney_idx)
     main["Seed"] = None
+
     main.loc[mask, "Seed"] = seed_helper(main["Ovr"][mask])
 
     main["Ovr"] = main.apply(

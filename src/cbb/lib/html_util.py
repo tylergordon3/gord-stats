@@ -44,7 +44,7 @@ def _color_arrow(val):
     )
 
 
-def bold_row(row, conf_champ_dict):
+def bold_row(row, conf_champ_dict, bid_dict):
     """
     Bolds row if team is projected conference winner
 
@@ -64,8 +64,14 @@ def bold_row(row, conf_champ_dict):
         team = row["Team"].split(">")[-1].split(" (")[0].strip()
 
     val = conf_champ_dict.get(team, False)
-
-    if val:
+    bid = bid_dict.get(team, False)
+    
+    if bid:
+        ret = ["font-weight: bold; background:#e8f7e8"] * len(row)
+        ret[2] = "font-weight: normal"
+        ret[3] = "font-weight: normal"
+        return ret
+    elif val:
         ret = ["font-weight: bold"] * len(row)
         ret[2] = "font-weight: normal"
         ret[3] = "font-weight: normal"
@@ -145,6 +151,7 @@ def style_bracketology(df, gender="M", original=None, conference=None):
     team_index = df["Team"].apply(lambda x: strip_team_html(x))
 
     conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
+    bids_dict = pd.Series(df.Bid.values, index=team_index).to_dict()
     
     if conference:
         output_cols.insert(2, "Conf Record")
@@ -168,7 +175,7 @@ def style_bracketology(df, gender="M", original=None, conference=None):
             .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .set_table_attributes(table_attr)
-            .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
+            .apply(lambda x: bold_row(x, conf_champ_dict, bids_dict), axis=1)
         )
     else:
         styler = (
@@ -177,7 +184,7 @@ def style_bracketology(df, gender="M", original=None, conference=None):
             .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .set_table_attributes(table_attr)
-            .apply(lambda x: bold_row(x, conf_champ_dict), axis=1)
+            .apply(lambda x: bold_row(x, conf_champ_dict, bids_dict), axis=1)
         )
 
     return styler
