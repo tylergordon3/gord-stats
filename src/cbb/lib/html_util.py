@@ -68,8 +68,6 @@ def bold_row(row, conf_champ_dict, bid_dict):
     
     if bid:
         ret = ["font-weight: bold; background:#e8f7e8"] * len(row)
-        ret[2] = "font-weight: normal"
-        ret[3] = "font-weight: normal"
         return ret
     elif val:
         ret = ["font-weight: bold"] * len(row)

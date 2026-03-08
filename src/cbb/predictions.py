@@ -660,6 +660,7 @@ def predict(date):
     df_html += f"<p>Pwr is derived from using machine learning models on Kenpom & Torvik data in aggregate to calculate tournament probabilties.</p>"
     df_html += f"<p>This value is then balanced by rankings from ESPN BPI, NCAA Net, Kenpom and Torvik to help rank/seed teams.</p>"
     df_html += f"<p>Future plans include using machine learning to specifically rank teams seperately from tournament projections.</p>"
+    df_html += f"<p><strong>Teams highlighted green have won their conference tournament, earning the bid to the NCAA Tournament! </storng></p>"
     df_html += '<div class="filter-bar">'
     df_html += """{% include global-toggle.html %} """
     df_html += "</div>"
