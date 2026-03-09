@@ -1,6 +1,25 @@
+import json
+import pandas as pd
+
 from cbb.lib import html_util
 from cbb.lib import paths
 
+
+def bids():
+    with open(paths.BIDS_FILE, "r") as f:
+        bid_json = json.load(f)
+    
+    men = bid_json["Men"]["2026"]
+    women = bid_json["Women"]["2026"]
+    
+    men_df = pd.DataFrame.from_dict(men, orient="index")
+    women_df = pd.DataFrame.from_dict(women, orient="index")
+    combo = pd.merge(men_df, women_df, "inner", left_index=True, right_index=True)
+    print(combo)
+    return
+
+
+bids()
 
 def render_home():
     # Raw string to preserve formatting
