@@ -79,7 +79,6 @@ def render_home():
   #tweet-container {
     transition: opacity 0.4s ease-in-out;
     opacity: 1;
-    min-height: 400px;
   }
 
   .fade-out {
