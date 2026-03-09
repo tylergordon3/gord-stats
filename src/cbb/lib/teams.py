@@ -105,3 +105,11 @@ def normalize_conf(name):
         if name in vals:
             return key
     return name
+
+def getTeamLogo(team):
+    master = getTeams()
+    idx = getTeamIndex(team)
+    if idx != None:
+        return "/assets/images/" + master.at[idx, "path"]
+    return ""
+    

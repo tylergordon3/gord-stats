@@ -2,8 +2,18 @@ import json
 import pandas as pd
 
 from cbb.lib import html_util
-from cbb.lib import paths
+from cbb.lib import paths, teams
 
+def team_logos(df):
+    if teams.getTeamOfficialName(df['Men'], debug=False) != None:
+      logo = teams.getTeamLogo(df["Men"])
+      df["Men"] = f"{html_util.image_formatter(logo)} {teams.getTeamNickname(df.Men)}"
+    
+    if teams.getTeamOfficialName(df['Women']) != None:
+      logo = teams.getTeamLogo(df["Women"])
+      df["Women"] = f"{html_util.image_formatter(logo)} {teams.getTeamNickname(df.Men)}"
+
+    return df
 
 def bids():
     with open(paths.BIDS_FILE, "r") as f:
@@ -22,6 +32,7 @@ def bids():
         "0_y" : "Women"
     })
     combo = combo[["Men", "Conf", "Women"]].copy()
+    combo = combo.apply(lambda x: team_logos(x), axis=1)
     print(combo)
     return
 
