@@ -15,6 +15,13 @@ def bids():
     men_df = pd.DataFrame.from_dict(men, orient="index")
     women_df = pd.DataFrame.from_dict(women, orient="index")
     combo = pd.merge(men_df, women_df, "inner", left_index=True, right_index=True)
+    combo['Conf'] = combo.index
+    combo = combo.reset_index(drop=True)
+    combo = combo.rename(columns={
+        "0_x" : "Men",
+        "0_y" : "Women"
+    })
+    combo = combo[["Men", "Conf", "Women"]].copy()
     print(combo)
     return
 
