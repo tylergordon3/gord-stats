@@ -62,7 +62,6 @@ def chunks(lst, n):
 
 def fetch_events_by_ids(event_ids, league_path):
     events = []
-
     for batch in chunks(event_ids, BATCH_SIZE):
         resp = requests.get(
             f"{BASE}/{league_path}/events",
@@ -169,19 +168,27 @@ def last_night_results(gender="M"):
     save_all()
     yesterday = date.today() - timedelta(days=1)
     yesterday_str = yesterday.isoformat()
-
     if gender == "M":
         file_name = "men_season.json"
         league = "ncaab"
     elif gender == "W":
         file_name = "women_season.json"
         league = "wcbk"
+
     file = paths.SCHEDULE_DATA / Path(file_name)
     with open(file, "r") as f:
         all = json.load(f)
 
-    games = fetch_events_by_ids(yesterday_str, league)
-
+    web_file = paths.SCHEDULE_DATA / Path(f"{league}_season.json")
+    with open(web_file, "r") as f:
+        web_data = json.load(f)
+    ids = []
+    for day in web_data:
+        if day['id'] == yesterday_str:
+            ids = day['event_ids']
+            break
+   
+    games = fetch_events_by_ids(ids, league)
     for g in games:
 
         elements = parse_g(g)
@@ -214,7 +221,6 @@ def last_night_results(gender="M"):
                     "opponent" : home,
                     "opponent_score" : elements[4]
                 }
-
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
     return
