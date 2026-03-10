@@ -224,3 +224,24 @@ def last_night_results(gender="M"):
     with open(file, "w") as f:
         json.dump(all, f, indent=4)
     return
+
+def check_last_night(gender="M"):
+    yesterday = date.today() - timedelta(days=1)
+    yesterday_str = yesterday.isoformat()
+    if gender == "M":
+        # league = "ncaab"
+        file_name = "men_season.json"
+    elif gender == "W":
+        # league = "wcbk"
+        file_name = "women_season.json"
+
+    file = paths.SCHEDULE_DATA / Path(file_name)
+    with open(file, "r") as f:
+        all = json.load(f)
+    
+    for games in all.values():
+        if yesterday_str in games.keys():
+            return True
+    return False
+    
+   
