@@ -6,12 +6,12 @@ from cbb.lib import paths, teams
 
 def team_logos(df):
     if teams.getTeamOfficialName(df['Men'], debug=False) != None:
-      logo = teams.getTeamLogo(df["Men"])
-      df["Men"] = f"{html_util.image_formatter(logo)} {teams.getTeamNickname(df.Men)}"
+      logo = teams.getTeamLogo(df["Men"], debug=False)
+      df["Men"] = f'{html_util.image_formatter(logo)} {teams.getTeamNickname(df.Men)}'
     
-    if teams.getTeamOfficialName(df['Women']) != None:
-      logo = teams.getTeamLogo(df["Women"])
-      df["Women"] = f"{html_util.image_formatter(logo)} {teams.getTeamNickname(df.Men)}"
+    if teams.getTeamOfficialName(df['Women'], debug=False) != None:
+      logo = teams.getTeamLogo(df["Women"], debug=False)
+      df["Women"] = f'{html_util.image_formatter(logo)} {teams.getTeamNickname(df.Women)}'
 
     return df
 
@@ -32,15 +32,33 @@ def bids():
         "0_y" : "Women"
     })
     combo = combo[["Men", "Conf", "Women"]].copy()
+
     combo = combo.apply(lambda x: team_logos(x), axis=1)
-    print(combo)
-    return
+    classes = ["sticky-table", "bids-table"]
+    table_attr = f'class="{" ".join(classes)}"'
+    
+    def highlight(row):
+      ret = ["", "", ""]
 
-
-bids()
+      if "team-logo" in row.Women:
+        ret[2] = "font-weight: bold; background:#e8f7e8 !important;"
+      
+      if "team-logo" in row.Men:
+        ret[0] = "font-weight: bold; background:#e8f7e8 !important;"
+      return ret
+      
+    styler = (
+        combo.style
+        .hide(axis="index")
+        .set_table_attributes(table_attr)
+        .apply(lambda x: highlight(x), axis=1)
+    )
+    
+    return styler
 
 def render_home():
     # Raw string to preserve formatting
+    styler = bids()
     html = r"""
 {% include countdown.html %}
 
@@ -127,7 +145,7 @@ def render_home():
   }
 </style>
     """
-
+    html = html + "<br>" + styler.to_html()
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
 

@@ -1551,3 +1551,127 @@ p {
   border-radius: 6px;
   letter-spacing: 0.3px;
 }
+
+/* =========================
+   HOME BIDS TABLE
+   ========================= */
+
+.bids-table table {
+  table-layout: fixed !important;   /* equal column sizing */
+}
+
+/* Equal width columns */
+.bids-table th,
+.bids-table td {
+  width: 33.33%;
+  text-align: center;
+}
+
+/* Remove sticky/index styling from Men column */
+.bids-table th:first-child,
+.bids-table td:first-child {
+  position: static !important;
+  left: auto !important;
+  background: white !important;
+  border-right: none !important;
+  box-shadow: none !important;
+}
+
+/* Make Conference column behave like index */
+.bids-table th:nth-child(2),
+.bids-table td:nth-child(2) {
+
+  background: #D3D3D3;
+  border-right: 1px solid black;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+}
+
+/* Slight logo alignment improvement */
+.bids-table img {
+  height: 18px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* =========================
+   BIDS TABLE HEADER FIX
+   ========================= */
+
+/* Make Men/Women headers look like Conf */
+.bids-table thead th:first-child,
+.bids-table thead th:nth-child(3) {
+  background: #D3D3D3 !important;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Keep Conf header looking like index */
+.bids-table thead th:nth-child(2) {
+  padding-left: 10px;
+}
+
+/* Add border between Men and Conf */
+.bids-table thead th:first-child {
+  border-right: 1px solid black;
+}
+
+/* Match the border in the body */
+.bids-table td:first-child {
+  border-right: 1px solid black;
+}
+
+.bids-table td {
+  vertical-align: middle;
+}
+
+.bids-table td img {
+  height: 18px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* =========================
+   BIDS TABLE BORDER FIXES
+   ========================= */
+
+/* Vertical divider between Men and Conf */
+.bids-table thead th:first-child,
+.bids-table tbody td:first-child {
+  border-right: 1px solid black !important;
+}
+
+/* Ensure Conf column also has left divider */
+.bids-table thead th:nth-child(2),
+.bids-table tbody td:nth-child(2) {
+  border-left: 1px solid black;
+}
+
+/* Bottom border under headers */
+.bids-table thead th {
+  border-bottom: 1px solid black;
+}
+
+/* =========================
+   AUTO BID CELL HIGHLIGHT
+   ========================= */
+
+.bids-table td.team-in {
+  background: rgba(34, 197, 94, 0.15);
+  font-weight: 600;
+}
+
+.bids-table td.team-in img {
+  height: 18px;
+  margin-right: 6px;
+}
+
+/* Center the conference column */
+.bids-table td:nth-child(2),
+.bids-table th:nth-child(2) {
+  text-align: center;
+}
+
+/* Optional subtle row striping */
+.bids-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}

@@ -77,7 +77,7 @@ def getTeamOfficialName(team, debug=True):
         return None
 
 
-def getTeamIndex(team):
+def getTeamIndex(team, debug=True):
     """
     Get index of team from master dict.
 
@@ -86,7 +86,7 @@ def getTeamIndex(team):
     :return: Official Name | None
     :rtype: string | None
     """
-    result = getTeamInfo(team)
+    result = getTeamInfo(team, debug)
     try:
         return list(result.index)[0]
     except:
@@ -106,9 +106,9 @@ def normalize_conf(name):
             return key
     return name
 
-def getTeamLogo(team):
+def getTeamLogo(team, debug=True):
     master = getTeams()
-    idx = getTeamIndex(team)
+    idx = getTeamIndex(team, debug)
     if idx != None:
         return "/assets/images/" + master.at[idx, "path"]
     return ""
