@@ -145,12 +145,12 @@ def style_bracketology(df, gender="M", original=None, conference=None):
             lambda x: f"{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})",
             axis=1,
         )
-
+    
     team_index = df["Team"].apply(lambda x: strip_team_html(x))
 
     conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
     bids_dict = pd.Series(df.Bid.values, index=team_index).to_dict()
-    
+ 
     if conference:
         output_cols.insert(2, "Conf Record")
     df = df[output_cols]
@@ -166,7 +166,7 @@ def style_bracketology(df, gender="M", original=None, conference=None):
     table_attr = f'class="{" ".join(classes)}"'
     if attrs:
         table_attr += " " + " ".join(attrs)
-
+    
     if gender == "W":
         styler = (
             df.style.hide(axis="index")

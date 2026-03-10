@@ -340,7 +340,7 @@ def predict_womens(date):
             idx = [idx]
 
         df.loc[idx, "ConfChamp"] = 1
-
+ 
     delta = change.change(date, "W")    
 
     df = pd.merge(df.reset_index(), delta, "left", "Team").set_index("index")
