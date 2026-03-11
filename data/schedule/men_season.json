@@ -2730,6 +2730,13 @@
             "score": 62,
             "opponent": "Rutgers",
             "opponent_score": 74
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 66,
+            "opponent": "Northwestern",
+            "opponent_score": 76
         }
     },
     "Tarleton St.": {
@@ -3175,6 +3182,13 @@
             "score": 78,
             "opponent": "Florida St.",
             "opponent_score": 91
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 86,
+            "opponent": "Syracuse",
+            "opponent_score": 69
         }
     },
     "Maine": {
@@ -3832,6 +3846,13 @@
             "score": 72,
             "opponent": "Illinois",
             "opponent_score": 78
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 70,
+            "opponent": "Oregon",
+            "opponent_score": 60
         }
     },
     "Coppin St.": {
@@ -4277,6 +4298,13 @@
             "score": 70,
             "opponent": "Texas Southern",
             "opponent_score": 59
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 65,
+            "opponent": "Alcorn St.",
+            "opponent_score": 56
         }
     },
     "Wright St.": {
@@ -4510,6 +4538,13 @@
             "score": 103,
             "opponent": "Northern Kentucky",
             "opponent_score": 90
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 66,
+            "opponent": "Detroit Mercy",
+            "opponent_score": 63
         }
     },
     "Norfolk St.": {
@@ -5167,6 +5202,13 @@
             "score": 69,
             "opponent": "Pittsburgh",
             "opponent_score": 71
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 69,
+            "opponent": "SMU",
+            "opponent_score": 86
         }
     },
     "New Hampshire": {
@@ -7399,6 +7441,13 @@
             "score": 71,
             "opponent": "Syracuse",
             "opponent_score": 69
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 64,
+            "opponent": "Stanford",
+            "opponent_score": 63
         }
     },
     "Marist": {
@@ -12569,6 +12618,13 @@
             "score": 81,
             "opponent": "Albany",
             "opponent_score": 76
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 69,
+            "opponent": "UMBC",
+            "opponent_score": 91
         }
     },
     "North Carolina Central": {
@@ -15924,6 +15980,13 @@
             "score": 64,
             "opponent": "Wagner",
             "opponent_score": 56
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 79,
+            "opponent": "Mercyhurst",
+            "opponent_score": 70
         }
     },
     "Notre Dame": {
@@ -18785,6 +18848,13 @@
             "score": 63,
             "opponent": "TCU",
             "opponent_score": 73
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 73,
+            "opponent": "Utah",
+            "opponent_score": 66
         }
     },
     "Kennesaw St.": {
@@ -24640,6 +24710,13 @@
             "score": 76,
             "opponent": "Incarnate Word",
             "opponent_score": 68
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 60,
+            "opponent": "Texas A&M Corpus Chris",
+            "opponent_score": 58
         }
     },
     "Troy": {
@@ -25763,6 +25840,13 @@
             "score": 72,
             "opponent": "Virginia",
             "opponent_score": 76
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 89,
+            "opponent": "Wake Forest",
+            "opponent_score": 95
         }
     },
     "Boston University": {
@@ -26879,6 +26963,13 @@
             "score": 75,
             "opponent": "Nicholls",
             "opponent_score": 65
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 84,
+            "opponent": "UT Rio Grande Valley",
+            "opponent_score": 80
         }
     },
     "Sam Houston St.": {
@@ -27769,6 +27860,13 @@
             "score": 63,
             "opponent": "Mount St. Mary's",
             "opponent_score": 58
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 64,
+            "opponent": "Merrimack",
+            "opponent_score": 54
         }
     },
     "Wofford": {
@@ -28885,6 +28983,13 @@
             "score": 75,
             "opponent": "New Mexico St.",
             "opponent_score": 77
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 63,
+            "opponent": "New Mexico St.",
+            "opponent_score": 68
         }
     },
     "Vermont": {
@@ -29111,6 +29216,13 @@
             "score": 77,
             "opponent": "Bryant",
             "opponent_score": 57
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 63,
+            "opponent": "NJIT",
+            "opponent_score": 54
         }
     },
     "Coastal Carolina": {
@@ -29782,6 +29894,13 @@
             "score": 77,
             "opponent": "Mississippi Valley St.",
             "opponent_score": 52
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 65,
+            "opponent": "Jackson St.",
+            "opponent_score": 68
         }
     },
     "Arkansas St.": {
@@ -32014,6 +32133,13 @@
             "score": 67,
             "opponent": "Middle Tennessee",
             "opponent_score": 73
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 72,
+            "opponent": "Missouri St.",
+            "opponent_score": 75
         }
     },
     "Davidson": {
@@ -34684,6 +34810,13 @@
             "score": 82,
             "opponent": "Texas Tech",
             "opponent_score": 76
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 105,
+            "opponent": "Kansas St.",
+            "opponent_score": 91
         }
     },
     "Indiana St.": {
@@ -35560,6 +35693,13 @@
             "score": 65,
             "opponent": "Oregon St.",
             "opponent_score": 56
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 79,
+            "opponent": "Santa Clara",
+            "opponent_score": 68
         }
     },
     "South Carolina St.": {
@@ -37792,6 +37932,13 @@
             "score": 79,
             "opponent": "Arizona",
             "opponent_score": 89
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 83,
+            "opponent": "Oklahoma St.",
+            "opponent_score": 92
         }
     },
     "Bethune Cookman": {
@@ -38675,6 +38822,13 @@
             "score": 85,
             "opponent": "Mississippi Valley St.",
             "opponent_score": 77
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 68,
+            "opponent": "Grambling St.",
+            "opponent_score": 65
         }
     },
     "Illinois": {
@@ -41578,6 +41732,13 @@
             "score": 84,
             "opponent": "Weber St.",
             "opponent_score": 79
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 68,
+            "opponent": "Idaho",
+            "opponent_score": 81
         }
     },
     "UCLA": {
@@ -43845,6 +44006,13 @@
             "score": 68,
             "opponent": "Sacramento St.",
             "opponent_score": 45
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 81,
+            "opponent": "Eastern Washington",
+            "opponent_score": 68
         }
     },
     "Washington St.": {
@@ -47207,6 +47375,13 @@
             "score": 80,
             "opponent": "California",
             "opponent_score": 73
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 95,
+            "opponent": "Virginia Tech",
+            "opponent_score": 89
         }
     },
     "Fairleigh Dickinson": {
@@ -47878,6 +48053,13 @@
             "score": 86,
             "opponent": "Nicholls",
             "opponent_score": 68
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 80,
+            "opponent": "McNeese",
+            "opponent_score": 84
         }
     },
     "Baylor": {
@@ -48097,6 +48279,13 @@
             "score": 101,
             "opponent": "Utah",
             "opponent_score": 75
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 79,
+            "opponent": "Arizona St.",
+            "opponent_score": 83
         }
     },
     "Weber St.": {
@@ -50371,6 +50560,13 @@
             "score": 70,
             "opponent": "Robert Morris",
             "opponent_score": 64
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 63,
+            "opponent": "Wright St.",
+            "opponent_score": 66
         }
     },
     "Illinois Chicago": {
@@ -51981,6 +52177,13 @@
             "score": 56,
             "opponent": "Stonehill",
             "opponent_score": 51
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 70,
+            "opponent": "LIU",
+            "opponent_score": 79
         }
     },
     "Northwestern": {
@@ -52200,6 +52403,13 @@
             "score": 66,
             "opponent": "Minnesota",
             "opponent_score": 67
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 76,
+            "opponent": "Penn St.",
+            "opponent_score": 66
         }
     },
     "San Jose St.": {
@@ -52638,6 +52848,13 @@
             "score": 75,
             "opponent": "Baylor",
             "opponent_score": 101
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 66,
+            "opponent": "Cincinnati",
+            "opponent_score": 73
         }
     },
     "Jacksonville": {
@@ -55061,6 +55278,13 @@
             "score": 74,
             "opponent": "New Orleans",
             "opponent_score": 61
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 58,
+            "opponent": "Stephen F. Austin",
+            "opponent_score": 60
         }
     },
     "Merrimack": {
@@ -55294,6 +55518,13 @@
             "score": 70,
             "opponent": "Sacred Heart",
             "opponent_score": 48
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 54,
+            "opponent": "Siena",
+            "opponent_score": 64
         }
     },
     "South Dakota St.": {
@@ -58903,6 +59134,13 @@
             "score": 68,
             "opponent": "Towson",
             "opponent_score": 65
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 75,
+            "opponent": "Monmouth",
+            "opponent_score": 69
         }
     },
     "UCF": {
@@ -60252,6 +60490,13 @@
             "score": 95,
             "opponent": "Northern Colorado",
             "opponent_score": 89
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 75,
+            "opponent": "Portland St.",
+            "opponent_score": 72
         }
     },
     "UTEP": {
@@ -64490,6 +64735,13 @@
             "score": 85,
             "opponent": "Kansas",
             "opponent_score": 104
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 91,
+            "opponent": "BYU",
+            "opponent_score": 105
         }
     },
     "Southern Utah": {
@@ -64928,6 +65180,13 @@
             "score": 65,
             "opponent": "Iowa St.",
             "opponent_score": 86
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 83,
+            "opponent": "Baylor",
+            "opponent_score": 79
         }
     },
     "Hawaii": {
@@ -65359,6 +65618,13 @@
             "score": 85,
             "opponent": "Washington",
             "opponent_score": 79
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 60,
+            "opponent": "Maryland",
+            "opponent_score": 70
         }
     },
     "Evansville": {
@@ -66030,6 +66296,13 @@
             "score": 87,
             "opponent": "Western Kentucky",
             "opponent_score": 74
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 75,
+            "opponent": "FIU",
+            "opponent_score": 72
         }
     },
     "Alcorn St.": {
@@ -66248,6 +66521,13 @@
             "location": "away",
             "score": 77,
             "opponent": "Alabama St.",
+            "opponent_score": 65
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 56,
+            "opponent": "Prairie View A&M",
             "opponent_score": 65
         }
     },
@@ -68968,6 +69248,13 @@
             "score": 75,
             "opponent": "Houston",
             "opponent_score": 82
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 92,
+            "opponent": "Colorado",
+            "opponent_score": 83
         }
     },
     "Tennessee Martin": {
@@ -70077,6 +70364,13 @@
             "score": 84,
             "opponent": "New Hampshire",
             "opponent_score": 69
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "home",
+            "score": 91,
+            "opponent": "UMass Lowell",
+            "opponent_score": 69
         }
     },
     "NJIT": {
@@ -70303,6 +70597,13 @@
             "score": 60,
             "opponent": "Maine",
             "opponent_score": 58
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 54,
+            "opponent": "Vermont",
+            "opponent_score": 63
         }
     },
     "Fordham": {
@@ -71228,6 +71529,13 @@
             "score": 76,
             "opponent": "Saint Mary's",
             "opponent_score": 71
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 68,
+            "opponent": "Gonzaga",
+            "opponent_score": 79
         }
     },
     "Sacramento St.": {
@@ -71659,6 +71967,13 @@
             "score": 85,
             "opponent": "Idaho St.",
             "opponent_score": 78
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 72,
+            "opponent": "Montana",
+            "opponent_score": 75
         }
     },
     "Stanford": {
@@ -71878,6 +72193,13 @@
             "score": 85,
             "opponent": "N.C. State",
             "opponent_score": 84
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "home",
+            "score": 63,
+            "opponent": "Pittsburgh",
+            "opponent_score": 64
         }
     },
     "Idaho St.": {
@@ -73679,6 +74001,13 @@
             "score": 74,
             "opponent": "Campbell",
             "opponent_score": 64
+        },
+        "2026-03-10": {
+            "win": false,
+            "location": "away",
+            "score": 69,
+            "opponent": "Hofstra",
+            "opponent_score": 75
         }
     },
     "East Tennessee St.": {
@@ -74569,6 +74898,13 @@
             "score": 77,
             "opponent": "Jacksonville St.",
             "opponent_score": 75
+        },
+        "2026-03-10": {
+            "win": true,
+            "location": "away",
+            "score": 68,
+            "opponent": "Jacksonville St.",
+            "opponent_score": 63
         }
     },
     "New Mexico": {
