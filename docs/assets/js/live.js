@@ -926,8 +926,6 @@ function renderGames(games, medalByDate = {}) {
       e.stopPropagation()
     })
   })
-
-  container.innerHTML = html
 }
 
 async function start() {
