@@ -18,29 +18,34 @@ let LAST_MEDALS = null
 let EXPAND_ALL = false
 let EXPANDED_GAMES = new Set()
 
-const CONF_CLASSES = new Set([
-  "acc",
-  "sec",
-  "bigten",
-  "big12",
-  "bigeast"
-])
+const CONF_CLASSES = new Set(['acc', 'sec', 'bigten', 'big12', 'bigeast'])
 
-function normalize(s) {
+function normalize (s) {
   return String(s)
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "")
+    .replace(/[^a-z0-9]+/g, '')
     .trim()
 }
 
-function getConfClass(conf) {
+function getConfClass (conf) {
   const key = normalize(conf)
 
   if (CONF_CLASSES.has(key)) {
     return `conf-${key}`
   }
 
-  return "conf" // default class
+  return 'conf' // default class
+}
+
+function isToday (isoDate) {
+  const today = new Date()
+  const d = new Date(isoDate + 'T00:00:00')
+
+  return (
+    today.getFullYear() === d.getFullYear() &&
+    today.getMonth() === d.getMonth() &&
+    today.getDate() === d.getDate()
+  )
 }
 
 async function loadTeamLogos () {
@@ -435,8 +440,8 @@ function renderExpandedStats (g) {
     return { left: '', right: '' }
   }
 
-  function compareRecords(a, b) {
-    function pct(rec) {
+  function compareRecords (a, b) {
+    function pct (rec) {
       if (!rec || rec === '—') return null
 
       const parts = rec.trim().split('-')
@@ -645,14 +650,7 @@ function filterGameIds (games) {
 
 function renderGames (games, medalByDate = {}) {
   if (!games) return
-  console.log(
-    'renderGames',
-    Object.keys(games || {}).length,
-    'filter:',
-    currentFilter
-  )
 
-  // enrich once
   Object.values(games).forEach(enrichGame)
 
   const filteredIds = filterGameIds(games)
@@ -665,78 +663,91 @@ function renderGames (games, medalByDate = {}) {
     return
   }
 
-  /// ---- group by date ----
-  const byDate = {}
+  const todayStr = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  })
+
+  const activeByDate = {}
+  const pastByDate = {}
 
   for (const id of filteredIds) {
     const g = games[id]
     if (!g) continue
 
     const dateKey = g.date || 'unknown'
-    if (!byDate[dateKey]) byDate[dateKey] = []
 
-    byDate[dateKey].push({ id, g })
+    const isPastFinal =
+      g.status === "final" &&
+      dateKey < todayStr
+
+    const target = isPastFinal ? pastByDate : activeByDate
+
+    if (!target[dateKey]) target[dateKey] = []
+    target[dateKey].push({ id, g })
   }
 
-  // ---- sort dates chronologically ----
-  const dates = Object.keys(byDate).sort((a, b) => new Date(a) - new Date(b))
+  const activeDates = Object.keys(activeByDate).sort(
+    (a,b)=> new Date(a) - new Date(b)
+  )
 
-  // ---- build HTML ----
+  const pastDates = Object.keys(pastByDate).sort(
+    (a,b)=> new Date(b) - new Date(a)
+  )
+
   let html = ''
 
-  for (const date of dates) {
-    const gamesForDay = byDate[date]
+  function renderDay(date, source){
+    const gamesForDay = source[date]
 
-    // ---- sort within the day ----
-    gamesForDay.sort((a, b) => {
+    gamesForDay.sort((a,b)=>{
       const pa = gamePriority(a.g)
       const pb = gamePriority(b.g)
 
-      if (pa !== pb) return pb - pa
-
+      if (pa !== pb) return pb-pa
       return gameTime(a.g) - gameTime(b.g)
     })
 
-    // ---- date header ----
     html += `
       <h2 class="date-header">${formatDateHeader(date)}</h2>
       <div class="scoreboard-grid">
     `
 
-    for (const { id, g } of gamesForDay) {
-      const awayTeam = safe(g.away_team, 'AWAY')
-      const homeTeam = safe(g.home_team, 'HOME')
+    for (const {id,g} of gamesForDay){
 
-      const awayAbb = safe(g.away_abb, null)
-      const homeAbb = safe(g.home_abb, null)
+      const awayTeam = safe(g.away_team,'AWAY')
+      const homeTeam = safe(g.home_team,'HOME')
 
-      const awayRank = safe(g.away_rank, null)
-      const homeRank = safe(g.home_rank, null)
+      const awayAbb = safe(g.away_abb,null)
+      const homeAbb = safe(g.home_abb,null)
+
+      const awayRank = safe(g.away_rank,null)
+      const homeRank = safe(g.home_rank,null)
+
       const isAP = g.isAP
       const isP5 = g.isP5
 
-      const awayRecord = safe(g.away_record, null)
-      const homeRecord = safe(g.home_record, null)
+      const awayRecord = safe(g.away_record,null)
+      const homeRecord = safe(g.home_record,null)
 
-      const homeModel = safe(g.home_model, null)
-      const awayModel = safe(g.away_model, null)
+      const homeModel = safe(g.home_model,null)
+      const awayModel = safe(g.away_model,null)
 
-      const awayScore = safe(g.away_score, '—')
-      const homeScore = safe(g.home_score, '—')
+      const awayScore = safe(g.away_score,'—')
+      const homeScore = safe(g.home_score,'—')
 
-      const { text: stText, cls: stCls } = statusLabel(g.status)
+      const {text:stText, cls:stCls} = statusLabel(g.status)
+
       const metaLines = formatMeta(g)
 
       const medal = medalByDate[date]?.get(id)
 
       const medalClass =
-        medal === '🥇'
-          ? 'gold'
-          : medal === '🥈'
-          ? 'silver'
-          : medal === '🥉'
-          ? 'bronze'
-          : ''
+        medal === '🥇' ? 'gold' :
+        medal === '🥈' ? 'silver' :
+        medal === '🥉' ? 'bronze' : ''
 
       html += `
         <article class="game-card 
@@ -744,42 +755,38 @@ function renderGames (games, medalByDate = {}) {
           ${g.isActiveLive ? 'live-active' : ''}"
           id="game-${id}" 
           data-game-id="${id}">
+
           <header class="game-head">
-          <div class="game-head-left">
-          <span class="status-pill ${stCls}">${stText} </span>
-          </div>
-           <div class="game-head-center">
-            ${renderTime(g)}
-          </div>
-          <div class="game-head-right">
-           ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
-           ${isP5 ? `<span class="game-badge p5">P5</span>` : ''}
-           ${
-             medal
-               ? `<span class="game-badge medal  ${medalClass}" title="Top 3 rating">${medal}</span>`
-               : ''
-           }
-           </div>
-        </header>
+            <div class="game-head-left">
+              <span class="status-pill ${stCls}">${stText}</span>
+            </div>
+
+            <div class="game-head-center">
+              ${renderTime(g)}
+            </div>
+
+            <div class="game-head-right">
+              ${isAP ? `<span class="game-badge ap">TOP 25</span>` : ''}
+              ${isP5 ? `<span class="game-badge p5">P5</span>` : ''}
+              ${medal ? `<span class="game-badge medal ${medalClass}" title="Top 3 rating">${medal}</span>` : ''}
+            </div>
+          </header>
 
           <div class="teams">
-           <div class="team-row ${g.awayWon ? 'winner' : ''}">
+
+            <div class="team-row ${g.awayWon ? 'winner' : ''}">
               <div class="team-left">
                 <span class="team">
-                <img
-                  class="team-logo"
-                  src="${teamLogo(awayTeam)}"
-                  alt="${awayTeam}"
-                  loading="lazy"
-                  onerror="this.src='/assets/images/default.png'"
-                />
-                ${awayRank ? `(${awayRank})` : ''}
-                <span class="team-name">${
-                  awayAbb ? awayAbb : getTeamName(awayTeam)
-                }</span>
-                <strong>${awayModel ? `#${awayModel}` : ''}</strong>
-                ${awayRecord ? `(${awayRecord})` : ''}
-              </span>
+                  <img class="team-logo"
+                       src="${teamLogo(awayTeam)}"
+                       alt="${awayTeam}"
+                       loading="lazy"
+                       onerror="this.src='/assets/images/default.png'"/>
+                  ${awayRank ? `(${awayRank})` : ''}
+                  <span class="team-name">${awayAbb ? awayAbb : getTeamName(awayTeam)}</span>
+                  <strong>${awayModel ? `#${awayModel}` : ''}</strong>
+                  ${awayRecord ? `(${awayRecord})` : ''}
+                </span>
               </div>
               <div class="score">${awayScore}</div>
             </div>
@@ -787,24 +794,22 @@ function renderGames (games, medalByDate = {}) {
             <div class="team-row ${g.homeWon ? 'winner' : ''}">
               <div class="team-left">
                 <span class="team">
-                <img
-                  class="team-logo"
-                  src="${teamLogo(homeTeam)}"
-                  alt="${homeTeam}"
-                  loading="lazy"
-                  onerror="this.src='/assets/images/default.png'"
-                />
-                ${homeRank ? `(${homeRank})` : ''}
-                <span class="team-name">${
-                  homeAbb ? homeAbb : getTeamName(homeTeam)
-                }</span>
-                <strong>${homeModel ? `#${homeModel}` : ''}</strong>
-                ${homeRecord ? `(${homeRecord})` : ''}
-              </span>
+                  <img class="team-logo"
+                       src="${teamLogo(homeTeam)}"
+                       alt="${homeTeam}"
+                       loading="lazy"
+                       onerror="this.src='/assets/images/default.png'"/>
+                  ${homeRank ? `(${homeRank})` : ''}
+                  <span class="team-name">${homeAbb ? homeAbb : getTeamName(homeTeam)}</span>
+                  <strong>${homeModel ? `#${homeModel}` : ''}</strong>
+                  ${homeRecord ? `(${homeRecord})` : ''}
+                </span>
               </div>
               <div class="score">${homeScore}</div>
             </div>
+
           </div>
+
           <div class="tourney-slot">
             ${
               g.isConfTournament
@@ -814,23 +819,21 @@ function renderGames (games, medalByDate = {}) {
                 : ''
             }
           </div>
-            ${
-              metaLines.length
-                ? `
+
+          ${
+            metaLines.length
+              ? `
             <div class="meta">
-              ${metaLines
-                .map(
-                  m => `
-              <div class="meta-line meta-${m.type || 'misc'}">
-                ${m.text || m}
-              </div>
-            `
-                )
-                .join('')}
+              ${metaLines.map(m=>`
+                <div class="meta-line meta-${m.type||'misc'}">
+                  ${m.text || m}
+                </div>
+              `).join('')}
             </div>
           `
-                : ''
-            }
+              : ''
+          }
+
           <div class="expand-toggle">
             <span class="expand-indicator">▼</span>
           </div>
@@ -838,6 +841,7 @@ function renderGames (games, medalByDate = {}) {
           <div class="game-expand" hidden>
             ${renderExpandedStats(g)}
           </div>
+
         </article>
       `
     }
@@ -845,67 +849,26 @@ function renderGames (games, medalByDate = {}) {
     html += `</div>`
   }
 
-  container.innerHTML = html
-  // Restore expanded state after re-render
-  container.querySelectorAll('.game-card').forEach(card => {
-    const id = card.dataset.gameId
-    const expand = card.querySelector('.game-expand')
-    if (!expand) return
+  // active section (today + future games)
+  for (const date of activeDates){
+    renderDay(date, activeByDate)
+  }
 
-    if (EXPAND_ALL || EXPANDED_GAMES.has(id)) {
-      expand.hidden = false
-      card.classList.add('open')
-    } else {
-      expand.hidden = true
-      card.classList.remove('open')
+  // past games collapsible
+  if (pastDates.length){
+    html += `
+      <details class="past-games">
+        <summary class="date-header">Past Games</summary>
+    `
+
+    for (const date of pastDates){
+      renderDay(date, pastByDate)
     }
-  })
 
-  container.querySelectorAll('.expand-toggle').forEach(toggle => {
-    toggle.addEventListener('click', e => {
-      if (EXPAND_ALL) return
-      const card = toggle.closest('.game-card')
-      const expand = card.querySelector('.game-expand')
-      const id = card.dataset.gameId
+    html += `</details>`
+  }
 
-      if (!expand || !id) return
-
-      const isOpen = !expand.hidden
-
-      // Close all others (accordion behavior)
-      container.querySelectorAll('.game-expand').forEach(el => {
-        el.hidden = true
-      })
-
-      container.querySelectorAll('.game-card').forEach(c => {
-        c.classList.remove('open')
-      })
-
-      if (isOpen) {
-        // closing
-        expand.hidden = true
-        card.classList.remove('open')
-        EXPANDED_GAMES.delete(id)
-      } else {
-        // opening (accordion style)
-        EXPANDED_GAMES.clear()
-
-        container.querySelectorAll('.game-expand').forEach(el => {
-          el.hidden = true
-        })
-
-        container.querySelectorAll('.game-card').forEach(c => {
-          c.classList.remove('open')
-        })
-
-        expand.hidden = false
-        card.classList.add('open')
-        EXPANDED_GAMES.add(id)
-      }
-
-      e.stopPropagation()
-    })
-  })
+  container.innerHTML = html
 }
 
 async function start () {

@@ -5,6 +5,9 @@ import pandas as pd
 from cbb import scraper
 from cbb.lib import teams
 
+DAYTON_SLOTS = {42, 43, 44, 45, 64, 65, 66, 67}
+FF_BADGE = '<span class="ff-badge" title="First Four (Dayton)">FF</span>'
+
 
 def _format_arrow(val):
     """
@@ -65,7 +68,7 @@ def bold_row(row, conf_champ_dict, bid_dict):
 
     val = conf_champ_dict.get(team, False)
     bid = bid_dict.get(team, False)
-    
+
     if bid:
         ret = ["font-weight: bold; background:#e8f7e8"] * len(row)
         return ret
@@ -126,31 +129,32 @@ def strip_team_html(row):
     return team
 
 
+def format_team_cell(x, dayton_set):
+    badge = FF_BADGE if x.BracketRank in dayton_set else ""
+    return f"{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record}) {badge}"
+
+
 def style_bracketology(df, gender="M", original=None, conference=None):
     master = scraper.getMasterTeams()
+
     df = df.copy()
+    df["BracketRank"] = range(len(df))
     if gender == "W":
         output_cols = ["Team", "Conf", "Gord", "Ovr", "Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"]
         df["Logo"] = df.apply(
             lambda x: "/assets/images/" + scraper.get_image_name(x["Team"]), axis=1
         )
-        df["Team"] = df.apply(
-            lambda x: f"{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})",
-            axis=1,
-        )
+        df["Team"] = df.apply(lambda x: format_team_cell(x, DAYTON_SLOTS), axis=1)
     else:
         output_cols = ["Team", "Conf", "Pwr", "Ovr", "Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"]
         df["Logo"] = df.apply(lambda x: getUrl(x, df, master, "M"), axis=1)
-        df["Team"] = df.apply(
-            lambda x: f"{image_formatter(x.Logo)} {teams.getTeamNickname(x.Team)} ({x.Record})",
-            axis=1,
-        )
-    
+        df["Team"] = df.apply(lambda x: format_team_cell(x, DAYTON_SLOTS), axis=1)
+
     team_index = df["Team"].apply(lambda x: strip_team_html(x))
 
     conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
     bids_dict = pd.Series(df.Bid.values, index=team_index).to_dict()
- 
+
     if conference:
         output_cols.insert(2, "Conf Record")
     df = df[output_cols]
@@ -166,7 +170,7 @@ def style_bracketology(df, gender="M", original=None, conference=None):
     table_attr = f'class="{" ".join(classes)}"'
     if attrs:
         table_attr += " " + " ".join(attrs)
-    
+
     if gender == "W":
         styler = (
             df.style.hide(axis="index")
