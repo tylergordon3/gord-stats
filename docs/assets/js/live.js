@@ -701,12 +701,19 @@ function renderGames(games, medalByDate = {}) {
   function renderDay(date, source) {
     const gamesForDay = source[date]
 
-    gamesForDay.sort((a, b) => {
+    gamesForDay.sort((a,b)=>{
+
       const pa = gamePriority(a.g)
       const pb = gamePriority(b.g)
 
       if (pa !== pb) return pb - pa
-      return gameTime(a.g) - gameTime(b.g)
+
+      const ta = gameTime(a.g)
+      const tb = gameTime(b.g)
+
+      if (ta !== tb) return ta - tb
+
+      return 0
     })
 
     html += `
@@ -865,34 +872,32 @@ function renderGames(games, medalByDate = {}) {
     html += `</details>`
   }
 
-  container.innerHTML = html
-  // Restore expanded state after re-render
-  container.querySelectorAll('.game-card').forEach(card => {
-    const id = card.dataset.gameId
-    const expand = card.querySelector('.game-expand')
-    if (!expand) return
+container.innerHTML = html
 
-    if (EXPAND_ALL || EXPANDED_GAMES.has(id)) {
-      expand.hidden = false
-      card.classList.add('open')
-    } else {
-      expand.hidden = true
-      card.classList.remove('open')
-    }
-  })
+// restore expanded state
+container.querySelectorAll('.game-card').forEach(card => {
+  const id = card.dataset.gameId
+  const expand = card.querySelector('.game-expand')
+  if (!expand) return
 
+  if (EXPAND_ALL || EXPANDED_GAMES.has(id)) {
+    expand.hidden = false
+    card.classList.add('open')
+  }
+})
+
+  // expand click handler
   container.querySelectorAll('.expand-toggle').forEach(toggle => {
     toggle.addEventListener('click', e => {
-      if (EXPAND_ALL) return
+
       const card = toggle.closest('.game-card')
       const expand = card.querySelector('.game-expand')
       const id = card.dataset.gameId
 
-      if (!expand || !id) return
+      if (!expand) return
 
       const isOpen = !expand.hidden
 
-      // Close all others (accordion behavior)
       container.querySelectorAll('.game-expand').forEach(el => {
         el.hidden = true
       })
@@ -901,26 +906,13 @@ function renderGames(games, medalByDate = {}) {
         c.classList.remove('open')
       })
 
-      if (isOpen) {
-        // closing
-        expand.hidden = true
-        card.classList.remove('open')
-        EXPANDED_GAMES.delete(id)
-      } else {
-        // opening (accordion style)
-        EXPANDED_GAMES.clear()
-
-        container.querySelectorAll('.game-expand').forEach(el => {
-          el.hidden = true
-        })
-
-        container.querySelectorAll('.game-card').forEach(c => {
-          c.classList.remove('open')
-        })
-
+      if (!isOpen) {
         expand.hidden = false
         card.classList.add('open')
+        EXPANDED_GAMES.clear()
         EXPANDED_GAMES.add(id)
+      } else {
+        EXPANDED_GAMES.delete(id)
       }
 
       e.stopPropagation()
