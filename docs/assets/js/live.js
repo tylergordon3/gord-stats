@@ -20,14 +20,14 @@ let EXPANDED_GAMES = new Set()
 
 const CONF_CLASSES = new Set(['acc', 'sec', 'bigten', 'big12', 'bigeast'])
 
-function normalize (s) {
+function normalize(s) {
   return String(s)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '')
     .trim()
 }
 
-function getConfClass (conf) {
+function getConfClass(conf) {
   const key = normalize(conf)
 
   if (CONF_CLASSES.has(key)) {
@@ -37,7 +37,7 @@ function getConfClass (conf) {
   return 'conf' // default class
 }
 
-function isToday (isoDate) {
+function isToday(isoDate) {
   const today = new Date()
   const d = new Date(isoDate + 'T00:00:00')
 
@@ -48,7 +48,7 @@ function isToday (isoDate) {
   )
 }
 
-async function loadTeamLogos () {
+async function loadTeamLogos() {
   const res = await fetch('/assets/data/master.json')
   const data = await res.json()
 
@@ -87,7 +87,7 @@ async function loadTeamLogos () {
   console.log('Loaded team logos:', Object.keys(map).length)
 }
 
-function teamLogo (teamName) {
+function teamLogo(teamName) {
   if (!TEAM_LOGO_READY || !teamName) {
     return '/assets/images/default.png'
   }
@@ -95,7 +95,7 @@ function teamLogo (teamName) {
   return TEAM_LOGO_MAP[normalize(teamName)] || '/assets/images/default.png'
 }
 
-async function pollScores () {
+async function pollScores() {
   const res = await fetch(WORKER_URL)
   const data = await res.json()
 
@@ -123,7 +123,7 @@ async function pollScores () {
   }
 }
 
-function applyMedalsToGames (games, medalByDate) {
+function applyMedalsToGames(games, medalByDate) {
   for (const date in medalByDate) {
     const medalMap = medalByDate[date]
 
@@ -135,7 +135,7 @@ function applyMedalsToGames (games, medalByDate) {
   }
 }
 
-function parseClockToSeconds (clock) {
+function parseClockToSeconds(clock) {
   if (!clock || typeof clock !== 'string') return Infinity
 
   const parts = clock.split(':')
@@ -147,7 +147,7 @@ function parseClockToSeconds (clock) {
   return minutes * 60 + seconds
 }
 
-function enrichGame (g) {
+function enrichGame(g) {
   g.isP5 = g.is_p5 === true
   g.isAP = g.is_ap === true
 
@@ -190,7 +190,7 @@ function enrichGame (g) {
   return g
 }
 
-function gamePriority (g) {
+function gamePriority(g) {
   const status = (g.status || '').toLowerCase()
 
   const isLive = status === 'in_progress' || status === 'live'
@@ -200,7 +200,7 @@ function gamePriority (g) {
   const isPre = status === 'pre_game' || status === 'scheduled'
   const isOT = status === 'OT'
 
-  function gameProgressScore (g) {
+  function gameProgressScore(g) {
     let currentPeriod
     if (isOT) {
       currentPeriod = LEAGUE === 'men' ? 3 : 5
@@ -235,11 +235,11 @@ function gamePriority (g) {
   return -3
 }
 
-function gameTime (g) {
+function gameTime(g) {
   return g.start_time_utc ? new Date(g.start_time_utc).getTime() : Infinity
 }
 
-function formatDateHeader (isoDate) {
+function formatDateHeader(isoDate) {
   const d = new Date(isoDate + 'T00:00:00')
   return d.toLocaleDateString(undefined, {
     weekday: 'long',
@@ -248,7 +248,7 @@ function formatDateHeader (isoDate) {
   })
 }
 
-function statusLabel (status) {
+function statusLabel(status) {
   if (!status) return { text: '—', cls: 'st-unk' }
 
   const s = String(status).toLowerCase()
@@ -263,11 +263,11 @@ function statusLabel (status) {
   return { text: status.toString().toUpperCase(), cls: 'st-unk' }
 }
 
-function safe (v, fallback = '') {
+function safe(v, fallback = '') {
   return v === null || v === undefined ? fallback : v
 }
 
-function getTeamName (team) {
+function getTeamName(team) {
   print_name = TEAM_NAME_MAP[team]
   if (!print_name) {
     return team
@@ -276,7 +276,7 @@ function getTeamName (team) {
   return print_name
 }
 
-function formatMeta (g) {
+function formatMeta(g) {
   const parts = []
 
   const venue = safe(g.venue)
@@ -332,7 +332,7 @@ function formatMeta (g) {
   return parts
 }
 
-function renderTime (g) {
+function renderTime(g) {
   // PRE games: show tip-off
   if (g.status === 'pre_game' && g.start_time) {
     return `<span class="game-time">${g.start_time}</span>`
@@ -357,7 +357,7 @@ function renderTime (g) {
   return `<span class="game-time">—</span>`
 }
 
-function getLowestRatings (games, n = 3) {
+function getLowestRatings(games, n = 3) {
   const vals = []
 
   for (const id in games) {
@@ -372,7 +372,7 @@ function getLowestRatings (games, n = 3) {
   return new Set(vals.slice(0, n))
 }
 
-function getBottom3MedalsByDate (games) {
+function getBottom3MedalsByDate(games) {
   const byDate = {}
   const result = {}
 
@@ -405,8 +405,8 @@ function getBottom3MedalsByDate (games) {
   return result
 }
 
-function renderExpandedStats (g) {
-  function compareNums (a, b) {
+function renderExpandedStats(g) {
+  function compareNums(a, b) {
     if (a == '—') {
       a = 99
     }
@@ -423,7 +423,7 @@ function renderExpandedStats (g) {
     return { left: '', right: '' }
   }
 
-  function compareNumsGreater (a, b) {
+  function compareNumsGreater(a, b) {
     if (a == '—') {
       a = -999
     }
@@ -440,8 +440,8 @@ function renderExpandedStats (g) {
     return { left: '', right: '' }
   }
 
-  function compareRecords (a, b) {
-    function pct (rec) {
+  function compareRecords(a, b) {
+    function pct(rec) {
       if (!rec || rec === '—') return null
 
       const parts = rec.trim().split('-')
@@ -588,9 +588,8 @@ function renderExpandedStats (g) {
       </div>
       </div>
 
-       ${
-         LEAGUE === 'men'
-           ? `
+       ${LEAGUE === 'men'
+      ? `
 
       <!-- BPI -->
       <div class="expanded-row">
@@ -617,14 +616,14 @@ function renderExpandedStats (g) {
         <div class="value right">${ouHome}</div>
       </div>
       `
-           : ''
-       }
+      : ''
+    }
       
     </div>
   `
 }
 
-function filterGameIds (games) {
+function filterGameIds(games) {
   const ids = Object.keys(games || {})
 
   if (!currentFilter) return ids
@@ -648,7 +647,7 @@ function filterGameIds (games) {
   })
 }
 
-function renderGames (games, medalByDate = {}) {
+function renderGames(games, medalByDate = {}) {
   if (!games) return
 
   Object.values(games).forEach(enrichGame)
@@ -690,23 +689,23 @@ function renderGames (games, medalByDate = {}) {
   }
 
   const activeDates = Object.keys(activeByDate).sort(
-    (a,b)=> new Date(a) - new Date(b)
+    (a, b) => new Date(a) - new Date(b)
   )
 
   const pastDates = Object.keys(pastByDate).sort(
-    (a,b)=> new Date(b) - new Date(a)
+    (a, b) => new Date(b) - new Date(a)
   )
 
   let html = ''
 
-  function renderDay(date, source){
+  function renderDay(date, source) {
     const gamesForDay = source[date]
 
-    gamesForDay.sort((a,b)=>{
+    gamesForDay.sort((a, b) => {
       const pa = gamePriority(a.g)
       const pb = gamePriority(b.g)
 
-      if (pa !== pb) return pb-pa
+      if (pa !== pb) return pb - pa
       return gameTime(a.g) - gameTime(b.g)
     })
 
@@ -715,30 +714,30 @@ function renderGames (games, medalByDate = {}) {
       <div class="scoreboard-grid">
     `
 
-    for (const {id,g} of gamesForDay){
+    for (const { id, g } of gamesForDay) {
 
-      const awayTeam = safe(g.away_team,'AWAY')
-      const homeTeam = safe(g.home_team,'HOME')
+      const awayTeam = safe(g.away_team, 'AWAY')
+      const homeTeam = safe(g.home_team, 'HOME')
 
-      const awayAbb = safe(g.away_abb,null)
-      const homeAbb = safe(g.home_abb,null)
+      const awayAbb = safe(g.away_abb, null)
+      const homeAbb = safe(g.home_abb, null)
 
-      const awayRank = safe(g.away_rank,null)
-      const homeRank = safe(g.home_rank,null)
+      const awayRank = safe(g.away_rank, null)
+      const homeRank = safe(g.home_rank, null)
 
       const isAP = g.isAP
       const isP5 = g.isP5
 
-      const awayRecord = safe(g.away_record,null)
-      const homeRecord = safe(g.home_record,null)
+      const awayRecord = safe(g.away_record, null)
+      const homeRecord = safe(g.home_record, null)
 
-      const homeModel = safe(g.home_model,null)
-      const awayModel = safe(g.away_model,null)
+      const homeModel = safe(g.home_model, null)
+      const awayModel = safe(g.away_model, null)
 
-      const awayScore = safe(g.away_score,'—')
-      const homeScore = safe(g.home_score,'—')
+      const awayScore = safe(g.away_score, '—')
+      const homeScore = safe(g.home_score, '—')
 
-      const {text:stText, cls:stCls} = statusLabel(g.status)
+      const { text: stText, cls: stCls } = statusLabel(g.status)
 
       const metaLines = formatMeta(g)
 
@@ -746,8 +745,8 @@ function renderGames (games, medalByDate = {}) {
 
       const medalClass =
         medal === '🥇' ? 'gold' :
-        medal === '🥈' ? 'silver' :
-        medal === '🥉' ? 'bronze' : ''
+          medal === '🥈' ? 'silver' :
+            medal === '🥉' ? 'bronze' : ''
 
       html += `
         <article class="game-card 
@@ -811,28 +810,26 @@ function renderGames (games, medalByDate = {}) {
           </div>
 
           <div class="tourney-slot">
-            ${
-              g.isConfTournament
-                ? `<div class="tourney-bar ${getConfClass(g.confName)}">
+            ${g.isConfTournament
+          ? `<div class="tourney-bar ${getConfClass(g.confName)}">
                     🏆 ${g.confName} Tournament
                   </div>`
-                : ''
-            }
+          : ''
+        }
           </div>
 
-          ${
-            metaLines.length
-              ? `
+          ${metaLines.length
+          ? `
             <div class="meta">
-              ${metaLines.map(m=>`
-                <div class="meta-line meta-${m.type||'misc'}">
+              ${metaLines.map(m => `
+                <div class="meta-line meta-${m.type || 'misc'}">
                   ${m.text || m}
                 </div>
               `).join('')}
             </div>
           `
-              : ''
-          }
+          : ''
+        }
 
           <div class="expand-toggle">
             <span class="expand-indicator">▼</span>
@@ -850,18 +847,18 @@ function renderGames (games, medalByDate = {}) {
   }
 
   // active section (today + future games)
-  for (const date of activeDates){
+  for (const date of activeDates) {
     renderDay(date, activeByDate)
   }
 
   // past games collapsible
-  if (pastDates.length){
+  if (pastDates.length) {
     html += `
       <details class="past-games">
         <summary class="date-header">Past Games</summary>
     `
 
-    for (const date of pastDates){
+    for (const date of pastDates) {
       renderDay(date, pastByDate)
     }
 
@@ -869,9 +866,71 @@ function renderGames (games, medalByDate = {}) {
   }
 
   container.innerHTML = html
+  // Restore expanded state after re-render
+  container.querySelectorAll('.game-card').forEach(card => {
+    const id = card.dataset.gameId
+    const expand = card.querySelector('.game-expand')
+    if (!expand) return
+
+    if (EXPAND_ALL || EXPANDED_GAMES.has(id)) {
+      expand.hidden = false
+      card.classList.add('open')
+    } else {
+      expand.hidden = true
+      card.classList.remove('open')
+    }
+  })
+
+  container.querySelectorAll('.expand-toggle').forEach(toggle => {
+    toggle.addEventListener('click', e => {
+      if (EXPAND_ALL) return
+      const card = toggle.closest('.game-card')
+      const expand = card.querySelector('.game-expand')
+      const id = card.dataset.gameId
+
+      if (!expand || !id) return
+
+      const isOpen = !expand.hidden
+
+      // Close all others (accordion behavior)
+      container.querySelectorAll('.game-expand').forEach(el => {
+        el.hidden = true
+      })
+
+      container.querySelectorAll('.game-card').forEach(c => {
+        c.classList.remove('open')
+      })
+
+      if (isOpen) {
+        // closing
+        expand.hidden = true
+        card.classList.remove('open')
+        EXPANDED_GAMES.delete(id)
+      } else {
+        // opening (accordion style)
+        EXPANDED_GAMES.clear()
+
+        container.querySelectorAll('.game-expand').forEach(el => {
+          el.hidden = true
+        })
+
+        container.querySelectorAll('.game-card').forEach(c => {
+          c.classList.remove('open')
+        })
+
+        expand.hidden = false
+        card.classList.add('open')
+        EXPANDED_GAMES.add(id)
+      }
+
+      e.stopPropagation()
+    })
+  })
+
+  container.innerHTML = html
 }
 
-async function start () {
+async function start() {
   await loadTeamLogos()
   await pollScores()
   setInterval(pollScores, POLL_INTERVAL)
