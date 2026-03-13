@@ -220,7 +220,12 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     is_p5 = utils.check_p5(home_conf, away_conf)
     
     game_type = g['game_type']
-   
+    game_descript = g['game_description']
+    try:
+        tv = g["tv_listings_by_country_code"]["us"][0]["short_name"]
+    except:
+        tv = None
+
     # ---- score / progress ----
     box = g.get("box_score") or {}
     score = box.get("score") or {}
@@ -322,6 +327,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
         "home_conf_seed" : home_conf_seed,
         "away_conf_seed" : away_conf_seed,
         "game_type" : game_type,
+        "game_description" :game_descript,
 
         "wab_home" : wab_home,
         "wab_away" : wab_away

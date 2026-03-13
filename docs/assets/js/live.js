@@ -744,6 +744,7 @@ function renderGames(games, medalByDate = {}) {
       const awayScore = safe(g.away_score, '—')
       const homeScore = safe(g.home_score, '—')
 
+      const game_descrip = safe(g.game_description, null)
       const { text: stText, cls: stCls } = statusLabel(g.status)
 
       const metaLines = formatMeta(g)
@@ -819,7 +820,7 @@ function renderGames(games, medalByDate = {}) {
           <div class="tourney-slot">
             ${g.isConfTournament
           ? `<div class="tourney-bar ${getConfClass(g.confName)}">
-                    🏆 ${g.confName} Tournament
+                    ${g.game_description}
                   </div>`
           : ''
         }
