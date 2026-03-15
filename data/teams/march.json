@@ -1,0 +1,113 @@
+{
+    "Men": {
+        "2026": {
+            "1": [
+                "Duke",
+                "Arizona",
+                "Michigan",
+                "Florida"
+            ],
+            "2": [
+                "UConn",
+                "Iowa State",
+                "Purdue",
+                "Houston"
+            ],
+            "3": [
+                "Virginia",
+                "Illinois",
+                "Gonzaga",
+                "Michigan State"
+            ],
+            "4": [
+                "Arkansas",
+                "Kansas",
+                "Alabama",
+                "Nebraska"
+            ],
+            "5": [
+                "Vanderbilt",
+                "Texas Tech",
+                "Wisconsin",
+                "St John's"
+            ],
+            "6": [
+                "BYU",
+                "Louisville",
+                "Tennessee",
+                "North Carolina"
+            ],
+            "7": [
+                "Kentucky",
+                "Saint Mary's",
+                "UCLA",
+                "Miami (FL)"
+            ],
+            "8": [
+                "Villanova",
+                "Ohio State",
+                "Clemson",
+                "Georgia"
+            ],
+            "9": [
+                "Saint Louis",
+                "Iowa",
+                "TCU",
+                "Utah State"
+            ],
+            "10": [
+                "Missouri",
+                "Santa Clara",
+                "Texas A&M",
+                "UCF"
+            ],
+            "11": [
+                "VCU",
+                "South Florida"
+            ],
+            "11ff": [
+                "NC State",
+                "Texas",
+                "SMU",
+                "Miami (OH)"
+            ],
+            "12": [
+                "Akron",
+                "McNeese",
+                "Northern Iowa",
+                "High Point"
+            ],
+            "13": [
+                "Hawaii",
+                "Hofstra",
+                "Troy",
+                "Cal Baptist"
+            ],
+            "14": [
+                "North Dakota State",
+                "Kennesaw State",
+                "Wright State",
+                "Penn"
+            ],
+            "15": [
+                "Furman",
+                "Queens",
+                "Tennessee State",
+                "Idaho"
+            ],
+            "16": [
+                "Long Island",
+                "Siena"
+            ],
+            "16ff": [
+                "Lehigh",
+                "Howard",
+                "UMBC",
+                "Prairie View A&M"
+            ]
+        }
+    },
+    "Women": {
+        "2026": {}
+    }
+}
