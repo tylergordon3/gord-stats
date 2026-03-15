@@ -677,8 +677,8 @@ def predict(date):
     path = paths.WEB_M_DIR / f"predict_{date}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
     html = html_util.add_front_matter(df_html, f"NCAAM Bracketology", date)
-    with open(path, "w") as f:
-        f.write(html)
-        print(f"Wrote to: {path} for {date}")
+    #with open(path, "w") as f:
+    #    f.write(html)
+    #    print(f"Wrote to: {path} for {date}")
 
     return [save_df, main]

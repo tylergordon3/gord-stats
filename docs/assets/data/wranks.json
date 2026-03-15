@@ -123938,16 +123938,16 @@
       "Record": "18-11",
       "Ovr": 87
     },
-    "Kansas St.": {
-      "Record": "18-17",
-      "Ovr": 88
-    },
     "Montana St.": {
       "Record": "25-7",
-      "Ovr": 89
+      "Ovr": 88
     },
     "Marquette": {
       "Record": "18-12",
+      "Ovr": 89
+    },
+    "Kansas St.": {
+      "Record": "18-17",
       "Ovr": 90
     },
     "Massachusetts": {
@@ -124710,16 +124710,16 @@
       "Record": "11-19",
       "Ovr": 280
     },
+    "Loyola MD": {
+      "Record": "12-18",
+      "Ovr": 281
+    },
     "North Florida": {
       "Record": "9-21",
-      "Ovr": 281
+      "Ovr": 282
     },
     "UNC Greensboro": {
       "Record": "14-16",
-      "Ovr": 282
-    },
-    "Loyola MD": {
-      "Record": "12-18",
       "Ovr": 283
     },
     "Wright St.": {
@@ -124862,12 +124862,12 @@
       "Record": "10-17",
       "Ovr": 318
     },
-    "Long Beach St.": {
-      "Record": "5-25",
-      "Ovr": 319
-    },
     "North Dakota": {
       "Record": "7-24",
+      "Ovr": 319
+    },
+    "Long Beach St.": {
+      "Record": "5-25",
       "Ovr": 320
     },
     "Queens": {

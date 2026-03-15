@@ -163796,20 +163796,20 @@
       "Record": "26-8",
       "Ovr": 13
     },
-    "Alabama": {
-      "Record": "23-9",
-      "Ovr": 14
-    },
     "Arkansas": {
       "Record": "26-8",
-      "Ovr": 15
+      "Ovr": 14
     },
-    "Nebraska": {
-      "Record": "26-6",
-      "Ovr": 16
+    "Alabama": {
+      "Record": "23-9",
+      "Ovr": 15
     },
     "Virginia": {
       "Record": "29-5",
+      "Ovr": 16
+    },
+    "Nebraska": {
+      "Record": "26-6",
       "Ovr": 17
     },
     "Texas Tech": {
@@ -163832,12 +163832,12 @@
       "Record": "22-11",
       "Ovr": 22
     },
-    "BYU": {
-      "Record": "23-11",
-      "Ovr": 23
-    },
     "Saint Mary's": {
       "Record": "27-5",
+      "Ovr": 23
+    },
+    "BYU": {
+      "Record": "23-11",
       "Ovr": 24
     },
     "North Carolina": {
@@ -164716,20 +164716,20 @@
       "Record": "14-18",
       "Ovr": 243
     },
+    "American": {
+      "Record": "16-16",
+      "Ovr": 244
+    },
     "SIUE": {
       "Record": "19-13",
-      "Ovr": 244
+      "Ovr": 245
     },
     "Elon": {
       "Record": "14-18",
-      "Ovr": 245
+      "Ovr": 246
     },
     "Denver": {
       "Record": "15-17",
-      "Ovr": 246
-    },
-    "American": {
-      "Record": "16-16",
       "Ovr": 247
     },
     "Radford": {
@@ -164980,12 +164980,12 @@
       "Record": "10-22",
       "Ovr": 309
     },
-    "Wagner": {
-      "Record": "14-17",
-      "Ovr": 310
-    },
     "Evansville": {
       "Record": "7-25",
+      "Ovr": 310
+    },
+    "Wagner": {
+      "Record": "14-17",
       "Ovr": 311
     },
     "Norfolk St.": {
