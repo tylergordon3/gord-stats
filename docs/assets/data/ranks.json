@@ -163749,7 +163749,7 @@
       "Ovr": 1
     },
     "Michigan": {
-      "Record": "31-2",
+      "Record": "31-3",
       "Ovr": 2
     },
     "Arizona": {
@@ -163777,7 +163777,7 @@
       "Ovr": 8
     },
     "Purdue": {
-      "Record": "26-8",
+      "Record": "27-8",
       "Ovr": 9
     },
     "Connecticut": {
@@ -163948,12 +163948,12 @@
       "Record": "20-13",
       "Ovr": 51
     },
-    "New Mexico": {
-      "Record": "23-10",
-      "Ovr": 52
-    },
     "San Diego St.": {
       "Record": "22-11",
+      "Ovr": 52
+    },
+    "South Florida": {
+      "Record": "25-8",
       "Ovr": 53
     },
     "Indiana": {
@@ -163964,8 +163964,8 @@
       "Record": "29-5",
       "Ovr": 55
     },
-    "South Florida": {
-      "Record": "24-8",
+    "New Mexico": {
+      "Record": "23-10",
       "Ovr": 56
     },
     "Stephen F. Austin": {
@@ -164084,24 +164084,24 @@
       "Record": "23-11",
       "Ovr": 85
     },
-    "St. Thomas": {
-      "Record": "24-9",
-      "Ovr": 86
-    },
     "Colorado": {
       "Record": "17-15",
-      "Ovr": 87
+      "Ovr": 86
     },
-    "Wichita St.": {
-      "Record": "22-10",
-      "Ovr": 88
+    "St. Thomas": {
+      "Record": "24-9",
+      "Ovr": 87
     },
     "Hofstra": {
       "Record": "24-10",
-      "Ovr": 89
+      "Ovr": 88
     },
     "Grand Canyon": {
       "Record": "20-12",
+      "Ovr": 89
+    },
+    "Wichita St.": {
+      "Record": "22-11",
       "Ovr": 90
     },
     "Winthrop": {
@@ -164424,16 +164424,16 @@
       "Record": "18-14",
       "Ovr": 170
     },
-    "St. Bonaventure": {
-      "Record": "17-17",
-      "Ovr": 171
-    },
     "Harvard": {
       "Record": "17-12",
-      "Ovr": 172
+      "Ovr": 171
     },
     "Oakland": {
       "Record": "16-16",
+      "Ovr": 172
+    },
+    "St. Bonaventure": {
+      "Record": "17-17",
       "Ovr": 173
     },
     "Appalachian St.": {

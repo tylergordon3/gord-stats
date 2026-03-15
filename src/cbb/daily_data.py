@@ -38,14 +38,14 @@ def main():
     success = True
 
     for name, (path, func) in targets.items():
-        if path == paths.W_SCHEDULE:
+        '''if path == paths.W_SCHEDULE:
             if season.check_last_night("W") == True:
                 continue
         elif path == paths.M_SCHEDULE:
             if season.check_last_night("M") == True:
                 continue
         elif check_scrape(path):
-            continue
+            continue'''
 
         try:
             func()
