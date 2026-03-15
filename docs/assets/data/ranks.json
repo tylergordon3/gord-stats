@@ -163748,12 +163748,12 @@
       "Record": "32-2",
       "Ovr": 1
     },
-    "Michigan": {
-      "Record": "31-3",
-      "Ovr": 2
-    },
     "Arizona": {
       "Record": "32-2",
+      "Ovr": 2
+    },
+    "Michigan": {
+      "Record": "31-3",
       "Ovr": 3
     },
     "Iowa St.": {
@@ -163832,12 +163832,12 @@
       "Record": "22-11",
       "Ovr": 22
     },
-    "Saint Mary's": {
-      "Record": "27-5",
-      "Ovr": 23
-    },
     "BYU": {
       "Record": "23-11",
+      "Ovr": 23
+    },
+    "Saint Mary's": {
+      "Record": "27-5",
       "Ovr": 24
     },
     "North Carolina": {
@@ -163940,20 +163940,20 @@
       "Record": "18-14",
       "Ovr": 49
     },
+    "South Florida": {
+      "Record": "25-8",
+      "Ovr": 50
+    },
     "Yale": {
       "Record": "24-6",
-      "Ovr": 50
+      "Ovr": 51
     },
     "SMU": {
       "Record": "20-13",
-      "Ovr": 51
+      "Ovr": 52
     },
     "San Diego St.": {
       "Record": "22-11",
-      "Ovr": 52
-    },
-    "South Florida": {
-      "Record": "25-8",
       "Ovr": 53
     },
     "Indiana": {
@@ -164084,12 +164084,12 @@
       "Record": "23-11",
       "Ovr": 85
     },
-    "Colorado": {
-      "Record": "17-15",
-      "Ovr": 86
-    },
     "St. Thomas": {
       "Record": "24-9",
+      "Ovr": 86
+    },
+    "Colorado": {
+      "Record": "17-15",
       "Ovr": 87
     },
     "Hofstra": {
@@ -164100,16 +164100,16 @@
       "Record": "20-12",
       "Ovr": 89
     },
-    "Wichita St.": {
-      "Record": "22-11",
-      "Ovr": 90
-    },
     "Winthrop": {
       "Record": "23-11",
-      "Ovr": 91
+      "Ovr": 90
     },
     "Tennessee St.": {
       "Record": "23-9",
+      "Ovr": 91
+    },
+    "Wichita St.": {
+      "Record": "22-11",
       "Ovr": 92
     },
     "Troy": {
@@ -164204,12 +164204,12 @@
       "Record": "15-18",
       "Ovr": 115
     },
-    "Bradley": {
-      "Record": "21-12",
-      "Ovr": 116
-    },
     "Arkansas St.": {
       "Record": "20-12",
+      "Ovr": 116
+    },
+    "Bradley": {
+      "Record": "21-12",
       "Ovr": 117
     },
     "Saint Joseph's": {
@@ -164276,28 +164276,28 @@
       "Record": "17-16",
       "Ovr": 133
     },
-    "DePaul": {
-      "Record": "16-16",
-      "Ovr": 134
-    },
     "Seattle": {
       "Record": "20-13",
-      "Ovr": 135
+      "Ovr": 134
     },
     "Idaho": {
       "Record": "21-14",
-      "Ovr": 136
+      "Ovr": 135
     },
     "San Francisco": {
       "Record": "17-16",
-      "Ovr": 137
+      "Ovr": 136
     },
-    "Pacific": {
-      "Record": "18-15",
-      "Ovr": 138
+    "DePaul": {
+      "Record": "16-16",
+      "Ovr": 137
     },
     "Mississippi St.": {
       "Record": "13-19",
+      "Ovr": 138
+    },
+    "Pacific": {
+      "Record": "18-15",
       "Ovr": 139
     },
     "South Carolina": {
@@ -164416,32 +164416,32 @@
       "Record": "12-20",
       "Ovr": 168
     },
-    "Cornell": {
-      "Record": "15-13",
-      "Ovr": 169
-    },
     "Bowling Green": {
       "Record": "18-14",
+      "Ovr": 169
+    },
+    "Cornell": {
+      "Record": "15-13",
       "Ovr": 170
-    },
-    "Harvard": {
-      "Record": "17-12",
-      "Ovr": 171
-    },
-    "Oakland": {
-      "Record": "16-16",
-      "Ovr": 172
-    },
-    "St. Bonaventure": {
-      "Record": "17-17",
-      "Ovr": 173
-    },
-    "Appalachian St.": {
-      "Record": "19-13",
-      "Ovr": 174
     },
     "Temple": {
       "Record": "16-16",
+      "Ovr": 171
+    },
+    "Harvard": {
+      "Record": "17-12",
+      "Ovr": 172
+    },
+    "Oakland": {
+      "Record": "16-16",
+      "Ovr": 173
+    },
+    "St. Bonaventure": {
+      "Record": "17-17",
+      "Ovr": 174
+    },
+    "Appalachian St.": {
+      "Record": "19-13",
       "Ovr": 175
     },
     "Fresno St.": {
@@ -164576,12 +164576,12 @@
       "Record": "18-15",
       "Ovr": 208
     },
-    "FIU": {
-      "Record": "15-17",
-      "Ovr": 209
-    },
     "Buffalo": {
       "Record": "17-15",
+      "Ovr": 209
+    },
+    "FIU": {
+      "Record": "15-17",
       "Ovr": 210
     },
     "Jacksonville St.": {
