@@ -108,6 +108,112 @@
         }
     },
     "Women": {
-        "2026": {}
+        "2026": {
+            "1": [
+                "UConn",
+                "South Carolina",
+                "Texas",
+                "UCLA"
+            ],
+            "2": [
+                "Iowa",
+                "Vanderbilt",
+                "LSU",
+                "Michigan"
+            ],
+            "3": [
+                "Duke",
+                "Louisville",
+                "TCU",
+                "Ohio State"
+            ],
+            "4": [
+                "North Carolina",
+                "Oklahoma",
+                "Minnesota",
+                "West Virginia"
+            ],
+            "5": [
+                "Kentucky",
+                "Maryland",
+                "Ole Miss"
+            ],
+            "6": [
+                "Alabama",
+                "Washington",
+                "Notre Dame",
+                "Baylor"
+            ],
+            "7": [
+                "NC State",
+                "Georgia",
+                "Illinois",
+                "Texas Tech"
+            ],
+            "8": [
+                "Clemson",
+                "Iowa State",
+                "Oklahoma State",
+                "Oregon"
+            ],
+            "9": [
+                "USC",
+                "Syracuse",
+                "Princeton",
+                "Virginia Tech"
+            ],
+            "10": [
+                "Colorado",
+                "Villanova",
+                "Tennessee"
+            ],
+            "10ff" : [
+                "Virginia",
+                "Arizona State"
+            ],
+            "11": [
+                "Fairfield",
+                "South Dakota State",
+                "Rhode Island"
+            ],
+            "11ff" : [
+                "Nebraska",
+                "Richmond"
+            ],
+            "12": [
+                "Murray St.",
+                "Gonzaga",
+                "James Madison"
+
+            ],
+            "13": [
+                "Western Illinois",
+                "Idaho",
+                "Green Bay",
+                "Miami (OH)"
+            ],
+            "14": [
+                "Howard",
+                "UC San Diego",
+                "Charleston",
+                "Vermont"
+            ],
+            "15": [
+                "High Point",
+                "Jacksonville",
+                "Farleigh Dickinson",
+                "Holy Cross"
+            ],
+            "16": [
+                "UTSA",
+                "Cal Baptist"
+            ],
+            "16ff" : [
+                "Southern",
+                "Samford",
+                "Missouri State",
+                "Stephen F. Austin"
+            ]
+        }
     }
 }

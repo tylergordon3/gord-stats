@@ -397,12 +397,12 @@ def predict_womens(date):
     df_html += "<script src='/assets/js/rank-toggle.js'></script>"
 
     # MAIN -> DF with Conf col data
-    path = paths.WEB_W_DIR / f"predict_{date}.html"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    html = html_util.add_front_matter(df_html, f"NCAAW Bracketology", date)
-    with open(path, "w") as f:
-        f.write(html)
-        print(f"Wrote to: {path} for {date}")
+    #path = paths.WEB_W_DIR / f"predict_{date}.html"
+    #path.parent.mkdir(parents=True, exist_ok=True)
+    #html = html_util.add_front_matter(df_html, f"NCAAW Bracketology", date)
+    #with open(path, "w") as f:
+    #    f.write(html)
+    #    print(f"Wrote to: {path} for {date}")
 
     return [save_df, df]
 
