@@ -192,11 +192,16 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     home_record = ranks[home_name]["Record"] if home_name else ""
     away_record = ranks[away_name]["Record"] if away_name else ""
 
-    home_record_last_ten = g['standings']['home']['last_ten_games_record']
-    away_record_last_ten = g['standings']['away']['last_ten_games_record']
+    standings = g.get("standings") or {}
 
-    home_conf_seed = g['standings']['home']['conference_seed']
-    away_conf_seed = g['standings']['away']['conference_seed']
+    home = standings.get("home") or {}
+    away = standings.get("away") or {}
+
+    home_record_last_ten = home.get("last_ten_games_record", "")
+    away_record_last_ten = away.get("last_ten_games_record", "")
+
+    home_conf_seed = home.get("conference_seed", "")
+    away_conf_seed = away.get("conference_seed", "")
 
     def safe_float(x):
         try:
