@@ -1551,6 +1551,30 @@ p {
   color: white;
 }
 
+.tourney-bar.march-madness {
+  background: linear-gradient(90deg, #0033a0, #0066ff);
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 8px rgba(0, 51, 160, 0.5);
+}
+
+.tourney-bar.march-madness {
+  animation: madnessPulse 2.5s infinite;
+}
+
+@keyframes madnessPulse {
+  0% { box-shadow: 0 0 6px rgba(0, 51, 160, 0.4); }
+  50% { box-shadow: 0 0 12px rgba(0, 102, 255, 0.7); }
+  100% { box-shadow: 0 0 6px rgba(0, 51, 160, 0.4); }
+}
+
+.tourney-bar.nit {
+  background: #1b5e20;
+  color: #ffd54f;
+  font-weight: 600;
+}
+
 .tourney-bubble::before {
   content: '🏆';
   font-size: 12px;

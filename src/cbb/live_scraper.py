@@ -151,6 +151,7 @@ EASTERN = pytz.timezone("US/Eastern")
 def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     # ---- parse datetime ----
     dt = None
+
     if g.get("game_date"):
         dt = datetime.strptime(g["game_date"], "%a, %d %b %Y %H:%M:%S %z")
 
@@ -226,6 +227,15 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     
     game_type = g['game_type']
     game_descript = g['game_description']
+
+    is_mm = False
+    is_nit = False
+ 
+    if "NCAA Tournament" in game_descript:
+        is_mm = True
+    elif "NIT" in game_descript:
+        is_nit = True
+  
     try:
         tv = g["tv_listings_by_country_code"]["us"][0]["short_name"]
     except:
@@ -333,6 +343,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
         "away_conf_seed" : away_conf_seed,
         "game_type" : game_type,
         "game_description" :game_descript,
+        "is_mm" : is_mm,
+        "is_nit" : is_nit,
 
         "wab_home" : wab_home,
         "wab_away" : wab_away

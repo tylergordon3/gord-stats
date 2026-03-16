@@ -48,3 +48,5 @@ vendor/
 
 .DS_Store
 Thumbs.db
+
+/home/tgordon/cbb-model/data/live_scores.json

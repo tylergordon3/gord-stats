@@ -19,6 +19,8 @@ let EXPAND_ALL = false
 let EXPANDED_GAMES = new Set()
 
 const CONF_CLASSES = new Set(['acc', 'sec', 'bigten', 'big12', 'bigeast'])
+const march_madness = new Set(["ncaatournament"])
+const nit = new Set(["nit"])
 
 function normalize(s) {
   return String(s)
@@ -27,13 +29,16 @@ function normalize(s) {
     .trim()
 }
 
-function getConfClass(conf) {
+function getTourneyClass(conf) {
   const key = normalize(conf)
-
+  console.log(key)
   if (CONF_CLASSES.has(key)) {
     return `conf-${key}`
-  }
-
+  } else if (key.includes("ncaatournament")) {
+    return "march-madness"
+  } else if (key.includes("nit")) {
+    return "nit"
+  } 
   return 'conf' // default class
 }
 
@@ -150,6 +155,8 @@ function parseClockToSeconds(clock) {
 function enrichGame(g) {
   g.isP5 = g.is_p5 === true
   g.isAP = g.is_ap === true
+  g.isMM = g.is_mm === true
+  g.isNIT = g.is_nit === true
 
   const homeScore = Number(g.home_score)
   const awayScore = Number(g.away_score)
@@ -285,14 +292,15 @@ function formatMeta(g) {
   const tourneyType = safe(g.game_type)
   const homeConf = safe(g.conference_home)
   const awayConf = safe(g.conference_away)
+  const game_descrip = safe(g.game_description, null)
 
   // --- detect conference tournament ---
-  g.isConfTournament = false
-  g.confName = null
+  g.isTournament = false
+  g.tourneyName = null
 
-  if (tourneyType === 'Postseason Tournament' && homeConf === awayConf) {
-    g.isConfTournament = true
-    g.confName = homeConf
+  if (tourneyType === 'Postseason Tournament') {
+    g.isTournament = true
+    g.tourneyName = game_descrip
   }
 
   // --- LOCATION ROW (top) ---
@@ -640,6 +648,12 @@ function filterGameIds(games) {
 
       case 'top3':
         return g.hasMedal === true
+      
+      case 'mm':
+        return g.isMM === true
+      
+      case 'nit':
+        return g.isNIT === true
 
       default:
         return true
@@ -744,7 +758,6 @@ function renderGames(games, medalByDate = {}) {
       const awayScore = safe(g.away_score, '—')
       const homeScore = safe(g.home_score, '—')
 
-      const game_descrip = safe(g.game_description, null)
       const { text: stText, cls: stCls } = statusLabel(g.status)
 
       const metaLines = formatMeta(g)
@@ -818,8 +831,8 @@ function renderGames(games, medalByDate = {}) {
           </div>
 
           <div class="tourney-slot">
-            ${g.isConfTournament
-          ? `<div class="tourney-bar ${getConfClass(g.confName)}">
+            ${g.isTournament
+          ? `<div class="tourney-bar ${getTourneyClass(g.game_description)}">
                     ${g.game_description}
                   </div>`
           : ''
