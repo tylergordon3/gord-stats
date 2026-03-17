@@ -6,7 +6,7 @@ main:
     url: "__TODAY_SCORES__"
 
   - title: Bracketology
-    url: "predict___TODAY__.html"
+    url: /predict_2026-03-15.html
 
   - title: Conference Rankings
     url: /conference.html
