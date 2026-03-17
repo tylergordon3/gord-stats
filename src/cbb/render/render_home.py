@@ -60,7 +60,7 @@ def render_home():
     # Raw string to preserve formatting
     styler = bids()
     html = r"""
-{% include countdown.html %}
+{% include ff_countdown.html %}
 
 <div class="home-grid">
   <div class="home-left">
@@ -145,7 +145,7 @@ def render_home():
   }
 </style>
     """
-    html = html + "<br>" + styler.to_html()
+    html = html + "<br>" # + styler.to_html()
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
 
