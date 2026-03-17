@@ -2078,7 +2078,8 @@
             "hp",
             "highpoint",
             "HIGHPT",
-            "HIPT"
+            "HIPT",
+            "HPU"
         ],
         "111": [
             "Hofstra",
@@ -2385,7 +2386,8 @@
             "kennesawst",
             "kennesaw st",
             "KENSAW",
-            "Kennesaw St"
+            "Kennesaw St",
+            "Kenn. St."
         ],
         "135": [
             "KENT",
@@ -3068,7 +3070,8 @@
             "n.c. state",
             "N.C. STATE",
             "ncstate",
-            "NCSU"
+            "NCSU",
+            "NC St"
         ],
         "190": [
             "N.J.I.T.",
@@ -3880,7 +3883,8 @@
             "SAINT LOUIS",
             "stlou",
             "saintlouis",
-            "SLU"
+            "SLU",
+            "St. Louis"
         ],
         "259": [
             "Saint Mary's",
@@ -3891,7 +3895,8 @@
             "saintmary's",
             "saint marys",
             "SMC",
-            "Saint Mary's (CA)"
+            "Saint Mary's (CA)",
+            "St. Mary's"
         ],
         "260": [
             "Saint Peter's",
@@ -4374,7 +4379,8 @@
             "tennesseest",
             "tennessee st",
             "TennSt",
-            "Tennessee St"
+            "Tennessee St",
+            "Tenn. St"
         ],
         "298": [
             "TNTC",

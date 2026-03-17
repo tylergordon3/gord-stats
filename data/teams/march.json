@@ -63,9 +63,7 @@
             ],
             "11": [
                 "VCU",
-                "South Florida"
-            ],
-            "11ff": [
+                "South Florida",
                 "NC State",
                 "Texas",
                 "SMU",
@@ -97,9 +95,7 @@
             ],
             "16": [
                 "Long Island",
-                "Siena"
-            ],
-            "16ff": [
+                "Siena",
                 "Lehigh",
                 "Howard",
                 "UMBC",
@@ -165,25 +161,22 @@
             "10": [
                 "Colorado",
                 "Villanova",
-                "Tennessee"
-            ],
-            "10ff" : [
+                "Tennessee",
                 "Virginia",
                 "Arizona State"
             ],
             "11": [
                 "Fairfield",
                 "South Dakota State",
-                "Rhode Island"
-            ],
-            "11ff" : [
+                "Rhode Island",
                 "Nebraska",
                 "Richmond"
             ],
             "12": [
                 "Murray St.",
                 "Gonzaga",
-                "James Madison"
+                "James Madison",
+                "Colorado St."
 
             ],
             "13": [
@@ -206,9 +199,7 @@
             ],
             "16": [
                 "UTSA",
-                "Cal Baptist"
-            ],
-            "16ff" : [
+                "Cal Baptist",
                 "Southern",
                 "Samford",
                 "Missouri State",

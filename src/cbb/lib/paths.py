@@ -70,6 +70,7 @@ W_NET_DIR = W_DATA / "net"
 W_SCHEDULE = DATA / "schedule" / "women_season.json"
 
 BIDS_FILE = DATA / "teams" / "bids.json"
+MARCH_FILE = DATA / "teams" / "march.json"
 
 # --------------
 # Website Assets
@@ -101,6 +102,8 @@ WEB_W_HOME = WEB_W_DIR / "index.html"
 WEB_M_CONF = WEB_M_DIR / "conference.html"
 WEB_W_CONF = WEB_W_DIR / "conference.html"
 
+FINAL_26_BRACKET_M =  WEB_M_DIR / "predict_2026-03-15.html"
+FINAL_26_BRACKET_W =  WEB_W_DIR / "predict_2026-03-15.html"
 
 # -------------------
 # ML Training Data
