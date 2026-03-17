@@ -30,6 +30,13 @@ LEAGUES = {
     "women": {"path": "wcbk", "label": "women"},
 }
 
+def get_file(gender="M"):
+    if gender == "M":
+        file_name = "men_season.json"
+    elif gender == "W":
+        file_name = "women_season.json"
+    file = paths.SCHEDULE_DATA / Path(file_name)
+    return file
 
 def get_all_events(league_path):
 
@@ -244,4 +251,22 @@ def check_last_night(gender="M"):
             return True
     return False
     
-   
+def get_last_x(gender, team, x):
+    name = teams.getTeamOfficialName(team)
+    file = get_file(gender)
+    with open(file, "r") as f:
+        all = json.load(f)
+
+    team_dict = all.get(name)
+    if x > len(team_dict) or x < 0:
+        x = len(team_dict)
+    last_x_dict = list(team_dict.keys())[(len(team_dict)-x):]
+    w = 0
+    l = 0
+    for game_date in last_x_dict:
+        result = team_dict.get(game_date).get('win')
+        if result == True:
+            w += 1
+        else:
+            l += 1
+    return f"{w}-{l}"

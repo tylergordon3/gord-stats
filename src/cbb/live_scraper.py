@@ -4,12 +4,11 @@ from datetime import datetime
 
 import pytz
 import requests
-import re
 
 from cbb import scraper, utils
 from cbb.push_scores import push
 from cbb.lib import teams, constants
-from cbb.scrape import ats, bpi, net, torvik
+from cbb.scrape import ats, bpi, net, torvik, season
 
 # =========================
 # CONFIG
@@ -148,7 +147,7 @@ import pytz
 EASTERN = pytz.timezone("US/Eastern")
 
 
-def format_event(g, ranks, master, ats, net, bpi, tor_dict):
+def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     # ---- parse datetime ----
     dt = None
 
@@ -198,8 +197,11 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict):
     home = standings.get("home") or {}
     away = standings.get("away") or {}
 
-    home_record_last_ten = home.get("last_ten_games_record", "")
-    away_record_last_ten = away.get("last_ten_games_record", "")
+    #home_record_last_ten = home.get("last_ten_games_record", "")
+    home_record_last_ten = season.get_last_x(gender, home_name, 10)
+    
+    away_record_last_ten = season.get_last_x(gender, away_name, 10)
+    #away_record_last_ten = away.get("last_ten_games_record", "")
 
     home_conf_seed = home.get("conference_seed", "")
     away_conf_seed = away.get("conference_seed", "")
@@ -460,11 +462,13 @@ def get_current_live_dataset(league_key):
         net_dict = net.get_today_net("M")
         bpi_dict = bpi.get_today_bpi()
         tor_dict = torvik.get_today_tor("M")
+        gender = "M"
     else:
         ats_dict = None
         net_dict = net.get_today_net("W")
         bpi_dict = None
         tor_dict = torvik.get_today_tor("W")
+        gender = "W"
 
     for g in events:
         game_id = g.get("id")
@@ -472,7 +476,7 @@ def get_current_live_dataset(league_key):
             continue
 
         games[str(game_id)] = format_event(
-            g, ranks, master, ats_dict, net_dict, bpi_dict, tor_dict
+            g, ranks, master, ats_dict, net_dict, bpi_dict, tor_dict, gender
         )
 
     return {
