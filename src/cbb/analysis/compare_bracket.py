@@ -76,6 +76,7 @@ plt.xticks(ticks=x_pos, labels=df['index'], rotation=45, ha='right')
 plt.ylabel("Seed Value")
 plt.title("2026 Bracket Seeds: Predictions vs Actual")
 plt.legend()
+plt.grid()
 plt.tight_layout() # Prevents labels from getting cut off
 plt.savefig("line_chart.png")
 plt.show()
