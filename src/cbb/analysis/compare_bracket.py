@@ -3,6 +3,7 @@ import re
 import pandas as pd
 from bs4 import BeautifulSoup
 from cbb.lib import paths, teams
+import matplotlib.pyplot as plt
 
 file = paths.MARCH_FILE
 with open(file, "r") as f:
@@ -51,6 +52,28 @@ df['diff'] = pd.to_numeric(df["actual"]) - pd.to_numeric(df["preds"])
 missed = df[condition]
 df = df[~condition]
 
-df = df.sort_values(by="diff", ascending=False)
+df['err_size'] = df['diff'].abs() 
+plt.figure(figsize=(20, 6))
+df = df.reset_index()
+df["preds"] = pd.to_numeric(df["preds"])
+df["actual"] = pd.to_numeric(df["actual"])
+# Create a numeric range for the X-axis positions
+x_pos = range(len(df))
 
-print(df.to_string())
+# Plot 'preds' using the numeric x_pos
+plt.errorbar(x_pos, df['preds'], 
+             fmt='o', label='Predictions', capsize=3, alpha=0.7)
+
+# Plot 'actual' using the numeric x_pos
+plt.errorbar(x_pos, df['actual'], 
+             fmt='s', label='Actual', capsize=3, alpha=0.7)
+
+# Set the labels back to the team names
+plt.xticks(ticks=x_pos, labels=df['index'], rotation=45, ha='right')
+
+plt.ylabel("Seed Value")
+plt.title("2026 Bracket Seeds: Predictions vs Actual")
+plt.legend()
+plt.tight_layout() # Prevents labels from getting cut off
+plt.savefig("line_chart.png")
+plt.show()
