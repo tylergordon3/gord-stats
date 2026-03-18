@@ -52,11 +52,13 @@ df['diff'] = pd.to_numeric(df["actual"]) - pd.to_numeric(df["preds"])
 missed = df[condition]
 df = df[~condition]
 
+
 df['err_size'] = df['diff'].abs() 
 plt.figure(figsize=(20, 6))
 df = df.reset_index()
 df["preds"] = pd.to_numeric(df["preds"])
 df["actual"] = pd.to_numeric(df["actual"])
+df = df.sort_values(by="actual", ascending=True)
 # Create a numeric range for the X-axis positions
 x_pos = range(len(df))
 
