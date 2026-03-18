@@ -546,7 +546,7 @@ function renderExpandedStats(g) {
         <div class="value left">
           <span class="${rankCompare.left}">${awayRank}</span>
         </div>
-        <div class="label">AP Rank</div>
+        <div class="label">Seed</div>
         <div class="value right">
         <span class="${rankCompare.right}">${homeRank}</span>
       </div>

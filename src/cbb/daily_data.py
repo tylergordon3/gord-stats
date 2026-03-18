@@ -24,14 +24,14 @@ def main():
     today = now.strftime("%Y-%m-%d")
     fp = Path(f"{today}.json")
     targets = {
-        #"Men's Torvik": (paths.M_TOR_DIR / fp, lambda: torvik.mens_tor(today)),
+        "Men's Torvik": (paths.M_TOR_DIR / fp, lambda: torvik.mens_tor(today)),
         "Men's ATS": (paths.M_ATS_DIR / fp, lambda: ats.main()),
         "KenPom": (paths.M_KEN_DIR / fp, kenpom.kenpom_now),
         "Men's Net Rankings": (paths.M_NET_DIR / fp, lambda: net.main("M")),
         "ESPN BPI": (paths.M_ESPN_DIR / fp, bpi.main),
         "Men's Schedules" : (paths.M_SCHEDULE, lambda: season.last_night_results("M")),
         "Women's Net Rankings": (paths.W_NET_DIR / fp, lambda: net.main("W")),
-        #"Women's Torvik": (paths.W_TOR_DIR / fp, lambda: torvik.womens_tor(today)),
+        "Women's Torvik": (paths.W_TOR_DIR / fp, lambda: torvik.womens_tor(today)),
         "Women's Schedules" : (paths.W_SCHEDULE, lambda: season.last_night_results("W"))
     }
 
