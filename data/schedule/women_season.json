@@ -2045,6 +2045,13 @@
             "score": 71,
             "opponent": "McNeese",
             "opponent_score": 59
+        },
+        "2026-03-18": {
+            "win": false,
+            "location": "away",
+            "score": 75,
+            "opponent": "Missouri St.",
+            "opponent_score": 85
         }
     },
     "Oral Roberts": {
@@ -18319,6 +18326,13 @@
             "score": 69,
             "opponent": "Indiana",
             "opponent_score": 72
+        },
+        "2026-03-18": {
+            "win": true,
+            "location": "home",
+            "score": 75,
+            "opponent": "Richmond",
+            "opponent_score": 56
         }
     },
     "Saint Francis": {
@@ -36189,6 +36203,13 @@
             "score": 43,
             "opponent": "Louisiana Tech",
             "opponent_score": 38
+        },
+        "2026-03-18": {
+            "win": true,
+            "location": "home",
+            "score": 85,
+            "opponent": "Stephen F. Austin",
+            "opponent_score": 75
         }
     },
     "Incarnate Word": {
@@ -58525,6 +58546,13 @@
             "score": 70,
             "opponent": "La Salle",
             "opponent_score": 51
+        },
+        "2026-03-18": {
+            "win": false,
+            "location": "away",
+            "score": 56,
+            "opponent": "Nebraska",
+            "opponent_score": 75
         }
     },
     "Colgate": {
