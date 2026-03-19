@@ -5,6 +5,24 @@ from bs4 import BeautifulSoup
 from cbb.lib import paths, teams
 import matplotlib.pyplot as plt
 
+def add_team_logos(df):
+    def format_team(team):
+        try:
+            logo = teams.getTeamLogo(team, debug=False)
+            if logo:
+                return f'''
+                <div class="team-cell">
+                    <img src="{logo}" alt="{team}">
+                    <span>{team}</span>
+                </div>
+                '''
+        except:
+            pass
+        return team
+
+    df["Team"] = df["Team"].apply(format_team)
+    return df
+
 def filter(file, dictp):
     with open(file, 'r', encoding='utf-8') as f:
         html_content = f.read()
@@ -61,15 +79,35 @@ def filter(file, dictp):
     return df_over, df_under
 
 def get_html_table(df, title, table_color="table-dark"):
-    # Added 'text-center' to the classes string
-    html = df.to_html(
-        index=False, 
-        classes=f'table table-striped table-hover text-center {table_color}',
-        border=0,
-        justify='center' # This specifically ensures the header text is centered
+    df = add_team_logos(df)
+
+    def color_diff(val):
+        if val < 0:
+            intensity = min(abs(val) / 5, 1)
+            return f'background-color: rgba(220, 53, 69, {intensity}); color: white;'
+        elif val > 0:
+            intensity = min(abs(val) / 5, 1)
+            return f'background-color: rgba(25, 135, 84, {intensity}); color: white;'
+        return ''
+
+    styled = (
+        df.style
+        .map(color_diff, subset=["Difference"])
+        .set_properties(subset=["Team"], **{"text-align": "left"})
+        .hide(axis="index")
+        .set_table_attributes(
+            f'class="table table-striped table-hover {table_color}"'
+        )
     )
-    # Added 'text-center' to the <h3> to keep the title aligned with the table
-    return f"<h3 class='text-center'>{title}</h3>{html}"
+
+    html = styled.to_html(escape=False)
+
+    return f"""
+            <div class="analysis-table-block">
+            <h3>{title}</h3>
+            {html}
+            </div>
+            """
 
 def gen():
     file = paths.MARCH_FILE
@@ -84,25 +122,25 @@ def gen():
 
     m_over, m_under = filter(my_m_file, men)
     w_over, w_under = filter(my_w_file, women)
-    m_over_html = get_html_table(m_over, "Men: Over-Seeded", "table-danger")
-    m_under_html = get_html_table(m_under, "Men: Under-Seeded", "table-success")
-    w_over_html = get_html_table(w_over, "Women: Over-Seeded", "table-danger")
-    w_under_html = get_html_table(w_under, "Women: Under-Seeded", "table-success")
+    m_over_html = get_html_table(m_over, "Men: Over-Seeded", "")
+    m_under_html = get_html_table(m_under, "Men: Under-Seeded", "")
+    w_over_html = get_html_table(w_over, "Women: Over-Seeded", "")
+    w_under_html = get_html_table(w_under, "Women: Under-Seeded", "")
 
     html = f'''
     <div class="container-fluid">
         <h1 class="text-center mb-5">March Madness 2026 Seed Analysis</h1>
-        
-        <div class="row">
-            <!-- Men's Section -->
-            <div class="col-md-6 table-container">{m_over_html}</div>
-            <div class="col-md-6 table-container">{m_under_html}</div>
+        <p class="text-center mb-5">How does seeding compare to what the model projected?</p>
+        <p class="text-center mb-5"><strong>Over-Seeded:</strong> Model indicates this team may not be as good as their seed.</p>
+        <p class="text-center mb-5"><strong>Under-Seeded:</strong> Model indicates this team may be better than their seed.</p>
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-6 analysis-table-container">{m_over_html}</div>
+            <div class="col-lg-5 col-md-6 analysis-table-container">{m_under_html}</div>
         </div>
 
-        <div class="row">
-            <!-- Women's Section -->
-            <div class="col-md-6 table-container">{w_over_html}</div>
-            <div class="col-md-6 table-container">{w_under_html}</div>
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-5 col-md-6 analysis-table-container">{w_over_html}</div>
+            <div class="col-lg-5 col-md-6 analysis-table-container">{w_under_html}</div>
         </div>
     </div>
     '''

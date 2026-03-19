@@ -17,10 +17,18 @@
   <!-- HEADER -->
   <div id="header_wrap" class="outer">
     <header class="inner">
-      <h1 id="project_title">Bracket Gordology</h1>
+      <h1 id="project_title">GordStats.com</h1>
       <div class="header-row">
         {% include nav.html %}
 
+      </div>
+      <!-- League toggle (stays top-right) -->
+      <div class="league-toggle">
+        <button id="league-toggle-btn" aria-label="Toggle Men/Women">
+          <span class="option men">Men</span>
+          <span class="option women">Women</span>
+          <span class="slider"></span>
+        </button>
       </div>
     </header>
   </div>
@@ -162,4 +170,5 @@
     })();
   </script>
 </body>
+
 </html>
