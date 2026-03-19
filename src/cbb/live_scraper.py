@@ -23,7 +23,7 @@ HEADERS = {
 
 UTC_OFFSET_SECONDS = -18000  # EST
 POLL_INTERVAL = 25  # seconds
-BATCH_SIZE = 90
+BATCH_SIZE = 120
 
 LIVE_STATUSES = {"in_progress", "halftime", "delay"}
 
