@@ -3,6 +3,7 @@ import pandas as pd
 
 from cbb.lib import html_util
 from cbb.lib import paths, teams
+from cbb.analysis import compare_bracket
 
 def team_logos(df):
     if teams.getTeamOfficialName(df['Men'], debug=False) != None:
@@ -145,7 +146,8 @@ def render_home():
   }
 </style>
     """
-    html = html + "<br>" # + styler.to_html()
+    seeds = compare_bracket.gen()
+    html = html + "<br>" + seeds # + styler.to_html()
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
 

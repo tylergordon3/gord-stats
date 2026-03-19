@@ -1466,7 +1466,8 @@
             "colorado st",
             "COLOST",
             "Colo. St.",
-            "Colorado St"
+            "Colorado St",
+            "Colo St"
         ],
         "58": [
             "COM",
@@ -1787,7 +1788,8 @@
             "FAIRLEIGH DICKINSON",
             "fdu",
             "fairleighdickinson",
-            "F Dickinson"
+            "F Dickinson",
+            "Farleigh Dickinson"
         ],
         "87": [
             "FLA",
@@ -3741,7 +3743,8 @@
             "RAMS",
             "uri",
             "rhodeisland",
-            "RI"
+            "RI",
+            "RIU"
         ],
         "246": [
             "Rice",
@@ -4081,7 +4084,8 @@
             "south dakota",
             "SOUTH DAKOTA",
             "southdakota",
-            "SDST"
+            "SDST",
+            "S. Dakota St"
         ],
         "275": [
             "South Dakota State",
