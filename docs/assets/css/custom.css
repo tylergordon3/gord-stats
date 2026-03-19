@@ -585,9 +585,10 @@
 
 @media (max-width: 767px) {
   /* Hide desktop nav */
-  .simple-nav {
-    display: none;
+    .simple-nav {
+    display: flex !important;
   }
+
 
   /* Bottom app-style nav */
   .bottom-nav {

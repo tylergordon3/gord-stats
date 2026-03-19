@@ -35,38 +35,36 @@
 
   </div>
 </div>
-<!-- =========================
-     Mobile Bottom Navigation
-     ========================= -->
+
 <nav class="bottom-nav">
-  <!-- Root home -->
-  <a href="/index.html" class="nav-home">
+
+  <a href="#" class="league-route" data-page="home">
     <span class="icon">🏠</span>
     <span class="label">Home</span>
   </a>
 
-  <!-- Scores (handled by today-scores JS) -->
-  <a href="/index.html" class="today-scores-link">
+  <a href="#" class="today-scores-link">
     <span class="icon">🏀</span>
     <span class="label">Scores</span>
   </a>
 
-  <!-- Bracketology (JS will rewrite predict_*) -->
-  <a href="predict_{{ site.time | date: '%Y-%m-%d' }}.html">
+  <!-- ✅ MUST be exactly "bracketology" -->
+  <a href="#" class="league-route" data-page="bracketology">
     <span class="icon">🧮</span>
     <span class="label">Bracketology</span>
   </a>
 
-  <!-- Conferences -->
-  <a href="/conference.html">
+  <!-- ✅ MUST be exactly "conference" -->
+  <a href="#" class="league-route" data-page="conference">
     <span class="icon">🏆</span>
     <span class="label">Conferences</span>
   </a>
+
 </nav>
 
 <script>
 (function () {
-  // This function MUST match what your site already uses
+
   function getLeague() {
     try {
       const stored = localStorage.getItem("league");
@@ -78,6 +76,8 @@
     return "men";
   }
 
+  const LATEST_BRACKET = "2026-03-15";
+
   document.querySelectorAll(".league-route").forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
@@ -86,21 +86,30 @@
       const league = getLeague();
       let target;
 
-      if (page === "conference") {
-        target = `/docs/${league}/conference.html`;
+      const today = new Date().toISOString().slice(0, 10);
+
+      // ✅ HOME
+      if (page === "home") {
+        target = `/docs/${league}/`;
       }
 
-      if (page === "bracketology") {
-        // Redirect to today's existing bracket file
-        const today = new Date().toISOString().slice(0, 10);
-        target = `/docs/${league}/predict_${today}.html`;
+      // ✅ CONFERENCE (CURRENT DATE)
+      if (page === "conference") {
+        target = `/docs/${league}/conference_${today}.html`;
       }
+
+      // ✅ BRACKETOLOGY (FIXED DATE)
+      if (page === "bracketology") {
+        target = `/docs/${league}/predict_${LATEST_BRACKET}.html`;
+      }
+
+      console.log("Routing:", page, "→", target); // 👈 DEBUG
 
       if (target) {
         window.location.href = target;
       }
     });
   });
+
 })();
 </script>
-
