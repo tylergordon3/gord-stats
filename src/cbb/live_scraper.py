@@ -261,6 +261,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
 
     if "NCAA Tournament" in game_descript:
         is_mm = True
+    elif "WNCAA Tournament" in game_descript:
+        is_mm = True
     elif "NIT" in game_descript:
         is_nit = True
 
