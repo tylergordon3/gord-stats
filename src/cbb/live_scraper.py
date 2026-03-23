@@ -98,7 +98,7 @@ def get_today_event_ids(conference_strings, league_path):
     from zoneinfo import ZoneInfo
 
     ET = ZoneInfo("America/New_York")
-    MAX_DAYS_AHEAD = 7  # 🔧 adjust (3–7 is ideal)
+    MAX_DAYS_AHEAD = 7
     MAX_DAYS_BEHIND = 2
     today_et = datetime.now(ET).date()
     yesterday_et = today_et + timedelta(days=MAX_DAYS_BEHIND)
@@ -112,7 +112,6 @@ def get_today_event_ids(conference_strings, league_path):
 
         resp = requests.get(
             f"{BASE}/{league_path}/schedule",
-            # params={"conference": conf, "utc_offset": UTC_OFFSET_SECONDS},
             params={"utc_offset": UTC_OFFSET_SECONDS},
             headers=HEADERS,
             timeout=10,
@@ -124,7 +123,7 @@ def get_today_event_ids(conference_strings, league_path):
             all_ids.update(current.get("event_ids", []))
 
         groups = sched.get("current_season", [])
-        print(groups)
+
         for group in groups:
             group_date = group.get("start_date")
             event_ids = group.get("event_ids", [])
