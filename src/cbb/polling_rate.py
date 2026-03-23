@@ -191,7 +191,7 @@ def calculate_rate():
         data = json.load(f)
 
     leagues = data.get("leagues", {})
-    print(leagues)
+
     # ---- merge all games across leagues ----
     games = {}
     for league_games in leagues.values():
