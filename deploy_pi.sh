@@ -153,7 +153,12 @@ DEPLOY_LOG+="<b>Wrangler Output:</b><br><pre>$WRANGLER_OUTPUT</pre><br>"
 ########################################
 
 if $STASH_CREATED; then
-  git stash pop || true
+  if git stash apply; then
+    git stash drop
+    DEPLOY_LOG+="Stash reapplied cleanly.<br>"
+  else
+    DEPLOY_LOG+="⚠️ Stash apply had conflicts — stash preserved.<br>"
+  fi
 fi
 
 ########################################
