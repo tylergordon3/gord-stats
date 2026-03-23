@@ -1,6 +1,7 @@
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 import pytz
 import requests
@@ -92,8 +93,16 @@ def normalize_conf_name(conf: str) -> str:
 # SCHEDULE → EVENT IDS
 # =========================
 
-
 def get_today_event_ids(conference_strings, league_path):
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+
+    ET = ZoneInfo("America/New_York")
+    MAX_DAYS_AHEAD = 6  # 🔧 adjust (3–7 is ideal)
+
+    today_et = datetime.now(ET).date()
+    cutoff_et = today_et + timedelta(days=MAX_DAYS_AHEAD)
+
     all_ids = set()
 
     for conf in conference_strings:
@@ -110,10 +119,28 @@ def get_today_event_ids(conference_strings, league_path):
         sched = resp.json()
 
         current = sched.get("current_group")
-        if not current:
-            continue
+        if current:
+            all_ids.update(current.get("event_ids", []))
 
-        all_ids.update(current.get("event_ids", []))
+        # -------------------------
+        # ➕ EXTEND WITH GROUPS
+        # -------------------------
+        groups = sched.get("groups", [])
+
+        for group in groups:
+            group_date = group.get("date")
+            event_ids = group.get("event_ids", [])
+
+            if not group_date or not event_ids:
+                continue
+
+            try:
+                group_day = datetime.fromisoformat(group_date).date()
+            except Exception:
+                continue
+
+            if today_et <= group_day <= cutoff_et:
+                all_ids.update(event_ids)
 
     return sorted(all_ids)
 
