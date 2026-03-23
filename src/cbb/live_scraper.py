@@ -98,9 +98,10 @@ def get_today_event_ids(conference_strings, league_path):
     from zoneinfo import ZoneInfo
 
     ET = ZoneInfo("America/New_York")
-    MAX_DAYS_AHEAD = 6  # 🔧 adjust (3–7 is ideal)
-
+    MAX_DAYS_AHEAD = 7  # 🔧 adjust (3–7 is ideal)
+    MAX_DAYS_BEHIND = 2
     today_et = datetime.now(ET).date()
+    yesterday_et = today_et + timedelta(days=MAX_DAYS_BEHIND)
     cutoff_et = today_et + timedelta(days=MAX_DAYS_AHEAD)
 
     all_ids = set()
@@ -111,24 +112,21 @@ def get_today_event_ids(conference_strings, league_path):
 
         resp = requests.get(
             f"{BASE}/{league_path}/schedule",
-            params={"conference": conf, "utc_offset": UTC_OFFSET_SECONDS},
+            # params={"conference": conf, "utc_offset": UTC_OFFSET_SECONDS},
+            params={"utc_offset": UTC_OFFSET_SECONDS},
             headers=HEADERS,
             timeout=10,
         )
         resp.raise_for_status()
         sched = resp.json()
-
         current = sched.get("current_group")
         if current:
             all_ids.update(current.get("event_ids", []))
 
-        # -------------------------
-        # ➕ EXTEND WITH GROUPS
-        # -------------------------
-        groups = sched.get("groups", [])
-
+        groups = sched.get("current_season", [])
+        print(groups)
         for group in groups:
-            group_date = group.get("date")
+            group_date = group.get("start_date")
             event_ids = group.get("event_ids", [])
 
             if not group_date or not event_ids:
@@ -139,7 +137,7 @@ def get_today_event_ids(conference_strings, league_path):
             except Exception:
                 continue
 
-            if today_et <= group_day <= cutoff_et:
+            if yesterday_et <= group_day <= cutoff_et:
                 all_ids.update(event_ids)
 
     return sorted(all_ids)
