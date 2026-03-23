@@ -7,7 +7,7 @@ import requests
 
 from cbb import scraper, utils
 from cbb.push_scores import push
-from cbb.lib import teams, constants
+from cbb.lib import teams, constants, paths
 from cbb.scrape import ats, bpi, net, torvik, season
 
 # =========================
@@ -59,6 +59,7 @@ def safe_float(x):
     except (TypeError, ValueError):
         return None
 
+
 # =========================
 # CONFERENCE DISCOVERY
 # =========================
@@ -79,12 +80,14 @@ def get_conference_strings(league_path):
 
     return sorted(confs)
 
+
 def normalize_conf_name(conf: str) -> str:
     for name, vals in constants.CONF_MAP.items():
         if conf.strip() in vals:
             return name
     return conf
-    
+
+
 # =========================
 # SCHEDULE → EVENT IDS
 # =========================
@@ -156,7 +159,6 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
 
     dt_local = dt.astimezone(EASTERN) if dt else None
 
-  
     game_date = dt_local.date().isoformat() if dt_local else None
     start_time = dt_local.strftime("%I:%M %p").lstrip("0") if dt_local else None
 
@@ -173,7 +175,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         bpi_lookup = {row[1]: row[7] for row in bpi["rows"]}
 
     net_lookup = {row[1]: row[0] for row in net["rows"]}
-    wab_lookup = {teams.cleanTorvikNames(row[1]) : row[-1] for row in tor_dict["rows"]}
+    wab_lookup = {teams.cleanTorvikNames(row[1]): row[-1] for row in tor_dict["rows"]}
 
     # ---- teams ----
     home = g["home_team"]
@@ -197,11 +199,11 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     home = standings.get("home") or {}
     away = standings.get("away") or {}
 
-    #home_record_last_ten = home.get("last_ten_games_record", "")
+    # home_record_last_ten = home.get("last_ten_games_record", "")
     home_record_last_ten = season.get_last_x(gender, home_name, 10)
-    
+
     away_record_last_ten = season.get_last_x(gender, away_name, 10)
-    #away_record_last_ten = away.get("last_ten_games_record", "")
+    # away_record_last_ten = away.get("last_ten_games_record", "")
 
     home_conf_seed = home.get("conference_seed", "")
     away_conf_seed = away.get("conference_seed", "")
@@ -226,18 +228,18 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     home_conf = normalize_conf_name(g.get("home_conference"))
     away_conf = normalize_conf_name(g.get("away_conference"))
     is_p5 = utils.check_p5(home_conf, away_conf)
-    
-    game_type = g['game_type']
-    game_descript = g['game_description']
+
+    game_type = g["game_type"]
+    game_descript = g["game_description"]
 
     is_mm = False
     is_nit = False
- 
+
     if "NCAA Tournament" in game_descript:
         is_mm = True
     elif "NIT" in game_descript:
         is_nit = True
-  
+
     try:
         tv = g["tv_listings_by_country_code"]["us"][0]["short_name"]
     except:
@@ -277,7 +279,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     net_away = get_stat(away_idx, master, net_lookup)
     wab_home = get_stat(home_idx, master, wab_lookup)
     wab_away = get_stat(away_idx, master, wab_lookup)
-  
+
     clock = progress.get("clock")
     period = progress.get("segment_string")
     overtime = progress.get("overtime", False)
@@ -287,6 +289,12 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     spread_close = odd.get("line")
 
     ou_raw = odd.get("over_under")
+    
+    if g.get("location") != None:
+        location = g.get("location")[:-5]
+    else:
+        location = ""
+    
     try:
         total_close = float(ou_raw)
     except (TypeError, ValueError):
@@ -333,23 +341,21 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         "conference_home": home_conf,
         "conference_away": away_conf,
         "venue": g.get("stadium"),
-        "location": g.get("location")[:-5],
+        "location": location,
         # betting
         "spread_close": spread_close,
         "total_close": total_close,
-
-        #standings/record
-        "home_last_ten" : home_record_last_ten,
-        "away_last_ten" : away_record_last_ten,
-        "home_conf_seed" : home_conf_seed,
-        "away_conf_seed" : away_conf_seed,
-        "game_type" : game_type,
-        "game_description" :game_descript,
-        "is_mm" : is_mm,
-        "is_nit" : is_nit,
-
-        "wab_home" : wab_home,
-        "wab_away" : wab_away
+        # standings/record
+        "home_last_ten": home_record_last_ten,
+        "away_last_ten": away_record_last_ten,
+        "home_conf_seed": home_conf_seed,
+        "away_conf_seed": away_conf_seed,
+        "game_type": game_type,
+        "game_description": game_descript,
+        "is_mm": is_mm,
+        "is_nit": is_nit,
+        "wab_home": wab_home,
+        "wab_away": wab_away,
     }
 
 
@@ -497,19 +503,20 @@ if __name__ == "__main__":
 
         payload = {
             "generated": datetime.utcnow().isoformat(),
-            "leagues": {
-                "men": snapshots["men"]["games"],
-                "women": snapshots["women"]["games"],
-            },
+            "games": snapshots[league_key]["games"],
         }
 
-        path = utils.get_path(f"data/live_scores_{league_key}.json")
+        if league_key == "women":
+            path = paths.W_LIVE
+        else:
+            path = paths.M_LIVE
+
         with open(path, "w") as f:
             json.dump(payload, f, indent=2)
 
         print(
             f"{league_key.upper()} snapshot — "
-            f"{len(payload['leagues'][league_key])} games @ {payload['generated']}"
+            f"{len(payload['games'])} games @ {payload['generated']}"
         )
 
         push(payload)
