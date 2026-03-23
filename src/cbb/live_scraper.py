@@ -101,7 +101,7 @@ def get_today_event_ids(conference_strings, league_path):
     MAX_DAYS_AHEAD = 7
     MAX_DAYS_BEHIND = 2
     today_et = datetime.now(ET).date()
-    yesterday_et = today_et + timedelta(days=MAX_DAYS_BEHIND)
+    yesterday_et = today_et - timedelta(days=MAX_DAYS_BEHIND)
     cutoff_et = today_et + timedelta(days=MAX_DAYS_AHEAD)
 
     all_ids = set()
