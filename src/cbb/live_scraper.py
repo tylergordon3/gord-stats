@@ -201,6 +201,22 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     net_lookup = {row[1]: row[0] for row in net["rows"]}
     wab_lookup = {teams.cleanTorvikNames(row[1]): row[-1] for row in tor_dict["rows"]}
 
+    tor_lookup = {teams.cleanTorvikNames(row[1]) : {
+        "AdjOE" : row[5],
+        "AdjDE" : row[6],
+        "TOR" : row[9],
+        "TORD" : row[10],
+        "ORB" : row[11],
+        "DRB" : row[12],
+        "FTR" : row[13],
+        "2P%" : row[14],
+        "2P%D" : row[15],
+        "3P%" : row[16],
+        "3P%D" : row[17],
+        "3PRD" : row[18],
+        "WAB" : row[20]
+    } for row in tor_dict["rows"]}
+
     # ---- teams ----
     home = g["home_team"]
     away = g["away_team"]
@@ -223,11 +239,9 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     home = standings.get("home") or {}
     away = standings.get("away") or {}
 
-    # home_record_last_ten = home.get("last_ten_games_record", "")
     home_record_last_ten = season.get_last_x(gender, home_name, 10)
 
     away_record_last_ten = season.get_last_x(gender, away_name, 10)
-    # away_record_last_ten = away.get("last_ten_games_record", "")
 
     home_conf_seed = home.get("conference_seed", "")
     away_conf_seed = away.get("conference_seed", "")
@@ -265,11 +279,6 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         is_mm = True
     elif "NIT" in game_descript:
         is_nit = True
-
-    try:
-        tv = g["tv_listings_by_country_code"]["us"][0]["short_name"]
-    except:
-        tv = None
 
     # ---- score / progress ----
     box = g.get("box_score") or {}
