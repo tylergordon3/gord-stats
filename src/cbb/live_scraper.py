@@ -44,6 +44,13 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i : i + n]
 
+def get_stat(idx, master, lookup):
+    aliases = master["names"][idx]
+    for alias in aliases:
+        if alias in lookup:
+            return lookup[alias]
+    return None
+
 
 def get_rank_dict_for_league(league):
     if league == "men":
@@ -92,6 +99,7 @@ def normalize_conf_name(conf: str) -> str:
 # =========================
 # SCHEDULE → EVENT IDS
 # =========================
+
 
 def get_today_event_ids(conference_strings, league_path):
     from datetime import datetime, timedelta
@@ -177,108 +185,107 @@ EASTERN = pytz.timezone("US/Eastern")
 def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     # ---- parse datetime ----
     dt = None
-
     if g.get("game_date"):
         dt = datetime.strptime(g["game_date"], "%a, %d %b %Y %H:%M:%S %z")
-
     dt_local = dt.astimezone(EASTERN) if dt else None
-
     game_date = dt_local.date().isoformat() if dt_local else None
     start_time = dt_local.strftime("%I:%M %p").lstrip("0") if dt_local else None
 
+    # ---- mens lookup dicts ----
     ats_lookup = {}
+    ou_lookup = {}
+    bpi_lookup = {}
+
     if ats:
         ats_lookup = {row[0]: row[2] for row in ats["rows"]}
-
-    ou_lookup = {}
-    if ats:
         ou_lookup = {row[0]: row[6] for row in ats["rows"]}
-
-    bpi_lookup = {}
     if bpi:
         bpi_lookup = {row[1]: row[7] for row in bpi["rows"]}
 
+    # ---- both genders lookup dicts ----
     net_lookup = {row[1]: row[0] for row in net["rows"]}
     wab_lookup = {teams.cleanTorvikNames(row[1]): row[-1] for row in tor_dict["rows"]}
+    tor_lookup = {
+        teams.cleanTorvikNames(row[1]): {
+            "AdjOE": row[5],
+            "AdjDE": row[6],
+            "TOR": row[9],
+            "TORD": row[10],
+            "ORB": row[11],
+            "DRB": row[12],
+            "FTR": row[13],
+            "2P%": row[14],
+            "2P%D": row[15],
+            "3P%": row[16],
+            "3P%D": row[17],
+            "3PRD": row[18],
+            "WAB": row[20],
+        }
+        for row in tor_dict["rows"]
+    }
 
-    tor_lookup = {teams.cleanTorvikNames(row[1]) : {
-        "AdjOE" : row[5],
-        "AdjDE" : row[6],
-        "TOR" : row[9],
-        "TORD" : row[10],
-        "ORB" : row[11],
-        "DRB" : row[12],
-        "FTR" : row[13],
-        "2P%" : row[14],
-        "2P%D" : row[15],
-        "3P%" : row[16],
-        "3P%D" : row[17],
-        "3PRD" : row[18],
-        "WAB" : row[20]
-    } for row in tor_dict["rows"]}
+    # ---- team objects ----
+    home_obj = g["home_team"]
+    away_obj = g["away_team"]
 
-    # ---- teams ----
-    home = g["home_team"]
-    away = g["away_team"]
-
+    # ---- get team info from master dict ----
     [home_idx, home_name, home_abb] = scraper.getNameFromCode(
-        home.get("abbreviation"), master, True
+        home_obj.get("abbreviation"), master, True
     )
     [away_idx, away_name, away_abb] = scraper.getNameFromCode(
-        away.get("abbreviation"), master, True
+        away_obj.get("abbreviation"), master, True
     )
 
+    # ---- gord model rankings ----
     home_model = ranks[home_name]["Ovr"] if home_name else ""
     away_model = ranks[away_name]["Ovr"] if away_name else ""
 
+    hm_safe = safe_float(home_model)
+    am_safe = safe_float(away_model)
+    rating = (
+        (hm_safe + am_safe) / 2 if hm_safe is not None and am_safe is not None else None
+    )
+
+    # ---- basic team stats ----
     home_record = ranks[home_name]["Record"] if home_name else ""
     away_record = ranks[away_name]["Record"] if away_name else ""
 
     standings = g.get("standings") or {}
+    home_standings_obj = standings.get("home") or {}
+    away_standings_obj = standings.get("away") or {}
 
-    home = standings.get("home") or {}
-    away = standings.get("away") or {}
+    home_conf_seed = home_standings_obj.get("conference_seed", "")
+    away_conf_seed = away_standings_obj.get("conference_seed", "")
 
     home_record_last_ten = season.get_last_x(gender, home_name, 10)
-
     away_record_last_ten = season.get_last_x(gender, away_name, 10)
 
-    home_conf_seed = home.get("conference_seed", "")
-    away_conf_seed = away.get("conference_seed", "")
-
-    def safe_float(x):
-        try:
-            return float(x)
-        except (TypeError, ValueError):
-            return None
-
-    hm = safe_float(home_model)
-    am = safe_float(away_model)
-
-    rating = (hm + am) / 2 if hm is not None and am is not None else None
-
-    # ranks
-    home_ap = g.get("home_ranking")
-    away_ap = g.get("away_ranking")
-    is_ap = bool(home_ap or away_ap)
-
-    # conferences
     home_conf = normalize_conf_name(g.get("home_conference"))
     away_conf = normalize_conf_name(g.get("away_conference"))
     is_p5 = utils.check_p5(home_conf, away_conf)
 
+    # ---- ap rankings ----
+    home_ap = g.get("home_ranking")
+    away_ap = g.get("away_ranking")
+    is_ap = bool(home_ap or away_ap)
+
+    # ---- game info ----
     game_type = g["game_type"]
     game_descript = g["game_description"]
 
     is_mm = False
     is_nit = False
-
     if "NCAA Tournament" in game_descript:
         is_mm = True
     elif "WNCAA Tournament" in game_descript:
         is_mm = True
     elif "NIT" in game_descript:
         is_nit = True
+
+    if g.get("location") != None:
+        location = g.get("location")[:-5]
+    else:
+        location = ""
 
     # ---- score / progress ----
     box = g.get("box_score") or {}
@@ -287,13 +294,6 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
 
     home_score = score.get("home", {}).get("score")
     away_score = score.get("away", {}).get("score")
-
-    def get_stat(idx, master, lookup):
-        aliases = master["names"][idx]
-        for alias in aliases:
-            if alias in lookup:
-                return lookup[alias]
-        return None
 
     if ats_lookup:
         ats_home = get_stat(home_idx, master, ats_lookup)
@@ -322,28 +322,19 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     # ---- odds ----
     odd = g.get("odd") or {}
     spread_close = odd.get("line")
-
     ou_raw = odd.get("over_under")
-    
-    if g.get("location") != None:
-        location = g.get("location")[:-5]
-    else:
-        location = ""
-    
+
     try:
         total_close = float(ou_raw)
     except (TypeError, ValueError):
         total_close = None
 
     return {
-        # timing
         "date": game_date,
         "start_time": start_time,
         "start_time_utc": dt.isoformat() if dt else None,
-        # status
         "status": g.get("status"),
         "rating": rating,
-        # teams
         "home_team": home_name,
         "away_team": away_name,
         "home_abb": home_abb,
@@ -351,7 +342,6 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         "is_p5": is_p5,
         "home_record": home_record,
         "away_record": away_record,
-        # scores
         "home_score": home_score,
         "away_score": away_score,
         "away_model": away_model,
@@ -364,23 +354,18 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         "net_home": net_home,
         "bpi_away": bpi_away,
         "bpi_home": bpi_home,
-        # live info
         "clock": clock,
         "period": period,
         "overtime": overtime,
-        # ranks
         "home_rank": home_ap,
         "away_rank": away_ap,
         "is_ap": is_ap,
-        # meta
         "conference_home": home_conf,
         "conference_away": away_conf,
         "venue": g.get("stadium"),
         "location": location,
-        # betting
         "spread_close": spread_close,
         "total_close": total_close,
-        # standings/record
         "home_last_ten": home_record_last_ten,
         "away_last_ten": away_record_last_ten,
         "home_conf_seed": home_conf_seed,
