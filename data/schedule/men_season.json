@@ -7290,6 +7290,13 @@
             "score": 76,
             "opponent": "California",
             "opponent_score": 75
+        },
+        "2026-03-24": {
+            "win": false,
+            "location": "away",
+            "score": 69,
+            "opponent": "New Mexico",
+            "opponent_score": 84
         }
     },
     "Youngstown St.": {
@@ -63471,6 +63478,13 @@
             "score": 77,
             "opponent": "UNLV",
             "opponent_score": 66
+        },
+        "2026-03-24": {
+            "win": true,
+            "location": "home",
+            "score": 83,
+            "opponent": "Wichita St.",
+            "opponent_score": 79
         }
     },
     "Southeastern Louisiana": {
@@ -66775,6 +66789,13 @@
             "score": 96,
             "opponent": "Oklahoma St.",
             "opponent_score": 70
+        },
+        "2026-03-24": {
+            "win": false,
+            "location": "away",
+            "score": 79,
+            "opponent": "Tulsa",
+            "opponent_score": 83
         }
     },
     "UNC Greensboro": {
@@ -78001,6 +78022,13 @@
             "score": 86,
             "opponent": "George Washington",
             "opponent_score": 61
+        },
+        "2026-03-24": {
+            "win": true,
+            "location": "home",
+            "score": 84,
+            "opponent": "Saint Joseph's",
+            "opponent_score": 69
         }
     },
     "Pacific": {

@@ -230,6 +230,13 @@
             "score": 49,
             "opponent": "Green Bay",
             "opponent_score": 57
+        },
+        "2026-03-24": {
+            "win": true,
+            "location": "home",
+            "score": 61,
+            "opponent": "Maryland Eastern Shore",
+            "opponent_score": 42
         }
     },
     "North Carolina Central": {
@@ -22194,6 +22201,13 @@
             "score": 76,
             "opponent": "Stetson",
             "opponent_score": 73
+        },
+        "2026-03-24": {
+            "win": false,
+            "location": "away",
+            "score": 66,
+            "opponent": "Abilene Christian",
+            "opponent_score": 77
         }
     },
     "South Florida": {
@@ -25691,6 +25705,13 @@
             "score": 48,
             "opponent": "Green Bay",
             "opponent_score": 73
+        },
+        "2026-03-24": {
+            "win": true,
+            "location": "home",
+            "score": 77,
+            "opponent": "South Alabama",
+            "opponent_score": 72
         }
     },
     "West Virginia": {
@@ -26178,6 +26199,13 @@
             "score": 58,
             "opponent": "Cal Baptist",
             "opponent_score": 74
+        },
+        "2026-03-24": {
+            "win": true,
+            "location": "home",
+            "score": 77,
+            "opponent": "FIU",
+            "opponent_score": 66
         }
     },
     "Winthrop": {
@@ -44794,6 +44822,13 @@
             "score": 73,
             "opponent": "Alcorn St.",
             "opponent_score": 65
+        },
+        "2026-03-24": {
+            "win": false,
+            "location": "away",
+            "score": 72,
+            "opponent": "Purdue Fort Wayne",
+            "opponent_score": 77
         }
     },
     "Davidson": {
@@ -69754,6 +69789,13 @@
             "score": 59,
             "opponent": "Wake Forest",
             "opponent_score": 48
+        },
+        "2026-03-24": {
+            "win": false,
+            "location": "away",
+            "score": 42,
+            "opponent": "Youngstown St.",
+            "opponent_score": 61
         }
     },
     "VCU": {
