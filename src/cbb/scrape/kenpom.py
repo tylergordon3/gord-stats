@@ -70,3 +70,38 @@ def update_all(start=2010, end=2026):
     all = all.reset_index(drop=True)
     path = utils.get_path(f"model_data/kenpom_api/all.json")
     utils.save_json_data(all.to_json(), path)
+
+def get_today_ken(gender):
+    if gender == "M":
+        ken_dir = paths.M_KEN_DIR
+    elif gender == "W":
+        ken_dir = paths.W_KEN_DIR
+    else:
+        print("Invalid gender given to get_today_net.")
+        return None
+
+    # Today's filename
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_file = ken_dir / f"{today_str}.json"
+
+    # If today's file exists, return it
+    if today_file.exists():
+        target_file = today_file
+
+    # Otherwise get most recent file
+    files = sorted(
+        ken_dir.glob("*.json"),
+        key=lambda f: f.name,  # filenames are YYYY-MM-DD.json so this works
+        reverse=True,
+    )
+
+    if not files:
+        return None
+
+    target_file = files[0]
+    print(target_file)
+    # Load JSON
+    with open(target_file, "r", encoding="utf-8") as f:
+       data = json.load(f)
+
+    return data
