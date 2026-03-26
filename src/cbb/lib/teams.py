@@ -112,4 +112,11 @@ def getTeamLogo(team, debug=True):
     if idx != None:
         return "/assets/images/" + master.at[idx, "path"]
     return ""
+
+def getTeamLogoShort(team, debug=True):
+    master = getTeams()
+    idx = getTeamIndex(team, debug)
+    if idx != None:
+        return  master.at[idx, "path"]
+    return ""
     
