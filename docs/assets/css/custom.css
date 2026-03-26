@@ -1883,3 +1883,22 @@ p {
   font-weight: 700;
   letter-spacing: 0.5px;
 }
+
+.notebook-content {
+  max-width: 900px;     /* controls width */
+  margin: 0 auto;       /* 🔥 centers horizontally */
+  padding: 20px;
+}
+
+.notebook-content {
+  text-align: center;
+}
+
+.notebook-content table {
+  margin: 20px auto;
+  border-collapse: collapse;
+}
+
+.anchor-link {
+  display: none;
+}

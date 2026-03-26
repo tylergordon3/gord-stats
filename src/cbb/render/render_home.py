@@ -3,7 +3,7 @@ import pandas as pd
 
 from cbb.lib import html_util
 from cbb.lib import paths, teams
-from cbb.analysis import compare_bracket
+from cbb.tools import compare_bracket
 
 def team_logos(df):
     if teams.getTeamOfficialName(df['Men'], debug=False) != None:
@@ -59,7 +59,7 @@ def bids():
 
 def render_home():
     # Raw string to preserve formatting
-    styler = bids()
+
     html = r"""
 {% include ff_countdown.html %}
     <p>Using machine learning to predict the NCAA March Madness field.</p>
@@ -72,9 +72,10 @@ def render_home():
       Today's scores and schedule from:
       <a href="https://www.thescore.com/" target="_blank">TheScore</a>
     </p>
+    {% include s16_26.html %}
     """
-    seeds = compare_bracket.gen()
-    html = html + "<br>" + seeds # + styler.to_html()
+    #seeds = compare_bracket.gen()
+    #html = html + "<br>" + seeds # + styler.to_html()
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
 
