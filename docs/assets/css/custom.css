@@ -630,19 +630,16 @@
 }
 
 @media (max-width: 767px) {
-  /* Hide desktop nav */
-    .simple-nav {
-    display: flex !important;
+  /* ❌ Hide top nav */
+  #nav {
+    display: none !important;
   }
 
-
-  /* Bottom app-style nav */
+  /* ✅ Bottom nav stays visible */
   .bottom-nav {
     position: fixed;
     left: 0;
     right: 0;
-
-    /* 👇 THIS IS THE FIX */
     bottom: 0;
     height: 64px;
 
@@ -655,26 +652,37 @@
     z-index: 9999;
   }
 
-  .bottom-nav a {
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    color: #555;
-    font-size: 11px;
-  }
-
-  .bottom-nav .icon {
-    display: block;
-    font-size: 20px;
-    line-height: 1.1;
-  }
-
-  /* 🔑 Dynamic viewport-safe spacing */
   body {
     padding-bottom: calc(64px + env(safe-area-inset-bottom));
     min-height: 100dvh;
     overflow-x: hidden;
   }
+}
+
+.bottom-nav a.active {
+  background: rgba(0, 122, 255, 0.08);
+  border-radius: 10px;
+}
+
+/* =========================
+   ACTIVE NAV STATE
+========================= */
+.bottom-nav a.active {
+  color: #007aff;
+}
+
+.bottom-nav a.active .icon {
+  transform: translateY(-2px);
+}
+
+.bottom-nav a.active::after {
+  content: '';
+  display: block;
+  margin: 4px auto 0;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  background: #007aff;
 }
 
 /* =========================

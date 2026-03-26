@@ -74,11 +74,11 @@
       };
 
       document.querySelectorAll('.simple-nav a, .bottom-nav a').forEach(a => {
-        const href = a.getAttribute('href');
+        if (a.classList.contains("no-rewrite")) return;
 
+        const href = a.getAttribute('href');
         if (!href || href.startsWith('http')) return;
 
-        // 🚫 NEVER rewrite Home (two layers of safety)
         if (a.classList.contains("nav-home")) return;
         if (href === "/index.html") return;
 

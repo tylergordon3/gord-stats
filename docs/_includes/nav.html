@@ -1,115 +1,109 @@
-{% capture today_date %}{{ site.time | date: '%Y-%m-%d' }}{% endcapture %}
-
-{% capture men_home %}/docs/men/{% endcapture %}
-{% capture women_home %}/docs/women/{% endcapture %}
-
-{% capture men_conf %}/docs/men/conference.html{% endcapture %}
-{% capture women_conf %}/docs/women/conference.html{% endcapture %}
-
-{% capture men_bracket %}/docs/men/predict_{{ today_date }}.html{% endcapture %}
-{% capture women_bracket %}/docs/women/predict_{{ today_date }}.html{% endcapture %}
+{% assign latest_prediction_date = '2026-03-15' %}
 
 <div id="nav">
   <div class="nav-inner">
-
-    <!-- Desktop / shared navigation -->
     <nav class="simple-nav">
-      {% assign nav = site.data.nav %}
-      {% for item in nav.main %}
-
-        {% if item.url contains "__TODAY__" %}
-          {% capture today_url %}
-            predict_{{ site.time | date: '%Y-%m-%d' }}.html
-          {% endcapture %}
-          <a href="{{ today_url | strip | relative_url }}">{{ item.title }}</a>
-
-        {% elsif item.url == "__TODAY_SCORES__" %}
-          <a href="#" class="today-scores-link">{{ item.title }}</a>
-
-        {% else %}
-          <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
-        {% endif %}
-
-      {% endfor %}
+      <a class="league-route no-rewrite" data-page="home" href="/index.html">Home</a>
+      <a class="today-scores-link no-rewrite" href="/men/index.html">Today's Scores</a>
+      <a class="league-route no-rewrite" data-page="bracketology" href="/men/predict_{{ latest_prediction_date }}.html">Bracketology</a>
+      <a class="league-route no-rewrite" data-page="conference" href="/men/conference.html">Conference Rankings</a>
     </nav>
-
   </div>
 </div>
 
 <nav class="bottom-nav">
-
-  <a href="#" class="league-route" data-page="home">
+  <a class="league-route no-rewrite" data-page="home" href="/index.html">
     <span class="icon">🏠</span>
     <span class="label">Home</span>
   </a>
 
-  <a href="#" class="today-scores-link">
+  <a class="today-scores-link no-rewrite" href="/men/index.html">
     <span class="icon">🏀</span>
     <span class="label">Scores</span>
   </a>
 
-  <!-- ✅ MUST be exactly "bracketology" -->
-  <a href="#" class="league-route" data-page="bracketology">
+  <a class="league-route no-rewrite" data-page="bracketology" href="/men/predict_{{ latest_prediction_date }}.html">
     <span class="icon">🧮</span>
     <span class="label">Bracketology</span>
   </a>
 
-  <!-- ✅ MUST be exactly "conference" -->
-  <a href="#" class="league-route" data-page="conference">
+  <a class="league-route no-rewrite" data-page="conference" href="/men/conference.html">
     <span class="icon">🏆</span>
     <span class="label">Conferences</span>
   </a>
-
 </nav>
 
 <script>
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
+  const latestPredictionDate = "2026-03-15";
 
   function getLeague() {
     try {
       const stored = localStorage.getItem("league");
       if (stored === "men" || stored === "women") return stored;
     } catch (e) {}
-
-    const btn = document.getElementById("league-toggle-btn");
-    if (btn && btn.classList.contains("women")) return "women";
-    return "men";
+    return window.location.pathname.startsWith("/women/") ? "women" : "men";
   }
 
-  const LATEST_BRACKET = "2026-03-15";
+  const routeBuilders = {
+    home: () => `/index.html`,
+    conference: league => `/${league}/conference.html`,
+    bracketology: league => `/${league}/predict_${latestPredictionDate}.html`
+  };
 
   document.querySelectorAll(".league-route").forEach(link => {
-    link.addEventListener("click", e => {
+    link.addEventListener("click", function (e) {
+      const page = this.dataset.page;
+      if (!page || !routeBuilders[page]) return;
+
       e.preventDefault();
-
-      const page = link.dataset.page;
       const league = getLeague();
-      let target;
-
-      const today = new Date().toISOString().slice(0, 10);
-
-      // ✅ HOME
-      if (page === "home") {
-        target = `/docs/${league}/`;
-      }
-
-      // ✅ CONFERENCE (CURRENT DATE)
-      if (page === "conference") {
-        target = `/docs/${league}/conference_${today}.html`;
-      }
-
-      // ✅ BRACKETOLOGY (FIXED DATE)
-      if (page === "bracketology") {
-        target = `/docs/${league}/predict_${LATEST_BRACKET}.html`;
-      }
-
-      console.log("Routing:", page, "→", target); // 👈 DEBUG
-
-      if (target) {
-        window.location.href = target;
-      }
+      window.location.href = routeBuilders[page](league);
     });
   });
 
-})();
+  document.querySelectorAll(".today-scores-link").forEach(link => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      const league = getLeague();
+      window.location.href = `/${league}/index.html`;
+    });
+  });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const path = window.location.pathname;
+
+  let current = "home";
+
+  if (path === "/" || path.includes("index.html") && !path.includes("/men/") && !path.includes("/women/")) {
+    current = "home";
+  }
+  else if (path.includes("/men/") || path.includes("/women/")) {
+    current = "scores";
+  }
+  if (path.includes("predict_")) {
+    current = "bracketology";
+  }
+  if (path.includes("conference")) {
+    current = "conference";
+  }
+
+  
+  document.querySelectorAll(".bottom-nav a").forEach(link => {
+    link.classList.remove("active");
+
+    // special case for scores
+    if (link.classList.contains("today-scores-link") && current === "scores") {
+      link.classList.add("active");
+    }
+
+    if (link.dataset.page === current) {
+      link.classList.add("active");
+    }
+  });
+
+});
 </script>
