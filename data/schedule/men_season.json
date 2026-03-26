@@ -20727,6 +20727,13 @@
             "score": 80,
             "opponent": "UNC Wilmington",
             "opponent_score": 61
+        },
+        "2026-03-25": {
+            "win": false,
+            "location": "home",
+            "score": 55,
+            "opponent": "Illinois St.",
+            "opponent_score": 61
         }
     },
     "Wagner": {
@@ -39798,6 +39805,13 @@
             "score": 91,
             "opponent": "Seattle",
             "opponent_score": 85
+        },
+        "2026-03-25": {
+            "win": true,
+            "location": "home",
+            "score": 75,
+            "opponent": "Nevada",
+            "opponent_score": 69
         }
     },
     "Abilene Christian": {
@@ -75904,6 +75918,13 @@
             "score": 73,
             "opponent": "Liberty",
             "opponent_score": 63
+        },
+        "2026-03-25": {
+            "win": false,
+            "location": "away",
+            "score": 69,
+            "opponent": "Auburn",
+            "opponent_score": 75
         }
     },
     "Robert Morris": {
@@ -82344,6 +82365,13 @@
             "score": 78,
             "opponent": "Wake Forest",
             "opponent_score": 75
+        },
+        "2026-03-25": {
+            "win": true,
+            "location": "away",
+            "score": 61,
+            "opponent": "Dayton",
+            "opponent_score": 55
         }
     },
     "Eastern Kentucky": {

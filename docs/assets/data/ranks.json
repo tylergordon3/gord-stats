@@ -179824,5 +179824,1467 @@
       "Record": "3-30",
       "Ovr": 365
     }
+  },
+  "2026-03-26": {
+    "Duke": {
+      "Record": "34-2",
+      "Ovr": 1
+    },
+    "Michigan": {
+      "Record": "33-3",
+      "Ovr": 2
+    },
+    "Arizona": {
+      "Record": "34-2",
+      "Ovr": 3
+    },
+    "Iowa St.": {
+      "Record": "29-7",
+      "Ovr": 4
+    },
+    "Houston": {
+      "Record": "30-6",
+      "Ovr": 5
+    },
+    "Florida": {
+      "Record": "27-8",
+      "Ovr": 6
+    },
+    "Illinois": {
+      "Record": "26-8",
+      "Ovr": 7
+    },
+    "Purdue": {
+      "Record": "29-8",
+      "Ovr": 8
+    },
+    "Gonzaga": {
+      "Record": "31-4",
+      "Ovr": 9
+    },
+    "Connecticut": {
+      "Record": "31-5",
+      "Ovr": 10
+    },
+    "St. John's": {
+      "Record": "30-6",
+      "Ovr": 11
+    },
+    "Michigan St.": {
+      "Record": "27-7",
+      "Ovr": 12
+    },
+    "Alabama": {
+      "Record": "25-9",
+      "Ovr": 13
+    },
+    "Arkansas": {
+      "Record": "28-8",
+      "Ovr": 14
+    },
+    "Nebraska": {
+      "Record": "28-6",
+      "Ovr": 15
+    },
+    "Virginia": {
+      "Record": "30-6",
+      "Ovr": 16
+    },
+    "Texas Tech": {
+      "Record": "23-11",
+      "Ovr": 17
+    },
+    "Tennessee": {
+      "Record": "24-11",
+      "Ovr": 18
+    },
+    "Vanderbilt": {
+      "Record": "27-9",
+      "Ovr": 19
+    },
+    "Louisville": {
+      "Record": "24-11",
+      "Ovr": 20
+    },
+    "Kansas": {
+      "Record": "24-11",
+      "Ovr": 21
+    },
+    "Wisconsin": {
+      "Record": "24-11",
+      "Ovr": 22
+    },
+    "Saint Mary's": {
+      "Record": "27-6",
+      "Ovr": 23
+    },
+    "Utah St.": {
+      "Record": "29-7",
+      "Ovr": 24
+    },
+    "BYU": {
+      "Record": "23-12",
+      "Ovr": 25
+    },
+    "North Carolina": {
+      "Record": "24-9",
+      "Ovr": 26
+    },
+    "UCLA": {
+      "Record": "24-12",
+      "Ovr": 27
+    },
+    "Ohio St.": {
+      "Record": "21-13",
+      "Ovr": 28
+    },
+    "Miami FL": {
+      "Record": "26-9",
+      "Ovr": 29
+    },
+    "Kentucky": {
+      "Record": "22-14",
+      "Ovr": 30
+    },
+    "Georgia": {
+      "Record": "22-11",
+      "Ovr": 31
+    },
+    "Villanova": {
+      "Record": "24-9",
+      "Ovr": 32
+    },
+    "Iowa": {
+      "Record": "23-12",
+      "Ovr": 33
+    },
+    "Clemson": {
+      "Record": "24-11",
+      "Ovr": 34
+    },
+    "Texas A&M": {
+      "Record": "22-12",
+      "Ovr": 35
+    },
+    "Saint Louis": {
+      "Record": "29-6",
+      "Ovr": 36
+    },
+    "Santa Clara": {
+      "Record": "26-9",
+      "Ovr": 37
+    },
+    "VCU": {
+      "Record": "28-8",
+      "Ovr": 38
+    },
+    "TCU": {
+      "Record": "23-12",
+      "Ovr": 39
+    },
+    "McNeese": {
+      "Record": "28-6",
+      "Ovr": 40
+    },
+    "Miami OH": {
+      "Record": "32-2",
+      "Ovr": 41
+    },
+    "N.C. State": {
+      "Record": "20-14",
+      "Ovr": 42
+    },
+    "UCF": {
+      "Record": "21-12",
+      "Ovr": 43
+    },
+    "Missouri": {
+      "Record": "20-13",
+      "Ovr": 44
+    },
+    "Auburn": {
+      "Record": "20-16",
+      "Ovr": 45
+    },
+    "High Point": {
+      "Record": "31-5",
+      "Ovr": 46
+    },
+    "Texas": {
+      "Record": "21-14",
+      "Ovr": 47
+    },
+    "Tulsa": {
+      "Record": "29-7",
+      "Ovr": 48
+    },
+    "Oklahoma": {
+      "Record": "19-15",
+      "Ovr": 49
+    },
+    "New Mexico": {
+      "Record": "26-10",
+      "Ovr": 50
+    },
+    "South Florida": {
+      "Record": "25-9",
+      "Ovr": 51
+    },
+    "San Diego St.": {
+      "Record": "22-11",
+      "Ovr": 52
+    },
+    "Indiana": {
+      "Record": "18-14",
+      "Ovr": 53
+    },
+    "Yale": {
+      "Record": "24-7",
+      "Ovr": 54
+    },
+    "Akron": {
+      "Record": "29-6",
+      "Ovr": 55
+    },
+    "SMU": {
+      "Record": "20-14",
+      "Ovr": 56
+    },
+    "UNC Wilmington": {
+      "Record": "27-7",
+      "Ovr": 57
+    },
+    "Stephen F. Austin": {
+      "Record": "28-6",
+      "Ovr": 58
+    },
+    "Seton Hall": {
+      "Record": "21-12",
+      "Ovr": 59
+    },
+    "Navy": {
+      "Record": "26-8",
+      "Ovr": 60
+    },
+    "Stanford": {
+      "Record": "20-12",
+      "Ovr": 61
+    },
+    "Belmont": {
+      "Record": "26-6",
+      "Ovr": 62
+    },
+    "Boise St.": {
+      "Record": "20-12",
+      "Ovr": 63
+    },
+    "Dayton": {
+      "Record": "25-12",
+      "Ovr": 64
+    },
+    "UMBC": {
+      "Record": "24-9",
+      "Ovr": 65
+    },
+    "North Dakota St.": {
+      "Record": "27-8",
+      "Ovr": 66
+    },
+    "Virginia Tech": {
+      "Record": "19-13",
+      "Ovr": 67
+    },
+    "Cincinnati": {
+      "Record": "18-15",
+      "Ovr": 68
+    },
+    "Baylor": {
+      "Record": "16-16",
+      "Ovr": 69
+    },
+    "Oklahoma St.": {
+      "Record": "20-15",
+      "Ovr": 70
+    },
+    "Liberty": {
+      "Record": "26-8",
+      "Ovr": 71
+    },
+    "LIU": {
+      "Record": "24-11",
+      "Ovr": 72
+    },
+    "California": {
+      "Record": "22-12",
+      "Ovr": 73
+    },
+    "Cal Baptist": {
+      "Record": "25-9",
+      "Ovr": 74
+    },
+    "Hawaii": {
+      "Record": "24-9",
+      "Ovr": 75
+    },
+    "George Mason": {
+      "Record": "23-10",
+      "Ovr": 76
+    },
+    "Nevada": {
+      "Record": "24-13",
+      "Ovr": 77
+    },
+    "Utah Valley": {
+      "Record": "25-9",
+      "Ovr": 78
+    },
+    "Colorado St.": {
+      "Record": "21-13",
+      "Ovr": 79
+    },
+    "USC": {
+      "Record": "18-14",
+      "Ovr": 80
+    },
+    "Kent St.": {
+      "Record": "24-10",
+      "Ovr": 81
+    },
+    "Arizona St.": {
+      "Record": "17-16",
+      "Ovr": 82
+    },
+    "Florida St.": {
+      "Record": "18-15",
+      "Ovr": 83
+    },
+    "Merrimack": {
+      "Record": "23-11",
+      "Ovr": 84
+    },
+    "Colorado": {
+      "Record": "17-15",
+      "Ovr": 85
+    },
+    "Grand Canyon": {
+      "Record": "20-12",
+      "Ovr": 86
+    },
+    "West Virginia": {
+      "Record": "18-14",
+      "Ovr": 87
+    },
+    "Wichita St.": {
+      "Record": "24-12",
+      "Ovr": 88
+    },
+    "Hofstra": {
+      "Record": "24-11",
+      "Ovr": 89
+    },
+    "Winthrop": {
+      "Record": "23-11",
+      "Ovr": 90
+    },
+    "St. Thomas": {
+      "Record": "24-10",
+      "Ovr": 91
+    },
+    "Illinois St.": {
+      "Record": "23-12",
+      "Ovr": 92
+    },
+    "Tennessee St.": {
+      "Record": "23-10",
+      "Ovr": 93
+    },
+    "Troy": {
+      "Record": "22-12",
+      "Ovr": 94
+    },
+    "Howard": {
+      "Record": "24-11",
+      "Ovr": 95
+    },
+    "Washington": {
+      "Record": "16-17",
+      "Ovr": 96
+    },
+    "Minnesota": {
+      "Record": "15-17",
+      "Ovr": 97
+    },
+    "Northern Iowa": {
+      "Record": "23-13",
+      "Ovr": 98
+    },
+    "Charleston": {
+      "Record": "21-11",
+      "Ovr": 99
+    },
+    "Robert Morris": {
+      "Record": "22-11",
+      "Ovr": 100
+    },
+    "LSU": {
+      "Record": "15-17",
+      "Ovr": 101
+    },
+    "Northwestern": {
+      "Record": "15-19",
+      "Ovr": 102
+    },
+    "Austin Peay": {
+      "Record": "22-9",
+      "Ovr": 103
+    },
+    "Wake Forest": {
+      "Record": "18-17",
+      "Ovr": 104
+    },
+    "Sam Houston St.": {
+      "Record": "22-12",
+      "Ovr": 105
+    },
+    "Murray St.": {
+      "Record": "20-13",
+      "Ovr": 106
+    },
+    "UC San Diego": {
+      "Record": "23-11",
+      "Ovr": 107
+    },
+    "Central Arkansas": {
+      "Record": "22-12",
+      "Ovr": 108
+    },
+    "Butler": {
+      "Record": "16-16",
+      "Ovr": 109
+    },
+    "Saint Joseph's": {
+      "Record": "24-12",
+      "Ovr": 110
+    },
+    "UAB": {
+      "Record": "20-12",
+      "Ovr": 111
+    },
+    "Creighton": {
+      "Record": "15-17",
+      "Ovr": 112
+    },
+    "Wright St.": {
+      "Record": "23-12",
+      "Ovr": 113
+    },
+    "Providence": {
+      "Record": "15-18",
+      "Ovr": 114
+    },
+    "South Alabama": {
+      "Record": "21-12",
+      "Ovr": 115
+    },
+    "Arkansas St.": {
+      "Record": "20-12",
+      "Ovr": 116
+    },
+    "Mississippi": {
+      "Record": "15-20",
+      "Ovr": 117
+    },
+    "UC Irvine": {
+      "Record": "23-12",
+      "Ovr": 118
+    },
+    "Penn": {
+      "Record": "18-12",
+      "Ovr": 119
+    },
+    "Syracuse": {
+      "Record": "15-17",
+      "Ovr": 120
+    },
+    "Georgetown": {
+      "Record": "16-18",
+      "Ovr": 121
+    },
+    "Bradley": {
+      "Record": "21-13",
+      "Ovr": 122
+    },
+    "East Tennessee St.": {
+      "Record": "23-11",
+      "Ovr": 123
+    },
+    "Wyoming": {
+      "Record": "18-15",
+      "Ovr": 124
+    },
+    "George Washington": {
+      "Record": "19-16",
+      "Ovr": 125
+    },
+    "William & Mary": {
+      "Record": "20-12",
+      "Ovr": 126
+    },
+    "Davidson": {
+      "Record": "20-14",
+      "Ovr": 127
+    },
+    "Portland St.": {
+      "Record": "20-11",
+      "Ovr": 128
+    },
+    "Xavier": {
+      "Record": "15-18",
+      "Ovr": 129
+    },
+    "Notre Dame": {
+      "Record": "13-18",
+      "Ovr": 130
+    },
+    "Queens": {
+      "Record": "21-14",
+      "Ovr": 131
+    },
+    "UNLV": {
+      "Record": "18-17",
+      "Ovr": 132
+    },
+    "Marquette": {
+      "Record": "12-20",
+      "Ovr": 133
+    },
+    "Seattle": {
+      "Record": "21-14",
+      "Ovr": 134
+    },
+    "Idaho": {
+      "Record": "21-15",
+      "Ovr": 135
+    },
+    "DePaul": {
+      "Record": "16-16",
+      "Ovr": 136
+    },
+    "San Francisco": {
+      "Record": "17-16",
+      "Ovr": 137
+    },
+    "Mississippi St.": {
+      "Record": "13-19",
+      "Ovr": 138
+    },
+    "Pacific": {
+      "Record": "18-15",
+      "Ovr": 139
+    },
+    "South Carolina": {
+      "Record": "13-19",
+      "Ovr": 140
+    },
+    "Oregon": {
+      "Record": "12-20",
+      "Ovr": 141
+    },
+    "North Texas": {
+      "Record": "19-14",
+      "Ovr": 142
+    },
+    "Kansas St.": {
+      "Record": "12-20",
+      "Ovr": 143
+    },
+    "Pittsburgh": {
+      "Record": "13-20",
+      "Ovr": 144
+    },
+    "UT Rio Grande Valley": {
+      "Record": "19-14",
+      "Ovr": 145
+    },
+    "Kennesaw St.": {
+      "Record": "21-14",
+      "Ovr": 146
+    },
+    "Illinois Chicago": {
+      "Record": "19-16",
+      "Ovr": 147
+    },
+    "Tennessee Martin": {
+      "Record": "22-11",
+      "Ovr": 148
+    },
+    "Rutgers": {
+      "Record": "14-19",
+      "Ovr": 149
+    },
+    "Toledo": {
+      "Record": "19-15",
+      "Ovr": 150
+    },
+    "Siena": {
+      "Record": "23-12",
+      "Ovr": 151
+    },
+    "Western Kentucky": {
+      "Record": "18-14",
+      "Ovr": 152
+    },
+    "Florida Atlantic": {
+      "Record": "18-15",
+      "Ovr": 153
+    },
+    "Maryland": {
+      "Record": "12-21",
+      "Ovr": 154
+    },
+    "Duquesne": {
+      "Record": "18-15",
+      "Ovr": 155
+    },
+    "Northern Colorado": {
+      "Record": "20-12",
+      "Ovr": 156
+    },
+    "UC Santa Barbara": {
+      "Record": "18-14",
+      "Ovr": 157
+    },
+    "Utah": {
+      "Record": "10-22",
+      "Ovr": 158
+    },
+    "Southern Illinois": {
+      "Record": "16-16",
+      "Ovr": 159
+    },
+    "Towson": {
+      "Record": "19-15",
+      "Ovr": 160
+    },
+    "Montana St.": {
+      "Record": "18-14",
+      "Ovr": 161
+    },
+    "Memphis": {
+      "Record": "13-19",
+      "Ovr": 162
+    },
+    "UT Arlington": {
+      "Record": "18-14",
+      "Ovr": 163
+    },
+    "UC Davis": {
+      "Record": "19-14",
+      "Ovr": 164
+    },
+    "Valparaiso": {
+      "Record": "18-15",
+      "Ovr": 165
+    },
+    "Rhode Island": {
+      "Record": "16-16",
+      "Ovr": 166
+    },
+    "Bowling Green": {
+      "Record": "18-14",
+      "Ovr": 167
+    },
+    "Temple": {
+      "Record": "16-16",
+      "Ovr": 168
+    },
+    "Mercer": {
+      "Record": "19-13",
+      "Ovr": 169
+    },
+    "Harvard": {
+      "Record": "17-12",
+      "Ovr": 170
+    },
+    "St. Bonaventure": {
+      "Record": "17-17",
+      "Ovr": 171
+    },
+    "Penn St.": {
+      "Record": "12-20",
+      "Ovr": 172
+    },
+    "Oakland": {
+      "Record": "16-16",
+      "Ovr": 173
+    },
+    "Appalachian St.": {
+      "Record": "19-13",
+      "Ovr": 174
+    },
+    "Cornell": {
+      "Record": "15-13",
+      "Ovr": 175
+    },
+    "Fresno St.": {
+      "Record": "13-19",
+      "Ovr": 176
+    },
+    "Washington St.": {
+      "Record": "12-20",
+      "Ovr": 177
+    },
+    "CSUN": {
+      "Record": "20-14",
+      "Ovr": 178
+    },
+    "Furman": {
+      "Record": "22-13",
+      "Ovr": 179
+    },
+    "Richmond": {
+      "Record": "15-17",
+      "Ovr": 180
+    },
+    "Oregon St.": {
+      "Record": "17-16",
+      "Ovr": 181
+    },
+    "Lipscomb": {
+      "Record": "19-13",
+      "Ovr": 182
+    },
+    "Boston College": {
+      "Record": "11-20",
+      "Ovr": 183
+    },
+    "Middle Tennessee": {
+      "Record": "17-15",
+      "Ovr": 184
+    },
+    "Monmouth": {
+      "Record": "19-15",
+      "Ovr": 185
+    },
+    "Coastal Carolina": {
+      "Record": "19-13",
+      "Ovr": 186
+    },
+    "Louisiana Tech": {
+      "Record": "20-14",
+      "Ovr": 187
+    },
+    "Quinnipiac": {
+      "Record": "19-13",
+      "Ovr": 188
+    },
+    "Loyola Marymount": {
+      "Record": "15-17",
+      "Ovr": 189
+    },
+    "Georgia Tech": {
+      "Record": "11-20",
+      "Ovr": 190
+    },
+    "Utah Tech": {
+      "Record": "19-15",
+      "Ovr": 191
+    },
+    "Texas A&M Corpus Chris": {
+      "Record": "18-15",
+      "Ovr": 192
+    },
+    "Fordham": {
+      "Record": "17-15",
+      "Ovr": 193
+    },
+    "Marshall": {
+      "Record": "19-13",
+      "Ovr": 194
+    },
+    "Cal St. Fullerton": {
+      "Record": "18-16",
+      "Ovr": 195
+    },
+    "Columbia": {
+      "Record": "16-12",
+      "Ovr": 196
+    },
+    "Samford": {
+      "Record": "18-14",
+      "Ovr": 197
+    },
+    "Northern Kentucky": {
+      "Record": "20-14",
+      "Ovr": 198
+    },
+    "Charlotte": {
+      "Record": "17-17",
+      "Ovr": 199
+    },
+    "Marist": {
+      "Record": "19-12",
+      "Ovr": 200
+    },
+    "Massachusetts": {
+      "Record": "17-16",
+      "Ovr": 201
+    },
+    "New Mexico St.": {
+      "Record": "16-16",
+      "Ovr": 202
+    },
+    "Montana": {
+      "Record": "18-16",
+      "Ovr": 203
+    },
+    "Eastern Washington": {
+      "Record": "14-19",
+      "Ovr": 204
+    },
+    "Campbell": {
+      "Record": "16-18",
+      "Ovr": 205
+    },
+    "Vermont": {
+      "Record": "22-12",
+      "Ovr": 206
+    },
+    "Tulane": {
+      "Record": "18-15",
+      "Ovr": 207
+    },
+    "James Madison": {
+      "Record": "18-15",
+      "Ovr": 208
+    },
+    "FIU": {
+      "Record": "15-17",
+      "Ovr": 209
+    },
+    "Buffalo": {
+      "Record": "17-15",
+      "Ovr": 210
+    },
+    "SEMO": {
+      "Record": "20-13",
+      "Ovr": 211
+    },
+    "Jacksonville St.": {
+      "Record": "15-17",
+      "Ovr": 212
+    },
+    "Green Bay": {
+      "Record": "18-15",
+      "Ovr": 213
+    },
+    "Weber St.": {
+      "Record": "16-16",
+      "Ovr": 214
+    },
+    "Missouri St.": {
+      "Record": "16-18",
+      "Ovr": 215
+    },
+    "Saint Peter's": {
+      "Record": "17-12",
+      "Ovr": 216
+    },
+    "Bethune Cookman": {
+      "Record": "17-15",
+      "Ovr": 217
+    },
+    "Drake": {
+      "Record": "14-20",
+      "Ovr": 218
+    },
+    "Drexel": {
+      "Record": "17-16",
+      "Ovr": 219
+    },
+    "New Orleans": {
+      "Record": "15-18",
+      "Ovr": 220
+    },
+    "Detroit Mercy": {
+      "Record": "17-15",
+      "Ovr": 221
+    },
+    "Youngstown St.": {
+      "Record": "15-17",
+      "Ovr": 222
+    },
+    "Southern Miss": {
+      "Record": "19-16",
+      "Ovr": 223
+    },
+    "Morehead St.": {
+      "Record": "20-13",
+      "Ovr": 224
+    },
+    "Texas St.": {
+      "Record": "19-13",
+      "Ovr": 225
+    },
+    "Indiana St.": {
+      "Record": "11-21",
+      "Ovr": 226
+    },
+    "South Dakota St.": {
+      "Record": "14-18",
+      "Ovr": 227
+    },
+    "Georgia Southern": {
+      "Record": "21-16",
+      "Ovr": 228
+    },
+    "Western Carolina": {
+      "Record": "15-16",
+      "Ovr": 229
+    },
+    "Rice": {
+      "Record": "13-18",
+      "Ovr": 230
+    },
+    "Ohio": {
+      "Record": "15-17",
+      "Ovr": 231
+    },
+    "Wofford": {
+      "Record": "19-13",
+      "Ovr": 232
+    },
+    "Portland": {
+      "Record": "15-19",
+      "Ovr": 233
+    },
+    "Colgate": {
+      "Record": "18-15",
+      "Ovr": 234
+    },
+    "Fairfield": {
+      "Record": "21-13",
+      "Ovr": 235
+    },
+    "Iona": {
+      "Record": "18-14",
+      "Ovr": 236
+    },
+    "Stony Brook": {
+      "Record": "17-15",
+      "Ovr": 237
+    },
+    "San Jose St.": {
+      "Record": "9-24",
+      "Ovr": 238
+    },
+    "San Diego": {
+      "Record": "12-21",
+      "Ovr": 239
+    },
+    "Cal Poly": {
+      "Record": "14-19",
+      "Ovr": 240
+    },
+    "La Salle": {
+      "Record": "9-23",
+      "Ovr": 241
+    },
+    "Florida Gulf Coast": {
+      "Record": "16-18",
+      "Ovr": 242
+    },
+    "Tarleton St.": {
+      "Record": "14-18",
+      "Ovr": 243
+    },
+    "Radford": {
+      "Record": "16-16",
+      "Ovr": 244
+    },
+    "SIUE": {
+      "Record": "19-13",
+      "Ovr": 245
+    },
+    "Denver": {
+      "Record": "15-17",
+      "Ovr": 246
+    },
+    "American": {
+      "Record": "16-16",
+      "Ovr": 247
+    },
+    "Elon": {
+      "Record": "14-18",
+      "Ovr": 248
+    },
+    "UNC Asheville": {
+      "Record": "15-17",
+      "Ovr": 249
+    },
+    "Nicholls": {
+      "Record": "14-19",
+      "Ovr": 250
+    },
+    "Old Dominion": {
+      "Record": "12-21",
+      "Ovr": 251
+    },
+    "Purdue Fort Wayne": {
+      "Record": "17-15",
+      "Ovr": 252
+    },
+    "Charleston Southern": {
+      "Record": "15-17",
+      "Ovr": 253
+    },
+    "Eastern Michigan": {
+      "Record": "10-21",
+      "Ovr": 254
+    },
+    "Lamar": {
+      "Record": "12-19",
+      "Ovr": 255
+    },
+    "Lindenwood": {
+      "Record": "18-15",
+      "Ovr": 256
+    },
+    "Boston University": {
+      "Record": "17-17",
+      "Ovr": 257
+    },
+    "Longwood": {
+      "Record": "16-16",
+      "Ovr": 258
+    },
+    "Long Beach St.": {
+      "Record": "10-22",
+      "Ovr": 259
+    },
+    "Princeton": {
+      "Record": "9-20",
+      "Ovr": 260
+    },
+    "Nebraska Omaha": {
+      "Record": "16-17",
+      "Ovr": 261
+    },
+    "East Carolina": {
+      "Record": "11-20",
+      "Ovr": 262
+    },
+    "Southern": {
+      "Record": "17-17",
+      "Ovr": 263
+    },
+    "Abilene Christian": {
+      "Record": "14-19",
+      "Ovr": 264
+    },
+    "Milwaukee": {
+      "Record": "12-20",
+      "Ovr": 265
+    },
+    "Idaho St.": {
+      "Record": "13-20",
+      "Ovr": 266
+    },
+    "Dartmouth": {
+      "Record": "11-16",
+      "Ovr": 267
+    },
+    "Presbyterian": {
+      "Record": "15-18",
+      "Ovr": 268
+    },
+    "Incarnate Word": {
+      "Record": "12-19",
+      "Ovr": 269
+    },
+    "North Dakota": {
+      "Record": "18-17",
+      "Ovr": 270
+    },
+    "UC Riverside": {
+      "Record": "10-22",
+      "Ovr": 271
+    },
+    "UTEP": {
+      "Record": "11-20",
+      "Ovr": 272
+    },
+    "Loyola Chicago": {
+      "Record": "9-24",
+      "Ovr": 273
+    },
+    "Central Michigan": {
+      "Record": "10-21",
+      "Ovr": 274
+    },
+    "Southern Utah": {
+      "Record": "10-22",
+      "Ovr": 275
+    },
+    "Pepperdine": {
+      "Record": "9-23",
+      "Ovr": 276
+    },
+    "Mount St. Mary's": {
+      "Record": "15-17",
+      "Ovr": 277
+    },
+    "Sacramento St.": {
+      "Record": "10-21",
+      "Ovr": 278
+    },
+    "Mercyhurst": {
+      "Record": "17-17",
+      "Ovr": 279
+    },
+    "Lehigh": {
+      "Record": "18-17",
+      "Ovr": 280
+    },
+    "Hampton": {
+      "Record": "13-19",
+      "Ovr": 281
+    },
+    "South Dakota": {
+      "Record": "16-16",
+      "Ovr": 282
+    },
+    "Prairie View A&M": {
+      "Record": "19-18",
+      "Ovr": 283
+    },
+    "Western Michigan": {
+      "Record": "10-21",
+      "Ovr": 284
+    },
+    "Brown": {
+      "Record": "9-18",
+      "Ovr": 285
+    },
+    "UNC Greensboro": {
+      "Record": "15-19",
+      "Ovr": 286
+    },
+    "Ball St.": {
+      "Record": "12-19",
+      "Ovr": 287
+    },
+    "Jacksonville": {
+      "Record": "12-20",
+      "Ovr": 288
+    },
+    "Central Connecticut": {
+      "Record": "18-12",
+      "Ovr": 289
+    },
+    "Delaware": {
+      "Record": "10-21",
+      "Ovr": 290
+    },
+    "Chattanooga": {
+      "Record": "13-19",
+      "Ovr": 291
+    },
+    "Northeastern": {
+      "Record": "7-24",
+      "Ovr": 292
+    },
+    "Bellarmine": {
+      "Record": "13-19",
+      "Ovr": 293
+    },
+    "Sacred Heart": {
+      "Record": "14-19",
+      "Ovr": 294
+    },
+    "Eastern Kentucky": {
+      "Record": "11-21",
+      "Ovr": 295
+    },
+    "Southeastern Louisiana": {
+      "Record": "9-22",
+      "Ovr": 296
+    },
+    "North Carolina A&T": {
+      "Record": "11-19",
+      "Ovr": 297
+    },
+    "Northwestern St.": {
+      "Record": "10-22",
+      "Ovr": 298
+    },
+    "Le Moyne": {
+      "Record": "15-17",
+      "Ovr": 299
+    },
+    "Grambling St.": {
+      "Record": "14-19",
+      "Ovr": 300
+    },
+    "East Texas A&M": {
+      "Record": "11-21",
+      "Ovr": 301
+    },
+    "USC Upstate": {
+      "Record": "13-19",
+      "Ovr": 302
+    },
+    "Alabama A&M": {
+      "Record": "18-15",
+      "Ovr": 303
+    },
+    "West Georgia": {
+      "Record": "15-17",
+      "Ovr": 304
+    },
+    "Houston Christian": {
+      "Record": "12-20",
+      "Ovr": 305
+    },
+    "Florida A&M": {
+      "Record": "15-16",
+      "Ovr": 306
+    },
+    "Louisiana": {
+      "Record": "11-22",
+      "Ovr": 307
+    },
+    "Arkansas Pine Bluff": {
+      "Record": "13-19",
+      "Ovr": 308
+    },
+    "Norfolk St.": {
+      "Record": "15-17",
+      "Ovr": 309
+    },
+    "Georgia St.": {
+      "Record": "10-22",
+      "Ovr": 310
+    },
+    "Wagner": {
+      "Record": "14-17",
+      "Ovr": 311
+    },
+    "Evansville": {
+      "Record": "7-25",
+      "Ovr": 312
+    },
+    "Texas Southern": {
+      "Record": "12-18",
+      "Ovr": 313
+    },
+    "Oral Roberts": {
+      "Record": "10-23",
+      "Ovr": 314
+    },
+    "Little Rock": {
+      "Record": "12-20",
+      "Ovr": 315
+    },
+    "IU Indy": {
+      "Record": "7-25",
+      "Ovr": 316
+    },
+    "Tennessee Tech": {
+      "Record": "13-18",
+      "Ovr": 317
+    },
+    "Stetson": {
+      "Record": "12-21",
+      "Ovr": 318
+    },
+    "UMass Lowell": {
+      "Record": "15-18",
+      "Ovr": 319
+    },
+    "Cleveland St.": {
+      "Record": "11-22",
+      "Ovr": 320
+    },
+    "Albany": {
+      "Record": "11-21",
+      "Ovr": 321
+    },
+    "Northern Arizona": {
+      "Record": "10-22",
+      "Ovr": 322
+    },
+    "Alabama St.": {
+      "Record": "10-22",
+      "Ovr": 323
+    },
+    "Lafayette": {
+      "Record": "11-21",
+      "Ovr": 324
+    },
+    "Loyola MD": {
+      "Record": "12-20",
+      "Ovr": 325
+    },
+    "Eastern Illinois": {
+      "Record": "13-20",
+      "Ovr": 326
+    },
+    "New Haven": {
+      "Record": "14-17",
+      "Ovr": 327
+    },
+    "NJIT": {
+      "Record": "16-17",
+      "Ovr": 328
+    },
+    "Manhattan": {
+      "Record": "12-20",
+      "Ovr": 329
+    },
+    "Cal St. Bakersfield": {
+      "Record": "8-24",
+      "Ovr": 330
+    },
+    "Holy Cross": {
+      "Record": "11-22",
+      "Ovr": 331
+    },
+    "Stonehill": {
+      "Record": "12-21",
+      "Ovr": 332
+    },
+    "Bucknell": {
+      "Record": "10-23",
+      "Ovr": 333
+    },
+    "North Florida": {
+      "Record": "7-25",
+      "Ovr": 334
+    },
+    "Fairleigh Dickinson": {
+      "Record": "11-21",
+      "Ovr": 335
+    },
+    "UTSA": {
+      "Record": "5-25",
+      "Ovr": 336
+    },
+    "Northern Illinois": {
+      "Record": "9-21",
+      "Ovr": 337
+    },
+    "North Alabama": {
+      "Record": "9-21",
+      "Ovr": 338
+    },
+    "Army": {
+      "Record": "11-21",
+      "Ovr": 339
+    },
+    "Niagara": {
+      "Record": "8-22",
+      "Ovr": 340
+    },
+    "Jackson St.": {
+      "Record": "12-21",
+      "Ovr": 341
+    },
+    "Maine": {
+      "Record": "8-24",
+      "Ovr": 342
+    },
+    "North Carolina Central": {
+      "Record": "14-18",
+      "Ovr": 343
+    },
+    "Chicago St.": {
+      "Record": "7-25",
+      "Ovr": 344
+    },
+    "Southern Indiana": {
+      "Record": "7-23",
+      "Ovr": 345
+    },
+    "Canisius": {
+      "Record": "10-21",
+      "Ovr": 346
+    },
+    "New Hampshire": {
+      "Record": "9-21",
+      "Ovr": 347
+    },
+    "The Citadel": {
+      "Record": "11-22",
+      "Ovr": 348
+    },
+    "Alcorn St.": {
+      "Record": "9-23",
+      "Ovr": 349
+    },
+    "Air Force": {
+      "Record": "3-29",
+      "Ovr": 350
+    },
+    "Morgan St.": {
+      "Record": "14-16",
+      "Ovr": 351
+    },
+    "Maryland Eastern Shore": {
+      "Record": "9-23",
+      "Ovr": 352
+    },
+    "Saint Francis": {
+      "Record": "7-24",
+      "Ovr": 353
+    },
+    "Louisiana Monroe": {
+      "Record": "4-28",
+      "Ovr": 354
+    },
+    "Bryant": {
+      "Record": "9-22",
+      "Ovr": 355
+    },
+    "South Carolina St.": {
+      "Record": "10-22",
+      "Ovr": 356
+    },
+    "Binghamton": {
+      "Record": "8-23",
+      "Ovr": 357
+    },
+    "VMI": {
+      "Record": "6-26",
+      "Ovr": 358
+    },
+    "Rider": {
+      "Record": "4-25",
+      "Ovr": 359
+    },
+    "UMKC": {
+      "Record": "4-27",
+      "Ovr": 360
+    },
+    "Gardner Webb": {
+      "Record": "4-29",
+      "Ovr": 361
+    },
+    "Delaware St.": {
+      "Record": "8-23",
+      "Ovr": 362
+    },
+    "Western Illinois": {
+      "Record": "5-26",
+      "Ovr": 363
+    },
+    "Coppin St.": {
+      "Record": "7-24",
+      "Ovr": 364
+    },
+    "Mississippi Valley St.": {
+      "Record": "3-30",
+      "Ovr": 365
+    }
   }
 }

@@ -21304,6 +21304,13 @@
             "score": 59,
             "opponent": "NJIT",
             "opponent_score": 52
+        },
+        "2026-03-25": {
+            "win": true,
+            "location": "home",
+            "score": 74,
+            "opponent": "La Salle",
+            "opponent_score": 63
         }
     },
     "Hofstra": {
@@ -74924,6 +74931,13 @@
             "score": 70,
             "opponent": "Binghamton",
             "opponent_score": 61
+        },
+        "2026-03-25": {
+            "win": false,
+            "location": "away",
+            "score": 63,
+            "opponent": "Army",
+            "opponent_score": 74
         }
     },
     "Western Carolina": {
