@@ -190,7 +190,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     dt_local = dt.astimezone(EASTERN) if dt else None
     game_date = dt_local.date().isoformat() if dt_local else None
     start_time = dt_local.strftime("%I:%M %p").lstrip("0") if dt_local else None
-
+    start_time_utc = dt.isoformat() if dt else None
+   
     # ---- mens lookup dicts ----
     ats_lookup = {}
     ou_lookup = {}
@@ -272,6 +273,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     # ---- game info ----
     game_type = g["game_type"]
     game_descript = g["game_description"]
+    status = g.get("status")
+    stadium = g.get("stadium")
 
     is_mm = False
     is_nit = False
@@ -332,8 +335,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     return {
         "date": game_date,
         "start_time": start_time,
-        "start_time_utc": dt.isoformat() if dt else None,
-        "status": g.get("status"),
+        "start_time_utc": start_time_utc,
+        "status": status,
         "rating": rating,
         "home_team": home_name,
         "away_team": away_name,
@@ -362,7 +365,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         "is_ap": is_ap,
         "conference_home": home_conf,
         "conference_away": away_conf,
-        "venue": g.get("stadium"),
+        "venue": stadium,
         "location": location,
         "spread_close": spread_close,
         "total_close": total_close,
@@ -376,6 +379,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         "is_nit": is_nit,
         "wab_home": wab_home,
         "wab_away": wab_away,
+        "torvik" : tor_lookup
     }
 
 
