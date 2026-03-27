@@ -11456,6 +11456,13 @@
             "score": 78,
             "opponent": "Utah St.",
             "opponent_score": 66
+        },
+        "2026-03-26": {
+            "win": true,
+            "location": "home",
+            "score": 109,
+            "opponent": "Arkansas",
+            "opponent_score": 88
         }
     },
     "Florida": {
@@ -31869,6 +31876,13 @@
             "score": 94,
             "opponent": "High Point",
             "opponent_score": 88
+        },
+        "2026-03-26": {
+            "win": false,
+            "location": "away",
+            "score": 88,
+            "opponent": "Arizona",
+            "opponent_score": 109
         }
     },
     "Morehead St.": {
@@ -40525,6 +40539,13 @@
             "score": 76,
             "opponent": "VCU",
             "opponent_score": 55
+        },
+        "2026-03-26": {
+            "win": true,
+            "location": "away",
+            "score": 65,
+            "opponent": "Houston",
+            "opponent_score": 55
         }
     },
     "Arkansas Pine Bluff": {
@@ -47282,6 +47303,13 @@
             "score": 74,
             "opponent": "Vanderbilt",
             "opponent_score": 72
+        },
+        "2026-03-26": {
+            "win": false,
+            "location": "home",
+            "score": 71,
+            "opponent": "Iowa",
+            "opponent_score": 77
         }
     },
     "Lehigh": {
@@ -47783,6 +47811,13 @@
             "score": 88,
             "opponent": "Texas A&M",
             "opponent_score": 57
+        },
+        "2026-03-26": {
+            "win": false,
+            "location": "home",
+            "score": 55,
+            "opponent": "Illinois",
+            "opponent_score": 65
         }
     },
     "Hampton": {
@@ -66076,6 +66111,13 @@
             "score": 74,
             "opponent": "Gonzaga",
             "opponent_score": 68
+        },
+        "2026-03-26": {
+            "win": false,
+            "location": "away",
+            "score": 77,
+            "opponent": "Purdue",
+            "opponent_score": 79
         }
     },
     "Duke": {
@@ -68688,6 +68730,13 @@
             "score": 79,
             "opponent": "Miami FL",
             "opponent_score": 69
+        },
+        "2026-03-26": {
+            "win": true,
+            "location": "home",
+            "score": 79,
+            "opponent": "Texas",
+            "opponent_score": 77
         }
     },
     "Missouri St.": {
@@ -76405,6 +76454,13 @@
             "score": 73,
             "opponent": "Florida",
             "opponent_score": 72
+        },
+        "2026-03-26": {
+            "win": true,
+            "location": "away",
+            "score": 77,
+            "opponent": "Nebraska",
+            "opponent_score": 71
         }
     },
     "Manhattan": {

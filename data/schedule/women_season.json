@@ -6579,6 +6579,13 @@
             "score": 74,
             "opponent": "Monmouth",
             "opponent_score": 68
+        },
+        "2026-03-26": {
+            "win": true,
+            "location": "away",
+            "score": 66,
+            "opponent": "Middle Tennessee",
+            "opponent_score": 56
         }
     },
     "Tennessee St.": {
@@ -7010,6 +7017,13 @@
             "score": 69,
             "opponent": "St. Bonaventure",
             "opponent_score": 50
+        },
+        "2026-03-26": {
+            "win": false,
+            "location": "home",
+            "score": 56,
+            "opponent": "Cleveland St.",
+            "opponent_score": 66
         }
     },
     "North Texas": {
@@ -29286,6 +29300,13 @@
             "score": 80,
             "opponent": "Northern Colorado",
             "opponent_score": 60
+        },
+        "2026-03-26": {
+            "win": true,
+            "location": "home",
+            "score": 73,
+            "opponent": "Pepperdine",
+            "opponent_score": 57
         }
     },
     "Chattanooga": {
@@ -62811,6 +62832,13 @@
             "score": 69,
             "opponent": "San Francisco",
             "opponent_score": 53
+        },
+        "2026-03-26": {
+            "win": true,
+            "location": "home",
+            "score": 72,
+            "opponent": "Portland",
+            "opponent_score": 54
         }
     },
     "Portland": {
@@ -63051,6 +63079,13 @@
             "score": 78,
             "opponent": "Lamar",
             "opponent_score": 68
+        },
+        "2026-03-26": {
+            "win": false,
+            "location": "away",
+            "score": 54,
+            "opponent": "Montana St.",
+            "opponent_score": 72
         }
     },
     "Montana": {
@@ -63503,6 +63538,13 @@
             "score": 85,
             "opponent": "Southern Utah",
             "opponent_score": 80
+        },
+        "2026-03-26": {
+            "win": false,
+            "location": "away",
+            "score": 57,
+            "opponent": "South Dakota",
+            "opponent_score": 73
         }
     },
     "Cal St. Fullerton": {
