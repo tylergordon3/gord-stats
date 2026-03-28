@@ -1437,6 +1437,13 @@
             "score": 77,
             "opponent": "Louisville",
             "opponent_score": 69
+        },
+        "2026-03-27": {
+            "win": false,
+            "location": "away",
+            "score": 63,
+            "opponent": "Connecticut",
+            "opponent_score": 67
         }
     },
     "Mercer": {
@@ -1910,6 +1917,13 @@
             "score": 79,
             "opponent": "Virginia",
             "opponent_score": 72
+        },
+        "2026-03-27": {
+            "win": true,
+            "location": "away",
+            "score": 76,
+            "opponent": "Iowa St.",
+            "opponent_score": 62
         }
     },
     "Marshall": {
@@ -14548,6 +14562,13 @@
             "score": 73,
             "opponent": "UCLA",
             "opponent_score": 57
+        },
+        "2026-03-27": {
+            "win": true,
+            "location": "home",
+            "score": 67,
+            "opponent": "Michigan St.",
+            "opponent_score": 63
         }
     },
     "UNC Wilmington": {
@@ -21701,6 +21722,13 @@
             "score": 67,
             "opponent": "Kansas",
             "opponent_score": 65
+        },
+        "2026-03-27": {
+            "win": false,
+            "location": "away",
+            "score": 75,
+            "opponent": "Duke",
+            "opponent_score": 80
         }
     },
     "Nebraska Omaha": {
@@ -35625,6 +35653,13 @@
             "score": 95,
             "opponent": "Saint Louis",
             "opponent_score": 72
+        },
+        "2026-03-27": {
+            "win": true,
+            "location": "home",
+            "score": 90,
+            "opponent": "Alabama",
+            "opponent_score": 77
         }
     },
     "Villanova": {
@@ -49703,6 +49738,13 @@
             "score": 82,
             "opponent": "Kentucky",
             "opponent_score": 63
+        },
+        "2026-03-27": {
+            "win": false,
+            "location": "home",
+            "score": 62,
+            "opponent": "Tennessee",
+            "opponent_score": 76
         }
     },
     "UT Rio Grande Valley": {
@@ -53741,6 +53783,13 @@
             "score": 90,
             "opponent": "Texas Tech",
             "opponent_score": 65
+        },
+        "2026-03-27": {
+            "win": false,
+            "location": "away",
+            "score": 77,
+            "opponent": "Michigan",
+            "opponent_score": 90
         }
     },
     "Boise St.": {
@@ -66372,6 +66421,13 @@
             "score": 81,
             "opponent": "TCU",
             "opponent_score": 58
+        },
+        "2026-03-27": {
+            "win": true,
+            "location": "home",
+            "score": 80,
+            "opponent": "St. John's",
+            "opponent_score": 75
         }
     },
     "UNC Asheville": {
