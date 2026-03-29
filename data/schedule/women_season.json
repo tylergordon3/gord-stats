@@ -4163,6 +4163,13 @@
             "score": 74,
             "opponent": "West Virginia",
             "opponent_score": 73
+        },
+        "2026-03-28": {
+            "win": false,
+            "location": "away",
+            "score": 54,
+            "opponent": "Texas",
+            "opponent_score": 76
         }
     },
     "Iona": {
@@ -12024,6 +12031,13 @@
             "score": 101,
             "opponent": "USC",
             "opponent_score": 61
+        },
+        "2026-03-28": {
+            "win": true,
+            "location": "home",
+            "score": 94,
+            "opponent": "Oklahoma",
+            "opponent_score": 68
         }
     },
     "Indiana St.": {
@@ -31863,6 +31877,13 @@
             "score": 77,
             "opponent": "Michigan St.",
             "opponent_score": 71
+        },
+        "2026-03-28": {
+            "win": false,
+            "location": "away",
+            "score": 68,
+            "opponent": "South Carolina",
+            "opponent_score": 94
         }
     },
     "East Texas A&M": {
@@ -37292,6 +37313,13 @@
             "score": 100,
             "opponent": "Oregon",
             "opponent_score": 58
+        },
+        "2026-03-28": {
+            "win": true,
+            "location": "home",
+            "score": 76,
+            "opponent": "Kentucky",
+            "opponent_score": 54
         }
     },
     "Delaware": {
@@ -54130,6 +54158,13 @@
             "score": 83,
             "opponent": "Iowa",
             "opponent_score": 75
+        },
+        "2026-03-28": {
+            "win": false,
+            "location": "away",
+            "score": 69,
+            "opponent": "TCU",
+            "opponent_score": 79
         }
     },
     "Valparaiso": {
@@ -55712,6 +55747,13 @@
             "score": 69,
             "opponent": "Alabama",
             "opponent_score": 68
+        },
+        "2026-03-28": {
+            "win": false,
+            "location": "away",
+            "score": 52,
+            "opponent": "Michigan",
+            "opponent_score": 71
         }
     },
     "Connecticut": {
@@ -65684,6 +65726,13 @@
             "score": 92,
             "opponent": "N.C. State",
             "opponent_score": 63
+        },
+        "2026-03-28": {
+            "win": true,
+            "location": "home",
+            "score": 71,
+            "opponent": "Louisville",
+            "opponent_score": 52
         }
     },
     "Michigan St.": {
@@ -74654,6 +74703,13 @@
             "score": 62,
             "opponent": "Washington",
             "opponent_score": 59
+        },
+        "2026-03-28": {
+            "win": true,
+            "location": "home",
+            "score": 79,
+            "opponent": "Virginia",
+            "opponent_score": 69
         }
     },
     "Rider": {

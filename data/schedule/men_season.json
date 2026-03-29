@@ -11477,6 +11477,13 @@
             "score": 109,
             "opponent": "Arkansas",
             "opponent_score": 88
+        },
+        "2026-03-28": {
+            "win": true,
+            "location": "home",
+            "score": 79,
+            "opponent": "Purdue",
+            "opponent_score": 64
         }
     },
     "Florida": {
@@ -40581,6 +40588,13 @@
             "score": 65,
             "opponent": "Houston",
             "opponent_score": 55
+        },
+        "2026-03-28": {
+            "win": true,
+            "location": "home",
+            "score": 71,
+            "opponent": "Iowa",
+            "opponent_score": 59
         }
     },
     "Arkansas Pine Bluff": {
@@ -68793,6 +68807,13 @@
             "score": 79,
             "opponent": "Texas",
             "opponent_score": 77
+        },
+        "2026-03-28": {
+            "win": false,
+            "location": "away",
+            "score": 64,
+            "opponent": "Arizona",
+            "opponent_score": 79
         }
     },
     "Missouri St.": {
@@ -76516,6 +76537,13 @@
             "location": "away",
             "score": 77,
             "opponent": "Nebraska",
+            "opponent_score": 71
+        },
+        "2026-03-28": {
+            "win": false,
+            "location": "away",
+            "score": 59,
+            "opponent": "Illinois",
             "opponent_score": 71
         }
     },
