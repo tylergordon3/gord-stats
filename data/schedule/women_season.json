@@ -3683,6 +3683,13 @@
             "score": 87,
             "opponent": "LSU",
             "opponent_score": 85
+        },
+        "2026-03-29": {
+            "win": false,
+            "location": "away",
+            "score": 58,
+            "opponent": "UCLA",
+            "opponent_score": 70
         }
     },
     "Morehead St.": {
@@ -29377,6 +29384,13 @@
             "score": 73,
             "opponent": "Pepperdine",
             "opponent_score": 57
+        },
+        "2026-03-29": {
+            "win": true,
+            "location": "home",
+            "score": 65,
+            "opponent": "Montana St.",
+            "opponent_score": 56
         }
     },
     "Chattanooga": {
@@ -50838,6 +50852,13 @@
             "score": 80,
             "opponent": "Minnesota",
             "opponent_score": 56
+        },
+        "2026-03-29": {
+            "win": true,
+            "location": "home",
+            "score": 70,
+            "opponent": "Duke",
+            "opponent_score": 58
         }
     },
     "Cal Poly": {
@@ -56015,6 +56036,13 @@
             "score": 63,
             "opponent": "North Carolina",
             "opponent_score": 42
+        },
+        "2026-03-29": {
+            "win": true,
+            "location": "home",
+            "score": 70,
+            "opponent": "Notre Dame",
+            "opponent_score": 52
         }
     },
     "Drexel": {
@@ -62986,6 +63014,13 @@
             "score": 72,
             "opponent": "Portland",
             "opponent_score": 54
+        },
+        "2026-03-29": {
+            "win": false,
+            "location": "away",
+            "score": 56,
+            "opponent": "South Dakota",
+            "opponent_score": 65
         }
     },
     "Portland": {
@@ -68876,6 +68911,13 @@
             "score": 67,
             "opponent": "Vanderbilt",
             "opponent_score": 64
+        },
+        "2026-03-29": {
+            "win": false,
+            "location": "away",
+            "score": 52,
+            "opponent": "Connecticut",
+            "opponent_score": 70
         }
     },
     "Hampton": {

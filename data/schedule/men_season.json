@@ -1924,6 +1924,13 @@
             "score": 76,
             "opponent": "Iowa St.",
             "opponent_score": 62
+        },
+        "2026-03-29": {
+            "win": false,
+            "location": "away",
+            "score": 62,
+            "opponent": "Michigan",
+            "opponent_score": 95
         }
     },
     "Marshall": {
@@ -14576,6 +14583,13 @@
             "score": 67,
             "opponent": "Michigan St.",
             "opponent_score": 63
+        },
+        "2026-03-29": {
+            "win": true,
+            "location": "away",
+            "score": 73,
+            "opponent": "Duke",
+            "opponent_score": 72
         }
     },
     "UNC Wilmington": {
@@ -35667,6 +35681,13 @@
             "score": 90,
             "opponent": "Alabama",
             "opponent_score": 77
+        },
+        "2026-03-29": {
+            "win": true,
+            "location": "home",
+            "score": 95,
+            "opponent": "Tennessee",
+            "opponent_score": 62
         }
     },
     "Villanova": {
@@ -66442,6 +66463,13 @@
             "score": 80,
             "opponent": "St. John's",
             "opponent_score": 75
+        },
+        "2026-03-29": {
+            "win": false,
+            "location": "home",
+            "score": 72,
+            "opponent": "Connecticut",
+            "opponent_score": 73
         }
     },
     "UNC Asheville": {
