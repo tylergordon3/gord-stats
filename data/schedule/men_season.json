@@ -38025,6 +38025,13 @@
             "score": 67,
             "opponent": "Rutgers",
             "opponent_score": 72
+        },
+        "2026-04-01": {
+            "win": false,
+            "location": "home",
+            "score": 48,
+            "opponent": "Baylor",
+            "opponent_score": 67
         }
     },
     "Denver": {
@@ -39409,6 +39416,13 @@
             "score": 83,
             "opponent": "Oklahoma St.",
             "opponent_score": 92
+        },
+        "2026-04-01": {
+            "win": false,
+            "location": "home",
+            "score": 86,
+            "opponent": "Oklahoma",
+            "opponent_score": 90
         }
     },
     "Bethune Cookman": {
@@ -50239,6 +50253,13 @@
             "score": 79,
             "opponent": "Arizona St.",
             "opponent_score": 83
+        },
+        "2026-04-01": {
+            "win": true,
+            "location": "away",
+            "score": 67,
+            "opponent": "Minnesota",
+            "opponent_score": 48
         }
     },
     "Weber St.": {
@@ -60787,6 +60808,13 @@
             "score": 79,
             "opponent": "Arkansas",
             "opponent_score": 82
+        },
+        "2026-04-01": {
+            "win": true,
+            "location": "away",
+            "score": 90,
+            "opponent": "Colorado",
+            "opponent_score": 86
         }
     },
     "Fresno St.": {

@@ -13937,6 +13937,13 @@
             "score": 82,
             "opponent": "Army",
             "opponent_score": 65
+        },
+        "2026-04-01": {
+            "win": true,
+            "location": "away",
+            "score": 69,
+            "opponent": "Arkansas St.",
+            "opponent_score": 62
         }
     },
     "Auburn": {
@@ -29426,6 +29433,13 @@
             "score": 65,
             "opponent": "Montana St.",
             "opponent_score": 56
+        },
+        "2026-04-01": {
+            "win": false,
+            "location": "home",
+            "score": 60,
+            "opponent": "Illinois St.",
+            "opponent_score": 67
         }
     },
     "Chattanooga": {
@@ -33091,6 +33105,13 @@
             "score": 61,
             "opponent": "George Washington",
             "opponent_score": 53
+        },
+        "2026-04-01": {
+            "win": true,
+            "location": "away",
+            "score": 67,
+            "opponent": "South Dakota",
+            "opponent_score": 60
         }
     },
     "Eastern Washington": {
@@ -35237,6 +35258,13 @@
             "score": 71,
             "opponent": "Cleveland St.",
             "opponent_score": 53
+        },
+        "2026-04-01": {
+            "win": false,
+            "location": "home",
+            "score": 62,
+            "opponent": "Marshall",
+            "opponent_score": 69
         }
     },
     "Murray St.": {
