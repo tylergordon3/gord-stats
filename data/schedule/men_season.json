@@ -39903,6 +39903,13 @@
             "score": 75,
             "opponent": "Nevada",
             "opponent_score": 69
+        },
+        "2026-04-02": {
+            "win": true,
+            "location": "home",
+            "score": 88,
+            "opponent": "Illinois St.",
+            "opponent_score": 66
         }
     },
     "Abilene Christian": {
@@ -63646,6 +63653,13 @@
             "score": 83,
             "opponent": "Wichita St.",
             "opponent_score": 79
+        },
+        "2026-04-02": {
+            "win": true,
+            "location": "away",
+            "score": 74,
+            "opponent": "New Mexico",
+            "opponent_score": 69
         }
     },
     "Southeastern Louisiana": {
@@ -73071,6 +73085,13 @@
             "score": 48,
             "opponent": "BYU",
             "opponent_score": 68
+        },
+        "2026-04-02": {
+            "win": true,
+            "location": "home",
+            "score": 82,
+            "opponent": "Stanford",
+            "opponent_score": 77
         }
     },
     "UMBC": {
@@ -75147,6 +75168,13 @@
             "score": 63,
             "opponent": "Pittsburgh",
             "opponent_score": 64
+        },
+        "2026-04-02": {
+            "win": false,
+            "location": "away",
+            "score": 77,
+            "opponent": "West Virginia",
+            "opponent_score": 82
         }
     },
     "Idaho St.": {
@@ -78246,6 +78274,13 @@
             "score": 84,
             "opponent": "Saint Joseph's",
             "opponent_score": 69
+        },
+        "2026-04-02": {
+            "win": false,
+            "location": "home",
+            "score": 69,
+            "opponent": "Tulsa",
+            "opponent_score": 74
         }
     },
     "Pacific": {
@@ -80280,6 +80315,13 @@
             "score": 61,
             "opponent": "Seton Hall",
             "opponent_score": 72
+        },
+        "2026-04-02": {
+            "win": true,
+            "location": "home",
+            "score": 82,
+            "opponent": "Rutgers",
+            "opponent_score": 69
         }
     },
     "LSU": {
@@ -81629,6 +81671,13 @@
             "score": 59,
             "opponent": "UCLA",
             "opponent_score": 72
+        },
+        "2026-04-02": {
+            "win": false,
+            "location": "away",
+            "score": 69,
+            "opponent": "Creighton",
+            "opponent_score": 82
         }
     },
     "UTSA": {
@@ -82568,6 +82617,13 @@
             "score": 61,
             "opponent": "Dayton",
             "opponent_score": 55
+        },
+        "2026-04-02": {
+            "win": false,
+            "location": "away",
+            "score": 66,
+            "opponent": "Auburn",
+            "opponent_score": 88
         }
     },
     "Eastern Kentucky": {
