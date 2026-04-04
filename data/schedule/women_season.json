@@ -12059,6 +12059,13 @@
             "score": 78,
             "opponent": "TCU",
             "opponent_score": 52
+        },
+        "2026-04-03": {
+            "win": true,
+            "location": "away",
+            "score": 62,
+            "opponent": "Connecticut",
+            "opponent_score": 48
         }
     },
     "Indiana St.": {
@@ -37418,6 +37425,13 @@
             "score": 77,
             "opponent": "Michigan",
             "opponent_score": 41
+        },
+        "2026-04-03": {
+            "win": false,
+            "location": "away",
+            "score": 44,
+            "opponent": "UCLA",
+            "opponent_score": 51
         }
     },
     "Delaware": {
@@ -50943,6 +50957,13 @@
             "score": 70,
             "opponent": "Duke",
             "opponent_score": 58
+        },
+        "2026-04-03": {
+            "win": true,
+            "location": "home",
+            "score": 51,
+            "opponent": "Texas",
+            "opponent_score": 44
         }
     },
     "Cal Poly": {
@@ -56127,6 +56148,13 @@
             "score": 70,
             "opponent": "Notre Dame",
             "opponent_score": 52
+        },
+        "2026-04-03": {
+            "win": false,
+            "location": "home",
+            "score": 48,
+            "opponent": "South Carolina",
+            "opponent_score": 62
         }
     },
     "Drexel": {
