@@ -13951,6 +13951,13 @@
             "score": 69,
             "opponent": "Arkansas St.",
             "opponent_score": 62
+        },
+        "2026-04-04": {
+            "win": true,
+            "location": "home",
+            "score": 66,
+            "opponent": "Illinois St.",
+            "opponent_score": 41
         }
     },
     "Auburn": {
@@ -33119,6 +33126,13 @@
             "score": 67,
             "opponent": "South Dakota",
             "opponent_score": 60
+        },
+        "2026-04-04": {
+            "win": false,
+            "location": "away",
+            "score": 41,
+            "opponent": "Marshall",
+            "opponent_score": 66
         }
     },
     "Eastern Washington": {
