@@ -12066,6 +12066,13 @@
             "score": 62,
             "opponent": "Connecticut",
             "opponent_score": 48
+        },
+        "2026-04-05": {
+            "win": false,
+            "location": "away",
+            "score": 51,
+            "opponent": "UCLA",
+            "opponent_score": 79
         }
     },
     "Indiana St.": {
@@ -50978,6 +50985,13 @@
             "score": 51,
             "opponent": "Texas",
             "opponent_score": 44
+        },
+        "2026-04-05": {
+            "win": true,
+            "location": "home",
+            "score": 79,
+            "opponent": "South Carolina",
+            "opponent_score": 51
         }
     },
     "Cal Poly": {

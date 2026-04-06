@@ -39931,6 +39931,13 @@
             "score": 88,
             "opponent": "Illinois St.",
             "opponent_score": 66
+        },
+        "2026-04-05": {
+            "win": true,
+            "location": "home",
+            "score": 92,
+            "opponent": "Tulsa",
+            "opponent_score": 86
         }
     },
     "Abilene Christian": {
@@ -60864,6 +60871,13 @@
             "score": 82,
             "opponent": "Baylor",
             "opponent_score": 69
+        },
+        "2026-04-05": {
+            "win": false,
+            "location": "away",
+            "score": 82,
+            "opponent": "West Virginia",
+            "opponent_score": 89
         }
     },
     "Fresno St.": {
@@ -63702,6 +63716,13 @@
             "score": 74,
             "opponent": "New Mexico",
             "opponent_score": 69
+        },
+        "2026-04-05": {
+            "win": false,
+            "location": "away",
+            "score": 86,
+            "opponent": "Auburn",
+            "opponent_score": 92
         }
     },
     "Southeastern Louisiana": {
@@ -73141,6 +73162,13 @@
             "score": 87,
             "opponent": "Creighton",
             "opponent_score": 70
+        },
+        "2026-04-05": {
+            "win": true,
+            "location": "home",
+            "score": 89,
+            "opponent": "Oklahoma",
+            "opponent_score": 82
         }
     },
     "UMBC": {
