@@ -72,7 +72,6 @@ def render_home():
       Today's scores and schedule from:
       <a href="https://www.thescore.com/" target="_blank">TheScore</a>
     </p>
-    {% include s16_26.html %}
     """
     #seeds = compare_bracket.gen()
     #html = html + "<br>" + seeds # + styler.to_html()
