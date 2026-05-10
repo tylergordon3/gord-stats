@@ -14604,6 +14604,13 @@
             "score": 71,
             "opponent": "Illinois",
             "opponent_score": 62
+        },
+        "2026-04-06": {
+            "win": false,
+            "location": "away",
+            "score": 63,
+            "opponent": "Michigan",
+            "opponent_score": 69
         }
     },
     "UNC Wilmington": {
@@ -35709,6 +35716,13 @@
             "score": 91,
             "opponent": "Arizona",
             "opponent_score": 73
+        },
+        "2026-04-06": {
+            "win": true,
+            "location": "home",
+            "score": 69,
+            "opponent": "Connecticut",
+            "opponent_score": 63
         }
     },
     "Villanova": {
