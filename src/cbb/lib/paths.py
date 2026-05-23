@@ -54,6 +54,7 @@ ML_DIR = ROOT / "models"
 
 M_DATA = DATA / "men"
 W_DATA = DATA / "women"
+WNBA_DATA = DATA / "wnba"
 OTHER_DATA = DATA / "refs"
 SCHEDULE_DATA = DATA / "schedule"
 LIVE_DATA = DATA / "live"
