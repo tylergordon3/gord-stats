@@ -57,6 +57,7 @@ def bids():
     
     return styler
 
+
 def render_home():
     # Raw string to preserve formatting
 
