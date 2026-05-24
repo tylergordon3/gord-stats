@@ -72,18 +72,20 @@ def render_home():
       Today's scores and schedule from:
       <a href="https://www.thescore.com/" target="_blank">TheScore</a>
     </p>
-    <p>Fantasy data: 2026-05-23 02:49:15 PM EDT<br />Schedule: fetched 2026-05-23 (332 games)</p>
+    <h1>WNBA Fantasy Matchups</h1>
+    <p class="demoTitle">&nbsp;</p>
+<p>Fantasy data: 2026-05-23 08:48:58 PM EDT<br />Schedule: fetched 2026-05-23 (332 games)</p>
 <p>Week 2: 2026-05-18 &rarr; 2026-05-24<br />Counting: remaining (2 days)</p>
 <p>──────────────────────────────────────────────────<br /> Team Max Games<br />──────────────────────────────────────────────────<br /> Kim Mulkey's Rejects 6<br /> Shyanne Sellars pls come back 8<br /> Quarterzip Memorial Team 9<br /> Angel REESE 8<br /> Stud bud enthusiast 7<br /> Brenda Frese Fan Club 8<br /> Tatum Tots Top Team 10<br /> Jake's Scary Team 9<br />──────────────────────────────────────────────────</p>
-<p>══════════════════════════════════════════════════════════════<br /> WEEK 2 MATCHUPS &mdash; LIVE SCOREBOARD<br />══════════════════════════════════════════════════════════════</p>
-<p>──────────────────────────────────────────────────────────<br /> IN PROGRESS<br /> ──────────────────────────────────────────────────────────<br /> Stud bud enthusiast 290.0 pts 7 games left<br /> ▲ Shyanne Sellars pls come back 383.0 pts 8 games left</p>
-<p>Shyanne Sellars pls come back leads by 93.0 pts (includes live scoring)<br /> Finalized only &rarr; Stud bud enthusiast: 250.0 | Shyanne Sellars pls come back: 323.0</p>
-<p>──────────────────────────────────────────────────────────<br /> IN PROGRESS<br /> ──────────────────────────────────────────────────────────<br /> ▲ Kim Mulkey's Rejects 356.0 pts 6 games left<br /> Quarterzip Memorial Team 193.0 pts 9 games left</p>
-<p>Kim Mulkey's Rejects leads by 163.0 pts (includes live scoring)<br /> Finalized only &rarr; Kim Mulkey's Rejects: 356.0 | Quarterzip Memorial Team: 154.0</p>
-<p>──────────────────────────────────────────────────────────<br /> IN PROGRESS<br /> ──────────────────────────────────────────────────────────<br /> Tatum Tots Top Team 149.0 pts 10 games left<br /> ▲ Jake's Scary Team 259.0 pts 9 games left</p>
-<p>Jake's Scary Team leads by 110.0 pts (includes live scoring)<br /> Finalized only &rarr; Tatum Tots Top Team: 136.0 | Jake's Scary Team: 243.0</p>
-<p>──────────────────────────────────────────────────────────<br /> IN PROGRESS<br /> ──────────────────────────────────────────────────────────<br /> Brenda Frese Fan Club 309.0 pts 8 games left<br /> ▲ Angel REESE 409.0 pts 8 games left</p>
-<p>Angel REESE leads by 100.0 pts (includes live scoring)<br /> Finalized only &rarr; Brenda Frese Fan Club: 254.0 | Angel REESE: 409.0</p>
+<p>═══════════════════════════════════════════════════<br /> WEEK 2 MATCHUPS &mdash; LIVE SCOREBOARD<br />═══════════════════════════════════════════════════</p>
+<p>───────────────────────────────────────────────────<br /> IN PROGRESS<br /> ───────────────────────────────────────────────────<br /> Stud bud enthusiast 300.0 pts 7 games left<br /> ▲ Shyanne Sellars pls come back 424.0 pts 8 games left</p>
+<p>Shyanne Sellars pls come back leads by 124.0 pts (includes live scoring)<br /> Finalized only &rarr; Stud bud enthusiast: 250.0 | Shyanne Sellars pls come back: 323.0</p>
+<p>───────────────────────────────────────────────────<br /> IN PROGRESS<br /> ───────────────────────────────────────────────────<br /> ▲ Kim Mulkey's Rejects 397.0 pts 6 games left<br /> Quarterzip Memorial Team 223.0 pts 9 games left</p>
+<p>Kim Mulkey's Rejects leads by 174.0 pts (includes live scoring)<br /> Finalized only &rarr; Kim Mulkey's Rejects: 356.0 | Quarterzip Memorial Team: 154.0</p>
+<p>───────────────────────────────────────────────────<br /> IN PROGRESS<br /> ───────────────────────────────────────────────────<br /> Tatum Tots Top Team 206.0 pts 10 games left<br /> ▲ Jake's Scary Team 322.0 pts 9 games left</p>
+<p>Jake's Scary Team leads by 116.0 pts (includes live scoring)<br /> Finalized only &rarr; Tatum Tots Top Team: 136.0 | Jake's Scary Team: 243.0</p>
+<p>──────────────────────────────────────────────────────────<br /> IN PROGRESS<br /> ──────────────────────────────────────────────────────────<br /> Brenda Frese Fan Club 388.0 pts 8 games left<br /> ▲ Angel REESE 434.0 pts 8 games left</p>
+<p>Angel REESE leads by 46.0 pts (includes live scoring)<br /> Finalized only &rarr; Brenda Frese Fan Club: 254.0 | Angel REESE: 409.0</p>
 <p>══════════════════════════════════════════════════════════</p>
 <p><br />════════════════════════════════════════════════════════════<br /> Team 1: Kim Mulkey's Rejects<br /> Week 2 (2026-05-18 &rarr; 2026-05-24)<br /> Today: 2026-05-23 | Days left: 2<br />════════════════════════════════════════════════════════════</p>
 <p>(Days already played: 2026-05-18, 2026-05-19, 2026-05-20, 2026-05-21, 2026-05-22)</p>
@@ -117,9 +119,6 @@ def render_home():
 <p>(Days already played: 2026-05-18, 2026-05-19, 2026-05-20, 2026-05-21, 2026-05-22)</p>
 <p>MAX STARTABLE GAMES REMAINING: 9 (cap: 12)</p>
 <p>2026-05-23 ◀ today<br /> [G ] Jade Melbourne (SEA)<br /> [F/C ] Kamilla Cardoso (CHI)<br /> [F/C ] Brittney Griner (CON)<br /> 2026-05-24<br /> [G ] Kelsey Plum (LA)<br /> [G ] Jade Melbourne (SEA)<br /> [F/C ] Dearica Hamby (LA)<br /> [F/C ] Kiki Iriafen (WSH)<br /> [F/C ] Natasha Mack (PHX)<br /> [UTIL] Pauline Astier (NY)</p>
-<p>&nbsp;</p>
-<!-- Comments are visible in the HTML source only -->
-    
     """
     #seeds = compare_bracket.gen()
     #html = html + "<br>" + seeds # + styler.to_html()
