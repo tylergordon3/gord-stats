@@ -8,7 +8,7 @@ from cbb.render import render_home as rh
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
 
-daily_data.get_data()
+# daily_data.get_data()
 
 update_mens = 0
 if update_mens:
@@ -28,11 +28,11 @@ if update_womens_all:
     for day in sorted(date_lst):
        predictions.predict_womens(day)
 
-[today_df, main] = predictions.predict(date.today())
-[today_w_df, main_w] = predictions.predict_womens(date.today())
+#[today_df, main] = predictions.predict(date.today())
+#[today_w_df, main_w] = predictions.predict_womens(date.today())
 
-rc.main(main, 'M')
-rc.main(main_w, 'W')
+#rc.main(main, 'M')
+#rc.main(main_w, 'W')
 
 rh.render_home()
 
