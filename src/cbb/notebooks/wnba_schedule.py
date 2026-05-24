@@ -19,19 +19,26 @@ import json
 import os
 import requests
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from cbb.lib import paths
+
+ET = ZoneInfo("America/New_York")
+
+def today_et() -> str:
+    """Current date in Eastern Time as YYYY-MM-DD."""
+    return datetime.now(ET).date().isoformat()
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
 load_dotenv()
 
-API_KEY       = os.getenv("BALL_DONT_LIE_API")
+API_KEY       = os.getenv("BALL_DONT_LIE_KEY")
 BASE_URL      = "https://api.balldontlie.io"
 HEADERS       = {"Authorization": API_KEY}
-SCHEDULE_FILE = paths.WNBA_DATA / "wnba_schedule_2026.json"
+SCHEDULE_FILE =  paths.WNBA_DATA / "wnba_schedule_2026.json"
 SEASON        = 2026
 
 # ── Team dictionary ───────────────────────────────────────────────────────────
@@ -84,7 +91,7 @@ def _index_schedule(raw_games: list) -> dict:
     for g in raw_games:
         home     = normalize_abbrev(g["home_team"]["abbreviation"])
         away     = normalize_abbrev(g["visitor_team"]["abbreviation"])
-        date_key = g["date"][:10]  # "YYYY-MM-DD"
+        date_key = g["date"][:10]
 
         entry = {
             "id":         g["id"],
@@ -132,7 +139,7 @@ def fetch_and_save_schedule(season: int = SEASON, path: Path = SCHEDULE_FILE) ->
     schedule = _index_schedule(raw_games)
 
     payload = {
-        "fetched_on":  date.today().isoformat(),
+        "fetched_on":  today_et(),
         "season":      season,
         "total_games": len(raw_games),
         "schedule":    schedule,
@@ -154,13 +161,23 @@ def load_schedule(path: Path = SCHEDULE_FILE) -> dict:
     return payload["schedule"]
 
 def is_stale(path: Path = SCHEDULE_FILE, max_age_days: int = 1) -> bool:
-    """Returns True if the cache file is missing or older than max_age_days."""
+    """
+    Returns True if the cache file is missing or stale.
+    Also considers stale if fetched before noon ET today — late-night games
+    from the previous evening may still show status=pre until BDL updates.
+    """
     if not path.exists():
         return True
     with open(path) as f:
         payload = json.load(f)
-    fetched = date.fromisoformat(payload["fetched_on"])
-    return (date.today() - fetched).days >= max_age_days
+    fetched_on = payload["fetched_on"]
+    today      = today_et()
+    if (date.fromisoformat(today) - date.fromisoformat(fetched_on)).days >= max_age_days:
+        return True
+    # Fetched today but before noon ET — statuses from last night may be stale
+    if fetched_on == today and datetime.now(ET).hour < 12:
+        return True
+    return False
 
 def get_schedule(season: int = SEASON, max_age_days: int = 1, force: bool = False) -> dict:
     """
@@ -214,7 +231,7 @@ def get_team_schedule(schedule: dict, abbrev: str) -> dict:
 
 def get_today_games(schedule: dict) -> dict:
     """Shortcut for get_games_on(schedule, today)."""
-    return get_games_on(schedule, date.today().isoformat())
+    return get_games_on(schedule, today_et())
 
 # ── CLI / demo ────────────────────────────────────────────────────────────────
 
@@ -251,11 +268,11 @@ if __name__ == "__main__":
                 _print_game(g)
 
     else:
-        today = date.today().isoformat()
+        today = today_et()
         print(f"\n=== Today's Games ({today}) ===")
         seen = set()
         for abbrev, games in get_today_games(schedule).items():
             for g in games:
-                if g["id"] not in seen:
+                if g["id"] not in seen and g.get("status") != "post":
                     _print_game(g)
                     seen.add(g["id"])

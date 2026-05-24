@@ -21,10 +21,16 @@ Requires:
 
 import argparse
 import json
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from cbb.lib import paths
+
+ET = ZoneInfo("America/New_York")
+ 
+def today_et() -> str:
+    """Current date in Eastern Time as YYYY-MM-DD."""
+    return datetime.now(ET).date().isoformat()
 
 # ── File paths (adjust if yours are elsewhere) ────────────────────────────────
 FANTASY_FILE  = paths.WNBA_DATA / "wnba_fantasy_data.json"
@@ -77,7 +83,18 @@ def dates_in_range(start: str, end: str) -> list[str]:
     return out
  
 def teams_playing_on(schedule: dict, date_str: str) -> set[str]:
-    return set(schedule.get(date_str, {}).keys())
+    """
+    Returns teams with a game on date_str that has not yet been played.
+    Excludes any game with status='post', which handles the case where BDL
+    dates a late ET game (e.g. 10pm ET) as the next calendar day in UTC.
+    """
+    playing = set()
+    for abbrev, games in schedule.get(date_str, {}).items():
+        for g in games:
+            if g.get("status") != "post":
+                playing.add(abbrev)
+                break
+    return playing
  
 def get_players(fantasy_team: dict) -> list[dict]:
     """Extract non-IR players with position category from a fantasy team."""
@@ -247,9 +264,7 @@ def print_team_report(
     remaining_dates: list[str],
 ) -> None:
     played_dates = [d for d in all_dates if d not in remaining_dates]
-    today = date.today().isoformat()
- 
-    print(f"\n{'═'*60}")
+    today = today_et()
     print(f"  Team {fantasy_team['id']}: {fantasy_team['name']}")
     print(f"  Week {week}  ({start} → {end})")
     print(f"  Today: {today}  |  Days left: {len(remaining_dates)}")
@@ -314,7 +329,7 @@ def main():
     week         = args.week or fantasy_data["status"]["currentMatchupPeriod"]
     start, end   = WEEK_DATES[week]
     all_dates    = dates_in_range(start, end)
-    today        = date.today().isoformat()
+    today        = today_et()
     remaining    = all_dates if args.full_week else [d for d in all_dates if d >= today]
  
     print(f"\nWeek {week}: {start} → {end}")
