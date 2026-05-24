@@ -83,11 +83,7 @@ def dates_in_range(start: str, end: str) -> list[str]:
     return out
  
 def teams_playing_on(schedule: dict, date_str: str) -> set[str]:
-    """
-    Returns teams with a game on date_str that has not yet been played.
-    Excludes any game with status='post', which handles the case where BDL
-    dates a late ET game (e.g. 10pm ET) as the next calendar day in UTC.
-    """
+    """Returns teams with a game that has not yet been played on date_str."""
     playing = set()
     for abbrev, games in schedule.get(date_str, {}).items():
         for g in games:
@@ -318,6 +314,8 @@ def main():
         help="Calculate over the entire week, not just remaining days")
     parser.add_argument("--no-scoreboard", action="store_true",
         help="Skip the matchup scoreboard, show only the games-remaining breakdown")
+    parser.add_argument("--html", type=Path, default=None, metavar="FILE",
+        help="Also write an HTML report to FILE (e.g. --html report.html)")
     parser.add_argument("--fantasy-file",  type=Path, default=FANTASY_FILE)
     parser.add_argument("--schedule-file", type=Path, default=SCHEDULE_FILE)
     args = parser.parse_args()
@@ -392,7 +390,439 @@ def main():
     # Detailed breakdown per team
     for ft, total, log in results:
         print_team_report(ft, total, log, week, start, end, all_dates, remaining)
+
+    # HTML output
+    if args.html:
+        # Attach metadata so build_html can show pulled_at
+        fantasy_data["metadata"] = json.load(open(args.fantasy_file))["metadata"]
+        html = build_html(
+            fantasy_data, week, start, end, all_dates, remaining,
+            results, max_games_by_id,
+        )
+        args.html.write_text(html)
+        print(f"\nHTML report written → {args.html}")
  
  
+# ── HTML output ───────────────────────────────────────────────────────────────
+
+def _slot_color(slot_label: str) -> str:
+    return {"G": "#e8f4fd", "F/C": "#fef3e8", "UTIL": "#f0fde8"}.get(slot_label, "#f8f8f8")
+
+def build_html(
+    fantasy_data: dict,
+    week: int,
+    start: str,
+    end: str,
+    all_dates: list,
+    remaining: list,
+    results: list,
+    max_games_by_id: dict,
+) -> str:
+    today      = today_et()
+    pulled_at  = fantasy_data.get("metadata", {}).get("pulled_at_readable", "")
+    all_teams  = {t["id"]: t["name"] for t in fantasy_data["teams"]}
+    matchups   = get_week_matchups(fantasy_data, week)
+
+    # ── matchup cards html ────────────────────────────────────────────────────
+    matchup_cards = ""
+    for m in matchups:
+        home_id    = m["home"]["teamId"]
+        away_id    = m["away"]["teamId"]
+        home_name  = all_teams.get(home_id, f"Team {home_id}")
+        away_name  = all_teams.get(away_id, f"Team {away_id}")
+        home_live  = m["home"].get("totalPointsLive", 0) or 0
+        away_live  = m["away"].get("totalPointsLive", 0) or 0
+        home_final = m["home"].get("totalPoints", 0) or 0
+        away_final = m["away"].get("totalPoints", 0) or 0
+        live_today = home_live != home_final or away_live != away_final
+        home_rem   = max_games_by_id.get(home_id, 0)
+        away_rem   = max_games_by_id.get(away_id, 0)
+        winner     = m.get("winner", "UNDECIDED")
+        gap        = abs(home_live - away_live)
+
+        home_winning = home_live > away_live
+        away_winning = away_live > home_live
+
+        status_label = "FINAL" if winner != "UNDECIDED" else ("🔴 LIVE" if live_today else "IN PROGRESS")
+        status_class = "final" if winner != "UNDECIDED" else ("live" if live_today else "progress")
+
+        win_name = ""
+        if winner != "UNDECIDED":
+            win_name = home_name if winner == "HOME" else away_name
+            summary = f'{win_name} wins by {gap:.1f} pts'
+        else:
+            leader = home_name if home_live >= away_live else away_name
+            summary = f'{leader} leads by {gap:.1f} pts'
+            if live_today:
+                summary += f' <span class="live-note">(live · finalized: {home_name} {home_final:.1f} / {away_name} {away_final:.1f})</span>'
+
+        def team_row(name, live, rem, winning, tid):
+            w_class = "winning" if winning else ""
+            arrow   = "▲" if winning else ""
+            return f"""
+            <div class="team-row {w_class}">
+                <span class="arrow">{arrow}</span>
+                <span class="team-name">{name}</span>
+                <span class="pts">{live:.1f}</span>
+                <span class="rem-badge">{rem}G left</span>
+            </div>"""
+
+        matchup_cards += f"""
+        <div class="matchup-card">
+            <div class="matchup-status {status_class}">{status_label}</div>
+            {team_row(home_name, home_live, home_rem, home_winning, home_id)}
+            {team_row(away_name, away_live, away_rem, away_winning, away_id)}
+            <div class="matchup-summary">{summary}</div>
+        </div>"""
+
+    # ── team detail cards ─────────────────────────────────────────────────────
+    team_cards = ""
+    for ft, total, daily_log in results:
+        max_possible = len(remaining) * (G_LIMIT + FC_LIMIT + UTIL_LIMIT)
+
+        day_rows = ""
+        for d, slots in daily_log:
+            is_today = d == today
+            today_cls = " today-row" if is_today else ""
+            if not slots:
+                day_rows += f'<div class="day-row{today_cls}"><span class="day-label">{d}</span><span class="no-games">— no games</span></div>'
+            else:
+                slot_pills = "".join(
+                    f'<span class="pill pill-{sl.lower().replace("/","")}" style="background:{_slot_color(sl)}">'
+                    f'<b>{sl}</b> {name} <span class="abbrev">({abbrev})</span></span>'
+                    for sl, name, abbrev in slots
+                )
+                today_badge = '<span class="today-badge">TODAY</span>' if is_today else ""
+                day_rows += f'<div class="day-row{today_cls}"><span class="day-label">{d}{today_badge}</span><div class="slots">{slot_pills}</div></div>'
+
+        pct = int((total / max_possible * 100)) if max_possible else 0
+        team_cards += f"""
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">{ft["name"]}</span>
+                <span class="games-badge">{total} / {max_possible} games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:{pct}%"></div>
+            </div>
+            <div class="day-log">{day_rows}</div>
+        </div>"""
+
+    # ── full page ─────────────────────────────────────────────────────────────
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WNBA Fantasy — Week {week}</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {{
+    --bg:        #0d0f14;
+    --surface:   #161a22;
+    --surface2:  #1e2330;
+    --border:    #2a3040;
+    --accent:    #ff6b35;
+    --accent2:   #ffc947;
+    --green:     #3ddc84;
+    --red:       #ff4757;
+    --text:      #e8eaf0;
+    --muted:     #8892a4;
+    --g-color:   #3b82f6;
+    --fc-color:  #f59e0b;
+    --util-color:#10b981;
+  }}
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }}
+
+  /* ── header ── */
+  header {{
+    background: linear-gradient(135deg, #0d0f14 0%, #1a1f2e 50%, #0d1520 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 32px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }}
+  .header-left h1 {{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    color: #fff;
+  }}
+  .header-left h1 span {{ color: var(--accent); }}
+  .week-badge {{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }}
+  .header-meta {{
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }}
+
+  /* ── layout ── */
+  .container {{ max-width: 1200px; margin: 0 auto; padding: 0 24px; }}
+  .section-title {{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }}
+
+  /* ── matchup grid ── */
+  .matchup-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }}
+  .matchup-card {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color .2s;
+  }}
+  .matchup-card:hover {{ border-color: var(--accent); }}
+  .matchup-status {{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }}
+  .matchup-status.final    {{ background: #1e2a1e; color: var(--green); }}
+  .matchup-status.live     {{ background: #2a1a1a; color: var(--red); animation: pulse 1.5s infinite; }}
+  .matchup-status.progress {{ background: #2a2510; color: var(--accent2); }}
+  @keyframes pulse {{ 0%,100% {{ opacity:1 }} 50% {{ opacity:.5 }} }}
+
+  .team-row {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid transparent;
+    transition: all .15s;
+  }}
+  .team-row.winning {{
+    border-color: var(--accent);
+    background: #1e1812;
+  }}
+  .arrow {{ width: 14px; color: var(--accent); font-size: 0.8rem; }}
+  .team-name {{ flex: 1; font-size: 0.9rem; font-weight: 500; }}
+  .pts {{
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--accent2);
+  }}
+  .rem-badge {{
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+  }}
+  .matchup-summary {{
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding-top: 4px;
+  }}
+  .live-note {{ color: var(--muted); font-style: italic; }}
+
+  /* ── team detail cards ── */
+  .teams-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+  }}
+  .team-card {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }}
+  .team-card:hover {{ border-color: var(--border); }}
+  .team-header {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }}
+  .team-title {{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }}
+  .games-badge {{
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }}
+  .progress-bar-wrap {{
+    height: 3px;
+    background: var(--border);
+  }}
+  .progress-bar-fill {{
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .6s ease;
+  }}
+  .day-log {{ padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }}
+  .day-row {{
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+  }}
+  .day-row.today-row {{
+    background: #161d28;
+    border-color: #2a3d58;
+  }}
+  .day-label {{
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 3px;
+    min-width: 90px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }}
+  .today-badge {{
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: var(--accent);
+    color: #fff;
+  }}
+  .no-games {{ font-size: 0.8rem; color: var(--border); font-style: italic; }}
+  .slots {{ display: flex; flex-wrap: wrap; gap: 6px; }}
+  .pill {{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.1);
+    color: #1a1a1a;
+    font-family: 'Barlow', sans-serif;
+  }}
+  .pill b {{ font-weight: 700; font-family: 'DM Mono', monospace; font-size: 0.65rem; }}
+  .abbrev {{ color: #555; font-size: 0.68rem; }}
+
+  /* legend */
+  .legend {{
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin: 20px 0 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+    align-items: center;
+  }}
+  .legend-item {{ display: flex; align-items: center; gap: 6px; }}
+  .legend-dot {{
+    width: 10px; height: 10px; border-radius: 50%;
+  }}
+  footer {{
+    text-align: center;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>WNBA <span>Fantasy</span></h1>
+    <div class="week-badge">Week {week} &nbsp;·&nbsp; {start} – {end}</div>
+  </div>
+  <div class="header-meta">
+    Generated {today}<br>
+    Data pulled {pulled_at}<br>
+    {len(remaining)} day(s) remaining
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="section-title">Matchups</div>
+  <div class="matchup-grid">
+    {matchup_cards}
+  </div>
+
+  <div class="section-title">Max Startable Games Remaining</div>
+  <div class="legend">
+    <span>Slot colors:</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> G</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> F/C</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#10b981"></span> UTIL</span>
+  </div>
+  <div class="teams-grid" style="margin-top:16px">
+    {team_cards}
+  </div>
+
+</div>
+
+<footer>
+  wnba_remaining.py &nbsp;·&nbsp; data via ESPN Fantasy &amp; BallDontLie
+</footer>
+
+</body>
+</html>"""
+
+
+
 if __name__ == "__main__":
     main()

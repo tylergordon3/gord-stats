@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WNBA Fantasy — Week 2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d0f14;
+    --surface:   #161a22;
+    --surface2:  #1e2330;
+    --border:    #2a3040;
+    --accent:    #ff6b35;
+    --accent2:   #ffc947;
+    --green:     #3ddc84;
+    --red:       #ff4757;
+    --text:      #e8eaf0;
+    --muted:     #8892a4;
+    --g-color:   #3b82f6;
+    --fc-color:  #f59e0b;
+    --util-color:#10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── header ── */
+  header {
+    background: linear-gradient(135deg, #0d0f14 0%, #1a1f2e 50%, #0d1520 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 32px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header-left h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    color: #fff;
+  }
+  .header-left h1 span { color: var(--accent); }
+  .week-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .header-meta {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ── layout ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── matchup grid ── */
+  .matchup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .matchup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color .2s;
+  }
+  .matchup-card:hover { border-color: var(--accent); }
+  .matchup-status {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }
+  .matchup-status.final    { background: #1e2a1e; color: var(--green); }
+  .matchup-status.live     { background: #2a1a1a; color: var(--red); animation: pulse 1.5s infinite; }
+  .matchup-status.progress { background: #2a2510; color: var(--accent2); }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.5 } }
+
+  .team-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid transparent;
+    transition: all .15s;
+  }
+  .team-row.winning {
+    border-color: var(--accent);
+    background: #1e1812;
+  }
+  .arrow { width: 14px; color: var(--accent); font-size: 0.8rem; }
+  .team-name { flex: 1; font-size: 0.9rem; font-weight: 500; }
+  .pts {
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--accent2);
+  }
+  .rem-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .matchup-summary {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding-top: 4px;
+  }
+  .live-note { color: var(--muted); font-style: italic; }
+
+  /* ── team detail cards ── */
+  .teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+  }
+  .team-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .team-card:hover { border-color: var(--border); }
+  .team-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .team-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .games-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--border);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .6s ease;
+  }
+  .day-log { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .day-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+  }
+  .day-row.today-row {
+    background: #161d28;
+    border-color: #2a3d58;
+  }
+  .day-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 3px;
+    min-width: 90px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .today-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: var(--accent);
+    color: #fff;
+  }
+  .no-games { font-size: 0.8rem; color: var(--border); font-style: italic; }
+  .slots { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.1);
+    color: #1a1a1a;
+    font-family: 'Barlow', sans-serif;
+  }
+  .pill b { font-weight: 700; font-family: 'DM Mono', monospace; font-size: 0.65rem; }
+  .abbrev { color: #555; font-size: 0.68rem; }
+
+  /* legend */
+  .legend {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin: 20px 0 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+    align-items: center;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>WNBA <span>Fantasy</span></h1>
+    <div class="week-badge">Week 2 &nbsp;·&nbsp; 2026-05-18 – 2026-05-24</div>
+  </div>
+  <div class="header-meta">
+    Generated 2026-05-24<br>
+    Data pulled 2026-05-24 12:49:17 PM EDT<br>
+    1 day(s) remaining
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="section-title">Matchups</div>
+  <div class="matchup-grid">
+    
+        <div class="matchup-card">
+            <div class="matchup-status progress">IN PROGRESS</div>
+            
+            <div class="team-row ">
+                <span class="arrow"></span>
+                <span class="team-name">Stud bud enthusiast</span>
+                <span class="pts">300.0</span>
+                <span class="rem-badge">4G left</span>
+            </div>
+            
+            <div class="team-row winning">
+                <span class="arrow">▲</span>
+                <span class="team-name">Shyanne Sellars pls come back</span>
+                <span class="pts">424.0</span>
+                <span class="rem-badge">4G left</span>
+            </div>
+            <div class="matchup-summary">Shyanne Sellars pls come back leads by 124.0 pts</div>
+        </div>
+        <div class="matchup-card">
+            <div class="matchup-status progress">IN PROGRESS</div>
+            
+            <div class="team-row winning">
+                <span class="arrow">▲</span>
+                <span class="team-name">Kim Mulkey's Rejects</span>
+                <span class="pts">399.0</span>
+                <span class="rem-badge">5G left</span>
+            </div>
+            
+            <div class="team-row ">
+                <span class="arrow"></span>
+                <span class="team-name">Quarterzip Memorial Team</span>
+                <span class="pts">253.0</span>
+                <span class="rem-badge">3G left</span>
+            </div>
+            <div class="matchup-summary">Kim Mulkey's Rejects leads by 146.0 pts</div>
+        </div>
+        <div class="matchup-card">
+            <div class="matchup-status progress">IN PROGRESS</div>
+            
+            <div class="team-row ">
+                <span class="arrow"></span>
+                <span class="team-name">Tatum Tots Top Team</span>
+                <span class="pts">243.0</span>
+                <span class="rem-badge">4G left</span>
+            </div>
+            
+            <div class="team-row winning">
+                <span class="arrow">▲</span>
+                <span class="team-name">Jake's Scary Team</span>
+                <span class="pts">393.0</span>
+                <span class="rem-badge">4G left</span>
+            </div>
+            <div class="matchup-summary">Jake's Scary Team leads by 150.0 pts</div>
+        </div>
+        <div class="matchup-card">
+            <div class="matchup-status progress">IN PROGRESS</div>
+            
+            <div class="team-row ">
+                <span class="arrow"></span>
+                <span class="team-name">Brenda Frese Fan Club</span>
+                <span class="pts">391.0</span>
+                <span class="rem-badge">4G left</span>
+            </div>
+            
+            <div class="team-row winning">
+                <span class="arrow">▲</span>
+                <span class="team-name">Angel REESE</span>
+                <span class="pts">465.0</span>
+                <span class="rem-badge">4G left</span>
+            </div>
+            <div class="matchup-summary">Angel REESE leads by 74.0 pts</div>
+        </div>
+  </div>
+
+  <div class="section-title">Max Startable Games Remaining</div>
+  <div class="legend">
+    <span>Slot colors:</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> G</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> F/C</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#10b981"></span> UTIL</span>
+  </div>
+  <div class="teams-grid" style="margin-top:16px">
+    
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Kim Mulkey's Rejects</span>
+                <span class="games-badge">5 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:83%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Azzi Fudd <span class="abbrev">(DAL)</span></span><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Kahleah Copper <span class="abbrev">(PHX)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Breanna Stewart <span class="abbrev">(NY)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Naz Hillmon <span class="abbrev">(ATL)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Awa Fam <span class="abbrev">(SEA)</span></span></div></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Shyanne Sellars pls come back</span>
+                <span class="games-badge">4 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:66%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Rhyne Howard <span class="abbrev">(ATL)</span></span><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Jordin Canada <span class="abbrev">(ATL)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Shakira Austin <span class="abbrev">(WSH)</span></span><span class="pill pill-util" style="background:#f0fde8"><b>UTIL</b> Natisha Hiedeman <span class="abbrev">(SEA)</span></span></div></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Quarterzip Memorial Team</span>
+                <span class="games-badge">3 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:50%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Sonia Citron <span class="abbrev">(WSH)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Angel Reese <span class="abbrev">(ATL)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Alanna Smith <span class="abbrev">(DAL)</span></span></div></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Angel REESE</span>
+                <span class="games-badge">4 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:66%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Paige Bueckers <span class="abbrev">(DAL)</span></span><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Flau'jae Johnson <span class="abbrev">(SEA)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Jonquel Jones <span class="abbrev">(NY)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> DeWanna Bonner <span class="abbrev">(PHX)</span></span></div></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Stud bud enthusiast</span>
+                <span class="games-badge">4 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:66%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Allisha Gray <span class="abbrev">(ATL)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Lauren Betts <span class="abbrev">(WSH)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Betnijah Laney-Hamilton <span class="abbrev">(NY)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Jessica Shepard <span class="abbrev">(DAL)</span></span></div></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Brenda Frese Fan Club</span>
+                <span class="games-badge">4 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:66%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Sabrina Ionescu <span class="abbrev">(NY)</span></span><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Jovana Nogic <span class="abbrev">(PHX)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Alyssa Thomas <span class="abbrev">(PHX)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Satou Sabally <span class="abbrev">(NY)</span></span></div></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Tatum Tots Top Team</span>
+                <span class="games-badge">4 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:66%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Arike Ogunbowale <span class="abbrev">(DAL)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Dominique Malonga <span class="abbrev">(SEA)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Brionna Jones <span class="abbrev">(ATL)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Leonie Fiebich <span class="abbrev">(NY)</span></span></div></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-header">
+                <span class="team-title">Jake's Scary Team</span>
+                <span class="games-badge">4 / 6 games</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width:66%"></div>
+            </div>
+            <div class="day-log"><div class="day-row today-row"><span class="day-label">2026-05-24<span class="today-badge">TODAY</span></span><div class="slots"><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Jade Melbourne <span class="abbrev">(SEA)</span></span><span class="pill pill-g" style="background:#e8f4fd"><b>G</b> Pauline Astier <span class="abbrev">(NY)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Kiki Iriafen <span class="abbrev">(WSH)</span></span><span class="pill pill-fc" style="background:#fef3e8"><b>F/C</b> Natasha Mack <span class="abbrev">(PHX)</span></span></div></div></div>
+        </div>
+  </div>
+
+</div>
+
+<footer>
+  wnba_remaining.py &nbsp;·&nbsp; data via ESPN Fantasy &amp; BallDontLie
+</footer>
+
+</body>
+</html>
