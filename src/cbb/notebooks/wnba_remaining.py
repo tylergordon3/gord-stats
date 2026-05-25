@@ -250,7 +250,53 @@ def print_matchup_scoreboard(fantasy_data: dict, week: int, max_games: dict[int,
  
     print(f"\n  {'═'*58}\n")
  
- 
+def matchup_scoreboard_html(fantasy_data, week, max_games):
+    matchups = get_week_matchups(fantasy_data, week)
+    all_teams = {t["id"]: t["name"] for t in fantasy_data["teams"]}
+
+    html = []
+    html.append(f'<section class="wnba-fantasy-week">')
+    html.append(f'<h2>Week {week} Matchups</h2>')
+    html.append('<div class="matchup-grid">')
+
+    for m in matchups:
+        home_id = m["home"]["teamId"]
+        away_id = m["away"]["teamId"]
+
+        home_name = all_teams.get(home_id, f"Team {home_id}")
+        away_name = all_teams.get(away_id, f"Team {away_id}")
+
+        home_live = m["home"].get("totalPointsLive", 0) or 0
+        away_live = m["away"].get("totalPointsLive", 0) or 0
+
+        home_rem = max_games.get(home_id, 0)
+        away_rem = max_games.get(away_id, 0)
+
+        status = "Final" if m.get("winner") != "UNDECIDED" else "In Progress"
+
+        html.append(f"""
+        <article class="matchup-card">
+          <div class="matchup-status">{status}</div>
+
+          <div class="team-row {'leader' if home_live > away_live else ''}">
+            <span class="team-name">{home_name}</span>
+            <span class="team-score">{home_live:.1f}</span>
+            <span class="team-games">{home_rem} left</span>
+          </div>
+
+          <div class="team-row {'leader' if away_live > home_live else ''}">
+            <span class="team-name">{away_name}</span>
+            <span class="team-score">{away_live:.1f}</span>
+            <span class="team-games">{away_rem} left</span>
+          </div>
+        </article>
+        """)
+
+    html.append("</div>")
+    html.append("</section>")
+
+    return "\n".join(html)
+
 # ── Display ───────────────────────────────────────────────────────────────────
  
 def print_team_report(
@@ -287,6 +333,66 @@ def print_team_report(
                 print(f"    [{slot_label:<4}]  {name} ({abbrev})")
  
     print()
+
+def team_reports_html(results, week, start, end, all_dates, remaining_dates):
+    today = today_et()
+    played_dates = [d for d in all_dates if d not in remaining_dates]
+
+    html = []
+    html.append('<section class="wnba-team-reports">')
+    html.append(f'<h2>Week {week} Player Games Remaining</h2>')
+    html.append(f'<p class="week-meta">{start} → {end} | Today: {today}</p>')
+
+    if played_dates:
+        html.append(
+            f'<p class="played-days">Days already played: {", ".join(played_dates)}</p>'
+        )
+
+    for ft, total, daily_log in results:
+        max_possible = len(remaining_dates) * (G_LIMIT + FC_LIMIT + UTIL_LIMIT)
+
+        html.append(f"""
+        <article class="team-report">
+          <header class="team-report-header">
+            <h3>{ft["name"]}</h3>
+            <div class="max-games">
+              <strong>{total}</strong> startable games
+            </div>
+          </header>
+        """)
+
+        html.append('<div class="daily-games">')
+
+        for d, slots in daily_log:
+            today_class = " today" if d == today else ""
+            today_label = " <span class='today-badge'>Today</span>" if d == today else ""
+
+            html.append(f"""
+            <div class="day-card{today_class}">
+              <h4>{d}{today_label}</h4>
+            """)
+
+            if not slots:
+                html.append('<p class="no-games">No startable games</p>')
+            else:
+                html.append('<ul class="player-list">')
+                for slot_label, name, abbrev in slots:
+                    html.append(f"""
+                    <li>
+                      <span class="slot">{slot_label}</span>
+                      <span class="player-name">{name}</span>
+                      <span class="team-abbrev">{abbrev}</span>
+                    </li>
+                    """)
+                html.append('</ul>')
+
+            html.append('</div>')
+
+        html.append('</div>')
+        html.append('</article>')
+
+    html.append('</section>')
+    return "\n".join(html)
  
 # ── Load ──────────────────────────────────────────────────────────────────────
  
@@ -371,10 +477,15 @@ def main():
  
     print(f"{'─'*50}")
  
+    html_parts = []
     # Matchup scoreboard (all matchups for the week, not filtered by --team)
     if not args.no_scoreboard:
         max_games_by_id = {ft["id"]: total for ft, total, _ in results}
+        html_parts.append(
+            matchup_scoreboard_html(fantasy_data, week, max_games_by_id)
+        )
         # If showing a single team, still compute the opponent's max games
+        '''
         if args.team:
             all_t = {t["id"]: t for t in fantasy_data["teams"]}
             matchups = [m for m in fantasy_data["schedule"] if m.get("matchupPeriodId") == week]
@@ -387,11 +498,30 @@ def main():
                             p = get_players(ft_extra)
                             t, _ = calc_max_games(p, remaining, schedule)
                             max_games_by_id[tid] = t
-        print_matchup_scoreboard(fantasy_data, week, max_games_by_id)
- 
+        '''
+        # print_matchup_scoreboard(fantasy_data, week, max_games_by_id)
+
+        html_parts.append(
+            team_reports_html(
+                results,
+                week,
+                start,
+                end,
+                all_dates,
+                remaining,
+            )
+        )
+
+        output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
+
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write("\n\n".join(html_parts))
+
+        print(f"Wrote HTML to {output_file}")
+            
     # Detailed breakdown per team
-    for ft, total, log in results:
-        print_team_report(ft, total, log, week, start, end, all_dates, remaining)
+    # for ft, total, log in results:
+    #    print_team_report(ft, total, log, week, start, end, all_dates, remaining)
  
  
 if __name__ == "__main__":

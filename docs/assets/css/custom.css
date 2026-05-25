@@ -1902,3 +1902,151 @@ p {
 .anchor-link {
   display: none;
 }
+
+.wnba-fantasy-week {
+  max-width: 900px;
+  margin: 24px auto;
+}
+
+.matchup-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.matchup-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+
+.matchup-status {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.team-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.team-row.leader .team-name,
+.team-row.leader .team-score {
+  font-weight: 800;
+}
+
+.team-score {
+  font-variant-numeric: tabular-nums;
+}
+
+.team-games {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.wnba-team-reports {
+  max-width: 1000px;
+  margin: 32px auto;
+}
+
+.week-meta,
+.played-days {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.team-report {
+  margin-top: 24px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.team-report-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  background: #f7f7f7;
+  border-bottom: 1px solid #ddd;
+}
+
+.team-report-header h3 {
+  margin: 0;
+}
+
+.max-games {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.daily-games {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.day-card {
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.day-card.today {
+  border-width: 2px;
+}
+
+.day-card h4 {
+  margin: 0 0 8px;
+}
+
+.today-badge {
+  font-size: 0.75rem;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #eee;
+}
+
+.player-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.player-list li {
+  display: grid;
+  grid-template-columns: 48px 1fr 50px;
+  gap: 10px;
+  padding: 6px 0;
+  border-top: 1px solid #eee;
+}
+
+.player-list li:first-child {
+  border-top: none;
+}
+
+.slot {
+  font-weight: 700;
+  color: #555;
+}
+
+.team-abbrev {
+  text-align: right;
+  font-weight: 700;
+  color: #666;
+}
+
+.no-games {
+  margin: 0;
+  color: #777;
+  font-style: italic;
+}

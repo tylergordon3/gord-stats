@@ -74,7 +74,7 @@ def render_home():
       <a href="https://www.thescore.com/" target="_blank">TheScore</a>
     </p>
     <h1>WNBA Fantasy Matchups</h1>
-    {% include report.html %}
+    {% include wnba_fantasy_matchups.html %}
 """
     #seeds = compare_bracket.gen()
     #html = html + "<br>" + seeds # + styler.to_html()
