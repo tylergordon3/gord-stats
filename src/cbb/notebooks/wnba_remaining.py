@@ -21,7 +21,7 @@ Requires:
 
 import argparse
 import json
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from cbb.lib import paths
@@ -254,9 +254,13 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
     matchups = get_week_matchups(fantasy_data, week)
     all_teams = {t["id"]: t["name"] for t in fantasy_data["teams"]}
 
+    time_obj = datetime.now(ET)
+    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
+
     html = []
-    html.append(f'<section class="wnba-fantasy-week">')
+    html.append('<section class="wnba-fantasy-week">')
     html.append(f'<h2>Week {week} Matchups</h2>')
+    html.append(f'<p>{time}</p>')
     html.append('<div class="matchup-grid">')
 
     for m in matchups:
@@ -268,33 +272,58 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
 
         home_live = m["home"].get("totalPointsLive", 0) or 0
         away_live = m["away"].get("totalPointsLive", 0) or 0
+        home_final = m["home"].get("totalPoints", 0) or 0
+        away_final = m["away"].get("totalPoints", 0) or 0
 
         home_rem = max_games.get(home_id, 0)
         away_rem = max_games.get(away_id, 0)
 
-        status = "Final" if m.get("winner") != "UNDECIDED" else "In Progress"
+        winner = m.get("winner", "UNDECIDED")
+        status = "Final" if winner != "UNDECIDED" else "In Progress"
+
+        gap = abs(home_live - away_live)
+
+        if home_live > away_live:
+            home_class, away_class = "team-side leader", "team-side"
+            summary = f"{home_name} leads by {gap:.1f}"
+        elif away_live > home_live:
+            home_class, away_class = "team-side", "team-side leader"
+            summary = f"{away_name} leads by {gap:.1f}"
+        else:
+            home_class = away_class = "team-side tied"
+            summary = "Tied"
 
         html.append(f"""
         <article class="matchup-card">
-          <div class="matchup-status">{status}</div>
-
-          <div class="team-row {'leader' if home_live > away_live else ''}">
-            <span class="team-name">{home_name}</span>
-            <span class="team-score">{home_live:.1f}</span>
-            <span class="team-games">{home_rem} left</span>
+          <div class="matchup-topline">
+            <span>{status}</span>
+            <strong>{summary}</strong>
           </div>
 
-          <div class="team-row {'leader' if away_live > home_live else ''}">
-            <span class="team-name">{away_name}</span>
-            <span class="team-score">{away_live:.1f}</span>
-            <span class="team-games">{away_rem} left</span>
+          <div class="matchup-sides">
+            <div class="{home_class}">
+              <div class="team-label">Home</div>
+              <div class="team-name">{home_name}</div>
+              <div class="score">{home_live:.1f}</div>
+              <div class="games-left">{home_rem} games left</div>
+              <div class="finalized">Finalized: {home_final:.1f}</div>
+            </div>
+
+            <div class="vs-pill">vs</div>
+
+            <div class="{away_class}">
+              <div class="team-label">Away</div>
+              <div class="team-name">{away_name}</div>
+              <div class="score">{away_live:.1f}</div>
+              <div class="games-left">{away_rem} games left</div>
+              <div class="finalized">Finalized: {away_final:.1f}</div>
+            </div>
           </div>
         </article>
         """)
 
     html.append("</div>")
     html.append("</section>")
-
     return "\n".join(html)
 
 # ── Display ───────────────────────────────────────────────────────────────────
