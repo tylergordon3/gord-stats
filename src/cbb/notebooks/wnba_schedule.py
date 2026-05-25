@@ -91,8 +91,10 @@ def _index_schedule(raw_games: list) -> dict:
     for g in raw_games:
         home     = normalize_abbrev(g["home_team"]["abbreviation"])
         away     = normalize_abbrev(g["visitor_team"]["abbreviation"])
-        date_key = g["date"][:10]
-
+        utc_time = datetime.fromisoformat(g['date'])
+        eastern_time = utc_time.astimezone(ET)
+        date_key = eastern_time.strftime("%Y-%m-%d")
+        
         entry = {
             "id":         g["id"],
             "home":       home,
