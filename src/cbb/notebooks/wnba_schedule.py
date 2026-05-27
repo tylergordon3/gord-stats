@@ -39,7 +39,7 @@ API_KEY       = os.getenv("BALL_DONT_LIE_KEY")
 BASE_URL      = "https://api.balldontlie.io"
 HEADERS       = {"Authorization": API_KEY}
 SCHEDULE_FILE =  paths.WNBA_DATA / "wnba_schedule_2026.json"
-RAW_FILE      =  paths.WNBA_DATA / "wnba_raw_2026.json"
+
 SEASON        = 2026
 
 # ── Team dictionary ───────────────────────────────────────────────────────────

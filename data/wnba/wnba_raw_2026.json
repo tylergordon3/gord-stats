@@ -1,0 +1,268 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "conference": "Eastern Conference",
+      "city": "New York",
+      "name": "Liberty",
+      "full_name": "New York Liberty",
+      "abbreviation": "NY"
+    },
+    {
+      "id": 2,
+      "conference": "Eastern Conference",
+      "city": "Connecticut",
+      "name": "Sun",
+      "full_name": "Connecticut Sun",
+      "abbreviation": "CON"
+    },
+    {
+      "id": 3,
+      "conference": "Eastern Conference",
+      "city": "Indiana",
+      "name": "Fever",
+      "full_name": "Indiana Fever",
+      "abbreviation": "IND"
+    },
+    {
+      "id": 4,
+      "conference": "Eastern Conference",
+      "city": "Atlanta",
+      "name": "Dream",
+      "full_name": "Atlanta Dream",
+      "abbreviation": "ATL"
+    },
+    {
+      "id": 5,
+      "conference": "Eastern Conference",
+      "city": "Washington",
+      "name": "Mystics",
+      "full_name": "Washington Mystics",
+      "abbreviation": "WSH"
+    },
+    {
+      "id": 6,
+      "conference": "Eastern Conference",
+      "city": "Chicago",
+      "name": "Sky",
+      "full_name": "Chicago Sky",
+      "abbreviation": "CHI"
+    },
+    {
+      "id": 7,
+      "conference": "Western Conference",
+      "city": "Minnesota",
+      "name": "Lynx",
+      "full_name": "Minnesota Lynx",
+      "abbreviation": "MIN"
+    },
+    {
+      "id": 8,
+      "conference": "Western Conference",
+      "city": "Las Vegas",
+      "name": "Aces",
+      "full_name": "Las Vegas Aces",
+      "abbreviation": "LV"
+    },
+    {
+      "id": 9,
+      "conference": "Western Conference",
+      "city": "Seattle",
+      "name": "Storm",
+      "full_name": "Seattle Storm",
+      "abbreviation": "SEA"
+    },
+    {
+      "id": 10,
+      "conference": "Western Conference",
+      "city": "Phoenix",
+      "name": "Mercury",
+      "full_name": "Phoenix Mercury",
+      "abbreviation": "PHX"
+    },
+    {
+      "id": 11,
+      "conference": "Western Conference",
+      "city": "Dallas",
+      "name": "Wings",
+      "full_name": "Dallas Wings",
+      "abbreviation": "DAL"
+    },
+    {
+      "id": 12,
+      "conference": "Western Conference",
+      "city": "Los Angeles",
+      "name": "Sparks",
+      "full_name": "Los Angeles Sparks",
+      "abbreviation": "LA"
+    },
+    {
+      "id": 13,
+      "conference": "Western Conference",
+      "city": "Golden State",
+      "name": "Valkyries",
+      "full_name": "Golden State Valkyries",
+      "abbreviation": "GS"
+    },
+    {
+      "id": 14,
+      "conference": "Western Conference",
+      "city": "Sacramento",
+      "name": "Monarchs",
+      "full_name": "Sacramento Monarchs",
+      "abbreviation": "SAC"
+    },
+    {
+      "id": 15,
+      "conference": "Western Conference",
+      "city": "Houston",
+      "name": "Comets",
+      "full_name": "Houston Comets",
+      "abbreviation": "HOU"
+    },
+    {
+      "id": 16,
+      "conference": null,
+      "city": "Eastern Conf",
+      "name": "East",
+      "full_name": "EAST",
+      "abbreviation": "EAST"
+    },
+    {
+      "id": 17,
+      "conference": null,
+      "city": "Western Conf",
+      "name": "West",
+      "full_name": "WEST",
+      "abbreviation": "WEST"
+    },
+    {
+      "id": 18,
+      "conference": null,
+      "city": "Team WNBA",
+      "name": "Team WNBA",
+      "full_name": "Team WNBA",
+      "abbreviation": "WNBASTARS"
+    },
+    {
+      "id": 19,
+      "conference": null,
+      "city": "Team USA",
+      "name": "Team USA",
+      "full_name": "Team USA",
+      "abbreviation": "USA"
+    },
+    {
+      "id": 20,
+      "conference": null,
+      "city": "DEL",
+      "name": "Team Delle Donne",
+      "full_name": "Team Delle Donne",
+      "abbreviation": "DEL"
+    },
+    {
+      "id": 21,
+      "conference": null,
+      "city": "Team Parker",
+      "name": "Team Parker",
+      "full_name": "Team Parker",
+      "abbreviation": "PAR"
+    },
+    {
+      "id": 22,
+      "conference": null,
+      "city": "Team Wilson",
+      "name": "Team Wilson",
+      "full_name": "Team Wilson",
+      "abbreviation": "WIL"
+    },
+    {
+      "id": 23,
+      "conference": null,
+      "city": "Team Stewart",
+      "name": "TEAM STEWART",
+      "full_name": "TEAM STEWART",
+      "abbreviation": "STE"
+    },
+    {
+      "id": 24,
+      "conference": null,
+      "city": "Team Clark",
+      "name": "TEAM CLARK",
+      "full_name": "TEAM CLARK",
+      "abbreviation": "CLA"
+    },
+    {
+      "id": 25,
+      "conference": null,
+      "city": "Team Collier",
+      "name": "TEAM COLLIER",
+      "full_name": "TEAM COLLIER",
+      "abbreviation": "COL"
+    },
+    {
+      "id": 26,
+      "conference": null,
+      "city": "",
+      "name": "BRAZIL",
+      "full_name": "BRAZIL",
+      "abbreviation": "BRAZIL"
+    },
+    {
+      "id": 27,
+      "conference": null,
+      "city": "",
+      "name": "Japan",
+      "full_name": "Japan",
+      "abbreviation": "JAPAN"
+    },
+    {
+      "id": 28,
+      "conference": null,
+      "city": "",
+      "name": "Australia",
+      "full_name": "Australia",
+      "abbreviation": "AUS"
+    },
+    {
+      "id": 29,
+      "conference": null,
+      "city": "",
+      "name": "Puerto Rico",
+      "full_name": "Puerto Rico",
+      "abbreviation": "PUERTORICO"
+    },
+    {
+      "id": 30,
+      "conference": null,
+      "city": "",
+      "name": "Tempo",
+      "full_name": "Tempo",
+      "abbreviation": "TOR"
+    },
+    {
+      "id": 31,
+      "conference": null,
+      "city": "",
+      "name": "Fire",
+      "full_name": "Fire",
+      "abbreviation": "POR"
+    },
+    {
+      "id": 32,
+      "conference": null,
+      "city": "TBD",
+      "name": "TBD",
+      "full_name": "TBD",
+      "abbreviation": "TBD"
+    },
+    {
+      "id": 33,
+      "conference": null,
+      "city": "TBD",
+      "name": "TBD",
+      "full_name": "TBD",
+      "abbreviation": "TBD"
+    }
+  ]
+}
