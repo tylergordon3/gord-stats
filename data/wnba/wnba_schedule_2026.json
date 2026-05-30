@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-05-28",
+  "fetched_on": "2026-05-30",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -1209,7 +1209,7 @@
           "id": 24805,
           "home": "DAL",
           "away": "LV",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-28"
@@ -1220,7 +1220,7 @@
           "id": 24805,
           "home": "DAL",
           "away": "LV",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-28"
@@ -1231,7 +1231,7 @@
           "id": 24806,
           "home": "GS",
           "away": "IND",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-28"
@@ -1242,7 +1242,7 @@
           "id": 24806,
           "home": "GS",
           "away": "IND",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-28"
@@ -1255,7 +1255,7 @@
           "id": 24807,
           "home": "NY",
           "away": "PHX",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
@@ -1266,7 +1266,7 @@
           "id": 24807,
           "home": "NY",
           "away": "PHX",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
@@ -1277,7 +1277,7 @@
           "id": 24808,
           "home": "WSH",
           "away": "LA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
@@ -1288,7 +1288,7 @@
           "id": 24808,
           "home": "WSH",
           "away": "LA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
@@ -1299,7 +1299,7 @@
           "id": 24809,
           "home": "CHI",
           "away": "MIN",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
@@ -1310,7 +1310,7 @@
           "id": 24809,
           "home": "CHI",
           "away": "MIN",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
@@ -1321,7 +1321,7 @@
           "id": 24810,
           "home": "POR",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
@@ -1332,7 +1332,7 @@
           "id": 24810,
           "home": "POR",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-29"
