@@ -26,4 +26,4 @@ players = df[['full_name', 'search_first_name', 'injury_start_date', 'number', '
               'search_last_name', 'weight', 'status', 'height', 'injury_notes', 'team_changed_at', 'injury_status', 
               'search_full_name', 'college', 'depth_chart_order', 'practice_participation', 
               'player_id', 'team', 'first_name', 'position', 'search_rank', 'age']].copy()
-
+print(players)

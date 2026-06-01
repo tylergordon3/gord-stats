@@ -30,20 +30,28 @@ nickname_dict = {
     "Audric Estimé" : "Audric Estime",
     "Nathan Carter" : "Nate Carter",
     "Nyheim Miller-Hines" : "Nyheim Hines",
-    "John Parker Romo" : "Parker Romo"
+    "John Parker Romo" : "Parker Romo",
+    "Amon-Ra St. Brown" : "AmonRa St Brown",
+    "Chigoziem Okonkwo" : "Chig Okonkwo",
+    "Hollywood Brown" : "Marquise Brown",
 }
 
+symbols = [
+    ".",
+    "'",
+    " III",
+    " II",
+    " IV",
+    " Jr",
+    " Sr"
+]
+
 def format(name):
-    ret = name.replace(".", "")
-    ret = ret.replace("'", "")
-    ret = ret.replace(" III","")
-    ret = ret.replace(" II","")
-    ret = ret.replace(" IV","")
-    ret = ret.replace(" Jr","")
-    ret = ret.replace(" Sr","")
+    for sym in symbols:
+        name = name.replace(sym, "")
     for nickname in nickname_dict:
-        ret = ret.replace(nickname, nickname_dict[nickname])
-    return ret
+        name = name.replace(nickname, nickname_dict[nickname])
+    return name
 
 st = np.sort(np.array(stat))
 sl = np.sort(np.array(sleep))
@@ -58,4 +66,5 @@ match = np.intersect1d(st, sl)
 print(str(len(diff1)) + " players in readPy and not sleeper.")
 print(str(len(diff2)) + " players in sleeper and not readPy.")
 print(str(len(match)) + " players matched!")
+
 
