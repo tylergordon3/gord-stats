@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-05-31",
+  "fetched_on": "2026-06-01",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -1413,7 +1413,7 @@
           "id": 24814,
           "home": "GS",
           "away": "LV",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-31"
@@ -1424,7 +1424,7 @@
           "id": 24814,
           "home": "GS",
           "away": "LV",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-05-31"
