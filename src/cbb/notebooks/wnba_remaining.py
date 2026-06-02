@@ -110,6 +110,7 @@ def get_players(fantasy_team: dict) -> list[dict]:
             "abbrev": abbrev,
             "is_g":   G_SLOT  in es,
             "is_fc":  FC_SLOT in es,
+            "is_out":  player.get("injuryStatus", "ACTIVE") == "OUT",
         })
     return players
  
@@ -118,23 +119,30 @@ def get_players(fantasy_team: dict) -> list[dict]:
 def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tuple[int, list]:
     """
     Greedy day-by-day slot filler. For each date:
-      1. Fill up to 2 G slots from guards with a game that day
-      2. Fill up to 3 F/C slots from forwards/centers with a game that day
-      3. Fill 1 UTIL slot from any remaining player with a game that day
+      1. Fill up to 2 G slots from active guards with a game that day
+      2. Fill up to 3 F/C slots from active forwards/centers with a game that day
+      3. Fill 1 UTIL slot from any remaining active player with a game that day
+ 
+    OUT players are excluded from slot counts but appear in the daily log
+    with is_out=True so the display layer can highlight them.
  
     Returns (total_max_games, daily_log).
-    daily_log is a list of (date_str, slots_filled) where slots_filled is
-    a list of (slot_label, player_name, abbrev).
+    daily_log is a list of (date_str, slots_filled, out_players) where:
+      slots_filled = list of (slot_label, player_name, abbrev)
+      out_players  = list of (player_name, abbrev) who have a game but are OUT
     """
     total  = 0
     daily_log = []
  
     for d in dates:
         playing   = teams_playing_on(schedule, d)
-        available = [p for p in players if p["abbrev"] in playing]
+        
+        # Split into active and out players who have a game today
+        active    = [p for p in players if p["abbrev"] in playing and not p["is_out"]]
+        out_today = [p for p in players if p["abbrev"] in playing and p["is_out"]]
  
-        guards = [p for p in available if p["is_g"]]
-        fcs    = [p for p in available if p["is_fc"]]
+        guards = [p for p in active if p["is_g"]]
+        fcs    = [p for p in active if p["is_fc"]]
  
         used   = set()
         slots  = []
@@ -154,7 +162,7 @@ def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tup
             slots.append(("F/C", p["name"], p["abbrev"]))
  
         # UTIL — any unused player with a game
-        for p in available:
+        for p in active:
             if len([s for s in slots if s[0] == "UTIL"]) >= UTIL_LIMIT:
                 break
             if p["name"] not in used:
@@ -162,7 +170,7 @@ def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tup
                 slots.append(("UTIL", p["name"], p["abbrev"]))
  
         total += len(slots)
-        daily_log.append((d, slots))
+        daily_log.append((d, slots, [(p["name"], p["abbrev"]) for p in out_today]))
  
     return total, daily_log
  
@@ -340,6 +348,12 @@ def print_team_report(
 ) -> None:
     played_dates = [d for d in all_dates if d not in remaining_dates]
     today = today_et()
+    
+    # ANSI codes
+    RED    = "\033[31m"
+    YELLOW = "\033[43m\033[30m"  # black text on yellow background
+    RESET  = "\033[0m"
+    
     print(f"  Team {fantasy_team['id']}: {fantasy_team['name']}")
     print(f"  Week {week}  ({start} → {end})")
     print(f"  Today: {today}  |  Days left: {len(remaining_dates)}")
@@ -352,14 +366,18 @@ def print_team_report(
     print(f"\n  MAX STARTABLE GAMES REMAINING: {total}  (cap: {max_possible})")
     print()
  
-    for d, slots in daily_log:
+    for d, slots, out_players in daily_log:
         label = " ◀ today" if d == today else ""
-        if not slots:
+        if not slots and not out_players:
             print(f"  {d}  — no games{label}")
         else:
             print(f"  {d}{label}")
             for slot_label, name, abbrev in slots:
                 print(f"    [{slot_label:<4}]  {name} ({abbrev})")
+            for name, abbrev in out_players:
+                out_badge = f"{RED}O{RESET}"
+                row = f"    {YELLOW}[OUT ]  {name} ({abbrev}) {out_badge}{RESET}"
+                print(row)
  
     print()
 
@@ -392,7 +410,7 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
 
         html.append('<div class="daily-games">')
 
-        for d, slots in daily_log:
+        for d, slots, out_players in daily_log:
             today_class = " today" if d == today else ""
             today_label = " <span class='today-badge'>Today</span>" if d == today else ""
 
@@ -413,6 +431,13 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                       <span class="team-abbrev">{abbrev}</span>
                     </li>
                     """)
+                for name, abbrev in out_players:
+                    html.append(f"""
+                                <li>
+                                    <span class="slot injured">OUT </span>
+                                    <span class="player-name injured"> {name}</span>
+                                    <span class="team-abbrev injured">{abbrev}</span>
+                                </li>""")
                 html.append('</ul>')
 
             html.append('</div>')

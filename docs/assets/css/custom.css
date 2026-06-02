@@ -2171,6 +2171,10 @@ p {
   font-size: 0.76rem;
 }
 
+.injured {
+  color: #d80a0a;
+}
+
 .no-games {
   margin: 0;
   color: #94a3b8;
