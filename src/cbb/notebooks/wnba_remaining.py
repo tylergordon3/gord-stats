@@ -47,7 +47,8 @@ FC_LIMIT  = 3
 UTIL_LIMIT = 1
  
 IR_SLOTS  = {7}
- 
+
+TEAM_COUNT = {}
 # ── Team dict: ESPN proTeamId → WNBA abbreviation ─────────────────────────────
 TEAM_DICT = {
     "3":      "DAL", "5":      "IND", "6":      "LA",  "8":      "MIN",
@@ -133,10 +134,17 @@ def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tup
     """
     total  = 0
     daily_log = []
- 
     for d in dates:
         playing   = teams_playing_on(schedule, d)
         
+        for team in playing:
+            if team not in TEAM_COUNT:
+                TEAM_COUNT[team] = [d]
+            else:
+                list = TEAM_COUNT[team]
+                if d not in list:
+                    TEAM_COUNT[team] += [d]
+
         # Split into active and out players who have a game today
         active    = [p for p in players if p["abbrev"] in playing and not p["is_out"]]
         out_today = [p for p in players if p["abbrev"] in playing and p["is_out"]]
@@ -171,7 +179,6 @@ def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tup
  
         total += len(slots)
         daily_log.append((d, slots, [(p["name"], p["abbrev"]) for p in out_today]))
- 
     return total, daily_log
  
 # ── Matchup comparison ────────────────────────────────────────────────────────
@@ -491,7 +498,7 @@ def main():
     all_dates    = dates_in_range(start, end)
     today        = today_et()
     remaining    = all_dates if args.full_week else [d for d in all_dates if d >= today]
- 
+
     print(f"\nWeek {week}: {start} → {end}")
     print(f"Counting: {'full week' if args.full_week else f'remaining ({len(remaining)} days)'}")
  
@@ -572,7 +579,13 @@ def main():
             f.write("\n\n".join(html_parts))
 
         print(f"Wrote HTML to {output_file}")
-            
+        for team in TEAM_COUNT:
+            TEAM_COUNT[team] = len(TEAM_COUNT[team])
+        sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
+        print()
+        print("TEAMS WITH THE MOST GAMES LEFT")
+        for team, value in sorted_teams:
+            print(f"{team}: {value}")
     # Detailed breakdown per team
     # for ft, total, log in results:
     #    print_team_report(ft, total, log, week, start, end, all_dates, remaining)
