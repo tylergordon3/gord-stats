@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-06-02",
+  "fetched_on": "2026-06-03",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -1483,7 +1483,7 @@
           "id": 24817,
           "home": "ATL",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
@@ -1494,7 +1494,7 @@
           "id": 24817,
           "home": "ATL",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
@@ -1505,7 +1505,7 @@
           "id": 24818,
           "home": "WSH",
           "away": "CHI",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
@@ -1516,7 +1516,7 @@
           "id": 24818,
           "home": "WSH",
           "away": "CHI",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
@@ -1527,7 +1527,7 @@
           "id": 24819,
           "home": "GS",
           "away": "POR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
@@ -1538,7 +1538,7 @@
           "id": 24819,
           "home": "GS",
           "away": "POR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
@@ -1549,7 +1549,7 @@
           "id": 24820,
           "home": "LA",
           "away": "LV",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
@@ -1560,7 +1560,7 @@
           "id": 24820,
           "home": "LA",
           "away": "LV",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-02"
