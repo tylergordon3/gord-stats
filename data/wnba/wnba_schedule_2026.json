@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-06-03",
+  "fetched_on": "2026-06-04",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -1573,7 +1573,7 @@
           "id": 24821,
           "home": "NY",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-03"
@@ -1584,7 +1584,7 @@
           "id": 24821,
           "home": "NY",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-03"
@@ -1595,7 +1595,7 @@
           "id": 24822,
           "home": "SEA",
           "away": "PHX",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-03"
@@ -1606,7 +1606,7 @@
           "id": 24822,
           "home": "SEA",
           "away": "PHX",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-03"
