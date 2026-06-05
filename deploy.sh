@@ -74,7 +74,7 @@ export NVM_DIR="$HOME/.nvm"
 
 if [ -s "$NVM_DIR/nvm.sh" ]; then
   source "$NVM_DIR/nvm.sh"
-  nvm use 20
+  nvm use 24
 else
   echo "❌ nvm not found; Node 20 required for Wrangler"
   node -v || true
