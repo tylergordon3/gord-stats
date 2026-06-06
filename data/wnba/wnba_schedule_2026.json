@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-06-05",
+  "fetched_on": "2026-06-06",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -1665,7 +1665,7 @@
           "id": 24825,
           "home": "CHI",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-05"
@@ -1676,7 +1676,7 @@
           "id": 24825,
           "home": "CHI",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-05"
@@ -1687,7 +1687,7 @@
           "id": 24826,
           "home": "LA",
           "away": "DAL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-05"
@@ -1698,7 +1698,7 @@
           "id": 24826,
           "home": "LA",
           "away": "DAL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-05"
@@ -1709,7 +1709,7 @@
           "id": 24827,
           "home": "POR",
           "away": "PHX",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-05"
@@ -1720,7 +1720,7 @@
           "id": 24827,
           "home": "POR",
           "away": "PHX",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-05"
