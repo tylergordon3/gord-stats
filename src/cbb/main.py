@@ -4,6 +4,7 @@ from datetime import date, datetime
 from cbb import daily_data, predictions, utils
 from cbb.render import render_conferences as rc
 from cbb.render import render_home as rh
+from cbb.notebooks import wnba_remaining
 
 start = datetime.now()
 today = datetime.today().strftime("%Y-%m-%d")
@@ -33,7 +34,7 @@ if update_womens_all:
 
 #rc.main(main, 'M')
 #rc.main(main_w, 'W')
-
+wnba_remaining.wnba_update()
 rh.render_home()
 
 

@@ -163,30 +163,72 @@ def fetch_and_save(
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
-if __name__ == "__main__":
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Fetch ESPN Fantasy WNBA league data and save to JSON."
     )
-    parser.add_argument(
-        "--league", type=int, default=LEAGUE_ID,
-        help=f"ESPN Fantasy league ID (default: {LEAGUE_ID})"
-    )
-    parser.add_argument(
-        "--season", type=int, default=SEASON,
-        help=f"Season year (default: {SEASON})"
-    )
-    parser.add_argument(
-        "--out", type=Path, default=DEFAULT_OUT_PATH,
-        help=f"Output JSON file path (default: {DEFAULT_OUT_PATH})"
-    )
-    args = parser.parse_args()
 
+    parser.add_argument(
+        "--league",
+        type=int,
+        default=LEAGUE_ID,
+        help=f"ESPN Fantasy league ID (default: {LEAGUE_ID})",
+    )
+
+    parser.add_argument(
+        "--season",
+        type=int,
+        default=SEASON,
+        help=f"Season year (default: {SEASON})",
+    )
+
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=DEFAULT_OUT_PATH,
+        help=f"Output JSON file path (default: {DEFAULT_OUT_PATH})",
+    )
+
+    return parser
+
+
+def cli(argv=None) -> Path:
+    """
+    CLI entry point.
+
+    Can be called from command line:
+        python wnba_fantasy_fetch.py
+
+    Or from another Python file:
+        from cbb.wnba.wnba_fantasy_fetch import cli
+        cli(["--league", "1234567", "--season", "2026"])
+    """
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    return fetch_and_save(
+        league_id=args.league,
+        season=args.season,
+        out_path=args.out,
+    )
+
+
+def main(argv=None) -> int:
+    """
+    Main entry point.
+
+    Returns:
+        0 on success
+        1 on handled RuntimeError
+    """
     try:
-        fetch_and_save(
-            league_id=args.league,
-            season=args.season,
-            out_path=args.out,
-        )
+        cli(argv)
+        return 0
+
     except RuntimeError as e:
         print(f"\n✗ Error: {e}", file=sys.stderr)
-        sys.exit(1)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

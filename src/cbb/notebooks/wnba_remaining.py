@@ -26,6 +26,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from cbb.lib import paths
 
+from cbb.notebooks import wnba_fantasy, wnba_schedule
+
 ET = ZoneInfo("America/New_York")
  
 def today_et() -> str:
@@ -592,4 +594,12 @@ def main():
  
  
 if __name__ == "__main__":
+    main()
+    
+
+# WNBA
+def wnba_update():
+    # update schedule (5 requests an hour max)
+    wnba_schedule.main(["--refresh"])
+    wnba_fantasy.fetch_and_save()
     main()

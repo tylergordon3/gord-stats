@@ -129,8 +129,24 @@ def fetch_and_save_schedule(season: int = SEASON, path: Path = SCHEDULE_FILE) ->
         if cursor:
             params["cursor"] = cursor
 
-        resp = requests.get(f"{BASE_URL}/wnba/v1/games", headers=HEADERS, params=params)
+        resp = requests.get(
+    f"{BASE_URL}/wnba/v1/games",
+    headers=HEADERS,
+    params=params,
+)
+
+        # Rate limited — use existing cached schedule instead
+        if resp.status_code == 429:
+            print("⚠ BallDontLie rate limit hit (429). Using cached schedule instead.")
+
+            if SCHEDULE_FILE.exists():
+                return load_schedule()
+
+            print("⚠ No cached schedule exists yet.")
+            return {}
+
         resp.raise_for_status()
+
         data = resp.json()
         raw_games.extend(data["data"])
         print(f"  {len(raw_games)} games fetched...")
@@ -246,36 +262,80 @@ def _print_game(g: dict) -> None:
     )
     print(f"  {g['away']:>3} @ {g['home']:<3}  |  {score:^9}  |  {g['status']}")
 
-if __name__ == "__main__":
+def cli(argv=None):
+    """
+    Command-line interface entry point.
+
+    Can be called:
+        cli()                      -> uses sys.argv
+        cli(["--team", "NY"])     -> manual args from another file
+    """
     parser = argparse.ArgumentParser(description="WNBA schedule utility")
-    parser.add_argument("--refresh", action="store_true", help="Force re-fetch from API")
-    parser.add_argument("--team",    type=str, help="Show full schedule for a team (e.g. IND)")
-    parser.add_argument("--date",    type=str, help="Show all games on a date (YYYY-MM-DD)")
-    args = parser.parse_args()
+
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help="Force re-fetch from API"
+    )
+
+    parser.add_argument(
+        "--team",
+        type=str,
+        help="Show full schedule for a team (e.g. IND)"
+    )
+
+    parser.add_argument(
+        "--date",
+        type=str,
+        help="Show all games on a date (YYYY-MM-DD)"
+    )
+
+    args = parser.parse_args(argv)
 
     schedule = get_schedule(force=args.refresh)
 
     if args.team:
         abbrev = args.team.upper()
-        team   = ABBREV_TO_TEAM.get(abbrev, {})
-        label  = f"{team.get('City', '')} {team.get('Name', abbrev)}".strip()
+
+        team = ABBREV_TO_TEAM.get(abbrev, {})
+
+        label = f"{team.get('City', '')} {team.get('Name', abbrev)}".strip()
+
         print(f"\n=== {label} — 2026 Schedule ===")
+
         for d, games in sorted(get_team_schedule(schedule, abbrev).items()):
             for g in games:
                 _print_game(g)
 
     elif args.date:
         print(f"\n=== Games on {args.date} ===")
+
+        seen = set()
+
         for abbrev, games in get_games_on(schedule, args.date).items():
             for g in games:
-                _print_game(g)
+                if g["id"] not in seen:
+                    _print_game(g)
+                    seen.add(g["id"])
 
     else:
         today = today_et()
+
         print(f"\n=== Today's Games ({today}) ===")
+
         seen = set()
+
         for abbrev, games in get_today_games(schedule).items():
             for g in games:
                 if g["id"] not in seen and g.get("status") != "post":
                     _print_game(g)
                     seen.add(g["id"])
+
+
+def main(argv=None):
+    """Primary entry point."""
+    cli(argv)
+
+
+if __name__ == "__main__":
+    main()
