@@ -547,22 +547,6 @@ def main():
         html_parts.append(
             matchup_scoreboard_html(fantasy_data, week, max_games_by_id)
         )
-        # If showing a single team, still compute the opponent's max games
-        '''
-        if args.team:
-            all_t = {t["id"]: t for t in fantasy_data["teams"]}
-            matchups = [m for m in fantasy_data["schedule"] if m.get("matchupPeriodId") == week]
-            for m in matchups:
-                for side in ("home", "away"):
-                    tid = m[side]["teamId"]
-                    if tid not in max_games_by_id:
-                        ft_extra = all_t.get(tid)
-                        if ft_extra:
-                            p = get_players(ft_extra)
-                            t, _ = calc_max_games(p, remaining, schedule)
-                            max_games_by_id[tid] = t
-        '''
-        # print_matchup_scoreboard(fantasy_data, week, max_games_by_id)
 
         html_parts.append(
             team_reports_html(
@@ -575,28 +559,27 @@ def main():
             )
         )
 
-        output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
+        for team in TEAM_COUNT:
+            TEAM_COUNT[team] = len(TEAM_COUNT[team])
+        sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
+        html_parts.append("<h1>Games left for each team</h1>")
+        for team, value in sorted_teams:
+            print(f"{team}: {value}")
+            html_parts.append(f"""
+                    <li>
+                      {team} : {value}
+                    </li>
+                    """)
 
+        output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
         with open(output_file, "w", encoding="utf-8") as f:
             f.write("\n\n".join(html_parts))
 
         print(f"Wrote HTML to {output_file}")
-        for team in TEAM_COUNT:
-            TEAM_COUNT[team] = len(TEAM_COUNT[team])
-        sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
-        print()
-        print("TEAMS WITH THE MOST GAMES LEFT")
-        for team, value in sorted_teams:
-            print(f"{team}: {value}")
-    # Detailed breakdown per team
-    # for ft, total, log in results:
-    #    print_team_report(ft, total, log, week, start, end, all_dates, remaining)
- 
- 
-if __name__ == "__main__":
+        
+if __name__ ==" __main__":
     main()
     
-
 # WNBA
 def wnba_update():
     # update schedule (5 requests an hour max)
