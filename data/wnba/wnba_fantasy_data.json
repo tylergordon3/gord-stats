@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-06-09T11:39:42.546277-04:00",
-    "pulled_at_readable": "2026-06-09 11:39:42 AM EDT",
+    "pulled_at": "2026-06-09T12:05:43.180599-04:00",
+    "pulled_at_readable": "2026-06-09 12:05:43 PM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -10742,7 +10742,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "0",
                     "lastName": "Austin",
-                    "lastNewsDate": 1780789680000,
+                    "lastNewsDate": 1781019720000,
                     "proTeamId": 16,
                     "stats": [],
                     "universeId": 1
@@ -11007,7 +11007,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "0",
                     "lastName": "Austin",
-                    "lastNewsDate": 1780789680000,
+                    "lastNewsDate": 1781019720000,
                     "proTeamId": 16,
                     "stats": [
                       {
@@ -11233,7 +11233,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "0",
                     "lastName": "Austin",
-                    "lastNewsDate": 1780789680000,
+                    "lastNewsDate": 1781019720000,
                     "proTeamId": 16,
                     "stats": [
                       {
@@ -23100,7 +23100,7 @@
                   "injuryStatus": "ACTIVE",
                   "jersey": "0",
                   "lastName": "Austin",
-                  "lastNewsDate": 1780789680000,
+                  "lastNewsDate": 1781019720000,
                   "ownership": {
                     "auctionValueAverage": 7.96,
                     "averageDraftPosition": 33.95,

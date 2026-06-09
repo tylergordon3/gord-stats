@@ -562,7 +562,7 @@ def main():
         for team in TEAM_COUNT:
             TEAM_COUNT[team] = len(TEAM_COUNT[team])
         sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
-        html_parts.append("<h1>Games left for each team</h1>")
+        html_parts.append("<h3>Games left for each team</h3>")
         for team, value in sorted_teams:
             print(f"{team}: {value}")
             html_parts.append(f"""
