@@ -1937,7 +1937,7 @@
           "id": 24837,
           "home": "CHI",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-09"
@@ -1948,7 +1948,7 @@
           "id": 24837,
           "home": "CHI",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-09"
@@ -1959,7 +1959,7 @@
           "id": 24838,
           "home": "MIN",
           "away": "DAL",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-09"
@@ -1970,7 +1970,7 @@
           "id": 24838,
           "home": "MIN",
           "away": "DAL",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-09"
