@@ -25,11 +25,11 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from cbb.lib import paths
-
 from cbb.notebooks import wnba_fantasy, wnba_schedule
 
 ET = ZoneInfo("America/New_York")
- 
+DEBUG = False
+
 def today_et() -> str:
     """Current date in Eastern Time as YYYY-MM-DD."""
     return datetime.now(ET).date().isoformat()
@@ -76,7 +76,6 @@ WEEK_DATES = {
 }
  
 # ── Helpers ───────────────────────────────────────────────────────────────────
- 
 def dates_in_range(start: str, end: str) -> list[str]:
     s, e = date.fromisoformat(start), date.fromisoformat(end)
     out = []
@@ -118,7 +117,6 @@ def get_players(fantasy_team: dict) -> list[dict]:
     return players
  
 # ── Core optimizer ────────────────────────────────────────────────────────────
- 
 def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tuple[int, list]:
     """
     Greedy day-by-day slot filler. For each date:
@@ -184,88 +182,9 @@ def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tup
     return total, daily_log
  
 # ── Matchup comparison ────────────────────────────────────────────────────────
- 
 def get_week_matchups(fantasy_data: dict, week: int) -> list[dict]:
     """Return matchup objects for the given week."""
     return [m for m in fantasy_data["schedule"] if m.get("matchupPeriodId") == week]
- 
-def print_matchup_scoreboard(fantasy_data: dict, week: int, max_games: dict[int, int]) -> None:
-    """
-    Print a head-to-head scoreboard for every matchup in the week.
- 
-    max_games: { fantasy_team_id: max_games_remaining }
- 
-    Scoring note:
-        totalPoints     = finalized points (excludes any live/current scoring period)
-        totalPointsLive = includes the current live scoring period
-    We display totalPointsLive as the live score and note the finalized separately.
-    """
-    matchups   = get_week_matchups(fantasy_data, week)
-    all_teams  = {t["id"]: t["name"] for t in fantasy_data["teams"]}
- 
-    print(f"\n{'═'*62}")
-    print(f"  WEEK {week} MATCHUPS — LIVE SCOREBOARD")
-    print(f"{'═'*62}")
- 
-    for m in matchups:
-        home_id    = m["home"]["teamId"]
-        away_id    = m["away"]["teamId"]
-        home_name  = all_teams.get(home_id, f"Team {home_id}")
-        away_name  = all_teams.get(away_id, f"Team {away_id}")
- 
-        home_live  = m["home"].get("totalPointsLive", 0) or 0
-        away_live  = m["away"].get("totalPointsLive", 0) or 0
-        home_final = m["home"].get("totalPoints", 0) or 0
-        away_final = m["away"].get("totalPoints", 0) or 0
-        live_today = home_live != home_final or away_live != away_final
- 
-        home_rem   = max_games.get(home_id, 0)
-        away_rem   = max_games.get(away_id, 0)
-        winner     = m.get("winner", "UNDECIDED")
- 
-        # Who's leading on live score
-        if home_live > away_live:
-            home_lead, away_lead = "▲", " "
-        elif away_live > home_live:
-            home_lead, away_lead = " ", "▲"
-        else:
-            home_lead = away_lead = "–"
- 
-        print(f"\n  {'─'*58}")
-        print(f"  {'FINAL' if winner != 'UNDECIDED' else 'IN PROGRESS'}")
-        print(f"  {'─'*58}")
- 
-        # Home row
-        print(
-            f"  {home_lead} {home_name:<33}"
-            f"  {home_live:>7.1f} pts"
-            f"  {home_rem:>2} games left"
-        )
-        # Away row
-        print(
-            f"  {away_lead} {away_name:<33}"
-            f"  {away_live:>7.1f} pts"
-            f"  {away_rem:>2} games left"
-        )
- 
-        # Gap line
-        gap = abs(home_live - away_live)
-        if winner != "UNDECIDED":
-            win_name = home_name if winner == "HOME" else away_name
-            print(f"\n  Winner: {win_name}  (by {gap:.1f} pts)")
-        else:
-            leading  = home_name if home_live >= away_live else away_name
-            trailing = away_name if home_live >= away_live else home_name
-            print(f"\n  {leading} leads by {gap:.1f} pts", end="")
-            if live_today:
-                live_diff = home_live - home_final if home_live != home_final else away_live - away_final
-                print(f"  (includes live scoring)", end="")
-            print()
-            # Finalized-only note if there's live activity
-            if live_today:
-                print(f"  Finalized only → {home_name}: {home_final:.1f}  |  {away_name}: {away_final:.1f}")
- 
-    print(f"\n  {'═'*58}\n")
  
 def matchup_scoreboard_html(fantasy_data, week, max_games):
     matchups = get_week_matchups(fantasy_data, week)
@@ -343,53 +262,6 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
     html.append("</section>")
     return "\n".join(html)
 
-# ── Display ───────────────────────────────────────────────────────────────────
- 
-def print_team_report(
-    fantasy_team: dict,
-    total: int,
-    daily_log: list,
-    week: int,
-    start: str,
-    end: str,
-    all_dates: list[str],
-    remaining_dates: list[str],
-) -> None:
-    played_dates = [d for d in all_dates if d not in remaining_dates]
-    today = today_et()
-    
-    # ANSI codes
-    RED    = "\033[31m"
-    YELLOW = "\033[43m\033[30m"  # black text on yellow background
-    RESET  = "\033[0m"
-    
-    print(f"  Team {fantasy_team['id']}: {fantasy_team['name']}")
-    print(f"  Week {week}  ({start} → {end})")
-    print(f"  Today: {today}  |  Days left: {len(remaining_dates)}")
-    print(f"{'═'*60}")
- 
-    if played_dates:
-        print(f"\n  (Days already played: {', '.join(played_dates)})")
- 
-    max_possible = len(remaining_dates) * (G_LIMIT + FC_LIMIT + UTIL_LIMIT)
-    print(f"\n  MAX STARTABLE GAMES REMAINING: {total}  (cap: {max_possible})")
-    print()
- 
-    for d, slots, out_players in daily_log:
-        label = " ◀ today" if d == today else ""
-        if not slots and not out_players:
-            print(f"  {d}  — no games{label}")
-        else:
-            print(f"  {d}{label}")
-            for slot_label, name, abbrev in slots:
-                print(f"    [{slot_label:<4}]  {name} ({abbrev})")
-            for name, abbrev in out_players:
-                out_badge = f"{RED}O{RESET}"
-                row = f"    {YELLOW}[OUT ]  {name} ({abbrev}) {out_badge}{RESET}"
-                print(row)
- 
-    print()
-
 def team_reports_html(results, week, start, end, all_dates, remaining_dates):
     today = today_et()
     played_dates = [d for d in all_dates if d not in remaining_dates]
@@ -448,31 +320,28 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                                     <span class="team-abbrev injured">{abbrev}</span>
                                 </li>""")
                 html.append('</ul>')
-
             html.append('</div>')
-
         html.append('</div>')
         html.append('</article>')
-
     html.append('</section>')
     return "\n".join(html)
  
 # ── Load ──────────────────────────────────────────────────────────────────────
- 
 def load_fantasy(path: Path) -> dict:
     with open(path) as f:
         d = json.load(f)
-    print(f"Fantasy data: {d['metadata']['pulled_at_readable']}")
+    if DEBUG:
+        print(f"Fantasy data: {d['metadata']['pulled_at_readable']}")
     return d["data"]
  
 def load_schedule(path: Path) -> dict:
     with open(path) as f:
         d = json.load(f)
-    print(f"Schedule:     fetched {d['fetched_on']}  ({d['total_games']} games)")
+    if DEBUG:
+        print(f"Schedule:     fetched {d['fetched_on']}  ({d['total_games']} games)")
     return d["schedule"]
  
 # ── CLI ───────────────────────────────────────────────────────────────────────
- 
 def main():
     parser = argparse.ArgumentParser(
         description="Calculate max startable games remaining for each fantasy team."
@@ -502,7 +371,8 @@ def main():
     remaining    = all_dates if args.full_week else [d for d in all_dates if d >= today]
 
     print(f"\nWeek {week}: {start} → {end}")
-    print(f"Counting: {'full week' if args.full_week else f'remaining ({len(remaining)} days)'}")
+    if DEBUG:
+        print(f"Counting: {'full week' if args.full_week else f'remaining ({len(remaining)} days)'}\n")
  
     # Which fantasy teams to show
     all_teams = {t["id"]: t for t in fantasy_data["teams"]}
@@ -527,18 +397,21 @@ def main():
         )
  
     # Summary table header
-    print(f"\n{'─'*50}")
-    print(f"  {'Team':<35} {'Max Games':>9}")
-    print(f"{'─'*50}")
+    if DEBUG:
+        print(f"\n{'─'*50}")
+        print(f"  {'Team':<35} {'Max Games':>9}")
+        print(f"{'─'*50}")
  
     results = []
     for ft in teams_to_show:
         players        = get_players(ft)
         total, log     = calc_max_games(players, remaining, schedule)
         results.append((ft, total, log))
-        print(f"  {ft['name']:<35} {total:>9}")
+        if DEBUG:
+            print(f"  {ft['name']:<35} {total:>9}")
  
-    print(f"{'─'*50}")
+    if DEBUG:
+        print(f"{'─'*50}")
  
     html_parts = []
     # Matchup scoreboard (all matchups for the week, not filtered by --team)
@@ -564,7 +437,6 @@ def main():
         sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
         html_parts.append("<h3>Games left for each team</h3>")
         for team, value in sorted_teams:
-            print(f"{team}: {value}")
             html_parts.append(f"""
                     <li>
                       {team} : {value}
@@ -574,8 +446,8 @@ def main():
         output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
         with open(output_file, "w", encoding="utf-8") as f:
             f.write("\n\n".join(html_parts))
-
-        print(f"Wrote HTML to {output_file}")
+        if DEBUG:
+            print(f"Wrote HTML to {output_file}")
         
 if __name__ ==" __main__":
     main()

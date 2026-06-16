@@ -85,4 +85,4 @@ def render_home():
 
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
-        print(f"Wrote to: {path}")
+        # print(f"Wrote to: {path}")

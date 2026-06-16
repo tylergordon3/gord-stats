@@ -36,7 +36,7 @@ from zoneinfo import ZoneInfo
 from cbb.lib import paths
 
 # ── Config ────────────────────────────────────────────────────────────────────
-
+DEBUG = False
 load_dotenv()
 
 LEAGUE_ID        = 1039832288
@@ -63,7 +63,8 @@ def get_espn_cookies() -> dict:
     swid    = os.getenv("SWID")
 
     if espn_s2 and swid:
-        print("✓ Using ESPN cookies from .env")
+        if DEBUG:
+            print("✓ Using ESPN cookies from .env")
         return {"espn_s2": espn_s2, "SWID": swid}
 
     print("ESPN_S2/SWID not in .env — trying browser cookies...")
@@ -80,7 +81,8 @@ def get_espn_cookies() -> dict:
             cookies = {c.name: c.value for c in cj}
             espn_s2 = cookies.get("espn_s2", "")
             swid    = cookies.get("SWID", "")
-            print(f"  {name}: espn_s2={'✓' if espn_s2 else '✗'}  SWID={'✓' if swid else '✗'}")
+            if DEBUG:
+                print(f"  {name}: espn_s2={'✓' if espn_s2 else '✗'}  SWID={'✓' if swid else '✗'}")
             if espn_s2 and swid:
                 return {"espn_s2": espn_s2, "SWID": swid}
         except Exception as e:
@@ -114,10 +116,11 @@ def fetch_league_data(league_id: int = LEAGUE_ID, season: int = SEASON) -> dict:
     session.cookies.set("espn_s2", cookies["espn_s2"], domain=".espn.com")
     session.cookies.set("SWID",    cookies["SWID"],    domain=".espn.com")
 
-    print(f"Fetching league {league_id} ({season} season)...")
+    print(f"\nFetching league {league_id} ({season} season)...")
     r = session.get(url, params=params, headers=headers, allow_redirects=False, timeout=20)
 
-    print(f"  Status: {r.status_code}  |  Content-Type: {r.headers.get('content-type', 'unknown')}")
+    if DEBUG:
+        print(f"Status: {r.status_code}  |  Content-Type: {r.headers.get('content-type', 'unknown')}")
 
     if r.status_code in (301, 302, 303, 307, 308):
         raise RuntimeError(
@@ -158,7 +161,7 @@ def fetch_and_save(
     with open(out_path, "w") as f:
         json.dump(output, f, indent=2)
 
-    print(f"✓ Saved → {out_path}  ({pulled_at.strftime('%Y-%m-%d %I:%M:%S %p %Z')})")
+    print(f"Saved → {pulled_at.strftime('%Y-%m-%d %I:%M:%S %p %Z')}")
     return out_path
 
 # ── CLI ───────────────────────────────────────────────────────────────────────

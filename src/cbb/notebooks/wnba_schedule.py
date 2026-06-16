@@ -32,7 +32,7 @@ def today_et() -> str:
     return datetime.now(ET).date().isoformat()
 
 # ── Config ────────────────────────────────────────────────────────────────────
-
+DEBUG = False
 load_dotenv()
 
 API_KEY       = os.getenv("BALL_DONT_LIE_KEY")
@@ -122,7 +122,7 @@ def fetch_and_save_schedule(season: int = SEASON, path: Path = SCHEDULE_FILE) ->
     """
     raw_games = []
     cursor    = None
-
+    
     print(f"Fetching {season} WNBA schedule from BallDontLie...")
     while True:
         params = {"seasons[]": season, "per_page": 100}
@@ -149,7 +149,8 @@ def fetch_and_save_schedule(season: int = SEASON, path: Path = SCHEDULE_FILE) ->
 
         data = resp.json()
         raw_games.extend(data["data"])
-        print(f"  {len(raw_games)} games fetched...")
+        if DEBUG:
+            print(f"  {len(raw_games)} games fetched...")
 
         cursor = data.get("meta", {}).get("next_cursor")
         if not cursor:
@@ -167,7 +168,8 @@ def fetch_and_save_schedule(season: int = SEASON, path: Path = SCHEDULE_FILE) ->
     with open(path, "w") as f:
         json.dump(payload, f, indent=2)
 
-    print(f"Saved {len(raw_games)} games → {path}")
+    # print(f"Saved {len(raw_games)} games → {path}")
+    print(f"Saved {len(raw_games)} games")
     return schedule
 
 # ── Load ──────────────────────────────────────────────────────────────────────
@@ -293,43 +295,43 @@ def cli(argv=None):
     args = parser.parse_args(argv)
 
     schedule = get_schedule(force=args.refresh)
+    if DEBUG:
+        if args.team:
+            abbrev = args.team.upper()
 
-    if args.team:
-        abbrev = args.team.upper()
+            team = ABBREV_TO_TEAM.get(abbrev, {})
 
-        team = ABBREV_TO_TEAM.get(abbrev, {})
+            label = f"{team.get('City', '')} {team.get('Name', abbrev)}".strip()
 
-        label = f"{team.get('City', '')} {team.get('Name', abbrev)}".strip()
+            print(f"\n=== {label} — 2026 Schedule ===")
 
-        print(f"\n=== {label} — 2026 Schedule ===")
-
-        for d, games in sorted(get_team_schedule(schedule, abbrev).items()):
-            for g in games:
-                _print_game(g)
-
-    elif args.date:
-        print(f"\n=== Games on {args.date} ===")
-
-        seen = set()
-
-        for abbrev, games in get_games_on(schedule, args.date).items():
-            for g in games:
-                if g["id"] not in seen:
+            for d, games in sorted(get_team_schedule(schedule, abbrev).items()):
+                for g in games:
                     _print_game(g)
-                    seen.add(g["id"])
 
-    else:
-        today = today_et()
+        elif args.date:
+            print(f"\n=== Games on {args.date} ===")
 
-        print(f"\n=== Today's Games ({today}) ===")
+            seen = set()
 
-        seen = set()
+            for abbrev, games in get_games_on(schedule, args.date).items():
+                for g in games:
+                    if g["id"] not in seen:
+                        _print_game(g)
+                        seen.add(g["id"])
 
-        for abbrev, games in get_today_games(schedule).items():
-            for g in games:
-                if g["id"] not in seen and g.get("status") != "post":
-                    _print_game(g)
-                    seen.add(g["id"])
+        else:
+            today = today_et()
+
+            print(f"\n=== Today's Games ({today}) ===")
+
+            seen = set()
+
+            for abbrev, games in get_today_games(schedule).items():
+                for g in games:
+                    if g["id"] not in seen and g.get("status") != "post":
+                        _print_game(g)
+                        seen.add(g["id"])
 
 
 def main(argv=None):
