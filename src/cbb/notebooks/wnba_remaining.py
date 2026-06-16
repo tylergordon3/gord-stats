@@ -434,14 +434,22 @@ def main():
 
         for team in TEAM_COUNT:
             TEAM_COUNT[team] = len(TEAM_COUNT[team])
-        sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
+        invert = {}
+        for key, value in TEAM_COUNT.items():
+            if value not in invert:
+                invert[value] = []
+            invert[value].append(key)
+        html_parts.append('<ul class="player-list">')
+        #sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
         html_parts.append("<h3>Games left for each team</h3>")
-        for team, value in sorted_teams:
-            html_parts.append(f"""
-                    <li>
-                      {team} : {value}
-                    </li>
-                    """)
+        for value, teams in invert.items():
+            html_parts.append(f"<p>Teams with {value} games left:</p>")
+            for team in teams:
+                html_parts.append(f"""
+                        <li>
+                        {team}
+                        </li>
+                        """)
 
         output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
         with open(output_file, "w", encoding="utf-8") as f:
