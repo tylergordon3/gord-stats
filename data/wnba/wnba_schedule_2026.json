@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-06-16",
+  "fetched_on": "2026-06-17",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -2391,7 +2391,7 @@
           "id": 24857,
           "home": "IND",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-16"
@@ -2402,7 +2402,7 @@
           "id": 24857,
           "home": "IND",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-16"
