@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-06-18",
+  "fetched_on": "2026-06-21",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -2415,7 +2415,7 @@
           "id": 24858,
           "home": "CON",
           "away": "WSH",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-17"
@@ -2426,7 +2426,7 @@
           "id": 24858,
           "home": "CON",
           "away": "WSH",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-17"
@@ -2549,7 +2549,7 @@
           "id": 24864,
           "home": "IND",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-18"
@@ -2560,7 +2560,7 @@
           "id": 24864,
           "home": "IND",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-18"
@@ -2573,7 +2573,7 @@
           "id": 24865,
           "home": "CON",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-19"
@@ -2584,7 +2584,7 @@
           "id": 24865,
           "home": "CON",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-19"
@@ -2595,7 +2595,7 @@
           "id": 24866,
           "home": "NY",
           "away": "WSH",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-19"
@@ -2606,7 +2606,7 @@
           "id": 24866,
           "home": "NY",
           "away": "WSH",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-19"
@@ -2617,7 +2617,7 @@
           "id": 24867,
           "home": "GS",
           "away": "MIN",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-19"
@@ -2628,7 +2628,7 @@
           "id": 24867,
           "home": "GS",
           "away": "MIN",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-19"
@@ -2641,7 +2641,7 @@
           "id": 24868,
           "home": "ATL",
           "away": "IND",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-20"
@@ -2652,7 +2652,7 @@
           "id": 24868,
           "home": "ATL",
           "away": "IND",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-20"
@@ -2663,7 +2663,7 @@
           "id": 24869,
           "home": "PHX",
           "away": "SEA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-20"
@@ -2674,7 +2674,7 @@
           "id": 24869,
           "home": "PHX",
           "away": "SEA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-20"
@@ -2685,7 +2685,7 @@
           "id": 24870,
           "home": "DAL",
           "away": "CHI",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-20"
@@ -2696,7 +2696,7 @@
           "id": 24870,
           "home": "DAL",
           "away": "CHI",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-20"
