@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-06-22T10:12:20.539232-04:00",
-    "pulled_at_readable": "2026-06-22 10:12:20 AM EDT",
+    "pulled_at": "2026-06-22T10:14:14.635155-04:00",
+    "pulled_at_readable": "2026-06-22 10:14:14 AM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -6038,7 +6038,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 6,
+                "lineupSlotId": 4,
                 "pendingTransactionIds": null,
                 "playerId": 2529130,
                 "playerPoolEntry": {
@@ -6082,7 +6082,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 5,
+                "lineupSlotId": 6,
                 "pendingTransactionIds": null,
                 "playerId": 4281929,
                 "playerPoolEntry": {
@@ -6257,7 +6257,7 @@
                 "acquisitionDate": null,
                 "acquisitionType": null,
                 "injuryStatus": "NORMAL",
-                "lineupSlotId": 4,
+                "lineupSlotId": 5,
                 "pendingTransactionIds": null,
                 "playerId": 4398776,
                 "playerPoolEntry": {
@@ -46655,7 +46655,7 @@
           }
         },
         "roster": {
-          "appliedStatTotal": 91.0,
+          "appliedStatTotal": 100.0,
           "entries": [
             {
               "acquisitionDate": 1778203625898,
@@ -49246,7 +49246,7 @@
               "acquisitionDate": 1778203625898,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 6,
+              "lineupSlotId": 4,
               "pendingTransactionIds": null,
               "playerId": 2529130,
               "playerPoolEntry": {
@@ -50135,7 +50135,7 @@
               "acquisitionDate": 1778203625898,
               "acquisitionType": "DRAFT",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 5,
+              "lineupSlotId": 6,
               "pendingTransactionIds": null,
               "playerId": 4281929,
               "playerPoolEntry": {
@@ -53170,7 +53170,7 @@
               "acquisitionDate": 1780846989014,
               "acquisitionType": "ADD",
               "injuryStatus": "NORMAL",
-              "lineupSlotId": 4,
+              "lineupSlotId": 5,
               "pendingTransactionIds": null,
               "playerId": 4398776,
               "playerPoolEntry": {
@@ -54697,7 +54697,7 @@
             "6": 3
           },
           "misc": 0,
-          "moveToActive": 112,
+          "moveToActive": 113,
           "moveToIR": 6,
           "paid": 0.0,
           "teamCharges": 0.0,
