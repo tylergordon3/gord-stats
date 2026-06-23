@@ -222,10 +222,10 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
 
         if home_live > away_live:
             home_class, away_class = "team-side leader", "team-side"
-            summary = f"{home_name} leads by {gap:.1f}"
+            summary = f"{home_name} leads by {gap:.0f}"
         elif away_live > home_live:
             home_class, away_class = "team-side", "team-side leader"
-            summary = f"{away_name} leads by {gap:.1f}"
+            summary = f"{away_name} leads by {gap:.0f}"
         else:
             home_class = away_class = "team-side tied"
             summary = "Tied"
@@ -241,9 +241,9 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
             <div class="{home_class}">
               <div class="team-label">Home</div>
               <div class="team-name">{home_name}</div>
-              <div class="score">{home_live:.1f}</div>
-              <div class="games-left">{home_rem} games left</div>
-              <div class="finalized">Finalized: {home_final:.1f}</div>
+              <div class="score">{home_live:.0f}</div>
+              <div class="games-left">{home_rem:.0f} games left</div>
+              <div class="finalized">Finalized: {home_final:.0f}</div>
             </div>
 
             <div class="vs-pill">vs</div>
@@ -251,9 +251,9 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
             <div class="{away_class}">
               <div class="team-label">Away</div>
               <div class="team-name">{away_name}</div>
-              <div class="score">{away_live:.1f}</div>
-              <div class="games-left">{away_rem} games left</div>
-              <div class="finalized">Finalized: {away_final:.1f}</div>
+              <div class="score">{away_live:.0f}</div>
+              <div class="games-left">{away_rem:.0f} games left</div>
+              <div class="finalized">Finalized: {away_final:.0f}</div>
             </div>
           </div>
         </article>
@@ -278,14 +278,12 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
         )
 
     for ft, total, daily_log in results:
-        max_possible = len(remaining_dates) * (G_LIMIT + FC_LIMIT + UTIL_LIMIT)
-
         html.append(f"""
         <article class="team-report">
           <header class="team-report-header">
             <h3>{ft["name"]}</h3>
             <div class="max-games">
-              <strong>{total}</strong> startable games
+              <strong>{int(total)}</strong> MAX games left
             </div>
           </header>
         """)
@@ -441,7 +439,7 @@ def main():
                 invert[value] = []
             invert[value].append(key)
         html_parts.append('<ul class="player-list">')
-        #sorted_teams = sorted(TEAM_COUNT.items(), key=lambda item: item[1], reverse=True)
+
         html_parts.append("<h3>Games left for each team</h3>")
         for value, teams in invert.items():
             html_parts.append(f"<p>Teams with {value} games left:</p>")
