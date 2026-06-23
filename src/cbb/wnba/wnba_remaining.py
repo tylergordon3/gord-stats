@@ -25,7 +25,8 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from cbb.lib import paths
-from cbb.notebooks import wnba_fantasy, wnba_schedule
+from cbb.wnba import wnba_schedule
+from cbb.wnba import wnba_fantasy
 
 ET = ZoneInfo("America/New_York")
 DEBUG = False
