@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-06-29",
+  "fetched_on": "2026-06-30",
   "season": 2026,
   "total_games": 332,
   "schedule": {
@@ -3270,20 +3270,22 @@
       ]
     },
     "2026-06-30": {
-      "TBD": [
+      "NY": [
         {
           "id": 24896,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "NY",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-06-30"
-        },
+        }
+      ],
+      "LV": [
         {
           "id": 24896,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "NY",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
