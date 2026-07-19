@@ -1,7 +1,7 @@
 {
-  "fetched_on": "2026-07-16",
+  "fetched_on": "2026-07-19",
   "season": 2026,
-  "total_games": 332,
+  "total_games": 333,
   "schedule": {
     "2026-05-08": {
       "NY": [
@@ -4141,7 +4141,7 @@
           "id": 24934,
           "home": "WSH",
           "away": "POR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-16"
@@ -4152,7 +4152,7 @@
           "id": 24934,
           "home": "WSH",
           "away": "POR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-16"
@@ -4187,7 +4187,7 @@
           "id": 24936,
           "home": "IND",
           "away": "SEA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4198,7 +4198,7 @@
           "id": 24936,
           "home": "IND",
           "away": "SEA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4209,7 +4209,7 @@
           "id": 24937,
           "home": "TOR",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4220,7 +4220,7 @@
           "id": 24937,
           "home": "TOR",
           "away": "ATL",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4231,7 +4231,7 @@
           "id": 24938,
           "home": "CHI",
           "away": "LA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4242,7 +4242,7 @@
           "id": 24938,
           "home": "CHI",
           "away": "LA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4253,7 +4253,7 @@
           "id": 24939,
           "home": "PHX",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4264,7 +4264,7 @@
           "id": 24939,
           "home": "PHX",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-17"
@@ -4277,7 +4277,7 @@
           "id": 24940,
           "home": "IND",
           "away": "NY",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-18"
@@ -4288,7 +4288,7 @@
           "id": 24940,
           "home": "IND",
           "away": "NY",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-18"
@@ -4299,7 +4299,7 @@
           "id": 24941,
           "home": "MIN",
           "away": "POR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-18"
@@ -4310,7 +4310,7 @@
           "id": 24941,
           "home": "MIN",
           "away": "POR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-18"
@@ -4321,7 +4321,7 @@
           "id": 24942,
           "home": "GS",
           "away": "WSH",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-18"
@@ -4332,7 +4332,7 @@
           "id": 24942,
           "home": "GS",
           "away": "WSH",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-18"
@@ -4468,6 +4468,28 @@
           "id": 24948,
           "home": "SEA",
           "away": "MIN",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-07-20"
+        }
+      ],
+      "DAL": [
+        {
+          "id": 275552,
+          "home": "DAL",
+          "away": "NY",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-07-20"
+        }
+      ],
+      "NY": [
+        {
+          "id": 275552,
+          "home": "DAL",
+          "away": "NY",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -4610,20 +4632,22 @@
       ]
     },
     "2026-07-25": {
-      "TBD": [
+      "COOP": [
         {
           "id": 24955,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "COOP",
+          "away": "SPO",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-07-25"
-        },
+        }
+      ],
+      "SPO": [
         {
           "id": 24955,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "COOP",
+          "away": "SPO",
           "status": "pre",
           "home_score": null,
           "away_score": null,
