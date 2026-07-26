@@ -126,11 +126,3 @@ def pa_adj(pa):
         return None
 
 
-with open('data/players.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            sleeper_players = pd.DataFrame.from_dict(data, orient='index')
-defenses = sleeper_players[sleeper_players['position'] == 'DEF']
-defenses = defenses.dropna(axis=1, how='all')
-stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
-stats_defenses = stats_defenses.to_pandas()
-def_fpts(stats_defenses)

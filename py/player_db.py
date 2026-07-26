@@ -1,128 +1,97 @@
-import json
 import pandas as pd
 import nflreadpy as nfl
 import constants as c
-import re
 import nfl_stats as stats
-import numpy as np
-import json
+import src_bridge as bridge
+
+# Legacy special-case names, kept so the CamelCase key matches draft.py's.
+_NAME_RENAMES = {
+    'Mike Badgley': 'Michael Badgley',
+    'Amon-Ra St. Brown': 'AmonRa StBrown',
+    'Chigoziem Okonkwo': 'ChigOkonkwo',
+    'Hollywood Brown': 'Marquise Brown',
+}
+
+
+def _cleaned_name(display_series):
+    """CamelCase key from the first two name tokens (e.g. 'PatrickMahomes').
+
+    Mirrors the legacy key exactly so draft.py's name-based joins still line up.
+    Team defenses keep their abbreviation.
+    """
+    s = display_series.replace(_NAME_RENAMES)
+    s = s.str.replace(r"[.'-]", "", regex=True)
+
+    def key(name):
+        if not isinstance(name, str):
+            return name
+        parts = name.split()
+        return ''.join(parts[:2]) if len(parts) >= 2 else ''.join(parts)
+
+    return s.map(key)
+
 
 def get(week):
-    # Week returns specific week, 0 returns all
-    with open('data/players.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            sleeper_players = pd.DataFrame.from_dict(data, orient='index')
-    # Getting defense fantasy pts
-    drop_pos = ['OL', 'CB', 'LB', 'FS', 'DE', 'DT', 'T', 'DL', 'DB', 'OT',
-    'G', None, 'C', 'SS', 'LS', 'P', 'ILB', 'NT', 'OLB', 'S', 'OG']
-    sleeper_players = sleeper_players[~sleeper_players['position'].isin(drop_pos)]
-    defenses = sleeper_players[sleeper_players['position'] == 'DEF']
-    defenses = defenses.dropna(axis=1, how='all')
-    stats_defenses = nfl.load_team_stats(nfl.get_current_season(), 'week')
-    stats_defenses = stats_defenses.to_pandas()
-    stats_defenses['team'] = stats_defenses['team'].replace('LA', 'LAR')
-    def_fpts = stats.def_fpts(stats_defenses)
-    def_fpts = def_fpts.rename(columns={'fpts':'fantasy_points', 'team' : 'search_full_name', 'team1' : 'team'})
-    def_fpts['position'] = 'DEF'
-    def_fpts['fantasy_points_ppr'] = def_fpts['fantasy_points']
-    
-    # Getting all other players stats
-    stats_players = nfl.load_player_stats(nfl.get_current_season(), 'week')
-    stats_players = stats_players.to_pandas()
-    stats_players.columns = c.player_stats_headers
-    stats_players = stats_players.iloc[:-1]
-    # Special cases - seperate into own function TBC
-    stats_players['player_display_name'] = stats_players['player_display_name'].replace('Mike Badgley', 'Michael Badgley')
-    stats_players['player_display_name'] = stats_players['player_display_name'].replace('Amon-Ra St. Brown', 'AmonRa StBrown')
-    stats_players['player_display_name'] = stats_players['player_display_name'].replace('Chigoziem Okonkwo', 'ChigOkonkwo')
-    
-    stats_players['player_display_name'] = stats_players['player_display_name'].replace('Hollywood Brown', 'Marquise Brown')
-    stats_players['team'] = stats_players['team'].replace('LA', 'LAR')
-    
-    stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace(".", "") if not x == None else x)
-    stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace("'", "") if not x == None else x)
-    stats_players['player_display_name'] = stats_players['player_display_name'].apply(lambda x: x.replace("-", "") if not x == None else x)
-    
-    stats_players['cleaned_name'] = stats_players['player_display_name'].str.split()
-    
-    stats_players = stats_players[~stats_players['cleaned_name'].isnull()]
-    
-    stats_players['cleaned_name'] = stats_players['cleaned_name'].apply(lambda lst: lst.str.join('') if len(lst) < 2 else ''.join(lst[:2]))
-    stats_players['search_full_name'] = [re.sub(r'\s+', '', str(x)).lower() for x in stats_players['cleaned_name']]
-    stats_players = pd.concat([stats_players, def_fpts])
-    merged_players =  pd.merge(sleeper_players, stats_players, on='search_full_name', how='inner')
-    merged_players = merged_players.drop(columns=['competitions', 'team_abbr', 'high_school', 'practice_participation', 'opta_id', 'birth_country', 'injury_start_date', 'birth_state',
-                                 'height', 'team_changed_at', 'practice_description', 'birth_city', 'fantasy_positions', 'position_x', 'injury_notes',
-                                 'pandascore_id', 'sport', 'metadata', 'news_updated', 'search_rank', 'team_y', 'depth_chart_order', 'hashtag', 'player_name',
-                                 'search_first_name', 'search_last_name', 'player_display_name'])
-    
-    merged_players = merged_players.rename(columns={"position_y" : "position", "team_x" : "team", "player_id_x" : "sleeper_id", "player_id_y" : "nflstats_id"})
+    """Player + team-defense fantasy points for the current season.
 
-    merged_players = pd.concat([merged_players, def_fpts])
-    
-    # positions is position_y
+    Returns the columns the legacy consumers rely on - sleeper_id, cleaned_name,
+    position, team, week, fantasy_points, fantasy_points_ppr - plus the raw
+    nflverse stat columns. week <= 0 returns the whole season.
+
+    Sleeper identity is attached by an exact gsis_id join to the src/ registry,
+    replacing the old fuzzy search_full_name merge (and the fragile positional
+    column rename that broke on nflverse schema changes).
+    """
+    season = nfl.get_current_season()
+
+    # --- Skill-position players: columns referenced BY NAME (schema-robust) ---
+    players = nfl.load_player_stats(season, 'week').to_pandas()
     pos_groups_remove = ["LB", "DL", "OL", "DB", "None"]
     spec_teams_remove = ["P", "LS"]
-    merged_players = merged_players[~merged_players.position_group.isin(pos_groups_remove)]
-    
-    merged_players = merged_players[~merged_players.position.isin(spec_teams_remove)]
-    merged_players = merged_players.drop(columns="position_group")
+    players = players[~players['position_group'].isin(pos_groups_remove)]
+    players = players[~players['position'].isin(spec_teams_remove)]
+    players['team'] = players['team'].replace('LA', 'LAR')
+    players['cleaned_name'] = _cleaned_name(players['player_display_name'])
 
-    # IDs in DF
-    #   espn_id, swish_id, fantasy_data_id, sportradar_id, yahoo_id, kalshi_id
-    #   oddsjam_id, stats_id, rotowire_id, rotoworld_id, sleeper_id, nflstats_id
+    # Custom league kicker scoring overrides nflverse's standard points.
+    is_k = players['position'] == 'K'
+    players.loc[is_k, 'fantasy_points'] = stats.kicker_fpts(players[is_k])
+    players.loc[is_k, 'fantasy_points_ppr'] = players.loc[is_k, 'fantasy_points']
 
-    # Player Info in DF
-    #   birth_date, search_full_name, last_name, years_exp, team
-    #   injury_body_part, status, weight, college, number, age,
-    #   injury status, first_name, full_name, headshot_url
+    # Attach Sleeper id via exact gsis_id match (nflverse player_id IS gsis_id).
+    reg = bridge.load_registry()[['gsis_id', 'sleeper_id']]
+    players['gsis_id'] = players['player_id'].astype(str)
+    players = players.merge(reg, on='gsis_id', how='left')
+    players = players.rename(columns={'player_id': 'nflstats_id'})
 
-    # Fantasy Stats in DF
-    #   "completions", "attempts", "passing_yards", "passing_tds", "passing_interceptions", "sacks_suffered",
-    #   "sack_yards_lost", "sack_fumbles", "sack_fumbles_lost", "passing_air_yards",
-    #   "passing_yards_after_catch", "passing_first_downs", "passing_epa", "passing_cpoe",
-    #   "passing_2pt_conversions", "pacr", "carries", "rushing_yards", "rushing_tds",
-    #   "rushing_fumbles", "rushing_fumbles_lost", "rushing_first_downs", "rushing_epa",
-    #    "rushing_2pt_conversions", "receptions", "targets", "receiving_yards", "receiving_tds",
-    #    "receiving_fumbles", "receiving_fumbles_lost", "receiving_air_yards",
-    #    "receiving_yards_after_catch", "receiving_first_downs", "receiving_epa",
-    #    "receiving_2pt_conversions", "racr", "target_share", "air_yards_share", "wopr",
-    #    "special_teams_tds", "def_tackles_solo", "def_tackles_with_assist", "def_tackle_assists",
-    #    "def_tackles_for_loss", "def_tackles_for_loss_yards", "def_fumbles_forced", "def_sacks",
-    #    "def_sack_yards", "def_qb_hits", "def_interceptions", "def_interception_yards",
-    #    "def_pass_defended", "def_tds", "def_fumbles", "def_safeties", "misc_yards",
-    #    "fumble_recovery_own", "fumble_recovery_yards_own", "fumble_recovery_opp",
-    #    "fumble_recovery_yards_opp", "fumble_recovery_tds", "penalties", "penalty_yards",
-    #    "punt_returns", "punt_return_yards", "kickoff_returns", "kickoff_return_yards",
-    #    "fg_made", "fg_att", "fg_missed", "fg_blocked", "fg_long", "fg_pct", "fg_made_0_19",
-    #    "fg_made_20_29", "fg_made_30_39", "fg_made_40_49", "fg_made_50_59", "fg_made_60_",
-    #    "fg_missed_0_19", "fg_missed_20_29", "fg_missed_30_39", "fg_missed_40_49", "fg_missed_50_59",
-    #    "fg_missed_60_", "fg_made_list", "fg_missed_list", "fg_blocked_list",
-    #    "fg_made_distance", "fg_missed_distance", "fg_blocked_distance", "pat_made",
-    #    "pat_att", "pat_missed", "pat_blocked", "pat_pct", "gwfg_made", "gwfg_att", "gwfg_missed",
-    #    "gwfg_blocked", "gwfg_distance", "fantasy_points", "fantasy_points_ppr"
-    
-    merged_players['fantasy_points'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points'])
-    merged_players['fantasy_points_ppr'] = np.where(merged_players.position == "K", stats.kicker_fpts(merged_players), merged_players['fantasy_points_ppr'])
+    # --- Team defenses: custom DST scoring, keyed by team abbreviation ---
+    team_stats = nfl.load_team_stats(season, 'week').to_pandas()
+    team_stats['team'] = team_stats['team'].replace('LA', 'LAR')
+    defense = stats.def_fpts(team_stats).rename(columns={'fpts': 'fantasy_points'})
+    defense['team'] = defense['team1']
+    defense['position'] = 'DEF'
+    defense['fantasy_points_ppr'] = defense['fantasy_points']
+    defense['sleeper_id'] = defense['cleaned_name']   # DST keyed by team abbrev
+    defense = defense[['week', 'team', 'position', 'cleaned_name',
+                       'sleeper_id', 'fantasy_points', 'fantasy_points_ppr']]
 
-    merged_players['team'] = merged_players['team'].replace('LA', 'LAR')
+    db = pd.concat([players, defense], ignore_index=True)
 
-    merged_players['sleeper_id'] = np.where(merged_players['position'] == 'DEF', merged_players['cleaned_name'], merged_players['sleeper_id'])    
-    
-    if (week <= 0): 
-        #print("Returning player database for entire season.")
-        return merged_players
-    else: 
-        #print("Returning player database for week: ", week)
-        return merged_players[merged_players['week'] == week]
-    
+    if week <= 0:
+        return db
+    return db[db['week'] == week]
+
+
 def getFromID(id, db):
     if id in c.TEAMS:
         return db[db['cleaned_name'] == id]
     player = db[db['sleeper_id'] == id]
     return player
 
+
 def checkForInjury(id, db):
+    # NOTE: relies on an injury_status column (dropped in the registry migration).
+    # Currently unused; wire injury data back in from src/ if this is revived.
     for i in id:
         df = db[db['sleeper_id'] == i]
         df = df.iloc[-1, :]

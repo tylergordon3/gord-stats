@@ -2,13 +2,12 @@ import json
 import pandas as pd
 import nflreadpy as nfl
 import numpy as np
+import src_bridge as bridge
 
 DROP_POS = ['OL', 'CB', 'LB', 'FS', 'DE', 'DT', 'T', 'DL', 'DB', 'OT',
     'G', None, 'C', 'SS', 'LS', 'P', 'ILB', 'NT', 'OLB', 'S', 'OG', 'SAF', 'OG', 'MLB']
 
-with open('data/players.json', 'r', encoding='utf-8') as file:
-    data = json.load(file)
-    sleeper_db = pd.DataFrame.from_dict(data, orient='index')
+sleeper_db = bridge.sleeper_players()
 
 
 stats_players = nfl.load_player_stats()

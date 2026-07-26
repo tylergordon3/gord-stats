@@ -898,11 +898,11 @@
             {
                 "Owner": "The Standard",
                 "roster_id": 6,
-                "num_games": 150,
+                "num_games": 143,
                 "tot_players": 13,
                 "tot_games": 182,
-                "Total Games Missed": 32,
-                "% of Games Missed": "17.58%"
+                "Total Games Missed": 39,
+                "% of Games Missed": "21.43%"
             },
             {
                 "Owner": "padgett",

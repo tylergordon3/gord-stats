@@ -7,7 +7,7 @@ data_manager.main(season_str='2526', season='2025')
 data_manager.main(season_str='2425', season='2024')
 data_manager.main(season_str='2324', season='2023')
 
-#draft.main(season_str='2526')
+draft.main(season_str='2526')
 #draft.main(season_str='2425')
 #draft.main(season_str='2324')
 

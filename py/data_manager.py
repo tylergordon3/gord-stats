@@ -1,5 +1,5 @@
 import injuries
-import player
+import src_bridge as bridge
 import league_data as league_data
 import nflreadpy as nfl
 import utilities as utils
@@ -19,7 +19,8 @@ def main(season_str=SEASON_STR, season=SEASON):
     else:
         curr_overall_week = utils.get_last_completed_week()
     
-    player.player_json()
+    # Refresh the Sleeper cache the legacy code reads (now sourced via src/).
+    bridge.sleeper_players(refresh=True)
 
     data_path = utils.get_project_root() / Path("data")
     inj_path = data_path / Path("injuries") / Path(f'{season_str}.json')

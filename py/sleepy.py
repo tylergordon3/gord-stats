@@ -1,6 +1,7 @@
 import pandas as pd
 import constants as c
 import json
+import src_bridge as bridge
 from sleeper_wrapper import League
 
 league = League(c.LEAGUEID_2025)
@@ -16,9 +17,7 @@ roster_df = roster_df.rename(columns={'owner_id' : 'user_id'})
 info = pd.merge(user_df, roster_df, 'inner', 'user_id')
 info = info[['user_id', 'display_name', 'team_name', 'roster_id']].copy()
 
-with open('data/players.json', 'r', encoding='utf-8') as file:
-    data = json.load(file)
-    df = pd.DataFrame.from_dict(data, orient='index')
+df = bridge.sleeper_players()
 
 
 
