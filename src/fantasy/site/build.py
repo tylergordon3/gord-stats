@@ -23,6 +23,7 @@ def build_all(seasons=None):
     for season_str in seasons:
         schedule.generate(season_str)
         draft.generate(season_str)
+        bestball.generate(season_str)
 
     # Best ball / median live in single (current-season) folders.
     current = util.year_str()
