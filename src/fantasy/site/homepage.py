@@ -1,0 +1,132 @@
+"""
+League homepage generation (src/).
+
+First migrated page. Sections:
+  * All-Time Metrics  - computed directly from data/season/*.json (no archive).
+  * All-Time Injury Impacts - aggregated from the archive's per-season
+    missing_df (see src/site/injuries.py).
+
+    python -m src.site.homepage            # writes docs/index.html
+"""
+import pandas as pd
+
+from src.config import (
+    CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
+)
+from src.site import injuries, styles
+from src.site.frontmatter import add_front_matter
+
+OUTPUT = ROOT / "docs" / "index.html"
+
+# Cumulative season-total columns carried on every weekly row.
+_SUM_COLS = ["median_wins", "h2h_loss", "h2h_wins", "median_loss",
+             "total_wins", "total_loss", "PF", "PA"]
+
+
+def _avg(values):
+    return sum(values) / len(values) if values else 0.0
+
+
+def all_time_metrics() -> pd.DataFrame:
+    """SOS / SOV / Expected-Wins standings aggregated across all stored seasons.
+
+    Metrics mirror the legacy schedule_stats.all_time_metrics, but are computed
+    from the raw season files instead of the pre-archived per-season stats.
+    """
+    season_frames, n_seasons = [], 0
+    for path in sorted(SEASON_DIR.glob("*.json")):
+        df = pd.read_json(path)
+        season_frames.append(df[df["week"] <= FANTASY_REG_WEEKS])
+        n_seasons += 1
+
+    # Per-team season totals (final-week snapshot) + full opponent / win history.
+    snapshots, opps, if_win = [], {}, {}
+    for df in season_frames:
+        last_week = df["week"].max()
+        snapshots.append(df[df["week"] == last_week])
+        for rid, g in df.sort_values("week").groupby("roster_id"):
+            opps.setdefault(rid, []).extend(g["opp"].tolist())
+            if_win.setdefault(rid, []).extend(g["win"].tolist())
+
+    g = pd.concat(snapshots).groupby("roster_id")[_SUM_COLS].sum().reset_index()
+
+    g["Win %"] = g["total_wins"] / (g["total_wins"] + g["total_loss"])
+    winp = dict(zip(g["roster_id"], g["Win %"]))
+
+    # Opponent win % (OW%), opponents-of-opponents (OOW%) -> strength of schedule.
+    g["OW%"] = g["roster_id"].map(lambda r: _avg([winp[o] for o in opps[r]]))
+    oow = dict(zip(g["roster_id"], g["OW%"]))
+    g["OOW%"] = g["roster_id"].map(lambda r: _avg([oow[o] for o in opps[r]]))
+    g["SOS"] = (g["OW%"] * 2 + g["OOW%"]) / 3
+
+    # Strength of victory: avg win % of the opponents you actually beat.
+    g["SOV"] = g["roster_id"].map(
+        lambda r: _avg([winp[o] for o, w in zip(opps[r], if_win[r]) if w == 1])
+    )
+
+    # Expected wins via Pythagorean expectation, scaled to total h2h games played.
+    exp_games = FANTASY_REG_WEEKS * n_seasons
+    g["Exp W (Actual)"] = g.apply(
+        lambda x: f"{(x.PF**EXPW_RATIO) / (x.PF**EXPW_RATIO + x.PA**EXPW_RATIO) * exp_games:.1f}"
+                  f" ({int(x.h2h_wins)})",
+        axis=1,
+    )
+
+    g["Team"] = g["roster_id"].map(ROSTER_NAMES)
+    g["Record"] = g["total_wins"].astype(int).astype(str) + "-" + g["total_loss"].astype(int).astype(str)
+    g["Titles"] = g["Team"].map(lambda t: "👑" if t in CHAMPIONS else "-")
+
+    g = g.sort_values(["total_wins", "PF"], ascending=False)
+    return g[["Team", "Titles", "Record", "PF", "PA", "SOS", "SOV", "Exp W (Actual)"]].reset_index(drop=True)
+
+
+def _style(df: pd.DataFrame):
+    return (
+        df.style
+        .hide(axis="index")
+        .format(lambda x: f"{x:.3f}" if isinstance(x, float) else x)
+        .background_gradient(cmap="RdYlGn_r", subset=["SOS"])
+        .background_gradient(cmap="RdYlGn", subset=["SOV"])
+        .apply(styles.bg_from_pythag_str, subset=["Exp W (Actual)"])
+        .set_table_styles([styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE], overwrite=False)
+        .set_table_attributes('class="sticky-table"')
+    )
+
+
+def metrics_section() -> str:
+    """The All-Time Metrics block of the homepage (heading, legend, table)."""
+    table = _style(all_time_metrics()).to_html()
+    return f"""<h1>All-Time Metrics</h1>
+<p><strong>SOS - Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
+<p><strong>SOV - Strength of Victory</strong>: Green, More wins vs. good teams -> Red, Less wins vs. good teams</p>
+<p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green, Outperformed expectations -> Red, underperformed.<br>
+*Expected Wins calculated using Pythagorean Wins formula using a constant of {EXPW_RATIO}.</p>
+<div class="table-scroll">
+{table}
+</div>"""
+
+
+def injury_section() -> str:
+    """The All-Time Injury Impacts block (heading, note, table, by-season chart)."""
+    img, table = injuries.all_time_missed()
+    return f"""<h1>All-Time Injury Impacts</h1>
+<p>A 'missed game' in this context is defined as a player who was <strong>drafted</strong> by a team and did not play for the entirety of the game.<br>
+Players traded, or picked up on the waiver wire, are counted for the team who originally drafted them (or not at all if not drafted).<br>
+Players who did not play for the entire season, such as Joe Mixon who was on IR for the entire 2025-2026 season, are also not considered.</p>
+<div class="table-scroll">
+{table.to_html()}
+</div>
+<h2>Injury Breakdown by Season</h2>
+<img src="data:image/png;base64,{img}" alt="Games Missed Plot"/>"""
+
+
+def generate(output=OUTPUT):
+    """Write the homepage to `output` (default docs/index.html)."""
+    page = add_front_matter(metrics_section() + injury_section(), "Home")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(page, encoding="utf-8")
+    print(f"Wrote homepage -> {output}")
+
+
+if __name__ == "__main__":
+    generate()

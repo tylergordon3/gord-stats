@@ -2,6 +2,7 @@
 Single entry point to refresh every dataset the site depends on.
 
     python -m src.data_manager                     # all datasets, all seasons
+    python -m src.data_manager --pages             # + regenerate all site pages (update everything)
     python -m src.data_manager --refresh           # force re-fetch of cached data
     python -m src.data_manager --only players       # just the player registry
     python -m src.data_manager --seasons 2526       # limit to one season
@@ -12,28 +13,14 @@ Each dataset is an "update job". Two scopes:
 
 Add a dataset by writing a function and registering it in GLOBAL_JOBS or
 SEASON_JOBS - same extensibility idea as sources/.
-
-NOTE: injuries + season data still delegate to the legacy py/ modules during the
-overhaul. They are wrapped here so there is one command to run; porting them into
-src/ is the next step.
 """
 import argparse
-import sys
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-# New pipeline lives under src/; legacy injury + matchup logic under py/.
-for _p in (str(ROOT), str(ROOT / "py")):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
-
-from src.config import DATA_DIR                       # noqa: E402
-from src.identity.registry import build_registry      # noqa: E402
-from src.identity.history import build_player_seasons  # noqa: E402
-
-import injuries                                        # noqa: E402  (legacy)
-import league_data                                     # noqa: E402  (legacy)
-import utilities as utils                              # noqa: E402  (legacy)
+from src import util
+from src.config import DATA_DIR, LEAGUE_IDS
+from src.identity.history import build_player_seasons
+from src.identity.registry import build_registry
+from src.league import injuries, season as season_data
 
 # (four-digit season key used by the league helpers, folder/file season string).
 SEASONS = [
@@ -41,13 +28,13 @@ SEASONS = [
     ("2024", "2425"),
     ("2023", "2324"),
 ]
-CURRENT_SEASON_STR = utils.getYrStr()
+CURRENT_SEASON_STR = util.year_str()
 
 
 def _end_week(season_str: str) -> int:
     """Last week to pull: live count for the current season, full 14 for past."""
     if season_str == CURRENT_SEASON_STR:
-        return utils.get_last_completed_week()
+        return util.get_last_completed_week()
     return 14
 
 
@@ -68,11 +55,17 @@ def update_history(seasons=None, refresh: bool = False, **_):
 def update_injuries(season4: str, season_str: str, refresh: bool = False, **_):
     """Scrape weekly 'Out' injury reports for a season -> data/injuries/<szn>.json."""
     path = DATA_DIR / "injuries" / f"{season_str}.json"
-    # Completed past seasons don't change; skip the network scrape unless forced.
-    if path.exists() and season_str != CURRENT_SEASON_STR and not refresh:
-        print(f"[injuries] {season_str} already saved, skipping.")
-        return
-    df = injuries.scrape_injuries_all(season4, 1, _end_week(season_str))
+    if path.exists():
+        # Past seasons are immutable once saved - never re-scrape (even with
+        # --refresh); the nfl.com scrape is slow/flaky. The current season
+        # re-scrapes only when forced.
+        if season_str != CURRENT_SEASON_STR:
+            print(f"[injuries] {season_str} already saved (completed season), skipping.")
+            return
+        if not refresh:
+            print(f"[injuries] {season_str} already saved, skipping (use --refresh).")
+            return
+    df = injuries.scrape_all(season4, 1, _end_week(season_str))
     df = df.reset_index(drop=True)
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_json(path)
@@ -85,7 +78,7 @@ def update_season(season4: str, season_str: str, refresh: bool = False, **_):
     if path.exists() and season_str != CURRENT_SEASON_STR and not refresh:
         print(f"[season] {season_str} already saved, skipping.")
         return
-    df = league_data.get_season(_end_week(season_str), season4)
+    df = season_data.get_season(_end_week(season_str), LEAGUE_IDS[season_str])
     df = df.reset_index(drop=True)
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_json(path)
@@ -101,7 +94,7 @@ ALL_JOBS = list(GLOBAL_JOBS) + list(SEASON_JOBS)
 # Orchestration
 # --------------------------------------------------------------------------- #
 
-def main(seasons=None, only=None, refresh: bool = False):
+def main(seasons=None, only=None, refresh: bool = False, pages: bool = False):
     jobs = only or ALL_JOBS
     wanted = set(seasons) if seasons else None
     season_pairs = [
@@ -121,6 +114,12 @@ def main(seasons=None, only=None, refresh: bool = False):
                 print(f"== {name} [{season_str}] ==")
                 SEASON_JOBS[name](season4=season4, season_str=season_str, refresh=refresh)
 
+    # After data is current, optionally regenerate the site pages for these seasons.
+    if pages:
+        from src.site.build import build_all  # lazy: only imports matplotlib/jinja2 when needed
+        print("== pages ==")
+        build_all([ss for _, ss in season_pairs])
+
 
 def _parse_args():
     p = argparse.ArgumentParser(description="Refresh all stored fantasy data.")
@@ -130,9 +129,11 @@ def _parse_args():
                    help="Run only these jobs. Default: all.")
     p.add_argument("--refresh", action="store_true",
                    help="Force re-fetch of cached source pulls / completed seasons.")
+    p.add_argument("--pages", action="store_true",
+                   help="After updating data, regenerate the site pages for these seasons.")
     return p.parse_args()
 
 
 if __name__ == "__main__":
     args = _parse_args()
-    main(seasons=args.seasons, only=args.only, refresh=args.refresh)
+    main(seasons=args.seasons, only=args.only, refresh=args.refresh, pages=args.pages)
