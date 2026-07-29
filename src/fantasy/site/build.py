@@ -11,7 +11,7 @@ import sys
 
 from src import util
 from src.config import LEAGUE_IDS
-from src.site import bestball, draft, homepage, median, schedule
+from src.site import adp, bestball, draft, homepage, median, schedule
 
 # Season codes we have data for, newest first.
 SEASONS = list(LEAGUE_IDS)
@@ -23,7 +23,7 @@ def build_all(seasons=None):
     for season_str in seasons:
         schedule.generate(season_str)
         draft.generate(season_str)
-        bestball.generate(season_str)
+        adp.generate(season_str)
 
     # Best ball / median live in single (current-season) folders.
     current = util.year_str()
