@@ -25,8 +25,11 @@ def _font_for_bg(rgb) -> str:
 
 
 def default_style(df, gradient_cols, cmap: str = "RdYlGn"):
-    """Minimal styled table: hidden index + a color gradient on `gradient_cols`."""
-    return df.style.hide(axis="index").background_gradient(cmap=cmap, subset=gradient_cols)
+    """Styled table: hidden index, grid borders, sticky, + a gradient on `gradient_cols`."""
+    return (df.style.hide(axis="index")
+            .background_gradient(cmap=cmap, subset=gradient_cols)
+            .set_table_styles([GRID_TD, GRID_TH, TABLE_STYLE], overwrite=False)
+            .set_table_attributes('class="sticky-table"'))
 
 
 # --- Win-Loss record helpers (for all-play / schedule-comparison tables) ----- #

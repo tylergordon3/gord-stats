@@ -13,7 +13,7 @@ import pandas as pd
 from src.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from src.site import injuries, styles
+from src.site import adp, injuries, layout, styles
 from src.site.frontmatter import add_front_matter
 
 OUTPUT = ROOT / "docs" / "index.html"
@@ -94,10 +94,9 @@ def _style(df: pd.DataFrame):
 
 
 def metrics_section() -> str:
-    """The All-Time Metrics block of the homepage (heading, legend, table)."""
+    """The All-Time Metrics block of the homepage (legend, table)."""
     table = _style(all_time_metrics()).to_html()
-    return f"""<h1>All-Time Metrics</h1>
-<p><strong>SOS - Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
+    return f"""<p><strong>SOS - Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
 <p><strong>SOV - Strength of Victory</strong>: Green, More wins vs. good teams -> Red, Less wins vs. good teams</p>
 <p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green, Outperformed expectations -> Red, underperformed.<br>
 *Expected Wins calculated using Pythagorean Wins formula using a constant of {EXPW_RATIO}.</p>
@@ -109,8 +108,7 @@ def metrics_section() -> str:
 def injury_section() -> str:
     """The All-Time Injury Impacts block (heading, note, table, by-season chart)."""
     img, table = injuries.all_time_missed()
-    return f"""<h1>All-Time Injury Impacts</h1>
-<p>A 'missed game' in this context is defined as a player who was <strong>drafted</strong> by a team and did not play for the entirety of the game.<br>
+    return f"""<p>A 'missed game' in this context is defined as a player who was <strong>drafted</strong> by a team and did not play for the entirety of the game.<br>
 Players traded, or picked up on the waiver wire, are counted for the team who originally drafted them (or not at all if not drafted).<br>
 Players who did not play for the entire season, such as Joe Mixon who was on IR for the entire 2025-2026 season, are also not considered.</p>
 <div class="table-scroll">
@@ -122,7 +120,16 @@ Players who did not play for the entire season, such as Joe Mixon who was on IR 
 
 def generate(output=OUTPUT):
     """Write the homepage to `output` (default docs/index.html)."""
-    page = add_front_matter(metrics_section() + injury_section(), "Home")
+    sections = [
+        ("metrics", "All-Time Metrics", metrics_section(), True),
+        ("injuries", "All-Time Injury Impacts", injury_section(), False),
+        ("adp", "All-Time Draft vs ADP", adp.all_time_section(), False),
+    ]
+    nav = layout.section_nav([(a, title) for a, title, _, _ in sections])
+    body = layout.HEAD + nav + "".join(
+        layout.details(title, html, open=is_open, anchor=a) for a, title, html, is_open in sections)
+
+    page = add_front_matter(body, "Home")
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(page, encoding="utf-8")
     print(f"Wrote homepage -> {output}")

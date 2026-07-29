@@ -22,7 +22,7 @@ def build_all(seasons=None):
     seasons = seasons or SEASONS
     for season_str in seasons:
         schedule.generate(season_str)
-        draft.generate(season_str)
+        draft.save_games_missed(season_str)   # injury data for the homepage (draft page retired)
         adp.generate(season_str)
 
     # Best ball / median live in single (current-season) folders.
