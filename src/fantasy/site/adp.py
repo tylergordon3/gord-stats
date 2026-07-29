@@ -15,6 +15,7 @@ import sys
 
 import pandas as pd
 
+from src import stats
 from src.config import FORMAL_SEASON, ROOT, SEASON_YEAR
 from src.league.adp import get_adp
 from src.site import draft, styles
@@ -24,23 +25,34 @@ CUTOFF_ROWS = 15
 
 
 def _picks_with_adp(season_str: str) -> pd.DataFrame:
-    """Drafted players joined to consensus ADP by normalized name."""
+    """Drafted players joined to consensus ADP.
+
+    Both sides key through stats.cleaned_name so aliases the draft applies
+    (e.g. Hollywood -> Marquise Brown) line up with the ADP names.
+    """
     picks, _ = draft._build(season_str)
     picks[["overall_pick", "final_rank"]] = picks["Overall Rk"].str.split(" -> ", expand=True).astype(int)
     picks["key"] = picks["Name"].str.lower()
 
-    adp = get_adp(SEASON_YEAR[season_str])[["merge_name", "adp", "adp_min", "adp_max"]]
-    m = picks.merge(adp, left_on="key", right_on="merge_name", how="left")
+    adp = get_adp(SEASON_YEAR[season_str]).copy()
+    adp["key"] = stats.cleaned_name(adp["player"]).str.lower()
+    adp = adp.drop_duplicates(subset="key", keep="first")  # keep the higher-ADP of any name collision
+
+    m = picks.merge(adp[["key", "adp", "adp_min", "adp_max"]], on="key", how="left")
     m["Value"] = (m["overall_pick"] - m["adp"]).round(1)
     rng = m["adp_min"].astype("Int64").astype(str) + "-" + m["adp_max"].astype("Int64").astype(str)
     m["ADP Range"] = rng.where(m["adp"].notna())
     return m
 
 
+_COLS = ["Pick", "overall_pick", "Owner", "Name", "Pos.", "adp", "Value", "final_rank"]
+_RENAME = {"overall_pick": "Overall", "Name": "Player", "Pos.": "Pos",
+           "adp": "ADP", "final_rank": "Finish"}
+
+
 def _main_table(matched: pd.DataFrame):
-    df = matched[["Pick", "Owner", "Name", "Pos.", "adp", "ADP Range", "Value", "final_rank"]]
-    df = df.rename(columns={"Name": "Player", "Pos.": "Pos", "adp": "ADP", "final_rank": "Finish"})
-    df = df.sort_values("Pick")
+    cols = _COLS[:6] + ["ADP Range"] + _COLS[6:]   # insert ADP Range before Value
+    df = matched.sort_values("overall_pick")[cols].rename(columns=_RENAME)
     return (df.style.hide(axis="index")
             .format({"ADP": "{:.1f}", "Value": "{:+.1f}"})
             .background_gradient(cmap="RdYlGn", subset=["Value"], vmin=-40, vmax=40)
@@ -49,9 +61,7 @@ def _main_table(matched: pd.DataFrame):
 
 
 def _ranked(matched: pd.DataFrame, ascending: bool):
-    df = matched.sort_values("Value", ascending=ascending).head(CUTOFF_ROWS)
-    df = df[["Pick", "Owner", "Name", "Pos.", "adp", "Value", "final_rank"]]
-    df = df.rename(columns={"Name": "Player", "Pos.": "Pos", "adp": "ADP", "final_rank": "Finish"})
+    df = matched.sort_values("Value", ascending=ascending).head(CUTOFF_ROWS)[_COLS].rename(columns=_RENAME)
     cmap = "Greens" if not ascending else "Reds_r"
     return (df.style.hide(axis="index")
             .format({"ADP": "{:.1f}", "Value": "{:+.1f}"})
