@@ -97,18 +97,20 @@ def _view(df) -> str:
 
     return (
         _section("Overall",
-                 "<strong>vs ADP</strong> = pick &minus; consensus ADP (+ = value). "
-                 "<strong>vs Finish</strong> = pick &minus; fantasy finish (+ = outperformed the pick).",
+                 "<strong>vs ADP</strong> = Draft position &minus; consensus ADP.<br>"
+                 "<strong>vs Fantasy Finish</strong> = Draft position &minus; fantasy finish.<br>"
+                 "ADP Bars: Higher numbers indicate taking players later than ADP, lower numbers earlier than ADP.<br>"
+                 "Fantasy Finish Bars: Higher numbers indicate players finished better than drafted, lower numbers mean worse.",
                  _bar(overall_bars, "Draft success by manager", "avg rank delta"),
                  _style_summary(summary))
-        + _section("By Position &mdash; Value vs ADP",
-                   "Positional draft rank &minus; positional ADP. Green = drafts that position for value.",
-                   _bar(padp, "Positional value vs ADP by manager", "avg (draft &minus; ADP)"),
+        + _section("By Position &mdash; Draft Position vs ADP",
+                   "Positional draft rank &minus; positional ADP. Positive = drafted later than ADP | Negative = drafted before ADP",
+                   _bar(padp, "Draft Position vs ADP by manager", "avg (draft &minus; ADP)"),
                    _style_pivot(padp))
-        + _section("By Position &mdash; Result vs Finish",
-                   "Positional draft rank &minus; positional finish (players who played). "
-                   "Green = that position's picks outperformed where drafted.",
-                   _bar(pfin, "Positional result vs finish by manager", "avg (draft - finish)"),
+        + _section("By Position &mdash; Draft Position vs Fantasy Finish",
+                   "Positional draft rank &minus; positional fantasy finish."
+                   "Positive = Finished better than drafted | Negative = Finished worse than drafted",
+                   _bar(pfin, "Draft Position vs Fantasy Finish by manager", "avg (draft - finish)"),
                    _style_pivot(pfin))
     )
 
@@ -119,8 +121,9 @@ def generate():
     for season_str in LEAGUE_IDS:
         views.append((season_str, FORMAL_SEASON[season_str], _view(adp.matched_with_manager(season_str))))
 
-    intro = ("<p>How each manager drafts, measured against both consensus ADP and how players "
-             "actually finished. Switch between all-time and a single season below.</p>")
+    intro = ("<p>How each manager drafts, measured against both consensus <strong>Average Draft Position (ADP)</strong> and how players "
+             "actually finished. Switch between all-time and a single season below.<br>"
+             "ADP data taken from FantasyPros for PPR leaguesaveraged across ESPN/Sleeper/Yahoo/CBS/NFL.</p>")
     html = layout.HEAD + intro + layout.view_switcher(views, group="report")
 
     page = add_front_matter(html, "Manager Draft Report")

@@ -96,9 +96,9 @@ def _style(df: pd.DataFrame):
 def metrics_section() -> str:
     """The All-Time Metrics block of the homepage (legend, table)."""
     table = _style(all_time_metrics()).to_html()
-    return f"""<p><strong>SOS - Strength of Schedule</strong>: Green, Easier Schedule -> Red, Harder Schedule</p>
-<p><strong>SOV - Strength of Victory</strong>: Green, More wins vs. good teams -> Red, Less wins vs. good teams</p>
-<p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green, Outperformed expectations -> Red, underperformed.<br>
+    return f"""<p><strong>SOS - Strength of Schedule</strong>: Green = Easier | Red = Harder</p>
+<p><strong>SOV - Strength of Victory</strong>: More Wins Against [Green = Stronger Teams | Read = Weaker Teams] </p>
+<p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green = Better than Expected | Red = Worse than Expected
 *Expected Wins calculated using Pythagorean Wins formula using a constant of {EXPW_RATIO}.</p>
 <div class="table-scroll">
 {table}
@@ -106,11 +106,10 @@ def metrics_section() -> str:
 
 
 def injury_section() -> str:
-    """The All-Time Injury Impacts block (heading, note, table, by-season chart)."""
+    """The All-Time Draft Injury Impacts block (heading, note, table, by-season chart)."""
     img, table = injuries.all_time_missed()
-    return f"""<p>A 'missed game' in this context is defined as a player who was <strong>drafted</strong> by a team and did not play for the entirety of the game.<br>
-Players traded, or picked up on the waiver wire, are counted for the team who originally drafted them (or not at all if not drafted).<br>
-Players who did not play for the entire season, such as Joe Mixon who was on IR for the entire 2025-2026 season, are also not considered.</p>
+    return f"""<p>A player eligible for missed games is: drafted by a team and played in at least one game.<br>
+    Players not eligible include: traded, waiver wire pickups, or on IR for whole season.</p>
 <div class="table-scroll">
 {table.to_html()}
 </div>
