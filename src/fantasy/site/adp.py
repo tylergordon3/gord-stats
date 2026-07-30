@@ -60,7 +60,7 @@ def _picks_with_adp(season_str: str) -> pd.DataFrame:
 # Shared styling
 # --------------------------------------------------------------------------- #
 
-def _style(df, value_fmt, cmap, vmin=None, vmax=None, wide=True, grad_col="Value"):
+def _style(df, value_fmt, cmap, vmin=None, vmax=None, wide=True, grad_col="ADP Value"):
     fmt = {grad_col: value_fmt}
     if "ADP" in df.columns:
         fmt["ADP"] = "{:.1f}"
@@ -78,11 +78,11 @@ def _owner(matched, value_col, fmt, threshold):
         Values=(value_col, lambda v: int((v > threshold).sum())),
     ).reset_index()
     g["Avg"] = g["Avg"].round(1)
-    g = g.rename(columns={"Avg": "Avg Value", "Reaches": f"Reaches (>{threshold})",
+    g = g.rename(columns={"Avg": "Avg ADP Value", "Reaches": f"Reaches (>{threshold})",
                           "Values": f"Values (>{threshold})"})
-    g = g.sort_values("Avg Value", ascending=False)
-    return (g.style.hide(axis="index").format({"Avg Value": fmt})
-            .background_gradient(cmap="RdYlGn", subset=["Avg Value"])
+    g = g.sort_values("Avg ADP Value", ascending=False)
+    return (g.style.hide(axis="index").format({"Avg ADP Value": fmt})
+            .background_gradient(cmap="RdYlGn", subset=["Avg ADP Value"])
             .set_table_styles(_GRID_WIDE, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -103,12 +103,12 @@ def _assemble(values, reaches, owner, full, full_label):
 
 _OVR_COLS = ["Pick", "overall_pick", "Owner", "Name", "Pos.", "adp", "OvrValue", "final_rank"]
 _OVR_RENAME = {"overall_pick": "Overall Pick", "Name": "Player", "Pos.": "Pos",
-               "adp": "ADP", "OvrValue": "Value", "final_rank": "Finish"}
+               "adp": "ADP", "OvrValue": "ADP Value", "final_rank": "Fantasy Finish"}
 
 _POS_COLS = ["Pos.", "Name", "Owner", "draft_pos_rank", "overall_pick", "adp_pos", "PosValue", "final_pos_rank"]
 _POS_RENAME = {"Pos.": "Pos", "Name": "Player", "draft_pos_rank": "Draft Pos",
-               "overall_pick": "Overall Pick", "adp_pos": "ADP Pos", "PosValue": "Value",
-               "final_pos_rank": "Pos Finish"}
+               "overall_pick": "Overall Pick", "adp_pos": "ADP Pos", "PosValue": "ADP Value",
+               "final_pos_rank": "Positional Finish"}
 
 
 def _overall_view(matched):
@@ -125,7 +125,7 @@ def _overall_view(matched):
 
 _OUT_COLS = ["Pick", "overall_pick", "Owner", "Name", "Pos.", "adp", "final_rank", "BeatADP"]
 _OUT_RENAME = {"overall_pick": "Overall Pick", "Name": "Player", "Pos.": "Pos",
-               "adp": "ADP", "final_rank": "Finish", "BeatADP": "Finish vs ADP"}
+               "adp": "ADP", "final_rank": "Fantasy Finish", "BeatADP": "Finish vs ADP"}
 
 
 def _payoff_buckets(d):
@@ -140,9 +140,9 @@ def _payoff_buckets(d):
         g[c] = g[c].round(1)
     order = {"Reach (drafted early)": 0, "On consensus": 1, "Value (drafted late)": 2}
     g = g.sort_values("Call", key=lambda s: s.map(order))
-    g = g.rename(columns={"AvgADP": "Avg ADP", "AvgFinish": "Avg Finish", "FinishVsADP": "Avg Finish vs ADP"})
+    g = g.rename(columns={"AvgADP": "Avg ADP", "AvgFinish": "Avg Fantasy Finish", "FinishVsADP": "Avg Finish vs ADP"})
     return (g.style.hide(axis="index")
-            .format({"Avg ADP": "{:.1f}", "Avg Finish": "{:.1f}", "Avg Finish vs ADP": "{:+.1f}"})
+            .format({"Avg ADP": "{:.1f}", "Avg Fantasy Finish": "{:.1f}", "Avg Finish vs ADP": "{:+.1f}"})
             .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs ADP"])
             .set_table_styles(_GRID_WIDE, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
@@ -188,7 +188,7 @@ def _positional_view(matched):
 
 _ALL_COLS = ["Season", "Manager", "Name", "Pos.", "overall_pick", "adp", "OvrValue", "final_rank"]
 _ALL_RENAME = {"Name": "Player", "Pos.": "Pos", "overall_pick": "Overall Pick",
-               "adp": "ADP", "OvrValue": "Value", "final_rank": "Finish"}
+               "adp": "ADP", "OvrValue": "ADP Value", "final_rank": "Fantasy Finish"}
 
 
 def matched_with_manager(season_str) -> pd.DataFrame:
@@ -242,8 +242,8 @@ def all_time_section() -> str:
 
     links = " &middot; ".join(f'<a href="/{s}/adp/">{FORMAL_SEASON[s]}</a>' for s in LEAGUE_IDS)
     return (
-        "<p>Combined across every league season. <strong>Value</strong> = pick minus consensus "
-        "ADP (+ = value, - = reach); <strong>Finish vs ADP</strong> = ADP minus finish "
+        "<p>Combined across every league season. <strong>ADP Value</strong> = pick minus consensus "
+        "ADP (+ = value, - = reach); <strong>Finish vs ADP</strong> = ADP minus fantasy finish "
         "(+ = beat consensus).</p>"
         f"<p>Full draft-vs-ADP by season: {links}</p>"
         "<h2>Draft Tendencies by Manager</h2>"
@@ -291,9 +291,10 @@ def generate(season_str: str):
 
     intro = (
         "<p>How the league drafted vs <strong>consensus ADP</strong> (FantasyPros PPR, "
-        "averaged across ESPN/Sleeper/Yahoo/CBS/NFL). <strong>Value</strong> = league rank minus "
+        "averaged across ESPN/Sleeper/Yahoo/CBS/NFL). <strong>ADP Value</strong> = league rank minus "
         "consensus rank: <strong>+</strong> = drafted later than consensus (value), "
-        "<strong>-</strong> = drafted earlier (reach). Switch between overall and positional ranks below.</p>"
+        "<strong>-</strong> = drafted earlier (reach). <strong>Fantasy Finish</strong> is the "
+        "player's actual end-of-season rank. Switch between overall and positional ranks below.</p>"
         f"<p>{len(matched)} of {len(m)} picks matched to ADP"
         + (f" (no ADP for: {', '.join(unmatched)})." if unmatched else ".") + "</p>"
     )

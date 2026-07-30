@@ -2,46 +2,80 @@
 Manager Draft Report (src/).
 
 Each manager's drafting success, measured two ways:
-  * vs ADP    = pick - consensus ADP   (+ = drafted value / waited)
+  * ADP Value = pick - consensus ADP   (+ = drafted value / waited)
   * vs Finish = pick - final finish    (+ = the pick outperformed its slot)
 
 Switchable All-Time / per-year, with positional breakdowns so you can see which
-managers draft each position well or poorly.
+managers draft each position well or poorly. Each section shows a bar chart with
+the data table collapsed underneath.
 
     python -m src.site.draft_report
 """
-import numpy as np
-import pandas as pd
+import base64
+import io
 
-from src.config import FORMAL_SEASON, LEAGUE_IDS, ROOT
-from src.site import adp, layout, styles
-from src.site.frontmatter import add_front_matter
+import matplotlib
+matplotlib.use("Agg")            # non-interactive backend
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np               # noqa: E402
+
+from src.config import FORMAL_SEASON, LEAGUE_IDS, ROOT  # noqa: E402
+from src.site import adp, layout, styles                # noqa: E402
+from src.site.frontmatter import add_front_matter        # noqa: E402
 
 _POS_ORDER = ["QB", "RB", "WR", "TE"]
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
 
 
-def _summary(df):
+# --------------------------------------------------------------------------- #
+# Data
+# --------------------------------------------------------------------------- #
+
+def _summary_df(df):
     g = df.groupby("Manager").agg(
-        Picks=("vsADP", "count"), vsADP=("vsADP", "mean"), vsFinish=("vsFinish", "mean")
-    ).reset_index()
-    g["vsADP"] = g["vsADP"].round(1)
-    g["vsFinish"] = g["vsFinish"].round(1)
-    g = g.rename(columns={"vsADP": "Avg vs ADP", "vsFinish": "Avg vs Finish"})
-    g = g.sort_values("Avg vs Finish", ascending=False)
-    return (g.style.hide(axis="index")
-            .format({"Avg vs ADP": "{:+.1f}", "Avg vs Finish": "{:+.1f}"})
-            .background_gradient(cmap="RdYlGn", subset=["Avg vs ADP"])
+        Picks=("vsADP", "count"), ADPValue=("vsADP", "mean"), FinishValue=("vsFinish", "mean")
+    ).round(1).reset_index()
+    return g.sort_values("FinishValue", ascending=False)
+
+
+def _pivot_df(df, value_col):
+    p = df.pivot_table(index="Manager", columns="Pos.", values=value_col, aggfunc="mean").round(1)
+    p = p.reindex(columns=[c for c in _POS_ORDER if c in p.columns])
+    p.columns.name = None
+    return p
+
+
+# --------------------------------------------------------------------------- #
+# Rendering
+# --------------------------------------------------------------------------- #
+
+def _bar(df, title, ylabel) -> str:
+    ax = df.plot(kind="bar", figsize=(10, 4.3), width=0.8, edgecolor="#333",
+                 title=title, colormap="tab10")
+    ax.axhline(0, color="#333", linewidth=0.9)
+    ax.set_xlabel("")
+    ax.set_ylabel(ylabel)
+    ax.tick_params(axis="x", labelrotation=35)
+    ax.legend(fontsize=9, ncol=min(4, max(1, len(df.columns))))
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", bbox_inches="tight", dpi=110)
+    plt.close()
+    img = base64.b64encode(buf.getvalue()).decode("utf-8")
+    return f'<img src="data:image/png;base64,{img}" style="max-width:100%"/>'
+
+
+def _style_summary(g):
+    d = g.rename(columns={"ADPValue": "Avg ADP Value", "FinishValue": "Avg vs Finish"})
+    return (d.style.hide(axis="index")
+            .format({"Avg ADP Value": "{:+.1f}", "Avg vs Finish": "{:+.1f}"})
+            .background_gradient(cmap="RdYlGn", subset=["Avg ADP Value"])
             .background_gradient(cmap="RdYlGn", subset=["Avg vs Finish"])
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
 
-def _pos_pivot(df, value_col):
-    p = df.pivot_table(index="Manager", columns="Pos.", values=value_col, aggfunc="mean").round(1)
-    p = p.reindex(columns=[c for c in _POS_ORDER if c in p.columns])
-    p.columns.name = None
-    bound = np.nanmax(np.abs(p.to_numpy(dtype="float64")))
+def _style_pivot(p):
+    bound = np.nanmax(np.abs(p.to_numpy(dtype="float64"))) if p.size else 1.0
     bound = bound if bound and not np.isnan(bound) else 1.0
     return (p.style.format("{:+.1f}", na_rep="—")
             .background_gradient(cmap="RdYlGn", axis=None, vmin=-bound, vmax=bound)
@@ -49,20 +83,33 @@ def _pos_pivot(df, value_col):
             .set_table_attributes('class="sticky-table"')).to_html()
 
 
+def _section(title, desc, chart, table) -> str:
+    return (f"<h3>{title}</h3><p>{desc}</p>{chart}"
+            + layout.details("Show data table", f"<div class='table-scroll'>{table}</div>"))
+
+
 def _view(df) -> str:
+    summary = _summary_df(df)
+    overall_bars = summary.set_index("Manager")[["ADPValue", "FinishValue"]].rename(
+        columns={"ADPValue": "vs ADP", "FinishValue": "vs Finish"})
+    padp = _pivot_df(df, "PosValue")
+    pfin = _pivot_df(df, "PosVsFinish")
+
     return (
-        "<h3>Overall</h3>"
-        "<p><strong>vs ADP</strong> = pick &minus; consensus ADP (+ = value drafted). "
-        "<strong>vs Finish</strong> = pick &minus; finish (+ = outperformed the pick).</p>"
-        f"<div class='table-scroll'>{_summary(df)}</div>"
-        "<h3>By Position &mdash; Value vs ADP</h3>"
-        "<p>Average positional draft rank &minus; positional ADP. Green = drafts that position "
-        "for value; red = reaches. (e.g. drafting the WR20 when consensus had them WR12.)</p>"
-        f"<div class='table-scroll'>{_pos_pivot(df, 'PosValue')}</div>"
-        "<h3>By Position &mdash; Result vs Finish</h3>"
-        "<p>Average positional draft rank &minus; positional finish (players who played). "
-        "Green = that position's picks finished above where drafted.</p>"
-        f"<div class='table-scroll'>{_pos_pivot(df, 'PosVsFinish')}</div>"
+        _section("Overall",
+                 "<strong>vs ADP</strong> = pick &minus; consensus ADP (+ = value). "
+                 "<strong>vs Finish</strong> = pick &minus; fantasy finish (+ = outperformed the pick).",
+                 _bar(overall_bars, "Draft success by manager", "avg rank delta"),
+                 _style_summary(summary))
+        + _section("By Position &mdash; Value vs ADP",
+                   "Positional draft rank &minus; positional ADP. Green = drafts that position for value.",
+                   _bar(padp, "Positional value vs ADP by manager", "avg (draft &minus; ADP)"),
+                   _style_pivot(padp))
+        + _section("By Position &mdash; Result vs Finish",
+                   "Positional draft rank &minus; positional finish (players who played). "
+                   "Green = that position's picks outperformed where drafted.",
+                   _bar(pfin, "Positional result vs finish by manager", "avg (draft - finish)"),
+                   _style_pivot(pfin))
     )
 
 

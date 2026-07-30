@@ -5,14 +5,17 @@ Include HEAD once per page, then use section_nav() and details().
 """
 
 HEAD = """<style>
-.section-nav{margin:10px 0 18px;padding:8px 14px;background:#f4f4f4;border-radius:6px;font-size:14px}
+.section-nav{margin:10px 0 18px;padding:8px 14px;background:#dfe6ee;border-radius:6px;font-size:14px}
 .section-nav a{margin-right:16px;text-decoration:none;white-space:nowrap}
-details.section{margin:12px 0;border:1px solid #ddd;border-radius:6px;padding:2px 12px}
-details.section>summary{cursor:pointer;font-weight:bold;font-size:18px;padding:8px 0;list-style:none}
+details.section{margin:14px 0;border:1px solid #b9c4d0;border-radius:6px;overflow:hidden;background:#fbfcfe}
+details.section>summary{cursor:pointer;font-weight:bold;font-size:17px;padding:10px 14px;
+  background:#dfe6ee;color:#17293b;list-style:none}
+details.section>summary:hover{background:#d1dbe7}
 details.section>summary::-webkit-details-marker{display:none}
-details.section>summary::before{content:'\\25B8 ';color:#888}
-details.section[open]>summary::before{content:'\\25BE ';color:#888}
-details.section[open]>summary{border-bottom:1px solid #eee;margin-bottom:8px}
+details.section>summary::before{content:'\\25B8 ';color:#4a6178}
+details.section[open]>summary::before{content:'\\25BE ';color:#4a6178}
+details.section[open]>summary{border-bottom:1px solid #b9c4d0}
+details.section>*:not(summary){margin:10px 14px}
 </style>
 <script>
 function openHashTarget(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);
