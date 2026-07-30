@@ -8,12 +8,19 @@ import matplotlib as mpl
 import matplotlib.colors as mcolors
 from matplotlib.colors import Normalize
 
-# Table cell / header / layout styles.
-GRID_TD = {"selector": "td", "props": [("border", "1px solid black")]}
-GRID_TH = {"selector": "th", "props": [("border", "1px solid black")]}
+# Table cell / header / layout styles (shared across all generated tables).
+GRID_TD = {
+    "selector": "td",
+    "props": [("border", "1px solid #cfd6dd"), ("padding", "6px 12px"), ("text-align", "center")],
+}
+GRID_TH = {
+    "selector": "th",
+    "props": [("border", "1px solid #cfd6dd"), ("padding", "8px 12px"), ("text-align", "center"),
+              ("background-color", "#e8edf2"), ("color", "#141414"), ("font-weight", "600")],
+}
 TABLE_STYLE = {
-    "selector": "th.col_heading,td",
-    "props": [("width", "100px"), ("text-align", "center"), ("table-layout", "fixed")],
+    "selector": "",
+    "props": [("border-collapse", "collapse"), ("margin", "6px 0"), ("font-size", "14px")],
 }
 
 

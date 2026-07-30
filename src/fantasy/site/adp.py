@@ -102,12 +102,12 @@ def _assemble(values, reaches, owner, full, full_label):
 # --------------------------------------------------------------------------- #
 
 _OVR_COLS = ["Pick", "overall_pick", "Owner", "Name", "Pos.", "adp", "OvrValue", "final_rank"]
-_OVR_RENAME = {"overall_pick": "Overall", "Name": "Player", "Pos.": "Pos",
+_OVR_RENAME = {"overall_pick": "Overall Pick", "Name": "Player", "Pos.": "Pos",
                "adp": "ADP", "OvrValue": "Value", "final_rank": "Finish"}
 
 _POS_COLS = ["Pos.", "Name", "Owner", "draft_pos_rank", "overall_pick", "adp_pos", "PosValue", "final_pos_rank"]
 _POS_RENAME = {"Pos.": "Pos", "Name": "Player", "draft_pos_rank": "Draft Pos",
-               "overall_pick": "Overall", "adp_pos": "ADP Pos", "PosValue": "Value",
+               "overall_pick": "Overall Pick", "adp_pos": "ADP Pos", "PosValue": "Value",
                "final_pos_rank": "Pos Finish"}
 
 
@@ -124,7 +124,7 @@ def _overall_view(matched):
 
 
 _OUT_COLS = ["Pick", "overall_pick", "Owner", "Name", "Pos.", "adp", "final_rank", "BeatADP"]
-_OUT_RENAME = {"overall_pick": "Overall", "Name": "Player", "Pos.": "Pos",
+_OUT_RENAME = {"overall_pick": "Overall Pick", "Name": "Player", "Pos.": "Pos",
                "adp": "ADP", "final_rank": "Finish", "BeatADP": "Finish vs ADP"}
 
 
@@ -187,20 +187,28 @@ def _positional_view(matched):
 # --------------------------------------------------------------------------- #
 
 _ALL_COLS = ["Season", "Manager", "Name", "Pos.", "overall_pick", "adp", "OvrValue", "final_rank"]
-_ALL_RENAME = {"Name": "Player", "Pos.": "Pos", "overall_pick": "Overall",
+_ALL_RENAME = {"Name": "Player", "Pos.": "Pos", "overall_pick": "Overall Pick",
                "adp": "ADP", "OvrValue": "Value", "final_rank": "Finish"}
+
+
+def matched_with_manager(season_str) -> pd.DataFrame:
+    """One season's ADP-matched picks tagged with Season, stable Manager, and
+    both success metrics: vsADP (pick - ADP) and vsFinish (pick - finish)."""
+    m = _picks_with_adp(season_str)
+    m = m[m["adp"].notna()].copy()
+    m["Season"] = FORMAL_SEASON[season_str]
+    m["Manager"] = m["roster_id"].map(ROSTER_NAMES)
+    m["vsADP"] = m["OvrValue"]
+    m["vsFinish"] = m["overall_pick"] - m["final_rank"]
+    # Positional versions (comparable across positions; overall finish favors QBs).
+    # PosValue already = draft_pos_rank - adp_pos. Exclude DNP (final_pos_rank sentinel 999).
+    m["PosVsFinish"] = (m["draft_pos_rank"] - m["final_pos_rank"]).where(m["final_pos_rank"] < 900)
+    return m
 
 
 def _all_seasons() -> pd.DataFrame:
     """Every season's matched picks, tagged with Season + stable Manager name."""
-    frames = []
-    for season_str in LEAGUE_IDS:
-        m = _picks_with_adp(season_str)
-        m = m[m["adp"].notna()].copy()
-        m["Season"] = FORMAL_SEASON[season_str]
-        m["Manager"] = m["roster_id"].map(ROSTER_NAMES)
-        frames.append(m)
-    return pd.concat(frames, ignore_index=True)
+    return pd.concat([matched_with_manager(s) for s in LEAGUE_IDS], ignore_index=True)
 
 
 def _manager_summary(df):

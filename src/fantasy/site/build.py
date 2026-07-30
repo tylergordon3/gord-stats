@@ -11,7 +11,7 @@ import sys
 
 from src import util
 from src.config import LEAGUE_IDS
-from src.site import adp, bestball, draft, homepage, median, schedule
+from src.site import adp, bestball, draft, draft_report, homepage, median, schedule
 
 # Season codes we have data for, newest first.
 SEASONS = list(LEAGUE_IDS)
@@ -31,6 +31,7 @@ def build_all(seasons=None):
         bestball.generate(current)
         median.generate(current)
 
+    draft_report.generate()   # all-time + per-year manager draft report
     homepage.generate()
 
 
