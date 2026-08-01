@@ -58,7 +58,7 @@ def _bar(df, title, ylabel) -> str:
     ax.tick_params(axis="x", labelrotation=35)
     ax.legend(fontsize=9, ncol=min(4, max(1, len(df.columns))))
     buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight", dpi=110)
+    plt.savefig(buf, format="png", bbox_inches="tight", dpi=90)  # 60 charts on the page; keep bytes down
     plt.close()
     img = base64.b64encode(buf.getvalue()).decode("utf-8")
     return f'<img src="data:image/png;base64,{img}" style="max-width:100%"/>'
@@ -115,16 +115,39 @@ def _view(df) -> str:
     )
 
 
-def generate():
-    """Build and write docs/draft-report/index.html."""
-    views = [("alltime", "All-Time", _view(adp._all_seasons()))]
-    for season_str in LEAGUE_IDS:
-        views.append((season_str, FORMAL_SEASON[season_str], _view(adp.matched_with_manager(season_str))))
+# Round filters: (id, label, (low, high) inclusive).
+_ROUND_FILTERS = [
+    ("all", "All Rounds", (1, 99)),
+    ("r1_2", "Rounds 1-2", (1, 2)),
+    ("r1_4", "Rounds 1-4", (1, 4)),
+    ("r1_8", "Rounds 1-8", (1, 8)),
+    ("r4_8", "Rounds 4-8", (4, 8)),
+]
 
-    intro = ("<p>How each manager drafts, measured against both consensus <strong>Average Draft Position (ADP)</strong> and how players "
-             "actually finished. Switch between all-time and a single season below.<br>"
-             "ADP data taken from FantasyPros for PPR leaguesaveraged across ESPN/Sleeper/Yahoo/CBS/NFL.</p>")
-    html = layout.HEAD + intro + layout.view_switcher(views, group="report")
+
+def _seasons_df(year_id):
+    return adp._all_seasons() if year_id == "alltime" else adp.matched_with_manager(year_id)
+
+
+def generate():
+    """Build and write docs/draft-report/index.html (year x round-filter views)."""
+    years = [("alltime", "All-Time")] + [(s, FORMAL_SEASON[s]) for s in LEAGUE_IDS]
+    rounds = [(rid, label) for rid, label, _ in _ROUND_FILTERS]
+
+    content = {}
+    for year_id, _ in years:
+        base = _seasons_df(year_id)
+        for rid, _, (lo, hi) in _ROUND_FILTERS:
+            df = base[(base["round"] >= lo) & (base["round"] <= hi)]
+            content[(year_id, rid)] = _view(df)
+
+    intro = ("<p>How each manager drafts, measured against both consensus <strong>Average Draft "
+             "Position (ADP)</strong> and how players actually finished. Filter by season and by "
+             "draft rounds below.<br>ADP data from FantasyPros PPR, averaged across "
+             "ESPN/Sleeper/Yahoo/CBS/NFL.</p>")
+    switcher = layout.two_axis_switcher(years, rounds, content,
+                                        row_label="Season:", col_label="Rounds:", group="report")
+    html = layout.HEAD + intro + switcher
 
     page = add_front_matter(html, "Manager Draft Report")
     out = ROOT / "docs" / "draft-report" / "index.html"

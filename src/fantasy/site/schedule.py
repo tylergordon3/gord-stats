@@ -13,7 +13,7 @@ import sys
 import pandas as pd
 
 from src.config import EXPW_RATIO, FANTASY_REG_WEEKS, FORMAL_SEASON, ROOT, ROSTER_NAMES, SEASON_DIR
-from src.site import styles
+from src.site import layout, styles
 from src.site.frontmatter import add_front_matter
 
 _GRID = [styles.GRID_TD, styles.GRID_TH]
@@ -169,7 +169,8 @@ def generate(season_str: str):
     # Freeze the first column on horizontal scroll (first <td> of each row).
     lines = [ln.replace("<td>", '<td class="first-col">', 1) if "<td>" in ln else ln
              for ln in html.split("\n")]
-    page = add_front_matter("\n".join(lines), f"Schedule Stats {FORMAL_SEASON[season_str]}")
+    body = layout.season_bar(season_str, "schedule") + "\n".join(lines)
+    page = add_front_matter(body, f"Schedule Stats {FORMAL_SEASON[season_str]}")
 
     out = ROOT / "docs" / season_str / "schedule" / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)

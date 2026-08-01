@@ -1,11 +1,8 @@
 <div id="nav">
   <nav class="simple-nav">
     {% for item in site.data.nav.docs %}
-      <a href="{{ item.url | absolute_url }}" 
-         class="dynamic-nav-item" 
-         data-url-template="{{ item.url | absolute_url }}">
-         {{ item.title }}
-      </a>
+      {% assign href = item.url | replace: 'YEAR_VAL', site.current_season %}
+      <a href="{{ href | absolute_url }}" class="nav-item">{{ item.title }}</a>
     {% endfor %}
   </nav>
 </div>

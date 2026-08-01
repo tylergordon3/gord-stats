@@ -25,6 +25,25 @@ window.addEventListener('load',openHashTarget);
 </script>"""
 
 
+_SEASON_CSS = """<style>
+.season-bar{margin:12px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.season-bar .switch-label{font-weight:bold;margin-right:6px}
+.season-bar a{padding:6px 14px;border:1px solid #888;border-radius:5px;background:#eee;
+  text-decoration:none;color:#222;font-size:14px}
+.season-bar a.active{background:#3CB371;color:#fff;font-weight:bold;border-color:#2e8b57}
+</style>"""
+
+
+def season_bar(current: str, path: str) -> str:
+    """Per-page season selector: links to /<season>/<path>/, current highlighted."""
+    from src.config import FORMAL_SEASON, LEAGUE_IDS
+    links = "".join(
+        f'<a class="{"active" if s == current else ""}" href="/{s}/{path}/">{FORMAL_SEASON[s]}</a>'
+        for s in LEAGUE_IDS
+    )
+    return _SEASON_CSS + f'<div class="season-bar"><span class="switch-label">Season:</span>{links}</div>'
+
+
 def section_nav(items) -> str:
     """items: list of (anchor_id, label) -> a 'Jump to:' bar."""
     links = "".join(f'<a href="#{a}">{label}</a>' for a, label in items)
@@ -38,7 +57,8 @@ def details(summary: str, body: str, open: bool = False, anchor: str = None) -> 
 
 
 _SWITCH_CSS = """<style>
-.view-switch{margin:14px 0;display:flex;flex-wrap:wrap;gap:6px}
+.view-switch{margin:10px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.view-switch .switch-label{font-weight:bold;margin-right:6px;min-width:58px}
 .view-switch button{padding:7px 16px;cursor:pointer;border:1px solid #888;background:#eee;
   border-radius:5px;font-size:15px}
 .view-switch button.active{background:#3CB371;color:#fff;font-weight:bold;border-color:#2e8b57}
@@ -63,3 +83,41 @@ function show_{group}(v){{
 }}
 </script>"""
     return _SWITCH_CSS + f'<div class="view-switch">{"".join(buttons)}</div>' + "".join(divs) + js
+
+
+def two_axis_switcher(rows, cols, content, row_label="", col_label="", group="v") -> str:
+    """Two independent button groups (rows x cols) selecting one content pane.
+
+    rows/cols: list of (id, label). content: dict {(row_id, col_id): html}. First
+    of each axis shown initially.
+    """
+    def btns(axis, kind):
+        out = []
+        for i, (aid, label) in enumerate(axis):
+            active = " active" if i == 0 else ""
+            out.append(f'<button class="{group}-{kind}{active}" data-{kind}="{aid}" '
+                       f'onclick="{group}_pick(this)">{label}</button>')
+        return "".join(out)
+
+    divs = []
+    for i, (rid, _) in enumerate(rows):
+        for j, (cid, _) in enumerate(cols):
+            hidden = "" if (i == 0 and j == 0) else ' style="display:none"'
+            divs.append(f'<div class="{group}-view" id="{group}-{rid}-{cid}"{hidden}>{content[(rid, cid)]}</div>')
+
+    js = f"""<script>
+var {group}_r="{rows[0][0]}", {group}_c="{cols[0][0]}";
+function {group}_pick(btn){{
+  if(btn.dataset.r){{ {group}_r=btn.dataset.r;
+    document.querySelectorAll('.{group}-r').forEach(function(b){{b.classList.toggle('active', b===btn);}}); }}
+  if(btn.dataset.c){{ {group}_c=btn.dataset.c;
+    document.querySelectorAll('.{group}-c').forEach(function(b){{b.classList.toggle('active', b===btn);}}); }}
+  document.querySelectorAll('.{group}-view').forEach(function(v){{v.style.display='none';}});
+  var el=document.getElementById('{group}-'+{group}_r+'-'+{group}_c); if(el) el.style.display='';
+}}
+</script>"""
+
+    return (_SWITCH_CSS
+            + f'<div class="view-switch"><span class="switch-label">{row_label}</span>{btns(rows, "r")}</div>'
+            + f'<div class="view-switch"><span class="switch-label">{col_label}</span>{btns(cols, "c")}</div>'
+            + "".join(divs) + js)

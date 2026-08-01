@@ -1,3 +1,6 @@
+# Latest season — season-specific nav links default here (per-page buttons switch season).
+current_season      : "2526"
+
 # Where things are
 source              : .
 destination         : ./_site

@@ -300,7 +300,7 @@ def generate(season_str: str):
     )
 
     html = (
-        layout.HEAD + intro + _TOGGLE
+        layout.HEAD + layout.season_bar(season_str, "adp") + intro + _TOGGLE
         + f'<div id="view-overall">{_overall_view(matched)}</div>'
         + f'<div id="view-positional" style="display:none">{_positional_view(matched)}</div>'
     )
