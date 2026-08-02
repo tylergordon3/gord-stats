@@ -8,10 +8,9 @@ Every page is now global - schedule, draft-vs-ADP and the draft report each hold
 every season behind on-page season buttons. --seasons only narrows the per-season
 data archived for the homepage.
 
-NOTE: the weekly pages (src.site.bestball, src.site.median) are intentionally
-not wired in - removed from the site for now (not operational). To bring one
-back, import it and call its generate() for the current season below (they were
-previously gated on util.in_fantasy_season()).
+NOTE: the weekly Best Ball / Median pages were retired. src.site.bestball and
+src.site.median survive as calculation libraries (compute()) with no HTML
+rendering; wiring either back into the site means writing a new page for it.
 """
 import argparse
 

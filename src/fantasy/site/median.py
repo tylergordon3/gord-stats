@@ -1,26 +1,20 @@
 """
-Median-race page (src/): for the in-progress week, who is locked above/below the
-league median (5th place), with max-points scenarios. Current-season section
-(writes docs/median/), matching the legacy site structure.
+Median-race calculations (src/): for a given week, who is locked above/below the
+league median (5th place), using max-points scenarios for players yet to play.
 
-    python -m src.site.median 2526
+Library only - the Median pages were retired from the site, so nothing here
+writes HTML. `compute()` returns one frame per week, each row carrying the team's
+points, hypothetical max, rank and status ("W" / "L" / "tbd").
+
+    from src.site.median import compute
+    by_week = compute("2526")
 """
-import datetime
-import re
-import sys
-
 import pandas as pd
-from pytz import timezone
 from sleeper_wrapper import League
 
 from src import stats, util
-from src.config import LEAGUE_IDS, MAX_POINTS, ROOT, SEASON_YEAR
+from src.config import LEAGUE_IDS, MAX_POINTS, SEASON_YEAR
 from src.league import rosters as rosters_mod
-from src.site import styles
-from src.site.frontmatter import add_front_matter
-from src.site.landing import generate_landing
-
-OUT_DIR = ROOT / "docs" / "median"
 
 
 def _to_play(starters, weeks_players, db, week):
@@ -40,17 +34,6 @@ def _hypothetical_max(names, db):
         pos = players[players["cleaned_name"] == name]["position"].mode()
         total += MAX_POINTS.get(list(pos)[0], 0)
     return total
-
-
-def _pretty_players(names) -> str:
-    out = []
-    for name in names:
-        if name.isupper():
-            out.append(name)
-            continue
-        parts = re.findall(r"[A-Z][a-z]*", name)
-        out.append(f"{parts[0][0]}. {parts[-1]}" if parts else name)
-    return ", ".join(out)
 
 
 def _set_winners(team, df):
@@ -84,60 +67,11 @@ def _rule_out_set(matchup_df):
     return df
 
 
-def _median_scenarios(df) -> str:
-    html = ""
-    for _, row in df.iterrows():
-        if row["status"] in ("L", "W"):
-            html += f"<p><strong>{row['team']}</strong>, has: <strong>{row['status']}</strong> vs the median.</p>"
-        elif row["rank"] <= 5:
-            check = df[(df["status"] == "tbd") & (df["rank"] > row["rank"])]
-            to_lose = int(6 - row["rank"])
-            remain = f" Remaining players: {_pretty_players(row['to_play'])}" if row["num_to_play"] > 0 else ""
-            html += f"<p><strong>{row['team']} loses median if {to_lose} / {len(check)} pass.{remain}</strong></p>"
-            for opp in check.itertuples():
-                diff = round(row["points"] - opp.points, 2)
-                html += (f"<p><u>{opp.team}:</u> {_pretty_players(opp.to_play)} "
-                         f"outscore(s) remaining players by <strong>{diff}</strong></p>")
-    return html
-
-
-def _highlight_rows(row, status_by_team):
-    status = status_by_team.get(row["Team"])
-    if status == "W":
-        return ["background-color: #3CB371"] * len(row)
-    if status == "L":
-        return ["background-color: #FF8080"] * len(row)
-    if row["Rank"] <= 5:
-        return ["background-color: lightgreen"] * len(row)
-    return [""] * len(row)
-
-
-def _week_page(prepped, week):
-    if prepped.empty:
-        return  # no data for this week yet (matches legacy: write nothing)
-
-    scenarios = _median_scenarios(prepped)
-    status_by_team = dict(zip(prepped["team"], prepped["status"]))
-    view = prepped.copy()
-    view["Players"] = view["to_play"].apply(_pretty_players)
-    view = view.sort_values(["rank", "max_pts"], ascending=[True, False])
-    view["rank"] = view["rank"].astype(int)
-    view = view.rename(columns={"team": "Team", "points": "Points", "max_pts": "Max Points", "rank": "Rank"})
-    view = view[["Rank", "Team", "Players", "Points", "Max Points"]]
-
-    styler = (view.style.apply(_highlight_rows, axis=1, status_by_team=status_by_team)
-              .format(precision=2).hide(axis="index"))
-    table = f'<div class="table-scroll">{styler.to_html(index=False)}</div>'
-
-    stamp = datetime.datetime.now(timezone("EST")).strftime("Last Update: %A %m/%d/%y %I:%M %p")
-    page = add_front_matter(stamp + "<br>" + table + scenarios, f"Median - Week {week}")
-    (OUT_DIR / f"week{week}_median.html").write_text(page, encoding="utf-8")
-
-
-def _median_week(league, week, rosters, db):
+def median_week(league, week, rosters, db) -> pd.DataFrame:
+    """One week's median race, or an empty frame if the week has no matchups."""
     matchups = pd.DataFrame.from_dict(league.get_matchups(week))
     if matchups.empty or "starters" not in matchups.columns:
-        return  # week not played / no matchups
+        return pd.DataFrame()   # week not played / no matchups
     starters = matchups[["roster_id", "matchup_id", "starters"]].copy()
 
     weeks_players = db[db["week"] == week]
@@ -147,21 +81,19 @@ def _median_week(league, week, rosters, db):
     matchups["to_play"] = combined["to_play"]
     matchups["team"] = combined["team_name"]
     matchups["max_pts"] = matchups["to_play"].apply(lambda n: _hypothetical_max(n, db)) + matchups["points"]
-    _week_page(_rule_out_set(matchups), week)
+    return _rule_out_set(matchups)
 
 
-def generate(season_str: str):
-    """Regenerate the Median section for a season's weeks."""
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+def compute(season_str: str) -> dict[int, pd.DataFrame]:
+    """Median race for every played week of a season, keyed by week number."""
     league = League(LEAGUE_IDS[season_str])
     rosters = rosters_mod.get(league)[["roster_id", "team_name"]]
     db = stats.get(0, SEASON_YEAR[season_str])   # full-season points, computed once
     last = min(14, util.get_week()) if season_str == util.year_str() else 14
+
+    weeks = {}
     for week in range(1, last + 1):
-        _median_week(league, week, rosters, db)
-    generate_landing(str(OUT_DIR), "median", "Median")
-    print(f"Wrote Median section -> {OUT_DIR}")
-
-
-if __name__ == "__main__":
-    generate(sys.argv[1] if len(sys.argv) > 1 else "2526")
+        df = median_week(league, week, rosters, db)
+        if not df.empty:
+            weeks[week] = df
+    return weeks

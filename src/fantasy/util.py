@@ -1,10 +1,8 @@
 """
-Date / NFL-week helpers and small JSON I/O utilities (ported from py/utilities).
+Date / NFL-week helpers.
 """
 import math
 from datetime import date, timedelta
-
-import pandas as pd
 
 
 def current_season_years():
@@ -40,16 +38,3 @@ def get_last_completed_week() -> int:
     approx = (date.today() - first).days / 7
     today = date.today()
     return math.ceil(approx) if 0 < today.weekday() < 4 else math.floor(approx)
-
-
-def in_fantasy_season() -> bool:
-    """True during the NFL season window (weeks 1-18); False in the offseason."""
-    return 1 <= get_week() <= 18
-
-
-def load_df_from_json(filename):
-    """Load a DataFrame from JSON, or None if missing/invalid."""
-    try:
-        return pd.read_json(filename)
-    except (FileNotFoundError, ValueError):
-        return None
