@@ -17,7 +17,7 @@ import argparse
 
 from src.config import LEAGUE_IDS
 from src.league import adp_board
-from src.site import adp, draft, draft_report, homepage, schedule
+from src.site import adp, draft, draft_dna, draft_report, homepage, schedule
 
 # Season codes we have data for, newest first.
 SEASONS = list(LEAGUE_IDS)
@@ -35,6 +35,7 @@ def build_all(seasons=None, refresh_adp=False):
     schedule.generate()
     adp.generate()
     draft_report.generate()   # all-time + per-year manager draft report
+    draft_dna.generate()      # owner draft habits across every draft
     homepage.generate()
 
 

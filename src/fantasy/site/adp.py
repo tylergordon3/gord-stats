@@ -48,7 +48,11 @@ def _picks_with_adp(season_str: str) -> pd.DataFrame:
     adp["adp_pos"] = adp["pos_rank"].str.extract(r"(\d+)")[0].astype("Int64")
     adp = adp.drop_duplicates(subset="key", keep="first")
 
-    m = picks.merge(adp[["key", "adp", "adp_min", "adp_max", "adp_pos"]], on="key", how="left")
+    # adp_player carries the source's display spelling ("Ja'Marr Chase"), since
+    # picks["Name"] is the CamelCase join key ("JaMarrChase").
+    adp = adp.rename(columns={"player": "adp_player"})
+    m = picks.merge(adp[["key", "adp_player", "adp", "adp_min", "adp_max", "adp_pos"]],
+                    on="key", how="left")
     m["OvrValue"] = (m["overall_pick"] - m["adp"]).round(1)
     m["PosValue"] = (m["draft_pos_rank"] - m["adp_pos"]).astype("Int64")
     # Finish vs ADP: consensus ADP minus actual finish (positive = beat consensus).

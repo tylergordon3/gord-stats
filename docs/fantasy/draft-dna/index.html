@@ -1,0 +1,1202 @@
+---
+layout: default
+title: Draft DNA
+---
+<h1>Draft DNA</h1><style>
+.section-nav{margin:10px 0 18px;padding:8px 14px;background:#dfe6ee;border-radius:6px;font-size:14px}
+.section-nav a{margin-right:16px;text-decoration:none;white-space:nowrap}
+details.section{margin:14px 0;border:1px solid #b9c4d0;border-radius:6px;overflow:hidden;background:#fbfcfe}
+details.section>summary{cursor:pointer;font-weight:bold;font-size:17px;padding:10px 14px;
+  background:#dfe6ee;color:#17293b;list-style:none}
+details.section>summary:hover{background:#d1dbe7}
+details.section>summary::-webkit-details-marker{display:none}
+details.section>summary::before{content:'\25B8 ';color:#4a6178}
+details.section[open]>summary::before{content:'\25BE ';color:#4a6178}
+details.section[open]>summary{border-bottom:1px solid #b9c4d0}
+details.section>*:not(summary){margin:10px 14px}
+</style>
+<script>
+function openHashTarget(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);
+  if(e&&e.tagName==='DETAILS'){e.open=true;e.scrollIntoView();}}
+window.addEventListener('hashchange',openHashTarget);
+window.addEventListener('load',openHashTarget);
+</script><p>Not <em>how well</em> each manager drafts &mdash; that's the <a href="{{ '/draft-report/' | relative_url }}">Manager Draft Report</a> &mdash; but <em>how</em> they draft. Positional timing, early-round shape, and what the championship drafts had in common.</p><p><strong>Sample size:</strong> 3 drafts, 381 picks in total, so roughly 38 picks per manager. That is enough to describe a habit and not enough to prove one &mdash; read the 'never before round N' lines as 'hasn't yet', not as a law. Kickers and defenses are excluded throughout.</p><nav class="section-nav"><strong>Jump to:</strong> <a href="#clock">Positional Clock</a><a href="#blueprint">Early Blueprint</a><a href="#champions">Champion Blueprint</a><a href="#cards">Manager Report Cards</a></nav><details class="section" id="clock" open><summary>Positional Clock - when each manager goes to each position</summary><p>The round each manager spends their <strong>first</strong> pick at each position, averaged over 3 drafts. Colored down each column: <strong>green = goes earliest</strong>, <strong>red = waits longest</strong>.</p><div class='table-scroll'><style type="text/css">
+#T_a9cb7 td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_a9cb7 th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_a9cb7  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_a9cb7_row0_col0, #T_a9cb7_row2_col3, #T_a9cb7_row5_col0 {
+  background-color: #bbe278;
+  color: #000000;
+}
+#T_a9cb7_row0_col1, #T_a9cb7_row1_col2, #T_a9cb7_row2_col2, #T_a9cb7_row3_col2, #T_a9cb7_row4_col3, #T_a9cb7_row6_col2, #T_a9cb7_row7_col2, #T_a9cb7_row8_col0, #T_a9cb7_row9_col1 {
+  background-color: #006837;
+  color: #f1f1f1;
+}
+#T_a9cb7_row0_col2, #T_a9cb7_row4_col2, #T_a9cb7_row5_col2 {
+  background-color: #fee999;
+  color: #000000;
+}
+#T_a9cb7_row0_col3, #T_a9cb7_row3_col3, #T_a9cb7_row8_col3 {
+  background-color: #fdb768;
+  color: #000000;
+}
+#T_a9cb7_row1_col0 {
+  background-color: #e24731;
+  color: #f1f1f1;
+}
+#T_a9cb7_row1_col1, #T_a9cb7_row2_col1, #T_a9cb7_row3_col1, #T_a9cb7_row5_col1 {
+  background-color: #7dc765;
+  color: #000000;
+}
+#T_a9cb7_row1_col3 {
+  background-color: #f46d43;
+  color: #f1f1f1;
+}
+#T_a9cb7_row2_col0 {
+  background-color: #eff8aa;
+  color: #000000;
+}
+#T_a9cb7_row3_col0, #T_a9cb7_row7_col3, #T_a9cb7_row9_col3 {
+  background-color: #fee08b;
+  color: #000000;
+}
+#T_a9cb7_row4_col0, #T_a9cb7_row4_col1, #T_a9cb7_row6_col3, #T_a9cb7_row8_col2, #T_a9cb7_row9_col2 {
+  background-color: #a50026;
+  color: #f1f1f1;
+}
+#T_a9cb7_row5_col3 {
+  background-color: #36a657;
+  color: #f1f1f1;
+}
+#T_a9cb7_row6_col0 {
+  background-color: #66bd63;
+  color: #f1f1f1;
+}
+#T_a9cb7_row6_col1, #T_a9cb7_row7_col1 {
+  background-color: #ddf191;
+  color: #000000;
+}
+#T_a9cb7_row7_col0 {
+  background-color: #8ccd67;
+  color: #000000;
+}
+#T_a9cb7_row8_col1 {
+  background-color: #fee491;
+  color: #000000;
+}
+#T_a9cb7_row9_col0 {
+  background-color: #fdc372;
+  color: #000000;
+}
+</style>
+<table id="T_a9cb7" class="sticky-table">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_a9cb7_level0_col0" class="col_heading level0 col0" >QB</th>
+      <th id="T_a9cb7_level0_col1" class="col_heading level0 col1" >RB</th>
+      <th id="T_a9cb7_level0_col2" class="col_heading level0 col2" >WR</th>
+      <th id="T_a9cb7_level0_col3" class="col_heading level0 col3" >TE</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Manager</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_a9cb7_level0_row0" class="row_heading level0 row0" >Austin</th>
+      <td id="T_a9cb7_row0_col0" class="data row0 col0" >4.7</td>
+      <td id="T_a9cb7_row0_col1" class="data row0 col1" >1.3</td>
+      <td id="T_a9cb7_row0_col2" class="data row0 col2" >1.7</td>
+      <td id="T_a9cb7_row0_col3" class="data row0 col3" >6.7</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row1" class="row_heading level0 row1" >Colin</th>
+      <td id="T_a9cb7_row1_col0" class="data row1 col0" >7.3</td>
+      <td id="T_a9cb7_row1_col1" class="data row1 col1" >1.7</td>
+      <td id="T_a9cb7_row1_col2" class="data row1 col2" >1.3</td>
+      <td id="T_a9cb7_row1_col3" class="data row1 col3" >7.3</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row2" class="row_heading level0 row2" >Everett</th>
+      <td id="T_a9cb7_row2_col0" class="data row2 col0" >5.3</td>
+      <td id="T_a9cb7_row2_col1" class="data row2 col1" >1.7</td>
+      <td id="T_a9cb7_row2_col2" class="data row2 col2" >1.3</td>
+      <td id="T_a9cb7_row2_col3" class="data row2 col3" >5.0</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row3" class="row_heading level0 row3" >George</th>
+      <td id="T_a9cb7_row3_col0" class="data row3 col0" >6.0</td>
+      <td id="T_a9cb7_row3_col1" class="data row3 col1" >1.7</td>
+      <td id="T_a9cb7_row3_col2" class="data row3 col2" >1.3</td>
+      <td id="T_a9cb7_row3_col3" class="data row3 col3" >6.7</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row4" class="row_heading level0 row4" >Jackson</th>
+      <td id="T_a9cb7_row4_col0" class="data row4 col0" >8.0</td>
+      <td id="T_a9cb7_row4_col1" class="data row4 col1" >3.0</td>
+      <td id="T_a9cb7_row4_col2" class="data row4 col2" >1.7</td>
+      <td id="T_a9cb7_row4_col3" class="data row4 col3" >3.3</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row5" class="row_heading level0 row5" >Mark</th>
+      <td id="T_a9cb7_row5_col0" class="data row5 col0" >4.7</td>
+      <td id="T_a9cb7_row5_col1" class="data row5 col1" >1.7</td>
+      <td id="T_a9cb7_row5_col2" class="data row5 col2" >1.7</td>
+      <td id="T_a9cb7_row5_col3" class="data row5 col3" >4.0</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row6" class="row_heading level0 row6" >Max</th>
+      <td id="T_a9cb7_row6_col0" class="data row6 col0" >4.0</td>
+      <td id="T_a9cb7_row6_col1" class="data row6 col1" >2.0</td>
+      <td id="T_a9cb7_row6_col2" class="data row6 col2" >1.3</td>
+      <td id="T_a9cb7_row6_col3" class="data row6 col3" >8.3</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row7" class="row_heading level0 row7" >Padgett</th>
+      <td id="T_a9cb7_row7_col0" class="data row7 col0" >4.3</td>
+      <td id="T_a9cb7_row7_col1" class="data row7 col1" >2.0</td>
+      <td id="T_a9cb7_row7_col2" class="data row7 col2" >1.3</td>
+      <td id="T_a9cb7_row7_col3" class="data row7 col3" >6.3</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row8" class="row_heading level0 row8" >Trevor</th>
+      <td id="T_a9cb7_row8_col0" class="data row8 col0" >3.0</td>
+      <td id="T_a9cb7_row8_col1" class="data row8 col1" >2.3</td>
+      <td id="T_a9cb7_row8_col2" class="data row8 col2" >2.0</td>
+      <td id="T_a9cb7_row8_col3" class="data row8 col3" >6.7</td>
+    </tr>
+    <tr>
+      <th id="T_a9cb7_level0_row9" class="row_heading level0 row9" >Tyler</th>
+      <td id="T_a9cb7_row9_col0" class="data row9 col0" >6.3</td>
+      <td id="T_a9cb7_row9_col1" class="data row9 col1" >1.3</td>
+      <td id="T_a9cb7_row9_col2" class="data row9 col2" >2.0</td>
+      <td id="T_a9cb7_row9_col3" class="data row9 col3" >6.3</td>
+    </tr>
+  </tbody>
+</table>
+</div><ul><li><strong>QB</strong> - league average first QB lands in round 5.4. <strong>Trevor</strong> goes earliest (round 3.0 on average), <strong>Jackson</strong> waits longest (round 8.0). Highest floor: <strong>Colin</strong> has never opened at QB before round 5.</li><li><strong>RB</strong> - league average first RB lands in round 1.9. <strong>Austin</strong> goes earliest (round 1.3 on average), <strong>Jackson</strong> waits longest (round 3.0).</li><li><strong>WR</strong> - league average first WR lands in round 1.6. <strong>Colin</strong> goes earliest (round 1.3 on average), <strong>Trevor</strong> waits longest (round 2.0).</li><li><strong>TE</strong> - league average first TE lands in round 6.1. <strong>Jackson</strong> goes earliest (round 3.3 on average), <strong>Max</strong> waits longest (round 8.3). Highest floor: <strong>Max</strong> has never opened at TE before round 8.</li></ul><details class="section"><summary>Earliest - latest round of the first pick at each position</summary><div class='table-scroll'><style type="text/css">
+#T_f81d0 td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_f81d0 th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_f81d0  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+</style>
+<table id="T_f81d0" class="sticky-table">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_f81d0_level0_col0" class="col_heading level0 col0" >QB</th>
+      <th id="T_f81d0_level0_col1" class="col_heading level0 col1" >RB</th>
+      <th id="T_f81d0_level0_col2" class="col_heading level0 col2" >WR</th>
+      <th id="T_f81d0_level0_col3" class="col_heading level0 col3" >TE</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Manager</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_f81d0_level0_row0" class="row_heading level0 row0" >Austin</th>
+      <td id="T_f81d0_row0_col0" class="data row0 col0" >3 - 6</td>
+      <td id="T_f81d0_row0_col1" class="data row0 col1" >1 - 2</td>
+      <td id="T_f81d0_row0_col2" class="data row0 col2" >1 - 2</td>
+      <td id="T_f81d0_row0_col3" class="data row0 col3" >5 - 8</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row1" class="row_heading level0 row1" >Colin</th>
+      <td id="T_f81d0_row1_col0" class="data row1 col0" >5 - 11</td>
+      <td id="T_f81d0_row1_col1" class="data row1 col1" >1 - 2</td>
+      <td id="T_f81d0_row1_col2" class="data row1 col2" >1 - 2</td>
+      <td id="T_f81d0_row1_col3" class="data row1 col3" >4 - 10</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row2" class="row_heading level0 row2" >Everett</th>
+      <td id="T_f81d0_row2_col0" class="data row2 col0" >3 - 9</td>
+      <td id="T_f81d0_row2_col1" class="data row2 col1" >1 - 2</td>
+      <td id="T_f81d0_row2_col2" class="data row2 col2" >1 - 2</td>
+      <td id="T_f81d0_row2_col3" class="data row2 col3" >3 - 7</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row3" class="row_heading level0 row3" >George</th>
+      <td id="T_f81d0_row3_col0" class="data row3 col0" >3 - 9</td>
+      <td id="T_f81d0_row3_col1" class="data row3 col1" >1 - 2</td>
+      <td id="T_f81d0_row3_col2" class="data row3 col2" >1 - 2</td>
+      <td id="T_f81d0_row3_col3" class="data row3 col3" >5 - 8</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row4" class="row_heading level0 row4" >Jackson</th>
+      <td id="T_f81d0_row4_col0" class="data row4 col0" >3 - 12</td>
+      <td id="T_f81d0_row4_col1" class="data row4 col1" >1 - 4</td>
+      <td id="T_f81d0_row4_col2" class="data row4 col2" >1 - 2</td>
+      <td id="T_f81d0_row4_col3" class="data row4 col3" >1 - 6</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row5" class="row_heading level0 row5" >Mark</th>
+      <td id="T_f81d0_row5_col0" class="data row5 col0" >4 - 6</td>
+      <td id="T_f81d0_row5_col1" class="data row5 col1" >1 - 2</td>
+      <td id="T_f81d0_row5_col2" class="data row5 col2" >1 - 3</td>
+      <td id="T_f81d0_row5_col3" class="data row5 col3" >2 - 5</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row6" class="row_heading level0 row6" >Max</th>
+      <td id="T_f81d0_row6_col0" class="data row6 col0" >3 - 5</td>
+      <td id="T_f81d0_row6_col1" class="data row6 col1" >1 - 3</td>
+      <td id="T_f81d0_row6_col2" class="data row6 col2" >1 - 2</td>
+      <td id="T_f81d0_row6_col3" class="data row6 col3" >8 - 9</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row7" class="row_heading level0 row7" >Padgett</th>
+      <td id="T_f81d0_row7_col0" class="data row7 col0" >4 - 5</td>
+      <td id="T_f81d0_row7_col1" class="data row7 col1" >1 - 3</td>
+      <td id="T_f81d0_row7_col2" class="data row7 col2" >1 - 2</td>
+      <td id="T_f81d0_row7_col3" class="data row7 col3" >5 - 8</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row8" class="row_heading level0 row8" >Trevor</th>
+      <td id="T_f81d0_row8_col0" class="data row8 col0" >2 - 4</td>
+      <td id="T_f81d0_row8_col1" class="data row8 col1" >1 - 5</td>
+      <td id="T_f81d0_row8_col2" class="data row8 col2" >1 - 3</td>
+      <td id="T_f81d0_row8_col3" class="data row8 col3" >3 - 9</td>
+    </tr>
+    <tr>
+      <th id="T_f81d0_level0_row9" class="row_heading level0 row9" >Tyler</th>
+      <td id="T_f81d0_row9_col0" class="data row9 col0" >4 - 9</td>
+      <td id="T_f81d0_row9_col1" class="data row9 col1" >1 - 2</td>
+      <td id="T_f81d0_row9_col2" class="data row9 col2" >1 - 3</td>
+      <td id="T_f81d0_row9_col3" class="data row9 col3" >3 - 12</td>
+    </tr>
+  </tbody>
+</table>
+</div></details><details class="section"><summary>Hard floors: the earliest each manager has ever gone (3 drafts)</summary><ul><li><strong>Austin</strong> has never taken a QB before round 3, TE before round 5.</li><li><strong>Colin</strong> has never taken a QB before round 5, TE before round 4.</li><li><strong>Everett</strong> has never taken a QB before round 3, TE before round 3.</li><li><strong>George</strong> has never taken a QB before round 3, TE before round 5.</li><li><strong>Jackson</strong> has never taken a QB before round 3.</li><li><strong>Mark</strong> has never taken a QB before round 4, TE before round 2.</li><li><strong>Max</strong> has never taken a QB before round 3, TE before round 8.</li><li><strong>Padgett</strong> has never taken a QB before round 4, TE before round 5.</li><li><strong>Trevor</strong> has never taken a QB before round 2, TE before round 3.</li><li><strong>Tyler</strong> has never taken a QB before round 4, TE before round 3.</li></ul></details></details><details class="section" id="blueprint"><summary>Early Blueprint - the first 5 rounds</summary><p>Positions taken in the first 5 rounds, across all 3 drafts (15 picks per manager).</p><div class='table-scroll'><style type="text/css">
+#T_16dad td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_16dad th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_16dad  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_16dad_row0_col0, #T_16dad_row2_col0, #T_16dad_row2_col3, #T_16dad_row4_col3, #T_16dad_row5_col0, #T_16dad_row9_col3 {
+  background-color: #c6dbef;
+  color: #000000;
+}
+#T_16dad_row0_col1, #T_16dad_row0_col2, #T_16dad_row1_col1, #T_16dad_row2_col1, #T_16dad_row5_col2, #T_16dad_row9_col1, #T_16dad_row9_col2 {
+  background-color: #2070b4;
+  color: #f1f1f1;
+}
+#T_16dad_row0_col3, #T_16dad_row1_col0, #T_16dad_row1_col3, #T_16dad_row3_col0, #T_16dad_row3_col3, #T_16dad_row4_col0, #T_16dad_row7_col3, #T_16dad_row8_col3, #T_16dad_row9_col0 {
+  background-color: #deebf7;
+  color: #000000;
+}
+#T_16dad_row1_col2, #T_16dad_row6_col2, #T_16dad_row8_col2 {
+  background-color: #08509b;
+  color: #f1f1f1;
+}
+#T_16dad_row2_col2, #T_16dad_row3_col1, #T_16dad_row6_col1 {
+  background-color: #4191c6;
+  color: #f1f1f1;
+}
+#T_16dad_row3_col2, #T_16dad_row4_col2, #T_16dad_row7_col2 {
+  background-color: #08306b;
+  color: #f1f1f1;
+}
+#T_16dad_row4_col1, #T_16dad_row5_col1, #T_16dad_row8_col1 {
+  background-color: #6aaed6;
+  color: #f1f1f1;
+}
+#T_16dad_row5_col3, #T_16dad_row6_col0, #T_16dad_row7_col0, #T_16dad_row7_col1, #T_16dad_row8_col0 {
+  background-color: #9dcae1;
+  color: #000000;
+}
+#T_16dad_row6_col3 {
+  background-color: #f7fbff;
+  color: #000000;
+}
+</style>
+<table id="T_16dad" class="sticky-table">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_16dad_level0_col0" class="col_heading level0 col0" >QB</th>
+      <th id="T_16dad_level0_col1" class="col_heading level0 col1" >RB</th>
+      <th id="T_16dad_level0_col2" class="col_heading level0 col2" >WR</th>
+      <th id="T_16dad_level0_col3" class="col_heading level0 col3" >TE</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Manager</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_16dad_level0_row0" class="row_heading level0 row0" >Austin</th>
+      <td id="T_16dad_row0_col0" class="data row0 col0" >2</td>
+      <td id="T_16dad_row0_col1" class="data row0 col1" >6</td>
+      <td id="T_16dad_row0_col2" class="data row0 col2" >6</td>
+      <td id="T_16dad_row0_col3" class="data row0 col3" >1</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row1" class="row_heading level0 row1" >Colin</th>
+      <td id="T_16dad_row1_col0" class="data row1 col0" >1</td>
+      <td id="T_16dad_row1_col1" class="data row1 col1" >6</td>
+      <td id="T_16dad_row1_col2" class="data row1 col2" >7</td>
+      <td id="T_16dad_row1_col3" class="data row1 col3" >1</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row2" class="row_heading level0 row2" >Everett</th>
+      <td id="T_16dad_row2_col0" class="data row2 col0" >2</td>
+      <td id="T_16dad_row2_col1" class="data row2 col1" >6</td>
+      <td id="T_16dad_row2_col2" class="data row2 col2" >5</td>
+      <td id="T_16dad_row2_col3" class="data row2 col3" >2</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row3" class="row_heading level0 row3" >George</th>
+      <td id="T_16dad_row3_col0" class="data row3 col0" >1</td>
+      <td id="T_16dad_row3_col1" class="data row3 col1" >5</td>
+      <td id="T_16dad_row3_col2" class="data row3 col2" >8</td>
+      <td id="T_16dad_row3_col3" class="data row3 col3" >1</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row4" class="row_heading level0 row4" >Jackson</th>
+      <td id="T_16dad_row4_col0" class="data row4 col0" >1</td>
+      <td id="T_16dad_row4_col1" class="data row4 col1" >4</td>
+      <td id="T_16dad_row4_col2" class="data row4 col2" >8</td>
+      <td id="T_16dad_row4_col3" class="data row4 col3" >2</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row5" class="row_heading level0 row5" >Mark</th>
+      <td id="T_16dad_row5_col0" class="data row5 col0" >2</td>
+      <td id="T_16dad_row5_col1" class="data row5 col1" >4</td>
+      <td id="T_16dad_row5_col2" class="data row5 col2" >6</td>
+      <td id="T_16dad_row5_col3" class="data row5 col3" >3</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row6" class="row_heading level0 row6" >Max</th>
+      <td id="T_16dad_row6_col0" class="data row6 col0" >3</td>
+      <td id="T_16dad_row6_col1" class="data row6 col1" >5</td>
+      <td id="T_16dad_row6_col2" class="data row6 col2" >7</td>
+      <td id="T_16dad_row6_col3" class="data row6 col3" >0</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row7" class="row_heading level0 row7" >Padgett</th>
+      <td id="T_16dad_row7_col0" class="data row7 col0" >3</td>
+      <td id="T_16dad_row7_col1" class="data row7 col1" >3</td>
+      <td id="T_16dad_row7_col2" class="data row7 col2" >8</td>
+      <td id="T_16dad_row7_col3" class="data row7 col3" >1</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row8" class="row_heading level0 row8" >Trevor</th>
+      <td id="T_16dad_row8_col0" class="data row8 col0" >3</td>
+      <td id="T_16dad_row8_col1" class="data row8 col1" >4</td>
+      <td id="T_16dad_row8_col2" class="data row8 col2" >7</td>
+      <td id="T_16dad_row8_col3" class="data row8 col3" >1</td>
+    </tr>
+    <tr>
+      <th id="T_16dad_level0_row9" class="row_heading level0 row9" >Tyler</th>
+      <td id="T_16dad_row9_col0" class="data row9 col0" >1</td>
+      <td id="T_16dad_row9_col1" class="data row9 col1" >6</td>
+      <td id="T_16dad_row9_col2" class="data row9 col2" >6</td>
+      <td id="T_16dad_row9_col3" class="data row9 col3" >2</td>
+    </tr>
+  </tbody>
+</table>
+</div><p><strong>Austin</strong> is the most run-heavy start (40% of early picks are RBs); <strong>George</strong> the most receiver-heavy (53%).</p><h2>What they open with</h2><p>Position of each manager's very first pick, counted over 3 drafts.</p><div class='table-scroll'><style type="text/css">
+#T_c48d7 td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_c48d7 th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_c48d7  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_c48d7_row0_col0, #T_c48d7_row1_col1, #T_c48d7_row2_col1, #T_c48d7_row3_col1, #T_c48d7_row5_col1, #T_c48d7_row6_col1, #T_c48d7_row7_col1, #T_c48d7_row8_col0, #T_c48d7_row9_col0 {
+  background-color: #08306b;
+  color: #f1f1f1;
+}
+#T_c48d7_row0_col1, #T_c48d7_row1_col0, #T_c48d7_row2_col0, #T_c48d7_row3_col0, #T_c48d7_row4_col0, #T_c48d7_row4_col1, #T_c48d7_row4_col2, #T_c48d7_row5_col0, #T_c48d7_row6_col0, #T_c48d7_row7_col0, #T_c48d7_row8_col1, #T_c48d7_row9_col1 {
+  background-color: #6aaed6;
+  color: #f1f1f1;
+}
+#T_c48d7_row0_col2, #T_c48d7_row1_col2, #T_c48d7_row2_col2, #T_c48d7_row3_col2, #T_c48d7_row5_col2, #T_c48d7_row6_col2, #T_c48d7_row7_col2, #T_c48d7_row8_col2, #T_c48d7_row9_col2 {
+  background-color: #f7fbff;
+  color: #000000;
+}
+</style>
+<table id="T_c48d7" class="sticky-table">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_c48d7_level0_col0" class="col_heading level0 col0" >RB</th>
+      <th id="T_c48d7_level0_col1" class="col_heading level0 col1" >WR</th>
+      <th id="T_c48d7_level0_col2" class="col_heading level0 col2" >TE</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Manager</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_c48d7_level0_row0" class="row_heading level0 row0" >Austin</th>
+      <td id="T_c48d7_row0_col0" class="data row0 col0" >2</td>
+      <td id="T_c48d7_row0_col1" class="data row0 col1" >1</td>
+      <td id="T_c48d7_row0_col2" class="data row0 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row1" class="row_heading level0 row1" >Colin</th>
+      <td id="T_c48d7_row1_col0" class="data row1 col0" >1</td>
+      <td id="T_c48d7_row1_col1" class="data row1 col1" >2</td>
+      <td id="T_c48d7_row1_col2" class="data row1 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row2" class="row_heading level0 row2" >Everett</th>
+      <td id="T_c48d7_row2_col0" class="data row2 col0" >1</td>
+      <td id="T_c48d7_row2_col1" class="data row2 col1" >2</td>
+      <td id="T_c48d7_row2_col2" class="data row2 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row3" class="row_heading level0 row3" >George</th>
+      <td id="T_c48d7_row3_col0" class="data row3 col0" >1</td>
+      <td id="T_c48d7_row3_col1" class="data row3 col1" >2</td>
+      <td id="T_c48d7_row3_col2" class="data row3 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row4" class="row_heading level0 row4" >Jackson</th>
+      <td id="T_c48d7_row4_col0" class="data row4 col0" >1</td>
+      <td id="T_c48d7_row4_col1" class="data row4 col1" >1</td>
+      <td id="T_c48d7_row4_col2" class="data row4 col2" >1</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row5" class="row_heading level0 row5" >Mark</th>
+      <td id="T_c48d7_row5_col0" class="data row5 col0" >1</td>
+      <td id="T_c48d7_row5_col1" class="data row5 col1" >2</td>
+      <td id="T_c48d7_row5_col2" class="data row5 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row6" class="row_heading level0 row6" >Max</th>
+      <td id="T_c48d7_row6_col0" class="data row6 col0" >1</td>
+      <td id="T_c48d7_row6_col1" class="data row6 col1" >2</td>
+      <td id="T_c48d7_row6_col2" class="data row6 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row7" class="row_heading level0 row7" >Padgett</th>
+      <td id="T_c48d7_row7_col0" class="data row7 col0" >1</td>
+      <td id="T_c48d7_row7_col1" class="data row7 col1" >2</td>
+      <td id="T_c48d7_row7_col2" class="data row7 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row8" class="row_heading level0 row8" >Trevor</th>
+      <td id="T_c48d7_row8_col0" class="data row8 col0" >2</td>
+      <td id="T_c48d7_row8_col1" class="data row8 col1" >1</td>
+      <td id="T_c48d7_row8_col2" class="data row8 col2" >0</td>
+    </tr>
+    <tr>
+      <th id="T_c48d7_level0_row9" class="row_heading level0 row9" >Tyler</th>
+      <td id="T_c48d7_row9_col0" class="data row9 col0" >2</td>
+      <td id="T_c48d7_row9_col1" class="data row9 col1" >1</td>
+      <td id="T_c48d7_row9_col2" class="data row9 col2" >0</td>
+    </tr>
+  </tbody>
+</table>
+</div></details><details class="section" id="champions"><summary>Champion Blueprint - how the title winners drafted</summary><p>Champions taken from Sleeper's playoff bracket, then measured against everyone else who drafted that same year. <strong>Starter Hit %</strong> is the share of a manager's picks that finished inside their position's weekly starter pool (top 10 QB / 24 RB / 24 WR / 10 TE for a 10-team, 2-flex league).</p><div class='table-scroll'><style type="text/css">
+#T_2bc0c td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_2bc0c th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_2bc0c  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_2bc0c_row0_col3, #T_2bc0c_row2_col3 {
+  background-color: #a50026;
+  color: #f1f1f1;
+}
+#T_2bc0c_row1_col3 {
+  background-color: #006837;
+  color: #f1f1f1;
+}
+#T_2bc0c_row3_col3, #T_2bc0c_row5_col3 {
+  background-color: #fff8b4;
+  color: #000000;
+}
+#T_2bc0c_row4_col3 {
+  background-color: #e75337;
+  color: #f1f1f1;
+}
+</style>
+<table id="T_2bc0c" class="sticky-table">
+  <thead>
+    <tr>
+      <th id="T_2bc0c_level0_col0" class="col_heading level0 col0" >Season</th>
+      <th id="T_2bc0c_level0_col1" class="col_heading level0 col1" >Who</th>
+      <th id="T_2bc0c_level0_col2" class="col_heading level0 col2" >Picks</th>
+      <th id="T_2bc0c_level0_col3" class="col_heading level0 col3" >Starter Hit %</th>
+      <th id="T_2bc0c_level0_col4" class="col_heading level0 col4" >Avg ADP Value</th>
+      <th id="T_2bc0c_level0_col5" class="col_heading level0 col5" >Avg Finish vs ADP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="T_2bc0c_row0_col0" class="data row0 col0" >2023-2024</td>
+      <td id="T_2bc0c_row0_col1" class="data row0 col1" >Everyone else</td>
+      <td id="T_2bc0c_row0_col2" class="data row0 col2" >110</td>
+      <td id="T_2bc0c_row0_col3" class="data row0 col3" >42%</td>
+      <td id="T_2bc0c_row0_col4" class="data row0 col4" >-2.7</td>
+      <td id="T_2bc0c_row0_col5" class="data row0 col5" >-2.3</td>
+    </tr>
+    <tr>
+      <td id="T_2bc0c_row1_col0" class="data row1 col0" >2023-2024</td>
+      <td id="T_2bc0c_row1_col1" class="data row1 col1" >Champion</td>
+      <td id="T_2bc0c_row1_col2" class="data row1 col2" >12</td>
+      <td id="T_2bc0c_row1_col3" class="data row1 col3" >67%</td>
+      <td id="T_2bc0c_row1_col4" class="data row1 col4" >-1.3</td>
+      <td id="T_2bc0c_row1_col5" class="data row1 col5" >+17.0</td>
+    </tr>
+    <tr>
+      <td id="T_2bc0c_row2_col0" class="data row2 col0" >2024-2025</td>
+      <td id="T_2bc0c_row2_col1" class="data row2 col1" >Everyone else</td>
+      <td id="T_2bc0c_row2_col2" class="data row2 col2" >116</td>
+      <td id="T_2bc0c_row2_col3" class="data row2 col3" >42%</td>
+      <td id="T_2bc0c_row2_col4" class="data row2 col4" >-2.3</td>
+      <td id="T_2bc0c_row2_col5" class="data row2 col5" >-2.3</td>
+    </tr>
+    <tr>
+      <td id="T_2bc0c_row3_col0" class="data row3 col0" >2024-2025</td>
+      <td id="T_2bc0c_row3_col1" class="data row3 col1" >Champion</td>
+      <td id="T_2bc0c_row3_col2" class="data row3 col2" >13</td>
+      <td id="T_2bc0c_row3_col3" class="data row3 col3" >54%</td>
+      <td id="T_2bc0c_row3_col4" class="data row3 col4" >-3.5</td>
+      <td id="T_2bc0c_row3_col5" class="data row3 col5" >+3.1</td>
+    </tr>
+    <tr>
+      <td id="T_2bc0c_row4_col0" class="data row4 col0" >2025-2026</td>
+      <td id="T_2bc0c_row4_col1" class="data row4 col1" >Everyone else</td>
+      <td id="T_2bc0c_row4_col2" class="data row4 col2" >117</td>
+      <td id="T_2bc0c_row4_col3" class="data row4 col3" >46%</td>
+      <td id="T_2bc0c_row4_col4" class="data row4 col4" >-5.2</td>
+      <td id="T_2bc0c_row4_col5" class="data row4 col5" >+0.7</td>
+    </tr>
+    <tr>
+      <td id="T_2bc0c_row5_col0" class="data row5 col0" >2025-2026</td>
+      <td id="T_2bc0c_row5_col1" class="data row5 col1" >Champion</td>
+      <td id="T_2bc0c_row5_col2" class="data row5 col2" >13</td>
+      <td id="T_2bc0c_row5_col3" class="data row5 col3" >54%</td>
+      <td id="T_2bc0c_row5_col4" class="data row5 col4" >-3.6</td>
+      <td id="T_2bc0c_row5_col5" class="data row5 col5" >-18.3</td>
+    </tr>
+  </tbody>
+</table>
+</div><p>Across all 3 titles the champion beat the field's hit rate <strong>3 of 3</strong> times, but only led the field in value against ADP <strong>2 of 3</strong> times. On this sample, titles track picks that <em>worked</em> more than picks that looked like bargains on draft day &mdash; though three seasons cannot separate that from simple luck.</p><h2>When champions went to each position</h2><div class='table-scroll'><style type="text/css">
+#T_22dad td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_22dad th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_22dad  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+</style>
+<table id="T_22dad" class="sticky-table">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_22dad_level0_col0" class="col_heading level0 col0" >QB</th>
+      <th id="T_22dad_level0_col1" class="col_heading level0 col1" >RB</th>
+      <th id="T_22dad_level0_col2" class="col_heading level0 col2" >WR</th>
+      <th id="T_22dad_level0_col3" class="col_heading level0 col3" >TE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_22dad_level0_row0" class="row_heading level0 row0" >Everyone else</th>
+      <td id="T_22dad_row0_col0" class="data row0 col0" >5.4</td>
+      <td id="T_22dad_row0_col1" class="data row0 col1" >1.8</td>
+      <td id="T_22dad_row0_col2" class="data row0 col2" >1.6</td>
+      <td id="T_22dad_row0_col3" class="data row0 col3" >6.1</td>
+    </tr>
+    <tr>
+      <th id="T_22dad_level0_row1" class="row_heading level0 row1" >Champions</th>
+      <td id="T_22dad_row1_col0" class="data row1 col0" >4.7</td>
+      <td id="T_22dad_row1_col1" class="data row1 col1" >2.3</td>
+      <td id="T_22dad_row1_col2" class="data row1 col2" >1.7</td>
+      <td id="T_22dad_row1_col3" class="data row1 col3" >5.7</td>
+    </tr>
+  </tbody>
+</table>
+</div><h2>The title-winning drafts, round by round</h2><p>First six picks of each championship team. <strong>Pos Finish</strong> is where the player ended the season at his position (green = better).</p><h3>2025-2026 &mdash; Austin</h3><div class='table-scroll'><style type="text/css">
+#T_e7ab4 td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_e7ab4 th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_e7ab4  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_e7ab4_row0_col6, #T_e7ab4_row1_col6 {
+  background-color: #06733d;
+  color: #f1f1f1;
+}
+#T_e7ab4_row2_col6 {
+  background-color: #006837;
+  color: #f1f1f1;
+}
+#T_e7ab4_row3_col6 {
+  background-color: #a50026;
+  color: #f1f1f1;
+}
+#T_e7ab4_row4_col6 {
+  background-color: #d3ec87;
+  color: #000000;
+}
+#T_e7ab4_row5_col6 {
+  background-color: #f7844e;
+  color: #f1f1f1;
+}
+</style>
+<table id="T_e7ab4" class="sticky-table">
+  <thead>
+    <tr>
+      <th id="T_e7ab4_level0_col0" class="col_heading level0 col0" >Rd</th>
+      <th id="T_e7ab4_level0_col1" class="col_heading level0 col1" >Pick</th>
+      <th id="T_e7ab4_level0_col2" class="col_heading level0 col2" >Player</th>
+      <th id="T_e7ab4_level0_col3" class="col_heading level0 col3" >Pos</th>
+      <th id="T_e7ab4_level0_col4" class="col_heading level0 col4" >ADP</th>
+      <th id="T_e7ab4_level0_col5" class="col_heading level0 col5" >ADP Value</th>
+      <th id="T_e7ab4_level0_col6" class="col_heading level0 col6" >Pos Finish</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="T_e7ab4_row0_col0" class="data row0 col0" >1</td>
+      <td id="T_e7ab4_row0_col1" class="data row0 col1" >7</td>
+      <td id="T_e7ab4_row0_col2" class="data row0 col2" >Derrick Henry</td>
+      <td id="T_e7ab4_row0_col3" class="data row0 col3" >RB</td>
+      <td id="T_e7ab4_row0_col4" class="data row0 col4" >10.2</td>
+      <td id="T_e7ab4_row0_col5" class="data row0 col5" >-3.2</td>
+      <td id="T_e7ab4_row0_col6" class="data row0 col6" >11</td>
+    </tr>
+    <tr>
+      <td id="T_e7ab4_row1_col0" class="data row1 col0" >2</td>
+      <td id="T_e7ab4_row1_col1" class="data row1 col1" >14</td>
+      <td id="T_e7ab4_row1_col2" class="data row1 col2" >Drake London</td>
+      <td id="T_e7ab4_row1_col3" class="data row1 col3" >WR</td>
+      <td id="T_e7ab4_row1_col4" class="data row1 col4" >19.2</td>
+      <td id="T_e7ab4_row1_col5" class="data row1 col5" >-5.2</td>
+      <td id="T_e7ab4_row1_col6" class="data row1 col6" >11</td>
+    </tr>
+    <tr>
+      <td id="T_e7ab4_row2_col0" class="data row2 col0" >3</td>
+      <td id="T_e7ab4_row2_col1" class="data row2 col1" >27</td>
+      <td id="T_e7ab4_row2_col2" class="data row2 col2" >Kyren Williams</td>
+      <td id="T_e7ab4_row2_col3" class="data row2 col3" >RB</td>
+      <td id="T_e7ab4_row2_col4" class="data row2 col4" >24.2</td>
+      <td id="T_e7ab4_row2_col5" class="data row2 col5" >+2.8</td>
+      <td id="T_e7ab4_row2_col6" class="data row2 col6" >9</td>
+    </tr>
+    <tr>
+      <td id="T_e7ab4_row3_col0" class="data row3 col0" >4</td>
+      <td id="T_e7ab4_row3_col1" class="data row3 col1" >34</td>
+      <td id="T_e7ab4_row3_col2" class="data row3 col2" >Tyreek Hill</td>
+      <td id="T_e7ab4_row3_col3" class="data row3 col3" >WR</td>
+      <td id="T_e7ab4_row3_col4" class="data row3 col4" >32.5</td>
+      <td id="T_e7ab4_row3_col5" class="data row3 col5" >+1.5</td>
+      <td id="T_e7ab4_row3_col6" class="data row3 col6" >89</td>
+    </tr>
+    <tr>
+      <td id="T_e7ab4_row4_col0" class="data row4 col0" >5</td>
+      <td id="T_e7ab4_row4_col1" class="data row4 col1" >47</td>
+      <td id="T_e7ab4_row4_col2" class="data row4 col2" >Joe Burrow</td>
+      <td id="T_e7ab4_row4_col3" class="data row4 col3" >QB</td>
+      <td id="T_e7ab4_row4_col4" class="data row4 col4" >33.3</td>
+      <td id="T_e7ab4_row4_col5" class="data row4 col5" >+13.7</td>
+      <td id="T_e7ab4_row4_col6" class="data row4 col6" >40</td>
+    </tr>
+    <tr>
+      <td id="T_e7ab4_row5_col0" class="data row5 col0" >6</td>
+      <td id="T_e7ab4_row5_col1" class="data row5 col1" >54</td>
+      <td id="T_e7ab4_row5_col2" class="data row5 col2" >James Conner</td>
+      <td id="T_e7ab4_row5_col3" class="data row5 col3" >RB</td>
+      <td id="T_e7ab4_row5_col4" class="data row5 col4" >47.3</td>
+      <td id="T_e7ab4_row5_col5" class="data row5 col5" >+6.7</td>
+      <td id="T_e7ab4_row5_col6" class="data row5 col6" >70</td>
+    </tr>
+  </tbody>
+</table>
+</div><h3>2024-2025 &mdash; Colin</h3><div class='table-scroll'><style type="text/css">
+#T_df0ba td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_df0ba th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_df0ba  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_df0ba_row0_col6 {
+  background-color: #08773f;
+  color: #f1f1f1;
+}
+#T_df0ba_row1_col6 {
+  background-color: #006837;
+  color: #f1f1f1;
+}
+#T_df0ba_row2_col6 {
+  background-color: #a50026;
+  color: #f1f1f1;
+}
+#T_df0ba_row3_col6 {
+  background-color: #fffab6;
+  color: #000000;
+}
+#T_df0ba_row4_col6 {
+  background-color: #30a356;
+  color: #f1f1f1;
+}
+#T_df0ba_row5_col6 {
+  background-color: #e0f295;
+  color: #000000;
+}
+</style>
+<table id="T_df0ba" class="sticky-table">
+  <thead>
+    <tr>
+      <th id="T_df0ba_level0_col0" class="col_heading level0 col0" >Rd</th>
+      <th id="T_df0ba_level0_col1" class="col_heading level0 col1" >Pick</th>
+      <th id="T_df0ba_level0_col2" class="col_heading level0 col2" >Player</th>
+      <th id="T_df0ba_level0_col3" class="col_heading level0 col3" >Pos</th>
+      <th id="T_df0ba_level0_col4" class="col_heading level0 col4" >ADP</th>
+      <th id="T_df0ba_level0_col5" class="col_heading level0 col5" >ADP Value</th>
+      <th id="T_df0ba_level0_col6" class="col_heading level0 col6" >Pos Finish</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="T_df0ba_row0_col0" class="data row0 col0" >1</td>
+      <td id="T_df0ba_row0_col1" class="data row0 col1" >7</td>
+      <td id="T_df0ba_row0_col2" class="data row0 col2" >Amon-Ra St. Brown</td>
+      <td id="T_df0ba_row0_col3" class="data row0 col3" >WR</td>
+      <td id="T_df0ba_row0_col4" class="data row0 col4" >6.2</td>
+      <td id="T_df0ba_row0_col5" class="data row0 col5" >+0.8</td>
+      <td id="T_df0ba_row0_col6" class="data row0 col6" >3</td>
+    </tr>
+    <tr>
+      <td id="T_df0ba_row1_col0" class="data row1 col0" >2</td>
+      <td id="T_df0ba_row1_col1" class="data row1 col1" >14</td>
+      <td id="T_df0ba_row1_col2" class="data row1 col2" >Saquon Barkley</td>
+      <td id="T_df0ba_row1_col3" class="data row1 col3" >RB</td>
+      <td id="T_df0ba_row1_col4" class="data row1 col4" >9.2</td>
+      <td id="T_df0ba_row1_col5" class="data row1 col5" >+4.8</td>
+      <td id="T_df0ba_row1_col6" class="data row1 col6" >1</td>
+    </tr>
+    <tr>
+      <td id="T_df0ba_row2_col0" class="data row2 col0" >3</td>
+      <td id="T_df0ba_row2_col1" class="data row2 col1" >27</td>
+      <td id="T_df0ba_row2_col2" class="data row2 col2" >Isiah Pacheco</td>
+      <td id="T_df0ba_row2_col3" class="data row2 col3" >RB</td>
+      <td id="T_df0ba_row2_col4" class="data row2 col4" >20.2</td>
+      <td id="T_df0ba_row2_col5" class="data row2 col5" >+6.8</td>
+      <td id="T_df0ba_row2_col6" class="data row2 col6" >63</td>
+    </tr>
+    <tr>
+      <td id="T_df0ba_row3_col0" class="data row3 col0" >4</td>
+      <td id="T_df0ba_row3_col1" class="data row3 col1" >34</td>
+      <td id="T_df0ba_row3_col2" class="data row3 col2" >Jaylen Waddle</td>
+      <td id="T_df0ba_row3_col3" class="data row3 col3" >WR</td>
+      <td id="T_df0ba_row3_col4" class="data row3 col4" >42.6</td>
+      <td id="T_df0ba_row3_col5" class="data row3 col5" >-8.6</td>
+      <td id="T_df0ba_row3_col6" class="data row3 col6" >33</td>
+    </tr>
+    <tr>
+      <td id="T_df0ba_row4_col0" class="data row4 col0" >5</td>
+      <td id="T_df0ba_row4_col1" class="data row4 col1" >47</td>
+      <td id="T_df0ba_row4_col2" class="data row4 col2" >Malik Nabers</td>
+      <td id="T_df0ba_row4_col3" class="data row4 col3" >WR</td>
+      <td id="T_df0ba_row4_col4" class="data row4 col4" >48.6</td>
+      <td id="T_df0ba_row4_col5" class="data row4 col5" >-1.6</td>
+      <td id="T_df0ba_row4_col6" class="data row4 col6" >9</td>
+    </tr>
+    <tr>
+      <td id="T_df0ba_row5_col0" class="data row5 col0" >6</td>
+      <td id="T_df0ba_row5_col1" class="data row5 col1" >54</td>
+      <td id="T_df0ba_row5_col2" class="data row5 col2" >Anthony Richardson Sr.</td>
+      <td id="T_df0ba_row5_col3" class="data row5 col3" >QB</td>
+      <td id="T_df0ba_row5_col4" class="data row5 col4" >57.6</td>
+      <td id="T_df0ba_row5_col5" class="data row5 col5" >-3.6</td>
+      <td id="T_df0ba_row5_col6" class="data row5 col6" >27</td>
+    </tr>
+  </tbody>
+</table>
+</div><h3>2023-2024 &mdash; Jackson</h3><div class='table-scroll'><style type="text/css">
+#T_746f7 td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_746f7 th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_746f7  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_746f7_row0_col6 {
+  background-color: #006837;
+  color: #f1f1f1;
+}
+#T_746f7_row1_col6, #T_746f7_row2_col6 {
+  background-color: #08773f;
+  color: #f1f1f1;
+}
+#T_746f7_row3_col6 {
+  background-color: #d3ec87;
+  color: #000000;
+}
+#T_746f7_row4_col6 {
+  background-color: #a50026;
+  color: #f1f1f1;
+}
+#T_746f7_row5_col6 {
+  background-color: #8ccd67;
+  color: #000000;
+}
+</style>
+<table id="T_746f7" class="sticky-table">
+  <thead>
+    <tr>
+      <th id="T_746f7_level0_col0" class="col_heading level0 col0" >Rd</th>
+      <th id="T_746f7_level0_col1" class="col_heading level0 col1" >Pick</th>
+      <th id="T_746f7_level0_col2" class="col_heading level0 col2" >Player</th>
+      <th id="T_746f7_level0_col3" class="col_heading level0 col3" >Pos</th>
+      <th id="T_746f7_level0_col4" class="col_heading level0 col4" >ADP</th>
+      <th id="T_746f7_level0_col5" class="col_heading level0 col5" >ADP Value</th>
+      <th id="T_746f7_level0_col6" class="col_heading level0 col6" >Pos Finish</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="T_746f7_row0_col0" class="data row0 col0" >1</td>
+      <td id="T_746f7_row0_col1" class="data row0 col1" >5</td>
+      <td id="T_746f7_row0_col2" class="data row0 col2" >Travis Kelce</td>
+      <td id="T_746f7_row0_col3" class="data row0 col3" >TE</td>
+      <td id="T_746f7_row0_col4" class="data row0 col4" >5.8</td>
+      <td id="T_746f7_row0_col5" class="data row0 col5" >-0.8</td>
+      <td id="T_746f7_row0_col6" class="data row0 col6" >1</td>
+    </tr>
+    <tr>
+      <td id="T_746f7_row1_col0" class="data row1 col0" >2</td>
+      <td id="T_746f7_row1_col1" class="data row1 col1" >16</td>
+      <td id="T_746f7_row1_col2" class="data row1 col2" >CeeDee Lamb</td>
+      <td id="T_746f7_row1_col3" class="data row1 col3" >WR</td>
+      <td id="T_746f7_row1_col4" class="data row1 col4" >13.2</td>
+      <td id="T_746f7_row1_col5" class="data row1 col5" >+2.8</td>
+      <td id="T_746f7_row1_col6" class="data row1 col6" >2</td>
+    </tr>
+    <tr>
+      <td id="T_746f7_row2_col0" class="data row2 col0" >3</td>
+      <td id="T_746f7_row2_col1" class="data row2 col1" >25</td>
+      <td id="T_746f7_row2_col2" class="data row2 col2" >Jalen Hurts</td>
+      <td id="T_746f7_row2_col3" class="data row2 col3" >QB</td>
+      <td id="T_746f7_row2_col4" class="data row2 col4" >22.8</td>
+      <td id="T_746f7_row2_col5" class="data row2 col5" >+2.2</td>
+      <td id="T_746f7_row2_col6" class="data row2 col6" >2</td>
+    </tr>
+    <tr>
+      <td id="T_746f7_row3_col0" class="data row3 col0" >4</td>
+      <td id="T_746f7_row3_col1" class="data row3 col1" >36</td>
+      <td id="T_746f7_row3_col2" class="data row3 col2" >Jahmyr Gibbs</td>
+      <td id="T_746f7_row3_col3" class="data row3 col3" >RB</td>
+      <td id="T_746f7_row3_col4" class="data row3 col4" >33.0</td>
+      <td id="T_746f7_row3_col5" class="data row3 col5" >+3.0</td>
+      <td id="T_746f7_row3_col6" class="data row3 col6" >13</td>
+    </tr>
+    <tr>
+      <td id="T_746f7_row4_col0" class="data row4 col0" >5</td>
+      <td id="T_746f7_row4_col1" class="data row4 col1" >45</td>
+      <td id="T_746f7_row4_col2" class="data row4 col2" >Amari Cooper</td>
+      <td id="T_746f7_row4_col3" class="data row4 col3" >WR</td>
+      <td id="T_746f7_row4_col4" class="data row4 col4" >42.0</td>
+      <td id="T_746f7_row4_col5" class="data row4 col5" >+3.0</td>
+      <td id="T_746f7_row4_col6" class="data row4 col6" >32</td>
+    </tr>
+    <tr>
+      <td id="T_746f7_row5_col0" class="data row5 col0" >6</td>
+      <td id="T_746f7_row5_col1" class="data row5 col1" >56</td>
+      <td id="T_746f7_row5_col2" class="data row5 col2" >Breece Hall</td>
+      <td id="T_746f7_row5_col3" class="data row5 col3" >RB</td>
+      <td id="T_746f7_row5_col4" class="data row5 col4" >40.8</td>
+      <td id="T_746f7_row5_col5" class="data row5 col5" >+15.2</td>
+      <td id="T_746f7_row5_col6" class="data row5 col6" >9</td>
+    </tr>
+  </tbody>
+</table>
+</div></details><details class="section" id="cards"><summary>Manager Report Cards</summary><p><strong>Starter Hit %</strong> = share of picks that finished inside their position's weekly starter pool. <strong>Avg ADP Value</strong> = pick minus consensus ADP (+ = waited for value). <strong>Avg Finish vs ADP</strong> = ADP minus where the player actually finished (+ = the pick outperformed the market).</p><div class='table-scroll'><style type="text/css">
+#T_aa9f8 td {
+  border: 1px solid #cfd6dd;
+  padding: 6px 12px;
+  text-align: center;
+}
+#T_aa9f8 th {
+  border: 1px solid #cfd6dd;
+  padding: 8px 12px;
+  text-align: center;
+  background-color: #e8edf2;
+  color: #141414;
+  font-weight: 600;
+}
+#T_aa9f8  {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 14px;
+}
+#T_aa9f8_row0_col2, #T_aa9f8_row0_col4, #T_aa9f8_row1_col2, #T_aa9f8_row2_col2, #T_aa9f8_row3_col2 {
+  background-color: #006837;
+  color: #f1f1f1;
+}
+#T_aa9f8_row1_col4 {
+  background-color: #279f53;
+  color: #f1f1f1;
+}
+#T_aa9f8_row2_col4 {
+  background-color: #98d368;
+  color: #000000;
+}
+#T_aa9f8_row3_col4 {
+  background-color: #feffbe;
+  color: #000000;
+}
+#T_aa9f8_row4_col2 {
+  background-color: #2aa054;
+  color: #f1f1f1;
+}
+#T_aa9f8_row4_col4 {
+  background-color: #fffcba;
+  color: #000000;
+}
+#T_aa9f8_row5_col2 {
+  background-color: #5ab760;
+  color: #f1f1f1;
+}
+#T_aa9f8_row5_col4 {
+  background-color: #fee593;
+  color: #000000;
+}
+#T_aa9f8_row6_col2 {
+  background-color: #84ca66;
+  color: #000000;
+}
+#T_aa9f8_row6_col4 {
+  background-color: #96d268;
+  color: #000000;
+}
+#T_aa9f8_row7_col2 {
+  background-color: #bbe278;
+  color: #000000;
+}
+#T_aa9f8_row7_col4 {
+  background-color: #feeda1;
+  color: #000000;
+}
+#T_aa9f8_row8_col2 {
+  background-color: #feec9f;
+  color: #000000;
+}
+#T_aa9f8_row8_col4 {
+  background-color: #e0422f;
+  color: #f1f1f1;
+}
+#T_aa9f8_row9_col2, #T_aa9f8_row9_col4 {
+  background-color: #a50026;
+  color: #f1f1f1;
+}
+</style>
+<table id="T_aa9f8" class="sticky-table">
+  <thead>
+    <tr>
+      <th id="T_aa9f8_level0_col0" class="col_heading level0 col0" >Manager</th>
+      <th id="T_aa9f8_level0_col1" class="col_heading level0 col1" >Picks</th>
+      <th id="T_aa9f8_level0_col2" class="col_heading level0 col2" >Starter Hit %</th>
+      <th id="T_aa9f8_level0_col3" class="col_heading level0 col3" >Avg ADP Value</th>
+      <th id="T_aa9f8_level0_col4" class="col_heading level0 col4" >Avg Finish vs ADP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="T_aa9f8_row0_col0" class="data row0 col0" >Mark</td>
+      <td id="T_aa9f8_row0_col1" class="data row0 col1" >38</td>
+      <td id="T_aa9f8_row0_col2" class="data row0 col2" >53%</td>
+      <td id="T_aa9f8_row0_col3" class="data row0 col3" >-7.3</td>
+      <td id="T_aa9f8_row0_col4" class="data row0 col4" >+7.3</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row1_col0" class="data row1 col0" >Colin</td>
+      <td id="T_aa9f8_row1_col1" class="data row1 col1" >38</td>
+      <td id="T_aa9f8_row1_col2" class="data row1 col2" >53%</td>
+      <td id="T_aa9f8_row1_col3" class="data row1 col3" >-3.2</td>
+      <td id="T_aa9f8_row1_col4" class="data row1 col4" >+5.2</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row2_col0" class="data row2 col0" >Jackson</td>
+      <td id="T_aa9f8_row2_col1" class="data row2 col1" >38</td>
+      <td id="T_aa9f8_row2_col2" class="data row2 col2" >53%</td>
+      <td id="T_aa9f8_row2_col3" class="data row2 col3" >+0.3</td>
+      <td id="T_aa9f8_row2_col4" class="data row2 col4" >+2.3</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row3_col0" class="data row3 col0" >Austin</td>
+      <td id="T_aa9f8_row3_col1" class="data row3 col1" >38</td>
+      <td id="T_aa9f8_row3_col2" class="data row3 col2" >53%</td>
+      <td id="T_aa9f8_row3_col3" class="data row3 col3" >-2.7</td>
+      <td id="T_aa9f8_row3_col4" class="data row3 col4" >-1.6</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row4_col0" class="data row4 col0" >George</td>
+      <td id="T_aa9f8_row4_col1" class="data row4 col1" >39</td>
+      <td id="T_aa9f8_row4_col2" class="data row4 col2" >49%</td>
+      <td id="T_aa9f8_row4_col3" class="data row4 col3" >-0.2</td>
+      <td id="T_aa9f8_row4_col4" class="data row4 col4" >-1.8</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row5_col0" class="data row5 col0" >Padgett</td>
+      <td id="T_aa9f8_row5_col1" class="data row5 col1" >36</td>
+      <td id="T_aa9f8_row5_col2" class="data row5 col2" >47%</td>
+      <td id="T_aa9f8_row5_col3" class="data row5 col3" >-0.1</td>
+      <td id="T_aa9f8_row5_col4" class="data row5 col4" >-3.1</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row6_col0" class="data row6 col0" >Trevor</td>
+      <td id="T_aa9f8_row6_col1" class="data row6 col1" >38</td>
+      <td id="T_aa9f8_row6_col2" class="data row6 col2" >45%</td>
+      <td id="T_aa9f8_row6_col3" class="data row6 col3" >-4.4</td>
+      <td id="T_aa9f8_row6_col4" class="data row6 col4" >+2.4</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row7_col0" class="data row7 col0" >Max</td>
+      <td id="T_aa9f8_row7_col1" class="data row7 col1" >38</td>
+      <td id="T_aa9f8_row7_col2" class="data row7 col2" >42%</td>
+      <td id="T_aa9f8_row7_col3" class="data row7 col3" >-7.2</td>
+      <td id="T_aa9f8_row7_col4" class="data row7 col4" >-2.6</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row8_col0" class="data row8 col0" >Tyler</td>
+      <td id="T_aa9f8_row8_col1" class="data row8 col1" >40</td>
+      <td id="T_aa9f8_row8_col2" class="data row8 col2" >35%</td>
+      <td id="T_aa9f8_row8_col3" class="data row8 col3" >-4.5</td>
+      <td id="T_aa9f8_row8_col4" class="data row8 col4" >-8.2</td>
+    </tr>
+    <tr>
+      <td id="T_aa9f8_row9_col0" class="data row9 col0" >Everett</td>
+      <td id="T_aa9f8_row9_col1" class="data row9 col1" >38</td>
+      <td id="T_aa9f8_row9_col2" class="data row9 col2" >21%</td>
+      <td id="T_aa9f8_row9_col3" class="data row9 col3" >-4.3</td>
+      <td id="T_aa9f8_row9_col4" class="data row9 col4" >-10.5</td>
+    </tr>
+  </tbody>
+</table>
+</div><h2>Individual cards</h2><details class="section"><summary>Mark</summary><p><strong>First pick by position:</strong> QB rd 4.7, RB rd 1.7, WR rd 1.7, TE rd 4.0</p><ul><li>Takes their first <strong>TE</strong> 2.1 rounds earlier than the league average (round 4.0 vs 6.1).</li><li>53% of picks became weekly starters (tied 1st of 10 in the league); the average pick finished 7.3 spots better than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Michael Pittman Jr. (WR, 2025-2026) &mdash; taken at pick 111 as the 47th WR off consensus boards, finished 9th.</li><li><strong>Worst pick:</strong> Hollywood Brown (WR, 2024-2025) &mdash; taken at pick 92 as the 45th WR off consensus boards, finished 213th.</li></ul></details><details class="section"><summary>Colin</summary><p><strong>First pick by position:</strong> QB rd 7.3, RB rd 1.7, WR rd 1.3, TE rd 7.3</p><ul><li>Takes their first <strong>QB</strong> 2.0 rounds later than the league average (round 7.3 vs 5.4).</li><li>Champion in <strong>2024-2025</strong>.</li><li>53% of picks became weekly starters (tied 1st of 10 in the league); the average pick finished 5.2 spots better than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Keenan Allen (WR, 2025-2026) &mdash; taken at pick 133 as the 53rd WR off consensus boards, finished 27th.</li><li><strong>Worst pick:</strong> Calvin Ridley (WR, 2025-2026) &mdash; taken at pick 68 as the 28th WR off consensus boards, finished 100th.</li></ul></details><details class="section"><summary>Jackson</summary><p><strong>First pick by position:</strong> QB rd 8.0, RB rd 3.0, WR rd 1.7, TE rd 3.3</p><ul><li>Takes their first <strong>TE</strong> 2.7 rounds earlier than the league average (round 3.3 vs 6.1).</li><li>Champion in <strong>2023-2024</strong>.</li><li>53% of picks became weekly starters (tied 1st of 10 in the league); the average pick finished 2.3 spots better than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Jaxon Smith-Njigba (WR, 2024-2025) &mdash; taken at pick 102 as the 40th WR off consensus boards, finished 7th.</li><li><strong>Worst pick:</strong> Malik Nabers (WR, 2025-2026) &mdash; taken at pick 16 as the 4th WR off consensus boards, finished 84th.</li></ul></details><details class="section"><summary>Austin</summary><p><strong>First pick by position:</strong> QB rd 4.7, RB rd 1.3, WR rd 1.7, TE rd 6.7</p><ul><li>Takes their first <strong>QB</strong> 0.7 rounds earlier than the league average (round 4.7 vs 5.4).</li><li>Champion in <strong>2025-2026</strong>.</li><li>53% of picks became weekly starters (tied 1st of 10 in the league); the average pick finished 1.6 spots worse than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Emeka Egbuka (WR, 2025-2026) &mdash; taken at pick 94 as the 37th WR off consensus boards, finished 15th.</li><li><strong>Worst pick:</strong> Tyreek Hill (WR, 2025-2026) &mdash; taken at pick 34 as the 13th WR off consensus boards, finished 89th.</li></ul></details><details class="section"><summary>George</summary><p><strong>First pick by position:</strong> QB rd 6.0, RB rd 1.7, WR rd 1.3, TE rd 6.7</p><ul><li>Takes their first <strong>QB</strong> 0.6 rounds later than the league average (round 6.0 vs 5.4).</li><li>49% of picks became weekly starters (5th of 10 in the league); the average pick finished 1.8 spots worse than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Jerry Jeudy (WR, 2024-2025) &mdash; taken at pick 150 as the 55th WR off consensus boards, finished 11th.</li><li><strong>Worst pick:</strong> Jayden Reed (WR, 2025-2026) &mdash; taken at pick 109 as the 50th WR off consensus boards, finished 133rd.</li></ul></details><details class="section"><summary>Padgett</summary><p><strong>First pick by position:</strong> QB rd 4.3, RB rd 2.0, WR rd 1.3, TE rd 6.3</p><ul><li>Takes their first <strong>QB</strong> 1.0 rounds earlier than the league average (round 4.3 vs 5.4).</li><li>47% of picks became weekly starters (6th of 10 in the league); the average pick finished 3.1 spots worse than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Khalil Shakir (WR, 2024-2025) &mdash; taken at pick 145 as the 50th WR off consensus boards, finished 22nd.</li><li><strong>Worst pick:</strong> Amari Cooper (WR, 2024-2025) &mdash; taken at pick 56 as the 25th WR off consensus boards, finished 59th.</li></ul></details><details class="section"><summary>Trevor</summary><p><strong>First pick by position:</strong> QB rd 3.0, RB rd 2.3, WR rd 2.0, TE rd 6.7</p><ul><li>Takes their first <strong>QB</strong> 2.4 rounds earlier than the league average (round 3.0 vs 5.4).</li><li>45% of picks became weekly starters (7th of 10 in the league); the average pick finished 2.4 spots better than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Michael Pittman Jr. (WR, 2023-2024) &mdash; taken at pick 72 as the 33rd WR off consensus boards, finished 11th.</li><li><strong>Worst pick:</strong> Travis Hunter (WR, 2025-2026) &mdash; taken at pick 66 as the 30th WR off consensus boards, finished 218th.</li></ul></details><details class="section"><summary>Max</summary><p><strong>First pick by position:</strong> QB rd 4.0, RB rd 2.0, WR rd 1.3, TE rd 8.3</p><ul><li>Takes their first <strong>TE</strong> 2.3 rounds later than the league average (round 8.3 vs 6.1).</li><li>42% of picks became weekly starters (8th of 10 in the league); the average pick finished 2.6 spots worse than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Terry McLaurin (WR, 2024-2025) &mdash; taken at pick 68 as the 31st WR off consensus boards, finished 5th.</li><li><strong>Worst pick:</strong> Rashaad Penny (RB, 2023-2024) &mdash; taken at pick 115 as the 42nd RB off consensus boards, finished 115th.</li></ul></details><details class="section"><summary>Tyler</summary><p><strong>First pick by position:</strong> QB rd 6.3, RB rd 1.3, WR rd 2.0, TE rd 6.3</p><ul><li>Takes their first <strong>QB</strong> 1.0 rounds later than the league average (round 6.3 vs 5.4).</li><li>35% of picks became weekly starters (9th of 10 in the league); the average pick finished 8.2 spots worse than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Javonte Williams (RB, 2025-2026) &mdash; taken at pick 98 as the 36th RB off consensus boards, finished 7th.</li><li><strong>Worst pick:</strong> Joe Mixon (RB, 2025-2026) &mdash; taken at pick 63 as the 38th RB off consensus boards, finished 138th.</li></ul></details><details class="section"><summary>Everett</summary><p><strong>First pick by position:</strong> QB rd 5.3, RB rd 1.7, WR rd 1.3, TE rd 5.0</p><ul><li>Takes their first <strong>TE</strong> 1.1 rounds earlier than the league average (round 5.0 vs 6.1).</li><li>21% of picks became weekly starters (10th of 10 in the league); the average pick finished 10.5 spots worse than its ADP.</li></ul><ul><li><strong>Best pick:</strong> Khalil Shakir (WR, 2025-2026) &mdash; taken at pick 99 as the 44th WR off consensus boards, finished 31st.</li><li><strong>Worst pick:</strong> Brandon Aiyuk (WR, 2025-2026) &mdash; taken at pick 122 as the 54th WR off consensus boards, finished 218th.</li></ul></details></details>
