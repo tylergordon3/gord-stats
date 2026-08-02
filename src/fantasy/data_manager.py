@@ -17,7 +17,7 @@ SEASON_JOBS - same extensibility idea as sources/.
 import argparse
 
 from src import util
-from src.config import DATA_DIR, LEAGUE_IDS
+from src.config import DATA_DIR, FANTASY_REG_WEEKS, LEAGUE_IDS
 from src.identity.history import build_player_seasons
 from src.identity.registry import build_registry
 from src.league import injuries, season as season_data
@@ -32,10 +32,16 @@ CURRENT_SEASON_STR = util.year_str()
 
 
 def _end_week(season_str: str) -> int:
-    """Last week to pull: live count for the current season, full 14 for past."""
+    """Last week to pull: live count for the current season, full slate for past.
+
+    Clamped to [1, FANTASY_REG_WEEKS]. get_last_completed_week() keeps counting
+    through the offseason - in August it returns 47 - and an unclamped value would
+    send a 47-week request at Sleeper and overwrite a good season file with the
+    result. Nothing past week 14 is used by any page.
+    """
     if season_str == CURRENT_SEASON_STR:
-        return util.get_last_completed_week()
-    return 14
+        return max(1, min(util.get_last_completed_week(), FANTASY_REG_WEEKS))
+    return FANTASY_REG_WEEKS
 
 
 # --------------------------------------------------------------------------- #

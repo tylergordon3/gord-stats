@@ -78,7 +78,7 @@ table.adp-table tbody tr:hover{background:#e6eef6}
 .adp-early{background:#d8f0dd!important}.adp-late{background:#fadddd!important}
 .adp-meta{font-size:13px;color:#4a5a68;margin:6px 0 0}
 .adp-empty{padding:14px;text-align:center;color:#666}
-</style><p>Where the field is going into the 2026-2027 draft, straight from each site. Click any column header to sort, filter by position, or search for a player. In each row the site that is <span class='adp-early'>highest</span> on a player and the one that is <span class='adp-late'>lowest</span> are shaded - sort by <strong>Spread</strong> to find the players the sites disagree on most.</p><ul><li><strong>Consensus</strong> - FantasyPros consensus (ESPN / Sleeper / CBS / NFL / RTSports, PPR)</li><li><strong>ESPN</strong> - ESPN public PPR league ADP</li><li><strong>FFC</strong> - Fantasy Football Calculator, 12-team PPR mock drafts</li></ul><p class='adp-meta'>Numbers are overall picks; lower = drafted earlier. <strong>Rd</strong> is the round the average ADP lands in for our 10-team league. <strong>Spread</strong> (max - min across sites) is only shown through pick 150, where all three boards are dense enough to compare - past that a gap mostly reflects how deep each site ranks, not real disagreement. Refreshed at build time; last pulled Aug 2, 7:13 PM.</p><div class="adp-controls"><span class="adp-label">Position:</span><button class="adp-pos active" data-pos="ALL">ALL</button><button class="adp-pos" data-pos="QB">QB</button><button class="adp-pos" data-pos="RB">RB</button><button class="adp-pos" data-pos="WR">WR</button><button class="adp-pos" data-pos="TE">TE</button><button class="adp-pos" data-pos="K">K</button><button class="adp-pos" data-pos="DST">DST</button></div><div class="adp-controls"><input id="adp-search" type="search" placeholder="Search player or team..."><select id="adp-limit"><option value="50">Top 50</option><option value="100" selected>Top 100</option><option value="200">Top 200</option><option value="0">All</option></select><span class="adp-label" id="adp-count"></span></div><div class="adp-wrap"><table class="adp-table"><thead id="adp-head"><tr><th data-col="-1">#</th><th data-col="-2">Rd</th><th data-col="0">Player</th><th data-col="1">Pos</th><th data-col="2">Tm</th><th data-col="3">Bye</th><th data-col="4">Consensus</th><th data-col="5">ESPN</th><th data-col="6">FFC</th><th data-col="7">Avg</th><th data-col="8">Spread</th></tr></thead><tbody id="adp-body"></tbody></table></div>{% raw %}<script>
+</style><p>Where the field is going into the 2026-2027 draft, straight from each site. Click any column header to sort, filter by position, or search for a player. In each row the site that is <span class='adp-early'>highest</span> on a player and the one that is <span class='adp-late'>lowest</span> are shaded - sort by <strong>Spread</strong> to find the players the sites disagree on most.</p><ul><li><strong>Consensus</strong> - FantasyPros consensus (ESPN / Sleeper / CBS / NFL / RTSports, PPR)</li><li><strong>ESPN</strong> - ESPN public PPR league ADP</li><li><strong>FFC</strong> - Fantasy Football Calculator, 12-team PPR mock drafts</li></ul><p class='adp-meta'>Numbers are overall picks; lower = drafted earlier. <strong>Rd</strong> is the round the average ADP lands in for our 10-team league. <strong>Spread</strong> (max - min across sites) is only shown through pick 150, where all three boards are dense enough to compare - past that a gap mostly reflects how deep each site ranks, not real disagreement. Refreshed at build time; last pulled Aug 2, 7:25 PM.</p><div class="adp-controls"><span class="adp-label">Position:</span><button class="adp-pos active" data-pos="ALL">ALL</button><button class="adp-pos" data-pos="QB">QB</button><button class="adp-pos" data-pos="RB">RB</button><button class="adp-pos" data-pos="WR">WR</button><button class="adp-pos" data-pos="TE">TE</button><button class="adp-pos" data-pos="K">K</button><button class="adp-pos" data-pos="DST">DST</button></div><div class="adp-controls"><input id="adp-search" type="search" placeholder="Search player or team..."><select id="adp-limit"><option value="50">Top 50</option><option value="100" selected>Top 100</option><option value="200">Top 200</option><option value="0">All</option></select><span class="adp-label" id="adp-count"></span></div><div class="adp-wrap"><table class="adp-table"><thead id="adp-head"><tr><th data-col="-1">#</th><th data-col="-2">Rd</th><th data-col="0">Player</th><th data-col="1">Pos</th><th data-col="2">Tm</th><th data-col="3">Bye</th><th data-col="4">Consensus</th><th data-col="5">ESPN</th><th data-col="6">FFC</th><th data-col="7">Avg</th><th data-col="8">Spread</th></tr></thead><tbody id="adp-body"></tbody></table></div>{% raw %}<script>
 (function(){
 var CFG={"rows":[["Jahmyr Gibbs","RB","DET",6.0,1.0,1.8,1.6,1.5,0.8],["Bijan Robinson","RB","ATL",11.0,2.0,2.7,2.0,2.2,0.7],["Puka Nacua","WR","LAR",11.0,3.8,3.7,2.7,3.4,1.1],["Ja'Marr Chase","WR","CIN",6.0,3.2,4.6,4.1,4.0,1.4],["Christian McCaffrey","RB","SF",8.0,5.6,6.3,5.0,5.6,1.3],["Jaxon Smith-Njigba","WR","SEA",11.0,5.8,5.8,6.2,5.9,0.4],["Jonathan Taylor","RB","IND",13.0,6.6,8.2,7.3,7.4,1.6],["Amon-Ra St. Brown","WR","DET",6.0,8.4,8.2,7.5,8.0,0.9],["De'Von Achane","RB","MIA",6.0,11.0,12.4,9.6,11.0,2.8],["CeeDee Lamb","WR","DAL",14.0,11.8,10.6,11.6,11.3,1.2],["Justin Jefferson","WR","MIN",6.0,11.6,12.0,13.3,12.3,1.7],["James Cook III","RB","BUF",7.0,10.6,13.6,14.5,12.9,3.9],["Ashton Jeanty","RB","LV",13.0,11.2,17.6,13.2,14.0,6.4],["Drake London","WR","ATL",11.0,16.4,19.5,10.7,15.5,8.8],["Saquon Barkley","RB","PHI",10.0,15.2,17.1,18.2,16.8,3.0],["Chase Brown","RB","CIN",6.0,16.2,26.3,13.7,18.7,12.6],["Omarion Hampton","RB","LAC",7.0,16.2,21.2,19.4,18.9,5.0],["Derrick Henry","RB","BAL",13.0,20.4,20.7,15.6,18.9,5.1],["Rashee Rice","WR","KC",5.0,23.6,22.0,17.4,21.0,6.2],["A.J. Brown","WR","NE",11.0,20.6,26.7,17.0,21.4,9.7],["Jeremiyah Love","RB","ARI",14.0,23.2,18.6,24.2,22.0,5.6],["Trey McBride","TE","ARI",14.0,20.6,18.7,34.2,24.5,15.5],["Kenneth Walker III","RB","KC",5.0,21.4,26.4,26.0,24.6,5.0],["George Pickens","WR","DAL",14.0,24.4,28.2,21.2,24.6,7.0],["Josh Allen","QB","BUF",7.0,25.4,22.7,26.7,24.9,4.0],["Nico Collins","WR","HOU",8.0,25.2,27.8,23.7,25.6,4.1],["Josh Jacobs","RB","GB",11.0,29.6,27.3,24.6,27.2,5.0],["Brock Bowers","TE","LV",13.0,21.0,23.4,38.9,27.8,17.9],["Chris Olave","WR","NO",8.0,28.0,35.3,21.7,28.3,13.6],["Breece Hall","RB","NYJ",13.0,31.0,35.6,27.8,31.5,7.8],["DeVonta Smith","WR","PHI",10.0,35.0,38.4,28.9,34.1,9.5],["Garrett Wilson","WR","NYJ",13.0,39.6,35.5,27.8,34.3,11.8],["Kyren Williams","RB","LAR",11.0,30.4,41.0,32.4,34.6,10.6],["Javonte Williams","RB","DAL",14.0,32.6,38.1,34.7,35.1,5.5],["Zay Flowers","WR","BAL",13.0,39.6,43.2,27.4,36.7,15.8],["Tetairoa McMillan","WR","CAR",5.0,38.6,40.4,33.6,37.5,6.8],["Cam Skattebo","RB","NYG",8.0,38.6,43.2,33.3,38.4,9.9],["Malik Nabers","WR","NYG",8.0,34.0,41.5,41.2,38.9,7.5],["Emeka Egbuka","WR","TB",10.0,39.4,42.0,36.7,39.4,5.3],["Travis Etienne Jr.","RB","NO",8.0,37.6,48.4,36.6,40.9,11.8],["Tee Higgins","WR","CIN",6.0,40.8,56.6,38.2,45.2,18.4],["Lamar Jackson","QB","BAL",13.0,41.4,40.2,53.9,45.2,13.7],["Davante Adams","WR","LAR",11.0,50.6,46.5,41.5,46.2,9.1],["Bucky Irving","RB","TB",10.0,44.2,55.3,42.4,47.3,12.9],["Ladd McConkey","WR","LAC",7.0,48.6,53.4,42.3,48.1,11.1],["Colston Loveland","TE","CHI",10.0,43.0,45.5,58.8,49.1,15.8],["Quinshon Judkins","RB","CLE",11.0,47.0,53.0,48.7,49.6,6.0],["Drake Maye","QB","NE",11.0,51.4,47.8,51.6,50.3,3.8],["Terry McLaurin","WR","WAS",7.0,52.6,60.8,42.1,51.8,18.7],["Jaylen Waddle","WR","DEN",10.0,49.6,59.5,47.8,52.3,11.7],["Tyler Warren","TE","IND",13.0,51.4,47.0,64.8,54.4,17.8],["Joe Burrow","QB","CIN",6.0,54.8,60.2,54.9,56.6,5.4],["Jameson Williams","WR","DET",6.0,55.6,67.0,47.5,56.7,19.5],["D'Andre Swift","RB","CHI",10.0,53.8,71.9,45.4,57.0,26.5],["TreVeyon Henderson","RB","NE",11.0,50.0,68.8,56.4,58.4,18.8],["Luther Burden III","WR","CHI",10.0,49.2,76.8,52.3,59.4,27.6],["Jayden Daniels","QB","WAS",7.0,58.6,52.0,71.8,60.8,19.8],["DJ Moore","WR","BUF",7.0,54.8,70.7,60.4,62.0,15.9],["Rome Odunze","WR","CHI",10.0,62.2,71.5,53.2,62.3,18.3],["David Montgomery","RB","HOU",8.0,53.4,74.3,60.6,62.8,20.9],["Bhayshul Tuten","RB","JAC",7.0,58.0,77.7,55.7,63.8,22.0],["Jalen Hurts","QB","PHI",10.0,65.6,54.3,76.1,65.3,21.8],["Mike Evans","WR","SF",8.0,61.6,88.3,58.5,69.5,29.8],["Jadarian Price","RB","SEA",11.0,65.2,77.8,65.8,69.6,12.6],["Carnell Tate","WR","TEN",9.0,68.2,69.0,73.3,70.2,5.1],["Kyle Pitts Sr.","TE","ATL",11.0,70.0,65.8,80.9,72.2,15.1],["Harold Fannin Jr.","TE","CLE",11.0,66.8,77.0,76.8,73.5,10.2],["Courtland Sutton","WR","DEN",10.0,76.6,85.9,65.0,75.8,20.9],["Tony Pollard","RB","TEN",9.0,75.8,88.5,63.2,75.8,25.3],["Sam LaPorta","TE","DET",6.0,76.2,67.8,83.7,75.9,15.9],["Marvin Harrison Jr.","WR","ARI",14.0,73.8,88.9,65.8,76.2,23.1],["DK Metcalf","WR","PIT",9.0,79.0,87.4,64.7,77.0,22.7],["Dak Prescott","QB","DAL",14.0,79.8,89.6,64.9,78.1,24.7],["Christian Watson","WR","GB",11.0,70.4,99.3,66.3,78.7,33.0],["Alec Pierce","WR","IND",13.0,79.8,95.6,63.1,79.5,32.5],["Jaylen Warren","RB","PIT",9.0,74.8,102.5,65.5,80.9,37.0],["Michael Pittman Jr.","WR","PIT",9.0,99.4,90.3,71.4,87.0,28.0],["Brian Thomas Jr.","WR","JAC",7.0,76.6,103.0,83.1,87.6,26.4],["Jaxson Dart","QB","NYG",8.0,84.2,74.4,106.4,88.3,32.0],["Jordyn Tyson","WR","NO",8.0,85.6,97.8,82.8,88.7,15.0],["Rico Dowdle","RB","PIT",9.0,83.6,108.2,75.1,89.0,33.1],["Parker Washington","WR","JAC",7.0,87.6,102.3,77.1,89.0,25.2],["Matthew Stafford","QB","LAR",11.0,100.2,78.6,88.5,89.1,21.6],["Rhamondre Stevenson","RB","NE",11.0,84.4,112.1,71.8,89.4,40.3],["Chuba Hubbard","RB","CAR",5.0,83.2,110.8,77.8,90.6,33.0],["Trevor Lawrence","QB","JAC",7.0,92.6,94.7,88.9,92.1,5.8],["Caleb Williams","QB","CHI",10.0,83.4,91.5,102.6,92.5,19.2],["Michael Wilson","WR","ARI",14.0,89.8,107.6,88.0,95.1,19.6],["Brock Purdy","QB","SF",8.0,102.6,102.9,80.8,95.4,22.1],["Wan'Dale Robinson","WR","TEN",9.0,95.6,114.7,78.4,96.2,36.3],["Jakobi Meyers","WR","JAC",7.0,98.2,113.3,80.7,97.4,32.6],["RJ Harvey","RB","DEN",10.0,78.8,125.4,88.2,97.5,46.6],["Tucker Kraft","TE","GB",11.0,78.8,105.5,110.1,98.1,31.3],["George Kittle","TE","SF",8.0,95.2,93.5,109.5,99.4,16.0],["Denver Broncos","DST","DEN",10.0,113.0,89.5,96.9,99.8,23.5],["Travis Kelce","TE","KC",5.0,103.2,101.2,95.5,100.0,7.7],["Justin Herbert","QB","LAC",7.0,88.8,108.1,103.0,100.0,19.3],["J.K. Dobbins","RB","DEN",10.0,94.2,121.8,90.7,102.2,31.1],["Makai Lemon","WR","PHI",10.0,95.4,109.5,101.6,102.2,14.1],["Houston Texans","DST","HOU",8.0,108.0,92.6,106.6,102.4,15.4],["Patrick Mahomes II","QB","KC",5.0,103.6,104.0,99.8,102.5,4.2],["Kenny Gainwell","RB","TB",10.0,104.8,121.9,91.1,105.9,30.8],["Kyle Monangai","RB","CHI",10.0,94.8,128.9,98.2,107.3,34.1],["Aaron Jones Sr.","RB","MIN",6.0,112.6,120.6,94.3,109.2,26.3],["Bo Nix","QB","DEN",10.0,112.6,94.1,121.2,109.3,27.1],["Chris Godwin Jr.","WR","TB",10.0,98.8,143.3,86.0,109.4,57.3],["Jordan Addison","WR","MIN",6.0,109.2,121.5,98.2,109.6,23.3],["Seattle Seahawks","DST","SEA",11.0,125.2,107.1,97.1,109.8,28.1],["Dallas Goedert","TE","PHI",10.0,113.2,100.9,116.3,110.1,15.4],["Rachaad White","RB","WAS",7.0,106.2,124.8,100.5,110.5,24.3],["Josh Downs","WR","IND",13.0,114.0,129.2,91.7,111.6,37.5],["Brandon Aubrey","K","DAL",14.0,125.0,85.3,129.7,113.3,44.4],["Jayden Reed","WR","GB",11.0,118.6,138.6,91.0,116.1,47.6],["Quentin Johnston","WR","LAC",7.0,108.4,143.4,97.2,116.3,46.2],["Los Angeles Rams","DST","LAR",11.0,121.8,97.9,130.2,116.6,32.3],["Matthew Golden","WR","GB",11.0,125.8,106.0,119.3,117.0,19.8],["Jake Ferguson","TE","DAL",14.0,112.2,109.9,131.4,117.8,21.5],["Jonathon Brooks","RB","CAR",5.0,108.4,129.0,120.8,119.4,20.6],["Blake Corum","RB","LAR",11.0,107.2,137.9,117.9,121.0,30.7],["Jared Goff","QB","DET",6.0,120.4,140.7,103.5,121.5,37.2],["Xavier Worthy","WR","KC",5.0,127.6,135.7,104.8,122.7,30.9],["Jacory Croskey-Merritt","RB","WAS",7.0,113.8,141.1,115.5,123.5,27.3],["Khalil Shakir","WR","BUF",7.0,137.2,134.7,102.9,124.9,34.3],["Isaiah Likely","TE","NYG",8.0,109.2,128.2,141.1,126.2,31.9],["Mark Andrews","TE","BAL",13.0,122.2,121.3,137.9,127.1,16.6],["Romeo Doubs","WR","NE",11.0,127.0,148.5,107.1,127.5,41.4],["Jordan Mason","RB","MIN",6.0,120.0,151.9,121.4,131.1,null],["KC Concepcion","WR","CLE",11.0,133.0,145.3,126.3,134.9,19.0],["Dalton Kincaid","TE","BUF",7.0,123.0,136.1,146.7,135.3,23.7],["Jason Myers","K","SEA",11.0,151.0,118.2,141.8,137.0,null],["Baker Mayfield","QB","TB",10.0,135.2,149.3,129.2,137.9,20.1],["Cameron Dicker","K","LAC",7.0,157.0,108.9,148.4,138.1,null],["Philadelphia Eagles","DST","PHI",10.0,144.6,134.7,140.3,139.9,9.9],["Woody Marks","RB","HOU",8.0,138.4,150.0,139.2,142.5,11.6],["Kyler Murray","QB","MIN",6.0,138.2,149.6,140.9,142.9,11.4],["Rashid Shaheed","WR","SEA",11.0,150.8,156.4,121.9,143.0,null],["Zach Charbonnet","RB","SEA",11.0,135.8,152.1,141.5,143.1,null],["Jayden Higgins","WR","HOU",8.0,139.0,158.7,134.1,143.9,null],["Ka'imi Fairbairn","K","HOU",8.0,154.4,135.4,143.7,144.5,null],["Jalen Coker","WR","CAR",5.0,146.0,160.3,127.2,144.5,null],["T.J. Hockenson","TE","MIN",6.0,146.75,132.5,155.8,145.0,null],["Tyler Shough","QB","NO",8.0,143.2,153.6,138.4,145.1,null],["Travis Hunter","WR","JAC",7.0,161.0,118.0,162.9,147.3,null],["Jordan Love","QB","GB",11.0,140.0,159.6,142.2,147.3,null],["Alvin Kamara","RB","NO",8.0,147.8,156.5,140.6,148.3,null],["Tyjae Spears","RB","TEN",9.0,154.8,168.2,121.8,148.3,null],["Pittsburgh Steelers","DST","PIT",9.0,173.8,117.7,155.0,148.8,null],["Kenyon Sadiq","TE","NYJ",13.0,153.8,133.8,160.4,149.3,null],["Hunter Henry","TE","NE",11.0,154.0,141.8,154.5,150.1,null],["New England Patriots","DST","NE",11.0,168.4,146.7,139.0,151.4,null],["Isiah Pacheco","RB","DET",6.0,152.8,157.6,145.8,152.1,null],["Minnesota Vikings","DST","MIN",6.0,166.4,168.7,129.0,154.7,null],["Deebo Samuel Sr.","WR","SF",8.0,156.2,153.6,null,154.9,null],["Tyrone Tracy Jr.","RB","NYG",8.0,141.8,167.5,156.8,155.4,null],["Brenton Strange","TE","JAC",7.0,151.4,166.7,150.2,156.1,null],["Cam Little","K","JAC",7.0,173.2,136.9,159.6,156.6,null],["Chris Rodriguez Jr.","RB","JAC",7.0,147.0,168.9,155.1,157.0,null],["Baltimore Ravens","DST","BAL",13.0,174.25,133.9,163.0,157.0,null],["Jauan Jennings","WR","MIN",6.0,175.8,null,139.1,157.4,null],["Juwan Johnson","TE","NO",8.0,148.4,163.4,160.3,157.4,null],["Jonah Coleman","RB","DEN",10.0,156.5,null,159.6,158.0,null],["Jalen McMillan","WR","TB",10.0,169.0,167.1,138.7,158.3,null],["Keaton Mitchell","RB","LAC",7.0,154.5,null,162.3,158.4,null],["Jerry Jeudy","WR","CLE",11.0,175.2,161.8,138.5,158.5,null],["Harrison Mevis","K","LAR",11.0,191.2,134.3,150.5,158.7,null],["Tyler Allgeier","RB","ARI",14.0,156.4,null,161.6,159.0,null],["Detroit Lions","DST","DET",6.0,194.75,151.7,130.8,159.1,null],["Stefon Diggs","WR","FA",null,152.8,166.2,null,159.5,null],["Malik Willis","QB","MIA",6.0,156.0,166.8,161.4,161.4,null],["Denzel Boston","WR","CLE",11.0,169.0,167.8,151.3,162.7,null],["Dylan Sampson","RB","CLE",11.0,166.0,null,159.5,162.8,null],["Tre Tucker","WR","LV",13.0,188.4,168.1,135.2,163.9,null],["Austin Ekeler","RB","FA",null,164.0,null,null,164.0,null],["Brian Robinson Jr.","RB","ATL",11.0,168.2,168.1,156.2,164.2,null],["Omar Cooper Jr.","WR","NYJ",13.0,170.2,169.4,154.1,164.6,null],["Sam Darnold","QB","SEA",11.0,186.4,163.6,144.5,164.8,null],["Tre' Harris","WR","LAC",7.0,197.33,null,132.4,164.9,null],["Oronde Gadsden II","TE","LAC",7.0,159.2,168.8,169.5,165.8,null],["Chig Okonkwo","TE","WAS",7.0,166.0,168.5,164.4,166.3,null],["Calvin Ridley","WR","TEN",9.0,194.8,167.3,137.3,166.5,null],["Malik Washington","WR","MIA",6.0,177.0,null,156.6,166.8,null],["Jalen Nailor","WR","LV",13.0,175.8,null,158.5,167.2,null],["Jake Bates","K","DET",6.0,200.6,155.1,147.7,167.8,null],["Los Angeles Chargers","DST","LAC",7.0,194.6,161.7,148.4,168.2,null],["Eddy Pineiro","K","SF",8.0,198.6,150.2,156.8,168.5,null],["Daniel Jones","QB","IND",13.0,186.6,160.5,160.5,169.2,null],["C.J. Stroud","QB","HOU",8.0,185.0,166.2,157.3,169.5,null],["Tank Bigsby","RB","PHI",10.0,181.6,168.3,163.4,171.1,null],["De'Zhaun Stribling","WR","SF",8.0,181.75,169.0,163.5,171.4,null],["Dalton Schultz","TE","HOU",8.0,175.6,167.6,173.8,172.3,null],["Kayshon Boutte","WR","NE",11.0,178.25,null,169.0,173.6,null],["Green Bay Packers","DST","GB",11.0,205.0,167.9,151.2,174.7,null],["Adonai Mitchell","WR","NYJ",13.0,197.4,null,154.4,175.9,null],["Tyler Loop","K","BAL",13.0,205.25,162.5,160.4,176.0,null],["Harrison Butker","K","KC",5.0,211.6,150.7,167.0,176.4,null],["Antonio Williams","WR","WAS",7.0,198.0,null,157.2,177.6,null],["Tank Dell","WR","HOU",8.0,203.2,169.4,160.6,177.7,null],["Cam Ward","QB","TEN",9.0,192.5,167.1,174.5,178.0,null],["Atlanta Falcons","DST","ATL",11.0,204.0,null,154.1,179.0,null],["Cairo Santos","K","CHI",10.0,218.8,166.6,151.9,179.1,null],["James Conner","RB","ARI",14.0,197.4,null,160.8,179.1,null],["Jordan James","RB","SF",8.0,200.67,null,158.5,179.6,null],["AJ Barner","TE","SEA",11.0,190.75,168.7,null,179.7,null],["Pat Freiermuth","TE","PIT",9.0,191.67,168.8,null,180.2,null],["Troy Franklin","WR","DEN",10.0,192.0,null,168.9,180.4,null],["Terrance Ferguson","TE","LAR",11.0,195.0,166.9,null,181.0,null],["Will Reichard","K","MIN",6.0,214.0,165.6,163.7,181.1,null],["San Francisco 49ers","DST","SF",8.0,220.75,168.3,156.2,181.8,null],["Kansas City Chiefs","DST","KC",5.0,209.5,161.3,174.6,181.8,null],["Mike Washington Jr.","RB","LV",13.0,223.67,null,141.0,182.3,null],["Bryce Young","QB","CAR",5.0,209.0,168.3,170.4,182.6,null],["Fernando Mendoza","QB","LV",13.0,211.5,166.8,170.2,182.8,null],["Braelon Allen","RB","NYJ",13.0,195.2,null,170.8,183.0,null],["Chris Boswell","K","PIT",9.0,230.75,162.2,156.6,183.2,null],["Brandon Aiyuk","WR","SF",8.0,213.25,null,154.0,183.6,null],["Kimani Vidal","RB","LAC",7.0,202.75,null,165.0,183.9,null],["Justice Hill","RB","BAL",13.0,203.0,null,165.2,184.1,null],["Cleveland Browns","DST","CLE",11.0,221.0,152.0,179.3,184.1,null],["Greg Dulcich","TE","MIA",6.0,199.67,null,169.8,184.7,null],["Buffalo Bills","DST","BUF",7.0,223.0,169.1,163.1,185.1,null],["Ray Davis","RB","BUF",7.0,207.67,null,163.2,185.4,null],["Jacksonville Jaguars","DST","JAC",7.0,185.4,null,null,185.4,null],["Dallas Cowboys","DST","DAL",14.0,228.0,167.3,161.5,185.6,null],["Jaydon Blue","RB","DAL",14.0,243.0,null,129.2,186.1,null],["Cooper Kupp","WR","SEA",11.0,230.67,168.9,159.5,186.4,null],["Chicago Bears","DST","CHI",10.0,231.0,169.4,160.1,186.8,null],["Odell Beckham Jr.","WR","NYG",8.0,206.0,169.3,null,187.6,null],["Andy Borregales","K","NE",11.0,209.33,null,166.5,187.9,null],["Evan McPherson","K","CIN",6.0,226.0,169.0,170.0,188.3,null],["Darnell Mooney","WR","NYG",8.0,211.5,null,165.3,188.4,null],["New York Giants","DST","NYG",8.0,222.25,169.3,175.3,189.0,null],["Isaac TeSlaa","WR","DET",6.0,210.33,null,169.7,190.0,null],["Ryan Flournoy","WR","DAL",14.0,214.5,null,166.1,190.3,null],["Jacoby Brissett","QB","ARI",14.0,219.0,null,167.9,193.4,null],["Zachariah Branch","WR","ATL",11.0,214.0,null,175.3,194.6,null],["Chase McLaughlin","K","TB",10.0,260.5,168.7,157.4,195.5,null],["Dontayvion Wicks","WR","PHI",10.0,220.0,null,171.2,195.6,null],["Aaron Rodgers","QB","PIT",9.0,222.33,169.4,null,195.9,null],["Emanuel Wilson","RB","SEA",11.0,198.0,null,null,198.0,null],["Kaelon Black","RB","SF",8.0,232.33,null,164.2,198.3,null],["Tyreek Hill","WR","FA",null,198.4,null,null,198.4,null],["Colby Parkinson","TE","LAR",11.0,202.0,null,null,202.0,null],["Christian Kirk","WR","SF",8.0,242.67,null,161.5,202.1,null],["Shedeur Sanders","QB","CLE",11.0,238.67,169.4,null,204.0,null],["Germie Bernard","WR","PIT",9.0,238.0,null,170.1,204.0,null],["Rashod Bateman","WR","BAL",13.0,260.5,null,149.2,204.8,null],["Tampa Bay Buccaneers","DST","TB",10.0,240.67,169.1,null,204.9,null],["Cade Otton","TE","TB",10.0,205.0,null,null,205.0,null],["Jake Elliott","K","PHI",10.0,247.33,169.0,null,208.2,null],["Trey Smack","K","GB",11.0,212.0,null,null,212.0,null],["Nicholas Singleton","RB","TEN",9.0,212.25,null,null,212.2,null],["Sean Tucker","RB","TB",10.0,213.33,null,null,213.3,null],["John Metchie III","WR","CAR",5.0,311.67,null,115.4,213.5,null],["Tyler Bass","K","BUF",7.0,264.33,null,166.8,215.6,null],["Justin Tucker","K","FA",null,216.0,null,null,216.0,null],["Gunnar Helm","TE","TEN",9.0,216.0,null,null,216.0,null],["Samaje Perine","RB","CIN",6.0,268.0,null,164.9,216.4,null],["Washington Commanders","DST","WAS",7.0,264.0,null,171.2,217.6,null],["Nick Folk","K","ATL",11.0,269.0,null,166.5,217.8,null],["Miami Dolphins","DST","MIA",6.0,256.0,null,179.9,218.0,null],["New Orleans Saints","DST","NO",8.0,271.0,null,167.6,219.3,null],["David Njoku","TE","LAC",7.0,221.0,null,null,221.0,null],["Wil Lutz","K","DEN",10.0,268.0,null,176.1,222.0,null],["Ja'Kobi Lane","WR","BAL",13.0,223.0,null,null,223.0,null],["Tennessee Titans","DST","TEN",9.0,287.0,null,159.8,223.4,null],["Eli Stowers","TE","PHI",10.0,224.33,null,null,224.3,null],["Jake Tonges","TE","SF",8.0,225.0,null,null,225.0,null],["Joe Mixon","RB","FA",null,225.0,null,null,225.0,null],["MarShawn Lloyd","RB","GB",11.0,226.0,null,null,226.0,null],["Spencer Shrader","K","IND",13.0,226.5,null,null,226.5,null],["Cincinnati Bengals","DST","CIN",6.0,276.67,null,179.2,227.9,null],["George Holani","RB","SEA",11.0,229.5,null,null,229.5,null],["Dominic Zvada","K","NYG",8.0,230.0,null,null,230.0,null],["Kaytron Allen","RB","WAS",7.0,230.0,null,null,230.0,null],["Jack Bech","WR","LV",13.0,231.0,null,null,231.0,null],["Philip Rivers","QB","FA",null,232.0,null,null,232.0,null],["Indianapolis Colts","DST","IND",13.0,232.5,null,null,232.5,null],["Kirk Cousins","QB","LV",13.0,233.0,null,null,233.0,null],["Jake Moody","K","WAS",7.0,234.0,null,null,234.0,null],["Andre Szmyt","K","CLE",11.0,235.0,null,null,235.0,null],["Younghoe Koo","K","FA",null,236.0,null,null,236.0,null],["Elic Ayomanor","WR","TEN",9.0,236.5,null,null,236.5,null],["Emmett Johnson","RB","KC",5.0,237.0,null,null,237.0,null],["KaVontae Turpin","WR","DAL",14.0,238.0,null,null,238.0,null],["Ryan Fitzgerald","K","CAR",5.0,239.0,null,null,239.0,null],["Ted Hurst III","WR","TB",10.0,240.0,null,null,240.0,null],["Emari Demercado","RB","KC",5.0,240.0,null,null,240.0,null],["Jason Sanders","K","NYJ",13.0,240.0,null,null,240.0,null],["Ty Johnson","RB","BUF",7.0,242.0,null,null,242.0,null],["Matt Prater","K","FA",null,242.0,null,null,242.0,null],["Jaylen Wright","RB","MIA",6.0,242.33,null,null,242.3,null],["Ben Sauls","K","NYG",8.0,244.0,null,null,244.0,null],["Mike Gesicki","TE","CIN",6.0,244.0,null,null,244.0,null],["Evan Engram","TE","DEN",10.0,248.0,null,null,248.0,null],["Jaylin Noel","WR","HOU",8.0,248.5,null,null,248.5,null],["DeMario Douglas","WR","NE",11.0,249.0,null,null,249.0,null],["Demond Claiborne","RB","MIN",6.0,249.5,null,null,249.5,null],["Jordan Whittington","WR","LAR",11.0,250.0,null,null,250.0,null],["Kendre Miller","RB","NO",8.0,250.0,null,null,250.0,null],["Chad Ryland","K","ARI",14.0,252.0,null,null,252.0,null],["Geno Smith","QB","NYJ",13.0,252.0,null,null,252.0,null],["Jahan Dotson","WR","ATL",11.0,252.0,null,null,252.0,null],["Malachi Fields","WR","NYG",8.0,252.75,null,null,252.8,null],["Luke Musgrave","TE","GB",11.0,253.0,null,null,253.0,null],["Mason Taylor","TE","NYJ",13.0,253.33,null,null,253.3,null],["Matt Gay","K","LV",13.0,254.5,null,null,254.5,null],["DJ Giddens","RB","IND",13.0,255.0,null,null,255.0,null],["Tommy DeVito","QB","NE",11.0,257.0,null,null,257.0,null],["Tua Tagovailoa","QB","ATL",11.0,258.0,null,null,258.0,null],["Eli Raridon","TE","NE",11.0,258.0,null,null,258.0,null],["Najee Harris","RB","LAC",7.0,258.0,null,null,258.0,null],["Marvin Mims Jr.","WR","DEN",10.0,258.5,null,null,258.5,null],["Zavion Thomas","WR","CHI",10.0,259.0,null,null,259.0,null],["Keenan Allen","WR","LAC",7.0,260.0,null,null,260.0,null],["Luke Schoonmaker","TE","DAL",14.0,260.0,null,null,260.0,null],["Caden Davis","K","FA",null,261.0,null,null,261.0,null],["Arizona Cardinals","DST","ARI",14.0,261.5,null,null,261.5,null],["Chris Bell","WR","MIA",6.0,261.67,null,null,261.7,null],["Michael Penix Jr.","QB","ATL",11.0,262.5,null,null,262.5,null],["Tyler Higbee","TE","LAR",11.0,263.0,null,null,263.0,null],["J.J. McCarthy","QB","MIN",6.0,263.67,null,null,263.7,null],["Tory Horton","WR","SEA",11.0,264.0,null,null,264.0,null],["Brock Wright","TE","DET",6.0,264.0,null,null,264.0,null],["Jalen Tolbert","WR","MIA",6.0,264.0,null,null,264.0,null],["Keon Coleman","WR","BUF",7.0,264.5,null,null,264.5,null],["Pat Bryant","WR","DEN",10.0,264.5,null,null,264.5,null],["Kaleb Johnson","RB","PIT",9.0,264.67,null,null,264.7,null],["Carolina Panthers","DST","CAR",5.0,264.67,null,null,264.7,null],["Cade Klubnik","QB","NYJ",13.0,265.0,null,null,265.0,null],["LeQuint Allen Jr.","RB","JAC",7.0,265.0,null,null,265.0,null],["Skyler Bell","WR","BUF",7.0,265.0,null,null,265.0,null],["Quinn Ewers","QB","MIA",6.0,266.0,null,null,266.0,null],["Devin Singletary","RB","NYG",8.0,267.0,null,null,267.0,null],["Joe Milton III","QB","DAL",14.0,267.0,null,null,267.0,null],["Brashard Smith","RB","KC",5.0,267.5,null,null,267.5,null],["Chimere Dike","WR","TEN",9.0,267.5,null,null,267.5,null],["Tyson Bagent","QB","CHI",10.0,269.0,null,null,269.0,null],["Kyle Williams","WR","NE",11.0,269.33,null,null,269.3,null],["Brenen Thompson","WR","LAC",7.0,270.0,null,null,270.0,null],["Darnell Washington","TE","PIT",9.0,270.5,null,null,270.5,null],["Cole Kmet","TE","CHI",10.0,271.0,null,null,271.0,null],["Chris Brooks","RB","GB",11.0,272.0,null,null,272.0,null],["Drew Allar","QB","PIT",9.0,272.0,null,null,272.0,null],["Jahdae Walker","WR","CHI",10.0,273.0,null,null,273.0,null],["Ollie Gordon II","RB","MIA",6.0,274.0,null,null,274.0,null],["Tommy Tremble","TE","CAR",5.0,275.0,null,null,275.0,null],["Josh Oliver","TE","MIN",6.0,276.0,null,null,276.0,null],["Devontez Walker","WR","BAL",13.0,276.5,null,null,276.5,null],["Tai Felton","WR","MIN",6.0,278.0,null,null,278.0,null],["Las Vegas Raiders","DST","LV",13.0,278.33,null,null,278.3,null],["Drew Lock","QB","SEA",11.0,279.0,null,null,279.0,null],["Will Howard","QB","PIT",9.0,280.0,null,null,280.0,null],["Graham Gano","K","FA",null,281.0,null,null,281.0,null],["DeWayne McBride","RB","FA",null,282.0,null,null,282.0,null],["Andrei Iosivas","WR","CIN",6.0,283.0,null,null,283.0,null],["Zane Gonzalez","K","MIA",6.0,284.0,null,null,284.0,null],["Hollywood Brown","WR","PHI",10.0,284.0,null,null,284.0,null],["Justin Fields","QB","KC",5.0,284.5,null,null,284.5,null],["Tutu Atwell","WR","MIA",6.0,285.0,null,null,285.0,null],["Dawson Knox","TE","BUF",7.0,285.5,null,null,285.5,null],["Max Klare","TE","LAR",11.0,286.0,null,null,286.0,null],["Devaughn Vele","WR","NO",8.0,286.5,null,null,286.5,null],["Cyrus Allen","WR","KC",5.0,286.5,null,null,286.5,null],["Jackson Hawes","TE","BUF",7.0,287.0,null,null,287.0,null],["Charlie Smyth","K","NO",8.0,287.5,null,null,287.5,null],["KeAndre Lambert-Smith","WR","LAC",7.0,288.0,null,null,288.0,null],["Malik Davis","RB","DAL",14.0,288.0,null,null,288.0,null],["Calvin Austin III","WR","NYG",8.0,289.0,null,null,289.0,null],["Bo Melton","WR","GB",11.0,290.0,null,null,290.0,null],["Isaiah Davis","RB","NYJ",13.0,290.0,null,null,290.0,null],["Joshua Palmer","WR","BUF",7.0,290.0,null,null,290.0,null],["Mac Jones","QB","SF",8.0,291.0,null,null,291.0,null],["Xavier Legette","WR","CAR",5.0,291.0,null,null,291.0,null],["Ben Skowronek","WR","PIT",9.0,291.0,null,null,291.0,null],["Elijah Arroyo","TE","SEA",11.0,291.5,null,null,291.5,null],["Colbie Young","WR","CIN",6.0,292.0,null,null,292.0,null],["Ty Simpson","QB","LAR",11.0,293.0,null,null,293.0,null],["CJ Daniels","WR","LAR",11.0,293.0,null,null,293.0,null],["Jonathan Mingo","WR","DAL",14.0,295.0,null,null,295.0,null],["Michael Trigg","TE","DAL",14.0,295.0,null,null,295.0,null],["Theo Johnson","TE","NYG",8.0,295.5,null,null,295.5,null],["Cedric Tillman","WR","CLE",11.0,296.0,null,null,296.0,null],["Elijah Sarratt","WR","BAL",13.0,296.0,null,null,296.0,null],["Efton Chism III","WR","NE",11.0,297.0,null,null,297.0,null],["Carson Beck","QB","ARI",14.0,297.5,null,null,297.5,null],["Trey Benson","RB","ARI",14.0,297.67,null,null,297.7,null],["Darius Slayton","WR","NYG",8.0,298.0,null,null,298.0,null],["Lil'Jordan Humphrey","WR","DEN",10.0,298.0,null,null,298.0,null],["New York Jets","DST","NYJ",13.0,298.67,null,null,298.7,null],["Jake Bobo","WR","SEA",11.0,299.0,null,null,299.0,null],["Roman Wilson","WR","PIT",9.0,300.0,null,null,300.0,null],["Frank Gore Jr.","RB","BUF",7.0,301.0,null,null,301.0,null],["Xavier Hutchinson","WR","HOU",8.0,302.0,null,null,302.0,null],["Raheim Sanders","RB","CLE",11.0,302.0,null,null,302.0,null],["Savion Williams","WR","GB",11.0,303.0,null,null,303.0,null],["Mack Hollins","WR","NE",11.0,303.5,null,null,303.5,null],["Chris Brazzell II","WR","CAR",5.0,304.0,null,null,304.0,null],["Olamide Zaccheaus","WR","ATL",11.0,304.0,null,null,304.0,null],["Tanner Brown","K","NO",8.0,304.0,null,null,304.0,null],["Jarquez Hunter","RB","LAR",11.0,305.0,null,null,305.0,null],["Devin Leary","QB","FA",null,305.0,null,null,305.0,null],["Jude McAtamney","K","FA",null,306.0,null,null,306.0,null],["Kendrick Bourne","WR","ARI",14.0,307.0,null,null,307.0,null],["Tez Johnson","WR","TB",10.0,307.5,null,null,307.5,null],["Jameis Winston","QB","NYG",8.0,308.0,null,null,308.0,null],["Tyquan Thornton","WR","KC",5.0,309.0,null,null,309.0,null],["Kalif Raymond","WR","CHI",10.0,310.0,null,null,310.0,null],["Bryce Lance","WR","NO",8.0,311.0,null,null,311.0,null],["Isaac Guerendo","RB","SF",8.0,312.0,null,null,312.0,null],["Will Kacmarek","TE","MIA",6.0,312.0,null,null,312.0,null],["Trey Lance","QB","LAC",7.0,312.5,null,null,312.5,null],["Konata Mumpfield","WR","LAR",11.0,313.0,null,null,313.0,null],["Deshaun Watson","QB","CLE",11.0,313.5,null,null,313.5,null],["Adam Trautman","TE","DEN",10.0,314.0,null,null,314.0,null],["Kenny McIntosh","RB","FA",null,316.0,null,null,316.0,null],["Jalen Royals","WR","KC",5.0,317.0,null,null,317.0,null],["Greg Dortch","WR","DET",6.0,318.0,null,null,318.0,null],["Michael Mayer","TE","LV",13.0,319.0,null,null,319.0,null],["Xavier Smith","WR","LAR",11.0,319.0,null,null,319.0,null],["Kenny Pickett","QB","CAR",5.0,320.0,null,null,320.0,null],["Sam Roush","TE","CHI",10.0,321.0,null,null,321.0,null],["Reggie Gilliam","RB","NE",11.0,322.0,null,null,322.0,null],["Myles Price","WR","MIN",6.0,323.0,null,null,323.0,null],["JuJu Smith-Schuster","WR","NYG",8.0,324.0,null,null,324.0,null],["Zach Wilson","QB","NO",8.0,325.0,null,null,325.0,null],["Pierre Strong Jr.","RB","GB",11.0,326.0,null,null,326.0,null],["Roschon Johnson","RB","CHI",10.0,327.0,null,null,327.0,null],["Hendon Hooker","QB","TEN",9.0,328.0,null,null,328.0,null],["Isaiah Bond","WR","CLE",11.0,328.0,null,null,328.0,null],["Israel Abanikanda","RB","DAL",14.0,329.0,null,null,329.0,null],["Dillon Gabriel","QB","CLE",11.0,330.0,null,null,330.0,null],["Taylen Green","QB","CLE",11.0,332.0,null,null,332.0,null],["Eli Heidenreich","RB","PIT",9.0,333.0,null,null,333.0,null],["Equanimeous St. Brown","WR","FA",null,334.0,null,null,334.0,null],["Austin Seibert","K","FA",null,335.0,null,null,335.0,null],["Nick Chubb","RB","FA",null,336.0,null,null,336.0,null],["Kadarius Toney","WR","FA",null,337.0,null,null,337.0,null],["Jakobie Keeney-James","WR","FA",null,338.0,null,null,338.0,null],["Sal Cannella","TE","FA",null,339.0,null,null,339.0,null],["Joe Flacco","QB","CIN",6.0,340.0,null,null,340.0,null],["Kevin Coleman Jr.","WR","MIA",6.0,341.5,null,null,341.5,null],["Tyler Huntley","QB","BAL",13.0,342.0,null,null,342.0,null],["Ja'Tavion Sanders","TE","CAR",5.0,342.0,null,null,342.0,null],["Devin Neal","RB","NO",8.0,343.67,null,null,343.7,null],["Josh Williams","RB","TB",10.0,344.0,null,null,344.0,null],["Kareem Hunt","RB","FA",null,344.0,null,null,344.0,null],["Noah Gray","TE","KC",5.0,345.0,null,null,345.0,null],["Sam Howell","QB","DAL",14.0,346.0,null,null,346.0,null],["Erick All Jr.","TE","CIN",6.0,348.0,null,null,348.0,null],["Dont'e Thornton Jr.","WR","LV",13.0,349.0,null,null,349.0,null],["Brendan Sorsby","QB","FA",null,349.0,null,null,349.0,null],["Oscar Delp","TE","NO",8.0,350.5,null,null,350.5,null],["Jimmy Horn Jr.","WR","CAR",5.0,351.0,null,null,351.0,null],["Tyrod Taylor","QB","GB",11.0,352.0,null,null,352.0,null],["Mitch Tinsley","WR","CIN",6.0,352.0,null,null,352.0,null],["Nate Boerkircher","TE","JAC",7.0,353.0,null,null,353.0,null],["Joe Royer","TE","CLE",11.0,354.0,null,null,354.0,null],["Isaiah Williams","WR","NYJ",13.0,355.0,null,null,355.0,null],["Brevyn Spann-Ford","TE","DAL",14.0,356.0,null,null,356.0,null],["Tanner McKee","QB","PHI",10.0,357.0,null,null,357.0,null],["Riley Patterson","K","MIA",6.0,357.5,null,null,357.5,null],["Teddy Bridgewater","QB","DET",6.0,358.0,null,null,358.0,null],["Kaden Wetjen","WR","PIT",9.0,362.0,null,null,362.0,null],["Gardner Minshew II","QB","ARI",14.0,363.0,null,null,363.0,null],["Jaleel McLaughlin","RB","DEN",10.0,363.5,null,null,363.5,null],["Skyy Moore","WR","GB",11.0,364.0,null,null,364.0,null],["Mecole Hardman Jr.","WR","BUF",7.0,365.0,null,null,365.0,null],["Gunner Olszewski","WR","NYG",8.0,366.0,null,null,366.0,null],["Chris Oladokun","QB","KC",5.0,367.0,null,null,367.0,null],["Julius Chestnut","RB","TEN",9.0,368.0,null,null,368.0,null],["Ronnie Rivers","RB","LAR",11.0,369.0,null,null,369.0,null],["Will Levis","QB","TEN",9.0,370.0,null,null,370.0,null],["Sione Vaki","RB","DET",6.0,371.0,null,null,371.0,null],["Jalen Milroe","QB","SEA",11.0,372.0,null,null,372.0,null],["Gavin Bartholomew","TE","MIN",6.0,373.0,null,null,373.0,null],["Brady Cook","QB","NYJ",13.0,374.0,null,null,374.0,null],["Max Brosmer","QB","MIN",6.0,375.0,null,null,375.0,null],["Greg Zuerlein","K","FA",null,376.0,null,null,376.0,null],["Cade York","K","NYJ",13.0,377.0,null,null,377.0,null],["Audric Estime","RB","NO",8.0,377.5,null,null,377.5,null],["Desmond Ridder","QB","FA",null,378.0,null,null,378.0,null],["Dorian Thompson-Robinson","QB","FA",null,379.0,null,null,379.0,null],["Max Duggan","QB","FA",null,380.0,null,null,380.0,null],["Nathan Rourke","QB","FA",null,381.0,null,null,381.0,null],["Michael Pratt","QB","FA",null,382.0,null,null,382.0,null],["Anthony Richardson Sr.","QB","IND",13.0,384.0,null,null,384.0,null],["Mitchell Evans","TE","CAR",5.0,385.0,null,null,385.0,null],["Daniel Bellinger","TE","TEN",9.0,386.0,null,null,386.0,null],["Ben Sinnott","TE","WAS",7.0,387.0,null,null,387.0,null],["Hunter Luepke","RB","DAL",14.0,388.0,null,null,388.0,null],["Jake Browning","QB","TB",10.0,388.0,null,null,388.0,null],["Jerome Ford","RB","WAS",7.0,389.0,null,null,389.0,null],["Malik Benson","WR","LV",13.0,389.0,null,null,389.0,null],["Justin Joly","TE","DEN",10.0,390.0,null,null,390.0,null],["Malachi Corley","WR","CLE",11.0,391.0,null,null,391.0,null],["CJ Dippre","TE","NE",11.0,392.0,null,null,392.0,null],["Spencer Rattler","QB","NO",8.0,393.0,null,null,393.0,null],["Darius Cooper","WR","PHI",10.0,394.0,null,null,394.0,null],["Riley Leonard","QB","IND",13.0,394.5,null,null,394.5,null],["Reggie Virgil","WR","ARI",14.0,395.0,null,null,395.0,null],["Kyle Allen","QB","BUF",7.0,396.0,null,null,396.0,null],["Arian Smith","WR","NYJ",13.0,397.0,null,null,397.0,null],["Charlie Jones","WR","CIN",6.0,398.0,null,null,398.0,null],["Nikko Remigio","WR","KC",5.0,399.0,null,null,399.0,null],["Jalen Brooks","WR","ARI",14.0,400.0,null,null,400.0,null],["AJ Dillon","RB","CAR",5.0,401.0,null,null,401.0,null],["Albert Okwuegbunam Jr.","TE","LV",13.0,402.0,null,null,402.0,null],["Isaiah Hodgins","WR","NYG",8.0,403.0,null,null,403.0,null],["Simi Fehoko","WR","ARI",14.0,404.0,null,null,404.0,null],["Danny Gray","WR","PHI",10.0,406.0,null,null,406.0,null],["Skylar Thompson","QB","BAL",13.0,407.0,null,null,407.0,null],["Shane Buechele","QB","BUF",7.0,408.0,null,null,408.0,null],["Jalin Hyatt","WR","NYG",8.0,409.0,null,null,409.0,null],["Josh Whyle","TE","GB",11.0,410.0,null,null,410.0,null],["Eric Gray","RB","NYG",8.0,411.0,null,null,411.0,null],["Carson Steele","RB","PHI",10.0,414.0,null,null,414.0,null],["Kalel Mullings","RB","TEN",9.0,415.0,null,null,415.0,null],["Graham Mertz","QB","HOU",8.0,416.0,null,null,416.0,null],["Kurtis Rourke","QB","SF",8.0,417.0,null,null,417.0,null],["Zavier Scott","RB","MIN",6.0,418.0,null,null,418.0,null],["Ulysses Bentley IV","RB","IND",13.0,419.0,null,null,419.0,null],["Athan Kaliakmanis","QB","WAS",7.0,420.0,null,null,420.0,null],["Emmanuel Henderson Jr.","WR","SEA",11.0,421.0,null,null,421.0,null],["Ezekiel Elliott","RB","FA",null,422.0,null,null,422.0,null],["Jermar Jefferson","RB","FA",null,423.0,null,null,423.0,null],["Zamir White","RB","LV",13.0,425.0,null,null,425.0,null],["Raheem Blackshear","RB","FA",null,426.0,null,null,426.0,null],["Keilan Robinson","RB","FA",null,427.0,null,null,427.0,null],["Jordan Travis","QB","FA",null,428.0,null,null,428.0,null],["Louis Rees-Zammit","RB","FA",null,429.0,null,null,429.0,null],["Brayden Narveson","K","FA",null,430.0,null,null,430.0,null],["Parker Romo","K","FA",null,431.0,null,null,431.0,null],["Jaylen Johnson","WR","FA",null,432.0,null,null,432.0,null],["Tommy Mellott","WR","FA",null,433.0,null,null,433.0,null],["Jacob Saylors","RB","DET",6.0,434.0,null,null,434.0,null],["Elijah Higgins","TE","ARI",14.0,435.0,null,null,435.0,null],["Jarrett Stidham","QB","DEN",10.0,436.0,null,null,436.0,null],["Joey Slye","K","TEN",9.0,438.0,null,null,438.0,null],["Ashton Dulin","WR","IND",13.0,439.0,null,null,439.0,null],["Luke McCaffrey","WR","WAS",7.0,440.0,null,null,440.0,null],["Charlie Kolar","TE","LAC",7.0,441.0,null,null,441.0,null],["Jeremy Ruckert","TE","NYJ",13.0,442.0,null,null,442.0,null],["Tyrell Shavers","WR","BUF",7.0,443.0,null,null,443.0,null],["Barion Brown","WR","NO",8.0,444.0,null,null,444.0,null],["Max Bredeson","RB","MIN",6.0,445.0,null,null,445.0,null],["Tanner Koziol","TE","JAC",7.0,447.0,null,null,447.0,null],["Drew Ogletree","TE","IND",13.0,448.0,null,null,448.0,null],["Josh Cuevas","TE","BAL",13.0,449.0,null,null,449.0,null],["Tip Reiman","TE","ARI",14.0,451.0,null,null,451.0,null],["Riley Nowakowski","TE","PIT",9.0,452.0,null,null,452.0,null],["British Brooks","RB","HOU",8.0,453.0,null,null,453.0,null],["Britain Covey","WR","PHI",10.0,454.0,null,null,454.0,null],["Ke'Shawn Williams","WR","CIN",6.0,455.0,null,null,455.0,null],["Mason Tipton","WR","NO",8.0,456.0,null,null,456.0,null],["Josh Cameron","WR","JAC",7.0,457.0,null,null,457.0,null],["Michael Bandy","WR","DEN",10.0,458.0,null,null,458.0,null],["Jeshaun Jones","WR","MIN",6.0,459.0,null,null,459.0,null],["Cedrick Wilson Jr.","WR","DET",6.0,460.0,null,null,460.0,null],["Scotty Miller","WR","CHI",10.0,461.0,null,null,461.0,null],["David Moore","WR","CAR",5.0,462.0,null,null,462.0,null],["Marquez Valdes-Scantling","WR","DAL",14.0,463.0,null,null,463.0,null],["Quez Watkins","WR","PHI",10.0,464.0,null,null,464.0,null],["K.J. Osborn","WR","TEN",9.0,465.0,null,null,465.0,null],["Elijah Moore","WR","PHI",10.0,466.0,null,null,466.0,null],["Ihmir Smith-Marsette","WR","ARI",14.0,467.0,null,null,467.0,null],["Shane Zylstra","TE","BUF",7.0,468.0,null,null,468.0,null],["Ty Chandler","RB","NO",8.0,469.0,null,null,469.0,null],["Bailey Zappe","QB","NYJ",13.0,471.0,null,null,471.0,null],["Brittain Brown","RB","CHI",10.0,472.0,null,null,472.0,null],["Stone Smartt","TE","PHI",10.0,473.0,null,null,473.0,null],["Stetson Bennett IV","QB","LAR",11.0,474.0,null,null,474.0,null],["Tyler Scott","WR","LAR",11.0,475.0,null,null,475.0,null],["Scott Matlock","DT","LAC",7.0,476.0,null,null,476.0,null],["Aidan O'Connell","QB","LV",13.0,477.0,null,null,477.0,null],["Jason Brownlee","WR","KC",5.0,478.0,null,null,478.0,null],["Malik Cunningham","QB","DET",6.0,479.0,null,null,479.0,null],["Ben VanSumeren","LB","BUF",7.0,480.0,null,null,480.0,null],["Chris Blair","WR","ATL",11.0,481.0,null,null,481.0,null],["Blake Whiteheart","TE","CLE",11.0,482.0,null,null,482.0,null],["Jared Wiley","TE","KC",5.0,484.0,null,null,484.0,null],["Bub Means","WR","NO",8.0,485.0,null,null,485.0,null],["Cornelius Johnson","WR","BAL",13.0,486.0,null,null,486.0,null],["Jha'Quan Jackson","WR","HOU",8.0,487.0,null,null,487.0,null],["Tejhaun Palmer","WR","ARI",14.0,488.0,null,null,488.0,null],["Johnny Wilson","WR","PHI",10.0,489.0,null,null,489.0,null],["Xavier Weaver","WR","ARI",14.0,490.0,null,null,490.0,null],["Terrell Jennings","RB","NE",11.0,491.0,null,null,491.0,null],["Bryce Oliver","WR","TEN",9.0,492.0,null,null,492.0,null],["Carlos Washington Jr.","RB","MIA",6.0,493.0,null,null,493.0,null],["Jordan Watkins","WR","SF",8.0,494.0,null,null,494.0,null],["Phil Mafah","RB","DAL",14.0,495.0,null,null,495.0,null],["Thomas Fidone II","TE","NYG",8.0,496.0,null,null,496.0,null],["Cam Miller","QB","MIA",6.0,497.0,null,null,497.0,null],["Damien Martinez","RB","GB",11.0,498.0,null,null,498.0,null],["Dominic Lovett","WR","DET",6.0,499.0,null,null,499.0,null]],"sites":[4,5,6],"avg":7,"spread":8,"teams":10};
 var D=CFG.rows, SITES=CFG.sites, AVG=CFG.avg, SPREAD=CFG.spread, TEAMS=CFG.teams;
@@ -171,12 +171,12 @@ draw();
 *Expected Wins calculated using Pythagorean Wins formula using a constant of 2.37.</p>
 <div class="table-scroll">
 <style type="text/css">
-#T_2c937 td {
+#T_c7471 td {
   border: 1px solid #cfd6dd;
   padding: 6px 12px;
   text-align: center;
 }
-#T_2c937 th {
+#T_c7471 th {
   border: 1px solid #cfd6dd;
   padding: 8px 12px;
   text-align: center;
@@ -184,233 +184,233 @@ draw();
   color: #141414;
   font-weight: 600;
 }
-#T_2c937  {
+#T_c7471  {
   border-collapse: collapse;
   margin: 6px 0;
   font-size: 14px;
 }
-#T_2c937_row0_col5 {
+#T_c7471_row0_col5 {
   background-color: #a7d96b;
   color: #000000;
 }
-#T_2c937_row0_col6 {
+#T_c7471_row0_col6 {
   background-color: #f8864f;
   color: #f1f1f1;
 }
-#T_2c937_row0_col7 {
+#T_c7471_row0_col7 {
   background-color: #006837;
   color: #ffffff;
 }
-#T_2c937_row1_col5 {
+#T_c7471_row1_col5 {
   background-color: #0b7d42;
   color: #f1f1f1;
 }
-#T_2c937_row1_col6, #T_2c937_row4_col5 {
+#T_c7471_row1_col6, #T_c7471_row4_col5 {
   background-color: #fffcba;
   color: #000000;
 }
-#T_2c937_row1_col7 {
+#T_c7471_row1_col7 {
   background-color: #c1e57b;
   color: #000000;
 }
-#T_2c937_row2_col5, #T_2c937_row9_col6 {
+#T_c7471_row2_col5, #T_c7471_row9_col6 {
   background-color: #006837;
   color: #f1f1f1;
 }
-#T_2c937_row2_col6 {
+#T_c7471_row2_col6 {
   background-color: #f67c4a;
   color: #f1f1f1;
 }
-#T_2c937_row2_col7 {
+#T_c7471_row2_col7 {
   background-color: #93d168;
   color: #000000;
 }
-#T_2c937_row3_col5 {
+#T_c7471_row3_col5 {
   background-color: #cbe982;
   color: #000000;
 }
-#T_2c937_row3_col6, #T_2c937_row9_col5 {
+#T_c7471_row3_col6, #T_c7471_row9_col5 {
   background-color: #a50026;
   color: #f1f1f1;
 }
-#T_2c937_row3_col7 {
+#T_c7471_row3_col7 {
   background-color: #fffdbc;
   color: #000000;
 }
-#T_2c937_row4_col6 {
+#T_c7471_row4_col6 {
   background-color: #42ac5a;
   color: #f1f1f1;
 }
-#T_2c937_row4_col7 {
+#T_c7471_row4_col7 {
   background-color: #42ac5a;
   color: #000000;
 }
-#T_2c937_row5_col5 {
+#T_c7471_row5_col5 {
   background-color: #fca55d;
   color: #000000;
 }
-#T_2c937_row5_col6 {
+#T_c7471_row5_col6 {
   background-color: #fdc372;
   color: #000000;
 }
-#T_2c937_row5_col7 {
+#T_c7471_row5_col7 {
   background-color: #feefa3;
   color: #000000;
 }
-#T_2c937_row6_col5 {
+#T_c7471_row6_col5 {
   background-color: #f99355;
   color: #000000;
 }
-#T_2c937_row6_col6 {
+#T_c7471_row6_col6 {
   background-color: #eff8aa;
   color: #000000;
 }
-#T_2c937_row6_col7 {
+#T_c7471_row6_col7 {
   background-color: #fdfebc;
   color: #000000;
 }
-#T_2c937_row7_col5 {
+#T_c7471_row7_col5 {
   background-color: #c3e67d;
   color: #000000;
 }
-#T_2c937_row7_col6 {
+#T_c7471_row7_col6 {
   background-color: #ee613e;
   color: #f1f1f1;
 }
-#T_2c937_row7_col7 {
+#T_c7471_row7_col7 {
   background-color: #54b45f;
   color: #000000;
 }
-#T_2c937_row8_col5 {
+#T_c7471_row8_col5 {
   background-color: #fec877;
   color: #000000;
 }
-#T_2c937_row8_col6 {
+#T_c7471_row8_col6 {
   background-color: #feffbe;
   color: #000000;
 }
-#T_2c937_row8_col7 {
+#T_c7471_row8_col7 {
   background-color: #fa9b58;
   color: #000000;
 }
-#T_2c937_row9_col7 {
+#T_c7471_row9_col7 {
   background-color: #a50026;
   color: #ffffff;
 }
 </style>
-<table id="T_2c937" class="sticky-table">
+<table id="T_c7471" class="sticky-table">
   <thead>
     <tr>
-      <th id="T_2c937_level0_col0" class="col_heading level0 col0" >Team</th>
-      <th id="T_2c937_level0_col1" class="col_heading level0 col1" >Titles</th>
-      <th id="T_2c937_level0_col2" class="col_heading level0 col2" >Record</th>
-      <th id="T_2c937_level0_col3" class="col_heading level0 col3" >PF</th>
-      <th id="T_2c937_level0_col4" class="col_heading level0 col4" >PA</th>
-      <th id="T_2c937_level0_col5" class="col_heading level0 col5" >SOS</th>
-      <th id="T_2c937_level0_col6" class="col_heading level0 col6" >SOV</th>
-      <th id="T_2c937_level0_col7" class="col_heading level0 col7" >Exp W (Actual)</th>
+      <th id="T_c7471_level0_col0" class="col_heading level0 col0" >Team</th>
+      <th id="T_c7471_level0_col1" class="col_heading level0 col1" >Titles</th>
+      <th id="T_c7471_level0_col2" class="col_heading level0 col2" >Record</th>
+      <th id="T_c7471_level0_col3" class="col_heading level0 col3" >PF</th>
+      <th id="T_c7471_level0_col4" class="col_heading level0 col4" >PA</th>
+      <th id="T_c7471_level0_col5" class="col_heading level0 col5" >SOS</th>
+      <th id="T_c7471_level0_col6" class="col_heading level0 col6" >SOV</th>
+      <th id="T_c7471_level0_col7" class="col_heading level0 col7" >Exp W (Actual)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_2c937_row0_col0" class="data row0 col0" >Jackson</td>
-      <td id="T_2c937_row0_col1" class="data row0 col1" >👑</td>
-      <td id="T_2c937_row0_col2" class="data row0 col2" >53-31</td>
-      <td id="T_2c937_row0_col3" class="data row0 col3" >5639.020</td>
-      <td id="T_2c937_row0_col4" class="data row0 col4" >5326.180</td>
-      <td id="T_2c937_row0_col5" class="data row0 col5" >0.497</td>
-      <td id="T_2c937_row0_col6" class="data row0 col6" >0.480</td>
-      <td id="T_2c937_row0_col7" class="data row0 col7" >22.4 (26)</td>
+      <td id="T_c7471_row0_col0" class="data row0 col0" >Jackson</td>
+      <td id="T_c7471_row0_col1" class="data row0 col1" >👑</td>
+      <td id="T_c7471_row0_col2" class="data row0 col2" >53-31</td>
+      <td id="T_c7471_row0_col3" class="data row0 col3" >5639.020</td>
+      <td id="T_c7471_row0_col4" class="data row0 col4" >5326.180</td>
+      <td id="T_c7471_row0_col5" class="data row0 col5" >0.497</td>
+      <td id="T_c7471_row0_col6" class="data row0 col6" >0.480</td>
+      <td id="T_c7471_row0_col7" class="data row0 col7" >22.4 (26)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row1_col0" class="data row1 col0" >Austin</td>
-      <td id="T_2c937_row1_col1" class="data row1 col1" >👑</td>
-      <td id="T_2c937_row1_col2" class="data row1 col2" >52-32</td>
-      <td id="T_2c937_row1_col3" class="data row1 col3" >5459.380</td>
-      <td id="T_2c937_row1_col4" class="data row1 col4" >5165.140</td>
-      <td id="T_2c937_row1_col5" class="data row1 col5" >0.493</td>
-      <td id="T_2c937_row1_col6" class="data row1 col6" >0.491</td>
-      <td id="T_2c937_row1_col7" class="data row1 col7" >22.4 (23)</td>
+      <td id="T_c7471_row1_col0" class="data row1 col0" >Austin</td>
+      <td id="T_c7471_row1_col1" class="data row1 col1" >👑</td>
+      <td id="T_c7471_row1_col2" class="data row1 col2" >52-32</td>
+      <td id="T_c7471_row1_col3" class="data row1 col3" >5459.380</td>
+      <td id="T_c7471_row1_col4" class="data row1 col4" >5165.140</td>
+      <td id="T_c7471_row1_col5" class="data row1 col5" >0.493</td>
+      <td id="T_c7471_row1_col6" class="data row1 col6" >0.491</td>
+      <td id="T_c7471_row1_col7" class="data row1 col7" >22.4 (23)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row2_col0" class="data row2 col0" >Max</td>
-      <td id="T_2c937_row2_col1" class="data row2 col1" >-</td>
-      <td id="T_2c937_row2_col2" class="data row2 col2" >46-38</td>
-      <td id="T_2c937_row2_col3" class="data row2 col3" >5626.400</td>
-      <td id="T_2c937_row2_col4" class="data row2 col4" >5051.660</td>
-      <td id="T_2c937_row2_col5" class="data row2 col5" >0.492</td>
-      <td id="T_2c937_row2_col6" class="data row2 col6" >0.480</td>
-      <td id="T_2c937_row2_col7" class="data row2 col7" >23.7 (25)</td>
+      <td id="T_c7471_row2_col0" class="data row2 col0" >Max</td>
+      <td id="T_c7471_row2_col1" class="data row2 col1" >-</td>
+      <td id="T_c7471_row2_col2" class="data row2 col2" >46-38</td>
+      <td id="T_c7471_row2_col3" class="data row2 col3" >5626.400</td>
+      <td id="T_c7471_row2_col4" class="data row2 col4" >5051.660</td>
+      <td id="T_c7471_row2_col5" class="data row2 col5" >0.492</td>
+      <td id="T_c7471_row2_col6" class="data row2 col6" >0.480</td>
+      <td id="T_c7471_row2_col7" class="data row2 col7" >23.7 (25)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row3_col0" class="data row3 col0" >Colin</td>
-      <td id="T_2c937_row3_col1" class="data row3 col1" >👑</td>
-      <td id="T_2c937_row3_col2" class="data row3 col2" >44-40</td>
-      <td id="T_2c937_row3_col3" class="data row3 col3" >5572.980</td>
-      <td id="T_2c937_row3_col4" class="data row3 col4" >5206.460</td>
-      <td id="T_2c937_row3_col5" class="data row3 col5" >0.498</td>
-      <td id="T_2c937_row3_col6" class="data row3 col6" >0.470</td>
-      <td id="T_2c937_row3_col7" class="data row3 col7" >22.7 (22)</td>
+      <td id="T_c7471_row3_col0" class="data row3 col0" >Colin</td>
+      <td id="T_c7471_row3_col1" class="data row3 col1" >👑</td>
+      <td id="T_c7471_row3_col2" class="data row3 col2" >44-40</td>
+      <td id="T_c7471_row3_col3" class="data row3 col3" >5572.980</td>
+      <td id="T_c7471_row3_col4" class="data row3 col4" >5206.460</td>
+      <td id="T_c7471_row3_col5" class="data row3 col5" >0.498</td>
+      <td id="T_c7471_row3_col6" class="data row3 col6" >0.470</td>
+      <td id="T_c7471_row3_col7" class="data row3 col7" >22.7 (22)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row4_col0" class="data row4 col0" >Trevor</td>
-      <td id="T_2c937_row4_col1" class="data row4 col1" >-</td>
-      <td id="T_2c937_row4_col2" class="data row4 col2" >44-40</td>
-      <td id="T_2c937_row4_col3" class="data row4 col3" >5211.540</td>
-      <td id="T_2c937_row4_col4" class="data row4 col4" >5496.960</td>
-      <td id="T_2c937_row4_col5" class="data row4 col5" >0.501</td>
-      <td id="T_2c937_row4_col6" class="data row4 col6" >0.505</td>
-      <td id="T_2c937_row4_col7" class="data row4 col7" >19.7 (22)</td>
+      <td id="T_c7471_row4_col0" class="data row4 col0" >Trevor</td>
+      <td id="T_c7471_row4_col1" class="data row4 col1" >-</td>
+      <td id="T_c7471_row4_col2" class="data row4 col2" >44-40</td>
+      <td id="T_c7471_row4_col3" class="data row4 col3" >5211.540</td>
+      <td id="T_c7471_row4_col4" class="data row4 col4" >5496.960</td>
+      <td id="T_c7471_row4_col5" class="data row4 col5" >0.501</td>
+      <td id="T_c7471_row4_col6" class="data row4 col6" >0.505</td>
+      <td id="T_c7471_row4_col7" class="data row4 col7" >19.7 (22)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row5_col0" class="data row5 col0" >Tyler</td>
-      <td id="T_2c937_row5_col1" class="data row5 col1" >-</td>
-      <td id="T_2c937_row5_col2" class="data row5 col2" >41-43</td>
-      <td id="T_2c937_row5_col3" class="data row5 col3" >5396.420</td>
-      <td id="T_2c937_row5_col4" class="data row5 col4" >5364.480</td>
-      <td id="T_2c937_row5_col5" class="data row5 col5" >0.504</td>
-      <td id="T_2c937_row5_col6" class="data row5 col6" >0.485</td>
-      <td id="T_2c937_row5_col7" class="data row5 col7" >21.1 (20)</td>
+      <td id="T_c7471_row5_col0" class="data row5 col0" >Tyler</td>
+      <td id="T_c7471_row5_col1" class="data row5 col1" >-</td>
+      <td id="T_c7471_row5_col2" class="data row5 col2" >41-43</td>
+      <td id="T_c7471_row5_col3" class="data row5 col3" >5396.420</td>
+      <td id="T_c7471_row5_col4" class="data row5 col4" >5364.480</td>
+      <td id="T_c7471_row5_col5" class="data row5 col5" >0.504</td>
+      <td id="T_c7471_row5_col6" class="data row5 col6" >0.485</td>
+      <td id="T_c7471_row5_col7" class="data row5 col7" >21.1 (20)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row6_col0" class="data row6 col0" >Mark</td>
-      <td id="T_2c937_row6_col1" class="data row6 col1" >-</td>
-      <td id="T_2c937_row6_col2" class="data row6 col2" >40-44</td>
-      <td id="T_2c937_row6_col3" class="data row6 col3" >5277.860</td>
-      <td id="T_2c937_row6_col4" class="data row6 col4" >5372.680</td>
-      <td id="T_2c937_row6_col5" class="data row6 col5" >0.504</td>
-      <td id="T_2c937_row6_col6" class="data row6 col6" >0.493</td>
-      <td id="T_2c937_row6_col7" class="data row6 col7" >20.6 (20)</td>
+      <td id="T_c7471_row6_col0" class="data row6 col0" >Mark</td>
+      <td id="T_c7471_row6_col1" class="data row6 col1" >-</td>
+      <td id="T_c7471_row6_col2" class="data row6 col2" >40-44</td>
+      <td id="T_c7471_row6_col3" class="data row6 col3" >5277.860</td>
+      <td id="T_c7471_row6_col4" class="data row6 col4" >5372.680</td>
+      <td id="T_c7471_row6_col5" class="data row6 col5" >0.504</td>
+      <td id="T_c7471_row6_col6" class="data row6 col6" >0.493</td>
+      <td id="T_c7471_row6_col7" class="data row6 col7" >20.6 (20)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row7_col0" class="data row7 col0" >George</td>
-      <td id="T_2c937_row7_col1" class="data row7 col1" >-</td>
-      <td id="T_2c937_row7_col2" class="data row7 col2" >37-47</td>
-      <td id="T_2c937_row7_col3" class="data row7 col3" >5149.300</td>
-      <td id="T_2c937_row7_col4" class="data row7 col4" >5376.000</td>
-      <td id="T_2c937_row7_col5" class="data row7 col5" >0.498</td>
-      <td id="T_2c937_row7_col6" class="data row7 col6" >0.478</td>
-      <td id="T_2c937_row7_col7" class="data row7 col7" >19.9 (22)</td>
+      <td id="T_c7471_row7_col0" class="data row7 col0" >George</td>
+      <td id="T_c7471_row7_col1" class="data row7 col1" >-</td>
+      <td id="T_c7471_row7_col2" class="data row7 col2" >37-47</td>
+      <td id="T_c7471_row7_col3" class="data row7 col3" >5149.300</td>
+      <td id="T_c7471_row7_col4" class="data row7 col4" >5376.000</td>
+      <td id="T_c7471_row7_col5" class="data row7 col5" >0.498</td>
+      <td id="T_c7471_row7_col6" class="data row7 col6" >0.478</td>
+      <td id="T_c7471_row7_col7" class="data row7 col7" >19.9 (22)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row8_col0" class="data row8 col0" >Padgett</td>
-      <td id="T_2c937_row8_col1" class="data row8 col1" >-</td>
-      <td id="T_2c937_row8_col2" class="data row8 col2" >35-49</td>
-      <td id="T_2c937_row8_col3" class="data row8 col3" >5206.460</td>
-      <td id="T_2c937_row8_col4" class="data row8 col4" >5732.060</td>
-      <td id="T_2c937_row8_col5" class="data row8 col5" >0.503</td>
-      <td id="T_2c937_row8_col6" class="data row8 col6" >0.491</td>
-      <td id="T_2c937_row8_col7" class="data row8 col7" >18.6 (16)</td>
+      <td id="T_c7471_row8_col0" class="data row8 col0" >Padgett</td>
+      <td id="T_c7471_row8_col1" class="data row8 col1" >-</td>
+      <td id="T_c7471_row8_col2" class="data row8 col2" >35-49</td>
+      <td id="T_c7471_row8_col3" class="data row8 col3" >5206.460</td>
+      <td id="T_c7471_row8_col4" class="data row8 col4" >5732.060</td>
+      <td id="T_c7471_row8_col5" class="data row8 col5" >0.503</td>
+      <td id="T_c7471_row8_col6" class="data row8 col6" >0.491</td>
+      <td id="T_c7471_row8_col7" class="data row8 col7" >18.6 (16)</td>
     </tr>
     <tr>
-      <td id="T_2c937_row9_col0" class="data row9 col0" >Everett</td>
-      <td id="T_2c937_row9_col1" class="data row9 col1" >-</td>
-      <td id="T_2c937_row9_col2" class="data row9 col2" >28-56</td>
-      <td id="T_2c937_row9_col3" class="data row9 col3" >5065.780</td>
-      <td id="T_2c937_row9_col4" class="data row9 col4" >5513.520</td>
-      <td id="T_2c937_row9_col5" class="data row9 col5" >0.509</td>
-      <td id="T_2c937_row9_col6" class="data row9 col6" >0.512</td>
-      <td id="T_2c937_row9_col7" class="data row9 col7" >18.9 (14)</td>
+      <td id="T_c7471_row9_col0" class="data row9 col0" >Everett</td>
+      <td id="T_c7471_row9_col1" class="data row9 col1" >-</td>
+      <td id="T_c7471_row9_col2" class="data row9 col2" >28-56</td>
+      <td id="T_c7471_row9_col3" class="data row9 col3" >5065.780</td>
+      <td id="T_c7471_row9_col4" class="data row9 col4" >5513.520</td>
+      <td id="T_c7471_row9_col5" class="data row9 col5" >0.509</td>
+      <td id="T_c7471_row9_col6" class="data row9 col6" >0.512</td>
+      <td id="T_c7471_row9_col7" class="data row9 col7" >18.9 (14)</td>
     </tr>
   </tbody>
 </table>
@@ -419,12 +419,12 @@ draw();
     Players not eligible include: traded, waiver wire pickups, or on IR for whole season.</p>
 <div class="table-scroll">
 <style type="text/css">
-#T_bd4e5 td {
+#T_5a891 td {
   border: 1px solid #cfd6dd;
   padding: 6px 12px;
   text-align: center;
 }
-#T_bd4e5 th {
+#T_5a891 th {
   border: 1px solid #cfd6dd;
   padding: 8px 12px;
   text-align: center;
@@ -432,102 +432,102 @@ draw();
   color: #141414;
   font-weight: 600;
 }
-#T_bd4e5  {
+#T_5a891  {
   border-collapse: collapse;
   margin: 6px 0;
   font-size: 14px;
 }
-#T_bd4e5_row0_col1, #T_bd4e5_row1_col1 {
+#T_5a891_row0_col1, #T_5a891_row1_col1 {
   background-color: #a50026;
   color: #f1f1f1;
 }
-#T_bd4e5_row2_col1 {
+#T_5a891_row2_col1 {
   background-color: #af0926;
   color: #f1f1f1;
 }
-#T_bd4e5_row3_col1 {
+#T_5a891_row3_col1 {
   background-color: #c62027;
   color: #f1f1f1;
 }
-#T_bd4e5_row4_col1 {
+#T_5a891_row4_col1 {
   background-color: #db382b;
   color: #f1f1f1;
 }
-#T_bd4e5_row5_col1, #T_bd4e5_row6_col1 {
+#T_5a891_row5_col1, #T_5a891_row6_col1 {
   background-color: #e95538;
   color: #f1f1f1;
 }
-#T_bd4e5_row7_col1 {
+#T_5a891_row7_col1 {
   background-color: #fdaf62;
   color: #000000;
 }
-#T_bd4e5_row8_col1 {
+#T_5a891_row8_col1 {
   background-color: #118848;
   color: #f1f1f1;
 }
-#T_bd4e5_row9_col1 {
+#T_5a891_row9_col1 {
   background-color: #006837;
   color: #f1f1f1;
 }
 </style>
-<table id="T_bd4e5" class="sticky-table">
+<table id="T_5a891" class="sticky-table">
   <thead>
     <tr>
-      <th id="T_bd4e5_level0_col0" class="col_heading level0 col0" >Team</th>
-      <th id="T_bd4e5_level0_col1" class="col_heading level0 col1" >Total Games Missed</th>
-      <th id="T_bd4e5_level0_col2" class="col_heading level0 col2" >% of Games Missed</th>
+      <th id="T_5a891_level0_col0" class="col_heading level0 col0" >Team</th>
+      <th id="T_5a891_level0_col1" class="col_heading level0 col1" >Total Games Missed</th>
+      <th id="T_5a891_level0_col2" class="col_heading level0 col2" >% of Games Missed</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_bd4e5_row0_col0" class="data row0 col0" >Tyler</td>
-      <td id="T_bd4e5_row0_col1" class="data row0 col1" >126</td>
-      <td id="T_bd4e5_row0_col2" class="data row0 col2" >22.50%</td>
+      <td id="T_5a891_row0_col0" class="data row0 col0" >Tyler</td>
+      <td id="T_5a891_row0_col1" class="data row0 col1" >126</td>
+      <td id="T_5a891_row0_col2" class="data row0 col2" >22.50%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row1_col0" class="data row1 col0" >Everett</td>
-      <td id="T_bd4e5_row1_col1" class="data row1 col1" >126</td>
-      <td id="T_bd4e5_row1_col2" class="data row1 col2" >23.68%</td>
+      <td id="T_5a891_row1_col0" class="data row1 col0" >Everett</td>
+      <td id="T_5a891_row1_col1" class="data row1 col1" >126</td>
+      <td id="T_5a891_row1_col2" class="data row1 col2" >23.68%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row2_col0" class="data row2 col0" >Max</td>
-      <td id="T_bd4e5_row2_col1" class="data row2 col1" >125</td>
-      <td id="T_bd4e5_row2_col2" class="data row2 col2" >23.50%</td>
+      <td id="T_5a891_row2_col0" class="data row2 col0" >Max</td>
+      <td id="T_5a891_row2_col1" class="data row2 col1" >125</td>
+      <td id="T_5a891_row2_col2" class="data row2 col2" >23.50%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row3_col0" class="data row3 col0" >George</td>
-      <td id="T_bd4e5_row3_col1" class="data row3 col1" >123</td>
-      <td id="T_bd4e5_row3_col2" class="data row3 col2" >22.53%</td>
+      <td id="T_5a891_row3_col0" class="data row3 col0" >George</td>
+      <td id="T_5a891_row3_col1" class="data row3 col1" >123</td>
+      <td id="T_5a891_row3_col2" class="data row3 col2" >22.53%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row4_col0" class="data row4 col0" >Austin</td>
-      <td id="T_bd4e5_row4_col1" class="data row4 col1" >121</td>
-      <td id="T_bd4e5_row4_col2" class="data row4 col2" >22.74%</td>
+      <td id="T_5a891_row4_col0" class="data row4 col0" >Austin</td>
+      <td id="T_5a891_row4_col1" class="data row4 col1" >121</td>
+      <td id="T_5a891_row4_col2" class="data row4 col2" >22.74%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row5_col0" class="data row5 col0" >Colin</td>
-      <td id="T_bd4e5_row5_col1" class="data row5 col1" >119</td>
-      <td id="T_bd4e5_row5_col2" class="data row5 col2" >22.37%</td>
+      <td id="T_5a891_row5_col0" class="data row5 col0" >Colin</td>
+      <td id="T_5a891_row5_col1" class="data row5 col1" >119</td>
+      <td id="T_5a891_row5_col2" class="data row5 col2" >22.37%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row6_col0" class="data row6 col0" >Mark</td>
-      <td id="T_bd4e5_row6_col1" class="data row6 col1" >119</td>
-      <td id="T_bd4e5_row6_col2" class="data row6 col2" >22.37%</td>
+      <td id="T_5a891_row6_col0" class="data row6 col0" >Mark</td>
+      <td id="T_5a891_row6_col1" class="data row6 col1" >119</td>
+      <td id="T_5a891_row6_col2" class="data row6 col2" >22.37%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row7_col0" class="data row7 col0" >Trevor</td>
-      <td id="T_bd4e5_row7_col1" class="data row7 col1" >113</td>
-      <td id="T_bd4e5_row7_col2" class="data row7 col2" >21.24%</td>
+      <td id="T_5a891_row7_col0" class="data row7 col0" >Trevor</td>
+      <td id="T_5a891_row7_col1" class="data row7 col1" >113</td>
+      <td id="T_5a891_row7_col2" class="data row7 col2" >21.24%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row8_col0" class="data row8 col0" >Jackson</td>
-      <td id="T_bd4e5_row8_col1" class="data row8 col1" >86</td>
-      <td id="T_bd4e5_row8_col2" class="data row8 col2" >16.17%</td>
+      <td id="T_5a891_row8_col0" class="data row8 col0" >Jackson</td>
+      <td id="T_5a891_row8_col1" class="data row8 col1" >86</td>
+      <td id="T_5a891_row8_col2" class="data row8 col2" >16.17%</td>
     </tr>
     <tr>
-      <td id="T_bd4e5_row9_col0" class="data row9 col0" >Padgett</td>
-      <td id="T_bd4e5_row9_col1" class="data row9 col1" >83</td>
-      <td id="T_bd4e5_row9_col2" class="data row9 col2" >16.47%</td>
+      <td id="T_5a891_row9_col0" class="data row9 col0" >Padgett</td>
+      <td id="T_5a891_row9_col1" class="data row9 col1" >83</td>
+      <td id="T_5a891_row9_col2" class="data row9 col2" >16.47%</td>
     </tr>
   </tbody>
 </table>
@@ -535,12 +535,12 @@ draw();
 </div>
 <h2>Injury Breakdown by Season</h2>
 <img src="data:image/png;base64,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mICCBQvC2NgYhQoVwtSpU5GQkKCsIyLw9PSEra0tjI2N4ebmhuDg4LQOhYiIiDKpNE9QZs+ejaVLl2LhwoW4ceMGvL29MWfOHPj5+SnreHt7w8fHBwsXLkRQUBBsbGxQv359vHnzJq3DISIiokwozROUM2fOoGXLlmjatCkcHBzQrl07NGjQAOfPnweQWHvi6+uL8ePHo02bNihVqhTWrl2L6OhobNy4Ma3DISIiokwozROUGjVq4OjRo7h9+zYA4I8//sDJkyfRpEkTAEBISAjCwsLQoEED5TWGhoaoVasWTp8+neo2Y2JiEBERofUgIiKirCvNO8mOHj0a4eHhKFasGLJly4b4+HjMmDEDnTt3BgCEhYUBAKytrbVeZ21tjfv376e6TS8vL0yZMiWtQyUiIiKVSvMalC1btuCnn37Cxo0bcfHiRaxduxZz587F2rVrtdbTaDRaz0UkRVmSsWPHIjw8XHmEhoamddhERESkImlegzJy5EiMGTMGnTp1AgA4Ozvj/v378PLyQo8ePWBjYwMgsSblm2++UV739OnTFLUqSQwNDWFoaJjWoRIREZFKpXmCEh0dDT097YqZbNmyKcOMCxYsCBsbGxw5cgTlypUDALx//x6BgYGYPXt2WodDRF8JziFClLWkeYLSvHlzzJgxAwUKFEDJkiVx6dIl+Pj4oFevXgASm3Y8PDwwc+ZMODk5wcnJCTNnzoSJiQm6dOmS1uEQERFRJpTmCYqfnx8mTpyIgQMH4unTp7C1tUX//v0xadIkZZ1Ro0bh7du3GDhwIF69eoXKlSvj8OHDMDc3T+twiIiIKBNK8wTF3Nwcvr6+8PX1/eg6Go0Gnp6e8PT0TOvdExERURbAmwUSERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDppPg8KpS9O501ERF8D1qAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDpMUIiIiEh1mKAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDpMUIiIiEh19HUdQEZyeLcx3fdxL933QJS2roY80HUIREQpsAaFiIiIVIcJChEREakOExQiIiJSHSYoREREpDpMUIiIiEh1mKAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDpMUIiIiEh1mKAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDrpkqD89ddf6NatGywtLWFiYoKyZcviwoULynIRgaenJ2xtbWFsbAw3NzcEBwenRyhERESUCaV5gvLq1StUr14d2bNnx4EDB3D9+nXMmzcPOXPmVNbx9vaGj48PFi5ciKCgINjY2KB+/fp48+ZNWodDREREmZB+Wm9w9uzZsLOzw5o1a5QyBwcH5f8iAl9fX4wfPx5t2rQBAKxduxbW1tbYuHEj+vfvn9YhERERUSaT5jUoe/fuRYUKFdC+fXvkzZsX5cqVw4oVK5TlISEhCAsLQ4MGDZQyQ0ND1KpVC6dPn051mzExMYiIiNB6EBERUdaV5gnKn3/+iSVLlsDJyQmHDh3CgAEDMGTIEKxbtw4AEBYWBgCwtrbWep21tbWy7ENeXl6wsLBQHnZ2dmkdNhEREalImicoCQkJcHFxwcyZM1GuXDn0798fffv2xZIlS7TW02g0Ws9FJEVZkrFjxyI8PFx5hIaGpnXYREREpCJpnqB88803KFGihFZZ8eLF8eDBAwCAjY0NAKSoLXn69GmKWpUkhoaGyJEjh9aDiIiIsq40T1CqV6+OW7duaZXdvn0b9vb2AICCBQvCxsYGR44cUZa/f/8egYGBqFatWlqHQ0RERJlQmo/iGTZsGKpVq4aZM2eiQ4cOOHfuHJYvX47ly5cDSGza8fDwwMyZM+Hk5AQnJyfMnDkTJiYm6NKlS1qHQ0RERJlQmicoFStWxK5duzB27FhMnToVBQsWhK+vL7p27aqsM2rUKLx9+xYDBw7Eq1evULlyZRw+fBjm5uZpHQ4RERFlQmmeoABAs2bN0KxZs48u12g08PT0hKenZ3rsnoiIiDI53ouHiIiIVIcJChEREalOujTxEBHR1+tqyANdh0BZAGtQiIiISHWYoBAREZHqMEEhIiIi1WGCQkRERKrDTrKkEw7vNqb7Pu6l+x6IiCi9sAaFiIiIVIcJChEREakOExQiIiJSHSYoREREpDpMUIiIiEh1mKAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDpMUIiIiEh1mKAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHX1dB0BERIkc3m1M933cS/c9EKUN1qAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDqcB4WIiCiLysxz67AGhYiIiFSHCQoRERGpDpt4iP6D9K4+vZeuWyciUi/WoBAREZHqMEEhIiIi1WETD9FXLjP38ieirIs1KERERKQ6TFCIiIhIdZigEBERkeqke4Li5eUFjUYDDw8PpUxE4OnpCVtbWxgbG8PNzQ3BwcHpHQoRERFlEumaoAQFBWH58uUoXbq0Vrm3tzd8fHywcOFCBAUFwcbGBvXr18ebN2/SMxwiIiLKJNItQYmMjETXrl2xYsUK5MqVSykXEfj6+mL8+PFo06YNSpUqhbVr1yI6OhobN6b/aAIiIiJSv3RLUAYNGoSmTZuiXr16WuUhISEICwtDgwYNlDJDQ0PUqlULp0+fTnVbMTExiIiI0HoQERFR1pUu86Bs3rwZFy9eRFBQUIplYWFhAABra2utcmtra9y/fz/V7Xl5eWHKlClpHygRERGpUprXoISGhmLo0KH46aefYGRk9NH1NBqN1nMRSVGWZOzYsQgPD1ceoaGhaRozERERqUua16BcuHABT58+Rfny5ZWy+Ph4nDhxAgsXLsStW7cAJNakfPPNN8o6T58+TVGrksTQ0BCGhoZpHSoRERGpVJonKHXr1sXVq1e1ynr27IlixYph9OjRKFSoEGxsbHDkyBGUK1cOAPD+/XsEBgZi9uzZaR0OERHRv8K7letWmico5ubmKFWqlFaZqakpLC0tlXIPDw/MnDkTTk5OcHJywsyZM2FiYoIuXbqkdThERESUCenkZoGjRo3C27dvMXDgQLx69QqVK1fG4cOHYW5urotwiIiISGUyJEEJCAjQeq7RaODp6QlPT8+M2D0RERFlMrwXDxEREakOExQiIiJSHSYoREREpDpMUIiIiEh1mKAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHSYoREREpDpMUIiIiEh1mKAQERGR6jBBISIiItVhgkJERESqwwSFiIiIVIcJChEREakOExQiIiJSHX1dB0BfxuHdxnTfx7103wMREdE/Yw0KERERqQ4T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" alt="Games Missed Plot"/></details><details class="section" id="adp"><summary>All-Time Draft vs ADP</summary><p>Combined across every league season. <strong>ADP Value</strong> = pick minus consensus ADP (+ = value, - = reach); <strong>Finish vs ADP</strong> = ADP minus fantasy finish (+ = beat consensus).</p><p>Full draft-vs-ADP by season: <a href="{{ '/adp/' | relative_url }}">Draft vs ADP</a></p><h2>Draft Tendencies by Manager</h2><div class='table-scroll'><style type="text/css">
-#T_ddbba td {
+#T_b1564 td {
   border: 1px solid #cfd6dd;
   padding: 6px 12px;
   text-align: center;
 }
-#T_ddbba th {
+#T_b1564 th {
   border: 1px solid #cfd6dd;
   padding: 8px 12px;
   text-align: center;
@@ -548,185 +548,185 @@ draw();
   color: #141414;
   font-weight: 600;
 }
-#T_ddbba  {
+#T_b1564  {
   border-collapse: collapse;
   margin: 6px 0;
   font-size: 14px;
 }
-#T_ddbba_row0_col2, #T_ddbba_row9_col5 {
+#T_b1564_row0_col2, #T_b1564_row9_col5 {
   background-color: #006837;
   color: #f1f1f1;
 }
-#T_ddbba_row0_col5 {
+#T_b1564_row0_col5 {
   background-color: #98d368;
   color: #000000;
 }
-#T_ddbba_row1_col2 {
+#T_b1564_row1_col2 {
   background-color: #0d8044;
   color: #f1f1f1;
 }
-#T_ddbba_row1_col5 {
+#T_b1564_row1_col5 {
   background-color: #fee593;
   color: #000000;
 }
-#T_ddbba_row2_col2 {
+#T_b1564_row2_col2 {
   background-color: #108647;
   color: #f1f1f1;
 }
-#T_ddbba_row2_col5 {
+#T_b1564_row2_col5 {
   background-color: #fffcba;
   color: #000000;
 }
-#T_ddbba_row3_col2 {
+#T_b1564_row3_col2 {
   background-color: #d7ee8a;
   color: #000000;
 }
-#T_ddbba_row3_col5 {
+#T_b1564_row3_col5 {
   background-color: #feffbe;
   color: #000000;
 }
-#T_ddbba_row4_col2 {
+#T_b1564_row4_col2 {
   background-color: #eff8aa;
   color: #000000;
 }
-#T_ddbba_row4_col5 {
+#T_b1564_row4_col5 {
   background-color: #279f53;
   color: #f1f1f1;
 }
-#T_ddbba_row5_col2 {
+#T_b1564_row5_col2 {
   background-color: #fede89;
   color: #000000;
 }
-#T_ddbba_row5_col5, #T_ddbba_row9_col2 {
+#T_b1564_row5_col5, #T_b1564_row9_col2 {
   background-color: #a50026;
   color: #f1f1f1;
 }
-#T_ddbba_row6_col2 {
+#T_b1564_row6_col2 {
   background-color: #fed683;
   color: #000000;
 }
-#T_ddbba_row6_col5 {
+#T_b1564_row6_col5 {
   background-color: #96d268;
   color: #000000;
 }
-#T_ddbba_row7_col2 {
+#T_b1564_row7_col2 {
   background-color: #fed07e;
   color: #000000;
 }
-#T_ddbba_row7_col5 {
+#T_b1564_row7_col5 {
   background-color: #e0422f;
   color: #f1f1f1;
 }
-#T_ddbba_row8_col2 {
+#T_b1564_row8_col2 {
   background-color: #ab0626;
   color: #f1f1f1;
 }
-#T_ddbba_row8_col5 {
+#T_b1564_row8_col5 {
   background-color: #feeda1;
   color: #000000;
 }
 </style>
-<table id="T_ddbba" class="sticky-table">
+<table id="T_b1564" class="sticky-table">
   <thead>
     <tr>
-      <th id="T_ddbba_level0_col0" class="col_heading level0 col0" >Manager</th>
-      <th id="T_ddbba_level0_col1" class="col_heading level0 col1" >Picks</th>
-      <th id="T_ddbba_level0_col2" class="col_heading level0 col2" >Avg Value vs ADP</th>
-      <th id="T_ddbba_level0_col3" class="col_heading level0 col3" >Reaches (>10)</th>
-      <th id="T_ddbba_level0_col4" class="col_heading level0 col4" >Values (>10)</th>
-      <th id="T_ddbba_level0_col5" class="col_heading level0 col5" >Avg Finish vs ADP</th>
+      <th id="T_b1564_level0_col0" class="col_heading level0 col0" >Manager</th>
+      <th id="T_b1564_level0_col1" class="col_heading level0 col1" >Picks</th>
+      <th id="T_b1564_level0_col2" class="col_heading level0 col2" >Avg Value vs ADP</th>
+      <th id="T_b1564_level0_col3" class="col_heading level0 col3" >Reaches (>10)</th>
+      <th id="T_b1564_level0_col4" class="col_heading level0 col4" >Values (>10)</th>
+      <th id="T_b1564_level0_col5" class="col_heading level0 col5" >Avg Finish vs ADP</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_ddbba_row0_col0" class="data row0 col0" >Jackson</td>
-      <td id="T_ddbba_row0_col1" class="data row0 col1" >38</td>
-      <td id="T_ddbba_row0_col2" class="data row0 col2" >+0.3</td>
-      <td id="T_ddbba_row0_col3" class="data row0 col3" >3</td>
-      <td id="T_ddbba_row0_col4" class="data row0 col4" >7</td>
-      <td id="T_ddbba_row0_col5" class="data row0 col5" >+2.3</td>
+      <td id="T_b1564_row0_col0" class="data row0 col0" >Jackson</td>
+      <td id="T_b1564_row0_col1" class="data row0 col1" >38</td>
+      <td id="T_b1564_row0_col2" class="data row0 col2" >+0.3</td>
+      <td id="T_b1564_row0_col3" class="data row0 col3" >3</td>
+      <td id="T_b1564_row0_col4" class="data row0 col4" >7</td>
+      <td id="T_b1564_row0_col5" class="data row0 col5" >+2.3</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row1_col0" class="data row1 col0" >Padgett</td>
-      <td id="T_ddbba_row1_col1" class="data row1 col1" >36</td>
-      <td id="T_ddbba_row1_col2" class="data row1 col2" >-0.1</td>
-      <td id="T_ddbba_row1_col3" class="data row1 col3" >5</td>
-      <td id="T_ddbba_row1_col4" class="data row1 col4" >5</td>
-      <td id="T_ddbba_row1_col5" class="data row1 col5" >-3.1</td>
+      <td id="T_b1564_row1_col0" class="data row1 col0" >Padgett</td>
+      <td id="T_b1564_row1_col1" class="data row1 col1" >36</td>
+      <td id="T_b1564_row1_col2" class="data row1 col2" >-0.1</td>
+      <td id="T_b1564_row1_col3" class="data row1 col3" >5</td>
+      <td id="T_b1564_row1_col4" class="data row1 col4" >5</td>
+      <td id="T_b1564_row1_col5" class="data row1 col5" >-3.1</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row2_col0" class="data row2 col0" >George</td>
-      <td id="T_ddbba_row2_col1" class="data row2 col1" >39</td>
-      <td id="T_ddbba_row2_col2" class="data row2 col2" >-0.2</td>
-      <td id="T_ddbba_row2_col3" class="data row2 col3" >6</td>
-      <td id="T_ddbba_row2_col4" class="data row2 col4" >4</td>
-      <td id="T_ddbba_row2_col5" class="data row2 col5" >-1.8</td>
+      <td id="T_b1564_row2_col0" class="data row2 col0" >George</td>
+      <td id="T_b1564_row2_col1" class="data row2 col1" >39</td>
+      <td id="T_b1564_row2_col2" class="data row2 col2" >-0.2</td>
+      <td id="T_b1564_row2_col3" class="data row2 col3" >6</td>
+      <td id="T_b1564_row2_col4" class="data row2 col4" >4</td>
+      <td id="T_b1564_row2_col5" class="data row2 col5" >-1.8</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row3_col0" class="data row3 col0" >Austin</td>
-      <td id="T_ddbba_row3_col1" class="data row3 col1" >37</td>
-      <td id="T_ddbba_row3_col2" class="data row3 col2" >-2.7</td>
-      <td id="T_ddbba_row3_col3" class="data row3 col3" >7</td>
-      <td id="T_ddbba_row3_col4" class="data row3 col4" >4</td>
-      <td id="T_ddbba_row3_col5" class="data row3 col5" >-1.6</td>
+      <td id="T_b1564_row3_col0" class="data row3 col0" >Austin</td>
+      <td id="T_b1564_row3_col1" class="data row3 col1" >37</td>
+      <td id="T_b1564_row3_col2" class="data row3 col2" >-2.7</td>
+      <td id="T_b1564_row3_col3" class="data row3 col3" >7</td>
+      <td id="T_b1564_row3_col4" class="data row3 col4" >4</td>
+      <td id="T_b1564_row3_col5" class="data row3 col5" >-1.6</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row4_col0" class="data row4 col0" >Colin</td>
-      <td id="T_ddbba_row4_col1" class="data row4 col1" >38</td>
-      <td id="T_ddbba_row4_col2" class="data row4 col2" >-3.2</td>
-      <td id="T_ddbba_row4_col3" class="data row4 col3" >9</td>
-      <td id="T_ddbba_row4_col4" class="data row4 col4" >3</td>
-      <td id="T_ddbba_row4_col5" class="data row4 col5" >+5.2</td>
+      <td id="T_b1564_row4_col0" class="data row4 col0" >Colin</td>
+      <td id="T_b1564_row4_col1" class="data row4 col1" >38</td>
+      <td id="T_b1564_row4_col2" class="data row4 col2" >-3.2</td>
+      <td id="T_b1564_row4_col3" class="data row4 col3" >9</td>
+      <td id="T_b1564_row4_col4" class="data row4 col4" >3</td>
+      <td id="T_b1564_row4_col5" class="data row4 col5" >+5.2</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row5_col0" class="data row5 col0" >Everett</td>
-      <td id="T_ddbba_row5_col1" class="data row5 col1" >38</td>
-      <td id="T_ddbba_row5_col2" class="data row5 col2" >-4.3</td>
-      <td id="T_ddbba_row5_col3" class="data row5 col3" >6</td>
-      <td id="T_ddbba_row5_col4" class="data row5 col4" >1</td>
-      <td id="T_ddbba_row5_col5" class="data row5 col5" >-10.5</td>
+      <td id="T_b1564_row5_col0" class="data row5 col0" >Everett</td>
+      <td id="T_b1564_row5_col1" class="data row5 col1" >38</td>
+      <td id="T_b1564_row5_col2" class="data row5 col2" >-4.3</td>
+      <td id="T_b1564_row5_col3" class="data row5 col3" >6</td>
+      <td id="T_b1564_row5_col4" class="data row5 col4" >1</td>
+      <td id="T_b1564_row5_col5" class="data row5 col5" >-10.5</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row6_col0" class="data row6 col0" >Trevor</td>
-      <td id="T_ddbba_row6_col1" class="data row6 col1" >38</td>
-      <td id="T_ddbba_row6_col2" class="data row6 col2" >-4.4</td>
-      <td id="T_ddbba_row6_col3" class="data row6 col3" >7</td>
-      <td id="T_ddbba_row6_col4" class="data row6 col4" >2</td>
-      <td id="T_ddbba_row6_col5" class="data row6 col5" >+2.4</td>
+      <td id="T_b1564_row6_col0" class="data row6 col0" >Trevor</td>
+      <td id="T_b1564_row6_col1" class="data row6 col1" >38</td>
+      <td id="T_b1564_row6_col2" class="data row6 col2" >-4.4</td>
+      <td id="T_b1564_row6_col3" class="data row6 col3" >7</td>
+      <td id="T_b1564_row6_col4" class="data row6 col4" >2</td>
+      <td id="T_b1564_row6_col5" class="data row6 col5" >+2.4</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row7_col0" class="data row7 col0" >Tyler</td>
-      <td id="T_ddbba_row7_col1" class="data row7 col1" >40</td>
-      <td id="T_ddbba_row7_col2" class="data row7 col2" >-4.5</td>
-      <td id="T_ddbba_row7_col3" class="data row7 col3" >9</td>
-      <td id="T_ddbba_row7_col4" class="data row7 col4" >2</td>
-      <td id="T_ddbba_row7_col5" class="data row7 col5" >-8.2</td>
+      <td id="T_b1564_row7_col0" class="data row7 col0" >Tyler</td>
+      <td id="T_b1564_row7_col1" class="data row7 col1" >40</td>
+      <td id="T_b1564_row7_col2" class="data row7 col2" >-4.5</td>
+      <td id="T_b1564_row7_col3" class="data row7 col3" >9</td>
+      <td id="T_b1564_row7_col4" class="data row7 col4" >2</td>
+      <td id="T_b1564_row7_col5" class="data row7 col5" >-8.2</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row8_col0" class="data row8 col0" >Max</td>
-      <td id="T_ddbba_row8_col1" class="data row8 col1" >38</td>
-      <td id="T_ddbba_row8_col2" class="data row8 col2" >-7.2</td>
-      <td id="T_ddbba_row8_col3" class="data row8 col3" >9</td>
-      <td id="T_ddbba_row8_col4" class="data row8 col4" >3</td>
-      <td id="T_ddbba_row8_col5" class="data row8 col5" >-2.6</td>
+      <td id="T_b1564_row8_col0" class="data row8 col0" >Max</td>
+      <td id="T_b1564_row8_col1" class="data row8 col1" >38</td>
+      <td id="T_b1564_row8_col2" class="data row8 col2" >-7.2</td>
+      <td id="T_b1564_row8_col3" class="data row8 col3" >9</td>
+      <td id="T_b1564_row8_col4" class="data row8 col4" >3</td>
+      <td id="T_b1564_row8_col5" class="data row8 col5" >-2.6</td>
     </tr>
     <tr>
-      <td id="T_ddbba_row9_col0" class="data row9 col0" >Mark</td>
-      <td id="T_ddbba_row9_col1" class="data row9 col1" >37</td>
-      <td id="T_ddbba_row9_col2" class="data row9 col2" >-7.3</td>
-      <td id="T_ddbba_row9_col3" class="data row9 col3" >10</td>
-      <td id="T_ddbba_row9_col4" class="data row9 col4" >2</td>
-      <td id="T_ddbba_row9_col5" class="data row9 col5" >+7.3</td>
+      <td id="T_b1564_row9_col0" class="data row9 col0" >Mark</td>
+      <td id="T_b1564_row9_col1" class="data row9 col1" >37</td>
+      <td id="T_b1564_row9_col2" class="data row9 col2" >-7.3</td>
+      <td id="T_b1564_row9_col3" class="data row9 col3" >10</td>
+      <td id="T_b1564_row9_col4" class="data row9 col4" >2</td>
+      <td id="T_b1564_row9_col5" class="data row9 col5" >+7.3</td>
     </tr>
   </tbody>
 </table>
 </div><h2>Did it pay off? (all seasons)</h2><div class='table-scroll'><style type="text/css">
-#T_9b6ca td {
+#T_f4807 td {
   border: 1px solid #cfd6dd;
   padding: 6px 12px;
   text-align: center;
 }
-#T_9b6ca th {
+#T_f4807 th {
   border: 1px solid #cfd6dd;
   padding: 8px 12px;
   text-align: center;
@@ -734,65 +734,65 @@ draw();
   color: #141414;
   font-weight: 600;
 }
-#T_9b6ca  {
+#T_f4807  {
   border-collapse: collapse;
   margin: 6px 0;
   font-size: 14px;
 }
-#T_9b6ca_row0_col4 {
+#T_f4807_row0_col4 {
   background-color: #006837;
   color: #f1f1f1;
 }
-#T_9b6ca_row1_col4 {
+#T_f4807_row1_col4 {
   background-color: #a50026;
   color: #f1f1f1;
 }
-#T_9b6ca_row2_col4 {
+#T_f4807_row2_col4 {
   background-color: #fff6b0;
   color: #000000;
 }
 </style>
-<table id="T_9b6ca" class="sticky-table">
+<table id="T_f4807" class="sticky-table">
   <thead>
     <tr>
-      <th id="T_9b6ca_level0_col0" class="col_heading level0 col0" >Call</th>
-      <th id="T_9b6ca_level0_col1" class="col_heading level0 col1" >Picks</th>
-      <th id="T_9b6ca_level0_col2" class="col_heading level0 col2" >Avg ADP</th>
-      <th id="T_9b6ca_level0_col3" class="col_heading level0 col3" >Avg Fantasy Finish</th>
-      <th id="T_9b6ca_level0_col4" class="col_heading level0 col4" >Avg Finish vs ADP</th>
+      <th id="T_f4807_level0_col0" class="col_heading level0 col0" >Call</th>
+      <th id="T_f4807_level0_col1" class="col_heading level0 col1" >Picks</th>
+      <th id="T_f4807_level0_col2" class="col_heading level0 col2" >Avg ADP</th>
+      <th id="T_f4807_level0_col3" class="col_heading level0 col3" >Avg Fantasy Finish</th>
+      <th id="T_f4807_level0_col4" class="col_heading level0 col4" >Avg Finish vs ADP</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_9b6ca_row0_col0" class="data row0 col0" >Reach (drafted early)</td>
-      <td id="T_9b6ca_row0_col1" class="data row0 col1" >71</td>
-      <td id="T_9b6ca_row0_col2" class="data row0 col2" >114.1</td>
-      <td id="T_9b6ca_row0_col3" class="data row0 col3" >87.2</td>
-      <td id="T_9b6ca_row0_col4" class="data row0 col4" >+26.9</td>
+      <td id="T_f4807_row0_col0" class="data row0 col0" >Reach (drafted early)</td>
+      <td id="T_f4807_row0_col1" class="data row0 col1" >71</td>
+      <td id="T_f4807_row0_col2" class="data row0 col2" >114.1</td>
+      <td id="T_f4807_row0_col3" class="data row0 col3" >87.2</td>
+      <td id="T_f4807_row0_col4" class="data row0 col4" >+26.9</td>
     </tr>
     <tr>
-      <td id="T_9b6ca_row1_col0" class="data row1 col0" >On consensus</td>
-      <td id="T_9b6ca_row1_col1" class="data row1 col1" >275</td>
-      <td id="T_9b6ca_row1_col2" class="data row1 col2" >55.6</td>
-      <td id="T_9b6ca_row1_col3" class="data row1 col3" >64.9</td>
-      <td id="T_9b6ca_row1_col4" class="data row1 col4" >-9.4</td>
+      <td id="T_f4807_row1_col0" class="data row1 col0" >On consensus</td>
+      <td id="T_f4807_row1_col1" class="data row1 col1" >275</td>
+      <td id="T_f4807_row1_col2" class="data row1 col2" >55.6</td>
+      <td id="T_f4807_row1_col3" class="data row1 col3" >64.9</td>
+      <td id="T_f4807_row1_col4" class="data row1 col4" >-9.4</td>
     </tr>
     <tr>
-      <td id="T_9b6ca_row2_col0" class="data row2 col0" >Value (drafted late)</td>
-      <td id="T_9b6ca_row2_col1" class="data row2 col1" >33</td>
-      <td id="T_9b6ca_row2_col2" class="data row2 col2" >78.0</td>
-      <td id="T_9b6ca_row2_col3" class="data row2 col3" >70.3</td>
-      <td id="T_9b6ca_row2_col4" class="data row2 col4" >+7.7</td>
+      <td id="T_f4807_row2_col0" class="data row2 col0" >Value (drafted late)</td>
+      <td id="T_f4807_row2_col1" class="data row2 col1" >33</td>
+      <td id="T_f4807_row2_col2" class="data row2 col2" >78.0</td>
+      <td id="T_f4807_row2_col3" class="data row2 col3" >70.3</td>
+      <td id="T_f4807_row2_col4" class="data row2 col4" >+7.7</td>
     </tr>
   </tbody>
 </table>
 </div><h2>Best Values (all-time)</h2><div class='table-scroll'><style type="text/css">
-#T_ab0dd td {
+#T_11655 td {
   border: 1px solid #cfd6dd;
   padding: 6px 12px;
   text-align: center;
 }
-#T_ab0dd th {
+#T_11655 th {
   border: 1px solid #cfd6dd;
   padding: 8px 12px;
   text-align: center;
@@ -800,232 +800,232 @@ draw();
   color: #141414;
   font-weight: 600;
 }
-#T_ab0dd_row0_col6 {
+#T_11655_row0_col6 {
   background-color: #00441b;
   color: #f1f1f1;
 }
-#T_ab0dd_row1_col6 {
+#T_11655_row1_col6 {
   background-color: #90d18d;
   color: #000000;
 }
-#T_ab0dd_row2_col6 {
+#T_11655_row2_col6 {
   background-color: #a4da9e;
   color: #000000;
 }
-#T_ab0dd_row3_col6 {
+#T_11655_row3_col6 {
   background-color: #b6e2af;
   color: #000000;
 }
-#T_ab0dd_row4_col6 {
+#T_11655_row4_col6 {
   background-color: #bee5b8;
   color: #000000;
 }
-#T_ab0dd_row5_col6 {
+#T_11655_row5_col6 {
   background-color: #c8e9c1;
   color: #000000;
 }
-#T_ab0dd_row6_col6 {
+#T_11655_row6_col6 {
   background-color: #d6efd0;
   color: #000000;
 }
-#T_ab0dd_row7_col6 {
+#T_11655_row7_col6 {
   background-color: #e5f5e0;
   color: #000000;
 }
-#T_ab0dd_row8_col6 {
+#T_11655_row8_col6 {
   background-color: #e7f6e2;
   color: #000000;
 }
-#T_ab0dd_row9_col6 {
+#T_11655_row9_col6 {
   background-color: #eaf7e6;
   color: #000000;
 }
-#T_ab0dd_row10_col6, #T_ab0dd_row11_col6 {
+#T_11655_row10_col6, #T_11655_row11_col6 {
   background-color: #ecf8e8;
   color: #000000;
 }
-#T_ab0dd_row12_col6 {
+#T_11655_row12_col6 {
   background-color: #eff9ec;
   color: #000000;
 }
-#T_ab0dd_row13_col6, #T_ab0dd_row14_col6 {
+#T_11655_row13_col6, #T_11655_row14_col6 {
   background-color: #f7fcf5;
   color: #000000;
 }
 </style>
-<table id="T_ab0dd" class="sticky-table">
+<table id="T_11655" class="sticky-table">
   <thead>
     <tr>
-      <th id="T_ab0dd_level0_col0" class="col_heading level0 col0" >Season</th>
-      <th id="T_ab0dd_level0_col1" class="col_heading level0 col1" >Manager</th>
-      <th id="T_ab0dd_level0_col2" class="col_heading level0 col2" >Player</th>
-      <th id="T_ab0dd_level0_col3" class="col_heading level0 col3" >Pos</th>
-      <th id="T_ab0dd_level0_col4" class="col_heading level0 col4" >Overall Pick</th>
-      <th id="T_ab0dd_level0_col5" class="col_heading level0 col5" >ADP</th>
-      <th id="T_ab0dd_level0_col6" class="col_heading level0 col6" >ADP Value</th>
-      <th id="T_ab0dd_level0_col7" class="col_heading level0 col7" >Fantasy Finish</th>
+      <th id="T_11655_level0_col0" class="col_heading level0 col0" >Season</th>
+      <th id="T_11655_level0_col1" class="col_heading level0 col1" >Manager</th>
+      <th id="T_11655_level0_col2" class="col_heading level0 col2" >Player</th>
+      <th id="T_11655_level0_col3" class="col_heading level0 col3" >Pos</th>
+      <th id="T_11655_level0_col4" class="col_heading level0 col4" >Overall Pick</th>
+      <th id="T_11655_level0_col5" class="col_heading level0 col5" >ADP</th>
+      <th id="T_11655_level0_col6" class="col_heading level0 col6" >ADP Value</th>
+      <th id="T_11655_level0_col7" class="col_heading level0 col7" >Fantasy Finish</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_ab0dd_row0_col0" class="data row0 col0" >2023-2024</td>
-      <td id="T_ab0dd_row0_col1" class="data row0 col1" >Austin</td>
-      <td id="T_ab0dd_row0_col2" class="data row0 col2" >DakPrescott</td>
-      <td id="T_ab0dd_row0_col3" class="data row0 col3" >QB</td>
-      <td id="T_ab0dd_row0_col4" class="data row0 col4" >122</td>
-      <td id="T_ab0dd_row0_col5" class="data row0 col5" >89.5</td>
-      <td id="T_ab0dd_row0_col6" class="data row0 col6" >+32.5</td>
-      <td id="T_ab0dd_row0_col7" class="data row0 col7" >7</td>
+      <td id="T_11655_row0_col0" class="data row0 col0" >2023-2024</td>
+      <td id="T_11655_row0_col1" class="data row0 col1" >Austin</td>
+      <td id="T_11655_row0_col2" class="data row0 col2" >DakPrescott</td>
+      <td id="T_11655_row0_col3" class="data row0 col3" >QB</td>
+      <td id="T_11655_row0_col4" class="data row0 col4" >122</td>
+      <td id="T_11655_row0_col5" class="data row0 col5" >89.5</td>
+      <td id="T_11655_row0_col6" class="data row0 col6" >+32.5</td>
+      <td id="T_11655_row0_col7" class="data row0 col7" >7</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row1_col0" class="data row1 col0" >2023-2024</td>
-      <td id="T_ab0dd_row1_col1" class="data row1 col1" >Max</td>
-      <td id="T_ab0dd_row1_col2" class="data row1 col2" >DalvinCook</td>
-      <td id="T_ab0dd_row1_col3" class="data row1 col3" >RB</td>
-      <td id="T_ab0dd_row1_col4" class="data row1 col4" >86</td>
-      <td id="T_ab0dd_row1_col5" class="data row1 col5" >63.5</td>
-      <td id="T_ab0dd_row1_col6" class="data row1 col6" >+22.5</td>
-      <td id="T_ab0dd_row1_col7" class="data row1 col7" >134</td>
+      <td id="T_11655_row1_col0" class="data row1 col0" >2023-2024</td>
+      <td id="T_11655_row1_col1" class="data row1 col1" >Max</td>
+      <td id="T_11655_row1_col2" class="data row1 col2" >DalvinCook</td>
+      <td id="T_11655_row1_col3" class="data row1 col3" >RB</td>
+      <td id="T_11655_row1_col4" class="data row1 col4" >86</td>
+      <td id="T_11655_row1_col5" class="data row1 col5" >63.5</td>
+      <td id="T_11655_row1_col6" class="data row1 col6" >+22.5</td>
+      <td id="T_11655_row1_col7" class="data row1 col7" >134</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row2_col0" class="data row2 col0" >2023-2024</td>
-      <td id="T_ab0dd_row2_col1" class="data row2 col1" >Colin</td>
-      <td id="T_ab0dd_row2_col2" class="data row2 col2" >SamajePerine</td>
-      <td id="T_ab0dd_row2_col3" class="data row2 col3" >RB</td>
-      <td id="T_ab0dd_row2_col4" class="data row2 col4" >140</td>
-      <td id="T_ab0dd_row2_col5" class="data row2 col5" >118.5</td>
-      <td id="T_ab0dd_row2_col6" class="data row2 col6" >+21.5</td>
-      <td id="T_ab0dd_row2_col7" class="data row2 col7" >108</td>
+      <td id="T_11655_row2_col0" class="data row2 col0" >2023-2024</td>
+      <td id="T_11655_row2_col1" class="data row2 col1" >Colin</td>
+      <td id="T_11655_row2_col2" class="data row2 col2" >SamajePerine</td>
+      <td id="T_11655_row2_col3" class="data row2 col3" >RB</td>
+      <td id="T_11655_row2_col4" class="data row2 col4" >140</td>
+      <td id="T_11655_row2_col5" class="data row2 col5" >118.5</td>
+      <td id="T_11655_row2_col6" class="data row2 col6" >+21.5</td>
+      <td id="T_11655_row2_col7" class="data row2 col7" >108</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row3_col0" class="data row3 col0" >2025-2026</td>
-      <td id="T_ab0dd_row3_col1" class="data row3 col1" >Tyler</td>
-      <td id="T_ab0dd_row3_col2" class="data row3 col2" >BakerMayfield</td>
-      <td id="T_ab0dd_row3_col3" class="data row3 col3" >QB</td>
-      <td id="T_ab0dd_row3_col4" class="data row3 col4" >83</td>
-      <td id="T_ab0dd_row3_col5" class="data row3 col5" >62.5</td>
-      <td id="T_ab0dd_row3_col6" class="data row3 col6" >+20.5</td>
-      <td id="T_ab0dd_row3_col7" class="data row3 col7" >24</td>
+      <td id="T_11655_row3_col0" class="data row3 col0" >2025-2026</td>
+      <td id="T_11655_row3_col1" class="data row3 col1" >Tyler</td>
+      <td id="T_11655_row3_col2" class="data row3 col2" >BakerMayfield</td>
+      <td id="T_11655_row3_col3" class="data row3 col3" >QB</td>
+      <td id="T_11655_row3_col4" class="data row3 col4" >83</td>
+      <td id="T_11655_row3_col5" class="data row3 col5" >62.5</td>
+      <td id="T_11655_row3_col6" class="data row3 col6" >+20.5</td>
+      <td id="T_11655_row3_col7" class="data row3 col7" >24</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row4_col0" class="data row4 col0" >2023-2024</td>
-      <td id="T_ab0dd_row4_col1" class="data row4 col1" >Padgett</td>
-      <td id="T_ab0dd_row4_col2" class="data row4 col2" >ZachCharbonnet</td>
-      <td id="T_ab0dd_row4_col3" class="data row4 col3" >RB</td>
-      <td id="T_ab0dd_row4_col4" class="data row4 col4" >138</td>
-      <td id="T_ab0dd_row4_col5" class="data row4 col5" >118.0</td>
-      <td id="T_ab0dd_row4_col6" class="data row4 col6" >+20.0</td>
-      <td id="T_ab0dd_row4_col7" class="data row4 col7" >116</td>
+      <td id="T_11655_row4_col0" class="data row4 col0" >2023-2024</td>
+      <td id="T_11655_row4_col1" class="data row4 col1" >Padgett</td>
+      <td id="T_11655_row4_col2" class="data row4 col2" >ZachCharbonnet</td>
+      <td id="T_11655_row4_col3" class="data row4 col3" >RB</td>
+      <td id="T_11655_row4_col4" class="data row4 col4" >138</td>
+      <td id="T_11655_row4_col5" class="data row4 col5" >118.0</td>
+      <td id="T_11655_row4_col6" class="data row4 col6" >+20.0</td>
+      <td id="T_11655_row4_col7" class="data row4 col7" >116</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row5_col0" class="data row5 col0" >2025-2026</td>
-      <td id="T_ab0dd_row5_col1" class="data row5 col1" >Max</td>
-      <td id="T_ab0dd_row5_col2" class="data row5 col2" >DakPrescott</td>
-      <td id="T_ab0dd_row5_col3" class="data row5 col3" >QB</td>
-      <td id="T_ab0dd_row5_col4" class="data row5 col4" >120</td>
-      <td id="T_ab0dd_row5_col5" class="data row5 col5" >100.5</td>
-      <td id="T_ab0dd_row5_col6" class="data row5 col6" >+19.5</td>
-      <td id="T_ab0dd_row5_col7" class="data row5 col7" >10</td>
+      <td id="T_11655_row5_col0" class="data row5 col0" >2025-2026</td>
+      <td id="T_11655_row5_col1" class="data row5 col1" >Max</td>
+      <td id="T_11655_row5_col2" class="data row5 col2" >DakPrescott</td>
+      <td id="T_11655_row5_col3" class="data row5 col3" >QB</td>
+      <td id="T_11655_row5_col4" class="data row5 col4" >120</td>
+      <td id="T_11655_row5_col5" class="data row5 col5" >100.5</td>
+      <td id="T_11655_row5_col6" class="data row5 col6" >+19.5</td>
+      <td id="T_11655_row5_col7" class="data row5 col7" >10</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row6_col0" class="data row6 col0" >2023-2024</td>
-      <td id="T_ab0dd_row6_col1" class="data row6 col1" >Colin</td>
-      <td id="T_ab0dd_row6_col2" class="data row6 col2" >AlvinKamara</td>
-      <td id="T_ab0dd_row6_col3" class="data row6 col3" >RB</td>
-      <td id="T_ab0dd_row6_col4" class="data row6 col4" >80</td>
-      <td id="T_ab0dd_row6_col5" class="data row6 col5" >61.5</td>
-      <td id="T_ab0dd_row6_col6" class="data row6 col6" >+18.5</td>
-      <td id="T_ab0dd_row6_col7" class="data row6 col7" >23</td>
+      <td id="T_11655_row6_col0" class="data row6 col0" >2023-2024</td>
+      <td id="T_11655_row6_col1" class="data row6 col1" >Colin</td>
+      <td id="T_11655_row6_col2" class="data row6 col2" >AlvinKamara</td>
+      <td id="T_11655_row6_col3" class="data row6 col3" >RB</td>
+      <td id="T_11655_row6_col4" class="data row6 col4" >80</td>
+      <td id="T_11655_row6_col5" class="data row6 col5" >61.5</td>
+      <td id="T_11655_row6_col6" class="data row6 col6" >+18.5</td>
+      <td id="T_11655_row6_col7" class="data row6 col7" >23</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row7_col0" class="data row7 col0" >2024-2025</td>
-      <td id="T_ab0dd_row7_col1" class="data row7 col1" >George</td>
-      <td id="T_ab0dd_row7_col2" class="data row7 col2" >BrianRobinson</td>
-      <td id="T_ab0dd_row7_col3" class="data row7 col3" >RB</td>
-      <td id="T_ab0dd_row7_col4" class="data row7 col4" >110</td>
-      <td id="T_ab0dd_row7_col5" class="data row7 col5" >92.6</td>
-      <td id="T_ab0dd_row7_col6" class="data row7 col6" >+17.4</td>
-      <td id="T_ab0dd_row7_col7" class="data row7 col7" >77</td>
+      <td id="T_11655_row7_col0" class="data row7 col0" >2024-2025</td>
+      <td id="T_11655_row7_col1" class="data row7 col1" >George</td>
+      <td id="T_11655_row7_col2" class="data row7 col2" >BrianRobinson</td>
+      <td id="T_11655_row7_col3" class="data row7 col3" >RB</td>
+      <td id="T_11655_row7_col4" class="data row7 col4" >110</td>
+      <td id="T_11655_row7_col5" class="data row7 col5" >92.6</td>
+      <td id="T_11655_row7_col6" class="data row7 col6" >+17.4</td>
+      <td id="T_11655_row7_col7" class="data row7 col7" >77</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row8_col0" class="data row8 col0" >2023-2024</td>
-      <td id="T_ab0dd_row8_col1" class="data row8 col1" >Trevor</td>
-      <td id="T_ab0dd_row8_col2" class="data row8 col2" >DiontaeJohnson</td>
-      <td id="T_ab0dd_row8_col3" class="data row8 col3" >WR</td>
-      <td id="T_ab0dd_row8_col4" class="data row8 col4" >92</td>
-      <td id="T_ab0dd_row8_col5" class="data row8 col5" >74.8</td>
-      <td id="T_ab0dd_row8_col6" class="data row8 col6" >+17.2</td>
-      <td id="T_ab0dd_row8_col7" class="data row8 col7" >103</td>
+      <td id="T_11655_row8_col0" class="data row8 col0" >2023-2024</td>
+      <td id="T_11655_row8_col1" class="data row8 col1" >Trevor</td>
+      <td id="T_11655_row8_col2" class="data row8 col2" >DiontaeJohnson</td>
+      <td id="T_11655_row8_col3" class="data row8 col3" >WR</td>
+      <td id="T_11655_row8_col4" class="data row8 col4" >92</td>
+      <td id="T_11655_row8_col5" class="data row8 col5" >74.8</td>
+      <td id="T_11655_row8_col6" class="data row8 col6" >+17.2</td>
+      <td id="T_11655_row8_col7" class="data row8 col7" >103</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row9_col0" class="data row9 col0" >2025-2026</td>
-      <td id="T_ab0dd_row9_col1" class="data row9 col1" >Tyler</td>
-      <td id="T_ab0dd_row9_col2" class="data row9 col2" >KylerMurray</td>
-      <td id="T_ab0dd_row9_col3" class="data row9 col3" >QB</td>
-      <td id="T_ab0dd_row9_col4" class="data row9 col4" >103</td>
-      <td id="T_ab0dd_row9_col5" class="data row9 col5" >86.2</td>
-      <td id="T_ab0dd_row9_col6" class="data row9 col6" >+16.8</td>
-      <td id="T_ab0dd_row9_col7" class="data row9 col7" >123</td>
+      <td id="T_11655_row9_col0" class="data row9 col0" >2025-2026</td>
+      <td id="T_11655_row9_col1" class="data row9 col1" >Tyler</td>
+      <td id="T_11655_row9_col2" class="data row9 col2" >KylerMurray</td>
+      <td id="T_11655_row9_col3" class="data row9 col3" >QB</td>
+      <td id="T_11655_row9_col4" class="data row9 col4" >103</td>
+      <td id="T_11655_row9_col5" class="data row9 col5" >86.2</td>
+      <td id="T_11655_row9_col6" class="data row9 col6" >+16.8</td>
+      <td id="T_11655_row9_col7" class="data row9 col7" >123</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row10_col0" class="data row10 col0" >2024-2025</td>
-      <td id="T_ab0dd_row10_col1" class="data row10 col1" >Mark</td>
-      <td id="T_ab0dd_row10_col2" class="data row10 col2" >CourtlandSutton</td>
-      <td id="T_ab0dd_row10_col3" class="data row10 col3" >WR</td>
-      <td id="T_ab0dd_row10_col4" class="data row10 col4" >129</td>
-      <td id="T_ab0dd_row10_col5" class="data row10 col5" >112.4</td>
-      <td id="T_ab0dd_row10_col6" class="data row10 col6" >+16.6</td>
-      <td id="T_ab0dd_row10_col7" class="data row10 col7" >42</td>
+      <td id="T_11655_row10_col0" class="data row10 col0" >2024-2025</td>
+      <td id="T_11655_row10_col1" class="data row10 col1" >Mark</td>
+      <td id="T_11655_row10_col2" class="data row10 col2" >CourtlandSutton</td>
+      <td id="T_11655_row10_col3" class="data row10 col3" >WR</td>
+      <td id="T_11655_row10_col4" class="data row10 col4" >129</td>
+      <td id="T_11655_row10_col5" class="data row10 col5" >112.4</td>
+      <td id="T_11655_row10_col6" class="data row10 col6" >+16.6</td>
+      <td id="T_11655_row10_col7" class="data row10 col7" >42</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row11_col0" class="data row11 col0" >2023-2024</td>
-      <td id="T_ab0dd_row11_col1" class="data row11 col1" >Everett</td>
-      <td id="T_ab0dd_row11_col2" class="data row11 col2" >TuaTagovailoa</td>
-      <td id="T_ab0dd_row11_col3" class="data row11 col3" >QB</td>
-      <td id="T_ab0dd_row11_col4" class="data row11 col4" >110</td>
-      <td id="T_ab0dd_row11_col5" class="data row11 col5" >93.5</td>
-      <td id="T_ab0dd_row11_col6" class="data row11 col6" >+16.5</td>
-      <td id="T_ab0dd_row11_col7" class="data row11 col7" >20</td>
+      <td id="T_11655_row11_col0" class="data row11 col0" >2023-2024</td>
+      <td id="T_11655_row11_col1" class="data row11 col1" >Everett</td>
+      <td id="T_11655_row11_col2" class="data row11 col2" >TuaTagovailoa</td>
+      <td id="T_11655_row11_col3" class="data row11 col3" >QB</td>
+      <td id="T_11655_row11_col4" class="data row11 col4" >110</td>
+      <td id="T_11655_row11_col5" class="data row11 col5" >93.5</td>
+      <td id="T_11655_row11_col6" class="data row11 col6" >+16.5</td>
+      <td id="T_11655_row11_col7" class="data row11 col7" >20</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row12_col0" class="data row12 col0" >2023-2024</td>
-      <td id="T_ab0dd_row12_col1" class="data row12 col1" >George</td>
-      <td id="T_ab0dd_row12_col2" class="data row12 col2" >DanielJones</td>
-      <td id="T_ab0dd_row12_col3" class="data row12 col3" >QB</td>
-      <td id="T_ab0dd_row12_col4" class="data row12 col4" >137</td>
-      <td id="T_ab0dd_row12_col5" class="data row12 col5" >120.8</td>
-      <td id="T_ab0dd_row12_col6" class="data row12 col6" >+16.2</td>
-      <td id="T_ab0dd_row12_col7" class="data row12 col7" >130</td>
+      <td id="T_11655_row12_col0" class="data row12 col0" >2023-2024</td>
+      <td id="T_11655_row12_col1" class="data row12 col1" >George</td>
+      <td id="T_11655_row12_col2" class="data row12 col2" >DanielJones</td>
+      <td id="T_11655_row12_col3" class="data row12 col3" >QB</td>
+      <td id="T_11655_row12_col4" class="data row12 col4" >137</td>
+      <td id="T_11655_row12_col5" class="data row12 col5" >120.8</td>
+      <td id="T_11655_row12_col6" class="data row12 col6" >+16.2</td>
+      <td id="T_11655_row12_col7" class="data row12 col7" >130</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row13_col0" class="data row13 col0" >2025-2026</td>
-      <td id="T_ab0dd_row13_col1" class="data row13 col1" >Padgett</td>
-      <td id="T_ab0dd_row13_col2" class="data row13 col2" >NickChubb</td>
-      <td id="T_ab0dd_row13_col3" class="data row13 col3" >RB</td>
-      <td id="T_ab0dd_row13_col4" class="data row13 col4" >144</td>
-      <td id="T_ab0dd_row13_col5" class="data row13 col5" >128.8</td>
-      <td id="T_ab0dd_row13_col6" class="data row13 col6" >+15.2</td>
-      <td id="T_ab0dd_row13_col7" class="data row13 col7" >120</td>
+      <td id="T_11655_row13_col0" class="data row13 col0" >2025-2026</td>
+      <td id="T_11655_row13_col1" class="data row13 col1" >Padgett</td>
+      <td id="T_11655_row13_col2" class="data row13 col2" >NickChubb</td>
+      <td id="T_11655_row13_col3" class="data row13 col3" >RB</td>
+      <td id="T_11655_row13_col4" class="data row13 col4" >144</td>
+      <td id="T_11655_row13_col5" class="data row13 col5" >128.8</td>
+      <td id="T_11655_row13_col6" class="data row13 col6" >+15.2</td>
+      <td id="T_11655_row13_col7" class="data row13 col7" >120</td>
     </tr>
     <tr>
-      <td id="T_ab0dd_row14_col0" class="data row14 col0" >2023-2024</td>
-      <td id="T_ab0dd_row14_col1" class="data row14 col1" >Jackson</td>
-      <td id="T_ab0dd_row14_col2" class="data row14 col2" >BreeceHall</td>
-      <td id="T_ab0dd_row14_col3" class="data row14 col3" >RB</td>
-      <td id="T_ab0dd_row14_col4" class="data row14 col4" >56</td>
-      <td id="T_ab0dd_row14_col5" class="data row14 col5" >40.8</td>
-      <td id="T_ab0dd_row14_col6" class="data row14 col6" >+15.2</td>
-      <td id="T_ab0dd_row14_col7" class="data row14 col7" >32</td>
+      <td id="T_11655_row14_col0" class="data row14 col0" >2023-2024</td>
+      <td id="T_11655_row14_col1" class="data row14 col1" >Jackson</td>
+      <td id="T_11655_row14_col2" class="data row14 col2" >BreeceHall</td>
+      <td id="T_11655_row14_col3" class="data row14 col3" >RB</td>
+      <td id="T_11655_row14_col4" class="data row14 col4" >56</td>
+      <td id="T_11655_row14_col5" class="data row14 col5" >40.8</td>
+      <td id="T_11655_row14_col6" class="data row14 col6" >+15.2</td>
+      <td id="T_11655_row14_col7" class="data row14 col7" >32</td>
     </tr>
   </tbody>
 </table>
 </div><h2>Biggest Reaches (all-time)</h2><div class='table-scroll'><style type="text/css">
-#T_a9c45 td {
+#T_521f6 td {
   border: 1px solid #cfd6dd;
   padding: 6px 12px;
   text-align: center;
 }
-#T_a9c45 th {
+#T_521f6 th {
   border: 1px solid #cfd6dd;
   padding: 8px 12px;
   text-align: center;
@@ -1033,230 +1033,230 @@ draw();
   color: #141414;
   font-weight: 600;
 }
-#T_a9c45_row0_col6 {
+#T_521f6_row0_col6 {
   background-color: #67000d;
   color: #f1f1f1;
 }
-#T_a9c45_row1_col6 {
+#T_521f6_row1_col6 {
   background-color: #9d0d14;
   color: #f1f1f1;
 }
-#T_a9c45_row2_col6 {
+#T_521f6_row2_col6 {
   background-color: #ad1117;
   color: #f1f1f1;
 }
-#T_a9c45_row3_col6 {
+#T_521f6_row3_col6 {
   background-color: #ce1a1e;
   color: #f1f1f1;
 }
-#T_a9c45_row4_col6 {
+#T_521f6_row4_col6 {
   background-color: #d32020;
   color: #f1f1f1;
 }
-#T_a9c45_row5_col6 {
+#T_521f6_row5_col6 {
   background-color: #d82422;
   color: #f1f1f1;
 }
-#T_a9c45_row6_col6 {
+#T_521f6_row6_col6 {
   background-color: #f5533b;
   color: #f1f1f1;
 }
-#T_a9c45_row7_col6 {
+#T_521f6_row7_col6 {
   background-color: #fc8f6f;
   color: #000000;
 }
-#T_a9c45_row8_col6 {
+#T_521f6_row8_col6 {
   background-color: #fcad90;
   color: #000000;
 }
-#T_a9c45_row9_col6 {
+#T_521f6_row9_col6 {
   background-color: #fcb499;
   color: #000000;
 }
-#T_a9c45_row10_col6 {
+#T_521f6_row10_col6 {
   background-color: #fdc6b0;
   color: #000000;
 }
-#T_a9c45_row11_col6 {
+#T_521f6_row11_col6 {
   background-color: #fee3d6;
   color: #000000;
 }
-#T_a9c45_row12_col6 {
+#T_521f6_row12_col6 {
   background-color: #ffece3;
   color: #000000;
 }
-#T_a9c45_row13_col6 {
+#T_521f6_row13_col6 {
   background-color: #ffeee6;
   color: #000000;
 }
-#T_a9c45_row14_col6 {
+#T_521f6_row14_col6 {
   background-color: #fff5f0;
   color: #000000;
 }
 </style>
-<table id="T_a9c45" class="sticky-table">
+<table id="T_521f6" class="sticky-table">
   <thead>
     <tr>
-      <th id="T_a9c45_level0_col0" class="col_heading level0 col0" >Season</th>
-      <th id="T_a9c45_level0_col1" class="col_heading level0 col1" >Manager</th>
-      <th id="T_a9c45_level0_col2" class="col_heading level0 col2" >Player</th>
-      <th id="T_a9c45_level0_col3" class="col_heading level0 col3" >Pos</th>
-      <th id="T_a9c45_level0_col4" class="col_heading level0 col4" >Overall Pick</th>
-      <th id="T_a9c45_level0_col5" class="col_heading level0 col5" >ADP</th>
-      <th id="T_a9c45_level0_col6" class="col_heading level0 col6" >ADP Value</th>
-      <th id="T_a9c45_level0_col7" class="col_heading level0 col7" >Fantasy Finish</th>
+      <th id="T_521f6_level0_col0" class="col_heading level0 col0" >Season</th>
+      <th id="T_521f6_level0_col1" class="col_heading level0 col1" >Manager</th>
+      <th id="T_521f6_level0_col2" class="col_heading level0 col2" >Player</th>
+      <th id="T_521f6_level0_col3" class="col_heading level0 col3" >Pos</th>
+      <th id="T_521f6_level0_col4" class="col_heading level0 col4" >Overall Pick</th>
+      <th id="T_521f6_level0_col5" class="col_heading level0 col5" >ADP</th>
+      <th id="T_521f6_level0_col6" class="col_heading level0 col6" >ADP Value</th>
+      <th id="T_521f6_level0_col7" class="col_heading level0 col7" >Fantasy Finish</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_a9c45_row0_col0" class="data row0 col0" >2025-2026</td>
-      <td id="T_a9c45_row0_col1" class="data row0 col1" >Max</td>
-      <td id="T_a9c45_row0_col2" class="data row0 col2" >KyleWilliams</td>
-      <td id="T_a9c45_row0_col3" class="data row0 col3" >WR</td>
-      <td id="T_a9c45_row0_col4" class="data row0 col4" >141</td>
-      <td id="T_a9c45_row0_col5" class="data row0 col5" >200.2</td>
-      <td id="T_a9c45_row0_col6" class="data row0 col6" >-59.2</td>
-      <td id="T_a9c45_row0_col7" class="data row0 col7" >142</td>
+      <td id="T_521f6_row0_col0" class="data row0 col0" >2025-2026</td>
+      <td id="T_521f6_row0_col1" class="data row0 col1" >Max</td>
+      <td id="T_521f6_row0_col2" class="data row0 col2" >KyleWilliams</td>
+      <td id="T_521f6_row0_col3" class="data row0 col3" >WR</td>
+      <td id="T_521f6_row0_col4" class="data row0 col4" >141</td>
+      <td id="T_521f6_row0_col5" class="data row0 col5" >200.2</td>
+      <td id="T_521f6_row0_col6" class="data row0 col6" >-59.2</td>
+      <td id="T_521f6_row0_col7" class="data row0 col7" >142</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row1_col0" class="data row1 col0" >2023-2024</td>
-      <td id="T_a9c45_row1_col1" class="data row1 col1" >Max</td>
-      <td id="T_a9c45_row1_col2" class="data row1 col2" >AaronRodgers</td>
-      <td id="T_a9c45_row1_col3" class="data row1 col3" >QB</td>
-      <td id="T_a9c45_row1_col4" class="data row1 col4" >46</td>
-      <td id="T_a9c45_row1_col5" class="data row1 col5" >101.8</td>
-      <td id="T_a9c45_row1_col6" class="data row1 col6" >-55.8</td>
-      <td id="T_a9c45_row1_col7" class="data row1 col7" >140</td>
+      <td id="T_521f6_row1_col0" class="data row1 col0" >2023-2024</td>
+      <td id="T_521f6_row1_col1" class="data row1 col1" >Max</td>
+      <td id="T_521f6_row1_col2" class="data row1 col2" >AaronRodgers</td>
+      <td id="T_521f6_row1_col3" class="data row1 col3" >QB</td>
+      <td id="T_521f6_row1_col4" class="data row1 col4" >46</td>
+      <td id="T_521f6_row1_col5" class="data row1 col5" >101.8</td>
+      <td id="T_521f6_row1_col6" class="data row1 col6" >-55.8</td>
+      <td id="T_521f6_row1_col7" class="data row1 col7" >140</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row2_col0" class="data row2 col0" >2025-2026</td>
-      <td id="T_a9c45_row2_col1" class="data row2 col1" >Tyler</td>
-      <td id="T_a9c45_row2_col2" class="data row2 col2" >JoeMixon</td>
-      <td id="T_a9c45_row2_col3" class="data row2 col3" >RB</td>
-      <td id="T_a9c45_row2_col4" class="data row2 col4" >63</td>
-      <td id="T_a9c45_row2_col5" class="data row2 col5" >117.5</td>
-      <td id="T_a9c45_row2_col6" class="data row2 col6" >-54.5</td>
-      <td id="T_a9c45_row2_col7" class="data row2 col7" >148</td>
+      <td id="T_521f6_row2_col0" class="data row2 col0" >2025-2026</td>
+      <td id="T_521f6_row2_col1" class="data row2 col1" >Tyler</td>
+      <td id="T_521f6_row2_col2" class="data row2 col2" >JoeMixon</td>
+      <td id="T_521f6_row2_col3" class="data row2 col3" >RB</td>
+      <td id="T_521f6_row2_col4" class="data row2 col4" >63</td>
+      <td id="T_521f6_row2_col5" class="data row2 col5" >117.5</td>
+      <td id="T_521f6_row2_col6" class="data row2 col6" >-54.5</td>
+      <td id="T_521f6_row2_col7" class="data row2 col7" >148</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row3_col0" class="data row3 col0" >2025-2026</td>
-      <td id="T_a9c45_row3_col1" class="data row3 col1" >Mark</td>
-      <td id="T_a9c45_row3_col2" class="data row3 col2" >QuinshonJudkins</td>
-      <td id="T_a9c45_row3_col3" class="data row3 col3" >RB</td>
-      <td id="T_a9c45_row3_col4" class="data row3 col4" >70</td>
-      <td id="T_a9c45_row3_col5" class="data row3 col5" >121.3</td>
-      <td id="T_a9c45_row3_col6" class="data row3 col6" >-51.3</td>
-      <td id="T_a9c45_row3_col7" class="data row3 col7" >57</td>
+      <td id="T_521f6_row3_col0" class="data row3 col0" >2025-2026</td>
+      <td id="T_521f6_row3_col1" class="data row3 col1" >Mark</td>
+      <td id="T_521f6_row3_col2" class="data row3 col2" >QuinshonJudkins</td>
+      <td id="T_521f6_row3_col3" class="data row3 col3" >RB</td>
+      <td id="T_521f6_row3_col4" class="data row3 col4" >70</td>
+      <td id="T_521f6_row3_col5" class="data row3 col5" >121.3</td>
+      <td id="T_521f6_row3_col6" class="data row3 col6" >-51.3</td>
+      <td id="T_521f6_row3_col7" class="data row3 col7" >57</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row4_col0" class="data row4 col0" >2025-2026</td>
-      <td id="T_a9c45_row4_col1" class="data row4 col1" >Everett</td>
-      <td id="T_a9c45_row4_col2" class="data row4 col2" >JonnuSmith</td>
-      <td id="T_a9c45_row4_col3" class="data row4 col3" >TE</td>
-      <td id="T_a9c45_row4_col4" class="data row4 col4" >102</td>
-      <td id="T_a9c45_row4_col5" class="data row4 col5" >152.7</td>
-      <td id="T_a9c45_row4_col6" class="data row4 col6" >-50.7</td>
-      <td id="T_a9c45_row4_col7" class="data row4 col7" >127</td>
+      <td id="T_521f6_row4_col0" class="data row4 col0" >2025-2026</td>
+      <td id="T_521f6_row4_col1" class="data row4 col1" >Everett</td>
+      <td id="T_521f6_row4_col2" class="data row4 col2" >JonnuSmith</td>
+      <td id="T_521f6_row4_col3" class="data row4 col3" >TE</td>
+      <td id="T_521f6_row4_col4" class="data row4 col4" >102</td>
+      <td id="T_521f6_row4_col5" class="data row4 col5" >152.7</td>
+      <td id="T_521f6_row4_col6" class="data row4 col6" >-50.7</td>
+      <td id="T_521f6_row4_col7" class="data row4 col7" >127</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row5_col0" class="data row5 col0" >2025-2026</td>
-      <td id="T_a9c45_row5_col1" class="data row5 col1" >Max</td>
-      <td id="T_a9c45_row5_col2" class="data row5 col2" >JaydenHiggins</td>
-      <td id="T_a9c45_row5_col3" class="data row5 col3" >WR</td>
-      <td id="T_a9c45_row5_col4" class="data row5 col4" >101</td>
-      <td id="T_a9c45_row5_col5" class="data row5 col5" >151.2</td>
-      <td id="T_a9c45_row5_col6" class="data row5 col6" >-50.2</td>
-      <td id="T_a9c45_row5_col7" class="data row5 col7" >107</td>
+      <td id="T_521f6_row5_col0" class="data row5 col0" >2025-2026</td>
+      <td id="T_521f6_row5_col1" class="data row5 col1" >Max</td>
+      <td id="T_521f6_row5_col2" class="data row5 col2" >JaydenHiggins</td>
+      <td id="T_521f6_row5_col3" class="data row5 col3" >WR</td>
+      <td id="T_521f6_row5_col4" class="data row5 col4" >101</td>
+      <td id="T_521f6_row5_col5" class="data row5 col5" >151.2</td>
+      <td id="T_521f6_row5_col6" class="data row5 col6" >-50.2</td>
+      <td id="T_521f6_row5_col7" class="data row5 col7" >107</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row6_col0" class="data row6 col0" >2025-2026</td>
-      <td id="T_a9c45_row6_col1" class="data row6 col1" >Max</td>
-      <td id="T_a9c45_row6_col2" class="data row6 col2" >BrianRobinson</td>
-      <td id="T_a9c45_row6_col3" class="data row6 col3" >RB</td>
-      <td id="T_a9c45_row6_col4" class="data row6 col4" >81</td>
-      <td id="T_a9c45_row6_col5" class="data row6 col5" >126.8</td>
-      <td id="T_a9c45_row6_col6" class="data row6 col6" >-45.8</td>
-      <td id="T_a9c45_row6_col7" class="data row6 col7" >135</td>
+      <td id="T_521f6_row6_col0" class="data row6 col0" >2025-2026</td>
+      <td id="T_521f6_row6_col1" class="data row6 col1" >Max</td>
+      <td id="T_521f6_row6_col2" class="data row6 col2" >BrianRobinson</td>
+      <td id="T_521f6_row6_col3" class="data row6 col3" >RB</td>
+      <td id="T_521f6_row6_col4" class="data row6 col4" >81</td>
+      <td id="T_521f6_row6_col5" class="data row6 col5" >126.8</td>
+      <td id="T_521f6_row6_col6" class="data row6 col6" >-45.8</td>
+      <td id="T_521f6_row6_col7" class="data row6 col7" >135</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row7_col0" class="data row7 col0" >2023-2024</td>
-      <td id="T_a9c45_row7_col1" class="data row7 col1" >Trevor</td>
-      <td id="T_a9c45_row7_col2" class="data row7 col2" >ColeKmet</td>
-      <td id="T_a9c45_row7_col3" class="data row7 col3" >TE</td>
-      <td id="T_a9c45_row7_col4" class="data row7 col4" >89</td>
-      <td id="T_a9c45_row7_col5" class="data row7 col5" >129.5</td>
-      <td id="T_a9c45_row7_col6" class="data row7 col6" >-40.5</td>
-      <td id="T_a9c45_row7_col7" class="data row7 col7" >66</td>
+      <td id="T_521f6_row7_col0" class="data row7 col0" >2023-2024</td>
+      <td id="T_521f6_row7_col1" class="data row7 col1" >Trevor</td>
+      <td id="T_521f6_row7_col2" class="data row7 col2" >ColeKmet</td>
+      <td id="T_521f6_row7_col3" class="data row7 col3" >TE</td>
+      <td id="T_521f6_row7_col4" class="data row7 col4" >89</td>
+      <td id="T_521f6_row7_col5" class="data row7 col5" >129.5</td>
+      <td id="T_521f6_row7_col6" class="data row7 col6" >-40.5</td>
+      <td id="T_521f6_row7_col7" class="data row7 col7" >66</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row8_col0" class="data row8 col0" >2025-2026</td>
-      <td id="T_a9c45_row8_col1" class="data row8 col1" >Trevor</td>
-      <td id="T_a9c45_row8_col2" class="data row8 col2" >TyjaeSpears</td>
-      <td id="T_a9c45_row8_col3" class="data row8 col3" >RB</td>
-      <td id="T_a9c45_row8_col4" class="data row8 col4" >146</td>
-      <td id="T_a9c45_row8_col5" class="data row8 col5" >183.8</td>
-      <td id="T_a9c45_row8_col6" class="data row8 col6" >-37.8</td>
-      <td id="T_a9c45_row8_col7" class="data row8 col7" >124</td>
+      <td id="T_521f6_row8_col0" class="data row8 col0" >2025-2026</td>
+      <td id="T_521f6_row8_col1" class="data row8 col1" >Trevor</td>
+      <td id="T_521f6_row8_col2" class="data row8 col2" >TyjaeSpears</td>
+      <td id="T_521f6_row8_col3" class="data row8 col3" >RB</td>
+      <td id="T_521f6_row8_col4" class="data row8 col4" >146</td>
+      <td id="T_521f6_row8_col5" class="data row8 col5" >183.8</td>
+      <td id="T_521f6_row8_col6" class="data row8 col6" >-37.8</td>
+      <td id="T_521f6_row8_col7" class="data row8 col7" >124</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row9_col0" class="data row9 col0" >2023-2024</td>
-      <td id="T_a9c45_row9_col1" class="data row9 col1" >Tyler</td>
-      <td id="T_a9c45_row9_col2" class="data row9 col2" >ElijahMoore</td>
-      <td id="T_a9c45_row9_col3" class="data row9 col3" >WR</td>
-      <td id="T_a9c45_row9_col4" class="data row9 col4" >114</td>
-      <td id="T_a9c45_row9_col5" class="data row9 col5" >151.0</td>
-      <td id="T_a9c45_row9_col6" class="data row9 col6" >-37.0</td>
-      <td id="T_a9c45_row9_col7" class="data row9 col7" >99</td>
+      <td id="T_521f6_row9_col0" class="data row9 col0" >2023-2024</td>
+      <td id="T_521f6_row9_col1" class="data row9 col1" >Tyler</td>
+      <td id="T_521f6_row9_col2" class="data row9 col2" >ElijahMoore</td>
+      <td id="T_521f6_row9_col3" class="data row9 col3" >WR</td>
+      <td id="T_521f6_row9_col4" class="data row9 col4" >114</td>
+      <td id="T_521f6_row9_col5" class="data row9 col5" >151.0</td>
+      <td id="T_521f6_row9_col6" class="data row9 col6" >-37.0</td>
+      <td id="T_521f6_row9_col7" class="data row9 col7" >99</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row10_col0" class="data row10 col0" >2025-2026</td>
-      <td id="T_a9c45_row10_col1" class="data row10 col1" >Austin</td>
-      <td id="T_a9c45_row10_col2" class="data row10 col2" >JaydonBlue</td>
-      <td id="T_a9c45_row10_col3" class="data row10 col3" >RB</td>
-      <td id="T_a9c45_row10_col4" class="data row10 col4" >107</td>
-      <td id="T_a9c45_row10_col5" class="data row10 col5" >142.3</td>
-      <td id="T_a9c45_row10_col6" class="data row10 col6" >-35.3</td>
-      <td id="T_a9c45_row10_col7" class="data row10 col7" >147</td>
+      <td id="T_521f6_row10_col0" class="data row10 col0" >2025-2026</td>
+      <td id="T_521f6_row10_col1" class="data row10 col1" >Austin</td>
+      <td id="T_521f6_row10_col2" class="data row10 col2" >JaydonBlue</td>
+      <td id="T_521f6_row10_col3" class="data row10 col3" >RB</td>
+      <td id="T_521f6_row10_col4" class="data row10 col4" >107</td>
+      <td id="T_521f6_row10_col5" class="data row10 col5" >142.3</td>
+      <td id="T_521f6_row10_col6" class="data row10 col6" >-35.3</td>
+      <td id="T_521f6_row10_col7" class="data row10 col7" >147</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row11_col0" class="data row11 col0" >2023-2024</td>
-      <td id="T_a9c45_row11_col1" class="data row11 col1" >Jackson</td>
-      <td id="T_a9c45_row11_col2" class="data row11 col2" >SamLaPorta</td>
-      <td id="T_a9c45_row11_col3" class="data row11 col3" >TE</td>
-      <td id="T_a9c45_row11_col4" class="data row11 col4" >136</td>
-      <td id="T_a9c45_row11_col5" class="data row11 col5" >168.2</td>
-      <td id="T_a9c45_row11_col6" class="data row11 col6" >-32.2</td>
-      <td id="T_a9c45_row11_col7" class="data row11 col7" >42</td>
+      <td id="T_521f6_row11_col0" class="data row11 col0" >2023-2024</td>
+      <td id="T_521f6_row11_col1" class="data row11 col1" >Jackson</td>
+      <td id="T_521f6_row11_col2" class="data row11 col2" >SamLaPorta</td>
+      <td id="T_521f6_row11_col3" class="data row11 col3" >TE</td>
+      <td id="T_521f6_row11_col4" class="data row11 col4" >136</td>
+      <td id="T_521f6_row11_col5" class="data row11 col5" >168.2</td>
+      <td id="T_521f6_row11_col6" class="data row11 col6" >-32.2</td>
+      <td id="T_521f6_row11_col7" class="data row11 col7" >42</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row12_col0" class="data row12 col0" >2023-2024</td>
-      <td id="T_a9c45_row12_col1" class="data row12 col1" >Everett</td>
-      <td id="T_a9c45_row12_col2" class="data row12 col2" >DaltonSchultz</td>
-      <td id="T_a9c45_row12_col3" class="data row12 col3" >TE</td>
-      <td id="T_a9c45_row12_col4" class="data row12 col4" >90</td>
-      <td id="T_a9c45_row12_col5" class="data row12 col5" >120.5</td>
-      <td id="T_a9c45_row12_col6" class="data row12 col6" >-30.5</td>
-      <td id="T_a9c45_row12_col7" class="data row12 col7" >93</td>
+      <td id="T_521f6_row12_col0" class="data row12 col0" >2023-2024</td>
+      <td id="T_521f6_row12_col1" class="data row12 col1" >Everett</td>
+      <td id="T_521f6_row12_col2" class="data row12 col2" >DaltonSchultz</td>
+      <td id="T_521f6_row12_col3" class="data row12 col3" >TE</td>
+      <td id="T_521f6_row12_col4" class="data row12 col4" >90</td>
+      <td id="T_521f6_row12_col5" class="data row12 col5" >120.5</td>
+      <td id="T_521f6_row12_col6" class="data row12 col6" >-30.5</td>
+      <td id="T_521f6_row12_col7" class="data row12 col7" >93</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row13_col0" class="data row13 col0" >2025-2026</td>
-      <td id="T_a9c45_row13_col1" class="data row13 col1" >Max</td>
-      <td id="T_a9c45_row13_col2" class="data row13 col2" >RasheeRice</td>
-      <td id="T_a9c45_row13_col3" class="data row13 col3" >WR</td>
-      <td id="T_a9c45_row13_col4" class="data row13 col4" >41</td>
-      <td id="T_a9c45_row13_col5" class="data row13 col5" >71.2</td>
-      <td id="T_a9c45_row13_col6" class="data row13 col6" >-30.2</td>
-      <td id="T_a9c45_row13_col7" class="data row13 col7" >69</td>
+      <td id="T_521f6_row13_col0" class="data row13 col0" >2025-2026</td>
+      <td id="T_521f6_row13_col1" class="data row13 col1" >Max</td>
+      <td id="T_521f6_row13_col2" class="data row13 col2" >RasheeRice</td>
+      <td id="T_521f6_row13_col3" class="data row13 col3" >WR</td>
+      <td id="T_521f6_row13_col4" class="data row13 col4" >41</td>
+      <td id="T_521f6_row13_col5" class="data row13 col5" >71.2</td>
+      <td id="T_521f6_row13_col6" class="data row13 col6" >-30.2</td>
+      <td id="T_521f6_row13_col7" class="data row13 col7" >69</td>
     </tr>
     <tr>
-      <td id="T_a9c45_row14_col0" class="data row14 col0" >2023-2024</td>
-      <td id="T_a9c45_row14_col1" class="data row14 col1" >Tyler</td>
-      <td id="T_a9c45_row14_col2" class="data row14 col2" >JaylenWarren</td>
-      <td id="T_a9c45_row14_col3" class="data row14 col3" >RB</td>
-      <td id="T_a9c45_row14_col4" class="data row14 col4" >134</td>
-      <td id="T_a9c45_row14_col5" class="data row14 col5" >162.8</td>
-      <td id="T_a9c45_row14_col6" class="data row14 col6" >-28.8</td>
-      <td id="T_a9c45_row14_col7" class="data row14 col7" >65</td>
+      <td id="T_521f6_row14_col0" class="data row14 col0" >2023-2024</td>
+      <td id="T_521f6_row14_col1" class="data row14 col1" >Tyler</td>
+      <td id="T_521f6_row14_col2" class="data row14 col2" >JaylenWarren</td>
+      <td id="T_521f6_row14_col3" class="data row14 col3" >RB</td>
+      <td id="T_521f6_row14_col4" class="data row14 col4" >134</td>
+      <td id="T_521f6_row14_col5" class="data row14 col5" >162.8</td>
+      <td id="T_521f6_row14_col6" class="data row14 col6" >-28.8</td>
+      <td id="T_521f6_row14_col7" class="data row14 col7" >65</td>
     </tr>
   </tbody>
 </table>
