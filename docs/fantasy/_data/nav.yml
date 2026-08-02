@@ -5,10 +5,10 @@ docs:
   url: /index.html
 
 - title: Schedule Stats
-  url: /YEAR_VAL/schedule/
+  url: /schedule/
 
 - title: Draft vs ADP
-  url: /YEAR_VAL/adp/
+  url: /adp/
 
 - title: Draft Report
   url: /draft-report/

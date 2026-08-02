@@ -6,13 +6,16 @@ Three sections, all computed from data/season/<season>.json:
   * Strength of Schedule / Victory / Expected Wins.
   * Records vs every other team's schedule (matrix).
 
-    python -m src.site.schedule 2526   # writes docs/2526/schedule/index.html
-"""
-import sys
+Every season lives on the one page (docs/schedule/index.html), picked with the
+season buttons - same shape as the draft report.
 
+    python -m src.site.schedule
+"""
 import pandas as pd
 
-from src.config import EXPW_RATIO, FANTASY_REG_WEEKS, FORMAL_SEASON, ROOT, ROSTER_NAMES, SEASON_DIR
+from src.config import (
+    EXPW_RATIO, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_DIR,
+)
 from src.site import layout, styles
 from src.site.frontmatter import add_front_matter
 
@@ -148,8 +151,8 @@ def schedule_compare(season_str: str):
 # Page
 # --------------------------------------------------------------------------- #
 
-def generate(season_str: str):
-    """Build and write docs/<season_str>/schedule/index.html."""
+def _season_view(season_str: str) -> str:
+    """One season's three tables, with the first column frozen on h-scroll."""
     html = (
         '<h2>All-Play Standings</h2><p>Whole league goes H2H, every week.</p>'
         f'<div class="table-scroll">{all_play(season_str).to_html()}</div>'
@@ -169,14 +172,20 @@ def generate(season_str: str):
     # Freeze the first column on horizontal scroll (first <td> of each row).
     lines = [ln.replace("<td>", '<td class="first-col">', 1) if "<td>" in ln else ln
              for ln in html.split("\n")]
-    body = layout.season_bar(season_str, "schedule") + "\n".join(lines)
-    page = add_front_matter(body, f"Schedule Stats {FORMAL_SEASON[season_str]}")
+    return "\n".join(lines)
 
-    out = ROOT / "docs" / season_str / "schedule" / "index.html"
+
+def generate():
+    """Build and write docs/schedule/index.html - every season, switchable."""
+    views = [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS]
+    body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:")
+    page = add_front_matter(body, "Schedule Stats")
+
+    out = ROOT / "docs" / "schedule" / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote schedule page -> {out}")
 
 
 if __name__ == "__main__":
-    generate(sys.argv[1] if len(sys.argv) > 1 else "2526")
+    generate()

@@ -2,9 +2,11 @@
 Regenerate all migrated site pages.
 
     python -m src.site.build                 # all seasons + global pages
-    python -m src.site.build --seasons 2526  # just these seasons
+    python -m src.site.build --seasons 2526  # just these seasons' archived data
 
-Per-season pages: schedule, draft-vs-ADP. Global pages: draft report, homepage.
+Every page is now global - schedule, draft-vs-ADP and the draft report each hold
+every season behind on-page season buttons. --seasons only narrows the per-season
+data archived for the homepage.
 
 NOTE: the weekly pages (src.site.bestball, src.site.median) are intentionally
 not wired in - removed from the site for now (not operational). To bring one
@@ -24,10 +26,11 @@ def build_all(seasons=None):
     """Generate per-season pages, then the global pages."""
     seasons = seasons or SEASONS
     for season_str in seasons:
-        schedule.generate(season_str)
         draft.save_games_missed(season_str)   # injury data for the homepage (draft page retired)
-        adp.generate(season_str)
 
+    # Every remaining page carries all seasons at once (season buttons on-page).
+    schedule.generate()
+    adp.generate()
     draft_report.generate()   # all-time + per-year manager draft report
     homepage.generate()
 

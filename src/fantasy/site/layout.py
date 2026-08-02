@@ -25,23 +25,14 @@ window.addEventListener('load',openHashTarget);
 </script>"""
 
 
-_SEASON_CSS = """<style>
-.season-bar{margin:12px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.season-bar .switch-label{font-weight:bold;margin-right:6px}
-.season-bar a{padding:6px 14px;border:1px solid #888;border-radius:5px;background:#eee;
-  text-decoration:none;color:#222;font-size:14px}
-.season-bar a.active{background:#3CB371;color:#fff;font-weight:bold;border-color:#2e8b57}
-</style>"""
+def internal_link(path: str, label: str) -> str:
+    """Link to another page of this site.
 
-
-def season_bar(current: str, path: str) -> str:
-    """Per-page season selector: links to /<season>/<path>/, current highlighted."""
-    from src.config import FORMAL_SEASON, LEAGUE_IDS
-    links = "".join(
-        f'<a class="{"active" if s == current else ""}" href="/{s}/{path}/">{FORMAL_SEASON[s]}</a>'
-        for s in LEAGUE_IDS
-    )
-    return _SEASON_CSS + f'<div class="season-bar"><span class="switch-label">Season:</span>{links}</div>'
+    Emits Liquid `relative_url` rather than a bare "/path/" so the link keeps
+    working under the GitHub Pages project baseurl (/fantasy_insights). Generated
+    pages carry front matter, so Jekyll resolves this on build.
+    """
+    return "<a href=\"{{ '%s' | relative_url }}\">%s</a>" % (path, label)
 
 
 def section_nav(items) -> str:
@@ -65,9 +56,11 @@ _SWITCH_CSS = """<style>
 </style>"""
 
 
-def view_switcher(views, group: str = "v") -> str:
+def view_switcher(views, group: str = "v", label: str = "") -> str:
     """Button-toggled views. `views`: list of (view_id, label, html). First shown."""
     buttons, divs = [], []
+    if label:
+        buttons.append(f'<span class="switch-label">{label}</span>')
     for i, (vid, label, html) in enumerate(views):
         active = " active" if i == 0 else ""
         hidden = "" if i == 0 else ' style="display:none"'

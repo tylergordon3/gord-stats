@@ -11,9 +11,11 @@ button on the page:
 Value = league rank - consensus rank (positive = drafted later than consensus =
 value; negative = reach).
 
-    python -m src.site.adp 2425
+Every season lives on the one page (docs/adp/index.html), picked with the season
+buttons - same shape as the draft report.
+
+    python -m src.site.adp
 """
-import sys
 from functools import lru_cache
 
 import pandas as pd
@@ -240,12 +242,12 @@ def all_time_section() -> str:
         d = df.sort_values("OvrValue", ascending=asc).head(CUTOFF_ROWS)[_ALL_COLS].rename(columns=_ALL_RENAME)
         return _style(d, "{:+.1f}", cmap, wide=False)
 
-    links = " &middot; ".join(f'<a href="/{s}/adp/">{FORMAL_SEASON[s]}</a>' for s in LEAGUE_IDS)
+    link = layout.internal_link("/adp/", "Draft vs ADP")
     return (
         "<p>Combined across every league season. <strong>ADP Value</strong> = pick minus consensus "
         "ADP (+ = value, - = reach); <strong>Finish vs ADP</strong> = ADP minus fantasy finish "
         "(+ = beat consensus).</p>"
-        f"<p>Full draft-vs-ADP by season: {links}</p>"
+        f"<p>Full draft-vs-ADP by season: {link}</p>"
         "<h2>Draft Tendencies by Manager</h2>"
         f"<div class='table-scroll'>{_manager_summary(df)}</div>"
         "<h2>Did it pay off? (all seasons)</h2>"
@@ -258,59 +260,45 @@ def all_time_section() -> str:
 
 
 # --------------------------------------------------------------------------- #
-# Page (with view toggle)
+# Page (season x view grid)
 # --------------------------------------------------------------------------- #
 
-_TOGGLE = """
-<style>
-.view-toggle{margin:14px 0}
-.view-toggle button{padding:7px 18px;margin-right:6px;cursor:pointer;border:1px solid #888;
-  background:#eee;border-radius:5px;font-size:15px}
-.view-toggle button.active{background:#3CB371;color:#fff;font-weight:bold;border-color:#2e8b57}
-</style>
-<div class="view-toggle">
-  <button id="btn-overall" class="active" onclick="adpView('overall')">Overall</button>
-  <button id="btn-positional" onclick="adpView('positional')">By Position</button>
-</div>
-<script>
-function adpView(v){
-  document.getElementById('view-overall').style.display = (v==='overall')?'':'none';
-  document.getElementById('view-positional').style.display = (v==='positional')?'':'none';
-  document.getElementById('btn-overall').classList.toggle('active', v==='overall');
-  document.getElementById('btn-positional').classList.toggle('active', v==='positional');
-}
-</script>
-"""
-
-
-def generate(season_str: str):
-    """Build and write docs/<season_str>/adp/index.html (overall + positional views)."""
-    m = _picks_with_adp(season_str)
-    matched = m[m["adp"].notna()].copy()
+def _match_note(m, matched) -> str:
     unmatched = list(m[m["adp"].isna()]["Name"])
+    return (f"<p>{len(matched)} of {len(m)} picks matched to ADP"
+            + (f" (no ADP for: {', '.join(unmatched)})." if unmatched else ".") + "</p>")
+
+
+def generate():
+    """Build and write docs/adp/index.html (season x overall/positional views)."""
+    seasons = [(s, FORMAL_SEASON[s]) for s in LEAGUE_IDS]
+    views = [("overall", "Overall"), ("positional", "By Position")]
+
+    content = {}
+    for season_str, _ in seasons:
+        m = _picks_with_adp(season_str)
+        matched = m[m["adp"].notna()].copy()
+        note = _match_note(m, matched)
+        content[(season_str, "overall")] = note + _overall_view(matched)
+        content[(season_str, "positional")] = note + _positional_view(matched)
 
     intro = (
         "<p>How the league drafted vs <strong>consensus ADP</strong> (FantasyPros PPR, "
         "averaged across ESPN/Sleeper/Yahoo/CBS/NFL). <strong>ADP Value</strong> = league rank minus "
         "consensus rank: <strong>+</strong> = drafted later than consensus (value), "
         "<strong>-</strong> = drafted earlier (reach). <strong>Fantasy Finish</strong> is the "
-        "player's actual end-of-season rank. Switch between overall and positional ranks below.</p>"
-        f"<p>{len(matched)} of {len(m)} picks matched to ADP"
-        + (f" (no ADP for: {', '.join(unmatched)})." if unmatched else ".") + "</p>"
+        "player's actual end-of-season rank. Pick a season and a view below.</p>"
     )
 
-    html = (
-        layout.HEAD + layout.season_bar(season_str, "adp") + intro + _TOGGLE
-        + f'<div id="view-overall">{_overall_view(matched)}</div>'
-        + f'<div id="view-positional" style="display:none">{_positional_view(matched)}</div>'
-    )
+    html = layout.HEAD + intro + layout.two_axis_switcher(
+        seasons, views, content, row_label="Season:", col_label="View:", group="adp")
 
-    page = add_front_matter(html, f"Draft vs ADP - {FORMAL_SEASON[season_str]}")
-    out = ROOT / "docs" / season_str / "adp" / "index.html"
+    page = add_front_matter(html, "Draft vs ADP")
+    out = ROOT / "docs" / "adp" / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote Draft vs ADP page -> {out}")
 
 
 if __name__ == "__main__":
-    generate(sys.argv[1] if len(sys.argv) > 1 else "2425")
+    generate()
