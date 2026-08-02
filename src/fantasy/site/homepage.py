@@ -13,7 +13,7 @@ import pandas as pd
 from src.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from src.site import adp, injuries, layout, styles
+from src.site import adp, injuries, layout, styles, upcoming
 from src.site.frontmatter import add_front_matter
 
 OUTPUT = ROOT / "docs" / "index.html"
@@ -120,12 +120,13 @@ def injury_section() -> str:
 def generate(output=OUTPUT):
     """Write the homepage to `output` (default docs/index.html)."""
     sections = [
-        ("metrics", "All-Time Metrics", metrics_section(), True),
+        ("board", "Draft Board - Live ADP by Site", upcoming.adp_board_section(), True),
+        ("metrics", "All-Time Metrics", metrics_section(), False),
         ("injuries", "All-Time Injury Impacts", injury_section(), False),
         ("adp", "All-Time Draft vs ADP", adp.all_time_section(), False),
     ]
     nav = layout.section_nav([(a, title) for a, title, _, _ in sections])
-    body = layout.HEAD + nav + "".join(
+    body = layout.HEAD + upcoming.countdown_banner() + nav + "".join(
         layout.details(title, html, open=is_open, anchor=a) for a, title, html, is_open in sections)
 
     page = add_front_matter(body, "Home")

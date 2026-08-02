@@ -70,6 +70,17 @@ DRAFT_IDS = {
 FORMAL_SEASON = {"2526": "2025-2026", "2425": "2024-2025", "2324": "2023-2024"}
 SEASON_YEAR = {"2526": 2025, "2425": 2024, "2324": 2023}
 
+# --------------------------------------------------------------------------- #
+# Upcoming season / draft (drives the homepage countdown + live ADP board).
+# --------------------------------------------------------------------------- #
+UPCOMING_YEAR = 2026                 # NFL season being drafted for
+UPCOMING_SEASON = "2026-2027"        # display label
+# Naive ISO timestamp: rendered as-is and parsed by the browser as local time,
+# so the countdown reads 8:00 PM for anyone in the league's timezone.
+DRAFT_DATETIME = "2026-08-22T20:00:00"
+DRAFT_LABEL = "Saturday, August 22 - 8:00 PM"
+LEAGUE_TEAMS = len(ROSTER_NAMES)     # 10 - used to turn ADP into a round number
+
 # Highest fantasy points at each position since 2020 (used by the median race's
 # hypothetical-max calculation).
 MAX_POINTS = {
