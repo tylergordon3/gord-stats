@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-08-01",
+  "fetched_on": "2026-08-03",
   "season": 2026,
   "total_games": 333,
   "schedule": {
@@ -5001,7 +5001,7 @@
           "id": 24971,
           "home": "MIN",
           "away": "IND",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
@@ -5012,7 +5012,7 @@
           "id": 24971,
           "home": "MIN",
           "away": "IND",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
@@ -5023,7 +5023,7 @@
           "id": 24972,
           "home": "POR",
           "away": "LA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
@@ -5034,7 +5034,7 @@
           "id": 24972,
           "home": "POR",
           "away": "LA",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
@@ -5045,7 +5045,7 @@
           "id": 24973,
           "home": "DAL",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
@@ -5056,7 +5056,7 @@
           "id": 24973,
           "home": "DAL",
           "away": "CON",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
@@ -5067,7 +5067,7 @@
           "id": 24974,
           "home": "GS",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
@@ -5078,7 +5078,7 @@
           "id": 24974,
           "home": "GS",
           "away": "TOR",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-02"
