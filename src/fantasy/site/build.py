@@ -17,7 +17,7 @@ import argparse
 
 from src.config import LEAGUE_IDS
 from src.league import adp_board
-from src.site import adp, draft, draft_dna, draft_report, homepage, schedule
+from src.site import adp, draft, draft_dna, draft_report, homepage, schedule, team_adjusted
 
 # Season codes we have data for, newest first.
 SEASONS = list(LEAGUE_IDS)
