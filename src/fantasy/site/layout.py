@@ -6,7 +6,7 @@ Include HEAD once per page, then use section_nav() and details().
 
 HEAD = """<style>
 .section-nav{margin:10px 0 18px;padding:8px 14px;background:#dfe6ee;border-radius:6px;font-size:14px}
-.section-nav a{margin-right:16px;text-decoration:none;white-space:nowrap}
+.section-nav a{display:inline-block;margin:3px 16px 3px 0;text-decoration:none;white-space:nowrap}
 details.section{margin:14px 0;border:1px solid #b9c4d0;border-radius:6px;overflow:hidden;background:#fbfcfe}
 details.section>summary{cursor:pointer;font-weight:bold;font-size:17px;padding:10px 14px;
   background:#dfe6ee;color:#17293b;list-style:none}
@@ -16,6 +16,15 @@ details.section>summary::before{content:'\\25B8 ';color:#4a6178}
 details.section[open]>summary::before{content:'\\25BE ';color:#4a6178}
 details.section[open]>summary{border-bottom:1px solid #b9c4d0}
 details.section>*:not(summary){margin:10px 14px}
+/* Phones: the 14px gutters cost real table width, and wrapped nav links need
+   room to breathe once they stop fitting on one line. */
+@media (max-width:600px){
+  .section-nav{margin:8px 0 14px;padding:8px 10px;line-height:1.5}
+  .section-nav a{margin-right:14px}
+  details.section{margin:10px 0}
+  details.section>summary{font-size:16px;padding:10px}
+  details.section>*:not(summary){margin:10px 8px}
+}
 </style>
 <script>
 function openHashTarget(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);
@@ -53,6 +62,12 @@ _SWITCH_CSS = """<style>
 .view-switch button{padding:7px 16px;cursor:pointer;border:1px solid #888;background:#eee;
   border-radius:5px;font-size:15px}
 .view-switch button.active{background:#3CB371;color:#fff;font-weight:bold;border-color:#2e8b57}
+@media (max-width:600px){
+  .view-switch{gap:5px;margin:8px 0}
+  .view-switch button{padding:6px 11px;font-size:14px}
+  /* Label on its own line so the season buttons wrap as an even grid. */
+  .view-switch .switch-label{flex:1 1 100%;min-width:0;margin:0 0 2px}
+}
 </style>"""
 
 

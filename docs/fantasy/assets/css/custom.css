@@ -1,4 +1,9 @@
+.simple-nav {
+  line-height: 1.9;
+}
+
 .simple-nav a {
+  display: inline-block;
   margin-right: 12px;
   padding-right: 12px;
   border-right: 1px solid #4a5a68;
@@ -7,6 +12,8 @@
 
 .simple-nav a:last-child {
   border-right: none;
+  padding-right: 0;
+  margin-right: 0;
 }
 
 /* Freeze first column */
@@ -90,6 +97,33 @@ thead th {
 
 
 /* Reduce padding/headings on smaller screens */
+@media (max-width: 600px) {
+  /* The theme's 40px content gap and 10px gutters are a lot of dead space on a
+     phone, where the tables want every pixel of width. */
+  #main_content {
+    padding-top: 18px;
+    padding-bottom: 10px;
+  }
+
+  .custom-inner {
+    padding: 14px 8px;
+  }
+
+  /* Theme header: 50px of top padding, and a 320px floor that pushes the whole
+     page sideways on narrow phones. */
+  #header_wrap .inner {
+    padding: 26px 12px 18px 12px;
+  }
+
+  .inner {
+    min-width: 0;
+  }
+
+  #project_title {
+    margin-bottom: 4px;
+  }
+}
+
 @media (max-width: 480px) {
   table th,
   table td {

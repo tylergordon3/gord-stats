@@ -5,8 +5,10 @@ Two pieces, both rendered by src.site.homepage:
 
   * countdown_banner() - live JS countdown to config.DRAFT_DATETIME.
   * adp_board_section() - the multi-site ADP board (src.league.adp_board) as a
-    sortable / filterable / searchable table. The data is baked into the page as
-    JSON at build time; all the interaction is vanilla JS, since the site is a
+    sortable / filterable / searchable table, plus the movement tracker: how far
+    each player has climbed or slid since the previous pull (the Move column and
+    the risers / fallers strip above the table). The data is baked into the page
+    as JSON at build time; all the interaction is vanilla JS, since the site is a
     static Jekyll build with no JS dependencies.
 
     python -m src.site.upcoming     # rebuilds the homepage
@@ -18,11 +20,16 @@ import pandas as pd
 from src.config import (
     DRAFT_DATETIME, DRAFT_LABEL, LEAGUE_TEAMS, UPCOMING_SEASON, UPCOMING_YEAR,
 )
-from src.league.adp_board import COMPARABLE_MAX, SOURCES, board, last_updated
+from src.league.adp_board import (
+    COMPARABLE_MAX, SOURCES, TRACKED_MAX, board, last_updated, movers,
+    previous_updated,
+)
 
 # Row layout for the embedded JSON (arrays, not objects - keeps the page small).
-_FIELDS = ["player", "pos", "team", "bye", "Consensus", "ESPN", "FFC", "Avg", "Spread"]
+_FIELDS = ["player", "pos", "team", "bye", "Consensus", "ESPN", "FFC", "Avg", "Move", "Spread"]
 POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
+MOVERS_SHOWN = 8            # risers / fallers listed in the movement strip
+MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
 
 
 # --------------------------------------------------------------------------- #
@@ -39,7 +46,16 @@ _COUNTDOWN_CSS = """<style>
 .countdown .num{font-size:28px;font-weight:700;font-family:monospace;line-height:1.1}
 .countdown .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.09em;opacity:.8}
 .draft-banner .draft-note{margin:10px 0 0;font-size:13px;opacity:.8}
-@media (max-width:480px){.countdown .unit{min-width:62px}.countdown .num{font-size:22px}}
+@media (max-width:600px){
+  .draft-banner{margin:10px 0 14px;padding:14px 10px}
+  .draft-banner .draft-title{font-size:18px;margin-bottom:10px}
+  .draft-banner .draft-when{font-size:13px}
+  .countdown{gap:6px}
+  .countdown .unit{min-width:64px;padding:6px 4px}
+  .countdown .num{font-size:24px}
+  .draft-banner .draft-note{font-size:12px}
+}
+@media (max-width:360px){.countdown .unit{min-width:56px}.countdown .num{font-size:20px}}
 </style>"""
 
 
@@ -109,6 +125,42 @@ table.adp-table tbody tr:hover{background:#e6eef6}
 .adp-early{background:#d8f0dd!important}.adp-late{background:#fadddd!important}
 .adp-meta{font-size:13px;color:#4a5a68;margin:6px 0 0}
 .adp-empty{padding:14px;text-align:center;color:#666}
+.adp-up{color:#1a7f4b;font-weight:700}
+.adp-down{color:#b3382c;font-weight:700}
+.adp-flat{color:#93a1ad}
+.adp-controls button.adp-toggle.active{background:#17293b;border-color:#17293b}
+.movers{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 4px}
+.movers .mover-card{flex:1 1 260px;min-width:0;border:1px solid #b9c4d0;border-radius:6px;
+  overflow:hidden;background:#fff}
+.movers .mover-head{padding:6px 10px;font-size:13px;font-weight:700;letter-spacing:.03em;
+  background:#17293b;color:#fff}
+.movers ol{margin:0;padding:6px 10px 8px 26px;font-size:13px}
+.movers li{padding:2px 0;line-height:1.45}
+.movers .mv-pos{color:#4a5a68;font-size:12px}
+.movers .mv-num{font-family:monospace;white-space:nowrap}
+.movers .mover-none{padding:10px;font-size:13px;color:#4a5a68}
+@media (max-width:600px){
+  .adp-controls{gap:6px;margin:8px 0}
+  .adp-controls button{padding:5px 9px}
+  .adp-controls input{min-width:0;flex:1 1 100%}
+  .adp-controls select{flex:0 0 auto}
+  .adp-controls .adp-label#adp-count{flex:1 1 100%;font-weight:normal}
+  .adp-wrap{max-height:70vh}
+  .movers{gap:8px}
+  .movers .mover-card{flex:1 1 100%}
+  /* A phone screen only fits ~6 columns, and #/Rd/Player/Pos/Tm/Bye filled all
+     of them - every ADP number sat off to the right. Drop the round (it is just
+     Avg / league size) and pin the name so the numbers keep a player attached
+     to them while the table scrolls sideways. */
+  table.adp-table .rd{display:none}
+  table.adp-table td,table.adp-table th{padding:5px 7px}
+  table.adp-table td.name,table.adp-table th.name{position:sticky;left:0;
+    max-width:118px;overflow:hidden;text-overflow:ellipsis;
+    box-shadow:2px 0 4px -2px rgba(0,0,0,.3)}
+  table.adp-table td.name{z-index:1;background:#fff}
+  table.adp-table th.name{z-index:4;background:#17293b}
+  table.adp-table tbody tr:nth-child(even) td.name{background:#f5f7fa}
+}
 </style>"""
 
 
@@ -128,16 +180,27 @@ def _table_js(rows) -> str:
         "sites": [_FIELDS.index(s) for s in SOURCES],
         "avg": _FIELDS.index("Avg"),
         "spread": _FIELDS.index("Spread"),
+        "move": _FIELDS.index("Move"),
+        "minMove": MIN_MOVE,
         "teams": LEAGUE_TEAMS,
     }, separators=(",", ":"))
     return """{% raw %}<script>
 (function(){
 var CFG=""" + cfg + """;
-var D=CFG.rows, SITES=CFG.sites, AVG=CFG.avg, SPREAD=CFG.spread, TEAMS=CFG.teams;
+var D=CFG.rows, SITES=CFG.sites, AVG=CFG.avg, SPREAD=CFG.spread, MOVE=CFG.move;
+var MINMOVE=CFG.minMove, TEAMS=CFG.teams;
 var HEADS=document.querySelectorAll('#adp-head th');
-var sortCol=AVG, asc=true, pos='ALL', query='', limit=100;
+var sortCol=AVG, asc=true, pos='ALL', query='', limit=100, moversOnly=false;
 
 function fmt(v){return v===null||v===undefined?'-':v.toFixed(1);}
+
+// Move is baseline ADP minus current: positive = going earlier = rising.
+function moveCell(v){
+  if(v===null||v===undefined) return '<td class="adp-flat">-</td>';
+  if(Math.abs(v)<MINMOVE) return '<td class="adp-flat">&ndash;</td>';
+  var cls=v>0?'adp-up':'adp-down';
+  return '<td class="'+cls+'">'+(v>0?'\\u25B2 ':'\\u25BC ')+Math.abs(v).toFixed(1)+'</td>';
+}
 
 function compare(a,b){
   var x=a[sortCol], y=b[sortCol];
@@ -155,6 +218,7 @@ function filtered(){
   var q=query.toLowerCase();
   return D.filter(function(r){
     if(pos!=='ALL'&&r[1]!==pos) return false;
+    if(moversOnly&&(r[MOVE]===null||Math.abs(r[MOVE])<MINMOVE)) return false;
     if(q&&(r[0]+' '+(r[2]||'')).toLowerCase().indexOf(q)<0) return false;
     return true;
   }).sort(compare);
@@ -168,7 +232,7 @@ function cells(r,rank){
     if(worst===null||r[i]>r[worst]) worst=i;
   });
   var round=r[AVG]===null?'-':Math.ceil(r[AVG]/TEAMS);
-  var html='<td>'+rank+'</td><td>'+round+'</td>'
+  var html='<td>'+rank+'</td><td class="rd">'+round+'</td>'
           +'<td class="name">'+r[0]+'</td>'
           +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+'</span></td>'
           +'<td>'+(r[2]||'-')+'</td><td>'+(r[3]===null?'-':r[3])+'</td>';
@@ -177,7 +241,7 @@ function cells(r,rank){
       ? (i===best?' class="adp-early"':i===worst?' class="adp-late"':'') : '';
     html+='<td'+cls+'>'+fmt(r[i])+'</td>';
   });
-  return html+'<td>'+fmt(r[AVG])+'</td><td>'+fmt(r[SPREAD])+'</td>';
+  return html+'<td>'+fmt(r[AVG])+'</td>'+moveCell(r[MOVE])+'<td>'+fmt(r[SPREAD])+'</td>';
 }
 
 function draw(){
@@ -186,7 +250,8 @@ function draw(){
     ? shown.map(function(r,i){return '<tr>'+cells(r,i+1)+'</tr>';}).join('')
     : '<tr><td class="adp-empty" colspan="'+HEADS.length+'">No players match.</td></tr>';
   document.getElementById('adp-count').textContent =
-    'Showing '+shown.length+' of '+rows.length+' players'+(pos==='ALL'?'':' at '+pos)+'.';
+    'Showing '+shown.length+' of '+rows.length+(moversOnly?' movers':' players')
+    +(pos==='ALL'?'':' at '+pos)+'.';
   HEADS.forEach(function(th){
     var on = +th.dataset.col===sortCol;
     th.classList.toggle('sorted',on);
@@ -198,7 +263,8 @@ HEADS.forEach(function(th){
   th.addEventListener('click',function(){
     var c=+th.dataset.col;
     if(c<0) return;                                    // rank / round aren't sortable
-    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==SPREAD);}
+    // Spread and Move read best biggest-first (widest disagreement, biggest risers).
+    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==SPREAD&&c!==MOVE);}
     draw();
   });
 });
@@ -215,38 +281,110 @@ document.getElementById('adp-search').addEventListener('input',function(e){
 document.getElementById('adp-limit').addEventListener('change',function(e){
   limit=+e.target.value; draw();
 });
+var moversBtn=document.getElementById('adp-movers');
+if(moversBtn) moversBtn.addEventListener('click',function(){
+  moversOnly=!moversOnly;
+  moversBtn.classList.toggle('active',moversOnly);
+  if(moversOnly){sortCol=MOVE; asc=false;}          // land on the biggest risers
+  draw();
+});
 draw();
 })();
 </script>{% endraw %}"""
 
 
-def _controls() -> str:
+def _controls(has_movement: bool) -> str:
     buttons = "".join(
         f'<button class="adp-pos{" active" if p == "ALL" else ""}" data-pos="{p}">{p}</button>'
         for p in ["ALL"] + POSITIONS
     )
     limits = "".join(f'<option value="{v}"{" selected" if v == 100 else ""}>{label}</option>'
                      for v, label in [(50, "Top 50"), (100, "Top 100"), (200, "Top 200"), (0, "All")])
+    movers_btn = ('<button id="adp-movers" class="adp-toggle">Movers only</button>'
+                  if has_movement else "")
     return (f'<div class="adp-controls"><span class="adp-label">Position:</span>{buttons}</div>'
             '<div class="adp-controls">'
             '<input id="adp-search" type="search" placeholder="Search player or team...">'
-            f'<select id="adp-limit">{limits}</select>'
+            f'<select id="adp-limit">{limits}</select>{movers_btn}'
             '<span class="adp-label" id="adp-count"></span></div>')
 
 
 def _header() -> str:
-    """Header cells; data-col is the row index to sort on (negative = derived)."""
+    """Header cells; data-col is the row index to sort on (negative = derived).
+
+    The Rd / Player classes match the body cells, so the phone layout can drop
+    the round column and pin the name in place (see _BOARD_CSS).
+    """
     labels = {"player": "Player", "pos": "Pos", "team": "Tm", "bye": "Bye"}
+    classes = {-2: "rd", 0: "name"}
     cols = [(-1, "#"), (-2, "Rd")] + [(i, labels.get(f, f)) for i, f in enumerate(_FIELDS)]
-    return "".join(f'<th data-col="{i}">{label}</th>' for i, label in cols)
+    return "".join(f'<th data-col="{i}"{_cls(classes.get(i))}>{label}</th>' for i, label in cols)
+
+
+def _cls(name) -> str:
+    return f' class="{name}"' if name else ""
+
+
+def _when(when) -> str:
+    """Timestamps as 'Aug 2, 7:25 PM' (no zero padding on the hour)."""
+    hour = when.hour % 12 or 12
+    return f"{when:%b} {when.day}, {hour}:{when:%M %p}"
 
 
 def _stamp(year=UPCOMING_YEAR) -> str:
     when = last_updated(year)
-    if not when:
-        return "just now"
-    hour = when.hour % 12 or 12
-    return f"{when:%b} {when.day}, {hour}:{when:%M %p}"
+    return _when(when) if when else "just now"
+
+
+# --------------------------------------------------------------------------- #
+# Movement tracker
+# --------------------------------------------------------------------------- #
+
+def _mover_items(df: pd.DataFrame, rising: bool) -> str:
+    """<li> per mover: name, position, and the baseline -> current ADP jump."""
+    arrow = "▲" if rising else "▼"
+    cls = "adp-up" if rising else "adp-down"
+    items = []
+    for r in df.itertuples(index=False):
+        items.append(
+            f'<li><strong>{r.player}</strong> <span class="mv-pos">{r.pos}'
+            f'{" - " + r.team if isinstance(r.team, str) and r.team else ""}</span><br>'
+            f'<span class="mv-num">{r.Prev:.1f} &rarr; {r.Avg:.1f} '
+            f'<span class="{cls}">{arrow} {abs(r.Move):.1f}</span></span></li>'
+        )
+    return "".join(items)
+
+
+def _movers_strip(year: int) -> str:
+    """Biggest risers / fallers since the previous pull (empty before baseline)."""
+    since = previous_updated(year)
+    if not since:
+        return ("<p class='adp-meta'>Movement tracking starts with the next refresh - "
+                "this is the first board on record, so there is nothing to compare it to yet.</p>")
+
+    risers, fallers = movers(year, n=MOVERS_SHOWN, min_move=MIN_MOVE)
+    if risers.empty and fallers.empty:
+        return (f"<p class='adp-meta'>No player has moved more than {MIN_MOVE} picks since "
+                f"the last pull ({_when(since)}).</p>")
+
+    def card(title, frame, rising):
+        body = (f'<ol>{_mover_items(frame, rising)}</ol>' if not frame.empty
+                else '<p class="mover-none">Nobody.</p>')
+        return f'<div class="mover-card"><div class="mover-head">{title}</div>{body}</div>'
+
+    return (
+        f"<p class='adp-meta'>Movement since the previous pull ({_when(since)}): "
+        f"<strong>Move</strong> is how many picks earlier (<span class='adp-up'>&#9650;</span>) "
+        f"or later (<span class='adp-down'>&#9660;</span>) a player is going now. "
+        f"Sort by <strong>Move</strong>, or hit <strong>Movers only</strong>, to see it "
+        f"across the whole board. Tracked through pick {TRACKED_MAX}, and only where the "
+        f"same sites ranked him both times - a site adding a player moves his average "
+        f"without anyone changing their mind.</p>"
+        '<div class="movers">'
+        + card("Biggest Risers", risers, True)
+        + card("Biggest Fallers", fallers, False)
+        + "</div>"
+    )
 
 
 def adp_board_section(year=UPCOMING_YEAR) -> str:
@@ -275,7 +413,9 @@ def adp_board_section(year=UPCOMING_YEAR) -> str:
              f'<thead id="adp-head"><tr>{_header()}</tr></thead>'
              f'<tbody id="adp-body"></tbody></table></div>')
 
-    return _BOARD_CSS + intro + _controls() + table + _table_js(_rows(df))
+    has_movement = df["Move"].notna().any()
+    return (_BOARD_CSS + intro + _movers_strip(year)
+            + _controls(has_movement) + table + _table_js(_rows(df)))
 
 
 if __name__ == "__main__":
