@@ -2,7 +2,6 @@ import re
 
 import pandas as pd
 
-from cbb import scraper
 from cbb.lib import teams
 
 DAYTON_SLOTS = {42, 43, 44, 45, 64, 65, 66, 67}
@@ -135,6 +134,12 @@ def format_team_cell(x, dayton_set):
 
 
 def style_bracketology(df, gender="M", original=None, conference=None):
+    # Lazy: cbb.scraper imports playwright at module level, and this is the only
+    # function here that needs it. Importing it at the top made every consumer of
+    # html_util — including the WNBA/homepage path, which never calls this —
+    # depend on a browser automation stack it doesn't use.
+    from cbb import scraper
+
     master = scraper.getMasterTeams()
 
     df = df.copy()
