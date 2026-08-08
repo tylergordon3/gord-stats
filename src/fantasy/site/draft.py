@@ -82,6 +82,13 @@ def _build(season_str: str):
     df = draft_df[["pick_no", "roster_id", "team_name", "player_id", "first_name",
                    "last_name", "round", "position", "team"]].copy()
 
+    # Where the pick sits inside its round, for the "2.3" label below. Derived
+    # from the overall pick rather than Sleeper's draft_slot: draft_slot is the
+    # manager's seat, so in a snake round it counts backwards (the first pick of
+    # round 2 belongs to seat 10 and is 2.1, not 2.10).
+    per_round = int(draft_df.groupby("round")["pick_no"].count().max())
+    df["pick_in_round"] = df["pick_no"] - (df["round"] - 1) * per_round
+
     # Player key (same CamelCase scheme as stats), team abbrev for defenses.
     df["name"] = stats.cleaned_name(df["first_name"].fillna("") + " " + df["last_name"].fillna(""))
     df["name"] = df.apply(lambda x: x["team"] if x["position"] == "DEF" else x["name"], axis=1)
@@ -110,8 +117,8 @@ def _build(season_str: str):
         "position": "Pos.", "team_name": "Owner", "total_pts": "Pts.",
         "name": "Name", "team": "Team", "num_games": "Games Played",
     })
-    df["Pick"] = df.apply(lambda x: f"{x['round']}.{x['Pick']}", axis=1)
-    return df, final_ranks
+    df["Pick"] = df["round"].astype(str) + "." + df["pick_in_round"].astype(str)
+    return df.drop(columns="pick_in_round"), final_ranks
 
 
 def save_games_missed(season_str: str):

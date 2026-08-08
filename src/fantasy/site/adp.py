@@ -11,6 +11,9 @@ button on the page:
 Value = league rank - consensus rank (positive = drafted later than consensus =
 value; negative = reach).
 
+Seasons a player mostly missed are left off the page entirely - see
+_injury_shortened. Nobody's draft grade should hinge on a torn ACL.
+
 Every season lives on the one page (docs/adp/index.html), picked with the season
 buttons - same shape as the draft report.
 
@@ -27,6 +30,11 @@ from src.site import draft, layout, styles
 from src.site.frontmatter import add_front_matter
 
 CUTOFF_ROWS = 15
+# A drafted player is dropped from the page when he missed this many of the
+# scored weeks *and* finished below his ADP - see _injury_shortened. Set at
+# "more than 8 games", so it only catches seasons that were essentially lost,
+# not the two- or three-week absences every roster deals with.
+INJURY_GAMES_MISSED = 9
 _GRID = [styles.GRID_TD, styles.GRID_TH]
 _GRID_WIDE = _GRID + [styles.TABLE_STYLE]
 
@@ -59,7 +67,35 @@ def _picks_with_adp(season_str: str) -> pd.DataFrame:
     m["BeatADP"] = (m["adp"] - m["final_rank"]).round(1)
     rng = m["adp_min"].astype("Int64").astype(str) + "-" + m["adp_max"].astype("Int64").astype(str)
     m["ADP Range"] = rng.where(m["adp"].notna())
+    m["Injured"] = _injury_shortened(m)
     return m
+
+
+def _injury_shortened(m: pd.DataFrame) -> pd.Series:
+    """True where a bad season looks like games missed rather than a bad pick.
+
+    Two conditions, because either alone is the wrong call: a player who missed
+    half the year and still finished ahead of his ADP says nothing bad about the
+    manager, and a healthy bust says everything.
+
+      * he missed at least INJURY_GAMES_MISSED of the scored weeks, and
+      * he finished below consensus ADP.
+
+    Games played is the only availability signal in the data (it is what the
+    homepage injury section runs on too), so this catches holdouts and benchings
+    along with injuries - all cases where the manager drafted a player who was
+    then not on the field.
+    """
+    played = pd.to_numeric(m["Games Played"], errors="coerce")
+    missed = played.max() - played
+    return (missed >= INJURY_GAMES_MISSED) & (m["BeatADP"] < 0)
+
+
+def _matched(season_str) -> pd.DataFrame:
+    """The picks every table on the page is built from: matched to an ADP, and
+    with the injury-shortened seasons taken out."""
+    m = _picks_with_adp(season_str)
+    return m[m["adp"].notna() & ~m["Injured"]].copy()
 
 
 # --------------------------------------------------------------------------- #
@@ -125,55 +161,7 @@ def _overall_view(matched):
     full_cols = _OVR_COLS[:6] + ["ADP Range"] + _OVR_COLS[6:]
     full = _style(matched.sort_values("overall_pick")[full_cols].rename(columns=_OVR_RENAME),
                   "{:+.1f}", "RdYlGn", vmin=-40, vmax=40)
-    body = _assemble(rank(False), rank(True), _owner(matched, "OvrValue", "{:+.1f}", 10), full, "ADP")
-    return body + _outcomes(matched)
-
-
-_OUT_COLS = ["Pick", "overall_pick", "Owner", "Name", "Pos.", "adp", "final_rank", "BeatADP"]
-_OUT_RENAME = {"overall_pick": "Overall Pick", "Name": "Player", "Pos.": "Pos",
-               "adp": "ADP", "final_rank": "Fantasy Finish", "BeatADP": "Finish vs ADP"}
-
-
-def _payoff_buckets(d):
-    """Bucket picks by reach/consensus/value and show avg ADP, finish, finish-vs-ADP."""
-    def bucket(v):
-        return "Reach (drafted early)" if v < -10 else "Value (drafted late)" if v > 10 else "On consensus"
-
-    d = d.assign(Call=d["OvrValue"].apply(bucket))
-    g = d.groupby("Call").agg(Picks=("OvrValue", "count"), AvgADP=("adp", "mean"),
-                              AvgFinish=("final_rank", "mean"), FinishVsADP=("BeatADP", "mean")).reset_index()
-    for c in ["AvgADP", "AvgFinish", "FinishVsADP"]:
-        g[c] = g[c].round(1)
-    order = {"Reach (drafted early)": 0, "On consensus": 1, "Value (drafted late)": 2}
-    g = g.sort_values("Call", key=lambda s: s.map(order))
-    g = g.rename(columns={"AvgADP": "Avg ADP", "AvgFinish": "Avg Fantasy Finish", "FinishVsADP": "Avg Finish vs ADP"})
-    return (g.style.hide(axis="index")
-            .format({"Avg ADP": "{:.1f}", "Avg Fantasy Finish": "{:.1f}", "Avg Finish vs ADP": "{:+.1f}"})
-            .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs ADP"])
-            .set_table_styles(_GRID_WIDE, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
-
-
-def _outcomes(matched):
-    """Overall pick vs ADP vs finish: did the league's draft calls pay off?"""
-    d = matched.copy()
-    summary = _payoff_buckets(d)
-    steals = _style(d.sort_values("BeatADP", ascending=False).head(CUTOFF_ROWS)[_OUT_COLS].rename(columns=_OUT_RENAME),
-                    "{:+.0f}", "Greens", wide=False, grad_col="Finish vs ADP")
-    busts = _style(d.sort_values("BeatADP").head(CUTOFF_ROWS)[_OUT_COLS].rename(columns=_OUT_RENAME),
-                   "{:+.0f}", "Reds_r", wide=False, grad_col="Finish vs ADP")
-
-    return (
-        "<h2>Did it pay off? Draft call vs finish</h2>"
-        "<p>Players bucketed by how far from consensus they were drafted. "
-        "<strong>Finish vs ADP</strong> = consensus ADP minus actual overall finish "
-        "(positive = finished better than consensus expected).</p>"
-        f"<div class='table-scroll'>{summary}</div>"
-        + layout.details("Biggest Steals vs Consensus (finished well above ADP)",
-                         f"<div class='table-scroll'>{steals}</div>")
-        + layout.details("Biggest Busts vs Consensus (finished well below ADP)",
-                         f"<div class='table-scroll'>{busts}</div>")
-    )
+    return _assemble(rank(False), rank(True), _owner(matched, "OvrValue", "{:+.1f}", 10), full, "ADP")
 
 
 def _positional_view(matched):
@@ -199,9 +187,13 @@ _ALL_RENAME = {"Name": "Player", "Pos.": "Pos", "overall_pick": "Overall Pick",
 
 def matched_with_manager(season_str) -> pd.DataFrame:
     """One season's ADP-matched picks tagged with Season, stable Manager, and
-    both success metrics: vsADP (pick - ADP) and vsFinish (pick - finish)."""
-    m = _picks_with_adp(season_str)
-    m = m[m["adp"].notna()].copy()
+    both success metrics: vsADP (pick - ADP) and vsFinish (pick - finish).
+
+    Injury-shortened seasons are dropped here as well as on the page itself, so
+    the all-time manager numbers aren't dragged down by picks that never got a
+    chance to work out.
+    """
+    m = _matched(season_str)
     m["Season"] = FORMAL_SEASON[season_str]
     m["Manager"] = m["roster_id"].map(ROSTER_NAMES)
     m["vsADP"] = m["OvrValue"]
@@ -254,8 +246,6 @@ def all_time_section() -> str:
         f"<p>Full draft-vs-ADP by season: {link}</p>"
         "<h2>Draft Tendencies by Manager</h2>"
         f"<div class='table-scroll'>{_manager_summary(df)}</div>"
-        "<h2>Did it pay off? (all seasons)</h2>"
-        f"<div class='table-scroll'>{_payoff_buckets(df)}</div>"
         "<h2>Best Values (all-time)</h2>"
         f"<div class='table-scroll'>{ranked(False, 'Greens')}</div>"
         "<h2>Biggest Reaches (all-time)</h2>"
@@ -268,9 +258,15 @@ def all_time_section() -> str:
 # --------------------------------------------------------------------------- #
 
 def _match_note(m, matched) -> str:
+    """What was left out of this season, and why: no ADP, or too hurt to judge."""
     unmatched = list(m[m["adp"].isna()]["Name"])
-    return (f"<p>{len(matched)} of {len(m)} picks matched to ADP"
-            + (f" (no ADP for: {', '.join(unmatched)})." if unmatched else ".") + "</p>")
+    hurt = sorted(m[m["adp"].notna() & m["Injured"]]["adp_player"].dropna())
+    note = (f"<p>{len(matched)} of {len(m)} picks shown"
+            + (f" (no ADP for: {', '.join(unmatched)})." if unmatched else "."))
+    if hurt:
+        note += (f" Another {len(hurt)} sat out too much of the season to grade the pick on "
+                 f"and are left off: {', '.join(hurt)}.")
+    return note + "</p>"
 
 
 def generate():
@@ -281,7 +277,7 @@ def generate():
     content = {}
     for season_str, _ in seasons:
         m = _picks_with_adp(season_str)
-        matched = m[m["adp"].notna()].copy()
+        matched = _matched(season_str)
         note = _match_note(m, matched)
         content[(season_str, "overall")] = note + _overall_view(matched)
         content[(season_str, "positional")] = note + _positional_view(matched)
@@ -292,6 +288,9 @@ def generate():
         "consensus rank: <strong>+</strong> = drafted later than consensus (value), "
         "<strong>-</strong> = drafted earlier (reach). <strong>Fantasy Finish</strong> is the "
         "player's actual end-of-season rank. Pick a season and a view below.</p>"
+        f"<p>Players who missed more than {INJURY_GAMES_MISSED - 1} games and finished below "
+        "their ADP are left out: a season lost to injury says nothing about the pick. Each "
+        "season notes who was dropped.</p>"
     )
 
     html = layout.HEAD + intro + layout.two_axis_switcher(
