@@ -1,0 +1,17 @@
+[Unit]
+Description=Refresh cbb-model and publish to Cloudflare Pages
+After=network-online.target
+Wants=network-online.target
+OnFailure=notify@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/apps/cbb-model
+EnvironmentFile=%h/secrets/cbb-model.env
+ExecStart=%h/apps/cbb-model/deploy/pi-deploy.sh
+# Data pulls, a Jekyll build and a Cloudflare upload, all on a Pi.
+TimeoutStartSec=3600
+Environment=MPLBACKEND=Agg
+
+[Install]
+WantedBy=default.target

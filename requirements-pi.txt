@@ -1,0 +1,23 @@
+# Runtime dependencies for the Pi's daily job — the WNBA section plus the
+# homepage render. That's all `cbb.daily --tasks wnba` touches.
+#
+# Deliberately not environment_pi.yml: that env carries the model stack
+# (scikit-learn, statsmodels) and the scrapers (selenium, playwright, the
+# KenPom wrapper), none of which the WNBA path imports. Installing playwright
+# and a browser on a Pi to run code that's currently gated off would be a lot
+# of disk and build time for nothing.
+#
+# When the CBB section gets automated, that's the moment to add them here —
+# see the note in src/cbb/daily.py.
+pandas
+numpy
+python-dotenv
+requests
+beautifulsoup4
+lxml
+matplotlib
+
+# Imported at the top of wnba/wnba_fantasy.py. It reads cookies out of a local
+# browser profile, which a headless Pi doesn't have — but ESPN_S2/SWID from the
+# env file take priority, so it's imported and never used. Still has to install.
+browser-cookie3
