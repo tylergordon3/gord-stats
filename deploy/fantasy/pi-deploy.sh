@@ -17,6 +17,27 @@ main() {
   export MPLBACKEND="${MPLBACKEND:-Agg}"
 
   ########################################
+  # CLEAN SLATE
+  ########################################
+  # A run that fails partway leaves regenerated files in the tree, and rebase
+  # refuses to start with unstaged changes. Everything tracked under docs/ and
+  # data/ is output, so discarding it costs nothing — the rebuild recreates it.
+  # Untracked files are deliberately left alone: data/adp/history/ accumulates
+  # timestamped snapshots worth keeping, and untracked files don't block rebase.
+  if ! git diff --quiet -- docs data; then
+    log "discarding regenerated files left by an earlier run"
+    git checkout -- docs data
+  fi
+
+  # Anything dirty outside those paths means someone edited code on the Pi,
+  # which shouldn't happen — fail loudly rather than clobber it.
+  if ! git diff --quiet || ! git diff --cached --quiet; then
+    echo "❌ uncommitted changes outside docs/ and data/ — the Pi is a deploy target, not a dev box"
+    git status --short
+    exit 1
+  fi
+
+  ########################################
   # PULL
   ########################################
   local BRANCH BEFORE AFTER
