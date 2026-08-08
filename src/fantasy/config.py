@@ -5,6 +5,7 @@ Kept intentionally free of any dependency on the legacy py/ package so the
 new structure can evolve independently.
 """
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # Project root = fantasy_insights/  (this file lives at src/config.py)
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,6 +81,9 @@ UPCOMING_SEASON = "2026-2027"        # display label
 DRAFT_DATETIME = "2026-08-22T20:00:00"
 DRAFT_LABEL = "Saturday, August 22 - 8:00 PM"
 LEAGUE_TEAMS = len(ROSTER_NAMES)     # 10 - used to turn ADP into a round number
+# The league's wall clock. Build-time stamps (when the ADP board was last pulled)
+# are reported in it rather than in whatever timezone the build machine runs in.
+LEAGUE_TZ = ZoneInfo("America/New_York")
 
 # Highest fantasy points at each position since 2020 (used by the median race's
 # hypothetical-max calculation).

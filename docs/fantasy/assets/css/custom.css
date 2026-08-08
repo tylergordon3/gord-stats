@@ -42,20 +42,18 @@ thead th {
 /* -----------------------------
    TABLE BASE STYLING
 ------------------------------ */
-.sticky-table table {
-  width: 100% !important;
-  max-width: 100% !important;
-  border-collapse: collapse !important;
-
-  /* THIS allows the table to shrink normally */
-  table-layout: auto !important;
-  white-space: nowrap;
-  font-family: monospace;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: inherit;
+/* Generated tables carry .sticky-table on the <table> itself, so size them by
+   their own content. Forcing width:100% handed every spare pixel to the widest
+   text column - an Owner column ran 184px for names half that wide, and the
+   table sat flush against the container edge. Anything genuinely wider than the
+   page overflows into .table-scroll and scrolls instead. */
+table.sticky-table {
+  width: auto;
+  max-width: none;
+  table-layout: auto;
+  border-collapse: collapse;
+  margin-right: auto;   /* left edge lines up with the surrounding copy */
 }
-
 
 .sticky-table th,
 .sticky-table td {
@@ -109,6 +107,11 @@ thead th {
     padding: 14px 8px;
   }
 
+  /* The desktop gutter is worth real table width on a phone. */
+  .table-scroll {
+    padding-right: 4px;
+  }
+
   /* Theme header: 50px of top padding, and a 320px floor that pushes the whole
      page sideways on narrow phones. */
   #header_wrap .inner {
@@ -144,10 +147,16 @@ thead th {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; /* smooth iOS scroll */
+    /* Breathing room on the right, and somewhere for a scrolling table to end
+       rather than stopping hard against the container. border-box keeps that
+       padding inside the 100%, so the page itself never gains a scrollbar. */
+    box-sizing: border-box;
+    padding-right: 12px;
 }
 
 .table-scroll table {
-    width: 100%;
+    width: auto;
+    max-width: none;
     border-collapse: collapse;
 }
 

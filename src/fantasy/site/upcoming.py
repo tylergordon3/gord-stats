@@ -21,7 +21,8 @@ from datetime import datetime
 import pandas as pd
 
 from src.config import (
-    DRAFT_DATETIME, DRAFT_LABEL, LEAGUE_TEAMS, UPCOMING_SEASON, UPCOMING_YEAR,
+    DRAFT_DATETIME, DRAFT_LABEL, LEAGUE_TEAMS, LEAGUE_TZ, UPCOMING_SEASON,
+    UPCOMING_YEAR,
 )
 from src.league.adp_board import (
     COMPARABLE_MAX, SOURCES, TRACKED_MAX, WINDOWS, baseline_times, board,
@@ -412,9 +413,16 @@ def _title(text) -> str:
 
 
 def _when(when) -> str:
-    """Timestamps as 'Aug 2, 7:25 PM' (no zero padding on the hour)."""
+    """Timestamps as 'Aug 2, 7:25 PM ET' (no zero padding on the hour).
+
+    Everything upstream is a file mtime or snapshot name in the build machine's
+    own timezone, which nobody reading the page has any reason to share. Naive
+    values are converted from local, so this reads the same whether the site was
+    built on a laptop in Denver or in CI on UTC.
+    """
+    when = when.astimezone(LEAGUE_TZ)
     hour = when.hour % 12 or 12
-    return f"{when:%b} {when.day}, {hour}:{when:%M %p}"
+    return f"{when:%b} {when.day}, {hour}:{when:%M %p} ET"
 
 
 def _stamp(year=UPCOMING_YEAR) -> str:
