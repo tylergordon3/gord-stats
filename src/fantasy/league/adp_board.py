@@ -176,31 +176,31 @@ def _fetch_board(year) -> pd.DataFrame:
 def _with_ranks(df: pd.DataFrame) -> pd.DataFrame:
     """Turn Avg into the three ways a draft board names a pick.
 
-      * Pick    - overall pick off this board: 1, 2, 3, ...
-      * Slot    - that pick as round.pick for our league size: 1.3, 2.10, ...
-      * PosPick - rank within the position: QB1 is stored as pos + PosPick.
+      * Ovr   - overall pick off this board: 1, 2, 3, ...
+      * Pick  - that pick as round.pick for our league size: 1.3, 2.10, ...
+      * PosRk - rank within the position: RB1 is stored as pos + PosRk.
 
     Positional rank is recomputed here rather than taken from FantasyPros'
     pos_rank, so all three agree with the Avg column the table is sorted on.
     """
     df = df.copy()
-    df["Pick"] = df["Avg"].rank(method="first").astype("Int64")
-    df["PosPick"] = df.groupby("pos")["Avg"].rank(method="first").astype("Int64")
-    df["Slot"] = [_slot(p) for p in df["Pick"]]
+    df["Ovr"] = df["Avg"].rank(method="first").astype("Int64")
+    df["PosRk"] = df.groupby("pos")["Avg"].rank(method="first").astype("Int64")
+    df["Pick"] = [_pick(o) for o in df["Ovr"]]
     return df
 
 
-def _slot(pick, teams: int = LEAGUE_TEAMS) -> str:
+def _pick(overall, teams: int = LEAGUE_TEAMS) -> str:
     """Overall pick -> 'round.pick-in-round' ('13' -> '2.3' in a 10-team league)."""
-    if pd.isna(pick):
+    if pd.isna(overall):
         return ""
-    pick = int(pick)
-    return f"{math.ceil(pick / teams)}.{(pick - 1) % teams + 1}"
+    overall = int(overall)
+    return f"{math.ceil(overall / teams)}.{(overall - 1) % teams + 1}"
 
 
 def _ensure_ranks(df: pd.DataFrame) -> pd.DataFrame:
     """Add the slot columns to boards cached before they existed."""
-    return df if "Pick" in df.columns else _with_ranks(df)
+    return df if "Ovr" in df.columns else _with_ranks(df)
 
 
 def _cache_path(year):
@@ -422,5 +422,5 @@ if __name__ == "__main__":
     for key, when in baseline_times(args.year).items():
         stamp = f"{when:%b %d %I:%M %p}" if when else "none yet"
         print(f"{WINDOWS[key]['label']:<20} baseline: {stamp}")
-    print(b[["Pick", "Slot", "player", "pos", "PosPick", "team", "bye"] + _SITE_COLS
+    print(b[["Ovr", "Pick", "player", "pos", "PosRk", "team", "bye"] + _SITE_COLS
             + ["Avg", "Spread"] + [w["move"] for w in WINDOWS.values()]].head(25).to_string(index=False))

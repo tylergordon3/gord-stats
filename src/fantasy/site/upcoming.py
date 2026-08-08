@@ -31,7 +31,7 @@ from src.league.adp_board import (
 # player / pos / team / bye lead so the JS can address them by index.
 _MOVE_FIELDS = [w["move"] for w in WINDOWS.values()]
 _FIELDS = (["player", "pos", "team", "bye", "Consensus", "ESPN", "FFC", "Avg"]
-           + _MOVE_FIELDS + ["Spread", "Pick", "Slot", "PosPick"])
+           + _MOVE_FIELDS + ["Spread", "Ovr", "Pick", "PosRk"])
 POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
 MOVERS_SHOWN = 8            # risers / fallers listed in the movement strip
 MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
@@ -123,7 +123,7 @@ table.adp-table td{border:1px solid #dde3ea;padding:5px 10px;text-align:center;w
 table.adp-table td.name{text-align:left;font-family:inherit}
 table.adp-table tbody tr:nth-child(even){background:#f5f7fa}
 table.adp-table tbody tr:hover{background:#e6eef6}
-.pos-tag{display:inline-block;min-width:34px;padding:1px 6px;border-radius:4px;color:#fff;
+.pos-tag{display:inline-block;min-width:44px;padding:1px 6px;border-radius:4px;color:#fff;
   font-size:12px;font-weight:700}
 .pos-QB{background:#c1436b}.pos-RB{background:#2f9e6d}.pos-WR{background:#2b7ba8}
 .pos-TE{background:#b98a2a}.pos-K{background:#7a6bbd}.pos-DST{background:#6b7785}
@@ -134,8 +134,7 @@ table.adp-table tbody tr:hover{background:#e6eef6}
 .adp-down{color:#b3382c;font-weight:700}
 .adp-flat{color:#93a1ad}
 .adp-controls button.adp-toggle.active{background:#17293b;border-color:#17293b}
-table.adp-table td.slot{color:#4a5a68}
-table.adp-table td.posrk{font-size:13px}
+table.adp-table td.pick{color:#4a5a68}
 /* The window whose movers are on screen is also the one the table sorts and
    filters by, so its column is tinted to tie the two together. */
 table.adp-table th.mv-on,table.adp-table td.mv-on{background:#eef4fa}
@@ -161,12 +160,11 @@ table.adp-table th.mv-on{background:#28405a}
   .adp-wrap{max-height:70vh}
   .movers{gap:8px}
   .movers .mover-card{flex:1 1 100%}
-  /* A phone screen only fits ~6 columns, and the identity block alone (#/Rd.Pk/
-     Player/Pos/Pos Rk/Tm/Bye) is seven - every ADP number sat off to the right.
-     Drop the overall pick, since Rd.Pk says the same thing in the form you draft
-     in, and pin the name so the numbers keep a player attached to them while the
-     table scrolls sideways. */
-  table.adp-table .pk{display:none}
+  /* A phone screen only fits ~6 columns, and Ovr/Pick/Player/Pos/Tm/Bye is
+     already six - every ADP number sat off to the right. Drop Ovr, since Pick
+     says the same thing in the form you draft in, and pin the name so the
+     numbers keep a player attached to them while the table scrolls sideways. */
+  table.adp-table .ovr{display:none}
   table.adp-table td,table.adp-table th{padding:5px 7px}
   table.adp-table td.name,table.adp-table th.name{position:sticky;left:0;
     max-width:118px;overflow:hidden;text-overflow:ellipsis;
@@ -198,9 +196,9 @@ def _table_js(rows) -> str:
         "sites": [_FIELDS.index(s) for s in SOURCES],
         "avg": _FIELDS.index("Avg"),
         "spread": _FIELDS.index("Spread"),
+        "ovr": _FIELDS.index("Ovr"),
         "pick": _FIELDS.index("Pick"),
-        "slot": _FIELDS.index("Slot"),
-        "posPick": _FIELDS.index("PosPick"),
+        "posRk": _FIELDS.index("PosRk"),
         # Window key -> its column in each row, so the window buttons above the
         # table can point the sort / filter / highlight at the matching column.
         "moves": {key: _FIELDS.index(spec["move"]) for key, spec in WINDOWS.items()},
@@ -210,7 +208,7 @@ def _table_js(rows) -> str:
 (function(){
 var CFG=""" + cfg + """;
 var D=CFG.rows, SITES=CFG.sites, AVG=CFG.avg, SPREAD=CFG.spread;
-var PICK=CFG.pick, SLOT=CFG.slot, POSPICK=CFG.posPick, MOVES=CFG.moves;
+var OVR=CFG.ovr, PICK=CFG.pick, POSRK=CFG.posRk, MOVES=CFG.moves;
 var MINMOVE=CFG.minMove;
 var MOVECOLS=Object.keys(MOVES).map(function(k){return MOVES[k];});
 var HEADS=document.querySelectorAll('#adp-head th');
@@ -230,9 +228,9 @@ function moveCell(v,on){
 }
 
 function compare(a,b){
-  // Pos Rk sorts as a draft board reads it - QB1..QB40, then RB1.. - so the
-  // number alone (every position has a 1) is not the whole key.
-  if(sortCol===POSPICK&&a[1]!==b[1]) return a[1]<b[1]?-1:1;
+  // Pos sorts as a draft board reads it - QB1..QB40, then RB1.. - so the rank
+  // alone (every position has a 1) is not the whole key.
+  if(sortCol===POSRK&&a[1]!==b[1]) return a[1]<b[1]?-1:1;
   var x=a[sortCol], y=b[sortCol];
   if(typeof x==='string'||typeof y==='string'){
     x=(x||'').toLowerCase(); y=(y||'').toLowerCase();
@@ -261,11 +259,11 @@ function cells(r){
     if(best===null||r[i]<r[best]) best=i;
     if(worst===null||r[i]>r[worst]) worst=i;
   });
-  var html='<td class="pk">'+(r[PICK]===null?'-':r[PICK])+'</td>'
-          +'<td class="rd slot">'+(r[SLOT]||'-')+'</td>'
+  // Pos carries the position and the rank in it on one tag: a green RB1.
+  var html='<td class="ovr">'+(r[OVR]===null?'-':r[OVR])+'</td>'
+          +'<td class="pick">'+(r[PICK]||'-')+'</td>'
           +'<td class="name">'+r[0]+'</td>'
-          +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+'</span></td>'
-          +'<td class="posrk">'+(r[POSPICK]===null?'-':r[1]+r[POSPICK])+'</td>'
+          +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+(r[POSRK]===null?'':r[POSRK])+'</span></td>'
           +'<td>'+(r[2]||'-')+'</td><td>'+(r[3]===null?'-':r[3])+'</td>';
   SITES.forEach(function(i){
     var cls = (best!==null&&worst!==null&&best!==worst)
@@ -357,11 +355,12 @@ def _controls(has_movement: bool) -> str:
             '<span class="adp-label" id="adp-count"></span></div>')
 
 
-_LABELS = {"player": "Player", "pos": "Pos", "team": "Tm", "bye": "Bye",
-           "Pick": "#", "PosPick": "Pos Rk"}
+_LABELS = {"player": "Player", "PosRk": "Pos", "team": "Tm", "bye": "Bye",
+           "Ovr": "Ovr", "Pick": "Pick"}
 _TIPS = dict({
-    "Pick": "Overall pick this board's average ADP puts him at",
-    "PosPick": "Rank within his position on this board",
+    "Ovr": "Overall pick this board's average ADP puts him at",
+    "Pick": f"Round and pick that lands on in a {LEAGUE_TEAMS}-team draft",
+    "PosRk": "Position, and where he ranks in it on this board",
     "Avg": "Average of the site ADPs in this row",
     "Spread": f"Widest disagreement between sites (through pick {COMPARABLE_MAX})",
 }, **SOURCES, **{spec["move"]: f"Picks gained ({spec['label'].lower()})"
@@ -373,13 +372,15 @@ def _header() -> str:
 
     The columns are re-ordered here rather than in _FIELDS: the JSON rows keep
     player / pos / team / bye up front for the JS to address by index, while the
-    table leads with the draft slot the way a draft board reads. The pk / rd /
+    table leads with the draft slot the way a draft board reads. The ovr / pick /
     name classes match the body cells, so the phone layout can drop the overall
     pick and pin the name in place (see _BOARD_CSS).
     """
-    slot = [(_FIELDS.index("Pick"), "#", "pk"), (-2, "Rd.Pk", "rd")]
+    # Pick has no sort of its own: it is Ovr in draft form, and sorting its
+    # "2.10" strings as text would put 10.1 before 2.1. Sort on Ovr beside it.
+    slot = [(_FIELDS.index("Ovr"), "Ovr", "ovr"), (-2, "Pick", "pick")]
     who = [(_FIELDS.index(f), _LABELS[f], "name" if f == "player" else None)
-           for f in ["player", "pos", "PosPick", "team", "bye"]]
+           for f in ["player", "PosRk", "team", "bye"]]
     numbers = [(_FIELDS.index(f), _LABELS.get(f, f), None)
                for f in list(SOURCES) + ["Avg"]]
     moves = [(_FIELDS.index(spec["move"]), spec["short"], None) for spec in WINDOWS.values()]
@@ -387,7 +388,7 @@ def _header() -> str:
 
     cells = []
     for i, label, cls in slot + who + numbers + moves + spread:
-        tip = _TIPS.get(_FIELDS[i]) if i >= 0 else f"Round and pick in a {LEAGUE_TEAMS}-team draft"
+        tip = _TIPS.get("Pick" if i < 0 else _FIELDS[i])
         cells.append(f'<th data-col="{i}"{_cls(cls)}{_title(tip)}>{label}</th>')
     return "".join(cells)
 
@@ -507,11 +508,11 @@ def adp_board_section(year=UPCOMING_YEAR) -> str:
         "one that is <span class='adp-late'>lowest</span> are shaded - sort by "
         "<strong>Spread</strong> to find the players the sites disagree on most.</p>"
         f"<ul>{legend}</ul>"
-        f"<p class='adp-meta'>Numbers are overall picks; lower = drafted earlier. The first "
-        f"three columns are that same ordering said three ways: <strong>#</strong> is the "
-        f"overall pick, <strong>Rd.Pk</strong> is the round and pick it falls on in our "
-        f"{LEAGUE_TEAMS}-team draft, and <strong>Pos Rk</strong> is where he lands among his "
-        f"own position (RB1, WR2). <strong>Spread</strong> (max - min across sites) is only "
+        f"<p class='adp-meta'>Numbers are overall picks; lower = drafted earlier. "
+        f"<strong>Ovr</strong> is the overall pick, <strong>Pick</strong> is the round and "
+        f"pick that lands on in our {LEAGUE_TEAMS}-team draft, and <strong>Pos</strong> is "
+        f"where he ranks within his own position (RB1, WR2). "
+        f"<strong>Spread</strong> (max - min across sites) is only "
         f"shown through pick {COMPARABLE_MAX}, where all three boards are dense enough to "
         f"compare - past that a gap mostly reflects how deep each site ranks, not real "
         f"disagreement. Refreshed at build time; last pulled {_stamp()}.</p>"
