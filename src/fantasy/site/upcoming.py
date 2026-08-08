@@ -6,14 +6,16 @@ Two pieces, both rendered by src.site.homepage:
   * countdown_banner() - live JS countdown to config.DRAFT_DATETIME.
   * adp_board_section() - the multi-site ADP board (src.league.adp_board) as a
     sortable / filterable / searchable table, plus the movement tracker: how far
-    each player has climbed or slid since the previous pull (the Move column and
-    the risers / fallers strip above the table). The data is baked into the page
-    as JSON at build time; all the interaction is vanilla JS, since the site is a
+    each player has climbed or slid over each window in adp_board.WINDOWS (the
+    Move / 3d / 7d columns and the risers / fallers strip above the table, which
+    switches between the same three windows). The data is baked into the page as
+    JSON at build time; all the interaction is vanilla JS, since the site is a
     static Jekyll build with no JS dependencies.
 
     python -m src.site.upcoming     # rebuilds the homepage
 """
 import json
+from datetime import datetime
 
 import pandas as pd
 
@@ -21,12 +23,15 @@ from src.config import (
     DRAFT_DATETIME, DRAFT_LABEL, LEAGUE_TEAMS, UPCOMING_SEASON, UPCOMING_YEAR,
 )
 from src.league.adp_board import (
-    COMPARABLE_MAX, SOURCES, TRACKED_MAX, board, last_updated, movers,
-    previous_updated,
+    COMPARABLE_MAX, SOURCES, TRACKED_MAX, WINDOWS, baseline_times, board,
+    last_updated, movers,
 )
 
 # Row layout for the embedded JSON (arrays, not objects - keeps the page small).
-_FIELDS = ["player", "pos", "team", "bye", "Consensus", "ESPN", "FFC", "Avg", "Move", "Spread"]
+# player / pos / team / bye lead so the JS can address them by index.
+_MOVE_FIELDS = [w["move"] for w in WINDOWS.values()]
+_FIELDS = (["player", "pos", "team", "bye", "Consensus", "ESPN", "FFC", "Avg"]
+           + _MOVE_FIELDS + ["Spread", "Pick", "Slot", "PosPick"])
 POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
 MOVERS_SHOWN = 8            # risers / fallers listed in the movement strip
 MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
@@ -129,6 +134,12 @@ table.adp-table tbody tr:hover{background:#e6eef6}
 .adp-down{color:#b3382c;font-weight:700}
 .adp-flat{color:#93a1ad}
 .adp-controls button.adp-toggle.active{background:#17293b;border-color:#17293b}
+table.adp-table td.slot{color:#4a5a68}
+table.adp-table td.posrk{font-size:13px}
+/* The window whose movers are on screen is also the one the table sorts and
+   filters by, so its column is tinted to tie the two together. */
+table.adp-table th.mv-on,table.adp-table td.mv-on{background:#eef4fa}
+table.adp-table th.mv-on{background:#28405a}
 .movers{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 4px}
 .movers .mover-card{flex:1 1 260px;min-width:0;border:1px solid #b9c4d0;border-radius:6px;
   overflow:hidden;background:#fff}
@@ -139,6 +150,8 @@ table.adp-table tbody tr:hover{background:#e6eef6}
 .movers .mv-pos{color:#4a5a68;font-size:12px}
 .movers .mv-num{font-family:monospace;white-space:nowrap}
 .movers .mover-none{padding:10px;font-size:13px;color:#4a5a68}
+.movers-window[hidden]{display:none}
+.mv-since{font-size:12px;color:#4a5a68;margin:0 0 6px}
 @media (max-width:600px){
   .adp-controls{gap:6px;margin:8px 0}
   .adp-controls button{padding:5px 9px}
@@ -148,11 +161,12 @@ table.adp-table tbody tr:hover{background:#e6eef6}
   .adp-wrap{max-height:70vh}
   .movers{gap:8px}
   .movers .mover-card{flex:1 1 100%}
-  /* A phone screen only fits ~6 columns, and #/Rd/Player/Pos/Tm/Bye filled all
-     of them - every ADP number sat off to the right. Drop the round (it is just
-     Avg / league size) and pin the name so the numbers keep a player attached
-     to them while the table scrolls sideways. */
-  table.adp-table .rd{display:none}
+  /* A phone screen only fits ~6 columns, and the identity block alone (#/Rd.Pk/
+     Player/Pos/Pos Rk/Tm/Bye) is seven - every ADP number sat off to the right.
+     Drop the overall pick, since Rd.Pk says the same thing in the form you draft
+     in, and pin the name so the numbers keep a player attached to them while the
+     table scrolls sideways. */
+  table.adp-table .pk{display:none}
   table.adp-table td,table.adp-table th{padding:5px 7px}
   table.adp-table td.name,table.adp-table th.name{position:sticky;left:0;
     max-width:118px;overflow:hidden;text-overflow:ellipsis;
@@ -164,13 +178,17 @@ table.adp-table tbody tr:hover{background:#e6eef6}
 </style>"""
 
 
+def _cell(v):
+    """One JSON value: strings as-is, missing as null, everything else a number."""
+    if isinstance(v, str):
+        return v
+    return None if pd.isna(v) else float(v)
+
+
 def _rows(df: pd.DataFrame) -> list:
     """Board frame -> compact JSON rows (None for missing numbers)."""
-    out = []
-    for row in df[_FIELDS].itertuples(index=False, name=None):
-        out.append([v if isinstance(v, str) else (None if pd.isna(v) else float(v) if i >= 3 else v)
-                    for i, v in enumerate(row)])
-    return out
+    return [[_cell(v) for v in row]
+            for row in df[_FIELDS].itertuples(index=False, name=None)]
 
 
 def _table_js(rows) -> str:
@@ -180,29 +198,41 @@ def _table_js(rows) -> str:
         "sites": [_FIELDS.index(s) for s in SOURCES],
         "avg": _FIELDS.index("Avg"),
         "spread": _FIELDS.index("Spread"),
-        "move": _FIELDS.index("Move"),
+        "pick": _FIELDS.index("Pick"),
+        "slot": _FIELDS.index("Slot"),
+        "posPick": _FIELDS.index("PosPick"),
+        # Window key -> its column in each row, so the window buttons above the
+        # table can point the sort / filter / highlight at the matching column.
+        "moves": {key: _FIELDS.index(spec["move"]) for key, spec in WINDOWS.items()},
         "minMove": MIN_MOVE,
-        "teams": LEAGUE_TEAMS,
     }, separators=(",", ":"))
     return """{% raw %}<script>
 (function(){
 var CFG=""" + cfg + """;
-var D=CFG.rows, SITES=CFG.sites, AVG=CFG.avg, SPREAD=CFG.spread, MOVE=CFG.move;
-var MINMOVE=CFG.minMove, TEAMS=CFG.teams;
+var D=CFG.rows, SITES=CFG.sites, AVG=CFG.avg, SPREAD=CFG.spread;
+var PICK=CFG.pick, SLOT=CFG.slot, POSPICK=CFG.posPick, MOVES=CFG.moves;
+var MINMOVE=CFG.minMove;
+var MOVECOLS=Object.keys(MOVES).map(function(k){return MOVES[k];});
 var HEADS=document.querySelectorAll('#adp-head th');
 var sortCol=AVG, asc=true, pos='ALL', query='', limit=100, moversOnly=false;
+var window_='last', MOVE=MOVES[window_];       // the window the table keys off
 
 function fmt(v){return v===null||v===undefined?'-':v.toFixed(1);}
+function isMove(c){return MOVECOLS.indexOf(c)>=0;}
 
 // Move is baseline ADP minus current: positive = going earlier = rising.
-function moveCell(v){
-  if(v===null||v===undefined) return '<td class="adp-flat">-</td>';
-  if(Math.abs(v)<MINMOVE) return '<td class="adp-flat">&ndash;</td>';
-  var cls=v>0?'adp-up':'adp-down';
-  return '<td class="'+cls+'">'+(v>0?'\\u25B2 ':'\\u25BC ')+Math.abs(v).toFixed(1)+'</td>';
+function moveCell(v,on){
+  var cls=on?' mv-on':'';
+  if(v===null||v===undefined) return '<td class="adp-flat'+cls+'">-</td>';
+  if(Math.abs(v)<MINMOVE) return '<td class="adp-flat'+cls+'">&ndash;</td>';
+  return '<td class="'+(v>0?'adp-up':'adp-down')+cls+'">'
+        +(v>0?'\\u25B2 ':'\\u25BC ')+Math.abs(v).toFixed(1)+'</td>';
 }
 
 function compare(a,b){
+  // Pos Rk sorts as a draft board reads it - QB1..QB40, then RB1.. - so the
+  // number alone (every position has a 1) is not the whole key.
+  if(sortCol===POSPICK&&a[1]!==b[1]) return a[1]<b[1]?-1:1;
   var x=a[sortCol], y=b[sortCol];
   if(typeof x==='string'||typeof y==='string'){
     x=(x||'').toLowerCase(); y=(y||'').toLowerCase();
@@ -224,47 +254,65 @@ function filtered(){
   }).sort(compare);
 }
 
-function cells(r,rank){
+function cells(r){
   var best=null,worst=null;
   SITES.forEach(function(i){
     if(r[i]===null) return;
     if(best===null||r[i]<r[best]) best=i;
     if(worst===null||r[i]>r[worst]) worst=i;
   });
-  var round=r[AVG]===null?'-':Math.ceil(r[AVG]/TEAMS);
-  var html='<td>'+rank+'</td><td class="rd">'+round+'</td>'
+  var html='<td class="pk">'+(r[PICK]===null?'-':r[PICK])+'</td>'
+          +'<td class="rd slot">'+(r[SLOT]||'-')+'</td>'
           +'<td class="name">'+r[0]+'</td>'
           +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+'</span></td>'
+          +'<td class="posrk">'+(r[POSPICK]===null?'-':r[1]+r[POSPICK])+'</td>'
           +'<td>'+(r[2]||'-')+'</td><td>'+(r[3]===null?'-':r[3])+'</td>';
   SITES.forEach(function(i){
     var cls = (best!==null&&worst!==null&&best!==worst)
       ? (i===best?' class="adp-early"':i===worst?' class="adp-late"':'') : '';
     html+='<td'+cls+'>'+fmt(r[i])+'</td>';
   });
-  return html+'<td>'+fmt(r[AVG])+'</td>'+moveCell(r[MOVE])+'<td>'+fmt(r[SPREAD])+'</td>';
+  html+='<td>'+fmt(r[AVG])+'</td>';
+  MOVECOLS.forEach(function(c){html+=moveCell(r[c],c===MOVE);});
+  return html+'<td>'+fmt(r[SPREAD])+'</td>';
 }
 
 function draw(){
   var rows=filtered(), shown=limit>0?rows.slice(0,limit):rows;
   document.getElementById('adp-body').innerHTML = shown.length
-    ? shown.map(function(r,i){return '<tr>'+cells(r,i+1)+'</tr>';}).join('')
+    ? shown.map(function(r){return '<tr>'+cells(r)+'</tr>';}).join('')
     : '<tr><td class="adp-empty" colspan="'+HEADS.length+'">No players match.</td></tr>';
   document.getElementById('adp-count').textContent =
     'Showing '+shown.length+' of '+rows.length+(moversOnly?' movers':' players')
     +(pos==='ALL'?'':' at '+pos)+'.';
   HEADS.forEach(function(th){
-    var on = +th.dataset.col===sortCol;
+    var c=+th.dataset.col, on=c===sortCol;
     th.classList.toggle('sorted',on);
     th.classList.toggle('asc',on&&asc);
+    th.classList.toggle('mv-on',c===MOVE);
   });
 }
 
 HEADS.forEach(function(th){
   th.addEventListener('click',function(){
     var c=+th.dataset.col;
-    if(c<0) return;                                    // rank / round aren't sortable
-    // Spread and Move read best biggest-first (widest disagreement, biggest risers).
-    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==SPREAD&&c!==MOVE);}
+    if(c<0) return;                                    // Rd.Pk isn't sortable
+    // Spread and the move columns read best biggest-first (widest disagreement,
+    // biggest risers).
+    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==SPREAD&&!isMove(c));}
+    draw();
+  });
+});
+// The movers strip and the table share one window: picking "Last 3 days" swaps
+// the cards, the highlighted column, and what "Movers only" is filtering on.
+document.querySelectorAll('.mv-win').forEach(function(b){
+  b.addEventListener('click',function(){
+    window_=b.dataset.win; MOVE=MOVES[window_];
+    document.querySelectorAll('.mv-win').forEach(function(o){o.classList.toggle('active',o===b);});
+    document.querySelectorAll('.movers-window').forEach(function(w){
+      w.hidden = w.dataset.win!==window_;
+    });
+    if(moversOnly||isMove(sortCol)){sortCol=MOVE; asc=false;}
     draw();
   });
 });
@@ -309,20 +357,47 @@ def _controls(has_movement: bool) -> str:
             '<span class="adp-label" id="adp-count"></span></div>')
 
 
-def _header() -> str:
-    """Header cells; data-col is the row index to sort on (negative = derived).
+_LABELS = {"player": "Player", "pos": "Pos", "team": "Tm", "bye": "Bye",
+           "Pick": "#", "PosPick": "Pos Rk"}
+_TIPS = dict({
+    "Pick": "Overall pick this board's average ADP puts him at",
+    "PosPick": "Rank within his position on this board",
+    "Avg": "Average of the site ADPs in this row",
+    "Spread": f"Widest disagreement between sites (through pick {COMPARABLE_MAX})",
+}, **SOURCES, **{spec["move"]: f"Picks gained ({spec['label'].lower()})"
+                 for spec in WINDOWS.values()})
 
-    The Rd / Player classes match the body cells, so the phone layout can drop
-    the round column and pin the name in place (see _BOARD_CSS).
+
+def _header() -> str:
+    """Header cells; data-col is the row index to sort on (-2 = derived, no sort).
+
+    The columns are re-ordered here rather than in _FIELDS: the JSON rows keep
+    player / pos / team / bye up front for the JS to address by index, while the
+    table leads with the draft slot the way a draft board reads. The pk / rd /
+    name classes match the body cells, so the phone layout can drop the overall
+    pick and pin the name in place (see _BOARD_CSS).
     """
-    labels = {"player": "Player", "pos": "Pos", "team": "Tm", "bye": "Bye"}
-    classes = {-2: "rd", 0: "name"}
-    cols = [(-1, "#"), (-2, "Rd")] + [(i, labels.get(f, f)) for i, f in enumerate(_FIELDS)]
-    return "".join(f'<th data-col="{i}"{_cls(classes.get(i))}>{label}</th>' for i, label in cols)
+    slot = [(_FIELDS.index("Pick"), "#", "pk"), (-2, "Rd.Pk", "rd")]
+    who = [(_FIELDS.index(f), _LABELS[f], "name" if f == "player" else None)
+           for f in ["player", "pos", "PosPick", "team", "bye"]]
+    numbers = [(_FIELDS.index(f), _LABELS.get(f, f), None)
+               for f in list(SOURCES) + ["Avg"]]
+    moves = [(_FIELDS.index(spec["move"]), spec["short"], None) for spec in WINDOWS.values()]
+    spread = [(_FIELDS.index("Spread"), "Spread", None)]
+
+    cells = []
+    for i, label, cls in slot + who + numbers + moves + spread:
+        tip = _TIPS.get(_FIELDS[i]) if i >= 0 else f"Round and pick in a {LEAGUE_TEAMS}-team draft"
+        cells.append(f'<th data-col="{i}"{_cls(cls)}{_title(tip)}>{label}</th>')
+    return "".join(cells)
 
 
 def _cls(name) -> str:
     return f' class="{name}"' if name else ""
+
+
+def _title(text) -> str:
+    return f' title="{text}"' if text else ""
 
 
 def _when(when) -> str:
@@ -340,50 +415,80 @@ def _stamp(year=UPCOMING_YEAR) -> str:
 # Movement tracker
 # --------------------------------------------------------------------------- #
 
-def _mover_items(df: pd.DataFrame, rising: bool) -> str:
+def _mover_items(df: pd.DataFrame, spec: dict, rising: bool) -> str:
     """<li> per mover: name, position, and the baseline -> current ADP jump."""
     arrow = "▲" if rising else "▼"
     cls = "adp-up" if rising else "adp-down"
     items = []
     for r in df.itertuples(index=False):
+        prev, move = getattr(r, spec["prev"]), getattr(r, spec["move"])
         items.append(
             f'<li><strong>{r.player}</strong> <span class="mv-pos">{r.pos}'
             f'{" - " + r.team if isinstance(r.team, str) and r.team else ""}</span><br>'
-            f'<span class="mv-num">{r.Prev:.1f} &rarr; {r.Avg:.1f} '
-            f'<span class="{cls}">{arrow} {abs(r.Move):.1f}</span></span></li>'
+            f'<span class="mv-num">{prev:.1f} &rarr; {r.Avg:.1f} '
+            f'<span class="{cls}">{arrow} {abs(move):.1f}</span></span></li>'
         )
     return "".join(items)
 
 
-def _movers_strip(year: int) -> str:
-    """Biggest risers / fallers since the previous pull (empty before baseline)."""
-    since = previous_updated(year)
-    if not since:
-        return ("<p class='adp-meta'>Movement tracking starts with the next refresh - "
-                "this is the first board on record, so there is nothing to compare it to yet.</p>")
-
-    risers, fallers = movers(year, n=MOVERS_SHOWN, min_move=MIN_MOVE)
+def _mover_cards(year: int, key: str, spec: dict, since) -> str:
+    """One window's risers / fallers, plus how far back its baseline reaches."""
+    risers, fallers = movers(year, n=MOVERS_SHOWN, min_move=MIN_MOVE, window=key)
+    # A young archive can't reach the far end of a window, and then two windows
+    # land on the same baseline and show the same names - say so rather than let
+    # it look like nothing moved in four days.
+    short = spec["delta"] and since > datetime.now() - spec["delta"]
+    note = (f"<p class='mv-since'>Measured against the board pulled {_when(since)}"
+            + (" - the furthest back the archive goes yet, so this window is still "
+               "filling in." if short else ".") + "</p>")
     if risers.empty and fallers.empty:
-        return (f"<p class='adp-meta'>No player has moved more than {MIN_MOVE} picks since "
-                f"the last pull ({_when(since)}).</p>")
+        return (f"{note}<p class='adp-meta'>No player has moved more than {MIN_MOVE} "
+                f"picks over this window.</p>")
 
     def card(title, frame, rising):
-        body = (f'<ol>{_mover_items(frame, rising)}</ol>' if not frame.empty
+        body = (f'<ol>{_mover_items(frame, spec, rising)}</ol>' if not frame.empty
                 else '<p class="mover-none">Nobody.</p>')
         return f'<div class="mover-card"><div class="mover-head">{title}</div>{body}</div>'
 
+    return (note + '<div class="movers">'
+            + card("Biggest Risers", risers, True)
+            + card("Biggest Fallers", fallers, False)
+            + "</div>")
+
+
+def _movers_strip(year: int) -> str:
+    """Risers / fallers over each window, switchable with the buttons above them.
+
+    All three windows are rendered into the page and toggled client-side, and the
+    same buttons re-point the table's sort / Movers-only filter (see _table_js).
+    """
+    since = baseline_times(year)
+    if not any(since.values()):
+        return ("<p class='adp-meta'>Movement tracking starts with the next refresh - "
+                "this is the first board on record, so there is nothing to compare it to yet.</p>")
+
+    buttons, panels = [], []
+    for key, spec in WINDOWS.items():
+        active = key == "last"
+        buttons.append(f'<button class="mv-win{" active" if active else ""}" '
+                       f'data-win="{key}">{spec["label"]}</button>')
+        body = (_mover_cards(year, key, spec, since[key]) if since[key] else
+                "<p class='adp-meta'>Nothing on record this far back yet.</p>")
+        panels.append(f'<div class="movers-window" data-win="{key}"'
+                      f'{"" if active else " hidden"}>{body}</div>')
+
     return (
-        f"<p class='adp-meta'>Movement since the previous pull ({_when(since)}): "
-        f"<strong>Move</strong> is how many picks earlier (<span class='adp-up'>&#9650;</span>) "
-        f"or later (<span class='adp-down'>&#9660;</span>) a player is going now. "
-        f"Sort by <strong>Move</strong>, or hit <strong>Movers only</strong>, to see it "
-        f"across the whole board. Tracked through pick {TRACKED_MAX}, and only where the "
-        f"same sites ranked him both times - a site adding a player moves his average "
-        f"without anyone changing their mind.</p>"
-        '<div class="movers">'
-        + card("Biggest Risers", risers, True)
-        + card("Biggest Fallers", fallers, False)
-        + "</div>"
+        f"<p class='adp-meta'>How far each player has climbed "
+        f"(<span class='adp-up'>&#9650;</span>) or slid "
+        f"(<span class='adp-down'>&#9660;</span>) in picks. Pick a window below - it also "
+        f"sets which column the table sorts and the <strong>Movers only</strong> filter "
+        f"reads. Tracked through pick {TRACKED_MAX}, and only where the same sites ranked "
+        f"him at both ends - a site adding a player moves his average without anyone "
+        f"changing their mind. The 3-day and week windows compare against the closest "
+        f"board on record at or before that point, so they reach back only as far as the "
+        f"archive does.</p>"
+        f'<div class="adp-controls"><span class="adp-label">Movement:</span>'
+        + "".join(buttons) + "</div>" + "".join(panels)
     )
 
 
@@ -402,18 +507,20 @@ def adp_board_section(year=UPCOMING_YEAR) -> str:
         "one that is <span class='adp-late'>lowest</span> are shaded - sort by "
         "<strong>Spread</strong> to find the players the sites disagree on most.</p>"
         f"<ul>{legend}</ul>"
-        f"<p class='adp-meta'>Numbers are overall picks; lower = drafted earlier. "
-        f"<strong>Rd</strong> is the round the average ADP lands in for our {LEAGUE_TEAMS}-team "
-        f"league. <strong>Spread</strong> (max - min across sites) is only shown through pick "
-        f"{COMPARABLE_MAX}, where all three boards are dense enough to compare - past that a gap "
-        f"mostly reflects how deep each site ranks, not real disagreement. "
-        f"Refreshed at build time; last pulled {_stamp()}.</p>"
+        f"<p class='adp-meta'>Numbers are overall picks; lower = drafted earlier. The first "
+        f"three columns are that same ordering said three ways: <strong>#</strong> is the "
+        f"overall pick, <strong>Rd.Pk</strong> is the round and pick it falls on in our "
+        f"{LEAGUE_TEAMS}-team draft, and <strong>Pos Rk</strong> is where he lands among his "
+        f"own position (RB1, WR2). <strong>Spread</strong> (max - min across sites) is only "
+        f"shown through pick {COMPARABLE_MAX}, where all three boards are dense enough to "
+        f"compare - past that a gap mostly reflects how deep each site ranks, not real "
+        f"disagreement. Refreshed at build time; last pulled {_stamp()}.</p>"
     )
     table = (f'<div class="adp-wrap"><table class="adp-table">'
              f'<thead id="adp-head"><tr>{_header()}</tr></thead>'
              f'<tbody id="adp-body"></tbody></table></div>')
 
-    has_movement = df["Move"].notna().any()
+    has_movement = df[_MOVE_FIELDS].notna().any().any()
     return (_BOARD_CSS + intro + _movers_strip(year)
             + _controls(has_movement) + table + _table_js(_rows(df)))
 

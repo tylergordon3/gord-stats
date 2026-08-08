@@ -14,26 +14,26 @@ Sleeper and NFL.com have no public ADP endpoint; both are folded into the
 FantasyPros consensus column instead.
 
 Everything is cached to data/adp/board_{year}.parquet and refetched once the
-cache goes stale (ADP moves daily during draft season). The board it replaces is
-kept as data/adp/board_{year}_prev.parquet, which is what the Move column on the
-homepage measures against - see _with_movement.
+cache goes stale (ADP moves daily during draft season). Every pull is also
+archived to data/adp/history/{year}/, and those snapshots are what the Move
+columns on the homepage measure against - see WINDOWS and _with_movement.
 
     python -m src.league.adp_board          # print the top of the board
     python -m src.league.adp_board --refresh
 """
-import shutil
-from datetime import datetime
+import math
+from datetime import datetime, timedelta
 
 import pandas as pd
 import requests
 
-from src.config import UPCOMING_YEAR
+from src.config import LEAGUE_TEAMS, UPCOMING_YEAR
 from src.league.adp import ADP_DIR, _is_fresh, get_adp
 from src.normalize import normalize_name
 
 MAX_AGE_HOURS = 12
-# The movement baseline only rolls forward once it is this old, so repeated
-# --refresh runs in one sitting don't collapse Move to a column of zeros.
+# The "since last update" baseline only rolls forward once it is this old, so
+# repeated --refresh runs in one sitting don't collapse Move to a column of zeros.
 MIN_SNAPSHOT_HOURS = 6
 # Overall pick through which a move means something: deeper than any 12-team
 # draft goes, but well short of the 595-name tail FantasyPros ranks (see Move
@@ -166,7 +166,41 @@ def _fetch_board(year) -> pd.DataFrame:
     base.loc[~comparable, "Spread"] = pd.NA
 
     base["pos"] = base["pos"].fillna("").str.upper().replace({"DEF": "DST"})
-    return base.sort_values("Avg").reset_index(drop=True)
+    return _with_ranks(base.sort_values("Avg").reset_index(drop=True))
+
+
+# --------------------------------------------------------------------------- #
+# Draft slots - where the board's own ordering puts each player
+# --------------------------------------------------------------------------- #
+
+def _with_ranks(df: pd.DataFrame) -> pd.DataFrame:
+    """Turn Avg into the three ways a draft board names a pick.
+
+      * Pick    - overall pick off this board: 1, 2, 3, ...
+      * Slot    - that pick as round.pick for our league size: 1.3, 2.10, ...
+      * PosPick - rank within the position: QB1 is stored as pos + PosPick.
+
+    Positional rank is recomputed here rather than taken from FantasyPros'
+    pos_rank, so all three agree with the Avg column the table is sorted on.
+    """
+    df = df.copy()
+    df["Pick"] = df["Avg"].rank(method="first").astype("Int64")
+    df["PosPick"] = df.groupby("pos")["Avg"].rank(method="first").astype("Int64")
+    df["Slot"] = [_slot(p) for p in df["Pick"]]
+    return df
+
+
+def _slot(pick, teams: int = LEAGUE_TEAMS) -> str:
+    """Overall pick -> 'round.pick-in-round' ('13' -> '2.3' in a 10-team league)."""
+    if pd.isna(pick):
+        return ""
+    pick = int(pick)
+    return f"{math.ceil(pick / teams)}.{(pick - 1) % teams + 1}"
+
+
+def _ensure_ranks(df: pd.DataFrame) -> pd.DataFrame:
+    """Add the slot columns to boards cached before they existed."""
+    return df if "Pick" in df.columns else _with_ranks(df)
 
 
 def _cache_path(year):
@@ -174,7 +208,7 @@ def _cache_path(year):
 
 
 def _prev_path(year):
-    """The board this one replaced - the baseline the Move column reads against."""
+    """Pre-history movement baseline; still read once to seed data/adp/history."""
     return ADP_DIR / f"board_{year}_prev.parquet"
 
 
@@ -184,39 +218,114 @@ def last_updated(year=UPCOMING_YEAR):
     return datetime.fromtimestamp(cache.stat().st_mtime) if cache.exists() else None
 
 
-def previous_updated(year=UPCOMING_YEAR):
-    """When the movement baseline was pulled, or None before the first rollover."""
-    prev = _prev_path(year)
-    return datetime.fromtimestamp(prev.stat().st_mtime) if prev.exists() else None
-
-
 # --------------------------------------------------------------------------- #
-# Movement since the last pull
+# Snapshot history
 # --------------------------------------------------------------------------- #
+# Every pull is archived under data/adp/history/{year}/{timestamp}.parquet so the
+# board can be compared against any point in the past, not just the previous
+# pull. Snapshots keep only what movement needs (three columns), so a season's
+# worth costs a few hundred KB.
 
-_MOVE_COLS = ["Prev", "Move"]
+HISTORY_DIR = ADP_DIR / "history"
+HISTORY_KEEP_DAYS = 60      # comfortably past the widest window below
+SNAPSHOT_GAP_HOURS = 3      # don't archive the same afternoon twice
+_SNAP_FMT = "%Y%m%d-%H%M%S"
+_SNAP_COLS = ["merge_name", "Avg", "Sites"]
+
+# The movement windows shown on the board, each measured against the newest
+# snapshot at or before its cutoff. "last" has no fixed span: it is simply the
+# previous pull, as long as that pull is old enough to mean something.
+WINDOWS = {
+    "last": {"prev": "Prev", "move": "Move", "delta": None,
+             "label": "Since last update", "short": "Move"},
+    "3d": {"prev": "Prev3d", "move": "Move3d", "delta": timedelta(days=3),
+           "label": "Last 3 days", "short": "3d"},
+    "7d": {"prev": "Prev7d", "move": "Move7d", "delta": timedelta(days=7),
+           "label": "Last week", "short": "7d"},
+}
+_MOVE_COLS = [c for w in WINDOWS.values() for c in (w["prev"], w["move"])]
 
 
-def _roll_snapshot(year):
-    """Promote the board we're about to overwrite to the movement baseline.
+def _history_dir(year):
+    return HISTORY_DIR / str(year)
 
-    Skipped while the existing baseline is still standing and the cache is only
-    hours old (two --refresh runs back to back), so Move always spans a real
-    stretch of draft season instead of the gap between two manual rebuilds.
+
+def _snapshots(year) -> list:
+    """[(taken_at, path)] for every archived pull, oldest first."""
+    out = []
+    for path in _history_dir(year).glob("*.parquet"):
+        try:
+            out.append((datetime.strptime(path.stem, _SNAP_FMT), path))
+        except ValueError:
+            continue                                  # not one of ours
+    return sorted(out)
+
+
+def _seed_history(year):
+    """Backfill the history from the two boards kept before it existed.
+
+    Without this the 3-day and week windows would read empty until the archive
+    had built itself up over a week of rebuilds.
     """
-    cache, prev = _cache_path(year), _prev_path(year)
-    if not cache.exists():
+    if _snapshots(year):
         return
-    if prev.exists() and _is_fresh(cache, MIN_SNAPSHOT_HOURS):
+    for path in (_prev_path(year), _cache_path(year)):
+        if path.exists():
+            when = datetime.fromtimestamp(path.stat().st_mtime)
+            _write_snapshot(pd.read_parquet(path), year, when)
+
+
+def _write_snapshot(df: pd.DataFrame, year, when=None):
+    """Archive a board, unless one was already taken in the last few hours."""
+    when = when or datetime.now()
+    snaps = _snapshots(year)
+    if snaps and when - snaps[-1][0] < timedelta(hours=SNAPSHOT_GAP_HOURS):
         return
-    shutil.copy2(cache, prev)     # copy2 keeps mtime = when that board was pulled
+    out = _history_dir(year)
+    out.mkdir(parents=True, exist_ok=True)
+    cols = [c for c in _SNAP_COLS if c in df.columns]
+    df[cols].to_parquet(out / f"{when:{_SNAP_FMT}}.parquet", index=False)
+
+    cutoff = when - timedelta(days=HISTORY_KEEP_DAYS)
+    for taken, path in snaps:
+        if taken < cutoff:
+            path.unlink()
 
 
-def _with_movement(df: pd.DataFrame, year) -> pd.DataFrame:
-    """Attach Prev (baseline Avg) and Move (how far the player has climbed).
+def _baseline(snaps: list, delta):
+    """The snapshot a window measures against: newest at or before its cutoff.
 
-    Move is positive when a player is going *earlier* than he was at the last
-    pull, i.e. rising up boards; NA for anyone the baseline didn't rank.
+    Falls back to the oldest snapshot on hand when the archive doesn't reach
+    back that far yet, so a 3-day-old board still reports *something* for the
+    week window - the timestamp reported alongside it says how far back it
+    actually goes (see baseline_times).
+    """
+    if not snaps:
+        return None
+    cutoff = datetime.now() - (delta or timedelta(hours=MIN_SNAPSHOT_HOURS))
+    older = [s for s in snaps if s[0] <= cutoff]
+    return older[-1] if older else snaps[0]
+
+
+def baseline_times(year=UPCOMING_YEAR) -> dict:
+    """Window key -> when its baseline board was pulled (None if unavailable)."""
+    snaps = _snapshots(year)
+    times = {}
+    for key, spec in WINDOWS.items():
+        base = _baseline(snaps, spec["delta"])
+        times[key] = base[0] if base else None
+    return times
+
+
+# --------------------------------------------------------------------------- #
+# Movement
+# --------------------------------------------------------------------------- #
+
+def _attach_window(df: pd.DataFrame, base, spec) -> pd.DataFrame:
+    """Attach one window's Prev (baseline Avg) and Move (picks climbed).
+
+    Move is positive when a player is going *earlier* than he was at the
+    baseline, i.e. rising up boards; NA for anyone the baseline didn't rank.
 
     Two kinds of fake movement are blanked out rather than reported:
 
@@ -227,27 +336,34 @@ def _with_movement(df: pd.DataFrame, year) -> pd.DataFrame:
         and a 150-pick swing is a fifth-stringer drifting around the part of the
         board nobody drafts from (same reason Spread stops at COMPARABLE_MAX).
     """
-    prev = _prev_path(year)
-    if not prev.exists():
-        df["Prev"] = float("nan")
-        df["Move"] = float("nan")
+    prev_col, move_col = spec["prev"], spec["move"]
+    if base is None:
+        df[prev_col] = float("nan")
+        df[move_col] = float("nan")
         return df
 
-    old = pd.read_parquet(prev)
-    cols = {"Avg": "Prev", "Sites": "PrevSites"}
-    old = (old[["merge_name"] + list(cols)].rename(columns=cols)
+    cols = {"Avg": prev_col, "Sites": "_prev_sites"}
+    old = (pd.read_parquet(base[1])[["merge_name"] + list(cols)].rename(columns=cols)
            .drop_duplicates("merge_name", keep="first"))
     df = df.merge(old, on="merge_name", how="left")
 
-    move = (df["Prev"] - df["Avg"]).round(1)
-    same_sites = df["Sites"] == df["PrevSites"]
-    draftable = df[["Avg", "Prev"]].min(axis=1) <= TRACKED_MAX
-    df["Move"] = move.where(same_sites & draftable)
-    return df.drop(columns="PrevSites")
+    move = (df[prev_col] - df["Avg"]).round(1)
+    same_sites = df["Sites"] == df["_prev_sites"]
+    draftable = df[["Avg", prev_col]].min(axis=1) <= TRACKED_MAX
+    df[move_col] = move.where(same_sites & draftable)
+    return df.drop(columns="_prev_sites")
+
+
+def _with_movement(df: pd.DataFrame, year) -> pd.DataFrame:
+    """Attach every window's Prev / Move against the archived snapshots."""
+    snaps = _snapshots(year)
+    for spec in WINDOWS.values():
+        df = _attach_window(df, _baseline(snaps, spec["delta"]), spec)
+    return df
 
 
 def _blank_movement(df: pd.DataFrame) -> pd.DataFrame:
-    """Fill in Prev / Move for boards cached before movement was tracked."""
+    """Fill in the Prev / Move columns a cached board predates."""
     for col in _MOVE_COLS:
         if col not in df.columns:
             df[col] = float("nan")
@@ -261,8 +377,9 @@ def board(year=UPCOMING_YEAR, refresh: bool = False) -> pd.DataFrame:
     site build never breaks on a flaky feed.
     """
     cache = _cache_path(year)
+    _seed_history(year)                           # first run after the rewrite
     if cache.exists() and not refresh and _is_fresh(cache, MAX_AGE_HOURS):
-        return _blank_movement(pd.read_parquet(cache))
+        return _ensure_ranks(_blank_movement(pd.read_parquet(cache)))
 
     try:
         df = _fetch_board(year)
@@ -270,21 +387,23 @@ def board(year=UPCOMING_YEAR, refresh: bool = False) -> pd.DataFrame:
         if not cache.exists():
             raise
         print(f"  ADP board fetch failed ({exc}); using cached {cache.name}")
-        return _blank_movement(pd.read_parquet(cache))
+        return _ensure_ranks(_blank_movement(pd.read_parquet(cache)))
 
-    _roll_snapshot(year)                          # before the cache is overwritten
-    df = _with_movement(df, year)
+    df = _with_movement(df, year)                 # against history as it stands
+    _write_snapshot(df, year)                     # then add this pull to it
     ADP_DIR.mkdir(parents=True, exist_ok=True)
     df.to_parquet(cache, index=False)
     return df
 
 
-def movers(year=UPCOMING_YEAR, n: int = 10, min_move: float = 0.5) -> tuple:
-    """(risers, fallers): the n biggest Move swings since the baseline pull."""
+def movers(year=UPCOMING_YEAR, n: int = 10, min_move: float = 0.5,
+           window: str = "last") -> tuple:
+    """(risers, fallers): the n biggest swings over one of the WINDOWS."""
+    col = WINDOWS[window]["move"]
     df = board(year)
-    moved = df[df["Move"].notna() & (df["Move"].abs() >= min_move)]
-    risers = moved.sort_values("Move", ascending=False).head(n)
-    fallers = moved.sort_values("Move").head(n)
+    moved = df[df[col].notna() & (df[col].abs() >= min_move)]
+    risers = moved.sort_values(col, ascending=False).head(n)
+    fallers = moved.sort_values(col).head(n)
     return risers, fallers
 
 
@@ -300,7 +419,8 @@ if __name__ == "__main__":
     args = _parse_args()
     b = board(args.year, refresh=args.refresh)
     print(f"{len(b)} players, {b['ESPN'].notna().sum()} with ESPN, {b['FFC'].notna().sum()} with FFC")
-    since = previous_updated(args.year)
-    print(f"Movement baseline: {since:%b %d %I:%M %p}" if since else "Movement baseline: none yet")
-    print(b[["player", "pos", "team", "bye"] + _SITE_COLS
-            + ["Avg", "Spread", "Move"]].head(25).to_string(index=False))
+    for key, when in baseline_times(args.year).items():
+        stamp = f"{when:%b %d %I:%M %p}" if when else "none yet"
+        print(f"{WINDOWS[key]['label']:<20} baseline: {stamp}")
+    print(b[["Pick", "Slot", "player", "pos", "PosPick", "team", "bye"] + _SITE_COLS
+            + ["Avg", "Spread"] + [w["move"] for w in WINDOWS.values()]].head(25).to_string(index=False))
