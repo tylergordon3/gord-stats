@@ -234,14 +234,15 @@ _SNAP_COLS = ["merge_name", "Avg", "Sites"]
 
 # The movement windows shown on the board, each measured against the newest
 # snapshot at or before its cutoff. "last" has no fixed span: it is simply the
-# previous pull, as long as that pull is old enough to mean something.
+# previous pull, as long as that pull is old enough to mean something. `label`
+# names the window's button, `short` the table column while it is selected.
 WINDOWS = {
     "last": {"prev": "Prev", "move": "Move", "delta": None,
              "label": "Since last update", "short": "Move"},
     "3d": {"prev": "Prev3d", "move": "Move3d", "delta": timedelta(days=3),
-           "label": "Last 3 days", "short": "3d"},
+           "label": "Last 3 days", "short": "Move 3d"},
     "7d": {"prev": "Prev7d", "move": "Move7d", "delta": timedelta(days=7),
-           "label": "Last week", "short": "7d"},
+           "label": "Last week", "short": "Move 7d"},
 }
 _MOVE_COLS = [c for w in WINDOWS.values() for c in (w["prev"], w["move"])]
 

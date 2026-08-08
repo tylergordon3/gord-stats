@@ -6,11 +6,12 @@ Two pieces, both rendered by src.site.homepage:
   * countdown_banner() - live JS countdown to config.DRAFT_DATETIME.
   * adp_board_section() - the multi-site ADP board (src.league.adp_board) as a
     sortable / filterable / searchable table, plus the movement tracker: how far
-    each player has climbed or slid over each window in adp_board.WINDOWS (the
-    Move / 3d / 7d columns and the risers / fallers strip above the table, which
-    switches between the same three windows). The data is baked into the page as
-    JSON at build time; all the interaction is vanilla JS, since the site is a
-    static Jekyll build with no JS dependencies.
+    each player has climbed or slid over each window in adp_board.WINDOWS. The
+    window buttons above the table drive both halves of that tracker - the risers
+    / fallers cards and the table's single Move column, which re-reads whichever
+    window is selected. Every window's numbers are baked into the page as JSON at
+    build time; all the interaction is vanilla JS, since the site is a static
+    Jekyll build with no JS dependencies.
 
     python -m src.site.upcoming     # rebuilds the homepage
 """
@@ -28,9 +29,11 @@ from src.league.adp_board import (
 )
 
 # Row layout for the embedded JSON (arrays, not objects - keeps the page small).
-# player / pos / team / bye lead so the JS can address them by index.
+# player / pos / team lead so the JS can address them by index. Every window's
+# movement ships, even though the table shows one column: the buttons switch
+# between them client-side.
 _MOVE_FIELDS = [w["move"] for w in WINDOWS.values()]
-_FIELDS = (["player", "pos", "team", "bye", "Consensus", "ESPN", "FFC", "Avg"]
+_FIELDS = (["player", "pos", "team", "Consensus", "ESPN", "FFC", "Avg"]
            + _MOVE_FIELDS + ["Spread", "Ovr", "Pick", "PosRk"])
 POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
 MOVERS_SHOWN = 8            # risers / fallers listed in the movement strip
@@ -135,10 +138,6 @@ table.adp-table tbody tr:hover{background:#e6eef6}
 .adp-flat{color:#93a1ad}
 .adp-controls button.adp-toggle.active{background:#17293b;border-color:#17293b}
 table.adp-table td.pick{color:#4a5a68}
-/* The window whose movers are on screen is also the one the table sorts and
-   filters by, so its column is tinted to tie the two together. */
-table.adp-table th.mv-on,table.adp-table td.mv-on{background:#eef4fa}
-table.adp-table th.mv-on{background:#28405a}
 .movers{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 4px}
 .movers .mover-card{flex:1 1 260px;min-width:0;border:1px solid #b9c4d0;border-radius:6px;
   overflow:hidden;background:#fff}
@@ -160,10 +159,10 @@ table.adp-table th.mv-on{background:#28405a}
   .adp-wrap{max-height:70vh}
   .movers{gap:8px}
   .movers .mover-card{flex:1 1 100%}
-  /* A phone screen only fits ~6 columns, and Ovr/Pick/Player/Pos/Tm/Bye is
-     already six - every ADP number sat off to the right. Drop Ovr, since Pick
-     says the same thing in the form you draft in, and pin the name so the
-     numbers keep a player attached to them while the table scrolls sideways. */
+  /* A phone screen only fits ~6 columns, so every ADP number sat off to the
+     right. Drop Ovr, since Pick says the same thing in the form you draft in,
+     and pin the name so the numbers keep a player attached to them while the
+     table scrolls sideways. */
   table.adp-table .ovr{display:none}
   table.adp-table td,table.adp-table th{padding:5px 7px}
   table.adp-table td.name,table.adp-table th.name{position:sticky;left:0;
@@ -199,31 +198,31 @@ def _table_js(rows) -> str:
         "ovr": _FIELDS.index("Ovr"),
         "pick": _FIELDS.index("Pick"),
         "posRk": _FIELDS.index("PosRk"),
-        # Window key -> its column in each row, so the window buttons above the
-        # table can point the sort / filter / highlight at the matching column.
+        # Window key -> its column in each row, plus the header the Move column
+        # wears while that window is selected.
         "moves": {key: _FIELDS.index(spec["move"]) for key, spec in WINDOWS.items()},
+        "moveHeads": {key: [spec["short"], _TIPS[spec["move"]]] for key, spec in WINDOWS.items()},
         "minMove": MIN_MOVE,
     }, separators=(",", ":"))
     return """{% raw %}<script>
 (function(){
 var CFG=""" + cfg + """;
 var D=CFG.rows, SITES=CFG.sites, AVG=CFG.avg, SPREAD=CFG.spread;
-var OVR=CFG.ovr, PICK=CFG.pick, POSRK=CFG.posRk, MOVES=CFG.moves;
+var OVR=CFG.ovr, PICK=CFG.pick, POSRK=CFG.posRk, MOVES=CFG.moves, HEADS_MV=CFG.moveHeads;
 var MINMOVE=CFG.minMove;
-var MOVECOLS=Object.keys(MOVES).map(function(k){return MOVES[k];});
 var HEADS=document.querySelectorAll('#adp-head th');
+var MOVEHEAD=document.getElementById('adp-move');
 var sortCol=AVG, asc=true, pos='ALL', query='', limit=100, moversOnly=false;
-var window_='last', MOVE=MOVES[window_];       // the window the table keys off
+// One Move column, pointed at whichever window the buttons above have selected.
+var window_='last', MOVE=MOVES[window_];
 
 function fmt(v){return v===null||v===undefined?'-':v.toFixed(1);}
-function isMove(c){return MOVECOLS.indexOf(c)>=0;}
 
 // Move is baseline ADP minus current: positive = going earlier = rising.
-function moveCell(v,on){
-  var cls=on?' mv-on':'';
-  if(v===null||v===undefined) return '<td class="adp-flat'+cls+'">-</td>';
-  if(Math.abs(v)<MINMOVE) return '<td class="adp-flat'+cls+'">&ndash;</td>';
-  return '<td class="'+(v>0?'adp-up':'adp-down')+cls+'">'
+function moveCell(v){
+  if(v===null||v===undefined) return '<td class="adp-flat">-</td>';
+  if(Math.abs(v)<MINMOVE) return '<td class="adp-flat">&ndash;</td>';
+  return '<td class="'+(v>0?'adp-up':'adp-down')+'">'
         +(v>0?'\\u25B2 ':'\\u25BC ')+Math.abs(v).toFixed(1)+'</td>';
 }
 
@@ -264,15 +263,13 @@ function cells(r){
           +'<td class="pick">'+(r[PICK]||'-')+'</td>'
           +'<td class="name">'+r[0]+'</td>'
           +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+(r[POSRK]===null?'':r[POSRK])+'</span></td>'
-          +'<td>'+(r[2]||'-')+'</td><td>'+(r[3]===null?'-':r[3])+'</td>';
+          +'<td>'+(r[2]||'-')+'</td>';
   SITES.forEach(function(i){
     var cls = (best!==null&&worst!==null&&best!==worst)
       ? (i===best?' class="adp-early"':i===worst?' class="adp-late"':'') : '';
     html+='<td'+cls+'>'+fmt(r[i])+'</td>';
   });
-  html+='<td>'+fmt(r[AVG])+'</td>';
-  MOVECOLS.forEach(function(c){html+=moveCell(r[c],c===MOVE);});
-  return html+'<td>'+fmt(r[SPREAD])+'</td>';
+  return html+'<td>'+fmt(r[AVG])+'</td>'+moveCell(r[MOVE])+'<td>'+fmt(r[SPREAD])+'</td>';
 }
 
 function draw(){
@@ -284,33 +281,37 @@ function draw(){
     'Showing '+shown.length+' of '+rows.length+(moversOnly?' movers':' players')
     +(pos==='ALL'?'':' at '+pos)+'.';
   HEADS.forEach(function(th){
-    var c=+th.dataset.col, on=c===sortCol;
+    var on = +th.dataset.col===sortCol;
     th.classList.toggle('sorted',on);
     th.classList.toggle('asc',on&&asc);
-    th.classList.toggle('mv-on',c===MOVE);
   });
 }
 
 HEADS.forEach(function(th){
   th.addEventListener('click',function(){
     var c=+th.dataset.col;
-    if(c<0) return;                                    // Rd.Pk isn't sortable
-    // Spread and the move columns read best biggest-first (widest disagreement,
-    // biggest risers).
-    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==SPREAD&&!isMove(c));}
+    if(c<0) return;                                    // Pick isn't sortable
+    // Spread and Move read best biggest-first (widest disagreement, biggest risers).
+    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==SPREAD&&c!==MOVE);}
     draw();
   });
 });
 // The movers strip and the table share one window: picking "Last 3 days" swaps
-// the cards, the highlighted column, and what "Movers only" is filtering on.
+// the cards and re-points the Move column - header, numbers, and any sort or
+// Movers-only filter already running on it - at that window.
 document.querySelectorAll('.mv-win').forEach(function(b){
   b.addEventListener('click',function(){
+    var was=MOVE;
     window_=b.dataset.win; MOVE=MOVES[window_];
     document.querySelectorAll('.mv-win').forEach(function(o){o.classList.toggle('active',o===b);});
     document.querySelectorAll('.movers-window').forEach(function(w){
       w.hidden = w.dataset.win!==window_;
     });
-    if(moversOnly||isMove(sortCol)){sortCol=MOVE; asc=false;}
+    MOVEHEAD.dataset.col=MOVE;
+    MOVEHEAD.textContent=HEADS_MV[window_][0];
+    MOVEHEAD.title=HEADS_MV[window_][1];
+    if(sortCol===was){sortCol=MOVE;}                   // follow the sort across
+    else if(moversOnly){sortCol=MOVE; asc=false;}
     draw();
   });
 });
@@ -355,7 +356,7 @@ def _controls(has_movement: bool) -> str:
             '<span class="adp-label" id="adp-count"></span></div>')
 
 
-_LABELS = {"player": "Player", "PosRk": "Pos", "team": "Tm", "bye": "Bye",
+_LABELS = {"player": "Player", "PosRk": "Pos", "team": "Tm",
            "Ovr": "Ovr", "Pick": "Pick"}
 _TIPS = dict({
     "Ovr": "Overall pick this board's average ADP puts him at",
@@ -371,25 +372,34 @@ def _header() -> str:
     """Header cells; data-col is the row index to sort on (-2 = derived, no sort).
 
     The columns are re-ordered here rather than in _FIELDS: the JSON rows keep
-    player / pos / team / bye up front for the JS to address by index, while the
-    table leads with the draft slot the way a draft board reads. The ovr / pick /
-    name classes match the body cells, so the phone layout can drop the overall
-    pick and pin the name in place (see _BOARD_CSS).
+    player / pos / team up front for the JS to address by index, while the table
+    leads with the draft slot the way a draft board reads. The ovr / pick / name
+    classes match the body cells, so the phone layout can drop the overall pick
+    and pin the name in place (see _BOARD_CSS).
+
+    Move is the one column whose header moves: id="adp-move" so the window
+    buttons can re-point its data-col and relabel it (see _table_js).
     """
     # Pick has no sort of its own: it is Ovr in draft form, and sorting its
     # "2.10" strings as text would put 10.1 before 2.1. Sort on Ovr beside it.
     slot = [(_FIELDS.index("Ovr"), "Ovr", "ovr"), (-2, "Pick", "pick")]
     who = [(_FIELDS.index(f), _LABELS[f], "name" if f == "player" else None)
-           for f in ["player", "PosRk", "team", "bye"]]
+           for f in ["player", "PosRk", "team"]]
     numbers = [(_FIELDS.index(f), _LABELS.get(f, f), None)
                for f in list(SOURCES) + ["Avg"]]
-    moves = [(_FIELDS.index(spec["move"]), spec["short"], None) for spec in WINDOWS.values()]
     spread = [(_FIELDS.index("Spread"), "Spread", None)]
 
+    opening = WINDOWS["last"]
+    move = (f'<th data-col="{_FIELDS.index(opening["move"])}" id="adp-move"'
+            f'{_title(_TIPS[opening["move"]])}>{opening["short"]}</th>')
+
     cells = []
-    for i, label, cls in slot + who + numbers + moves + spread:
+    for i, label, cls in slot + who + numbers:
         tip = _TIPS.get("Pick" if i < 0 else _FIELDS[i])
         cells.append(f'<th data-col="{i}"{_cls(cls)}{_title(tip)}>{label}</th>')
+    cells.append(move)
+    for i, label, cls in spread:
+        cells.append(f'<th data-col="{i}"{_title(_TIPS[_FIELDS[i]])}>{label}</th>')
     return "".join(cells)
 
 
@@ -481,9 +491,9 @@ def _movers_strip(year: int) -> str:
     return (
         f"<p class='adp-meta'>How far each player has climbed "
         f"(<span class='adp-up'>&#9650;</span>) or slid "
-        f"(<span class='adp-down'>&#9660;</span>) in picks. Pick a window below - it also "
-        f"sets which column the table sorts and the <strong>Movers only</strong> filter "
-        f"reads. Tracked through pick {TRACKED_MAX}, and only where the same sites ranked "
+        f"(<span class='adp-down'>&#9660;</span>) in picks. Pick a window below - it sets "
+        f"these cards and the table's <strong>Move</strong> column together. "
+        f"Tracked through pick {TRACKED_MAX}, and only where the same sites ranked "
         f"him at both ends - a site adding a player moves his average without anyone "
         f"changing their mind. The 3-day and week windows compare against the closest "
         f"board on record at or before that point, so they reach back only as far as the "
