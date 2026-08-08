@@ -63,14 +63,18 @@ main() {
   # shellcheck source=/dev/null
   . "$VENV/bin/activate"
 
-  if [ "$BEFORE" != "$AFTER" ] && ! git diff --quiet "$BEFORE" "$AFTER" -- requirements-pi.txt; then
-    log "requirements changed — reinstalling"
+  # Stamp the venv with a hash of the requirements rather than diffing git.
+  # Deciding from the diff meant a run whose pull was a no-op — because the
+  # code was already updated by hand — skipped an install it needed.
+  local REQ_HASH STAMP
+  REQ_HASH="$(sha256sum requirements-pi.txt | cut -d' ' -f1)"
+  STAMP="$VENV/.requirements-sha256"
+
+  if [ ! -f "$STAMP" ] || [ "$(cat "$STAMP")" != "$REQ_HASH" ]; then
+    log "installing dependencies"
     pip install -q --upgrade pip
     pip install -q -r requirements-pi.txt
-  elif ! python -c "import nflreadpy, polars, pandas" 2>/dev/null; then
-    log "installing dependencies (first run)"
-    pip install -q --upgrade pip
-    pip install -q -r requirements-pi.txt
+    echo "$REQ_HASH" > "$STAMP"
   else
     log "dependencies unchanged"
   fi
