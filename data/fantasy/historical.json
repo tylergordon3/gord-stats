@@ -913,6 +913,1308 @@
                 "Total Games Missed": 23,
                 "% of Games Missed": "12.64%"
             }
+        ],
+        "injury_detail_df": [
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "JaMarrChase",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.1",
+                "Pts.": 221.9,
+                "Games Played": 12
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "BijanRobinson",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.2",
+                "Pts.": 264.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "ChristianMcCaffrey",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.3",
+                "Pts.": 328.49999999999994,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "SaquonBarkley",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.4",
+                "Pts.": 187.10000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "JahmyrGibbs",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.5",
+                "Pts.": 307.6,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "JustinJefferson",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.6",
+                "Pts.": 157.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DerrickHenry",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.7",
+                "Pts.": 188.50000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "AshtonJeanty",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.8",
+                "Pts.": 183.40000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "CeeDeeLamb",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.9",
+                "Pts.": 161.70000000000002,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "DeVonAchane",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.10",
+                "Pts.": 271.9,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "BrockBowers",
+                "Pos.": "TE",
+                "round": 2,
+                "Pick": "2.1",
+                "Pts.": 153.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "JoshJacobs",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.2",
+                "Pts.": 207.8,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "AmonRaStBrown",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.3",
+                "Pts.": 233.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DrakeLondon",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.4",
+                "Pts.": 177.0,
+                "Games Played": 9
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "PukaNacua",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.5",
+                "Pts.": 258.9,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "MalikNabers",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.6",
+                "Pts.": 57.1,
+                "Games Played": 4
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "NicoCollins",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.7",
+                "Pts.": 184.1,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "BrianThomas",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.8",
+                "Pts.": 102.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "AJBrown",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.9",
+                "Pts.": 177.9,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "BuckyIrving",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.10",
+                "Pts.": 104.19999999999999,
+                "Games Played": 6
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "JonathanTaylor",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.1",
+                "Pts.": 309.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "LamarJackson",
+                "Pos.": "QB",
+                "round": 3,
+                "Pick": "3.2",
+                "Pts.": 175.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "ChaseBrown",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.3",
+                "Pts.": 185.60000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "LaddMcConkey",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.4",
+                "Pts.": 158.50000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "TreyMcBride",
+                "Pos.": "TE",
+                "round": 3,
+                "Pick": "3.5",
+                "Pts.": 234.70000000000005,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "JoshAllen",
+                "Pos.": "QB",
+                "round": 3,
+                "Pick": "3.6",
+                "Pts.": 310.02,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "KyrenWilliams",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.7",
+                "Pts.": 202.89999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "OmarionHampton",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.8",
+                "Pts.": 91.7,
+                "Games Played": 6
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "TeeHiggins",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.9",
+                "Pts.": 168.7,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "TerryMcLaurin",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.10",
+                "Pts.": 69.0,
+                "Games Played": 6
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "BreeceHall",
+                "Pos.": "RB",
+                "round": 4,
+                "Pick": "4.1",
+                "Pts.": 172.76000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "JamesCook",
+                "Pos.": "RB",
+                "round": 4,
+                "Pick": "4.2",
+                "Pts.": 234.49999999999997,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "GeorgeKittle",
+                "Pos.": "TE",
+                "round": 4,
+                "Pick": "4.3",
+                "Pts.": 106.3,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "TyreekHill",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.4",
+                "Pts.": 53.5,
+                "Games Played": 4
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "JaxonSmithNjigba",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.5",
+                "Pts.": 287.40000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "GarrettWilson",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.6",
+                "Pts.": 99.49999999999999,
+                "Games Played": 7
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "JalenHurts",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.7",
+                "Pts.": 249.86000000000004,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "MarvinHarrison",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.8",
+                "Pts.": 125.4,
+                "Games Played": 10
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "MikeEvans",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.9",
+                "Pts.": 34.0,
+                "Games Played": 4
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "JaydenDaniels",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.10",
+                "Pts.": 114.28,
+                "Games Played": 7
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "RasheeRice",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.1",
+                "Pts.": 138.00000000000003,
+                "Games Played": 7
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "KennethWalker",
+                "Pos.": "RB",
+                "round": 5,
+                "Pick": "5.2",
+                "Pts.": 138.60000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "AlvinKamara",
+                "Pos.": "RB",
+                "round": 5,
+                "Pick": "5.3",
+                "Pts.": 100.7,
+                "Games Played": 11
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "DKMetcalf",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.4",
+                "Pts.": 164.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "DavanteAdams",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.5",
+                "Pts.": 211.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "ChubaHubbard",
+                "Pos.": "RB",
+                "round": 5,
+                "Pick": "5.6",
+                "Pts.": 109.69999999999999,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "JoeBurrow",
+                "Pos.": "QB",
+                "round": 5,
+                "Pick": "5.7",
+                "Pts.": 58.459999999999994,
+                "Games Played": 4
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "TetairoaMcMillan",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.8",
+                "Pts.": 175.6,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "DJMoore",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.9",
+                "Pts.": 123.58,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "CourtlandSutton",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.10",
+                "Pts.": 165.29999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "BoNix",
+                "Pos.": "QB",
+                "round": 6,
+                "Pick": "6.1",
+                "Pts.": 230.56,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "PatrickMahomes",
+                "Pos.": "QB",
+                "round": 6,
+                "Pick": "6.2",
+                "Pts.": 272.62,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "TreVeyonHenderson",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.3",
+                "Pts.": 148.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "JamesConner",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.4",
+                "Pts.": 33.300000000000004,
+                "Games Played": 3
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "DeVontaSmith",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.5",
+                "Pts.": 165.9,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "RJHarvey",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.6",
+                "Pts.": 151.1,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "GeorgePickens",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.7",
+                "Pts.": 245.9,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "JamesonWilliams",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.8",
+                "Pts.": 162.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "IsiahPacheco",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.9",
+                "Pts.": 68.50000000000001,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "ZayFlowers",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.10",
+                "Pts.": 163.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "AaronJones",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.1",
+                "Pts.": 82.6,
+                "Games Played": 9
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "SamLaPorta",
+                "Pos.": "TE",
+                "round": 7,
+                "Pick": "7.2",
+                "Pts.": 106.9,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "JoeMixon",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.3",
+                "Pts.": 0.0,
+                "Games Played": 0
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "DavidMontgomery",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.4",
+                "Pts.": 143.82000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "XavierWorthy",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.5",
+                "Pts.": 98.20000000000002,
+                "Games Played": 11
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "TravisHunter",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.6",
+                "Pts.": 0.0,
+                "Games Played": 0
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "MatthewGolden",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.7",
+                "Pts.": 57.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "CalvinRidley",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.8",
+                "Pts.": 47.3,
+                "Games Played": 7
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "DAndreSwift",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.9",
+                "Pts.": 169.3,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "QuinshonJudkins",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.10",
+                "Pts.": 155.0,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "ChrisOlave",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.1",
+                "Pts.": 184.79999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "TJHockenson",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.2",
+                "Pts.": 101.00000000000001,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "JaylenWaddle",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.3",
+                "Pts.": 176.61999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "TravisKelce",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.4",
+                "Pts.": 164.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "MarkAndrews",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.5",
+                "Pts.": 112.60000000000001,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "TonyPollard",
+                "Pos.": "RB",
+                "round": 8,
+                "Pick": "8.6",
+                "Pts.": 136.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "EvanEngram",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.7",
+                "Pts.": 81.4,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "JerryJeudy",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.8",
+                "Pts.": 97.69999999999999,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "JordanAddison",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.9",
+                "Pts.": 107.6,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "TylerWarren",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.10",
+                "Pts.": 160.7,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "BrianRobinson",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.1",
+                "Pts.": 53.699999999999996,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "KalebJohnson",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.2",
+                "Pts.": 8.4,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "BakerMayfield",
+                "Pos.": "QB",
+                "round": 9,
+                "Pick": "9.3",
+                "Pts.": 209.38,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "TyroneTracy",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.4",
+                "Pts.": 91.7,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "CamSkattebo",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.5",
+                "Pts.": 127.7,
+                "Games Played": 8
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "TravisEtienne",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.6",
+                "Pts.": 189.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DeeboSamuel",
+                "Pos.": "WR",
+                "round": 9,
+                "Pick": "9.7",
+                "Pts.": 158.99999999999997,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "JordanMason",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.8",
+                "Pts.": 114.49999999999999,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "JaylenWarren",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.9",
+                "Pts.": 158.9,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "RomeOdunze",
+                "Pos.": "WR",
+                "round": 9,
+                "Pick": "9.10",
+                "Pts.": 146.10000000000002,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "CooperKupp",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.1",
+                "Pts.": 93.30000000000001,
+                "Games Played": 12
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "JakobiMeyers",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.2",
+                "Pts.": 137.8,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "StefonDiggs",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.3",
+                "Pts.": 152.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "EmekaEgbuka",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.4",
+                "Pts.": 173.49999999999997,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "JauanJennings",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.5",
+                "Pts.": 116.80000000000001,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "RickyPearsall",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.6",
+                "Pts.": 59.5,
+                "Games Played": 7
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "DavidNjoku",
+                "Pos.": "TE",
+                "round": 10,
+                "Pick": "10.7",
+                "Pts.": 86.3,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "JavonteWilliams",
+                "Pos.": "RB",
+                "round": 10,
+                "Pick": "10.8",
+                "Pts.": 210.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "KhalilShakir",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.9",
+                "Pts.": 138.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "ChrisGodwin",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.10",
+                "Pts.": 35.4,
+                "Games Played": 5
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "JaydenHiggins",
+                "Pos.": "WR",
+                "round": 11,
+                "Pick": "11.1",
+                "Pts.": 98.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "JonnuSmith",
+                "Pos.": "TE",
+                "round": 11,
+                "Pick": "11.2",
+                "Pts.": 62.70000000000001,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "KylerMurray",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.3",
+                "Pts.": 77.78,
+                "Games Played": 5
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "JKDobbins",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.4",
+                "Pts.": 115.9,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "ZachCharbonnet",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.5",
+                "Pts.": 116.0,
+                "Games Played": 12
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "JustinHerbert",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.6",
+                "Pts.": 231.14000000000001,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "JaydonBlue",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.7",
+                "Pts.": 8.0,
+                "Games Played": 4
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "CalebWilliams",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.8",
+                "Pts.": 238.62,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "JaydenReed",
+                "Pos.": "WR",
+                "round": 11,
+                "Pick": "11.9",
+                "Pts.": 22.8,
+                "Games Played": 2
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "RhamondreStevenson",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.10",
+                "Pts.": 87.80000000000001,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "MichaelPittman",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.1",
+                "Pts.": 182.9,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "NajeeHarris",
+                "Pos.": "RB",
+                "round": 12,
+                "Pick": "12.2",
+                "Pts.": 11.600000000000001,
+                "Games Played": 3
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "DrakeMaye",
+                "Pos.": "QB",
+                "round": 12,
+                "Pick": "12.3",
+                "Pts.": 259.58000000000004,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "KylePitts",
+                "Pos.": "TE",
+                "round": 12,
+                "Pick": "12.4",
+                "Pts.": 131.10000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "DaltonKincaid",
+                "Pos.": "TE",
+                "round": 12,
+                "Pick": "12.5",
+                "Pts.": 111.9,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "JaredGoff",
+                "Pos.": "QB",
+                "round": 12,
+                "Pick": "12.6",
+                "Pts.": 227.75999999999996,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "JoshDowns",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.7",
+                "Pts.": 101.30000000000001,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "ColstonLoveland",
+                "Pos.": "TE",
+                "round": 12,
+                "Pick": "12.8",
+                "Pts.": 102.50000000000001,
+                "Games Played": 12
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "DarnellMooney",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.9",
+                "Pts.": 60.900000000000006,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "DakPrescott",
+                "Pos.": "QB",
+                "round": 12,
+                "Pick": "12.10",
+                "Pts.": 259.28,
+                "Games Played": 13
+            },
+            {
+                "Owner": "The Jackson 5",
+                "roster_id": 10,
+                "Name": "BrandonAiyuk",
+                "Pos.": "WR",
+                "round": 13,
+                "Pick": "13.2",
+                "Pts.": 0.0,
+                "Games Played": 0
+            },
+            {
+                "Owner": "Kraft YAC-N-Cheese",
+                "roster_id": 2,
+                "Name": "KeonColeman",
+                "Pos.": "WR",
+                "round": 13,
+                "Pick": "13.3",
+                "Pts.": 93.5,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Big Booty Bowers",
+                "roster_id": 8,
+                "Name": "JakeFerguson",
+                "Pos.": "TE",
+                "round": 14,
+                "Pick": "14.1",
+                "Pts.": 170.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "LGBBQ+",
+                "roster_id": 9,
+                "Name": "DallasGoedert",
+                "Pos.": "TE",
+                "round": 14,
+                "Pick": "14.2",
+                "Pts.": 138.10000000000002,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Clanker Barrel",
+                "roster_id": 1,
+                "Name": "KeenanAllen",
+                "Pos.": "WR",
+                "round": 14,
+                "Pick": "14.3",
+                "Pts.": 151.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Strictly Dickly",
+                "roster_id": 4,
+                "Name": "KyleWilliams",
+                "Pos.": "WR",
+                "round": 15,
+                "Pick": "15.1",
+                "Pts.": 31.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "NickChubb",
+                "Pos.": "RB",
+                "round": 15,
+                "Pick": "15.4",
+                "Pts.": 83.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Professional Fratson",
+                "roster_id": 3,
+                "Name": "TreHarris",
+                "Pos.": "WR",
+                "round": 15,
+                "Pick": "15.5",
+                "Pts.": 44.800000000000004,
+                "Games Played": 12
+            },
+            {
+                "Owner": "The Standard",
+                "roster_id": 6,
+                "Name": "TyjaeSpears",
+                "Pos.": "RB",
+                "round": 15,
+                "Pick": "15.6",
+                "Pts.": 73.8,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "AustinEkeler",
+                "Pos.": "RB",
+                "round": 15,
+                "Pick": "15.7",
+                "Pts.": 13.1,
+                "Games Played": 2
+            }
         ]
     },
     "2024-2025": {
@@ -1839,6 +3141,1298 @@
                 "Total Games Missed": 34,
                 "% of Games Missed": "20.24%"
             }
+        ],
+        "injury_detail_df": [
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "ChristianMcCaffrey",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.1",
+                "Pts.": 47.80000000000001,
+                "Games Played": 4
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "TyreekHill",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.2",
+                "Pts.": 177.20000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "CeeDeeLamb",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.3",
+                "Pts.": 219.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "JaMarrChase",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.4",
+                "Pts.": 317.40000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "JustinJefferson",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.5",
+                "Pts.": 235.18,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "BijanRobinson",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.6",
+                "Pts.": 246.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "AmonRaStBrown",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.7",
+                "Pts.": 226.18,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "BreeceHall",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.8",
+                "Pts.": 189.3,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "PukaNacua",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.9",
+                "Pts.": 152.3,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "AJBrown",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.10",
+                "Pts.": 155.6,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "TravisEtienne",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.1",
+                "Pts.": 94.5,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "JahmyrGibbs",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.2",
+                "Pts.": 236.80000000000004,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "GarrettWilson",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.3",
+                "Pts.": 199.20000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "SaquonBarkley",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.4",
+                "Pts.": 300.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "KyrenWilliams",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.5",
+                "Pts.": 222.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "StefonDiggs",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.6",
+                "Pts.": 121.91999999999999,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "JonathanTaylor",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.7",
+                "Pts.": 142.20000000000002,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DerrickHenry",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.8",
+                "Pts.": 254.20000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "MarvinHarrison",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.9",
+                "Pts.": 150.50000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "DavanteAdams",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.10",
+                "Pts.": 148.2,
+                "Games Played": 10
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "TravisKelce",
+                "Pos.": "TE",
+                "round": 3,
+                "Pick": "3.1",
+                "Pts.": 158.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "DrakeLondon",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.2",
+                "Pts.": 197.29999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DeVonAchane",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.3",
+                "Pts.": 230.39999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "SamLaPorta",
+                "Pos.": "TE",
+                "round": 3,
+                "Pick": "3.4",
+                "Pts.": 110.5,
+                "Games Played": 12
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "JoshJacobs",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.5",
+                "Pts.": 228.29999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "ChrisOlave",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.6",
+                "Pts.": 76.7,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "IsiahPacheco",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.7",
+                "Pts.": 45.900000000000006,
+                "Games Played": 4
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "JoshAllen",
+                "Pos.": "QB",
+                "round": 3,
+                "Pick": "3.8",
+                "Pts.": 303.62,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "BrandonAiyuk",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.9",
+                "Pts.": 62.400000000000006,
+                "Games Played": 7
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "PatrickMahomes",
+                "Pos.": "QB",
+                "round": 3,
+                "Pick": "3.10",
+                "Pts.": 217.55999999999997,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "NicoCollins",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.1",
+                "Pts.": 156.20000000000002,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "LamarJackson",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.2",
+                "Pts.": 321.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "DeeboSamuel",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.3",
+                "Pts.": 116.5,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "JaylenWaddle",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.4",
+                "Pts.": 140.6,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "TreyMcBride",
+                "Pos.": "TE",
+                "round": 4,
+                "Pick": "4.5",
+                "Pts.": 171.3,
+                "Games Played": 12
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "JalenHurts",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.6",
+                "Pts.": 282.48,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "MikeEvans",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.7",
+                "Pts.": 144.00000000000003,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DJMoore",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.8",
+                "Pts.": 174.80000000000004,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "RachaadWhite",
+                "Pos.": "RB",
+                "round": 4,
+                "Pick": "4.9",
+                "Pts.": 170.10000000000002,
+                "Games Played": 12
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "CJStroud",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.10",
+                "Pts.": 180.57999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "CooperKupp",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.1",
+                "Pts.": 165.7,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JamesCook",
+                "Pos.": "RB",
+                "round": 5,
+                "Pick": "5.2",
+                "Pts.": 192.7,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "MarkAndrews",
+                "Pos.": "TE",
+                "round": 5,
+                "Pick": "5.3",
+                "Pts.": 134.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "JoeMixon",
+                "Pos.": "RB",
+                "round": 5,
+                "Pick": "5.4",
+                "Pts.": 212.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "GeorgeKittle",
+                "Pos.": "TE",
+                "round": 5,
+                "Pick": "5.5",
+                "Pts.": 183.99999999999997,
+                "Games Played": 11
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "DeVontaSmith",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.6",
+                "Pts.": 130.3,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "MalikNabers",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.7",
+                "Pts.": 182.10000000000002,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "MichaelPittman",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.8",
+                "Pts.": 112.99999999999999,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "DaltonKincaid",
+                "Pos.": "TE",
+                "round": 5,
+                "Pick": "5.9",
+                "Pts.": 81.60000000000001,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "DKMetcalf",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.10",
+                "Pts.": 149.2,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "AlvinKamara",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.1",
+                "Pts.": 248.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "KennethWalker",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.2",
+                "Pts.": 167.3,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "ZayFlowers",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.3",
+                "Pts.": 174.70000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "AnthonyRichardson",
+                "Pos.": "QB",
+                "round": 6,
+                "Pick": "6.4",
+                "Pts.": 128.74,
+                "Games Played": 9
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "KylerMurray",
+                "Pos.": "QB",
+                "round": 6,
+                "Pick": "6.5",
+                "Pts.": 222.88,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "AmariCooper",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.6",
+                "Pts.": 106.10000000000001,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "TankDell",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.7",
+                "Pts.": 112.1,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "JoeBurrow",
+                "Pos.": "QB",
+                "round": 6,
+                "Pick": "6.8",
+                "Pts.": 284.03999999999996,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "KylePitts",
+                "Pos.": "TE",
+                "round": 6,
+                "Pick": "6.9",
+                "Pts.": 104.80000000000001,
+                "Games Played": 13
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "AaronJones",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.10",
+                "Pts.": 186.50000000000006,
+                "Games Played": 13
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "TeeHiggins",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.1",
+                "Pts.": 133.1,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JamesConner",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.2",
+                "Pts.": 193.60000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DavidMontgomery",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.3",
+                "Pts.": 214.22000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "GeorgePickens",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.4",
+                "Pts.": 155.4,
+                "Games Played": 12
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "DAndreSwift",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.5",
+                "Pts.": 171.70000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "RasheeRice",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.6",
+                "Pts.": 64.9,
+                "Games Played": 4
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "RhamondreStevenson",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.7",
+                "Pts.": 154.0,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "TerryMcLaurin",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.8",
+                "Pts.": 202.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "KeenanAllen",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.9",
+                "Pts.": 124.10000000000001,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "EvanEngram",
+                "Pos.": "TE",
+                "round": 7,
+                "Pick": "7.10",
+                "Pts.": 89.50000000000001,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "RaheemMostert",
+                "Pos.": "RB",
+                "round": 8,
+                "Pick": "8.1",
+                "Pts.": 55.300000000000004,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "TonyPollard",
+                "Pos.": "RB",
+                "round": 8,
+                "Pick": "8.2",
+                "Pts.": 178.00000000000006,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "ChrisGodwin",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.3",
+                "Pts.": 137.8,
+                "Games Played": 7
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "BrockBowers",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.4",
+                "Pts.": 205.7,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "CalvinRidley",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.5",
+                "Pts.": 149.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "DakPrescott",
+                "Pos.": "QB",
+                "round": 8,
+                "Pick": "8.6",
+                "Pts.": 116.51999999999998,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "ChristianKirk",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.7",
+                "Pts.": 70.9,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "RomeOdunze",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.8",
+                "Pts.": 123.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "NajeeHarris",
+                "Pos.": "RB",
+                "round": 8,
+                "Pick": "8.9",
+                "Pts.": 171.60000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "JaydenReed",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.10",
+                "Pts.": 168.1,
+                "Games Played": 13
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "ZamirWhite",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.1",
+                "Pts.": 29.300000000000004,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JordanLove",
+                "Pos.": "QB",
+                "round": 9,
+                "Pick": "9.2",
+                "Pts.": 188.06,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "XavierWorthy",
+                "Pos.": "WR",
+                "round": 9,
+                "Pick": "9.3",
+                "Pts.": 124.19999999999999,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "BrockPurdy",
+                "Pos.": "QB",
+                "round": 9,
+                "Pick": "9.4",
+                "Pts.": 211.47999999999996,
+                "Games Played": 12
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "JakeFerguson",
+                "Pos.": "TE",
+                "round": 9,
+                "Pick": "9.5",
+                "Pts.": 84.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "JavonteWilliams",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.6",
+                "Pts.": 128.50000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "JonathonBrooks",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.7",
+                "Pts.": 7.500000000000001,
+                "Games Played": 3
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "DavidNjoku",
+                "Pos.": "TE",
+                "round": 9,
+                "Pick": "9.8",
+                "Pts.": 133.9,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "JordanAddison",
+                "Pos.": "WR",
+                "round": 9,
+                "Pick": "9.9",
+                "Pts.": 164.8,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "ZackMoss",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.10",
+                "Pts.": 81.9,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "LaddMcConkey",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.1",
+                "Pts.": 163.5,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "MarquiseBrown",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.2",
+                "Pts.": 0.0,
+                "Games Played": 0
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "AustinEkeler",
+                "Pos.": "RB",
+                "round": 10,
+                "Pick": "10.3",
+                "Pts.": 127.1,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "ChristianWatson",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.4",
+                "Pts.": 94.40000000000002,
+                "Games Played": 11
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "DiontaeJohnson",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.5",
+                "Pts.": 85.9,
+                "Games Played": 10
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "DeAndreHopkins",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.6",
+                "Pts.": 128.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "JaylenWarren",
+                "Pos.": "RB",
+                "round": 10,
+                "Pick": "10.7",
+                "Pts.": 89.10000000000001,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DevinSingletary",
+                "Pos.": "RB",
+                "round": 10,
+                "Pick": "10.8",
+                "Pts.": 75.6,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "NickChubb",
+                "Pos.": "RB",
+                "round": 10,
+                "Pick": "10.9",
+                "Pts.": 61.2,
+                "Games Played": 7
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "KeonColeman",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.10",
+                "Pts.": 83.69999999999999,
+                "Games Played": 9
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "JamesonWilliams",
+                "Pos.": "WR",
+                "round": 11,
+                "Pick": "11.1",
+                "Pts.": 139.6,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JaxonSmithNjigba",
+                "Pos.": "WR",
+                "round": 11,
+                "Pick": "11.2",
+                "Pts.": 199.2,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "DallasGoedert",
+                "Pos.": "TE",
+                "round": 11,
+                "Pick": "11.3",
+                "Pts.": 94.1,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "CalebWilliams",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.4",
+                "Pts.": 204.34000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "GusEdwards",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.5",
+                "Pts.": 41.7,
+                "Games Played": 9
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "TyjaeSpears",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.6",
+                "Pts.": 51.49999999999999,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "ChaseBrown",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.7",
+                "Pts.": 201.70000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "TuaTagovailoa",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.8",
+                "Pts.": 165.24,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "JaredGoff",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.9",
+                "Pts.": 223.00000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "BrianRobinson",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.10",
+                "Pts.": 134.5,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "BrianThomas",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.1",
+                "Pts.": 182.1,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "TreyBenson",
+                "Pos.": "RB",
+                "round": 12,
+                "Pick": "12.2",
+                "Pts.": 44.800000000000004,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "EzekielElliott",
+                "Pos.": "RB",
+                "round": 12,
+                "Pick": "12.3",
+                "Pts.": 46.1,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "JaydenDaniels",
+                "Pos.": "QB",
+                "round": 12,
+                "Pick": "12.4",
+                "Pts.": 261.76,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "RomeoDoubs",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.5",
+                "Pts.": 94.3,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "TJHockenson",
+                "Pos.": "TE",
+                "round": 12,
+                "Pick": "12.7",
+                "Pts.": 56.89999999999999,
+                "Games Played": 6
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "KirkCousins",
+                "Pos.": "QB",
+                "round": 12,
+                "Pick": "12.8",
+                "Pts.": 169.83999999999997,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JeromeFord",
+                "Pos.": "RB",
+                "round": 12,
+                "Pick": "12.9",
+                "Pts.": 89.30000000000001,
+                "Games Played": 11
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "DaltonSchultz",
+                "Pos.": "TE",
+                "round": 12,
+                "Pick": "12.10",
+                "Pts.": 89.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "TJ Watts huge left nut",
+                "roster_id": 6,
+                "Name": "JustinHerbert",
+                "Pos.": "QB",
+                "round": 13,
+                "Pick": "13.1",
+                "Pts.": 196.95999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Bing Chilling",
+                "roster_id": 10,
+                "Name": "TylerLockett",
+                "Pos.": "WR",
+                "round": 13,
+                "Pick": "13.4",
+                "Pts.": 104.10000000000001,
+                "Games Played": 13
+            },
+            {
+                "Owner": "DRINK MAYE",
+                "roster_id": 2,
+                "Name": "ChubaHubbard",
+                "Pos.": "RB",
+                "round": 13,
+                "Pick": "13.6",
+                "Pts.": 200.2,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "BlakeCorum",
+                "Pos.": "RB",
+                "round": 13,
+                "Pick": "13.8",
+                "Pts.": 25.300000000000004,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Jahmyr Gibbies",
+                "roster_id": 8,
+                "Name": "CourtlandSutton",
+                "Pos.": "WR",
+                "round": 13,
+                "Pick": "13.9",
+                "Pts.": 180.8,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "CurtisSamuel",
+                "Pos.": "WR",
+                "round": 14,
+                "Pick": "14.9",
+                "Pts.": 50.400000000000006,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Lotta Cox (Balls Too)",
+                "roster_id": 5,
+                "Name": "AdonaiMitchell",
+                "Pos.": "WR",
+                "round": 15,
+                "Pick": "15.3",
+                "Pts.": 47.96,
+                "Games Played": 13
+            },
+            {
+                "Owner": "padgett",
+                "roster_id": 7,
+                "Name": "KhalilShakir",
+                "Pos.": "WR",
+                "round": 15,
+                "Pick": "15.5",
+                "Pts.": 156.9,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Stormy Daniels",
+                "roster_id": 1,
+                "Name": "MikeWilliams",
+                "Pos.": "WR",
+                "round": 15,
+                "Pick": "15.7",
+                "Pts.": 45.4,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Mahomo's backup glazer",
+                "roster_id": 9,
+                "Name": "JerryJeudy",
+                "Pos.": "WR",
+                "round": 15,
+                "Pick": "15.10",
+                "Pts.": 181.4,
+                "Games Played": 13
+            }
         ]
     },
     "2023-2024": {
@@ -2746,6 +5340,1228 @@
                 "tot_games": 182,
                 "Total Games Missed": 37,
                 "% of Games Missed": "20.33%"
+            }
+        ],
+        "injury_detail_df": [
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "JustinJefferson",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.1",
+                "Pts.": 113.8,
+                "Games Played": 6
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "ChristianMcCaffrey",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.2",
+                "Pts.": 311.40000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "JaMarrChase",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.3",
+                "Pts.": 239.32000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "AustinEkeler",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.4",
+                "Pts.": 150.1,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "TravisKelce",
+                "Pos.": "TE",
+                "round": 1,
+                "Pick": "1.5",
+                "Pts.": 197.6,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "TyreekHill",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.6",
+                "Pts.": 322.70000000000005,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "StefonDiggs",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.7",
+                "Pts.": 234.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "AJBrown",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.8",
+                "Pts.": 255.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "SaquonBarkley",
+                "Pos.": "RB",
+                "round": 1,
+                "Pick": "1.9",
+                "Pts.": 165.6,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "CooperKupp",
+                "Pos.": "WR",
+                "round": 1,
+                "Pick": "1.10",
+                "Pts.": 115.7,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "BijanRobinson",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.1",
+                "Pts.": 189.00000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "PatrickMahomes",
+                "Pos.": "QB",
+                "round": 2,
+                "Pick": "2.2",
+                "Pts.": 235.82,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "JoshJacobs",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.3",
+                "Pts.": 181.1,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "NickChubb",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.4",
+                "Pts.": 23.1,
+                "Games Played": 2
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "DavanteAdams",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.5",
+                "Pts.": 186.70000000000005,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "CeeDeeLamb",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.6",
+                "Pts.": 283.70000000000005,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "GarrettWilson",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.7",
+                "Pts.": 176.20000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "DerrickHenry",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.8",
+                "Pts.": 194.78,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "AmonRaStBrown",
+                "Pos.": "WR",
+                "round": 2,
+                "Pick": "2.9",
+                "Pts.": 228.6,
+                "Games Played": 12
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "TonyPollard",
+                "Pos.": "RB",
+                "round": 2,
+                "Pick": "2.10",
+                "Pts.": 187.10000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "JonathanTaylor",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.1",
+                "Pts.": 101.1,
+                "Games Played": 7
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "JoshAllen",
+                "Pos.": "QB",
+                "round": 3,
+                "Pick": "3.2",
+                "Pts.": 307.28,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "JaylenWaddle",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.3",
+                "Pts.": 164.20000000000002,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "ChrisOlave",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.4",
+                "Pts.": 187.80000000000004,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JalenHurts",
+                "Pos.": "QB",
+                "round": 3,
+                "Pick": "3.5",
+                "Pts.": 291.68,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "TravisEtienne",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.6",
+                "Pts.": 226.89999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "MarkAndrews",
+                "Pos.": "TE",
+                "round": 3,
+                "Pick": "3.7",
+                "Pts.": 135.4,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "TeeHiggins",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.8",
+                "Pts.": 87.60000000000001,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "DeVontaSmith",
+                "Pos.": "WR",
+                "round": 3,
+                "Pick": "3.9",
+                "Pts.": 193.7,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "NajeeHarris",
+                "Pos.": "RB",
+                "round": 3,
+                "Pick": "3.10",
+                "Pts.": 131.9,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "LamarJackson",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.1",
+                "Pts.": 253.76,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "DKMetcalf",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.2",
+                "Pts.": 179.39999999999998,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "JustinFields",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.3",
+                "Pts.": 162.20000000000002,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "JoeBurrow",
+                "Pos.": "QB",
+                "round": 4,
+                "Pick": "4.4",
+                "Pts.": 147.16000000000003,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "JoeMixon",
+                "Pos.": "RB",
+                "round": 4,
+                "Pick": "4.5",
+                "Pts.": 199.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JahmyrGibbs",
+                "Pos.": "RB",
+                "round": 4,
+                "Pick": "4.6",
+                "Pts.": 179.00000000000006,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "RhamondreStevenson",
+                "Pos.": "RB",
+                "round": 4,
+                "Pick": "4.7",
+                "Pts.": 145.70000000000002,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "CalvinRidley",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.8",
+                "Pts.": 164.70000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "AaronJones",
+                "Pos.": "RB",
+                "round": 4,
+                "Pick": "4.9",
+                "Pts.": 76.4,
+                "Games Played": 7
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "KeenanAllen",
+                "Pos.": "WR",
+                "round": 4,
+                "Pick": "4.10",
+                "Pts.": 278.86,
+                "Games Played": 13
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "JustinHerbert",
+                "Pos.": "QB",
+                "round": 5,
+                "Pick": "5.1",
+                "Pts.": 234.15999999999997,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "DeeboSamuel",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.2",
+                "Pts.": 189.0,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "TrevorLawrence",
+                "Pos.": "QB",
+                "round": 5,
+                "Pick": "5.3",
+                "Pts.": 222.34,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "TJHockenson",
+                "Pos.": "TE",
+                "round": 5,
+                "Pick": "5.4",
+                "Pts.": 196.90000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "AmariCooper",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.5",
+                "Pts.": 154.6,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "AaronRodgers",
+                "Pos.": "QB",
+                "round": 5,
+                "Pick": "5.6",
+                "Pts.": 0.0,
+                "Games Played": 1
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "DeAndreHopkins",
+                "Pos.": "WR",
+                "round": 5,
+                "Pick": "5.7",
+                "Pts.": 183.70000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "GeorgeKittle",
+                "Pos.": "TE",
+                "round": 5,
+                "Pick": "5.8",
+                "Pts.": 170.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "KennethWalker",
+                "Pos.": "RB",
+                "round": 5,
+                "Pick": "5.9",
+                "Pts.": 147.0,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "DarrenWaller",
+                "Pos.": "TE",
+                "round": 5,
+                "Pick": "5.10",
+                "Pts.": 80.4,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "DJMoore",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.1",
+                "Pts.": 231.20000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "TerryMcLaurin",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.2",
+                "Pts.": 141.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "JKDobbins",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.3",
+                "Pts.": 11.7,
+                "Games Played": 1
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "DameonPierce",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.4",
+                "Pts.": 70.7,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "AlexanderMattison",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.5",
+                "Pts.": 124.39999999999999,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "BreeceHall",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.6",
+                "Pts.": 188.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "ChristianWatson",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.7",
+                "Pts.": 101.29999999999998,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "KylePitts",
+                "Pos.": "TE",
+                "round": 6,
+                "Pick": "6.8",
+                "Pts.": 110.50000000000001,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "DrakeLondon",
+                "Pos.": "WR",
+                "round": 6,
+                "Pick": "6.9",
+                "Pts.": 145.37999999999997,
+                "Games Played": 12
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "RachaadWhite",
+                "Pos.": "RB",
+                "round": 6,
+                "Pick": "6.10",
+                "Pts.": 204.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "MikeWilliams",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.1",
+                "Pts.": 50.2,
+                "Games Played": 3
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "DallasGoedert",
+                "Pos.": "TE",
+                "round": 7,
+                "Pick": "7.2",
+                "Pts.": 98.0,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "JamesConner",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.3",
+                "Pts.": 104.7,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "DAndreSwift",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.4",
+                "Pts.": 167.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "MilesSanders",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.5",
+                "Pts.": 76.50000000000001,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "TylerLockett",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.6",
+                "Pts.": 162.1,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "JerryJeudy",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.7",
+                "Pts.": 98.69999999999999,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "BrandonAiyuk",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.8",
+                "Pts.": 195.29999999999998,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "CamAkers",
+                "Pos.": "RB",
+                "round": 7,
+                "Pick": "7.9",
+                "Pts.": 46.7,
+                "Games Played": 7
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "ChrisGodwin",
+                "Pos.": "WR",
+                "round": 7,
+                "Pick": "7.10",
+                "Pts.": 141.20000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "ChristianKirk",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.1",
+                "Pts.": 150.26000000000002,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "MichaelPittman",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.2",
+                "Pts.": 221.39999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "GeorgePickens",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.3",
+                "Pts.": 145.20000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "MarquiseBrown",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.4",
+                "Pts.": 134.70000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "DavidNjoku",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.5",
+                "Pts.": 141.00000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "IsiahPacheco",
+                "Pos.": "RB",
+                "round": 8,
+                "Pick": "8.6",
+                "Pts.": 173.8,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "JaxonSmithNjigba",
+                "Pos.": "WR",
+                "round": 8,
+                "Pick": "8.7",
+                "Pts.": 110.3,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "EvanEngram",
+                "Pos.": "TE",
+                "round": 8,
+                "Pick": "8.8",
+                "Pts.": 170.10000000000002,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "JavonteWilliams",
+                "Pos.": "RB",
+                "round": 8,
+                "Pick": "8.9",
+                "Pts.": 135.0,
+                "Games Played": 12
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "AlvinKamara",
+                "Pos.": "RB",
+                "round": 8,
+                "Pick": "8.10",
+                "Pts.": 201.60000000000002,
+                "Games Played": 10
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "MikeEvans",
+                "Pos.": "WR",
+                "round": 9,
+                "Pick": "9.1",
+                "Pts.": 224.00000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "PatFreiermuth",
+                "Pos.": "TE",
+                "round": 9,
+                "Pick": "9.2",
+                "Pts.": 60.7,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "JamesCook",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.3",
+                "Pts.": 178.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "DeshaunWatson",
+                "Pos.": "QB",
+                "round": 9,
+                "Pick": "9.4",
+                "Pts.": 86.80000000000001,
+                "Games Played": 6
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "JahanDotson",
+                "Pos.": "WR",
+                "round": 9,
+                "Pick": "9.5",
+                "Pts.": 113.8,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "DalvinCook",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.6",
+                "Pts.": 38.2,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "DavidMontgomery",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.7",
+                "Pts.": 159.60000000000002,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "JamaalWilliams",
+                "Pos.": "RB",
+                "round": 9,
+                "Pick": "9.8",
+                "Pts.": 31.400000000000006,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "ColeKmet",
+                "Pos.": "TE",
+                "round": 9,
+                "Pick": "9.9",
+                "Pts.": 146.0,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "DaltonSchultz",
+                "Pos.": "TE",
+                "round": 9,
+                "Pick": "9.10",
+                "Pts.": 113.5,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "AJDillon",
+                "Pos.": "RB",
+                "round": 10,
+                "Pick": "10.1",
+                "Pts.": 107.69999999999999,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "DiontaeJohnson",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.2",
+                "Pts.": 102.50000000000001,
+                "Games Played": 9
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "KadariusToney",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.4",
+                "Pts.": 50.50000000000001,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "MichaelThomas",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.5",
+                "Pts.": 89.80000000000001,
+                "Games Played": 10
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "CourtlandSutton",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.6",
+                "Pts.": 176.89999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "BrandinCooks",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.7",
+                "Pts.": 126.7,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "JordanAddison",
+                "Pos.": "WR",
+                "round": 10,
+                "Pick": "10.9",
+                "Pts.": 169.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "DaltonKincaid",
+                "Pos.": "TE",
+                "round": 10,
+                "Pick": "10.10",
+                "Pts.": 120.49999999999999,
+                "Games Played": 12
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "KhalilHerbert",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.1",
+                "Pts.": 64.2,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "GabeDavis",
+                "Pos.": "WR",
+                "round": 11,
+                "Pick": "11.4",
+                "Pts.": 134.3,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "ZayFlowers",
+                "Pos.": "WR",
+                "round": 11,
+                "Pick": "11.5",
+                "Pts.": 162.89999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "KirkCousins",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.6",
+                "Pts.": 149.73999999999998,
+                "Games Played": 8
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "AntonioGibson",
+                "Pos.": "RB",
+                "round": 11,
+                "Pick": "11.7",
+                "Pts.": 96.5,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "JuJuSmithSchuster",
+                "Pos.": "WR",
+                "round": 11,
+                "Pick": "11.8",
+                "Pts.": 61.00000000000001,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "TuaTagovailoa",
+                "Pos.": "QB",
+                "round": 11,
+                "Pick": "11.10",
+                "Pts.": 219.37999999999997,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Kuppin\u2019 Farts",
+                "roster_id": 10,
+                "Name": "TreylonBurks",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.1",
+                "Pts.": 23.200000000000003,
+                "Games Played": 6
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "ElijahMoore",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.4",
+                "Pts.": 107.4,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Nick's Chubb (Revival)",
+                "roster_id": 4,
+                "Name": "RashaadPenny",
+                "Pos.": "RB",
+                "round": 12,
+                "Pick": "12.5",
+                "Pts.": 3.2,
+                "Games Played": 2
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "BrianRobinson",
+                "Pos.": "RB",
+                "round": 12,
+                "Pick": "12.7",
+                "Pts.": 176.00000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "OdellBeckham",
+                "Pos.": "WR",
+                "round": 12,
+                "Pick": "12.9",
+                "Pts.": 97.50000000000001,
+                "Games Played": 11
+            },
+            {
+                "Owner": "Moe Lester (Again)",
+                "roster_id": 5,
+                "Name": "DakPrescott",
+                "Pos.": "QB",
+                "round": 13,
+                "Pick": "13.2",
+                "Pts.": 272.70000000000005,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "AnthonyRichardson",
+                "Pos.": "QB",
+                "round": 13,
+                "Pick": "13.3",
+                "Pts.": 72.68,
+                "Games Played": 4
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "QuentinJohnston",
+                "Pos.": "WR",
+                "round": 13,
+                "Pick": "13.7",
+                "Pts.": 68.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "JaredGoff",
+                "Pos.": "QB",
+                "round": 13,
+                "Pick": "13.8",
+                "Pts.": 212.06000000000003,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "GenoSmith",
+                "Pos.": "QB",
+                "round": 13,
+                "Pick": "13.9",
+                "Pts.": 172.72000000000003,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Ray Rices Fiancee",
+                "roster_id": 6,
+                "Name": "ChigOkonkwo",
+                "Pos.": "TE",
+                "round": 14,
+                "Pick": "14.2",
+                "Pts.": 76.5,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Justin Cream Fields",
+                "roster_id": 8,
+                "Name": "TylerHigbee",
+                "Pos.": "TE",
+                "round": 14,
+                "Pick": "14.3",
+                "Pts.": 82.7,
+                "Games Played": 12
+            },
+            {
+                "Owner": "Tua In The Pink",
+                "roster_id": 2,
+                "Name": "JaylenWarren",
+                "Pos.": "RB",
+                "round": 14,
+                "Pick": "14.4",
+                "Pts.": 146.39999999999998,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Fratson",
+                "roster_id": 3,
+                "Name": "SamLaPorta",
+                "Pos.": "TE",
+                "round": 14,
+                "Pick": "14.6",
+                "Pts.": 176.6,
+                "Games Played": 13
+            },
+            {
+                "Owner": "Women Respecters",
+                "roster_id": 9,
+                "Name": "DanielJones",
+                "Pos.": "QB",
+                "round": 14,
+                "Pick": "14.7",
+                "Pts.": 56.96,
+                "Games Played": 6
+            },
+            {
+                "Owner": "Matt",
+                "roster_id": 7,
+                "Name": "ZachCharbonnet",
+                "Pos.": "RB",
+                "round": 14,
+                "Pick": "14.8",
+                "Pts.": 86.8,
+                "Games Played": 12
+            },
+            {
+                "Owner": "RAMS HOUSE! ",
+                "roster_id": 1,
+                "Name": "SamajePerine",
+                "Pos.": "RB",
+                "round": 14,
+                "Pick": "14.10",
+                "Pts.": 98.0,
+                "Games Played": 13
             }
         ]
     }

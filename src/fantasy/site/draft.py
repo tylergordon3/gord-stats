@@ -131,4 +131,11 @@ def save_games_missed(season_str: str):
     missing["% of Games Missed"] = (missing["Total Games Missed"] / missing["tot_games"]).apply(
         lambda x: f"{x:.2%}")
     archive.save_statistic(season_str, "missing_df", missing.reset_index().to_dict(orient="records"))
+
+    # Per-player detail so the injury section can weight injuries by how much the
+    # player mattered (draft capital, scoring pace) instead of counting all missed
+    # games equally. Tiering/weighting happens at render time in src.site.injuries.
+    detail = df[["Owner", "roster_id", "Name", "Pos.", "round", "Pick",
+                 "Pts.", "Games Played"]].copy()
+    archive.save_statistic(season_str, "injury_detail_df", detail.to_dict(orient="records"))
     print(f"[games-missed] archived {season_str}")
