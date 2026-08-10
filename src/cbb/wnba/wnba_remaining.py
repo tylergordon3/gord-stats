@@ -21,12 +21,14 @@ Requires:
 
 import argparse
 import json
+import math
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from cbb.lib import paths
 from cbb.wnba import wnba_schedule
 from cbb.wnba import wnba_fantasy
+from cbb.wnba import wnba_defense
 
 ET = ZoneInfo("America/New_York")
 DEBUG = False
@@ -101,6 +103,15 @@ def teams_playing_on(schedule: dict, date_str: str) -> set[str]:
                 break
     return playing
  
+def get_avg_points(player: dict, season: int = 2026) -> float:
+    """Season-average fantasy points; falls back to ESPN's season projection."""
+    stats = {s["id"]: s for s in player.get("stats", [])}
+    for stat_id in (f"00{season}", f"10{season}"):
+        s = stats.get(stat_id)
+        if s and s.get("appliedAverage"):
+            return s["appliedAverage"]
+    return 0.0
+
 def get_players(fantasy_team: dict) -> list[dict]:
     """Extract non-IR players with position category from a fantasy team."""
     players = []
@@ -116,30 +127,82 @@ def get_players(fantasy_team: dict) -> list[dict]:
             "is_g":   G_SLOT  in es,
             "is_fc":  FC_SLOT in es,
             "is_out":  player.get("injuryStatus", "ACTIVE") == "OUT",
+            "avg":    get_avg_points(player),
         })
     return players
+
+def opponent_on(schedule: dict, date_str: str, abbrev: str) -> str | None:
+    """Opponent abbreviation for a team's first unplayed game on a date."""
+    for g in schedule.get(date_str, {}).get(abbrev, []):
+        if g.get("status") != "post":
+            return g["away"] if g["home"] == abbrev else g["home"]
+    return None
+
+def project_points(player: dict, opp: str | None, factors: dict) -> float:
+    """Player's average scaled by the opponent's defense vs their position group."""
+    group  = "G" if player["is_g"] else "FC"
+    factor = factors.get(opp, {}).get(group, 1.0) if opp else 1.0
+    return player["avg"] * factor
+
+# A full player-game (~40 min) swings a fantasy score by roughly ±8 points,
+# so the margin's std dev scales as 8*sqrt(games) ≈ 1.3*sqrt(total minutes).
+SIGMA_PER_SQRT_MIN = 1.3
+
+def win_probability(home_proj: float, away_proj: float,
+                    home_min: float, away_min: float) -> float:
+    """
+    P(home wins) given projected finals and MAX minutes left to play.
+    The projected margin covers points needed (current gap + expected
+    remaining production); the minutes left set how much can still change —
+    as clocks run out the leader's probability hardens toward certainty.
+    """
+    margin    = home_proj - away_proj
+    total_min = home_min + away_min
+    if total_min <= 0:
+        return 1.0 if margin > 0 else 0.0 if margin < 0 else 0.5
+    sigma = SIGMA_PER_SQRT_MIN * math.sqrt(total_min)
+    return 0.5 * (1 + math.erf(margin / (sigma * math.sqrt(2))))
  
 # ── Core optimizer ────────────────────────────────────────────────────────────
-def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tuple[int, list]:
+def calc_max_games(
+    players: list[dict],
+    dates: list[str],
+    schedule: dict,
+    factors: dict | None = None,
+    live_mins: dict | None = None,
+) -> tuple[int, float, float, list]:
     """
     Greedy day-by-day slot filler. For each date:
       1. Fill up to 2 G slots from active guards with a game that day
       2. Fill up to 3 F/C slots from active forwards/centers with a game that day
       3. Fill 1 UTIL slot from any remaining active player with a game that day
- 
+
+    Within each pool, higher-averaging players get slots first, and each
+    slotted player is projected for avg points x opponent defense factor
+    vs their position group.
+
     OUT players are excluded from slot counts but appear in the daily log
     with is_out=True so the display layer can highlight them.
- 
-    Returns (total_max_games, daily_log).
+
+    Minutes are the MAX a slotted player could still play: the live game
+    clock (via live_mins {abbrev: minutes}) for today's games, 40 for any
+    game on a future day.
+
+    Returns (total_max_games, total_projected_points, total_max_minutes, daily_log).
     daily_log is a list of (date_str, slots_filled, out_players) where:
-      slots_filled = list of (slot_label, player_name, abbrev)
+      slots_filled = list of (slot_label, player_name, abbrev, proj_pts, opp, mins_left)
       out_players  = list of (player_name, abbrev) who have a game but are OUT
     """
+    factors = factors or {}
+    live_mins = live_mins if live_mins is not None else {}
+    today = today_et()
     total  = 0
+    proj_total = 0.0
+    min_total  = 0.0
     daily_log = []
     for d in dates:
         playing   = teams_playing_on(schedule, d)
-        
+
         for team in playing:
             if team not in TEAM_COUNT:
                 TEAM_COUNT[team] = [d]
@@ -151,45 +214,161 @@ def calc_max_games(players: list[dict], dates: list[str], schedule: dict) -> tup
         # Split into active and out players who have a game today
         active    = [p for p in players if p["abbrev"] in playing and not p["is_out"]]
         out_today = [p for p in players if p["abbrev"] in playing and p["is_out"]]
- 
+
+        active.sort(key=lambda p: p["avg"], reverse=True)
         guards = [p for p in active if p["is_g"]]
         fcs    = [p for p in active if p["is_fc"]]
- 
+
         used   = set()
         slots  = []
- 
-        # Guards
-        for p in guards:
-            if len([s for s in slots if s[0] == "G"]) >= G_LIMIT:
-                break
-            used.add(p["name"])
-            slots.append(("G", p["name"], p["abbrev"]))
- 
-        # F/C
-        for p in fcs:
-            if len([s for s in slots if s[0] == "F/C"]) >= FC_LIMIT:
-                break
-            used.add(p["name"])
-            slots.append(("F/C", p["name"], p["abbrev"]))
- 
-        # UTIL — any unused player with a game
-        for p in active:
-            if len([s for s in slots if s[0] == "UTIL"]) >= UTIL_LIMIT:
-                break
-            if p["name"] not in used:
+
+        def fill(label, pool, limit):
+            for p in pool:
+                if len([s for s in slots if s[0] == label]) >= limit:
+                    break
+                if p["name"] in used:
+                    continue
                 used.add(p["name"])
-                slots.append(("UTIL", p["name"], p["abbrev"]))
- 
+                opp  = opponent_on(schedule, d, p["abbrev"])
+                proj = project_points(p, opp, factors)
+                if d == today:
+                    mins = live_mins.get(p["abbrev"], 40.0)
+                else:
+                    mins = 40.0
+                slots.append((label, p["name"], p["abbrev"], proj, opp, mins))
+
+        fill("G", guards, G_LIMIT)
+        fill("F/C", fcs, FC_LIMIT)
+        fill("UTIL", active, UTIL_LIMIT)
+
         total += len(slots)
+        proj_total += sum(s[3] for s in slots)
+        min_total  += sum(s[5] for s in slots)
         daily_log.append((d, slots, [(p["name"], p["abbrev"]) for p in out_today]))
-    return total, daily_log
+    return total, proj_total, min_total, daily_log
  
+# ── Playoff bracket ───────────────────────────────────────────────────────────
+PLAYOFF_ROUND_NAMES = {1: "Semifinals", 2: "Championship"}
+
+def _bracket_team_html(team, score, is_winner, tbd_label="TBD"):
+    if team is None:
+        return f"""
+            <div class="bracket-team tbd">
+              <span class="bseed">–</span>
+              <span class="bteam-name">{tbd_label}</span>
+              <span class="bscore"></span>
+            </div>"""
+    rec = team.get("record", {}).get("overall", {})
+    rec_s = f"{rec.get('wins', 0)}-{rec.get('losses', 0)}"
+    cls = "bracket-team winner" if is_winner else "bracket-team"
+    score_s = f"{score:.0f}" if score is not None else ""
+    return f"""
+            <div class="{cls}">
+              <span class="bseed">{team.get("playoffSeed", "–")}</span>
+              <span class="bteam-name">{team["name"]} <em>({rec_s})</em></span>
+              <span class="bscore">{score_s}</span>
+            </div>"""
+
+def _bracket_game_html(home, away, home_score, away_score, winner, tbd=("TBD", "TBD")):
+    return f"""
+          <div class="bracket-game">
+            {_bracket_team_html(home, home_score, winner == "HOME", tbd[0])}
+            {_bracket_team_html(away, away_score, winner == "AWAY", tbd[1])}
+          </div>"""
+
+def playoff_bracket_html(fantasy_data) -> str:
+    """
+    Winners-bracket view for the league playoffs. Uses real playoff matchups
+    from the ESPN schedule once they exist; until then synthesizes the
+    semifinal pairings from current playoff seeds (1v4, 2v3).
+    """
+    ss        = fantasy_data["settings"]["scheduleSettings"]
+    n_regular = ss["matchupPeriodCount"]
+    n_teams   = ss.get("playoffTeamCount", 4)
+    teams     = {t["id"]: t for t in fantasy_data["teams"]}
+    seeds     = {t.get("playoffSeed"): t for t in fantasy_data["teams"]}
+
+    playoff = [m for m in fantasy_data["schedule"]
+               if m.get("matchupPeriodId", 0) > n_regular]
+    winners = [m for m in playoff
+               if m.get("playoffTierType", "WINNERS_BRACKET") == "WINNERS_BRACKET"]
+    consolation = [m for m in playoff if m not in winners]
+
+    rounds = {}
+    for m in winners:
+        rounds.setdefault(m["matchupPeriodId"], []).append(m)
+
+    n_rounds = max(1, (n_teams - 1).bit_length())  # 4 teams -> 2 rounds
+
+    html = ['<section class="wnba-playoff-bracket">', "<h2>Playoff Bracket</h2>"]
+    if not winners:
+        html.append('<p class="week-meta">Seeds from current standings — '
+                    "bracket locks when the regular season finalizes</p>")
+    html.append('<div class="bracket">')
+
+    for i in range(1, n_rounds + 1):
+        period = n_regular + i
+        name   = PLAYOFF_ROUND_NAMES.get(i, f"Round {i}")
+        start, end = WEEK_DATES.get(period, (None, None))
+        dates = f' <span class="round-dates">{start} → {end}</span>' if start else ""
+        html.append(f'<div class="bracket-round"><h3>{name}{dates}</h3>')
+
+        ms = rounds.get(period, [])
+        if ms:
+            for m in ms:
+                home = teams.get(m.get("home", {}).get("teamId"))
+                away = teams.get(m.get("away", {}).get("teamId"))
+                hs = m.get("home", {}).get("totalPointsLive") or m.get("home", {}).get("totalPoints")
+                as_ = m.get("away", {}).get("totalPointsLive") or m.get("away", {}).get("totalPoints")
+                html.append(_bracket_game_html(home, away, hs, as_, m.get("winner", "UNDECIDED")))
+        elif i == 1:
+            # Synthesize semis from seeds: 1vN, 2v(N-1), ...
+            for s in range(1, n_teams // 2 + 1):
+                html.append(_bracket_game_html(
+                    seeds.get(s), seeds.get(n_teams + 1 - s), None, None, "UNDECIDED"
+                ))
+        else:
+            n_games = n_teams // (2 ** i)
+            for g in range(n_games):
+                prev = PLAYOFF_ROUND_NAMES.get(i - 1, f"Round {i - 1}")
+                html.append(_bracket_game_html(
+                    None, None, None, None, "UNDECIDED",
+                    tbd=(f"Winner {prev} 1", f"Winner {prev} 2"),
+                ))
+        html.append("</div>")
+
+    html.append("</div>")
+
+    if consolation:
+        html.append('<h3 class="consolation-title">Consolation</h3>')
+        html.append('<div class="bracket">')
+        cons_rounds = {}
+        for m in consolation:
+            cons_rounds.setdefault(m["matchupPeriodId"], []).append(m)
+        for period in sorted(cons_rounds):
+            start, end = WEEK_DATES.get(period, (None, None))
+            dates = f' <span class="round-dates">{start} → {end}</span>' if start else ""
+            html.append(f'<div class="bracket-round"><h3>Week {period}{dates}</h3>')
+            for m in cons_rounds[period]:
+                home = teams.get(m.get("home", {}).get("teamId"))
+                away = teams.get(m.get("away", {}).get("teamId"))
+                hs = m.get("home", {}).get("totalPointsLive") or m.get("home", {}).get("totalPoints")
+                as_ = m.get("away", {}).get("totalPointsLive") or m.get("away", {}).get("totalPoints")
+                html.append(_bracket_game_html(home, away, hs, as_, m.get("winner", "UNDECIDED")))
+            html.append("</div>")
+        html.append("</div>")
+
+    html.append("</section>")
+    return "\n".join(html)
+
 # ── Matchup comparison ────────────────────────────────────────────────────────
 def get_week_matchups(fantasy_data: dict, week: int) -> list[dict]:
     """Return matchup objects for the given week."""
     return [m for m in fantasy_data["schedule"] if m.get("matchupPeriodId") == week]
  
-def matchup_scoreboard_html(fantasy_data, week, max_games):
+def matchup_scoreboard_html(fantasy_data, week, max_games, proj_left=None, min_left=None):
+    proj_left = proj_left or {}
+    min_left = min_left or {}
     matchups = get_week_matchups(fantasy_data, week)
     all_teams = {t["id"]: t["name"] for t in fantasy_data["teams"]}
 
@@ -217,6 +396,12 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
         home_rem = max_games.get(home_id, 0)
         away_rem = max_games.get(away_id, 0)
 
+        home_min = min_left.get(home_id, 0)
+        away_min = min_left.get(away_id, 0)
+
+        home_proj = home_live + proj_left.get(home_id, 0)
+        away_proj = away_live + proj_left.get(away_id, 0)
+
         winner = m.get("winner", "UNDECIDED")
         status = "Final" if winner != "UNDECIDED" else "In Progress"
 
@@ -232,11 +417,44 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
             home_class = away_class = "team-side tied"
             summary = "Tied"
 
+        home_proj_class = " proj-leader" if home_proj > away_proj else ""
+        away_proj_class = " proj-leader" if away_proj > home_proj else ""
+
+        if winner == "HOME":
+            p_home = 1.0
+        elif winner == "AWAY":
+            p_home = 0.0
+        else:
+            p_home = win_probability(home_proj, away_proj, home_min, away_min)
+
+        home_pct = round(100 * p_home)
+        # An undecided matchup with time left never shows 0/100
+        if winner == "UNDECIDED" and (home_min + away_min) > 0:
+            home_pct = min(99, max(1, home_pct))
+        away_pct = 100 - home_pct
+
+        home_fill = "proj-fill proj-win" if home_pct > away_pct else "proj-fill"
+        away_fill = "proj-fill proj-win" if away_pct > home_pct else "proj-fill"
+
+        tooltip = f"Projected final: {home_name} {home_proj:.0f} – {away_proj:.0f} {away_name}"
+        if winner == "UNDECIDED" and gap > 0:
+            trailer, t_min = (
+                (away_name, away_min) if home_live > away_live else (home_name, home_min)
+            )
+            tooltip += f" · {trailer} needs {gap:.0f} pts with {t_min:.0f} min left"
+
         html.append(f"""
         <article class="matchup-card">
           <div class="matchup-topline">
             <span>{status}</span>
             <strong>{summary}</strong>
+          </div>
+          <div class="matchup-projline" title="{tooltip}">
+            <span>Win %</span>
+            <div class="proj-bar">
+              <div class="{home_fill}" style="width:{home_pct}%">{home_pct}%</div>
+              <div class="{away_fill}" style="width:{away_pct}%">{away_pct}%</div>
+            </div>
           </div>
 
           <div class="matchup-sides">
@@ -244,7 +462,8 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
               <div class="team-label">Home</div>
               <div class="team-name">{home_name}</div>
               <div class="score">{home_live:.0f}</div>
-              <div class="games-left">{home_rem:.0f} games left</div>
+              <div class="projected{home_proj_class}">Proj final: {home_proj:.0f}</div>
+              <div class="games-left">{home_rem:.0f} games · {home_min:.0f} min left</div>
               <div class="finalized">Finalized: {home_final:.0f}</div>
             </div>
 
@@ -254,7 +473,8 @@ def matchup_scoreboard_html(fantasy_data, week, max_games):
               <div class="team-label">Away</div>
               <div class="team-name">{away_name}</div>
               <div class="score">{away_live:.0f}</div>
-              <div class="games-left">{away_rem:.0f} games left</div>
+              <div class="projected{away_proj_class}">Proj final: {away_proj:.0f}</div>
+              <div class="games-left">{away_rem:.0f} games · {away_min:.0f} min left</div>
               <div class="finalized">Finalized: {away_final:.0f}</div>
             </div>
           </div>
@@ -279,13 +499,21 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
             f'<p class="played-days">Days already played: {", ".join(played_dates)}</p>'
         )
 
-    for ft, total, daily_log in results:
+    for ft, total, proj_total, min_total, daily_log in results:
         html.append(f"""
         <article class="team-report">
           <header class="team-report-header">
             <h3>{ft["name"]}</h3>
-            <div class="max-games">
-              <strong>{int(total)}</strong> MAX games left
+            <div class="header-stats">
+              <div class="max-games">
+                <strong>{int(total)}</strong> MAX games left
+              </div>
+              <div class="max-games proj-total">
+                <strong>{proj_total:.0f}</strong> proj pts left
+              </div>
+              <div class="max-games min-total">
+                <strong>{min_total:.0f}</strong> MAX min left
+              </div>
             </div>
           </header>
         """)
@@ -305,11 +533,13 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                 html.append('<p class="no-games">No startable games</p>')
             else:
                 html.append('<ul class="player-list">')
-                for slot_label, name, abbrev in slots:
+                for slot_label, name, abbrev, proj, opp, mins in slots:
+                    vs = f" title=\"vs {opp} · {mins:.0f} min left\"" if opp else ""
                     html.append(f"""
-                    <li>
+                    <li class="with-proj">
                       <span class="slot">{slot_label}</span>
                       <span class="player-name">{name}</span>
+                      <span class="proj"{vs}>{proj:.1f}</span>
                       <span class="team-abbrev">{abbrev}</span>
                     </li>
                     """)
@@ -403,13 +633,27 @@ def main():
         print(f"  {'Team':<35} {'Max Games':>9}")
         print(f"{'─'*50}")
  
+    # Defense-vs-position factors for projections (empty dict → neutral 1.0)
+    try:
+        factors = wnba_defense.get_defense_factors()
+    except Exception as e:
+        print(f"⚠ Could not load defense factors, using neutral projections: {e}")
+        factors = {}
+
+    # Live game clocks for today's games (missing team → assume full 40)
+    try:
+        live_mins = wnba_defense.live_minutes_by_team(today)
+    except Exception as e:
+        print(f"⚠ Could not fetch live game clocks: {e}")
+        live_mins = {}
+
     results = []
     for ft in teams_to_show:
-        players        = get_players(ft)
-        total, log     = calc_max_games(players, remaining, schedule)
-        results.append((ft, total, log))
+        players                = get_players(ft)
+        total, proj, mins, log = calc_max_games(players, remaining, schedule, factors, live_mins)
+        results.append((ft, total, proj, mins, log))
         if DEBUG:
-            print(f"  {ft['name']:<35} {total:>9}")
+            print(f"  {ft['name']:<35} {total:>9} {proj:>9.1f} {mins:>7.0f}")
  
     if DEBUG:
         print(f"{'─'*50}")
@@ -417,9 +661,18 @@ def main():
     html_parts = []
     # Matchup scoreboard (all matchups for the week, not filtered by --team)
     if not args.no_scoreboard:
-        max_games_by_id = {ft["id"]: total for ft, total, _ in results}
+        # Playoff bracket on top once the regular season is wrapping up
+        n_regular = fantasy_data["settings"]["scheduleSettings"]["matchupPeriodCount"]
+        if week >= n_regular:
+            html_parts.append(playoff_bracket_html(fantasy_data))
+
+        max_games_by_id = {ft["id"]: total for ft, total, _, _, _ in results}
+        proj_left_by_id = {ft["id"]: proj for ft, _, proj, _, _ in results}
+        min_left_by_id  = {ft["id"]: mins for ft, _, _, mins, _ in results}
         html_parts.append(
-            matchup_scoreboard_html(fantasy_data, week, max_games_by_id)
+            matchup_scoreboard_html(
+                fantasy_data, week, max_games_by_id, proj_left_by_id, min_left_by_id
+            )
         )
 
         html_parts.append(
@@ -466,4 +719,9 @@ def wnba_update():
     # update schedule (5 requests an hour max)
     wnba_schedule.main(["--refresh"])
     wnba_fantasy.fetch_and_save()
+    # refresh defense-vs-position cache (only fetches new final games)
+    try:
+        wnba_defense.update_cache()
+    except Exception as e:
+        print(f"⚠ Defense cache update failed: {e}")
     main()
