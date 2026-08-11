@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# Frequent WNBA refresh while games are being played. Run every 10 minutes by
+# cbb-live.timer, and on demand with `deploy/pi-live.sh`.
+#
+# The gate is one ESPN scoreboard call: if no WNBA game is live (or tipping
+# within 30 minutes) the tick exits in about a second. When games are on, it
+# refetches fantasy data, rebuilds the site, and republishes via wrangler —
+# the same direct-upload path as pi-deploy.sh. Git gets a commit at most once
+# an hour: publishing doesn't need git, commits are for the laptop to pull.
+set -euo pipefail
+
+main() {
+  cd "$(git rev-parse --show-toplevel)"
+
+  local VENV="$PWD/.venv"
+  local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
+  export MPLBACKEND="${MPLBACKEND:-Agg}"
+
+  # Don't fight the daily deploy for the repo or the Pi's cores.
+  if systemctl --user is-active --quiet cbb-daily.service 2>/dev/null; then
+    log "cbb-daily is running — skipping this tick"
+    exit 0
+  fi
+
+  ########################################
+  # SECRETS (same contract as pi-deploy.sh)
+  ########################################
+  local SECRETS="$HOME/secrets/cbb-model.env"
+  [ -f "$SECRETS" ] || { echo "❌ no secrets at $SECRETS"; exit 1; }
+  set -o allexport
+  # shellcheck source=/dev/null
+  . "$SECRETS"
+  set +o allexport
+
+  ########################################
+  # GATE + REGENERATE
+  ########################################
+  # shellcheck source=/dev/null
+  . "$VENV/bin/activate"
+
+  local RC=0
+  python -m cbb.wnba.wnba_live || RC=$?
+  if [ "$RC" -eq 3 ]; then
+    exit 0                       # no active games — quiet tick
+  elif [ "$RC" -ne 0 ]; then
+    echo "❌ live refresh failed (rc=$RC)"
+    exit "$RC"
+  fi
+
+  ########################################
+  # BUILD + PUBLISH
+  ########################################
+  export PATH="$HOME/.local/share/gem/ruby/3.3.0/bin:$HOME/gems/bin:$PATH"
+  export BUNDLE_PATH="vendor/bundle"
+  export BUNDLE_WITHOUT="development:test"
+
+  log "jekyll build"
+  bundle exec jekyll build --source docs --destination docs/_site --quiet
+
+  log "deploying to Cloudflare Pages ($PROJECT)"
+  wrangler pages deploy docs/_site --project-name="$PROJECT" --commit-dirty=true >/dev/null
+
+  ########################################
+  # HOURLY COMMIT
+  ########################################
+  local STAMP="$PWD/.last_live_commit" NOW LAST=0
+  NOW=$(date +%s)
+  [ -f "$STAMP" ] && LAST=$(stat -c %Y "$STAMP")
+
+  if [ $((NOW - LAST)) -ge 3600 ]; then
+    local BRANCH
+    BRANCH="$(git branch --show-current)"
+    git add -A docs data
+    if git diff --cached --quiet; then
+      log "no data changes to record"
+    else
+      git commit -q -m "Live update (wnba) $(date '+%Y-%m-%d %H:%M')"
+      if ! git push --quiet origin "$BRANCH" 2>/dev/null; then
+        log "push rejected — rebasing onto origin and retrying"
+        if git pull --rebase --quiet origin "$BRANCH"; then
+          git push --quiet origin "$BRANCH" || log "⚠️ push still failing — will retry next hour"
+        else
+          git rebase --abort || true
+          log "⚠️ rebase failed — leaving commit local, will retry next hour"
+        fi
+      fi
+      log "recorded $(git rev-parse --short HEAD)"
+    fi
+    touch "$STAMP"
+  fi
+
+  log "✅ live tick done"
+}
+
+log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
+
+main "$@"

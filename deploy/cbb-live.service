@@ -1,0 +1,18 @@
+[Unit]
+Description=Live WNBA refresh and publish while games are on
+After=network-online.target
+Wants=network-online.target
+OnFailure=notify@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/apps/cbb-model
+EnvironmentFile=%h/secrets/cbb-model.env
+ExecStart=%h/apps/cbb-model/deploy/pi-live.sh
+# One ESPN check when idle; a fantasy fetch, Jekyll build and wrangler upload
+# when games are live — all comfortably inside 15 minutes on the Pi.
+TimeoutStartSec=900
+Environment=MPLBACKEND=Agg
+
+[Install]
+WantedBy=default.target

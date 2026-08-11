@@ -620,7 +620,7 @@ def load_schedule(path: Path) -> dict:
     return d["schedule"]
  
 # ── CLI ───────────────────────────────────────────────────────────────────────
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Calculate max startable games remaining for each fantasy team."
     )
@@ -636,7 +636,7 @@ def main():
         help="Skip the matchup scoreboard, show only the games-remaining breakdown")
     parser.add_argument("--fantasy-file",  type=Path, default=FANTASY_FILE)
     parser.add_argument("--schedule-file", type=Path, default=SCHEDULE_FILE)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
  
     fantasy_data = load_fantasy(args.fantasy_file)
     schedule     = load_schedule(args.schedule_file)

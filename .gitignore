@@ -50,3 +50,4 @@ vendor/
 Thumbs.db
 
 /home/tgordon/cbb-model/data/live_scores.json
+.last_live_commit

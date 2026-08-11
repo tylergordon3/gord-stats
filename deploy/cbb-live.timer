@@ -1,0 +1,13 @@
+[Unit]
+Description=WNBA live refresh every 10 minutes
+
+[Timer]
+# Every 10 minutes around the clock: the service's scoreboard gate makes
+# off-hours ticks nearly free, so no game-window scheduling is needed here.
+# systemd never overlaps activations of the same oneshot unit, and the script
+# itself skips a tick while cbb-daily is mid-deploy.
+OnCalendar=*:00/10
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target
