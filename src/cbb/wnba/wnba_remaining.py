@@ -296,7 +296,7 @@ def _bracket_game_html(home, away, home_score, away_score, winner, tbd=("TBD", "
             {_bracket_team_html(away, away_score, winner == "AWAY", tbd[1])}
           </div>"""
 
-CONSOLATION_ROUND_NAMES = {1: "Semifinals", 2: "Finals"}
+CONSOLATION_ROUND_NAMES = {1: "Consolation Semifinals", 2: "Consolation Finals"}
 
 def _bracket_rounds_html(teams, seeds, by_period, n_regular,
                          seed_lo, seed_hi, round_names) -> list[str]:
@@ -340,12 +340,30 @@ def _bracket_rounds_html(teams, seeds, by_period, n_regular,
     html.append("</div>")
     return html
 
-def playoff_bracket_html(fantasy_data) -> str:
+def _matchup_seeds(m, teams):
+    return [teams[i].get("playoffSeed", 99)
+            for i in (m.get("home", {}).get("teamId"), m.get("away", {}).get("teamId"))
+            if i in teams]
+
+def is_championship_matchup(m, teams, n_playoff) -> bool:
     """
-    Playoff view: top playoffTeamCount seeds in the championship bracket,
-    every remaining team in the consolation bracket. Real ESPN playoff
-    matchups (split by playoffTierType) drive each bracket once published;
-    until then pairings are synthesized from current playoff seeds.
+    True for winners-bracket matchups. ESPN omits playoffTierType on some
+    leagues — a matchup of only top seeds is championship, else consolation.
+    """
+    tier = m.get("playoffTierType")
+    if tier == "WINNERS_BRACKET":
+        return True
+    if tier:
+        return False
+    s = _matchup_seeds(m, teams)
+    return bool(s) and max(s) <= n_playoff
+
+def playoff_bracket_sections(fantasy_data) -> tuple[str, str]:
+    """
+    (championship, consolation) bracket sections: top playoffTeamCount seeds
+    in the championship bracket, every remaining team in the consolation.
+    Real ESPN playoff matchups drive each bracket once published; until then
+    pairings are synthesized from current playoff seeds.
     """
     ss        = fantasy_data["settings"]["scheduleSettings"]
     n_regular = ss["matchupPeriodCount"]
@@ -358,48 +376,56 @@ def playoff_bracket_html(fantasy_data) -> str:
                if m.get("matchupPeriodId", 0) > n_regular]
     win_by_period, cons_by_period = {}, {}
     for m in playoff:
-        tier = m.get("playoffTierType", "WINNERS_BRACKET")
-        dest = win_by_period if tier == "WINNERS_BRACKET" else cons_by_period
+        dest = (win_by_period if is_championship_matchup(m, teams, n_playoff)
+                else cons_by_period)
         dest.setdefault(m["matchupPeriodId"], []).append(m)
 
-    html = ['<section class="wnba-playoff-bracket">', "<h2>Playoff Bracket</h2>"]
-    if not playoff:
-        html.append('<p class="week-meta">Seeds from current standings — '
-                    "bracket locks when the regular season finalizes</p>")
+    # Best seed first within each round (1v4 above 2v3)
+    for by_period in (win_by_period, cons_by_period):
+        for ms in by_period.values():
+            ms.sort(key=lambda m: min(_matchup_seeds(m, teams) or [99]))
 
-    html.append('<h3 class="bracket-title">Championship Bracket</h3>')
-    html += _bracket_rounds_html(
+    champ = ['<section class="wnba-playoff-bracket">', "<h2>Playoff Bracket</h2>"]
+    if not playoff:
+        champ.append('<p class="week-meta">Seeds from current standings — '
+                     "bracket locks when the regular season finalizes</p>")
+    champ.append('<h3 class="bracket-title">Championship Bracket</h3>')
+    champ += _bracket_rounds_html(
         teams, seeds, win_by_period, n_regular, 1, n_playoff, PLAYOFF_ROUND_NAMES
     )
+    champ.append("</section>")
 
+    cons = []
     if n_total - n_playoff >= 2:
-        html.append('<h3 class="bracket-title consolation-title">Consolation Bracket</h3>')
-        html += _bracket_rounds_html(
+        cons = ['<section class="wnba-playoff-bracket">',
+                '<h3 class="bracket-title consolation-title">Consolation Bracket</h3>']
+        cons += _bracket_rounds_html(
             teams, seeds, cons_by_period, n_regular,
             n_playoff + 1, n_total, CONSOLATION_ROUND_NAMES
         )
+        cons.append("</section>")
 
-    html.append("</section>")
-    return "\n".join(html)
+    return "\n".join(champ), "\n".join(cons)
 
 # ── Matchup comparison ────────────────────────────────────────────────────────
 def get_week_matchups(fantasy_data: dict, week: int) -> list[dict]:
     """Return matchup objects for the given week."""
     return [m for m in fantasy_data["schedule"] if m.get("matchupPeriodId") == week]
  
-def matchup_scoreboard_html(fantasy_data, week, max_games, proj_left=None, min_left=None):
+def matchup_scoreboard_html(fantasy_data, week, max_games, proj_left=None, min_left=None,
+                            matchups=None, title=None, show_updated=True):
     proj_left = proj_left or {}
     min_left = min_left or {}
-    matchups = get_week_matchups(fantasy_data, week)
+    if matchups is None:
+        matchups = get_week_matchups(fantasy_data, week)
     all_teams = {t["id"]: t["name"] for t in fantasy_data["teams"]}
-
-    time_obj = datetime.now(ET)
-    time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
 
     html = []
     html.append('<section class="wnba-fantasy-week">')
-    html.append(f'<h2>Week {week} Matchups</h2>')
-    html.append(f'<p>{time}</p>')
+    html.append(f'<h2>{title or f"Week {week} Matchups"}</h2>')
+    if show_updated:
+        time = datetime.now(ET).strftime("Last Update: %A %m/%d/%y %I:%M %p")
+        html.append(f'<p>{time}</p>')
     html.append('<div class="matchup-grid">')
 
     for m in matchups:
@@ -684,19 +710,46 @@ def main():
     html_parts = []
     # Matchup scoreboard (all matchups for the week, not filtered by --team)
     if not args.no_scoreboard:
-        # Playoff bracket on top once the regular season is wrapping up
-        n_regular = fantasy_data["settings"]["scheduleSettings"]["matchupPeriodCount"]
-        if week >= n_regular:
-            html_parts.append(playoff_bracket_html(fantasy_data))
-
         max_games_by_id = {ft["id"]: total for ft, total, _, _, _, _ in results}
         proj_left_by_id = {ft["id"]: proj for ft, _, proj, _, _, _ in results}
         min_left_by_id  = {ft["id"]: mins for ft, _, _, mins, _, _ in results}
-        html_parts.append(
-            matchup_scoreboard_html(
-                fantasy_data, week, max_games_by_id, proj_left_by_id, min_left_by_id
+
+        def scoreboard(matchups=None, title=None, show_updated=True):
+            return matchup_scoreboard_html(
+                fantasy_data, week, max_games_by_id, proj_left_by_id, min_left_by_id,
+                matchups=matchups, title=title, show_updated=show_updated,
             )
-        )
+
+        ss        = fantasy_data["settings"]["scheduleSettings"]
+        n_regular = ss["matchupPeriodCount"]
+        n_playoff = ss.get("playoffTeamCount", 4)
+        teams_by_id = {t["id"]: t for t in fantasy_data["teams"]}
+
+        if week > n_regular:
+            # Playoffs: championship bracket + its games, then consolation
+            champ_bracket, cons_bracket = playoff_bracket_sections(fantasy_data)
+            week_ms = get_week_matchups(fantasy_data, week)
+            week_ms.sort(key=lambda m: min(_matchup_seeds(m, teams_by_id) or [99]))
+            champ_ms = [m for m in week_ms
+                        if is_championship_matchup(m, teams_by_id, n_playoff)]
+            cons_ms  = [m for m in week_ms if m not in champ_ms]
+
+            html_parts.append(champ_bracket)
+            html_parts.append(scoreboard(champ_ms, f"Championship Matchups — Week {week}"))
+            if cons_bracket:
+                html_parts.append(cons_bracket)
+            if cons_ms:
+                html_parts.append(scoreboard(
+                    cons_ms, f"Consolation Matchups — Week {week}", show_updated=False
+                ))
+        else:
+            # Bracket preview in the last regular-season week
+            if week >= n_regular:
+                champ_bracket, cons_bracket = playoff_bracket_sections(fantasy_data)
+                html_parts.append(champ_bracket)
+                if cons_bracket:
+                    html_parts.append(cons_bracket)
+            html_parts.append(scoreboard())
 
         html_parts.append(
             team_reports_html(
