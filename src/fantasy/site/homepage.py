@@ -8,6 +8,8 @@ First migrated page. Sections:
 
     python -m src.site.homepage            # writes docs/index.html
 """
+import math
+
 import pandas as pd
 
 from src.config import (
@@ -110,6 +112,7 @@ def injury_section() -> str:
     img, table, top = injuries.all_time_missed()
     premium = injuries.PREMIUM_ROUNDS
     top_pct = round((1 - injuries.STARTER_PCTL) * 100)
+    min_games = math.ceil(injuries.REG_WEEKS * injuries.MIN_GAMES_SHARE)
     top_html = "" if top is None else f"""<h2>Most Impactful Injuries</h2>
 <p>The single most damaging player absences across all seasons, ranked by estimated points lost.</p>
 <div class="table-scroll">
@@ -119,9 +122,11 @@ def injury_section() -> str:
     Players not eligible include: traded, waiver wire pickups, or on IR for whole season.</p>
 <p>Not all missed games hurt equally, so each injury is also weighted by how much the player mattered:<br>
 <strong>High-Impact Games Missed</strong> — games missed by players drafted in the first {premium} rounds
-or scoring at weekly-starter pace (top {top_pct}% PPG among drafted players at their position that season).<br>
-<strong>Est. Pts Lost</strong> — games missed &times; the player's PPG, so losing a stud costs far more
-than losing a bench stash.</p>
+or scoring at weekly-starter pace: top {top_pct}% <em>median</em> weekly points among drafted players at
+their position that season, with at least {min_games} games played (so a couple of spike weeks
+don't count as starter production).<br>
+<strong>Est. Pts Lost</strong> — games missed &times; the player's median weekly score, so losing a stud
+costs far more than losing a bench stash.</p>
 <div class="table-scroll">
 {table.to_html()}
 </div>

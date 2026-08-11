@@ -35,6 +35,10 @@ def _num_games(players, pid):
     return players[players["sleeper_id"] == str(pid)]["fantasy_points_ppr"][:13].count()
 
 
+def _med_pts(players, pid):
+    return players[players["sleeper_id"] == str(pid)]["fantasy_points_ppr"][:13].median()
+
+
 def _final_rank(row, df):
     return len(df[df["total_pts"] > row.total_pts]) + 1
 
@@ -96,6 +100,9 @@ def _build(season_str: str):
     df["pos_rank"] = df.apply(lambda x: _pos_rank(x, df[df["position"] == x.position]), axis=1)
     df["total_pts"] = df["player_id"].apply(lambda pid: _sum_pts(players, pid))
     df["num_games"] = df["player_id"].apply(lambda pid: _num_games(players, pid))
+    # Median weekly score: robust "typical week" for injury weighting — a couple
+    # of spike weeks shouldn't read as starter-level production.
+    df["med_ppg"] = df["player_id"].apply(lambda pid: _med_pts(players, pid))
     df["final_rank"] = df.apply(lambda x: _final_rank(x, df), axis=1)
 
     df["final_pos_rank"] = df["name"].apply(
@@ -116,6 +123,7 @@ def _build(season_str: str):
         "pos_diff": "Pos. Rank Δ", "overall_diff": "Overall Rank Δ", "pick_no": "Pick",
         "position": "Pos.", "team_name": "Owner", "total_pts": "Pts.",
         "name": "Name", "team": "Team", "num_games": "Games Played",
+        "med_ppg": "Med PPG",
     })
     df["Pick"] = df["round"].astype(str) + "." + df["pick_in_round"].astype(str)
     return df.drop(columns="pick_in_round"), final_ranks
@@ -136,6 +144,6 @@ def save_games_missed(season_str: str):
     # player mattered (draft capital, scoring pace) instead of counting all missed
     # games equally. Tiering/weighting happens at render time in src.site.injuries.
     detail = df[["Owner", "roster_id", "Name", "Pos.", "round", "Pick",
-                 "Pts.", "Games Played"]].copy()
+                 "Pts.", "Games Played", "Med PPG"]].copy()
     archive.save_statistic(season_str, "injury_detail_df", detail.to_dict(orient="records"))
     print(f"[games-missed] archived {season_str}")

@@ -6,7 +6,7 @@ bar chart and a league table, and weights each injury by how much the player
 mattered: not every missed game hurts equally, so a round-1/2 pick or a player
 producing at weekly-starter pace relative to his position-mates counts as
 "high-impact", and every absence is also priced in estimated points lost
-(games missed x PPG).
+(games missed x median weekly score).
 
 `impact_detail()` is the reusable classifier — import it from other pages as
 injury weighting spreads across the site.
@@ -33,31 +33,39 @@ ARCHIVE_PATH = DATA_DIR / "historical.json"
 REG_WEEKS = 14                  # fantasy regular season, matches src.site.draft
 PREMIUM_ROUNDS = 2              # drafted this early = high-impact regardless of PPG
 # Starter-level scoring is judged against position-mates, not a fixed PPG line:
-# a player qualifies when his PPG reaches this percentile of drafted players at
-# his position (per season, when a season column is present).
+# a player qualifies when his median weekly score reaches this percentile of
+# drafted players at his position (per season, when a season column is present).
+# The median (not the mean) is the yardstick so two spike weeks before an injury
+# don't read as starter-level production, and a minimum share of the season must
+# be played before the sample counts at all.
 STARTER_PCTL = 0.75
+MIN_GAMES_SHARE = 0.25
 
 
 def impact_detail(detail: pd.DataFrame) -> pd.DataFrame:
     """Add injury-impact columns to a per-player `injury_detail_df` frame.
 
-    Adds: Games Missed, PPG, High Impact (premium draft capital OR starter-level
-    scoring pace relative to drafted position-mates), and Est. Pts Lost (games
-    missed x PPG). Players who never played have no PPG, so their Est. Pts Lost
-    is 0 — draft capital is the only signal that flags them.
+    Adds: Games Missed, Med PPG (median weekly score), High Impact (premium
+    draft capital OR starter-level median scoring relative to drafted
+    position-mates, with a minimum games-played sample), and Est. Pts Lost
+    (games missed x median weekly score). Players who never played have no
+    scoring sample, so their Est. Pts Lost is 0 — draft capital is the only
+    signal that flags them.
     """
     out = detail.copy()
     out["Games Missed"] = REG_WEEKS - out["Games Played"]
-    out["PPG"] = (out["Pts."] / out["Games Played"].where(out["Games Played"] > 0)).fillna(0.0)
+    if "Med PPG" not in out.columns:    # seasons archived before the median existed
+        out["Med PPG"] = out["Pts."] / out["Games Played"].where(out["Games Played"] > 0)
+    out["Med PPG"] = out["Med PPG"].fillna(0.0)
 
-    played = out["Games Played"] > 0
+    qualified = out["Games Played"] >= REG_WEEKS * MIN_GAMES_SHARE
     group_keys = (["season"] if "season" in out.columns else []) + ["Pos."]
-    cutoff = (out.loc[played].groupby(group_keys)["PPG"]
+    cutoff = (out.loc[qualified].groupby(group_keys)["Med PPG"]
               .transform(lambda s: s.quantile(STARTER_PCTL)))
-    starter = out["PPG"] >= cutoff.reindex(out.index)   # NaN cutoff (never played) -> False
+    starter = qualified & (out["Med PPG"] >= cutoff.reindex(out.index))
 
     out["High Impact"] = (out["round"] <= PREMIUM_ROUNDS) | starter
-    out["Est. Pts Lost"] = out["Games Missed"] * out["PPG"]
+    out["Est. Pts Lost"] = out["Games Missed"] * out["Med PPG"]
     return out
 
 
@@ -144,10 +152,10 @@ def top_injuries(detail: pd.DataFrame, n: int = 12):
         return None
     hurt = detail[detail["Games Missed"] > 0].copy()
     hurt = hurt.sort_values("Est. Pts Lost", ascending=False).head(n)
-    hurt["PPG"] = hurt["PPG"].map("{:.1f}".format)
+    hurt["Med PPG"] = hurt["Med PPG"].map("{:.1f}".format)
     hurt["Est. Pts Lost"] = hurt["Est. Pts Lost"].round(0).astype(int)
     hurt = hurt.rename(columns={"season": "Season"})
-    hurt = hurt[["Season", "Name", "Pos.", "Owner", "Pick", "PPG",
+    hurt = hurt[["Season", "Name", "Pos.", "Owner", "Pick", "Med PPG",
                  "Games Missed", "Est. Pts Lost"]]
     return styles.default_style(hurt, ["Est. Pts Lost"], cmap="RdYlGn_r")
 
