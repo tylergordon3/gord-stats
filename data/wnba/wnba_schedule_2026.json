@@ -5567,7 +5567,7 @@
           "id": 24996,
           "home": "ATL",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-10"
@@ -5578,7 +5578,7 @@
           "id": 24996,
           "home": "ATL",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-10"
@@ -5589,7 +5589,7 @@
           "id": 24997,
           "home": "SEA",
           "away": "CHI",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-10"
@@ -5600,7 +5600,7 @@
           "id": 24997,
           "home": "SEA",
           "away": "CHI",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-10"
