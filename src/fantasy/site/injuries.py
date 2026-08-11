@@ -4,8 +4,9 @@ All-Time Injury Impacts section of the homepage.
 Aggregates per-season "games missed by drafted players" into a by-season stacked
 bar chart and a league table, and weights each injury by how much the player
 mattered: not every missed game hurts equally, so a round-1/2 pick or a player
-producing at weekly-starter pace counts as "high-impact" and every absence is
-also priced in estimated points lost (games missed x PPG).
+producing at weekly-starter pace relative to his position-mates counts as
+"high-impact", and every absence is also priced in estimated points lost
+(games missed x PPG).
 
 `impact_detail()` is the reusable classifier — import it from other pages as
 injury weighting spreads across the site.
@@ -31,22 +32,30 @@ ARCHIVE_PATH = DATA_DIR / "historical.json"
 
 REG_WEEKS = 14                  # fantasy regular season, matches src.site.draft
 PREMIUM_ROUNDS = 2              # drafted this early = high-impact regardless of PPG
-# PPG at or above which a player counts as a weekly starter for his position.
-STARTER_PPG = {"QB": 16.0, "RB": 12.0, "WR": 12.0, "TE": 8.0}
+# Starter-level scoring is judged against position-mates, not a fixed PPG line:
+# a player qualifies when his PPG reaches this percentile of drafted players at
+# his position (per season, when a season column is present).
+STARTER_PCTL = 0.75
 
 
 def impact_detail(detail: pd.DataFrame) -> pd.DataFrame:
     """Add injury-impact columns to a per-player `injury_detail_df` frame.
 
     Adds: Games Missed, PPG, High Impact (premium draft capital OR starter-level
-    scoring pace), and Est. Pts Lost (games missed x PPG). Players who never
-    played have no PPG, so their Est. Pts Lost is 0 — draft capital is the only
-    signal that flags them.
+    scoring pace relative to drafted position-mates), and Est. Pts Lost (games
+    missed x PPG). Players who never played have no PPG, so their Est. Pts Lost
+    is 0 — draft capital is the only signal that flags them.
     """
     out = detail.copy()
     out["Games Missed"] = REG_WEEKS - out["Games Played"]
     out["PPG"] = (out["Pts."] / out["Games Played"].where(out["Games Played"] > 0)).fillna(0.0)
-    starter = out.apply(lambda x: x["PPG"] >= STARTER_PPG.get(x["Pos."], 12.0), axis=1)
+
+    played = out["Games Played"] > 0
+    group_keys = (["season"] if "season" in out.columns else []) + ["Pos."]
+    cutoff = (out.loc[played].groupby(group_keys)["PPG"]
+              .transform(lambda s: s.quantile(STARTER_PCTL)))
+    starter = out["PPG"] >= cutoff.reindex(out.index)   # NaN cutoff (never played) -> False
+
     out["High Impact"] = (out["round"] <= PREMIUM_ROUNDS) | starter
     out["Est. Pts Lost"] = out["Games Missed"] * out["PPG"]
     return out

@@ -109,7 +109,7 @@ def injury_section() -> str:
     """The All-Time Draft Injury Impacts block (heading, note, tables, by-season chart)."""
     img, table, top = injuries.all_time_missed()
     premium = injuries.PREMIUM_ROUNDS
-    thresholds = " / ".join(f"{pos} {ppg:g}" for pos, ppg in injuries.STARTER_PPG.items())
+    top_pct = round((1 - injuries.STARTER_PCTL) * 100)
     top_html = "" if top is None else f"""<h2>Most Impactful Injuries</h2>
 <p>The single most damaging player absences across all seasons, ranked by estimated points lost.</p>
 <div class="table-scroll">
@@ -119,7 +119,7 @@ def injury_section() -> str:
     Players not eligible include: traded, waiver wire pickups, or on IR for whole season.</p>
 <p>Not all missed games hurt equally, so each injury is also weighted by how much the player mattered:<br>
 <strong>High-Impact Games Missed</strong> — games missed by players drafted in the first {premium} rounds
-or averaging weekly-starter points ({thresholds} PPG).<br>
+or scoring at weekly-starter pace (top {top_pct}% PPG among drafted players at their position that season).<br>
 <strong>Est. Pts Lost</strong> — games missed &times; the player's PPG, so losing a stud costs far more
 than losing a bench stash.</p>
 <div class="table-scroll">
