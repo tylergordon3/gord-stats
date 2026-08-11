@@ -2220,10 +2220,59 @@ p {
   color: #0f172a;
 }
 
-.consolation-title {
-  margin: 18px 0 8px;
-  font-size: 0.95rem;
+.bracket-title {
+  margin: 16px 0 8px;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.bracket-title.consolation-title {
+  margin-top: 24px;
   color: #64748b;
+}
+
+@media (max-width: 700px) {
+  .wnba-playoff-bracket {
+    margin: 16px auto;
+  }
+
+  .bracket {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    align-items: start;
+  }
+
+  .bracket-round h3 {
+    margin: 6px 0 6px;
+    font-size: 0.82rem;
+  }
+
+  .round-dates {
+    display: block;
+    margin: 2px 0 0;
+    font-size: 0.72rem;
+  }
+
+  .bracket-game {
+    margin-bottom: 8px;
+    border-radius: 10px;
+  }
+
+  .bracket-team {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+
+  .bseed {
+    width: 20px;
+    height: 20px;
+    font-size: 0.68rem;
+  }
+
+  .bteam-name em {
+    font-size: 0.72rem;
+  }
 }
 
 /* -----------------------------

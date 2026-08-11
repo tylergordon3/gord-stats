@@ -112,6 +112,17 @@ def get_avg_points(player: dict, season: int = 2026) -> float:
             return s["appliedAverage"]
     return 0.0
 
+MINUTES_STAT = "40"  # averageStats["40"] = minutes per game
+
+def get_avg_minutes(player: dict, season: int = 2026) -> float:
+    """Season-average minutes per game; falls back to ESPN's season projection."""
+    stats = {s["id"]: s for s in player.get("stats", [])}
+    for stat_id in (f"00{season}", f"10{season}"):
+        s = stats.get(stat_id)
+        if s and s.get("averageStats", {}).get(MINUTES_STAT):
+            return s["averageStats"][MINUTES_STAT]
+    return 0.0
+
 def get_players(fantasy_team: dict) -> list[dict]:
     """Extract non-IR players with position category from a fantasy team."""
     players = []
@@ -128,6 +139,7 @@ def get_players(fantasy_team: dict) -> list[dict]:
             "is_fc":  FC_SLOT in es,
             "is_out":  player.get("injuryStatus", "ACTIVE") == "OUT",
             "avg":    get_avg_points(player),
+            "mpg":    get_avg_minutes(player),
         })
     return players
 
@@ -144,9 +156,10 @@ def project_points(player: dict, opp: str | None, factors: dict) -> float:
     factor = factors.get(opp, {}).get(group, 1.0) if opp else 1.0
     return player["avg"] * factor
 
-# A full player-game (~40 min) swings a fantasy score by roughly ±8 points,
-# so the margin's std dev scales as 8*sqrt(games) ≈ 1.3*sqrt(total minutes).
-SIGMA_PER_SQRT_MIN = 1.3
+# Margin std dev scales with sqrt(total max minutes left). 2.0 treats a full
+# player-game (~40 min) as ~±12.6 fantasy pts of swing — deliberately generous
+# so favorites aren't shown as overwhelming while games remain.
+SIGMA_PER_SQRT_MIN = 2.0
 
 def win_probability(home_proj: float, away_proj: float,
                     home_min: float, away_min: float) -> float:
@@ -184,13 +197,17 @@ def calc_max_games(
     OUT players are excluded from slot counts but appear in the daily log
     with is_out=True so the display layer can highlight them.
 
-    Minutes are the MAX a slotted player could still play: the live game
-    clock (via live_mins {abbrev: minutes}) for today's games, 40 for any
-    game on a future day.
+    Tracks two minute totals per team:
+      max minutes  — the game clock: live minutes (via live_mins
+                     {abbrev: minutes}) for today, 40 per future game.
+                     Feeds the matchup cards and win probability.
+      proj minutes — each slotted player's average minutes, capped by the
+                     game clock. Feeds the roster lists.
 
-    Returns (total_max_games, total_projected_points, total_max_minutes, daily_log).
+    Returns (total_max_games, total_projected_points, total_max_minutes,
+             total_proj_minutes, daily_log).
     daily_log is a list of (date_str, slots_filled, out_players) where:
-      slots_filled = list of (slot_label, player_name, abbrev, proj_pts, opp, mins_left)
+      slots_filled = list of (slot_label, player_name, abbrev, proj_pts, opp, proj_mins)
       out_players  = list of (player_name, abbrev) who have a game but are OUT
     """
     factors = factors or {}
@@ -199,6 +216,7 @@ def calc_max_games(
     total  = 0
     proj_total = 0.0
     min_total  = 0.0
+    proj_min_total = 0.0
     daily_log = []
     for d in dates:
         playing   = teams_playing_on(schedule, d)
@@ -232,10 +250,11 @@ def calc_max_games(
                 opp  = opponent_on(schedule, d, p["abbrev"])
                 proj = project_points(p, opp, factors)
                 if d == today:
-                    mins = live_mins.get(p["abbrev"], 40.0)
+                    game_mins = live_mins.get(p["abbrev"], 40.0)
                 else:
-                    mins = 40.0
-                slots.append((label, p["name"], p["abbrev"], proj, opp, mins))
+                    game_mins = 40.0
+                p_mins = min(p["mpg"], game_mins)
+                slots.append((label, p["name"], p["abbrev"], proj, opp, game_mins, p_mins))
 
         fill("G", guards, G_LIMIT)
         fill("F/C", fcs, FC_LIMIT)
@@ -244,8 +263,9 @@ def calc_max_games(
         total += len(slots)
         proj_total += sum(s[3] for s in slots)
         min_total  += sum(s[5] for s in slots)
+        proj_min_total += sum(s[6] for s in slots)
         daily_log.append((d, slots, [(p["name"], p["abbrev"]) for p in out_today]))
-    return total, proj_total, min_total, daily_log
+    return total, proj_total, min_total, proj_min_total, daily_log
  
 # ── Playoff bracket ───────────────────────────────────────────────────────────
 PLAYOFF_ROUND_NAMES = {1: "Semifinals", 2: "Championship"}
@@ -276,87 +296,88 @@ def _bracket_game_html(home, away, home_score, away_score, winner, tbd=("TBD", "
             {_bracket_team_html(away, away_score, winner == "AWAY", tbd[1])}
           </div>"""
 
-def playoff_bracket_html(fantasy_data) -> str:
+CONSOLATION_ROUND_NAMES = {1: "Semifinals", 2: "Finals"}
+
+def _bracket_rounds_html(teams, seeds, by_period, n_regular,
+                         seed_lo, seed_hi, round_names) -> list[str]:
     """
-    Winners-bracket view for the league playoffs. Uses real playoff matchups
-    from the ESPN schedule once they exist; until then synthesizes the
-    semifinal pairings from current playoff seeds (1v4, 2v3).
+    One bracket (championship or consolation) as round columns. Renders real
+    matchups for a round when ESPN has them, otherwise synthesizes round 1
+    from seeds (lo v hi, lo+1 v hi-1, ...) and later rounds as TBD.
     """
-    ss        = fantasy_data["settings"]["scheduleSettings"]
-    n_regular = ss["matchupPeriodCount"]
-    n_teams   = ss.get("playoffTeamCount", 4)
-    teams     = {t["id"]: t for t in fantasy_data["teams"]}
-    seeds     = {t.get("playoffSeed"): t for t in fantasy_data["teams"]}
+    n_teams  = seed_hi - seed_lo + 1
+    n_rounds = max(1, (n_teams - 1).bit_length())
 
-    playoff = [m for m in fantasy_data["schedule"]
-               if m.get("matchupPeriodId", 0) > n_regular]
-    winners = [m for m in playoff
-               if m.get("playoffTierType", "WINNERS_BRACKET") == "WINNERS_BRACKET"]
-    consolation = [m for m in playoff if m not in winners]
-
-    rounds = {}
-    for m in winners:
-        rounds.setdefault(m["matchupPeriodId"], []).append(m)
-
-    n_rounds = max(1, (n_teams - 1).bit_length())  # 4 teams -> 2 rounds
-
-    html = ['<section class="wnba-playoff-bracket">', "<h2>Playoff Bracket</h2>"]
-    if not winners:
-        html.append('<p class="week-meta">Seeds from current standings — '
-                    "bracket locks when the regular season finalizes</p>")
-    html.append('<div class="bracket">')
-
+    html = ['<div class="bracket">']
     for i in range(1, n_rounds + 1):
         period = n_regular + i
-        name   = PLAYOFF_ROUND_NAMES.get(i, f"Round {i}")
+        name   = round_names.get(i, f"Round {i}")
         start, end = WEEK_DATES.get(period, (None, None))
         dates = f' <span class="round-dates">{start} → {end}</span>' if start else ""
         html.append(f'<div class="bracket-round"><h3>{name}{dates}</h3>')
 
-        ms = rounds.get(period, [])
+        ms = by_period.get(period, [])
         if ms:
             for m in ms:
                 home = teams.get(m.get("home", {}).get("teamId"))
                 away = teams.get(m.get("away", {}).get("teamId"))
-                hs = m.get("home", {}).get("totalPointsLive") or m.get("home", {}).get("totalPoints")
+                hs  = m.get("home", {}).get("totalPointsLive") or m.get("home", {}).get("totalPoints")
                 as_ = m.get("away", {}).get("totalPointsLive") or m.get("away", {}).get("totalPoints")
                 html.append(_bracket_game_html(home, away, hs, as_, m.get("winner", "UNDECIDED")))
         elif i == 1:
-            # Synthesize semis from seeds: 1vN, 2v(N-1), ...
-            for s in range(1, n_teams // 2 + 1):
+            for s in range(n_teams // 2):
                 html.append(_bracket_game_html(
-                    seeds.get(s), seeds.get(n_teams + 1 - s), None, None, "UNDECIDED"
+                    seeds.get(seed_lo + s), seeds.get(seed_hi - s), None, None, "UNDECIDED"
                 ))
         else:
-            n_games = n_teams // (2 ** i)
-            for g in range(n_games):
-                prev = PLAYOFF_ROUND_NAMES.get(i - 1, f"Round {i - 1}")
+            prev = round_names.get(i - 1, f"Round {i - 1}")
+            for _ in range(max(1, n_teams // (2 ** i))):
                 html.append(_bracket_game_html(
                     None, None, None, None, "UNDECIDED",
                     tbd=(f"Winner {prev} 1", f"Winner {prev} 2"),
                 ))
         html.append("</div>")
-
     html.append("</div>")
+    return html
 
-    if consolation:
-        html.append('<h3 class="consolation-title">Consolation</h3>')
-        html.append('<div class="bracket">')
-        cons_rounds = {}
-        for m in consolation:
-            cons_rounds.setdefault(m["matchupPeriodId"], []).append(m)
-        for period in sorted(cons_rounds):
-            start, end = WEEK_DATES.get(period, (None, None))
-            dates = f' <span class="round-dates">{start} → {end}</span>' if start else ""
-            html.append(f'<div class="bracket-round"><h3>Week {period}{dates}</h3>')
-            for m in cons_rounds[period]:
-                home = teams.get(m.get("home", {}).get("teamId"))
-                away = teams.get(m.get("away", {}).get("teamId"))
-                hs = m.get("home", {}).get("totalPointsLive") or m.get("home", {}).get("totalPoints")
-                as_ = m.get("away", {}).get("totalPointsLive") or m.get("away", {}).get("totalPoints")
-                html.append(_bracket_game_html(home, away, hs, as_, m.get("winner", "UNDECIDED")))
-            html.append("</div>")
-        html.append("</div>")
+def playoff_bracket_html(fantasy_data) -> str:
+    """
+    Playoff view: top playoffTeamCount seeds in the championship bracket,
+    every remaining team in the consolation bracket. Real ESPN playoff
+    matchups (split by playoffTierType) drive each bracket once published;
+    until then pairings are synthesized from current playoff seeds.
+    """
+    ss        = fantasy_data["settings"]["scheduleSettings"]
+    n_regular = ss["matchupPeriodCount"]
+    n_playoff = ss.get("playoffTeamCount", 4)
+    n_total   = len(fantasy_data["teams"])
+    teams     = {t["id"]: t for t in fantasy_data["teams"]}
+    seeds     = {t.get("playoffSeed"): t for t in fantasy_data["teams"]}
+
+    playoff = [m for m in fantasy_data["schedule"]
+               if m.get("matchupPeriodId", 0) > n_regular]
+    win_by_period, cons_by_period = {}, {}
+    for m in playoff:
+        tier = m.get("playoffTierType", "WINNERS_BRACKET")
+        dest = win_by_period if tier == "WINNERS_BRACKET" else cons_by_period
+        dest.setdefault(m["matchupPeriodId"], []).append(m)
+
+    html = ['<section class="wnba-playoff-bracket">', "<h2>Playoff Bracket</h2>"]
+    if not playoff:
+        html.append('<p class="week-meta">Seeds from current standings — '
+                    "bracket locks when the regular season finalizes</p>")
+
+    html.append('<h3 class="bracket-title">Championship Bracket</h3>')
+    html += _bracket_rounds_html(
+        teams, seeds, win_by_period, n_regular, 1, n_playoff, PLAYOFF_ROUND_NAMES
+    )
+
+    if n_total - n_playoff >= 2:
+        html.append('<h3 class="bracket-title consolation-title">Consolation Bracket</h3>')
+        html += _bracket_rounds_html(
+            teams, seeds, cons_by_period, n_regular,
+            n_playoff + 1, n_total, CONSOLATION_ROUND_NAMES
+        )
 
     html.append("</section>")
     return "\n".join(html)
@@ -499,7 +520,7 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
             f'<p class="played-days">Days already played: {", ".join(played_dates)}</p>'
         )
 
-    for ft, total, proj_total, min_total, daily_log in results:
+    for ft, total, proj_total, min_total, proj_min_total, daily_log in results:
         html.append(f"""
         <article class="team-report">
           <header class="team-report-header">
@@ -512,7 +533,7 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                 <strong>{proj_total:.0f}</strong> proj pts left
               </div>
               <div class="max-games min-total">
-                <strong>{min_total:.0f}</strong> MAX min left
+                <strong>~{proj_min_total:.0f}</strong> proj min left
               </div>
             </div>
           </header>
@@ -533,8 +554,8 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                 html.append('<p class="no-games">No startable games</p>')
             else:
                 html.append('<ul class="player-list">')
-                for slot_label, name, abbrev, proj, opp, mins in slots:
-                    vs = f" title=\"vs {opp} · {mins:.0f} min left\"" if opp else ""
+                for slot_label, name, abbrev, proj, opp, game_mins, p_mins in slots:
+                    vs = f" title=\"vs {opp} · ~{p_mins:.0f} proj min\"" if opp else ""
                     html.append(f"""
                     <li class="with-proj">
                       <span class="slot">{slot_label}</span>
@@ -649,11 +670,13 @@ def main():
 
     results = []
     for ft in teams_to_show:
-        players                = get_players(ft)
-        total, proj, mins, log = calc_max_games(players, remaining, schedule, factors, live_mins)
-        results.append((ft, total, proj, mins, log))
+        players = get_players(ft)
+        total, proj, mins, pmins, log = calc_max_games(
+            players, remaining, schedule, factors, live_mins
+        )
+        results.append((ft, total, proj, mins, pmins, log))
         if DEBUG:
-            print(f"  {ft['name']:<35} {total:>9} {proj:>9.1f} {mins:>7.0f}")
+            print(f"  {ft['name']:<35} {total:>9} {proj:>9.1f} {mins:>7.0f} {pmins:>7.0f}")
  
     if DEBUG:
         print(f"{'─'*50}")
@@ -666,9 +689,9 @@ def main():
         if week >= n_regular:
             html_parts.append(playoff_bracket_html(fantasy_data))
 
-        max_games_by_id = {ft["id"]: total for ft, total, _, _, _ in results}
-        proj_left_by_id = {ft["id"]: proj for ft, _, proj, _, _ in results}
-        min_left_by_id  = {ft["id"]: mins for ft, _, _, mins, _ in results}
+        max_games_by_id = {ft["id"]: total for ft, total, _, _, _, _ in results}
+        proj_left_by_id = {ft["id"]: proj for ft, _, proj, _, _, _ in results}
+        min_left_by_id  = {ft["id"]: mins for ft, _, _, mins, _, _ in results}
         html_parts.append(
             matchup_scoreboard_html(
                 fantasy_data, week, max_games_by_id, proj_left_by_id, min_left_by_id
