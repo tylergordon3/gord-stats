@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-08-11",
+  "fetched_on": "2026-08-12",
   "season": 2026,
   "total_games": 333,
   "schedule": {
@@ -5635,7 +5635,7 @@
           "id": 24999,
           "home": "LV",
           "away": "WSH",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-11"
@@ -5646,7 +5646,7 @@
           "id": 24999,
           "home": "LV",
           "away": "WSH",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-11"
@@ -5657,7 +5657,7 @@
           "id": 25000,
           "home": "LA",
           "away": "PHX",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-11"
@@ -5668,7 +5668,7 @@
           "id": 25000,
           "home": "LA",
           "away": "PHX",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-11"
