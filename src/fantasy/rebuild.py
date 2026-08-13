@@ -30,6 +30,7 @@ SEASONS = list(LEAGUE_IDS)
 # second or two to load, and the menu should appear instantly.
 PAGES = [
     ("schedule",     "Schedule Stats",                    lambda: _gen("schedule")),
+    ("transactions", "Waivers & Trades",                  lambda: _gen("transactions")),
     ("adp",          "Draft vs ADP",                      lambda: _gen("adp")),
     ("draft-report", "Manager Draft Report",              lambda: _gen("draft_report")),
     ("draft-dna",    "Draft DNA",                         lambda: _gen("draft_dna")),
@@ -38,6 +39,7 @@ PAGES = [
 
 DATA_JOBS = [
     ("season",   "League matchup / record files"),
+    ("transactions", "Waiver / free-agent / trade log"),
     ("injuries", "Weekly injury reports (slow: scrapes nfl.com)"),
     ("players",  "Cross-source player registry"),
     ("history",  "Year-over-year player table"),

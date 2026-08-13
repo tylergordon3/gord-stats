@@ -20,7 +20,7 @@ from src import util
 from src.config import DATA_DIR, FANTASY_REG_WEEKS, LEAGUE_IDS
 from src.identity.history import build_player_seasons
 from src.identity.registry import build_registry
-from src.league import injuries, season as season_data
+from src.league import injuries, season as season_data, transactions as transactions_data
 
 # (four-digit season key used by the league helpers, folder/file season string).
 SEASONS = [
@@ -91,8 +91,21 @@ def update_season(season4: str, season_str: str, refresh: bool = False, **_):
     print(f"[season] {season_str} -> {path}")
 
 
+def update_transactions(season4: str, season_str: str, refresh: bool = False, **_):
+    """Pull waiver/free-agent/trade log for a season -> data/transactions/<szn>.json."""
+    path = DATA_DIR / "transactions" / f"{season_str}.json"
+    if path.exists() and season_str != CURRENT_SEASON_STR and not refresh:
+        print(f"[transactions] {season_str} already saved, skipping.")
+        return
+    df = transactions_data.get_transactions(LEAGUE_IDS[season_str])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_json(path)
+    print(f"[transactions] {season_str} -> {path}")
+
+
 GLOBAL_JOBS = {"players": update_players, "history": update_history}
-SEASON_JOBS = {"injuries": update_injuries, "season": update_season}
+SEASON_JOBS = {"injuries": update_injuries, "season": update_season,
+               "transactions": update_transactions}
 ALL_JOBS = list(GLOBAL_JOBS) + list(SEASON_JOBS)
 
 
