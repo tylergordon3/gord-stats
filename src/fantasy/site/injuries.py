@@ -1,7 +1,9 @@
 """
 All-Time Injury Impacts section of the homepage.
 
-Aggregates per-season "games missed by drafted players" into a by-season stacked
+Aggregates per-season games missed - by drafted players (all 14 weeks) and by
+waiver / free-agent pickups held a substantial stretch (only the weeks they were
+actually rostered; see src.site.draft.PICKUP_MIN_WEEKS) - into a by-season stacked
 bar chart and a league table, and weights each injury by how much the player
 mattered: not every missed game hurts equally, so a round-1/2 pick or a player
 producing at weekly-starter pace relative to his position-mates counts as
@@ -53,16 +55,33 @@ def impact_detail(detail: pd.DataFrame) -> pd.DataFrame:
     signal that flags them.
     """
     out = detail.copy()
-    out["Games Missed"] = REG_WEEKS - out["Games Played"]
+    # Pickup rows carry their own accountability window ("Window Weeks", the
+    # weeks they were actually on the roster) and season-wide scoring sample
+    # ("Sample Games"). Drafted rows - and archives from before pickups were
+    # included - default to the full regular season / their own games played.
+    if "Window Weeks" not in out.columns:
+        out["Window Weeks"] = REG_WEEKS
+    out["Window Weeks"] = out["Window Weeks"].fillna(REG_WEEKS)
+    if "Source" not in out.columns:
+        out["Source"] = "Drafted"
+    out["Source"] = out["Source"].fillna("Drafted")
+    sample = (out["Sample Games"].fillna(out["Games Played"])
+              if "Sample Games" in out.columns else out["Games Played"])
+
+    out["Games Missed"] = (out["Window Weeks"] - out["Games Played"]).astype(int)
     if "Med PPG" not in out.columns:    # seasons archived before the median existed
         out["Med PPG"] = out["Pts."] / out["Games Played"].where(out["Games Played"] > 0)
     out["Med PPG"] = out["Med PPG"].fillna(0.0)
 
-    qualified = out["Games Played"] >= REG_WEEKS * MIN_GAMES_SHARE
+    qualified = sample >= REG_WEEKS * MIN_GAMES_SHARE
     group_keys = (["season"] if "season" in out.columns else []) + ["Pos."]
-    cutoff = (out.loc[qualified].groupby(group_keys)["Med PPG"]
-              .transform(lambda s: s.quantile(STARTER_PCTL)))
-    starter = qualified & (out["Med PPG"] >= cutoff.reindex(out.index))
+    # The starter-pace bar stays defined by drafted position-mates, but is
+    # applied to every row - a pickup scoring like a drafted starter counts.
+    pool = out[qualified & out["Source"].eq("Drafted")]
+    cutoffs = pool.groupby(group_keys)["Med PPG"].quantile(STARTER_PCTL)
+    cutoff = pd.Series(
+        cutoffs.reindex(out.set_index(group_keys).index).values, index=out.index)
+    starter = qualified & (out["Med PPG"] >= cutoff)
 
     out["High Impact"] = (out["round"] <= PREMIUM_ROUNDS) | starter
     out["Est. Pts Lost"] = out["Games Missed"] * out["Med PPG"]

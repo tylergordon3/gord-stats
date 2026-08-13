@@ -16,6 +16,7 @@ from src.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
 from src.site import adp, injuries, layout, styles, upcoming
+from src.site.draft import PICKUP_MIN_WEEKS
 from src.site.frontmatter import add_front_matter
 
 OUTPUT = ROOT / "docs" / "index.html"
@@ -118,8 +119,11 @@ def injury_section() -> str:
 <div class="table-scroll">
 {top.to_html()}
 </div>"""
-    return f"""<p>A player eligible for missed games is: drafted by a team and played in at least one game.<br>
-    Players not eligible include: traded, waiver wire pickups, or on IR for whole season.</p>
+    return f"""<p>Eligible players: drafted by a team (accountable all {injuries.REG_WEEKS} weeks), plus
+    waiver / free-agent pickups held at least {PICKUP_MIN_WEEKS} weeks — a pickup only answers for games
+    missed while actually on the roster (add week until dropped or traded).<br>
+    Not eligible: short-term streamers, and pickups of players drafted that season
+    (their missed games are already charged to the drafter).</p>
 <p>Not all missed games hurt equally, so each injury is also weighted by how much the player mattered:<br>
 <strong>High-Impact Games Missed</strong> — games missed by players drafted in the first {premium} rounds
 or scoring at weekly-starter pace: top {top_pct}% <em>median</em> weekly points among drafted players at

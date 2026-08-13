@@ -32,6 +32,7 @@ PAGES = [
     ("schedule",     "Schedule Stats",                    lambda: _gen("schedule")),
     ("transactions", "Waivers & Trades",                  lambda: _gen("transactions")),
     ("adp",          "Draft vs ADP",                      lambda: _gen("adp")),
+    ("draft-recap",  "Draft Recap (boards + tiers)",      lambda: _gen("draft_recap")),
     ("draft-report", "Manager Draft Report",              lambda: _gen("draft_report")),
     ("draft-dna",    "Draft DNA",                         lambda: _gen("draft_dna")),
     ("homepage",     "Home (countdown + live ADP board)", lambda: _gen("homepage")),

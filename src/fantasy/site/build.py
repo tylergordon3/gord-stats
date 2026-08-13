@@ -18,7 +18,8 @@ import argparse
 from src.config import LEAGUE_IDS
 from src.league import adp_board
 from src.site import (
-    adp, draft, draft_dna, draft_report, homepage, schedule, team_adjusted, transactions,
+    adp, draft, draft_dna, draft_recap, draft_report, homepage, schedule, team_adjusted,
+    transactions,
 )
 
 # Season codes we have data for, newest first.
@@ -37,6 +38,7 @@ def build_all(seasons=None, refresh_adp=False):
     schedule.generate()
     transactions.generate()
     adp.generate()
+    draft_recap.generate()    # per-season draft boards with tier movement
     draft_report.generate()   # all-time + per-year manager draft report
     draft_dna.generate()      # owner draft habits across every draft
     homepage.generate()

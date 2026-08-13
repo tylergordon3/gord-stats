@@ -14,9 +14,12 @@ import pandas as pd
 from sleeper_wrapper import Drafts, League
 
 from src import archive, stats
-from src.config import DRAFT_IDS, LEAGUE_IDS, SEASON_YEAR
+from src.config import DATA_DIR, DRAFT_IDS, LEAGUE_IDS, SEASON_YEAR
 
 REG_WEEKS = 14
+# In-season pickups enter the injury stats only when held this many weeks -
+# streamers and one-week rentals aren't an injury story.
+PICKUP_MIN_WEEKS = 4
 
 
 def _rosters(league) -> pd.DataFrame:
@@ -53,8 +56,12 @@ def _final_rank_missed_szn(final_ranks, position, pts):
 
 
 @lru_cache(maxsize=None)
-def _build(season_str: str):
-    """Return (picks df, final_ranks) for the season. Cached; callers must not mutate."""
+def _build(season_str: str, keep_streamers: bool = False):
+    """Return (picks df, final_ranks) for the season. Cached; callers must not mutate.
+
+    K / team-defense picks are dropped by default (the value pages judge skill
+    positions only); keep_streamers=True keeps them for full-draft views.
+    """
     league = League(LEAGUE_IDS[season_str])
     draft = Drafts(DRAFT_IDS[season_str])
     rosters = _rosters(league)
@@ -97,6 +104,9 @@ def _build(season_str: str):
     df["name"] = stats.cleaned_name(df["first_name"].fillna("") + " " + df["last_name"].fillna(""))
     df["name"] = df.apply(lambda x: x["team"] if x["position"] == "DEF" else x["name"], axis=1)
 
+    # Human spelling ("Ja'Marr Chase") - "name" below is the CamelCase join key.
+    df["Display Name"] = (df["first_name"].fillna("") + " " + df["last_name"].fillna("")).str.strip()
+
     df["pos_rank"] = df.apply(lambda x: _pos_rank(x, df[df["position"] == x.position]), axis=1)
     df["total_pts"] = df["player_id"].apply(lambda pid: _sum_pts(players, pid))
     df["num_games"] = df["player_id"].apply(lambda pid: _num_games(players, pid))
@@ -118,7 +128,8 @@ def _build(season_str: str):
 
     df = df.drop(columns=["player_id", "first_name", "last_name", "pos_rank",
                           "final_pos_rank", "final_rank"])
-    df = df[~df["position"].isin(["K", "DEF"])]
+    if not keep_streamers:
+        df = df[~df["position"].isin(["K", "DEF"])]
     df = df.rename(columns={
         "pos_diff": "Pos. Rank Δ", "overall_diff": "Overall Rank Δ", "pick_no": "Pick",
         "position": "Pos.", "team_name": "Owner", "total_pts": "Pts.",
@@ -129,12 +140,81 @@ def _build(season_str: str):
     return df.drop(columns="pick_in_round"), final_ranks
 
 
+def _pickup_detail(season_str: str) -> pd.DataFrame:
+    """Injury-stat rows for in-season waiver / free-agent pickups.
+
+    A pickup counts only when it looks like a real roster piece:
+      * held at least PICKUP_MIN_WEEKS weeks (add week through the week before
+        the player left the roster again - drop or trade - capped at week 14);
+      * not drafted that season (a drafted player's missed games are already
+        charged to his drafter - counting his pickup stint too would double-bill
+        the same absences);
+      * not a K / team defense (mirrors the drafted table).
+
+    Unlike drafted players (accountable all 14 weeks), a pickup is only on the
+    hook for games missed inside his ownership window ("Window Weeks").
+    """
+    path = DATA_DIR / "transactions" / f"{season_str}.json"
+    if not path.exists():
+        print(f"[games-missed] no transactions for {season_str}, pickups skipped")
+        return pd.DataFrame()
+    tx = pd.read_json(path)
+
+    drafted_ids = {str(p["player_id"]) for p in Drafts(DRAFT_IDS[season_str]).get_all_picks()}
+    rosters = _rosters(League(LEAGUE_IDS[season_str]))
+    team_by_roster = dict(zip(rosters["roster_id"], rosters["team_name"]))
+
+    players = stats.player_points(season=SEASON_YEAR[season_str])
+    players = players[players["week"] <= REG_WEEKS]
+
+    # Every time (player, roster) parted ways, by any transaction type.
+    removals = [(str(pid), r, t["leg"]) for _, t in tx.iterrows()
+                for pid, r in (t["drops"] or {}).items()]
+
+    rows = []
+    for _, t in tx[tx["type"].isin(["waiver", "free_agent"])].iterrows():
+        for pid, roster_id in (t["adds"] or {}).items():
+            pid, start = str(pid), t["leg"]
+            if pid in drafted_ids or pid.isalpha() or start > REG_WEEKS:
+                continue                          # drafted / team defense / playoffs add
+            ends = [w for p, r, w in removals if p == pid and r == roster_id and w > start]
+            end = min(ends) - 1 if ends else REG_WEEKS
+            window = min(end, REG_WEEKS) - start + 1
+            if window < PICKUP_MIN_WEEKS:
+                continue
+            mine = players[players["sleeper_id"] == pid]
+            if mine.empty or mine["position"].iloc[0] in ("K", "DEF"):
+                continue                          # never played this season, or streamer slot
+            in_window = mine[(mine["week"] >= start) & (mine["week"] <= end)]
+            rows.append({
+                "Owner": team_by_roster.get(roster_id), "roster_id": roster_id,
+                "Name": mine["cleaned_name"].iloc[0], "Pos.": mine["position"].iloc[0],
+                "round": None, "Pick": f"Wk {start} add",
+                "Pts.": in_window["fantasy_points_ppr"].sum(),
+                "Games Played": int(in_window["fantasy_points_ppr"].count()),
+                # Season-wide typical week: the injury weighting needs to know how
+                # much the player mattered, and the window alone can be all-injury.
+                "Med PPG": mine["fantasy_points_ppr"].median(),
+                "Sample Games": int(mine["fantasy_points_ppr"].count()),
+                "Window Weeks": window, "Source": "Pickup",
+            })
+    return pd.DataFrame(rows)
+
+
 def save_games_missed(season_str: str):
-    """Archive per-team games missed by drafted players (feeds the homepage injury section)."""
+    """Archive per-team games missed by drafted players and substantial pickups
+    (feeds the homepage injury section)."""
     df, _ = _build(season_str)
-    missing = df.groupby(by=["Owner", "roster_id"]).agg(
-        num_games=("Games Played", "sum"), tot_players=("Games Played", "count"))
-    missing["tot_games"] = missing["tot_players"] * REG_WEEKS
+    detail = df[["Owner", "roster_id", "Name", "Pos.", "round", "Pick",
+                 "Pts.", "Games Played", "Med PPG"]].copy()
+    detail["Sample Games"] = detail["Games Played"]
+    detail["Window Weeks"] = REG_WEEKS
+    detail["Source"] = "Drafted"
+    detail = pd.concat([detail, _pickup_detail(season_str)], ignore_index=True)
+
+    missing = detail.groupby(by=["Owner", "roster_id"]).agg(
+        num_games=("Games Played", "sum"), tot_players=("Games Played", "count"),
+        tot_games=("Window Weeks", "sum"))
     missing["Total Games Missed"] = missing["tot_games"] - missing["num_games"]
     missing["% of Games Missed"] = (missing["Total Games Missed"] / missing["tot_games"]).apply(
         lambda x: f"{x:.2%}")
@@ -143,7 +223,6 @@ def save_games_missed(season_str: str):
     # Per-player detail so the injury section can weight injuries by how much the
     # player mattered (draft capital, scoring pace) instead of counting all missed
     # games equally. Tiering/weighting happens at render time in src.site.injuries.
-    detail = df[["Owner", "roster_id", "Name", "Pos.", "round", "Pick",
-                 "Pts.", "Games Played", "Med PPG"]].copy()
     archive.save_statistic(season_str, "injury_detail_df", detail.to_dict(orient="records"))
-    print(f"[games-missed] archived {season_str}")
+    print(f"[games-missed] archived {season_str} "
+          f"({(detail['Source'] == 'Pickup').sum()} qualifying pickups)")
