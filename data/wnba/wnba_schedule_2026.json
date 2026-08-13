@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-08-12",
+  "fetched_on": "2026-08-13",
   "season": 2026,
   "total_games": 333,
   "schedule": {
@@ -5703,7 +5703,7 @@
           "id": 25002,
           "home": "GS",
           "away": "CHI",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-12"
@@ -5714,7 +5714,7 @@
           "id": 25002,
           "home": "GS",
           "away": "CHI",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-12"
@@ -5725,7 +5725,7 @@
           "id": 25003,
           "home": "POR",
           "away": "MIN",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-12"
@@ -5736,7 +5736,7 @@
           "id": 25003,
           "home": "POR",
           "away": "MIN",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-12"
