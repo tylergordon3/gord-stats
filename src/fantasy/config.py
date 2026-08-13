@@ -79,7 +79,7 @@ UPCOMING_SEASON = "2026-2027"        # display label
 # Naive ISO timestamp: rendered as-is and parsed by the browser as local time,
 # so the countdown reads 8:00 PM for anyone in the league's timezone.
 DRAFT_DATETIME = "2026-08-22T20:00:00"
-DRAFT_LABEL = "Saturday, August 22 - 8:00 PM"
+DRAFT_LABEL = "Friday, August 21 - 8:00 PM"
 LEAGUE_TEAMS = len(ROSTER_NAMES)     # 10 - used to turn ADP into a round number
 # The league's wall clock. Build-time stamps (when the ADP board was last pulled)
 # are reported in it rather than in whatever timezone the build machine runs in.
