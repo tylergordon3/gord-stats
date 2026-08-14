@@ -34,6 +34,13 @@ W_VS_OPP    = 0.5   # weight of the head-to-head average when it exists
 MAX_ROWS    = 20
 FA_LIMIT    = 150
 
+# Only suggest players who are demonstrably playing: enough box-score
+# appearances this season, with the latest not too long ago. This screens out
+# the retired/overseas/season-long-injured names ESPN still lists as ACTIVE
+# free agents (with tempting preseason projections but zero 2026 games).
+MIN_SEASON_GAMES = 3
+MAX_IDLE_DAYS    = 21
+
 
 # ── Free agents ───────────────────────────────────────────────────────────────
 
@@ -69,9 +76,22 @@ def fetch_free_agents(league_id: int = wnba_fantasy.LEAGUE_ID,
             "is_g":       wr.G_SLOT in es,
             "is_fc":      wr.FC_SLOT in es,
             "own_pct":    p.get("ownership", {}).get("percentOwned", 0.0),
-            "season_avg": wr.get_avg_points(p, season),
+            "season_avg": _actual_season_avg(p, season),
         })
     return out
+
+
+def _actual_season_avg(p: dict, season: int) -> float:
+    """
+    This-season average from real games only. Deliberately NOT
+    wr.get_avg_points, whose fallback to ESPN's preseason projection is
+    right for rostered players but would rank never-played free agents
+    (e.g. an 18.6 'average' for a player with zero 2026 games).
+    """
+    for s in p.get("stats", []):
+        if s["id"] == f"00{season}" and s.get("appliedAverage"):
+            return s["appliedAverage"]
+    return 0.0
 
 
 def pos_label(p: dict) -> str:
@@ -138,14 +158,20 @@ def build_pickups(schedule: dict, week: int, factors: dict,
     dates = [d for d in wr.dates_in_range(start, end) if d >= today]
     log = wnba_defense.player_game_log()
 
+    idle_cutoff = (date.fromisoformat(today) - timedelta(days=MAX_IDLE_DAYS)).isoformat()
+
     rows = []
     for p in fetch_free_agents():
         if p["injury"] == "OUT" or not p["abbrev"]:
             continue
+        entries = log.get(p["name"], [])
+        # Must actually be playing: enough games, recently (entries are sorted)
+        if len(entries) < MIN_SEASON_GAMES or entries[-1]["date"] < idle_cutoff:
+            continue
         games = remaining_games(schedule, p["abbrev"], dates)
         if not games:
             continue
-        rows.append(project_pickup(p, games, factors, log.get(p["name"], []), today))
+        rows.append(project_pickup(p, games, factors, entries, today))
 
     rows.sort(key=lambda r: -r["proj_total"])
     return rows[:max_rows]
