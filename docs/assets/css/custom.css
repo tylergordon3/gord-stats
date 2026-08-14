@@ -2276,6 +2276,40 @@ p {
 }
 
 /* -----------------------------
+   PREDICTION ARCHIVE
+------------------------------ */
+
+.archive-controls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 14px 0 18px;
+}
+
+.archive-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.archive-controls select {
+  padding: 7px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.archive-table td {
+  white-space: nowrap;
+}
+
+/* -----------------------------
    HOME CARDS
 ------------------------------ */
 

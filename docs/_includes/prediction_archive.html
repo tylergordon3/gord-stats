@@ -1,0 +1,86 @@
+<p class="week-meta">Every stored bracketology run, any season — pick a date to
+see the projected field exactly as it stood that day. The newest prediction
+lives on the <a class="league-route no-rewrite" data-page="bracketology" href="#">Bracketology page</a>.</p>
+
+<div class="archive-controls">
+  <label>Season <select id="archive-season"></select></label>
+  <label>Date <select id="archive-date"></select></label>
+</div>
+
+<div id="archive-tables" class="table-container">
+  <p class="no-games">Loading archive…</p>
+</div>
+
+<script>
+(function () {
+  var league = window.location.pathname.indexOf("/women/") === 0 ? "women" : "men";
+  var seasonSel = document.getElementById("archive-season");
+  var dateSel   = document.getElementById("archive-date");
+  var target    = document.getElementById("archive-tables");
+  var manifest  = {};
+
+  function fail(msg) { target.innerHTML = '<p class="no-games">' + msg + "</p>"; }
+
+  function options(sel, values) {
+    sel.innerHTML = "";
+    values.forEach(function (v) {
+      var o = document.createElement("option");
+      o.value = o.textContent = v;
+      sel.appendChild(o);
+    });
+  }
+
+  function esc(s) {
+    var d = document.createElement("div");
+    d.textContent = s == null ? "" : String(s);
+    return d.innerHTML;
+  }
+
+  function render(data) {
+    var html = "";
+    if (data.updated) {
+      html += '<p class="week-meta">As published: ' + esc(data.updated) + "</p>";
+    }
+    data.tables.forEach(function (t) {
+      html += "<h3>" + esc(t.title) + "</h3>";
+      html += '<table class="sticky-table rank-table archive-table"><thead><tr>';
+      t.columns.forEach(function (c) { html += "<th>" + esc(c) + "</th>"; });
+      html += "</tr></thead><tbody>";
+      t.rows.forEach(function (r) {
+        html += "<tr>";
+        r.forEach(function (v) { html += "<td>" + esc(v) + "</td>"; });
+        html += "</tr>";
+      });
+      html += "</tbody></table>";
+    });
+    target.innerHTML = html;
+  }
+
+  function loadDate() {
+    var season = seasonSel.value, date = dateSel.value;
+    if (!season || !date) return fail("Nothing archived yet for this league.");
+    fetch("/assets/data/predictions/" + league + "/" + season + "/" + date + ".json")
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(render)
+      .catch(function () { fail("Could not load " + date + "."); });
+  }
+
+  function loadSeason() {
+    var dates = (manifest[league][seasonSel.value] || []).slice().reverse();
+    options(dateSel, dates);
+    loadDate();
+  }
+
+  fetch("/assets/data/predictions/manifest.json")
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (m) {
+      manifest = m;
+      if (!m[league]) return fail("Nothing archived yet for this league.");
+      options(seasonSel, Object.keys(m[league]).sort().reverse());
+      seasonSel.addEventListener("change", loadSeason);
+      dateSel.addEventListener("change", loadDate);
+      loadSeason();
+    })
+    .catch(function () { fail("Archive manifest unavailable."); });
+})();
+</script>

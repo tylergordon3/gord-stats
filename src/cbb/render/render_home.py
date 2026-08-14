@@ -66,6 +66,19 @@ CBB_TIPOFF     = date(2026, 11, 2)
 CBB_SEASON_END = date(2027, 4, 10)
 
 
+def _latest_predict_link() -> tuple[str, str]:
+    """(href, label) for the newest men's bracketology page on disk."""
+    dates = sorted(
+        f.name.removeprefix("predict_").removesuffix(".html")
+        for f in paths.WEB_M_DIR.glob("predict_*.html")
+    )
+    if not dates:
+        return "/men/history.html", "Prediction Archive →"
+    latest = dates[-1]
+    season = int(latest[:4]) + 1 if int(latest[5:7]) >= 7 else int(latest[:4])
+    return f"/men/predict_{latest}.html", f"Final {season} Bracketology →"
+
+
 def _cbb_card(today: date) -> str:
     """Compact college-basketball card for the WNBA-season homepage."""
     days = (CBB_TIPOFF - today).days
@@ -74,11 +87,12 @@ def _cbb_card(today: date) -> str:
                 f"— {days} days away.")
     else:
         when = "The season is underway."
+    href, label = _latest_predict_link()
     return f"""
 <section class="home-card">
   <div class="home-card-head">
     <h2>College Basketball</h2>
-    <a class="home-card-link" href="/men/predict_2026-03-15.html">Final 2026 Bracketology →</a>
+    <a class="home-card-link" href="{href}">{label}</a>
   </div>
   <p>{when} Machine-learning March Madness field predictions,
      built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
