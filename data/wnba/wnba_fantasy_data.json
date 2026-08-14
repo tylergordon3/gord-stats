@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-08-14T13:48:42.291843-04:00",
-    "pulled_at_readable": "2026-08-14 01:48:42 PM EDT",
+    "pulled_at": "2026-08-14T14:09:34.189886-04:00",
+    "pulled_at_readable": "2026-08-14 02:09:34 PM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -6851,7 +6851,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "3",
                     "lastName": "Smith",
-                    "lastNewsDate": 1786511280000,
+                    "lastNewsDate": 1786728060000,
                     "proTeamId": 17,
                     "stats": [],
                     "universeId": 2
@@ -7839,7 +7839,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "3",
                     "lastName": "Smith",
-                    "lastNewsDate": 1786511280000,
+                    "lastNewsDate": 1786728060000,
                     "proTeamId": 17,
                     "stats": [
                       {
@@ -9157,7 +9157,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "3",
                     "lastName": "Smith",
-                    "lastNewsDate": 1786511280000,
+                    "lastNewsDate": 1786728060000,
                     "proTeamId": 17,
                     "stats": [
                       {
@@ -25449,7 +25449,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "22",
                     "lastName": "Citron",
-                    "lastNewsDate": 1786511880000,
+                    "lastNewsDate": 1786728180000,
                     "proTeamId": 16,
                     "stats": [],
                     "universeId": 1
@@ -26063,7 +26063,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "22",
                     "lastName": "Citron",
-                    "lastNewsDate": 1786511880000,
+                    "lastNewsDate": 1786728180000,
                     "proTeamId": 16,
                     "stats": [
                       {
@@ -26610,7 +26610,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "22",
                     "lastName": "Citron",
-                    "lastNewsDate": 1786511880000,
+                    "lastNewsDate": 1786728180000,
                     "proTeamId": 16,
                     "stats": [
                       {
@@ -43623,7 +43623,7 @@
                   "injuryStatus": "ACTIVE",
                   "jersey": "22",
                   "lastName": "Citron",
-                  "lastNewsDate": 1786511880000,
+                  "lastNewsDate": 1786728180000,
                   "ownership": {
                     "auctionValueAverage": 28.0,
                     "averageDraftPosition": 17.65,
@@ -70644,7 +70644,7 @@
                   "injuryStatus": "ACTIVE",
                   "jersey": "3",
                   "lastName": "Smith",
-                  "lastNewsDate": 1786511280000,
+                  "lastNewsDate": 1786728060000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.26,
