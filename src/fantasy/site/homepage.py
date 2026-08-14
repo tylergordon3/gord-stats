@@ -145,7 +145,7 @@ def generate(output=OUTPUT):
         ("board", "Draft Board - Live ADP by Site", upcoming.adp_board_section(), True),
         ("metrics", "All-Time Metrics", metrics_section(), False),
         ("injuries", "All-Time Injury Impacts", injury_section(), False),
-        ("adp", "All-Time Draft vs ADP", adp.all_time_section(), False),
+        ("adp", "All-Time Draft Values & Busts", adp.all_time_section(), False),
     ]
     nav = layout.section_nav([(a, title) for a, title, _, _ in sections])
     body = layout.HEAD + upcoming.countdown_banner() + nav + "".join(

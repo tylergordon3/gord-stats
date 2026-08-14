@@ -2,8 +2,8 @@
 Manager Draft Report (src/).
 
 Each manager's drafting success, measured two ways:
-  * ADP Value = pick - consensus ADP   (+ = drafted value / waited)
-  * vs Finish = pick - final finish    (+ = the pick outperformed its slot)
+  * vs Finish = pick - final finish    (+ = the pick outperformed its slot; primary)
+  * ADP Value = pick - consensus ADP   (+ = drafted value / waited; secondary context)
 
 Switchable All-Time / per-year, with positional breakdowns so you can see which
 managers draft each position well or poorly. Each section shows a bar chart with
@@ -66,9 +66,9 @@ def _bar(df, title, ylabel) -> str:
 
 def _style_summary(g):
     d = g.rename(columns={"ADPValue": "Avg ADP Value", "FinishValue": "Avg vs Finish"})
+    d = d[["Manager", "Picks", "Avg vs Finish", "Avg ADP Value"]]
     return (d.style.hide(axis="index")
             .format({"Avg ADP Value": "{:+.1f}", "Avg vs Finish": "{:+.1f}"})
-            .background_gradient(cmap="RdYlGn", subset=["Avg ADP Value"])
             .background_gradient(cmap="RdYlGn", subset=["Avg vs Finish"])
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
@@ -90,28 +90,29 @@ def _section(title, desc, chart, table) -> str:
 
 def _view(df) -> str:
     summary = _summary_df(df)
-    overall_bars = summary.set_index("Manager")[["ADPValue", "FinishValue"]].rename(
-        columns={"ADPValue": "vs ADP", "FinishValue": "vs Finish"})
+    overall_bars = summary.set_index("Manager")[["FinishValue", "ADPValue"]].rename(
+        columns={"FinishValue": "vs Finish", "ADPValue": "vs ADP"})
     padp = _pivot_df(df, "PosValue")
     pfin = _pivot_df(df, "PosVsFinish")
 
     return (
         _section("Overall",
-                 "<strong>vs ADP</strong> = Draft position &minus; consensus ADP.<br>"
-                 "<strong>vs Fantasy Finish</strong> = Draft position &minus; fantasy finish.<br>"
-                 "ADP Bars: Higher numbers indicate taking players later than ADP, lower numbers earlier than ADP.<br>"
-                 "Fantasy Finish Bars: Higher numbers indicate players finished better than drafted, lower numbers mean worse.",
+                 "<strong>vs Fantasy Finish</strong> = Draft position &minus; fantasy finish. "
+                 "Higher numbers indicate players finished better than drafted, lower numbers mean worse. "
+                 "This is the metric that matters: did the pick outperform its slot?<br>"
+                 "<strong>vs ADP</strong> (secondary, draft-day context) = Draft position &minus; consensus ADP. "
+                 "Higher numbers indicate taking players later than ADP, lower numbers earlier than ADP.",
                  _bar(overall_bars, "Draft success by manager", "avg rank delta"),
                  _style_summary(summary))
-        + _section("By Position &mdash; Draft Position vs ADP",
-                   "Positional draft rank &minus; positional ADP. Positive = drafted later than ADP | Negative = drafted before ADP",
-                   _bar(padp, "Draft Position vs ADP by manager", "avg (draft &minus; ADP)"),
-                   _style_pivot(padp))
         + _section("By Position &mdash; Draft Position vs Fantasy Finish",
-                   "Positional draft rank &minus; positional fantasy finish."
+                   "Positional draft rank &minus; positional fantasy finish. "
                    "Positive = Finished better than drafted | Negative = Finished worse than drafted",
                    _bar(pfin, "Draft Position vs Fantasy Finish by manager", "avg (draft - finish)"),
                    _style_pivot(pfin))
+        + _section("By Position &mdash; Draft Position vs ADP (secondary)",
+                   "Positional draft rank &minus; positional ADP. Positive = drafted later than ADP | Negative = drafted before ADP",
+                   _bar(padp, "Draft Position vs ADP by manager", "avg (draft &minus; ADP)"),
+                   _style_pivot(padp))
     )
 
 
@@ -141,9 +142,10 @@ def generate():
             df = base[(base["round"] >= lo) & (base["round"] <= hi)]
             content[(year_id, rid)] = _view(df)
 
-    intro = ("<p>How each manager drafts, measured against both consensus <strong>Average Draft "
-             "Position (ADP)</strong> and how players actually finished. Filter by season and by "
-             "draft rounds below.<br>ADP data from FantasyPros PPR, averaged across "
+    intro = ("<p>How each manager drafts, measured first by <strong>how players actually finished "
+             "relative to where they were drafted</strong>. Consensus <strong>Average Draft "
+             "Position (ADP)</strong> appears as secondary, draft-day context. Filter by season "
+             "and by draft rounds below.<br>ADP data from FantasyPros PPR, averaged across "
              "ESPN/Sleeper/Yahoo/CBS/NFL.</p>")
     switcher = layout.two_axis_switcher(years, rounds, content,
                                         row_label="Season:", col_label="Rounds:", group="report")

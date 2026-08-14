@@ -80,12 +80,14 @@ def all_picks() -> pd.DataFrame:
     df["Missed"] = GAMES - df["Games Played"]
     df["Healthy"] = df["Games Played"] >= HEALTHY_MIN
 
-    # Positional, not overall: "beat ADP" measured on the overall board rewards
+    # Positional, not overall: outcomes measured on the overall board reward
     # QBs, who out-score every other position by construction. Comparing the
-    # consensus positional rank to the actual positional finish is position-fair.
+    # positional draft rank to the actual positional finish is position-fair.
     # 999 is src.site.draft's sentinel for a player who never took the field.
     played = df["final_pos_rank"] < 900
-    df["PosBeatADP"] = (df["adp_pos"] - df["final_pos_rank"]).where(played)
+    df["PosVsPick"] = (df["draft_pos_rank"] - df["final_pos_rank"]).where(played)
+    # Overall finish against overall draft slot (+ = outperformed the pick).
+    df["VsPick"] = df["overall_pick"] - df["final_rank"]
     return df
 
 
@@ -354,9 +356,9 @@ def _health_caveat() -> str:
 # Section 4 - champion blueprint
 # --------------------------------------------------------------------------- #
 
-_CHAMP_PICK_COLS = ["round", "overall_pick", "Player", "Pos.", "adp", "OvrValue", "final_pos_rank"]
+_CHAMP_PICK_COLS = ["round", "overall_pick", "Player", "Pos.", "final_pos_rank", "VsPick", "adp"]
 _CHAMP_PICK_RENAME = {"round": "Rd", "overall_pick": "Pick", "Pos.": "Pos",
-                      "adp": "ADP", "OvrValue": "ADP Value", "final_pos_rank": "Pos Finish"}
+                      "final_pos_rank": "Pos Finish", "VsPick": "Finish vs Pick", "adp": "ADP"}
 
 
 def _champ_vs_field(df) -> pd.DataFrame:
@@ -364,24 +366,25 @@ def _champ_vs_field(df) -> pd.DataFrame:
         Picks=("overall_pick", "count"),
         HitRate=("Hit", "mean"),
         WeeksLost=("Missed", "mean"),
+        FinishVsPick=("VsPick", "mean"),
         AvgValue=("OvrValue", "mean"),
-        FinishVsADP=("BeatADP", "mean"),
     ).reset_index()
     g["Who"] = g["Champ"].map({True: "Champion", False: "Everyone else"})
     g["HitRate"] = (g["HitRate"] * 100).round(0)
-    g[["WeeksLost", "AvgValue", "FinishVsADP"]] = (
-        g[["WeeksLost", "AvgValue", "FinishVsADP"]].round(1))
-    return g[["Season", "Who", "Picks", "HitRate", "WeeksLost", "AvgValue", "FinishVsADP"]].rename(
+    g[["WeeksLost", "FinishVsPick", "AvgValue"]] = (
+        g[["WeeksLost", "FinishVsPick", "AvgValue"]].round(1))
+    return g[["Season", "Who", "Picks", "HitRate", "WeeksLost", "FinishVsPick", "AvgValue"]].rename(
         columns={"HitRate": "Starter Hit %", "WeeksLost": "Weeks Lost / Pick",
-                 "AvgValue": "Avg ADP Value", "FinishVsADP": "Avg Finish vs ADP"})
+                 "FinishVsPick": "Avg Finish vs Pick", "AvgValue": "Avg ADP Value"})
 
 
 def _champ_picks_table(df, season) -> str:
     c = df[(df["Season"] == season) & df["Champ"]].sort_values("overall_pick").head(6)
     d = c[_CHAMP_PICK_COLS].rename(columns=_CHAMP_PICK_RENAME)
     return (d.style.hide(axis="index")
-            .format({"ADP": "{:.1f}", "ADP Value": "{:+.1f}"}, na_rep="—")
+            .format({"ADP": "{:.1f}", "Finish vs Pick": "{:+.0f}"}, na_rep="—")
             .background_gradient(cmap="RdYlGn_r", subset=["Pos Finish"])
+            .background_gradient(cmap="RdYlGn", subset=["Finish vs Pick"])
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -401,8 +404,9 @@ def champion_blueprint(df) -> str:
     vs = _champ_vs_field(df)
     vs_html = (vs.style.hide(axis="index")
                .format({"Starter Hit %": "{:.0f}%", "Weeks Lost / Pick": "{:.1f}",
-                        "Avg ADP Value": "{:+.1f}", "Avg Finish vs ADP": "{:+.1f}"})
+                        "Avg Finish vs Pick": "{:+.1f}", "Avg ADP Value": "{:+.1f}"})
                .background_gradient(cmap="RdYlGn", subset=["Starter Hit %"])
+               .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs Pick"])
                .background_gradient(cmap="RdYlGn_r", subset=["Weeks Lost / Pick"])
                .set_table_styles(_GRID, overwrite=False)
                .set_table_attributes('class="sticky-table"')).to_html()
@@ -419,15 +423,18 @@ def champion_blueprint(df) -> str:
     field = vs[vs["Who"] == "Everyone else"].set_index("Season")
     seasons = len(champ)
     beat_hits = int((champ["Starter Hit %"] > field["Starter Hit %"]).sum())
+    beat_finish = int((champ["Avg Finish vs Pick"] > field["Avg Finish vs Pick"]).sum())
     beat_value = int((champ["Avg ADP Value"] > field["Avg ADP Value"]).sum())
     healthier = int((champ["Weeks Lost / Pick"] < field["Weeks Lost / Pick"]).sum())
 
     verdict = (
         f"<p>Across all {seasons} titles the champion beat the field's hit rate "
-        f"<strong>{beat_hits} of {seasons}</strong> times, but only led the field in value "
-        f"against ADP <strong>{beat_value} of {seasons}</strong> times. On this sample, titles "
-        "track picks that <em>worked</em> more than picks that looked like bargains on draft "
-        "day &mdash; though three seasons cannot separate that from simple luck.</p>"
+        f"<strong>{beat_hits} of {seasons}</strong> times and got more finish out of their draft "
+        f"slots <strong>{beat_finish} of {seasons}</strong> times, but only led the field in "
+        f"draft-day value against ADP <strong>{beat_value} of {seasons}</strong> times. On this "
+        "sample, titles track picks that <em>worked</em> more than picks that looked like "
+        "bargains on draft day &mdash; though three seasons cannot separate that from simple "
+        "luck.</p>"
         f"<p>Health is not the explanation. The champion's picks were the healthier group in "
         f"only <strong>{healthier} of {seasons}</strong> seasons"
         + _unhealthiest_champ(champ, field) + ".</p>"
@@ -445,14 +452,19 @@ def champion_blueprint(df) -> str:
         "manager's picks that finished inside their position's weekly starter pool "
         f"(top {STARTERS['QB']} QB / {STARTERS['RB']} RB / {STARTERS['WR']} WR / "
         f"{STARTERS['TE']} TE for a 10-team, 2-flex league). <strong>Weeks Lost / Pick</strong> "
-        f"is how many of the {GAMES} weeks the average pick spent inactive.</p>"
+        f"is how many of the {GAMES} weeks the average pick spent inactive. "
+        "<strong>Avg Finish vs Pick</strong> = draft position minus fantasy finish "
+        "(+ = picks outperformed their slots); <strong>Avg ADP Value</strong> = pick minus "
+        "consensus ADP &mdash; draft-day context, not an outcome.</p>"
         f"<div class='table-scroll'>{vs_html}</div>"
         + verdict +
         "<h2>When champions went to each position</h2>"
         f"<div class='table-scroll'>{timing_html}</div>"
         "<h2>The title-winning drafts, round by round</h2>"
         "<p>First six picks of each championship team. <strong>Pos Finish</strong> is where the "
-        "player ended the season at their position (green = better).</p>"
+        "player ended the season at their position (green = better); <strong>Finish vs Pick</strong> "
+        "= overall pick minus overall finish (+ = outperformed the slot). ADP is draft-day "
+        "context.</p>"
         + drafts
     )
 
@@ -477,28 +489,29 @@ def _manager_summary(df) -> pd.DataFrame:
         Picks=("overall_pick", "count"),
         HitRate=("Hit", "mean"),
         WeeksLost=("Missed", "sum"),
+        FinishVsPick=("VsPick", "mean"),
         AvgValue=("OvrValue", "mean"),
-        FinishVsADP=("BeatADP", "mean"),
     ).reset_index()
     healthy = df[df["Healthy"]].groupby("Manager")["Hit"].mean().rename("HealthyHit")
     g = g.merge(healthy, on="Manager", how="left")
 
     g["HitRate"] = (g["HitRate"] * 100).round(0)
     g["HealthyHit"] = (g["HealthyHit"] * 100).round(0)
-    g[["AvgValue", "FinishVsADP"]] = g[["AvgValue", "FinishVsADP"]].round(1)
+    g[["FinishVsPick", "AvgValue"]] = g[["FinishVsPick", "AvgValue"]].round(1)
     # method="min" so managers tied on a rate share a rank rather than being
     # ordered arbitrarily by row position.
     g["Hit Rank"] = g["HitRate"].rank(method="min", ascending=False).astype(int)
     g["Healthy Rank"] = g["HealthyHit"].rank(method="min", ascending=False).astype(int)
     return g.sort_values(["HealthyHit", "HitRate"], ascending=False).rename(
         columns={"HitRate": "Starter Hit %", "WeeksLost": "Weeks Lost",
-                 "HealthyHit": "Healthy Hit %", "AvgValue": "Avg ADP Value",
-                 "FinishVsADP": "Avg Finish vs ADP"})
+                 "HealthyHit": "Healthy Hit %", "FinishVsPick": "Avg Finish vs Pick",
+                 "AvgValue": "Avg ADP Value"})
 
 
 def _extremes(sub) -> str:
-    """That manager's best and worst pick, by positional finish against positional ADP."""
-    scored = sub[sub["PosBeatADP"].notna()]
+    """That manager's best and worst pick, by positional finish against where
+    they actually drafted the player (ADP is a parenthetical note)."""
+    scored = sub[sub["PosVsPick"].notna()]
     if scored.empty:
         return ""
 
@@ -507,13 +520,15 @@ def _extremes(sub) -> str:
         # played all season and simply wasn't good; say which.
         note = ("" if row["Healthy"] else
                 f" &mdash; active only {int(row['Games Played'])} of {GAMES} weeks")
+        adp_note = ("" if pd.isna(row["adp_pos"]) else
+                    f" (consensus had him {_ordinal(int(row['adp_pos']))})")
         return (f"<li><strong>{label}:</strong> {row['Player']} ({row['Pos.']}, {row['Season']}) "
                 f"&mdash; taken at pick {int(row['overall_pick'])} as the "
-                f"{_ordinal(int(row['adp_pos']))} {row['Pos.']} off consensus boards, "
-                f"finished {_ordinal(int(row['final_pos_rank']))}{note}.</li>")
+                f"{_ordinal(int(row['draft_pos_rank']))} {row['Pos.']} off the board, "
+                f"finished {_ordinal(int(row['final_pos_rank']))}{adp_note}{note}.</li>")
 
-    best = scored.loc[scored["PosBeatADP"].idxmax()]
-    worst = scored.loc[scored["PosBeatADP"].idxmin()]
+    best = scored.loc[scored["PosVsPick"].idxmax()]
+    worst = scored.loc[scored["PosVsPick"].idxmin()]
     return f"<ul>{line(best, 'Best pick')}{line(worst, 'Worst pick')}</ul>"
 
 
@@ -540,9 +555,9 @@ def _card(df, avg_clock, summary, mgr) -> str:
     if titles:
         habits.append(f"<li>Champion in <strong>{', '.join(titles)}</strong>.</li>")
 
-    finish = row["Avg Finish vs ADP"]
-    verdict = (f"finished {finish:.1f} spots better than its ADP" if finish >= 0
-               else f"finished {abs(finish):.1f} spots worse than its ADP")
+    finish = row["Avg Finish vs Pick"]
+    verdict = (f"finished {finish:.1f} spots better than where it was drafted" if finish >= 0
+               else f"finished {abs(finish):.1f} spots worse than where it was drafted")
     habits.append(
         f"<li>{row['Starter Hit %']:.0f}% of picks became weekly starters "
         f"({_place(summary, row, 'Hit Rank')} of {len(summary)} in the league); "
@@ -570,11 +585,11 @@ def report_cards(df) -> str:
 
     table = (summary.drop(columns=["Hit Rank", "Healthy Rank"]).style.hide(axis="index")
              .format({"Starter Hit %": "{:.0f}%", "Healthy Hit %": "{:.0f}%",
-                      "Avg ADP Value": "{:+.1f}", "Avg Finish vs ADP": "{:+.1f}"})
+                      "Avg Finish vs Pick": "{:+.1f}", "Avg ADP Value": "{:+.1f}"})
              .background_gradient(cmap="RdYlGn", subset=["Starter Hit %"])
              .background_gradient(cmap="RdYlGn_r", subset=["Weeks Lost"])
              .background_gradient(cmap="RdYlGn", subset=["Healthy Hit %"])
-             .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs ADP"])
+             .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs Pick"])
              .set_table_styles(_GRID, overwrite=False)
              .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -583,10 +598,10 @@ def report_cards(df) -> str:
         "<p><strong>Starter Hit %</strong> = share of picks that finished inside their "
         "position's weekly starter pool. <strong>Weeks Lost</strong> = player-weeks their picks "
         f"spent inactive. <strong>Healthy Hit %</strong> = the same hit rate counting only picks "
-        f"active at least {HEALTHY_MIN} of {GAMES} weeks. <strong>Avg ADP Value</strong> = pick "
-        "minus consensus ADP (+ = waited for value). <strong>Avg Finish vs ADP</strong> = ADP "
-        "minus where the player actually finished (+ = the pick outperformed the market). "
-        "Sorted by the health-adjusted rate.</p>"
+        f"active at least {HEALTHY_MIN} of {GAMES} weeks. <strong>Avg Finish vs Pick</strong> = "
+        "draft position minus where the player actually finished (+ = the pick outperformed its "
+        "slot). <strong>Avg ADP Value</strong> = pick minus consensus ADP (+ = waited for value) "
+        "&mdash; draft-day context, not an outcome. Sorted by the health-adjusted rate.</p>"
         f"<div class='table-scroll'>{table}</div>"
         "<h2>Individual cards</h2>" + cards
     )

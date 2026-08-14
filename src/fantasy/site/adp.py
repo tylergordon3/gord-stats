@@ -180,9 +180,9 @@ def _positional_view(matched):
 # All-time combined (across every season) - for the homepage
 # --------------------------------------------------------------------------- #
 
-_ALL_COLS = ["Season", "Manager", "Name", "Pos.", "overall_pick", "adp", "OvrValue", "final_rank"]
+_ALL_COLS = ["Season", "Manager", "Name", "Pos.", "overall_pick", "final_rank", "vsFinish", "adp"]
 _ALL_RENAME = {"Name": "Player", "Pos.": "Pos", "overall_pick": "Overall Pick",
-               "adp": "ADP", "OvrValue": "ADP Value", "final_rank": "Fantasy Finish"}
+               "final_rank": "Fantasy Finish", "vsFinish": "Finish vs Pick", "adp": "ADP"}
 
 
 def matched_with_manager(season_str) -> pd.DataFrame:
@@ -211,44 +211,44 @@ def _all_seasons() -> pd.DataFrame:
 
 def _manager_summary(df):
     g = df.groupby("Manager").agg(
-        Picks=("OvrValue", "count"),
-        AvgValue=("OvrValue", "mean"),
-        Reaches=("OvrValue", lambda v: int((v < -10).sum())),
-        Values=("OvrValue", lambda v: int((v > 10).sum())),
-        FinishVsADP=("BeatADP", "mean"),
+        Picks=("vsFinish", "count"),
+        AvgFinish=("vsFinish", "mean"),
+        Busts=("vsFinish", lambda v: int((v < -10).sum())),
+        Values=("vsFinish", lambda v: int((v > 10).sum())),
+        AvgADP=("OvrValue", "mean"),
     ).reset_index()
-    g["AvgValue"] = g["AvgValue"].round(1)
-    g["FinishVsADP"] = g["FinishVsADP"].round(1)
-    g = g.rename(columns={"AvgValue": "Avg Value vs ADP", "Reaches": "Reaches (>10)",
-                          "Values": "Values (>10)", "FinishVsADP": "Avg Finish vs ADP"})
-    g = g.sort_values("Avg Value vs ADP", ascending=False)
+    g["AvgFinish"] = g["AvgFinish"].round(1)
+    g["AvgADP"] = g["AvgADP"].round(1)
+    g = g.rename(columns={"AvgFinish": "Avg Finish vs Pick", "Busts": "Busts (>10)",
+                          "Values": "Values (>10)", "AvgADP": "Avg Value vs ADP"})
+    g = g.sort_values("Avg Finish vs Pick", ascending=False)
     return (g.style.hide(axis="index")
-            .format({"Avg Value vs ADP": "{:+.1f}", "Avg Finish vs ADP": "{:+.1f}"})
-            .background_gradient(cmap="RdYlGn", subset=["Avg Value vs ADP"])
-            .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs ADP"])
+            .format({"Avg Finish vs Pick": "{:+.1f}", "Avg Value vs ADP": "{:+.1f}"})
+            .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs Pick"])
             .set_table_styles(_GRID_WIDE, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
 
 def all_time_section() -> str:
-    """Combined draft-vs-ADP summaries across every season (homepage section)."""
+    """Combined draft value/bust summaries across every season (homepage section)."""
     df = _all_seasons()
 
     def ranked(asc, cmap):
-        d = df.sort_values("OvrValue", ascending=asc).head(CUTOFF_ROWS)[_ALL_COLS].rename(columns=_ALL_RENAME)
-        return _style(d, "{:+.1f}", cmap, wide=False)
+        d = df.sort_values("vsFinish", ascending=asc).head(CUTOFF_ROWS)[_ALL_COLS].rename(columns=_ALL_RENAME)
+        return _style(d, "{:+.0f}", cmap, wide=False, grad_col="Finish vs Pick")
 
     link = layout.internal_link("/adp/", "Draft vs ADP")
     return (
-        "<p>Combined across every league season. <strong>ADP Value</strong> = pick minus consensus "
-        "ADP (+ = value, - = reach); <strong>Finish vs ADP</strong> = ADP minus fantasy finish "
-        "(+ = beat consensus).</p>"
+        "<p>Combined across every league season. <strong>Finish vs Pick</strong> = draft position "
+        "minus fantasy finish: <strong>+</strong> = the player finished better than where he was "
+        "taken (a value), <strong>-</strong> = worse (a bust). Consensus <strong>ADP</strong> is "
+        "shown as draft-day context only.</p>"
         f"<p>Full draft-vs-ADP by season: {link}</p>"
         "<h2>Draft Tendencies by Manager</h2>"
         f"<div class='table-scroll'>{_manager_summary(df)}</div>"
         "<h2>Best Values (all-time)</h2>"
         f"<div class='table-scroll'>{ranked(False, 'Greens')}</div>"
-        "<h2>Biggest Reaches (all-time)</h2>"
+        "<h2>Biggest Busts (all-time)</h2>"
         f"<div class='table-scroll'>{ranked(True, 'Reds_r')}</div>"
     )
 
