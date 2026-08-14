@@ -698,8 +698,10 @@ def main(argv=None):
     if DEBUG:
         print(f"{'─'*50}")
  
-    html_parts = []
-    # Matchup scoreboard (all matchups for the week, not filtered by --team)
+    # Two includes: the scoreboard (brackets + matchup cards) leads the home
+    # page; the dashboard (team reports, pickups, drops) lives on /wnba/.
+    scoreboard_parts = []
+    dashboard_parts = []
     if not args.no_scoreboard:
         max_games_by_id = {ft["id"]: total for ft, total, _, _, _, _ in results}
         proj_left_by_id = {ft["id"]: proj for ft, _, proj, _, _, _ in results}
@@ -725,24 +727,24 @@ def main(argv=None):
                         if is_championship_matchup(m, teams_by_id, n_playoff)]
             cons_ms  = [m for m in week_ms if m not in champ_ms]
 
-            html_parts.append(champ_bracket)
-            html_parts.append(scoreboard(champ_ms, f"Championship Matchups — Week {week}"))
+            scoreboard_parts.append(champ_bracket)
+            scoreboard_parts.append(scoreboard(champ_ms, f"Championship Matchups — Week {week}"))
             if cons_bracket:
-                html_parts.append(cons_bracket)
+                scoreboard_parts.append(cons_bracket)
             if cons_ms:
-                html_parts.append(scoreboard(
+                scoreboard_parts.append(scoreboard(
                     cons_ms, f"Consolation Matchups — Week {week}", show_updated=False
                 ))
         else:
             # Bracket preview in the last regular-season week
             if week >= n_regular:
                 champ_bracket, cons_bracket = playoff_bracket_sections(fantasy_data)
-                html_parts.append(champ_bracket)
+                scoreboard_parts.append(champ_bracket)
                 if cons_bracket:
-                    html_parts.append(cons_bracket)
-            html_parts.append(scoreboard())
+                    scoreboard_parts.append(cons_bracket)
+            scoreboard_parts.append(scoreboard())
 
-        html_parts.append(
+        dashboard_parts.append(
             team_reports_html(
                 results,
                 week,
@@ -762,21 +764,23 @@ def main(argv=None):
             pickup_rows = wnba_pickups.build_pickups(
                 schedule, week, factors, today, log=game_log
             )
-            html_parts.append(wnba_pickups.suggested_pickups_html(pickup_rows, week))
+            dashboard_parts.append(wnba_pickups.suggested_pickups_html(pickup_rows, week))
             drop_rows = wnba_pickups.build_drop_rows(
                 fantasy_data, schedule, week, factors, today, log=game_log
             )
-            html_parts.append(wnba_pickups.drop_recommendations_html(
+            dashboard_parts.append(wnba_pickups.drop_recommendations_html(
                 drop_rows, pickup_rows[0] if pickup_rows else None
             ))
         except Exception as e:
             print(f"⚠ Pickups/drops unavailable: {e}")
 
-        output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write("\n\n".join(html_parts))
+        includes = paths.DOCS / "_includes"
+        with open(includes / "wnba_scoreboard.html", "w", encoding="utf-8") as f:
+            f.write("\n\n".join(scoreboard_parts))
+        with open(includes / "wnba_dashboard.html", "w", encoding="utf-8") as f:
+            f.write("\n\n".join(dashboard_parts))
         if DEBUG:
-            print(f"Wrote HTML to {output_file}")
+            print(f"Wrote scoreboard + dashboard includes to {includes}")
         
 if __name__ ==" __main__":
     main()

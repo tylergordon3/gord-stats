@@ -1,4 +1,6 @@
 import json
+from datetime import date
+
 import pandas as pd
 
 from cbb.lib import html_util
@@ -58,31 +60,97 @@ def bids():
     return styler
 
 
-def render_home():
-    # Raw string to preserve formatting
+# CBB regular season window: the homepage leads with college basketball
+# inside it, and with WNBA fantasy outside it. Update yearly.
+CBB_TIPOFF     = date(2026, 11, 2)
+CBB_SEASON_END = date(2027, 4, 10)
 
-    html = r"""
-{% include ff_countdown.html %}
-    <p>Using machine learning to predict the NCAA March Madness field.</p>
-    <p>
-      Data Sources:
-      <a href="https://kenpom.com/" target="_blank">KenPom</a> |
-      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>
-    </p>
-    <p>
-      Today's scores and schedule from:
-      <a href="https://www.thescore.com/" target="_blank">TheScore</a>
-    </p>
-    <h1>WNBA Fantasy Matchups</h1>
-    {% include wnba_fantasy_matchups.html %}
+
+def _cbb_card(today: date) -> str:
+    """Compact college-basketball card for the WNBA-season homepage."""
+    days = (CBB_TIPOFF - today).days
+    if days > 0:
+        when = (f"The 2026–27 season tips off <strong>{CBB_TIPOFF:%B %-d}</strong> "
+                f"— {days} days away.")
+    else:
+        when = "The season is underway."
+    return f"""
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>College Basketball</h2>
+    <a class="home-card-link" href="/men/predict_2026-03-15.html">Final 2026 Bracketology →</a>
+  </div>
+  <p>{when} Machine-learning March Madness field predictions,
+     built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
+     <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
+     from <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
+  <p class="home-card-links">
+    <a href="/men/conference.html">Conference Rankings</a> ·
+    <a href="/men/history.html">Prediction History</a>
+  </p>
+</section>
 """
-    #seeds = compare_bracket.gen()
-    #html = html + "<br>" + seeds # + styler.to_html()
+
+
+def _wnba_card() -> str:
+    """Compact WNBA card for the CBB-season homepage."""
+    return """
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>WNBA Fantasy</h2>
+    <a class="home-card-link" href="/wnba/index.html">Full dashboard →</a>
+  </div>
+  <p>League matchup projections, live win odds, pickups and drops —
+     back when the WNBA season resumes.</p>
+</section>
+"""
+
+
+def _wnba_lead() -> str:
+    return """
+<h1>WNBA Fantasy</h1>
+{% include wnba_scoreboard.html %}
+<p class="dashboard-cta">
+  <a class="dashboard-link" href="/wnba/index.html">
+    Full dashboard: player games remaining, pickups &amp; drops →
+  </a>
+</p>
+"""
+
+
+def _cbb_lead() -> str:
+    return """
+<h1>College Basketball</h1>
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>March Madness Predictions</h2>
+    <a class="home-card-link" href="/men/index.html">Today's Scores →</a>
+  </div>
+  <p>Machine-learning predictions of the NCAA tournament field, updated daily.
+     Built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
+     <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
+     from <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
+  <p class="home-card-links">
+    <a href="/men/conference.html">Conference Rankings</a> ·
+    <a href="/men/history.html">Prediction History</a>
+  </p>
+</section>
+"""
+
+
+def render_home():
+    """Season-aware homepage: whichever sport is live leads the page."""
+    today = date.today()
+    cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
+
+    if cbb_in_season:
+        html = _cbb_lead() + _wnba_card()
+    else:
+        html = _wnba_lead() + _cbb_card(today)
+
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    html = html_util.add_front_matter(html, "GordStats Home")
-
+    fm = "---\nlayout: default\ntitle: GordStats Home\n---\n"
     with open(path, "w", encoding="utf-8") as f:
-        f.write(html)
-        # print(f"Wrote to: {path}")
+        f.write(fm + html.lstrip())
