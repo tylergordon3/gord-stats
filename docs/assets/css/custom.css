@@ -2350,6 +2350,54 @@ p {
 }
 
 /* -----------------------------
+   RECOMMENDED DROPS
+------------------------------ */
+
+.wnba-drops {
+  max-width: 1200px;
+  margin: 22px auto;
+}
+
+.drop-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #475569;
+  margin: 4px 0 12px;
+}
+
+#drop-team-select {
+  padding: 7px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ir-tag,
+.lock-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.ir-tag {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.lock-tag {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* -----------------------------
    TEAM REPORTS
 ------------------------------ */
 

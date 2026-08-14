@@ -153,10 +153,11 @@ def project_pickup(player: dict, games: list[tuple[str, str]],
 
 
 def build_pickups(schedule: dict, week: int, factors: dict,
-                  today: str, max_rows: int = MAX_ROWS) -> list[dict]:
+                  today: str, max_rows: int = MAX_ROWS,
+                  log: dict | None = None) -> list[dict]:
     start, end = wr.WEEK_DATES[week]
     dates = [d for d in wr.dates_in_range(start, end) if d >= today]
-    log = wnba_defense.player_game_log()
+    log = log if log is not None else wnba_defense.player_game_log()
 
     idle_cutoff = (date.fromisoformat(today) - timedelta(days=MAX_IDLE_DAYS)).isoformat()
 
@@ -175,6 +176,127 @@ def build_pickups(schedule: dict, week: int, factors: dict,
 
     rows.sort(key=lambda r: -r["proj_total"])
     return rows[:max_rows]
+
+
+# ── Drop recommendations ──────────────────────────────────────────────────────
+
+def build_drop_rows(fantasy_data: dict, schedule: dict, week: int, factors: dict,
+                    today: str, log: dict | None = None) -> dict:
+    """
+    {fantasy team name: [player rows, lowest projected value first]}.
+
+    Each rostered player is scored with the same projection as the pickups
+    list, so the two tables are directly comparable. OUT players project 0
+    for the period (they can't play), with their averages still shown so
+    stash value stays visible.
+    """
+    start, end = wr.WEEK_DATES[week]
+    dates = [d for d in wr.dates_in_range(start, end) if d >= today]
+    log = log if log is not None else wnba_defense.player_game_log()
+
+    by_team = {}
+    for ft in sorted(fantasy_data["teams"], key=lambda t: t["name"].lower()):
+        rows = []
+        for entry in ft["roster"]["entries"]:
+            p = entry["playerPoolEntry"]["player"]
+            es = p.get("eligibleSlots", [])
+            player = {
+                "name":       p["fullName"],
+                "abbrev":     wr.TEAM_DICT.get(str(p.get("proTeamId")), None),
+                "injury":     p.get("injuryStatus", "ACTIVE"),
+                "is_g":       wr.G_SLOT in es,
+                "is_fc":      wr.FC_SLOT in es,
+                "own_pct":    p.get("ownership", {}).get("percentOwned", 0.0),
+                "season_avg": _actual_season_avg(p, wnba_fantasy.SEASON),
+                "droppable":  p.get("droppable", True),
+                "is_ir":      entry.get("lineupSlotId") in wr.IR_SLOTS,
+            }
+            games = (remaining_games(schedule, player["abbrev"], dates)
+                     if player["abbrev"] else [])
+            row = project_pickup(player, games, factors, log.get(p["fullName"], []), today)
+            if player["injury"] == "OUT":
+                row["proj_total"] = 0.0
+                row["proj_pg"] = 0.0
+            rows.append(row)
+
+        # Actionable drops first: droppable, non-IR players by lowest remaining
+        # value; IR stashes and can't-drop players sink to the bottom (an IR
+        # player doesn't cost a roster spot, a locked one can't be cut anyway).
+        rows.sort(key=lambda r: (
+            0 if (r["droppable"] and not r["is_ir"]) else 1,
+            r["proj_total"],
+        ))
+        by_team[ft["name"]] = rows
+    return by_team
+
+
+def drop_recommendations_html(by_team: dict, best_pickup: dict | None = None) -> str:
+    html = ['<section class="wnba-drops">', "<h2>Recommended Drops</h2>"]
+    intro = ("Pick a team to see its roster ranked by the same projection as the "
+             "pickups above — lowest remaining value first, so the top rows are "
+             "the drop candidates.")
+    if best_pickup:
+        intro += (f' Best available right now: <strong>{best_pickup["name"]}</strong> '
+                  f'({best_pickup["proj_total"]:.1f} proj pts left).')
+    html.append(f'<p class="week-meta">{intro}</p>')
+
+    names = list(by_team)
+    html.append('<label class="drop-select-label">Team '
+                '<select id="drop-team-select">')
+    for name in names:
+        html.append(f'<option value="{name}">{name}</option>')
+    html.append("</select></label>")
+
+    for name, rows in by_team.items():
+        html.append(f'<div class="drop-panel" data-team="{name}" style="display:none">')
+        html.append('<div class="table-scroll"><table class="pickups-table">')
+        html.append(
+            "<thead><tr>"
+            "<th>#</th><th>Player</th><th>Pos</th><th>Team</th>"
+            "<th>Games left</th><th>Opponents</th>"
+            "<th>Szn avg</th><th>L14 avg</th><th>Proj total</th>"
+            "</tr></thead><tbody>"
+        )
+        for i, r in enumerate(rows, 1):
+            tags = ""
+            if r["injury"] not in ("ACTIVE",):
+                tags += f' <span class="inj-tag">{r["injury"].replace("_", "-")}</span>'
+            if r.get("is_ir"):
+                tags += ' <span class="ir-tag">IR</span>'
+            if not r.get("droppable", True):
+                tags += ' <span class="lock-tag">can\'t drop</span>'
+            l14 = f'{r["recent_avg"]:.1f}' if r["recent_avg"] is not None else "—"
+            html.append(
+                "<tr>"
+                f"<td>{i}</td>"
+                f'<td class="pickup-name">{r["name"]}{tags}</td>'
+                f"<td>{r['pos']}</td>"
+                f'<td class="team-abbrev">{r["abbrev"] or "—"}</td>'
+                f"<td>{r['n_games']}</td>"
+                f'<td class="pickup-opps">{", ".join(r["opps"]) or "—"}</td>'
+                f"<td>{r['season_avg']:.1f}</td>"
+                f"<td>{l14}</td>"
+                f'<td class="proj-strong">{r["proj_total"]:.1f}</td>'
+                "</tr>"
+            )
+        html.append("</tbody></table></div></div>")
+
+    html.append("""
+<script>
+(function () {
+  var sel = document.getElementById('drop-team-select');
+  if (!sel) return;
+  function show() {
+    document.querySelectorAll('.drop-panel').forEach(function (p) {
+      p.style.display = (p.dataset.team === sel.value) ? '' : 'none';
+    });
+  }
+  sel.addEventListener('change', show);
+  show();
+})();
+</script>""")
+    html.append("</section>")
+    return "\n".join(html)
 
 
 # ── HTML ──────────────────────────────────────────────────────────────────────

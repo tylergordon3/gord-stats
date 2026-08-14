@@ -753,14 +753,24 @@ def main(argv=None):
             )
         )
 
-        # Suggested pickups (replaces the old games-left-by-team list).
+        # Suggested pickups (replaces the old games-left-by-team list) and
+        # per-team drop recommendations, scored with the same projection.
         # Imported here to avoid a circular import at module load.
         try:
             from cbb.wnba import wnba_pickups
-            pickup_rows = wnba_pickups.build_pickups(schedule, week, factors, today)
+            game_log = wnba_defense.player_game_log()
+            pickup_rows = wnba_pickups.build_pickups(
+                schedule, week, factors, today, log=game_log
+            )
             html_parts.append(wnba_pickups.suggested_pickups_html(pickup_rows, week))
+            drop_rows = wnba_pickups.build_drop_rows(
+                fantasy_data, schedule, week, factors, today, log=game_log
+            )
+            html_parts.append(wnba_pickups.drop_recommendations_html(
+                drop_rows, pickup_rows[0] if pickup_rows else None
+            ))
         except Exception as e:
-            print(f"⚠ Suggested pickups unavailable: {e}")
+            print(f"⚠ Pickups/drops unavailable: {e}")
 
         output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
         with open(output_file, "w", encoding="utf-8") as f:
