@@ -5771,7 +5771,7 @@
           "id": 25005,
           "home": "NY",
           "away": "LA",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-13"
@@ -5782,7 +5782,7 @@
           "id": 25005,
           "home": "NY",
           "away": "LA",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-13"
@@ -5793,7 +5793,7 @@
           "id": 25006,
           "home": "LV",
           "away": "WSH",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-13"
@@ -5804,7 +5804,7 @@
           "id": 25006,
           "home": "LV",
           "away": "WSH",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-13"
