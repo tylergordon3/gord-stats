@@ -540,7 +540,8 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
     for ft, total, proj_total, min_total, proj_min_total, daily_log in results:
         html.append(f"""
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>{ft["name"]}</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -553,7 +554,7 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                 <strong>~{proj_min_total:.0f}</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         """)
 
         html.append('<div class="daily-games">')
@@ -591,7 +592,18 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                 html.append('</ul>')
             html.append('</div>')
         html.append('</div>')
+        html.append('</details>')
         html.append('</article>')
+
+    # Day cards collapse behind each team header on phones
+    html.append("""
+<script>
+  if (window.innerWidth < 700) {
+    document.querySelectorAll("details.team-fold[open]").forEach(function (d) {
+      d.removeAttribute("open");
+    });
+  }
+</script>""")
     html.append('</section>')
     return "\n".join(html)
  
@@ -703,6 +715,9 @@ def main(argv=None):
     scoreboard_parts = []
     dashboard_parts = []
     if not args.no_scoreboard:
+        # One page-level stamp instead of per-section "Last Update" lines
+        stamp = datetime.now(ET).strftime("%A %m/%d/%y %I:%M %p")
+        scoreboard_parts.append(f'<p class="page-updated">Updated {stamp} ET</p>')
         max_games_by_id = {ft["id"]: total for ft, total, _, _, _, _ in results}
         proj_left_by_id = {ft["id"]: proj for ft, _, proj, _, _, _ in results}
         min_left_by_id  = {ft["id"]: mins for ft, _, _, mins, _, _ in results}
@@ -728,7 +743,9 @@ def main(argv=None):
             cons_ms  = [m for m in week_ms if m not in champ_ms]
 
             scoreboard_parts.append(champ_bracket)
-            scoreboard_parts.append(scoreboard(champ_ms, f"Championship Matchups — Week {week}"))
+            scoreboard_parts.append(scoreboard(
+                champ_ms, f"Championship Matchups — Week {week}", show_updated=False
+            ))
             if cons_bracket:
                 scoreboard_parts.append(cons_bracket)
             if cons_ms:
@@ -742,7 +759,7 @@ def main(argv=None):
                 scoreboard_parts.append(champ_bracket)
                 if cons_bracket:
                     scoreboard_parts.append(cons_bracket)
-            scoreboard_parts.append(scoreboard())
+            scoreboard_parts.append(scoreboard(show_updated=False))
 
         dashboard_parts.append(
             team_reports_html(

@@ -15,14 +15,12 @@
 <body>
 
   <!-- HEADER -->
-  <div id="header_wrap" class="outer">
-    <header class="inner">
-      <h1 id="project_title">GordStats.com</h1>
-      <div class="header-row">
-        {% include nav.html %}
-
-      </div>
-      <!-- League toggle (stays top-right) -->
+  <header id="site-header">
+    <div class="site-header-inner">
+      <a class="site-brand no-rewrite" href="/index.html">Gord<span>Stats</span></a>
+      {% include nav.html %}
+      {% if page.dir == "/men/" or page.dir == "/women/" %}
+      <!-- League toggle only where it means something -->
       <div class="league-toggle">
         <button id="league-toggle-btn" aria-label="Toggle Men/Women">
           <span class="option men">Men</span>
@@ -30,22 +28,21 @@
           <span class="slider"></span>
         </button>
       </div>
-    </header>
-  </div>
+      {% endif %}
+    </div>
+  </header>
 
   <!-- MAIN CONTENT -->
-  <div id="main_content_wrap" class="outer">
+  <main id="main_content_wrap" class="outer">
     <section id="main_content" class="custom-inner">
       {{ content }}
     </section>
-  </div>
+  </main>
 
   <!-- FOOTER  -->
-  <div id="footer_wrap" class="outer">
-    <footer class="inner">
-      <p class="copyright">Maintained by Tyler Gordon
-    </footer>
-  </div>
+  <footer id="site-footer">
+    <p>GordStats — maintained by Tyler Gordon</p>
+  </footer>
   <script>
     /**
      * LEAGUE-AWARE NAV REWRITE

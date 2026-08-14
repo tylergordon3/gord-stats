@@ -4,7 +4,8 @@
 <p class="played-days">Days already played: 2026-08-10, 2026-08-11, 2026-08-12, 2026-08-13</p>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Kim Mulkey's Rejects</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -17,7 +18,7 @@
                 <strong>~722</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -315,10 +316,12 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Shyanne Sellars pls come back</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -331,7 +334,7 @@
                 <strong>~684</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -664,10 +667,12 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Quarterzip Memorial Team</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -680,7 +685,7 @@
                 <strong>~656</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -969,10 +974,12 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Angel REESE</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -985,7 +992,7 @@
                 <strong>~811</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -1313,10 +1320,12 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Stud bud enthusiast</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -1329,7 +1338,7 @@
                 <strong>~516</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -1650,10 +1659,12 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Brenda Frese Fan Club</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -1666,7 +1677,7 @@
                 <strong>~917</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -2019,10 +2030,12 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Tatum Tots Top Team</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -2035,7 +2048,7 @@
                 <strong>~932</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -2373,10 +2386,12 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
 
         <article class="team-report">
-          <header class="team-report-header">
+          <details class="team-fold" open>
+          <summary class="team-report-header">
             <h3>Jake's Scary Team</h3>
             <div class="header-stats">
               <div class="max-games">
@@ -2389,7 +2404,7 @@
                 <strong>~809</strong> proj min left
               </div>
             </div>
-          </header>
+          </summary>
         
 <div class="daily-games">
 
@@ -2726,7 +2741,16 @@
 </ul>
 </div>
 </div>
+</details>
 </article>
+
+<script>
+  if (window.innerWidth < 700) {
+    document.querySelectorAll("details.team-fold[open]").forEach(function (d) {
+      d.removeAttribute("open");
+    });
+  }
+</script>
 </section>
 
 <section class="wnba-pickups">
@@ -2741,11 +2765,11 @@
 <tr><td>5</td><td class="pickup-name">Courtney Vandersloot</td><td>G</td><td class="team-abbrev">CHI</td><td>4</td><td class="pickup-opps">SEA, NY, GS, IND</td><td>20.2</td><td>22.6</td><td>19.8</td><td class="proj-strong">79.3</td></tr>
 <tr><td>6</td><td class="pickup-name">DiJonai Carrington</td><td>G</td><td class="team-abbrev">CHI</td><td>4</td><td class="pickup-opps">SEA, NY, GS, IND</td><td>17.7</td><td>17.7</td><td>18.9</td><td class="proj-strong">75.4</td></tr>
 <tr><td>7</td><td class="pickup-name">Naz Hillmon</td><td>F/C</td><td class="team-abbrev">ATL</td><td>4</td><td class="pickup-opps">IND, LV, LA, PHX</td><td>18.1</td><td>20.0</td><td>18.8</td><td class="proj-strong">75.3</td></tr>
-<tr><td>8</td><td class="pickup-name">Jordan Harrison</td><td>G</td><td class="team-abbrev">POR</td><td>4</td><td class="pickup-opps">SEA, PHX, TOR, WSH</td><td>13.1</td><td>19.7</td><td>18.0</td><td class="proj-strong">71.8</td></tr>
-<tr><td>9</td><td class="pickup-name">Tiffany Hayes</td><td>G</td><td class="team-abbrev">GS</td><td>3</td><td class="pickup-opps">DAL, MIN, CHI</td><td>14.7</td><td>26.8</td><td>22.8</td><td class="proj-strong">68.5</td></tr>
-<tr><td>10</td><td class="pickup-name">Teja Oblak</td><td>G</td><td class="team-abbrev">POR</td><td>4</td><td class="pickup-opps">SEA, PHX, TOR, WSH</td><td>13.2</td><td>23.0</td><td>16.6</td><td class="proj-strong">66.4</td></tr>
-<tr><td>11</td><td class="pickup-name">Saniya Rivers</td><td>G</td><td class="team-abbrev">CON</td><td>4</td><td class="pickup-opps">NY, LA, LV, LA</td><td>15.5</td><td>10.5</td><td>16.5</td><td class="proj-strong">65.9</td></tr>
-<tr><td>12</td><td class="pickup-name">Odyssey Sims</td><td>G</td><td class="team-abbrev">DAL</td><td>4</td><td class="pickup-opps">IND, GS, IND, SEA</td><td>10.4</td><td>12.7</td><td>15.7</td><td class="proj-strong">62.7</td></tr>
+<tr><td>8</td><td class="pickup-name">Diamond Miller</td><td>G</td><td class="team-abbrev">CON</td><td>4</td><td class="pickup-opps">NY, LA, LV, LA</td><td>16.2</td><td>20.5</td><td>18.5</td><td class="proj-strong">74.2</td></tr>
+<tr><td>9</td><td class="pickup-name">Jordan Harrison</td><td>G</td><td class="team-abbrev">POR</td><td>4</td><td class="pickup-opps">SEA, PHX, TOR, WSH</td><td>13.1</td><td>19.7</td><td>18.0</td><td class="proj-strong">71.8</td></tr>
+<tr><td>10</td><td class="pickup-name">Tiffany Hayes</td><td>G</td><td class="team-abbrev">GS</td><td>3</td><td class="pickup-opps">DAL, MIN, CHI</td><td>14.7</td><td>26.8</td><td>22.8</td><td class="proj-strong">68.5</td></tr>
+<tr><td>11</td><td class="pickup-name">Teja Oblak</td><td>G</td><td class="team-abbrev">POR</td><td>4</td><td class="pickup-opps">SEA, PHX, TOR, WSH</td><td>13.2</td><td>23.0</td><td>16.6</td><td class="proj-strong">66.4</td></tr>
+<tr><td>12</td><td class="pickup-name">Saniya Rivers</td><td>G</td><td class="team-abbrev">CON</td><td>4</td><td class="pickup-opps">NY, LA, LV, LA</td><td>15.5</td><td>10.5</td><td>16.5</td><td class="proj-strong">65.9</td></tr>
 <tr><td>13</td><td class="pickup-name">Jewell Loyd</td><td>G</td><td class="team-abbrev">LV</td><td>4</td><td class="pickup-opps">MIN, ATL, CON, TOR</td><td>16.0</td><td>13.2</td><td>15.4</td><td class="proj-strong">61.8</td></tr>
 <tr><td>14</td><td class="pickup-name">Cecilia Zandalasini</td><td>F/C</td><td class="team-abbrev">GS</td><td>3</td><td class="pickup-opps">DAL, MIN, CHI</td><td>15.7</td><td>19.4</td><td>20.3</td><td class="proj-strong">61.0</td></tr>
 <tr><td>15</td><td class="pickup-name">Cotie McMahon</td><td>F/C</td><td class="team-abbrev">WSH</td><td>4</td><td class="pickup-opps">LA, TOR, MIN, POR</td><td>13.9</td><td>16.5</td><td>14.1</td><td class="proj-strong">56.3</td></tr>

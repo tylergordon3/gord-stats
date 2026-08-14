@@ -1,15 +1,75 @@
 /* -----------------------------
+   SITE HEADER (light sticky bar)
+------------------------------ */
+
+/* No backdrop-filter here: it would create a containing block and pin the
+   fixed bottom-nav (rendered inside the nav include) to the header. */
+#site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.05);
+}
+
+.site-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 16px;
+}
+
+.site-brand {
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  color: #0f172a !important;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-brand span {
+  color: #059669;
+}
+
+#site-header #nav {
+  flex: 1;
+  min-width: 0;
+}
+
+#site-footer {
+  margin-top: 32px;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+#site-footer p {
+  margin: 0;
+}
+
+/* -----------------------------
    NAV
 ------------------------------ */
 .simple-nav a {
-  margin-right: 12px;
-  padding-right: 12px;
-  border-right: 1px solid #4a5a68;
+  margin-right: 4px;
+  padding: 6px 10px;
+  border-radius: 8px;
   text-decoration: none;
+  color: #475569 !important;
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
-.simple-nav a:last-child {
-  border-right: none;
+.simple-nav a:hover {
+  background: #f1f5f9;
+  color: #059669 !important;
 }
 
 .nav-inner {
@@ -33,7 +93,7 @@
 .league-toggle {
   display: flex;
   justify-content: center;
-  margin-top: 12px; 
+  margin-top: 0;
 }
 
 .league-toggle a {
@@ -2531,6 +2591,27 @@ p {
   font-size: 1rem;
 }
 
+/* Team reports fold behind their header (collapsed by default on phones) */
+summary.team-report-header {
+  cursor: pointer;
+  list-style: none;
+}
+
+summary.team-report-header::-webkit-details-marker {
+  display: none;
+}
+
+summary.team-report-header::after {
+  content: "▾";
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-left: 4px;
+}
+
+.team-fold[open] > summary.team-report-header::after {
+  content: "▴";
+}
+
 .header-stats {
   display: flex;
   gap: 14px;
@@ -2676,5 +2757,239 @@ p {
 
   .daily-games {
     grid-template-columns: 1fr;
+  }
+}
+/* -----------------------------
+   PAGE-LEVEL UPDATED STAMP
+------------------------------ */
+
+.page-updated {
+  max-width: 1200px;
+  margin: 10px auto 0;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* -----------------------------
+   DARK MODE
+   Targeted overrides for the major surfaces; pandas-styled data tables
+   (predict/conference pages) keep their inline light styling and read as
+   light islands on the dark page.
+------------------------------ */
+
+@media (prefers-color-scheme: dark) {
+  body,
+  #main_content_wrap {
+    background: #0f172a !important;
+    color: #cbd5e1;
+  }
+
+  h1, h2, h3, h4 {
+    color: #f1f5f9;
+  }
+
+  a {
+    color: #7dd3fc;
+  }
+
+  /* Shell */
+  #site-header {
+    background: #0f172a;
+    border-bottom-color: #1e293b;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .site-brand {
+    color: #f1f5f9 !important;
+  }
+
+  .site-brand span {
+    color: #34d399;
+  }
+
+  .simple-nav a {
+    color: #94a3b8 !important;
+  }
+
+  .simple-nav a:hover {
+    background: #1e293b;
+    color: #34d399 !important;
+  }
+
+  #site-footer {
+    border-top-color: #1e293b;
+    color: #64748b;
+  }
+
+  .bottom-nav {
+    background: #0f172a !important;
+    border-top-color: #1e293b !important;
+  }
+
+  #league-toggle-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+  }
+
+  /* Cards & sections */
+  .matchup-card,
+  .bracket-game,
+  .team-report,
+  .home-card,
+  .day-card,
+  .table-scroll,
+  .drop-panel .table-scroll {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  .team-side,
+  .bracket-team {
+    background: #263449;
+    border-color: #334155;
+  }
+
+  .team-side.leader,
+  .bracket-team.winner {
+    background: #123c2e;
+    border-color: #059669;
+  }
+
+  .bracket-team.winner .bteam-name {
+    color: #6ee7b7;
+  }
+
+  .team-side.tied {
+    background: #3b2f11;
+    border-color: #a16207;
+  }
+
+  .day-card {
+    background: #263449;
+  }
+
+  .day-card.today {
+    background: #3b2410;
+    border-color: #c2410c;
+  }
+
+  .team-report-header {
+    background: linear-gradient(90deg, #1e293b, #263449);
+    border-bottom-color: #334155;
+  }
+
+  .home-card p,
+  .max-games,
+  .finalized,
+  .week-meta,
+  .played-days,
+  .matchup-topline,
+  .pickup-opps,
+  .bteam-name em,
+  .round-dates {
+    color: #94a3b8;
+  }
+
+  .team-label,
+  .bracket-round h3,
+  .slot {
+    color: #94a3b8;
+  }
+
+  .score,
+  .bscore {
+    color: #f1f5f9;
+  }
+
+  .player-list li,
+  .bracket-team + .bracket-team {
+    border-top-color: #334155;
+  }
+
+  .proj-bar {
+    background: #334155;
+  }
+
+  .proj-fill {
+    background: #64748b;
+  }
+
+  .proj-fill.proj-win {
+    background: #059669;
+  }
+
+  .matchup-topline span {
+    background: #0c4a6e;
+    color: #7dd3fc;
+  }
+
+  .matchup-projline > span {
+    background: #123c2e;
+    color: #6ee7b7;
+  }
+
+  /* Our own tables (pickups, drops, archive) go dark */
+  .pickups-table {
+    background: #1e293b;
+    color: #cbd5e1;
+  }
+
+  .pickups-table th {
+    background: #0f172a;
+    border-bottom-color: #334155;
+    color: #94a3b8;
+  }
+
+  .pickups-table td {
+    border-bottom-color: #263449;
+  }
+
+  .pickups-table tbody tr:hover {
+    background: #263449;
+  }
+
+  .proj-strong {
+    color: #34d399;
+  }
+
+  #drop-team-select,
+  .archive-controls select {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+  }
+
+  .drop-select-label,
+  .archive-controls label {
+    color: #94a3b8;
+  }
+
+  /* Pandas-styled tables stay light islands so inline cell colors read */
+  .table-container table,
+  .sticky-table {
+    background: #fff;
+    color: #1e293b;
+  }
+
+  .page-updated {
+    color: #64748b;
+  }
+
+  .bracket-title {
+    color: #f1f5f9;
+  }
+
+  .games-left,
+  .team-games,
+  .team-abbrev,
+  .pickup-name {
+    color: #60a5fa;
+  }
+
+  .pickup-name {
+    color: #e2e8f0;
   }
 }
