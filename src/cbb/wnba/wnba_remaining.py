@@ -53,7 +53,6 @@ UTIL_LIMIT = 1
  
 IR_SLOTS  = {7}
 
-TEAM_COUNT = {}
 # ── Team dict: ESPN proTeamId → WNBA abbreviation ─────────────────────────────
 TEAM_DICT = {
     "3":      "DAL", "5":      "IND", "6":      "LA",  "8":      "MIN",
@@ -220,14 +219,6 @@ def calc_max_games(
     daily_log = []
     for d in dates:
         playing   = teams_playing_on(schedule, d)
-
-        for team in playing:
-            if team not in TEAM_COUNT:
-                TEAM_COUNT[team] = [d]
-            else:
-                list = TEAM_COUNT[team]
-                if d not in list:
-                    TEAM_COUNT[team] += [d]
 
         # Split into active and out players who have a game today
         active    = [p for p in players if p["abbrev"] in playing and not p["is_out"]]
@@ -762,24 +753,14 @@ def main(argv=None):
             )
         )
 
-        for team in TEAM_COUNT:
-            TEAM_COUNT[team] = len(TEAM_COUNT[team])
-        invert = {}
-        for key, value in TEAM_COUNT.items():
-            if value not in invert:
-                invert[value] = []
-            invert[value].append(key)
-        html_parts.append('<ul class="player-list">')
-
-        html_parts.append("<h3>Games left for each team</h3>")
-        for value, teams in invert.items():
-            html_parts.append(f"<p>Teams with {value} games left:</p>")
-            for team in teams:
-                html_parts.append(f"""
-                        <li>
-                        {team}
-                        </li>
-                        """)
+        # Suggested pickups (replaces the old games-left-by-team list).
+        # Imported here to avoid a circular import at module load.
+        try:
+            from cbb.wnba import wnba_pickups
+            pickup_rows = wnba_pickups.build_pickups(schedule, week, factors, today)
+            html_parts.append(wnba_pickups.suggested_pickups_html(pickup_rows, week))
+        except Exception as e:
+            print(f"⚠ Suggested pickups unavailable: {e}")
 
         output_file = paths.DOCS / "_includes" / "wnba_fantasy_matchups.html"
         with open(output_file, "w", encoding="utf-8") as f:

@@ -2276,6 +2276,80 @@ p {
 }
 
 /* -----------------------------
+   SUGGESTED PICKUPS
+------------------------------ */
+
+.wnba-pickups {
+  max-width: 1200px;
+  margin: 22px auto;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.pickups-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #fff;
+}
+
+.pickups-table th {
+  text-align: left;
+  padding: 10px 10px;
+  background: linear-gradient(90deg, #eff6ff, #f8fafc);
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.pickups-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.pickups-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pickups-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.pickup-name {
+  font-weight: 700;
+}
+
+.pickup-opps {
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.proj-strong {
+  font-weight: 900;
+  color: #059669;
+}
+
+.inj-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #b45309;
+  vertical-align: middle;
+}
+
+/* -----------------------------
    TEAM REPORTS
 ------------------------------ */
 

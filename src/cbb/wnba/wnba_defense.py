@@ -103,20 +103,24 @@ def fetch_final_events(start: str = SEASON_START, end: str | None = None) -> lis
     return events
 
 
-def fetch_game_allowed(event_id: str) -> dict:
+def fetch_game_allowed(event_id: str) -> tuple[dict, dict]:
     """
-    Fantasy points each team ALLOWED in one game, by position group.
-
-    Returns {"PHX": {"G": 55.0, "FC": 61.0}, "CON": {...}}
+    One game's box score, twice-digested:
+      allowed — fantasy points each team ALLOWED, by position group:
+                {"PHX": {"G": 55.0, "FC": 61.0}, "CON": {...}}
+      players — every player's fantasy line for the game:
+                {"PHX": [[name, "G"|"FC", fpts], ...], "CON": [...]}
     """
     r = requests.get(SUMMARY_URL, params={"event": event_id}, headers=HEADERS, timeout=20)
     r.raise_for_status()
 
     sides = r.json()["boxscore"]["players"]
-    scored = {}  # abbrev -> {"G": pts, "FC": pts} scored BY that team
+    scored = {}   # abbrev -> {"G": pts, "FC": pts} scored BY that team
+    players = {}  # abbrev -> [[name, group, fpts], ...]
     for side in sides:
         abbrev = side["team"]["abbreviation"]
         totals = {"G": 0.0, "FC": 0.0}
+        lines = []
         block = side["statistics"][0]
         keys = block["keys"]
         for a in block["athletes"]:
@@ -124,14 +128,18 @@ def fetch_game_allowed(event_id: str) -> dict:
             if not stats:  # DNP
                 continue
             group = position_group(a["athlete"].get("position", {}).get("abbreviation"))
-            totals[group] += fantasy_points(keys, stats)
+            pts = fantasy_points(keys, stats)
+            totals[group] += pts
+            lines.append([a["athlete"]["displayName"], group, round(pts, 1)])
         scored[abbrev] = totals
+        players[abbrev] = lines
 
     if len(scored) != 2:
         raise ValueError(f"Event {event_id}: expected 2 teams, got {list(scored)}")
 
     a, b = scored
-    return {a: scored[b], b: scored[a]}  # allowed = opponent's scored
+    allowed = {a: scored[b], b: scored[a]}  # allowed = opponent's scored
+    return allowed, players
 
 
 # ── Live game clock ───────────────────────────────────────────────────────────
@@ -207,13 +215,16 @@ def update_cache(rebuild: bool = False, path: Path = DEFENSE_FILE) -> dict:
     games = cache["games"]
 
     events = fetch_final_events()
-    new = [e for e in events if e["id"] not in games]
+    # "players" missing means the entry predates per-player lines — refetch it
+    new = [e for e in events
+           if e["id"] not in games or "players" not in games[e["id"]]]
 
     if new:
         print(f"Fetching box scores for {len(new)} new game(s)...")
     for e in new:
         try:
-            games[e["id"]] = {"date": e["date"], "allowed": fetch_game_allowed(e["id"])}
+            allowed, players = fetch_game_allowed(e["id"])
+            games[e["id"]] = {"date": e["date"], "allowed": allowed, "players": players}
         except Exception as err:
             print(f"  ⚠ event {e['id']}: {err}")
         time.sleep(0.15)
@@ -226,6 +237,31 @@ def update_cache(rebuild: bool = False, path: Path = DEFENSE_FILE) -> dict:
     if DEBUG or new:
         print(f"Defense cache: {len(games)} games total ({len(new)} added)")
     return cache
+
+
+def player_game_log(cache: dict | None = None) -> dict:
+    """
+    Per-player fantasy game log from the cached box scores:
+      {"Kelsey Plum": [{"date","team","opp","grp","pts"}, ...], ...}
+    Names are ESPN display names, which match fantasy fullName.
+    """
+    cache = cache or load_cache()
+    log = {}
+    for g in cache["games"].values():
+        players = g.get("players")
+        if not players or len(players) != 2:
+            continue
+        a, b = players
+        opps = {a: b, b: a}
+        for ab, lines in players.items():
+            for name, grp, pts in lines:
+                log.setdefault(name, []).append({
+                    "date": g["date"], "team": ab, "opp": opps[ab],
+                    "grp": grp, "pts": pts,
+                })
+    for entries in log.values():
+        entries.sort(key=lambda e: e["date"])
+    return log
 
 
 # ── Factors ───────────────────────────────────────────────────────────────────
