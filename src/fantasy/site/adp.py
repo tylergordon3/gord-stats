@@ -232,10 +232,17 @@ def _manager_summary(df):
 def all_time_section() -> str:
     """Combined draft value/bust summaries across every season (homepage section)."""
     df = _all_seasons()
+    # "WR5 → WR38": positional rank at draft vs positional fantasy finish.
+    # 900+ is the sentinel for a player with no positional finish (never played).
+    df["Pos Draft → Finish"] = (
+        df["Pos."] + df["draft_pos_rank"].astype(str) + " → "
+        + (df["Pos."] + df["final_pos_rank"].astype(str)).where(df["final_pos_rank"] < 900, "—"))
 
-    def ranked(asc, cmap):
-        d = df.sort_values("vsFinish", ascending=asc).head(CUTOFF_ROWS)[_ALL_COLS].rename(columns=_ALL_RENAME)
+    def ranked(asc, cmap, cols=_ALL_COLS):
+        d = df.sort_values("vsFinish", ascending=asc).head(CUTOFF_ROWS)[cols].rename(columns=_ALL_RENAME)
         return _style(d, "{:+.0f}", cmap, wide=False, grad_col="Finish vs Pick")
+
+    bust_cols = _ALL_COLS[:6] + ["Pos Draft → Finish"] + _ALL_COLS[6:]
 
     link = layout.internal_link("/adp/", "Draft vs ADP")
     return (
@@ -249,7 +256,7 @@ def all_time_section() -> str:
         "<h2>Best Values (all-time)</h2>"
         f"<div class='table-scroll'>{ranked(False, 'Greens')}</div>"
         "<h2>Biggest Busts (all-time)</h2>"
-        f"<div class='table-scroll'>{ranked(True, 'Reds_r')}</div>"
+        f"<div class='table-scroll'>{ranked(True, 'Reds_r', bust_cols)}</div>"
     )
 
 

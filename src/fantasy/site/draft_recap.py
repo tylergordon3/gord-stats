@@ -30,8 +30,9 @@ _NORM = Normalize(vmin=-TIER_SPAN, vmax=TIER_SPAN)
 
 _BOARD_CSS = """<style>
 table.draft-board{border-collapse:collapse;font-size:12px;margin:6px 0}
-table.draft-board th{border:1px solid #cfd6dd;padding:6px 8px;background:#e8edf2;color:#141414}
-table.draft-board td{border:1px solid #cfd6dd;padding:5px 7px;text-align:center;min-width:96px}
+table.draft-board th{border:1px solid #e2e8f0;padding:6px 8px;background:#eef2f7;color:#334155;
+  font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+table.draft-board td{border:1px solid #e5e7eb;padding:5px 7px;text-align:center;min-width:96px}
 table.draft-board td .p{font-weight:600;white-space:nowrap}
 table.draft-board td .t{font-size:11px;white-space:nowrap}
 </style>"""

@@ -2,22 +2,36 @@ docs_list_title: FantasyFootballLinks
 docs:
 
 - title: Home
+  short: Home
+  icon: "🏠"
   url: /index.html
 
 - title: Schedule Stats
+  short: Schedule
+  icon: "📅"
   url: /schedule/
 
 - title: Draft vs ADP
+  short: ADP
+  icon: "🎯"
   url: /adp/
 
 - title: Draft Recap
+  short: Recap
+  icon: "📋"
   url: /draft-recap/
 
 - title: Draft Report
+  short: Report
+  icon: "📊"
   url: /draft-report/
 
 - title: Draft DNA
+  short: DNA
+  icon: "🧬"
   url: /draft-dna/
 
 - title: Waivers & Trades
+  short: Waivers
+  icon: "🔄"
   url: /transactions/

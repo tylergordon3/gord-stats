@@ -30,8 +30,11 @@ POS = ["QB", "RB", "WR", "TE"]
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
 
 _CSS = """<style>
-p.caveat{border-left:3px solid #b9c4d0;padding:8px 12px;background:#f2f5f8;font-size:14px;
-  color:#3c4a58;border-radius:0 4px 4px 0}
+p.caveat{border-left:3px solid #cbd5e1;padding:8px 12px;background:#f1f5f9;font-size:14px;
+  color:#475569;border-radius:0 8px 8px 0}
+@media (prefers-color-scheme: dark){
+  p.caveat{background:#1e293b;border-left-color:#475569;color:#cbd5e1}
+}
 </style>"""
 
 # Roughly how many players at each position start league-wide in a given week:

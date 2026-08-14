@@ -1,84 +1,411 @@
+/* ==========================================================================
+   GordStats FF — site theme
+   Ported from the CBB (gordstats.com) shell: light sticky header, pill nav,
+   card-style tables, fixed bottom nav on phones, dark mode via
+   prefers-color-scheme. Pandas-styled data tables keep their inline light
+   styling and read as light islands on the dark page.
+   ========================================================================== */
+
+/* -----------------------------
+   SITE HEADER (light sticky bar)
+------------------------------ */
+
+#site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.05);
+}
+
+.site-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 16px;
+}
+
+.site-brand {
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  color: #0f172a !important;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-brand span {
+  color: #059669;
+}
+
+#site-header #nav {
+  flex: 1;
+  min-width: 0;
+}
+
+#site-footer {
+  margin-top: 32px;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+#site-footer p {
+  margin: 0;
+}
+
+/* -----------------------------
+   NAV
+------------------------------ */
+
+.nav-inner {
+  display: flex;
+  justify-content: center;
+}
+
 .simple-nav {
-  line-height: 1.9;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
 }
 
 .simple-nav a {
-  display: inline-block;
-  margin-right: 12px;
-  padding-right: 12px;
-  border-right: 1px solid #4a5a68;
+  padding: 6px 10px;
+  border-radius: 8px;
   text-decoration: none;
+  color: #475569 !important;
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
-.simple-nav a:last-child {
-  border-right: none;
-  padding-right: 0;
-  margin-right: 0;
+.simple-nav a:hover {
+  background: #f1f5f9;
+  color: #059669 !important;
 }
 
-/* Freeze first column */
-.sticky-table th:first-child,
-.sticky-table td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
+.simple-nav a.active {
+  background: #ecfdf5;
+  color: #047857 !important;
 }
 
-/* Freeze header row */
-thead th {
-  position: sticky;
-  top: 0;
-  z-index: 3;
+/* -----------------------------
+   MOBILE BOTTOM NAV
+------------------------------ */
+
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  #site-header #nav {
+    display: none !important;
+  }
+
+  .bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    background: #fff;
+    border-top: 1px solid #ddd;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 9999;
+  }
+
+  .bottom-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bottom-nav a {
+    flex: 1 0 auto;
+    min-width: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 6px 6px;
+    text-decoration: none;
+    color: #475569;
+    font-size: 0.62rem;
+    font-weight: 700;
+  }
+
+  .bottom-nav a .icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+}
+
+.bottom-nav a.active {
+  color: #059669;
+}
+
+.bottom-nav a.active::after {
+  content: '';
+  display: block;
+  margin: 2px auto 0;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  background: #059669;
+}
+
+/* -----------------------------
+   PAGE FRAME
+------------------------------ */
+
+/* Slate paints body with a dark texture that shows below short pages and
+   behind the footer; the theme is light, so paint it white. */
+body {
+  background: #ffffff;
+}
+
+#main_content_wrap {
+  background: #ffffff;
+  border: none;
 }
 
 .custom-inner {
   position: relative;
-  max-width: 900px;
+  box-sizing: border-box;
+  width: 95%;
+  max-width: 1200px;
   padding: 20px 10px;
   margin: 0 auto;
 }
 
+#main_content h1 {
+  text-align: center;
+  margin: 6px 0 14px;
+  letter-spacing: -0.01em;
+}
+
+/* -----------------------------
+   SECTION CHROME
+   (jump nav, collapsible sections, view-switch buttons — the classes are
+   emitted by src/site/layout.py, which no longer carries its own CSS)
+------------------------------ */
+
+.section-nav {
+  margin: 10px 0 18px;
+  padding: 10px 14px;
+  background: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.section-nav a {
+  display: inline-block;
+  margin: 3px 14px 3px 0;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+details.section {
+  margin: 14px 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+details.section>summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 14px;
+  background: linear-gradient(90deg, #eff6ff, #f8fafc);
+  color: #0f172a;
+  list-style: none;
+}
+
+details.section>summary:hover {
+  background: #e2e8f0;
+}
+
+details.section>summary::-webkit-details-marker {
+  display: none;
+}
+
+details.section>summary::before {
+  content: '\25B8  ';
+  color: #64748b;
+}
+
+details.section[open]>summary::before {
+  content: '\25BE  ';
+  color: #64748b;
+}
+
+details.section[open]>summary {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+details.section>*:not(summary) {
+  margin: 10px 14px;
+}
+
+.view-switch {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.view-switch .switch-label {
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+  min-width: 58px;
+}
+
+.view-switch button {
+  padding: 6px 14px;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.view-switch button:hover {
+  background: #f1f5f9;
+}
+
+.view-switch button.active {
+  background: #059669;
+  color: #fff;
+  font-weight: 700;
+  border-color: #047857;
+}
+
+@media (max-width: 600px) {
+  .section-nav {
+    margin: 8px 0 14px;
+    padding: 8px 10px;
+    line-height: 1.5;
+  }
+
+  .section-nav a {
+    margin-right: 12px;
+  }
+
+  details.section {
+    margin: 10px 0;
+  }
+
+  details.section>summary {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  details.section>*:not(summary) {
+    margin: 10px 8px;
+  }
+
+  .view-switch {
+    gap: 5px;
+    margin: 8px 0;
+  }
+
+  .view-switch button {
+    padding: 6px 11px;
+    font-size: 13px;
+  }
+
+  /* Label on its own line so the season buttons wrap as an even grid. */
+  .view-switch .switch-label {
+    flex: 1 1 100%;
+    min-width: 0;
+    margin: 0 0 2px;
+  }
+}
+
+/* -----------------------------
+   TABLE WRAPPER — prevents overflow
+------------------------------ */
+
+.table-scroll {
+  /* Hug narrow tables (no acres of empty card), scroll wide ones. */
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 14px 0 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  background: #fff;
+  box-sizing: border-box;
+  padding: 6px 8px;
+}
+
+.table-scroll table {
+  width: auto;
+  max-width: none;
+  border-collapse: collapse;
+}
+
 /* -----------------------------
    TABLE BASE STYLING
+   Generated tables carry .sticky-table on the <table> itself; the cell look
+   itself comes from pandas inline styles (src/site/styles.py) so it matches
+   this theme. This block adds stickiness + sizing only.
 ------------------------------ */
-/* Generated tables carry .sticky-table on the <table> itself, so size them by
-   their own content. Forcing width:100% handed every spare pixel to the widest
-   text column - an Owner column ran 184px for names half that wide, and the
-   table sat flush against the container edge. Anything genuinely wider than the
-   page overflows into .table-scroll and scrolls instead. */
+
 table.sticky-table {
   width: auto;
   max-width: none;
   table-layout: auto;
   border-collapse: collapse;
-  margin-right: auto;   /* left edge lines up with the surrounding copy */
+  margin-right: auto;
 }
 
 .sticky-table th,
 .sticky-table td {
-  padding: 4px 6px;
   font-size: inherit;
-
-  /* Default: keep columns readable */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  min-width: 30px; /* prevents columns from collapsing to nothing */
+  min-width: 30px;
+  font-variant-numeric: tabular-nums;
 }
 
-.sticky-table th {
-    position: sticky;
-    top: 0;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
-    z-index: 2;
-    color: white;
-    border-right: 1px solid #ccc;
-}
-
-.sticky-table th:last-child {
-    border-right: none;             /* keep right edge clean */
+.sticky-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 /* Freeze first column */
@@ -87,47 +414,47 @@ table.sticky-table {
   position: sticky;
   left: 0;
   z-index: 3;
-  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2); /* optional shadow */
-  color: #fff;
-  border-right: 1px solid black;
-  background: #373737
+  box-shadow: 2px 0 5px -2px rgba(15, 23, 42, 0.12);
 }
 
+/* Pandas leaves first-column td backgrounds unset unless a gradient colors
+   them; a frozen column needs an opaque background to slide over the rest. */
+.sticky-table td:first-child {
+  background: #f8fafc;
+}
 
-/* Reduce padding/headings on smaller screens */
+.sticky-table thead th:first-child {
+  z-index: 4;
+}
+
+/* -----------------------------
+   MOBILE
+------------------------------ */
+
 @media (max-width: 600px) {
-  /* The theme's 40px content gap and 10px gutters are a lot of dead space on a
-     phone, where the tables want every pixel of width. */
+  /* The theme's content gap and gutters are dead space on a phone, where the
+     tables want every pixel of width. */
   #main_content {
-    padding-top: 18px;
+    padding-top: 14px;
     padding-bottom: 10px;
   }
 
   .custom-inner {
-    padding: 14px 8px;
+    width: 100%;
+    padding: 12px 8px;
   }
 
-  /* The desktop gutter is worth real table width on a phone. */
   .table-scroll {
-    padding-right: 4px;
-  }
-
-  /* Theme header: 50px of top padding, and a 320px floor that pushes the whole
-     page sideways on narrow phones. */
-  #header_wrap .inner {
-    padding: 26px 12px 18px 12px;
-  }
-
-  .inner {
-    min-width: 0;
-  }
-
-  #project_title {
-    margin-bottom: 4px;
+    margin: 10px 0 14px;
+    padding: 4px;
+    border-radius: 10px;
   }
 }
 
+/* Compress data tables on phones. !important because pandas emits id-scoped
+   inline styles that otherwise win. */
 @media (max-width: 480px) {
+
   table th,
   table td {
     padding: 4px 6px !important;
@@ -136,6 +463,7 @@ table.sticky-table {
 }
 
 @media (max-width: 320px) {
+
   table th,
   table td {
     padding: 3px 4px !important;
@@ -143,20 +471,143 @@ table.sticky-table {
   }
 }
 
-.table-scroll {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* smooth iOS scroll */
-    /* Breathing room on the right, and somewhere for a scrolling table to end
-       rather than stopping hard against the container. border-box keeps that
-       padding inside the 100%, so the page itself never gains a scrollbar. */
-    box-sizing: border-box;
-    padding-right: 12px;
-}
+/* -----------------------------
+   DARK MODE
+   Targeted overrides for the shell and section chrome; pandas-styled data
+   tables (and the matplotlib charts) keep their light styling and read as
+   light islands on the dark page — same approach as the CBB site.
+------------------------------ */
 
-.table-scroll table {
-    width: auto;
-    max-width: none;
-    border-collapse: collapse;
-}
+@media (prefers-color-scheme: dark) {
 
+  body,
+  #main_content_wrap {
+    background: #0f172a !important;
+    color: #cbd5e1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: #f1f5f9;
+  }
+
+  a {
+    color: #7dd3fc;
+  }
+
+  /* Shell */
+  #site-header {
+    background: #0f172a;
+    border-bottom-color: #1e293b;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .site-brand {
+    color: #f1f5f9 !important;
+  }
+
+  .site-brand span {
+    color: #34d399;
+  }
+
+  .simple-nav a {
+    color: #94a3b8 !important;
+  }
+
+  .simple-nav a:hover {
+    background: #1e293b;
+    color: #34d399 !important;
+  }
+
+  .simple-nav a.active {
+    background: #123c2e;
+    color: #6ee7b7 !important;
+  }
+
+  #site-footer {
+    border-top-color: #1e293b;
+    color: #64748b;
+  }
+
+  .bottom-nav {
+    background: #0f172a !important;
+    border-top-color: #1e293b !important;
+  }
+
+  .bottom-nav a {
+    color: #94a3b8;
+  }
+
+  .bottom-nav a.active {
+    color: #34d399;
+  }
+
+  .bottom-nav a.active::after {
+    background: #34d399;
+  }
+
+  /* Section chrome */
+  .section-nav {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  details.section {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  details.section>summary {
+    background: linear-gradient(90deg, #1e293b, #263449);
+    color: #f1f5f9;
+  }
+
+  details.section>summary:hover {
+    background: #263449;
+  }
+
+  details.section[open]>summary {
+    border-bottom-color: #334155;
+  }
+
+  .view-switch .switch-label {
+    color: #94a3b8;
+  }
+
+  .view-switch button {
+    background: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+    box-shadow: none;
+  }
+
+  .view-switch button:hover {
+    background: #263449;
+  }
+
+  .view-switch button.active {
+    background: #059669;
+    border-color: #047857;
+    color: #fff;
+  }
+
+  /* Tables stay light islands so the inline cell colors read. */
+  .table-scroll {
+    background: #fff;
+    border-color: #334155;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  table.sticky-table,
+  table.draft-board {
+    background: #fff;
+  }
+
+  .sticky-table td,
+  .draft-board td {
+    color: #0f172a;
+  }
+}

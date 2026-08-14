@@ -9,14 +9,22 @@ import matplotlib.colors as mcolors
 from matplotlib.colors import Normalize
 
 # Table cell / header / layout styles (shared across all generated tables).
+# Palette matches the site theme in docs/assets/css/custom.css (slate grays,
+# soft borders); the styles are inline because pandas id-scopes them, so this
+# is the authoritative look of every generated table.
+# NB: no background on td — `#T_x td` outranks pandas' per-cell gradient ids,
+# so a background here would erase every heatmap. The white surface comes from
+# the .table-scroll card around the table.
 GRID_TD = {
     "selector": "td",
-    "props": [("border", "1px solid #cfd6dd"), ("padding", "6px 12px"), ("text-align", "center")],
+    "props": [("border", "1px solid #eef2f7"), ("padding", "6px 10px"), ("text-align", "center")],
 }
 GRID_TH = {
     "selector": "th",
-    "props": [("border", "1px solid #cfd6dd"), ("padding", "8px 12px"), ("text-align", "center"),
-              ("background-color", "#e8edf2"), ("color", "#141414"), ("font-weight", "600")],
+    "props": [("border", "1px solid #e2e8f0"), ("padding", "8px 10px"), ("text-align", "center"),
+              ("background-color", "#eef2f7"), ("color", "#334155"), ("font-weight", "700"),
+              ("font-size", "12px"), ("text-transform", "uppercase"),
+              ("letter-spacing", "0.03em")],
 }
 TABLE_STYLE = {
     "selector": "",
@@ -71,7 +79,7 @@ def highlight_actual_records(df):
     for idx in df.index:
         for col in df.columns:
             if idx == col or (idx == "Team Totals" and col == "Schedule Totals"):
-                styled.loc[idx, col] = "background-color: #373737"
+                styled.loc[idx, col] = "background-color: #334155; color: #f1f5f9"
     return styled
 
 

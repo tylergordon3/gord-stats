@@ -46,8 +46,9 @@ MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
 # --------------------------------------------------------------------------- #
 
 _COUNTDOWN_CSS = """<style>
-.draft-banner{margin:14px 0 18px;padding:16px 18px;border-radius:8px;
-  background:linear-gradient(135deg,#17293b,#2f4a63);color:#fff;text-align:center}
+.draft-banner{margin:14px 0 18px;padding:16px 18px;border-radius:14px;
+  background:linear-gradient(135deg,#065f46,#059669);color:#fff;text-align:center;
+  box-shadow:0 2px 8px rgba(5,150,105,.25)}
 .draft-banner .draft-when{font-size:15px;letter-spacing:.04em;opacity:.85;margin:0 0 4px}
 .draft-banner .draft-title{font-size:20px;font-weight:700;margin:0 0 12px}
 .countdown{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
@@ -109,41 +110,49 @@ def countdown_banner() -> str:
 _BOARD_CSS = """<style>
 .adp-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
 .adp-controls .adp-label{font-weight:bold;font-size:14px}
-.adp-controls button{padding:5px 12px;cursor:pointer;border:1px solid #888;background:#eee;
-  border-radius:5px;font-size:14px}
-.adp-controls button.active{background:#3CB371;color:#fff;font-weight:bold;border-color:#2e8b57}
-.adp-controls input,.adp-controls select{padding:5px 8px;border:1px solid #888;border-radius:5px;
-  font-size:14px}
+.adp-controls button{padding:6px 14px;cursor:pointer;border:1px solid #e2e8f0;background:#fff;
+  border-radius:999px;font-size:14px;font-weight:600;color:#334155;
+  box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.adp-controls button:hover{background:#f1f5f9}
+.adp-controls button.active{background:#059669;color:#fff;font-weight:700;border-color:#047857}
+.adp-controls input,.adp-controls select{padding:6px 10px;border:1px solid #e2e8f0;
+  border-radius:8px;font-size:14px;background:#fff;color:#0f172a}
 .adp-controls input{min-width:170px}
-.adp-wrap{max-height:620px;overflow:auto;border:1px solid #b9c4d0;border-radius:6px}
+.adp-wrap{max-height:620px;overflow:auto;border:1px solid #e5e7eb;border-radius:12px;
+  background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.05)}
 table.adp-table{width:100%;border-collapse:collapse;font-size:14px;font-family:monospace}
-table.adp-table th{position:sticky;top:0;z-index:2;background:#17293b;color:#fff;
-  padding:8px 10px;text-align:center;cursor:pointer;white-space:nowrap;
-  border-right:1px solid #33475c;-webkit-user-select:none;user-select:none}
-table.adp-table th:hover{background:#28405a}
+table.adp-table th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334155;
+  padding:8px 10px;text-align:center;cursor:pointer;white-space:nowrap;font-size:12px;
+  text-transform:uppercase;letter-spacing:.03em;
+  border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;
+  -webkit-user-select:none;user-select:none}
+table.adp-table th:hover{background:#e2e8f0}
 table.adp-table th.sorted::after{content:' \\25BE';font-size:11px}
 table.adp-table th.sorted.asc::after{content:' \\25B4'}
-table.adp-table td{border:1px solid #dde3ea;padding:5px 10px;text-align:center;white-space:nowrap}
+table.adp-table td{border:1px solid #eef2f7;padding:5px 10px;text-align:center;white-space:nowrap;
+  background:#fff;color:#0f172a}
 table.adp-table td.name{text-align:left;font-family:inherit}
-table.adp-table tbody tr:nth-child(even){background:#f5f7fa}
-table.adp-table tbody tr:hover{background:#e6eef6}
+table.adp-table tbody tr:nth-child(even) td{background:#f8fafc}
+table.adp-table tbody tr:hover td{background:#eef2f6}
 .pos-tag{display:inline-block;min-width:44px;padding:1px 6px;border-radius:4px;color:#fff;
   font-size:12px;font-weight:700}
 .pos-QB{background:#c1436b}.pos-RB{background:#2f9e6d}.pos-WR{background:#2b7ba8}
 .pos-TE{background:#b98a2a}.pos-K{background:#7a6bbd}.pos-DST{background:#6b7785}
-.adp-early{background:#d8f0dd!important}.adp-late{background:#fadddd!important}
+.adp-early{background:#d8f0dd!important;color:#14532d!important}
+.adp-late{background:#fadddd!important;color:#7f1d1d!important}
 .adp-meta{font-size:13px;color:#4a5a68;margin:6px 0 0}
 .adp-empty{padding:14px;text-align:center;color:#666}
 .adp-up{color:#1a7f4b;font-weight:700}
 .adp-down{color:#b3382c;font-weight:700}
 .adp-flat{color:#93a1ad}
-.adp-controls button.adp-toggle.active{background:#17293b;border-color:#17293b}
+.adp-controls button.adp-toggle.active{background:#334155;border-color:#334155}
 table.adp-table td.pick{color:#4a5a68}
 .movers{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 4px}
-.movers .mover-card{flex:1 1 260px;min-width:0;border:1px solid #b9c4d0;border-radius:6px;
-  overflow:hidden;background:#fff}
+.movers .mover-card{flex:1 1 260px;min-width:0;border:1px solid #e5e7eb;border-radius:12px;
+  overflow:hidden;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.05)}
 .movers .mover-head{padding:6px 10px;font-size:13px;font-weight:700;letter-spacing:.03em;
-  background:#17293b;color:#fff}
+  text-transform:uppercase;background:#eef2f7;color:#334155}
+.movers ol,.movers li,.mover-none{color:#0f172a}
 .movers ol{margin:0;padding:6px 10px 8px 26px;font-size:13px}
 .movers li{padding:2px 0;line-height:1.45}
 .movers .mv-pos{color:#4a5a68;font-size:12px}
@@ -170,8 +179,8 @@ table.adp-table td.pick{color:#4a5a68}
     max-width:118px;overflow:hidden;text-overflow:ellipsis;
     box-shadow:2px 0 4px -2px rgba(0,0,0,.3)}
   table.adp-table td.name{z-index:1;background:#fff}
-  table.adp-table th.name{z-index:4;background:#17293b}
-  table.adp-table tbody tr:nth-child(even) td.name{background:#f5f7fa}
+  table.adp-table th.name{z-index:4;background:#eef2f7}
+  table.adp-table tbody tr:nth-child(even) td.name{background:#f8fafc}
 }
 </style>"""
 

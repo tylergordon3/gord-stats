@@ -2,31 +2,13 @@
 Small HTML layout helpers: in-page jump nav + collapsible sections.
 
 Include HEAD once per page, then use section_nav() and details().
+
+The styling for every class emitted here (.section-nav, details.section,
+.view-switch) lives in docs/assets/css/custom.css with the rest of the site
+theme, so light/dark mode and mobile rules cascade normally.
 """
 
-HEAD = """<style>
-.section-nav{margin:10px 0 18px;padding:8px 14px;background:#dfe6ee;border-radius:6px;font-size:14px}
-.section-nav a{display:inline-block;margin:3px 16px 3px 0;text-decoration:none;white-space:nowrap}
-details.section{margin:14px 0;border:1px solid #b9c4d0;border-radius:6px;overflow:hidden;background:#fbfcfe}
-details.section>summary{cursor:pointer;font-weight:bold;font-size:17px;padding:10px 14px;
-  background:#dfe6ee;color:#17293b;list-style:none}
-details.section>summary:hover{background:#d1dbe7}
-details.section>summary::-webkit-details-marker{display:none}
-details.section>summary::before{content:'\\25B8 ';color:#4a6178}
-details.section[open]>summary::before{content:'\\25BE ';color:#4a6178}
-details.section[open]>summary{border-bottom:1px solid #b9c4d0}
-details.section>*:not(summary){margin:10px 14px}
-/* Phones: the 14px gutters cost real table width, and wrapped nav links need
-   room to breathe once they stop fitting on one line. */
-@media (max-width:600px){
-  .section-nav{margin:8px 0 14px;padding:8px 10px;line-height:1.5}
-  .section-nav a{margin-right:14px}
-  details.section{margin:10px 0}
-  details.section>summary{font-size:16px;padding:10px}
-  details.section>*:not(summary){margin:10px 8px}
-}
-</style>
-<script>
+HEAD = """<script>
 function openHashTarget(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);
   if(e&&e.tagName==='DETAILS'){e.open=true;e.scrollIntoView();}}
 window.addEventListener('hashchange',openHashTarget);
@@ -56,19 +38,7 @@ def details(summary: str, body: str, open: bool = False, anchor: str = None) -> 
     return f'<details class="section"{idattr}{" open" if open else ""}><summary>{summary}</summary>{body}</details>'
 
 
-_SWITCH_CSS = """<style>
-.view-switch{margin:10px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.view-switch .switch-label{font-weight:bold;margin-right:6px;min-width:58px}
-.view-switch button{padding:7px 16px;cursor:pointer;border:1px solid #888;background:#eee;
-  border-radius:5px;font-size:15px}
-.view-switch button.active{background:#3CB371;color:#fff;font-weight:bold;border-color:#2e8b57}
-@media (max-width:600px){
-  .view-switch{gap:5px;margin:8px 0}
-  .view-switch button{padding:6px 11px;font-size:14px}
-  /* Label on its own line so the season buttons wrap as an even grid. */
-  .view-switch .switch-label{flex:1 1 100%;min-width:0;margin:0 0 2px}
-}
-</style>"""
+# .view-switch styling lives in docs/assets/css/custom.css (site theme).
 
 
 def view_switcher(views, group: str = "v", label: str = "") -> str:
@@ -90,7 +60,7 @@ function show_{group}(v){{
   document.getElementById('{group}-tab-'+v).classList.add('active');
 }}
 </script>"""
-    return _SWITCH_CSS + f'<div class="view-switch">{"".join(buttons)}</div>' + "".join(divs) + js
+    return f'<div class="view-switch">{"".join(buttons)}</div>' + "".join(divs) + js
 
 
 def two_axis_switcher(rows, cols, content, row_label="", col_label="", group="v") -> str:
@@ -125,7 +95,6 @@ function {group}_pick(btn){{
 }}
 </script>"""
 
-    return (_SWITCH_CSS
-            + f'<div class="view-switch"><span class="switch-label">{row_label}</span>{btns(rows, "r")}</div>'
+    return (f'<div class="view-switch"><span class="switch-label">{row_label}</span>{btns(rows, "r")}</div>'
             + f'<div class="view-switch"><span class="switch-label">{col_label}</span>{btns(cols, "c")}</div>'
             + "".join(divs) + js)
