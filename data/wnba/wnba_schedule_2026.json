@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-08-13",
+  "fetched_on": "2026-08-14",
   "season": 2026,
   "total_games": 333,
   "schedule": {
@@ -5793,7 +5793,7 @@
           "id": 25006,
           "home": "LV",
           "away": "WSH",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-13"
@@ -5804,7 +5804,7 @@
           "id": 25006,
           "home": "LV",
           "away": "WSH",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-13"
