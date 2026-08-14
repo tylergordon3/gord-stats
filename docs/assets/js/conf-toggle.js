@@ -13,11 +13,17 @@
     title.className = "conference-title";
     title.textContent = conf;
 
-    const container = document.createElement("div");
-    container.className = "table-container";
-
-    table.parentNode.insertBefore(block, table);
-    container.appendChild(table);
+    // Reuse the table's existing .table-container — creating a new one
+    // orphans the original as an empty card above every table.
+    let container = table.closest(".table-container");
+    if (container) {
+      container.parentNode.insertBefore(block, container);
+    } else {
+      container = document.createElement("div");
+      container.className = "table-container";
+      table.parentNode.insertBefore(block, table);
+      container.appendChild(table);
+    }
     block.appendChild(title);
     block.appendChild(container);
   });
