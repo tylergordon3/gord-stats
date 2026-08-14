@@ -172,6 +172,16 @@
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin: 14px auto 22px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  background: #fff;
+}
+
+.table-container .sticky-table {
+  width: 100%;
+  max-width: none;
 }
 
 #tweet-container {
@@ -218,9 +228,14 @@
 }
 
 .sticky-table th {
-  font-weight: bold;
-  background: #d3d3d3;
-  padding: 6px 8px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #eff6ff, #f8fafc);
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.78rem;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .sticky-table th,
@@ -239,7 +254,17 @@
 
 .sticky-table td {
   background: white;
-  padding: 1px 4px;
+  padding: 6px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  font-variant-numeric: tabular-nums;
+}
+
+.sticky-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sticky-table tbody tr:hover td {
+  filter: brightness(0.97);
 }
 
 /* -----------------------------
@@ -255,9 +280,9 @@
 .sticky-table th {
   position: sticky;
   top: 0;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.15);
   z-index: 2;
-  border-right: 1px solid #ccc;
+  border-right: none;
 }
 
 .analysis-table-container {
@@ -279,15 +304,10 @@
   position: sticky;
   left: 0;
   z-index: 3;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.2);
-  /* optional shadow */
-  color: black;
-  border-right: 1px solid black;
-  background: #d3d3d3;
-}
-
-.sticky-table td:last-child {
-  border-bottom: none;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+  border-right: 1px solid #e5e7eb;
+  background: #f8fafc;
 }
 
 .sticky-table th:last-child {
@@ -603,26 +623,29 @@
    ========================= */
 .filter-bar {
   position: sticky;
-  top: 0;
+  top: 54px;  /* clears the sticky site header */
   z-index: 20;
 
   display: flex;
   align-items: center;
   gap: 20px;
 
-  width: 95%;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0 auto 4px;
 
   background: #fff;
-  padding: 8px 0;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
 }
 
 .filter-bar label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   white-space: nowrap;
 }
 
@@ -766,7 +789,7 @@
 
 .sticky-table th.active-col,
 .sticky-table td.active-col {
-  border-right: 1px solid #373737 !important;
+  border-right: 1px solid #cbd5e1 !important;
 }
 
 /* =========================
@@ -867,7 +890,7 @@ p {
 
 .filter-bar {
   position: sticky;
-  top: 0;
+  top: 54px;  /* clears the sticky site header */
   z-index: 20;
 
   display: flex;
