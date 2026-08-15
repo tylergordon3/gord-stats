@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-15T14:50:06.237630-04:00",
+ "updated": "2026-08-15T19:00:08.927108-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -30219,6 +30219,120 @@
       "Zia Cooke",
       "G",
       4.0
+     ]
+    ]
+   }
+  },
+  "401857145": {
+   "date": "2026-08-15",
+   "allowed": {
+    "NY": {
+     "G": 83.0,
+     "FC": 74.0
+    },
+    "CON": {
+     "G": 84.0,
+     "FC": 73.0
+    }
+   },
+   "players": {
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      22.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      39.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      13.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      33.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      14.0
+     ],
+     [
+      "Anneli Maley",
+      "FC",
+      6.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      6.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      12.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      12.0
+     ]
+    ],
+    "CON": [
+     [
+      "Diamond Miller",
+      "FC",
+      24.0
+     ],
+     [
+      "Olivia Nelson-Ododa",
+      "FC",
+      31.0
+     ],
+     [
+      "Kennedy Burke",
+      "G",
+      14.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      33.0
+     ],
+     [
+      "Leila Lacan",
+      "G",
+      20.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      9.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      10.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      16.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      0.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      0.0
      ]
     ]
    }
