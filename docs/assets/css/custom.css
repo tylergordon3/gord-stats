@@ -1,4 +1,19 @@
 /* -----------------------------
+   PAGE BASE (overrides theme's #212121 body / #f2f2f2 content)
+------------------------------ */
+
+body {
+  background: #eef2f7;
+  color: #334155;
+}
+
+#main_content_wrap {
+  background: #eef2f7;
+  border-top: none;
+  border-bottom: none;
+}
+
+/* -----------------------------
    SITE HEADER (light sticky bar)
 ------------------------------ */
 
@@ -249,7 +264,7 @@
 
   min-width: 70px;
   /* prevents columns from collapsing to nothing */
-  color: black;
+  color: #334155;
 }
 
 .sticky-table td {
@@ -257,6 +272,10 @@
   padding: 6px 10px;
   border-bottom: 1px solid #f1f5f9;
   font-variant-numeric: tabular-nums;
+}
+
+.sticky-table tbody tr:nth-child(even) td {
+  background: #f8fafc;
 }
 
 .sticky-table tbody tr:last-child td {
@@ -2990,11 +3009,55 @@ summary.team-report-header::after {
     color: #94a3b8;
   }
 
-  /* Pandas-styled tables stay light islands so inline cell colors read */
-  .table-container table,
-  .sticky-table {
-    background: #fff;
-    color: #1e293b;
+  /* Pandas tables: dim the DEFAULT cells to a soft slate so they stop
+     glaring; per-cell colors from the styler (ID selectors) still win. */
+  .table-container {
+    background: transparent;
+    border-color: #334155;
+  }
+
+  .sticky-table th {
+    background: #0f172a;
+    color: #94a3b8;
+    border-bottom-color: #334155;
+  }
+
+  .sticky-table td {
+    background: #cbd5e1;
+    color: #0f172a;
+    border-bottom-color: #94a3b8;
+  }
+
+  .sticky-table tbody tr:nth-child(even) td {
+    background: #bfcbdb;
+  }
+
+  .sticky-table th:first-child,
+  .sticky-table td:first-child {
+    background: #b7c3d5;
+    border-right-color: #94a3b8;
+    color: #0f172a;
+  }
+
+  .filter-bar {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .filter-bar label {
+    color: #94a3b8;
+  }
+
+  .filter-bar select,
+  .conference-filter select {
+    background: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+  }
+
+  /* Theme-styled page paragraphs (predict intro, last-update lines) */
+  #main_content > p {
+    color: #94a3b8;
   }
 
   .page-updated {
