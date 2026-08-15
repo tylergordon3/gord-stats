@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-14T21:20:03.940874-04:00",
+ "updated": "2026-08-14T22:17:02.184226-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -29976,6 +29976,130 @@
       "Mai Yamamoto",
       "G",
       8.0
+     ]
+    ]
+   }
+  },
+  "401857143": {
+   "date": "2026-08-14",
+   "allowed": {
+    "DAL": {
+     "G": 107.0,
+     "FC": 60.0
+    },
+    "IND": {
+     "G": 95.0,
+     "FC": 66.0
+    }
+   },
+   "players": {
+    "DAL": [
+     [
+      "Alanna Smith",
+      "FC",
+      21.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      25.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      18.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      27.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      47.0
+     ],
+     [
+      "Alysha Clark",
+      "FC",
+      9.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      11.0
+     ],
+     [
+      "Li Yueru",
+      "FC",
+      0.0
+     ],
+     [
+      "Sug Sutton",
+      "G",
+      0.0
+     ],
+     [
+      "Haley Jones",
+      "G",
+      3.0
+     ]
+    ],
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      13.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      31.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      28.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      2.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      46.0
+     ],
+     [
+      "Myisha Hines-Allen",
+      "FC",
+      7.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      9.0
+     ],
+     [
+      "Grace VanSlooten",
+      "FC",
+      0.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      7.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      24.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      0.0
      ]
     ]
    }
