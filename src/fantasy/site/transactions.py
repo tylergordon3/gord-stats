@@ -170,10 +170,14 @@ def trade_log(tx: pd.DataFrame, names: dict) -> pd.DataFrame:
 
 def _season_view(season_str: str, names: dict) -> str:
     tx = _load_tx(season_str)
-    act = activity(tx).style.set_table_styles(_GRID).to_html()
+    # reset_index() keeps Manager/Rank as real columns — a styled index
+    # renders its name as a phantom second header row.
+    act = (activity(tx).reset_index().style.set_table_styles(_GRID)
+           .hide(axis="index").to_html())
 
     pickups = best_pickups(season_str, tx, names)
-    pickups_html = (pickups.style.set_table_styles(_GRID).to_html()
+    pickups_html = (pickups.reset_index().style.set_table_styles(_GRID)
+                    .hide(axis="index").format({"Starter Pts": "{:.1f}"}).to_html()
                     if not pickups.empty else "<p><em>No pickups started yet this season.</em></p>")
 
     trades = trade_log(tx, names)
@@ -201,7 +205,8 @@ def _all_time_view(names: dict) -> str:
     combined = pd.concat(frames)          # pre-FAAB seasons lack the FAAB column -> NaN
     total = combined.groupby("Manager").sum().astype(int).sort_values(
         ["Total Adds", "Waiver Claims"], ascending=False)
-    html = total.style.set_table_styles(_GRID).to_html()
+    html = (total.reset_index().style.set_table_styles(_GRID)
+            .hide(axis="index").to_html())
     return (
         '<h2>All-Time Manager Activity</h2>'
         f'<p>Every completed move across all {len(LEAGUE_IDS)} seasons. '

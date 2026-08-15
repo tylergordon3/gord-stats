@@ -177,13 +177,14 @@
 ------------------------------ */
 
 /* Slate paints body with a dark texture that shows below short pages and
-   behind the footer; the theme is light, so paint it white. */
+   behind the footer. A soft slate tint (matching gordstats-cbb) gives the
+   white cards depth instead of white-on-white. */
 body {
-  background: #ffffff;
+  background: #eef2f7;
 }
 
 #main_content_wrap {
-  background: #ffffff;
+  background: #eef2f7;
   border: none;
 }
 
@@ -594,20 +595,28 @@ table.sticky-table {
     color: #fff;
   }
 
-  /* Tables stay light islands so the inline cell colors read. */
+  /* Tables dim to a soft slate instead of glaring white; the styler's
+     per-cell colors (ID selectors) still win, so heatmaps, records and
+     position colors keep their meaning. Scoped to the .table-scroll card
+     because generated tables don't all carry a class; text color has no
+     ID-rule competition (GRID_TD sets none), but borders do — hence the
+     !important. */
   .table-scroll {
-    background: #fff;
+    background: #cbd5e1;
     border-color: #334155;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   }
 
-  table.sticky-table,
-  table.draft-board {
-    background: #fff;
+  .table-scroll table {
+    background: #cbd5e1;
   }
 
-  .sticky-table td,
-  .draft-board td {
+  .table-scroll table td {
     color: #0f172a;
+    border-color: #9fb0c6 !important;
+  }
+
+  .sticky-table td:first-child {
+    background: #b7c3d5;
   }
 }
