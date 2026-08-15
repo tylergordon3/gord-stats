@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-14T23:40:02.959250-04:00",
+ "updated": "2026-08-15T06:39:08.231918-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -30100,6 +30100,125 @@
       "Raven Johnson",
       "G",
       0.0
+     ]
+    ]
+   }
+  },
+  "401857144": {
+   "date": "2026-08-15",
+   "allowed": {
+    "POR": {
+     "G": 46.0,
+     "FC": 131.0
+    },
+    "SEA": {
+     "G": 83.0,
+     "FC": 102.0
+    }
+   },
+   "players": {
+    "POR": [
+     [
+      "Bridget Carleton",
+      "FC",
+      29.0
+     ],
+     [
+      "Emily Engstler",
+      "FC",
+      18.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      10.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      26.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      29.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      12.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      7.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      11.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      39.0
+     ],
+     [
+      "Teja Oblak",
+      "G",
+      4.0
+     ]
+    ],
+    "SEA": [
+     [
+      "Ezi Magbegor",
+      "FC",
+      30.0
+     ],
+     [
+      "Jordan Horston",
+      "FC",
+      30.0
+     ],
+     [
+      "Dominique Malonga",
+      "FC",
+      30.0
+     ],
+     [
+      "Natisha Hiedeman",
+      "G",
+      20.0
+     ],
+     [
+      "Jade Melbourne",
+      "G",
+      22.0
+     ],
+     [
+      "Katie Lou Samuelson",
+      "FC",
+      5.0
+     ],
+     [
+      "Taylor Thierry",
+      "FC",
+      0.0
+     ],
+     [
+      "Stefanie Dolson",
+      "FC",
+      1.0
+     ],
+     [
+      "Awa Fam",
+      "FC",
+      35.0
+     ],
+     [
+      "Zia Cooke",
+      "G",
+      4.0
      ]
     ]
    }
