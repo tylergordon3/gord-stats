@@ -3208,6 +3208,9 @@ summary.team-report-header::after {
   text-decoration: none;
   font-weight: 700;
   white-space: nowrap;
+  /* Explicit, because the inherited link colour sits at 4.11:1 on this
+     bar's #f1f5f9 ground — just under AA. */
+  color: #047857;
 }
 
 details.section {
