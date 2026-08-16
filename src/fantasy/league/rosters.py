@@ -4,7 +4,7 @@ League roster / owner info from Sleeper (ported from py/fantasy_rosters).
 import pandas as pd
 from sleeper_wrapper import League
 
-from src.config import LEAGUE_IDS, ROSTER_NAMES
+from fantasy.config import LEAGUE_IDS, ROSTER_NAMES
 
 
 def league_for(season_str: str) -> League:

@@ -2,14 +2,14 @@
 Best Ball calculations (src/): what each team's score would have been with its
 optimal lineup each week, plus season standings.
 
-Uses Sleeper's authoritative per-player points (league scoring); src.stats is
+Uses Sleeper's authoritative per-player points (league scoring); fantasy.stats is
 only used to resolve each player's name/position.
 
 Library only - the Best Ball pages were retired from the site, so nothing here
 writes HTML. `compute()` is the entry point; it refreshes data/bestball.json and
 returns the per-week outcomes plus the standings frame.
 
-    from src.site.bestball import compute
+    from fantasy.site.bestball import compute
     outcomes, standings = compute("2526")
 """
 import json
@@ -18,9 +18,9 @@ from io import StringIO
 import pandas as pd
 from sleeper_wrapper import League
 
-from src import stats, util
-from src.config import DATA_DIR, LEAGUE_IDS, SEASON_YEAR
-from src.league import rosters as rosters_mod
+from fantasy import stats, util
+from fantasy.config import DATA_DIR, LEAGUE_IDS, SEASON_YEAR
+from fantasy.league import rosters as rosters_mod
 
 BESTBALL_JSON = DATA_DIR / "bestball.json"
 LINEUP = {"QB": 1, "RB": 2, "WR": 2, "TE": 1, "FLEX": 2, "DEF": 1, "K": 1}

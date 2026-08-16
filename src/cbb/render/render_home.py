@@ -3,8 +3,8 @@ from datetime import date
 
 import pandas as pd
 
-from cbb.lib import html_util
-from cbb.lib import paths, teams
+from cbb import html_util
+from cbb import paths, teams
 from cbb.tools import compare_bracket
 
 def team_logos(df):

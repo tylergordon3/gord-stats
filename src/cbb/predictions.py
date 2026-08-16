@@ -8,8 +8,10 @@ import numpy as np
 import pandas as pd
 from pytz import timezone
 
+from gordstats import frontmatter
 from cbb import change, scraper, utils
-from cbb.lib import html_util, paths, teams
+from cbb import paths
+from cbb import html_util, teams
 
 
 def seed_helper(x):
@@ -399,7 +401,7 @@ def predict_womens(date):
     # MAIN -> DF with Conf col data
     #path = paths.WEB_W_DIR / f"predict_{date}.html"
     #path.parent.mkdir(parents=True, exist_ok=True)
-    #html = html_util.add_front_matter(df_html, f"NCAAW Bracketology", date)
+    #html = frontmatter.add_front_matter(df_html, "NCAAW Bracketology", f"{date} FINAL Prediction")
     #with open(path, "w") as f:
     #    f.write(html)
     #    print(f"Wrote to: {path} for {date}")
@@ -676,7 +678,7 @@ def predict(date):
     # MAIN -> DF with Conf col data
     path = paths.WEB_M_DIR / f"predict_{date}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
-    html = html_util.add_front_matter(df_html, f"NCAAM Bracketology", date)
+    html = frontmatter.add_front_matter(df_html, "NCAAM Bracketology", f"{date} FINAL Prediction")
     #with open(path, "w") as f:
     #    f.write(html)
     #    print(f"Wrote to: {path} for {date}")

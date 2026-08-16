@@ -15,7 +15,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
-from cbb.lib import help, paths
+from cbb import paths
+from gordstats import jsonio
 
 HEADERS = [
     "Rk",
@@ -53,7 +54,7 @@ DROP = ["Rk", "Team", "Conf", "Year", "Seed", "Finish", "Rec", "G"]
 CV = StratifiedKFold(n_splits=5, shuffle=True, random_state=13)
 
 def load():
-    raw_data = help.load_json_data(paths.W_TOR_TRAIN_ALL)
+    raw_data = jsonio.load_json_data(paths.W_TOR_TRAIN_ALL)
     df = pd.DataFrame(raw_data, columns=HEADERS)
     return df
 

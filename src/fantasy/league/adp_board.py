@@ -18,8 +18,8 @@ cache goes stale (ADP moves daily during draft season). Every pull is also
 archived to data/adp/history/{year}/, and those snapshots are what the Move
 columns on the homepage measure against - see WINDOWS and _with_movement.
 
-    python -m src.league.adp_board          # print the top of the board
-    python -m src.league.adp_board --refresh
+    python -m fantasy.league.adp_board          # print the top of the board
+    python -m fantasy.league.adp_board --refresh
 """
 import math
 from datetime import datetime, timedelta
@@ -27,9 +27,9 @@ from datetime import datetime, timedelta
 import pandas as pd
 import requests
 
-from src.config import LEAGUE_TEAMS, UPCOMING_YEAR
-from src.league.adp import ADP_DIR, _is_fresh, get_adp
-from src.normalize import normalize_name
+from fantasy.config import LEAGUE_TEAMS, UPCOMING_YEAR
+from fantasy.league.adp import ADP_DIR, _is_fresh, get_adp
+from fantasy.normalize import normalize_name
 
 MAX_AGE_HOURS = 12
 # The "since last update" baseline only rolls forward once it is this old, so

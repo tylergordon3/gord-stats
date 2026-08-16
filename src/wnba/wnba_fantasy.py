@@ -33,7 +33,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 from zoneinfo import ZoneInfo
-from cbb.lib import paths
+from wnba import paths
 
 # ── Config ────────────────────────────────────────────────────────────────────
 DEBUG = False
@@ -203,7 +203,7 @@ def cli(argv=None) -> Path:
         python wnba_fantasy_fetch.py
 
     Or from another Python file:
-        from cbb.wnba.wnba_fantasy_fetch import cli
+        from wnba.wnba_fantasy_fetch import cli
         cli(["--league", "1234567", "--season", "2026"])
     """
     parser = build_parser()

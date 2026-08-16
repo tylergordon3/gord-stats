@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
 from cbb import utils
-from cbb.lib import paths, url
+from cbb import paths, url
 
 def get_today_tor(gender="M"):
     if gender == "M":

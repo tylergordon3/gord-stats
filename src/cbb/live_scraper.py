@@ -8,7 +8,8 @@ import requests
 
 from cbb import scraper, utils
 from cbb.push_scores import push
-from cbb.lib import teams, constants, paths
+from cbb import paths
+from cbb import teams, constants
 from cbb.scrape import ats, bpi, net, torvik, season
 
 # =========================

@@ -3,7 +3,7 @@ All-Time Injury Impacts section of the homepage.
 
 Aggregates per-season games missed - by drafted players (all 14 weeks) and by
 waiver / free-agent pickups held a substantial stretch (only the weeks they were
-actually rostered; see src.site.draft.PICKUP_MIN_WEEKS) - into a by-season stacked
+actually rostered; see fantasy.site.draft.PICKUP_MIN_WEEKS) - into a by-season stacked
 bar chart and a league table, and weights each injury by how much the player
 mattered: not every missed game hurts equally, so a round-1/2 pick or a player
 producing at weekly-starter pace relative to his position-mates counts as
@@ -14,7 +14,7 @@ producing at weekly-starter pace relative to his position-mates counts as
 injury weighting spreads across the site.
 
 Data sources: the archive (data/historical.json -> per-season `missing_df` and
-`injury_detail_df`, both written by src.site.draft.save_games_missed).
+`injury_detail_df`, both written by fantasy.site.draft.save_games_missed).
 NOTE: that per-season missing_df is still produced by the legacy draft pipeline;
 migrating its *computation* belongs with the draft page, not the homepage.
 """
@@ -27,12 +27,12 @@ matplotlib.use("Agg")          # non-interactive backend (no Qt/GUI needed)
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd              # noqa: E402
 
-from src.config import DATA_DIR, ROSTER_NAMES  # noqa: E402
-from src.site import styles                      # noqa: E402
+from fantasy.config import DATA_DIR, ROSTER_NAMES  # noqa: E402
+from fantasy.site import styles                      # noqa: E402
 
 ARCHIVE_PATH = DATA_DIR / "historical.json"
 
-REG_WEEKS = 14                  # fantasy regular season, matches src.site.draft
+REG_WEEKS = 14                  # fantasy regular season, matches fantasy.site.draft
 PREMIUM_ROUNDS = 2              # drafted this early = high-impact regardless of PPG
 # Starter-level scoring is judged against position-mates, not a fixed PPG line:
 # a player qualifies when his median weekly score reaches this percentile of

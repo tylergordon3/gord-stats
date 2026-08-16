@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 from cbb import live_scraper, polling_rate, push_scores
-from cbb.lib import paths
+from cbb import paths
 
 EASTERN = ZoneInfo("America/New_York")
 DEPLOY_HOUR = 8  # 8 AM Eastern

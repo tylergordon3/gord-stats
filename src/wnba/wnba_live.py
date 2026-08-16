@@ -10,8 +10,8 @@ free. The BallDontLie schedule is rate-limited, so it refreshes at most
 once an hour during live windows.
 
 Usage:
-    python -m cbb.wnba.wnba_live            # update only if games are active
-    python -m cbb.wnba.wnba_live --force    # update regardless
+    python -m wnba.wnba_live            # update only if games are active
+    python -m wnba.wnba_live --force    # update regardless
 
 Exit codes:
     0 = updated
@@ -26,7 +26,7 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-from cbb.wnba import wnba_defense, wnba_fantasy, wnba_remaining, wnba_schedule
+from wnba import wnba_defense, wnba_fantasy, wnba_remaining, wnba_schedule
 
 ET = ZoneInfo("America/New_York")
 PREGAME_BUFFER_MIN = 30

@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 
 from cbb import utils
-from cbb.lib import paths
+from cbb import paths
 
 load_dotenv()
 kenpom = kenpom_wrapper.KenpomData()

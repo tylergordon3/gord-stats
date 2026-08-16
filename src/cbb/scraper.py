@@ -19,7 +19,7 @@ from tqdm import tqdm
 from urllib3.util.retry import Retry
 
 from cbb import utils
-from cbb.lib import paths
+from cbb import paths
 
 TORVIK_PRE = "https://barttorvik.com/trankpre.php"
 KENPOM = "https://kenpom.com/"

@@ -25,10 +25,10 @@ import math
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
-from cbb.lib import paths
-from cbb.wnba import wnba_schedule
-from cbb.wnba import wnba_fantasy
-from cbb.wnba import wnba_defense
+from wnba import paths
+from wnba import wnba_schedule
+from wnba import wnba_fantasy
+from wnba import wnba_defense
 
 ET = ZoneInfo("America/New_York")
 DEBUG = False
@@ -776,7 +776,7 @@ def main(argv=None):
         # per-team drop recommendations, scored with the same projection.
         # Imported here to avoid a circular import at module load.
         try:
-            from cbb.wnba import wnba_pickups
+            from wnba import wnba_pickups
             game_log = wnba_defense.player_game_log()
             pickup_rows = wnba_pickups.build_pickups(
                 schedule, week, factors, today, log=game_log

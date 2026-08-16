@@ -5,16 +5,16 @@ This is the core pattern for the whole system: take any nflverse stat table and
 join it to the identity registry on `gsis_id` to get clean, cross-source player
 info - no name matching required.
 
-    python -m src.examples.top_scorers                      # last season, PPR
-    python -m src.examples.top_scorers --season 2024 --n 25
-    python -m src.examples.top_scorers --pos RB --scoring fantasy_points
+    python -m fantasy.examples.top_scorers                      # last season, PPR
+    python -m fantasy.examples.top_scorers --season 2024 --n 25
+    python -m fantasy.examples.top_scorers --pos RB --scoring fantasy_points
 """
 import argparse
 
 import nflreadpy as nfl
 
-from src.identity.registry import load_registry
-from src.normalize import clean_id_series
+from fantasy.identity.registry import load_registry
+from fantasy.normalize import clean_id_series
 
 
 def top_scorers(season: int, n: int = 15, pos: str | None = None,

@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 import re
-from cbb.lib  import paths
+from cbb import paths
 # -----------------------------
 # Config (AUTO-LOCAL)
 # -----------------------------

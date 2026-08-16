@@ -15,16 +15,17 @@ different question: *how* do they draft? Five sections:
 Everything here is drawn from three drafts per manager, which is a small sample -
 the page says so, and every table carries its own counts.
 
-    python -m src.site.draft_dna
+    python -m fantasy.site.draft_dna
 """
 import re
 
 import pandas as pd
 
-from src.config import FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES
-from src.league.playoffs import champion_roster
-from src.site import adp, layout, styles
-from src.site.frontmatter import add_front_matter
+from fantasy import paths
+from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES
+from fantasy.league.playoffs import champion_roster
+from fantasy.site import adp, layout, styles
+from gordstats.frontmatter import add_front_matter
 
 POS = ["QB", "RB", "WR", "TE"]
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
@@ -45,7 +46,7 @@ EARLY_ROUNDS = 5
 # Smallest gap from the league average worth calling a positional habit (rounds).
 _HABIT_MIN = 0.5
 
-# Availability. src.site.draft counts, for each drafted player, the weeks in the
+# Availability. fantasy.site.draft counts, for each drafted player, the weeks in the
 # first GAMES of the season where they recorded a stat line; anything short of
 # that is a week their manager got nothing. HEALTHY_MIN (missed no more than two)
 # is the bar for "was available all year", used for the health-adjusted hit rate.
@@ -67,7 +68,7 @@ def all_picks() -> pd.DataFrame:
 
     Unlike adp.matched_with_manager this keeps picks with no ADP match, because
     positional timing questions ("when does a manager take a QB?") need the full draft.
-    Kickers and defenses are already excluded upstream by src.site.draft.
+    Kickers and defenses are already excluded upstream by fantasy.site.draft.
     """
     frames = []
     for season_str in LEAGUE_IDS:
@@ -86,7 +87,7 @@ def all_picks() -> pd.DataFrame:
     # Positional, not overall: outcomes measured on the overall board reward
     # QBs, who out-score every other position by construction. Comparing the
     # positional draft rank to the actual positional finish is position-fair.
-    # 999 is src.site.draft's sentinel for a player who never took the field.
+    # 999 is fantasy.site.draft's sentinel for a player who never took the field.
     played = df["final_pos_rank"] < 900
     df["PosVsPick"] = (df["draft_pos_rank"] - df["final_pos_rank"]).where(played)
     # Overall finish against overall draft slot (+ = outperformed the pick).
@@ -645,7 +646,7 @@ def generate():
         for i, (a, title, html) in enumerate(sections))
 
     page = add_front_matter(body, "Draft DNA")
-    out = ROOT / "docs" / "draft-dna" / "index.html"
+    out = paths.WEB_DRAFT_DNA
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote Draft DNA page -> {out}")

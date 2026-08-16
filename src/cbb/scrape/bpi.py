@@ -12,7 +12,7 @@ import pytz
 import requests
 
 from cbb import utils
-from cbb.lib import paths, url, teams
+from cbb import paths, url, teams
 
 
 def save_id(dict):

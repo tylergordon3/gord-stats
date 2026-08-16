@@ -2,7 +2,7 @@ import re
 
 import pandas as pd
 
-from cbb.lib import teams
+from cbb import teams
 
 DAYTON_SLOTS = {42, 43, 44, 45, 64, 65, 66, 67}
 FF_BADGE = '<span class="ff-badge" title="First Four (Dayton)">FF</span>'
@@ -195,16 +195,3 @@ def style_bracketology(df, gender="M", original=None, conference=None):
         )
 
     return styler
-
-
-def add_front_matter(html, title, opt_date=None):
-    fm = f"""---
-layout: default
-title: {title}
----
-"""
-    header = f"<h1>{title}</h1>"
-    if opt_date:
-        header += f"<h3>{opt_date} FINAL Prediction</h3>"
-    new_html = fm + header + html
-    return new_html.lstrip()

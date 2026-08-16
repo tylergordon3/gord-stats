@@ -23,7 +23,7 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
-from cbb.lib import paths
+from wnba import paths
 
 ET = ZoneInfo("America/New_York")
 

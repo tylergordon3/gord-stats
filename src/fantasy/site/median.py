@@ -6,15 +6,15 @@ Library only - the Median pages were retired from the site, so nothing here
 writes HTML. `compute()` returns one frame per week, each row carrying the team's
 points, hypothetical max, rank and status ("W" / "L" / "tbd").
 
-    from src.site.median import compute
+    from fantasy.site.median import compute
     by_week = compute("2526")
 """
 import pandas as pd
 from sleeper_wrapper import League
 
-from src import stats, util
-from src.config import LEAGUE_IDS, MAX_POINTS, SEASON_YEAR
-from src.league import rosters as rosters_mod
+from fantasy import stats, util
+from fantasy.config import LEAGUE_IDS, MAX_POINTS, SEASON_YEAR
+from fantasy.league import rosters as rosters_mod
 
 
 def _to_play(starters, weeks_players, db, week):

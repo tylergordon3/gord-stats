@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from cbb.lib import paths
+from cbb import paths
 
 
 def root():

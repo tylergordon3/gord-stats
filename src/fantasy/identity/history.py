@@ -13,8 +13,8 @@ past seasons accumulate untouched.
 import nflreadpy as nfl
 import pandas as pd
 
-from src.config import PLAYERS_DIR
-from src.normalize import clean_id_series
+from fantasy.config import PLAYERS_DIR
+from fantasy.normalize import clean_id_series
 
 PLAYER_SEASONS_PATH = PLAYERS_DIR / "player_seasons.parquet"
 

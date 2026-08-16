@@ -1,23 +1,23 @@
 """
 Regenerate all migrated site pages.
 
-    python -m src.site.build                 # all seasons + global pages
-    python -m src.site.build --seasons 2526  # just these seasons' archived data
-    python -m src.site.build --refresh-adp   # force a fresh pull of the live ADP board
+    python -m fantasy.site.build                 # all seasons + global pages
+    python -m fantasy.site.build --seasons 2526  # just these seasons' archived data
+    python -m fantasy.site.build --refresh-adp   # force a fresh pull of the live ADP board
 
 Every page is now global - schedule, draft-vs-ADP and the draft report each hold
 every season behind on-page season buttons. --seasons only narrows the per-season
 data archived for the homepage.
 
-NOTE: the weekly Best Ball / Median pages were retired. src.site.bestball and
-src.site.median survive as calculation libraries (compute()) with no HTML
+NOTE: the weekly Best Ball / Median pages were retired. fantasy.site.bestball and
+fantasy.site.median survive as calculation libraries (compute()) with no HTML
 rendering; wiring either back into the site means writing a new page for it.
 """
 import argparse
 
-from src.config import LEAGUE_IDS
-from src.league import adp_board
-from src.site import (
+from fantasy.config import LEAGUE_IDS
+from fantasy.league import adp_board
+from fantasy.site import (
     adp, draft, draft_dna, draft_recap, draft_report, homepage, schedule, team_adjusted,
     transactions,
 )

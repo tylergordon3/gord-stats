@@ -10,8 +10,8 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
-from src.config import PLAYERS_DIR, SPINE_COLS, ID_COLS
-from src.normalize import clean_id_series, normalize_name
+from fantasy.config import PLAYERS_DIR, SPINE_COLS, ID_COLS
+from fantasy.normalize import clean_id_series, normalize_name
 
 
 class PlayerSource(ABC):

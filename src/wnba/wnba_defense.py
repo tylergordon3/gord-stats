@@ -27,7 +27,7 @@ import requests
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
-from cbb.lib import paths
+from wnba import paths
 
 ET     = ZoneInfo("America/New_York")
 DEBUG  = False

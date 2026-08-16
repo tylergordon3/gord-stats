@@ -11,7 +11,7 @@ Anything left is reported as unmatched (team defenses are tagged separately).
 """
 import pandas as pd
 
-from src.config import ID_COLS, TEAMS
+from fantasy.config import ID_COLS, TEAMS
 
 # Other IDs we can use to look up a gsis_id, best-first.
 _LOOKUP_IDS = ["sleeper_id", "espn_id", "yahoo_id", "sportradar_id",

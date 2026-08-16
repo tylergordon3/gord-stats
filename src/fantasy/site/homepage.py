@@ -6,20 +6,21 @@ First migrated page. Sections:
   * All-Time Injury Impacts - aggregated from the archive's per-season
     missing_df (see src/site/injuries.py).
 
-    python -m src.site.homepage            # writes docs/index.html
+    python -m fantasy.site.homepage            # writes docs/index.html
 """
 import math
 
 import pandas as pd
 
-from src.config import (
+from fantasy import paths
+from fantasy.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from src.site import adp, injuries, layout, styles, upcoming
-from src.site.draft import PICKUP_MIN_WEEKS
-from src.site.frontmatter import add_front_matter
+from fantasy.site import adp, injuries, layout, styles, upcoming
+from fantasy.site.draft import PICKUP_MIN_WEEKS
+from gordstats.frontmatter import add_front_matter
 
-OUTPUT = ROOT / "docs" / "index.html"
+OUTPUT = paths.WEB_FANTASY_HOME
 
 # Cumulative season-total columns carried on every weekly row.
 _SUM_COLS = ["median_wins", "h2h_loss", "h2h_wins", "median_loss",

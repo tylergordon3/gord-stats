@@ -10,7 +10,7 @@ from functools import lru_cache
 
 from sleeper_wrapper import League
 
-from src.config import LEAGUE_IDS, ROSTER_NAMES
+from fantasy.config import LEAGUE_IDS, ROSTER_NAMES
 
 
 @lru_cache(maxsize=None)

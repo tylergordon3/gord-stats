@@ -49,5 +49,9 @@ vendor/
 .DS_Store
 Thumbs.db
 
-/home/tgordon/cbb-model/data/live_scores.json
+# live scores are regenerated every poll; never worth committing
+data/live_scores.json
 .last_live_commit
+
+# Fantasy player DB build artifacts (regenerable via `python -m fantasy.data_manager`)
+data/fantasy/players/

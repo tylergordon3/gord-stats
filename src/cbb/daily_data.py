@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytz
 
-from cbb.lib import paths
+from cbb import paths
 from cbb.scrape import ats, bpi, kenpom, net, torvik, season
 
 RETRY_SLEEP = 300

@@ -2,17 +2,17 @@
 Entry point for the new player-database pipeline.
 
 Usage (from the project root):
-    python -m src.build            # build using cached source pulls if present
-    python -m src.build --refresh  # re-fetch Sleeper + nflverse from the network
+    python -m fantasy.build            # build using cached source pulls if present
+    python -m fantasy.build --refresh  # re-fetch Sleeper + nflverse from the network
     python src/build.py            # also works (bootstraps sys.path below)
 """
 import sys
 from pathlib import Path
 
-# Allow running this file directly (python src/build.py) as well as -m src.build.
+# Allow running this file directly (python src/build.py) as well as -m fantasy.build.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.identity.registry import build_registry  # noqa: E402
+from fantasy.identity.registry import build_registry  # noqa: E402
 
 
 def main():

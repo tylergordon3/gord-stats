@@ -12,16 +12,17 @@ One view per season, picked with the season buttons:
 Unlike the Draft vs ADP page this keeps K / team defenses - it is a record of
 the whole draft, not a skill-position value judgement.
 
-    python -m src.site.draft_recap
+    python -m fantasy.site.draft_recap
 """
 import re
 
 import matplotlib as mpl
 from matplotlib.colors import Normalize, rgb2hex
 
-from src.config import FORMAL_SEASON, LEAGUE_IDS, LEAGUE_TEAMS, ROOT, ROSTER_NAMES
-from src.site import draft, layout, styles
-from src.site.frontmatter import add_front_matter
+from fantasy import paths
+from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, LEAGUE_TEAMS, ROOT, ROSTER_NAMES
+from fantasy.site import draft, layout, styles
+from gordstats.frontmatter import add_front_matter
 
 # Tier moves at or beyond +/- TIER_SPAN get the strongest green/red.
 TIER_SPAN = 3
@@ -152,7 +153,7 @@ def generate():
     body = layout.HEAD + _BOARD_CSS + layout.view_switcher(views, group="season", label="Season:")
     page = add_front_matter(body, "Draft Recap")
 
-    out = ROOT / "docs" / "draft-recap" / "index.html"
+    out = paths.WEB_DRAFT_RECAP
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote draft recap page -> {out}")

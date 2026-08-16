@@ -10,16 +10,17 @@ data/season/<season>.json for pickup production):
 Every season lives on the one page (docs/transactions/index.html), picked with
 the season buttons - same shape as the schedule page.
 
-    python -m src.site.transactions
+    python -m fantasy.site.transactions
 """
 import pandas as pd
 
-from src.config import (
+from fantasy import paths
+from fantasy.config import (
     DATA_DIR, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from src.identity.registry import load_registry
-from src.site import layout, styles
-from src.site.frontmatter import add_front_matter
+from fantasy.identity.registry import load_registry
+from fantasy.site import layout, styles
+from gordstats.frontmatter import add_front_matter
 
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
 
@@ -223,7 +224,7 @@ def generate():
     body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:")
     page = add_front_matter(body, "Waivers & Trades")
 
-    out = ROOT / "docs" / "transactions" / "index.html"
+    out = paths.WEB_TRANSACTIONS
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote transactions page -> {out}")

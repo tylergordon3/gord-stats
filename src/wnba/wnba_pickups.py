@@ -25,8 +25,8 @@ from datetime import date, timedelta
 
 import requests
 
-from cbb.wnba import wnba_defense, wnba_fantasy
-from cbb.wnba import wnba_remaining as wr
+from wnba import wnba_defense, wnba_fantasy
+from wnba import wnba_remaining as wr
 
 RECENT_DAYS = 14
 W_RECENT    = 0.65  # last-14 weight vs season average in "form"

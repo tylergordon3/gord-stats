@@ -9,8 +9,8 @@ gsis_id join to the registry - no fuzzy name matching.
 import nflreadpy as nfl
 import pandas as pd
 
-from src.config import TEAMS
-from src.identity.registry import load_registry
+from fantasy.config import TEAMS
+from fantasy.identity.registry import load_registry
 
 # Legacy special-case names, kept so the CamelCase key matches draft-pick names.
 _NAME_RENAMES = {

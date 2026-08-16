@@ -4,7 +4,7 @@ from pathlib import Path
 
 import requests
 
-from cbb.lib import paths, teams
+from cbb import paths, teams
 
 # =========================
 # CONFIG

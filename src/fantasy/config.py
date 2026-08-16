@@ -1,16 +1,19 @@
 """
-Shared paths and constants for the new player-database pipeline (src/).
+League configuration for the fantasy football project.
 
-Kept intentionally free of any dependency on the legacy py/ package so the
-new structure can evolve independently.
+Anything that names a location on disk lives in `fantasy.paths`; this module
+is the league/domain configuration (roster names, league IDs, scoring). The
+path constants are re-exported here because call sites have always imported
+them from `fantasy.config`.
 """
-from pathlib import Path
 from zoneinfo import ZoneInfo
 
-# Project root = fantasy_insights/  (this file lives at src/config.py)
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-PLAYERS_DIR = DATA_DIR / "players"
+from fantasy.paths import (  # noqa: F401  (re-exported for call sites)
+    ROOT,
+    DATA_DIR,
+    PLAYERS_DIR,
+    SEASON_DIR,
+)
 
 # The canonical, cross-source identity schema every source normalizes into.
 # Adding a new ID column here (and populating it in an adapter) is all that is
@@ -45,7 +48,6 @@ SPINE_COLS = ["source", "source_id"] + ID_COLS + IDENTITY_COLS + ["merge_name"]
 # --------------------------------------------------------------------------- #
 # League-specific config (roster_id -> owner is stable across seasons here).
 # --------------------------------------------------------------------------- #
-SEASON_DIR = DATA_DIR / "season"
 FANTASY_REG_WEEKS = 14           # fantasy regular season length
 EXPW_RATIO = 2.37                # Pythagorean exponent for expected wins
 

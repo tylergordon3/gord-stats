@@ -17,17 +17,18 @@ _injury_shortened. Nobody's draft grade should hinge on a torn ACL.
 Every season lives on the one page (docs/adp/index.html), picked with the season
 buttons - same shape as the draft report.
 
-    python -m src.site.adp
+    python -m fantasy.site.adp
 """
 from functools import lru_cache
 
 import pandas as pd
 
-from src import stats
-from src.config import FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_YEAR
-from src.league.adp import get_adp
-from src.site import draft, layout, styles
-from src.site.frontmatter import add_front_matter
+from fantasy import paths
+from fantasy import stats
+from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_YEAR
+from fantasy.league.adp import get_adp
+from fantasy.site import draft, layout, styles
+from gordstats.frontmatter import add_front_matter
 
 CUTOFF_ROWS = 15
 # A drafted player is dropped from the page when he missed this many of the
@@ -304,7 +305,7 @@ def generate():
         seasons, views, content, row_label="Season:", col_label="View:", group="adp")
 
     page = add_front_matter(html, "Draft vs ADP")
-    out = ROOT / "docs" / "adp" / "index.html"
+    out = paths.WEB_ADP
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote Draft vs ADP page -> {out}")

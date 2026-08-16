@@ -9,15 +9,16 @@ Three sections, all computed from data/season/<season>.json:
 Every season lives on the one page (docs/schedule/index.html), picked with the
 season buttons - same shape as the draft report.
 
-    python -m src.site.schedule
+    python -m fantasy.site.schedule
 """
 import pandas as pd
 
-from src.config import (
+from fantasy import paths
+from fantasy.config import (
     EXPW_RATIO, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from src.site import layout, styles
-from src.site.frontmatter import add_front_matter
+from fantasy.site import layout, styles
+from gordstats.frontmatter import add_front_matter
 
 _GRID = [styles.GRID_TD, styles.GRID_TH]
 
@@ -181,7 +182,7 @@ def generate():
     body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:")
     page = add_front_matter(body, "Schedule Stats")
 
-    out = ROOT / "docs" / "schedule" / "index.html"
+    out = paths.WEB_SCHEDULE
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote schedule page -> {out}")

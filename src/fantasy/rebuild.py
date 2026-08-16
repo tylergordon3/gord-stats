@@ -7,8 +7,8 @@ Interactive rebuild for the fantasy site.
 
 Wraps the two existing entry points so you don't have to remember either:
 
-    src.data_manager   refreshes stored datasets (players, injuries, season files)
-    src.site.build     regenerates the HTML pages under docs/
+    fantasy.data_manager   refreshes stored datasets (players, injuries, season files)
+    fantasy.site.build     regenerates the HTML pages under docs/
 
 Presets cover the usual cases; "Custom" asks about every step. Nothing is fetched
 or written until you confirm the plan.
@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))   # so `python rebuild.py` works from any cwd
 
-from src.config import LEAGUE_IDS, UPCOMING_YEAR   # noqa: E402
+from fantasy.config import LEAGUE_IDS, UPCOMING_YEAR   # noqa: E402
 
 SEASONS = list(LEAGUE_IDS)
 
@@ -55,9 +55,9 @@ PRESETS = {
 
 
 def _gen(module: str):
-    """Import src.site.<module> late and run its generate()."""
+    """Import fantasy.site.<module> late and run its generate()."""
     import importlib
-    importlib.import_module(f"src.site.{module}").generate()
+    importlib.import_module(f"fantasy.site.{module}").generate()
 
 
 # --------------------------------------------------------------------------- #
@@ -131,7 +131,7 @@ def ask_multi(question: str, items, default_all: bool = True):
 
 class Plan:
     def __init__(self):
-        self.data_jobs = []       # names for src.data_manager
+        self.data_jobs = []       # names for fantasy.data_manager
         self.force_refresh = False
         self.refresh_adp = False
         self.games_missed = False
@@ -198,7 +198,7 @@ def plan_from_prompts() -> Plan:
 def _board_age_hint() -> str:
     """' (cached copy is 5h old)' - so you know whether a refresh is worth it."""
     try:
-        from src.league.adp_board import last_updated
+        from fantasy.league.adp_board import last_updated
         when = last_updated(UPCOMING_YEAR)
     except Exception:
         return ""
@@ -238,11 +238,11 @@ def run(plan: Plan) -> int:
               results)
 
     if plan.refresh_adp:
-        from src.league import adp_board
+        from fantasy.league import adp_board
         _step("live ADP board", lambda: adp_board.board(UPCOMING_YEAR, refresh=True), results)
 
     if plan.games_missed:
-        from src.site import draft
+        from fantasy.site import draft
         for season in plan.seasons:
             _step(f"games-missed [{season}]",
                   lambda s=season: draft.save_games_missed(s), results)

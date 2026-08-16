@@ -17,7 +17,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
-from cbb.lib import paths
+from cbb import paths
 
 DROP = [
         "TEAM",

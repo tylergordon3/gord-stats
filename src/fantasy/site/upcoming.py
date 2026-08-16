@@ -1,10 +1,10 @@
 """
 Upcoming-draft block for the homepage.
 
-Two pieces, both rendered by src.site.homepage:
+Two pieces, both rendered by fantasy.site.homepage:
 
   * countdown_banner() - live JS countdown to config.DRAFT_DATETIME.
-  * adp_board_section() - the multi-site ADP board (src.league.adp_board) as a
+  * adp_board_section() - the multi-site ADP board (fantasy.league.adp_board) as a
     sortable / filterable / searchable table, plus the movement tracker: how far
     each player has climbed or slid over each window in adp_board.WINDOWS. The
     window buttons above the table drive both halves of that tracker - the risers
@@ -13,18 +13,18 @@ Two pieces, both rendered by src.site.homepage:
     build time; all the interaction is vanilla JS, since the site is a static
     Jekyll build with no JS dependencies.
 
-    python -m src.site.upcoming     # rebuilds the homepage
+    python -m fantasy.site.upcoming     # rebuilds the homepage
 """
 import json
 from datetime import datetime
 
 import pandas as pd
 
-from src.config import (
+from fantasy.config import (
     DRAFT_DATETIME, DRAFT_LABEL, LEAGUE_TEAMS, LEAGUE_TZ, UPCOMING_SEASON,
     UPCOMING_YEAR,
 )
-from src.league.adp_board import (
+from fantasy.league.adp_board import (
     COMPARABLE_MAX, SOURCES, TRACKED_MAX, WINDOWS, baseline_times, board,
     last_updated, movers,
 )
@@ -554,5 +554,5 @@ def adp_board_section(year=UPCOMING_YEAR) -> str:
 
 
 if __name__ == "__main__":
-    from src.site import homepage
+    from fantasy.site import homepage
     homepage.generate()

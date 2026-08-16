@@ -7,7 +7,7 @@ aggregate later (e.g. the homepage injury section).
 """
 import json
 
-from src.config import DATA_DIR, FORMAL_SEASON
+from fantasy.config import DATA_DIR, FORMAL_SEASON
 
 ARCHIVE_PATH = DATA_DIR / "historical.json"
 

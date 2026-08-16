@@ -32,7 +32,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from cbb.lib import paths
+from cbb import paths
 
 LEAGUES = {
     "men":   paths.WEB_M_DIR,

@@ -12,7 +12,7 @@ fantasy-relevant player, which is what makes ID-based matching possible.
 import nflreadpy as nfl
 import pandas as pd
 
-from src.sources.base import PlayerSource
+from fantasy.sources.base import PlayerSource
 
 
 class NflverseSource(PlayerSource):

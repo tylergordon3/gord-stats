@@ -2,12 +2,12 @@
     Calculates fantasy stats for NFL teams each year. Currently just schedule adjusted values.
 """
 
-from src.config import LEAGUE_IDS, TEAMS
+from fantasy.config import LEAGUE_IDS, TEAMS
 
 import pandas as pd
 import polars as pl
 import nflreadpy as nfl
-import src.stats as stats
+import fantasy.stats as stats
 
 SEASONS = list(LEAGUE_IDS)
 

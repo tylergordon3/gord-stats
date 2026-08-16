@@ -21,7 +21,7 @@ from contextlib import contextmanager
 from datetime import datetime
 
 from cbb.render import render_home as rh
-from cbb.wnba import wnba_remaining
+from wnba import wnba_remaining
 
 
 @contextmanager

@@ -2,7 +2,7 @@ import json
 import re
 import pandas as pd
 from bs4 import BeautifulSoup
-from cbb.lib import paths, teams
+from cbb import paths, teams
 import matplotlib.pyplot as plt
 
 def add_team_logos(df):

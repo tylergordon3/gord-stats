@@ -1,6 +1,8 @@
 import pandas as pd
 
-from cbb.lib import html_util, paths
+from gordstats import frontmatter
+from cbb import paths
+from cbb import html_util
 from cbb.scrape import bpi
 
 
@@ -61,7 +63,7 @@ def main(df, gender):
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    html = html_util.add_front_matter(html, "Conferences")
+    html = frontmatter.add_front_matter(html, "Conferences")
 
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)

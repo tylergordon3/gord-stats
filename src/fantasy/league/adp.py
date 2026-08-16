@@ -13,8 +13,8 @@ import time
 import pandas as pd
 import requests
 
-from src.config import DATA_DIR
-from src.normalize import normalize_name
+from fantasy.config import DATA_DIR
+from fantasy.normalize import normalize_name
 
 ADP_DIR = DATA_DIR / "adp"
 _URL = ("https://partners.fantasypros.com/api/v1/consensus-rankings.php"

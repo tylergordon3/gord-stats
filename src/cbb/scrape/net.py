@@ -6,7 +6,7 @@ import pytz
 import requests
 from bs4 import BeautifulSoup
 
-from cbb.lib import paths, url
+from cbb import paths, url
 
 
 def main(gender):

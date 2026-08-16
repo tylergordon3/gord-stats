@@ -9,7 +9,7 @@ Switchable All-Time / per-year, with positional breakdowns so you can see which
 managers draft each position well or poorly. Each section shows a bar chart with
 the data table collapsed underneath.
 
-    python -m src.site.draft_report
+    python -m fantasy.site.draft_report
 """
 import base64
 import io
@@ -19,9 +19,10 @@ matplotlib.use("Agg")            # non-interactive backend
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np               # noqa: E402
 
-from src.config import FORMAL_SEASON, LEAGUE_IDS, ROOT  # noqa: E402
-from src.site import adp, layout, styles                # noqa: E402
-from src.site.frontmatter import add_front_matter        # noqa: E402
+from fantasy import paths
+from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROOT  # noqa: E402
+from fantasy.site import adp, layout, styles                # noqa: E402
+from gordstats.frontmatter import add_front_matter        # noqa: E402
 
 _POS_ORDER = ["QB", "RB", "WR", "TE"]
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
@@ -152,7 +153,7 @@ def generate():
     html = layout.HEAD + intro + switcher
 
     page = add_front_matter(html, "Manager Draft Report")
-    out = ROOT / "docs" / "draft-report" / "index.html"
+    out = paths.WEB_DRAFT_REPORT
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote Manager Draft Report -> {out}")

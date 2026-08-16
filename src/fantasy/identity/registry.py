@@ -7,10 +7,10 @@ Output: data/players/registry.parquet
 """
 import pandas as pd
 
-from src.config import ID_COLS, IDENTITY_COLS, PLAYERS_DIR
-from src.identity.crosswalk import assign_uid, build_gsis_lookup, resolve_gsis
-from src.sources.nflverse import NflverseSource
-from src.sources.sleeper import SleeperSource
+from fantasy.config import ID_COLS, IDENTITY_COLS, PLAYERS_DIR
+from fantasy.identity.crosswalk import assign_uid, build_gsis_lookup, resolve_gsis
+from fantasy.sources.nflverse import NflverseSource
+from fantasy.sources.sleeper import SleeperSource
 
 REGISTRY_PATH = PLAYERS_DIR / "registry.parquet"
 

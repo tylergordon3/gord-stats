@@ -7,7 +7,7 @@ disk and re-parsing it elsewhere, we fetch and normalize in one place.
 import pandas as pd
 from sleeper_wrapper import Players
 
-from src.sources.base import PlayerSource
+from fantasy.sources.base import PlayerSource
 
 # Sleeper field  ->  our spine column.
 _FIELD_MAP = {

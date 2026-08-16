@@ -3,7 +3,7 @@ Draft pick data (src/) - internal data module.
 
 Builds each season's drafted players with where they were taken (overall +
 positional) and where they finished, from Sleeper draft picks + rosters and
-src.stats.player_points. Consumed by src.site.adp (the Draft vs ADP page).
+fantasy.stats.player_points. Consumed by fantasy.site.adp (the Draft vs ADP page).
 
 Also archives per-team games-missed for the homepage injury section
 (save_games_missed), which is why this module survived the draft-page removal.
@@ -13,8 +13,8 @@ from functools import lru_cache
 import pandas as pd
 from sleeper_wrapper import Drafts, League
 
-from src import archive, stats
-from src.config import DATA_DIR, DRAFT_IDS, LEAGUE_IDS, SEASON_YEAR
+from fantasy import archive, stats
+from fantasy.config import DATA_DIR, DRAFT_IDS, LEAGUE_IDS, SEASON_YEAR
 
 REG_WEEKS = 14
 # In-season pickups enter the injury stats only when held this many weeks -
@@ -222,7 +222,7 @@ def save_games_missed(season_str: str):
 
     # Per-player detail so the injury section can weight injuries by how much the
     # player mattered (draft capital, scoring pace) instead of counting all missed
-    # games equally. Tiering/weighting happens at render time in src.site.injuries.
+    # games equally. Tiering/weighting happens at render time in fantasy.site.injuries.
     archive.save_statistic(season_str, "injury_detail_df", detail.to_dict(orient="records"))
     print(f"[games-missed] archived {season_str} "
           f"({(detail['Source'] == 'Pickup').sum()} qualifying pickups)")

@@ -1,11 +1,11 @@
 """
 Single entry point to refresh every dataset the site depends on.
 
-    python -m src.data_manager                     # all datasets, all seasons
-    python -m src.data_manager --pages             # + regenerate all site pages (update everything)
-    python -m src.data_manager --refresh           # force re-fetch of cached data
-    python -m src.data_manager --only players       # just the player registry
-    python -m src.data_manager --seasons 2526       # limit to one season
+    python -m fantasy.data_manager                     # all datasets, all seasons
+    python -m fantasy.data_manager --pages             # + regenerate all site pages (update everything)
+    python -m fantasy.data_manager --refresh           # force re-fetch of cached data
+    python -m fantasy.data_manager --only players       # just the player registry
+    python -m fantasy.data_manager --seasons 2526       # limit to one season
 
 Each dataset is an "update job". Two scopes:
   * global jobs  run once            (e.g. the cross-source player registry)
@@ -16,11 +16,11 @@ SEASON_JOBS - same extensibility idea as sources/.
 """
 import argparse
 
-from src import util
-from src.config import DATA_DIR, FANTASY_REG_WEEKS, LEAGUE_IDS
-from src.identity.history import build_player_seasons
-from src.identity.registry import build_registry
-from src.league import injuries, season as season_data, transactions as transactions_data
+from fantasy import util
+from fantasy.config import DATA_DIR, FANTASY_REG_WEEKS, LEAGUE_IDS
+from fantasy.identity.history import build_player_seasons
+from fantasy.identity.registry import build_registry
+from fantasy.league import injuries, season as season_data, transactions as transactions_data
 
 # (four-digit season key used by the league helpers, folder/file season string).
 SEASONS = [
@@ -135,7 +135,7 @@ def main(seasons=None, only=None, refresh: bool = False, pages: bool = False):
 
     # After data is current, optionally regenerate the site pages for these seasons.
     if pages:
-        from src.site.build import build_all  # lazy: only imports matplotlib/jinja2 when needed
+        from fantasy.site.build import build_all  # lazy: only imports matplotlib/jinja2 when needed
         print("== pages ==")
         build_all([ss for _, ss in season_pairs])
 
