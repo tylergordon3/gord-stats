@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-15T21:20:03.973929-04:00",
+ "updated": "2026-08-16T06:34:06.616909-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -30333,6 +30333,224 @@
       "Ashlon Jackson",
       "G",
       0.0
+     ]
+    ]
+   }
+  },
+  "401857146": {
+   "date": "2026-08-15",
+   "allowed": {
+    "LA": {
+     "G": 83.0,
+     "FC": 95.0
+    },
+    "WSH": {
+     "G": 69.0,
+     "FC": 83.0
+    }
+   },
+   "players": {
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      35.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      27.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      14.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      10.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      31.0
+     ],
+     [
+      "Emma Cannon",
+      "FC",
+      10.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      2.0
+     ],
+     [
+      "Alissa Pili",
+      "FC",
+      9.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      13.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      1.0
+     ]
+    ],
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      7.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      36.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      32.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      43.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      1.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      20.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      6.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      18.0
+     ],
+     [
+      "Cassandre Prosper",
+      "G",
+      12.0
+     ],
+     [
+      "Alicia Florez",
+      "G",
+      3.0
+     ]
+    ]
+   }
+  },
+  "401857147": {
+   "date": "2026-08-16",
+   "allowed": {
+    "MIN": {
+     "G": 75.0,
+     "FC": 88.0
+    },
+    "LV": {
+     "G": 87.0,
+     "FC": 82.0
+    }
+   },
+   "players": {
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      25.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      31.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      27.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      19.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      40.0
+     ],
+     [
+      "Nia Coffey",
+      "FC",
+      25.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      1.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      1.0
+     ]
+    ],
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      7.0
+     ],
+     [
+      "NaLyssa Smith",
+      "FC",
+      32.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      47.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      28.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      22.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      2.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      15.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      10.0
      ]
     ]
    }
