@@ -1,4 +1,4 @@
-name: cbb-env
+name: gord-stats
 channels:
   - defaults
 dependencies:

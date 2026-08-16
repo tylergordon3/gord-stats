@@ -72,12 +72,17 @@ def update_all(start=2010, end=2026):
     utils.save_json_data(all.to_json(), path)
 
 def get_today_ken(gender):
+    # KenPom only covers men's college basketball, so there is no women's
+    # equivalent of M_KEN_DIR to fall back on — the women's model uses Torvik
+    # and NET instead (see W_TOR_DIR / W_NET_DIR). This branch used to read a
+    # paths.W_KEN_DIR that was never defined and raised AttributeError.
     if gender == "M":
         ken_dir = paths.M_KEN_DIR
     elif gender == "W":
-        ken_dir = paths.W_KEN_DIR
+        print("KenPom has no women's data — use Torvik or NET for the women's model.")
+        return None
     else:
-        print("Invalid gender given to get_today_net.")
+        print("Invalid gender given to get_today_ken.")
         return None
 
     # Today's filename
