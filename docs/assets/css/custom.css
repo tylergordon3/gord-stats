@@ -3442,3 +3442,39 @@ img {
     padding: 12px 6px;
   }
 }
+
+
+/* =========================================================
+   MOBILE NAV
+   The header nav used to be hidden below 768px and replaced by a
+   fixed 64px bottom bar. That bar now carries the same links as the
+   two header rows, so showing the header on phones too would mean
+   the same navigation twice and 64px less page.
+
+   The header rows win: they show which sport you're in AND that
+   sport's pages, which the bottom bar can only do one of at a time.
+   ========================================================= */
+
+@media (max-width: 767px) {
+  #nav {
+    display: block !important;
+  }
+
+  .bottom-nav {
+    display: none !important;
+  }
+
+  body {
+    padding-bottom: 0;
+  }
+}
+
+/* Jump-to links are buttons in practice — give them a thumb-sized target. */
+@media (max-width: 767px) {
+  .section-nav a,
+  .bottom-nav a {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
