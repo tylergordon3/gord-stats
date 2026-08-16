@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# One-time setup of cbb-model on the Pi. Afterwards it's `pi deploy cbb-model`
+# One-time setup of gord-stats on the Pi. Afterwards it's `pi deploy gord-stats`
 # plus the daily timer.
 #
-#   ssh gordpi 'cd ~/apps/cbb-model && ./deploy/pi-bootstrap.sh'
+#   ssh gordpi 'cd ~/apps/gord-stats && ./deploy/pi-bootstrap.sh'
 set -euo pipefail
 
 UNIT_DIR="$HOME/.config/systemd/user"
-SECRETS="$HOME/secrets/cbb-model.env"
+SECRETS="$HOME/secrets/gord-stats.env"
 cd "$(git rev-parse --show-toplevel)"
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 
@@ -30,15 +30,15 @@ grep -q '^CLOUDFLARE_API_TOKEN=' "$SECRETS" || {
   exit 1; }
 
 # Which sections the daily job refreshes. Only WNBA is automated today.
-grep -q '^CBB_TASKS=' "$SECRETS" || {
-  echo 'CBB_TASKS=wnba' >> "$SECRETS"
-  log "defaulted CBB_TASKS=wnba in $SECRETS"; }
+grep -q '^TASKS=' "$SECRETS" || {
+  echo 'TASKS=wnba,fantasy' >> "$SECRETS"
+  log "defaulted TASKS=wnba,fantasy in $SECRETS"; }
 
 # The Pi records generated data back to the repo, so it needs a push identity
 # and a write-enabled remote.
-if ! git remote get-url origin | grep -q '^git@github-cbb:'; then
-  echo "❌ origin must use the github-cbb alias so pushes use the write key."
-  echo "   git remote set-url origin git@github-cbb:tylergordon3/cbb-model.git"
+if ! git remote get-url origin | grep -q '^git@github-gordstats:'; then
+  echo "❌ origin must use the github-gordstats alias so pushes use the write key."
+  echo "   git remote set-url origin git@github-gordstats:tylergordon3/gord-stats.git"
   exit 1
 fi
 git config user.name  >/dev/null 2>&1 || git config user.name  "gordpi"
@@ -57,7 +57,7 @@ log "units linked into $UNIT_DIR"
 
 loginctl enable-linger "$USER"
 systemctl --user daemon-reload
-systemctl --user enable --now cbb-daily.timer
+systemctl --user enable --now gordstats-daily.timer wnba-live.timer
 log "daily timer armed"
 
 ########################################

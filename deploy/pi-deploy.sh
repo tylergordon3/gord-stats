@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Refresh cbb-model on the Pi and publish it. Run daily by cbb-daily.timer, and
-# on demand with `pi deploy cbb-model`.
+# Refresh gord-stats on the Pi and publish it. Run daily by gordstats-daily.timer,
+# and on demand with `pi deploy gord-stats`.
 #
-# Which sections get refreshed is driven by CBB_TASKS in ~/secrets/cbb-model.env
-# (default: wnba). Turning on college basketball later is a change to that
-# variable plus an implementation in cbb/daily.py — not a change to this script.
+# Which sections get refreshed is driven by TASKS in ~/secrets/gord-stats.env
+# (default: wnba,fantasy). Turning on college basketball later is a change to
+# that variable plus an implementation in gordstats/daily.py — not a change to
+# this script. One job builds the whole site, so two sections can never publish
+# inconsistent versions of the shared homepage.
 set -euo pipefail
 
 # Body lives in main() because this script git-pulls a newer copy of itself
@@ -13,7 +15,7 @@ main() {
   cd "$(git rev-parse --show-toplevel)"
 
   local VENV="$PWD/.venv"
-  local TASKS="${CBB_TASKS:-wnba}"
+  local TASKS="${TASKS:-wnba,fantasy}"
   local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
   export MPLBACKEND="${MPLBACKEND:-Agg}"
 
@@ -21,15 +23,15 @@ main() {
   # SECRETS
   ########################################
   # systemd supplies these via EnvironmentFile=, but the script also runs by
-  # hand over ssh, where nothing has loaded them. cbb.daily reads ESPN_S2/SWID
+  # hand over ssh, where nothing has loaded them. gordstats.daily reads ESPN_S2/SWID
   # and BALL_DONT_LIE_KEY through python-dotenv; wrangler needs the CF token.
-  local SECRETS="$HOME/secrets/cbb-model.env"
+  local SECRETS="$HOME/secrets/gord-stats.env"
   [ -f "$SECRETS" ] || { echo "❌ no secrets at $SECRETS"; exit 1; }
   set -o allexport
   # shellcheck source=/dev/null
   . "$SECRETS"
   set +o allexport
-  TASKS="${CBB_TASKS:-$TASKS}"
+  TASKS="${TASKS:-wnba,fantasy}"
 
   [ -n "${CLOUDFLARE_API_TOKEN:-}" ] || {
     echo "❌ CLOUDFLARE_API_TOKEN not set — wrangler can't deploy unattended."
@@ -81,7 +83,7 @@ main() {
     log "installing dependencies"
     pip install -q --upgrade pip
     pip install -q -r requirements-pi.txt
-    pip install -q -e .            # the cbb package itself
+    pip install -q -e .            # cbb, wnba, fantasy, gordstats
     echo "$REQ_HASH" > "$STAMP"
   else
     log "dependencies unchanged"
@@ -91,7 +93,7 @@ main() {
   # REFRESH
   ########################################
   log "refreshing sections: $TASKS"
-  python -m cbb.daily --tasks "$TASKS"
+  python -m gordstats.daily --tasks "$TASKS"
 
   ########################################
   # JEKYLL

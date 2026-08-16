@@ -1,0 +1,20 @@
+[Unit]
+Description=Refresh gord-stats and publish to Cloudflare Pages
+After=network-online.target
+Wants=network-online.target
+OnFailure=notify@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/apps/gord-stats
+EnvironmentFile=%h/secrets/gord-stats.env
+ExecStart=%h/apps/gord-stats/deploy/pi-deploy.sh
+# Data pulls for every section, the nflverse parquet reads, a Jekyll build and
+# a Cloudflare upload, all on a Pi. Bounded so a hung HTTP call can't wedge the
+# timer forever, but generous enough not to kill a run that's making progress.
+TimeoutStartSec=5400
+# No display on a headless Pi, so matplotlib must not try to pick a GUI backend.
+Environment=MPLBACKEND=Agg
+
+[Install]
+WantedBy=default.target

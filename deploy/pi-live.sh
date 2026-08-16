@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Frequent WNBA refresh while games are being played. Run every 10 minutes by
-# cbb-live.timer, and on demand with `deploy/pi-live.sh`.
+# wnba-live.timer, and on demand with `deploy/pi-live.sh`.
 #
 # The gate is one ESPN scoreboard call: if no WNBA game is live (or tipping
 # within 30 minutes) the tick exits in about a second. When games are on, it
@@ -17,15 +17,15 @@ main() {
   export MPLBACKEND="${MPLBACKEND:-Agg}"
 
   # Don't fight the daily deploy for the repo or the Pi's cores.
-  if systemctl --user is-active --quiet cbb-daily.service 2>/dev/null; then
-    log "cbb-daily is running — skipping this tick"
+  if systemctl --user is-active --quiet gordstats-daily.service 2>/dev/null; then
+    log "gordstats-daily is running — skipping this tick"
     exit 0
   fi
 
   ########################################
   # SECRETS (same contract as pi-deploy.sh)
   ########################################
-  local SECRETS="$HOME/secrets/cbb-model.env"
+  local SECRETS="$HOME/secrets/gord-stats.env"
   [ -f "$SECRETS" ] || { echo "❌ no secrets at $SECRETS"; exit 1; }
   set -o allexport
   # shellcheck source=/dev/null
@@ -39,7 +39,7 @@ main() {
   . "$VENV/bin/activate"
 
   local RC=0
-  python -m cbb.wnba.wnba_live || RC=$?
+  python -m wnba.wnba_live || RC=$?
   if [ "$RC" -eq 3 ]; then
     exit 0                       # no active games — quiet tick
   elif [ "$RC" -ne 0 ]; then

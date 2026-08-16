@@ -6,9 +6,9 @@ OnFailure=notify@%n.service
 
 [Service]
 Type=oneshot
-WorkingDirectory=%h/apps/cbb-model
-EnvironmentFile=%h/secrets/cbb-model.env
-ExecStart=%h/apps/cbb-model/deploy/pi-live.sh
+WorkingDirectory=%h/apps/gord-stats
+EnvironmentFile=%h/secrets/gord-stats.env
+ExecStart=%h/apps/gord-stats/deploy/pi-live.sh
 # One ESPN check when idle; a fantasy fetch, Jekyll build and wrangler upload
 # when games are live — all comfortably inside 15 minutes on the Pi.
 TimeoutStartSec=900

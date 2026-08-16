@@ -19,9 +19,9 @@ window.addEventListener('load',openHashTarget);
 def internal_link(path: str, label: str) -> str:
     """Link to another page of this site.
 
-    Emits Liquid `relative_url` rather than a bare "/path/" so the link keeps
-    working under the GitHub Pages project baseurl (/fantasy_insights). Generated
-    pages carry front matter, so Jekyll resolves this on build.
+    Emits Liquid `relative_url` rather than a bare "/path/" so the link stays
+    correct if the site ever moves under a baseurl. Generated pages carry front
+    matter, so Jekyll resolves this on build.
     """
     return "<a href=\"{{ '%s' | relative_url }}\">%s</a>" % (path, label)
 

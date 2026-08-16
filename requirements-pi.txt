@@ -1,23 +1,40 @@
-# Runtime dependencies for the Pi's daily job — the WNBA section plus the
-# homepage render. That's all `cbb.daily --tasks wnba` touches.
+# Runtime dependencies for the Pi's daily job — every section it publishes:
+# the WNBA feed, the fantasy football rebuild, and the homepage render. That's
+# what `gordstats.daily --tasks wnba,fantasy` touches.
 #
-# Deliberately not environment_pi.yml: that env carries the model stack
-# (scikit-learn, statsmodels) and the scrapers (selenium, playwright, the
-# KenPom wrapper), none of which the WNBA path imports. Installing playwright
-# and a browser on a Pi to run code that's currently gated off would be a lot
-# of disk and build time for nothing.
+# Deliberately not environment_pi.yml or fantasy's requirements.txt: the former
+# carries the CBB model stack (scikit-learn, statsmodels) and scrapers
+# (selenium, playwright, the KenPom wrapper); the latter is a full `pip freeze`
+# of a dev environment including torch, which has no aarch64 wheel on PyPI at
+# all. Neither is imported by the sections that actually run here.
 #
-# When the CBB section gets automated, that's the moment to add them here —
-# see the note in src/cbb/daily.py.
-pandas
-numpy
+# When the CBB section gets automated, that's the moment to add the model stack
+# — see the note in src/gordstats/daily.py.
+
+# --- shared ---
+pandas>=2.2
+numpy>=2.0
+requests>=2.32
+matplotlib>=3.10
+
+# --- WNBA ---
 python-dotenv
-requests
-beautifulsoup4
-lxml
-matplotlib
 
 # Imported at the top of wnba/wnba_fantasy.py. It reads cookies out of a local
 # browser profile, which a headless Pi doesn't have — but ESPN_S2/SWID from the
 # env file take priority, so it's imported and never used. Still has to install.
 browser-cookie3
+
+# --- fantasy football ---
+nflreadpy
+polars
+pyarrow          # nflreadpy reads the nflverse parquet files through it
+sleeper-api-wrapper
+tqdm
+
+# --- pulled in through pandas, so an import scan misses them ---
+# jinja2 backs the DataFrame.style accessor (used in 7 fantasy modules; without
+# it every page generator raises), and lxml/beautifulsoup4 back read_html.
+beautifulsoup4
+jinja2
+lxml

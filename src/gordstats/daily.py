@@ -1,5 +1,5 @@
 """
-Scheduled entry point for the Pi.
+Scheduled entry point for the Pi — every section of gordstats.com.
 
 `cbb.main` is a working scratchpad — sections get commented in and out and gated
 behind flags like `update_mens = 0`. That's fine at a keyboard and wrong for a
@@ -7,14 +7,18 @@ scheduled job, where what ran has to be explicit, reviewable in a log, and
 changeable without editing code. This module names each section as a task and
 takes the selection from the command line:
 
-    python -m cbb.daily --tasks wnba        # what the Pi runs today
-    python -m cbb.daily --tasks wnba,cbb    # once the CBB section is automated
+    python -m gordstats.daily --tasks wnba,fantasy   # what the Pi runs today
+    python -m gordstats.daily --tasks wnba,cbb       # once CBB is automated
 
 Turning the college basketball section on later is two steps: fill in `_cbb()`
-with whatever `main.py` does by hand today, then change CBB_TASKS in the Pi's
-~/secrets/cbb-model.env. The schedule itself doesn't change.
+with whatever `main.py` does by hand today, then change TASKS in the Pi's
+~/secrets/gord-stats.env. The schedule itself doesn't change.
+
+A failing section is recorded and the run continues, so one broken feed can't
+stop the rest of the site from publishing.
 """
 import argparse
+import os
 import sys
 import traceback
 from contextlib import contextmanager
@@ -60,9 +64,26 @@ def _cbb() -> None:
     )
 
 
+def _fantasy() -> None:
+    """Refresh the fantasy football data and rebuild its pages.
+
+    Reuses the same plan `python -m fantasy.rebuild` runs interactively, so
+    there is one description of what a rebuild does rather than a scheduled
+    copy that drifts from the manual one. FANTASY_PRESET overrides it from
+    the secrets file; "predraft" refreshes the live ADP board first, which is
+    what matters until the draft.
+    """
+    from fantasy import rebuild
+
+    preset = os.environ.get("FANTASY_PRESET", "predraft")
+    if rebuild.run(rebuild.plan_from_preset(preset)):
+        raise RuntimeError(f"fantasy rebuild preset '{preset}' had failing steps")
+
+
 TASKS = {
     "wnba": _wnba,
     "cbb": _cbb,
+    "fantasy": _fantasy,
 }
 
 

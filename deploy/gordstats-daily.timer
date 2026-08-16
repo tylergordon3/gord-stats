@@ -1,0 +1,15 @@
+[Unit]
+Description=Daily gord-stats refresh and publish
+
+[Timer]
+# One job now covers every section, so there's no longer a second rebuild to
+# stagger against. Early enough that the site is current before anyone looks at
+# it, late enough that the previous night's games have settled.
+OnCalendar=*-*-* 05:30:00
+# A missed day still runs at next boot — the site going stale is the failure
+# mode worth avoiding.
+Persistent=true
+RandomizedDelaySec=900
+
+[Install]
+WantedBy=timers.target

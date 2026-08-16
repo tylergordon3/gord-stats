@@ -2,13 +2,13 @@
 """
 Interactive rebuild for the fantasy site.
 
-    python rebuild.py            # ask what to do, then do it
-    python rebuild.py --preset pages --yes    # no prompts (for scripts / cron)
+    python -m fantasy.rebuild                       # ask what to do, then do it
+    python -m fantasy.rebuild --preset pages --yes   # no prompts (for scripts)
 
 Wraps the two existing entry points so you don't have to remember either:
 
     fantasy.data_manager   refreshes stored datasets (players, injuries, season files)
-    fantasy.site.build     regenerates the HTML pages under docs/
+    fantasy.site.build     regenerates the HTML pages under docs/fantasy/
 
 Presets cover the usual cases; "Custom" asks about every step. Nothing is fetched
 or written until you confirm the plan.
@@ -17,12 +17,7 @@ import argparse
 import sys
 import time
 import traceback
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parent
-sys.path.insert(0, str(ROOT))   # so `python rebuild.py` works from any cwd
-
-from fantasy.config import LEAGUE_IDS, UPCOMING_YEAR   # noqa: E402
+from fantasy.config import LEAGUE_IDS, UPCOMING_YEAR
 
 SEASONS = list(LEAGUE_IDS)
 
