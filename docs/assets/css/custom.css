@@ -3493,7 +3493,9 @@ img {
   .legend-btn,
   .sort-chip,
   .archive-controls button,
-  .filter-bar button {
+  .filter-bar button,
+  .mv-win,
+  .adp-pos {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
