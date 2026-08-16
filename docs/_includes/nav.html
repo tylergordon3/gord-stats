@@ -1,8 +1,17 @@
 {% comment %}
-Latest prediction date per league, computed from the predict_*.html pages
+Two-level navigation, both levels driven by _data/nav.yml.
+
+  1. Section bar   Home / CBB / WNBA / Fantasy
+  2. Sub-nav       the pages inside whichever section you're in
+
+The active section is resolved here at build time from page.url, so no page
+has to declare which section it belongs to.
+
+Latest prediction date per league is computed from the predict_*.html pages
 that actually exist — nothing to update when a new daily lands or old pages
 are archived away.
 {% endcomment %}
+
 {% assign latest_m = '' %}
 {% assign latest_w = '' %}
 {% for p in site.pages %}
@@ -13,117 +22,151 @@ are archived away.
   {% endif %}
 {% endfor %}
 
+{% assign sec = '' %}
+{% if page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}
+{% elsif page.url contains '/wnba/' %}{% assign sec = 'wnba' %}
+{% elsif page.url contains '/men/' or page.url contains '/women/' %}{% assign sec = 'cbb' %}
+{% endif %}
+
+{% assign subnav = site.data.nav[sec] %}
+
 <div id="nav">
   <div class="nav-inner">
-    <nav class="simple-nav">
-      <a class="league-route no-rewrite" data-page="home" href="/index.html">Home</a>
-      <a class="no-rewrite" href="/wnba/index.html">WNBA Fantasy</a>
-      <a class="today-scores-link no-rewrite" href="/men/index.html">Today's Scores</a>
-      <a class="league-route no-rewrite" data-page="bracketology" href="/men/predict_{{ latest_m }}.html">Bracketology</a>
-      <a class="league-route no-rewrite" data-page="conference" href="/men/conference.html">Conference Rankings</a>
+    <nav class="simple-nav site-sections">
+      {% for item in site.data.nav.sections %}
+      <a class="no-rewrite{% if item.section == sec %} active{% endif %}{% if item.section == nil and sec == '' %} active{% endif %}"
+         href="{{ item.url | relative_url }}">{{ item.title }}</a>
+      {% endfor %}
     </nav>
+
+    {% if subnav and subnav.size > 1 %}
+    <nav class="simple-nav sub-nav">
+      {% for item in subnav %}
+        {% if item.route == 'bracketology' %}
+      <a class="league-route no-rewrite" data-page="bracketology"
+         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{{ item.title }}</a>
+        {% elsif item.route == 'today-scores' %}
+      <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{{ item.title }}</a>
+        {% elsif item.route %}
+      <a class="league-route no-rewrite" data-page="{{ item.route }}"
+         href="{{ item.url | relative_url }}">{{ item.title }}</a>
+        {% else %}
+      <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    {% endif %}
   </div>
 </div>
 
+{% comment %}
+Mobile: the bottom bar shows the current section's pages, or the section list
+itself when there's nothing more specific (the hub) — so a phone is always one
+tap from anywhere without stacking two bars on a small screen.
+{% endcomment %}
 <nav class="bottom-nav">
-  <a class="league-route no-rewrite" data-page="home" href="/index.html">
-    <span class="icon">🏠</span>
-    <span class="label">Home</span>
-  </a>
-
-  <a class="no-rewrite" href="/wnba/index.html">
-    <span class="icon">📊</span>
-    <span class="label">WNBA</span>
-  </a>
-
-  <a class="today-scores-link no-rewrite" href="/men/index.html">
-    <span class="icon">🏀</span>
-    <span class="label">Scores</span>
-  </a>
-
-  <a class="league-route no-rewrite" data-page="bracketology" href="/men/predict_{{ latest_m }}.html">
-    <span class="icon">🧮</span>
-    <span class="label">Bracketology</span>
-  </a>
-
-  <a class="league-route no-rewrite" data-page="conference" href="/men/conference.html">
-    <span class="icon">🏆</span>
-    <span class="label">Conferences</span>
-  </a>
+  {% if subnav and subnav.size > 1 %}
+    <a class="no-rewrite bottom-up" href="{{ '/index.html' | relative_url }}">
+      <span class="icon">🏠</span>
+      <span class="label">Home</span>
+    </a>
+    {% for item in subnav %}
+      {% if item.route == 'bracketology' %}
+    <a class="league-route no-rewrite" data-page="bracketology"
+       href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">
+      <span class="icon">{{ item.icon | default: "•" }}</span>
+      <span class="label">{{ item.short | default: item.title }}</span>
+    </a>
+      {% elsif item.route == 'today-scores' %}
+    <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">
+      <span class="icon">{{ item.icon | default: "•" }}</span>
+      <span class="label">{{ item.short | default: item.title }}</span>
+    </a>
+      {% else %}
+    <a{% if item.route %} class="league-route no-rewrite" data-page="{{ item.route }}"{% endif %}
+       href="{{ item.url | relative_url }}">
+      <span class="icon">{{ item.icon | default: "•" }}</span>
+      <span class="label">{{ item.short | default: item.title }}</span>
+    </a>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% for item in site.data.nav.sections %}
+    <a class="no-rewrite{% if item.url == '/index.html' %} nav-home{% endif %}" href="{{ item.url | relative_url }}">
+      <span class="icon">{{ item.icon | default: "•" }}</span>
+      <span class="label">{{ item.short | default: item.title }}</span>
+    </a>
+    {% endfor %}
+  {% endif %}
 </nav>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  // Computed per league at build time from the pages that exist
-  const latestPredictionDate = { men: "{{ latest_m }}", women: "{{ latest_w }}" };
-
-  function getLeague() {
-    try {
-      const stored = localStorage.getItem("league");
-      if (stored === "men" || stored === "women") return stored;
-    } catch (e) {}
-    return window.location.pathname.startsWith("/women/") ? "women" : "men";
-  }
-
-  const routeBuilders = {
-    home: () => `/index.html`,
-    conference: league => `/${league}/conference.html`,
-    bracketology: league => `/${league}/predict_${latestPredictionDate[league]}.html`
-  };
-
-  document.querySelectorAll(".league-route").forEach(link => {
-    link.addEventListener("click", function (e) {
-      const page = this.dataset.page;
-      if (!page || !routeBuilders[page]) return;
-
-      e.preventDefault();
-      const league = getLeague();
-      window.location.href = routeBuilders[page](league);
+  /**
+   * ACTIVE LINK STATE
+   * Marks the current page in the sub-nav and the mobile bottom bar. The
+   * section bar is marked at build time (Liquid, above) since it can't be
+   * derived from the path alone once a section has several page prefixes.
+   * Home matches exactly; every other link is active for its whole subtree.
+   */
+  document.addEventListener("DOMContentLoaded", function () {
+    var norm = function (p) { return p.replace(/\/index\.html$/, "/"); };
+    var here = norm(location.pathname);
+    document.querySelectorAll(".sub-nav a, .bottom-nav a").forEach(function (a) {
+      var target = norm(a.pathname);
+      var active = (a.classList.contains("nav-home") || a.classList.contains("bottom-up"))
+        ? here === target
+        : here.indexOf(target) === 0;
+      if (active) a.classList.add("active");
     });
+    // Keep the active bottom tab in view on narrow phones (the bar scrolls).
+    var tab = document.querySelector(".bottom-nav a.active");
+    if (tab && tab.scrollIntoView) {
+      tab.scrollIntoView({ block: "nearest", inline: "center" });
+    }
   });
-
-  document.querySelectorAll(".today-scores-link").forEach(link => {
-    link.addEventListener("click", function (e) {
-      e.preventDefault();
-      const league = getLeague();
-      window.location.href = `/${league}/index.html`;
-    });
-  });
-});
 </script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  /**
+   * LEAGUE-AWARE NAV REWRITE (college basketball only)
+   * Converts the generic men's URLs in nav.yml into whichever league the
+   * reader last chose, remembered in localStorage by the header toggle.
+   *
+   * Safety rules:
+   *   - never rewrite Home, or anything marked .no-rewrite without a route
+   *   - never touch external links
+   */
+  document.addEventListener("DOMContentLoaded", function () {
+    // Computed per league at build time from the pages that exist
+    const latestPredictionDate = { men: "{{ latest_m }}", women: "{{ latest_w }}" };
 
-  const path = window.location.pathname;
-
-  let current = "home";
-
-  if (path === "/" || path.includes("index.html") && !path.includes("/men/") && !path.includes("/women/")) {
-    current = "home";
-  }
-  else if (path.includes("/men/") || path.includes("/women/")) {
-    current = "scores";
-  }
-  if (path.includes("predict_")) {
-    current = "bracketology";
-  }
-  if (path.includes("conference")) {
-    current = "conference";
-  }
-
-  
-  document.querySelectorAll(".bottom-nav a").forEach(link => {
-    link.classList.remove("active");
-
-    // special case for scores
-    if (link.classList.contains("today-scores-link") && current === "scores") {
-      link.classList.add("active");
+    function getLeague() {
+      try {
+        const stored = localStorage.getItem("league");
+        if (stored === "men" || stored === "women") return stored;
+      } catch (e) {}
+      return window.location.pathname.startsWith("/women/") ? "women" : "men";
     }
 
-    if (link.dataset.page === current) {
-      link.classList.add("active");
-    }
+    const routeBuilders = {
+      conference: league => `/${league}/conference.html`,
+      bracketology: league => `/${league}/predict_${latestPredictionDate[league]}.html`
+    };
+
+    document.querySelectorAll(".league-route").forEach(link => {
+      link.addEventListener("click", function (e) {
+        const page = this.dataset.page;
+        if (!page || !routeBuilders[page]) return;
+        e.preventDefault();
+        window.location.href = routeBuilders[page](getLeague());
+      });
+    });
+
+    document.querySelectorAll(".today-scores-link").forEach(link => {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.location.href = `/${getLeague()}/index.html`;
+      });
+    });
   });
-
-});
 </script>

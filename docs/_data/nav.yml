@@ -1,19 +1,98 @@
-main:
+# Navigation for gordstats.com, in two levels.
+#
+#   sections  the projects in this repo — one entry per section of the site
+#   <section> the pages within that section, rendered as a sub-nav
+#
+# Adding a page is an edit here, not an edit to _includes/nav.html.
+#
+# `route` marks a link the CBB league toggle rewrites at click time (men vs
+# women); see the script in _includes/nav.html. Links without one are literal.
+# Bracketology has no url because it points at the most recent prediction,
+# which is computed at build time from the pages that actually exist.
+
+sections:
   - title: Home
+    short: Home
+    icon: "🏠"
     url: /index.html
 
+  - title: College Basketball
+    short: CBB
+    icon: "🏀"
+    url: /men/index.html
+    section: cbb
+
+  - title: WNBA Fantasy
+    short: WNBA
+    icon: "📊"
+    url: /wnba/index.html
+    section: wnba
+
+  - title: Fantasy Football
+    short: Fantasy
+    icon: "🏈"
+    url: /fantasy/index.html
+    section: fantasy
+
+
+cbb:
   - title: Today's Scores
-    url: "__TODAY_SCORES__"
+    short: Scores
+    icon: "🏀"
+    url: /men/index.html
+    route: today-scores
 
   - title: Bracketology
-    url: /predict_2026-03-15.html
+    short: Bracket
+    icon: "🧮"
+    route: bracketology
 
   - title: Conference Rankings
-    url: /conference.html
+    short: Conf
+    icon: "🏆"
+    url: /men/conference.html
+    route: conference
 
-secondary:
-  - title: About
-    url: /about.html
+  - title: Prediction History
+    short: History
+    icon: "📜"
+    url: /men/history.html
 
-  - title: History
-    url: /history.html
+
+wnba:
+  - title: Dashboard
+    short: Dashboard
+    icon: "📊"
+    url: /wnba/index.html
+
+
+fantasy:
+  - title: Schedule Stats
+    short: Schedule
+    icon: "📅"
+    url: /fantasy/schedule/
+
+  - title: Draft vs ADP
+    short: ADP
+    icon: "🎯"
+    url: /fantasy/adp/
+
+  - title: Draft Recap
+    short: Recap
+    icon: "📋"
+    url: /fantasy/draft-recap/
+
+  - title: Draft Report
+    short: Report
+    icon: "📊"
+    url: /fantasy/draft-report/
+
+  - title: Draft DNA
+    short: DNA
+    icon: "🧬"
+    url: /fantasy/draft-dna/
+
+  - title: Waivers & Trades
+    short: Waivers
+    icon: "🔄"
+    url: /fantasy/transactions/

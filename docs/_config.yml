@@ -63,6 +63,6 @@ liquid:
   strict_filters    : false
   strict_variables  : false
 
-repository: tgordon3/cbb-model
+repository: tylergordon3/gord-stats
 
 github: false

@@ -152,7 +152,7 @@ def generate(output=OUTPUT):
     body = layout.HEAD + upcoming.countdown_banner() + nav + "".join(
         layout.details(title, html, open=is_open, anchor=a) for a, title, html, is_open in sections)
 
-    page = add_front_matter(body, "Home")
+    page = add_front_matter(body, "Fantasy Football")
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(page, encoding="utf-8")
     print(f"Wrote homepage -> {output}")

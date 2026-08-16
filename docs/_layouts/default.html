@@ -12,12 +12,23 @@
   {% include head-custom.html %}
 </head>
 
-<body>
+{% comment %}
+Section class on <body> so a section can carry its own styling without
+those rules leaking into the others. Kept in sync with the section
+resolution in _includes/nav.html.
+{% endcomment %}
+{% assign bodysec = 'home' %}
+{% if page.url contains '/fantasy/' %}{% assign bodysec = 'fantasy' %}
+{% elsif page.url contains '/wnba/' %}{% assign bodysec = 'wnba' %}
+{% elsif page.url contains '/men/' or page.url contains '/women/' %}{% assign bodysec = 'cbb' %}
+{% endif %}
+
+<body class="sec-{{ bodysec }}">
 
   <!-- HEADER -->
   <header id="site-header">
     <div class="site-header-inner">
-      <a class="site-brand no-rewrite" href="/index.html">Gord<span>Stats</span></a>
+      <a class="site-brand no-rewrite" href="{{ '/index.html' | relative_url }}">Gord<span>Stats</span></a>
       {% include nav.html %}
       {% if page.dir == "/men/" or page.dir == "/women/" %}
       <!-- League toggle only where it means something -->
@@ -42,6 +53,9 @@
   <!-- FOOTER  -->
   <footer id="site-footer">
     <p>GordStats — maintained by Tyler Gordon</p>
+    {% if bodysec == 'fantasy' %}
+    <p><a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team Fantasy Football League</a></p>
+    {% endif %}
   </footer>
   <script>
     /**

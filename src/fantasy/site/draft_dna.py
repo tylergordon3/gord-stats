@@ -630,7 +630,7 @@ def generate():
 
     intro = (
         "<p>Not <em>how well</em> each manager drafts &mdash; that's the "
-        + layout.internal_link("/draft-report/", "Manager Draft Report")
+        + layout.internal_link("/fantasy/draft-report/", "Manager Draft Report")
         + " &mdash; but <em>how</em> they draft. Positional timing, early-round shape, how much "
         "of the result came down to players simply staying on the field, and what the "
         "championship drafts had in common.</p>"

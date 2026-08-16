@@ -120,6 +120,26 @@ def _wnba_card() -> str:
 """
 
 
+def _fantasy_card() -> str:
+    """Compact fantasy football card. Shown in both season layouts."""
+    return """
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Fantasy Football</h2>
+    <a class="home-card-link" href="/fantasy/index.html">League dashboard →</a>
+  </div>
+  <p>Draft boards and tiers, ADP versus where players actually went, schedule
+     strength, and a full waiver and trade history for the
+     <a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team</a> league.</p>
+  <p class="home-card-links">
+    <a href="/fantasy/adp/">Draft vs ADP</a> ·
+    <a href="/fantasy/draft-dna/">Draft DNA</a> ·
+    <a href="/fantasy/transactions/">Waivers &amp; Trades</a>
+  </p>
+</section>
+"""
+
+
 def _wnba_lead() -> str:
     return """
 <h1>WNBA Fantasy</h1>
@@ -158,9 +178,9 @@ def render_home():
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
 
     if cbb_in_season:
-        html = _cbb_lead() + _wnba_card()
+        html = _cbb_lead() + _wnba_card() + _fantasy_card()
     else:
-        html = _wnba_lead() + _cbb_card(today)
+        html = _wnba_lead() + _cbb_card(today) + _fantasy_card()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

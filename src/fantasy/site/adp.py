@@ -245,7 +245,7 @@ def all_time_section() -> str:
 
     bust_cols = _ALL_COLS[:6] + ["Pos Draft → Finish"] + _ALL_COLS[6:]
 
-    link = layout.internal_link("/adp/", "Draft vs ADP")
+    link = layout.internal_link("/fantasy/adp/", "Draft vs ADP")
     return (
         "<p>Combined across every league season. <strong>Finish vs Pick</strong> = draft position "
         "minus fantasy finish: <strong>+</strong> = the player finished better than where he was "

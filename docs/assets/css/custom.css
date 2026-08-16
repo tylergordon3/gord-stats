@@ -3079,3 +3079,192 @@ summary.team-report-header::after {
     color: #e2e8f0;
   }
 }
+
+
+/* =========================================================
+   TWO-LEVEL NAV
+   Section bar (Home / CBB / WNBA / Fantasy) over a sub-nav of
+   the pages inside the current section. Both come from
+   _data/nav.yml via _includes/nav.html.
+   ========================================================= */
+
+.nav-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Level 1 — the sections. Heavier than the sub-nav so the two
+   rows read as a hierarchy rather than one long wrapped list. */
+.site-sections a {
+  font-size: 0.95rem;
+  color: #0f172a !important;
+}
+
+.site-sections a.active {
+  background: #ecfdf5;
+  color: #047857 !important;
+}
+
+/* Level 2 — pages within the section. */
+.sub-nav a {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b !important;
+}
+
+.sub-nav a:hover {
+  color: #059669 !important;
+}
+
+.sub-nav a.active {
+  background: #f1f5f9;
+  color: #047857 !important;
+}
+
+/* The section bar is the one that matters on a phone; the sub-nav's
+   contents are already in the bottom bar there. */
+@media (max-width: 640px) {
+  .sub-nav {
+    display: none;
+  }
+}
+/* ---- carried over from the fantasy football site ---- */
+
+/* Classes only the fantasy page generators emit (src/fantasy/site/layout.py). */
+
+.section-nav {
+  margin: 10px 0 18px;
+  padding: 10px 14px;
+  background: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.section-nav a {
+  display: inline-block;
+  margin: 3px 14px 3px 0;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+details.section {
+  margin: 14px 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+details.section>summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 14px;
+  background: linear-gradient(90deg, #eff6ff, #f8fafc);
+  color: #0f172a;
+  list-style: none;
+}
+
+details.section>summary:hover {
+  background: #e2e8f0;
+}
+
+details.section>summary::-webkit-details-marker {
+  display: none;
+}
+
+details.section>summary::before {
+  content: '\25B8  ';
+  color: #64748b;
+}
+
+details.section[open]>summary::before {
+  content: '\25BE  ';
+  color: #64748b;
+}
+
+details.section[open]>summary {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+details.section>*:not(summary) {
+  margin: 10px 14px;
+}
+
+.view-switch {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.view-switch .switch-label {
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+  min-width: 58px;
+}
+
+.view-switch button {
+  padding: 6px 14px;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.view-switch button:hover {
+  background: #f1f5f9;
+}
+
+.view-switch button.active {
+  background: #059669;
+  color: #fff;
+  font-weight: 700;
+  border-color: #047857;
+}
+
+
+/* Shared class names, so these stay scoped to fantasy pages and cannot
+   change how the CBB or WNBA tables render. */
+
+.sec-fantasy #main_content h1 {
+  text-align: center;
+  margin: 6px 0 14px;
+  letter-spacing: -0.01em;
+}
+
+.sec-fantasy .table-scroll table {
+  width: auto;
+  max-width: none;
+  border-collapse: collapse;
+}
+
+.sec-fantasy table.sticky-table {
+  width: auto;
+  max-width: none;
+  table-layout: auto;
+  border-collapse: collapse;
+  margin-right: auto;
+}
+
+.sec-fantasy .sticky-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.sec-fantasy .sticky-table thead th:first-child {
+  z-index: 4;
+}
