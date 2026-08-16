@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-08-16T16:30:02.421826-04:00",
-    "pulled_at_readable": "2026-08-16 04:30:02 PM EDT",
+    "pulled_at": "2026-08-16T16:30:48.921027-04:00",
+    "pulled_at_readable": "2026-08-16 04:30:48 PM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -17084,7 +17084,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "7",
                     "lastName": "Boston",
-                    "lastNewsDate": 1786827840000,
+                    "lastNewsDate": 1786909740000,
                     "proTeamId": 5,
                     "stats": [],
                     "universeId": 1
@@ -17256,7 +17256,7 @@
                     "injuryStatus": "OUT",
                     "jersey": "3",
                     "lastName": "Canada",
-                    "lastNewsDate": 1786828020000,
+                    "lastNewsDate": 1786910580000,
                     "proTeamId": 20,
                     "stats": [],
                     "universeId": 1
@@ -17807,7 +17807,7 @@
                     "injuryStatus": "OUT",
                     "jersey": "3",
                     "lastName": "Canada",
-                    "lastNewsDate": 1786828020000,
+                    "lastNewsDate": 1786910580000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -18245,7 +18245,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "7",
                     "lastName": "Boston",
-                    "lastNewsDate": 1786827840000,
+                    "lastNewsDate": 1786909740000,
                     "proTeamId": 5,
                     "stats": [
                       {
@@ -18685,7 +18685,7 @@
                     "injuryStatus": "OUT",
                     "jersey": "3",
                     "lastName": "Canada",
-                    "lastNewsDate": 1786828020000,
+                    "lastNewsDate": 1786910580000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -19123,7 +19123,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "7",
                     "lastName": "Boston",
-                    "lastNewsDate": 1786827840000,
+                    "lastNewsDate": 1786909740000,
                     "proTeamId": 5,
                     "stats": [
                       {
@@ -36622,7 +36622,7 @@
                   "injuryStatus": "ACTIVE",
                   "jersey": "7",
                   "lastName": "Boston",
-                  "lastNewsDate": 1786827840000,
+                  "lastNewsDate": 1786909740000,
                   "ownership": {
                     "auctionValueAverage": 43.53,
                     "averageDraftPosition": 7.69,
@@ -39657,7 +39657,7 @@
                   "injuryStatus": "OUT",
                   "jersey": "3",
                   "lastName": "Canada",
-                  "lastNewsDate": 1786828020000,
+                  "lastNewsDate": 1786910580000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 51.68,
