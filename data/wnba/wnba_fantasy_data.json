@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-08-16T15:19:54.144408-04:00",
-    "pulled_at_readable": "2026-08-16 03:19:54 PM EDT",
+    "pulled_at": "2026-08-16T15:54:58.359787-04:00",
+    "pulled_at_readable": "2026-08-16 03:54:58 PM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -14173,7 +14173,7 @@
                     "injuryStatus": "OUT",
                     "jersey": "42",
                     "lastName": "Jones",
-                    "lastNewsDate": 1786828200000,
+                    "lastNewsDate": 1786907760000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -15596,7 +15596,7 @@
                     "injuryStatus": "OUT",
                     "jersey": "42",
                     "lastName": "Jones",
-                    "lastNewsDate": 1786828200000,
+                    "lastNewsDate": 1786907760000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -17080,8 +17080,8 @@
                     "firstName": "Aliyah",
                     "fullName": "Aliyah Boston",
                     "id": 4432831,
-                    "injured": true,
-                    "injuryStatus": "OUT",
+                    "injured": false,
+                    "injuryStatus": "ACTIVE",
                     "jersey": "7",
                     "lastName": "Boston",
                     "lastNewsDate": 1786827840000,
@@ -18241,8 +18241,8 @@
                     "firstName": "Aliyah",
                     "fullName": "Aliyah Boston",
                     "id": 4432831,
-                    "injured": true,
-                    "injuryStatus": "OUT",
+                    "injured": false,
+                    "injuryStatus": "ACTIVE",
                     "jersey": "7",
                     "lastName": "Boston",
                     "lastNewsDate": 1786827840000,
@@ -19119,8 +19119,8 @@
                     "firstName": "Aliyah",
                     "fullName": "Aliyah Boston",
                     "id": 4432831,
-                    "injured": true,
-                    "injuryStatus": "OUT",
+                    "injured": false,
+                    "injuryStatus": "ACTIVE",
                     "jersey": "7",
                     "lastName": "Boston",
                     "lastNewsDate": 1786827840000,
@@ -19745,7 +19745,7 @@
                     "injuryStatus": "OUT",
                     "jersey": "42",
                     "lastName": "Jones",
-                    "lastNewsDate": 1786828200000,
+                    "lastNewsDate": 1786907760000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -20949,7 +20949,7 @@
                     "injuryStatus": "OUT",
                     "jersey": "42",
                     "lastName": "Jones",
-                    "lastNewsDate": 1786828200000,
+                    "lastNewsDate": 1786907760000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -24899,8 +24899,8 @@
                     "firstName": "Caitlin",
                     "fullName": "Caitlin Clark",
                     "id": 4433403,
-                    "injured": true,
-                    "injuryStatus": "OUT",
+                    "injured": false,
+                    "injuryStatus": "ACTIVE",
                     "jersey": "22",
                     "lastName": "Clark",
                     "lastNewsDate": 1786827960000,
@@ -25517,8 +25517,8 @@
                     "firstName": "Caitlin",
                     "fullName": "Caitlin Clark",
                     "id": 4433403,
-                    "injured": true,
-                    "injuryStatus": "OUT",
+                    "injured": false,
+                    "injuryStatus": "ACTIVE",
                     "jersey": "22",
                     "lastName": "Clark",
                     "lastNewsDate": 1786827960000,
@@ -26064,8 +26064,8 @@
                     "firstName": "Caitlin",
                     "fullName": "Caitlin Clark",
                     "id": 4433403,
-                    "injured": true,
-                    "injuryStatus": "OUT",
+                    "injured": false,
+                    "injuryStatus": "ACTIVE",
                     "jersey": "22",
                     "lastName": "Clark",
                     "lastNewsDate": 1786827960000,
@@ -28355,7 +28355,7 @@
                     "averageDraftPosition": 4.93,
                     "percentChange": -0.01,
                     "percentOwned": 99.96,
-                    "percentStarted": 85.45
+                    "percentStarted": 85.3
                   },
                   "proGamePlayerDetail": {},
                   "proTeamId": 9,
@@ -29247,10 +29247,10 @@
                   "lastNewsDate": 1786844940000,
                   "ownership": {
                     "auctionValueAverage": 37.4,
-                    "averageDraftPosition": 11.68,
-                    "percentChange": -0.03,
+                    "averageDraftPosition": 11.67,
+                    "percentChange": -0.04,
                     "percentOwned": 99.71,
-                    "percentStarted": 79.16
+                    "percentStarted": 79.01
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -30145,10 +30145,10 @@
                   "lastNewsDate": 1786655040000,
                   "ownership": {
                     "auctionValueAverage": 3.53,
-                    "averageDraftPosition": 34.1,
-                    "percentChange": -0.74,
-                    "percentOwned": 82.57,
-                    "percentStarted": 26.93
+                    "averageDraftPosition": 34.09,
+                    "percentChange": -0.73,
+                    "percentOwned": 82.55,
+                    "percentStarted": 26.87
                   },
                   "proGamePlayerDetail": {
                     "401857097": {
@@ -30675,10 +30675,10 @@
                   "lastNewsDate": 1786167720000,
                   "ownership": {
                     "auctionValueAverage": 2.4,
-                    "averageDraftPosition": 34.56,
+                    "averageDraftPosition": 34.55,
                     "percentChange": 0.34,
-                    "percentOwned": 98.2,
-                    "percentStarted": 77.03
+                    "percentOwned": 98.21,
+                    "percentStarted": 77.25
                   },
                   "proTeamId": 11,
                   "seasonOutlook": "Copper missed the first month of last season after undergoing offseason knee surgery, and it really wasn't until around midseason that she was ready to take on a full workload. Her overall numbers dipped after a career season in 2024, but Copper still produced strong averages of 15.6 points, 2.9 rebounds, 1.5 assists and 1.1 steals in 26.9 minutes per contest across 28 regular-season appearances. The minutes per game were the 31-year-old's fewest since the early part of her career, but there should be plenty of optimism that Copper will have no restrictions to open 2026 after she averaged 34.2 minutes per game during Phoenix's playoff run. The Mercury had several key players, including Copper, hit unrestricted free agency during the offseason, but they managed to bring back Copper, Alyssa Thomas and DeWanna Bonner ahead of the 2026 campaign.",
@@ -31498,10 +31498,10 @@
                   "lastNewsDate": 1786773960000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 51.9,
-                    "percentChange": 0.27,
-                    "percentOwned": 94.66,
-                    "percentStarted": 84.35
+                    "averageDraftPosition": 51.88,
+                    "percentChange": 0.28,
+                    "percentOwned": 94.68,
+                    "percentStarted": 84.53
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -32329,10 +32329,10 @@
                   "lastNewsDate": 1786901160000,
                   "ownership": {
                     "auctionValueAverage": 1.0,
-                    "averageDraftPosition": 38.11,
-                    "percentChange": -0.11,
-                    "percentOwned": 97.98,
-                    "percentStarted": 48.43
+                    "averageDraftPosition": 38.12,
+                    "percentChange": -0.12,
+                    "percentOwned": 97.97,
+                    "percentStarted": 48.2
                   },
                   "proTeamId": 8,
                   "seasonOutlook": "McBride has spent the past five years in Minnesota, and her production has remained consistent during her time with the Lynx. Most recently, she averaged 14.2 points, 3.5 assists, 2.3 rebounds and 1.3 steals in 31.3 minutes per game over 39 regular-season appearances during her age-33 campaign in 2025. McBride was an unrestricted free agent during the offseason, but she returned to the Lynx on a two-year deal and should continue to provide reliable output and veteran presence. She has a relatively high fantasy floor with some upside and is an appealing early-to-mid-round target, but she did suffer a ruptured eardrum this spring and could be forced to miss some time early in the 2026 season as a result.",
@@ -33217,10 +33217,10 @@
                   "lastNewsDate": 1786202460000,
                   "ownership": {
                     "auctionValueAverage": 4.33,
-                    "averageDraftPosition": 32.91,
+                    "averageDraftPosition": 32.9,
                     "percentChange": 0.07,
-                    "percentOwned": 95.25,
-                    "percentStarted": 35.45
+                    "percentOwned": 95.26,
+                    "percentStarted": 35.38
                   },
                   "proTeamId": 129689,
                   "seasonOutlook": "After playing minor roles in Dallas and Connecticut to begin her WNBA career, Burton latched on with the Valkyries via the 2025 WNBA Expansion Draft and was arguably their best player all year during Golden State's inaugural campaign. Burton started every game in 2025, pacing the team in assists (6.0 per game). She was second on the team in points (11.9) and steals (1.1) per game, but in both categories, she trailed Kayla Thornton, who made only 22 appearances due to injuries. Burton was a restricted free agent during the offseason, and she ultimately agreed to a multi-year contract with the Valkyries ahead of the 2026 campaign. Following the strong all-around production that she displayed in her first year with Golden State, she should remain a strong fantasy asset in 2026.",
@@ -34040,10 +34040,10 @@
                   "lastNewsDate": 1786203060000,
                   "ownership": {
                     "auctionValueAverage": 0.53,
-                    "averageDraftPosition": 45.25,
-                    "percentChange": -0.51,
-                    "percentOwned": 58.97,
-                    "percentStarted": 28.42
+                    "averageDraftPosition": 45.23,
+                    "percentChange": -0.53,
+                    "percentOwned": 58.94,
+                    "percentStarted": 28.41
                   },
                   "proTeamId": 129689,
                   "seasonOutlook": "Thornton spent two years with the Liberty and helped the franchise capture the 2024 WNBA title before being selected by the Valkyries during the WNBA Expansion Draft. The move to Golden State paid off for her, as she was thrust into a starting role, and through 20 games, she averaged 14.8 points, 7.2 rebounds, 1.4 steals (all career highs) and 1.4 assists over 29.9 minutes, en route to her first All-Star nod. However, her campaign was cut short due to a knee injury that was severe enough for her to require surgery. She signed a one-year deal to remain with the Valkyries during the offseason, and she said at the start of training camp that she expects to be ready to play in time for the start of the 2026 campaign.",
@@ -34863,9 +34863,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.47,
-                    "percentChange": 4.21,
-                    "percentOwned": 35.91,
-                    "percentStarted": 21.04
+                    "percentChange": 4.25,
+                    "percentOwned": 36.09,
+                    "percentStarted": 21.25
                   },
                   "proTeamId": 14,
                   "seasonOutlook": "Magbegor took a significant step back on the offensive end in 2025, averaging 8.0 points while shooting a career-worst 49.3 percent from the field on 6.5 attempts per game across 44 regular-season outings. However, the 26-year-old center remained dominant defensively after being named to the All-Defensive First Team in 2024, posting averages of 2.2 blocks and 0.7 steals while earning All-Defensive Second Team honors for the third time in her career. Magbegor also saw her playing time dip slightly last season due to the arrival of Dominique Malonga, who showed significant promise in the second half of the campaign. Magbegor sustained a right foot injury while competing for Australia during the offseason, and she's expected to miss the first few weeks of the 2026 campaign as a result, while her absence should allow Malonga and rookie Awa Fam to see increased roles for Seattle early in the season.",
@@ -35684,10 +35684,10 @@
                   "lastNewsDate": 1786426200000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 53.59,
-                    "percentChange": 2.69,
-                    "percentOwned": 27.1,
-                    "percentStarted": 15.06
+                    "averageDraftPosition": 53.62,
+                    "percentChange": 2.75,
+                    "percentOwned": 27.22,
+                    "percentStarted": 15.21
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "Following two seasons with the Liberty, Vandersloot returned to Chicago in 2025. The 37-year-old improved upon her 2024 results early in the 2025 campaign, averaging 10.6 points, 5.3 assists and 3.1 rebounds in 27.3 minutes per game over her first seven appearances before suffering a season-ending torn ACL. Vandersloot is one of the league's all-time leading passers, ranking second on the all-time assists leaderboard, behind only Sue Bird. However, her output has declined slightly in recent years, as she's averaged just 5.0 assists per game over the past two seasons. Vandersloot re-signed with the Sky ahead of the 2026 season, and while she should have an opportunity to maintain a starting role in Chicago, she doesn't have quite as much fantasy upside as she did earlier in her career, as the team traded away Ariel Atkins but brought in Skylar Diggins this spring.",
@@ -36618,17 +36618,17 @@
                   "firstName": "Aliyah",
                   "fullName": "Aliyah Boston",
                   "id": 4432831,
-                  "injured": true,
-                  "injuryStatus": "OUT",
+                  "injured": false,
+                  "injuryStatus": "ACTIVE",
                   "jersey": "7",
                   "lastName": "Boston",
                   "lastNewsDate": 1786827840000,
                   "ownership": {
                     "auctionValueAverage": 43.53,
-                    "averageDraftPosition": 7.7,
+                    "averageDraftPosition": 7.69,
                     "percentChange": 0.0,
                     "percentOwned": 99.95,
-                    "percentStarted": 91.52
+                    "percentStarted": 91.55
                   },
                   "proTeamId": 5,
                   "seasonOutlook": "Boston has been a strong contributor for the Fever since entering the WNBA in 2023, and she's coming off a successful stint in the Unrivaled league, where she earned the Defensive Player of the Year honors after averaging 18.9 points, 9.7 rebounds and 2.1 blocks per game. She wasn't able to play in the Unrivaled playoffs due to a right lower extremity injury, but she said at the start of WNBA training camp that she's healthy ahead of the 2026 campaign. Boston's production has been consistent in each of her first three years in the WNBA, though she averaged career highs in points (15.0) and assists (3.7). She's still under her rookie contract but will be a restricted free agent in 2027, so Boston will have plenty of financial incentive behind her this season, especially under the league's new collective bargaining agreement.",
@@ -37447,10 +37447,10 @@
                   "lastNewsDate": 1786316820000,
                   "ownership": {
                     "auctionValueAverage": 33.73,
-                    "averageDraftPosition": 14.7,
-                    "percentChange": -0.88,
-                    "percentOwned": 72.11,
-                    "percentStarted": 36.57
+                    "averageDraftPosition": 14.69,
+                    "percentChange": -0.89,
+                    "percentOwned": 72.08,
+                    "percentStarted": 36.58
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "Diggins got off to a strong start in the 2025 campaign, averaging 17.5 points, 5.8 assists, 2.3 rebounds and 1.1 steals per contest in 23 games before the All-Star break. She also earned her seventh career All-Star nod. Her scoring dipped slightly after Brittney Sykes was acquired from the Mystics in early August, though Diggins still averaged 6.4 assists per tilt over the final 14 regular-season games. The 35-year-old finished with averages of 15.5 points, 6.0 assists, 2.5 rebounds and 2.0 combined steals-plus-blocks over 31.2 minutes per game in 43 regular-season appearances. She also shot 36.5 percent from beyond the arc, marking her most efficient season from downtown since 2021. While her fantasy value took a slight hit last season with the Storm, Diggins remains a valuable early-round option thanks to consistent assists and steals. After signing a two-year deal with the Sky during the offseason, Diggins should be a focal point for a team that traded Angel Reese and Ariel Atkins ahead of the 2026 campaign.",
@@ -37957,10 +37957,10 @@
                   "lastNewsDate": 1786670520000,
                   "ownership": {
                     "auctionValueAverage": 15.6,
-                    "averageDraftPosition": 22.41,
+                    "averageDraftPosition": 22.4,
                     "percentChange": 0.02,
                     "percentOwned": 99.76,
-                    "percentStarted": 91.31
+                    "percentStarted": 91.47
                   },
                   "proTeamId": 20,
                   "seasonOutlook": "The 2022 No. 1 overall pick's stats have looked eerily similar over the past three seasons, though she set career highs in both assists (4.6) and three-pointers made (3.1 on 32.2 percent shooting) per game in 2025. Howard has been the definition of consistency for Atlanta and has produced on both ends of the floor, earning All-Defensive Second Team honors last season. She was a restricted free agent during the offseason and will be one of several key players to remain with the Dream for the 2026 campaign. Although the team lost Brittney Griner to Connecticut, Atlanta traded for Angel Reese, who should provide a boost alongside Howard in the frontcourt.",
@@ -38779,10 +38779,10 @@
                   "lastNewsDate": 1786897980000,
                   "ownership": {
                     "auctionValueAverage": 1.13,
-                    "averageDraftPosition": 37.57,
+                    "averageDraftPosition": 37.58,
                     "percentChange": -0.07,
                     "percentOwned": 99.09,
-                    "percentStarted": 68.58
+                    "percentStarted": 68.36
                   },
                   "proTeamId": 16,
                   "seasonOutlook": "After a promising rookie season in 2022, Austin struggled mightily with injuries in 2023 and 2024, totaling only 31 appearances in two seasons. However, she bounced back in 2025, making a career-high 38 appearances, posting her best season-long averages in points (12.7), assists (1.8), steals (1.1) and blocks (1.1) per game. When healthy, Austin has always been a force in fantasy, but her availability has been far from a guarantee. With a full offseason under her belt, expectations are high for Austin, who'll play an integral part for a Mystics team looking to compete in 2026 after strong rookie seasons from Sonia Citron and Kiki Iriafen. Despite not shooting a ton of three-pointers, Austin is a high-upside player who'll likely be taken early in fantasy, but she'll be a risky pick on draft day.",
@@ -39660,10 +39660,10 @@
                   "lastNewsDate": 1786828020000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 51.66,
-                    "percentChange": -1.16,
-                    "percentOwned": 90.43,
-                    "percentStarted": 62.86
+                    "averageDraftPosition": 51.68,
+                    "percentChange": -1.24,
+                    "percentOwned": 90.37,
+                    "percentStarted": 62.79
                   },
                   "proTeamId": 20,
                   "seasonOutlook": "After playing just 20 regular-season games in 2024, Canada dealt with injuries yet again in 2025. The 30-year-old guard missed the first seven games of the season with a right knee injury, and she also sat out an extended period after the All-Star break due to a right hamstring injury. She was relatively productive when healthy, finishing with averages of 11.2 points, 5.7 assists, 3.3 rebounds and 1.7 steals in 28.0 minutes per game across 28 regular-season appearances. Canada will likely remain a reliable distributor after re-signing with the Dream during the offseason, as she's averaged at least 5.2 assists per game in six of her eight WNBA seasons. She'll continue to be surrounded by Allisha Gray, Rhyne Howard and Brionna Jones, while the team also traded for Angel Reese this spring. Canada should remain a reliable fantasy contributor in 2026.",
@@ -40484,9 +40484,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.88,
-                    "percentChange": -0.93,
-                    "percentOwned": 27.83,
-                    "percentStarted": 13.23
+                    "percentChange": -0.99,
+                    "percentOwned": 27.76,
+                    "percentStarted": 13.17
                   },
                   "proTeamId": 8,
                   "seasonOutlook": "After averaging over 20 minutes per game in three consecutive seasons between 2021 and 2023, Coffey's playing time has declined across the past two seasons, as she averaged 13.3 minutes per game in 2024 before averaging just 10.3 minutes per game last year, which was her lowest mark since her rookie season. While Coffey appeared in every regular-season game and made two starts, she wasn't a reliable fantasy contributor and had a low floor. She was an unrestricted free agent ahead of the 2026 campaign and signed a two-year deal with the Lynx, where she could see a slightly elevated role early in the season since Napheesa Collier is expected to miss at least a month due to ankle surgery. Coffey provided decent fantasy results earlier in her career and could see some early-season production in Minnesota, but her recent output makes her more of a streaming option for most of her age-31 season, especially once Collier is healthy.",
@@ -41372,9 +41372,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.93,
-                    "percentChange": 3.98,
-                    "percentOwned": 54.47,
-                    "percentStarted": 49.76
+                    "percentChange": 4.02,
+                    "percentOwned": 54.62,
+                    "percentStarted": 50.07
                   },
                   "proTeamId": 132052,
                   "seasonOutlook": "Gustafson put herself on the fantasy radar with the Mercury in 2023 by averaging 7.9 points and 3.9 rebounds in 15.1 minutes per game, but she was much more inconsistent with the Aces across the past two seasons, averaging 3.4 points and 1.9 rebounds in 11.0 minutes per game during 58 regular-season appearances (eight starts). She missed the first several weeks of the 2025 campaign due to a lower-leg injury, and she wasn't a consistent part of the Aces' rotation down the stretch. She was an unrestricted free agent ahead of the 2026 campaign and ultimately decided to join Portland, where she should compete with Luisa Geiselsoder for minutes at center, but Gustafson could have to settle for a bench role with her new team.",
@@ -42190,9 +42190,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.8,
-                    "percentChange": -0.95,
-                    "percentOwned": 7.41,
-                    "percentStarted": 3.27
+                    "percentChange": -0.99,
+                    "percentOwned": 7.36,
+                    "percentStarted": 3.23
                   },
                   "proGamePlayerDetail": {
                     "401856891": {
@@ -43080,8 +43080,8 @@
                     "auctionValueAverage": 0.2,
                     "averageDraftPosition": 54.0,
                     "percentChange": 0.16,
-                    "percentOwned": 1.59,
-                    "percentStarted": 1.35
+                    "percentOwned": 1.61,
+                    "percentStarted": 1.36
                   },
                   "proTeamId": 11,
                   "stats": [
@@ -43732,7 +43732,7 @@
                     "averageDraftPosition": 5.74,
                     "percentChange": 0.02,
                     "percentOwned": 99.89,
-                    "percentStarted": 94.22
+                    "percentStarted": 94.32
                   },
                   "proTeamId": 20,
                   "seasonOutlook": "Reese was dominant when healthy in 2025, collecting a league-high-tying 23 double-doubles, despite appearing in only 30 contests. Availability ended up being an issue, however, as Reese was active for only nine of Chicago's final 23 games of the campaign due to a back injury. She'll get a change of scenery in 2026 after being traded to the Dream. While she'll have a stronger supporting cast around her this season, she's established herself as a dominant fantasy option over her first two years in the league and should remain a top option in Atlanta. After participating in the Unrivaled season this past winter, Reese appears to be fully healthy this year. Last regular season, the All-Star forward averaged 14.7 points, a league-leading 12.6 rebounds, 3.7 assists and 1.5 steals in 31.6 minutes per contest in 30 games.",
@@ -44551,10 +44551,10 @@
                   "lastNewsDate": 1786898400000,
                   "ownership": {
                     "auctionValueAverage": 28.67,
-                    "averageDraftPosition": 17.57,
+                    "averageDraftPosition": 17.56,
                     "percentChange": -0.03,
                     "percentOwned": 99.15,
-                    "percentStarted": 59.19
+                    "percentStarted": 59.03
                   },
                   "proGamePlayerDetail": {
                     "401856891": {
@@ -45448,10 +45448,10 @@
                   "lastNewsDate": 1786901400000,
                   "ownership": {
                     "auctionValueAverage": 11.4,
-                    "averageDraftPosition": 25.58,
+                    "averageDraftPosition": 25.56,
                     "percentChange": -0.16,
                     "percentOwned": 98.14,
-                    "percentStarted": 52.47
+                    "percentStarted": 52.25
                   },
                   "proTeamId": 17,
                   "seasonOutlook": "After fracturing her foot during the 2023 WNBA Finals, Gray was a shell of herself in 2024, but she bounced back in 2025, finishing as a top-25 fantasy option. The veteran floor general averaged 11.2 points, 5.4 assists, 3.9 rebounds and 1.4 steals in 31.1 minutes per game. She may not be as prolific a scorer as she was earlier in her career, but she's an elite distributor and trusted in clutch situations. While she was an unrestricted free agent during the offseason, Gray will return to Las Vegas in 2026 and run it back after the Aces won their third title in four years. Given her age and likely role on a superteam, Gray may fall in drafts due to a lack of upside, but she should still be an early-round pick.",
@@ -46337,10 +46337,10 @@
                   "lastNewsDate": 1786848420000,
                   "ownership": {
                     "auctionValueAverage": 6.6,
-                    "averageDraftPosition": 20.13,
+                    "averageDraftPosition": 20.12,
                     "percentChange": 0.0,
-                    "percentOwned": 99.45,
-                    "percentStarted": 68.34
+                    "percentOwned": 99.44,
+                    "percentStarted": 68.1
                   },
                   "proTeamId": 8,
                   "seasonOutlook": "Miles was in the conversation to go No. 1 overall in the 2026 WNBA Draft, but she instead joined an established contender in the Lynx at No. 2. Miles transferred to TCU after four impressive seasons with Notre Dame, and she took another step with the Horned Frogs, averaging a career-best 19.6 points to go with 7.2 rebounds, 6.6 assists and 1.8 steals in 35.4 minutes per game, but she did also average 3.7 turnovers. Her three-point volume has increased across the past two seasons, which should help her chances of being an immediate contributor alongside Kayla McBride and Courtney Williams in the backcourt. Miles should have the opportunity to step in as Minnesota's point guard and will have immediate opportunities to contribute, especially if Napheesa Collier misses time due to her ankle injury, while also learning from an established group of veterans.",
@@ -47029,10 +47029,10 @@
                   "lastNewsDate": 1786833420000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 50.28,
-                    "percentChange": -2.79,
-                    "percentOwned": 53.08,
-                    "percentStarted": 22.5
+                    "averageDraftPosition": 50.3,
+                    "percentChange": -2.81,
+                    "percentOwned": 53.0,
+                    "percentStarted": 22.41
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -47875,9 +47875,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 48.59,
-                    "percentChange": 4.38,
-                    "percentOwned": 83.38,
-                    "percentStarted": 64.5
+                    "percentChange": 4.34,
+                    "percentOwned": 83.5,
+                    "percentStarted": 64.81
                   },
                   "proTeamId": 11,
                   "seasonOutlook": "After five years in Connecticut, Bonner followed head coach Stephanie White to Indiana but appeared in only nine games (three starts) before falling out of favor and requesting a trade. She was ultimately waived and signed with Phoenix. The veteran forward had a larger role with the injury-depleted Mercury but she finished with career-low averages across the board during her age-38 season. She elected to re-sign with the Mercury during the offseason and could push for a larger role after Satou Sabally joined the Liberty. Bonner can still put the ball in the bucket, but her overall production is never going to be as prolific as it was a few years ago.",
@@ -48697,10 +48697,10 @@
                   "lastNewsDate": 1786767360000,
                   "ownership": {
                     "auctionValueAverage": 0.07,
-                    "averageDraftPosition": 53.44,
-                    "percentChange": 6.13,
-                    "percentOwned": 62.04,
-                    "percentStarted": 53.7
+                    "averageDraftPosition": 53.5,
+                    "percentChange": 6.14,
+                    "percentOwned": 62.27,
+                    "percentStarted": 54.02
                   },
                   "proTeamId": 14,
                   "seasonOutlook": "Fam has experience playing professionally with Valencia and the Spanish national team, and she'll make the jump to the WNBA as the third overall pick in this year's draft. Fam is a high-upside big and will join a rebuilding Storm team that lost Nneka Ogwumike, Skylar Diggins and Gabby Williams during the offseason, but the team retained Ezi Magbegor and Dominique Malonga, who was selected No. 2 overall last year and is also a highly talented frontcourt player with overseas experience. Malonga took some time to carve out consistent minutes last season, but Fam could have more immediate chances to step up given the team's departures during the offseason, though the Storm also have Stefanie Dolson as a capable option to handle minutes if the team wants to bring Fam along slowly. Fam has a versatile offensive skill set with decent defensive prowess, and she has the potential to provide strong fantasy value early in her career.",
@@ -49323,9 +49323,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.62,
-                    "percentChange": -0.97,
-                    "percentOwned": 29.28,
-                    "percentStarted": 10.82
+                    "percentChange": -0.99,
+                    "percentOwned": 29.24,
+                    "percentStarted": 10.76
                   },
                   "proGamePlayerDetail": {},
                   "proTeamId": 9,
@@ -50212,10 +50212,10 @@
                   "lastNewsDate": 1786633140000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 48.98,
+                    "averageDraftPosition": 48.93,
                     "percentChange": 0.41,
-                    "percentOwned": 32.69,
-                    "percentStarted": 16.56
+                    "percentOwned": 32.7,
+                    "percentStarted": 16.6
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "Williams was limited to just nine appearances in 2024 due to a knee injury, but she returned to full health in 2025 and made 43 regular-season appearances. However, she made just 15 starts after starting each of her first 49 regular-season outings with Chicago, and she was held to 8.5 points, 5.2 rebounds and 1.8 assists in 21.1 minutes per game, all of which were down from her debut season with the Sky in 2023. Williams maintained a decent fantasy floor but had limited upside while sharing the frontcourt with Kamilla Cardoso and Angel Reese. The 32-year-old Williams was an unrestricted free agent ahead of 2026, but she elected to re-join the Sky during the offseason. The Sky traded Reese to Atlanta this spring but brought in Rickea Jackson and Azura Stevens, so Williams will continue to have to share work in the frontcourt and could have to play mainly off the bench once again.",
@@ -51013,10 +51013,10 @@
                   "lastNewsDate": 1786556400000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 54.34,
-                    "percentChange": 1.61,
-                    "percentOwned": 25.86,
-                    "percentStarted": 19.1
+                    "averageDraftPosition": 54.48,
+                    "percentChange": 1.66,
+                    "percentOwned": 25.95,
+                    "percentStarted": 19.26
                   },
                   "proTeamId": 11,
                   "seasonOutlook": "Mack returned to the WNBA in 2024 and has spent the past two seasons in a reserve role for the Mercury, but she's been thrust into expanded roles at times. The 6-foot-4 center was an exclusive rights free agent and officially agreed to return to Phoenix, where her role should remain steady. In 2025, she averaged 4.7 points, 5.8 rebounds, 1.0 steals and 1.5 blocks in just 18.3 minutes per game. Her elite per-minute defensive production makes her an intriguing late-round dart throw. However, Phoenix retained most of its core by bringing back Alyssa Thomas, Kahleah Copper and DeWanna Bonner, and even though the team lost Satou Sabally, Mack profiles mainly as a high-upside streamer given the talent around her. Mack's ceiling is undeniable, including a 10-point, 12-rebound, five-block explosion against Chicago on Aug. 28 last season, but her production can be minimal at times.",
@@ -51932,7 +51932,7 @@
                     "averageDraftPosition": 5.82,
                     "percentChange": 0.0,
                     "percentOwned": 99.98,
-                    "percentStarted": 69.78
+                    "percentStarted": 69.65
                   },
                   "proGamePlayerDetail": {
                     "401857097": {
@@ -52760,10 +52760,10 @@
                   "lastNewsDate": 1786773240000,
                   "ownership": {
                     "auctionValueAverage": 29.27,
-                    "averageDraftPosition": 12.53,
+                    "averageDraftPosition": 12.52,
                     "percentChange": 0.01,
                     "percentOwned": 99.84,
-                    "percentStarted": 92.74
+                    "percentStarted": 92.9
                   },
                   "proTeamId": 5,
                   "seasonOutlook": "Mitchell has increased her level of production every year since entering the league in 2018, and in 2025 she averaged a career-high 20.2 points per game along with 3.4 assists, 1.8 rebounds, 0.9 steals and 2.5 threes over 31.4 minutes. She also played in all 44 regular-season games and in all eight postseason games, and Mitchell and Jackie Young both took on larger roles for the second half of the regular season after Caitlin Clark was shut down due to a groin injury. The trio of Mitchell, Clark and Aliyah Boston figure to be the core players for the Fever in 2026 after the team retained all three of them during the offseason.",
@@ -53587,10 +53587,10 @@
                   "lastNewsDate": 1786820700000,
                   "ownership": {
                     "auctionValueAverage": 7.6,
-                    "averageDraftPosition": 25.99,
+                    "averageDraftPosition": 26.0,
                     "percentChange": -0.02,
                     "percentOwned": 99.69,
-                    "percentStarted": 73.04
+                    "percentStarted": 72.86
                   },
                   "proGamePlayerDetail": {},
                   "proTeamId": 9,
@@ -54478,10 +54478,10 @@
                   "lastNewsDate": 1786838880000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 53.25,
-                    "percentChange": 4.76,
-                    "percentOwned": 84.07,
-                    "percentStarted": 57.55
+                    "averageDraftPosition": 53.29,
+                    "percentChange": 4.97,
+                    "percentOwned": 84.25,
+                    "percentStarted": 58.23
                   },
                   "proTeamId": 14,
                   "seasonOutlook": "After being selected by the Valkyries with the No. 8 pick in the 2026 WNBA Draft, Johnson was subsequently traded to the Storm on draft night. She could have even greater opportunities in Seattle as a rookie and will likely be in the mix for a starting role right away given her shot-creating abilities and defensive skill set in the backcourt. Johnson had plenty of contributions during her four seasons at LSU, averaging 14.6 points, 5.3 rebounds, 2.3 assists and 1.6 steals in 29.2 minutes per game. The 22-year-old had some struggles with consistency at the WNBA level, which could lead the Storm to ease her into action at the professional level, but she's a stellar defender with solid scoring capabilities, and she should have ample opportunities to earn playing time as a rookie.",
@@ -55000,9 +55000,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.85,
-                    "percentChange": -1.36,
-                    "percentOwned": 63.62,
-                    "percentStarted": 19.34
+                    "percentChange": -1.41,
+                    "percentOwned": 63.57,
+                    "percentStarted": 19.19
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -55901,10 +55901,10 @@
                   "lastNewsDate": 1786821000000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 53.96,
-                    "percentChange": -1.6,
-                    "percentOwned": 29.62,
-                    "percentStarted": 11.99
+                    "averageDraftPosition": 54.1,
+                    "percentChange": -1.61,
+                    "percentOwned": 29.57,
+                    "percentStarted": 11.92
                   },
                   "proTeamId": 18,
                   "seasonOutlook": "The Sun extended a restricted qualifying offer to Nelson-Ododa during the offseason and ultimately reached a deal to bring her back for 2026. The 25-year-old center spent the first four years of her career in Connecticut and will remain with the club following a career-best 2025 campaign. Over 37 regular-season appearances, including a career-high 21 starts, she averaged 8.2 points, 5.0 rebounds, 1.2 blocks, 0.9 assists and 0.7 steals in 21.6 minutes per contest. While she has yet to make much of an impact in the assists column or from beyond the arc over her career, Nelson-Ododa showcased her defensive chops last season. She could provide fantasy managers with solid center stats if she has enough opportunities, though she'll have to share some work with Brittney Griner in the frontcourt.",
@@ -56772,10 +56772,10 @@
                   "lastNewsDate": 1786642860000,
                   "ownership": {
                     "auctionValueAverage": 6.13,
-                    "averageDraftPosition": 31.04,
-                    "percentChange": -2.15,
-                    "percentOwned": 67.27,
-                    "percentStarted": 33.01
+                    "averageDraftPosition": 31.03,
+                    "percentChange": -2.1,
+                    "percentOwned": 67.24,
+                    "percentStarted": 32.93
                   },
                   "proGamePlayerDetail": {
                     "401857097": {
@@ -57603,10 +57603,10 @@
                   "lastNewsDate": 1786896600000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 54.42,
-                    "percentChange": -2.77,
-                    "percentOwned": 6.12,
-                    "percentStarted": 1.68
+                    "averageDraftPosition": 54.55,
+                    "percentChange": -2.57,
+                    "percentOwned": 6.05,
+                    "percentStarted": 1.64
                   },
                   "proGamePlayerDetail": {},
                   "proTeamId": 9,
@@ -58495,9 +58495,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.51,
-                    "percentChange": 5.58,
-                    "percentOwned": 33.09,
-                    "percentStarted": 24.58
+                    "percentChange": 5.74,
+                    "percentOwned": 33.4,
+                    "percentStarted": 24.93
                   },
                   "proTeamId": 20,
                   "seasonOutlook": "After three solid seasons in Atlanta, Hillmon took her game to another level in 2025, most notably adding a consistent three-point shot. She posted career highs in points (8.6), rebounds (6.2), assists (2.4), made three-pointers (1.2) and minutes per game (25.5) while appearing in all 44 regular-season games. Despite making 17 starts, Hillmon earned Sixth Player of the Year honors and will return to the Dream on a three-year deal after being a restricted free agent during the offseason. The Dream also traded for Angel Reese during the offseason, which could cut into Hillmon's workload, but Hillmon could see a slightly increased role early in the season if Brionna Jones is forced to miss time after undergoing knee surgery this spring.",
@@ -59417,8 +59417,8 @@
                   "firstName": "Caitlin",
                   "fullName": "Caitlin Clark",
                   "id": 4433403,
-                  "injured": true,
-                  "injuryStatus": "OUT",
+                  "injured": false,
+                  "injuryStatus": "ACTIVE",
                   "jersey": "22",
                   "lastName": "Clark",
                   "lastNewsDate": 1786827960000,
@@ -59427,7 +59427,7 @@
                     "averageDraftPosition": 2.34,
                     "percentChange": 0.0,
                     "percentOwned": 99.77,
-                    "percentStarted": 90.03
+                    "percentStarted": 90.14
                   },
                   "proTeamId": 5,
                   "seasonOutlook": "Groin and ankle injuries ruined Clark's 2025 campaign, limiting her to just 13 appearances. There was optimism that she'd be able to return for the stretch run, but the ankle problem Clark picked up during her recovery from the groin issue may have caused the Fever to err on the side of caution and shut down their franchise centerpiece ahead of the postseason. Although Clark's lack of availability may have been disappointing, her results on the court in her second season were superb. The 24-year-old superstar averaged 16.5 points, 8.8 assists, 5.0 rebounds and 1.6 steals in 31.1 minutes per game a year ago, which placed her in the top five in fantasy points per game, and Clark is entering the new year with a clean bill of health after representing the United States in the 2026 FIBA Women's World Cup Qualifying Tournament.",
@@ -60246,10 +60246,10 @@
                   "lastNewsDate": 1786671060000,
                   "ownership": {
                     "auctionValueAverage": 28.67,
-                    "averageDraftPosition": 16.09,
+                    "averageDraftPosition": 16.08,
                     "percentChange": 0.05,
                     "percentOwned": 99.74,
-                    "percentStarted": 90.01
+                    "percentStarted": 90.24
                   },
                   "proTeamId": 20,
                   "seasonOutlook": "Gray spent the first six years of her WNBA career in Dallas before joining Atlanta in 2023. She saw her production jump with the Dream, and that was also the case in 2025, when she averaged 18.4 points, 5.3 rebounds, 3.5 assists and 2.3 threes over 34.5 minutes per game -- all career highs. Gray was one of the key reasons why Atlanta finished last season with a 30-14 record, though their first-round exit at the hands of a shorthanded Indiana squad was disappointing. Gray was an unrestricted free agent during the offseason but agreed to a three-year deal with the Dream in April, and she'll have a chance to run it back alongside several of the other key players from Atlanta's 2025 squad.",
@@ -61068,10 +61068,10 @@
                   "lastNewsDate": 1786900860000,
                   "ownership": {
                     "auctionValueAverage": 22.07,
-                    "averageDraftPosition": 20.0,
-                    "percentChange": -0.51,
-                    "percentOwned": 98.31,
-                    "percentStarted": 62.46
+                    "averageDraftPosition": 19.99,
+                    "percentChange": -0.52,
+                    "percentOwned": 98.29,
+                    "percentStarted": 62.24
                   },
                   "proTeamId": 8,
                   "seasonOutlook": "Williams enjoyed a strong campaign in 2025, appearing in all 44 regular-season games while averaging 13.6 points, 6.2 assists, 4.9 rebounds and 1.3 steals in 28.6 minutes per contest, a slight uptick in playing time compared to her first season in Minnesota. The veteran guard also shot an efficient 38.9 percent from three-point range, up from 33.3 percent in 2024. The 31-year-old agreed to a two-year deal to remain with the Lynx during the offseason, and she's a consistent contributor in the assists column who should continue to be a reliable fantasy option in 2026.",
@@ -61958,9 +61958,9 @@
                   "ownership": {
                     "auctionValueAverage": 1.13,
                     "averageDraftPosition": 36.98,
-                    "percentChange": -0.74,
-                    "percentOwned": 40.79,
-                    "percentStarted": 23.11
+                    "percentChange": -0.76,
+                    "percentOwned": 40.77,
+                    "percentStarted": 23.07
                   },
                   "proGamePlayerDetail": {
                     "401856891": {
@@ -62654,7 +62654,7 @@
                     "averageDraftPosition": 26.19,
                     "percentChange": -0.07,
                     "percentOwned": 95.73,
-                    "percentStarted": 51.13
+                    "percentStarted": 51.03
                   },
                   "proTeamId": 129689,
                   "seasonOutlook": "Williams enjoyed a career-best season in 2025 during her first full WNBA campaign since 2022. The 29-year-old forward appeared in all 44 regular-season games last year, averaging career highs in points (11.6), assists (4.2), three-pointers made (3.7), steals (2.3), blocks (0.5) and minutes (31.6) per contest. She led the league in steals per game and was a consistent contributor on both ends of the floor, ranking 17th in fantasy points per game. Williams should remain a reliable fantasy asset after signing a multi-year deal with the Valkyries during the offseason, and she should have a key role in Golden State's frontcourt.",
@@ -63475,9 +63475,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 52.61,
-                    "percentChange": -0.35,
-                    "percentOwned": 8.97,
-                    "percentStarted": 3.27
+                    "percentChange": -0.37,
+                    "percentOwned": 8.96,
+                    "percentStarted": 3.26
                   },
                   "proGamePlayerDetail": {},
                   "proTeamId": 16,
@@ -64198,10 +64198,10 @@
                   "lastNewsDate": 1786655220000,
                   "ownership": {
                     "auctionValueAverage": 0.07,
-                    "averageDraftPosition": 49.51,
-                    "percentChange": -0.16,
-                    "percentOwned": 96.19,
-                    "percentStarted": 34.81
+                    "averageDraftPosition": 49.56,
+                    "percentChange": -0.17,
+                    "percentOwned": 96.18,
+                    "percentStarted": 34.7
                   },
                   "proGamePlayerDetail": {},
                   "proTeamId": 3,
@@ -65010,7 +65010,7 @@
                   "lastNewsDate": 1786579800000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 54.43,
+                    "averageDraftPosition": 54.46,
                     "percentChange": -0.08,
                     "percentOwned": 15.76,
                     "percentStarted": 4.44
@@ -65639,8 +65639,8 @@
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 54.0,
                     "percentChange": 1.04,
-                    "percentOwned": 5.74,
-                    "percentStarted": 4.23
+                    "percentOwned": 5.78,
+                    "percentStarted": 4.29
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "Sheldon opened last season in a significant role for the Sun before being traded to the Mystics in exchange for Aaliyah Edwards. An ankle injury ended up ruining her campaign, costing her the final 12 games of 2025, and Sheldon's role with her new team was never quite able to become defined as a result. Overall, Sheldon averaged 7.5 points, 1.9 rebounds, 1.9 assists and 0.9 steals in 23.6 minutes per contest across 28 regular-season games for Connecticut and two for Washington. She'll have yet another change of scenery in 2026 after being traded to the Sky for a first-round pick. Chicago's valuation on Sheldon's talent appears to be high, but she'll have to compete with Skylar Diggins, Courtney Vandersloot and DiJonai Carrington for playing time in the Sky backcourt, which makes Sheldon a somewhat risky fantasy option.",
@@ -66560,10 +66560,10 @@
                   "lastNewsDate": 1786309320000,
                   "ownership": {
                     "auctionValueAverage": 71.67,
-                    "averageDraftPosition": 4.4,
+                    "averageDraftPosition": 4.39,
                     "percentChange": 0.0,
                     "percentOwned": 99.94,
-                    "percentStarted": 94.32
+                    "percentStarted": 94.42
                   },
                   "proTeamId": 11,
                   "seasonOutlook": "After spending the first 11 years of her career with Connecticut, Thomas thrived in her new surroundings with the Mercury during her first season in the desert. Over 39 regular-season appearances, the All-Star forward averaged 15.4 points, a league-leading 9.2 assists, 8.8 rebounds and 1.6 steals in 31.3 minutes per game while shooting a career-high 53.2 percent from the floor. Those numbers made Thomas a top-five player in fantasy points per game, and she remains one of the premier choices in the first round of drafts heading into 2026. She was an unrestricted free agent during the offseason, along with several top players, she'll return to Phoenix in 2026 and will continue to play alongside DeWanna Bonner, while Thomas could also see slightly more usage after Satou Sabally signed with New York.",
@@ -67371,7 +67371,7 @@
                     "averageDraftPosition": 12.88,
                     "percentChange": -0.01,
                     "percentOwned": 99.96,
-                    "percentStarted": 73.64
+                    "percentStarted": 73.43
                   },
                   "proTeamId": 17,
                   "seasonOutlook": "Young played a key role in the Aces' 2025 WNBA Championship, the third title in four seasons for the franchise. She played in every single game in 2025, and she finished the regular season averaging 16.5 points, 4.5 rebounds, 5.1 assists, 1.3 steals and 1.8 threes over 30.4 minutes per game. Young's numbers were similar to her production in 2024 despite a slight dip in playing time, but it was encouraging to see an uptick in her field-goal percentage. She formed a three-person core with Chelsea Gray and 2025 WNBA MVP A'ja Wilson, and Las Vegas should remain a championship favorite in 2026 since the Aces managed to retain their key contributors during the offseason.",
@@ -68256,10 +68256,10 @@
                   "lastNewsDate": 1786806780000,
                   "ownership": {
                     "auctionValueAverage": 21.0,
-                    "averageDraftPosition": 18.23,
+                    "averageDraftPosition": 18.24,
                     "percentChange": -0.16,
-                    "percentOwned": 99.26,
-                    "percentStarted": 49.34
+                    "percentOwned": 99.25,
+                    "percentStarted": 49.16
                   },
                   "proGamePlayerDetail": {},
                   "proTeamId": 9,
@@ -69097,7 +69097,7 @@
                     "averageDraftPosition": 24.97,
                     "percentChange": -0.07,
                     "percentOwned": 99.41,
-                    "percentStarted": 67.14
+                    "percentStarted": 66.96
                   },
                   "proTeamId": 8,
                   "seasonOutlook": "Howard became a fantasy stalwart during her time with New York and Dallas, but she showed signs of decline in her second stint with Indiana a year ago for her age-34 campaign. She averaged 11.4 points, 6.6 rebounds, 1.5 assists and 1.2 steals in 24.1 minutes per game across 44 regular-season appearances in 2025 but connected on 55.2 percent of her field-goal attempts Howard's averages were her lowest since the truncated 2020 season, when she helped lead the Storm to a WNBA championship, but her shooting efficiency was her best since 2016 with Minnesota. Howard's splits were relatively similar with and without Caitlin Clark in the lineup during 2025, but she did lose out on plenty of usage to Aliyah Boston and Kelsey Mitchell. Howard signed a two-year contract with the Lynx during the offseason and should play a prominent role in Minnesota's frontcourt, especially since Napheesa Collier is expected to miss at least the first month of the regular season.",
@@ -69984,9 +69984,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 50.99,
-                    "percentChange": -0.97,
-                    "percentOwned": 64.26,
-                    "percentStarted": 21.1
+                    "percentChange": -1.0,
+                    "percentOwned": 64.22,
+                    "percentStarted": 21.05
                   },
                   "proTeamId": 129689,
                   "seasonOutlook": "Salaun was one of only two players who averaged at least 11 points per game and made more than 26 appearances for the Valkyries during their inaugural season, which ended in a surprise playoff berth. She also led the team in rebounds per game (5.1) as a rookie. Given that Salaun was one of the Valkyries' best players, it wasn't very surprising to see her sign a multi-year contract with Golden State during the offseason, especially since the team had exclusive negotiating rights with her. While she was a great scorer and solid rebounder, Salaun didn't provide consistent playmaking or defensive production. However, she has plenty of upside and can develop into a more well-rounded player, especially if she's given a longer runway in Year 2.",
@@ -70806,10 +70806,10 @@
                   "lastNewsDate": 1786848840000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 53.85,
-                    "percentChange": -3.07,
-                    "percentOwned": 55.95,
-                    "percentStarted": 25.15
+                    "averageDraftPosition": 53.9,
+                    "percentChange": -3.12,
+                    "percentOwned": 55.82,
+                    "percentStarted": 24.98
                   },
                   "proTeamId": 17,
                   "seasonOutlook": "Smith heads into 2026 as an intriguing fantasy target ahead of her first full season with the Aces. The 2022 No. 2 overall pick split time between Dallas and Las Vegas last season, capping the campaign off with a championship ring. She thrived after the trade to the Aces, averaging 8.2 points, 5.3 rebounds and 1.2 stocks in 22.7 minutes across 27 appearances (26 starts). While those numbers were a marked upgrade from her first 18 games (15 starts) in Dallas, they were well below what she produced during her first three seasons in the WNBA, when she had a lead role for Indiana. After Las Vegas retained her alongside A'ja Wilson, Smith profiles as a capable 20-plus-minute contributor with defensive upside. Although Smith's upside over a partial season with the Aces was somewhat limited last year, she'll likely have the opportunity to provide consistent production again in 2026.",
@@ -71695,10 +71695,10 @@
                   "lastNewsDate": 1786123740000,
                   "ownership": {
                     "auctionValueAverage": 0.13,
-                    "averageDraftPosition": 50.63,
-                    "percentChange": -1.28,
-                    "percentOwned": 68.63,
-                    "percentStarted": 23.61
+                    "averageDraftPosition": 50.64,
+                    "percentChange": -1.35,
+                    "percentOwned": 68.55,
+                    "percentStarted": 23.52
                   },
                   "proTeamId": 131935,
                   "seasonOutlook": "It took some time for Morrow to find her way during her rookie season. She started just two of her first 21 games, but Morrow ended up closing the year as a full-time starter for the rebuilding Sun. Through her 23 regular-season contests as a member of the first unit, the rookie forward averaged 8.7 points, 8.3 rebounds and 0.9 steals in 22.1 minutes per game. Connecticut lost Marina Mabrey to the Tempo in the WNBA Expansion Draft this offseason, freeing up plenty of usage and playing time. Morrow has plenty of room for growth -- she shot just 36.6 percent from the field and 22.4 percent from beyond the arc in 2025 -- and she'll likely need to increase her efficiency to be a more valuable fantasy player in 2026.",
@@ -72517,10 +72517,10 @@
                   "lastNewsDate": 1786675920000,
                   "ownership": {
                     "auctionValueAverage": 1.4,
-                    "averageDraftPosition": 39.8,
-                    "percentChange": -3.44,
-                    "percentOwned": 60.31,
-                    "percentStarted": 24.29
+                    "averageDraftPosition": 39.78,
+                    "percentChange": -3.52,
+                    "percentOwned": 60.19,
+                    "percentStarted": 24.2
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -73416,9 +73416,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.78,
-                    "percentChange": 0.35,
-                    "percentOwned": 14.62,
-                    "percentStarted": 12.17
+                    "percentChange": 0.4,
+                    "percentOwned": 14.65,
+                    "percentStarted": 12.23
                   },
                   "proTeamId": 5,
                   "seasonOutlook": "After six seasons in Atlanta to begin her career, Billings has suited up for the Wings, Mercury and Valkyries over the past two seasons. The veteran center is a solid rebounder and defender, but it's unclear how impactful she can be moving forward. She made only 26 appearances (eight starts) for Golden State in 2025 while averaging 18.2 minutes per game. Billings was an unrestricted free agent ahead of the 2026 campaign and agreed to a contract with Indiana, where she should compete with Myisha Hines-Allen and Sophie Cunningham for minutes. Her fantasy value could be muted if she's forced to settle for a bench role, but her upside could rise considerably if she can consistently operate as a starter. She failed to post double-digit fantasy points only once when she played at least 20 minutes last season (13 games).",
@@ -74237,10 +74237,10 @@
                   "lastNewsDate": 1786501620000,
                   "ownership": {
                     "auctionValueAverage": 9.4,
-                    "averageDraftPosition": 46.5,
-                    "percentChange": 0.52,
-                    "percentOwned": 28.95,
-                    "percentStarted": 19.25
+                    "averageDraftPosition": 46.63,
+                    "percentChange": 0.57,
+                    "percentOwned": 29.0,
+                    "percentStarted": 19.37
                   },
                   "proTeamId": 5,
                   "seasonOutlook": "Cunningham missed the end of the 2025 campaign due to a torn MCL in her right knee and was an unrestricted free agent heading into 2026, but she'll remain with the Fever on a one-year deal. While the injury from last season isn't expected to impact her availability to start 2026, Cunningham has appeared in more than 31 regular-season games only once in her seven-year career. She's also averaged double-digit points per game only twice and never averaged more than 4.4 rebounds or 2.1 assists for an entire campaign. Cunningham's fantasy value is mostly tied to her defense -- she has recorded at least one steal per game in three of the last four seasons -- and three-point shooting, making nearly two made triples a night over the past four years.",
@@ -75178,7 +75178,7 @@
                     "averageDraftPosition": 1.7,
                     "percentChange": -0.01,
                     "percentOwned": 99.98,
-                    "percentStarted": 87.37
+                    "percentStarted": 87.27
                   },
                   "proTeamId": 17,
                   "seasonOutlook": "Following another outstanding season, Wilson signed a supermax deal to remain in Las Vegas. She took a slight step back in multiple categories during the 2025 campaign but still had a dominant season en route to her fourth MVP award and third championship. The superstar appeared in 40 regular-season games, averaging 23.4 points, 10.2 rebounds, 3.1 assists, 2.3 blocks and 1.6 steals while shooting 50.5 percent from the field across 31.2 minutes per contest. She led the league in points and blocks per game while finishing second in rebounds and tied for third in steals. The 29-year-old center also improved from beyond the arc, shooting 42.4 percent from downtown on 1.5 three-point attempts per game. Wilson should remain at the top of draft boards ahead of the 2026 campaign.",
@@ -76063,10 +76063,10 @@
                   "lastNewsDate": 1786772700000,
                   "ownership": {
                     "auctionValueAverage": 26.27,
-                    "averageDraftPosition": 19.49,
-                    "percentChange": -0.28,
-                    "percentOwned": 95.61,
-                    "percentStarted": 51.38
+                    "averageDraftPosition": 19.47,
+                    "percentChange": -0.3,
+                    "percentOwned": 95.6,
+                    "percentStarted": 51.28
                   },
                   "proGamePlayerDetail": {
                     "401857097": {
@@ -76895,10 +76895,10 @@
                   "lastNewsDate": 1786848480000,
                   "ownership": {
                     "auctionValueAverage": 24.13,
-                    "averageDraftPosition": 16.72,
-                    "percentChange": -0.01,
-                    "percentOwned": 99.62,
-                    "percentStarted": 69.37
+                    "averageDraftPosition": 16.73,
+                    "percentChange": -0.02,
+                    "percentOwned": 99.61,
+                    "percentStarted": 69.2
                   },
                   "proTeamId": 8,
                   "seasonOutlook": "Collier is coming off a second consecutive second-place finish in MVP voting in 2025, during which she averaged 22.9 points, 7.3 rebounds, 3.2 assists, 1.6 steals and 1.5 blocks in 32.3 minutes per contest across 33 regular-season appearances. She was extremely efficient, becoming just the second player in WNBA history to finish the regular season with 50/40/90 shooting splits and the first to do so while averaging 20-plus points per game. However, the 29-year-old forward missed time with a right ankle sprain and later sustained a Grade 2 tear of three ligaments in her left ankle and a muscle in her shin during the WNBA Semifinals. The superstar underwent ankle surgery in late March that is expected to keep her out of basketball activities until at least early June, but she'll officially be back with the Lynx this year after signing a supermax contract with the team during the offseason. Collier should remain an elite fantasy option once she's healthy, but she'll likely have to wait at least a month before making her season debut.",
@@ -77783,10 +77783,10 @@
                   "lastNewsDate": 1786593000000,
                   "ownership": {
                     "auctionValueAverage": 1.13,
-                    "averageDraftPosition": 36.8,
+                    "averageDraftPosition": 36.78,
                     "percentChange": -0.02,
                     "percentOwned": 99.11,
-                    "percentStarted": 47.88
+                    "percentStarted": 47.79
                   },
                   "proGamePlayerDetail": {
                     "401856891": {
@@ -78614,10 +78614,10 @@
                   "lastNewsDate": 1786774740000,
                   "ownership": {
                     "auctionValueAverage": 2.8,
-                    "averageDraftPosition": 30.72,
-                    "percentChange": 0.1,
+                    "averageDraftPosition": 30.73,
+                    "percentChange": 0.11,
                     "percentOwned": 97.83,
-                    "percentStarted": 86.54
+                    "percentStarted": 86.62
                   },
                   "proTeamId": 14,
                   "seasonOutlook": "Playing in a loaded frontcourt, Malonga saw a limited role to start her rookie season, scoring in double figures only once over her first 23 appearances while averaging 9.0 minutes a night. However, from July 24 through the end of the playoffs, Malonga's role expanded, and she proved worthy of the No. 2 overall pick in the 2025 WNBA Draft. Despite playing only 21 minutes per game over her final 22 appearances, Malonga averaged 11.5 points, 7.0 rebounds, 1.1 assists, 1.3 blocks and 0.7 steals while posting 57/50/58 shooting splits. After several key contributors left via free agency, Seattle may have no choice but to force Malonga into a major role, which would spike her fantasy value, especially since Ezi Magbegor may miss the start of the season, though the team also selected Awa Fam with the No. 3 overall pick in the 2026 WNBA Draft. When Malonga played at least 24 minutes last season, she averaged 17.5 points, 9.8 rebounds, 1.3 steals and 1.0 blocks. Malonga has as high of an upside as any player in the league, but she's only 21 years old and may have some growing pains if given a lead role right away in 2026.",
@@ -79437,9 +79437,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.53,
                     "averageDraftPosition": 44.23,
-                    "percentChange": 5.58,
-                    "percentOwned": 77.07,
-                    "percentStarted": 47.43
+                    "percentChange": 5.61,
+                    "percentOwned": 77.24,
+                    "percentStarted": 47.79
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "After spending the first eight years of her career in Washington, Cloud joined the Mercury in 2024 before being traded to New York ahead of the 2025 campaign. She saw a slight decrease in playing time, averaging below 30 minutes per game for the first time since 2018, and she also averaged 8.5 field-goal attempts per game after back-to-back years with double-digit averages. However, she still generated 10.1 points per game, her fourth consecutive double-digit average, while remaining consistent in most other categories, although her average of 5.1 assists per game was her lowest mark since 2018. Cloud was an unrestricted free agent ahead of the 2026 season and went unsigned until after the preseason, when she inked a deal with Chicago, where she'll join fellow veteran guards Skylar Diggins and Courtney Vandersloot. Cloud still has fantasy upside, but she was somewhat inconsistent during her time with the Liberty and will attempt to bounce back in 2026.",
@@ -80258,9 +80258,9 @@
                   "lastNewsDate": 1786564560000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 54.48,
-                    "percentChange": -0.4,
-                    "percentOwned": 12.48,
+                    "averageDraftPosition": 54.54,
+                    "percentChange": -0.39,
+                    "percentOwned": 12.45,
                     "percentStarted": 2.59
                   },
                   "proGamePlayerDetail": {
@@ -81007,9 +81007,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.8,
                     "averageDraftPosition": 40.81,
-                    "percentChange": 2.49,
-                    "percentOwned": 81.36,
-                    "percentStarted": 63.87
+                    "percentChange": 2.46,
+                    "percentOwned": 81.43,
+                    "percentStarted": 64.09
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "After missing the first half of the 2024 season following left arm surgery, Stevens posted several career highs in 2025 and finished second in the Most Improved Player voting. The 30-year-old forward appeared in all 44 regular-season games, averaging career highs in points (12.8), rebounds (8.0), assists (2.1), steals (1.2) and minutes (28.4) along with 1.1 blocks per contest. However, it's worth noting that she was more productive before the All-Star break, as Cameron Brink missed the first 25 games of the campaign. Still, Stevens was great in fantasy and contributed on both ends of the floor. Stevens was an unrestricted free agent during the offseason and elected to sign a three-year contract with the Sky. She should have the chance to build upon her momentum in 2025 after Chicago traded Angel Reese to the Dream this spring, and Stevens will get to continue working alongside Sparks teammate Rickea Jackson with her new team.",
@@ -81821,8 +81821,8 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 54.0,
-                    "percentChange": -0.27,
-                    "percentOwned": 15.53,
+                    "percentChange": -0.28,
+                    "percentOwned": 15.52,
                     "percentStarted": 4.79
                   },
                   "proGamePlayerDetail": {
@@ -82369,9 +82369,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.03,
-                    "percentChange": -6.14,
-                    "percentOwned": 36.62,
-                    "percentStarted": 12.43
+                    "percentChange": -6.22,
+                    "percentOwned": 36.44,
+                    "percentStarted": 12.34
                   },
                   "proTeamId": 6,
                   "seasonOutlook": "Wheeler proved she still had plenty left in the tank during her 2025 bounce-back campaign in Seattle, averaging 10.3 points, 3.3 assists, 2.7 rebounds and 1.3 steals across 25.6 minutes in all 44 regular-season games. She showed improved range from deep, knocking down 37.3 percent of her threes on a career-high 4.6 attempts per game. However, the mid-season acquisition of Brittney Sykes pushed Wheeler to the bench for the final stretch. She was an unrestricted free agent during the offseason and agreed to terms with the Sparks, where she may need to maintain a reserve role in 2026, especially after Los Angeles brought back Kelsey Plum while trading for Ariel Atkins. The steals production and three-point shooting give her category value in deeper leagues, but her game-to-game inconsistency remains a concern -- she fluctuated wildly between 20-point eruptions and scoreless outings in 2025. Wheeler is best viewed as a back-end roster option whose upside is tied to injuries or lineup shuffles ahead of her.",
@@ -83364,10 +83364,10 @@
                   "lastNewsDate": 1786897800000,
                   "ownership": {
                     "auctionValueAverage": 38.4,
-                    "averageDraftPosition": 9.72,
-                    "percentChange": -0.08,
-                    "percentOwned": 99.43,
-                    "percentStarted": 70.97
+                    "averageDraftPosition": 9.71,
+                    "percentChange": -0.09,
+                    "percentOwned": 99.42,
+                    "percentStarted": 70.74
                   },
                   "proTeamId": 6,
                   "seasonOutlook": "Hamby appeared in all 44 regular-season games in 2025, averaging a career-high 18.4 points along with 7.9 rebounds, 3.3 assists, 1.6 steals and 0.5 blocks in 31.2 minutes per contest. The three-time All-Star also shot a career-best 57.2 percent from the field, including 60.5 percent following the All-Star break. The veteran forward has been a top-10 fantasy option in each of the past two seasons, including finishing second behind only A'ja Wilson last year, narrowly ahead of Alyssa Thomas, Kelsey Plum and Nneka Ogwumike. After spending the last three years with the Sparks, Hamby was an unrestricted free agent during the offseason, but she'll return to Los Angeles in 2026, where she'll be joined by Ogwumike and Cameron Brink in the frontcourt.",
@@ -84252,10 +84252,10 @@
                   "lastNewsDate": 1786736100000,
                   "ownership": {
                     "auctionValueAverage": 38.6,
-                    "averageDraftPosition": 10.65,
+                    "averageDraftPosition": 10.64,
                     "percentChange": -0.35,
-                    "percentOwned": 97.6,
-                    "percentStarted": 48.63
+                    "percentOwned": 97.59,
+                    "percentStarted": 48.54
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -85084,10 +85084,10 @@
                   "lastNewsDate": 1786844580000,
                   "ownership": {
                     "auctionValueAverage": 10.33,
-                    "averageDraftPosition": 24.75,
-                    "percentChange": -0.07,
-                    "percentOwned": 98.76,
-                    "percentStarted": 61.41
+                    "averageDraftPosition": 24.74,
+                    "percentChange": -0.08,
+                    "percentOwned": 98.75,
+                    "percentStarted": 61.2
                   },
                   "proGamePlayerDetail": {
                     "401856891": {
@@ -85984,7 +85984,7 @@
                     "averageDraftPosition": 27.22,
                     "percentChange": 0.1,
                     "percentOwned": 99.51,
-                    "percentStarted": 91.73
+                    "percentStarted": 91.88
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "Cardoso took a significant step forward on the offensive end in her second season with Chicago, averaging 13.6 points on 52.8 percent shooting from the field compared to 9.8 points on 52.1 percent shooting in her rookie campaign. The South Carolina product also averaged 8.5 rebounds, 2.5 assists, 1.2 blocks and 0.4 steals in 27.6 minutes per game across 40 regular-season appearances (39 starts), though her defensive numbers dipped slightly in Year 2. Her role grew as the season progressed, with averages of 14.8 points, 9.6 rebounds, 3.0 assists and 1.5 blocks over 30.3 minutes per game across 22 outings following the All-Star break. She recorded 13 double-doubles last season and could see an even larger role in 2026 after Angel Reese was traded to Atlanta, but the Sky retained Elizabeth Williams in free agency and acquired Azura Stevens and Rickea Jackson, so there will still be several talented frontcourt options in Chicago in 2026.",
@@ -86789,10 +86789,10 @@
                   "lastNewsDate": 1786756680000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 53.98,
-                    "percentChange": 9.9,
-                    "percentOwned": 70.02,
-                    "percentStarted": 55.08
+                    "averageDraftPosition": 54.02,
+                    "percentChange": 10.0,
+                    "percentOwned": 70.34,
+                    "percentStarted": 55.7
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -87538,9 +87538,9 @@
                   "ownership": {
                     "auctionValueAverage": 0.47,
                     "averageDraftPosition": 53.97,
-                    "percentChange": 1.47,
-                    "percentOwned": 67.62,
-                    "percentStarted": 60.61
+                    "percentChange": 1.61,
+                    "percentOwned": 67.73,
+                    "percentStarted": 60.83
                   },
                   "proGamePlayerDetail": {
                     "401856971": {
@@ -88368,10 +88368,10 @@
                   "lastNewsDate": 1786833360000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 54.32,
-                    "percentChange": -3.2,
-                    "percentOwned": 26.22,
-                    "percentStarted": 8.64
+                    "averageDraftPosition": 54.39,
+                    "percentChange": -3.18,
+                    "percentOwned": 26.11,
+                    "percentStarted": 8.55
                   },
                   "proTeamId": 18,
                   "seasonOutlook": "After being selected No. 10 overall by Connecticut in the 2024 WNBA Draft, Lacan chose to sit out the 2024 campaign to prepare for the Olympics and then missed the onset of 2025 due to overseas obligations. The Sun eased her into action, deploying her as a reserve in nine of her first 10 games, before Lacan closed the season effectively as a full-time starter. Since she'll likely open 2026 as a member of the first unit, the rookie guard's averages of 10.1 points, 4.7 assists, 2.5 steals and 2.1 rebounds in 28.2 minutes per contest through 15 regular-season games as a starter a year ago are notable. Brittney Griner signed with the Sun during the offseason, but Lacan's fantasy stock is on the rise following a promising finish last season, especially since Marina Mabrey joined the Tempo ahead of the 2026 campaign.",
@@ -89173,9 +89173,9 @@
                   "ownership": {
                     "auctionValueAverage": 4.4,
                     "averageDraftPosition": 54.0,
-                    "percentChange": 3.01,
-                    "percentOwned": 23.0,
-                    "percentStarted": 19.43
+                    "percentChange": 3.14,
+                    "percentOwned": 23.14,
+                    "percentStarted": 19.62
                   },
                   "proTeamId": 14,
                   "stats": [
@@ -89827,8 +89827,8 @@
                     "auctionValueAverage": 0.0,
                     "averageDraftPosition": 53.86,
                     "percentChange": -0.56,
-                    "percentOwned": 26.28,
-                    "percentStarted": 8.66
+                    "percentOwned": 26.26,
+                    "percentStarted": 8.63
                   },
                   "proGamePlayerDetail": {
                     "401856891": {
@@ -90656,10 +90656,10 @@
                   "lastNewsDate": 1786422600000,
                   "ownership": {
                     "auctionValueAverage": 0.0,
-                    "averageDraftPosition": 53.72,
-                    "percentChange": 2.3,
-                    "percentOwned": 22.12,
-                    "percentStarted": 13.28
+                    "averageDraftPosition": 53.83,
+                    "percentChange": 2.36,
+                    "percentOwned": 22.23,
+                    "percentStarted": 13.45
                   },
                   "proTeamId": 19,
                   "seasonOutlook": "Carrington spent the first four years of her career in Connecticut but was on the move last year, as she was traded to the Wings ahead of the 2025 campaign before being dealt to Minnesota in early August. Across her 31 regular-season appearances between the two teams, she averaged 9.5 points, 3.6 rebounds, 1.5 assists and 1.1 steals in 20.8 minutes per game, though her playing time decreased after joining the Lynx. Carrington dealt with multiple injuries during her age-27 campaign, including a left mid-foot sprain that forced her to miss the end of the playoffs and the 2026 Unrivaled season. Carrington signed a one-year contract with the Sky during the offseason, but she underwent surgery to address her left foot injury over the winter, and it's not yet clear whether she'll be ready for the start of the 2026 WNBA campaign.",
