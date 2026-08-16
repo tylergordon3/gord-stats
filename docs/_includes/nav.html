@@ -144,7 +144,13 @@ tap from anywhere without stacking two bars on a small screen.
    * path boundary so /fantasy/adp/ can't match /fantasy/adpx/.
    */
   document.addEventListener("DOMContentLoaded", function () {
-    var norm = function (p) { return p.replace(/\/index\.html$/, "/"); };
+    // Cloudflare Pages serves clean URLs: /men/index.html arrives as /men/ and
+    // /men/conference.html as /men/conference. nav.yml still writes .html, so
+    // both sides are canonicalised here or the specific links never match and
+    // only the /men/ prefix is left to win.
+    var norm = function (p) {
+      return p.replace(/\/index\.html$/, "/").replace(/\.html$/, "");
+    };
     var here = norm(location.pathname);
 
     function markBest(links) {
