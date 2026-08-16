@@ -162,7 +162,9 @@ table.adp-table td.pick{color:#4a5a68}
 .mv-since{font-size:12px;color:#4a5a68;margin:0 0 6px}
 @media (max-width:600px){
   .adp-controls{gap:6px;margin:8px 0}
-  .adp-controls button{padding:5px 9px}
+  /* Narrower, but still a thumb-sized target — shrinking these to 28px
+     made them hard to hit on the screen they exist for. */
+  .adp-controls button{padding:5px 9px;min-height:44px}
   .adp-controls input{min-width:0;flex:1 1 100%}
   .adp-controls select{flex:0 0 auto}
   .adp-controls .adp-label#adp-count{flex:1 1 100%;font-weight:normal}
