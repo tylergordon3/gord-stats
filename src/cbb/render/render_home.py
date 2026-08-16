@@ -133,7 +133,7 @@ def _fantasy_card() -> str:
      <a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team</a> league.</p>
   <p class="home-card-links">
     <a href="/fantasy/adp/">Draft vs ADP</a> ·
-    <a href="/fantasy/draft-dna/">Draft DNA</a> ·
+    <a href="/fantasy/draft/">Draft</a> ·
     <a href="/fantasy/transactions/">Waivers &amp; Trades</a>
   </p>
 </section>

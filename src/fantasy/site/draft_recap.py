@@ -147,11 +147,19 @@ def _season_view(season_str: str) -> str:
     )
 
 
-def generate():
-    """Build and write docs/draft-recap/index.html - every season, switchable."""
+def body() -> str:
+    """This section's content, for the combined draft page or a standalone one.
+
+    The switcher group is "recap" rather than "season" so it can share a page
+    with the other draft sections without their controls colliding.
+    """
     views = [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS]
-    body = layout.HEAD + _BOARD_CSS + layout.view_switcher(views, group="season", label="Season:")
-    page = add_front_matter(body, "Draft Recap")
+    return _BOARD_CSS + layout.view_switcher(views, group="recap", label="Season:")
+
+
+def generate():
+    """Build and write the standalone Draft Recap page."""
+    page = add_front_matter(layout.HEAD + body(), "Draft Recap")
 
     out = paths.WEB_DRAFT_RECAP
     out.parent.mkdir(parents=True, exist_ok=True)

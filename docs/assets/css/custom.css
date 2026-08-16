@@ -3,12 +3,12 @@
 ------------------------------ */
 
 body {
-  background: #eef2f7;
+  background: #f7f9fc;
   color: #334155;
 }
 
 #main_content_wrap {
-  background: #eef2f7;
+  background: #f7f9fc;
   border-top: none;
   border-bottom: none;
 }
@@ -47,7 +47,7 @@ body {
 }
 
 .site-brand span {
-  color: #059669;
+  color: #047857;
 }
 
 #site-header #nav {
@@ -84,7 +84,7 @@ body {
 
 .simple-nav a:hover {
   background: #f1f5f9;
-  color: #059669 !important;
+  color: #047857 !important;
 }
 
 .nav-inner {
@@ -2185,7 +2185,7 @@ p {
   margin-top: 4px;
   font-size: .85rem;
   font-weight: 800;
-  color: #059669;
+  color: #047857;
 }
 
 .projected.proj-leader {
@@ -2245,7 +2245,7 @@ p {
 .round-dates {
   font-weight: 400;
   text-transform: none;
-  color: #94a3b8;
+  color: #5d6b7e;
   font-size: 0.78rem;
   margin-left: 6px;
 }
@@ -2282,7 +2282,7 @@ p {
 }
 
 .bracket-team.tbd .bteam-name {
-  color: #94a3b8;
+  color: #5d6b7e;
   font-style: italic;
   font-weight: 600;
 }
@@ -2537,7 +2537,7 @@ p {
 
 .proj-strong {
   font-weight: 900;
-  color: #059669;
+  color: #047857;
 }
 
 .inj-tag {
@@ -2645,7 +2645,7 @@ summary.team-report-header::-webkit-details-marker {
 
 summary.team-report-header::after {
   content: "▾";
-  color: #94a3b8;
+  color: #5d6b7e;
   font-size: 0.85rem;
   margin-left: 4px;
 }
@@ -2671,7 +2671,7 @@ summary.team-report-header::after {
 }
 
 .max-games.proj-total strong {
-  color: #059669;
+  color: #047857;
 }
 
 .max-games.min-total strong {
@@ -2734,7 +2734,7 @@ summary.team-report-header::after {
 .proj {
   text-align: right;
   font-weight: 800;
-  color: #059669;
+  color: #047857;
   font-size: 0.76rem;
   font-variant-numeric: tabular-nums;
 }
@@ -2768,7 +2768,7 @@ summary.team-report-header::after {
 
 .no-games {
   margin: 0;
-  color: #94a3b8;
+  color: #5d6b7e;
   font-style: italic;
   font-size: 0.8rem;
 }
@@ -2809,7 +2809,7 @@ summary.team-report-header::after {
   max-width: 1200px;
   margin: 10px auto 0;
   text-align: center;
-  color: #94a3b8;
+  color: #5d6b7e;
   font-size: 0.8rem;
 }
 
@@ -2823,8 +2823,8 @@ summary.team-report-header::after {
 @media (prefers-color-scheme: dark) {
   body,
   #main_content_wrap {
-    background: #0f172a !important;
-    color: #cbd5e1;
+    background: #16203a !important;
+    color: #dde5ef;
   }
 
   h1, h2, h3, h4 {
@@ -2851,7 +2851,7 @@ summary.team-report-header::after {
   }
 
   .simple-nav a {
-    color: #94a3b8 !important;
+    color: #aab7c9 !important;
   }
 
   .simple-nav a:hover {
@@ -2865,14 +2865,14 @@ summary.team-report-header::after {
   }
 
   .bottom-nav {
-    background: #0f172a !important;
+    background: #16203a !important;
     border-top-color: #1e293b !important;
   }
 
   #league-toggle-btn {
     background: #1e293b;
     border-color: #334155;
-    color: #cbd5e1;
+    color: #dde5ef;
   }
 
   /* Cards & sections */
@@ -2932,13 +2932,13 @@ summary.team-report-header::after {
   .pickup-opps,
   .bteam-name em,
   .round-dates {
-    color: #94a3b8;
+    color: #aab7c9;
   }
 
   .team-label,
   .bracket-round h3,
   .slot {
-    color: #94a3b8;
+    color: #aab7c9;
   }
 
   .score,
@@ -2976,13 +2976,13 @@ summary.team-report-header::after {
   /* Our own tables (pickups, drops, archive) go dark */
   .pickups-table {
     background: #1e293b;
-    color: #cbd5e1;
+    color: #dde5ef;
   }
 
   .pickups-table th {
     background: #0f172a;
     border-bottom-color: #334155;
-    color: #94a3b8;
+    color: #aab7c9;
   }
 
   .pickups-table td {
@@ -3006,7 +3006,7 @@ summary.team-report-header::after {
 
   .drop-select-label,
   .archive-controls label {
-    color: #94a3b8;
+    color: #aab7c9;
   }
 
   /* Pandas tables: dim the DEFAULT cells to a soft slate so they stop
@@ -3018,14 +3018,14 @@ summary.team-report-header::after {
 
   .sticky-table th {
     background: #0f172a;
-    color: #94a3b8;
+    color: #aab7c9;
     border-bottom-color: #334155;
   }
 
   .sticky-table td {
     background: #cbd5e1;
     color: #0f172a;
-    border-bottom-color: #94a3b8;
+    border-bottom-color: #aab7c9;
   }
 
   .sticky-table tbody tr:nth-child(even) td {
@@ -3035,7 +3035,7 @@ summary.team-report-header::after {
   .sticky-table th:first-child,
   .sticky-table td:first-child {
     background: #b7c3d5;
-    border-right-color: #94a3b8;
+    border-right-color: #aab7c9;
     color: #0f172a;
   }
 
@@ -3045,7 +3045,7 @@ summary.team-report-header::after {
   }
 
   .filter-bar label {
-    color: #94a3b8;
+    color: #aab7c9;
   }
 
   .filter-bar select,
@@ -3057,7 +3057,7 @@ summary.team-report-header::after {
 
   /* Theme-styled page paragraphs (predict intro, last-update lines) */
   #main_content > p {
-    color: #94a3b8;
+    color: #aab7c9;
   }
 
   .page-updated {
@@ -3086,35 +3086,60 @@ summary.team-report-header::after {
    Section bar (Home / CBB / WNBA / Fantasy) over a sub-nav of
    the pages inside the current section. Both come from
    _data/nav.yml via _includes/nav.html.
+
+   Both rows stay visible at every width — the sub-nav is how you
+   reach a sport's pages, so hiding it on a phone hides the site.
+   Each row scrolls sideways instead of wrapping, so a long section
+   never pushes the content down the page.
    ========================================================= */
 
 .nav-inner {
   display: flex;
   flex-direction: column;
+  gap: 0;
+}
+
+.simple-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;              /* the rows are short; a bar adds noise */
+  -webkit-overflow-scrolling: touch;
   gap: 2px;
 }
 
-/* Level 1 — the sections. Heavier than the sub-nav so the two
-   rows read as a hierarchy rather than one long wrapped list. */
+.simple-nav::-webkit-scrollbar { display: none; }
+
+/* Level 1 — the sections. Heavier than the sub-nav so the two rows
+   read as a hierarchy rather than one long wrapped list. */
 .site-sections a {
   font-size: 0.95rem;
-  color: #0f172a !important;
+  color: #1f2a3a !important;
+  padding: 8px 12px;
 }
 
 .site-sections a.active {
-  background: #ecfdf5;
+  background: #e8f7f0;
   color: #047857 !important;
 }
 
-/* Level 2 — pages within the section. */
+/* Level 2 — pages within the current section, indented under it by a
+   hairline rule so the relationship is visible rather than implied. */
+.sub-nav {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2px;
+  padding-top: 3px;
+}
+
 .sub-nav a {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  color: #64748b !important;
+  color: #5d6b7e !important;
+  padding: 7px 10px;
 }
 
 .sub-nav a:hover {
-  color: #059669 !important;
+  color: #047857 !important;
 }
 
 .sub-nav a.active {
@@ -3122,13 +3147,48 @@ summary.team-report-header::after {
   color: #047857 !important;
 }
 
-/* The section bar is the one that matters on a phone; the sub-nav's
-   contents are already in the bottom bar there. */
+/* Phones: keep both rows, shrink the chrome rather than drop a row.
+   Tap targets stay at 40px+ even as the type gets smaller. */
 @media (max-width: 640px) {
-  .sub-nav {
-    display: none;
+  .site-sections a {
+    font-size: 0.88rem;
+    padding: 9px 11px;
+  }
+
+  .sub-nav a {
+    font-size: 0.8rem;
+    padding: 9px 10px;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .site-sections a {
+    color: #e3eaf4 !important;
+  }
+
+  .site-sections a.active {
+    background: #123c2e;
+    color: #6ee7b7 !important;
+  }
+
+  .sub-nav {
+    border-top-color: #2b3852;
+  }
+
+  .sub-nav a {
+    color: #aab7c9 !important;
+  }
+
+  .sub-nav a:hover,
+  .sub-nav a.active {
+    color: #6ee7b7 !important;
+  }
+
+  .sub-nav a.active {
+    background: #1e293b;
+  }
+}
+
 /* ---- carried over from the fantasy football site ---- */
 
 /* Classes only the fantasy page generators emit (src/fantasy/site/layout.py). */
@@ -3267,4 +3327,118 @@ details.section>*:not(summary) {
 
 .sec-fantasy .sticky-table thead th:first-child {
   z-index: 4;
+}
+
+
+/* =========================================================
+   MOBILE
+   The remote theme is a desktop-first design: it sets a 320px
+   floor on .inner and spends ~40px of vertical padding plus
+   10px gutters before any content. On a 360px phone that floor
+   is what pushes the whole page sideways, and the gutters are
+   width the tables want.
+   ========================================================= */
+
+/* Nothing may exceed the viewport. The theme's min-width floor is the
+   one rule that reliably breaks this, so it goes first. */
+.inner {
+  min-width: 0 !important;
+}
+
+img,
+svg,
+table {
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+/* Wide content scrolls inside its own box rather than the page. */
+.table-scroll,
+.simple-nav,
+.view-switch {
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 600px) {
+  #main_content {
+    padding-top: 16px;
+    padding-bottom: 10px;
+  }
+
+  .custom-inner {
+    padding: 14px 8px;
+  }
+
+  .site-header-inner {
+    padding: 10px 10px 6px 10px;
+  }
+
+  /* Tap targets. Anything interactive clears 40px so it can be hit with
+     a thumb; the type shrinks but the target does not. */
+  .view-switch button,
+  details.section > summary,
+  .archive-controls button,
+  .filter-bar button {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+  }
+
+  .view-switch {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+  }
+
+  .view-switch button {
+    white-space: nowrap;
+  }
+
+  /* Tables get every pixel of width available. */
+  .table-scroll {
+    border-radius: 8px;
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  details.section {
+    margin: 10px 0;
+    border-radius: 8px;
+  }
+
+  /* The in-page "Jump to" bar becomes a scrollable strip rather than
+     four wrapped rows of links. */
+  .section-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 10px;
+    margin: 8px 0 14px;
+  }
+
+  .section-nav a {
+    margin: 0;
+    padding: 8px 6px;
+    white-space: nowrap;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .custom-inner {
+    padding: 12px 6px;
+  }
 }

@@ -12,12 +12,12 @@ collections:
   posts:
     output          : true
   
-url: "https://gordstats.com"
+url: "https://www.gordstats.com"
 baseurl: ""
 
 # Handling Reading
 safe                : false
-include             : [".htaccess"]
+include             : [".htaccess", "_redirects"]
 exclude             : ["Gemfile", "Gemfile.lock", "node_modules", "vendor/bundle/", "vendor/cache/", "vendor/gems/", "vendor/ruby/"]
 keep_files          : [".git", ".svn"]
 encoding            : "utf-8"

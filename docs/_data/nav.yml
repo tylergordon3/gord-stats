@@ -77,20 +77,10 @@ fantasy:
     icon: "🎯"
     url: /fantasy/adp/
 
-  - title: Draft Recap
-    short: Recap
+  - title: Draft
+    short: Draft
     icon: "📋"
-    url: /fantasy/draft-recap/
-
-  - title: Draft Report
-    short: Report
-    icon: "📊"
-    url: /fantasy/draft-report/
-
-  - title: Draft DNA
-    short: DNA
-    icon: "🧬"
-    url: /fantasy/draft-dna/
+    url: /fantasy/draft/
 
   - title: Waivers & Trades
     short: Waivers

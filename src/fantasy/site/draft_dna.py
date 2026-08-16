@@ -615,8 +615,13 @@ def report_cards(df) -> str:
 # Page
 # --------------------------------------------------------------------------- #
 
-def generate():
-    """Build and write docs/draft-dna/index.html."""
+def body(report_href: str = "/fantasy/draft-report/") -> str:
+    """This section's content, for the combined draft page or a standalone one.
+
+    `report_href` is where the intro points for "how well" each manager drafts;
+    on the combined page that is an anchor on the same page rather than a link
+    away from it.
+    """
     df = all_picks()
     n_drafts, n_picks = df["Season"].nunique(), len(df)
 
@@ -630,7 +635,8 @@ def generate():
 
     intro = (
         "<p>Not <em>how well</em> each manager drafts &mdash; that's the "
-        + layout.internal_link("/fantasy/draft-report/", "Manager Draft Report")
+        + (f'<a href="{report_href}">Manager Draft Report</a>' if report_href.startswith("#")
+           else layout.internal_link(report_href, "Manager Draft Report"))
         + " &mdash; but <em>how</em> they draft. Positional timing, early-round shape, how much "
         "of the result came down to players simply staying on the field, and what the "
         "championship drafts had in common.</p>"
@@ -641,11 +647,14 @@ def generate():
     )
 
     nav = layout.section_nav([(a, title.split(" - ")[0]) for a, title, _ in sections])
-    body = layout.HEAD + _CSS + intro + nav + "".join(
+    return _CSS + intro + nav + "".join(
         layout.details(title, html, open=(i == 0), anchor=a)
         for i, (a, title, html) in enumerate(sections))
 
-    page = add_front_matter(body, "Draft DNA")
+
+def generate():
+    """Build and write the standalone Draft DNA page."""
+    page = add_front_matter(layout.HEAD + body(), "Draft DNA")
     out = paths.WEB_DRAFT_DNA
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
