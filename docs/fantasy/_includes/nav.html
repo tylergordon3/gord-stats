@@ -1,0 +1,43 @@
+<div id="nav">
+  <div class="nav-inner">
+    <nav class="simple-nav">
+      {% for item in site.data.nav.docs %}
+      <a href="{{ item.url | relative_url }}" class="nav-item{% if item.url == '/index.html' %} nav-home{% endif %}">{{ item.title }}</a>
+      {% endfor %}
+    </nav>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  {% for item in site.data.nav.docs %}
+  <a href="{{ item.url | relative_url }}"{% if item.url == '/index.html' %} class="nav-home"{% endif %}>
+    <span class="icon">{{ item.icon | default: "•" }}</span>
+    <span class="label">{{ item.short | default: item.title }}</span>
+  </a>
+  {% endfor %}
+</nav>
+
+<script>
+  /**
+   * ACTIVE NAV STATE
+   * Marks the current page's link in both the desktop nav and the mobile
+   * bottom nav. Home only matches exactly; every other link is active for
+   * its whole section (e.g. /draft-dna/ and anything under it).
+   */
+  document.addEventListener("DOMContentLoaded", function () {
+    var norm = function (p) { return p.replace(/\/index\.html$/, "/"); };
+    var here = norm(location.pathname);
+    document.querySelectorAll(".simple-nav a, .bottom-nav a").forEach(function (a) {
+      var target = norm(a.pathname);
+      var active = a.classList.contains("nav-home")
+        ? here === target
+        : here.indexOf(target) === 0;
+      if (active) a.classList.add("active");
+    });
+    // Keep the active bottom tab in view on narrow phones (the bar scrolls).
+    var tab = document.querySelector(".bottom-nav a.active");
+    if (tab && tab.scrollIntoView) {
+      tab.scrollIntoView({ block: "nearest", inline: "center" });
+    }
+  });
+</script>

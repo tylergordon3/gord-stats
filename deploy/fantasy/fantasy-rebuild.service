@@ -1,0 +1,16 @@
+[Unit]
+Description=Rebuild fantasy_insights and publish to GitHub Pages
+After=network-online.target
+Wants=network-online.target
+OnFailure=notify@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/apps/fantasy_insights
+ExecStart=%h/apps/fantasy_insights/deploy/pi-deploy.sh
+# The nflverse pulls and page generation are slow on a Pi; don't let systemd
+# kill a run that's making progress. Still bounded so a hung HTTP call can't
+# wedge the timer forever.
+TimeoutStartSec=3600
+# No display on a headless Pi, so matplotlib must not try to pick a GUI backend.
+Environment=MPLBACKEND=Agg
