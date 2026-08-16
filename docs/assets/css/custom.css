@@ -3478,3 +3478,32 @@ img {
     align-items: center;
   }
 }
+
+
+/* Thumb-sized targets for every control on a phone. Measured in a headless
+   browser at 390px: nav rows were 37-39px, the brand 29px, the league toggle
+   32px, and the legend/sort chips 22-23px. Links inside running text are
+   deliberately left alone — they are prose, not controls. */
+@media (max-width: 767px) {
+  .site-sections a,
+  .sub-nav a,
+  .section-nav a,
+  .site-brand,
+  #league-toggle-btn,
+  .legend-btn,
+  .sort-chip,
+  .archive-controls button,
+  .filter-bar button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* The toggle stacks two labels, so it needs the height on the button
+     itself rather than on its inline-flex line box. */
+  #league-toggle-btn {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
