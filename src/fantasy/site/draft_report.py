@@ -85,7 +85,11 @@ def _style_pivot(p):
 
 
 def _section(title, desc, chart, table) -> str:
-    return (f"<h3>{title}</h3><p>{desc}</p>{chart}"
+    # h2 to match Draft Recap and Draft DNA. All three are content blocks at the
+    # same depth — inside one of the draft page's <details> sections — and this
+    # was the only one using h3, so the same level of heading rendered at a
+    # different size depending on which section you were reading.
+    return (f"<h2>{title}</h2><p>{desc}</p>{chart}"
             + layout.details("Show data table", f"<div class='table-scroll'>{table}</div>"))
 
 

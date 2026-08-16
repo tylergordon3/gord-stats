@@ -3289,7 +3289,7 @@ details.section>*:not(summary) {
 }
 
 .view-switch button.active {
-  background: #059669;
+  background: #047857;
   color: #fff;
   font-weight: 700;
   border-color: #047857;
@@ -3566,5 +3566,75 @@ img {
   summary.team-report-header::after,
   .no-games {
     color: #aab7c9;
+  }
+}
+
+
+/* =========================================================
+   DARK MODE — components carried over from the fantasy site
+   These came across as global rules because the classes are
+   only emitted by the fantasy generators. They were written
+   for a light-only site, so each paints a light box that the
+   dark theme then fills with light text: body copy inside
+   details.section measured 1.27:1 and headings 1.10:1, which
+   is the "white on white" in the draft page's drop-downs.
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  details.section {
+    background: #1b2540;
+    border-color: #2b3852;
+    box-shadow: none;
+  }
+
+  details.section > summary {
+    background: linear-gradient(90deg, #223052, #1b2540);
+    color: #e3eaf4;
+  }
+
+  details.section > summary:hover {
+    background: #26365c;
+  }
+
+  /* The in-page "Jump to" bar */
+  .section-nav {
+    background: #1b2540;
+    border-color: #2b3852;
+  }
+
+  .section-nav a {
+    color: #aab7c9;
+  }
+
+  .section-nav a:hover {
+    color: #6ee7b7;
+  }
+
+  /* View switchers (season / round / position pills) */
+  .view-switch button {
+    background: #1b2540;
+    border-color: #2b3852;
+    color: #dde5ef;
+  }
+
+  .view-switch button:hover {
+    background: #26365c;
+  }
+
+  .view-switch button.active {
+    background: #047857;
+    color: #ffffff;
+  }
+
+  .view-switch .switch-label {
+    color: #aab7c9;
+  }
+
+  /* Headings inside a carried-over box inherit the dark theme's light
+     colour, which only works now that the box itself is dark. */
+  details.section h2,
+  details.section h3,
+  details.section h4 {
+    color: #f1f5f9;
   }
 }

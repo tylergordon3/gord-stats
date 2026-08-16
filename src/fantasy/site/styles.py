@@ -28,7 +28,13 @@ GRID_TH = {
 }
 TABLE_STYLE = {
     "selector": "",
-    "props": [("border-collapse", "collapse"), ("margin", "6px 0"), ("font-size", "14px")],
+    # `auto` side margins, not 0: the site centres .sticky-table with
+    # `margin: 0 auto`, but pandas emits this block as an ID rule (#T_xxx),
+    # which outranks the class. With `6px 0` the tables carrying TABLE_STYLE
+    # sat flush left while the ones without it stayed centred, on the same
+    # page — that's the Draft vs ADP mismatch between By Owner / Full Draft
+    # and Best Values.
+    "props": [("border-collapse", "collapse"), ("margin", "6px auto"), ("font-size", "14px")],
 }
 
 
