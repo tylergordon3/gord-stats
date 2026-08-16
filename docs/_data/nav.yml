@@ -19,7 +19,7 @@ sections:
   - title: College Basketball
     short: CBB
     icon: "🏀"
-    url: /men/index.html
+    url: /cbb/index.html
     section: cbb
 
   - title: WNBA Fantasy
@@ -36,6 +36,11 @@ sections:
 
 
 cbb:
+  - title: Home
+    short: Home
+    icon: "🏠"
+    url: /cbb/index.html
+
   - title: Today's Scores
     short: Scores
     icon: "🏀"

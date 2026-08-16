@@ -172,6 +172,76 @@ def _cbb_lead() -> str:
 """
 
 
+def _cbb_home_body(today: date) -> str:
+    """The college basketball section landing page.
+
+    Deliberately league-agnostic: it sits above the men's/women's split so the
+    section has somewhere to land that isn't already a scores page. The
+    countdown include is the same one the season banner uses.
+    """
+    days = (CBB_TIPOFF - today).days
+    if days > 0:
+        when = (f"The 2026&ndash;27 season tips off <strong>{CBB_TIPOFF:%B %-d}</strong>"
+                f" &mdash; {days} days away.")
+    else:
+        when = "The season is underway."
+    href, label = _latest_predict_link()
+
+    return f"""
+{{% include cbb_countdown.html %}}
+
+<p>{when} Machine-learning predictions of the NCAA tournament field, rebuilt daily
+   through the season and scored against what actually happened. Built on
+   <a href="https://kenpom.com/" target="_blank">KenPom</a> and
+   <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores from
+   <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
+
+<p>Every page below carries a men's/women's toggle in the header &mdash; it
+   remembers which league you last looked at.</p>
+
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Bracketology</h2>
+    <a class="home-card-link" href="{href}">{label}</a>
+  </div>
+  <p>The projected tournament field: seeds, bubble, and the teams on the wrong
+     side of the cut.</p>
+  <p class="home-card-links">
+    <a href="/men/history.html">Prediction History</a>
+  </p>
+</section>
+
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Today's Scores</h2>
+    <a class="home-card-link" href="/men/index.html">Scoreboard &rarr;</a>
+  </div>
+  <p>Live scores and the day's slate.</p>
+</section>
+
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Conference Rankings</h2>
+    <a class="home-card-link" href="/men/conference.html">Standings &rarr;</a>
+  </div>
+  <p>Conference-by-conference strength, and how many bids each is projected to get.</p>
+</section>
+"""
+
+
+def render_cbb_home():
+    """Write the college basketball section landing page."""
+    html = _cbb_home_body(date.today())
+
+    path = paths.DOCS / "cbb" / "index.html"
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    fm = "---\nlayout: default\ntitle: College Basketball\n---\n"
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(fm + html.lstrip())
+    print(f"Wrote CBB home -> {path}")
+
+
 def render_home():
     """Season-aware homepage: whichever sport is live leads the page."""
     today = date.today()

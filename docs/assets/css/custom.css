@@ -3509,3 +3509,62 @@ img {
     padding-bottom: 4px;
   }
 }
+
+
+/* =========================================================
+   DARK MODE — controls and labels that were left behind
+   Everything here was defined once, for the light theme, on an
+   element that has no background of its own (or a translucent
+   one). On the dark ground they rendered dark-on-dark: the
+   scoreboard sort chips came out at 1.1:1, i.e. invisible.
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  /* Live scoreboard controls */
+  .sort-chip {
+    background: rgba(255, 255, 255, 0.10);
+    color: #dde5ef;
+  }
+
+  .sort-chip:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .legend-btn {
+    color: #aab7c9;
+  }
+
+  .legend-btn:hover {
+    color: #e3eaf4;
+  }
+
+  .status {
+    color: #aab7c9;
+  }
+
+  .team strong,
+  .league-toggle a.active {
+    color: #e3eaf4;
+  }
+
+  /* Season countdown pills */
+  .time-pill span,
+  .pill-label {
+    color: #e3eaf4;
+  }
+
+  /* Projections read as the accent, which needs lifting off the dark ground */
+  .value.better,
+  .projected,
+  .projected.proj-leader,
+  .max-games.proj-total strong {
+    color: #6ee7b7;
+  }
+
+  /* Muted labels */
+  .bracket-team.tbd .bteam-name,
+  summary.team-report-header::after,
+  .no-games {
+    color: #aab7c9;
+  }
+}

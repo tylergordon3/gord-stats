@@ -399,12 +399,22 @@ def board(year=UPCOMING_YEAR, refresh: bool = False) -> pd.DataFrame:
 
 def movers(year=UPCOMING_YEAR, n: int = 10, min_move: float = 0.5,
            window: str = "last") -> tuple:
-    """(risers, fallers): the n biggest swings over one of the WINDOWS."""
+    """(risers, fallers): the n biggest swings over one of the WINDOWS.
+
+    Each side is filtered by direction, not just sorted by it. Sorting alone
+    put every mover in both lists whenever fewer than n players had moved —
+    with two movers, one up and one down, both appeared as a riser and as a
+    faller, and _mover_items renders abs(move) with a fixed arrow, so the
+    faller showed up under "Biggest Risers" with an upward arrow.
+
+    Move is positive when a player is being taken earlier than at the baseline
+    (see _attach_window), so risers are > 0 and fallers < 0.
+    """
     col = WINDOWS[window]["move"]
     df = board(year)
     moved = df[df[col].notna() & (df[col].abs() >= min_move)]
-    risers = moved.sort_values(col, ascending=False).head(n)
-    fallers = moved.sort_values(col).head(n)
+    risers = moved[moved[col] > 0].sort_values(col, ascending=False).head(n)
+    fallers = moved[moved[col] < 0].sort_values(col).head(n)
     return risers, fallers
 
 

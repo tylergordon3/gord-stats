@@ -22,10 +22,19 @@ are archived away.
   {% endif %}
 {% endfor %}
 
+{% comment %}
+The 404 page is served for ANY unmatched path, so its section can't be known
+at build time — /men/typo lands on the same file as /fantasy/typo. It renders
+every section's sub-nav and picks one at runtime from location.pathname, so a
+reader who mistypes a CBB URL still lands somewhere with CBB navigation.
+{% endcomment %}
+{% assign is404 = false %}
+{% if page.url == '/404.html' %}{% assign is404 = true %}{% endif %}
+
 {% assign sec = '' %}
 {% if page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}
 {% elsif page.url contains '/wnba/' %}{% assign sec = 'wnba' %}
-{% elsif page.url contains '/men/' or page.url contains '/women/' %}{% assign sec = 'cbb' %}
+{% elsif page.url contains '/cbb/' or page.url contains '/men/' or page.url contains '/women/' %}{% assign sec = 'cbb' %}
 {% endif %}
 
 {% assign subnav = site.data.nav[sec] %}
@@ -34,12 +43,36 @@ are archived away.
   <div class="nav-inner">
     <nav class="simple-nav site-sections">
       {% for item in site.data.nav.sections %}
-      <a class="no-rewrite{% if item.section == sec %} active{% endif %}{% if item.section == nil and sec == '' %} active{% endif %}"
+      <a class="no-rewrite{% unless is404 %}{% if item.section == sec %} active{% endif %}{% if item.section == nil and sec == '' %} active{% endif %}{% endunless %}"
+         data-section="{{ item.section | default: 'home' }}"
          href="{{ item.url | relative_url }}">{{ item.title }}</a>
       {% endfor %}
     </nav>
 
-    {% if subnav and subnav.size > 1 %}
+    {% if is404 %}
+      {% for s in site.data.nav.sections %}
+        {% if s.section %}
+          {% assign items = site.data.nav[s.section] %}
+          {% if items and items.size > 1 %}
+    <nav class="simple-nav sub-nav sub-nav-404" data-section="{{ s.section }}" style="display:none">
+            {% for item in items %}
+              {% if item.route == 'bracketology' %}
+      <a class="league-route no-rewrite" data-page="bracketology"
+         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{{ item.title }}</a>
+              {% elsif item.route == 'today-scores' %}
+      <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{{ item.title }}</a>
+              {% elsif item.route %}
+      <a class="league-route no-rewrite" data-page="{{ item.route }}"
+         href="{{ item.url | relative_url }}">{{ item.title }}</a>
+              {% else %}
+      <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+              {% endif %}
+            {% endfor %}
+    </nav>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% elsif subnav and subnav.size > 1 %}
     <nav class="simple-nav sub-nav">
       {% for item in subnav %}
         {% if item.route == 'bracketology' %}
@@ -103,27 +136,59 @@ tap from anywhere without stacking two bars on a small screen.
 <script>
   /**
    * ACTIVE LINK STATE
-   * Marks the current page in the sub-nav and the mobile bottom bar. The
-   * section bar is marked at build time (Liquid, above) since it can't be
-   * derived from the path alone once a section has several page prefixes.
-   * Home matches exactly; every other link is active for its whole subtree.
+   * The winner is the LONGEST matching link, not the first one that matches.
+   * "Today's Scores" points at /men/index.html, which normalises to /men/ and
+   * is therefore a prefix of every CBB page — a plain prefix test marked it
+   * active on Bracketology, Conference Rankings and History too. Comparing
+   * lengths lets the more specific link win, and a prefix only counts on a
+   * path boundary so /fantasy/adp/ can't match /fantasy/adpx/.
    */
   document.addEventListener("DOMContentLoaded", function () {
     var norm = function (p) { return p.replace(/\/index\.html$/, "/"); };
     var here = norm(location.pathname);
-    document.querySelectorAll(".sub-nav a, .bottom-nav a").forEach(function (a) {
-      var target = norm(a.pathname);
-      var active = (a.classList.contains("nav-home") || a.classList.contains("bottom-up"))
-        ? here === target
-        : here.indexOf(target) === 0;
-      if (active) a.classList.add("active");
-    });
-    // Keep the active bottom tab in view on narrow phones (the bar scrolls).
-    var tab = document.querySelector(".bottom-nav a.active");
-    if (tab && tab.scrollIntoView) {
-      tab.scrollIntoView({ block: "nearest", inline: "center" });
+
+    function markBest(links) {
+      var best = null, bestLen = -1;
+      links.forEach(function (a) {
+        var t = norm(a.pathname);
+        var hit = (here === t) || (t.slice(-1) === "/" && here.indexOf(t) === 0);
+        if (hit && t.length > bestLen) { bestLen = t.length; best = a; }
+      });
+      if (best) best.classList.add("active");
     }
+
+    markBest([].slice.call(document.querySelectorAll(".sub-nav a")));
   });
+</script>
+
+<script>
+  /**
+   * 404 SECTION RESOLUTION
+   * A 404 is served for any unmatched path, so the section is only knowable
+   * from the URL the reader actually asked for. Pick it from the path and
+   * reveal that section's sub-nav, so someone who mistypes a CBB link still
+   * sees the CBB pages rather than being dropped into a sectionless page.
+   */
+  (function () {
+    var holder = document.querySelector(".sub-nav-404");
+    if (!holder) return;                     // not the 404 page
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var p = location.pathname;
+      var sec = "home";
+      if (p.indexOf("/fantasy/") === 0) sec = "fantasy";
+      else if (p.indexOf("/wnba/") === 0) sec = "wnba";
+      else if (p.indexOf("/cbb/") === 0 || p.indexOf("/men/") === 0 ||
+               p.indexOf("/women/") === 0) sec = "cbb";
+
+      document.querySelectorAll(".site-sections a").forEach(function (a) {
+        if (a.dataset.section === sec) a.classList.add("active");
+      });
+      document.querySelectorAll(".sub-nav-404").forEach(function (n) {
+        n.style.display = (n.dataset.section === sec) ? "" : "none";
+      });
+    });
+  })();
 </script>
 
 <script>

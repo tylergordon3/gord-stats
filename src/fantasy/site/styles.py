@@ -33,10 +33,25 @@ TABLE_STYLE = {
 
 
 def _font_for_bg(rgb) -> str:
-    """White text on dark backgrounds, black on light (ITU-BT.601 luma)."""
-    r, g, b = rgb
-    luminance = 0.299 * r + 0.587 * g + 0.114 * b
-    return "#ffffff" if luminance < 0.5 else "#000000"
+    """Pick black or white text — whichever actually contrasts better.
+
+    This used to threshold ITU-BT.601 luma at 0.5, which is the wrong measure
+    and the wrong cut. Perceived brightness is not linear in sRGB, and on the
+    RdYlGn scale the draft board uses, the mid oranges and greens land right at
+    that boundary — so they got black text at roughly 3:1, which is where the
+    board became hard to read. WCAG relative luminance puts the true crossover
+    near 0.179, so comparing the two candidate ratios directly always picks the
+    more legible one.
+    """
+    def _lin(c):
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+
+    r, g, b = rgb[:3]
+    lum = 0.2126 * _lin(r) + 0.7152 * _lin(g) + 0.0722 * _lin(b)
+
+    on_white = 1.05 / (lum + 0.05)      # contrast of white text on this bg
+    on_black = (lum + 0.05) / 0.05      # contrast of black text on this bg
+    return "#ffffff" if on_white > on_black else "#000000"
 
 
 def default_style(df, gradient_cols, cmap: str = "RdYlGn"):

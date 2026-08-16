@@ -131,6 +131,7 @@ def main(argv=None) -> int:
     if not args.skip_render:
         print("--- render home ---", flush=True)
         rh.render_home()
+        rh.render_cbb_home()
 
     if failed:
         print(f"FAILED: {', '.join(failed)}", file=sys.stderr)
