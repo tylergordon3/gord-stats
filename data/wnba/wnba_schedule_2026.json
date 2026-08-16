@@ -5885,7 +5885,7 @@
           "id": 25010,
           "home": "WSH",
           "away": "LA",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-15"
@@ -5896,7 +5896,7 @@
           "id": 25010,
           "home": "WSH",
           "away": "LA",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-15"
@@ -5907,7 +5907,7 @@
           "id": 25011,
           "home": "LV",
           "away": "MIN",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-15"
@@ -5918,7 +5918,7 @@
           "id": 25011,
           "home": "LV",
           "away": "MIN",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-15"
