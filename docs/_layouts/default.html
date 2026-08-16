@@ -59,61 +59,6 @@ resolution in _includes/nav.html.
   </footer>
   <script>
     /**
-     * LEAGUE-AWARE NAV REWRITE
-     * --------------------------------------------------
-     * Converts generic nav.yml links into league-specific URLs.
-     *
-     * Examples:
-     *   /history.html          → /men/history.html or /women/history.html
-     *   predict_YYYY-MM-DD.html → /men/predict_YYYY-MM-DD.html
-     *
-     * Safety rules:
-     *   - NEVER rewrite Home (/index.html)
-     *   - NEVER rewrite links marked with .nav-home
-     *   - NEVER touch external (http/https) links
-     *
-     * This allows nav.yml to remain league-agnostic while
-     * the site stays context-aware.
-     */
-    (function () {
-      const path = location.pathname;
-      const league = path.startsWith("/women/") ? "women" : "men";
-
-      // Explicit filename rewrites (extend as needed)
-      const rewriteMap = {
-        "/history.html": `/${league}/history.html`
-      };
-
-      document.querySelectorAll('.simple-nav a, .bottom-nav a').forEach(a => {
-        if (a.classList.contains("no-rewrite")) return;
-
-        const href = a.getAttribute('href');
-        if (!href || href.startsWith('http')) return;
-
-        if (a.classList.contains("nav-home")) return;
-        if (href === "/index.html") return;
-
-        // Exact filename rewrites
-        if (rewriteMap[href]) {
-          a.href = rewriteMap[href];
-          return;
-        }
-
-        // Daily prediction pages
-        if (href.startsWith("predict_")) {
-          a.href = `/${league}/${href}`;
-          return;
-        }
-
-        // Default: prepend league to root-relative links
-        if (href.startsWith("/")) {
-          a.href = `/${league}${href}`;
-        }
-      });
-    })();
-  </script>
-  <script>
-    /**
      * LEAGUE TOGGLE BUTTON
      * --------------------------------------------------
      * Controls the Men/Women pill-style toggle.
