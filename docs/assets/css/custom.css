@@ -3217,9 +3217,21 @@ details.section {
   margin: 14px 0;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  overflow: hidden;
+  /* No `overflow: hidden` here. It was only clipping the summary's background
+     to the rounded corners, but it also made this element a clipping container,
+     which then became the sticky ancestor for anything inside — that is why the
+     ADP board's column headers scrolled away instead of pinning to the viewport.
+     The corners are cut on the summary itself instead. */
   background: #fff;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+details.section > summary {
+  border-radius: 11px;
+}
+
+details.section[open] > summary {
+  border-radius: 11px 11px 0 0;
 }
 
 details.section>summary {
