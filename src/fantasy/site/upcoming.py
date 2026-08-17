@@ -187,6 +187,20 @@ table.adp-table td.pick{color:#4a5a68}
   table.adp-table th.name{z-index:4;background:#eef2f7}
   table.adp-table tbody tr:nth-child(even) td.name{background:#f8fafc}
 }
+@media (prefers-color-scheme: dark) {
+  /* The board paints its own light surfaces, so the dark theme's light text
+     lands on them unreadably — worst on the sticky name column, which has to
+     stay opaque so the scrolling numbers don't show through it. */
+  table.adp-table th{background:#223052;color:#dde5ef}
+  table.adp-table th:hover{background:#26365c}
+  table.adp-table td{border-color:#2b3852;color:#dde5ef}
+  table.adp-table tbody tr:nth-child(even) td{background:#1b2540}
+  table.adp-table tbody tr:hover td{background:#26365c}
+  table.adp-table td.name{background:#16203a}
+  table.adp-table th.name{background:#223052}
+  table.adp-table tbody tr:nth-child(even) td.name{background:#1b2540}
+  .adp-wrap{border-color:#2b3852}
+}
 </style>"""
 
 
