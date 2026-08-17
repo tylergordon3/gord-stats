@@ -10,3 +10,8 @@ include = ["cbb*", "wnba*", "fantasy*", "gordstats*"]
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+addopts = "-q --tb=short"

@@ -7,6 +7,7 @@ import re
 import matplotlib as mpl
 import matplotlib.colors as mcolors
 from matplotlib.colors import Normalize
+from gordstats import contrast
 
 # Table cell / header / layout styles (shared across all generated tables).
 # Palette matches the site theme in docs/assets/css/custom.css (slate grays,
@@ -41,23 +42,14 @@ TABLE_STYLE = {
 def _font_for_bg(rgb) -> str:
     """Pick black or white text — whichever actually contrasts better.
 
-    This used to threshold ITU-BT.601 luma at 0.5, which is the wrong measure
-    and the wrong cut. Perceived brightness is not linear in sRGB, and on the
-    RdYlGn scale the draft board uses, the mid oranges and greens land right at
-    that boundary — so they got black text at roughly 3:1, which is where the
-    board became hard to read. WCAG relative luminance puts the true crossover
-    near 0.179, so comparing the two candidate ratios directly always picks the
-    more legible one.
+    Thin wrapper over gordstats.contrast so the board and the test suite agree
+    on what "readable" means. This used to threshold ITU-BT.601 luma at 0.5,
+    which is the wrong measure and the wrong cut: perceived brightness is not
+    linear in sRGB, and on the RdYlGn scale the draft board uses, the mid
+    oranges and greens sat right at that boundary and took black text at about
+    3:1.
     """
-    def _lin(c):
-        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
-
-    r, g, b = rgb[:3]
-    lum = 0.2126 * _lin(r) + 0.7152 * _lin(g) + 0.0722 * _lin(b)
-
-    on_white = 1.05 / (lum + 0.05)      # contrast of white text on this bg
-    on_black = (lum + 0.05) / 0.05      # contrast of black text on this bg
-    return "#ffffff" if on_white > on_black else "#000000"
+    return contrast.best_text_on(rgb)
 
 
 def default_style(df, gradient_cols, cmap: str = "RdYlGn"):

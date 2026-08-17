@@ -1,0 +1,4 @@
+# Test-only dependencies. The suite itself needs the runtime deps too
+# (requirements-pi.txt), since the board tests import pandas.
+pytest
+pyyaml
