@@ -6,23 +6,25 @@ For the pre-draft board we also want to see where the individual sites disagree,
 so this module pulls each site that exposes a public JSON feed and merges them
 into one row per player:
 
-  * FantasyPros - consensus average across ESPN / Sleeper / CBS / NFL / RTSports.
-  * ESPN        - live ADP from ESPN's public PPR league-defaults feed.
-  * Yahoo       - average_pick from Yahoo's public read-only fantasy API.
-  * FFC         - Fantasy Football Calculator, from real 12-team PPR mock drafts.
+  * Sleeper  - via BeatADP's platform board (Sleeper publishes none itself).
+  * ESPN     - live ADP from ESPN's public PPR league-defaults feed.
+  * Yahoo    - average_pick from Yahoo's public read-only fantasy API.
+  * Underdog - best-ball ADP via DraftSharks (Underdog's own API is auth-gated).
+  * FFC      - Fantasy Football Calculator, from real 12-team PPR mock drafts.
 
-Sleeper, Underdog and NFL.com have no usable public ADP feed:
+FantasyPros is still the spine — it is the only source that lists every player
+with position, team and bye — but its consensus number is no longer published
+as a column. It is itself an average of ESPN / Sleeper / CBS / NFL / RTSports,
+so showing it beside those same sites double-counted them and pulled Avg toward
+the crowd.
 
-  * Sleeper's REST ADP routes 500, and its GraphQL schema only exposes draft
-    data per draft_id — there is no aggregate board.
-  * Underdog's API 404s on every unauthenticated path.
-  * FantasyPros does publish both of them per-site (Sleeper on the PPR page,
-    Underdog on the best-ball page), but only the top five rows are embedded
-    in the HTML; the rest of that table is subscriber-gated. Note also that
-    Underdog's number is best-ball ADP, which is not the same shape of number
-    as the redraft PPR ADP in the other columns.
+Two caveats worth keeping in mind when reading the columns side by side:
 
-Sleeper still contributes to the FantasyPros consensus column.
+  * Underdog is best-ball ADP. Underdog runs no redraft, so it is not strictly
+    the same measure as the redraft columns beside it, and it is a whole pick
+    rather than a decimal.
+  * Yahoo only publishes an ADP for players actually being drafted, so its
+    column runs out around pick 145 while the others run deeper.
 
 Everything is cached to data/adp/board_{year}.parquet and refetched once the
 cache goes stale (ADP moves daily during draft season). Every pull is also
@@ -32,7 +34,10 @@ columns on the homepage measure against - see WINDOWS and _with_movement.
     python -m fantasy.league.adp_board          # print the top of the board
     python -m fantasy.league.adp_board --refresh
 """
+import io
+import json
 import math
+import re
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -58,9 +63,10 @@ _TIMEOUT = 30
 
 # Column label -> short description, shown as the table's source legend.
 SOURCES = {
-    "Consensus": "FantasyPros consensus (ESPN / Sleeper / CBS / NFL / RTSports, PPR)",
+    "Sleeper": "Sleeper ADP, via BeatADP's platform board",
     "ESPN": "ESPN public PPR league ADP",
     "Yahoo": "Yahoo public league ADP (average pick, draftable range only)",
+    "Underdog": "Underdog best-ball ADP, via DraftSharks (whole picks)",
     "FFC": "Fantasy Football Calculator, 12-team PPR mock drafts",
 }
 
@@ -91,6 +97,12 @@ _ESPN_TEAMS = {
 }
 
 _FFC_URL = "https://fantasyfootballcalculator.com/api/v1/adp/{scoring}?teams={teams}&year={year}"
+
+_BEATADP_URL = "https://www.beatadp.com/platform-adp"
+_DRAFTSHARKS_URL = "https://www.draftsharks.com/adp/{platform}"
+# Both of the scraped boards want to look like a browser request.
+_BROWSER_HEADERS = {"User-Agent": ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                                   "(KHTML, like Gecko) Chrome/140.0 Safari/537.36")}
 
 # Yahoo's public read-only fantasy API — no OAuth for game-level player data.
 # sort=AR walks the board in draft order; out=draft_analysis adds average_pick.
@@ -212,6 +224,75 @@ def _yahoo_player(entry) -> dict | None:
     return out if out.get("player") and out.get("adp") else None
 
 
+def sleeper(year) -> pd.DataFrame:
+    """Sleeper ADP, read off BeatADP's platform comparison board.
+
+    Sleeper publishes no aggregate ADP of its own (its REST route 500s and its
+    GraphQL only exposes per-draft data), so this comes second-hand. BeatADP
+    server-renders the whole table into the page, so no browser is needed, and
+    it carries one decimal — DraftSharks only exposes an integer pick.
+    """
+    html = requests.get(_BEATADP_URL, headers=_BROWSER_HEADERS, timeout=_TIMEOUT).text
+    table = pd.read_html(io.StringIO(html))[0]
+
+    col = next((c for c in table.columns if str(c).lower().startswith("sleeper")), None)
+    if col is None:
+        raise ValueError("BeatADP: no Sleeper column — the board's layout changed")
+
+    # "Jahmyr Gibbs●DET" in one cell; "RB1" in Position.
+    parts = table["Player"].astype(str).str.split("●")
+    df = pd.DataFrame({
+        "player": parts.str[0].str.strip(),
+        "team": parts.str[1].str.strip(),
+        "pos": table["Position"].astype(str).str.extract(r"^([A-Za-z/]+)")[0],
+        "adp": pd.to_numeric(table[col], errors="coerce"),
+    }).dropna(subset=["adp"])
+
+    df["merge_name"] = _key(df)
+    return df.dropna(subset=["merge_name"]).drop_duplicates("merge_name", keep="first")
+
+
+def underdog(year) -> pd.DataFrame:
+    """Underdog best-ball ADP, read off DraftSharks.
+
+    Underdog's own API is auth-gated. DraftSharks embeds the board as an
+    `adpSets` blob plus an id -> player dictionary in the same page, so one
+    request gets both. Its ADP is a whole-number pick, not a decimal.
+
+    Note this is *best-ball* ADP: Underdog runs no redraft, so it is not
+    strictly the same measure as the redraft columns beside it.
+    """
+    html = requests.get(_DRAFTSHARKS_URL.format(platform="underdog"),
+                        headers=_BROWSER_HEADERS, timeout=_TIMEOUT).text
+
+    match = re.search(r'"adpSets":\{"[^"]+":\[(.*?)\]\}', html, re.S)
+    if not match:
+        raise ValueError("DraftSharks: no adpSets blob — the page layout changed")
+    entries = json.loads("[" + match.group(1) + "]")
+
+    # The dictionary is JSON-escaped in the raw HTML ("Ja'Marr"), so each
+    # field goes back through the JSON decoder rather than being used as-is.
+    meta = {}
+    for pid, first, last, team, pos in re.findall(
+            r'"(\d+)":\{"fn":"([^"]*)","ln":"([^"]*)","tm":"([^"]*)","pos":"([^"]*)"', html):
+        meta[int(pid)] = (json.loads(f'"{first} {last}"').strip(),
+                          json.loads(f'"{team}"'), json.loads(f'"{pos}"'))
+
+    rows = []
+    for entry in entries:
+        info = meta.get(entry.get("id"))
+        if not info or not entry.get("pick"):
+            continue
+        rows.append({"player": info[0], "team": info[1], "pos": info[2],
+                     "adp": float(entry["pick"])})
+
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    df["merge_name"] = _key(df)
+    return df.dropna(subset=["merge_name"]).drop_duplicates("merge_name", keep="first")
+
+
 def ffc(year, scoring: str = "ppr", teams: int = 12) -> pd.DataFrame:
     """Fantasy Football Calculator ADP, aggregated from real mock drafts."""
     url = _FFC_URL.format(scoring=scoring, teams=teams, year=year)
@@ -239,9 +320,16 @@ _SITE_COLS = list(SOURCES)
 
 def _fetch_board(year) -> pd.DataFrame:
     """Join every site onto the FantasyPros spine (the most complete list)."""
-    base = fantasypros(year).rename(columns={"adp": "Consensus"})
+    # FantasyPros stays the spine — it is the only source that lists every
+    # player with position, team and bye — but its consensus number is itself
+    # an average of other sites, so publishing it beside them double-counted
+    # them and dragged Avg toward the crowd. Dropped from SOURCES; the column
+    # is kept internally as `fp_adp` for ordering the tail.
+    base = fantasypros(year).rename(columns={"adp": "fp_adp"})
 
-    for label, frame in (("ESPN", espn(year)), ("Yahoo", yahoo(year)), ("FFC", ffc(year))):
+    for label, frame in (("Sleeper", sleeper(year)), ("ESPN", espn(year)),
+                         ("Yahoo", yahoo(year)), ("Underdog", underdog(year)),
+                         ("FFC", ffc(year))):
         cols = ["merge_name", "adp"] + [c for c in frame.columns if c.startswith("ffc_")]
         base = base.merge(frame[cols].rename(columns={"adp": label}), on="merge_name", how="left")
 
@@ -256,6 +344,12 @@ def _fetch_board(year) -> pd.DataFrame:
     base["Spread"] = (sites.max(axis=1) - sites.min(axis=1)).round(1)
     comparable = (base["Sites"] >= SPREAD_MIN_SITES) & (sites.max(axis=1) <= COMPARABLE_MAX)
     base.loc[~comparable, "Spread"] = pd.NA
+
+    # With the consensus column gone, a player no site ranks has no number at
+    # all. The FantasyPros spine lists ~640 names, most of them undraftable, so
+    # those rows would be blank filler under the real board — drop them and let
+    # the board be the players somebody is actually drafting.
+    base = base[base["Sites"] > 0].copy()
 
     base["pos"] = base["pos"].fillna("").str.upper().replace({"DEF": "DST"})
     return _with_ranks(base.sort_values("Avg").reset_index(drop=True))
