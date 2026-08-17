@@ -221,6 +221,11 @@ table.adp-table td.pick{color:#4a5a68}
   /* Matching the light rules' specificity — `.movers li` is (0,2,0) and would
      otherwise keep its near-black colour on the now-dark card, which is how
      darkening these cards could have blanked the list text entirely. */
+  /* Muted greys that read fine on white and vanish on dark. .adp-empty only
+     appears when a filter matches nothing, so it is guarded here rather than
+     found later by someone searching for a player who isn't on the board. */
+  table.adp-table td.pick{color:#aab7c9}
+  .adp-meta,.adp-empty{color:#aab7c9}
   .movers ol,.movers li{color:#dde5ef}
   .movers .mover-none{color:#aab7c9}
   .movers .mv-pos{color:#aab7c9}
