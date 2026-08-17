@@ -34,7 +34,10 @@ from fantasy.league.adp_board import (
 # movement ships, even though the table shows one column: the buttons switch
 # between them client-side.
 _MOVE_FIELDS = [w["move"] for w in WINDOWS.values()]
-_FIELDS = (["player", "pos", "team", "Consensus", "ESPN", "FFC", "Avg"]
+# Derived from SOURCES rather than listed, so adding a site to the board is one
+# edit in adp_board.SOURCES and the table, its headers and the sort indices all
+# follow. This list used to name the sites and silently omitted new ones.
+_FIELDS = (["player", "pos", "team"] + list(SOURCES) + ["Avg"]
            + _MOVE_FIELDS + ["Spread", "Ovr", "Pick", "PosRk"])
 POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
 MOVERS_SHOWN = 8            # risers / fallers listed in the movement strip

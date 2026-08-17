@@ -8,10 +8,21 @@ into one row per player:
 
   * FantasyPros - consensus average across ESPN / Sleeper / CBS / NFL / RTSports.
   * ESPN        - live ADP from ESPN's public PPR league-defaults feed.
+  * Yahoo       - average_pick from Yahoo's public read-only fantasy API.
   * FFC         - Fantasy Football Calculator, from real 12-team PPR mock drafts.
 
-Sleeper and NFL.com have no public ADP endpoint; both are folded into the
-FantasyPros consensus column instead.
+Sleeper, Underdog and NFL.com have no usable public ADP feed:
+
+  * Sleeper's REST ADP routes 500, and its GraphQL schema only exposes draft
+    data per draft_id — there is no aggregate board.
+  * Underdog's API 404s on every unauthenticated path.
+  * FantasyPros does publish both of them per-site (Sleeper on the PPR page,
+    Underdog on the best-ball page), but only the top five rows are embedded
+    in the HTML; the rest of that table is subscriber-gated. Note also that
+    Underdog's number is best-ball ADP, which is not the same shape of number
+    as the redraft PPR ADP in the other columns.
+
+Sleeper still contributes to the FantasyPros consensus column.
 
 Everything is cached to data/adp/board_{year}.parquet and refetched once the
 cache goes stale (ADP moves daily during draft season). Every pull is also
@@ -49,8 +60,16 @@ _TIMEOUT = 30
 SOURCES = {
     "Consensus": "FantasyPros consensus (ESPN / Sleeper / CBS / NFL / RTSports, PPR)",
     "ESPN": "ESPN public PPR league ADP",
+    "Yahoo": "Yahoo public league ADP (average pick, draftable range only)",
     "FFC": "Fantasy Football Calculator, 12-team PPR mock drafts",
 }
+
+# Spread needs at least this many sites on a player. It used to require every
+# site, which was fine while all three ranked hundreds of players deep. Yahoo
+# only reports ADP for players actually being drafted (~125 picks), so
+# demanding all four would have quietly cut the comparable window down to
+# Yahoo's depth rather than COMPARABLE_MAX.
+SPREAD_MIN_SITES = 3
 
 _ESPN_URL = ("https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{year}"
              "/segments/0/leaguedefaults/3?view=kona_player_info")
@@ -72,6 +91,11 @@ _ESPN_TEAMS = {
 }
 
 _FFC_URL = "https://fantasyfootballcalculator.com/api/v1/adp/{scoring}?teams={teams}&year={year}"
+
+# Yahoo's public read-only fantasy API — no OAuth for game-level player data.
+# sort=AR walks the board in draft order; out=draft_analysis adds average_pick.
+_YAHOO_URL = ("https://pub-api-ro.fantasysports.yahoo.com/fantasy/v2/game/nfl/players"
+              ";sort=AR;start={start};count={count};out=draft_analysis?format=json")
 
 
 # --------------------------------------------------------------------------- #
@@ -120,6 +144,74 @@ def espn(year, limit: int = 400) -> pd.DataFrame:
     return df.dropna(subset=["merge_name"]).drop_duplicates("merge_name", keep="first")
 
 
+def yahoo(year, limit: int = 600, page: int = 25) -> pd.DataFrame:
+    """Yahoo's own ADP, from the public read-only fantasy API.
+
+    `out=draft_analysis` carries average_pick per player; sort=AR walks the
+    board in draft order. Yahoo only publishes an ADP for players who are
+    actually being drafted, so this runs out around pick 125 — shorter than
+    the other sources by design, not by truncation.
+
+    `year` is accepted for symmetry with the other fetchers; the endpoint
+    always serves the current season, so a past year returns today's board.
+    """
+    rows = []
+    for start in range(0, limit, page):
+        data = requests.get(_YAHOO_URL.format(start=start, count=page),
+                            headers=_HEADERS, timeout=_TIMEOUT).json()
+        players = {}
+        for item in data.get("fantasy_content", {}).get("game", []):
+            if isinstance(item, dict) and "players" in item:
+                players = item["players"]
+        found = 0
+        for key, entry in players.items():
+            if key == "count":
+                continue
+            row = _yahoo_player(entry)
+            if row:
+                rows.append(row)
+                found += 1
+        if not found:
+            break
+
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    df["merge_name"] = _key(df)
+    return df.dropna(subset=["merge_name"]).drop_duplicates("merge_name", keep="first")
+
+
+def _yahoo_player(entry) -> dict | None:
+    """One player out of Yahoo's nested [[meta...], {draft_analysis}] shape."""
+    parts = entry.get("player") or []
+    if not parts:
+        return None
+
+    out = {}
+    for field in parts[0]:
+        if not isinstance(field, dict):
+            continue
+        name = field.get("name")
+        if isinstance(name, dict) and name.get("full"):
+            out["player"] = name["full"]
+        if field.get("display_position"):
+            out["pos"] = field["display_position"]
+        if field.get("editorial_team_abbr"):
+            out["team"] = field["editorial_team_abbr"].upper()
+
+    for chunk in parts[1:]:
+        if not (isinstance(chunk, dict) and "draft_analysis" in chunk):
+            continue
+        for kv in chunk["draft_analysis"]:
+            if isinstance(kv, dict) and "average_pick" in kv:
+                try:
+                    out["adp"] = round(float(kv["average_pick"]), 1)
+                except (TypeError, ValueError):
+                    pass
+
+    return out if out.get("player") and out.get("adp") else None
+
+
 def ffc(year, scoring: str = "ppr", teams: int = 12) -> pd.DataFrame:
     """Fantasy Football Calculator ADP, aggregated from real mock drafts."""
     url = _FFC_URL.format(scoring=scoring, teams=teams, year=year)
@@ -149,7 +241,7 @@ def _fetch_board(year) -> pd.DataFrame:
     """Join every site onto the FantasyPros spine (the most complete list)."""
     base = fantasypros(year).rename(columns={"adp": "Consensus"})
 
-    for label, frame in (("ESPN", espn(year)), ("FFC", ffc(year))):
+    for label, frame in (("ESPN", espn(year)), ("Yahoo", yahoo(year)), ("FFC", ffc(year))):
         cols = ["merge_name", "adp"] + [c for c in frame.columns if c.startswith("ffc_")]
         base = base.merge(frame[cols].rename(columns={"adp": label}), on="merge_name", how="left")
 
@@ -162,7 +254,7 @@ def _fetch_board(year) -> pd.DataFrame:
     # (ESPN stops at ~170 picks, FFC at ~245, FantasyPros ranks 595), so late-board
     # gaps measure pool size rather than real disagreement.
     base["Spread"] = (sites.max(axis=1) - sites.min(axis=1)).round(1)
-    comparable = sites.notna().all(axis=1) & (sites.max(axis=1) <= COMPARABLE_MAX)
+    comparable = (base["Sites"] >= SPREAD_MIN_SITES) & (sites.max(axis=1) <= COMPARABLE_MAX)
     base.loc[~comparable, "Spread"] = pd.NA
 
     base["pos"] = base["pos"].fillna("").str.upper().replace({"DEF": "DST"})
@@ -380,7 +472,15 @@ def board(year=UPCOMING_YEAR, refresh: bool = False) -> pd.DataFrame:
     cache = _cache_path(year)
     _seed_history(year)                           # first run after the rewrite
     if cache.exists() and not refresh and _is_fresh(cache, MAX_AGE_HOURS):
-        return _ensure_ranks(_blank_movement(pd.read_parquet(cache)))
+        cached = pd.read_parquet(cache)
+        # A cache written before a site was added has no column for it, and
+        # every consumer selects the source columns by name. Treat a changed
+        # source set as staleness rather than letting the page blow up on a
+        # KeyError until the cache happens to expire.
+        if not set(SOURCES).difference(cached.columns):
+            return _ensure_ranks(_blank_movement(cached))
+        print(f"  ADP board cache predates {', '.join(sorted(set(SOURCES) - set(cached.columns)))}"
+              f"; refetching")
 
     try:
         df = _fetch_board(year)
