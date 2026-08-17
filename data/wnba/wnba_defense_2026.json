@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-16T19:40:03.008443-04:00",
+ "updated": "2026-08-16T20:00:31.460687-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -30675,6 +30675,120 @@
       "Taina Mair",
       "G",
       0.0
+     ]
+    ]
+   }
+  },
+  "401857150": {
+   "date": "2026-08-16",
+   "allowed": {
+    "IND": {
+     "G": 101.0,
+     "FC": 71.0
+    },
+    "ATL": {
+     "G": 88.0,
+     "FC": 99.0
+    }
+   },
+   "players": {
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      29.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      52.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      26.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      2.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      41.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      16.0
+     ],
+     [
+      "Mercedes Russell",
+      "FC",
+      2.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      11.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      8.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      0.0
+     ]
+    ],
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      14.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      35.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      48.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      27.0
+     ],
+     [
+      "Jaylyn Sherrod",
+      "G",
+      3.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      22.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      4.0
+     ],
+     [
+      "Aaliyah Nye",
+      "G",
+      1.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      18.0
      ]
     ]
    }
