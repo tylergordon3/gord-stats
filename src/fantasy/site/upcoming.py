@@ -139,8 +139,8 @@ table.adp-table tbody tr:nth-child(even) td{background:#f8fafc}
 table.adp-table tbody tr:hover td{background:#eef2f6}
 .pos-tag{display:inline-block;min-width:44px;padding:1px 6px;border-radius:4px;color:#fff;
   font-size:12px;font-weight:700}
-.pos-QB{background:#c1436b}.pos-RB{background:#2f9e6d}.pos-WR{background:#2b7ba8}
-.pos-TE{background:#b98a2a}.pos-K{background:#7a6bbd}.pos-DST{background:#6b7785}
+.pos-QB{background:#c1436b}.pos-RB{background:#278259}.pos-WR{background:#2b7ba8}
+.pos-TE{background:#946e22}.pos-K{background:#7a6bbd}.pos-DST{background:#6b7785}
 .adp-early{background:#d8f0dd!important;color:#14532d!important}
 .adp-late{background:#fadddd!important;color:#7f1d1d!important}
 .adp-meta{font-size:13px;color:#4a5a68;margin:6px 0 0}
@@ -188,18 +188,41 @@ table.adp-table td.pick{color:#4a5a68}
   table.adp-table tbody tr:nth-child(even) td.name{background:#f8fafc}
 }
 @media (prefers-color-scheme: dark) {
-  /* The board paints its own light surfaces, so the dark theme's light text
-     lands on them unreadably — worst on the sticky name column, which has to
-     stay opaque so the scrolling numbers don't show through it. */
+  /* Every surface in this section is painted light by the rules above, so each
+     one needs a dark counterpart or the dark theme's light text lands on it.
+     The table cell background is the important one: setting only the even-row
+     colour left the odd rows falling through to a white container, which read
+     as ghost text on white. */
+  .adp-wrap{background:#16203a;border-color:#2b3852}
   table.adp-table th{background:#223052;color:#dde5ef}
   table.adp-table th:hover{background:#26365c}
-  table.adp-table td{border-color:#2b3852;color:#dde5ef}
+  table.adp-table td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.adp-table tbody tr:nth-child(even) td{background:#1b2540}
   table.adp-table tbody tr:hover td{background:#26365c}
   table.adp-table td.name{background:#16203a}
   table.adp-table th.name{background:#223052}
   table.adp-table tbody tr:nth-child(even) td.name{background:#1b2540}
-  .adp-wrap{border-color:#2b3852}
+
+  /* Cheapest / dearest site for a row: dark tints, so they read as a highlight
+     on this table rather than two light patches punched out of it. */
+  .adp-early{background:#123c2e!important;color:#8ff0bd!important}
+  .adp-late{background:#4a1d1d!important;color:#ffb4ae!important}
+
+  /* Filter controls */
+  .adp-controls button{background:#1b2540;border-color:#2b3852;color:#dde5ef}
+  .adp-controls button:hover{background:#26365c}
+  .adp-controls button.active{background:#047857;border-color:#065f46;color:#fff}
+  .adp-controls input,.adp-controls select{background:#1b2540;border-color:#2b3852;color:#dde5ef}
+  .adp-controls input::placeholder{color:#8b99ad}
+
+  /* Risers / fallers cards */
+  .movers .mover-card{background:#1b2540;border-color:#2b3852}
+  .movers .mover-head{background:#223052;color:#dde5ef}
+  .mover-none{color:#aab7c9}
+  .mv-pos{color:#aab7c9}
+  .mv-since{color:#aab7c9}
+  .adp-up{color:#6ee7b7}
+  .adp-down{color:#ff9b91}
 }
 </style>"""
 
