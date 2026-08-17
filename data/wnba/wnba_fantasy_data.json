@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-08-16T22:20:27.202115-04:00",
-    "pulled_at_readable": "2026-08-16 10:20:27 PM EDT",
+    "pulled_at": "2026-08-16T22:29:33.681502-04:00",
+    "pulled_at_readable": "2026-08-16 10:29:33 PM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -8453,7 +8453,7 @@
                   "keeperValue": 0,
                   "keeperValueFuture": 0,
                   "lineupLocked": false,
-                  "onTeamId": 0,
+                  "onTeamId": 9,
                   "player": {
                     "active": true,
                     "defaultPositionId": 2,
@@ -8544,7 +8544,7 @@
                     "universeId": 2
                   },
                   "rosterLocked": true,
-                  "status": "FREEAGENT",
+                  "status": "ONTEAM",
                   "tradeLocked": false
                 },
                 "status": "NORMAL"
@@ -9980,7 +9980,7 @@
                   "keeperValue": 0,
                   "keeperValueFuture": 0,
                   "lineupLocked": false,
-                  "onTeamId": 0,
+                  "onTeamId": 9,
                   "player": {
                     "active": true,
                     "defaultPositionId": 2,
@@ -10071,7 +10071,7 @@
                     "universeId": 2
                   },
                   "rosterLocked": true,
-                  "status": "FREEAGENT",
+                  "status": "ONTEAM",
                   "tradeLocked": false
                 },
                 "status": "NORMAL"
@@ -11631,7 +11631,7 @@
                   "keeperValue": 6,
                   "keeperValueFuture": 0,
                   "lineupLocked": true,
-                  "onTeamId": 9,
+                  "onTeamId": 0,
                   "player": {
                     "active": true,
                     "defaultPositionId": 1,
@@ -11721,7 +11721,7 @@
                     "universeId": 1
                   },
                   "rosterLocked": true,
-                  "status": "ONTEAM",
+                  "status": "FREEAGENT",
                   "tradeLocked": false
                 },
                 "status": "NORMAL"
@@ -13277,7 +13277,7 @@
                   "keeperValue": 6,
                   "keeperValueFuture": 0,
                   "lineupLocked": true,
-                  "onTeamId": 9,
+                  "onTeamId": 0,
                   "player": {
                     "active": true,
                     "defaultPositionId": 1,
@@ -13367,7 +13367,7 @@
                     "universeId": 1
                   },
                   "rosterLocked": true,
-                  "status": "ONTEAM",
+                  "status": "FREEAGENT",
                   "tradeLocked": false
                 },
                 "status": "NORMAL"
@@ -24218,7 +24218,7 @@
                   "keeperValue": 0,
                   "keeperValueFuture": 0,
                   "lineupLocked": true,
-                  "onTeamId": 9,
+                  "onTeamId": 0,
                   "player": {
                     "active": true,
                     "defaultPositionId": 1,
@@ -24310,8 +24310,10 @@
                     "universeId": 2
                   },
                   "rosterLocked": true,
-                  "status": "ONTEAM",
-                  "tradeLocked": false
+                  "status": "WAIVERS",
+                  "tradeLocked": false,
+                  "waiverDate": 1786933734545,
+                  "waiverProcessDate": 1787036400000
                 },
                 "status": "NORMAL"
               },
@@ -24372,7 +24374,7 @@
                   "keeperValue": 6,
                   "keeperValueFuture": 0,
                   "lineupLocked": true,
-                  "onTeamId": 9,
+                  "onTeamId": 0,
                   "player": {
                     "active": true,
                     "defaultPositionId": 1,
@@ -24464,7 +24466,7 @@
                     "universeId": 1
                   },
                   "rosterLocked": true,
-                  "status": "ONTEAM",
+                  "status": "FREEAGENT",
                   "tradeLocked": false
                 },
                 "status": "NORMAL"
@@ -24487,7 +24489,7 @@
                   "keeperValue": 0,
                   "keeperValueFuture": 0,
                   "lineupLocked": true,
-                  "onTeamId": 9,
+                  "onTeamId": 0,
                   "player": {
                     "active": true,
                     "defaultPositionId": 1,
@@ -24577,8 +24579,10 @@
                     "universeId": 2
                   },
                   "rosterLocked": true,
-                  "status": "ONTEAM",
-                  "tradeLocked": false
+                  "status": "WAIVERS",
+                  "tradeLocked": false,
+                  "waiverDate": 1786933734545,
+                  "waiverProcessDate": 1787036400000
                 },
                 "status": "NORMAL"
               },
@@ -24703,7 +24707,7 @@
                   "keeperValue": 6,
                   "keeperValueFuture": 0,
                   "lineupLocked": true,
-                  "onTeamId": 9,
+                  "onTeamId": 0,
                   "player": {
                     "active": true,
                     "defaultPositionId": 1,
@@ -24793,7 +24797,7 @@
                     "universeId": 1
                   },
                   "rosterLocked": true,
-                  "status": "ONTEAM",
+                  "status": "FREEAGENT",
                   "tradeLocked": false
                 },
                 "status": "NORMAL"
@@ -25688,7 +25692,7 @@
                   "keeperValue": 0,
                   "keeperValueFuture": 0,
                   "lineupLocked": true,
-                  "onTeamId": 9,
+                  "onTeamId": 0,
                   "player": {
                     "active": true,
                     "defaultPositionId": 1,
@@ -25778,8 +25782,10 @@
                     "universeId": 2
                   },
                   "rosterLocked": true,
-                  "status": "ONTEAM",
-                  "tradeLocked": false
+                  "status": "WAIVERS",
+                  "tradeLocked": false,
+                  "waiverDate": 1786933734545,
+                  "waiverProcessDate": 1787036400000
                 },
                 "status": "NORMAL"
               },
@@ -93633,7 +93639,7 @@
                 "keeperValue": 0,
                 "keeperValueFuture": 0,
                 "lineupLocked": true,
-                "onTeamId": 9,
+                "onTeamId": 0,
                 "player": {
                   "active": true,
                   "defaultPositionId": 1,
@@ -94333,10 +94339,12 @@
                   }
                 },
                 "rosterLocked": true,
-                "status": "ONTEAM",
-                "tradeLocked": false
+                "status": "WAIVERS",
+                "tradeLocked": false,
+                "waiverDate": 1786933734545,
+                "waiverProcessDate": 1787036400000
               },
-              "status": "NORMAL"
+              "status": "FUTURE_DROP"
             },
             {
               "acquisitionDate": 1786863671840,
@@ -95183,7 +95191,7 @@
                 "keeperValue": 6,
                 "keeperValueFuture": 0,
                 "lineupLocked": true,
-                "onTeamId": 9,
+                "onTeamId": 0,
                 "player": {
                   "active": true,
                   "defaultPositionId": 1,
@@ -96053,18 +96061,18 @@
                   }
                 },
                 "rosterLocked": true,
-                "status": "ONTEAM",
+                "status": "FREEAGENT",
                 "tradeLocked": false
               },
-              "status": "NORMAL"
+              "status": "FUTURE_DROP"
             }
           ],
           "tradeReservedEntries": 0
         },
         "transactionCounter": {
           "acquisitionBudgetSpent": 0,
-          "acquisitions": 47,
-          "drops": 46,
+          "acquisitions": 49,
+          "drops": 48,
           "matchupAcquisitionTotals": {
             "1": 7,
             "2": 1,
@@ -96078,7 +96086,7 @@
             "10": 1,
             "11": 2,
             "12": 3,
-            "13": 7
+            "13": 9
           },
           "misc": 0,
           "moveToActive": 235,
