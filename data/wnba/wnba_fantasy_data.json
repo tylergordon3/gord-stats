@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-08-16T21:58:34.932215-04:00",
-    "pulled_at_readable": "2026-08-16 09:58:34 PM EDT",
+    "pulled_at": "2026-08-16T22:20:27.202115-04:00",
+    "pulled_at_readable": "2026-08-16 10:20:27 PM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -10433,7 +10433,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "0",
                     "lastName": "Mitchell",
-                    "lastNewsDate": 1786773240000,
+                    "lastNewsDate": 1786929240000,
                     "proTeamId": 5,
                     "stats": [
                       {
@@ -11215,7 +11215,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "0",
                     "lastName": "Mitchell",
-                    "lastNewsDate": 1786773240000,
+                    "lastNewsDate": 1786929240000,
                     "proTeamId": 5,
                     "stats": [
                       {
@@ -12861,7 +12861,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "0",
                     "lastName": "Mitchell",
-                    "lastNewsDate": 1786773240000,
+                    "lastNewsDate": 1786929240000,
                     "proTeamId": 5,
                     "stats": [
                       {
@@ -56139,7 +56139,7 @@
                   "injuryStatus": "ACTIVE",
                   "jersey": "0",
                   "lastName": "Mitchell",
-                  "lastNewsDate": 1786773240000,
+                  "lastNewsDate": 1786929240000,
                   "ownership": {
                     "auctionValueAverage": 29.27,
                     "averageDraftPosition": 12.53,
