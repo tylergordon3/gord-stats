@@ -3669,3 +3669,22 @@ img {
     color: #f1f5f9;
   }
 }
+
+
+/* Keyboard users otherwise tab through both nav rows on every page before
+   reaching anything. Visible only while focused. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1100;
+  padding: 10px 14px;
+  background: #1B2340;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 0 0 8px 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}
