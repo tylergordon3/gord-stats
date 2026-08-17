@@ -1,0 +1,13 @@
+{%- comment -%}
+Label for one header-nav link, in both lengths.
+
+A phone has room for "CBB" but not "College Basketball": at 390px the four
+section titles alone measured 462px, so the row could only be reached by
+scrolling it sideways — and the same again for the sub-nav. Both lengths are
+rendered and CSS picks one (see MOBILE NAV in custom.css), so the full titles
+still show on a desktop while a phone gets rows that fit without scrolling.
+
+`short` comes from _data/nav.yml, where the bottom bar already used it, and
+falls back to the title for any item that doesn't set one.
+{%- endcomment -%}
+<span class="nav-full">{{ include.item.title }}</span><span class="nav-short">{{ include.item.short | default: include.item.title }}</span>

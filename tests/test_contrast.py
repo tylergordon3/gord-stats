@@ -23,8 +23,14 @@ DARK_GROUNDS = ("#16203a", "#1b2540")
 
 # Colours that read as "surface" — a rule painting one of these needs a dark
 # counterpart or the theme's light text lands on it.
+#
+# fafafa and f9fafb were added after the header nav shipped a mobile-only rule
+# that gave every link a #fafafa card. The dark theme colours those links
+# #e3eaf4, so on a phone the whole nav rendered at 1.1:1 — present, but
+# unreadable. Nothing here caught it because the list only knew about the
+# surfaces in use at the time.
 LIGHT_SURFACES = re.compile(
-    r"#(fff\b|ffffff|f8fafc|f7f9fc|eef2f7|f1f5f9|e2e8f0|eef2f6|fdf0e4|e8f7f0|ebe4e4)", re.I)
+    r"#(fff\b|ffffff|fafafa|f9fafb|f8fafc|f7f9fc|eef2f7|f1f5f9|e2e8f0|eef2f6|fdf0e4|e8f7f0|ebe4e4)", re.I)
 
 # Deliberate light islands: components that keep a light surface in dark mode
 # and carry their own dark text, so they stay readable even though they do not
@@ -40,6 +46,11 @@ LIGHT_ISLANDS = {
     ".legend-modal": "CBB scoreboard legend modal — untreated",
     ".date-header": "CBB scoreboard date divider — untreated",
     ".lock-tag": "CBB bracket lock pill — untreated",
+    ".st-unk": "CBB scoreboard status pill — sits on .game-card, carries its own dark text",
+    # Row striping painted on the <tr>. Every cell over it gets an opaque
+    # background of its own from `.sticky-table td` in the dark block, so the
+    # row colour is covered rather than exposed.
+    ".bids-table tbody tr:nth-child(even)": "covered by .sticky-table td's dark background",
 }
 
 # Text colours inside those islands. They sit on a light card that stays light,

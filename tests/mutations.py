@@ -59,6 +59,15 @@ MUTATIONS = [
      "  details.section {\n    /* removed */",
      "test_every_light_surface_has_a_dark_counterpart"),
 
+    # The phone nav shipped exactly this: a card behind every header nav link,
+    # written when the nav was one row and never given a dark counterpart, so
+    # the dark theme's #e3eaf4 links sat on #fafafa at 1.1:1.
+    ("mobile nav links given a light card",
+     "docs/assets/css/custom.css",
+     "  .site-sections a,\n  .sub-nav a {\n",
+     "  .site-sections a,\n  .sub-nav a {\n    background: #fafafa;\n",
+     "test_every_light_surface_has_a_dark_counterpart"),
+
     ("light-only muted text",
      "docs/assets/css/custom.css",
      "  .sub-nav a {\n    color: #aab7c9 !important;",

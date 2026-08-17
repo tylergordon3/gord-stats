@@ -45,7 +45,7 @@ reader who mistypes a CBB URL still lands somewhere with CBB navigation.
       {% for item in site.data.nav.sections %}
       <a class="no-rewrite{% unless is404 %}{% if item.section == sec %} active{% endif %}{% if item.section == nil and sec == '' %} active{% endif %}{% endunless %}"
          data-section="{{ item.section | default: 'home' }}"
-         href="{{ item.url | relative_url }}">{{ item.title }}</a>
+         href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
       {% endfor %}
     </nav>
 
@@ -58,14 +58,14 @@ reader who mistypes a CBB URL still lands somewhere with CBB navigation.
             {% for item in items %}
               {% if item.route == 'bracketology' %}
       <a class="league-route no-rewrite" data-page="bracketology"
-         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{{ item.title }}</a>
+         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{% include nav_label.html item=item %}</a>
               {% elsif item.route == 'today-scores' %}
-      <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{{ item.title }}</a>
+      <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
               {% elsif item.route %}
       <a class="league-route no-rewrite" data-page="{{ item.route }}"
-         href="{{ item.url | relative_url }}">{{ item.title }}</a>
+         href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
               {% else %}
-      <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+      <a href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
               {% endif %}
             {% endfor %}
     </nav>
@@ -77,14 +77,14 @@ reader who mistypes a CBB URL still lands somewhere with CBB navigation.
       {% for item in subnav %}
         {% if item.route == 'bracketology' %}
       <a class="league-route no-rewrite" data-page="bracketology"
-         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{{ item.title }}</a>
+         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{% include nav_label.html item=item %}</a>
         {% elsif item.route == 'today-scores' %}
-      <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{{ item.title }}</a>
+      <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
         {% elsif item.route %}
       <a class="league-route no-rewrite" data-page="{{ item.route }}"
-         href="{{ item.url | relative_url }}">{{ item.title }}</a>
+         href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
         {% else %}
-      <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+      <a href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
         {% endif %}
       {% endfor %}
     </nav>
@@ -165,6 +165,62 @@ tap from anywhere without stacking two bars on a small screen.
 
     markBest([].slice.call(document.querySelectorAll(".sub-nav a")));
   });
+</script>
+
+<script>
+  /**
+   * SCROLLABLE NAV ROWS
+   * Both rows fit a phone now that they use the short labels from nav.yml, so
+   * neither normally scrolls. This is for when one does anyway — a narrow
+   * phone, a large font setting, or a section that grows another page:
+   *
+   *   - the current page is scrolled into view, rather than being parked off
+   *     the right edge where nothing suggests it exists;
+   *   - the edge a row continues past is faded, so the row reads as scrollable
+   *     instead of reading as clipped.
+   *
+   * Both are no-ops while everything fits, and the classes are only styled
+   * below 768px.
+   */
+  (function () {
+    var rows = [].slice.call(document.querySelectorAll(".simple-nav"));
+    if (!rows.length) return;
+
+    function overflow(row) {
+      return row.scrollWidth - row.clientWidth;
+    }
+
+    function markEdges(row) {
+      var over = overflow(row);
+      row.classList.remove("scroll-start", "scroll-mid", "scroll-end");
+      if (over <= 2) return;                       // fits; no fade to draw
+      var x = row.scrollLeft;
+      row.classList.add(x <= 2 ? "scroll-start"
+                      : x >= over - 2 ? "scroll-end"
+                      : "scroll-mid");
+    }
+
+    function reveal(row) {
+      var a = row.querySelector("a.active");
+      if (!a || overflow(row) <= 2) return;
+      // Measured rather than offsetLeft: the sticky header is a positioned
+      // ancestor, so offsetLeft is relative to it and not to the row.
+      var box = a.getBoundingClientRect(), rowBox = row.getBoundingClientRect();
+      row.scrollLeft += (box.left - rowBox.left) - (rowBox.width - box.width) / 2;
+    }
+
+    function sync() {
+      rows.forEach(function (row) { reveal(row); markEdges(row); });
+    }
+
+    rows.forEach(function (row) {
+      row.addEventListener("scroll", function () { markEdges(row); }, { passive: true });
+    });
+    window.addEventListener("resize", sync);
+    // After the other script has had its turn at adding .active.
+    document.addEventListener("DOMContentLoaded", function () { setTimeout(sync, 0); });
+    window.addEventListener("load", sync);         // web fonts change the widths
+  })();
 </script>
 
 <script>

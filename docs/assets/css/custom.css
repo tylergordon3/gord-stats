@@ -138,47 +138,12 @@ body {
   border-bottom: 2px solid #111;
 }
 
+/* The phone styling for the nav rows themselves lives in MOBILE NAV at the
+   bottom of this file. It used to be here, as a grid of soft #fafafa cards —
+   which the dark theme then filled with near-white text (1.1:1, unreadable),
+   and which forced every link to 110px whether it needed it or not, so both
+   rows overflowed and had to be scrolled sideways. */
 @media (max-width: 600px) {
-
-  .nav-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;              /* 🔥 better overall spacing */
-    padding-top: 8px;       /* 🔥 adds breathing room at top */
-  }
-
-  /* NAV LINKS */
-  .simple-nav {
-    width: 100%;
-
-    display: flex;
-    flex-wrap: wrap;                 
-    justify-content: center;         
-    gap: 8px;                        
-
-    margin-top: 4px;                 /* 🔥 subtle top spacing */
-    margin-bottom: 12px;             /* 🔥 space before toggle */
-
-    overflow: visible;
-  }
-
-  .simple-nav a {
-    flex: 1 1 auto;
-    text-align: center;
-
-    font-size: 14px;
-    padding: 10px;
-
-    min-width: 110px;
-    max-width: 160px;
-
-    /* 🔥 mobile styling (no dividers → soft cards) */
-    border: none;
-    background: #fafafa;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-  }
 
   /* HEADER ROW */
   .header-row {
@@ -3521,12 +3486,11 @@ img {
 
 
 /* Thumb-sized targets for every control on a phone. Measured in a headless
-   browser at 390px: nav rows were 37-39px, the brand 29px, the league toggle
-   32px, and the legend/sort chips 22-23px. Links inside running text are
-   deliberately left alone — they are prose, not controls. */
+   browser at 390px: the brand was 29px, the league toggle 32px, and the
+   legend/sort chips 22-23px. Links inside running text are deliberately left
+   alone — they are prose, not controls. The two header nav rows are sized in
+   MOBILE NAV ROWS below, where the rest of their phone styling lives. */
 @media (max-width: 767px) {
-  .site-sections a,
-  .sub-nav a,
   .section-nav a,
   .site-brand,
   #league-toggle-btn,
@@ -3740,20 +3704,159 @@ img {
   .sub-nav {
     margin: 0;
   }
+}
+
+
+/* =========================================================
+   MOBILE NAV ROWS
+   Two things made these rows hard to use on a phone.
+
+   1. Every link carried a soft #fafafa card left over from the
+      one-row nav. Against the dark theme's near-white link text
+      that measured 1.1:1 — the links were there but unreadable —
+      and in either theme four identical cards made the current
+      page indistinguishable from the rest.
+
+   2. Each card was pinned to min-width:110px, so four sections
+      wanted 462px inside a 370px row and the sub-nav 578px. Both
+      rows overflowed on every page and had to be dragged sideways
+      to reach half the site, with nothing on screen to say so.
+
+   The links now size to their text, in the short form from
+   nav.yml ("CBB", not "College Basketball"), which fits both rows
+   on a phone with room to spare; they share the leftover width so
+   the targets stay thumb-sized. Only the current page is filled
+   in, so "where am I" is one glance.
+   ========================================================= */
+
+/* The full titles need about 900px between the two rows — at 768px, where the
+   header goes back to one line with the brand and the toggle beside it, the
+   CBB sub-nav still wanted 150px more than it had. So the swap point is the
+   width where the long titles actually fit, not the phone breakpoint. */
+.nav-short {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .nav-full {
+    display: none;
+  }
+
+  .nav-short {
+    display: inline;
+  }
+}
+
+/* A row is only faded when it genuinely overflows — the script adds these —
+   so they are not restricted to phones. */
+.simple-nav.scroll-start {
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+
+.simple-nav.scroll-mid {
+  mask-image: linear-gradient(to right, transparent, #000 28px calc(100% - 28px), transparent);
+}
+
+.simple-nav.scroll-end {
+  mask-image: linear-gradient(to right, transparent, #000 28px);
+}
+
+@media (max-width: 767px) {
+  /* Each row is still a scroll container in case a section ever outgrows the
+     width, but nothing overflows at 320px today. The links divide whatever is
+     left over between them rather than clustering in the middle. */
+  .simple-nav {
+    gap: 4px;
+    padding: 0 6px;
+    scroll-padding-inline: 12px;
+  }
+
+  .site-sections a,
+  .sub-nav a {
+    /* Grow into free space, never shrink below the label — a shrunk link
+       would clip its own text, which is what "ome" and "ule Stats" were. */
+    flex: 1 0 auto;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 8px;
+    scroll-snap-align: center;
+  }
 
   .site-sections a {
-    font-size: 0.84rem;
+    font-size: 0.86rem;
     padding: 0 10px;
-    min-height: 38px;
+    min-height: 42px;
   }
 
   .sub-nav a {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     padding: 0 9px;
-    min-height: 36px;
+    min-height: 38px;
   }
 
   .sub-nav {
     padding-top: 2px;
+  }
+
+  /* The current page, filled. Everything else is plain text on the header,
+     so the fill is the only shading in the rows and reads as position. */
+  .site-sections a.active {
+    background: #1B2340;
+    color: #ffffff !important;
+    font-weight: 800;
+  }
+
+  .sub-nav a.active {
+    background: #FDF0E4;
+    color: #A34F0A !important;
+  }
+
+  /* Held down, so a tap has some feedback where :hover means nothing. */
+  .site-sections a:active,
+  .sub-nav a:active {
+    background: #e8edf5;
+  }
+
+}
+
+/* Small phones. The CBB sub-nav is five items; at 320px it wanted 36px more
+   than the screen has, so the padding comes off before anyone has to scroll
+   a row that is nearly fitting. */
+@media (max-width: 360px) {
+  .simple-nav {
+    gap: 2px;
+    padding: 0 4px;
+  }
+
+  .site-sections a {
+    font-size: 0.82rem;
+    padding: 0 7px;
+  }
+
+  .sub-nav a {
+    font-size: 0.76rem;
+    padding: 0 5px;
+  }
+}
+
+@media (max-width: 767px) and (prefers-color-scheme: dark) {
+  .site-sections a.active {
+    background: #EE8434;
+    color: #1B2340 !important;
+  }
+
+  .sub-nav a.active {
+    background: #3A2412;
+    color: #F5A968 !important;
+  }
+
+  .site-sections a:active,
+  .sub-nav a:active {
+    background: #26365c;
   }
 }

@@ -56,14 +56,20 @@ def normalise_selector(sel: str) -> str:
     return re.sub(r"\s*([>+~])\s*", r" \1 ", sel)
 
 
-def dark_block(css: str) -> str:
-    """Everything inside prefers-color-scheme: dark blocks, concatenated."""
-    parts, i = [], 0
-    while True:
-        i = css.find("@media (prefers-color-scheme: dark)", i)
-        if i < 0:
-            return "\n".join(parts)
-        start = css.index("{", i)
+# Any at-rule whose condition mentions the dark scheme, not just the bare
+# `@media (prefers-color-scheme: dark)`. A width-scoped one —
+# `@media (max-width: 767px) and (prefers-color-scheme: dark)`, which is how
+# the phone nav states are written — was read as *light* CSS by an exact-string
+# match, so its rules were audited against the dark grounds they already sit on
+# and could not count as anyone's dark counterpart.
+_DARK_AT_RULE = re.compile(r"@media[^{}]*prefers-color-scheme:\s*dark[^{}]*\{")
+
+
+def _dark_spans(css: str):
+    """(start of the at-rule, index of its `{`, index of its closing `}`)."""
+    spans = []
+    for match in _DARK_AT_RULE.finditer(css):
+        start = match.end() - 1
         depth, k = 0, start
         while k < len(css):
             if css[k] == "{":
@@ -73,8 +79,13 @@ def dark_block(css: str) -> str:
                 if depth == 0:
                     break
             k += 1
-        parts.append(css[start + 1:k])
-        i = k
+        spans.append((match.start(), start, k))
+    return spans
+
+
+def dark_block(css: str) -> str:
+    """Everything inside prefers-color-scheme: dark blocks, concatenated."""
+    return "\n".join(css[start + 1:end] for _, start, end in _dark_spans(css))
 
 
 def light_block(css: str) -> str:
@@ -85,23 +96,11 @@ def light_block(css: str) -> str:
     which is most of the components carried over from the fantasy site.
     """
     out, i = [], 0
-    while True:
-        j = css.find("@media (prefers-color-scheme: dark)", i)
-        if j < 0:
-            out.append(css[i:])
-            return "".join(out)
-        out.append(css[i:j])
-        start = css.index("{", j)
-        depth, k = 0, start
-        while k < len(css):
-            if css[k] == "{":
-                depth += 1
-            elif css[k] == "}":
-                depth -= 1
-                if depth == 0:
-                    break
-            k += 1
-        i = k + 1
+    for at_rule, _, end in _dark_spans(css):
+        out.append(css[i:at_rule])
+        i = end + 1
+    out.append(css[i:])
+    return "".join(out)
 
 
 def declared(body: str, prop: str):
