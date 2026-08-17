@@ -50,7 +50,7 @@ MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
 
 _COUNTDOWN_CSS = """<style>
 .draft-banner{margin:14px 0 18px;padding:16px 18px;border-radius:14px;
-  background:linear-gradient(135deg,#065f46,#059669);color:#fff;text-align:center;
+  background:linear-gradient(135deg,#064e3b,#047857);color:#fff;text-align:center;
   box-shadow:0 2px 8px rgba(5,150,105,.25)}
 .draft-banner .draft-when{font-size:15px;letter-spacing:.04em;opacity:.85;margin:0 0 4px}
 .draft-banner .draft-title{font-size:20px;font-weight:700;margin:0 0 12px}
@@ -218,8 +218,12 @@ table.adp-table td.pick{color:#4a5a68}
   /* Risers / fallers cards */
   .movers .mover-card{background:#1b2540;border-color:#2b3852}
   .movers .mover-head{background:#223052;color:#dde5ef}
-  .mover-none{color:#aab7c9}
-  .mv-pos{color:#aab7c9}
+  /* Matching the light rules' specificity — `.movers li` is (0,2,0) and would
+     otherwise keep its near-black colour on the now-dark card, which is how
+     darkening these cards could have blanked the list text entirely. */
+  .movers ol,.movers li{color:#dde5ef}
+  .movers .mover-none{color:#aab7c9}
+  .movers .mv-pos{color:#aab7c9}
   .mv-since{color:#aab7c9}
   .adp-up{color:#6ee7b7}
   .adp-down{color:#ff9b91}
