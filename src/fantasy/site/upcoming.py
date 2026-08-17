@@ -121,7 +121,18 @@ _BOARD_CSS = """<style>
 .adp-controls input,.adp-controls select{padding:6px 10px;border:1px solid #e2e8f0;
   border-radius:8px;font-size:14px;background:#fff;color:#0f172a}
 .adp-controls input{min-width:170px}
-.adp-wrap{max-height:620px;overflow:auto;border:1px solid #e5e7eb;border-radius:12px;
+/* The column headers are sticky to this box, not to the viewport — `th` can
+   only stick to its nearest scrolling ancestor, and this box has to be one so
+   the table can scroll sideways on a phone. A short box therefore let the page
+   scroll it (and the headers with it) up behind the site header, leaving bare
+   rows under the nav.
+
+   Sizing it to the viewport keeps it on screen once you reach it, and
+   overscroll-behavior stops a wheel over the table from chaining to the page
+   and dragging the headers away. */
+.adp-wrap{max-height:calc(100vh - 150px);min-height:320px;overflow:auto;
+  overscroll-behavior:contain;scroll-margin-top:120px;
+  border:1px solid #e5e7eb;border-radius:12px;
   background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.05)}
 /* border-collapse:separate, not collapse: collapsed borders are painted as
    part of the table's own border grid rather than with the cell, so rows
