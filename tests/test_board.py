@@ -91,3 +91,37 @@ def test_cached_board_missing_a_source_is_treated_as_stale(tmp_path, monkeypatch
 
     adp_board.board(2026)
     assert refetched["called"], "a cache missing a SOURCES column must be refetched"
+
+
+# --------------------------------------------------------------------------- #
+# Scheduled tasks
+# --------------------------------------------------------------------------- #
+
+def test_cbb_task_is_registered_and_refuses_to_run_out_of_season():
+    """_cbb() used to raise NotImplementedError. Now it is wired, but the feeds
+    keep serving last season's numbers in the off-season, so turning `cbb` on
+    in September must not republish March's bracket as if it were current."""
+    import io
+    import contextlib
+    from datetime import date, timedelta
+
+    from cbb.render.render_home import CBB_SEASON_END, CBB_TIPOFF
+    from gordstats import daily
+
+    assert "cbb" in daily.TASKS
+
+    if CBB_TIPOFF <= date.today() <= CBB_SEASON_END:
+        pytest.skip("in season — the guard is not the path under test today")
+
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        daily.TASKS["cbb"]()
+    assert "season" in buf.getvalue().lower(), \
+        "out of season, _cbb() must decline rather than rebuild from stale feeds"
+
+
+def test_every_task_in_the_table_is_callable():
+    from gordstats import daily
+
+    for name, fn in daily.TASKS.items():
+        assert callable(fn), f"task {name} is not callable"

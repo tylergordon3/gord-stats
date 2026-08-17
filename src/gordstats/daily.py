@@ -51,17 +51,42 @@ def _wnba() -> None:
 
 
 def _cbb() -> None:
-    """Refresh the men's and women's college basketball predictions.
+    """Scrape the day's college basketball feeds and rebuild the predictions.
 
-    Not automated yet: the pipeline in `cbb.main` still runs behind manual
-    flags, and the model deps (scikit-learn, statsmodels, selenium, the KenPom
-    wrapper) aren't installed on the Pi. Failing loudly here keeps a typo in
-    --tasks from quietly publishing a half-built site.
+    Mirrors what `cbb.main` does by hand: pull the day's data, run the men's
+    and women's models, then re-render the conference pages. The homepage is
+    rendered once for every task by main(), so it is not repeated here.
+
+    Refuses to run outside the season. The feeds keep serving last season's
+    numbers in the off-season, so without this guard turning `cbb` on in
+    September would quietly republish March's bracket as if it were current.
+
+    The model imports are deliberately local: scikit-learn and joblib cost a
+    few seconds to load and the wnba-only path should not pay for them.
     """
-    raise NotImplementedError(
-        "the CBB section isn't automated yet — see cbb/main.py for the manual "
-        "steps, and environment_pi.yml for the extra dependencies it needs"
-    )
+    from datetime import date
+
+    from cbb import daily_data, predictions
+    from cbb.render import render_conferences as rc
+    from cbb.render.render_home import CBB_SEASON_END, CBB_TIPOFF
+
+    today = date.today()
+    if not CBB_TIPOFF <= today <= CBB_SEASON_END:
+        print(f"  outside the {CBB_TIPOFF:%b %-d}-{CBB_SEASON_END:%b %-d} season; nothing to do")
+        return
+
+    # daily_data reports rather than raises, so a partial scrape has to be
+    # turned into a failure here: predictions built on half the feeds are
+    # worse than no update at all. main() records the task as failed and
+    # still renders the homepage, so the rest of the site publishes.
+    if not daily_data.main():
+        raise RuntimeError("one or more college basketball feeds failed to scrape")
+
+    _, mens = predictions.predict(today)
+    _, womens = predictions.predict_womens(today)
+
+    rc.main(mens, "M")
+    rc.main(womens, "W")
 
 
 def _fantasy() -> None:

@@ -8,8 +8,10 @@
 # of a dev environment including torch, which has no aarch64 wheel on PyPI at
 # all. Neither is imported by the sections that actually run here.
 #
-# When the CBB section gets automated, that's the moment to add the model stack
-# — see the note in src/gordstats/daily.py.
+# The college basketball model stack is included but the section is not enabled
+# in TASKS yet: the feeds only carry current-season numbers once the season
+# starts, so _cbb() refuses to run before tipoff (Nov 2). Installing the deps
+# now means the switch is one edit to TASKS rather than a deploy on the night.
 
 # --- shared ---
 pandas>=2.2
@@ -24,6 +26,22 @@ python-dotenv
 # browser profile, which a headless Pi doesn't have — but ESPN_S2/SWID from the
 # env file take priority, so it's imported and never used. Still has to install.
 browser-cookie3
+
+# --- college basketball model ---
+# aarch64 wheels exist for all of these, so nothing compiles on the Pi.
+scikit-learn
+joblib
+pytz                     # cbb.daily_data
+# Not on PyPI — it is Tyler's own wrapper. Pinned to the commit that was in the
+# dev env, because a scraper wrapper that changes shape silently is worse than
+# one that stays put.
+kenpom-wrapper @ git+https://github.com/tylergordon3/kenpom-py-api-wrapper.git@cd45558dd9da99a63996c303c06a6c6c2d1b0e89
+# cbb.predictions imports cbb.scraper, which imports playwright at module
+# level, so the package is needed just to load the model code. The browser
+# binary is a separate ~300MB download and is only required by the Torvik
+# scrapers, which are currently commented out of daily_data.main(). If those
+# are re-enabled, `playwright install chromium` becomes part of the bootstrap.
+playwright
 
 # --- fantasy football ---
 nflreadpy
