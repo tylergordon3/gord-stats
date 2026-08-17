@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "pulled_at": "2026-08-16T21:38:08.175708-04:00",
-    "pulled_at_readable": "2026-08-16 09:38:08 PM EDT",
+    "pulled_at": "2026-08-16T21:48:10.519761-04:00",
+    "pulled_at_readable": "2026-08-16 09:48:10 PM EDT",
     "league_id": 1039832288,
     "season": 2026
   },
@@ -18253,7 +18253,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "10",
                     "lastName": "Howard",
-                    "lastNewsDate": 1786670520000,
+                    "lastNewsDate": 1786928760000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -18887,7 +18887,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "10",
                     "lastName": "Howard",
-                    "lastNewsDate": 1786670520000,
+                    "lastNewsDate": 1786928760000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -19765,7 +19765,7 @@
                     "injuryStatus": "ACTIVE",
                     "jersey": "10",
                     "lastName": "Howard",
-                    "lastNewsDate": 1786670520000,
+                    "lastNewsDate": 1786928760000,
                     "proTeamId": 20,
                     "stats": [
                       {
@@ -40795,7 +40795,7 @@
                   "injuryStatus": "ACTIVE",
                   "jersey": "10",
                   "lastName": "Howard",
-                  "lastNewsDate": 1786670520000,
+                  "lastNewsDate": 1786928760000,
                   "ownership": {
                     "auctionValueAverage": 15.6,
                     "averageDraftPosition": 22.17,
