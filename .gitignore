@@ -55,3 +55,9 @@ data/live_scores.json
 
 # Fantasy player DB build artifacts (regenerable via `python -m fantasy.data_manager`)
 data/fantasy/players/
+
+# Refetched at the start of every WNBA run (wnba_remaining.wnba_update calls
+# wnba_fantasy.fetch_and_save before reading it), and the live job runs every
+# 10 minutes — 3.5MB rewritten ~11x a day had accumulated 448MB of history,
+# the single largest thing in this repo.
+data/wnba/wnba_fantasy_data.json
