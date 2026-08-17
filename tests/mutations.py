@@ -74,6 +74,23 @@ MUTATIONS = [
      "  .sub-nav a {\n    font-weight: 600;",
      "test_light_only_text_colours_are_not_invisible_on_dark"),
 
+    # Both halves of the kicker/defense exclusion, which fail independently:
+    # the rows have to go everywhere the board is served, and the pick numbers
+    # have to survive the drop.
+    ("streamers filtered on fetch but not on the cached board",
+     "src/fantasy/league/adp_board.py",
+     "            return _drop_streamers(_ensure_ranks(_blank_movement(cached)))",
+     "            return _ensure_ranks(_blank_movement(cached))",
+     "test_a_cache_written_before_the_exclusion_is_still_filtered"),
+
+    ("board renumbered after the streamers were dropped",
+     "src/fantasy/league/adp_board.py",
+     '    return df[~df["pos"].isin(STREAMER_POS)].reset_index(drop=True)',
+     '    out = df[~df["pos"].isin(STREAMER_POS)].reset_index(drop=True)\n'
+     '    out["Ovr"] = range(1, len(out) + 1)\n'
+     '    return out',
+     "test_dropping_streamers_does_not_renumber_the_picks"),
+
     ("nav href rewriting restored in the layout",
      "docs/_layouts/default.html",
      "  <script>",
