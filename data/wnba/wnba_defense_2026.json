@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-16T21:29:00.432152-04:00",
+ "updated": "2026-08-16T21:38:09.128363-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -30789,6 +30789,140 @@
       "Isobel Borlase",
       "G",
       18.0
+     ]
+    ]
+   }
+  },
+  "401857149": {
+   "date": "2026-08-16",
+   "allowed": {
+    "POR": {
+     "G": 57.0,
+     "FC": 103.0
+    },
+    "PHX": {
+     "G": 62.0,
+     "FC": 107.0
+    }
+   },
+   "players": {
+    "POR": [
+     [
+      "Bridget Carleton",
+      "FC",
+      20.0
+     ],
+     [
+      "Emily Engstler",
+      "FC",
+      21.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      11.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      28.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      34.0
+     ],
+     [
+      "Sania Feagin",
+      "FC",
+      0.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      16.0
+     ],
+     [
+      "Luisa Geiselsoder",
+      "FC",
+      0.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      11.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      13.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      5.0
+     ],
+     [
+      "Sarah Ashlee Barker",
+      "G",
+      0.0
+     ],
+     [
+      "Jordan Harrison",
+      "G",
+      10.0
+     ]
+    ],
+    "PHX": [
+     [
+      "DeWanna Bonner",
+      "FC",
+      35.0
+     ],
+     [
+      "Alyssa Thomas",
+      "FC",
+      42.0
+     ],
+     [
+      "Noemie Brochant",
+      "FC",
+      4.0
+     ],
+     [
+      "Sami Whitcomb",
+      "G",
+      22.0
+     ],
+     [
+      "Kahleah Copper",
+      "G",
+      29.0
+     ],
+     [
+      "Valeriane Ayayi",
+      "FC",
+      5.0
+     ],
+     [
+      "Natasha Mack",
+      "FC",
+      14.0
+     ],
+     [
+      "Marta Suarez",
+      "FC",
+      3.0
+     ],
+     [
+      "Jovana Nogic",
+      "G",
+      0.0
+     ],
+     [
+      "Lexi Held",
+      "G",
+      6.0
      ]
     ]
    }
