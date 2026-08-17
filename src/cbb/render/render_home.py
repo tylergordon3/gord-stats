@@ -255,6 +255,8 @@ def render_home():
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    fm = "---\nlayout: default\ntitle: GordStats Home\n---\n"
+    # No page title: jekyll-seo-tag then renders the site title and tagline,
+    # which is a better tab than "GordStats Home | GordStats".
+    fm = "---\nlayout: default\n---\n"
     with open(path, "w", encoding="utf-8") as f:
         f.write(fm + html.lstrip())

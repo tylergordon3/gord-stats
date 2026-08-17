@@ -9,6 +9,16 @@
     href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
   {% seo %}
+
+  {%- comment -%}
+  Brand icons. /favicon.ico is still requested by name by some clients no
+  matter what these tags say, so it exists at the root as well.
+  {%- endcomment -%}
+  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/images/brand/icon-32.png' | relative_url }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/brand/icon-180.png' | relative_url }}">
+  <link rel="manifest" href="{{ '/site.webmanifest' | relative_url }}">
+  <meta name="theme-color" content="#1B2340">
   {% include head-custom.html %}
 </head>
 
@@ -28,7 +38,7 @@ resolution in _includes/nav.html.
   <!-- HEADER -->
   <header id="site-header">
     <div class="site-header-inner">
-      <a class="site-brand no-rewrite" href="{{ '/index.html' | relative_url }}">Gord<span>Stats</span></a>
+      <a class="site-brand no-rewrite" href="{{ '/index.html' | relative_url }}">GORD<span>STATS</span></a>
       {% include nav.html %}
       {% if page.dir == "/men/" or page.dir == "/women/" %}
       <!-- League toggle only where it means something -->

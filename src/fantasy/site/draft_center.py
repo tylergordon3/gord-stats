@@ -49,7 +49,7 @@ def body() -> str:
 
 def generate():
     """Build and write the combined draft page."""
-    page = add_front_matter(layout.HEAD + body(), "Draft")
+    page = add_front_matter(layout.HEAD + body(), "Fantasy Draft")
     out = paths.WEB_DRAFT
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")

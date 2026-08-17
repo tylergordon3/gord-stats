@@ -12,12 +12,29 @@ collections:
   posts:
     output          : true
   
+# Feeds jekyll-seo-tag: the browser tab, the search snippet and the link
+# preview all come from here. Without a title/description it was emitting a
+# bare page name and no summary at all.
+title: GordStats
+tagline: College basketball, WNBA and fantasy football
+description: >-
+  Machine-learning March Madness bracketology, a WNBA fantasy dashboard, and a
+  five-site fantasy football ADP board. Rebuilt daily.
+author: Tyler Gordon
+logo: /assets/images/brand/icon-512.png
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/images/brand/icon-512.png
+
 url: "https://www.gordstats.com"
 baseurl: ""
 
 # Handling Reading
 safe                : false
-include             : [".htaccess", "_redirects"]
+include             : [".htaccess", "_redirects", "site.webmanifest"]
 exclude             : ["Gemfile", "Gemfile.lock", "node_modules", "vendor/bundle/", "vendor/cache/", "vendor/gems/", "vendor/ruby/"]
 keep_files          : [".git", ".svn"]
 encoding            : "utf-8"

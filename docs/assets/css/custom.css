@@ -40,14 +40,30 @@ body {
 .site-brand {
   font-weight: 900;
   font-size: 1.2rem;
-  letter-spacing: -0.02em;
-  color: #0f172a !important;
+  letter-spacing: 0.01em;
+  color: #1B2340 !important;
   text-decoration: none;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The orange rule between GORD and STATS, matching the app icon. Drawn rather
+   than shipped as an image so it stays crisp and follows the theme. */
+.site-brand span::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 0.95em;
+  margin-right: 8px;
+  vertical-align: -0.12em;
+  background: #EE8434;
+  border-radius: 1px;
 }
 
 .site-brand span {
-  color: #047857;
+  color: #1B2340;
 }
 
 #site-header #nav {
