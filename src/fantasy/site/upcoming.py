@@ -145,6 +145,17 @@ table.adp-table th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334
   border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;
   -webkit-user-select:none;user-select:none}
 table.adp-table th:hover{background:#e2e8f0}
+
+/* Wide screens: the table fits without scrolling sideways (measured — it needs
+   ~985px and gets it above about 1100px viewport), so the box does not have to
+   be a scroll container here. Dropping that makes the viewport the header's
+   sticky ancestor, so it pins just under the site header instead of riding a
+   620px box up off the screen. Narrow screens keep the box, because there the
+   table genuinely has to scroll sideways. */
+@media (min-width: 1120px) {
+  .adp-wrap{max-height:none;min-height:0;overflow:visible}
+  table.adp-table th{top:100px}
+}
 table.adp-table th.sorted::after{content:' \\25BE';font-size:11px}
 table.adp-table th.sorted.asc::after{content:' \\25B4'}
 table.adp-table td{border-right:1px solid #eef2f7;border-bottom:1px solid #eef2f7;padding:5px 10px;text-align:center;white-space:nowrap;
