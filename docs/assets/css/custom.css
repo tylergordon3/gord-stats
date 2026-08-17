@@ -907,7 +907,10 @@ h3 {
   text-align: center;
 }
 
-p {
+/* Scoped to the conference blocks these rules sit among. Unscoped, this
+   centred every paragraph on the site — tolerable on a wide column, but on a
+   phone it turns body copy into a ragged diamond. */
+.conference-block p {
   text-align: center;
 }
 
@@ -3122,6 +3125,12 @@ summary.team-report-header::after {
   scrollbar-width: none;              /* the rows are short; a bar adds noise */
   -webkit-overflow-scrolling: touch;
   gap: 2px;
+  /* `safe` matters. A plain `center` on a scroll container pushes overflowing
+     content off BOTH edges, and the part past the left edge cannot be scrolled
+     back to — scrollLeft is already 0. That is why the nav read "ome" and
+     "ule Stats" on a phone. `safe center` falls back to start when it would
+     overflow, and still centres when everything fits. */
+  justify-content: safe center;
 }
 
 .simple-nav::-webkit-scrollbar { display: none; }
@@ -3528,6 +3537,9 @@ img {
   .mv-win,
   .adp-pos {
     min-height: 44px;
+    /* border-box, or the padding adds to min-height and a 44px target renders
+       62px tall — with two nav rows that alone cost 36px of screen. */
+    box-sizing: border-box;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -3687,4 +3699,61 @@ img {
 
 .skip-link:focus {
   left: 0;
+}
+
+
+/* =========================================================
+   MOBILE HEADER
+   The header is a flex row: brand on the left, both nav rows
+   on the right. At 390px that left the nav 214px to work in,
+   so it scrolled sideways mid-word and the whole header stood
+   183px tall — nearly a quarter of the screen.
+
+   Stacking gives each row the full width, and the rows scroll
+   independently rather than the block scrolling as one.
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .site-header-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 4px 10px;
+  }
+
+  /* The brand is the one thing here that isn't really a tap target, so it
+     does not need the 44px the nav links do. */
+  .site-brand {
+    font-size: 1rem;
+    padding: 0;
+    min-height: 32px;
+    align-self: flex-start;
+  }
+
+  #nav {
+    width: 100%;
+  }
+
+  /* The desktop rule gives each row 12px of bottom margin. Across two rows
+     plus the brand that is 28px of empty header on a 780px screen. */
+  .site-sections,
+  .sub-nav {
+    margin: 0;
+  }
+
+  .site-sections a {
+    font-size: 0.84rem;
+    padding: 0 10px;
+    min-height: 38px;
+  }
+
+  .sub-nav a {
+    font-size: 0.78rem;
+    padding: 0 9px;
+    min-height: 36px;
+  }
+
+  .sub-nav {
+    padding-top: 2px;
+  }
 }
