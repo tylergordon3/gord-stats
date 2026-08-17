@@ -100,7 +100,7 @@ body {
 
 .simple-nav a:hover {
   background: #f1f5f9;
-  color: #047857 !important;
+  color: #A34F0A !important;
 }
 
 .nav-inner {
@@ -2480,7 +2480,7 @@ p {
   display: inline-block;
   padding: 10px 18px;
   border-radius: 999px;
-  background: #059669;
+  background: #A34F0A;
   color: #fff !important;
   font-weight: 800;
   font-size: 0.9rem;
@@ -2489,7 +2489,7 @@ p {
 }
 
 .dashboard-link:hover {
-  background: #047857;
+  background: #8A420A;
 }
 
 /* -----------------------------
@@ -3135,8 +3135,8 @@ summary.team-report-header::after {
 }
 
 .site-sections a.active {
-  background: #e8f7f0;
-  color: #047857 !important;
+  background: #FDF0E4;
+  color: #A34F0A !important;
 }
 
 /* Level 2 — pages within the current section, indented under it by a
@@ -3155,12 +3155,12 @@ summary.team-report-header::after {
 }
 
 .sub-nav a:hover {
-  color: #047857 !important;
+  color: #A34F0A !important;
 }
 
 .sub-nav a.active {
   background: #f1f5f9;
-  color: #047857 !important;
+  color: #A34F0A !important;
 }
 
 /* Phones: keep both rows, shrink the chrome rather than drop a row.
@@ -3183,8 +3183,8 @@ summary.team-report-header::after {
   }
 
   .site-sections a.active {
-    background: #123c2e;
-    color: #6ee7b7 !important;
+    background: #3A2412;
+    color: #F5A968 !important;
   }
 
   .sub-nav {
@@ -3197,7 +3197,7 @@ summary.team-report-header::after {
 
   .sub-nav a:hover,
   .sub-nav a.active {
-    color: #6ee7b7 !important;
+    color: #F5A968 !important;
   }
 
   .sub-nav a.active {
@@ -3226,7 +3226,7 @@ summary.team-report-header::after {
   white-space: nowrap;
   /* Explicit, because the inherited link colour sits at 4.11:1 on this
      bar's #f1f5f9 ground — just under AA. */
-  color: #047857;
+  color: #A34F0A;
 }
 
 details.section {
@@ -3320,10 +3320,10 @@ details.section>*:not(summary) {
 }
 
 .view-switch button.active {
-  background: #047857;
+  background: #A34F0A;
   color: #fff;
   font-weight: 700;
-  border-color: #047857;
+  border-color: #A34F0A;
 }
 
 
@@ -3638,7 +3638,7 @@ img {
   }
 
   .section-nav a:hover {
-    color: #6ee7b7;
+    color: #F5A968;
   }
 
   /* View switchers (season / round / position pills) */
@@ -3653,7 +3653,7 @@ img {
   }
 
   .view-switch button.active {
-    background: #047857;
+    background: #A34F0A;
     color: #ffffff;
   }
 

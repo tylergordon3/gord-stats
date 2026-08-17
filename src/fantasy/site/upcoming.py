@@ -50,13 +50,13 @@ MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
 
 _COUNTDOWN_CSS = """<style>
 .draft-banner{margin:14px 0 18px;padding:16px 18px;border-radius:14px;
-  background:linear-gradient(135deg,#064e3b,#047857);color:#fff;text-align:center;
-  box-shadow:0 2px 8px rgba(5,150,105,.25)}
+  background:linear-gradient(135deg,#141B33,#2A3557);color:#fff;text-align:center;
+  box-shadow:0 2px 8px rgba(27,35,64,.25)}
 .draft-banner .draft-when{font-size:15px;letter-spacing:.04em;opacity:.85;margin:0 0 4px}
 .draft-banner .draft-title{font-size:20px;font-weight:700;margin:0 0 12px}
 .countdown{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .countdown .unit{min-width:74px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.12)}
-.countdown .num{font-size:28px;font-weight:700;font-family:monospace;line-height:1.1}
+.countdown .num{font-size:28px;font-weight:700;font-family:monospace;line-height:1.1;color:#F5A968}
 .countdown .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.09em;opacity:.8}
 .draft-banner .draft-note{margin:10px 0 0;font-size:13px;opacity:.8}
 @media (max-width:600px){
@@ -117,7 +117,7 @@ _BOARD_CSS = """<style>
   border-radius:999px;font-size:14px;font-weight:600;color:#334155;
   box-shadow:0 1px 2px rgba(15,23,42,.04)}
 .adp-controls button:hover{background:#f1f5f9}
-.adp-controls button.active{background:#059669;color:#fff;font-weight:700;border-color:#047857}
+.adp-controls button.active{background:#A34F0A;color:#fff;font-weight:700;border-color:#8A420A}
 .adp-controls input,.adp-controls select{padding:6px 10px;border:1px solid #e2e8f0;
   border-radius:8px;font-size:14px;background:#fff;color:#0f172a}
 .adp-controls input{min-width:170px}
@@ -242,7 +242,7 @@ table.adp-table td.pick{color:#4a5a68}
   /* Filter controls */
   .adp-controls button{background:#1b2540;border-color:#2b3852;color:#dde5ef}
   .adp-controls button:hover{background:#26365c}
-  .adp-controls button.active{background:#047857;border-color:#065f46;color:#fff}
+  .adp-controls button.active{background:#A34F0A;border-color:#8A420A;color:#fff}
   .adp-controls input,.adp-controls select{background:#1b2540;border-color:#2b3852;color:#dde5ef}
   .adp-controls input::placeholder{color:#8b99ad}
 
