@@ -123,7 +123,11 @@ _BOARD_CSS = """<style>
 .adp-controls input{min-width:170px}
 .adp-wrap{max-height:620px;overflow:auto;border:1px solid #e5e7eb;border-radius:12px;
   background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.05)}
-table.adp-table{width:100%;border-collapse:collapse;font-size:14px;font-family:monospace}
+/* border-collapse:separate, not collapse: collapsed borders are painted as
+   part of the table's own border grid rather than with the cell, so rows
+   scrolled under a position:sticky header show through its edges. Spacing is
+   zeroed and the grid drawn with per-cell right/bottom borders instead. */
+table.adp-table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;font-family:monospace}
 table.adp-table th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334155;
   padding:8px 10px;text-align:center;cursor:pointer;white-space:nowrap;font-size:12px;
   text-transform:uppercase;letter-spacing:.03em;
@@ -132,7 +136,7 @@ table.adp-table th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334
 table.adp-table th:hover{background:#e2e8f0}
 table.adp-table th.sorted::after{content:' \\25BE';font-size:11px}
 table.adp-table th.sorted.asc::after{content:' \\25B4'}
-table.adp-table td{border:1px solid #eef2f7;padding:5px 10px;text-align:center;white-space:nowrap;
+table.adp-table td{border-right:1px solid #eef2f7;border-bottom:1px solid #eef2f7;padding:5px 10px;text-align:center;white-space:nowrap;
   background:#fff;color:#0f172a}
 table.adp-table td.name{text-align:left;font-family:inherit}
 table.adp-table tbody tr:nth-child(even) td{background:#f8fafc}
@@ -141,6 +145,12 @@ table.adp-table tbody tr:hover td{background:#eef2f6}
   font-size:12px;font-weight:700}
 .pos-QB{background:#c1436b}.pos-RB{background:#278259}.pos-WR{background:#2b7ba8}
 .pos-TE{background:#946e22}.pos-K{background:#7a6bbd}.pos-DST{background:#6b7785}
+/* The overall pick rides along in the slot cell, quieter than the round.pick
+   it sits beside. */
+.slot-ovr{color:#5d6b7e;font-size:12px}
+/* Avg leads the site columns and is what the board sorts on, so it carries a
+   little more weight than the working beside it. */
+table.adp-table td.avg{font-weight:700}
 .adp-early{background:#d8f0dd!important;color:#14532d!important}
 .adp-late{background:#fadddd!important;color:#7f1d1d!important}
 .adp-meta{font-size:13px;color:#4a5a68;margin:6px 0 0}
@@ -174,11 +184,10 @@ table.adp-table td.pick{color:#4a5a68}
   .adp-wrap{max-height:70vh}
   .movers{gap:8px}
   .movers .mover-card{flex:1 1 100%}
-  /* A phone screen only fits ~6 columns, so every ADP number sat off to the
-     right. Drop Ovr, since Pick says the same thing in the form you draft in,
-     and pin the name so the numbers keep a player attached to them while the
-     table scrolls sideways. */
-  table.adp-table .ovr{display:none}
+  /* Ovr used to be dropped here to save a column; it now rides inside the
+     slot cell instead. The name stays pinned so the numbers keep a player
+     attached to them while the table scrolls sideways. */
+  .slot-ovr{display:none}
   table.adp-table td,table.adp-table th{padding:5px 7px}
   table.adp-table td.name,table.adp-table th.name{position:sticky;left:0;
     max-width:118px;overflow:hidden;text-overflow:ellipsis;
@@ -224,7 +233,8 @@ table.adp-table td.pick{color:#4a5a68}
   /* Muted greys that read fine on white and vanish on dark. .adp-empty only
      appears when a filter matches nothing, so it is guarded here rather than
      found later by someone searching for a player who isn't on the board. */
-  table.adp-table td.pick{color:#aab7c9}
+  table.adp-table td.pick{color:#dde5ef}
+  .slot-ovr{color:#aab7c9}
   .adp-meta,.adp-empty{color:#aab7c9}
   .movers ol,.movers li{color:#dde5ef}
   .movers .mover-none{color:#aab7c9}
@@ -320,17 +330,22 @@ function cells(r){
     if(worst===null||r[i]>r[worst]) worst=i;
   });
   // Pos carries the position and the rank in it on one tag: a green RB1.
-  var html='<td class="ovr">'+(r[OVR]===null?'-':r[OVR])+'</td>'
-          +'<td class="pick">'+(r[PICK]||'-')+'</td>'
+  // Slot reads "1.1 (1)": the round.pick you actually draft at, with the
+  // overall pick beside it, so the two former columns cost one.
+  var slot = (r[PICK]||'-') + (r[OVR]===null?'':' <span class="slot-ovr">('+r[OVR]+')</span>');
+  var html='<td class="pick">'+slot+'</td>'
           +'<td class="name">'+r[0]+'</td>'
           +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+(r[POSRK]===null?'':r[POSRK])+'</span></td>'
-          +'<td>'+(r[2]||'-')+'</td>';
+          +'<td>'+(r[2]||'-')+'</td>'
+          // Avg leads the sites: it is the number the board is sorted and
+          // drafted on, and the per-site columns are the working behind it.
+          +'<td class="avg">'+fmt(r[AVG])+'</td>';
   SITES.forEach(function(i){
     var cls = (best!==null&&worst!==null&&best!==worst)
       ? (i===best?' class="adp-early"':i===worst?' class="adp-late"':'') : '';
     html+='<td'+cls+'>'+fmt(r[i])+'</td>';
   });
-  return html+'<td>'+fmt(r[AVG])+'</td>'+moveCell(r[MOVE])+'<td>'+fmt(r[SPREAD])+'</td>';
+  return html+moveCell(r[MOVE])+'<td>'+fmt(r[SPREAD])+'</td>';
 }
 
 function draw(){
@@ -420,7 +435,7 @@ def _controls(has_movement: bool) -> str:
 _LABELS = {"player": "Player", "PosRk": "Pos", "team": "Tm",
            "Ovr": "Ovr", "Pick": "Pick"}
 _TIPS = dict({
-    "Ovr": "Overall pick this board's average ADP puts him at",
+    "Ovr": f"Round and pick in a {LEAGUE_TEAMS}-team draft, with the overall pick in brackets",
     "Pick": f"Round and pick that lands on in a {LEAGUE_TEAMS}-team draft",
     "PosRk": "Position, and where he ranks in it on this board",
     "Avg": "Average of the site ADPs in this row",
@@ -443,11 +458,11 @@ def _header() -> str:
     """
     # Pick has no sort of its own: it is Ovr in draft form, and sorting its
     # "2.10" strings as text would put 10.1 before 2.1. Sort on Ovr beside it.
-    slot = [(_FIELDS.index("Ovr"), "Ovr", "ovr"), (-2, "Pick", "pick")]
+    slot = [(_FIELDS.index("Ovr"), "Pick", "pick")]
     who = [(_FIELDS.index(f), _LABELS[f], "name" if f == "player" else None)
            for f in ["player", "PosRk", "team"]]
-    numbers = [(_FIELDS.index(f), _LABELS.get(f, f), None)
-               for f in list(SOURCES) + ["Avg"]]
+    numbers = [(_FIELDS.index(f), _LABELS.get(f, f), "avg" if f == "Avg" else None)
+               for f in ["Avg"] + list(SOURCES)]
     spread = [(_FIELDS.index("Spread"), "Spread", None)]
 
     opening = WINDOWS["last"]
