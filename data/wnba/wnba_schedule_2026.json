@@ -6023,7 +6023,7 @@
           "id": 25016,
           "home": "CON",
           "away": "LA",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"
@@ -6034,7 +6034,7 @@
           "id": 25016,
           "home": "CON",
           "away": "LA",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"
@@ -6045,7 +6045,7 @@
           "id": 25017,
           "home": "TOR",
           "away": "IND",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"
@@ -6056,7 +6056,7 @@
           "id": 25017,
           "home": "TOR",
           "away": "IND",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"
