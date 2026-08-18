@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-08-17",
+  "fetched_on": "2026-08-18",
   "season": 2026,
   "total_games": 333,
   "schedule": {
@@ -5999,7 +5999,7 @@
           "id": 25015,
           "home": "GS",
           "away": "DAL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-17"
@@ -6010,7 +6010,7 @@
           "id": 25015,
           "home": "GS",
           "away": "DAL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-17"

@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-17T23:50:04.690637-04:00",
+ "updated": "2026-08-18T05:36:06.426415-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -30923,6 +30923,130 @@
       "Lexi Held",
       "G",
       6.0
+     ]
+    ]
+   }
+  },
+  "401857151": {
+   "date": "2026-08-18",
+   "allowed": {
+    "DAL": {
+     "G": 61.0,
+     "FC": 92.0
+    },
+    "GS": {
+     "G": 64.0,
+     "FC": 81.0
+    }
+   },
+   "players": {
+    "DAL": [
+     [
+      "Alysha Clark",
+      "FC",
+      10.0
+     ],
+     [
+      "Jessica Shepard",
+      "FC",
+      15.0
+     ],
+     [
+      "Alanna Smith",
+      "FC",
+      25.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      29.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      29.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      13.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      18.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      3.0
+     ],
+     [
+      "Sug Sutton",
+      "G",
+      3.0
+     ],
+     [
+      "Costanza Verona",
+      "G",
+      0.0
+     ]
+    ],
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      12.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      44.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      12.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      7.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      32.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      0.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      17.0
+     ],
+     [
+      "Iliana Rupert",
+      "FC",
+      0.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      19.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      7.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      3.0
      ]
     ]
    }
