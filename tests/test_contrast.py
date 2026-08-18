@@ -47,6 +47,12 @@ LIGHT_ISLANDS = {
     ".date-header": "CBB scoreboard date divider — untreated",
     ".lock-tag": "CBB bracket lock pill — untreated",
     ".st-unk": "CBB scoreboard status pill — sits on .game-card, carries its own dark text",
+    # The draft grid keeps each pick's position colour with black text in both
+    # themes, so the frozen round column has to stay light with it. Giving it a
+    # dark counterpart is what *caused* a 1.26:1 cell — this test can tell that
+    # a dark background exists, not that the text on it is readable.
+    ".draft-board tbody th:first-child": "draft grid is a light island in both themes",
+    ".draft-board thead th:first-child": "draft grid is a light island in both themes",
     # Row striping painted on the <tr>. Every cell over it gets an opaque
     # background of its own from `.sticky-table td` in the dark block, so the
     # row colour is covered rather than exposed.

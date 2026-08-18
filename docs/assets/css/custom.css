@@ -3860,3 +3860,230 @@ img {
     background: #26365c;
   }
 }
+
+
+/* =========================================================
+   WIDE TABLES ON A PHONE
+   Every wide table already scrolls inside its own box, so the
+   page never pans sideways. What was missing is any sign that
+   the box scrolls at all — measured at 390px, the schedule grid
+   runs 1263px past its right edge, the draft board 906px, the
+   ADP board 481px, and each one simply looked cut off.
+
+   The classes here are set by assets/js/table-scroll.js, which
+   only marks a box whose content actually overflows, so none of
+   this shows on a desktop or beside a table that fits.
+   ========================================================= */
+
+.table-scroll,
+.table-container,
+.adp-wrap {
+  position: relative;                 /* the hint anchors to the box */
+}
+
+/* The season / round switchers and the in-page "Jump to" bar scroll sideways
+   for the same reason the tables do, and were just as silent about it. */
+.view-switch,
+.section-nav {
+  scroll-padding-inline: 12px;
+}
+
+/* `mask` rather than a gradient overlay: an overlay would sit above the table
+   and swallow taps on the last column, and would need repainting in the dark
+   theme.
+
+   Only the trailing edge fades. Fading the leading edge as well — the obvious
+   symmetric version — dimmed the frozen identity column, which is pinned at
+   that edge: mid-scroll on the schedule grid, "PROFESSIONAL FRAT…" and
+   "LOTTA COX" lost their first letters to it. The frozen column is the one
+   thing that has to stay solid, and there is nothing to hint at on the left
+   anyway, since the reader has already been there. */
+.table-scroll.scroll-start,
+.table-container.scroll-start,
+.adp-wrap.scroll-start,
+.view-switch.scroll-start,
+.section-nav.scroll-start,
+.table-scroll.scroll-mid,
+.table-container.scroll-mid,
+.adp-wrap.scroll-mid,
+.view-switch.scroll-mid,
+.section-nav.scroll-mid {
+  mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+}
+
+/* Said once, in words, for the tables where the fade alone understates how
+   much is off screen. It leaves for good the first time the reader scrolls. */
+.scroll-hint {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  display: none;                      /* phones only — see below */
+  width: max-content;
+  margin: 0 0 4px 2px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(27, 35, 64, 0.86);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+@media (max-width: 767px) {
+  .is-scrollable > .scroll-hint {
+    display: block;
+  }
+
+  .scrolled-once > .scroll-hint {
+    opacity: 0;
+  }
+
+  /* The frozen identity column was 180px on a 390px screen, so the column you
+     already know took more of the width than every number you came to read.
+     150px still fits "Kraft YAC-N-Chee" before the ellipsis. */
+  .sticky-table td:first-child,
+  .sticky-table th:first-child {
+    min-width: 150px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Tables that never got a frozen column: scrolling right on these lost the
+     round, or the player, that the row belonged to. */
+  .draft-board tbody th:first-child,
+  .draft-board thead th:first-child,
+  .pickups-table tbody td:first-child,
+  .pickups-table thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: #eef2f7;
+  }
+
+  .draft-board tbody th:first-child,
+  .draft-board thead th:first-child {
+    box-shadow: 2px 0 4px -2px rgba(15, 23, 42, 0.3);
+  }
+
+  .draft-board thead th:first-child,
+  .pickups-table thead th:first-child {
+    z-index: 4;
+  }
+
+  /* The pickups table leads with a row number, so freezing "the first column"
+     froze a counter and let the player's name scroll away — the one thing the
+     row is about. The number is pinned narrow and the name pinned beside it,
+     which together cost less width than the 150px identity column elsewhere. */
+  .pickups-table thead th:first-child,
+  .pickups-table tbody td:first-child {
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    padding-left: 4px;
+    padding-right: 4px;
+    text-align: right;
+  }
+
+  .pickups-table thead th:nth-child(2),
+  .pickups-table tbody td:nth-child(2) {
+    position: sticky;
+    /* Set by assets/js/table-scroll.js from the rendered width of the number
+       column; the fallback only has to be close for the first paint. */
+    left: var(--pin-2nd, 33px);
+    z-index: 3;
+    min-width: 118px;
+    max-width: 118px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: #ffffff;
+    box-shadow: 2px 0 4px -2px rgba(15, 23, 42, 0.3);
+  }
+
+  .pickups-table thead th:nth-child(2) {
+    z-index: 4;
+    background: #eef2f7;
+  }
+
+  /* Type floor. Measured on a phone: the countdown labels were 9.6px, the
+     bracket seeds 10.9px, the scoreboard sort chips 11px. Data cells hold at
+     12px — smaller buys a column and costs the reader the row. */
+  .pill-label,
+  .time-pill span {
+    font-size: 11px;
+  }
+
+  .bseed,
+  .ff-badge,
+  .game-badge,
+  .legend-pill {
+    font-size: 11px;
+  }
+
+  .sort-chip {
+    font-size: 12px;
+  }
+
+  .pickups-table th,
+  .pickups-table td {
+    font-size: 12px;
+  }
+
+  /* iOS zooms the whole page in when a focused control's text is under 16px,
+     and it does not zoom back out. The filter bar already had this; the ADP
+     search and the season / archive pickers did not. */
+  input[type="search"],
+  input[type="text"],
+  select {
+    font-size: 16px;
+  }
+
+  /* Those controls are also targets. Measured on a phone: the ADP search box
+     was 30px, the season and team pickers 32-36px. Named by element rather
+     than by the bar they sit in — the WNBA team picker sits in none of them
+     and was missed by an earlier, tidier-looking list. */
+  select,
+  input[type="search"],
+  input[type="text"],
+  /* Named explicitly: `.filter-bar select` pins min-height to 36px and outranks
+     a bare `select`, which is why the conference and period pickers stayed
+     short after the rule above was added. */
+  .filter-bar select {
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  /* The card CTAs ("League dashboard →") measured 20px. They are the way into
+     each section from the homepage, so they get a target rather than staying
+     a bare line of text. The padding is vertical only: these sit inline
+     beside a heading, and horizontal padding would break that line up. */
+  .home-card-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 767px) and (prefers-color-scheme: dark) {
+  .pickups-table tbody td:nth-child(2) {
+    background: #1b2540;
+  }
+
+  .pickups-table tbody td:first-child,
+  .pickups-table thead th:first-child,
+  .pickups-table thead th:nth-child(2) {
+    background: #223052;
+  }
+
+  /* The draft board is deliberately absent here. It is a light island — its
+     cells keep the pick's position colour and black text in the dark theme —
+     so painting the frozen round column #223052 left #334155 text on it at
+     1.26:1. The column keeps the light background the rest of that table has. */
+
+  .scroll-hint {
+    background: rgba(238, 132, 52, 0.92);
+    color: #1B2340;
+  }
+}
