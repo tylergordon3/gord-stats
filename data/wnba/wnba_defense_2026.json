@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-18T20:50:04.401972-04:00",
+ "updated": "2026-08-18T21:50:06.053494-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -31047,6 +31047,239 @@
       "Kaitlyn Chen",
       "G",
       3.0
+     ]
+    ]
+   }
+  },
+  "401857152": {
+   "date": "2026-08-18",
+   "allowed": {
+    "LA": {
+     "G": 99.0,
+     "FC": 76.0
+    },
+    "CON": {
+     "G": 85.0,
+     "FC": 73.0
+    }
+   },
+   "players": {
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      26.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      27.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      18.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      31.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      14.0
+     ],
+     [
+      "Emma Cannon",
+      "FC",
+      7.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      5.0
+     ],
+     [
+      "Alissa Pili",
+      "FC",
+      8.0
+     ],
+     [
+      "Kate Martin",
+      "G",
+      11.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      11.0
+     ]
+    ],
+    "CON": [
+     [
+      "Diamond Miller",
+      "FC",
+      20.0
+     ],
+     [
+      "Olivia Nelson-Ododa",
+      "FC",
+      36.0
+     ],
+     [
+      "Kennedy Burke",
+      "G",
+      27.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      25.0
+     ],
+     [
+      "Leila Lacan",
+      "G",
+      19.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      15.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      5.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      26.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      0.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      2.0
+     ]
+    ]
+   }
+  },
+  "401857153": {
+   "date": "2026-08-18",
+   "allowed": {
+    "IND": {
+     "G": 104.0,
+     "FC": 87.0
+    },
+    "TOR": {
+     "G": 117.0,
+     "FC": 67.0
+    }
+   },
+   "players": {
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      19.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      35.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      40.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      10.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      38.0
+     ],
+     [
+      "Myisha Hines-Allen",
+      "FC",
+      6.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      7.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      20.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      9.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      0.0
+     ]
+    ],
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      25.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      8.0
+     ],
+     [
+      "Brittney Sykes",
+      "G",
+      24.0
+     ],
+     [
+      "Marina Mabrey",
+      "G",
+      35.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      21.0
+     ],
+     [
+      "Aneesah Morrow",
+      "FC",
+      33.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      21.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      15.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      9.0
      ]
     ]
    }
