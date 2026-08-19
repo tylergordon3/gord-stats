@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-08-18",
+  "fetched_on": "2026-08-19",
   "season": 2026,
   "total_games": 333,
   "schedule": {
@@ -6067,7 +6067,7 @@
           "id": 25018,
           "home": "CHI",
           "away": "NY",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"
@@ -6078,7 +6078,7 @@
           "id": 25018,
           "home": "CHI",
           "away": "NY",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"
@@ -6089,7 +6089,7 @@
           "id": 25019,
           "home": "LV",
           "away": "ATL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"
@@ -6100,7 +6100,7 @@
           "id": 25019,
           "home": "LV",
           "away": "ATL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-18"

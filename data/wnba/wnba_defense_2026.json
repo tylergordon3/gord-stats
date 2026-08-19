@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-18T23:00:09.382476-04:00",
+ "updated": "2026-08-19T05:32:06.776841-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -31280,6 +31280,249 @@
       "Ornella Bankole",
       "G",
       9.0
+     ]
+    ]
+   }
+  },
+  "401857154": {
+   "date": "2026-08-19",
+   "allowed": {
+    "NY": {
+     "G": 119.0,
+     "FC": 69.0
+    },
+    "CHI": {
+     "G": 101.0,
+     "FC": 75.0
+    }
+   },
+   "players": {
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      41.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      7.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      29.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      43.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      12.0
+     ],
+     [
+      "Anneli Maley",
+      "FC",
+      3.0
+     ],
+     [
+      "Raquel Carrera",
+      "FC",
+      1.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      23.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      7.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      7.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      3.0
+     ]
+    ],
+    "CHI": [
+     [
+      "Azura Stevens",
+      "FC",
+      23.0
+     ],
+     [
+      "Kamilla Cardoso",
+      "FC",
+      39.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      20.0
+     ],
+     [
+      "Natasha Cloud",
+      "G",
+      54.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      19.0
+     ],
+     [
+      "Elizabeth Williams",
+      "FC",
+      7.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      5.0
+     ],
+     [
+      "DiJonai Carrington",
+      "G",
+      8.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      3.0
+     ],
+     [
+      "Gabriela Jaquez",
+      "G",
+      10.0
+     ]
+    ]
+   }
+  },
+  "401857155": {
+   "date": "2026-08-19",
+   "allowed": {
+    "ATL": {
+     "G": 83.0,
+     "FC": 89.0
+    },
+    "LV": {
+     "G": 125.0,
+     "FC": 66.0
+    }
+   },
+   "players": {
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      15.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      44.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      38.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      36.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      44.0
+     ],
+     [
+      "Sika Kone",
+      "FC",
+      0.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      7.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      0.0
+     ],
+     [
+      "Aaliyah Nye",
+      "G",
+      0.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      7.0
+     ]
+    ],
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      3.0
+     ],
+     [
+      "NaLyssa Smith",
+      "FC",
+      22.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      57.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      26.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      40.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      2.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      5.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      10.0
+     ],
+     [
+      "Ta'Niya Latson",
+      "G",
+      0.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      7.0
      ]
     ]
    }
