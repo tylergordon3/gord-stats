@@ -3301,6 +3301,29 @@ details.section>*:not(summary) {
 }
 
 
+/* Position pills. Written here rather than inside a generated page's <style>
+   because two pages draw them now — the homepage's ADP board and the live
+   draft board — and the second one inherited a plain grey "RB" for as long as
+   these rules lived in the first one's markup. */
+
+.pos-tag {
+  display: inline-block;
+  min-width: 44px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pos-QB { background: #c1436b; }
+.pos-RB { background: #278259; }
+.pos-WR { background: #2b7ba8; }
+.pos-TE { background: #946e22; }
+.pos-K  { background: #7a6bbd; }
+.pos-DST, .pos-DEF { background: #6b7785; }
+
+
 /* Shared class names, so these stay scoped to fantasy pages and cannot
    change how the CBB or WNBA tables render. */
 
@@ -3877,7 +3900,8 @@ img {
 
 .table-scroll,
 .table-container,
-.adp-wrap {
+.adp-wrap,
+.ld-wrap {
   position: relative;                 /* the hint anchors to the box */
 }
 
@@ -3901,11 +3925,13 @@ img {
 .table-scroll.scroll-start,
 .table-container.scroll-start,
 .adp-wrap.scroll-start,
+.ld-wrap.scroll-start,
 .view-switch.scroll-start,
 .section-nav.scroll-start,
 .table-scroll.scroll-mid,
 .table-container.scroll-mid,
 .adp-wrap.scroll-mid,
+.ld-wrap.scroll-mid,
 .view-switch.scroll-mid,
 .section-nav.scroll-mid {
   mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);

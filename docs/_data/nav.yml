@@ -87,6 +87,11 @@ fantasy:
     icon: "🎯"
     url: /fantasy/adp/
 
+  - title: Live Draft Board
+    short: Live
+    icon: "🔴"
+    url: /fantasy/live/
+
   - title: Draft
     short: Draft
     icon: "📋"

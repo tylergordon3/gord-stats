@@ -17,7 +17,7 @@
   "use strict";
 
   // Tables get the fade and, when there is a lot off screen, a worded hint.
-  var TABLES = ".table-scroll, .table-container, .adp-wrap";
+  var TABLES = ".table-scroll, .table-container, .adp-wrap, .ld-wrap";
   // Control strips scroll too — the draft page's season and round switchers run
   // 276px past their box — but they only get the fade. A "swipe" label sitting
   // inside a row of buttons reads as another button.

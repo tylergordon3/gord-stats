@@ -78,6 +78,13 @@ SEASON_YEAR = {"2526": 2025, "2425": 2024, "2324": 2023}
 # --------------------------------------------------------------------------- #
 UPCOMING_YEAR = 2026                 # NFL season being drafted for
 UPCOMING_SEASON = "2026-2027"        # display label
+# The league being drafted, kept out of LEAGUE_IDS / DRAFT_IDS on purpose: those
+# are keyed by season code and drive the per-season data builds, which would go
+# looking for matchups and points a season that has not kicked off yet does not
+# have. This pair only has to name the draft the live board watches; it joins
+# the keyed maps once the season has games in it.
+UPCOMING_LEAGUE_ID = "1385675901408153600"
+UPCOMING_DRAFT_ID = "1385675901416534016"
 # The draft's date and time are not here any more: they are one entry in
 # docs/_data/countdowns.yml, beside the college basketball tip-off, because the
 # same clock is now rendered by Jekyll on the fantasy page and inside the

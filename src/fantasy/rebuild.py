@@ -28,6 +28,7 @@ PAGES = [
     ("transactions", "Waivers & Trades",                  lambda: _gen("transactions")),
     ("adp",          "Draft vs ADP",                      lambda: _gen("adp")),
     ("draft",        "Draft (recap + report + DNA)",      lambda: _gen("draft_center")),
+    ("live",         "Live Draft Board",                  lambda: _gen("draft_live")),
     ("homepage",     "Home (countdown + live ADP board)", lambda: _gen("homepage")),
 ]
 

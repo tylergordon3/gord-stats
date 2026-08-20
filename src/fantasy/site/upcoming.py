@@ -122,10 +122,9 @@ table.adp-table td{border-right:1px solid #eef2f7;border-bottom:1px solid #eef2f
 table.adp-table td.name{text-align:left;font-family:inherit}
 table.adp-table tbody tr:nth-child(even) td{background:#f8fafc}
 table.adp-table tbody tr:hover td{background:#eef2f6}
-.pos-tag{display:inline-block;min-width:44px;padding:1px 6px;border-radius:4px;color:#fff;
-  font-size:12px;font-weight:700}
-.pos-QB{background:#c1436b}.pos-RB{background:#278259}.pos-WR{background:#2b7ba8}
-.pos-TE{background:#946e22}.pos-K{background:#7a6bbd}.pos-DST{background:#6b7785}
+/* .pos-tag and the per-position colours now live in custom.css: the live draft
+   board draws the same pills, and a copy in each page's markup is how the two
+   would drift apart. */
 /* The overall pick rides along in the slot cell, quieter than the round.pick
    it sits beside. */
 .slot-ovr{color:#5d6b7e;font-size:12px}

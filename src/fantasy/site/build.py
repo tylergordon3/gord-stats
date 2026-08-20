@@ -18,8 +18,8 @@ import argparse
 from fantasy.config import LEAGUE_IDS
 from fantasy.league import adp_board
 from fantasy.site import (
-    adp, draft, draft_dna, draft_recap, draft_report, homepage, schedule, team_adjusted,
-    transactions,
+    adp, draft, draft_dna, draft_live, draft_recap, draft_report, homepage, schedule,
+    team_adjusted, transactions,
 )
 
 # Season codes we have data for, newest first.
@@ -41,6 +41,7 @@ def build_all(seasons=None, refresh_adp=False):
     draft_recap.generate()    # per-season draft boards with tier movement
     draft_report.generate()   # all-time + per-year manager draft report
     draft_dna.generate()      # owner draft habits across every draft
+    draft_live.generate()     # live board for the draft being held next
     homepage.generate()
 
 
