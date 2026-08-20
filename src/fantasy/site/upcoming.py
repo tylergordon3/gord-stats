@@ -3,7 +3,7 @@ Upcoming-draft block for the homepage.
 
 Two pieces, both rendered by fantasy.site.homepage:
 
-  * countdown_banner() - live JS countdown to config.DRAFT_DATETIME.
+  * countdown_banner() - the draft countdown, from _data/countdowns.yml.
   * adp_board_section() - the multi-site ADP board (fantasy.league.adp_board) as a
     sortable / filterable / searchable table, plus the movement tracker: how far
     each player has climbed or slid over each window in adp_board.WINDOWS. The
@@ -21,8 +21,7 @@ from datetime import datetime
 import pandas as pd
 
 from fantasy.config import (
-    DRAFT_DATETIME, DRAFT_LABEL, LEAGUE_TEAMS, LEAGUE_TZ, UPCOMING_SEASON,
-    UPCOMING_YEAR,
+    LEAGUE_TEAMS, LEAGUE_TZ, UPCOMING_SEASON, UPCOMING_YEAR,
 )
 from fantasy.league.adp_board import (
     COMPARABLE_MAX, SOURCES, STREAMER_POS, TRACKED_MAX, WINDOWS, baseline_times,
@@ -50,62 +49,20 @@ MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
 # Countdown
 # --------------------------------------------------------------------------- #
 
-_COUNTDOWN_CSS = """<style>
-.draft-banner{margin:14px 0 18px;padding:16px 18px;border-radius:14px;
-  background:linear-gradient(135deg,#141B33,#2A3557);color:#fff;text-align:center;
-  box-shadow:0 2px 8px rgba(27,35,64,.25)}
-.draft-banner .draft-when{font-size:15px;letter-spacing:.04em;opacity:.85;margin:0 0 4px}
-.draft-banner .draft-title{font-size:20px;font-weight:700;margin:0 0 12px}
-.countdown{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.countdown .unit{min-width:74px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.12)}
-.countdown .num{font-size:28px;font-weight:700;font-family:monospace;line-height:1.1;color:#F5A968}
-.countdown .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.09em;opacity:.8}
-.draft-banner .draft-note{margin:10px 0 0;font-size:13px;opacity:.8}
-@media (max-width:600px){
-  .draft-banner{margin:10px 0 14px;padding:14px 10px}
-  .draft-banner .draft-title{font-size:18px;margin-bottom:10px}
-  .draft-banner .draft-when{font-size:13px}
-  .countdown{gap:6px}
-  .countdown .unit{min-width:64px;padding:6px 4px}
-  .countdown .num{font-size:24px}
-  .draft-banner .draft-note{font-size:12px}
-}
-@media (max-width:360px){.countdown .unit{min-width:56px}.countdown .num{font-size:20px}}
-</style>"""
 
 
 def countdown_banner() -> str:
-    """The draft-day countdown card that sits at the top of the homepage."""
-    units = "".join(
-        f'<div class="unit"><div class="num" id="cd-{key}">--</div><div class="lbl">{label}</div></div>'
-        for key, label in [("d", "Days"), ("h", "Hours"), ("m", "Minutes"), ("s", "Seconds")]
-    )
-    js = f"""<script>
-(function(){{
-  var target=new Date("{DRAFT_DATETIME}").getTime();
-  var box=document.getElementById('draft-countdown');
-  function pad(n){{return n<10?'0'+n:''+n;}}
-  function tick(){{
-    var left=target-Date.now();
-    if(left<=0){{
-      box.innerHTML='<div class="num" style="font-size:22px">The draft is here. Good luck.</div>';
-      clearInterval(timer); return;
-    }}
-    var s=Math.floor(left/1000);
-    document.getElementById('cd-d').textContent=Math.floor(s/86400);
-    document.getElementById('cd-h').textContent=pad(Math.floor(s/3600)%24);
-    document.getElementById('cd-m').textContent=pad(Math.floor(s/60)%60);
-    document.getElementById('cd-s').textContent=pad(s%60);
-  }}
-  var timer=setInterval(tick,1000); tick();
-}})();
-</script>"""
-    return (_COUNTDOWN_CSS + '<div class="draft-banner">'
-            f'<p class="draft-when">{UPCOMING_SEASON} DRAFT</p>'
-            f'<p class="draft-title">{DRAFT_LABEL}</p>'
-            f'<div class="countdown" id="draft-countdown">{units}</div>'
-            '<p class="draft-note">Countdown shown in your local time.</p>'
-            '</div>' + js)
+    """The draft-day countdown, rendered by Jekyll from _data/countdowns.yml.
+
+    This used to build the card here — markup, CSS and a setInterval — which
+    meant the same clock existed a second time as a hand-written include for
+    the college basketball tip-off, with a different look and a different bug.
+    The date moved to docs/_data/countdowns.yml with it, so there is one place
+    to change it and one card to restyle.
+
+    This page carries front matter, so Liquid runs over what we write here.
+    """
+    return '{% include countdown.html key="fantasy" %}'
 
 
 # --------------------------------------------------------------------------- #

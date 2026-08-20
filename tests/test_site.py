@@ -6,6 +6,7 @@ that rewrote them at click time so they only broke in a browser.
 """
 
 import re
+from datetime import datetime
 
 import pytest
 import yaml
@@ -70,6 +71,68 @@ def test_retired_draft_pages_are_gone_and_redirected():
     for old in ("draft-recap", "draft-report", "draft-dna"):
         assert not (DOCS / "fantasy" / old).exists(), f"docs/fantasy/{old} still shadows its redirect"
         assert f"/fantasy/{old}/" in REDIRECTS, f"no redirect for /fantasy/{old}/"
+
+
+# --------------------------------------------------------------------------- #
+# Countdown clocks
+# --------------------------------------------------------------------------- #
+
+COUNTDOWNS = yaml.safe_load((DOCS / "_data" / "countdowns.yml").read_text())
+_COUNTDOWN_KEY = re.compile(r'include\s+countdown\.html\s+key="([^"]+)"')
+
+
+def _countdown_uses():
+    """(where it was written, key) for every countdown placed on a page.
+
+    The generators are read as well as the pages: docs/index.html is written by
+    src/cbb/render/render_home.py and docs/fantasy/index.html by the fantasy
+    site build, so a bad key added there would only surface on the next daily
+    rebuild.
+    """
+    for path in sorted(DOCS.rglob("*.html")):
+        if "_site" in path.parts:
+            continue
+        for key in _COUNTDOWN_KEY.findall(path.read_text(encoding="utf-8")):
+            yield path.relative_to(ROOT), key
+    for path in sorted((ROOT / "src").rglob("*.py")):
+        for key in _COUNTDOWN_KEY.findall(path.read_text(encoding="utf-8")):
+            yield path.relative_to(ROOT), key
+
+
+def test_every_countdown_on_a_page_has_data_behind_it():
+    """A key with no entry renders nothing at all — the include is silent about
+    it, so the clock just quietly stops appearing."""
+    missing = [f"{where} -> {key!r}" for where, key in _countdown_uses()
+               if key not in COUNTDOWNS]
+    assert not missing, ("countdowns.yml has no entry for:\n  " + "\n  ".join(missing))
+
+
+def test_the_homepage_carries_both_countdowns():
+    """They live inside the preview boxes; two clocks on one page is the case
+    the old per-page includes could not do, since each hardcoded id="days"."""
+    keys = _COUNTDOWN_KEY.findall((DOCS / "index.html").read_text(encoding="utf-8"))
+    assert "cbb" in keys and "fantasy" in keys, f"homepage countdowns: {keys}"
+
+
+@pytest.mark.parametrize("key", sorted(COUNTDOWNS))
+def test_countdown_entries_are_complete_and_parseable(key):
+    entry = COUNTDOWNS[key]
+    for field in ("eyebrow", "title", "target", "expired"):
+        assert entry.get(field), f"countdowns.yml [{key}] is missing {field}"
+    # Naive on purpose: the browser reads it as the reader's local time, so a
+    # trailing Z or an offset would move the clock for everyone but the author.
+    datetime.fromisoformat(entry["target"])
+    assert not entry["target"].endswith("Z") and "+" not in entry["target"], \
+        f"countdowns.yml [{key}] target must be local, not zoned"
+
+
+def test_the_old_per_page_countdowns_are_gone():
+    """Three copies of one clock, two of them hand-written, is how the styles
+    drifted apart in the first place."""
+    assert not (DOCS / "_includes" / "cbb_countdown.html").exists()
+    stale = [p.relative_to(ROOT) for p in DOCS.rglob("*.html")
+             if "_site" not in p.parts and "cbb_countdown.html" in p.read_text(encoding="utf-8")]
+    assert not stale, f"still including the retired countdown: {stale}"
 
 
 def test_brand_icons_exist():

@@ -4087,3 +4087,180 @@ img {
     color: #1B2340;
   }
 }
+
+
+/* =========================================================
+   COUNTDOWN CARD
+   One clock, three placements: inside the college basketball
+   and fantasy boxes on the homepage, and at the top of each
+   of those sections' own pages.
+
+   The look is the fantasy draft banner's, which was defined in
+   Python (fantasy/site/upcoming.py) and so could only ever
+   appear on a Python-generated page. The college basketball
+   clock was a separate hand-written include with its own pills
+   and its own black-on-dark type. Both now render from
+   _includes/countdown.html against the rules here.
+   ========================================================= */
+
+.countdown-card {
+  margin: 14px 0 18px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #141B33, #2A3557);
+  color: #ffffff;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(27, 35, 64, 0.25);
+}
+
+/* These three are <p>, and the card's own white is inherited — which is not
+   enough inside a homepage box, where `.home-card p` sets a slate #475569 and
+   outranks it. That put the eyebrow and the date at about 2.4:1 on the navy
+   while the same card read correctly on its own page. Stated on the card's own
+   selectors so no container can win. */
+.countdown-card .countdown-eyebrow,
+.countdown-card .countdown-title,
+.countdown-card .countdown-note {
+  color: #ffffff;
+}
+
+.countdown-eyebrow {
+  margin: 0 0 4px;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+.countdown-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Four columns rather than a wrapping flex row. Flexed, the units are sized by
+   their padding and min-width, which at 390px inside a homepage box came to
+   322px against 305px of room — so Seconds dropped to a second row on its own
+   and the clock read as three units and an orphan. A grid divides whatever
+   width there is by four and keeps one row down to 320px. */
+.countdown-units {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  justify-items: stretch;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.countdown-unit {
+  box-sizing: border-box;             /* or the padding is added to the track */
+  padding: 8px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.countdown-num {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: monospace;
+  line-height: 1.1;
+  color: #F5A968;
+}
+
+.countdown-lbl {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  opacity: 0.8;
+}
+
+.countdown-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* Swapped in for the units when the date passes with the page open. */
+.countdown-done {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #F5A968;
+}
+
+/* Inside a homepage preview box the card is a detail of that box, not the
+   headline of the page, so it gives back the width and weight it takes when
+   it stands alone. The numbers stay the largest thing in it. */
+.home-card .countdown-card {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.home-card .countdown-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-card .countdown-title {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.home-card .countdown-unit {
+  padding: 6px 4px;
+}
+
+.home-card .countdown-num {
+  font-size: 22px;
+}
+
+.home-card .countdown-note {
+  display: none;                      /* said once per page is enough */
+}
+
+@media (max-width: 600px) {
+  .countdown-card {
+    margin: 10px 0 14px;
+    padding: 14px 10px;
+  }
+
+  .countdown-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .countdown-eyebrow {
+    font-size: 13px;
+  }
+
+  .countdown-units {
+    gap: 6px;
+  }
+
+  .countdown-unit {
+    padding: 6px 4px;
+  }
+
+  .countdown-num {
+    font-size: 24px;
+  }
+
+  .countdown-note {
+    font-size: 12px;
+  }
+
+  .home-card .countdown-num {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .countdown-units {
+    gap: 4px;
+  }
+
+  .countdown-num {
+    font-size: 20px;
+  }
+}

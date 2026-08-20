@@ -102,6 +102,7 @@ def _cbb_card(today: date) -> str:
     <a href="/men/conference.html">Conference Rankings</a> ·
     <a href="/men/history.html">Prediction History</a>
   </p>
+  {{% include countdown.html key="cbb" %}}
 </section>
 """
 
@@ -136,6 +137,7 @@ def _fantasy_card() -> str:
     <a href="/fantasy/draft/">Draft</a> ·
     <a href="/fantasy/transactions/">Waivers &amp; Trades</a>
   </p>
+  {% include countdown.html key="fantasy" %}
 </section>
 """
 
@@ -188,7 +190,7 @@ def _cbb_home_body(today: date) -> str:
     href, label = _latest_predict_link()
 
     return f"""
-{{% include cbb_countdown.html %}}
+{{% include countdown.html key="cbb" %}}
 
 <p>{when} Machine-learning predictions of the NCAA tournament field, rebuilt daily
    through the season and scored against what actually happened. Built on

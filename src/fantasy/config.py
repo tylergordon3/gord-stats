@@ -74,14 +74,14 @@ FORMAL_SEASON = {"2526": "2025-2026", "2425": "2024-2025", "2324": "2023-2024"}
 SEASON_YEAR = {"2526": 2025, "2425": 2024, "2324": 2023}
 
 # --------------------------------------------------------------------------- #
-# Upcoming season / draft (drives the homepage countdown + live ADP board).
+# Upcoming season / draft (drives the live ADP board).
 # --------------------------------------------------------------------------- #
 UPCOMING_YEAR = 2026                 # NFL season being drafted for
 UPCOMING_SEASON = "2026-2027"        # display label
-# Naive ISO timestamp: rendered as-is and parsed by the browser as local time,
-# so the countdown reads 8:00 PM for anyone in the league's timezone.
-DRAFT_DATETIME = "2026-08-21T20:00:00"
-DRAFT_LABEL = "Friday, August 21 - 8:00 PM"
+# The draft's date and time are not here any more: they are one entry in
+# docs/_data/countdowns.yml, beside the college basketball tip-off, because the
+# same clock is now rendered by Jekyll on the fantasy page and inside the
+# homepage's preview boxes. Setting it in two languages meant setting it twice.
 LEAGUE_TEAMS = len(ROSTER_NAMES)     # 10 - used to turn ADP into a round number
 # The league's wall clock. Build-time stamps (when the ADP board was last pulled)
 # are reported in it rather than in whatever timezone the build machine runs in.

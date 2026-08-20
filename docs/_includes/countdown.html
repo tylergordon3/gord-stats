@@ -1,47 +1,55 @@
-<div class="countdown-top">
-  <div class="countdown-label">Selection Sunday Countdown</div>
+{%- comment -%}
+One countdown card, from _data/countdowns.yml.
 
-  <div id="timer" class="timer-compact">
-    <div class="time-pill">
-      <span id="days">00</span>
-      <div class="pill-label">D</div>
+    {% include countdown.html key="fantasy" %}
+
+There were three of these before: a hand-written include for the college
+basketball tip-off, a near-identical copy for Selection Sunday, and a third
+built in Python for the draft. All three hardcoded their own date, ran their
+own setInterval, and used `id="days"` — so two on one page, which is what the
+homepage now wants, would have fought over the same element.
+
+Markup only. assets/js/countdown.js drives every card on the page from
+data-target, so any number of them can coexist.
+
+A card whose date has passed is not rendered at all: an expired clock is worse
+than no clock, and the pages are rebuilt daily. `expired` covers the case where
+the date passes while somebody has the page open — the script swaps it in.
+{%- endcomment -%}
+
+{%- assign cd = site.data.countdowns[include.key] -%}
+{%- if cd -%}
+  {%- assign target_at = cd.target | date: '%s' | plus: 0 -%}
+  {%- assign now_at = 'now' | date: '%s' | plus: 0 -%}
+  {%- if target_at > now_at -%}
+<div class="countdown-card{% if include.compact %} countdown-compact{% endif %}"
+     data-countdown data-target="{{ cd.target }}" data-expired="{{ cd.expired | escape }}">
+  <p class="countdown-eyebrow">{{ cd.eyebrow }}</p>
+  <p class="countdown-title">{{ cd.title }}</p>
+  <div class="countdown-units">
+    {%- comment -%}
+    Written out rather than looped: a Liquid loop over "d,Days|h,Hours|..."
+    reads the pipe inside the quotes as a filter pipe, so the label rendered
+    as "Days|h" and only one unit survived. Four fixed units are clearer flat.
+    {%- endcomment -%}
+    <div class="countdown-unit">
+      <div class="countdown-num" data-unit="d">--</div>
+      <div class="countdown-lbl">Days</div>
     </div>
-    <div class="time-pill">
-      <span id="hours">00</span>
-      <div class="pill-label">H</div>
+    <div class="countdown-unit">
+      <div class="countdown-num" data-unit="h">--</div>
+      <div class="countdown-lbl">Hours</div>
     </div>
-    <div class="time-pill">
-      <span id="minutes">00</span>
-      <div class="pill-label">M</div>
+    <div class="countdown-unit">
+      <div class="countdown-num" data-unit="m">--</div>
+      <div class="countdown-lbl">Minutes</div>
     </div>
-    <div class="time-pill">
-      <span id="seconds">00</span>
-      <div class="pill-label">S</div>
+    <div class="countdown-unit">
+      <div class="countdown-num" data-unit="s">--</div>
+      <div class="countdown-lbl">Seconds</div>
     </div>
   </div>
+  <p class="countdown-note">Countdown shown in your local time.</p>
 </div>
-
-<script>
-    const targetDate = new Date("March 15, 2026 18:00:00").getTime();
-
-    const timerInterval = setInterval(function() {
-        const now = new Date().getTime(); // Fixed syntax error: now = new Date().getTime()
-        const distance = targetDate - now;
-
-        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // Update individual elements
-        document.getElementById("days").innerText = d;
-        document.getElementById("hours").innerText = h;
-        document.getElementById("minutes").innerText = m;
-        document.getElementById("seconds").innerText = s;
-
-        if (distance < 0) {
-            clearInterval(timerInterval);
-            document.getElementById("timer").innerHTML = "EXPIRED";
-        }
-    }, 1000);
-</script>
+  {%- endif -%}
+{%- endif -%}
