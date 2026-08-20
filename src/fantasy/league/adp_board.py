@@ -18,7 +18,12 @@ as a column. It is itself an average of ESPN / Sleeper / CBS / NFL / RTSports,
 so showing it beside those same sites double-counted them and pulled Avg toward
 the crowd.
 
-Kickers and defenses are left off the board entirely (see STREAMER_POS).
+Kickers and defenses are on the board. They were dropped for a while, on the
+grounds that nobody drafts them on merit, which was true of the *board* and
+false of the draft: the live draft board grades each pick against this table,
+and a pick it has no row for is a pick it cannot say anything about. They rank
+below everyone else on Avg anyway, so they sit at the bottom until somebody
+spends a pick on one.
 
 Two caveats worth keeping in mind when reading the columns side by side:
 
@@ -60,15 +65,6 @@ TRACKED_MAX = 200
 # Overall pick through which every site's board is dense enough to compare
 # (see the Spread note in _fetch_board).
 COMPARABLE_MAX = 150
-# Positions the board leaves out. Kickers and defenses are streamed, not
-# drafted on merit — 50 of the 366 rows on the 2026 board were one or the
-# other, all of them noise for anyone using this to prepare a draft.
-#
-# They are dropped *after* the slot columns are worked out, so Ovr and Pick
-# still count them: they are picks somebody in the room will spend, and
-# renumbering without them would have said a player goes four rounds earlier
-# than he does. A gap in Ovr is a kicker or a defense going there.
-STREAMER_POS = ("K", "DST")
 _HEADERS = {"User-Agent": "Mozilla/5.0"}
 _TIMEOUT = 30
 
@@ -363,8 +359,7 @@ def _fetch_board(year) -> pd.DataFrame:
     base = base[base["Sites"] > 0].copy()
 
     base["pos"] = base["pos"].fillna("").str.upper().replace({"DEF": "DST"})
-    ranked = _with_ranks(base.sort_values("Avg").reset_index(drop=True))
-    return _drop_streamers(ranked)
+    return _with_ranks(base.sort_values("Avg").reset_index(drop=True))
 
 
 # --------------------------------------------------------------------------- #
@@ -399,18 +394,6 @@ def _pick(overall, teams: int = LEAGUE_TEAMS) -> str:
 def _ensure_ranks(df: pd.DataFrame) -> pd.DataFrame:
     """Add the slot columns to boards cached before they existed."""
     return df if "Ovr" in df.columns else _with_ranks(df)
-
-
-def _drop_streamers(df: pd.DataFrame) -> pd.DataFrame:
-    """Board without the STREAMER_POS rows.
-
-    Applied on the way out of board() as well as in _fetch_board, so a parquet
-    written before this existed serves a clean board immediately instead of
-    showing kickers until the cache ages out twelve hours later.
-    """
-    if "pos" not in df.columns:
-        return df                                 # pre-slot cache; nothing to match on
-    return df[~df["pos"].isin(STREAMER_POS)].reset_index(drop=True)
 
 
 def _cache_path(year):
@@ -596,7 +579,7 @@ def board(year=UPCOMING_YEAR, refresh: bool = False) -> pd.DataFrame:
         # source set as staleness rather than letting the page blow up on a
         # KeyError until the cache happens to expire.
         if not set(SOURCES).difference(cached.columns):
-            return _drop_streamers(_ensure_ranks(_blank_movement(cached)))
+            return _ensure_ranks(_blank_movement(cached))
         print(f"  ADP board cache predates {', '.join(sorted(set(SOURCES) - set(cached.columns)))}"
               f"; refetching")
 
@@ -606,7 +589,7 @@ def board(year=UPCOMING_YEAR, refresh: bool = False) -> pd.DataFrame:
         if not cache.exists():
             raise
         print(f"  ADP board fetch failed ({exc}); using cached {cache.name}")
-        return _drop_streamers(_ensure_ranks(_blank_movement(pd.read_parquet(cache))))
+        return _ensure_ranks(_blank_movement(pd.read_parquet(cache)))
 
     df = _with_movement(df, year)                 # against history as it stands
     _write_snapshot(df, year)                     # then add this pull to it

@@ -24,7 +24,7 @@ from fantasy.config import (
     LEAGUE_TEAMS, LEAGUE_TZ, UPCOMING_SEASON, UPCOMING_YEAR,
 )
 from fantasy.league.adp_board import (
-    COMPARABLE_MAX, SOURCES, STREAMER_POS, TRACKED_MAX, WINDOWS, baseline_times,
+    COMPARABLE_MAX, SOURCES, TRACKED_MAX, WINDOWS, baseline_times,
     board, last_updated, movers,
 )
 
@@ -38,9 +38,10 @@ _MOVE_FIELDS = [w["move"] for w in WINDOWS.values()]
 # follow. This list used to name the sites and silently omitted new ones.
 _FIELDS = (["player", "pos", "team"] + list(SOURCES) + ["Avg"]
            + _MOVE_FIELDS + ["Spread", "Ovr", "Pick", "PosRk"])
-# Filter chips. Derived from the board's own exclusions rather than listed, so
-# a position the board drops can't leave a chip behind that filters to nothing.
-POSITIONS = [p for p in ["QB", "RB", "WR", "TE", "K", "DST"] if p not in STREAMER_POS]
+# Filter chips, in the order a roster is filled. Every position the board
+# carries has one — kickers and defenses included, since the board stopped
+# leaving them off.
+POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
 MOVERS_SHOWN = 8            # risers / fallers listed in the movement strip
 MIN_MOVE = 0.5              # picks of drift before a player counts as "moved"
 
@@ -585,9 +586,9 @@ def adp_board_section(year=UPCOMING_YEAR) -> str:
         f"<strong>Ovr</strong> is the overall pick, <strong>Pick</strong> is the round and "
         f"pick that lands on in our {LEAGUE_TEAMS}-team draft, and <strong>Pos</strong> is "
         f"where he ranks within his own position (RB1, WR2). "
-        f"Kickers and defenses are left off - the Ovr and Pick columns still count "
-        f"them, since somebody in the room spends those picks, so a jump in "
-        f"<strong>Ovr</strong> is a K or DST going there. "
+        f"Kickers and defenses are included, near the bottom where the sites rank "
+        f"them - the live draft board grades every pick against this table, and a "
+        f"pick with no row here is one it cannot grade. "
         f"<strong>Spread</strong> (max - min across sites) is only "
         f"shown through pick {COMPARABLE_MAX}, where all three boards are dense enough to "
         f"compare - past that a gap mostly reflects how deep each site ranks, not real "

@@ -3304,24 +3304,41 @@ details.section>*:not(summary) {
 /* Position pills. Written here rather than inside a generated page's <style>
    because two pages draw them now — the homepage's ADP board and the live
    draft board — and the second one inherited a plain grey "RB" for as long as
-   these rules lived in the first one's markup. */
+   these rules lived in the first one's markup.
+
+   The hues follow Sleeper's, so a board read here and a draft read in the app
+   agree about what colour a running back is: deep blue quarterbacks, green
+   backs, yellow receivers, orange tight ends, light blue defenses, light purple
+   kickers.
+
+   Background and text colour are stated together on every rule, never a shared
+   colour on .pos-tag with the backgrounds underneath it: half these hues are
+   light enough that white text fails on them, and a rule setting a colour with
+   no background of its own is exactly what the readability test flags, because
+   nothing tells it what that text lands on. Each pair clears WCAG AA against
+   its own background (4.75:1 at worst, most above 6), measured with
+   gordstats.contrast — the same module the tests use.
+
+   The base rule carries the grey fallback, so a position nothing here knows
+   about still renders as a pill rather than as bare text. */
 
 .pos-tag {
   display: inline-block;
   min-width: 44px;
   padding: 1px 6px;
   border-radius: 4px;
-  color: #fff;
   font-size: 12px;
   font-weight: 700;
+  background: #6b7785;
+  color: #fff;
 }
 
-.pos-QB { background: #c1436b; }
-.pos-RB { background: #278259; }
-.pos-WR { background: #2b7ba8; }
-.pos-TE { background: #946e22; }
-.pos-K  { background: #7a6bbd; }
-.pos-DST, .pos-DEF { background: #6b7785; }
+.pos-QB { background: #2f52a0; color: #fff; }
+.pos-RB { background: #278259; color: #fff; }
+.pos-WR { background: #e8b60e; color: #1f2937; }
+.pos-TE { background: #f08a2c; color: #1f2937; }
+.pos-DST, .pos-DEF { background: #7fb3e3; color: #1f2937; }
+.pos-K  { background: #b39ddb; color: #1f2937; }
 
 
 /* Shared class names, so these stay scoped to fantasy pages and cannot

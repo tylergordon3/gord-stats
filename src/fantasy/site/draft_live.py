@@ -51,16 +51,17 @@ _TIMEOUT = 20
 # keys would be most of the bytes.
 _FIELDS = ["player", "pos", "team", "bye", "Ovr", "Avg", "Pick", "PosRk"]
 
-# Positions the Best Available filter offers. The ADP board drops kickers and
-# defenses (adp_board.STREAMER_POS), so they are not chips here either — they
-# still appear on the grid when somebody spends a pick on one.
-POSITIONS = ["QB", "RB", "WR", "TE"]
+# Positions the Best Available filter offers, in the order a roster fills.
+# Kickers and defenses are on the ADP board now, so they get a chip like anyone
+# else rather than only appearing once somebody drafts one.
+POSITIONS = ["QB", "RB", "WR", "TE", "K", "DST"]
 
-# How far a pick has to sit from its board rank before the cell is tinted. A
-# round is 10 picks in this league, so half a round is noise and a round and a
-# half is somebody making a decision.
+# How far a pick has to sit from its board rank before the cell says so. A round
+# is 10 picks in this league, so half a round is noise and anything more is
+# somebody making a decision. It is a number in the cell, not a colour: the cell
+# colour is the position now, which is the thing you are actually scanning a
+# draft board for.
 NUDGE = 5
-SWING = 15
 
 
 def _num(v):
@@ -193,11 +194,21 @@ table.ld-grid td{vertical-align:top;padding:5px 7px;min-width:118px;
 .ld-val{font-family:monospace;font-weight:700}
 .ld-val.up{color:#1a7f4b}
 .ld-val.down{color:#b3382c}
-/* Qualified with the table, not written as a bare `td.ld-value`: the cell's
+/* A drafted cell is tinted by the player's position: the same six hues the
+   pills use (custom.css), mixed light enough to read the name off.
+   Sleeper colours its board this way, and it is what makes a run visible —
+   four greens in a row is four backs going in six picks, without reading a
+   single name.
+
+   Qualified with the table, not written as a bare `td.ld-pos-QB`: the cell's
    own background above is `table.ld-grid td`, which outweighs a lone class and
    painted every tint back to white. */
-table.ld-grid td.ld-value{background:#d8f0dd}
-table.ld-grid td.ld-reach{background:#fadddd}
+table.ld-grid td.ld-pos-QB{background:#d3ddf5}
+table.ld-grid td.ld-pos-RB{background:#d5efdd}
+table.ld-grid td.ld-pos-WR{background:#fbeec2}
+table.ld-grid td.ld-pos-TE{background:#fadfc8}
+table.ld-grid td.ld-pos-DEF,table.ld-grid td.ld-pos-DST{background:#d4f0f7}
+table.ld-grid td.ld-pos-K{background:#e6dff7}
 table.ld-grid td.ld-empty{background:#f8fafc}
 table.ld-grid td.ld-onclock-cell{background:#fff7e8;box-shadow:inset 0 0 0 2px #A34F0A}
 /* A pick that landed while you were looking at the board. Fades out on its own
@@ -228,10 +239,6 @@ table.ld-grid td.ld-new{animation:ld-flash 6s ease-out}
 .ld-team-card .ld-none{padding:10px;font-size:13px;color:#4a5a68}
 .ld-note{font-size:13px;color:#4a5a68;margin:6px 0 0}
 .ld-legend{font-size:13px;color:#4a5a68;margin:0 0 8px}
-.ld-sw{display:inline-block;width:11px;height:11px;border-radius:3px;
-  vertical-align:-1px;margin:0 2px}
-.ld-sw.v{background:#d8f0dd;border:1px solid #9ed5b0}
-.ld-sw.r{background:#fadddd;border:1px solid #e6a9a9}
 
 @media (max-width:600px){
   .ld-bar{gap:6px;padding:8px 10px}
@@ -262,10 +269,15 @@ table.ld-grid td.ld-new{animation:ld-flash 6s ease-out}
   table.ld-grid td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.ld-grid td.ld-empty{background:#1b2540}
   .ld-pk,.ld-sub{color:#aab7c9}
-  /* The tints have to be re-mixed for dark rather than dimmed: the light greens
-     and pinks above carry dark text, which vanishes on them here. */
-  table.ld-grid td.ld-value{background:#123c2e}
-  table.ld-grid td.ld-reach{background:#4a1d1d}
+  /* The tints are re-mixed for dark rather than dimmed: the light versions
+     above are meant to be read with near-black text, which vanishes here. Same
+     six hues, taken deep enough to carry the theme's light text. */
+  table.ld-grid td.ld-pos-QB{background:#1e2c52}
+  table.ld-grid td.ld-pos-RB{background:#123c2e}
+  table.ld-grid td.ld-pos-WR{background:#3d3413}
+  table.ld-grid td.ld-pos-TE{background:#40280f}
+  table.ld-grid td.ld-pos-DEF,table.ld-grid td.ld-pos-DST{background:#143a45}
+  table.ld-grid td.ld-pos-K{background:#2e2450}
   table.ld-grid td.ld-onclock-cell{background:#3a2e12;box-shadow:inset 0 0 0 2px #d98324}
   .ld-val.up{color:#6ee7b7}
   .ld-val.down{color:#ff9b91}
@@ -285,8 +297,6 @@ table.ld-grid td.ld-new{animation:ld-flash 6s ease-out}
   .ld-team-head .ld-need{color:#aab7c9}
   .ld-team-card ol,.ld-team-card li{color:#dde5ef}
   .ld-team-card .ld-none{color:#aab7c9}
-  .ld-sw.v{background:#123c2e;border-color:#1f6b4d}
-  .ld-sw.r{background:#4a1d1d;border-color:#7d3232}
 }
 </style>"""
 
@@ -451,12 +461,11 @@ _SCRIPT = """<script>
     var pos = String(md.position || "").toUpperCase();
     var adp = CFG.adp[keyFor(md)];
     // The ADP page's convention: pick number minus board rank, so + means the
-    // player lasted longer than the market said he would.
+    // player lasted longer than the market said he would. It is written in the
+    // cell rather than painted on it — the cell's colour is the position.
     var diff = (adp && adp[4]) ? no - adp[4] : null;
-    var tint = "";
-    if (diff !== null) tint = diff >= CFG.swing ? " ld-value" : (diff <= -CFG.swing ? " ld-reach" : "");
     var isNew = state.seeded && (Date.now() - (state.firstSeen[no] || 0)) < FLASH_MS;
-    return "<td class='" + tint + (isNew ? " ld-new" : "") + "'>" +
+    return "<td class='ld-pos ld-pos-" + esc(pos) + (isNew ? " ld-new" : "") + "'>" +
       "<span class='ld-pk'>" + label + "</span>" +
       "<span class='ld-name'>" + esc(nameOf(pick)) + "</span>" +
       "<span class='ld-sub'><span class='pos-tag pos-" + esc(pos) + "'>" + esc(pos) + "</span> " +
@@ -753,11 +762,21 @@ def _intro() -> str:
     return (f"<p>The {UPCOMING_SEASON} draft as it happens, read straight from Sleeper. "
             f"The page polls for picks every few seconds while the draft is live — leave it open, "
             f"there is nothing to refresh.</p>"
-            f"<p class='ld-note'>Each pick is graded against the multi-site ADP board on the "
-            f"{layout.internal_link('/fantasy/', 'fantasy homepage')}, pulled {when}. "
-            f"A green cell (<span class='ld-sw v'></span>) means the player lasted {SWING}+ picks "
-            f"past his board rank; a red one (<span class='ld-sw r'></span>) means he went {SWING}+ "
-            f"picks early. Kickers and defenses are not on the board, so they are never tinted.</p>")
+            f"<p class='ld-note'>Cells are coloured by position — "
+            f"{_swatch_legend()} — so you can see a run forming without reading a name. "
+            f"Each pick is also graded against the multi-site ADP board on the "
+            f"{layout.internal_link('/fantasy/', 'fantasy homepage')}, pulled {when}: the number "
+            f"beside the team is how far the pick sat from that player's board rank, "
+            f"<span class='ld-val up'>+</span> for a player who lasted longer than the market said "
+            f"and <span class='ld-val down'>&minus;</span> for a reach, shown once it is more than "
+            f"{NUDGE} picks either way.</p>")
+
+
+def _swatch_legend() -> str:
+    """"QB, RB, WR..." with each label carrying its position's colour."""
+    labels = {"QB": "QB", "RB": "RB", "WR": "WR", "TE": "TE", "K": "K", "DST": "DEF"}
+    return ", ".join(f"<span class='pos-tag pos-{pos}'>{label}</span>"
+                     for pos, label in labels.items())
 
 
 def _status_bar() -> str:
@@ -801,7 +820,6 @@ def _config_json(rows: dict, order: list, meta: dict) -> str:
         "rounds": settings.get("rounds") or 15,
         "tz": str(LEAGUE_TZ),
         "nudge": NUDGE,
-        "swing": SWING,
         "adp": rows,
         "order": order,
     }
