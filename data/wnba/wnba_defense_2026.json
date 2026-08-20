@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-19T23:40:03.478330-04:00",
+ "updated": "2026-08-20T05:41:07.148063-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -31662,6 +31662,110 @@
       "Alicia Florez",
       "G",
       7.0
+     ]
+    ]
+   }
+  },
+  "401857157": {
+   "date": "2026-08-20",
+   "allowed": {
+    "MIN": {
+     "G": 67.0,
+     "FC": 77.0
+    },
+    "GS": {
+     "G": 93.0,
+     "FC": 55.0
+    }
+   },
+   "players": {
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      22.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      26.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      27.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      20.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      43.0
+     ],
+     [
+      "Nia Coffey",
+      "FC",
+      3.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      4.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      3.0
+     ]
+    ],
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      6.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      18.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      18.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      9.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      35.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      26.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      27.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      5.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      0.0
      ]
     ]
    }
