@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-19T21:20:06.634728-04:00",
+ "updated": "2026-08-19T22:30:09.005247-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -31521,6 +31521,145 @@
      ],
      [
       "Mai Yamamoto",
+      "G",
+      7.0
+     ]
+    ]
+   }
+  },
+  "401857156": {
+   "date": "2026-08-19",
+   "allowed": {
+    "TOR": {
+     "G": 76.0,
+     "FC": 110.0
+    },
+    "WSH": {
+     "G": 66.0,
+     "FC": 88.0
+    }
+   },
+   "players": {
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      17.0
+     ],
+     [
+      "Aneesah Morrow",
+      "FC",
+      25.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      20.0
+     ],
+     [
+      "Julie Allemand",
+      "G",
+      12.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      26.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      13.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      13.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      19.0
+     ],
+     [
+      "Zaay Green",
+      "G",
+      1.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      8.0
+     ]
+    ],
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      27.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      36.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      25.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      27.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      19.0
+     ],
+     [
+      "Angela Dugalic",
+      "FC",
+      5.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      17.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      12.0
+     ],
+     [
+      "Rori Harmon",
+      "G",
+      0.0
+     ],
+     [
+      "Lucy Olsen",
+      "G",
+      0.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      10.0
+     ],
+     [
+      "Darianna Littlepage-Buggs",
+      "G",
+      0.0
+     ],
+     [
+      "Cassandre Prosper",
+      "G",
+      1.0
+     ],
+     [
+      "Alicia Florez",
       "G",
       7.0
      ]

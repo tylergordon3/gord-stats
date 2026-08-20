@@ -6113,7 +6113,7 @@
           "id": 25020,
           "home": "WSH",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-19"
@@ -6124,7 +6124,7 @@
           "id": 25020,
           "home": "WSH",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-19"
@@ -6135,7 +6135,7 @@
           "id": 25021,
           "home": "GS",
           "away": "MIN",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-19"
@@ -6146,7 +6146,7 @@
           "id": 25021,
           "home": "GS",
           "away": "MIN",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-19"
