@@ -79,24 +79,19 @@ def _latest_predict_link() -> tuple[str, str]:
     return f"/men/predict_{latest}.html", f"Final {season} Bracketology →"
 
 
-def _countdown_strip() -> str:
-    """Both clocks, side by side, above everything else on the homepage.
-
-    They started inside their sport's preview box, which buried them: the box
-    is a paragraph and two rows of links, so the clock landed below the fold on
-    a phone. Up here they are the first thing on the page, which is what a
-    countdown is for.
-
-    Each card renders nothing once its date has passed (see the include), so
-    this is a strip of two, then of one, then of none — the grid re-flows and
-    the empty strip removes itself in CSS rather than leaving a gap.
-    """
-    return """
-<div class="countdown-strip">
-  {% include countdown.html key="cbb" %}
-  {% include countdown.html key="fantasy" %}
-</div>
-"""
+# Each clock is included by its own sport's preview box below, directly under
+# that box's heading.
+#
+# They spent a while as a strip across the top of the page instead, because
+# sitting at the *bottom* of a box — under a paragraph and two rows of links —
+# put them below the fold on a phone. Under the heading is what makes the box
+# work as a home for them: the clock is the second thing in the box, and it is
+# attached to the sport it counts down to rather than floating above a page
+# that is mostly about something else.
+#
+# A card renders nothing at all once its date has passed (see the include), so
+# out of season a box simply has no clock in it — there is no empty frame left
+# behind to clear up.
 
 
 def _cbb_card(today: date) -> str:
@@ -114,6 +109,7 @@ def _cbb_card(today: date) -> str:
     <h2>College Basketball</h2>
     <a class="home-card-link" href="{href}">{label}</a>
   </div>
+  {{% include countdown.html key="cbb" %}}
   <p>{when} Machine-learning March Madness field predictions,
      built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
@@ -148,6 +144,7 @@ def _fantasy_card() -> str:
     <h2>Fantasy Football</h2>
     <a class="home-card-link" href="/fantasy/index.html">League dashboard →</a>
   </div>
+  {% include countdown.html key="fantasy" %}
   <p>Draft boards and tiers, ADP versus where players actually went, schedule
      strength, and a full waiver and trade history for the
      <a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team</a> league.</p>
@@ -180,6 +177,7 @@ def _cbb_lead() -> str:
     <h2>March Madness Predictions</h2>
     <a class="home-card-link" href="/men/index.html">Today's Scores →</a>
   </div>
+  {% include countdown.html key="cbb" %}
   <p>Machine-learning predictions of the NCAA tournament field, updated daily.
      Built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
@@ -268,9 +266,9 @@ def render_home():
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
 
     if cbb_in_season:
-        html = _countdown_strip() + _cbb_lead() + _wnba_card() + _fantasy_card()
+        html = _cbb_lead() + _wnba_card() + _fantasy_card()
     else:
-        html = _countdown_strip() + _wnba_lead() + _cbb_card(today) + _fantasy_card()
+        html = _wnba_lead() + _cbb_card(today) + _fantasy_card()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

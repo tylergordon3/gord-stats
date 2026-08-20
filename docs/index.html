@@ -1,11 +1,6 @@
 ---
 layout: default
 ---
-<div class="countdown-strip">
-  {% include countdown.html key="cbb" %}
-  {% include countdown.html key="fantasy" %}
-</div>
-
 <h1>WNBA Fantasy</h1>
 {% include wnba_scoreboard.html %}
 <p class="dashboard-cta">
@@ -19,6 +14,7 @@ layout: default
     <h2>College Basketball</h2>
     <a class="home-card-link" href="/men/predict_2026-03-15.html">Final 2026 Bracketology →</a>
   </div>
+  {% include countdown.html key="cbb" %}
   <p>The 2026–27 season tips off <strong>November 2</strong> — 75 days away. Machine-learning March Madness field predictions,
      built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
@@ -34,6 +30,7 @@ layout: default
     <h2>Fantasy Football</h2>
     <a class="home-card-link" href="/fantasy/index.html">League dashboard →</a>
   </div>
+  {% include countdown.html key="fantasy" %}
   <p>Draft boards and tiers, ADP versus where players actually went, schedule
      strength, and a full waiver and trade history for the
      <a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team</a> league.</p>

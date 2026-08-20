@@ -4213,37 +4213,11 @@ img {
   color: #F5A968;
 }
 
-/* The homepage leads with both clocks, side by side while there is room for
-   two. auto-fit rather than a fixed pair: each card stops rendering once its
-   date passes, so the strip goes from two to one to none on its own, and a
-   surviving card takes the full width instead of sitting in half of it. */
-.countdown-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 14px;
-  /* No align-items/height pair here. `align-items: start` with height:100% on
-     the cards made each one as tall as its own grid row, which side by side is
-     what you want and stacked is not: on a phone the first card kept the
-     height of the pair and trailed 32px of empty navy. Grid stretches items in
-     the same row by default, which is the same result across the row and none
-     of the damage down it. */
-}
-
-.countdown-strip:empty {
-  display: none;                      /* both dates passed; no empty gap */
-}
-
-.countdown-strip .countdown-card {
-  margin: 14px 0 4px;
-  box-sizing: border-box;
-}
-
-/* Said once for the pair. Side by side, two identical "shown in your local
-   time" lines read as a stutter. First card, so it survives whichever clock
-   expires first. */
-.countdown-strip .countdown-card:not(:first-child) .countdown-note {
-  display: none;
-}
+/* The clocks used to sit side by side in a .countdown-strip across the top of
+   the homepage; they now live inside their sport's preview box, so the grid
+   that paired them, and the rule that silenced the second card's "shown in
+   your local time" line, went with the strip. Two boxes apart, the note is not
+   the stutter it was when the cards were adjacent. */
 
 @media (max-width: 600px) {
   .countdown-card {
@@ -4276,9 +4250,6 @@ img {
     font-size: 12px;
   }
 
-  .countdown-strip {
-    gap: 8px;
-  }
 }
 
 @media (max-width: 360px) {
