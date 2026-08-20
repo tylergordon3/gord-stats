@@ -1,13 +1,22 @@
 [Unit]
-Description=Daily gord-stats refresh and publish
+Description=Six-hourly gord-stats refresh and publish
 
 [Timer]
-# One job now covers every section, so there's no longer a second rebuild to
-# stagger against. Early enough that the site is current before anyone looks at
-# it, late enough that the previous night's games have settled.
-OnCalendar=*-*-* 05:30:00
-# A missed day still runs at next boot — the site going stale is the failure
-# mode worth avoiding.
+# Every six hours through the draft and the season. It ran once a day, at 05:30,
+# which was right while the only thing that moved overnight was last night's
+# results — but ADP moves all day in draft season, and the fantasy job runs the
+# "predraft" preset, so a run is what refetches the board the live draft page is
+# graded against. Four runs a day also give the ADP movement archive four points
+# instead of one (adp_board.SNAPSHOT_GAP_HOURS is 3, so every run is kept), which
+# is what the Move column measures against.
+#
+# Still anchored at :30 past 05:00 rather than the top of the hour: the original
+# 05:30 run is the one that has to be finished before anyone looks at the site in
+# the morning, and that reasoning did not change.
+OnCalendar=*-*-* 05,11,17,23:30:00
+# A missed run still happens at next boot — the site going stale is the failure
+# mode worth avoiding. Persistent only makes up the most recent missed elapse,
+# so a Pi that was off overnight catches up once, not four times.
 Persistent=true
 RandomizedDelaySec=900
 
