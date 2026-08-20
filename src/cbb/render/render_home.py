@@ -261,14 +261,21 @@ def render_cbb_home():
 
 
 def render_home():
-    """Season-aware homepage: whichever sport is live leads the page."""
+    """Season-aware homepage: the boxes with live clocks lead, then the sport in season.
+
+    Out of the college basketball season the preview boxes go first, because
+    they are the two carrying countdowns and the WNBA dashboard below them is
+    long enough to push a clock most of a screen down. In season the tip-off and
+    the draft have both passed, so neither box has a clock in it and there is
+    nothing to lift above the sport actually being played.
+    """
     today = date.today()
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
 
     if cbb_in_season:
         html = _cbb_lead() + _wnba_card() + _fantasy_card()
     else:
-        html = _wnba_lead() + _cbb_card(today) + _fantasy_card()
+        html = _cbb_card(today) + _fantasy_card() + _wnba_lead()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
