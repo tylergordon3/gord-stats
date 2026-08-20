@@ -115,6 +115,19 @@ main() {
   ########################################
   # PUBLISH
   ########################################
+  # Re-check origin first. The pull above is minutes old by now — the refresh,
+  # the bundle install and the Jekyll build all sit between them — so a commit
+  # pushed inside that window would be published over. Rebuild rather than skip:
+  # this run holds the day's fresh data, and the point is to publish both.
+  git fetch --quiet origin "$BRANCH"
+  if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD; then
+    log "origin moved during the build — rebasing and rebuilding before publish"
+    git checkout -- docs data       # generated, and regenerated on the next line
+    git pull --rebase --quiet origin "$BRANCH"
+    python -m gordstats.daily --tasks "$TASKS"
+    bundle exec jekyll build --source docs --destination docs/_site --quiet
+  fi
+
   log "deploying to Cloudflare Pages ($PROJECT)"
   wrangler pages deploy docs/_site --project-name="$PROJECT" --commit-dirty=true
 

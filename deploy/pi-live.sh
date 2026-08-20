@@ -7,6 +7,9 @@
 # refetches fantasy data, rebuilds the site, and republishes via wrangler —
 # the same direct-upload path as pi-deploy.sh. Git gets a commit at most once
 # an hour: publishing doesn't need git, commits are for the laptop to pull.
+#
+# It does pull, though. The tick rebuilds and republishes the whole site, so a
+# tick running from a stale checkout republishes a stale site.
 set -euo pipefail
 
 main() {
@@ -31,6 +34,42 @@ main() {
   # shellcheck source=/dev/null
   . "$SECRETS"
   set +o allexport
+
+  ########################################
+  # PULL
+  ########################################
+  # This tick publishes the whole site, not just the WNBA panel, so it has to
+  # be building from the current source. Without this it built from whatever
+  # the checkout happened to be and published that over the top of anything
+  # newer: on 2026-08-19 the 19:00 tick republished the site as it stood before
+  # that afternoon's work, minutes after that work had been deployed by hand.
+  #
+  # Ticks regenerate docs/ and data/ but only commit hourly, so the tree is
+  # usually dirty here and a rebase would refuse to start. Discarding is safe —
+  # everything under those paths is generated, and the gate below regenerates
+  # what this tick needs.
+  local BRANCH
+  BRANCH="$(git branch --show-current)"
+  if ! git diff --quiet -- docs data; then
+    git checkout -- docs data
+  fi
+  if git diff --quiet && git diff --cached --quiet; then
+    git fetch --quiet origin "$BRANCH"
+    if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD; then
+      log "origin moved — rebasing before rebuild"
+      git pull --rebase --quiet origin "$BRANCH" || {
+        git rebase --abort 2>/dev/null || true
+        log "⚠️ rebase failed — skipping this tick rather than publishing stale"
+        exit 0
+      }
+    fi
+  else
+    # Something outside docs/ and data/ is uncommitted, which is not this
+    # script's to resolve. Publishing from it would be publishing a mystery.
+    log "⚠️ uncommitted changes outside docs/ and data/ — skipping this tick"
+    git status --short
+    exit 0
+  fi
 
   ########################################
   # GATE + REGENERATE
@@ -68,8 +107,6 @@ main() {
   [ -f "$STAMP" ] && LAST=$(stat -c %Y "$STAMP")
 
   if [ $((NOW - LAST)) -ge 3600 ]; then
-    local BRANCH
-    BRANCH="$(git branch --show-current)"
     git add -A docs data
     if git diff --cached --quiet; then
       log "no data changes to record"
