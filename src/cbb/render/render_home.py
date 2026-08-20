@@ -79,6 +79,26 @@ def _latest_predict_link() -> tuple[str, str]:
     return f"/men/predict_{latest}.html", f"Final {season} Bracketology →"
 
 
+def _countdown_strip() -> str:
+    """Both clocks, side by side, above everything else on the homepage.
+
+    They started inside their sport's preview box, which buried them: the box
+    is a paragraph and two rows of links, so the clock landed below the fold on
+    a phone. Up here they are the first thing on the page, which is what a
+    countdown is for.
+
+    Each card renders nothing once its date has passed (see the include), so
+    this is a strip of two, then of one, then of none — the grid re-flows and
+    the empty strip removes itself in CSS rather than leaving a gap.
+    """
+    return """
+<div class="countdown-strip">
+  {% include countdown.html key="cbb" %}
+  {% include countdown.html key="fantasy" %}
+</div>
+"""
+
+
 def _cbb_card(today: date) -> str:
     """Compact college-basketball card for the WNBA-season homepage."""
     days = (CBB_TIPOFF - today).days
@@ -102,7 +122,6 @@ def _cbb_card(today: date) -> str:
     <a href="/men/conference.html">Conference Rankings</a> ·
     <a href="/men/history.html">Prediction History</a>
   </p>
-  {{% include countdown.html key="cbb" %}}
 </section>
 """
 
@@ -137,7 +156,6 @@ def _fantasy_card() -> str:
     <a href="/fantasy/draft/">Draft</a> ·
     <a href="/fantasy/transactions/">Waivers &amp; Trades</a>
   </p>
-  {% include countdown.html key="fantasy" %}
 </section>
 """
 
@@ -250,9 +268,9 @@ def render_home():
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
 
     if cbb_in_season:
-        html = _cbb_lead() + _wnba_card() + _fantasy_card()
+        html = _countdown_strip() + _cbb_lead() + _wnba_card() + _fantasy_card()
     else:
-        html = _wnba_lead() + _cbb_card(today) + _fantasy_card()
+        html = _countdown_strip() + _wnba_lead() + _cbb_card(today) + _fantasy_card()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -72,6 +72,11 @@ wnba:
 
 
 fantasy:
+  - title: Home
+    short: Home
+    icon: "🏠"
+    url: /fantasy/index.html
+
   - title: Schedule Stats
     short: Schedule
     icon: "📅"
