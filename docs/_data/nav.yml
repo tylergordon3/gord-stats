@@ -97,6 +97,11 @@ fantasy:
     icon: "📋"
     url: /fantasy/draft/
 
+  - title: Power Rankings
+    short: Power
+    icon: "⚡"
+    url: /fantasy/power/
+
   - title: Waivers & Trades
     short: Waivers
     icon: "🔄"

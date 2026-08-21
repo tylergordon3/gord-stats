@@ -29,6 +29,7 @@ PAGES = [
     ("adp",          "Draft vs ADP",                      lambda: _gen("adp")),
     ("draft",        "Draft (recap + report + DNA)",      lambda: _gen("draft_center")),
     ("live",         "Live Draft Board",                  lambda: _gen("draft_live")),
+    ("power",        "Power Rankings (post-draft)",        lambda: _gen("power")),
     ("homepage",     "Home (countdown + live ADP board)", lambda: _gen("homepage")),
 ]
 

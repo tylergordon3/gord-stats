@@ -55,6 +55,11 @@ data/live_scores.json
 
 # Fantasy player DB build artifacts (regenerable via `python -m fantasy.data_manager`)
 data/fantasy/players/
+# Weekly league-scored points and the projections fitted from them. Both are
+# pulled straight back out of nflverse by `python -m fantasy.projections
+# --refresh`, so they are cache, not source.
+data/fantasy/points/
+data/fantasy/projections/
 
 # Refetched at the start of every WNBA run (wnba_remaining.wnba_update calls
 # wnba_fantasy.fetch_and_save before reading it), and the live job runs every
