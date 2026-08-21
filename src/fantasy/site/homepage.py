@@ -114,7 +114,7 @@ def injury_section() -> str:
     img, table, top = injuries.all_time_missed()
     premium = injuries.PREMIUM_ROUNDS
     top_pct = round((1 - injuries.STARTER_PCTL) * 100)
-    min_games = math.ceil(injuries.REG_WEEKS * injuries.MIN_GAMES_SHARE)
+    min_games = injuries.MIN_SAMPLE_GAMES
     top_html = "" if top is None else f"""<h2>Most Impactful Injuries</h2>
 <p>The single most damaging player absences across all seasons, ranked by estimated points lost.</p>
 <div class="table-scroll">
@@ -137,7 +137,7 @@ costs far more than losing a bench stash.</p>
 </div>
 {top_html}
 <h2>Injury Breakdown by Season</h2>
-<img src="data:image/png;base64,{img}" alt="Games Missed Plot"/>"""
+{img}"""
 
 
 def generate(output=OUTPUT):

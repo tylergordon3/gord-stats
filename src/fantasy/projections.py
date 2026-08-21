@@ -493,7 +493,7 @@ PRIOR_GAMES = 5.0
 
 
 def current_form(board: pd.DataFrame, year: int = UPCOMING_YEAR,
-                 refresh: bool = True) -> pd.DataFrame:
+                 refresh: bool = True, through_week: int = None) -> pd.DataFrame:
     """Blend the preseason projection with what has happened so far this season.
 
     Without this the power rankings would be frozen at draft night for four
@@ -505,12 +505,20 @@ def current_form(board: pd.DataFrame, year: int = UPCOMING_YEAR,
     A rookie who was a curve on a chart in August is a real player by October,
     and this is where the page learns that. Returns the board unchanged if the
     season has not kicked off.
+
+    `through_week` caps which weeks count. nflverse publishes Thursday night's
+    stats before the rest of the week is played, and without the cap a single
+    game would be blended in as if it were a full week of evidence for the
+    few players who had one and nothing for everyone else. The caller passes
+    the last week Sleeper has fully scored.
     """
     try:
         weekly = weekly_points.build(year, refresh=refresh)
     except Exception as exc:
         print(f"[projections] no {year} results yet ({exc}); staying preseason")
         return board
+    if through_week is not None:
+        weekly = weekly[weekly["week"] <= through_week]
     if weekly.empty:
         return board
 

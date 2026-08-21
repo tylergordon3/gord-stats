@@ -2,8 +2,12 @@
 Draft pick data (src/) - internal data module.
 
 Builds each season's drafted players with where they were taken (overall +
-positional) and where they finished, from Sleeper draft picks + rosters and
-fantasy.stats.player_points. Consumed by fantasy.site.adp (the Draft vs ADP page).
+positional) and where they finished, from Sleeper draft picks + rosters and the
+league-scored weekly points. Those come through fantasy.league.weekly_points,
+the cache the projection model trains on, rather than straight from
+fantasy.stats.player_points: the five page modules that build on this frame
+used to each pull a season of nflverse stats over the network per call, which
+was most of the Pi's fantasy build time. Consumed by fantasy.site.adp.
 
 Also archives per-team games-missed for the homepage injury section
 (save_games_missed), which is why this module survived the draft-page removal.
@@ -14,14 +18,12 @@ import pandas as pd
 from sleeper_wrapper import Drafts, League
 
 from fantasy import archive, stats
-from fantasy.config import DATA_DIR, DRAFT_IDS, FANTASY_REG_WEEKS, LEAGUE_IDS, SEASON_YEAR
+from fantasy.league import weekly_points
+from fantasy.config import (  # noqa: F401  (PLAYABLE_WEEKS re-exported for call sites)
+    DATA_DIR, DRAFT_IDS, FANTASY_REG_WEEKS, LEAGUE_IDS, PLAYABLE_WEEKS, SEASON_YEAR,
+)
 
 REG_WEEKS = FANTASY_REG_WEEKS
-# Every NFL team's bye falls inside the fantasy regular season, so a drafted
-# player can appear in at most REG_WEEKS - 1 of its weeks. That is the window
-# his absences are charged against. It used to be REG_WEEKS itself, which
-# billed every player in the league for one game nobody could have played.
-PLAYABLE_WEEKS = REG_WEEKS - 1
 # In-season pickups enter the injury stats only when held this many weeks -
 # streamers and one-week rentals aren't an injury story.
 PICKUP_MIN_WEEKS = 4
@@ -76,7 +78,7 @@ def _build(season_str: str, keep_streamers: bool = False):
     draft = Drafts(DRAFT_IDS[season_str])
     rosters = _rosters(league)
 
-    players = stats.player_points(season=SEASON_YEAR[season_str])
+    players = weekly_points.build(SEASON_YEAR[season_str])
     players = players[players["week"] <= REG_WEEKS]
 
     final_ranks = players.groupby("cleaned_name").agg(
@@ -174,7 +176,7 @@ def _pickup_detail(season_str: str) -> pd.DataFrame:
     rosters = _rosters(League(LEAGUE_IDS[season_str]))
     team_by_roster = dict(zip(rosters["roster_id"], rosters["team_name"]))
 
-    players = stats.player_points(season=SEASON_YEAR[season_str])
+    players = weekly_points.build(SEASON_YEAR[season_str])
     players = players[players["week"] <= REG_WEEKS]
 
     # Every time (player, roster) parted ways, by any transaction type.

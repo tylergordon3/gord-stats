@@ -134,6 +134,22 @@ def schedule(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS
     return found or None
 
 
+def scored_weeks(posted: dict) -> int:
+    """How many regular-season weeks Sleeper has fully scored, counting from 1.
+
+    A week counts once every team has points on it: Sleeper shows Thursday
+    night's score on a week that is otherwise still to be played, and a
+    zero-point team on a scored week does not happen.
+    """
+    week = 0
+    while (week + 1) in posted:
+        rows = posted[week + 1]
+        if not all(float(r.get("points") or 0) > 0 for r in rows):
+            break
+        week += 1
+    return week
+
+
 def actual_results(league_id: str = UPCOMING_LEAGUE_ID, through_week: int = 0,
                    posted: dict = None):
     """What has actually happened, for the weeks that are over.
@@ -540,9 +556,6 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     itself archived before returning.
     """
     board = projections.load(year, refresh=refresh)
-    # Once the season is under way the rankings follow it: see
-    # projections.current_form. Before kickoff this is a no-op.
-    board = projections.current_form(board, year)
     roster_frame = rosters()
     if roster_frame.empty:
         raise RuntimeError(
@@ -550,6 +563,12 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
             "published its picks. Nothing to rank.")
 
     posted = matchups()
+    # A week is "played" only when Sleeper has scored all of it AND nflverse
+    # has published it; each source gets ahead of the other in its own way.
+    scored = scored_weeks(posted)
+    # Once the season is under way the rankings follow it: see
+    # projections.current_form. Before kickoff this is a no-op.
+    board = projections.current_form(board, year, through_week=scored)
     table = schedule(posted=posted)
     fixed = None
     if table:
@@ -558,7 +577,8 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
         fixed = np.array([[index[table[w][rid]] for rid in order]
                           for w in sorted(table)])
 
-    actual = actual_results(through_week=projections.completed_weeks(year), posted=posted)
+    through = min(scored, projections.completed_weeks(year))
+    actual = actual_results(through_week=through, posted=posted)
     points = actual["points"] if actual else None
     summary = simulate(board, roster_frame, sims=sims, fixed_schedule=fixed,
                        actual_points=points)

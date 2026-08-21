@@ -18,8 +18,6 @@ Data sources: the archive (data/historical.json -> per-season `missing_df` and
 NOTE: that per-season missing_df is still produced by the legacy draft pipeline;
 migrating its *computation* belongs with the draft page, not the homepage.
 """
-import base64
-import io
 import json
 
 import matplotlib
@@ -27,9 +25,11 @@ matplotlib.use("Agg")          # non-interactive backend (no Qt/GUI needed)
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd              # noqa: E402
 
-from fantasy.config import DATA_DIR, FANTASY_REG_WEEKS, ROSTER_NAMES  # noqa: E402
+from fantasy.config import (                                           # noqa: E402
+    DATA_DIR, FANTASY_REG_WEEKS, LOST_SEASON_GAMES, PLAYABLE_WEEKS, ROSTER_NAMES,
+)
 from fantasy.site import styles                                         # noqa: E402
-from fantasy.site.draft import PLAYABLE_WEEKS                           # noqa: E402
+from gordstats import charts                                            # noqa: E402
 
 ARCHIVE_PATH = DATA_DIR / "historical.json"
 
@@ -39,10 +39,10 @@ PREMIUM_ROUNDS = 2              # drafted this early = high-impact regardless of
 # a player qualifies when his median weekly score reaches this percentile of
 # drafted players at his position (per season, when a season column is present).
 # The median (not the mean) is the yardstick so two spike weeks before an injury
-# don't read as starter-level production, and a minimum share of the season must
-# be played before the sample counts at all.
+# don't read as starter-level production, and a season that was lost (the
+# site-wide line in fantasy.config) is no sample at all.
 STARTER_PCTL = 0.75
-MIN_GAMES_SHARE = 0.25
+MIN_SAMPLE_GAMES = LOST_SEASON_GAMES
 
 
 def impact_detail(detail: pd.DataFrame) -> pd.DataFrame:
@@ -76,7 +76,7 @@ def impact_detail(detail: pd.DataFrame) -> pd.DataFrame:
         out["Med PPG"] = out["Pts."] / out["Games Played"].where(out["Games Played"] > 0)
     out["Med PPG"] = out["Med PPG"].fillna(0.0)
 
-    qualified = sample >= REG_WEEKS * MIN_GAMES_SHARE
+    qualified = sample >= MIN_SAMPLE_GAMES
     group_keys = (["season"] if "season" in out.columns else []) + ["Pos."]
     # The starter-pace bar stays defined by drafted position-mates, but is
     # applied to every row - a pickup scoring like a drafted starter counts.
@@ -122,7 +122,13 @@ def _load_missing():
 
 
 def _chart(missing: pd.DataFrame, seasons) -> str:
-    """Stacked bar of games missed per team, stacked by season -> base64 png."""
+    """Stacked bar of games missed per team by season -> an <img> tag.
+
+    Written to a file through gordstats.charts rather than inlined as base64:
+    this was the last inlined chart on the site, and the reason charts.py
+    exists is that an inlined one re-downloads with every page load and
+    rewrites the whole page blob whenever it changes.
+    """
     pivot = (
         missing.assign(Team=missing["roster_id"].map(ROSTER_NAMES))
         .pivot_table(index="Team", columns="season",
@@ -132,13 +138,9 @@ def _chart(missing: pd.DataFrame, seasons) -> str:
     )
     pivot.plot(x="Team", kind="bar", stacked=True,
                title="Games Missed for Injury by Season", rot=45)
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    buf.seek(0)
-    img = base64.b64encode(buf.read()).decode("utf-8")
-    buf.close()
-    plt.close()
-    return img
+    charts.clear("injuries")
+    return charts.save("injuries", "games-missed-by-season",
+                       alt="Games missed per team, stacked by season")
 
 
 def _table(missing: pd.DataFrame, detail: pd.DataFrame):
@@ -177,13 +179,14 @@ def top_injuries(detail: pd.DataFrame, n: int = 12):
     hurt["Med PPG"] = hurt["Med PPG"].map("{:.1f}".format)
     hurt["Est. Pts Lost"] = hurt["Est. Pts Lost"].round(0).astype(int)
     hurt = hurt.rename(columns={"season": "Season"})
-    hurt = hurt[["Season", "Name", "Pos.", "Owner", "Pick", "Med PPG",
+    hurt["Manager"] = hurt["roster_id"].map(ROSTER_NAMES)
+    hurt = hurt[["Season", "Name", "Pos.", "Manager", "Pick", "Med PPG",
                  "Games Missed", "Est. Pts Lost"]]
     return styles.default_style(hurt, ["Est. Pts Lost"], cmap="RdYlGn_r")
 
 
 def all_time_missed():
-    """Return (base64 chart png, styled league table, styled top-injuries table
+    """Return (chart <img> tag, styled league table, styled top-injuries table
     or None) for the injury section."""
     missing, seasons = _load_missing()
     detail = _load_detail()

@@ -25,16 +25,11 @@ from functools import lru_cache
 import pandas as pd
 
 from fantasy import stats
-from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROSTER_NAMES, SEASON_YEAR
+from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, LOST_SEASON_GAMES, ROSTER_NAMES, SEASON_YEAR
 from fantasy.league.adp import get_adp
 from fantasy.site import draft, layout, styles
 
 CUTOFF_ROWS = 15
-# A drafted player is dropped from the page when he missed this many of the
-# scored weeks *and* finished below his ADP - see _injury_shortened. Set at
-# "more than 8 games", so it only catches seasons that were essentially lost,
-# not the two- or three-week absences every roster deals with.
-INJURY_GAMES_MISSED = 9
 _GRID = [styles.GRID_TD, styles.GRID_TH]
 
 
@@ -77,7 +72,8 @@ def _injury_shortened(m: pd.DataFrame) -> pd.Series:
     half the year and still finished ahead of his ADP says nothing bad about the
     manager, and a healthy bust says everything.
 
-      * he missed at least INJURY_GAMES_MISSED of the scored weeks, and
+      * he played fewer than LOST_SEASON_GAMES (the site-wide line for a lost
+        season, see fantasy.config), and
       * he finished below consensus ADP.
 
     Games played is the only availability signal in the data (it is what the
@@ -86,15 +82,18 @@ def _injury_shortened(m: pd.DataFrame) -> pd.Series:
     then not on the field.
     """
     played = pd.to_numeric(m["Games Played"], errors="coerce")
-    missed = played.max() - played
-    return (missed >= INJURY_GAMES_MISSED) & (m["BeatADP"] < 0)
+    return (played < LOST_SEASON_GAMES) & (m["BeatADP"] < 0)
 
 
 def _matched(season_str) -> pd.DataFrame:
     """The picks every table on the page is built from: matched to an ADP, and
     with the injury-shortened seasons taken out."""
     m = _picks_with_adp(season_str)
-    return m[m["adp"].notna() & ~m["Injured"]].copy()
+    m = m[m["adp"].notna() & ~m["Injured"]].copy()
+    # The stable manager name, like every other section; "Owner" is the Sleeper
+    # team name, which changes yearly and reads as a stranger's.
+    m["Manager"] = m["roster_id"].map(ROSTER_NAMES)
+    return m
 
 
 # --------------------------------------------------------------------------- #
@@ -123,13 +122,13 @@ def _assemble(values, busts):
 
 # Ranked and coloured on the outcome column; ADP and the gap to it stay on the
 # row so a bust that consensus also liked reads differently from a pure reach.
-_OVR_COLS = ["Pick", "overall_pick", "Owner", "Name", "Pos.", "final_rank", "vsFinish",
+_OVR_COLS = ["Pick", "overall_pick", "Manager", "Name", "Pos.", "final_rank", "vsFinish",
              "adp", "OvrValue"]
 _OVR_RENAME = {"overall_pick": "Overall Pick", "Name": "Player", "Pos.": "Pos",
                "final_rank": "Fantasy Finish", "vsFinish": "Finish vs Pick",
                "adp": "ADP", "OvrValue": "ADP Value"}
 
-_POS_COLS = ["Pos.", "Name", "Owner", "draft_pos_rank", "overall_pick", "final_pos_rank",
+_POS_COLS = ["Pos.", "Name", "Manager", "draft_pos_rank", "overall_pick", "final_pos_rank",
              "PosVsFinish", "adp_pos", "PosValue"]
 _POS_RENAME = {"Pos.": "Pos", "Name": "Player", "draft_pos_rank": "Draft Pos",
                "overall_pick": "Overall Pick", "final_pos_rank": "Positional Finish",
@@ -184,7 +183,6 @@ def matched_with_manager(season_str) -> pd.DataFrame:
     """
     m = _matched(season_str)
     m["Season"] = FORMAL_SEASON[season_str]
-    m["Manager"] = m["roster_id"].map(ROSTER_NAMES)
     m["vsADP"] = m["OvrValue"]
     m["vsFinish"] = m["overall_pick"] - m["final_rank"]
     # Positional versions (comparable across positions; overall finish favors QBs).
@@ -286,7 +284,7 @@ def body() -> str:
         "(pick minus ADP, + = taken later than consensus) are on each row as draft-day context. "
         "<strong>By Position</strong> does the same on positional ranks, which is the fairer "
         "comparison across positions: an overall finish always favours quarterbacks.</p>"
-        f"<p>Players who missed more than {INJURY_GAMES_MISSED - 1} games and finished below "
+        f"<p>Players who played fewer than {LOST_SEASON_GAMES} games and finished below "
         "their ADP are left out: a season lost to injury says nothing about the pick. Each "
         "season notes who was dropped.</p>"
     )

@@ -51,6 +51,24 @@ SPINE_COLS = ["source", "source_id"] + ID_COLS + IDENTITY_COLS + ["merge_name"]
 FANTASY_REG_WEEKS = 14           # fantasy regular season length
 EXPW_RATIO = 2.37                # Pythagorean exponent for expected wins
 
+# --------------------------------------------------------------------------- #
+# Availability policy. Every page that asks "how much of the season did he
+# actually play" reads these, so the draft page, the injury tables and the
+# health-adjusted hit rate agree on what a lost season and a healthy one are.
+# They used to keep three thresholds of their own, in three different units,
+# that disagreed at the margins on the same page.
+# --------------------------------------------------------------------------- #
+# Weeks a player can appear in: every NFL bye falls inside the fantasy regular
+# season, so the most anyone plays is one fewer than the season has.
+PLAYABLE_WEEKS = FANTASY_REG_WEEKS - 1
+# Fewer games than this and the season was lost: the pick is not graded (a
+# torn ACL says nothing about the drafter) and the scoring sample is too thin
+# to call anyone a starter on.
+LOST_SEASON_GAMES = 5
+# Missed no more than this many and he was available all year - the bar for
+# the health-adjusted hit rate.
+HEALTHY_MAX_MISSED = 2
+
 ROSTER_NAMES = {
     1: "Colin", 2: "Tyler", 3: "Jackson", 4: "Max", 5: "Austin",
     6: "Trevor", 7: "Padgett", 8: "Mark", 9: "George", 10: "Everett",
