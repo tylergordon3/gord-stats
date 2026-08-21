@@ -225,7 +225,7 @@ def run(plan: Plan) -> int:
     results = []
 
     if plan.data_jobs:
-        from src import data_manager
+        from fantasy import data_manager
         _step(f"data: {', '.join(plan.data_jobs)}",
               lambda: data_manager.main(seasons=plan.seasons, only=plan.data_jobs,
                                         refresh=plan.force_refresh),

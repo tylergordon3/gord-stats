@@ -1,13 +1,14 @@
 """
-Regenerate all migrated site pages.
+Regenerate the fantasy site pages, non-interactively.
 
-    python -m fantasy.site.build                 # all seasons + global pages
-    python -m fantasy.site.build --seasons 2526  # just these seasons' archived data
-    python -m fantasy.site.build --refresh-adp   # force a fresh pull of the live ADP board
+    python -m fantasy.site.build                 # every page, cached ADP board
+    python -m fantasy.site.build --refresh-adp   # refetch the live ADP board first
+    python -m fantasy.site.build --seasons 2526  # narrow the games-missed re-archive
 
-Every page is now global - schedule and draft analytics each hold every season
-behind on-page season buttons. --seasons only narrows the per-season
-data archived for the homepage.
+This is `fantasy.rebuild` without the menu. It used to keep its own list of
+pages, which drifted: after the draft pages were merged it was still calling
+three modules that no longer wrote anything. There is one list now,
+rebuild.PAGES, and adding a page there is the whole job.
 
 NOTE: the weekly Best Ball / Median pages were retired. fantasy.site.bestball and
 fantasy.site.median survive as calculation libraries (compute()) with no HTML
@@ -15,37 +16,21 @@ rendering; wiring either back into the site means writing a new page for it.
 """
 import argparse
 
-from fantasy.config import LEAGUE_IDS
-from fantasy.league import adp_board
-from fantasy.site import (
-    draft, draft_analytics, draft_live, homepage, power, schedule, team_adjusted,
-    transactions,
-)
-
-# Season codes we have data for, newest first.
-SEASONS = list(LEAGUE_IDS)
+from fantasy import rebuild
 
 
-def build_all(seasons=None, refresh_adp=False):
-    """Generate per-season pages, then the global pages."""
-    seasons = seasons or SEASONS
-    if refresh_adp:
-        adp_board.board(refresh=True)         # live ADP for the homepage draft board
-    for season_str in seasons:
-        draft.save_games_missed(season_str)   # injury data for the homepage (draft page retired)
-
-    # Every remaining page carries all seasons at once (season buttons on-page).
-    schedule.generate()
-    transactions.generate()
-    draft_analytics.generate()  # board, values & busts, manager report, DNA
-    draft_live.generate()     # live board for the draft being held next
-    power.generate()          # post-draft roster strength, simulated
-    homepage.generate()
+def build_all(seasons=None, refresh_adp: bool = False):
+    """Every page, with the ADP board refetched first if asked."""
+    plan = rebuild.plan_from_preset("predraft" if refresh_adp else "pages")
+    if seasons:
+        plan.seasons = list(seasons)
+    if rebuild.run(plan):
+        raise RuntimeError("one or more pages failed to build")
 
 
 def _parse_args():
     p = argparse.ArgumentParser(description="Regenerate site pages.")
-    p.add_argument("--seasons", nargs="+", help="Season codes to build (default: all).")
+    p.add_argument("--seasons", nargs="+", help="Season codes to re-archive (default: all).")
     p.add_argument("--refresh-adp", action="store_true",
                    help="Refetch the live ADP board instead of using the cache.")
     return p.parse_args()

@@ -1,5 +1,5 @@
 [Unit]
-Description=Live WNBA refresh and publish while games are on
+Description=Live refresh and publish: WNBA games, fantasy draft and weeks
 After=network-online.target
 Wants=network-online.target
 OnFailure=notify@%n.service
@@ -9,8 +9,9 @@ Type=oneshot
 WorkingDirectory=%h/apps/gord-stats
 EnvironmentFile=%h/secrets/gord-stats.env
 ExecStart=%h/apps/gord-stats/deploy/pi-live.sh
-# One ESPN check when idle; a fantasy fetch, Jekyll build and wrangler upload
-# when games are live — all comfortably inside 15 minutes on the Pi.
+# An ESPN check and a Sleeper check when idle; a fantasy fetch or a power-page
+# rebuild, a Jekyll build and a wrangler upload when something fired — all
+# comfortably inside 15 minutes on the Pi.
 TimeoutStartSec=900
 Environment=MPLBACKEND=Agg
 

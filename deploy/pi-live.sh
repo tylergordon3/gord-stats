@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
-# Frequent WNBA refresh while games are being played. Run every 10 minutes by
+# Frequent refresh while something is happening. Run every 10 minutes by
 # wnba-live.timer, and on demand with `deploy/pi-live.sh`.
 #
-# The gate is one ESPN scoreboard call: if no WNBA game is live (or tipping
-# within 30 minutes) the tick exits in about a second. When games are on, it
-# refetches fantasy data, rebuilds the site, and republishes via wrangler —
-# the same direct-upload path as pi-deploy.sh. Git gets a commit at most once
-# an hour: publishing doesn't need git, commits are for the laptop to pull.
+# Two gates, each a call or two: the WNBA scoreboard (a game live or tipping
+# within 30 minutes) and the fantasy section (the draft finished, or a week of
+# the season fully scored — see fantasy.live). If neither has anything, the
+# tick exits in about a second. Otherwise whichever fired regenerates its
+# pages and the tick rebuilds the site and republishes via wrangler — the same
+# direct-upload path as pi-deploy.sh. Git gets a commit at most once an hour
+# for WNBA ticks, and immediately when fantasy fires, since those are rare and
+# the power rankings archive a snapshot that should be recorded: publishing
+# doesn't need git, commits are for the laptop to pull.
 #
 # It does pull, though. The tick rebuilds and republishes the whole site, so a
 # tick running from a stale checkout republishes a stale site.
@@ -77,14 +81,25 @@ main() {
   # shellcheck source=/dev/null
   . "$VENV/bin/activate"
 
-  local RC=0
-  python -m wnba.wnba_live || RC=$?
-  if [ "$RC" -eq 3 ]; then
-    exit 0                       # no active games — quiet tick
-  elif [ "$RC" -ne 0 ]; then
-    echo "❌ live refresh failed (rc=$RC)"
-    exit "$RC"
+  # Each gate exits 0 (regenerated something) or 3 (nothing to do); anything
+  # else is a failure worth the notify unit.
+  local WNBA=0 FANTASY=0
+  python -m wnba.wnba_live || WNBA=$?
+  if [ "$WNBA" -ne 0 ] && [ "$WNBA" -ne 3 ]; then
+    echo "❌ WNBA live refresh failed (rc=$WNBA)"
+    exit "$WNBA"
   fi
+  python -m fantasy.live || FANTASY=$?
+  if [ "$FANTASY" -ne 0 ] && [ "$FANTASY" -ne 3 ]; then
+    echo "❌ fantasy live refresh failed (rc=$FANTASY)"
+    exit "$FANTASY"
+  fi
+  if [ "$WNBA" -eq 3 ] && [ "$FANTASY" -eq 3 ]; then
+    exit 0                       # nothing live anywhere — quiet tick
+  fi
+  local WHAT=""
+  [ "$WNBA" -eq 0 ] && WHAT="wnba"
+  [ "$FANTASY" -eq 0 ] && WHAT="${WHAT:+$WHAT,}fantasy"
 
   ########################################
   # BUILD + PUBLISH
@@ -100,18 +115,18 @@ main() {
   wrangler pages deploy docs/_site --project-name="$PROJECT" --commit-dirty=true >/dev/null
 
   ########################################
-  # HOURLY COMMIT
+  # COMMIT: hourly for WNBA, at once for fantasy
   ########################################
   local STAMP="$PWD/.last_live_commit" NOW LAST=0
   NOW=$(date +%s)
   [ -f "$STAMP" ] && LAST=$(stat -c %Y "$STAMP")
 
-  if [ $((NOW - LAST)) -ge 3600 ]; then
+  if [ "$FANTASY" -eq 0 ] || [ $((NOW - LAST)) -ge 3600 ]; then
     git add -A docs data
     if git diff --cached --quiet; then
       log "no data changes to record"
     else
-      git commit -q -m "Live update (wnba) $(date '+%Y-%m-%d %H:%M')"
+      git commit -q -m "Live update ($WHAT) $(date '+%Y-%m-%d %H:%M')"
       if ! git push --quiet origin "$BRANCH" 2>/dev/null; then
         log "push rejected — rebasing onto origin and retrying"
         if git pull --rebase --quiet origin "$BRANCH"; then

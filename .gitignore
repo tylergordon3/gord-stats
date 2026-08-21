@@ -52,6 +52,7 @@ Thumbs.db
 # live scores are regenerated every poll; never worth committing
 data/live_scores.json
 .last_live_commit
+.fantasy_live_state.json
 
 # Fantasy player DB build artifacts (regenerable via `python -m fantasy.data_manager`)
 data/fantasy/players/
