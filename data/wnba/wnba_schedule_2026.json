@@ -6159,7 +6159,7 @@
           "id": 25022,
           "home": "DAL",
           "away": "IND",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-20"
@@ -6170,7 +6170,7 @@
           "id": 25022,
           "home": "DAL",
           "away": "IND",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-20"
@@ -6181,7 +6181,7 @@
           "id": 25023,
           "home": "LV",
           "away": "CON",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-20"
@@ -6192,7 +6192,7 @@
           "id": 25023,
           "home": "LV",
           "away": "CON",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-20"
@@ -6203,7 +6203,7 @@
           "id": 25024,
           "home": "LA",
           "away": "ATL",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-20"
@@ -6214,7 +6214,7 @@
           "id": 25024,
           "home": "LA",
           "away": "ATL",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-20"
