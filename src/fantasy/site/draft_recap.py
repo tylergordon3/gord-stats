@@ -7,7 +7,8 @@ One view per season, picked with the season buttons:
     and the tier the player actually finished in, colored by the move:
     green = finished tiers better than his draft cost, red = worse.
   * Pick-by-Pick - every pick as a row with exact position finish and the
-    tier move highlighted.
+    tier move highlighted. Collapsed under the board: it is the same draft
+    again as 150 rows, there for looking a pick up, not for reading.
 
 Unlike the Draft vs ADP page this keeps K / team defenses - it is a record of
 the whole draft, not a skill-position value judgement.
@@ -140,10 +141,11 @@ def _season_view(season_str: str) -> str:
         f'next {LEAGUE_TEAMS} = RB2, ...) → tier the player finished the season in. '
         'Green = outplayed his draft cost, red = fell short.</p>'
         f'<div class="table-scroll">{board(df)}</div>'
-        '<h2>Pick by Pick</h2>'
-        '<p><strong>Finished</strong> shows the tier plus the exact position finish '
-        'by total points; <strong>Tier Δ</strong> is tiers gained (+) or lost (-).</p>'
-        f'<div class="table-scroll">{pick_table(df)}</div>'
+        + layout.details(
+            "Pick by Pick",
+            '<p><strong>Finished</strong> shows the tier plus the exact position finish '
+            'by total points; <strong>Tier Δ</strong> is tiers gained (+) or lost (-).</p>'
+            f'<div class="table-scroll">{pick_table(df)}</div>')
     )
 
 

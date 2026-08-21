@@ -68,7 +68,7 @@ def test_sub_nav_sections_match_the_bar():
 def test_retired_draft_pages_are_gone_and_redirected():
     """Pages serves a matching asset before consulting _redirects, so the old
     directories had to be deleted for the 301s to fire at all."""
-    for old in ("draft-recap", "draft-report", "draft-dna"):
+    for old in ("draft-recap", "draft-report", "draft-dna", "adp"):
         assert not (DOCS / "fantasy" / old).exists(), f"docs/fantasy/{old} still shadows its redirect"
         assert f"/fantasy/{old}/" in REDIRECTS, f"no redirect for /fantasy/{old}/"
 

@@ -5,8 +5,8 @@ Regenerate all migrated site pages.
     python -m fantasy.site.build --seasons 2526  # just these seasons' archived data
     python -m fantasy.site.build --refresh-adp   # force a fresh pull of the live ADP board
 
-Every page is now global - schedule, draft-vs-ADP and the draft report each hold
-every season behind on-page season buttons. --seasons only narrows the per-season
+Every page is now global - schedule and draft analytics each hold every season
+behind on-page season buttons. --seasons only narrows the per-season
 data archived for the homepage.
 
 NOTE: the weekly Best Ball / Median pages were retired. fantasy.site.bestball and
@@ -18,8 +18,8 @@ import argparse
 from fantasy.config import LEAGUE_IDS
 from fantasy.league import adp_board
 from fantasy.site import (
-    adp, draft, draft_dna, draft_live, draft_recap, draft_report, homepage, power,
-    schedule, team_adjusted, transactions,
+    draft, draft_analytics, draft_live, homepage, power, schedule, team_adjusted,
+    transactions,
 )
 
 # Season codes we have data for, newest first.
@@ -37,10 +37,7 @@ def build_all(seasons=None, refresh_adp=False):
     # Every remaining page carries all seasons at once (season buttons on-page).
     schedule.generate()
     transactions.generate()
-    adp.generate()
-    draft_recap.generate()    # per-season draft boards with tier movement
-    draft_report.generate()   # all-time + per-year manager draft report
-    draft_dna.generate()      # owner draft habits across every draft
+    draft_analytics.generate()  # board, values & busts, manager report, DNA
     draft_live.generate()     # live board for the draft being held next
     power.generate()          # post-draft roster strength, simulated
     homepage.generate()

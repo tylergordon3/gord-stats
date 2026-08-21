@@ -7,10 +7,11 @@ different question: *how* do they draft? Five sections:
   * Positional Clock   - when each manager takes their first QB / RB / WR / TE,
                          and the earliest they have ever gone at each spot.
   * Early Blueprint    - what the first five rounds look like for each manager.
-  * Availability       - how much of a hit rate is drafting and how much is the
-                         player simply staying on the field.
+  * Health-adjusted    - how much of a hit rate is drafting and how much is the
+                         player simply staying on the field, with each absence
+                         weighted the way the homepage injury section weights it.
   * Champion Blueprint - how the three title-winning drafts differed from the field.
-  * Report Cards       - a per-manager card with signature habits and outlier picks.
+  * Manager Cards      - a per-manager card with signature habits and outlier picks.
 
 Everything here is drawn from three drafts per manager, which is a small sample -
 the page says so, and every table carries its own counts.
@@ -24,7 +25,7 @@ import pandas as pd
 from fantasy import paths
 from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES
 from fantasy.league.playoffs import champion_roster
-from fantasy.site import adp, layout, styles
+from fantasy.site import adp, injuries, layout, styles
 from gordstats.frontmatter import add_front_matter
 
 POS = ["QB", "RB", "WR", "TE"]
@@ -50,6 +51,9 @@ _HABIT_MIN = 0.5
 # first GAMES of the season where they recorded a stat line; anything short of
 # that is a week their manager got nothing. HEALTHY_MIN (missed no more than two)
 # is the bar for "was available all year", used for the health-adjusted hit rate.
+# Which absences *mattered* - high-impact, and the points they cost - is not
+# decided here: fantasy.site.injuries.impact_detail classifies them, so this
+# section and the homepage's injury tables agree on what a major injury is.
 GAMES = 13
 HEALTHY_MIN = 11
 
@@ -83,6 +87,15 @@ def all_picks() -> pd.DataFrame:
     df["Hit"] = df.apply(lambda r: r["final_pos_rank"] <= STARTERS.get(r["Pos."], 24), axis=1)
     df["Missed"] = GAMES - df["Games Played"]
     df["Healthy"] = df["Games Played"] >= HEALTHY_MIN
+
+    # The same classifier the homepage injury section uses, so "high-impact"
+    # means one thing across the site: a premium-round pick, or a player
+    # scoring at weekly-starter pace among that season's drafted position-mates,
+    # priced at games missed x his median weekly score. The window is GAMES
+    # rather than the full regular season so Games Missed agrees with Missed.
+    impact = injuries.impact_detail(df.assign(season=df["Season"], **{"Window Weeks": GAMES}))
+    df["High Impact"] = impact["High Impact"]
+    df["Est. Pts Lost"] = impact["Est. Pts Lost"]
 
     # Positional, not overall: outcomes measured on the overall board reward
     # QBs, who out-score every other position by construction. Comparing the
@@ -227,88 +240,72 @@ def early_blueprint(df) -> str:
 
 
 # --------------------------------------------------------------------------- #
-# Section 3 - availability
+# Section 3 - health-adjusted drafting
 # --------------------------------------------------------------------------- #
 
-_BUCKETS = [(-1, 6, f"6 or fewer of {GAMES}"), (6, 10, f"7-10 of {GAMES}"),
-            (10, GAMES, f"11-{GAMES} of {GAMES}")]
-
-
-def _availability_buckets(df) -> pd.DataFrame:
-    rows = []
-    for lo, hi, label in _BUCKETS:
-        sub = df[(df["Games Played"] > lo) & (df["Games Played"] <= hi)]
-        rows.append({"Weeks active": label, "Picks": len(sub),
-                     "Became a starter": round(sub["Hit"].mean() * 100) if len(sub) else 0})
-    return pd.DataFrame(rows)
-
-
 def health_table(df) -> pd.DataFrame:
-    """Per manager: games lost, raw hit rate, and the hit rate among healthy picks."""
+    """Per manager: what their picks' absences cost, and the hit rate without them."""
     healthy = df[df["Healthy"]]
-    g = df.groupby("Manager").agg(Picks=("Hit", "count"), Missed=("Missed", "sum"),
-                                  Raw=("Hit", "mean")).reset_index()
+    g = df.groupby("Manager").agg(
+        Picks=("Hit", "count"), Missed=("Missed", "sum"),
+        HighImpact=("Missed", lambda s: int(s[df.loc[s.index, "High Impact"]].sum())),
+        PtsLost=("Est. Pts Lost", "sum"), Raw=("Hit", "mean")).reset_index()
     h = healthy.groupby("Manager").agg(HealthyPicks=("Hit", "count"),
                                        HealthyHit=("Hit", "mean")).reset_index()
     g = g.merge(h, on="Manager", how="left")
     g["Raw"] = (g["Raw"] * 100).round(0)
     g["HealthyHit"] = (g["HealthyHit"] * 100).round(0)
     g["Swing"] = (g["HealthyHit"] - g["Raw"]).round(0)
+    g["PtsLost"] = g["PtsLost"].round(0).astype(int)
     # Kept off the rendered table; drives the "who moves" narrative below.
     g["RawRank"] = g["Raw"].rank(method="min", ascending=False).astype(int)
     g["AdjRank"] = g["HealthyHit"].rank(method="min", ascending=False).astype(int)
     g["Move"] = g["AdjRank"] - g["RawRank"]
     return g.sort_values("HealthyHit", ascending=False).rename(columns={
-        "Missed": "Weeks Lost", "Raw": "Starter Hit %", "HealthyPicks": "Healthy Picks",
-        "HealthyHit": "Healthy Hit %", "Swing": "Swing"})
+        "Missed": "Weeks Lost", "HighImpact": "High-Impact Weeks Lost",
+        "PtsLost": "Est. Pts Lost", "Raw": "Starter Hit %",
+        "HealthyPicks": "Healthy Picks", "HealthyHit": "Healthy Hit %", "Swing": "Swing"})
 
 
-def availability(df) -> str:
-    buckets = _availability_buckets(df)
-    bucket_html = (buckets.style.hide(axis="index")
-                   .format({"Became a starter": "{:.0f}%"})
-                   .background_gradient(cmap="RdYlGn", subset=["Became a starter"])
-                   .set_table_styles(_GRID, overwrite=False)
-                   .set_table_attributes('class="sticky-table"')).to_html()
+def health(df) -> str:
+    table = health_table(df)
+    shown = table.drop(columns=["RawRank", "AdjRank", "Move"])
+    html = (shown.style.hide(axis="index")
+            .format({"Starter Hit %": "{:.0f}%", "Healthy Hit %": "{:.0f}%", "Swing": "{:+.0f}"})
+            .background_gradient(cmap="RdYlGn_r", subset=["Weeks Lost"])
+            .background_gradient(cmap="RdYlGn_r", subset=["High-Impact Weeks Lost"])
+            .background_gradient(cmap="RdYlGn_r", subset=["Est. Pts Lost"])
+            .background_gradient(cmap="RdYlGn", subset=["Healthy Hit %"])
+            .set_table_styles(_GRID, overwrite=False)
+            .set_table_attributes('class="sticky-table"')).to_html()
 
-    health = health_table(df)
-    shown = health.drop(columns=["RawRank", "AdjRank", "Move"])
-    health_html = (shown.style.hide(axis="index")
-                   .format({"Starter Hit %": "{:.0f}%", "Healthy Hit %": "{:.0f}%",
-                            "Swing": "{:+.0f}"})
-                   .background_gradient(cmap="RdYlGn_r", subset=["Weeks Lost"])
-                   .background_gradient(cmap="RdYlGn", subset=["Healthy Hit %"])
-                   .set_table_styles(_GRID, overwrite=False)
-                   .set_table_attributes('class="sticky-table"')).to_html()
-
-    worst = health.loc[health["Weeks Lost"].idxmax()]
-    best = health.loc[health["Weeks Lost"].idxmin()]
-    top = health.iloc[0]
-    dead = buckets.iloc[0]
+    worst = table.loc[table["Est. Pts Lost"].idxmax()]
+    best = table.loc[table["Est. Pts Lost"].idxmin()]
+    top = table.iloc[0]
+    premium = injuries.PREMIUM_ROUNDS
+    top_pct = round((1 - injuries.STARTER_PCTL) * 100)
 
     return (
         f"<p>Every hit rate on this page is really two things at once: whether the pick was any "
-        f"good, and whether they stayed on the field. This section separates them. "
-        f"<strong>Weeks active</strong> counts the weeks in the first {GAMES} where a drafted "
-        f"player recorded a stat line &mdash; a week they missed is a week their manager got "
-        f"nothing from that roster spot.</p>"
-        f"<h2>Availability decides almost everything</h2>"
-        f"<div class='table-scroll'>{bucket_html}</div>"
-        f"<p>Of the {dead['Picks']} picks who were active for {dead['Weeks active'].lower()} weeks, "
-        f"<strong>{dead['Became a starter']:.0f}%</strong> finished as a weekly starter. Availability "
-        f"isn't a factor in draft success so much as a precondition for it.</p>"
-        f"<h2>Health-adjusted drafting</h2>"
-        f"<p><strong>Healthy Hit %</strong> is the hit rate counting only picks who were active for "
-        f"at least {HEALTHY_MIN} of {GAMES} weeks &mdash; it asks how good the picks were when they "
-        f"were actually available, which is the part a manager controls.</p>"
-        f"<div class='table-scroll'>{health_html}</div>"
-        f"<p><strong>{worst['Manager']}</strong>'s picks sat out "
-        f"{int(worst['Weeks Lost'])} player-weeks against {int(best['Weeks Lost'])} for "
-        f"<strong>{best['Manager']}</strong> &mdash; a gap of "
-        f"{(worst['Weeks Lost'] - best['Weeks Lost']) / GAMES:.1f} full player-seasons across "
-        f"three drafts, none of it a drafting decision. Adjusting for it puts "
+        f"good, and whether they stayed on the field. This section separates them, and weighs "
+        f"each absence the way the homepage's injury tables do rather than counting every "
+        f"missed week the same. <strong>Weeks Lost</strong> counts the weeks in the first {GAMES} "
+        f"where a drafted player recorded no stat line. <strong>High-Impact Weeks Lost</strong> "
+        f"are the ones that belonged to a pick from the first {premium} rounds, or to a player "
+        f"scoring at weekly-starter pace (top {top_pct}% median weekly points among drafted "
+        f"players at his position that season). <strong>Est. Pts Lost</strong> prices every "
+        f"absence at the player's median week. <strong>Healthy Hit %</strong> is the hit rate "
+        f"counting only picks active at least {HEALTHY_MIN} of {GAMES} weeks &mdash; how good "
+        f"the picks were when they were actually available, which is the part a manager "
+        f"controls.</p>"
+        f"<div class='table-scroll'>{html}</div>"
+        f"<p><strong>{worst['Manager']}</strong>'s picks cost an estimated "
+        f"<strong>{int(worst['Est. Pts Lost'])} points</strong> in absences "
+        f"({int(worst['High-Impact Weeks Lost'])} of {int(worst['Weeks Lost'])} weeks lost were "
+        f"high-impact) against {int(best['Est. Pts Lost'])} for <strong>{best['Manager']}</strong> "
+        f"&mdash; none of it a drafting decision. Adjusting for availability puts "
         f"<strong>{top['Manager']}</strong> on top at {top['Healthy Hit %']:.0f}%.</p>"
-        + _movers(health)
+        + _movers(table)
         + _health_caveat()
     )
 
@@ -325,7 +322,7 @@ def _movers(health) -> str:
         parts.append(
             f"<strong>{faller['Manager']}</strong> loses the most, sliding from "
             f"{_ordinal(int(faller['RawRank']))} to {_ordinal(int(faller['AdjRank']))} &mdash; "
-            f"only {int(faller['Weeks Lost'])} player-weeks lost meant there was little "
+            f"only {int(faller['Weeks Lost'])} weeks lost meant there was little "
             f"bad luck inflating their raw number to begin with")
     if riser["Move"] < 0:
         parts.append(
@@ -346,7 +343,7 @@ def _movers(health) -> str:
 
 def _health_caveat() -> str:
     return (
-        "<p class='caveat'><strong>What this does and doesn't measure.</strong> Weeks active "
+        "<p class='caveat'><strong>What this does and doesn't measure.</strong> Weeks lost "
         "counts absences of every kind &mdash; injury, benching, a release &mdash; not injuries "
         "specifically. The league's weekly injury reports (data/injuries) can't fill that gap: "
         "they list players ruled <em>Out</em> week by week, and a player lost for the season "
@@ -493,6 +490,8 @@ def _manager_summary(df) -> pd.DataFrame:
         Picks=("overall_pick", "count"),
         HitRate=("Hit", "mean"),
         WeeksLost=("Missed", "sum"),
+        HighImpact=("Missed", lambda s: int(s[df.loc[s.index, "High Impact"]].sum())),
+        PtsLost=("Est. Pts Lost", "sum"),
         FinishVsPick=("VsPick", "mean"),
         AvgValue=("OvrValue", "mean"),
     ).reset_index()
@@ -508,6 +507,7 @@ def _manager_summary(df) -> pd.DataFrame:
     g["Healthy Rank"] = g["HealthyHit"].rank(method="min", ascending=False).astype(int)
     return g.sort_values(["HealthyHit", "HitRate"], ascending=False).rename(
         columns={"HitRate": "Starter Hit %", "WeeksLost": "Weeks Lost",
+                 "HighImpact": "High-Impact Weeks Lost", "PtsLost": "Est. Pts Lost",
                  "HealthyHit": "Healthy Hit %", "FinishVsPick": "Avg Finish vs Pick",
                  "AvgValue": "Avg ADP Value"})
 
@@ -567,7 +567,9 @@ def _card(df, avg_clock, summary, mgr) -> str:
         f"({_place(summary, row, 'Hit Rank')} of {len(summary)} in the league); "
         f"the average pick {verdict}.</li>")
     habits.append(
-        f"<li>Lost <strong>{int(row['Weeks Lost'])} player-weeks</strong> to absences. Counting "
+        f"<li>Lost <strong>{int(row['Weeks Lost'])} player-weeks</strong> to absences, "
+        f"{int(row['High-Impact Weeks Lost'])} of them high-impact, worth an estimated "
+        f"{int(round(row['Est. Pts Lost']))} points. Counting "
         f"only picks who stayed available, the hit rate is "
         f"<strong>{row['Healthy Hit %']:.0f}%</strong> "
         f"({_place(summary, row, 'Healthy Rank')} of {len(summary)}).</li>")
@@ -586,28 +588,12 @@ def _roster_of(manager):
 def report_cards(df) -> str:
     summary = _manager_summary(df)
     avg_clock = _pivot(_first_at_position(df), "round", "mean")
-
-    table = (summary.drop(columns=["Hit Rank", "Healthy Rank"]).style.hide(axis="index")
-             .format({"Starter Hit %": "{:.0f}%", "Healthy Hit %": "{:.0f}%",
-                      "Avg Finish vs Pick": "{:+.1f}", "Avg ADP Value": "{:+.1f}"})
-             .background_gradient(cmap="RdYlGn", subset=["Starter Hit %"])
-             .background_gradient(cmap="RdYlGn_r", subset=["Weeks Lost"])
-             .background_gradient(cmap="RdYlGn", subset=["Healthy Hit %"])
-             .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs Pick"])
-             .set_table_styles(_GRID, overwrite=False)
-             .set_table_attributes('class="sticky-table"')).to_html()
-
     cards = "".join(_card(df, avg_clock, summary, m) for m in summary["Manager"])
     return (
-        "<p><strong>Starter Hit %</strong> = share of picks that finished inside their "
-        "position's weekly starter pool. <strong>Weeks Lost</strong> = player-weeks their picks "
-        f"spent inactive. <strong>Healthy Hit %</strong> = the same hit rate counting only picks "
-        f"active at least {HEALTHY_MIN} of {GAMES} weeks. <strong>Avg Finish vs Pick</strong> = "
-        "draft position minus where the player actually finished (+ = the pick outperformed its "
-        "slot). <strong>Avg ADP Value</strong> = pick minus consensus ADP (+ = waited for value) "
-        "&mdash; draft-day context, not an outcome. Sorted by the health-adjusted rate.</p>"
-        f"<div class='table-scroll'>{table}</div>"
-        "<h2>Individual cards</h2>" + cards
+        "<p>One card per manager: when they go to each position, how often their picks became "
+        "weekly starters, what their picks' absences cost, and their best and worst pick by "
+        "positional finish. Ranks are out of the league, ordered by the health-adjusted hit "
+        "rate.</p>" + cards
     )
 
 
@@ -628,9 +614,9 @@ def body(report_href: str = "/fantasy/draft-report/") -> str:
     sections = [
         ("clock", "Positional Clock - when each manager goes to each position", positional_clock(df)),
         ("blueprint", f"Early Blueprint - the first {EARLY_ROUNDS} rounds", early_blueprint(df)),
-        ("health", "Availability - separating bad picks from hurt ones", availability(df)),
+        ("health", "Health-adjusted drafting - separating bad picks from hurt ones", health(df)),
         ("champions", "Champion Blueprint - how the title winners drafted", champion_blueprint(df)),
-        ("cards", "Manager Report Cards", report_cards(df)),
+        ("cards", "Manager Cards", report_cards(df)),
     ]
 
     intro = (

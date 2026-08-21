@@ -59,7 +59,6 @@ WEB_FANTASY_DIR = DOCS / "fantasy"
 WEB_FANTASY_HOME = WEB_FANTASY_DIR / "index.html"
 
 # Section pages. Each is a directory with an index.html so the URL stays clean.
-WEB_ADP = WEB_FANTASY_DIR / "adp" / "index.html"
 WEB_DRAFT = WEB_FANTASY_DIR / "draft" / "index.html"
 WEB_DRAFT_DNA = WEB_FANTASY_DIR / "draft-dna" / "index.html"
 WEB_DRAFT_RECAP = WEB_FANTASY_DIR / "draft-recap" / "index.html"

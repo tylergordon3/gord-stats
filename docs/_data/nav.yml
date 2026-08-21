@@ -82,17 +82,12 @@ fantasy:
     icon: "📅"
     url: /fantasy/schedule/
 
-  - title: Draft vs ADP
-    short: ADP
-    icon: "🎯"
-    url: /fantasy/adp/
-
   - title: Live Draft Board
     short: Live
     icon: "🔴"
     url: /fantasy/live/
 
-  - title: Draft
+  - title: Draft Analytics
     short: Draft
     icon: "📋"
     url: /fantasy/draft/

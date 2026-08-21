@@ -145,12 +145,12 @@ def _fantasy_card() -> str:
     <a class="home-card-link" href="/fantasy/index.html">League dashboard →</a>
   </div>
   {% include countdown.html key="fantasy" %}
-  <p>Draft boards and tiers, ADP versus where players actually went, schedule
+  <p>Draft boards, values and busts, simulated power rankings, schedule
      strength, and a full waiver and trade history for the
      <a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team</a> league.</p>
   <p class="home-card-links">
-    <a href="/fantasy/adp/">Draft vs ADP</a> ·
-    <a href="/fantasy/draft/">Draft</a> ·
+    <a href="/fantasy/draft/">Draft Analytics</a> ·
+    <a href="/fantasy/power/">Power Rankings</a> ·
     <a href="/fantasy/transactions/">Waivers &amp; Trades</a>
   </p>
 </section>

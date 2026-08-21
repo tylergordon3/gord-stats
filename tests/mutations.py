@@ -111,8 +111,8 @@ MUTATIONS = [
 
     ("nav link pointing at a page that does not exist",
      "docs/_data/nav.yml",
-     "    url: /fantasy/adp/",
-     "    url: /fantasy/adp-gone/",
+     "    url: /fantasy/draft/",
+     "    url: /fantasy/draft-gone/",
      "test_nav_links_point_at_real_pages"),
 ]
 

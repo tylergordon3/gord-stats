@@ -26,8 +26,7 @@ SEASONS = list(LEAGUE_IDS)
 PAGES = [
     ("schedule",     "Schedule Stats",                    lambda: _gen("schedule")),
     ("transactions", "Waivers & Trades",                  lambda: _gen("transactions")),
-    ("adp",          "Draft vs ADP",                      lambda: _gen("adp")),
-    ("draft",        "Draft (recap + report + DNA)",      lambda: _gen("draft_center")),
+    ("draft",        "Draft Analytics (board, values, report, DNA)", lambda: _gen("draft_analytics")),
     ("live",         "Live Draft Board",                  lambda: _gen("draft_live")),
     ("power",        "Power Rankings (post-draft)",        lambda: _gen("power")),
     ("homepage",     "Home (countdown + live ADP board)", lambda: _gen("homepage")),

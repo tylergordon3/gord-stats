@@ -1,5 +1,6 @@
-# The three draft pages were merged into one (src/fantasy/site/draft_center.py).
+# The draft pages were merged into one (src/fantasy/site/draft_analytics.py).
 # Real 301s so existing links and bookmarks keep working.
 /fantasy/draft-recap/*   /fantasy/draft/   301
 /fantasy/draft-report/*  /fantasy/draft/   301
 /fantasy/draft-dna/*     /fantasy/draft/   301
+/fantasy/adp/*           /fantasy/draft/   301
