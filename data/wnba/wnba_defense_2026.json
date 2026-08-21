@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-20T23:37:07.935386-04:00",
+ "updated": "2026-08-21T05:34:06.736317-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -31870,6 +31870,269 @@
       "Sug Sutton",
       "G",
       1.0
+     ]
+    ]
+   }
+  },
+  "401857159": {
+   "date": "2026-08-21",
+   "allowed": {
+    "CON": {
+     "G": 91.0,
+     "FC": 100.0
+    },
+    "LV": {
+     "G": 99.0,
+     "FC": 46.0
+    }
+   },
+   "players": {
+    "CON": [
+     [
+      "Diamond Miller",
+      "FC",
+      3.0
+     ],
+     [
+      "Olivia Nelson-Ododa",
+      "FC",
+      17.0
+     ],
+     [
+      "Kennedy Burke",
+      "G",
+      20.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      23.0
+     ],
+     [
+      "Leila Lacan",
+      "G",
+      21.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      10.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      7.0
+     ],
+     [
+      "Rayah Marshall",
+      "FC",
+      9.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      26.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      3.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      6.0
+     ]
+    ],
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      23.0
+     ],
+     [
+      "NaLyssa Smith",
+      "FC",
+      13.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      27.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      16.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      42.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      32.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      1.0
+     ],
+     [
+      "Kierstan Bell",
+      "FC",
+      4.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      15.0
+     ],
+     [
+      "Justine Pissott",
+      "G",
+      3.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      15.0
+     ]
+    ]
+   }
+  },
+  "401857160": {
+   "date": "2026-08-21",
+   "allowed": {
+    "ATL": {
+     "G": 82.0,
+     "FC": 75.0
+    },
+    "LA": {
+     "G": 132.0,
+     "FC": 107.0
+    }
+   },
+   "players": {
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      33.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      46.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      19.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      31.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      45.0
+     ],
+     [
+      "Sika Kone",
+      "FC",
+      8.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      20.0
+     ],
+     [
+      "Shatori Walker-Kimbrough",
+      "G",
+      13.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      11.0
+     ],
+     [
+      "Aaliyah Nye",
+      "G",
+      4.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      9.0
+     ]
+    ],
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      22.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      15.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      10.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      15.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      21.0
+     ],
+     [
+      "Emma Cannon",
+      "FC",
+      3.0
+     ],
+     [
+      "Cameron Brink",
+      "FC",
+      30.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      5.0
+     ],
+     [
+      "Kate Martin",
+      "G",
+      5.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      16.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      10.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      5.0
      ]
     ]
    }
