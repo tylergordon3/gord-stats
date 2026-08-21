@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-20T21:50:04.977815-04:00",
+ "updated": "2026-08-20T22:50:04.000144-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -31766,6 +31766,110 @@
       "Kaitlyn Chen",
       "G",
       0.0
+     ]
+    ]
+   }
+  },
+  "401857158": {
+   "date": "2026-08-21",
+   "allowed": {
+    "IND": {
+     "G": 78.0,
+     "FC": 98.0
+    },
+    "DAL": {
+     "G": 90.0,
+     "FC": 65.0
+    }
+   },
+   "players": {
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      25.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      30.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      49.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      11.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      29.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      10.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      0.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      1.0
+     ]
+    ],
+    "DAL": [
+     [
+      "Jessica Shepard",
+      "FC",
+      40.0
+     ],
+     [
+      "Alanna Smith",
+      "FC",
+      2.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      41.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      41.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      27.0
+     ],
+     [
+      "Alysha Clark",
+      "FC",
+      11.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      4.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      9.0
+     ],
+     [
+      "Sug Sutton",
+      "G",
+      1.0
      ]
     ]
    }
