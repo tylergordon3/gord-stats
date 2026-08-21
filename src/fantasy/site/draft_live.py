@@ -110,6 +110,26 @@ def _draft_meta(draft_id: str = UPCOMING_DRAFT_ID) -> dict:
         return {}
 
 
+# What the league asks a roster to fill, used when Sleeper cannot be asked
+# at build time. The script re-reads it from the league on load.
+_DEFAULT_ROSTER = ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX", "FLEX", "K", "DEF",
+                   "BN", "BN", "BN", "BN", "BN"]
+
+
+def _roster_positions(meta: dict) -> list:
+    """The league's roster slots, in Sleeper's order, or a sensible default."""
+    league = meta.get("league_id")
+    if not league:
+        return _DEFAULT_ROSTER
+    try:
+        r = requests.get(f"{SLEEPER_API}/league/{league}", timeout=_TIMEOUT)
+        r.raise_for_status()
+        return (r.json() or {}).get("roster_positions") or _DEFAULT_ROSTER
+    except Exception as exc:
+        print(f"  ! could not read league {league} at build time ({exc})")
+        return _DEFAULT_ROSTER
+
+
 def _countdown(meta: dict) -> str:
     """The pre-draft clock, seeded from Sleeper and re-pointed by the script.
 
@@ -229,11 +249,46 @@ table.ld-grid td.ld-new{animation:ld-flash 6s ease-out}
 .ld-avail tbody tr:nth-child(even) td{background:#f8fafc}
 .ld-avail .ld-gone td{opacity:.45;text-decoration:line-through}
 
+/* Teams: one panel, three views. Needs is a slot-by-slot count against the
+   league's lineup, Value is each team's picks against the ADP board, Rosters
+   is the pick list. Same table skin as Best Available so they read as one. */
+.ld-views{margin:4px 0 10px}
+table.ld-teams{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+table.ld-teams th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334155;
+  padding:7px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;white-space:nowrap;text-align:center}
+table.ld-teams td{padding:6px 8px;border-right:1px solid #eef2f7;border-bottom:1px solid #eef2f7;
+  background:#fff;color:#0f172a;white-space:nowrap;text-align:center;vertical-align:middle}
+table.ld-teams td.name,table.ld-teams th.name{text-align:left}
+table.ld-teams td.name{font-weight:600}
+table.ld-teams tbody tr:nth-child(even) td{background:#f8fafc}
+table.ld-teams tr.ld-me td{box-shadow:inset 3px 0 0 #A34F0A}
+/* A slot cell: filled / required. Green when the lineup spot is covered,
+   amber when partly, red when nothing is there yet, grey for a slot the
+   league does not have. */
+.ld-slot{display:inline-block;min-width:38px;padding:2px 7px;border-radius:6px;
+  font-family:monospace;font-weight:700;font-size:12px}
+.ld-slot.full{background:#d5efdd;color:#0f5132}
+.ld-slot.part{background:#fbeec2;color:#6b4b00}
+.ld-slot.open{background:#fde2df;color:#7a1f17}
+.ld-slot.none{background:#eef2f7;color:#93a1ad;font-weight:400}
+td.ld-needs-list{text-align:left;font-size:12px;color:#4a5a68;white-space:normal;min-width:150px}
+td.ld-needs-list .pos-tag{min-width:0;padding:0 5px;font-size:10px;margin-right:2px}
+/* The value bar: a centre line, green to the right for picks that lasted past
+   their ADP, red to the left for reaches. Width is the average, scaled to the
+   biggest on the table. */
+.ld-barwrap{position:relative;width:120px;height:14px;background:#eef2f7;border-radius:4px;
+  display:inline-block;vertical-align:middle;overflow:hidden}
+.ld-barwrap::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:#94a3b8}
+.ld-vbar{position:absolute;top:2px;bottom:2px}
+.ld-vbar.up{left:50%;background:#1a7f4b;border-radius:0 3px 3px 0}
+.ld-vbar.down{right:50%;background:#b3382c;border-radius:3px 0 0 3px}
+td.ld-pickcell{text-align:left;white-space:normal;min-width:140px;font-size:12px}
+
 .ld-rosters{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
 .ld-team-card{flex:1 1 260px;min-width:0;border:1px solid #e5e7eb;border-radius:12px;
   overflow:hidden;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.05)}
 .ld-team-head{padding:6px 10px;background:#eef2f7;color:#334155;font-size:13px;font-weight:700}
-.ld-team-head .ld-need{float:right;font-weight:400;font-size:12px;color:#4a5a68}
 .ld-team-card ol{margin:0;padding:6px 10px 8px 26px;font-size:13px;color:#0f172a}
 .ld-team-card li{padding:1px 0;line-height:1.4}
 .ld-team-card .ld-none{padding:10px;font-size:13px;color:#4a5a68}
@@ -254,6 +309,14 @@ table.ld-grid td.ld-new{animation:ld-flash 6s ease-out}
     box-shadow:2px 0 4px -2px rgba(0,0,0,.3)}
   .ld-avail th:first-child{z-index:3;background:#eef2f7}
   .ld-avail tbody tr:nth-child(even) td.name{background:#f8fafc}
+  table.ld-teams{font-size:12px}
+  table.ld-teams td{padding:5px 6px}
+  table.ld-teams td.name,table.ld-teams th.name{position:sticky;left:0;z-index:1;
+    max-width:96px;overflow:hidden;text-overflow:ellipsis;background:#fff;
+    box-shadow:2px 0 4px -2px rgba(0,0,0,.3)}
+  table.ld-teams th.name{z-index:3;background:#eef2f7}
+  table.ld-teams tbody tr:nth-child(even) td.name{background:#f8fafc}
+  .ld-barwrap{width:84px}
 }
 
 @media (prefers-color-scheme: dark){
@@ -292,9 +355,25 @@ table.ld-grid td.ld-new{animation:ld-flash 6s ease-out}
     .ld-avail th:first-child{background:#223052}
     .ld-avail tbody tr:nth-child(even) td.name{background:#1b2540}
   }
+  table.ld-teams th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.ld-teams td{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  table.ld-teams tbody tr:nth-child(even) td{background:#1b2540}
+  .ld-slot.full{background:#123c2e;color:#8ff0bd}
+  .ld-slot.part{background:#3d3413;color:#ffe08a}
+  .ld-slot.open{background:#4a1d1d;color:#ffb4ae}
+  .ld-slot.none{background:#223052;color:#8b99ad}
+  td.ld-needs-list{color:#aab7c9}
+  .ld-barwrap{background:#223052}
+  .ld-barwrap::before{background:#5d6b7e}
+  .ld-vbar.up{background:#2bb673}
+  .ld-vbar.down{background:#e0564a}
+  @media (max-width:600px){
+    table.ld-teams td.name{background:#16203a}
+    table.ld-teams th.name{background:#223052}
+    table.ld-teams tbody tr:nth-child(even) td.name{background:#1b2540}
+  }
   .ld-team-card{background:#1b2540;border-color:#2b3852}
   .ld-team-head{background:#223052;color:#dde5ef}
-  .ld-team-head .ld-need{color:#aab7c9}
   .ld-team-card ol,.ld-team-card li{color:#dde5ef}
   .ld-team-card .ld-none{color:#aab7c9}
 }
@@ -330,8 +409,14 @@ _SCRIPT = """<script>
     meta: null, picks: [], users: {}, usersFor: null, usersAt: 0,
     firstSeen: {},             // pick_no -> when we first saw it (drives the flash)
     seeded: false,             // has the first paint happened?
-    at: 0, failures: 0, sig: "", filter: "ALL", query: ""
+    at: 0, failures: 0, sig: "", filter: "ALL", query: "",
+    view: "needs",             // Teams panel: needs | value | rosters
+    rosterPositions: null      // the league's slots, read on load
   };
+
+  // The lineup slots in the order the Needs table shows them.
+  var SLOT_ORDER = ["QB", "RB", "WR", "TE", "FLEX", "K", "DEF", "BN"];
+  var FLEX_OK = {RB: true, WR: true, TE: true};
 
   // ----------------------------------------------------------------- helpers
   function esc(s) {
@@ -524,21 +609,142 @@ _SCRIPT = """<script>
       left + " available" + (shown < left ? " (top " + shown + " shown)" : "");
   }
 
-  function renderRosters() {
+  // ------------------------------------------------------------- teams
+  function posOf(pick) {
+    var pos = String((pick.metadata || {}).position || "").toUpperCase();
+    return pos === "DST" ? "DEF" : pos;
+  }
+
+  /** {slot: count} the league asks every roster to fill. */
+  function slotNeeds() {
+    var list = (state.rosterPositions && state.rosterPositions.length)
+      ? state.rosterPositions : CFG.roster_positions;
+    var need = {};
+    list.forEach(function (raw) {
+      var slot = String(raw).toUpperCase();
+      if (slot === "DST") slot = "DEF";
+      need[slot] = (need[slot] || 0) + 1;
+    });
+    return need;
+  }
+
+  /** Fill a lineup the way Sleeper does: the player's own slot first, then a
+   *  flex he qualifies for, then the bench. Returns {slot: filled}. */
+  function fillLineup(picks, need) {
+    var filled = {};
+    function take(slot) {
+      if ((need[slot] || 0) > (filled[slot] || 0)) { filled[slot] = (filled[slot] || 0) + 1; return true; }
+      return false;
+    }
+    picks.forEach(function (p) {
+      var pos = posOf(p);
+      if (take(pos)) return;
+      if (FLEX_OK[pos] && take("FLEX")) return;
+      take("BN");
+    });
+    return filled;
+  }
+
+  function picksByRoster() {
     var byRoster = {};
     state.picks.forEach(function (p) {
       (byRoster[p.roster_id] = byRoster[p.roster_id] || []).push(p);
     });
+    return byRoster;
+  }
+
+  function renderNeeds() {
+    var need = slotNeeds(), byRoster = picksByRoster();
+    var cols = SLOT_ORDER.filter(function (slot) { return need[slot]; });
+    // "Still needs" sits beside the name, not at the far right: on a phone the
+    // table scrolls sideways and that column is the one being looked for.
+    var html = "<thead><tr><th class='name'>Team</th><th>Still needs</th>" +
+      cols.map(function (c) { return "<th>" + c + "</th>"; }).join("") +
+      "</tr></thead><tbody>";
+    slots().forEach(function (t) {
+      var picks = byRoster[t.roster] || [];
+      var filled = fillLineup(picks, need);
+      var open = [], cells = "";
+      cols.forEach(function (slot) {
+        var have = filled[slot] || 0, want = need[slot];
+        var cls = have >= want ? "full" : have > 0 ? "part" : "open";
+        cells += "<td><span class='ld-slot " + cls + "'>" + have + "/" + want + "</span></td>";
+        if (slot !== "BN" && have < want) {
+          open.push("<span class='pos-tag pos-" + (slot === "DEF" ? "DST" : slot) + "'>" + slot + "</span>" +
+            (want - have > 1 ? "&times;" + (want - have) : ""));
+        }
+      });
+      html += "<tr><td class='name'>" + esc(t.owner) + "</td>" +
+        "<td class='ld-needs-list'>" + (open.length ? open.join(" ") : "Lineup set") + "</td>" +
+        cells + "</tr>";
+    });
+    document.getElementById("ld-teams").innerHTML =
+      "<div class='ld-wrap'><table class='ld-teams'>" + html + "</tbody></table></div>" +
+      "<p class='ld-note'>Filled / required for each lineup slot, the way Sleeper fills it: a " +
+      "player's own position first, then FLEX, then the bench. <strong>Still needs</strong> " +
+      "lists the starting spots nobody has been drafted for yet.</p>";
+  }
+
+  function renderValue() {
+    var byRoster = picksByRoster(), rows = [];
+    slots().forEach(function (t) {
+      var picks = byRoster[t.roster] || [], diffs = [], best = null, worst = null;
+      picks.forEach(function (p) {
+        var adp = CFG.adp[keyFor(p.metadata || {})];
+        if (!adp || !adp[4]) return;
+        var d = p.pick_no - adp[4];
+        diffs.push(d);
+        if (!best || d > best.d) best = {d: d, p: p};
+        if (!worst || d < worst.d) worst = {d: d, p: p};
+      });
+      var avg = diffs.length ? diffs.reduce(function (a, b) { return a + b; }, 0) / diffs.length : null;
+      rows.push({
+        owner: t.owner, n: diffs.length, avg: avg,
+        values: diffs.filter(function (d) { return d >= CFG.nudge; }).length,
+        reaches: diffs.filter(function (d) { return d <= -CFG.nudge; }).length,
+        best: best, worst: worst
+      });
+    });
+    rows.sort(function (a, b) { return (b.avg === null ? -1e9 : b.avg) - (a.avg === null ? -1e9 : a.avg); });
+    var scale = Math.max(1, Math.max.apply(null, rows.map(function (r) { return Math.abs(r.avg || 0); })));
+
+    function pickCell(x, sign) {
+      if (!x || Math.abs(x.d) < CFG.nudge) return "<td class='ld-pickcell'>&mdash;</td>";
+      return "<td class='ld-pickcell'>" + esc(nameOf(x.p)) + " <span class='ld-val " + sign + "'>" +
+        (x.d > 0 ? "+" : "") + x.d + "</span></td>";
+    }
+    var html = "<thead><tr><th class='name'>Team</th><th>Picks</th><th>Avg vs ADP</th>" +
+      "<th>Values</th><th>Reaches</th><th>Biggest reach</th><th>Best value</th></tr></thead><tbody>";
+    rows.forEach(function (r) {
+      var width = r.avg === null ? 0 : Math.round(Math.abs(r.avg) / scale * 50);
+      var bar = r.avg === null ? "" :
+        "<span class='ld-barwrap'><span class='ld-vbar " + (r.avg >= 0 ? "up" : "down") +
+        "' style='width:" + width + "%'></span></span>";
+      html += "<tr><td class='name'>" + esc(r.owner) + "</td><td>" + r.n + "</td>" +
+        "<td>" + bar + " <span class='ld-val " + (r.avg === null ? "" : r.avg >= 0 ? "up" : "down") + "'>" +
+        (r.avg === null ? "&mdash;" : (r.avg > 0 ? "+" : "") + r.avg.toFixed(1)) + "</span></td>" +
+        "<td>" + r.values + "</td><td>" + r.reaches + "</td>" +
+        pickCell(r.worst, "down") + pickCell(r.best, "up") + "</tr>";
+    });
+    document.getElementById("ld-teams").innerHTML =
+      "<div class='ld-wrap'><table class='ld-teams'>" + html + "</tbody></table></div>" +
+      "<p class='ld-note'><strong>Avg vs ADP</strong> is the average of (pick &minus; board rank) over " +
+      "a team's picks: positive means its players lasted past where the market had them, negative " +
+      "means it went early. <strong>Values</strong> and <strong>Reaches</strong> count the picks " +
+      "more than " + CFG.nudge + " spots either way.</p>";
+  }
+
+  function renderTeams() {
+    if (state.view === "needs") return renderNeeds();
+    if (state.view === "value") return renderValue();
+    renderRosters();
+  }
+
+  function renderRosters() {
+    var byRoster = picksByRoster();
     var html = "";
     slots().forEach(function (t) {
       var picks = byRoster[t.roster] || [];
-      var counts = {};
-      picks.forEach(function (p) {
-        var pos = String((p.metadata || {}).position || "?").toUpperCase();
-        counts[pos] = (counts[pos] || 0) + 1;
-      });
-      var need = ["QB", "RB", "WR", "TE", "K", "DEF"].filter(function (p) { return counts[p]; })
-        .map(function (p) { return p + counts[p]; }).join(" ");
       var body = picks.length
         ? "<ol>" + picks.map(function (p) {
             var md = p.metadata || {};
@@ -550,9 +756,9 @@ _SCRIPT = """<script>
           }).join("") + "</ol>"
         : "<p class='ld-none'>No picks yet.</p>";
       html += "<div class='ld-team-card'><div class='ld-team-head'>" + esc(t.owner) +
-        "<span class='ld-need'>" + esc(need) + "</span></div>" + body + "</div>";
+        "</div>" + body + "</div>";
     });
-    document.getElementById("ld-rosters").innerHTML = html;
+    document.getElementById("ld-teams").innerHTML = "<div class='ld-rosters'>" + html + "</div>";
   }
 
   function whenText(ms) {
@@ -654,7 +860,8 @@ _SCRIPT = """<script>
     return [state.picks.length, meta.status, meta.start_time, meta.last_picked,
             roundCount(), teamCount(), state.usersAt,
             JSON.stringify(meta.draft_order), JSON.stringify(meta.slot_to_roster_id),
-            state.filter, state.query].join("|");
+            state.filter, state.query, state.view,
+            (state.rosterPositions || []).length].join("|");
   }
 
   function render(force) {
@@ -663,7 +870,7 @@ _SCRIPT = """<script>
     state.sig = sig;
     renderGrid();
     renderAvailable();
-    renderRosters();
+    renderTeams();
     renderStatus();
     syncCountdown();
     state.seeded = true;
@@ -697,12 +904,19 @@ _SCRIPT = """<script>
   }
 
   function users(leagueId) {
-    return fresh(API + "/league/" + leagueId + "/users").then(function (list) {
+    return Promise.all([
+      fresh(API + "/league/" + leagueId + "/users"),
+      fresh(API + "/league/" + leagueId)
+    ]).then(function (res) {
       var out = {};
-      (list || []).forEach(function (u) { out[u.user_id] = u; });
+      (res[0] || []).forEach(function (u) { out[u.user_id] = u; });
       state.users = out;
       state.usersFor = leagueId;
       state.usersAt = Date.now();
+      // The lineup the league actually asks for, so Needs follows a settings
+      // change rather than the build-time copy.
+      var positions = (res[1] || {}).roster_positions;
+      if (positions && positions.length) state.rosterPositions = positions;
     }).catch(function () { /* names fall back to the league config */ });
   }
 
@@ -729,6 +943,15 @@ _SCRIPT = """<script>
       btn.addEventListener("click", function () {
         state.filter = btn.getAttribute("data-pos");
         document.querySelectorAll("[data-pos]").forEach(function (b) {
+          b.classList.toggle("active", b === btn);
+        });
+        render(true);
+      });
+    });
+    document.querySelectorAll("[data-view]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.view = btn.getAttribute("data-view");
+        document.querySelectorAll("[data-view]").forEach(function (b) {
           b.classList.toggle("active", b === btn);
         });
         render(true);
@@ -761,15 +984,8 @@ def _intro() -> str:
     when = stamp.astimezone(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z") if stamp else "an earlier build"
     return (f"<p>The {UPCOMING_SEASON} draft as it happens, read straight from Sleeper. "
             f"The page polls for picks every few seconds while the draft is live — leave it open, "
-            f"there is nothing to refresh.</p>"
-            f"<p class='ld-note'>Cells are coloured by position — "
-            f"{_swatch_legend()} — so you can see a run forming without reading a name. "
-            f"Each pick is also graded against the multi-site ADP board on the "
-            f"{layout.internal_link('/fantasy/', 'fantasy homepage')}, pulled {when}: the number "
-            f"beside the team is how far the pick sat from that player's board rank, "
-            f"<span class='ld-val up'>+</span> for a player who lasted longer than the market said "
-            f"and <span class='ld-val down'>&minus;</span> for a reach, shown once it is more than "
-            f"{NUDGE} picks either way.</p>")
+            f"there is nothing to refresh. Picks are graded against the multi-site ADP board on the "
+            f"{layout.internal_link('/fantasy/', 'fantasy homepage')}, pulled {when}.</p>")
 
 
 def _swatch_legend() -> str:
@@ -788,8 +1004,11 @@ def _status_bar() -> str:
 
 
 def _board_section() -> str:
-    return ('<p class="ld-legend">Snake order, so even rounds run right to left. '
-            'The number in each cell is the pick it was made with.</p>'
+    return (f'<p class="ld-legend">Snake order, so even rounds run right to left. Cells are '
+            f'coloured by position — {_swatch_legend()} — so a run shows without reading a name. '
+            f'The number beside the team is the pick against the player\'s board rank: '
+            f'<span class="ld-val up">+</span> lasted longer than the market said, '
+            f'<span class="ld-val down">&minus;</span> a reach, shown past {NUDGE} picks either way.</p>'
             '<div class="ld-wrap"><table class="ld-grid" id="ld-grid"></table></div>')
 
 
@@ -802,13 +1021,22 @@ def _available_section() -> str:
     return f"""<div class="adp-controls">
   <span class="adp-label">Position:</span>{chips}
   <input id="ld-search" type="search" placeholder="Search players" aria-label="Search players">
-  <span class="adp-label" id="ld-avail-count"></span>
+  <span class="adp-label adp-count" id="ld-avail-count"></span>
 </div>
 <div class="ld-wrap"><table class="ld-avail"><thead><tr>{head}</tr></thead>
 <tbody id="ld-avail-body"></tbody></table></div>
 <p class="ld-note"><strong>ADP</strong> is the average pick across the five sites on the board;
 <strong>Board</strong> is that average turned into an overall rank, and <strong>Pick</strong> is
 where that rank falls in a {LEAGUE_TEAMS}-team draft.</p>"""
+
+
+def _teams_section() -> str:
+    views = [("needs", "Needs"), ("value", "Value vs ADP"), ("rosters", "Rosters")]
+    buttons = "".join(
+        f'<button data-view="{v}"{" class=\'active\'" if v == "needs" else ""}>{label}</button>'
+        for v, label in views)
+    return (f'<div class="view-switch ld-views"><span class="switch-label">Show:</span>{buttons}</div>'
+            '<div id="ld-teams"></div>')
 
 
 def _config_json(rows: dict, order: list, meta: dict) -> str:
@@ -818,6 +1046,7 @@ def _config_json(rows: dict, order: list, meta: dict) -> str:
         "roster_names": {str(k): v for k, v in ROSTER_NAMES.items()},
         "teams": settings.get("teams") or LEAGUE_TEAMS,
         "rounds": settings.get("rounds") or 15,
+        "roster_positions": _roster_positions(meta),
         "tz": str(LEAGUE_TZ),
         "nudge": NUDGE,
         "adp": rows,
@@ -838,7 +1067,7 @@ def generate(output=OUTPUT):
     sections = [
         ("board", "Draft Board", _board_section(), True),
         ("available", "Best Available", _available_section(), True),
-        ("rosters", "Rosters", '<div class="ld-rosters" id="ld-rosters"></div>', False),
+        ("teams", "Teams", _teams_section(), True),
     ]
     nav = layout.section_nav([(anchor, title) for anchor, title, _, _ in sections])
     body = (layout.HEAD + _CSS + _intro() + _countdown(meta) + _status_bar() + nav

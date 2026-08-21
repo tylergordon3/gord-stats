@@ -70,17 +70,10 @@ def countdown_banner() -> str:
 # ADP board
 # --------------------------------------------------------------------------- #
 
+# .adp-controls (the position chips, search box and count) is styled in
+# docs/assets/css/custom.css: the live draft board uses the same controls and
+# was rendering them as bare browser buttons while the rules lived here.
 _BOARD_CSS = """<style>
-.adp-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
-.adp-controls .adp-label{font-weight:bold;font-size:14px}
-.adp-controls button{padding:6px 14px;cursor:pointer;border:1px solid #e2e8f0;background:#fff;
-  border-radius:999px;font-size:14px;font-weight:600;color:#334155;
-  box-shadow:0 1px 2px rgba(15,23,42,.04)}
-.adp-controls button:hover{background:#f1f5f9}
-.adp-controls button.active{background:#A34F0A;color:#fff;font-weight:700;border-color:#8A420A}
-.adp-controls input,.adp-controls select{padding:6px 10px;border:1px solid #e2e8f0;
-  border-radius:8px;font-size:14px;background:#fff;color:#0f172a}
-.adp-controls input{min-width:170px}
 /* The column headers are sticky to this box, not to the viewport — `th` can
    only stick to its nearest scrolling ancestor, and this box has to be one so
    the table can scroll sideways on a phone. A short box therefore let the page
@@ -155,13 +148,6 @@ table.adp-table td.pick{color:#4a5a68}
 .movers-window[hidden]{display:none}
 .mv-since{font-size:12px;color:#4a5a68;margin:0 0 6px}
 @media (max-width:600px){
-  .adp-controls{gap:6px;margin:8px 0}
-  /* Narrower, but still a thumb-sized target — shrinking these to 28px
-     made them hard to hit on the screen they exist for. */
-  .adp-controls button{padding:5px 9px;min-height:44px}
-  .adp-controls input{min-width:0;flex:1 1 100%}
-  .adp-controls select{flex:0 0 auto}
-  .adp-controls .adp-label#adp-count{flex:1 1 100%;font-weight:normal}
   .adp-wrap{max-height:70vh}
   .movers{gap:8px}
   .movers .mover-card{flex:1 1 100%}
@@ -197,13 +183,6 @@ table.adp-table td.pick{color:#4a5a68}
      on this table rather than two light patches punched out of it. */
   .adp-early{background:#123c2e!important;color:#8ff0bd!important}
   .adp-late{background:#4a1d1d!important;color:#ffb4ae!important}
-
-  /* Filter controls */
-  .adp-controls button{background:#1b2540;border-color:#2b3852;color:#dde5ef}
-  .adp-controls button:hover{background:#26365c}
-  .adp-controls button.active{background:#A34F0A;border-color:#8A420A;color:#fff}
-  .adp-controls input,.adp-controls select{background:#1b2540;border-color:#2b3852;color:#dde5ef}
-  .adp-controls input::placeholder{color:#8b99ad}
 
   /* Risers / fallers cards */
   .movers .mover-card{background:#1b2540;border-color:#2b3852}
@@ -410,7 +389,7 @@ def _controls(has_movement: bool) -> str:
             '<div class="adp-controls">'
             '<input id="adp-search" type="search" placeholder="Search player or team...">'
             f'<select id="adp-limit">{limits}</select>{movers_btn}'
-            '<span class="adp-label" id="adp-count"></span></div>')
+            '<span class="adp-label adp-count" id="adp-count"></span></div>')
 
 
 _LABELS = {"player": "Player", "PosRk": "Pos", "team": "Tm",

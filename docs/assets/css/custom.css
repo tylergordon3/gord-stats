@@ -4278,3 +4278,120 @@ img {
     font-size: 20px;
   }
 }
+
+
+/* =========================================================
+   FILTER CONTROLS (.adp-controls)
+   The position chips, search box and count above a player table. Used by
+   the homepage ADP board and the live draft board; lived in the homepage
+   module until the live board turned out to be rendering the same markup as
+   bare browser buttons.
+   ========================================================= */
+.adp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.adp-controls .adp-label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.adp-controls button {
+  padding: 6px 14px;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.adp-controls button:hover {
+  background: #f1f5f9;
+}
+
+.adp-controls button.active {
+  background: #A34F0A;
+  color: #fff;
+  font-weight: 700;
+  border-color: #8A420A;
+}
+
+.adp-controls input,
+.adp-controls select {
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  color: #0f172a;
+}
+
+.adp-controls input {
+  min-width: 170px;
+}
+
+@media (max-width: 600px) {
+  .adp-controls {
+    gap: 6px;
+    margin: 8px 0;
+  }
+
+  /* Narrower, but still a thumb-sized target — shrinking these to 28px
+     made them hard to hit on the screen they exist for. */
+  .adp-controls button {
+    padding: 5px 9px;
+    min-height: 44px;
+  }
+
+  .adp-controls input {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+
+  .adp-controls select {
+    flex: 0 0 auto;
+  }
+
+  /* The "223 available (top 75 shown)" count takes its own line rather than
+     wrapping mid-phrase beside the search box. */
+  .adp-controls .adp-label.adp-count {
+    flex: 1 1 100%;
+    font-weight: normal;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .adp-controls button {
+    background: #1b2540;
+    border-color: #2b3852;
+    color: #dde5ef;
+  }
+
+  .adp-controls button:hover {
+    background: #26365c;
+  }
+
+  .adp-controls button.active {
+    background: #A34F0A;
+    border-color: #8A420A;
+    color: #fff;
+  }
+
+  .adp-controls input,
+  .adp-controls select {
+    background: #1b2540;
+    border-color: #2b3852;
+    color: #dde5ef;
+  }
+
+  .adp-controls input::placeholder {
+    color: #8b99ad;
+  }
+}
