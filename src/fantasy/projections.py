@@ -535,6 +535,22 @@ def current_form(board: pd.DataFrame, year: int = UPCOMING_YEAR,
     return merged.drop(columns=["played", "actual_ppg", "actual_sd"])
 
 
+def completed_weeks(year: int = UPCOMING_YEAR) -> int:
+    """Regular-season weeks nflverse has published for `year` (0 before kickoff).
+
+    Read from the cached weekly file rather than the wall clock: the calendar
+    says a week is over on Tuesday, the data says it when the stats land, and
+    the second is the one that matters for whether a week can be scored.
+    """
+    from fantasy.config import FANTASY_REG_WEEKS
+
+    path = weekly_points.path(year)
+    if not path.exists():
+        return 0
+    weekly = pd.read_parquet(path, columns=["week"])
+    return int(min(weekly["week"].max(), FANTASY_REG_WEEKS)) if len(weekly) else 0
+
+
 def accuracy(year: int, min_games: int = MIN_GAMES) -> pd.DataFrame:
     """How well the projection for `year` matched what players actually did.
 

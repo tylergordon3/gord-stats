@@ -26,6 +26,7 @@ from fantasy import paths
 from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES
 from fantasy.league.playoffs import champion_roster
 from fantasy.site import adp, injuries, layout, styles
+from fantasy.site.draft import PLAYABLE_WEEKS
 from gordstats.frontmatter import add_front_matter
 
 POS = ["QB", "RB", "WR", "TE"]
@@ -47,15 +48,17 @@ EARLY_ROUNDS = 5
 # Smallest gap from the league average worth calling a positional habit (rounds).
 _HABIT_MIN = 0.5
 
-# Availability. fantasy.site.draft counts, for each drafted player, the weeks in the
-# first GAMES of the season where they recorded a stat line; anything short of
-# that is a week their manager got nothing. HEALTHY_MIN (missed no more than two)
-# is the bar for "was available all year", used for the health-adjusted hit rate.
-# Which absences *mattered* - high-impact, and the points they cost - is not
-# decided here: fantasy.site.injuries.impact_detail classifies them, so this
-# section and the homepage's injury tables agree on what a major injury is.
-GAMES = 13
-HEALTHY_MIN = 11
+# Availability. fantasy.site.draft counts, for each drafted player, the weeks of
+# the fantasy regular season where they recorded a stat line; anything short of
+# the playable season (the bye takes one week from everyone) is a week their
+# manager got nothing. HEALTHY_MIN (missed no more than two) is the bar for
+# "was available all year", used for the health-adjusted hit rate. GAMES is the
+# same window the homepage injury tables charge a player for, so the two agree
+# on how many weeks a player missed - they used to differ by one. Which absences
+# *mattered* - high-impact, and the points they cost - is not decided here
+# either: fantasy.site.injuries.impact_detail classifies them.
+GAMES = PLAYABLE_WEEKS
+HEALTHY_MIN = GAMES - 2
 
 
 # --------------------------------------------------------------------------- #

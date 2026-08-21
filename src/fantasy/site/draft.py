@@ -14,9 +14,14 @@ import pandas as pd
 from sleeper_wrapper import Drafts, League
 
 from fantasy import archive, stats
-from fantasy.config import DATA_DIR, DRAFT_IDS, LEAGUE_IDS, SEASON_YEAR
+from fantasy.config import DATA_DIR, DRAFT_IDS, FANTASY_REG_WEEKS, LEAGUE_IDS, SEASON_YEAR
 
-REG_WEEKS = 14
+REG_WEEKS = FANTASY_REG_WEEKS
+# Every NFL team's bye falls inside the fantasy regular season, so a drafted
+# player can appear in at most REG_WEEKS - 1 of its weeks. That is the window
+# his absences are charged against. It used to be REG_WEEKS itself, which
+# billed every player in the league for one game nobody could have played.
+PLAYABLE_WEEKS = REG_WEEKS - 1
 # In-season pickups enter the injury stats only when held this many weeks -
 # streamers and one-week rentals aren't an injury story.
 PICKUP_MIN_WEEKS = 4
@@ -35,11 +40,16 @@ def _sum_pts(players, pid):
 
 
 def _num_games(players, pid):
-    return players[players["sleeper_id"] == str(pid)]["fantasy_points_ppr"][:13].count()
+    """Weeks with a stat line inside the regular season.
+
+    `players` is already cut to weeks 1..REG_WEEKS by _build, so this is a
+    plain count, at most PLAYABLE_WEEKS because of the bye.
+    """
+    return players[players["sleeper_id"] == str(pid)]["fantasy_points_ppr"].count()
 
 
 def _med_pts(players, pid):
-    return players[players["sleeper_id"] == str(pid)]["fantasy_points_ppr"][:13].median()
+    return players[players["sleeper_id"] == str(pid)]["fantasy_points_ppr"].median()
 
 
 def _final_rank(row, df):
@@ -67,7 +77,7 @@ def _build(season_str: str, keep_streamers: bool = False):
     rosters = _rosters(league)
 
     players = stats.player_points(season=SEASON_YEAR[season_str])
-    players = players[players["week"] < REG_WEEKS + 1]
+    players = players[players["week"] <= REG_WEEKS]
 
     final_ranks = players.groupby("cleaned_name").agg(
         tot_pts=("fantasy_points_ppr", "sum"),
@@ -171,6 +181,14 @@ def _pickup_detail(season_str: str) -> pd.DataFrame:
     removals = [(str(pid), r, t["leg"]) for _, t in tx.iterrows()
                 for pid, r in (t["drops"] or {}).items()]
 
+    # A team's bye is the regular-season week none of its players has a line.
+    # Read off the stats already in hand rather than fetched: a pickup held
+    # across his bye should not be charged for it any more than a drafted
+    # player is.
+    weeks = set(range(1, REG_WEEKS + 1))
+    bye_of = {team: next(iter(weeks - set(grp["week"])), None)
+              for team, grp in players.groupby("team")}
+
     rows = []
     for _, t in tx[tx["type"].isin(["waiver", "free_agent"])].iterrows():
         for pid, roster_id in (t["adds"] or {}).items():
@@ -179,12 +197,14 @@ def _pickup_detail(season_str: str) -> pd.DataFrame:
                 continue                          # drafted / team defense / playoffs add
             ends = [w for p, r, w in removals if p == pid and r == roster_id and w > start]
             end = min(ends) - 1 if ends else REG_WEEKS
-            window = min(end, REG_WEEKS) - start + 1
-            if window < PICKUP_MIN_WEEKS:
+            held = min(end, REG_WEEKS) - start + 1
+            if held < PICKUP_MIN_WEEKS:
                 continue
             mine = players[players["sleeper_id"] == pid]
             if mine.empty or mine["position"].iloc[0] in ("K", "DEF"):
                 continue                          # never played this season, or streamer slot
+            bye = bye_of.get(mine["team"].iloc[-1])
+            window = held - (1 if bye is not None and start <= bye <= end else 0)
             in_window = mine[(mine["week"] >= start) & (mine["week"] <= end)]
             rows.append({
                 "Owner": team_by_roster.get(roster_id), "roster_id": roster_id,
@@ -208,7 +228,7 @@ def save_games_missed(season_str: str):
     detail = df[["Owner", "roster_id", "Name", "Pos.", "round", "Pick",
                  "Pts.", "Games Played", "Med PPG"]].copy()
     detail["Sample Games"] = detail["Games Played"]
-    detail["Window Weeks"] = REG_WEEKS
+    detail["Window Weeks"] = PLAYABLE_WEEKS
     detail["Source"] = "Drafted"
     detail = pd.concat([detail, _pickup_detail(season_str)], ignore_index=True)
 

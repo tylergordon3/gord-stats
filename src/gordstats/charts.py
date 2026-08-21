@@ -11,6 +11,15 @@ rest are lazy), the files cache across page loads, and — because an unchanged
 chart produces an identical file — git stores one blob for it no matter how
 many times the site is rebuilt. Inlined, any single change rewrote the whole
 page blob every day.
+
+"Identical" has a condition attached: the same machine. matplotlib stamps its
+own version into every PNG (stripped below, since it was the one thing that
+changed between otherwise identical builds), but font rendering still differs
+between the Pi and a laptop, so a chart built here and a chart built there are
+different bytes for the same picture. The Pi's own daily runs commit no chart
+changes; a local rebuild rewrites every chart in the section. Don't commit the
+latter - `git checkout -- docs/assets/images/charts` before committing, and let
+the Pi regenerate them.
 """
 
 import re
@@ -48,7 +57,10 @@ def save(section: str, name: str, alt: str = "", lazy: bool = True,
     d = CHART_DIR / section
     d.mkdir(parents=True, exist_ok=True)
     fname = f"{slug(name)}.png"
-    plt.savefig(d / fname, format="png", bbox_inches="tight", dpi=dpi)
+    # No Software tag: it carries the matplotlib version, which is the one
+    # thing that differed between byte-identical charts across an upgrade.
+    plt.savefig(d / fname, format="png", bbox_inches="tight", dpi=dpi,
+                metadata={"Software": None})
     plt.close()
 
     # relative_url keeps the path correct if the site ever moves under a

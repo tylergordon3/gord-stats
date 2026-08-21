@@ -828,90 +828,90 @@
                 "roster_id": 8,
                 "num_games": 157,
                 "tot_players": 14,
-                "tot_games": 186,
-                "Total Games Missed": 29,
-                "% of Games Missed": "15.59%"
+                "tot_games": 173,
+                "Total Games Missed": 16,
+                "% of Games Missed": "9.25%"
             },
             {
                 "Owner": "Clanker Barrel",
                 "roster_id": 1,
                 "num_games": 207,
                 "tot_players": 22,
-                "tot_games": 243,
-                "Total Games Missed": 36,
-                "% of Games Missed": "14.81%"
+                "tot_games": 228,
+                "Total Games Missed": 21,
+                "% of Games Missed": "9.21%"
             },
             {
                 "Owner": "Kraft YAC-N-Cheese",
                 "roster_id": 2,
                 "num_games": 180,
                 "tot_players": 20,
-                "tot_games": 233,
-                "Total Games Missed": 53,
-                "% of Games Missed": "22.75%"
+                "tot_games": 216,
+                "Total Games Missed": 36,
+                "% of Games Missed": "16.67%"
             },
             {
                 "Owner": "LGBBQ+",
                 "roster_id": 9,
                 "num_games": 160,
                 "tot_players": 16,
-                "tot_games": 206,
-                "Total Games Missed": 46,
-                "% of Games Missed": "22.33%"
+                "tot_games": 192,
+                "Total Games Missed": 32,
+                "% of Games Missed": "16.67%"
             },
             {
                 "Owner": "Lotta Cox (Balls Too)",
                 "roster_id": 5,
                 "num_games": 150,
                 "tot_players": 18,
-                "tot_games": 223,
-                "Total Games Missed": 73,
-                "% of Games Missed": "32.74%"
+                "tot_games": 206,
+                "Total Games Missed": 56,
+                "% of Games Missed": "27.18%"
             },
             {
                 "Owner": "Professional Fratson",
                 "roster_id": 3,
                 "num_games": 217,
                 "tot_players": 25,
-                "tot_games": 277,
-                "Total Games Missed": 60,
-                "% of Games Missed": "21.66%"
+                "tot_games": 257,
+                "Total Games Missed": 40,
+                "% of Games Missed": "15.56%"
             },
             {
                 "Owner": "Strictly Dickly",
                 "roster_id": 4,
                 "num_games": 177,
                 "tot_players": 19,
-                "tot_games": 229,
-                "Total Games Missed": 52,
-                "% of Games Missed": "22.71%"
+                "tot_games": 213,
+                "Total Games Missed": 36,
+                "% of Games Missed": "16.90%"
             },
             {
                 "Owner": "The Jackson 5",
                 "roster_id": 10,
                 "num_games": 184,
                 "tot_players": 23,
-                "tot_games": 261,
-                "Total Games Missed": 77,
-                "% of Games Missed": "29.50%"
+                "tot_games": 242,
+                "Total Games Missed": 58,
+                "% of Games Missed": "23.97%"
             },
             {
                 "Owner": "The Standard",
                 "roster_id": 6,
                 "num_games": 157,
                 "tot_players": 15,
-                "tot_games": 197,
-                "Total Games Missed": 40,
-                "% of Games Missed": "20.30%"
+                "tot_games": 183,
+                "Total Games Missed": 26,
+                "% of Games Missed": "14.21%"
             },
             {
                 "Owner": "padgett",
                 "roster_id": 7,
                 "num_games": 170,
                 "tot_players": 14,
-                "tot_games": 196,
-                "Total Games Missed": 26,
-                "% of Games Missed": "13.27%"
+                "tot_games": 182,
+                "Total Games Missed": 12,
+                "% of Games Missed": "6.59%"
             }
         ],
         "injury_detail_df": [
@@ -926,7 +926,7 @@
                 "Games Played": 12,
                 "Med PPG": 17.55,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -940,7 +940,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -954,7 +954,7 @@
                 "Games Played": 13,
                 "Med PPG": 24.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -968,7 +968,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -982,7 +982,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -996,7 +996,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1010,7 +1010,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1024,7 +1024,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1038,7 +1038,7 @@
                 "Games Played": 9,
                 "Med PPG": 18.0,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1052,7 +1052,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1066,7 +1066,7 @@
                 "Games Played": 10,
                 "Med PPG": 12.85,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1080,7 +1080,7 @@
                 "Games Played": 12,
                 "Med PPG": 15.8,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1094,7 +1094,7 @@
                 "Games Played": 13,
                 "Med PPG": 18.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1108,7 +1108,7 @@
                 "Games Played": 9,
                 "Med PPG": 18.9,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1122,7 +1122,7 @@
                 "Games Played": 12,
                 "Med PPG": 22.8,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1136,7 +1136,7 @@
                 "Games Played": 4,
                 "Med PPG": 8.05,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1150,7 +1150,7 @@
                 "Games Played": 12,
                 "Med PPG": 15.25,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1164,7 +1164,7 @@
                 "Games Played": 10,
                 "Med PPG": 8.95,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1178,7 +1178,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.95,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1192,7 +1192,7 @@
                 "Games Played": 6,
                 "Med PPG": 16.1,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1206,7 +1206,7 @@
                 "Games Played": 13,
                 "Med PPG": 23.700000000000003,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1220,7 +1220,7 @@
                 "Games Played": 10,
                 "Med PPG": 18.85,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1234,7 +1234,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1248,7 +1248,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1262,7 +1262,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1276,7 +1276,7 @@
                 "Games Played": 13,
                 "Med PPG": 23.02,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1290,7 +1290,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1304,7 +1304,7 @@
                 "Games Played": 6,
                 "Med PPG": 13.85,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1318,7 +1318,7 @@
                 "Games Played": 12,
                 "Med PPG": 11.3,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1332,7 +1332,7 @@
                 "Games Played": 6,
                 "Med PPG": 10.100000000000001,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1346,7 +1346,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1360,7 +1360,7 @@
                 "Games Played": 13,
                 "Med PPG": 20.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1374,7 +1374,7 @@
                 "Games Played": 8,
                 "Med PPG": 13.15,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1388,7 +1388,7 @@
                 "Games Played": 4,
                 "Med PPG": 14.3,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1402,7 +1402,7 @@
                 "Games Played": 13,
                 "Med PPG": 20.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1416,7 +1416,7 @@
                 "Games Played": 7,
                 "Med PPG": 19.1,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1430,7 +1430,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.500000000000004,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1444,7 +1444,7 @@
                 "Games Played": 10,
                 "Med PPG": 13.350000000000001,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1458,7 +1458,7 @@
                 "Games Played": 4,
                 "Med PPG": 10.350000000000001,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1472,7 +1472,7 @@
                 "Games Played": 7,
                 "Med PPG": 17.740000000000002,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1486,7 +1486,7 @@
                 "Games Played": 7,
                 "Med PPG": 23.2,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1500,7 +1500,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1514,7 +1514,7 @@
                 "Games Played": 11,
                 "Med PPG": 9.5,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1528,7 +1528,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1542,7 +1542,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1556,7 +1556,7 @@
                 "Games Played": 11,
                 "Med PPG": 9.4,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1570,7 +1570,7 @@
                 "Games Played": 4,
                 "Med PPG": 14.03,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1584,7 +1584,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1598,7 +1598,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1612,7 +1612,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1626,7 +1626,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.44,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1640,7 +1640,7 @@
                 "Games Played": 13,
                 "Med PPG": 22.96,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1654,7 +1654,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1668,7 +1668,7 @@
                 "Games Played": 3,
                 "Med PPG": 12.2,
                 "Sample Games": 3,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1682,7 +1682,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1696,7 +1696,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1710,7 +1710,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1724,7 +1724,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1738,7 +1738,7 @@
                 "Games Played": 10,
                 "Med PPG": 5.800000000000001,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1752,7 +1752,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1766,7 +1766,7 @@
                 "Games Played": 9,
                 "Med PPG": 8.7,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1780,7 +1780,7 @@
                 "Games Played": 9,
                 "Med PPG": 10.3,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1794,7 +1794,7 @@
                 "Games Played": 0,
                 "Med PPG": NaN,
                 "Sample Games": 0,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1808,7 +1808,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1822,7 +1822,7 @@
                 "Games Played": 11,
                 "Med PPG": 9.9,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1836,7 +1836,7 @@
                 "Games Played": 0,
                 "Med PPG": NaN,
                 "Sample Games": 0,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1850,7 +1850,7 @@
                 "Games Played": 10,
                 "Med PPG": 3.5,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1864,7 +1864,7 @@
                 "Games Played": 7,
                 "Med PPG": 5.0,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1878,7 +1878,7 @@
                 "Games Played": 12,
                 "Med PPG": 14.350000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1892,7 +1892,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.15,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1906,7 +1906,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1920,7 +1920,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1934,7 +1934,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1948,7 +1948,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1962,7 +1962,7 @@
                 "Games Played": 13,
                 "Med PPG": 6.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1976,7 +1976,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -1990,7 +1990,7 @@
                 "Games Played": 12,
                 "Med PPG": 7.1000000000000005,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2004,7 +2004,7 @@
                 "Games Played": 13,
                 "Med PPG": 5.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2018,7 +2018,7 @@
                 "Games Played": 10,
                 "Med PPG": 10.1,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2032,7 +2032,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2046,7 +2046,7 @@
                 "Games Played": 13,
                 "Med PPG": 2.9000000000000004,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2060,7 +2060,7 @@
                 "Games Played": 9,
                 "Med PPG": 0.4,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2074,7 +2074,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.72,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2088,7 +2088,7 @@
                 "Games Played": 11,
                 "Med PPG": 7.300000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2102,7 +2102,7 @@
                 "Games Played": 8,
                 "Med PPG": 14.15,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2116,7 +2116,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2130,7 +2130,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.0,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2144,7 +2144,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2158,7 +2158,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.95,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2172,7 +2172,7 @@
                 "Games Played": 12,
                 "Med PPG": 11.75,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2186,7 +2186,7 @@
                 "Games Played": 12,
                 "Med PPG": 6.0,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2200,7 +2200,7 @@
                 "Games Played": 12,
                 "Med PPG": 10.350000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2214,7 +2214,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2228,7 +2228,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2242,7 +2242,7 @@
                 "Games Played": 11,
                 "Med PPG": 9.4,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2256,7 +2256,7 @@
                 "Games Played": 7,
                 "Med PPG": 8.600000000000001,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2270,7 +2270,7 @@
                 "Games Played": 11,
                 "Med PPG": 7.1,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2284,7 +2284,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2298,7 +2298,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2312,7 +2312,7 @@
                 "Games Played": 5,
                 "Med PPG": 5.6,
                 "Sample Games": 5,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2326,7 +2326,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2340,7 +2340,7 @@
                 "Games Played": 13,
                 "Med PPG": 5.300000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2354,7 +2354,7 @@
                 "Games Played": 5,
                 "Med PPG": 15.3,
                 "Sample Games": 5,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2368,7 +2368,7 @@
                 "Games Played": 10,
                 "Med PPG": 12.8,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2382,7 +2382,7 @@
                 "Games Played": 12,
                 "Med PPG": 10.1,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2396,7 +2396,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.700000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2410,7 +2410,7 @@
                 "Games Played": 4,
                 "Med PPG": 1.8000000000000003,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2424,7 +2424,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.98,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2438,7 +2438,7 @@
                 "Games Played": 2,
                 "Med PPG": 11.4,
                 "Sample Games": 2,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2452,7 +2452,7 @@
                 "Games Played": 10,
                 "Med PPG": 5.5,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2466,7 +2466,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2480,7 +2480,7 @@
                 "Games Played": 3,
                 "Med PPG": 2.8000000000000003,
                 "Sample Games": 3,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2494,7 +2494,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.22,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2508,7 +2508,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2522,7 +2522,7 @@
                 "Games Played": 9,
                 "Med PPG": 14.100000000000001,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2536,7 +2536,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.82,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2550,7 +2550,7 @@
                 "Games Played": 12,
                 "Med PPG": 6.4,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2564,7 +2564,7 @@
                 "Games Played": 12,
                 "Med PPG": 6.300000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2578,7 +2578,7 @@
                 "Games Played": 11,
                 "Med PPG": 4.0,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2592,7 +2592,7 @@
                 "Games Played": 13,
                 "Med PPG": 22.139999999999997,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2606,7 +2606,7 @@
                 "Games Played": 0,
                 "Med PPG": NaN,
                 "Sample Games": 0,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2620,7 +2620,7 @@
                 "Games Played": 11,
                 "Med PPG": 6.0,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2634,7 +2634,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2648,7 +2648,7 @@
                 "Games Played": 12,
                 "Med PPG": 10.600000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2662,7 +2662,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2676,7 +2676,7 @@
                 "Games Played": 10,
                 "Med PPG": 0.9,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2690,7 +2690,7 @@
                 "Games Played": 13,
                 "Med PPG": 6.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2704,7 +2704,7 @@
                 "Games Played": 12,
                 "Med PPG": 3.45,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2718,7 +2718,7 @@
                 "Games Played": 9,
                 "Med PPG": 8.4,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2732,7 +2732,7 @@
                 "Games Played": 2,
                 "Med PPG": 6.55,
                 "Sample Games": 2,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -2746,7 +2746,7 @@
                 "Games Played": 7,
                 "Med PPG": 11.450000000000001,
                 "Sample Games": 8,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -2760,7 +2760,7 @@
                 "Games Played": 11,
                 "Med PPG": 4.2,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -2802,7 +2802,7 @@
                 "Games Played": 13,
                 "Med PPG": 3.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -2830,7 +2830,7 @@
                 "Games Played": 4,
                 "Med PPG": 8.45,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -2844,7 +2844,7 @@
                 "Games Played": 11,
                 "Med PPG": 11.3,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -2900,7 +2900,7 @@
                 "Games Played": 12,
                 "Med PPG": 11.5,
                 "Sample Games": 13,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -2914,7 +2914,7 @@
                 "Games Played": 9,
                 "Med PPG": 15.92,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -2928,7 +2928,7 @@
                 "Games Played": 11,
                 "Med PPG": 8.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -2942,7 +2942,7 @@
                 "Games Played": 11,
                 "Med PPG": 7.7,
                 "Sample Games": 13,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -2956,7 +2956,7 @@
                 "Games Played": 10,
                 "Med PPG": 6.800000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 11,
+                "Window Weeks": 10,
                 "Source": "Pickup"
             },
             {
@@ -3012,7 +3012,7 @@
                 "Games Played": 6,
                 "Med PPG": 7.2,
                 "Sample Games": 10,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -3026,7 +3026,7 @@
                 "Games Played": 5,
                 "Med PPG": 5.05,
                 "Sample Games": 8,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -3040,7 +3040,7 @@
                 "Games Played": 3,
                 "Med PPG": 4.5,
                 "Sample Games": 10,
-                "Window Weeks": 4,
+                "Window Weeks": 3,
                 "Source": "Pickup"
             },
             {
@@ -3054,7 +3054,7 @@
                 "Games Played": 9,
                 "Med PPG": 22.92,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -3068,7 +3068,7 @@
                 "Games Played": 9,
                 "Med PPG": 8.5,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -3082,7 +3082,7 @@
                 "Games Played": 9,
                 "Med PPG": 8.2,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -3096,7 +3096,7 @@
                 "Games Played": 9,
                 "Med PPG": 10.8,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -3110,7 +3110,7 @@
                 "Games Played": 9,
                 "Med PPG": 9.0,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -3124,7 +3124,7 @@
                 "Games Played": 8,
                 "Med PPG": 5.8,
                 "Sample Games": 13,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -3152,7 +3152,7 @@
                 "Games Played": 8,
                 "Med PPG": 9.8,
                 "Sample Games": 13,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -3194,7 +3194,7 @@
                 "Games Played": 5,
                 "Med PPG": 8.6,
                 "Sample Games": 11,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -3208,7 +3208,7 @@
                 "Games Played": 6,
                 "Med PPG": 6.1000000000000005,
                 "Sample Games": 11,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -3222,7 +3222,7 @@
                 "Games Played": 5,
                 "Med PPG": 19.630000000000003,
                 "Sample Games": 10,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -3236,7 +3236,7 @@
                 "Games Played": 5,
                 "Med PPG": 5.8,
                 "Sample Games": 12,
-                "Window Weeks": 6,
+                "Window Weeks": 5,
                 "Source": "Pickup"
             },
             {
@@ -3264,7 +3264,7 @@
                 "Games Played": 5,
                 "Med PPG": 7.2,
                 "Sample Games": 10,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -3278,7 +3278,7 @@
                 "Games Played": 6,
                 "Med PPG": 16.68,
                 "Sample Games": 13,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -3306,7 +3306,7 @@
                 "Games Played": 4,
                 "Med PPG": 11.030000000000001,
                 "Sample Games": 10,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -3320,7 +3320,7 @@
                 "Games Played": 6,
                 "Med PPG": 8.5,
                 "Sample Games": 13,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -3362,7 +3362,7 @@
                 "Games Played": 5,
                 "Med PPG": 3.5,
                 "Sample Games": 13,
-                "Window Weeks": 6,
+                "Window Weeks": 5,
                 "Source": "Pickup"
             },
             {
@@ -4360,90 +4360,90 @@
                 "roster_id": 10,
                 "num_games": 178,
                 "tot_players": 20,
-                "tot_games": 226,
-                "Total Games Missed": 48,
-                "% of Games Missed": "21.24%"
+                "tot_games": 209,
+                "Total Games Missed": 31,
+                "% of Games Missed": "14.83%"
             },
             {
                 "Owner": "DRINK MAYE",
                 "roster_id": 2,
                 "num_games": 193,
                 "tot_players": 20,
-                "tot_games": 245,
-                "Total Games Missed": 52,
-                "% of Games Missed": "21.22%"
+                "tot_games": 226,
+                "Total Games Missed": 33,
+                "% of Games Missed": "14.60%"
             },
             {
                 "Owner": "Fratson",
                 "roster_id": 3,
                 "num_games": 185,
                 "tot_players": 16,
-                "tot_games": 215,
-                "Total Games Missed": 30,
-                "% of Games Missed": "13.95%"
+                "tot_games": 200,
+                "Total Games Missed": 15,
+                "% of Games Missed": "7.50%"
             },
             {
                 "Owner": "Jahmyr Gibbies",
                 "roster_id": 8,
                 "num_games": 180,
                 "tot_players": 22,
-                "tot_games": 252,
-                "Total Games Missed": 72,
-                "% of Games Missed": "28.57%"
+                "tot_games": 233,
+                "Total Games Missed": 53,
+                "% of Games Missed": "22.75%"
             },
             {
                 "Owner": "Lotta Cox (Balls Too)",
                 "roster_id": 5,
                 "num_games": 176,
                 "tot_players": 15,
-                "tot_games": 199,
-                "Total Games Missed": 23,
-                "% of Games Missed": "11.56%"
+                "tot_games": 184,
+                "Total Games Missed": 8,
+                "% of Games Missed": "4.35%"
             },
             {
                 "Owner": "Mahomo's backup glazer",
                 "roster_id": 9,
                 "num_games": 148,
                 "tot_players": 14,
-                "tot_games": 191,
-                "Total Games Missed": 43,
-                "% of Games Missed": "22.51%"
+                "tot_games": 177,
+                "Total Games Missed": 29,
+                "% of Games Missed": "16.38%"
             },
             {
                 "Owner": "Nick's Chubb (Revival)",
                 "roster_id": 4,
                 "num_games": 161,
                 "tot_players": 16,
-                "tot_games": 199,
-                "Total Games Missed": 38,
-                "% of Games Missed": "19.10%"
+                "tot_games": 183,
+                "Total Games Missed": 22,
+                "% of Games Missed": "12.02%"
             },
             {
                 "Owner": "Stormy Daniels",
                 "roster_id": 1,
                 "num_games": 155,
                 "tot_players": 16,
-                "tot_games": 208,
-                "Total Games Missed": 53,
-                "% of Games Missed": "25.48%"
+                "tot_games": 192,
+                "Total Games Missed": 37,
+                "% of Games Missed": "19.27%"
             },
             {
                 "Owner": "TJ Watts huge left nut",
                 "roster_id": 6,
                 "num_games": 168,
                 "tot_players": 16,
-                "tot_games": 217,
-                "Total Games Missed": 49,
-                "% of Games Missed": "22.58%"
+                "tot_games": 201,
+                "Total Games Missed": 33,
+                "% of Games Missed": "16.42%"
             },
             {
                 "Owner": "padgett",
                 "roster_id": 7,
                 "num_games": 134,
                 "tot_players": 12,
-                "tot_games": 168,
-                "Total Games Missed": 34,
-                "% of Games Missed": "20.24%"
+                "tot_games": 156,
+                "Total Games Missed": 22,
+                "% of Games Missed": "14.10%"
             }
         ],
         "injury_detail_df": [
@@ -4458,7 +4458,7 @@
                 "Games Played": 4,
                 "Med PPG": 11.65,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4472,7 +4472,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4486,7 +4486,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4500,7 +4500,7 @@
                 "Games Played": 13,
                 "Med PPG": 20.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4514,7 +4514,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4528,7 +4528,7 @@
                 "Games Played": 13,
                 "Med PPG": 20.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4542,7 +4542,7 @@
                 "Games Played": 13,
                 "Med PPG": 18.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4556,7 +4556,7 @@
                 "Games Played": 12,
                 "Med PPG": 15.3,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4570,7 +4570,7 @@
                 "Games Played": 8,
                 "Med PPG": 18.450000000000003,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4584,7 +4584,7 @@
                 "Games Played": 10,
                 "Med PPG": 14.65,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4598,7 +4598,7 @@
                 "Games Played": 11,
                 "Med PPG": 8.8,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4612,7 +4612,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4626,7 +4626,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4640,7 +4640,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.700000000000003,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4654,7 +4654,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4668,7 +4668,7 @@
                 "Games Played": 8,
                 "Med PPG": 16.35,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4682,7 +4682,7 @@
                 "Games Played": 10,
                 "Med PPG": 14.850000000000001,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4696,7 +4696,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4710,7 +4710,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4724,7 +4724,7 @@
                 "Games Played": 10,
                 "Med PPG": 12.05,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4738,7 +4738,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4752,7 +4752,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4766,7 +4766,7 @@
                 "Games Played": 13,
                 "Med PPG": 20.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4780,7 +4780,7 @@
                 "Games Played": 12,
                 "Med PPG": 8.9,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4794,7 +4794,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4808,7 +4808,7 @@
                 "Games Played": 8,
                 "Med PPG": 7.95,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4822,7 +4822,7 @@
                 "Games Played": 4,
                 "Med PPG": 11.950000000000001,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4836,7 +4836,7 @@
                 "Games Played": 13,
                 "Med PPG": 22.099999999999998,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4850,7 +4850,7 @@
                 "Games Played": 7,
                 "Med PPG": 6.800000000000001,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4864,7 +4864,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.84,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4878,7 +4878,7 @@
                 "Games Played": 8,
                 "Med PPG": 18.8,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4892,7 +4892,7 @@
                 "Games Played": 13,
                 "Med PPG": 24.160000000000004,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4906,7 +4906,7 @@
                 "Games Played": 12,
                 "Med PPG": 8.149999999999999,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4920,7 +4920,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4934,7 +4934,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.7,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4948,7 +4948,7 @@
                 "Games Played": 13,
                 "Med PPG": 21.860000000000003,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4962,7 +4962,7 @@
                 "Games Played": 10,
                 "Med PPG": 11.350000000000001,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4976,7 +4976,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -4990,7 +4990,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.1,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5004,7 +5004,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5018,7 +5018,7 @@
                 "Games Played": 9,
                 "Med PPG": 20.0,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5032,7 +5032,7 @@
                 "Games Played": 12,
                 "Med PPG": 16.7,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5046,7 +5046,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5060,7 +5060,7 @@
                 "Games Played": 10,
                 "Med PPG": 22.65,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5074,7 +5074,7 @@
                 "Games Played": 11,
                 "Med PPG": 20.200000000000003,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5088,7 +5088,7 @@
                 "Games Played": 10,
                 "Med PPG": 15.15,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5102,7 +5102,7 @@
                 "Games Played": 11,
                 "Med PPG": 14.9,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5116,7 +5116,7 @@
                 "Games Played": 12,
                 "Med PPG": 9.25,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5130,7 +5130,7 @@
                 "Games Played": 10,
                 "Med PPG": 7.75,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5144,7 +5144,7 @@
                 "Games Played": 11,
                 "Med PPG": 10.600000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5158,7 +5158,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5172,7 +5172,7 @@
                 "Games Played": 10,
                 "Med PPG": 14.25,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5186,7 +5186,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5200,7 +5200,7 @@
                 "Games Played": 9,
                 "Med PPG": 11.5,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5214,7 +5214,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.200000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5228,7 +5228,7 @@
                 "Games Played": 11,
                 "Med PPG": 7.5,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5242,7 +5242,7 @@
                 "Games Played": 12,
                 "Med PPG": 9.350000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5256,7 +5256,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.82,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5270,7 +5270,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5284,7 +5284,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.200000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5298,7 +5298,7 @@
                 "Games Played": 8,
                 "Med PPG": 16.299999999999997,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5312,7 +5312,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5326,7 +5326,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5340,7 +5340,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.45,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5354,7 +5354,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5368,7 +5368,7 @@
                 "Games Played": 4,
                 "Med PPG": 17.9,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5382,7 +5382,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.65,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5396,7 +5396,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5410,7 +5410,7 @@
                 "Games Played": 11,
                 "Med PPG": 7.6,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5424,7 +5424,7 @@
                 "Games Played": 9,
                 "Med PPG": 10.0,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5438,7 +5438,7 @@
                 "Games Played": 9,
                 "Med PPG": 5.4,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5452,7 +5452,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.700000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5466,7 +5466,7 @@
                 "Games Played": 7,
                 "Med PPG": 17.3,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5480,7 +5480,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5494,7 +5494,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5508,7 +5508,7 @@
                 "Games Played": 8,
                 "Med PPG": 13.27,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5522,7 +5522,7 @@
                 "Games Played": 8,
                 "Med PPG": 7.4,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5536,7 +5536,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5550,7 +5550,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5564,7 +5564,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5578,7 +5578,7 @@
                 "Games Played": 8,
                 "Med PPG": 3.5500000000000003,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5592,7 +5592,7 @@
                 "Games Played": 11,
                 "Med PPG": 16.4,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5606,7 +5606,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5620,7 +5620,7 @@
                 "Games Played": 12,
                 "Med PPG": 17.77,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5634,7 +5634,7 @@
                 "Games Played": 10,
                 "Med PPG": 7.25,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5648,7 +5648,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5662,7 +5662,7 @@
                 "Games Played": 3,
                 "Med PPG": 0.7000000000000001,
                 "Sample Games": 3,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5676,7 +5676,7 @@
                 "Games Played": 10,
                 "Med PPG": 12.75,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5690,7 +5690,7 @@
                 "Games Played": 11,
                 "Med PPG": 9.600000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5704,7 +5704,7 @@
                 "Games Played": 8,
                 "Med PPG": 8.05,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5718,7 +5718,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.850000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5732,7 +5732,7 @@
                 "Games Played": 0,
                 "Med PPG": NaN,
                 "Sample Games": 0,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5746,7 +5746,7 @@
                 "Games Played": 11,
                 "Med PPG": 11.5,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5760,7 +5760,7 @@
                 "Games Played": 11,
                 "Med PPG": 8.7,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5774,7 +5774,7 @@
                 "Games Played": 10,
                 "Med PPG": 4.2,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5788,7 +5788,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5802,7 +5802,7 @@
                 "Games Played": 11,
                 "Med PPG": 8.100000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5816,7 +5816,7 @@
                 "Games Played": 11,
                 "Med PPG": 4.800000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5830,7 +5830,7 @@
                 "Games Played": 7,
                 "Med PPG": 5.2,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5844,7 +5844,7 @@
                 "Games Played": 9,
                 "Med PPG": 9.100000000000001,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5858,7 +5858,7 @@
                 "Games Played": 11,
                 "Med PPG": 13.0,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5872,7 +5872,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5886,7 +5886,7 @@
                 "Games Played": 9,
                 "Med PPG": 10.5,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5900,7 +5900,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.059999999999999,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5914,7 +5914,7 @@
                 "Games Played": 9,
                 "Med PPG": 4.300000000000001,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5928,7 +5928,7 @@
                 "Games Played": 9,
                 "Med PPG": 5.1,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5942,7 +5942,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5956,7 +5956,7 @@
                 "Games Played": 9,
                 "Med PPG": 18.62,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5970,7 +5970,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5984,7 +5984,7 @@
                 "Games Played": 10,
                 "Med PPG": 14.0,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -5998,7 +5998,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6012,7 +6012,7 @@
                 "Games Played": 11,
                 "Med PPG": 2.7,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6026,7 +6026,7 @@
                 "Games Played": 12,
                 "Med PPG": 1.9500000000000002,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6040,7 +6040,7 @@
                 "Games Played": 13,
                 "Med PPG": 20.959999999999997,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6054,7 +6054,7 @@
                 "Games Played": 10,
                 "Med PPG": 8.7,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6068,7 +6068,7 @@
                 "Games Played": 6,
                 "Med PPG": 7.15,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6082,7 +6082,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.24,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6096,7 +6096,7 @@
                 "Games Played": 11,
                 "Med PPG": 7.7,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6110,7 +6110,7 @@
                 "Games Played": 13,
                 "Med PPG": 6.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6124,7 +6124,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.719999999999999,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6138,7 +6138,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6152,7 +6152,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6166,7 +6166,7 @@
                 "Games Played": 11,
                 "Med PPG": 2.8,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6180,7 +6180,7 @@
                 "Games Played": 12,
                 "Med PPG": 15.15,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6194,7 +6194,7 @@
                 "Games Played": 12,
                 "Med PPG": 3.5,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6208,7 +6208,7 @@
                 "Games Played": 13,
                 "Med PPG": 2.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6222,7 +6222,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.5,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6236,7 +6236,7 @@
                 "Games Played": 10,
                 "Med PPG": 3.7,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6250,7 +6250,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -6264,7 +6264,7 @@
                 "Games Played": 11,
                 "Med PPG": 13.7,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -6278,7 +6278,7 @@
                 "Games Played": 12,
                 "Med PPG": 8.850000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -6320,7 +6320,7 @@
                 "Games Played": 11,
                 "Med PPG": 16.8,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -6334,7 +6334,7 @@
                 "Games Played": 9,
                 "Med PPG": 3.35,
                 "Sample Games": 10,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -6362,7 +6362,7 @@
                 "Games Played": 12,
                 "Med PPG": 14.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -6390,7 +6390,7 @@
                 "Games Played": 9,
                 "Med PPG": 11.4,
                 "Sample Games": 11,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -6418,7 +6418,7 @@
                 "Games Played": 3,
                 "Med PPG": 7.3999999999999995,
                 "Sample Games": 10,
-                "Window Weeks": 4,
+                "Window Weeks": 3,
                 "Source": "Pickup"
             },
             {
@@ -6432,7 +6432,7 @@
                 "Games Played": 8,
                 "Med PPG": 13.7,
                 "Sample Games": 11,
-                "Window Weeks": 11,
+                "Window Weeks": 10,
                 "Source": "Pickup"
             },
             {
@@ -6446,7 +6446,7 @@
                 "Games Played": 3,
                 "Med PPG": 10.65,
                 "Sample Games": 12,
-                "Window Weeks": 4,
+                "Window Weeks": 3,
                 "Source": "Pickup"
             },
             {
@@ -6460,7 +6460,7 @@
                 "Games Played": 8,
                 "Med PPG": 12.5,
                 "Sample Games": 10,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -6474,7 +6474,7 @@
                 "Games Played": 9,
                 "Med PPG": 10.6,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -6488,7 +6488,7 @@
                 "Games Played": 9,
                 "Med PPG": 12.5,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -6502,7 +6502,7 @@
                 "Games Played": 4,
                 "Med PPG": 12.100000000000001,
                 "Sample Games": 8,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -6516,7 +6516,7 @@
                 "Games Played": 7,
                 "Med PPG": 5.9,
                 "Sample Games": 12,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -6530,7 +6530,7 @@
                 "Games Played": 8,
                 "Med PPG": 15.74,
                 "Sample Games": 13,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -6544,7 +6544,7 @@
                 "Games Played": 7,
                 "Med PPG": 6.550000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -6558,7 +6558,7 @@
                 "Games Played": 6,
                 "Med PPG": 0.65,
                 "Sample Games": 10,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -6572,7 +6572,7 @@
                 "Games Played": 7,
                 "Med PPG": 9.2,
                 "Sample Games": 13,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -6586,7 +6586,7 @@
                 "Games Played": 8,
                 "Med PPG": 5.5,
                 "Sample Games": 13,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -6600,7 +6600,7 @@
                 "Games Played": 8,
                 "Med PPG": 9.0,
                 "Sample Games": 13,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -6614,7 +6614,7 @@
                 "Games Played": 7,
                 "Med PPG": 15.740000000000002,
                 "Sample Games": 9,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -6628,7 +6628,7 @@
                 "Games Played": 2,
                 "Med PPG": 5.65,
                 "Sample Games": 4,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -6642,7 +6642,7 @@
                 "Games Played": 6,
                 "Med PPG": 9.8,
                 "Sample Games": 13,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -6656,7 +6656,7 @@
                 "Games Played": 6,
                 "Med PPG": 2.3,
                 "Sample Games": 11,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -6670,7 +6670,7 @@
                 "Games Played": 2,
                 "Med PPG": 4.5,
                 "Sample Games": 9,
-                "Window Weeks": 5,
+                "Window Weeks": 4,
                 "Source": "Pickup"
             },
             {
@@ -6684,7 +6684,7 @@
                 "Games Played": 5,
                 "Med PPG": 2.8000000000000003,
                 "Sample Games": 9,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -6698,7 +6698,7 @@
                 "Games Played": 3,
                 "Med PPG": 7.750000000000001,
                 "Sample Games": 10,
-                "Window Weeks": 4,
+                "Window Weeks": 3,
                 "Source": "Pickup"
             },
             {
@@ -6712,7 +6712,7 @@
                 "Games Played": 0,
                 "Med PPG": 17.0,
                 "Sample Games": 6,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -6726,7 +6726,7 @@
                 "Games Played": 6,
                 "Med PPG": 9.5,
                 "Sample Games": 13,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -6768,7 +6768,7 @@
                 "Games Played": 5,
                 "Med PPG": 15.05,
                 "Sample Games": 10,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -7608,90 +7608,90 @@
                 "roster_id": 3,
                 "num_games": 191,
                 "tot_players": 18,
-                "tot_games": 224,
-                "Total Games Missed": 33,
-                "% of Games Missed": "14.73%"
+                "tot_games": 207,
+                "Total Games Missed": 16,
+                "% of Games Missed": "7.73%"
             },
             {
                 "Owner": "Justin Cream Fields",
                 "roster_id": 8,
                 "num_games": 163,
                 "tot_players": 18,
-                "tot_games": 206,
-                "Total Games Missed": 43,
-                "% of Games Missed": "20.87%"
+                "tot_games": 191,
+                "Total Games Missed": 28,
+                "% of Games Missed": "14.66%"
             },
             {
                 "Owner": "Kuppin\u2019 Farts",
                 "roster_id": 10,
                 "num_games": 146,
                 "tot_players": 14,
-                "tot_games": 178,
-                "Total Games Missed": 32,
-                "% of Games Missed": "17.98%"
+                "tot_games": 165,
+                "Total Games Missed": 19,
+                "% of Games Missed": "11.52%"
             },
             {
                 "Owner": "Matt",
                 "roster_id": 7,
                 "num_games": 128,
                 "tot_players": 11,
-                "tot_games": 154,
-                "Total Games Missed": 26,
-                "% of Games Missed": "16.88%"
+                "tot_games": 143,
+                "Total Games Missed": 15,
+                "% of Games Missed": "10.49%"
             },
             {
                 "Owner": "Moe Lester (Again)",
                 "roster_id": 5,
                 "num_games": 160,
                 "tot_players": 16,
-                "tot_games": 195,
-                "Total Games Missed": 35,
-                "% of Games Missed": "17.95%"
+                "tot_games": 181,
+                "Total Games Missed": 21,
+                "% of Games Missed": "11.60%"
             },
             {
                 "Owner": "Nick's Chubb (Revival)",
                 "roster_id": 4,
                 "num_games": 168,
                 "tot_players": 18,
-                "tot_games": 226,
-                "Total Games Missed": 58,
-                "% of Games Missed": "25.66%"
+                "tot_games": 208,
+                "Total Games Missed": 40,
+                "% of Games Missed": "19.23%"
             },
             {
                 "Owner": "RAMS HOUSE! ",
                 "roster_id": 1,
                 "num_games": 170,
                 "tot_players": 18,
-                "tot_games": 228,
-                "Total Games Missed": 58,
-                "% of Games Missed": "25.44%"
+                "tot_games": 210,
+                "Total Games Missed": 40,
+                "% of Games Missed": "19.05%"
             },
             {
                 "Owner": "Ray Rices Fiancee",
                 "roster_id": 6,
                 "num_games": 144,
                 "tot_players": 13,
-                "tot_games": 174,
-                "Total Games Missed": 30,
-                "% of Games Missed": "17.24%"
+                "tot_games": 161,
+                "Total Games Missed": 17,
+                "% of Games Missed": "10.56%"
             },
             {
                 "Owner": "Tua In The Pink",
                 "roster_id": 2,
                 "num_games": 312,
                 "tot_players": 33,
-                "tot_games": 398,
-                "Total Games Missed": 86,
-                "% of Games Missed": "21.61%"
+                "tot_games": 369,
+                "Total Games Missed": 57,
+                "% of Games Missed": "15.45%"
             },
             {
                 "Owner": "Women Respecters",
                 "roster_id": 9,
                 "num_games": 165,
                 "tot_players": 15,
-                "tot_games": 204,
-                "Total Games Missed": 39,
-                "% of Games Missed": "19.12%"
+                "tot_games": 189,
+                "Total Games Missed": 24,
+                "% of Games Missed": "12.70%"
             }
         ],
         "injury_detail_df": [
@@ -7706,7 +7706,7 @@
                 "Games Played": 6,
                 "Med PPG": 24.45,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7720,7 +7720,7 @@
                 "Games Played": 13,
                 "Med PPG": 22.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7734,7 +7734,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7748,7 +7748,7 @@
                 "Games Played": 10,
                 "Med PPG": 15.6,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7762,7 +7762,7 @@
                 "Games Played": 12,
                 "Med PPG": 14.7,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7776,7 +7776,7 @@
                 "Games Played": 13,
                 "Med PPG": 25.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7790,7 +7790,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7804,7 +7804,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7818,7 +7818,7 @@
                 "Games Played": 10,
                 "Med PPG": 15.05,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7832,7 +7832,7 @@
                 "Games Played": 9,
                 "Med PPG": 6.9,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7846,7 +7846,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7860,7 +7860,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.340000000000003,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7874,7 +7874,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7888,7 +7888,7 @@
                 "Games Played": 2,
                 "Med PPG": 11.55,
                 "Sample Games": 2,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7902,7 +7902,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7916,7 +7916,7 @@
                 "Games Played": 13,
                 "Med PPG": 18.700000000000003,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7930,7 +7930,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7944,7 +7944,7 @@
                 "Games Played": 13,
                 "Med PPG": 18.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7958,7 +7958,7 @@
                 "Games Played": 12,
                 "Med PPG": 18.8,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7972,7 +7972,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -7986,7 +7986,7 @@
                 "Games Played": 7,
                 "Med PPG": 14.5,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8000,7 +8000,7 @@
                 "Games Played": 13,
                 "Med PPG": 23.66,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8014,7 +8014,7 @@
                 "Games Played": 12,
                 "Med PPG": 12.350000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8028,7 +8028,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8042,7 +8042,7 @@
                 "Games Played": 13,
                 "Med PPG": 23.92,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8056,7 +8056,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8070,7 +8070,7 @@
                 "Games Played": 10,
                 "Med PPG": 13.25,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8084,7 +8084,7 @@
                 "Games Played": 9,
                 "Med PPG": 6.6,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8098,7 +8098,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8112,7 +8112,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8126,7 +8126,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.12,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8140,7 +8140,7 @@
                 "Games Played": 12,
                 "Med PPG": 13.35,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8154,7 +8154,7 @@
                 "Games Played": 9,
                 "Med PPG": 14.74,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8168,7 +8168,7 @@
                 "Games Played": 10,
                 "Med PPG": 14.590000000000002,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8182,7 +8182,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8196,7 +8196,7 @@
                 "Games Played": 11,
                 "Med PPG": 12.600000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8210,7 +8210,7 @@
                 "Games Played": 12,
                 "Med PPG": 13.850000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8224,7 +8224,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8238,7 +8238,7 @@
                 "Games Played": 7,
                 "Med PPG": 8.7,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8252,7 +8252,7 @@
                 "Games Played": 13,
                 "Med PPG": 15.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8266,7 +8266,7 @@
                 "Games Played": 13,
                 "Med PPG": 20.86,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8280,7 +8280,7 @@
                 "Games Played": 11,
                 "Med PPG": 15.9,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8294,7 +8294,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.48,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8308,7 +8308,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8322,7 +8322,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8336,7 +8336,7 @@
                 "Games Played": 1,
                 "Med PPG": 0.0,
                 "Sample Games": 1,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8350,7 +8350,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8364,7 +8364,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8378,7 +8378,7 @@
                 "Games Played": 11,
                 "Med PPG": 13.100000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8392,7 +8392,7 @@
                 "Games Played": 8,
                 "Med PPG": 7.95,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8406,7 +8406,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8420,7 +8420,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8434,7 +8434,7 @@
                 "Games Played": 1,
                 "Med PPG": 11.7,
                 "Sample Games": 1,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8448,7 +8448,7 @@
                 "Games Played": 10,
                 "Med PPG": 6.1,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8462,7 +8462,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8476,7 +8476,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8490,7 +8490,7 @@
                 "Games Played": 9,
                 "Med PPG": 10.2,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8504,7 +8504,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8518,7 +8518,7 @@
                 "Games Played": 12,
                 "Med PPG": 11.600000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8532,7 +8532,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8546,7 +8546,7 @@
                 "Games Played": 3,
                 "Med PPG": 16.6,
                 "Sample Games": 3,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8560,7 +8560,7 @@
                 "Games Played": 10,
                 "Med PPG": 8.1,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8574,7 +8574,7 @@
                 "Games Played": 9,
                 "Med PPG": 8.3,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8588,7 +8588,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8602,7 +8602,7 @@
                 "Games Played": 12,
                 "Med PPG": 6.2,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8616,7 +8616,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8630,7 +8630,7 @@
                 "Games Played": 12,
                 "Med PPG": 8.15,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8644,7 +8644,7 @@
                 "Games Played": 12,
                 "Med PPG": 15.05,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8658,7 +8658,7 @@
                 "Games Played": 7,
                 "Med PPG": 7.1000000000000005,
                 "Sample Games": 7,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8672,7 +8672,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8686,7 +8686,7 @@
                 "Games Played": 12,
                 "Med PPG": 14.15,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8700,7 +8700,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8714,7 +8714,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.8,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8728,7 +8728,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8742,7 +8742,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8756,7 +8756,7 @@
                 "Games Played": 12,
                 "Med PPG": 14.600000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8770,7 +8770,7 @@
                 "Games Played": 13,
                 "Med PPG": 8.4,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8784,7 +8784,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.100000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8798,7 +8798,7 @@
                 "Games Played": 12,
                 "Med PPG": 9.85,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8812,7 +8812,7 @@
                 "Games Played": 10,
                 "Med PPG": 18.6,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8826,7 +8826,7 @@
                 "Games Played": 13,
                 "Med PPG": 17.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8840,7 +8840,7 @@
                 "Games Played": 8,
                 "Med PPG": 6.35,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8854,7 +8854,7 @@
                 "Games Played": 13,
                 "Med PPG": 13.200000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8868,7 +8868,7 @@
                 "Games Played": 6,
                 "Med PPG": 17.589999999999996,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8882,7 +8882,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8896,7 +8896,7 @@
                 "Games Played": 13,
                 "Med PPG": 2.4000000000000004,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8910,7 +8910,7 @@
                 "Games Played": 10,
                 "Med PPG": 14.25,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8924,7 +8924,7 @@
                 "Games Played": 9,
                 "Med PPG": 3.0,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8938,7 +8938,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8952,7 +8952,7 @@
                 "Games Played": 11,
                 "Med PPG": 11.100000000000001,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8966,7 +8966,7 @@
                 "Games Played": 13,
                 "Med PPG": 9.700000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8980,7 +8980,7 @@
                 "Games Played": 9,
                 "Med PPG": 12.9,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -8994,7 +8994,7 @@
                 "Games Played": 12,
                 "Med PPG": 3.5,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9008,7 +9008,7 @@
                 "Games Played": 10,
                 "Med PPG": 10.65,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9022,7 +9022,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9036,7 +9036,7 @@
                 "Games Played": 12,
                 "Med PPG": 6.95,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9050,7 +9050,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9064,7 +9064,7 @@
                 "Games Played": 12,
                 "Med PPG": 9.05,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9078,7 +9078,7 @@
                 "Games Played": 8,
                 "Med PPG": 6.450000000000001,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9092,7 +9092,7 @@
                 "Games Played": 12,
                 "Med PPG": 9.950000000000001,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9106,7 +9106,7 @@
                 "Games Played": 13,
                 "Med PPG": 12.3,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9120,7 +9120,7 @@
                 "Games Played": 8,
                 "Med PPG": 19.86,
                 "Sample Games": 8,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9134,7 +9134,7 @@
                 "Games Played": 12,
                 "Med PPG": 8.45,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9148,7 +9148,7 @@
                 "Games Played": 11,
                 "Med PPG": 3.6,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9162,7 +9162,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.92,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9176,7 +9176,7 @@
                 "Games Played": 6,
                 "Med PPG": 3.1500000000000004,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9190,7 +9190,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9204,7 +9204,7 @@
                 "Games Played": 2,
                 "Med PPG": 1.6,
                 "Sample Games": 2,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9218,7 +9218,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9232,7 +9232,7 @@
                 "Games Played": 11,
                 "Med PPG": 6.4,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9246,7 +9246,7 @@
                 "Games Played": 13,
                 "Med PPG": 19.6,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9260,7 +9260,7 @@
                 "Games Played": 4,
                 "Med PPG": 19.330000000000002,
                 "Sample Games": 4,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9274,7 +9274,7 @@
                 "Games Played": 13,
                 "Med PPG": 3.0,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9288,7 +9288,7 @@
                 "Games Played": 13,
                 "Med PPG": 16.32,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9302,7 +9302,7 @@
                 "Games Played": 12,
                 "Med PPG": 13.489999999999998,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9316,7 +9316,7 @@
                 "Games Played": 13,
                 "Med PPG": 5.9,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9330,7 +9330,7 @@
                 "Games Played": 12,
                 "Med PPG": 4.85,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9344,7 +9344,7 @@
                 "Games Played": 13,
                 "Med PPG": 10.1,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9358,7 +9358,7 @@
                 "Games Played": 13,
                 "Med PPG": 11.2,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9372,7 +9372,7 @@
                 "Games Played": 6,
                 "Med PPG": 5.8100000000000005,
                 "Sample Games": 6,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9386,7 +9386,7 @@
                 "Games Played": 12,
                 "Med PPG": 5.65,
                 "Sample Games": 12,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9400,7 +9400,7 @@
                 "Games Played": 13,
                 "Med PPG": 7.1000000000000005,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Drafted"
             },
             {
@@ -9414,7 +9414,7 @@
                 "Games Played": 13,
                 "Med PPG": 14.5,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -9428,7 +9428,7 @@
                 "Games Played": 11,
                 "Med PPG": 8.4,
                 "Sample Games": 11,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -9442,7 +9442,7 @@
                 "Games Played": 10,
                 "Med PPG": 1.9,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -9456,7 +9456,7 @@
                 "Games Played": 9,
                 "Med PPG": 3.2,
                 "Sample Games": 9,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -9470,7 +9470,7 @@
                 "Games Played": 10,
                 "Med PPG": 1.9,
                 "Sample Games": 10,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -9484,7 +9484,7 @@
                 "Games Played": 13,
                 "Med PPG": 18.7,
                 "Sample Games": 13,
-                "Window Weeks": 14,
+                "Window Weeks": 13,
                 "Source": "Pickup"
             },
             {
@@ -9498,7 +9498,7 @@
                 "Games Played": 11,
                 "Med PPG": 4.9,
                 "Sample Games": 12,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9512,7 +9512,7 @@
                 "Games Played": 11,
                 "Med PPG": 4.9,
                 "Sample Games": 12,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9526,7 +9526,7 @@
                 "Games Played": 12,
                 "Med PPG": 20.299999999999997,
                 "Sample Games": 13,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9540,7 +9540,7 @@
                 "Games Played": 12,
                 "Med PPG": 3.2,
                 "Sample Games": 13,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9554,7 +9554,7 @@
                 "Games Played": 9,
                 "Med PPG": 9.3,
                 "Sample Games": 12,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -9568,7 +9568,7 @@
                 "Games Played": 8,
                 "Med PPG": 20.200000000000003,
                 "Sample Games": 9,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9582,7 +9582,7 @@
                 "Games Played": 12,
                 "Med PPG": 11.9,
                 "Sample Games": 13,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9596,7 +9596,7 @@
                 "Games Played": 11,
                 "Med PPG": 13.75,
                 "Sample Games": 12,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9610,7 +9610,7 @@
                 "Games Played": 12,
                 "Med PPG": 14.5,
                 "Sample Games": 13,
-                "Window Weeks": 13,
+                "Window Weeks": 12,
                 "Source": "Pickup"
             },
             {
@@ -9638,7 +9638,7 @@
                 "Games Played": 5,
                 "Med PPG": 3.2,
                 "Sample Games": 13,
-                "Window Weeks": 6,
+                "Window Weeks": 5,
                 "Source": "Pickup"
             },
             {
@@ -9652,7 +9652,7 @@
                 "Games Played": 11,
                 "Med PPG": 9.2,
                 "Sample Games": 11,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -9666,7 +9666,7 @@
                 "Games Played": 10,
                 "Med PPG": 8.75,
                 "Sample Games": 12,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -9680,7 +9680,7 @@
                 "Games Played": 11,
                 "Med PPG": 16.2,
                 "Sample Games": 13,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -9694,7 +9694,7 @@
                 "Games Played": 11,
                 "Med PPG": 15.840000000000002,
                 "Sample Games": 13,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -9708,7 +9708,7 @@
                 "Games Played": 11,
                 "Med PPG": 15.2,
                 "Sample Games": 13,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -9722,7 +9722,7 @@
                 "Games Played": 6,
                 "Med PPG": 21.5,
                 "Sample Games": 7,
-                "Window Weeks": 12,
+                "Window Weeks": 11,
                 "Source": "Pickup"
             },
             {
@@ -9736,7 +9736,7 @@
                 "Games Played": 8,
                 "Med PPG": 18.049999999999997,
                 "Sample Games": 10,
-                "Window Weeks": 11,
+                "Window Weeks": 10,
                 "Source": "Pickup"
             },
             {
@@ -9750,7 +9750,7 @@
                 "Games Played": 10,
                 "Med PPG": 16.060000000000002,
                 "Sample Games": 13,
-                "Window Weeks": 11,
+                "Window Weeks": 10,
                 "Source": "Pickup"
             },
             {
@@ -9764,7 +9764,7 @@
                 "Games Played": 7,
                 "Med PPG": 8.56,
                 "Sample Games": 11,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -9792,7 +9792,7 @@
                 "Games Played": 9,
                 "Med PPG": 17.64,
                 "Sample Games": 13,
-                "Window Weeks": 10,
+                "Window Weeks": 9,
                 "Source": "Pickup"
             },
             {
@@ -9806,7 +9806,7 @@
                 "Games Played": 8,
                 "Med PPG": 10.1,
                 "Sample Games": 13,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -9820,7 +9820,7 @@
                 "Games Played": 7,
                 "Med PPG": 7.6000000000000005,
                 "Sample Games": 12,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -9834,7 +9834,7 @@
                 "Games Played": 4,
                 "Med PPG": 0.8,
                 "Sample Games": 7,
-                "Window Weeks": 9,
+                "Window Weeks": 8,
                 "Source": "Pickup"
             },
             {
@@ -9848,7 +9848,7 @@
                 "Games Played": 4,
                 "Med PPG": 8.600000000000001,
                 "Sample Games": 13,
-                "Window Weeks": 5,
+                "Window Weeks": 4,
                 "Source": "Pickup"
             },
             {
@@ -9890,7 +9890,7 @@
                 "Games Played": 3,
                 "Med PPG": 0.8,
                 "Sample Games": 7,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -9904,7 +9904,7 @@
                 "Games Played": 6,
                 "Med PPG": 7.6000000000000005,
                 "Sample Games": 12,
-                "Window Weeks": 8,
+                "Window Weeks": 7,
                 "Source": "Pickup"
             },
             {
@@ -9946,7 +9946,7 @@
                 "Games Played": 1,
                 "Med PPG": 10.600000000000001,
                 "Sample Games": 8,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -9988,7 +9988,7 @@
                 "Games Played": 6,
                 "Med PPG": 6.9,
                 "Sample Games": 13,
-                "Window Weeks": 7,
+                "Window Weeks": 6,
                 "Source": "Pickup"
             },
             {
@@ -10002,7 +10002,7 @@
                 "Games Played": 2,
                 "Med PPG": 12.4,
                 "Sample Games": 3,
-                "Window Weeks": 6,
+                "Window Weeks": 5,
                 "Source": "Pickup"
             },
             {
@@ -10016,7 +10016,7 @@
                 "Games Played": 5,
                 "Med PPG": 9.05,
                 "Sample Games": 6,
-                "Window Weeks": 6,
+                "Window Weeks": 5,
                 "Source": "Pickup"
             },
             {
@@ -10030,7 +10030,7 @@
                 "Games Played": 4,
                 "Med PPG": 18.85,
                 "Sample Games": 4,
-                "Window Weeks": 6,
+                "Window Weeks": 5,
                 "Source": "Pickup"
             },
             {
@@ -10044,7 +10044,7 @@
                 "Games Played": 5,
                 "Med PPG": 16.939999999999998,
                 "Sample Games": 13,
-                "Window Weeks": 6,
+                "Window Weeks": 5,
                 "Source": "Pickup"
             },
             {
@@ -10058,7 +10058,7 @@
                 "Games Played": 4,
                 "Med PPG": 5.9,
                 "Sample Games": 13,
-                "Window Weeks": 5,
+                "Window Weeks": 4,
                 "Source": "Pickup"
             },
             {
@@ -10100,7 +10100,7 @@
                 "Games Played": 3,
                 "Med PPG": 8.95,
                 "Sample Games": 12,
-                "Window Weeks": 4,
+                "Window Weeks": 3,
                 "Source": "Pickup"
             },
             {
@@ -10128,7 +10128,7 @@
                 "Games Played": 3,
                 "Med PPG": 18.34,
                 "Sample Games": 13,
-                "Window Weeks": 4,
+                "Window Weeks": 3,
                 "Source": "Pickup"
             }
         ]

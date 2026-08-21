@@ -63,41 +63,94 @@ def _record(wins: float) -> str:
     return f"{wins:.1f}-{games - wins:.1f}"
 
 
+def _signed(v) -> str:
+    """+2 / -1 / blank, for the rank-movement columns."""
+    if pd.isna(v) or int(v) == 0:
+        return "" if pd.isna(v) else "&middot;"
+    return f"{int(v):+d}"
+
+
 def _rankings_table(table: pd.DataFrame) -> str:
-    display = pd.DataFrame({
-        "#": range(1, len(table) + 1),
-        "Manager": table["manager"],
-        "Power": table["power"],
-        "Proj. Record": table["proj_wins"].map(_record),
-        "Proj. Points": table["proj_points"],
-        "Playoffs": table["playoff_odds"],
-        "1 Seed": table["first_seed_odds"],
-        "Title": table["title_odds"],
-        "Last": table["last_odds"],
-    })
-    return (display.style.hide(axis="index")
-            .format({"Power": "{:.1f}", "Proj. Points": "{:,.0f}",
-                     "Playoffs": "{:.0%}", "1 Seed": "{:.0%}",
-                     "Title": "{:.0%}", "Last": "{:.0%}"})
-            .background_gradient(cmap="RdYlGn", subset=["Power"])
-            .background_gradient(cmap="RdYlGn", subset=["Playoffs"])
-            .background_gradient(cmap="RdYlGn", subset=["Title"])
-            .background_gradient(cmap="RdYlGn_r", subset=["Last"])
-            .set_table_styles(_GRID, overwrite=False)
+    in_season = "wins" in table.columns and table["week"].iloc[0] > 0
+    display = pd.DataFrame({"#": table["rank"], "Manager": table["manager"]})
+    display["Move"] = table["move"]
+    display["Pre"] = table["pre_rank"]
+    display["Power"] = table["power"]
+    if in_season:
+        display["Record"] = (table["wins"].astype(int).astype(str) + "-"
+                             + table["losses"].astype(int).astype(str))
+        display["Luck"] = table["luck"]
+    display["Proj. Record"] = table["proj_wins"].map(_record)
+    display["Proj. Points"] = table["proj_points"]
+    display["Playoffs"] = table["playoff_odds"]
+    display["1 Seed"] = table["first_seed_odds"]
+    display["Title"] = table["title_odds"]
+    display["Last"] = table["last_odds"]
+
+    fmt = {"Move": _signed, "Pre": lambda v: "" if pd.isna(v) else f"{int(v)}",
+           "Power": "{:.1f}", "Proj. Points": "{:,.0f}", "Playoffs": "{:.0%}",
+           "1 Seed": "{:.0%}", "Title": "{:.0%}", "Last": "{:.0%}", "Luck": "{:+.1f}"}
+    styled = (display.style.hide(axis="index").format(fmt, na_rep="")
+              .background_gradient(cmap="RdYlGn", subset=["Power"])
+              .background_gradient(cmap="RdYlGn", subset=["Playoffs"])
+              .background_gradient(cmap="RdYlGn", subset=["Title"])
+              .background_gradient(cmap="RdYlGn_r", subset=["Last"]))
+    if table["move"].notna().any():
+        bound = max(1.0, float(table["move"].abs().max()))
+        styled = styled.background_gradient(cmap="RdYlGn", subset=["Move"], vmin=-bound, vmax=bound)
+    if in_season:
+        bound = max(1.0, float(table["luck"].abs().max()))
+        styled = styled.background_gradient(cmap="RdYlGn", subset=["Luck"], vmin=-bound, vmax=bound)
+    return (styled.set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
+
+
+def _trend_chart(year: int) -> str:
+    """Power over time, one line per manager — once there are days to join."""
+    hist = power.history(year)
+    if hist.empty or hist["taken"].dt.date.nunique() < 2:
+        return ""
+    pivot = hist.pivot_table(index="taken", columns="manager", values="power").sort_index()
+    ax = pivot.plot(figsize=(9, 4.4), marker="o", markersize=3, colormap="tab10")
+    ax.axhline(100, color="#94a3b8", linewidth=0.9, linestyle="--")
+    ax.set_xlabel("")
+    ax.set_ylabel("power")
+    ax.set_title("Power rating by build")
+    ax.legend(fontsize=8, ncol=5, loc="upper center", bbox_to_anchor=(0.5, -0.14))
+    ax.grid(color="#e2e8f0")
+    ax.set_axisbelow(True)
+    return ("<h3>How it has moved</h3>"
+            + charts.save(_SECTION, "trend", alt="Power rating per team over successive builds"))
 
 
 def _rankings_section(table: pd.DataFrame) -> str:
     leader = table.iloc[0]
     tail = table.iloc[-1]
-    note = (f"<p><strong>{leader['manager']}</strong> comes out of the draft with the "
-            f"strongest roster &mdash; {leader['playoff_odds']:.0%} to make the playoffs "
-            f"and {leader['title_odds']:.0%} to win it, against "
-            f"{tail['playoff_odds']:.0%} and {tail['title_odds']:.0%} for "
+    week = int(table["week"].iloc[0])
+    when = ("comes out of the draft with" if week == 0
+            else f"has, through week {week},")
+    note = (f"<p><strong>{leader['manager']}</strong> {when} the strongest roster &mdash; "
+            f"{leader['playoff_odds']:.0%} to make the playoffs and {leader['title_odds']:.0%} "
+            f"to win it, against {tail['playoff_odds']:.0%} and {tail['title_odds']:.0%} for "
             f"<strong>{tail['manager']}</strong>. Power is points per week against the "
             f"league average, so 105 means a roster projected 5% above the field.</p>")
-    return f"<h2>Power Rankings</h2>{note}" + \
-        f"<div class='table-scroll'>{_rankings_table(table)}</div>"
+
+    legend = ["<strong>Move</strong> is places climbed since "
+              + (f"{table.attrs['prev_taken']:%b %-d}" if "prev_taken" in table.attrs
+                 else "the previous build")
+              + "; <strong>Pre</strong> is where the roster ranked on draft night, before "
+              "any game was played"]
+    if week > 0:
+        legend.append("<strong>Record</strong> counts both the head-to-head and the median "
+                      "win each week; <strong>Luck</strong> is that record minus what the "
+                      "all-play record says it should be, so +2 is two wins the schedule "
+                      "handed over and -2 is two it took away. Played weeks are locked in "
+                      "and only the rest of the season is simulated, so the projected "
+                      "record is the real one plus what is still expected")
+    return (f"<h2>Power Rankings</h2>{note}"
+            f"<div class='table-scroll'>{_rankings_table(table)}</div>"
+            f"<p>{'. '.join(legend)}.</p>"
+            + _trend_chart(int(UPCOMING_YEAR)))
 
 
 # --------------------------------------------------------------------------- #

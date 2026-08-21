@@ -24,13 +24,22 @@ Each simulated season:
 What comes out is a distribution — projected wins, points, playoff odds, title
 odds — and none of it has looked at where anybody was drafted.
 
+Once the season starts the simulation stops guessing at weeks that have
+happened: played weeks carry each team's actual score, and only the weeks
+still to come are drawn. So "projected wins" is always actual wins so far plus
+the expected rest, and the page gains the record, an all-play-based luck
+figure, and movement against a week ago and against draft night — every
+build's table is archived under data/fantasy/power/{year}/ for that.
+
     python -m fantasy.league.power
 """
+from datetime import datetime, timedelta
+
 import numpy as np
 import pandas as pd
 import requests
 
-from fantasy import projections
+from fantasy import paths, projections
 from fantasy.config import (
     FANTASY_REG_WEEKS, ROSTER_NAMES, UPCOMING_DRAFT_ID,
     UPCOMING_LEAGUE_ID, UPCOMING_YEAR,
@@ -85,29 +94,105 @@ def rosters(league_id: str = UPCOMING_LEAGUE_ID,
     return pd.DataFrame(rows, columns=["roster_id", "sleeper_id"])
 
 
-def schedule(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS):
+def matchups(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS) -> dict:
+    """{week: Sleeper matchup rows} for every week the league has posted.
+
+    Stops at the first week with no matchup ids: before the season Sleeper
+    returns an empty list for every week, and it builds the schedule out in
+    order once it exists.
+    """
+    found = {}
+    for week in range(1, weeks + 1):
+        rows = [r for r in (_get(f"{SLEEPER_API}/league/{league_id}/matchups/{week}") or [])
+                if r.get("matchup_id") is not None]
+        if not rows:
+            break
+        found[week] = rows
+    return found
+
+
+def schedule(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS,
+             posted: dict = None):
     """{week: {roster_id: opponent_roster_id}}, or None before Sleeper posts it.
 
     Returning None is not a failure: with no schedule the simulation deals a
     fresh random round-robin each season, which averages out schedule luck
     rather than baking one draw of it into the ranking.
     """
+    posted = matchups(league_id, weeks) if posted is None else posted
     found = {}
-    for week in range(1, weeks + 1):
-        matchups = _get(f"{SLEEPER_API}/league/{league_id}/matchups/{week}") or []
-        pairs = {}
+    for week, rows in posted.items():
         by_matchup = {}
-        for entry in matchups:
-            if entry.get("matchup_id") is None:
-                continue
+        for entry in rows:
             by_matchup.setdefault(entry["matchup_id"], []).append(int(entry["roster_id"]))
+        pairs = {}
         for sides in by_matchup.values():
             if len(sides) == 2:
                 pairs[sides[0]], pairs[sides[1]] = sides[1], sides[0]
-        if not pairs:
-            return None
-        found[week] = pairs
+        if pairs:
+            found[week] = pairs
     return found or None
+
+
+def actual_results(league_id: str = UPCOMING_LEAGUE_ID, through_week: int = 0,
+                   posted: dict = None):
+    """What has actually happened, for the weeks that are over.
+
+    Returns None before any week is complete. Otherwise a dict with the team
+    order (roster ids, ascending), a (weeks, teams) array of real scores, and
+    per-team head-to-head wins, median wins, points for, and all-play record.
+    A week only counts once every team has a score on it: nflverse says a
+    week is published, but Sleeper can show a Thursday night's points on a
+    week that is otherwise still to be played.
+    """
+    if through_week <= 0:
+        return None
+    posted = matchups(league_id) if posted is None else posted
+    weeks = [w for w in sorted(posted) if w <= through_week]
+    if not weeks:
+        return None
+
+    order = sorted({int(r["roster_id"]) for r in posted[weeks[0]]})
+    index = {rid: i for i, rid in enumerate(order)}
+    n = len(order)
+    points, h2h, median, allplay = [], np.zeros(n), np.zeros(n), np.zeros(n)
+
+    for week in weeks:
+        rows = posted[week]
+        scores = np.zeros(n)
+        for r in rows:
+            scores[index[int(r["roster_id"])]] = float(r.get("points") or 0.0)
+        if scores.min() <= 0:
+            break                                   # not a finished week
+        by_matchup = {}
+        for r in rows:
+            by_matchup.setdefault(r["matchup_id"], []).append(index[int(r["roster_id"])])
+        for sides in by_matchup.values():
+            if len(sides) == 2:
+                a, b = sides
+                if scores[a] > scores[b]:
+                    h2h[a] += 1
+                elif scores[b] > scores[a]:
+                    h2h[b] += 1
+        ranks = (-scores).argsort().argsort()       # 0 = top scorer
+        median += ranks < n // 2
+        allplay += (n - 1) - ranks
+        points.append(scores)
+
+    if not points:
+        return None
+    played = len(points)
+    points = np.array(points)
+    allplay_pct = allplay / (played * (n - 1))
+    return {
+        "order": order, "points": points, "weeks": played,
+        "h2h_wins": h2h, "median_wins": median, "wins": h2h + median,
+        "losses": 2 * played - (h2h + median),
+        "points_for": points.sum(axis=0), "allplay_pct": allplay_pct,
+        # What the all-play record says the team should have: win two a week
+        # at its all-play rate. Luck is how far the real record sits from it.
+        "luck": (h2h + median) - allplay_pct * 2 * played,
+    }
 
 
 # --------------------------------------------------------------------------- #
@@ -229,8 +314,13 @@ def _bracket(points: np.ndarray, seeds: np.ndarray) -> np.ndarray:
 
 def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
              weeks: int = FANTASY_REG_WEEKS, sims: int = DEFAULT_SIMS,
-             fixed_schedule=None, seed: int = 20260821) -> pd.DataFrame:
-    """Run the season `sims` times and summarize each team's outcomes."""
+             fixed_schedule=None, actual_points=None, seed: int = 20260821) -> pd.DataFrame:
+    """Run the season `sims` times and summarize each team's outcomes.
+
+    `actual_points` is a (played weeks, teams) array of real scores, in
+    ascending roster_id order; those weeks are taken as they happened in every
+    simulation and only the rest of the season is drawn.
+    """
     players = roster_frame.merge(board, on="sleeper_id", how="left")
     missing = players["mu"].isna()
     if missing.any():
@@ -263,6 +353,9 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
         team_points = np.stack(
             [_lineup_points(scores[:, :, team.slice], team) for team in teams], axis=-1)
         regular = team_points[:, :weeks, :]
+        if actual_points is not None and len(actual_points):
+            played = min(len(actual_points), weeks)
+            regular[:, :played, :] = actual_points[None, :played, :]
 
         # Top half of the league takes a win, same as the league's median rule.
         ranks = (-regular).argsort(axis=-1).argsort(axis=-1)
@@ -337,9 +430,115 @@ def starting_lineup(board: pd.DataFrame, roster_frame: pd.DataFrame) -> pd.DataF
     return pd.DataFrame(rows)
 
 
+# --------------------------------------------------------------------------- #
+# Snapshot history
+# --------------------------------------------------------------------------- #
+# Every build's table is archived under data/fantasy/power/{year}/ — committed,
+# unlike the projection cache, because it is the only record of what the page
+# said before the season answered it. Two things read it: the Move column
+# (rank against the newest snapshot at least a week old) and the preseason
+# rank, which is the last table built before any week was played.
+
+HISTORY_DIR = paths.DATA_DIR / "power"
+SNAPSHOT_GAP_HOURS = 6       # four builds a day; one snapshot a day is plenty
+MOVE_WINDOW = timedelta(days=7)
+_SNAP_FMT = "%Y%m%d-%H%M%S"
+_SNAP_COLS = ["roster_id", "manager", "power", "proj_wins", "proj_points",
+              "playoff_odds", "title_odds", "week"]
+
+
+def _history_dir(year):
+    return HISTORY_DIR / str(year)
+
+
+def _snapshots(year) -> list:
+    """[(taken_at, path)] for every archived table, oldest first."""
+    out = []
+    for path in _history_dir(year).glob("*.parquet"):
+        try:
+            out.append((datetime.strptime(path.stem, _SNAP_FMT), path))
+        except ValueError:
+            continue                                  # preseason.parquet
+    return sorted(out)
+
+
+def write_snapshot(table: pd.DataFrame, year: int, week: int, when=None):
+    """Archive a table, unless one was taken in the last few hours.
+
+    Before kickoff the same table is also kept as preseason.parquet, replaced
+    on every preseason build so the copy that survives is the last word
+    before week 1 — draft night, as amended by every waiver move up to then.
+    """
+    when = when or datetime.now()
+    out = _history_dir(year)
+    out.mkdir(parents=True, exist_ok=True)
+    keep = table[[c for c in _SNAP_COLS if c in table.columns]].assign(week=week)
+    keep.attrs = {}          # with_movement leaves a datetime here; parquet can't take it
+    if week == 0:
+        keep.to_parquet(out / "preseason.parquet", index=False)
+    snaps = _snapshots(year)
+    if snaps and when - snaps[-1][0] < timedelta(hours=SNAPSHOT_GAP_HOURS):
+        return
+    keep.to_parquet(out / f"{when:{_SNAP_FMT}}.parquet", index=False)
+
+
+def preseason(year: int):
+    path = _history_dir(year) / "preseason.parquet"
+    return pd.read_parquet(path) if path.exists() else None
+
+
+def history(year: int) -> pd.DataFrame:
+    """Every snapshot stacked, with `taken` — for the trend chart."""
+    frames = []
+    for taken, path in _snapshots(year):
+        frames.append(pd.read_parquet(path).assign(taken=taken))
+    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+
+
+def _rank_by_power(frame: pd.DataFrame) -> pd.Series:
+    return frame.set_index("roster_id")["power"].rank(ascending=False, method="min").astype(int)
+
+
+def with_movement(table: pd.DataFrame, year: int, now=None) -> pd.DataFrame:
+    """Add rank, the rank a week ago (`prev_rank`, `move`), and `pre_rank`.
+
+    The week-ago baseline is the newest snapshot at or before the cutoff,
+    falling back to the oldest on hand so a three-day-old archive still
+    reports something; `prev_taken` says how far back it really goes.
+    """
+    now = now or datetime.now()
+    table = table.copy()
+    table["rank"] = _rank_by_power(table).reindex(table["roster_id"]).to_numpy()
+
+    snaps = _snapshots(year)
+    older = [sp for sp in snaps if sp[0] <= now - MOVE_WINDOW]
+    base = older[-1] if older else (snaps[0] if snaps else None)
+    if base is not None:
+        prev = _rank_by_power(pd.read_parquet(base[1]))
+        table["prev_rank"] = table["roster_id"].map(prev)
+        table["move"] = table["prev_rank"] - table["rank"]
+        table.attrs["prev_taken"] = base[0]
+    else:
+        table["prev_rank"] = pd.NA
+        table["move"] = pd.NA
+
+    pre = preseason(year)
+    table["pre_rank"] = table["roster_id"].map(_rank_by_power(pre)) if pre is not None else pd.NA
+    return table
+
+
+# --------------------------------------------------------------------------- #
+# The whole thing
+# --------------------------------------------------------------------------- #
+
 def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
              refresh: bool = False) -> tuple:
-    """(rankings, projection board, rosters) for the upcoming season."""
+    """(rankings, projection board, rosters) for the upcoming season.
+
+    The table carries actual results once there are any (record, points,
+    all-play, luck), plus rank movement against the snapshot archive — and is
+    itself archived before returning.
+    """
     board = projections.load(year, refresh=refresh)
     # Once the season is under way the rankings follow it: see
     # projections.current_form. Before kickoff this is a no-op.
@@ -350,14 +549,33 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
             "No rosters yet — the draft has not happened, or Sleeper has not "
             "published its picks. Nothing to rank.")
 
-    table = schedule()
+    posted = matchups()
+    table = schedule(posted=posted)
     fixed = None
     if table:
         order = sorted({rid for week in table.values() for rid in week})
         index = {rid: i for i, rid in enumerate(order)}
         fixed = np.array([[index[table[w][rid]] for rid in order]
                           for w in sorted(table)])
-    return simulate(board, roster_frame, sims=sims, fixed_schedule=fixed), board, roster_frame
+
+    actual = actual_results(through_week=projections.completed_weeks(year), posted=posted)
+    points = actual["points"] if actual else None
+    summary = simulate(board, roster_frame, sims=sims, fixed_schedule=fixed,
+                       actual_points=points)
+
+    week = actual["weeks"] if actual else 0
+    summary["week"] = week
+    if actual:
+        facts = pd.DataFrame({
+            "roster_id": actual["order"], "wins": actual["wins"], "losses": actual["losses"],
+            "points_for": actual["points_for"], "allplay_pct": actual["allplay_pct"],
+            "luck": actual["luck"],
+        })
+        summary = summary.merge(facts, on="roster_id", how="left")
+
+    summary = with_movement(summary, year)
+    write_snapshot(summary, year, week)
+    return summary, board, roster_frame
 
 
 def draft_day_rosters(season_str: str) -> pd.DataFrame:

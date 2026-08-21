@@ -27,12 +27,13 @@ matplotlib.use("Agg")          # non-interactive backend (no Qt/GUI needed)
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd              # noqa: E402
 
-from fantasy.config import DATA_DIR, ROSTER_NAMES  # noqa: E402
-from fantasy.site import styles                      # noqa: E402
+from fantasy.config import DATA_DIR, FANTASY_REG_WEEKS, ROSTER_NAMES  # noqa: E402
+from fantasy.site import styles                                         # noqa: E402
+from fantasy.site.draft import PLAYABLE_WEEKS                           # noqa: E402
 
 ARCHIVE_PATH = DATA_DIR / "historical.json"
 
-REG_WEEKS = 14                  # fantasy regular season, matches fantasy.site.draft
+REG_WEEKS = FANTASY_REG_WEEKS   # fantasy regular season, matches fantasy.site.draft
 PREMIUM_ROUNDS = 2              # drafted this early = high-impact regardless of PPG
 # Starter-level scoring is judged against position-mates, not a fixed PPG line:
 # a player qualifies when his median weekly score reaches this percentile of
@@ -59,9 +60,11 @@ def impact_detail(detail: pd.DataFrame) -> pd.DataFrame:
     # weeks they were actually on the roster) and season-wide scoring sample
     # ("Sample Games"). Drafted rows - and archives from before pickups were
     # included - default to the full regular season / their own games played.
+    # Archives from before the bye was accounted for carry no window at all;
+    # they get the playable season, not the full one.
     if "Window Weeks" not in out.columns:
-        out["Window Weeks"] = REG_WEEKS
-    out["Window Weeks"] = out["Window Weeks"].fillna(REG_WEEKS)
+        out["Window Weeks"] = PLAYABLE_WEEKS
+    out["Window Weeks"] = out["Window Weeks"].fillna(PLAYABLE_WEEKS)
     if "Source" not in out.columns:
         out["Source"] = "Drafted"
     out["Source"] = out["Source"].fillna("Drafted")
