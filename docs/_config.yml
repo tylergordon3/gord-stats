@@ -82,4 +82,8 @@ liquid:
 
 repository: tylergordon3/gord-stats
 
+# Cloudflare Web Analytics site token (dashboard: Analytics & Logs -> Web
+# Analytics). Leave empty if the site is enabled there with auto-injection.
+cf_analytics_token: ""
+
 github: false

@@ -1,2 +1,6 @@
 name = "gordstats-cbb"
 pages_build_output_dir = "docs/_site"
+# Visit counter storage, read and written by functions/api/visits.js.
+[[kv_namespaces]]
+binding = "VISITS"
+id = "334f93448a734bb8bc6dd47c49cd81cd"

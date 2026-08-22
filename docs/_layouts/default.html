@@ -20,6 +20,16 @@
   <link rel="manifest" href="{{ '/site.webmanifest' | relative_url }}">
   <meta name="theme-color" content="#1B2340">
   {% include head-custom.html %}
+  {%- if site.cf_analytics_token and site.cf_analytics_token != "" -%}
+  {%- comment -%}
+  Cloudflare Web Analytics: unique visitors and page views in the Cloudflare
+  dashboard, no cookies. Set cf_analytics_token in _config.yml to turn it on
+  (Cloudflare -> Analytics & Logs -> Web Analytics -> Add site). Not needed
+  if the site is enabled there with automatic injection instead.
+  {%- endcomment %}
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "{{ site.cf_analytics_token }}"}'></script>
+  {%- endif %}
 </head>
 
 {% comment %}
@@ -65,6 +75,7 @@ resolution in _includes/nav.html.
   <!-- FOOTER  -->
   <footer id="site-footer">
     <p>GordStats — maintained by Tyler Gordon</p>
+    <p id="visit-counter" class="visit-counter" hidden></p>
     {% if bodysec == 'fantasy' %}
     <p><a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team Fantasy Football League</a></p>
     {% endif %}
@@ -74,6 +85,9 @@ resolution in _includes/nav.html.
 
   <!-- Drives every countdown card on the page; the homepage carries two. -->
   <script src="{{ '/assets/js/countdown.js' | relative_url }}"></script>
+
+  <!-- Fills the footer visit counter from /api/visits. -->
+  <script src="{{ '/assets/js/visits.js' | relative_url }}" defer></script>
 
   <script>
     /**

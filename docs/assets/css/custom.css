@@ -84,6 +84,13 @@ body {
   margin: 0;
 }
 
+#site-footer .visit-counter {
+  margin-top: 4px;
+  font-size: 0.76rem;
+  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+
 /* -----------------------------
    NAV
 ------------------------------ */
