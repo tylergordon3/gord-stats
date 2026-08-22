@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-21T23:35:06.187819-04:00",
+ "updated": "2026-08-22T05:42:06.785732-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -32386,6 +32386,125 @@
       "Gabriela Jaquez",
       "G",
       2.0
+     ]
+    ]
+   }
+  },
+  "401857163": {
+   "date": "2026-08-22",
+   "allowed": {
+    "POR": {
+     "G": 64.0,
+     "FC": 95.0
+    },
+    "TOR": {
+     "G": 33.0,
+     "FC": 120.0
+    }
+   },
+   "players": {
+    "POR": [
+     [
+      "Bridget Carleton",
+      "FC",
+      31.0
+     ],
+     [
+      "Emily Engstler",
+      "FC",
+      30.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      17.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      22.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      13.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      1.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      19.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      8.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      5.0
+     ],
+     [
+      "Teja Oblak",
+      "G",
+      7.0
+     ]
+    ],
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      40.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      33.0
+     ],
+     [
+      "Brittney Sykes",
+      "G",
+      0.0
+     ],
+     [
+      "Julie Allemand",
+      "G",
+      19.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      27.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      7.0
+     ],
+     [
+      "Aneesah Morrow",
+      "FC",
+      2.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      13.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      8.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      10.0
      ]
     ]
    }
