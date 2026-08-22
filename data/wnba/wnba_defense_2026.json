@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-21T21:20:05.503977-04:00",
+ "updated": "2026-08-21T22:10:04.513413-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -32133,6 +32133,259 @@
       "Monique Akoa Makani",
       "G",
       5.0
+     ]
+    ]
+   }
+  },
+  "401857161": {
+   "date": "2026-08-21",
+   "allowed": {
+    "MIN": {
+     "G": 63.0,
+     "FC": 95.0
+    },
+    "WSH": {
+     "G": 106.0,
+     "FC": 80.0
+    }
+   },
+   "players": {
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      41.0
+     ],
+     [
+      "Nia Coffey",
+      "FC",
+      21.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      26.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      30.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      42.0
+     ],
+     [
+      "Chloe Bibby",
+      "FC",
+      3.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      15.0
+     ],
+     [
+      "Antonia Delaere",
+      "FC",
+      0.0
+     ],
+     [
+      "Anastasiia Olairi Kosu",
+      "FC",
+      0.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      8.0
+     ],
+     [
+      "Eliska Joklova",
+      "G",
+      0.0
+     ]
+    ],
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      16.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      39.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      35.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      18.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      23.0
+     ],
+     [
+      "Angela Dugalic",
+      "FC",
+      0.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      5.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      5.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      10.0
+     ],
+     [
+      "Cassandre Prosper",
+      "G",
+      0.0
+     ],
+     [
+      "Alicia Florez",
+      "G",
+      7.0
+     ]
+    ]
+   }
+  },
+  "401857162": {
+   "date": "2026-08-21",
+   "allowed": {
+    "GS": {
+     "G": 105.0,
+     "FC": 50.0
+    },
+    "CHI": {
+     "G": 71.0,
+     "FC": 67.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      2.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      5.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      9.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      5.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      20.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      26.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      20.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      23.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      13.0
+     ],
+     [
+      "Miela Sowah",
+      "G",
+      0.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      15.0
+     ]
+    ],
+    "CHI": [
+     [
+      "Azura Stevens",
+      "FC",
+      20.0
+     ],
+     [
+      "Kamilla Cardoso",
+      "FC",
+      30.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      22.0
+     ],
+     [
+      "Natasha Cloud",
+      "G",
+      35.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      25.0
+     ],
+     [
+      "Elizabeth Williams",
+      "FC",
+      0.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      15.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      6.0
+     ],
+     [
+      "Aicha Coulibaly",
+      "G",
+      0.0
+     ],
+     [
+      "Gabriela Jaquez",
+      "G",
+      2.0
      ]
     ]
    }
