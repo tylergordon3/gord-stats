@@ -21,8 +21,10 @@ import matplotlib as mpl
 from matplotlib.colors import Normalize, rgb2hex
 
 from fantasy import paths
-from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, LEAGUE_TEAMS, ROOT, ROSTER_NAMES
-from fantasy.site import draft, layout, styles
+from fantasy.config import (
+    FORMAL_SEASON, LEAGUE_IDS, LEAGUE_TEAMS, ROOT, ROSTER_NAMES, UPCOMING_SEASON,
+)
+from fantasy.site import draft, draft_current, layout, styles
 from gordstats.frontmatter import add_front_matter
 
 # Tier moves at or beyond +/- TIER_SPAN get the strongest green/red.
@@ -155,7 +157,10 @@ def body() -> str:
     The switcher group is "recap" rather than "season" so it can share a page
     with the other draft sections without their controls colliding.
     """
-    views = [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS]
+    # The draft just made has no finishes to colour by, so it gets the
+    # position / ADP view (fantasy.site.draft_current) and comes first.
+    views = ([("current", UPCOMING_SEASON, draft_current.view())]
+             + [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS])
     return _BOARD_CSS + layout.view_switcher(views, group="recap", label="Season:")
 
 

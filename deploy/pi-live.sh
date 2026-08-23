@@ -3,8 +3,8 @@
 # wnba-live.timer, and on demand with `deploy/pi-live.sh`.
 #
 # Two gates, each a call or two: the WNBA scoreboard (a game live or tipping
-# within 30 minutes) and the fantasy section (the draft finished, or a week of
-# the season fully scored — see fantasy.live). If neither has anything, the
+# within 30 minutes) and the fantasy section (a week of the season fully
+# scored — see fantasy.live). If neither has anything, the
 # tick exits in about a second. Otherwise whichever fired regenerates its
 # pages and the tick rebuilds the site and republishes via wrangler — the same
 # direct-upload path as pi-deploy.sh. Git gets a commit at most once an hour

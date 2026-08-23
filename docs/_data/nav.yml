@@ -82,10 +82,6 @@ fantasy:
     icon: "📅"
     url: /fantasy/schedule/
 
-  - title: Live Draft Board
-    short: Live
-    icon: "🔴"
-    url: /fantasy/live/
 
   - title: Draft Analytics
     short: Draft

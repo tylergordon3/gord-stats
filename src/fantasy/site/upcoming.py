@@ -566,7 +566,7 @@ def adp_board_section(year=UPCOMING_YEAR) -> str:
         f"pick that lands on in our {LEAGUE_TEAMS}-team draft, and <strong>Pos</strong> is "
         f"where he ranks within his own position (RB1, WR2). "
         f"Kickers and defenses are included, near the bottom where the sites rank "
-        f"them - the live draft board grades every pick against this table, and a "
+        f"them - the draft page grades every pick against this table, and a "
         f"pick with no row here is one it cannot grade. "
         f"<strong>Spread</strong> (max - min across sites) is only "
         f"shown through pick {COMPARABLE_MAX}, where all three boards are dense enough to "

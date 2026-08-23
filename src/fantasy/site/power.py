@@ -395,7 +395,7 @@ def _method_section() -> str:
 PRE_DRAFT = f"""<p>The {UPCOMING_SEASON} draft has not happened yet, so there are no
 rosters to rank. This page fills in as soon as the last pick is in &mdash; it reads
 the draft straight from Sleeper, the same way the
-{layout.internal_link('/fantasy/live/', 'live board')} does.</p>
+{layout.internal_link('/fantasy/draft/', 'draft page')} does.</p>
 <p>What it will show, and how it gets there, is below.</p>"""
 
 

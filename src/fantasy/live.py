@@ -1,16 +1,15 @@
 """
 Publish the fantasy section the moment something happens, not hours later.
 
-The daily job runs four times a day and rebuilds everything. Two events in
-this section deserve a response inside ten minutes instead:
-
-  * the draft finishing - the power rankings exist from that moment, and the
-    live board has been showing a complete draft to anyone watching;
-  * a week of the season finishing - Monday night's game settles the week's
-    records, and Tuesday morning is when people look.
+The daily job runs four times a day and rebuilds everything. One event in
+this section deserves a response inside ten minutes instead: a week of the
+season finishing - Monday night's game settles the week's records, and
+Tuesday morning is when people look. (The draft finishing used to be the
+other; that gate and the live draft board it served were retired after the
+2026 draft.)
 
 This is the gate for the Pi's ten-minute live tick (deploy/pi-live.sh), next
-to the WNBA scoreboard check. It decides whether either has happened since it
+to the WNBA scoreboard check. It decides whether that has happened since it
 last published, rebuilds just the power page if so, and leaves the Jekyll
 build and the Cloudflare upload to the tick. Only the power page: the homepage
 takes minutes on the Pi and shows nothing that changes at these moments.
@@ -35,9 +34,7 @@ from datetime import datetime
 import requests
 
 from fantasy import paths, projections
-from fantasy.config import (
-    FANTASY_REG_WEEKS, LEAGUE_TZ, UPCOMING_DRAFT_ID, UPCOMING_LEAGUE_ID, UPCOMING_YEAR,
-)
+from fantasy.config import FANTASY_REG_WEEKS, LEAGUE_TZ, UPCOMING_LEAGUE_ID, UPCOMING_YEAR
 from fantasy.league import weekly_points
 
 STATE_PATH = paths.ROOT / ".fantasy_live_state.json"
@@ -65,13 +62,8 @@ def _save_state(state: dict):
 
 
 # --------------------------------------------------------------------------- #
-# The two things worth waking up for
+# The thing worth waking up for
 # --------------------------------------------------------------------------- #
-
-def draft_complete(draft_id: str = UPCOMING_DRAFT_ID) -> bool:
-    """Sleeper's word on whether the draft has finished."""
-    return (_get(f"{SLEEPER_API}/draft/{draft_id}") or {}).get("status") == "complete"
-
 
 def week_scored(week: int, league_id: str = UPCOMING_LEAGUE_ID) -> bool:
     """True once every team has a score for `week` - Sleeper shows Thursday's
@@ -109,16 +101,14 @@ def nflverse_has(week: int, year: int = UPCOMING_YEAR) -> bool:
     return projections.completed_weeks(year) >= week
 
 
-def pending(state: dict, draft_id: str = UPCOMING_DRAFT_ID,
-            league_id: str = UPCOMING_LEAGUE_ID, year: int = UPCOMING_YEAR) -> dict:
+def pending(state: dict, league_id: str = UPCOMING_LEAGUE_ID,
+            year: int = UPCOMING_YEAR) -> dict:
     """{trigger: value} for everything that has happened since the last publish.
 
     The ids are parameters rather than read from config inside, so a finished
     season can be pointed at it to prove it fires.
     """
     due = {}
-    if state.get("draft") != draft_id and draft_complete(draft_id):
-        due["draft"] = draft_id
     published = int(state.get("week", 0))
     week = latest_scored_week(published, league_id)
     if week > published and nflverse_has(week, year):
@@ -157,7 +147,7 @@ def main(argv=None) -> int:
         print(f"{now:%F %T} - nothing new in the fantasy section, skipping.")
         return 3
 
-    what = ", ".join(f"{k} {v}" if k == "week" else k for k, v in due.items()) or "forced"
+    what = ", ".join(f"{k} {v}" for k, v in due.items()) or "forced"
     print(f"{now:%F %T} - {what}: rebuilding {', '.join(PAGES)}.")
     rebuild_pages()
     state.update(due)

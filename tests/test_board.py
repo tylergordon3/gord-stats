@@ -6,7 +6,7 @@ source showing a header with no data under it, and the page dying on a cached
 parquet written before a column existed.
 
 Also guards kicker and defense coverage. They were excluded from the board for
-a while; the live draft board grades every pick against this table, so a pick it
+a while; the draft page grades every pick against this table, so a pick it
 has no row for is a pick it cannot say anything about.
 """
 
@@ -14,7 +14,7 @@ import pandas as pd
 import pytest
 
 from fantasy.league import adp_board
-from fantasy.site import draft_live, upcoming
+from fantasy.site import upcoming
 
 
 def _frame(moves):
@@ -144,15 +144,12 @@ def test_kickers_and_defenses_keep_their_pick_numbers(tmp_path, monkeypatch):
 
 
 def test_position_filters_cover_exactly_what_the_board_holds():
-    """Both pages that draw the board filter it by the same set of positions.
+    """The homepage board's position chips match what the board carries.
 
     A missing chip hides those rows behind a filter nothing can select, and a
     chip for a position the board does not carry filters the table to nothing.
-    The two lists are written out separately, one per page, so this is what
-    stops them drifting apart.
     """
     assert set(upcoming.POSITIONS) == {"QB", "RB", "WR", "TE", "K", "DST"}
-    assert set(draft_live.POSITIONS) == set(upcoming.POSITIONS)
 
 
 # --------------------------------------------------------------------------- #
