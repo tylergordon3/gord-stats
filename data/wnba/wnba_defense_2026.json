@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-23T17:50:03.711355-04:00",
+ "updated": "2026-08-23T18:50:03.912306-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -32847,6 +32847,135 @@
       "Lexi Held",
       "G",
       11.0
+     ]
+    ]
+   }
+  },
+  "401857167": {
+   "date": "2026-08-23",
+   "allowed": {
+    "SEA": {
+     "G": 82.0,
+     "FC": 104.0
+    },
+    "DAL": {
+     "G": 90.0,
+     "FC": 62.0
+    }
+   },
+   "players": {
+    "SEA": [
+     [
+      "Ezi Magbegor",
+      "FC",
+      11.0
+     ],
+     [
+      "Dominique Malonga",
+      "FC",
+      20.0
+     ],
+     [
+      "Awa Fam",
+      "FC",
+      8.0
+     ],
+     [
+      "Flau'jae Johnson",
+      "G",
+      42.0
+     ],
+     [
+      "Jade Melbourne",
+      "G",
+      26.0
+     ],
+     [
+      "Katie Lou Samuelson",
+      "FC",
+      7.0
+     ],
+     [
+      "Jordan Horston",
+      "FC",
+      11.0
+     ],
+     [
+      "Mackenzie Holmes",
+      "FC",
+      3.0
+     ],
+     [
+      "Taylor Thierry",
+      "FC",
+      1.0
+     ],
+     [
+      "Stefanie Dolson",
+      "FC",
+      1.0
+     ],
+     [
+      "Zia Cooke",
+      "G",
+      12.0
+     ],
+     [
+      "Taina Mair",
+      "G",
+      10.0
+     ]
+    ],
+    "DAL": [
+     [
+      "Jessica Shepard",
+      "FC",
+      26.0
+     ],
+     [
+      "Alanna Smith",
+      "FC",
+      17.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      23.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      19.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      48.0
+     ],
+     [
+      "Alysha Clark",
+      "FC",
+      7.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      18.0
+     ],
+     [
+      "Li Yueru",
+      "FC",
+      13.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      0.0
+     ],
+     [
+      "Sug Sutton",
+      "G",
+      15.0
      ]
     ]
    }
