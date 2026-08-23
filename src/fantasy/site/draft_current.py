@@ -69,8 +69,9 @@ def picks(draft_id: str = UPCOMING_DRAFT_ID) -> pd.DataFrame:
     """Every pick of the draft, graded against the ADP board.
 
     Columns: Pick, round, slot, Manager, Player, Pos, Team, ADP (board overall
-    rank, NaN if the player was not on it) and Δ = ADP - Pick, so positive means
-    the player lasted past where the market had him.
+    rank, NaN if the player was not on it) and Δ = Pick - ADP, so positive means
+    the player lasted past where the market had him (a value) and negative
+    means he was taken ahead of it (a reach).
     """
     r = requests.get(f"{SLEEPER_API}/draft/{draft_id}/picks", timeout=_TIMEOUT)
     r.raise_for_status()
@@ -100,7 +101,7 @@ def picks(draft_id: str = UPCOMING_DRAFT_ID) -> pd.DataFrame:
             "ADP": adp.get(_key(md)),
         })
     df = pd.DataFrame(rows)
-    df["Δ"] = df["ADP"] - df["Pick"]
+    df["Δ"] = df["Pick"] - df["ADP"]
     return df
 
 
@@ -206,13 +207,13 @@ def view() -> str:
         f'<div class="table-scroll">{grid(df)}</div>'
         + layout.details(
             "Managers vs the Board",
-            "<p><strong>Avg Δ</strong> is the mean of (board rank − pick) across a "
+            "<p><strong>Avg Δ</strong> is the mean of (pick − board rank) across a "
             "manager's graded picks; positive means the room let value fall to them.</p>"
             f'<div class="table-scroll">{manager_table(df)}</div>')
         + layout.details(
             "Pick by Pick",
             "<p><strong>ADP</strong> is the player's overall rank on the board; "
-            "<strong>Δ</strong> = ADP − pick.</p>"
+            "<strong>Δ</strong> = pick − ADP.</p>"
             f'<div class="table-scroll">{pick_table(df)}</div>')
     )
 
