@@ -32,7 +32,9 @@ reader who mistypes a CBB URL still lands somewhere with CBB navigation.
 {% if page.url == '/404.html' %}{% assign is404 = true %}{% endif %}
 
 {% assign sec = '' %}
-{% if page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}
+{% comment %} /cfb/ before /fantasy/: a /cfb/fantasy/-style URL would match both. {% endcomment %}
+{% if page.url contains '/cfb/' %}{% assign sec = 'cfb' %}
+{% elsif page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}
 {% elsif page.url contains '/wnba/' %}{% assign sec = 'wnba' %}
 {% elsif page.url contains '/cbb/' or page.url contains '/men/' or page.url contains '/women/' %}{% assign sec = 'cbb' %}
 {% endif %}
@@ -238,7 +240,8 @@ tap from anywhere without stacking two bars on a small screen.
     document.addEventListener("DOMContentLoaded", function () {
       var p = location.pathname;
       var sec = "home";
-      if (p.indexOf("/fantasy/") === 0) sec = "fantasy";
+      if (p.indexOf("/cfb/") === 0) sec = "cfb";
+      else if (p.indexOf("/fantasy/") === 0) sec = "fantasy";
       else if (p.indexOf("/wnba/") === 0) sec = "wnba";
       else if (p.indexOf("/cbb/") === 0 || p.indexOf("/men/") === 0 ||
                p.indexOf("/women/") === 0) sec = "cbb";

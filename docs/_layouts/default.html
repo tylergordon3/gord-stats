@@ -38,7 +38,8 @@ those rules leaking into the others. Kept in sync with the section
 resolution in _includes/nav.html.
 {% endcomment %}
 {% assign bodysec = 'home' %}
-{% if page.url contains '/fantasy/' %}{% assign bodysec = 'fantasy' %}
+{% if page.url contains '/cfb/' %}{% assign bodysec = 'cfb' %}
+{% elsif page.url contains '/fantasy/' %}{% assign bodysec = 'fantasy' %}
 {% elsif page.url contains '/wnba/' %}{% assign bodysec = 'wnba' %}
 {% elsif page.url contains '/men/' or page.url contains '/women/' %}{% assign bodysec = 'cbb' %}
 {% endif %}

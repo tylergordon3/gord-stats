@@ -3,7 +3,7 @@
 # and on demand with `pi deploy gord-stats`.
 #
 # Which sections get refreshed is driven by TASKS in ~/secrets/gord-stats.env
-# (default: wnba,fantasy). Turning on college basketball later is a change to
+# (default: wnba,fantasy,cfb). Turning on college basketball later is a change to
 # that variable plus an implementation in gordstats/daily.py — not a change to
 # this script. One job builds the whole site, so two sections can never publish
 # inconsistent versions of the shared homepage.
@@ -15,7 +15,7 @@ main() {
   cd "$(git rev-parse --show-toplevel)"
 
   local VENV="$PWD/.venv"
-  local TASKS="${TASKS:-wnba,fantasy}"
+  local TASKS="${TASKS:-wnba,fantasy,cfb}"
   local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
   export MPLBACKEND="${MPLBACKEND:-Agg}"
 
@@ -31,7 +31,7 @@ main() {
   # shellcheck source=/dev/null
   . "$SECRETS"
   set +o allexport
-  TASKS="${TASKS:-wnba,fantasy}"
+  TASKS="${TASKS:-wnba,fantasy,cfb}"
 
   [ -n "${CLOUDFLARE_API_TOKEN:-}" ] || {
     echo "❌ CLOUDFLARE_API_TOKEN not set — wrangler can't deploy unattended."
@@ -83,7 +83,7 @@ main() {
     log "installing dependencies"
     pip install -q --upgrade pip
     pip install -q -r requirements-pi.txt
-    pip install -q -e .            # cbb, wnba, fantasy, gordstats
+    pip install -q -e .            # cbb, cfb, wnba, fantasy, gordstats
     echo "$REQ_HASH" > "$STAMP"
   else
     log "dependencies unchanged"

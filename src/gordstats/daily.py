@@ -105,10 +105,22 @@ def _fantasy() -> None:
         raise RuntimeError(f"fantasy rebuild preset '{preset}' had failing steps")
 
 
+def _cfb() -> None:
+    """Refresh the college football data (Yahoo board + ESPN schedule) and
+    rebuild the section's pages. Import deferred like the others: the wnba-only
+    path should not pay for pandas parquet readers it never uses."""
+    from cfb import build
+
+    failed = build.build_all(refresh=True)
+    if failed:
+        raise RuntimeError(f"cfb pages failed to build: {', '.join(failed)}")
+
+
 TASKS = {
     "wnba": _wnba,
     "cbb": _cbb,
     "fantasy": _fantasy,
+    "cfb": _cfb,
 }
 
 

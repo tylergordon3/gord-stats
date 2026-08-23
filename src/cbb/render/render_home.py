@@ -157,6 +157,25 @@ def _fantasy_card() -> str:
 """
 
 
+def _cfb_card() -> str:
+    """Compact college football card. Shown in both season layouts."""
+    return """
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>College Football</h2>
+    <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
+  </div>
+  {% include countdown.html key="cfb" %}
+  <p>The Yahoo college fantasy league's draft board, and every FBS game of the
+     season — kickoffs, TV, ranks, and scores.</p>
+  <p class="home-card-links">
+    <a href="/cfb/draft/">Draft Board</a> ·
+    <a href="/cfb/schedule/">CFB Schedule</a>
+  </p>
+</section>
+"""
+
+
 def _wnba_lead() -> str:
     return """
 <h1>WNBA Fantasy</h1>
@@ -273,9 +292,9 @@ def render_home():
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
 
     if cbb_in_season:
-        html = _cbb_lead() + _wnba_card() + _fantasy_card()
+        html = _cbb_lead() + _wnba_card() + _fantasy_card() + _cfb_card()
     else:
-        html = _cbb_card(today) + _fantasy_card() + _wnba_lead()
+        html = _cbb_card(today) + _fantasy_card() + _cfb_card() + _wnba_lead()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

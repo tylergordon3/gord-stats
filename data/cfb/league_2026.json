@@ -1,0 +1,227 @@
+{
+ "name": "B1G West Memorial FFL",
+ "url": "https://college.fantasysports.yahoo.com/cfb/21318",
+ "num_teams": 10,
+ "scoring_label": "H2H",
+ "draft_status": "predraft",
+ "draft_time": 1788134400.0,
+ "draft_pick_seconds": 120.0,
+ "start_week": 1,
+ "end_week": 13,
+ "start_date": "2026-09-03",
+ "end_date": "2026-11-28",
+ "playoff_start_week": 11,
+ "roster": [
+  {
+   "position": "QB",
+   "count": 2
+  },
+  {
+   "position": "RB",
+   "count": 2
+  },
+  {
+   "position": "WR",
+   "count": 3
+  },
+  {
+   "position": "TE",
+   "count": 1
+  },
+  {
+   "position": "W/R/T",
+   "count": 2
+  },
+  {
+   "position": "DEF",
+   "count": 1
+  },
+  {
+   "position": "BN",
+   "count": 8
+  },
+  {
+   "position": "IL",
+   "count": 1
+  }
+ ],
+ "modifiers": [
+  {
+   "stat_id": "4",
+   "name": "Pass Yds",
+   "value": 0.04
+  },
+  {
+   "stat_id": "5",
+   "name": "Pass TD",
+   "value": 4.0
+  },
+  {
+   "stat_id": "6",
+   "name": "Int",
+   "value": -1.0
+  },
+  {
+   "stat_id": "9",
+   "name": "Rush Yds",
+   "value": 0.1
+  },
+  {
+   "stat_id": "10",
+   "name": "Rush TD",
+   "value": 6.0
+  },
+  {
+   "stat_id": "11",
+   "name": "Rec",
+   "value": 0.5
+  },
+  {
+   "stat_id": "12",
+   "name": "Rec Yds",
+   "value": 0.1
+  },
+  {
+   "stat_id": "13",
+   "name": "Rec TD",
+   "value": 6.0
+  },
+  {
+   "stat_id": "15",
+   "name": "Ret TD",
+   "value": 6.0
+  },
+  {
+   "stat_id": "16",
+   "name": "2-PT",
+   "value": 2.0
+  },
+  {
+   "stat_id": "18",
+   "name": "Fum Lost",
+   "value": -2.0
+  },
+  {
+   "stat_id": "57",
+   "name": "Fum Ret TD",
+   "value": 6.0
+  },
+  {
+   "stat_id": "32",
+   "name": "Sack",
+   "value": 1.0
+  },
+  {
+   "stat_id": "33",
+   "name": "Int",
+   "value": 2.0
+  },
+  {
+   "stat_id": "34",
+   "name": "Fum Rec",
+   "value": 2.0
+  },
+  {
+   "stat_id": "35",
+   "name": "TD",
+   "value": 6.0
+  },
+  {
+   "stat_id": "36",
+   "name": "Safe",
+   "value": 2.0
+  },
+  {
+   "stat_id": "37",
+   "name": "Blk Kick",
+   "value": 2.0
+  },
+  {
+   "stat_id": "49",
+   "name": "Ret TD",
+   "value": 6.0
+  },
+  {
+   "stat_id": "50",
+   "name": "Pts Allow 0",
+   "value": 10.0
+  },
+  {
+   "stat_id": "51",
+   "name": "Pts Allow 1-6",
+   "value": 7.0
+  },
+  {
+   "stat_id": "52",
+   "name": "Pts Allow 7-13",
+   "value": 4.0
+  },
+  {
+   "stat_id": "53",
+   "name": "Pts Allow 14-20",
+   "value": 1.0
+  },
+  {
+   "stat_id": "55",
+   "name": "Pts Allow 28-34",
+   "value": -1.0
+  },
+  {
+   "stat_id": "56",
+   "name": "Pts Allow 35+",
+   "value": -4.0
+  }
+ ],
+ "teams": [
+  {
+   "name": "Puntaholics",
+   "manager": "--hidden--",
+   "logo": "https://yahoofantasysports-res.cloudinary.com/image/upload/t_s192sq/fantasy-logos/e8e2f970401474f41f391908d21d729c1e847295224c9e285a8c97298890e7c4.jpg"
+  },
+  {
+   "name": "Mike Locksley",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ba/images/72872f4869515b3d98f29efb9b46b3a0d9df0511e7744a8881d0a0b77a81a73c.png"
+  },
+  {
+   "name": "Jackson's Brilliant Team",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png"
+  },
+  {
+   "name": "Colin's Champion Team",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-football-trophy-png_1721174536245.png"
+  },
+  {
+   "name": "Austin's Best Team",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-gold-y-trophy-png_1721174646089.png"
+  },
+  {
+   "name": "Max's Majestic Team",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-unicorn-png_1721174459352.png"
+  },
+  {
+   "name": "Too B1G Too Strong Too Fast",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ba/images/020369e579d5f0c46a81830c3d6f57a33da4465ea0f8af86832850d657549f47.png"
+  },
+  {
+   "name": "Cameron's Choice Team",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-whistle-png_1721175112404.png"
+  },
+  {
+   "name": "Noah's Nice Team",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-football-trophy-png_1721174536245.png"
+  },
+  {
+   "name": "Jacob's Tip-Top Team",
+   "manager": "--hidden--",
+   "logo": "https://s.yimg.com/ba/images/7c80bce12605641f09da029eb50bcbfc939417842593818ba42db47f04daeabb.png"
+  }
+ ]
+}

@@ -34,6 +34,12 @@ sections:
     url: /fantasy/index.html
     section: fantasy
 
+  - title: College Football
+    short: CFB
+    icon: "🎓"
+    url: /cfb/index.html
+    section: cfb
+
 
 cbb:
   - title: Home
@@ -97,3 +103,20 @@ fantasy:
     short: Waivers
     icon: "🔄"
     url: /fantasy/transactions/
+
+
+cfb:
+  - title: Home
+    short: Home
+    icon: "🏠"
+    url: /cfb/index.html
+
+  - title: Draft Board
+    short: Draft
+    icon: "📋"
+    url: /cfb/draft/
+
+  - title: CFB Schedule
+    short: Schedule
+    icon: "📅"
+    url: /cfb/schedule/
