@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-22T19:40:03.743475-04:00",
+ "updated": "2026-08-23T00:17:06.155885-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -32505,6 +32505,348 @@
       "Ornella Bankole",
       "G",
       10.0
+     ]
+    ]
+   }
+  },
+  "401857164": {
+   "date": "2026-08-22",
+   "allowed": {
+    "IND": {
+     "G": 70.0,
+     "FC": 122.0
+    },
+    "NY": {
+     "G": 107.0,
+     "FC": 72.0
+    }
+   },
+   "players": {
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      16.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      35.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      34.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      3.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      36.0
+     ],
+     [
+      "Myisha Hines-Allen",
+      "FC",
+      12.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      9.0
+     ],
+     [
+      "Mercedes Russell",
+      "FC",
+      0.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      23.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      11.0
+     ]
+    ],
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      43.0
+     ],
+     [
+      "Leonie Fiebich",
+      "FC",
+      35.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      33.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      22.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      13.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      11.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      8.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      13.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      14.0
+     ]
+    ]
+   }
+  },
+  "401857165": {
+   "date": "2026-08-23",
+   "allowed": {
+    "CON": {
+     "G": 97.0,
+     "FC": 61.0
+    },
+    "LA": {
+     "G": 117.0,
+     "FC": 37.0
+    }
+   },
+   "players": {
+    "CON": [
+     [
+      "Diamond Miller",
+      "FC",
+      7.0
+     ],
+     [
+      "Olivia Nelson-Ododa",
+      "FC",
+      4.0
+     ],
+     [
+      "Kennedy Burke",
+      "G",
+      29.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      14.0
+     ],
+     [
+      "Leila Lacan",
+      "G",
+      20.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      17.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      9.0
+     ],
+     [
+      "Hailey Van Lith",
+      "G",
+      4.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      28.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      12.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      10.0
+     ]
+    ],
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      23.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      17.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      21.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      18.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      38.0
+     ],
+     [
+      "Emma Cannon",
+      "FC",
+      9.0
+     ],
+     [
+      "Cameron Brink",
+      "FC",
+      12.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      0.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      6.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      9.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      5.0
+     ]
+    ]
+   }
+  },
+  "401857166": {
+   "date": "2026-08-23",
+   "allowed": {
+    "ATL": {
+     "G": 71.0,
+     "FC": 102.0
+    },
+    "PHX": {
+     "G": 111.0,
+     "FC": 85.0
+    }
+   },
+   "players": {
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      18.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      55.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      30.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      29.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      36.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      12.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      4.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      12.0
+     ]
+    ],
+    "PHX": [
+     [
+      "DeWanna Bonner",
+      "FC",
+      24.0
+     ],
+     [
+      "Alyssa Thomas",
+      "FC",
+      39.0
+     ],
+     [
+      "Noemie Brochant",
+      "FC",
+      19.0
+     ],
+     [
+      "Sami Whitcomb",
+      "G",
+      15.0
+     ],
+     [
+      "Kahleah Copper",
+      "G",
+      45.0
+     ],
+     [
+      "Valeriane Ayayi",
+      "FC",
+      13.0
+     ],
+     [
+      "Natasha Mack",
+      "FC",
+      7.0
+     ],
+     [
+      "Lexi Held",
+      "G",
+      11.0
      ]
     ]
    }
