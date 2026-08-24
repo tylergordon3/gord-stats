@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-23T23:34:16.649992-04:00",
+ "updated": "2026-08-24T05:43:06.986932-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -33093,6 +33093,269 @@
      ],
      [
       "Ornella Bankole",
+      "G",
+      9.0
+     ]
+    ]
+   }
+  },
+  "401857168": {
+   "date": "2026-08-23",
+   "allowed": {
+    "IND": {
+     "G": 108.0,
+     "FC": 66.0
+    },
+    "CHI": {
+     "G": 139.0,
+     "FC": 67.0
+    }
+   },
+   "players": {
+    "IND": [
+     [
+      "Monique Billings",
+      "FC",
+      15.0
+     ],
+     [
+      "Makayla Timpson",
+      "FC",
+      28.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      48.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      19.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      60.0
+     ],
+     [
+      "Myisha Hines-Allen",
+      "FC",
+      17.0
+     ],
+     [
+      "Grace VanSlooten",
+      "FC",
+      0.0
+     ],
+     [
+      "Mercedes Russell",
+      "FC",
+      7.0
+     ],
+     [
+      "Michelle Onyiah",
+      "FC",
+      0.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      7.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      0.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      1.0
+     ],
+     [
+      "Bree Hall",
+      "G",
+      4.0
+     ]
+    ],
+    "CHI": [
+     [
+      "Azura Stevens",
+      "FC",
+      30.0
+     ],
+     [
+      "Kamilla Cardoso",
+      "FC",
+      22.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      17.0
+     ],
+     [
+      "Natasha Cloud",
+      "G",
+      29.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      6.0
+     ],
+     [
+      "Elizabeth Williams",
+      "FC",
+      14.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      13.0
+     ],
+     [
+      "DiJonai Carrington",
+      "G",
+      13.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      9.0
+     ],
+     [
+      "Aicha Coulibaly",
+      "G",
+      21.0
+     ],
+     [
+      "Morgan Maly",
+      "G",
+      0.0
+     ]
+    ]
+   }
+  },
+  "401857169": {
+   "date": "2026-08-23",
+   "allowed": {
+    "WSH": {
+     "G": 60.0,
+     "FC": 121.0
+    },
+    "POR": {
+     "G": 80.0,
+     "FC": 116.0
+    }
+   },
+   "players": {
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      14.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      32.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      47.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      25.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      20.0
+     ],
+     [
+      "Angela Dugalic",
+      "FC",
+      0.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      23.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      12.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      21.0
+     ],
+     [
+      "Cassandre Prosper",
+      "G",
+      0.0
+     ],
+     [
+      "Alicia Florez",
+      "G",
+      2.0
+     ]
+    ],
+    "POR": [
+     [
+      "Bridget Carleton",
+      "FC",
+      39.0
+     ],
+     [
+      "Emily Engstler",
+      "FC",
+      40.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      3.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      29.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      46.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      4.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      6.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      1.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      4.0
+     ],
+     [
+      "Jordan Harrison",
       "G",
       9.0
      ]
