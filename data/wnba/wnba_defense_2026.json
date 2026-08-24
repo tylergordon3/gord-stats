@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-23T21:00:10.066626-04:00",
+ "updated": "2026-08-23T23:34:16.649992-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -32976,6 +32976,125 @@
       "Sug Sutton",
       "G",
       15.0
+     ]
+    ]
+   }
+  },
+  "401857170": {
+   "date": "2026-08-23",
+   "allowed": {
+    "LV": {
+     "G": 75.0,
+     "FC": 79.0
+    },
+    "TOR": {
+     "G": 81.0,
+     "FC": 91.0
+    }
+   },
+   "players": {
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      11.0
+     ],
+     [
+      "NaLyssa Smith",
+      "FC",
+      23.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      48.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      24.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      30.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      6.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      2.0
+     ],
+     [
+      "Kierstan Bell",
+      "FC",
+      1.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      7.0
+     ],
+     [
+      "Ta'Niya Latson",
+      "G",
+      1.0
+     ],
+     [
+      "Justine Pissott",
+      "G",
+      2.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      17.0
+     ]
+    ],
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      24.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      21.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      22.0
+     ],
+     [
+      "Julie Allemand",
+      "G",
+      7.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      28.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      12.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      31.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      9.0
      ]
     ]
    }
