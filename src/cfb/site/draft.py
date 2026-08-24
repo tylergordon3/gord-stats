@@ -25,8 +25,14 @@ from cfb.site import write_page
 POSITIONS = ["QB", "RB", "WR", "TE", "DEF"]
 
 # Row layout of the embedded JSON (arrays, not objects, to keep the page small).
+# Movement columns are appended after these, one per window the history can
+# support (see yahoo.movement) - their indices ride in the CFG.moves map.
 _FIELDS = ["player", "pos", "team", "team_full", "bye", "adp", "avg_round",
            "pct_drafted", "rank", "pos_rank"]
+
+# Picks of ADP drift before a player counts as having moved at all.
+MIN_MOVE = 0.5
+MOVERS_SHOWN = 8
 
 # The board CSS is a slimmed copy of the NFL board's (fantasy.site.upcoming):
 # same class names, so the chips / search / pills pick up their shared styling
@@ -55,6 +61,23 @@ table.adp-table td.avg{font-weight:700}
 .slot-ovr{color:#5d6b7e;font-size:12px}
 .adp-meta{font-size:13px;color:#4a5a68;margin:6px 0 0}
 .adp-empty{padding:14px;text-align:center;color:#666}
+.adp-up{color:#1a7f4b;font-weight:700}
+.adp-down{color:#b3382c;font-weight:700}
+.adp-flat{color:#93a1ad}
+.adp-controls button.mv-win.active{background:#334155;border-color:#334155}
+.movers{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 4px}
+.movers .mover-card{flex:1 1 260px;min-width:0;border:1px solid #e5e7eb;border-radius:12px;
+  overflow:hidden;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.05)}
+.movers .mover-head{padding:6px 10px;font-size:13px;font-weight:700;letter-spacing:.03em;
+  text-transform:uppercase;background:#eef2f7;color:#334155}
+.movers ol,.movers li,.mover-none{color:#0f172a}
+.movers ol{margin:0;padding:6px 10px 8px 26px;font-size:13px}
+.movers li{padding:2px 0;line-height:1.45}
+.movers .mv-pos{color:#4a5a68;font-size:12px}
+.movers .mv-num{font-family:monospace;white-space:nowrap}
+.movers .mover-none{padding:10px;font-size:13px;color:#4a5a68}
+.movers-window[hidden]{display:none}
+.mv-since{font-size:12px;color:#4a5a68;margin:0 0 6px}
 .cfb-league{font-size:14px;color:#334155;border:1px solid #e5e7eb;border-radius:12px;
   padding:10px 14px;background:#f8fafc;margin:10px 0}
 .cfb-league b{color:#0f172a}
@@ -84,6 +107,16 @@ table.adp-table td.avg{font-weight:700}
   .adp-meta,.adp-empty{color:#aab7c9}
   .cfb-league{background:#1b2540;border-color:#2b3852;color:#dde5ef}
   .cfb-league b{color:#fff}
+  .adp-up{color:#6ee7b7}
+  .adp-down{color:#ff9b91}
+  .movers .mover-card{background:#1b2540;border-color:#2b3852}
+  .movers .mover-head{background:#223052;color:#dde5ef}
+  .movers ol,.movers li{color:#dde5ef}
+  .movers .mover-none,.movers .mv-pos,.mv-since{color:#aab7c9}
+}
+@media (max-width:600px){
+  .movers{gap:8px}
+  .movers .mover-card{flex:1 1 100%}
 }
 </style>"""
 
@@ -121,29 +154,45 @@ _HEADERS = [
 ]
 
 
-def _header() -> str:
+def _header(move_col: int | None) -> str:
     cells = "".join(
         f'<th{" class=" + chr(34) + cls + chr(34) if cls else ""} data-col="{col}" '
         f'title="{tip}">{label}</th>'
         for cls, label, col, tip in _HEADERS)
+    if move_col is not None:
+        cells += (f'<th id="adp-move" data-col="{move_col}" '
+                  'title="ADP gained over the selected window (▲ = going earlier)">Move</th>')
     return f'<thead id="adp-head"><tr>{cells}</tr></thead>'
 
 
-def _table_js(rows: list) -> str:
-    cfg = json.dumps({"rows": rows, "teams": LEAGUE_TEAMS}, separators=(",", ":"))
+def _table_js(rows: list, moves: dict[str, int], default_win: str | None) -> str:
+    cfg = json.dumps({"rows": rows, "teams": LEAGUE_TEAMS, "moves": moves,
+                      "defaultWin": default_win, "minMove": MIN_MOVE},
+                     separators=(",", ":"))
     return """{% raw %}<script>
 (function(){
 var CFG=""" + cfg + """;
-var D=CFG.rows, TEAMS=CFG.teams;
+var D=CFG.rows, TEAMS=CFG.teams, MOVES=CFG.moves, MINMOVE=CFG.minMove;
 var ADP=5, RD=6, PCT=7, RANK=8, POSRK=9;
 var HEADS=document.querySelectorAll('#adp-head th');
+var MOVEHEAD=document.getElementById('adp-move');
 var sortCol=RANK, asc=true, pos='ALL', query='', limit=100;
+// One Move column, pointed at whichever window the buttons above have selected.
+var window_=CFG.defaultWin, MOVE=window_?MOVES[window_]:-1;
 
 function fmt(v){return v===null||v===undefined?'-':v.toFixed(1);}
 function pct(v){return v===null||v===undefined?'-':Math.round(v*100)+'%';}
 function slot(rank){
   var rd=Math.floor((rank-1)/TEAMS)+1, pk=(rank-1)%TEAMS+1;
   return rd+'.'+(pk<10?'0':'')+pk+' <span class="slot-ovr">('+rank+')</span>';
+}
+
+// Move is baseline ADP minus current: positive = going earlier = rising.
+function moveCell(v){
+  if(v===null||v===undefined) return '<td class="adp-flat">-</td>';
+  if(Math.abs(v)<MINMOVE) return '<td class="adp-flat">&ndash;</td>';
+  return '<td class="'+(v>0?'adp-up':'adp-down')+'">'
+        +(v>0?'\\u25B2 ':'\\u25BC ')+Math.abs(v).toFixed(1)+'</td>';
 }
 
 function compare(a,b){
@@ -170,7 +219,7 @@ function filtered(){
 }
 
 function cells(r){
-  return '<td class="pick">'+slot(r[8])+'</td>'
+  var html='<td class="pick">'+slot(r[8])+'</td>'
     +'<td class="name">'+r[0]+'</td>'
     +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+r[9]+'</span></td>'
     +'<td title="'+(r[3]||'')+'">'+(r[2]||'-')+'</td>'
@@ -178,6 +227,8 @@ function cells(r){
     +'<td class="avg">'+fmt(r[5])+'</td>'
     +'<td>'+fmt(r[6])+'</td>'
     +'<td>'+pct(r[7])+'</td>';
+  if(MOVE>=0) html+=moveCell(r[MOVE]);
+  return html;
 }
 
 function draw(){
@@ -197,7 +248,8 @@ function draw(){
 HEADS.forEach(function(th){
   th.addEventListener('click',function(){
     var c=+th.dataset.col;
-    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==PCT);}
+    // Drafted and Move read best biggest-first.
+    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==PCT&&c!==MOVE);}
     draw();
   });
 });
@@ -214,9 +266,74 @@ document.getElementById('adp-search').addEventListener('input',function(e){
 document.getElementById('adp-limit').addEventListener('change',function(e){
   limit=+e.target.value; draw();
 });
+// The movers cards and the table share one window: picking one swaps the
+// cards and re-points the Move column - header, numbers, and any sort
+// already running on it - at that window's baseline.
+document.querySelectorAll('.mv-win').forEach(function(b){
+  b.addEventListener('click',function(){
+    var was=MOVE;
+    window_=b.dataset.win; MOVE=MOVES[window_];
+    document.querySelectorAll('.mv-win').forEach(function(x){x.classList.toggle('active',x===b);});
+    document.querySelectorAll('.movers-window').forEach(function(w){
+      w.hidden = w.dataset.win!==window_;
+    });
+    if(MOVEHEAD) MOVEHEAD.dataset.col=MOVE;
+    if(sortCol===was) sortCol=MOVE;
+    draw();
+  });
+});
 draw();
 })();
 </script>{% endraw %}"""
+
+
+# --------------------------------------------------------------------------- #
+# Movement tracker
+# --------------------------------------------------------------------------- #
+
+def _mover_list(df: pd.DataFrame, moves: pd.Series, rising: bool) -> str:
+    """One card's <ol>: the biggest movers in one direction, or a quiet note."""
+    mv = moves[moves >= MIN_MOVE] if rising else moves[moves <= -MIN_MOVE]
+    mv = mv.sort_values(ascending=not rising).head(MOVERS_SHOWN)
+    if mv.empty:
+        return ('<div class="mover-none">No one has '
+                + ("risen" if rising else "fallen")
+                + f" {MIN_MOVE:g}+ picks over this window.</div>")
+    info = df.set_index("yahoo_id")
+    items = []
+    for pid, delta in mv.items():
+        p = info.loc[pid]
+        arrow = "▲" if rising else "▼"
+        cls = "adp-up" if rising else "adp-down"
+        items.append(
+            f"<li>{p['player']} <span class='mv-pos'>({p['pos']} · {p['team']})</span> "
+            f"<span class='mv-num {cls}'>{arrow} {abs(delta):.1f}</span></li>")
+    return f"<ol>{''.join(items)}</ol>"
+
+
+def _tracker(df: pd.DataFrame, movement: dict, win_keys: list[str]) -> str:
+    """Window buttons plus a risers/fallers card pair per window (one shown)."""
+    buttons = "".join(
+        f'<button class="mv-win{" active" if i == 0 else ""}" data-win="{k}">'
+        f"{yahoo.WINDOWS[k]['label']}</button>"
+        for i, k in enumerate(win_keys))
+    panes = []
+    for i, k in enumerate(win_keys):
+        stamp = (movement[k]["stamp"].astimezone(LEAGUE_TZ)
+                 .strftime("%b %-d, %-I:%M %p %Z"))
+        moves = movement[k]["moves"]
+        panes.append(
+            f'<div class="movers-window" data-win="{k}"{"" if i == 0 else " hidden"}>'
+            f'<p class="mv-since">Against the board pulled {stamp}. '
+            "▲ = moving up draft boards (ADP getting earlier).</p>"
+            '<div class="movers">'
+            '<div class="mover-card"><div class="mover-head">Risers</div>'
+            + _mover_list(df, moves, rising=True) + "</div>"
+            '<div class="mover-card"><div class="mover-head">Fallers</div>'
+            + _mover_list(df, moves, rising=False) + "</div>"
+            "</div></div>")
+    return ('<div class="adp-controls"><span class="adp-label">Movement:</span>'
+            f"{buttons}</div>" + "".join(panes))
 
 
 # --------------------------------------------------------------------------- #
@@ -238,7 +355,14 @@ def _draft_when(lg: dict) -> str | None:
 
 
 def _mods(lg: dict) -> dict:
-    return {m["name"]: m["value"] for m in lg["modifiers"] if m["name"]}
+    """Modifier values by display name, first occurrence winning: Yahoo names
+    both the passing and the team-defense interception "Int", and the card
+    means the offensive one, which sorts first."""
+    out = {}
+    for m in lg["modifiers"]:
+        if m["name"] and m["name"] not in out:
+            out[m["name"]] = m["value"]
+    return out
 
 
 def _league_card(lg: dict) -> str:
@@ -294,8 +418,27 @@ def _details(summary: str, body: str) -> str:
 def body() -> str:
     lg = yahoo.league()
     df = yahoo.board()
+
+    movement = yahoo.movement(df)
+    win_keys = [k for k in yahoo.WINDOWS if k in movement]
+    frame = df.copy()
+    for k in win_keys:
+        frame[f"move_{k}"] = frame["yahoo_id"].map(movement[k]["moves"])
+    fields = _FIELDS + [f"move_{k}" for k in win_keys]
+    moves_idx = {k: fields.index(f"move_{k}") for k in win_keys}
     rows = [[_cell(v) for v in row]
-            for row in df[_FIELDS].itertuples(index=False, name=None)]
+            for row in frame[fields].itertuples(index=False, name=None)]
+
+    if win_keys:
+        tracker = ("<h2>Board Movement</h2>"
+                   "<p>Who is climbing and sliding on Yahoo's board. The window "
+                   "buttons drive both the cards and the table's "
+                   "<strong>Move</strong> column below.</p>"
+                   + _tracker(df, movement, win_keys))
+    else:
+        tracker = ("<h2>Board Movement</h2>"
+                   "<p>The tracker compares the board with its archived pulls; "
+                   "it appears once the history is more than a day deep.</p>")
 
     stamp = yahoo.board_updated()
     when = (stamp.astimezone(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
@@ -306,6 +449,7 @@ def body() -> str:
         _CSS
         + '{% include countdown.html key="cfb" %}'
         + _league_card(lg)
+        + tracker
         + "<h2>Draft Board</h2>"
         f"<p>Yahoo's college board, in Yahoo's own rank order (pulled {when}). "
         f"<strong>ADP</strong> is Yahoo's average pick across live drafts — the only "
@@ -316,9 +460,9 @@ def body() -> str:
         "and search filter the pool.</p>"
         + _controls()
         + '<div class="adp-wrap"><table class="adp-table">'
-        + _header()
+        + _header(moves_idx[win_keys[0]] if win_keys else None)
         + '<tbody id="adp-body"></tbody></table></div>'
-        + _table_js(rows)
+        + _table_js(rows, moves_idx, win_keys[0] if win_keys else None)
         + _details("League Scoring", '<div class="table-scroll">'
                    + _scoring_table(lg) + "</div>")
         + _details("The Ten Teams", '<div class="table-scroll">'

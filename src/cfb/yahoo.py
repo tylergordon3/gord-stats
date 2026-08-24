@@ -18,7 +18,7 @@ the way the NFL board's were.
 """
 import json
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import requests
@@ -140,6 +140,62 @@ def board(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.Dat
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     df.to_parquet(hist / f"{SEASON}_{stamp}.parquet", index=False)
     return df
+
+
+# --------------------------------------------------------------------------- #
+# ADP movement
+# --------------------------------------------------------------------------- #
+#
+# Every board pull is archived to data/cfb/adp_history/, and movement is the
+# current ADP against the newest archived snapshot old enough to serve as the
+# window's baseline. Same idea as the NFL board's tracker; single-source, so
+# the delta is Yahoo's average_pick with itself over time.
+
+# The "since last update" baseline must be at least this old, so repeated
+# refreshes in one sitting don't collapse the Move column to zeros. Shorter
+# than the NFL board's 6h because this board refreshes once a day, not thrice.
+MIN_SNAPSHOT_HOURS = 2
+
+WINDOWS = {
+    "last": {"label": "Since last update", "hours": None},
+    "1d": {"label": "Last 24 hours", "hours": 24},
+    "3d": {"label": "Last 3 days", "hours": 72},
+    "7d": {"label": "Last 7 days", "hours": 168},
+}
+
+
+def _snapshots() -> list[tuple]:
+    """Archived board pulls as (UTC stamp, path), oldest first."""
+    out = []
+    for p in sorted((DATA_DIR / "adp_history").glob(f"{SEASON}_*.parquet")):
+        stamp = (datetime.strptime(p.stem.split("_", 1)[1], "%Y%m%dT%H%M%SZ")
+                 .replace(tzinfo=timezone.utc))
+        out.append((stamp, p))
+    return out
+
+
+def movement(current: pd.DataFrame) -> dict:
+    """ADP drift per window: {key: {"stamp": baseline UTC, "moves": Series}}.
+
+    moves is keyed by yahoo_id, value = baseline ADP - current ADP, so
+    positive = going earlier = rising. Windows with no old-enough snapshot are
+    simply absent - the page renders whatever windows the history can support.
+    """
+    now = board_updated() or datetime.now(timezone.utc)
+    cur = current.set_index("yahoo_id")["adp"]
+    out = {}
+    for key, spec in WINDOWS.items():
+        age = spec["hours"] if spec["hours"] is not None else MIN_SNAPSHOT_HOURS
+        eligible = [(t, p) for t, p in _snapshots()
+                    if t <= now - timedelta(hours=age)]
+        if not eligible:
+            continue
+        stamp, path = eligible[-1]
+        base = (pd.read_parquet(path)
+                .drop_duplicates("yahoo_id").set_index("yahoo_id")["adp"])
+        moves = (base - cur).dropna()
+        out[key] = {"stamp": stamp, "moves": moves}
+    return out
 
 
 def board_updated() -> datetime | None:
