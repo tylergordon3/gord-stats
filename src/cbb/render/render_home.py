@@ -1,5 +1,6 @@
 import json
-from datetime import date
+import re
+from datetime import date, datetime
 
 import pandas as pd
 
@@ -77,6 +78,42 @@ def _latest_predict_link() -> tuple[str, str]:
     latest = dates[-1]
     season = int(latest[:4]) + 1 if int(latest[5:7]) >= 7 else int(latest[:4])
     return f"/men/predict_{latest}.html", f"Final {season} Bracketology →"
+
+
+def _countdown_targets() -> dict:
+    """{key: target datetime} from docs/_data/countdowns.yml.
+
+    Parsed with a regex rather than a YAML library on purpose: the Pi's
+    runtime does not carry pyyaml, and the file is two fields per block by
+    construction. The include itself stays the authority on rendering; this
+    only answers "when does each clock fire", for ordering the preview boxes.
+    """
+    text = (paths.DOCS / "_data" / "countdowns.yml").read_text(encoding="utf-8")
+    out = {}
+    for match in re.finditer(
+            r"^(\w+):.*?^\s*target:\s*\"([^\"]+)\"", text, re.S | re.M):
+        try:
+            out[match.group(1)] = datetime.fromisoformat(match.group(2))
+        except ValueError:
+            continue
+    return out
+
+
+def _by_next_clock(cards) -> str:
+    """Join preview cards ordered by how soon their countdown fires.
+
+    `cards`: (countdown key or None, html). The card whose clock fires next
+    goes first; a card whose clock has passed - or that has no clock at all -
+    renders nothing where the countdown would be, so it drops behind every
+    live one, keeping its position among the clockless (the sort is stable).
+    """
+    targets = _countdown_targets()
+    now = datetime.now()
+
+    def fires(item):
+        target = targets.get(item[0])
+        return target if target and target > now else datetime.max
+    return "".join(html for _, html in sorted(cards, key=fires))
 
 
 # Each clock is included by its own sport's preview box below, directly under
@@ -292,10 +329,16 @@ def render_home():
     today = date.today()
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
 
+    # Preview boxes run closest clock first: the thing happening soonest is
+    # the thing the page should lead with, and the order corrects itself as
+    # each date passes rather than being re-argued by hand.
     if cbb_in_season:
-        html = _cbb_lead() + _wnba_card() + _fantasy_card() + _cfb_card()
+        html = _cbb_lead() + _by_next_clock(
+            [(None, _wnba_card()), ("fantasy", _fantasy_card()), ("cfb", _cfb_card())])
     else:
-        html = _cbb_card(today) + _fantasy_card() + _cfb_card() + _wnba_lead()
+        html = _by_next_clock(
+            [("cbb", _cbb_card(today)), ("fantasy", _fantasy_card()),
+             ("cfb", _cfb_card())]) + _wnba_lead()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
