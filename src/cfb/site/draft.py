@@ -272,9 +272,14 @@ def _scoring_table(lg: dict) -> str:
 
 
 def _teams_table(lg: dict) -> str:
-    rows = "".join(f"<tr><td>{t['name']}</td><td>{t['manager'] or '—'}</td></tr>"
-                   for t in lg["teams"])
-    return ('<table class="sticky-table"><thead><tr><th>Team</th><th>Manager</th></tr></thead>'
+    # Yahoo masks manager nicknames on signed-out reads; skip the column then.
+    named = any(t.get("manager") for t in lg["teams"])
+    rows = "".join(
+        f"<tr><td>{t['name']}</td>"
+        + (f"<td>{t['manager'] or '—'}</td>" if named else "") + "</tr>"
+        for t in lg["teams"])
+    head = "<th>Team</th>" + ("<th>Manager</th>" if named else "")
+    return (f'<table class="sticky-table"><thead><tr>{head}</tr></thead>'
             f"<tbody>{rows}</tbody></table>")
 
 

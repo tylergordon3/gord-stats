@@ -168,13 +168,29 @@ def _parse_league(raw: dict) -> dict:
                 if k == "count":
                     continue
                 t = _fold(v["team"][0])
+                standings = _fold(v["team"][1:]).get("team_standings", {})
+                outcomes = standings.get("outcome_totals") or {}
                 managers = t.get("managers") or []
                 nick = ""
                 if managers:
                     nick = (managers[0].get("manager") or {}).get("nickname") or ""
-                teams.append({"name": t.get("name"), "manager": nick,
-                              "logo": (t.get("team_logos") or [{}])[0]
-                              .get("team_logo", {}).get("url", "")})
+                if nick == "--hidden--":   # Yahoo masks nicknames for signed-out reads
+                    nick = ""
+                teams.append({
+                    "team_key": t.get("team_key"),
+                    "name": t.get("name"), "manager": nick,
+                    "logo": (t.get("team_logos") or [{}])[0]
+                    .get("team_logo", {}).get("url", ""),
+                    "faab": _num(t.get("faab_balance")),
+                    "moves": _num(t.get("number_of_moves")),
+                    "trades": _num(t.get("number_of_trades")),
+                    "rank": _num(standings.get("rank")),
+                    "wins": _num(outcomes.get("wins")),
+                    "losses": _num(outcomes.get("losses")),
+                    "ties": _num(outcomes.get("ties")),
+                    "points_for": _num(standings.get("points_for")),
+                    "points_against": _num(standings.get("points_against")),
+                })
 
     roster = []
     for rp in settings.get("roster_positions", []):
@@ -221,6 +237,157 @@ def league(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> dict:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps(parsed, indent=1))
     return parsed
+
+
+# --------------------------------------------------------------------------- #
+# Scoreboard, transactions, draft results
+# --------------------------------------------------------------------------- #
+#
+# All three come off the same league endpoint family as league() and share its
+# caching. They are thin before the draft — scheduled matchups with no points,
+# commissioner-only transactions, an empty pick list — and the parsers accept
+# that as normal, so the league page can be built now and fill in as the
+# season generates the data.
+
+def _league_block(raw: dict, key: str):
+    for item in raw["fantasy_content"]["league"][1:]:
+        if isinstance(item, dict) and key in item:
+            return item[key]
+    return None
+
+
+def _cached(name: str, fetch, refresh: bool, max_age_hours: float):
+    cache = DATA_DIR / f"{name}_{SEASON}.json"
+    if cache.exists() and not refresh and _is_fresh(cache, max_age_hours):
+        return json.loads(cache.read_text())
+    data = fetch()
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    cache.write_text(json.dumps(data, indent=1))
+    return data
+
+
+def _team_meta(entry) -> dict:
+    """A teams-collection team entry -> {team_key, name, points, projected}."""
+    parts = entry["team"]
+    meta = _fold(parts[0])
+    rest = _fold(parts[1:])
+    return {
+        "team_key": meta.get("team_key"),
+        "name": meta.get("name"),
+        "points": _num((rest.get("team_points") or {}).get("total")),
+        "projected": _num((rest.get("team_projected_points") or {}).get("total")),
+    }
+
+
+def _parse_scoreboard(raw: dict) -> dict:
+    sb = _league_block(raw, "scoreboard") or {}
+    matchups = []
+    for k, v in ((sb.get("0") or {}).get("matchups") or {}).items():
+        if k == "count":
+            continue
+        mu = v["matchup"]
+        teams = [_team_meta(t) for tk, t in mu["0"]["teams"].items() if tk != "count"]
+        matchups.append({
+            "week": _num(mu.get("week")),
+            "week_start": mu.get("week_start"),
+            "week_end": mu.get("week_end"),
+            "status": mu.get("status"),
+            "is_playoffs": mu.get("is_playoffs") == "1",
+            "teams": teams,
+        })
+    return {"week": _num(sb.get("week")), "matchups": matchups}
+
+
+def scoreboard(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> dict:
+    """The current week's matchups: {week, matchups: [{teams: [..], ...}]}."""
+    return _cached("scoreboard",
+                   lambda: _parse_scoreboard(_get(f"league/{LEAGUE_KEY}/scoreboard")),
+                   refresh, max_age_hours)
+
+
+def _parse_transactions(raw: dict) -> list[dict]:
+    out = []
+    for k, v in (_league_block(raw, "transactions") or {}).items():
+        if k == "count":
+            continue
+        parts = v["transaction"]
+        meta = _fold(parts[:1]) if isinstance(parts, list) else parts
+        players = []
+        for part in (parts[1:] if isinstance(parts, list) else []):
+            if not (isinstance(part, dict) and "players" in part):
+                continue
+            for pk, pv in part["players"].items():
+                if pk == "count":
+                    continue
+                pparts = pv["player"]
+                pmeta = _fold(pparts[0])
+                tdata = _fold(pparts[1:]).get("transaction_data")
+                if isinstance(tdata, list):
+                    tdata = _fold(tdata)
+                tdata = tdata or {}
+                players.append({
+                    "player": (pmeta.get("name") or {}).get("full"),
+                    "pos": pmeta.get("display_position"),
+                    "team": pmeta.get("editorial_team_abbr"),
+                    "type": tdata.get("type"),
+                    "source": tdata.get("source_team_name"),
+                    "destination": tdata.get("destination_team_name"),
+                })
+        out.append({
+            "id": _num(meta.get("transaction_id")),
+            "type": meta.get("type"),
+            "status": meta.get("status"),
+            "timestamp": _num(meta.get("timestamp")),
+            "faab_bid": _num(meta.get("faab_bid")),
+            "players": players,
+        })
+    return sorted(out, key=lambda t: t["timestamp"] or 0, reverse=True)
+
+
+def transactions(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> list[dict]:
+    """Every league transaction, newest first. Commissioner actions included —
+    the page filters to player moves; this keeps the raw record complete."""
+    return _cached("transactions",
+                   lambda: _parse_transactions(_get(f"league/{LEAGUE_KEY}/transactions")),
+                   refresh, max_age_hours)
+
+
+def _parse_draft(raw: dict) -> list[dict]:
+    block = _league_block(raw, "draft_results")
+    if not isinstance(block, dict):        # an empty list before the draft
+        return []
+    picks = []
+    for k, v in block.items():
+        if k == "count":
+            continue
+        r = v["draft_result"]
+        picks.append({"pick": _num(r.get("pick")), "round": _num(r.get("round")),
+                      "team_key": r.get("team_key"),
+                      "player_key": r.get("player_key")})
+    return sorted(picks, key=lambda p: p["pick"] or 0)
+
+
+def draft_results(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> list[dict]:
+    """Every pick of the league's draft; [] until the draft has happened."""
+    return _cached("draft",
+                   lambda: _parse_draft(_get(f"league/{LEAGUE_KEY}/draftresults")),
+                   refresh, max_age_hours)
+
+
+def predraft_board() -> pd.DataFrame:
+    """The board to grade draft picks against: the last ADP snapshot taken
+    before the draft started, so post-draft ADP drift can't rewrite the grades.
+    Falls back to the current board when no such snapshot exists."""
+    lg = league()
+    hist = sorted((DATA_DIR / "adp_history").glob(f"{SEASON}_*.parquet"))
+    if lg.get("draft_time"):
+        cutoff = datetime.fromtimestamp(lg["draft_time"], tz=timezone.utc)
+        before = [p for p in hist
+                  if datetime.strptime(p.stem.split("_")[1], "%Y%m%dT%H%M%SZ")
+                  .replace(tzinfo=timezone.utc) <= cutoff]
+        if before:
+            return pd.read_parquet(before[-1])
+    return board()
 
 
 if __name__ == "__main__":

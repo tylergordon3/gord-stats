@@ -170,6 +170,7 @@ def _cfb_card() -> str:
      season — kickoffs, TV, ranks, and scores.</p>
   <p class="home-card-links">
     <a href="/cfb/draft/">Draft Board</a> ·
+    <a href="/cfb/league/">League Dashboard</a> ·
     <a href="/cfb/schedule/">CFB Schedule</a>
   </p>
 </section>

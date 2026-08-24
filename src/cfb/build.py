@@ -10,7 +10,7 @@ works for the NFL section); gordstats.daily's cfb task calls build_all().
 import argparse
 import traceback
 
-PAGES = ["home", "draft", "schedule"]
+PAGES = ["home", "draft", "schedule", "league"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
@@ -21,6 +21,9 @@ def build_all(refresh: bool = False) -> list[str]:
     # fetch that does fail leaves the pages building from the last good cache.
     for label, pull in [("yahoo league", lambda: yahoo.league(refresh=refresh)),
                         ("yahoo board", lambda: yahoo.board(refresh=refresh)),
+                        ("yahoo scoreboard", lambda: yahoo.scoreboard(refresh=refresh)),
+                        ("yahoo transactions", lambda: yahoo.transactions(refresh=refresh)),
+                        ("yahoo draft", lambda: yahoo.draft_results(refresh=refresh)),
                         ("espn schedule", lambda: espn.schedule(refresh=refresh))]:
         try:
             pull()

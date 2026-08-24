@@ -174,54 +174,154 @@
  ],
  "teams": [
   {
+   "team_key": "474.l.21318.t.1",
    "name": "Puntaholics",
-   "manager": "--hidden--",
-   "logo": "https://yahoofantasysports-res.cloudinary.com/image/upload/t_s192sq/fantasy-logos/e8e2f970401474f41f391908d21d729c1e847295224c9e285a8c97298890e7c4.jpg"
+   "manager": "",
+   "logo": "https://yahoofantasysports-res.cloudinary.com/image/upload/t_s192sq/fantasy-logos/e8e2f970401474f41f391908d21d729c1e847295224c9e285a8c97298890e7c4.jpg",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.2",
    "name": "Mike Locksley",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ba/images/72872f4869515b3d98f29efb9b46b3a0d9df0511e7744a8881d0a0b77a81a73c.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ba/images/72872f4869515b3d98f29efb9b46b3a0d9df0511e7744a8881d0a0b77a81a73c.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.3",
    "name": "Jackson's Brilliant Team",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.4",
    "name": "Colin's Champion Team",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-football-trophy-png_1721174536245.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-football-trophy-png_1721174536245.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.5",
    "name": "Austin's Best Team",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-gold-y-trophy-png_1721174646089.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-gold-y-trophy-png_1721174646089.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.6",
    "name": "Max's Majestic Team",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-unicorn-png_1721174459352.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-unicorn-png_1721174459352.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.7",
    "name": "Too B1G Too Strong Too Fast",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ba/images/020369e579d5f0c46a81830c3d6f57a33da4465ea0f8af86832850d657549f47.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ba/images/020369e579d5f0c46a81830c3d6f57a33da4465ea0f8af86832850d657549f47.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.8",
    "name": "Cameron's Choice Team",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-whistle-png_1721175112404.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-whistle-png_1721175112404.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.9",
    "name": "Noah's Nice Team",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-football-trophy-png_1721174536245.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-football-trophy-png_1721174536245.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   },
   {
+   "team_key": "474.l.21318.t.10",
    "name": "Jacob's Tip-Top Team",
-   "manager": "--hidden--",
-   "logo": "https://s.yimg.com/ba/images/7c80bce12605641f09da029eb50bcbfc939417842593818ba42db47f04daeabb.png"
+   "manager": "",
+   "logo": "https://s.yimg.com/ba/images/7c80bce12605641f09da029eb50bcbfc939417842593818ba42db47f04daeabb.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": null,
+   "wins": 0.0,
+   "losses": 0.0,
+   "ties": 0.0,
+   "points_for": 0.0,
+   "points_against": 0.0
   }
  ]
 }

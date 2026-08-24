@@ -1,0 +1,110 @@
+{
+ "week": 1.0,
+ "matchups": [
+  {
+   "week": 1.0,
+   "week_start": "2026-09-03",
+   "week_end": "2026-09-07",
+   "status": "preevent",
+   "is_playoffs": false,
+   "teams": [
+    {
+     "team_key": "474.l.21318.t.1",
+     "name": "Puntaholics",
+     "points": 0.0,
+     "projected": 0.0
+    },
+    {
+     "team_key": "474.l.21318.t.9",
+     "name": "Noah's Nice Team",
+     "points": 0.0,
+     "projected": 0.0
+    }
+   ]
+  },
+  {
+   "week": 1.0,
+   "week_start": "2026-09-03",
+   "week_end": "2026-09-07",
+   "status": "preevent",
+   "is_playoffs": false,
+   "teams": [
+    {
+     "team_key": "474.l.21318.t.2",
+     "name": "Mike Locksley",
+     "points": 0.0,
+     "projected": 0.0
+    },
+    {
+     "team_key": "474.l.21318.t.4",
+     "name": "Colin's Champion Team",
+     "points": 0.0,
+     "projected": 0.0
+    }
+   ]
+  },
+  {
+   "week": 1.0,
+   "week_start": "2026-09-03",
+   "week_end": "2026-09-07",
+   "status": "preevent",
+   "is_playoffs": false,
+   "teams": [
+    {
+     "team_key": "474.l.21318.t.3",
+     "name": "Jackson's Brilliant Team",
+     "points": 0.0,
+     "projected": 0.0
+    },
+    {
+     "team_key": "474.l.21318.t.7",
+     "name": "Too B1G Too Strong Too Fast",
+     "points": 0.0,
+     "projected": 0.0
+    }
+   ]
+  },
+  {
+   "week": 1.0,
+   "week_start": "2026-09-03",
+   "week_end": "2026-09-07",
+   "status": "preevent",
+   "is_playoffs": false,
+   "teams": [
+    {
+     "team_key": "474.l.21318.t.5",
+     "name": "Austin's Best Team",
+     "points": 0.0,
+     "projected": 0.0
+    },
+    {
+     "team_key": "474.l.21318.t.10",
+     "name": "Jacob's Tip-Top Team",
+     "points": 0.0,
+     "projected": 0.0
+    }
+   ]
+  },
+  {
+   "week": 1.0,
+   "week_start": "2026-09-03",
+   "week_end": "2026-09-07",
+   "status": "preevent",
+   "is_playoffs": false,
+   "teams": [
+    {
+     "team_key": "474.l.21318.t.6",
+     "name": "Max's Majestic Team",
+     "points": 0.0,
+     "projected": 0.0
+    },
+    {
+     "team_key": "474.l.21318.t.8",
+     "name": "Cameron's Choice Team",
+     "points": 0.0,
+     "projected": 0.0
+    }
+   ]
+  }
+ ]
+}

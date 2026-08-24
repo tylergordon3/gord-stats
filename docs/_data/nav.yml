@@ -116,6 +116,11 @@ cfb:
     icon: "📋"
     url: /cfb/draft/
 
+  - title: League Dashboard
+    short: League
+    icon: "🏆"
+    url: /cfb/league/
+
   - title: CFB Schedule
     short: Schedule
     icon: "📅"
