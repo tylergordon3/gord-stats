@@ -1,89 +1,89 @@
 {
- "built": "2026-08-21",
+ "built": "2026-08-24",
  "accuracy": [
   {
    "season": 2025,
    "pos": "QB",
    "players": 41,
-   "correlation": 0.3093999306161493,
-   "mean_error": 3.3298333472766504
+   "correlation": 0.6387914629149711,
+   "mean_error": 2.6991211022855226
   },
   {
    "season": 2025,
    "pos": "RB",
    "players": 101,
-   "correlation": 0.6994871338419223,
-   "mean_error": 3.822798473146366
+   "correlation": 0.8167665709393684,
+   "mean_error": 2.8252528793451073
   },
   {
    "season": 2025,
    "pos": "WR",
    "players": 178,
-   "correlation": 0.5817777886076905,
-   "mean_error": 3.8772396040637287
+   "correlation": 0.7603011303645912,
+   "mean_error": 2.595432065584028
   },
   {
    "season": 2025,
    "pos": "TE",
    "players": 95,
-   "correlation": 0.5756943312467268,
-   "mean_error": 2.977901925659633
+   "correlation": 0.7548185644151459,
+   "mean_error": 2.1116975874401454
   },
   {
    "season": 2024,
    "pos": "QB",
    "players": 45,
-   "correlation": 0.4102657800860208,
-   "mean_error": 3.7562415653171066
+   "correlation": 0.7310176600586086,
+   "mean_error": 2.7746383318831698
   },
   {
    "season": 2024,
    "pos": "RB",
    "players": 104,
-   "correlation": 0.6108096923072898,
-   "mean_error": 4.1953774533289065
+   "correlation": 0.8064884787236427,
+   "mean_error": 2.8358449570374806
   },
   {
    "season": 2024,
    "pos": "WR",
    "players": 169,
-   "correlation": 0.5718185499054568,
-   "mean_error": 3.978809783995414
+   "correlation": 0.7482187148908894,
+   "mean_error": 2.9129943263481453
   },
   {
    "season": 2024,
    "pos": "TE",
    "players": 90,
-   "correlation": 0.4076948544551103,
-   "mean_error": 3.2452998013247663
+   "correlation": 0.6958260911861961,
+   "mean_error": 2.2072187028764696
   },
   {
    "season": 2023,
    "pos": "QB",
    "players": 45,
-   "correlation": 0.4217614952829979,
-   "mean_error": 5.053362417051107
+   "correlation": 0.599667273842242,
+   "mean_error": 4.22678431682615
   },
   {
    "season": 2023,
    "pos": "RB",
    "players": 102,
-   "correlation": 0.5619792248326927,
-   "mean_error": 3.898436460490368
+   "correlation": 0.6618465364208277,
+   "mean_error": 3.4496600243159743
   },
   {
    "season": 2023,
    "pos": "WR",
    "players": 171,
-   "correlation": 0.6747441699986229,
-   "mean_error": 3.8440825913125707
+   "correlation": 0.7287817176074347,
+   "mean_error": 3.1342852983851026
   },
   {
    "season": 2023,
    "pos": "TE",
    "players": 94,
-   "correlation": 0.43454555714600734,
-   "mean_error": 3.295523953047883
+   "correlation": 0.6228709199300929,
+   "mean_error": 2.745248146543145
   }
  ],
  "backtest": {
@@ -91,79 +91,79 @@
    {
     "manager": "Trevor",
     "proj_rank": 1,
-    "proj_points": 1782.0589023961647,
+    "proj_points": 1803.4460358101853,
     "actual_rank": 4,
     "PF": 1886.1,
     "total_wins": 17
    },
    {
-    "manager": "George",
-    "proj_rank": 2,
-    "proj_points": 1768.4328014167886,
-    "actual_rank": 3,
-    "PF": 1890.94,
-    "total_wins": 15
-   },
-   {
     "manager": "Everett",
-    "proj_rank": 3,
-    "proj_points": 1749.539902681844,
+    "proj_rank": 2,
+    "proj_points": 1792.5544027422409,
     "actual_rank": 10,
     "PF": 1657.68,
     "total_wins": 5
    },
    {
-    "manager": "Max",
-    "proj_rank": 4,
-    "proj_points": 1748.4570393536299,
-    "actual_rank": 1,
-    "PF": 1983.0,
-    "total_wins": 19
+    "manager": "George",
+    "proj_rank": 3,
+    "proj_points": 1791.6972551791991,
+    "actual_rank": 3,
+    "PF": 1890.94,
+    "total_wins": 15
    },
    {
     "manager": "Jackson",
-    "proj_rank": 5,
-    "proj_points": 1744.4206603894759,
+    "proj_rank": 4,
+    "proj_points": 1774.7535381604364,
     "actual_rank": 2,
     "PF": 1943.08,
     "total_wins": 19
    },
    {
-    "manager": "Tyler",
-    "proj_rank": 6,
-    "proj_points": 1731.01592872917,
-    "actual_rank": 5,
-    "PF": 1871.82,
-    "total_wins": 14
-   },
-   {
     "manager": "Austin",
-    "proj_rank": 7,
-    "proj_points": 1730.1540591027895,
+    "proj_rank": 5,
+    "proj_points": 1763.7090232862504,
     "actual_rank": 8,
     "PF": 1776.24,
     "total_wins": 16
    },
    {
-    "manager": "Colin",
-    "proj_rank": 8,
-    "proj_points": 1722.6835484053295,
-    "actual_rank": 7,
-    "PF": 1793.38,
-    "total_wins": 10
-   },
-   {
     "manager": "Padgett",
-    "proj_rank": 9,
-    "proj_points": 1722.0570791286507,
+    "proj_rank": 6,
+    "proj_points": 1732.921498825563,
     "actual_rank": 9,
     "PF": 1752.38,
     "total_wins": 8
    },
    {
+    "manager": "Colin",
+    "proj_rank": 7,
+    "proj_points": 1728.2106829128054,
+    "actual_rank": 7,
+    "PF": 1793.38,
+    "total_wins": 10
+   },
+   {
+    "manager": "Max",
+    "proj_rank": 8,
+    "proj_points": 1727.5185646701254,
+    "actual_rank": 1,
+    "PF": 1983.0,
+    "total_wins": 19
+   },
+   {
+    "manager": "Tyler",
+    "proj_rank": 9,
+    "proj_points": 1692.6727792135082,
+    "actual_rank": 5,
+    "PF": 1871.82,
+    "total_wins": 14
+   },
+   {
     "manager": "Mark",
     "proj_rank": 10,
-    "proj_points": 1645.6928130674057,
+    "proj_points": 1630.2669268671166,
     "actual_rank": 6,
     "PF": 1834.04,
     "total_wins": 17
@@ -171,81 +171,81 @@
   ],
   "2425": [
    {
-    "manager": "Mark",
-    "proj_rank": 1,
-    "proj_points": 1772.0347128206727,
-    "actual_rank": 5,
-    "PF": 1869.62,
-    "total_wins": 15
-   },
-   {
-    "manager": "George",
-    "proj_rank": 2,
-    "proj_points": 1770.8784476649303,
-    "actual_rank": 10,
-    "PF": 1710.94,
-    "total_wins": 9
-   },
-   {
-    "manager": "Everett",
-    "proj_rank": 3,
-    "proj_points": 1769.4642788981346,
-    "actual_rank": 6,
-    "PF": 1852.3,
-    "total_wins": 14
-   },
-   {
-    "manager": "Austin",
-    "proj_rank": 4,
-    "proj_points": 1748.086697868686,
-    "actual_rank": 2,
-    "PF": 1957.86,
-    "total_wins": 17
-   },
-   {
     "manager": "Max",
-    "proj_rank": 5,
-    "proj_points": 1729.2558500508162,
+    "proj_rank": 1,
+    "proj_points": 1764.3034629903877,
     "actual_rank": 8,
     "PF": 1809.94,
     "total_wins": 11
    },
    {
-    "manager": "Padgett",
-    "proj_rank": 6,
-    "proj_points": 1682.5746276443847,
-    "actual_rank": 7,
-    "PF": 1826.46,
+    "manager": "Everett",
+    "proj_rank": 2,
+    "proj_points": 1763.7759546997847,
+    "actual_rank": 6,
+    "PF": 1852.3,
     "total_wins": 14
    },
    {
-    "manager": "Jackson",
-    "proj_rank": 7,
-    "proj_points": 1661.34700367954,
-    "actual_rank": 4,
-    "PF": 1879.5,
-    "total_wins": 14
+    "manager": "George",
+    "proj_rank": 3,
+    "proj_points": 1758.8467834484761,
+    "actual_rank": 10,
+    "PF": 1710.94,
+    "total_wins": 9
    },
    {
-    "manager": "Colin",
-    "proj_rank": 8,
-    "proj_points": 1623.7502397204992,
-    "actual_rank": 1,
-    "PF": 2030.4,
+    "manager": "Austin",
+    "proj_rank": 4,
+    "proj_points": 1755.462620917141,
+    "actual_rank": 2,
+    "PF": 1957.86,
     "total_wins": 17
    },
    {
     "manager": "Trevor",
-    "proj_rank": 9,
-    "proj_points": 1614.854312504864,
+    "proj_rank": 5,
+    "proj_points": 1738.1914695252847,
     "actual_rank": 9,
     "PF": 1714.26,
     "total_wins": 13
    },
    {
+    "manager": "Jackson",
+    "proj_rank": 6,
+    "proj_points": 1711.5638486200294,
+    "actual_rank": 4,
+    "PF": 1879.5,
+    "total_wins": 14
+   },
+   {
+    "manager": "Mark",
+    "proj_rank": 7,
+    "proj_points": 1710.489059558293,
+    "actual_rank": 5,
+    "PF": 1869.62,
+    "total_wins": 15
+   },
+   {
+    "manager": "Padgett",
+    "proj_rank": 8,
+    "proj_points": 1688.5632108727361,
+    "actual_rank": 7,
+    "PF": 1826.46,
+    "total_wins": 14
+   },
+   {
+    "manager": "Colin",
+    "proj_rank": 9,
+    "proj_points": 1673.3774707655525,
+    "actual_rank": 1,
+    "PF": 2030.4,
+    "total_wins": 17
+   },
+   {
     "manager": "Tyler",
     "proj_rank": 10,
-    "proj_points": 1523.8570962675449,
+    "proj_points": 1577.742932182674,
     "actual_rank": 3,
     "PF": 1893.9,
     "total_wins": 16
@@ -253,73 +253,73 @@
   ],
   "2324": [
    {
-    "manager": "Jackson",
-    "proj_rank": 1,
-    "proj_points": 1689.0416910682768,
-    "actual_rank": 2,
-    "PF": 1816.44,
-    "total_wins": 20
-   },
-   {
     "manager": "Colin",
-    "proj_rank": 2,
-    "proj_points": 1671.3531279161132,
+    "proj_rank": 1,
+    "proj_points": 1773.9416197237376,
     "actual_rank": 3,
     "PF": 1749.2,
     "total_wins": 17
    },
    {
-    "manager": "Mark",
-    "proj_rank": 3,
-    "proj_points": 1653.2655043408688,
-    "actual_rank": 8,
-    "PF": 1574.2,
-    "total_wins": 8
+    "manager": "Jackson",
+    "proj_rank": 2,
+    "proj_points": 1709.1083198696033,
+    "actual_rank": 2,
+    "PF": 1816.44,
+    "total_wins": 20
    },
    {
     "manager": "Everett",
-    "proj_rank": 4,
-    "proj_points": 1613.9098539564309,
+    "proj_rank": 3,
+    "proj_points": 1659.5036859170805,
     "actual_rank": 9,
     "PF": 1555.8,
     "total_wins": 9
    },
    {
-    "manager": "Max",
-    "proj_rank": 5,
-    "proj_points": 1609.755103907489,
-    "actual_rank": 1,
-    "PF": 1833.46,
-    "total_wins": 16
-   },
-   {
     "manager": "Padgett",
-    "proj_rank": 6,
-    "proj_points": 1574.4100372945559,
+    "proj_rank": 4,
+    "proj_points": 1634.9523767647572,
     "actual_rank": 6,
     "PF": 1627.62,
     "total_wins": 13
    },
    {
-    "manager": "George",
-    "proj_rank": 7,
-    "proj_points": 1569.1930043691352,
-    "actual_rank": 10,
-    "PF": 1547.42,
-    "total_wins": 13
+    "manager": "Max",
+    "proj_rank": 5,
+    "proj_points": 1634.322503617086,
+    "actual_rank": 1,
+    "PF": 1833.46,
+    "total_wins": 16
    },
    {
     "manager": "Trevor",
-    "proj_rank": 8,
-    "proj_points": 1561.1481876951805,
+    "proj_rank": 6,
+    "proj_points": 1632.7481152043101,
     "actual_rank": 7,
     "PF": 1611.18,
     "total_wins": 14
    },
    {
+    "manager": "George",
+    "proj_rank": 7,
+    "proj_points": 1616.4908876349534,
+    "actual_rank": 10,
+    "PF": 1547.42,
+    "total_wins": 13
+   },
+   {
+    "manager": "Mark",
+    "proj_rank": 8,
+    "proj_points": 1611.9840778260277,
+    "actual_rank": 8,
+    "PF": 1574.2,
+    "total_wins": 8
+   },
+   {
     "manager": "Austin",
     "proj_rank": 9,
-    "proj_points": 1535.1708298417464,
+    "proj_points": 1592.5158300145156,
     "actual_rank": 4,
     "PF": 1725.28,
     "total_wins": 19
@@ -327,7 +327,7 @@
    {
     "manager": "Tyler",
     "proj_rank": 10,
-    "proj_points": 1512.3992201540811,
+    "proj_points": 1545.631085270193,
     "actual_rank": 5,
     "PF": 1630.7,
     "total_wins": 11
@@ -335,8 +335,8 @@
   ]
  },
  "spearman": {
-  "2526": 0.41818181818181815,
-  "2425": -0.2727272727272727,
-  "2324": 0.22424242424242422
+  "2526": -0.06666666666666665,
+  "2425": -0.5515151515151515,
+  "2324": 0.2727272727272727
  }
 }

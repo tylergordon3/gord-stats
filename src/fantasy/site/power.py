@@ -44,13 +44,15 @@ SECTIONS = [
 ]
 
 INTRO = f"""<p>Every roster in the league, run through {UPCOMING_SEASON} ten thousand
-times. <strong>Nothing here reads ADP, auction price or an expert ranking</strong> &mdash;
-those would only tell you what the draft board already said. Player projections
-come from usage (targets, carries, air yards, target share), rookies from where
-the <em>NFL</em> drafted them, and kickers and defenses from nothing at all,
-because nothing predicts them. Those projections then have to play the season:
-fourteen weeks, byes, injuries, and a legal starting lineup every week, which is
-the only way bench depth and a bye-week pileup ever show up in a number.</p>"""
+times. Player values anchor on the <strong>consensus ADP board</strong> &mdash; tested
+against three seasons of this league, consensus beat our own usage model at every
+position, so it earned the job &mdash; with the usage model adjusting at the edges and
+kickers and defenses valued at nothing at all, because nothing predicts them.
+The ranking is not those values summed: the projections have to <strong>play the
+season</strong> &mdash; fourteen weeks, byes, injuries, and a legal starting lineup every
+week against the real schedule, which is the only way bench depth and a bye-week
+pileup ever show up in a number, and why this table is not the draft board
+read back.</p>"""
 
 
 # --------------------------------------------------------------------------- #
@@ -308,11 +310,7 @@ def _player_accuracy_section(scored: dict) -> str:
             .set_table_attributes('class="sticky-table"')).to_html()
     return (f"<div class='table-scroll'>{html}</div>"
             "<p>Correlation between a player's projected points per game and what he "
-            "actually scored, for every season the league has played, with the model "
-            "given only the years before each one. Running backs and receivers land "
-            "around <strong>+0.6</strong> every year; quarterbacks and tight ends around "
-            "<strong>+0.4</strong>. That is the part of this page that demonstrably "
-            "works.</p>")
+            "actually scored, for every season the league has played.</p>")
 
 
 def _backtest_section(scored: dict) -> str:
@@ -357,29 +355,42 @@ def _backtest_section(scored: dict) -> str:
 
 def _method_section() -> str:
     scored = validation.load()
+    from fantasy.projections import MARKET_WEIGHT
+
+    market_pct = round(MARKET_WEIGHT * 100)
     return ("<h2>Method</h2>"
-            "<p>Three things go into a player's projection, and ADP is not one of them.</p>"
+            f"<p>A player's projection is <strong>{market_pct}% consensus</strong> and "
+            f"<strong>{100 - market_pct}% usage model</strong>. It did not start that way: "
+            "the first version used no ADP at all, on the theory that market prices would "
+            "just restate the draft board. Tested over the league's three seasons &mdash; each "
+            "rebuilt knowing only prior years &mdash; consensus predicted players' actual points "
+            "at <strong>0.81</strong> correlation against the usage model's 0.53, winning at "
+            "every position every year: the market reads depth charts, trades and coaching "
+            "changes that last season's usage cannot. So consensus earned the anchor, turned "
+            "into points through a per-position curve fit on what past ADP actually bought. "
+            "The restatement worry also turned out to be overblown &mdash; run through the "
+            "league's real lineup rules and schedule, the same consensus values still "
+            "reorder teams, because a roster is not the sum of its draft slots.</p>"
             "<ul>"
-            "<li><strong>Usage, not points.</strong> A ridge regression per position maps "
-            "last season's per-game volume &mdash; targets, carries, air yards, target "
-            "share, WOPR &mdash; onto this season's points per game. Volume survives the "
-            "offseason; points carry touchdown luck that does not. Held out on the two "
-            "most recent seasons, that beats projecting last year's points forward at "
-            "receiver and tight end and ties at running back.</li>"
-            "<li><strong>Draft capital for rookies.</strong> A rookie has no usage to "
-            "read, so the prior is where the NFL drafted him, fit against what drafted "
-            "rookies have actually scored since 2021. That is 32 front offices spending "
-            "picks, not a fantasy consensus.</li>"
-            "<li><strong>Nothing for kickers and defenses.</strong> The same model fit to "
-            "K and DST has <em>negative</em> held-out skill: last season's kicker points "
-            "do not predict this season's at any amount of regularization. Both positions "
-            "get the positional mean, so they cancel out of the rankings entirely.</li>"
+            "<li><strong>The usage minority share.</strong> A ridge regression per position "
+            "maps last season's per-game volume &mdash; targets, carries, air yards, target "
+            "share, WOPR &mdash; onto this season's points per game, and nudges the anchor "
+            "where a player's volume disagrees with his price.</li>"
+            "<li><strong>Draft capital for rookies</strong> the ADP board has no line on: "
+            "where the NFL drafted him, fit against what drafted rookies have scored "
+            "since 2021.</li>"
+            "<li><strong>Nothing for kickers and defenses.</strong> Neither the market nor "
+            "the model has held-out skill there &mdash; last season's kicker points do not "
+            "predict this season's at any amount of regularization &mdash; so both positions "
+            "get the positional mean and cancel out of the rankings entirely.</li>"
             "</ul>"
             "<p>Each projection carries its own error bar, and every simulated season "
             "deals each player a true rate drawn from it. Without that step the page would "
             "quote playoff odds far more confident than a projection this uncertain can "
             "support.</p>"
             "<h3>How well does it work? Player by player: well.</h3>"
+            "<p>Scored the same way the anchor was chosen: each season rebuilt knowing "
+            "only the years before it.</p>"
             + _player_accuracy_section(scored)
             + "<h3>Roster by roster: unproven.</h3>"
             "<p>Run the whole page on a past season's draft-day rosters, with only the "

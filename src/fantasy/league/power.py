@@ -21,8 +21,12 @@ Each simulated season:
      one more for finishing in the top half, which is how this league scores it.
   5. Fourteen weeks, then six playoff teams, then a bracket.
 
-What comes out is a distribution — projected wins, points, playoff odds, title
-odds — and none of it has looked at where anybody was drafted.
+What comes out is a distribution — projected wins, points, playoff odds,
+title odds. Player values anchor on the consensus ADP board with the usage
+model as minority partner (fantasy.projections tells that story, including
+why the anchor won the argument); what this module adds is everything a list
+of player values cannot say — byes, injuries, depth, and a legal lineup every
+week against the real schedule.
 
 Once the season starts the simulation stops guessing at weeks that have
 happened: played weeks carry each team's actual score, and only the weeks
