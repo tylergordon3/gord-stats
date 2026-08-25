@@ -15,7 +15,7 @@ main() {
   cd "$(git rev-parse --show-toplevel)"
 
   local VENV="$PWD/.venv"
-  local TASKS="${TASKS:-wnba,fantasy,cfb}"
+  local TASKS="${TASKS:-wnba,fantasy,cfb,cbb_power}"
   local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
   export MPLBACKEND="${MPLBACKEND:-Agg}"
 
@@ -31,7 +31,7 @@ main() {
   # shellcheck source=/dev/null
   . "$SECRETS"
   set +o allexport
-  TASKS="${TASKS:-wnba,fantasy,cfb}"
+  TASKS="${TASKS:-wnba,fantasy,cfb,cbb_power}"
 
   [ -n "${CLOUDFLARE_API_TOKEN:-}" ] || {
     echo "❌ CLOUDFLARE_API_TOKEN not set — wrangler can't deploy unattended."

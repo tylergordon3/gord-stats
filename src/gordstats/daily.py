@@ -89,6 +89,19 @@ def _cbb() -> None:
     rc.main(womens, "W")
 
 
+def _cbb_power() -> None:
+    """Rebuild the CBB power rankings page (docs/cbb/power/).
+
+    Its own task rather than part of _cbb: that one refuses to run outside
+    the basketball season, and this page is most alive before it - Torvik's
+    preseason projections move all autumn as rosters settle.
+    """
+    from cbb.render import render_power
+
+    render_power.trank(refresh=True)
+    render_power.generate()
+
+
 def _fantasy() -> None:
     """Refresh the fantasy football data and rebuild its pages.
 
@@ -121,6 +134,7 @@ TASKS = {
     "cbb": _cbb,
     "fantasy": _fantasy,
     "cfb": _cfb,
+    "cbb_power": _cbb_power,
 }
 
 

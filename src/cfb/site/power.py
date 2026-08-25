@@ -9,6 +9,10 @@ columns are shown: the FPI value and the projected record. The API carries
 a dozen more unlabelled figures per team; naming them by guesswork is how a
 "win conference" column ends up holding playoff odds.
 
+Beside the computer number: the AP poll where one exists for this season
+(the human column), and Move columns against the snapshot archive
+(gordstats.rankmoves) once it has more than one build in it.
+
     python -m cfb.site.power             # cached JSON if fresh
     python -m cfb.site.power --refresh
 """
@@ -17,13 +21,18 @@ import json
 import time
 from datetime import datetime
 
+import pandas as pd
 import requests
 
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import write_page
+from gordstats import rankmoves
 
 _URL = ("https://site.web.api.espn.com/apis/fitt/v3/sports/football/"
         "college-football/powerindex")
+_AP_URL = ("https://site.api.espn.com/apis/site/v2/sports/football/"
+           "college-football/rankings")
+HISTORY_DIR = DATA_DIR / "power_history" / str(SEASON)
 # Same no-UA convention as cfb.espn: ESPN's edge 403s a browser UA coming
 # from a non-browser TLS stack, and answers requests' own UA normally.
 _HEADERS = {}
@@ -45,6 +54,7 @@ table.cfb-power img{width:20px;height:20px;vertical-align:-4px;margin-right:6px}
 .power-wrap{overflow:auto;max-height:calc(100vh - 170px);border:1px solid #e5e7eb;
   border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,.05)}
 .power-note{font-size:13px;color:#4a5a68;margin:6px 0 10px}
+""" + rankmoves.CSS + """
 @media (max-width:600px){
   table.cfb-power{font-size:13px}
   table.cfb-power td{padding:5px 7px}
@@ -88,6 +98,36 @@ def fpi(refresh: bool = False) -> dict:
     return data
 
 
+def ap_poll(refresh: bool = False):
+    """({espn team id: AP rank}, poll season year), or (None, None)."""
+    cache = DATA_DIR / "ap.json"
+    fresh = cache.exists() and (time.time() - cache.stat().st_mtime) < MAX_AGE_HOURS * 3600
+    data = None
+    if cache.exists() and (fresh and not refresh):
+        data = json.loads(cache.read_text(encoding="utf-8"))
+    else:
+        try:
+            r = requests.get(_AP_URL, headers=_HEADERS, timeout=_TIMEOUT)
+            r.raise_for_status()
+            data = r.json()
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_text(json.dumps(data), encoding="utf-8")
+        except Exception as exc:
+            if cache.exists():
+                print(f"  ! AP fetch failed ({exc}); using the cached copy")
+                data = json.loads(cache.read_text(encoding="utf-8"))
+            else:
+                print(f"  ! AP poll unavailable ({exc}); page renders without it")
+    for poll in (data or {}).get("rankings", []):
+        if poll.get("name") != "AP Top 25":
+            continue
+        season = (poll.get("season") or {}).get("year")
+        ranks = {str((r.get("team") or {}).get("id")): int(r["current"])
+                 for r in poll.get("ranks", []) if r.get("current")}
+        return (ranks or None), season
+    return None, None
+
+
 def _rows(data: dict) -> list:
     """(name, logo, fpi, proj_w, proj_l) per team, best first.
 
@@ -110,6 +150,7 @@ def _rows(data: dict) -> list:
             continue
         logos = team.get("logos") or []
         out.append({
+            "id": str(team.get("id")),
             "name": team.get("displayName") or team.get("nickname"),
             "logo": logos[0]["href"] if logos else None,
             "fpi": value, "pw": proj_w, "pl": proj_l,
@@ -123,27 +164,60 @@ def body() -> str:
     season = (data.get("requestedSeason") or {}).get("year") or SEASON
     stamp = datetime.fromtimestamp(_cache_path().stat().st_mtime).strftime("%b %-d")
 
+    ap_ranks, ap_season = ap_poll()
+    show_ap = bool(ap_ranks) and ap_season == season
+
+    moves = rankmoves.movement(HISTORY_DIR)
+    show_move = "prev" in moves
+    show_week = "prev7" in moves and moves.get("prev7_at") != moves.get("prev_at")
+
     rows = []
+    ranks_now = {}
     for rank, t in enumerate(teams, 1):
+        ranks_now[t["id"]] = rank
         logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
+        ap = ap_ranks.get(t["id"]) if show_ap else None
+        move = (moves["prev"].get(t["id"]) - rank
+                if show_move and t["id"] in moves["prev"].index else None)
+        week = (moves["prev7"].get(t["id"]) - rank
+                if show_week and t["id"] in moves["prev7"].index else None)
         rows.append(
             f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
-            f"<td>{rank}</td><td class='pwr-team'>{logo}{t['name']}</td>"
-            f"<td>{t['fpi']:+.1f}</td><td>{t['pw']:.1f}-{t['pl']:.1f}</td></tr>")
+            f"<td>{rank}</td>"
+            + (f"<td>{rankmoves.cell(move)}</td>" if show_move else "")
+            + (f"<td>{rankmoves.cell(week)}</td>" if show_week else "")
+            + f"<td class='pwr-team'>{logo}{t['name']}</td>"
+            + (f"<td>{'' if ap is None else ap}</td>" if show_ap else "")
+            + f"<td>{t['fpi']:+.1f}</td><td>{t['pw']:.1f}-{t['pl']:.1f}</td></tr>")
+
+    head = ("<th>RK</th>"
+            + ("<th>Move</th>" if show_move else "")
+            + ("<th>7d</th>" if show_week else "")
+            + "<th class='pwr-team'>Team</th>"
+            + ("<th>AP</th>" if show_ap else "")
+            + "<th>FPI</th><th>Proj W-L</th>")
+
+    move_note = ""
+    if show_move:
+        move_note = f" <strong>Move</strong> is places climbed since {moves['prev_at']:%b %-d}"
+        if show_week:
+            move_note += f"; <strong>7d</strong> since {moves['prev7_at']:%b %-d}"
+        move_note += "."
 
     intro = (
         f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "
-        f"Index</strong> for the {season} season, pulled {stamp}. FPI is expected "
-        f"point margin against an average FBS team on a neutral field; the projected "
-        f"record is ESPN's simulation of each team's actual schedule. Preseason these "
-        f"are projections; once games are played the same numbers update with "
-        f"results.</p>"
+        f"Index</strong> for the {season} season"
+        + (", with the <strong>AP poll</strong> beside it as the human column" if show_ap else "")
+        + f", pulled {stamp}. FPI is expected point margin against an average FBS team "
+        f"on a neutral field; the projected record is ESPN's simulation of each team's "
+        f"actual schedule. Preseason these are projections; once games are played the "
+        f"same numbers update with results.{move_note}</p>"
         "<p class='power-note'>Top 25 highlighted.</p>")
 
+    rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now))
     return (_CSS + intro
-            + "<div class='power-wrap'><table class='cfb-power'><thead><tr>"
-            + "<th>RK</th><th class='pwr-team'>Team</th><th>FPI</th><th>Proj W-L</th>"
-            + f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
+            + f"<div class='power-wrap'><table class='cfb-power'><thead><tr>{head}</tr></thead>"
+            + f"<tbody>{''.join(rows)}</tbody></table></div>")
 
 
 def generate():
@@ -157,4 +231,5 @@ if __name__ == "__main__":
     args = p.parse_args()
     if args.refresh:
         fpi(refresh=True)
+        ap_poll(refresh=True)
     generate()
