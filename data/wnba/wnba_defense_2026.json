@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-24T21:50:04.901306-04:00",
+ "updated": "2026-08-24T22:50:03.931462-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -33358,6 +33358,145 @@
       "Jordan Harrison",
       "G",
       9.0
+     ]
+    ]
+   }
+  },
+  "401857171": {
+   "date": "2026-08-25",
+   "allowed": {
+    "GS": {
+     "G": 61.0,
+     "FC": 77.0
+    },
+    "MIN": {
+     "G": 73.0,
+     "FC": 105.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      1.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      30.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      28.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      18.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      39.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      4.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      24.0
+     ],
+     [
+      "Nadia Fingall",
+      "FC",
+      0.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      25.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      4.0
+     ],
+     [
+      "Miela Sowah",
+      "G",
+      0.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      5.0
+     ],
+     [
+      "Juste Jocyte",
+      "G",
+      0.0
+     ]
+    ],
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      25.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      19.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      22.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      14.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      18.0
+     ],
+     [
+      "Nia Coffey",
+      "FC",
+      13.0
+     ],
+     [
+      "Chloe Bibby",
+      "FC",
+      6.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      11.0
+     ],
+     [
+      "Antonia Delaere",
+      "FC",
+      2.0
+     ],
+     [
+      "Anastasiia Olairi Kosu",
+      "FC",
+      1.0
+     ],
+     [
+      "Eliska Joklova",
+      "G",
+      7.0
      ]
     ]
    }
