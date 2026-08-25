@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-24T23:45:08.462675-04:00",
+ "updated": "2026-08-25T05:37:06.190077-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -33497,6 +33497,110 @@
       "Eliska Joklova",
       "G",
       7.0
+     ]
+    ]
+   }
+  },
+  "401857172": {
+   "date": "2026-08-25",
+   "allowed": {
+    "ATL": {
+     "G": 44.0,
+     "FC": 109.0
+    },
+    "LA": {
+     "G": 91.0,
+     "FC": 74.0
+    }
+   },
+   "players": {
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      23.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      46.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      31.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      19.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      31.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      5.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      3.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      7.0
+     ]
+    ],
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      43.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      23.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      7.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      25.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      7.0
+     ],
+     [
+      "Cameron Brink",
+      "FC",
+      42.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      1.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      4.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      1.0
      ]
     ]
    }
