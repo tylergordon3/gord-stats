@@ -10,7 +10,7 @@ works for the NFL section); gordstats.daily's cfb task calls build_all().
 import argparse
 import traceback
 
-PAGES = ["home", "draft", "schedule", "league"]
+PAGES = ["home", "draft", "schedule", "league", "power"]
 
 
 def build_all(refresh: bool = False) -> list[str]:

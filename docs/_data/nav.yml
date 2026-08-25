@@ -69,6 +69,11 @@ cbb:
     icon: "📜"
     url: /men/history.html
 
+  - title: Power Rankings
+    short: Power
+    icon: "⚡"
+    url: /cbb/power/
+
 
 wnba:
   - title: Dashboard
@@ -125,3 +130,8 @@ cfb:
     short: Schedule
     icon: "📅"
     url: /cfb/schedule/
+
+  - title: Power Rankings
+    short: Power
+    icon: "⚡"
+    url: /cfb/power/
