@@ -6453,7 +6453,7 @@
           "id": 25035,
           "home": "MIN",
           "away": "GS",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-24"
@@ -6464,7 +6464,7 @@
           "id": 25035,
           "home": "MIN",
           "away": "GS",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-24"
@@ -6475,7 +6475,7 @@
           "id": 25036,
           "home": "LA",
           "away": "ATL",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-24"
@@ -6486,7 +6486,7 @@
           "id": 25036,
           "home": "LA",
           "away": "ATL",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-24"
