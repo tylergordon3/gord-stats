@@ -29,6 +29,7 @@ Exit codes:
 import argparse
 import json
 import sys
+import time
 from datetime import datetime
 
 import requests
@@ -40,15 +41,28 @@ from fantasy.league import weekly_points
 STATE_PATH = paths.ROOT / ".fantasy_live_state.json"
 SLEEPER_API = "https://api.sleeper.app/v1"
 _TIMEOUT = 20
+_ATTEMPTS = 3
 
 # Pages rebuilt when the gate opens, by their rebuild.PAGES slug.
 PAGES = ["power"]
 
 
-def _get(url):
-    r = requests.get(url, timeout=_TIMEOUT)
-    r.raise_for_status()
-    return r.json()
+def _get(url, attempts=_ATTEMPTS):
+    """GET, retrying a couple of times before giving up.
+
+    Sleeper hands out the occasional spurious 404 on a URL that answered a
+    minute earlier and answers again a minute later, so one bad response is
+    not news.
+    """
+    for attempt in range(1, attempts + 1):
+        try:
+            r = requests.get(url, timeout=_TIMEOUT)
+            r.raise_for_status()
+            return r.json()
+        except requests.RequestException:
+            if attempt == attempts:
+                raise
+            time.sleep(2 * attempt)
 
 
 def _load_state() -> dict:
@@ -67,9 +81,19 @@ def _save_state(state: dict):
 
 def week_scored(week: int, league_id: str = UPCOMING_LEAGUE_ID) -> bool:
     """True once every team has a score for `week` - Sleeper shows Thursday's
-    points on a week that is otherwise still to be played."""
-    rows = [r for r in (_get(f"{SLEEPER_API}/league/{league_id}/matchups/{week}") or [])
-            if r.get("matchup_id") is not None]
+    points on a week that is otherwise still to be played.
+
+    A Sleeper that will not answer is "not yet", not a failure. On 2026-08-26
+    a single 404 here took the whole live tick down and mailed an alert, and
+    the next tick ten minutes later got a 200 from the same URL. A week that
+    really has finished is published by the next tick, or by the daily job.
+    """
+    try:
+        rows = _get(f"{SLEEPER_API}/league/{league_id}/matchups/{week}") or []
+    except requests.RequestException as exc:  # Sleeper down, or offline
+        print(f"  sleeper: {exc}")
+        return False
+    rows = [r for r in rows if r.get("matchup_id") is not None]
     return bool(rows) and all(float(r.get("points") or 0) > 0 for r in rows)
 
 
