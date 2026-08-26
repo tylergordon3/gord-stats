@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-25T20:40:05.519861-04:00",
+ "updated": "2026-08-25T21:50:03.763010-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -33601,6 +33601,130 @@
       "Chance Gray",
       "G",
       1.0
+     ]
+    ]
+   }
+  },
+  "401857173": {
+   "date": "2026-08-25",
+   "allowed": {
+    "CHI": {
+     "G": 87.0,
+     "FC": 87.0
+    },
+    "CON": {
+     "G": 87.0,
+     "FC": 83.0
+    }
+   },
+   "players": {
+    "CHI": [
+     [
+      "Azura Stevens",
+      "FC",
+      29.0
+     ],
+     [
+      "Kamilla Cardoso",
+      "FC",
+      42.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      25.0
+     ],
+     [
+      "Natasha Cloud",
+      "G",
+      11.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      8.0
+     ],
+     [
+      "Elizabeth Williams",
+      "FC",
+      12.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      5.0
+     ],
+     [
+      "DiJonai Carrington",
+      "G",
+      1.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      11.0
+     ],
+     [
+      "Aicha Coulibaly",
+      "G",
+      15.0
+     ],
+     [
+      "Gabriela Jaquez",
+      "G",
+      11.0
+     ]
+    ],
+    "CON": [
+     [
+      "Aaliyah Edwards",
+      "FC",
+      39.0
+     ],
+     [
+      "Diamond Miller",
+      "FC",
+      33.0
+     ],
+     [
+      "Kennedy Burke",
+      "G",
+      36.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      19.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      18.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      10.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      5.0
+     ],
+     [
+      "Hailey Van Lith",
+      "G",
+      6.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      0.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      8.0
      ]
     ]
    }
