@@ -6567,7 +6567,7 @@
           "id": 25040,
           "home": "CON",
           "away": "GS",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-26"
@@ -6578,7 +6578,7 @@
           "id": 25040,
           "home": "CON",
           "away": "GS",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-26"
@@ -6589,7 +6589,7 @@
           "id": 25041,
           "home": "SEA",
           "away": "TOR",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-26"
@@ -6600,7 +6600,7 @@
           "id": 25041,
           "home": "SEA",
           "away": "TOR",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-08-26"
