@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-26T20:40:03.494908-04:00",
+ "updated": "2026-08-26T21:40:03.920959-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -33988,6 +33988,150 @@
       "Lexi Held",
       "G",
       5.0
+     ]
+    ]
+   }
+  },
+  "401857176": {
+   "date": "2026-08-26",
+   "allowed": {
+    "GS": {
+     "G": 71.0,
+     "FC": 60.0
+    },
+    "CON": {
+     "G": 84.0,
+     "FC": 111.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      4.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      20.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      14.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      20.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      23.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      12.0
+     ],
+     [
+      "Ashten Prechtel",
+      "FC",
+      11.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      23.0
+     ],
+     [
+      "Nadia Fingall",
+      "FC",
+      7.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      10.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      27.0
+     ],
+     [
+      "Miela Sowah",
+      "G",
+      3.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      16.0
+     ],
+     [
+      "Juste Jocyte",
+      "G",
+      5.0
+     ]
+    ],
+    "CON": [
+     [
+      "Aaliyah Edwards",
+      "FC",
+      19.0
+     ],
+     [
+      "Diamond Miller",
+      "FC",
+      14.0
+     ],
+     [
+      "Kennedy Burke",
+      "G",
+      7.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      9.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      27.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      6.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      16.0
+     ],
+     [
+      "Rayah Marshall",
+      "FC",
+      5.0
+     ],
+     [
+      "Hailey Van Lith",
+      "G",
+      13.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      8.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      7.0
      ]
     ]
    }
