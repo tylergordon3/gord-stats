@@ -147,20 +147,50 @@ def board(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.Dat
 # --------------------------------------------------------------------------- #
 #
 # Every board pull is archived to data/cfb/adp_history/, and movement is the
-# current ADP against the newest archived snapshot old enough to serve as the
+# current board against the newest archived snapshot old enough to serve as the
 # window's baseline. Same idea as the NFL board's tracker; single-source, so
-# the delta is Yahoo's average_pick with itself over time.
+# every delta is Yahoo's own numbers against themselves over time - which is
+# also why more than one of them is worth showing (see METRICS).
 
 # The "since last update" baseline must be at least this old, so repeated
 # refreshes in one sitting don't collapse the Move column to zeros. Shorter
 # than the NFL board's 6h because this board refreshes once a day, not thrice.
 MIN_SNAPSHOT_HOURS = 2
 
+# Windows are tried in this order and de-duplicated by baseline snapshot: early
+# in the archive's life "Last 24 hours" and "Since last update" resolve to the
+# same pull, and two buttons showing identical numbers is worse than one.
+# "all" walks to the oldest snapshot instead of the newest eligible one.
 WINDOWS = {
     "last": {"label": "Since last update", "hours": None},
     "1d": {"label": "Last 24 hours", "hours": 24},
     "3d": {"label": "Last 3 days", "hours": 72},
     "7d": {"label": "Last 7 days", "hours": 168},
+    "14d": {"label": "Last 2 weeks", "hours": 336},
+    "all": {"label": "Since first pull", "hours": None, "oldest": True},
+}
+
+# Three different things can move, and a board watcher wants all of them: the
+# ADP itself, Yahoo's own rank order (which covers the undrafted tail the ADP
+# leaves blank), and the share of leagues actually taking the player. Signed so
+# positive always means rising - ADP and rank fall as a player climbs, draft
+# share rises - so one set of arrows reads the same way for all three.
+METRICS = {
+    "adp": {"label": "ADP", "short": "ADP \u0394", "col": "adp",
+            "min": 0.5, "dec": 1, "suffix": "", "unit": "picks",
+            "tip": "Picks of ADP gained (\u25b2 = going earlier)",
+            "invert": True, "scale": 1},
+    "rank": {"label": "Board rank", "short": "Rank \u0394", "col": "rank",
+             "min": 1, "dec": 0, "suffix": "", "unit": "spots",
+             "tip": "Spots gained in Yahoo\u2019s rank order (\u25b2 = climbing)",
+             "invert": True, "scale": 1},
+    "pct": {"label": "Draft share", "short": "Draft% \u0394", "col": "pct_drafted",
+            # Yahoo publishes percent_drafted to the whole point, so a
+            # decimal here would only ever be trailing zeros.
+            "min": 1, "dec": 0, "suffix": "%", "unit": "points of draft share",
+            "tip": "Change in the share of leagues drafting him "
+                   "(\u25b2 = taken more often)",
+            "invert": False, "scale": 100},
 }
 
 
@@ -174,27 +204,47 @@ def _snapshots() -> list[tuple]:
     return out
 
 
-def movement(current: pd.DataFrame) -> dict:
-    """ADP drift per window: {key: {"stamp": baseline UTC, "moves": Series}}.
+def _baseline(snaps: list, now: datetime, spec: dict):
+    """The (stamp, path) a window measures against, or None if the archive
+    isn't deep enough for it yet."""
+    age = spec["hours"] if spec["hours"] is not None else MIN_SNAPSHOT_HOURS
+    eligible = [s for s in snaps if s[0] <= now - timedelta(hours=age)]
+    if not eligible:
+        return None
+    return eligible[0] if spec.get("oldest") else eligible[-1]
 
-    moves is keyed by yahoo_id, value = baseline ADP - current ADP, so
-    positive = going earlier = rising. Windows with no old-enough snapshot are
-    simply absent - the page renders whatever windows the history can support.
+
+def _delta(base: pd.DataFrame, cur: pd.DataFrame, spec: dict) -> pd.Series:
+    """One metric's drift, positive = rising, keyed by yahoo_id."""
+    col = spec["col"]
+    if col not in base.columns or col not in cur.columns:
+        return pd.Series(dtype=float)
+    b, c = base[col].astype(float), cur[col].astype(float)
+    d = (b - c) if spec["invert"] else (c - b)
+    return (d * spec["scale"]).dropna().round(2)
+
+
+def movement(current: pd.DataFrame) -> dict:
+    """Board drift per window: {key: {"stamp": baseline UTC, "moves": {metric: Series}}}.
+
+    Each metric's Series is keyed by yahoo_id and signed so positive = rising
+    (see METRICS). Windows with no old-enough snapshot - or whose baseline
+    another window already used - are simply absent; the page renders whatever
+    windows the history can support.
     """
     now = board_updated() or datetime.now(timezone.utc)
-    cur = current.set_index("yahoo_id")["adp"]
-    out = {}
+    cur = current.drop_duplicates("yahoo_id").set_index("yahoo_id")
+    snaps = _snapshots()
+    out, used = {}, set()
     for key, spec in WINDOWS.items():
-        age = spec["hours"] if spec["hours"] is not None else MIN_SNAPSHOT_HOURS
-        eligible = [(t, p) for t, p in _snapshots()
-                    if t <= now - timedelta(hours=age)]
-        if not eligible:
+        pick = _baseline(snaps, now, spec)
+        if pick is None or pick[1] in used:
             continue
-        stamp, path = eligible[-1]
-        base = (pd.read_parquet(path)
-                .drop_duplicates("yahoo_id").set_index("yahoo_id")["adp"])
-        moves = (base - cur).dropna()
-        out[key] = {"stamp": stamp, "moves": moves}
+        stamp, path = pick
+        used.add(path)
+        base = pd.read_parquet(path).drop_duplicates("yahoo_id").set_index("yahoo_id")
+        out[key] = {"stamp": stamp,
+                    "moves": {m: _delta(base, cur, s) for m, s in METRICS.items()}}
     return out
 
 

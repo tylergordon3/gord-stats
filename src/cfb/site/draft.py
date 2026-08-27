@@ -25,14 +25,22 @@ from cfb.site import write_page
 POSITIONS = ["QB", "RB", "WR", "TE", "DEF"]
 
 # Row layout of the embedded JSON (arrays, not objects, to keep the page small).
-# Movement columns are appended after these, one per window the history can
-# support (see yahoo.movement) - their indices ride in the CFG.moves map.
+# Movement columns are appended after these, one per (window, metric) pair the
+# history can support (see yahoo.WINDOWS and yahoo.METRICS) - their indices ride
+# in the CFG.moves map, and the controls decide which one is live.
 _FIELDS = ["player", "pos", "team", "team_full", "bye", "adp", "avg_round",
            "pct_drafted", "rank", "pos_rank"]
 
-# Picks of ADP drift before a player counts as having moved at all.
-MIN_MOVE = 0.5
+# How long a movers card is, and the lengths offered above it.
 MOVERS_SHOWN = 8
+MOVERS_COUNTS = [5, 8, 15, 25]
+
+# Which slice of the board a movers card is drawn from. "adp" is the drafted
+# pool (everyone Yahoo publishes an average pick for); a number is a board-rank
+# depth; 0 is the whole 450-deep pull. Depth matters most for the rank measure,
+# where the undrafted tail shuffles by dozens of spots on noise alone.
+MOVER_POOLS = [("adp", "Drafted pool"), ("100", "Top 100"),
+               ("200", "Top 200"), ("0", "Everyone")]
 
 # The board CSS is a slimmed copy of the NFL board's (fantasy.site.upcoming):
 # same class names, so the chips / search / pills pick up their shared styling
@@ -75,8 +83,10 @@ table.adp-table td.avg{font-weight:700}
 .movers li{padding:2px 0;line-height:1.45}
 .movers .mv-pos{color:#4a5a68;font-size:12px}
 .movers .mv-num{font-family:monospace;white-space:nowrap}
+.movers .mv-ctx{color:#4a5a68;font-size:12px;font-family:monospace;white-space:nowrap}
 .movers .mover-none{padding:10px;font-size:13px;color:#4a5a68}
-.movers-window[hidden]{display:none}
+.movers .mover-head .mv-what{float:right;font-weight:400;text-transform:none;
+  letter-spacing:0;color:#4a5a68}
 .mv-since{font-size:12px;color:#4a5a68;margin:0 0 6px}
 .cfb-league{font-size:14px;color:#334155;border:1px solid #e5e7eb;border-radius:12px;
   padding:10px 14px;background:#f8fafc;margin:10px 0}
@@ -112,7 +122,8 @@ table.adp-table td.avg{font-weight:700}
   .movers .mover-card{background:#1b2540;border-color:#2b3852}
   .movers .mover-head{background:#223052;color:#dde5ef}
   .movers ol,.movers li{color:#dde5ef}
-  .movers .mover-none,.movers .mv-pos,.mv-since{color:#aab7c9}
+  .movers .mover-none,.movers .mv-pos,.movers .mv-ctx,.mv-since{color:#aab7c9}
+  .movers .mover-head .mv-what{color:#aab7c9}
 }
 @media (max-width:600px){
   .movers{gap:8px}
@@ -127,14 +138,20 @@ def _cell(v):
     return None if pd.isna(v) else float(v)
 
 
-def _controls() -> str:
+def _controls(has_movement: bool) -> str:
     buttons = "".join(
         f'<button class="adp-pos{" active" if p == "ALL" else ""}" data-pos="{p}">{p}</button>'
         for p in ["ALL"] + POSITIONS)
     limits = "".join(
         f'<option value="{v}"{" selected" if v == 100 else ""}>{label}</option>'
         for v, label in [(50, "Top 50"), (100, "Top 100"), (200, "Top 200"), (0, "All")])
-    return (f'<div class="adp-controls"><span class="adp-label">Position:</span>{buttons}</div>'
+    # Only offered once there is a baseline to measure against - otherwise the
+    # filter would empty the board.
+    movers_btn = ('<button id="adp-movers" class="adp-toggle" '
+                  'title="Only players who moved over the selected window">'
+                  "Movers only</button>" if has_movement else "")
+    return (f'<div class="adp-controls"><span class="adp-label">Position:</span>{buttons}'
+            f"{movers_btn}</div>"
             '<div class="adp-controls">'
             '<input id="adp-search" type="search" placeholder="Search player or school...">'
             f'<select id="adp-limit">{limits}</select>'
@@ -155,30 +172,43 @@ _HEADERS = [
 
 
 def _header(move_col: int | None) -> str:
+    """The board's header. The Move column's label and tooltip are rewritten by
+    the script whenever the measure changes, so they start blank-ish here."""
     cells = "".join(
         f'<th{" class=" + chr(34) + cls + chr(34) if cls else ""} data-col="{col}" '
         f'title="{tip}">{label}</th>'
         for cls, label, col, tip in _HEADERS)
     if move_col is not None:
-        cells += (f'<th id="adp-move" data-col="{move_col}" '
-                  'title="ADP gained over the selected window (▲ = going earlier)">Move</th>')
+        cells += f'<th id="adp-move" data-col="{move_col}">Move</th>'
     return f'<thead id="adp-head"><tr>{cells}</tr></thead>'
 
 
-def _table_js(rows: list, moves: dict[str, int], default_win: str | None) -> str:
-    cfg = json.dumps({"rows": rows, "teams": LEAGUE_TEAMS, "moves": moves,
-                      "defaultWin": default_win, "minMove": MIN_MOVE},
-                     separators=(",", ":"))
+def _table_js(rows: list, cfg: dict) -> str:
+    payload = json.dumps({"rows": rows, "teams": LEAGUE_TEAMS, **cfg},
+                         separators=(",", ":"))
     return """{% raw %}<script>
 (function(){
-var CFG=""" + cfg + """;
-var D=CFG.rows, TEAMS=CFG.teams, MOVES=CFG.moves, MINMOVE=CFG.minMove;
+var CFG=""" + payload + """;
+var D=CFG.rows, TEAMS=CFG.teams, MOVES=CFG.moves, MET=CFG.metrics;
 var ADP=5, RD=6, PCT=7, RANK=8, POSRK=9;
 var HEADS=document.querySelectorAll('#adp-head th');
 var MOVEHEAD=document.getElementById('adp-move');
-var sortCol=RANK, asc=true, pos='ALL', query='', limit=100;
-// One Move column, pointed at whichever window the buttons above have selected.
-var window_=CFG.defaultWin, MOVE=window_?MOVES[window_]:-1;
+var sortCol=RANK, asc=true, pos='ALL', query='', limit=100, moversOnly=false;
+// Exactly one movement column is live at a time: the (window, measure) pair the
+// buttons above the cards have selected. The cards and the table's Move column
+// both read it, so the two halves of the page can never disagree.
+var win=CFG.defaultWin, metric=CFG.defaultMetric;
+var mvPos='ALL', mvPool=CFG.pool, mvCount=CFG.count;
+
+function spec(){return MET[metric];}
+function moveCol(){
+  var m=win?MOVES[win]:null;
+  return m&&m[metric]!==undefined?m[metric]:-1;
+}
+function stampFor(k){
+  for(var i=0;i<CFG.wins.length;i++) if(CFG.wins[i].key===k) return CFG.wins[i].stamp;
+  return '';
+}
 
 function fmt(v){return v===null||v===undefined?'-':v.toFixed(1);}
 function pct(v){return v===null||v===undefined?'-':Math.round(v*100)+'%';}
@@ -187,12 +217,15 @@ function slot(rank){
   return rd+'.'+(pk<10?'0':'')+pk+' <span class="slot-ovr">('+rank+')</span>';
 }
 
-// Move is baseline ADP minus current: positive = going earlier = rising.
+// Every measure is signed the same way: positive = rising, whichever way the
+// underlying number happens to run.
+function mvNum(v){var s=spec(); return Math.abs(v).toFixed(s.dec)+s.suffix;}
 function moveCell(v){
+  var s=spec();
   if(v===null||v===undefined) return '<td class="adp-flat">-</td>';
-  if(Math.abs(v)<MINMOVE) return '<td class="adp-flat">&ndash;</td>';
+  if(Math.abs(v)<s.min) return '<td class="adp-flat">&ndash;</td>';
   return '<td class="'+(v>0?'adp-up':'adp-down')+'">'
-        +(v>0?'\\u25B2 ':'\\u25BC ')+Math.abs(v).toFixed(1)+'</td>';
+        +(v>0?'\u25B2 ':'\u25BC ')+mvNum(v)+'</td>';
 }
 
 function compare(a,b){
@@ -210,15 +243,17 @@ function compare(a,b){
 }
 
 function filtered(){
-  var q=query.toLowerCase();
+  var q=query.toLowerCase(), col=moveCol(), s=spec();
   return D.filter(function(r){
     if(pos!=='ALL'&&r[1]!==pos) return false;
     if(q&&(r[0]+' '+(r[2]||'')+' '+(r[3]||'')).toLowerCase().indexOf(q)<0) return false;
+    if(moversOnly&&(col<0||r[col]===null||Math.abs(r[col])<s.min)) return false;
     return true;
   }).sort(compare);
 }
 
 function cells(r){
+  var col=moveCol();
   var html='<td class="pick">'+slot(r[8])+'</td>'
     +'<td class="name">'+r[0]+'</td>'
     +'<td><span class="pos-tag pos-'+r[1]+'">'+r[1]+r[9]+'</span></td>'
@@ -227,7 +262,7 @@ function cells(r){
     +'<td class="avg">'+fmt(r[5])+'</td>'
     +'<td>'+fmt(r[6])+'</td>'
     +'<td>'+pct(r[7])+'</td>';
-  if(MOVE>=0) html+=moveCell(r[MOVE]);
+  if(col>=0) html+=moveCell(r[col]);
   return html;
 }
 
@@ -237,7 +272,8 @@ function draw(){
     ? shown.map(function(r){return '<tr>'+cells(r)+'</tr>';}).join('')
     : '<tr><td class="adp-empty" colspan="'+HEADS.length+'">No players match.</td></tr>';
   document.getElementById('adp-count').textContent =
-    'Showing '+shown.length+' of '+rows.length+' players'+(pos==='ALL'?'':' at '+pos)+'.';
+    'Showing '+shown.length+' of '+rows.length+(moversOnly?' movers':' players')
+    +(pos==='ALL'?'':' at '+pos)+'.';
   HEADS.forEach(function(th){
     var on = +th.dataset.col===sortCol;
     th.classList.toggle('sorted',on);
@@ -245,11 +281,67 @@ function draw(){
   });
 }
 
+// --- movers cards ---------------------------------------------------------
+// Drawn here rather than baked in at build time, because the pair of cards is
+// now one cell of a window x measure x position x pool x length grid, and
+// shipping every combination as HTML would be most of the page.
+
+function inPool(r){
+  if(mvPool==='adp') return r[ADP]!==null;
+  var depth=+mvPool;
+  return depth?r[RANK]<=depth:true;
+}
+
+// What the number moved from and to, in the measure's own units.
+function ctx(r,v){
+  if(metric==='adp'){
+    if(r[ADP]===null) return '';
+    return 'ADP '+r[ADP].toFixed(1)+' \u2190 '+(r[ADP]+v).toFixed(1);
+  }
+  if(metric==='rank') return '#'+r[RANK]+' \u2190 #'+Math.round(r[RANK]+v);
+  if(r[PCT]===null) return '';
+  return Math.round(r[PCT]*100)+'% \u2190 '+Math.round(r[PCT]*100-v)+'%';
+}
+
+function moverList(rising){
+  var col=moveCol(), s=spec();
+  if(col<0) return '<div class="mover-none">No baseline for this window yet.</div>';
+  var mv=D.filter(function(r){
+    if(mvPos!=='ALL'&&r[1]!==mvPos) return false;
+    if(!inPool(r)) return false;
+    var v=r[col];
+    return v!==null&&v!==undefined&&(rising?v>=s.min:v<=-s.min);
+  }).sort(function(a,b){return rising?b[col]-a[col]:a[col]-b[col];}).slice(0,mvCount);
+  if(!mv.length){
+    return '<div class="mover-none">No one has '+(rising?'risen':'fallen')+' '
+      +s.min+'+ '+s.unit+' here over this window.</div>';
+  }
+  return '<ol>'+mv.map(function(r){
+    var v=r[col], cls=rising?'adp-up':'adp-down', arrow=rising?'\u25B2':'\u25BC';
+    var c=ctx(r,v);
+    return '<li>'+r[0]+' <span class="mv-pos">('+r[1]+' \u00b7 '+(r[2]||'?')+')</span> '
+      +'<span class="mv-num '+cls+'">'+arrow+' '+mvNum(v)+'</span>'
+      +(c?' <span class="mv-ctx">'+c+'</span>':'')+'</li>';
+  }).join('')+'</ol>';
+}
+
+function drawMovers(){
+  var s=spec(), up=document.getElementById('mv-up');
+  if(!up) return;
+  up.innerHTML=moverList(true);
+  document.getElementById('mv-down').innerHTML=moverList(false);
+  document.querySelectorAll('.mv-what').forEach(function(e){e.textContent=s.label;});
+  document.getElementById('mv-since').innerHTML=
+    'Against the board pulled <b>'+stampFor(win)+'</b>. '+s.tip+'.';
+}
+
+// --- wiring ---------------------------------------------------------------
+
 HEADS.forEach(function(th){
   th.addEventListener('click',function(){
     var c=+th.dataset.col;
     // Drafted and Move read best biggest-first.
-    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==PCT&&c!==MOVE);}
+    if(c===sortCol){asc=!asc;} else {sortCol=c; asc=(c!==PCT&&c!==moveCol());}
     draw();
   });
 });
@@ -266,23 +358,54 @@ document.getElementById('adp-search').addEventListener('input',function(e){
 document.getElementById('adp-limit').addEventListener('change',function(e){
   limit=+e.target.value; draw();
 });
-// The movers cards and the table share one window: picking one swaps the
-// cards and re-points the Move column - header, numbers, and any sort
-// already running on it - at that window's baseline.
+var moversBtn=document.getElementById('adp-movers');
+if(moversBtn) moversBtn.addEventListener('click',function(){
+  moversOnly=!moversOnly;
+  moversBtn.classList.toggle('active',moversOnly);
+  if(moversOnly&&moveCol()>=0){sortCol=moveCol(); asc=false;}   // biggest risers first
+  draw();
+});
+
+// Re-point the Move column - header, tooltip, numbers, and any sort already
+// running on it - after the window or the measure changes underneath it.
+function repoint(was){
+  var col=moveCol(), s=spec();
+  if(MOVEHEAD){
+    MOVEHEAD.dataset.col=col;
+    MOVEHEAD.textContent=s.short;
+    MOVEHEAD.title=s.tip;
+  }
+  if(sortCol===was) sortCol=col>=0?col:RANK;
+  draw(); drawMovers();
+}
+function pick(group,attr,value){
+  document.querySelectorAll(group).forEach(function(x){
+    x.classList.toggle('active',x.dataset[attr]===value);
+  });
+}
 document.querySelectorAll('.mv-win').forEach(function(b){
   b.addEventListener('click',function(){
-    var was=MOVE;
-    window_=b.dataset.win; MOVE=MOVES[window_];
-    document.querySelectorAll('.mv-win').forEach(function(x){x.classList.toggle('active',x===b);});
-    document.querySelectorAll('.movers-window').forEach(function(w){
-      w.hidden = w.dataset.win!==window_;
-    });
-    if(MOVEHEAD) MOVEHEAD.dataset.col=MOVE;
-    if(sortCol===was) sortCol=MOVE;
-    draw();
+    var was=moveCol(); win=b.dataset.win; pick('.mv-win','win',win); repoint(was);
   });
 });
+document.querySelectorAll('.mv-metric').forEach(function(b){
+  b.addEventListener('click',function(){
+    var was=moveCol(); metric=b.dataset.metric; pick('.mv-metric','metric',metric);
+    repoint(was);
+  });
+});
+// The card filters exist only when there is movement to show at all.
+function onSelect(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('change',function(e){fn(e.target.value); drawMovers();});
+}
+onSelect('mv-pos',function(v){mvPos=v;});
+onSelect('mv-pool',function(v){mvPool=v;});
+onSelect('mv-count',function(v){mvCount=+v;});
+
+if(MOVEHEAD){MOVEHEAD.textContent=spec().short; MOVEHEAD.title=spec().tip;}
 draw();
+drawMovers();
 })();
 </script>{% endraw %}"""
 
@@ -291,49 +414,46 @@ draw();
 # Movement tracker
 # --------------------------------------------------------------------------- #
 
-def _mover_list(df: pd.DataFrame, moves: pd.Series, rising: bool) -> str:
-    """One card's <ol>: the biggest movers in one direction, or a quiet note."""
-    mv = moves[moves >= MIN_MOVE] if rising else moves[moves <= -MIN_MOVE]
-    mv = mv.sort_values(ascending=not rising).head(MOVERS_SHOWN)
-    if mv.empty:
-        return ('<div class="mover-none">No one has '
-                + ("risen" if rising else "fallen")
-                + f" {MIN_MOVE:g}+ picks over this window.</div>")
-    info = df.set_index("yahoo_id")
-    items = []
-    for pid, delta in mv.items():
-        p = info.loc[pid]
-        arrow = "▲" if rising else "▼"
-        cls = "adp-up" if rising else "adp-down"
-        items.append(
-            f"<li>{p['player']} <span class='mv-pos'>({p['pos']} · {p['team']})</span> "
-            f"<span class='mv-num {cls}'>{arrow} {abs(delta):.1f}</span></li>")
-    return f"<ol>{''.join(items)}</ol>"
+def _buttons(cls: str, attr: str, items: list[tuple[str, str]], first: str) -> str:
+    return "".join(
+        f'<button class="{cls}{" active" if key == first else ""}" '
+        f'data-{attr}="{key}">{label}</button>'
+        for key, label in items)
 
 
-def _tracker(df: pd.DataFrame, movement: dict, win_keys: list[str]) -> str:
-    """Window buttons plus a risers/fallers card pair per window (one shown)."""
-    buttons = "".join(
-        f'<button class="mv-win{" active" if i == 0 else ""}" data-win="{k}">'
-        f"{yahoo.WINDOWS[k]['label']}</button>"
-        for i, k in enumerate(win_keys))
-    panes = []
-    for i, k in enumerate(win_keys):
-        stamp = (movement[k]["stamp"].astimezone(LEAGUE_TZ)
-                 .strftime("%b %-d, %-I:%M %p %Z"))
-        moves = movement[k]["moves"]
-        panes.append(
-            f'<div class="movers-window" data-win="{k}"{"" if i == 0 else " hidden"}>'
-            f'<p class="mv-since">Against the board pulled {stamp}. '
-            "▲ = moving up draft boards (ADP getting earlier).</p>"
-            '<div class="movers">'
-            '<div class="mover-card"><div class="mover-head">Risers</div>'
-            + _mover_list(df, moves, rising=True) + "</div>"
-            '<div class="mover-card"><div class="mover-head">Fallers</div>'
-            + _mover_list(df, moves, rising=False) + "</div>"
-            "</div></div>")
-    return ('<div class="adp-controls"><span class="adp-label">Movement:</span>'
-            f"{buttons}</div>" + "".join(panes))
+def _select(sid: str, label: str, items: list[tuple[str, str]], chosen: str) -> str:
+    opts = "".join(f'<option value="{v}"{" selected" if v == chosen else ""}>{t}</option>'
+                   for v, t in items)
+    return (f'<span class="adp-label">{label}</span>'
+            f'<select id="{sid}">{opts}</select>')
+
+
+def _tracker(win_keys: list[str], default_metric: str) -> str:
+    """The movement section's controls and its two empty cards. Every list the
+    cards can hold is a filter of the same embedded rows, so the markup here is
+    a shell and _table_js fills it - see the note above moverList()."""
+    windows = _buttons("mv-win", "win",
+                       [(k, yahoo.WINDOWS[k]["label"]) for k in win_keys], win_keys[0])
+    measures = _buttons("mv-metric", "metric",
+                        [(k, m["label"]) for k, m in yahoo.METRICS.items()],
+                        default_metric)
+    filters = (_select("mv-pos", "Position:",
+                       [("ALL", "All positions")] + [(p, p) for p in POSITIONS], "ALL")
+               + _select("mv-pool", "Pool:", MOVER_POOLS, MOVER_POOLS[0][0])
+               + _select("mv-count", "Show:",
+                         [(str(n), f"Top {n}") for n in MOVERS_COUNTS],
+                         str(MOVERS_SHOWN)))
+    card = ('<div class="mover-card"><div class="mover-head">{head}'
+            '<span class="mv-what"></span></div><div id="{cid}"></div></div>')
+    return (
+        f'<div class="adp-controls"><span class="adp-label">Window:</span>{windows}</div>'
+        f'<div class="adp-controls"><span class="adp-label">Measure:</span>{measures}</div>'
+        f'<div class="adp-controls">{filters}</div>'
+        '<p class="mv-since" id="mv-since"></p>'
+        '<div class="movers">'
+        + card.format(head="Risers", cid="mv-up")
+        + card.format(head="Fallers", cid="mv-down")
+        + "</div>")
 
 
 # --------------------------------------------------------------------------- #
@@ -421,20 +541,47 @@ def body() -> str:
 
     movement = yahoo.movement(df)
     win_keys = [k for k in yahoo.WINDOWS if k in movement]
+    metric_keys = list(yahoo.METRICS)
+    default_metric = metric_keys[0]
+
+    # One embedded column per (window, measure) the archive can support; the
+    # controls only ever light up one of them at a time.
     frame = df.copy()
+    fields = list(_FIELDS)
+    moves_idx: dict[str, dict[str, int]] = {}
     for k in win_keys:
-        frame[f"move_{k}"] = frame["yahoo_id"].map(movement[k]["moves"])
-    fields = _FIELDS + [f"move_{k}" for k in win_keys]
-    moves_idx = {k: fields.index(f"move_{k}") for k in win_keys}
+        moves_idx[k] = {}
+        for m in metric_keys:
+            col = f"mv_{k}_{m}"
+            frame[col] = frame["yahoo_id"].map(movement[k]["moves"][m])
+            moves_idx[k][m] = len(fields)
+            fields.append(col)
     rows = [[_cell(v) for v in row]
             for row in frame[fields].itertuples(index=False, name=None)]
 
+    wins = [{"key": k, "label": yahoo.WINDOWS[k]["label"],
+             "stamp": movement[k]["stamp"].astimezone(LEAGUE_TZ)
+             .strftime("%b %-d, %-I:%M %p %Z")}
+            for k in win_keys]
+    # Only the display half of METRICS crosses into the page; how a delta is
+    # computed is the data module's business.
+    shown = ("label", "short", "min", "dec", "suffix", "unit", "tip")
+    metrics = {k: {f: m[f] for f in shown} for k, m in yahoo.METRICS.items()}
+    cfg = {"moves": moves_idx, "wins": wins, "metrics": metrics,
+           "defaultWin": win_keys[0] if win_keys else None,
+           "defaultMetric": default_metric,
+           "pool": MOVER_POOLS[0][0], "count": MOVERS_SHOWN}
+
     if win_keys:
         tracker = ("<h2>Board Movement</h2>"
-                   "<p>Who is climbing and sliding on Yahoo's board. The window "
-                   "buttons drive both the cards and the table's "
-                   "<strong>Move</strong> column below.</p>"
-                   + _tracker(df, movement, win_keys))
+                   "<p>Who is climbing and sliding on Yahoo's board. Pick a "
+                   "window and what to measure &mdash; the <strong>ADP</strong> "
+                   "itself, Yahoo's <strong>rank order</strong> (which covers "
+                   "the undrafted tail too), or the <strong>share of leagues</strong> "
+                   "drafting him &mdash; then narrow the cards by position, board "
+                   "depth, and length. The same choice drives the "
+                   "<strong>Move</strong> column in the table below.</p>"
+                   + _tracker(win_keys, default_metric))
     else:
         tracker = ("<h2>Board Movement</h2>"
                    "<p>The tracker compares the board with its archived pulls; "
@@ -458,11 +605,11 @@ def body() -> str:
         "<strong>Pick</strong> is where that board slot lands in this league's "
         f"{LEAGUE_TEAMS}-team snake. Click a header to sort; the position chips "
         "and search filter the pool.</p>"
-        + _controls()
+        + _controls(bool(win_keys))
         + '<div class="adp-wrap"><table class="adp-table">'
-        + _header(moves_idx[win_keys[0]] if win_keys else None)
+        + _header(moves_idx[win_keys[0]][default_metric] if win_keys else None)
         + '<tbody id="adp-body"></tbody></table></div>'
-        + _table_js(rows, moves_idx, win_keys[0] if win_keys else None)
+        + _table_js(rows, cfg)
         + _details("League Scoring", '<div class="table-scroll">'
                    + _scoring_table(lg) + "</div>")
         + _details("The Ten Teams", '<div class="table-scroll">'
