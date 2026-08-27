@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-26T23:42:05.854152-04:00",
+ "updated": "2026-08-27T05:37:06.403608-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -34132,6 +34132,120 @@
       "Ashlon Jackson",
       "G",
       7.0
+     ]
+    ]
+   }
+  },
+  "401857177": {
+   "date": "2026-08-27",
+   "allowed": {
+    "TOR": {
+     "G": 84.0,
+     "FC": 116.0
+    },
+    "SEA": {
+     "G": 57.0,
+     "FC": 98.0
+    }
+   },
+   "players": {
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      36.0
+     ],
+     [
+      "Maria Conde",
+      "FC",
+      12.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      27.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      16.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      35.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      7.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      13.0
+     ],
+     [
+      "Kiana Williams",
+      "G",
+      2.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      7.0
+     ]
+    ],
+    "SEA": [
+     [
+      "Ezi Magbegor",
+      "FC",
+      12.0
+     ],
+     [
+      "Jordan Horston",
+      "FC",
+      15.0
+     ],
+     [
+      "Dominique Malonga",
+      "FC",
+      35.0
+     ],
+     [
+      "Flau'jae Johnson",
+      "G",
+      28.0
+     ],
+     [
+      "Jade Melbourne",
+      "G",
+      32.0
+     ],
+     [
+      "Katie Lou Samuelson",
+      "FC",
+      28.0
+     ],
+     [
+      "Stefanie Dolson",
+      "FC",
+      9.0
+     ],
+     [
+      "Awa Fam",
+      "FC",
+      17.0
+     ],
+     [
+      "Zia Cooke",
+      "G",
+      21.0
+     ],
+     [
+      "Taina Mair",
+      "G",
+      3.0
      ]
     ]
    }
