@@ -4,10 +4,20 @@ College football power rankings (docs/cfb/power/): every FBS team.
 Ratings are ESPN's Football Power Index, read from the public API behind
 espn.com's own FPI page. Preseason it is ESPN's projection model; in season
 it updates with results, so - like the CBB page - whatever FPI believes
-today is what renders, with no seasonal switch. Only the unambiguous
-columns are shown: the FPI value and the projected record. The API carries
-a dozen more unlabelled figures per team; naming them by guesswork is how a
-"win conference" column ends up holding playoff odds.
+today is what renders, with no seasonal switch.
+
+The API carries about twenty figures per team as bare positional arrays,
+which is why this page long showed only the two it could name for certain.
+It now reads the payload's own header block for the position of each field
+by name, so a column can never quietly come to hold the number next to it -
+the failure that kept the rest of them off the page. Three tabs divide
+them: Rating (the ratings and the projected record), Odds (the simulation
+probabilities) and Resume (schedule strength and, in season, ESPN's
+resume ranks).
+
+A figure ESPN has not computed yet reads as "-" in the payload rather than
+zero, so a column stays hidden until some team has one - the resume ranks
+appear by themselves once games are played.
 
 Beside the computer number: the AP poll where one exists for this season
 (the human column), and Move columns against the snapshot archive
@@ -20,6 +30,7 @@ import argparse
 import json
 import time
 from datetime import datetime
+from html import escape
 
 import pandas as pd
 import requests
@@ -56,6 +67,12 @@ table.cfb-power tr.top25:nth-child(even) td{background:#faf0d2}
 table.cfb-power td.pwr-team img{width:22px;height:22px;object-fit:contain;
   vertical-align:middle;margin:0 8px 0 0;border:none;padding:0;box-shadow:none;
   background:none;border-radius:0}
+/* One table, three tabs: the live view keeps its own columns and hides the
+   rest. Cheaper than three tables, and the sort survives a tab change. */
+table.cfb-power.view-rating td:not(.v-rating),table.cfb-power.view-rating th:not(.v-rating),
+table.cfb-power.view-odds td:not(.v-odds),table.cfb-power.view-odds th:not(.v-odds),
+table.cfb-power.view-resume td:not(.v-resume),table.cfb-power.view-resume th:not(.v-resume){
+  display:none}
 table.cfb-power th.sortable{cursor:pointer;user-select:none}
 table.cfb-power th.sortable:hover{color:#0f172a}
 /* The caret is always drawn, faint until the column is the one sorting, so a
@@ -99,10 +116,19 @@ var head=table.tHead.rows[0], body=table.tBodies[0];
 var rows=Array.prototype.slice.call(body.rows);
 
 // Every sortable cell carries data-sort; a cell without one (a team outside the
-// AP poll) sorts as missing and sinks to the bottom in both directions.
+// AP poll, a resume rank ESPN hasn't computed) sorts as missing and sinks to the
+// bottom in both directions.
 function val(row,i){
   var cell=row.cells[i], v=cell?cell.dataset.sort:undefined;
-  return v===undefined||v===''?null:parseFloat(v);
+  return v===undefined||v===''?null:v;
+}
+
+// Numbers where both cells are numbers, text otherwise - Conf is the one column
+// that sorts as a name.
+function compare(x,y){
+  var nx=parseFloat(x), ny=parseFloat(y);
+  if(!isNaN(nx)&&!isNaN(ny)) return nx-ny;
+  return String(x).localeCompare(String(y));
 }
 
 function sortBy(th){
@@ -115,7 +141,7 @@ function sortBy(th){
     if(x===null&&y===null) return 0;
     if(x===null) return 1;
     if(y===null) return -1;
-    return dir==='asc'?x-y:y-x;
+    return dir==='asc'?compare(x,y):compare(y,x);
   });
   // Ties keep the order they came in, which is rank order: sort is stable and
   // `rows` is never re-read from the DOM.
@@ -138,6 +164,20 @@ Array.prototype.forEach.call(head.cells,function(th){
   th.addEventListener('click',function(){sortBy(th);});
   th.addEventListener('keydown',function(e){
     if(e.key==='Enter'||e.key===' '){e.preventDefault(); sortBy(th);}
+  });
+});
+
+// --- tabs -----------------------------------------------------------------
+var TABS=document.querySelectorAll('.pv-btn');
+Array.prototype.forEach.call(TABS,function(btn){
+  btn.addEventListener('click',function(){
+    var view=btn.dataset.view;
+    table.className='cfb-power view-'+view;
+    Array.prototype.forEach.call(TABS,function(b){b.classList.toggle('active',b===btn);});
+    // A sort running on a column this tab doesn't show would leave the table in
+    // an order with nothing on screen to explain it, so it falls back to rank.
+    var live=head.querySelector('th.sorted');
+    if(live&&!live.classList.contains('v-'+view)) sortBy(head.cells[0]);
   });
 });
 })();
@@ -201,34 +241,143 @@ def ap_poll(refresh: bool = False):
     return None, None
 
 
-def _rows(data: dict) -> list:
-    """(name, logo, fpi, proj_w, proj_l) per team, best first.
+# Each team's figures arrive as two parallel arrays: `values` holds the raw
+# numbers and `totals` ESPN's own rendering of them, where "-" means the figure
+# does not exist yet. Reading both is what lets a column tell a real 0% from a
+# resume number that no team can have until games are played.
+_FIELDS = {
+    "fpi": ["fpi", "projectedw", "projectedl", "probwinout", "prob6wins",
+            "probmakeplayoffs", "probwintitle", "probwinconf",
+            "numwins", "numlosses", "numties"],
+    "resume": ["accomplishmentrank", "avgsosrank", "sosremainingrank",
+               "gamecontrolrank"],
+}
+# Where those fields sat when this was written, used only if a payload arrives
+# without its header block. The three the page has always read - FPI and the
+# projected record - are the ones worth surviving that.
+_FALLBACK = {"fpi": {"fpi": 0, "projectedw": 3, "projectedl": 4}, "resume": {}}
 
-    The fpi category's totals open with the four figures that are stable and
-    self-describing on ESPN's own page: the FPI value, the rank, the trend,
-    and the projected wins and losses. Everything after that is unlabelled
-    percentages, deliberately unread.
+
+def _field_index(data: dict) -> dict:
+    """{category: {field name: position}}, read from the payload's own header.
+
+    The per-team arrays are positional and unlabelled; the top-level categories
+    list is where ESPN says what each slot holds. Taking the map from there
+    means a column inserted upstream shifts nothing here.
     """
+    index = {c.get("name"): {n: i for i, n in enumerate(c.get("names") or [])}
+             for c in data.get("categories") or []}
+    return {cat: index.get(cat) or _FALLBACK[cat] for cat in _FIELDS}
+
+
+def _figures(entry: dict, index: dict) -> dict:
+    """{field name: float or None} for one team, None where ESPN prints "-"."""
+    out = {}
+    for cat_name, fields in _FIELDS.items():
+        cat = next((c for c in entry["categories"] if c.get("name") == cat_name), {})
+        values, totals = cat.get("values") or [], cat.get("totals") or []
+        for field in fields:
+            pos = index[cat_name].get(field)
+            shown = totals[pos].strip() if pos is not None and pos < len(totals) else "-"
+            if pos is None or pos >= len(values) or shown in ("-", ""):
+                out[field] = None
+                continue
+            try:
+                out[field] = float(values[pos])
+            except (TypeError, ValueError):
+                out[field] = None
+    return out
+
+
+def _rows(data: dict) -> list:
+    """One dict per team - name, logo, conference and every figure - best first."""
+    index = _field_index(data)
     out = []
     for entry in data["teams"]:
         team = entry["team"]
-        cat = next((c for c in entry["categories"] if c.get("name") == "fpi"), None)
-        if not cat:
-            continue
-        totals = cat.get("totals") or []
-        try:
-            value = float(totals[0])
-            proj_w, proj_l = float(totals[3]), float(totals[4])
-        except (IndexError, ValueError, TypeError):
+        figures = _figures(entry, index)
+        if figures["fpi"] is None:
             continue
         logos = team.get("logos") or []
+        group = team.get("group") or {}
         out.append({
             "id": str(team.get("id")),
             "name": team.get("displayName") or team.get("nickname"),
             "logo": logos[0]["href"] if logos else None,
-            "fpi": value, "pw": proj_w, "pl": proj_l,
+            "conf": group.get("shortName"),
+            **figures,
         })
     return sorted(out, key=lambda t: -t["fpi"])
+
+
+# The three tabs, and the columns each one carries. One table holds every
+# column and the tab hides the ones it does not want, so switching tabs keeps
+# the rows, the sort and the highlight exactly where they were.
+VIEWS = [("rating", "Rating"), ("odds", "Odds"), ("resume", "Resume")]
+ALL = tuple(v for v, _ in VIEWS)
+
+
+def _td(views, value, text, team=False, sortable=True) -> str:
+    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "")
+    if isinstance(value, float):
+        value = round(value, 3)      # ESPN sends 38.800000000000004
+    key = f" data-sort='{value}'" if sortable and value is not None else ""
+    return f"<td class='{cls}'{key}>{text}</td>"
+
+
+def _th(views, label, tip, direction, first=False, team=False) -> str:
+    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "")
+    if direction:
+        cls += " sortable"
+    attrs = f' title="{escape(tip, quote=True)}"' if tip else ""
+    if direction:
+        attrs += f" data-dir='{direction}'"
+    # The table arrives sorted by rank, so RK opens as the live column.
+    if first:
+        cls += " sorted asc"
+        attrs += " data-now='asc' aria-sort='ascending'"
+    return f"<th class='{cls}'{attrs}>{label}</th>"
+
+
+def _plain(v):
+    """A rank cell: the integer, or nothing at all when there isn't one."""
+    return (None, "") if v is None else (int(v), f"{int(v)}")
+
+
+def _pct(v):
+    """A probability cell. A real 0% is drawn as a dot - a column like Title%
+    is mostly zeros, and 130 rows of "0.0%" bury the teams that have a chance -
+    but it still sorts as the zero it is, above the teams with no figure."""
+    if v is None:
+        return None, ""
+    return v, ("<span class='mv-flat'>&middot;</span>" if v == 0 else f"{v:.1f}%")
+
+
+def _record(t):
+    w, l, ties = t["numwins"] or 0, t["numlosses"] or 0, t["numties"] or 0
+    return int(w), f"{w:.0f}-{l:.0f}" + (f"-{ties:.0f}" if ties else "")
+
+
+def _team(t) -> str:
+    logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
+    return logo + t["name"]
+
+
+def _moved(baseline, t, rank):
+    """Places climbed against one of the rank snapshots, or nothing when the
+    team wasn't in it."""
+    if t["id"] not in baseline.index:
+        return None, ""
+    delta = baseline.get(t["id"]) - rank
+    return delta, rankmoves.cell(delta)
+
+
+def _switcher() -> str:
+    buttons = "".join(
+        f'<button class="pv-btn{" active" if i == 0 else ""}" id="pv-tab-{vid}" '
+        f'data-view="{vid}">{label}</button>'
+        for i, (vid, label) in enumerate(VIEWS))
+    return f'<div class="view-switch"><span class="switch-label">Show:</span>{buttons}</div>'
 
 
 def body() -> str:
@@ -244,40 +393,83 @@ def body() -> str:
     show_move = "prev" in moves
     show_week = "prev7" in moves and moves.get("prev7_at") != moves.get("prev_at")
 
-    rows = []
-    ranks_now = {}
-    for rank, t in enumerate(teams, 1):
-        ranks_now[t["id"]] = rank
-        logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
-        ap = ap_ranks.get(t["id"]) if show_ap else None
-        move = (moves["prev"].get(t["id"]) - rank
-                if show_move and t["id"] in moves["prev"].index else None)
-        week = (moves["prev7"].get(t["id"]) - rank
-                if show_week and t["id"] in moves["prev7"].index else None)
-        # data-sort carries the number the JS sorts on, so the sort never has to
-        # parse a rendered cell ("+28.7", "10.2-2.4") back into a figure. A team
-        # outside the AP poll carries none, which sinks it to the bottom either way.
-        ap_cell = "<td></td>" if ap is None else f"<td data-sort='{ap}'>{ap}</td>"
-        rows.append(
-            f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
-            f"<td data-sort='{rank}'>{rank}</td>"
-            + (f"<td>{rankmoves.cell(move)}</td>" if show_move else "")
-            + (f"<td>{rankmoves.cell(week)}</td>" if show_week else "")
-            + f"<td class='pwr-team'>{logo}{t['name']}</td>"
-            + (ap_cell if show_ap else "")
-            + f"<td data-sort='{t['fpi']:.1f}'>{t['fpi']:+.1f}</td>"
-            + f"<td data-sort='{t['pw']:.1f}'>{t['pw']:.1f}-{t['pl']:.1f}</td></tr>")
+    # A figure ESPN has not filled in yet - every resume rank until games are
+    # played - comes back None for all 138 teams. Rather than print a column of
+    # dashes for weeks, each column asks whether anyone has a value at all.
+    def live(field) -> bool:
+        return any(t[field] is not None for t in teams)
 
-    # data-dir is the direction the column opens on: rank and the AP poll read
-    # best-first ascending, the two ratings best-first descending.
-    head = ("<th class='sortable sorted asc' data-dir='asc' data-now='asc'"
-            " aria-sort='ascending'>RK</th>"
-            + ("<th>Move</th>" if show_move else "")
-            + ("<th>7d</th>" if show_week else "")
-            + "<th class='pwr-team'>Team</th>"
-            + ("<th class='sortable' data-dir='asc'>AP</th>" if show_ap else "")
-            + "<th class='sortable' data-dir='desc'>FPI</th>"
-            + "<th class='sortable' data-dir='desc'>Proj W-L</th>")
+    show_rec = live("numwins") and any(t["numwins"] or t["numlosses"] for t in teams)
+    # Until a game is played, what's left of a schedule is the whole schedule:
+    # the two SOS columns hold the same 138 numbers, and printing both twice is
+    # noise. It comes back on its own the week they start to diverge.
+    show_rem_sos = any(t["sosremainingrank"] != t["avgsosrank"] for t in teams)
+    ranks_now = {t["id"]: rank for rank, t in enumerate(teams, 1)}
+
+    # (views, label, tooltip, opening direction, cell) per column. `cell` returns
+    # the figure to sort on and the text to show; the two are separate so the
+    # sort never has to parse "+28.7" or "10.2-2.4" back out of the rendering.
+    cols = [
+        (ALL, "RK", "FPI rank", "asc", lambda t, r: (r, r)),
+    ]
+    if show_move:
+        cols.append((("rating",), "Move", f"Places climbed since {moves['prev_at']:%b %-d}",
+                     "desc", lambda t, r: _moved(moves["prev"], t, r)))
+    if show_week:
+        cols.append((("rating",), "7d", f"Places climbed since {moves['prev7_at']:%b %-d}",
+                     "desc", lambda t, r: _moved(moves["prev7"], t, r)))
+    cols.append((ALL, "Team", "", None, lambda t, r: (None, _team(t))))
+    cols.append((ALL, "Conf", "Conference", "asc", lambda t, r: (t["conf"], t["conf"] or "")))
+    if show_ap:
+        cols.append((("rating",), "AP", "AP poll rank", "asc",
+                     lambda t, r: _plain(ap_ranks.get(t["id"]))))
+    if show_rec:
+        cols.append((("rating", "resume"), "Rec", "Record so far", "desc",
+                     lambda t, r: _record(t)))
+    cols += [
+        (("rating",), "FPI", "Expected point margin against an average FBS team",
+         "desc", lambda t, r: (t["fpi"], f"{t['fpi']:+.1f}")),
+        (("rating",), "Proj W-L", "ESPN's simulation of the full schedule", "desc",
+         lambda t, r: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}")),
+        (("odds",), "Playoff%", "Chance of making the playoff", "desc",
+         lambda t, r: _pct(t["probmakeplayoffs"])),
+        (("odds",), "Win Conf%", "Chance of winning the conference", "desc",
+         lambda t, r: _pct(t["probwinconf"])),
+        (("odds",), "Bowl%", "Chance of reaching six wins, the bowl-eligibility line",
+         "desc", lambda t, r: _pct(t["prob6wins"])),
+        (("odds",), "Win Out%", "Chance of winning every remaining game", "desc",
+         lambda t, r: _pct(t["probwinout"])),
+        (("odds",), "Title%", "Chance of winning the national title", "desc",
+         lambda t, r: _pct(t["probwintitle"])),
+        (("resume",), "SOS", "Strength-of-schedule rank, hardest first", "asc",
+         lambda t, r: _plain(t["avgsosrank"])),
+    ]
+    if show_rem_sos:
+        cols.append((("resume",), "Rem SOS", "Strength-of-schedule rank for the "
+                     "games still to play", "asc",
+                     lambda t, r: _plain(t["sosremainingrank"])))
+    if live("accomplishmentrank"):
+        cols.append((("resume",), "SOR", "Strength-of-record rank: where an average "
+                     "top-25 team would sit with this resume", "asc",
+                     lambda t, r: _plain(t["accomplishmentrank"])))
+    if live("gamecontrolrank"):
+        cols.append((("resume",), "GC", "Game-control rank: share of game time "
+                     "spent in the lead", "asc",
+                     lambda t, r: _plain(t["gamecontrolrank"])))
+
+    rows = []
+    for rank, t in enumerate(teams, 1):
+        cells = []
+        for views, label, _tip, direction, cell in cols:
+            value, text = cell(t, rank)
+            cells.append(_td(views, value, text, team=(label == "Team"),
+                             sortable=direction is not None))
+        rows.append(f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
+                    + "".join(cells) + "</tr>")
+
+    head = "".join(_th(views, label, tip, direction, first=(label == "RK"),
+                       team=(label == "Team"))
+                   for views, label, tip, direction, _cell in cols)
 
     move_note = ""
     if show_move:
@@ -294,15 +486,21 @@ def body() -> str:
         f"on a neutral field; the projected record is ESPN's simulation of each team's "
         f"actual schedule. Preseason these are projections; once games are played the "
         f"same numbers update with results.{move_note}</p>"
-        "<p class='power-note'>Top 25 highlighted. Click <strong>RK</strong>"
-        + (", <strong>AP</strong>" if show_ap else "")
-        + ", <strong>FPI</strong> or <strong>Proj W-L</strong> to sort by that "
-        "column; click it again to reverse. The highlight follows the team, so "
-        "the FPI top 25 stay marked however the table is sorted.</p>")
+        "<p class='power-note'><strong>Rating</strong> is the ratings and the "
+        "projected record, <strong>Odds</strong> what ESPN's simulations give "
+        "each team, <strong>Resume</strong> what the schedule has been worth. "
+        "Click any column header to sort by it; click again to reverse. Top 25 "
+        "highlighted - the highlight follows the team, so the FPI top 25 stay "
+        "marked however the table is sorted.</p>"
+        + ("" if live("accomplishmentrank") else
+           "<p class='power-note'>The resume ranks ESPN computes from results - "
+           "strength of record, game control - appear here once games have been "
+           "played.</p>"))
 
     rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now))
-    return (_CSS + intro
-            + f"<div class='power-wrap'><table class='cfb-power'><thead><tr>{head}</tr></thead>"
+    return (_CSS + intro + _switcher()
+            + "<div class='power-wrap'>"
+            + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(rows)}</tbody></table></div>" + _JS)
 
 
