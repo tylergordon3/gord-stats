@@ -77,12 +77,12 @@ main() {
   # Hash-stamped rather than diffed against git, so an install can't be skipped
   # just because this run's pull happened to be a no-op.
   local REQ_HASH STAMP
-  REQ_HASH="$(cat requirements-pi.txt pyproject.toml | sha256sum | cut -d' ' -f1)"
+  REQ_HASH="$(sha256sum pyproject.toml | cut -d' ' -f1)"
   STAMP="$VENV/.requirements-sha256"
   if [ ! -f "$STAMP" ] || [ "$(cat "$STAMP")" != "$REQ_HASH" ]; then
     log "installing dependencies"
     pip install -q --upgrade pip
-    pip install -q -r requirements-pi.txt
+    # Runtime deps and the packages themselves both come from pyproject.toml.
     pip install -q -e .            # cbb, cfb, wnba, fantasy, gordstats
     echo "$REQ_HASH" > "$STAMP"
   else

@@ -1,7 +1,76 @@
 [project]
 name = "gord-stats"
 version = "0.1.0"
-requires-python = ">=3.10"
+# Both the laptop and the Pi run 3.13 (see .python-version). Kept in step
+# deliberately -- a version gap between dev and the Pi is how bugs reach the
+# live site without reproducing locally.
+requires-python = ">=3.13"
+
+# Runtime dependencies for everything the daily job publishes: the WNBA feed,
+# the fantasy football rebuild, and the homepage render -- what
+# `gordstats.daily --tasks wnba,fantasy` touches.
+#
+# This list deliberately excludes torch and the rest of the old dev-environment
+# `pip freeze`: torch has no aarch64 wheel on PyPI at all, and nothing that runs
+# here imports it.
+dependencies = [
+    # --- shared ---
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "requests>=2.32",
+    "matplotlib>=3.10",
+
+    # --- WNBA ---
+    "python-dotenv",
+    # Imported at the top of wnba/wnba_fantasy.py. It reads cookies out of a
+    # local browser profile, which a headless Pi doesn't have -- but ESPN_S2 and
+    # SWID from the env file take priority, so it is imported and never used.
+    # Still has to install.
+    "browser-cookie3",
+
+    # --- college basketball model ---
+    # The section is not enabled in TASKS yet: the feeds only carry
+    # current-season numbers once the season starts, so _cbb() refuses to run
+    # before tipoff (Nov 2). Installing the deps now means the switch is one
+    # edit to TASKS rather than a deploy on the night.
+    # aarch64 wheels exist for all of these, so nothing compiles on the Pi.
+    "scikit-learn",
+    "joblib",
+    "pytz",                                     # cbb.daily_data
+    # Not on PyPI -- Tyler's own wrapper. Pinned to the commit that was in the
+    # dev env, because a scraper wrapper that changes shape silently is worse
+    # than one that stays put.
+    "kenpom-wrapper @ git+https://github.com/tylergordon3/kenpom-py-api-wrapper.git@cd45558dd9da99a63996c303c06a6c6c2d1b0e89",
+    # cbb.predictions imports cbb.scraper, which imports playwright at module
+    # level, so the package is needed just to load the model code. The browser
+    # binary is a separate ~300MB download and is only required by the Torvik
+    # scrapers, currently commented out of daily_data.main(). If those are
+    # re-enabled, `playwright install chromium` becomes part of the bootstrap.
+    "playwright",
+
+    # --- fantasy football ---
+    "nflreadpy",
+    "polars",
+    "pyarrow",                                  # nflreadpy reads the nflverse parquet files through it
+    "sleeper-api-wrapper",
+    "tqdm",
+
+    # --- pulled in through pandas, so an import scan misses them ---
+    # jinja2 backs the DataFrame.style accessor (used in 7 fantasy modules;
+    # without it every page generator raises), and lxml/beautifulsoup4 back
+    # read_html.
+    "beautifulsoup4",
+    "jinja2",
+    "lxml",
+]
+
+[project.optional-dependencies]
+# Test-only. The suite needs the runtime deps too, since the board tests import
+# pandas -- so install as `pip install -e ".[dev]"`.
+dev = [
+    "pytest",
+    "pyyaml",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
