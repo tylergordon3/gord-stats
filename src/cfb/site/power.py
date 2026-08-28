@@ -50,7 +50,20 @@ table.cfb-power td.pwr-team{text-align:left;font-weight:600}
 table.cfb-power tbody tr:nth-child(even) td{background:#f8fafc}
 table.cfb-power tr.top25 td{background:#fdf6e3}
 table.cfb-power tr.top25:nth-child(even) td{background:#faf0d2}
-table.cfb-power img{width:20px;height:20px;vertical-align:-4px;margin-right:6px}
+/* The Slate theme styles every <img> as a framed figure - padding, a border,
+   a drop shadow and 10px vertical margins - which boxes each logo and stretches
+   the row. Reset all of it here, same as the league table does. */
+table.cfb-power td.pwr-team img{width:22px;height:22px;object-fit:contain;
+  vertical-align:middle;margin:0 8px 0 0;border:none;padding:0;box-shadow:none;
+  background:none;border-radius:0}
+table.cfb-power th.sortable{cursor:pointer;user-select:none}
+table.cfb-power th.sortable:hover{color:#0f172a}
+/* The caret is always drawn, faint until the column is the one sorting, so a
+   header never changes width on click and the sticky row stays put. */
+table.cfb-power th.sortable::after{content:"\\2195";margin-left:5px;opacity:.35;
+  font-size:11px}
+table.cfb-power th.sorted.asc::after{content:"\\25B2";opacity:1}
+table.cfb-power th.sorted.desc::after{content:"\\25BC";opacity:1}
 .power-wrap{overflow:auto;max-height:calc(100vh - 170px);border:1px solid #e5e7eb;
   border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,.05)}
 .power-note{font-size:13px;color:#4a5a68;margin:6px 0 10px}
@@ -61,14 +74,74 @@ table.cfb-power img{width:20px;height:20px;vertical-align:-4px;margin-right:6px}
 }
 @media (prefers-color-scheme: dark){
   table.cfb-power th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.cfb-power th.sortable:hover{color:#fff}
   table.cfb-power td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.cfb-power tbody tr:nth-child(even) td{background:#1b2540}
   table.cfb-power tr.top25 td{background:#33301a}
   table.cfb-power tr.top25:nth-child(even) td{background:#3a361e}
+  /* Several teams ship a near-black logo; a faint halo keeps them readable
+     against the navy rows. */
+  table.cfb-power td.pwr-team img{filter:drop-shadow(0 0 1px rgba(255,255,255,.6))}
   .power-note{color:#aab7c9}
   .power-wrap{border-color:#2b3852}
 }
 </style>"""
+
+# The rows are already rendered by the time this runs, so sorting reorders the
+# <tr>s that are there rather than redrawing them from a payload: the Move
+# arrows, the Top 25 highlight and the logos all travel with their team, and
+# with JS off the page is still the table sorted by rank.
+_JS = """{% raw %}<script>
+(function(){
+var table=document.querySelector('table.cfb-power');
+if(!table||!table.tHead||!table.tBodies.length) return;
+var head=table.tHead.rows[0], body=table.tBodies[0];
+var rows=Array.prototype.slice.call(body.rows);
+
+// Every sortable cell carries data-sort; a cell without one (a team outside the
+// AP poll) sorts as missing and sinks to the bottom in both directions.
+function val(row,i){
+  var cell=row.cells[i], v=cell?cell.dataset.sort:undefined;
+  return v===undefined||v===''?null:parseFloat(v);
+}
+
+function sortBy(th){
+  var i=Array.prototype.indexOf.call(head.cells,th);
+  // A column that is already the live one reverses; one being picked up opens
+  // in the direction it reads best, even if it was left reversed earlier.
+  var dir=th.dataset.now?(th.dataset.now==='asc'?'desc':'asc'):th.dataset.dir;
+  var sorted=rows.slice().sort(function(a,b){
+    var x=val(a,i), y=val(b,i);
+    if(x===null&&y===null) return 0;
+    if(x===null) return 1;
+    if(y===null) return -1;
+    return dir==='asc'?x-y:y-x;
+  });
+  // Ties keep the order they came in, which is rank order: sort is stable and
+  // `rows` is never re-read from the DOM.
+  var frag=document.createDocumentFragment();
+  sorted.forEach(function(r){frag.appendChild(r);});
+  body.appendChild(frag);
+  Array.prototype.forEach.call(head.cells,function(c){
+    c.classList.remove('sorted','asc','desc');
+    c.removeAttribute('aria-sort');
+    delete c.dataset.now;
+  });
+  th.classList.add('sorted',dir);
+  th.dataset.now=dir;
+  th.setAttribute('aria-sort',dir==='asc'?'ascending':'descending');
+}
+
+Array.prototype.forEach.call(head.cells,function(th){
+  if(!th.classList.contains('sortable')) return;
+  th.tabIndex=0;
+  th.addEventListener('click',function(){sortBy(th);});
+  th.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){e.preventDefault(); sortBy(th);}
+  });
+});
+})();
+</script>{% endraw %}"""
 
 
 def _cache_path():
@@ -181,21 +254,30 @@ def body() -> str:
                 if show_move and t["id"] in moves["prev"].index else None)
         week = (moves["prev7"].get(t["id"]) - rank
                 if show_week and t["id"] in moves["prev7"].index else None)
+        # data-sort carries the number the JS sorts on, so the sort never has to
+        # parse a rendered cell ("+28.7", "10.2-2.4") back into a figure. A team
+        # outside the AP poll carries none, which sinks it to the bottom either way.
+        ap_cell = "<td></td>" if ap is None else f"<td data-sort='{ap}'>{ap}</td>"
         rows.append(
             f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
-            f"<td>{rank}</td>"
+            f"<td data-sort='{rank}'>{rank}</td>"
             + (f"<td>{rankmoves.cell(move)}</td>" if show_move else "")
             + (f"<td>{rankmoves.cell(week)}</td>" if show_week else "")
             + f"<td class='pwr-team'>{logo}{t['name']}</td>"
-            + (f"<td>{'' if ap is None else ap}</td>" if show_ap else "")
-            + f"<td>{t['fpi']:+.1f}</td><td>{t['pw']:.1f}-{t['pl']:.1f}</td></tr>")
+            + (ap_cell if show_ap else "")
+            + f"<td data-sort='{t['fpi']:.1f}'>{t['fpi']:+.1f}</td>"
+            + f"<td data-sort='{t['pw']:.1f}'>{t['pw']:.1f}-{t['pl']:.1f}</td></tr>")
 
-    head = ("<th>RK</th>"
+    # data-dir is the direction the column opens on: rank and the AP poll read
+    # best-first ascending, the two ratings best-first descending.
+    head = ("<th class='sortable sorted asc' data-dir='asc' data-now='asc'"
+            " aria-sort='ascending'>RK</th>"
             + ("<th>Move</th>" if show_move else "")
             + ("<th>7d</th>" if show_week else "")
             + "<th class='pwr-team'>Team</th>"
-            + ("<th>AP</th>" if show_ap else "")
-            + "<th>FPI</th><th>Proj W-L</th>")
+            + ("<th class='sortable' data-dir='asc'>AP</th>" if show_ap else "")
+            + "<th class='sortable' data-dir='desc'>FPI</th>"
+            + "<th class='sortable' data-dir='desc'>Proj W-L</th>")
 
     move_note = ""
     if show_move:
@@ -212,12 +294,16 @@ def body() -> str:
         f"on a neutral field; the projected record is ESPN's simulation of each team's "
         f"actual schedule. Preseason these are projections; once games are played the "
         f"same numbers update with results.{move_note}</p>"
-        "<p class='power-note'>Top 25 highlighted.</p>")
+        "<p class='power-note'>Top 25 highlighted. Click <strong>RK</strong>"
+        + (", <strong>AP</strong>" if show_ap else "")
+        + ", <strong>FPI</strong> or <strong>Proj W-L</strong> to sort by that "
+        "column; click it again to reverse. The highlight follows the team, so "
+        "the FPI top 25 stay marked however the table is sorted.</p>")
 
     rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now))
     return (_CSS + intro
             + f"<div class='power-wrap'><table class='cfb-power'><thead><tr>{head}</tr></thead>"
-            + f"<tbody>{''.join(rows)}</tbody></table></div>")
+            + f"<tbody>{''.join(rows)}</tbody></table></div>" + _JS)
 
 
 def generate():
