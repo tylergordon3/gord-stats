@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-27T21:40:06.772478-04:00",
+ "updated": "2026-08-27T22:50:05.206608-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -34246,6 +34246,150 @@
       "Taina Mair",
       "G",
       3.0
+     ]
+    ]
+   }
+  },
+  "401857178": {
+   "date": "2026-08-28",
+   "allowed": {
+    "GS": {
+     "G": 52.0,
+     "FC": 79.0
+    },
+    "NY": {
+     "G": 59.0,
+     "FC": 107.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      6.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      31.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      30.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      19.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      26.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      0.0
+     ],
+     [
+      "Ashten Prechtel",
+      "FC",
+      6.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      15.0
+     ],
+     [
+      "Nadia Fingall",
+      "FC",
+      0.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      17.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      11.0
+     ],
+     [
+      "Miela Sowah",
+      "G",
+      1.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      3.0
+     ],
+     [
+      "Juste Jocyte",
+      "G",
+      1.0
+     ]
+    ],
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      26.0
+     ],
+     [
+      "Leonie Fiebich",
+      "FC",
+      12.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      35.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      16.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      10.0
+     ],
+     [
+      "Raquel Carrera",
+      "FC",
+      2.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      4.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      13.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      9.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      3.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      1.0
      ]
     ]
    }
