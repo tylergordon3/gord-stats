@@ -32,6 +32,7 @@ from dotenv import load_dotenv
 
 from cfb.config import DATA_DIR
 from cfb.games import FIRST_SEASON
+from gordstats import paths
 
 LINES_DIR = DATA_DIR / "lines"
 API = "https://api.collegefootballdata.com/lines"
@@ -41,7 +42,7 @@ MAX_WEEK = 17
 
 
 def _key() -> str:
-    load_dotenv(DATA_DIR.parent.parent / ".env")
+    load_dotenv(paths.ROOT / ".env")
     key = os.getenv("CFBD_KEY")
     if not key:
         raise RuntimeError("CFBD_KEY is not set; put it in .env")

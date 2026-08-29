@@ -23,7 +23,6 @@ is at its weakest in week one and gets better every Saturday.
 """
 import json
 
-import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
@@ -65,9 +64,14 @@ def _current_season_games() -> pd.DataFrame:
     return played
 
 
-def history(asof: pd.Timestamp = None) -> tuple:
-    """(games to fit on, this season's schedule, id -> name)."""
-    past = games_mod.load()
+def history() -> tuple:
+    """(games to fit on, this season's schedule, id -> name).
+
+    Loaded without the archive's per-season pooling, because this decides
+    membership on its own terms a few lines down and paying for a
+    classification only to overwrite every row of it is wasted work.
+    """
+    past = games_mod.load(classify=False)
     current = _current_season_games()
 
     frame = pd.concat([past, current], ignore_index=True) if not current.empty else past

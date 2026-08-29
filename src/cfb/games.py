@@ -86,11 +86,16 @@ def backfill(first: int = FIRST_SEASON, last: int = None,
 
 
 def load(first: int = FIRST_SEASON, last: int = None,
-         played_only: bool = True) -> pd.DataFrame:
+         played_only: bool = True, classify: bool = True) -> pd.DataFrame:
     """Every stored season stacked, with the model's own columns derived.
 
     Adds `margin` (home minus away) and `total`, the two things worth
     predicting, and pools non-FBS opponents into one identity.
+
+    `classify=False` skips that pooling and leaves `home_team`/`away_team`
+    holding raw ids. It is for callers that decide membership themselves --
+    `cfb.predict` does, on this season's terms rather than each season's -- and
+    saves them paying for a classification they are about to overwrite.
     """
     last = last if last is not None else espn.SEASON
     frames = []
@@ -120,11 +125,15 @@ def load(first: int = FIRST_SEASON, last: int = None,
 
     # Membership is per season, not for all time: teams move up and down, and
     # 2020's short schedules make a fixed appearance count meaningless.
-    fbs = _fbs_teams(games)
-    for side in ("home", "away"):
-        pairs = list(zip(games["season"].astype(int), games[f"{side}_id"]))
-        games[f"{side}_team"] = [tid if (season, tid) in fbs else FCS
-                                 for season, tid in pairs]
+    if classify:
+        fbs = _fbs_teams(games)
+        for side in ("home", "away"):
+            pairs = list(zip(games["season"].astype(int), games[f"{side}_id"]))
+            games[f"{side}_team"] = [tid if (season, tid) in fbs else FCS
+                                     for season, tid in pairs]
+    else:
+        for side in ("home", "away"):
+            games[f"{side}_team"] = games[f"{side}_id"]
     return games.sort_values(["season", "date"]).reset_index(drop=True)
 
 
@@ -155,10 +164,13 @@ def classifications() -> dict:
     our own archive. Returns empty when the lines archive has not been pulled,
     which is what `_fbs_teams` falls back for.
     """
+    from cfb import lines as lines_mod
     try:
-        from cfb import lines as lines_mod
         board = lines_mod.load()
-    except Exception:
+    except (OSError, ValueError) as exc:
+        # An unreadable or half-written archive is a reason to fall back, not
+        # to bring a page build down. Anything else is a real bug: let it raise.
+        print(f"[cfb] lines archive unreadable ({exc}); classifying by games played")
         return {}
     if board.empty or "home_class" not in board.columns:
         return {}

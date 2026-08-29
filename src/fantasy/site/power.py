@@ -32,22 +32,19 @@ from fantasy.config import (                                   # noqa: E402
 )
 from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
-from gordstats import charts                                   # noqa: E402
+from gordstats import charts, palette                          # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
 
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
 _SECTION = "power"
 
-# Categorical slots 1-3. Three is the cap for charts where every pair can end up
-# side by side, and these three are the trio that clears the colour-blind and
-# normal-vision separation floors as a set; a fourth would put yellow next to
-# orange and fail both. Every chart using them sits beside a table carrying the
-# same numbers, which is what the low-contrast aqua needs to be legible.
-SOURCE_COLOURS = {"us": "#2a78d6", "fp": "#eb6834", "ff": "#1baf7a"}
-INK = "#0b0b0b"
-MUTED = "#94a3b8"
-GRIDLINE = "#e2e8f0"
-CONTEXT = "#d8dee7"
+# Shared with every other chart on the site; see gordstats.palette for why
+# three categorical slots is the cap rather than an arbitrary stopping point.
+SOURCE_COLOURS = dict(zip(("us", "fp", "ff"), palette.SERIES))
+INK = palette.INK
+MUTED = palette.MUTED
+GRIDLINE = palette.GRIDLINE
+CONTEXT = palette.CONTEXT
 
 SECTIONS = [
     ("draft-consensus", "Draft Power Rankings &mdash; three sources, frozen on draft week",

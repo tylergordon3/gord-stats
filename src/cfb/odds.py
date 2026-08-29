@@ -20,7 +20,6 @@ guessed at.
 from datetime import datetime, timezone
 
 import pandas as pd
-import requests
 
 from cfb import espn
 from cfb.config import DATA_DIR, SEASON

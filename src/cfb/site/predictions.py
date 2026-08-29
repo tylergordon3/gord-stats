@@ -30,15 +30,15 @@ from cfb import odds as odds_mod                     # noqa: E402
 from cfb import predict                              # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import charts                         # noqa: E402
+from gordstats import charts, palette                # noqa: E402
 
 _SECTION = "cfb-predictions"
-ACCENT = "#2a78d6"
-INK = "#0b0b0b"
-MUTED = "#94a3b8"
-GRIDLINE = "#e2e8f0"
+ACCENT = palette.BLUE
+INK = palette.INK
+MUTED = palette.MUTED
+GRIDLINE = palette.GRIDLINE
 
-_CSS = """<style>
+_CSS = ("""<style>
 .pred-note{color:#475569;font-size:14px;line-height:1.55}
 
 /* Headline numbers. Four things worth knowing before reading 40 rows. */
@@ -75,13 +75,13 @@ _CSS = """<style>
   border-radius:0;margin:0}
 .pg-row img{width:26px;height:26px;object-fit:contain;flex:none}
 .pg-bar{height:6px;border-radius:3px;background:#eef2f7;overflow:hidden;margin:9px 0 6px}
-.pg-bar span{display:block;height:100%;background:#2a78d6}
+.pg-bar span{display:block;height:100%;background:{accent}}
 .pg-line{display:flex;justify-content:space-between;gap:8px;font-size:12px;
   color:#475569;font-variant-numeric:tabular-nums}
 .pg-line b{color:#0f172a}
 .pred-chart img{margin:12px 0}
 .pred-chart{max-width:640px}
-</style>"""
+</style>""").replace("{accent}", ACCENT)
 
 
 def _validation() -> dict:
