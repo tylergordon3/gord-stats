@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-28T21:10:03.587086-04:00",
+ "updated": "2026-08-28T22:20:04.348281-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -34499,6 +34499,254 @@
       "Shay Ciezki",
       "G",
       10.0
+     ]
+    ]
+   }
+  },
+  "401857180": {
+   "date": "2026-08-28",
+   "allowed": {
+    "POR": {
+     "G": 99.0,
+     "FC": 68.0
+    },
+    "ATL": {
+     "G": 81.0,
+     "FC": 115.0
+    }
+   },
+   "players": {
+    "POR": [
+     [
+      "Bridget Carleton",
+      "FC",
+      17.0
+     ],
+     [
+      "Emily Engstler",
+      "FC",
+      51.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      11.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      23.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      43.0
+     ],
+     [
+      "Amy Okonkwo",
+      "FC",
+      7.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      6.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      2.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      22.0
+     ],
+     [
+      "Jordan Harrison",
+      "G",
+      14.0
+     ]
+    ],
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      23.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      42.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      20.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      23.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      45.0
+     ],
+     [
+      "Sika Kone",
+      "FC",
+      0.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      3.0
+     ],
+     [
+      "Shatori Walker-Kimbrough",
+      "G",
+      0.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      7.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      4.0
+     ]
+    ]
+   }
+  },
+  "401857181": {
+   "date": "2026-08-28",
+   "allowed": {
+    "CON": {
+     "G": 150.0,
+     "FC": 68.0
+    },
+    "IND": {
+     "G": 73.0,
+     "FC": 95.0
+    }
+   },
+   "players": {
+    "CON": [
+     [
+      "Aaliyah Edwards",
+      "FC",
+      19.0
+     ],
+     [
+      "Diamond Miller",
+      "FC",
+      27.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      12.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      19.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      20.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      37.0
+     ],
+     [
+      "Hailey Van Lith",
+      "G",
+      23.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      7.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      4.0
+     ]
+    ],
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      27.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      28.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      47.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      19.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      63.0
+     ],
+     [
+      "Myisha Hines-Allen",
+      "FC",
+      2.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      2.0
+     ],
+     [
+      "Grace VanSlooten",
+      "FC",
+      0.0
+     ],
+     [
+      "Mercedes Russell",
+      "FC",
+      9.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      7.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      10.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      4.0
+     ],
+     [
+      "Bree Hall",
+      "G",
+      0.0
      ]
     ]
    }
