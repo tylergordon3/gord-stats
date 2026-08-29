@@ -204,3 +204,25 @@ def test_the_fallback_threshold_scales_to_a_short_season(monkeypatch):
     })
     fbs = games._fbs_teams(short)
     assert {(2020, "a"), (2020, "b"), (2020, "c")} <= fbs
+
+
+def test_the_published_accuracy_matches_the_model_that_is_running():
+    """A page quoting an accuracy the current settings never produced is a lie.
+
+    `model_validation.json` is committed rather than recomputed on a build, so
+    nothing stops a retune from leaving it describing the old model. This is
+    what stops it: change a default and re-run `python -m cfb.backtest --report`.
+    """
+    import json
+    from cfb.config import DATA_DIR
+    path = DATA_DIR / "model_validation.json"
+    if not path.exists():
+        pytest.skip("no validation record on disk")
+
+    recorded = json.loads(path.read_text())["hyperparameters"]
+    assert recorded == {
+        "alpha": ratings.DEFAULT_ALPHA,
+        "half_life_days": ratings.DEFAULT_HALF_LIFE,
+        "total_alpha": ratings.DEFAULT_TOTAL_ALPHA,
+        "total_half_life_days": ratings.DEFAULT_TOTAL_HALF_LIFE,
+    }
