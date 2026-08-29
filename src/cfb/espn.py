@@ -70,6 +70,10 @@ def _game_row(event: dict, week: int) -> dict:
         place = ", ".join(x for x in (place, address.get("country")) if x)
     return {
         "week": week,
+        # ESPN's event id. CollegeFootballData keys its own game records on the
+        # same number, so carrying it makes joining betting lines to results an
+        # exact match rather than a fight over team-name spellings.
+        "game_id": str(event.get("id", "")),
         "date_utc": event["date"],
         # ESPN's numeric team id, not the name: display names and abbreviations
         # get rewritten and reused between seasons, and a ratings model that

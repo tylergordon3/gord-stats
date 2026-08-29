@@ -68,5 +68,16 @@
       "total_rmse": 15.666,
       "winner_accuracy": 0.7382
     }
-  ]
+  ],
+  "versus_market": {
+    "games": 4238,
+    "our_margin_rmse": 16.148,
+    "market_margin_rmse": 15.383,
+    "our_total_rmse": 16.272,
+    "gap_rmse": 0.765,
+    "ats_when_we_disagree_by_3": 0.4771,
+    "ats_sample": 2008,
+    "break_even_at_minus_110": 0.5238,
+    "verdict": "Within a point of the closing line without using it, but the disagreements are noise: below break-even against the spread, and our error grows with the size of the disagreement while the market's does not. No betting edge."
+  }
 }
