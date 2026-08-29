@@ -1,0 +1,81 @@
+{
+  "source": "The Fantasy Footballers",
+  "label": "League Grades",
+  "short": "FF",
+  "url": "https://www.thefantasyfootballers.com/",
+  "note": "Hand-entered from a screenshot on 2026-08-28; there is no API. Their published Rank sorts by letter grade first and PPG only within a grade tier, which is why Professional Fratson ranks 9th on the 4th-best PPG. `ppg` is the cardinal strength number and is what the blend uses; `rank` is recorded as published. Team names are theirs as displayed and can lag: roster 8 is listed as 'Big Booty Bowers', which Mark has since renamed 'Brooklyn Nine'. Joins are on team_id, so a stale name is cosmetic.",
+  "season": 2026,
+  "captured": "2026-08-28",
+  "teams": [
+    {
+      "team": "Gord of the Rings",
+      "team_id": 2,
+      "rank": 1,
+      "ppg": 138.5,
+      "grade": "B+"
+    },
+    {
+      "team": "padgett",
+      "team_id": 7,
+      "rank": 2,
+      "ppg": 138.3,
+      "grade": "B+"
+    },
+    {
+      "team": "The Standard",
+      "team_id": 6,
+      "rank": 3,
+      "ppg": 136.8,
+      "grade": "B+"
+    },
+    {
+      "team": "Lotta Cox (Balls Too)",
+      "team_id": 5,
+      "rank": 4,
+      "ppg": 135.7,
+      "grade": "B+"
+    },
+    {
+      "team": "Clanker Barrel",
+      "team_id": 1,
+      "rank": 5,
+      "ppg": 135.0,
+      "grade": "B+"
+    },
+    {
+      "team": "The Jackson 5",
+      "team_id": 10,
+      "rank": 6,
+      "ppg": 132.0,
+      "grade": "B+"
+    },
+    {
+      "team": "LGBBQ+",
+      "team_id": 9,
+      "rank": 7,
+      "ppg": 129.3,
+      "grade": "B+"
+    },
+    {
+      "team": "Strictly Dickly",
+      "team_id": 4,
+      "rank": 8,
+      "ppg": 122.1,
+      "grade": "B+"
+    },
+    {
+      "team": "Professional Fratson",
+      "team_id": 3,
+      "rank": 9,
+      "ppg": 135.1,
+      "grade": "B"
+    },
+    {
+      "team": "Big Booty Bowers",
+      "team_id": 8,
+      "rank": 10,
+      "ppg": 129.4,
+      "grade": "B"
+    }
+  ]
+}

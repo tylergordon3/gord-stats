@@ -1,0 +1,82 @@
+{
+  "source": "FantasyPros",
+  "label": "League Analyzer",
+  "short": "FP",
+  "url": "https://www.fantasypros.com/nfl/myplaybook/league-analyzer.php",
+  "note": "Fetched on each build from getLeagueAnalysisJSON?key=<league_key>, which answers anonymously; see fantasy.league.external.",
+  "league_key": "nfl~9b42e042-983c-4e34-b3fa-62e91bf82f79",
+  "season": 2026,
+  "captured": "2026-08-28",
+  "teams": [
+    {
+      "team": "Professional Fratson",
+      "team_id": 3,
+      "rank": 1,
+      "score": 100,
+      "vorp": 111.01
+    },
+    {
+      "team": "Gord of the Rings",
+      "team_id": 2,
+      "rank": 2,
+      "score": 98,
+      "vorp": 108.25
+    },
+    {
+      "team": "Strictly Dickly",
+      "team_id": 4,
+      "rank": 3,
+      "score": 96,
+      "vorp": 106.34
+    },
+    {
+      "team": "padgett",
+      "team_id": 7,
+      "rank": 4,
+      "score": 93,
+      "vorp": 103.56
+    },
+    {
+      "team": "Clanker Barrel",
+      "team_id": 1,
+      "rank": 5,
+      "score": 91,
+      "vorp": 101.54
+    },
+    {
+      "team": "The Jackson 5",
+      "team_id": 10,
+      "rank": 6,
+      "score": 88,
+      "vorp": 97.19
+    },
+    {
+      "team": "Lotta Cox (Balls Too)",
+      "team_id": 5,
+      "rank": 7,
+      "score": 86,
+      "vorp": 95.69
+    },
+    {
+      "team": "The Standard",
+      "team_id": 6,
+      "rank": 8,
+      "score": 85,
+      "vorp": 94.9
+    },
+    {
+      "team": "LGBBQ+",
+      "team_id": 9,
+      "rank": 9,
+      "score": 84,
+      "vorp": 93.72
+    },
+    {
+      "team": "Brooklyn “Nine”-9",
+      "team_id": 8,
+      "rank": 10,
+      "score": 79,
+      "vorp": 87.8
+    }
+  ]
+}

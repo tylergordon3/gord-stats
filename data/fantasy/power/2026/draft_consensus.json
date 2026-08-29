@@ -1,0 +1,143 @@
+{
+  "title": "Draft consensus",
+  "note": "What our simulation, FantasyPros and The Fantasy Footballers each made of these rosters coming out of the draft. Frozen on the date below and never recomputed.",
+  "season": 2026,
+  "frozen": "2026-08-28",
+  "sources": [
+    "us",
+    "FP",
+    "FF"
+  ],
+  "teams": [
+    {
+      "roster_id": 3,
+      "manager": "Jackson",
+      "team": "Professional Fratson",
+      "rank": 1,
+      "combined": 106.1,
+      "us": 105.89,
+      "fp": 111.01,
+      "ff": 101.41,
+      "us_rank": 1,
+      "fp_rank": 1,
+      "ff_rank": 9
+    },
+    {
+      "roster_id": 2,
+      "manager": "Tyler",
+      "team": "Gord of the Rings",
+      "rank": 2,
+      "combined": 104.23,
+      "us": 100.48,
+      "fp": 108.25,
+      "ff": 103.96,
+      "us_rank": 6,
+      "fp_rank": 2,
+      "ff_rank": 1
+    },
+    {
+      "roster_id": 7,
+      "manager": "Padgett",
+      "team": "padgett",
+      "rank": 3,
+      "combined": 102.36,
+      "us": 99.7,
+      "fp": 103.56,
+      "ff": 103.81,
+      "us_rank": 7,
+      "fp_rank": 4,
+      "ff_rank": 2
+    },
+    {
+      "roster_id": 1,
+      "manager": "Colin",
+      "team": "Clanker Barrel",
+      "rank": 4,
+      "combined": 101.3,
+      "us": 101.03,
+      "fp": 101.54,
+      "ff": 101.34,
+      "us_rank": 4,
+      "fp_rank": 5,
+      "ff_rank": 5
+    },
+    {
+      "roster_id": 5,
+      "manager": "Austin",
+      "team": "Lotta Cox (Balls Too)",
+      "rank": 5,
+      "combined": 100.36,
+      "us": 103.52,
+      "fp": 95.69,
+      "ff": 101.86,
+      "us_rank": 2,
+      "fp_rank": 7,
+      "ff_rank": 4
+    },
+    {
+      "roster_id": 10,
+      "manager": "Everett",
+      "team": "The Jackson 5",
+      "rank": 6,
+      "combined": 98.92,
+      "us": 100.48,
+      "fp": 97.19,
+      "ff": 99.08,
+      "us_rank": 5,
+      "fp_rank": 6,
+      "ff_rank": 6
+    },
+    {
+      "roster_id": 6,
+      "manager": "Trevor",
+      "team": "The Standard",
+      "rank": 7,
+      "combined": 98.59,
+      "us": 98.18,
+      "fp": 94.9,
+      "ff": 102.69,
+      "us_rank": 9,
+      "fp_rank": 8,
+      "ff_rank": 3
+    },
+    {
+      "roster_id": 9,
+      "manager": "George",
+      "team": "LGBBQ+",
+      "rank": 8,
+      "combined": 98.04,
+      "us": 103.35,
+      "fp": 93.72,
+      "ff": 97.06,
+      "us_rank": 3,
+      "fp_rank": 9,
+      "ff_rank": 7
+    },
+    {
+      "roster_id": 4,
+      "manager": "Max",
+      "team": "Strictly Dickly",
+      "rank": 9,
+      "combined": 95.68,
+      "us": 89.05,
+      "fp": 106.34,
+      "ff": 91.65,
+      "us_rank": 10,
+      "fp_rank": 3,
+      "ff_rank": 8
+    },
+    {
+      "roster_id": 8,
+      "manager": "Mark",
+      "team": "Brooklyn “Nine”-9",
+      "rank": 10,
+      "combined": 94.42,
+      "us": 98.31,
+      "fp": 87.8,
+      "ff": 97.13,
+      "us_rank": 8,
+      "fp_rank": 10,
+      "ff_rank": 10
+    }
+  ]
+}

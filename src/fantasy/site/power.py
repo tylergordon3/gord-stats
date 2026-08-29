@@ -17,6 +17,8 @@ Five sections:
 
     python -m fantasy.site.power
 """
+from datetime import datetime
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
@@ -27,7 +29,7 @@ from fantasy import paths                                      # noqa: E402
 from fantasy.config import (                                   # noqa: E402
     FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, UPCOMING_SEASON, UPCOMING_YEAR,
 )
-from fantasy.league import power, validation                   # noqa: E402
+from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
 from gordstats import charts                                   # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
@@ -37,6 +39,7 @@ _SECTION = "power"
 
 SECTIONS = [
     ("rankings", "Power Rankings &mdash; every roster, ten thousand seasons", "Rankings"),
+    ("draft-consensus", "Draft Consensus &mdash; three sources, frozen on draft week", "Draft"),
     ("range", "Projected Wins &mdash; and how wide the range really is", "Range"),
     ("positions", "Positional Strength &mdash; where each roster is built", "Positions"),
     ("lineups", "Projected Lineups &mdash; the roster behind the number", "Lineups"),
@@ -49,10 +52,12 @@ against three seasons of this league, consensus beat our own usage model at ever
 position, so it earned the job &mdash; with the usage model adjusting at the edges and
 kickers and defenses valued at nothing at all, because nothing predicts them.
 The ranking is not those values summed: the projections have to <strong>play the
-season</strong> &mdash; fourteen weeks, byes, injuries, and a legal starting lineup every
-week against the real schedule, which is the only way bench depth and a bye-week
-pileup ever show up in a number, and why this table is not the draft board
-read back.</p>"""
+season</strong> &mdash; fourteen weeks, byes, injuries that keep a starter out for
+weeks at a time rather than a game here and there, and a starting lineup set the way a
+manager has to set it: on projections, before the week happens. That is the only way
+bench depth and a bye-week pileup ever show up in a number, and why this table is not
+the draft board read back. The published <strong>Rating</strong> then averages that
+simulation with the FantasyPros League Analyzer.</p>"""
 
 
 # --------------------------------------------------------------------------- #
@@ -77,7 +82,15 @@ def _rankings_table(table: pd.DataFrame) -> str:
     display = pd.DataFrame({"#": table["rank"], "Manager": table["manager"]})
     display["Move"] = table["move"]
     display["Pre"] = table["pre_rank"]
-    display["Power"] = table["power"]
+    blended = "combined" in table.columns and table.get("ext_vorp") is not None \
+        and table["ext_vorp"].notna().any()
+    short = table.attrs.get("ext_short", "Ext")
+    if blended:
+        display["Rating"] = table["combined"]
+        display["Us"] = table["power"]
+        display[short] = table["ext_vorp"]
+    else:
+        display["Power"] = table["power"]
     if in_season:
         display["Record"] = (table["wins"].astype(int).astype(str) + "-"
                              + table["losses"].astype(int).astype(str))
@@ -92,8 +105,10 @@ def _rankings_table(table: pd.DataFrame) -> str:
     fmt = {"Move": _signed, "Pre": lambda v: "" if pd.isna(v) else f"{int(v)}",
            "Power": "{:.1f}", "Proj. Points": "{:,.0f}", "Playoffs": "{:.0%}",
            "1 Seed": "{:.0%}", "Title": "{:.0%}", "Last": "{:.0%}", "Luck": "{:+.1f}"}
+    if blended:
+        fmt.update({"Rating": "{:.1f}", "Us": "{:.1f}", short: "{:.1f}"})
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
-              .background_gradient(cmap="RdYlGn", subset=["Power"])
+              .background_gradient(cmap="RdYlGn", subset=["Rating" if blended else "Power"])
               .background_gradient(cmap="RdYlGn", subset=["Playoffs"])
               .background_gradient(cmap="RdYlGn", subset=["Title"])
               .background_gradient(cmap="RdYlGn_r", subset=["Last"]))
@@ -125,7 +140,23 @@ def _trend_chart(year: int) -> str:
             + charts.save(_SECTION, "trend", alt="Power rating per team over successive builds"))
 
 
+def _with_external(table: pd.DataFrame) -> pd.DataFrame:
+    """Attach the source descriptor for the legend.
+
+    The ratings themselves arrive on the table from `power.rankings`, which is
+    where the blend happens; this only reads the snapshot for who said it and
+    when, and never re-fetches.
+    """
+    ext = external.load(int(UPCOMING_YEAR), live=False)
+    if ext.empty:
+        return table
+    table = table.copy()
+    table.attrs = dict(table.attrs) | {f"ext_{k}": v for k, v in ext.attrs.items()}
+    return table
+
+
 def _rankings_section(table: pd.DataFrame) -> str:
+    table = _with_external(table)
     leader = table.iloc[0]
     tail = table.iloc[-1]
     week = int(table["week"].iloc[0])
@@ -134,8 +165,8 @@ def _rankings_section(table: pd.DataFrame) -> str:
     note = (f"<p><strong>{leader['manager']}</strong> {when} the strongest roster &mdash; "
             f"{leader['playoff_odds']:.0%} to make the playoffs and {leader['title_odds']:.0%} "
             f"to win it, against {tail['playoff_odds']:.0%} and {tail['title_odds']:.0%} for "
-            f"<strong>{tail['manager']}</strong>. Power is points per week against the "
-            f"league average, so 105 means a roster projected 5% above the field.</p>")
+            f"<strong>{tail['manager']}</strong>. Every rating is scaled so 100 is the "
+            f"league average and 105 is a roster five percent above the field.</p>")
 
     legend = ["<strong>Move</strong> is places climbed since "
               + (f"{table.attrs['prev_taken']:%b %-d}" if "prev_taken" in table.attrs
@@ -149,10 +180,78 @@ def _rankings_section(table: pd.DataFrame) -> str:
                       "handed over and -2 is two it took away. Played weeks are locked in "
                       "and only the rest of the season is simulated, so the projected "
                       "record is the real one plus what is still expected")
+    if "combined" in table.columns and table["ext_vorp"].notna().any():
+        src = table.attrs.get("ext_source", "an outside source")
+        label = table.attrs.get("ext_label") or ""
+        url = table.attrs.get("ext_url") or ""
+        named = f"<a href='{url}'>{src}</a>" if url else src
+        when = table.attrs.get("ext_captured") or ""
+        try:
+            when = f"{datetime.strptime(when, '%Y-%m-%d'):%b %-d}"
+        except ValueError:
+            pass
+        short = table.attrs.get("ext_short", "Ext")
+        legend.append(f"<strong>Rating</strong> is the published ranking: our simulation "
+                      f"(<strong>Us</strong>) and the {named}"
+                      + (f" {label}" if label else "")
+                      + f" (<strong>{short}</strong>"
+                      + (f", as of {when}" if when else "") + ") averaged on a common "
+                      "scale, where 100 is the league average and a point is one percent "
+                      "better than it. Ratings are averaged rather than ranks, on purpose: "
+                      "a ranking of ranks would record that the two disagree about Max "
+                      "without recording that they disagree by seventeen points")
+
     return (f"<h2>Power Rankings</h2>{note}"
             f"<div class='table-scroll'>{_rankings_table(table)}</div>"
             f"<p>{'. '.join(legend)}.</p>"
             + _trend_chart(int(UPCOMING_YEAR)))
+
+
+def _draft_section() -> str:
+    """The three-source draft ranking, exactly as it was frozen."""
+    snap = consensus.draft(int(UPCOMING_YEAR))
+    if not snap or not snap.get("teams"):
+        return ""
+    rows = pd.DataFrame(snap["teams"])
+
+    display = pd.DataFrame({"#": rows["rank"], "Manager": rows["manager"]})
+    display["Consensus"] = rows["combined"]
+    display["Us"] = rows["us"]
+    display["FP"] = rows["fp"]
+    display["FF"] = rows["ff"]
+    display["Us #"] = rows["us_rank"]
+    display["FP #"] = rows["fp_rank"]
+    display["FF #"] = rows["ff_rank"]
+
+    fmt = {c: "{:.1f}" for c in ["Consensus", "Us", "FP", "FF"]}
+    styled = (display.style.hide(axis="index").format(fmt, na_rep="")
+              .background_gradient(cmap="RdYlGn", subset=["Consensus"])
+              .set_table_styles(_GRID, overwrite=False)
+              .set_table_attributes('class="sticky-table"'))
+
+    frozen = snap.get("frozen", "")
+    try:
+        frozen = f"{datetime.strptime(frozen, '%Y-%m-%d'):%B %-d, %Y}"
+    except ValueError:
+        pass
+    spread = rows["combined"].max() - rows["combined"].min()
+
+    note = (f"<p>What all three sources made of these rosters coming out of the draft, "
+            f"frozen on <strong>{frozen}</strong> and never recomputed. This is the "
+            f"only table on the page that does not move: the rankings above follow the "
+            f"season, and the point of this one is that it cannot.</p>")
+    legend = (f"<p>Every column is on the same scale &mdash; 100 is the league average, "
+              f"and the whole league fits in {spread:.0f} points. <strong>Us</strong> is "
+              f"the simulation, <strong>FP</strong> the FantasyPros League Analyzer, "
+              f"<strong>FF</strong> The Fantasy Footballers' projected points per game. "
+              f"The Footballers publish a rank that sorts by letter grade first and "
+              f"points only within a grade, which is why their ninth-ranked roster "
+              f"carries their fourth-best projection; their points, not their rank, are "
+              f"what is averaged here. Their table also still calls Mark's roster "
+              f"<em>Big Booty Bowers</em>, the name it carried when they last synced; "
+              f"it is <em>Brooklyn Nine</em> now.</p>")
+    return (f"<h2>Draft Consensus</h2>{note}"
+            f"<div class='table-scroll'>{styled.to_html()}</div>{legend}")
 
 
 # --------------------------------------------------------------------------- #
@@ -429,6 +528,7 @@ def body() -> str:
 
     content = {
         "rankings": _rankings_section(table),
+        "draft-consensus": _draft_section(),
         "range": _range_section(table),
         "positions": _positions_section(board, rosters, table),
         "lineups": _lineups_section(board, rosters, table),

@@ -44,6 +44,7 @@ import pandas as pd
 import requests
 
 from fantasy import paths, projections
+from fantasy.league import consensus, external
 from fantasy.config import (
     FANTASY_REG_WEEKS, ROSTER_NAMES, UPCOMING_DRAFT_ID,
     UPCOMING_LEAGUE_ID, UPCOMING_YEAR,
@@ -59,6 +60,12 @@ FLEX_POSITIONS = ("RB", "WR", "TE")
 
 PLAYOFF_TEAMS = 6
 PLAYOFF_WEEKS = 3            # quarters (with two byes), semis, final
+
+# How long a player is out once he is out. Three weeks is the middle of the
+# distribution of real absences: most are one or two, a few end the season.
+MEAN_ABSENCE_WEEKS = 3.0
+MIN_MU = 0.05                # a gamma needs a positive mean
+MIN_SD = 0.5                 # and a positive variance
 
 DEFAULT_SIMS = 10_000
 SIM_CHUNK = 500              # sims per vectorized batch, to cap peak memory
@@ -227,73 +234,117 @@ class Roster:
         self.name = ROSTER_NAMES.get(roster_id, f"Roster {roster_id}")
         self.frame = frame.reset_index(drop=True)
         self.slice = slice(offset, offset + len(frame))
+        self.mu = self.frame["mu"].to_numpy(float)
         self.by_position = {
             pos: np.flatnonzero((frame["pos"] == pos).to_numpy())
             for pos in set(STARTERS) | set(FLEX_POSITIONS)
         }
 
 
-def _rank_desc(scores: np.ndarray, columns: np.ndarray) -> np.ndarray:
-    """Scores for `columns`, sorted high to low along the player axis."""
-    if len(columns) == 0:
-        return np.zeros(scores.shape[:-1] + (0,))
-    return -np.sort(-scores[..., columns], axis=-1)
-
-
-def _take(sorted_scores: np.ndarray, count: int) -> tuple:
-    """(sum of the best `count`, whatever is left over) — zero-padded if short."""
-    have = sorted_scores.shape[-1]
+def _fill(values: np.ndarray, keys: np.ndarray, count: int) -> tuple:
+    """Take the best `count` by key, and hand back what is left over."""
+    have = values.shape[-1]
     if have >= count:
-        return sorted_scores[..., :count].sum(axis=-1), sorted_scores[..., count:]
-    padding = np.zeros(sorted_scores.shape[:-1] + (count - have,))
-    return (np.concatenate([sorted_scores, padding], axis=-1).sum(axis=-1),
-            sorted_scores[..., :0])
+        return values[..., :count].sum(-1), values[..., count:], keys[..., count:]
+    padding = np.zeros(values.shape[:-1] + (count - have,))
+    return (np.concatenate([values, padding], -1).sum(-1),
+            values[..., :0], keys[..., :0])
 
 
-def _lineup_points(scores: np.ndarray, roster: Roster) -> np.ndarray:
-    """Best legal lineup for one team: (sims, weeks) of starting points.
+def _lineup_points(scores: np.ndarray, available: np.ndarray,
+                   roster: Roster) -> np.ndarray:
+    """Points from the lineup a manager could actually have set: (sims, weeks).
 
-    Filling the fixed slots first and handing the flex whatever ranks highest
-    among the leftovers is optimal here, because the flex accepts every position
-    that could have been left over.
+    Starters are chosen on projection among whoever is available, never on the
+    scores that are about to happen. Choosing with hindsight flattered every
+    roster by about 7.5 points a week, and — because the benefit goes to
+    whoever owns the most volatile bench — flattered some rosters four points a
+    week more than others, which is large next to the gaps this page reports.
+
+    A player who is out sorts below everyone and contributes nothing, so a team
+    short of bodies at a position simply starts an empty slot, which is what
+    actually happens.
     """
+    key = np.where(available, roster.mu[None, None, :], -1.0)
     total = np.zeros(scores.shape[:2])
     leftovers = []
     for pos, count in STARTERS.items():
-        best, rest = _take(_rank_desc(scores, roster.by_position[pos]), count)
+        columns = roster.by_position[pos]
+        if len(columns) == 0:
+            continue
+        order = np.argsort(-key[..., columns], axis=-1)
+        picked = np.take_along_axis(scores[..., columns], order, axis=-1)
+        picked_keys = np.take_along_axis(key[..., columns], order, axis=-1)
+        best, rest, rest_keys = _fill(picked, picked_keys, count)
         total += best
         if pos in FLEX_POSITIONS:
-            leftovers.append(rest)
+            leftovers.append((rest, rest_keys))
 
     if leftovers:
-        pool = np.concatenate(leftovers, axis=-1)
-        pool = -np.sort(-pool, axis=-1)
-        flex, _ = _take(pool, FLEX_SLOTS)
+        pool = np.concatenate([v for v, _ in leftovers], axis=-1)
+        pool_keys = np.concatenate([k for _, k in leftovers], axis=-1)
+        order = np.argsort(-pool_keys, axis=-1)
+        pool = np.take_along_axis(pool, order, axis=-1)
+        pool_keys = np.take_along_axis(pool_keys, order, axis=-1)
+        flex, _, _ = _fill(pool, pool_keys, FLEX_SLOTS)
         total += flex
     return total
 
 
-def _weekly_scores(players: pd.DataFrame, weeks: int, sims: int,
-                   rng: np.random.Generator) -> np.ndarray:
-    """(sims, weeks, players) of points, after byes and availability."""
-    mu = players["mu"].to_numpy(float)
-    sd = players["sd"].to_numpy(float)
-    mu_se = players["mu_se"].to_numpy(float)
+def _availability(players: pd.DataFrame, weeks: int, sims: int,
+                  rng: np.random.Generator) -> np.ndarray:
+    """(sims, weeks, players) of who is playing, byes included.
+
+    Injuries persist. A weekly coin flip at each player's own rate gives the
+    right number of missed games but spreads them evenly over every roster and
+    every season, which is the one thing injuries never do — the risk that
+    decides a fantasy season is a starter gone for a month, not everyone
+    missing a scattered game apiece. So availability is a two-state chain:
+    `avail` fixes the long-run share of weeks played and MEAN_ABSENCE_WEEKS
+    how long a spell lasts once it starts, and the season opens in the
+    stationary state rather than assuming everyone is healthy in week one.
+    """
     avail = players["avail"].to_numpy(float)
     bye = players["bye"].to_numpy(int)
+    n = len(avail)
+
+    back = 1.0 / MEAN_ABSENCE_WEEKS                    # out -> available
+    out = np.clip(back * (1.0 - avail) / np.maximum(avail, 1e-9), 0.0, 1.0)
+
+    playing = rng.random((sims, n)) < avail[None, :]
+    states = np.empty((sims, weeks, n), dtype=bool)
+    for week in range(weeks):
+        draw = rng.random((sims, n))
+        playing = np.where(playing, draw >= out[None, :], draw < back)
+        states[:, week, :] = playing
+
+    week_index = np.arange(1, weeks + 1)[None, :, None]
+    return states & ~(week_index == bye[None, None, :])
+
+
+def _weekly_scores(players: pd.DataFrame, weeks: int, sims: int,
+                   rng: np.random.Generator) -> tuple:
+    """((sims, weeks, players) of points, the same shape of availability)."""
+    mu = players["mu"].to_numpy(float)
+    sd = np.maximum(players["sd"].to_numpy(float), MIN_SD)
+    mu_se = players["mu_se"].to_numpy(float)
 
     # One true rate per player per season: the projection's own uncertainty.
     true_mu = np.clip(mu[None, :] + rng.normal(0.0, 1.0, (sims, len(mu))) * mu_se[None, :],
-                      0.0, None)
+                      MIN_MU, None)
 
-    scores = rng.normal(true_mu[:, None, :], sd[None, None, :],
-                        size=(sims, weeks, len(mu)))
-    np.clip(scores, 0.0, None, out=scores)          # nobody scores negative in practice
+    # A gamma matched on mean and variance, not a normal clipped at zero.
+    # Weekly scores are non-negative and right-skewed, and clipping a normal
+    # does not just reshape it, it adds points that were never projected —
+    # worth +0.2 a week per player on this board, and up to +0.9 for the
+    # volatile ones. That is a thumb on the scale for precisely the boom-or-bust
+    # rosters this page exists to judge. A gamma keeps the mean it was handed.
+    shape = (true_mu / sd[None, :]) ** 2
+    scale = sd[None, :] ** 2 / true_mu
+    scores = rng.gamma(shape[:, None, :], scale[:, None, :], size=(sims, weeks, len(mu)))
 
-    playing = rng.random((sims, weeks, len(mu))) < avail[None, None, :]
-    week_index = np.arange(1, weeks + 1)[None, :, None]
-    on_bye = week_index == bye[None, None, :]
-    return np.where(playing & ~on_bye, scores, 0.0)
+    available = _availability(players, weeks, sims, rng)
+    return np.where(available, scores, 0.0), available
 
 
 def _round_robin(rng: np.random.Generator, teams: int, weeks: int) -> np.ndarray:
@@ -368,10 +419,11 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     while done < sims:
         batch = min(SIM_CHUNK, sims - done)
         total_weeks = weeks + PLAYOFF_WEEKS
-        scores = _weekly_scores(players, total_weeks, batch, rng)
+        scores, available = _weekly_scores(players, total_weeks, batch, rng)
 
         team_points = np.stack(
-            [_lineup_points(scores[:, :, team.slice], team) for team in teams], axis=-1)
+            [_lineup_points(scores[:, :, team.slice], available[:, :, team.slice], team)
+             for team in teams], axis=-1)
         regular = team_points[:, :weeks, :]
         if actual_points is not None and len(actual_points):
             played = min(len(actual_points), weeks)
@@ -463,7 +515,7 @@ HISTORY_DIR = paths.DATA_DIR / "power"
 SNAPSHOT_GAP_HOURS = 6       # four builds a day; one snapshot a day is plenty
 MOVE_WINDOW = timedelta(days=7)
 _SNAP_FMT = "%Y%m%d-%H%M%S"
-_SNAP_COLS = ["roster_id", "manager", "power", "proj_wins", "proj_points",
+_SNAP_COLS = ["roster_id", "manager", "power", "combined", "proj_wins", "proj_points",
               "playoff_odds", "title_odds", "week"]
 
 
@@ -515,8 +567,15 @@ def history(year: int) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
-def _rank_by_power(frame: pd.DataFrame) -> pd.Series:
-    return frame.set_index("roster_id")["power"].rank(ascending=False, method="min").astype(int)
+def _rank_by_rating(frame: pd.DataFrame) -> pd.Series:
+    """Rank on the published rating, so Move and Pre track the printed order.
+
+    That is `combined` once an outside source is in the mix, and our own power
+    when it is not — a snapshot taken while the source was unreachable still
+    compares against later ones on the only basis both of them have.
+    """
+    column = "combined" if "combined" in frame.columns else "power"
+    return frame.set_index("roster_id")[column].rank(ascending=False, method="min").astype(int)
 
 
 def with_movement(table: pd.DataFrame, year: int, now=None) -> pd.DataFrame:
@@ -528,13 +587,13 @@ def with_movement(table: pd.DataFrame, year: int, now=None) -> pd.DataFrame:
     """
     now = now or datetime.now()
     table = table.copy()
-    table["rank"] = _rank_by_power(table).reindex(table["roster_id"]).to_numpy()
+    table["rank"] = _rank_by_rating(table).reindex(table["roster_id"]).to_numpy()
 
     snaps = _snapshots(year)
     older = [sp for sp in snaps if sp[0] <= now - MOVE_WINDOW]
     base = older[-1] if older else (snaps[0] if snaps else None)
     if base is not None:
-        prev = _rank_by_power(pd.read_parquet(base[1]))
+        prev = _rank_by_rating(pd.read_parquet(base[1]))
         table["prev_rank"] = table["roster_id"].map(prev)
         table["move"] = table["prev_rank"] - table["rank"]
         table.attrs["prev_taken"] = base[0]
@@ -543,7 +602,7 @@ def with_movement(table: pd.DataFrame, year: int, now=None) -> pd.DataFrame:
         table["move"] = pd.NA
 
     pre = preseason(year)
-    table["pre_rank"] = table["roster_id"].map(_rank_by_power(pre)) if pre is not None else pd.NA
+    table["pre_rank"] = table["roster_id"].map(_rank_by_rating(pre)) if pre is not None else pd.NA
     return table
 
 
@@ -596,6 +655,12 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
             "luck": actual["luck"],
         })
         summary = summary.merge(facts, on="roster_id", how="left")
+
+    # The published ranking is our simulation blended with an outside source;
+    # see fantasy.league.consensus for why they are averaged on a common scale
+    # rather than by rank, and what happens when the source is unreachable.
+    summary = consensus.combined(summary, external.load(year))
+    summary = summary.sort_values("combined", ascending=False).reset_index(drop=True)
 
     summary = with_movement(summary, year)
     write_snapshot(summary, year, week)
