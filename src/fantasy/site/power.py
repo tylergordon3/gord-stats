@@ -21,6 +21,7 @@ from datetime import datetime
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.dates as mdates  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np               # noqa: E402
 import pandas as pd              # noqa: E402
@@ -37,9 +38,22 @@ from gordstats.frontmatter import add_front_matter             # noqa: E402
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
 _SECTION = "power"
 
+# Categorical slots 1-3. Three is the cap for charts where every pair can end up
+# side by side, and these three are the trio that clears the colour-blind and
+# normal-vision separation floors as a set; a fourth would put yellow next to
+# orange and fail both. Every chart using them sits beside a table carrying the
+# same numbers, which is what the low-contrast aqua needs to be legible.
+SOURCE_COLOURS = {"us": "#2a78d6", "fp": "#eb6834", "ff": "#1baf7a"}
+INK = "#0b0b0b"
+MUTED = "#94a3b8"
+GRIDLINE = "#e2e8f0"
+CONTEXT = "#d8dee7"
+
 SECTIONS = [
+    ("draft-consensus", "Draft Power Rankings &mdash; three sources, frozen on draft week",
+     "Draft"),
     ("rankings", "Power Rankings &mdash; every roster, ten thousand seasons", "Rankings"),
-    ("draft-consensus", "Draft Consensus &mdash; three sources, frozen on draft week", "Draft"),
+    ("season", "Through the Season &mdash; every rating, build by build", "Season"),
     ("range", "Projected Wins &mdash; and how wide the range really is", "Range"),
     ("positions", "Positional Strength &mdash; where each roster is built", "Positions"),
     ("lineups", "Projected Lineups &mdash; the roster behind the number", "Lineups"),
@@ -87,7 +101,7 @@ def _rankings_table(table: pd.DataFrame) -> str:
     short = table.attrs.get("ext_short", "Ext")
     if blended:
         display["Rating"] = table["combined"]
-        display["Us"] = table["power"]
+        display["GordStats"] = table["power"]
         display[short] = table["ext_vorp"]
     else:
         display["Power"] = table["power"]
@@ -106,7 +120,7 @@ def _rankings_table(table: pd.DataFrame) -> str:
            "Power": "{:.1f}", "Proj. Points": "{:,.0f}", "Playoffs": "{:.0%}",
            "1 Seed": "{:.0%}", "Title": "{:.0%}", "Last": "{:.0%}", "Luck": "{:+.1f}"}
     if blended:
-        fmt.update({"Rating": "{:.1f}", "Us": "{:.1f}", short: "{:.1f}"})
+        fmt.update({"Rating": "{:.1f}", "GordStats": "{:.1f}", short: "{:.1f}"})
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
               .background_gradient(cmap="RdYlGn", subset=["Rating" if blended else "Power"])
               .background_gradient(cmap="RdYlGn", subset=["Playoffs"])
@@ -120,24 +134,6 @@ def _rankings_table(table: pd.DataFrame) -> str:
         styled = styled.background_gradient(cmap="RdYlGn", subset=["Luck"], vmin=-bound, vmax=bound)
     return (styled.set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
-
-
-def _trend_chart(year: int) -> str:
-    """Power over time, one line per manager — once there are days to join."""
-    hist = power.history(year)
-    if hist.empty or hist["taken"].dt.date.nunique() < 2:
-        return ""
-    pivot = hist.pivot_table(index="taken", columns="manager", values="power").sort_index()
-    ax = pivot.plot(figsize=(9, 4.4), marker="o", markersize=3, colormap="tab10")
-    ax.axhline(100, color="#94a3b8", linewidth=0.9, linestyle="--")
-    ax.set_xlabel("")
-    ax.set_ylabel("power")
-    ax.set_title("Power rating by build")
-    ax.legend(fontsize=8, ncol=5, loc="upper center", bbox_to_anchor=(0.5, -0.14))
-    ax.grid(color="#e2e8f0")
-    ax.set_axisbelow(True)
-    return ("<h3>How it has moved</h3>"
-            + charts.save(_SECTION, "trend", alt="Power rating per team over successive builds"))
 
 
 def _with_external(table: pd.DataFrame) -> pd.DataFrame:
@@ -192,7 +188,7 @@ def _rankings_section(table: pd.DataFrame) -> str:
             pass
         short = table.attrs.get("ext_short", "Ext")
         legend.append(f"<strong>Rating</strong> is the published ranking: our simulation "
-                      f"(<strong>Us</strong>) and the {named}"
+                      f"(<strong>GordStats</strong>) and the {named}"
                       + (f" {label}" if label else "")
                       + f" (<strong>{short}</strong>"
                       + (f", as of {when}" if when else "") + ") averaged on a common "
@@ -203,8 +199,52 @@ def _rankings_section(table: pd.DataFrame) -> str:
 
     return (f"<h2>Power Rankings</h2>{note}"
             f"<div class='table-scroll'>{_rankings_table(table)}</div>"
-            f"<p>{'. '.join(legend)}.</p>"
-            + _trend_chart(int(UPCOMING_YEAR)))
+            f"<p>{'. '.join(legend)}.</p>")
+
+
+def _draft_chart(rows: pd.DataFrame) -> str:
+    """Where the three sources agree, and where they do not.
+
+    A dot per source on a shared scale, joined by the span between the highest
+    and lowest of them. The span is the point of the chart: a roster every
+    source rates the same is a roster we know something about, and a roster
+    they disagree about by seventeen points is not a ranking at all, it is
+    three opinions that happened to be averaged.
+    """
+    ordered = rows.sort_values("combined")            # best at the top once drawn
+    y = np.arange(len(ordered))
+    sources = [("us", "GordStats"), ("fp", "FantasyPros"), ("ff", "Fantasy Footballers")]
+
+    fig, ax = plt.subplots(figsize=(9, 5.0))
+    ax.axvline(100, color=MUTED, linewidth=1.0, linestyle="--", zorder=1)
+
+    lo = ordered[[c for c, _ in sources]].min(axis=1)
+    hi = ordered[[c for c, _ in sources]].max(axis=1)
+    ax.hlines(y, lo, hi, color=CONTEXT, linewidth=2.0, zorder=2)
+
+    for column, label in sources:
+        ax.plot(ordered[column], y, "o", markersize=9, label=label,
+                color=SOURCE_COLOURS[column], markeredgecolor="white",
+                markeredgewidth=1.5, linestyle="none", zorder=3)
+    ax.plot(ordered["combined"], y, "|", markersize=17, markeredgewidth=2.4,
+            color=INK, label="Consensus", linestyle="none", zorder=4)
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(ordered["manager"])
+    ax.set_ylim(-0.7, len(ordered) - 0.3)
+    ax.set_xlabel("rating (100 = league average)")
+    ax.set_title("Draft power rankings, and how far the sources disagree")
+    ax.grid(axis="x", color=GRIDLINE)
+    ax.set_axisbelow(True)
+    ax.tick_params(axis="y", length=0)      # the left spine is gone; its ticks would float
+    for spine in ("top", "right", "left"):
+        ax.spines[spine].set_visible(False)
+    ax.legend(fontsize=9, ncol=4, loc="upper center", bbox_to_anchor=(0.5, -0.11),
+              frameon=False)
+    fig.tight_layout()
+    return charts.save(_SECTION, "draft-consensus",
+                       alt="Each team's rating from all three sources, with the "
+                           "consensus marked and the spread between sources drawn")
 
 
 def _draft_section() -> str:
@@ -216,14 +256,14 @@ def _draft_section() -> str:
 
     display = pd.DataFrame({"#": rows["rank"], "Manager": rows["manager"]})
     display["Consensus"] = rows["combined"]
-    display["Us"] = rows["us"]
+    display["GordStats"] = rows["us"]
     display["FP"] = rows["fp"]
     display["FF"] = rows["ff"]
-    display["Us #"] = rows["us_rank"]
+    display["GordStats #"] = rows["us_rank"]
     display["FP #"] = rows["fp_rank"]
     display["FF #"] = rows["ff_rank"]
 
-    fmt = {c: "{:.1f}" for c in ["Consensus", "Us", "FP", "FF"]}
+    fmt = {c: "{:.1f}" for c in ["Consensus", "GordStats", "FP", "FF"]}
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
               .background_gradient(cmap="RdYlGn", subset=["Consensus"])
               .set_table_styles(_GRID, overwrite=False)
@@ -235,23 +275,96 @@ def _draft_section() -> str:
     except ValueError:
         pass
     spread = rows["combined"].max() - rows["combined"].min()
+    widest = (rows[["us", "fp", "ff"]].max(axis=1) - rows[["us", "fp", "ff"]].min(axis=1))
+    argued = rows.loc[widest.idxmax()]
+    # How many sources rate the whole league inside the gap the three of them
+    # leave on one roster — the honest way to say "they really do not agree".
+    narrower = sum(1 for c in ("us", "fp", "ff")
+                   if rows[c].max() - rows[c].min() < widest.max())
 
     note = (f"<p>What all three sources made of these rosters coming out of the draft, "
-            f"frozen on <strong>{frozen}</strong> and never recomputed. This is the "
-            f"only table on the page that does not move: the rankings above follow the "
-            f"season, and the point of this one is that it cannot.</p>")
+            f"frozen on <strong>{frozen}</strong> and never recomputed. This is the only "
+            f"table on the page that does not move: everything below it follows the "
+            f"season, and the point of this one is that it cannot. They agree less than "
+            f"a single ranking would suggest: the three of them spread "
+            f"<strong>{argued['manager']}</strong> across "
+            f"{widest.max():.0f} points"
+            + (f", more than {narrower} of the three spend on the entire league"
+               if narrower else "") + ".</p>")
     legend = (f"<p>Every column is on the same scale &mdash; 100 is the league average, "
-              f"and the whole league fits in {spread:.0f} points. <strong>Us</strong> is "
-              f"the simulation, <strong>FP</strong> the FantasyPros League Analyzer, "
-              f"<strong>FF</strong> The Fantasy Footballers' projected points per game. "
-              f"The Footballers publish a rank that sorts by letter grade first and "
-              f"points only within a grade, which is why their ninth-ranked roster "
-              f"carries their fourth-best projection; their points, not their rank, are "
-              f"what is averaged here. Their table also still calls Mark's roster "
-              f"<em>Big Booty Bowers</em>, the name it carried when they last synced; "
-              f"it is <em>Brooklyn Nine</em> now.</p>")
-    return (f"<h2>Draft Consensus</h2>{note}"
-            f"<div class='table-scroll'>{styled.to_html()}</div>{legend}")
+              f"and the whole league fits in {spread:.0f} points. "
+              f"<strong>GordStats</strong> is our simulation, <strong>FP</strong> the "
+              f"FantasyPros League Analyzer, <strong>FF</strong> The Fantasy Footballers' "
+              f"projected points per game. The Footballers publish a rank that sorts by "
+              f"letter grade first and points only within a grade, which is why their "
+              f"ninth-ranked roster carries their fourth-best projection; their points, "
+              f"not their rank, are what is averaged here.</p>")
+    return (f"<h2>Draft Power Rankings</h2>{note}"
+            + _draft_chart(rows)
+            + f"<div class='table-scroll'>{styled.to_html()}</div>{legend}")
+
+
+def _season_section() -> str:
+    """Every team's published rating, build by build."""
+    year = int(UPCOMING_YEAR)
+    hist = power.history(year)
+    column = "combined" if not hist.empty and "combined" in hist.columns else "power"
+    if hist.empty or hist["taken"].dt.date.nunique() < 2:
+        return ("<h2>Through the Season</h2>"
+                "<p>Every build of the rankings is archived, and this chart draws each "
+                "team's rating across them &mdash; who is climbing, who is sliding, and "
+                "whether a move is a real trend or one noisy week. The model was rebuilt "
+                "and the archive re-baselined, so there is one build on record; the chart "
+                "appears with the second and fills in from there.</p>")
+
+    pivot = hist.pivot_table(index="taken", columns="manager", values=column).sort_index()
+    order = [m for m in pivot.iloc[-1].sort_values(ascending=False).index]
+
+    cols = 5
+    fig_rows = int(np.ceil(len(order) / cols))
+    fig, axes = plt.subplots(fig_rows, cols, figsize=(11, 2.5 * fig_rows),
+                             sharex=True, sharey=True)
+    axes = np.atleast_1d(axes).ravel()
+
+    for ax, manager in zip(axes, order):
+        # Ten lines on one pair of axes is a tangle and needs ten colours nobody
+        # can tell apart. One panel each, with the rest kept as grey context, so
+        # a team is read against the league instead of against a legend.
+        for other in pivot.columns:
+            ax.plot(pivot.index, pivot[other], color=CONTEXT, linewidth=1.0, zorder=1)
+        ax.plot(pivot.index, pivot[manager], color=SOURCE_COLOURS["us"],
+                linewidth=2.0, marker="o", markersize=4, zorder=3)
+        ax.axhline(100, color=MUTED, linewidth=0.9, linestyle="--", zorder=2)
+        ax.set_title(manager, fontsize=10)
+        ax.grid(color=GRIDLINE)
+        ax.set_axisbelow(True)
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+        ax.tick_params(labelsize=8)
+        # Ten panels share one x-axis; full ISO dates on each collide into a
+        # smear. A handful of "Sep 3" ticks is all a reader needs here.
+        ax.xaxis.set_major_locator(mdates.AutoDateLocator(minticks=2, maxticks=4))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %-d"))
+        for label in ax.get_xticklabels():
+            label.set_rotation(30)
+            label.set_horizontalalignment("right")
+    for ax in axes[len(order):]:
+        ax.set_visible(False)
+
+    fig.suptitle("Published rating through the season, one panel per team", y=1.0)
+    fig.tight_layout()
+    chart = charts.save(_SECTION, "season-trend",
+                        alt="One small chart per team showing its rating across every "
+                            "build, with the rest of the league in grey behind it")
+    first, last = pivot.index[0], pivot.index[-1]
+    swing = (pivot.iloc[-1] - pivot.iloc[0])
+    up, down = swing.idxmax(), swing.idxmin()
+    return ("<h2>Through the Season</h2>"
+            f"<p>Every build since <strong>{first:%b %-d}</strong>, one panel per team "
+            f"with the rest of the league behind it in grey. Since then "
+            f"<strong>{up}</strong> has gained the most ({swing[up]:+.1f}) and "
+            f"<strong>{down}</strong> has given up the most ({swing[down]:+.1f}), "
+            f"as of {last:%b %-d}.</p>" + chart)
 
 
 # --------------------------------------------------------------------------- #
@@ -529,6 +642,7 @@ def body() -> str:
     content = {
         "rankings": _rankings_section(table),
         "draft-consensus": _draft_section(),
+        "season": _season_section(),
         "range": _range_section(table),
         "positions": _positions_section(board, rosters, table),
         "lineups": _lineups_section(board, rosters, table),
@@ -536,7 +650,7 @@ def body() -> str:
     }
     nav = layout.section_nav([(a, label) for a, _, label in SECTIONS])
     return INTRO + nav + "".join(
-        layout.details(summary, content[anchor], open=(i == 0), anchor=anchor)
+        layout.details(summary, content[anchor], open=(i < 2), anchor=anchor)
         for i, (anchor, summary, _) in enumerate(SECTIONS)
     )
 
