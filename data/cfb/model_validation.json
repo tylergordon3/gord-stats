@@ -1,0 +1,72 @@
+{
+  "model": "ridge team ratings, margin and total fitted separately",
+  "tuned_on": "2015-2019",
+  "scored_on": "2020-2025",
+  "scored_games": "FBS vs FBS only; FCS opponents train the ratings but are not scored",
+  "hyperparameters": {
+    "alpha": 0.25,
+    "half_life_days": 180.0,
+    "total_alpha": 4.0,
+    "total_half_life_days": 180.0
+  },
+  "overall": {
+    "games": 4265,
+    "margin_mae": 12.8612,
+    "margin_rmse": 16.1679,
+    "margin_sd": 16.1698,
+    "total_mae": 12.9405,
+    "total_rmse": 16.2821,
+    "winner_accuracy": 0.7186,
+    "baseline_home_rmse": 20.5203
+  },
+  "by_season": [
+    {
+      "season": 2020,
+      "games": 511,
+      "margin_rmse": 16.774,
+      "margin_mae": 13.37,
+      "total_rmse": 17.472,
+      "winner_accuracy": 0.7123
+    },
+    {
+      "season": 2021,
+      "games": 739,
+      "margin_rmse": 16.499,
+      "margin_mae": 13.417,
+      "total_rmse": 16.309,
+      "winner_accuracy": 0.7145
+    },
+    {
+      "season": 2022,
+      "games": 741,
+      "margin_rmse": 16.21,
+      "margin_mae": 12.838,
+      "total_rmse": 15.972,
+      "winner_accuracy": 0.6977
+    },
+    {
+      "season": 2023,
+      "games": 755,
+      "margin_rmse": 15.8,
+      "margin_mae": 12.564,
+      "total_rmse": 16.312,
+      "winner_accuracy": 0.743
+    },
+    {
+      "season": 2024,
+      "games": 755,
+      "margin_rmse": 16.308,
+      "margin_mae": 12.958,
+      "total_rmse": 16.305,
+      "winner_accuracy": 0.7033
+    },
+    {
+      "season": 2025,
+      "games": 764,
+      "margin_rmse": 15.601,
+      "margin_mae": 12.204,
+      "total_rmse": 15.666,
+      "winner_accuracy": 0.7382
+    }
+  ]
+}

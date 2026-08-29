@@ -71,6 +71,11 @@ def _game_row(event: dict, week: int) -> dict:
     return {
         "week": week,
         "date_utc": event["date"],
+        # ESPN's numeric team id, not the name: display names and abbreviations
+        # get rewritten and reused between seasons, and a ratings model that
+        # loses track of who is who silently rates two teams as one.
+        "home_id": str(home["team"].get("id", "")),
+        "away_id": str(away["team"].get("id", "")),
         "home": home["team"].get("shortDisplayName") or home["team"]["displayName"],
         "home_abbr": home["team"].get("abbreviation", ""),
         "home_rank": _rank(home),
