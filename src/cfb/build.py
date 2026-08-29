@@ -15,7 +15,7 @@ PAGES = ["home", "draft", "schedule", "league", "power", "predictions"]
 
 def build_all(refresh: bool = False) -> list[str]:
     """Fetch (or reuse) the data, build every page; returns failed page names."""
-    from cfb import espn, odds, yahoo
+    from cfb import espn, odds, results, yahoo
 
     # Fetch up front so one network failure surfaces once, not per page, and a
     # fetch that does fail leaves the pages building from the last good cache.
@@ -27,7 +27,10 @@ def build_all(refresh: bool = False) -> list[str]:
                         ("espn schedule", lambda: espn.schedule(refresh=refresh)),
                         # The board is only served before kickoff, so capture it on
                         # every build rather than only when a page happens to ask.
-                        ("espn betting lines", lambda: odds.capture())]:
+                        ("espn betting lines", lambda: odds.capture()),
+                        # Archive the predictions too: one scored after kickoff
+                        # is not a prediction, so they have to be on record first.
+                        ("prediction archive", lambda: results.capture())]:
         try:
             pull()
         except Exception as exc:

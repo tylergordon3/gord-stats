@@ -28,6 +28,7 @@ import pandas as pd                                  # noqa: E402
 
 from cfb import odds as odds_mod                     # noqa: E402
 from cfb import predict                              # noqa: E402
+from cfb import results                              # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
 from cfb.site import write_page                      # noqa: E402
 from gordstats import charts, palette                # noqa: E402
@@ -40,6 +41,15 @@ GRIDLINE = palette.GRIDLINE
 
 _CSS = ("""<style>
 .pred-note{color:#475569;font-size:14px;line-height:1.55}
+.pred-scroll{overflow-x:auto}
+table.cfb-pred{width:100%;border-collapse:collapse;font-size:14px}
+table.cfb-pred th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:center;
+  font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
+  border:1px solid #e2e8f0}
+table.cfb-pred td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
+  text-align:center;white-space:nowrap}
+table.cfb-pred td.pred-match{text-align:left;font-weight:600}
+table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 
 /* Headline numbers. Four things worth knowing before reading 40 rows. */
 .pred-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
@@ -208,6 +218,74 @@ def _tiles(games: pd.DataFrame) -> str:
         for label, value, sub in tiles) + "</div>")
 
 
+def _results_section() -> str:
+    """How the published predictions have actually done.
+
+    Everything else on this page is a claim about seasons nobody watched. This
+    is the only part a reader can check, so it is scored on predictions that
+    were on record before kickoff and nothing else.
+    """
+    frame = results.scored()
+    if frame.empty:
+        return ("<h2>How it has gone</h2>"
+                "<p class='pred-note'>Every prediction above is archived with the "
+                "moment it was made, and scored only if it was on record before "
+                "kickoff. Nothing has finished yet, so there is nothing to report "
+                "&mdash; this fills in from the first Saturday and never resets.</p>")
+
+    stat = results.summary(frame)
+    recent = frame.tail(12).iloc[::-1]
+    ours = stat["margin_mae"]
+    book = stat.get("market_margin_mae")
+
+    tiles = [("Games scored", f"{stat['games']}", "predicted before kickoff"),
+             ("Winners", f"{stat['correct']}/{stat['games']}",
+              f"{stat['winner_accuracy']:.0%} right"),
+             ("Average miss", f"{ours:.1f} pts",
+              "on the final margin"),
+             ("The book", "&mdash;" if book is None else f"{book:.1f} pts",
+              "same games, same measure")]
+    tile_html = ("<div class='pred-tiles'>" + "".join(
+        f"<div class='pred-tile'><div class='t-label'>{label}</div>"
+        f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
+        for label, value, sub in tiles) + "</div>")
+
+    rows = []
+    for _, g in recent.iterrows():
+        mark = "&#10003;" if g["correct"] else "&#10007;"
+        colour = "#15803d" if g["correct"] else "#b91c1c"
+        rows.append(
+            f"<tr><td class='pred-match'>{escape(str(g['away']))} at "
+            f"{escape(str(g['home']))}</td>"
+            f"<td>{g['pred_margin']:+.1f}</td>"
+            f"<td>{g['actual_margin']:+.0f}</td>"
+            f"<td>{abs(g['margin_error']):.1f}</td>"
+            f"<td style='color:{colour};font-weight:700'>{mark}</td></tr>")
+    table = ("<div class='pred-scroll'><table class='cfb-pred'><thead><tr>"
+             "<th>Game</th><th>We said</th><th>It was</th><th>Miss</th><th></th>"
+             f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
+
+    verdict = ""
+    if book is not None:
+        gap = ours - book
+        verdict = (f" On these games the book missed by {book:.1f}, so we are "
+                   + ("ahead of it by " if gap < 0 else "behind it by ")
+                   + f"{abs(gap):.1f} points a game &mdash; on a sample this small "
+                   "that is noise, not a trend.")
+    ats = ""
+    if stat["ats_games"]:
+        ats = (f" Where the two disagreed by three points or more, this model has "
+               f"been right {stat['ats_wins']} times in {stat['ats_games']}.")
+
+    return ("<h2>How it has gone</h2>"
+            f"<p class='pred-note'>Scored on the "
+            f"{stat['games']} game{'s' if stat['games'] != 1 else ''} that have "
+            f"finished since the archive started, using the last prediction made "
+            f"before each kickoff. Average miss on the final margin is "
+            f"<strong>{ours:.1f} points</strong>.{verdict}{ats}</p>"
+            + tile_html + table)
+
+
 def _agreement_chart(games: pd.DataFrame) -> str:
     """Our line against the market's, one dot per game.
 
@@ -308,7 +386,8 @@ def body() -> str:
     games = predict.week()
     if games.empty:
         return (_CSS + "<p class='pred-note'>No games scheduled in the next week. "
-                "Predictions return when the season does.</p>" + _method(games))
+                "Predictions return when the season does.</p>"
+                + _results_section() + _method(games))
 
     games = _with_market(games)
     week = int(games["week"].iloc[0])
@@ -321,7 +400,8 @@ def body() -> str:
              f"chance of winning, taken from the margin and the spread of this model's "
              f"own errors: not a second model, and not a promise.</p>")
 
-    parts = [_CSS, f"<h2>Week {week}</h2>", intro, _tiles(games), _cards(games)]
+    parts = [_CSS, f"<h2>Week {week}</h2>", intro, _tiles(games), _cards(games),
+             _results_section()]
     if matched >= 5:
         parts.append(_agreement_chart(games))
     parts.append(_method(games))
