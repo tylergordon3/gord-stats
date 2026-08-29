@@ -121,6 +121,7 @@ def test_zero_zero_games_are_treated_as_never_played(tmp_path, monkeypatch):
     """ESPN files cancelled games as 0-0 'post'; they are not scoreless ties."""
     frame = pd.DataFrame({
         "season": [2020, 2020], "week": [1, 2],
+        "game_id": ["1", "2"],
         "date_utc": ["2020-09-05T16:00Z", "2020-09-12T16:00Z"],
         "home_id": ["1", "1"], "away_id": ["2", "2"],
         "home": ["A", "A"], "away": ["B", "B"],
@@ -171,3 +172,35 @@ def test_a_line_that_contradicts_its_own_favourite_flag_is_dropped(monkeypatch):
     monkeypatch.setattr(odds.espn, "_get",
                         lambda params: {"events": [_event("BUFF", "BUF -24.5", -24.5, False)]})
     assert odds._rows(1, 2026) == []
+
+
+def test_division_membership_is_decided_per_season(monkeypatch, tmp_path):
+    """Idaho was FBS, then FCS for six years, then FBS again.
+
+    Deciding once across the whole archive rated it as FBS throughout, which
+    pooled the wrong opponents and rated a team that was not there.
+    """
+    frame = pd.DataFrame({
+        "season": [2017, 2017, 2020, 2020],
+        "home_id": ["70", "70", "70", "70"],
+        "away_id": ["1", "2", "1", "2"],
+    })
+    monkeypatch.setattr(games, "classifications",
+                        lambda: {(2017, "70"): "fbs", (2020, "70"): "fcs",
+                                 (2017, "1"): "fbs", (2020, "1"): "fbs",
+                                 (2017, "2"): "fbs", (2020, "2"): "fbs"})
+    fbs = games._fbs_teams(frame)
+    assert (2017, "70") in fbs
+    assert (2020, "70") not in fbs
+
+
+def test_the_fallback_threshold_scales_to_a_short_season(monkeypatch):
+    """2020's FBS teams played as few as three games; a fixed rule breaks."""
+    monkeypatch.setattr(games, "classifications", dict)
+    short = pd.DataFrame({
+        "season": [2020] * 8,
+        "home_id": ["a", "a", "a", "b", "b", "b", "c", "c"],
+        "away_id": ["b", "c", "b", "c", "a", "c", "a", "b"],
+    })
+    fbs = games._fbs_teams(short)
+    assert {(2020, "a"), (2020, "b"), (2020, "c")} <= fbs

@@ -118,10 +118,13 @@ def load(first: int = FIRST_SEASON, last: int = None,
     games["margin"] = games["home_score"] - games["away_score"]
     games["total"] = games["home_score"] + games["away_score"]
 
+    # Membership is per season, not for all time: teams move up and down, and
+    # 2020's short schedules make a fixed appearance count meaningless.
     fbs = _fbs_teams(games)
     for side in ("home", "away"):
-        games[f"{side}_team"] = games[f"{side}_id"].where(
-            games[f"{side}_id"].isin(fbs), FCS)
+        pairs = list(zip(games["season"].astype(int), games[f"{side}_id"]))
+        games[f"{side}_team"] = [tid if (season, tid) in fbs else FCS
+                                 for season, tid in pairs]
     return games.sort_values(["season", "date"]).reset_index(drop=True)
 
 
@@ -144,17 +147,74 @@ def team_names(games: pd.DataFrame = None) -> dict:
     return names
 
 
-def _fbs_teams(games: pd.DataFrame, min_games: int = 8) -> set:
-    """Who is FBS: anyone appearing often enough in a season to be rated.
+def classifications() -> dict:
+    """(season, team id) -> "fbs"/"fcs", from CollegeFootballData.
 
-    ESPN does not label the tier on the scoreboard, and an FBS team plays a
-    dozen of these games a year while a visiting FCS side plays one or two.
-    Counting appearances separates them without a second data source.
+    ESPN does not put the tier on the scoreboard; CFBD does, and because it
+    keys games on ESPN's event id its label can be carried straight back onto
+    our own archive. Returns empty when the lines archive has not been pulled,
+    which is what `_fbs_teams` falls back for.
     """
+    try:
+        from cfb import lines as lines_mod
+        board = lines_mod.load()
+    except Exception:
+        return {}
+    if board.empty or "home_class" not in board.columns:
+        return {}
+
+    raw = []
+    for season in range(FIRST_SEASON, espn.SEASON + 1):
+        path = season_path(season)
+        if path.exists():
+            frame = pd.read_parquet(path)
+            # Archives written before the ESPN event id was carried cannot be
+            # joined to anything; fall back rather than fail on them.
+            if "game_id" not in frame.columns:
+                return {}
+            raw.append(frame)
+    if not raw:
+        return {}
+
+    joined = pd.concat(raw, ignore_index=True).merge(
+        board[["game_id", "home_class", "away_class"]], on="game_id", how="inner")
+    sides = pd.concat([
+        joined[["season", "home_id", "home_class"]]
+        .rename(columns={"home_id": "id", "home_class": "cls"}),
+        joined[["season", "away_id", "away_class"]]
+        .rename(columns={"away_id": "id", "away_class": "cls"}),
+    ]).dropna(subset=["cls"])
+    # A team keeps one tier per season; take the label it carries most often.
+    grouped = sides.groupby(["season", "id"])["cls"].agg(lambda s: s.mode().iloc[0])
+    return {(int(season), str(tid)): cls for (season, tid), cls in grouped.items()}
+
+
+def _fbs_teams(games: pd.DataFrame) -> set:
+    """Which (season, team) pairs are FBS.
+
+    Per season, not once for all time. Teams change division: Idaho was FBS
+    through 2017, spent six years back in FCS, and returned in 2024; Delaware,
+    James Madison, Sam Houston and Kennesaw State all moved up mid-archive.
+    Deciding membership once across twelve seasons rated all of them as FBS for
+    years they were not, and put 52 team-seasons on the wrong side.
+
+    CollegeFootballData is asked first, because it simply knows. Counting games
+    played is the fallback for a season whose lines have not been pulled, and
+    the count is taken relative to that season rather than against a fixed
+    number -- in 2020 real FBS teams played as few as three games, so any fixed
+    threshold worth using in a normal year is wrong for that one.
+    """
+    known = classifications()
     keep = set()
-    for _, season in games.groupby("season"):
-        counts = pd.concat([season["home_id"], season["away_id"]]).value_counts()
-        keep |= set(counts[counts >= min_games].index)
+    for season, block in games.groupby("season"):
+        counts = pd.concat([block["home_id"], block["away_id"]]).value_counts()
+        labelled = {tid for tid in counts.index
+                    if known.get((int(season), str(tid))) == "fbs"}
+        if labelled:
+            keep |= {(int(season), tid) for tid in labelled}
+            continue
+        threshold = max(3.0, 0.55 * counts.quantile(0.75))
+        keep |= {(int(season), tid) for tid in counts[counts >= threshold].index}
     return keep
 
 

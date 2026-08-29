@@ -10,72 +10,72 @@
     "total_half_life_days": 180.0
   },
   "overall": {
-    "games": 4265,
-    "margin_mae": 12.8612,
-    "margin_rmse": 16.1679,
-    "margin_sd": 16.1698,
-    "total_mae": 12.9405,
-    "total_rmse": 16.2821,
-    "winner_accuracy": 0.7186,
-    "baseline_home_rmse": 20.5203
+    "games": 4238,
+    "margin_mae": 12.8716,
+    "margin_rmse": 16.1775,
+    "margin_sd": 16.1794,
+    "total_mae": 12.9254,
+    "total_rmse": 16.2761,
+    "winner_accuracy": 0.7154,
+    "baseline_home_rmse": 20.4934
   },
   "by_season": [
     {
       "season": 2020,
-      "games": 511,
-      "margin_rmse": 16.774,
-      "margin_mae": 13.37,
-      "total_rmse": 17.472,
-      "winner_accuracy": 0.7123
+      "games": 508,
+      "margin_rmse": 16.775,
+      "margin_mae": 13.357,
+      "total_rmse": 17.455,
+      "winner_accuracy": 0.7165
     },
     {
       "season": 2021,
-      "games": 739,
-      "margin_rmse": 16.499,
-      "margin_mae": 13.417,
-      "total_rmse": 16.309,
-      "winner_accuracy": 0.7145
+      "games": 732,
+      "margin_rmse": 16.444,
+      "margin_mae": 13.375,
+      "total_rmse": 16.31,
+      "winner_accuracy": 0.7117
     },
     {
       "season": 2022,
-      "games": 741,
-      "margin_rmse": 16.21,
-      "margin_mae": 12.838,
-      "total_rmse": 15.972,
-      "winner_accuracy": 0.6977
+      "games": 734,
+      "margin_rmse": 16.269,
+      "margin_mae": 12.833,
+      "total_rmse": 15.955,
+      "winner_accuracy": 0.6989
     },
     {
       "season": 2023,
-      "games": 755,
-      "margin_rmse": 15.8,
-      "margin_mae": 12.564,
-      "total_rmse": 16.312,
-      "winner_accuracy": 0.743
+      "games": 750,
+      "margin_rmse": 15.804,
+      "margin_mae": 12.588,
+      "total_rmse": 16.364,
+      "winner_accuracy": 0.7373
     },
     {
       "season": 2024,
-      "games": 755,
-      "margin_rmse": 16.308,
-      "margin_mae": 12.958,
-      "total_rmse": 16.305,
-      "winner_accuracy": 0.7033
+      "games": 752,
+      "margin_rmse": 16.368,
+      "margin_mae": 13.019,
+      "total_rmse": 16.284,
+      "winner_accuracy": 0.6928
     },
     {
       "season": 2025,
-      "games": 764,
-      "margin_rmse": 15.601,
-      "margin_mae": 12.204,
-      "total_rmse": 15.666,
-      "winner_accuracy": 0.7382
+      "games": 762,
+      "margin_rmse": 15.589,
+      "margin_mae": 12.236,
+      "total_rmse": 15.627,
+      "winner_accuracy": 0.7349
     }
   ],
   "versus_market": {
     "games": 4238,
-    "our_margin_rmse": 16.148,
+    "our_margin_rmse": 16.178,
     "market_margin_rmse": 15.383,
-    "our_total_rmse": 16.272,
-    "gap_rmse": 0.765,
-    "ats_when_we_disagree_by_3": 0.4771,
+    "our_total_rmse": 16.276,
+    "gap_rmse": 0.794,
+    "ats_when_we_disagree_by_3": 0.4801,
     "ats_sample": 2008,
     "break_even_at_minus_110": 0.5238,
     "verdict": "Within a point of the closing line without using it, but the disagreements are noise: below break-even against the spread, and our error grows with the size of the disagreement while the market's does not. No betting edge."
