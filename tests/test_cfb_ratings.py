@@ -226,3 +226,20 @@ def test_the_published_accuracy_matches_the_model_that_is_running():
         "total_alpha": ratings.DEFAULT_TOTAL_ALPHA,
         "total_half_life_days": ratings.DEFAULT_TOTAL_HALF_LIFE,
     }
+
+
+def test_no_predicted_score_is_ever_negative():
+    """Margin and total are modelled apart; their arithmetic does not know that
+    a team cannot score below zero, and a team page printed "49 to -2"."""
+    from cfb import predict
+    frame = pd.DataFrame({"pred_margin": [51.8, -51.8, 7.0],
+                          "pred_total": [47.6, 47.6, 50.0],
+                          "pred_home": [49.7, -2.1, 28.5],
+                          "pred_away": [-2.1, 49.7, 21.5]})
+    out = predict.floor_scores(frame)
+    assert (out[["pred_home", "pred_away"]] >= 0).all().all()
+    # the margin is the modelled quantity and survives; the total gives way
+    assert np.allclose(out["pred_home"] - out["pred_away"], frame["pred_margin"])
+    assert np.allclose(out["pred_home"] + out["pred_away"], out["pred_total"])
+    # a game that needed no flooring is left exactly alone
+    assert out["pred_home"].iloc[2] == 28.5

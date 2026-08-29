@@ -23,6 +23,7 @@ is at its weakest in week one and gets better every Saturday.
 """
 import json
 
+import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
@@ -48,6 +49,30 @@ def margin_sd() -> float:
         return float(json.loads(path.read_text())["overall"]["margin_sd"])
     except (json.JSONDecodeError, KeyError, TypeError, ValueError):
         return _FALLBACK_SD
+
+
+def floor_scores(out: pd.DataFrame) -> pd.DataFrame:
+    """No team scores below zero; the arithmetic does not know that.
+
+    Margin and total are modelled separately, and in a fifty-point mismatch
+    (total + margin) / 2 and its mirror hand the underdog a negative score --
+    which reached a team page as "49 to -2" before this existed. The margin is
+    the modelled quantity and is kept; the total gives way, which amounts to
+    saying that if the underdog cannot score below zero then the total must be
+    at least the margin.
+
+    Deliberately not inside `ratings.Ratings.predict`: the backtest scores the
+    model's own `pred_total`, and flooring it there would quietly change the
+    accuracy the site publishes.
+    """
+    out = out.copy()
+    for low, high in (("pred_away", "pred_home"), ("pred_home", "pred_away")):
+        under = out[low] < 0
+        if under.any():
+            out.loc[under, high] = out.loc[under, "pred_margin"].abs()
+            out.loc[under, low] = 0.0
+    out["pred_total"] = out["pred_home"] + out["pred_away"]
+    return out
 
 
 def _current_season_games() -> pd.DataFrame:
@@ -140,19 +165,37 @@ def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
     out = upcoming[[c for c in carry if c in upcoming.columns]].join(preds)
     out["home_rating"] = upcoming["home_team"].map(model.rating)
     out["away_rating"] = upcoming["away_team"].map(model.rating)
-    # A team cannot score below zero. The margin and total models do not know
-    # that, and in a 45-point mismatch the arithmetic hands the underdog four
-    # points or fewer. Clipping keeps the margin, which is the modelled
-    # quantity, and moves the total instead.
-    floor = out["pred_away"] < 0
-    out.loc[floor, "pred_home"] = out.loc[floor, "pred_margin"]
-    out.loc[floor, "pred_away"] = 0.0
-    out["pred_total"] = out["pred_home"] + out["pred_away"]
-
+    out = floor_scores(out)
     out["home_win_prob"] = norm.cdf(out["pred_margin"] / margin_sd())
     # Sportsbook convention: a favourite is quoted negative.
     out["spread"] = -out["pred_margin"]
     return out.sort_values("date").reset_index(drop=True)
+
+
+def season(asof: pd.Timestamp = None) -> pd.DataFrame:
+    """Every game of the season: played ones with their result, the rest predicted.
+
+    One fit and one pass, rather than a fit per week, because a team page wants
+    the whole schedule and there is no reason for the rating behind week three
+    to differ from the rating behind week ten when both are being shown today.
+    """
+    frame, schedule, names = history()
+    asof = asof if asof is not None else pd.Timestamp.now(tz="UTC")
+
+    played = schedule["state"] == "post"
+    real = played & (schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) > 0)
+
+    train = frame[frame["date"] < asof]
+    model = ratings_mod.fit(train, asof=asof)
+    preds = model.predict(schedule)
+
+    out = floor_scores(schedule.copy().join(preds))
+    out["played"] = real
+    out["home_rating"] = schedule["home_team"].map(model.rating)
+    out["away_rating"] = schedule["away_team"].map(model.rating)
+    out["home_win_prob"] = norm.cdf(out["pred_margin"] / margin_sd())
+    out["actual_margin"] = np.where(real, out["home_score"] - out["away_score"], np.nan)
+    return out.sort_values("date").reset_index(drop=True), model, names
 
 
 if __name__ == "__main__":

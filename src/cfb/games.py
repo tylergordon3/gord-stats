@@ -204,11 +204,13 @@ def classifications() -> dict:
 def _fbs_teams(games: pd.DataFrame) -> set:
     """Which (season, team) pairs are FBS.
 
-    Per season, not once for all time. Teams change division: Idaho was FBS
-    through 2017, spent six years back in FCS, and returned in 2024; Delaware,
-    James Madison, Sam Houston and Kennesaw State all moved up mid-archive.
-    Deciding membership once across twelve seasons rated all of them as FBS for
-    years they were not, and put 52 team-seasons on the wrong side.
+    Per season, not once for all time. Teams change division, in both
+    directions: Idaho was FBS through 2017 and has been FCS ever since, while
+    James Madison (2022), Sam Houston and Jacksonville State (2023), Kennesaw
+    State (2024) and Delaware (2025) each moved up part-way through this
+    archive. Deciding membership once across twelve seasons rated every one of
+    them as FBS for years they were not, and put 52 team-seasons on the wrong
+    side of the line.
 
     CollegeFootballData is asked first, because it simply knows. Counting games
     played is the fallback for a season whose lines have not been pulled, and

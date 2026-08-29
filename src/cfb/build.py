@@ -10,7 +10,9 @@ works for the NFL section); gordstats.daily's cfb task calls build_all().
 import argparse
 import traceback
 
-PAGES = ["home", "draft", "schedule", "league", "power", "predictions"]
+# teams before predictions: the predictions page links only to team pages
+# that exist, and asks the filesystem.
+PAGES = ["home", "draft", "schedule", "league", "power", "teams", "predictions"]
 
 
 def build_all(refresh: bool = False) -> list[str]:

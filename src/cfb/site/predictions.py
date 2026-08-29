@@ -30,6 +30,7 @@ from cfb import odds as odds_mod                     # noqa: E402
 from cfb import predict                              # noqa: E402
 from cfb import results                              # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
+from cfb.site import teams as teams_page              # noqa: E402
 from cfb.site import write_page                      # noqa: E402
 from gordstats import charts, palette                # noqa: E402
 
@@ -71,6 +72,8 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 .pg-when .pg-tv{color:#0f172a;font-weight:600}
 .pg-row{display:flex;align-items:center;gap:9px;padding:4px 0}
 .pg-row.pg-win .pg-name{font-weight:700;color:#0f172a}
+.pg-row .pg-name a{color:inherit;text-decoration:none}
+.pg-row .pg-name a:hover{text-decoration:underline}
 .pg-row .pg-name{flex:1;color:#475569;font-size:14.5px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .pg-rank{color:#64748b;font-size:11.5px;font-weight:700;margin-right:3px}
@@ -151,9 +154,17 @@ def _side(game, side: str, winning: bool, score: int) -> str:
     rating = game.get(f"{side}_rating")
     rating_txt = "" if pd.isna(rating) else f"{rating:+.1f}"
     logo = LOGO.format(team_id=escape(str(game[f"{side}_id"])))
+    # Only FBS teams get a page; an FCS visitor is pooled and has no rating to
+    # show, so it gets a badge and no link rather than a link to nothing. Team
+    # pages are built before this one -- see cfb.build.PAGES -- so the file is
+    # already on disk when this asks.
+    slug = teams_page.team_slug(str(game[side]))
+    linked = (WEB_DIR / "teams" / slug / "index.html").exists()
+    open_a = f"<a href='/cfb/teams/{slug}/'>" if linked else ""
+    close_a = "</a>" if linked else ""
     return (f"<div class='pg-row{' pg-win' if winning else ''}'>"
-            f"<img src='{logo}' alt='' loading='lazy'>"
-            f"<span class='pg-name'>{badge}{name}</span>"
+            f"{open_a}<img src='{logo}' alt='' loading='lazy'>{close_a}"
+            f"<span class='pg-name'>{badge}{open_a}{name}{close_a}</span>"
             f"<span class='pg-rating'>{rating_txt}</span>"
             f"<span class='pg-score'>{score}</span></div>")
 

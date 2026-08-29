@@ -140,3 +140,8 @@ cfb:
     short: Predict
     icon: "🔮"
     url: /cfb/predictions/
+
+  - title: Team Ratings
+    short: Teams
+    icon: "🏈"
+    url: /cfb/teams/
