@@ -133,3 +133,41 @@ def test_zero_zero_games_are_treated_as_never_played(tmp_path, monkeypatch):
     loaded = games.load(first=2020, last=2020)
     assert len(loaded) == 1
     assert loaded["margin"].iloc[0] == 14.0
+
+
+# --------------------------------------------------------------------------- #
+# Archived betting lines
+# --------------------------------------------------------------------------- #
+
+def _event(home_abbr, details, spread, home_favourite):
+    return {"date": "2026-08-29T16:00Z", "competitions": [{
+        "status": {"type": {"state": "pre"}},
+        "odds": [{"provider": {"name": "DraftKings"}, "details": details,
+                  "spread": spread, "overUnder": 48.5,
+                  "homeTeamOdds": {"favorite": home_favourite}}],
+        "competitors": [
+            {"homeAway": "home", "team": {"id": "2084", "abbreviation": home_abbr,
+                                          "shortDisplayName": "Buffalo"}},
+            {"homeAway": "away", "team": {"id": "399", "abbreviation": "ALB",
+                                          "shortDisplayName": "UAlbany"}}]}]}
+
+
+def test_the_line_is_read_from_spread_not_from_the_details_string(monkeypatch):
+    """ESPN's details names the favourite by an abbreviation it does not use itself.
+
+    The payload says "BUF -24.5" while calling the same team "BUFF". Matching on
+    that flips the sign and turns a 24-point favourite into a 24-point underdog.
+    """
+    from cfb import odds
+    monkeypatch.setattr(odds.espn, "_get",
+                        lambda params: {"events": [_event("BUFF", "BUF -24.5", -24.5, True)]})
+    row = odds._rows(1, 2026)[0]
+    assert row["spread"] == -24.5          # negative = the home team is favoured
+    assert row["home"] == "Buffalo"
+
+
+def test_a_line_that_contradicts_its_own_favourite_flag_is_dropped(monkeypatch):
+    from cfb import odds
+    monkeypatch.setattr(odds.espn, "_get",
+                        lambda params: {"events": [_event("BUFF", "BUF -24.5", -24.5, False)]})
+    assert odds._rows(1, 2026) == []
