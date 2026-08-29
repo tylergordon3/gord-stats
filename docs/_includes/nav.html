@@ -76,7 +76,17 @@ reader who mistypes a CBB URL still lands somewhere with CBB navigation.
       {% endfor %}
     {% elsif subnav and subnav.size > 1 %}
     <nav class="simple-nav sub-nav">
+      {% comment %}
+      A hairline between runs of related pages, for sections whose items set
+      `group` in _data/nav.yml. Sections that do not set it render exactly as
+      before, so this is additive.
+      {% endcomment %}
+      {% assign prev_group = '' %}
       {% for item in subnav %}
+        {% if item.group and prev_group != '' and item.group != prev_group %}
+      <span class="sub-nav-sep" aria-hidden="true"></span>
+        {% endif %}
+        {% assign prev_group = item.group | default: prev_group %}
         {% if item.route == 'bracketology' %}
       <a class="league-route no-rewrite" data-page="bracketology"
          href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{% include nav_label.html item=item %}</a>

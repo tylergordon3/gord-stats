@@ -111,37 +111,47 @@ fantasy:
 
 
 cfb:
+  # `group` draws a hairline between runs of related pages. The section covers
+  # two unrelated things -- a Yahoo fantasy league and a prediction model for
+  # the real sport -- and seven flat links gave no hint which was which.
   - title: Home
     short: Home
     icon: "🏠"
     url: /cfb/index.html
-
-  - title: Draft Board
-    short: Draft
-    icon: "📋"
-    url: /cfb/draft/
-
-  - title: League Dashboard
-    short: League
-    icon: "🏆"
-    url: /cfb/league/
-
-  - title: CFB Schedule
-    short: Schedule
-    icon: "📅"
-    url: /cfb/schedule/
-
-  - title: Power Rankings
-    short: Power
-    icon: "⚡"
-    url: /cfb/power/
+    group: home
 
   - title: Predictions
     short: Predict
     icon: "🔮"
     url: /cfb/predictions/
+    group: model
 
-  - title: Team Ratings
-    short: Teams
-    icon: "🏈"
+  - title: GordStats Rankings
+    short: GordStats
+    icon: "📈"
     url: /cfb/teams/
+    group: model
+
+  - title: CFB Schedule
+    short: Schedule
+    icon: "📅"
+    url: /cfb/schedule/
+    group: reference
+
+  - title: National Rankings
+    short: FPI
+    icon: "⚡"
+    url: /cfb/power/
+    group: reference
+
+  - title: Draft Board
+    short: Draft
+    icon: "📋"
+    url: /cfb/draft/
+    group: fantasy
+
+  - title: League Dashboard
+    short: League
+    icon: "🏆"
+    url: /cfb/league/
+    group: fantasy

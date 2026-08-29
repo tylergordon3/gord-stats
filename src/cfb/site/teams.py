@@ -205,9 +205,9 @@ def generate() -> None:
     frame, model, names = predict.season()
     table = _standings(frame, model, names)
 
-    write_page(WEB_DIR / "teams" / "index.html", "CFB Team Ratings",
+    write_page(WEB_DIR / "teams" / "index.html", "GordStats Rankings",
                _index(table, frame),
-               subtitle="Every FBS team, on the number behind the predictions")
+               subtitle="Every FBS team on our own rating, not somebody else's")
 
     for _, row in table.iterrows():
         slug = team_slug(row["name"])

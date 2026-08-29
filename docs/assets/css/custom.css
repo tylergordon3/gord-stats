@@ -3144,6 +3144,26 @@ summary.team-report-header::after {
   color: #A34F0A !important;
 }
 
+/* Divider between groups of pages within a section (see _data/nav.yml).
+   A rule rather than a gap: at this size a gap alone reads as loose spacing
+   rather than as a boundary. */
+.sub-nav-sep {
+  display: inline-block;
+  width: 1px;
+  height: 15px;
+  margin: 0 7px;
+  background: #d7dce3;
+  vertical-align: middle;
+}
+
+/* Phones drop the dividers. The sub-nav is built to fit 390px without
+   scrolling sideways (see _includes/nav_label.html); three rules and their
+   margins are 45px this row does not have, and grouping is the first thing
+   worth losing when the alternative is a row you have to drag. */
+@media (max-width: 640px) {
+  .sub-nav-sep { display: none; }
+}
+
 /* Phones: keep both rows, shrink the chrome rather than drop a row.
    Tap targets stay at 40px+ even as the type gets smaller. */
 @media (max-width: 640px) {

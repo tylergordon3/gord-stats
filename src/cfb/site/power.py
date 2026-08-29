@@ -505,7 +505,7 @@ def body() -> str:
 
 
 def generate():
-    write_page(WEB_DIR / "power" / "index.html", "CFB Power Rankings", body(),
+    write_page(WEB_DIR / "power" / "index.html", "CFB National Rankings", body(),
                subtitle=f"{SEASON} season")
 
 
