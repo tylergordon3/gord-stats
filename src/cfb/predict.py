@@ -131,8 +131,9 @@ def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
 
     # Carry the ESPN team ids: names are for reading, ids are what joins to the
     # betting board without arguing about how a school spells itself.
-    out = upcoming[["week", "date", "home", "away", "neutral",
-                    "home_id", "away_id"]].join(preds)
+    carry = ["week", "date", "home", "away", "neutral", "home_id", "away_id",
+             "home_rank", "away_rank", "tv", "venue", "place"]
+    out = upcoming[[c for c in carry if c in upcoming.columns]].join(preds)
     out["home_rating"] = upcoming["home_team"].map(model.rating)
     out["away_rating"] = upcoming["away_team"].map(model.rating)
     # A team cannot score below zero. The margin and total models do not know

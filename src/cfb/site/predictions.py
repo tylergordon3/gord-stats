@@ -17,6 +17,8 @@ better number, not as something to bet into.
     python -m cfb.site.predictions
 """
 import json
+from html import escape
+from zoneinfo import ZoneInfo
 
 import matplotlib
 matplotlib.use("Agg")
@@ -37,19 +39,48 @@ MUTED = "#94a3b8"
 GRIDLINE = "#e2e8f0"
 
 _CSS = """<style>
-table.cfb-pred{width:100%;border-collapse:collapse;font-size:14px}
-table.cfb-pred th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:center;
-  font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
-  border:1px solid #e2e8f0}
-table.cfb-pred td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
-  text-align:center;white-space:nowrap}
-table.cfb-pred td.pred-match{text-align:left;font-weight:600}
-table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
-table.cfb-pred td.pred-fav{font-weight:700}
-.pred-note{color:#475569;font-size:14px}
-.pred-scroll{overflow-x:auto}
-/* The Slate remote theme frames every <img>; charts here are not figures. */
-.pred-chart img{border:none;padding:0;box-shadow:none;background:none;margin:12px 0}
+.pred-note{color:#475569;font-size:14px;line-height:1.55}
+
+/* Headline numbers. Four things worth knowing before reading 40 rows. */
+.pred-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;margin:18px 0 26px}
+.pred-tile{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px}
+.pred-tile .t-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+  color:#64748b;font-weight:600}
+.pred-tile .t-value{font-size:23px;font-weight:700;color:#0f172a;line-height:1.25;
+  margin-top:3px}
+.pred-tile .t-sub{font-size:12px;color:#64748b;margin-top:2px}
+
+/* One card per game. */
+.pred-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+  gap:14px;margin:6px 0 28px}
+.pg{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px 11px;
+  box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.pg-when{font-size:11.5px;color:#64748b;display:flex;justify-content:space-between;
+  gap:10px;margin-bottom:9px;white-space:nowrap;overflow:hidden}
+.pg-when .pg-tv{color:#0f172a;font-weight:600}
+.pg-row{display:flex;align-items:center;gap:9px;padding:4px 0}
+.pg-row.pg-win .pg-name{font-weight:700;color:#0f172a}
+.pg-row .pg-name{flex:1;color:#475569;font-size:14.5px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.pg-rank{color:#64748b;font-size:11.5px;font-weight:700;margin-right:3px}
+.pg-rating{color:#94a3b8;font-size:11.5px;font-variant-numeric:tabular-nums;
+  min-width:44px;text-align:right}
+.pg-score{font-size:19px;font-weight:700;color:#0f172a;min-width:32px;text-align:right;
+  font-variant-numeric:tabular-nums}
+.pg-row:not(.pg-win) .pg-score{color:#94a3b8;font-weight:600}
+/* The Slate remote theme frames every <img> - border, padding, shadow, margins.
+   Reset it here or every logo becomes a boxed figure and the row grows. */
+.pg-row img,.pred-chart img{border:none;padding:0;box-shadow:none;background:none;
+  border-radius:0;margin:0}
+.pg-row img{width:26px;height:26px;object-fit:contain;flex:none}
+.pg-bar{height:6px;border-radius:3px;background:#eef2f7;overflow:hidden;margin:9px 0 6px}
+.pg-bar span{display:block;height:100%;background:#2a78d6}
+.pg-line{display:flex;justify-content:space-between;gap:8px;font-size:12px;
+  color:#475569;font-variant-numeric:tabular-nums}
+.pg-line b{color:#0f172a}
+.pred-chart img{margin:12px 0}
+.pred-chart{max-width:640px}
 </style>"""
 
 
@@ -75,31 +106,106 @@ def _with_market(games: pd.DataFrame) -> pd.DataFrame:
                        on=["home_id", "away_id"], how="left")
 
 
+ET = ZoneInfo("America/New_York")
+LOGO = "https://a.espncdn.com/i/teamlogos/ncaa/500/{team_id}.png"
+
+
 def _fmt_spread(value) -> str:
     if pd.isna(value):
         return "&mdash;"
     return "PK" if abs(value) < 0.25 else f"{value:+.1f}"
 
 
-def _table(games: pd.DataFrame) -> str:
-    rows = []
-    for _, g in games.iterrows():
-        favourite = g["home"] if g["pred_margin"] > 0 else g["away"]
-        prob = g["home_win_prob"] if g["pred_margin"] > 0 else 1 - g["home_win_prob"]
-        rows.append(
-            "<tr>"
-            f"<td>{g['date']:%a %-d %b, %-I:%M%p} UTC</td>"
-            f"<td class='pred-match'>{g['away']} at {g['home']}</td>"
-            f"<td>{g['pred_away']:.0f} &ndash; {g['pred_home']:.0f}</td>"
-            f"<td class='pred-fav'>{favourite} {_fmt_spread(-abs(g['pred_margin']))}</td>"
-            f"<td>{_fmt_spread(g['market_spread'])}</td>"
-            f"<td>{g['pred_total']:.0f}</td>"
-            f"<td>{prob:.0%}</td>"
-            "</tr>")
-    head = ("<tr><th>Kickoff</th><th>Game</th><th>Score</th><th>Our line</th>"
-            "<th>Market</th><th>Total</th><th>Confidence</th></tr>")
-    return ("<div class='pred-scroll'><table class='cfb-pred'>"
-            f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>")
+def _scores(game) -> tuple:
+    """Projected scores as whole points, never a tie.
+
+    Rounding two numbers 0.3 apart lands them on the same integer, and the card
+    then shows a 30-30 draw next to a line calling one side the favourite.
+    College football has not drawn a game since overtime arrived in 1996, so the
+    favourite is nudged clear rather than shown level.
+    """
+    home, away = round(game["pred_home"]), round(game["pred_away"])
+    if home == away:
+        if game["pred_margin"] >= 0:
+            home += 1
+        else:
+            away += 1
+    return int(home), int(away)
+
+
+def _side(game, side: str, winning: bool, score: int) -> str:
+    """One team's row inside a card: badge, rank, name, rating, projected score."""
+    name = escape(str(game[side]))
+    rank = game.get(f"{side}_rank")
+    badge = "" if pd.isna(rank) else f"<span class='pg-rank'>#{int(rank)}</span>"
+    rating = game.get(f"{side}_rating")
+    rating_txt = "" if pd.isna(rating) else f"{rating:+.1f}"
+    logo = LOGO.format(team_id=escape(str(game[f"{side}_id"])))
+    return (f"<div class='pg-row{' pg-win' if winning else ''}'>"
+            f"<img src='{logo}' alt='' loading='lazy'>"
+            f"<span class='pg-name'>{badge}{name}</span>"
+            f"<span class='pg-rating'>{rating_txt}</span>"
+            f"<span class='pg-score'>{score}</span></div>")
+
+
+def _card(game) -> str:
+    home_wins = game["pred_margin"] > 0
+    favourite = game["home"] if home_wins else game["away"]
+    prob = game["home_win_prob"] if home_wins else 1 - game["home_win_prob"]
+
+    kick = game["date"].astimezone(ET)
+    where = "neutral site" if game.get("neutral") else escape(str(game.get("place") or ""))
+    tv = escape(str(game.get("tv") or "").split(",")[0])
+    when = (f"<div class='pg-when'><span>{kick:%a %-d %b, %-I:%M %p} ET"
+            + (f" &middot; {where}" if where else "") + "</span>"
+            + (f"<span class='pg-tv'>{tv}</span>" if tv else "") + "</div>")
+
+    ours = f"<b>{escape(str(favourite))} {-abs(game['pred_margin']):.1f}</b>"
+    market = ("" if pd.isna(game.get("market_spread"))
+              else f"<span>book {_fmt_spread(game['market_spread'])}</span>")
+    home_score, away_score = _scores(game)
+    return ("<article class='pg'>" + when
+            + _side(game, "away", not home_wins, away_score)
+            + _side(game, "home", home_wins, home_score)
+            + f"<div class='pg-bar'><span style='width:{prob * 100:.0f}%'></span></div>"
+            + "<div class='pg-line'>" + ours + market
+            + f"<span>O/U {game['pred_total']:.0f}</span>"
+            + f"<span>{prob:.0%}</span></div></article>")
+
+
+def _cards(games: pd.DataFrame) -> str:
+    return ("<div class='pred-grid'>"
+            + "".join(_card(g) for _, g in games.iterrows()) + "</div>")
+
+
+def _tiles(games: pd.DataFrame) -> str:
+    """The four numbers worth having before reading forty cards."""
+    closest = games.reindex(games["pred_margin"].abs().sort_values().index).iloc[0]
+    biggest = games.reindex(games["pred_margin"].abs().sort_values(ascending=False).index).iloc[0]
+    big_fav = biggest["home"] if biggest["pred_margin"] > 0 else biggest["away"]
+    ranked = games[(games["home_rank"].notna()) | (games["away_rank"].notna())]
+
+    priced = games.dropna(subset=["market_spread"])
+    agree = ((-priced["pred_margin"]) - priced["market_spread"]).abs().mean() \
+        if len(priced) else float("nan")
+
+    tiles = [
+        ("Games", f"{len(games)}", f"{len(ranked)} with a ranked team"),
+        ("Closest call",
+         f"{abs(closest['pred_margin']):.1f} pts",
+         escape(f"{closest['away']} at {closest['home']}")),
+        ("Biggest mismatch",
+         f"{abs(biggest['pred_margin']):.0f} pts",
+         escape(f"{big_fav} over "
+                f"{biggest['away'] if biggest['pred_margin'] > 0 else biggest['home']}")),
+        ("Distance from the book",
+         "&mdash;" if pd.isna(agree) else f"{agree:.1f} pts",
+         f"average across {len(priced)} priced games"),
+    ]
+    return ("<div class='pred-tiles'>" + "".join(
+        f"<div class='pred-tile'><div class='t-label'>{label}</div>"
+        f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
+        for label, value, sub in tiles) + "</div>")
 
 
 def _agreement_chart(games: pd.DataFrame) -> str:
@@ -206,19 +312,16 @@ def body() -> str:
 
     games = _with_market(games)
     week = int(games["week"].iloc[0])
-    closest = games.reindex(games["pred_margin"].abs().sort_values().index).iloc[0]
     matched = games["market_spread"].notna().sum()
 
     intro = (f"<p class='pred-note'>Every FBS game kicking off in the next seven days, "
-             f"{len(games)} of them, with the score this model expects and the book's "
-             f"line beside it. The closest game on the board is "
-             f"<strong>{closest['away']} at {closest['home']}</strong>, which it "
-             f"separates by {abs(closest['pred_margin']):.1f} points. "
-             f"<strong>Confidence</strong> is the chance the favourite wins, taken from "
-             f"the margin and the spread of this model's own errors &mdash; not a "
-             f"second model, and not a promise.</p>")
+             f"{len(games)} of them. Each card carries the score this model expects, "
+             f"each team's rating &mdash; points better than an average FBS side "
+             f"&mdash; and the book's line beside ours. The bar is the favourite's "
+             f"chance of winning, taken from the margin and the spread of this model's "
+             f"own errors: not a second model, and not a promise.</p>")
 
-    parts = [_CSS, f"<h2>Week {week}</h2>", intro, _table(games)]
+    parts = [_CSS, f"<h2>Week {week}</h2>", intro, _tiles(games), _cards(games)]
     if matched >= 5:
         parts.append(_agreement_chart(games))
     parts.append(_method(games))
