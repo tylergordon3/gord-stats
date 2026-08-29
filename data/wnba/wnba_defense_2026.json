@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-28T23:37:05.738320-04:00",
+ "updated": "2026-08-29T05:38:06.435956-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -34747,6 +34747,244 @@
       "Bree Hall",
       "G",
       0.0
+     ]
+    ]
+   }
+  },
+  "401857182": {
+   "date": "2026-08-29",
+   "allowed": {
+    "TOR": {
+     "G": 105.0,
+     "FC": 84.0
+    },
+    "LV": {
+     "G": 69.0,
+     "FC": 85.0
+    }
+   },
+   "players": {
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      30.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      31.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      10.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      19.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      15.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      14.0
+     ],
+     [
+      "Kiana Williams",
+      "G",
+      14.0
+     ],
+     [
+      "Zaay Green",
+      "G",
+      6.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      15.0
+     ]
+    ],
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      10.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      9.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      43.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      28.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      41.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      17.0
+     ],
+     [
+      "Kierstan Bell",
+      "FC",
+      5.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      12.0
+     ],
+     [
+      "Dana Evans",
+      "G",
+      9.0
+     ],
+     [
+      "Justine Pissott",
+      "G",
+      3.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      12.0
+     ]
+    ]
+   }
+  },
+  "401857183": {
+   "date": "2026-08-29",
+   "allowed": {
+    "WSH": {
+     "G": 95.0,
+     "FC": 82.0
+    },
+    "LA": {
+     "G": 74.0,
+     "FC": 82.0
+    }
+   },
+   "players": {
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      7.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      26.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      34.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      39.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      18.0
+     ],
+     [
+      "Angela Dugalic",
+      "FC",
+      1.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      14.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      11.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      2.0
+     ],
+     [
+      "Cassandre Prosper",
+      "G",
+      0.0
+     ],
+     [
+      "Alicia Florez",
+      "G",
+      4.0
+     ]
+    ],
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      43.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      14.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      23.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      16.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      27.0
+     ],
+     [
+      "Cameron Brink",
+      "FC",
+      25.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      6.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      2.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      21.0
      ]
     ]
    }
