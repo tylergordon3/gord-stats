@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-29T15:27:46.667318-04:00",
+ "updated": "2026-08-29T17:32:06.127818-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -34985,6 +34985,140 @@
       "Monique Akoa Makani",
       "G",
       21.0
+     ]
+    ]
+   }
+  },
+  "401857184": {
+   "date": "2026-08-29",
+   "allowed": {
+    "CHI": {
+     "G": 78.0,
+     "FC": 105.0
+    },
+    "NY": {
+     "G": 94.0,
+     "FC": 41.0
+    }
+   },
+   "players": {
+    "CHI": [
+     [
+      "Azura Stevens",
+      "FC",
+      10.0
+     ],
+     [
+      "Kamilla Cardoso",
+      "FC",
+      20.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      23.0
+     ],
+     [
+      "Natasha Cloud",
+      "G",
+      18.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      19.0
+     ],
+     [
+      "Elizabeth Williams",
+      "FC",
+      11.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      13.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      9.0
+     ],
+     [
+      "Aicha Coulibaly",
+      "G",
+      6.0
+     ],
+     [
+      "Morgan Maly",
+      "G",
+      0.0
+     ],
+     [
+      "Gabriela Jaquez",
+      "G",
+      6.0
+     ]
+    ],
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      31.0
+     ],
+     [
+      "Leonie Fiebich",
+      "FC",
+      20.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      21.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      13.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      18.0
+     ],
+     [
+      "Anneli Maley",
+      "FC",
+      0.0
+     ],
+     [
+      "Raquel Carrera",
+      "FC",
+      2.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      31.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      22.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      17.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      1.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      7.0
      ]
     ]
    }
