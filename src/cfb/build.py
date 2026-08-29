@@ -10,12 +10,12 @@ works for the NFL section); gordstats.daily's cfb task calls build_all().
 import argparse
 import traceback
 
-PAGES = ["home", "draft", "schedule", "league", "power"]
+PAGES = ["home", "draft", "schedule", "league", "power", "predictions"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
     """Fetch (or reuse) the data, build every page; returns failed page names."""
-    from cfb import espn, yahoo
+    from cfb import espn, odds, yahoo
 
     # Fetch up front so one network failure surfaces once, not per page, and a
     # fetch that does fail leaves the pages building from the last good cache.
@@ -24,7 +24,10 @@ def build_all(refresh: bool = False) -> list[str]:
                         ("yahoo scoreboard", lambda: yahoo.scoreboard(refresh=refresh)),
                         ("yahoo transactions", lambda: yahoo.transactions(refresh=refresh)),
                         ("yahoo draft", lambda: yahoo.draft_results(refresh=refresh)),
-                        ("espn schedule", lambda: espn.schedule(refresh=refresh))]:
+                        ("espn schedule", lambda: espn.schedule(refresh=refresh)),
+                        # The board is only served before kickoff, so capture it on
+                        # every build rather than only when a page happens to ask.
+                        ("espn betting lines", lambda: odds.capture())]:
         try:
             pull()
         except Exception as exc:

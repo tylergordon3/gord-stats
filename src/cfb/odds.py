@@ -78,6 +78,15 @@ def capture(weeks=None, season: int = SEASON) -> pd.DataFrame:
     return fresh
 
 
+def latest(season: int = SEASON) -> pd.DataFrame:
+    """The most recent captured line per game: game key, spread, total."""
+    path = ODDS_DIR / f"{season}.parquet"
+    if not path.exists():
+        return pd.DataFrame(columns=["home_id", "away_id", "spread", "total", "book"])
+    frame = pd.read_parquet(path).sort_values("captured")
+    return frame.drop_duplicates(subset=["home_id", "away_id"], keep="last")
+
+
 if __name__ == "__main__":
     frame = capture()
     print(f"{len(frame)} lines archived for {SEASON}")

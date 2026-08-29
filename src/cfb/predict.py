@@ -80,18 +80,27 @@ def history(asof: pd.Timestamp = None) -> tuple:
     schedule = espn.schedule().copy()
     schedule["date"] = pd.to_datetime(schedule["date_utc"], format="ISO8601", utc=True)
 
-    # Who counts as FBS this season: anyone with a full schedule of these games.
-    # Taken from the whole published schedule rather than games played so far,
-    # so week one classifies teams the same way week twelve will.
+    # Membership is this season's, applied to the whole archive -- deliberately
+    # not the per-season identity `games.load` uses for the backtest.
+    #
+    # A team promoted this year has no FBS record, and the choice is between
+    # rating it from the FCS football it did play and giving it the generic
+    # pool. Measured against the book on this week's 42 games, its own record
+    # wins: 7.03 points of mean error against 7.64, and it is the difference
+    # between pricing North Dakota State -- a promoted FCS champion -- within
+    # three points of the market and missing it by twenty-six.
+    #
+    # The cost is that the record was earned against opposition this archive
+    # pools together, so a promoted team is rated optimistically. The backtest
+    # is unaffected: it scores FBS against FBS, where nobody is in this state.
     counts = pd.concat([schedule["home_id"], schedule["away_id"]]).value_counts()
-    fbs = set(counts[counts >= 8].index) | set(past["home_team"]) | set(past["away_team"])
-    fbs.discard(games_mod.FCS)
+    this_year = set(counts[counts >= 8].index)
 
     for side in ("home", "away"):
         frame[f"{side}_team"] = frame[f"{side}_id"].where(
-            frame[f"{side}_id"].isin(fbs), games_mod.FCS)
+            frame[f"{side}_id"].isin(this_year), games_mod.FCS)
         schedule[f"{side}_team"] = schedule[f"{side}_id"].where(
-            schedule[f"{side}_id"].isin(fbs), games_mod.FCS)
+            schedule[f"{side}_id"].isin(this_year), games_mod.FCS)
 
     names = games_mod.team_names(past)
     names.update(dict(zip(schedule["home_id"], schedule["home"])))
@@ -120,7 +129,10 @@ def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
     model = ratings_mod.fit(train, asof=upcoming["date"].min())
     preds = model.predict(upcoming)
 
-    out = upcoming[["week", "date", "home", "away", "neutral"]].join(preds)
+    # Carry the ESPN team ids: names are for reading, ids are what joins to the
+    # betting board without arguing about how a school spells itself.
+    out = upcoming[["week", "date", "home", "away", "neutral",
+                    "home_id", "away_id"]].join(preds)
     out["home_rating"] = upcoming["home_team"].map(model.rating)
     out["away_rating"] = upcoming["away_team"].map(model.rating)
     # A team cannot score below zero. The margin and total models do not know

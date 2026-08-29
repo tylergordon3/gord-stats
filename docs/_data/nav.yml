@@ -135,3 +135,8 @@ cfb:
     short: Power
     icon: "⚡"
     url: /cfb/power/
+
+  - title: Predictions
+    short: Predict
+    icon: "🔮"
+    url: /cfb/predictions/
