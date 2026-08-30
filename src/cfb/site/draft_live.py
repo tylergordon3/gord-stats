@@ -179,11 +179,15 @@ _CSS = """<style>
 .ld-pill.live{background:#1a7f4b;color:#fff}
 .ld-pill.mine{background:#b45309;color:#fff}
 .ld-note{font-size:12px;color:#4a5a68}
-img.ld-tlogo{width:16px;height:16px;border-radius:50%;vertical-align:-3px;
-  margin-right:5px;background:#fff;object-fit:cover}
+/* The Slate theme frames every <img> - padding, border, drop shadow and 10px
+   vertical margins - which boxes a 15px logo and knocks its row out of line.
+   Reset all of it, the same way the power table does. */
+img.ld-tlogo,img.ld-slogo{border:none;padding:0;box-shadow:none;background:none;
+  border-radius:0;object-fit:contain;vertical-align:middle;margin:0 5px 0 0}
+img.ld-tlogo{width:16px;height:16px;border-radius:50%}
+img.ld-slogo{width:15px;height:15px;margin-right:4px}
 table.ld-grid th img.ld-tlogo{display:block;width:18px;height:18px;margin:0 auto 2px}
-.ld-panel h3 img.ld-tlogo{vertical-align:-4px}
-img.ld-slogo{width:15px;height:15px;vertical-align:-3px;margin-right:3px}
+.ld-panel h3 img.ld-tlogo{margin-right:6px}
 table.ld-avail td.tm{text-align:left}
 #ld-status,#ld-feed{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ld-clock{font-family:monospace;font-size:15px;font-weight:700;color:#0f172a}
@@ -256,6 +260,9 @@ td.p-TE{background:#fadfc8}td.p-DEF{background:#d4f0f7}
 .ld-need{font-size:12.5px;color:#334155;margin:6px 0 0;line-height:1.5}
 
 @media (prefers-color-scheme: dark){
+  /* Several schools ship a near-black mark; a faint halo keeps them readable
+     against the navy rows, same as the power table. */
+  img.ld-slogo{filter:drop-shadow(0 0 1px rgba(255,255,255,.6))}
   .ld-bar{background:#1b2540;border-color:#2b3852}
   .ld-bar select,.ld-bar button,.ld-take{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .ld-bar button.on{background:#dde5ef;color:#16203a;border-color:#dde5ef}
