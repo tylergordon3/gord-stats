@@ -20,14 +20,14 @@
       "team_id": 2,
       "rank": 2,
       "score": 97,
-      "vorp": 108.06
+      "vorp": 107.99
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
       "rank": 3,
       "score": 96,
-      "vorp": 106.85
+      "vorp": 107.0
     },
     {
       "team": "padgett",
@@ -48,14 +48,14 @@
       "team_id": 10,
       "rank": 6,
       "score": 88,
-      "vorp": 98.22
+      "vorp": 98.23
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 7,
       "score": 85,
-      "vorp": 95.53
+      "vorp": 95.38
     },
     {
       "team": "The Standard",
@@ -76,7 +76,7 @@
       "team_id": 8,
       "rank": 10,
       "score": 79,
-      "vorp": 88.21
+      "vorp": 88.29
     }
   ]
 }
