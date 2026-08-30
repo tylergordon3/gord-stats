@@ -20,14 +20,14 @@
       "team_id": 2,
       "rank": 2,
       "score": 97,
-      "vorp": 107.77
+      "vorp": 107.86
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
       "rank": 3,
       "score": 96,
-      "vorp": 106.83
+      "vorp": 106.67
     },
     {
       "team": "padgett",
@@ -41,42 +41,42 @@
       "team_id": 1,
       "rank": 5,
       "score": 91,
-      "vorp": 101.29
+      "vorp": 101.18
     },
     {
       "team": "The Jackson 5",
       "team_id": 10,
       "rank": 6,
       "score": 87,
-      "vorp": 97.13
+      "vorp": 97.14
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 7,
-      "score": 85,
-      "vorp": 95.32
+      "score": 86,
+      "vorp": 95.87
     },
     {
       "team": "The Standard",
       "team_id": 6,
       "rank": 8,
       "score": 85,
-      "vorp": 94.88
+      "vorp": 95.06
     },
     {
       "team": "LGBBQ+",
       "team_id": 9,
       "rank": 9,
-      "score": 84,
-      "vorp": 93.41
+      "score": 83,
+      "vorp": 92.98
     },
     {
       "team": "Brooklyn “Nine”-9",
       "team_id": 8,
       "rank": 10,
       "score": 79,
-      "vorp": 88.26
+      "vorp": 88.15
     }
   ]
 }
