@@ -214,6 +214,18 @@ def test_draft_order_covers_every_team_exactly_once():
     assert sorted(order.values()) == list(range(1, len(keys) + 1))
 
 
+def test_the_default_team_is_a_real_team_in_this_league():
+    """The board opens on one roster rather than asking, because it is read with
+    a draft clock running. A default that resolves to nothing opens on an empty
+    roster and gives no sign why the recommendations look wrong."""
+    league = yahoo.league()
+    config = draft_live.config(projections.value_board(), league)
+    keys = {t["team_key"] for t in league["teams"]}
+
+    assert config["defaultTeam"] in keys
+    assert config["slotOf"][config["defaultTeam"]] >= 1
+
+
 def test_payload_carries_every_row_and_the_league_shape():
     board = projections.value_board()
     league = yahoo.league()

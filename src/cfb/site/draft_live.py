@@ -68,6 +68,11 @@ _FIELDS = ["player", "pos", "team", "school", "bye", "adp", "pct_drafted",
 # Positions the filter chips offer, in the order a roster fills.
 POSITIONS = ["QB", "RB", "WR", "TE", "DEF"]
 
+# Whose board this is, by team name. The page opens on this roster rather than
+# asking, since it is read on draft night with a clock running; the team menu
+# still changes it, and the choice is remembered per browser.
+MY_TEAM = "Puntaholics"
+
 
 def _cell(value):
     """JSON-safe: NaN becomes null, whole floats become ints."""
@@ -126,11 +131,15 @@ def _bench(league: dict) -> int:
 def config(board: pd.DataFrame, league: dict) -> dict:
     levels = projections.replacement_levels(board, league)
     teams = [{"key": t["team_key"], "name": t["name"]} for t in league["teams"]]
+    mine = next((t["team_key"] for t in league["teams"] if t["name"] == MY_TEAM), None)
+    if MY_TEAM and mine is None:
+        raise ValueError(f"MY_TEAM {MY_TEAM!r} is not a team in this league")
     rounds = sum(int(s["count"]) for s in league["roster"] if s["position"] != "IL")
     return {
         "rows": rows(board),
         "teams": teams,
         "slotOf": draft_order(league),
+        "defaultTeam": mine,
         "numTeams": int(league.get("num_teams") or LEAGUE_TEAMS),
         "rounds": rounds,
         "slots": _slots(league),
@@ -215,6 +224,9 @@ table.ld-grid{width:100%;border-collapse:collapse;font-size:11px;table-layout:fi
 table.ld-grid th{background:#eef2f7;color:#334155;padding:4px 3px;font-size:10px;
   text-transform:uppercase;letter-spacing:.02em;border:1px solid #e2e8f0;
   overflow:hidden;text-overflow:ellipsis}
+table.ld-grid th[data-slot]{cursor:pointer}
+table.ld-grid th[data-slot]:hover{background:#e2e8f0}
+table.ld-grid th.mine-col{color:#b45309;box-shadow:inset 0 -3px 0 #b45309}
 table.ld-grid td{border:1px solid #eef2f7;padding:3px;height:34px;vertical-align:top;
   overflow:hidden;color:#0f172a}
 table.ld-grid td.on{outline:2px solid #b45309;outline-offset:-2px}
@@ -253,6 +265,8 @@ td.p-TE{background:#fadfc8}td.p-DEF{background:#d4f0f7}
   table.ld-avail tbody tr:nth-child(even) td{background:#16203a}
   table.ld-avail tbody tr:hover td{background:#26365c}
   table.ld-grid th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.ld-grid th[data-slot]:hover{background:#26365c}
+  table.ld-grid th.mine-col{color:#ffb457;box-shadow:inset 0 -3px 0 #ffb457}
   table.ld-grid td{border-color:#2b3852;color:#dde5ef}
   td.p-QB{background:#1e2c52}td.p-RB{background:#123c2e}td.p-WR{background:#3d3413}
   td.p-TE{background:#40280f}td.p-DEF{background:#143a45}
@@ -340,13 +354,14 @@ _ENGINE = r"""
   }
   function restore() {
     state.slotOf = seedSlots(null);
+    state.myTeam = CFG.defaultTeam || null;
     try {
       var raw = localStorage.getItem(STORE);
       if (!raw) return;
       var s = JSON.parse(raw);
       state.picks = s.picks || [];
       state.mySlot = s.mySlot || null;
-      state.myTeam = s.myTeam || null;
+      if (s.myTeam) state.myTeam = s.myTeam;
       state.slotOf = seedSlots(s.slotOf);
       if (s.auto === false) state.auto = false;
     } catch (e) { /* corrupt or unreadable; start clean */ }
@@ -1057,7 +1072,8 @@ _RENDER2 = r"""
     var mine = mySlot(), current = onClock();
     var head = "<tr><th></th>";
     for (var s = 1; s <= nTeams(); s++) {
-      head += "<th" + (s === mine ? ' style="color:#b45309"' : "") + ">"
+      head += '<th data-slot="' + s + '" title="Click if this column is yours"'
+        + (s === mine ? ' class="mine-col"' : "") + ">"
         + esc(nameOfSlot(s)) + "</th>";
     }
     head += "</tr>";
@@ -1113,16 +1129,21 @@ _WIRE = r"""
     el("ld-sort").addEventListener("change", function (e) {
       state.sort = e.target.value; renderAvail();
     });
-    el("ld-slot").addEventListener("change", function (e) {
-      state.mySlot = e.target.value ? +e.target.value : null;
-      save(); render();
-    });
     el("ld-team").addEventListener("change", function (e) {
       state.myTeam = e.target.value || null;
-      if (state.myTeam && state.slotOf[state.myTeam]) {
-        state.mySlot = state.slotOf[state.myTeam];
-        el("ld-slot").value = String(state.mySlot);
-      }
+      state.mySlot = null;              // the order decides the slot again
+      save(); render();
+    });
+
+    // The one way left to say "the recorded order is wrong, this column is
+    // me". The slot menu that used to do it was a second control asking the
+    // same question the team menu already answers, and on a phone it was two
+    // taps of clutter on the row that matters most.
+    el("ld-grid").addEventListener("click", function (ev) {
+      var th = ev.target.closest && ev.target.closest("th[data-slot]");
+      if (!th) return;
+      var slot = +th.dataset.slot;
+      state.mySlot = mySlot() === slot ? null : slot;
       save(); render();
     });
     el("ld-auto").addEventListener("click", function () {
@@ -1144,14 +1165,6 @@ _WIRE = r"""
   }
 
   function fillControls() {
-    var slots = ['<option value="">Your draft slot…</option>'];
-    for (var s = 1; s <= nTeams(); s++) {
-      var who = nameOfSlot(s);
-      slots.push('<option value="' + s + '"' + (state.mySlot === s ? " selected" : "")
-        + ">" + s + ". " + esc(who === "Slot " + s ? "(unknown)" : who) + "</option>");
-    }
-    el("ld-slot").innerHTML = slots.join("");
-
     var opts = ['<option value="">Your team…</option>'].concat(
       CFG.teams.map(function (t) {
         return '<option value="' + esc(t.key) + '"'
@@ -1210,7 +1223,6 @@ def _setup_bar() -> str:
     return (
         '<div class="ld-bar">'
         '<select id="ld-team" aria-label="Your team"></select>'
-        '<select id="ld-slot" aria-label="Your draft slot"></select>'
         '<button id="ld-auto" type="button">Auto-sync</button>'
         '<button id="ld-undo" type="button" title="Undo the last pick (u)">Undo</button>'
         '<button id="ld-reset" type="button">Clear</button>'
@@ -1329,9 +1341,10 @@ def body() -> str:
         + '{% include countdown.html key="cfb" %}'
         + f'<p>The <a href="{league["url"]}">{league["name"]}</a> draft, live: '
         f'{league["num_teams"]} teams, {config(board, league)["rounds"]} rounds, '
-        f'{when.strftime("%A %B %-d at %-I:%M %p %Z")}. Pick your slot, and the '
-        "board follows along &mdash; from Yahoo if Yahoo will say, and from what "
-        "you tap here either way.</p>"
+        f'{when.strftime("%A %B %-d at %-I:%M %p %Z")}. The order is already set, so '
+        "the board knows whose pick is on the clock and which column is yours. "
+        "It follows the draft from Yahoo if Yahoo will say, and from what you "
+        "tap here either way.</p>"
         + _setup_bar()
         + _recs_section()
         + '<div class="ld-cols">' + _available_section() + _roster_section() + "</div>"
