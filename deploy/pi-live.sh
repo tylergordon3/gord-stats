@@ -21,11 +21,29 @@ main() {
 
   local VENV="$PWD/.venv"
   local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
+  # Fixed path, not $XDG_RUNTIME_DIR: this runs both as a systemd user unit and
+  # over plain ssh, and the two don't reliably agree on that variable. A lock
+  # under a different path is not a lock.
+  local LOCK="$HOME/.cache/gord-stats-deploy.lock"
   export MPLBACKEND="${MPLBACKEND:-Agg}"
 
-  # Don't fight the daily deploy for the repo or the Pi's cores.
-  if systemctl --user is-active --quiet gordstats-daily.service 2>/dev/null; then
-    log "gordstats-daily is running — skipping this tick"
+  # Don't fight a deploy for the repo. This used to test whether
+  # gordstats-daily.service was active, which missed the case that actually
+  # bit: `pi deploy gord-stats` ssh's in and runs pi-deploy.sh directly, so no
+  # unit is ever active and this tick sailed straight into a tree the deploy
+  # was rewriting. On 2026-08-29 two ticks died in `jekyll build` with ENOENT
+  # on a chart PNG — power.body() clears the section's charts before running
+  # the sim that regenerates them, and Jekyll stat'd one inside that window.
+  # The checkout below is the same hazard pointed the other way: it would
+  # discard pages a deploy was halfway through writing.
+  #
+  # So both entry points take one lock instead. The deploy waits for a tick;
+  # a tick skips rather than waits, which is what it did before and costs
+  # nothing — the next one is ten minutes out.
+  mkdir -p "$(dirname "$LOCK")"
+  exec 9>"$LOCK"
+  if ! flock -n 9; then
+    log "a deploy holds the lock — skipping this tick"
     exit 0
   fi
 

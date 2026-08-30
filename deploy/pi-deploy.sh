@@ -17,7 +17,25 @@ main() {
   local VENV="$PWD/.venv"
   local TASKS="${TASKS:-wnba,fantasy,cfb,cbb_power}"
   local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
+  # Fixed path, not $XDG_RUNTIME_DIR: this runs both as gordstats-daily.service
+  # and over plain ssh from `pi deploy`, and the two don't reliably agree on
+  # that variable. A lock under a different path is not a lock.
+  local LOCK="$HOME/.cache/gord-stats-deploy.lock"
   export MPLBACKEND="${MPLBACKEND:-Agg}"
+
+  ########################################
+  # LOCK
+  ########################################
+  # One writer for docs/ and data/ at a time. pi-live.sh takes the same lock
+  # and skips when it can't get it; this side waits, because a deploy asked for
+  # by hand should happen. A live tick is a couple of minutes at worst, well
+  # inside the unit's TimeoutStartSec.
+  mkdir -p "$(dirname "$LOCK")"
+  exec 9>"$LOCK"
+  if ! flock -w 600 9; then
+    echo "❌ a live tick has held the deploy lock for 10 minutes — something is stuck"
+    exit 1
+  fi
 
   ########################################
   # SECRETS
