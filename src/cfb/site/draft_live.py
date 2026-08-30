@@ -209,6 +209,8 @@ table.ld-avail{width:100%;border-collapse:separate;border-spacing:0;font-size:13
 table.ld-avail th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334155;
   padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
   cursor:pointer;white-space:nowrap;border-bottom:1px solid #e2e8f0}
+table.ld-avail th.sort-desc::after{content:" \25be"}
+table.ld-avail th.sort-asc::after{content:" \25b4"}
 table.ld-avail td{padding:4px 8px;text-align:center;white-space:nowrap;
   border-bottom:1px solid #eef2f7;color:#0f172a}
 table.ld-avail td.nm{text-align:left;font-family:inherit}
@@ -341,6 +343,7 @@ _ENGINE = r"""
     pos: "ALL",
     query: "",
     sort: "score",
+    sortFlip: false,      // clicking the sorted column again reverses it
   };
 
   // ----------------------------------------------------------------- storage
@@ -979,20 +982,53 @@ _RENDER2 = r"""
   }
 
   // ------------------------------------------------------- best available
-  var SORTS = {
-    score: function (a, b) { return b.m - a.m; },
-    vorp: function (a, b) { return P[b.i][VORP] - P[a.i][VORP]; },
-    proj: function (a, b) { return P[b.i][PROJ] - P[a.i][PROJ]; },
-    adp: function (a, b) {
-      var x = P[a.i][ADP], y = P[b.i][ADP];
-      if (x === null) return 1;
-      if (y === null) return -1;
-      return x - y;
-    },
-    ceiling: function (a, b) { return P[b.i][CEIL] - P[a.i][CEIL]; },
-    floor: function (a, b) { return P[b.i][FLOOR] - P[a.i][FLOOR]; },
-    surv: function (a, b) { return a.s - b.s; },
+  // One value per sortable column; the comparator applies the direction and
+  // keeps blanks (an ADP nobody has) at the bottom whichever way it points.
+  // Ties keep the underlying board order, which is VORP - so sorting by tier
+  // lists each tier best-first rather than shuffled.
+  var SORT_VALS = {
+    score: function (c) { return c.m; },
+    vorp: function (c) { return P[c.i][VORP]; },
+    proj: function (c) { return P[c.i][PROJ]; },
+    ceiling: function (c) { return P[c.i][CEIL]; },
+    floor: function (c) { return P[c.i][FLOOR]; },
+    tier: function (c) { return P[c.i][TIER]; },
+    adp: function (c) { return P[c.i][ADP]; },
+    surv: function (c) { return c.s; },
   };
+  // Columns whose best reading is smallest-first; the rest lead with biggest.
+  var SORT_ASC = { adp: true, tier: true, surv: true };
+
+  function compare() {
+    var val = SORT_VALS[state.sort] || SORT_VALS.score;
+    var asc = !!SORT_ASC[state.sort];
+    if (state.sortFlip) asc = !asc;
+    return function (a, b) {
+      var x = val(a), y = val(b);
+      if (x === null || x === undefined) return 1;
+      if (y === null || y === undefined) return -1;
+      if (x === y) return 0;
+      return (x < y) === asc ? -1 : 1;
+    };
+  }
+
+  function sortBy(key) {
+    state.sortFlip = state.sort === key && !state.sortFlip;
+    state.sort = key;
+    el("ld-sort").value = key;
+    renderAvail();
+  }
+
+  function markSortHeads() {
+    var asc = !!SORT_ASC[state.sort];
+    if (state.sortFlip) asc = !asc;
+    document.querySelectorAll("th[data-sortkey]").forEach(function (th) {
+      th.classList.remove("sort-asc", "sort-desc");
+      if (th.dataset.sortkey === state.sort) {
+        th.classList.add(asc ? "sort-asc" : "sort-desc");
+      }
+    });
+  }
 
   function renderAvail() {
     var ids = myRoster(), base = lineupValue(ids);
@@ -1007,7 +1043,8 @@ _RENDER2 = r"""
     }).map(function (i) {
       return { i: i, m: marginal(i, ids, base), s: survives(i, next, now) };
     });
-    list.sort(SORTS[state.sort] || SORTS.score);
+    list.sort(compare());
+    markSortHeads();
 
     // Replacing the rows resets the scroller, and during a draft this list is
     // being scrolled and tapped continuously - losing the reader's place on
@@ -1162,6 +1199,8 @@ _WIRE = r"""
     document.addEventListener("click", function (ev) {
       var take = ev.target.closest && ev.target.closest("[data-take]");
       if (take) { draft(+take.dataset.take); return; }
+      var sk = ev.target.closest && ev.target.closest("th[data-sortkey]");
+      if (sk) { sortBy(sk.dataset.sortkey); return; }
       var pos = ev.target.closest && ev.target.closest("[data-pos]");
       if (pos) {
         state.pos = pos.dataset.pos;
@@ -1176,7 +1215,7 @@ _WIRE = r"""
       state.query = e.target.value; renderAvail();
     });
     el("ld-sort").addEventListener("change", function (e) {
-      state.sort = e.target.value; renderAvail();
+      state.sort = e.target.value; state.sortFlip = false; renderAvail();
     });
     el("ld-team").addEventListener("change", function (e) {
       state.myTeam = e.target.value || null;
@@ -1260,19 +1299,26 @@ _WIRE = r"""
 
 _SORTS = [("score", "Fit with my roster"), ("vorp", "Value over replacement"),
           ("proj", "Projected points"), ("ceiling", "Ceiling"),
-          ("floor", "Floor"), ("adp", "Yahoo ADP"), ("surv", "Least likely to last")]
+          ("floor", "Floor"), ("tier", "Tier"), ("adp", "Yahoo ADP"),
+          ("surv", "Least likely to last")]
 
+# (label, tooltip, sort key or None). A keyed column sorts on click, its
+# natural direction first, reversed on a second click; the Range column sorts
+# by ceiling since that is the number the eye reads it for.
 _AVAIL_HEADERS = [
-    ("Player", "Player"), ("Pos", "Position, and his rank in it on this board"),
-    ("Team", "School"), ("Bye", "Bye week"),
-    ("Proj", "Projected season points in this league's scoring"),
-    ("Range", "20th to 80th percentile of where he finishes"),
-    ("VORP", "Points above the last player nobody has to start"),
-    ("Fit", "What he adds to your starting lineup as it stands"),
-    ("Tier", "Tier at his position; a new tier is a cliff in the curve"),
-    ("ADP", "Yahoo's average draft pick, across every college league it runs"),
-    ("Last?", "Chance he is still there at your next pick"),
-    ("", "Mark him drafted at the pick on the clock"),
+    ("Player", "Player", None),
+    ("Pos", "Position, and his rank in it on this board", None),
+    ("Team", "School", None), ("Bye", "Bye week", None),
+    ("Proj", "Projected season points in this league's scoring", "proj"),
+    ("Range", "20th to 80th percentile of where he finishes; sorts by ceiling",
+     "ceiling"),
+    ("VORP", "Points above the last player nobody has to start", "vorp"),
+    ("Fit", "What he adds to your starting lineup as it stands", "score"),
+    ("Tier", "Tier at his position; a new tier is a cliff in the curve", "tier"),
+    ("ADP", "Yahoo's average draft pick, across every college league it runs",
+     "adp"),
+    ("Last?", "Chance he is still there at your next pick", "surv"),
+    ("", "Mark him drafted at the pick on the clock", None),
 ]
 
 
@@ -1312,7 +1358,9 @@ def _available_section() -> str:
         f'<button class="adp-pos{" active" if p == "ALL" else ""}" data-pos="{p}">{p}</button>'
         for p in ["ALL"] + POSITIONS)
     sorts = "".join(f'<option value="{key}">{label}</option>' for key, label in _SORTS)
-    head = "".join(f'<th title="{tip}">{label}</th>' for label, tip in _AVAIL_HEADERS)
+    head = "".join(
+        f'<th title="{tip}"' + (f' data-sortkey="{key}"' if key else "") + f'>{label}</th>'
+        for label, tip, key in _AVAIL_HEADERS)
     return (
         '<div class="ld-panel"><h3>Best Available</h3><div class="body">'
         f'<div class="adp-controls">{chips}</div>'
