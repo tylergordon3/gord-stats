@@ -209,8 +209,8 @@ table.ld-avail{width:100%;border-collapse:separate;border-spacing:0;font-size:13
 table.ld-avail th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334155;
   padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
   cursor:pointer;white-space:nowrap;border-bottom:1px solid #e2e8f0}
-table.ld-avail th.sort-desc::after{content:" \25be"}
-table.ld-avail th.sort-asc::after{content:" \25b4"}
+table.ld-avail th.sort-desc::after{content:" ▼";font-size:9px}
+table.ld-avail th.sort-asc::after{content:" ▲";font-size:9px}
 table.ld-avail td{padding:4px 8px;text-align:center;white-space:nowrap;
   border-bottom:1px solid #eef2f7;color:#0f172a}
 table.ld-avail td.nm{text-align:left;font-family:inherit}
