@@ -6,7 +6,7 @@
   "note": "Fetched on each build from getLeagueAnalysisJSON?key=<league_key>, which answers anonymously; see fantasy.league.external.",
   "league_key": "nfl~9b42e042-983c-4e34-b3fa-62e91bf82f79",
   "season": 2026,
-  "captured": "2026-08-29",
+  "captured": "2026-08-30",
   "teams": [
     {
       "team": "Professional Fratson",
@@ -34,7 +34,7 @@
       "team_id": 7,
       "rank": 4,
       "score": 93,
-      "vorp": 103.6
+      "vorp": 103.93
     },
     {
       "team": "Clanker Barrel",
@@ -69,7 +69,7 @@
       "team_id": 9,
       "rank": 9,
       "score": 83,
-      "vorp": 92.98
+      "vorp": 92.65
     },
     {
       "team": "Brooklyn “Nine”-9",

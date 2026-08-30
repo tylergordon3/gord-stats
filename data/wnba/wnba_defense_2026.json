@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-29T23:35:05.807318-04:00",
+ "updated": "2026-08-30T05:31:06.707777-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -35119,6 +35119,120 @@
       "Marine Fauthoux",
       "G",
       7.0
+     ]
+    ]
+   }
+  },
+  "401857185": {
+   "date": "2026-08-30",
+   "allowed": {
+    "TOR": {
+     "G": 97.0,
+     "FC": 111.0
+    },
+    "PHX": {
+     "G": 59.0,
+     "FC": 77.0
+    }
+   },
+   "players": {
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      32.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      16.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      14.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      6.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      26.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      15.0
+     ],
+     [
+      "Kiana Williams",
+      "G",
+      12.0
+     ],
+     [
+      "Zaay Green",
+      "G",
+      6.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      9.0
+     ]
+    ],
+    "PHX": [
+     [
+      "Alyssa Thomas",
+      "FC",
+      24.0
+     ],
+     [
+      "Natasha Mack",
+      "FC",
+      19.0
+     ],
+     [
+      "Noemie Brochant",
+      "FC",
+      28.0
+     ],
+     [
+      "Sami Whitcomb",
+      "G",
+      25.0
+     ],
+     [
+      "Lexi Held",
+      "G",
+      23.0
+     ],
+     [
+      "Maddy Westbeld",
+      "FC",
+      21.0
+     ],
+     [
+      "Marta Suarez",
+      "FC",
+      19.0
+     ],
+     [
+      "Saylor Poffenbarger",
+      "G",
+      2.0
+     ],
+     [
+      "Shay Ciezki",
+      "G",
+      32.0
+     ],
+     [
+      "Kara Dunn",
+      "G",
+      15.0
      ]
     ]
    }
