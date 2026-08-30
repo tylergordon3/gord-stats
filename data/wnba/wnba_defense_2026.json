@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-30T16:40:03.629102-04:00",
+ "updated": "2026-08-30T17:42:06.160470-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -35233,6 +35233,135 @@
       "Kara Dunn",
       "G",
       15.0
+     ]
+    ]
+   }
+  },
+  "401857186": {
+   "date": "2026-08-30",
+   "allowed": {
+    "MIN": {
+     "G": 120.0,
+     "FC": 62.0
+    },
+    "ATL": {
+     "G": 89.0,
+     "FC": 83.0
+    }
+   },
+   "players": {
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      35.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      34.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      31.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      25.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      29.0
+     ],
+     [
+      "Nia Coffey",
+      "FC",
+      7.0
+     ],
+     [
+      "Chloe Bibby",
+      "FC",
+      5.0
+     ],
+     [
+      "Liatu King",
+      "FC",
+      2.0
+     ],
+     [
+      "Anastasiia Olairi Kosu",
+      "FC",
+      0.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      4.0
+     ],
+     [
+      "Eliska Joklova",
+      "G",
+      0.0
+     ]
+    ],
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      12.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      34.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      48.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      34.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      28.0
+     ],
+     [
+      "DeWanna Bonner",
+      "FC",
+      16.0
+     ],
+     [
+      "Sika Kone",
+      "FC",
+      0.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      0.0
+     ],
+     [
+      "Shatori Walker-Kimbrough",
+      "G",
+      0.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      1.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      9.0
      ]
     ]
    }
