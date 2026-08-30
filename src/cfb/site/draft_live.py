@@ -260,6 +260,9 @@ td.p-TE{background:#fadfc8}td.p-DEF{background:#d4f0f7}
 .ld-need{font-size:12.5px;color:#334155;margin:6px 0 0;line-height:1.5}
 
 @media (prefers-color-scheme: dark){
+  /* Several schools ship a near-black mark; a faint halo keeps them readable
+     against the navy rows, same as the power table. */
+  img.ld-slogo{filter:drop-shadow(0 0 1px rgba(255,255,255,.6))}
   .ld-bar{background:#1b2540;border-color:#2b3852}
   .ld-bar select,.ld-bar button,.ld-take{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .ld-bar button.on{background:#dde5ef;color:#16203a;border-color:#dde5ef}
@@ -724,19 +727,12 @@ _RENDER = r"""
     return '<span class="pos-tag pos-' + pos + '">' + pos + (rank || "") + "</span>";
   }
 
-  /** The school's mark, off the ESPN id the schedule pages already key on.
-   *  Marks are drawn for white paper, so their negative space - the inside of
-   *  Ohio State's O - goes navy on the dark palette. ESPN keeps a -dark set
-   *  for exactly this (all 68 board schools have one, checked), and a picture
-   *  element swaps it in on the same media query the page's palette uses. */
+  /** The school's mark, off the ESPN id the schedule pages already key on. */
   function schoolLogo(i) {
     var id = P[i][ESPN];
     if (!id) return "";
-    var cdn = "https://a.espncdn.com/i/teamlogos/ncaa/500";
-    return '<picture><source srcset="' + cdn + '-dark/' + esc(id) + '.png" '
-      + 'media="(prefers-color-scheme: dark)">'
-      + '<img class="ld-slogo" loading="lazy" alt="" '
-      + 'src="' + cdn + '/' + esc(id) + '.png"></picture>';
+    return '<img class="ld-slogo" loading="lazy" alt="" '
+      + 'src="https://a.espncdn.com/i/teamlogos/ncaa/500/' + esc(id) + '.png">';
   }
 
   // --------------------------------------------------------------- pick entry
