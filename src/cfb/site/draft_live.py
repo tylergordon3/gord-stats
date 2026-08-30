@@ -386,7 +386,13 @@ _ENGINE = r"""
     return r + "." + (i < 10 ? "0" : "") + i;
   }
 
-  function onClock() { return state.picks.length + 1; }
+  function onClock() {
+    var last = 0;
+    for (var i = 0; i < state.picks.length; i++) {
+      if (state.picks[i].pick > last) last = state.picks[i].pick;
+    }
+    return last + 1;
+  }
 
   /** My draft slot: what I picked in the bar, or what the feed revealed. */
   function mySlot() {
@@ -441,14 +447,42 @@ _ENGINE = r"""
     return x > 0 ? 1 - p : p;
   }
 
+  /** How this room is actually drafting, position by position: the mean of
+   *  (actual pick - Yahoo ADP) over the picks made so far, shrunk toward zero
+   *  while the sample is small and clamped per pick so one manager's reach
+   *  does not reprice a whole position. Yahoo's ADP is pooled over every
+   *  league in the game whatever its settings; this league starts two
+   *  quarterbacks, and the nine other managers can read the settings too. The
+   *  first few quarterbacks going eight picks early is the room saying so,
+   *  and the survival odds should listen rather than keep promising that the
+   *  position this board most wants to exploit will still be there. */
+  var DRIFT = {};
+  function adpDrift() {
+    var sum = {}, n = {};
+    state.picks.forEach(function (p) {
+      var idx = byId[p.id];
+      if (idx === undefined || P[idx][ADP] === null) return;
+      var pos = P[idx][POS];
+      var d = Math.max(-30, Math.min(30, p.pick - P[idx][ADP]));
+      sum[pos] = (sum[pos] || 0) + d;
+      n[pos] = (n[pos] || 0) + 1;
+    });
+    var out = {};
+    for (var pos in sum) out[pos] = (sum[pos] / n[pos]) * (n[pos] / (n[pos] + 4));
+    return out;
+  }
+
   /** P(this player is off the board by the time pick `k` comes round).
    *
    * Yahoo's average pick with a spread that widens down the board, scaled by
    * how often he is drafted at all - a player taken in 40% of leagues cannot be
-   * more than 40% likely to be gone, however early his average pick is. */
+   * more than 40% likely to be gone, however early his average pick is. The
+   * average pick is first shifted by how early this room has been taking the
+   * position tonight. */
   function goneBy(i, k) {
     var adp = P[i][ADP];
     if (adp === null) return 0.04;                  // ranked, but nobody drafts him
+    adp += DRIFT[P[i][POS]] || 0;
     var sd = P[i][ADPSD] || 4;
     var pct = P[i][PCTD] === null ? 1 : P[i][PCTD];
     return Math.max(0, Math.min(1, pct * ncdf((k - adp) / sd)));
@@ -681,6 +715,16 @@ _RENDER = r"""
     save();
     render();
   }
+  /** Someone drafted a player this board does not list (it carries Yahoo's
+   *  top 500; the pool runs deeper). The pick still has to be counted, or
+   *  every pick after it lands on the wrong roster. */
+  function skipPick() {
+    var pick = onClock();
+    if (pick > totalPicks()) return;
+    state.picks.push({ pick: pick, id: "off-" + pick, manual: true });
+    save();
+    render();
+  }
   function reset() {
     if (!confirm("Clear every pick on this board?")) return;
     state.picks = [];
@@ -709,21 +753,23 @@ _RENDER = r"""
     state.fetched = data.fetched || Date.now();
 
     if (data.picks && data.picks.length) {
-      // Yahoo is publishing the draft itself: it wins outright, and it also
-      // says who is sitting in which slot.
-      var mapped = [];
+      // Yahoo is publishing the draft itself: it wins outright, its pick
+      // numbers are the truth, and it also says who is sitting in which slot.
+      // A pick of a player this board does not carry keeps its pick with the
+      // id Yahoo gave it - dropping it and closing up would hand every later
+      // pick to the wrong roster, and the snake would be lying from there on.
+      var mapped = [], seen = {}, last = 0;
       data.picks.forEach(function (p) {
-        if (byId[p.player_id] === undefined) return;
+        if (!p.pick) return;
         mapped.push({ pick: p.pick, id: p.player_id, team: p.team_key });
+        seen[p.player_id] = true;
+        if (p.pick > last) last = p.pick;
         if (p.team_key && p.round === 1) state.slotOf[p.team_key] = slotOfPick(p.pick);
       });
-      var seen = {};
-      mapped.forEach(function (p) { seen[p.id] = true; });
       // Anything typed in that Yahoo has not caught up to yet stays, after.
       state.picks.filter(function (p) { return p.manual && !seen[p.id]; })
-        .forEach(function (p) { mapped.push(p); });
+        .forEach(function (p) { mapped.push({ pick: ++last, id: p.id, manual: true }); });
       state.picks = mapped;
-      renumber();
       save();
       return signature() !== before;
     }
@@ -746,7 +792,9 @@ _RENDER = r"""
     state.picks.forEach(function (p) { have[p.id] = true; });
     var added = 0;
     ids.forEach(function (x) {
-      if (have[x.id] || byId[x.id] === undefined) return;
+      // A player this board does not carry still occupies a pick; skipping
+      // him would put the count of picks made - and whose turn it is - wrong.
+      if (have[x.id]) return;
       state.picks.push({ pick: state.picks.length + 1, id: x.id, team: x.team });
       have[x.id] = true;
       added++;
@@ -1091,7 +1139,7 @@ _RENDER2 = r"""
         body += '<td class="' + cls.join(" ") + '"><span class="pk">' + label(no) + "</span>"
           + (idx !== undefined
             ? '<span class="pl">' + esc(P[idx][NAME]) + "</span>"
-            : "") + "</td>";
+            : p ? '<span class="pl">(off board)</span>' : "") + "</td>";
       }
       body += "</tr>";
     }
@@ -1100,6 +1148,7 @@ _RENDER2 = r"""
 
   // ------------------------------------------------------------------- wiring
   function render() {
+    DRIFT = adpDrift();
     renderStatus();
     renderRecs();
     renderAvail();
@@ -1155,7 +1204,15 @@ _WIRE = r"""
       else renderStatus();
     });
     el("ld-undo").addEventListener("click", undo);
+    el("ld-skip").addEventListener("click", skipPick);
     el("ld-reset").addEventListener("click", reset);
+
+    // On draft night this tab shares a phone with Yahoo's draft client, and a
+    // hidden tab polls slowly. Coming back should not mean thirty seconds of
+    // stale board with a pick clock running.
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) pull();
+    });
 
     document.addEventListener("keydown", function (e) {
       if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
@@ -1225,6 +1282,9 @@ def _setup_bar() -> str:
         '<select id="ld-team" aria-label="Your team"></select>'
         '<button id="ld-auto" type="button">Auto-sync</button>'
         '<button id="ld-undo" type="button" title="Undo the last pick (u)">Undo</button>'
+        '<button id="ld-skip" type="button" title="Record a pick of a player this '
+        'board does not list, so later picks stay on the right rosters">'
+        'Off-board pick</button>'
         '<button id="ld-reset" type="button">Clear</button>'
         '<span class="ld-note">Picks and settings stay in this browser.</span>'
         "</div>"

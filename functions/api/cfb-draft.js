@@ -9,7 +9,8 @@
  *
  * Yahoo does not publish "the draft, live" as one endpoint, and which of its
  * feeds fills in first during a draft is not something the documentation says.
- * So this asks all three and returns whichever has picks in it:
+ * So this tries the real one first and asks the other two only when it is
+ * empty, returning whichever has picks in it:
  *
  *   draftresults        pick number -> team + player key. The real thing, if
  *                       Yahoo writes it during the draft rather than after.
@@ -135,15 +136,23 @@ async function settle(promise, fallback) {
 }
 
 export async function onRequestGet() {
-  const [draftRaw, rosterRaw, takenRaw] = await Promise.all([
-    settle(yahoo(`league/${LEAGUE}/draftresults`), null),
-    settle(yahoo(`league/${LEAGUE}/teams;out=roster`), null),
-    // 200 is past a full 10-team draft of 17 rounds, so one page is enough.
-    settle(yahoo(`league/${LEAGUE}/players;status=T;count=200`), null),
-  ]);
-
+  // The draft feed is the real thing; while it has picks in it the fallbacks
+  // can add nothing, so they are only fetched when it comes back empty. The
+  // page polls every six seconds during a live draft - one Yahoo request per
+  // poll instead of three is the difference over a three-hour night.
+  const draftRaw = await settle(yahoo(`league/${LEAGUE}/draftresults`), null);
   const meta = fold(draftRaw?.fantasy_content?.league?.[0]);
   const picks = draftRaw ? parseDraft(draftRaw) : [];
+
+  let rosterRaw = null;
+  let takenRaw = null;
+  if (!picks.length) {
+    [rosterRaw, takenRaw] = await Promise.all([
+      settle(yahoo(`league/${LEAGUE}/teams;out=roster`), null),
+      // 200 is past a full 10-team draft of 17 rounds, so one page is enough.
+      settle(yahoo(`league/${LEAGUE}/players;status=T;count=200`), null),
+    ]);
+  }
   const rosters = rosterRaw ? parseRosters(rosterRaw) : {};
   const taken = takenRaw ? parseTaken(takenRaw) : [];
 
