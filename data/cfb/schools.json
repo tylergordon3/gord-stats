@@ -1,0 +1,1096 @@
+{
+ "season": 2025,
+ "yahoo_to_school": {
+  "Miami (FL) Hurricanes": "Miami",
+  "Air Force Falcons": "Air Force",
+  "Akron Zips": "Akron",
+  "Alabama Crimson Tide": "Alabama",
+  "App State Mountaineers": "App State",
+  "Arizona Wildcats": "Arizona",
+  "Arizona State Sun Devils": "Arizona State",
+  "Arkansas Razorbacks": "Arkansas",
+  "Arkansas State Red Wolves": "Arkansas State",
+  "Army Black Knights": "Army",
+  "Auburn Tigers": "Auburn",
+  "Ball State Cardinals": "Ball State",
+  "Baylor Bears": "Baylor",
+  "Boise State Broncos": "Boise State",
+  "Boston College Eagles": "Boston College",
+  "Bowling Green Falcons": "Bowling Green",
+  "Buffalo Bulls": "Buffalo",
+  "BYU Cougars": "BYU",
+  "California Golden Bears": "California",
+  "Central Michigan Chippewas": "Central Michigan",
+  "Charlotte 49ers": "Charlotte",
+  "Cincinnati Bearcats": "Cincinnati",
+  "Clemson Tigers": "Clemson",
+  "Coastal Carolina Chanticleers": "Coastal Carolina",
+  "Colorado Buffaloes": "Colorado",
+  "Colorado State Rams": "Colorado State",
+  "Delaware Blue Hens": "Delaware",
+  "Duke Blue Devils": "Duke",
+  "East Carolina Pirates": "East Carolina",
+  "Eastern Michigan Eagles": "Eastern Michigan",
+  "Florida Gators": "Florida",
+  "Florida Atlantic Owls": "Florida Atlantic",
+  "Florida International Panthers": "Florida International",
+  "Florida State Seminoles": "Florida State",
+  "Fresno State Bulldogs": "Fresno State",
+  "Georgia Bulldogs": "Georgia",
+  "Georgia Southern Eagles": "Georgia Southern",
+  "Georgia State Panthers": "Georgia State",
+  "Georgia Tech Yellow Jackets": "Georgia Tech",
+  "Hawai'i Rainbow Warriors": "Hawai'i",
+  "Houston Cougars": "Houston",
+  "Illinois Fighting Illini": "Illinois",
+  "Indiana Hoosiers": "Indiana",
+  "Iowa Hawkeyes": "Iowa",
+  "Iowa State Cyclones": "Iowa State",
+  "Jacksonville State Gamecocks": "Jacksonville State",
+  "James Madison Dukes": "James Madison",
+  "Kansas Jayhawks": "Kansas",
+  "Kansas State Wildcats": "Kansas State",
+  "Kennesaw State Owls": "Kennesaw State",
+  "Kent State Golden Flashes": "Kent State",
+  "Kentucky Wildcats": "Kentucky",
+  "Liberty Flames": "Liberty",
+  "Louisiana Ragin' Cajuns": "Louisiana",
+  "Louisiana Tech Bulldogs": "Louisiana Tech",
+  "Louisville Cardinals": "Louisville",
+  "LSU Tigers": "LSU",
+  "Marshall Thundering Herd": "Marshall",
+  "Maryland Terrapins": "Maryland",
+  "Massachusetts Minutemen": "Massachusetts",
+  "Memphis Tigers": "Memphis",
+  "Miami Hurricanes": "Miami",
+  "Miami (OH) RedHawks": "Miami (OH)",
+  "Michigan Wolverines": "Michigan",
+  "Michigan State Spartans": "Michigan State",
+  "Middle Tennessee Blue Raiders": "Middle Tennessee",
+  "Minnesota Golden Gophers": "Minnesota",
+  "Mississippi State Bulldogs": "Mississippi State",
+  "Missouri Tigers": "Missouri",
+  "Missouri State Bears": "Missouri State",
+  "Navy Midshipmen": "Navy",
+  "NC State Wolfpack": "NC State",
+  "Nebraska Cornhuskers": "Nebraska",
+  "Nevada Wolf Pack": "Nevada",
+  "New Mexico Lobos": "New Mexico",
+  "New Mexico State Aggies": "New Mexico State",
+  "North Carolina Tar Heels": "North Carolina",
+  "Northern Illinois Huskies": "Northern Illinois",
+  "North Texas Mean Green": "North Texas",
+  "Northwestern Wildcats": "Northwestern",
+  "Notre Dame Fighting Irish": "Notre Dame",
+  "Ohio Bobcats": "Ohio",
+  "Ohio State Buckeyes": "Ohio State",
+  "Oklahoma Sooners": "Oklahoma",
+  "Oklahoma State Cowboys": "Oklahoma State",
+  "Old Dominion Monarchs": "Old Dominion",
+  "Ole Miss Rebels": "Ole Miss",
+  "Oregon Ducks": "Oregon",
+  "Oregon State Beavers": "Oregon State",
+  "Penn State Nittany Lions": "Penn State",
+  "Pittsburgh Panthers": "Pittsburgh",
+  "Purdue Boilermakers": "Purdue",
+  "Rice Owls": "Rice",
+  "Rutgers Scarlet Knights": "Rutgers",
+  "Sam Houston Bearkats": "Sam Houston",
+  "San Diego State Aztecs": "San Diego State",
+  "San Jos\u00e9 State Spartans": "San Jos\u00e9 State",
+  "SMU Mustangs": "SMU",
+  "South Alabama Jaguars": "South Alabama",
+  "South Carolina Gamecocks": "South Carolina",
+  "Southern Miss Golden Eagles": "Southern Miss",
+  "South Florida Bulls": "South Florida",
+  "Stanford Cardinal": "Stanford",
+  "Syracuse Orange": "Syracuse",
+  "TCU Horned Frogs": "TCU",
+  "Temple Owls": "Temple",
+  "Tennessee Volunteers": "Tennessee",
+  "Texas Longhorns": "Texas",
+  "Texas A&M Aggies": "Texas A&M",
+  "Texas State Bobcats": "Texas State",
+  "Texas Tech Red Raiders": "Texas Tech",
+  "Toledo Rockets": "Toledo",
+  "Troy Trojans": "Troy",
+  "Tulane Green Wave": "Tulane",
+  "Tulsa Golden Hurricane": "Tulsa",
+  "UAB Blazers": "UAB",
+  "UCF Knights": "UCF",
+  "UCLA Bruins": "UCLA",
+  "UConn Huskies": "UConn",
+  "UL Monroe Warhawks": "UL Monroe",
+  "UNLV Rebels": "UNLV",
+  "USC Trojans": "USC",
+  "Utah Utes": "Utah",
+  "Utah State Aggies": "Utah State",
+  "UTEP Miners": "UTEP",
+  "UTSA Roadrunners": "UTSA",
+  "Vanderbilt Commodores": "Vanderbilt",
+  "Virginia Cavaliers": "Virginia",
+  "Virginia Tech Hokies": "Virginia Tech",
+  "Wake Forest Demon Deacons": "Wake Forest",
+  "Washington Huskies": "Washington",
+  "Washington State Cougars": "Washington State",
+  "Western Kentucky Hilltoppers": "Western Kentucky",
+  "Western Michigan Broncos": "Western Michigan",
+  "West Virginia Mountaineers": "West Virginia",
+  "Wisconsin Badgers": "Wisconsin",
+  "Wyoming Cowboys": "Wyoming"
+ },
+ "schools": {
+  "Air Force": {
+   "school": "Air Force",
+   "conference": "Mountain West",
+   "abbr": "AF",
+   "espn_id": "2005",
+   "espn_name": "Air Force"
+  },
+  "Akron": {
+   "school": "Akron",
+   "conference": "Mid-American",
+   "abbr": "AKR",
+   "espn_id": "2006",
+   "espn_name": "Akron"
+  },
+  "Alabama": {
+   "school": "Alabama",
+   "conference": "SEC",
+   "abbr": "ALA",
+   "espn_id": "333",
+   "espn_name": "Alabama"
+  },
+  "App State": {
+   "school": "App State",
+   "conference": "Sun Belt",
+   "abbr": "APP",
+   "espn_id": "2026",
+   "espn_name": "App State"
+  },
+  "Arizona": {
+   "school": "Arizona",
+   "conference": "Big 12",
+   "abbr": "ARIZ",
+   "espn_id": "12",
+   "espn_name": "Arizona"
+  },
+  "Arizona State": {
+   "school": "Arizona State",
+   "conference": "Big 12",
+   "abbr": "ASU",
+   "espn_id": "9",
+   "espn_name": "Arizona St"
+  },
+  "Arkansas": {
+   "school": "Arkansas",
+   "conference": "SEC",
+   "abbr": "ARK",
+   "espn_id": "8",
+   "espn_name": "Arkansas"
+  },
+  "Arkansas State": {
+   "school": "Arkansas State",
+   "conference": "Sun Belt",
+   "abbr": "ARST",
+   "espn_id": "2032",
+   "espn_name": "Arkansas St"
+  },
+  "Army": {
+   "school": "Army",
+   "conference": "American Athletic",
+   "abbr": "ARMY",
+   "espn_id": "349",
+   "espn_name": "Army"
+  },
+  "Auburn": {
+   "school": "Auburn",
+   "conference": "SEC",
+   "abbr": "AUB",
+   "espn_id": "2",
+   "espn_name": "Auburn"
+  },
+  "Ball State": {
+   "school": "Ball State",
+   "conference": "Mid-American",
+   "abbr": "BALL",
+   "espn_id": "2050",
+   "espn_name": "Ball State"
+  },
+  "Baylor": {
+   "school": "Baylor",
+   "conference": "Big 12",
+   "abbr": "BAY",
+   "espn_id": "239",
+   "espn_name": "Baylor"
+  },
+  "Boise State": {
+   "school": "Boise State",
+   "conference": "Mountain West",
+   "abbr": "BOIS",
+   "espn_id": "68",
+   "espn_name": "Boise St"
+  },
+  "Boston College": {
+   "school": "Boston College",
+   "conference": "ACC",
+   "abbr": "BC",
+   "espn_id": "103",
+   "espn_name": "Boston College"
+  },
+  "Bowling Green": {
+   "school": "Bowling Green",
+   "conference": "Mid-American",
+   "abbr": "BGSU",
+   "espn_id": "189",
+   "espn_name": "Bowling Green"
+  },
+  "Buffalo": {
+   "school": "Buffalo",
+   "conference": "Mid-American",
+   "abbr": "BUF",
+   "espn_id": "2084",
+   "espn_name": "Buffalo"
+  },
+  "BYU": {
+   "school": "BYU",
+   "conference": "Big 12",
+   "abbr": "BYU",
+   "espn_id": "252",
+   "espn_name": "BYU"
+  },
+  "California": {
+   "school": "California",
+   "conference": "ACC",
+   "abbr": "CAL",
+   "espn_id": "25",
+   "espn_name": "California"
+  },
+  "Central Michigan": {
+   "school": "Central Michigan",
+   "conference": "Mid-American",
+   "abbr": "CMU",
+   "espn_id": "2117",
+   "espn_name": "C Michigan"
+  },
+  "Charlotte": {
+   "school": "Charlotte",
+   "conference": "American Athletic",
+   "abbr": "CLT",
+   "espn_id": "2429",
+   "espn_name": "Charlotte"
+  },
+  "Cincinnati": {
+   "school": "Cincinnati",
+   "conference": "Big 12",
+   "abbr": "CIN",
+   "espn_id": "2132",
+   "espn_name": "Cincinnati"
+  },
+  "Clemson": {
+   "school": "Clemson",
+   "conference": "ACC",
+   "abbr": "CLEM",
+   "espn_id": "228",
+   "espn_name": "Clemson"
+  },
+  "Coastal Carolina": {
+   "school": "Coastal Carolina",
+   "conference": "Sun Belt",
+   "abbr": "CCU",
+   "espn_id": "324",
+   "espn_name": "Coastal"
+  },
+  "Colorado": {
+   "school": "Colorado",
+   "conference": "Big 12",
+   "abbr": "COLO",
+   "espn_id": "38",
+   "espn_name": "Colorado"
+  },
+  "Colorado State": {
+   "school": "Colorado State",
+   "conference": "Mountain West",
+   "abbr": "CSU",
+   "espn_id": "36",
+   "espn_name": "Colorado St"
+  },
+  "Delaware": {
+   "school": "Delaware",
+   "conference": "Conference USA",
+   "abbr": "DEL",
+   "espn_id": "48",
+   "espn_name": "Delaware"
+  },
+  "Duke": {
+   "school": "Duke",
+   "conference": "ACC",
+   "abbr": "DUKE",
+   "espn_id": "150",
+   "espn_name": "Duke"
+  },
+  "East Carolina": {
+   "school": "East Carolina",
+   "conference": "American Athletic",
+   "abbr": "ECU",
+   "espn_id": "151",
+   "espn_name": "East Carolina"
+  },
+  "Eastern Michigan": {
+   "school": "Eastern Michigan",
+   "conference": "Mid-American",
+   "abbr": "EMU",
+   "espn_id": "2199",
+   "espn_name": "E Michigan"
+  },
+  "Florida": {
+   "school": "Florida",
+   "conference": "SEC",
+   "abbr": "FLA",
+   "espn_id": "57",
+   "espn_name": "Florida"
+  },
+  "Florida Atlantic": {
+   "school": "Florida Atlantic",
+   "conference": "American Athletic",
+   "abbr": "FAU",
+   "espn_id": "2226",
+   "espn_name": "FAU"
+  },
+  "Florida International": {
+   "school": "Florida International",
+   "conference": "Conference USA",
+   "abbr": "FIU",
+   "espn_id": "2229",
+   "espn_name": "FIU"
+  },
+  "Florida State": {
+   "school": "Florida State",
+   "conference": "ACC",
+   "abbr": "FSU",
+   "espn_id": "52",
+   "espn_name": "Florida St"
+  },
+  "Fresno State": {
+   "school": "Fresno State",
+   "conference": "Mountain West",
+   "abbr": "FRES",
+   "espn_id": "278",
+   "espn_name": "Fresno St"
+  },
+  "Georgia": {
+   "school": "Georgia",
+   "conference": "SEC",
+   "abbr": "UGA",
+   "espn_id": "61",
+   "espn_name": "Georgia"
+  },
+  "Georgia Southern": {
+   "school": "Georgia Southern",
+   "conference": "Sun Belt",
+   "abbr": "GASO",
+   "espn_id": "290",
+   "espn_name": "GA Southern"
+  },
+  "Georgia State": {
+   "school": "Georgia State",
+   "conference": "Sun Belt",
+   "abbr": "GAST",
+   "espn_id": "2247",
+   "espn_name": "Georgia St"
+  },
+  "Georgia Tech": {
+   "school": "Georgia Tech",
+   "conference": "ACC",
+   "abbr": "GT",
+   "espn_id": "59",
+   "espn_name": "Georgia Tech"
+  },
+  "Hawai'i": {
+   "school": "Hawai'i",
+   "conference": "Mountain West",
+   "abbr": "HAW",
+   "espn_id": "62",
+   "espn_name": "Hawai'i"
+  },
+  "Houston": {
+   "school": "Houston",
+   "conference": "Big 12",
+   "abbr": "HOU",
+   "espn_id": "248",
+   "espn_name": "Houston"
+  },
+  "Illinois": {
+   "school": "Illinois",
+   "conference": "Big Ten",
+   "abbr": "ILL",
+   "espn_id": "356",
+   "espn_name": "Illinois"
+  },
+  "Indiana": {
+   "school": "Indiana",
+   "conference": "Big Ten",
+   "abbr": "IU",
+   "espn_id": "84",
+   "espn_name": "Indiana"
+  },
+  "Iowa": {
+   "school": "Iowa",
+   "conference": "Big Ten",
+   "abbr": "IOWA",
+   "espn_id": "2294",
+   "espn_name": "Iowa"
+  },
+  "Iowa State": {
+   "school": "Iowa State",
+   "conference": "Big 12",
+   "abbr": "ISU",
+   "espn_id": "66",
+   "espn_name": "Iowa State"
+  },
+  "Jacksonville State": {
+   "school": "Jacksonville State",
+   "conference": "Conference USA",
+   "abbr": "JXST",
+   "espn_id": "55",
+   "espn_name": "Jax State"
+  },
+  "James Madison": {
+   "school": "James Madison",
+   "conference": "Sun Belt",
+   "abbr": "JMU",
+   "espn_id": "256",
+   "espn_name": "James Madison"
+  },
+  "Kansas": {
+   "school": "Kansas",
+   "conference": "Big 12",
+   "abbr": "KU",
+   "espn_id": "2305",
+   "espn_name": "Kansas"
+  },
+  "Kansas State": {
+   "school": "Kansas State",
+   "conference": "Big 12",
+   "abbr": "KSU",
+   "espn_id": "2306",
+   "espn_name": "Kansas St"
+  },
+  "Kennesaw State": {
+   "school": "Kennesaw State",
+   "conference": "Conference USA",
+   "abbr": "KENN",
+   "espn_id": "338",
+   "espn_name": "Kennesaw St"
+  },
+  "Kent State": {
+   "school": "Kent State",
+   "conference": "Mid-American",
+   "abbr": "KENT",
+   "espn_id": "2309",
+   "espn_name": "Kent State"
+  },
+  "Kentucky": {
+   "school": "Kentucky",
+   "conference": "SEC",
+   "abbr": "UK",
+   "espn_id": "96",
+   "espn_name": "Kentucky"
+  },
+  "Liberty": {
+   "school": "Liberty",
+   "conference": "Conference USA",
+   "abbr": "LIB",
+   "espn_id": "2335",
+   "espn_name": "Liberty"
+  },
+  "Louisiana": {
+   "school": "Louisiana",
+   "conference": "Sun Belt",
+   "abbr": "UL",
+   "espn_id": "309",
+   "espn_name": "Louisiana"
+  },
+  "Louisiana Tech": {
+   "school": "Louisiana Tech",
+   "conference": "Conference USA",
+   "abbr": "LT",
+   "espn_id": "2348",
+   "espn_name": "Louisiana Tech"
+  },
+  "Louisville": {
+   "school": "Louisville",
+   "conference": "ACC",
+   "abbr": "LOU",
+   "espn_id": "97",
+   "espn_name": "Louisville"
+  },
+  "LSU": {
+   "school": "LSU",
+   "conference": "SEC",
+   "abbr": "LSU",
+   "espn_id": "99",
+   "espn_name": "LSU"
+  },
+  "Marshall": {
+   "school": "Marshall",
+   "conference": "Sun Belt",
+   "abbr": "MRSH",
+   "espn_id": "276",
+   "espn_name": "Marshall"
+  },
+  "Maryland": {
+   "school": "Maryland",
+   "conference": "Big Ten",
+   "abbr": "MD",
+   "espn_id": "120",
+   "espn_name": "Maryland"
+  },
+  "Massachusetts": {
+   "school": "Massachusetts",
+   "conference": "Mid-American",
+   "abbr": "MASS",
+   "espn_id": "113",
+   "espn_name": "UMass"
+  },
+  "Memphis": {
+   "school": "Memphis",
+   "conference": "American Athletic",
+   "abbr": "MEM",
+   "espn_id": "235",
+   "espn_name": "Memphis"
+  },
+  "Miami": {
+   "school": "Miami",
+   "conference": "ACC",
+   "abbr": "MIA",
+   "espn_id": "2390",
+   "espn_name": "Miami"
+  },
+  "Miami (OH)": {
+   "school": "Miami (OH)",
+   "conference": "Mid-American",
+   "abbr": "M-OH",
+   "espn_id": "193",
+   "espn_name": "Miami OH"
+  },
+  "Michigan": {
+   "school": "Michigan",
+   "conference": "Big Ten",
+   "abbr": "MICH",
+   "espn_id": "130",
+   "espn_name": "Michigan"
+  },
+  "Michigan State": {
+   "school": "Michigan State",
+   "conference": "Big Ten",
+   "abbr": "MSU",
+   "espn_id": "127",
+   "espn_name": "Michigan St"
+  },
+  "Middle Tennessee": {
+   "school": "Middle Tennessee",
+   "conference": "Conference USA",
+   "abbr": "MTSU",
+   "espn_id": "2393",
+   "espn_name": "MTSU"
+  },
+  "Minnesota": {
+   "school": "Minnesota",
+   "conference": "Big Ten",
+   "abbr": "MINN",
+   "espn_id": "135",
+   "espn_name": "Minnesota"
+  },
+  "Mississippi State": {
+   "school": "Mississippi State",
+   "conference": "SEC",
+   "abbr": "MSST",
+   "espn_id": "344",
+   "espn_name": "Mississippi St"
+  },
+  "Missouri": {
+   "school": "Missouri",
+   "conference": "SEC",
+   "abbr": "MIZ",
+   "espn_id": "142",
+   "espn_name": "Missouri"
+  },
+  "Missouri State": {
+   "school": "Missouri State",
+   "conference": "Conference USA",
+   "abbr": "MOST",
+   "espn_id": "2623",
+   "espn_name": "Missouri St"
+  },
+  "Navy": {
+   "school": "Navy",
+   "conference": "American Athletic",
+   "abbr": "NAVY",
+   "espn_id": "2426",
+   "espn_name": "Navy"
+  },
+  "NC State": {
+   "school": "NC State",
+   "conference": "ACC",
+   "abbr": "NCSU",
+   "espn_id": "152",
+   "espn_name": "NC State"
+  },
+  "Nebraska": {
+   "school": "Nebraska",
+   "conference": "Big Ten",
+   "abbr": "NEB",
+   "espn_id": "158",
+   "espn_name": "Nebraska"
+  },
+  "Nevada": {
+   "school": "Nevada",
+   "conference": "Mountain West",
+   "abbr": "NEV",
+   "espn_id": "2440",
+   "espn_name": "Nevada"
+  },
+  "New Mexico": {
+   "school": "New Mexico",
+   "conference": "Mountain West",
+   "abbr": "UNM",
+   "espn_id": "167",
+   "espn_name": "New Mexico"
+  },
+  "New Mexico State": {
+   "school": "New Mexico State",
+   "conference": "Conference USA",
+   "abbr": "NMSU",
+   "espn_id": "166",
+   "espn_name": "New Mexico St"
+  },
+  "North Carolina": {
+   "school": "North Carolina",
+   "conference": "ACC",
+   "abbr": "UNC",
+   "espn_id": "153",
+   "espn_name": "North Carolina"
+  },
+  "Northern Illinois": {
+   "school": "Northern Illinois",
+   "conference": "Mid-American",
+   "abbr": "NIU",
+   "espn_id": "2459",
+   "espn_name": "N Illinois"
+  },
+  "North Texas": {
+   "school": "North Texas",
+   "conference": "American Athletic",
+   "abbr": "UNT",
+   "espn_id": "249",
+   "espn_name": "North Texas"
+  },
+  "Northwestern": {
+   "school": "Northwestern",
+   "conference": "Big Ten",
+   "abbr": "NU",
+   "espn_id": "77",
+   "espn_name": "Northwestern"
+  },
+  "Notre Dame": {
+   "school": "Notre Dame",
+   "conference": "FBS Independents",
+   "abbr": "ND",
+   "espn_id": "87",
+   "espn_name": "Notre Dame"
+  },
+  "Ohio": {
+   "school": "Ohio",
+   "conference": "Mid-American",
+   "abbr": "OHIO",
+   "espn_id": "195",
+   "espn_name": "Ohio"
+  },
+  "Ohio State": {
+   "school": "Ohio State",
+   "conference": "Big Ten",
+   "abbr": "OSU",
+   "espn_id": "194",
+   "espn_name": "Ohio State"
+  },
+  "Oklahoma": {
+   "school": "Oklahoma",
+   "conference": "SEC",
+   "abbr": "OU",
+   "espn_id": "201",
+   "espn_name": "Oklahoma"
+  },
+  "Oklahoma State": {
+   "school": "Oklahoma State",
+   "conference": "Big 12",
+   "abbr": "OKST",
+   "espn_id": "197",
+   "espn_name": "Oklahoma St"
+  },
+  "Old Dominion": {
+   "school": "Old Dominion",
+   "conference": "Sun Belt",
+   "abbr": "ODU",
+   "espn_id": "295",
+   "espn_name": "Old Dominion"
+  },
+  "Ole Miss": {
+   "school": "Ole Miss",
+   "conference": "SEC",
+   "abbr": "MISS",
+   "espn_id": "145",
+   "espn_name": "Ole Miss"
+  },
+  "Oregon": {
+   "school": "Oregon",
+   "conference": "Big Ten",
+   "abbr": "ORE",
+   "espn_id": "2483",
+   "espn_name": "Oregon"
+  },
+  "Oregon State": {
+   "school": "Oregon State",
+   "conference": "Pac-12",
+   "abbr": "ORST",
+   "espn_id": "204",
+   "espn_name": "Oregon St"
+  },
+  "Penn State": {
+   "school": "Penn State",
+   "conference": "Big Ten",
+   "abbr": "PSU",
+   "espn_id": "213",
+   "espn_name": "Penn State"
+  },
+  "Pittsburgh": {
+   "school": "Pittsburgh",
+   "conference": "ACC",
+   "abbr": "PITT",
+   "espn_id": "221",
+   "espn_name": "Pitt"
+  },
+  "Purdue": {
+   "school": "Purdue",
+   "conference": "Big Ten",
+   "abbr": "PUR",
+   "espn_id": "2509",
+   "espn_name": "Purdue"
+  },
+  "Rice": {
+   "school": "Rice",
+   "conference": "American Athletic",
+   "abbr": "RICE",
+   "espn_id": "242",
+   "espn_name": "Rice"
+  },
+  "Rutgers": {
+   "school": "Rutgers",
+   "conference": "Big Ten",
+   "abbr": "RUTG",
+   "espn_id": "164",
+   "espn_name": "Rutgers"
+  },
+  "Sam Houston": {
+   "school": "Sam Houston",
+   "conference": "Conference USA",
+   "abbr": "SHSU",
+   "espn_id": "2534",
+   "espn_name": "Sam Houston"
+  },
+  "San Diego State": {
+   "school": "San Diego State",
+   "conference": "Mountain West",
+   "abbr": "SDSU",
+   "espn_id": "21",
+   "espn_name": "San Diego St"
+  },
+  "San Jos\u00e9 State": {
+   "school": "San Jos\u00e9 State",
+   "conference": "Mountain West",
+   "abbr": "SJSU",
+   "espn_id": "23",
+   "espn_name": "San Jos\u00e9 St"
+  },
+  "SMU": {
+   "school": "SMU",
+   "conference": "ACC",
+   "abbr": "SMU",
+   "espn_id": "2567",
+   "espn_name": "SMU"
+  },
+  "South Alabama": {
+   "school": "South Alabama",
+   "conference": "Sun Belt",
+   "abbr": "USA",
+   "espn_id": "6",
+   "espn_name": "South Alabama"
+  },
+  "South Carolina": {
+   "school": "South Carolina",
+   "conference": "SEC",
+   "abbr": "SC",
+   "espn_id": "2579",
+   "espn_name": "South Carolina"
+  },
+  "Southern Miss": {
+   "school": "Southern Miss",
+   "conference": "Sun Belt",
+   "abbr": "USM",
+   "espn_id": "2572",
+   "espn_name": "Southern Miss"
+  },
+  "South Florida": {
+   "school": "South Florida",
+   "conference": "American Athletic",
+   "abbr": "USF",
+   "espn_id": "58",
+   "espn_name": "South Florida"
+  },
+  "Stanford": {
+   "school": "Stanford",
+   "conference": "ACC",
+   "abbr": "STAN",
+   "espn_id": "24",
+   "espn_name": "Stanford"
+  },
+  "Syracuse": {
+   "school": "Syracuse",
+   "conference": "ACC",
+   "abbr": "SYR",
+   "espn_id": "183",
+   "espn_name": "Syracuse"
+  },
+  "TCU": {
+   "school": "TCU",
+   "conference": "Big 12",
+   "abbr": "TCU",
+   "espn_id": "2628",
+   "espn_name": "TCU"
+  },
+  "Temple": {
+   "school": "Temple",
+   "conference": "American Athletic",
+   "abbr": "TEM",
+   "espn_id": "218",
+   "espn_name": "Temple"
+  },
+  "Tennessee": {
+   "school": "Tennessee",
+   "conference": "SEC",
+   "abbr": "TENN",
+   "espn_id": "2633",
+   "espn_name": "Tennessee"
+  },
+  "Texas": {
+   "school": "Texas",
+   "conference": "SEC",
+   "abbr": "TEX",
+   "espn_id": "251",
+   "espn_name": "Texas"
+  },
+  "Texas A&M": {
+   "school": "Texas A&M",
+   "conference": "SEC",
+   "abbr": "TA&M",
+   "espn_id": "245",
+   "espn_name": "Texas A&M"
+  },
+  "Texas State": {
+   "school": "Texas State",
+   "conference": "Sun Belt",
+   "abbr": "TXST",
+   "espn_id": "326",
+   "espn_name": "Texas St"
+  },
+  "Texas Tech": {
+   "school": "Texas Tech",
+   "conference": "Big 12",
+   "abbr": "TTU",
+   "espn_id": "2641",
+   "espn_name": "Texas Tech"
+  },
+  "Toledo": {
+   "school": "Toledo",
+   "conference": "Mid-American",
+   "abbr": "TOL",
+   "espn_id": "2649",
+   "espn_name": "Toledo"
+  },
+  "Troy": {
+   "school": "Troy",
+   "conference": "Sun Belt",
+   "abbr": "TROY",
+   "espn_id": "2653",
+   "espn_name": "Troy"
+  },
+  "Tulane": {
+   "school": "Tulane",
+   "conference": "American Athletic",
+   "abbr": "TULN",
+   "espn_id": "2655",
+   "espn_name": "Tulane"
+  },
+  "Tulsa": {
+   "school": "Tulsa",
+   "conference": "American Athletic",
+   "abbr": "TLSA",
+   "espn_id": "202",
+   "espn_name": "Tulsa"
+  },
+  "UAB": {
+   "school": "UAB",
+   "conference": "American Athletic",
+   "abbr": "UAB",
+   "espn_id": "5",
+   "espn_name": "UAB"
+  },
+  "UCF": {
+   "school": "UCF",
+   "conference": "Big 12",
+   "abbr": "UCF",
+   "espn_id": "2116",
+   "espn_name": "UCF"
+  },
+  "UCLA": {
+   "school": "UCLA",
+   "conference": "Big Ten",
+   "abbr": "UCLA",
+   "espn_id": "26",
+   "espn_name": "UCLA"
+  },
+  "UConn": {
+   "school": "UConn",
+   "conference": "FBS Independents",
+   "abbr": "CONN",
+   "espn_id": "41",
+   "espn_name": "UConn"
+  },
+  "UL Monroe": {
+   "school": "UL Monroe",
+   "conference": "Sun Belt",
+   "abbr": "ULM",
+   "espn_id": "2433",
+   "espn_name": "UL Monroe"
+  },
+  "UNLV": {
+   "school": "UNLV",
+   "conference": "Mountain West",
+   "abbr": "UNLV",
+   "espn_id": "2439",
+   "espn_name": "UNLV"
+  },
+  "USC": {
+   "school": "USC",
+   "conference": "Big Ten",
+   "abbr": "USC",
+   "espn_id": "30",
+   "espn_name": "USC"
+  },
+  "Utah": {
+   "school": "Utah",
+   "conference": "Big 12",
+   "abbr": "UTAH",
+   "espn_id": "254",
+   "espn_name": "Utah"
+  },
+  "Utah State": {
+   "school": "Utah State",
+   "conference": "Mountain West",
+   "abbr": "USU",
+   "espn_id": "328",
+   "espn_name": "Utah State"
+  },
+  "UTEP": {
+   "school": "UTEP",
+   "conference": "Conference USA",
+   "abbr": "UTEP",
+   "espn_id": "2638",
+   "espn_name": "UTEP"
+  },
+  "UTSA": {
+   "school": "UTSA",
+   "conference": "American Athletic",
+   "abbr": "UTSA",
+   "espn_id": "2636",
+   "espn_name": "UTSA"
+  },
+  "Vanderbilt": {
+   "school": "Vanderbilt",
+   "conference": "SEC",
+   "abbr": "VAN",
+   "espn_id": "238",
+   "espn_name": "Vanderbilt"
+  },
+  "Virginia": {
+   "school": "Virginia",
+   "conference": "ACC",
+   "abbr": "UVA",
+   "espn_id": "258",
+   "espn_name": "Virginia"
+  },
+  "Virginia Tech": {
+   "school": "Virginia Tech",
+   "conference": "ACC",
+   "abbr": "VT",
+   "espn_id": "259",
+   "espn_name": "Virginia Tech"
+  },
+  "Wake Forest": {
+   "school": "Wake Forest",
+   "conference": "ACC",
+   "abbr": "WAKE",
+   "espn_id": "154",
+   "espn_name": "Wake Forest"
+  },
+  "Washington": {
+   "school": "Washington",
+   "conference": "Big Ten",
+   "abbr": "WASH",
+   "espn_id": "264",
+   "espn_name": "Washington"
+  },
+  "Washington State": {
+   "school": "Washington State",
+   "conference": "Pac-12",
+   "abbr": "WSU",
+   "espn_id": "265",
+   "espn_name": "Washington St"
+  },
+  "Western Kentucky": {
+   "school": "Western Kentucky",
+   "conference": "Conference USA",
+   "abbr": "WKU",
+   "espn_id": "98",
+   "espn_name": "Western KY"
+  },
+  "Western Michigan": {
+   "school": "Western Michigan",
+   "conference": "Mid-American",
+   "abbr": "WMU",
+   "espn_id": "2711",
+   "espn_name": "W Michigan"
+  },
+  "West Virginia": {
+   "school": "West Virginia",
+   "conference": "Big 12",
+   "abbr": "WVU",
+   "espn_id": "277",
+   "espn_name": "West Virginia"
+  },
+  "Wisconsin": {
+   "school": "Wisconsin",
+   "conference": "Big Ten",
+   "abbr": "WIS",
+   "espn_id": "275",
+   "espn_name": "Wisconsin"
+  },
+  "Wyoming": {
+   "school": "Wyoming",
+   "conference": "Mountain West",
+   "abbr": "WYO",
+   "espn_id": "2751",
+   "espn_name": "Wyoming"
+  }
+ }
+}

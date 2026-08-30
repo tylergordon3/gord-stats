@@ -504,7 +504,9 @@ def _league_card(lg: dict) -> str:
         f'{mods.get("Int", -1):+.0f} INT.</p>'
         '<p>Two starting QBs and two flexes on a 10-team board: quarterbacks '
         'and three-down college workhorses go far earlier than an NFL board '
-        'would suggest.</p>'
+        'would suggest. On the night, the '
+        '<a href="/cfb/live/"><b>live draft board</b></a> prices all of this in '
+        'points and picks for you.</p>'
         '</div>')
 
 

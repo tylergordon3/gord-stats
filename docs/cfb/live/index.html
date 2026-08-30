@@ -1,0 +1,1005 @@
+---
+layout: default
+title: CFB Live Draft 2026
+---
+<h1>CFB Live Draft 2026</h1><style>
+.ld-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0;
+  padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc}
+.ld-bar select,.ld-bar button{font:inherit;font-size:13px;padding:5px 9px;
+  border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a}
+.ld-bar button{cursor:pointer}
+.ld-bar button.on{background:#334155;border-color:#334155;color:#fff}
+.ld-pill{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+  padding:3px 9px;border-radius:999px;background:#e2e8f0;color:#334155}
+.ld-pill.live{background:#1a7f4b;color:#fff}
+.ld-pill.mine{background:#b45309;color:#fff}
+.ld-note{font-size:12px;color:#4a5a68}
+#ld-status,#ld-feed{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ld-clock{font-family:monospace;font-size:15px;font-weight:700;color:#0f172a}
+
+.ld-recs{display:grid;gap:10px;margin:10px 0;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.ld-rec{border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:10px 12px;
+  box-shadow:0 2px 8px rgba(15,23,42,.05);display:flex;flex-direction:column;gap:6px}
+.ld-rec.top{border-color:#b45309;box-shadow:0 2px 10px rgba(180,83,9,.18)}
+.ld-rec .hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ld-rec .nm{font-weight:700;font-size:15px;color:#0f172a}
+.ld-rec .sub{font-size:12px;color:#4a5a68}
+.ld-rec .edge{margin-left:auto;font-family:monospace;font-weight:700;color:#1a7f4b}
+.ld-rec .why{font-size:12.5px;color:#334155;line-height:1.5;margin:0}
+.ld-rec .chips{display:flex;flex-wrap:wrap;gap:5px}
+.ld-chip{font-size:11px;padding:2px 7px;border-radius:999px;background:#eef2f7;color:#334155}
+.ld-chip.warn{background:#fde9c8;color:#8a4b00}
+.ld-chip.good{background:#d5efdd;color:#14603a}
+.ld-rec button{align-self:flex-start;font:inherit;font-size:12px;padding:4px 10px;
+  border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;cursor:pointer}
+
+.ld-cols{display:grid;gap:14px;grid-template-columns:1fr;margin:10px 0}
+@media (min-width:900px){.ld-cols{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}
+.ld-panel{border:1px solid #e5e7eb;border-radius:12px;background:#fff;overflow:hidden}
+.ld-panel h3{margin:0;padding:7px 11px;font-size:12px;text-transform:uppercase;
+  letter-spacing:.04em;background:#eef2f7;color:#334155}
+.ld-panel .body{padding:8px 11px}
+
+table.ld-avail{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;
+  font-family:monospace}
+table.ld-avail th{position:sticky;top:0;z-index:2;background:#eef2f7;color:#334155;
+  padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  cursor:pointer;white-space:nowrap;border-bottom:1px solid #e2e8f0}
+table.ld-avail td{padding:4px 8px;text-align:center;white-space:nowrap;
+  border-bottom:1px solid #eef2f7;color:#0f172a}
+table.ld-avail td.nm{text-align:left;font-family:inherit}
+table.ld-avail tbody tr:nth-child(even) td{background:#f8fafc}
+table.ld-avail tbody tr:hover td{background:#eef2f6}
+table.ld-avail td.v{font-weight:700}
+.ld-scroll{max-height:460px;overflow:auto;overscroll-behavior:contain}
+.ld-take{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #cbd5e1;
+  border-radius:6px;background:#fff;cursor:pointer;color:#0f172a}
+.ld-take:hover{background:#334155;border-color:#334155;color:#fff}
+
+table.ld-grid{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+table.ld-grid th{background:#eef2f7;color:#334155;padding:4px 3px;font-size:10px;
+  text-transform:uppercase;letter-spacing:.02em;border:1px solid #e2e8f0;
+  overflow:hidden;text-overflow:ellipsis}
+table.ld-grid td{border:1px solid #eef2f7;padding:3px;height:34px;vertical-align:top;
+  overflow:hidden;color:#0f172a}
+table.ld-grid td.on{outline:2px solid #b45309;outline-offset:-2px}
+table.ld-grid td.mine{box-shadow:inset 3px 0 0 #b45309}
+table.ld-grid .pk{font-size:9px;color:#5d6b7e;font-family:monospace}
+table.ld-grid .pl{display:block;line-height:1.2;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+td.p-QB{background:#d3ddf5}td.p-RB{background:#d5efdd}td.p-WR{background:#fbeec2}
+td.p-TE{background:#fadfc8}td.p-DEF{background:#d4f0f7}
+
+.ld-lineup{width:100%;border-collapse:collapse;font-size:13px}
+.ld-lineup td{padding:3px 4px;border-bottom:1px solid #eef2f7}
+.ld-lineup td.slot{font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  color:#4a5a68;width:52px}
+.ld-lineup td.pts{text-align:right;font-family:monospace;color:#4a5a68}
+.ld-lineup tr.empty td{color:#93a1ad}
+.ld-need{font-size:12.5px;color:#334155;margin:6px 0 0;line-height:1.5}
+
+@media (prefers-color-scheme: dark){
+  .ld-bar{background:#1b2540;border-color:#2b3852}
+  .ld-bar select,.ld-bar button,.ld-take{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  .ld-bar button.on{background:#dde5ef;color:#16203a;border-color:#dde5ef}
+  .ld-pill{background:#223052;color:#dde5ef}
+  .ld-note,.ld-rec .sub{color:#aab7c9}
+  .ld-clock{color:#fff}
+  .ld-rec,.ld-panel{background:#1b2540;border-color:#2b3852}
+  .ld-rec .nm{color:#fff}
+  .ld-rec .why{color:#dde5ef}
+  .ld-rec .edge{color:#6ee7b7}
+  .ld-chip{background:#223052;color:#dde5ef}
+  .ld-chip.warn{background:#4a3410;color:#ffd79a}
+  .ld-chip.good{background:#123c2e;color:#8ff0bd}
+  .ld-panel h3{background:#223052;color:#dde5ef}
+  table.ld-avail th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.ld-avail td{color:#dde5ef;border-color:#2b3852}
+  table.ld-avail tbody tr:nth-child(even) td{background:#16203a}
+  table.ld-avail tbody tr:hover td{background:#26365c}
+  table.ld-grid th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.ld-grid td{border-color:#2b3852;color:#dde5ef}
+  td.p-QB{background:#1e2c52}td.p-RB{background:#123c2e}td.p-WR{background:#3d3413}
+  td.p-TE{background:#40280f}td.p-DEF{background:#143a45}
+  table.ld-grid .pk{color:#aab7c9}
+  .ld-lineup td{border-color:#2b3852}
+  .ld-lineup td.slot,.ld-lineup td.pts{color:#aab7c9}
+  .ld-need{color:#dde5ef}
+}
+@media (max-width:700px){
+  .ld-scroll{max-height:60vh}
+  table.ld-grid{font-size:10px}
+  table.ld-grid td{height:30px}
+}
+</style>{% include countdown.html key="cfb" %}<p>The <a href="https://college.fantasysports.yahoo.com/cfb/21318">B1G West Memorial FFL</a> draft, live: 10 teams, 17 rounds, Sunday August 30 at 8:00 PM EDT. Pick your slot, and the board follows along &mdash; from Yahoo if Yahoo will say, and from what you tap here either way.</p><div class="ld-bar"><select id="ld-team" aria-label="Your team"></select><select id="ld-slot" aria-label="Your draft slot"></select><button id="ld-auto" type="button">Auto-sync</button><button id="ld-undo" type="button" title="Undo the last pick (u)">Undo</button><button id="ld-reset" type="button">Clear</button><span class="ld-note">Picks and settings stay in this browser.</span></div><div class="ld-bar" id="ld-statusbar"><span id="ld-status"></span><span id="ld-feed"></span></div><h2>What To Do With This Pick</h2><p id="ld-recs-note" class="ld-note"></p><div class="ld-recs" id="ld-recs"></div><div class="ld-panel" id="ld-positions-panel"><h3>Where The Board Is About To Thin Out</h3><div class="body"><div id="ld-positions"></div><p class="ld-note">The best player available at each position, what he adds to your lineup now, and what that position should still be worth when your next pick comes round. A big <b>Wait</b> number is a position that is about to get worse; a small one is a position you can leave alone.</p></div></div><div class="ld-cols"><div class="ld-panel"><h3>Best Available</h3><div class="body"><div class="adp-controls"><button class="adp-pos active" data-pos="ALL">ALL</button><button class="adp-pos" data-pos="QB">QB</button><button class="adp-pos" data-pos="RB">RB</button><button class="adp-pos" data-pos="WR">WR</button><button class="adp-pos" data-pos="TE">TE</button><button class="adp-pos" data-pos="DEF">DEF</button></div><div class="adp-controls"><input id="ld-search" type="search" placeholder="Search player or school (/)"><select id="ld-sort" aria-label="Sort by"><option value="score">Fit with my roster</option><option value="vorp">Value over replacement</option><option value="proj">Projected points</option><option value="ceiling">Ceiling</option><option value="floor">Floor</option><option value="adp">Yahoo ADP</option><option value="surv">Least likely to last</option></select></div><p class="ld-note" id="ld-avail-count"></p><div class="ld-scroll"><table class="ld-avail"><thead><tr><th title="Player">Player</th><th title="Position, and his rank in it on this board">Pos</th><th title="School">Team</th><th title="Bye week">Bye</th><th title="Projected season points in this league's scoring">Proj</th><th title="20th to 80th percentile of where he finishes">Range</th><th title="Points above the last player nobody has to start">VORP</th><th title="What he adds to your starting lineup as it stands">Fit</th><th title="Tier at his position; a new tier is a cliff in the curve">Tier</th><th title="Yahoo's average draft pick, across every college league it runs">ADP</th><th title="Chance he is still there at your next pick">Last?</th><th title="Mark him drafted at the pick on the clock"></th></tr></thead><tbody id="ld-avail-body"></tbody></table></div></div></div><div class="ld-panel"><h3>Your Roster</h3><div class="body"><div id="ld-lineup"></div><p class="ld-need" id="ld-need"></p></div></div></div><h2>The Board</h2><p class="ld-note">Every pick of the draft, coloured by position. Your column is marked; the outlined cell is on the clock.</p><div class="table-scroll"><table class="ld-grid" id="ld-grid"></table></div><details class="section"><summary>How this board decides</summary><h3>How the numbers are made</h3><p><b>Projections.</b> Yahoo ranks the college pool but publishes no projections for it, so the points come from real seasons: every FBS player at a school this game covers, scored under this league's own modifiers, sorted by position. That curve says what a WR12 or a QB8 is worth. A player is then valued not at the curve's reading for his rank but at its <i>average over where he might actually finish</i> &mdash; which is what stops the first round from being priced as a certainty, and is where the floor and ceiling columns come from.</p><p><b>Replacement level.</b> From this league's roster, not a generic one. 20 starting quarterback slots across 10 teams puts quarterback replacement at <b>275</b> points, against <b>151</b> at running back, <b>150</b> at receiver, <b>104</b> at tight end and <b>80</b> at defense. Two starting quarterbacks and 6-point passing touchdowns are why this board wants them earlier than Yahoo's average draft pick does. That ADP is one number for the whole college game, pooled across every league Yahoo runs whatever their settings &mdash; so it prices a quarterback for the average league, not for this one, and the gap is the edge.</p><p><b>This site's game model.</b> The predictions page already forecasts every score of the season, so the board knows which offences are about to be good and whose schedule is soft in weeks 11&ndash;13. It is applied as a tilt of at most a tenth either way, because Yahoo's rank is not ignorant of it either. Team defenses are the exception: most of what one scores is decided by what its opponents score, which the model predicts outright, so their projections are built from it rather than from a rank.</p><p><b>The recommendation.</b> Not the best player left. For every candidate it works out what he adds to the starting lineup you already have, then what your <i>next</i> pick should expect to land with him already on the roster &mdash; using each remaining player's odds of surviving that long, from his average pick and how often he goes undrafted at all. The pair with the best total wins. That is what turns "he is the highest ranked" into "take the quarterback, the running backs will still be here".</p><p><b>What is not on this board.</b> Yahoo ranks team offence units, and this league has no slot to start one, so they are dropped and every rank below them closed up &mdash; a player Yahoo shows at 150 is really going a few picks sooner than that here. 484 players remain: 66 QB, 138 RB, 182 WR, 48 TE, 50 DEF.</p></details>{% raw %}<script>window.LD_CFG={"rows":[["Kewan Lacy","RB","MISS","Ole Miss",5,2.8,1,4,3,1,342.28,338.77,349.55,191.08,1,1.17,33.7,20.19,"457240"],["LJ Martin","RB","BYU","BYU",4,5.8,1,4,5,3,309.3,281.47,338.16,158.09,2,1.04,31.72,20.57,"404291"],["Trinidad Chambliss","QB","MISS","Ole Miss",5,33.1,1,10.59,48,2,430.63,418.93,447.16,155.77,1,1.17,33.7,20.19,"471748"],["Devon Dampier","QB","UTAH","Utah",5,50.7,1,16.22,58,3,429.35,409.74,453.6,154.5,1,0.94,36.45,19.47,"404164"],["Arch Manning","QB","TEX","Texas",5,16.1,1,5.15,25,1,423.85,420.94,429.1,149.0,2,0.97,29.37,22.78,"404544"],["DeSean Bishop","RB","TENN","Tennessee",9,8.4,1,4,7,5,293.13,261.05,334.57,141.92,3,0.86,33.84,25.06,"448820"],["Jadan Baugh","RB","FLA","Florida",8,7,1,4,6,4,276.33,248.16,309.02,125.12,4,0.96,24.73,24.56,"456340"],["Caleb Hawkins","RB","OKST","Oklahoma State",5,4.2,1,4,4,2,275.54,258.8,293.38,124.33,4,0.8,18.63,32.68,"472146"],["Aneyas Williams","RB","ND","Notre Dame",8,16.2,1,5.18,12,10,269.6,223.45,314.17,118.39,5,1.03,40.56,13.66,"457567"],["Nate Sheppard","RB","DUKE","Duke",5,11.3,1,4,9,7,266.63,229.49,309.19,115.42,6,0.82,30.24,26.32,"468495"],["Jeremiah Smith","WR","OSU","Ohio State",8,1.2,1,4,1,1,262.69,259.21,267.98,112.48,1,0.97,35.2,12.88,"455576"],["Darius Taylor","RB","MINN","Minnesota",7,11.2,1,4,8,6,257.88,226.72,299.39,106.67,7,0.84,24.55,24.3,"404007"],["Malachi Toney","WR","MIA","Miami",6,2.6,1,4,2,2,255.3,242.36,270.18,105.09,2,1.06,36.18,15.94,"471011"],["Isaac Brown","RB","LOU","Louisville",8,10.8,1,4,11,9,256.17,213.68,297.27,104.96,7,0.94,31.58,21.45,"456169"],["Nick Marsh","WR","IND","Indiana",10,22.5,1,7.2,20,3,254.74,233.56,274.73,104.54,2,0.96,40.34,14.12,"458486"],["Demond Williams Jr.","QB","UW","Washington",8,78.9,1,25.25,110,7,369.79,331.72,413.85,94.94,3,0.79,30.56,22.4,"455480"],["Sam Leavitt","QB","LSU","LSU",9,67.1,1,21.47,104,5,369.68,340.07,403.85,94.82,3,0.91,26.17,22.83,"403957"],["Cam Cook","RB","WVU","West Virginia",9,11.7,1,4,10,8,244.16,206.52,281.86,92.95,8,0.88,24.72,29.35,"404522"],["Conner Weigman","QB","HOU","Houston",9,62.1,1,19.87,107,6,366.61,330.15,407.17,91.75,3,0.99,27.56,23.87,"333785"],["Ja'Kyrian Turner","RB","PITT","Pittsburgh",10,19,1,6.08,14,12,240.49,197.93,283.48,89.28,9,0.88,32.17,23.28,"468744"],["Bo Jackson","RB","OSU","Ohio State",8,15.6,1,4.99,16,14,237.12,195.5,282.38,85.91,10,0.97,35.2,12.88,"469636"],["Jayden Maiava","QB","USC","USC",10,98.7,1,31.58,117,9,359.92,322.7,408.06,85.07,4,0.96,32.3,23.03,"337760"],["Antwan Raymond","RB","RUTG","Rutgers",6,12.1,1,4,13,11,235.9,194.44,276.67,84.7,10,0.92,28.07,27.35,"463126"],["Justice Haynes","RB","GT","Georgia Tech",5,17,1,5.44,15,13,231.05,190.21,273.89,79.84,11,0.8,30.2,25.53,"404392"],["Gunner Stockton","QB","UGA","Georgia",8,109.2,1,34.94,124,10,350.55,313.86,399.49,75.69,5,0.96,31.71,18.64,"334043"],["Kendrick Raphael","RB","SMU","SMU",6,23.4,1,7.49,18,16,226.55,186.83,274.34,75.35,12,0.85,34.27,19.69,"404852"],["Josh Hoover","QB","IND","Indiana",10,120.8,0.99,38.66,134,14,348.15,304.88,415.55,73.3,5,0.96,40.34,14.12,"333497"],["Charlie Becker","WR","IND","Indiana",10,37.1,1,11.87,38,9,220.76,197.2,245.38,70.56,3,0.96,40.34,14.12,"457893"],["Dante Moore","QB","ORE","Oregon",5,86.2,1,27.58,130,13,345.26,306.54,407.83,70.4,5,0.94,36.77,16.2,"404287"],["Amare Thomas","WR","HOU","Houston",9,21.9,1,7.01,21,4,220.33,200.78,241.06,70.13,3,0.99,27.56,23.87,"405225"],["Kamario Taylor","QB","MSST","Mississippi State",6,83.4,1,26.69,113,8,344.94,310.05,388.68,70.09,5,1.19,26.09,28.77,"470211"],["Cam Coleman","WR","TEX","Texas",5,19.2,1,6.14,22,5,218.53,199.69,242.81,68.32,4,0.97,29.37,22.78,"455543"],["Drew Mestemaker","QB","OKST","Oklahoma State",5,57.2,1,18.3,67,4,343.0,323.11,368.35,68.14,5,0.8,18.63,32.68,"464024"],["CJ Carr","QB","ND","Notre Dame",8,115.7,0.97,37.02,135,15,342.2,295.47,412.15,67.34,5,1.03,40.56,13.66,"457576"],["Mark Fletcher Jr.","RB","MIA","Miami",6,24.7,1,7.9,28,20,214.88,165.82,267.28,63.68,13,1.06,36.18,15.94,"404876"],["Adam Mohammed","RB","CAL","California",10,24,1,7.68,17,15,213.31,176.51,256.13,62.11,13,0.94,26.35,27.03,"455519"],["Jayden Scott","RB","NCST","NC State",1,42.5,1,13.6,23,18,211.35,169.55,260.01,60.14,13,0.95,30.59,25.38,"457959"],["Jamari Johnson","TE","ORE","Oregon",5,45.1,1,14.43,44,2,162.89,143.54,180.07,58.41,1,0.94,36.77,16.2,"404809"],["Jordan Marshall","RB","MICH","Michigan",6,17.8,1,5.7,19,17,207.81,169.78,253.71,56.61,14,0.8,27.29,21.14,"457591"],["Terrance Carter Jr.","TE","TTU","Texas Tech",6,49.8,1,15.94,45,3,158.89,136.43,181.32,54.42,2,0.96,41.48,13.53,"334780"],["Waymond Jordan","RB","USC","USC",10,40,1,12.8,29,21,204.41,155.35,255.26,53.2,15,0.96,32.3,23.03,"470260"],["Isaiah Sategna III","WR","OU","Oklahoma",5,28.2,1,9.02,26,7,203.04,184.39,227.94,52.83,5,0.9,26.83,20.07,"336811"],["Trey'Dez Green","TE","LSU","LSU",9,34.5,1,11.04,33,1,156.93,152.94,162.6,52.46,2,0.91,26.17,22.83,"456968"],["John Mateer","QB","OU","Oklahoma",5,98.9,1,31.65,125,11,326.72,292.88,377.02,51.86,6,0.9,26.83,20.07,"338757"],["Dierre Hill Jr.","RB","ORE","Oregon",5,37.9,1,12.13,34,24,202.93,153.75,256.87,51.72,15,0.94,36.77,16.2,"469395"],["KJ Duff","WR","RUTG","Rutgers",6,27.2,1,8.7,32,8,201.73,180.97,225.24,51.52,6,0.92,28.07,27.35,"456020"],["Dakorien Moore","WR","ORE","Oregon",5,46.7,1,14.94,42,13,201.5,177.03,225.5,51.29,6,0.94,36.77,16.2,"469394"],["Makhi Hughes","RB","HOU","Houston",9,29,1,9.28,27,19,201.31,158.54,249.19,50.1,15,0.99,27.56,23.87,"338839"],["Ryan Coleman-Williams","WR","ALA","Alabama",9,38.5,1,12.32,40,11,199.89,177.78,221.65,49.68,7,1.16,32.4,19.3,"455490"],["Byrum Brown","QB","AUB","Auburn",6,120.8,0.84,38.66,127,12,322.51,288.58,376.89,47.65,6,1.13,27.45,24.27,"333511"],["Duce Robinson","WR","FSU","Florida State",8,41.1,1,13.15,39,10,194.91,174.27,215.3,44.7,8,0.99,28.21,24.39,"451040"],["Cameron Dickey","RB","TTU","Texas Tech",6,47.5,1,15.2,49,29,195.89,142.72,250.63,44.69,16,0.96,41.48,13.53,"457801"],["Bryant Wesco Jr.","WR","CLEM","Clemson",6,44.9,1,14.37,41,12,194.41,171.29,216.37,44.21,8,0.92,31.08,20.74,"457622"],["Jamal Roberts","RB","MIZZ","Missouri",8,61.6,1,19.71,30,22,195.17,147.11,244.56,43.96,16,0.85,29.18,22.25,"405130"],["Jordon Davison","RB","ORE","Oregon",5,41.1,1,13.15,37,27,194.22,145.45,248.25,43.01,16,0.94,36.77,16.2,"469228"],["Joe Jackson","RB","KSU","Kansas State",5,34.6,1,11.07,31,23,193.78,146.25,244.09,42.57,16,0.85,30.0,23.59,"404437"],["Mario Craver","WR","TAMU","Texas A&M",9,40.7,1,13.02,43,14,191.93,168.1,215.88,41.73,9,0.87,32.77,21.27,"457217"],["Wayshawn Parker","RB","UTAH","Utah",5,40,1,12.8,47,28,191.04,141.56,244.02,39.83,17,0.94,36.45,19.47,"456295"],["Kevin Jennings","QB","SMU","SMU",6,136.6,0.63,43.71,139,17,313.32,264.86,383.81,38.46,7,0.85,34.27,19.69,"338689"],["Jeremy Payne","RB","TCU","TCU",1,47.7,1,15.26,35,25,189.25,143.25,240.65,38.04,17,0.8,30.61,24.86,"457872"],["Cooper Barkate","WR","MIA","Miami",6,53.8,1,17.22,52,18,187.91,160.55,215.3,37.71,10,1.06,36.18,15.94,"335616"],["Wyatt Young","WR","OKST","Oklahoma State",5,25.1,1,8.03,24,6,186.52,170.29,209.86,36.32,11,0.8,18.63,32.68,"457478"],["Jordan Dwyer","WR","TCU","TCU",1,45.6,1,14.59,46,15,185.56,161.68,209.56,35.35,11,0.8,30.61,24.86,"335178"],["Tre Richardson","WR","LOU","Louisville",8,55,1,17.6,50,16,184.9,160.03,209.55,34.69,11,0.94,31.58,21.45,"456628"],["Kamari Moulton","RB","IOWA","Iowa",7,43.5,1,13.92,36,26,183.7,138.63,234.6,32.5,18,1.05,29.11,16.6,"403910"],["DJ Vonnahme","TE","IOWA","Iowa",7,56.8,1,18.18,53,4,135.37,115.88,158.14,30.9,3,1.05,29.11,16.6,"462228"],["Turbo Richard","RB","IND","Indiana",10,86.2,1,27.58,62,34,181.83,129.27,235.69,30.62,18,0.96,40.34,14.12,"456220"],["Keelon Russell","QB","ALA","Alabama",9,135.6,0.53,43.39,143,18,302.45,252.01,373.32,27.59,8,1.16,32.4,19.3,"470424"],["Deuce Alexander","WR","MISS","Ole Miss",5,75.6,1,24.19,60,21,177.79,151.19,207.1,27.58,12,1.17,33.7,20.19,"407241"],["Nate Frazier","RB","UGA","Georgia",8,60,1,19.2,56,30,178.25,128.84,228.56,27.04,19,0.96,31.71,18.64,"462842"],["Ohio State","DEF","OSU","Ohio State",8,97.8,1,31.3,105,1,106.93,76.99,139.01,26.59,1,1.15,35.2,12.88,"900033"],["Darian Mensah","QB","MIA","Miami",6,124.6,0.8,39.87,156,20,301.36,243.95,376.19,26.51,8,1.06,36.18,15.94,"406169"],["Dezmen Roebuck","WR","UW","Washington",8,75.9,1,24.29,54,19,176.53,150.35,203.54,26.33,13,0.79,30.56,22.4,"469690"],["Benjamin Brahmer","TE","PSU","Penn State",8,67.7,1,21.66,96,6,128.95,107.45,158.6,24.47,4,1.03,33.51,18.87,"404367"],["Texas Tech","DEF","TTU","Texas Tech",6,124.5,1,39.84,216,6,104.58,75.3,135.95,24.24,2,0.81,41.48,13.53,"900086"],["Notre Dame","DEF","ND","Notre Dame",8,86.5,1,27.68,123,2,104.07,74.93,135.29,23.73,2,0.94,40.56,13.66,"900104"],["Tanook Hines","WR","USC","USC",10,68,1,21.76,64,22,173.67,146.56,203.1,23.46,14,0.96,32.3,23.03,"474632"],["Anthony Evans III","WR","MSST","Mississippi State",6,58.2,1,18.62,51,17,172.43,148.61,196.5,22.22,15,1.19,26.09,28.77,"405636"],["Indiana","DEF","IND","Indiana",10,136.2,1,43.58,177,3,102.35,73.69,133.05,22.0,2,0.89,40.34,14.12,"900027"],["LaNorris Sellers","QB","SC","South Carolina",7,125.8,0.95,40.26,137,16,296.77,253.58,360.58,21.92,8,0.85,26.87,23.22,"405071"],["Dylan Wade","TE","UCF","UCF",7,64.4,1,20.61,95,5,126.15,106.9,151.56,21.67,4,0.88,26.98,24.68,"403914"],["Raleek Brown","RB","TEX","Texas",5,74.9,1,23.97,57,31,171.87,123.82,220.93,20.66,20,0.97,29.37,22.78,"338965"],["Omarion Miller","WR","ASU","Arizona State",4,66.6,1,21.31,55,20,168.93,143.9,195.93,18.73,16,0.99,27.4,23.55,"404143"],["Mike Matthews","WR","TENN","Tennessee",9,104.4,1,33.41,74,27,167.39,137.33,199.81,17.18,17,0.86,33.84,25.06,"457039"],["Lotzeir Brooks","WR","ALA","Alabama",9,92.3,1,29.54,72,26,166.84,137.55,198.62,16.63,17,1.16,32.4,19.3,"470421"],["Hollywood Smothers","RB","TEX","Texas",5,79.5,1,25.44,61,33,167.45,120.29,216.38,16.24,21,0.97,29.37,22.78,"404466"],["Miami (FL)","DEF","MIA","Miami",6,129.3,1,41.38,203,5,95.22,68.56,123.78,14.87,3,1.06,36.18,15.94,"900011"],["Oregon","DEF","ORE","Oregon",5,156.5,1,50.08,226,7,94.18,67.81,122.43,13.83,3,0.89,36.77,16.2,"900060"],["Yamir Knight","WR","SMU","SMU",6,85.8,1,27.46,79,30,163.38,133.32,195.85,13.17,18,0.85,34.27,19.69,"450275"],["Marcel Reed","QB","TAMU","Texas A&M",9,127.3,0.69,40.74,165,21,287.35,225.47,360.65,12.5,9,0.87,32.77,21.27,"405249"],["Iowa","DEF","IOWA","Iowa",7,167.7,0.72,53.66,255,11,92.53,66.62,120.29,12.19,3,0.98,29.11,16.6,"900028"],["Ousmane Kromah","RB","FSU","Florida State",8,119.9,0.73,38.37,63,35,161.23,113.17,209.62,10.03,22,0.99,28.21,24.39,"471560"],["Nyck Harbor","WR","SC","South Carolina",7,84.7,1,27.1,71,25,159.3,131.83,188.87,9.09,19,0.85,26.87,23.22,"405075"],["Marcellous Hawkins","RB","VT","Virginia Tech",9,76.7,1,24.54,59,32,160.15,115.57,206.34,8.94,22,0.89,24.25,28.05,"471615"],["Gideon Davidson","RB","CLEM","Clemson",6,99.4,1,31.81,69,38,159.92,111.26,210.54,8.71,22,0.92,31.08,20.74,"468459"],["Luke Reynolds","TE","VT","Virginia Tech",9,90.9,1,29.09,112,7,112.56,91.4,135.78,8.08,5,0.89,24.25,28.05,"455969"],["Rueben Owens II","RB","TAMU","Texas A&M",9,117.5,0.98,37.6,76,40,158.64,108.37,210.56,7.43,22,0.87,32.77,21.27,"405245"],["Carson Hansen","RB","PSU","Penn State",8,104.5,1,33.44,77,41,157.84,106.17,210.39,6.63,22,1.03,33.51,18.87,"404365"],["Jordan Faison","WR","ND","Notre Dame",8,143.8,0.99,46.02,100,41,156.36,126.19,193.92,6.16,20,1.03,40.56,13.66,"450577"],["Reed Harris","WR","ASU","Arizona State",4,106.7,1,34.14,75,28,155.59,127.29,186.17,5.39,20,0.99,27.4,23.55,"404730"],["Patrick Overmyer","TE","HOU","Houston",9,102,1,32.64,128,9,109.2,85.71,128.97,4.72,6,0.99,27.56,23.87,"405317"],["Braylon Staley","WR","TENN","Tennessee",9,113.1,1,36.19,89,36,154.31,124.54,187.52,4.11,21,0.86,33.84,25.06,"457038"],["Griffin Wilde","WR","NW","Northwestern",2,91.7,1,29.34,65,23,153.95,128.62,180.88,3.74,21,0.75,22.39,25.76,"451329"],["Georgia","DEF","UGA","Georgia",8,146.5,1,46.88,195,4,83.95,60.44,109.13,3.61,4,0.97,31.71,18.64,"900068"],["Penn State","DEF","PSU","Penn State",8,152,0.09,48.64,274,15,82.95,59.72,107.83,2.61,4,1.01,33.51,18.87,"900034"],["Fluff Bothwell","RB","MSST","Mississippi State",6,92.1,1,29.47,68,37,153.65,106.83,201.14,2.44,23,1.19,26.09,28.77,"456937"],["Randy Pittman Jr.","TE","SMU","SMU",6,129.7,1,41.5,158,12,106.83,82.25,129.21,2.35,6,0.85,34.27,19.69,"406200"],["Willie Rodriguez","TE","UK","Kentucky",9,106.9,1,34.21,122,8,106.73,85.0,125.17,2.26,6,0.93,22.89,27.22,"456603"],["Ian Strong","WR","CAL","California",10,105.5,1,33.76,78,29,152.35,124.25,182.51,2.14,22,0.94,26.35,27.03,"404713"],["Alabama","DEF","ALA","Alabama",9,145.7,0.17,46.62,431,25,81.08,58.38,105.4,0.74,4,1.26,32.4,19.3,"900073"],["Avery Johnson","QB","KSU","Kansas State",5,147.8,0.26,47.3,170,22,274.85,208.05,346.85,0,10,0.85,30.0,23.59,"404434"],["Utah","DEF","UTAH","Utah",5,155.5,0.03,49.76,439,30,80.34,57.85,104.44,0,4,0.9,36.45,19.47,"900094"],["Braden Pegan","WR","UTAH","Utah",5,145,1,46.4,101,42,150.21,121.05,186.83,0,23,0.94,36.45,19.47,"340392"],["Mason Mini","TE","CAL","California",10,139.9,0.82,44.77,140,10,104.48,81.73,124.25,0,6,0.94,26.35,27.03,"406381"],["DeJuan Williams","RB","UMD","Maryland",8,74.8,1,23.94,66,36,151.21,105.37,197.04,0,24,0.81,23.74,28.27,"457315"],["Jordan Shipp","WR","UNC","North Carolina",1,99.8,1,31.94,70,24,150.13,124.62,177.23,-0.07,23,0.96,21.32,30.24,"457310"],["Bear Bachmeier","QB","BYU","BYU",4,138.9,0.14,44.45,176,23,274.61,201.56,349.02,-0.24,10,1.04,31.72,20.57,"468769"],["SMU","DEF","SMU","SMU",6,157.5,0.03,50.4,278,16,79.38,57.16,103.2,-0.96,4,0.81,34.27,19.69,"900082"],["Ryan Wingo","WR","TEX","Texas",5,96.8,1,30.98,88,35,149.15,120.71,180.6,-1.06,23,0.97,29.37,22.78,"457676"],["T.J. Moore","WR","CLEM","Clemson",6,132.3,1,42.34,91,37,149.14,120.24,182.02,-1.06,23,0.92,31.08,20.74,"457631"],["Jayce Brown","WR","LSU","LSU",9,112.4,1,35.97,82,32,147.92,120.54,177.82,-2.28,24,0.91,26.17,22.83,"404460"],["Jekail Middlebrook","RB","UVA","Virginia",1,120.6,0.55,38.59,84,44,148.66,95.32,200.87,-2.55,25,0.97,30.83,21.95,"405101"],["Oklahoma","DEF","OU","Oklahoma",5,150.3,0.67,48.1,261,12,77.72,55.96,101.04,-2.62,4,0.83,26.83,20.07,"900024"],["Andrew Marsh","WR","MICH","Michigan",6,114.4,1,36.61,87,34,147.16,119.48,177.6,-3.05,24,0.8,27.29,21.14,"469439"],["Evan Stewart","WR","ORE","Oregon",5,139.3,0.96,44.58,114,45,147.13,117.76,184.26,-3.07,24,0.94,36.77,16.2,"333783"],["Ole Miss","DEF","MISS","Ole Miss",5,175,0.88,56,249,10,77.19,55.57,100.34,-3.15,4,1.26,33.7,20.19,"900077"],["Kenny Johnson","WR","TTU","Texas Tech",6,166.8,0.37,53.38,133,50,146.91,114.86,185.47,-3.3,24,0.96,41.48,13.53,"405242"],["Decker DeGraaf","TE","UW","Washington",8,136.2,0.97,43.58,173,13,100.56,77.63,123.3,-3.92,7,0.79,30.56,22.4,"456077"],["Danny Scudero","WR","COLO","Colorado",6,95.4,1,30.53,81,31,146.27,119.3,175.6,-3.94,24,0.99,24.45,28.98,"449475"],["Mason Heintschel","QB","PITT","Pittsburgh",10,133.1,0.03,42.59,194,24,270.86,193.59,346.96,-4.0,10,0.88,32.17,23.28,"468738"],["Kyson Brown","RB","ASU","Arizona State",4,96.2,1,30.78,80,42,146.85,97.02,196.64,-4.36,25,0.99,27.4,23.55,"403802"],["BYU","DEF","BYU","BYU",4,160.7,0.3,51.42,272,14,75.52,54.37,98.18,-4.82,4,0.97,31.72,20.57,"900088"],["Clemson","DEF","CLEM","Clemson",6,135.4,0.03,43.33,440,31,74.76,53.83,97.18,-5.58,4,0.86,31.08,20.74,"900001"],["Elija Lofton","TE","MIA","Miami",6,143.9,0.58,46.05,196,16,98.42,75.96,124.12,-6.06,7,1.06,36.18,15.94,"456218"],["Dorian Fleming","TE","UMD","Maryland",8,109.4,1,35.01,142,11,98.35,76.24,118.05,-6.12,7,0.81,23.74,28.27,"405765"],["Sedrick Alexander","RB","VAN","Vanderbilt",9,121.6,0.99,38.91,98,49,144.99,85.76,201.25,-6.22,25,0.87,34.18,23.49,"405205"],["Ahmad Hardy","RB","MIZZ","Missouri",8,56.7,1,18.14,85,45,144.58,91.38,196.29,-6.63,25,0.85,29.18,22.25,"463244"],["Garrett Oakley","TE","KSU","Kansas State",5,122.1,1,39.07,181,14,97.52,75.94,121.18,-6.96,7,0.85,30.0,23.59,"336557"],["Michigan","DEF","MICH","Michigan",6,160.5,0.29,51.36,269,13,73.01,52.57,94.92,-7.33,4,0.81,27.29,21.14,"900029"],["Tre Spivey","WR","ARIZ","Arizona",7,151.4,0.97,48.45,99,40,142.49,115.0,176.15,-7.72,25,0.91,28.98,23.29,"404439"],["Brody Foley","TE","LOU","Louisville",8,144,0.8,46.08,188,15,96.67,75.42,121.13,-7.8,7,0.94,31.58,21.45,"333373"],["Texas A&M","DEF","TAMU","Texas A&M",9,171.9,0.98,55.01,241,9,72.45,52.17,94.19,-7.89,4,0.82,32.77,21.27,"900084"],["Caleb Komolafe","RB","NW","Northwestern",2,75.3,1,24.1,73,39,143.2,99.05,189.35,-8.01,25,0.75,22.39,25.76,"404055"],["Dilin Jones","RB","LSU","LSU",9,125.9,0.97,40.29,83,43,143.15,93.08,192.58,-8.06,25,0.91,26.17,22.83,"456092"],["Louisville","DEF","LOU","Louisville",8,null,null,null,453,38,71.65,51.59,93.15,-8.69,4,0.98,31.58,21.45,"900100"],["Dawson Pendergrass","RB","BAY","Baylor",6,132.5,0.14,42.4,90,46,141.82,88.65,193.52,-9.39,25,0.79,28.42,29.01,"404353"],["Dylan Edwards","RB","KU","Kansas",4,127.5,0.98,40.8,92,47,141.28,87.35,193.86,-9.93,25,0.97,29.12,25.48,"404140"],["Nico Iamaleava","QB","UCLA","UCLA",5,140.1,0.08,44.83,152,19,264.86,218.23,328.79,-10.0,11,0.84,22.12,27.49,"404971"],["Luke Hasz","TE","MISS","Ole Miss",5,145.8,0.32,46.66,200,17,94.21,72.24,119.99,-10.27,7,1.17,33.7,20.19,"405413"],["Carlos Hernandez","WR","WAKE","Wake Forest",8,129.6,1,41.47,97,39,139.4,112.38,171.63,-10.8,26,0.86,26.22,25.69,"405846"],["Julian Sayin","QB","OSU","Ohio State",8,109.4,0.6,35.01,215,27,264.03,178.2,348.69,-10.82,11,0.97,35.2,12.88,"455500"],["Virginia","DEF","UVA","Virginia",1,null,null,null,435,27,69.41,49.97,90.23,-10.93,5,1.06,30.83,21.95,"900008"],["Devin McCuin","WR","OSU","Ohio State",8,159.7,0.37,51.1,141,51,138.83,107.97,175.82,-11.37,26,0.97,35.2,12.88,"405329"],["J'Koby Williams","RB","TTU","Texas Tech",6,155.2,0.11,49.66,131,58,139.69,73.64,204.48,-11.52,25,0.96,41.48,13.53,"457825"],["Dallas Wilson","WR","FLA","Florida",8,138.7,1,44.38,94,38,138.1,111.33,169.31,-12.1,26,0.96,24.73,24.56,"470531"],["Micahi Danzy","WR","FSU","Florida State",8,160,0.89,51.2,102,43,138.02,110.96,172.12,-12.19,26,0.99,28.21,24.39,"458035"],["Missouri","DEF","MIZZ","Missouri",8,null,null,null,451,36,68.07,49.01,88.49,-12.27,5,0.95,29.18,22.25,"900022"],["Junior Sherrill","WR","VAN","Vanderbilt",9,165,0.33,52.8,145,52,136.6,105.62,173.67,-13.6,27,0.87,34.18,23.49,"405283"],["Illinois","DEF","ILL","Illinois",7,null,null,null,481,50,66.42,47.82,86.35,-13.92,5,0.97,29.54,22.62,"900026"],["Ethan Davis","TE","TENN","Tennessee",9,145.1,0.46,46.43,212,19,90.41,69.46,116.86,-14.07,8,0.86,33.84,25.06,"404952"],["Texas","DEF","TEX","Texas",5,145.5,1,46.56,233,8,65.72,47.32,85.43,-14.62,5,0.96,29.37,22.78,"900083"],["King Miller","RB","USC","USC",10,154,0.83,49.28,111,53,136.54,74.58,193.89,-14.67,26,0.96,32.3,23.03,"467588"],["LSU","DEF","LSU","LSU",9,135.9,0.06,43.49,428,24,65.48,47.15,85.13,-14.86,5,0.83,26.17,22.83,"900076"],["Jeremiah Hasley","TE","DUKE","Duke",5,117,0.97,37.44,211,18,89.25,68.54,114.76,-15.22,8,0.82,30.24,26.32,"335940"],["Ca'Lil Valentine","RB","ILL","Illinois",7,128.8,0.96,41.22,108,51,135.8,75.71,190.61,-15.41,26,0.87,29.54,22.62,"456249"],["Hunter Andrews","TE","UTAH","Utah",5,139.6,0.3,44.67,234,21,88.8,67.04,115.83,-15.68,8,0.94,36.45,19.47,"456798"],["USC","DEF","USC","USC",10,null,null,null,452,37,64.59,46.51,83.97,-15.75,5,0.94,32.3,23.03,"900062"],["Will Hammond","QB","TTU","Texas Tech",6,143.2,0.07,45.82,252,31,258.89,147.74,359.15,-15.97,11,0.96,41.48,13.53,"457821"],["South Carolina","DEF","SC","South Carolina",7,null,null,null,416,21,63.75,45.9,82.87,-16.59,5,0.85,26.87,23.22,"900070"],["Pittsburgh","DEF","PITT","Pittsburgh",10,null,null,null,412,20,63.51,45.73,82.56,-16.83,5,0.86,32.17,23.28,"900012"],["Arizona","DEF","ARIZ","Arizona",7,153.2,0.02,49.02,421,22,63.44,45.68,82.48,-16.9,5,0.88,28.98,23.29,"900057"],["Dre'lon Miller","WR","BAY","Baylor",6,151.5,0.65,48.48,126,48,133.08,104.78,167.43,-17.13,28,0.79,28.42,29.01,"469110"],["Chris Barnes","WR","OKST","Oklahoma State",5,129.9,1,41.57,86,33,132.74,107.95,159.88,-17.47,28,0.8,18.63,32.68,"456315"],["Walker Lyons","TE","BYU","BYU",4,148.2,0.69,47.42,228,20,86.88,66.38,112.75,-17.6,8,1.04,31.72,20.57,"463879"],["Vanderbilt","DEF","VAN","Vanderbilt",9,null,null,null,463,43,62.53,45.02,81.29,-17.81,5,0.87,34.18,23.49,"900072"],["Arizona State","DEF","ASU","Arizona State",4,null,null,null,442,32,62.27,44.83,80.95,-18.08,5,1.08,27.4,23.55,"900058"],["Kansas State","DEF","KSU","Kansas State",5,null,null,null,401,18,62.12,44.72,80.75,-18.23,5,0.83,30.0,23.59,"900021"],["Isaiah Horton","WR","TAMU","Texas A&M",9,148.8,0.16,47.62,150,55,131.98,100.06,169.54,-18.23,28,0.87,32.77,21.27,"340917"],["Winston Watkins Jr.","WR","LSU","LSU",9,161.2,0.76,51.58,115,46,131.86,105.1,165.3,-18.35,28,0.91,26.17,22.83,"470091"],["Trell Harris","WR","OU","Oklahoma",5,161.7,0.8,51.74,116,47,131.84,104.37,165.54,-18.36,28,0.9,26.83,20.07,"336586"],["Keyjuan Brown","RB","LOU","Louisville",8,163,0.53,52.16,119,55,132.77,71.66,190.76,-18.44,27,0.94,31.58,21.45,"404825"],["Houston","DEF","HOU","Houston",9,null,null,null,460,41,60.87,43.83,79.13,-19.47,6,0.96,27.56,23.87,"900080"],["Duke Watson","RB","UCF","UCF",7,160.5,0.66,51.36,109,52,130.72,72.12,184.58,-20.49,27,0.88,26.98,24.68,"456178"],["Khobie Martin","RB","IND","Indiana",10,158.9,0.22,50.85,149,64,130.44,64.53,197.32,-20.77,27,0.96,40.34,14.12,"457892"],["Lawson Luckie","TE","UGA","Georgia",8,137.7,0.26,44.06,244,22,83.55,61.71,109.49,-20.92,9,0.96,31.71,18.64,"405647"],["Chase Hendricks","WR","CAL","California",10,159.3,0.75,50.98,129,49,129.14,101.21,162.76,-21.07,29,0.94,26.35,27.03,"406011"],["Auburn","DEF","AUB","Auburn",6,null,null,null,437,29,59.06,42.52,76.78,-21.28,6,1.17,27.45,24.27,"900075"],["Minnesota","DEF","MINN","Minnesota",7,null,null,null,436,28,58.93,42.43,76.61,-21.41,6,0.95,24.55,24.3,"900031"],["Florida State","DEF","FSU","Florida State",8,139.6,0.02,44.67,284,17,58.55,42.16,76.12,-21.79,6,0.96,28.21,24.39,"900003"],["Wayne Knight","RB","UCLA","UCLA",5,134.5,0.98,43.04,93,48,128.64,78.28,177.56,-22.56,27,0.84,22.12,27.49,"334875"],["Jeremiah Cobb","RB","AUB","Auburn",6,157.7,0.5,50.46,118,54,128.64,69.81,183.77,-22.57,27,1.13,27.45,24.27,"405442"],["Florida","DEF","FLA","Florida",8,134.3,0.04,42.98,450,35,57.76,41.59,75.09,-22.58,6,0.93,24.73,24.56,"900067"],["Chris Marshall","WR","ARK","Arkansas",8,null,null,null,148,54,127.32,97.15,163.06,-22.89,30,0.89,28.38,30.15,"339672"],["Brian Rowe Jr.","WR","UCLA","UCLA",5,159.2,0.95,50.94,106,44,127.31,102.25,159.16,-22.9,30,0.84,22.12,27.49,"470081"],["UCF","DEF","UCF","UCF",7,null,null,null,471,44,57.25,41.22,74.42,-23.09,6,0.96,26.98,24.68,"900210"],["Joshisa Trader","WR","NCST","NC State",1,null,null,null,154,58,126.59,95.22,163.73,-23.62,30,0.95,30.59,25.38,"456198"],["TCU","DEF","TCU","TCU",1,137.2,0.02,43.9,454,39,56.45,40.65,73.39,-23.89,6,0.78,30.61,24.86,"900085"],["Caleb Odom","TE","MISS","Ole Miss",5,null,null,null,281,25,80.49,55.72,106.69,-23.99,10,1.17,33.7,20.19,"455479"],["Jaron-Keawe Sagapolutele","QB","CAL","California",10,132.9,0.71,42.53,201,25,250.66,176.33,324.1,-24.2,12,0.94,26.35,27.03,"468582"],["Brett Norfleet","TE","MIZZ","Missouri",8,151.2,0.19,48.38,275,23,79.97,57.57,105.2,-24.51,10,0.85,29.18,22.25,"405114"],["Louis Brown IV","WR","BAY","Baylor",6,161.6,0.51,51.71,151,56,125.53,94.89,161.71,-24.67,30,0.79,28.42,29.01,"337423"],["Tennessee","DEF","TENN","Tennessee",9,143,0.04,45.76,406,19,55.58,40.02,72.25,-24.76,6,0.84,33.84,25.06,"900071"],["Cooper Flanagan","TE","ND","Notre Dame",8,142.8,0.08,45.7,302,29,79.33,49.7,105.79,-25.14,10,1.03,40.56,13.66,"403669"],["Marquis Johnson","WR","MSST","Mississippi State",6,163.5,0.03,52.32,147,53,125.03,96.05,159.58,-25.17,30,1.19,26.09,28.77,"405105"],["Linkon Cure","TE","KSU","Kansas State",5,null,null,null,276,24,79.16,56.02,104.49,-25.31,10,0.85,30.0,23.59,"471759"],["Cam Edwards","RB","MSU","Michigan State",9,128.8,0.93,41.22,103,50,125.47,71.52,175.13,-25.73,28,0.94,21.89,29.64,"340537"],["Mark Bowman","TE","USC","USC",10,144.6,0.1,46.27,286,26,78.05,52.77,103.88,-26.42,10,0.96,32.3,23.03,"482194"],["Donovan Olugbode","WR","MIZZ","Missouri",8,131.3,0.04,42.02,157,60,123.06,90.83,159.99,-27.15,31,0.85,29.18,22.25,"470164"],["JV Gibson","WR","CIN","Cincinnati",6,157.6,0.02,50.43,155,59,122.7,91.41,159.09,-27.51,31,0.89,28.23,25.88,"465355"],["Wake Forest","DEF","WAKE","Wake Forest",8,null,null,null,462,42,52.78,38.0,68.61,-27.56,7,0.83,26.22,25.69,"900009"],["Northwestern","DEF","NW","Northwestern",2,null,null,null,480,49,52.46,37.77,68.2,-27.88,7,0.88,22.39,25.76,"900032"],["EJ Crowell","RB","ALA","Alabama",9,130.4,0.05,41.73,146,63,123.31,62.01,185.84,-27.9,29,1.16,32.4,19.3,"483904"],["Ty Clark III","RB","WAKE","Wake Forest",8,158.9,0.42,50.85,121,57,123.01,65.64,178.85,-28.2,29,0.86,26.22,25.69,"457411"],["Johntay Cook II","WR","MISS","Ole Miss",5,145.9,0.03,46.69,172,68,121.77,84.74,161.22,-28.44,31,1.17,33.7,20.19,"404545"],["Braylen Russell","RB","ARK","Arkansas",8,139.5,0.02,44.64,136,60,122.14,62.88,181.15,-29.07,29,0.89,28.38,30.15,"455493"],["Savion Hiter","RB","MICH","Michigan",6,147.3,0.44,47.14,132,59,121.95,63.34,179.67,-29.26,29,0.8,27.29,21.14,"482773"],["Quinten Joyner","RB","TTU","Texas Tech",6,144.3,0.03,46.18,183,72,121.76,51.45,187.5,-29.45,29,0.96,41.48,13.53,"404984"],["Jojo Phillips","WR","BYU","BYU",4,null,null,null,169,67,120.37,84.53,158.98,-29.84,32,1.04,31.72,20.57,"451228"],["Michael Masunas","TE","TEX","Texas",5,138.5,0.03,44.32,292,27,74.53,49.18,99.25,-29.94,11,0.97,29.37,22.78,"338919"],["Evan Dickens","RB","BC","Boston College",6,109.8,0.97,35.14,120,56,121.09,65.05,175.0,-30.12,29,0.78,24.06,31.89,"404810"],["Duke","DEF","DUKE","Duke",5,null,null,null,434,26,49.99,35.99,64.99,-30.35,8,0.86,30.24,26.32,"900002"],["Gi'Bran Payne","RB","CIN","Cincinnati",6,null,null,null,138,61,120.69,61.7,180.1,-30.51,29,0.89,28.23,25.88,"339827"],["Jared Richardson","WR","DUKE","Duke",5,143.3,0.08,45.86,168,66,119.43,84.39,157.35,-30.78,32,0.82,30.24,26.32,"341349"],["Emmett Mosley V","WR","TEX","Texas",5,142.5,0.05,45.6,166,65,119.16,84.64,156.56,-31.05,32,0.97,29.37,22.78,"457905"],["Cole Spence","TE","VAN","Vanderbilt",9,null,null,null,341,31,72.89,43.45,97.77,-31.59,11,0.87,34.18,23.49,"338520"],["Chris Durr Jr.","WR","UMD","Maryland",8,null,null,null,153,57,118.13,89.21,152.48,-32.07,32,0.81,23.74,28.27,"455922"],["Daniel Hill","RB","ALA","Alabama",9,128.2,0.05,41.02,167,67,118.6,55.11,181.37,-32.61,30,1.16,32.4,19.3,"455505"],["Coy Eakin","WR","TTU","Texas Tech",6,134.8,0.02,43.14,220,84,117.0,71.72,161.62,-33.21,32,0.96,41.48,13.53,"334802"],["Jalen Cooper","WR","SMU","SMU",6,null,null,null,191,75,116.93,75.18,156.74,-33.28,32,0.85,34.27,19.69,"468742"],["California","DEF","CAL","California",10,null,null,null,472,45,46.83,33.72,60.88,-33.51,9,0.97,26.35,27.03,"900059"],["Kentucky","DEF","UK","Kentucky",9,null,null,null,457,40,46.03,33.14,59.84,-34.31,9,0.99,22.89,27.22,"900069"],["Que'Sean Brown","WR","VT","Virginia Tech",9,null,null,null,159,61,115.62,84.55,150.7,-34.59,33,0.89,24.25,28.05,"404749"],["Yannick Smith","WR","SMU","SMU",6,null,null,null,193,77,115.42,74.4,155.68,-34.78,33,0.85,34.27,19.69,"456452"],["Ed Small","WR","TCU","TCU",1,null,null,null,184,72,115.24,76.68,153.48,-34.97,33,0.8,30.61,24.86,"468953"],["Jeremiah McClellan","WR","ORE","Oregon",5,131.1,0.03,41.95,207,81,114.99,71.79,157.25,-35.21,33,0.94,36.77,16.2,"455620"],["Alonza Barnett III","QB","UCF","UCF",7,137.4,0.02,43.97,219,28,239.58,155.93,320.2,-35.27,13,0.88,26.98,24.68,"333966"],["Eric Singleton Jr.","WR","FLA","Florida",8,148.9,0.19,47.65,161,63,114.73,82.32,150.18,-35.47,33,0.96,24.73,24.56,"404831"],["Hayden Hansen","TE","OU","Oklahoma",5,null,null,null,308,30,68.91,41.89,92.14,-35.56,12,0.9,26.83,20.07,"336481"],["Rashid Williams","WR","UW","Washington",8,160.6,0.12,51.39,187,74,113.67,73.86,152.03,-36.54,33,0.79,30.56,22.4,"405388"],["Landen Thomas","TE","FSU","Florida State",8,null,null,null,356,32,67.71,39.89,91.08,-36.77,12,0.99,28.21,24.39,"457991"],["Kaden Feagin","TE","ILL","Illinois",7,141.7,0.06,45.34,368,33,67.58,39.64,91.14,-36.9,12,0.87,29.54,22.62,"403835"],["Luke Dehnicke","TE","NW","Northwestern",2,null,null,null,300,28,67.53,43.5,89.84,-36.95,12,0.75,22.39,25.76,"481515"],["Chris Henry Jr.","WR","OSU","Ohio State",8,128,0.35,40.96,209,82,112.78,69.64,154.82,-37.43,33,0.97,35.2,12.88,"482684"],["Chris Corbo","TE","GT","Georgia Tech",5,null,null,null,378,34,66.97,39.1,90.55,-37.51,12,0.8,30.2,25.53,"335642"],["Cataurus Hicks","WR","PITT","Pittsburgh",10,159.1,0.13,50.91,199,78,112.53,72.43,152.28,-37.68,33,0.88,32.17,23.28,"404836"],["Cole Weaver","WR","SYR","Syracuse",4,null,null,null,160,62,111.71,80.83,145.95,-38.5,33,0.87,22.12,32.43,"406103"],["Bryce Underwood","QB","MICH","Michigan",6,128.7,0.31,41.18,221,29,236.29,148.45,319.8,-38.56,13,0.8,27.29,21.14,"469436"],["Maryland","DEF","UMD","Maryland",8,null,null,null,424,23,41.42,29.82,53.84,-38.93,10,0.89,23.74,28.27,"900005"],["CJ Baxter","RB","UK","Kentucky",9,144.8,0.13,46.34,144,62,112.2,57.13,168.33,-39.01,31,0.93,22.89,27.22,"404559"],["Lee Beebe Jr.","RB","IND","Indiana",10,null,null,null,208,80,112.12,41.42,172.97,-39.09,31,0.96,40.34,14.12,"339490"],["Malcolm Simmons","WR","TTU","Texas Tech",6,null,null,null,239,93,110.82,62.36,155.03,-39.39,33,0.96,41.48,13.53,"455516"],["DJ Lagway","QB","BAY","Baylor",6,143.5,0.05,45.92,245,30,235.12,141.19,322.25,-39.74,13,0.79,28.42,29.01,"456332"],["Matt Fuller","RB","SC","South Carolina",7,null,null,null,171,68,111.05,50.72,170.31,-40.16,31,0.85,26.87,23.22,"457709"],["Joseph Williams","WR","COLO","Colorado",6,null,null,null,174,69,109.86,75.39,145.76,-40.34,33,0.99,24.45,28.98,"457547"],["Sutton Smith","RB","ARK","Arkansas",8,null,null,null,179,70,110.71,48.86,170.36,-40.49,31,0.89,28.38,30.15,"338705"],["Isaiah West","RB","OSU","Ohio State",8,122.8,0.05,39.3,198,77,110.62,43.58,170.86,-40.59,31,0.97,35.2,12.88,"469638"],["Rocky Beers","TE","OU","Oklahoma",5,140.1,0.06,44.83,381,35,63.65,36.94,86.39,-40.83,13,0.9,26.83,20.07,"333084"],["Kedrick Reescano","RB","ARIZ","Arizona",7,160.2,0.16,51.26,180,71,110.36,47.97,169.92,-40.85,31,0.91,28.98,23.29,"405280"],["Jackson Harris","WR","LSU","LSU",9,143.1,0.08,45.79,185,73,109.22,71.99,145.73,-40.98,33,0.91,26.17,22.83,"404265"],["Mississippi State","DEF","MSST","Mississippi State",6,null,null,null,473,46,39.27,28.27,51.05,-41.07,11,1.11,26.09,28.77,"900078"],["DeAndre Moore Jr.","WR","COLO","Colorado",6,null,null,null,175,70,109.13,73.88,145.02,-41.08,34,0.99,24.45,28.98,"404541"],["Steve Angeli","QB","SYR","Syracuse",4,null,null,null,213,26,233.73,161.98,305.09,-41.12,13,0.87,22.12,32.43,"334501"],["Jaron Tibbs","WR","KSU","Kansas State",5,null,null,null,205,80,108.85,68.91,148.31,-41.36,34,0.85,30.0,23.59,"404692"],["Keshaun Singleton","WR","AUB","Auburn",6,155.9,0.18,49.89,192,76,108.7,69.9,146.14,-41.5,34,1.13,27.45,24.27,"406054"],["Colorado","DEF","COLO","Colorado",6,null,null,null,474,47,38.36,27.62,49.87,-41.98,11,1.04,24.45,28.98,"900018"],["Harlem Berry","RB","LSU","LSU",9,132.1,0.05,42.27,178,69,109.11,48.94,167.69,-42.1,31,0.91,26.17,22.83,"469420"],["Dorian Thomas","TE","CAL","California",10,158.1,0.26,50.59,395,36,62.34,36.0,84.98,-42.14,13,0.94,26.35,27.03,"404116"],["Jalen Hale","WR","SMU","SMU",6,null,null,null,229,88,107.85,64.14,150.18,-42.36,34,0.85,34.27,19.69,"404393"],["Gavin Harris","TE","GT","Georgia Tech",5,null,null,null,409,39,62.11,34.79,86.45,-42.37,13,0.8,30.2,25.53,"459464"],["CJ Bailey","QB","NCST","NC State",1,128.4,0.03,41.09,253,32,232.31,125.2,326.06,-42.54,13,0.95,30.59,25.38,"457958"],["Jett Carpenter","TE","TTU","Texas Tech",6,null,null,null,466,46,61.88,31.67,89.12,-42.6,13,0.96,41.48,13.53,"313280"],["Houston Thomas","TE","TAMU","Texas A&M",9,null,null,null,430,41,61.84,33.95,86.92,-42.64,13,0.87,32.77,21.27,"339651"],["West Virginia","DEF","WVU","West Virginia",9,null,null,null,444,33,36.75,26.46,47.78,-43.59,11,0.92,24.72,29.35,"900017"],["Micah Hudson","WR","TTU","Texas Tech",6,143.4,0.02,45.89,262,100,106.31,56.69,150.99,-43.9,35,0.96,41.48,13.53,"457812"],["Carter Moses","TE","KU","Kansas",4,null,null,null,411,40,60.55,33.63,84.71,-43.93,13,0.97,29.12,25.48,"341082"],["Gabe Burkle","TE","PSU","Penn State",8,null,null,null,446,43,60.49,31.97,85.85,-43.99,13,1.03,33.51,18.87,"335033"],["Darrell Gill Jr.","WR","MISS","Ole Miss",5,null,null,null,231,90,105.99,61.71,147.91,-44.22,35,1.17,33.7,20.19,"405885"],["TreyShun Hurry","WR","LOU","Louisville",8,null,null,null,227,87,105.87,63.14,147.3,-44.34,35,0.94,31.58,21.45,"335268"],["Nik McMillan","WR","KU","Kansas",4,null,null,null,217,83,105.86,65.02,145.85,-44.34,35,0.97,29.12,25.48,"338352"],["Micah Ford","RB","STAN","Stanford",10,154.6,0.1,49.47,162,65,106.77,51.63,162.14,-44.44,32,0.97,21.39,30.85,"457894"],["Umari Hatcher","WR","SYR","Syracuse",4,null,null,null,182,71,105.2,70.53,139.98,-45.01,35,0.87,22.12,32.43,"327462"],["Malik Knight","WR","PITT","Pittsburgh",10,null,null,null,230,89,105.18,62.21,146.61,-45.03,35,0.88,32.17,23.28,"338160"],["Justin Bowick","WR","OKST","Oklahoma State",5,155.7,0.03,49.82,164,64,104.93,74.82,137.56,-45.27,35,0.8,18.63,32.68,"336276"],["Ryan Schwendeman","TE","WIS","Wisconsin",6,null,null,null,402,37,58.99,33.85,80.98,-45.48,13,1.02,23.05,22.02,"340981"],["Benjamin Hall","RB","UNC","North Carolina",1,null,null,null,163,66,105.62,49.93,161.0,-45.58,32,0.96,21.32,30.24,"403930"],["L.J. Phillips Jr.","RB","IOWA","Iowa",7,133.7,0.13,42.78,197,76,105.46,42.25,162.94,-45.75,32,1.05,29.11,16.6,"406821"],["Jaden Greathouse","WR","ND","Notre Dame",8,null,null,null,268,102,104.41,54.9,148.89,-45.79,35,1.03,40.56,13.66,"403654"],["Collin Dixon","WR","ILL","Illinois",7,null,null,null,223,86,104.38,62.94,144.96,-45.83,35,0.87,29.54,22.62,"403842"],["Lawayne McCoy","WR","LOU","Louisville",8,null,null,null,236,91,103.32,59.15,144.32,-46.89,35,0.94,31.58,21.45,"457986"],["Noah Meyers","TE","SYR","Syracuse",4,null,null,null,405,38,57.41,32.52,79.42,-47.07,13,0.87,22.12,32.43,"451593"],["North Carolina","DEF","UNC","North Carolina",1,null,null,null,448,34,32.95,23.72,42.83,-47.39,12,1.0,21.32,30.24,"900006"],["Jamal Rule","RB","NEB","Nebraska",8,null,null,null,189,74,103.21,42.19,159.28,-48.0,33,0.76,25.45,25.65,"482918"],["Jude James","TE","MIZZ","Missouri",8,null,null,null,464,45,56.44,29.1,80.87,-48.04,13,0.85,29.18,22.25,"457254"],["Kaleb Webb","WR","UMD","Maryland",8,null,null,null,204,79,102.08,65.36,138.6,-48.12,36,0.81,23.74,28.27,"334139"],["Quincy Porter","WR","ND","Notre Dame",8,133.5,0.02,42.72,282,106,102.02,50.96,146.94,-48.19,36,1.03,40.56,13.66,"469641"],["Evan Chieca","TE","FLA","Florida",8,null,null,null,438,42,56.02,30.17,79.12,-48.46,13,0.96,24.73,24.56,"476451"],["Christian Bentancur","TE","CLEM","Clemson",6,null,null,null,477,47,55.98,28.33,81.02,-48.5,13,0.92,31.08,20.74,"457627"],["Ashton Bethel-Roman","WR","TAMU","Texas A&M",9,null,null,null,248,96,101.41,56.08,142.47,-48.8,36,0.87,32.77,21.27,"463564"],["Hunter Provience","TE","NCST","NC State",1,null,null,null,479,48,54.95,27.18,79.92,-49.52,14,0.95,30.59,25.38,"453391"],["James Peoples","RB","PSU","Penn State",8,135,0.02,43.2,225,85,101.41,33.8,157.37,-49.79,33,1.03,33.51,18.87,"455600"],["Cayden Lee","WR","MIZZ","Missouri",8,133.2,0.03,42.62,237,92,100.3,56.81,140.2,-49.91,36,0.85,29.18,22.25,"405273"],["Stanford","DEF","STAN","Stanford",10,null,null,null,476,48,30.36,21.86,39.46,-49.98,13,1.01,21.39,30.85,"900063"],["Abu Sama III","RB","WIS","Wisconsin",6,146.5,0.12,46.88,186,73,101.13,41.81,155.85,-50.08,33,1.02,23.05,22.02,"404359"],["Kaelan Chudzinski","TE","BC","Boston College",6,132.6,0.03,42.43,447,44,54.0,28.11,76.99,-50.48,14,0.78,24.06,31.89,"468147"],["Jayden Limar","RB","UW","Washington",8,null,null,null,218,83,100.41,34.23,155.54,-50.8,33,0.79,30.56,22.4,"404488"],["Javon Tracy","WR","MINN","Minnesota",7,null,null,null,222,85,99.35,60.61,137.61,-50.86,36,0.84,24.55,24.3,"335010"],["Taevion Swint","RB","UCF","UCF",7,null,null,null,206,79,100.27,37.95,154.63,-50.94,33,0.88,26.98,24.68,"468605"],["Faizon Brandon","QB","TENN","Tennessee",9,127.1,0.05,40.67,265,36,223.89,97.09,328.34,-50.97,14,0.86,33.84,25.06,"484035"],["Salahadin Allah","RB","ISU","Iowa State",7,null,null,null,214,82,99.64,34.74,154.1,-51.57,33,0.97,28.89,21.65,"456316"],["Jacquon Gibson","WR","UVA","Virginia",1,null,null,null,260,99,97.84,52.8,138.62,-52.37,37,0.97,30.83,21.95,"334456"],["Hudson Clement","WR","ILL","Illinois",7,null,null,null,250,97,97.75,53.8,137.57,-52.45,37,0.87,29.54,22.62,"342063"],["Trent Walker","WR","HOU","Houston",9,null,null,null,243,94,97.43,54.45,136.49,-52.78,37,0.99,27.56,23.87,"327496"],["Brandon Inniss","WR","OSU","Ohio State",8,130.4,0.1,41.73,289,107,97.22,48.24,140.37,-52.99,37,0.97,35.2,12.88,"404626"],["KJ Edwards","RB","TAMU","Texas A&M",9,null,null,null,238,88,98.11,30.72,153.25,-53.09,33,0.87,32.77,21.27,"483981"],["Chauncey Bowens","RB","UGA","Georgia",8,null,null,null,235,87,97.99,31.43,152.56,-53.22,33,0.96,31.71,18.64,"462830"],["Aiden Flora","RB","ISU","Iowa State",7,null,null,null,224,84,97.85,32.82,151.72,-53.36,33,0.97,28.89,21.65,"464097"],["Noah Fifita","QB","ARIZ","Arizona",7,129.2,0.02,41.34,258,34,220.98,106.07,317.22,-53.88,14,0.91,28.98,23.29,"333810"],["Jaden Craig","QB","TCU","TCU",1,null,null,null,264,35,220.91,101.61,320.56,-53.94,14,0.8,30.61,24.86,"335622"],["Kyler Kasper","WR","BYU","BYU",4,null,null,null,277,104,95.88,48.92,137.35,-54.33,38,1.04,31.72,20.57,"338769"],["Victor Snow","WR","NCST","NC State",1,null,null,null,273,103,95.4,49.47,136.31,-54.81,38,0.95,30.59,25.38,"334656"],["Girard Pringle Jr.","RB","MIA","Miami",6,null,null,null,259,94,95.99,26.87,154.44,-55.22,33,1.06,36.18,15.94,"471021"],["Iverson Hooks","WR","ORE","Oregon",5,null,null,null,309,114,94.66,44.5,138.91,-55.54,38,0.94,36.77,16.2,"337054"],["Quintrevion Wisner","RB","FSU","Florida State",8,136.4,0.04,43.65,232,86,95.47,31.39,148.32,-55.74,33,0.99,28.21,24.39,"404581"],["Trent Mosley","WR","USC","USC",10,null,null,null,290,108,94.21,46.52,136.25,-56.0,38,0.96,32.3,23.03,"482179"],["Vernell Brown III","WR","FLA","Florida",8,132.9,0.04,42.53,246,95,93.74,52.06,131.52,-56.47,38,0.96,24.73,24.56,"470529"],["Eugene Wilson III","WR","LSU","LSU",9,null,null,null,251,98,93.71,51.25,132.34,-56.49,38,0.91,26.17,22.83,"405470"],["Demon June","RB","UNC","North Carolina",1,122.4,0.46,39.17,202,78,94.3,36.43,145.49,-56.91,33,0.96,21.32,30.24,"471451"],["Chase Sowell","WR","PSU","Penn State",8,null,null,null,303,112,93.11,44.21,135.87,-57.1,38,1.03,33.51,18.87,"336422"],["Chris Johnson Jr.","RB","CLEM","Clemson",6,null,null,null,247,91,94.1,28.18,148.97,-57.11,34,0.92,31.08,20.74,"453989"],["Malachi Hosley","RB","GT","Georgia Tech",5,null,null,null,242,90,94.09,28.65,148.25,-57.12,34,0.8,30.2,25.53,"453489"],["Fame Ijeboi","RB","PUR","Purdue",8,null,null,null,190,75,93.85,38.07,144.97,-57.36,34,0.65,19.13,32.39,"457379"],["Kedren Young","RB","ND","Notre Dame",8,null,null,null,304,102,92.91,22.71,155.5,-58.3,34,1.03,40.56,13.66,"457570"],["Kyri Shoels","WR","UTAH","Utah",5,null,null,null,331,119,91.82,39.77,136.48,-58.39,39,0.94,36.45,19.47,"464594"],["Ahmad Miller","RB","SYR","Syracuse",4,null,null,null,210,81,92.78,33.26,143.26,-58.43,34,0.87,22.12,32.43,"407059"],["Tyler Morris","WR","IND","Indiana",10,null,null,null,340,125,91.59,36.48,138.91,-58.62,39,0.96,40.34,14.12,"333319"],["Nyziah Hunter","WR","NEB","Nebraska",8,142.4,0.03,45.57,266,101,91.3,48.29,129.94,-58.91,39,0.76,25.45,25.65,"404124"],["Mylan Graham","WR","ND","Notre Dame",8,null,null,null,342,126,91.23,36.05,138.81,-58.98,39,1.03,40.56,13.66,"455617"],["JJ Buchanan","WR","MICH","Michigan",6,130.3,0.03,41.7,280,105,91.1,45.83,130.86,-59.11,39,0.8,27.29,21.14,"471478"],["Jordan Washington","RB","UW","Washington",8,null,null,null,256,93,92.02,26.26,147.21,-59.19,34,0.79,30.56,22.4,"463926"],["TK Keys","WR","TENN","Tennessee",9,null,null,null,321,117,90.83,41.35,134.2,-59.38,39,0.86,33.84,25.06,"484041"],["Kayden Dixon-Wyatt","WR","USC","USC",10,null,null,null,312,115,90.56,42.32,133.22,-59.64,39,0.96,32.3,23.03,"482190"],["Jamar Searcy","RB","WAKE","Wake Forest",8,null,null,null,240,89,90.98,28.0,142.65,-60.23,34,0.86,26.22,25.69,"471664"],["Nolan James Jr.","RB","ND","Notre Dame",8,128.3,0.03,41.06,313,105,90.65,21.34,153.47,-60.55,34,1.03,40.56,13.66,"469860"],["Jeremiah Koger","WR","AUB","Auburn",6,146.8,0.02,46.98,293,109,89.19,43.57,129.25,-61.02,40,1.13,27.45,24.27,"468341"],["Koby Howard","WR","PSU","Penn State",8,null,null,null,332,120,89.03,37.87,132.83,-61.17,40,1.03,33.51,18.87,"469974"],["Jeremy Scott","WR","TCU","TCU",1,null,null,null,318,116,88.64,41.06,130.65,-61.57,40,0.8,30.61,24.86,"463469"],["Christian Clark","RB","SC","South Carolina",7,null,null,null,254,92,89.31,26.09,142.1,-61.9,34,0.85,26.87,23.22,"457690"],["Javin Gordon","RB","TENN","Tennessee",9,null,null,null,298,101,88.73,22.34,147.96,-62.48,34,0.86,33.84,25.06,"468404"],["Cooper Perry","WR","CAL","California",10,null,null,null,296,110,87.6,42.17,127.23,-62.61,40,0.94,26.35,27.03,"469379"],["Parker Livingstone","WR","OU","Oklahoma",5,null,null,null,299,111,87.59,41.81,127.5,-62.61,40,0.9,26.83,20.07,"457689"],["Corey Simms","WR","USC","USC",10,null,null,null,334,121,87.58,36.9,131.15,-62.63,40,0.96,32.3,23.03,"470257"],["Yasin Willis","RB","KU","Kansas",4,null,null,null,271,96,88.42,24.21,143.93,-62.78,34,0.97,29.12,25.48,"457939"],["Malik Washington","QB","UMD","Maryland",8,130,0.02,41.6,257,33,211.71,107.49,300.5,-63.15,15,0.81,23.74,28.27,"469212"],["Rodney Fields Jr.","RB","KSU","Kansas State",5,null,null,null,288,98,87.73,23.31,144.42,-63.48,34,0.85,30.0,23.59,"457387"],["Quaid Carr","RB","UW","Washington",8,null,null,null,291,99,87.5,22.84,144.75,-63.71,35,0.79,30.56,22.4,"469687"],["Zion Johnson","RB","CIN","Cincinnati",6,null,null,null,283,97,86.85,23.49,142.2,-64.35,35,0.89,28.23,25.88,"469298"],["Raiden Vines-Bright","WR","ASU","Arizona State",4,null,null,null,328,118,84.77,37.65,125.62,-65.44,41,0.99,27.4,23.55,"469663"],["Brett Eskildsen","WR","PSU","Penn State",8,null,null,null,347,130,84.31,31.53,129.78,-65.9,41,1.03,33.51,18.87,"455955"],["CJ Wiley","WR","UGA","Georgia",8,null,null,null,343,127,84.29,33.1,128.62,-65.91,41,0.96,31.71,18.64,"470329"],["KJ Jackson","QB","ARK","Arkansas",8,null,null,null,267,37,208.86,84.19,309.5,-66.0,15,0.89,28.38,30.15,"455497"],["Lincoln Kienholz","QB","LOU","Louisville",8,null,null,null,279,39,208.71,74.64,315.89,-66.14,15,0.94,31.58,21.45,"404635"],["Derek Meadows","WR","ALA","Alabama",9,null,null,null,346,129,83.93,31.89,128.82,-66.27,41,1.16,32.4,19.3,"470406"],["London Humphreys","WR","UGA","Georgia",8,130.8,0.06,41.86,344,128,83.85,32.38,128.31,-66.36,41,0.96,31.71,18.64,"405171"],["Jermaine Bishop Jr.","WR","TEX","Texas",5,null,null,null,338,124,83.75,33.82,126.65,-66.46,41,0.97,29.37,22.78,"483241"],["Zylan Perry","RB","CIN","Cincinnati",6,null,null,null,297,100,84.73,21.79,140.74,-66.48,36,0.89,28.23,25.88,"334762"],["Jalen Jones","WR","TTU","Texas Tech",6,134.3,0.02,42.98,369,144,83.54,25.79,133.13,-66.67,41,0.96,41.48,13.53,"407230"],["Bill Davis","RB","VT","Virginia Tech",9,null,null,null,263,95,84.42,23.37,136.6,-66.79,36,0.89,24.25,28.05,"405761"],["Nic Anderson","WR","UK","Kentucky",9,null,null,null,305,113,82.57,39.03,120.83,-67.64,41,0.93,22.89,27.22,"334153"],["Aidan Laughery","RB","ILL","Illinois",7,null,null,null,310,104,83.08,19.64,140.13,-68.13,36,0.87,29.54,22.62,"333882"],["Jordan Allen","WR","GT","Georgia Tech",5,null,null,null,348,131,81.28,29.88,125.46,-68.93,42,0.8,30.2,25.53,"471570"],["Kwazi Gilmer","WR","NEB","Nebraska",8,null,null,null,335,122,81.1,33.85,121.89,-69.11,42,0.76,25.45,25.65,"456036"],["Kevin Riley","RB","ALA","Alabama",9,null,null,null,323,109,82.03,18.32,140.52,-69.18,36,1.16,32.4,19.3,"455512"],["Kameron Courtney","WR","UVA","Virginia",1,null,null,null,351,133,80.94,28.76,125.51,-69.27,42,0.97,30.83,21.95,"456484"],["Jacory Barney Jr.","WR","NEB","Nebraska",8,null,null,null,337,123,80.66,33.12,121.67,-69.54,42,0.76,25.45,25.65,"457834"],["Rico Flores Jr.","WR","UVA","Virginia",1,null,null,null,352,134,80.51,28.39,125.22,-69.69,42,0.97,30.83,21.95,"403656"],["Cederian Morgan","WR","ALA","Alabama",9,null,null,null,357,137,80.41,27.31,126.13,-69.79,42,1.16,32.4,19.3,"483911"],["Michael Turner","RB","BAY","Baylor",6,null,null,null,317,107,80.14,18.36,136.79,-71.07,36,0.79,28.42,29.01,"473849"],["Bryson Washington","RB","AUB","Auburn",6,null,null,null,315,106,79.98,18.61,135.98,-71.22,36,1.13,27.45,24.27,"404345"],["Brian Bonner Jr.","RB","UW","Washington",8,null,null,null,325,110,79.96,17.74,137.28,-71.25,36,0.79,30.56,22.4,"483032"],["Joshua Dye","RB","MISS","Ole Miss",5,120.4,0.09,38.53,361,115,79.13,16.21,137.01,-72.07,36,1.17,33.7,20.19,"405382"],["Jeffrey Overton Jr.","RB","VT","Virginia Tech",9,156,0.12,49.92,306,103,78.96,18.86,132.66,-72.25,36,0.89,24.25,28.05,"468975"],["Christian Moss","WR","UW","Washington",8,null,null,null,360,140,77.81,25.13,122.94,-72.4,43,0.79,30.56,22.4,"323869"],["Malachi Henry","WR","CIN","Cincinnati",6,null,null,null,355,136,77.56,26.66,121.34,-72.64,43,0.89,28.23,25.88,"407939"],["Tory Blaylock","RB","OU","Oklahoma",5,null,null,null,320,108,78.13,17.64,133.62,-73.08,36,0.9,26.83,20.07,"470151"],["Duane Thomas Jr.","WR","UCF","UCF",7,null,null,null,353,135,76.93,26.77,120.02,-73.27,43,0.88,26.98,24.68,"404913"],["CJ Brown","WR","ARK","Arkansas",8,null,null,null,358,138,76.89,25.78,120.91,-73.32,43,0.89,28.38,30.15,"455509"],["Jaedn Skeete","WR","BC","Boston College",6,null,null,null,350,132,75.52,27.24,116.85,-74.68,44,0.78,24.06,31.89,"404731"],["Evan James","WR","IOWA","Iowa",7,null,null,null,365,143,75.5,23.46,120.03,-74.71,44,1.05,29.11,16.6,"470898"],["Cam Settles","RB","ARK","Arkansas",8,null,null,null,339,114,75.76,15.8,131.03,-75.45,37,0.89,28.38,30.15,"470458"],["Josh Derry","WR","UCF","UCF",7,131,0.06,41.92,362,141,74.55,23.66,118.08,-75.65,44,0.88,26.98,24.68,"452617"],["Rocco Becht","QB","PSU","Penn State",8,126.6,0.04,40.51,295,43,199.11,56.87,315.34,-75.75,16,1.03,33.51,18.87,"333160"],["Isaiah Fuhrmann","WR","GT","Georgia Tech",5,null,null,null,373,148,74.38,22.23,119.81,-75.83,44,0.8,30.2,25.53,"465514"],["Anthony Colandrea","QB","NEB","Nebraska",8,130.1,0.03,41.63,270,38,198.85,74.46,297.64,-76.0,16,0.76,25.45,25.65,"407183"],["Cody Jackson","WR","ISU","Iowa State",7,null,null,null,371,146,74.17,22.56,118.82,-76.03,44,0.97,28.89,21.65,"322511"],["Mekhi Nelson","RB","NEB","Nebraska",8,null,null,null,327,111,75.08,16.59,129.19,-76.13,37,0.76,25.45,25.65,"461405"],["Tony Diaz","WR","IOWA","Iowa",7,null,null,null,372,147,73.95,22.32,118.78,-76.26,44,1.05,29.11,16.6,"470796"],["Caden Durham","RB","LSU","LSU",9,null,null,null,336,113,74.52,15.92,128.73,-76.69,37,0.91,26.17,22.83,"456961"],["Donte Lee Jr.","WR","TTU","Texas Tech",6,null,null,null,425,170,73.27,16.22,125.99,-76.94,44,0.96,41.48,13.53,"459373"],["Steve Chavez-Soto","RB","UTAH","Utah",5,null,null,null,413,127,73.88,12.37,131.71,-77.33,37,0.94,36.45,19.47,"471112"],["Amari Latimer","RB","WVU","West Virginia",9,null,null,null,330,112,73.84,16.11,127.32,-77.37,37,0.88,24.72,29.35,"482545"],["Beau Pribula","QB","UVA","Virginia",1,null,null,null,294,42,197.33,59.53,308.97,-77.52,16,0.97,30.83,21.95,"333444"],["Landen Chambers","RB","UCF","UCF",7,null,null,null,366,116,73.45,14.79,127.05,-77.76,37,0.88,26.98,24.68,"407941"],["Ja'Cory Thomas","WR","VAN","Vanderbilt",9,null,null,null,403,161,72.29,17.94,121.07,-77.92,44,0.87,34.18,23.49,"469254"],["Cutter Boley","QB","ASU","Arizona State",4,null,null,null,285,40,196.75,66.83,301.3,-78.11,16,0.99,27.4,23.55,"456589"],["Xai'Shaun Edwards","RB","MIZZ","Missouri",8,null,null,null,380,120,72.88,13.45,126.79,-78.33,37,0.85,29.18,22.25,"458749"],["Larenzo Fenner","WR","CIN","Cincinnati",6,null,null,null,383,151,71.79,20.9,116.62,-78.42,44,0.89,28.23,25.88,"451627"],["David Avit","RB","ASU","Arizona State",4,null,null,null,377,118,72.65,13.88,125.82,-78.55,37,0.99,27.4,23.55,"460714"],["Donovan Faupel","WR","ARK","Arkansas",8,null,null,null,384,152,71.54,20.58,116.56,-78.66,44,0.89,28.38,30.15,"403823"],["Sawyer Seidl","RB","WAKE","Wake Forest",8,null,null,null,367,117,72.26,14.2,124.93,-78.94,37,0.86,26.22,25.69,"406884"],["Ethan Shine","RB","PITT","Pittsburgh",10,null,null,null,408,125,72.22,12.76,127.52,-78.99,37,0.88,32.17,23.28,"453738"],["Javen Nicholas","WR","DUKE","Duke",5,null,null,null,393,157,71.1,18.52,117.6,-79.11,44,0.82,30.24,26.32,"334847"],["Marquis Gillis","RB","ASU","Arizona State",4,null,null,null,379,119,72.08,13.48,125.06,-79.12,37,0.99,27.4,23.55,"333105"],["CharMar Brown","RB","MIA","Miami",6,null,null,null,441,130,72.06,10.78,130.27,-79.15,37,1.06,36.18,15.94,"406911"],["Alex Perry","WR","ILL","Illinois",7,null,null,null,392,156,70.95,18.86,117.02,-79.26,44,0.87,29.54,22.62,"338674"],["Reed Swanson","WR","BC","Boston College",6,null,null,null,370,145,70.57,21.61,112.75,-79.64,45,0.78,24.06,31.89,"407788"],["Jayshon Platt","WR","ILL","Illinois",7,null,null,null,394,158,70.24,18.02,116.54,-79.96,45,0.87,29.54,22.62,"334754"],["Chas Nimrod","WR","AUB","Auburn",6,null,null,null,388,154,70.13,19.61,114.93,-80.08,45,1.13,27.45,24.27,"334137"],["Shazz Preston","WR","IND","Indiana",10,null,null,null,467,178,69.9,13.95,122.59,-80.3,45,0.96,40.34,14.12,"337752"],["Cam Vaughn","WR","MIA","Miami",6,null,null,null,432,173,69.3,14.72,120.01,-80.9,45,1.06,36.18,15.94,"450858"],["Nico Brown","WR","STAN","Stanford",10,null,null,null,364,142,69.18,21.71,109.78,-81.03,45,0.97,21.39,30.85,"341803"],["Carter Vargas","RB","CAL","California",10,null,null,null,397,122,69.61,12.56,121.76,-81.59,38,0.94,26.35,27.03,"458991"],["Davion Dozier","WR","NCST","NC State",1,null,null,null,417,165,68.56,16.28,116.31,-81.65,45,0.95,30.59,25.38,"405412"],["Terrell Anderson","WR","USC","USC",10,null,null,null,423,169,68.31,15.32,117.16,-81.9,45,0.96,32.3,23.03,"457960"],["AK Dear","RB","ALA","Alabama",9,null,null,null,443,131,69.2,10.02,125.6,-82.0,38,1.16,32.4,19.3,"470427"],["Ernest Campbell","WR","COLO","Colorado",6,null,null,null,386,153,68.08,19.32,111.22,-82.13,45,0.99,24.45,28.98,"457069"],["Asaad Waseem","WR","PUR","Purdue",8,null,null,null,359,139,67.96,22.36,107.14,-82.25,45,0.65,19.13,32.39,"404214"],["Xavier Robinson","RB","OU","Oklahoma",5,129.5,0.02,41.44,400,124,68.91,12.35,121.29,-82.29,38,0.9,26.83,20.07,"457303"],["Jaylon Domingeaux","WR","WIS","Wisconsin",6,null,null,null,376,150,67.9,19.95,109.98,-82.31,45,1.02,23.05,22.02,"406854"],["Clay Thevenin","RB","RUTG","Rutgers",6,null,null,null,410,126,68.82,11.87,122.1,-82.39,38,0.92,28.07,27.35,"468847"],["Tyran Warren","WR","NCST","NC State",1,null,null,null,422,168,67.53,15.37,115.54,-82.67,45,0.95,30.59,25.38,"453608"],["Cade Wolford","WR","CIN","Cincinnati",6,null,null,null,415,164,67.25,16.05,113.78,-82.96,46,0.89,28.23,25.88,"456755"],["La'Vell Wright","RB","PITT","Pittsburgh",10,null,null,null,449,133,68.04,9.11,124.27,-83.16,38,0.88,32.17,23.28,"322265"],["TJ Thomas","RB","MINN","Minnesota",7,null,null,null,399,123,67.62,12.17,118.62,-83.59,38,0.84,24.55,24.3,"465541"],["Marquise Davis","RB","LOU","Louisville",8,null,null,null,455,134,67.15,8.67,122.92,-84.05,38,0.94,31.58,21.45,"470177"],["Tre' Brown","WR","LSU","LSU",9,null,null,null,407,163,66.07,15.93,111.45,-84.14,47,0.91,26.17,22.83,"469242"],["Shane Carr","WR","UK","Kentucky",9,null,null,null,391,155,66.06,18.04,108.62,-84.15,47,0.93,22.89,27.22,"460699"],["Kam Perry","WR","COLO","Colorado",6,null,null,null,396,159,66.04,16.71,109.91,-84.16,47,0.99,24.45,28.98,"336496"],["Jackson Voth","WR","LOU","Louisville",8,null,null,null,459,176,65.58,13.65,114.4,-84.63,47,0.94,31.58,21.45,"456367"],["Nahzae Cox","WR","KU","Kansas",4,null,null,null,427,172,65.26,13.98,112.75,-84.95,47,0.97,29.12,25.48,"469009"],["Wondame Davis Jr.","WR","WAKE","Wake Forest",8,null,null,null,419,166,65.13,15.33,110.82,-85.07,47,0.86,26.22,25.69,"464496"],["Bisi Owens","WR","PUR","Purdue",8,null,null,null,375,149,64.53,19.1,104.23,-85.68,47,0.65,19.13,32.39,"341348"],["Na'eem Abdul-Rahim Gladding","WR","UMD","Maryland",8,null,null,null,404,162,64.47,15.78,108.38,-85.73,47,0.81,23.74,28.27,"463325"],["Nykahi Davenport","RB","AUB","Auburn",6,null,null,null,445,132,65.36,9.11,119.01,-85.85,38,1.13,27.45,24.27,"457527"],["DeKalon Taylor","RB","COLO","Colorado",6,null,null,null,414,128,65.05,10.49,116.53,-86.16,38,0.99,24.45,28.98,"343248"],["London Montgomery","RB","FLA","Florida",8,null,null,null,418,129,64.78,10.09,116.61,-86.43,38,0.96,24.73,24.56,"404636"],["Landon Ellis","WR","UCLA","UCLA",5,null,null,null,398,160,63.76,15.98,106.45,-86.44,47,0.84,22.12,27.49,"449051"],["Solomon Beebe","RB","UVA","Virginia",1,null,null,null,482,138,64.74,7.62,119.28,-86.47,38,0.97,30.83,21.95,"463819"],["Michael Hawkins Jr.","QB","WVU","West Virginia",9,135,0.02,43.2,287,41,187.69,60.16,290.67,-87.16,17,0.88,24.72,29.35,"457283"],["Caleb Goodie Sr.","WR","MIZZ","Missouri",8,null,null,null,469,180,62.8,12.08,110.74,-87.41,47,0.85,29.18,22.25,"404003"],["Jayden Sellers","WR","SC","South Carolina",7,null,null,null,456,175,62.77,13.19,109.23,-87.44,47,0.85,26.87,23.22,"470082"],["Tre Page III","RB","OKST","Oklahoma State",5,null,null,null,387,121,63.39,11.56,110.56,-87.82,38,0.8,18.63,32.68,"464303"],["Gavin Freeman","WR","BAY","Baylor",6,null,null,null,475,181,62.0,11.73,109.54,-88.2,47,0.79,28.42,29.01,"337939"],["Mason Humphrey","WR","UNC","North Carolina",1,null,null,null,420,167,60.9,14.11,103.92,-89.3,48,0.96,21.32,30.24,"407551"],["JaQuail Smith","RB","COLO","Colorado",6,null,null,null,465,135,61.74,7.82,113.23,-89.47,39,0.99,24.45,28.98,"473105"],["Evan Pryor","RB","FLA","Florida",8,null,null,null,470,136,61.49,7.64,112.96,-89.72,39,0.96,24.73,24.56,"322883"],["Leland Smith","WR","UCLA","UCLA",5,null,null,null,426,171,60.38,13.14,104.09,-89.83,48,0.84,22.12,27.49,"462764"],["DJ Epps","WR","WVU","West Virginia",9,null,null,null,483,182,59.18,11.11,104.75,-91.02,49,0.88,24.72,29.35,"337175"],["Gavin Sawchuk","RB","NW","Northwestern",2,null,null,null,478,137,59.24,7.17,109.0,-91.97,40,0.75,22.39,25.76,"337929"],["Caden High","WR","STAN","Stanford",10,null,null,null,461,177,58.06,11.86,101.54,-92.14,49,0.97,21.39,30.85,"467367"],["Chrishon McCray","WR","MSU","Michigan State",9,null,null,null,468,179,57.9,11.32,101.86,-92.3,49,0.94,21.89,29.64,"336600"],["Austin Simmons","QB","MIZZ","Missouri",8,null,null,null,311,46,182.09,44.47,298.31,-92.77,18,0.85,29.18,22.25,"451573"],["Israel Polk","WR","OKST","Oklahoma State",5,null,null,null,433,174,56.66,11.96,98.36,-93.54,50,0.8,18.63,32.68,"405248"],["Alberto Mendoza","QB","GT","Georgia Tech",5,null,null,null,314,47,181.11,42.5,299.82,-93.75,18,0.8,30.2,25.53,"457908"],["Katin Houser","QB","ILL","Illinois",7,null,null,null,316,48,177.11,39.84,296.23,-97.74,18,0.87,29.54,22.62,"333842"],["Kenny Minchey","QB","UK","Kentucky",9,null,null,null,301,44,174.76,47.34,280.07,-100.09,18,0.93,22.89,27.22,"403635"],["Colton Joseph","QB","WIS","Wisconsin",6,138.6,0.03,44.35,307,45,172.38,44.26,279.35,-102.48,18,1.02,23.05,22.02,"405815"],["Ashton Daniels","QB","FSU","Florida State",8,null,null,null,319,49,171.97,37.16,290.43,-102.89,18,0.99,28.21,24.39,"336727"],["Walker Eget","QB","DUKE","Duke",5,null,null,null,324,51,170.22,31.93,292.71,-104.64,18,0.82,30.24,26.32,"326376"],["Jared Curtis","QB","VAN","Vanderbilt",9,null,null,null,345,55,166.09,25.33,294.68,-108.76,18,0.87,34.18,23.49,"484628"],["JC French IV","QB","CIN","Cincinnati",6,null,null,null,326,52,164.2,27.73,284.76,-110.65,18,0.89,28.23,25.88,"338703"],["Aaron Philo","QB","FLA","Florida",8,null,null,null,322,50,162.76,33.36,277.41,-112.09,18,0.96,24.73,24.56,"456157"],["Julian Lewis","QB","COLO","Colorado",6,null,null,null,329,53,154.86,24.64,270.76,-119.99,19,0.99,24.45,28.98,"469108"],["Dylan Lonergan","QB","RUTG","Rutgers",6,null,null,null,349,56,154.24,22.93,275.39,-120.62,19,0.92,28.07,27.35,"404391"],["Ethan Grunkemeyer","QB","VT","Virginia Tech",9,null,null,null,333,54,152.16,23.7,268.04,-122.69,19,0.89,24.25,28.05,"455971"],["Liam O'Brien","QB","CIN","Cincinnati",6,null,null,null,363,58,149.92,20.67,271.25,-124.94,19,0.89,28.23,25.88,"341343"],["Jaylen Raynor","QB","ISU","Iowa State",7,null,null,null,374,59,148.71,19.46,270.91,-126.14,19,0.97,28.89,21.65,"405702"],["Drake Lindsey","QB","MINN","Minnesota",7,null,null,null,354,57,145.91,21.02,262.32,-128.95,19,0.84,24.55,24.3,"457367"],["Davin Wydner","QB","LOU","Louisville",8,null,null,null,390,63,144.0,15.1,269.99,-130.86,19,0.94,31.58,21.45,"336894"],["Landen Clark","QB","LSU","LSU",9,null,null,null,382,60,142.26,17.62,260.84,-132.6,19,0.91,26.17,22.83,"465503"],["Eli Holstein","QB","UVA","Virginia",1,null,null,null,429,64,140.9,13.84,266.04,-133.96,19,0.97,30.83,21.95,"404396"],["Dean DeNobile","QB","FSU","Florida State",8,null,null,null,484,66,133.28,11.48,255.59,-141.58,20,0.99,28.21,24.39,"335737"],["Amari Odom","QB","SYR","Syracuse",4,null,null,null,385,61,133.24,15.63,246.13,-141.61,20,0.87,22.12,32.43,"408092"],["Gio Lopez","QB","WAKE","Wake Forest",8,null,null,null,458,65,132.27,12.22,251.67,-142.59,20,0.86,26.22,25.69,"405873"],["Aidan Chiles","QB","NW","Northwestern",2,null,null,null,389,62,131.8,14.71,245.3,-143.05,20,0.75,22.39,25.76,"404495"]],"teams":[{"key":"474.l.21318.t.1","name":"Puntaholics"},{"key":"474.l.21318.t.2","name":"Mike Locksley"},{"key":"474.l.21318.t.3","name":"Jackson's Brilliant Team"},{"key":"474.l.21318.t.4","name":"Colin's Champion Team"},{"key":"474.l.21318.t.5","name":"Austin's Best Team"},{"key":"474.l.21318.t.6","name":"Max's Majestic Team"},{"key":"474.l.21318.t.7","name":"Too B1G Too Strong Too Fast"},{"key":"474.l.21318.t.8","name":"Cameron's Choice Team"},{"key":"474.l.21318.t.9","name":"Noah's Nice Team"},{"key":"474.l.21318.t.10","name":"I Stand With Diggs"}],"numTeams":10,"rounds":17,"slots":[["QB",2],["RB",2],["WR",3],["TE",1],["W/R/T",2],["DEF",1]],"bench":6,"flexSlot":"W/R/T","flexPositions":["RB","WR","TE"],"positions":["QB","RB","WR","TE","DEF"],"replacement":{"QB":274.9,"RB":151.2,"WR":150.2,"TE":104.5,"DEF":80.3},"draftTime":1788134400.0,"pickSeconds":120,"leagueUrl":"https://college.fantasysports.yahoo.com/cfb/21318","leagueName":"B1G West Memorial FFL","playoffWeek":11,"endWeek":13,"season":2026};</script><script>
+(function () {
+  var CFG = window.LD_CFG, P = CFG.rows;
+
+  // Column indices into a board row - the order _FIELDS ships them in.
+  var NAME = 0, POS = 1, TEAM = 2, SCHOOL = 3, BYE = 4, ADP = 5, PCTD = 6,
+      ADPSD = 7, RANK = 8, POSRK = 9, PROJ = 10, FLOOR = 11, CEIL = 12,
+      VORP = 13, TIER = 14, PLAYOFF = 15, TSCORED = 16, OPPALL = 17, YID = 18;
+
+  // What a player who never cracks the lineup is worth, as a share of his value
+  // over replacement. Six bench spots on a seventeen-round roster is a lot of
+  // depth to fill, and a backup at a two-starter position is an injury away
+  // from being a starter - but he is not one now, and the number says so.
+  var BENCH_SHARE = 0.28;
+
+  // How many players a lookahead considers at a position, and how many
+  // candidates get the full two-pick treatment. Both are far past where the
+  // answer stops changing; they exist so a phone does not have to score 480
+  // players against every position on every redraw.
+  var LOOKAHEAD_DEPTH = 30, CANDIDATES = 40;
+
+  // A run is this many picks back. Two rounds is what a manager can feel.
+  var RUN_WINDOW = 12;
+
+  var STORE = "cfb-live-" + CFG.season;
+  var byId = {};
+  for (var i = 0; i < P.length; i++) byId[P[i][YID]] = i;
+
+  // Picks are owned by draft *slot*, not by team key: the snake decides whose
+  // pick number 34 is, and that is knowable from the pick alone. Team keys are
+  // metadata - what Yahoo calls the manager sitting in that slot - and arrive
+  // only if Yahoo publishes the draft live. The board never needs them to work.
+  var state = {
+    picks: [],            // {pick, id, team, manual}
+    mySlot: null,         // 1..teams, chosen or learnt
+    myTeam: null,         // Yahoo team key, for names and for the live feed
+    slotOf: {},           // team key -> draft slot, once the feed says
+    auto: true,
+    source: "none",
+    fetched: 0,
+    error: null,
+    pos: "ALL",
+    query: "",
+    sort: "score",
+  };
+
+  // ----------------------------------------------------------------- storage
+  function save() {
+    try {
+      localStorage.setItem(STORE, JSON.stringify({
+        picks: state.picks, mySlot: state.mySlot, myTeam: state.myTeam,
+        slotOf: state.slotOf, auto: state.auto,
+      }));
+    } catch (e) { /* private mode; the board still works, it just forgets */ }
+  }
+  function restore() {
+    try {
+      var raw = localStorage.getItem(STORE);
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      state.picks = s.picks || [];
+      state.mySlot = s.mySlot || null;
+      state.myTeam = s.myTeam || null;
+      state.slotOf = s.slotOf || {};
+      if (s.auto === false) state.auto = false;
+    } catch (e) { /* corrupt or unreadable; start clean */ }
+  }
+
+  // -------------------------------------------------------------- draft shape
+  function teams() { return CFG.teams; }
+  function nTeams() { return CFG.numTeams; }
+  function totalPicks() { return nTeams() * CFG.rounds; }
+
+  function roundOf(pick) { return Math.floor((pick - 1) / nTeams()) + 1; }
+  function slotOfPick(pick) {
+    var r = roundOf(pick), i = pick - (r - 1) * nTeams();
+    return r % 2 === 1 ? i : nTeams() + 1 - i;      // snake
+  }
+  function pickAt(round, slot) {
+    var i = round % 2 === 1 ? slot : nTeams() + 1 - slot;
+    return (round - 1) * nTeams() + i;
+  }
+  function label(pick) {
+    var r = roundOf(pick), i = pick - (r - 1) * nTeams();
+    return r + "." + (i < 10 ? "0" : "") + i;
+  }
+
+  function onClock() { return state.picks.length + 1; }
+
+  /** My draft slot: what I picked in the bar, or what the feed revealed. */
+  function mySlot() {
+    if (state.mySlot) return state.mySlot;
+    if (state.myTeam && state.slotOf[state.myTeam]) return state.slotOf[state.myTeam];
+    return null;
+  }
+
+  /** The next pick that is mine, and the one after it. */
+  function myPicks() {
+    var slot = mySlot(), now = onClock();
+    if (!slot) return [now, now + nTeams()];        // no slot set: assume it is mine
+    var out = [];
+    for (var r = 1; r <= CFG.rounds; r++) {
+      var p = pickAt(r, slot);
+      if (p >= now) out.push(p);
+      if (out.length === 3) break;
+    }
+    while (out.length < 2) out.push(totalPicks() + nTeams() * (out.length + 1));
+    return out;
+  }
+
+  function nameOfSlot(slot) {
+    for (var key in state.slotOf) {
+      if (state.slotOf[key] === slot) {
+        for (var t = 0; t < CFG.teams.length; t++) {
+          if (CFG.teams[t].key === key) return CFG.teams[t].name;
+        }
+      }
+    }
+    return "Slot " + slot;
+  }
+
+  // -------------------------------------------------------------- availability
+  function takenSet() {
+    var t = {};
+    for (var i = 0; i < state.picks.length; i++) t[state.picks[i].id] = true;
+    return t;
+  }
+
+  function availableIdx() {
+    var taken = takenSet(), out = [];
+    for (var i = 0; i < P.length; i++) if (!taken[P[i][YID]]) out.push(i);
+    return out;
+  }
+
+  function ncdf(x) {
+    var t = 1 / (1 + 0.2316419 * Math.abs(x));
+    var d = 0.3989422804014327 * Math.exp(-x * x / 2);
+    var p = d * t * (0.31938153 + t * (-0.356563782 + t * (1.781477937
+            + t * (-1.821255978 + t * 1.330274429))));
+    return x > 0 ? 1 - p : p;
+  }
+
+  /** P(this player is off the board by the time pick `k` comes round).
+   *
+   * Yahoo's average pick with a spread that widens down the board, scaled by
+   * how often he is drafted at all - a player taken in 40% of leagues cannot be
+   * more than 40% likely to be gone, however early his average pick is. */
+  function goneBy(i, k) {
+    var adp = P[i][ADP];
+    if (adp === null) return 0.04;                  // ranked, but nobody drafts him
+    var sd = P[i][ADPSD] || 4;
+    var pct = P[i][PCTD] === null ? 1 : P[i][PCTD];
+    return Math.max(0, Math.min(1, pct * ncdf((k - adp) / sd)));
+  }
+
+  /** P(still there at pick `k`), given he is still here at pick `now`. */
+  function survives(i, k, now) {
+    var a = goneBy(i, now), b = goneBy(i, k);
+    if (a >= 0.995) return 0.02;
+    return Math.max(0, Math.min(1, (1 - b) / (1 - a)));
+  }
+
+  // ------------------------------------------------------------- roster value
+  function repl(pos) { return CFG.replacement[pos] || 0; }
+  var FLEX_REPL = (function () {
+    var m = 0;
+    CFG.flexPositions.forEach(function (p) { m = Math.max(m, repl(p)); });
+    return m;
+  })();
+
+  var EMPTY_LINEUP = 0;      // set once lineupValue exists; see below
+
+  function rosterAt(slot) {
+    var out = [];
+    if (!slot) return out;
+    for (var i = 0; i < state.picks.length; i++) {
+      if (slotOfPick(state.picks[i].pick) === slot) {
+        var idx = byId[state.picks[i].id];
+        if (idx !== undefined) out.push(idx);
+      }
+    }
+    return out;
+  }
+  function myRoster() { return rosterAt(mySlot()); }
+
+  /** The starting lineup this set of players supports, in projected points,
+   *  with every slot nobody fills counted at replacement level. Dedicated slots
+   *  take the best player at their position; the flex slots then take the best
+   *  of whoever is left, which is both what a manager does and what makes a
+   *  fourth receiver worth less than a third. */
+  function lineupValue(ids) {
+    var pools = {};
+    for (var k = 0; k < ids.length; k++) {
+      var r = P[ids[k]];
+      (pools[r[POS]] = pools[r[POS]] || []).push(r[PROJ]);
+    }
+    for (var p in pools) pools[p].sort(function (a, b) { return b - a; });
+
+    var used = {}, total = 0, flexN = 0;
+    CFG.slots.forEach(function (s) {
+      var pos = s[0], n = s[1];
+      if (pos === CFG.flexSlot) { flexN += n; return; }
+      for (var c = 0; c < n; c++) {
+        var pool = pools[pos] || [], at = used[pos] || 0;
+        total += at < pool.length ? pool[at] : repl(pos);
+        used[pos] = at + 1;
+      }
+    });
+    for (var f = 0; f < flexN; f++) {
+      var best = null, bestPos = null;
+      CFG.flexPositions.forEach(function (pos) {
+        var pool = pools[pos] || [], at = used[pos] || 0;
+        if (at < pool.length && (best === null || pool[at] > best)) {
+          best = pool[at]; bestPos = pos;
+        }
+      });
+      if (best !== null && best > FLEX_REPL) { total += best; used[bestPos]++; }
+      else total += FLEX_REPL;
+    }
+    return total;
+  }
+
+  /** What adding this player does for that roster's starting lineup - and if
+   *  he does not crack it, what a bench spot he fills is worth. */
+  EMPTY_LINEUP = lineupValue([]);
+
+  function marginal(i, ids, base) {
+    var full = ids.length >= CFG.rounds;
+    if (full) return 0;
+    var gain = lineupValue(ids.concat([i])) - (base === undefined ? lineupValue(ids) : base);
+    var bench = BENCH_SHARE * Math.max(0, P[i][VORP]);
+    return Math.max(gain, bench);
+  }
+
+  /** Expected value of the best player at this position still there at pick k.
+   *
+   *  Walk the position in value order: the first one who survives is the one
+   *  taken, so his value counts for the chance he is there times the chance
+   *  everyone better is not. That is the expectation exactly, not a sample. */
+  function expectedBest(pos, k, ids, pool, now) {
+    var base = lineupValue(ids), scored = [];
+    for (var n = 0; n < pool.length; n++) {
+      var i = pool[n];
+      if (P[i][POS] !== pos) continue;
+      scored.push([i, marginal(i, ids, base)]);
+      if (scored.length >= LOOKAHEAD_DEPTH * 2) break;   // pool is value-ordered
+    }
+    scored.sort(function (a, b) { return b[1] - a[1]; });
+    var total = 0, none = 1;
+    for (var s = 0; s < Math.min(scored.length, LOOKAHEAD_DEPTH); s++) {
+      var live = survives(scored[s][0], k, now);
+      total += scored[s][1] * live * none;
+      none *= (1 - live);
+    }
+    return total;
+  }
+
+  // ------------------------------------------------------------ the two picks
+  /** Rank every candidate by what the *pair* of picks is worth: him now, plus
+   *  the best this roster could expect at its next pick with him already on it.
+   *  Taking the best player left is the special case of this where the board
+   *  never changes between your picks, which is never. */
+  function recommend() {
+    var ids = myRoster(), base = lineupValue(ids);
+    var picks = myPicks(), now = picks[0], next = picks[1];
+    var pool = availableIdx();
+    pool.sort(function (a, b) { return P[b][VORP] - P[a][VORP]; });
+
+    var cands = [];
+    for (var n = 0; n < pool.length && cands.length < CANDIDATES; n++) {
+      cands.push({ i: pool[n], now: marginal(pool[n], ids, base) });
+    }
+    cands.sort(function (a, b) { return b.now - a.now; });
+
+    // What each position is worth at the next pick if I do nothing now - the
+    // baseline every candidate is measured against.
+    var waitAt = {};
+    CFG.positions.forEach(function (pos) {
+      waitAt[pos] = expectedBest(pos, next, ids, pool, now);
+    });
+
+    cands.forEach(function (c) {
+      var after = ids.concat([c.i]);
+      var best = 0, bestPos = null;
+      CFG.positions.forEach(function (pos) {
+        var e = expectedBest(pos, next, after, pool.filter(function (x) { return x !== c.i; }), now);
+        if (e > best) { best = e; bestPos = pos; }
+      });
+      c.next = best;
+      c.nextPos = bestPos;
+      c.score = c.now + best;
+      c.wait = c.now - waitAt[P[c.i][POS]];      // cost of not taking him now
+      c.surv = survives(c.i, next, now);
+    });
+    cands.sort(function (a, b) { return b.score - a.score; });
+
+    // The best available at each position now, against what that position
+    // should still be worth at the next pick. The difference is the whole
+    // strategic question - which board is about to thin out, and which will
+    // keep. It is what the pair-scoring above is deciding with, shown plainly.
+    var byPos = {};
+    CFG.positions.forEach(function (pos) {
+      var best = null;
+      for (var n = 0; n < cands.length; n++) {
+        if (P[cands[n].i][POS] === pos) { best = cands[n]; break; }
+      }
+      if (!best) {
+        for (var m = 0; m < pool.length; m++) {
+          if (P[pool[m]][POS] === pos) {
+            best = { i: pool[m], now: marginal(pool[m], ids, base) };
+            break;
+          }
+        }
+      }
+      if (best) byPos[pos] = { best: best, later: waitAt[pos] };
+    });
+    return { list: cands, now: now, next: next, byPos: byPos };
+  }
+
+  // ------------------------------------------------------------------ context
+  /** How many players are left in this player's tier at his position. */
+  function tierLeft(i) {
+    var taken = takenSet(), n = 0;
+    for (var k = 0; k < P.length; k++) {
+      if (P[k][POS] === P[i][POS] && P[k][TIER] === P[i][TIER] && !taken[P[k][YID]]) n++;
+    }
+    return n;
+  }
+
+  /** Positions taken more often than their share over the last two rounds. */
+  function runs() {
+    var recent = state.picks.slice(-RUN_WINDOW), counts = {};
+    recent.forEach(function (p) {
+      var idx = byId[p.id];
+      if (idx === undefined) return;
+      counts[P[idx][POS]] = (counts[P[idx][POS]] || 0) + 1;
+    });
+    return { counts: counts, n: recent.length };
+  }
+
+  /** Bye weeks my starters already stack on, by position. */
+  function byeClash(i) {
+    var ids = myRoster(), pos = P[i][POS], bye = P[i][BYE], same = 0;
+    if (!bye) return 0;
+    ids.forEach(function (k) { if (P[k][POS] === pos && P[k][BYE] === bye) same++; });
+    return same;
+  }
+
+  // ------------------------------------------------------------------ helpers
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function n0(v) { return v === null || v === undefined ? "-" : Math.round(v); }
+  function n1(v) { return v === null || v === undefined ? "-" : v.toFixed(1); }
+  function pct(v) { return Math.round(v * 100) + "%"; }
+  function el(id) { return document.getElementById(id); }
+
+  function posTag(pos, rank) {
+    return '<span class="pos-tag pos-' + pos + '">' + pos + (rank || "") + "</span>";
+  }
+
+  // --------------------------------------------------------------- pick entry
+  function draft(i, atPick) {
+    var pick = atPick || onClock();
+    if (pick > totalPicks()) return;
+    state.picks = state.picks.filter(function (p) { return p.id !== P[i][YID]; });
+    state.picks.push({ pick: pick, id: P[i][YID], manual: true });
+    state.picks.sort(function (a, b) { return a.pick - b.pick; });
+    renumber();
+    save();
+    render();
+  }
+  function undo() {
+    if (!state.picks.length) return;
+    state.picks.pop();
+    save();
+    render();
+  }
+  function reset() {
+    if (!confirm("Clear every pick on this board?")) return;
+    state.picks = [];
+    save();
+    render();
+  }
+  /** Picks are a dense sequence; a hand-entered one out of order closes up. */
+  function renumber() {
+    state.picks.forEach(function (p, k) { p.pick = k + 1; });
+  }
+
+  // --------------------------------------------------------------- live feed
+  /** What the board is showing, in one string. The poll runs every few seconds
+   *  and Yahoo answers it whether or not a pick has landed; re-rendering on
+   *  every answer would rebuild the recommendations, the table and the grid
+   *  once a heartbeat - which on a phone is a visible stall, and which throws
+   *  away the reader's scroll position and whatever they were typing. */
+  function signature() {
+    return state.picks.length + "|"
+      + state.picks.map(function (p) { return p.id; }).join(",");
+  }
+
+  function applyFeed(data) {
+    var before = signature();
+    state.source = data.source || "none";
+    state.fetched = data.fetched || Date.now();
+
+    if (data.picks && data.picks.length) {
+      // Yahoo is publishing the draft itself: it wins outright, and it also
+      // says who is sitting in which slot.
+      var mapped = [];
+      data.picks.forEach(function (p) {
+        if (byId[p.player_id] === undefined) return;
+        mapped.push({ pick: p.pick, id: p.player_id, team: p.team_key });
+        if (p.team_key && p.round === 1) state.slotOf[p.team_key] = slotOfPick(p.pick);
+      });
+      var seen = {};
+      mapped.forEach(function (p) { seen[p.id] = true; });
+      // Anything typed in that Yahoo has not caught up to yet stays, after.
+      state.picks.filter(function (p) { return p.manual && !seen[p.id]; })
+        .forEach(function (p) { mapped.push(p); });
+      state.picks = mapped;
+      renumber();
+      save();
+      return signature() !== before;
+    }
+
+    // No pick list. Rosters or the taken-players feed still tell us who is off
+    // the board, which is most of what the recommendations need; the order is
+    // then a guess, so hand-entered picks keep their place ahead of it.
+    var ids = [];
+    if (data.rosters) {
+      for (var key in data.rosters) {
+        data.rosters[key].forEach(function (id) { ids.push({ id: id, team: key }); });
+      }
+    }
+    if (!ids.length && data.taken) {
+      data.taken.forEach(function (id) { ids.push({ id: id, team: null }); });
+    }
+    if (!ids.length) return false;
+
+    var have = {};
+    state.picks.forEach(function (p) { have[p.id] = true; });
+    var added = 0;
+    ids.forEach(function (x) {
+      if (have[x.id] || byId[x.id] === undefined) return;
+      state.picks.push({ pick: state.picks.length + 1, id: x.id, team: x.team });
+      have[x.id] = true;
+      added++;
+    });
+    if (added) { renumber(); save(); }
+    return signature() !== before;
+  }
+
+  function pull() {
+    if (!state.auto) return Promise.resolve();
+    return fetch("/api/cfb-draft?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        state.error = null;
+        if (applyFeed(data)) render(); else renderStatus();
+      })
+      .catch(function (err) {
+        state.error = String(err && err.message || err);
+        renderStatus();
+      });
+  }
+
+  // ------------------------------------------------------------------ status
+  function ago(ms) {
+    if (!ms) return "never";
+    var s = Math.round((Date.now() - ms) / 1000);
+    return s < 60 ? s + "s ago" : Math.round(s / 60) + "m ago";
+  }
+
+  function renderStatus() {
+    var pick = onClock(), done = pick > totalPicks();
+    var slot = slotOfPick(pick), mine = mySlot() && slot === mySlot();
+    var sourceText = {
+      draftresults: "following Yahoo's draft feed",
+      rosters: "following Yahoo rosters",
+      taken: "following Yahoo's taken list",
+      none: "no live feed yet - picks are the ones entered here",
+    }[state.source] || "";
+
+    el("ld-status").innerHTML = done
+      ? '<span class="ld-pill">Draft complete</span>'
+      : '<span class="ld-pill' + (mine ? " mine" : " live") + '">'
+        + (mine ? "Your pick" : "On the clock") + "</span>"
+        + '<span class="ld-clock">' + label(pick) + " &middot; overall " + pick + "</span>"
+        + '<span class="ld-note">' + esc(nameOfSlot(slot)) + "</span>";
+
+    el("ld-feed").innerHTML =
+      '<span class="ld-note">' + esc(sourceText)
+      + (state.auto ? " &middot; checked " + ago(state.fetched) : " &middot; auto-sync off")
+      + (state.error ? " &middot; last check failed" : "") + "</span>";
+  }
+
+  // --------------------------------------------------------- recommendations
+  function chips(c) {
+    var out = [], i = c.i, r = P[i];
+    var left = tierLeft(i);
+    if (left <= 3) {
+      out.push('<span class="ld-chip warn">' + r[POS] + " tier " + r[TIER] + ": "
+        + left + " left</span>");
+    }
+    if (c.surv < 0.35) {
+      out.push('<span class="ld-chip warn">' + pct(c.surv) + " to last</span>");
+    } else if (c.surv > 0.75) {
+      out.push('<span class="ld-chip good">' + pct(c.surv) + " to last</span>");
+    }
+    if (r[ADP] !== null) {
+      var gap = c.pickNow - r[ADP];        // picks he has lasted past his ADP
+      if (gap >= 10) out.push('<span class="ld-chip good">' + Math.round(gap)
+        + " past ADP " + n1(r[ADP]) + "</span>");
+      else if (gap <= -10) out.push('<span class="ld-chip warn">' + Math.round(-gap)
+        + " ahead of ADP " + n1(r[ADP]) + "</span>");
+    }
+    if (r[PLAYOFF] !== null && r[PLAYOFF] >= 1.06) {
+      out.push('<span class="ld-chip good">playoff schedule</span>');
+    } else if (r[PLAYOFF] !== null && r[PLAYOFF] <= 0.92) {
+      out.push('<span class="ld-chip warn">hard weeks ' + CFG.playoffWeek + "-"
+        + CFG.endWeek + "</span>");
+    }
+    var clash = byeClash(i);
+    if (clash) {
+      out.push('<span class="ld-chip warn">' + (clash + 1) + " " + r[POS]
+        + "s on bye week " + r[BYE] + "</span>");
+    }
+    var run = runs();
+    if (run.n >= 6 && (run.counts[r[POS]] || 0) / run.n >= 0.42) {
+      out.push('<span class="ld-chip warn">' + (run.counts[r[POS]] || 0) + " of last "
+        + run.n + " were " + r[POS] + "</span>");
+    }
+    return out.join("");
+  }
+
+  function why(c, best) {
+    var r = P[c.i], parts = [];
+    var lead = "Worth <b>" + n0(c.now) + "</b> to your lineup now";
+    if (c.wait > 4) {
+      lead += ", <b>" + n0(c.wait) + "</b> more than the best " + r[POS]
+        + " you should expect at " + label(c.pickNext);
+    } else if (c.wait < -4) {
+      lead += ", but the " + r[POS] + " pool holds up &mdash; waiting costs about "
+        + n0(-c.wait);
+    }
+    parts.push(lead);
+    if (c.nextPos) {
+      parts.push("Take him and " + label(c.pickNext) + " still lands a "
+        + c.nextPos + " worth about <b>" + n0(c.next) + "</b>");
+    }
+    if (best && c !== best) {
+      parts.push("<i>" + n0(best.score - c.score) + " behind the top pair</i>");
+    }
+    return parts.join(". ") + ".";
+  }
+
+  function renderRecs() {
+    var out = recommend();
+    var wrap = el("ld-recs");
+    if (!out.list.length) {
+      wrap.innerHTML = '<p class="ld-note">Every player on the board is gone.</p>';
+      return;
+    }
+    out.list.forEach(function (c) { c.pickNow = out.now; c.pickNext = out.next; });
+    var top = out.list[0], seen = {}, cards = [];
+    out.list.forEach(function (c) {
+      var pos = P[c.i][POS];
+      if (cards.length >= 5 || (seen[pos] || 0) >= 2) return;
+      seen[pos] = (seen[pos] || 0) + 1;
+      cards.push(c);
+    });
+    wrap.innerHTML = cards.map(function (c, k) {
+      var r = P[c.i];
+      return '<div class="ld-rec' + (k === 0 ? " top" : "") + '">'
+        + '<div class="hd"><span class="nm">' + esc(r[NAME]) + "</span>"
+        + posTag(r[POS], r[POSRK]) + '<span class="sub">' + esc(r[TEAM])
+        + " &middot; bye " + (r[BYE] || "-") + "</span>"
+        + '<span class="edge">' + n0(c.score) + "</span></div>"
+        + '<div class="chips">' + chips(c) + "</div>"
+        + '<p class="why">' + why(c, top) + "</p>"
+        + '<button data-take="' + c.i + '">'
+        + (out.now === onClock() ? "Draft at " : "Mark taken at ")
+        + label(onClock()) + "</button>"
+        + "</div>";
+    }).join("");
+
+    renderPositions(out);
+
+    el("ld-recs-note").innerHTML =
+      "Scored as a pair: what he adds to your starting lineup at <b>" + label(out.now)
+      + "</b>, plus the best your roster should expect at <b>" + label(out.next)
+      + "</b> once he is on it. Replacement level is this league's own &mdash; "
+      + Object.keys(CFG.replacement).map(function (p) {
+        return p + " " + Math.round(CFG.replacement[p]);
+      }).join(", ") + " points.";
+  }
+
+  /** One row per position: the best there is now, what the position should
+   *  still be worth at the next pick, and the gap between them. */
+  function renderPositions(out) {
+    var rows = CFG.positions.map(function (pos) {
+      var x = out.byPos[pos];
+      if (!x) return "";
+      var cost = x.best.now - x.later;
+      // "Holds" is the useful answer, not a rounded zero: it means this is the
+      // position to leave alone, which is a decision.
+      var cls = cost >= 15 ? "warn" : cost < 4 ? "good" : "";
+      var text = cost < 4 ? "holds" : "&minus;" + n0(cost);
+      return "<tr><td>" + posTag(pos, "") + "</td>"
+        + '<td class="nm">' + esc(P[x.best.i][NAME]) + " "
+        + '<span class="ld-note">' + esc(P[x.best.i][TEAM]) + "</span></td>"
+        + '<td class="v">' + n0(x.best.now) + "</td>"
+        + "<td>" + n0(x.later) + "</td>"
+        + '<td><span class="ld-chip ' + cls + '">' + text + "</span></td>"
+        + '<td><button class="ld-take" data-take="' + x.best.i + '">+</button></td></tr>';
+    }).join("");
+    el("ld-positions").innerHTML =
+      '<table class="ld-avail"><thead><tr><th>Pos</th><th>Best available</th>'
+      + '<th title="What he adds to your lineup right now">Now</th>'
+      + '<th title="What this position should still be worth at your next pick">'
+      + "At " + label(out.next) + "</th>"
+      + '<th title="What waiting on this position costs">Wait</th><th></th>'
+      + "</tr></thead><tbody>" + rows + "</tbody></table>";
+  }
+
+  // ------------------------------------------------------- best available
+  var SORTS = {
+    score: function (a, b) { return b.m - a.m; },
+    vorp: function (a, b) { return P[b.i][VORP] - P[a.i][VORP]; },
+    proj: function (a, b) { return P[b.i][PROJ] - P[a.i][PROJ]; },
+    adp: function (a, b) {
+      var x = P[a.i][ADP], y = P[b.i][ADP];
+      if (x === null) return 1;
+      if (y === null) return -1;
+      return x - y;
+    },
+    ceiling: function (a, b) { return P[b.i][CEIL] - P[a.i][CEIL]; },
+    floor: function (a, b) { return P[b.i][FLOOR] - P[a.i][FLOOR]; },
+    surv: function (a, b) { return a.s - b.s; },
+  };
+
+  function renderAvail() {
+    var ids = myRoster(), base = lineupValue(ids);
+    var picks = myPicks(), now = picks[0], next = picks[1];
+    var q = state.query.toLowerCase();
+
+    var list = availableIdx().filter(function (i) {
+      if (state.pos !== "ALL" && P[i][POS] !== state.pos) return false;
+      if (q && (P[i][NAME] + " " + P[i][TEAM] + " " + P[i][SCHOOL]).toLowerCase()
+        .indexOf(q) < 0) return false;
+      return true;
+    }).map(function (i) {
+      return { i: i, m: marginal(i, ids, base), s: survives(i, next, now) };
+    });
+    list.sort(SORTS[state.sort] || SORTS.score);
+
+    // Replacing the rows resets the scroller, and during a draft this list is
+    // being scrolled and tapped continuously - losing the reader's place on
+    // every pick is the difference between usable and not.
+    var scroller = document.querySelector(".ld-scroll");
+    var top = scroller ? scroller.scrollTop : 0;
+
+    var shown = list.slice(0, 120);
+    el("ld-avail-body").innerHTML = shown.length ? shown.map(function (c) {
+      var r = P[c.i];
+      return "<tr>"
+        + '<td class="nm">' + esc(r[NAME]) + "</td>"
+        + "<td>" + posTag(r[POS], r[POSRK]) + "</td>"
+        + '<td title="' + esc(r[SCHOOL] || "") + '">' + esc(r[TEAM] || "-") + "</td>"
+        + "<td>" + (r[BYE] || "-") + "</td>"
+        + '<td class="v">' + n0(r[PROJ]) + "</td>"
+        + "<td>" + n0(r[FLOOR]) + "&ndash;" + n0(r[CEIL]) + "</td>"
+        + '<td class="v">' + n0(r[VORP]) + "</td>"
+        + "<td>" + n0(c.m) + "</td>"
+        + "<td>" + r[TIER] + "</td>"
+        + "<td>" + (r[ADP] === null ? "-" : n1(r[ADP])) + "</td>"
+        + "<td>" + pct(c.s) + "</td>"
+        + '<td><button class="ld-take" data-take="' + c.i + '">+</button></td>'
+        + "</tr>";
+    }).join("") : '<tr><td colspan="12" class="ld-note">No players match.</td></tr>';
+
+    if (scroller) scroller.scrollTop = top;
+
+    el("ld-avail-count").textContent = "Showing " + shown.length + " of " + list.length
+      + " available" + (state.pos === "ALL" ? "" : " at " + state.pos)
+      + " · survival is to " + label(next) + ".";
+  }
+
+  // ------------------------------------------------------------- my lineup
+  function lineupRows() {
+    var ids = myRoster(), pools = {};
+    ids.forEach(function (i) { (pools[P[i][POS]] = pools[P[i][POS]] || []).push(i); });
+    for (var p in pools) {
+      pools[p].sort(function (a, b) { return P[b][PROJ] - P[a][PROJ]; });
+    }
+    var used = {}, rows = [], flexN = 0, starters = [];
+    CFG.slots.forEach(function (s) {
+      if (s[0] === CFG.flexSlot) { flexN += s[1]; return; }
+      for (var c = 0; c < s[1]; c++) {
+        var pool = pools[s[0]] || [], at = used[s[0]] || 0;
+        var who = at < pool.length ? pool[at] : null;
+        used[s[0]] = at + 1;
+        rows.push([s[0], who]);
+        if (who !== null) starters.push(who);
+      }
+    });
+    for (var f = 0; f < flexN; f++) {
+      var best = null, bestPos = null;
+      CFG.flexPositions.forEach(function (pos) {
+        var pool = pools[pos] || [], at = used[pos] || 0;
+        if (at < pool.length && (best === null || P[pool[at]][PROJ] > P[best][PROJ])) {
+          best = pool[at]; bestPos = pos;
+        }
+      });
+      if (best !== null) { used[bestPos]++; starters.push(best); }
+      rows.push([CFG.flexSlot, best]);
+    }
+    var bench = ids.filter(function (i) { return starters.indexOf(i) < 0; })
+      .sort(function (a, b) { return P[b][PROJ] - P[a][PROJ]; });
+    return { rows: rows, bench: bench, ids: ids };
+  }
+
+  function renderLineup() {
+    var lu = lineupRows();
+    var body = lu.rows.map(function (row) {
+      var slot = row[0], i = row[1];
+      if (i === null) {
+        return '<tr class="empty"><td class="slot">' + slot
+          + '</td><td>&mdash;</td><td class="pts"></td></tr>';
+      }
+      return '<tr><td class="slot">' + slot + "</td><td>" + esc(P[i][NAME])
+        + ' <span class="ld-note">' + P[i][POS] + " · " + esc(P[i][TEAM])
+        + " · bye " + (P[i][BYE] || "-") + '</span></td><td class="pts">'
+        + n0(P[i][PROJ]) + "</td></tr>";
+    }).join("");
+    var bench = lu.bench.map(function (i) {
+      return '<tr><td class="slot">BN</td><td>' + esc(P[i][NAME])
+        + ' <span class="ld-note">' + P[i][POS] + " · " + esc(P[i][TEAM])
+        + '</span></td><td class="pts">' + n0(P[i][PROJ]) + "</td></tr>";
+    }).join("");
+    el("ld-lineup").innerHTML = '<table class="ld-lineup">' + body + bench + "</table>";
+
+    // What the roster is short of: the slots still empty, and the byes stacking.
+    var empty = {}, byes = {};
+    lu.rows.forEach(function (row) { if (row[1] === null) empty[row[0]] = (empty[row[0]] || 0) + 1; });
+    lu.ids.forEach(function (i) {
+      if (P[i][BYE]) byes[P[i][BYE]] = (byes[P[i][BYE]] || 0) + 1;
+    });
+    var needs = Object.keys(empty).map(function (k) { return empty[k] + " " + k; });
+    var stack = Object.keys(byes).filter(function (w) { return byes[w] >= 3; })
+      .map(function (w) { return byes[w] + " on bye week " + w; });
+    var over = lineupValue(lu.ids) - EMPTY_LINEUP;
+    el("ld-need").innerHTML =
+      "<b>" + (over > 0 ? "+" : "") + n0(over) + "</b> over a replacement lineup"
+      + (needs.length ? " &middot; still to fill: <b>" + needs.join(", ") + "</b>"
+        : " &middot; <b>lineup full</b>")
+      + " &middot; " + lu.ids.length + " of " + CFG.rounds + " roster spots"
+      + (stack.length ? " &middot; <b>" + stack.join("; ") + "</b>" : "");
+  }
+
+  // ---------------------------------------------------------------- the board
+  function renderGrid() {
+    var byPick = {};
+    state.picks.forEach(function (p) { byPick[p.pick] = p; });
+    var mine = mySlot(), current = onClock();
+    var head = "<tr><th></th>";
+    for (var s = 1; s <= nTeams(); s++) {
+      head += "<th" + (s === mine ? ' style="color:#b45309"' : "") + ">"
+        + esc(nameOfSlot(s)) + "</th>";
+    }
+    head += "</tr>";
+
+    var body = "";
+    for (var r = 1; r <= CFG.rounds; r++) {
+      body += "<tr><th>" + r + "</th>";
+      for (var slot = 1; slot <= nTeams(); slot++) {
+        var no = pickAt(r, slot), p = byPick[no];
+        var idx = p ? byId[p.id] : undefined;
+        var cls = [];
+        if (idx !== undefined) cls.push("p-" + P[idx][POS]);
+        if (no === current) cls.push("on");
+        if (slot === mine) cls.push("mine");
+        body += '<td class="' + cls.join(" ") + '"><span class="pk">' + label(no) + "</span>"
+          + (idx !== undefined
+            ? '<span class="pl">' + esc(P[idx][NAME]) + "</span>"
+            : "") + "</td>";
+      }
+      body += "</tr>";
+    }
+    el("ld-grid").innerHTML = head + body;
+  }
+
+  // ------------------------------------------------------------------- wiring
+  function render() {
+    renderStatus();
+    renderRecs();
+    renderAvail();
+    renderLineup();
+    renderGrid();
+  }
+
+  function bind() {
+    document.addEventListener("click", function (ev) {
+      var take = ev.target.closest && ev.target.closest("[data-take]");
+      if (take) { draft(+take.dataset.take); return; }
+      var pos = ev.target.closest && ev.target.closest("[data-pos]");
+      if (pos) {
+        state.pos = pos.dataset.pos;
+        document.querySelectorAll("[data-pos]").forEach(function (b) {
+          b.classList.toggle("active", b === pos);
+        });
+        renderAvail();
+      }
+    });
+
+    el("ld-search").addEventListener("input", function (e) {
+      state.query = e.target.value; renderAvail();
+    });
+    el("ld-sort").addEventListener("change", function (e) {
+      state.sort = e.target.value; renderAvail();
+    });
+    el("ld-slot").addEventListener("change", function (e) {
+      state.mySlot = e.target.value ? +e.target.value : null;
+      save(); render();
+    });
+    el("ld-team").addEventListener("change", function (e) {
+      state.myTeam = e.target.value || null;
+      if (state.myTeam && state.slotOf[state.myTeam]) {
+        state.mySlot = state.slotOf[state.myTeam];
+        el("ld-slot").value = String(state.mySlot);
+      }
+      save(); render();
+    });
+    el("ld-auto").addEventListener("click", function () {
+      state.auto = !state.auto;
+      el("ld-auto").classList.toggle("on", state.auto);
+      el("ld-auto").textContent = state.auto ? "Auto-sync on" : "Auto-sync off";
+      save();
+      if (state.auto) pull();
+      else renderStatus();
+    });
+    el("ld-undo").addEventListener("click", undo);
+    el("ld-reset").addEventListener("click", reset);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+      if (e.key === "u") undo();
+      if (e.key === "/") { e.preventDefault(); el("ld-search").focus(); }
+    });
+  }
+
+  function fillControls() {
+    var slots = ['<option value="">Your draft slot…</option>'];
+    for (var s = 1; s <= nTeams(); s++) {
+      slots.push('<option value="' + s + '"' + (state.mySlot === s ? " selected" : "")
+        + ">Slot " + s + "</option>");
+    }
+    el("ld-slot").innerHTML = slots.join("");
+
+    var opts = ['<option value="">Your team…</option>'].concat(
+      CFG.teams.map(function (t) {
+        return '<option value="' + esc(t.key) + '"'
+          + (state.myTeam === t.key ? " selected" : "") + ">" + esc(t.name) + "</option>";
+      }));
+    el("ld-team").innerHTML = opts.join("");
+    el("ld-auto").classList.toggle("on", state.auto);
+    el("ld-auto").textContent = state.auto ? "Auto-sync on" : "Auto-sync off";
+  }
+
+  // The poll is fast while a draft is running and slow when one is not; a page
+  // left open overnight should not hammer the proxy for eight hours.
+  function interval() {
+    if (!state.auto) return 30000;
+    if (onClock() > totalPicks()) return 120000;
+    if (document.hidden) return 30000;
+    return state.picks.length ? 6000 : 15000;
+  }
+  function loop() {
+    pull().then(function () { setTimeout(loop, interval()); });
+  }
+
+  restore();
+  fillControls();
+  bind();
+  render();
+  loop();
+  setInterval(renderStatus, 5000);
+})();
+</script>{% endraw %}
