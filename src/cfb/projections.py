@@ -34,12 +34,14 @@ touchdowns mean the position outscores everything else on the board.
 
     python -m cfb.projections           # the top of the board, valued
 """
+import json
+
 import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
 from cfb import players, schools as schools_mod, yahoo
-from cfb.config import LEAGUE_TEAMS, SEASON
+from cfb.config import DATA_DIR, LEAGUE_TEAMS, SEASON
 
 # Positions this league can actually roster. Yahoo's board also ranks team
 # offence units ("OFF"), which most college leagues start and this one does
@@ -351,15 +353,47 @@ def _points_allowed_value(mean_allowed: np.ndarray, mods: dict,
     return total
 
 
-def _big_play_model(league: dict, season: int = SEASON - 1):
+# Where the fitted big-play line is kept, and what to use if it is missing and
+# cannot be refitted. The fallback is roughly the fit's own average defense; it
+# shifts every team's projection by the same amount, so the board still ranks
+# defenses correctly, it just prices them all a little flat.
+BIG_PLAY_CACHE = DATA_DIR / "def_big_play.json"
+BIG_PLAY_FALLBACK = (8.6, -0.153)
+
+
+def big_play_model(league: dict, season: int = SEASON - 1, refresh: bool = False):
     """(intercept, slope) of big-play defensive points per game on points allowed.
+
+    Two numbers off a finished season, so they are cached on disk and committed:
+    refitting them needs a CFBD key, and the machine that publishes this site
+    does not have one - a page that has to hold a credential to render is a page
+    that stops rendering the day the credential is somewhere else.
+    """
+    if not refresh and BIG_PLAY_CACHE.exists():
+        try:
+            saved = json.loads(BIG_PLAY_CACHE.read_text())
+            if saved.get("season") == season:
+                return float(saved["intercept"]), float(saved["slope"])
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            pass
+    try:
+        fit = _fit_big_play(league, season)
+    except Exception:
+        return BIG_PLAY_FALLBACK
+    BIG_PLAY_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    BIG_PLAY_CACHE.write_text(json.dumps(
+        {"season": season, "intercept": fit[0], "slope": fit[1]}, indent=1))
+    return fit
+
+
+def _fit_big_play(league: dict, season: int):
+    """Fit that line from CFBD's team season stats. Needs a key; called once.
 
     Sacks, takeaways and defensive scores are not in the game model, so they are
     estimated the only way available: from what defenses actually did last year,
-    against the one thing that does predict them - how good the defense is. The
-    fit is over FBS teams, and it is a line rather than a constant because good
-    defenses genuinely take the ball away more, by about the amount this
-    measures.
+    against the one thing that does predict them - how good the defense is. It
+    is a line rather than a constant because good defenses genuinely take the
+    ball away more, by about the amount this measures.
     """
     import requests
 
@@ -387,7 +421,7 @@ def _big_play_model(league: dict, season: int = SEASON - 1):
         points.append(big / games)
         allowed.append(opp / games)
     if len(points) < 20:
-        return float(np.mean(points) if points else 6.0), 0.0
+        raise RuntimeError(f"only {len(points)} teams with a full season of stats")
     slope, intercept = np.polyfit(allowed, points, 1)
     return float(intercept), float(slope)
 
@@ -395,7 +429,7 @@ def _big_play_model(league: dict, season: int = SEASON - 1):
 def defense_projections(env: pd.DataFrame, league: dict) -> pd.DataFrame:
     """Projected season points for every school's defense, from the game model."""
     mods = _def_modifiers(league)
-    intercept, slope = _big_play_model(league)
+    intercept, slope = big_play_model(league)
     per_game = (_points_allowed_value(env["allowed"].to_numpy(), mods)
                 + intercept + slope * env["allowed"].to_numpy())
     playoff = (_points_allowed_value(env["playoff_allowed"].fillna(env["allowed"]).to_numpy(), mods)

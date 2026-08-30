@@ -114,6 +114,27 @@ def test_offensive_and_defensive_interceptions_do_not_collide():
     assert projections._def_modifiers(league)["Int"] > 0
 
 
+def test_the_page_builds_without_a_cfbd_key(monkeypatch):
+    """This is why the first deploy failed: the defensive big-play line was
+    refitted from CFBD on every build, and the machine that publishes the site
+    has no CFBD key. A page that needs a credential to render is a page that
+    stops rendering the day the credential is somewhere else."""
+    import cfb.lines
+
+    def no_key():
+        raise RuntimeError("CFBD_KEY is not set; put it in .env")
+
+    monkeypatch.setattr(cfb.lines, "_key", no_key)
+    monkeypatch.setattr(projections, "BIG_PLAY_CACHE",
+                        projections.BIG_PLAY_CACHE.with_name("absent.json"))
+    fit = projections.big_play_model(yahoo.league())
+    assert fit == projections.BIG_PLAY_FALLBACK
+
+    # And with the cache present - which is the committed, normal case - it
+    # never reaches for the key at all.
+    assert projections.BIG_PLAY_CACHE.with_name("def_big_play.json").exists()
+
+
 def test_defense_scores_more_for_allowing_less():
     """A defense's projection is built from the game model's predicted opponent
     score, integrated over Yahoo's points-allowed brackets - so it has to fall
