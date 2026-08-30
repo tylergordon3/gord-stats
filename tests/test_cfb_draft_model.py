@@ -194,7 +194,7 @@ def test_field_order_matches_the_indices_the_script_reads():
              "RANK": "rank", "POSRK": "pos_rank", "PROJ": "proj", "FLOOR": "floor",
              "CEIL": "ceiling", "VORP": "vorp", "TIER": "tier",
              "PLAYOFF": "playoff_ratio", "TSCORED": "team_scored",
-             "OPPALL": "opp_allowed", "YID": "yahoo_id"}
+             "OPPALL": "opp_allowed", "YID": "yahoo_id", "ESPN": "espn"}
     assert set(declared) == set(names), "the script and this test disagree"
     for const, field in names.items():
         assert draft_live._FIELDS[int(declared[const])] == field, (

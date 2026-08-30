@@ -50,7 +50,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from cfb import projections, yahoo
+from cfb import projections, schools as schools_mod, yahoo
 from cfb.config import (
     DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, LEAGUE_URL, SEASON, WEB_DIR,
 )
@@ -63,7 +63,8 @@ OUTPUT = WEB_DIR / "live" / "index.html"
 # here is the order the page script reads them in, and the two must agree.
 _FIELDS = ["player", "pos", "team", "school", "bye", "adp", "pct_drafted",
            "adp_sd", "rank", "pos_rank", "proj", "floor", "ceiling", "vorp",
-           "tier", "playoff_ratio", "team_scored", "opp_allowed", "yahoo_id"]
+           "tier", "playoff_ratio", "team_scored", "opp_allowed", "yahoo_id",
+           "espn"]
 
 # Positions the filter chips offer, in the order a roster fills.
 POSITIONS = ["QB", "RB", "WR", "TE", "DEF"]
@@ -130,7 +131,8 @@ def _bench(league: dict) -> int:
 
 def config(board: pd.DataFrame, league: dict) -> dict:
     levels = projections.replacement_levels(board, league)
-    teams = [{"key": t["team_key"], "name": t["name"]} for t in league["teams"]]
+    teams = [{"key": t["team_key"], "name": t["name"], "logo": t.get("logo") or ""}
+             for t in league["teams"]]
     mine = next((t["team_key"] for t in league["teams"] if t["name"] == MY_TEAM), None)
     if MY_TEAM and mine is None:
         raise ValueError(f"MY_TEAM {MY_TEAM!r} is not a team in this league")
@@ -177,6 +179,12 @@ _CSS = """<style>
 .ld-pill.live{background:#1a7f4b;color:#fff}
 .ld-pill.mine{background:#b45309;color:#fff}
 .ld-note{font-size:12px;color:#4a5a68}
+img.ld-tlogo{width:16px;height:16px;border-radius:50%;vertical-align:-3px;
+  margin-right:5px;background:#fff;object-fit:cover}
+table.ld-grid th img.ld-tlogo{display:block;width:18px;height:18px;margin:0 auto 2px}
+.ld-panel h3 img.ld-tlogo{vertical-align:-4px}
+img.ld-slogo{width:15px;height:15px;vertical-align:-3px;margin-right:3px}
+table.ld-avail td.tm{text-align:left}
 #ld-status,#ld-feed{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ld-clock{font-family:monospace;font-size:15px;font-weight:700;color:#0f172a}
 
@@ -296,7 +304,8 @@ _ENGINE = r"""
   // Column indices into a board row - the order _FIELDS ships them in.
   var NAME = 0, POS = 1, TEAM = 2, SCHOOL = 3, BYE = 4, ADP = 5, PCTD = 6,
       ADPSD = 7, RANK = 8, POSRK = 9, PROJ = 10, FLOOR = 11, CEIL = 12,
-      VORP = 13, TIER = 14, PLAYOFF = 15, TSCORED = 16, OPPALL = 17, YID = 18;
+      VORP = 13, TIER = 14, PLAYOFF = 15, TSCORED = 16, OPPALL = 17, YID = 18,
+      ESPN = 19;
 
   // What a player who never cracks the lineup is worth, as a share of his value
   // over replacement. Six bench spots on a seventeen-round roster is a lot of
@@ -418,15 +427,25 @@ _ENGINE = r"""
     return out;
   }
 
-  function nameOfSlot(slot) {
+  function teamOfSlot(slot) {
     for (var key in state.slotOf) {
       if (state.slotOf[key] === slot) {
         for (var t = 0; t < CFG.teams.length; t++) {
-          if (CFG.teams[t].key === key) return CFG.teams[t].name;
+          if (CFG.teams[t].key === key) return CFG.teams[t];
         }
       }
     }
-    return "Slot " + slot;
+    return null;
+  }
+  function nameOfSlot(slot) {
+    var t = teamOfSlot(slot);
+    return t ? t.name : "Slot " + slot;
+  }
+  function logoOfSlot(slot) {
+    var t = teamOfSlot(slot);
+    return t && t.logo
+      ? '<img class="ld-tlogo" src="' + esc(t.logo) + '" alt="" loading="lazy">'
+      : "";
   }
 
   // -------------------------------------------------------------- availability
@@ -701,6 +720,14 @@ _RENDER = r"""
     return '<span class="pos-tag pos-' + pos + '">' + pos + (rank || "") + "</span>";
   }
 
+  /** The school's mark, off the ESPN id the schedule pages already key on. */
+  function schoolLogo(i) {
+    var id = P[i][ESPN];
+    if (!id) return "";
+    return '<img class="ld-slogo" loading="lazy" alt="" '
+      + 'src="https://a.espncdn.com/i/teamlogos/ncaa/500/' + esc(id) + '.png">';
+  }
+
   // --------------------------------------------------------------- pick entry
   function draft(i, atPick) {
     var pick = atPick || onClock();
@@ -842,7 +869,7 @@ _RENDER = r"""
       : '<span class="ld-pill' + (mine ? " mine" : " live") + '">'
         + (mine ? "Your pick" : "On the clock") + "</span>"
         + '<span class="ld-clock">' + label(pick) + " &middot; overall " + pick + "</span>"
-        + '<span class="ld-note">' + esc(nameOfSlot(slot)) + "</span>";
+        + '<span class="ld-note">' + logoOfSlot(slot) + esc(nameOfSlot(slot)) + "</span>";
 
     el("ld-feed").innerHTML =
       '<span class="ld-note">' + esc(sourceText)
@@ -929,8 +956,8 @@ _RENDER = r"""
       var r = P[c.i];
       return '<div class="ld-rec' + (k === 0 ? " top" : "") + '">'
         + '<div class="hd"><span class="nm">' + esc(r[NAME]) + "</span>"
-        + posTag(r[POS], r[POSRK]) + '<span class="sub">' + esc(r[TEAM])
-        + " &middot; bye " + (r[BYE] || "-") + "</span>"
+        + posTag(r[POS], r[POSRK]) + '<span class="sub">' + schoolLogo(c.i)
+        + esc(r[TEAM]) + " &middot; bye " + (r[BYE] || "-") + "</span>"
         + '<span class="edge">' + n0(c.score) + "</span></div>"
         + '<div class="chips">' + chips(c) + "</div>"
         + '<p class="why">' + why(c, top) + "</p>"
@@ -966,7 +993,8 @@ _RENDER2 = r"""
       var text = cost < 4 ? "holds" : "&minus;" + n0(cost);
       return "<tr><td>" + posTag(pos, "") + "</td>"
         + '<td class="nm">' + esc(P[x.best.i][NAME]) + " "
-        + '<span class="ld-note">' + esc(P[x.best.i][TEAM]) + "</span></td>"
+        + '<span class="ld-note">' + schoolLogo(x.best.i)
+        + esc(P[x.best.i][TEAM]) + "</span></td>"
         + '<td class="v">' + n0(x.best.now) + "</td>"
         + "<td>" + n0(x.later) + "</td>"
         + '<td><span class="ld-chip ' + cls + '">' + text + "</span></td>"
@@ -1058,7 +1086,8 @@ _RENDER2 = r"""
       return "<tr>"
         + '<td class="nm">' + esc(r[NAME]) + "</td>"
         + "<td>" + posTag(r[POS], r[POSRK]) + "</td>"
-        + '<td title="' + esc(r[SCHOOL] || "") + '">' + esc(r[TEAM] || "-") + "</td>"
+        + '<td class="tm" title="' + esc(r[SCHOOL] || "") + '">' + schoolLogo(c.i)
+        + esc(r[TEAM] || "-") + "</td>"
         + "<td>" + (r[BYE] || "-") + "</td>"
         + '<td class="v">' + n0(r[PROJ]) + "</td>"
         + "<td>" + n0(r[FLOOR]) + "&ndash;" + n0(r[CEIL]) + "</td>"
@@ -1113,6 +1142,12 @@ _RENDER2 = r"""
   }
 
   function renderLineup() {
+    var mine = null;
+    for (var t = 0; t < CFG.teams.length; t++) {
+      if (CFG.teams[t].key === state.myTeam) mine = CFG.teams[t];
+    }
+    el("ld-my-logo").innerHTML = mine && mine.logo
+      ? '<img class="ld-tlogo" src="' + esc(mine.logo) + '" alt="">' : "";
     var lu = lineupRows();
     var body = lu.rows.map(function (row) {
       var slot = row[0], i = row[1];
@@ -1121,14 +1156,15 @@ _RENDER2 = r"""
           + '</td><td>&mdash;</td><td class="pts"></td></tr>';
       }
       return '<tr><td class="slot">' + slot + "</td><td>" + esc(P[i][NAME])
-        + ' <span class="ld-note">' + P[i][POS] + " · " + esc(P[i][TEAM])
-        + " · bye " + (P[i][BYE] || "-") + '</span></td><td class="pts">'
-        + n0(P[i][PROJ]) + "</td></tr>";
+        + ' <span class="ld-note">' + P[i][POS] + " · " + schoolLogo(i)
+        + esc(P[i][TEAM]) + " · bye " + (P[i][BYE] || "-")
+        + '</span></td><td class="pts">' + n0(P[i][PROJ]) + "</td></tr>";
     }).join("");
     var bench = lu.bench.map(function (i) {
       return '<tr><td class="slot">BN</td><td>' + esc(P[i][NAME])
-        + ' <span class="ld-note">' + P[i][POS] + " · " + esc(P[i][TEAM])
-        + '</span></td><td class="pts">' + n0(P[i][PROJ]) + "</td></tr>";
+        + ' <span class="ld-note">' + P[i][POS] + " · " + schoolLogo(i)
+        + esc(P[i][TEAM]) + '</span></td><td class="pts">' + n0(P[i][PROJ])
+        + "</td></tr>";
     }).join("");
     el("ld-lineup").innerHTML = '<table class="ld-lineup">' + body + bench + "</table>";
 
@@ -1159,7 +1195,7 @@ _RENDER2 = r"""
     for (var s = 1; s <= nTeams(); s++) {
       head += '<th data-slot="' + s + '" title="Click if this column is yours"'
         + (s === mine ? ' class="mine-col"' : "") + ">"
-        + esc(nameOfSlot(s)) + "</th>";
+        + logoOfSlot(s) + esc(nameOfSlot(s)) + "</th>";
     }
     head += "</tr>";
 
@@ -1374,7 +1410,8 @@ def _available_section() -> str:
 
 
 def _roster_section() -> str:
-    return ('<div class="ld-panel"><h3>Your Roster</h3><div class="body">'
+    return ('<div class="ld-panel"><h3><span id="ld-my-logo"></span>Your Roster</h3>'
+            '<div class="body">'
             '<div id="ld-lineup"></div><p class="ld-need" id="ld-need"></p>'
             "</div></div>")
 
@@ -1439,6 +1476,8 @@ def _how_it_works(board: pd.DataFrame, league: dict) -> str:
 def body() -> str:
     league = yahoo.league()
     board = projections.value_board()
+    # ESPN team id per school, for the logo CDN the rest of the section uses.
+    board["espn"] = board["school"].map(schools_mod.espn_ids())
     payload = json.dumps(config(board, league), separators=(",", ":"))
     script = ("{% raw %}<script>window.LD_CFG=" + payload + ";</script>"
               "<script>" + _ENGINE + _RENDER + _RENDER2 + _WIRE + "</script>{% endraw %}")
