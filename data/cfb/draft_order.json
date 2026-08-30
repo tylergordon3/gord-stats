@@ -1,0 +1,16 @@
+{
+  "season": 2026,
+  "note": "Round 1 order, read off Yahoo's draft client. Yahoo's public API does not publish the order before the draft (checked: teams, settings and draftresults all omit it), so it is recorded here by hand. Once the draft runs, the live feed's round-one picks override this. Names must match cfb.yahoo.league() teams exactly; the build fails if one does not.",
+  "order": [
+    "Too B1G Too Strong Too Fast",
+    "Puntaholics",
+    "I Stand With Diggs",
+    "Cameron's Choice Team",
+    "Jackson's Brilliant Team",
+    "Noah's Nice Team",
+    "Austin's Best Team",
+    "Max's Majestic Team",
+    "Colin's Champion Team",
+    "Mike Locksley"
+  ]
+}

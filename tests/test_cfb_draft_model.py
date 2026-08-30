@@ -201,6 +201,19 @@ def test_field_order_matches_the_indices_the_script_reads():
             f"{const} points at {draft_live._FIELDS[int(declared[const])]}, not {field}")
 
 
+def test_draft_order_covers_every_team_exactly_once():
+    """Yahoo does not publish the draft order before the draft, so it is typed
+    in from the draft client. A name that matches no team, or a slot that holds
+    two, assigns picks to the wrong roster - and every recommendation after that
+    is answering a question about somebody else's team."""
+    league = yahoo.league()
+    order = draft_live.draft_order(league)
+    keys = {t["team_key"] for t in league["teams"]}
+
+    assert set(order) == keys, "the recorded order is not this league's ten teams"
+    assert sorted(order.values()) == list(range(1, len(keys) + 1))
+
+
 def test_payload_carries_every_row_and_the_league_shape():
     board = projections.value_board()
     league = yahoo.league()

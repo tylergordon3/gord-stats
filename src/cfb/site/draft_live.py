@@ -51,7 +51,9 @@ import numpy as np
 import pandas as pd
 
 from cfb import projections, yahoo
-from cfb.config import LEAGUE_TEAMS, LEAGUE_TZ, LEAGUE_URL, SEASON, WEB_DIR
+from cfb.config import (
+    DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, LEAGUE_URL, SEASON, WEB_DIR,
+)
 from cfb.site import write_page
 
 OUTPUT = WEB_DIR / "live" / "index.html"
@@ -86,6 +88,31 @@ def rows(board: pd.DataFrame) -> list:
             for row in frame[_FIELDS].itertuples(index=False, name=None)]
 
 
+def draft_order(league: dict) -> dict:
+    """{team key: draft slot}, from data/cfb/draft_order.json.
+
+    Yahoo's public API does not publish the order before the draft - teams,
+    settings and draftresults all omit it - but the order is set in the draft
+    client days beforehand, and knowing it is what lets the board name the ten
+    columns, work out whose pick is on the clock, and fill in a slot the moment
+    a team is chosen. So it is recorded by hand and read here.
+
+    Matched on the team's name rather than its key, because a name is what can
+    be read off the draft client; an unmatched name raises rather than silently
+    dropping a slot, since a wrong slot map assigns picks to the wrong roster
+    and every recommendation after it is answering the wrong question.
+    """
+    path = DATA_DIR / "draft_order.json"
+    if not path.exists():
+        return {}
+    order = json.loads(path.read_text()).get("order") or []
+    keys = {t["name"]: t["team_key"] for t in league["teams"]}
+    unknown = [n for n in order if n not in keys]
+    if unknown:
+        raise ValueError(f"draft_order.json names no team in this league: {unknown}")
+    return {keys[name]: slot for slot, name in enumerate(order, start=1)}
+
+
 def _slots(league: dict) -> list:
     """Starting slots as [position, count], bench and IL dropped."""
     return [[s["position"], int(s["count"])] for s in league["roster"]
@@ -103,6 +130,7 @@ def config(board: pd.DataFrame, league: dict) -> dict:
     return {
         "rows": rows(board),
         "teams": teams,
+        "slotOf": draft_order(league),
         "numTeams": int(league.get("num_teams") or LEAGUE_TEAMS),
         "rounds": rounds,
         "slots": _slots(league),
@@ -277,11 +305,21 @@ _ENGINE = r"""
   // pick number 34 is, and that is knowable from the pick alone. Team keys are
   // metadata - what Yahoo calls the manager sitting in that slot - and arrive
   // only if Yahoo publishes the draft live. The board never needs them to work.
+  /** The slot map, layered: the order recorded at build time is the base, a
+   *  correction saved in this browser wins over it, and the live feed - which
+   *  is the draft actually happening - wins over both. */
+  function seedSlots(saved) {
+    var out = {};
+    for (var k in (CFG.slotOf || {})) out[k] = CFG.slotOf[k];
+    for (var j in (saved || {})) out[j] = saved[j];
+    return out;
+  }
+
   var state = {
     picks: [],            // {pick, id, team, manual}
     mySlot: null,         // 1..teams, chosen or learnt
     myTeam: null,         // Yahoo team key, for names and for the live feed
-    slotOf: {},           // team key -> draft slot, once the feed says
+    slotOf: {},           // team key -> draft slot; seeded below
     auto: true,
     source: "none",
     fetched: 0,
@@ -301,6 +339,7 @@ _ENGINE = r"""
     } catch (e) { /* private mode; the board still works, it just forgets */ }
   }
   function restore() {
+    state.slotOf = seedSlots(null);
     try {
       var raw = localStorage.getItem(STORE);
       if (!raw) return;
@@ -308,7 +347,7 @@ _ENGINE = r"""
       state.picks = s.picks || [];
       state.mySlot = s.mySlot || null;
       state.myTeam = s.myTeam || null;
-      state.slotOf = s.slotOf || {};
+      state.slotOf = seedSlots(s.slotOf);
       if (s.auto === false) state.auto = false;
     } catch (e) { /* corrupt or unreadable; start clean */ }
   }
@@ -1107,8 +1146,9 @@ _WIRE = r"""
   function fillControls() {
     var slots = ['<option value="">Your draft slot…</option>'];
     for (var s = 1; s <= nTeams(); s++) {
+      var who = nameOfSlot(s);
       slots.push('<option value="' + s + '"' + (state.mySlot === s ? " selected" : "")
-        + ">Slot " + s + "</option>");
+        + ">" + s + ". " + esc(who === "Slot " + s ? "(unknown)" : who) + "</option>");
     }
     el("ld-slot").innerHTML = slots.join("");
 
