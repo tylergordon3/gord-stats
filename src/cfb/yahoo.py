@@ -458,6 +458,49 @@ def transactions(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) ->
                    refresh, max_age_hours)
 
 
+def _parse_rosters(raw: dict) -> dict:
+    """{team_key: [player_id, ...]} from teams;out=roster.
+
+    Yahoo nests each team as [metadata parts, {roster: ...}] and is not
+    consistent about whether the players collection sits under roster["0"] or
+    on the roster itself; both shapes arrive and both are read.
+    """
+    out = {}
+    for k, v in (_league_block(raw, "teams") or {}).items():
+        if k == "count":
+            continue
+        parts = v["team"]
+        meta = _fold(parts[0])
+        key = meta.get("team_key")
+        if not key:
+            continue
+        ids = []
+        for part in parts[1:]:
+            if not isinstance(part, dict) or "roster" not in part:
+                continue
+            roster = part["roster"] or {}
+            players = ((roster.get("0") or {}).get("players")
+                       or roster.get("players") or {})
+            for pk, pv in players.items():
+                if pk == "count":
+                    continue
+                pmeta = _fold(pv["player"][0])
+                if pmeta.get("player_id"):
+                    ids.append(str(pmeta["player_id"]))
+        out[key] = ids
+    return out
+
+
+def rosters(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> dict:
+    """Every team's current roster, {team_key: [player_id, ...]}.
+
+    Empty lists before the draft; afterwards this is the live truth the power
+    rankings follow, waivers and trades included."""
+    return _cached("rosters",
+                   lambda: _parse_rosters(_get(f"league/{LEAGUE_KEY}/teams;out=roster")),
+                   refresh, max_age_hours)
+
+
 def _parse_draft(raw: dict) -> list[dict]:
     block = _league_block(raw, "draft_results")
     if not isinstance(block, dict):        # an empty list before the draft

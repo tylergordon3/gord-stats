@@ -5,6 +5,9 @@ Four sections, each rendering whatever the season has produced so far and
 saying plainly what it is still waiting on:
 
   * Standings      - records, points, FAAB and moves (teams exist predraft).
+  * Power Rankings - every roster's best starting lineup in projected season
+                     points, off the draft board's own projections; follows
+                     the live rosters, so waivers move it all season.
   * Matchups       - the current week's scoreboard; pairings before kickoff,
                      projections and points once Yahoo serves them.
   * Draft Results  - empty until the draft; afterwards the snake grid coloured
@@ -156,6 +159,146 @@ def matchups_section(sb: dict) -> str:
             + '<div class="table-scroll"><table class="lg-table">'
               "<thead><tr><th></th><th colspan='2'>Score</th><th></th></tr></thead>"
             f'<tbody>{"".join(rows)}</tbody></table></div>')
+
+
+# --------------------------------------------------------------------------- #
+# Power rankings
+# --------------------------------------------------------------------------- #
+# Each roster priced the way the live draft board priced the players: the best
+# starting lineup it can field, in projected season points under this league's
+# own scoring and slots. Built from Yahoo's roster feed so waivers and trades
+# move the rankings all season; the feed stays empty until the draft completes
+# (checked during the live one), so fresh off the draft the picks stand in.
+
+def _team_rosters() -> dict:
+    """{team_key: [player_id, ...]} - live rosters, or the draft while
+    Yahoo's roster feed still lags it."""
+    rosters = yahoo.rosters()
+    if any(rosters.values()):
+        return rosters
+    out = {}
+    for p in yahoo.draft_results():
+        pid = str(p["player_key"] or "").rsplit(".", 1)[-1]
+        out.setdefault(p["team_key"], []).append(pid)
+    return out
+
+
+def _best_lineup(players: pd.DataFrame, lg: dict) -> dict:
+    """The best starting lineup this roster supports.
+
+    Dedicated slots take the top projections at their position; the flex slots
+    then take the best skill player left - the same fill the live board uses,
+    because it is what a manager setting a lineup does. A slot nobody fills
+    counts zero, which is what makes a half-drafted roster rank honestly low.
+    """
+    from cfb import projections
+
+    pools = {p: players[players["pos"] == p].sort_values("proj", ascending=False)
+             for p in projections.POSITIONS}
+    used = {p: 0 for p in pools}
+    by_pos = {p: 0.0 for p in pools}
+    starters, flex_n = [], 0
+    for slot in lg["roster"]:
+        pos, n = slot["position"], int(slot["count"])
+        if pos == projections.FLEX_SLOT:
+            flex_n += n
+            continue
+        if pos not in pools:
+            continue
+        for _ in range(n):
+            pool = pools[pos]
+            if used[pos] < len(pool):
+                by_pos[pos] += float(pool.iloc[used[pos]]["proj"])
+                starters.append(pool.index[used[pos]])
+            used[pos] += 1
+    for _ in range(flex_n):
+        best_pos = None
+        best = 0.0
+        for pos in projections.FLEX_POSITIONS:
+            pool = pools[pos]
+            if used[pos] < len(pool) and float(pool.iloc[used[pos]]["proj"]) > best:
+                best, best_pos = float(pool.iloc[used[pos]]["proj"]), pos
+        if best_pos is None:
+            continue
+        by_pos[best_pos] += best
+        starters.append(pools[best_pos].index[used[best_pos]])
+        used[best_pos] += 1
+
+    lineup = players.loc[starters]
+    bench = players.drop(starters)
+    weight = lineup["proj"].sum()
+    ratio = (lineup["proj"] * lineup["playoff_ratio"].fillna(1.0)).sum() / weight \
+        if weight else 1.0
+    return {
+        "total": float(sum(by_pos.values())),
+        "by_pos": by_pos,
+        "bench": float(bench["vorp"].clip(lower=0).sum()),
+        "playoff": float(ratio),
+        "anchor": (lineup.loc[lineup["vorp"].idxmax()] if len(lineup) else None),
+    }
+
+
+def power_section(lg: dict) -> str:
+    from cfb import projections
+
+    rosters = _team_rosters()
+    if not any(rosters.values()):
+        return ("<p>Nothing to rank yet — the rankings appear on the first "
+                "rebuild after the draft, priced off the same projections as "
+                "the live draft board.</p>")
+
+    board = (projections.value_board().drop_duplicates("yahoo_id")
+             .set_index("yahoo_id"))
+    names = {t["team_key"]: t for t in lg["teams"]}
+    rows = []
+    for key, ids in rosters.items():
+        have = [i for i in dict.fromkeys(ids) if i in board.index]
+        r = _best_lineup(board.loc[have], lg)
+        r["team"] = names.get(key, {"name": key})
+        r["unrated"] = len(set(ids)) - len(have)
+        rows.append(r)
+    rows.sort(key=lambda r: r["total"], reverse=True)
+    avg = sum(r["total"] for r in rows) / len(rows)
+    best_pos = {p: max(r["by_pos"][p] for r in rows) for p in projections.POSITIONS}
+
+    cells = []
+    for i, r in enumerate(rows, 1):
+        t = r["team"]
+        logo = (f'<img class="lg-logo" src="{t["logo"]}" alt="" loading="lazy">'
+                if t.get("logo") else "")
+        edge = r["total"] - avg
+        pos_tds = "".join(
+            f"<td>{'<b>' if r['by_pos'][p] == best_pos[p] and r['by_pos'][p] else ''}"
+            f"{r['by_pos'][p]:.0f}"
+            f"{'</b>' if r['by_pos'][p] == best_pos[p] and r['by_pos'][p] else ''}</td>"
+            for p in projections.POSITIONS)
+        tilt = (r["playoff"] - 1) * 100
+        anchor = (f"{r['anchor']['player']} ({r['anchor']['pos']})"
+                  if r["anchor"] is not None else "—")
+        cells.append(
+            f'<tr><td>{i}</td><td class="lg-team">{logo}{t["name"]}'
+            + (f' <span class="mu-note">({r["unrated"]} unrated)</span>'
+               if r["unrated"] else "") + "</td>"
+            f"<td><b>{r['total']:.0f}</b></td>"
+            f"<td>{edge:+.0f}</td>{pos_tds}"
+            f"<td>{r['bench']:.0f}</td>"
+            f"<td>{tilt:+.0f}%</td>"
+            f'<td class="lg-team">{anchor}</td></tr>')
+
+    return (
+        "<p>Every roster priced the way the draft board priced the players: "
+        "the best starting lineup it can field, in projected season points "
+        "under this league's scoring. <b>Bench</b> is the value over "
+        "replacement sitting behind the starters; <b>Wks "
+        f"{lg['playoff_start_week']}–{lg['end_week']}</b> is how the lineup's "
+        "schedule tilts across the fantasy playoffs. Rebuilt daily, so "
+        "waivers and trades move it all season.</p>"
+        '<div class="table-scroll"><table class="lg-table">'
+        "<thead><tr><th>Rk</th><th>Team</th><th>Lineup</th><th>±Avg</th>"
+        "<th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
+        f"<th>Bench</th><th>Wks {lg['playoff_start_week']}–{lg['end_week']}</th>"
+        "<th>Anchor</th></tr></thead>"
+        f'<tbody>{"".join(cells)}</tbody></table></div>')
 
 
 # --------------------------------------------------------------------------- #
@@ -313,6 +456,7 @@ def body() -> str:
         f'{lg["playoff_start_week"]}. Rebuilt daily (last: {built}); every '
         "section below fills in as the season generates it.</p>"
         + _details("Standings", standings_section(lg), open=True)
+        + _details("Power Rankings", power_section(lg), open=drafted)
         + _details(f"Matchups — Week {int(sb['week']) if sb.get('week') else '?'}",
                    matchups_section(sb), open=True)
         + _details("Draft Results", draft_section(picks, lg), open=drafted)
