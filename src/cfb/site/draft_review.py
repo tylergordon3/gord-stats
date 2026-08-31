@@ -50,6 +50,10 @@ table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
   border:1px solid #e5e7eb;border-radius:10px}
 .rv-scroll table.lg-table th{position:sticky;top:0;z-index:2}
 .rv-grade{font-weight:800}
+.gr{display:inline-block;min-width:34px;padding:2px 8px;border-radius:999px;
+  font-weight:800;font-size:13px;color:#fff;text-align:center}
+.gr-A{background:#1a7f4b}.gr-B{background:#2a78d6}
+.gr-C{background:#b45309}.gr-D{background:#b3382c}
 .rv-up{color:#1a7f4b;font-weight:700}
 .rv-down{color:#b3382c;font-weight:700}
 .rv-dim{color:#93a1ad}
@@ -162,11 +166,19 @@ def grade_rows(df: pd.DataFrame, lg: dict) -> list[dict]:
     return rows
 
 
+def _badge(grade: str) -> str:
+    """The letter as a coloured chip - readable at a glance, the way Yahoo
+    draws its own."""
+    if not grade or grade == "—":
+        return "<span class='rv-dim'>—</span>"
+    return f"<span class='gr gr-{grade[0]}'>{grade}</span>"
+
+
 def team_grades(df: pd.DataFrame, lg: dict) -> str:
     rows = grade_rows(df, lg)
     avg = sum(r["total"] for r in rows) / len(rows)
     cells = "".join(
-        f"<tr><td class='rv-grade'>{r['grade']}</td>"
+        f"<tr><td>{_badge(r['grade'])}</td>"
         f"<td class='lg-team'>{r['team']}</td>"
         f"<td><b>{r['total']:.0f}</b></td><td>{r['total'] - avg:+.0f}</td>"
         f"<td>{r['vorp']:.0f}</td><td>{r['bench']:.0f}</td>"
@@ -269,9 +281,9 @@ def yahoo_section(df: pd.DataFrame, lg: dict) -> str:
             gaps.append((gap, name, our_rank, i))
         rows.append(
             f"<tr><td>{i}</td><td class='lg-team'>{name}</td>"
-            f"<td class='rv-grade'>{v['grades'].get(name, '—')}</td>"
+            f"<td>{_badge(v['grades'].get(name, '—'))}</td>"
             f"<td>{pts:g}</td><td>{recs.get(team, '—')}</td>"
-            f"<td class='rv-grade'>{our_grade}"
+            f"<td>{_badge(our_grade)}"
             + (f" <span class='rv-dim'>#{our_rank}</span>" if our_rank else "")
             + f"</td><td>{_tag(gap, 2)}</td></tr>")
 
@@ -297,7 +309,8 @@ def yahoo_section(df: pd.DataFrame, lg: dict) -> str:
         + _vs_chart(grade_rows(df, lg), v)
         + '<div class="table-scroll"><table class="lg-table">'
         "<thead><tr><th>Yahoo Rk</th><th>Team</th><th>Yahoo grade</th>"
-        "<th>Yahoo power</th><th>Proj record</th><th>This board</th>"
+        "<th>Yahoo power</th><th>Proj record</th>"
+        "<th title='This board&apos;s draft grade and rank'>GordStats</th>"
         "<th>Δ</th></tr></thead>"
         f'<tbody>{"".join(rows)}</tbody></table></div>')
 
