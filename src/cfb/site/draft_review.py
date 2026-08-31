@@ -15,12 +15,13 @@ scoring - applied to the 170 picks that actually happened:
 
     python -m cfb.site.draft_review     # rebuild the page
 """
+import json
 from datetime import datetime
 
 import pandas as pd
 
 from cfb import projections, yahoo
-from cfb.config import LEAGUE_TEAMS, LEAGUE_TZ, SEASON, WEB_DIR
+from cfb.config import DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.league_power import best_lineup
 
@@ -129,7 +130,8 @@ def _tag(delta, dim_within=NUDGE) -> str:
 # Team grades
 # --------------------------------------------------------------------------- #
 
-def team_grades(df: pd.DataFrame, lg: dict) -> str:
+def grade_rows(df: pd.DataFrame, lg: dict) -> list[dict]:
+    """One dict per team, best drafted roster first, letter attached."""
     board = (projections.value_board().drop_duplicates("yahoo_id")
              .set_index("yahoo_id"))
     rows = []
@@ -151,9 +153,16 @@ def team_grades(df: pd.DataFrame, lg: dict) -> str:
                       if worst is not None else "—"),
         })
     rows.sort(key=lambda r: r["total"], reverse=True)
+    for i, r in enumerate(rows):
+        r["grade"] = GRADES[min(i, len(GRADES) - 1)]
+    return rows
+
+
+def team_grades(df: pd.DataFrame, lg: dict) -> str:
+    rows = grade_rows(df, lg)
     avg = sum(r["total"] for r in rows) / len(rows)
     cells = "".join(
-        f"<tr><td class='rv-grade'>{GRADES[min(i, len(GRADES) - 1)]}</td>"
+        f"<tr><td class='rv-grade'>{r['grade']}</td>"
         f"<td class='lg-team'>{r['team']}</td>"
         f"<td><b>{r['total']:.0f}</b></td><td>{r['total'] - avg:+.0f}</td>"
         f"<td>{r['vorp']:.0f}</td><td>{r['bench']:.0f}</td>"
@@ -174,6 +183,68 @@ def team_grades(df: pd.DataFrame, lg: dict) -> str:
         "<th>VORP</th><th>Bench</th><th>vs ADP</th><th>Values</th>"
         "<th>Reaches</th><th>Best pick</th><th>Toughest pick</th></tr></thead>"
         f"<tbody>{cells}</tbody></table></div>")
+
+
+# --------------------------------------------------------------------------- #
+# Yahoo's verdict
+# --------------------------------------------------------------------------- #
+# Yahoo publishes its own draft-day grades, projected standings and power
+# numbers the moment a draft ends. They are read off the league page once and
+# committed (data/cfb/yahoo_draft_verdict.json) - a static record on purpose,
+# because Yahoo grades against its pooled game and this board against a 2-QB
+# league, and that argument is worth keeping the receipts for.
+
+VERDICT = DATA_DIR / "yahoo_draft_verdict.json"
+
+
+def yahoo_section(df: pd.DataFrame, lg: dict) -> str:
+    if not VERDICT.exists():
+        return ""
+    v = json.loads(VERDICT.read_text())
+    alias = v.get("alias", {})
+    ours = {r["team"]: (i + 1, r["grade"])
+            for i, r in enumerate(grade_rows(df, lg))}
+    recs = {alias.get(t, t): rec for t, rec in v["projected"]}
+
+    rows, gaps = [], []
+    for i, (name, pts) in enumerate(v["power"], 1):
+        team = alias.get(name, name)
+        our_rank, our_grade = ours.get(team, (None, "—"))
+        gap = (i - our_rank) if our_rank else None
+        if gap is not None:
+            gaps.append((gap, name, our_rank, i))
+        rows.append(
+            f"<tr><td>{i}</td><td class='lg-team'>{name}</td>"
+            f"<td class='rv-grade'>{v['grades'].get(name, '—')}</td>"
+            f"<td>{pts:g}</td><td>{recs.get(team, '—')}</td>"
+            f"<td class='rv-grade'>{our_grade}"
+            + (f" <span class='rv-dim'>#{our_rank}</span>" if our_rank else "")
+            + f"</td><td>{_tag(gap, 2)}</td></tr>")
+
+    up = max(gaps) if gaps else None
+    down = min(gaps) if gaps else None
+    contrast = ""
+    if up and up[0] >= 3:
+        contrast += (f" The biggest argument is <b>{up[1]}</b>: Yahoo's "
+                     f"#{up[3]}, this board's #{up[2]} — the gap is what two "
+                     "starting quarterbacks and 6-point passing touchdowns "
+                     "are worth.")
+    if down and down[0] <= -3:
+        contrast += (f" It goes the other way on <b>{down[1]}</b>: Yahoo's "
+                     f"#{down[3]}, only #{down[2]} here.")
+    return (
+        "<h2>Yahoo's Draft-Day Verdict</h2>"
+        f"<p>What Yahoo said the moment the draft ended ({v['captured']}), "
+        "kept as-is for the record: its letter grades, its power score for "
+        "every roster, and the season it projected. <b>Δ</b> is how many "
+        "spots higher this board ranks the same roster — the two disagree "
+        "because Yahoo prices every league the same and this one is not "
+        "priced like the average league." + contrast + "</p>"
+        '<div class="table-scroll"><table class="lg-table">'
+        "<thead><tr><th>Yahoo Rk</th><th>Team</th><th>Yahoo grade</th>"
+        "<th>Yahoo power</th><th>Proj record</th><th>This board</th>"
+        "<th>Δ</th></tr></thead>"
+        f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
 # --------------------------------------------------------------------------- #
@@ -309,6 +380,7 @@ def body() -> str:
         '<a href="/cfb/league-power/">league power rankings</a>.</p>'
         + headlines(df)
         + "<h2>Team Grades</h2>" + team_grades(df, lg)
+        + yahoo_section(df, lg)
         + "<h2>How The Room Drafted</h2>" + room_section(df)
         + "<h2>Every Pick</h2>" + picks_table(df))
 

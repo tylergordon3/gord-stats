@@ -7,3 +7,6 @@
 # The live draft board was retired after the 2026 draft; the draft it was
 # showing is now the first board on the draft page.
 /fantasy/live/*          /fantasy/draft/   301
+# The CFB pre-draft board retired when the draft did; its analysis lives on
+# the draft review, which took over the live board's URL.
+/cfb/draft/*             /cfb/live/        301

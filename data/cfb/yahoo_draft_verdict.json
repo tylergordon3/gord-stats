@@ -1,0 +1,101 @@
+{
+ "captured": "2026-08-30",
+ "note": "Yahoo's own draft-day verdict, read off the league page the night of the draft. Static on purpose: this is what Yahoo said before any games, kept as the record to be argued with all season. CCAM State drafted as Colin's Champion Team and renamed after.",
+ "alias": {},
+ "grades": {
+  "Jackson's Brilliant Team": "A+",
+  "Cameron's Choice Team": "A+",
+  "I Stand With Diggs": "A-",
+  "Austin's Best Team": "B-",
+  "Mike Locksley": "C+",
+  "Noah's Nice Team": "C+",
+  "Puntaholics": "D+",
+  "Max's Majestic Team": "D",
+  "CCAM State": "D-",
+  "Too B1G Too Strong Too Fast": "D-"
+ },
+ "projected": [
+  [
+   "Cameron's Choice Team",
+   "9-1-0"
+  ],
+  [
+   "Jackson's Brilliant Team",
+   "8-2-0"
+  ],
+  [
+   "Noah's Nice Team",
+   "7-3-0"
+  ],
+  [
+   "I Stand With Diggs",
+   "5-5-0"
+  ],
+  [
+   "Austin's Best Team",
+   "5-5-0"
+  ],
+  [
+   "Mike Locksley",
+   "4-6-0"
+  ],
+  [
+   "Puntaholics",
+   "4-6-0"
+  ],
+  [
+   "Max's Majestic Team",
+   "4-6-0"
+  ],
+  [
+   "Too B1G Too Strong Too Fast",
+   "3-7-0"
+  ],
+  [
+   "CCAM State",
+   "1-9-0"
+  ]
+ ],
+ "power": [
+  [
+   "Jackson's Brilliant Team",
+   2213.9
+  ],
+  [
+   "I Stand With Diggs",
+   2199.68
+  ],
+  [
+   "Cameron's Choice Team",
+   2179.49
+  ],
+  [
+   "Mike Locksley",
+   2169.97
+  ],
+  [
+   "Noah's Nice Team",
+   2152.12
+  ],
+  [
+   "Austin's Best Team",
+   2146.72
+  ],
+  [
+   "Puntaholics",
+   2117.98
+  ],
+  [
+   "CCAM State",
+   2111.9
+  ],
+  [
+   "Max's Majestic Team",
+   2087.03
+  ],
+  [
+   "Too B1G Too Strong Too Fast",
+   2078.68
+  ]
+ ]
+}
