@@ -9,19 +9,23 @@ scoring - applied to the 170 picks that actually happened:
   * Team grades   - every drafted roster priced as its best starting lineup,
                     ranked, lettered, with each team's best and toughest pick.
   * Headlines     - the steal, the reach, the late-round find.
-  * The room      - how the ten managers actually drafted each position
-                    against Yahoo's pooled ADP; the 2-QB league showed.
-  * Every pick    - the full log, each pick against ADP and this board.
+  * The verdict   - Yahoo's own draft-day grades and power scores beside this
+                    board's, with the two drawn on one chart (the same
+                    draft-consensus chart the NFL power page uses).
 
     python -m cfb.site.draft_review     # rebuild the page
 """
 import json
 from datetime import datetime
 
-import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import numpy as np               # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402
+import pandas as pd              # noqa: E402
 
 from cfb import projections, yahoo
-from cfb.config import DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, SEASON, WEB_DIR
+from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.league_power import best_lineup
 
@@ -197,6 +201,56 @@ def team_grades(df: pd.DataFrame, lg: dict) -> str:
 VERDICT = DATA_DIR / "yahoo_draft_verdict.json"
 
 
+def _vs_chart(ours: list[dict], v: dict) -> str:
+    """The two boards on one scale - the draft-consensus chart the NFL power
+    page draws, with two sources instead of three.
+
+    Both rate a roster in projected season points, but not the same points:
+    this board prices a 2-QB league and Yahoo prices its pooled game, so each
+    is normalised to its own league average (=100) and the span between the
+    dots is the argument, drawn.
+    """
+    from gordstats import charts, palette
+
+    yahoo = dict(v["power"])
+    rows = [(r["team"], r["total"], yahoo[r["team"]])
+            for r in ours if r["team"] in yahoo]
+    if len(rows) < 2:
+        return ""
+    g_avg = sum(r[1] for r in rows) / len(rows)
+    y_avg = sum(r[2] for r in rows) / len(rows)
+    rows = [(t, g / g_avg * 100, yp / y_avg * 100) for t, g, yp in rows]
+    rows.sort(key=lambda r: r[1])           # best at the top once drawn
+    y = np.arange(len(rows))
+    gord = [r[1] for r in rows]
+    yah = [r[2] for r in rows]
+
+    fig, ax = plt.subplots(figsize=(9, 4.6))
+    ax.axvline(100, color=palette.MUTED, linewidth=1.0, linestyle="--", zorder=1)
+    ax.hlines(y, np.minimum(gord, yah), np.maximum(gord, yah),
+              color=palette.CONTEXT, linewidth=2.0, zorder=2)
+    ax.plot(gord, y, "o", markersize=9, label="GordStats", color=palette.SERIES[0],
+            markeredgecolor="white", markeredgewidth=1.5, linestyle="none", zorder=3)
+    ax.plot(yah, y, "o", markersize=9, label="Yahoo", color=palette.SERIES[1],
+            markeredgecolor="white", markeredgewidth=1.5, linestyle="none", zorder=3)
+    ax.set_yticks(y)
+    ax.set_yticklabels([r[0] for r in rows])
+    ax.set_ylim(-0.7, len(rows) - 0.3)
+    ax.set_xlabel("draft-day rating (100 = that source's league average)")
+    ax.set_title("Draft power: GordStats vs Yahoo")
+    ax.grid(axis="x", color=palette.GRIDLINE)
+    ax.set_axisbelow(True)
+    ax.tick_params(axis="y", length=0)
+    for spine in ("top", "right", "left"):
+        ax.spines[spine].set_visible(False)
+    ax.legend(fontsize=9, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.13),
+              frameon=False)
+    fig.tight_layout()
+    return charts.save("cfb-draft-review", "gordstats-vs-yahoo",
+                       alt="Each roster's draft-day rating from GordStats and "
+                           "from Yahoo on one scale, the gap between them drawn")
+
+
 def yahoo_section(df: pd.DataFrame, lg: dict) -> str:
     if not VERDICT.exists():
         return ""
@@ -240,7 +294,8 @@ def yahoo_section(df: pd.DataFrame, lg: dict) -> str:
         "spots higher this board ranks the same roster — the two disagree "
         "because Yahoo prices every league the same and this one is not "
         "priced like the average league." + contrast + "</p>"
-        '<div class="table-scroll"><table class="lg-table">'
+        + _vs_chart(grade_rows(df, lg), v)
+        + '<div class="table-scroll"><table class="lg-table">'
         "<thead><tr><th>Yahoo Rk</th><th>Team</th><th>Yahoo grade</th>"
         "<th>Yahoo power</th><th>Proj record</th><th>This board</th>"
         "<th>Δ</th></tr></thead>"
@@ -289,66 +344,6 @@ def headlines(df: pd.DataFrame) -> str:
 
 
 # --------------------------------------------------------------------------- #
-# How the room drafted
-# --------------------------------------------------------------------------- #
-
-def room_section(df: pd.DataFrame) -> str:
-    rows = []
-    for pos in projections.POSITIONS:
-        g = df[df["pos"] == pos]
-        if not len(g):
-            continue
-        first = g.loc[g["pick"].idxmin()]
-        drift = g["delta_adp"].dropna()
-        rows.append(
-            f"<tr><td>{pos}</td><td>{len(g)}</td>"
-            f"<td class='lg-team'>{first['player']} (pick {first['pick']:.0f})</td>"
-            f"<td>{int((g['round'] <= 5).sum())}</td>"
-            f"<td>{_tag(-drift.mean(), 2) if len(drift) else '—'}</td></tr>")
-    return (
-        "<p>Yahoo's ADP is pooled over every college league it runs, whatever "
-        "the settings; this league starts two quarterbacks with 6-point "
-        "passing touchdowns, and the room drafted like it knew. "
-        "<b>Ahead of ADP</b> is how many picks earlier than the pooled market "
-        "each position actually went here.</p>"
-        '<div class="table-scroll"><table class="lg-table">'
-        "<thead><tr><th>Pos</th><th>Drafted</th><th>First off the board</th>"
-        "<th>In rounds 1–5</th><th>Ahead of ADP</th></tr></thead>"
-        f'<tbody>{"".join(rows)}</tbody></table></div>')
-
-
-# --------------------------------------------------------------------------- #
-# Every pick
-# --------------------------------------------------------------------------- #
-
-def picks_table(df: pd.DataFrame) -> str:
-    rows = []
-    for _, p in df.iterrows():
-        label = f"{p['round']:.0f}.{(p['pick'] - 1) % LEAGUE_TEAMS + 1:02.0f}"
-        adp = "—" if pd.isna(p["adp"]) else f"{p['adp']:.1f}"
-        vrank = "—" if pd.isna(p["value_rank"]) else f"{p['value_rank']:.0f}"
-        vorp = "—" if pd.isna(p["vorp"]) else f"{p['vorp']:.0f}"
-        rows.append(
-            f"<tr><td>{p['pick']:.0f}</td><td>{label}</td>"
-            f"<td class='lg-team'>{p['team']}</td>"
-            f"<td class='lg-team'>{p['player']}</td><td>{p['pos'] or '—'}</td>"
-            f"<td>{p['school'] or '—'}</td>"
-            f"<td>{adp}</td><td>{_tag(p['delta_adp'])}</td>"
-            f"<td>{vrank}</td><td>{_tag(p['delta_board'])}</td>"
-            f"<td>{vorp}</td></tr>")
-    return (
-        "<p>Every pick against both prices: <b>Δ ADP</b> is picks lasted past "
-        "Yahoo's pooled average pick, <b>Δ Board</b> is picks lasted past this "
-        "board's value rank — green got value, red paid up, shown past "
-        f"{NUDGE} spots either way.</p>"
-        '<div class="rv-scroll"><table class="lg-table">'
-        "<thead><tr><th>#</th><th>Rd</th><th>Team</th><th>Player</th>"
-        "<th>Pos</th><th>School</th><th>ADP</th><th>Δ ADP</th>"
-        "<th>Board</th><th>Δ Board</th><th>VORP</th></tr></thead>"
-        f'<tbody>{"".join(rows)}</tbody></table></div>')
-
-
-# --------------------------------------------------------------------------- #
 # Page
 # --------------------------------------------------------------------------- #
 
@@ -380,9 +375,7 @@ def body() -> str:
         '<a href="/cfb/league-power/">league power rankings</a>.</p>'
         + headlines(df)
         + "<h2>Team Grades</h2>" + team_grades(df, lg)
-        + yahoo_section(df, lg)
-        + "<h2>How The Room Drafted</h2>" + room_section(df)
-        + "<h2>Every Pick</h2>" + picks_table(df))
+        + yahoo_section(df, lg))
 
 
 def generate():
