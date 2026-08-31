@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-30T21:00:03.672334-04:00",
+ "updated": "2026-08-30T21:50:26.533398-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -35486,6 +35486,130 @@
       "Taina Mair",
       "G",
       0.0
+     ]
+    ]
+   }
+  },
+  "401857188": {
+   "date": "2026-08-30",
+   "allowed": {
+    "GS": {
+     "G": 52.0,
+     "FC": 93.0
+    },
+    "POR": {
+     "G": 121.0,
+     "FC": 51.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      28.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      2.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      33.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      28.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      30.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      15.0
+     ],
+     [
+      "Ashten Prechtel",
+      "FC",
+      2.0
+     ],
+     [
+      "Nadia Fingall",
+      "FC",
+      4.0
+     ],
+     [
+      "Miela Sowah",
+      "G",
+      3.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      22.0
+     ],
+     [
+      "Juste Jocyte",
+      "G",
+      5.0
+     ]
+    ],
+    "POR": [
+     [
+      "Bridget Carleton",
+      "FC",
+      18.0
+     ],
+     [
+      "Emily Engstler",
+      "FC",
+      23.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      15.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      16.0
+     ],
+     [
+      "Teja Oblak",
+      "G",
+      19.0
+     ],
+     [
+      "Amy Okonkwo",
+      "FC",
+      8.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      13.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      9.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      6.0
+     ],
+     [
+      "Jordan Harrison",
+      "G",
+      18.0
      ]
     ]
    }
