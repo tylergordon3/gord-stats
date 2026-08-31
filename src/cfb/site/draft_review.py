@@ -6,12 +6,12 @@ address now grades it. Same pricing as the board used live - every player's
 projection, value over replacement and board rank under this league's own
 scoring - applied to the 170 picks that actually happened:
 
-  * Team grades   - every drafted roster priced as its best starting lineup,
-                    ranked, lettered, with each team's best and toughest pick.
-  * Headlines     - the steal, the reach, the late-round find.
-  * The verdict   - Yahoo's own draft-day grades and power scores beside this
-                    board's, with the two drawn on one chart (the same
-                    draft-consensus chart the NFL power page uses).
+  * Headlines            - the steal, the reach, the late-round find.
+  * GordStats grades     - every drafted roster priced as its best starting
+                           lineup, ranked, lettered, best and toughest pick.
+  * Yahoo grades         - Yahoo's own draft-day verdict, exactly as given.
+  * GordStats vs Yahoo   - the two verdicts on one chart (the NFL power
+                           page's draft-consensus chart) and team by team.
 
     python -m cfb.site.draft_review     # rebuild the page
 """
@@ -263,28 +263,43 @@ def _vs_chart(ours: list[dict], v: dict) -> str:
                            "from Yahoo on one scale, the gap between them drawn")
 
 
-def yahoo_section(df: pd.DataFrame, lg: dict) -> str:
-    if not VERDICT.exists():
-        return ""
-    v = json.loads(VERDICT.read_text())
+def yahoo_grades(v: dict) -> str:
+    """Yahoo's verdict, purely as Yahoo gave it - no editorialising here."""
     alias = v.get("alias", {})
-    ours = {r["team"]: (i + 1, r["grade"])
-            for i, r in enumerate(grade_rows(df, lg))}
     recs = {alias.get(t, t): rec for t, rec in v["projected"]}
+    rows = "".join(
+        f"<tr><td>{i}</td><td class='lg-team'>{name}</td>"
+        f"<td>{_badge(v['grades'].get(name, '—'))}</td>"
+        f"<td>{pts:g}</td><td>{recs.get(alias.get(name, name), '—')}</td></tr>"
+        for i, (name, pts) in enumerate(v["power"], 1))
+    return (
+        f"<p>What Yahoo said the moment the draft ended ({v['captured']}), "
+        "kept as-is for the record: its letter grades, its power score for "
+        "every roster, and the season it projected.</p>"
+        '<div class="table-scroll"><table class="lg-table">'
+        "<thead><tr><th>Rk</th><th>Team</th><th>Grade</th>"
+        "<th>Power</th><th>Proj record</th></tr></thead>"
+        f"<tbody>{rows}</tbody></table></div>")
+
+
+def comparison_section(df: pd.DataFrame, lg: dict, v: dict) -> str:
+    """The two verdicts against each other: the chart, then team by team."""
+    alias = v.get("alias", {})
+    ours = grade_rows(df, lg)
+    yahoo_rank = {alias.get(name, name): (i, name, v["grades"].get(name, "—"))
+                  for i, (name, _pts) in enumerate(v["power"], 1)}
 
     rows, gaps = [], []
-    for i, (name, pts) in enumerate(v["power"], 1):
-        team = alias.get(name, name)
-        our_rank, our_grade = ours.get(team, (None, "—"))
-        gap = (i - our_rank) if our_rank else None
+    for our_rank, r in enumerate(ours, 1):
+        y = yahoo_rank.get(r["team"])
+        gap = (y[0] - our_rank) if y else None
         if gap is not None:
-            gaps.append((gap, name, our_rank, i))
+            gaps.append((gap, y[1], our_rank, y[0]))
         rows.append(
-            f"<tr><td>{i}</td><td class='lg-team'>{name}</td>"
-            f"<td>{_badge(v['grades'].get(name, '—'))}</td>"
-            f"<td>{pts:g}</td><td>{recs.get(team, '—')}</td>"
-            f"<td>{_badge(our_grade)}"
-            + (f" <span class='rv-dim'>#{our_rank}</span>" if our_rank else "")
+            f"<tr><td class='lg-team'>{y[1] if y else r['team']}</td>"
+            f"<td>{_badge(r['grade'])} <span class='rv-dim'>#{our_rank}</span></td>"
+            f"<td>{_badge(y[2]) if y else '—'}"
+            + (f" <span class='rv-dim'>#{y[0]}</span>" if y else "")
             + f"</td><td>{_tag(gap, 2)}</td></tr>")
 
     up = max(gaps) if gaps else None
@@ -299,18 +314,13 @@ def yahoo_section(df: pd.DataFrame, lg: dict) -> str:
         contrast += (f" It goes the other way on <b>{down[1]}</b>: Yahoo's "
                      f"#{down[3]}, only #{down[2]} here.")
     return (
-        "<h2>Yahoo's Draft-Day Verdict</h2>"
-        f"<p>What Yahoo said the moment the draft ended ({v['captured']}), "
-        "kept as-is for the record: its letter grades, its power score for "
-        "every roster, and the season it projected. <b>Δ</b> is how many "
-        "spots higher this board ranks the same roster — the two disagree "
-        "because Yahoo prices every league the same and this one is not "
-        "priced like the average league." + contrast + "</p>"
-        + _vs_chart(grade_rows(df, lg), v)
+        "<p>The same ten rosters, both verdicts. The two disagree because "
+        "Yahoo prices every league the same and this one is not priced like "
+        "the average league; <b>Δ</b> is how many spots higher GordStats "
+        "ranks the roster." + contrast + "</p>"
+        + _vs_chart(ours, v)
         + '<div class="table-scroll"><table class="lg-table">'
-        "<thead><tr><th>Yahoo Rk</th><th>Team</th><th>Yahoo grade</th>"
-        "<th>Yahoo power</th><th>Proj record</th>"
-        "<th title='This board&apos;s draft grade and rank'>GordStats</th>"
+        "<thead><tr><th>Team</th><th>GordStats</th><th>Yahoo</th>"
         "<th>Δ</th></tr></thead>"
         f'<tbody>{"".join(rows)}</tbody></table></div>')
 
@@ -363,6 +373,7 @@ def headlines(df: pd.DataFrame) -> str:
 def body() -> str:
     lg = yahoo.league()
     df = graded()
+    verdict = json.loads(VERDICT.read_text()) if VERDICT.exists() else None
     if not len(df):
         return (_CSS + "<p>No draft to review yet — this page grades the "
                 "draft once Yahoo publishes its results.</p>")
@@ -387,8 +398,10 @@ def body() -> str:
         "how these rosters rank now, and all season, is on the "
         '<a href="/cfb/league-power/">league power rankings</a>.</p>'
         + headlines(df)
-        + "<h2>Team Grades</h2>" + team_grades(df, lg)
-        + yahoo_section(df, lg))
+        + "<h2>GordStats Team Grades</h2>" + team_grades(df, lg)
+        + (("<h2>Yahoo Team Grades</h2>" + yahoo_grades(verdict)
+            + "<h2>GordStats vs Yahoo</h2>" + comparison_section(df, lg, verdict))
+           if verdict else ""))
 
 
 def generate():
