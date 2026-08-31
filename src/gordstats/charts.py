@@ -68,4 +68,4 @@ def save(section: str, name: str, alt: str = "", lazy: bool = True,
     src = "{{ '/assets/images/charts/%s/%s' | relative_url }}" % (section, fname)
     attrs = ' loading="lazy" decoding="async"' if lazy else ""
     return (f'<img src="{src}" alt="{alt}"{attrs} '
-            f'style="max-width:100%;height:auto"/>')
+            f'style="max-width:100%;height:auto;display:block;margin:0 auto"/>')
