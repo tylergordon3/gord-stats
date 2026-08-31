@@ -16,9 +16,10 @@ def projection_years() -> list[int]:
 
 
 # teams before predictions: the predictions page links only to team pages
-# that exist, and asks the filesystem.
-PAGES = ["home", "draft", "draft_live", "schedule", "league", "power",
-         "teams", "predictions"]
+# that exist, and asks the filesystem. The pre-draft pages (draft, draft_live)
+# retired when the draft did - draft_review now owns their URL.
+PAGES = ["home", "draft_review", "schedule", "league", "league_power",
+         "power", "teams", "predictions"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
@@ -32,6 +33,7 @@ def build_all(refresh: bool = False) -> list[str]:
                         ("yahoo scoreboard", lambda: yahoo.scoreboard(refresh=refresh)),
                         ("yahoo transactions", lambda: yahoo.transactions(refresh=refresh)),
                         ("yahoo draft", lambda: yahoo.draft_results(refresh=refresh)),
+                        ("yahoo rosters", lambda: yahoo.rosters(refresh=refresh)),
                         ("espn schedule", lambda: espn.schedule(refresh=refresh)),
                         # The live draft board prices players off real seasons,
                         # so it needs the school-name bridge and two years of

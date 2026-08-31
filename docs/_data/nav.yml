@@ -144,16 +144,16 @@ cfb:
     url: /cfb/power/
     group: reference
 
-  - title: Live Draft
-    short: Live
-    icon: "🔴"
+  - title: Draft Review
+    short: Draft
+    icon: "📝"
     url: /cfb/live/
     group: fantasy
 
-  - title: Draft Board
-    short: Draft
-    icon: "📋"
-    url: /cfb/draft/
+  - title: League Power
+    short: Power
+    icon: "📊"
+    url: /cfb/league-power/
     group: fantasy
 
   - title: League Dashboard
