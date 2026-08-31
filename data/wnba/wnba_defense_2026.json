@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-30T18:50:05.792170-04:00",
+ "updated": "2026-08-30T20:00:04.148839-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -35362,6 +35362,130 @@
       "Isobel Borlase",
       "G",
       9.0
+     ]
+    ]
+   }
+  },
+  "401857187": {
+   "date": "2026-08-30",
+   "allowed": {
+    "LA": {
+     "G": 68.0,
+     "FC": 100.0
+    },
+    "SEA": {
+     "G": 100.0,
+     "FC": 99.0
+    }
+   },
+   "players": {
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      46.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      27.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      20.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      12.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      31.0
+     ],
+     [
+      "Cameron Brink",
+      "FC",
+      26.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      11.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      11.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      15.0
+     ]
+    ],
+    "SEA": [
+     [
+      "Ezi Magbegor",
+      "FC",
+      24.0
+     ],
+     [
+      "Jordan Horston",
+      "FC",
+      12.0
+     ],
+     [
+      "Dominique Malonga",
+      "FC",
+      39.0
+     ],
+     [
+      "Flau'jae Johnson",
+      "G",
+      27.0
+     ],
+     [
+      "Jade Melbourne",
+      "G",
+      12.0
+     ],
+     [
+      "Katie Lou Samuelson",
+      "FC",
+      8.0
+     ],
+     [
+      "Mackenzie Holmes",
+      "FC",
+      5.0
+     ],
+     [
+      "Taylor Thierry",
+      "FC",
+      4.0
+     ],
+     [
+      "Stefanie Dolson",
+      "FC",
+      8.0
+     ],
+     [
+      "Awa Fam",
+      "FC",
+      0.0
+     ],
+     [
+      "Zia Cooke",
+      "G",
+      29.0
+     ],
+     [
+      "Taina Mair",
+      "G",
+      0.0
      ]
     ]
    }
