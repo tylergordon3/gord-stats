@@ -30,13 +30,10 @@ fantasy:
   target: "2026-09-09T20:20:00"
   expired: Kickoff. The season is here.
 
-# Yahoo has the CFB draft at 8:00 PM Eastern on Aug 30 (epoch 1788134400 in
-# the league settings); local-time semantics match the other clocks here.
-cfb:
-  eyebrow: 2026 CFB DRAFT
-  title: Sunday, August 30 - 8:00 PM ET
-  target: "2026-08-30T20:00:00"
-  expired: The draft is here. Good luck.
+# The CFB clock no longer lives here: the draft (Aug 30) came and went, and
+# the card now counts to the next kickoff, which no hand-typed date can track.
+# cfb.site.countdown writes _data/cfb_countdown.json on every build and
+# _includes/cfb_countdown.html renders it.
 
 # Not placed on a page right now. It was _includes/countdown.html, which
 # nothing included any more; kept because the date is the awkward part to

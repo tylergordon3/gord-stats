@@ -1,0 +1,34 @@
+{%- comment -%}
+The CFB game clock: {% include cfb_countdown.html %}
+
+Renders _data/cfb_countdown.json, which cfb.site.countdown rewrites on every
+build from the ESPN schedule — so unlike the countdowns.yml cards this one
+never points at a hand-typed date. Three shapes:
+
+    notice     games are on right now: text instead of a clock
+    countdown  a clock to the next kickoff, via countdown.html
+    off        season over: nothing
+
+A countdown whose target has already passed at build time (games kicked off
+since the last refresh) renders its `expired` text as a notice rather than
+disappearing, which is what the plain include would do.
+{%- endcomment -%}
+
+{%- assign cfbcd = site.data.cfb_countdown -%}
+{%- if cfbcd.mode == "notice" -%}
+<div class="countdown-card">
+  <p class="countdown-eyebrow">{{ cfbcd.eyebrow }}</p>
+  <p class="countdown-done">{{ cfbcd.title }}</p>
+</div>
+{%- elsif cfbcd.mode == "countdown" -%}
+  {%- assign target_at = cfbcd.target | date: '%s' | plus: 0 -%}
+  {%- assign now_at = 'now' | date: '%s' | plus: 0 -%}
+  {%- if target_at > now_at -%}
+{% include countdown.html data=cfbcd %}
+  {%- else -%}
+<div class="countdown-card">
+  <p class="countdown-eyebrow">{{ cfbcd.eyebrow }}</p>
+  <p class="countdown-done">{{ cfbcd.expired }}</p>
+</div>
+  {%- endif -%}
+{%- endif -%}

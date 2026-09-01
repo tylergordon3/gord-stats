@@ -38,7 +38,7 @@ layout: default
     <h2>College Football</h2>
     <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
   </div>
-  {% include countdown.html key="cfb" %}
+  {% include cfb_countdown.html %}
   <p>The Yahoo college fantasy league's draft board, and every FBS game of the
      season — kickoffs, TV, ranks, and scores.</p>
   <p class="home-card-links">
@@ -48,10 +48,11 @@ layout: default
   </p>
 </section>
 
-<h1>WNBA Fantasy</h1>
-{% include wnba_scoreboard.html %}
-<p class="dashboard-cta">
-  <a class="dashboard-link" href="/wnba/index.html">
-    Full dashboard: player games remaining, pickups &amp; drops →
-  </a>
-</p>
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>WNBA Fantasy</h2>
+    <a class="home-card-link" href="/wnba/index.html">Full dashboard →</a>
+  </div>
+  <p>Live fantasy scoreboard, player games remaining, and suggested pickups
+     &amp; drops for the WNBA fantasy league.</p>
+</section>

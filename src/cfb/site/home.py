@@ -19,7 +19,7 @@ def body() -> str:
     draft_line = (f" The draft is <strong>{when}</strong>."
                   if when and lg.get("draft_status") == "predraft" else "")
     return f"""
-{{% include countdown.html key="cfb" %}}
+{{% include cfb_countdown.html %}}
 
 <p>College football, two ways: the real {SEASON} FBS season, and the
    <a href="{lg['url']}">{lg['name']}</a> — a {lg['num_teams']}-team Yahoo
