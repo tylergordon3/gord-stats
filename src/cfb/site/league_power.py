@@ -36,6 +36,11 @@ table.lg-table td.lg-team{text-align:left}
 table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
 table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
   vertical-align:middle;margin:0 7px 0 0;border:none;padding:0;box-shadow:none}
+/* Team leads the table, so pinning first-child holds the identity column
+   while the rest scrolls on a phone. The cells already carry opaque themed
+   backgrounds (zebra and dark) from the rules above. */
+table.lg-table td:first-child,table.lg-table th:first-child{
+  position:sticky;left:0;z-index:1}
 .mu-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
 """ + rankmoves.CSS + """
 @media (prefers-color-scheme: dark){
@@ -170,10 +175,10 @@ def body() -> str:
         move_tds = (f"<td>{_move(prev, r['key'], i)}</td>" if prev is not None else "") \
             + (f"<td>{_move(week, r['key'], i)}</td>" if week is not None else "")
         cells.append(
-            f"<tr><td>{i}</td>{move_tds}"
-            f'<td class="lg-team">{logo}{t["name"]}'
+            f'<tr><td class="lg-team"><span class="row-rank">{i}</span>'
+            f'{logo}{t["name"]}'
             + (f' <span class="mu-note">({r["unrated"]} unrated)</span>'
-               if r["unrated"] else "") + "</td>"
+               if r["unrated"] else "") + f"</td>{move_tds}"
             f"<td><b>{r['total']:.0f}</b></td>"
             f"<td>{r['total'] - avg:+.0f}</td>{pos_tds}"
             f"<td>{r['bench']:.0f}</td>"
@@ -197,9 +202,13 @@ def body() -> str:
         f"{lg['end_week']}</b> is how the lineup's schedule tilts across the "
         "fantasy playoffs. Follows the live rosters, so waivers and trades "
         f"move it — rebuilt daily (last: {built}), every build archived, and "
-        "the Move columns track the climb.</p>"
+        "the Move columns track the climb: <b>Move</b> is places climbed "
+        "since the previous build, <b>7d</b> since a week ago. "
+        "<b>Lineup</b> is that best startable lineup's projected points, "
+        "<b>±Avg</b> the same against the league average, and "
+        "<b>Anchor</b> the roster's most valuable player.</p>"
         '<div class="table-scroll"><table class="lg-table">'
-        f"<thead><tr><th>Rk</th>{move_heads}<th>Team</th><th>Lineup</th>"
+        f"<thead><tr><th>Team</th>{move_heads}<th>Lineup</th>"
         "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
         f"<th>Bench</th><th>Wks {lg['playoff_start_week']}–{lg['end_week']}</th>"
         "<th>Anchor</th></tr></thead>"

@@ -178,9 +178,12 @@ def top_injuries(detail: pd.DataFrame, n: int = 12):
     hurt = hurt.sort_values("Est. Pts Lost", ascending=False).head(n)
     hurt["Med PPG"] = hurt["Med PPG"].map("{:.1f}".format)
     hurt["Est. Pts Lost"] = hurt["Est. Pts Lost"].round(0).astype(int)
-    hurt = hurt.rename(columns={"season": "Season"})
+    # Player first so the frozen column names the row; "Drafted" is the draft
+    # slot ("3.4"), or the add week for a pickup ("Wk 5 add") — the homepage
+    # prose says so.
+    hurt = hurt.rename(columns={"season": "Season", "Name": "Player", "Pick": "Drafted"})
     hurt["Manager"] = hurt["roster_id"].map(ROSTER_NAMES)
-    hurt = hurt[["Season", "Name", "Pos.", "Manager", "Pick", "Med PPG",
+    hurt = hurt[["Player", "Season", "Pos.", "Manager", "Drafted", "Med PPG",
                  "Games Missed", "Est. Pts Lost"]]
     return styles.default_style(hurt, ["Est. Pts Lost"], cmap="RdYlGn_r")
 

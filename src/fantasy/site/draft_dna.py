@@ -19,6 +19,7 @@ the page says so, and every table carries its own counts.
     python -m fantasy.site.draft_dna
 """
 import re
+from html import escape
 
 import pandas as pd
 
@@ -134,15 +135,20 @@ def _clock_tables(first):
     avg = _pivot(first, "round", "mean").round(1)
     earliest = _pivot(first, "round", "min").astype("Int64")
     latest = _pivot(first, "round", "max").astype("Int64")
+    pos = list(avg.columns)
 
+    # reset_index() makes Manager a real, labelled column — a styled index
+    # renders its name as a phantom second header row.
     # Each position on its own scale: green = goes earliest, red = waits longest.
-    heat = (avg.style.format("{:.1f}", na_rep="—")
-            .background_gradient(cmap="RdYlGn_r", axis=0)
+    heat = (avg.reset_index().style.hide(axis="index")
+            .format("{:.1f}", na_rep="—", subset=pos)
+            .background_gradient(cmap="RdYlGn_r", axis=0, subset=pos)
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
     detail = earliest.astype(str) + " - " + latest.astype(str)
-    detail = (detail.style.set_table_styles(_GRID, overwrite=False)
+    detail = (detail.reset_index().style.hide(axis="index")
+              .set_table_styles(_GRID, overwrite=False)
               .set_table_attributes('class="sticky-table"')).to_html()
     return avg, earliest, heat, detail
 
@@ -209,16 +215,20 @@ def early_blueprint(df) -> str:
     n_drafts = df["Season"].nunique()
     total = EARLY_ROUNDS * n_drafts
 
-    grid = (counts.style.format("{:d}")
-            .background_gradient(cmap="Blues", axis=None)
+    # reset_index() makes Manager a real, labelled column — a styled index
+    # renders its name as a phantom second header row.
+    grid = (counts.reset_index().style.hide(axis="index")
+            .format("{:d}", subset=list(counts.columns))
+            .background_gradient(cmap="Blues", axis=None, subset=list(counts.columns))
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
     # What each manager opens with.
     opener = df.sort_values("overall_pick").groupby(["Manager", "Season"], as_index=False).first()
     opens = _pivot(opener, "overall_pick", "count").fillna(0).astype(int)
-    opens_html = (opens.style.format("{:d}")
-                  .background_gradient(cmap="Blues", axis=None)
+    opens_html = (opens.reset_index().style.hide(axis="index")
+                  .format("{:d}", subset=list(opens.columns))
+                  .background_gradient(cmap="Blues", axis=None, subset=list(opens.columns))
                   .set_table_styles(_GRID, overwrite=False)
                   .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -360,8 +370,9 @@ def _health_caveat() -> str:
 # Section 4 - champion blueprint
 # --------------------------------------------------------------------------- #
 
-_CHAMP_PICK_COLS = ["round", "overall_pick", "Player", "Pos.", "final_pos_rank", "VsPick", "adp"]
-_CHAMP_PICK_RENAME = {"round": "Rd", "overall_pick": "Pick", "Pos.": "Pos",
+# Player leads with the overall pick folded in (.row-rank, see _champ_picks_table).
+_CHAMP_PICK_COLS = ["Player", "round", "Pos.", "final_pos_rank", "VsPick", "adp"]
+_CHAMP_PICK_RENAME = {"round": "Rd", "Pos.": "Pos",
                       "final_pos_rank": "Pos Finish", "VsPick": "Finish vs Pick", "adp": "ADP"}
 
 
@@ -383,7 +394,11 @@ def _champ_vs_field(df) -> pd.DataFrame:
 
 
 def _champ_picks_table(df, season) -> str:
-    c = df[(df["Season"] == season) & df["Champ"]].sort_values("overall_pick").head(6)
+    c = df[(df["Season"] == season) & df["Champ"]].sort_values("overall_pick").head(6).copy()
+    # The overall pick folds into the Player cell (.row-rank, same as the power
+    # page) so the frozen first column carries the name, not a number.
+    c["Player"] = [f'<span class="row-rank">{int(p)}</span>{escape(n)}'
+                   for p, n in zip(c["overall_pick"], c["Player"])]
     d = c[_CHAMP_PICK_COLS].rename(columns=_CHAMP_PICK_RENAME)
     return (d.style.hide(axis="index")
             .format({"ADP": "{:.1f}", "Finish vs Pick": "{:+.0f}"}, na_rep="—")
@@ -417,9 +432,12 @@ def champion_blueprint(df) -> str:
 
     first = _first_at_position(df)
     timing = _pivot(first, "round", "mean", index="Champ").round(1)
+    # Same phantom-header fix as _clock_tables: the group label becomes a real
+    # first column ("Who", matching the table above) instead of a styled index.
     timing.index = timing.index.map({True: "Champions", False: "Everyone else"})
-    timing.index.name = None
-    timing_html = (timing.style.format("{:.1f}", na_rep="—")
+    timing = timing.rename_axis("Who").reset_index()
+    timing_html = (timing.style.hide(axis="index")
+                   .format("{:.1f}", na_rep="—", subset=[c for c in timing.columns if c != "Who"])
                    .set_table_styles(_GRID, overwrite=False)
                    .set_table_attributes('class="sticky-table"')).to_html()
 

@@ -2659,6 +2659,9 @@ summary.team-report-header::after {
 
 .header-stats {
   display: flex;
+  /* Three stats with no wrap shrank into a ragged three-column block on a
+     360px phone; wrapping keeps each stat on its own intact line instead. */
+  flex-wrap: wrap;
   gap: 14px;
   align-items: center;
 }

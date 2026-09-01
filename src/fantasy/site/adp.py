@@ -21,6 +21,7 @@ The season-keyed frames built here (`_picks_with_adp`, `matched_with_manager`)
 are also what the Manager Draft Report and Draft DNA sections compute from.
 """
 from functools import lru_cache
+from html import escape
 
 import pandas as pd
 
@@ -122,13 +123,15 @@ def _assemble(values, busts):
 
 # Ranked and coloured on the outcome column; ADP and the gap to it stay on the
 # row so a bust that consensus also liked reads differently from a pure reach.
-_OVR_COLS = ["Pick", "overall_pick", "Manager", "Name", "Pos.", "final_rank", "vsFinish",
+# Player leads with the overall pick folded in (.row-rank, see _overall_view);
+# "Rd.Pick" is the same pick as round.slot.
+_OVR_COLS = ["Name", "Pick", "Manager", "Pos.", "final_rank", "vsFinish",
              "adp", "OvrValue"]
-_OVR_RENAME = {"overall_pick": "Overall Pick", "Name": "Player", "Pos.": "Pos",
+_OVR_RENAME = {"Pick": "Rd.Pick", "Name": "Player", "Pos.": "Pos",
                "final_rank": "Fantasy Finish", "vsFinish": "Finish vs Pick",
                "adp": "ADP", "OvrValue": "ADP Value"}
 
-_POS_COLS = ["Pos.", "Name", "Manager", "draft_pos_rank", "overall_pick", "final_pos_rank",
+_POS_COLS = ["Name", "Pos.", "Manager", "draft_pos_rank", "overall_pick", "final_pos_rank",
              "PosVsFinish", "adp_pos", "PosValue"]
 _POS_RENAME = {"Pos.": "Pos", "Name": "Player", "draft_pos_rank": "Draft Pos",
                "overall_pick": "Overall Pick", "final_pos_rank": "Positional Finish",
@@ -152,6 +155,11 @@ def _ranked(frame, value_col, cols, rename, best: bool, value_fmt, adp_fmt):
 def _overall_view(matched):
     m = matched.copy()
     m["vsFinish"] = m["overall_pick"] - m["final_rank"]
+    # The overall pick folds into the Player cell (.row-rank, same as the power
+    # page): two leading number columns made the frozen first column a counter
+    # while the player's name scrolled away.
+    m["Name"] = [f'<span class="row-rank">{int(p)}</span>{escape(n)}'
+                 for p, n in zip(m["overall_pick"], m["Name"])]
     return _assemble(_ranked(m, "vsFinish", _OVR_COLS, _OVR_RENAME, True, "{:+.0f}", "{:+.1f}"),
                      _ranked(m, "vsFinish", _OVR_COLS, _OVR_RENAME, False, "{:+.0f}", "{:+.1f}"))
 
@@ -168,7 +176,8 @@ def _positional_view(matched):
 # All-time combined (across every season) - for the homepage
 # --------------------------------------------------------------------------- #
 
-_ALL_COLS = ["Season", "Manager", "Name", "Pos.", "overall_pick", "final_rank", "vsFinish", "adp"]
+# Player first so the frozen column names the row; Season is context, not a rank.
+_ALL_COLS = ["Name", "Season", "Manager", "Pos.", "overall_pick", "final_rank", "vsFinish", "adp"]
 _ALL_RENAME = {"Name": "Player", "Pos.": "Pos", "overall_pick": "Overall Pick",
                "final_rank": "Fantasy Finish", "vsFinish": "Finish vs Pick", "adp": "ADP"}
 
@@ -236,7 +245,9 @@ def all_time_section() -> str:
         "<p>Combined across every league season. <strong>Finish vs Pick</strong> = draft position "
         "minus fantasy finish: <strong>+</strong> = the player finished better than where he was "
         "taken (a value), <strong>-</strong> = worse (a bust). Consensus <strong>ADP</strong> is "
-        "shown as draft-day context only.</p>"
+        "shown as draft-day context only. In the manager table, <strong>Values (&gt;10)</strong> "
+        "and <strong>Busts (&gt;10)</strong> count the picks that finished more than 10 rank "
+        "spots better or worse than where they were drafted.</p>"
         f"<p>Every season's values and busts, with the board they came off: {link}</p>"
         "<h2>Draft Tendencies by Manager</h2>"
         f"<div class='table-scroll'>{_manager_summary(df)}</div>"

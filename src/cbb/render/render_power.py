@@ -72,29 +72,38 @@ _CSS = """<style>
 table.cbb-power{width:100%;border-collapse:collapse;font-size:14px}
 table.cbb-power th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:center;
   font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
-  border:1px solid #e2e8f0;position:sticky;top:0}
+  border:1px solid #e2e8f0;position:sticky;top:0;z-index:2}
 table.cbb-power td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
   text-align:center;white-space:nowrap}
 table.cbb-power td.pwr-team{text-align:left;font-weight:600}
+/* Frozen identity column at every width, now that Team leads the table. The
+   old version pinned it under 600px only and gave the td no z-index, so the
+   other cells slid over it. Backgrounds come from the base td rules above —
+   every td is painted opaque in both themes, so the stripe/top25 cascade
+   keeps working under the pin. z-index ladder: pinned td (1) over plain
+   cells, header row (2) over the pinned column, corner header (3) over both. */
+table.cbb-power td.pwr-team,table.cbb-power th.pwr-team{position:sticky;left:0;
+  box-shadow:2px 0 4px -2px rgba(0,0,0,.3)}
+table.cbb-power td.pwr-team{z-index:1}
+table.cbb-power th.pwr-team{z-index:3}
 table.cbb-power td.conf{color:#4a5a68}
 table.cbb-power tbody tr:nth-child(even) td{background:#f8fafc}
 table.cbb-power tr.top25 td{background:#fdf6e3}
 table.cbb-power tr.top25:nth-child(even) td{background:#faf0d2}
-.power-wrap{overflow:auto;max-height:calc(100vh - 170px);border:1px solid #e5e7eb;
+/* overflow-x only by default: with a max-height this box became a nested
+   vertical scroller that captured phone swipes on a 366-row table. The
+   height cap (and with it the sticky header) is desktop-only now. */
+.power-wrap{overflow-x:auto;border:1px solid #e5e7eb;
   border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,.05)}
+@media (min-width:768px){
+  .power-wrap{overflow:auto;max-height:calc(100vh - 170px)}
+}
 .power-note{font-size:13px;color:#4a5a68;margin:6px 0 10px}
 """ + rankmoves.CSS + """
 @media (max-width:600px){
   table.cbb-power{font-size:13px}
   table.cbb-power td{padding:5px 7px}
-  table.cbb-power td.pwr-team,table.cbb-power th.pwr-team{position:sticky;left:0;
-    max-width:150px;overflow:hidden;text-overflow:ellipsis;background:#fff;
-    box-shadow:2px 0 4px -2px rgba(0,0,0,.3)}
-  table.cbb-power th.pwr-team{z-index:2;background:#eef2f7}
-  table.cbb-power tbody tr:nth-child(even) td.pwr-team{background:#f8fafc}
-  /* tbody in the selector on purpose: the even-row stripe above outweighs a
-     tr.top25 rule without it, and the highlight vanished on alternate rows. */
-  table.cbb-power tbody tr.top25 td.pwr-team{background:#fdf6e3}
+  table.cbb-power td.pwr-team{max-width:150px;overflow:hidden;text-overflow:ellipsis}
 }
 @media (prefers-color-scheme: dark){
   table.cbb-power th{background:#223052;color:#dde5ef;border-color:#2b3852}
@@ -105,12 +114,6 @@ table.cbb-power tr.top25:nth-child(even) td{background:#faf0d2}
   table.cbb-power td.conf{color:#aab7c9}
   .power-note{color:#aab7c9}
   .power-wrap{border-color:#2b3852}
-  @media (max-width:600px){
-    table.cbb-power td.pwr-team{background:#16203a}
-    table.cbb-power th.pwr-team{background:#223052}
-    table.cbb-power tbody tr:nth-child(even) td.pwr-team{background:#1b2540}
-    table.cbb-power tbody tr.top25 td.pwr-team{background:#33301a}
-  }
 }
 </style>"""
 
@@ -254,10 +257,13 @@ def body() -> str:
         rank = int(t.rk)
         rows.append(
             f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
-            f"<td>{rank}</td>"
+            # Rank folds into the frozen team cell (the fantasy pages' pattern,
+            # .row-rank in custom.css): a standalone RK column meant the sticky
+            # first column pinned a counter while the team name slid away.
+            f"<td class='pwr-team'><span class=\"row-rank\">{rank}</span>{t.team}</td>"
             + (f"<td>{rankmoves.cell(t.move)}</td>" if show_move else "")
             + (f"<td>{rankmoves.cell(t.move7)}</td>" if show_week else "")
-            + f"<td class='pwr-team'>{t.team}</td><td class='conf'>{t.conf}</td>"
+            + f"<td class='conf'>{t.conf}</td>"
             + (f"<td>{'' if pd.isna(t.ap) else int(t.ap)}</td>" if show_ap else "")
             + f"<td>{int(t.trank)}</td>"
             + (f"<td>{'&mdash;' if pd.isna(t.bpi) else int(t.bpi)}</td>" if bpi_rows else "")
@@ -269,10 +275,10 @@ def body() -> str:
     if bpi_rows:
         bpi_head = ("<th>BPI</th>" if bpi_current else
                     f"<th>BPI '{str(bpi_season - 1)[2:]}-{str(bpi_season)[2:]}</th>")
-    head = ("<th>RK</th>"
+    head = ("<th class='pwr-team'>Team</th>"
             + ("<th>Move</th>" if show_move else "")
             + ("<th>7d</th>" if show_week else "")
-            + "<th class='pwr-team'>Team</th><th>Conf</th>"
+            + "<th>Conf</th>"
             + ("<th>AP</th>" if show_ap else "")
             + "<th>T-Rank</th>" + bpi_head
             + ("<th>Record</th>" if played else "")
@@ -299,7 +305,9 @@ def body() -> str:
            "become the live ratings." if not played else
            "These are the live in-season ratings.")
         + move_note + "</p>"
-        "<p class='power-note'><strong>AdjOE / AdjDE</strong> are points scored / allowed "
+        "<p class='power-note'>The number beside each team is its rank in this ordering; "
+        "<strong>Proj W-L</strong> is T-Rank's projected final record. "
+        "<strong>AdjOE / AdjDE</strong> are points scored / allowed "
         "per 100 possessions against an average opponent (offense high is good, defense low "
         "is good); <strong>Barthag</strong> is the chance of beating an average team on a "
         "neutral floor. Top 25 highlighted.</p>")

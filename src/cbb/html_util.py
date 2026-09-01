@@ -179,6 +179,10 @@ def style_bracketology(df, gender="M", original=None, conference=None):
     if gender == "W":
         styler = (
             df.style.hide(axis="index")
+            # The rating column is "Gord" here ("Pwr" on the men's side); an
+            # earlier formatter targeted "Rtg", a column that never existed,
+            # so the rating rendered as a raw 6-decimal float.
+            .format({"Gord": "{:.3f}"})
             .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .set_table_attributes(table_attr)
@@ -187,7 +191,7 @@ def style_bracketology(df, gender="M", original=None, conference=None):
     else:
         styler = (
             df.style.hide(axis="index")
-            .format({"Rtg": "{:.4f}"})
+            .format({"Pwr": "{:.3f}"})  # was "Rtg", a column that never existed
             .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
             .set_table_attributes(table_attr)

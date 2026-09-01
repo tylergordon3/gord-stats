@@ -63,12 +63,17 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 .pred-tile .t-sub{font-size:12px;color:#64748b;margin-top:2px}
 
 /* One card per game. */
-.pred-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+/* min(330px,100%) so a narrow phone shrinks the card instead of scrolling
+   the whole page sideways. */
+.pred-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr));
   gap:14px;margin:6px 0 28px}
 .pg{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px 11px;
   box-shadow:0 1px 2px rgba(15,23,42,.05)}
 .pg-when{font-size:11.5px;color:#64748b;display:flex;justify-content:space-between;
   gap:10px;margin-bottom:9px;white-space:nowrap;overflow:hidden}
+/* The flex container clips; the ellipsis has to live on the child that
+   actually overflows (venue), never the TV badge. */
+.pg-when>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .pg-when .pg-tv{color:#0f172a;font-weight:600}
 .pg-row{display:flex;align-items:center;gap:9px;padding:4px 0}
 .pg-row.pg-win .pg-name{font-weight:700;color:#0f172a}
@@ -94,6 +99,27 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 .pg-line b{color:#0f172a}
 .pred-chart img{margin:12px 0}
 .pred-chart{max-width:640px}
+@media (prefers-color-scheme: dark){
+  .pred-note{color:#aab7c9}
+  table.cfb-pred th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.cfb-pred td{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  table.cfb-pred tbody tr:nth-child(even) td{background:#1b2540}
+  .pred-tile{background:#16203a;border-color:#2b3852}
+  .pred-tile .t-label,.pred-tile .t-sub{color:#aab7c9}
+  .pred-tile .t-value{color:#f1f5f9}
+  .pg{background:#16203a;border-color:#2b3852;box-shadow:none}
+  .pg-when{color:#8fa0b8}
+  .pg-when .pg-tv{color:#dde5ef}
+  .pg-row .pg-name{color:#c3cfdd}
+  .pg-row.pg-win .pg-name{color:#ffffff}
+  .pg-rank{color:#dde5ef}
+  .pg-rating{color:#7f8ea3}
+  .pg-score{color:#f1f5f9}
+  .pg-row:not(.pg-win) .pg-score{color:#7f8ea3}
+  .pg-bar{background:#223052}
+  .pg-line{color:#aab7c9}
+  .pg-line b{color:#f1f5f9}
+}
 </style>""").replace("{accent}", ACCENT)
 
 
@@ -273,7 +299,7 @@ def _results_section() -> str:
             f"<td>{abs(g['margin_error']):.1f}</td>"
             f"<td style='color:{colour};font-weight:700'>{mark}</td></tr>")
     table = ("<div class='pred-scroll'><table class='cfb-pred'><thead><tr>"
-             "<th>Game</th><th>We said</th><th>It was</th><th>Miss</th><th></th>"
+             "<th>Game</th><th>We said</th><th>It was</th><th>Miss</th><th>Call</th>"
              f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
     verdict = ""
@@ -293,7 +319,9 @@ def _results_section() -> str:
             f"{stat['games']} game{'s' if stat['games'] != 1 else ''} that have "
             f"finished since the archive started, using the last prediction made "
             f"before each kickoff. Average miss on the final margin is "
-            f"<strong>{ours:.1f} points</strong>.{verdict}{ats}</p>"
+            f"<strong>{ours:.1f} points</strong>. In the <strong>Call</strong> "
+            f"column, &#10003; means the pick got the winner right and "
+            f"&#10007; means it did not.{verdict}{ats}</p>"
             + tile_html + table)
 
 

@@ -17,7 +17,11 @@
   "use strict";
 
   // Tables get the fade and, when there is a lot off screen, a worded hint.
-  var TABLES = ".table-scroll, .table-container, .adp-wrap, .ld-wrap";
+  // The last three are page-local scroller classes (CFB/CBB power, CFB teams,
+  // CFB predictions) that shipped without any of this — the widest tables on
+  // the site were exactly the ones with no swipe affordance.
+  var TABLES = ".table-scroll, .table-container, .adp-wrap, .ld-wrap, " +
+               ".power-wrap, .tm-scroll, .pred-scroll";
   // Control strips scroll too — the draft page's season and round switchers run
   // 276px past their box — but they only get the fade. A "swipe" label sitting
   // inside a row of buttons reads as another button.
@@ -102,6 +106,16 @@
   // <details> boxes measure zero until they are opened.
   document.addEventListener("click", function (e) {
     if (e.target.closest("details, .view-switch, .adp-controls, .archive-controls")) {
+      setTimeout(sync, 0);
+    }
+  });
+
+  // <select>-driven reveals hide the same trap: a table that was display:none
+  // at measure time has zero widths, so it gets no fade — and the WNBA drops
+  // tables got a stale --pin-2nd, landing the pinned Player column on top of
+  // the pinned row number. Any select on the page can swap content in.
+  document.addEventListener("change", function (e) {
+    if (e.target.matches("select")) {
       setTimeout(sync, 0);
     }
   });

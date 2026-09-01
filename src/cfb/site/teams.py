@@ -62,6 +62,27 @@ table.tm img{width:22px;height:22px;object-fit:contain;vertical-align:middle;
 .tm-tile .t-sub{font-size:12px;color:#64748b;margin-top:2px}
 .tm-win{color:{good};font-weight:700}
 .tm-loss{color:{bad};font-weight:700}
+/* A projected score for an unplayed game, so it never reads as a final. */
+.tm-proj{color:#94a3b8;font-style:italic}
+/* Identity leads every table; pin it while the stats scroll. Every cell
+   above carries an opaque background in both themes, so nothing bleeds
+   through the frozen column. */
+table.tm th:first-child,table.tm td:first-child{position:sticky;left:0;z-index:1}
+@media (prefers-color-scheme: dark){
+  .tm-note{color:#aab7c9}
+  table.tm th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.tm td{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  table.tm tbody tr:nth-child(even) td{background:#1b2540}
+  table.tm a{color:#dde5ef}
+  .tm-head .tm-title{color:#f1f5f9}
+  .tm-head .tm-sub{color:#aab7c9}
+  .tm-tile{background:#16203a;border-color:#2b3852}
+  .tm-tile .t-label,.tm-tile .t-sub{color:#aab7c9}
+  .tm-tile .t-value{color:#f1f5f9}
+  .tm-proj{color:#7f8ea3}
+  .tm-win{color:#8ff0bd}
+  .tm-loss{color:#ffb4ab}
+}
 </style>""").replace("{good}", "#15803d").replace("{bad}", "#b91c1c")
 
 GOOD, BAD = "#15803d", "#b91c1c"
@@ -128,15 +149,15 @@ def _schedule_rows(frame: pd.DataFrame, team: str, names: dict) -> str:
             expected = f"{margin:+.1f}"
             chance = "&mdash;"
         else:
-            result = f"{mine_pts:.0f}&ndash;{opp_pts:.0f}"
+            result = f"<span class='tm-proj'>proj {mine_pts:.0f}&ndash;{opp_pts:.0f}</span>"
             expected = f"{margin:+.1f}"
             chance = f"{prob:.0%}"
 
-        rows.append(f"<tr><td>{int(g['week'])}</td>"
-                    f"<td class='tm-name'>{cell}</td>"
+        rows.append(f"<tr><td class='tm-name'>"
+                    f"<span class='row-rank'>{int(g['week'])}</span>{cell}</td>"
                     f"<td>{g['date'].astimezone(ET):%-d %b}</td>"
                     f"<td>{result}</td><td>{expected}</td><td>{chance}</td></tr>")
-    head = ("<tr><th>Wk</th><th>Opponent</th><th>Date</th>"
+    head = ("<tr><th>Opponent</th><th>Date</th>"
             "<th>Result</th><th>Expected</th><th>Win</th></tr>")
     return ("<div class='tm-scroll'><table class='tm'>"
             f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>")
@@ -163,7 +184,9 @@ def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict) -> st
             f"{int(row['rank'])}{_ordinal(int(row['rank']))} of {total} FBS teams"
             f"</div></div></div>")
 
-    note = ("<p class='tm-note'><strong>Expected</strong> is the margin this model "
+    note = ("<p class='tm-note'>Games without a final yet show this model's "
+            "projected score, tagged <em>proj</em>. "
+            "<strong>Expected</strong> is the margin this model "
             "gives the game, from this team's point of view, and it is shown for "
             "played games too so a result can be read against what was expected of "
             "it. <strong>Win</strong> is the chance of winning an upcoming game. "
@@ -182,12 +205,12 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
     rows = []
     for _, r in table.iterrows():
         rows.append(
-            f"<tr><td>{int(r['rank'])}</td>"
-            f"<td class='tm-name'>{_logo(r['team'])}"
+            f"<tr><td class='tm-name'><span class='row-rank'>{int(r['rank'])}</span>"
+            f"{_logo(r['team'])}"
             f"<a href='/cfb/teams/{team_slug(r['name'])}/'>{escape(str(r['name']))}</a></td>"
             f"<td>{r['rating']:+.1f}</td><td>{r['pace']:+.1f}</td>"
             f"<td>{int(r['wins'])}&ndash;{int(r['losses'])}</td></tr>")
-    head = ("<tr><th>#</th><th>Team</th><th>Rating</th><th>Scoring</th><th>Record</th></tr>")
+    head = ("<tr><th>Team</th><th>Rating</th><th>Scoring</th><th>Record</th></tr>")
     spread = table["rating"].max() - table["rating"].min()
     note = (f"<p class='tm-note'>Every FBS team on the number the predictions run on: "
             f"points better than an average FBS side, so +14 beats -14 by four "

@@ -32,7 +32,19 @@ def main(df, gender):
     </div>
     </div>
     """
-    
+
+    # The tables shipped with no key: Pwr/Gord, Ovr and the Δ arrows were
+    # unexplained everywhere on the site. Column name differs by gender.
+    rating = "Pwr" if gender == "M" else "Gord"
+    html += (
+        f"<p class='week-meta'><strong>Conf Record</strong> is the record in conference "
+        f"play; <strong>{rating}</strong> is the model's power rating (0&ndash;1, higher "
+        f"is better); <strong>Ovr</strong> is overall rank with projected tournament seed; "
+        f"<strong>&Delta;</strong> is movement in overall rank over the selected window "
+        f"(&uarr;/&darr; places, <strong>NR</strong> = newly ranked, "
+        f"<strong>-</strong> = no change).</p>"
+    )
+
     conf_record_dict = bpi.get_conf_records()
     for k, v in conf_dict.items():
         v['Conf Record'] = v.apply(lambda x: conf_record_dict[x.Team], axis=1)

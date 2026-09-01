@@ -39,6 +39,11 @@ table.lg-table td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;
   background:#fff;text-align:center;white-space:nowrap}
 table.lg-table td.lg-team{text-align:left}
 table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
+/* An identity cell (team, or the transactions date) leads every lg-table, so
+   pinning first-child holds it while the rest scrolls on a phone. The cells
+   already carry opaque themed backgrounds (zebra and dark) from these rules. */
+table.lg-table td:first-child,table.lg-table th:first-child{
+  position:sticky;left:0;z-index:1}
 /* The remote theme decorates every img with a border, padding, margins and a
    drop shadow — figure styling that turns a 22px logo into a postage stamp.
    Reset all of it here. */
@@ -107,19 +112,22 @@ def standings_section(lg: dict) -> str:
                 if t.get("logo") else "")
         mgr = f"<td>{t['manager'] or '—'}</td>" if named else ""
         rows.append(
-            f"<tr><td>{rank if played else '—'}</td>"
-            f'<td class="lg-team">{logo}{t["name"]}</td>'
+            '<tr><td class="lg-team">'
+            + (f'<span class="row-rank">{rank}</span>' if played else "")
+            + f'{logo}{t["name"]}</td>'
             f"{mgr}<td>{_rec(t)}</td>"
             f"<td>{t.get('points_for') or 0:g}</td>"
             f"<td>{t.get('points_against') or 0:g}</td>"
             f"<td>${t.get('faab') or 0:g}</td>"
             f"<td>{int(t.get('moves') or 0)}</td></tr>")
-    note = ("" if played else
-            '<p class="mu-note">Everyone is 0-0 until the games start; '
-            "FAAB is the season's $100 waiver budget.</p>")
+    note = ('<p class="mu-note">'
+            + ("" if played else "Everyone is 0-0 until the games start. ")
+            + "<strong>PF</strong>/<strong>PA</strong> are points for and "
+            "against; <strong>FAAB</strong> is the season's $100 waiver "
+            "budget.</p>")
     mgr_head = "<th>Manager</th>" if named else ""
     return (note + '<div class="table-scroll"><table class="lg-table">'
-            f"<thead><tr><th>Rk</th><th>Team</th>{mgr_head}<th>Record</th>"
+            f"<thead><tr><th>Team</th>{mgr_head}<th>Record</th>"
             "<th>PF</th><th>PA</th><th>FAAB</th><th>Moves</th></tr></thead>"
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
@@ -154,7 +162,7 @@ def matchups_section(sb: dict) -> str:
     return (f"<p><strong>Week {int(sb['week'])}</strong> · {start} – {end}"
             + (" (playoffs)" if mu0.get("is_playoffs") else "") + "</p>" + note
             + '<div class="table-scroll"><table class="lg-table">'
-              "<thead><tr><th></th><th colspan='2'>Score</th><th></th></tr></thead>"
+              "<thead><tr><th>Team</th><th colspan='2'>Score</th><th>Team</th></tr></thead>"
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -213,7 +221,7 @@ def _draft_grid(df: pd.DataFrame) -> str:
                 f"<div class='t'>{p['Pos']}{' · ' + p['School'] if p['School'] else ''}</div>"
                 f"{_delta_tag(p['Δ'])}</td>")
         rows.append(f"<tr><th>Rd {int(rnd)}</th>{''.join(cells)}</tr>")
-    return (f"<table class='draft-board'><thead><tr><th></th>{header}</tr></thead>"
+    return (f"<table class='draft-board'><thead><tr><th>Rd</th>{header}</tr></thead>"
             f"<tbody>{''.join(rows)}</tbody></table>")
 
 

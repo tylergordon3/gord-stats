@@ -16,6 +16,7 @@ the whole draft, not a skill-position value judgement.
     python -m fantasy.site.draft_recap
 """
 import re
+from html import escape
 
 import matplotlib as mpl
 from matplotlib.colors import Normalize, rgb2hex
@@ -119,8 +120,14 @@ def board(df) -> str:
 # --------------------------------------------------------------------------- #
 
 def pick_table(df) -> str:
-    cols = ["Pick", "Manager", "Player", "Pos.", "Drafted", "Finished", "Tier Δ", "Pts."]
-    out = df.sort_values("overall_pick")[cols]
+    out = df.sort_values("overall_pick").copy()
+    # The pick ("1.1") folds into the Player cell (.row-rank, same as the power
+    # page): a leading Pick column would make the frozen first column a counter
+    # while the player's name scrolled away.
+    out["Player"] = [f'<span class="row-rank">{p}</span>{escape(n)}'
+                     for p, n in zip(out["Pick"], out["Player"])]
+    cols = ["Player", "Manager", "Pos.", "Drafted", "Finished", "Tier Δ", "Pts."]
+    out = out[cols]
     styled = (out.style.hide(axis="index")
               .background_gradient(cmap="RdYlGn", subset=["Tier Δ"],
                                    vmin=-TIER_SPAN, vmax=TIER_SPAN)

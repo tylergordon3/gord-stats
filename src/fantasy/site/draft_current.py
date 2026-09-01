@@ -15,6 +15,8 @@ picks are a fact, so they are baked in at build time like everything else.
 
     python -m fantasy.site.draft_current      # prints the board, for a look
 """
+from html import escape
+
 import pandas as pd
 import requests
 
@@ -141,7 +143,13 @@ def grid(df: pd.DataFrame) -> str:
 
 
 def pick_table(df: pd.DataFrame) -> str:
-    out = df.sort_values("Pick")[["Pick", "Manager", "Player", "Pos", "Team", "ADP", "Δ"]]
+    out = df.sort_values("Pick").copy()
+    # The pick number folds into the Player cell (.row-rank, same as the power
+    # page): a leading Pick column would make the frozen first column a counter
+    # while the player's name scrolled away.
+    out["Player"] = [f'<span class="row-rank">{int(p)}</span>{escape(n)}'
+                     for p, n in zip(out["Pick"], out["Player"])]
+    out = out[["Player", "Manager", "Pos", "Team", "ADP", "Δ"]]
     styled = (out.style.hide(axis="index")
               .background_gradient(cmap="RdYlGn", subset=["Δ"], vmin=-3 * NUDGE, vmax=3 * NUDGE)
               .format({"ADP": lambda v: "—" if pd.isna(v) else f"{v:.0f}",

@@ -78,8 +78,12 @@ def _style_summary(g):
 def _style_pivot(p):
     bound = np.nanmax(np.abs(p.to_numpy(dtype="float64"))) if p.size else 1.0
     bound = bound if bound and not np.isnan(bound) else 1.0
-    return (p.style.format("{:+.1f}", na_rep="—")
-            .background_gradient(cmap="RdYlGn", axis=None, vmin=-bound, vmax=bound)
+    # reset_index() makes Manager a real, labelled column — a styled index
+    # renders its name as a phantom second header row.
+    pos = list(p.columns)
+    return (p.reset_index().style.hide(axis="index")
+            .format("{:+.1f}", na_rep="—", subset=pos)
+            .background_gradient(cmap="RdYlGn", axis=None, vmin=-bound, vmax=bound, subset=pos)
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 

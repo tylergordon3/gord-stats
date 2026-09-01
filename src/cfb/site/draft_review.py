@@ -46,9 +46,12 @@ table.lg-table td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;
   background:#fff;text-align:center;white-space:nowrap}
 table.lg-table td.lg-team{text-align:left}
 table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
-.rv-scroll{max-height:520px;overflow:auto;overscroll-behavior:contain;
-  border:1px solid #e5e7eb;border-radius:10px}
-.rv-scroll table.lg-table th{position:sticky;top:0;z-index:2}
+/* Identity leads every table on this page; pin it while the stats scroll.
+   Cell backgrounds above are opaque in both themes, so nothing bleeds
+   through. league.py styles lg-table for its own pages - these rules ship
+   only in this page's block. */
+table.lg-table th:first-child,table.lg-table td:first-child{
+  position:sticky;left:0;z-index:1}
 .rv-grade{font-weight:800}
 .gr{display:inline-block;min-width:34px;padding:2px 8px;border-radius:999px;
   font-weight:800;font-size:13px;color:#fff;text-align:center}
@@ -70,7 +73,6 @@ table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
   table.lg-table th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.lg-table td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.lg-table tbody tr:nth-child(even) td{background:#1b2540}
-  .rv-scroll{border-color:#2b3852}
   .rv-up{color:#8ff0bd}
   .rv-down{color:#ffb4ab}
   .rv-card{background:#1b2540;border-color:#2b3852}
@@ -178,8 +180,7 @@ def team_grades(df: pd.DataFrame, lg: dict) -> str:
     rows = grade_rows(df, lg)
     avg = sum(r["total"] for r in rows) / len(rows)
     cells = "".join(
-        f"<tr><td>{_badge(r['grade'])}</td>"
-        f"<td class='lg-team'>{r['team']}</td>"
+        f"<tr><td class='lg-team'>{_badge(r['grade'])} {r['team']}</td>"
         f"<td><b>{r['total']:.0f}</b></td><td>{r['total'] - avg:+.0f}</td>"
         f"<td>{r['vorp']:.0f}</td><td>{r['bench']:.0f}</td>"
         f"<td>{_tag(r['avg_adp'], 2)}</td>"
@@ -195,7 +196,7 @@ def team_grades(df: pd.DataFrame, lg: dict) -> str:
         "picks of market value captured per selection; a value or a reach is "
         f"a pick {NUDGE}+ spots past either side of this board's rank.</p>"
         '<div class="table-scroll"><table class="lg-table">'
-        "<thead><tr><th>Grade</th><th>Team</th><th>Lineup</th><th>±Avg</th>"
+        "<thead><tr><th>Team</th><th>Lineup</th><th>±Avg</th>"
         "<th>VORP</th><th>Bench</th><th>vs ADP</th><th>Values</th>"
         "<th>Reaches</th><th>Best pick</th><th>Toughest pick</th></tr></thead>"
         f"<tbody>{cells}</tbody></table></div>")
@@ -268,7 +269,7 @@ def yahoo_grades(v: dict) -> str:
     alias = v.get("alias", {})
     recs = {alias.get(t, t): rec for t, rec in v["projected"]}
     rows = "".join(
-        f"<tr><td>{i}</td><td class='lg-team'>{name}</td>"
+        f"<tr><td class='lg-team'><span class='row-rank'>{i}</span>{name}</td>"
         f"<td>{_badge(v['grades'].get(name, '—'))}</td>"
         f"<td>{pts:g}</td><td>{recs.get(alias.get(name, name), '—')}</td></tr>"
         for i, (name, pts) in enumerate(v["power"], 1))
@@ -277,7 +278,7 @@ def yahoo_grades(v: dict) -> str:
         "kept as-is for the record: its letter grades, its power score for "
         "every roster, and the season it projected.</p>"
         '<div class="table-scroll"><table class="lg-table">'
-        "<thead><tr><th>Rk</th><th>Team</th><th>Grade</th>"
+        "<thead><tr><th>Team</th><th>Grade</th>"
         "<th>Power</th><th>Proj record</th></tr></thead>"
         f"<tbody>{rows}</tbody></table></div>")
 

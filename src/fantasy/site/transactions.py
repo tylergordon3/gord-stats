@@ -12,6 +12,8 @@ the season buttons - same shape as the schedule page.
 
     python -m fantasy.site.transactions
 """
+from html import escape
+
 import pandas as pd
 
 from fantasy import paths
@@ -132,8 +134,12 @@ def best_pickups(season_str: str, tx: pd.DataFrame, names: dict, top: int = 15) 
     if not rows:
         return pd.DataFrame()
     out = pd.DataFrame(rows).sort_values("Starter Pts", ascending=False).head(top)
-    out.insert(0, "Rank", range(1, len(out) + 1))
-    return out.set_index("Rank")
+    # Rank folds into the Player cell (.row-rank, same as the power page): a
+    # leading Rank column would make the frozen first column a counter while
+    # the player's name scrolled away.
+    out["Player"] = [f'<span class="row-rank">{n}</span>{escape(p)}'
+                     for n, p in enumerate(out["Player"], start=1)]
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -171,18 +177,22 @@ def trade_log(tx: pd.DataFrame, names: dict) -> pd.DataFrame:
 
 def _season_view(season_str: str, names: dict) -> str:
     tx = _load_tx(season_str)
-    # reset_index() keeps Manager/Rank as real columns — a styled index
-    # renders its name as a phantom second header row.
+    # reset_index() keeps Manager as a real column — a styled index renders
+    # its name as a phantom second header row.
     act = (activity(tx).reset_index().style.set_table_styles(_GRID)
+           .set_table_attributes('class="sticky-table"')
            .hide(axis="index").to_html())
 
     pickups = best_pickups(season_str, tx, names)
-    pickups_html = (pickups.reset_index().style.set_table_styles(_GRID)
+    pickups_html = (pickups.style.set_table_styles(_GRID)
+                    .set_table_attributes('class="sticky-table"')
                     .hide(axis="index").format({"Starter Pts": "{:.1f}"}).to_html()
                     if not pickups.empty else "<p><em>No pickups started yet this season.</em></p>")
 
     trades = trade_log(tx, names)
-    trades_html = (trades.style.set_table_styles(_GRID).hide(axis="index").to_html()
+    trades_html = (trades.style.set_table_styles(_GRID)
+                   .set_table_attributes('class="sticky-table"')
+                   .hide(axis="index").to_html()
                    if not trades.empty else "<p><em>No trades this season. Cowards.</em></p>")
 
     faab_note = ("<p><strong>FAAB Spent</strong>: total winning free-agent budget bids.</p>"
@@ -207,6 +217,7 @@ def _all_time_view(names: dict) -> str:
     total = combined.groupby("Manager").sum().astype(int).sort_values(
         ["Total Adds", "Waiver Claims"], ascending=False)
     html = (total.reset_index().style.set_table_styles(_GRID)
+            .set_table_attributes('class="sticky-table"')
             .hide(axis="index").to_html())
     return (
         '<h2>All-Time Manager Activity</h2>'

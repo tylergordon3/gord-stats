@@ -81,8 +81,18 @@ table.cfb-power th.sortable::after{content:"\\2195";margin-left:5px;opacity:.35;
   font-size:11px}
 table.cfb-power th.sorted.asc::after{content:"\\25B2";opacity:1}
 table.cfb-power th.sorted.desc::after{content:"\\25BC";opacity:1}
-.power-wrap{overflow:auto;max-height:calc(100vh - 170px);border:1px solid #e5e7eb;
+/* Team is the first cell in every view, so pinning first-child holds the
+   identity column while the wide tabs scroll. The cells already carry opaque
+   backgrounds (zebra, top25, dark) from the rules above; the z-indexes keep
+   header over body and the top-left corner over both. */
+table.cfb-power th{z-index:2}
+table.cfb-power td:first-child{position:sticky;left:0;z-index:1}
+table.cfb-power th:first-child{left:0;z-index:3}
+.power-wrap{overflow:auto;border:1px solid #e5e7eb;
   border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,.05)}
+/* Capping the height nests a second vertical scroller, which on a phone
+   captures the page swipe - so only desktop gets the pinned header view. */
+@media (min-width:768px){.power-wrap{max-height:calc(100vh - 170px)}}
 .power-note{font-size:13px;color:#4a5a68;margin:6px 0 10px}
 """ + rankmoves.CSS + """
 @media (max-width:600px){
@@ -332,7 +342,8 @@ def _th(views, label, tip, direction, first=False, team=False) -> str:
     attrs = f' title="{escape(tip, quote=True)}"' if tip else ""
     if direction:
         attrs += f" data-dir='{direction}'"
-    # The table arrives sorted by rank, so RK opens as the live column.
+    # The table arrives sorted by rank, so Team - which sorts by it - opens
+    # as the live column.
     if first:
         cls += " sorted asc"
         attrs += " data-now='asc' aria-sort='ascending'"
@@ -409,8 +420,13 @@ def body() -> str:
     # (views, label, tooltip, opening direction, cell) per column. `cell` returns
     # the figure to sort on and the text to show; the two are separate so the
     # sort never has to parse "+28.7" or "10.2-2.4" back out of the rendering.
+    # Team leads with the FPI rank folded in: a leading RK column froze a bare
+    # counter on phones while the names scrolled away. Sorting the Team column
+    # sorts by that rank, which also keeps it the opening sort and the one the
+    # tab switcher falls back to.
     cols = [
-        (ALL, "RK", "FPI rank", "asc", lambda t, r: (r, r)),
+        (ALL, "Team", "FPI rank", "asc",
+         lambda t, r: (r, f"<span class='row-rank'>{r}</span>{_team(t)}")),
     ]
     if show_move:
         cols.append((("rating",), "Move", f"Places climbed since {moves['prev_at']:%b %-d}",
@@ -418,7 +434,6 @@ def body() -> str:
     if show_week:
         cols.append((("rating",), "7d", f"Places climbed since {moves['prev7_at']:%b %-d}",
                      "desc", lambda t, r: _moved(moves["prev7"], t, r)))
-    cols.append((ALL, "Team", "", None, lambda t, r: (None, _team(t))))
     cols.append((ALL, "Conf", "Conference", "asc", lambda t, r: (t["conf"], t["conf"] or "")))
     if show_ap:
         cols.append((("rating",), "AP", "AP poll rank", "asc",
@@ -467,7 +482,7 @@ def body() -> str:
         rows.append(f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
                     + "".join(cells) + "</tr>")
 
-    head = "".join(_th(views, label, tip, direction, first=(label == "RK"),
+    head = "".join(_th(views, label, tip, direction, first=(label == "Team"),
                        team=(label == "Team"))
                    for views, label, tip, direction, _cell in cols)
 
@@ -491,7 +506,12 @@ def body() -> str:
         "each team, <strong>Resume</strong> what the schedule has been worth. "
         "Click any column header to sort by it; click again to reverse. Top 25 "
         "highlighted - the highlight follows the team, so the FPI top 25 stay "
-        "marked however the table is sorted.</p>"
+        "marked however the table is sorted. On the Resume tab, "
+        "<strong>SOS</strong> is strength-of-schedule rank (hardest first) and "
+        "<strong>Rem SOS</strong> the same for the games still to play; "
+        "<strong>SOR</strong> is strength of record - where an average top-25 "
+        "team would sit with this resume - and <strong>GC</strong> game "
+        "control, the share of game time spent in the lead.</p>"
         + ("" if live("accomplishmentrank") else
            "<p class='power-note'>The resume ranks ESPN computes from results - "
            "strength of record, game control - appear here once games have been "

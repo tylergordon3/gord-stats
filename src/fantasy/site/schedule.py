@@ -60,10 +60,14 @@ def all_play(season_str: str):
     win, loss = pd.to_numeric(pivot["win"]), pd.to_numeric(pivot["loss"])
     pivot["Win %"] = (win / (win + loss)).map("{:.1%}".format)
     pivot = pivot.drop(columns=["win", "loss"])
-    pivot.index.name, pivot.columns.name = "Team", "Week"
+    # reset_index() makes Team a real, labelled column — a styled index renders
+    # its name as a phantom second header row, with the columns' name ("week")
+    # sitting over the frozen team column.
+    pivot.columns.name = None
+    pivot = pivot.rename_axis("Team").reset_index()
 
-    return (pivot.style
-            .apply(styles.highlight_roto, subset=list(pivot.columns[:-2]))
+    return (pivot.style.hide(axis="index")
+            .apply(styles.highlight_roto, subset=list(pivot.columns[1:-2]))
             .apply(styles.highlight_on_record, subset=["Total"])
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"'))
@@ -138,11 +142,15 @@ def schedule_compare(season_str: str):
     totals = {t: f"{w}-{l}" for t, (w, l) in totals.items()}
     totals["Schedule Totals"] = "0-0"
     df = pd.DataFrame(rows + [totals], index=names + ["Team Totals"])
-    df.index.name, df.columns.name = "Schedules", "Teams"
+    # The schedule owner renders as a real, labelled first column — a styled
+    # index would name it in a phantom second header row. The index itself
+    # stays (hidden): highlight_actual_records darkens the diagonal by
+    # comparing row labels to column names.
+    df.insert(0, "Schedule", df.index)
 
-    return (df.style
+    return (df.style.hide(axis="index")
             .set_table_styles(_GRID, overwrite=False)
-            .apply(styles.highlight_actual_records, axis=None)
+            .apply(styles.highlight_actual_records, axis=None, subset=list(df.columns[1:]))
             .apply(styles.style_total_bottom, axis=1, subset=pd.IndexSlice[df.index[-1]:, :])
             .apply(styles.style_total_right, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:])
             .set_table_attributes('class="sticky-table"'))
@@ -167,13 +175,9 @@ def _season_view(season_str: str) -> str:
         '<h2>Records vs Every Schedule</h2>'
         '<p>Left to right - all teams (columns) compared to 1 schedule (row)</p>'
         '<p>Top to bottom - 1 team (column) compared to every schedule (row)</p>'
-        f'<div class="table-scroll">{schedule_compare(season_str).to_html(index=False)}</div>'
+        f'<div class="table-scroll">{schedule_compare(season_str).to_html()}</div>'
     )
-
-    # Freeze the first column on horizontal scroll (first <td> of each row).
-    lines = [ln.replace("<td>", '<td class="first-col">', 1) if "<td>" in ln else ln
-             for ln in html.split("\n")]
-    return "\n".join(lines)
+    return html
 
 
 def generate():

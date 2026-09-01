@@ -100,7 +100,8 @@ def _style(df: pd.DataFrame):
 def metrics_section() -> str:
     """The All-Time Metrics block of the homepage (legend, table)."""
     table = _style(all_time_metrics()).to_html()
-    return f"""<p><strong>SOS - Strength of Schedule</strong>: Green = Easier | Red = Harder</p>
+    return f"""<p><strong>PF / PA - Points For / Points Against</strong>: total points scored and allowed, all seasons</p>
+<p><strong>SOS - Strength of Schedule</strong>: Green = Easier | Red = Harder</p>
 <p><strong>SOV - Strength of Victory</strong>: More Wins Against [Green = Stronger Teams | Read = Weaker Teams] </p>
 <p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green = Better than Expected | Red = Worse than Expected
 *Expected Wins calculated using Pythagorean Wins formula using a constant of {EXPW_RATIO}.</p>
@@ -116,7 +117,9 @@ def injury_section() -> str:
     top_pct = round((1 - injuries.STARTER_PCTL) * 100)
     min_games = injuries.MIN_SAMPLE_GAMES
     top_html = "" if top is None else f"""<h2>Most Impactful Injuries</h2>
-<p>The single most damaging player absences across all seasons, ranked by estimated points lost.</p>
+<p>The single most damaging player absences across all seasons, ranked by estimated points lost.
+<strong>Drafted</strong> is where the manager got the player: the draft slot (round.pick), or the
+week a pickup was added.</p>
 <div class="table-scroll">
 {top.to_html()}
 </div>"""

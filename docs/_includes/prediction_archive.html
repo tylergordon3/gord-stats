@@ -2,12 +2,20 @@
 see the projected field exactly as it stood that day. The newest prediction
 lives on the <a class="league-route no-rewrite" data-page="bracketology" href="#">Bracketology page</a>.</p>
 
+<p class="week-meta"><strong>Pwr</strong>/<strong>Gord</strong> is the model's power
+rating (0&ndash;1, higher is better); <strong>Ovr</strong> is overall rank with
+projected tournament seed; <strong>&Delta;</strong> is movement in overall rank over
+that window (<strong>NR</strong> = newly ranked, <strong>-</strong> = no change).</p>
+
 <div class="archive-controls">
   <label>Season <select id="archive-season"></select></label>
   <label>Date <select id="archive-date"></select></label>
 </div>
 
-<div id="archive-tables" class="table-container">
+<!-- Plain div, not a .table-container: one shared scroll box dragged the h3
+     headings sideways with the tables and made both tables scroll as one.
+     render() below wraps each table in its own container instead. -->
+<div id="archive-tables">
   <p class="no-games">Loading archive…</p>
 </div>
 
@@ -42,7 +50,10 @@ lives on the <a class="league-route no-rewrite" data-page="bracketology" href="#
       html += '<p class="week-meta">As published: ' + esc(data.updated) + "</p>";
     }
     data.tables.forEach(function (t) {
+      // Heading outside the scroll box, one .table-container per table —
+      // sharing a container scrolled the headings away with the columns.
       html += "<h3>" + esc(t.title) + "</h3>";
+      html += '<div class="table-container">';
       html += '<table class="sticky-table rank-table archive-table"><thead><tr>';
       t.columns.forEach(function (c) { html += "<th>" + esc(c) + "</th>"; });
       html += "</tr></thead><tbody>";
@@ -51,7 +62,7 @@ lives on the <a class="league-route no-rewrite" data-page="bracketology" href="#
         r.forEach(function (v) { html += "<td>" + esc(v) + "</td>"; });
         html += "</tr>";
       });
-      html += "</tbody></table>";
+      html += "</tbody></table></div>";
     });
     target.innerHTML = html;
   }
