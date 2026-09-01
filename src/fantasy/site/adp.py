@@ -63,6 +63,10 @@ def _picks_with_adp(season_str: str) -> pd.DataFrame:
     rng = m["adp_min"].astype("Int64").astype(str) + "-" + m["adp_max"].astype("Int64").astype(str)
     m["ADP Range"] = rng.where(m["adp"].notna())
     m["Injured"] = _injury_shortened(m)
+    # The join key is CamelCase ("JaMarrChase"); adp_player is the source's
+    # readable spelling, so it is what any table should print. A pick that
+    # never matched ADP keeps the key — better than a blank cell.
+    m["Player"] = m["adp_player"].fillna(m["Name"])
     return m
 
 
@@ -125,15 +129,15 @@ def _assemble(values, busts):
 # row so a bust that consensus also liked reads differently from a pure reach.
 # Player leads with the overall pick folded in (.row-rank, see _overall_view);
 # "Rd.Pick" is the same pick as round.slot.
-_OVR_COLS = ["Name", "Pick", "Manager", "Pos.", "final_rank", "vsFinish",
+_OVR_COLS = ["Player", "Pick", "Manager", "Pos.", "final_rank", "vsFinish",
              "adp", "OvrValue"]
-_OVR_RENAME = {"Pick": "Rd.Pick", "Name": "Player", "Pos.": "Pos",
+_OVR_RENAME = {"Pick": "Rd.Pick", "Pos.": "Pos",
                "final_rank": "Fantasy Finish", "vsFinish": "Finish vs Pick",
                "adp": "ADP", "OvrValue": "ADP Value"}
 
-_POS_COLS = ["Name", "Pos.", "Manager", "draft_pos_rank", "overall_pick", "final_pos_rank",
+_POS_COLS = ["Player", "Pos.", "Manager", "draft_pos_rank", "overall_pick", "final_pos_rank",
              "PosVsFinish", "adp_pos", "PosValue"]
-_POS_RENAME = {"Pos.": "Pos", "Name": "Player", "draft_pos_rank": "Draft Pos",
+_POS_RENAME = {"Pos.": "Pos", "draft_pos_rank": "Draft Pos",
                "overall_pick": "Overall Pick", "final_pos_rank": "Positional Finish",
                "PosVsFinish": "Finish vs Draft Pos", "adp_pos": "ADP Pos",
                "PosValue": "ADP Value"}
@@ -158,8 +162,8 @@ def _overall_view(matched):
     # The overall pick folds into the Player cell (.row-rank, same as the power
     # page): two leading number columns made the frozen first column a counter
     # while the player's name scrolled away.
-    m["Name"] = [f'<span class="row-rank">{int(p)}</span>{escape(n)}'
-                 for p, n in zip(m["overall_pick"], m["Name"])]
+    m["Player"] = [f'<span class="row-rank">{int(p)}</span>{escape(n)}'
+                   for p, n in zip(m["overall_pick"], m["Player"])]
     return _assemble(_ranked(m, "vsFinish", _OVR_COLS, _OVR_RENAME, True, "{:+.0f}", "{:+.1f}"),
                      _ranked(m, "vsFinish", _OVR_COLS, _OVR_RENAME, False, "{:+.0f}", "{:+.1f}"))
 
@@ -177,8 +181,8 @@ def _positional_view(matched):
 # --------------------------------------------------------------------------- #
 
 # Player first so the frozen column names the row; Season is context, not a rank.
-_ALL_COLS = ["Name", "Season", "Manager", "Pos.", "overall_pick", "final_rank", "vsFinish", "adp"]
-_ALL_RENAME = {"Name": "Player", "Pos.": "Pos", "overall_pick": "Overall Pick",
+_ALL_COLS = ["Player", "Season", "Manager", "Pos.", "overall_pick", "final_rank", "vsFinish", "adp"]
+_ALL_RENAME = {"Pos.": "Pos", "overall_pick": "Overall Pick",
                "final_rank": "Fantasy Finish", "vsFinish": "Finish vs Pick", "adp": "ADP"}
 
 
@@ -264,7 +268,7 @@ def all_time_section() -> str:
 
 def _match_note(m, matched) -> str:
     """What was left out of this season, and why: no ADP, or too hurt to judge."""
-    unmatched = list(m[m["adp"].isna()]["Name"])
+    unmatched = list(m[m["adp"].isna()]["Player"])
     hurt = sorted(m[m["adp"].notna() & m["Injured"]]["adp_player"].dropna())
     note = (f"<p>{len(matched)} of {len(m)} picks shown"
             + (f" (no ADP for: {', '.join(unmatched)})." if unmatched else "."))

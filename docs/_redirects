@@ -10,3 +10,7 @@
 # The CFB pre-draft board retired when the draft did; its analysis lives on
 # the draft review, which took over the live board's URL.
 /cfb/draft/*             /cfb/live/        301
+# The about pages were orphans: linked from nowhere, glossarying model inputs
+# that no rendered table shows. The sections' real explanations live inline.
+/men/about.html          /men/index.html   301
+/women/about.html        /women/index.html 301
