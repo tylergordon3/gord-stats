@@ -9,8 +9,10 @@
  *   total  - visits since launch. The footer script calls with count=1 once
  *            per browser tab (sessionStorage), so this is closer to sessions
  *            than raw page loads.
- *   today  - approximate unique visitors in the current UTC day, found by
- *            hashing IP + user agent + day; the hash key expires with the day.
+ *   today  - approximate unique visitors in the current Eastern-time day
+ *            (the site's clock; a UTC day rolled the footer over at 8 PM ET),
+ *            found by hashing IP + user agent + day; the hash key expires
+ *            with the day.
  *
  * KV is eventually consistent and rate-limits writes to one key to ~1/s, so a
  * burst can drop a few increments. Fine for a footer number; nothing here is
@@ -22,7 +24,11 @@ const BOT_UA = /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|ligh
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const count = url.searchParams.get("count") === "1";
-  const day = new Date().toISOString().slice(0, 10);
+  // en-CA formats as YYYY-MM-DD; the timeZone option makes it the Eastern
+  // calendar day, DST handled by ICU rather than by a hand-rolled offset.
+  const day = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+  }).format(new Date());
 
   let total = 0, today = 0;
   try {
