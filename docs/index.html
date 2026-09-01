@@ -23,7 +23,7 @@ layout: default
     <a class="home-card-link" href="/men/predict_2026-03-15.html">Final 2026 Bracketology →</a>
   </div>
   {% include countdown.html key="cbb" %}
-  <p>The 2026–27 season tips off <strong>November 2</strong> — 64 days away. Machine-learning March Madness field predictions,
+  <p>The 2026–27 season tips off <strong>November 2</strong> — 63 days away. Machine-learning March Madness field predictions,
      built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
      from <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
@@ -38,21 +38,20 @@ layout: default
     <h2>College Football</h2>
     <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
   </div>
-  {% include cfb_countdown.html %}
+  {% include countdown.html key="cfb" %}
   <p>The Yahoo college fantasy league's draft board, and every FBS game of the
      season — kickoffs, TV, ranks, and scores.</p>
   <p class="home-card-links">
-    <a href="/cfb/scoreboard/">Scoreboard</a> ·
+    <a href="/cfb/draft/">Draft Board</a> ·
     <a href="/cfb/league/">League Dashboard</a> ·
     <a href="/cfb/schedule/">CFB Schedule</a>
   </p>
 </section>
 
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>WNBA Fantasy</h2>
-    <a class="home-card-link" href="/wnba/index.html">Full dashboard →</a>
-  </div>
-  <p>Live fantasy scoreboard, player games remaining, and suggested pickups
-     &amp; drops for the WNBA fantasy league.</p>
-</section>
+<h1>WNBA Fantasy</h1>
+{% include wnba_scoreboard.html %}
+<p class="dashboard-cta">
+  <a class="dashboard-link" href="/wnba/index.html">
+    Full dashboard: player games remaining, pickups &amp; drops →
+  </a>
+</p>

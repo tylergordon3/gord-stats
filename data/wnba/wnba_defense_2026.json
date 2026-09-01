@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-08-30T23:40:07.926480-04:00",
+ "updated": "2026-08-31T20:22:46.502687-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -35610,6 +35610,135 @@
       "Jordan Harrison",
       "G",
       18.0
+     ]
+    ]
+   }
+  },
+  "401857189": {
+   "date": "2026-08-31",
+   "allowed": {
+    "CON": {
+     "G": 84.0,
+     "FC": 102.0
+    },
+    "DAL": {
+     "G": 63.0,
+     "FC": 78.0
+    }
+   },
+   "players": {
+    "CON": [
+     [
+      "Aaliyah Edwards",
+      "FC",
+      38.0
+     ],
+     [
+      "Diamond Miller",
+      "FC",
+      17.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      12.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      17.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      29.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      11.0
+     ],
+     [
+      "Hailey Van Lith",
+      "G",
+      10.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      5.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      2.0
+     ]
+    ],
+    "DAL": [
+     [
+      "Jessica Shepard",
+      "FC",
+      33.0
+     ],
+     [
+      "Alanna Smith",
+      "FC",
+      9.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      19.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      28.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      26.0
+     ],
+     [
+      "Alysha Clark",
+      "FC",
+      16.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      15.0
+     ],
+     [
+      "Li Yueru",
+      "FC",
+      10.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      0.0
+     ],
+     [
+      "Sug Sutton",
+      "G",
+      6.0
+     ],
+     [
+      "Christyn Williams",
+      "G",
+      2.0
+     ],
+     [
+      "Aziaha James",
+      "G",
+      20.0
+     ],
+     [
+      "Haley Jones",
+      "G",
+      2.0
      ]
     ]
    }
