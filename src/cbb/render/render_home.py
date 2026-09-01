@@ -96,6 +96,18 @@ def _countdown_targets() -> dict:
             out[match.group(1)] = datetime.fromisoformat(match.group(2))
         except ValueError:
             continue
+    # The CFB clock left countdowns.yml for the build-generated game clock
+    # (cfb.site.countdown). Its target is a real UTC instant; the yml ones are
+    # naive local times, so fold it to naive local for the same comparison.
+    try:
+        clock = json.loads((paths.DOCS / "_data" / "cfb_countdown.json")
+                           .read_text(encoding="utf-8"))
+        if clock.get("mode") == "countdown":
+            out["cfb"] = (datetime.fromisoformat(
+                clock["target"].replace("Z", "+00:00"))
+                .astimezone().replace(tzinfo=None))
+    except (OSError, ValueError, KeyError):
+        pass
     return out
 
 
@@ -159,16 +171,20 @@ def _cbb_card(today: date) -> str:
 """
 
 
-def _wnba_card() -> str:
-    """Compact WNBA card for the CBB-season homepage."""
-    return """
+def _wnba_card(in_season: bool) -> str:
+    """Compact WNBA card. The full scoreboard lives only on /wnba/ now."""
+    what = ("Live fantasy scoreboard, player games remaining, and suggested\n"
+            "     pickups &amp; drops for the WNBA fantasy league."
+            if in_season else
+            "League matchup projections, live win odds, pickups and drops —\n"
+            "     back when the WNBA season resumes.")
+    return f"""
 <section class="home-card">
   <div class="home-card-head">
     <h2>WNBA Fantasy</h2>
     <a class="home-card-link" href="/wnba/index.html">Full dashboard →</a>
   </div>
-  <p>League matchup projections, live win odds, pickups and drops —
-     back when the WNBA season resumes.</p>
+  <p>{what}</p>
 </section>
 """
 
@@ -195,34 +211,27 @@ def _fantasy_card() -> str:
 
 
 def _cfb_card() -> str:
-    """Compact college football card. Shown in both season layouts."""
+    """Compact college football card. Shown in both season layouts.
+
+    The clock is the build-generated game clock (cfb_countdown.html /
+    _data/cfb_countdown.json), not a countdowns.yml entry — it counts to the
+    next kickoff and shows a notice while games are on.
+    """
     return """
 <section class="home-card">
   <div class="home-card-head">
     <h2>College Football</h2>
     <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
   </div>
-  {% include countdown.html key="cfb" %}
-  <p>The Yahoo college fantasy league's draft board, and every FBS game of the
-     season — kickoffs, TV, ranks, and scores.</p>
+  {% include cfb_countdown.html %}
+  <p>The Yahoo college fantasy league, and every FBS game of the season —
+     model predictions, live scores, kickoffs, TV, and ranks.</p>
   <p class="home-card-links">
-    <a href="/cfb/draft/">Draft Board</a> ·
+    <a href="/cfb/scoreboard/">Scoreboard</a> ·
     <a href="/cfb/league/">League Dashboard</a> ·
     <a href="/cfb/schedule/">CFB Schedule</a>
   </p>
 </section>
-"""
-
-
-def _wnba_lead() -> str:
-    return """
-<h1>WNBA Fantasy</h1>
-{% include wnba_scoreboard.html %}
-<p class="dashboard-cta">
-  <a class="dashboard-link" href="/wnba/index.html">
-    Full dashboard: player games remaining, pickups &amp; drops →
-  </a>
-</p>
 """
 
 
@@ -318,13 +327,12 @@ def render_cbb_home():
 
 
 def render_home():
-    """Season-aware homepage: the boxes with live clocks lead, then the sport in season.
+    """Season-aware homepage: every sport is a preview card, closest clock first.
 
-    Out of the college basketball season the preview boxes go first, because
-    they are the two carrying countdowns and the WNBA dashboard below them is
-    long enough to push a clock most of a screen down. In season the tip-off and
-    the draft have both passed, so neither box has a clock in it and there is
-    nothing to lift above the sport actually being played.
+    The WNBA scoreboard used to lead the page outside the college basketball
+    season; it moved to /wnba/ only (2026-08-31), so the homepage is now cards
+    all the way down in both layouts — in CBB season the basketball lead
+    stays on top.
     """
     today = date.today()
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
@@ -334,11 +342,12 @@ def render_home():
     # each date passes rather than being re-argued by hand.
     if cbb_in_season:
         html = _cbb_lead() + _by_next_clock(
-            [(None, _wnba_card()), ("fantasy", _fantasy_card()), ("cfb", _cfb_card())])
+            [(None, _wnba_card(in_season=False)), ("fantasy", _fantasy_card()),
+             ("cfb", _cfb_card())])
     else:
         html = _by_next_clock(
             [("cbb", _cbb_card(today)), ("fantasy", _fantasy_card()),
-             ("cfb", _cfb_card())]) + _wnba_lead()
+             ("cfb", _cfb_card()), (None, _wnba_card(in_season=True))])
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

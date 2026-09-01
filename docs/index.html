@@ -3,6 +3,21 @@ layout: default
 ---
 <section class="home-card">
   <div class="home-card-head">
+    <h2>College Football</h2>
+    <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
+  </div>
+  {% include cfb_countdown.html %}
+  <p>The Yahoo college fantasy league, and every FBS game of the season —
+     model predictions, live scores, kickoffs, TV, and ranks.</p>
+  <p class="home-card-links">
+    <a href="/cfb/scoreboard/">Scoreboard</a> ·
+    <a href="/cfb/league/">League Dashboard</a> ·
+    <a href="/cfb/schedule/">CFB Schedule</a>
+  </p>
+</section>
+
+<section class="home-card">
+  <div class="home-card-head">
     <h2>Fantasy Football</h2>
     <a class="home-card-link" href="/fantasy/index.html">League dashboard →</a>
   </div>
@@ -35,23 +50,9 @@ layout: default
 
 <section class="home-card">
   <div class="home-card-head">
-    <h2>College Football</h2>
-    <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
+    <h2>WNBA Fantasy</h2>
+    <a class="home-card-link" href="/wnba/index.html">Full dashboard →</a>
   </div>
-  {% include countdown.html key="cfb" %}
-  <p>The Yahoo college fantasy league's draft board, and every FBS game of the
-     season — kickoffs, TV, ranks, and scores.</p>
-  <p class="home-card-links">
-    <a href="/cfb/draft/">Draft Board</a> ·
-    <a href="/cfb/league/">League Dashboard</a> ·
-    <a href="/cfb/schedule/">CFB Schedule</a>
-  </p>
+  <p>Live fantasy scoreboard, player games remaining, and suggested
+     pickups &amp; drops for the WNBA fantasy league.</p>
 </section>
-
-<h1>WNBA Fantasy</h1>
-{% include wnba_scoreboard.html %}
-<p class="dashboard-cta">
-  <a class="dashboard-link" href="/wnba/index.html">
-    Full dashboard: player games remaining, pickups &amp; drops →
-  </a>
-</p>
