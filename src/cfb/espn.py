@@ -109,7 +109,10 @@ def schedule(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.
         data = _get({"groups": _FBS, "week": wk["week"], "dates": SEASON,
                      "seasontype": 2, "limit": 500})
         for event in data.get("events", []):
-            rows.append(_game_row(event, wk["week"]))
+            # ESPN's 2026 feeds slip empty stub events (no id, no
+            # competitions) into some weeks; a row can't be built from one.
+            if event.get("competitions"):
+                rows.append(_game_row(event, wk["week"]))
 
     df = pd.DataFrame(rows).sort_values(["week", "date_utc"]).reset_index(drop=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
