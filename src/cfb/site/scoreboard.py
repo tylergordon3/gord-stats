@@ -2,18 +2,23 @@
 The live CFB scoreboard (docs/cfb/scoreboard/).
 
 One card per game of the current week, in three sections - Live, Upcoming,
-Final. A card carries everything known about the matchup: logos, AP ranks,
-records, model ratings, the model's projected score and win probability, the
-captured book line, TV and venue. Upcoming cards show the projection where
-the score will go; live and final cards show the real score with the
-projection kept below for the comparison.
+Final - grouped by day. A card carries everything known about the matchup:
+logos, AP ranks, records, model ratings, and a labelled lines block - the
+GordStats line (spread, projected total, win probability) over the book's
+official line, named for the book that posted it. Upcoming cards show the
+projected score where the score will go; live and final cards show the real
+score with the projection kept in the lines block for the comparison.
+
+Filters: a conference dropdown (either team counts) and a ranked-only
+toggle, both client-side. #conf=SEC in the URL preselects a conference.
 
 Server-side this is a snapshot - rebuilt daily and by the Pi's live tick
 (cfb.live) while games are on. The page then keeps itself current: a script
-polls ESPN's scoreboard endpoint (CORS-open) every ~30s during games,
-updating scores, clock, possession, down & distance and last play, and
-moving cards between sections as games kick off and finish. No JS still
-gets the build-time snapshot.
+polls ESPN's scoreboard through our Pages Function proxy
+(functions/api/cfb-scores.js - ESPN strips CORS for browsers) every ~30s
+during games, updating scores, clock, possession, down & distance and last
+play, and moving cards between sections as games kick off and finish. No JS
+still gets the build-time snapshot.
 
     python -m cfb.site.scoreboard       # rebuild the page
 """
@@ -26,7 +31,7 @@ import pandas as pd
 
 from cfb import espn, predict
 from cfb import odds as odds_mod
-from cfb.config import SEASON, WEB_DIR
+from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.schedule import _current_week
 from cfb.site.teams import LOGO, team_slug
@@ -35,20 +40,26 @@ ET = ZoneInfo("America/New_York")
 
 _CSS = """<style>
 .sb-note{color:#475569;font-size:14px;line-height:1.55}
+.sb-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 4px}
+.sb-select{font-size:13.5px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:8px;
+  background:#fff;color:#0f172a}
 .sb-sec{margin:24px 0 2px;font-size:13px;text-transform:uppercase;
   letter-spacing:.06em;color:#64748b}
 .sb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
   gap:14px;margin:10px 0 8px}
+.sb-day{grid-column:1/-1;font-size:14px;font-weight:700;color:#334155;
+  margin:6px 0 -4px}
 .sb-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;
   padding:12px 14px 11px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
-.sb-top{font-size:11.5px;color:#64748b;display:flex;justify-content:space-between;
+.sb-hide{display:none}
+.sb-top{font-size:12px;color:#64748b;display:flex;justify-content:space-between;
   gap:10px;margin-bottom:9px;white-space:nowrap;overflow:hidden}
 .sb-top .sb-tv{color:#0f172a;font-weight:600}
 .sb-card[data-state="in"] .sb-status{color:#0a7d33;font-weight:700}
 .sb-row{display:flex;align-items:center;gap:9px;padding:4px 0}
 .sb-row img{width:26px;height:26px;object-fit:contain;flex:none;
   border:none;padding:0;box-shadow:none;background:none;border-radius:0;margin:0}
-.sb-name{flex:1;color:#475569;font-size:14.5px;overflow:hidden;
+.sb-name{flex:1;color:#475569;font-size:15px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .sb-name a{color:inherit;text-decoration:none}
 .sb-name a:hover{text-decoration:underline}
@@ -66,20 +77,28 @@ _CSS = """<style>
 .sb-sit{font-size:12.5px;font-weight:600;color:#0f172a}
 .sb-play{font-size:12px;color:#64748b;margin-top:2px;overflow:hidden;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.sb-bar{height:6px;border-radius:3px;background:#eef2f7;overflow:hidden;margin:9px 0 6px}
+.sb-bar{height:6px;border-radius:3px;background:#eef2f7;overflow:hidden;margin:9px 0 4px}
 .sb-bar span{display:block;height:100%;background:#3b82f6}
 .sb-card:not([data-state="pre"]) .sb-bar{display:none}
-.sb-ctx{display:flex;justify-content:space-between;gap:8px;font-size:12px;
-  color:#475569;font-variant-numeric:tabular-nums;margin-top:6px}
-.sb-ctx b{color:#0f172a}
-.sb-card[data-state="pre"] .sb-ctx-after{display:none}
-.sb-card:not([data-state="pre"]) .sb-ctx-before{display:none}
+/* The lines block: our numbers over the book's official line, labelled. */
+.sb-lines{margin-top:7px;border-top:1px solid #eef2f7;padding-top:6px}
+.sb-line{display:grid;grid-template-columns:76px 1fr 64px 76px;gap:6px;
+  font-size:12.5px;color:#0f172a;font-variant-numeric:tabular-nums;
+  align-items:baseline;padding:1px 0}
+.sb-lab{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;
+  color:#94a3b8;font-weight:700}
+.sb-sp{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-ou{color:#475569}
+.sb-x{color:#475569;text-align:right;overflow:hidden;white-space:nowrap}
+.sb-card[data-state="pre"] .sb-live-only{display:none}
+.sb-card:not([data-state="pre"]) .sb-pre-only{display:none}
 .sb-venue{font-size:11.5px;color:#94a3b8;margin-top:6px;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
-.ranked-only .sb-card.sb-unranked{display:none}
 @media (prefers-color-scheme: dark){
   .sb-note{color:#aab7c9}
+  .sb-select{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .sb-sec{color:#aab7c9}
+  .sb-day{color:#dde5ef}
   .sb-card{background:#16203a;border-color:#2b3852;box-shadow:none}
   .sb-top{color:#8fa0b8}
   .sb-top .sb-tv{color:#dde5ef}
@@ -89,13 +108,42 @@ _CSS = """<style>
   .sb-rec,.sb-rating,.sb-pts.sb-proj,.sb-venue{color:#7f8ea3}
   .sb-pts{color:#f1f5f9}
   .sb-row.sb-win .sb-name{color:#ffffff}
-  .sb-live{border-color:#2b3852}
+  .sb-live,.sb-lines{border-color:#2b3852}
   .sb-play{color:#8fa0b8}
   .sb-bar{background:#223052}
-  .sb-ctx{color:#aab7c9}
-  .sb-ctx b{color:#f1f5f9}
+  .sb-line{color:#f1f5f9}
+  .sb-lab{color:#7f8ea3}
+  .sb-ou,.sb-x{color:#aab7c9}
 }
 </style>"""
+
+
+def _confs() -> dict:
+    """ESPN team id -> conference short name, from the cached FPI pull.
+
+    FPI covers exactly the FBS, which is exactly who the filter is for; FCS
+    visitors map to nothing and their games ride on the FBS side's badge.
+    The Sun Belt's East/West halves fold together - nobody filters by
+    division - and ESPN's "FBS Indep." reads better as "Independent".
+    """
+    path = DATA_DIR / f"fpi_{SEASON}.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    out = {}
+    for entry in data.get("teams", []):
+        team = entry.get("team") or {}
+        conf = (team.get("group") or {}).get("shortName")
+        if not conf or team.get("id") is None:
+            continue
+        if conf.startswith("Sun Belt"):
+            conf = "Sun Belt"
+        elif conf == "FBS Indep.":
+            conf = "Independent"
+        out[str(team["id"])] = conf
+    return out
+
 
 def _records(week: int) -> dict:
     """Event id -> {'home': '2-0', 'away': '1-1'} from the live feed."""
@@ -154,77 +202,131 @@ def _row(g, side: str, records: dict) -> str:
     return (f'<div class="sb-row{" sb-win" if won else ""}" data-tid="{tid}">'
             f'{a}<img src="{LOGO.format(team_id=tid)}" alt="" loading="lazy">{a_close}'
             f'<span class="sb-name">{badge}{a}{escape(name)}{a_close} {rec_tag}</span>'
-            f'<span class="sb-rating">{rating_txt}</span>'
+            f'<span class="sb-rating" title="GordStats rating">{rating_txt}</span>'
             f'<span class="sb-pts{proj}">{pts}</span></div>')
 
 
-def _card(g, records: dict) -> str:
+def _lines(g) -> str:
+    """The labelled lines block: GordStats over the book's official line."""
+    ours = _fav_line(g.gs_spread, g.home, g.away)
+    our_ou = "&mdash;" if pd.isna(g.pred_total) else f"O/U {g.pred_total:.0f}"
+    prob = g.home_win_prob if not pd.isna(g.home_win_prob) else None
+    fav_prob = "" if prob is None else f"{max(prob, 1 - prob):.0%}"
+    proj = ("" if pd.isna(g.pred_away)
+            else f"proj {g.pred_away:.0f}&ndash;{g.pred_home:.0f}")
+
+    book_name = str(g.book) if isinstance(g.book, str) and g.book else "Book"
+    book_sp = _fav_line(g.book_spread, g.home, g.away)
+    book_ou = "&mdash;" if pd.isna(g.book_total) else f"O/U {g.book_total:g}"
+
+    return (
+        '<div class="sb-lines">'
+        '<div class="sb-line"><span class="sb-lab">GordStats</span>'
+        f'<span class="sb-sp">{ours}</span><span class="sb-ou">{our_ou}</span>'
+        f'<span class="sb-x"><span class="sb-pre-only">{fav_prob}</span>'
+        f'<span class="sb-live-only">{proj}</span></span></div>'
+        f'<div class="sb-line"><span class="sb-lab">{escape(book_name)}</span>'
+        f'<span class="sb-sp">{book_sp}</span><span class="sb-ou">{book_ou}</span>'
+        '<span class="sb-x"></span></div>'
+        "</div>")
+
+
+def _card(g, records: dict, confs: dict) -> str:
     kick = g.local
     if g.state == "post":
         status = g.detail if "Final" in (g.detail or "") else "Final"
     elif g.state == "in":
         status = g.detail or "Live"
     else:
-        status = f"{kick:%a %-d %b, %-I:%M %p} ET"
+        status = f"{kick:%a %-I:%M %p} ET"
     tv = escape(str(g.tv or "").split(",")[0])
 
-    ours = _fav_line(g.gs_spread, g.home, g.away)
-    book = _fav_line(g.book_spread, g.home, g.away)
     prob = g.home_win_prob if not pd.isna(g.home_win_prob) else None
-    fav_prob = "" if prob is None else f"{max(prob, 1 - prob):.0%}"
-    ou = "&mdash;" if pd.isna(g.book_total) else f"{g.book_total:g}"
-    proj_line = ("&mdash;" if pd.isna(g.pred_away)
-                 else f"{g.pred_away:.0f}&ndash;{g.pred_home:.0f}")
-    before = (f'<div class="sb-ctx sb-ctx-before"><b>{ours}</b>'
-              f"<span>book {book}</span><span>O/U {ou}</span>"
-              f"<span>{fav_prob}</span></div>")
-    after = (f'<div class="sb-ctx sb-ctx-after"><span>model {proj_line} '
-             f"({ours})</span><span>book {book}</span></div>")
     bar = ("" if prob is None else
            f'<div class="sb-bar"><span style="width:{prob * 100:.0f}%"></span></div>')
 
     venue = escape(str(g.venue or "")) + (f" &mdash; {escape(str(g.place))}" if g.place else "")
     ranked = not (pd.isna(g.home_rank) and pd.isna(g.away_rank))
+    conf = "|".join(sorted({c for c in (confs.get(str(g.away_id)),
+                                        confs.get(str(g.home_id))) if c}))
     return (f'<article class="sb-card{"" if ranked else " sb-unranked"}" '
             f'id="sb-{escape(str(g.game_id))}" data-state="{g.state}" '
-            f'data-kick="{escape(str(g.date_utc))}">'
+            f'data-kick="{escape(str(g.date_utc))}" data-conf="{escape(conf)}">'
             f'<div class="sb-top"><span class="sb-status">{status}</span>'
             + (f'<span class="sb-tv">{tv}</span>' if tv else "") + "</div>"
             + _row(g, "away", records) + _row(g, "home", records)
             + '<div class="sb-live"><div class="sb-sit"></div>'
               '<div class="sb-play"></div></div>'
-            + bar + before + after
+            + bar + _lines(g)
             + f'<div class="sb-venue">{venue}</div></article>')
 
 
+def _grid(games: pd.DataFrame, records: dict, confs: dict,
+          dividers: bool) -> str:
+    """Cards in kickoff order, with a full-width day header where the
+    (Eastern) day turns over. Headers carry data-kick so cards the page
+    moves later still slot in kickoff order around them."""
+    out, last_day = [], None
+    for g in games.itertuples():
+        if dividers and g.local.date() != last_day:
+            last_day = g.local.date()
+            out.append(f'<div class="sb-day" data-kick="{escape(str(g.date_utc))}">'
+                       f"{g.local:%A, %B %-d}</div>")
+        out.append(_card(g, records, confs))
+    return "".join(out)
+
+
 def _js(week: int) -> str:
-    # Not ESPN directly: a real browser gets the scoreboard JSON back without
-    # access-control-allow-origin (curl gets the header - ESPN's edge treats
-    # the two differently), so the poll goes through our Pages Function proxy
-    # (functions/api/cfb-scores.js), which adds CORS.
     url = f"/api/cfb-scores?week={week}&dates={SEASON}"
     return """<script>
 (function () {
   "use strict";
   var URL = %s;
   var timer = null;
+  var board = document.getElementById("sb-board");
+  var confSel = document.getElementById("sb-conf");
+  var rankedBtn = document.getElementById("sb-ranked");
+  var rankedOn = false;
 
-  function sections() {
+  function visible(card) {
+    if (rankedOn && card.classList.contains("sb-unranked")) return false;
+    var conf = confSel.value;
+    if (conf &&
+        (card.getAttribute("data-conf") || "").split("|").indexOf(conf) < 0) {
+      return false;
+    }
+    return true;
+  }
+
+  /* Re-decide every card, then hide day headers whose group emptied and
+     sections with nothing left to show. */
+  function applyFilters() {
+    board.querySelectorAll(".sb-card").forEach(function (c) {
+      c.classList.toggle("sb-hide", !visible(c));
+    });
     ["in", "pre", "post"].forEach(function (s) {
       var grid = document.getElementById("sb-grid-" + s);
-      document.getElementById("sb-sec-" + s).style.display =
-        grid.children.length ? "" : "none";
+      var any = false, day = null, dayHas = false;
+      Array.prototype.forEach.call(grid.children, function (el) {
+        if (el.classList.contains("sb-day")) {
+          if (day) day.classList.toggle("sb-hide", !dayHas);
+          day = el; dayHas = false;
+        } else if (!el.classList.contains("sb-hide")) {
+          dayHas = true; any = true;
+        }
+      });
+      if (day) day.classList.toggle("sb-hide", !dayHas);
+      document.getElementById("sb-sec-" + s).style.display = any ? "" : "none";
     });
   }
 
   function move(card, state) {
     var grid = document.getElementById("sb-grid-" + state);
     var kick = card.getAttribute("data-kick"), before = null;
-    grid.querySelectorAll(".sb-card").forEach(function (c) {
-      if (!before && c.getAttribute("data-kick") > kick) before = c;
+    Array.prototype.forEach.call(grid.children, function (el) {
+      if (!before && el.getAttribute("data-kick") > kick) before = el;
     });
     grid.insertBefore(card, before);
-    sections();
   }
 
   function apply(ev) {
@@ -292,6 +394,7 @@ def _js(week: int) -> str:
           if (t > now && (next === null || t < next)) next = t;
         }
       });
+      applyFilters();
       // 30s while anything is live; 90s in the half hour before a kickoff;
       // otherwise sleep until just before the next one (checking at most
       // every 30 min in case the slate changes). Nothing left: stop.
@@ -307,11 +410,24 @@ def _js(week: int) -> str:
   document.addEventListener("visibilitychange", function () {
     if (!document.hidden) { clearTimeout(timer); poll(); }
   });
-  var rankedBtn = document.getElementById("sb-ranked");
   rankedBtn.addEventListener("click", function () {
-    var on = document.getElementById("sb-board").classList.toggle("ranked-only");
-    rankedBtn.classList.toggle("active", on);
+    rankedOn = !rankedOn;
+    rankedBtn.classList.toggle("active", rankedOn);
+    applyFilters();
   });
+  confSel.addEventListener("change", function () {
+    history.replaceState(null, "",
+      confSel.value ? "#conf=" + encodeURIComponent(confSel.value)
+                    : location.pathname);
+    applyFilters();
+  });
+  var m = /^#conf=(.+)$/.exec(decodeURIComponent(location.hash));
+  if (m) {
+    for (var i = 0; i < confSel.options.length; i++) {
+      if (confSel.options[i].value === m[1]) { confSel.value = m[1]; break; }
+    }
+    applyFilters();
+  }
   poll();
 })();
 </script>""" % json.dumps(url)
@@ -328,31 +444,46 @@ def _games(week: int) -> pd.DataFrame:
     if not preds.empty:
         preds = preds.rename(columns={"spread": "gs_spread"})
         preds["game_id"] = preds["game_id"].astype(str)
-        cols = ["game_id", "pred_home", "pred_away", "home_win_prob",
-                "gs_spread", "home_rating", "away_rating"]
-        games = games.merge(preds[cols], on="game_id", how="left")
-    for col in ("pred_home", "pred_away", "home_win_prob", "gs_spread",
-                "home_rating", "away_rating"):
+        cols = ["game_id", "pred_home", "pred_away", "pred_total",
+                "home_win_prob", "gs_spread", "home_rating", "away_rating"]
+        games = games.merge(preds[[c for c in cols if c in preds.columns]],
+                            on="game_id", how="left")
+    for col in ("pred_home", "pred_away", "pred_total", "home_win_prob",
+                "gs_spread", "home_rating", "away_rating"):
         if col not in games.columns:
             games[col] = pd.NA
 
     board = odds_mod.latest(SEASON)
     if not board.empty:
         board = board.rename(columns={"spread": "book_spread", "total": "book_total"})
-        games = games.merge(board[["home_id", "away_id", "book_spread", "book_total"]],
+        games = games.merge(board[["home_id", "away_id", "book_spread",
+                                   "book_total", "book"]],
                             on=["home_id", "away_id"], how="left")
-    for col in ("book_spread", "book_total"):
+    for col in ("book_spread", "book_total", "book"):
         if col not in games.columns:
             games[col] = pd.NA
     return games.sort_values("local")
+
+
+# Power-conference names first in the dropdown; the rest alphabetical after.
+_CONF_LEAD = ["ACC", "Big 12", "Big Ten", "SEC"]
+
+
+def _conf_options(confs: dict) -> str:
+    names = set(confs.values())
+    ordered = ([c for c in _CONF_LEAD if c in names]
+               + sorted(names - set(_CONF_LEAD)))
+    return '<option value="">All conferences</option>' + "".join(
+        f'<option value="{escape(c)}">{escape(c)}</option>' for c in ordered)
 
 
 def body() -> str:
     week = _current_week(espn.schedule())
     games = _games(week)
     records = _records(week)
+    confs = _confs()
 
-    grids = {state: "".join(_card(g, records) for g in grp.itertuples())
+    grids = {state: _grid(grp, records, confs, dividers=state != "in")
              for state, grp in games.groupby("state")}
     titles = {"in": "Live", "pre": "Upcoming", "post": "Final"}
     sections = "".join(
@@ -365,12 +496,13 @@ def body() -> str:
     built = datetime.now(ET).strftime("%b %-d, %-I:%M %p %Z")
     return (
         _CSS
-        + f'<p class="sb-note">Week {week}, every FBS game. Projected scores, '
-        "spreads and win probabilities are the "
-        '<a href="/cfb/predictions/">GordStats model</a>; book lines are the '
-        "latest captured from ESPN BET &mdash; the model has no edge on them. Live "
-        f"scores update in place while games are on. Built {built}.</p>"
-        '<div class="adp-controls">'
+        + f'<p class="sb-note">Week {week}, every FBS game. Each card shows the '
+        '<a href="/cfb/predictions/">GordStats model</a>&rsquo;s line - spread, '
+        "total and win probability - over the book&rsquo;s official line "
+        "(the latest captured; the model has no edge on it). Live scores "
+        f"update in place while games are on. Built {built}.</p>"
+        '<div class="sb-controls">'
+        f'<select id="sb-conf" class="sb-select">{_conf_options(confs)}</select>'
         '<button id="sb-ranked" class="adp-toggle">Ranked matchups only</button>'
         "</div>"
         f'<div id="sb-board">{sections}</div>'
