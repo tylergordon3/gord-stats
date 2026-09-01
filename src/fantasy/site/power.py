@@ -18,6 +18,7 @@ Five sections:
     python -m fantasy.site.power
 """
 from datetime import datetime
+from html import escape
 
 import matplotlib
 matplotlib.use("Agg")
@@ -88,9 +89,21 @@ def _signed(v) -> str:
     return f"{int(v):+d}"
 
 
+def _manager_col(ranks, managers) -> list[str]:
+    """Rank folded into the manager cell: '3 Kraft YAC-N-Chee'.
+
+    The rank used to be its own leading '#' column, which meant the frozen
+    first column (see .sticky-table td:first-child) pinned a counter while
+    the name - the thing a scrolled row is about - slid away on a phone.
+    """
+    return [f'<span class="row-rank">{int(r)}</span>{escape(str(m))}'
+            for r, m in zip(ranks, managers)]
+
+
 def _rankings_table(table: pd.DataFrame) -> str:
     in_season = "wins" in table.columns and table["week"].iloc[0] > 0
-    display = pd.DataFrame({"#": table["rank"], "Manager": table["manager"]})
+    display = pd.DataFrame(
+        {"Manager": _manager_col(table["rank"], table["manager"])})
     display["Move"] = table["move"]
     display["Pre"] = table["pre_rank"]
     blended = "combined" in table.columns and table.get("ext_vorp") is not None \
@@ -251,7 +264,8 @@ def _draft_section() -> str:
         return ""
     rows = pd.DataFrame(snap["teams"])
 
-    display = pd.DataFrame({"#": rows["rank"], "Manager": rows["manager"]})
+    display = pd.DataFrame(
+        {"Manager": _manager_col(rows["rank"], rows["manager"])})
     display["Consensus"] = rows["combined"]
     display["GordStats"] = rows["us"]
     display["FP"] = rows["fp"]

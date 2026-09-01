@@ -317,6 +317,18 @@ body {
   background: #f8fafc;
 }
 
+/* A rank folded into the frozen identity cell ("3 Kraft YAC-N-Chee"). It used
+   to be its own leading "#" column, which made the frozen column a counter
+   while the name scrolled away — the pickups-table trap, solved the same way. */
+.row-rank {
+  display: inline-block;
+  min-width: 1.7em;
+  color: #94a3b8;
+  font-size: 0.85em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
 .sticky-table th:last-child {
   border-right: none;
 }
