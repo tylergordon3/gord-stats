@@ -19,7 +19,7 @@ def projection_years() -> list[int]:
 # exist, and ask the filesystem. The pre-draft pages (draft, draft_live)
 # retired when the draft did - draft_review now owns their URL.
 PAGES = ["home", "draft_review", "league", "league_power",
-         "power", "teams", "predictions", "schedule", "countdown"]
+         "power", "teams", "predictions", "schedule", "scoreboard", "countdown"]
 
 
 def build_all(refresh: bool = False) -> list[str]:

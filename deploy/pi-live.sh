@@ -2,9 +2,10 @@
 # Frequent refresh while something is happening. Run every 10 minutes by
 # wnba-live.timer, and on demand with `deploy/pi-live.sh`.
 #
-# Two gates, each a call or two: the WNBA scoreboard (a game live or tipping
-# within 30 minutes) and the fantasy section (a week of the season fully
-# scored — see fantasy.live). If neither has anything, the
+# Three gates, each a call or two: the WNBA scoreboard (a game live or tipping
+# within 30 minutes), the CFB scoreboard (same window — see cfb.live) and the
+# fantasy section (a week of the season fully
+# scored — see fantasy.live). If none has anything, the
 # tick exits in about a second. Otherwise whichever fired regenerates its
 # pages and the tick rebuilds the site and republishes via wrangler — the same
 # direct-upload path as pi-deploy.sh. Git gets a commit at most once an hour
@@ -101,7 +102,7 @@ main() {
 
   # Each gate exits 0 (regenerated something) or 3 (nothing to do); anything
   # else is a failure worth the notify unit.
-  local WNBA=0 FANTASY=0
+  local WNBA=0 FANTASY=0 CFB=0
   python -m wnba.wnba_live || WNBA=$?
   if [ "$WNBA" -ne 0 ] && [ "$WNBA" -ne 3 ]; then
     echo "❌ WNBA live refresh failed (rc=$WNBA)"
@@ -112,12 +113,18 @@ main() {
     echo "❌ fantasy live refresh failed (rc=$FANTASY)"
     exit "$FANTASY"
   fi
-  if [ "$WNBA" -eq 3 ] && [ "$FANTASY" -eq 3 ]; then
+  python -m cfb.live || CFB=$?
+  if [ "$CFB" -ne 0 ] && [ "$CFB" -ne 3 ]; then
+    echo "❌ CFB live refresh failed (rc=$CFB)"
+    exit "$CFB"
+  fi
+  if [ "$WNBA" -eq 3 ] && [ "$FANTASY" -eq 3 ] && [ "$CFB" -eq 3 ]; then
     exit 0                       # nothing live anywhere — quiet tick
   fi
   local WHAT=""
   [ "$WNBA" -eq 0 ] && WHAT="wnba"
   [ "$FANTASY" -eq 0 ] && WHAT="${WHAT:+$WHAT,}fantasy"
+  [ "$CFB" -eq 0 ] && WHAT="${WHAT:+$WHAT,}cfb"
 
   ########################################
   # BUILD + PUBLISH
