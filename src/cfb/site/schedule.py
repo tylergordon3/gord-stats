@@ -68,10 +68,10 @@ _CSS = """<style>
 .sc-intro{color:#475569;font-size:14px;line-height:1.55}
 table.cfb-sched{width:100%;border-collapse:collapse;font-size:14px}
 table.cfb-sched th{background:var(--accent-soft,#eef2f7);color:var(--accent-dark,#334155);
-  padding:7px 10px;text-align:left;
+  padding:7px 8px;text-align:left;
   font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
   border:1px solid #e2e8f0}
-table.cfb-sched td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
+table.cfb-sched td{padding:6px 8px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
   vertical-align:top}
 table.cfb-sched tbody tr.g:nth-child(even) td{background:#f8fafc}
 table.cfb-sched .rk{font-weight:700;color:#8a6d00;font-size:11.5px}
@@ -86,7 +86,7 @@ table.cfb-sched tr.hdr.sec td{background:var(--accent-soft,#e2e8f0);
   color:var(--accent-dark,#334155);font-size:11.5px;
   text-transform:uppercase;letter-spacing:.06em;padding:6px 10px}
 /* The stacked scorebox: away over home, logos, ranks, the winner in bold. */
-.sc-mu{display:flex;flex-direction:column;gap:3px;min-width:200px}
+.sc-mu{display:flex;flex-direction:column;gap:2px;min-width:170px;max-width:240px}
 .sc-row{display:flex;align-items:center;gap:8px}
 /* The Slate remote theme frames every <img>; reset or each logo becomes a
    boxed figure and the row grows. */
@@ -121,8 +121,9 @@ tr.g[data-state="in"] .sc-live{display:block}
 .tag-upset{background:#fee2e2;color:#991b1b}
 .tag-wx{background:#e0e7ff;color:#3730a3}
 /* Kick: time over TV. */
-td.t{white-space:nowrap;color:#4a5a68}
-.t-tv{display:block;font-size:12px;color:#64748b;margin-top:2px}
+td.t{color:#4a5a68;max-width:140px}
+td.t .t-when{white-space:nowrap}
+.t-tv{display:block;font-size:11.5px;color:#64748b;margin-top:2px;line-height:1.3}
 .t-live{color:#0a7d33;font-weight:700}
 .t-day{display:none;color:#94a3b8}
 table.cfb-sched.sorted .t-day{display:inline}
@@ -138,7 +139,7 @@ table.cfb-sched table.lnt th,table.cfb-sched table.frt th{background:none;border
   border-bottom:1px solid #e2e8f0;padding:0 8px 2px 0;font-size:10px;color:#94a3b8;
   text-align:left;letter-spacing:.04em}
 table.cfb-sched table.lnt td,table.cfb-sched table.frt td{background:none;border:none;
-  padding:2px 8px 2px 0;font-size:12px;color:#334155;vertical-align:middle}
+  padding:2px 6px 2px 0;font-size:12px;color:#334155;vertical-align:middle}
 table.cfb-sched table.lnt td.k,table.cfb-sched table.frt td.k{font-weight:700;color:#64748b;
   font-size:10.5px;letter-spacing:.04em}
 table.cfb-sched table.lnt tr.pick td{background:var(--accent-soft,#eef2f7)}
@@ -148,20 +149,25 @@ table.cfb-sched table.lnt tr.pick td:last-child{border-radius:0 4px 4px 0}
 table.cfb-sched table.lnt td:first-child{padding-left:4px}
 .lnt b{color:#0f172a}
 .mlx{font-size:11px;color:#64748b}
+/* Ratings and last five under each team, inside the matchup cell. */
+.sc-stat{font-size:10.5px;color:#64748b;margin:-1px 0 2px 28px;white-space:nowrap;
+  font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+.sc-stat b{color:#334155;font-weight:600}
+.sc-stat .l5{width:13px;height:13px;line-height:13px;font-size:9px;margin-right:1px}
 .call{margin-top:5px;font-size:12.5px;color:#334155}
 .call b{color:#0f172a}
 .call .strong b{color:var(--accent-dark,#1e40af)}
 .call .mv{margin-left:3px}
 .frm-scroll{overflow-x:auto;max-width:100%}
-table.cfb-sched table.frt td{padding:2px 9px 2px 0}
+table.cfb-sched table.frt td{padding:2px 7px 2px 0}
 .sub{font-size:12px;color:#64748b;margin-top:2px}
 .bar{height:5px;width:64px;border-radius:3px;background:#eef2f7;overflow:hidden;margin-top:4px}
 .bar i{display:block;height:100%;background:#3b82f6}
 .mk{font-weight:700;margin-left:4px}
 .mk.hit{color:#15803d}
 .mk.miss{color:#b91c1c}
-.t-wx{display:block;font-size:12px;color:#334155;margin-top:4px}
-.t-wx .sub{display:inline;margin-left:4px}
+.t-wx{display:block;font-size:12px;color:#334155;margin-top:4px;white-space:nowrap}
+.t-wx .sub{display:block;margin:1px 0 0;font-size:11px}
 tr.g.wx-bad .t-wx{color:#3730a3;font-weight:600}
 td.na{color:#94a3b8}
 .wk-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
@@ -242,6 +248,7 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   /* Rank alone beside FPI and SP+ on a phone; the rating rides in the title
      on desktop-width screens and the whole form row then fits the card. */
   table.cfb-sched table.frt td .mv{display:none}
+  .sc-stat{margin-left:24px;font-size:10px}
   table.cfb-sched table.frt td{padding-right:6px}
   .l5{width:14px;height:14px;line-height:14px;font-size:9.5px;margin-right:1px}
   .call{font-size:12px}
@@ -310,6 +317,8 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   table.cfb-sched table.lnt tr.pick td.k{color:var(--accent-text,#f1f5f9)}
   .lnt b,.call b{color:#f1f5f9}
   .mlx{color:#8fa0b8}
+  .sc-stat{color:#8fa0b8}
+  .sc-stat b{color:#c3cfdd}
   .call{color:#c3cfdd}
   .call .strong b{color:var(--accent-text,#bfdbfe)}
   .sub{color:#8fa0b8}
@@ -363,12 +372,12 @@ leans</i> filter), then Over or Under the posted total. When the model and the b
 within half a point it says so. A finished game shows what was on record before kickoff,
 never a refit, with &#10003; or &#10007; on each call. The model has no edge on the book
 historically: read the leans as where it disagrees, not as tips.</li>
-<li><b>Team form</b> &mdash; away team over home: record, against-the-spread and
-over/under records this season (counted here against the closing DraftKings line, since
-ESPN publishes none for college football), points scored and allowed per game, GordStats
-rating (points better than an average FBS team), FPI and SP+ rank with the rating beside
-it (hover SP+ for offence and defence ranks), and the last five results as W/L chips with
-the score on hover.</li>
+<li><b>Under each team</b> &mdash; GordStats rating (points better than an average
+FBS team), FPI and SP+ rank (hover for the rating, and SP+ offence and defence ranks), and
+the last five results as W/L chips with the score on hover.</li>
+<li><b>Season</b> &mdash; away team over home: record, against-the-spread and over/under
+records this season (counted here against the closing DraftKings line, since ESPN
+publishes none for college football), and points scored and allowed per game.</li>
 <li><b>Weather</b> &mdash; ESPN's AccuWeather forecast for kickoff, which appears about ten
 days out: conditions, temperature, chance of rain, gusts. <i>Bad weather</i> means rain,
 storms or snow, a 50%+ chance of rain, gusts of 25+ mph, or a kickoff at or below
@@ -642,7 +651,29 @@ def _side_row(g, side: str, records: dict) -> str:
     return (f'<div class="sc-row{" sc-win" if won else ""}" data-tid="{tid}">'
             f'{a}<img src="{logo}" alt="" loading="lazy">{a_close}'
             f'<span class="sc-name">{joiner}{badge}{a}{escape(name)}{a_close}{rec_tag}</span>'
-            f"{pts}</div>")
+            f"{pts}</div>{_stat_line(g, side)}")
+
+
+def _stat_line(g, side: str) -> str:
+    """GordStats rating, FPI and SP+ rank, last five - under the team's name."""
+    tid = str(getattr(g, f"{side}_id"))
+    bits = []
+    rating = _CTX.get("ratings", {}).get(tid)
+    if rating is not None:
+        bits.append(f'<span title="GordStats rating: points better than an average FBS team">'
+                    f"GS <b>{rating:+.1f}</b></span>")
+    fpi = _CTX.get("fpi", {}).get(tid)
+    if fpi:
+        bits.append(f'<span title="ESPN FPI rank ({fpi["rating"]:+.1f})">FPI <b>#{fpi["rank"]}</b></span>')
+    sp = _CTX.get("sp", {}).get(tid)
+    if sp and sp.get("rank"):
+        od = (f", offence #{sp['off_rank']}, defence #{sp['def_rank']}"
+              if sp.get("off_rank") and sp.get("def_rank") else "")
+        bits.append(f'<span title="SP+ rank ({sp["rating"]:+.1f}{od})">SP+ <b>#{sp["rank"]}</b></span>')
+    last5 = getattr(g, f"last5_{side}")
+    if last5:
+        bits.append(f'<span title="Last five results">{_last5(last5)}</span>')
+    return f'<div class="sc-stat">{"".join(bits)}</div>' if bits else ""
 
 
 def _conf_text(g) -> str:
@@ -751,8 +782,9 @@ def _lines_cell(g, home_won, sp_margin) -> str:
     if dk_spread is not None or dk_total is not None:
         ml = ""
         if _v(g.ml_away) is not None or _v(g.ml_home) is not None:
-            ml = (f'<span class="mlx">{escape(str(g.away_abbr))} {_ml(_v(g.ml_away))} / '
-                  f'{escape(str(g.home_abbr))} {_ml(_v(g.ml_home))}</span>')
+            ml = (f'<span class="mlx" title="moneyline, {escape(str(g.away_abbr))} / '
+                  f'{escape(str(g.home_abbr))}">ML {_ml(_v(g.ml_away))} / {_ml(_v(g.ml_home))}'
+                  "</span>")
         rows.append(row("DK", _line_text(g, dk_spread) if dk_spread is not None else "&mdash;",
                         f"{dk_total:g}" if dk_total is not None else "&mdash;", ml or "&mdash;"))
     if fpi is not None:
@@ -796,9 +828,6 @@ def _form_row(g, side: str) -> str:
     abbr = escape(str(getattr(g, f"{side}_abbr")))
     f = _CTX.get("form", {}).get(tid)
     rec = _CTX.get("rec", {}).get(tid, {})
-    fpi = _CTX.get("fpi", {}).get(tid)
-    sp = _CTX.get("sp", {}).get(tid)
-    rating = _CTX.get("ratings", {}).get(tid)
     total = rec.get("total") or (f"{f['w']}-{f['l']}" if f else "&mdash;")
     if f and f["g"]:
         ppg, pa = f["pf"] / f["g"], f["pa"] / f["g"]
@@ -809,29 +838,18 @@ def _form_row(g, side: str) -> str:
                  f"<td>{ppg:.0f}&ndash;{pa:.0f}</td>")
     else:
         cells = "<td>&mdash;</td>" * 3
-    gs_td = f"{rating:+.1f}" if rating is not None else "&mdash;"
-    fpi_td = (f"#{fpi['rank']} <span class='mv'>{fpi['rating']:+.1f}</span>" if fpi else "&mdash;")
-    sp_td = "&mdash;"
-    if sp and sp.get("rating") is not None:
-        od = (f" title=\"offence #{sp['off_rank']}, defence #{sp['def_rank']}\""
-              if sp.get("off_rank") and sp.get("def_rank") else "")
-        sp_td = f"<span{od}>#{sp['rank']} <span class='mv'>{sp['rating']:+.1f}</span></span>"
-    return (f'<tr><td class="k">{abbr}</td><td>{total}</td>{cells}<td>{gs_td}</td>'
-            f"<td>{fpi_td}</td><td>{sp_td}</td><td>{_last5(getattr(g, f'last5_{side}'))}</td></tr>")
+    return f'<tr><td class="k">{abbr}</td><td>{total}</td>{cells}</tr>'
 
 
 def _form_cell(g) -> str:
-    """Both teams' form in the row: record, ATS and over/under records this
-    season, points for and against, GordStats rating, FPI and SP+ rank (rating
-    beside it), last five results. Away over home, like the scorebox."""
-    return ('<td class="frm d" data-l="Team form" data-s="Form"><div class="c">'
+    """Both teams' results this season, away over home: record, against-the-
+    spread and over/under records, points for and against per game. Ratings
+    and the last five sit under each name in the matchup cell."""
+    return ('<td class="frm d" data-l="Season" data-s="Season"><div class="c">'
             '<div class="frm-scroll"><table class="frt"><tr><th></th>'
             '<th title="Record">Rec</th><th title="Against the spread this season">ATS</th>'
             '<th title="Over-under this season">O/U</th>'
-            '<th title="Points scored and allowed per game">PF&ndash;PA</th>'
-            '<th title="GordStats rating: points better than an average FBS team">GS</th>'
-            '<th title="ESPN FPI rank and rating">FPI</th>'
-            '<th title="SP+ rank and rating">SP+</th><th>Last 5</th></tr>'
+            '<th title="Points scored and allowed per game">PF&ndash;PA</th></tr>'
             + _form_row(g, "away") + _form_row(g, "home") + "</table></div></div></td>")
 
 
@@ -1083,7 +1101,7 @@ def _detail(g, spread, gs_margin, home_won, sp_margin) -> str:
 
 
 _HEAD = ('<thead><tr><th>Matchup</th><th>Kick (ET) &middot; TV &middot; Weather</th>'
-         '<th>Lines &middot; GordStats pick</th><th>Team form</th></tr></thead>')
+         '<th>Lines &middot; GordStats pick</th><th>Season</th></tr></thead>')
 _COLS = 4
 
 
