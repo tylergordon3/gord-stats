@@ -25,7 +25,7 @@ PAGES = ["home", "draft_review", "league", "league_power",
 
 def build_all(refresh: bool = False) -> list[str]:
     """Fetch (or reuse) the data, build every page; returns failed page names."""
-    from cfb import espn, gameinfo, odds, players, results, schools, yahoo
+    from cfb import cfbd, espn, gameinfo, odds, players, results, schools, yahoo
 
     # Fetch up front so one network failure surfaces once, not per page, and a
     # fetch that does fail leaves the pages building from the last good cache.
@@ -41,6 +41,10 @@ def build_all(refresh: bool = False) -> list[str]:
                         # drops the projection and prices the moneyline at
                         # -100000, so what is not captured before is gone.
                         ("espn game summaries", lambda: gameinfo.capture(refresh=refresh)),
+                        # CFBD's books, SP+ and pregame win probability - the
+                        # schedule's second opinions. Budgeted: ~1000 calls a
+                        # month on the free key, so cfbd gates each on cache age.
+                        ("cfbd", lambda: cfbd.capture(refresh=refresh)),
                         # The live draft board prices players off real seasons,
                         # so it needs the school-name bridge and two years of
                         # CFBD stat lines in the cache before it builds.

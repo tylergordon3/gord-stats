@@ -52,13 +52,15 @@ from html import escape
 import numpy as np
 import pandas as pd
 
-from cfb import espn, gameinfo, predict, results
+from cfb import cfbd, espn, gameinfo, predict, results
 from cfb import odds as odds_mod
-from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
+from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.teams import LOGO, team_slug
 
 POWER4 = {"ACC", "Big 12", "Big Ten", "SEC"}
+HOME_EDGE = 2.5           # points SP+ ratings are read with for a home team
+_CTX = {}                 # build-time lookups the detail panels draw on
 TOSS_UP = 3.0             # a spread this small is a coin flip for the badge
 UPSET_WATCH = 0.35        # an underdog somebody gives this much is worth a look
 
@@ -154,25 +156,80 @@ td.na{color:#94a3b8}
 .sc-legend ul{margin:6px 0 0 18px;padding:0}
 .sc-legend li{margin:3px 0}
 tr.g.hide,tr.hdr.hide{display:none}
+/* The More panel: a second row per game, shown on demand. */
+.det-btn{border:none;background:none;padding:0;margin-left:auto;cursor:pointer;
+  font-size:11px;font-weight:700;color:#2a78d6;letter-spacing:.02em}
+.det-btn:hover{text-decoration:underline}
+table.cfb-sched>tbody>tr.det{display:none}
+table.cfb-sched>tbody>tr.det.show{display:table-row}
+table.cfb-sched tr.det td{background:#f8fafc;padding:8px 12px 10px;border-color:#e2e8f0}
+.det-wrap{display:grid;grid-template-columns:minmax(260px,1.1fr) minmax(220px,.9fr);gap:8px 22px;
+  font-size:12.5px;color:#334155}
+.det-block h4{margin:2px 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+  color:#64748b}
+/* min-width:0 on the grid items, or a wide nested table sets the column's
+   minimum and the whole panel overflows the page instead of scrolling inside. */
+.det-block{min-width:0}
+.det-teams{grid-column:1/-1}
+.det-scroll{overflow-x:auto;max-width:100%}
+table.cfb-sched table.det-t{border:none;width:auto;margin:0;background:none}
+table.det-t{border-collapse:collapse;font-size:12px;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+table.cfb-sched table.det-t th{background:none;border:none;border-bottom:1px solid #e2e8f0;
+  padding:2px 8px 3px 0;font-size:10.5px;color:#94a3b8;text-align:left;letter-spacing:.04em}
+table.cfb-sched table.det-t td{background:none;border:none;padding:3px 8px 3px 0;
+  font-size:12px;color:#334155;vertical-align:middle}
+table.det-t td.k{font-weight:600;color:#0f172a}
+.det-line{margin:3px 0;line-height:1.45;white-space:normal}
+.det-line b{color:#0f172a}
+.mv{color:#94a3b8;font-size:11px}
+.mv.up{color:#15803d}
+.mv.dn{color:#b91c1c}
+.best{background:#dcfce7;border-radius:3px;padding:0 3px}
+.l5{display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;
+  border-radius:3px;font-size:10px;font-weight:700;margin-right:2px;cursor:default}
+.l5.w{background:#dcfce7;color:#166534}
+.l5.l{background:#fee2e2;color:#991b1b}
+.lean{font-weight:600;color:#0f172a}
 /* On a phone the table becomes a stack of cards: matchup on top, then one
    labelled line per figure, empty figures dropped. Same rows, same data
    attributes, so sorting and filtering are untouched. */
 @media (max-width:700px){
   #cfb-weeks .table-scroll{border:none;box-shadow:none;border-radius:0;overflow:visible;
     background:transparent}
+  /* Tighter cards: smaller type and logos, short labels, venue and the
+     projected-score / moneyline small print moved into the More panel. */
+  table.cfb-sched>tbody>tr.g{padding:6px 8px 5px;margin:6px 0}
+  table.cfb-sched .sc-row img{width:18px;height:18px}
+  .sc-mu{gap:2px}
+  .sc-name{font-size:13px}
+  .sc-pts{font-size:14px}
+  .sc-meta{font-size:10.5px;margin-top:2px;gap:3px 5px}
+  .sc-venue{display:none}
+  .tag{font-size:9.5px;padding:0 5px}
+  .sub{font-size:11px}
+  .t-tv{font-size:11px}
+  .det-btn{font-size:10.5px}
+  table.cfb-sched>tbody>tr.det{display:none}
+  table.cfb-sched>tbody>tr.det.show{display:block}
+  table.cfb-sched>tbody>tr.det>td{border:1px solid #e2e8f0;border-radius:10px;
+    margin:-4px 0 8px;padding:8px 10px}
+  table.det-t{width:100%}
+  .det-wrap{grid-template-columns:1fr;gap:8px;font-size:12px}
   table.cfb-sched{border:none;background:transparent}
-  table.cfb-sched,table.cfb-sched tbody,table.cfb-sched tr,table.cfb-sched td{display:block}
-  table.cfb-sched thead{display:none}
-  table.cfb-sched tr.g{border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;
+  table.cfb-sched,table.cfb-sched>tbody,table.cfb-sched>tbody>tr,
+  table.cfb-sched>tbody>tr>td{display:block}
+  table.cfb-sched>thead{display:none}
+  table.cfb-sched>tbody>tr.g{border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;
     padding:8px 10px 7px;background:#fff}
-  table.cfb-sched tr.g td,table.cfb-sched tbody tr.g:nth-child(even) td{border:none;
+  table.cfb-sched>tbody>tr.g>td,table.cfb-sched>tbody>tr.g:nth-child(even)>td{border:none;
     padding:2px 0;background:transparent}
   table.cfb-sched td.mu{position:static;padding-bottom:6px;border-bottom:1px solid #eef2f7;
     margin-bottom:4px}
   .sc-mu{min-width:0}
-  table.cfb-sched td.d{display:grid;grid-template-columns:78px 1fr;gap:6px;
-    font-size:13px;white-space:normal;max-width:none}
-  table.cfb-sched td.d::before{content:attr(data-l);font-size:10.5px;text-transform:uppercase;
+  table.cfb-sched td.d{display:grid;grid-template-columns:40px 1fr;gap:4px;
+    font-size:12px;white-space:normal;max-width:none;padding:1px 0}
+  table.cfb-sched td.d::before{content:attr(data-s);font-size:10px;text-transform:uppercase;
     letter-spacing:.04em;color:#94a3b8;font-weight:700;padding-top:2px}
   table.cfb-sched td.na{display:none}
   .sc-venue{max-width:none}
@@ -223,10 +280,22 @@ tr.g.hide,tr.hdr.hide{display:none}
   .sc-chips button.clear{color:#aab7c9}
   .sc-legend{color:#aab7c9}
   .sc-legend summary{color:#dde5ef}
+  .det-btn{color:#7fb3ff}
+  table.cfb-sched tr.det td{background:#1b2540;border-color:#2b3852}
+  .det-wrap,table.cfb-sched table.det-t td{color:#c3cfdd}
+  .det-block h4,table.cfb-sched table.det-t th{color:#8fa0b8;border-color:#2b3852}
+  table.det-t td.k,.det-line b,.lean{color:#f1f5f9}
+  .mv{color:#7f8ea3}
+  .mv.up{color:#4ade80}
+  .mv.dn{color:#f87171}
+  .best{background:#14532d}
+  .l5.w{background:#14532d;color:#bbf7d0}
+  .l5.l{background:#7f1d1d;color:#fecaca}
   @media (max-width:700px){
-    table.cfb-sched tr.g{border-color:#2b3852;background:#16203a}
+    table.cfb-sched>tbody>tr.g{border-color:#2b3852;background:#16203a}
     table.cfb-sched td.mu{border-color:#2b3852}
     table.cfb-sched td.d::before{color:#7f8ea3}
+    table.cfb-sched>tbody>tr.det>td{border-color:#2b3852}
   }
 }
 </style>"""
@@ -250,6 +319,13 @@ freezing.</li>
 (the model's, if there is no book line yet). <i>Toss-up</i>: the spread is three points or
 fewer. <i>Upset</i>: the favourite lost. <i>Upset watch</i> in the filters: the model or
 FPI gives the underdog at least a 35% chance, or the two disagree on who is favoured.</li>
+<li><b>More</b> on any game opens a panel with the book-by-book lines (DraftKings from
+ESPN; Bovada and others from CollegeFootballData), how each has moved since it opened, the
+DraftKings line's implied score and win chance, our archive of the line day by day, SP+
+and CollegeFootballData's own read of the game beside ours and FPI's, where the model
+leans against the number, and both teams' form: record with home/away splits, points for
+and against, against-the-spread and over/under records this season, FPI and SP+ ranks,
+GordStats rating and last five results.</li>
 <li><b>Sorting</b> by anything other than kickoff turns the week into one ranked list;
 games without the figure being sorted on fall to the bottom. <i>Matchup quality</i> is
 ESPN's 0&ndash;100 measure of how competitive and consequential a game projects to be.</li>
@@ -308,7 +384,8 @@ def _v(x):
 # Assembling one frame with everything a row needs.
 
 def _model_lines(sched: pd.DataFrame) -> pd.DataFrame:
-    """game_id -> gs_margin, gs_total, gs_wp, gs_home, gs_away.
+    """game_id -> gs_margin, gs_total, gs_wp, gs_home, gs_away; and the fit's
+    team ratings into _CTX["ratings"] (ESPN id -> points above average).
 
     Games still to play get one fit as of now, the same fit the team pages
     run on. Finished games get the last prediction archived before their
@@ -326,6 +403,10 @@ def _model_lines(sched: pd.DataFrame) -> pd.DataFrame:
     # not by membership: the archive also holds this week's games, captured
     # before kickoff, and a pending game must still show today's fit.
     if not season.empty:
+        ratings = {}
+        for side in ("home", "away"):
+            ratings.update(dict(zip(season[f"{side}_id"].astype(str), season[f"{side}_rating"])))
+        _CTX["ratings"] = {k: v for k, v in ratings.items() if not pd.isna(v)}
         pending = season[~season["game_id"].astype(str).isin(done)]
         frames.append(pd.DataFrame({
             "game_id": pending["game_id"].astype(str),
@@ -357,15 +438,19 @@ def _frame() -> pd.DataFrame:
     df = df.merge(_model_lines(df), on="game_id", how="left")
 
     board = odds_mod.latest(SEASON)
+    bd_cols = ["bd_spread", "bd_total", "bd_book", "bd_spread_open", "bd_total_open",
+               "bd_ml_home", "bd_ml_away", "bd_ml_home_open", "bd_ml_away_open"]
     if not board.empty:
-        board = board.rename(columns={"spread": "bd_spread", "total": "bd_total",
-                                      "book": "bd_book"})
-        df = df.merge(board[["home_id", "away_id", "bd_spread", "bd_total", "bd_book"]],
+        board = board.rename(columns={c: "bd_" + c for c in odds_mod._LATEST_COLS
+                                      if c not in ("home_id", "away_id")})
+        df = df.merge(board[["home_id", "away_id"] + bd_cols],
                       on=["home_id", "away_id"], how="left")
-    for col in ("bd_spread", "bd_total", "bd_book", "gs_margin", "gs_total", "gs_wp",
-                "gs_home", "gs_away"):
+    for col in bd_cols + ["gs_margin", "gs_total", "gs_wp", "gs_home", "gs_away"]:
         if col not in df.columns:
             df[col] = np.nan
+    _CTX.update({"form": _form(df), "fpi": _fpi_by_id(), "sp": cfbd.sp_by_id(),
+                 "rec": cfbd.records(), "books": cfbd.lines(), "cfbd_wp": cfbd.pregame_wp(),
+                 "line_hist": _line_history()})
 
     info = gameinfo.load(SEASON)
     confs = espn.conferences()
@@ -384,8 +469,10 @@ def _frame() -> pd.DataFrame:
         rows.append({
             "dk_spread": dk_spread, "dk_total": dk_total,
             "dk_book": e.get("book") or _v(g.bd_book) or "DraftKings",
-            "ml_home": e.get("ml_home"), "ml_away": e.get("ml_away"),
+            "ml_home": e.get("ml_home") if e.get("ml_home") is not None else _v(g.bd_ml_home),
+            "ml_away": e.get("ml_away") if e.get("ml_away") is not None else _v(g.bd_ml_away),
             "fpi_wp": e.get("espn_home_wp"),
+            "last5_home": e.get("last5_home"), "last5_away": e.get("last5_away"),
             "mq": e.get("mq"),
             "weather": e.get("weather"),
             "home_conf": confs.get(str(g.home_id), ""),
@@ -393,6 +480,85 @@ def _frame() -> pd.DataFrame:
         })
     extra = pd.DataFrame(rows, index=df.index)
     return pd.concat([df, extra], axis=1)
+
+
+def _form(df: pd.DataFrame) -> dict:
+    """ESPN team id -> this season's form from the games played: record,
+    points for and against, and - against the last captured DraftKings line -
+    the against-the-spread and over/under records. ESPN publishes no ATS
+    record for college football, so it is counted here."""
+    out = {}
+    played = df[(df["state"] == "post") & df["home_score"].notna() & df["away_score"].notna()]
+    played = played[(played["home_score"] + played["away_score"]) > 0]
+    for g in played.itertuples():
+        margin = g.home_score - g.away_score
+        total = g.home_score + g.away_score
+        spread, ou = _v(g.bd_spread), _v(g.bd_total)
+        for side, tid, pf, pa, sign in (("home", g.home_id, g.home_score, g.away_score, 1),
+                                        ("away", g.away_id, g.away_score, g.home_score, -1)):
+            f = out.setdefault(str(tid), {"g": 0, "w": 0, "l": 0, "pf": 0.0, "pa": 0.0,
+                                          "ats": [0, 0, 0], "ou": [0, 0, 0]})
+            f["g"] += 1
+            f["w" if pf > pa else "l"] += 1
+            f["pf"] += pf
+            f["pa"] += pa
+            if spread is not None:
+                cover = (margin + spread) * sign     # home covers when margin + spread > 0
+                f["ats"][0 if cover > 0 else (1 if cover < 0 else 2)] += 1
+            if ou is not None:
+                f["ou"][0 if total > ou else (1 if total < ou else 2)] += 1
+    return out
+
+
+def _fpi_by_id() -> dict:
+    """ESPN team id -> {rating, rank} from the cached FPI pull."""
+    path = DATA_DIR / f"fpi_{SEASON}.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    names = next((c.get("names") or [] for c in data.get("categories") or []
+                  if c.get("name") == "fpi"), [])
+    pos = {n: i for i, n in enumerate(names)}
+    out = {}
+    for entry in data.get("teams") or []:
+        team = entry.get("team") or {}
+        cat = next((c for c in entry.get("categories") or [] if c.get("name") == "fpi"), {})
+        values = cat.get("values") or []
+        try:
+            out[str(team.get("id"))] = {"rating": float(values[pos["fpi"]]),
+                                        "rank": int(values[pos["fpirank"]])}
+        except (KeyError, IndexError, TypeError, ValueError):
+            continue
+    return out
+
+
+def _line_history() -> dict:
+    """(home_id, away_id) -> [(day, spread, total)] - one entry per capture day."""
+    hist = odds_mod.history(SEASON)
+    if hist.empty:
+        return {}
+    hist = hist.copy()
+    hist["day"] = hist["captured"].str[:10]
+    hist = hist.drop_duplicates(subset=["home_id", "away_id", "day"], keep="last")
+    out = {}
+    for r in hist.itertuples():
+        out.setdefault((str(r.home_id), str(r.away_id)), []).append(
+            (r.day, _v(r.spread), _v(r.total)))
+    return out
+
+
+def _implied(ml) -> float | None:
+    if ml is None:
+        return None
+    return 100 / (ml + 100) if ml > 0 else -ml / (-ml + 100)
+
+
+def _devig(ml_home, ml_away) -> float | None:
+    h, a = _implied(ml_home), _implied(ml_away)
+    if h is None or a is None or h + a <= 0:
+        return None
+    return h / (h + a)
 
 
 # ---------------------------------------------------------------------------
@@ -448,7 +614,7 @@ def _kick_cell(g) -> str:
     else:
         when = local.strftime("%-I:%M %p")
     tv = f'<span class="t-tv">{escape(str(g.tv))}</span>' if g.tv else ""
-    return (f'<td class="t d" data-l="Kick"><div class="c">{day}'
+    return (f'<td class="t d" data-l="Kick" data-s="Kick"><div class="c">{day}'
             f'<span class="t-when{live}">{when}</span>{tv}</div></td>')
 
 
@@ -477,7 +643,7 @@ def _mark(home_fav: bool, home_won) -> str:
 def _gs_cell(g, home_won) -> str:
     margin = _v(g.gs_margin)
     if margin is None:
-        return '<td class="ln na d" data-l="GordStats">&mdash;</td>'
+        return '<td class="ln na d" data-l="GordStats" data-s="GS">&mdash;</td>'
     wp = _v(g.gs_wp)
     pct = "" if wp is None else f'<span class="pct">{max(wp, 1 - wp):.0%}</span>'
     line = f"<b>{_line_text(g, -margin)}</b>{pct}{_mark(margin >= 0, home_won)}"
@@ -487,7 +653,7 @@ def _gs_cell(g, home_won) -> str:
         sub.append(f"O/U {total:.0f}")
     if g.state != "post" and _v(g.gs_home) is not None:
         sub.append(f"proj {g.gs_away:.0f}&ndash;{g.gs_home:.0f}")
-    return (f'<td class="ln d" data-l="GordStats"><div class="c">{line}'
+    return (f'<td class="ln d" data-l="GordStats" data-s="GS"><div class="c">{line}'
             + (f'<div class="sub">{" &middot; ".join(sub)}</div>' if sub else "")
             + "</div></td>")
 
@@ -499,7 +665,7 @@ def _ml(ml) -> str:
 def _dk_cell(g) -> str:
     spread, total = _v(g.dk_spread), _v(g.dk_total)
     if spread is None and total is None and _v(g.ml_home) is None:
-        return '<td class="ln na d" data-l="DraftKings">&mdash;</td>'
+        return '<td class="ln na d" data-l="DraftKings" data-s="DK">&mdash;</td>'
     line = f"<b>{_line_text(g, spread)}</b>" if spread is not None else "<b>&mdash;</b>"
     sub = []
     if total is not None:
@@ -507,7 +673,7 @@ def _dk_cell(g) -> str:
     if _v(g.ml_home) is not None or _v(g.ml_away) is not None:
         sub.append(f"ML {escape(str(g.away_abbr))} {_ml(_v(g.ml_away))} "
                    f"&middot; {escape(str(g.home_abbr))} {_ml(_v(g.ml_home))}")
-    return (f'<td class="ln d" data-l="DraftKings"><div class="c">{line}'
+    return (f'<td class="ln d" data-l="DraftKings" data-s="DK"><div class="c">{line}'
             + (f'<div class="sub">{" &middot; ".join(sub)}</div>' if sub else "")
             + "</div></td>")
 
@@ -515,10 +681,10 @@ def _dk_cell(g) -> str:
 def _fpi_cell(g, home_won) -> str:
     wp = _v(g.fpi_wp)
     if wp is None:
-        return '<td class="fpi na d" data-l="FPI">&mdash;</td>'
+        return '<td class="fpi na d" data-l="FPI" data-s="FPI">&mdash;</td>'
     _, abbr, home_fav = _fav(g, wp - 0.5)
     p = wp if home_fav else 1 - wp
-    return (f'<td class="fpi d" data-l="FPI"><div class="c"><b>{escape(str(abbr))}</b>'
+    return (f'<td class="fpi d" data-l="FPI" data-s="FPI"><div class="c"><b>{escape(str(abbr))}</b>'
             f'<span class="pct">{p:.0%}</span>{_mark(home_fav, home_won)}'
             f'<div class="bar"><i style="width:{p * 100:.0f}%"></i></div></div></td>')
 
@@ -546,7 +712,7 @@ def _wx_icon(cond) -> str:
 def _wx_cell(g) -> str:
     wx = g.weather if isinstance(g.weather, dict) else None
     if not wx:
-        return '<td class="wx na d" data-l="Weather">&mdash;</td>'
+        return '<td class="wx na d" data-l="Weather" data-s="Wx">&mdash;</td>'
     main = []
     temp = wx.get("temp")
     if temp is not None:
@@ -559,7 +725,7 @@ def _wx_cell(g) -> str:
         sub.append(f"rain {wx['precip']:.0f}%")
     if wx.get("gust") is not None and wx["gust"] >= 10:
         sub.append(f"gusts {wx['gust']:.0f} mph")
-    return (f'<td class="wx d" data-l="Weather"><div class="c">'
+    return (f'<td class="wx d" data-l="Weather" data-s="Wx"><div class="c">'
             f'<span class="wx-main">{_wx_icon(wx.get("cond"))} {" ".join(main)}</span>'
             + (f'<div class="sub">{" &middot; ".join(sub)}</div>' if sub else "")
             + "</div></td>")
@@ -608,7 +774,9 @@ def _row(g, idx: int, records: dict) -> str:
         tags.append('<span class="tag tag-wx">Weather</span>')
     conf = _conf_text(g)
     meta = ('<div class="sc-meta">' + (f"<span>{escape(conf)}</span>" if conf else "")
-            + "".join(tags) + "</div>") if (conf or tags) else ""
+            + "".join(tags)
+            + '<button type="button" class="det-btn" aria-expanded="false">More &#9662;</button>'
+            "</div>")
 
     confs = "|".join(sorted({c for c in (g.home_conf, g.away_conf) if c}))
     teams = " ".join(str(x).lower() for x in (g.home, g.away, g.home_abbr, g.away_abbr))
@@ -640,7 +808,170 @@ def _row(g, idx: int, records: dict) -> str:
         f'{_side_row(g, "home", records)}</div>{meta}{venue}'
         '<div class="sc-live"><div class="sc-sit"></div><div class="sc-play"></div></div></td>'
         + _kick_cell(g) + _gs_cell(g, home_won) + _dk_cell(g) + _fpi_cell(g, home_won)
-        + _wx_cell(g) + "</tr>")
+        + _wx_cell(g) + "</tr>" + _detail(g, spread, gs_margin, home_won))
+
+
+def _mv(now, opened, signed=True) -> str:
+    """'opened 52.5' beside a line that has moved since the book posted it."""
+    if opened is None or now is None or abs(now - opened) < 0.01:
+        return ""
+    return f' <span class="mv">opened {opened:+g}</span>' if signed else \
+        f' <span class="mv">opened {opened:g}</span>'
+
+
+def _side_line(g, spread) -> str:
+    return _line_text(g, spread) if spread is not None else "&mdash;"
+
+
+def _book_row(g, name, spread, spread_open, total, total_open, ml_h, ml_a,
+              ml_h_open=None, ml_a_open=None) -> str:
+    sp = _side_line(g, spread)
+    if spread is not None and spread_open is not None and abs(spread - spread_open) > 0.01:
+        # Same favourite: quote the favourite's number. Flipped: name the new one.
+        sp += (_mv(-abs(spread), -abs(spread_open)) if (spread < 0) == (spread_open < 0)
+               else f' <span class="mv">opened {_side_line(g, spread_open)}</span>')
+    tot = ("&mdash;" if total is None else f"{total:g}") + (
+        _mv(total, total_open, signed=False) if total is not None and total_open is not None
+        else "")
+    ml = ("&mdash;" if ml_a is None and ml_h is None else
+          f"{_ml(ml_a)} / {_ml(ml_h)}")
+    if ml_a_open is not None and ml_h_open is not None and (ml_a_open != ml_a or ml_h_open != ml_h):
+        ml += f' <span class="mv">opened {_ml(ml_a_open)} / {_ml(ml_h_open)}</span>'
+    return f'<tr><td class="k">{escape(name)}</td><td>{sp}</td><td>{tot}</td><td>{ml}</td></tr>'
+
+
+def _last5(games) -> str:
+    if not games:
+        return "&mdash;"
+    out = []
+    for e in games:
+        r = (e.get("r") or "").upper()[:1]
+        title = escape(f"{r} {e.get('s', '')} {e.get('v', '')} {e.get('o', '')}".strip())
+        out.append(f'<span class="l5 {"w" if r == "W" else "l"}" title="{title}">{r or "?"}</span>')
+    return "".join(out)
+
+
+def _team_row(g, side: str) -> str:
+    tid = str(getattr(g, f"{side}_id"))
+    name = escape(str(getattr(g, side)))
+    f = _CTX.get("form", {}).get(tid)
+    rec = _CTX.get("rec", {}).get(tid, {})
+    fpi = _CTX.get("fpi", {}).get(tid)
+    sp = _CTX.get("sp", {}).get(tid)
+    rating = _CTX.get("ratings", {}).get(tid)
+    total = rec.get("total") or (f"{f['w']}-{f['l']}" if f else "&mdash;")
+    split = f"{rec['home']} / {rec['away']}" if rec else "&mdash;"
+    if f and f["g"]:
+        ppg, pa = f["pf"] / f["g"], f["pa"] / f["g"]
+        form = f"<td>{ppg:.1f}</td><td>{pa:.1f}</td><td>{ppg - pa:+.1f}</td>"
+        ats = "-".join(str(x) for x in f["ats"][:2]) + (f"-{f['ats'][2]}" if f["ats"][2] else "")
+        ou = "-".join(str(x) for x in f["ou"][:2]) + (f"-{f['ou'][2]}" if f["ou"][2] else "")
+        form += f"<td>{ats if sum(f['ats']) else '&mdash;'}</td><td>{ou if sum(f['ou']) else '&mdash;'}</td>"
+    else:
+        form = "<td>&mdash;</td>" * 5
+    fpi_td = f"{fpi['rating']:+.1f} <span class='mv'>#{fpi['rank']}</span>" if fpi else "&mdash;"
+    sp_td = (f"{sp['rating']:+.1f} <span class='mv'>#{sp['rank']}</span>"
+             if sp and sp.get("rating") is not None else "&mdash;")
+    od_td = (f"<span class='mv'>O</span> #{sp['off_rank']} <span class='mv'>D</span> #{sp['def_rank']}"
+             if sp and sp.get("off_rank") and sp.get("def_rank") else "&mdash;")
+    gs_td = f"{rating:+.1f}" if rating is not None else "&mdash;"
+    return (f'<tr><td class="k">{name}</td><td>{total}</td><td>{split}</td>{form}'
+            f"<td>{fpi_td}</td><td>{sp_td}</td><td>{od_td}</td><td>{gs_td}</td>"
+            f"<td>{_last5(getattr(g, f'last5_{side}'))}</td></tr>")
+
+
+def _detail(g, spread, gs_margin, home_won) -> str:
+    """The More panel: books and movement, implied numbers, opinions and
+    edges, and both teams' form."""
+    ha, hh = escape(str(g.away_abbr)), escape(str(g.home_abbr))
+    # Books: DraftKings from ESPN's feed (frozen at kickoff), the rest from CFBD.
+    rows = []
+    dk_spread, dk_total = _v(g.dk_spread), _v(g.dk_total)
+    if dk_spread is not None or dk_total is not None:
+        rows.append(_book_row(g, "DraftKings", dk_spread, _v(g.bd_spread_open), dk_total,
+                              _v(g.bd_total_open), _v(g.ml_home), _v(g.ml_away),
+                              _v(g.bd_ml_home_open), _v(g.bd_ml_away_open)))
+    for b in _CTX.get("books", {}).get(str(g.game_id), []):
+        if b["book"] == "DraftKings" and rows:
+            continue
+        rows.append(_book_row(g, b["book"], b.get("spread"), b.get("spread_open"),
+                              b.get("total"), b.get("total_open"),
+                              b.get("ml_home"), b.get("ml_away")))
+    books = ('<div class="det-scroll"><table class="det-t"><tr><th>Book</th><th>Spread</th>'
+             f'<th>Total</th><th>ML {ha} / {hh}</th></tr>{"".join(rows)}</table></div>'
+             if rows else '<div class="det-line">No line posted yet.</div>')
+
+    lines = []
+    hist = _CTX.get("line_hist", {}).get((str(g.home_id), str(g.away_id)), [])
+    if len(hist) > 1:
+        steps = " &middot; ".join(
+            f"{pd.Timestamp(d):%b %-d} {_side_line(g, sp)}" + (f" / {t:g}" if t is not None else "")
+            for d, sp, t in hist[-6:])
+        lines.append(f'<div class="det-line"><b>Line by day</b> (DraftKings): {steps}</div>')
+    if dk_spread is not None and dk_total is not None:
+        home_pts, away_pts = (dk_total - dk_spread) / 2, (dk_total + dk_spread) / 2
+        implied = f"<b>DraftKings implies</b> {ha} {away_pts:.0f}&ndash;{hh} {home_pts:.0f}"
+        wp = _devig(_v(g.ml_home), _v(g.ml_away))
+        if wp is not None:
+            _, abbr, home_fav = _fav(g, wp - 0.5)
+            implied += f"; the moneyline says {escape(str(abbr))} {(wp if home_fav else 1 - wp):.0%}"
+        lines.append(f'<div class="det-line">{implied}.</div>')
+
+    # Opinions beside the number.
+    ops = []
+    if gs_margin is not None:
+        wp = _v(g.gs_wp)
+        ops.append(f"<b>GordStats</b> {_line_text(g, -gs_margin)}"
+                   + (f" &middot; {max(wp, 1 - wp):.0%}" if wp is not None else "")
+                   + (f" &middot; O/U {g.gs_total:.0f}" if _v(g.gs_total) is not None else ""))
+    fpi = _v(g.fpi_wp)
+    if fpi is not None:
+        _, abbr, home_fav = _fav(g, fpi - 0.5)
+        ops.append(f"<b>FPI</b> {escape(str(abbr))} {(fpi if home_fav else 1 - fpi):.0%}")
+    cw = _CTX.get("cfbd_wp", {}).get(str(g.game_id))
+    if cw is not None:
+        _, abbr, home_fav = _fav(g, cw - 0.5)
+        ops.append(f"<b>CFBD</b> {escape(str(abbr))} {(cw if home_fav else 1 - cw):.0%}")
+    sp_h = _CTX.get("sp", {}).get(str(g.home_id), {})
+    sp_a = _CTX.get("sp", {}).get(str(g.away_id), {})
+    sp_margin = None
+    if sp_h.get("rating") is not None and sp_a.get("rating") is not None:
+        sp_margin = sp_h["rating"] - sp_a["rating"] + (0 if g.neutral else HOME_EDGE)
+        ops.append(f"<b>SP+</b> {_line_text(g, -sp_margin)}")
+    edges = []
+    if spread is not None and abs(spread) > 0.25 and dk_spread is not None:
+        for label, margin in (("GordStats", gs_margin), ("SP+", sp_margin)):
+            if margin is None:
+                continue
+            diff = margin - (-dk_spread)
+            if abs(diff) >= 0.5:
+                side = hh if diff > 0 else ha
+                edges.append(f"{label} leans <span class='lean'>{side}</span> by {abs(diff):.1f}")
+    if dk_total is not None and _v(g.gs_total) is not None and abs(g.gs_total - dk_total) >= 0.5:
+        edges.append(f"GordStats leans <span class='lean'>"
+                     f"{'Over' if g.gs_total > dk_total else 'Under'}</span> by "
+                     f"{abs(g.gs_total - dk_total):.1f}")
+    opinions = ("".join(f'<div class="det-line">{o}</div>' for o in ops) or
+                '<div class="det-line">&mdash;</div>')
+    if edges:
+        opinions += ('<div class="det-line"><b>Against the number:</b> '
+                     + "; ".join(edges) + ". The model has no edge on the book "
+                     "historically &mdash; read these as disagreements, not tips.</div>")
+    where = " &middot; ".join(escape(str(x)) for x in (g.venue, g.place) if x)
+    if where:
+        opinions += f'<div class="det-line mv">{where}</div>'
+
+    teams = ('<div class="det-scroll"><table class="det-t"><tr><th></th><th>Rec</th>'
+             '<th>Home / Away</th><th>PPG</th><th>PA</th><th>Mrg</th><th>ATS</th><th>O/U</th>'
+             '<th>FPI</th><th>SP+</th><th>SP+ Off / Def</th><th>GS</th><th>Last 5</th></tr>'
+             + _team_row(g, "away") + _team_row(g, "home") + "</table></div>")
+
+    return (f'<tr class="det" data-for="g-{escape(str(g.game_id))}"><td colspan="{_COLS}">'
+            '<div class="det-wrap">'
+            f'<div class="det-block"><h4>Lines</h4>{books}{"".join(lines)}</div>'
+            f'<div class="det-block"><h4>Opinions</h4>{opinions}</div>'
+            f'<div class="det-block det-teams"><h4>Teams</h4>{teams}</div>'
+            "</div></td></tr>")
 
 
 _HEAD = ('<thead><tr><th>Matchup</th><th>Kick (ET)</th><th>GordStats</th>'
@@ -710,6 +1041,7 @@ var chips=Array.prototype.slice.call(document.querySelectorAll('.sc-chips button
 var on={};
 var current=CURRENT;
 var timer=null;
+var openGame=null,noScroll=false;     // #g=<espn id> opens that game's More panel
 
 // Sort keys: attribute and direction. Rows lacking the attribute sink to the bottom.
 var SORTS={spread:['spread',1],bigspread:['spread',-1],total:['total',-1],
@@ -750,7 +1082,9 @@ function layout(view){
   var tbody=view.querySelector('tbody');if(!tbody)return;
   Array.prototype.slice.call(tbody.querySelectorAll('tr.hdr')).forEach(function(h){
     h.parentNode.removeChild(h);});
-  var rows=Array.prototype.slice.call(tbody.rows);
+  var all=Array.prototype.slice.call(tbody.rows),dets={};
+  all.forEach(function(r){if(r.classList.contains('det'))dets[r.getAttribute('data-for')]=r;});
+  var rows=all.filter(function(r){return r.classList.contains('g');});
   var spec=SORTS[sortSel.value];
   rows.sort(function(a,b){
     if(spec){
@@ -781,6 +1115,9 @@ function layout(view){
       lastState=st;lastDay=day;
     }
     tbody.appendChild(r);
+    var d=dets[r.id];
+    if(d){tbody.appendChild(d);
+      d.classList.toggle('show',!r.classList.contains('hide')&&r.classList.contains('open'));}
   });
   view.querySelector('table').classList.toggle('sorted',!!spec);
   var count=view.querySelector('.wk-count');
@@ -805,13 +1142,15 @@ function writeHash(){
 function readHash(){
   var h=location.hash.replace(/^#/,'');if(!h)return;
   h.split('&').forEach(function(kv){
-    var i=kv.indexOf('='),k=kv.slice(0,i),v=decodeURIComponent(kv.slice(i+1));
+    var i=kv.indexOf('='),k=i<0?kv:kv.slice(0,i),v=i<0?'':decodeURIComponent(kv.slice(i+1));
     if(k==='w'&&document.getElementById('wk-view-'+v))current=+v;
     else if(k==='sort'&&SORTS[v])sortSel.value=v;
     else if(k==='f')v.split(',').forEach(function(x){on[x]=true;});
     else if(k==='conf'){for(var j=0;j<confSel.options.length;j++)
       if(confSel.options[j].value===v)confSel.value=v;}
     else if(k==='q')search.value=v;
+    else if(k==='g')openGame=v;
+    else if(k==='noscroll')noScroll=true;   // screenshot checks; a headless capture goes blank once scrolled
   });
   chips.forEach(function(b){b.classList.toggle('active',!!on[b.getAttribute('data-f')]);});
 }
@@ -916,6 +1255,19 @@ document.getElementById('sc-clear').addEventListener('click',function(){
 sortSel.addEventListener('change',applyAll);
 confSel.addEventListener('change',applyAll);
 search.addEventListener('input',applyAll);
+function setOpen(row,open){
+  row.classList.toggle('open',open);
+  var btn=row.querySelector('.det-btn');
+  if(btn){btn.setAttribute('aria-expanded',open?'true':'false');
+    btn.innerHTML=open?'Less \u25b4':'More \u25be';}
+  var d=row.parentNode.querySelector('tr.det[data-for="'+row.id+'"]');
+  if(d)d.classList.toggle('show',open);
+}
+document.addEventListener('click',function(ev){
+  var btn=ev.target.closest('.det-btn');if(!btn)return;
+  var row=btn.closest('tr.g');if(!row)return;
+  setOpen(row,!row.classList.contains('open'));
+});
 document.addEventListener('visibilitychange',function(){
   if(!document.hidden){clearTimeout(timer);poll();}
 });
@@ -923,6 +1275,13 @@ document.addEventListener('visibilitychange',function(){
 readHash();
 window.show_wk(current);
 applyAll();
+if(openGame){
+  var row=document.getElementById('g-'+openGame);
+  if(row){
+    var v=row.closest('.wk-view');if(v){show_wk(v.id.replace('wk-view-',''));}
+    setOpen(row,true);
+    if(!noScroll)row.scrollIntoView({block:'start'});}
+}
 poll();
 })();
 </script>"""

@@ -33,6 +33,8 @@ def _rows(week: int, season: int) -> list:
     captured = datetime.now(timezone.utc).isoformat(timespec="seconds")
     out = []
     for event in data.get("events", []):
+        if not event.get("competitions"):      # ESPN's empty stub events
+            continue
         comp = event["competitions"][0]
         book = (comp.get("odds") or [None])[0]
         if not book or book.get("spread") is None:
@@ -52,8 +54,35 @@ def _rows(week: int, season: int) -> list:
             "book": (book.get("provider") or {}).get("name", ""),
             "spread": spread,                       # home team, book convention
             "total": book.get("overUnder"),
+            # Where the book opened, and the moneyline: the movement between
+            # open and now is half of what a bettor looks at.
+            "spread_open": _line(book, "pointSpread", "home", "open"),
+            "total_open": _line(book, "total", "over", "open"),
+            "ml_home": _line(book, "moneyline", "home", "close", "odds"),
+            "ml_away": _line(book, "moneyline", "away", "close", "odds"),
+            "ml_home_open": _line(book, "moneyline", "home", "open", "odds"),
+            "ml_away_open": _line(book, "moneyline", "away", "open", "odds"),
         })
     return out
+
+
+def _line(book: dict, market: str, side: str, when: str, field: str = "line"):
+    """One number out of ESPN's nested open/close blocks, or None.
+
+    Lines arrive as strings like "+7", "-7", "o53.5", "u53.5" or "+205";
+    the letter prefix on a total is stripped. A post-game placeholder past
+    +-10000 on a moneyline is not a price and is dropped.
+    """
+    raw = (((book.get(market) or {}).get(side) or {}).get(when) or {}).get(field)
+    if raw in (None, ""):
+        return None
+    try:
+        value = float(str(raw).lstrip("ou").replace("EVEN", "100"))
+    except ValueError:
+        return None
+    if field == "odds" and abs(value) >= 10000:
+        return None
+    return value
 
 
 def capture(weeks=None, season: int = SEASON) -> pd.DataFrame:
@@ -77,13 +106,29 @@ def capture(weeks=None, season: int = SEASON) -> pd.DataFrame:
     return fresh
 
 
+_LATEST_COLS = ["home_id", "away_id", "spread", "total", "book", "spread_open",
+                "total_open", "ml_home", "ml_away", "ml_home_open", "ml_away_open"]
+
+
 def latest(season: int = SEASON) -> pd.DataFrame:
-    """The most recent captured line per game: game key, spread, total."""
+    """The most recent captured line per game: game key, spread, total, and
+    the open/moneyline columns (NaN on rows captured before those existed)."""
     path = ODDS_DIR / f"{season}.parquet"
     if not path.exists():
-        return pd.DataFrame(columns=["home_id", "away_id", "spread", "total", "book"])
+        return pd.DataFrame(columns=_LATEST_COLS)
     frame = pd.read_parquet(path).sort_values("captured")
+    for col in _LATEST_COLS:
+        if col not in frame.columns:
+            frame[col] = pd.NA
     return frame.drop_duplicates(subset=["home_id", "away_id"], keep="last")
+
+
+def history(season: int = SEASON) -> pd.DataFrame:
+    """Every capture of every game, oldest first - for a line-movement strip."""
+    path = ODDS_DIR / f"{season}.parquet"
+    if not path.exists():
+        return pd.DataFrame(columns=["home_id", "away_id", "captured", "spread", "total"])
+    return pd.read_parquet(path).sort_values("captured")
 
 
 if __name__ == "__main__":

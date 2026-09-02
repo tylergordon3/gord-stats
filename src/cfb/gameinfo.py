@@ -98,7 +98,8 @@ def _num(value):
 def _parse(summary: dict, home_id: str, away_id: str) -> dict:
     """The parts of a summary worth keeping, as flat JSON-friendly values."""
     out = {"espn_home_wp": None, "book": None, "spread": None, "total": None,
-           "ml_home": None, "ml_away": None, "weather": None}
+           "ml_home": None, "ml_away": None, "weather": None,
+           "last5_home": None, "last5_away": None}
 
     pred = summary.get("predictor") or {}
     for side, key in (("homeTeam", "home"), ("awayTeam", "away")):
@@ -135,6 +136,26 @@ def _parse(summary: dict, home_id: str, away_id: str) -> dict:
         for key in ("ml_home", "ml_away"):
             if out[key] is not None and abs(out[key]) >= 10000:
                 out[key] = None
+
+    # Each side's last five results, as ESPN lists them (last season's games
+    # early on). Which team a block belongs to is taken from the block's own
+    # team id, or failing that the id common to every game in it.
+    for block in summary.get("lastFiveGames") or []:
+        events = block.get("events") or []
+        tid = str((block.get("team") or {}).get("id") or "")
+        if not tid and events:
+            common = set.intersection(*[{str(e.get("homeTeamId")), str(e.get("awayTeamId"))}
+                                        for e in events])
+            tid = next(iter(common), "")
+        side = "home" if tid == home_id else ("away" if tid == away_id else None)
+        if side is None:
+            continue
+        games = []
+        for e in events[:5]:
+            opp = e.get("opponent") or {}
+            games.append({"r": e.get("gameResult") or "", "s": e.get("score") or "",
+                          "o": opp.get("abbreviation") or "", "v": e.get("atVs") or ""})
+        out[f"last5_{side}"] = games or None
 
     wx = (summary.get("gameInfo") or {}).get("weather") or {}
     if wx.get("temperature") is not None or wx.get("conditionId") is not None:
