@@ -1,10 +1,19 @@
 """
-The real college football schedule (docs/cfb/schedule/).
+The college football schedule and scoreboard, one page (docs/cfb/schedule/).
 
 Every FBS game of the season (cfb.espn.schedule), one tab per week. Inside a
-tab, games still to play come first (grouped by day) and finished ones sink
-into a Final section below, so mid-week the top of the page is what's next,
-not what already happened.
+tab, live games come first, then games still to play (grouped by day), then
+finished ones under a Final header, so mid-week the top of the page is what's
+on or what's next, not what already happened.
+
+It is the scoreboard too. Server-side this is a snapshot - rebuilt daily and
+by the Pi's live tick (cfb.live) while games are on. The page then keeps the
+current week current: a script polls ESPN's scoreboard through our Pages
+Function proxy (functions/api/cfb-scores.js - ESPN strips CORS for browsers)
+every ~30s during games, updating scores, clock, records, possession, down &
+distance and last play, and re-sectioning rows as games kick off and finish.
+No JS still gets the build-time snapshot. The old /cfb/scoreboard/ URL
+redirects here.
 
 Each game is a row: the stacked scorebox (away over home, ESPN logos, AP
 ranks, the winner in bold, a conference tag underneath), kickoff and TV,
@@ -63,8 +72,6 @@ table.cfb-sched td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;backg
   vertical-align:top}
 table.cfb-sched tbody tr.g:nth-child(even) td{background:#f8fafc}
 table.cfb-sched .rk{font-weight:700;color:#8a6d00;font-size:11.5px}
-table.cfb-sched td.venue{color:#4a5a68;font-size:13px;max-width:200px;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap}
 /* Identity leads and stays put while the numbers scroll; every cell carries
    an opaque background in both themes so nothing bleeds through. */
 table.cfb-sched th:first-child,table.cfb-sched td.mu{position:sticky;left:0;z-index:1}
@@ -75,7 +82,7 @@ table.cfb-sched tr.hdr td{background:#f1f5f9;color:#475569;font-weight:700;
 table.cfb-sched tr.hdr.sec td{background:#e2e8f0;color:#334155;font-size:11.5px;
   text-transform:uppercase;letter-spacing:.06em;padding:6px 10px}
 /* The stacked scorebox: away over home, logos, ranks, the winner in bold. */
-.sc-mu{display:flex;flex-direction:column;gap:3px;min-width:190px}
+.sc-mu{display:flex;flex-direction:column;gap:3px;min-width:200px}
 .sc-row{display:flex;align-items:center;gap:8px}
 /* The Slate remote theme frames every <img>; reset or each logo becomes a
    boxed figure and the row grows. */
@@ -90,8 +97,19 @@ table.cfb-sched .sc-row img{width:20px;height:20px;object-fit:contain;flex:none;
   font-size:15px;font-weight:600;color:#94a3b8}
 .sc-row.sc-win .sc-name{font-weight:700;color:#0f172a}
 .sc-row.sc-win .sc-pts{color:#0f172a;font-weight:700}
+.sc-rec{color:#94a3b8;font-size:11px;font-variant-numeric:tabular-nums;margin-left:4px}
+.sc-row.sc-ball .sc-name::after{content:" \\1F3C8";font-size:11px}
+/* The drive line, only while a game is on. */
+.sc-live{display:none;margin-top:5px;padding-top:5px;border-top:1px dashed #e2e8f0}
+tr.g[data-state="in"] .sc-live{display:block}
+.sc-sit{font-size:12px;font-weight:600;color:#0f172a}
+.sc-play{font-size:11.5px;color:#64748b;margin-top:1px;white-space:normal;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .sc-meta{margin-top:4px;font-size:11.5px;color:#64748b;display:flex;flex-wrap:wrap;
   gap:4px 6px;align-items:center}
+/* Where: stadium over city, one line each, clipped rather than wrapped. */
+.sc-venue{margin-top:3px;font-size:11px;color:#94a3b8;line-height:1.35;max-width:230px}
+.sc-venue span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tag{display:inline-block;padding:1px 6px;border-radius:999px;font-size:10.5px;
   font-weight:700;letter-spacing:.03em;text-transform:uppercase;line-height:1.5}
 .tag-dog{background:#fef3c7;color:#92400e}
@@ -156,7 +174,8 @@ tr.g.hide,tr.hdr.hide{display:none}
     font-size:13px;white-space:normal;max-width:none}
   table.cfb-sched td.d::before{content:attr(data-l);font-size:10.5px;text-transform:uppercase;
     letter-spacing:.04em;color:#94a3b8;font-weight:700;padding-top:2px}
-  table.cfb-sched td.na,table.cfb-sched td.venue{display:none}
+  table.cfb-sched td.na{display:none}
+  .sc-venue{max-width:none}
   .t-tv{display:inline;margin:0 0 0 6px}
   .t-day{display:inline}
   .bar{display:none}
@@ -171,12 +190,17 @@ tr.g.hide,tr.hdr.hide{display:none}
   table.cfb-sched tbody tr.g:nth-child(even) td{background:#1b2540}
   table.cfb-sched tr.hdr td{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.cfb-sched tr.hdr.sec td{background:#2b3852;color:#dde5ef}
-  table.cfb-sched td.t,table.cfb-sched td.venue,.t-tv{color:#aab7c9}
+  table.cfb-sched td.t,.t-tv{color:#aab7c9}
+  .sc-venue{color:#7f8ea3}
   table.cfb-sched .rk{color:#f2cc60}
   .sc-name{color:#c3cfdd}
   .sc-joiner,.sc-pts{color:#7f8ea3}
   .sc-row.sc-win .sc-name,.sc-row.sc-win .sc-pts{color:#ffffff}
   .sc-meta{color:#8fa0b8}
+  .sc-rec{color:#7f8ea3}
+  .sc-live{border-color:#2b3852}
+  .sc-sit{color:#f1f5f9}
+  .sc-play{color:#8fa0b8}
   .tag-dog{background:#4a3208;color:#fcd34d}
   .tag-toss{background:#1e3a8a;color:#bfdbfe}
   .tag-upset{background:#7f1d1d;color:#fecaca}
@@ -241,6 +265,28 @@ def _team_pages() -> frozenset:
     """
     d = WEB_DIR / "teams"
     return frozenset(p.name for p in d.iterdir() if p.is_dir()) if d.exists() else frozenset()
+
+
+def _records(week: int) -> dict:
+    """Event id -> {'home': '2-0', 'away': '1-1'} from the live feed, for the
+    current week only; the page's own polling keeps them moving after that."""
+    try:
+        data = espn._get({"groups": espn._FBS, "week": week, "dates": SEASON,
+                          "seasontype": 2, "limit": 500})
+    except Exception:
+        return {}
+    out = {}
+    for event in data.get("events", []):
+        comps = event.get("competitions") or [{}]
+        sides = {}
+        for c in comps[0].get("competitors", []):
+            total = next((r.get("summary") for r in (c.get("records") or [])
+                          if r.get("type") == "total"), None)
+            if total:
+                sides[c.get("homeAway")] = total
+        if sides:
+            out[str(event.get("id"))] = sides
+    return out
 
 
 def _abandoned(g) -> bool:
@@ -352,9 +398,12 @@ def _frame() -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 # Rendering.
 
-def _side_row(g, side: str) -> str:
-    """One team's line in the scorebox: logo, rank, linked name, score."""
+def _side_row(g, side: str, records: dict) -> str:
+    """One team's line in the scorebox: logo, rank, linked name, record, score."""
     name = str(getattr(g, side))
+    tid = escape(str(getattr(g, f"{side}_id")))
+    rec = records.get(str(g.game_id), {}).get(side, "")
+    rec_tag = f'<span class="sc-rec">{escape(rec)}</span>' if rec else ""
     rank = getattr(g, f"{side}_rank")
     badge = "" if pd.isna(rank) else f'<span class="rk">#{int(rank)}</span> '
     joiner = ("" if side == "away"
@@ -362,16 +411,16 @@ def _side_row(g, side: str) -> str:
     slug = team_slug(name)
     a, a_close = ((f'<a href="/cfb/teams/{slug}/">', "</a>")
                   if slug in _team_pages() else ("", ""))
-    logo = LOGO.format(team_id=escape(str(getattr(g, f"{side}_id"))))
+    logo = LOGO.format(team_id=tid)
 
     score = getattr(g, f"{side}_score")
     other = getattr(g, "home_score" if side == "away" else "away_score")
     scored = g.state in ("in", "post") and not pd.isna(score) and not _abandoned(g)
     won = g.state == "post" and scored and score > other
     pts = f'<span class="sc-pts">{score:.0f}</span>' if scored else ""
-    return (f'<div class="sc-row{" sc-win" if won else ""}">'
+    return (f'<div class="sc-row{" sc-win" if won else ""}" data-tid="{tid}">'
             f'{a}<img src="{logo}" alt="" loading="lazy">{a_close}'
-            f'<span class="sc-name">{joiner}{badge}{a}{escape(name)}{a_close}</span>'
+            f'<span class="sc-name">{joiner}{badge}{a}{escape(name)}{a_close}{rec_tag}</span>'
             f"{pts}</div>")
 
 
@@ -389,16 +438,18 @@ def _kick_cell(g) -> str:
     for sorted views, where the day headers are hidden."""
     local = g.local
     day = f'<span class="t-day">{local.strftime("%a")} </span>'
+    live = ""
     if _abandoned(g):
-        when = day + escape(str(g.detail))
+        when = escape(str(g.detail))
     elif g.state == "post":
-        when = day + (g.detail if "Final" in (g.detail or "") else "Final")
+        when = g.detail if "Final" in (g.detail or "") else "Final"
     elif g.state == "in":
-        when = f'<span class="t-live">{escape(str(g.detail or "Live"))}</span>'
+        when, live = escape(str(g.detail or "Live")), " t-live"
     else:
-        when = day + local.strftime("%-I:%M %p")
+        when = local.strftime("%-I:%M %p")
     tv = f'<span class="t-tv">{escape(str(g.tv))}</span>' if g.tv else ""
-    return f'<td class="t d" data-l="Kick"><div class="c">{when}{tv}</div></td>'
+    return (f'<td class="t d" data-l="Kick"><div class="c">{day}'
+            f'<span class="t-when{live}">{when}</span>{tv}</div></td>')
 
 
 def _fav(g, margin) -> tuple:
@@ -514,7 +565,7 @@ def _wx_cell(g) -> str:
             + "</div></td>")
 
 
-def _row(g, idx: int) -> str:
+def _row(g, idx: int, records: dict) -> str:
     final = g.state == "post" and not _abandoned(g)
     ranked = not (pd.isna(g.home_rank) and pd.isna(g.away_rank))
     dk_spread, gs_margin = _v(g.dk_spread), _v(g.gs_margin)
@@ -566,9 +617,13 @@ def _row(g, idx: int) -> str:
         return f' data-{name}="{fmt.format(value)}"' if value is not None else ""
 
     classes = ["g"] + (["wx-bad"] if severity >= 2 else [])
-    venue = escape(str(g.venue or "")) + (f" &mdash; {escape(str(g.place))}" if g.place else "")
+    where = [escape(str(x)) for x in (g.venue, g.place) if x]
+    venue = ('<div class="sc-venue">' + "".join(f"<span>{x}</span>" for x in where)
+             + "</div>") if where else ""
     return (
-        f'<tr class="{" ".join(classes)}" data-i="{idx}" data-state="{g.state}"'
+        f'<tr class="{" ".join(classes)}" id="g-{escape(str(g.game_id))}" data-i="{idx}"'
+        f' data-state="{g.state}" data-kick="{escape(str(g.date_utc))}"'
+        f' data-day="{g.local.strftime("%A, %B %-d")}"'
         f' data-final="{int(final)}" data-ranked="{int(ranked)}"'
         f' data-confgame="{int(bool(g.conference_game))}"'
         f' data-p4="{int(bool({g.home_conf, g.away_conf} & POWER4))}"'
@@ -581,58 +636,48 @@ def _row(g, idx: int) -> str:
         + attr("gap", gap, "{:.1f}")
         + attr("upset", upset_chance)
         + f' data-tossup="{int(toss_up)}">'
-        f'<td class="mu"><div class="sc-mu">{_side_row(g, "away")}{_side_row(g, "home")}'
-        f"</div>{meta}</td>"
+        f'<td class="mu"><div class="sc-mu">{_side_row(g, "away", records)}'
+        f'{_side_row(g, "home", records)}</div>{meta}{venue}'
+        '<div class="sc-live"><div class="sc-sit"></div><div class="sc-play"></div></div></td>'
         + _kick_cell(g) + _gs_cell(g, home_won) + _dk_cell(g) + _fpi_cell(g, home_won)
-        + _wx_cell(g)
-        + f'<td class="venue">{venue}</td></tr>')
+        + _wx_cell(g) + "</tr>")
 
 
 _HEAD = ('<thead><tr><th>Matchup</th><th>Kick (ET)</th><th>GordStats</th>'
-         '<th>DraftKings</th><th>FPI</th><th>Weather</th>'
-         '<th class="venue">Venue</th></tr></thead>')
-_COLS = 7
+         '<th>DraftKings</th><th>FPI</th><th>Weather</th></tr></thead>')
+_COLS = 6
 
 
 def _hdr(text: str, idx: int, kind: str) -> str:
-    return f'<tr class="hdr {kind}" data-i="{idx}"><td colspan="{_COLS}">{text}</td></tr>'
+    return f'<tr class="hdr {kind}"><td colspan="{_COLS}">{text}</td></tr>'
 
 
-def _week_table(games: pd.DataFrame) -> str:
-    """One table for the week: section and day header rows, then game rows.
-
-    Order is the kickoff order the page opens in - still-to-play days first,
-    finished ones under a Final header - and every row carries that position
-    so a sort can be undone.
-    """
-    done = games["state"] == "post"
-    split = bool(done.any() and not done.all())
-    rows, idx = [], 0
-
-    def days(frame):
-        nonlocal idx
-        for day, grp in frame.groupby(frame["local"].dt.date, sort=True):
-            rows.append(_hdr(pd.Timestamp(day).strftime("%A, %B %-d"), idx, "day"))
-            idx += 1
-            for g in grp.itertuples():
-                rows.append(_row(g, idx))
-                idx += 1
-
-    if split:
-        rows.append(_hdr("Still to play", idx, "sec")); idx += 1
-        days(games[~done])
-        rows.append(_hdr("Final", idx, "sec")); idx += 1
-        days(games[done])
-    else:
-        days(games)
+def _week_table(games: pd.DataFrame, records: dict) -> str:
+    """One table for the week: game rows in kickoff order, sectioned Live /
+    Still to play / Final with a day header inside each - the same layout the
+    page's script rebuilds from the rows' data attributes after every sort,
+    filter or live update, so a reader without JS sees the build-time version
+    of exactly the same thing."""
+    games = games.reset_index(drop=True)
+    sections = [(state, games[games["state"] == state])
+                for state in ("in", "pre", "post")]
+    sections = [(st, grp) for st, grp in sections if len(grp)]
+    titles = {"in": "Live", "pre": "Still to play", "post": "Final"}
+    rows = []
+    for state, grp in sections:
+        if len(sections) > 1:
+            rows.append(_hdr(titles[state], 0, "sec"))
+        for day, day_games in grp.groupby(grp["local"].dt.date, sort=True):
+            rows.append(_hdr(pd.Timestamp(day).strftime("%A, %B %-d"), 0, "day"))
+            rows.extend(_row(g, int(g.Index), records) for g in day_games.itertuples())
     return (f'<div class="table-scroll"><table class="cfb-sched">{_HEAD}'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
-def _week_view(games: pd.DataFrame) -> str:
+def _week_view(games: pd.DataFrame, records: dict) -> str:
     ranked = int((games["home_rank"].notna() | games["away_rank"].notna()).sum())
     return (f'<p class="wk-note"><span class="wk-count">{len(games)} games</span>, '
-            f'{ranked} with a ranked team.</p>' + _week_table(games))
+            f'{ranked} with a ranked team.</p>' + _week_table(games, records))
 
 
 def _current_week(df: pd.DataFrame) -> int:
@@ -656,19 +701,22 @@ _CONF_LEAD = ["ACC", "Big 12", "Big Ten", "SEC"]
 _JS = """<script>
 (function(){
 "use strict";
-var UPSET=%(upset)s;
+var UPSET=%(upset)s,LIVE_URL=%(url)s,CURRENT=%(current)s,COLS=%(cols)s;
 var weeks=document.getElementById('cfb-weeks');
 var sortSel=document.getElementById('sc-sort');
 var confSel=document.getElementById('sc-conf');
 var search=document.getElementById('sc-search');
 var chips=Array.prototype.slice.call(document.querySelectorAll('.sc-chips button[data-f]'));
 var on={};
-var current=%(current)s;
+var current=CURRENT;
+var timer=null;
 
 // Sort keys: attribute and direction. Rows lacking the attribute sink to the bottom.
 var SORTS={spread:['spread',1],bigspread:['spread',-1],total:['total',-1],
   lowtotal:['total',1],mq:['mq',-1],upset:['upset',-1],homedog:['homedog',-1],
   gap:['gap',-1],wx:['wx',-1]};
+var RANK={'in':0,pre:1,post:2};
+var SEC={'in':'Live',pre:'Still to play',post:'Final'};
 
 function num(row,key){var v=row.getAttribute('data-'+key);return v===null||v===''?null:+v;}
 
@@ -689,47 +737,58 @@ function passes(row){
   return true;
 }
 
-function applyTo(view){
+function hdr(kind,text){
+  var tr=document.createElement('tr');tr.className='hdr '+kind;
+  var td=document.createElement('td');td.colSpan=COLS;td.textContent=text;
+  tr.appendChild(td);return tr;
+}
+
+/* Rebuild one week from its rows: order (kickoff within Live / Still to play /
+   Final, or the chosen sort), filters, then fresh section and day headers
+   over whatever is left. The build-time headers are thrown away first. */
+function layout(view){
   var tbody=view.querySelector('tbody');if(!tbody)return;
+  Array.prototype.slice.call(tbody.querySelectorAll('tr.hdr')).forEach(function(h){
+    h.parentNode.removeChild(h);});
   var rows=Array.prototype.slice.call(tbody.rows);
-  var mode=sortSel.value,spec=SORTS[mode];
+  var spec=SORTS[sortSel.value];
   rows.sort(function(a,b){
     if(spec){
-      var ah=a.classList.contains('hdr'),bh=b.classList.contains('hdr');
-      if(ah!==bh)return ah?1:-1;           // headers out of the way (hidden anyway)
       var av=num(a,spec[0]),bv=num(b,spec[0]);
       if(av===null&&bv!==null)return 1;
       if(bv===null&&av!==null)return -1;
       if(av!==null&&bv!==null&&av!==bv)return (av-bv)*spec[1];
+    }else{
+      var ar=RANK[a.getAttribute('data-state')],br=RANK[b.getAttribute('data-state')];
+      if(ar===undefined)ar=1;if(br===undefined)br=1;
+      if(ar!==br)return ar-br;
+      var ak=a.getAttribute('data-kick')||'',bk=b.getAttribute('data-kick')||'';
+      if(ak!==bk)return ak<bk?-1:1;
     }
     return (+a.getAttribute('data-i'))-(+b.getAttribute('data-i'));
   });
-  rows.forEach(function(r){tbody.appendChild(r);});
-  tbody.parentNode.classList.toggle('sorted',!!spec);
-  // Filters, then headers: a day with nothing left in it goes too.
-  var shown=0,total=0,day=null,dayHas=false,sec=null,secHas=false;
+  var shown=0,total=0,states={};
   rows.forEach(function(r){
-    if(r.classList.contains('hdr')){
-      if(day)day.classList.toggle('hide',!!spec||!dayHas);
-      if(r.classList.contains('sec')){
-        if(sec)sec.classList.toggle('hide',!!spec||!secHas);
-        sec=r;secHas=false;
-      }
-      day=r;dayHas=false;return;
-    }
-    total++;
-    var ok=passes(r);
-    r.classList.toggle('hide',!ok);
-    if(ok){shown++;dayHas=true;secHas=true;}
+    total++;var ok=passes(r);r.classList.toggle('hide',!ok);
+    if(ok){shown++;states[r.getAttribute('data-state')||'pre']=1;}
   });
-  if(day)day.classList.toggle('hide',!!spec||!dayHas);
-  if(sec)sec.classList.toggle('hide',!!spec||!secHas);
+  var split=Object.keys(states).length>1,lastState=null,lastDay=null;
+  rows.forEach(function(r){
+    if(!spec&&!r.classList.contains('hide')){
+      var st=r.getAttribute('data-state')||'pre',day=r.getAttribute('data-day');
+      if(split&&st!==lastState){tbody.appendChild(hdr('sec',SEC[st]||st));lastDay=null;}
+      if(day!==lastDay)tbody.appendChild(hdr('day',day));
+      lastState=st;lastDay=day;
+    }
+    tbody.appendChild(r);
+  });
+  view.querySelector('table').classList.toggle('sorted',!!spec);
   var count=view.querySelector('.wk-count');
   if(count)count.textContent=(shown===total?total+' games':shown+' of '+total+' games');
 }
 
 function applyAll(){
-  Array.prototype.forEach.call(weeks.querySelectorAll('.wk-view'),applyTo);
+  Array.prototype.forEach.call(weeks.querySelectorAll('.wk-view'),layout);
   writeHash();
 }
 
@@ -766,11 +825,84 @@ window.show_wk=function(w){
   writeHash();
 };
 
+/* ---- live scores for the current week ---- */
+function apply(ev){
+  var row=document.getElementById('g-'+ev.id);if(!row)return null;
+  var comp=(ev.competitions||[])[0]||{};
+  var st=ev.status||comp.status||{};
+  var state=(st.type||{}).state||'pre';
+  var sit=comp.situation||{};
+  (comp.competitors||[]).forEach(function(c){
+    var side=row.querySelector('.sc-row[data-tid="'+c.team.id+'"]');if(!side)return;
+    if(state!=='pre'){
+      var pts=side.querySelector('.sc-pts');
+      if(!pts){pts=document.createElement('span');pts.className='sc-pts';side.appendChild(pts);}
+      pts.textContent=c.score;
+    }
+    var recs=c.records||[];
+    for(var i=0;i<recs.length;i++){
+      if(recs[i].type==='total'&&recs[i].summary){
+        var el=side.querySelector('.sc-rec');
+        if(!el){el=document.createElement('span');el.className='sc-rec';
+          side.querySelector('.sc-name').appendChild(el);}
+        el.textContent=recs[i].summary;break;
+      }
+    }
+    side.classList.toggle('sc-ball',state==='in'&&sit.possession===c.team.id);
+  });
+  var when=row.querySelector('.t-when');
+  if(when&&state!=='pre'){
+    when.textContent=(st.type||{}).shortDetail||(state==='post'?'Final':'Live');
+    when.classList.toggle('t-live',state==='in');
+  }
+  if(state==='post'){
+    var cs=comp.competitors||[];
+    if(cs.length===2&&+cs[0].score!==+cs[1].score){
+      var w=+cs[0].score>+cs[1].score?cs[0]:cs[1];
+      Array.prototype.forEach.call(row.querySelectorAll('.sc-row'),function(sd){
+        sd.classList.toggle('sc-win',sd.getAttribute('data-tid')===String(w.team.id));});
+    }
+    row.setAttribute('data-final','1');
+  }
+  if(state==='in'){
+    row.querySelector('.sc-sit').textContent=
+      [sit.downDistanceText,sit.possessionText].filter(Boolean).join(' \\u00b7 ');
+    row.querySelector('.sc-play').textContent=(sit.lastPlay||{}).text||'';
+  }
+  var changed=row.getAttribute('data-state')!==state;
+  row.setAttribute('data-state',state);
+  return {state:state,kick:ev.date,changed:changed};
+}
+
+function poll(){
+  fetch(LIVE_URL).then(function(r){return r.json();}).then(function(data){
+    var live=false,next=null,now=Date.now(),changed=false;
+    (data.events||[]).forEach(function(ev){
+      var r=apply(ev);if(!r)return;
+      if(r.changed)changed=true;
+      if(r.state==='in')live=true;
+      else if(r.state==='pre'){
+        var t=new Date(r.kick).getTime();
+        if(t>now&&(next===null||t<next))next=t;
+      }
+    });
+    if(changed){var v=document.getElementById('wk-view-'+CURRENT);if(v)layout(v);}
+    // 30s while anything is live; 90s in the half hour before a kickoff;
+    // otherwise sleep until just before the next one (checking at most
+    // every 30 min in case the slate changes). Nothing left: stop.
+    var delay;
+    if(live)delay=30e3;
+    else if(next!==null&&next-now<45*60e3)delay=90e3;
+    else if(next!==null)delay=Math.min(next-now-40*60e3,30*60e3);
+    else return;
+    timer=setTimeout(poll,Math.max(delay,30e3));
+  }).catch(function(){timer=setTimeout(poll,120e3);});
+}
+
 chips.forEach(function(b){
   b.addEventListener('click',function(){
     var k=b.getAttribute('data-f');on[k]=!on[k];
-    // Conference and non-conference cannot both be on; nor can a filter
-    // and its opposite make sense, so the newer one wins.
+    // Conference and non-conference cannot both be on; the newer one wins.
     if(on[k]&&k==='confgame')on.nonconf=false;
     if(on[k]&&k==='nonconf')on.confgame=false;
     chips.forEach(function(c){c.classList.toggle('active',!!on[c.getAttribute('data-f')]);});
@@ -784,10 +916,14 @@ document.getElementById('sc-clear').addEventListener('click',function(){
 sortSel.addEventListener('change',applyAll);
 confSel.addEventListener('change',applyAll);
 search.addEventListener('input',applyAll);
+document.addEventListener('visibilitychange',function(){
+  if(!document.hidden){clearTimeout(timer);poll();}
+});
 
 readHash();
 window.show_wk(current);
 applyAll();
+poll();
 })();
 </script>"""
 
@@ -827,9 +963,10 @@ def _switcher(week_ids: list[int], current: int, views: dict[int, str]) -> str:
 def body() -> str:
     df = _frame()
     week_ids = sorted(int(w) for w in df["week"].unique())
-    views = {int(w): _week_view(grp.sort_values("local"))
-             for w, grp in df.groupby("week")}
     current = _current_week(df)
+    records = _records(current)
+    views = {int(w): _week_view(grp.sort_values("local"), records if int(w) == current else {})
+             for w, grp in df.groupby("week")}
     info = gameinfo.load(SEASON)
     lined = sum(1 for e in info.values() if e.get("spread") is not None)
     forecast = sum(1 for e in info.values() if e.get("weather"))
@@ -837,19 +974,21 @@ def body() -> str:
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     intro = (
         f'<p class="sc-intro">Every FBS game of the {SEASON} season, from ESPN &mdash; '
-        "kickoffs in Eastern time, TV where it has been announced, scores once games go "
-        "final, ranks from the AP top 25. Beside each game: the "
+        "kickoffs in Eastern time, TV where it has been announced, ranks from the AP top "
+        "25. This week's scores, clock and drive situation update in place while games "
+        "are on. Beside each game: the "
         '<a href="/cfb/predictions/">GordStats</a> line and win chance, the DraftKings '
         "line, ESPN's FPI win chance and the kickoff forecast. "
         f"Right now {lined} upcoming games carry a book line and {forecast} a "
         f"forecast; both fill in as the week approaches. Rebuilt daily (last: {built}).</p>")
     return (_CSS + intro + _LEGEND + _controls(espn.conferences())
             + _switcher(week_ids, current, views)
-            + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current})
+            + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
+                     "url": json.dumps(f"/api/cfb-scores?week={current}&dates={SEASON}")})
 
 
 def generate():
-    write_page(WEB_DIR / "schedule" / "index.html", f"CFB Schedule {SEASON}", body())
+    write_page(WEB_DIR / "schedule" / "index.html", f"CFB Schedule & Scores {SEASON}", body())
 
 
 if __name__ == "__main__":

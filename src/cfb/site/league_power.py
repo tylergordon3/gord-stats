@@ -8,22 +8,33 @@ move the rankings all season; fresh off the draft (before Yahoo populates the
 roster feed) the draft results stand in.
 
 Tracked over the season the same way the other rating pages are: every build
-archives team -> rank (gordstats.rankmoves, data/cfb/league_power_history/),
-and the Move columns say who climbed since the last build and the last week.
+archives team -> rank and lineup points (gordstats.rankmoves,
+data/cfb/league_power_history/), the Move columns say who climbed since the
+last build and the last week, and a Through the Season chart - one panel per
+team with the league behind it in grey, the NFL power page's chart - draws
+each roster's points against the league average build by build. Until two
+builds carry the points, the panels draw rank instead, which every snapshot
+has.
 
     python -m cfb.site.league_power     # rebuild the page
 """
 from datetime import datetime
 
-import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.dates as mdates                    # noqa: E402
+import matplotlib.pyplot as plt                      # noqa: E402
+import numpy as np                                   # noqa: E402
+import pandas as pd                                  # noqa: E402
 
-from cfb import projections, yahoo
-from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
-from cfb.site import write_page
-from gordstats import rankmoves
+from cfb import projections, yahoo                   # noqa: E402
+from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR   # noqa: E402
+from cfb.site import write_page                      # noqa: E402
+from gordstats import charts, palette, rankmoves     # noqa: E402
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
 OUTPUT = WEB_DIR / "league-power" / "index.html"
+_SECTION = "cfb-league-power"
 
 _CSS = """<style>
 table.lg-table{width:100%;border-collapse:collapse;font-size:14px}
@@ -42,6 +53,8 @@ table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
 table.lg-table td:first-child,table.lg-table th:first-child{
   position:sticky;left:0;z-index:1}
 .mu-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
+.lg-chart{margin:10px 0 18px}
+.lg-chart img{border:none;padding:0;box-shadow:none;background:none;border-radius:0}
 """ + rankmoves.CSS + """
 @media (prefers-color-scheme: dark){
   table.lg-table th{background:#223052;color:#dde5ef;border-color:#2b3852}
@@ -145,7 +158,85 @@ def _move(baseline, key, rank):
     return rankmoves.cell(baseline.get(key) - rank)
 
 
+def _season_section(names: dict) -> str:
+    """Every roster's published figure, build by build - the NFL power page's
+    chart. One panel per team with the rest of the league in grey: ten lines
+    on one axis is a tangle nobody can read against a legend."""
+    hist = rankmoves.history(HISTORY_DIR)
+    if hist.empty:
+        return ""
+    hist["team"] = hist["key"].map(lambda k: names.get(k, k))
+    rated = hist.dropna(subset=["vs_avg"]) if "vs_avg" in hist.columns else pd.DataFrame()
+    if not rated.empty and rated["taken"].nunique() >= 2:
+        pivot = rated.pivot_table(index="taken", columns="team", values="vs_avg").sort_index()
+        what, base, invert, unit = "lineup points against the league average", 0.0, False, " pts"
+    elif hist["taken"].nunique() >= 2:
+        pivot = hist.pivot_table(index="taken", columns="team", values="rank").sort_index()
+        what, base, invert, unit = "rank", None, True, ""
+    else:
+        return ("<h2>Through the Season</h2>"
+                "<p class='mu-note'>Every build is archived, and this chart draws each "
+                "roster's lineup points against the league average across them &mdash; "
+                "who is climbing, who is sliding, and whether a move is a real trend or "
+                "one waiver claim. One build is on record; the chart appears with the "
+                "second and fills in from there.</p>")
+
+    order = pivot.iloc[-1].sort_values(ascending=invert).index.tolist()
+    span_days = max(1, (pivot.index[-1] - pivot.index[0]).days + 1)
+    cols = 5
+    fig_rows = int(np.ceil(len(order) / cols))
+    fig, axes = plt.subplots(fig_rows, cols, figsize=(11, 2.5 * fig_rows),
+                             sharex=True, sharey=True)
+    axes = np.atleast_1d(axes).ravel()
+    for ax, team in zip(axes, order):
+        for other in pivot.columns:
+            ax.plot(pivot.index, pivot[other], color=palette.CONTEXT, linewidth=1.0, zorder=1)
+        ax.plot(pivot.index, pivot[team], color=palette.BLUE, linewidth=2.0,
+                marker="o", markersize=4, zorder=3)
+        if base is not None:
+            ax.axhline(base, color=palette.MUTED, linewidth=0.9, linestyle="--", zorder=2)
+        # Yahoo team names run long; a panel is 2 inches wide.
+        ax.set_title(team if len(team) <= 22 else team[:21] + "\u2026", fontsize=9)
+        ax.grid(color=palette.GRIDLINE)
+        ax.set_axisbelow(True)
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+        ax.tick_params(labelsize=8)
+        # Whole days, a handful of them: the auto locator falls back to 12-hour
+        # ticks on a young archive and prints the same date twice.
+        ax.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, span_days // 4)))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %-d"))
+        for label in ax.get_xticklabels():
+            label.set_rotation(30)
+            label.set_horizontalalignment("right")
+    if invert:
+        axes[0].invert_yaxis()
+        axes[0].yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+    for ax in axes[len(order):]:
+        ax.set_visible(False)
+    fig.suptitle(f"Published {what} through the season, one panel per team", y=1.0)
+    fig.tight_layout()
+    chart = charts.save(_SECTION, "season-trend",
+                        alt=f"One small chart per team showing its {what} across every "
+                            "build, with the rest of the league in grey behind it")
+
+    first, last = pivot.index[0], pivot.index[-1]
+    swing = pivot.iloc[-1] - pivot.iloc[0]
+    if invert:
+        swing = -swing                 # climbing the table is a smaller rank
+    up, down = swing.idxmax(), swing.idxmin()
+    fmt = (lambda v: f"{v:+.0f}{unit}") if unit else (lambda v: f"{int(v):+d} places")
+    return ("<h2>Through the Season</h2>"
+            f"<p class='mu-note'>Every build since <strong>{first:%b %-d}</strong>, one "
+            f"panel per team with the rest of the league behind it in grey, drawing "
+            f"{what}. Since then <strong>{up}</strong> has gained the most "
+            f"({fmt(swing[up])}) and <strong>{down}</strong> has given up the most "
+            f"({fmt(swing[down])}), as of {last:%b %-d}.</p>"
+            f"<div class='lg-chart'>{chart}</div>")
+
+
 def body() -> str:
+    charts.clear(_SECTION)
     lg = yahoo.league()
     rows = ranked_teams(lg)
     if not rows:
@@ -188,8 +279,13 @@ def body() -> str:
     move_heads = ("<th title='Since the previous build'>Move</th>" if prev is not None else "") \
         + ("<th title='Since a week ago'>7d</th>" if week is not None else "")
 
-    rankmoves.snapshot(HISTORY_DIR, pd.Series(
-        {r["key"]: i for i, r in enumerate(rows, 1)}))
+    rankmoves.snapshot(
+        HISTORY_DIR, pd.Series({r["key"]: i for i, r in enumerate(rows, 1)}),
+        extra=pd.DataFrame({"team": [r["team"]["name"] for r in rows],
+                            "lineup": [round(r["total"], 1) for r in rows],
+                            "vs_avg": [round(r["total"] - avg, 1) for r in rows]},
+                           index=[r["key"] for r in rows]))
+    season = _season_section({r["key"]: r["team"]["name"] for r in rows})
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
@@ -217,7 +313,7 @@ def body() -> str:
         "records. Standings live on the "
         '<a href="/cfb/league/">league dashboard</a>; the '
         '<a href="/cfb/live/">draft review</a> grades how these rosters were '
-        "assembled.</p>")
+        "assembled.</p>" + season)
 
 
 def generate():

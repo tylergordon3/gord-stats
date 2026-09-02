@@ -71,6 +71,9 @@ def test_retired_draft_pages_are_gone_and_redirected():
     for old in ("draft-recap", "draft-report", "draft-dna", "adp"):
         assert not (DOCS / "fantasy" / old).exists(), f"docs/fantasy/{old} still shadows its redirect"
         assert f"/fantasy/{old}/" in REDIRECTS, f"no redirect for /fantasy/{old}/"
+    # The CFB scoreboard folded into the schedule page the same way.
+    assert not (DOCS / "cfb" / "scoreboard").exists(), "docs/cfb/scoreboard still shadows its redirect"
+    assert "/cfb/scoreboard/" in REDIRECTS, "no redirect for /cfb/scoreboard/"
 
 
 # --------------------------------------------------------------------------- #

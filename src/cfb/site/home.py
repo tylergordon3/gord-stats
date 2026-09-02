@@ -56,21 +56,12 @@ def body() -> str:
 
 <section class="home-card">
   <div class="home-card-head">
-    <h2>Scoreboard</h2>
-    <a class="home-card-link" href="/cfb/scoreboard/">This week's games &rarr;</a>
+    <h2>Schedule &amp; Scores</h2>
+    <a class="home-card-link" href="/cfb/schedule/">This week's games &rarr;</a>
   </div>
-  <p>Every game of the week on one board &mdash; model projections, betting
-     lines, ranks and records before kickoff; live scores, clock and drive
-     situation while games are on.</p>
-</section>
-
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>CFB Schedule</h2>
-    <a class="home-card-link" href="/cfb/schedule/">Full schedule &rarr;</a>
-  </div>
-  <p>Every FBS game, week by week: kickoffs, TV, venues, AP ranks, and scores
-     once the games go final.</p>
+  <p>Every FBS game, week by week &mdash; kickoffs, TV, ranks, the GordStats and
+     DraftKings lines, FPI and the forecast, with sorting and filters; live
+     scores, clock and drive situation while games are on.</p>
 </section>
 """
 

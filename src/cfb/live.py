@@ -4,9 +4,9 @@ Live-window gate for the Pi's 10-minute tick (deploy/pi-live.sh).
 Same contract as wnba.wnba_live: one cheap scoreboard call decides whether
 anything is happening. If a CFB game is in progress (or kicks off within 30
 minutes), today's events are patched into the season schedule parquet and
-the pages that show game state regenerate - the scoreboard, the schedule,
-and the homepage game clock. The scoreboard page also polls ESPN from the
-browser, so this tick is about keeping the *served* snapshot honest (and the
+the pages that show game state regenerate - the schedule (which is the
+scoreboard too) and the homepage game clock. The schedule page also polls
+ESPN from the browser, so this tick is about keeping the *served* snapshot honest (and the
 odds/model context fresh) rather than being the only source of liveness.
 
 Usage:
@@ -84,8 +84,7 @@ def main(force: bool = False) -> int:
     if not (force or _active(events)):
         return 3
     _patch_schedule(events)
-    from cfb.site import countdown, schedule, scoreboard
-    scoreboard.generate()
+    from cfb.site import countdown, schedule
     schedule.generate()
     countdown.generate()
     return 0

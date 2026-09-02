@@ -132,15 +132,9 @@ cfb:
     url: /cfb/teams/
     group: model
 
-  - title: Scoreboard
-    short: Scores
-    icon: "🏈"
-    url: /cfb/scoreboard/
-    group: reference
-
-  - title: CFB Schedule
+  - title: Schedule & Scores
     short: Schedule
-    icon: "📅"
+    icon: "🏈"
     url: /cfb/schedule/
     group: reference
 

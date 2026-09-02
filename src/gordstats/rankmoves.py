@@ -63,8 +63,13 @@ def movement(history_dir, now=None) -> dict:
     return out
 
 
-def snapshot(history_dir, ranks: pd.Series, now=None):
-    """Archive key->rank, unless one was taken in the last GAP_HOURS."""
+def snapshot(history_dir, ranks: pd.Series, now=None, extra: pd.DataFrame = None):
+    """Archive key->rank, unless one was taken in the last GAP_HOURS.
+
+    `extra` (indexed by key) rides along in the same CSV - a rating, a name -
+    so a trend chart can draw more than the rank. `movement` reads only
+    key and rank, so older files without the columns still serve it.
+    """
     now = now or datetime.now()
     snaps = _snaps(history_dir)
     if snaps and now - snaps[-1][0] < timedelta(hours=GAP_HOURS):
@@ -72,11 +77,27 @@ def snapshot(history_dir, ranks: pd.Series, now=None):
     history_dir.mkdir(parents=True, exist_ok=True)
     out = ranks.rename("rank").rename_axis("key").reset_index()
     out["key"] = out["key"].astype(str)
+    if extra is not None and len(extra):
+        more = extra.copy()
+        more.index = more.index.astype(str)
+        out = out.join(more, on="key")
     out.to_csv(history_dir / f"{now:{_FMT}}.csv", index=False)
     cutoff = now - timedelta(days=KEEP_DAYS)
     for taken, path in snaps:
         if taken < cutoff:
             path.unlink()
+
+
+def history(history_dir) -> pd.DataFrame:
+    """Every snapshot stacked, with `taken` - for a trend chart.
+
+    Columns are whatever each file holds (key, rank, and any extras it was
+    written with); a column absent from an older file is NaN there.
+    """
+    frames = []
+    for taken, path in _snaps(history_dir):
+        frames.append(pd.read_csv(path, dtype={"key": str}).assign(taken=taken))
+    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
 def cell(delta) -> str:

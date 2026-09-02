@@ -17,9 +17,10 @@ def projection_years() -> list[int]:
 
 # teams before predictions AND schedule: both link only to team pages that
 # exist, and ask the filesystem. The pre-draft pages (draft, draft_live)
-# retired when the draft did - draft_review now owns their URL.
+# retired when the draft did - draft_review now owns their URL; the scoreboard
+# folded into the schedule page, which /cfb/scoreboard/ now redirects to.
 PAGES = ["home", "draft_review", "league", "league_power",
-         "power", "teams", "predictions", "schedule", "scoreboard", "countdown"]
+         "power", "teams", "predictions", "schedule", "countdown"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
