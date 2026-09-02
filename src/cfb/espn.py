@@ -10,6 +10,7 @@ through the season.
     python -m cfb.espn              # print a summary per week
     python -m cfb.espn --refresh
 """
+import json
 import time
 
 import pandas as pd
@@ -87,6 +88,11 @@ def _game_row(event: dict, week: int) -> dict:
         "away": away["team"].get("shortDisplayName") or away["team"]["displayName"],
         "away_abbr": away["team"].get("abbreviation", ""),
         "away_rank": _rank(away),
+        # ESPN's conference (group) id per side. Named through conferences()
+        # rather than here: the FBS names come from the FPI pull, which is the
+        # one feed that spells them the way the site already does.
+        "home_conf_id": str(home["team"].get("conferenceId") or ""),
+        "away_conf_id": str(away["team"].get("conferenceId") or ""),
         "away_score": float(away["score"]) if away.get("score") not in (None, "") else None,
         "neutral": bool(comp.get("neutralSite")),
         "conference_game": bool(comp.get("conferenceCompetition")),
@@ -118,6 +124,35 @@ def schedule(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     df.to_parquet(cache, index=False)
     return df
+
+
+def conferences() -> dict:
+    """ESPN team id -> conference short name, from the cached FPI pull.
+
+    FPI covers exactly the FBS, which is exactly who the filters are for; FCS
+    visitors map to nothing and their games ride on the FBS side's badge.
+    The Sun Belt's East/West halves fold together - nobody filters by
+    division - and ESPN's "FBS Indep." reads better as "Independent".
+    cfb.site.power refreshes the file twice a day and builds before any page
+    that asks.
+    """
+    path = DATA_DIR / f"fpi_{SEASON}.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    out = {}
+    for entry in data.get("teams", []):
+        team = entry.get("team") or {}
+        conf = (team.get("group") or {}).get("shortName")
+        if not conf or team.get("id") is None:
+            continue
+        if conf.startswith("Sun Belt"):
+            conf = "Sun Belt"
+        elif conf == "FBS Indep.":
+            conf = "Independent"
+        out[str(team["id"])] = conf
+    return out
 
 
 if __name__ == "__main__":

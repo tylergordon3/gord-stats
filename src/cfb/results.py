@@ -100,26 +100,37 @@ def _finals(season: int = SEASON) -> pd.DataFrame:
     })
 
 
-def scored(season: int = SEASON) -> pd.DataFrame:
-    """Every finished game we predicted beforehand, with the error we made."""
+def on_record(season: int = SEASON) -> pd.DataFrame:
+    """The last prediction archived before each game's kickoff, one row a game.
+
+    Nothing stamped after kickoff counts: a capture that landed mid-game would
+    quietly improve every number on the page. This is what the schedule shows
+    for a finished game - the line that was on record, not a refit after the
+    fact - and what `scored` grades.
+    """
     path = season_path(season)
     if not path.exists():
-        return pd.DataFrame()
+        return pd.DataFrame(columns=_COLS)
     archive = pd.read_parquet(path)
-    finals = _finals(season)
-    if archive.empty or finals.empty:
-        return pd.DataFrame()
-
+    if archive.empty:
+        return pd.DataFrame(columns=_COLS)
     archive = archive.copy()
     archive["captured_at"] = pd.to_datetime(archive["captured"], utc=True, format="ISO8601")
     archive["kickoff"] = pd.to_datetime(archive["kickoff"], utc=True)
-    # The last word before kickoff, and nothing stamped after it. A capture that
-    # landed mid-game would quietly improve every number on the page.
     before = archive[archive["captured_at"] < archive["kickoff"]]
     if before.empty:
+        return pd.DataFrame(columns=_COLS)
+    return (before.sort_values("captured_at")
+            .drop_duplicates(subset="game_id", keep="last")
+            .reset_index(drop=True))
+
+
+def scored(season: int = SEASON) -> pd.DataFrame:
+    """Every finished game we predicted beforehand, with the error we made."""
+    latest = on_record(season)
+    finals = _finals(season)
+    if latest.empty or finals.empty:
         return pd.DataFrame()
-    latest = (before.sort_values("captured_at")
-              .drop_duplicates(subset="game_id", keep="last"))
 
     frame = latest.merge(finals, on="game_id", how="inner")
     if frame.empty:

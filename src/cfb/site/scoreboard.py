@@ -119,30 +119,8 @@ _CSS = """<style>
 
 
 def _confs() -> dict:
-    """ESPN team id -> conference short name, from the cached FPI pull.
-
-    FPI covers exactly the FBS, which is exactly who the filter is for; FCS
-    visitors map to nothing and their games ride on the FBS side's badge.
-    The Sun Belt's East/West halves fold together - nobody filters by
-    division - and ESPN's "FBS Indep." reads better as "Independent".
-    """
-    path = DATA_DIR / f"fpi_{SEASON}.json"
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
-    out = {}
-    for entry in data.get("teams", []):
-        team = entry.get("team") or {}
-        conf = (team.get("group") or {}).get("shortName")
-        if not conf or team.get("id") is None:
-            continue
-        if conf.startswith("Sun Belt"):
-            conf = "Sun Belt"
-        elif conf == "FBS Indep.":
-            conf = "Independent"
-        out[str(team["id"])] = conf
-    return out
+    """ESPN team id -> conference short name (shared with the schedule page)."""
+    return espn.conferences()
 
 
 def _records(week: int) -> dict:

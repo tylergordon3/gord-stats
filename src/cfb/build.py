@@ -24,7 +24,7 @@ PAGES = ["home", "draft_review", "league", "league_power",
 
 def build_all(refresh: bool = False) -> list[str]:
     """Fetch (or reuse) the data, build every page; returns failed page names."""
-    from cfb import espn, odds, players, results, schools, yahoo
+    from cfb import espn, gameinfo, odds, players, results, schools, yahoo
 
     # Fetch up front so one network failure surfaces once, not per page, and a
     # fetch that does fail leaves the pages building from the last good cache.
@@ -35,6 +35,11 @@ def build_all(refresh: bool = False) -> list[str]:
                         ("yahoo draft", lambda: yahoo.draft_results(refresh=refresh)),
                         ("yahoo rosters", lambda: yahoo.rosters(refresh=refresh)),
                         ("espn schedule", lambda: espn.schedule(refresh=refresh)),
+                        # FPI win chance, DraftKings moneyline and the forecast,
+                        # per game. Frozen at kickoff: ESPN's post-game payload
+                        # drops the projection and prices the moneyline at
+                        # -100000, so what is not captured before is gone.
+                        ("espn game summaries", lambda: gameinfo.capture(refresh=refresh)),
                         # The live draft board prices players off real seasons,
                         # so it needs the school-name bridge and two years of
                         # CFBD stat lines in the cache before it builds.
