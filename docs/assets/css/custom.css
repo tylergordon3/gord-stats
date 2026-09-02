@@ -107,7 +107,7 @@ body {
 
 .simple-nav a:hover {
   background: #f1f5f9;
-  color: #A34F0A !important;
+  color: var(--accent-text, #A34F0A) !important;
 }
 
 .nav-inner {
@@ -2467,7 +2467,7 @@ h3 {
   display: inline-block;
   padding: 10px 18px;
   border-radius: 999px;
-  background: #A34F0A;
+  background: var(--accent, #A34F0A);
   color: #fff !important;
   font-weight: 800;
   font-size: 0.9rem;
@@ -2476,7 +2476,7 @@ h3 {
 }
 
 .dashboard-link:hover {
-  background: #8A420A;
+  background: var(--accent-dark, #8A420A);
 }
 
 /* -----------------------------
@@ -3131,8 +3131,8 @@ summary.team-report-header::after {
 }
 
 .site-sections a.active {
-  background: #FDF0E4;
-  color: #A34F0A !important;
+  background: var(--accent-soft, #FDF0E4);
+  color: var(--accent-text, #A34F0A) !important;
 }
 
 /* Level 2 — pages within the current section, indented under it by a
@@ -3151,12 +3151,12 @@ summary.team-report-header::after {
 }
 
 .sub-nav a:hover {
-  color: #A34F0A !important;
+  color: var(--accent-text, #A34F0A) !important;
 }
 
 .sub-nav a.active {
   background: #f1f5f9;
-  color: #A34F0A !important;
+  color: var(--accent-text, #A34F0A) !important;
 }
 
 /* Divider between groups of pages within a section (see _data/nav.yml).
@@ -3199,8 +3199,8 @@ summary.team-report-header::after {
   }
 
   .site-sections a.active {
-    background: #3A2412;
-    color: #F5A968 !important;
+    background: var(--accent-soft, #3A2412);
+    color: var(--accent-text, #F5A968) !important;
   }
 
   .sub-nav {
@@ -3213,7 +3213,7 @@ summary.team-report-header::after {
 
   .sub-nav a:hover,
   .sub-nav a.active {
-    color: #F5A968 !important;
+    color: var(--accent-text, #F5A968) !important;
   }
 
   .sub-nav a.active {
@@ -3242,7 +3242,7 @@ summary.team-report-header::after {
   white-space: nowrap;
   /* Explicit, because the inherited link colour sits at 4.11:1 on this
      bar's #f1f5f9 ground — just under AA. */
-  color: #A34F0A;
+  color: var(--accent-text, #A34F0A);
 }
 
 details.section {
@@ -3336,10 +3336,10 @@ details.section>*:not(summary) {
 }
 
 .view-switch button.active {
-  background: #A34F0A;
+  background: var(--accent, #A34F0A);
   color: #fff;
   font-weight: 700;
-  border-color: #A34F0A;
+  border-color: var(--accent, #A34F0A);
 }
 
 
@@ -3711,7 +3711,7 @@ img {
   }
 
   .view-switch button.active {
-    background: #A34F0A;
+    background: var(--accent, #A34F0A);
     color: #ffffff;
   }
 
@@ -3894,8 +3894,8 @@ img {
   }
 
   .sub-nav a.active {
-    background: #FDF0E4;
-    color: #A34F0A !important;
+    background: var(--accent-soft, #FDF0E4);
+    color: var(--accent-text, #A34F0A) !important;
   }
 
   /* Held down, so a tap has some feedback where :hover means nothing. */
@@ -3933,8 +3933,8 @@ img {
   }
 
   .sub-nav a.active {
-    background: #3A2412;
-    color: #F5A968 !important;
+    background: var(--accent-soft, #3A2412);
+    color: var(--accent-text, #F5A968) !important;
   }
 
   .site-sections a:active,
@@ -4359,10 +4359,10 @@ img {
 }
 
 .adp-controls button.active {
-  background: #A34F0A;
+  background: var(--accent, #A34F0A);
   color: #fff;
   font-weight: 700;
-  border-color: #8A420A;
+  border-color: var(--accent-dark, #8A420A);
 }
 
 .adp-controls input,
@@ -4421,8 +4421,8 @@ img {
   }
 
   .adp-controls button.active {
-    background: #A34F0A;
-    border-color: #8A420A;
+    background: var(--accent, #A34F0A);
+    border-color: var(--accent-dark, #8A420A);
     color: #fff;
   }
 
@@ -4435,5 +4435,116 @@ img {
 
   .adp-controls input::placeholder {
     color: #8b99ad;
+  }
+}
+
+
+/* =========================================================
+   PER-SPORT ACCENT
+   The layout stamps <body class="sec-cfb|sec-fantasy|sec-wnba|sec-cbb|sec-home">,
+   and every accent-coloured control on the site (active nav pill, active
+   filter chips and view-switch buttons, section-nav links, dashboard
+   button) reads these variables instead of the hard-coded orange, so a
+   section can carry its own tint without any page knowing. The default is
+   the site's orange, which home and college basketball keep; football is
+   green, fantasy blue, the WNBA a deep red. Each light accent clears 4.5:1
+   on the #f1f5f9 chip and nav grounds; the dark-theme text tints clear it
+   on #16203a.
+   ========================================================= */
+
+body {
+  --accent: #A34F0A;
+  --accent-dark: #8A420A;
+  --accent-soft: #FDF0E4;
+  --accent-text: #A34F0A;
+}
+
+body.sec-cfb {
+  --accent: #1f6f43;
+  --accent-dark: #165233;
+  --accent-soft: #e4f3ea;
+  --accent-text: #1f6f43;
+}
+
+body.sec-fantasy {
+  --accent: #2a5db0;
+  --accent-dark: #1e4a8f;
+  --accent-soft: #e6eefb;
+  --accent-text: #2a5db0;
+}
+
+body.sec-wnba {
+  --accent: #b3382c;
+  --accent-dark: #8f2b22;
+  --accent-soft: #fbe9e6;
+  --accent-text: #b3382c;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --accent-soft: #3A2412;
+    --accent-text: #F5A968;
+  }
+
+  body.sec-cfb {
+    --accent-soft: #14331f;
+    --accent-text: #6fd39a;
+  }
+
+  body.sec-fantasy {
+    --accent-soft: #172a4a;
+    --accent-text: #8ab4ff;
+  }
+
+  body.sec-wnba {
+    --accent-soft: #3a1512;
+    --accent-text: #ff9b91;
+  }
+}
+
+/* The section shows in the chrome, not only on the active control: a stripe
+   along the top of the header, the brand's rule, the sub-nav strip, the page
+   title and (where a page opts in with --accent-soft) table headers. */
+#site-header {
+  border-top: 4px solid var(--accent, #A34F0A);
+}
+
+.site-brand span::before {
+  background: var(--brand-bar, #EE8434);
+}
+
+body.sec-cfb, body.sec-fantasy, body.sec-wnba {
+  --brand-bar: var(--accent);
+}
+
+.sub-nav {
+  background: var(--accent-soft, #FDF0E4);
+  border-top-color: transparent;
+  margin-left: -12px;
+  margin-right: -12px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 3px;
+}
+
+.sub-nav a.active {
+  background: #ffffff;
+}
+
+#main_content h1 {
+  color: var(--accent-dark, #8A420A);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sub-nav {
+    background: var(--accent-soft, #3A2412);
+  }
+
+  .sub-nav a.active {
+    background: #0f172a;
+  }
+
+  #main_content h1 {
+    color: var(--accent-text, #F5A968);
   }
 }
