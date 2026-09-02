@@ -4506,7 +4506,7 @@ body.sec-wnba {
    along the top of the header, the brand's rule, the sub-nav strip, the page
    title and (where a page opts in with --accent-soft) table headers. */
 #site-header {
-  border-top: 4px solid var(--accent, #A34F0A);
+  border-top: 3px solid var(--accent, #A34F0A);
 }
 
 .site-brand span::before {
@@ -4517,18 +4517,11 @@ body.sec-cfb, body.sec-fantasy, body.sec-wnba {
   --brand-bar: var(--accent);
 }
 
-.sub-nav {
-  background: var(--accent-soft, #FDF0E4);
-  border-top-color: transparent;
-  margin-left: -12px;
-  margin-right: -12px;
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-bottom: 3px;
-}
-
+/* The current page in the sub-nav gets an accent underline rather than a
+   filled strip: the strip read as a heavy block across the header. */
 .sub-nav a.active {
-  background: #ffffff;
+  box-shadow: inset 0 -2px 0 var(--accent, #A34F0A);
+  border-radius: 6px 6px 0 0;
 }
 
 #main_content h1 {
@@ -4536,12 +4529,8 @@ body.sec-cfb, body.sec-fantasy, body.sec-wnba {
 }
 
 @media (prefers-color-scheme: dark) {
-  .sub-nav {
-    background: var(--accent-soft, #3A2412);
-  }
-
   .sub-nav a.active {
-    background: #0f172a;
+    box-shadow: inset 0 -2px 0 var(--accent-text, #F5A968);
   }
 
   #main_content h1 {
