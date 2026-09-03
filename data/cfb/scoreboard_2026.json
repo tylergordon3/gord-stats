@@ -5,7 +5,7 @@
    "week": 1.0,
    "week_start": "2026-09-03",
    "week_end": "2026-09-07",
-   "status": "preevent",
+   "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -26,7 +26,7 @@
    "week": 1.0,
    "week_start": "2026-09-03",
    "week_end": "2026-09-07",
-   "status": "preevent",
+   "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -47,7 +47,7 @@
    "week": 1.0,
    "week_start": "2026-09-03",
    "week_end": "2026-09-07",
-   "status": "preevent",
+   "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -68,7 +68,7 @@
    "week": 1.0,
    "week_start": "2026-09-03",
    "week_end": "2026-09-07",
-   "status": "preevent",
+   "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -89,7 +89,7 @@
    "week": 1.0,
    "week_start": "2026-09-03",
    "week_end": "2026-09-07",
-   "status": "preevent",
+   "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
