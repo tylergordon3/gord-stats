@@ -644,7 +644,9 @@ body {
    pages, the tabs and change-since buttons on the rankings tables. Same
    offset as the filter bar below.
    ========================= */
-.pin-bar {
+.pin-bar,
+.filter-bar,
+.archive-controls {
   position: sticky;
   top: var(--header-h, 54px);
   z-index: 20;
@@ -674,13 +676,17 @@ body {
    its start, so they stay left-aligned there. */
 @media (max-width: 700px) {
   .pin-bar,
-  .pin-bar .view-switch {
+  .pin-bar .view-switch,
+  .filter-bar,
+  .archive-controls {
     justify-content: flex-start;
   }
 }
 
 @media (prefers-color-scheme: dark) {
-  .pin-bar {
+  .pin-bar,
+  .filter-bar,
+  .archive-controls {
     background: #1b2540;
     border-color: #2b3852;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
@@ -690,23 +696,12 @@ body {
 /* =========================
    FILTER BAR (Period + Conference)
    ========================= */
+/* The card itself (surface, stickiness, centering) is shared with .pin-bar
+   above; only the spacing is its own. */
 .filter-bar {
-  position: sticky;
-  top: var(--header-h, 54px);  /* clears the sticky site header */
-  z-index: 20;
-
-  display: flex;
-  align-items: center;
   gap: 20px;
-
   width: 100%;
-  margin: 0 auto 4px;
-
-  background: #fff;
-  padding: 10px 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  padding: 10px 14px 8px;
 }
 
 .filter-bar label {
@@ -756,7 +751,7 @@ body {
 }
 
 .conference-filter {
-  flex: 1;
+  flex: 0 1 auto;
 }
 
 .conference-filter select {
@@ -960,18 +955,6 @@ h3 {
   -webkit-overflow-scrolling: touch;
 }
 
-.filter-bar {
-  position: sticky;
-  top: var(--header-h, 54px);  /* clears the sticky site header */
-  z-index: 20;
-
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  background: white;
-  padding: 6px 0;
-}
 
 /* =========================
    LIVE POLLING
@@ -2435,10 +2418,9 @@ h3 {
 ------------------------------ */
 
 .archive-controls {
-  display: flex;
   gap: 16px;
-  flex-wrap: wrap;
-  margin: 14px 0 18px;
+  padding: 10px 14px 8px;
+  margin: 0 0 16px;
 }
 
 .archive-controls label {
@@ -2446,7 +2428,9 @@ h3 {
   align-items: center;
   gap: 8px;
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: #475569;
 }
 
@@ -3093,11 +3077,6 @@ summary.team-report-header::after {
     background: #b7c3d5;
     border-right-color: #aab7c9;
     color: #0f172a;
-  }
-
-  .filter-bar {
-    background: #1e293b;
-    border-color: #334155;
   }
 
   .filter-bar label {

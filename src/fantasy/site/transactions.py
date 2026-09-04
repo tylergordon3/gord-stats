@@ -232,7 +232,7 @@ def generate():
     names = _player_names()
     views = [(s, FORMAL_SEASON[s], _season_view(s, names)) for s in LEAGUE_IDS]
     views.append(("all", "All-Time", _all_time_view(names)))
-    body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:")
+    body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:", pin=True)
     page = add_front_matter(body, "Waivers & Trades")
 
     out = paths.WEB_TRANSACTIONS

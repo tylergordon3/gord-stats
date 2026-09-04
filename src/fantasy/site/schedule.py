@@ -183,7 +183,7 @@ def _season_view(season_str: str) -> str:
 def generate():
     """Build and write docs/schedule/index.html - every season, switchable."""
     views = [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS]
-    body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:")
+    body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:", pin=True)
     page = add_front_matter(body, "Schedule Stats")
 
     out = paths.WEB_SCHEDULE

@@ -41,8 +41,11 @@ def details(summary: str, body: str, open: bool = False, anchor: str = None) -> 
 # .view-switch styling lives in docs/assets/css/custom.css (site theme).
 
 
-def view_switcher(views, group: str = "v", label: str = "") -> str:
-    """Button-toggled views. `views`: list of (view_id, label, html). First shown."""
+def view_switcher(views, group: str = "v", label: str = "", pin: bool = False) -> str:
+    """Button-toggled views. `views`: list of (view_id, label, html). First shown.
+    `pin` puts the buttons in the site's pinned control card (.pin-bar), which
+    stays under the header as the page scrolls - for a page's top-level
+    switcher, not one nested inside a section."""
     buttons, divs = [], []
     if label:
         buttons.append(f'<span class="switch-label">{label}</span>')
@@ -60,10 +63,14 @@ function show_{group}(v){{
   document.getElementById('{group}-tab-'+v).classList.add('active');
 }}
 </script>"""
-    return f'<div class="view-switch">{"".join(buttons)}</div>' + "".join(divs) + js
+    bar = f'<div class="view-switch">{"".join(buttons)}</div>'
+    if pin:
+        bar = f'<div class="pin-bar">{bar}</div>'
+    return bar + "".join(divs) + js
 
 
-def two_axis_switcher(rows, cols, content, row_label="", col_label="", group="v") -> str:
+def two_axis_switcher(rows, cols, content, row_label="", col_label="", group="v",
+                      pin: bool = False) -> str:
     """Two independent button groups (rows x cols) selecting one content pane.
 
     rows/cols: list of (id, label). content: dict {(row_id, col_id): html}. First
@@ -95,6 +102,8 @@ function {group}_pick(btn){{
 }}
 </script>"""
 
-    return (f'<div class="view-switch"><span class="switch-label">{row_label}</span>{btns(rows, "r")}</div>'
-            + f'<div class="view-switch"><span class="switch-label">{col_label}</span>{btns(cols, "c")}</div>'
-            + "".join(divs) + js)
+    bars = (f'<div class="view-switch"><span class="switch-label">{row_label}</span>{btns(rows, "r")}</div>'
+            + f'<div class="view-switch"><span class="switch-label">{col_label}</span>{btns(cols, "c")}</div>')
+    if pin:
+        bars = f'<div class="pin-bar">{bars}</div>'
+    return bars + "".join(divs) + js
