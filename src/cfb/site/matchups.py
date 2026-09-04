@@ -171,9 +171,9 @@ def player_row(p: dict, wk: pd.DataFrame, to_school: dict, espn: dict,
            }.get(hint, "")
     return (f'<tr class="{"bench" if bench else "starter"}">'
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
-            f'<td class="mu-p">{_school_logo(p["team_full"], to_school, espn)}'
-            f'<span class="nm">{escape(p["player"])}</span>'
-            f'<span class="mu-meta">{escape(p["pos"])} · {escape(p["team"])}</span>{inj}{tag}</td>'
+            f'<td class="mu-p"><span class="nm">{_school_logo(p["team_full"], to_school, espn)}'
+            f'{escape(p["player"])}</span> <span class="mu-lbl">'
+            f'<span class="mu-meta">{escape(p["pos"])} · {escape(p["team"])}</span>{inj}{tag}</span></td>'
             f'<td class="mu-g">{game_cell(g)}</td>'
             f"<td>{ui.fmt(proj)}</td>"
             f"<td><b>{ui.fmt(p.get('points'))}</b></td>"
@@ -277,7 +277,8 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
             f"GordStats projected {ui.fmt(a['gs'])}–{ui.fmt(b['gs'])} going in.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{wp}<p class="mu-note">{edge}</p>'
-            f'<div class="mu-grid"><div>{a["html"]}</div><div>{b["html"]}</div></div>')
+            f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
+            f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')
     head = (f'{escape(a["name"])} {ui.fmt(a["pts"]) if started else ""} '
             f'<span style="color:#94a3b8">vs</span> '
             f'{ui.fmt(b["pts"]) if started else ""} {escape(b["name"])}')

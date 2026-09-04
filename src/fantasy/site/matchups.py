@@ -220,10 +220,10 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
                   if grade else "")
     return (f'<tr class="{"bench" if bench else "starter"}">'
             f'<td class="mu-slot">{escape(slot)}</td>'
-            f'<td class="mu-p">{_logo(card["team"])}<span class="nm">{escape(card["name"])}</span>'
-            f'<span class="mu-meta">{escape(card["pos"])}'
+            f'<td class="mu-p"><span class="nm">{_logo(card["team"])}{escape(card["name"])}</span> '
+            f'<span class="mu-lbl"><span class="mu-meta">{escape(card["pos"])}'
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
-            f"</span>{inj_html}{tag}{grade_html}</td>"
+            f"</span>{inj_html}{tag}{grade_html}</span></td>"
             f'<td class="mu-g">{game_cell(g)}</td>'
             f"<td>{ui.fmt(proj)}</td>"
             + "".join(f"<td>{ui.fmt(v)}</td>" for v in outside)
@@ -368,7 +368,8 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
             f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div><p class="mu-note">{note}</p>'
-            f'<div class="mu-grid"><div>{a["html"]}</div><div>{b["html"]}</div></div>')
+            f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
+            f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')
     head = (f'{escape(a["name"])} {ui.fmt(a["pts"]) if started else ""} '
             f'<span style="color:#94a3b8">vs</span> '
             f'{ui.fmt(b["pts"]) if started else ""} {escape(b["name"])}')

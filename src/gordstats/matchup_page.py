@@ -41,11 +41,20 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-wp i.b{background:#c0392b}
 .mu-wp-lbl{display:flex;justify-content:space-between;font-size:11px;color:#64748b;
   margin-bottom:8px}
-.mu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+/* Two rosters side by side only while each can have ~600px - nine columns
+   need that to read without a scrollbar. Narrower (half a laptop screen, a
+   tablet, a phone) and they stack; min(100%,...) keeps a phone from
+   overflowing the single column. */
+.mu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,600px),1fr));
+  gap:14px;align-items:start}
 /* min-width:0 on the grid items, or a wide roster table sets the column width
    and the right-hand roster runs off the page instead of scrolling. */
 .mu-grid>div{min-width:0}
-@media (max-width:860px){.mu-grid{grid-template-columns:1fr}
+/* Stacked rosters need a name over each table; the side-by-side layout
+   already has the header above. */
+.mu-grid>div>.mu-who{display:none;font-weight:700;font-size:14px;margin:6px 0 4px}
+@media (max-width:1150px){.mu-grid>div>.mu-who{display:block}}
+@media (max-width:700px){
   .mu-head{grid-template-columns:1fr}.mu-mid{display:none}
   .mu-side.r{flex-direction:row;text-align:left}}
 table.mu-roster{width:100%;border-collapse:collapse;font-size:13px}
@@ -56,7 +65,9 @@ table.mu-roster td{padding:4px 7px;border:1px solid #eef2f7;color:#0f172a;backgr
   text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums;vertical-align:middle}
 table.mu-roster td.mu-p,table.mu-roster td.mu-g,table.mu-roster td.mu-s{text-align:left}
 table.mu-roster td.mu-slot{font-weight:700;color:#64748b;font-size:11px}
-table.mu-roster td.mu-s{color:#64748b;font-size:12px;white-space:normal;min-width:120px}
+/* No min-width: before kickoff every stat line is empty and the column
+   should cost nothing; once lines arrive the cell wraps to what is left. */
+table.mu-roster td.mu-s{color:#64748b;font-size:12px;white-space:normal}
 table.mu-roster td.mu-g{font-size:12px;color:#334155}
 table.mu-roster td.mu-g .live{color:#b3382c;font-weight:700}
 table.mu-roster td.mu-g .fin{color:#64748b}
@@ -66,7 +77,11 @@ table.mu-roster tr.bench td.mu-slot{color:#94a3b8}
 table.mu-roster tr.sep td{background:#f1f5f9;color:#475569;font-weight:700;font-size:11px;
   text-align:left;text-transform:uppercase;letter-spacing:.04em;padding:3px 7px}
 table.mu-roster tr.total td{background:#eef2f7;font-weight:700}
-table.mu-roster td.mu-p .nm{font-weight:600}
+/* The player cell may break only between the name and its label: logo and
+   name are one unbreakable unit, the label another. */
+table.mu-roster td.mu-p{white-space:normal;min-width:150px}
+table.mu-roster td.mu-p .nm{font-weight:600;white-space:nowrap;display:inline-block}
+table.mu-roster td.mu-p .mu-lbl{white-space:nowrap;display:inline-block}
 /* Own names for the small labels: custom.css has a global .meta that styles
    any element carrying it as a block. */
 table.mu-roster td.mu-p .mu-meta{font-size:11px;color:#64748b;margin-left:4px}
