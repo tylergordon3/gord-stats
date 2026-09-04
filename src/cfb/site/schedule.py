@@ -171,6 +171,22 @@ table.cfb-sched table.frt td{padding:2px 7px 2px 0}
 tr.g.wx-bad .t-wx{color:#3730a3;font-weight:600}
 td.na{color:#94a3b8}
 .wk-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
+/* Sort, conference, search, the Show chips and the week buttons all live in
+   the pinned bar, each on its own row. The bar itself is a wrapping flex row
+   (custom.css), so each block takes the full width to stack. */
+.sc-pin>*{flex:1 1 100%}
+.sc-pin .sc-controls{margin:4px 0 2px}
+.sc-pin .sc-chips{margin:2px 0 4px}
+@media (max-width:700px){
+  /* A phone cannot give three rows of chips to a pinned bar: one row that
+     scrolls sideways, like the week buttons. */
+  .sc-pin .sc-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .sc-pin .sc-chips::-webkit-scrollbar{display:none}
+  .sc-pin .sc-chips button{white-space:nowrap;flex:none}
+  .sc-pin .sc-controls{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .sc-pin .sc-controls .sc-search{min-width:110px}
+}
 .sc-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px}
 .sc-controls .lbl{font-weight:800;font-size:.72rem;text-transform:uppercase;
   letter-spacing:.04em;color:#475569}
@@ -1433,7 +1449,8 @@ def _controls(confs: dict) -> str:
         '<button type="button" id="sc-clear" class="clear">Reset</button></div>')
 
 
-def _switcher(week_ids: list[int], current: int, views: dict[int, str]) -> str:
+def _switcher(week_ids: list[int], current: int, views: dict[int, str],
+              controls: str = "") -> str:
     buttons = "".join(
         f'<button class="wk-btn{" active" if w == current else ""}" '
         f"onclick=\"show_wk('{w}')\" id=\"wk-tab-{w}\">{w}</button>"
@@ -1442,8 +1459,8 @@ def _switcher(week_ids: list[int], current: int, views: dict[int, str]) -> str:
         f'<div id="wk-view-{w}" class="wk-view"'
         f'{"" if w == current else " style=\'display:none\'"}>{views[w]}</div>'
         for w in week_ids)
-    return ('<div class="pin-bar">'
-            f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div></div>'
+    return ('<div class="pin-bar sc-pin">' + controls
+            + f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div></div>'
             f'<div id="cfb-weeks">{divs}</div>')
 
 
@@ -1468,8 +1485,8 @@ def body() -> str:
         "This week's scores update in place while games are on. "
         f"{lined} upcoming games have a book line and {forecast} a forecast so far. "
         f"Rebuilt daily (last: {built}).</p>")
-    return (_CSS + intro + _LEGEND + _controls(espn.conferences())
-            + _switcher(week_ids, current, views)
+    return (_CSS + intro + _LEGEND
+            + _switcher(week_ids, current, views, controls=_controls(espn.conferences()))
             + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
                      "url": json.dumps(f"/api/cfb-scores?week={current}&dates={SEASON}")})
 
