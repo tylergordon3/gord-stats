@@ -628,7 +628,9 @@ def body() -> str:
     return (
         ui.CSS
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
-        f"— every {UPCOMING_SEASON} matchup with both rosters in full. <b>GS Proj</b> is "
+        f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
+        "are on.</p><details class='section'><summary>How to read this page</summary>"
+        "<p><b>GS Proj</b> is "
         "this site's projection for the week: the power model's points per game for "
         "each player, tilted by the market's implied total for his team this week "
         "(a defense the other way, on what its opponent is expected to score), and "
@@ -642,7 +644,7 @@ def body() -> str:
         f"the swap spelled out under the table. Rebuilt several times a day and every "
         f"ten minutes while games are on (last: {built}); finished weeks stay on "
         "record. Season-long standing lives on the "
-        '<a href="/fantasy/power/">power rankings</a>.</p>'
+        '<a href="/fantasy/power/">power rankings</a>.</p></details>'
         + scored + ui.week_switch(weeks, current, views) + ui.LIVE_JS)
 
 

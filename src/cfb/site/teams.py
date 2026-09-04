@@ -247,13 +247,14 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
         "with the second one.")
     spread = table["rating"].max() - table["rating"].min()
     note = (f"<p class='tm-note'>Every FBS team on the number the predictions run on: "
-            f"points better than an average FBS side, so +14 beats -14 by four "
-            f"touchdowns on a neutral field. The whole division fits in "
-            f"<strong>{spread:.0f} points</strong>. <strong>Scoring</strong> is the "
-            f"same idea for the total &mdash; how many points this team adds to a "
-            f"game, whichever sideline it is on. Ratings come out of "
-            f"<a href='/cfb/predictions/'>the same model</a> that prices Saturday, "
-            f"and carry the same caveats.{history_note}</p>")
+            f"points better than an average FBS side.</p>"
+            "<details class='section'><summary>About these ratings</summary>"
+            f"<p class='tm-note'>+14 beats -14 by four touchdowns on a neutral field. "
+            f"The whole division fits in <strong>{spread:.0f} points</strong>. "
+            f"<strong>Scoring</strong> is the same idea for the total &mdash; how many "
+            f"points this team adds to a game, whichever sideline it is on. Ratings come "
+            f"out of <a href='/cfb/predictions/'>the same model</a> that prices Saturday, "
+            f"and carry the same caveats.{history_note}</p></details>")
     return (_CSS + note + switch + "<div class='tm-scroll'><table class='tm'>"
             f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>"
             + rankmoves.WINDOW_JS)

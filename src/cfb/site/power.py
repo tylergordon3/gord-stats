@@ -51,12 +51,18 @@ _TIMEOUT = 25
 MAX_AGE_HOURS = 12
 
 _CSS = """<style>
-table.cfb-power{width:100%;border-collapse:collapse;font-size:14px}
+/* Separate borders, not collapsed: a collapsed border belongs to the grid,
+   not the cell, so a sticky header row left its border behind and the rows
+   scrolling under it showed through the gap. With each cell owning its right
+   and bottom edge the header is a solid bar. */
+table.cfb-power{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;margin:0}
 table.cfb-power th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:center;
   font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
-  border:1px solid #e2e8f0;position:sticky;top:0}
-table.cfb-power td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
+  border:0;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;position:sticky;top:0}
+table.cfb-power td{padding:6px 10px;border:0;border-right:1px solid #eef2f7;
+  border-bottom:1px solid #eef2f7;color:#0f172a;background:#fff;
   text-align:center;white-space:nowrap}
+table.cfb-power th:last-child,table.cfb-power td:last-child{border-right:0}
 table.cfb-power td.pwr-team{text-align:left;font-weight:600}
 table.cfb-power tbody tr:nth-child(even) td{background:#f8fafc}
 table.cfb-power tr.top25 td{background:#fdf6e3}
@@ -509,10 +515,12 @@ def body() -> str:
     intro = (
         f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "
         f"Index</strong> for the {season} season"
-        + (", with the <strong>AP poll</strong> beside it as the human column" if show_ap else "")
-        + f", pulled {stamp}. FPI is expected point margin against an average FBS team "
-        f"on a neutral field; the projected record is ESPN's simulation of each team's "
-        f"actual schedule. Preseason these are projections; once games are played the "
+        + (", with the <strong>AP poll</strong> beside it" if show_ap else "")
+        + f", pulled {stamp}.</p>"
+        "<details class='section'><summary>About these rankings</summary>"
+        "<p class='power-note'>FPI is expected point margin against an average FBS team "
+        "on a neutral field; the projected record is ESPN's simulation of each team's "
+        "actual schedule. Preseason these are projections; once games are played the "
         f"same numbers update with results.{move_note}</p>"
         "<p class='power-note'><strong>Rating</strong> is the ratings and the "
         "projected record, <strong>Odds</strong> what ESPN's simulations give "
@@ -528,7 +536,8 @@ def body() -> str:
         + ("" if live("accomplishmentrank") else
            "<p class='power-note'>The resume ranks ESPN computes from results - "
            "strength of record, game control - appear here once games have been "
-           "played.</p>"))
+           "played.</p>")
+        + "</details>")
 
     rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now),
                        extra=pd.DataFrame({"fpi": [t["fpi"] for t in teams],

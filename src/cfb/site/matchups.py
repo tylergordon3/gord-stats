@@ -406,7 +406,9 @@ def body() -> str:
     return (
         ui.CSS
         + f'<p><a href="{lg["url"]}"><strong>{lg["name"]}</strong></a> — every '
-        "matchup with both rosters in full. <b>GS Proj</b> is this site's own "
+        "matchup with both rosters in full, live while games are on.</p>"
+        "<details class='section'><summary>How to read this page</summary>"
+        "<p><b>GS Proj</b> is this site's own "
         "projection for the week: each player's season projection spread over "
         "his school's games, tilted by what the game model expects of this "
         "week's game, and zero on a bye. <b>Yahoo</b> is the points Yahoo has "
@@ -420,7 +422,7 @@ def body() -> str:
         f"Rebuilt several times a day (last: {built}); finished weeks stay on "
         'record. Standings and waivers are on the <a href="/cfb/league/">league '
         'dashboard</a>, season-long roster strength on the '
-        '<a href="/cfb/league-power/">power rankings</a>.</p>'
+        '<a href="/cfb/league-power/">power rankings</a>.</p></details>'
         + ui.week_switch(weeks, current, views) + ui.LIVE_JS)
 
 
