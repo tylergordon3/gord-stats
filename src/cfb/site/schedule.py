@@ -174,7 +174,7 @@ td.na{color:#94a3b8}
 /* Sort, conference, search, the Show chips and the week buttons all live in
    the pinned bar, each on its own row. The bar itself is a wrapping flex row
    (custom.css), so each block takes the full width to stack. */
-.sc-pin>*{flex:1 1 100%}
+.sc-pin>*{flex:1 1 100%;justify-content:center}
 .sc-pin .sc-controls{margin:4px 0 2px}
 .sc-pin .sc-chips{margin:2px 0 4px}
 @media (max-width:700px){
@@ -185,10 +185,11 @@ td.na{color:#94a3b8}
   .sc-pin .sc-chips::-webkit-scrollbar{display:none}
   .sc-pin .sc-chips button{white-space:nowrap;flex:none}
   .sc-pin .sc-controls{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .sc-pin>*{justify-content:flex-start}
   .sc-pin .sc-controls .sc-search{min-width:110px}
 }
 .sc-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px}
-.sc-controls .lbl{font-weight:800;font-size:.72rem;text-transform:uppercase;
+.sc-controls .lbl,.sc-chips .lbl{font-weight:800;font-size:.72rem;text-transform:uppercase;
   letter-spacing:.04em;color:#475569}
 .sc-select,.sc-search{font-size:13.5px;padding:6px 10px;border:1px solid #cbd5e1;
   border-radius:8px;background:#fff;color:#0f172a}
@@ -345,7 +346,7 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   tr.g.wx-bad .t-wx{color:#c7d2fe}
   td.na{color:#7f8ea3}
   .wk-note{color:#aab7c9}
-  .sc-controls .lbl{color:#aab7c9}
+  .sc-controls .lbl,.sc-chips .lbl{color:#aab7c9}
   .sc-select,.sc-search{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .sc-chips button{background:#16203a;border-color:#2b3852;color:#dde5ef;box-shadow:none}
   .sc-chips button:hover{background:#223052}

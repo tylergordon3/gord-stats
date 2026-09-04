@@ -648,25 +648,42 @@ body {
   position: sticky;
   top: var(--header-h, 54px);
   z-index: 20;
-  background: #f7f9fc;
-  padding: 4px 0 2px;
-  margin: 0 0 8px;
-  border-bottom: 1px solid #e5e7eb;
-  /* Two control rows share a line when the width allows. */
+  /* Its own surface, so header, controls and content read as three layers
+     rather than the controls floating on the page. Centered like the nav
+     above it. */
+  background: #ffffff;
+  padding: 6px 14px 4px;
+  margin: 0 0 12px;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.07);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   column-gap: 28px;
 }
 
 .pin-bar .view-switch {
   margin: 4px 0;
+  justify-content: center;
+}
+
+/* On a phone the rows scroll sideways; a centered row that overflows hides
+   its start, so they stay left-aligned there. */
+@media (max-width: 700px) {
+  .pin-bar,
+  .pin-bar .view-switch {
+    justify-content: flex-start;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   .pin-bar {
-    background: #0f172a;
-    border-bottom-color: #2b3852;
+    background: #1b2540;
+    border-color: #2b3852;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   }
 }
 
