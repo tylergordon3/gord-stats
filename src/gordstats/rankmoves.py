@@ -202,9 +202,14 @@ def window_switch(bases: dict, label: str = "Change since:") -> str:
     """The button bar. Empty when the archive offers nothing to compare to."""
     if not bases:
         return ""
+    def text(win, b):
+        # The date is the point; "Last build" said nothing about when that was.
+        if win == "last":
+            return f"{b['at']:%b %-d, %-I:%M %p}"
+        return f"{b['label']} <span class='win-when'>{b['at']:%b %-d}</span>"
     buttons = "".join(
         f'<button type="button" class="win-btn{" active" if i == 0 else ""}" data-win="{win}" '
-        f'title="Since {b["at"]:%b %-d, %-I:%M %p}">{b["label"]}</button>'
+        f'title="Since {b["at"]:%b %-d, %-I:%M %p}">{text(win, b)}</button>'
         for i, (win, b) in enumerate(bases.items()))
     return f'<div class="view-switch win-switch"><span class="switch-label">{label}</span>{buttons}</div>'
 
@@ -218,6 +223,7 @@ def window_tips(bases: dict, what: str) -> str:
 WINDOW_CSS = """
 .win-cell span[data-win]{display:none}
 .win-cell span[data-win].on{display:inline}
+.win-btn .win-when{font-weight:400;opacity:.75;font-size:12px;margin-left:3px}
 """
 
 # Reveals the chosen window in every .win-cell, carries its figure into the

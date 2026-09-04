@@ -48,3 +48,12 @@ def test_move_and_delta_spans_carry_every_window():
 
 def test_window_switch_is_empty_without_an_archive(tmp_path):
     assert rankmoves.window_switch(rankmoves.baselines(tmp_path)) == ""
+
+
+def test_window_buttons_say_when(tmp_path):
+    now = datetime(2026, 10, 1, 12)
+    _write(tmp_path, now - timedelta(days=9), {"a": 1})
+    _write(tmp_path, now - timedelta(hours=20, minutes=26), {"a": 1})
+    html = rankmoves.window_switch(rankmoves.baselines(tmp_path, now=now))
+    assert ">Sep 30, 3:34 PM</button>" in html          # the last build, by its clock
+    assert "1 day <span class='win-when'>Sep 22</span>" in html   # 1d, 3d, 7d all resolve here
