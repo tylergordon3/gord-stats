@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-04T05:20:12+00:00",
+ "fetched": "2026-09-04T09:43:16+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -115,7 +115,7 @@
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 6.4,
+     "points": 7.3,
      "projected": 182.75,
      "win_probability": 0.63
     }
@@ -2392,10 +2392,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 6.4,
+    "points": 7.3,
     "stats": {
      "8": 19.0,
-     "9": 64.0
+     "9": 64.0,
+     "11": 1.0,
+     "12": 4.0
     }
    },
    {
@@ -2507,12 +2509,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 2.1,
+    "points": 3.2,
     "stats": {
-     "8": 1.0,
-     "9": -5.0,
-     "11": 3.0,
-     "12": 11.0
+     "11": 4.0,
+     "12": 12.0
     }
    },
    {
