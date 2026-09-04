@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-04T15:46:12+00:00",
+ "fetched": "2026-09-04T15:48:17+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 179.3,
-     "win_probability": 0.52
+     "projected": 179.79,
+     "win_probability": 0.5
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 40.0,
      "projected": 183.41,
-     "win_probability": 0.48
+     "win_probability": 0.5
     }
    ]
   },
@@ -153,11 +153,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468744",
-    "player": "Ja'Kyrian Turner",
+    "yahoo_id": "470260",
+    "player": "Waymond Jordan",
     "pos": "RB",
-    "team": "PITT",
-    "team_full": "Pittsburgh Panthers",
+    "team": "USC",
+    "team_full": "USC Trojans",
     "bye": 10.0,
     "status": "",
     "status_full": "",
@@ -167,12 +167,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "469395",
-    "player": "Dierre Hill Jr.",
+    "yahoo_id": "468744",
+    "player": "Ja'Kyrian Turner",
     "pos": "RB",
-    "team": "ORE",
-    "team_full": "Oregon Ducks",
-    "bye": 5.0,
+    "team": "PITT",
+    "team_full": "Pittsburgh Panthers",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -237,6 +237,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "469395",
+    "player": "Dierre Hill Jr.",
+    "pos": "RB",
+    "team": "ORE",
+    "team_full": "Oregon Ducks",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "404466",
     "player": "Hollywood Smothers",
     "pos": "RB",
@@ -260,7 +274,7 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "W/R/T",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -271,20 +285,6 @@
     "team": "KU",
     "team_full": "Kansas Jayhawks",
     "bye": 4.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "470260",
-    "player": "Waymond Jordan",
-    "pos": "RB",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
