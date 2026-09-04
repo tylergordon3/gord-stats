@@ -646,12 +646,17 @@ body {
    ========================= */
 .pin-bar {
   position: sticky;
-  top: 54px;
+  top: var(--header-h, 54px);
   z-index: 20;
   background: #f7f9fc;
   padding: 4px 0 2px;
   margin: 0 0 8px;
   border-bottom: 1px solid #e5e7eb;
+  /* Two control rows share a line when the width allows. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 28px;
 }
 
 .pin-bar .view-switch {
@@ -670,7 +675,7 @@ body {
    ========================= */
 .filter-bar {
   position: sticky;
-  top: 54px;  /* clears the sticky site header */
+  top: var(--header-h, 54px);  /* clears the sticky site header */
   z-index: 20;
 
   display: flex;
@@ -940,7 +945,7 @@ h3 {
 
 .filter-bar {
   position: sticky;
-  top: 54px;  /* clears the sticky site header */
+  top: var(--header-h, 54px);  /* clears the sticky site header */
   z-index: 20;
 
   display: flex;

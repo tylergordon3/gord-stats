@@ -96,9 +96,17 @@ table.cfb-power td:first-child{position:sticky;left:0;z-index:1}
 table.cfb-power th:first-child{left:0;z-index:3}
 .power-wrap{overflow:auto;border:1px solid #e5e7eb;
   border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,.05)}
-/* Capping the height nests a second vertical scroller, which on a phone
-   captures the page swipe - so only desktop gets the pinned header view. */
-@media (min-width:768px){.power-wrap{max-height:calc(100vh - 170px)}}
+/* Desktop: the table fits, so the frame need not scroll at all - the page
+   does, one scrollbar, and the column header sticks under the site header
+   and the pinned controls (both measured into CSS variables by the layout).
+   A frame that scrolls sideways on a phone is its own scroll container,
+   which is where the header would stick instead - so phones keep the frame
+   and lose the pinned header. */
+@media (min-width:768px){
+  .power-wrap{overflow:visible}
+  table.cfb-power th{top:calc(var(--header-h,54px) + var(--pin-h,0px))}
+  table.cfb-power th:first-child{border-top-left-radius:0}
+}
 .power-note{font-size:13px;color:#4a5a68;margin:6px 0 10px}
 """ + rankmoves.CSS + """
 @media (max-width:600px){

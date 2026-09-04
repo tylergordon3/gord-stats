@@ -66,6 +66,29 @@ resolution in _includes/nav.html.
     </div>
   </header>
 
+  <!-- The header is sticky and its height depends on the viewport (one nav
+       row or two). Anything else that pins under it reads these instead of
+       guessing a number: --header-h for the header, --pin-h for a page's
+       pinned control bar, so a table header can stack under both. -->
+  <script>
+  (function(){
+    var root=document.documentElement;
+    function measure(){
+      var h=document.getElementById('site-header');
+      if(h)root.style.setProperty('--header-h',h.offsetHeight+'px');
+      var p=document.querySelector('.pin-bar');
+      root.style.setProperty('--pin-h',p?p.offsetHeight+'px':'0px');
+    }
+    measure();
+    window.addEventListener('load',measure);
+    window.addEventListener('resize',measure);
+    if(window.ResizeObserver){
+      var h=document.getElementById('site-header');
+      if(h)new ResizeObserver(measure).observe(h);
+    }
+  })();
+  </script>
+
   <!-- MAIN CONTENT -->
   <main id="main_content_wrap" class="outer">
     <section id="main_content" class="custom-inner">
