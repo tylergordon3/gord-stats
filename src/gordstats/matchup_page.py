@@ -160,7 +160,8 @@ def week_switch(weeks: list, current: int, views: dict) -> str:
         f'<div id="wk-view-{w}" class="wk-view"'
         f'{"" if w == current else " style=\'display:none\'"}>{views[w]}</div>' for w in weeks)
     switch = ("" if len(weeks) == 1 else
-              f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div>')
+              '<div class="pin-bar"><div class="view-switch">'
+              f'<span class="switch-label">Week:</span>{buttons}</div></div>')
     return f'<div class="mu-wrap">{switch}<div id="mu-weeks">{divs}</div></div>' + JS
 
 

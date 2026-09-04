@@ -24,9 +24,13 @@ import pandas as pd
 
 from cfb import games as games_mod
 from cfb import predict
-from cfb.config import WEB_DIR
+from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import charts, palette
+from gordstats import charts, palette, rankmoves
+
+# Every build's rank and rating, one CSV per build (at most two a day), so the
+# index can say how far a team has moved since any point in the season.
+HISTORY_DIR = DATA_DIR / "ratings_history" / str(SEASON)
 
 ET = ZoneInfo("America/New_York")
 LOGO = "https://a.espncdn.com/i/teamlogos/ncaa/500/{team_id}.png"
@@ -49,6 +53,8 @@ table.tm img,.tm-head img{border:none;padding:0;box-shadow:none;background:none;
   border-radius:0;margin:0}
 table.tm img{width:22px;height:22px;object-fit:contain;vertical-align:middle;
   margin-right:8px}
+table.tm td.win-cell{font-variant-numeric:tabular-nums}
+""" + rankmoves.CSS + """
 .tm-head{display:flex;align-items:center;gap:14px;margin:6px 0 4px}
 .tm-head img{width:56px;height:56px;object-fit:contain}
 .tm-head .tm-title{font-size:24px;font-weight:700;color:#0f172a}
@@ -202,15 +208,43 @@ def _ordinal(n: int) -> str:
 
 
 def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
+    bases = rankmoves.baselines(HISTORY_DIR)
+    show_delta = any("rating" in b["frame"].columns for b in bases.values())
     rows = []
     for _, r in table.iterrows():
+        move = change = ""
+        if bases:
+            spans, _first = rankmoves.move_spans(bases, r["team"], int(r["rank"]))
+            move = f"<td class='win-cell'>{spans}</td>"
+        if show_delta:
+            spans, _first = rankmoves.delta_spans(bases, r["team"], r["rating"], "rating")
+            change = f"<td class='win-cell'>{spans}</td>"
         rows.append(
             f"<tr><td class='tm-name'><span class='row-rank'>{int(r['rank'])}</span>"
             f"{_logo(r['team'])}"
             f"<a href='/cfb/teams/{team_slug(r['name'])}/'>{escape(str(r['name']))}</a></td>"
-            f"<td>{r['rating']:+.1f}</td><td>{r['pace']:+.1f}</td>"
+            f"{move}<td>{r['rating']:+.1f}</td>{change}<td>{r['pace']:+.1f}</td>"
             f"<td>{int(r['wins'])}&ndash;{int(r['losses'])}</td></tr>")
-    head = ("<tr><th>Team</th><th>Rating</th><th>Scoring</th><th>Record</th></tr>")
+    move_th = change_th = ""
+    if bases:
+        move_th = (f"<th class='win-th' data-tips='{rankmoves.window_tips(bases, 'Places climbed')}' "
+                   f"title='Places climbed since {next(iter(bases.values()))['at']:%b %-d}'>Move</th>")
+    if show_delta:
+        change_th = (f"<th class='win-th' data-tips='{rankmoves.window_tips(bases, 'Rating change')}' "
+                     f"title='Rating change since {next(iter(bases.values()))['at']:%b %-d}'>&Delta;</th>")
+    head = (f"<tr><th>Team</th>{move_th}<th>Rating</th>{change_th}<th>Scoring</th>"
+            "<th>Record</th></tr>")
+    first = next(iter(bases.values()))["at"] if bases else None
+    switch = ("" if not bases else
+              "<div class='pin-bar'>" + rankmoves.window_switch(bases) + "</div>")
+    history_note = (
+        " <strong>Move</strong> is places climbed"
+        + (" and <strong>&Delta;</strong> the rating's change" if show_delta else "")
+        + " since the point the buttons pick - every build is archived, "
+        f"so the choice runs from the last build (<strong>{first:%b %-d}</strong>) back "
+        "to the season's first." if bases else
+        " Every build is archived; a Move column and a change-since chooser appear "
+        "with the second one.")
     spread = table["rating"].max() - table["rating"].min()
     note = (f"<p class='tm-note'>Every FBS team on the number the predictions run on: "
             f"points better than an average FBS side, so +14 beats -14 by four "
@@ -219,14 +253,21 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
             f"same idea for the total &mdash; how many points this team adds to a "
             f"game, whichever sideline it is on. Ratings come out of "
             f"<a href='/cfb/predictions/'>the same model</a> that prices Saturday, "
-            f"and carry the same caveats.</p>")
-    return (_CSS + note + "<div class='tm-scroll'><table class='tm'>"
-            f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>")
+            f"and carry the same caveats.{history_note}</p>")
+    return (_CSS + note + switch + "<div class='tm-scroll'><table class='tm'>"
+            f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>"
+            + rankmoves.WINDOW_JS)
 
 
 def generate() -> None:
     frame, model, names = predict.season()
     table = _standings(frame, model, names)
+    rankmoves.snapshot(
+        HISTORY_DIR, pd.Series(table["rank"].values, index=table["team"].astype(str)),
+        extra=pd.DataFrame({"rating": table["rating"].round(2).values,
+                            "pace": table["pace"].round(2).values,
+                            "name": table["name"].values},
+                           index=table["team"].astype(str)))
 
     write_page(WEB_DIR / "teams" / "index.html", "GordStats Rankings",
                _index(table, frame),

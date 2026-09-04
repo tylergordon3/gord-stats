@@ -638,6 +638,34 @@ body {
 }
 
 /* =========================
+   PINNED CONTROLS
+   A view-switch row (or a couple of them) that stays under the site header
+   while the page scrolls: the week buttons on the scoreboard and matchup
+   pages, the tabs and change-since buttons on the rankings tables. Same
+   offset as the filter bar below.
+   ========================= */
+.pin-bar {
+  position: sticky;
+  top: 54px;
+  z-index: 20;
+  background: #f7f9fc;
+  padding: 4px 0 2px;
+  margin: 0 0 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pin-bar .view-switch {
+  margin: 4px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pin-bar {
+    background: #0f172a;
+    border-bottom-color: #2b3852;
+  }
+}
+
+/* =========================
    FILTER BAR (Period + Conference)
    ========================= */
 .filter-bar {

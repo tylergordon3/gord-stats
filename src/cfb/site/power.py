@@ -177,6 +177,14 @@ Array.prototype.forEach.call(head.cells,function(th){
   });
 });
 
+// A sort running on Move or Δ follows the window the reader picks.
+document.addEventListener('winchange',function(){
+  var live=head.querySelector('th.sorted');
+  if(!live||!live.classList.contains('win-th')) return;
+  live.dataset.now=live.dataset.now==='asc'?'desc':'asc';   // sortBy flips it back
+  sortBy(live);
+});
+
 // --- tabs -----------------------------------------------------------------
 var TABS=document.querySelectorAll('.pv-btn');
 Array.prototype.forEach.call(TABS,function(btn){
@@ -327,19 +335,23 @@ VIEWS = [("rating", "Rating"), ("odds", "Odds"), ("resume", "Resume")]
 ALL = tuple(v for v, _ in VIEWS)
 
 
-def _td(views, value, text, team=False, sortable=True) -> str:
-    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "")
+def _td(views, value, text, team=False, sortable=True, win=False) -> str:
+    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "") + (" win-cell" if win else "")
     if isinstance(value, float):
         value = round(value, 3)      # ESPN sends 38.800000000000004
     key = f" data-sort='{value}'" if sortable and value is not None else ""
     return f"<td class='{cls}'{key}>{text}</td>"
 
 
-def _th(views, label, tip, direction, first=False, team=False) -> str:
+def _th(views, label, tip, direction, first=False, team=False, tips=None) -> str:
     cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "")
     if direction:
         cls += " sortable"
+    if tips:
+        cls += " win-th"
     attrs = f' title="{escape(tip, quote=True)}"' if tip else ""
+    if tips:
+        attrs += f" data-tips='{tips}'"
     if direction:
         attrs += f" data-dir='{direction}'"
     # The table arrives sorted by rank, so Team - which sorts by it - opens
@@ -374,14 +386,6 @@ def _team(t) -> str:
     return logo + t["name"]
 
 
-def _moved(baseline, t, rank):
-    """Places climbed against one of the rank snapshots, or nothing when the
-    team wasn't in it."""
-    if t["id"] not in baseline.index:
-        return None, ""
-    delta = baseline.get(t["id"]) - rank
-    return delta, rankmoves.cell(delta)
-
 
 def _switcher() -> str:
     buttons = "".join(
@@ -400,9 +404,12 @@ def body() -> str:
     ap_ranks, ap_season = ap_poll()
     show_ap = bool(ap_ranks) and ap_season == season
 
-    moves = rankmoves.movement(HISTORY_DIR)
-    show_move = "prev" in moves
-    show_week = "prev7" in moves and moves.get("prev7_at") != moves.get("prev_at")
+    bases = rankmoves.baselines(HISTORY_DIR)
+    show_move = bool(bases)
+    # The rating itself only rides in snapshots taken from 2026-09-04 on; a
+    # change column with nothing in it waits for one that has it.
+    show_delta = any("fpi" in b["frame"].columns for b in bases.values())
+    first_at = next(iter(bases.values()))["at"] if bases else None
 
     # A figure ESPN has not filled in yet - every resume rank until games are
     # played - comes back None for all 138 teams. Rather than print a column of
@@ -429,11 +436,8 @@ def body() -> str:
          lambda t, r: (r, f"<span class='row-rank'>{r}</span>{_team(t)}")),
     ]
     if show_move:
-        cols.append((("rating",), "Move", f"Places climbed since {moves['prev_at']:%b %-d}",
-                     "desc", lambda t, r: _moved(moves["prev"], t, r)))
-    if show_week:
-        cols.append((("rating",), "7d", f"Places climbed since {moves['prev7_at']:%b %-d}",
-                     "desc", lambda t, r: _moved(moves["prev7"], t, r)))
+        cols.append((("rating",), "Move", f"Places climbed since {first_at:%b %-d}",
+                     "desc", lambda t, r: rankmoves.move_spans(bases, t["id"], r)[::-1]))
     cols.append((ALL, "Conf", "Conference", "asc", lambda t, r: (t["conf"], t["conf"] or "")))
     if show_ap:
         cols.append((("rating",), "AP", "AP poll rank", "asc",
@@ -444,6 +448,11 @@ def body() -> str:
     cols += [
         (("rating",), "FPI", "Expected point margin against an average FBS team",
          "desc", lambda t, r: (t["fpi"], f"{t['fpi']:+.1f}")),
+    ]
+    if show_delta:
+        cols.append((("rating",), "Δ", f"FPI change since {first_at:%b %-d}", "desc",
+                     lambda t, r: rankmoves.delta_spans(bases, t["id"], t["fpi"], "fpi")[::-1]))
+    cols += [
         (("rating",), "Proj W-L", "ESPN's simulation of the full schedule", "desc",
          lambda t, r: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}")),
         (("odds",), "Playoff%", "Chance of making the playoff", "desc",
@@ -472,26 +481,30 @@ def body() -> str:
                      "spent in the lead", "asc",
                      lambda t, r: _plain(t["gamecontrolrank"])))
 
+    win_labels = {"Move": "Places climbed", "Δ": "FPI change"}
     rows = []
     for rank, t in enumerate(teams, 1):
         cells = []
         for views, label, _tip, direction, cell in cols:
             value, text = cell(t, rank)
             cells.append(_td(views, value, text, team=(label == "Team"),
-                             sortable=direction is not None))
+                             sortable=direction is not None, win=label in win_labels))
         rows.append(f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
                     + "".join(cells) + "</tr>")
 
     head = "".join(_th(views, label, tip, direction, first=(label == "Team"),
-                       team=(label == "Team"))
+                       team=(label == "Team"),
+                       tips=(rankmoves.window_tips(bases, win_labels[label])
+                             if label in win_labels else None))
                    for views, label, tip, direction, _cell in cols)
 
     move_note = ""
     if show_move:
-        move_note = f" <strong>Move</strong> is places climbed since {moves['prev_at']:%b %-d}"
-        if show_week:
-            move_note += f"; <strong>7d</strong> since {moves['prev7_at']:%b %-d}"
-        move_note += "."
+        move_note = (" <strong>Move</strong> is places climbed"
+                     + (" and <strong>&Delta;</strong> the FPI's change" if show_delta else "")
+                     + " since the point the buttons pick - every build is "
+                     f"archived, so the choice runs from the last build ({first_at:%b %-d}) "
+                     "back to the season's first.")
 
     intro = (
         f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "
@@ -517,11 +530,15 @@ def body() -> str:
            "strength of record, game control - appear here once games have been "
            "played.</p>"))
 
-    rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now))
-    return (_CSS + intro + _switcher()
+    rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now),
+                       extra=pd.DataFrame({"fpi": [t["fpi"] for t in teams],
+                                           "name": [t["name"] for t in teams]},
+                                          index=[str(t["id"]) for t in teams]))
+    return (_CSS + intro
+            + "<div class='pin-bar'>" + _switcher() + rankmoves.window_switch(bases) + "</div>"
             + "<div class='power-wrap'>"
             + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
-            + f"<tbody>{''.join(rows)}</tbody></table></div>" + _JS)
+            + f"<tbody>{''.join(rows)}</tbody></table></div>" + _JS + rankmoves.WINDOW_JS)
 
 
 def generate():

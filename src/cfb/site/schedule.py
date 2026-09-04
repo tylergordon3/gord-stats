@@ -1442,7 +1442,8 @@ def _switcher(week_ids: list[int], current: int, views: dict[int, str]) -> str:
         f'<div id="wk-view-{w}" class="wk-view"'
         f'{"" if w == current else " style=\'display:none\'"}>{views[w]}</div>'
         for w in week_ids)
-    return (f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div>'
+    return ('<div class="pin-bar">'
+            f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div></div>'
             f'<div id="cfb-weeks">{divs}</div>')
 
 
