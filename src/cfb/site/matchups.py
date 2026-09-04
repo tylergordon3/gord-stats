@@ -188,9 +188,10 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
            }.get(hint, "")
     return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
-            f'<td class="mu-p"><span class="nm">{_school_logo(p["team_full"], to_school, espn)}'
-            f'{escape(p["player"])}</span> <span class="mu-lbl">'
-            f'<span class="mu-meta">{escape(p["pos"])} · {escape(p["team"])}</span>{inj}{tag}</span></td>'
+            f'<td class="mu-p"><span class="mu-pc"><span class="nm">'
+            f'{_school_logo(p["team_full"], to_school, espn)}{escape(p["player"])}</span> '
+            f'<span class="mu-lbl"><span class="mu-meta">{escape(p["pos"])} · {escape(p["team"])}'
+            f'</span>{inj}{tag}</span></span></td>'
             f'<td class="mu-g">{game_cell(g)}</td>'
             f"<td>{ui.fmt(proj)}</td>"
             f"<td class=\"mu-pts\"><b>{ui.fmt(p.get('points'))}</b></td>"

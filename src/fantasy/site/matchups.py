@@ -220,10 +220,11 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
                   if grade else "")
     return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
             f'<td class="mu-slot">{escape(slot)}</td>'
-            f'<td class="mu-p"><span class="nm">{_logo(card["team"])}{escape(card["name"])}</span> '
+            f'<td class="mu-p"><span class="mu-pc"><span class="nm">{_logo(card["team"])}'
+            f'{escape(card["name"])}</span> '
             f'<span class="mu-lbl"><span class="mu-meta">{escape(card["pos"])}'
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
-            f"</span>{inj_html}{tag}{grade_html}</span></td>"
+            f"</span>{inj_html}{tag}{grade_html}</span></span></td>"
             f'<td class="mu-g">{game_cell(g)}</td>'
             f"<td>{ui.fmt(proj)}</td>"
             + "".join(f"<td>{ui.fmt(v)}</td>" for v in outside)

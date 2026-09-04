@@ -50,6 +50,30 @@ table.mu-board td b.lead{color:#1a7f4b}
 /* min-width:0 on the grid items, or a wide roster table sets the column width
    and the right-hand roster runs off the page instead of scrolling. */
 .mu-grid>div{min-width:0}
+/* Side by side, the two rosters mirror each other so both teams' points meet
+   in the middle: the left table runs Stats ... Game, Player, Slot, Pts and the
+   right one Pts, Slot, Player, Game ... Stats. Done by laying the left table
+   out right-to-left (which reverses its columns) and setting each cell back
+   to left-to-right so the text reads normally. A container query keys it to
+   the grid actually being two columns; stacked, both read the normal way. */
+.mu-grid{container-type:inline-size}
+@container (min-width:1214px){
+  .mu-grid>div:first-child table.mu-roster{direction:rtl}
+  .mu-grid>div:first-child table.mu-roster th,
+  .mu-grid>div:first-child table.mu-roster td{direction:ltr}
+  .mu-grid>div:first-child table.mu-roster td.mu-p,
+  .mu-grid>div:first-child table.mu-roster td.mu-g,
+  .mu-grid>div:first-child table.mu-roster td.mu-s,
+  .mu-grid>div:first-child table.mu-roster tr.sep td{text-align:right}
+  .mu-grid>div:first-child table.mu-roster img.mu-logo{margin:0 0 0 5px}
+  /* The player cell mirrors too: label, then name, then logo on the outside. */
+  .mu-grid>div:first-child table.mu-roster .mu-pc{flex-direction:row-reverse;
+    justify-content:flex-start}
+  .mu-grid>div:first-child table.mu-roster td.mu-p .nm{display:inline-flex;
+    flex-direction:row-reverse;align-items:center}
+  .mu-grid>div:first-child .mu-swap{text-align:right}
+}
+.mu-pc{display:inline-flex;align-items:center;flex-wrap:wrap;gap:0 4px;max-width:100%}
 /* Stacked rosters need a name over each table; the side-by-side layout
    already has the header above. */
 .mu-grid>div>.mu-who{display:none;font-weight:700;font-size:14px;margin:6px 0 4px}
