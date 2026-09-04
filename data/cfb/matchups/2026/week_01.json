@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-04T02:05:06+00:00",
+ "fetched": "2026-09-04T02:56:05+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 0.0,
      "projected": 179.3,
-     "win_probability": 0.56
+     "win_probability": 0.54
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 20.3,
+     "points": 29.3,
      "projected": 183.41,
-     "win_probability": 0.43999999999999995
+     "win_probability": 0.45999999999999996
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 0.0,
      "projected": 184.23,
-     "win_probability": 0.41000000000000003
+     "win_probability": 0.39
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 42.1,
-     "projected": 173.02,
-     "win_probability": 0.59
+     "projected": 175.2,
+     "win_probability": 0.61
     }
    ]
   },
@@ -62,16 +62,16 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 10.62,
+     "points": 26.34,
      "projected": 196.15,
-     "win_probability": 0.65
+     "win_probability": 0.71
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 172.77,
-     "win_probability": 0.35
+     "win_probability": 0.29000000000000004
     }
    ]
   },
@@ -87,14 +87,14 @@
      "name": "Austin's Best Team",
      "points": 2.0,
      "projected": 193.93,
-     "win_probability": 0.42999999999999994
+     "win_probability": 0.38
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 18.7,
+     "points": 27.1,
      "projected": 186.84,
-     "win_probability": 0.5700000000000001
+     "win_probability": 0.62
     }
    ]
   },
@@ -110,14 +110,14 @@
      "name": "Max's Majestic Team",
      "points": 28.2,
      "projected": 145.32,
-     "win_probability": 0.4
+     "win_probability": 0.39
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 3.2,
+     "points": 3.9,
      "projected": 182.75,
-     "win_probability": 0.6
+     "win_probability": 0.61
     }
    ]
   }
@@ -510,10 +510,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 3.6,
+    "points": 12.6,
     "stats": {
-     "11": 1.0,
-     "12": 31.0
+     "11": 3.0,
+     "12": 51.0,
+     "13": 1.0
     }
    },
    {
@@ -981,20 +982,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "338965",
-    "player": "Raleek Brown",
-    "pos": "RB",
-    "team": "TEX",
-    "team_full": "Texas Longhorns",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "334875",
     "player": "Wayne Knight",
     "pos": "RB",
@@ -1005,6 +992,34 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "467588",
+    "player": "King Miller",
+    "pos": "RB",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "338965",
+    "player": "Raleek Brown",
+    "pos": "RB",
+    "team": "TEX",
+    "team_full": "Texas Longhorns",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1028,20 +1043,6 @@
     "pos": "WR",
     "team": "CAL",
     "team_full": "California Golden Bears",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "467588",
-    "player": "King Miller",
-    "pos": "RB",
-    "team": "USC",
-    "team_full": "USC Trojans",
     "bye": 10.0,
     "status": "",
     "status_full": "",
@@ -1119,12 +1120,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 10.62,
+    "points": 26.34,
     "stats": {
-     "4": 63.0,
-     "5": 1.0,
-     "8": 3.0,
-     "9": 21.0
+     "4": 131.0,
+     "5": 3.0,
+     "8": 6.0,
+     "9": 31.0
     }
    },
    {
@@ -1959,14 +1960,14 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 18.7,
+    "points": 27.1,
     "stats": {
-     "8": 6.0,
-     "9": 37.0,
+     "8": 11.0,
+     "9": 53.0,
      "10": 1.0,
-     "11": 2.0,
-     "12": 20.0,
-     "13": 1.0
+     "11": 3.0,
+     "12": 23.0,
+     "13": 2.0
     }
    },
    {
@@ -2310,11 +2311,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 12.8,
+    "points": 14.3,
     "stats": {
-     "8": 2.0,
-     "9": 68.0,
-     "10": 1.0
+     "8": 5.0,
+     "9": 74.0,
+     "10": 1.0,
+     "11": 1.0,
+     "12": 4.0
     }
    },
    {
@@ -2386,10 +2389,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 3.2,
+    "points": 3.9,
     "stats": {
-     "8": 9.0,
-     "9": 32.0
+     "8": 11.0,
+     "9": 39.0
     }
    },
    {
