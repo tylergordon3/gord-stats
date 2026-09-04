@@ -101,6 +101,14 @@ table.mu-roster tr.bench td.mu-slot{color:#94a3b8}
 table.mu-roster tr.sep td{background:#f1f5f9;color:#475569;font-weight:700;font-size:11px;
   text-align:left;text-transform:uppercase;letter-spacing:.04em;padding:3px 7px}
 table.mu-roster tr.total td{background:#eef2f7;font-weight:700}
+/* The score is the point of the page: bigger, bolder, on its own tint, at
+   the inner edge of each roster where the two meet. */
+table.mu-roster td.mu-pts,table.mu-roster th.mu-pts{background:#e8f0fb;
+  border-right-color:#d5e0f0;min-width:52px}
+table.mu-roster td.mu-pts{font-size:15px;font-weight:700;color:#0f172a}
+table.mu-roster tr.bench td.mu-pts{background:#eef3fa;font-weight:600;color:#475569}
+table.mu-roster tr.total td.mu-pts{background:#d9e6f7;font-size:16px}
+table.mu-roster th.mu-pts{color:#1e3a8a}
 /* The player cell may break only between the name and its label: logo and
    name are one unbreakable unit, the label another. */
 table.mu-roster td.mu-p{white-space:normal;min-width:150px}
@@ -133,6 +141,11 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   table.mu-roster tr.bench td{background:#1b2540;color:#aab7c9}
   table.mu-roster tr.sep td{background:#223052;color:#aab7c9}
   table.mu-roster tr.total td{background:#223052}
+  table.mu-roster td.mu-pts,table.mu-roster th.mu-pts{background:#1e2c52;border-right-color:#2f4070}
+  table.mu-roster td.mu-pts{color:#ffffff}
+  table.mu-roster tr.bench td.mu-pts{background:#1b2848;color:#aab7c9}
+  table.mu-roster tr.total td.mu-pts{background:#27407a}
+  table.mu-roster th.mu-pts{color:#bcd0ff}
   table.mu-roster td.mu-slot,table.mu-roster td.mu-s,table.mu-roster td.mu-p .mu-meta{color:#aab7c9}
   table.mu-roster td.mu-g{color:#dde5ef}
   table.mu-roster td.mu-g .live{color:#ffb4ab}
