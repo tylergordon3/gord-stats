@@ -2,6 +2,7 @@
  "name": "B1G West Memorial FFL",
  "url": "https://college.fantasysports.yahoo.com/cfb/21318",
  "num_teams": 10,
+ "current_week": 1,
  "scoring_label": "H2H",
  "draft_status": "postdraft",
  "draft_time": 1788134400.0,
@@ -172,6 +173,35 @@
    "value": -4.0
   }
  ],
+ "stat_names": {
+  "4": "Pass Yds",
+  "5": "Pass TD",
+  "6": "Int",
+  "8": "Rush Att",
+  "9": "Rush Yds",
+  "10": "Rush TD",
+  "11": "Rec",
+  "12": "Rec Yds",
+  "13": "Rec TD",
+  "15": "Ret TD",
+  "16": "2-PT",
+  "18": "Fum Lost",
+  "57": "Off Fumb TD",
+  "31": "Pts Allow",
+  "32": "Sack",
+  "33": "Int",
+  "34": "Fum Rec",
+  "35": "TD",
+  "36": "Safe",
+  "37": "Blk Kick",
+  "49": "Ret TD",
+  "50": "Pts Allow 0",
+  "51": "Pts Allow 1-6",
+  "52": "Pts Allow 7-13",
+  "53": "Pts Allow 14-20",
+  "55": "Pts Allow 28-34",
+  "56": "Pts Allow 35+"
+ },
  "teams": [
   {
    "team_key": "474.l.21318.t.1",

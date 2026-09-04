@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-04T00:20:38+00:00",
+ "fetched": "2026-09-04T02:05:06+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 0.0,
      "projected": 179.3,
-     "win_probability": 0.55
+     "win_probability": 0.56
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 6.8,
+     "points": 20.3,
      "projected": 183.41,
-     "win_probability": 0.44999999999999996
+     "win_probability": 0.43999999999999995
     }
    ]
   },
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 184.26,
-     "win_probability": 0.56
+     "projected": 184.23,
+     "win_probability": 0.41000000000000003
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 15.3,
+     "points": 42.1,
      "projected": 173.02,
-     "win_probability": 0.43999999999999995
+     "win_probability": 0.59
     }
    ]
   },
@@ -62,16 +62,16 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 0.0,
+     "points": 10.62,
      "projected": 196.15,
-     "win_probability": 0.62
+     "win_probability": 0.65
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 177.89,
-     "win_probability": 0.38
+     "projected": 172.77,
+     "win_probability": 0.35
     }
    ]
   },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 0.0,
+     "points": 2.0,
      "projected": 193.93,
-     "win_probability": 0.63
+     "win_probability": 0.42999999999999994
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 0.0,
-     "projected": 169.98,
-     "win_probability": 0.37
+     "points": 18.7,
+     "projected": 186.84,
+     "win_probability": 0.5700000000000001
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 3.5,
+     "points": 28.2,
      "projected": 145.32,
-     "win_probability": 0.36
+     "win_probability": 0.4
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 0.0,
+     "points": 3.2,
      "projected": 182.75,
-     "win_probability": 0.64
+     "win_probability": 0.6
     }
    ]
   }
@@ -417,10 +417,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 5.5,
+    "points": 6.0,
     "stats": {
-     "8": 13.0,
-     "9": 37.0,
+     "8": 14.0,
+     "9": 42.0,
      "11": 2.0,
      "12": 8.0
     }
@@ -492,10 +492,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 1.3,
+    "points": 10.7,
     "stats": {
-     "8": 3.0,
-     "9": 13.0
+     "8": 13.0,
+     "9": 47.0,
+     "10": 1.0
     }
    },
    {
@@ -509,8 +510,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 3.6,
+    "stats": {
+     "11": 1.0,
+     "12": 31.0
+    }
    },
    {
     "yahoo_id": "457039",
@@ -593,10 +597,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 14.7,
+    "points": 17.0,
     "stats": {
-     "8": 5.0,
-     "9": 87.0,
+     "8": 7.0,
+     "9": 110.0,
      "10": 1.0
     }
    },
@@ -781,10 +785,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 20.4,
+    "points": 25.0,
     "stats": {
-     "11": 3.0,
-     "12": 129.0,
+     "11": 5.0,
+     "12": 165.0,
      "13": 1.0
     }
    },
@@ -927,11 +931,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 15.3,
+    "points": 42.1,
     "stats": {
-     "11": 5.0,
-     "12": 68.0,
-     "13": 1.0
+     "11": 9.0,
+     "12": 196.0,
+     "13": 3.0
     }
    },
    {
@@ -1115,8 +1119,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 10.62,
+    "stats": {
+     "4": 63.0,
+     "5": 1.0,
+     "8": 3.0,
+     "9": 21.0
+    }
    },
    {
     "yahoo_id": "470424",
@@ -1373,12 +1382,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "455519",
-    "player": "Adam Mohammed",
+    "yahoo_id": "469228",
+    "player": "Jordon Davison",
     "pos": "RB",
-    "team": "CAL",
-    "team_full": "California Golden Bears",
-    "bye": 10.0,
+    "team": "ORE",
+    "team_full": "Oregon Ducks",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1387,12 +1396,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "469228",
-    "player": "Jordon Davison",
+    "yahoo_id": "404365",
+    "player": "Carson Hansen",
     "pos": "RB",
-    "team": "ORE",
-    "team_full": "Oregon Ducks",
-    "bye": 5.0,
+    "team": "PSU",
+    "team_full": "Penn State Nittany Lions",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1429,15 +1438,15 @@
     "stats": {}
    },
    {
-    "yahoo_id": "469690",
-    "player": "Dezmen Roebuck",
+    "yahoo_id": "470421",
+    "player": "Lotzeir Brooks",
     "pos": "WR",
-    "team": "UW",
-    "team_full": "Washington Huskies",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "team": "ALA",
+    "team_full": "Alabama Crimson Tide",
+    "bye": 9.0,
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Undisclosed",
     "slot": "WR",
     "points": 0.0,
     "stats": {}
@@ -1457,20 +1466,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "462842",
-    "player": "Nate Frazier",
-    "pos": "RB",
-    "team": "UGA",
-    "team_full": "Georgia Bulldogs",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "468459",
     "player": "Gideon Davidson",
     "pos": "RB",
@@ -1485,25 +1480,25 @@
     "stats": {}
    },
    {
-    "yahoo_id": "470421",
-    "player": "Lotzeir Brooks",
+    "yahoo_id": "469439",
+    "player": "Andrew Marsh",
     "pos": "WR",
-    "team": "ALA",
-    "team_full": "Alabama Crimson Tide",
-    "bye": 9.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
-    "slot": "BN",
+    "team": "MICH",
+    "team_full": "Michigan Wolverines",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
    },
    {
-    "yahoo_id": "404365",
-    "player": "Carson Hansen",
-    "pos": "RB",
-    "team": "PSU",
-    "team_full": "Penn State Nittany Lions",
+    "yahoo_id": "469690",
+    "player": "Dezmen Roebuck",
+    "pos": "WR",
+    "team": "UW",
+    "team_full": "Washington Huskies",
     "bye": 8.0,
     "status": "",
     "status_full": "",
@@ -1513,12 +1508,26 @@
     "stats": {}
    },
    {
-    "yahoo_id": "469439",
-    "player": "Andrew Marsh",
-    "pos": "WR",
-    "team": "MICH",
-    "team_full": "Michigan Wolverines",
-    "bye": 6.0,
+    "yahoo_id": "462842",
+    "player": "Nate Frazier",
+    "pos": "RB",
+    "team": "UGA",
+    "team_full": "Georgia Bulldogs",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "455519",
+    "player": "Adam Mohammed",
+    "pos": "RB",
+    "team": "CAL",
+    "team_full": "California Golden Bears",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1693,8 +1702,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 0.0,
-    "stats": {}
+    "points": 2.0,
+    "stats": {
+     "11": 1.0,
+     "12": 15.0
+    }
    },
    {
     "yahoo_id": "403802",
@@ -1825,12 +1837,12 @@
   ],
   "474.l.21318.t.10": [
    {
-    "yahoo_id": "404287",
-    "player": "Dante Moore",
+    "yahoo_id": "455500",
+    "player": "Julian Sayin",
     "pos": "QB",
-    "team": "ORE",
-    "team_full": "Oregon Ducks",
-    "bye": 5.0,
+    "team": "OSU",
+    "team_full": "Ohio State Buckeyes",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1839,12 +1851,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "455500",
-    "player": "Julian Sayin",
+    "yahoo_id": "333810",
+    "player": "Noah Fifita",
     "pos": "QB",
-    "team": "OSU",
-    "team_full": "Ohio State Buckeyes",
-    "bye": 8.0,
+    "team": "ARIZ",
+    "team_full": "Arizona Wildcats",
+    "bye": 7.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1947,6 +1959,27 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 18.7,
+    "stats": {
+     "8": 6.0,
+     "9": 37.0,
+     "10": 1.0,
+     "11": 2.0,
+     "12": 20.0,
+     "13": 1.0
+    }
+   },
+   {
+    "yahoo_id": "404810",
+    "player": "Evan Dickens",
+    "pos": "RB",
+    "team": "BC",
+    "team_full": "Boston College Eagles",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
    },
@@ -1960,7 +1993,21 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "W/R/T",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "404287",
+    "player": "Dante Moore",
+    "pos": "QB",
+    "team": "ORE",
+    "team_full": "Oregon Ducks",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1993,20 +2040,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404810",
-    "player": "Evan Dickens",
-    "pos": "RB",
-    "team": "BC",
-    "team_full": "Boston College Eagles",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "463879",
     "player": "Walker Lyons",
     "pos": "TE",
@@ -2027,20 +2060,6 @@
     "team": "AUB",
     "team_full": "Auburn Tigers",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "333810",
-    "player": "Noah Fifita",
-    "pos": "QB",
-    "team": "ARIZ",
-    "team_full": "Arizona Wildcats",
-    "bye": 7.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2103,12 +2122,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 3.5,
+    "points": 28.2,
     "stats": {
-     "8": 3.0,
-     "9": 11.0,
-     "11": 1.0,
-     "12": 19.0
+     "8": 14.0,
+     "9": 56.0,
+     "10": 3.0,
+     "11": 3.0,
+     "12": 31.0
     }
    },
    {
@@ -2290,8 +2310,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 12.8,
+    "stats": {
+     "8": 2.0,
+     "9": 68.0,
+     "10": 1.0
+    }
    },
    {
     "yahoo_id": "900068",
@@ -2362,8 +2386,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.0,
-    "stats": {}
+    "points": 3.2,
+    "stats": {
+     "8": 9.0,
+     "9": 32.0
+    }
    },
    {
     "yahoo_id": "405225",
@@ -2470,12 +2497,17 @@
     "team": "COLO",
     "team_full": "Colorado Buffaloes",
     "bye": 6.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Foot",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 2.1,
+    "stats": {
+     "8": 1.0,
+     "9": -5.0,
+     "11": 3.0,
+     "12": 11.0
+    }
    },
    {
     "yahoo_id": "450577",
