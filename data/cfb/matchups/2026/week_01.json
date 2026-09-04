@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-04T12:53:20+00:00",
+ "fetched": "2026-09-04T12:56:05+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -110,14 +110,14 @@
      "name": "Max's Majestic Team",
      "points": 28.2,
      "projected": 145.32,
-     "win_probability": 0.37
+     "win_probability": 0.4
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 7.3,
      "projected": 182.75,
-     "win_probability": 0.63
+     "win_probability": 0.6
     }
    ]
   }
