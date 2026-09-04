@@ -104,6 +104,11 @@ fantasy:
     icon: "⚡"
     url: /fantasy/power/
 
+  - title: Matchups
+    short: Matchups
+    icon: "⚔️"
+    url: /fantasy/matchups/
+
   - title: Waivers & Trades
     short: Waivers
     icon: "🔄"
@@ -154,6 +159,12 @@ cfb:
     short: Power
     icon: "📊"
     url: /cfb/league-power/
+    group: fantasy
+
+  - title: Matchups
+    short: Matchups
+    icon: "⚔️"
+    url: /cfb/matchups/
     group: fantasy
 
   - title: League Dashboard

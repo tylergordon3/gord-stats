@@ -318,6 +318,7 @@ def _parse_league(raw: dict) -> dict:
         "name": meta.get("name"),
         "url": meta.get("url"),
         "num_teams": int(meta.get("num_teams", 0)),
+        "current_week": int(meta.get("current_week") or meta.get("start_week") or 1),
         "scoring_label": meta.get("scoring_label"),
         "draft_status": meta.get("draft_status"),
         "draft_time": _num(settings.get("draft_time")),
@@ -329,6 +330,9 @@ def _parse_league(raw: dict) -> dict:
         "playoff_start_week": int(settings.get("playoff_start_week", 0) or 0),
         "roster": roster,
         "modifiers": modifiers,
+        # Every scored category by id, display-only ones (rush attempts,
+        # points allowed) included: the matchups page reads stat lines by id.
+        "stat_names": stat_names,
         "teams": teams,
     }
 
@@ -382,6 +386,7 @@ def _team_meta(entry) -> dict:
         "name": meta.get("name"),
         "points": _num((rest.get("team_points") or {}).get("total")),
         "projected": _num((rest.get("team_projected_points") or {}).get("total")),
+        "win_probability": _num(rest.get("win_probability")),
     }
 
 
@@ -409,6 +414,131 @@ def scoreboard(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> d
     return _cached("scoreboard",
                    lambda: _parse_scoreboard(_get(f"league/{LEAGUE_KEY}/scoreboard")),
                    refresh, max_age_hours)
+
+
+# --------------------------------------------------------------------------- #
+# Weekly matchups with full rosters
+# --------------------------------------------------------------------------- #
+#
+# The scoreboard says who plays whom and what Yahoo projects; the per-team
+# roster endpoint, asked for a week, says who was in which slot, what every
+# player scored and the stat line behind it - live while games are on. Yahoo
+# publishes no per-player projection for the college game (only the team
+# total), which is what the site's own weekly projection is for.
+#
+# One JSON per week under data/cfb/matchups/<season>/. A week whose every
+# matchup is postevent is final and is never refetched; the current week
+# follows MAX_AGE_HOURS like the other league caches.
+
+MATCHUPS_DIR = DATA_DIR / "matchups" / str(SEASON)
+
+STATUS_FINAL = "postevent"
+
+
+def _parse_team_roster(raw: dict) -> list[dict]:
+    """team/<key>/roster;week=N/players/stats;type=week;week=N -> player rows."""
+    blocks = raw["fantasy_content"]["team"]
+    roster = {}
+    for part in blocks[1:]:
+        if isinstance(part, dict) and "roster" in part:
+            roster = part["roster"] or {}
+    players = (roster.get("0") or {}).get("players") or roster.get("players") or {}
+    out = []
+    for k, v in players.items():
+        if k == "count":
+            continue
+        parts = v["player"]
+        meta = _fold(parts[0])
+        rest = _fold(parts[1:])
+        slot = _fold(rest.get("selected_position") or []).get("position") or ""
+        stats = {}
+        for st in ((rest.get("player_stats") or {}).get("stats") or []):
+            s = st.get("stat") or {}
+            val = _num(s.get("value"))
+            if s.get("stat_id") is not None and val:
+                stats[str(s["stat_id"])] = val
+        out.append({
+            "yahoo_id": str(meta.get("player_id") or ""),
+            "player": (meta.get("name") or {}).get("full") or "",
+            "pos": meta.get("display_position") or "",
+            "team": meta.get("editorial_team_abbr") or "",
+            "team_full": meta.get("editorial_team_full_name") or "",
+            "bye": _num((meta.get("bye_weeks") or {}).get("week")),
+            "status": meta.get("status") or "",
+            "status_full": meta.get("status_full") or "",
+            "injury_note": meta.get("injury_note") or "",
+            "slot": slot,
+            "points": _num((rest.get("player_points") or {}).get("total")),
+            "stats": stats,
+        })
+    return out
+
+
+def _fetch_week(week: int) -> dict:
+    sb = _parse_scoreboard(_get(f"league/{LEAGUE_KEY}/scoreboard;week={week}"))
+    rosters = {}
+    for m in sb["matchups"]:
+        for t in m["teams"]:
+            key = t["team_key"]
+            rosters[key] = _parse_team_roster(_get(
+                f"team/{key}/roster;week={week}/players/stats;type=week;week={week}"))
+    first = sb["matchups"][0] if sb["matchups"] else {}
+    return {
+        "week": week,
+        "week_start": first.get("week_start"),
+        "week_end": first.get("week_end"),
+        "status": first.get("status"),
+        "is_playoffs": bool(first.get("is_playoffs")),
+        "fetched": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "matchups": sb["matchups"],
+        "rosters": rosters,
+    }
+
+
+def week_final(data: dict) -> bool:
+    """A week is final once every matchup in it is postevent."""
+    return bool(data.get("matchups")) and all(
+        m.get("status") == STATUS_FINAL for m in data["matchups"])
+
+
+def week_matchups(week: int, refresh: bool = False,
+                  max_age_hours: float = MAX_AGE_HOURS) -> dict:
+    """One week's matchups with every roster, from the archive or Yahoo.
+
+    {week, week_start, week_end, status, matchups: [{teams: [..]}],
+     rosters: {team_key: [player rows]}, fetched}
+    """
+    cache = MATCHUPS_DIR / f"week_{int(week):02d}.json"
+    if cache.exists():
+        data = json.loads(cache.read_text())
+        if week_final(data) or (not refresh and _is_fresh(cache, max_age_hours)):
+            return data
+    data = _fetch_week(int(week))
+    MATCHUPS_DIR.mkdir(parents=True, exist_ok=True)
+    cache.write_text(json.dumps(data, indent=1))
+    return data
+
+
+def archived_weeks() -> list[int]:
+    """Weeks with a matchup file on disk, ascending."""
+    return sorted(int(p.stem.split("_")[1]) for p in MATCHUPS_DIR.glob("week_*.json"))
+
+
+def capture_matchups(refresh: bool = False) -> list[int]:
+    """Every week from the league's first to its current one, archived.
+
+    The current week is the one that refetches; earlier weeks are final on
+    disk and are only fetched when missing (a mid-season first build)."""
+    lg = league()
+    current = int(scoreboard().get("week") or lg.get("current_week") or 1)
+    weeks = []
+    for w in range(int(lg.get("start_week") or 1), current + 1):
+        try:
+            week_matchups(w, refresh=refresh and w == current)
+            weeks.append(w)
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! matchups week {w} fetch failed ({exc})")
+    return weeks
 
 
 def _parse_transactions(raw: dict) -> list[dict]:

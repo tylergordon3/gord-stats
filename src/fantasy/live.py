@@ -43,8 +43,10 @@ SLEEPER_API = "https://api.sleeper.app/v1"
 _TIMEOUT = 20
 _ATTEMPTS = 3
 
-# Pages rebuilt when the gate opens, by their rebuild.PAGES slug.
-PAGES = ["power"]
+# Pages rebuilt when the gate opens, by their rebuild.PAGES slug and trigger:
+# a finished week re-ranks the power page and closes the week on the matchups
+# page; a game in progress refreshes only the matchups page (live points).
+PAGES = {"week": ["power", "matchups"], "live": ["matchups"]}
 
 
 def _get(url, attempts=_ATTEMPTS):
@@ -137,18 +139,50 @@ def pending(state: dict, league_id: str = UPCOMING_LEAGUE_ID,
     week = latest_scored_week(published, league_id)
     if week > published and nflverse_has(week, year):
         due["week"] = week
+    if games_live(year):
+        due["live"] = datetime.now(LEAGUE_TZ).isoformat(timespec="minutes")
     return due
+
+
+def games_live(year: int = UPCOMING_YEAR) -> bool:
+    """An NFL game in progress or about to kick off: one ESPN scoreboard call.
+    Refreshes the current week's matchup archive as a side effect, which is
+    what the page rebuild reads. Unreachable means "no"."""
+    from fantasy.league import matchups
+
+    try:
+        week = matchups.current_week(year)
+        games = matchups.espn_games(week, year)
+    except Exception as exc:                           # noqa: BLE001
+        print(f"  espn: {exc}")
+        return False
+    if not matchups.active(games):
+        return False
+    try:
+        matchups.week_matchups(week, year, refresh=True)
+    except Exception as exc:                           # noqa: BLE001
+        print(f"  sleeper matchups: {exc}")
+    return True
 
 
 # --------------------------------------------------------------------------- #
 # Rebuild
 # --------------------------------------------------------------------------- #
 
-def rebuild_pages():
+def pages_for(due: dict) -> list[str]:
+    wanted = []
+    for trigger in due:
+        for slug in PAGES.get(trigger, []):
+            if slug not in wanted:
+                wanted.append(slug)
+    return wanted or [slug for slugs in PAGES.values() for slug in slugs]
+
+
+def rebuild_pages(slugs: list[str]):
     from fantasy import rebuild
 
     plan = rebuild.Plan()
-    plan.pages = [page for page in rebuild.PAGES if page[0] in PAGES]
+    plan.pages = [page for page in rebuild.PAGES if page[0] in slugs]
     if rebuild.run(plan):
         raise RuntimeError("fantasy live rebuild had failing steps")
 
@@ -172,9 +206,11 @@ def main(argv=None) -> int:
         return 3
 
     what = ", ".join(f"{k} {v}" for k, v in due.items()) or "forced"
-    print(f"{now:%F %T} - {what}: rebuilding {', '.join(PAGES)}.")
-    rebuild_pages()
-    state.update(due)
+    slugs = pages_for(due)
+    print(f"{now:%F %T} - {what}: rebuilding {', '.join(slugs)}.")
+    rebuild_pages(slugs)
+    # "live" is not a high-water mark: every tick with a game on is due again.
+    state.update({k: v for k, v in due.items() if k != "live"})
     state["published"] = now.isoformat(timespec="seconds")
     _save_state(state)
     return 0

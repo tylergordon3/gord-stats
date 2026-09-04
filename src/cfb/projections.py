@@ -181,13 +181,15 @@ def expected_points(curve: np.ndarray, ranks, sd: float = RANK_SD) -> pd.DataFra
 # Team environment, from this site's own model
 # --------------------------------------------------------------------------- #
 
-def team_environment(league: dict = None) -> pd.DataFrame:
+def team_environment(league: dict = None, frame: pd.DataFrame = None) -> pd.DataFrame:
     """Per school: expected points scored and allowed per game, over the fantasy
     season and over the fantasy playoff weeks, from cfb.predict.
 
     Indexed by CFBD school name so the board can join to it. Weeks are the
     league's own (settings say 1-13, playoffs from 11); a team's bye is simply a
     week it has no game in, so the mean over its games is the right average.
+    `frame` is cfb.predict.season()'s frame, for a caller that already has one
+    (the fit behind it is the slow part of pricing a board).
     """
     from cfb import predict
 
@@ -196,7 +198,8 @@ def team_environment(league: dict = None) -> pd.DataFrame:
     end = int(league.get("end_week") or 13)
     playoff = int(league.get("playoff_start_week") or end)
 
-    frame, _model, _names = predict.season()
+    if frame is None:
+        frame, _model, _names = predict.season()
     frame = frame[(frame["week"] >= start) & (frame["week"] <= end)]
 
     # One row per team-game: what we expect them to score, and to allow.
@@ -479,13 +482,13 @@ def _tiers(points: pd.Series) -> pd.Series:
     return pd.Series(out)
 
 
-def value_board(refresh: bool = False) -> pd.DataFrame:
+def value_board(refresh: bool = False, frame: pd.DataFrame = None) -> pd.DataFrame:
     """Yahoo's board, priced: projection, floor, ceiling, VORP, tier, schedule.
 
     One row per rosterable player, in Yahoo's own rank order with the team
     offence units removed and the ranks closed up behind them - this league has
     no slot for one, so leaving them in would have every player below them
-    looking a round cheaper than he is.
+    looking a round cheaper than he is. `frame` as in team_environment.
     """
     league = yahoo.league(refresh=refresh)
     board = yahoo.board(refresh=refresh)
@@ -494,7 +497,7 @@ def value_board(refresh: bool = False) -> pd.DataFrame:
     board["pos_rank"] = board.groupby("pos").cumcount() + 1
     board["school"] = board["team_full"].map(schools_mod.yahoo_school())
 
-    env = team_environment(league)
+    env = team_environment(league, frame=frame)
     curves = points_curve(board, league=league)
 
     board["proj"] = np.nan
@@ -534,6 +537,7 @@ def value_board(refresh: bool = False) -> pd.DataFrame:
                      playoff_scored / scored)
     board["playoff_ratio"] = pd.Series(ratio, index=board.index)
     board["playoff_games"] = board["school"].map(env["playoff_games"])
+    board["games"] = board["school"].map(env["games"])
     board["opp_allowed"] = board["school"].map(env["allowed"])
     board["team_scored"] = scored
 

@@ -19,7 +19,7 @@ def projection_years() -> list[int]:
 # exist, and ask the filesystem. The pre-draft pages (draft, draft_live)
 # retired when the draft did - draft_review now owns their URL; the scoreboard
 # folded into the schedule page, which /cfb/scoreboard/ now redirects to.
-PAGES = ["home", "draft_review", "league", "league_power",
+PAGES = ["home", "draft_review", "league", "league_power", "matchups",
          "power", "teams", "predictions", "schedule", "countdown"]
 
 
@@ -35,6 +35,9 @@ def build_all(refresh: bool = False) -> list[str]:
                         ("yahoo transactions", lambda: yahoo.transactions(refresh=refresh)),
                         ("yahoo draft", lambda: yahoo.draft_results(refresh=refresh)),
                         ("yahoo rosters", lambda: yahoo.rosters(refresh=refresh)),
+                        # Every week's matchups with full rosters, archived
+                        # per week; only the current week refetches.
+                        ("yahoo matchups", lambda: yahoo.capture_matchups(refresh=refresh)),
                         ("espn schedule", lambda: espn.schedule(refresh=refresh)),
                         # FPI win chance, DraftKings moneyline and the forecast,
                         # per game. Frozen at kickoff: ESPN's post-game payload

@@ -84,9 +84,17 @@ def main(force: bool = False) -> int:
     if not (force or _active(events)):
         return 3
     _patch_schedule(events)
-    from cfb.site import countdown, schedule
+    from cfb import yahoo
+    from cfb.site import countdown, matchups, schedule
     schedule.generate()
     countdown.generate()
+    # The league's live points ride the same window: refetch the current
+    # week's Yahoo rosters (eleven calls) and redraw the matchups page.
+    try:
+        yahoo.capture_matchups(refresh=True)
+        matchups.generate()
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! cfb matchups live refresh failed ({exc})")
     return 0
 
 

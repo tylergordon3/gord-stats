@@ -156,9 +156,11 @@ def matchups_section(sb: dict) -> str:
         bn, bx = side(b)
         rows.append(f'<tr><td class="lg-team">{an}</td><td>{ax}</td>'
                     f'<td>{bx}</td><td class="lg-team">{bn}</td></tr>')
-    note = ("" if live else
-            '<p class="mu-note">Pairings are set; points appear once the '
-            "week's games kick off.</p>")
+    note = ('<p class="mu-note">'
+            + ("" if live else "Pairings are set; points appear once the "
+               "week's games kick off. ")
+            + 'Full rosters, player by player, are on the '
+            '<a href="/cfb/matchups/">matchups page</a>.</p>')
     return (f"<p><strong>Week {int(sb['week'])}</strong> · {start} – {end}"
             + (" (playoffs)" if mu0.get("is_playoffs") else "") + "</p>" + note
             + '<div class="table-scroll"><table class="lg-table">'
