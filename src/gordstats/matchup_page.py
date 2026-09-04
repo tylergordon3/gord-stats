@@ -164,9 +164,82 @@ def week_switch(weeks: list, current: int, views: dict) -> str:
     return f'<div class="mu-wrap">{switch}<div id="mu-weeks">{divs}</div></div>' + JS
 
 
-def win_bar(wp_a: float, wp_b: float, source: str) -> str:
-    """Two-colour probability bar with the percentages under it."""
-    return (f'<div class="mu-wp"><i style="width:{wp_a * 100:.0f}%"></i>'
-            f'<i class="b" style="width:{wp_b * 100:.0f}%"></i></div>'
-            f'<div class="mu-wp-lbl"><span>{wp_a * 100:.0f}% ({source})</span>'
-            f'<span>{wp_b * 100:.0f}%</span></div>')
+def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str = "") -> str:
+    """Two-colour probability bar with the percentages under it. The keys let
+    the live script move it as the source's probability changes."""
+    return (f'<div class="mu-wp"><i data-wp="{key_a}" style="width:{wp_a * 100:.0f}%"></i>'
+            f'<i class="b" data-wp="{key_b}" style="width:{wp_b * 100:.0f}%"></i></div>'
+            f'<div class="mu-wp-lbl"><span><span data-wpl="{key_a}">{wp_a * 100:.0f}%</span> '
+            f'({source})</span><span data-wpl="{key_b}">{wp_b * 100:.0f}%</span></div>')
+
+
+# The live updater. A page that wants it sets window.MU_LIVE before this runs:
+#   { fetch: function -> Promise of { teams: { key: { points, projected,
+#            win_probability, players: { pid: { points, line } } } } },
+#     interval: ms between polls }
+# and marks its markup: tr[data-pid] rows with a .mu-pts cell (and .mu-s for
+# the stat line) inside [data-roster=key]; [data-num=key][data-mu=anchor] on
+# the header number; [data-sb=key] on scoreboard points; [data-tpts=key] on
+# the starters total; [data-wp=key] / [data-wpl=key] on the win bar; .mu-asof
+# for the stamp. Anything the page lacks is simply skipped.
+LIVE_JS = """<script>
+(function(){
+  var cfg=window.MU_LIVE;if(!cfg||!cfg.fetch)return;
+  var timer=null;
+  function fmt(v){return (v===null||v===undefined||isNaN(v))?'\u2014':(Math.round(v*10)/10).toFixed(1);}
+  function each(sel,fn){var els=document.querySelectorAll(sel);for(var i=0;i<els.length;i++)fn(els[i]);}
+  function apply(data){
+    var teams=(data&&data.teams)||{};var keys=Object.keys(teams);if(!keys.length)return false;
+    keys.forEach(function(key){
+      var t=teams[key];var pts=t.points;
+      var roster=document.querySelector('[data-roster="'+key+'"]');
+      if(roster&&t.players){
+        var total=0;
+        each('[data-roster="'+key+'"] tr[data-pid]',function(tr){
+          var p=t.players[tr.getAttribute('data-pid')];if(!p)return;
+          var c=tr.querySelector('.mu-pts');if(c)c.innerHTML='<b>'+fmt(p.points)+'</b>';
+          if(p.line!==undefined&&p.line!==null){var s=tr.querySelector('.mu-s');if(s)s.textContent=p.line;}
+          if(tr.classList.contains('starter'))total+=(p.points||0);
+        });
+        if(pts===null||pts===undefined)pts=total;
+      }
+      if(pts===null||pts===undefined)return;
+      each('[data-num="'+key+'"]',function(el){el.textContent=fmt(pts);el.setAttribute('data-val',pts);});
+      each('[data-sb="'+key+'"]',function(el){el.innerHTML=fmt(pts);el.setAttribute('data-val',pts);});
+      each('[data-tpts="'+key+'"]',function(el){el.textContent=fmt(pts);});
+      if(t.win_probability!==null&&t.win_probability!==undefined){
+        var pc=(t.win_probability*100).toFixed(0)+'%';
+        each('[data-wp="'+key+'"]',function(el){el.style.width=pc;});
+        each('[data-wpl="'+key+'"]',function(el){el.textContent=pc;});
+      }
+    });
+    // The leader in each matchup, by the numbers just written.
+    var byMu={};
+    each('[data-num][data-mu]',function(el){var m=el.getAttribute('data-mu');(byMu[m]=byMu[m]||[]).push(el);});
+    Object.keys(byMu).forEach(function(m){
+      var els=byMu[m];if(els.length!==2)return;
+      var a=parseFloat(els[0].getAttribute('data-val')),b=parseFloat(els[1].getAttribute('data-val'));
+      if(isNaN(a)||isNaN(b))return;
+      els[0].classList.toggle('lead',a>b);els[1].classList.toggle('lead',b>a);
+      var sb=document.querySelectorAll('[data-sb]');
+    });
+    each('[data-sb]',function(el){
+      var row=el.parentNode;var cells=row.querySelectorAll('[data-sb]');if(cells.length!==2)return;
+      var a=parseFloat(cells[0].getAttribute('data-val')),b=parseFloat(cells[1].getAttribute('data-val'));
+      if(isNaN(a)||isNaN(b))return;
+      cells[0].innerHTML=a>b?'<b class=lead>'+fmt(a)+'</b>':fmt(a);
+      cells[1].innerHTML=b>a?'<b class=lead>'+fmt(b)+'</b>':fmt(b);
+    });
+    var d=new Date();var h=d.getHours()%12||12,mn=('0'+d.getMinutes()).slice(-2);
+    each('.mu-asof',function(el){el.textContent=' \u00b7 live, points as of '+h+':'+mn+(d.getHours()<12?' AM':' PM');});
+    return true;
+  }
+  function poll(){
+    if(document.hidden){timer=setTimeout(poll,cfg.interval||60000);return;}
+    cfg.fetch().then(function(data){apply(data);timer=setTimeout(poll,cfg.interval||60000);})
+      .catch(function(){timer=setTimeout(poll,120000);});
+  }
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){clearTimeout(timer);poll();}});
+  timer=setTimeout(poll,cfg.delay||8000);
+})();
+</script>"""

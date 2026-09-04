@@ -218,7 +218,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
            }.get(hint, "")
     grade_html = (f'<span class="mu-meta" title="FantasyPros start/sit grade">{escape(grade)}</span>'
                   if grade else "")
-    return (f'<tr class="{"bench" if bench else "starter"}">'
+    return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
             f'<td class="mu-slot">{escape(slot)}</td>'
             f'<td class="mu-p"><span class="nm">{_logo(card["team"])}{escape(card["name"])}</span> '
             f'<span class="mu-lbl"><span class="mu-meta">{escape(card["pos"])}'
@@ -227,7 +227,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
             f'<td class="mu-g">{game_cell(g)}</td>'
             f"<td>{ui.fmt(proj)}</td>"
             + "".join(f"<td>{ui.fmt(v)}</td>" for v in outside)
-            + f"<td><b>{ui.fmt(pts)}</b></td>"
+            + f"<td class=\"mu-pts\"><b>{ui.fmt(pts)}</b></td>"
             f'<td class="mu-s">{escape(stat_line(stats, card["pos"]))}</td></tr>')
 
 
@@ -286,13 +286,13 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     html_rows.append(f'<tr class="total"><td></td><td class="mu-p">Starters</td><td></td>'
                      f"<td>{gs_total:.1f}</td>"
                      + "".join(f"<td>{t:.1f}</td>" for t in src_totals)
-                     + f"<td>{pts_total:.1f}</td><td></td></tr>")
+                     + f'<td data-tpts="{side["roster_id"]}">{pts_total:.1f}</td><td></td></tr>')
     if bench:
         html_rows.append(f'<tr class="sep"><td colspan="{4 + len(sources) + 2}">Bench</td></tr>')
         html_rows.extend(cell(r) for r in bench)
     heads = "".join(f"<th title='{ext.SOURCES[k]} projection for this week'>{SHORT[k]}</th>"
                     for k in sources)
-    html = ('<div class="table-scroll"><table class="mu-roster"><thead><tr>'
+    html = (f'<div class="table-scroll" data-roster="{side["roster_id"]}"><table class="mu-roster"><thead><tr>'
             "<th>Slot</th><th>Player</th><th>Game</th>"
             f"<th title='GordStats projection for this week'>GS</th>{heads}"
             "<th title='Points scored this week'>Pts</th><th>Stats</th>"
@@ -342,6 +342,7 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
         t = data["teams"].get(str(s["roster_id"])) or data["teams"].get(s["roster_id"]) or {}
         html, gs, sp, pts = roster_table(s, t, data, ctx, final)
         sides.append({"team": t, "name": t.get("name") or f"Team {s['roster_id']}",
+                      "key": str(s["roster_id"]),
                       "html": html, "gs": gs, "sp": sp, "pts": pts if started else None})
     if len(sides) != 2:
         return "", sides
@@ -357,7 +358,9 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_avatar(s["team"])}'
                 f'<div><div class="nm">{_label(s["team"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
-                f'<div class="num{cls}">{big}</div><div class="sub">{sub}</div></div></div>')
+                f'<div class="num{cls}" data-num="{s["key"]}" data-mu="{anchor}" '
+                f'data-val="{s["pts"] if s["pts"] is not None else ""}">{big}</div>'
+                f'<div class="sub">{sub}</div></div></div>')
 
     mid = "Final" if final else ("Live" if started else "Preview")
     edge = a["gs"] - b["gs"]
@@ -380,7 +383,9 @@ def week_board(rows: list, started: bool) -> str:
     def num(s, o, key):
         v, ov = s.get(key), o.get(key)
         lead = v is not None and ov is not None and v > ov
-        return f"<td>{'<b class=lead>' if lead else ''}{ui.fmt(v)}{'</b>' if lead else ''}</td>"
+        attr = (f' data-sb="{s["key"]}" data-val="{v if v is not None else ""}"'
+                if key == "pts" else "")
+        return f"<td{attr}>{'<b class=lead>' if lead else ''}{ui.fmt(v)}{'</b>' if lead else ''}</td>"
     cells = []
     for anchor, a, b in rows:
         cells.append(
@@ -422,11 +427,23 @@ def week_view(data: dict, ctx: dict) -> str:
     state = "Final" if final else "In progress" if started else "Not started"
     asof = ""
     if started and not final and data.get("fetched"):
-        asof = (" · points as of " + datetime.fromisoformat(data["fetched"])
-                .astimezone(LEAGUE_TZ).strftime("%a %-I:%M %p"))
+        asof = (' <span class="mu-asof">· points as of ' + datetime.fromisoformat(data["fetched"])
+                .astimezone(LEAGUE_TZ).strftime("%a %-I:%M %p") + "</span>")
     playoffs = " (playoffs)" if ctx["playoff_start"] and week >= ctx["playoff_start"] else ""
+    # Sleeper answers browsers directly (it sends CORS), so the week still
+    # being played polls its matchups for live points: every minute while
+    # games are on, every five before they start. Stat lines wait for the
+    # ten-minute rebuild; Sleeper's stats feed is too big to poll.
+    live = ("" if final else
+            "<script>window.MU_LIVE={fetch:function(){return fetch('"
+            f"{data_mod.SLEEPER_API}/league/{UPCOMING_LEAGUE_ID}/matchups/{week}')"
+            ".then(function(r){return r.json();}).then(function(rows){var teams={};"
+            "(rows||[]).forEach(function(r){var players={};var pp=r.players_points||{};"
+            "Object.keys(pp).forEach(function(k){players[k]={points:pp[k]};});"
+            "teams[String(r.roster_id)]={points:r.points,players:players};});"
+            f"return {{teams:teams}};}});}},interval:{60000 if started else 300000}}};</script>")
     return (f"<p><strong>Week {week}</strong>{span}{playoffs} · {state}{asof}</p>"
-            + week_board(rows, started) + extra + "".join(sections))
+            + week_board(rows, started) + extra + "".join(sections) + live)
 
 
 # --------------------------------------------------------------------------- #
@@ -619,13 +636,14 @@ def body() -> str:
         "<b>Slpr</b> is Sleeper's, <b>ESPN</b> is ESPN's, <b>FP</b> is the FantasyPros "
         "expert consensus (whose start/sit grade sits by the name); their average is "
         "the <b>Consensus</b> the scoreboard compares us against. <b>Pts</b> is what "
-        "the league has scored so far, with the stat line behind it. "
+        "the league has scored so far, with the stat line behind it; while games "
+        "are on, the points refresh in place about once a minute. "
         "Ahead of the final whistle a roster whose bench out-projects a starter gets "
         f"the swap spelled out under the table. Rebuilt several times a day and every "
         f"ten minutes while games are on (last: {built}); finished weeks stay on "
         "record. Season-long standing lives on the "
         '<a href="/fantasy/power/">power rankings</a>.</p>'
-        + scored + ui.week_switch(weeks, current, views))
+        + scored + ui.week_switch(weeks, current, views) + ui.LIVE_JS)
 
 
 def generate():

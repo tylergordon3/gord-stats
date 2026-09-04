@@ -158,31 +158,50 @@ def _school_logo(team_full: str, to_school: dict, espn: dict) -> str:
     return f'<img class="mu-logo" src="{LOGO.format(team_id=escape(str(tid)))}" alt="" loading="lazy">'
 
 
-def player_row(p: dict, wk: pd.DataFrame, to_school: dict, espn: dict,
+def game_for(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: dict):
+    """This week's game for a rostered player: from his projection row when
+    he is on the board, otherwise by his school - a player past the board's
+    depth still plays on Saturday."""
+    pid = p["yahoo_id"]
+    if pid in wk.index and isinstance(wk.loc[pid].get("opp"), str):
+        return wk.loc[pid]
+    team_id = espn.get(to_school.get(p.get("team_full") or "", ""))
+    games = by_team.get(str(team_id)) if team_id else None
+    if not games:
+        return None
+    g = games[0]
+    return pd.Series({"opp": g["opp"], "opp_rank": g.get("opp_rank"), "home": g["home"],
+                      "kickoff": g["date"], "state": g["state"],
+                      "score_for": g["score_for"], "score_against": g["score_against"]})
+
+
+def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: dict,
                hint: str = "") -> str:
     pid = p["yahoo_id"]
-    g = wk.loc[pid] if pid in wk.index else None
-    proj = g["proj_week"] if g is not None else None
+    g = game_for(p, wk, by_team, to_school, espn)
+    proj = wk.loc[pid, "proj_week"] if pid in wk.index else None
     bench = p["slot"] in _BENCH
     inj = (f'<span class="inj" title="{escape(p.get("injury_note") or p.get("status_full") or "")}">'
            f'{escape(p["status"])}</span>' if p.get("status") else "")
     tag = {"in": '<span class="mu-hint in" title="Projects into the best lineup">start</span>',
            "out": '<span class="mu-hint out" title="A bench player projects higher">sit</span>'
            }.get(hint, "")
-    return (f'<tr class="{"bench" if bench else "starter"}">'
+    return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
             f'<td class="mu-p"><span class="nm">{_school_logo(p["team_full"], to_school, espn)}'
             f'{escape(p["player"])}</span> <span class="mu-lbl">'
             f'<span class="mu-meta">{escape(p["pos"])} · {escape(p["team"])}</span>{inj}{tag}</span></td>'
             f'<td class="mu-g">{game_cell(g)}</td>'
             f"<td>{ui.fmt(proj)}</td>"
-            f"<td><b>{ui.fmt(p.get('points'))}</b></td>"
+            f"<td class=\"mu-pts\"><b>{ui.fmt(p.get('points'))}</b></td>"
             f'<td class="mu-s">{escape(stat_line(p.get("stats") or {}, p["pos"]))}</td></tr>')
 
 
 def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dict,
-                 espn: dict, final: bool) -> tuple[str, float, float]:
+                 espn: dict, final: bool, key: str = "",
+                 by_team: dict = None) -> tuple[str, float, float]:
     """One roster in lineup order. Returns (html, projected starters, points)."""
+    by_team = by_team or {}
     ordered = order_roster(players, lg)
     proj = {p["yahoo_id"]: (float(wk.loc[p["yahoo_id"], "proj_week"])
                             if p["yahoo_id"] in wk.index
@@ -211,13 +230,16 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
 
     proj_total = sum(proj.get(p["yahoo_id"]) or 0 for p in starters)
     pts_total = sum(p.get("points") or 0 for p in starters)
-    rows = [player_row(p, wk, to_school, espn, hints.get(p["yahoo_id"])) for p in starters]
+    rows = [player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
+            for p in starters]
     rows.append(f'<tr class="total"><td></td><td class="mu-p">Starters</td><td></td>'
-                f"<td>{proj_total:.1f}</td><td>{pts_total:.1f}</td><td></td></tr>")
+                f'<td>{proj_total:.1f}</td><td data-tpts="{escape(key)}">{pts_total:.1f}</td>'
+                "<td></td></tr>")
     if bench:
         rows.append('<tr class="sep"><td colspan="6">Bench</td></tr>')
-        rows.extend(player_row(p, wk, to_school, espn, hints.get(p["yahoo_id"])) for p in bench)
-    html = ('<div class="table-scroll"><table class="mu-roster"><thead><tr>'
+        rows.extend(player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
+                    for p in bench)
+    html = (f'<div class="table-scroll" data-roster="{escape(key)}"><table class="mu-roster"><thead><tr>'
             "<th>Slot</th><th>Player</th><th>Game</th>"
             "<th title='GordStats projection for this week'>GS Proj</th>"
             "<th title='Yahoo fantasy points this week'>Yahoo</th><th>Stats</th>"
@@ -240,14 +262,16 @@ def _record(t: dict) -> str:
 
 
 def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: dict,
-                    espn: dict, teams: dict, anchor: str) -> tuple[str, list[dict]]:
+                    espn: dict, teams: dict, anchor: str,
+                    by_team: dict = None) -> tuple[str, list[dict]]:
     """One matchup in full. Returns (html, [summary per side])."""
     final = m.get("status") == yahoo.STATUS_FINAL
     started = m.get("status") != "preevent"
     sides = []
     for t in m["teams"]:
         html, proj_total, pts_total = roster_table(
-            data["rosters"].get(t["team_key"], []), lg, wk, to_school, espn, final)
+            data["rosters"].get(t["team_key"], []), lg, wk, to_school, espn, final,
+            key=t["team_key"], by_team=by_team)
         sides.append({"team": teams.get(t["team_key"], {"name": t["name"]}),
                       "name": t["name"], "key": t["team_key"], "html": html,
                       "gs": proj_total, "pts": pts_total if started else None,
@@ -264,11 +288,13 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_team_logo(s["team"])}'
                 f'<div><div class="nm">{escape(s["name"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
-                f'<div class="num{cls}">{big}</div><div class="sub">{sub}</div></div></div>')
+                f'<div class="num{cls}" data-num="{escape(s["key"])}" data-mu="{anchor}" '
+                f'data-val="{s["pts"] if s["pts"] is not None else ""}">{big}</div>'
+                f'<div class="sub">{sub}</div></div></div>')
 
     wp_a = a["wp"] if a["wp"] is not None else 0.5
     wp_b = b["wp"] if b["wp"] is not None else 1 - wp_a
-    wp = "" if final else ui.win_bar(wp_a, wp_b, "Yahoo")
+    wp = "" if final else ui.win_bar(wp_a, wp_b, "Yahoo", a["key"], b["key"])
     mid = "Final" if final else ("Live" if started else "Preview")
     gs_edge = a["gs"] - b["gs"]
     edge = (f"GordStats has <b>{escape(a['name'] if gs_edge >= 0 else b['name'])}</b> "
@@ -295,7 +321,9 @@ def week_board(rows: list[tuple], started: bool, final: bool) -> str:
             v = s.get(key)
             o = other.get(key)
             lead = v is not None and o is not None and v > o
-            return f"<td>{'<b class=lead>' if lead else ''}{ui.fmt(v)}{'</b>' if lead else ''}</td>"
+            attr = (f' data-sb="{escape(s["key"])}" data-val="{v if v is not None else ""}"'
+                    if key == "pts" else "")
+            return f"<td{attr}>{'<b class=lead>' if lead else ''}{ui.fmt(v)}{'</b>' if lead else ''}</td>"
         pts = (num(a, b, "pts") + num(b, a, "pts")) if started else ""
         wp = "" if final else (f"<td>{ui.fmt((a['wp'] or 0) * 100, 0)}%</td>"
                                f"<td>{ui.fmt((b['wp'] or 0) * 100, 0)}%</td>")
@@ -329,23 +357,32 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
     started = any(m.get("status") != "preevent" for m in data["matchups"])
     start = datetime.strptime(data["week_start"], "%Y-%m-%d")
     end = datetime.strptime(data["week_end"], "%Y-%m-%d")
+    by_team = weekly.team_games(weekly.games_between(frame, data["week_start"], data["week_end"]))
     sections, rows = [], []
     for i, m in enumerate(data["matchups"], 1):
         anchor = f"wk{week}-m{i}"
-        html, sides = matchup_section(m, data, lg, wk, to_school, espn, teams, anchor)
+        html, sides = matchup_section(m, data, lg, wk, to_school, espn, teams, anchor,
+                                      by_team=by_team)
         sections.append(html)
         rows.append((anchor, sides[0], sides[1]))
     state = ("Final" if final else "In progress" if started else "Not started")
     fetched = data.get("fetched")
     asof = ""
-    if fetched:
-        asof = (" · Yahoo points as of "
+    if fetched and started and not final:
+        asof = (' <span class="mu-asof">· Yahoo points as of '
                 + datetime.fromisoformat(fetched).astimezone(LEAGUE_TZ)
-                .strftime("%a %-I:%M %p"))
+                .strftime("%a %-I:%M %p") + "</span>")
+    # The week still being played polls Yahoo through the site's own proxy
+    # (functions/api/cfb-matchups.js): a minute apart while games are on,
+    # five minutes before they start.
+    live = ("" if final else
+            "<script>window.MU_LIVE={fetch:function(){return fetch('/api/cfb-matchups?week="
+            f"{week}&_='+Date.now()).then(function(r){{return r.json();}});}},"
+            f"interval:{60000 if started else 300000}}};</script>")
     return (f"<p><strong>Week {week}</strong> · {start:%b %-d} – {end:%b %-d}"
             + (" (playoffs)" if data.get("is_playoffs") else "")
-            + f" · {state}{asof if started and not final else ''}</p>"
-            + week_board(rows, started, final) + "".join(sections))
+            + f" · {state}{asof}</p>"
+            + week_board(rows, started, final) + "".join(sections) + live)
 
 
 def body() -> str:
@@ -375,13 +412,16 @@ def body() -> str:
         "week's game, and zero on a bye. <b>Yahoo</b> is the points Yahoo has "
         "scored so far, with the stat line behind them. Yahoo projects a team "
         "total but no player-by-player number for the college game, so the "
-        "player column is ours alone. Ahead of kickoff a roster whose bench "
+        "player column is ours alone; a player past the board's depth shows "
+        "&mdash; there but still plays. While games are on, points, stat lines "
+        "and Yahoo's win odds refresh in place about once a minute. Ahead of "
+        "kickoff a roster whose bench "
         "out-projects a starter gets the swap spelled out under the table. "
         f"Rebuilt several times a day (last: {built}); finished weeks stay on "
         'record. Standings and waivers are on the <a href="/cfb/league/">league '
         'dashboard</a>, season-long roster strength on the '
         '<a href="/cfb/league-power/">power rankings</a>.</p>'
-        + ui.week_switch(weeks, current, views))
+        + ui.week_switch(weeks, current, views) + ui.LIVE_JS)
 
 
 def generate():
