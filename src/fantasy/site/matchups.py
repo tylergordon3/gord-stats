@@ -207,10 +207,10 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
     pid, slot = row["pid"], row["slot"]
     bench = slot in ("BN", "IR")
     if pid == "0":
-        return (f'<tr class="starter"><td class="mu-pts">—</td>'
+        return (f'<tr class="starter"><td class="mu-pts">—</td><td>—</td>'
                 f'<td class="mu-slot">{escape(slot)}</td>'
                 f'<td class="mu-p"><span class="mu-meta">empty</span></td><td class="mu-g"></td>'
-                + "<td>—</td>" * (N_COLS - 5) + "<td class='mu-s'></td></tr>")
+                + "<td>—</td>" * (N_COLS - 6) + "<td class='mu-s'></td></tr>")
     inj = card.get("injury")
     inj_html = (f'<span class="inj" title="{escape(inj)}">'
                 f'{escape(INJURY_TAGS.get(inj, inj[:3].upper()))}</span>' if inj else "")
@@ -221,6 +221,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
                   if grade else "")
     return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
             f"<td class=\"mu-pts\"><b>{ui.fmt(pts)}</b></td>"
+            f"<td>{ui.fmt(proj)}</td>"
             f'<td class="mu-slot">{escape(slot)}</td>'
             f'<td class="mu-p"><span class="mu-pc"><span class="nm">{_logo(card["team"])}'
             f'{escape(card["name"])}</span> '
@@ -228,7 +229,6 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
             f"</span>{inj_html}{tag}{grade_html}</span></span></td>"
             f'<td class="mu-g">{game_cell(g)}</td>'
-            f"<td>{ui.fmt(proj)}</td>"
             + "".join(f"<td>{ui.fmt(v)}</td>" for v in outside)
             + f'<td class="mu-s">{escape(stat_line(stats, card["pos"]))}</td></tr>')
 
@@ -286,8 +286,8 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     pts_total = float(side.get("points") or 0)
     html_rows = [cell(r) for r in starters]
     html_rows.append(f'<tr class="total"><td class="mu-pts" data-tpts="{side["roster_id"]}">'
-                     f'{pts_total:.1f}</td><td></td><td class="mu-p">Starters</td><td></td>'
-                     f"<td>{gs_total:.1f}</td>"
+                     f'{pts_total:.1f}</td><td>{gs_total:.1f}</td><td></td>'
+                     '<td class="mu-p">Starters</td><td></td>'
                      + "".join(f"<td>{t:.1f}</td>" for t in src_totals)
                      + "<td></td></tr>")
     if bench:
@@ -297,8 +297,8 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
                     for k in sources)
     html = (f'<div class="table-scroll" data-roster="{side["roster_id"]}"><table class="mu-roster"><thead><tr>'
             "<th class='mu-pts' title='Points scored this week'>Pts</th>"
-            "<th>Slot</th><th>Player</th><th>Game</th>"
-            f"<th title='GordStats projection for this week'>GS</th>{heads}"
+            "<th title='GordStats projection for this week'>GS</th>"
+            f"<th>Slot</th><th>Player</th><th>Game</th>{heads}"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>{swaps}')
     return html, gs_total, cons_total, pts_total

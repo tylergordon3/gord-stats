@@ -188,13 +188,13 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
            }.get(hint, "")
     return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
             f"<td class=\"mu-pts\"><b>{ui.fmt(p.get('points'))}</b></td>"
+            f"<td>{ui.fmt(proj)}</td>"
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
             f'<td class="mu-p"><span class="mu-pc"><span class="nm">'
             f'{_school_logo(p["team_full"], to_school, espn)}{escape(p["player"])}</span> '
             f'<span class="mu-lbl"><span class="mu-meta">{escape(p["pos"])} · {escape(p["team"])}'
             f'</span>{inj}{tag}</span></span></td>'
             f'<td class="mu-g">{game_cell(g)}</td>'
-            f"<td>{ui.fmt(proj)}</td>"
             f'<td class="mu-s">{escape(stat_line(p.get("stats") or {}, p["pos"]))}</td></tr>')
 
 
@@ -234,16 +234,16 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
     rows = [player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
             for p in starters]
     rows.append(f'<tr class="total"><td class="mu-pts" data-tpts="{escape(key)}">{pts_total:.1f}</td>'
-                f'<td></td><td class="mu-p">Starters</td><td></td>'
-                f"<td>{proj_total:.1f}</td><td></td></tr>")
+                f'<td>{proj_total:.1f}</td><td></td><td class="mu-p">Starters</td>'
+                "<td></td><td></td></tr>")
     if bench:
         rows.append('<tr class="sep"><td colspan="6">Bench</td></tr>')
         rows.extend(player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
                     for p in bench)
     html = (f'<div class="table-scroll" data-roster="{escape(key)}"><table class="mu-roster"><thead><tr>'
             "<th class='mu-pts' title='Points actually scored this week, from Yahoo (live while games are on)'>Pts</th>"
-            "<th>Slot</th><th>Player</th><th>Game</th>"
             "<th title='GordStats projection for this week'>GS Proj</th>"
+            "<th>Slot</th><th>Player</th><th>Game</th>"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>{swaps}')
     return html, proj_total, pts_total
