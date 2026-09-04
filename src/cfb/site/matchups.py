@@ -242,7 +242,8 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
     html = (f'<div class="table-scroll" data-roster="{escape(key)}"><table class="mu-roster"><thead><tr>'
             "<th>Slot</th><th>Player</th><th>Game</th>"
             "<th title='GordStats projection for this week'>GS Proj</th>"
-            "<th title='Yahoo fantasy points this week'>Yahoo</th><th>Stats</th>"
+            "<th title='Points actually scored this week, from Yahoo (live while games are on)'>Pts</th>"
+            "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>{swaps}')
     return html, proj_total, pts_total
 
@@ -411,8 +412,8 @@ def body() -> str:
         "<p><b>GS Proj</b> is this site's own "
         "projection for the week: each player's season projection spread over "
         "his school's games, tilted by what the game model expects of this "
-        "week's game, and zero on a bye. <b>Yahoo</b> is the points Yahoo has "
-        "scored so far, with the stat line behind them. Yahoo projects a team "
+        "week's game, and zero on a bye. <b>Pts</b> is the points actually scored "
+        "so far, as Yahoo scores them, with the stat line behind them. Yahoo projects a team "
         "total but no player-by-player number for the college game, so the "
         "player column is ours alone; a player past the board's depth shows "
         "&mdash; there but still plays. While games are on, points, stat lines "
