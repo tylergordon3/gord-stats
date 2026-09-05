@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-05T16:40:11+00:00",
+ "fetched": "2026-09-05T16:50:11+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 77.78,
+     "points": 80.18,
      "projected": 179.79,
-     "win_probability": 0.76
+     "win_probability": 0.77
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 49.2,
+     "points": 49.52,
      "projected": 183.48,
-     "win_probability": 0.24
+     "win_probability": 0.22999999999999998
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 40.8,
      "projected": 184.19,
-     "win_probability": 0.41000000000000003
+     "win_probability": 0.4
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 100.74,
      "projected": 175.2,
-     "win_probability": 0.59
+     "win_probability": 0.6
     }
    ]
   },
@@ -62,7 +62,7 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 79.46,
+     "points": 79.38,
      "projected": 196.09,
      "win_probability": 0.73
     },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 44.2,
-     "projected": 193.87,
-     "win_probability": 0.41000000000000003
+     "points": 46.0,
+     "projected": 193.82,
+     "win_probability": 0.42000000000000004
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 48.1,
+     "points": 50.82,
      "projected": 185.11,
-     "win_probability": 0.59
+     "win_probability": 0.58
     }
    ]
   },
@@ -110,14 +110,14 @@
      "name": "Max's Majestic Team",
      "points": 28.2,
      "projected": 145.43,
-     "win_probability": 0.24
+     "win_probability": 0.25
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 51.56,
      "projected": 182.75,
-     "win_probability": 0.76
+     "win_probability": 0.75
     }
    ]
   }
@@ -187,8 +187,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.0,
-    "stats": {}
+    "points": 2.4,
+    "stats": {
+     "8": 2.0,
+     "9": 4.0,
+     "11": 2.0,
+     "12": 10.0
+    }
    },
    {
     "yahoo_id": "471011",
@@ -401,9 +406,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 9.2,
+    "points": 9.52,
     "stats": {
-     "4": 100.0,
+     "4": 108.0,
      "5": 1.0,
      "8": 1.0,
      "9": -8.0
@@ -1212,11 +1217,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 5.72,
+    "points": 5.64,
     "stats": {
-     "4": 68.0,
-     "8": 3.0,
-     "9": 30.0
+     "4": 61.0,
+     "8": 4.0,
+     "9": 32.0
     }
    },
    {
@@ -1423,8 +1428,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.64,
+    "stats": {
+     "4": 41.0
+    }
    },
    {
     "yahoo_id": "900024",
@@ -1755,10 +1762,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 3.2,
+    "points": 5.0,
     "stats": {
-     "8": 4.0,
-     "9": 32.0
+     "8": 5.0,
+     "9": 37.0,
+     "11": 1.0,
+     "12": 8.0
     }
    },
    {
@@ -1964,8 +1973,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.32,
+    "stats": {
+     "4": 33.0
+    }
    },
    {
     "yahoo_id": "333810",
@@ -2006,10 +2017,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.4,
+    "points": 1.8,
     "stats": {
-     "8": 1.0,
-     "9": 4.0
+     "8": 4.0,
+     "9": 18.0
     }
    },
    {
@@ -2160,10 +2171,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 5.5,
+    "points": 11.9,
     "stats": {
-     "8": 3.0,
-     "9": 12.0,
+     "8": 5.0,
+     "9": 16.0,
+     "10": 1.0,
      "11": 1.0,
      "12": 38.0
     }
