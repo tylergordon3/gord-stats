@@ -228,6 +228,7 @@
     }
 
     paintControls();
+    paintAccount();
   }
 
   function paintControls() {
@@ -270,42 +271,79 @@
           ? "" : (count === 1 ? "1 team" : count + " teams");
       }
 
-      paintAccount(box.querySelector(".fav-account"));
     }
   }
 
-  // The sign-in control exists only where accounts are actually deployed, and
-  // says what signing in is for rather than just "Sign in" - the reason is the
-  // whole feature, and it is not obvious from a bare verb.
-  function paintAccount(slot) {
+  // The account control lives in the site header, top right, on every page -
+  // not in the favourites bar, which only exists on three of them. Signed out
+  // it says what signing in is for rather than a bare "Sign in", because the
+  // reason is the whole feature and is not obvious from the verb.
+  function paintAccount() {
+    var slot = document.querySelector(".site-account");
     if (!slot) return;
+
     if (!account.configured) {
       slot.hidden = true;
+      slot.textContent = "";
       return;
     }
     slot.hidden = false;
     var next = encodeURIComponent(location.pathname + location.search);
-    if (account.signedIn) {
-      slot.innerHTML = "";
-      var who = document.createElement("span");
-      who.className = "fav-who";
-      who.textContent = "Synced";
-      who.title = account.email + " \u00b7 favourites follow you between devices";
-      var out = document.createElement("a");
-      out.className = "fav-auth";
-      out.href = "/api/auth/logout?next=" + next;
-      out.textContent = "Sign out";
-      slot.appendChild(who);
-      slot.appendChild(out);
-    } else {
+
+    if (!account.signedIn) {
       slot.innerHTML = "";
       var link = document.createElement("a");
-      link.className = "fav-auth";
+      link.className = "acct-link";
       link.href = "/api/auth/login?next=" + next;
-      link.textContent = "Sign in to sync";
+      link.textContent = "Sign in";
+      link.title = "Sync your starred teams across devices";
       slot.appendChild(link);
+      return;
     }
+
+    // Signed in: an initial, and a menu behind it. <details> rather than a
+    // hand-rolled dropdown so it opens on a keyboard and on a phone without
+    // any of this file knowing what a tap is.
+    slot.innerHTML = "";
+    var wrap = document.createElement("details");
+    wrap.className = "acct";
+
+    var summary = document.createElement("summary");
+    summary.className = "acct-badge";
+    summary.setAttribute("aria-label", "Account: " + account.email);
+    summary.title = account.email;
+    summary.textContent = (account.email || "?").charAt(0).toUpperCase();
+    wrap.appendChild(summary);
+
+    var menu = document.createElement("div");
+    menu.className = "acct-menu";
+
+    var who = document.createElement("p");
+    who.className = "acct-email";
+    who.textContent = account.email;
+    menu.appendChild(who);
+
+    var synced = document.createElement("p");
+    synced.className = "acct-note";
+    synced.textContent = "Starred teams sync across your devices.";
+    menu.appendChild(synced);
+
+    var out = document.createElement("a");
+    out.className = "acct-out";
+    out.href = "/api/auth/logout?next=" + next;
+    out.textContent = "Sign out";
+    menu.appendChild(out);
+
+    wrap.appendChild(menu);
+    slot.appendChild(wrap);
   }
+
+  // A menu that only closes by clicking the badge again is a menu people leave
+  // open. Anything outside it shuts it.
+  document.addEventListener("click", function (ev) {
+    var open = document.querySelector("details.acct[open]");
+    if (open && !open.contains(ev.target)) open.removeAttribute("open");
+  });
 
   /* ---------- events ---------- */
 

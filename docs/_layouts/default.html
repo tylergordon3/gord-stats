@@ -72,6 +72,13 @@ resolution in _includes/nav.html.
         </button>
       </div>
       {% endif %}
+
+      {%- comment -%}
+      Account control, top right. Filled by assets/js/favorites.js from
+      /api/me and hidden entirely where accounts are not configured, so a
+      deploy without the Pages secrets looks exactly like the old header.
+      {%- endcomment -%}
+      <div class="site-account" hidden></div>
     </div>
   </header>
 

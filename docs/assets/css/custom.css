@@ -4714,41 +4714,139 @@ tr:hover .fav-star {
   }
 }
 
-/* Sign-in state, in the favourites bar. Quiet: it is an offer, not the point
-   of the page, and most readers never need it. */
-.fav-account {
-  display: inline-flex;
+
+}
+
+/* =========================
+   ACCOUNT CONTROL (header, top right)
+   Filled by favorites.js from /api/me; hidden where accounts are not
+   configured, so the header is unchanged on a deploy without the secrets.
+   ========================= */
+
+.site-account {
+  /* Pushes itself to the far end of the header row, whatever is to its left. */
+  margin-left: auto;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 4px;
-  padding-left: 10px;
-  border-left: 1px solid #e2e8f0;
+  flex: 0 0 auto;
 }
 
-.fav-who {
-  font-size: 12px;
-  color: var(--go-text, #0E7A55);
-  cursor: help;
-}
-
-a.fav-auth {
-  font-size: 12px;
-  color: #64748b;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+a.acct-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid #d6dbe3;
+  border-radius: 999px;
   white-space: nowrap;
+  transition: border-color .12s ease, color .12s ease;
 }
 
-a.fav-auth:hover { color: var(--accent-text, #A34F0A); }
+a.acct-link:hover {
+  color: var(--accent-text, #A34F0A);
+  border-color: var(--accent, #A34F0A);
+}
 
-a.fav-auth:focus-visible {
+a.acct-link:focus-visible,
+.acct-badge:focus-visible {
   outline: 2px solid var(--accent, #A34F0A);
   outline-offset: 2px;
 }
 
+/* Signed in: an initial, with the menu behind it. */
+.acct { position: relative; }
+
+.acct-badge {
+  list-style: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent, #A34F0A);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  user-select: none;
+}
+
+/* Safari draws its own disclosure triangle on summary without this. */
+.acct-badge::-webkit-details-marker { display: none; }
+.acct-badge::marker { content: ""; }
+
+.acct-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+  padding: 12px 14px;
+}
+
+.acct-email {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  /* An address longer than the menu must wrap, not spill out of it. */
+  overflow-wrap: anywhere;
+}
+
+.acct-note {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+a.acct-out {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-text, #A34F0A);
+  text-decoration: none;
+}
+
+a.acct-out:hover { text-decoration: underline; }
+
+/* On a phone the header already wraps to three rows, and a flex item with
+   margin-left:auto lands at the start of a new one - which put "Sign in"
+   under the nav, left-aligned, as a row of its own. Pinning it to the corner
+   instead uses the empty space beside the brand on row one, and takes it out
+   of the wrap entirely. */
+@media (max-width: 600px) {
+  .site-header-inner { position: relative; }
+
+  .site-account {
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    margin-left: 0;
+  }
+
+  a.acct-link { padding: 5px 10px; font-size: 12px; }
+  .acct-badge { width: 27px; height: 27px; font-size: 12px; }
+  .acct-menu { min-width: 190px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a.acct-link { transition: none; }
+}
+
 @media (prefers-color-scheme: dark) {
-  .fav-account { border-left-color: #2b3852; }
-  .fav-who { color: #3ACB95; }
-  a.fav-auth { color: #94a3b8; }
-  a.fav-auth:hover { color: var(--accent-text, #F5A968); }
+  a.acct-link { color: #cbd5e1; border-color: #2b3852; }
+  a.acct-link:hover {
+    color: var(--accent-text, #F5A968);
+    border-color: var(--accent-text, #F5A968);
+  }
+  .acct-badge { background: var(--accent-text, #F5A968); color: #14203a; }
+  .acct-menu { background: #1b2540; border-color: #2b3852; }
+  .acct-email { color: #e9ecf4; }
+  .acct-note { color: #94a3b8; }
+  a.acct-out { color: var(--accent-text, #F5A968); }
 }

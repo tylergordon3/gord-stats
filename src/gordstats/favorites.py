@@ -138,10 +138,6 @@ def controls(label: str = "Only my teams") -> str:
         f"<span aria-hidden='true'>&#9733;</span> {escape(label)}"
         "</button>"
         "<span class='fav-count' aria-live='polite'></span>"
-        # Filled by favorites.js from /api/me, and hidden entirely where
-        # accounts are not deployed - a sign-in link that leads to a 503 is
-        # worse than no link.
-        "<span class='fav-account' hidden></span>"
         "</div>"
     )
 def table_css(selector: str) -> str:
