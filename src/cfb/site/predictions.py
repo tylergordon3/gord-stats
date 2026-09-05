@@ -43,6 +43,10 @@ GRIDLINE = palette.GRIDLINE
 _CSS = ("""<style>
 .pred-note{color:#475569;font-size:14px;line-height:1.55}
 .pred-scroll{overflow-x:auto}
+/* A pick that was never live - no book total on record - reads as absent
+   rather than as a loss. */
+table.cfb-pred td.pred-na{color:#94a3b8}
+table.cfb-pred td.pred-ou{white-space:nowrap;font-variant-numeric:tabular-nums}
 table.cfb-pred{width:100%;border-collapse:collapse;font-size:14px}
 table.cfb-pred th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:center;
   font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
@@ -276,31 +280,58 @@ def _results_section() -> str:
     ours = stat["margin_mae"]
     book = stat.get("market_margin_mae")
 
+    ours_total = stat["total_mae"]
+    book_total = stat.get("market_total_mae")
+
+    # Two families, shown side by side: the margin and the total. Each gets the
+    # miss, the book's miss on the same games, and the record where the two
+    # disagreed enough to be a bet.
     tiles = [("Games scored", f"{stat['games']}", "predicted before kickoff"),
              ("Winners", f"{stat['correct']}/{stat['games']}",
               f"{stat['winner_accuracy']:.0%} right"),
-             ("Average miss", f"{ours:.1f} pts",
-              "on the final margin"),
-             ("The book", "&mdash;" if book is None else f"{book:.1f} pts",
-              "same games, same measure")]
+             ("Margin miss", f"{ours:.1f} pts",
+              "book &mdash;" if book is None else f"book {book:.1f}"),
+             ("Total miss", f"{ours_total:.1f} pts",
+              "book &mdash;" if book_total is None else f"book {book_total:.1f}"),
+             ("Against the spread",
+              "&mdash;" if not stat["ats_games"]
+              else f"{stat['ats_wins']}/{stat['ats_games']}",
+              "where we differed by 3+"),
+             ("Over/under",
+              "&mdash;" if not stat["ou_games"]
+              else f"{stat['ou_wins']}/{stat['ou_games']}",
+              "where we differed by 3+")]
     tile_html = ("<div class='pred-tiles'>" + "".join(
         f"<div class='pred-tile'><div class='t-label'>{label}</div>"
         f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
         for label, value, sub in tiles) + "</div>")
 
+    def _mark(ok) -> str:
+        """A tick, a cross, or a dash where the pick was never live."""
+        if ok is None or (isinstance(ok, float) and pd.isna(ok)):
+            return "<td class='pred-na'>&mdash;</td>"
+        glyph = "&#10003;" if ok else "&#10007;"
+        colour = teams_page.GOOD if ok else teams_page.BAD
+        return f"<td style='color:{colour};font-weight:700'>{glyph}</td>"
+
     rows = []
     for _, g in recent.iterrows():
-        mark = "&#10003;" if g["correct"] else "&#10007;"
-        colour = "#15803d" if g["correct"] else "#b91c1c"
+        ou_said = ("&mdash;" if pd.isna(g["market_total"])
+                   else f"{'O' if g['ou_edge'] > 0 else 'U'} {g['market_total']:.1f}")
         rows.append(
             f"<tr><td class='pred-match'>{escape(str(g['away']))} at "
             f"{escape(str(g['home']))}</td>"
             f"<td>{g['pred_margin']:+.1f}</td>"
             f"<td>{g['actual_margin']:+.0f}</td>"
             f"<td>{abs(g['margin_error']):.1f}</td>"
-            f"<td style='color:{colour};font-weight:700'>{mark}</td></tr>")
+            + _mark(bool(g["correct"]))
+            + f"<td>{g['pred_total']:.0f}</td>"
+            f"<td>{g['actual_total']:.0f}</td>"
+            f"<td class='pred-ou'>{ou_said}</td>"
+            + _mark(g["ou_correct"]) + "</tr>")
     table = ("<div class='pred-scroll'><table class='cfb-pred'><thead><tr>"
-             "<th>Game</th><th>We said</th><th>It was</th><th>Miss</th><th>Call</th>"
+             "<th>Game</th><th>Margin</th><th>It was</th><th>Miss</th><th>Call</th>"
+             "<th>Total</th><th>It was</th><th>Our O/U</th><th>Call</th>"
              f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
     verdict = ""
@@ -313,7 +344,21 @@ def _results_section() -> str:
     ats = ""
     if stat["ats_games"]:
         ats = (f" Where the two disagreed by three points or more, this model has "
-               f"been right {stat['ats_wins']} times in {stat['ats_games']}.")
+               f"been right {stat['ats_wins']} times in {stat['ats_games']} on the "
+               f"spread")
+        ats += (f" and {stat['ou_wins']} in {stat['ou_games']} on the total."
+                if stat["ou_games"] else ".")
+
+    # The over/under record starts empty and it is worth saying why: the book's
+    # total was not archived alongside its spread until now, so there is no
+    # honest way to score a total pick on a game that has already been played.
+    # Without this the column reads as broken rather than as not yet earned.
+    ou_note = ""
+    if not stat["ou_games"]:
+        ou_note = (" The over/under record starts from the next round of games: "
+                   "the book's total is archived before kickoff the same way its "
+                   "spread is, and that archive only begins now, so there is "
+                   "nothing to score it against on games already played.")
 
     return ("<h2>How it has gone</h2>"
             f"<p class='pred-note'>Scored on the "
@@ -322,7 +367,10 @@ def _results_section() -> str:
             f"before each kickoff. Average miss on the final margin is "
             f"<strong>{ours:.1f} points</strong>. In the <strong>Call</strong> "
             f"column, &#10003; means the pick got the winner right and "
-            f"&#10007; means it did not.{verdict}{ats}</p>"
+            f"&#10007; means it did not. <strong>Total</strong> is the same "
+            f"exercise on the points in the game, and <strong>Our O/U</strong> is "
+            f"the side our number took against the book's."
+            f"{verdict}{ats}{ou_note}</p>"
             + tile_html + table)
 
 

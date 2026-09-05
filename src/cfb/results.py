@@ -31,7 +31,7 @@ PRED_DIR = DATA_DIR / "predictions"
 
 _COLS = ["captured", "season", "week", "game_id", "kickoff", "home_id", "away_id",
          "home", "away", "neutral", "pred_margin", "pred_total",
-         "home_win_prob", "market_spread"]
+         "home_win_prob", "market_spread", "market_total"]
 
 
 def season_path(season: int = SEASON):
@@ -49,11 +49,12 @@ def capture(season: int = SEASON) -> pd.DataFrame:
         # Rename before the merge, not after: `predict.week` already publishes a
         # `spread` of its own, and merging two of them silently yields
         # spread_x/spread_y and no column by either name.
-        board = board[["home_id", "away_id", "spread"]].rename(
-            columns={"spread": "market_spread"})
+        board = board[["home_id", "away_id", "spread", "total"]].rename(
+            columns={"spread": "market_spread", "total": "market_total"})
         games = games.merge(board, on=["home_id", "away_id"], how="left")
     else:
         games["market_spread"] = np.nan
+        games["market_total"] = np.nan
 
     fresh = pd.DataFrame({
         "captured": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -69,6 +70,7 @@ def capture(season: int = SEASON) -> pd.DataFrame:
         "pred_total": games["pred_total"].astype(float),
         "home_win_prob": games["home_win_prob"].astype(float),
         "market_spread": games["market_spread"].astype(float),
+        "market_total": games["market_total"].astype(float),
     })
 
     PRED_DIR.mkdir(parents=True, exist_ok=True)
@@ -115,6 +117,12 @@ def on_record(season: int = SEASON) -> pd.DataFrame:
     if archive.empty:
         return pd.DataFrame(columns=_COLS)
     archive = archive.copy()
+    # Rows captured before a column existed simply have not got it. Backfilling
+    # here rather than at every use keeps `scored` free of column-presence
+    # checks, and NaN is the honest value: we did not record it at the time.
+    for col in _COLS:
+        if col not in archive.columns:
+            archive[col] = np.nan
     archive["captured_at"] = pd.to_datetime(archive["captured"], utc=True, format="ISO8601")
     archive["kickoff"] = pd.to_datetime(archive["kickoff"], utc=True)
     before = archive[archive["captured_at"] < archive["kickoff"]]
@@ -144,6 +152,21 @@ def scored(season: int = SEASON) -> pd.DataFrame:
     edge = frame["pred_margin"] - (-frame["market_spread"])
     cover = frame["actual_margin"] - (-frame["market_spread"])
     frame["beat_the_book"] = np.where(edge.abs() >= 3, (edge > 0) == (cover > 0), np.nan)
+
+    # Over/under, scored the same way as the spread. Our total against the
+    # book's: leaning over means predicting more points than the number, and
+    # the pick is right if the game went the same way. A game that lands
+    # exactly on the number is a push and is scored as neither - `np.nan`
+    # rather than a loss, which is what a book would do with the bet.
+    ou_edge = frame["pred_total"] - frame["market_total"]
+    ou_result = frame["actual_total"] - frame["market_total"]
+    frame["ou_edge"] = ou_edge
+    frame["ou_pick"] = np.where(frame["market_total"].isna(), None,
+                                np.where(ou_edge > 0, "over", "under"))
+    frame["ou_correct"] = np.where(
+        frame["market_total"].isna() | (ou_result == 0) | (ou_edge.abs() < 3),
+        np.nan, (ou_edge > 0) == (ou_result > 0))
+    frame["market_total_error"] = frame["market_total"] - frame["actual_total"]
     return frame.sort_values("kickoff").reset_index(drop=True)
 
 
@@ -152,7 +175,9 @@ def summary(frame: pd.DataFrame) -> dict:
     if frame.empty:
         return {}
     priced = frame.dropna(subset=["market_spread"])
+    totals_priced = frame.dropna(subset=["market_total"])
     ats = frame["beat_the_book"].dropna()
+    ou = frame["ou_correct"].dropna()
     return {
         "games": len(frame),
         "correct": int(frame["correct"].sum()),
@@ -164,6 +189,13 @@ def summary(frame: pd.DataFrame) -> dict:
                               if len(priced) else None),
         "ats_games": int(len(ats)),
         "ats_wins": int(ats.sum()) if len(ats) else 0,
+        # The same three figures for the total: how often our lean beat the
+        # book's number, and how the two sides compare on raw error.
+        "ou_games": int(len(ou)),
+        "ou_wins": int(ou.sum()) if len(ou) else 0,
+        "market_total_mae": (float(totals_priced["market_total_error"].abs().mean())
+                             if len(totals_priced) else None),
+        "totals_priced": int(len(totals_priced)),
     }
 
 
@@ -191,3 +223,11 @@ if __name__ == "__main__":
     if result["ats_games"]:
         print(f"  against the spread where we differed by 3+: "
               f"{result['ats_wins']}/{result['ats_games']}")
+    print(f"  total    MAE {result['total_mae']:.2f}", end="")
+    if result["market_total_mae"] is not None:
+        print(f"  (the book {result['market_total_mae']:.2f}"
+              f" on {result['totals_priced']})", end="")
+    print()
+    if result["ou_games"]:
+        print(f"  over/under where we differed by 3+: "
+              f"{result['ou_wins']}/{result['ou_games']}")

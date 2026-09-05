@@ -109,3 +109,82 @@ def test_no_archive_is_an_empty_report_not_an_error(tmp_path, monkeypatch):
     monkeypatch.setattr(results, "season_path", lambda season=2026: tmp_path / "none.parquet")
     assert results.scored(2026).empty
     assert results.summary(pd.DataFrame()) == {}
+
+
+# --- over/under -----------------------------------------------------------
+#
+# Scored the same way as the spread, and wrong in the same ways if it isn't
+# careful: a push is not a loss, a lean too small to be a bet is not a pick,
+# and a game with no book total on record cannot be graded at all.
+
+def _ou_row(captured, pred_total=50.0, market_total=45.0, **kw):
+    row = _row(captured, **kw)
+    row["pred_total"] = pred_total
+    row["market_total"] = market_total
+    return row
+
+
+def test_leaning_over_and_the_game_going_over_is_a_win(tmp_path, monkeypatch):
+    _archive([_ou_row("2026-09-04T12:00:00+00:00")], tmp_path, monkeypatch)
+    _finals(monkeypatch, total=60.0)
+    frame = results.scored(2026)
+    assert frame["ou_pick"].iloc[0] == "over"
+    assert bool(frame["ou_correct"].iloc[0]) is True
+
+
+def test_leaning_over_and_the_game_going_under_is_a_loss(tmp_path, monkeypatch):
+    _archive([_ou_row("2026-09-04T12:00:00+00:00")], tmp_path, monkeypatch)
+    _finals(monkeypatch, total=40.0)
+    frame = results.scored(2026)
+    assert bool(frame["ou_correct"].iloc[0]) is False
+
+
+def test_a_game_landing_on_the_number_is_a_push_not_a_loss(tmp_path, monkeypatch):
+    """A book refunds this bet; scoring it as a loss would understate the model."""
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", market_total=45.0)],
+             tmp_path, monkeypatch)
+    _finals(monkeypatch, total=45.0)
+    frame = results.scored(2026)
+    assert np.isnan(frame["ou_correct"].iloc[0])
+    assert results.summary(frame)["ou_games"] == 0
+
+
+def test_a_lean_under_three_points_is_not_a_pick(tmp_path, monkeypatch):
+    """Same gate as the spread: agreeing with the book is not a bet."""
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", pred_total=46.0,
+                      market_total=45.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, total=80.0)
+    frame = results.scored(2026)
+    assert np.isnan(frame["ou_correct"].iloc[0])
+
+
+def test_a_game_with_no_book_total_cannot_be_graded(tmp_path, monkeypatch):
+    """Every game archived before market_total existed looks like this."""
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", market_total=np.nan)],
+             tmp_path, monkeypatch)
+    _finals(monkeypatch, total=60.0)
+    frame = results.scored(2026)
+    assert np.isnan(frame["ou_correct"].iloc[0])
+    stat = results.summary(frame)
+    assert stat["ou_games"] == 0
+    assert stat["market_total_mae"] is None
+
+
+def test_an_archive_written_before_market_total_existed_still_loads(tmp_path, monkeypatch):
+    """The real archive has no such column; reading it must not raise."""
+    row = _row("2026-09-04T12:00:00+00:00")
+    assert "market_total" not in row
+    _archive([row], tmp_path, monkeypatch)
+    _finals(monkeypatch)
+    frame = results.scored(2026)
+    assert len(frame) == 1
+    assert np.isnan(frame["market_total"].iloc[0])
+
+
+def test_the_book_total_error_is_measured_on_priced_games_only(tmp_path, monkeypatch):
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", market_total=48.0)],
+             tmp_path, monkeypatch)
+    _finals(monkeypatch, total=52.0)
+    stat = results.summary(results.scored(2026))
+    assert stat["market_total_mae"] == pytest.approx(4.0)
+    assert stat["totals_priced"] == 1
