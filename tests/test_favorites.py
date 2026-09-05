@@ -67,9 +67,32 @@ def test_name_helpers_agree_with_the_key_helpers():
     assert favorites.name_star("cbb-men", "Duke") == favorites.star("cbb-men", "duke", "Duke")
 
 
-def test_controls_start_hidden():
-    """An empty filter can only blank the table, so it stays out of the way."""
-    assert favorites.controls().startswith("<div class='fav-controls' hidden>")
+def test_filter_starts_hidden_but_the_hint_does_not():
+    """An empty filter can only blank the table, so it waits for a favourite.
+
+    The hint is the opposite: it is the only thing telling a reader the stars
+    do anything, so it ships visible.
+    """
+    html = favorites.controls()
+    assert "<div class='fav-controls'>" in html
+    assert "class='fav-filter' aria-pressed='false' hidden" in html
+    # The hint's own tag closes immediately, carrying no hidden attribute
+    # (aria-hidden on the decorative glyph inside it does not count).
+    assert "<span class='fav-hint'>" in html
+
+
+def test_stars_are_never_invisible_at_rest():
+    """The regression that shipped: `.fav-star { opacity: 0 }`.
+
+    It hid the star until its row was hovered, so on a normal desktop browser
+    the feature had no visible entry point at all, and the `@media (hover:none)`
+    fallback meant it still looked fine in a headless screenshot. A star may be
+    quiet; it may not be absent.
+    """
+    css = (DOCS / "assets" / "css" / "custom.css").read_text()
+    block = css.split(".fav-star {")[1].split("}")[0]
+    assert "opacity: 0" not in block
+    assert "@media (hover: none)" not in css
 
 
 def test_layout_loads_the_script():

@@ -55,6 +55,7 @@ import pandas as pd
 from cfb import cfbd, espn, gameinfo, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
+from gordstats import favorites
 from cfb.site import write_page
 from cfb.site.teams import LOGO, team_slug
 
@@ -972,6 +973,7 @@ def _row(g, idx: int, records: dict) -> str:
              + "</div>") if where else ""
     return (
         f'<tr class="{" ".join(classes)}" id="g-{escape(str(g.game_id))}" data-i="{idx}"'
+        f'{favorites.many_attr("cfb", (g.home_id, g.away_id))}'
         f' data-state="{g.state}" data-kick="{escape(str(g.date_utc))}"'
         f' data-day="{g.local.strftime("%A, %B %-d")}"'
         f' data-final="{int(final)}" data-ranked="{int(ranked)}"'

@@ -90,6 +90,22 @@ def star(sport: str, team_id, name: str) -> str:
     )
 
 
+def many_attr(sport: str, team_ids) -> str:
+    """`row_attr` for something that belongs to more than one team.
+
+    A game is the reason this exists: a schedule row or a matchup card is one
+    of your teams' if *either* side is starred, so the element carries both
+    keys space-separated and the reader's list is matched against all of them.
+    Ids that are missing or empty are dropped rather than becoming a key like
+    ``cfb:nan`` that can never match anything.
+    """
+    keys = [team_key(sport, t) for t in team_ids
+            if t is not None and str(t).strip() and str(t).strip().lower() != "nan"]
+    if not keys:
+        return ""
+    return f' data-fav="{escape(" ".join(keys), quote=True)}"'
+
+
 def name_attr(sport: str, name: str) -> str:
     """`row_attr` for the sections that identify a team by its name."""
     return f' data-fav="{escape(name_key(sport, name), quote=True)}"'
@@ -104,14 +120,21 @@ def name_star(sport: str, name: str) -> str:
 
 
 def controls(label: str = "Only my teams") -> str:
-    """The filter toggle, for a page's existing `.pin-bar`.
+    """The favourites bar, for a page's existing `.pin-bar`.
 
-    Hidden until the reader has starred something: an empty filter that can
-    only ever blank the table is a control with nothing behind it.
+    Two states, and the empty one is the important one. Before anything is
+    starred the bar carries a hint, because the stars in the table are quiet by
+    design and a reader who is not told what they do will not find out. Once
+    something is starred the hint gives way to the filter, which until then
+    would be a control that can only blank the table.
     """
     return (
-        "<div class='fav-controls' hidden>"
-        f"<button type='button' class='fav-filter' aria-pressed='false'>"
+        "<div class='fav-controls'>"
+        "<span class='fav-hint'>"
+        "<span class='fav-hint-star' aria-hidden='true'>&#9734;</span> "
+        "Click a star to follow a team"
+        "</span>"
+        f"<button type='button' class='fav-filter' aria-pressed='false' hidden>"
         f"<span aria-hidden='true'>&#9733;</span> {escape(label)}"
         "</button>"
         "<span class='fav-count' aria-live='polite'></span>"

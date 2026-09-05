@@ -32,7 +32,7 @@ from cfb import results                              # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
 from cfb.site import teams as teams_page              # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import charts, palette                # noqa: E402
+from gordstats import charts, favorites, palette     # noqa: E402
 
 _SECTION = "cfb-predictions"
 ACCENT = palette.BLUE
@@ -211,7 +211,8 @@ def _card(game) -> str:
     market = ("" if pd.isna(game.get("market_spread"))
               else f"<span>book {_fmt_spread(game['market_spread'])}</span>")
     home_score, away_score = _scores(game)
-    return ("<article class='pg'>" + when
+    return (f"<article class='pg'{favorites.many_attr('cfb', (game.get('home_id'), game.get('away_id')))}>"
+            + when
             + _side(game, "away", not home_wins, away_score)
             + _side(game, "home", home_wins, home_score)
             + f"<div class='pg-bar'><span style='width:{prob * 100:.0f}%'></span></div>"

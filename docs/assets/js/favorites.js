@@ -90,8 +90,31 @@
     return document.querySelectorAll(".fav-star[data-fav-for]");
   }
 
+  // Any element, not just a row: the predictions page marks <article> game
+  // cards and the team pages mark opponent rows, and all of them light up the
+  // same way.
   function rows() {
-    return document.querySelectorAll("tr[data-fav]");
+    return document.querySelectorAll("[data-fav]");
+  }
+
+  // A game belongs to two teams, so data-fav holds one or more space-separated
+  // keys and the element is a favourite if the reader has starred any of them.
+  function marks(el) {
+    return (el.getAttribute("data-fav") || "").split(/\s+/).filter(Boolean);
+  }
+
+  function hasAny(el) {
+    var keys = marks(el);
+    for (var i = 0; i < keys.length; i++) if (has(keys[i])) return true;
+    return false;
+  }
+
+  // The filter is a stored, site-wide preference, but only pages that render a
+  // control may act on it. Without this, turning it on once made every later
+  // page hide rows with no visible way to undo it - and on the schedule page,
+  // which runs filters of its own, two things would be hiding rows at once.
+  function hiding() {
+    return filtering && document.querySelector(".fav-controls") !== null;
   }
 
   function paint() {
@@ -112,13 +135,13 @@
     var list = rows();
     for (i = 0; i < list.length; i++) {
       el = list[i];
-      on = has(el.getAttribute("data-fav"));
+      on = hasAny(el);
       el.classList.toggle("is-fav", on);
       // `hidden` rather than display:none so a row hidden by the filter is
       // hidden from assistive tech too, and so the page's own sort - which
       // moves rows around without knowing about any of this - can't leave a
       // hidden row looking visible.
-      el.hidden = filtering && !on;
+      el.hidden = hiding() && !on;
     }
 
     paintControls();
@@ -130,30 +153,38 @@
     var list = rows();
     var seen = {};
 
-    // Count teams, not rows: one team listed in two tables is one favourite.
+    // Count teams, not elements: one team in two tables, or on both sides of a
+    // game, is one favourite.
     for (var i = 0; i < list.length; i++) {
-      var key = list[i].getAttribute("data-fav");
-      if (has(key) && !seen[key]) {
-        seen[key] = true;
-        count++;
+      var keys = marks(list[i]);
+      for (var k = 0; k < keys.length; k++) {
+        if (has(keys[k]) && !seen[keys[k]]) {
+          seen[keys[k]] = true;
+          count++;
+        }
       }
     }
 
     for (var j = 0; j < boxes.length; j++) {
       var box = boxes[j];
-      // Nothing starred on this page means the filter can only blank the
-      // table, so it stays out of the way until there is something to filter.
-      box.hidden = count === 0;
+
+      // The bar itself always shows. Which half of it shows depends on whether
+      // there is anything to filter: the hint teaches the feature, the filter
+      // uses it, and neither is any use in the other's state.
+      var hint = box.querySelector(".fav-hint");
+      if (hint) hint.hidden = count > 0;
 
       var btn = box.querySelector(".fav-filter");
       if (btn) {
+        btn.hidden = count === 0;
         btn.setAttribute("aria-pressed", filtering ? "true" : "false");
         btn.classList.toggle("is-on", filtering);
       }
 
       var label = box.querySelector(".fav-count");
       if (label) {
-        label.textContent = count === 1 ? "1 team" : count + " teams";
+        label.textContent = count === 0
+          ? "" : (count === 1 ? "1 team" : count + " teams");
       }
     }
   }
