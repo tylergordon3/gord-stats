@@ -1488,7 +1488,11 @@ def body() -> str:
         "This week's scores update in place while games are on. "
         f"{lined} upcoming games have a book line and {forecast} a forecast so far. "
         f"Rebuilt daily (last: {built}).</p>")
-    return (_CSS + intro + _LEGEND
+    # Scoped through tbody, not just the table: this page's own stripe rule is
+    # `table.cfb-sched tbody tr.g:nth-child(even) td`, and a selector one
+    # element shorter loses to it on every second row. Emitted after _CSS so a
+    # tie in specificity goes to the highlight.
+    return (_CSS + favorites.table_css("table.cfb-sched tbody") + intro + _LEGEND
             + _switcher(week_ids, current, views, controls=_controls(espn.conferences()))
             + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
                      "url": json.dumps(f"/api/cfb-scores?week={current}&dates={SEASON}")})

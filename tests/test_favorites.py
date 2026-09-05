@@ -115,6 +115,29 @@ def test_script_does_not_reorder_rows():
         assert banned not in JS, f"favorites.js must not reorder rows ({banned})"
 
 
+# Every module that marks table *rows* must also emit the scoped row CSS.
+# Marking a row without it is the bug that shipped on the schedule page: the
+# class was applied to twenty-three rows and nothing styled any of them, so a
+# reader with favourites saw no difference at all. The predictions page is not
+# here because it marks <article> cards, which custom.css styles directly.
+ROW_MARKING_MODULES = [
+    ("src/cfb/site/power.py", "table.cfb-power"),
+    ("src/cfb/site/teams.py", "table.tm"),
+    ("src/cbb/render/render_power.py", "table.cbb-power"),
+    ("src/cfb/site/schedule.py", "table.cfb-sched"),
+]
+
+
+@pytest.mark.parametrize("module,selector", ROW_MARKING_MODULES)
+def test_a_page_that_marks_rows_also_styles_them(module, selector):
+    from conftest import ROOT
+    src = (ROOT / module).read_text()
+    assert "favorites.table_css(" in src, (
+        f"{module} marks rows but never calls table_css - the highlight "
+        "would be invisible")
+    assert selector in src, f"{module} styles a table it does not render"
+
+
 @pytest.mark.parametrize("module,sport", [
     ("src/cfb/site/power.py", "cfb"),
     ("src/cfb/site/teams.py", "cfb"),
