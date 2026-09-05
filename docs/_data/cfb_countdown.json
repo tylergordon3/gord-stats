@@ -1,5 +1,8 @@
 {
-  "mode": "notice",
+  "mode": "countdown",
   "eyebrow": "CFB WEEK 1 \u00b7 GAMEDAY",
-  "title": "1 game on right now"
+  "title": "First kickoff 12:00 PM ET",
+  "target": "2026-09-05T16:00:00Z",
+  "expired": "Kickoff \u2014 Week 1 is on.",
+  "note": "Kickoff in Eastern Time; the clock runs on yours."
 }

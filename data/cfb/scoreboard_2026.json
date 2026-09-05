@@ -11,16 +11,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 60.2,
+     "points": 60.3,
      "projected": 179.79,
-     "win_probability": 0.75
+     "win_probability": 0.74
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 40.0,
      "projected": 183.41,
-     "win_probability": 0.25
+     "win_probability": 0.26
     }
    ]
   },
@@ -36,14 +36,14 @@
      "name": "Mike Locksley",
      "points": 22.7,
      "projected": 184.19,
-     "win_probability": 0.32000000000000006
+     "win_probability": 0.32999999999999996
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 100.7,
+     "points": 100.74,
      "projected": 175.2,
-     "win_probability": 0.6799999999999999
+     "win_probability": 0.67
     }
    ]
   },

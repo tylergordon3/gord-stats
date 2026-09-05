@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-05T04:11:59+00:00",
+ "fetched": "2026-09-05T09:35:12+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 60.2,
+     "points": 60.3,
      "projected": 179.79,
-     "win_probability": 0.75
+     "win_probability": 0.74
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 40.0,
      "projected": 183.41,
-     "win_probability": 0.25
+     "win_probability": 0.26
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 22.7,
      "projected": 184.19,
-     "win_probability": 0.32000000000000006
+     "win_probability": 0.32999999999999996
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 100.7,
+     "points": 100.74,
      "projected": 175.2,
-     "win_probability": 0.6799999999999999
+     "win_probability": 0.67
     }
    ]
   },
@@ -198,10 +198,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 47.3,
+    "points": 47.4,
     "stats": {
      "11": 12.0,
-     "12": 233.0,
+     "12": 234.0,
      "13": 3.0
     }
    },
@@ -906,9 +906,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 46.5,
+    "points": 46.54,
     "stats": {
-     "4": 400.0,
+     "4": 401.0,
      "5": 5.0,
      "8": 1.0,
      "9": 5.0
@@ -1075,8 +1075,8 @@
     "team": "MIZZ",
     "team_full": "Missouri Tigers",
     "bye": 8.0,
-    "status": "O",
-    "status_full": "Out",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Leg",
     "slot": "BN",
     "points": 0.0,
@@ -2002,9 +2002,9 @@
     "team": "USC",
     "team_full": "USC Trojans",
     "bye": 10.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "WR",
     "points": 8.8,
     "stats": {
