@@ -70,6 +70,26 @@
   var favorites = read();
   var filtering = readFilter();
 
+  // What /api/me last said. `configured` false means this deploy has no
+  // accounts wired at all, and the page must look exactly as it did before
+  // any of this existed - no sign-in control, no network chatter.
+  var account = { signedIn: false, configured: false };
+  var SYNC_KEY = "gs:favorites:sync";
+
+  function readSyncedAs() {
+    try {
+      return window.localStorage.getItem(SYNC_KEY) || "";
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function writeSyncedAs(who) {
+    try {
+      window.localStorage.setItem(SYNC_KEY, who);
+    } catch (e) {}
+  }
+
   function has(key) {
     return favorites.indexOf(key) !== -1;
   }
@@ -79,6 +99,69 @@
     if (i === -1) favorites.push(key);
     else favorites.splice(i, 1);
     write(favorites);
+    push();
+  }
+
+  /* ---------- sync ---------- */
+
+  var pushTimer = null;
+
+  // Starring five teams in five seconds is one write, not five. The local list
+  // is already saved and already painted by the time this fires, so a slow or
+  // failed push costs the reader nothing on this device.
+  function push() {
+    if (!account.signedIn) return;
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(function () {
+      pushTimer = null;
+      fetch("/api/favorites", {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ favorites: favorites }),
+      }).catch(function () {
+        /* Offline or signed out elsewhere; the browser copy still stands. */
+      });
+    }, 600);
+  }
+
+  function union(a, b) {
+    var out = a.slice();
+    for (var i = 0; i < b.length; i++) if (out.indexOf(b[i]) === -1) out.push(b[i]);
+    return out;
+  }
+
+  function sync() {
+    fetch("/api/me", { credentials: "same-origin" })
+      .then(function (r) { return r.json(); })
+      .then(function (me) {
+        account = me || account;
+        if (!account.configured || !account.signedIn) return null;
+        return fetch("/api/favorites", { credentials: "same-origin" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (!data) return;
+            var remote = data.favorites || [];
+            // First sign-in on this device: the reader has stars here and
+            // stars on the account, and losing either would be indefensible,
+            // so they are merged once. After that the server is the truth -
+            // otherwise un-starring on one device could never stick, because
+            // the next load would merge the team straight back in.
+            if (readSyncedAs() !== account.email) {
+              favorites = union(favorites, remote);
+              write(favorites);
+              writeSyncedAs(account.email);
+              push();
+            } else {
+              favorites = remote;
+              write(favorites);
+            }
+          });
+      })
+      .catch(function () {
+        /* No network, or accounts not deployed. Local favourites are enough. */
+      })
+      .then(paint, paint);
   }
 
   /* ---------- painting ---------- */
@@ -186,6 +269,41 @@
         label.textContent = count === 0
           ? "" : (count === 1 ? "1 team" : count + " teams");
       }
+
+      paintAccount(box.querySelector(".fav-account"));
+    }
+  }
+
+  // The sign-in control exists only where accounts are actually deployed, and
+  // says what signing in is for rather than just "Sign in" - the reason is the
+  // whole feature, and it is not obvious from a bare verb.
+  function paintAccount(slot) {
+    if (!slot) return;
+    if (!account.configured) {
+      slot.hidden = true;
+      return;
+    }
+    slot.hidden = false;
+    var next = encodeURIComponent(location.pathname + location.search);
+    if (account.signedIn) {
+      slot.innerHTML = "";
+      var who = document.createElement("span");
+      who.className = "fav-who";
+      who.textContent = "Synced";
+      who.title = account.email + " \u00b7 favourites follow you between devices";
+      var out = document.createElement("a");
+      out.className = "fav-auth";
+      out.href = "/api/auth/logout?next=" + next;
+      out.textContent = "Sign out";
+      slot.appendChild(who);
+      slot.appendChild(out);
+    } else {
+      slot.innerHTML = "";
+      var link = document.createElement("a");
+      link.className = "fav-auth";
+      link.href = "/api/auth/login?next=" + next;
+      link.textContent = "Sign in to sync";
+      slot.appendChild(link);
     }
   }
 
@@ -224,9 +342,16 @@
     }
   });
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", paint);
-  } else {
+  function boot() {
+    // Paint from the browser copy first, then reconcile. The stars a reader
+    // already has must never wait on a network round trip.
     paint();
+    sync();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
   }
 })();

@@ -4713,3 +4713,42 @@ tr:hover .fav-star {
     background: color-mix(in srgb, var(--accent-text, #F5A968) 16%, #14203a);
   }
 }
+
+/* Sign-in state, in the favourites bar. Quiet: it is an offer, not the point
+   of the page, and most readers never need it. */
+.fav-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+  padding-left: 10px;
+  border-left: 1px solid #e2e8f0;
+}
+
+.fav-who {
+  font-size: 12px;
+  color: var(--go-text, #0E7A55);
+  cursor: help;
+}
+
+a.fav-auth {
+  font-size: 12px;
+  color: #64748b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+a.fav-auth:hover { color: var(--accent-text, #A34F0A); }
+
+a.fav-auth:focus-visible {
+  outline: 2px solid var(--accent, #A34F0A);
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .fav-account { border-left-color: #2b3852; }
+  .fav-who { color: #3ACB95; }
+  a.fav-auth { color: #94a3b8; }
+  a.fav-auth:hover { color: var(--accent-text, #F5A968); }
+}

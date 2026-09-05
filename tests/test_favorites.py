@@ -109,10 +109,20 @@ def test_script_tolerates_unavailable_storage():
 def test_script_does_not_reorder_rows():
     """Ranked tables: starring a team highlights it, it never moves it.
 
-    appendChild/insertBefore on a row is how that rule gets broken.
+    appendChild/insertBefore is how that rule gets broken, so the DOM-moving
+    calls are banned everywhere except `paintAccount`, which builds the
+    sign-in control out of fresh elements and touches no row. Excluding that
+    one function by name keeps the rule precise: a move added anywhere else
+    still fails, which a blanket ban would have stopped being able to say once
+    the control needed to build itself.
     """
+    body = JS
+    start = body.index("function paintAccount(")
+    end = body.index("/* ---------- events ---------- */")
+    outside = body[:start] + body[end:]
     for banned in ("appendChild", "insertBefore", "prepend("):
-        assert banned not in JS, f"favorites.js must not reorder rows ({banned})"
+        assert banned not in outside, (
+            f"favorites.js must not move rows ({banned} outside paintAccount)")
 
 
 # Every module that marks table *rows* must also emit the scoped row CSS.
