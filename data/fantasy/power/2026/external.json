@@ -13,56 +13,56 @@
       "team_id": 3,
       "rank": 1,
       "score": 100,
-      "vorp": 112.98
+      "vorp": 112.83
     },
     {
       "team": "Gord of the Rings",
       "team_id": 2,
       "rank": 2,
       "score": 97,
-      "vorp": 109.11
-    },
-    {
-      "team": "padgett",
-      "team_id": 7,
-      "rank": 3,
-      "score": 93,
-      "vorp": 105.58
+      "vorp": 109.23
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
+      "rank": 3,
+      "score": 94,
+      "vorp": 105.71
+    },
+    {
+      "team": "padgett",
+      "team_id": 7,
       "rank": 4,
-      "score": 93,
-      "vorp": 105.51
+      "score": 94,
+      "vorp": 105.58
     },
     {
       "team": "Clanker Barrel",
       "team_id": 1,
       "rank": 5,
       "score": 90,
-      "vorp": 101.69
+      "vorp": 101.71
     },
     {
       "team": "The Jackson 5",
       "team_id": 10,
       "rank": 6,
       "score": 87,
-      "vorp": 98.26
+      "vorp": 98.11
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 7,
       "score": 86,
-      "vorp": 97.0
+      "vorp": 96.98
     },
     {
       "team": "The Standard",
       "team_id": 6,
       "rank": 8,
       "score": 85,
-      "vorp": 95.54
+      "vorp": 95.56
     },
     {
       "team": "LGBBQ+",
@@ -76,7 +76,7 @@
       "team_id": 8,
       "rank": 10,
       "score": 71,
-      "vorp": 80.39
+      "vorp": 80.36
     }
   ]
 }
