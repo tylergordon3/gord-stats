@@ -13,7 +13,7 @@
       "team_id": 3,
       "rank": 1,
       "score": 100,
-      "vorp": 112.83
+      "vorp": 112.91
     },
     {
       "team": "Gord of the Rings",
@@ -27,14 +27,14 @@
       "team_id": 4,
       "rank": 3,
       "score": 94,
-      "vorp": 105.71
+      "vorp": 105.63
     },
     {
       "team": "padgett",
       "team_id": 7,
       "rank": 4,
-      "score": 94,
-      "vorp": 105.58
+      "score": 93,
+      "vorp": 105.56
     },
     {
       "team": "Clanker Barrel",
@@ -76,7 +76,7 @@
       "team_id": 8,
       "rank": 10,
       "score": 71,
-      "vorp": 80.14
+      "vorp": 80.15
     }
   ]
 }
