@@ -4,3 +4,12 @@ pages_build_output_dir = "docs/_site"
 [[kv_namespaces]]
 binding = "VISITS"
 id = "334f93448a734bb8bc6dd47c49cd81cd"
+
+# Accounts: users and their starred teams. Read and written by the endpoints
+# under functions/api/, and bound as DB because that is the name the code uses.
+# The Google client id and secret and the session signing key are NOT here -
+# they are Pages secrets, set on the project, because this file is public.
+[[d1_databases]]
+binding = "DB"
+database_name = "gordstats"
+database_id = "dccb9bd2-8ec5-4106-8fa0-37147adb11f8"
