@@ -1492,7 +1492,7 @@ def body() -> str:
     when = pd.Timestamp(league["draft_time"], unit="s", tz="UTC").tz_convert(LEAGUE_TZ)
     return (
         _CSS
-        + '{% include countdown.html key="cfb" %}'
+        + '{% include cfb_countdown.html %}'
         + f'<p>The <a href="{league["url"]}">{league["name"]}</a> draft, live: '
         f'{league["num_teams"]} teams, {config(board, league)["rounds"]} rounds, '
         f'{when.strftime("%A %B %-d at %-I:%M %p %Z")}. The order is already set, so '

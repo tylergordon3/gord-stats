@@ -596,7 +596,7 @@ def body() -> str:
 
     return (
         _CSS
-        + '{% include countdown.html key="cfb" %}'
+        + '{% include cfb_countdown.html %}'
         + _league_card(lg)
         + tracker
         + "<h2>Draft Board</h2>"

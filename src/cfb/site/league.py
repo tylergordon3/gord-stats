@@ -316,7 +316,7 @@ def body() -> str:
     drafted = bool(picks)
     return (
         _CSS
-        + '{% include countdown.html key="cfb" %}'
+        + '{% include cfb_countdown.html %}'
         + f'<p><a href="{lg["url"]}"><strong>{lg["name"]}</strong></a> on Yahoo — '
         f'{lg["num_teams"]} teams, {lg["scoring_label"]}, weeks '
         f'{lg["start_week"]}–{lg["end_week"]}, playoffs from week '
