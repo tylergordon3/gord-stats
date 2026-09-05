@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-05T03:53:08+00:00",
+ "fetched": "2026-09-05T03:59:23+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 60.2,
      "projected": 179.79,
-     "win_probability": 0.77
+     "win_probability": 0.76
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 40.0,
      "projected": 183.41,
-     "win_probability": 0.22999999999999998
+     "win_probability": 0.24
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 22.7,
      "projected": 184.19,
-     "win_probability": 0.29000000000000004
+     "win_probability": 0.30000000000000004
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 100.7,
      "projected": 175.2,
-     "win_probability": 0.71
+     "win_probability": 0.7
     }
    ]
   },
