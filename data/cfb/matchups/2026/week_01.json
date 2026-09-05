@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-04T23:00:11+00:00",
+ "fetched": "2026-09-05T00:10:10+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -62,7 +62,7 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 28.14,
+     "points": 40.44,
      "projected": 196.09,
      "win_probability": 0.63
     },
@@ -85,7 +85,7 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 2.0,
+     "points": 3.68,
      "projected": 193.93,
      "win_probability": 0.42000000000000004
     },
@@ -289,8 +289,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.4,
+    "stats": {
+     "11": 1.0,
+     "12": -1.0
+    }
    },
    {
     "yahoo_id": "468582",
@@ -1184,8 +1187,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 2.3,
+    "stats": {
+     "11": 1.0,
+     "12": 18.0
+    }
    },
    {
     "yahoo_id": "451329",
@@ -1310,8 +1316,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.0,
+    "stats": {
+     "8": 1.0,
+     "9": 10.0
+    }
    },
    {
     "yahoo_id": "406200",
@@ -1352,8 +1361,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 0.0,
-    "stats": {}
+    "points": 10.0,
+    "stats": {
+     "50": 1.0
+    }
    }
   ],
   "474.l.21318.t.7": [
@@ -1622,8 +1633,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.68,
+    "stats": {
+     "4": 42.0
+    }
    },
    {
     "yahoo_id": "448820",
@@ -1931,8 +1944,8 @@
     "team": "USC",
     "team_full": "USC Trojans",
     "bye": 10.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "WR",
     "points": 0.0,
