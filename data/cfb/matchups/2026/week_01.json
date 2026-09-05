@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-05T16:50:11+00:00",
+ "fetched": "2026-09-05T16:51:43+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 79.38,
      "projected": 196.09,
-     "win_probability": 0.73
+     "win_probability": 0.67
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 12.0,
+     "points": 23.3,
      "projected": 172.8,
-     "win_probability": 0.27
+     "win_probability": 0.32999999999999996
     }
    ]
   },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 46.0,
+     "points": 44.7,
      "projected": 193.82,
-     "win_probability": 0.42000000000000004
+     "win_probability": 0.35
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 50.82,
+     "points": 59.14,
      "projected": 185.11,
-     "win_probability": 0.58
+     "win_probability": 0.65
     }
    ]
   },
@@ -1428,9 +1428,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 1.64,
+    "points": 8.64,
     "stats": {
-     "4": 41.0
+     "4": 66.0,
+     "5": 1.0
     }
    },
    {
@@ -1521,8 +1522,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 11.3,
+    "stats": {
+     "11": 1.0,
+     "12": 48.0,
+     "13": 1.0
+    }
    },
    {
     "yahoo_id": "455543",
@@ -1762,12 +1767,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 5.0,
+    "points": 3.7,
     "stats": {
-     "8": 5.0,
-     "9": 37.0,
+     "8": 6.0,
+     "9": 44.0,
      "11": 1.0,
-     "12": 8.0
+     "12": 8.0,
+     "18": 1.0
     }
    },
    {
@@ -1973,9 +1979,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 1.32,
+    "points": 9.24,
     "stats": {
-     "4": 33.0
+     "4": 81.0,
+     "5": 1.0
     }
    },
    {
@@ -2017,10 +2024,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 1.8,
+    "points": 2.2,
     "stats": {
-     "8": 4.0,
-     "9": 18.0
+     "8": 5.0,
+     "9": 22.0
     }
    },
    {
