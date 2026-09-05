@@ -157,3 +157,17 @@ def test_lang_attribute_has_no_nested_quotes():
     assert m, "no lang attribute"
     attr = m.group(1)
     assert attr.count('"') == 2, f"nested quotes in the lang attribute: {attr}"
+
+
+def test_local_assets_are_cache_busted():
+    """Cloudflare serves JS and CSS with max-age=14400.
+
+    Without a version in the URL, a reader who visited in the last four hours
+    runs the previous build's JavaScript against the current build's HTML. That
+    shipped once: the sign-in control was in the markup and invisible on a
+    phone that had loaded the site earlier the same day.
+    """
+    for asset in re.findall(r"'(/assets/(?:js|css)/[^']+)' \| relative_url }}(\?v=\{\{ v \}\})?",
+                            LAYOUT):
+        path, version = asset
+        assert version, f"{path} is served without ?v= and will be cached stale"
