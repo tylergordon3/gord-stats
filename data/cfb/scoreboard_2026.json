@@ -36,14 +36,14 @@
      "name": "Mike Locksley",
      "points": 22.7,
      "projected": 184.19,
-     "win_probability": 0.31000000000000005
+     "win_probability": 0.32000000000000006
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 100.7,
      "projected": 175.2,
-     "win_probability": 0.69
+     "win_probability": 0.6799999999999999
     }
    ]
   },
@@ -105,14 +105,14 @@
      "name": "Max's Majestic Team",
      "points": 28.2,
      "projected": 145.32,
-     "win_probability": 0.30000000000000004
+     "win_probability": 0.31000000000000005
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 39.06,
      "projected": 182.75,
-     "win_probability": 0.7
+     "win_probability": 0.69
     }
    ]
   }
