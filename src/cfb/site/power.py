@@ -37,7 +37,7 @@ import requests
 
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import rankmoves
+from gordstats import favorites, rankmoves
 
 _URL = ("https://site.web.api.espn.com/apis/fitt/v3/sports/football/"
         "college-football/powerindex")
@@ -397,7 +397,7 @@ def _record(t):
 
 def _team(t) -> str:
     logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
-    return logo + t["name"]
+    return logo + t["name"] + favorites.star("cfb", t["id"], t["name"])
 
 
 
@@ -503,7 +503,8 @@ def body() -> str:
             value, text = cell(t, rank)
             cells.append(_td(views, value, text, team=(label == "Team"),
                              sortable=direction is not None, win=label in win_labels))
-        rows.append(f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
+        rows.append(f"<tr{' class=\"top25\"' if rank <= 25 else ''}"
+                    f"{favorites.row_attr('cfb', t['id'])}>"
                     + "".join(cells) + "</tr>")
 
     head = "".join(_th(views, label, tip, direction, first=(label == "Team"),
@@ -551,8 +552,9 @@ def body() -> str:
                        extra=pd.DataFrame({"fpi": [t["fpi"] for t in teams],
                                            "name": [t["name"] for t in teams]},
                                           index=[str(t["id"]) for t in teams]))
-    return (_CSS + intro
-            + "<div class='pin-bar'>" + _switcher() + rankmoves.window_switch(bases) + "</div>"
+    return (_CSS + favorites.table_css("table.cfb-power") + intro
+            + "<div class='pin-bar'>" + _switcher() + rankmoves.window_switch(bases)
+            + favorites.controls() + "</div>"
             + "<div class='power-wrap'>"
             + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(rows)}</tbody></table></div>" + _JS + rankmoves.WINDOW_JS)

@@ -26,7 +26,7 @@ from cfb import games as games_mod
 from cfb import predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import charts, palette, rankmoves
+from gordstats import charts, favorites, palette, rankmoves
 
 # Every build's rank and rating, one CSV per build (at most two a day), so the
 # index can say how far a team has moved since any point in the season.
@@ -220,9 +220,11 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
             spans, _first = rankmoves.delta_spans(bases, r["team"], r["rating"], "rating")
             change = f"<td class='win-cell'>{spans}</td>"
         rows.append(
-            f"<tr><td class='tm-name'><span class='row-rank'>{int(r['rank'])}</span>"
+            f"<tr{favorites.row_attr('cfb', r['team'])}>"
+            f"<td class='tm-name'><span class='row-rank'>{int(r['rank'])}</span>"
             f"{_logo(r['team'])}"
-            f"<a href='/cfb/teams/{team_slug(r['name'])}/'>{escape(str(r['name']))}</a></td>"
+            f"<a href='/cfb/teams/{team_slug(r['name'])}/'>{escape(str(r['name']))}</a>"
+            f"{favorites.star('cfb', r['team'], r['name'])}</td>"
             f"{move}<td>{r['rating']:+.1f}</td>{change}<td>{r['pace']:+.1f}</td>"
             f"<td>{int(r['wins'])}&ndash;{int(r['losses'])}</td></tr>")
     move_th = change_th = ""
@@ -235,8 +237,11 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
     head = (f"<tr><th>Team</th>{move_th}<th>Rating</th>{change_th}<th>Scoring</th>"
             "<th>Record</th></tr>")
     first = next(iter(bases.values()))["at"] if bases else None
-    switch = ("" if not bases else
-              "<div class='pin-bar'>" + rankmoves.window_switch(bases) + "</div>")
+    # The bar carries the favourites filter whether or not there is history to
+    # switch between, so the control doesn't vanish early in a season.
+    switch = ("<div class='pin-bar'>"
+              + (rankmoves.window_switch(bases) if bases else "")
+              + favorites.controls() + "</div>")
     history_note = (
         " <strong>Move</strong> is places climbed"
         + (" and <strong>&Delta;</strong> the rating's change" if show_delta else "")
@@ -255,7 +260,8 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
             f"points this team adds to a game, whichever sideline it is on. Ratings come "
             f"out of <a href='/cfb/predictions/'>the same model</a> that prices Saturday, "
             f"and carry the same caveats.{history_note}</p></details>")
-    return (_CSS + note + switch + "<div class='tm-scroll'><table class='tm'>"
+    return (_CSS + favorites.table_css("table.tm") + note + switch
+            + "<div class='tm-scroll'><table class='tm'>"
             f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>"
             + rankmoves.WINDOW_JS)
 

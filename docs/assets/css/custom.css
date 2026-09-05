@@ -4566,3 +4566,124 @@ body.sec-cfb, body.sec-fantasy, body.sec-wnba {
     color: var(--accent-text, #F5A968);
   }
 }
+
+/* =========================
+   TEAM FAVOURITES
+   Star a team, the row tints; the filter in the pin bar hides the rest.
+   Markup comes from gordstats.favorites, behaviour from favorites.js.
+   ========================= */
+
+/* The star sits in the team cell beside the name, never inside its link.
+   Sized in em so it tracks whichever table it lands in - the CFB power table
+   runs 14px, the CBB one a little larger. */
+.fav-star {
+  background: none;
+  border: 0;
+  padding: 0 0 0 6px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 1.05em;
+  line-height: 1;
+  color: #b8c0cc;
+  vertical-align: baseline;
+  /* Off-state stars are quiet until the row is under the cursor: forty of
+     them at full strength read as a column of their own. */
+  opacity: 0;
+  transition: opacity .12s ease, color .12s ease;
+}
+
+/* Always visible once it means something, and always visible to the keyboard. */
+.fav-star.is-on,
+.fav-star:focus-visible,
+tr:hover .fav-star {
+  opacity: 1;
+}
+
+.fav-star:hover {
+  color: var(--accent, #A34F0A);
+}
+
+.fav-star.is-on {
+  color: var(--accent, #A34F0A);
+}
+
+.fav-star:focus-visible {
+  outline: 2px solid var(--accent, #A34F0A);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* The filter control, dropped into a page's existing .pin-bar. */
+.fav-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.fav-filter {
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  padding: 5px 10px;
+  border: 1px solid #d6dbe3;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fav-filter:hover {
+  border-color: var(--accent, #A34F0A);
+  color: var(--accent-text, #A34F0A);
+}
+
+.fav-filter.is-on {
+  background: var(--accent, #A34F0A);
+  border-color: var(--accent, #A34F0A);
+  color: #fff;
+}
+
+.fav-filter:focus-visible {
+  outline: 2px solid var(--accent, #A34F0A);
+  outline-offset: 2px;
+}
+
+.fav-count {
+  font-size: 12px;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fav-star { transition: none; }
+}
+
+/* A touch reader has no hover, so the stars would never appear. Show them all
+   at low strength instead, and let the starred ones stand out by colour. */
+@media (hover: none) {
+  .fav-star { opacity: .45; }
+  .fav-star.is-on { opacity: 1; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .fav-star { color: #6b7590; }
+
+  .fav-star:hover,
+  .fav-star.is-on { color: var(--accent-text, #F5A968); }
+
+  .fav-filter {
+    background: #1b2540;
+    border-color: #2b3852;
+    color: #cbd5e1;
+  }
+
+  .fav-filter.is-on {
+    background: var(--accent-text, #F5A968);
+    border-color: var(--accent-text, #F5A968);
+    color: #14203a;
+  }
+
+  .fav-count { color: #94a3b8; }
+}

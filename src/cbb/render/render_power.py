@@ -32,7 +32,7 @@ import pandas as pd
 import requests
 
 from cbb import paths
-from gordstats import rankmoves
+from gordstats import favorites, rankmoves
 from gordstats.frontmatter import add_front_matter
 
 # The season being ranked, in Torvik's convention (2027 = the 2026-27 season).
@@ -256,11 +256,16 @@ def body() -> str:
     for t in df.itertuples(index=False):
         rank = int(t.rk)
         rows.append(
-            f"<tr{' class=\"top25\"' if rank <= 25 else ''}>"
+            f"<tr{' class=\"top25\"' if rank <= 25 else ''}"
+            # T-Rank names the school and carries no id of its own, so the
+            # favourite is keyed on the slugified name. That is stable across
+            # rebuilds and only breaks if Torvik renames a school.
+            f"{favorites.name_attr('cbb-men', t.team)}>"
             # Rank folds into the frozen team cell (the fantasy pages' pattern,
             # .row-rank in custom.css): a standalone RK column meant the sticky
             # first column pinned a counter while the team name slid away.
-            f"<td class='pwr-team'><span class=\"row-rank\">{rank}</span>{t.team}</td>"
+            f"<td class='pwr-team'><span class=\"row-rank\">{rank}</span>{t.team}"
+            f"{favorites.name_star('cbb-men', t.team)}</td>"
             + (f"<td>{rankmoves.cell(t.move)}</td>" if show_move else "")
             + (f"<td>{rankmoves.cell(t.move7)}</td>" if show_week else "")
             + f"<td class='conf'>{t.conf}</td>"
@@ -313,7 +318,8 @@ def body() -> str:
         "neutral floor. Top 25 highlighted.</p>")
 
     rankmoves.snapshot(HISTORY_DIR, ranks_now)
-    return (_CSS + intro
+    return (_CSS + favorites.table_css("table.cbb-power") + intro
+            + "<div class='pin-bar'>" + favorites.controls() + "</div>"
             + f"<div class='power-wrap'><table class='cbb-power'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(rows)}</tbody></table></div>")
 
