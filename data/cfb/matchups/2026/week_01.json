@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-06T19:30:12+00:00",
+ "fetched": "2026-09-06T20:30:12+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 174.44,
      "projected": 179.74,
-     "win_probability": 0.89
+     "win_probability": 0.9099999999999999
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 159.1,
+     "points": 160.22,
      "projected": 183.64,
-     "win_probability": 0.10999999999999999
+     "win_probability": 0.09000000000000008
     }
    ]
   },
@@ -465,8 +465,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.12,
+    "stats": {
+     "4": 18.0,
+     "8": 1.0,
+     "9": 4.0
+    }
    },
    {
     "yahoo_id": "456340",
@@ -3159,9 +3163,9 @@
     "team": "FLA",
     "team_full": "Florida Gators",
     "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Ankle",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
