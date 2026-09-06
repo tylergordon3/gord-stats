@@ -107,7 +107,7 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 /* Rate tiles. A record read as a fraction hides its own size -- 28/69 and
    15/30 look alike and are not -- so the percentage is the value and the bar
    underneath is what makes 88% and 41% look as different as they are. */
-.pred-tiles.pred-tiles-wide{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.pred-tiles.pred-tiles-wide{grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))}
 
 /* The record, at the top of the page. Two numbers, and both of them are simply
    right or wrong -- no averages, nothing to convert in your head. They were
@@ -530,8 +530,7 @@ def _record_band(frame: pd.DataFrame) -> str:
                           "games")]
     if stat["ou_games"]:
         cells.append(_record_cell("Over/under called right", stat["ou_wins"],
-                                  stat["ou_games"], "where we differed by 3+",
-                                  BREAK_EVEN))
+                                  stat["ou_games"], "where we differed by 3+"))
     return ("<p class='pred-note'>Every prediction below is archived before "
             "kickoff and scored against the result. Here is how that has gone "
             f"across {stat['games']} finished game"
@@ -567,6 +566,8 @@ def _results_section(frame: pd.DataFrame) -> str:
         _plain_tile("Games scored", f"{stat['games']}", "predicted before kickoff",
                     f"<div class='t-note'>{_span(frame)}</div>"),
         _rate_tile("Against the spread", stat["ats_wins"], stat["ats_games"],
+                   "where we differed by 3+", BREAK_EVEN),
+        _rate_tile("Over/under", stat["ou_wins"], stat["ou_games"],
                    "where we differed by 3+", BREAK_EVEN),
         _miss_tile("Margin miss", ours, book, "average, against the final margin"),
         _miss_tile("Total miss", ours_total, book_total,
