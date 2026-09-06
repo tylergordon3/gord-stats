@@ -103,6 +103,53 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 .pg-line b{color:#0f172a}
 .pred-chart img{margin:12px 0}
 .pred-chart{max-width:640px}
+
+/* Rate tiles. A record read as a fraction hides its own size -- 28/69 and
+   15/30 look alike and are not -- so the percentage is the value and the bar
+   underneath is what makes 88% and 41% look as different as they are. */
+.pred-tiles.pred-tiles-wide{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+@media (min-width:940px){.pred-tiles.pred-tiles-wide{grid-template-columns:repeat(3,1fr)}}
+.pred-tile .t-meter{position:relative;height:7px;border-radius:4px;background:#dbe7f7;
+  margin-top:10px}
+.pred-tile .t-meter>i{display:block;height:100%;border-radius:4px;background:{accent}}
+/* Break-even drawn on the bar rather than left to the caption: the whole point
+   of the spread record is where it sits against that line. */
+.pred-tile .t-mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:#334155}
+.pred-tile .t-note{font-size:11px;color:#64748b;margin-top:6px}
+.pred-tile .t-cmp{margin-top:10px;display:grid;gap:5px}
+.pred-tile .c-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#64748b;
+  font-variant-numeric:tabular-nums}
+.pred-tile .c-lab{min-width:30px}
+.pred-tile .c-bar{flex:1;height:6px;border-radius:3px;background:#eef2f7}
+.pred-tile .c-bar>i{display:block;height:100%;border-radius:3px;background:{accent}}
+.pred-tile .c-row.c-book .c-bar>i{background:#94a3b8}
+
+/* One block per week, so the log can hold every game without the page being
+   one endless table. The newest week is open; the rest are a click away. */
+.pred-week{border:1px solid #e2e8f0;border-radius:12px;background:#fff;margin:0 0 12px}
+.pred-week>summary{cursor:pointer;list-style:none;padding:11px 14px;display:flex;
+  flex-wrap:wrap;align-items:center;gap:8px 12px}
+.pred-week>summary::-webkit-details-marker{display:none}
+.pred-week>summary::before{content:"▸";color:#94a3b8;font-size:11px;flex:none}
+.pred-week[open]>summary::before{content:"▾"}
+.pw-name{font-weight:700;color:#0f172a;font-size:15px}
+.pw-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-left:auto}
+.pw-chip{font-size:11.5px;color:#475569;background:#f1f5f9;border-radius:999px;
+  padding:3px 9px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pw-chip b{color:#0f172a}
+.pw-body{padding:0 12px 12px}
+
+/* The upcoming board when the seven-day window straddles two weeks. */
+.pred-weekhead{font-size:15px;font-weight:700;color:#0f172a;margin:18px 0 8px;
+  display:flex;align-items:baseline;gap:9px}
+.pred-weekhead span{font-size:12px;font-weight:600;color:#64748b}
+
+/* Results table: two header rows, so margin and total read as two families of
+   four columns rather than eight columns in a row. */
+table.cfb-pred th.grp{border-bottom:none;letter-spacing:.08em}
+table.cfb-pred .col-sep{border-left:2px solid #cbd5e1}
+table.cfb-pred td.pred-match .pm-final{display:block;font-size:12px;font-weight:600;
+  color:#64748b;font-variant-numeric:tabular-nums;margin-top:1px}
 @media (prefers-color-scheme: dark){
   .pred-note{color:#aab7c9}
   table.cfb-pred th{background:#223052;color:#dde5ef;border-color:#2b3852}
@@ -123,6 +170,20 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
   .pg-bar{background:#223052}
   .pg-line{color:#aab7c9}
   .pg-line b{color:#f1f5f9}
+  .pred-tile .t-meter{background:#24406b}
+  .pred-tile .t-mark{background:#dde5ef}
+  .pred-tile .t-note{color:#aab7c9}
+  .pred-tile .c-row{color:#aab7c9}
+  .pred-tile .c-bar{background:#223052}
+  .pred-week{background:#16203a;border-color:#2b3852}
+  .pred-week>summary::before{color:#7f8ea3}
+  .pw-name{color:#f1f5f9}
+  .pw-chip{background:#223052;color:#c3cfdd}
+  .pw-chip b{color:#ffffff}
+  .pred-weekhead{color:#f1f5f9}
+  .pred-weekhead span{color:#aab7c9}
+  table.cfb-pred .col-sep{border-left-color:#3f5075}
+  table.cfb-pred td.pred-match .pm-final{color:#8fa0b8}
 }
 </style>""").replace("{accent}", ACCENT)
 
@@ -225,9 +286,42 @@ def _card(game) -> str:
             + f"<span>{prob:.0%}</span></div></article>")
 
 
-def _cards(games: pd.DataFrame) -> str:
+def _grid(games: pd.DataFrame) -> str:
     return ("<div class='pred-grid'>"
             + "".join(_card(g) for _, g in games.iterrows()) + "</div>")
+
+
+def _weeks(games: pd.DataFrame) -> list:
+    return sorted(int(w) for w in games["week"].dropna().unique())
+
+
+def _week_label(games: pd.DataFrame) -> str:
+    """What to call the board.
+
+    The window is seven days, not a week, so from Tuesday on it holds the tail
+    of one week and the front of the next. Naming it after the first game's week
+    -- which is what this did -- left week two's games filed under a "Week 1"
+    heading for half of every week.
+    """
+    weeks = _weeks(games)
+    if not weeks:
+        return "This week"
+    if len(weeks) == 1:
+        return f"Week {weeks[0]}"
+    return f"Weeks {weeks[0]}&ndash;{weeks[-1]}"
+
+
+def _cards(games: pd.DataFrame) -> str:
+    weeks = _weeks(games)
+    if len(weeks) < 2:
+        return _grid(games)
+    out = []
+    for week in weeks:
+        block = games[games["week"] == week]
+        out.append(f"<h3 class='pred-weekhead'>Week {week}"
+                   f"<span>{len(block)} games</span></h3>")
+        out.append(_grid(block))
+    return "".join(out)
 
 
 def _tiles(games: pd.DataFrame) -> str:
@@ -260,6 +354,127 @@ def _tiles(games: pd.DataFrame) -> str:
         for label, value, sub in tiles) + "</div>")
 
 
+# The break-even a spread bet has to clear at standard -110 juice. Quoted from
+# the backtest record where there is one, so the page never carries two numbers.
+BREAK_EVEN = 0.524
+
+
+def _span(frame: pd.DataFrame) -> str:
+    """The dates the archive covers, as one line."""
+    first = frame["kickoff"].min().astimezone(ET)
+    last = frame["kickoff"].max().astimezone(ET)
+    if first.date() == last.date():
+        return f"{first:%-d %b}"
+    return f"{first:%-d %b} &ndash; {last:%-d %b}"
+
+
+def _plain_tile(label: str, value: str, sub: str, extra: str = "") -> str:
+    return (f"<div class='pred-tile'><div class='t-label'>{label}</div>"
+            f"<div class='t-value'>{value}</div>"
+            f"<div class='t-sub'>{sub}</div>{extra}</div>")
+
+
+def _rate_tile(label: str, wins: int, games: int, sub: str,
+               benchmark: float | None = None) -> str:
+    """A record led by its percentage, with the bar that gives it a size.
+
+    28/69 and 15/30 read alike as fractions and are eleven points apart. The
+    percentage is the value, the fraction is the caption, and the meter is what
+    makes the difference visible without arithmetic.
+    """
+    if not games:
+        return _plain_tile(label, "&mdash;", sub)
+    pct = wins / games
+    mark = note = ""
+    if benchmark is not None:
+        mark = f"<span class='t-mark' style='left:{benchmark * 100:.1f}%'></span>"
+        gap = (benchmark - pct) * 100
+        note = ("<div class='t-note'>the mark is break-even at "
+                f"{benchmark:.1%} &middot; "
+                + (f"{abs(gap):.0f} points clear" if gap <= 0
+                   else f"{gap:.0f} points under") + "</div>")
+    meter = (f"<div class='t-meter'><i style='width:{pct * 100:.0f}%'></i>{mark}</div>"
+             f"{note}")
+    return _plain_tile(label, f"{pct:.0%}", f"{wins} of {games} {sub}", meter)
+
+
+def _miss_tile(label: str, ours: float, book: float | None, sub: str) -> str:
+    """Our average miss beside the book's on the same games, one shared scale."""
+    bars = ""
+    if book is not None:
+        top = max(ours, book) or 1.0
+        bars = ("<div class='t-cmp'>"
+                "<div class='c-row'><span class='c-lab'>ours</span>"
+                f"<span class='c-bar'><i style='width:{ours / top * 100:.0f}%'></i></span>"
+                f"<span>{ours:.1f}</span></div>"
+                "<div class='c-row c-book'><span class='c-lab'>book</span>"
+                f"<span class='c-bar'><i style='width:{book / top * 100:.0f}%'></i></span>"
+                f"<span>{book:.1f}</span></div></div>")
+    return _plain_tile(label, f"{ours:.1f} pts", sub, bars)
+
+
+def _mark(ok) -> str:
+    """A tick, a cross, or a dash where the pick was never live."""
+    if ok is None or (isinstance(ok, float) and pd.isna(ok)):
+        return "<td class='pred-na'>&mdash;</td>"
+    glyph = "&#10003;" if ok else "&#10007;"
+    colour = teams_page.GOOD if ok else teams_page.BAD
+    return f"<td style='color:{colour};font-weight:700'>{glyph}</td>"
+
+
+def _result_rows(frame: pd.DataFrame) -> str:
+    rows = []
+    for _, g in frame.iterrows():
+        ou_said = ("&mdash;" if pd.isna(g["market_total"])
+                   else f"{'O' if g['ou_edge'] > 0 else 'U'} {g['market_total']:.1f}")
+        rows.append(
+            f"<tr><td class='pred-match'>{escape(str(g['away']))} at "
+            f"{escape(str(g['home']))}"
+            f"<span class='pm-final'>{int(g['away_score'])}"
+            f"&ndash;{int(g['home_score'])}</span></td>"
+            f"<td>{g['pred_margin']:+.1f}</td>"
+            f"<td>{g['actual_margin']:+.0f}</td>"
+            f"<td>{abs(g['margin_error']):.1f}</td>"
+            + _mark(bool(g["correct"]))
+            + f"<td class='col-sep'>{g['pred_total']:.0f}</td>"
+            f"<td>{g['actual_total']:.0f}</td>"
+            f"<td class='pred-ou'>{ou_said}</td>"
+            + _mark(g["ou_correct"]) + "</tr>")
+    return ("<div class='pred-scroll'><table class='cfb-pred'><thead>"
+            "<tr><th rowspan='2'>Game</th><th class='grp' colspan='4'>Margin</th>"
+            "<th class='grp col-sep' colspan='4'>Total</th></tr>"
+            "<tr><th>Ours</th><th>It was</th><th>Miss</th><th>Call</th>"
+            "<th class='col-sep'>Ours</th><th>It was</th><th>Our O/U</th><th>Call</th>"
+            f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
+
+
+def _week_block(frame: pd.DataFrame, label: str, is_open: bool) -> str:
+    """One week of scored games, with its own record on the header.
+
+    Collapsed by default past the newest week: the log only grows, and a season
+    of it is three thousand pixels of table nobody scrolled to.
+    """
+    stat = results.summary(frame)
+    chips = [f"<span class='pw-chip'>{stat['games']} games</span>",
+             f"<span class='pw-chip'><b>{stat['winner_accuracy']:.0%}</b> winners "
+             f"({stat['correct']}/{stat['games']})</span>",
+             f"<span class='pw-chip'><b>{stat['margin_mae']:.1f}</b> pt miss</span>"]
+    if stat["ats_games"]:
+        chips.append(f"<span class='pw-chip'><b>"
+                     f"{stat['ats_wins'] / stat['ats_games']:.0%}</b> ATS "
+                     f"({stat['ats_wins']}/{stat['ats_games']})</span>")
+    if stat["ou_games"]:
+        chips.append(f"<span class='pw-chip'><b>"
+                     f"{stat['ou_wins'] / stat['ou_games']:.0%}</b> O/U "
+                     f"({stat['ou_wins']}/{stat['ou_games']})</span>")
+    # Newest first inside the week, matching the order of the weeks themselves.
+    ordered = frame.sort_values("kickoff", ascending=False)
+    return (f"<details class='pred-week'{' open' if is_open else ''}>"
+            f"<summary><span class='pw-name'>{label}</span>"
+            f"<span class='pw-chips'>{''.join(chips)}</span></summary>"
+            f"<div class='pw-body'>{_result_rows(ordered)}</div></details>")
+
+
 def _results_section() -> str:
     """How the published predictions have actually done.
 
@@ -276,63 +491,35 @@ def _results_section() -> str:
                 "&mdash; this fills in from the first Saturday and never resets.</p>")
 
     stat = results.summary(frame)
-    recent = frame.tail(12).iloc[::-1]
     ours = stat["margin_mae"]
     book = stat.get("market_margin_mae")
-
     ours_total = stat["total_mae"]
     book_total = stat.get("market_total_mae")
 
-    # Two families, shown side by side: the margin and the total. Each gets the
-    # miss, the book's miss on the same games, and the record where the two
-    # disagreed enough to be a bet.
-    tiles = [("Games scored", f"{stat['games']}", "predicted before kickoff"),
-             ("Winners", f"{stat['correct']}/{stat['games']}",
-              f"{stat['winner_accuracy']:.0%} right"),
-             ("Margin miss", f"{ours:.1f} pts",
-              "book &mdash;" if book is None else f"book {book:.1f}"),
-             ("Total miss", f"{ours_total:.1f} pts",
-              "book &mdash;" if book_total is None else f"book {book_total:.1f}"),
-             ("Against the spread",
-              "&mdash;" if not stat["ats_games"]
-              else f"{stat['ats_wins']}/{stat['ats_games']}",
-              "where we differed by 3+"),
-             ("Over/under",
-              "&mdash;" if not stat["ou_games"]
-              else f"{stat['ou_wins']}/{stat['ou_games']}",
-              "where we differed by 3+")]
-    tile_html = ("<div class='pred-tiles'>" + "".join(
-        f"<div class='pred-tile'><div class='t-label'>{label}</div>"
-        f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
-        for label, value, sub in tiles) + "</div>")
+    # Three records led by their percentage, then the two average misses beside
+    # the book's on the same games. Every rate that has a bar to clear carries
+    # the bar, so the spread line is never read as a win by accident.
+    tiles = [
+        _plain_tile("Games scored", f"{stat['games']}", "predicted before kickoff",
+                    f"<div class='t-note'>{_span(frame)}</div>"),
+        _rate_tile("Winners", stat["correct"], stat["games"], "games called right"),
+        _rate_tile("Against the spread", stat["ats_wins"], stat["ats_games"],
+                   "where we differed by 3+", BREAK_EVEN),
+        _rate_tile("Over/under", stat["ou_wins"], stat["ou_games"],
+                   "where we differed by 3+", BREAK_EVEN),
+        _miss_tile("Margin miss", ours, book, "average, against the final margin"),
+        _miss_tile("Total miss", ours_total, book_total,
+                   "average, against the points scored"),
+    ]
+    tile_html = ("<div class='pred-tiles pred-tiles-wide'>" + "".join(tiles) + "</div>")
 
-    def _mark(ok) -> str:
-        """A tick, a cross, or a dash where the pick was never live."""
-        if ok is None or (isinstance(ok, float) and pd.isna(ok)):
-            return "<td class='pred-na'>&mdash;</td>"
-        glyph = "&#10003;" if ok else "&#10007;"
-        colour = teams_page.GOOD if ok else teams_page.BAD
-        return f"<td style='color:{colour};font-weight:700'>{glyph}</td>"
-
-    rows = []
-    for _, g in recent.iterrows():
-        ou_said = ("&mdash;" if pd.isna(g["market_total"])
-                   else f"{'O' if g['ou_edge'] > 0 else 'U'} {g['market_total']:.1f}")
-        rows.append(
-            f"<tr><td class='pred-match'>{escape(str(g['away']))} at "
-            f"{escape(str(g['home']))}</td>"
-            f"<td>{g['pred_margin']:+.1f}</td>"
-            f"<td>{g['actual_margin']:+.0f}</td>"
-            f"<td>{abs(g['margin_error']):.1f}</td>"
-            + _mark(bool(g["correct"]))
-            + f"<td>{g['pred_total']:.0f}</td>"
-            f"<td>{g['actual_total']:.0f}</td>"
-            f"<td class='pred-ou'>{ou_said}</td>"
-            + _mark(g["ou_correct"]) + "</tr>")
-    table = ("<div class='pred-scroll'><table class='cfb-pred'><thead><tr>"
-             "<th>Game</th><th>Margin</th><th>It was</th><th>Miss</th><th>Call</th>"
-             "<th>Total</th><th>It was</th><th>Our O/U</th><th>Call</th>"
-             f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
+    filed = frame["week"].fillna(-1).astype(int)
+    weeks = sorted(filed.unique(), reverse=True)
+    blocks = "".join(
+        _week_block(frame[filed == week],
+                    f"Week {week}" if week >= 0 else "Unfiled",
+                    is_open=(i == 0))
+        for i, week in enumerate(weeks))
 
     verdict = ""
     if book is not None:
@@ -371,7 +558,10 @@ def _results_section() -> str:
             f"exercise on the points in the game, and <strong>Our O/U</strong> is "
             f"the side our number took against the book's."
             f"{verdict}{ats}{ou_note}</p>"
-            + tile_html + table)
+            + tile_html
+            + "<p class='pred-note'>Every game scored so far, newest week first. "
+            "Open a week for the game-by-game log.</p>"
+            + blocks)
 
 
 def _agreement_chart(games: pd.DataFrame) -> str:
@@ -478,18 +668,21 @@ def body() -> str:
                 + _results_section() + _method(games))
 
     games = _with_market(games)
-    week = int(games["week"].iloc[0])
+    weeks = _weeks(games)
     matched = games["market_spread"].notna().sum()
 
+    span = ("" if len(weeks) < 2 else
+            f" That window straddles week {weeks[0]} and week {weeks[-1]}, so both "
+            f"are below.")
     intro = (f"<p class='pred-note'>Every FBS game kicking off in the next seven days, "
-             f"{len(games)} of them. Each card carries the score this model expects, "
+             f"{len(games)} of them.{span} Each card carries the score this model expects, "
              f"each team's rating &mdash; points better than an average FBS side "
              f"&mdash; and the book's line beside ours. The bar is the favourite's "
              f"chance of winning, taken from the margin and the spread of this model's "
              f"own errors: not a second model, and not a promise.</p>")
 
-    parts = [_CSS, f"<h2>Week {week}</h2>", intro, _tiles(games), _cards(games),
-             _results_section()]
+    parts = [_CSS, f"<h2>{_week_label(games)}</h2>", intro, _tiles(games),
+             _cards(games), _results_section()]
     if matched >= 5:
         parts.append(_agreement_chart(games))
     parts.append(_method(games))
