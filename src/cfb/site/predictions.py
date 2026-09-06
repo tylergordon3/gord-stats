@@ -108,13 +108,30 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
    15/30 look alike and are not -- so the percentage is the value and the bar
    underneath is what makes 88% and 41% look as different as they are. */
 .pred-tiles.pred-tiles-wide{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-@media (min-width:940px){.pred-tiles.pred-tiles-wide{grid-template-columns:repeat(3,1fr)}}
+
+/* The record, at the top of the page. Two numbers, and both of them are simply
+   right or wrong -- no averages, nothing to convert in your head. They were
+   four screens down under a heading most readers never reached. */
+.pred-record{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:14px;margin:14px 0 10px}
+.rec-cell{background:#fff;border:1px solid #e2e8f0;border-radius:12px;
+  padding:15px 18px 16px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.rec-label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+  color:#64748b;font-weight:700}
+/* Proportional figures, not tabular: at this size tabular-nums leaves a gap
+   inside 88% wide enough to read as two numbers. */
+.rec-value{font-size:46px;font-weight:800;color:#0f172a;line-height:1.05;margin:5px 0 1px}
+.rec-sub{font-size:13.5px;color:#475569}
+.rec-meter{position:relative;height:9px;border-radius:5px;background:#dbe7f7;margin-top:13px}
+.rec-meter>i{display:block;height:100%;border-radius:5px;background:{accent}}
+.rec-note{font-size:11.5px;color:#64748b;margin-top:8px}
+.rec-more{font-size:13px;margin:0 0 4px}
 .pred-tile .t-meter{position:relative;height:7px;border-radius:4px;background:#dbe7f7;
   margin-top:10px}
 .pred-tile .t-meter>i{display:block;height:100%;border-radius:4px;background:{accent}}
 /* Break-even drawn on the bar rather than left to the caption: the whole point
    of the spread record is where it sits against that line. */
-.pred-tile .t-mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:#334155}
+.t-mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:#334155}
 .pred-tile .t-note{font-size:11px;color:#64748b;margin-top:6px}
 .pred-tile .t-cmp{margin-top:10px;display:grid;gap:5px}
 .pred-tile .c-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#64748b;
@@ -171,7 +188,12 @@ table.cfb-pred td.pred-match .pm-final{display:block;font-size:12px;font-weight:
   .pg-line{color:#aab7c9}
   .pg-line b{color:#f1f5f9}
   .pred-tile .t-meter{background:#24406b}
-  .pred-tile .t-mark{background:#dde5ef}
+  .t-mark{background:#dde5ef}
+  .rec-cell{background:#16203a;border-color:#2b3852;box-shadow:none}
+  .rec-label,.rec-note{color:#aab7c9}
+  .rec-value{color:#f1f5f9}
+  .rec-sub{color:#c3cfdd}
+  .rec-meter{background:#24406b}
   .pred-tile .t-note{color:#aab7c9}
   .pred-tile .c-row{color:#aab7c9}
   .pred-tile .c-bar{background:#223052}
@@ -475,16 +497,61 @@ def _week_block(frame: pd.DataFrame, label: str, is_open: bool) -> str:
             f"<div class='pw-body'>{_result_rows(ordered)}</div></details>")
 
 
-def _results_section() -> str:
-    """How the published predictions have actually done.
+def _record_cell(label: str, wins: int, games: int, sub: str,
+                 benchmark: float | None = None) -> str:
+    pct = wins / games
+    mark = note = ""
+    if benchmark is not None:
+        mark = f"<span class='t-mark' style='left:{benchmark * 100:.1f}%'></span>"
+        gap = (benchmark - pct) * 100
+        note = ("<div class='rec-note'>the mark is break-even at "
+                f"{benchmark:.1%} &middot; "
+                + (f"{abs(gap):.0f} points clear" if gap <= 0
+                   else f"{gap:.0f} points under") + "</div>")
+    return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
+            f"<div class='rec-value'>{pct:.0%}</div>"
+            f"<div class='rec-sub'>{wins} of {games} {sub}</div>"
+            f"<div class='rec-meter'><i style='width:{pct * 100:.0f}%'></i>{mark}</div>"
+            f"{note}</div>")
+
+
+def _record_band(frame: pd.DataFrame) -> str:
+    """Right or wrong, at the top of the page.
+
+    Everything else here measures how far off the model was, which is the
+    interesting question only once you already trust it. These two are the ones
+    that need no conversion -- the winner was called or it was not -- and they
+    were four screens down under a heading most readers never reached.
+    """
+    if frame.empty:
+        return ""
+    stat = results.summary(frame)
+    cells = [_record_cell("Winners called right", stat["correct"], stat["games"],
+                          "games")]
+    if stat["ou_games"]:
+        cells.append(_record_cell("Over/under called right", stat["ou_wins"],
+                                  stat["ou_games"], "where we differed by 3+",
+                                  BREAK_EVEN))
+    return ("<p class='pred-note'>Every prediction below is archived before "
+            "kickoff and scored against the result. Here is how that has gone "
+            f"across {stat['games']} finished game"
+            f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}.</p>"
+            "<div class='pred-record'>" + "".join(cells) + "</div>"
+            "<p class='pred-note rec-more'><a href='#how-it-has-gone'>The spread "
+            "record, the average miss and every game week by week &rarr;</a></p>")
+
+
+def _results_section(frame: pd.DataFrame) -> str:
+    """How the published predictions have actually done, in detail.
 
     Everything else on this page is a claim about seasons nobody watched. This
     is the only part a reader can check, so it is scored on predictions that
-    were on record before kickoff and nothing else.
+    were on record before kickoff and nothing else. The two plain right-or-wrong
+    rates are at the top of the page; what is left here is what needs a sentence
+    of explanation -- the spread, the average miss, and the game-by-game log.
     """
-    frame = results.scored()
     if frame.empty:
-        return ("<h2>How it has gone</h2>"
+        return ("<h2 id='how-it-has-gone'>How it has gone</h2>"
                 "<p class='pred-note'>Every prediction above is archived with the "
                 "moment it was made, and scored only if it was on record before "
                 "kickoff. Nothing has finished yet, so there is nothing to report "
@@ -496,16 +563,10 @@ def _results_section() -> str:
     ours_total = stat["total_mae"]
     book_total = stat.get("market_total_mae")
 
-    # Three records led by their percentage, then the two average misses beside
-    # the book's on the same games. Every rate that has a bar to clear carries
-    # the bar, so the spread line is never read as a win by accident.
     tiles = [
         _plain_tile("Games scored", f"{stat['games']}", "predicted before kickoff",
                     f"<div class='t-note'>{_span(frame)}</div>"),
-        _rate_tile("Winners", stat["correct"], stat["games"], "games called right"),
         _rate_tile("Against the spread", stat["ats_wins"], stat["ats_games"],
-                   "where we differed by 3+", BREAK_EVEN),
-        _rate_tile("Over/under", stat["ou_wins"], stat["ou_games"],
                    "where we differed by 3+", BREAK_EVEN),
         _miss_tile("Margin miss", ours, book, "average, against the final margin"),
         _miss_tile("Total miss", ours_total, book_total,
@@ -547,7 +608,7 @@ def _results_section() -> str:
                    "spread is, and that archive only begins now, so there is "
                    "nothing to score it against on games already played.")
 
-    return ("<h2>How it has gone</h2>"
+    return ("<h2 id='how-it-has-gone'>How it has gone</h2>"
             f"<p class='pred-note'>Scored on the "
             f"{stat['games']} game{'s' if stat['games'] != 1 else ''} that have "
             f"finished since the archive started, using the last prediction made "
@@ -662,10 +723,11 @@ def _method(games: pd.DataFrame) -> str:
 
 def body() -> str:
     games = predict.week()
+    scored = results.scored()
     if games.empty:
         return (_CSS + "<p class='pred-note'>No games scheduled in the next week. "
                 "Predictions return when the season does.</p>"
-                + _results_section() + _method(games))
+                + _results_section(scored) + _method(games))
 
     games = _with_market(games)
     weeks = _weeks(games)
@@ -681,8 +743,8 @@ def body() -> str:
              f"chance of winning, taken from the margin and the spread of this model's "
              f"own errors: not a second model, and not a promise.</p>")
 
-    parts = [_CSS, f"<h2>{_week_label(games)}</h2>", intro, _tiles(games),
-             _cards(games), _results_section()]
+    parts = [_CSS, _record_band(scored), f"<h2>{_week_label(games)}</h2>", intro,
+             _tiles(games), _cards(games), _results_section(scored)]
     if matched >= 5:
         parts.append(_agreement_chart(games))
     parts.append(_method(games))
