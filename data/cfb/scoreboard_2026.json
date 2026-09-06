@@ -13,14 +13,14 @@
      "name": "Puntaholics",
      "points": 174.44,
      "projected": 179.74,
-     "win_probability": 0.79
+     "win_probability": 0.89
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 159.1,
      "projected": 183.64,
-     "win_probability": 0.20999999999999996
+     "win_probability": 0.10999999999999999
     }
    ]
   },
@@ -36,14 +36,14 @@
      "name": "Mike Locksley",
      "points": 197.98,
      "projected": 184.19,
-     "win_probability": 0.33999999999999997
+     "win_probability": 0.08000000000000007
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 222.36,
+     "points": 255.06,
      "projected": 175.3,
-     "win_probability": 0.66
+     "win_probability": 0.9199999999999999
     }
    ]
   },
@@ -59,14 +59,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 177.78,
      "projected": 196.09,
-     "win_probability": 0.99
+     "win_probability": 1.0
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 143.1,
+     "points": 144.3,
      "projected": 172.8,
-     "win_probability": 0.010000000000000009
+     "win_probability": 0.0
     }
    ]
   },
@@ -82,14 +82,14 @@
      "name": "Austin's Best Team",
      "points": 168.4,
      "projected": 193.82,
-     "win_probability": 0.16999999999999993
+     "win_probability": 0.09999999999999998
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 167.34,
+     "points": 170.08,
      "projected": 185.11,
-     "win_probability": 0.8300000000000001
+     "win_probability": 0.9
     }
    ]
   },
@@ -103,16 +103,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 106.68,
+     "points": 116.44,
      "projected": 145.45,
-     "win_probability": 0.48
+     "win_probability": 0.43999999999999995
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 136.42,
+     "points": 145.62,
      "projected": 182.81,
-     "win_probability": 0.52
+     "win_probability": 0.56
     }
    ]
   }
