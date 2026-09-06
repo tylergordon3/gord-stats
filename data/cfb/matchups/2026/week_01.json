@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-06T21:40:12+00:00",
+ "fetched": "2026-09-06T22:40:11+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 174.44,
      "projected": 179.74,
-     "win_probability": 0.9099999999999999
+     "win_probability": 0.95
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 171.92,
+     "points": 175.22,
      "projected": 183.64,
-     "win_probability": 0.09000000000000008
+     "win_probability": 0.050000000000000044
     }
    ]
   },
@@ -465,11 +465,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 12.82,
+    "points": 16.12,
     "stats": {
-     "4": 108.0,
-     "8": 3.0,
-     "9": 25.0,
+     "4": 153.0,
+     "8": 6.0,
+     "9": 40.0,
      "10": 1.0
     }
    },
@@ -1006,10 +1006,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 3.0,
+    "points": 5.0,
     "stats": {
-     "11": 3.0,
-     "12": 15.0
+     "11": 4.0,
+     "12": 30.0
     }
    },
    {
@@ -1890,10 +1890,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 4.8,
+    "points": 7.6,
     "stats": {
-     "11": 4.0,
-     "12": 28.0
+     "11": 7.0,
+     "12": 41.0
     }
    },
    {
