@@ -81,6 +81,61 @@ table.mu-board td b.lead{color:#1a7f4b}
 @media (max-width:700px){
   .mu-head{grid-template-columns:1fr}.mu-mid{display:none}
   .mu-side.r{flex-direction:row;text-align:left}}
+
+/* ---- paired view: the two rosters as one column, for a phone ----
+   Two six-column tables cannot sit side by side at 390px. They stack, which
+   puts the opponent's quarterback three thousand pixels below yours, and each
+   still scrolls sideways inside its own container. Below 700px the tables are
+   replaced by one row per lineup slot - your player, the slot, theirs - which
+   is the layout every fantasy app settled on, because the question the page
+   answers is who is winning this slot. */
+.mu-pair{display:none}
+@media (max-width:700px){
+  .mu-grid{display:none}
+  .mu-pair{display:block;margin:8px 0 4px}
+}
+.mu-pr{display:grid;grid-template-columns:1fr 40px 1fr;align-items:stretch;
+  gap:0;border-bottom:1px solid #eef2f7}
+.mu-pr.bench{background:#f8fafc}
+.mu-pr.total{background:#eef2f7;font-weight:700;border-bottom:none;margin-top:2px}
+.mu-pp{display:flex;align-items:center;gap:6px;min-width:0;padding:6px 4px}
+/* The right-hand side mirrors so both teams' points meet in the middle,
+   beside the slot, which is what makes the comparison readable at a glance. */
+.mu-pr>.mu-pp:last-child{flex-direction:row-reverse;text-align:right}
+.mu-pp.empty{visibility:hidden}
+.mu-pn{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.mu-pr>.mu-pp:last-child .mu-pn{align-items:flex-end}
+/* The name truncates rather than wrapping: a wrapped name makes rows different
+   heights and the two sides stop lining up, which is the whole point. */
+.mu-pn .nm{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:100%}
+.mu-pn .mu-pm{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:100%}
+.mu-pp .mu-pts{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;
+  flex:none;min-width:38px;text-align:right;color:#0f172a}
+.mu-pr>.mu-pp:last-child .mu-pts{text-align:left}
+.mu-pr.bench .mu-pts{font-weight:600;color:#475569}
+.mu-pslot{display:flex;align-items:center;justify-content:center;font-size:10px;
+  font-weight:700;color:#64748b;background:#f1f5f9;letter-spacing:.02em}
+.mu-pr.bench .mu-pslot{color:#94a3b8}
+.mu-pr.total .mu-pslot{background:transparent}
+/* The site stylesheet frames every img - border, padding, shadow, pale
+   background - which turned each 14px school mark into a boxed thumbnail
+   twice the intended size and ate the width the name needed. The roster table
+   resets the same properties for the same reason. */
+.mu-pair img.mu-logo{width:14px;height:14px;object-fit:contain;margin:0 4px 0 0;
+  border:none;padding:0;box-shadow:none;background:none;border-radius:0;
+  vertical-align:middle}
+.mu-pbench{margin-top:6px}
+.mu-pbench>summary{font-size:12px;font-weight:700;color:#475569;cursor:pointer;
+  padding:5px 4px;list-style:none}
+.mu-pbench>summary::-webkit-details-marker{display:none}
+.mu-pbench>summary::before{content:"▸ ";color:#94a3b8}
+.mu-pbench[open]>summary::before{content:"▾ "}
+.mu-pair .inj{font-size:9px;font-weight:700;color:#b3382c;margin-left:3px}
+.mu-pair .mu-hint{font-size:9px;font-weight:700;margin-left:3px;border-radius:3px;padding:0 3px}
+.mu-pair .mu-hint.in{background:#d5efdd;color:#1a7f4b}
+.mu-pair .mu-hint.out{background:#fde2dd;color:#b3382c}
 table.mu-roster{width:100%;border-collapse:collapse;font-size:13px}
 table.mu-roster th{background:#eef2f7;color:#334155;padding:5px 7px;text-align:center;
   font-size:11px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
@@ -158,6 +213,14 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   .mu-wp{background:#2b3852}
   .mu-note{color:#aab7c9}
   .mu-swap{color:#dde5ef}
+  .mu-pr{border-bottom-color:#2b3852}
+  .mu-pr.bench{background:#1b2540}
+  .mu-pr.total{background:#223052}
+  .mu-pslot{background:#223052;color:#aab7c9}
+  .mu-pn .mu-pm{color:#aab7c9}
+  .mu-pp .mu-pts{color:#ffffff}
+  .mu-pr.bench .mu-pts{color:#aab7c9}
+  .mu-pbench>summary{color:#dde5ef}
 }
 </style>"""
 
@@ -215,7 +278,9 @@ def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str =
 #   { fetch: function -> Promise of { teams: { key: { points, projected,
 #            win_probability, players: { pid: { points, line } } } } },
 #     interval: ms between polls }
-# and marks its markup: tr[data-pid] rows with a .mu-pts cell (and .mu-s for
+# and marks its markup: any element with data-pid holding a .mu-pts cell (a
+# table row in the wide layout, a div in the paired phone one; only rows
+# add to the starters total, or both layouts would count each player) (.mu-s for
 # the stat line) inside [data-roster=key]; [data-num=key][data-mu=anchor] on
 # the header number; [data-sb=key] on scoreboard points; [data-tpts=key] on
 # the starters total; [data-wp=key] / [data-wpl=key] on the win bar; .mu-asof
@@ -233,11 +298,14 @@ LIVE_JS = """<script>
       var roster=document.querySelector('[data-roster="'+key+'"]');
       if(roster&&t.players){
         var total=0;
-        each('[data-roster="'+key+'"] tr[data-pid]',function(tr){
-          var p=t.players[tr.getAttribute('data-pid')];if(!p)return;
-          var c=tr.querySelector('.mu-pts');if(c)c.innerHTML='<b>'+fmt(p.points)+'</b>';
-          if(p.line!==undefined&&p.line!==null){var s=tr.querySelector('.mu-s');if(s)s.textContent=p.line;}
-          if(tr.classList.contains('starter'))total+=(p.points||0);
+        // Not tr[data-pid]: the phone layout renders the same players as
+        // divs, and both views are in the DOM with one hidden by CSS. Only
+        // table rows add to the total, or every starter would count twice.
+        each('[data-roster="'+key+'"] [data-pid], [data-pid][data-roster="'+key+'"]',function(el){
+          var p=t.players[el.getAttribute('data-pid')];if(!p)return;
+          var c=el.querySelector('.mu-pts');if(c)c.innerHTML='<b>'+fmt(p.points)+'</b>';
+          if(p.line!==undefined&&p.line!==null){var s=el.querySelector('.mu-s');if(s)s.textContent=p.line;}
+          if(el.tagName==='TR'&&el.classList.contains('starter'))total+=(p.points||0);
         });
         if(pts===null||pts===undefined)pts=total;
       }

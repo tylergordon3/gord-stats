@@ -246,7 +246,13 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
             "<th>Slot</th><th>Player</th><th>Game</th>"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>{swaps}')
-    return html, proj_total, pts_total
+    # The ordered players travel back with the html so `matchup_section` can
+    # build the paired phone view without redoing the ordering and the best
+    # lineup - both of which have to agree with the table or the two views
+    # would disagree about who is starting.
+    parts = {"starters": starters, "bench": bench, "proj": proj,
+             "hints": hints, "pts": pts_total, "gs": proj_total}
+    return html, proj_total, pts_total, parts
 
 
 # --------------------------------------------------------------------------- #
@@ -263,6 +269,93 @@ def _record(t: dict) -> str:
     return f"{w}-{l}" + (f"-{ti}" if ti else "")
 
 
+def _short_name(name: str) -> str:
+    """"Trinidad Chambliss" -> "T. Chambliss".
+
+    Each side of a paired row gets about 120px for a name at 390px wide, which
+    a full college name does not fit - twenty-nine of thirty-six were clipped
+    mid-word. The initial is what every fantasy app shows for the same reason.
+    The full name stays in the title attribute.
+    """
+    parts = str(name).split()
+    if len(parts) < 2:
+        return str(name)
+    return f"{parts[0][0]}. " + " ".join(parts[1:])
+
+
+def _pair_cell(p: dict | None, key: str, to_school: dict, espn: dict,
+               hint: str = "") -> str:
+    """One team's player in the paired phone view.
+
+    Carries the same data-pid and .mu-pts the live updater looks for, inside a
+    data-roster wrapper, so points tick over here exactly as they do in the
+    wide table.
+    """
+    if p is None:
+        return '<div class="mu-pp empty" aria-hidden="true"></div>'
+    inj = (f'<span class="inj">{escape(p["status"])}</span>' if p.get("status") else "")
+    tag = {"in": '<span class="mu-hint in">start</span>',
+           "out": '<span class="mu-hint out">sit</span>'}.get(hint, "")
+    return (f'<div class="mu-pp" data-roster="{escape(key)}" data-pid="{escape(p["yahoo_id"])}">'
+            f'<div class="mu-pn">'
+            f'<span class="nm" title="{escape(p["player"])}">'
+            f'{_school_logo(p["team_full"], to_school, espn)}'
+            f'{escape(_short_name(p["player"]))}</span>'
+            f'<span class="mu-pm">{escape(p["pos"])} · {escape(p["team"])}{inj}{tag}</span>'
+            f'</div>'
+            f'<span class="mu-pts"><b>{ui.fmt(p.get("points"))}</b></span></div>')
+
+
+def pair_view(a: dict, b: dict, to_school: dict, espn: dict) -> str:
+    """The two rosters as one column of slot-paired rows, for a phone.
+
+    Two tables of six columns each cannot be read side by side at 390px: they
+    stack, so the opponent's quarterback is three thousand pixels below yours,
+    and each table still scrolls sideways inside its own container. This is the
+    layout every fantasy app uses instead - one row per lineup slot, your
+    player on the left, theirs on the right, the slot between them - because it
+    answers the only question the page exists for: who is winning this slot.
+
+    Both sides run the same lineup, so the rows pair by position in the
+    starters list; a side short of players pairs against an empty cell rather
+    than shifting everything below it out of alignment.
+    """
+    ap, bp = a["parts"], b["parts"]
+
+    def rows(a_list, b_list, bench=False) -> str:
+        out = []
+        for i in range(max(len(a_list), len(b_list))):
+            pa = a_list[i] if i < len(a_list) else None
+            pb = b_list[i] if i < len(b_list) else None
+            slot = (pa or pb or {}).get("slot", "")
+            out.append(
+                f'<div class="mu-pr{" bench" if bench else ""}">'
+                + _pair_cell(pa, a["key"], to_school, espn, ap["hints"].get((pa or {}).get("yahoo_id")))
+                + f'<div class="mu-pslot">{escape(slot)}</div>'
+                + _pair_cell(pb, b["key"], to_school, espn, bp["hints"].get((pb or {}).get("yahoo_id")))
+                + "</div>")
+        return "".join(out)
+
+    starters = rows(ap["starters"], bp["starters"])
+    bench = ""
+    if ap["bench"] or bp["bench"]:
+        bench = ('<details class="mu-pbench"><summary>Bench</summary>'
+                 + rows(ap["bench"], bp["bench"], bench=True) + "</details>")
+
+    total = (f'<div class="mu-pr total">'
+             f'<div class="mu-pp"><div class="mu-pn"><span class="nm">Starters</span>'
+             f'<span class="mu-pm">proj {ap["gs"]:.1f}</span></div>'
+             f'<span class="mu-pts" data-tpts="{escape(a["key"])}">{ap["pts"]:.1f}</span></div>'
+             f'<div class="mu-pslot"></div>'
+             f'<div class="mu-pp"><span class="mu-pts" data-tpts="{escape(b["key"])}">'
+             f'{bp["pts"]:.1f}</span>'
+             f'<div class="mu-pn"><span class="nm">Starters</span>'
+             f'<span class="mu-pm">proj {bp["gs"]:.1f}</span></div></div>'
+             f"</div>")
+
+    return f'<div class="mu-pair">{starters}{total}{bench}</div>'
+
+
 def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: dict,
                     espn: dict, teams: dict, anchor: str,
                     by_team: dict = None) -> tuple[str, list[dict]]:
@@ -271,12 +364,13 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     started = m.get("status") != "preevent"
     sides = []
     for t in m["teams"]:
-        html, proj_total, pts_total = roster_table(
+        html, proj_total, pts_total, parts = roster_table(
             data["rosters"].get(t["team_key"], []), lg, wk, to_school, espn, final,
             key=t["team_key"], by_team=by_team)
         sides.append({"team": teams.get(t["team_key"], {"name": t["name"]}),
                       "name": t["name"], "key": t["team_key"], "html": html,
                       "gs": proj_total, "pts": pts_total if started else None,
+                      "parts": parts,
                       "yproj": t.get("projected"), "wp": t.get("win_probability")})
     a, b = sides
     lead = (None if not started or a["pts"] == b["pts"]
@@ -305,7 +399,8 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
             f"GordStats projected {ui.fmt(a['gs'])}–{ui.fmt(b['gs'])} going in.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{wp}<p class="mu-note">{edge}</p>'
-            f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
+            + pair_view(a, b, to_school, espn)
+            + f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
             f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')
     head = (f'{escape(a["name"])} {ui.fmt(a["pts"]) if started else ""} '
             f'<span style="color:#94a3b8">vs</span> '

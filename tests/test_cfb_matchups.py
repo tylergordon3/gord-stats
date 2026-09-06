@@ -149,3 +149,45 @@ def test_game_cell_reads_from_the_players_side(state, score, expect):
 def test_game_cell_says_bye_without_a_game():
     assert "Bye" in matchups.game_cell(None)
     assert "Bye" in matchups.game_cell(pd.Series({"opp": None, "proj_week": 0.0}))
+
+
+# --- the paired phone layout ---------------------------------------------
+#
+# Two six-column rosters cannot sit side by side at 390px: they stacked, which
+# put the opponent's quarterback three thousand pixels below yours, and each
+# table still scrolled sideways inside its own container. Below 700px the
+# tables are replaced by one row per lineup slot.
+
+def test_short_name_keeps_the_surname():
+    from cfb.site.matchups import _short_name
+    assert _short_name("Trinidad Chambliss") == "T. Chambliss"
+    assert _short_name("Marvin Harrison Jr.") == "M. Harrison Jr."
+    # A single-word name (a team defence) must survive unchanged.
+    assert _short_name("BYU") == "BYU"
+
+
+def test_the_paired_view_is_phone_only_and_the_tables_are_not():
+    """Both layouts ship; CSS picks one. Neither may be visible at both sizes."""
+    from gordstats import matchup_page as ui
+    assert ".mu-pair{display:none}" in ui.CSS
+    assert ".mu-grid{display:none}" in ui.CSS
+    assert "@media (max-width:700px)" in ui.CSS
+
+
+def test_the_live_updater_reaches_both_layouts_but_totals_once():
+    """Both views carry the same data-pid, so a total counting every match
+    would double every starter."""
+    from gordstats import matchup_page as ui
+    selector = ui.LIVE_JS.split("each('[data-roster=")[1].split("',function")[0]
+    assert "tr[data-pid]" not in selector, "selector still misses the paired rows"
+    assert "[data-pid]" in selector
+    assert "el.tagName==='TR'" in ui.LIVE_JS, "totals are not restricted to the table"
+
+
+def test_paired_logos_reset_the_global_image_framing():
+    """custom.css frames every img; unreset, a 14px mark renders as a boxed
+    thumbnail twice the size and eats the width the name needs."""
+    from gordstats import matchup_page as ui
+    rule = ui.CSS.split(".mu-pair img.mu-logo{")[1].split("}")[0]
+    for prop in ("border:none", "padding:0", "box-shadow:none", "background:none"):
+        assert prop in rule, f"paired logo does not reset {prop}"
