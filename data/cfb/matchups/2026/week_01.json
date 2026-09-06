@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-06T17:01:00+00:00",
+ "fetched": "2026-09-06T19:30:12+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -1581,9 +1581,9 @@
     "team": "CLEM",
     "team_full": "Clemson Tigers",
     "bye": 6.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 5.1,
     "stats": {
