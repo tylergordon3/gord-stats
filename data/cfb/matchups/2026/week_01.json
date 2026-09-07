@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-07T17:46:57+00:00",
+ "fetched": "2026-09-07T21:35:09+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -980,9 +980,9 @@
     "team": "WAKE",
     "team_full": "Wake Forest Demon Deacons",
     "bye": 8.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Chest",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 25.0,
     "stats": {
