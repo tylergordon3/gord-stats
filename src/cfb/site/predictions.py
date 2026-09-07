@@ -545,7 +545,7 @@ def _record_band(frame: pd.DataFrame) -> str:
                           "games")]
     if stat["ou_all_games"]:
         cells.append(_record_cell("Over/under called right", stat["ou_all_wins"],
-                                  stat["ou_all_games"], "games the book priced"))
+                                  stat["ou_all_games"], "games we called"))
     return ("<p class='pred-note'>Every prediction below is archived before "
             "kickoff and scored against the result. Here is how that has gone "
             f"across {stat['games']} finished game"
@@ -638,8 +638,10 @@ def _results_section(frame: pd.DataFrame) -> str:
             f"or no: <strong>Call</strong> under Margin is whether the pick got "
             f"the winner right, and <strong>Call</strong> under Total is whether "
             f"our number landed on the same side of the book's as the game did. "
-            f"<strong>Our O/U</strong> shows which side that was. A dash means "
-            f"the game had no book total to be called against."
+            f"<strong>Our O/U</strong> shows which side that was. A dash means no "
+            f"call was made: either the book never posted a total, or our "
+            f"number was inside half a point of theirs, which the schedule "
+            f"page reports as agreeing with the book rather than as a pick."
             f"{ou_note}</p>"
             + blocks
             + "<h3 class='pred-sub'>How close it was</h3>"

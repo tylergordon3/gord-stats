@@ -384,12 +384,16 @@ it is the pick (favourite, projected total, and that team's win chance); <b>DK</
 DraftKings spread, total and moneylines as ESPN carries them, captured before kickoff and
 frozen; <b>FPI</b> is ESPN's Football Power Index favourite and win chance; <b>SP+</b> is
 Bill Connelly's ratings read as a spread with home field added. Under the table is the
-call: <b>ATS</b> names the side the model would take against the DraftKings number and by
-how many points the two disagree (three or more is a strong lean and gets the <i>Strong
-leans</i> filter), then Over or Under the posted total. When the model and the book are
-within half a point it says so. A finished game shows what was on record before kickoff,
-never a refit, with &#10003; or &#10007; on each call. The model has no edge on the book
-historically: read the leans as where it disagrees, not as tips.</li>
+call, in one line: the score the model expects, then the DraftKings spread and total it
+would take &mdash; <i>GordStats projects 19&ndash;34, recommend M-OH +16.5 and Under
+47.5</i>. Hover either number for how far the model and the book are apart; three points
+or more is a strong lean and gets the <i>Strong leans</i> filter. Within half a point it
+says the model agrees with the book, and names nothing. A finished game shows what was on
+record before kickoff, never a refit, with &#10003; or &#10007; on each. Read these as
+where the model disagrees with the book rather than as tips: on the games scored so far it
+is <b>under break-even</b> against the spread, which the
+<a href="/cfb/predictions/#how-it-has-gone">predictions page</a> keeps an honest count
+of.</li>
 <li><b>Under each team</b> &mdash; GordStats rating (points better than an average
 FBS team), FPI and SP+ rank (hover for the rating, and SP+ offence and defence ranks), and
 the last five results as W/L chips with the score on hover.</li>
@@ -502,7 +506,12 @@ def _model_lines(sched: pd.DataFrame) -> pd.DataFrame:
             "game_id": finished["game_id"].astype(str),
             "gs_margin": finished["pred_margin"], "gs_total": finished["pred_total"],
             "gs_wp": finished["home_win_prob"],
-            "gs_home": np.nan, "gs_away": np.nan}))
+            # The archive stores the margin and the total, not the two scores,
+            # but those determine them exactly: home = (total + margin) / 2.
+            # Derived rather than left NaN so a finished game can still say
+            # what the model projected, which is the whole claim being scored.
+            "gs_home": (finished["pred_total"] + finished["pred_margin"]) / 2,
+            "gs_away": (finished["pred_total"] - finished["pred_margin"]) / 2}))
     if not frames:
         return pd.DataFrame(columns=cols)
     out = pd.concat(frames, ignore_index=True)
@@ -812,7 +821,16 @@ def _lines_cell(g, home_won, sp_margin) -> str:
     table = ('<table class="lnt"><tr><th></th><th>Spread</th><th>O/U</th><th>Win</th></tr>'
              + "".join(rows) + "</table>")
 
-    calls = []
+    # One sentence: the score the model expects, then the two DraftKings numbers
+    # it would take. The previous version led with "ATS EMU -1.5 by 0.9 · Over
+    # 47.5 by 5.1 · proj 19-34", which put the jargon first, the projection
+    # last, and asked the reader to work out what to do with any of it. The
+    # margin of disagreement is still there, in the title, because it is the
+    # thing that separates a lean worth noticing from a rounding difference.
+    done = g.state == "post"
+    recs = []
+    agrees = False
+
     if margin is not None and dk_spread is not None:
         gap = margin - (-dk_spread)            # > 0: the model likes the home side vs the number
         if abs(gap) >= 0.5:
@@ -823,21 +841,36 @@ def _lines_cell(g, home_won, sp_margin) -> str:
             if final_margin is not None:
                 cover = (final_margin + dk_spread) * (1 if lean_home else -1)
                 mark = _tick(None if cover == 0 else cover > 0)
-            calls.append(f'<span class="{"strong" if abs(gap) >= 3 else ""}">ATS '
-                         f"<b>{escape(str(abbr))} {number:+g}</b>"
-                         f'<span class="mv">by {abs(gap):.1f}</span>{mark}</span>')
+            recs.append(f'<b class="{"strong" if abs(gap) >= 3 else ""}" '
+                        f'title="The model and the book differ by {abs(gap):.1f} points">'
+                        f"{escape(str(abbr))} {number:+g}</b>{mark}")
         else:
-            calls.append('<span class="mv">ATS: agrees with the book</span>')
+            agrees = True
+
     if gs_total is not None and dk_total is not None and abs(gs_total - dk_total) >= 0.5:
         over = gs_total > dk_total
         mark = ""
         if final_total is not None:
             mark = _tick(None if final_total == dk_total else (final_total > dk_total) == over)
-        calls.append(f"<b>{'Over' if over else 'Under'} {dk_total:g}</b>"
-                     f'<span class="mv">by {abs(gs_total - dk_total):.1f}</span>{mark}')
-    if g.state != "post" and _v(g.gs_home) is not None:
-        calls.append(f'<span class="mv">proj {g.gs_away:.0f}&ndash;{g.gs_home:.0f}</span>')
-    call = f'<div class="call">{" &middot; ".join(calls)}</div>' if calls else ""
+        recs.append(f'<b title="The model and the book differ by '
+                    f'{abs(gs_total - dk_total):.1f} points">'
+                    f"{'Over' if over else 'Under'} {dk_total:g}</b>{mark}")
+
+    projects = ""
+    if _v(g.gs_home) is not None:
+        projects = (f"GordStats projected" if done else "GordStats projects") + \
+                   f" <b>{g.gs_away:.0f}&ndash;{g.gs_home:.0f}</b>"
+
+    if recs:
+        verb = "recommended" if done else "recommend"
+        tail = f"{verb} " + " and ".join(recs)
+        sentence = f"{projects}, {tail}" if projects else tail[0].upper() + tail[1:]
+    elif projects:
+        sentence = projects + ('<span class="mv"> &middot; agrees with the book</span>'
+                               if agrees else "")
+    else:
+        sentence = ""
+    call = f'<div class="call">{sentence}</div>' if sentence else ""
     return f'<td class="ln d" data-l="Lines" data-s="Lines"><div class="c">{table}{call}</div></td>'
 
 

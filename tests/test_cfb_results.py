@@ -256,3 +256,24 @@ def test_the_gated_record_survives_in_the_analysis_tiles():
     assert '_rate_tile("Over/under", stat["ou_wins"], stat["ou_games"]' in section
     # ...and below the log, not above it.
     assert section.index("+ blocks") < section.index("+ tile_html")
+
+
+def test_agreeing_with_the_book_is_not_a_call(tmp_path, monkeypatch):
+    """The schedule page shows no recommendation inside half a point, so the
+    record must not score a pick the reader was never offered."""
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", pred_total=45.3,
+                      market_total=45.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, total=60.0)
+    frame = results.scored(2026)
+    assert np.isnan(frame["ou_called"].iloc[0])
+    assert results.summary(frame)["ou_all_games"] == 0
+
+
+def test_a_game_the_model_never_priced_is_not_a_loss(tmp_path, monkeypatch):
+    """NaN compares false, so without an explicit guard this scored as wrong."""
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", pred_total=float("nan"),
+                      market_total=45.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, total=60.0)
+    frame = results.scored(2026)
+    assert np.isnan(frame["ou_called"].iloc[0])
+    assert results.summary(frame)["ou_all_games"] == 0

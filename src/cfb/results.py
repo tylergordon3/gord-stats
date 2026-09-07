@@ -29,6 +29,16 @@ from cfb.config import DATA_DIR, SEASON
 
 PRED_DIR = DATA_DIR / "predictions"
 
+# The smallest disagreement that counts as a call. The schedule page shows a
+# recommendation only once the model and the book differ by this much - below
+# it the page says the model agrees with the book and names no side - so a
+# record that counted those games would be scoring picks nobody was offered.
+CALL_MIN = 0.5
+
+# The disagreement worth treating as a bet, for the gated records. Agreeing
+# with the book to within a field goal is not an edge worth pricing.
+BET_MIN = 3
+
 _COLS = ["captured", "season", "week", "game_id", "kickoff", "home_id", "away_id",
          "home", "away", "neutral", "pred_margin", "pred_total",
          "home_win_prob", "market_spread", "market_total"]
@@ -176,12 +186,14 @@ def scored(season: int = SEASON) -> pd.DataFrame:
     #
     # A game landing exactly on the number is out of both: that is a push, and
     # scoring it as a loss would understate the model.
-    frame["ou_called"] = np.where(
-        frame["market_total"].isna() | (ou_result == 0),
-        np.nan, (ou_edge > 0) == (ou_result > 0))
+    # `pred_total` in the isna() check is not belt and braces: without it a game
+    # the model never priced compares NaN, which is false, and lands in the
+    # record as a loss rather than staying out of it.
+    no_call = (frame["market_total"].isna() | frame["pred_total"].isna()
+               | (ou_result == 0) | (ou_edge.abs() < CALL_MIN))
+    frame["ou_called"] = np.where(no_call, np.nan, (ou_edge > 0) == (ou_result > 0))
     frame["ou_correct"] = np.where(
-        frame["market_total"].isna() | (ou_result == 0) | (ou_edge.abs() < 3),
-        np.nan, (ou_edge > 0) == (ou_result > 0))
+        no_call | (ou_edge.abs() < BET_MIN), np.nan, (ou_edge > 0) == (ou_result > 0))
     frame["market_total_error"] = frame["market_total"] - frame["actual_total"]
     return frame.sort_values("kickoff").reset_index(drop=True)
 
