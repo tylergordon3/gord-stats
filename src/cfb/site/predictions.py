@@ -519,25 +519,31 @@ def _record_band(frame: pd.DataFrame) -> str:
     """Right or wrong, at the top of the page.
 
     Everything else here measures how far off the model was, which is the
-    interesting question only once you already trust it. These two are the ones
-    that need no conversion -- the winner was called or it was not -- and they
-    were four screens down under a heading most readers never reached.
+    interesting question only once you already trust it. These two need no
+    conversion: the winner was called or it was not, and the total went over
+    the book's number or it did not.
+
+    The over/under figure here is deliberately the ungated one - every game the
+    book priced, however small our disagreement. The three-point version is a
+    claim about bets worth placing and belongs with the rest of the analysis
+    further down; up here the question is only whether we were right.
     """
     if frame.empty:
         return ""
     stat = results.summary(frame)
     cells = [_record_cell("Winners called right", stat["correct"], stat["games"],
                           "games")]
-    if stat["ou_games"]:
-        cells.append(_record_cell("Over/under called right", stat["ou_wins"],
-                                  stat["ou_games"], "where we differed by 3+"))
+    if stat["ou_all_games"]:
+        cells.append(_record_cell("Over/under called right", stat["ou_all_wins"],
+                                  stat["ou_all_games"], "games the book priced"))
     return ("<p class='pred-note'>Every prediction below is archived before "
             "kickoff and scored against the result. Here is how that has gone "
             f"across {stat['games']} finished game"
             f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}.</p>"
             "<div class='pred-record'>" + "".join(cells) + "</div>"
-            "<p class='pred-note rec-more'><a href='#how-it-has-gone'>The spread "
-            "record, the average miss and every game week by week &rarr;</a></p>")
+            "<p class='pred-note rec-more'><a href='#how-it-has-gone'>How close the "
+            "scores were, the spread and total records against the book, and every "
+            "game week by week &rarr;</a></p>")
 
 
 def _results_section(frame: pd.DataFrame) -> str:

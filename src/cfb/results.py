@@ -163,6 +163,22 @@ def scored(season: int = SEASON) -> pd.DataFrame:
     frame["ou_edge"] = ou_edge
     frame["ou_pick"] = np.where(frame["market_total"].isna(), None,
                                 np.where(ou_edge > 0, "over", "under"))
+    # Two records, and they answer different questions.
+    #
+    # `ou_called` is the plain one: on every game where the book put up a
+    # number, did our total land on the same side of it as the game did. No
+    # threshold - a lean of a tenth of a point is still a lean, and the headline
+    # figure should not quietly drop the games where we barely disagreed.
+    #
+    # `ou_correct` keeps the three-point gate, because a record you could have
+    # bet is a different claim from a record you merely called, and agreeing
+    # with the book to within a field goal is not a disagreement worth pricing.
+    #
+    # A game landing exactly on the number is out of both: that is a push, and
+    # scoring it as a loss would understate the model.
+    frame["ou_called"] = np.where(
+        frame["market_total"].isna() | (ou_result == 0),
+        np.nan, (ou_edge > 0) == (ou_result > 0))
     frame["ou_correct"] = np.where(
         frame["market_total"].isna() | (ou_result == 0) | (ou_edge.abs() < 3),
         np.nan, (ou_edge > 0) == (ou_result > 0))
@@ -178,6 +194,7 @@ def summary(frame: pd.DataFrame) -> dict:
     totals_priced = frame.dropna(subset=["market_total"])
     ats = frame["beat_the_book"].dropna()
     ou = frame["ou_correct"].dropna()
+    ou_all = frame["ou_called"].dropna()
     return {
         "games": len(frame),
         "correct": int(frame["correct"].sum()),
@@ -193,6 +210,8 @@ def summary(frame: pd.DataFrame) -> dict:
         # book's number, and how the two sides compare on raw error.
         "ou_games": int(len(ou)),
         "ou_wins": int(ou.sum()) if len(ou) else 0,
+        "ou_all_games": int(len(ou_all)),
+        "ou_all_wins": int(ou_all.sum()) if len(ou_all) else 0,
         "market_total_mae": (float(totals_priced["market_total_error"].abs().mean())
                              if len(totals_priced) else None),
         "totals_priced": int(len(totals_priced)),
@@ -228,6 +247,9 @@ if __name__ == "__main__":
         print(f"  (the book {result['market_total_mae']:.2f}"
               f" on {result['totals_priced']})", end="")
     print()
+    if result["ou_all_games"]:
+        print(f"  over/under called: {result['ou_all_wins']}/{result['ou_all_games']}"
+              f" ({result['ou_all_wins'] / result['ou_all_games']:.0%})")
     if result["ou_games"]:
         print(f"  over/under where we differed by 3+: "
               f"{result['ou_wins']}/{result['ou_games']}")

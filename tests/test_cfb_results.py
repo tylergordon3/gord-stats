@@ -188,3 +188,40 @@ def test_the_book_total_error_is_measured_on_priced_games_only(tmp_path, monkeyp
     stat = results.summary(results.scored(2026))
     assert stat["market_total_mae"] == pytest.approx(4.0)
     assert stat["totals_priced"] == 1
+
+
+def test_the_plain_over_under_record_counts_every_priced_game(tmp_path, monkeypatch):
+    """The headline figure has no threshold.
+
+    A one-tenth-of-a-point lean is still a lean, and dropping the games where
+    we barely disagreed would quietly flatter the number at the top of the
+    page. The three-point gate belongs to `ou_correct`, which is a claim about
+    bets worth placing, not about being right.
+    """
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", pred_total=45.5,
+                      market_total=45.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, total=60.0)
+    frame = results.scored(2026)
+    assert bool(frame["ou_called"].iloc[0]) is True     # counted
+    assert np.isnan(frame["ou_correct"].iloc[0])        # too small to be a bet
+    stat = results.summary(frame)
+    assert (stat["ou_all_games"], stat["ou_all_wins"]) == (1, 1)
+    assert stat["ou_games"] == 0
+
+
+def test_a_push_is_out_of_the_plain_record_too(tmp_path, monkeypatch):
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", market_total=45.0)],
+             tmp_path, monkeypatch)
+    _finals(monkeypatch, total=45.0)
+    stat = results.summary(results.scored(2026))
+    assert stat["ou_all_games"] == 0
+
+
+def test_calling_under_and_getting_it_right_counts(tmp_path, monkeypatch):
+    """Both directions score; the record is not "did we say over"."""
+    _archive([_ou_row("2026-09-04T12:00:00+00:00", pred_total=40.0,
+                      market_total=45.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, total=30.0)
+    frame = results.scored(2026)
+    assert frame["ou_pick"].iloc[0] == "under"
+    assert bool(frame["ou_called"].iloc[0]) is True
