@@ -858,8 +858,12 @@ def _lines_cell(g, home_won, sp_margin) -> str:
 
     projects = ""
     if _v(g.gs_home) is not None:
+        # Named, not just "28-25": the row above lists the teams away-then-home
+        # and so does this, but a bare pair of numbers still made the reader
+        # check which way round it went before it meant anything.
         projects = (f"GordStats projected" if done else "GordStats projects") + \
-                   f" <b>{g.gs_away:.0f}&ndash;{g.gs_home:.0f}</b>"
+                   f" <b>{escape(str(g.away_abbr))} {g.gs_away:.0f}" \
+                   f"&ndash;{escape(str(g.home_abbr))} {g.gs_home:.0f}</b>"
 
     if recs:
         verb = "recommended" if done else "recommend"
