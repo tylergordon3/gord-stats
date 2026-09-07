@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-07T09:44:13+00:00",
+ "fetched": "2026-09-07T15:33:11+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -2386,9 +2386,9 @@
     "team": "MISS",
     "team_full": "Ole Miss Rebels",
     "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Leg",
     "slot": "RB",
     "points": 16.0,
     "stats": {
