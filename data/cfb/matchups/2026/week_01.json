@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-07T03:38:13+00:00",
+ "fetched": "2026-09-07T04:08:02+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 244.28,
      "projected": 179.74,
-     "win_probability": 0.99
+     "win_probability": 1.0
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 187.92,
      "projected": 183.64,
-     "win_probability": 0.010000000000000009
+     "win_probability": 0.0
     }
    ]
   },
@@ -39,7 +39,7 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 206.38,
+     "points": 206.28,
      "projected": 184.19,
      "win_probability": 0.01
     },
@@ -87,14 +87,14 @@
      "name": "Austin's Best Team",
      "points": 168.4,
      "projected": 193.82,
-     "win_probability": 0.01
+     "win_probability": 0.0
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 186.08,
      "projected": 185.11,
-     "win_probability": 0.99
+     "win_probability": 1.0
     }
    ]
   },
@@ -842,12 +842,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 8.4,
+    "points": 8.3,
     "stats": {
      "8": 16.0,
      "9": 36.0,
      "11": 3.0,
-     "12": 33.0
+     "12": 32.0
     }
    },
    {
