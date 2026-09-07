@@ -42,6 +42,10 @@ GRIDLINE = palette.GRIDLINE
 
 _CSS = ("""<style>
 .pred-note{color:#475569;font-size:14px;line-height:1.55}
+/* The analysis heading under the game log. Quieter than the section's own h2:
+   it opens a subsection, not a new part of the page. */
+h3.pred-sub{font-size:17px;margin:26px 0 4px;padding-top:16px;
+  border-top:1px solid #e2e8f0}
 .pred-scroll{overflow-x:auto}
 /* A pick that was never live - no book total on record - reads as absent
    rather than as a loss. */
@@ -168,6 +172,7 @@ table.cfb-pred .col-sep{border-left:2px solid #cbd5e1}
 table.cfb-pred td.pred-match .pm-final{display:block;font-size:12px;font-weight:600;
   color:#64748b;font-variant-numeric:tabular-nums;margin-top:1px}
 @media (prefers-color-scheme: dark){
+h3.pred-sub{border-top-color:#2b3852}
   .pred-note{color:#aab7c9}
   table.cfb-pred th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.cfb-pred td{background:#16203a;border-color:#2b3852;color:#dde5ef}
@@ -461,7 +466,12 @@ def _result_rows(frame: pd.DataFrame) -> str:
             + f"<td class='col-sep'>{g['pred_total']:.0f}</td>"
             f"<td>{g['actual_total']:.0f}</td>"
             f"<td class='pred-ou'>{ou_said}</td>"
-            + _mark(g["ou_correct"]) + "</tr>")
+            # The plain call, not the three-point-gated one. Gated, forty-one
+            # of seventy-one priced games showed an em dash - including games
+            # we called correctly - so the ticks could not be added up to the
+            # percentage at the top of the page, which is what a game log is
+            # for. The gated record keeps its own tile below.
+            + _mark(g["ou_called"]) + "</tr>")
     return ("<div class='pred-scroll'><table class='cfb-pred'><thead>"
             "<tr><th rowspan='2'>Game</th><th class='grp' colspan='4'>Margin</th>"
             "<th class='grp col-sep' colspan='4'>Total</th></tr>"
@@ -485,10 +495,10 @@ def _week_block(frame: pd.DataFrame, label: str, is_open: bool) -> str:
         chips.append(f"<span class='pw-chip'><b>"
                      f"{stat['ats_wins'] / stat['ats_games']:.0%}</b> ATS "
                      f"({stat['ats_wins']}/{stat['ats_games']})</span>")
-    if stat["ou_games"]:
+    if stat["ou_all_games"]:
         chips.append(f"<span class='pw-chip'><b>"
-                     f"{stat['ou_wins'] / stat['ou_games']:.0%}</b> O/U "
-                     f"({stat['ou_wins']}/{stat['ou_games']})</span>")
+                     f"{stat['ou_all_wins'] / stat['ou_all_games']:.0%}</b> O/U "
+                     f"({stat['ou_all_wins']}/{stat['ou_all_games']})</span>")
     # Newest first inside the week, matching the order of the weeks themselves.
     ordered = frame.sort_values("kickoff", ascending=False)
     return (f"<details class='pred-week'{' open' if is_open else ''}>"
@@ -615,21 +625,29 @@ def _results_section(frame: pd.DataFrame) -> str:
                    "spread is, and that archive only begins now, so there is "
                    "nothing to score it against on games already played.")
 
-    return ("<h2 id='how-it-has-gone'>How it has gone</h2>"
-            f"<p class='pred-note'>Scored on the "
-            f"{stat['games']} game{'s' if stat['games'] != 1 else ''} that have "
-            f"finished since the archive started, using the last prediction made "
-            f"before each kickoff. Average miss on the final margin is "
-            f"<strong>{ours:.1f} points</strong>. In the <strong>Call</strong> "
-            f"column, &#10003; means the pick got the winner right and "
-            f"&#10007; means it did not. <strong>Total</strong> is the same "
-            f"exercise on the points in the game, and <strong>Our O/U</strong> is "
-            f"the side our number took against the book's."
-            f"{verdict}{ats}{ou_note}</p>"
-            + tile_html
-            + "<p class='pred-note'>Every game scored so far, newest week first. "
-            "Open a week for the game-by-game log.</p>"
-            + blocks)
+    # Order matters here: the game log first, then the analysis. The two
+    # percentages at the top of the page are claims, and the log is the working
+    # behind them - every tick and cross in it adds up to one of the two. The
+    # tiles that follow ask a different and softer question, how close the
+    # numbers were, which is only worth reading once the record is in view.
+    return ("<h2 id='how-it-has-gone'>Every game, called</h2>"
+            f"<p class='pred-note'>All {stat['games']} game"
+            f"{'s' if stat['games'] != 1 else ''} scored since the archive "
+            f"started, newest week first, using the last prediction on record "
+            f"before each kickoff. Two calls per game, each of them a plain yes "
+            f"or no: <strong>Call</strong> under Margin is whether the pick got "
+            f"the winner right, and <strong>Call</strong> under Total is whether "
+            f"our number landed on the same side of the book's as the game did. "
+            f"<strong>Our O/U</strong> shows which side that was. A dash means "
+            f"the game had no book total to be called against."
+            f"{ou_note}</p>"
+            + blocks
+            + "<h3 class='pred-sub'>How close it was</h3>"
+            f"<p class='pred-note'>The record above says whether we were right. "
+            f"These say by how much, and how that compares with the book on the "
+            f"same games. Average miss on the final margin is "
+            f"<strong>{ours:.1f} points</strong>.{verdict}{ats}</p>"
+            + tile_html)
 
 
 def _agreement_chart(games: pd.DataFrame) -> str:

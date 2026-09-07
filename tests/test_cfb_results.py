@@ -225,3 +225,34 @@ def test_calling_under_and_getting_it_right_counts(tmp_path, monkeypatch):
     frame = results.scored(2026)
     assert frame["ou_pick"].iloc[0] == "under"
     assert bool(frame["ou_called"].iloc[0]) is True
+
+
+def test_the_game_log_can_be_added_up_to_the_headline():
+    """The log is the working behind the two percentages at the top.
+
+    While the per-game column used the three-point-gated call, forty-one of
+    seventy-one priced games showed an em dash - eighteen of them games we
+    called correctly - so the ticks could not be summed to the number above
+    them. The column, the week chips and the headline all read ou_called now.
+    """
+    from conftest import ROOT
+    src = (ROOT / "src" / "cfb" / "site" / "predictions.py").read_text()
+    rows = src.split("def _result_rows")[1].split("def ")[0]
+    assert '_mark(g["ou_called"])' in rows
+    assert '_mark(g["ou_correct"])' not in rows
+
+    block = src.split("def _week_block")[1].split("def ")[0]
+    assert "ou_all_games" in block and "ou_all_wins" in block
+
+    band = src.split("def _record_band")[1].split("def ")[0]
+    assert "ou_all_wins" in band
+
+
+def test_the_gated_record_survives_in_the_analysis_tiles():
+    """It answers a different question and should not simply disappear."""
+    from conftest import ROOT
+    src = (ROOT / "src" / "cfb" / "site" / "predictions.py").read_text()
+    section = src.split("def _results_section")[1].split("def ")[0]
+    assert '_rate_tile("Over/under", stat["ou_wins"], stat["ou_games"]' in section
+    # ...and below the log, not above it.
+    assert section.index("+ blocks") < section.index("+ tile_html")
