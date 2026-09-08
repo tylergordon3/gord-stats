@@ -34,7 +34,7 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 205.28,
+     "points": 223.48,
      "projected": 184.19,
      "win_probability": 0.01
     },
@@ -103,16 +103,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 161.34,
+     "points": 169.24,
      "projected": 145.45,
-     "win_probability": 0.8400000000000001
+     "win_probability": 0.99
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 142.62,
+     "points": 146.12,
      "projected": 182.81,
-     "win_probability": 0.15999999999999992
+     "win_probability": 0.010000000000000009
     }
    ]
   }
