@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-08T09:38:16+00:00",
+ "fetched": "2026-09-08T15:45:12+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -17,7 +17,7 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 201.22,
+     "projected": 201.3,
      "win_probability": 0.74
     },
     {
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 192.95,
-     "win_probability": 0.65
+     "projected": 215.24,
+     "win_probability": 0.75
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 168.7,
-     "win_probability": 0.35
+     "projected": 170.66,
+     "win_probability": 0.25
     }
    ]
   },
@@ -70,7 +70,7 @@
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 165.67,
+     "projected": 165.7,
      "win_probability": 0.71
     }
    ]
@@ -86,15 +86,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 181.87,
-     "win_probability": 0.66
+     "projected": 187.85,
+     "win_probability": 0.7
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 156.75,
-     "win_probability": 0.33999999999999997
+     "win_probability": 0.30000000000000004
     }
    ]
   },
@@ -109,14 +109,14 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 177.36,
+     "projected": 177.4,
      "win_probability": 0.55
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 170.82,
+     "projected": 170.85,
      "win_probability": 0.44999999999999996
     }
    ]
@@ -619,12 +619,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "405249",
-    "player": "Marcel Reed",
+    "yahoo_id": "334043",
+    "player": "Gunner Stockton",
     "pos": "QB",
-    "team": "TAMU",
-    "team_full": "Texas A&M Aggies",
-    "bye": 9.0,
+    "team": "UGA",
+    "team_full": "Georgia Bulldogs",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -689,12 +689,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "335616",
-    "player": "Cooper Barkate",
+    "yahoo_id": "405846",
+    "player": "Carlos Hernandez",
     "pos": "WR",
-    "team": "MIA",
-    "team_full": "Miami (FL) Hurricanes",
-    "bye": 6.0,
+    "team": "WAKE",
+    "team_full": "Wake Forest Demon Deacons",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -713,20 +713,6 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "471560",
-    "player": "Ousmane Kromah",
-    "pos": "RB",
-    "team": "FSU",
-    "team_full": "Florida State Seminoles",
-    "bye": 2.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
    },
@@ -754,17 +740,45 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "405249",
+    "player": "Marcel Reed",
+    "pos": "QB",
+    "team": "TAMU",
+    "team_full": "Texas A&M Aggies",
+    "bye": 9.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
    {
-    "yahoo_id": "405846",
-    "player": "Carlos Hernandez",
+    "yahoo_id": "471560",
+    "player": "Ousmane Kromah",
+    "pos": "RB",
+    "team": "FSU",
+    "team_full": "Florida State Seminoles",
+    "bye": 2.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "335616",
+    "player": "Cooper Barkate",
     "pos": "WR",
-    "team": "WAKE",
-    "team_full": "Wake Forest Demon Deacons",
-    "bye": 8.0,
+    "team": "MIA",
+    "team_full": "Miami (FL) Hurricanes",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -779,20 +793,6 @@
     "team": "BAY",
     "team_full": "Baylor Bears",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "334043",
-    "player": "Gunner Stockton",
-    "pos": "QB",
-    "team": "UGA",
-    "team_full": "Georgia Bulldogs",
-    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1579,12 +1579,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468769",
-    "player": "Bear Bachmeier",
+    "yahoo_id": "484035",
+    "player": "Faizon Brandon",
     "pos": "QB",
-    "team": "BYU",
-    "team_full": "BYU Cougars",
-    "bye": 4.0,
+    "team": "TENN",
+    "team_full": "Tennessee Volunteers",
+    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1635,20 +1635,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457622",
-    "player": "Bryant Wesco Jr.",
-    "pos": "WR",
-    "team": "CLEM",
-    "team_full": "Clemson Tigers",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "WR",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "404730",
     "player": "Reed Harris",
     "pos": "WR",
@@ -1663,12 +1649,26 @@
     "stats": {}
    },
    {
-    "yahoo_id": "334780",
-    "player": "Terrance Carter Jr.",
+    "yahoo_id": "482179",
+    "player": "Trent Mosley",
+    "pos": "WR",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "WR",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "336557",
+    "player": "Garrett Oakley",
     "pos": "TE",
-    "team": "TTU",
-    "team_full": "Texas Tech Red Raiders",
-    "bye": 6.0,
+    "team": "KSU",
+    "team_full": "Kansas State Wildcats",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1705,12 +1705,40 @@
     "stats": {}
    },
    {
-    "yahoo_id": "482179",
-    "player": "Trent Mosley",
+    "yahoo_id": "334780",
+    "player": "Terrance Carter Jr.",
+    "pos": "TE",
+    "team": "TTU",
+    "team_full": "Texas Tech Red Raiders",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457622",
+    "player": "Bryant Wesco Jr.",
     "pos": "WR",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
+    "team": "CLEM",
+    "team_full": "Clemson Tigers",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "468769",
+    "player": "Bear Bachmeier",
+    "pos": "QB",
+    "team": "BYU",
+    "team_full": "BYU Cougars",
+    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1753,34 +1781,6 @@
     "team": "CAL",
     "team_full": "California Golden Bears",
     "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "336557",
-    "player": "Garrett Oakley",
-    "pos": "TE",
-    "team": "KSU",
-    "team_full": "Kansas State Wildcats",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "484035",
-    "player": "Faizon Brandon",
-    "pos": "QB",
-    "team": "TENN",
-    "team_full": "Tennessee Volunteers",
-    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
