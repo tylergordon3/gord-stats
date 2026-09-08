@@ -12,15 +12,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 201.3,
-     "win_probability": 0.74
+     "projected": 200.44,
+     "win_probability": 0.73
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 161.66,
-     "win_probability": 0.26
+     "projected": 161.61,
+     "win_probability": 0.27
     }
    ]
   },
@@ -35,15 +35,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 215.24,
-     "win_probability": 0.75
+     "projected": 214.69,
+     "win_probability": 0.76
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 170.66,
-     "win_probability": 0.25
+     "projected": 169.61,
+     "win_probability": 0.24
     }
    ]
   },
@@ -58,15 +58,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 136.7,
-     "win_probability": 0.29000000000000004
+     "projected": 176.36,
+     "win_probability": 0.45999999999999996
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 165.7,
-     "win_probability": 0.71
+     "projected": 182.14,
+     "win_probability": 0.54
     }
    ]
   },
@@ -81,15 +81,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 187.85,
-     "win_probability": 0.7
+     "projected": 185.37,
+     "win_probability": 0.69
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 156.75,
-     "win_probability": 0.30000000000000004
+     "projected": 156.16,
+     "win_probability": 0.31000000000000005
     }
    ]
   },
@@ -104,15 +104,15 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 177.4,
-     "win_probability": 0.55
+     "projected": 180.29,
+     "win_probability": 0.5700000000000001
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 170.85,
-     "win_probability": 0.44999999999999996
+     "projected": 170.49,
+     "win_probability": 0.42999999999999994
     }
    ]
   }
