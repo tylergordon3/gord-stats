@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-08T02:20:12+00:00",
+ "fetched": "2026-09-08T03:30:11+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -39,7 +39,7 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 211.78,
+     "points": 223.48,
      "projected": 184.19,
      "win_probability": 0.01
     },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 162.04,
+     "points": 169.24,
      "projected": 145.45,
-     "win_probability": 0.89
+     "win_probability": 0.99
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 144.62,
+     "points": 146.12,
      "projected": 182.81,
-     "win_probability": 0.10999999999999999
+     "win_probability": 0.010000000000000009
     }
    ]
   }
@@ -930,10 +930,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 6.5,
+    "points": 18.2,
     "stats": {
-     "8": 6.0,
-     "9": 51.0,
+     "8": 18.0,
+     "9": 108.0,
+     "10": 1.0,
      "11": 1.0,
      "12": 9.0
     }
@@ -2588,10 +2589,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 3.3,
+    "points": 4.1,
     "stats": {
-     "11": 3.0,
-     "12": 18.0
+     "11": 5.0,
+     "12": 36.0,
+     "18": 1.0
     }
    },
    {
@@ -2833,10 +2835,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.7,
+    "points": 7.9,
     "stats": {
-     "8": 2.0,
-     "9": 7.0
+     "8": 7.0,
+     "9": 63.0,
+     "11": 1.0,
+     "12": 11.0
     }
    },
    {
@@ -2914,12 +2918,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 19.1,
+    "points": 20.62,
     "stats": {
-     "4": 160.0,
+     "4": 253.0,
      "5": 2.0,
-     "8": 3.0,
-     "9": 27.0,
+     "6": 1.0,
+     "8": 4.0,
+     "9": 25.0,
      "18": 1.0
     }
    },
@@ -3086,10 +3091,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 2.0,
+    "points": 3.5,
     "stats": {
-     "11": 1.0,
-     "12": 15.0
+     "11": 2.0,
+     "12": 25.0
     }
    },
    {
