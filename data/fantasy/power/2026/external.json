@@ -6,7 +6,7 @@
   "note": "Fetched on each build from getLeagueAnalysisJSON?key=<league_key>, which answers anonymously; see fantasy.league.external.",
   "league_key": "nfl~9b42e042-983c-4e34-b3fa-62e91bf82f79",
   "season": 2026,
-  "captured": "2026-09-07",
+  "captured": "2026-09-08",
   "teams": [
     {
       "team": "Professional Fratson",
@@ -20,21 +20,21 @@
       "team_id": 2,
       "rank": 2,
       "score": 98,
-      "vorp": 110.18
+      "vorp": 110.54
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
       "rank": 3,
-      "score": 95,
-      "vorp": 106.37
+      "score": 94,
+      "vorp": 106.2
     },
     {
       "team": "padgett",
       "team_id": 7,
       "rank": 4,
       "score": 94,
-      "vorp": 105.68
+      "vorp": 105.53
     },
     {
       "team": "Clanker Barrel",
@@ -55,7 +55,7 @@
       "team_id": 6,
       "rank": 7,
       "score": 86,
-      "vorp": 96.47
+      "vorp": 96.45
     },
     {
       "team": "Lotta Cox (Balls Too)",
@@ -76,7 +76,7 @@
       "team_id": 8,
       "rank": 10,
       "score": 71,
-      "vorp": 80.04
+      "vorp": 80.03
     }
   ]
 }

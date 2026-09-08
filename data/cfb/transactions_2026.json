@@ -1,5 +1,30 @@
 [
  {
+  "id": 51.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1788854025.0,
+  "faab_bid": 0.0,
+  "players": [
+   {
+    "player": "Umari Hatcher",
+    "pos": "WR",
+    "team": "SYR",
+    "type": "add",
+    "source": null,
+    "destination": "Jackson's Brilliant Team"
+   },
+   {
+    "player": "Jayce Brown",
+    "pos": "WR",
+    "team": "LSU",
+    "type": "drop",
+    "source": "Jackson's Brilliant Team",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 50.0,
   "type": "add/drop",
   "status": "successful",
