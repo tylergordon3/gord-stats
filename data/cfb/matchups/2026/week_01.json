@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-07T23:00:12+00:00",
+ "fetched": "2026-09-08T00:10:11+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 205.28,
      "projected": 184.19,
-     "win_probability": 0.01
+     "win_probability": 0.0
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 253.06,
      "projected": 175.3,
-     "win_probability": 0.99
+     "win_probability": 1.0
     }
    ]
   },
@@ -110,14 +110,14 @@
      "name": "Max's Majestic Team",
      "points": 161.34,
      "projected": 145.45,
-     "win_probability": 0.8400000000000001
+     "win_probability": 0.99
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 142.62,
      "projected": 182.81,
-     "win_probability": 0.15999999999999992
+     "win_probability": 0.010000000000000009
     }
    ]
   }
