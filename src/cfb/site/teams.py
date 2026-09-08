@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 
+from cfb import espn
 from cfb import games as games_mod
 from cfb import predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
@@ -210,7 +211,7 @@ def _ordinal(n: int) -> str:
 
 
 def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
-    bases = rankmoves.baselines(HISTORY_DIR)
+    bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
     show_delta = any("rating" in b["frame"].columns for b in bases.values())
     rows = []
     for _, r in table.iterrows():
@@ -249,7 +250,7 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
         + (" and <strong>&Delta;</strong> the rating's change" if show_delta else "")
         + " since the point the buttons pick - every build is archived, "
         f"so the choice runs from the last build (<strong>{first:%b %-d}</strong>) back "
-        "to the season's first." if bases else
+        "to the season's first, or to the end of any week's games." if bases else
         " Every build is archived; a Move column and a change-since chooser appear "
         "with the second one.")
     spread = table["rating"].max() - table["rating"].min()

@@ -57,3 +57,25 @@ def test_window_buttons_say_when(tmp_path):
     html = rankmoves.window_switch(rankmoves.baselines(tmp_path, now=now))
     assert ">Sep 30, 3:34 PM</button>" in html          # the last build, by its clock
     assert "1 day <span class='win-when'>Sep 22</span>" in html   # 1d, 3d, 7d all resolve here
+
+
+def test_week_windows_take_the_last_snapshot_before_the_next_kickoff(tmp_path):
+    now = datetime(2026, 9, 22, 12)
+    wk1 = (1, datetime(2026, 8, 29, 12), datetime(2026, 9, 7, 23, 30))
+    wk2 = (2, datetime(2026, 9, 10, 20), datetime(2026, 9, 13, 4))
+    wk3 = (3, datetime(2026, 9, 17, 19, 30), datetime(2026, 9, 20, 3))
+    _write(tmp_path, datetime(2026, 8, 25, 19), {"a": 1})          # preseason
+    _write(tmp_path, datetime(2026, 9, 7, 5), {"a": 2})            # week 1 still on
+    _write(tmp_path, datetime(2026, 9, 8, 5), {"a": 3})            # after week 1...
+    _write(tmp_path, datetime(2026, 9, 10, 5), {"a": 4})           # ...the last before week 2
+    _write(tmp_path, datetime(2026, 9, 21, 5), {"a": 5})           # after week 3
+    bases = rankmoves.baselines(tmp_path, now=now, weeks=[wk1, wk2, wk3])
+    assert bases["w1"]["at"] == datetime(2026, 9, 10, 5)
+    assert bases["w1"]["group"] == "week" and bases["w1"]["label"] == "Wk 1"
+    assert "w2" not in bases                       # nothing archived between weeks 2 and 3
+    # Week 3's baseline is also the last build: both buttons are offered.
+    assert bases["w3"]["at"] == bases["last"]["at"] == datetime(2026, 9, 21, 5)
+    html = rankmoves.window_switch(bases)
+    assert "After week:" in html
+    assert 'data-win="w1" title="After Week 1' in html
+    assert "Wk 1 <span class='win-when'>Sep 10</span>" in html

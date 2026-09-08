@@ -35,6 +35,7 @@ from html import escape
 import pandas as pd
 import requests
 
+from cfb import espn
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import write_page
 from gordstats import favorites, rankmoves
@@ -139,6 +140,52 @@ if(!table||!table.tHead||!table.tBodies.length) return;
 var head=table.tHead.rows[0], body=table.tBodies[0];
 var rows=Array.prototype.slice.call(body.rows);
 
+// --- change columns ----------------------------------------------------------
+// Move is always places climbed in the FPI rank. Δ follows the column the
+// table is sorted by: FPI change until the reader sorts by Playoff%, SOS,
+// AP or anything else archived, and then that figure's change. Every
+// window's figure for every tracked column is in DELTA, as one array per
+// (window, column) in rank order - the order `rows` never leaves.
+var data=document.getElementById('pwr-deltas');
+var DELTA={},KIND={},WHEN={},DEFAULT='fpi';
+if(data){try{var d=JSON.parse(data.textContent);DELTA=d.deltas;KIND=d.kinds;WHEN=d.when;}catch(e){}}
+var moveTh=head.querySelector('th.mv-th'), dTh=head.querySelector('th.dth');
+var moveI=moveTh?Array.prototype.indexOf.call(head.cells,moveTh):-1;
+var dI=dTh?Array.prototype.indexOf.call(head.cells,dTh):-1;
+var win=null, field=DEFAULT;
+var first=document.querySelector('.win-btn.active');
+if(first) win=first.getAttribute('data-win');
+
+function arrow(v){
+  v=Math.round(v);
+  if(v===0) return "<span class='mv-flat'>&middot;</span>";
+  return v>0?"<span class='mv-up'>&#9650;"+v+"</span>":"<span class='mv-down'>&#9660;"+(-v)+"</span>";
+}
+function signed(v,dec){
+  if(Math.abs(v)<0.5*Math.pow(10,-dec)) return "<span class='mv-flat'>&middot;</span>";
+  return "<span class='"+(v>0?'mv-up':'mv-down')+"'>"+(v>0?'+':'')+v.toFixed(dec)+"</span>";
+}
+function fill(i,f){
+  if(i<0) return;
+  var col=(DELTA[win]||{})[f], kind=KIND[f]||{k:'num',d:1};
+  rows.forEach(function(r,k){
+    var td=r.cells[i], v=col?col[k]:null;
+    if(v===null||v===undefined){td.innerHTML='';td.removeAttribute('data-sort');return;}
+    td.setAttribute('data-sort',v);
+    td.innerHTML=kind.k==='rank'?arrow(v):signed(v,kind.d);
+  });
+}
+function draw(){
+  fill(moveI,'rank');
+  fill(dI,field);
+  if(dTh){
+    var kind=KIND[field]||{label:field,tip:field+' change'};
+    dTh.textContent='Δ '+kind.label;
+    dTh.title=kind.tip+(WHEN[win]?' since '+WHEN[win]:'');
+  }
+}
+
+// --- sorting -------------------------------------------------------------------
 // Every sortable cell carries data-sort; a cell without one (a team outside the
 // AP poll, a resume rank ESPN hasn't computed) sorts as missing and sinks to the
 // bottom in both directions.
@@ -147,8 +194,7 @@ function val(row,i){
   return v===undefined||v===''?null:v;
 }
 
-// Numbers where both cells are numbers, text otherwise - Conf is the one column
-// that sorts as a name.
+// Numbers where both cells are numbers, text otherwise.
 function compare(x,y){
   var nx=parseFloat(x), ny=parseFloat(y);
   if(!isNaN(nx)&&!isNaN(ny)) return nx-ny;
@@ -157,6 +203,10 @@ function compare(x,y){
 
 function sortBy(th){
   var i=Array.prototype.indexOf.call(head.cells,th);
+  // Δ tracks the column being sorted; Team is the default (FPI rank) order, so
+  // it hands Δ back to FPI. Move and Δ themselves leave it where it is.
+  var f=th.dataset.field||(th===head.cells[0]?DEFAULT:null);
+  if(f&&f!==field){field=f;draw();}
   // A column that is already the live one reverses; one being picked up opens
   // in the direction it reads best, even if it was left reversed earlier.
   var dir=th.dataset.now?(th.dataset.now==='asc'?'desc':'asc'):th.dataset.dir;
@@ -191,8 +241,11 @@ Array.prototype.forEach.call(head.cells,function(th){
   });
 });
 
-// A sort running on Move or Δ follows the window the reader picks.
-document.addEventListener('winchange',function(){
+// A new window redraws both change columns, and a sort running on one of
+// them reruns so the order matches what is now on screen.
+document.addEventListener('winchange',function(e){
+  win=e.detail;
+  draw();
   var live=head.querySelector('th.sorted');
   if(!live||!live.classList.contains('win-th')) return;
   live.dataset.now=live.dataset.now==='asc'?'desc':'asc';   // sortBy flips it back
@@ -348,17 +401,32 @@ def _rows(data: dict) -> list:
 VIEWS = [("rating", "Rating"), ("odds", "Odds"), ("resume", "Resume")]
 ALL = tuple(v for v, _ in VIEWS)
 
+# The figures each snapshot archives beyond the rank, and how a change in each
+# reads: "num" is the value now minus the baseline's, to `dec` places; "rank"
+# is places climbed (baseline minus now), drawn with arrows. Every sortable
+# column names one of these, and the Δ column shows whichever the table is
+# sorted by. Older snapshots lack most of them - a window whose baseline
+# predates a figure shows nothing for it, not a wrong number.
+TRACKED = {
+    "rank": ("rank", 0), "fpi": ("num", 1), "ap": ("rank", 0), "numwins": ("num", 0),
+    "projectedw": ("num", 1), "probmakeplayoffs": ("num", 1), "probwinconf": ("num", 1),
+    "prob6wins": ("num", 1), "probwinout": ("num", 1), "probwintitle": ("num", 1),
+    "avgsosrank": ("rank", 0), "sosremainingrank": ("rank", 0),
+    "accomplishmentrank": ("rank", 0), "gamecontrolrank": ("rank", 0),
+}
 
-def _td(views, value, text, team=False, sortable=True, win=False) -> str:
-    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "") + (" win-cell" if win else "")
+
+def _td(views, value, text, team=False, sortable=True, extra="") -> str:
+    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "") + extra
     if isinstance(value, float):
         value = round(value, 3)      # ESPN sends 38.800000000000004
     key = f" data-sort='{value}'" if sortable and value is not None else ""
     return f"<td class='{cls}'{key}>{text}</td>"
 
 
-def _th(views, label, tip, direction, first=False, team=False, tips=None) -> str:
-    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "")
+def _th(views, label, tip, direction, first=False, team=False, tips=None,
+        field=None, extra="") -> str:
+    cls = " ".join(f"v-{v}" for v in views) + (" pwr-team" if team else "") + extra
     if direction:
         cls += " sortable"
     if tips:
@@ -368,6 +436,8 @@ def _th(views, label, tip, direction, first=False, team=False, tips=None) -> str
         attrs += f" data-tips='{tips}'"
     if direction:
         attrs += f" data-dir='{direction}'"
+    if field:
+        attrs += f" data-field='{field}'"
     # The table arrives sorted by rank, so Team - which sorts by it - opens
     # as the live column.
     if first:
@@ -400,13 +470,47 @@ def _team(t) -> str:
     return logo + t["name"] + favorites.star("cfb", t["id"], t["name"])
 
 
-
 def _switcher() -> str:
     buttons = "".join(
         f'<button class="pv-btn{" active" if i == 0 else ""}" id="pv-tab-{vid}" '
         f'data-view="{vid}">{label}</button>'
         for i, (vid, label) in enumerate(VIEWS))
     return f'<div class="view-switch"><span class="switch-label">Show:</span>{buttons}</div>'
+
+
+def _deltas(bases: dict, teams: list) -> dict:
+    """{window: {field: [change per team, in rank order]}} for every tracked
+    figure a window's baseline carries - the page's whole change-since answer,
+    handed to the script as JSON so a sort or a button redraws without a fetch.
+    A team with no figure on either end (unranked in the AP poll, a resume
+    rank ESPN has not computed) is None; a field nobody has is left out."""
+    out = {}
+    for win, b in bases.items():
+        frame, cols = b["frame"], {}
+        for field, (kind, dec) in TRACKED.items():
+            if field not in frame.columns:
+                continue
+            base = frame[field]
+            vals = []
+            for t in teams:
+                now, then = t.get(field), base.get(t["id"])
+                if now is None or then is None or pd.isna(then):
+                    vals.append(None)
+                    continue
+                delta = (float(then) - now) if kind == "rank" else (now - float(then))
+                vals.append(int(round(delta)) if dec == 0 else round(delta, dec))
+            if any(v is not None for v in vals):
+                cols[field] = vals
+        out[win] = cols
+    return out
+
+
+def _change(v, field) -> tuple:
+    """The Move/Δ cell as the page first renders it - the script redraws it."""
+    kind, dec = TRACKED[field]
+    if v is None:
+        return None, ""
+    return v, (rankmoves.cell(v) if kind == "rank" else rankmoves.signed(v, dec))
 
 
 def body() -> str:
@@ -417,13 +521,18 @@ def body() -> str:
 
     ap_ranks, ap_season = ap_poll()
     show_ap = bool(ap_ranks) and ap_season == season
+    for rank, t in enumerate(teams, 1):
+        t["rank"] = rank
+        t["ap"] = ap_ranks.get(t["id"]) if show_ap else None
 
-    bases = rankmoves.baselines(HISTORY_DIR)
+    bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
     show_move = bool(bases)
     # The rating itself only rides in snapshots taken from 2026-09-04 on; a
     # change column with nothing in it waits for one that has it.
     show_delta = any("fpi" in b["frame"].columns for b in bases.values())
-    first_at = next(iter(bases.values()))["at"] if bases else None
+    first_win = next(iter(bases)) if bases else None
+    first_at = bases[first_win]["at"] if bases else None
+    deltas = _deltas(bases, teams)
 
     # A figure ESPN has not filled in yet - every resume rank until games are
     # played - comes back None for all 138 teams. Rather than print a column of
@@ -436,90 +545,111 @@ def body() -> str:
     # the two SOS columns hold the same 138 numbers, and printing both twice is
     # noise. It comes back on its own the week they start to diverge.
     show_rem_sos = any(t["sosremainingrank"] != t["avgsosrank"] for t in teams)
-    ranks_now = {t["id"]: rank for rank, t in enumerate(teams, 1)}
+    ranks_now = {t["id"]: t["rank"] for t in teams}
 
-    # (views, label, tooltip, opening direction, cell) per column. `cell` returns
-    # the figure to sort on and the text to show; the two are separate so the
-    # sort never has to parse "+28.7" or "10.2-2.4" back out of the rendering.
+    # (views, label, tooltip, opening direction, cell, tracked field) per
+    # column. `cell` returns the figure to sort on and the text to show; the
+    # two are separate so the sort never has to parse "+28.7" or "10.2-2.4"
+    # back out of the rendering. `field` is the archived figure whose change
+    # the Δ column shows while this column sorts the table.
     # Team leads with the FPI rank folded in: a leading RK column froze a bare
     # counter on phones while the names scrolled away. Sorting the Team column
     # sorts by that rank, which also keeps it the opening sort and the one the
     # tab switcher falls back to.
+    def col(views, label, tip, direction, cell, field=None):
+        return views, label, tip, direction, cell, field
+
     cols = [
-        (ALL, "Team", "FPI rank", "asc",
-         lambda t, r: (r, f"<span class='row-rank'>{r}</span>{_team(t)}")),
+        col(ALL, "Team", "FPI rank", "asc",
+            lambda t: (t["rank"], f"<span class='row-rank'>{t['rank']}</span>{_team(t)}")),
     ]
+    # Move and Δ open on the first window, as the script would draw them.
+    def opening(field, t):
+        vals = deltas[first_win].get(field) if first_win else None
+        return _change(vals[t["rank"] - 1] if vals else None, field)
+
     if show_move:
-        cols.append((("rating",), "Move", f"Places climbed since {first_at:%b %-d}",
-                     "desc", lambda t, r: rankmoves.move_spans(bases, t["id"], r)[::-1]))
-    cols.append((ALL, "Conf", "Conference", "asc", lambda t, r: (t["conf"], t["conf"] or "")))
-    if show_ap:
-        cols.append((("rating",), "AP", "AP poll rank", "asc",
-                     lambda t, r: _plain(ap_ranks.get(t["id"]))))
-    if show_rec:
-        cols.append((("rating", "resume"), "Rec", "Record so far", "desc",
-                     lambda t, r: _record(t)))
-    cols += [
-        (("rating",), "FPI", "Expected point margin against an average FBS team",
-         "desc", lambda t, r: (t["fpi"], f"{t['fpi']:+.1f}")),
-    ]
+        cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", "desc",
+                        lambda t: opening("rank", t)))
     if show_delta:
-        cols.append((("rating",), "Δ", f"FPI change since {first_at:%b %-d}", "desc",
-                     lambda t, r: rankmoves.delta_spans(bases, t["id"], t["fpi"], "fpi")[::-1]))
+        cols.append(col(ALL, "Δ FPI", f"FPI change since {first_at:%b %-d}", "desc",
+                        lambda t: opening("fpi", t)))
+    if show_ap:
+        cols.append(col(("rating",), "AP", "AP poll rank", "asc",
+                        lambda t: _plain(t["ap"]), "ap"))
+    if show_rec:
+        cols.append(col(("rating", "resume"), "Rec", "Record so far", "desc",
+                        _record, "numwins"))
     cols += [
-        (("rating",), "Proj W-L", "ESPN's simulation of the full schedule", "desc",
-         lambda t, r: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}")),
-        (("odds",), "Playoff%", "Chance of making the playoff", "desc",
-         lambda t, r: _pct(t["probmakeplayoffs"])),
-        (("odds",), "Win Conf%", "Chance of winning the conference", "desc",
-         lambda t, r: _pct(t["probwinconf"])),
-        (("odds",), "Bowl%", "Chance of reaching six wins, the bowl-eligibility line",
-         "desc", lambda t, r: _pct(t["prob6wins"])),
-        (("odds",), "Win Out%", "Chance of winning every remaining game", "desc",
-         lambda t, r: _pct(t["probwinout"])),
-        (("odds",), "Title%", "Chance of winning the national title", "desc",
-         lambda t, r: _pct(t["probwintitle"])),
-        (("resume",), "SOS", "Strength-of-schedule rank, hardest first", "asc",
-         lambda t, r: _plain(t["avgsosrank"])),
+        col(("rating",), "FPI", "Expected point margin against an average FBS team",
+            "desc", lambda t: (t["fpi"], f"{t['fpi']:+.1f}"), "fpi"),
+        col(("rating",), "Proj W-L", "ESPN's simulation of the full schedule", "desc",
+            lambda t: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}"),
+            "projectedw"),
+        col(("odds",), "Playoff%", "Chance of making the playoff", "desc",
+            lambda t: _pct(t["probmakeplayoffs"]), "probmakeplayoffs"),
+        col(("odds",), "Win Conf%", "Chance of winning the conference", "desc",
+            lambda t: _pct(t["probwinconf"]), "probwinconf"),
+        col(("odds",), "Bowl%", "Chance of reaching six wins, the bowl-eligibility line",
+            "desc", lambda t: _pct(t["prob6wins"]), "prob6wins"),
+        col(("odds",), "Win Out%", "Chance of winning every remaining game", "desc",
+            lambda t: _pct(t["probwinout"]), "probwinout"),
+        col(("odds",), "Title%", "Chance of winning the national title", "desc",
+            lambda t: _pct(t["probwintitle"]), "probwintitle"),
+        col(("resume",), "SOS", "Strength-of-schedule rank, hardest first", "asc",
+            lambda t: _plain(t["avgsosrank"]), "avgsosrank"),
     ]
     if show_rem_sos:
-        cols.append((("resume",), "Rem SOS", "Strength-of-schedule rank for the "
-                     "games still to play", "asc",
-                     lambda t, r: _plain(t["sosremainingrank"])))
+        cols.append(col(("resume",), "Rem SOS", "Strength-of-schedule rank for the "
+                        "games still to play", "asc",
+                        lambda t: _plain(t["sosremainingrank"]), "sosremainingrank"))
     if live("accomplishmentrank"):
-        cols.append((("resume",), "SOR", "Strength-of-record rank: where an average "
-                     "top-25 team would sit with this resume", "asc",
-                     lambda t, r: _plain(t["accomplishmentrank"])))
+        cols.append(col(("resume",), "SOR", "Strength-of-record rank: where an average "
+                        "top-25 team would sit with this resume", "asc",
+                        lambda t: _plain(t["accomplishmentrank"]), "accomplishmentrank"))
     if live("gamecontrolrank"):
-        cols.append((("resume",), "GC", "Game-control rank: share of game time "
-                     "spent in the lead", "asc",
-                     lambda t, r: _plain(t["gamecontrolrank"])))
+        cols.append(col(("resume",), "GC", "Game-control rank: share of game time "
+                        "spent in the lead", "asc",
+                        lambda t: _plain(t["gamecontrolrank"]), "gamecontrolrank"))
 
-    win_labels = {"Move": "Places climbed", "Δ": "FPI change"}
+    # What the script calls each figure once Δ follows it: the column's own
+    # label, and a tooltip phrase that reads right for a value or a rank.
+    kinds = {"rank": {"k": "rank", "d": 0, "label": "Rank", "tip": "Places climbed"}}
+    for _views, label, _tip, _dir, _cell, field in cols:
+        if field and field in TRACKED:
+            kind, dec = TRACKED[field]
+            tip = ("Wins added" if field == "numwins"
+                   else f"{label} places climbed" if kind == "rank" else f"{label} change")
+            kinds[field] = {"k": kind, "d": dec, "label": label, "tip": tip}
+
     rows = []
-    for rank, t in enumerate(teams, 1):
+    for t in teams:
         cells = []
-        for views, label, _tip, direction, cell in cols:
-            value, text = cell(t, rank)
+        for views, label, _tip, direction, cell, _field in cols:
+            value, text = cell(t)
             cells.append(_td(views, value, text, team=(label == "Team"),
-                             sortable=direction is not None, win=label in win_labels))
-        rows.append(f"<tr{' class=\"top25\"' if rank <= 25 else ''}"
+                             sortable=direction is not None,
+                             extra=" mv-cell" if label in ("Move", "Δ FPI") else ""))
+        rows.append(f"<tr{' class=\"top25\"' if t['rank'] <= 25 else ''}"
                     f"{favorites.row_attr('cfb', t['id'])}>"
                     + "".join(cells) + "</tr>")
 
-    head = "".join(_th(views, label, tip, direction, first=(label == "Team"),
-                       team=(label == "Team"),
-                       tips=(rankmoves.window_tips(bases, win_labels[label])
-                             if label in win_labels else None))
-                   for views, label, tip, direction, _cell in cols)
+    head = "".join(
+        _th(views, label, tip, direction, first=(label == "Team"), team=(label == "Team"),
+            tips=(rankmoves.window_tips(bases, "Places climbed") if label == "Move" else None),
+            field=field,
+            extra=(" mv-th" if label == "Move" else " win-th dth" if label == "Δ FPI" else ""))
+        for views, label, tip, direction, _cell, field in cols)
 
     move_note = ""
     if show_move:
         move_note = (" <strong>Move</strong> is places climbed"
-                     + (" and <strong>&Delta;</strong> the FPI's change" if show_delta else "")
+                     + (" and <strong>&Delta;</strong> the change in whichever column "
+                        "the table is sorted by - the FPI until you sort by another"
+                        if show_delta else "")
                      + " since the point the buttons pick - every build is "
                      f"archived, so the choice runs from the last build ({first_at:%b %-d}) "
-                     "back to the season's first.")
+                     "back to the season's first, or to the end of any week's games.")
 
     intro = (
         f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "
@@ -549,15 +679,20 @@ def body() -> str:
         + "</details>")
 
     rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now),
-                       extra=pd.DataFrame({"fpi": [t["fpi"] for t in teams],
+                       extra=pd.DataFrame({**{f: [t[f] for t in teams] for f in TRACKED if f != "rank"},
                                            "name": [t["name"] for t in teams]},
-                                          index=[str(t["id"]) for t in teams]))
+                                          index=[str(t["id"]) for t in teams]).round(3))
+    blob = json.dumps({"deltas": deltas, "kinds": kinds,
+                       "when": {win: f"{b['at']:%b %-d}" for win, b in bases.items()}},
+                      separators=(",", ":"))
     return (_CSS + favorites.table_css("table.cfb-power") + intro
             + "<div class='pin-bar'>" + _switcher() + rankmoves.window_switch(bases)
             + favorites.controls() + "</div>"
             + "<div class='power-wrap'>"
             + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
-            + f"<tbody>{''.join(rows)}</tbody></table></div>" + _JS + rankmoves.WINDOW_JS)
+            + f"<tbody>{''.join(rows)}</tbody></table></div>"
+            + "{% raw %}<script type='application/json' id='pwr-deltas'>" + blob
+            + "</script>{% endraw %}" + _JS + rankmoves.WINDOW_JS)
 
 
 def generate():

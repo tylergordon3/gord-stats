@@ -110,6 +110,11 @@ def history(history_dir) -> pd.DataFrame:
 # de-duplicated so a young archive does not offer three buttons that all
 # point at the same file. A page renders every window's figure into the cell
 # and the reader's button choice shows one; nothing is refetched.
+#
+# Beside the clock, the calendar: a page that knows when its weeks are played
+# passes them, and each finished week becomes a window too - "after Week 3",
+# the newest snapshot between that week's last game and the next week's
+# first, which is the table as it stood once the week's results were in.
 
 WINDOWS = [
     ("last", "Last build", None),
@@ -128,13 +133,19 @@ def _load_full(path) -> pd.DataFrame:
     return pd.read_csv(path, dtype={"key": str}).set_index("key")
 
 
-def baselines(history_dir, now=None) -> dict:
-    """{window key: {label, at, frame}} for every window the archive can serve.
+def baselines(history_dir, now=None, weeks=None) -> dict:
+    """{window key: {label, at, frame, group}} for every window the archive can serve.
 
     `frame` is the baseline snapshot indexed by key (rank plus whatever extras
     it was written with). "last" is the newest snapshot at least GAP_HOURS old,
     "season" the oldest such snapshot, the rest the newest at least N days
     old. A window whose baseline another window already uses is dropped.
+
+    `weeks` is an optional list of (number, first kickoff, last game over) in
+    the archive's own clock; each week whose games are done and that the
+    archive caught before the next week began becomes a "w<N>" window in
+    group "week" - deliberately not de-duplicated against the clock windows,
+    so "Last build" and "Wk 3" can both be offered when they coincide.
     """
     now = now or datetime.now()
     snaps = [s for s in _snaps(history_dir) if s[0] <= now - timedelta(hours=GAP_HOURS)]
@@ -154,11 +165,25 @@ def baselines(history_dir, now=None) -> dict:
         if pick[1] in used:
             continue
         used.add(pick[1])
-        out[key] = {"label": label, "at": pick[0], "frame": _load_full(pick[1])}
+        out[key] = {"label": label, "at": pick[0], "frame": _load_full(pick[1]),
+                    "group": "time"}
+    weeks = sorted(weeks or [], key=lambda w: w[0])
+    for i, (number, _start, end) in enumerate(weeks):
+        # Up to the following week's kickoff - not "the newest since", which
+        # for every finished week would be today's build.
+        until = weeks[i + 1][1] if i + 1 < len(weeks) else None
+        eligible = [s for s in snaps if s[0] >= end and (until is None or s[0] < until)]
+        if not eligible:
+            continue
+        pick = eligible[-1]
+        out[f"w{number}"] = {"label": f"Wk {number}", "at": pick[0],
+                             "frame": _load_full(pick[1]), "group": "week",
+                             "week": number}
     return out
 
 
-def _signed(v, dec: int) -> str:
+def signed(v, dec: int) -> str:
+    """A rating change: +1.2 in green, -0.4 in red, a quiet dot for nothing."""
     if v is None or pd.isna(v):
         return ""
     if abs(v) < 0.5 * 10 ** -dec:
@@ -194,12 +219,15 @@ def delta_spans(bases: dict, key: str, value: float, col: str, dec: int = 1) -> 
         if first is None and delta is not None:
             first = round(delta, dec)
         parts.append(f"<span data-win='{win}' data-v='{'' if delta is None else round(delta, dec)}'"
-                     f"{' class=on' if i == 0 else ''}>{_signed(delta, dec)}</span>")
+                     f"{' class=on' if i == 0 else ''}>{signed(delta, dec)}</span>")
     return "".join(parts), first
 
 
 def window_switch(bases: dict, label: str = "Change since:") -> str:
-    """The button bar. Empty when the archive offers nothing to compare to."""
+    """The button bar. Empty when the archive offers nothing to compare to.
+
+    Clock windows first, then - under their own label - the finished weeks.
+    """
     if not bases:
         return ""
     def text(win, b):
@@ -207,11 +235,22 @@ def window_switch(bases: dict, label: str = "Change since:") -> str:
         if win == "last":
             return f"{b['at']:%b %-d, %-I:%M %p}"
         return f"{b['label']} <span class='win-when'>{b['at']:%b %-d}</span>"
-    buttons = "".join(
-        f'<button type="button" class="win-btn{" active" if i == 0 else ""}" data-win="{win}" '
-        f'title="Since {b["at"]:%b %-d, %-I:%M %p}">{text(win, b)}</button>'
-        for i, (win, b) in enumerate(bases.items()))
-    return f'<div class="view-switch win-switch"><span class="switch-label">{label}</span>{buttons}</div>'
+    def tip(win, b):
+        if b.get("group") == "week":
+            return f"After Week {b['week']}'s games ({b['at']:%b %-d, %-I:%M %p})"
+        return f"Since {b['at']:%b %-d, %-I:%M %p}"
+    def button(i, win, b):
+        return (f'<button type="button" class="win-btn{" active" if i == 0 else ""}" '
+                f'data-win="{win}" title="{tip(win, b)}">{text(win, b)}</button>')
+    items = list(bases.items())
+    clock = "".join(button(i, win, b) for i, (win, b) in enumerate(items)
+                    if b.get("group", "time") != "week")
+    weeks = "".join(button(i, win, b) for i, (win, b) in enumerate(items)
+                    if b.get("group") == "week")
+    if weeks:
+        weeks = f'<span class="switch-label win-week-label">After week:</span>{weeks}'
+    return (f'<div class="view-switch win-switch"><span class="switch-label">{label}</span>'
+            f'{clock}{weeks}</div>')
 
 
 def window_tips(bases: dict, what: str) -> str:
@@ -224,6 +263,7 @@ WINDOW_CSS = """
 .win-cell span[data-win]{display:none}
 .win-cell span[data-win].on{display:inline}
 .win-btn .win-when{font-weight:400;opacity:.75;font-size:12px;margin-left:3px}
+.win-switch .win-week-label{margin-left:10px}
 """
 
 # Reveals the chosen window in every .win-cell, carries its figure into the

@@ -12,6 +12,7 @@ through the season.
 """
 import json
 import time
+from datetime import datetime
 
 import pandas as pd
 import requests
@@ -124,6 +125,24 @@ def schedule(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     df.to_parquet(cache, index=False)
     return df
+
+
+def week_spans(df: pd.DataFrame = None) -> list[tuple]:
+    """(week, first kickoff, last game over) per week, in the machine's local
+    clock - the clock the snapshot archives (gordstats.rankmoves) are named
+    in, so a page can offer "change since the end of Week 3". A game is
+    called over four hours after kickoff.
+    """
+    if df is None:
+        df = schedule()
+    if not len(df):
+        return []
+    when = pd.to_datetime(df["date_utc"], utc=True)
+    local = when.dt.tz_convert(datetime.now().astimezone().tzinfo).dt.tz_localize(None)
+    spans = local.groupby(df["week"]).agg(["min", "max"])
+    return [(int(week), row["min"].to_pydatetime(),
+             (row["max"] + pd.Timedelta(hours=4)).to_pydatetime())
+            for week, row in spans.iterrows()]
 
 
 def conferences() -> dict:
