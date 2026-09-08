@@ -4,7 +4,7 @@
  "week_end": "2026-09-07",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-08T01:10:12+00:00",
+ "fetched": "2026-09-08T02:20:12+00:00",
  "matchups": [
   {
    "week": 1.0,
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 205.28,
+     "points": 211.78,
      "projected": 184.19,
-     "win_probability": 0.0
+     "win_probability": 0.01
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 253.06,
      "projected": 175.3,
-     "win_probability": 1.0
+     "win_probability": 0.99
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 161.34,
+     "points": 162.04,
      "projected": 145.45,
-     "win_probability": 0.99
+     "win_probability": 0.89
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 142.62,
+     "points": 144.62,
      "projected": 182.81,
-     "win_probability": 0.010000000000000009
+     "win_probability": 0.10999999999999999
     }
    ]
   }
@@ -930,8 +930,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 6.5,
+    "stats": {
+     "8": 6.0,
+     "9": 51.0,
+     "11": 1.0,
+     "12": 9.0
+    }
    },
    {
     "yahoo_id": "457315",
@@ -1675,8 +1680,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 13.4,
+    "stats": {
+     "11": 3.0,
+     "12": 59.0,
+     "13": 1.0
+    }
    },
    {
     "yahoo_id": "468738",
@@ -2263,8 +2272,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.2,
+    "stats": {
+     "11": 1.0,
+     "12": -3.0
+    }
    },
    {
     "yahoo_id": "404434",
@@ -2576,8 +2588,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 3.3,
+    "stats": {
+     "11": 3.0,
+     "12": 18.0
+    }
    },
    {
     "yahoo_id": "456220",
@@ -2818,8 +2833,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.7,
+    "stats": {
+     "8": 2.0,
+     "9": 7.0
+    }
    },
    {
     "yahoo_id": "457959",
@@ -2896,8 +2914,14 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 19.1,
+    "stats": {
+     "4": 160.0,
+     "5": 2.0,
+     "8": 3.0,
+     "9": 27.0,
+     "18": 1.0
+    }
    },
    {
     "yahoo_id": "406381",
@@ -3062,8 +3086,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 2.0,
+    "stats": {
+     "11": 1.0,
+     "12": 15.0
+    }
    },
    {
     "yahoo_id": "404713",
