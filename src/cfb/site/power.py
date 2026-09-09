@@ -88,6 +88,17 @@ table.cfb-power th.sortable::after{content:"\\2195";margin-left:5px;opacity:.35;
   font-size:11px}
 table.cfb-power th.sorted.asc::after{content:"\\25B2";opacity:1}
 table.cfb-power th.sorted.desc::after{content:"\\25BC";opacity:1}
+/* The live column, header and body: a tint over whatever the row already
+   paints. A pseudo-element rather than a background, because the zebra and
+   Top 25 rules set the background with more specificity than a class on
+   the cell can beat. Team is already sticky (positioned), the rest need to
+   be for the overlay to anchor. */
+table.cfb-power th.sorted{background:#dbe7f6;color:#0f172a}
+table.cfb-power td.sorted-col{font-weight:700}
+table.cfb-power td.sorted-col:not(:first-child){position:relative}
+table.cfb-power td.sorted-col::after{content:"";position:absolute;inset:0;
+  background:rgba(37,99,235,.09);pointer-events:none}
+table.cfb-power th.mv-th .mv-of{font-weight:500;opacity:.75;margin-left:5px;text-transform:none}
 /* Team is the first cell in every view, so pinning first-child holds the
    identity column while the wide tabs scroll. The cells already carry opaque
    backgrounds (zebra, top25, dark) from the rules above; the z-indexes keep
@@ -117,6 +128,8 @@ table.cfb-power th:first-child{left:0;z-index:3}
 @media (prefers-color-scheme: dark){
   table.cfb-power th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.cfb-power th.sortable:hover{color:#fff}
+  table.cfb-power th.sorted{background:#2f4a7a;color:#fff}
+  table.cfb-power td.sorted-col::after{background:rgba(147,197,253,.13)}
   table.cfb-power td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.cfb-power tbody tr:nth-child(even) td{background:#1b2540}
   table.cfb-power tr.top25 td{background:#33301a}
@@ -140,18 +153,17 @@ if(!table||!table.tHead||!table.tBodies.length) return;
 var head=table.tHead.rows[0], body=table.tBodies[0];
 var rows=Array.prototype.slice.call(body.rows);
 
-// --- change columns ----------------------------------------------------------
-// Move is always places climbed in the FPI rank. Δ follows the column the
-// table is sorted by: FPI change until the reader sorts by Playoff%, SOS,
-// AP or anything else archived, and then that figure's change. Every
-// window's figure for every tracked column is in DELTA, as one array per
-// (window, column) in rank order - the order `rows` never leaves.
+// --- the Move column ------------------------------------------------------------
+// Move follows the column the table is sorted by: places climbed in the FPI
+// rank until the reader sorts by Playoff%, SOS, AP or anything else archived,
+// and then that figure's change. Every window's figure for every tracked
+// column is in DELTA, as one array per (window, column) in rank order - the
+// order `rows` never leaves.
 var data=document.getElementById('pwr-deltas');
-var DELTA={},KIND={},WHEN={},DEFAULT='fpi';
+var DELTA={},KIND={},WHEN={},DEFAULT='rank';
 if(data){try{var d=JSON.parse(data.textContent);DELTA=d.deltas;KIND=d.kinds;WHEN=d.when;}catch(e){}}
-var moveTh=head.querySelector('th.mv-th'), dTh=head.querySelector('th.dth');
+var moveTh=head.querySelector('th.mv-th');
 var moveI=moveTh?Array.prototype.indexOf.call(head.cells,moveTh):-1;
-var dI=dTh?Array.prototype.indexOf.call(head.cells,dTh):-1;
 var win=null, field=DEFAULT;
 var first=document.querySelector('.win-btn.active');
 if(first) win=first.getAttribute('data-win');
@@ -165,24 +177,17 @@ function signed(v,dec){
   if(Math.abs(v)<0.5*Math.pow(10,-dec)) return "<span class='mv-flat'>&middot;</span>";
   return "<span class='"+(v>0?'mv-up':'mv-down')+"'>"+(v>0?'+':'')+v.toFixed(dec)+"</span>";
 }
-function fill(i,f){
-  if(i<0) return;
-  var col=(DELTA[win]||{})[f], kind=KIND[f]||{k:'num',d:1};
+function draw(){
+  if(moveI<0) return;
+  var col=(DELTA[win]||{})[field], kind=KIND[field]||{k:'num',d:1,label:field,tip:field+' change'};
   rows.forEach(function(r,k){
-    var td=r.cells[i], v=col?col[k]:null;
+    var td=r.cells[moveI], v=col?col[k]:null;
     if(v===null||v===undefined){td.innerHTML='';td.removeAttribute('data-sort');return;}
     td.setAttribute('data-sort',v);
     td.innerHTML=kind.k==='rank'?arrow(v):signed(v,kind.d);
   });
-}
-function draw(){
-  fill(moveI,'rank');
-  fill(dI,field);
-  if(dTh){
-    var kind=KIND[field]||{label:field,tip:field+' change'};
-    dTh.textContent='Δ '+kind.label;
-    dTh.title=kind.tip+(WHEN[win]?' since '+WHEN[win]:'');
-  }
+  moveTh.innerHTML='Move'+(kind.label?"<span class='mv-of'>"+kind.label+"</span>":'');
+  moveTh.title=kind.tip+(WHEN[win]?' since '+WHEN[win]:'');
 }
 
 // --- sorting -------------------------------------------------------------------
@@ -203,8 +208,8 @@ function compare(x,y){
 
 function sortBy(th){
   var i=Array.prototype.indexOf.call(head.cells,th);
-  // Δ tracks the column being sorted; Team is the default (FPI rank) order, so
-  // it hands Δ back to FPI. Move and Δ themselves leave it where it is.
+  // Move tracks the column being sorted; Team is the FPI rank order, so it
+  // hands Move back to places climbed. Move itself leaves it where it is.
   var f=th.dataset.field||(th===head.cells[0]?DEFAULT:null);
   if(f&&f!==field){field=f;draw();}
   // A column that is already the live one reverses; one being picked up opens
@@ -230,6 +235,11 @@ function sortBy(th){
   th.classList.add('sorted',dir);
   th.dataset.now=dir;
   th.setAttribute('aria-sort',dir==='asc'?'ascending':'descending');
+  // The sorted column is tinted down the body too, so the Move figures have
+  // a visible column to refer to.
+  rows.forEach(function(r){
+    Array.prototype.forEach.call(r.cells,function(c,k){c.classList.toggle('sorted-col',k===i);});
+  });
 }
 
 Array.prototype.forEach.call(head.cells,function(th){
@@ -296,18 +306,23 @@ def fpi(refresh: bool = False) -> dict:
     return data
 
 
-def ap_poll(refresh: bool = False):
-    """({espn team id: AP rank}, poll season year), or (None, None)."""
+def ap_poll(refresh: bool = True):
+    """({espn team id: AP rank}, poll season year, poll label), or (None, None, None).
+
+    Fetched on every build: the poll moves once a week and this is one small
+    request, so a 12-hour cache only ever served a stale Sunday. The cached
+    copy is the fallback when ESPN does not answer.
+    """
     cache = DATA_DIR / "ap.json"
-    fresh = cache.exists() and (time.time() - cache.stat().st_mtime) < MAX_AGE_HOURS * 3600
     data = None
-    if cache.exists() and (fresh and not refresh):
+    if cache.exists() and not refresh:
         data = json.loads(cache.read_text(encoding="utf-8"))
     else:
         try:
             r = requests.get(_AP_URL, headers=_HEADERS, timeout=_TIMEOUT)
             r.raise_for_status()
             data = r.json()
+            assert data.get("rankings"), "no rankings in AP payload"
             cache.parent.mkdir(parents=True, exist_ok=True)
             cache.write_text(json.dumps(data), encoding="utf-8")
         except Exception as exc:
@@ -320,10 +335,11 @@ def ap_poll(refresh: bool = False):
         if poll.get("name") != "AP Top 25":
             continue
         season = (poll.get("season") or {}).get("year")
+        label = (poll.get("occurrence") or {}).get("displayValue") or ""
         ranks = {str((r.get("team") or {}).get("id")): int(r["current"])
                  for r in poll.get("ranks", []) if r.get("current")}
-        return (ranks or None), season
-    return None, None
+        return (ranks or None), season, label
+    return None, None, None
 
 
 # Each team's figures arrive as two parallel arrays: `values` holds the raw
@@ -404,7 +420,7 @@ ALL = tuple(v for v, _ in VIEWS)
 # The figures each snapshot archives beyond the rank, and how a change in each
 # reads: "num" is the value now minus the baseline's, to `dec` places; "rank"
 # is places climbed (baseline minus now), drawn with arrows. Every sortable
-# column names one of these, and the Δ column shows whichever the table is
+# column names one of these, and the Move column shows whichever the table is
 # sorted by. Older snapshots lack most of them - a window whose baseline
 # predates a figure shows nothing for it, not a wrong number.
 TRACKED = {
@@ -506,7 +522,7 @@ def _deltas(bases: dict, teams: list) -> dict:
 
 
 def _change(v, field) -> tuple:
-    """The Move/Δ cell as the page first renders it - the script redraws it."""
+    """The Move cell as the page first renders it - the script redraws it."""
     kind, dec = TRACKED[field]
     if v is None:
         return None, ""
@@ -519,7 +535,7 @@ def body() -> str:
     season = (data.get("requestedSeason") or {}).get("year") or SEASON
     stamp = datetime.fromtimestamp(_cache_path().stat().st_mtime).strftime("%b %-d")
 
-    ap_ranks, ap_season = ap_poll()
+    ap_ranks, ap_season, ap_label = ap_poll()
     show_ap = bool(ap_ranks) and ap_season == season
     for rank, t in enumerate(teams, 1):
         t["rank"] = rank
@@ -527,9 +543,6 @@ def body() -> str:
 
     bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
     show_move = bool(bases)
-    # The rating itself only rides in snapshots taken from 2026-09-04 on; a
-    # change column with nothing in it waits for one that has it.
-    show_delta = any("fpi" in b["frame"].columns for b in bases.values())
     first_win = next(iter(bases)) if bases else None
     first_at = bases[first_win]["at"] if bases else None
     deltas = _deltas(bases, teams)
@@ -551,7 +564,7 @@ def body() -> str:
     # column. `cell` returns the figure to sort on and the text to show; the
     # two are separate so the sort never has to parse "+28.7" or "10.2-2.4"
     # back out of the rendering. `field` is the archived figure whose change
-    # the Δ column shows while this column sorts the table.
+    # the Move column shows while this column sorts the table.
     # Team leads with the FPI rank folded in: a leading RK column froze a bare
     # counter on phones while the names scrolled away. Sorting the Team column
     # sorts by that rank, which also keeps it the opening sort and the one the
@@ -563,19 +576,15 @@ def body() -> str:
         col(ALL, "Team", "FPI rank", "asc",
             lambda t: (t["rank"], f"<span class='row-rank'>{t['rank']}</span>{_team(t)}")),
     ]
-    # Move and Δ open on the first window, as the script would draw them.
-    def opening(field, t):
-        vals = deltas[first_win].get(field) if first_win else None
-        return _change(vals[t["rank"] - 1] if vals else None, field)
+    # Move opens on the first window and the rank, as the script would draw it.
+    def opening(t):
+        vals = deltas[first_win].get("rank") if first_win else None
+        return _change(vals[t["rank"] - 1] if vals else None, "rank")
 
     if show_move:
-        cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", "desc",
-                        lambda t: opening("rank", t)))
-    if show_delta:
-        cols.append(col(ALL, "Δ FPI", f"FPI change since {first_at:%b %-d}", "desc",
-                        lambda t: opening("fpi", t)))
+        cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", "desc", opening))
     if show_ap:
-        cols.append(col(("rating",), "AP", "AP poll rank", "asc",
+        cols.append(col(("rating",), "AP", f"AP poll rank ({ap_label})" if ap_label else "AP poll rank", "asc",
                         lambda t: _plain(t["ap"]), "ap"))
     if show_rec:
         cols.append(col(("rating", "resume"), "Rec", "Record so far", "desc",
@@ -612,9 +621,9 @@ def body() -> str:
                         "spent in the lead", "asc",
                         lambda t: _plain(t["gamecontrolrank"]), "gamecontrolrank"))
 
-    # What the script calls each figure once Δ follows it: the column's own
+    # What the script calls each figure once Move follows it: the column's own
     # label, and a tooltip phrase that reads right for a value or a rank.
-    kinds = {"rank": {"k": "rank", "d": 0, "label": "Rank", "tip": "Places climbed"}}
+    kinds = {"rank": {"k": "rank", "d": 0, "label": "", "tip": "Places climbed"}}
     for _views, label, _tip, _dir, _cell, field in cols:
         if field and field in TRACKED:
             kind, dec = TRACKED[field]
@@ -629,27 +638,26 @@ def body() -> str:
             value, text = cell(t)
             cells.append(_td(views, value, text, team=(label == "Team"),
                              sortable=direction is not None,
-                             extra=" mv-cell" if label in ("Move", "Δ FPI") else ""))
+                             extra=" mv-cell" if label == "Move" else ""))
         rows.append(f"<tr{' class=\"top25\"' if t['rank'] <= 25 else ''}"
                     f"{favorites.row_attr('cfb', t['id'])}>"
                     + "".join(cells) + "</tr>")
 
+    # Move's header is retitled by the script as the sorted column changes, so
+    # it carries no data-tips for WINDOW_JS to retitle it with.
     head = "".join(
         _th(views, label, tip, direction, first=(label == "Team"), team=(label == "Team"),
-            tips=(rankmoves.window_tips(bases, "Places climbed") if label == "Move" else None),
-            field=field,
-            extra=(" mv-th" if label == "Move" else " win-th dth" if label == "Δ FPI" else ""))
+            field=field, extra=(" mv-th win-th" if label == "Move" else ""))
         for views, label, tip, direction, _cell, field in cols)
 
     move_note = ""
     if show_move:
-        move_note = (" <strong>Move</strong> is places climbed"
-                     + (" and <strong>&Delta;</strong> the change in whichever column "
-                        "the table is sorted by - the FPI until you sort by another"
-                        if show_delta else "")
-                     + " since the point the buttons pick - every build is "
-                     f"archived, so the choice runs from the last build ({first_at:%b %-d}) "
-                     "back to the season's first, or to the end of any week's games.")
+        move_note = (" <strong>Move</strong> is the change in whichever column the table "
+                     "is sorted by - places climbed in the FPI rank until you sort by "
+                     "another, then that figure's change - since the point the buttons "
+                     f"pick. Every build is archived, so the choice runs from the last "
+                     f"build ({first_at:%b %-d}) back to the season's first, or to the end "
+                     "of any week's games.")
 
     intro = (
         f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "
@@ -706,5 +714,4 @@ if __name__ == "__main__":
     args = p.parse_args()
     if args.refresh:
         fpi(refresh=True)
-        ap_poll(refresh=True)
     generate()
