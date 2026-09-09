@@ -17,8 +17,17 @@ table.mu-board th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:c
   border:1px solid #e2e8f0}
 table.mu-board td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
   text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums}
-table.mu-board td.mu-t{text-align:left}
+/* The figures take only the width they need (width:1% on an auto-layout
+   table) and the two team cells split the rest; max-width:0 lets a team cell
+   shrink below its content, so on a narrow screen the names truncate (the
+   full name is in the link's title) instead of pushing the right-hand team
+   off the page. */
+table.mu-board td:not(.mu-t),table.mu-board th:not(:first-child):not(:last-child){width:1%}
+table.mu-board td.mu-t{text-align:left;max-width:0}
+table.mu-board td.mu-t a{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.mu-board td.mu-t.r{text-align:right}
+@media (max-width:900px){table.mu-board th,table.mu-board td{padding:6px 6px}
+  table.mu-board.started .mu-proj{display:none}}
 table.mu-board td.mu-vs{color:#94a3b8;font-size:11px}
 table.mu-board tbody tr:nth-child(even) td{background:#f8fafc}
 table.mu-board td b.lead{color:#1a7f4b}
@@ -31,7 +40,7 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-side .rec{font-size:12px;color:#64748b;margin-left:6px;font-weight:400}
 .mu-side .num{font-size:26px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
 .mu-side .num.lead{color:#1a7f4b}
-.mu-side .sub{font-size:12px;color:#64748b;white-space:nowrap}
+.mu-side .sub{font-size:12px;color:#64748b;white-space:nowrap;font-style:italic}
 .mu-side .sub b{color:#334155}
 .mu-mid{text-align:center;color:#94a3b8;font-size:12px;text-transform:uppercase;
   letter-spacing:.06em;white-space:nowrap}

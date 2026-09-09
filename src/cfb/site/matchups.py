@@ -343,14 +343,12 @@ def pair_view(a: dict, b: dict, to_school: dict, espn: dict) -> str:
                  + rows(ap["bench"], bp["bench"], bench=True) + "</details>")
 
     total = (f'<div class="mu-pr total">'
-             f'<div class="mu-pp"><div class="mu-pn"><span class="nm">Starters</span>'
-             f'<span class="mu-pm">proj {ap["gs"]:.1f}</span></div>'
+             f'<div class="mu-pp"><div class="mu-pn"><span class="nm">Starters</span></div>'
              f'<span class="mu-pts" data-tpts="{escape(a["key"])}">{ap["pts"]:.1f}</span></div>'
              f'<div class="mu-pslot"></div>'
              f'<div class="mu-pp"><span class="mu-pts" data-tpts="{escape(b["key"])}">'
              f'{bp["pts"]:.1f}</span>'
-             f'<div class="mu-pn"><span class="nm">Starters</span>'
-             f'<span class="mu-pm">proj {bp["gs"]:.1f}</span></div></div>'
+             f'<div class="mu-pn"><span class="nm">Starters</span></div></div>'
              f"</div>")
 
     return f'<div class="mu-pair">{starters}{total}{bench}</div>'
@@ -376,11 +374,14 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     lead = (None if not started or a["pts"] == b["pts"]
             else ("a" if (a["pts"] or 0) > (b["pts"] or 0) else "b"))
 
+    # The score is printed here and nowhere else in the section: the big
+    # number is the live total (the GordStats projection before kickoff), and
+    # the projections sit under it in italics, ours first.
     def side_html(s, which):
         big = ui.fmt(s["pts"]) if started else ui.fmt(s["gs"])
         cls = " lead" if lead == which else ""
-        sub = (f"Yahoo proj <b>{ui.fmt(s['yproj'])}</b> · GordStats <b>{ui.fmt(s['gs'])}</b>"
-               if started else f"Yahoo proj <b>{ui.fmt(s['yproj'])}</b>")
+        sub = (f"GordStats <b>{ui.fmt(s['gs'])}</b> · Yahoo <b>{ui.fmt(s['yproj'])}</b>"
+               if started else f"projected · Yahoo <b>{ui.fmt(s['yproj'])}</b>")
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_team_logo(s["team"])}'
                 f'<div><div class="nm">{escape(s["name"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
@@ -394,24 +395,30 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     mid = "Final" if final else ("Live" if started else "Preview")
     gs_edge = a["gs"] - b["gs"]
     edge = (f"GordStats has <b>{escape(a['name'] if gs_edge >= 0 else b['name'])}</b> "
-            f"by {abs(gs_edge):.1f} on projection ({ui.fmt(a['gs'])}–{ui.fmt(b['gs'])})."
+            f"by {abs(gs_edge):.1f} on projection."
             if not final else
-            f"GordStats projected {ui.fmt(a['gs'])}–{ui.fmt(b['gs'])} going in.")
+            f"GordStats had <b>{escape(a['name'] if gs_edge >= 0 else b['name'])}</b> "
+            f"by {abs(gs_edge):.1f} going in.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{wp}<p class="mu-note">{edge}</p>'
             + pair_view(a, b, to_school, espn)
             + f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
             f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')
-    head = (f'{escape(a["name"])} {ui.fmt(a["pts"]) if started else ""} '
-            f'<span style="color:#94a3b8">vs</span> '
-            f'{ui.fmt(b["pts"]) if started else ""} {escape(b["name"])}')
+    head = (f'{escape(a["name"])} <span style="color:#94a3b8">vs</span> '
+            f'{escape(b["name"])}')
     html = (f'<details class="section" open id="{anchor}"><summary>{head}</summary>'
             f"{body}</details>")
     return html, sides
 
 
 def week_board(rows: list[tuple], started: bool, final: bool) -> str:
-    """The scoreboard: one row per matchup linking down to the full view."""
+    """The scoreboard: one row per matchup linking down to the full view.
+
+    Per side: the points (once games are on), the GordStats projection and
+    Yahoo's win chance. Yahoo's projection is in each matchup's header, not
+    here - with it the board ran eleven columns and pushed the right-hand
+    team off any screen narrower than a laptop's.
+    """
     cells = []
     for anchor, a, b in rows:
         def num(s, other, key):
@@ -419,29 +426,28 @@ def week_board(rows: list[tuple], started: bool, final: bool) -> str:
             o = other.get(key)
             lead = v is not None and o is not None and v > o
             attr = (f' data-sb="{escape(s["key"])}" data-val="{v if v is not None else ""}"'
-                    if key == "pts" else "")
+                    if key == "pts" else ' class="mu-proj"')
             return f"<td{attr}>{'<b class=lead>' if lead else ''}{ui.fmt(v)}{'</b>' if lead else ''}</td>"
-        pts = (num(a, b, "pts") + num(b, a, "pts")) if started else ""
-        wp = "" if final else (f"<td>{ui.fmt((a['wp'] or 0) * 100, 0)}%</td>"
-                               f"<td>{ui.fmt((b['wp'] or 0) * 100, 0)}%</td>")
         cells.append(
-            f'<tr><td class="mu-t"><a href="#{anchor}">{_team_logo(a["team"])}'
-            f'{escape(a["name"])}</a></td>'
+            f'<tr><td class="mu-t"><a href="#{anchor}" title="{escape(a["name"])}">'
+            f'{_team_logo(a["team"])}{escape(a["name"])}</a></td>'
             + (num(a, b, "pts") if started else "")
-            + num(a, b, "yproj") + num(a, b, "gs")
+            + num(a, b, "gs")
             + (f"<td>{ui.fmt((a['wp'] or 0) * 100, 0)}%</td>" if not final else "")
             + '<td class="mu-vs">vs</td>'
             + (f"<td>{ui.fmt((b['wp'] or 0) * 100, 0)}%</td>" if not final else "")
-            + num(b, a, "gs") + num(b, a, "yproj")
+            + num(b, a, "gs")
             + (num(b, a, "pts") if started else "")
-            + f'<td class="mu-t r"><a href="#{anchor}">{escape(b["name"])}'
-              f'{_team_logo(b["team"])}</a></td></tr>')
+            + f'<td class="mu-t r"><a href="#{anchor}" title="{escape(b["name"])}">'
+              f'{escape(b["name"])}{_team_logo(b["team"])}</a></td></tr>')
     pts_h = "<th>Pts</th>" if started else ""
     wp_h = "<th title='Yahoo win probability'>Win%</th>" if not final else ""
-    return ('<div class="table-scroll"><table class="mu-board"><thead><tr>'
-            f"<th>Team</th>{pts_h}<th title='Yahoo projected total'>Yahoo Proj</th>"
-            f"<th title='GordStats projected total for the lineup as set'>GS Proj</th>{wp_h}"
-            f"<th></th>{wp_h}<th>GS Proj</th><th>Yahoo Proj</th>{pts_h}<th>Team</th>"
+    proj_h = "<th class='mu-proj' title='GordStats projected total for the lineup as set'>Proj</th>"
+    # Once games are on, a narrow screen drops the projection columns (the
+    # matchup headers carry them) so the names keep their room.
+    return (f'<div class="table-scroll"><table class="mu-board{" started" if started else ""}"><thead><tr>'
+            f"<th>Team</th>{pts_h}{proj_h}{wp_h}"
+            f"<th></th>{wp_h}{proj_h}{pts_h}<th>Team</th>"
             f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div>')
 
 
