@@ -14,14 +14,12 @@ The old URLs 301 to this page — see docs/_redirects.
 
 from fantasy import paths
 from fantasy.site import adp, draft_dna, draft_recap, draft_report, layout
-from fantasy.site import power as power_page
 from gordstats.frontmatter import add_front_matter
 
 # (anchor, summary shown on the closed section, jump-bar label)
 SECTIONS = [
     ("board", "Draft Board &mdash; the boards as they happened, pick by pick", "Board"),
     ("values", "Values &amp; Busts &mdash; the picks that beat their slot, and the ones that sank", "Values"),
-    ("consensus", "Draft Power Rankings &mdash; three sources, frozen on draft week", "Power"),
     ("report", "Manager Draft Report &mdash; how well each manager drafted", "Report"),
     ("dna", "Draft DNA &mdash; how each manager drafts", "DNA"),
 ]
@@ -43,7 +41,6 @@ def body() -> str:
     content = {
         "board": draft_recap.body(),
         "values": adp.body(),
-        "consensus": power_page.draft_consensus_section(),
         "report": draft_report.body(),
         "dna": draft_dna.body(report_href="#report"),
     }

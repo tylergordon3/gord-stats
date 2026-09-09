@@ -47,11 +47,13 @@ MUTED = palette.MUTED
 GRIDLINE = palette.GRIDLINE
 CONTEXT = palette.CONTEXT
 
-# The draft-week three-source table moved to the draft analytics page
-# (draft_consensus_section, below): it is frozen, and this page is about
-# what moves.
+# The draft-week three-source table sits under the live rankings, closed:
+# frozen on draft week, it is the fixed point every later rating is read
+# against.
 SECTIONS = [
     ("rankings", "Power Rankings &mdash; every roster, ten thousand seasons", "Rankings"),
+    ("draft-consensus", "Draft Power Rankings &mdash; the original standings, frozen on draft week",
+     "Draft"),
     ("season", "Through the Season &mdash; every rating, build by build", "Season"),
     ("positions", "Positional Strength &mdash; where each roster is built", "Positions"),
     ("lineups", "Projected Lineups &mdash; the roster behind the number", "Lineups"),
@@ -236,8 +238,8 @@ def _draft_chart(rows: pd.DataFrame) -> str:
 
 
 def draft_consensus_section() -> str:
-    """The three-source draft ranking, exactly as it was frozen - rendered on
-    the draft analytics page, where the rest of draft week lives."""
+    """The three-source draft ranking, exactly as it was frozen - the static
+    reference under the live table."""
     charts.clear("draft-consensus")
     snap = consensus.draft(int(UPCOMING_YEAR))
     if not snap or not snap.get("teams"):
@@ -624,6 +626,7 @@ def body() -> str:
 
     content = {
         "rankings": _rankings_section(table),
+        "draft-consensus": draft_consensus_section(),
         "season": _season_section(),
         "positions": _positions_section(board, rosters, table),
         "lineups": _lineups_section(board, rosters, table),
