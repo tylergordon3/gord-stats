@@ -32,7 +32,6 @@ from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
 
 LOGO = "https://a.espncdn.com/i/teamlogos/nfl/500/{abbr}.png"
-AVATAR = "https://sleepercdn.com/avatars/thumbs/{id}"
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
 
 SWAP_MIN = 1.0
@@ -324,8 +323,13 @@ def outside_sources(data: dict) -> dict:
 # --------------------------------------------------------------------------- #
 
 def _avatar(t: dict) -> str:
-    return (f'<img class="mu-tlogo" src="{AVATAR.format(id=escape(t["avatar"]))}" alt="" '
-            'loading="lazy">' if t.get("avatar") else "")
+    """The team's picture - its own where the manager set one, else the
+    manager's profile picture (fantasy.league.matchups.teams resolves which)."""
+    src = t.get("avatar") or ""
+    if src and "/" not in src:          # an archive from before URLs: a bare profile id
+        src = data_mod.AVATAR_THUMB.format(id=src)
+    return (f'<img class="mu-tlogo" src="{escape(src)}" alt="" loading="lazy">'
+            if src else "")
 
 
 def _record(t: dict) -> str:
@@ -616,6 +620,19 @@ def body() -> str:
                 "once the draft is done, and this page fills in on the next rebuild.</p>")
     lg = data_mod.league()
     datas = {w: data_mod.week_matchups(w, UPCOMING_YEAR) for w in weeks}
+    # Pictures are presentation, not history: a finished week's archive keeps
+    # the avatar it saw at capture, so every week draws the current one - a
+    # manager who sets a team picture in November sees it on week 1 too.
+    try:
+        live = {str(rid): t for rid, t in data_mod.teams().items()}
+    except Exception as exc:                            # noqa: BLE001
+        print(f"[matchups] archived avatars only ({exc})")
+        live = {}
+    for d in datas.values():
+        for rid, t in (d.get("teams") or {}).items():
+            cur = live.get(str(rid))
+            if cur and cur.get("avatar"):
+                t["avatar"] = cur["avatar"]
     board_frame = _board(weeks, datas)
     board = {str(r.sleeper_id): {"player": r.player, "pos": r.pos, "team": r.team}
              for r in board_frame.drop_duplicates("sleeper_id").itertuples(index=False)}

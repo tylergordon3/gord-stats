@@ -29,6 +29,8 @@ import requests
 from fantasy import paths
 from fantasy.config import LEAGUE_TZ, ROSTER_NAMES, UPCOMING_LEAGUE_ID, UPCOMING_YEAR
 
+AVATAR_THUMB = "https://sleepercdn.com/avatars/thumbs/{id}"
+
 SLEEPER_API = "https://api.sleeper.app/v1"
 SLEEPER_ROOT = "https://api.sleeper.app"
 ESPN_SCOREBOARD = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
@@ -93,7 +95,13 @@ def league(league_id: str = UPCOMING_LEAGUE_ID) -> dict:
 
 
 def teams(league_id: str = UPCOMING_LEAGUE_ID) -> dict:
-    """{roster_id: {name, manager, avatar, wins, losses, ties, fpts, reserve}}."""
+    """{roster_id: {name, manager, avatar, wins, losses, ties, fpts, reserve}}.
+
+    `avatar` is a full image URL: the team's own picture where the manager
+    set one for this league (Sleeper keeps it in the user's league metadata,
+    as a URL), else the manager's profile picture, which Sleeper serves by
+    id from its avatar CDN.
+    """
     users = {u["user_id"]: u for u in _get(f"{SLEEPER_API}/league/{league_id}/users") or []}
     out = {}
     for r in _get(f"{SLEEPER_API}/league/{league_id}/rosters") or []:
@@ -104,7 +112,8 @@ def teams(league_id: str = UPCOMING_LEAGUE_ID) -> dict:
                 or f"Team {rid}")
         out[rid] = {
             "name": name, "manager": ROSTER_NAMES.get(rid, u.get("display_name") or ""),
-            "avatar": u.get("avatar") or "",
+            "avatar": ((u.get("metadata") or {}).get("avatar")
+                       or (AVATAR_THUMB.format(id=u["avatar"]) if u.get("avatar") else "")),
             "wins": int(st.get("wins") or 0), "losses": int(st.get("losses") or 0),
             "ties": int(st.get("ties") or 0),
             "fpts": float(st.get("fpts") or 0) + float(st.get("fpts_decimal") or 0) / 100,
