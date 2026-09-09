@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-09T03:36:51+00:00",
+ "fetched": "2026-09-09T03:42:59+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 200.41,
-     "win_probability": 0.73
+     "projected": 198.18,
+     "win_probability": 0.72
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
      "projected": 161.63,
-     "win_probability": 0.27
+     "win_probability": 0.28
     }
    ]
   },
@@ -237,20 +237,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "337423",
-    "player": "Louis Brown IV",
-    "pos": "WR",
-    "team": "BAY",
-    "team_full": "Baylor Bears",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "470260",
     "player": "Waymond Jordan",
     "pos": "RB",
@@ -265,12 +251,26 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404466",
-    "player": "Hollywood Smothers",
+    "yahoo_id": "405245",
+    "player": "Rueben Owens II",
     "pos": "RB",
-    "team": "TEX",
-    "team_full": "Texas Longhorns",
-    "bye": 5.0,
+    "team": "TAMU",
+    "team_full": "Texas A&M Aggies",
+    "bye": 9.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "337423",
+    "player": "Louis Brown IV",
+    "pos": "WR",
+    "team": "BAY",
+    "team_full": "Baylor Bears",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -279,12 +279,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "405245",
-    "player": "Rueben Owens II",
+    "yahoo_id": "404466",
+    "player": "Hollywood Smothers",
     "pos": "RB",
-    "team": "TAMU",
-    "team_full": "Texas A&M Aggies",
-    "bye": 9.0,
+    "team": "TEX",
+    "team_full": "Texas Longhorns",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
