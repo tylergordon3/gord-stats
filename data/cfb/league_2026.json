@@ -223,8 +223,8 @@
    "name": "Puntaholics",
    "manager": "",
    "logo": "https://yahoofantasysports-res.cloudinary.com/image/upload/t_s192sq/fantasy-logos/e8e2f970401474f41f391908d21d729c1e847295224c9e285a8c97298890e7c4.jpg",
-   "faab": 99.0,
-   "moves": 3.0,
+   "faab": 88.0,
+   "moves": 4.0,
    "trades": 0.0,
    "rank": 2.0,
    "wins": 1.0,
@@ -253,14 +253,14 @@
    "name": "Jackson's Brilliant Team",
    "manager": "",
    "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png",
-   "faab": 100.0,
-   "moves": 1.0,
+   "faab": 95.0,
+   "moves": 2.0,
    "trades": 0.0,
    "rank": 4.0,
    "wins": 1.0,
    "losses": 0.0,
    "ties": 0.0,
-   "points_for": 177.78,
+   "points_for": 179.78,
    "points_against": 144.3
   },
   {
@@ -351,7 +351,7 @@
    "losses": 1.0,
    "ties": 0.0,
    "points_for": 144.3,
-   "points_against": 177.78
+   "points_against": 179.78
   }
  ]
 }
