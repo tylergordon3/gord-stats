@@ -33,10 +33,19 @@ from cfb.config import LEAGUE_TZ
 
 # The exponent on (this game's predicted score / the offence's season average)
 # and the band the result is held inside. At 0.6 a game the model prices 25%
-# above the offence's norm lifts its players about 14%; the cap keeps a
-# mismatch against an FCS opponent from doubling anyone.
+# above the offence's norm lifts its players about 14%.
+#
+# The band is lopsided on purpose. Downward, a hard opponent really does cost
+# a starter his share, so the tilt runs to -30%. Upward it stops at +10%: the
+# games the model prices far above an offence's norm are the mismatches, and
+# in those the starters sit for the second half. Week 1 of 2026 was the
+# evidence - 30% of the league's starters hit the old +30% cap and the
+# lineups projected 214 against 191 scored, while the untilted number was
+# within a point. A margin-based benching haircut was tried and did no better
+# than simply not tilting up.
 GAME_WEIGHT = 0.6
-GAME_CAP = 0.30
+GAME_CAP_DOWN = 0.30
+GAME_CAP_UP = 0.10
 
 
 def _window(start: str, end: str) -> tuple:
@@ -88,7 +97,7 @@ def _skill_points(row: pd.Series, game: dict) -> float:
     if not avg:
         return per_game
     tilt = (game["pred_for"] / avg) ** GAME_WEIGHT
-    return per_game * float(np.clip(tilt, 1 - GAME_CAP, 1 + GAME_CAP))
+    return per_game * float(np.clip(tilt, 1 - GAME_CAP_DOWN, 1 + GAME_CAP_UP))
 
 
 def week_projections(start: str, end: str, board: pd.DataFrame = None,
