@@ -228,34 +228,56 @@ def test_calling_under_and_getting_it_right_counts(tmp_path, monkeypatch):
 
 
 def test_the_game_log_can_be_added_up_to_the_headline():
-    """The log is the working behind the two percentages at the top.
+    """The log is the working behind the three records at the top.
 
-    While the per-game column used the three-point-gated call, forty-one of
-    seventy-one priced games showed an em dash - eighteen of them games we
-    called correctly - so the ticks could not be summed to the number above
-    them. The column, the week chips and the headline all read ou_called now.
+    The top of the page is our recommendations against the book - winner,
+    spread and total, the last two gated at three points - so the per-game
+    columns, the week chips and the headline all read the same gated calls.
+    A dash in a gated column is a game with no bet, not a wrong one.
     """
     from conftest import ROOT
     src = (ROOT / "src" / "cfb" / "site" / "predictions.py").read_text()
-    rows = src.split("def _result_rows")[1].split("def ")[0]
-    assert '_mark(g["ou_called"])' in rows
-    assert '_mark(g["ou_correct"])' not in rows
+    rows = src.split("def _result_rows")[1].split("\ndef ")[0]
+    assert '_mark(g["beat_the_book"])' in rows
+    assert '_mark(g["ou_correct"])' in rows
+    assert '_mark(g["ou_called"])' not in rows
 
-    block = src.split("def _week_block")[1].split("def ")[0]
-    assert "ou_all_games" in block and "ou_all_wins" in block
+    block = src.split("def _week_block")[1].split("\ndef ")[0]
+    assert "stat['ou_wins']" in block and "stat['ats_wins']" in block
+    assert "ou_all_games" not in block
 
-    band = src.split("def _record_band")[1].split("def ")[0]
-    assert "ou_all_wins" in band
+    band = src.split("def _record_band")[1].split("\ndef ")[0]
+    assert 'stat["ou_wins"]' in band and 'stat["ats_wins"]' in band
 
 
-def test_the_gated_record_survives_in_the_analysis_tiles():
-    """It answers a different question and should not simply disappear."""
+def test_both_over_under_records_keep_a_place_on_the_page():
+    """The gated record (bets worth placing) leads the page beside the winners
+    and the spread; the ungated one (every lean) answers a different question
+    and should not simply disappear - it lives in the analysis tiles."""
     from conftest import ROOT
     src = (ROOT / "src" / "cfb" / "site" / "predictions.py").read_text()
-    section = src.split("def _results_section")[1].split("def ")[0]
-    assert '_rate_tile("Over/under", stat["ou_wins"], stat["ou_games"]' in section
+    band = src.split("def _record_band")[1].split("\ndef ")[0]
+    assert '"Over/under", stat["ou_wins"], stat["ou_games"]' in band
+    assert '"Against the spread", stat["ats_wins"], stat["ats_games"]' in band
+    section = src.split("def _results_section")[1].split("\ndef ")[0]
+    assert 'stat["ou_all_wins"], stat["ou_all_games"]' in section
     # ...and below the log, not above it.
     assert section.index("+ blocks") < section.index("+ tile_html")
+
+
+def test_the_books_favourite_is_scored_on_the_same_games(tmp_path, monkeypatch):
+    """The winners cell compares us with the book's favourite: a pick'em names
+    nobody and stays out of the book's record."""
+    rows = [_ou_row("2026-09-04T12:00:00+00:00", pred_total=50.0, market_total=45.0)]
+    rows[0] = {**rows[0], "pred_margin": 7.0, "market_spread": -3.0}      # home favoured, we agree
+    _archive(rows, tmp_path, monkeypatch)
+    _finals(monkeypatch, total=60.0)
+    frame = results.scored(2026)
+    if "actual_margin" in frame and frame["actual_margin"].notna().all():
+        stat = results.summary(frame)
+        assert stat["book_games"] == 1
+        assert stat["book_correct"] == int((frame["actual_margin"] > 0).iloc[0])
+        assert stat["correct_on_book_games"] == stat["correct"]
 
 
 def test_agreeing_with_the_book_is_not_a_call(tmp_path, monkeypatch):

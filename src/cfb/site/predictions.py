@@ -463,20 +463,21 @@ def _result_rows(frame: pd.DataFrame) -> str:
             f"<td>{g['actual_margin']:+.0f}</td>"
             f"<td>{abs(g['margin_error']):.1f}</td>"
             + _mark(bool(g["correct"]))
+            # The three calls at the top of the page, so the log is their
+            # working: the ticks in each column add up to the record above.
+            # Spread and Total are the recommended bets - gated at three
+            # points from the book's number - and a dash is a game where no
+            # bet was recommended, not a wrong one.
+            + _mark(g["beat_the_book"])
             + f"<td class='col-sep'>{g['pred_total']:.0f}</td>"
             f"<td>{g['actual_total']:.0f}</td>"
             f"<td class='pred-ou'>{ou_said}</td>"
-            # The plain call, not the three-point-gated one. Gated, forty-one
-            # of seventy-one priced games showed an em dash - including games
-            # we called correctly - so the ticks could not be added up to the
-            # percentage at the top of the page, which is what a game log is
-            # for. The gated record keeps its own tile below.
-            + _mark(g["ou_called"]) + "</tr>")
+            + _mark(g["ou_correct"]) + "</tr>")
     return ("<div class='pred-scroll'><table class='cfb-pred'><thead>"
-            "<tr><th rowspan='2'>Game</th><th class='grp' colspan='4'>Margin</th>"
+            "<tr><th rowspan='2'>Game</th><th class='grp' colspan='5'>Margin</th>"
             "<th class='grp col-sep' colspan='4'>Total</th></tr>"
-            "<tr><th>Ours</th><th>It was</th><th>Miss</th><th>Call</th>"
-            "<th class='col-sep'>Ours</th><th>It was</th><th>Our O/U</th><th>Call</th>"
+            "<tr><th>Ours</th><th>It was</th><th>Miss</th><th>Winner</th><th>Spread</th>"
+            "<th class='col-sep'>Ours</th><th>It was</th><th>Our O/U</th><th>Bet</th>"
             f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 
@@ -495,10 +496,10 @@ def _week_block(frame: pd.DataFrame, label: str, is_open: bool) -> str:
         chips.append(f"<span class='pw-chip'><b>"
                      f"{stat['ats_wins'] / stat['ats_games']:.0%}</b> ATS "
                      f"({stat['ats_wins']}/{stat['ats_games']})</span>")
-    if stat["ou_all_games"]:
+    if stat["ou_games"]:
         chips.append(f"<span class='pw-chip'><b>"
-                     f"{stat['ou_all_wins'] / stat['ou_all_games']:.0%}</b> O/U "
-                     f"({stat['ou_all_wins']}/{stat['ou_all_games']})</span>")
+                     f"{stat['ou_wins'] / stat['ou_games']:.0%}</b> O/U "
+                     f"({stat['ou_wins']}/{stat['ou_games']})</span>")
     # Newest first inside the week, matching the order of the weeks themselves.
     ordered = frame.sort_values("kickoff", ascending=False)
     return (f"<details class='pred-week'{' open' if is_open else ''}>"
@@ -508,14 +509,20 @@ def _week_block(frame: pd.DataFrame, label: str, is_open: bool) -> str:
 
 
 def _record_cell(label: str, wins: int, games: int, sub: str,
-                 benchmark: float | None = None) -> str:
+                 benchmark: float | None = None, mark_label: str = "break-even") -> str:
+    """One of the three records at the top: the rate, the fraction under it,
+    and the book's number drawn on the bar - break-even for a bet, or the
+    book's own rate on the same games."""
+    if not games:
+        return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
+                f"<div class='rec-value'>&mdash;</div><div class='rec-sub'>{sub}</div></div>")
     pct = wins / games
     mark = note = ""
     if benchmark is not None:
         mark = f"<span class='t-mark' style='left:{benchmark * 100:.1f}%'></span>"
         gap = (benchmark - pct) * 100
-        note = ("<div class='rec-note'>the mark is break-even at "
-                f"{benchmark:.1%} &middot; "
+        note = (f"<div class='rec-note'>the mark is {mark_label} at "
+                f"{benchmark:.0%} &middot; "
                 + (f"{abs(gap):.0f} points clear" if gap <= 0
                    else f"{gap:.0f} points under") + "</div>")
     return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
@@ -526,34 +533,37 @@ def _record_cell(label: str, wins: int, games: int, sub: str,
 
 
 def _record_band(frame: pd.DataFrame) -> str:
-    """Right or wrong, at the top of the page.
+    """Right or wrong, at the top of the page: our three calls against the book.
 
-    Everything else here measures how far off the model was, which is the
-    interesting question only once you already trust it. These two need no
-    conversion: the winner was called or it was not, and the total went over
-    the book's number or it did not.
-
-    The over/under figure here is deliberately the ungated one - every game the
-    book priced, however small our disagreement. The three-point version is a
-    claim about bets worth placing and belongs with the rest of the analysis
-    further down; up here the question is only whether we were right.
+    The winner we named, against the book's favourite on the same games; and
+    where our number differs from the book's by three points or more - the
+    bets worth placing - our side of the spread and of the total, against
+    the break-even a bet has to clear. The ungated over/under figure (every
+    game the book priced, however small our lean) is a different claim and
+    stays with the analysis further down.
     """
     if frame.empty:
         return ""
     stat = results.summary(frame)
-    cells = [_record_cell("Winners called right", stat["correct"], stat["games"],
-                          "games")]
-    if stat["ou_all_games"]:
-        cells.append(_record_cell("Over/under called right", stat["ou_all_wins"],
-                                  stat["ou_all_games"], "games we called"))
+    book_rate = (stat["book_correct"] / stat["book_games"]) if stat["book_games"] else None
+    cells = [
+        _record_cell("Winners called right", stat["correct"], stat["games"], "games",
+                     book_rate, "the book's favourite"),
+        _record_cell("Against the spread", stat["ats_wins"], stat["ats_games"],
+                     "bets where we differed from the book by 3+", BREAK_EVEN),
+        _record_cell("Over/under", stat["ou_wins"], stat["ou_games"],
+                     "bets where we differed from the book by 3+", BREAK_EVEN),
+    ]
     return ("<p class='pred-note'>Every prediction below is archived before "
-            "kickoff and scored against the result. Here is how that has gone "
+            "kickoff and scored against the result: the winner we named, and - "
+            "where our number differs from the book's by three points or more - "
+            "our side of the spread and of the total. Here is how that has gone "
             f"across {stat['games']} finished game"
             f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}.</p>"
             "<div class='pred-record'>" + "".join(cells) + "</div>"
             "<p class='pred-note rec-more'><a href='#how-it-has-gone'>How close the "
-            "scores were, the spread and total records against the book, and every "
-            "game week by week &rarr;</a></p>")
+            "scores were, every total we leaned on, and every game week by week "
+            "&rarr;</a></p>")
 
 
 def _results_section(frame: pd.DataFrame) -> str:
@@ -561,9 +571,10 @@ def _results_section(frame: pd.DataFrame) -> str:
 
     Everything else on this page is a claim about seasons nobody watched. This
     is the only part a reader can check, so it is scored on predictions that
-    were on record before kickoff and nothing else. The two plain right-or-wrong
-    rates are at the top of the page; what is left here is what needs a sentence
-    of explanation -- the spread, the average miss, and the game-by-game log.
+    were on record before kickoff and nothing else. The three records against
+    the book are at the top of the page; what is left here is what needs a
+    sentence of explanation -- the ungated total, the average miss, and the
+    game-by-game log.
     """
     if frame.empty:
         return ("<h2 id='how-it-has-gone'>How it has gone</h2>"
@@ -581,10 +592,8 @@ def _results_section(frame: pd.DataFrame) -> str:
     tiles = [
         _plain_tile("Games scored", f"{stat['games']}", "predicted before kickoff",
                     f"<div class='t-note'>{_span(frame)}</div>"),
-        _rate_tile("Against the spread", stat["ats_wins"], stat["ats_games"],
-                   "where we differed by 3+", BREAK_EVEN),
-        _rate_tile("Over/under", stat["ou_wins"], stat["ou_games"],
-                   "where we differed by 3+", BREAK_EVEN),
+        _rate_tile("Over/under, every lean", stat["ou_all_wins"], stat["ou_all_games"],
+                   "games the book priced, however small our lean"),
         _miss_tile("Margin miss", ours, book, "average, against the final margin"),
         _miss_tile("Total miss", ours_total, book_total,
                    "average, against the points scored"),
@@ -634,14 +643,16 @@ def _results_section(frame: pd.DataFrame) -> str:
             f"<p class='pred-note'>All {stat['games']} game"
             f"{'s' if stat['games'] != 1 else ''} scored since the archive "
             f"started, newest week first, using the last prediction on record "
-            f"before each kickoff. Two calls per game, each of them a plain yes "
-            f"or no: <strong>Call</strong> under Margin is whether the pick got "
-            f"the winner right, and <strong>Call</strong> under Total is whether "
-            f"our number landed on the same side of the book's as the game did. "
-            f"<strong>Our O/U</strong> shows which side that was. A dash means no "
-            f"call was made: either the book never posted a total, or our "
-            f"number was inside half a point of theirs, which the schedule "
-            f"page reports as agreeing with the book rather than as a pick."
+            f"before each kickoff. Three calls per game, each a plain yes or "
+            f"no, and the three records at the top of the page are these columns "
+            f"added up: <strong>Winner</strong> is whether the pick got the "
+            f"winner right; <strong>Spread</strong> whether our side of the "
+            f"book's number covered, and <strong>Bet</strong> under Total whether "
+            f"our side of the book's total came in, each only where our number "
+            f"differed from the book's by three points or more. "
+            f"<strong>Our O/U</strong> shows which side we leaned, however "
+            f"slightly. A dash means no bet was recommended: the book posted no "
+            f"line, or our number was within three points of theirs."
             f"{ou_note}</p>"
             + blocks
             + "<h3 class='pred-sub'>How close it was</h3>"

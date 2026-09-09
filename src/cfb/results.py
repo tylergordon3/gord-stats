@@ -158,6 +158,11 @@ def scored(season: int = SEASON) -> pd.DataFrame:
     frame["total_error"] = frame["pred_total"] - frame["actual_total"]
     frame["correct"] = ((frame["pred_margin"] > 0) == (frame["actual_margin"] > 0))
     frame["market_error"] = -frame["market_spread"] - frame["actual_margin"]
+    # The book's own winner: its favourite. A pick'em (spread of zero) names
+    # nobody and stays out, as does a game the book never priced.
+    book_pick = -frame["market_spread"]
+    frame["book_correct"] = np.where(book_pick.isna() | (book_pick == 0), np.nan,
+                                     (book_pick > 0) == (frame["actual_margin"] > 0))
     # Did the side we leaned toward cover the number the book put up?
     edge = frame["pred_margin"] - (-frame["market_spread"])
     cover = frame["actual_margin"] - (-frame["market_spread"])
@@ -207,10 +212,16 @@ def summary(frame: pd.DataFrame) -> dict:
     ats = frame["beat_the_book"].dropna()
     ou = frame["ou_correct"].dropna()
     ou_all = frame["ou_called"].dropna()
+    book = frame["book_correct"].dropna()
     return {
         "games": len(frame),
         "correct": int(frame["correct"].sum()),
         "winner_accuracy": float(frame["correct"].mean()),
+        # The book's favourite on the games it named one in, and our winner
+        # on those same games - the like-for-like comparison.
+        "book_games": int(len(book)),
+        "book_correct": int(book.sum()) if len(book) else 0,
+        "correct_on_book_games": int(frame.loc[book.index, "correct"].sum()) if len(book) else 0,
         "margin_mae": float(frame["margin_error"].abs().mean()),
         "margin_rmse": float(np.sqrt((frame["margin_error"] ** 2).mean())),
         "total_mae": float(frame["total_error"].abs().mean()),
