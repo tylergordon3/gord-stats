@@ -162,7 +162,7 @@ var rows=Array.prototype.slice.call(body.rows);
 var data=document.getElementById('pwr-deltas');
 var DELTA={},KIND={},WHEN={},DEFAULT='rank';
 if(data){try{var d=JSON.parse(data.textContent);DELTA=d.deltas;KIND=d.kinds;WHEN=d.when;}catch(e){}}
-var moveTh=head.querySelector('th.mv-th');
+var moveTh=head.querySelector('th.mv-th'), fpiTh=head.querySelector('th.sortable[data-field=rank]');
 var moveI=moveTh?Array.prototype.indexOf.call(head.cells,moveTh):-1;
 var win=null, field=DEFAULT;
 var first=document.querySelector('.win-btn.active');
@@ -182,8 +182,7 @@ function draw(){
   var col=(DELTA[win]||{})[field], kind=KIND[field]||{k:'num',d:1,label:field,tip:field+' change'};
   rows.forEach(function(r,k){
     var td=r.cells[moveI], v=col?col[k]:null;
-    if(v===null||v===undefined){td.innerHTML='';td.removeAttribute('data-sort');return;}
-    td.setAttribute('data-sort',v);
+    if(v===null||v===undefined){td.innerHTML='';return;}
     td.innerHTML=kind.k==='rank'?arrow(v):signed(v,kind.d);
   });
   moveTh.innerHTML='Move'+(kind.label?"<span class='mv-of'>"+kind.label+"</span>":'');
@@ -206,15 +205,16 @@ function compare(x,y){
   return String(x).localeCompare(String(y));
 }
 
-function sortBy(th){
+function sortBy(th,force){
   var i=Array.prototype.indexOf.call(head.cells,th);
-  // Move tracks the column being sorted; Team is the FPI rank order, so it
-  // hands Move back to places climbed. Move itself leaves it where it is.
-  var f=th.dataset.field||(th===head.cells[0]?DEFAULT:null);
-  if(f&&f!==field){field=f;draw();}
+  // Move tracks the column being sorted: places climbed on FPI, otherwise
+  // that figure's change.
+  var f=th.dataset.field||DEFAULT;
+  if(f!==field){field=f;draw();}
   // A column that is already the live one reverses; one being picked up opens
-  // in the direction it reads best, even if it was left reversed earlier.
-  var dir=th.dataset.now?(th.dataset.now==='asc'?'desc':'asc'):th.dataset.dir;
+  // in the direction it reads best, even if it was left reversed earlier. The
+  // tab switcher passes the direction it wants, so falling back never flips.
+  var dir=force||(th.dataset.now?(th.dataset.now==='asc'?'desc':'asc'):th.dataset.dir);
   var sorted=rows.slice().sort(function(a,b){
     var x=val(a,i), y=val(b,i);
     if(x===null&&y===null) return 0;
@@ -251,16 +251,8 @@ Array.prototype.forEach.call(head.cells,function(th){
   });
 });
 
-// A new window redraws both change columns, and a sort running on one of
-// them reruns so the order matches what is now on screen.
-document.addEventListener('winchange',function(e){
-  win=e.detail;
-  draw();
-  var live=head.querySelector('th.sorted');
-  if(!live||!live.classList.contains('win-th')) return;
-  live.dataset.now=live.dataset.now==='asc'?'desc':'asc';   // sortBy flips it back
-  sortBy(live);
-});
+// A new window redraws the Move column.
+document.addEventListener('winchange',function(e){win=e.detail;draw();});
 
 // --- tabs -----------------------------------------------------------------
 var TABS=document.querySelectorAll('.pv-btn');
@@ -270,9 +262,10 @@ Array.prototype.forEach.call(TABS,function(btn){
     table.className='cfb-power view-'+view;
     Array.prototype.forEach.call(TABS,function(b){b.classList.toggle('active',b===btn);});
     // A sort running on a column this tab doesn't show would leave the table in
-    // an order with nothing on screen to explain it, so it falls back to rank.
+    // an order with nothing on screen to explain it, so it falls back to FPI
+    // order - the live column then being one this tab hides, nothing is tinted.
     var live=head.querySelector('th.sorted');
-    if(live&&!live.classList.contains('v-'+view)) sortBy(head.cells[0]);
+    if(live&&!live.classList.contains('v-'+view)&&fpiTh) sortBy(fpiTh,fpiTh.dataset.dir);
   });
 });
 })();
@@ -454,11 +447,11 @@ def _th(views, label, tip, direction, first=False, team=False, tips=None,
         attrs += f" data-dir='{direction}'"
     if field:
         attrs += f" data-field='{field}'"
-    # The table arrives sorted by rank, so Team - which sorts by it - opens
-    # as the live column.
+    # The table arrives in FPI order, so FPI opens as the live column, in
+    # its own direction.
     if first:
-        cls += " sorted asc"
-        attrs += " data-now='asc' aria-sort='ascending'"
+        cls += f" sorted {direction}"
+        attrs += f" data-now='{direction}' aria-sort='{'ascending' if direction == 'asc' else 'descending'}'"
     return f"<th class='{cls}'{attrs}>{label}</th>"
 
 
@@ -566,14 +559,16 @@ def body() -> str:
     # back out of the rendering. `field` is the archived figure whose change
     # the Move column shows while this column sorts the table.
     # Team leads with the FPI rank folded in: a leading RK column froze a bare
-    # counter on phones while the names scrolled away. Sorting the Team column
-    # sorts by that rank, which also keeps it the opening sort and the one the
-    # tab switcher falls back to.
+    # counter on phones while the names scrolled away. Neither Team nor Move
+    # sorts: the figures do, and FPI - the order the table arrives in - is the
+    # opening sort and the one the tab switcher falls back to. Its Move figure
+    # is places climbed in the FPI rank, since FPI order is the ranking itself;
+    # every other column's is the change in that column's own figure.
     def col(views, label, tip, direction, cell, field=None):
         return views, label, tip, direction, cell, field
 
     cols = [
-        col(ALL, "Team", "FPI rank", "asc",
+        col(ALL, "Team", "FPI rank", None,
             lambda t: (t["rank"], f"<span class='row-rank'>{t['rank']}</span>{_team(t)}")),
     ]
     # Move opens on the first window and the rank, as the script would draw it.
@@ -582,7 +577,7 @@ def body() -> str:
         return _change(vals[t["rank"] - 1] if vals else None, "rank")
 
     if show_move:
-        cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", "desc", opening))
+        cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", None, opening))
     if show_ap:
         cols.append(col(("rating",), "AP", f"AP poll rank ({ap_label})" if ap_label else "AP poll rank", "asc",
                         lambda t: _plain(t["ap"]), "ap"))
@@ -591,7 +586,7 @@ def body() -> str:
                         _record, "numwins"))
     cols += [
         col(("rating",), "FPI", "Expected point margin against an average FBS team",
-            "desc", lambda t: (t["fpi"], f"{t['fpi']:+.1f}"), "fpi"),
+            "desc", lambda t: (t["fpi"], f"{t['fpi']:+.1f}"), "rank"),
         col(("rating",), "Proj W-L", "ESPN's simulation of the full schedule", "desc",
             lambda t: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}"),
             "projectedw"),
@@ -625,7 +620,7 @@ def body() -> str:
     # label, and a tooltip phrase that reads right for a value or a rank.
     kinds = {"rank": {"k": "rank", "d": 0, "label": "", "tip": "Places climbed"}}
     for _views, label, _tip, _dir, _cell, field in cols:
-        if field and field in TRACKED:
+        if field and field != "rank" and field in TRACKED:
             kind, dec = TRACKED[field]
             tip = ("Wins added" if field == "numwins"
                    else f"{label} places climbed" if kind == "rank" else f"{label} change")
@@ -638,7 +633,8 @@ def body() -> str:
             value, text = cell(t)
             cells.append(_td(views, value, text, team=(label == "Team"),
                              sortable=direction is not None,
-                             extra=" mv-cell" if label == "Move" else ""))
+                             extra=(" mv-cell" if label == "Move"
+                                    else " sorted-col" if label == "FPI" else "")))
         rows.append(f"<tr{' class=\"top25\"' if t['rank'] <= 25 else ''}"
                     f"{favorites.row_attr('cfb', t['id'])}>"
                     + "".join(cells) + "</tr>")
@@ -646,8 +642,8 @@ def body() -> str:
     # Move's header is retitled by the script as the sorted column changes, so
     # it carries no data-tips for WINDOW_JS to retitle it with.
     head = "".join(
-        _th(views, label, tip, direction, first=(label == "Team"), team=(label == "Team"),
-            field=field, extra=(" mv-th win-th" if label == "Move" else ""))
+        _th(views, label, tip, direction, first=(label == "FPI"), team=(label == "Team"),
+            field=field, extra=(" mv-th" if label == "Move" else ""))
         for views, label, tip, direction, _cell, field in cols)
 
     move_note = ""
@@ -672,7 +668,7 @@ def body() -> str:
         "<p class='power-note'><strong>Rating</strong> is the ratings and the "
         "projected record, <strong>Odds</strong> what ESPN's simulations give "
         "each team, <strong>Resume</strong> what the schedule has been worth. "
-        "Click any column header to sort by it; click again to reverse. Top 25 "
+        "Click a figure's header to sort by it; click again to reverse. Top 25 "
         "highlighted - the highlight follows the team, so the FPI top 25 stay "
         "marked however the table is sorted. On the Resume tab, "
         "<strong>SOS</strong> is strength-of-schedule rank (hardest first) and "
