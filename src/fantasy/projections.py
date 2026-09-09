@@ -413,6 +413,11 @@ def _anchor_to_market(board: pd.DataFrame, year: int) -> pd.DataFrame:
     """
     curve = market_curve(exclude_year=year if year < UPCOMING_YEAR else None)
     market = _market_board(year).set_index("merge_name")["adp"]
+    if market.empty:
+        # Silent once: a board with no market anchor prices every player on
+        # usage or the replacement floor and looks plausible enough to ship.
+        print(f"[projections] WARNING: no ADP board for {year} - nothing is anchored "
+              "on the market; every projection is usage or replacement")
 
     adp = board["merge_name"].map(market)
     fitted = board["pos"].map({p: c for p, c in curve.items()})

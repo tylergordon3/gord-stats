@@ -291,8 +291,32 @@ def _lineup_points(scores: np.ndarray, available: np.ndarray,
     return total
 
 
+# Sleeper's injury designations and the weeks a player is held out for, from
+# the week the simulation is standing in. A reserve list (IR, PUP) is four
+# games by rule; NA (not with the team) and a suspension are treated the same,
+# an Out or Doubtful tag is this week. After the held-out weeks the chain
+# takes over from the out state, so a player on IR comes back at the usual
+# rate rather than on the dot.
+FORCED_OUT = {"IR": 4, "PUP": 4, "NA": 4, "Sus": 4, "DNR": 4, "Out": 1, "Doubtful": 1, "COV": 1}
+
+
+def injury_designations(year: int = UPCOMING_YEAR) -> dict:
+    """{sleeper_id: Sleeper injury status} for rostered players, from the
+    newest week the matchups archive holds - the current week refetches every
+    few hours, so this is as fresh as the site gets. Empty if nothing is
+    archived yet."""
+    import json
+    from fantasy.league import matchups as data_mod
+    files = sorted((data_mod.MATCHUPS_DIR / str(year)).glob("week_*.json"))
+    if not files:
+        return {}
+    data = json.loads(files[-1].read_text())
+    return {pid: v["injury"] for pid, v in (data.get("projections") or {}).items()
+            if v.get("injury")}
+
+
 def _availability(players: pd.DataFrame, weeks: int, sims: int,
-                  rng: np.random.Generator) -> np.ndarray:
+                  rng: np.random.Generator, from_week: int = 0) -> np.ndarray:
     """(sims, weeks, players) of who is playing, byes included.
 
     Injuries persist. A weekly coin flip at each player's own rate gives the
@@ -303,10 +327,16 @@ def _availability(players: pd.DataFrame, weeks: int, sims: int,
     `avail` fixes the long-run share of weeks played and MEAN_ABSENCE_WEEKS
     how long a spell lasts once it starts, and the season opens in the
     stationary state rather than assuming everyone is healthy in week one.
+
+    Except where we know better: `out_weeks` (from FORCED_OUT, when the frame
+    carries it) holds a player out from `from_week` - the week being played
+    next - for that many weeks, and the chain resumes from the out state.
     """
     avail = players["avail"].to_numpy(float)
     bye = players["bye"].to_numpy(int)
     n = len(avail)
+    out_weeks = (players["out_weeks"].fillna(0).to_numpy(int) if "out_weeks" in players
+                 else np.zeros(n, dtype=int))
 
     back = 1.0 / MEAN_ABSENCE_WEEKS                    # out -> available
     out = np.clip(back * (1.0 - avail) / np.maximum(avail, 1e-9), 0.0, 1.0)
@@ -316,6 +346,9 @@ def _availability(players: pd.DataFrame, weeks: int, sims: int,
     for week in range(weeks):
         draw = rng.random((sims, n))
         playing = np.where(playing, draw >= out[None, :], draw < back)
+        held = (week >= from_week) & (week < from_week + out_weeks)
+        if held.any():
+            playing = playing & ~held[None, :]
         states[:, week, :] = playing
 
     week_index = np.arange(1, weeks + 1)[None, :, None]
@@ -323,7 +356,7 @@ def _availability(players: pd.DataFrame, weeks: int, sims: int,
 
 
 def _weekly_scores(players: pd.DataFrame, weeks: int, sims: int,
-                   rng: np.random.Generator) -> tuple:
+                   rng: np.random.Generator, from_week: int = 0) -> tuple:
     """((sims, weeks, players) of points, the same shape of availability)."""
     mu = players["mu"].to_numpy(float)
     sd = np.maximum(players["sd"].to_numpy(float), MIN_SD)
@@ -343,7 +376,7 @@ def _weekly_scores(players: pd.DataFrame, weeks: int, sims: int,
     scale = sd[None, :] ** 2 / true_mu
     scores = rng.gamma(shape[:, None, :], scale[:, None, :], size=(sims, weeks, len(mu)))
 
-    available = _availability(players, weeks, sims, rng)
+    available = _availability(players, weeks, sims, rng, from_week)
     return np.where(available, scores, 0.0), available
 
 
@@ -385,14 +418,20 @@ def _bracket(points: np.ndarray, seeds: np.ndarray) -> np.ndarray:
 
 def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
              weeks: int = FANTASY_REG_WEEKS, sims: int = DEFAULT_SIMS,
-             fixed_schedule=None, actual_points=None, seed: int = 20260821) -> pd.DataFrame:
+             fixed_schedule=None, actual_points=None, seed: int = 20260821,
+             injuries: dict = None) -> pd.DataFrame:
     """Run the season `sims` times and summarize each team's outcomes.
 
     `actual_points` is a (played weeks, teams) array of real scores, in
     ascending roster_id order; those weeks are taken as they happened in every
-    simulation and only the rest of the season is drawn.
+    simulation and only the rest of the season is drawn. `injuries` is
+    {sleeper_id: Sleeper injury status} today; a player on a reserve list is
+    held out of the next weeks (FORCED_OUT) instead of opening healthy.
     """
     players = roster_frame.merge(board, on="sleeper_id", how="left")
+    players["out_weeks"] = (players["sleeper_id"].astype(str)
+                            .map(lambda pid: FORCED_OUT.get((injuries or {}).get(pid, ""), 0)))
+    played = min(len(actual_points), weeks) if actual_points is not None and len(actual_points) else 0
     missing = players["mu"].isna()
     if missing.any():
         # Anyone the projection board has never heard of is a deep-bench flier;
@@ -419,7 +458,7 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     while done < sims:
         batch = min(SIM_CHUNK, sims - done)
         total_weeks = weeks + PLAYOFF_WEEKS
-        scores, available = _weekly_scores(players, total_weeks, batch, rng)
+        scores, available = _weekly_scores(players, total_weeks, batch, rng, from_week=played)
 
         team_points = np.stack(
             [_lineup_points(scores[:, :, team.slice], available[:, :, team.slice], team)
@@ -644,7 +683,7 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     actual = actual_results(through_week=through, posted=posted)
     points = actual["points"] if actual else None
     summary = simulate(board, roster_frame, sims=sims, fixed_schedule=fixed,
-                       actual_points=points)
+                       actual_points=points, injuries=injury_designations(year))
 
     week = actual["weeks"] if actual else 0
     summary["week"] = week

@@ -57,11 +57,16 @@ data/live_scores.json
 
 # Fantasy player DB build artifacts (regenerable via `python -m fantasy.data_manager`)
 data/fantasy/players/
-# Weekly league-scored points and the projections fitted from them. Both are
-# pulled straight back out of nflverse by `python -m fantasy.projections
-# --refresh`, so they are cache, not source.
+# Weekly league-scored points: pulled straight back out of nflverse by
+# `python -m fantasy.projections --refresh`, so cache, not source.
 data/fantasy/points/
-data/fantasy/projections/
+# The projection board (data/fantasy/projections/<year>.parquet) is NOT
+# ignored, deliberately: it is built once and then read by every power
+# build, and a copy built per machine drifts - the Pi built one on 2026-08-21
+# with no ADP board on disk, anchored nothing on the market, and ran the
+# power rankings on it for three weeks. One committed board, refreshed on
+# purpose with `python -m fantasy.projections --refresh`, is what every
+# machine simulates on.
 
 # Refetched at the start of every WNBA run (wnba_remaining.wnba_update calls
 # wnba_fantasy.fetch_and_save before reading it), and the live job runs every

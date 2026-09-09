@@ -47,29 +47,22 @@ MUTED = palette.MUTED
 GRIDLINE = palette.GRIDLINE
 CONTEXT = palette.CONTEXT
 
+# The draft-week three-source table moved to the draft analytics page
+# (draft_consensus_section, below): it is frozen, and this page is about
+# what moves.
 SECTIONS = [
-    ("draft-consensus", "Draft Power Rankings &mdash; three sources, frozen on draft week",
-     "Draft"),
     ("rankings", "Power Rankings &mdash; every roster, ten thousand seasons", "Rankings"),
     ("season", "Through the Season &mdash; every rating, build by build", "Season"),
-    ("range", "Projected Wins &mdash; and how wide the range really is", "Range"),
     ("positions", "Positional Strength &mdash; where each roster is built", "Positions"),
     ("lineups", "Projected Lineups &mdash; the roster behind the number", "Lineups"),
     ("method", "Method &mdash; what this is measuring, and how well it works", "Method"),
 ]
 
-INTRO = f"""<p>Every roster in the league, run through {UPCOMING_SEASON} ten thousand
-times. Player values anchor on the <strong>consensus ADP board</strong> &mdash; tested
-against three seasons of this league, consensus beat our own usage model at every
-position, so it earned the job &mdash; with the usage model adjusting at the edges and
-kickers and defenses valued at nothing at all, because nothing predicts them.
-The ranking is not those values summed: the projections have to <strong>play the
-season</strong> &mdash; fourteen weeks, byes, injuries that keep a starter out for
-weeks at a time rather than a game here and there, and a starting lineup set the way a
-manager has to set it: on projections, before the week happens. That is the only way
-bench depth and a bye-week pileup ever show up in a number, and why this table is not
-the draft board read back. The published <strong>Rating</strong> then averages that
-simulation with the FantasyPros League Analyzer.</p>"""
+INTRO = f"""<p>Every roster in the league, played through {UPCOMING_SEASON} ten
+thousand times &mdash; byes, injuries that last, and a lineup set on projections
+before each week happens &mdash; and averaged with the FantasyPros League Analyzer.
+<strong>100 is the league average</strong>; a point is one percent better than it.
+Rosters follow Sleeper, so waivers and trades move the table with every build.</p>"""
 
 
 # --------------------------------------------------------------------------- #
@@ -105,7 +98,6 @@ def _rankings_table(table: pd.DataFrame) -> str:
     display = pd.DataFrame(
         {"Manager": _manager_col(table["rank"], table["manager"])})
     display["Move"] = table["move"]
-    display["Pre"] = table["pre_rank"]
     blended = "combined" in table.columns and table.get("ext_vorp") is not None \
         and table["ext_vorp"].notna().any()
     short = table.attrs.get("ext_short", "Ext")
@@ -120,22 +112,16 @@ def _rankings_table(table: pd.DataFrame) -> str:
                              + table["losses"].astype(int).astype(str))
         display["Luck"] = table["luck"]
     display["Proj. Record"] = table["proj_wins"].map(_record)
-    display["Proj. Points"] = table["proj_points"]
     display["Playoffs"] = table["playoff_odds"]
-    display["1 Seed"] = table["first_seed_odds"]
     display["Title"] = table["title_odds"]
-    display["Last"] = table["last_odds"]
 
-    fmt = {"Move": _signed, "Pre": lambda v: "" if pd.isna(v) else f"{int(v)}",
-           "Power": "{:.1f}", "Proj. Points": "{:,.0f}", "Playoffs": "{:.0%}",
-           "1 Seed": "{:.0%}", "Title": "{:.0%}", "Last": "{:.0%}", "Luck": "{:+.1f}"}
+    fmt = {"Move": _signed, "Power": "{:.1f}", "Playoffs": "{:.0%}",
+           "Title": "{:.0%}", "Luck": "{:+.1f}"}
     if blended:
         fmt.update({"Rating": "{:.1f}", "GordStats": "{:.1f}", short: "{:.1f}"})
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
               .background_gradient(cmap="RdYlGn", subset=["Rating" if blended else "Power"])
-              .background_gradient(cmap="RdYlGn", subset=["Playoffs"])
-              .background_gradient(cmap="RdYlGn", subset=["Title"])
-              .background_gradient(cmap="RdYlGn_r", subset=["Last"]))
+              .background_gradient(cmap="RdYlGn", subset=["Playoffs"]))
     if table["move"].notna().any():
         bound = max(1.0, float(table["move"].abs().max()))
         styled = styled.background_gradient(cmap="RdYlGn", subset=["Move"], vmin=-bound, vmax=bound)
@@ -171,24 +157,18 @@ def _rankings_section(table: pd.DataFrame) -> str:
     note = (f"<p><strong>{leader['manager']}</strong> {when} the strongest roster &mdash; "
             f"{leader['playoff_odds']:.0%} to make the playoffs and {leader['title_odds']:.0%} "
             f"to win it, against {tail['playoff_odds']:.0%} and {tail['title_odds']:.0%} for "
-            f"<strong>{tail['manager']}</strong>. Every rating is scaled so 100 is the "
-            f"league average and 105 is a roster five percent above the field.</p>")
+            f"<strong>{tail['manager']}</strong>.</p>")
 
     legend = ["<strong>Move</strong> is places climbed since "
               + (f"{table.attrs['prev_taken']:%b %-d}" if "prev_taken" in table.attrs
-                 else "the previous build")
-              + "; <strong>Pre</strong> is where the roster ranked on draft night, before "
-              "any game was played"]
+                 else "the previous build")]
     if week > 0:
-        legend.append("<strong>Record</strong> counts both the head-to-head and the median "
-                      "win each week; <strong>Luck</strong> is that record minus what the "
-                      "all-play record says it should be, so +2 is two wins the schedule "
-                      "handed over and -2 is two it took away. Played weeks are locked in "
-                      "and only the rest of the season is simulated, so the projected "
-                      "record is the real one plus what is still expected")
+        legend.append("<strong>Record</strong> counts the head-to-head and the median win "
+                      "each week; <strong>Luck</strong> is that record minus what the "
+                      "all-play record says it should be. Played weeks are locked in and "
+                      "only the rest is simulated")
     if "combined" in table.columns and table["ext_vorp"].notna().any():
         src = table.attrs.get("ext_source", "an outside source")
-        label = table.attrs.get("ext_label") or ""
         url = table.attrs.get("ext_url") or ""
         named = f"<a href='{url}'>{src}</a>" if url else src
         when = table.attrs.get("ext_captured") or ""
@@ -197,19 +177,17 @@ def _rankings_section(table: pd.DataFrame) -> str:
         except ValueError:
             pass
         short = table.attrs.get("ext_short", "Ext")
-        legend.append(f"<strong>Rating</strong> is the published ranking: our simulation "
-                      f"(<strong>GordStats</strong>) and the {named}"
-                      + (f" {label}" if label else "")
-                      + f" (<strong>{short}</strong>"
-                      + (f", as of {when}" if when else "") + ") averaged on a common "
-                      "scale, where 100 is the league average and a point is one percent "
-                      "better than it. Ratings are averaged rather than ranks, on purpose: "
-                      "a ranking of ranks would record that the two disagree about Max "
-                      "without recording that they disagree by seventeen points")
+        legend.append(f"<strong>Rating</strong> averages <strong>GordStats</strong> (our "
+                      f"simulation) and <strong>{short}</strong> ({named}"
+                      + (f", as of {when}" if when else "") + ") on one scale - ratings, "
+                      "not ranks, so a seventeen-point disagreement stays a seventeen-point "
+                      "disagreement")
 
     return (f"<h2>Power Rankings</h2>{note}"
             f"<div class='table-scroll'>{_rankings_table(table)}</div>"
-            f"<p>{'. '.join(legend)}.</p>")
+            f"<p>{'. '.join(legend)}.</p>"
+            + layout.details("How wide the range is &mdash; projected wins, middle 80% of seasons",
+                             _range_chart(table)))
 
 
 def _draft_chart(rows: pd.DataFrame) -> str:
@@ -252,13 +230,15 @@ def _draft_chart(rows: pd.DataFrame) -> str:
     ax.legend(fontsize=9, ncol=4, loc="upper center", bbox_to_anchor=(0.5, -0.11),
               frameon=False)
     fig.tight_layout()
-    return charts.save(_SECTION, "draft-consensus",
+    return charts.save("draft-consensus", "sources",
                        alt="Each team's rating from all three sources, with the "
                            "consensus marked and the spread between sources drawn")
 
 
-def _draft_section() -> str:
-    """The three-source draft ranking, exactly as it was frozen."""
+def draft_consensus_section() -> str:
+    """The three-source draft ranking, exactly as it was frozen - rendered on
+    the draft analytics page, where the rest of draft week lives."""
+    charts.clear("draft-consensus")
     snap = consensus.draft(int(UPCOMING_YEAR))
     if not snap or not snap.get("teams"):
         return ""
@@ -382,7 +362,9 @@ def _season_section() -> str:
 # Range chart
 # --------------------------------------------------------------------------- #
 
-def _range_section(table: pd.DataFrame) -> str:
+def _range_chart(table: pd.DataFrame) -> str:
+    """Projected wins with the middle 80% of seasons - the uncertainty behind
+    the odds, kept under the table rather than as a section of its own."""
     ordered = table.sort_values("proj_wins")
     positions = np.arange(len(ordered))
     low = ordered["proj_wins"] - ordered["wins_p10"]
@@ -402,15 +384,12 @@ def _range_section(table: pd.DataFrame) -> str:
                         alt="Projected wins per team with 10th-90th percentile bars")
 
     overlap = (table["wins_p90"].min() >= table["wins_p10"].max())
-    caveat = ("Every team's range overlaps every other team's. "
-              if overlap else
-              "Most of these ranges overlap. ")
-    return ("<h2>Projected Wins</h2>"
-            f"<p>The dot is the average season, the bar is the middle 80% of them. "
-            f"{caveat}That is the honest picture of a fantasy season and it is the "
-            f"reason this page leads with odds rather than a predicted finish: the "
-            f"gap between the best and worst roster in this league is worth a few "
-            f"wins, and a single season is noisier than that.</p>" + chart)
+    caveat = ("Every team's range overlaps every other team's" if overlap
+              else "Most of these ranges overlap")
+    return (f"<p>The dot is the average season, the bar the middle 80% of them. {caveat}: "
+            "the gap between the best and worst roster is worth a few wins, and a single "
+            "season is noisier than that, which is why the table leads with odds.</p>"
+            + chart)
 
 
 # --------------------------------------------------------------------------- #
@@ -442,12 +421,6 @@ def _positions_section(board: pd.DataFrame, rosters: pd.DataFrame,
     pivot = _positional_frame(board, rosters)
     pivot = pivot.reindex(table["manager"]).dropna(how="all")
 
-    bound = float(np.nanmax(np.abs(pivot.to_numpy(float)))) or 1.0
-    styled = (pivot.style.format("{:+.1f}")
-              .background_gradient(cmap="RdYlGn", axis=None, vmin=-bound, vmax=bound)
-              .set_table_styles(_GRID, overwrite=False)
-              .set_table_attributes('class="sticky-table"')).to_html()
-
     ax = pivot.plot(kind="bar", stacked=True, figsize=(10, 4.4), width=0.8,
                     edgecolor="#333", colormap="tab10")
     ax.axhline(0, color="#333", linewidth=0.9)
@@ -464,8 +437,7 @@ def _positions_section(board: pd.DataFrame, rosters: pd.DataFrame,
             "added up over the players deep enough to actually start. Kicker and "
             "defense are flat at zero for everyone on purpose &mdash; the model finds "
             "no year-over-year signal in either, so no roster gets credit for them.</p>"
-            + chart
-            + layout.details("Show data table", f"<div class='table-scroll'>{styled}</div>"))
+            + chart)
 
 
 # --------------------------------------------------------------------------- #
@@ -607,7 +579,7 @@ def _method_section() -> str:
             "predict this season's at any amount of regularization &mdash; so both positions "
             "get the positional mean and cancel out of the rankings entirely.</li>"
             "</ul>"
-            "<p>Each projection carries its own error bar, and every simulated season "
+            "<p>Injuries persist rather than scatter: a starter's absence runs a few weeks at a time, and a player Sleeper lists as out, on IR or PUP starts out rather than healthy, for the weeks the designation implies, before the usual return rate takes over. Each projection carries its own error bar, and every simulated season "
             "deals each player a true rate drawn from it. Without that step the page would "
             "quote playoff odds far more confident than a projection this uncertain can "
             "support.</p>"
@@ -652,16 +624,14 @@ def body() -> str:
 
     content = {
         "rankings": _rankings_section(table),
-        "draft-consensus": _draft_section(),
         "season": _season_section(),
-        "range": _range_section(table),
         "positions": _positions_section(board, rosters, table),
         "lineups": _lineups_section(board, rosters, table),
         "method": _method_section(),
     }
     nav = layout.section_nav([(a, label) for a, _, label in SECTIONS])
     return INTRO + nav + "".join(
-        layout.details(summary, content[anchor], open=(i < 2), anchor=anchor)
+        layout.details(summary, content[anchor], open=(i == 0), anchor=anchor)
         for i, (anchor, summary, _) in enumerate(SECTIONS)
     )
 

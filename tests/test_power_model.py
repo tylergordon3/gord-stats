@@ -97,3 +97,16 @@ def test_a_position_with_nobody_left_scores_zero_not_an_error():
     available = np.ones((1, 1, 1), dtype=bool)
     # One QB, no RB/WR/TE/K/DEF: the empty slots contribute nothing.
     assert power._lineup_points(scores, available, roster)[0, 0] == 12.0
+
+
+def test_a_player_on_reserve_is_held_out_then_returns_at_the_usual_rate():
+    """IR is four games by rule: those weeks are missed in every simulation,
+    from the week being played next, and the chain resumes from out."""
+    rng = np.random.default_rng(3)
+    players = pd.DataFrame({"avail": [0.9, 0.9], "bye": [0, 0], "out_weeks": [4, 0]})
+    available = power._availability(players, 12, 4000, rng, from_week=2)
+    assert available[:, 2:6, 0].sum() == 0                      # held out weeks 3-6
+    assert available[:, :2, 0].mean() == pytest.approx(0.9, abs=0.03)   # already-played weeks untouched
+    back = available[:, 6, 0].mean()                             # first eligible week
+    assert 1 / power.MEAN_ABSENCE_WEEKS - 0.05 < back < 0.9      # a return rate, not a full recovery
+    assert available[:, :, 1].mean() == pytest.approx(0.9, abs=0.02)
