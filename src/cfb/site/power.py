@@ -10,10 +10,9 @@ The API carries about twenty figures per team as bare positional arrays,
 which is why this page long showed only the two it could name for certain.
 It now reads the payload's own header block for the position of each field
 by name, so a column can never quietly come to hold the number next to it -
-the failure that kept the rest of them off the page. Three tabs divide
-them: Rating (the ratings and the projected record), Odds (the simulation
-probabilities) and Resume (schedule strength and, in season, ESPN's
-resume ranks).
+the failure that kept the rest of them off the page. Two tabs divide
+them: Rating (the ratings, the projected record, schedule strength and, in
+season, ESPN's resume ranks) and Odds (the simulation probabilities).
 
 A figure ESPN has not computed yet reads as "-" in the payload rather than
 zero, so a column stays hidden until some team has one - the resume ranks
@@ -74,12 +73,13 @@ table.cfb-power tr.top25:nth-child(even) td{background:#faf0d2}
 table.cfb-power td.pwr-team img{width:22px;height:22px;object-fit:contain;
   vertical-align:middle;margin:0 8px 0 0;border:none;padding:0;box-shadow:none;
   background:none;border-radius:0}
-/* One table, three tabs: the live view keeps its own columns and hides the
-   rest. Cheaper than three tables, and the sort survives a tab change. */
+/* One table, two tabs: the live view keeps its own columns and hides the
+   rest. Cheaper than two tables, and the sort survives a tab change. */
 table.cfb-power.view-rating td:not(.v-rating),table.cfb-power.view-rating th:not(.v-rating),
-table.cfb-power.view-odds td:not(.v-odds),table.cfb-power.view-odds th:not(.v-odds),
-table.cfb-power.view-resume td:not(.v-resume),table.cfb-power.view-resume th:not(.v-resume){
+table.cfb-power.view-odds td:not(.v-odds),table.cfb-power.view-odds th:not(.v-odds){
   display:none}
+/* The record rides in the Team cell, quiet beside the name. */
+table.cfb-power td.pwr-team .pwr-rec{font-weight:400;font-size:12px;color:#64748b;margin-left:7px}
 table.cfb-power th.sortable{cursor:pointer;user-select:none}
 table.cfb-power th.sortable:hover{color:#0f172a}
 /* The caret is always drawn, faint until the column is the one sorting, so a
@@ -139,6 +139,7 @@ table.cfb-power th:first-child{left:0;z-index:3}
   table.cfb-power td.pwr-team img{filter:drop-shadow(0 0 1px rgba(255,255,255,.6))}
   .power-note{color:#aab7c9}
   .power-wrap{border-color:#2b3852}
+  table.cfb-power td.pwr-team .pwr-rec{color:#aab7c9}
 }
 </style>"""
 
@@ -407,7 +408,7 @@ def _rows(data: dict) -> list:
 # The three tabs, and the columns each one carries. One table holds every
 # column and the tab hides the ones it does not want, so switching tabs keeps
 # the rows, the sort and the highlight exactly where they were.
-VIEWS = [("rating", "Rating"), ("odds", "Odds"), ("resume", "Resume")]
+VIEWS = [("rating", "Rating"), ("odds", "Odds")]
 ALL = tuple(v for v, _ in VIEWS)
 
 # The figures each snapshot archives beyond the rank, and how a change in each
@@ -469,14 +470,15 @@ def _pct(v):
     return v, ("<span class='mv-flat'>&middot;</span>" if v == 0 else f"{v:.1f}%")
 
 
-def _record(t):
+def _record(t) -> str:
     w, l, ties = t["numwins"] or 0, t["numlosses"] or 0, t["numties"] or 0
-    return int(w), f"{w:.0f}-{l:.0f}" + (f"-{ties:.0f}" if ties else "")
+    return f"{w:.0f}-{l:.0f}" + (f"-{ties:.0f}" if ties else "")
 
 
-def _team(t) -> str:
+def _team(t, record: bool) -> str:
     logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
-    return logo + t["name"] + favorites.star("cfb", t["id"], t["name"])
+    rec = f"<span class='pwr-rec'>{_record(t)}</span>" if record else ""
+    return logo + t["name"] + rec + favorites.star("cfb", t["id"], t["name"])
 
 
 def _switcher() -> str:
@@ -569,7 +571,7 @@ def body() -> str:
 
     cols = [
         col(ALL, "Team", "FPI rank", None,
-            lambda t: (t["rank"], f"<span class='row-rank'>{t['rank']}</span>{_team(t)}")),
+            lambda t: (t["rank"], f"<span class='row-rank'>{t['rank']}</span>{_team(t, show_rec)}")),
     ]
     # Move opens on the first window and the rank, as the script would draw it.
     def opening(t):
@@ -581,9 +583,6 @@ def body() -> str:
     if show_ap:
         cols.append(col(("rating",), "AP", f"AP poll rank ({ap_label})" if ap_label else "AP poll rank", "asc",
                         lambda t: _plain(t["ap"]), "ap"))
-    if show_rec:
-        cols.append(col(("rating", "resume"), "Rec", "Record so far", "desc",
-                        _record, "numwins"))
     cols += [
         col(("rating",), "FPI", "Expected point margin against an average FBS team",
             "desc", lambda t: (t["fpi"], f"{t['fpi']:+.1f}"), "rank"),
@@ -600,19 +599,19 @@ def body() -> str:
             lambda t: _pct(t["probwinout"]), "probwinout"),
         col(("odds",), "Title%", "Chance of winning the national title", "desc",
             lambda t: _pct(t["probwintitle"]), "probwintitle"),
-        col(("resume",), "SOS", "Strength-of-schedule rank, hardest first", "asc",
+        col(("rating",), "SOS", "Strength-of-schedule rank, hardest first", "asc",
             lambda t: _plain(t["avgsosrank"]), "avgsosrank"),
     ]
     if show_rem_sos:
-        cols.append(col(("resume",), "Rem SOS", "Strength-of-schedule rank for the "
+        cols.append(col(("rating",), "Rem SOS", "Strength-of-schedule rank for the "
                         "games still to play", "asc",
                         lambda t: _plain(t["sosremainingrank"]), "sosremainingrank"))
     if live("accomplishmentrank"):
-        cols.append(col(("resume",), "SOR", "Strength-of-record rank: where an average "
+        cols.append(col(("rating",), "SOR", "Strength-of-record rank: where an average "
                         "top-25 team would sit with this resume", "asc",
                         lambda t: _plain(t["accomplishmentrank"]), "accomplishmentrank"))
     if live("gamecontrolrank"):
-        cols.append(col(("resume",), "GC", "Game-control rank: share of game time "
+        cols.append(col(("rating",), "GC", "Game-control rank: share of game time "
                         "spent in the lead", "asc",
                         lambda t: _plain(t["gamecontrolrank"]), "gamecontrolrank"))
 
@@ -665,12 +664,12 @@ def body() -> str:
         "on a neutral field; the projected record is ESPN's simulation of each team's "
         "actual schedule. Preseason these are projections; once games are played the "
         f"same numbers update with results.{move_note}</p>"
-        "<p class='power-note'><strong>Rating</strong> is the ratings and the "
-        "projected record, <strong>Odds</strong> what ESPN's simulations give "
-        "each team, <strong>Resume</strong> what the schedule has been worth. "
+        "<p class='power-note'><strong>Rating</strong> is the ratings, the "
+        "projected record and what the schedule has been worth; <strong>Odds</strong> "
+        "what ESPN's simulations give each team. "
         "Click a figure's header to sort by it; click again to reverse. Top 25 "
         "highlighted - the highlight follows the team, so the FPI top 25 stay "
-        "marked however the table is sorted. On the Resume tab, "
+        "marked however the table is sorted. "
         "<strong>SOS</strong> is strength-of-schedule rank (hardest first) and "
         "<strong>Rem SOS</strong> the same for the games still to play; "
         "<strong>SOR</strong> is strength of record - where an average top-25 "
