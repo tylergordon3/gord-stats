@@ -23,7 +23,10 @@ table.mu-board td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;backgr
    full name is in the link's title) instead of pushing the right-hand team
    off the page. */
 table.mu-board td:not(.mu-t),table.mu-board th:not(:first-child):not(:last-child){width:1%}
-table.mu-board td.mu-t{text-align:left;max-width:0}
+table.mu-board td.mu-t{text-align:left}
+/* Only the outer two: the NFL page's disagreement and accuracy lists put a
+   second text cell (the roster) mid-row, and at max-width:0 it collapsed. */
+table.mu-board td.mu-t:first-child,table.mu-board td.mu-t:last-child{max-width:0}
 table.mu-board td.mu-t a{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.mu-board td.mu-t.r{text-align:right}
 @media (max-width:900px){table.mu-board th,table.mu-board td{padding:6px 6px}
@@ -186,7 +189,11 @@ table.mu-roster td.mu-p .mu-hint{font-size:10px;font-weight:700;margin-left:4px;
   border-radius:3px;padding:0 4px}
 table.mu-roster td.mu-p .mu-hint.in{background:#d5efdd;color:#1a7f4b}
 table.mu-roster td.mu-p .mu-hint.out{background:#fde2dd;color:#b3382c}
-table.mu-roster img.mu-logo{width:18px;height:18px;object-fit:contain;vertical-align:middle;
+/* The scoreboard-styled tables (the NFL page's disagreements and accuracy
+   lists) carry the same logos; without this they got the theme's figure
+   styling and rendered at full size. */
+table.mu-roster img.mu-logo,table.mu-board img.mu-logo{width:18px;height:18px;
+  object-fit:contain;vertical-align:middle;
   margin:0 5px 0 0;border:none;padding:0;box-shadow:none;background:none;border-radius:0;
   filter:drop-shadow(0 0 1px rgba(255,255,255,.7))}
 img.mu-tlogo{width:34px;height:34px;border-radius:50%;flex:none;border:none;padding:0;

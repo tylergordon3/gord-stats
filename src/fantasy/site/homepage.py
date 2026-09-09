@@ -22,6 +22,12 @@ from gordstats.frontmatter import add_front_matter
 
 OUTPUT = paths.WEB_FANTASY_HOME
 
+# The live ADP board (upcoming.adp_board_section) is a pre-draft page: it
+# reads where the market has every player going into the draft. The 2026
+# draft is done, so it is off; flip it back on next summer, when the
+# "predraft" rebuild preset starts refreshing the board again.
+LIVE_ADP_BOARD = False
+
 # Cumulative season-total columns carried on every weekly row.
 _SUM_COLS = ["median_wins", "h2h_loss", "h2h_wins", "median_loss",
              "total_wins", "total_loss", "PF", "PA"]
@@ -146,11 +152,13 @@ costs far more than losing a bench stash.</p>
 def generate(output=OUTPUT):
     """Write the homepage to `output` (default docs/index.html)."""
     sections = [
-        ("board", "Draft Board - Live ADP by Site", upcoming.adp_board_section(), True),
-        ("metrics", "All-Time Metrics", metrics_section(), False),
+        ("metrics", "All-Time Metrics", metrics_section(), not LIVE_ADP_BOARD),
         ("injuries", "All-Time Injury Impacts", injury_section(), False),
         ("adp", "All-Time Draft Values & Busts", adp.all_time_section(), False),
     ]
+    if LIVE_ADP_BOARD:
+        sections.insert(0, ("board", "Draft Board - Live ADP by Site",
+                            upcoming.adp_board_section(), True))
     nav = layout.section_nav([(a, title) for a, title, _, _ in sections])
     body = layout.HEAD + upcoming.countdown_banner() + nav + "".join(
         layout.details(title, html, open=is_open, anchor=a) for a, title, html, is_open in sections)
