@@ -1,10 +1,13 @@
 """
 The league dashboard (docs/cfb/league/) - the CFB fantasy league itself.
 
-Three sections, each rendering whatever the season has produced so far and
+Four sections, each rendering whatever the season has produced so far and
 saying plainly what it is still waiting on:
 
   * Standings      - records, points, FAAB and moves (teams exist predraft).
+  * Power Rankings - every roster priced as its best lineup, tracked build by
+                     build (cfb.site.league_power renders it; its snapshot
+                     archive is written from here).
   * Matchups       - the current week's scoreboard; pairings before kickoff,
                      projections and points once Yahoo serves them.
   * (The draft - grid, grades, every pick - lives on the draft review page,
@@ -18,7 +21,7 @@ from datetime import datetime
 
 from cfb import yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
-from cfb.site import write_page
+from cfb.site import league_power, write_page
 
 _CSS = """<style>
 .cfb-league{font-size:14px;color:#334155;border:1px solid #e5e7eb;border-radius:12px;
@@ -52,8 +55,9 @@ table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
 </style>"""
 
 
-def _details(summary: str, body: str, open: bool = False) -> str:
-    return (f'<details class="section"{" open" if open else ""}>'
+def _details(summary: str, body: str, open: bool = False, anchor: str = "") -> str:
+    return (f'<details class="section"{" open" if open else ""}'
+            f'{f" id={chr(34)}{anchor}{chr(34)}" if anchor else ""}>'
             f"<summary>{summary}</summary>{body}</details>")
 
 
@@ -181,17 +185,16 @@ def body() -> str:
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
-        _CSS
+        _CSS + league_power._CSS
         + '{% include cfb_countdown.html %}'
         + f'<p><a href="{lg["url"]}"><strong>{lg["name"]}</strong></a> on Yahoo — '
         f'{lg["num_teams"]} teams, {lg["scoring_label"]}, weeks '
         f'{lg["start_week"]}–{lg["end_week"]}, playoffs from week '
         f'{lg["playoff_start_week"]}. Rebuilt daily (last: {built}); every '
-        "section below fills in as the season generates it. Roster-strength "
-        'power rankings have <a href="/cfb/league-power/">their own page</a>, '
-        'and the draft - every pick, graded - is on the <a href="/cfb/live/">draft '
-        "review</a>.</p>"
+        "section below fills in as the season generates it. The draft - every "
+        'pick, graded - is on the <a href="/cfb/live/">draft review</a>.</p>'
         + _details("Standings", standings_section(lg), open=True)
+        + _details("Power Rankings", league_power.section(), open=True, anchor="power")
         + _details(f"Matchups — Week {int(sb['week']) if sb.get('week') else '?'}",
                    matchups_section(sb), open=True)
         + _details("Waivers &amp; Trades", transactions_section(txns))

@@ -1,5 +1,7 @@
 """
-League power rankings (docs/cfb/league-power/) - the ten fantasy rosters.
+League power rankings - the ten fantasy rosters, a section of the league
+dashboard (docs/cfb/league/, cfb.site.league) since 2026-09-08; the old
+/cfb/league-power/ URL redirects there.
 
 Every roster priced the way the draft board priced the players: the best
 starting lineup it can field, in projected season points under this league's
@@ -16,7 +18,7 @@ each roster's points against the league average build by build. Until two
 builds carry the points, the panels draw rank instead, which every snapshot
 has.
 
-    python -m cfb.site.league_power     # rebuild the page
+    python -m cfb.site.league_power     # the section as a page of its own
 """
 from datetime import datetime
 
@@ -174,7 +176,7 @@ def _season_section(names: dict) -> str:
         pivot = hist.pivot_table(index="taken", columns="team", values="rank").sort_index()
         what, base, invert, unit = "rank", None, True, ""
     else:
-        return ("<h2>Through the Season</h2>"
+        return ("<h3>Through the Season</h3>"
                 "<p class='mu-note'>Every build is archived, and this chart draws each "
                 "roster's lineup points against the league average across them &mdash; "
                 "who is climbing, who is sliding, and whether a move is a real trend or "
@@ -226,7 +228,7 @@ def _season_section(names: dict) -> str:
         swing = -swing                 # climbing the table is a smaller rank
     up, down = swing.idxmax(), swing.idxmin()
     fmt = (lambda v: f"{v:+.0f}{unit}") if unit else (lambda v: f"{int(v):+d} places")
-    return ("<h2>Through the Season</h2>"
+    return ("<h3>Through the Season</h3>"
             f"<p class='mu-note'>Every build since <strong>{first:%b %-d}</strong>, one "
             f"panel per team with the rest of the league behind it in grey, drawing "
             f"{what}. Since then <strong>{up}</strong> has gained the most "
@@ -235,12 +237,15 @@ def _season_section(names: dict) -> str:
             f"<div class='lg-chart'>{chart}</div>")
 
 
-def body() -> str:
+def section() -> str:
+    """The rankings, the table and the season chart - the dashboard's Power
+    Rankings section. Every build archives a snapshot here, so the dashboard
+    building it is what keeps the history growing."""
     charts.clear(_SECTION)
     lg = yahoo.league()
     rows = ranked_teams(lg)
     if not rows:
-        return (_CSS + "<p>Nothing to rank yet — the rankings appear on the "
+        return ("<p>Nothing to rank yet — the rankings appear on the "
                 "first rebuild after the draft, priced off the same "
                 "projections as the draft board.</p>")
 
@@ -289,9 +294,7 @@ def body() -> str:
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
-        _CSS
-        + f'<p><a href="{lg["url"]}"><strong>{lg["name"]}</strong></a> — every '
-        "roster priced the way the draft board priced the players: the best "
+        "<p>Every roster priced the way the draft board priced the players: the best "
         "starting lineup it can field, in projected season points under this "
         "league's scoring. <b>Bench</b> is the value over replacement sitting "
         f"behind the starters; <b>Wks {lg['playoff_start_week']}–"
@@ -309,14 +312,19 @@ def body() -> str:
         f"<th>Bench</th><th>Wks {lg['playoff_start_week']}–{lg['end_week']}</th>"
         "<th>Anchor</th></tr></thead>"
         f'<tbody>{"".join(cells)}</tbody></table></div>'
-        '<p class="mu-note">Projection-based for now: it prices rosters, not '
-        "records. Standings live on the "
-        '<a href="/cfb/league/">league dashboard</a>; the '
+        '<p class="mu-note">Projection-based: it prices rosters, not records - '
+        "the standings above say who is winning. The "
         '<a href="/cfb/live/">draft review</a> grades how these rosters were '
         "assembled.</p>" + season)
 
 
+def body() -> str:
+    return _CSS + section()
+
+
 def generate():
+    """The section as a page of its own - not in build.PAGES; the dashboard
+    hosts it now."""
     write_page(OUTPUT, f"CFB League Power Rankings {SEASON}", body())
 
 

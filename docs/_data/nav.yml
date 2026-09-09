@@ -155,12 +155,6 @@ cfb:
     url: /cfb/live/
     group: fantasy
 
-  - title: League Power
-    short: Power
-    icon: "📊"
-    url: /cfb/league-power/
-    group: fantasy
-
   - title: Matchups
     short: Matchups
     icon: "⚔️"
