@@ -12,6 +12,10 @@ scoring - applied to the 170 picks that actually happened:
   * Yahoo grades         - Yahoo's own draft-day verdict, exactly as given.
   * GordStats vs Yahoo   - the two verdicts on one chart (the NFL power
                            page's draft-consensus chart) and team by team.
+  * Every pick           - the snake grid coloured by position, each cell
+                           marked with how far the pick ran past (or ahead
+                           of) the player's value rank, and a table of each
+                           team's values and reaches.
 
     python -m cfb.site.draft_review     # rebuild the page
 """
@@ -25,7 +29,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd              # noqa: E402
 
 from cfb import projections, yahoo
-from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
+from cfb.config import DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.league_power import best_lineup
 
@@ -52,6 +56,20 @@ table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
    only in this page's block. */
 table.lg-table th:first-child,table.lg-table td:first-child{
   position:sticky;left:0;z-index:1}
+table.draft-board td{border:1px solid #eef2f7;padding:5px 8px;font-size:13px;
+  background:#fff;color:#0f172a;text-align:center}
+table.draft-board th{background:#eef2f7;color:#334155;padding:6px 8px;font-size:12px;
+  border:1px solid #e2e8f0;white-space:nowrap}
+table.draft-board td .p{font-weight:600;white-space:nowrap}
+table.draft-board td .t{font-size:11px;color:#4a5a68;white-space:nowrap}
+table.draft-board td.cur-QB{background:#d3ddf5}
+table.draft-board td.cur-RB{background:#d5efdd}
+table.draft-board td.cur-WR{background:#fbeec2}
+table.draft-board td.cur-TE{background:#fadfc8}
+table.draft-board td.cur-DEF{background:#d4f0f7}
+table.draft-board td .v{font-size:11px;font-weight:700}
+table.draft-board td .v.up{color:#1a7f4b}
+table.draft-board td .v.down{color:#b3382c}
 .rv-grade{font-weight:800}
 .gr{display:inline-block;min-width:34px;padding:2px 8px;border-radius:999px;
   font-weight:800;font-size:13px;color:#fff;text-align:center}
@@ -70,6 +88,16 @@ table.lg-table th:first-child,table.lg-table td:first-child{
 .rv-card .why{font-size:12.5px;color:#334155;margin:4px 0 0;line-height:1.5}
 .mu-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
 @media (prefers-color-scheme: dark){
+  table.draft-board th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.draft-board td{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  table.draft-board td .t{color:#aab7c9}
+  table.draft-board td.cur-QB{background:#1e2c52}
+  table.draft-board td.cur-RB{background:#123c2e}
+  table.draft-board td.cur-WR{background:#3d3413}
+  table.draft-board td.cur-TE{background:#40280f}
+  table.draft-board td.cur-DEF{background:#143a45}
+  table.draft-board td .v.up{color:#8ff0bd}
+  table.draft-board td .v.down{color:#ffb4ab}
   table.lg-table th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.lg-table td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.lg-table tbody tr:nth-child(even) td{background:#1b2540}
@@ -371,6 +399,83 @@ def headlines(df: pd.DataFrame) -> str:
 # Page
 # --------------------------------------------------------------------------- #
 
+# --------------------------------------------------------------------------- #
+# Every pick: the snake grid and the per-team tally
+# --------------------------------------------------------------------------- #
+
+def _delta_tag(delta) -> str:
+    if delta is None or pd.isna(delta) or abs(delta) < NUDGE:
+        return ""
+    cls = "up" if delta > 0 else "down"
+    return f"<div class='v {cls}'>{'+' if delta > 0 else '−'}{abs(int(delta))}</div>"
+
+
+def _draft_grid(df: pd.DataFrame) -> str:
+    """The snake grid, one column per draft slot, coloured by position, each
+    cell tagged with pick − value rank once it is past NUDGE either way."""
+    per_round = max(int(df.loc[df["round"] == 1, "pick"].max()), LEAGUE_TEAMS)
+    df = df.assign(slot=[(p - (rd - 1) * per_round) if rd % 2 == 1
+                         else per_round + 1 - (p - (rd - 1) * per_round)
+                         for p, rd in zip(df["pick"], df["round"])])
+    slot_owner = (df[df["round"] == 1].sort_values("slot")
+                  .set_index("slot")["team"].to_dict())
+    header = "".join(f"<th>{slot_owner.get(s, '?')}</th>" for s in sorted(slot_owner))
+    rows = []
+    for rnd, grp in df.groupby("round"):
+        by_slot = grp.set_index("slot")
+        cells = []
+        for s in sorted(slot_owner):
+            if s not in by_slot.index:
+                cells.append("<td></td>")
+                continue
+            p = by_slot.loc[s]
+            cells.append(
+                f"<td class='cur-{p['pos']}'><div class='p'>{p['player']}</div>"
+                f"<div class='t'>{p['pos']}{' · ' + p['school'] if p['school'] else ''}</div>"
+                f"{_delta_tag(p['delta_board'])}</td>")
+        rows.append(f"<tr><th>Rd {int(rnd)}</th>{''.join(cells)}</tr>")
+    return (f"<table class='draft-board'><thead><tr><th>Rd</th>{header}</tr></thead>"
+            f"<tbody>{''.join(rows)}</tbody></table>")
+
+
+def _manager_table(df: pd.DataFrame) -> str:
+    """Each team's average pick − value rank, its values and reaches, and the
+    pick at either end."""
+    rated = df.dropna(subset=["delta_board"])
+    rows = []
+    for team, g in rated.groupby("team"):
+        best, worst = g.loc[g["delta_board"].idxmax()], g.loc[g["delta_board"].idxmin()]
+        rows.append((team, g["delta_board"].mean(),
+                     int((g["delta_board"] >= NUDGE).sum()),
+                     int((g["delta_board"] <= -NUDGE).sum()),
+                     f"{best['player']} ({best['delta_board']:+.0f})",
+                     f"{worst['player']} ({worst['delta_board']:+.0f})"))
+    rows.sort(key=lambda x: x[1], reverse=True)
+    cells = "".join(
+        f'<tr><td class="lg-team">{team}</td><td>{avg:+.1f}</td><td>{val}</td>'
+        f'<td>{rch}</td><td class="lg-team">{best}</td><td class="lg-team">{worst}</td></tr>'
+        for team, avg, val, rch, best, worst in rows)
+    return ('<table class="lg-table"><thead><tr><th>Team</th><th>Avg Δ</th>'
+            "<th>Values</th><th>Reaches</th><th>Best value</th><th>Biggest reach</th>"
+            f'</tr></thead><tbody>{cells}</tbody></table>')
+
+
+def every_pick(df: pd.DataFrame) -> str:
+    unrated = int(df["value_rank"].isna().sum())
+    return (
+        "<p>Snake order, so even rounds run right to left. Each cell carries the "
+        "pick against the player's GordStats value rank - the same number the "
+        "grades above use: "
+        "<span style='font-weight:700;color:#1a7f4b'>+</span> lasted past his "
+        "rank, <span style='font-weight:700;color:#b3382c'>−</span> a reach, "
+        f"shown past {NUDGE} spots either way."
+        + (f" {unrated} pick{'s' if unrated != 1 else ''} had no rank to grade "
+           "against." if unrated else "") + "</p>"
+        f'<div class="table-scroll">{_draft_grid(df)}</div>'
+        "<h3>Teams vs the Board</h3>"
+        f'<div class="table-scroll">{_manager_table(df)}</div>')
+
+
 def body() -> str:
     lg = yahoo.league()
     df = graded()
@@ -394,15 +499,16 @@ def body() -> str:
         "6-point passing TDs), plus Yahoo's pooled ADP for what the market "
         "thought."
         + (f" {unrated} pick{'s' if unrated != 1 else ''} came from beyond "
-           "the board's 500 rated players." if unrated else "") + " The full "
-        'snake grid is on the <a href="/cfb/league/">league dashboard</a>; '
-        "how these rosters rank now, and all season, is on the "
-        '<a href="/cfb/league-power/">league power rankings</a>.</p>'
+           "the board's 500 rated players." if unrated else "") + " Every "
+        "pick is in the grid at the bottom; how these rosters rank now, and "
+        'all season, is on the <a href="/cfb/league-power/">league power '
+        "rankings</a>.</p>"
         + headlines(df)
         + "<h2>GordStats Team Grades</h2>" + team_grades(df, lg)
         + (("<h2>Yahoo Team Grades</h2>" + yahoo_grades(verdict)
             + "<h2>GordStats vs Yahoo</h2>" + comparison_section(df, lg, verdict))
-           if verdict else ""))
+           if verdict else "")
+        + "<h2>Every Pick</h2>" + every_pick(df))
 
 
 def generate():
