@@ -68,6 +68,12 @@ def _registry() -> dict:
             for r in df.itertuples(index=False)}
 
 
+def injury_status(data: dict) -> dict:
+    """{sleeper_id: Sleeper's injury designation} as the week's archive saw it."""
+    return {pid: v["injury"] for pid, v in (data.get("projections") or {}).items()
+            if v.get("injury")}
+
+
 def player_card(pid: str, data: dict, board: dict, registry: dict) -> dict:
     """Name, position and team for a rostered id, best source first: this
     week's Sleeper projection (current team), the projection board, then the
@@ -415,7 +421,8 @@ def week_board(rows: list, started: bool) -> str:
 def week_view(data: dict, ctx: dict) -> str:
     week = int(data["week"])
     ctx = {**ctx, "by_team": data_mod.team_games(data["games"]),
-           "wk": data_mod.week_projections(ctx["board_frame"], data["games"])}
+           "wk": data_mod.week_projections(ctx["board_frame"], data["games"],
+                                           injuries=injury_status(data))}
     final = data_mod.week_final(data)
     started = data_mod.week_started(data)
     sections, rows = [], []
@@ -492,12 +499,20 @@ def disagreements(data: dict, ctx: dict) -> list[dict]:
         if pid not in cons or pid not in wk.index or pd.isna(wk.loc[pid, "proj_week"]):
             continue
         gs = float(wk.loc[pid, "proj_week"])
+        theirs = [src.get(pid) for src in sources.values()]
+        known = [v for v in theirs if v is not None]
+        # A disagreement is with the field, not with its average: the row's
+        # rank is the gap to the source nearest us, so a player one site
+        # sees our way does not lead the list, and one site's outlier does
+        # not put a player here on its own.
+        if len(known) < 2:
+            continue
         card = player_card(pid, data, ctx["board"], ctx["registry"])
         out.append({"pid": pid, "name": card["name"], "pos": card["pos"], "team": card["team"],
                     "owner": owner, "slot": slot, "gs": gs, "cons": cons[pid],
-                    "gap": gs - cons[pid],
-                    "sources": [src.get(pid) for src in sources.values()]})
-    out.sort(key=lambda r: -abs(r["gap"]))
+                    "gap": gs - cons[pid], "nearest": min(abs(gs - v) for v in known),
+                    "sources": theirs})
+    out.sort(key=lambda r: -r["nearest"])
     return out
 
 
@@ -520,9 +535,11 @@ def disagreements_section(data: dict, ctx: dict) -> str:
             f'<td><b class="{"lead" if up else ""}">{r["gap"]:+.1f}</b></td></tr>')
     n_src = len(sources)
     body = ('<p class="mu-note">Rostered players where this site\'s projection sits furthest '
-            f"from the average of the {n_src} outside sources. A positive gap means we like "
-            "him more than the market does; the Accuracy section below says, once weeks are "
-            "final, which side of these calls has been right.</p>"
+            f"from <em>every one</em> of the {n_src} outside sources - ranked by the gap to "
+            "the source nearest us, so a player one site agrees with us on stays off the "
+            "list. A positive gap means we like him more than the market does; the Accuracy "
+            "section below says, once weeks are final, which side of these calls has been "
+            "right.</p>"
             '<div class="table-scroll"><table class="mu-board"><thead><tr><th>Player</th>'
             f"<th>Roster</th><th>GS</th>{heads}<th>Consensus</th><th>Gap</th></tr></thead>"
             f'<tbody>{"".join(cells)}</tbody></table></div>')
@@ -539,7 +556,8 @@ def accuracy(datas: dict, ctx: dict) -> pd.DataFrame | None:
             continue
         sources = outside_sources(data)
         cons = ext.consensus(*sources.values())
-        wk = data_mod.week_projections(ctx["board_frame"], data["games"])
+        wk = data_mod.week_projections(ctx["board_frame"], data["games"],
+                                       injuries=injury_status(data))
         for m in data["matchups"]:
             for s in m["sides"]:
                 pts = s.get("players_points") or {}

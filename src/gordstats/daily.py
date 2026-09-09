@@ -108,12 +108,14 @@ def _fantasy() -> None:
     Reuses the same plan `python -m fantasy.rebuild` runs interactively, so
     there is one description of what a rebuild does rather than a scheduled
     copy that drifts from the manual one. FANTASY_PRESET overrides it from
-    the secrets file; "predraft" refreshes the live ADP board first, which is
-    what matters until the draft.
+    the secrets file. "pages" rebuilds from cached ADP; "predraft" refreshes
+    the live ADP board first, which matters until the draft - set it in the
+    secrets file next summer (the board itself is switched on in
+    fantasy.site.homepage.LIVE_ADP_BOARD).
     """
     from fantasy import rebuild
 
-    preset = os.environ.get("FANTASY_PRESET", "predraft")
+    preset = os.environ.get("FANTASY_PRESET", "pages")
     if rebuild.run(rebuild.plan_from_preset(preset)):
         raise RuntimeError(f"fantasy rebuild preset '{preset}' had failing steps")
 

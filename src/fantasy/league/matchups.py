@@ -355,7 +355,16 @@ def capture(refresh: bool = False, year: int = UPCOMING_YEAR,
 # This week's projection
 # --------------------------------------------------------------------------- #
 
-def week_projections(board: pd.DataFrame, games: list[dict]) -> pd.DataFrame:
+# Sleeper's injury designations and what they are worth this week. A player
+# ruled out, on a reserve list or not with the team scores nothing; Doubtful
+# players play about one week in four; Questionable ones mostly play, and
+# the projection stands.
+INJURY_FACTOR = {"Out": 0.0, "IR": 0.0, "PUP": 0.0, "NA": 0.0, "Sus": 0.0, "COV": 0.0,
+                 "DNR": 0.0, "Doubtful": 0.25}
+
+
+def week_projections(board: pd.DataFrame, games: list[dict],
+                     injuries: dict = None) -> pd.DataFrame:
     """Every board player's projection for the week, indexed by sleeper_id.
 
     `mu` is the projection model's points per game. This week's number is
@@ -364,8 +373,14 @@ def week_projections(board: pd.DataFrame, games: list[dict]) -> pd.DataFrame:
     expected pace all folded into one number - capped so a mismatch cannot
     double anyone. A defense is tilted the other way, on what its opponent is
     expected to score. No game this week is a bye, and a bye is zero.
+
+    `injuries` is {sleeper_id: Sleeper injury status} as the week's archive
+    carries it; a player ruled out projects zero (INJURY_FACTOR). Without it
+    the season number stood for a player every other source had at nothing,
+    and the disagreements list was a list of the injured.
     """
     by_team = team_games(games)
+    injuries = injuries or {}
     implied = [v for g in games for v in (g["home_implied"], g["away_implied"]) if v]
     avg = float(np.mean(implied)) if implied else None
     rows = {}
@@ -380,7 +395,9 @@ def week_projections(board: pd.DataFrame, games: list[dict]) -> pd.DataFrame:
         if avg and basis:
             ratio = (avg / basis) if p["pos"] == "DEF" else (basis / avg)
             tilt = float(np.clip(ratio ** GAME_WEIGHT, 1 - GAME_CAP, 1 + GAME_CAP))
-        rows[str(p["sleeper_id"])] = {"proj_week": mu * tilt, "n_games": 1, "tilt": tilt, **g}
+        factor = INJURY_FACTOR.get(injuries.get(str(p["sleeper_id"])) or "", 1.0)
+        rows[str(p["sleeper_id"])] = {"proj_week": mu * tilt * factor, "n_games": 1,
+                                      "tilt": tilt, "injury_factor": factor, **g}
     out = pd.DataFrame.from_dict(rows, orient="index")
     out.index.name = "sleeper_id"
     return out

@@ -134,15 +134,35 @@ def test_outside_sources_keep_a_fixed_order_and_skip_empty_ones():
     assert list(page.outside_sources({"projections": {}, "external": {"fp": {}}})) == ["sleeper"]
 
 
-def test_disagreements_rank_rostered_players_by_gap_from_consensus():
+def test_disagreements_rank_by_the_gap_to_the_nearest_source():
     data = _week_data()
+    data["external"]["espn"]["b1"] = 8.0          # b1 now has two sources, q2 still one
     wk = pd.DataFrame({"proj_week": [30.0, 8.0, 10.0]}, index=["q", "b1", "q2"])
     ctx = {"wk": wk, "board": {"q": {"player": "Quarterback", "pos": "QB", "team": "KC"},
                                 "b1": {"player": "Bench", "pos": "RB", "team": "DET"},
                                 "q2": {"player": "Other", "pos": "QB", "team": "SF"}},
            "registry": {}}
     rows = page.disagreements(data, ctx)
-    # q: ours 30 vs consensus (20+22+21)/3 = 21 -> +9; q2: 10 vs 15 -> -5; b1: 8 vs 8 -> 0.
-    assert [r["pid"] for r in rows] == ["q", "q2", "b1"]
-    assert rows[0]["gap"] == 9.0 and rows[0]["owner"] == "A" and rows[0]["slot"] == "QB"
-    assert rows[1]["slot"] == "QB" and rows[2]["slot"] == "BN"
+    # q: ours 30 against 20/22/21 - nearest source 8 away, consensus gap +9.
+    # b1: 8 against 8/8 - no disagreement. q2 has one source and is not judged.
+    assert [r["pid"] for r in rows] == ["q", "b1"]
+    assert rows[0]["nearest"] == 8.0 and rows[0]["gap"] == 9.0
+    assert rows[0]["owner"] == "A" and rows[0]["slot"] == "QB" and rows[1]["slot"] == "BN"
+    # One site seeing it our way takes a player off the top, however far the
+    # average sits: with ESPN at 29 the consensus gap is still +6.7 but the
+    # nearest source is a point away.
+    data["external"]["espn"]["q"] = 29.0
+    rows = page.disagreements(data, ctx)
+    assert rows[0]["pid"] == "q" and rows[0]["nearest"] == 1.0 and round(rows[0]["gap"], 1) == 6.7
+
+
+def test_week_projection_zeroes_a_player_sleeper_rules_out():
+    from fantasy.league import matchups as data_mod
+    board = pd.DataFrame({"sleeper_id": ["a", "b", "c"], "team": ["KC", "KC", "KC"],
+                          "pos": ["RB", "RB", "RB"], "mu": [12.0, 12.0, 12.0]})
+    games = [{"game_id": "1", "date": "2026-09-13T17:00Z", "home": "KC", "away": "SF",
+              "home_score": None, "away_score": None, "home_implied": 24.0,
+              "away_implied": 24.0, "state": "pre", "detail": ""}]
+    wk = data_mod.week_projections(board, games, injuries={"a": "Out", "b": "Doubtful"})
+    assert wk.loc["a", "proj_week"] == 0.0
+    assert wk.loc["b", "proj_week"] == 3.0 and wk.loc["c", "proj_week"] == 12.0
