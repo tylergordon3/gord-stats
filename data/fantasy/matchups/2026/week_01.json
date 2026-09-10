@@ -1,7 +1,7 @@
 {
  "week": 1,
  "year": 2026,
- "fetched": "2026-09-10T15:46:02+00:00",
+ "fetched": "2026-09-10T21:36:56+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -76,9 +76,9 @@
    "reserve": []
   },
   "8": {
-   "name": "The Jahmyr Gibbies",
+   "name": "FX\u2019s The Bear(s)",
    "manager": "Mark",
-   "avatar": "https://sleepercdn.com/uploads/8435965416109de41f8db530387385ed.jpg",
+   "avatar": "https://sleepercdn.com/uploads/e515abb0dd4f0a090e7f1603ba29b21d.jpg",
    "wins": 0,
    "losses": 0,
    "ties": 0,
@@ -127,16 +127,16 @@
       "HOU"
      ],
      "players": [
-      "10236",
       "11560",
       "11628",
       "11786",
       "12519",
       "12526",
-      "13305",
       "4866",
       "5850",
+      "5947",
       "6819",
+      "7002",
       "7547",
       "7567",
       "8121",
@@ -144,16 +144,16 @@
       "HOU"
      ],
      "players_points": {
-      "10236": 0.0,
       "11560": 0.0,
       "11628": 0.0,
       "11786": 0.0,
       "12519": 0.0,
       "12526": 0.0,
-      "13305": 0.0,
       "4866": 0.0,
       "5850": 0.0,
+      "5947": 0.0,
       "6819": 0.0,
+      "7002": 0.0,
       "7547": 0.0,
       "7567": 0.0,
       "8121": 0.0,
@@ -703,7 +703,7 @@
    "pos": "WR"
   },
   "9509": {
-   "pts": 20.03,
+   "pts": 20.12,
    "opp": "PIT",
    "team": "ATL",
    "injury": "",
@@ -830,6 +830,14 @@
    "name": "Chase Brown",
    "pos": "RB"
   },
+  "8138": {
+   "pts": 16.89,
+   "opp": "HOU",
+   "team": "BUF",
+   "injury": "",
+   "name": "James Cook",
+   "pos": "RB"
+  },
   "5859": {
    "pts": 16.84,
    "opp": "SEA",
@@ -926,6 +934,14 @@
    "name": "George Pickens",
    "pos": "WR"
   },
+  "12527": {
+   "pts": 15.77,
+   "opp": "MIA",
+   "team": "LV",
+   "injury": "",
+   "name": "Ashton Jeanty",
+   "pos": "RB"
+  },
   "11566": {
    "pts": 15.73,
    "opp": "PHI",
@@ -938,7 +954,7 @@
    "pts": 15.61,
    "opp": "IND",
    "team": "BAL",
-   "injury": "Questionable",
+   "injury": "",
    "name": "Zay Flowers",
    "pos": "WR"
   },
@@ -948,14 +964,6 @@
    "team": "NYJ",
    "injury": "",
    "name": "Breece Hall",
-   "pos": "RB"
-  },
-  "8138": {
-   "pts": 15.55,
-   "opp": "HOU",
-   "team": "BUF",
-   "injury": "",
-   "name": "James Cook",
    "pos": "RB"
   },
   "11632": {
@@ -981,14 +989,6 @@
    "injury": "",
    "name": "Drake London",
    "pos": "WR"
-  },
-  "12527": {
-   "pts": 15.33,
-   "opp": "MIA",
-   "team": "LV",
-   "injury": "",
-   "name": "Ashton Jeanty",
-   "pos": "RB"
   },
   "3198": {
    "pts": 15.31,
@@ -1070,14 +1070,6 @@
    "name": "Colston Loveland",
    "pos": "TE"
   },
-  "12518": {
-   "pts": 13.87,
-   "opp": "BAL",
-   "team": "IND",
-   "injury": "",
-   "name": "Tyler Warren",
-   "pos": "TE"
-  },
   "10859": {
    "pts": 13.77,
    "opp": "NO",
@@ -1093,6 +1085,14 @@
    "injury": "",
    "name": "Kenneth Walker",
    "pos": "RB"
+  },
+  "12518": {
+   "pts": 13.57,
+   "opp": "BAL",
+   "team": "IND",
+   "injury": "",
+   "name": "Tyler Warren",
+   "pos": "TE"
   },
   "11584": {
    "pts": 13.56,
@@ -1114,7 +1114,7 @@
    "pts": 13.46,
    "opp": "DEN",
    "team": "KC",
-   "injury": "Questionable",
+   "injury": "",
    "name": "Patrick Mahomes",
    "pos": "QB"
   },
@@ -1150,12 +1150,12 @@
    "name": "Christian Watson",
    "pos": "WR"
   },
-  "11646": {
-   "pts": 12.89,
-   "opp": "CHI",
-   "team": "CAR",
+  "10229": {
+   "pts": 12.81,
+   "opp": "DEN",
+   "team": "KC",
    "injury": "",
-   "name": "Jalen Coker",
+   "name": "Rashee Rice",
    "pos": "WR"
   },
   "2216": {
@@ -1174,14 +1174,6 @@
    "name": "Jeremiyah Love",
    "pos": "RB"
   },
-  "13279": {
-   "pts": 12.63,
-   "opp": "NYJ",
-   "team": "TEN",
-   "injury": "",
-   "name": "Carnell Tate",
-   "pos": "WR"
-  },
   "2133": {
    "pts": 12.62,
    "opp": "SF",
@@ -1196,22 +1188,6 @@
    "team": "TB",
    "injury": "",
    "name": "Emeka Egbuka",
-   "pos": "WR"
-  },
-  "9500": {
-   "pts": 12.48,
-   "opp": "BAL",
-   "team": "IND",
-   "injury": "",
-   "name": "Josh Downs",
-   "pos": "WR"
-  },
-  "10229": {
-   "pts": 12.44,
-   "opp": "DEN",
-   "team": "KC",
-   "injury": "",
-   "name": "Rashee Rice",
    "pos": "WR"
   },
   "10222": {
@@ -1230,6 +1206,14 @@
    "name": "Rico Dowdle",
    "pos": "RB"
   },
+  "9487": {
+   "pts": 12.18,
+   "opp": "CLE",
+   "team": "JAX",
+   "injury": "",
+   "name": "Parker Washington",
+   "pos": "WR"
+  },
   "5927": {
    "pts": 12.05,
    "opp": "PHI",
@@ -1238,12 +1222,20 @@
    "name": "Terry McLaurin",
    "pos": "WR"
   },
-  "9487": {
-   "pts": 11.88,
-   "opp": "CLE",
-   "team": "JAX",
+  "11646": {
+   "pts": 12.03,
+   "opp": "CHI",
+   "team": "CAR",
    "injury": "",
-   "name": "Parker Washington",
+   "name": "Jalen Coker",
+   "pos": "WR"
+  },
+  "9500": {
+   "pts": 11.89,
+   "opp": "BAL",
+   "team": "IND",
+   "injury": "",
+   "name": "Josh Downs",
    "pos": "WR"
   },
   "5846": {
@@ -1286,6 +1278,14 @@
    "name": "DJ Moore",
    "pos": "WR"
   },
+  "8126": {
+   "pts": 11.12,
+   "opp": "NYJ",
+   "team": "TEN",
+   "injury": "",
+   "name": "Wan'Dale Robinson",
+   "pos": "WR"
+  },
   "9754": {
    "pts": 11.0,
    "opp": "ARI",
@@ -1310,14 +1310,6 @@
    "name": "Tony Pollard",
    "pos": "RB"
   },
-  "5012": {
-   "pts": 10.87,
-   "opp": "IND",
-   "team": "BAL",
-   "injury": "",
-   "name": "Mark Andrews",
-   "pos": "TE"
-  },
   "12512": {
    "pts": 10.85,
    "opp": "JAX",
@@ -1326,12 +1318,12 @@
    "name": "Quinshon Judkins",
    "pos": "RB"
   },
-  "5022": {
-   "pts": 10.73,
-   "opp": "WAS",
-   "team": "PHI",
+  "9484": {
+   "pts": 10.8,
+   "opp": "MIN",
+   "team": "GB",
    "injury": "",
-   "name": "Dallas Goedert",
+   "name": "Tucker Kraft",
    "pos": "TE"
   },
   "6819": {
@@ -1342,14 +1334,6 @@
    "name": "Michael Pittman",
    "pos": "WR"
   },
-  "8131": {
-   "pts": 10.62,
-   "opp": "DAL",
-   "team": "NYG",
-   "injury": "",
-   "name": "Isaiah Likely",
-   "pos": "TE"
-  },
   "12490": {
    "pts": 10.62,
    "opp": "CLE",
@@ -1357,6 +1341,14 @@
    "injury": "",
    "name": "Bhayshul Tuten",
    "pos": "RB"
+  },
+  "13279": {
+   "pts": 10.6,
+   "opp": "NYJ",
+   "team": "TEN",
+   "injury": "",
+   "name": "Carnell Tate",
+   "pos": "WR"
   },
   "8121": {
    "pts": 10.57,
@@ -1373,14 +1365,6 @@
    "injury": "",
    "name": "Kyle Pitts",
    "pos": "TE"
-  },
-  "8126": {
-   "pts": 10.55,
-   "opp": "NYJ",
-   "team": "TEN",
-   "injury": "",
-   "name": "Wan'Dale Robinson",
-   "pos": "WR"
   },
   "12506": {
    "pts": 10.54,
@@ -1406,6 +1390,30 @@
    "name": "Kenny Gainwell",
    "pos": "RB"
   },
+  "5947": {
+   "pts": 10.39,
+   "opp": "CLE",
+   "team": "JAX",
+   "injury": "Questionable",
+   "name": "Jakobi Meyers",
+   "pos": "WR"
+  },
+  "5022": {
+   "pts": 10.39,
+   "opp": "WAS",
+   "team": "PHI",
+   "injury": "",
+   "name": "Dallas Goedert",
+   "pos": "TE"
+  },
+  "7002": {
+   "pts": 10.39,
+   "opp": "DET",
+   "team": "NO",
+   "injury": "",
+   "name": "Juwan Johnson",
+   "pos": "TE"
+  },
   "5045": {
    "pts": 10.36,
    "opp": "KC",
@@ -1422,12 +1430,20 @@
    "name": "Michael Wilson",
    "pos": "WR"
   },
-  "9484": {
-   "pts": 10.35,
-   "opp": "MIN",
-   "team": "GB",
+  "5012": {
+   "pts": 10.28,
+   "opp": "IND",
+   "team": "BAL",
    "injury": "",
-   "name": "Tucker Kraft",
+   "name": "Mark Andrews",
+   "pos": "TE"
+  },
+  "8131": {
+   "pts": 10.22,
+   "opp": "DAL",
+   "team": "NYG",
+   "injury": "",
+   "name": "Isaiah Likely",
    "pos": "TE"
   },
   "6806": {
@@ -1550,6 +1566,14 @@
    "name": "Rachaad White",
    "pos": "RB"
   },
+  "8142": {
+   "pts": 9.13,
+   "opp": "BAL",
+   "team": "IND",
+   "injury": "Questionable",
+   "name": "Alec Pierce",
+   "pos": "WR"
+  },
   "PIT": {
    "pts": 9.01,
    "opp": "ATL",
@@ -1566,24 +1590,8 @@
    "name": "Seattle Seahawks",
    "pos": "DEF"
   },
-  "8142": {
-   "pts": 8.79,
-   "opp": "BAL",
-   "team": "IND",
-   "injury": "Questionable",
-   "name": "Alec Pierce",
-   "pos": "WR"
-  },
-  "10236": {
-   "pts": 8.77,
-   "opp": "HOU",
-   "team": "BUF",
-   "injury": "",
-   "name": "Dalton Kincaid",
-   "pos": "TE"
-  },
   "PHI": {
-   "pts": 8.7,
+   "pts": 8.73,
    "opp": "WAS",
    "team": "PHI",
    "injury": "",
@@ -1639,7 +1647,7 @@
    "pos": "RB"
   },
   "1479": {
-   "pts": 7.89,
+   "pts": 8.01,
    "opp": "BAL",
    "team": "IND",
    "injury": "",
@@ -1686,22 +1694,6 @@
    "name": "Cameron Dicker",
    "pos": "K"
   },
-  "LAR": {
-   "pts": 7.06,
-   "opp": "SF",
-   "team": "LAR",
-   "injury": "",
-   "name": "Los Angeles Rams",
-   "pos": "DEF"
-  },
-  "12015": {
-   "pts": 7.06,
-   "opp": "SF",
-   "team": "LAR",
-   "injury": "",
-   "name": "Harrison Mevis",
-   "pos": "K"
-  },
   "12711": {
    "pts": 7.05,
    "opp": "IND",
@@ -1717,6 +1709,22 @@
    "injury": "",
    "name": "Houston Texans",
    "pos": "DEF"
+  },
+  "LAR": {
+   "pts": 7.03,
+   "opp": "SF",
+   "team": "LAR",
+   "injury": "",
+   "name": "Los Angeles Rams",
+   "pos": "DEF"
+  },
+  "12015": {
+   "pts": 7.03,
+   "opp": "SF",
+   "team": "LAR",
+   "injury": "",
+   "name": "Harrison Mevis",
+   "pos": "K"
   },
   "2747": {
    "pts": 6.9,
@@ -1767,7 +1775,7 @@
    "pos": "K"
   },
   "5189": {
-   "pts": 6.37,
+   "pts": 6.34,
    "opp": "LAR",
    "team": "SF",
    "injury": "",
@@ -1781,14 +1789,6 @@
    "injury": "",
    "name": "Chase McLaughlin",
    "pos": "K"
-  },
-  "13305": {
-   "pts": 6.22,
-   "opp": "MIA",
-   "team": "LV",
-   "injury": "",
-   "name": "Mike Washington",
-   "pos": "RB"
   },
   "1945": {
    "pts": 6.04,
@@ -1869,8 +1869,8 @@
    "8138": 15.89356594,
    "6794": 17.08081991,
    "6813": 17.76548144,
-   "4866": 17.66105477,
    "8130": 14.34516219,
+   "4866": 17.66105477,
    "9226": 18.21072886,
    "3198": 16.36750799,
    "4881": 19.1294244,
@@ -1902,16 +1902,16 @@
    "12526": 14.81051636,
    "12481": 13.69991056,
    "6770": 18.15273219,
-   "9997": 14.24175913,
    "8259": 10.26383132,
-   "HOU": 5.24615059,
+   "9997": 14.24175913,
    "7543": 14.95903234,
+   "HOU": 5.24615059,
    "2747": 9.3773349,
    "12514": 14.04658138,
    "DEN": 5.8607573,
+   "SEA": 7.22353485,
    "11635": 13.74255509,
    "LAR": 6.11892266,
-   "SEA": 7.22353485,
    "6801": 12.96375007,
    "12512": 13.15413663,
    "7526": 12.22193741,
@@ -1949,16 +1949,16 @@
    "2216": 10.65124902,
    "8228": 12.61586177,
    "BAL": 6.81679456,
-   "5967": 11.54403438,
    "6819": 12.30849598,
+   "5967": 11.54403438,
    "8167": 10.91618729,
    "9487": 11.32011962,
    "7021": 12.49291549,
    "5850": 0.0,
    "11786": 8.80819651,
    "PHI": 6.33674169,
-   "11563": 16.20137865,
    "7523": 16.97800938,
+   "11563": 16.20137865,
    "7567": 10.78636982,
    "4046": 15.48160732,
    "8110": 9.80450219,
@@ -1977,12 +1977,12 @@
    "8131": 9.45741243,
    "8126": 10.36533484,
    "9756": 9.90880065,
+   "5947": 10.39094979,
    "12534": 10.25387982,
    "11586": 9.37201827,
    "4037": 9.67702552,
    "12489": 8.4567631,
    "11624": 9.52472671,
-   "10236": 8.66740983,
    "9754": 10.35393388,
    "8136": 8.86113,
    "13294": 8.53207594,
@@ -2000,8 +2000,8 @@
    "9753": 0.0,
    "12711": 8.49020669,
    "11646": 9.21520713,
+   "7002": 8.82551505,
    "8132": 6.78463916,
-   "13305": 7.07872178,
    "1945": 9.02100131,
    "13281": 0.0,
    "1479": 7.19101699,
@@ -2081,8 +2081,8 @@
    "9997": 15.2,
    "8146": 14.8,
    "6801": 14.8,
-   "10229": 14.7,
-   "11635": 14.4,
+   "11635": 14.7,
+   "10229": 14.4,
    "12526": 14.3,
    "7526": 14.0,
    "11632": 13.7,
@@ -2103,12 +2103,13 @@
    "5045": 10.9,
    "9500": 10.9,
    "8126": 10.7,
-   "10232": 10.7,
-   "9754": 10.6,
+   "9754": 10.7,
+   "10232": 10.6,
    "13279": 10.6,
    "11631": 10.5,
    "10222": 10.3,
    "9756": 10.1,
+   "5947": 10.0,
    "11646": 9.9,
    "2449": 9.8,
    "13298": 9.7,
@@ -2129,13 +2130,13 @@
    "12506": 11.5,
    "9484": 10.8,
    "5022": 10.5,
+   "7002": 10.3,
    "1466": 10.1,
    "8131": 9.9,
    "8110": 9.8,
    "5012": 9.7,
-   "10236": 9.6,
-   "4217": 8.3,
-   "12493": 7.0,
+   "4217": 8.2,
+   "12493": 6.9,
    "11533": 10.0,
    "8259": 9.0,
    "11786": 8.8,
@@ -2184,7 +2185,7 @@
    },
    "11560": {
     "ecr": 7,
-    "grade": "B+"
+    "grade": "B"
    },
    "7523": {
     "ecr": 8,
@@ -2442,11 +2443,11 @@
     "ecr": 15,
     "grade": "A"
    },
-   "10229": {
+   "11635": {
     "ecr": 16,
     "grade": "A-"
    },
-   "11635": {
+   "10229": {
     "ecr": 17,
     "grade": "A-"
    },
@@ -2530,11 +2531,11 @@
     "ecr": 37,
     "grade": "C+"
    },
-   "10232": {
+   "9754": {
     "ecr": 38,
     "grade": "C"
    },
-   "9754": {
+   "10232": {
     "ecr": 39,
     "grade": "C"
    },
@@ -2552,6 +2553,10 @@
    },
    "9756": {
     "ecr": 43,
+    "grade": "C"
+   },
+   "5947": {
+    "ecr": 44,
     "grade": "C"
    },
    "11646": {
@@ -2624,7 +2629,7 @@
    },
    "12506": {
     "ecr": 6,
-    "grade": "B+"
+    "grade": "B"
    },
    "9484": {
     "ecr": 7,
@@ -2632,6 +2637,10 @@
    },
    "5022": {
     "ecr": 8,
+    "grade": "B"
+   },
+   "7002": {
+    "ecr": 9,
     "grade": "B"
    },
    "1466": {
@@ -2649,10 +2658,6 @@
    "5012": {
     "ecr": 13,
     "grade": "C"
-   },
-   "10236": {
-    "ecr": 14,
-    "grade": "C-"
    },
    "4217": {
     "ecr": 20,
@@ -2676,7 +2681,7 @@
    },
    "3451": {
     "ecr": 4,
-    "grade": "B-"
+    "grade": "B"
    },
    "2747": {
     "ecr": 7,
@@ -2684,7 +2689,7 @@
    },
    "12711": {
     "ecr": 8,
-    "grade": "C"
+    "grade": "C+"
    },
    "6650": {
     "ecr": 9,
@@ -2921,10 +2926,10 @@
    "away": "ATL",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 23.0,
-   "away_implied": 19.5,
-   "spread": "PIT -3.5",
-   "total": 42.5,
+   "home_implied": 23.5,
+   "away_implied": 18.0,
+   "spread": "PIT -5.5",
+   "total": 41.5,
    "tv": "FOX"
   },
   {
@@ -2951,10 +2956,10 @@
    "away": "CLE",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 24.5,
-   "away_implied": 16.0,
+   "home_implied": 24.0,
+   "away_implied": 15.5,
    "spread": "JAX -8.5",
-   "total": 40.5,
+   "total": 39.5,
    "tv": "CBS"
   },
   {

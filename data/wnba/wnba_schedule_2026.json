@@ -1,7 +1,7 @@
 {
   "fetched_on": "2026-09-10",
   "season": 2026,
-  "total_games": 333,
+  "total_games": 362,
   "schedule": {
     "2026-05-08": {
       "NY": [
@@ -7552,6 +7552,596 @@
           "home_score": null,
           "away_score": null,
           "date": "2026-09-24"
+        }
+      ]
+    },
+    "2026-09-27": {
+      "TBD": [
+        {
+          "id": 1392661,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        },
+        {
+          "id": 1392661,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        },
+        {
+          "id": 1392662,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        },
+        {
+          "id": 1392662,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        },
+        {
+          "id": 1392663,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        },
+        {
+          "id": 1392663,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        },
+        {
+          "id": 1392664,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        },
+        {
+          "id": 1392664,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-27"
+        }
+      ]
+    },
+    "2026-09-29": {
+      "TBD": [
+        {
+          "id": 1392671,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-29"
+        },
+        {
+          "id": 1392671,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-29"
+        },
+        {
+          "id": 1392672,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-29"
+        },
+        {
+          "id": 1392672,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-29"
+        }
+      ]
+    },
+    "2026-09-30": {
+      "TBD": [
+        {
+          "id": 1392673,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-30"
+        },
+        {
+          "id": 1392673,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-30"
+        },
+        {
+          "id": 1392674,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-30"
+        },
+        {
+          "id": 1392674,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-09-30"
+        }
+      ]
+    },
+    "2026-10-01": {
+      "TBD": [
+        {
+          "id": 1392675,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-01"
+        },
+        {
+          "id": 1392675,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-01"
+        },
+        {
+          "id": 1392676,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-01"
+        },
+        {
+          "id": 1392676,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-01"
+        }
+      ]
+    },
+    "2026-10-02": {
+      "TBD": [
+        {
+          "id": 1392677,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-02"
+        },
+        {
+          "id": 1392677,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-02"
+        },
+        {
+          "id": 1392678,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-02"
+        },
+        {
+          "id": 1392678,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-02"
+        }
+      ]
+    },
+    "2026-10-04": {
+      "TBD": [
+        {
+          "id": 1392679,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-04"
+        },
+        {
+          "id": 1392679,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-04"
+        },
+        {
+          "id": 1392680,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-04"
+        },
+        {
+          "id": 1392680,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-04"
+        }
+      ]
+    },
+    "2026-10-07": {
+      "TBD": [
+        {
+          "id": 1392687,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-07"
+        },
+        {
+          "id": 1392687,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-07"
+        },
+        {
+          "id": 1392688,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-07"
+        },
+        {
+          "id": 1392688,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-07"
+        }
+      ]
+    },
+    "2026-10-09": {
+      "TBD": [
+        {
+          "id": 1392695,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-09"
+        },
+        {
+          "id": 1392695,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-09"
+        },
+        {
+          "id": 1392696,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-09"
+        },
+        {
+          "id": 1392696,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-09"
+        }
+      ]
+    },
+    "2026-10-11": {
+      "TBD": [
+        {
+          "id": 1392697,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-11"
+        },
+        {
+          "id": 1392697,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-11"
+        },
+        {
+          "id": 1392698,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-11"
+        },
+        {
+          "id": 1392698,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-11"
+        }
+      ]
+    },
+    "2026-10-14": {
+      "TBD": [
+        {
+          "id": 1392705,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-14"
+        },
+        {
+          "id": 1392705,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-14"
+        },
+        {
+          "id": 1392706,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-14"
+        },
+        {
+          "id": 1392706,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-14"
+        }
+      ]
+    },
+    "2026-10-17": {
+      "TBD": [
+        {
+          "id": 1392707,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-17"
+        },
+        {
+          "id": 1392707,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-17"
+        }
+      ]
+    },
+    "2026-10-19": {
+      "TBD": [
+        {
+          "id": 1392708,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-19"
+        },
+        {
+          "id": 1392708,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-19"
+        }
+      ]
+    },
+    "2026-10-22": {
+      "TBD": [
+        {
+          "id": 1392715,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-22"
+        },
+        {
+          "id": 1392715,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-22"
+        }
+      ]
+    },
+    "2026-10-24": {
+      "TBD": [
+        {
+          "id": 1392716,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-24"
+        },
+        {
+          "id": 1392716,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-24"
+        }
+      ]
+    },
+    "2026-10-26": {
+      "TBD": [
+        {
+          "id": 1392723,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-26"
+        },
+        {
+          "id": 1392723,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-26"
+        }
+      ]
+    },
+    "2026-10-29": {
+      "TBD": [
+        {
+          "id": 1392724,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-29"
+        },
+        {
+          "id": 1392724,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-29"
+        }
+      ]
+    },
+    "2026-10-31": {
+      "TBD": [
+        {
+          "id": 1392731,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-31"
+        },
+        {
+          "id": 1392731,
+          "home": "TBD",
+          "away": "TBD",
+          "status": "pre",
+          "home_score": null,
+          "away_score": null,
+          "date": "2026-10-31"
         }
       ]
     }
