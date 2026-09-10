@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-10T21:37:13+00:00",
+ "fetched": "2026-09-10T23:30:12+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -40,14 +40,14 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 213.08,
+     "projected": 213.1,
      "win_probability": 0.76
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 167.38,
+     "projected": 167.36,
      "win_probability": 0.24
     }
    ]
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 176.82,
-     "win_probability": 0.48
+     "projected": 195.67,
+     "win_probability": 0.6
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
      "projected": 180.05,
-     "win_probability": 0.52
+     "win_probability": 0.4
     }
    ]
   },
@@ -1318,7 +1318,7 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "BN",
+    "slot": "DEF",
     "points": 0.0,
     "stats": {}
    }
