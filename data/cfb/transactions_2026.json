@@ -1,5 +1,30 @@
 [
  {
+  "id": 55.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1789026821.0,
+  "faab_bid": 0.0,
+  "players": [
+   {
+    "player": "South Carolina",
+    "pos": "DEF",
+    "team": "SC",
+    "type": "add",
+    "source": null,
+    "destination": "Jackson's Brilliant Team"
+   },
+   {
+    "player": "Oklahoma",
+    "pos": "DEF",
+    "team": "OU",
+    "type": "drop",
+    "source": "Jackson's Brilliant Team",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 53.0,
   "type": "add/drop",
   "status": "successful",

@@ -12,15 +12,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 195.95,
-     "win_probability": 0.72
+     "projected": 195.4,
+     "win_probability": 0.71
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
      "projected": 161.1,
-     "win_probability": 0.28
+     "win_probability": 0.29000000000000004
     }
    ]
   },
@@ -42,7 +42,7 @@
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 168.88,
+     "projected": 168.9,
      "win_probability": 0.25
     }
    ]
@@ -58,15 +58,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 185.63,
-     "win_probability": 0.52
+     "projected": 176.43,
+     "win_probability": 0.45999999999999996
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
      "projected": 182.09,
-     "win_probability": 0.48
+     "win_probability": 0.54
     }
    ]
   },
@@ -82,14 +82,14 @@
      "name": "CCAM State",
      "points": 0.0,
      "projected": 184.82,
-     "win_probability": 0.62
+     "win_probability": 0.63
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 165.64,
-     "win_probability": 0.38
+     "projected": 165.21,
+     "win_probability": 0.37
     }
    ]
   },
