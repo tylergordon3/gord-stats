@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-09T21:40:12+00:00",
+ "fetched": "2026-09-10T03:36:07+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -47,7 +47,7 @@
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 168.86,
+     "projected": 168.88,
      "win_probability": 0.25
     }
    ]
@@ -63,7 +63,7 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 184.54,
+     "projected": 185.63,
      "win_probability": 0.52
     },
     {
@@ -1183,12 +1183,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "462228",
-    "player": "DJ Vonnahme",
+    "yahoo_id": "406200",
+    "player": "Randy Pittman Jr.",
     "pos": "TE",
-    "team": "IOWA",
-    "team_full": "Iowa Hawkeyes",
-    "bye": 7.0,
+    "team": "SMU",
+    "team_full": "SMU Mustangs",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1221,6 +1221,20 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "462228",
+    "player": "DJ Vonnahme",
+    "pos": "TE",
+    "team": "IOWA",
+    "team_full": "Iowa Hawkeyes",
+    "bye": 7.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1287,20 +1301,6 @@
     "team": "ALA",
     "team_full": "Alabama Crimson Tide",
     "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "406200",
-    "player": "Randy Pittman Jr.",
-    "pos": "TE",
-    "team": "SMU",
-    "team_full": "SMU Mustangs",
-    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
