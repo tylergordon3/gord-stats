@@ -9,39 +9,39 @@
   "captured": "2026-09-10",
   "teams": [
     {
-      "team": "Strictly Dickly",
-      "team_id": 4,
-      "rank": 1,
-      "score": 100,
-      "vorp": 112.61
-    },
-    {
       "team": "Professional Fratson",
       "team_id": 3,
+      "rank": 1,
+      "score": 100,
+      "vorp": 112.79
+    },
+    {
+      "team": "Strictly Dickly",
+      "team_id": 4,
       "rank": 2,
       "score": 100,
-      "vorp": 112.45
+      "vorp": 112.33
     },
     {
       "team": "DRINK MAYE",
       "team_id": 2,
       "rank": 3,
       "score": 94,
-      "vorp": 105.53
+      "vorp": 105.52
     },
     {
       "team": "padgett",
       "team_id": 7,
       "rank": 4,
       "score": 93,
-      "vorp": 105.07
+      "vorp": 105.06
     },
     {
       "team": "CCAM’s Convicts",
       "team_id": 1,
       "rank": 5,
       "score": 90,
-      "vorp": 101.66
+      "vorp": 101.65
     },
     {
       "team": "The Jackson 5",
@@ -55,14 +55,14 @@
       "team_id": 6,
       "rank": 7,
       "score": 86,
-      "vorp": 96.69
+      "vorp": 96.68
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 8,
       "score": 83,
-      "vorp": 93.96
+      "vorp": 93.95
     },
     {
       "team": "LGBBQ+",
@@ -76,7 +76,7 @@
       "team_id": 8,
       "rank": 10,
       "score": 73,
-      "vorp": 81.87
+      "vorp": 81.86
     }
   ]
 }
