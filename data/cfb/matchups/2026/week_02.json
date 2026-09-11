@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T00:40:13+00:00",
+ "fetched": "2026-09-11T00:50:16+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 1.9,
+     "points": 16.0,
      "projected": 195.56,
-     "win_probability": 0.7
+     "win_probability": 0.77
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
      "projected": 161.1,
-     "win_probability": 0.30000000000000004
+     "win_probability": 0.22999999999999998
     }
    ]
   },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 30.3,
+     "points": 39.42,
      "projected": 185.05,
-     "win_probability": 0.75
+     "win_probability": 0.79
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.25
+     "win_probability": 0.20999999999999996
     }
    ]
   },
@@ -191,10 +191,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 1.9,
+    "points": 16.0,
     "stats": {
-     "11": 1.0,
-     "12": 14.0
+     "11": 3.0,
+     "12": 85.0,
+     "13": 1.0
     }
    },
    {
@@ -1581,10 +1582,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 9.0,
+    "points": 18.12,
     "stats": {
-     "4": 75.0,
-     "5": 1.0
+     "4": 153.0,
+     "5": 2.0
     }
    },
    {
