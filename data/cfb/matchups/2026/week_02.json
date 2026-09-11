@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T09:41:20+00:00",
+ "fetched": "2026-09-11T15:44:06+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 9.0,
      "projected": 213.12,
-     "win_probability": 0.72
+     "win_probability": 0.65
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 166.88,
-     "win_probability": 0.28
+     "projected": 179.54,
+     "win_probability": 0.35
     }
    ]
   },
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
      "projected": 195.67,
-     "win_probability": 0.6
+     "win_probability": 0.55
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 179.96,
-     "win_probability": 0.4
+     "projected": 187.51,
+     "win_probability": 0.44999999999999996
     }
    ]
   },
@@ -899,12 +899,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404392",
-    "player": "Justice Haynes",
+    "yahoo_id": "403910",
+    "player": "Kamari Moulton",
     "pos": "RB",
-    "team": "GT",
-    "team_full": "Georgia Tech Yellow Jackets",
-    "bye": 5.0,
+    "team": "IOWA",
+    "team_full": "Iowa Hawkeyes",
+    "bye": 7.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -927,12 +927,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "451040",
-    "player": "Duce Robinson",
+    "yahoo_id": "404713",
+    "player": "Ian Strong",
     "pos": "WR",
-    "team": "FSU",
-    "team_full": "Florida State Seminoles",
-    "bye": 2.0,
+    "team": "CAL",
+    "team_full": "California Golden Bears",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -941,12 +941,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404713",
-    "player": "Ian Strong",
+    "yahoo_id": "450577",
+    "player": "Jordan Faison",
     "pos": "WR",
-    "team": "CAL",
-    "team_full": "California Golden Bears",
-    "bye": 10.0,
+    "team": "ND",
+    "team_full": "Notre Dame Fighting Irish",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -969,6 +969,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "404392",
+    "player": "Justice Haynes",
+    "pos": "RB",
+    "team": "GT",
+    "team_full": "Georgia Tech Yellow Jackets",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "457801",
     "player": "Cameron Dickey",
     "pos": "RB",
@@ -983,16 +997,16 @@
     "stats": {}
    },
    {
-    "yahoo_id": "403910",
-    "player": "Kamari Moulton",
-    "pos": "RB",
-    "team": "IOWA",
-    "team_full": "Iowa Hawkeyes",
-    "bye": 7.0,
+    "yahoo_id": "451040",
+    "player": "Duce Robinson",
+    "pos": "WR",
+    "team": "FSU",
+    "team_full": "Florida State Seminoles",
+    "bye": 2.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "W/R/T",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1017,20 +1031,6 @@
     "team": "COLO",
     "team_full": "Colorado Buffaloes",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "450577",
-    "player": "Jordan Faison",
-    "pos": "WR",
-    "team": "ND",
-    "team_full": "Notre Dame Fighting Irish",
-    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1379,12 +1379,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "469636",
-    "player": "Bo Jackson",
+    "yahoo_id": "456220",
+    "player": "Turbo Richard",
     "pos": "RB",
-    "team": "OSU",
-    "team_full": "Ohio State Buckeyes",
-    "bye": 8.0,
+    "team": "IND",
+    "team_full": "Indiana Hoosiers",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1407,12 +1407,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457217",
-    "player": "Mario Craver",
+    "yahoo_id": "474632",
+    "player": "Tanook Hines",
     "pos": "WR",
-    "team": "TAMU",
-    "team_full": "Texas A&M Aggies",
-    "bye": 9.0,
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1421,12 +1421,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "474632",
-    "player": "Tanook Hines",
+    "yahoo_id": "406054",
+    "player": "Keshaun Singleton",
     "pos": "WR",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
+    "team": "AUB",
+    "team_full": "Auburn Tigers",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1473,6 +1473,34 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457217",
+    "player": "Mario Craver",
+    "pos": "WR",
+    "team": "TAMU",
+    "team_full": "Texas A&M Aggies",
+    "bye": 9.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "469636",
+    "player": "Bo Jackson",
+    "pos": "RB",
+    "team": "OSU",
+    "team_full": "Ohio State Buckeyes",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1524,34 +1552,6 @@
     "pos": "WR",
     "team": "SMU",
     "team_full": "SMU Mustangs",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "456220",
-    "player": "Turbo Richard",
-    "pos": "RB",
-    "team": "IND",
-    "team_full": "Indiana Hoosiers",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "406054",
-    "player": "Keshaun Singleton",
-    "pos": "WR",
-    "team": "AUB",
-    "team_full": "Auburn Tigers",
     "bye": 6.0,
     "status": "",
     "status_full": "",
