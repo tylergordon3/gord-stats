@@ -192,6 +192,8 @@ table.mu-roster td.mu-p .mu-hint.out{background:#fde2dd;color:#b3382c}
 /* The scoreboard-styled tables (the NFL page's disagreements and accuracy
    lists) carry the same logos; without this they got the theme's figure
    styling and rendered at full size. */
+/* A projection that has become an expected final mid-game reads in italics. */
+table.mu-roster td.mu-gs.live,.mu-side .sub b.live{font-style:italic}
 table.mu-roster img.mu-logo,table.mu-board img.mu-logo{width:18px;height:18px;
   object-fit:contain;vertical-align:middle;
   margin:0 5px 0 0;border:none;padding:0;box-shadow:none;background:none;border-radius:0;
@@ -320,6 +322,9 @@ LIVE_JS = """<script>
         each('[data-roster="'+key+'"] [data-pid], [data-pid][data-roster="'+key+'"]',function(el){
           var p=t.players[el.getAttribute('data-pid')];if(!p)return;
           var c=el.querySelector('.mu-pts');if(c)c.innerHTML='<b>'+fmt(p.points)+'</b>';
+          // A live expected final replaces the pre-game projection while a
+          // game is on: points so far plus the unplayed share.
+          if(p.live!==undefined&&p.live!==null){var gc=el.querySelector('.mu-gs');if(gc){gc.textContent=fmt(p.live);gc.classList.add('live');}}
           if(p.line!==undefined&&p.line!==null){var s=el.querySelector('.mu-s');if(s)s.textContent=p.line;}
           if(el.tagName==='TR'&&el.classList.contains('starter'))total+=(p.points||0);
         });
@@ -329,6 +334,7 @@ LIVE_JS = """<script>
       each('[data-num="'+key+'"]',function(el){el.textContent=fmt(pts);el.setAttribute('data-val',pts);});
       each('[data-sb="'+key+'"]',function(el){el.innerHTML=fmt(pts);el.setAttribute('data-val',pts);});
       each('[data-tpts="'+key+'"]',function(el){el.textContent=fmt(pts);});
+      if(t.gs_live!==undefined&&t.gs_live!==null){each('[data-tgs="'+key+'"]',function(el){el.textContent=fmt(t.gs_live);el.classList.add('live');});}
       if(t.win_probability!==null&&t.win_probability!==undefined){
         var pc=(t.win_probability*100).toFixed(0)+'%';
         each('[data-wp="'+key+'"]',function(el){el.style.width=pc;});

@@ -207,8 +207,29 @@ def _logo(team: str) -> str:
 N_COLS = 9
 
 
+def _sd_for(sd, proj) -> float:
+    """The spread of a player's week: the board's, or a share of the
+    projection when it has none for him, and never trivially small."""
+    if sd is not None and not pd.isna(sd) and sd > 0:
+        return float(sd)
+    return max(2.0, 0.6 * float(proj or 0.0))
+
+
+def expected(pts, proj, sd, g: dict | None) -> tuple:
+    """(expected final, variance) for one player this week: the projection
+    before kickoff, the points once the game is over, and in between the
+    points so far plus the unplayed share of the projection, with the
+    variance shrinking the same way. The live script does the same sum in
+    the browser as the clocks run."""
+    proj = float(proj or 0.0)
+    pts = float(pts or 0.0)
+    done = float((g or {}).get("elapsed", 0.0)) if g else 0.0
+    left = 1.0 - done
+    return pts + proj * left, _sd_for(sd, proj) ** 2 * left
+
+
 def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, stats: dict,
-               hint: str = "", grade: str = "") -> str:
+               hint: str = "", grade: str = "", sd: float = 0.0) -> str:
     pid, slot = row["pid"], row["slot"]
     bench = slot in ("BN", "IR")
     if pid == "0":
@@ -224,9 +245,11 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
            }.get(hint, "")
     grade_html = (f'<span class="mu-meta" title="FantasyPros start/sit grade">{escape(grade)}</span>'
                   if grade else "")
-    return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
+    return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}" '
+            f'data-team="{escape(card["team"] or "")}" '
+            f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}">'
             f"<td class=\"mu-pts\"><b>{ui.fmt(pts)}</b></td>"
-            f"<td>{ui.fmt(proj)}</td>"
+            f"<td class=\"mu-gs\">{ui.fmt(proj)}</td>"
             f'<td class="mu-slot">{escape(slot)}</td>'
             f'<td class="mu-p"><span class="mu-pc"><span class="nm">{_logo(card["team"])}'
             f'{escape(card["name"])}</span> '
@@ -283,15 +306,27 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
         return player_row(r, c, ctx["by_team"].get(c["team"]), proj.get(r["pid"]),
                           outside.get(r["pid"], [None] * len(sources)), pts.get(r["pid"]),
                           (data.get("stats") or {}).get(r["pid"]) or {}, hints.get(r["pid"]),
-                          (grades.get(r["pid"]) or {}).get("grade") or "")
+                          (grades.get(r["pid"]) or {}).get("grade") or "",
+                          sd=_sd_for(ctx.get("sd", {}).get(r["pid"]), proj.get(r["pid"])))
 
     gs_total = sum(proj.get(r["pid"]) or 0 for r in starters)
+    # Expected final and its variance over the starters, for the win bar.
+    exp_total, var_total = 0.0, 0.0
+    for r in starters:
+        if r["pid"] == "0":
+            continue
+        c = cards.get(r["pid"]) or {}
+        e, v = expected(pts.get(r["pid"]), proj.get(r["pid"]),
+                        ctx.get("sd", {}).get(r["pid"]), ctx["by_team"].get(c.get("team")))
+        exp_total += e
+        var_total += v
     src_totals = [sum((src.get(r["pid"]) or 0) for r in starters) for src in sources.values()]
     cons_total = sum(cons.get(r["pid"]) or 0 for r in starters)
     pts_total = float(side.get("points") or 0)
     html_rows = [cell(r) for r in starters]
     html_rows.append(f'<tr class="total"><td class="mu-pts" data-tpts="{side["roster_id"]}">'
-                     f'{pts_total:.1f}</td><td>{gs_total:.1f}</td><td></td>'
+                     f'{pts_total:.1f}</td><td class="mu-gs" data-tgs="{side["roster_id"]}">'
+                     f'{gs_total:.1f}</td><td></td>'
                      '<td class="mu-p">Starters</td><td></td>'
                      + "".join(f"<td>{t:.1f}</td>" for t in src_totals)
                      + "<td></td></tr>")
@@ -306,7 +341,7 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
             f"<th>Slot</th><th>Player</th><th>Game</th>{heads}"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>{swaps}')
-    return html, gs_total, cons_total, pts_total
+    return html, gs_total, cons_total, pts_total, exp_total, var_total
 
 
 SHORT = {"sleeper": "Slpr", "espn": "ESPN", "fp": "FP"}
@@ -354,10 +389,11 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     sides = []
     for s in m["sides"]:
         t = data["teams"].get(str(s["roster_id"])) or data["teams"].get(s["roster_id"]) or {}
-        html, gs, sp, pts = roster_table(s, t, data, ctx, final)
+        html, gs, sp, pts, exp, var = roster_table(s, t, data, ctx, final)
         sides.append({"team": t, "name": t.get("name") or f"Team {s['roster_id']}",
                       "key": str(s["roster_id"]),
-                      "html": html, "gs": gs, "sp": sp, "pts": pts if started else None})
+                      "html": html, "gs": gs, "sp": sp, "pts": pts if started else None,
+                      "exp": exp, "var": var})
     if len(sides) != 2:
         return "", sides
     a, b = sides
@@ -367,8 +403,9 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     def side_html(s, which):
         big = ui.fmt(s["pts"]) if started else ui.fmt(s["gs"])
         cls = " lead" if lead == which else ""
-        sub = (f"Consensus <b>{ui.fmt(s['sp'])}</b> · GordStats <b>{ui.fmt(s['gs'])}</b>"
-               if started else f"Consensus proj <b>{ui.fmt(s['sp'])}</b>")
+        sub = (f"GordStats <b data-tgs='{s['key']}'>{ui.fmt(s['gs'])}</b> · "
+               f"Consensus <b>{ui.fmt(s['sp'])}</b>"
+               if started else f"projected · Consensus <b>{ui.fmt(s['sp'])}</b>")
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_avatar(s["team"])}'
                 f'<div><div class="nm">{_label(s["team"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
@@ -377,6 +414,10 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
                 f'<div class="sub">{sub}</div></div></div>')
 
     mid = "Final" if final else ("Live" if started else "Preview")
+    # Our chance for each side: the expected finals against the spread that
+    # is still to be played, from the players' own week-to-week variances.
+    wp_a = win_probability(a["exp"], a["var"], b["exp"], b["var"])
+    bar = "" if final else ui.win_bar(wp_a, 1 - wp_a, "GordStats", a["key"], b["key"])
     edge = a["gs"] - b["gs"]
     note = (f"GordStats has <b>{escape(a['name'] if edge >= 0 else b['name'])}</b> by "
             f"{abs(edge):.1f} on projection ({ui.fmt(a['gs'])}–{ui.fmt(b['gs'])}); the "
@@ -384,13 +425,22 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
             f"GordStats projected {ui.fmt(a['gs'])}–{ui.fmt(b['gs'])} going in, the consensus "
             f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
-            f'{side_html(b, "b")}</div><p class="mu-note">{note}</p>'
+            f'{side_html(b, "b")}</div>{bar}<p class="mu-note">{note}</p>'
             f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
             f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')
     head = (f'{escape(a["name"])} {ui.fmt(a["pts"]) if started else ""} '
             f'<span style="color:#94a3b8">vs</span> '
             f'{ui.fmt(b["pts"]) if started else ""} {escape(b["name"])}')
     return layout.details(head, body, open=True, anchor=anchor), sides
+
+
+def win_probability(exp_a: float, var_a: float, exp_b: float, var_b: float) -> float:
+    """P(A outscores B): a normal on the difference of expected finals, with a
+    floor on the spread so a matchup that is all but over still reads as odds
+    rather than a certainty."""
+    from math import erf, sqrt
+    sd = sqrt(max(var_a + var_b, 4.0))
+    return 0.5 * (1 + erf(((exp_a - exp_b) / sd) / sqrt(2)))
 
 
 def week_board(rows: list, started: bool) -> str:
@@ -418,11 +468,57 @@ def week_board(rows: list, started: bool) -> str:
             f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div>')
 
 
+# What the browser does between rebuilds: Sleeper's points per player and
+# ESPN's clocks per game, folded into each player's expected final (points
+# so far plus the unplayed share of his projection) and each side's chance -
+# the same arithmetic as `expected` and `win_probability` above. Projections
+# and spreads are read off the rows, so nothing the page already knows is
+# refetched. `compute` is exposed so it can be exercised with a fake payload.
+_LIVE_FETCH_JS = """window.MU_LIVE={interval:__INTERVAL__,
+compute:function(rows,games){
+  var teams={};
+  function erf(x){var t=1/(1+0.3275911*Math.abs(x));var y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y;}
+  function elapsed(g){if(!g||g.state==='pre')return 0;if(g.state==='post')return 1;if(!g.period)return .5;if(g.period>4)return .95;
+    var m=String(g.clock||'0:00').split(':'),left=(parseInt(m[0],10)||0)+((parseInt(m[1],10)||0)/60);
+    return Math.min(Math.max(((g.period-1)*15+(15-left))/60,0),1);}
+  (rows||[]).forEach(function(r){
+    var key=String(r.roster_id),pp=r.players_points||{},players={},exp=0,v=0;
+    document.querySelectorAll('[data-roster="'+key+'"] tr.starter[data-pid]').forEach(function(tr){
+      var pid=tr.getAttribute('data-pid'),proj=parseFloat(tr.getAttribute('data-proj')),sd=parseFloat(tr.getAttribute('data-sd'))||2;
+      var g=games[tr.getAttribute('data-team')],done=elapsed(g),pts=pp[pid]||0;
+      if(isNaN(proj))proj=0;
+      var e=pts+proj*(1-done);exp+=e;v+=sd*sd*(1-done);
+      players[pid]={points:pp[pid],live:(g&&g.state!=='pre')?e:undefined};
+    });
+    Object.keys(pp).forEach(function(k){if(!players[k])players[k]={points:pp[k]};});
+    teams[key]={points:r.points,players:players,exp:exp,v:v,matchup:r.matchup_id,gs_live:exp};
+  });
+  Object.keys(teams).forEach(function(k){
+    var t=teams[k],o=Object.keys(teams).filter(function(j){return j!==k&&teams[j].matchup===t.matchup;})[0];
+    if(!o)return;var u=teams[o],sd=Math.sqrt(Math.max(t.v+u.v,4));
+    t.win_probability=0.5*(1+erf(((t.exp-u.exp)/sd)/Math.SQRT2));
+  });
+  return {teams:teams};
+},
+fetch:function(){
+  var self=this;
+  var sleeper=fetch('__SLEEPER__').then(function(r){return r.json();});
+  var espn=fetch('__ESPN__').then(function(r){return r.json();}).then(function(d){
+    var games={};(d.events||[]).forEach(function(e){var c=(e.competitions||[])[0];if(!c)return;var st=c.status||{};
+      (c.competitors||[]).forEach(function(x){var ab=x.team&&x.team.abbreviation;if(ab==='WSH')ab='WAS';
+        games[ab]={state:(st.type||{}).state||'pre',period:st.period,clock:st.displayClock};});});
+    return games;}).catch(function(){return {};});
+  return Promise.all([sleeper,espn]).then(function(both){return self.compute(both[0],both[1]);});
+}};"""
+
+
 def week_view(data: dict, ctx: dict) -> str:
     week = int(data["week"])
+    bf = ctx["board_frame"].drop_duplicates("sleeper_id")
     ctx = {**ctx, "by_team": data_mod.team_games(data["games"]),
            "wk": data_mod.week_projections(ctx["board_frame"], data["games"],
-                                           injuries=injury_status(data))}
+                                           injuries=injury_status(data)),
+           "sd": dict(zip(bf["sleeper_id"].astype(str), bf["sd"])) if "sd" in bf else {}}
     final = data_mod.week_final(data)
     started = data_mod.week_started(data)
     sections, rows = [], []
@@ -450,13 +546,10 @@ def week_view(data: dict, ctx: dict) -> str:
     # games are on, every five before they start. Stat lines wait for the
     # ten-minute rebuild; Sleeper's stats feed is too big to poll.
     live = ("" if final else
-            "<script>window.MU_LIVE={fetch:function(){return fetch('"
-            f"{data_mod.SLEEPER_API}/league/{UPCOMING_LEAGUE_ID}/matchups/{week}')"
-            ".then(function(r){return r.json();}).then(function(rows){var teams={};"
-            "(rows||[]).forEach(function(r){var players={};var pp=r.players_points||{};"
-            "Object.keys(pp).forEach(function(k){players[k]={points:pp[k]};});"
-            "teams[String(r.roster_id)]={points:r.points,players:players};});"
-            f"return {{teams:teams}};}});}},interval:{60000 if started else 300000}}};</script>")
+            "<script>" + _LIVE_FETCH_JS
+            .replace("__SLEEPER__", f"{data_mod.SLEEPER_API}/league/{UPCOMING_LEAGUE_ID}/matchups/{week}")
+            .replace("__ESPN__", f"{data_mod.ESPN_SCOREBOARD}?week={week}&dates={UPCOMING_YEAR}&seasontype=2")
+            .replace("__INTERVAL__", str(60000 if started else 300000)) + "</script>")
     return (f"<p><strong>Week {week}</strong>{span}{playoffs} · {state}{asof}</p>"
             + week_board(rows, started) + extra + "".join(sections) + live)
 

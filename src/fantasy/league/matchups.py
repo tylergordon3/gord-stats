@@ -207,6 +207,7 @@ def parse_scoreboard(data: dict) -> list[dict]:
         games.append({
             "game_id": str(ev.get("id")), "date": ev.get("date"),
             "state": status.get("state") or "pre", "detail": status.get("shortDetail") or "",
+            "period": status.get("period"), "clock": status.get("displayClock"),
             "home": abbr(home), "away": abbr(away),
             "home_score": _num(home.get("score")), "away_score": _num(away.get("score")),
             "home_implied": hi, "away_implied": ai,
@@ -222,6 +223,30 @@ def espn_games(week: int, year: int = UPCOMING_YEAR) -> list[dict]:
                                                    "seasontype": 2}))
 
 
+def elapsed(game: dict) -> float:
+    """The share of a game already played: 0 before kickoff, 1 once final,
+    and in between from the period and the clock (fifteen-minute quarters;
+    overtime counts as nearly done). An archive from before the period was
+    kept reads a live game as half over."""
+    state = game.get("state") or "pre"
+    if state == "pre":
+        return 0.0
+    if state == "post":
+        return 1.0
+    period = game.get("period")
+    clock = game.get("clock") or ""
+    if not period:
+        return 0.5
+    if int(period) > 4:
+        return 0.95
+    try:
+        m, sec = clock.split(":")
+        left = int(m) + int(sec) / 60
+    except (ValueError, AttributeError):
+        left = 0.0
+    return min(max(((int(period) - 1) * 15 + (15 - left)) / 60, 0.0), 1.0)
+
+
 def team_games(games: list[dict]) -> dict:
     """{team: game dict from that team's side} - a team plays at most once a week."""
     out = {}
@@ -230,6 +255,7 @@ def team_games(games: list[dict]) -> dict:
             out[g[side]] = {
                 "game_id": g["game_id"], "date": g["date"], "home": side == "home",
                 "opp": g[other], "state": g["state"], "detail": g["detail"],
+                "elapsed": elapsed(g),
                 "score_for": g[f"{side}_score"], "score_against": g[f"{other}_score"],
                 "implied_for": g[f"{side}_implied"], "implied_against": g[f"{other}_implied"],
                 "spread": g.get("spread"), "total": g.get("total"), "tv": g.get("tv"),
