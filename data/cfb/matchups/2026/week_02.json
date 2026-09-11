@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T00:20:14+00:00",
+ "fetched": "2026-09-11T00:30:16+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -16,7 +16,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 0.0,
+     "points": 1.9,
      "projected": 195.56,
      "win_probability": 0.71
     },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 20.1,
+     "points": 20.9,
      "projected": 185.05,
-     "win_probability": 0.73
+     "win_probability": 0.72
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.27
+     "win_probability": 0.28
     }
    ]
   },
@@ -191,8 +191,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.9,
+    "stats": {
+     "11": 1.0,
+     "12": 14.0
+    }
    },
    {
     "yahoo_id": "458486",
@@ -1577,9 +1580,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 8.2,
+    "points": 9.0,
     "stats": {
-     "4": 55.0,
+     "4": 75.0,
      "5": 1.0
     }
    },
