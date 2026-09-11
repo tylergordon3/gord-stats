@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-10T23:30:12+00:00",
+ "fetched": "2026-09-11T00:10:14+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -39,8 +39,8 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 0.0,
-     "projected": 213.1,
+     "points": 10.0,
+     "projected": 213.12,
      "win_probability": 0.76
     },
     {
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 0.0,
+     "points": 11.9,
      "projected": 185.05,
-     "win_probability": 0.63
+     "win_probability": 0.69
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.37
+     "win_probability": 0.31000000000000005
     }
    ]
   },
@@ -839,8 +839,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 0.0,
-    "stats": {}
+    "points": 10.0,
+    "stats": {
+     "50": 1.0
+    }
    }
   ],
   "474.l.21318.t.8": [
@@ -1617,8 +1619,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.0,
-    "stats": {}
+    "points": 11.9,
+    "stats": {
+     "8": 3.0,
+     "9": 59.0,
+     "10": 1.0
+    }
    },
    {
     "yahoo_id": "456020",
