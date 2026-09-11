@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T00:10:14+00:00",
+ "fetched": "2026-09-11T00:20:14+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 11.9,
+     "points": 20.1,
      "projected": 185.05,
-     "win_probability": 0.69
+     "win_probability": 0.73
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.31000000000000005
+     "win_probability": 0.27
     }
    ]
   },
@@ -1577,8 +1577,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 8.2,
+    "stats": {
+     "4": 55.0,
+     "5": 1.0
+    }
    },
    {
     "yahoo_id": "468769",
