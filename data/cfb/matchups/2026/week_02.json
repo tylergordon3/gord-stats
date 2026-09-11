@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T02:20:13+00:00",
+ "fetched": "2026-09-11T02:30:13+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 17.6,
      "projected": 195.56,
-     "win_probability": 0.74
+     "win_probability": 0.73
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
      "projected": 161.1,
-     "win_probability": 0.26
+     "win_probability": 0.27
     }
    ]
   },
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 11.0,
+     "points": 12.0,
      "projected": 213.12,
-     "win_probability": 0.74
+     "win_probability": 0.75
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 167.36,
-     "win_probability": 0.26
+     "win_probability": 0.25
     }
    ]
   },
@@ -87,14 +87,14 @@
      "name": "CCAM State",
      "points": 52.68,
      "projected": 185.05,
-     "win_probability": 0.78
+     "win_probability": 0.76
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.21999999999999997
+     "win_probability": 0.24
     }
    ]
   },
@@ -847,9 +847,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 11.0,
+    "points": 12.0,
     "stats": {
-     "32": 1.0,
+     "32": 2.0,
      "50": 1.0
     }
    }
