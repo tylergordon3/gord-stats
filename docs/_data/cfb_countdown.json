@@ -1,8 +1,5 @@
 {
-  "mode": "countdown",
+  "mode": "notice",
   "eyebrow": "CFB WEEK 2 \u00b7 GAMEDAY",
-  "title": "First kickoff 7:00 PM ET",
-  "target": "2026-09-11T23:00:00Z",
-  "expired": "Kickoff \u2014 Week 2 is on.",
-  "note": "Kickoff in Eastern Time; the clock runs on yours."
+  "title": "3 games on right now"
 }

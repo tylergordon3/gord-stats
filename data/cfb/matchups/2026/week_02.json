@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T22:30:11+00:00",
+ "fetched": "2026-09-11T23:40:09+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 9.0,
+     "points": 10.6,
      "projected": 213.12,
-     "win_probability": 0.63
+     "win_probability": 0.62
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 181.75,
-     "win_probability": 0.37
+     "win_probability": 0.38
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 0.0,
+     "points": 18.2,
      "projected": 179.32,
-     "win_probability": 0.56
+     "win_probability": 0.65
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
      "projected": 170.29,
-     "win_probability": 0.43999999999999995
+     "win_probability": 0.35
     }
    ]
   }
@@ -661,8 +661,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.6,
+    "stats": {
+     "8": 4.0,
+     "9": 16.0
+    }
    },
    {
     "yahoo_id": "455490",
@@ -2146,8 +2149,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.2,
+    "stats": {
+     "11": 1.0,
+     "12": 7.0
+    }
    },
    {
     "yahoo_id": "457310",
@@ -2202,8 +2208,12 @@
     "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 17.0,
+    "stats": {
+     "8": 4.0,
+     "9": 110.0,
+     "10": 1.0
+    }
    },
    {
     "yahoo_id": "405101",
@@ -2216,8 +2226,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.7,
+    "stats": {
+     "8": 1.0,
+     "9": 7.0
+    }
    },
    {
     "yahoo_id": "456315",
