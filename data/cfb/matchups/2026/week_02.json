@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T21:42:15+00:00",
+ "fetched": "2026-09-11T22:30:11+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 17.6,
      "projected": 195.56,
-     "win_probability": 0.6799999999999999
+     "win_probability": 0.69
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 161.1,
-     "win_probability": 0.32000000000000006
+     "projected": 159.76,
+     "win_probability": 0.31000000000000005
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 9.0,
      "projected": 213.12,
-     "win_probability": 0.65
+     "win_probability": 0.63
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 179.54,
-     "win_probability": 0.35
+     "projected": 181.75,
+     "win_probability": 0.37
     }
    ]
   },
@@ -63,7 +63,7 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 195.73,
+     "projected": 194.27,
      "win_probability": 0.56
     },
     {
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 170.31,
+     "projected": 170.29,
      "win_probability": 0.43999999999999995
     }
    ]
