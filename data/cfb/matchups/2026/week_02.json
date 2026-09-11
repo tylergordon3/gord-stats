@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-11T01:30:16+00:00",
+ "fetched": "2026-09-11T01:40:13+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -85,7 +85,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 52.2,
+     "points": 52.68,
      "projected": 185.05,
      "win_probability": 0.8
     },
@@ -1586,9 +1586,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 29.7,
+    "points": 30.18,
     "stats": {
-     "4": 240.0,
+     "4": 252.0,
      "5": 3.0,
      "8": 2.0,
      "9": 21.0
