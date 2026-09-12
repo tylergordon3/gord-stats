@@ -64,6 +64,8 @@ HOME_EDGE = 2.5           # points SP+ ratings are read with for a home team
 _CTX = {}                 # build-time lookups the detail panels draw on
 TOSS_UP = 3.0             # a spread this small is a coin flip for the badge
 UPSET_WATCH = 0.35        # an underdog somebody gives this much is worth a look
+PARLAY_LEGS = 3           # legs in the parlay of the day
+ML_CAP = 0.65             # a moneyline the book prices likelier than this (about -185) is chalk, not a leg
 
 _CSS = """<style>
 .sc-intro{color:#475569;font-size:14px;line-height:1.55}
@@ -120,6 +122,26 @@ tr.g[data-state="in"] .sc-live{display:block}
 .tag-dog{background:#fef3c7;color:#92400e}
 .tag-toss{background:#dbeafe;color:#1e40af}
 .tag-upset{background:#fee2e2;color:#991b1b}
+/* GordStats picks of the day: two cards above the current week. */
+.gs-picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));
+  gap:12px;margin:8px 0 14px}
+.gs-pick{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 15px 13px;
+  box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.gs-pick .gp-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;
+  font-weight:700}
+.gs-pick .gp-main{font-size:19px;font-weight:800;color:#0f172a;margin:4px 0 2px;line-height:1.25}
+.gs-pick .gp-main a{color:inherit;text-decoration:none}
+.gs-pick .gp-main a:hover{text-decoration:underline}
+.gs-pick .gp-sub{font-size:12.5px;color:#475569}
+.gs-pick .gp-legs{list-style:none;margin:6px 0 4px;padding:0}
+.gs-pick .gp-legs li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;
+  border-top:1px solid #eef2f7;font-size:13.5px}
+.gs-pick .gp-legs li a{color:#0f172a;text-decoration:none;font-weight:700}
+.gs-pick .gp-legs li a:hover{text-decoration:underline}
+.gs-pick .gp-legs .gp-game{display:block;font-size:11.5px;color:#64748b;font-weight:400}
+.gs-pick .gp-p{font-weight:800;color:#1a7f4b;white-space:nowrap;font-variant-numeric:tabular-nums}
+.gs-pick .gp-book{font-weight:400;color:#64748b;font-size:11.5px}
+.gs-pick .gp-note{font-size:11.5px;color:#64748b;margin-top:6px}
 .tag-wx{background:#e0e7ff;color:#3730a3}
 /* Kick: time over TV. */
 td.t{color:#4a5a68;max-width:140px}
@@ -324,6 +346,11 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .tag-dog{background:#4a3208;color:#fcd34d}
   .tag-toss{background:#1e3a8a;color:#bfdbfe}
   .tag-upset{background:#7f1d1d;color:#fecaca}
+  .gs-pick{background:#16203a;border-color:#2b3852}
+  .gs-pick .gp-label,.gs-pick .gp-sub,.gs-pick .gp-note,.gs-pick .gp-book,.gs-pick .gp-legs .gp-game{color:#aab7c9}
+  .gs-pick .gp-main,.gs-pick .gp-legs li a{color:#f1f5f9}
+  .gs-pick .gp-legs li{border-color:#2b3852}
+  .gs-pick .gp-p{color:#6ee7b7}
   .tag-wx{background:#312e81;color:#c7d2fe}
   .t-live{color:#4ade80}
   .ln b,.fpi b{color:#f1f5f9}
@@ -1187,10 +1214,167 @@ def _week_table(games: pd.DataFrame, records: dict) -> str:
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
-def _week_view(games: pd.DataFrame, records: dict) -> str:
+def _week_view(games: pd.DataFrame, records: dict, picks: str = "") -> str:
     ranked = int((games["home_rank"].notna() | games["away_rank"].notna()).sum())
-    return (f'<p class="wk-note"><span class="wk-count">{len(games)} games</span>, '
+    return (picks + f'<p class="wk-note"><span class="wk-count">{len(games)} games</span>, '
             f'{ranked} with a ranked team.</p>' + _week_table(games, records))
+
+
+# --------------------------------------------------------------------------- #
+# Picks of the day
+# --------------------------------------------------------------------------- #
+
+def _sds() -> tuple:
+    """(margin sd, total sd) from the backtest: the spread of this model's own
+    errors, which is what turns a lean into a probability."""
+    m = predict.margin_sd()
+    try:
+        t = float(json.loads((DATA_DIR / "model_validation.json").read_text())
+                  ["overall"].get("total_rmse") or 0) or None
+    except (OSError, ValueError, KeyError):
+        t = None
+    return m, (t or m)
+
+
+def _ml_text(ml) -> str:
+    return f"{int(ml):+d}" if ml is not None else ""
+
+
+def _slate(df: pd.DataFrame, current: int) -> tuple:
+    """The day's games still to kick off with a book spread and a model line:
+    today's if any are left, else the next day with games. (frame, date)."""
+    # FBS against FBS only, as the predictions page scores it: the model
+    # rates every FCS opponent as one generic FCS team, so a Montana State or
+    # a UC Davis reads as a 30-point mismatch it never is, and those games
+    # would fill every slot here with the model's blind spot.
+    fbs = df["home_conf"].astype(str).ne("") & df["away_conf"].astype(str).ne("")
+    pending = df[(df["week"] == current) & (df["state"] == "pre") & fbs
+                 & df["dk_spread"].notna() & df["gs_margin"].notna()]
+    if pending.empty:
+        return pending, None
+    today = datetime.now(LEAGUE_TZ).date()
+    days = sorted(set(pending["local"].dt.date))
+    day = next((d for d in days if d >= today), days[0])
+    return pending[pending["local"].dt.date == day], day
+
+
+def _picks(df: pd.DataFrame, current: int) -> str:
+    """GordStats' underdog and parlay of the day, from the day's slate.
+
+    The underdog is the book's dog the model gives the best chance of
+    winning outright, our probability against the book's own (its two
+    moneylines with the vig taken out). The parlay is the model's surest
+    calls against the book, one leg per game: the side of the spread, the
+    side of the total, or a moneyline the book has not already priced as
+    near-certain, each with the chance the model's error spread gives it,
+    and the product beside what the book's numbers imply for the same legs.
+    """
+    slate, day = _slate(df, current)
+    if slate.empty:
+        return ""
+    m_sd, t_sd = _sds()
+    from scipy.stats import norm
+
+    def kick(g):
+        return f"{g.local:%a %-I:%M%p}".replace("AM", "a").replace("PM", "p")
+
+    def game_text(g):
+        return (f"{escape(str(g.away_abbr or g.away))} at {escape(str(g.home_abbr or g.home))}"
+                f" · {kick(g)}")
+
+    # --- the underdog ------------------------------------------------------
+    dog_best = None
+    for g in slate.itertuples():
+        spread, wp = float(g.dk_spread), _v(g.gs_wp)
+        if wp is None or abs(spread) <= 0.25:
+            continue
+        home_dog = spread > 0
+        p = wp if home_dog else 1 - wp
+        book = _devig(_v(g.ml_home), _v(g.ml_away))
+        book_p = (book if home_dog else 1 - book) if book is not None else None
+        ml = _v(g.ml_home) if home_dog else _v(g.ml_away)
+        if dog_best is None or p > dog_best["p"]:
+            dog_best = {"g": g, "p": p, "book_p": book_p, "home_dog": home_dog, "ml": ml,
+                        "line": abs(spread)}
+    dog_html = ""
+    if dog_best:
+        g, hd = dog_best["g"], dog_best["home_dog"]
+        dog = g.home if hd else g.away
+        fav = g.away if hd else g.home
+        where = "at home to" if hd else "at"
+        edge = (f"the book says {dog_best['book_p']:.0%}" if dog_best["book_p"] is not None
+                else f"the book has them at +{dog_best['line']:.1f}")
+        verdict = ("GordStats' pick to win outright" if dog_best["p"] >= 0.5
+                   else "the dog GordStats likes most, short of picking the upset")
+        ml_html = (f' <span class="gp-book">ML {_ml_text(dog_best["ml"])}</span>'
+                   if dog_best["ml"] is not None else "")
+        dog_html = (
+            '<div class="gs-pick"><div class="gp-label">Underdog of the day</div>'
+            f'<div class="gp-main"><a href="#g-{escape(str(g.game_id))}">{escape(str(dog))}'
+            f' +{dog_best["line"]:.1f}</a>{ml_html}</div>'
+            f'<div class="gp-sub">{where} {escape(str(fav))} · {kick(g)}'
+            f' · <span class="gp-p">{dog_best["p"]:.0%}</span> to win, {edge}</div>'
+            f"<div class='gp-note'>{verdict}: the model's chance for the book's underdog, "
+            "against the moneyline with the vig taken out.</div></div>")
+
+    # --- the parlay --------------------------------------------------------
+    legs = []
+    for g in slate.itertuples():
+        margin, spread = float(g.gs_margin), float(g.dk_spread)
+        cands = []
+        edge = margin - (-spread)
+        if abs(edge) > 0.25:
+            home_side = edge > 0
+            team = g.home if home_side else g.away
+            line = spread if home_side else -spread
+            cands.append({"p": float(norm.cdf(abs(edge) / m_sd)), "book": 0.5,
+                          "text": f"{escape(str(team))} {line:+.1f}"})
+        total, gs_total = _v(g.dk_total), _v(g.gs_total)
+        if total is not None and gs_total is not None and abs(gs_total - total) > 0.25:
+            over = gs_total > total
+            cands.append({"p": float(norm.cdf(abs(gs_total - total) / t_sd)), "book": 0.5,
+                          "text": f"{'Over' if over else 'Under'} {total:.1f}"})
+        wp = _v(g.gs_wp)
+        if wp is not None:
+            home_side = wp >= 0.5
+            p = wp if home_side else 1 - wp
+            ml = _v(g.ml_home) if home_side else _v(g.ml_away)
+            book = _devig(_v(g.ml_home), _v(g.ml_away))
+            book_p = (book if home_side else 1 - book) if book is not None else None
+            if ml is not None and book_p is not None and book_p < ML_CAP:
+                team = g.home if home_side else g.away
+                cands.append({"p": p, "book": book_p,
+                              "text": f"{escape(str(team))} ML {_ml_text(ml)}"})
+        if cands:
+            best = max(cands, key=lambda c: c["p"])
+            best["game"] = game_text(g)
+            best["anchor"] = f"#g-{escape(str(g.game_id))}"
+            legs.append(best)
+    legs.sort(key=lambda c: -c["p"])
+    legs = legs[:PARLAY_LEGS]
+    parlay_html = ""
+    if len(legs) >= 2:
+        ours = float(np.prod([c["p"] for c in legs]))
+        book = float(np.prod([c["book"] for c in legs]))
+        items = "".join(
+            f'<li><span><a href="{c["anchor"]}">{c["text"]}</a>'
+            f'<span class="gp-game">{c["game"]}</span></span>'
+            f'<span class="gp-p">{c["p"]:.0%}</span></li>' for c in legs)
+        parlay_html = (
+            '<div class="gs-pick"><div class="gp-label">Parlay of the day</div>'
+            f'<div class="gp-main">{len(legs)} legs · <span class="gp-p">{ours:.0%}</span>'
+            f' <span class="gp-book">the book implies {book:.0%}</span></div>'
+            f'<ul class="gp-legs">{items}</ul>'
+            "<div class='gp-note'>The model's surest calls against the book today, one "
+            "per game, each with the chance its own error spread gives it; the combined "
+            "figure is those multiplied. How the spread and total calls have done is on "
+            "the <a href='/cfb/predictions/'>predictions page</a>.</div></div>")
+
+    if not (dog_html or parlay_html):
+        return ""
+    return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b> - from the '
+            f'{len(slate)} games still to kick off with a book line.</p>'
+            f'<div class="gs-picks">{dog_html}{parlay_html}</div>')
 
 
 def _current_week(df: pd.DataFrame) -> int:
@@ -1509,7 +1693,9 @@ def body() -> str:
     week_ids = sorted(int(w) for w in df["week"].unique())
     current = _current_week(df)
     records = _records(current)
-    views = {int(w): _week_view(grp.sort_values("local"), records if int(w) == current else {})
+    picks = _picks(df, current)
+    views = {int(w): _week_view(grp.sort_values("local"), records if int(w) == current else {},
+                                picks if int(w) == current else "")
              for w, grp in df.groupby("week")}
     info = gameinfo.load(SEASON)
     lined = sum(1 for e in info.values() if e.get("spread") is not None)
@@ -1522,6 +1708,7 @@ def body() -> str:
         "<b>DraftKings</b> number and the Over/Under, with ESPN's <b>FPI</b> and <b>SP+</b> "
         "stacked beside them; both teams' record, ATS, points, ratings and last five; and "
         "the kickoff forecast. <b>More</b> opens every book's line and how it has moved. "
+        "Above the current week: GordStats' underdog and parlay of the day. "
         "This week's scores update in place while games are on. "
         f"{lined} upcoming games have a book line and {forecast} a forecast so far. "
         f"Rebuilt daily (last: {built}).</p>")
