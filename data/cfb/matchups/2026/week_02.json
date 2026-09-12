@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-12T03:36:02+00:00",
+ "fetched": "2026-09-12T09:43:23+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -47,7 +47,7 @@
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 181.75,
+     "projected": 181.73,
      "win_probability": 0.43999999999999995
     }
    ]
@@ -63,7 +63,7 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 191.29,
+     "projected": 191.32,
      "win_probability": 0.54
     },
     {
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 165.36,
+     "projected": 165.4,
      "win_probability": 0.26
     }
    ]
@@ -115,8 +115,8 @@
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 38.7,
-     "projected": 170.29,
+     "points": 38.8,
+     "projected": 170.27,
      "win_probability": 0.43999999999999995
     }
    ]
@@ -1810,8 +1810,8 @@
     "team": "MIZZ",
     "team_full": "Missouri Tigers",
     "bye": 8.0,
-    "status": "O",
-    "status_full": "Out",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Leg",
     "slot": "BN",
     "points": 0.0,
@@ -2225,9 +2225,9 @@
     "team": "NCST",
     "team_full": "NC State Wolfpack",
     "bye": 7.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "W/R/T",
     "points": 24.8,
     "stats": {
@@ -2470,10 +2470,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 16.5,
+    "points": 16.6,
     "stats": {
-     "8": 25.0,
-     "9": 124.0,
+     "8": 28.0,
+     "9": 125.0,
      "10": 1.0,
      "11": 1.0,
      "12": -4.0,
