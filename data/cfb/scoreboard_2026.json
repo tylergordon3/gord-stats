@@ -88,7 +88,7 @@
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 165.4,
+     "projected": 165.44,
      "win_probability": 0.26
     }
    ]
@@ -105,14 +105,14 @@
      "name": "Max's Majestic Team",
      "points": 39.2,
      "projected": 179.32,
-     "win_probability": 0.56
+     "win_probability": 0.45999999999999996
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 38.8,
-     "projected": 170.27,
-     "win_probability": 0.43999999999999995
+     "projected": 184.74,
+     "win_probability": 0.54
     }
    ]
   }
