@@ -34,16 +34,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 12.4,
+     "points": 15.0,
      "projected": 213.12,
-     "win_probability": 0.6
+     "win_probability": 0.61
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 181.75,
-     "win_probability": 0.4
+     "win_probability": 0.39
     }
    ]
   },
@@ -58,15 +58,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 194.27,
-     "win_probability": 0.56
+     "projected": 191.29,
+     "win_probability": 0.54
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
      "projected": 185.32,
-     "win_probability": 0.43999999999999995
+     "win_probability": 0.45999999999999996
     }
    ]
   },
@@ -82,14 +82,14 @@
      "name": "CCAM State",
      "points": 52.68,
      "projected": 185.05,
-     "win_probability": 0.65
+     "win_probability": 0.64
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.35
+     "win_probability": 0.36
     }
    ]
   },
@@ -103,16 +103,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 38.5,
+     "points": 36.7,
      "projected": 179.32,
-     "win_probability": 0.6799999999999999
+     "win_probability": 0.69
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 3.9,
+     "points": 5.6,
      "projected": 170.29,
-     "win_probability": 0.32000000000000006
+     "win_probability": 0.31000000000000005
     }
    ]
   }

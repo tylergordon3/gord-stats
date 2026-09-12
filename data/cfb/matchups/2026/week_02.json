@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-12T00:40:09+00:00",
+ "fetched": "2026-09-12T00:53:07+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 194.27,
-     "win_probability": 0.56
+     "projected": 191.29,
+     "win_probability": 0.54
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
      "projected": 185.32,
-     "win_probability": 0.43999999999999995
+     "win_probability": 0.45999999999999996
     }
    ]
   },
@@ -115,7 +115,7 @@
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 4.3,
+     "points": 5.6,
      "projected": 170.29,
      "win_probability": 0.31000000000000005
     }
@@ -2237,10 +2237,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.7,
+    "points": 1.8,
     "stats": {
-     "8": 1.0,
-     "9": 7.0
+     "8": 2.0,
+     "9": 8.0,
+     "11": 1.0,
+     "12": 5.0
     }
    },
    {
@@ -2382,10 +2384,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 4.1,
+    "points": 6.2,
     "stats": {
-     "8": 8.0,
-     "9": 41.0
+     "8": 10.0,
+     "9": 62.0
     }
    },
    {
@@ -2455,12 +2457,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.2,
+    "points": -0.6,
     "stats": {
-     "8": 3.0,
-     "9": 1.0,
+     "8": 6.0,
+     "9": 13.0,
      "11": 1.0,
-     "12": -4.0
+     "12": -4.0,
+     "18": 1.0
     }
    },
    {
