@@ -160,7 +160,19 @@ table.mu-roster td.mu-slot{font-weight:700;color:#64748b;font-size:11px}
    should cost nothing; once lines arrive the cell wraps to what is left. */
 table.mu-roster td.mu-s{color:#64748b;font-size:12px;white-space:normal}
 table.mu-roster td.mu-g{font-size:12px;color:#334155}
-table.mu-roster td.mu-g .live{color:#b3382c;font-weight:700}
+/* A player whose game is on: a pulsing dot on the game cell, a tint on
+   the row (and on the paired phone cell), in both themes. */
+table.mu-roster td.mu-g .live{color:#b3382c;font-weight:700;white-space:nowrap}
+table.mu-roster td.mu-g .live::before{content:"";display:inline-block;width:7px;height:7px;
+  border-radius:50%;background:#b3382c;margin-right:5px;vertical-align:1px;
+  animation:mu-pulse 1.4s ease-in-out infinite}
+@keyframes mu-pulse{0%,100%{opacity:1}50%{opacity:.25}}
+table.mu-roster tr.live td{background:#fff5f4}
+table.mu-roster tr.live td.mu-pts{background:#ffe9e6}
+.mu-pr .mu-pp.live{background:#fff5f4}
+.mu-pr .mu-pp.live .mu-pts::after{content:"";display:inline-block;width:6px;height:6px;
+  border-radius:50%;background:#b3382c;margin-left:4px;vertical-align:1px;
+  animation:mu-pulse 1.4s ease-in-out infinite}
 table.mu-roster td.mu-g .fin{color:#64748b}
 table.mu-roster td.mu-g .bye{color:#94a3b8;font-style:italic}
 table.mu-roster tr.bench td{background:#f8fafc;color:#475569}
@@ -222,6 +234,10 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   table.mu-roster td.mu-slot,table.mu-roster td.mu-s,table.mu-roster td.mu-p .mu-meta{color:#aab7c9}
   table.mu-roster td.mu-g{color:#dde5ef}
   table.mu-roster td.mu-g .live{color:#ffb4ab}
+  table.mu-roster td.mu-g .live::before,.mu-pr .mu-pp.live .mu-pts::after{background:#ffb4ab}
+  table.mu-roster tr.live td{background:#2a1f26}
+  table.mu-roster tr.live td.mu-pts{background:#3a262b}
+  .mu-pr .mu-pp.live{background:#2a1f26}
   table.mu-roster td.mu-g .fin,table.mu-roster td.mu-g .bye{color:#aab7c9}
   table.mu-roster td.mu-p .inj{color:#ffb4ab}
   table.mu-roster td.mu-p .mu-hint.in{background:#123c2e;color:#8ff0bd}
@@ -292,6 +308,37 @@ def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str =
             f'({source})</span><span data-wpl="{key_b}">{wp_b * 100:.0f}%</span></div>')
 
 
+# Game-state helpers a page's own MU_LIVE fetch can lean on: read ESPN's
+# scoreboard (it allows browser fetches) into {game id: {state, detail,
+# home/away scores}}, render a game's text from one side, and fold the
+# states into a points payload by the data-gid / data-side each row carries.
+LIVE_GAMES_JS = """
+function muGameText(state,score,opp,detail){
+  var sc=(score!==undefined&&score!==null&&opp!==undefined&&opp!==null)?' '+score+'\u2013'+opp:'';
+  if(state==='in')return 'Live'+sc+(detail?' \u00b7 '+detail:'');
+  if(state==='post')return 'Final'+sc;
+  return null;}
+function muGames(url){
+  return fetch(url).then(function(r){return r.json();}).then(function(d){
+    var games={};(d.events||[]).forEach(function(e){var c=(e.competitions||[])[0];if(!c)return;var st=c.status||{};
+      var home=null,away=null;(c.competitors||[]).forEach(function(x){if(x.homeAway==='home')home=x;else away=x;});
+      games[String(e.id)]={state:(st.type||{}).state||'pre',detail:(st.type||{}).shortDetail,
+        home:home&&home.score,away:away&&away.score};});
+    return games;}).catch(function(){return {};});}
+function muMergeGames(payload,games){
+  var teams=(payload&&payload.teams)||{};
+  var els=document.querySelectorAll('[data-pid][data-gid]');
+  for(var i=0;i<els.length;i++){var el=els[i];
+    var g=games[el.getAttribute('data-gid')];if(!g)continue;
+    var key=el.getAttribute('data-roster')||(el.closest('[data-roster]')||{}).getAttribute&&el.closest('[data-roster]').getAttribute('data-roster');
+    if(!key)continue;var pid=el.getAttribute('data-pid');
+    var t=teams[key]=teams[key]||{players:{}};t.players=t.players||{};
+    var p=t.players[pid]=t.players[pid]||{};
+    var mine=el.getAttribute('data-side')==='home'?g.home:g.away,theirs=el.getAttribute('data-side')==='home'?g.away:g.home;
+    p.state=g.state;p.game=muGameText(g.state,mine,theirs,g.detail);}
+  return {teams:teams};}
+"""
+
 # The live updater. A page that wants it sets window.MU_LIVE before this runs:
 #   { fetch: function -> Promise of { teams: { key: { points, projected,
 #            win_probability, players: { pid: { points, line } } } } },
@@ -314,6 +361,9 @@ LIVE_JS = """<script>
     keys.forEach(function(key){
       var t=teams[key];var pts=t.points;
       var roster=document.querySelector('[data-roster="'+key+'"]');
+      // A payload can carry game states without points (the points feed
+      // failed, the scoreboard did not): then only the indicators move.
+      var scored=false;
       if(roster&&t.players){
         var total=0;
         // Not tr[data-pid]: the phone layout renders the same players as
@@ -321,14 +371,21 @@ LIVE_JS = """<script>
         // table rows add to the total, or every starter would count twice.
         each('[data-roster="'+key+'"] [data-pid], [data-pid][data-roster="'+key+'"]',function(el){
           var p=t.players[el.getAttribute('data-pid')];if(!p)return;
-          var c=el.querySelector('.mu-pts');if(c)c.innerHTML='<b>'+fmt(p.points)+'</b>';
+          if(p.points!==undefined&&p.points!==null){scored=true;var c=el.querySelector('.mu-pts');if(c)c.innerHTML='<b>'+fmt(p.points)+'</b>';}
           // A live expected final replaces the pre-game projection while a
           // game is on: points so far plus the unplayed share.
           if(p.live!==undefined&&p.live!==null){var gc=el.querySelector('.mu-gs');if(gc){gc.textContent=fmt(p.live);gc.classList.add('live');}}
+          // The indicator: the row lights up while his game is on, and the
+          // game cell carries the score and clock.
+          if(p.state){el.classList.toggle('live',p.state==='in');
+            var g=el.querySelector('.mu-g');
+            if(g&&p.game){var sp=g.querySelector('.live,.fin');
+              if(!sp){sp=document.createElement('span');g.insertBefore(document.createTextNode(' '),g.firstChild);g.insertBefore(sp,g.firstChild);}
+              sp.className=p.state==='in'?'live':'fin';sp.textContent=p.game;}}
           if(p.line!==undefined&&p.line!==null){var s=el.querySelector('.mu-s');if(s)s.textContent=p.line;}
           if(el.tagName==='TR'&&el.classList.contains('starter'))total+=(p.points||0);
         });
-        if(pts===null||pts===undefined)pts=total;
+        if((pts===null||pts===undefined)&&scored)pts=total;
       }
       if(pts===null||pts===undefined)return;
       each('[data-num="'+key+'"]',function(el){el.textContent=fmt(pts);el.setAttribute('data-val',pts);});

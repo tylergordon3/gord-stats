@@ -245,8 +245,12 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
            }.get(hint, "")
     grade_html = (f'<span class="mu-meta" title="FantasyPros start/sit grade">{escape(grade)}</span>'
                   if grade else "")
-    return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}" '
-            f'data-team="{escape(card["team"] or "")}" '
+    live = " live" if g and g.get("state") == "in" else ""
+    gid = (g or {}).get("game_id")
+    attrs = (f' data-gid="{escape(str(gid))}" data-side="{"home" if g.get("home") else "away"}"'
+             if gid else "")
+    return (f'<tr class="{"bench" if bench else "starter"}{live}" data-pid="{escape(pid)}" '
+            f'data-team="{escape(card["team"] or "")}"{attrs} '
             f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}">'
             f"<td class=\"mu-pts\"><b>{ui.fmt(pts)}</b></td>"
             f"<td class=\"mu-gs\">{ui.fmt(proj)}</td>"
@@ -488,7 +492,8 @@ compute:function(rows,games){
       var g=games[tr.getAttribute('data-team')],done=elapsed(g),pts=pp[pid]||0;
       if(isNaN(proj))proj=0;
       var e=pts+proj*(1-done);exp+=e;v+=sd*sd*(1-done);
-      players[pid]={points:pp[pid],live:(g&&g.state!=='pre')?e:undefined};
+      players[pid]={points:pp[pid],live:(g&&g.state!=='pre')?e:undefined,
+        state:g&&g.state,game:g?muGameText(g.state,g.score,g.opp_score,g.detail):undefined};
     });
     Object.keys(pp).forEach(function(k){if(!players[k])players[k]={points:pp[k]};});
     teams[key]={points:r.points,players:players,exp:exp,v:v,matchup:r.matchup_id,gs_live:exp};
@@ -505,8 +510,10 @@ fetch:function(){
   var sleeper=fetch('__SLEEPER__').then(function(r){return r.json();});
   var espn=fetch('__ESPN__').then(function(r){return r.json();}).then(function(d){
     var games={};(d.events||[]).forEach(function(e){var c=(e.competitions||[])[0];if(!c)return;var st=c.status||{};
-      (c.competitors||[]).forEach(function(x){var ab=x.team&&x.team.abbreviation;if(ab==='WSH')ab='WAS';
-        games[ab]={state:(st.type||{}).state||'pre',period:st.period,clock:st.displayClock};});});
+      var cs=c.competitors||[];cs.forEach(function(x,i){var ab=x.team&&x.team.abbreviation;if(ab==='WSH')ab='WAS';
+        var o=cs[1-i]||{};
+        games[ab]={state:(st.type||{}).state||'pre',period:st.period,clock:st.displayClock,
+          detail:(st.type||{}).shortDetail,score:x.score,opp_score:o.score};});});
     return games;}).catch(function(){return {};});
   return Promise.all([sleeper,espn]).then(function(both){return self.compute(both[0],both[1]);});
 }};"""
@@ -546,7 +553,7 @@ def week_view(data: dict, ctx: dict) -> str:
     # games are on, every five before they start. Stat lines wait for the
     # ten-minute rebuild; Sleeper's stats feed is too big to poll.
     live = ("" if final else
-            "<script>" + _LIVE_FETCH_JS
+            "<script>" + ui.LIVE_GAMES_JS + _LIVE_FETCH_JS
             .replace("__SLEEPER__", f"{data_mod.SLEEPER_API}/league/{UPCOMING_LEAGUE_ID}/matchups/{week}")
             .replace("__ESPN__", f"{data_mod.ESPN_SCOREBOARD}?week={week}&dates={UPCOMING_YEAR}&seasontype=2")
             .replace("__INTERVAL__", str(60000 if started else 300000)) + "</script>")

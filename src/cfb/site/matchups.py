@@ -171,8 +171,19 @@ def game_for(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: di
         return None
     g = games[0]
     return pd.Series({"opp": g["opp"], "opp_rank": g.get("opp_rank"), "home": g["home"],
-                      "kickoff": g["date"], "state": g["state"],
+                      "kickoff": g["date"], "state": g["state"], "game_id": g.get("game_id"),
                       "score_for": g["score_for"], "score_against": g["score_against"]})
+
+
+def _live_attrs(g) -> tuple:
+    """(" live" while the game is on, and the data attributes the live script
+    keys on: ESPN's game id and which side the player is)."""
+    if g is None or not isinstance(g.get("opp"), str):
+        return "", ""
+    gid = g.get("game_id")
+    attrs = (f' data-gid="{escape(str(gid))}"' if gid and not pd.isna(gid) else "") \
+        + f' data-side="{"home" if g.get("home") else "away"}"'
+    return (" live" if g.get("state") == "in" else ""), attrs
 
 
 def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: dict,
@@ -186,7 +197,8 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
     tag = {"in": '<span class="mu-hint in" title="Projects into the best lineup">start</span>',
            "out": '<span class="mu-hint out" title="A bench player projects higher">sit</span>'
            }.get(hint, "")
-    return (f'<tr class="{"bench" if bench else "starter"}" data-pid="{escape(pid)}">'
+    return (f'<tr class="{"bench" if bench else "starter"}{_live_attrs(g)[0]}" '
+            f'data-pid="{escape(pid)}"{_live_attrs(g)[1]}>'
             f"<td class=\"mu-pts\"><b>{ui.fmt(p.get('points'))}</b></td>"
             f"<td>{ui.fmt(proj)}</td>"
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
@@ -251,6 +263,7 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
     # lineup - both of which have to agree with the table or the two views
     # would disagree about who is starting.
     parts = {"starters": starters, "bench": bench, "proj": proj,
+             "games": {p["yahoo_id"]: game_for(p, wk, by_team, to_school, espn) for p in ordered},
              "hints": hints, "pts": pts_total, "gs": proj_total}
     return html, proj_total, pts_total, parts
 
@@ -284,7 +297,7 @@ def _short_name(name: str) -> str:
 
 
 def _pair_cell(p: dict | None, key: str, to_school: dict, espn: dict,
-               hint: str = "") -> str:
+               hint: str = "", game=None) -> str:
     """One team's player in the paired phone view.
 
     Carries the same data-pid and .mu-pts the live updater looks for, inside a
@@ -296,7 +309,8 @@ def _pair_cell(p: dict | None, key: str, to_school: dict, espn: dict,
     inj = (f'<span class="inj">{escape(p["status"])}</span>' if p.get("status") else "")
     tag = {"in": '<span class="mu-hint in">start</span>',
            "out": '<span class="mu-hint out">sit</span>'}.get(hint, "")
-    return (f'<div class="mu-pp" data-roster="{escape(key)}" data-pid="{escape(p["yahoo_id"])}">'
+    live, attrs = _live_attrs(game)
+    return (f'<div class="mu-pp{live}" data-roster="{escape(key)}" data-pid="{escape(p["yahoo_id"])}"{attrs}>'
             f'<div class="mu-pn">'
             f'<span class="nm" title="{escape(p["player"])}">'
             f'{_school_logo(p["team_full"], to_school, espn)}'
@@ -330,9 +344,11 @@ def pair_view(a: dict, b: dict, to_school: dict, espn: dict) -> str:
             slot = (pa or pb or {}).get("slot", "")
             out.append(
                 f'<div class="mu-pr{" bench" if bench else ""}">'
-                + _pair_cell(pa, a["key"], to_school, espn, ap["hints"].get((pa or {}).get("yahoo_id")))
+                + _pair_cell(pa, a["key"], to_school, espn, ap["hints"].get((pa or {}).get("yahoo_id")),
+                             ap["games"].get((pa or {}).get("yahoo_id")))
                 + f'<div class="mu-pslot">{escape(slot)}</div>'
-                + _pair_cell(pb, b["key"], to_school, espn, bp["hints"].get((pb or {}).get("yahoo_id")))
+                + _pair_cell(pb, b["key"], to_school, espn, bp["hints"].get((pb or {}).get("yahoo_id")),
+                             bp["games"].get((pb or {}).get("yahoo_id")))
                 + "</div>")
         return "".join(out)
 
@@ -479,8 +495,12 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
     # (functions/api/cfb-matchups.js): a minute apart while games are on,
     # five minutes before they start.
     live = ("" if final else
-            "<script>window.MU_LIVE={fetch:function(){return fetch('/api/cfb-matchups?week="
-            f"{week}&_='+Date.now()).then(function(r){{return r.json();}});}},"
+            "<script>" + ui.LIVE_GAMES_JS + "window.MU_LIVE={fetch:function(){"
+            "var api=fetch('/api/cfb-matchups?week="
+            f"{week}&_='+Date.now()).then(function(r){{return r.json();}}).catch(function(){{return {{teams:{{}}}};}});"
+            "var sb=muGames('https://site.api.espn.com/apis/site/v2/sports/football/college-football/"
+            f"scoreboard?groups=80&limit=500&dates={start:%Y%m%d}-{end:%Y%m%d}');"
+            "return Promise.all([api,sb]).then(function(x){return muMergeGames(x[0],x[1]);});},"
             f"interval:{60000 if started else 300000}}};</script>")
     return (f"<p><strong>Week {week}</strong> · {start:%b %-d} – {end:%b %-d}"
             + (" (playoffs)" if data.get("is_playoffs") else "")

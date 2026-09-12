@@ -137,6 +137,7 @@ def week_projections(start: str, end: str, board: pd.DataFrame = None,
         rows[pid] = {
             "proj_week": total if (games or team_id) else np.nan,
             "n_games": len(games),
+            "game_id": first.get("game_id"),
             "opp": first.get("opp"), "opp_abbr": first.get("opp_abbr"),
             "opp_rank": first.get("opp_rank"),
             "home": first.get("home"), "kickoff": first.get("date"),
