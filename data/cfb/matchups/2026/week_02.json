@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-12T00:53:07+00:00",
+ "fetched": "2026-09-12T01:40:13+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 15.0,
+     "points": 15.1,
      "projected": 213.12,
-     "win_probability": 0.61
+     "win_probability": 0.59
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 181.75,
-     "win_probability": 0.39
+     "win_probability": 0.41000000000000003
     }
    ]
   },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 52.68,
+     "points": 54.08,
      "projected": 185.05,
-     "win_probability": 0.64
+     "win_probability": 0.63
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.36
+     "win_probability": 0.37
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 36.7,
+     "points": 38.5,
      "projected": 179.32,
-     "win_probability": 0.69
+     "win_probability": 0.62
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 5.6,
+     "points": 29.2,
      "projected": 170.29,
-     "win_probability": 0.31000000000000005
+     "win_probability": 0.38
     }
    ]
   }
@@ -307,10 +307,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 1.2,
+    "points": 3.6,
     "stats": {
-     "8": 3.0,
-     "9": 12.0
+     "8": 4.0,
+     "9": 36.0
     }
    },
    {
@@ -578,8 +578,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.5,
+    "stats": {
+     "11": 1.0,
+     "12": 10.0
+    }
    },
    {
     "yahoo_id": "334139",
@@ -664,10 +667,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 6.0,
+    "points": 6.1,
     "stats": {
-     "8": 11.0,
-     "9": 60.0
+     "8": 13.0,
+     "9": 61.0
     }
    },
    {
@@ -1521,13 +1524,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 9.2,
+    "points": 10.7,
     "stats": {
-     "8": 4.0,
-     "9": 25.0,
+     "8": 5.0,
+     "9": 30.0,
      "10": 1.0,
-     "11": 1.0,
-     "12": 2.0
+     "11": 2.0,
+     "12": 7.0
     }
    },
    {
@@ -1664,8 +1667,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.4,
+    "stats": {
+     "11": 1.0,
+     "12": 9.0
+    }
    },
    {
     "yahoo_id": "404730",
@@ -2158,12 +2164,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 13.2,
+    "points": 14.4,
     "stats": {
      "8": 1.0,
      "9": 11.0,
-     "11": 6.0,
-     "12": 91.0
+     "11": 7.0,
+     "12": 98.0
     }
    },
    {
@@ -2219,10 +2225,10 @@
     "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "W/R/T",
-    "points": 23.5,
+    "points": 24.1,
     "stats": {
-     "8": 6.0,
-     "9": 115.0,
+     "8": 7.0,
+     "9": 121.0,
      "10": 2.0
     }
    },
@@ -2237,10 +2243,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 1.8,
+    "points": 2.5,
     "stats": {
-     "8": 2.0,
-     "9": 8.0,
+     "8": 3.0,
+     "9": 15.0,
      "11": 1.0,
      "12": 5.0
     }
@@ -2384,10 +2390,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 6.2,
+    "points": 16.3,
     "stats": {
-     "8": 10.0,
-     "9": 62.0
+     "8": 16.0,
+     "9": 94.0,
+     "11": 1.0,
+     "12": 4.0,
+     "13": 1.0
     }
    },
    {
@@ -2457,10 +2466,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": -0.6,
+    "points": 12.9,
     "stats": {
-     "8": 6.0,
-     "9": 13.0,
+     "8": 14.0,
+     "9": 88.0,
+     "10": 1.0,
      "11": 1.0,
      "12": -4.0,
      "18": 1.0
