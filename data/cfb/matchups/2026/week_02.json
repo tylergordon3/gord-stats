@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-12T02:50:09+00:00",
+ "fetched": "2026-09-12T03:36:02+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 66.58,
+     "points": 82.38,
      "projected": 185.05,
-     "win_probability": 0.66
+     "win_probability": 0.74
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 165.36,
-     "win_probability": 0.33999999999999997
+     "win_probability": 0.26
     }
    ]
   },
@@ -110,14 +110,14 @@
      "name": "Max's Majestic Team",
      "points": 39.2,
      "projected": 179.32,
-     "win_probability": 0.58
+     "win_probability": 0.56
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 34.1,
+     "points": 38.7,
      "projected": 170.29,
-     "win_probability": 0.42000000000000004
+     "win_probability": 0.43999999999999995
     }
    ]
   }
@@ -307,10 +307,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 3.7,
+    "points": 6.2,
     "stats": {
-     "8": 5.0,
-     "9": 37.0
+     "8": 6.0,
+     "9": 39.0,
+     "11": 1.0,
+     "12": 18.0
     }
    },
    {
@@ -1524,13 +1526,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 10.9,
+    "points": 14.5,
     "stats": {
-     "8": 10.0,
-     "9": 44.0,
+     "8": 13.0,
+     "9": 56.0,
      "10": 1.0,
-     "11": 3.0,
-     "12": 10.0,
+     "11": 5.0,
+     "12": 24.0,
      "18": 1.0
     }
    },
@@ -1668,11 +1670,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 13.9,
+    "points": 29.7,
     "stats": {
-     "11": 5.0,
-     "12": 54.0,
-     "13": 1.0
+     "11": 8.0,
+     "12": 137.0,
+     "13": 2.0
     }
    },
    {
@@ -2392,12 +2394,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 20.0,
+    "points": 22.2,
     "stats": {
-     "8": 26.0,
-     "9": 131.0,
-     "11": 1.0,
-     "12": 4.0,
+     "8": 27.0,
+     "9": 134.0,
+     "11": 2.0,
+     "12": 18.0,
      "13": 1.0
     }
    },
@@ -2468,10 +2470,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 14.1,
+    "points": 16.5,
     "stats": {
-     "8": 18.0,
-     "9": 100.0,
+     "8": 25.0,
+     "9": 124.0,
      "10": 1.0,
      "11": 1.0,
      "12": -4.0,
