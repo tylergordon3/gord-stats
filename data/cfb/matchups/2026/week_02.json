@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-12T15:34:58+00:00",
+ "fetched": "2026-09-12T16:40:13+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 17.6,
-     "projected": 195.56,
-     "win_probability": 0.69
+     "points": 46.66,
+     "projected": 195.57,
+     "win_probability": 0.54
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 0.0,
-     "projected": 159.76,
-     "win_probability": 0.31000000000000005
+     "points": 31.34,
+     "projected": 168.99,
+     "win_probability": 0.45999999999999996
     }
    ]
   },
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 15.1,
+     "points": 18.8,
      "projected": 213.12,
-     "win_probability": 0.56
+     "win_probability": 0.73
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 181.73,
-     "win_probability": 0.43999999999999995
+     "win_probability": 0.27
     }
    ]
   },
@@ -62,16 +62,16 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 0.0,
-     "projected": 191.32,
-     "win_probability": 0.54
+     "points": 1.0,
+     "projected": 191.36,
+     "win_probability": 0.7
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 0.0,
+     "points": 7.0,
      "projected": 185.32,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.30000000000000004
     }
    ]
   },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 82.38,
+     "points": 83.98,
      "projected": 185.05,
-     "win_probability": 0.74
+     "win_probability": 0.9
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 0.0,
-     "projected": 165.44,
-     "win_probability": 0.26
+     "points": 13.38,
+     "projected": 165.45,
+     "win_probability": 0.09999999999999998
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 39.2,
+     "points": 40.4,
      "projected": 179.32,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.16999999999999993
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 38.8,
-     "projected": 184.74,
-     "win_probability": 0.54
+     "points": 41.4,
+     "projected": 184.76,
+     "win_probability": 0.8300000000000001
     }
    ]
   }
@@ -135,8 +135,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 22.06,
+    "stats": {
+     "4": 79.0,
+     "5": 3.0,
+     "8": 1.0,
+     "9": 9.0
+    }
    },
    {
     "yahoo_id": "471748",
@@ -205,9 +210,9 @@
     "team": "IND",
     "team_full": "Indiana Hoosiers",
     "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
     "slot": "WR",
     "points": 0.0,
     "stats": {}
@@ -265,8 +270,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 7.0,
+    "stats": {
+     "8": 3.0,
+     "9": 10.0,
+     "10": 1.0
+    }
    },
    {
     "yahoo_id": "337423",
@@ -388,18 +397,22 @@
     "stats": {}
    },
    {
-    "yahoo_id": "338757",
-    "player": "John Mateer",
+    "yahoo_id": "404434",
+    "player": "Avery Johnson",
     "pos": "QB",
-    "team": "OU",
-    "team_full": "Oklahoma Sooners",
+    "team": "KSU",
+    "team_full": "Kansas State Wildcats",
     "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 4.34,
+    "stats": {
+     "4": 81.0,
+     "8": 2.0,
+     "9": 11.0
+    }
    },
    {
     "yahoo_id": "448820",
@@ -440,8 +453,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 17.0,
+    "stats": {
+     "11": 2.0,
+     "12": 40.0,
+     "13": 2.0
+    }
    },
    {
     "yahoo_id": "405075",
@@ -486,20 +503,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "403802",
-    "player": "Kyson Brown",
-    "pos": "RB",
-    "team": "ASU",
-    "team_full": "Arizona State Sun Devils",
-    "bye": 4.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "405205",
     "player": "Sedrick Alexander",
     "pos": "RB",
@@ -523,9 +526,50 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
+    "slot": "W/R/T",
+    "points": 10.0,
+    "stats": {
+     "8": 5.0,
+     "9": 32.0,
+     "10": 1.0,
+     "11": 1.0,
+     "12": 3.0
+    }
+   },
+   {
+    "yahoo_id": "403802",
+    "player": "Kyson Brown",
+    "pos": "RB",
+    "team": "ASU",
+    "team_full": "Arizona State Sun Devils",
+    "bye": 4.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 4.3,
+    "stats": {
+     "8": 6.0,
+     "9": 43.0
+    }
+   },
+   {
+    "yahoo_id": "338757",
+    "player": "John Mateer",
+    "pos": "QB",
+    "team": "OU",
+    "team_full": "Oklahoma Sooners",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": -0.62,
+    "stats": {
+     "4": 7.0,
+     "8": 1.0,
+     "9": -9.0
+    }
    },
    {
     "yahoo_id": "335178",
@@ -548,20 +592,6 @@
     "team": "FSU",
     "team_full": "Florida State Seminoles",
     "bye": 2.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "404434",
-    "player": "Avery Johnson",
-    "pos": "QB",
-    "team": "KSU",
-    "team_full": "Kansas State Wildcats",
-    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -714,8 +744,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 3.7,
+    "stats": {
+     "11": 2.0,
+     "12": 27.0
+    }
    },
    {
     "yahoo_id": "456968",
@@ -770,8 +803,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.3,
+    "stats": {
+     "8": 1.0,
+     "9": 3.0
+    }
    },
    {
     "yahoo_id": "471560",
@@ -1060,8 +1096,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.3,
+    "stats": {
+     "8": 1.0,
+     "9": 3.0
+    }
    },
    {
     "yahoo_id": "404831",
@@ -1230,8 +1269,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.7,
+    "stats": {
+     "8": 1.0,
+     "9": 7.0
+    }
    },
    {
     "yahoo_id": "457591",
@@ -1244,8 +1286,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.3,
+    "stats": {
+     "8": 1.0,
+     "9": 3.0
+    }
    },
    {
     "yahoo_id": "462228",
@@ -1272,8 +1317,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 4.3,
+    "stats": {
+     "8": 4.0,
+     "9": 6.0,
+     "11": 2.0,
+     "12": 27.0
+    }
    },
    {
     "yahoo_id": "404055",
@@ -1400,8 +1450,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.0,
-    "stats": {}
+    "points": 7.0,
+    "stats": {
+     "8": 8.0,
+     "9": 70.0
+    }
    },
    {
     "yahoo_id": "457478",
@@ -1688,8 +1741,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.6,
+    "stats": {
+     "11": 1.0,
+     "12": 11.0
+    }
    },
    {
     "yahoo_id": "482179",
@@ -1872,8 +1928,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.88,
+    "stats": {
+     "4": 12.0,
+     "8": 4.0,
+     "9": 4.0
+    }
    },
    {
     "yahoo_id": "469228",
@@ -1900,8 +1960,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.0,
+    "stats": {
+     "8": 4.0,
+     "9": 10.0
+    }
    },
    {
     "yahoo_id": "455576",
@@ -1984,8 +2047,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.5,
+    "stats": {
+     "8": 1.0,
+     "9": 15.0
+    }
    },
    {
     "yahoo_id": "469690",
@@ -2082,8 +2148,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 0.0,
-    "stats": {}
+    "points": 10.0,
+    "stats": {
+     "50": 1.0
+    }
    }
   ],
   "474.l.21318.t.6": [
@@ -2201,8 +2269,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.2,
+    "stats": {
+     "11": 1.0,
+     "12": 7.0
+    }
    },
    {
     "yahoo_id": "404852",
@@ -2428,8 +2499,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 2.6,
+    "stats": {
+     "11": 3.0,
+     "12": 11.0
+    }
    },
    {
     "yahoo_id": "457039",
