@@ -279,10 +279,9 @@ def generate() -> None:
                             "name": table["name"].values},
                            index=table["team"].astype(str)))
 
-    write_page(WEB_DIR / "teams" / "index.html", "GordStats Rankings",
-               _index(table, frame),
-               subtitle="Every FBS team on our own rating, not somebody else's")
-
+    # The index that lived at /cfb/teams/ is part of the rankings page now
+    # (cfb.site.power carries the GordStats column); the URL redirects there.
+    # `_index` stays, unused, should a standalone list be wanted again.
     for _, row in table.iterrows():
         slug = team_slug(row["name"])
         write_page(WEB_DIR / "teams" / slug / "index.html",

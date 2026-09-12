@@ -7,6 +7,9 @@
 # The live draft board was retired after the 2026 draft; the draft it was
 # showing is now the first board on the draft page.
 /fantasy/live/*          /fantasy/draft/   301
+# The GordStats rankings index joined the FPI page as one rankings page;
+# the team pages under /cfb/teams/<team>/ stay where they are.
+/cfb/teams/              /cfb/power/        301
 # The league power rankings became a section of the league dashboard.
 /cfb/league-power/*      /cfb/league/#power 301
 # The CFB pre-draft board retired when the draft did; its analysis lives on

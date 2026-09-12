@@ -19,8 +19,11 @@ zero, so a column stays hidden until some team has one - the resume ranks
 appear by themselves once games are played.
 
 Beside the computer number: the AP poll where one exists for this season
-(the human column), and Move columns against the snapshot archive
-(gordstats.rankmoves) once it has more than one build in it.
+(the human column), our own GordStats rating with its rank (the number the
+predictions run on, from cfb.predict via cfb.site.teams), and Move columns
+against the snapshot archive (gordstats.rankmoves) once it has more than
+one build in it. This is the one rankings page: the GordStats index that
+lived at /cfb/teams/ redirects here, and each team links to its own page.
 
     python -m cfb.site.power             # cached JSON if fresh
     python -m cfb.site.power --refresh
@@ -34,8 +37,9 @@ from html import escape
 import pandas as pd
 import requests
 
-from cfb import espn
+from cfb import espn, predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
+from cfb.site import teams as teams_page
 from cfb.site import write_page
 from gordstats import favorites, rankmoves
 
@@ -64,6 +68,11 @@ table.cfb-power td{padding:6px 10px;border:0;border-right:1px solid #eef2f7;
   text-align:center;white-space:nowrap}
 table.cfb-power th:last-child,table.cfb-power td:last-child{border-right:0}
 table.cfb-power td.pwr-team{text-align:left;font-weight:600}
+table.cfb-power td.pwr-team a{color:inherit;text-decoration:none}
+table.cfb-power td.pwr-team a:hover{text-decoration:underline}
+/* The GordStats rank rides beside its rating, quiet. */
+table.cfb-power td .gs-rk{display:inline-block;min-width:22px;text-align:right;
+  font-size:11px;color:#64748b;margin-right:6px}
 table.cfb-power tbody tr:nth-child(even) td{background:#f8fafc}
 table.cfb-power tr.top25 td{background:#fdf6e3}
 table.cfb-power tr.top25:nth-child(even) td{background:#faf0d2}
@@ -140,6 +149,7 @@ table.cfb-power th:first-child{left:0;z-index:3}
   .power-note{color:#aab7c9}
   .power-wrap{border-color:#2b3852}
   table.cfb-power td.pwr-team .pwr-rec{color:#aab7c9}
+  table.cfb-power td .gs-rk{color:#aab7c9}
 }
 </style>"""
 
@@ -419,6 +429,7 @@ ALL = tuple(v for v, _ in VIEWS)
 # predates a figure shows nothing for it, not a wrong number.
 TRACKED = {
     "rank": ("rank", 0), "fpi": ("num", 1), "ap": ("rank", 0), "numwins": ("num", 0),
+    "gs": ("num", 1), "gs_rank": ("rank", 0),
     "projectedw": ("num", 1), "probmakeplayoffs": ("num", 1), "probwinconf": ("num", 1),
     "prob6wins": ("num", 1), "probwinout": ("num", 1), "probwintitle": ("num", 1),
     "avgsosrank": ("rank", 0), "sosremainingrank": ("rank", 0),
@@ -478,7 +489,17 @@ def _record(t) -> str:
 def _team(t, record: bool) -> str:
     logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
     rec = f"<span class='pwr-rec'>{_record(t)}</span>" if record else ""
-    return logo + t["name"] + rec + favorites.star("cfb", t["id"], t["name"])
+    # A rated team has a page of its own; the name is the way there.
+    name = (f"<a href='/cfb/teams/{teams_page.team_slug(t['gs_name'])}/'>{t['name']}</a>"
+            if t.get("gs_name") else t["name"])
+    return logo + name + rec + favorites.star("cfb", t["id"], t["name"])
+
+
+def _gordstats(t) -> tuple:
+    """The GordStats cell: rank beside rating, sorted by the rating."""
+    if t.get("gs") is None:
+        return None, ""
+    return t["gs"], f"<span class='gs-rk'>{t['gs_rank']}</span>{t['gs']:+.1f}"
 
 
 def _switcher() -> str:
@@ -532,9 +553,15 @@ def body() -> str:
 
     ap_ranks, ap_season, ap_label = ap_poll()
     show_ap = bool(ap_ranks) and ap_season == season
+    # Our own rating and rank, keyed by ESPN team id like everything here.
+    frame, model, names = predict.season()
+    gs_table = teams_page._standings(frame, model, names)
+    gs = {str(r["team"]): (float(r["rating"]), int(r["rank"]), str(r["name"]))
+          for _, r in gs_table.iterrows()}
     for rank, t in enumerate(teams, 1):
         t["rank"] = rank
         t["ap"] = ap_ranks.get(t["id"]) if show_ap else None
+        t["gs"], t["gs_rank"], t["gs_name"] = gs.get(t["id"], (None, None, None))
 
     bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
     show_move = bool(bases)
@@ -586,6 +613,9 @@ def body() -> str:
     cols += [
         col(("rating",), "FPI", "Expected point margin against an average FBS team",
             "desc", lambda t: (t["fpi"], f"{t['fpi']:+.1f}"), "rank"),
+        col(("rating",), "GordStats", "This site's own rating - points better than an "
+            "average FBS team, the number the predictions run on - with its rank",
+            "desc", _gordstats, "gs_rank"),
         col(("rating",), "Proj W-L", "ESPN's simulation of the full schedule", "desc",
             lambda t: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}"),
             "projectedw"),
@@ -623,6 +653,8 @@ def body() -> str:
             kind, dec = TRACKED[field]
             tip = ("Wins added" if field == "numwins"
                    else f"{label} places climbed" if kind == "rank" else f"{label} change")
+            if field == "gs_rank":
+                tip = "GordStats places climbed"
             kinds[field] = {"k": kind, "d": dec, "label": label, "tip": tip}
 
     rows = []
@@ -657,13 +689,17 @@ def body() -> str:
     intro = (
         f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "
         f"Index</strong> for the {season} season"
-        + (", with the <strong>AP poll</strong> beside it" if show_ap else "")
-        + f", pulled {stamp}.</p>"
+        + (", with the <strong>AP poll</strong>" if show_ap else "")
+        + " and this site's own <strong>GordStats</strong> rating beside it"
+        + f", pulled {stamp}. Click a team for its page.</p>"
         "<details class='section'><summary>About these rankings</summary>"
         "<p class='power-note'>FPI is expected point margin against an average FBS team "
         "on a neutral field; the projected record is ESPN's simulation of each team's "
         "actual schedule. Preseason these are projections; once games are played the "
-        f"same numbers update with results.{move_note}</p>"
+        "same numbers update with results. <strong>GordStats</strong> is the same idea "
+        "from <a href='/cfb/predictions/'>this site's own model</a>, the rating the "
+        "predictions run on, with its rank beside it; sort by it for our order, and "
+        f"Move then counts places climbed in our ranking.{move_note}</p>"
         "<p class='power-note'><strong>Rating</strong> is the ratings, the "
         "projected record and what the schedule has been worth; <strong>Odds</strong> "
         "what ESPN's simulations give each team. "
@@ -699,8 +735,8 @@ def body() -> str:
 
 
 def generate():
-    write_page(WEB_DIR / "power" / "index.html", "CFB National Rankings", body(),
-               subtitle=f"{SEASON} season")
+    write_page(WEB_DIR / "power" / "index.html", "CFB Rankings", body(),
+               subtitle=f"{SEASON} season · FPI, the AP poll and GordStats")
 
 
 if __name__ == "__main__":

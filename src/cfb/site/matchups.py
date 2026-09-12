@@ -470,8 +470,10 @@ def week_board(rows: list[tuple], started: bool, final: bool) -> str:
 def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
               to_school: dict, espn: dict, teams: dict) -> str:
     week = int(data["week"])
+    statuses = {p["yahoo_id"]: p["status"] for roster in data["rosters"].values()
+                for p in roster if p.get("status")}
     wk = weekly.week_projections(data["week_start"], data["week_end"],
-                                 board=board, league=lg, frame=frame)
+                                 board=board, league=lg, frame=frame, injuries=statuses)
     final = yahoo.week_final(data)
     started = any(m.get("status") != "preevent" for m in data["matchups"])
     start = datetime.strptime(data["week_start"], "%Y-%m-%d")

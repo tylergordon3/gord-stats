@@ -131,22 +131,16 @@ cfb:
     url: /cfb/predictions/
     group: model
 
-  - title: GordStats Rankings
-    short: GordStats
+  - title: Rankings
+    short: Rankings
     icon: "📈"
-    url: /cfb/teams/
+    url: /cfb/power/
     group: model
 
   - title: Schedule & Scores
     short: Schedule
     icon: "🏈"
     url: /cfb/schedule/
-    group: reference
-
-  - title: National Rankings
-    short: FPI
-    icon: "⚡"
-    url: /cfb/power/
     group: reference
 
   - title: Draft Review

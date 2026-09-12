@@ -47,6 +47,12 @@ GAME_WEIGHT = 0.6
 GAME_CAP_DOWN = 0.30
 GAME_CAP_UP = 0.10
 
+# Yahoo's injury designations and what a week is worth under each: out, on a
+# reserve list, suspended or not with the team is nothing; doubtful about a
+# game in four; questionable and probable play, and the projection stands.
+STATUS_FACTOR = {"O": 0.0, "IR": 0.0, "IR-R": 0.0, "PUP": 0.0, "SUSP": 0.0, "NA": 0.0,
+                 "NFI": 0.0, "D": 0.25}
+
 
 def _window(start: str, end: str) -> tuple:
     """A Yahoo week's [start, end] dates as UTC bounds covering whole local days."""
@@ -101,14 +107,20 @@ def _skill_points(row: pd.Series, game: dict) -> float:
 
 
 def week_projections(start: str, end: str, board: pd.DataFrame = None,
-                     league: dict = None, frame: pd.DataFrame = None) -> pd.DataFrame:
+                     league: dict = None, frame: pd.DataFrame = None,
+                     injuries: dict = None) -> pd.DataFrame:
     """Every board player's projection for the Yahoo week [start, end].
 
     Indexed by yahoo_id. Columns: proj_week (0 on a bye), n_games, and the
     game itself - opp, opp_abbr, home, kickoff (UTC), state, score_for,
     score_against, pred_for, pred_against - for the first game of the week
     (a school plays at most one in nearly every week).
+
+    `injuries` is {yahoo_id: Yahoo status} from the week's rosters; a player
+    ruled out projects nothing (STATUS_FACTOR). Without it the page priced a
+    player Yahoo had already marked O at his full week.
     """
+    injuries = injuries or {}
     league = yahoo.league() if league is None else league
     if frame is None:
         frame, _model, _names = predict.season()
@@ -134,6 +146,7 @@ def week_projections(start: str, end: str, board: pd.DataFrame = None,
             else:
                 total += _skill_points(row, g)
         first = games[0] if games else {}
+        total *= STATUS_FACTOR.get(injuries.get(str(pid), ""), 1.0)
         rows[pid] = {
             "proj_week": total if (games or team_id) else np.nan,
             "n_games": len(games),
