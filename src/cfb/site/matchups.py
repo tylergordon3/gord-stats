@@ -297,7 +297,7 @@ def _short_name(name: str) -> str:
 
 
 def _pair_cell(p: dict | None, key: str, to_school: dict, espn: dict,
-               hint: str = "", game=None) -> str:
+               hint: str = "", game=None, proj=None) -> str:
     """One team's player in the paired phone view.
 
     Carries the same data-pid and .mu-pts the live updater looks for, inside a
@@ -316,8 +316,9 @@ def _pair_cell(p: dict | None, key: str, to_school: dict, espn: dict,
             f'{_school_logo(p["team_full"], to_school, espn)}'
             f'{escape(_short_name(p["player"]))}</span>'
             f'<span class="mu-pm">{escape(p["pos"])} · {escape(p["team"])}{inj}{tag}</span>'
-            f'</div>'
-            f'<span class="mu-pts"><b>{ui.fmt(p.get("points"))}</b></span></div>')
+            f'<span class="mu-g">{game_cell(game)}</span></div>'
+            f'<div class="mu-pcol"><span class="mu-pts"><b>{ui.fmt(p.get("points"))}</b></span>'
+            f'<span class="mu-gs" title="GordStats projection">{ui.fmt(proj)}</span></div></div>')
 
 
 def pair_view(a: dict, b: dict, to_school: dict, espn: dict) -> str:
@@ -345,18 +346,19 @@ def pair_view(a: dict, b: dict, to_school: dict, espn: dict) -> str:
             out.append(
                 f'<div class="mu-pr{" bench" if bench else ""}">'
                 + _pair_cell(pa, a["key"], to_school, espn, ap["hints"].get((pa or {}).get("yahoo_id")),
-                             ap["games"].get((pa or {}).get("yahoo_id")))
+                             ap["games"].get((pa or {}).get("yahoo_id")),
+                             ap["proj"].get((pa or {}).get("yahoo_id")))
                 + f'<div class="mu-pslot">{escape(slot)}</div>'
                 + _pair_cell(pb, b["key"], to_school, espn, bp["hints"].get((pb or {}).get("yahoo_id")),
-                             bp["games"].get((pb or {}).get("yahoo_id")))
+                             bp["games"].get((pb or {}).get("yahoo_id")),
+                             bp["proj"].get((pb or {}).get("yahoo_id")))
                 + "</div>")
         return "".join(out)
 
     starters = rows(ap["starters"], bp["starters"])
     bench = ""
     if ap["bench"] or bp["bench"]:
-        bench = ('<details class="mu-pbench"><summary>Bench</summary>'
-                 + rows(ap["bench"], bp["bench"], bench=True) + "</details>")
+        bench = '<div class="mu-pbench-h">Bench</div>' + rows(ap["bench"], bp["bench"], bench=True)
 
     total = (f'<div class="mu-pr total">'
              f'<div class="mu-pp"><div class="mu-pn"><span class="nm">Starters</span></div>'

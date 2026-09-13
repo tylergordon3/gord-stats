@@ -138,8 +138,27 @@ table.mu-board td b.lead{color:#1a7f4b}
    beside the slot, which is what makes the comparison readable at a glance. */
 .mu-pr>.mu-pp:last-child{flex-direction:row-reverse;text-align:right}
 .mu-pp.empty{visibility:hidden}
-.mu-pn{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+/* The name block takes the slack, so the figures sit in a fixed column at
+   the slot's edge and line up down the page. */
+.mu-pn{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.25}
 .mu-pr>.mu-pp:last-child .mu-pn{align-items:flex-end}
+.mu-pcol{flex:none;min-width:46px;display:flex;flex-direction:column;align-items:flex-end;
+  line-height:1.15}
+.mu-pr>.mu-pp:last-child .mu-pcol{align-items:flex-start}
+/* The game, under the position: opponent and kickoff, then the live score
+   and clock, then the final - the same span the live poll rewrites in the
+   table, so it carries the same pulsing dot while the game is on. */
+.mu-pn .mu-g{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:100%}
+.mu-pn .mu-g .live{color:#b3382c;font-weight:700}
+.mu-pn .mu-g .live::before{content:"";display:inline-block;width:6px;height:6px;
+  border-radius:50%;background:#b3382c;margin-right:4px;vertical-align:1px;
+  animation:mu-pulse 1.4s ease-in-out infinite}
+.mu-pn .mu-g .fin{color:#64748b}
+.mu-pn .mu-g .bye{font-style:italic;color:#94a3b8}
+/* The projection under the points; italic once it is a live expected final. */
+.mu-pp .mu-gs{font-size:10px;color:#64748b;font-variant-numeric:tabular-nums}
+.mu-pp .mu-gs.live{font-style:italic}
 /* The name truncates rather than wrapping: a wrapped name makes rows different
    heights and the two sides stop lining up, which is the whole point. */
 .mu-pn .nm{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;
@@ -147,7 +166,7 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-pn .mu-pm{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;max-width:100%}
 .mu-pp .mu-pts{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;
-  flex:none;min-width:38px;text-align:right;color:#0f172a}
+  flex:none;text-align:right;color:#0f172a}
 .mu-pr>.mu-pp:last-child .mu-pts{text-align:left}
 .mu-pr.bench .mu-pts{font-weight:600;color:#475569}
 .mu-pslot{display:flex;align-items:center;justify-content:center;font-size:10px;
@@ -161,12 +180,9 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-pair img.mu-logo{width:14px;height:14px;object-fit:contain;margin:0 4px 0 0;
   border:none;padding:0;box-shadow:none;background:none;border-radius:0;
   vertical-align:middle}
-.mu-pbench{margin-top:6px}
-.mu-pbench>summary{font-size:12px;font-weight:700;color:#475569;cursor:pointer;
-  padding:5px 4px;list-style:none}
-.mu-pbench>summary::-webkit-details-marker{display:none}
-.mu-pbench>summary::before{content:"▸ ";color:#94a3b8}
-.mu-pbench[open]>summary::before{content:"▾ "}
+/* The bench stays in view under the starters, behind a quiet divider. */
+.mu-pbench-h{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:#94a3b8;padding:9px 4px 3px}
 .mu-pair .inj{font-size:9px;font-weight:700;color:#b3382c;margin-left:3px}
 .mu-pair .mu-hint{font-size:9px;font-weight:700;margin-left:3px;border-radius:3px;padding:0 3px}
 .mu-pair .mu-hint.in{background:#d5efdd;color:#1a7f4b}
@@ -265,6 +281,9 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   table.mu-roster tr.live td{background:#2a1f26}
   table.mu-roster tr.live td.mu-pts{background:#3a262b}
   .mu-pr .mu-pp.live{background:#2a1f26}
+  .mu-pn .mu-g,.mu-pn .mu-g .fin,.mu-pp .mu-gs{color:#aab7c9}
+  .mu-pn .mu-g .live{color:#ffb4ab}
+  .mu-pn .mu-g .live::before{background:#ffb4ab}
   table.mu-roster td.mu-g .fin,table.mu-roster td.mu-g .bye{color:#aab7c9}
   table.mu-roster td.mu-p .inj{color:#ffb4ab}
   table.mu-roster td.mu-p .mu-hint.in{background:#123c2e;color:#8ff0bd}

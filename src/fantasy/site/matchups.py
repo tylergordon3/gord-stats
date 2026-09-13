@@ -346,7 +346,7 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>{swaps}')
     parts = {"starters": starters, "bench": bench, "cards": cards, "pts": pts,
-             "hints": hints, "pts_total": pts_total}
+             "hints": hints, "pts_total": pts_total, "proj": proj}
     return html, gs_total, cons_total, pts_total, exp_total, var_total, parts
 
 
@@ -392,7 +392,7 @@ def _short_name(name: str) -> str:
 
 
 def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | None,
-               hint: str = "") -> str:
+               hint: str = "", proj=None) -> str:
     """One team's player in the paired phone view - the same data-pid, .mu-pts
     and live attributes as the table row, inside a data-roster wrapper, so
     the live poll moves it exactly the same way."""
@@ -414,8 +414,10 @@ def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | Non
             f'{escape(_short_name(card["name"]))}</span>'
             f'<span class="mu-pm">{escape(card["pos"])}'
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
-            f'{inj_html}{tag}</span></div>'
-            f'<span class="mu-pts"><b>{ui.fmt(pts)}</b></span></div>')
+            f'{inj_html}{tag}</span>'
+            f'<span class="mu-g">{game_cell(g)}</span></div>'
+            f'<div class="mu-pcol"><span class="mu-pts"><b>{ui.fmt(pts)}</b></span>'
+            f'<span class="mu-gs" title="GordStats projection">{ui.fmt(proj)}</span></div></div>')
 
 
 def pair_view(a: dict, b: dict, ctx: dict) -> str:
@@ -431,7 +433,7 @@ def pair_view(a: dict, b: dict, ctx: dict) -> str:
         card = parts["cards"].get(row["pid"])
         g = ctx["by_team"].get((card or {}).get("team")) if card else None
         return _pair_cell(row, card, key, parts["pts"].get(row["pid"]), g,
-                          parts["hints"].get(row["pid"], ""))
+                          parts["hints"].get(row["pid"], ""), parts["proj"].get(row["pid"]))
 
     def rows(a_list, b_list, bench=False) -> str:
         out = []
@@ -448,8 +450,7 @@ def pair_view(a: dict, b: dict, ctx: dict) -> str:
     starters = rows(ap["starters"], bp["starters"])
     bench = ""
     if ap["bench"] or bp["bench"]:
-        bench = ('<details class="mu-pbench"><summary>Bench</summary>'
-                 + rows(ap["bench"], bp["bench"], bench=True) + "</details>")
+        bench = '<div class="mu-pbench-h">Bench</div>' + rows(ap["bench"], bp["bench"], bench=True)
     total = (f'<div class="mu-pr total">'
              f'<div class="mu-pp"><div class="mu-pn"><span class="nm">Starters</span></div>'
              f'<span class="mu-pts" data-tpts="{escape(a["key"])}">{ap["pts_total"]:.1f}</span></div>'
