@@ -11,7 +11,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 151.8,
+     "points": 152.1,
      "projected": 195.53,
      "win_probability": 0.01
     },
@@ -36,14 +36,14 @@
      "name": "Mike Locksley",
      "points": 177.64,
      "projected": 207.25,
-     "win_probability": 0.040000000000000036
+     "win_probability": 0.01
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 182.3,
+     "points": 190.06,
      "projected": 181.73,
-     "win_probability": 0.96
+     "win_probability": 0.99
     }
    ]
   },
@@ -59,14 +59,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 170.22,
      "projected": 191.42,
-     "win_probability": 0.78
+     "win_probability": 0.8300000000000001
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 161.36,
      "projected": 185.21,
-     "win_probability": 0.21999999999999997
+     "win_probability": 0.16999999999999993
     }
    ]
   },

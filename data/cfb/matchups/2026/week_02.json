@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-13T05:31:37+00:00",
+ "fetched": "2026-09-13T05:43:16+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -16,7 +16,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 151.8,
+     "points": 152.1,
      "projected": 195.53,
      "win_probability": 0.01
     },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 177.64,
      "projected": 207.25,
-     "win_probability": 0.040000000000000036
+     "win_probability": 0.01
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 182.3,
+     "points": 190.06,
      "projected": 181.73,
-     "win_probability": 0.96
+     "win_probability": 0.99
     }
    ]
   },
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 170.22,
      "projected": 191.42,
-     "win_probability": 0.78
+     "win_probability": 0.8300000000000001
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 161.36,
      "projected": 185.21,
-     "win_probability": 0.21999999999999997
+     "win_probability": 0.16999999999999993
     }
    ]
   },
@@ -278,10 +278,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 4.2,
+    "points": 4.5,
     "stats": {
-     "8": 7.0,
-     "9": 32.0,
+     "8": 8.0,
+     "9": 35.0,
      "11": 1.0,
      "12": 5.0
     }
@@ -1067,10 +1067,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 30.68,
+    "points": 38.44,
     "stats": {
-     "4": 217.0,
-     "5": 4.0,
+     "4": 261.0,
+     "5": 5.0,
      "6": 1.0
     }
    },
