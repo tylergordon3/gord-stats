@@ -2,15 +2,15 @@
  "week": 2,
  "week_start": "2026-09-08",
  "week_end": "2026-09-12",
- "status": "midevent",
+ "status": "postevent",
  "is_playoffs": false,
- "fetched": "2026-09-13T06:10:13+00:00",
+ "fetched": "2026-09-13T21:35:06+00:00",
  "matchups": [
   {
    "week": 2.0,
    "week_start": "2026-09-08",
    "week_end": "2026-09-12",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 153.3,
      "projected": 195.53,
-     "win_probability": 0.01
+     "win_probability": 0.0
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 168.28,
      "projected": 169.0,
-     "win_probability": 0.99
+     "win_probability": 1.0
     }
    ]
   },
@@ -33,7 +33,7 @@
    "week": 2.0,
    "week_start": "2026-09-08",
    "week_end": "2026-09-12",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 177.64,
      "projected": 207.25,
-     "win_probability": 0.01
+     "win_probability": 0.0
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 190.06,
      "projected": 181.73,
-     "win_probability": 0.99
+     "win_probability": 1.0
     }
    ]
   },
@@ -56,22 +56,22 @@
    "week": 2.0,
    "week_start": "2026-09-08",
    "week_end": "2026-09-12",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 170.22,
+     "points": 168.22,
      "projected": 191.42,
-     "win_probability": 0.99
+     "win_probability": 1.0
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 161.36,
      "projected": 185.21,
-     "win_probability": 0.010000000000000009
+     "win_probability": 0.0
     }
    ]
   },
@@ -79,7 +79,7 @@
    "week": 2.0,
    "week_start": "2026-09-08",
    "week_end": "2026-09-12",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -87,14 +87,14 @@
      "name": "CCAM State",
      "points": 261.06,
      "projected": 185.16,
-     "win_probability": 0.99
+     "win_probability": 1.0
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 132.98,
      "projected": 165.45,
-     "win_probability": 0.010000000000000009
+     "win_probability": 0.0
     }
    ]
   },
@@ -102,13 +102,13 @@
    "week": 2.0,
    "week_start": "2026-09-08",
    "week_end": "2026-09-12",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 192.34,
+     "points": 186.34,
      "projected": 179.32,
      "win_probability": 1.0
     },
@@ -685,7 +685,7 @@
     "pos": "WR",
     "team": "FSU",
     "team_full": "Florida State Seminoles",
-    "bye": 2.0,
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -975,7 +975,7 @@
     "pos": "RB",
     "team": "FSU",
     "team_full": "Florida State Seminoles",
-    "bye": 2.0,
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1250,7 +1250,7 @@
     "pos": "WR",
     "team": "FSU",
     "team_full": "Florida State Seminoles",
-    "bye": 2.0,
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2131,9 +2131,9 @@
     "team": "USC",
     "team_full": "USC Trojans",
     "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Knee",
     "slot": "WR",
     "points": 17.1,
     "stats": {
@@ -2847,9 +2847,9 @@
     "team": "OKST",
     "team_full": "Oklahoma State Cowboys",
     "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 6.1,
     "stats": {
