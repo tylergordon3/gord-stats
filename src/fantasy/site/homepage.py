@@ -163,18 +163,25 @@ def teams_section() -> str:
 
 def generate(output=OUTPUT):
     """Write the homepage to `output` (default docs/index.html)."""
+    # The two sections everyone comes for sit inline, open, metrics first; the
+    # deeper all-time studies stay behind toggles below them.
+    inline = [
+        ("metrics", "All-Time Metrics", metrics_section()),
+        ("teams", "Teams", teams_section()),
+    ]
     sections = [
-        ("metrics", "All-Time Metrics", metrics_section(), not LIVE_ADP_BOARD),
         ("injuries", "All-Time Injury Impacts", injury_section(), False),
         ("adp", "All-Time Draft Values & Busts", adp.all_time_section(), False),
     ]
-    if LIVE_ADP_BOARD:
-        sections.insert(0, ("board", "Draft Board - Live ADP by Site",
-                            upcoming.adp_board_section(), True))
-    nav = layout.section_nav([("teams", "Teams")] + [(a, title) for a, title, _, _ in sections])
-    body = layout.HEAD + upcoming.countdown_banner() + nav + (
-        '<h2 id="teams">Teams</h2>' + teams_section()) + "".join(
-        layout.details(title, html, open=is_open, anchor=a) for a, title, html, is_open in sections)
+    board = (layout.details("Draft Board - Live ADP by Site", upcoming.adp_board_section(),
+                            open=True, anchor="board") if LIVE_ADP_BOARD else "")
+    nav = layout.section_nav(([("board", "Draft Board")] if LIVE_ADP_BOARD else [])
+                             + [(a, title) for a, title, _ in inline]
+                             + [(a, title) for a, title, _, _ in sections])
+    body = (layout.HEAD + upcoming.countdown_banner() + nav + board
+            + "".join(f'<h2 id="{a}">{title}</h2>{html}' for a, title, html in inline)
+            + "".join(layout.details(title, html, open=is_open, anchor=a)
+                      for a, title, html, is_open in sections))
 
     page = add_front_matter(body, "Fantasy Football")
     output.parent.mkdir(parents=True, exist_ok=True)
