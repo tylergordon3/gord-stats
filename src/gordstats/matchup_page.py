@@ -113,9 +113,23 @@ table.mu-board td b.lead{color:#1a7f4b}
    already has the header above. */
 .mu-grid>div>.mu-who{display:none;font-weight:700;font-size:14px;margin:6px 0 4px}
 @media (max-width:1150px){.mu-grid>div>.mu-who{display:block}}
+/* On a phone the header keeps two columns, each side's score under its own
+   team - the layout the Yahoo and Sleeper apps use - with the win bar
+   spanning both beneath. Logo on top like an avatar, then the name, the big
+   number and the projection line, mirrored on the right. */
 @media (max-width:700px){
-  .mu-head{grid-template-columns:1fr}.mu-mid{display:none}
-  .mu-side.r{flex-direction:row;text-align:left}}
+  .mu-head{grid-template-columns:1fr 1fr;gap:10px;align-items:start}.mu-mid{display:none}
+  .mu-side{flex-direction:column;align-items:flex-start;gap:3px}
+  .mu-side.r{flex-direction:column;align-items:flex-end;text-align:right}
+  .mu-side>div{min-width:0;max-width:100%}
+  /* Names wrap to two lines rather than truncating, at a fixed height so
+     the two scores stay level whatever the names' lengths. */
+  .mu-side .nm{font-size:13.5px;max-width:100%;white-space:normal;overflow-wrap:anywhere;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    line-height:1.25;min-height:2.5em}
+  .mu-side .num{font-size:28px;line-height:1.05}
+  .mu-side .sub{white-space:normal;font-size:11px;line-height:1.3}
+  img.mu-tlogo{width:30px;height:30px}}
 
 /* ---- paired view: the two rosters as one column, for a phone ----
    Two six-column tables cannot sit side by side at 390px. They stack, which
