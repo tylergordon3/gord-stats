@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-13T05:20:34+00:00",
+ "fetched": "2026-09-13T05:25:01+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -18,7 +18,7 @@
      "name": "Puntaholics",
      "points": 151.8,
      "projected": 195.53,
-     "win_probability": 0.010000000000000009
+     "win_probability": 0.01
     },
     {
      "team_key": "474.l.21318.t.5",
@@ -46,7 +46,7 @@
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 181.86,
+     "points": 182.3,
      "projected": 181.73,
      "win_probability": 0.96
     }
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 170.22,
      "projected": 191.42,
-     "win_probability": 0.74
+     "win_probability": 0.76
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 161.36,
      "projected": 185.21,
-     "win_probability": 0.26
+     "win_probability": 0.24
     }
    ]
   },
@@ -85,7 +85,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 249.16,
+     "points": 249.56,
      "projected": 185.16,
      "win_probability": 0.99
     },
@@ -942,8 +942,8 @@
     "team": "UMD",
     "team_full": "Maryland Terrapins",
     "bye": 8.0,
-    "status": "D",
-    "status_full": "Doubtful",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
@@ -1067,9 +1067,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 30.24,
+    "points": 30.68,
     "stats": {
-     "4": 206.0,
+     "4": 217.0,
      "5": 4.0,
      "6": 1.0
     }
@@ -2188,10 +2188,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 6.9,
+    "points": 7.3,
     "stats": {
-     "8": 12.0,
-     "9": 69.0
+     "8": 14.0,
+     "9": 73.0
     }
    },
    {
@@ -2238,10 +2238,8 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 6.4,
+    "points": 6.5,
     "stats": {
-     "8": 1.0,
-     "9": -1.0,
      "11": 6.0,
      "12": 35.0
     }
