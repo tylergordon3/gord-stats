@@ -1,7 +1,7 @@
 {
  "week": 1,
  "year": 2026,
- "fetched": "2026-09-13T19:10:06+00:00",
+ "fetched": "2026-09-13T19:20:06+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -166,7 +166,7 @@
     {
      "roster_id": 10,
      "matchup_id": 1,
-     "points": 40.5,
+     "points": 48.8,
      "starters": [
       "8183",
       "8138",
@@ -200,15 +200,15 @@
       "11631": 7.0,
       "12015": 1.0,
       "12493": 0.0,
-      "12506": 1.9,
+      "12506": 4.1,
       "12529": 0.0,
       "13287": 0.0,
       "4046": 0.0,
       "5927": 0.0,
       "6794": 0.0,
       "7021": 1.3,
-      "8138": 5.2,
-      "8144": 7.0,
+      "8138": 5.6,
+      "8144": 12.7,
       "8183": 22.1,
       "9756": 0.0,
       "LAR": 2.0
@@ -222,7 +222,7 @@
     {
      "roster_id": 2,
      "matchup_id": 2,
-     "points": 103.02,
+     "points": 105.62,
      "starters": [
       "11564",
       "9509",
@@ -254,7 +254,7 @@
       "PHI"
      ],
      "players_points": {
-      "10236": 4.8,
+      "10236": 6.9,
       "11564": 12.82,
       "11581": 0.0,
       "11604": 0.0,
@@ -265,9 +265,9 @@
       "4037": 7.2,
       "5892": 19.0,
       "7569": 14.3,
-      "7594": 11.3,
+      "7594": 12.1,
       "8146": 13.9,
-      "9509": 23.0,
+      "9509": 23.5,
       "9754": 0.0,
       "PHI": 0.0
      }
@@ -275,7 +275,7 @@
     {
      "roster_id": 9,
      "matchup_id": 2,
-     "points": 78.8,
+     "points": 79.64,
      "starters": [
       "4984",
       "6813",
@@ -312,11 +312,11 @@
       "12481": 0.0,
       "12527": 0.0,
       "12534": 4.8,
-      "4984": 26.0,
+      "4984": 26.44,
       "5045": 0.0,
       "5846": 5.6,
       "5872": 18.0,
-      "6813": 19.3,
+      "6813": 19.7,
       "7525": 0.0,
       "7526": 0.0,
       "8110": 0.0,
@@ -368,7 +368,7 @@
       "3451": 3.0,
       "421": 5.1,
       "4881": 21.56,
-      "5967": 2.3,
+      "5967": 2.9,
       "6786": 0.0,
       "6790": 13.0,
       "7553": 0.0,
@@ -382,7 +382,7 @@
     {
      "roster_id": 6,
      "matchup_id": 3,
-     "points": 66.4,
+     "points": 63.4,
      "starters": [
       "12508",
       "4034",
@@ -427,7 +427,7 @@
       "8137": 0.0,
       "8259": 0.0,
       "9484": 0.0,
-      "BAL": 10.0
+      "BAL": 7.0
      }
     }
    ]
@@ -474,7 +474,7 @@
       "12514": 11.3,
       "12517": 0.0,
       "13286": 7.8,
-      "13298": 3.6,
+      "13298": 6.8,
       "2216": 16.9,
       "3198": 21.2,
       "5859": 5.6,
@@ -596,7 +596,7 @@
     {
      "roster_id": 3,
      "matchup_id": 5,
-     "points": 41.72,
+     "points": 48.12,
      "starters": [
       "6770",
       "7588",
@@ -635,15 +635,15 @@
       "13294": 0.0,
       "6770": 11.52,
       "7523": 26.1,
-      "7543": 1.9,
+      "7543": 4.2,
       "7564": 3.2,
       "7588": 0.0,
-      "8112": 1.8,
+      "8112": 4.9,
       "8130": 0.0,
       "8148": 5.3,
       "8408": 0.0,
       "9753": 0.0,
-      "JAX": 15.0
+      "JAX": 16.0
      }
     }
    ]
@@ -2394,7 +2394,7 @@
     "grade": "D"
    },
    "5850": {
-    "ecr": 129,
+    "ecr": 128,
     "grade": "F"
    },
    "7564": {
@@ -2810,14 +2810,14 @@
    "gp": 1.0
   },
   "4984": {
-   "pass_yd": 183.0,
+   "pass_yd": 190.0,
    "pass_td": 1.0,
    "rush_att": 4.0,
    "rush_yd": 24.0,
    "rush_td": 2.0,
-   "pts_ppr": 25.72,
-   "pts_half_ppr": 25.72,
-   "pts_std": 25.72,
+   "pts_ppr": 26.0,
+   "pts_half_ppr": 26.0,
+   "pts_std": 26.0,
    "gp": 1.0
   },
   "9221": {
@@ -2856,8 +2856,20 @@
    "pts_std": 22.1,
    "gp": 1.0
   },
+  "4881": {
+   "pass_yd": 239.0,
+   "pass_td": 1.0,
+   "rush_att": 3.0,
+   "rush_yd": 40.0,
+   "rush_td": 1.0,
+   "fum_lost": 1.0,
+   "pts_ppr": 21.56,
+   "pts_half_ppr": 21.56,
+   "pts_std": 21.56,
+   "gp": 1.0
+  },
   "3198": {
-   "rush_att": 11.0,
+   "rush_att": 12.0,
    "rush_yd": 63.0,
    "rush_td": 2.0,
    "rec": 1.0,
@@ -2868,16 +2880,23 @@
    "pts_std": 20.2,
    "gp": 1.0
   },
-  "4881": {
-   "pass_yd": 229.0,
-   "pass_td": 1.0,
-   "rush_att": 3.0,
-   "rush_yd": 40.0,
-   "rush_td": 1.0,
-   "fum_lost": 1.0,
-   "pts_ppr": 21.16,
-   "pts_half_ppr": 21.16,
-   "pts_std": 21.16,
+  "4983": {
+   "rec": 5.0,
+   "rec_tgt": 6.0,
+   "rec_yd": 100.0,
+   "rec_td": 1.0,
+   "pts_ppr": 21.0,
+   "pts_half_ppr": 18.5,
+   "pts_std": 16.0,
+   "gp": 1.0
+  },
+  "DET": {
+   "sack": 3.0,
+   "int": 2.0,
+   "fum_rec": 1.0,
+   "pts_ppr": 20.0,
+   "pts_half_ppr": 20.0,
+   "pts_std": 20.0,
    "gp": 1.0
   },
   "11646": {
@@ -2890,6 +2909,19 @@
    "pts_std": 15.7,
    "gp": 1.0
   },
+  "6813": {
+   "rush_att": 14.0,
+   "rush_yd": 58.0,
+   "rush_td": 2.0,
+   "rec": 2.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 15.0,
+   "fum_lost": 1.0,
+   "pts_ppr": 19.3,
+   "pts_half_ppr": 18.3,
+   "pts_std": 17.3,
+   "gp": 1.0
+  },
   "9487": {
    "rec": 5.0,
    "rec_tgt": 6.0,
@@ -2898,16 +2930,6 @@
    "pts_ppr": 19.3,
    "pts_half_ppr": 16.8,
    "pts_std": 14.3,
-   "gp": 1.0
-  },
-  "4983": {
-   "rec": 4.0,
-   "rec_tgt": 5.0,
-   "rec_yd": 93.0,
-   "rec_td": 1.0,
-   "pts_ppr": 19.3,
-   "pts_half_ppr": 17.3,
-   "pts_std": 15.3,
    "gp": 1.0
   },
   "5892": {
@@ -2934,6 +2956,18 @@
    "pts_std": 12.0,
    "gp": 1.0
   },
+  "8155": {
+   "rush_att": 16.0,
+   "rush_yd": 73.0,
+   "rush_td": 1.0,
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 16.0,
+   "pts_ppr": 16.9,
+   "pts_half_ppr": 15.9,
+   "pts_std": 14.9,
+   "gp": 1.0
+  },
   "2216": {
    "rec": 6.0,
    "rec_tgt": 7.0,
@@ -2944,17 +2978,27 @@
    "pts_std": 10.9,
    "gp": 1.0
   },
-  "6813": {
-   "rush_att": 11.0,
+  "7547": {
+   "rec": 6.0,
+   "rec_tgt": 8.0,
+   "rec_yd": 46.0,
+   "rec_td": 1.0,
+   "pts_ppr": 16.6,
+   "pts_half_ppr": 13.6,
+   "pts_std": 10.6,
+   "gp": 1.0
+  },
+  "11584": {
+   "rush_att": 6.0,
    "rush_yd": 32.0,
-   "rush_td": 2.0,
-   "rec": 2.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 15.0,
+   "rush_td": 1.0,
+   "rec": 5.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 33.0,
    "fum_lost": 1.0,
-   "pts_ppr": 16.7,
-   "pts_half_ppr": 15.7,
-   "pts_std": 14.7,
+   "pts_ppr": 15.5,
+   "pts_half_ppr": 13.0,
+   "pts_std": 10.5,
    "gp": 1.0
   },
   "8150": {
@@ -2969,27 +3013,6 @@
    "pts_std": 12.5,
    "gp": 1.0
   },
-  "11584": {
-   "rush_att": 6.0,
-   "rush_yd": 32.0,
-   "rush_td": 1.0,
-   "rec": 5.0,
-   "rec_tgt": 5.0,
-   "rec_yd": 32.0,
-   "fum_lost": 1.0,
-   "pts_ppr": 15.4,
-   "pts_half_ppr": 12.9,
-   "pts_std": 10.4,
-   "gp": 1.0
-  },
-  "DET": {
-   "sack": 1.0,
-   "int": 2.0,
-   "pts_ppr": 15.0,
-   "pts_half_ppr": 15.0,
-   "pts_std": 15.0,
-   "gp": 1.0
-  },
   "JAX": {
    "pts_allow": 3.0,
    "sack": 2.0,
@@ -2998,18 +3021,6 @@
    "pts_ppr": 15.0,
    "pts_half_ppr": 15.0,
    "pts_std": 15.0,
-   "gp": 1.0
-  },
-  "8155": {
-   "rush_att": 14.0,
-   "rush_yd": 49.0,
-   "rush_td": 1.0,
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 16.0,
-   "pts_ppr": 14.5,
-   "pts_half_ppr": 13.5,
-   "pts_std": 12.5,
    "gp": 1.0
   },
   "7611": {
@@ -3021,6 +3032,18 @@
    "pts_ppr": 14.5,
    "pts_half_ppr": 12.0,
    "pts_std": 9.5,
+   "gp": 1.0
+  },
+  "9224": {
+   "rush_att": 10.0,
+   "rush_yd": 43.0,
+   "rush_td": 1.0,
+   "rec": 3.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 11.0,
+   "pts_ppr": 14.4,
+   "pts_half_ppr": 12.9,
+   "pts_std": 11.4,
    "gp": 1.0
   },
   "7569": {
@@ -3035,6 +3058,15 @@
    "pts_std": 11.3,
    "gp": 1.0
   },
+  "8146": {
+   "rec": 6.0,
+   "rec_tgt": 7.0,
+   "rec_yd": 79.0,
+   "pts_ppr": 13.9,
+   "pts_half_ppr": 10.9,
+   "pts_std": 7.9,
+   "gp": 1.0
+  },
   "4034": {
    "rush_att": 10.0,
    "rush_yd": 68.0,
@@ -3046,16 +3078,13 @@
    "pts_std": 8.8,
    "gp": 1.0
   },
-  "9224": {
-   "rush_att": 10.0,
-   "rush_yd": 43.0,
+  "6790": {
+   "rush_att": 11.0,
+   "rush_yd": 70.0,
    "rush_td": 1.0,
-   "rec": 2.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 10.0,
-   "pts_ppr": 13.3,
-   "pts_half_ppr": 12.3,
-   "pts_std": 11.3,
+   "pts_ppr": 13.0,
+   "pts_half_ppr": 13.0,
+   "pts_std": 13.0,
    "gp": 1.0
   },
   "SEA": {
@@ -3067,6 +3096,15 @@
    "pts_std": 13.0,
    "gp": 1.0
   },
+  "8144": {
+   "rec": 4.0,
+   "rec_tgt": 7.0,
+   "rec_yd": 89.0,
+   "pts_ppr": 12.9,
+   "pts_half_ppr": 10.9,
+   "pts_std": 8.9,
+   "gp": 1.0
+  },
   "11564": {
    "pass_yd": 178.0,
    "pass_td": 1.0,
@@ -3076,25 +3114,6 @@
    "pts_ppr": 12.82,
    "pts_half_ppr": 12.82,
    "pts_std": 12.82,
-   "gp": 1.0
-  },
-  "6790": {
-   "rush_att": 10.0,
-   "rush_yd": 67.0,
-   "rush_td": 1.0,
-   "pts_ppr": 12.7,
-   "pts_half_ppr": 12.7,
-   "pts_std": 12.7,
-   "gp": 1.0
-  },
-  "6770": {
-   "pass_yd": 162.0,
-   "pass_td": 1.0,
-   "rush_att": 3.0,
-   "rush_yd": 20.0,
-   "pts_ppr": 12.48,
-   "pts_half_ppr": 12.48,
-   "pts_std": 12.48,
    "gp": 1.0
   },
   "9493": {
@@ -3118,6 +3137,39 @@
    "pts_std": 10.2,
    "gp": 1.0
   },
+  "11786": {
+   "fgm": 2.0,
+   "fga": 2.0,
+   "xpm": 4.0,
+   "xpa": 4.0,
+   "pts_ppr": 12.0,
+   "pts_half_ppr": 12.0,
+   "pts_std": 12.0,
+   "gp": 1.0
+  },
+  "6770": {
+   "pass_yd": 163.0,
+   "pass_td": 1.0,
+   "pass_int": 1.0,
+   "rush_att": 3.0,
+   "rush_yd": 20.0,
+   "pts_ppr": 11.52,
+   "pts_half_ppr": 11.52,
+   "pts_std": 11.52,
+   "gp": 1.0
+  },
+  "7594": {
+   "rush_att": 6.0,
+   "rush_yd": 24.0,
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 9.0,
+   "rec_td": 1.0,
+   "pts_ppr": 11.3,
+   "pts_half_ppr": 10.3,
+   "pts_std": 9.3,
+   "gp": 1.0
+  },
   "12514": {
    "rec": 5.0,
    "rec_tgt": 6.0,
@@ -3127,16 +3179,14 @@
    "pts_std": 6.3,
    "gp": 1.0
   },
-  "7594": {
-   "rush_att": 4.0,
-   "rush_yd": 17.0,
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 9.0,
-   "rec_td": 1.0,
-   "pts_ppr": 10.6,
-   "pts_half_ppr": 9.6,
-   "pts_std": 8.6,
+  "6650": {
+   "fgm": 2.0,
+   "fga": 2.0,
+   "xpm": 2.0,
+   "xpa": 2.0,
+   "pts_ppr": 10.0,
+   "pts_half_ppr": 10.0,
+   "pts_std": 10.0,
    "gp": 1.0
   },
   "BAL": {
@@ -3159,15 +3209,6 @@
    "pts_std": 10.0,
    "gp": 1.0
   },
-  "8146": {
-   "rec": 4.0,
-   "rec_tgt": 5.0,
-   "rec_yd": 51.0,
-   "pts_ppr": 9.1,
-   "pts_half_ppr": 7.1,
-   "pts_std": 5.1,
-   "gp": 1.0
-  },
   "PIT": {
    "pts_allow": 7.0,
    "sack": 2.0,
@@ -3175,6 +3216,17 @@
    "pts_ppr": 9.0,
    "pts_half_ppr": 9.0,
    "pts_std": 9.0,
+   "gp": 1.0
+  },
+  "12490": {
+   "rush_att": 11.0,
+   "rush_yd": 54.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 22.0,
+   "pts_ppr": 8.6,
+   "pts_half_ppr": 8.1,
+   "pts_std": 7.6,
    "gp": 1.0
   },
   "1945": {
@@ -3187,19 +3239,9 @@
    "pts_std": 8.0,
    "gp": 1.0
   },
-  "11786": {
-   "fgm": 1.0,
-   "fga": 1.0,
-   "xpm": 4.0,
-   "xpa": 4.0,
-   "pts_ppr": 8.0,
-   "pts_half_ppr": 8.0,
-   "pts_std": 8.0,
-   "gp": 1.0
-  },
   "10859": {
    "rec": 4.0,
-   "rec_tgt": 6.0,
+   "rec_tgt": 7.0,
    "rec_yd": 39.0,
    "pts_ppr": 7.9,
    "pts_half_ppr": 5.9,
@@ -3215,26 +3257,6 @@
    "pts_ppr": 7.8,
    "pts_half_ppr": 6.8,
    "pts_std": 5.8,
-   "gp": 1.0
-  },
-  "7547": {
-   "rec": 5.0,
-   "rec_tgt": 7.0,
-   "rec_yd": 27.0,
-   "pts_ppr": 7.7,
-   "pts_half_ppr": 5.2,
-   "pts_std": 2.7,
-   "gp": 1.0
-  },
-  "12490": {
-   "rush_att": 9.0,
-   "rush_yd": 43.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 22.0,
-   "pts_ppr": 7.5,
-   "pts_half_ppr": 7.0,
-   "pts_std": 6.5,
    "gp": 1.0
   },
   "4037": {
@@ -3260,15 +3282,6 @@
   "11631": {
    "rec": 3.0,
    "rec_tgt": 3.0,
-   "rec_yd": 40.0,
-   "pts_ppr": 7.0,
-   "pts_half_ppr": 5.5,
-   "pts_std": 4.0,
-   "gp": 1.0
-  },
-  "8144": {
-   "rec": 3.0,
-   "rec_tgt": 6.0,
    "rec_yd": 40.0,
    "pts_ppr": 7.0,
    "pts_half_ppr": 5.5,
@@ -3328,7 +3341,7 @@
   },
   "5846": {
    "rec": 3.0,
-   "rec_tgt": 6.0,
+   "rec_tgt": 7.0,
    "rec_yd": 26.0,
    "pts_ppr": 5.6,
    "pts_half_ppr": 4.1,
@@ -3353,6 +3366,18 @@
    "pts_std": 2.6,
    "gp": 1.0
   },
+  "8228": {
+   "rush_att": 7.0,
+   "rush_yd": 12.0,
+   "rec": 4.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 23.0,
+   "fum_lost": 1.0,
+   "pts_ppr": 5.5,
+   "pts_half_ppr": 3.5,
+   "pts_std": 1.5,
+   "gp": 1.0
+  },
   "13279": {
    "rec": 3.0,
    "rec_tgt": 4.0,
@@ -3370,6 +3395,15 @@
    "pts_std": 5.4,
    "gp": 1.0
   },
+  "8148": {
+   "rec": 3.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 23.0,
+   "pts_ppr": 5.3,
+   "pts_half_ppr": 3.8,
+   "pts_std": 2.3,
+   "gp": 1.0
+  },
   "8138": {
    "rush_att": 8.0,
    "rush_yd": 39.0,
@@ -3379,18 +3413,6 @@
    "pts_ppr": 5.2,
    "pts_half_ppr": 4.7,
    "pts_std": 4.2,
-   "gp": 1.0
-  },
-  "8228": {
-   "rush_att": 5.0,
-   "rush_yd": 8.0,
-   "rec": 4.0,
-   "rec_tgt": 5.0,
-   "rec_yd": 23.0,
-   "fum_lost": 1.0,
-   "pts_ppr": 5.1,
-   "pts_half_ppr": 3.1,
-   "pts_std": 1.1,
    "gp": 1.0
   },
   "421": {
@@ -3432,23 +3454,31 @@
    "pts_std": 3.8,
    "gp": 1.0
   },
-  "6650": {
-   "fgm": 1.0,
-   "fga": 1.0,
-   "xpm": 1.0,
-   "xpa": 1.0,
-   "pts_ppr": 4.0,
-   "pts_half_ppr": 4.0,
-   "pts_std": 4.0,
-   "gp": 1.0
-  },
-  "8148": {
+  "5012": {
    "rec": 2.0,
    "rec_tgt": 4.0,
-   "rec_yd": 17.0,
-   "pts_ppr": 3.7,
-   "pts_half_ppr": 2.7,
-   "pts_std": 1.7,
+   "rec_yd": 27.0,
+   "pts_ppr": 4.7,
+   "pts_half_ppr": 3.7,
+   "pts_std": 2.7,
+   "gp": 1.0
+  },
+  "8142": {
+   "rec": 2.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 24.0,
+   "pts_ppr": 4.4,
+   "pts_half_ppr": 3.4,
+   "pts_std": 2.4,
+   "gp": 1.0
+  },
+  "12506": {
+   "rec": 2.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 21.0,
+   "pts_ppr": 4.1,
+   "pts_half_ppr": 3.1,
+   "pts_std": 2.1,
    "gp": 1.0
   },
   "13298": {
@@ -3499,6 +3529,14 @@
    "pts_std": 2.1,
    "gp": 1.0
   },
+  "11539": {
+   "xpm": 3.0,
+   "xpa": 3.0,
+   "pts_ppr": 3.0,
+   "pts_half_ppr": 3.0,
+   "pts_std": 3.0,
+   "gp": 1.0
+  },
   "3451": {
    "xpm": 3.0,
    "xpa": 3.0,
@@ -3507,13 +3545,15 @@
    "pts_std": 3.0,
    "gp": 1.0
   },
-  "5012": {
+  "7567": {
+   "rush_att": 5.0,
+   "rush_yd": 15.0,
    "rec": 1.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 17.0,
-   "pts_ppr": 2.7,
-   "pts_half_ppr": 2.2,
-   "pts_std": 1.7,
+   "rec_tgt": 1.0,
+   "rec_yd": 3.0,
+   "pts_ppr": 2.8,
+   "pts_half_ppr": 2.3,
+   "pts_std": 1.8,
    "gp": 1.0
   },
   "12512": {
@@ -3525,17 +3565,6 @@
    "pts_ppr": 2.6,
    "pts_half_ppr": 2.1,
    "pts_std": 1.6,
-   "gp": 1.0
-  },
-  "7567": {
-   "rush_att": 4.0,
-   "rush_yd": 11.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 3.0,
-   "pts_ppr": 2.4,
-   "pts_half_ppr": 1.9,
-   "pts_std": 1.4,
    "gp": 1.0
   },
   "12526": {
@@ -3556,15 +3585,6 @@
    "pts_std": 0.4,
    "gp": 1.0
   },
-  "8142": {
-   "rec": 1.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 13.0,
-   "pts_ppr": 2.3,
-   "pts_half_ppr": 1.8,
-   "pts_std": 1.3,
-   "gp": 1.0
-  },
   "5967": {
    "rush_att": 4.0,
    "rush_yd": 14.0,
@@ -3574,14 +3594,6 @@
    "pts_ppr": 2.3,
    "pts_half_ppr": 1.8,
    "pts_std": 1.3,
-   "gp": 1.0
-  },
-  "11539": {
-   "xpm": 2.0,
-   "xpa": 2.0,
-   "pts_ppr": 2.0,
-   "pts_half_ppr": 2.0,
-   "pts_std": 2.0,
    "gp": 1.0
   },
   "LAR": {
@@ -3605,7 +3617,7 @@
   },
   "8112": {
    "rec": 1.0,
-   "rec_tgt": 1.0,
+   "rec_tgt": 2.0,
    "rec_yd": 8.0,
    "pts_ppr": 1.8,
    "pts_half_ppr": 1.3,
@@ -3644,10 +3656,6 @@
    "rec_tgt": 1.0,
    "gp": 1.0
   },
-  "12506": {
-   "rec_tgt": 1.0,
-   "gp": 1.0
-  },
   "7002": {
    "rec_tgt": 1.0,
    "gp": 1.0
@@ -3668,7 +3676,7 @@
    "game_id": "401872925",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "2:16 - 3rd",
+   "detail": "1:37 - 3rd",
    "period": null,
    "clock": null,
    "home": "CIN",
@@ -3685,13 +3693,13 @@
    "game_id": "401872923",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "8:54 - 3rd",
+   "detail": "4:22 - 3rd",
    "period": null,
    "clock": null,
    "home": "DET",
    "away": "NO",
    "home_score": 21.0,
-   "away_score": 0.0,
+   "away_score": 7.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -3702,7 +3710,7 @@
    "game_id": "401872924",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "4:33 - 3rd",
+   "detail": "1:05 - 3rd",
    "period": null,
    "clock": null,
    "home": "TEN",
@@ -3719,12 +3727,12 @@
    "game_id": "401872659",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "10:11 - 3rd",
+   "detail": "4:55 - 3rd",
    "period": null,
    "clock": null,
    "home": "IND",
    "away": "BAL",
-   "home_score": 13.0,
+   "home_score": 16.0,
    "away_score": 31.0,
    "home_implied": null,
    "away_implied": null,
@@ -3736,7 +3744,7 @@
    "game_id": "401872658",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "9:19 - 3rd",
+   "detail": "5:04 - 3rd",
    "period": null,
    "clock": null,
    "home": "PIT",
@@ -3753,7 +3761,7 @@
    "game_id": "401872661",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "11:28 - 3rd",
+   "detail": "9:16 - 3rd",
    "period": null,
    "clock": null,
    "home": "CAR",
@@ -3770,7 +3778,7 @@
    "game_id": "401872922",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "0:50 - 3rd",
+   "detail": "10:39 - 4th",
    "period": null,
    "clock": null,
    "home": "JAX",
@@ -3787,13 +3795,13 @@
    "game_id": "401872660",
    "date": "2026-09-13T17:00Z",
    "state": "in",
-   "detail": "7:58 - 3rd",
+   "detail": "4:13 - 3rd",
    "period": null,
    "clock": null,
    "home": "HOU",
    "away": "BUF",
    "home_score": 21.0,
-   "away_score": 24.0,
+   "away_score": 27.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
