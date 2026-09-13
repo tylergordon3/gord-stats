@@ -452,6 +452,21 @@ function muLiveProjections(payload,games){
       if(g&&g.state!=='pre')p.live=e;}
     if(any)t.gs_live=total;}
   return payload;}
+// The week's median for a page whose feed brings only points: of the sides'
+// points once anyone has scored, of the live expected totals as the
+// projection, and each side's margin against whichever applies.
+function muMedian(payload){
+  var teams=(payload&&payload.teams)||{};var ks=Object.keys(teams);if(ks.length<2)return payload;
+  function median(a){a=a.slice().sort(function(x,y){return x-y;});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
+  var pts=ks.map(function(k){return teams[k].points;}).filter(function(v){return v!==null&&v!==undefined;});
+  var projs=ks.map(function(k){return teams[k].gs_live;}).filter(function(v){return v!==null&&v!==undefined;});
+  var started=pts.some(function(p){return p>0;});
+  var medNow=(started&&pts.length===ks.length)?median(pts):null;
+  var medProj=projs.length===ks.length?median(projs):null;
+  ks.forEach(function(k){var t=teams[k];
+    if(medNow!==null&&t.points!==null&&t.points!==undefined)t.vs_median=t.points-medNow;
+    else if(medProj!==null&&t.gs_live!==null&&t.gs_live!==undefined)t.vs_median=t.gs_live-medProj;});
+  payload.median={now:medNow,proj:medProj};return payload;}
 function muMergeGames(payload,games){
   var teams=(payload&&payload.teams)||{};
   var els=document.querySelectorAll('[data-pid][data-gid]');

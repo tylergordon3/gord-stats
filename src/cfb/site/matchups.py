@@ -432,7 +432,8 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     return html, sides
 
 
-def week_board(rows: list[tuple], started: bool, final: bool) -> str:
+def week_board(rows: list[tuple], started: bool, final: bool,
+               med_now=None, med_proj=None) -> str:
     """The scoreboard: one row per matchup linking down to the full view.
 
     Per side: the points (once games are on), the GordStats projection and
@@ -449,32 +450,48 @@ def week_board(rows: list[tuple], started: bool, final: bool) -> str:
             attr = (f' data-sb="{escape(s["key"])}" data-val="{v if v is not None else ""}"'
                     if key == "pts" else ' class="mu-proj"')
             return f"<td{attr}>{'<b class=lead>' if lead else ''}{ui.fmt(v)}{'</b>' if lead else ''}</td>"
+
+        def med(s):
+            v = s.get("med")
+            cls = "" if v is None else ("mu-med-up" if v > 0 else "mu-med-down" if v < 0 else "")
+            return (f'<td class="{cls}" data-vsmed="{escape(s["key"])}">'
+                    f'{"—" if v is None else f"{v:+.1f}"}</td>')
         cells.append(
             f'<tr><td class="mu-t"><a href="#{anchor}" title="{escape(a["name"])}">'
             f'{_team_logo(a["team"])}{escape(a["name"])}</a></td>'
             + (num(a, b, "pts") if started else "")
-            + num(a, b, "gs")
+            + num(a, b, "gs") + med(a)
             + (f"<td>{ui.fmt((a['wp'] or 0) * 100, 0)}%</td>" if not final else "")
             + '<td class="mu-vs">vs</td>'
             + (f"<td>{ui.fmt((b['wp'] or 0) * 100, 0)}%</td>" if not final else "")
-            + num(b, a, "gs")
+            + med(b) + num(b, a, "gs")
             + (num(b, a, "pts") if started else "")
             + f'<td class="mu-t r"><a href="#{anchor}" title="{escape(b["name"])}">'
               f'{escape(b["name"])}{_team_logo(b["team"])}</a></td></tr>')
     pts_h = "<th>Pts</th>" if started else ""
     wp_h = "<th title='Yahoo win probability'>Win%</th>" if not final else ""
     proj_h = "<th class='mu-proj' title='GordStats projected total for the lineup as set'>Proj</th>"
+    med_h = ("<th title='Margin against the week\'s median score - the league\'s second game "
+             "each week'>Med</th>")
+    strip = ""
+    if med_proj is not None:
+        strip = ('<p class="mu-median"><b>Week median</b> '
+                 + (f'<span data-median-now>{ui.fmt(med_now)}</span> now · ' if started else "")
+                 + f'<span data-median-proj>{ui.fmt(med_proj)}</span> projected'
+                 " - every team also plays the median each week; <b>Med</b> is the margin "
+                 "against it" + (", live" if started else ", on projection") + ".</p>")
     # Once games are on, a narrow screen drops the projection columns (the
     # matchup headers carry them) so the names keep their room.
     cards = ui.board_cards(
         [(anchor, {"name": escape(a["name"]), "logo": _team_logo(a["team"]), "key": a["key"],
-                   "pts": a["pts"], "gs": a["gs"], "wp": a["wp"]},
+                   "pts": a["pts"], "gs": a["gs"], "wp": a["wp"], "med": a.get("med")},
           {"name": escape(b["name"]), "logo": _team_logo(b["team"]), "key": b["key"],
-           "pts": b["pts"], "gs": b["gs"], "wp": b["wp"]}) for anchor, a, b in rows],
+           "pts": b["pts"], "gs": b["gs"], "wp": b["wp"], "med": b.get("med")})
+         for anchor, a, b in rows],
         started, final)
-    return (cards + f'<div class="mu-board-wrap"><div class="table-scroll"><table class="mu-board{" started" if started else ""}"><thead><tr>'
-            f"<th>Team</th>{pts_h}{proj_h}{wp_h}"
-            f"<th></th>{wp_h}{proj_h}{pts_h}<th>Team</th>"
+    return (strip + cards + f'<div class="mu-board-wrap"><div class="table-scroll"><table class="mu-board{" started" if started else ""}"><thead><tr>'
+            f"<th>Team</th>{pts_h}{proj_h}{med_h}{wp_h}"
+            f"<th></th>{wp_h}{med_h}{proj_h}{pts_h}<th>Team</th>"
             f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div></div>')
 
 
@@ -497,6 +514,15 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
                                       by_team=by_team)
         sections.append(html)
         rows.append((anchor, sides[0], sides[1]))
+    # The league plays a second game each week against the median score: the
+    # median of the live totals once games are on, of the projections before,
+    # and every side's margin against whichever applies.
+    import statistics
+    every = [s for _, a, b in rows for s in (a, b)]
+    med_proj = statistics.median(s["gs"] for s in every) if every else None
+    med_now = statistics.median((s["pts"] or 0.0) for s in every) if (every and started) else None
+    for s in every:
+        s["med"] = ((s["pts"] or 0.0) - med_now) if started else (s["gs"] - med_proj)
     state = ("Final" if final else "In progress" if started else "Not started")
     fetched = data.get("fetched")
     asof = ""
@@ -513,12 +539,12 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
             f"{week}&_='+Date.now()).then(function(r){{return r.json();}}).catch(function(){{return {{teams:{{}}}};}});"
             "var sb=muGames('https://site.api.espn.com/apis/site/v2/sports/football/college-football/"
             f"scoreboard?groups=80&limit=500&dates={start:%Y%m%d}-{end:%Y%m%d}');"
-            "return Promise.all([api,sb]).then(function(x){return muLiveProjections(muMergeGames(x[0],x[1]),x[1]);});},"
+            "return Promise.all([api,sb]).then(function(x){return muMedian(muLiveProjections(muMergeGames(x[0],x[1]),x[1]));});},"
             f"interval:{60000 if started else 300000}}};</script>")
     return (f"<p><strong>Week {week}</strong> · {start:%b %-d} – {end:%b %-d}"
             + (" (playoffs)" if data.get("is_playoffs") else "")
             + f" · {state}{asof}</p>"
-            + week_board(rows, started, final) + "".join(sections) + live)
+            + week_board(rows, started, final, med_now, med_proj) + "".join(sections) + live)
 
 
 def body() -> str:
@@ -548,7 +574,9 @@ def body() -> str:
         "projection for the week: each player's season projection spread over "
         "his school's games, tilted by what the game model expects of this "
         "week's game, and zero on a bye. <b>Pts</b> is the points actually scored "
-        "so far, as Yahoo scores them, with the stat line behind them. Yahoo projects a team "
+        "so far, as Yahoo scores them, with the stat line behind them. <b>Med</b> is each "
+        "team's margin against the week's median score - the league plays a second game "
+        "against it every week - live once games are on, on projection before. Yahoo projects a team "
         "total but no player-by-player number for the college game, so the "
         "player column is ours alone; a player past the board's depth shows "
         "&mdash; there but still plays. While games are on, points, stat lines "
