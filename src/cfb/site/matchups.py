@@ -198,9 +198,10 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
            "out": '<span class="mu-hint out" title="A bench player projects higher">sit</span>'
            }.get(hint, "")
     return (f'<tr class="{"bench" if bench else "starter"}{_live_attrs(g)[0]}" '
-            f'data-pid="{escape(pid)}"{_live_attrs(g)[1]}>'
+            f'data-pid="{escape(pid)}"{_live_attrs(g)[1]}'
+            f' data-proj="{"" if proj is None or pd.isna(proj) else round(float(proj), 2)}">'
             f"<td class=\"mu-pts\"><b>{ui.fmt(p.get('points'))}</b></td>"
-            f"<td>{ui.fmt(proj)}</td>"
+            f"<td class=\"mu-gs\">{ui.fmt(proj)}</td>"
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
             f'<td class="mu-p"><span class="mu-pc"><span class="nm">'
             f'{_school_logo(p["team_full"], to_school, espn)}{escape(p["player"])}</span> '
@@ -246,7 +247,8 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
     rows = [player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
             for p in starters]
     rows.append(f'<tr class="total"><td class="mu-pts" data-tpts="{escape(key)}">{pts_total:.1f}</td>'
-                f'<td>{proj_total:.1f}</td><td></td><td class="mu-p">Starters</td>'
+                f'<td class="mu-gs" data-tgs="{escape(key)}">{proj_total:.1f}</td><td></td>'
+                '<td class="mu-p">Starters</td>'
                 "<td></td><td></td></tr>")
     if bench:
         rows.append('<tr class="sep"><td colspan="6">Bench</td></tr>')
@@ -310,7 +312,8 @@ def _pair_cell(p: dict | None, key: str, to_school: dict, espn: dict,
     tag = {"in": '<span class="mu-hint in">start</span>',
            "out": '<span class="mu-hint out">sit</span>'}.get(hint, "")
     live, attrs = _live_attrs(game)
-    return (f'<div class="mu-pp{live}" data-roster="{escape(key)}" data-pid="{escape(p["yahoo_id"])}"{attrs}>'
+    return (f'<div class="mu-pp{live}" data-roster="{escape(key)}" data-pid="{escape(p["yahoo_id"])}"{attrs}'
+            f' data-proj="{"" if proj is None or pd.isna(proj) else round(float(proj), 2)}">'
             f'<div class="mu-pn">'
             f'<span class="nm" title="{escape(p["player"])}">'
             f'{_school_logo(p["team_full"], to_school, espn)}'
@@ -398,7 +401,8 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     def side_html(s, which):
         big = ui.fmt(s["pts"]) if started else ui.fmt(s["gs"])
         cls = " lead" if lead == which else ""
-        sub = (f"GordStats <b>{ui.fmt(s['gs'])}</b> · Yahoo <b>{ui.fmt(s['yproj'])}</b>"
+        sub = (f"GordStats <b data-tgs='{escape(s['key'])}'>{ui.fmt(s['gs'])}</b> · "
+               f"Yahoo <b>{ui.fmt(s['yproj'])}</b>"
                if started else f"projected · Yahoo <b>{ui.fmt(s['yproj'])}</b>")
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_team_logo(s["team"])}'
                 f'<div><div class="nm">{escape(s["name"])}'
@@ -509,7 +513,7 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
             f"{week}&_='+Date.now()).then(function(r){{return r.json();}}).catch(function(){{return {{teams:{{}}}};}});"
             "var sb=muGames('https://site.api.espn.com/apis/site/v2/sports/football/college-football/"
             f"scoreboard?groups=80&limit=500&dates={start:%Y%m%d}-{end:%Y%m%d}');"
-            "return Promise.all([api,sb]).then(function(x){return muMergeGames(x[0],x[1]);});},"
+            "return Promise.all([api,sb]).then(function(x){return muLiveProjections(muMergeGames(x[0],x[1]),x[1]);});},"
             f"interval:{60000 if started else 300000}}};</script>")
     return (f"<p><strong>Week {week}</strong> · {start:%b %-d} – {end:%b %-d}"
             + (" (playoffs)" if data.get("is_playoffs") else "")

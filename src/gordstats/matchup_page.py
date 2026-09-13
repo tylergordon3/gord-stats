@@ -426,8 +426,32 @@ function muGames(url){
     var games={};(d.events||[]).forEach(function(e){var c=(e.competitions||[])[0];if(!c)return;var st=c.status||{};
       var home=null,away=null;(c.competitors||[]).forEach(function(x){if(x.homeAway==='home')home=x;else away=x;});
       games[String(e.id)]={state:(st.type||{}).state||'pre',detail:(st.type||{}).shortDetail,
-        home:home&&home.score,away:away&&away.score};});
+        period:st.period,clock:st.displayClock,home:home&&home.score,away:away&&away.score};});
     return games;}).catch(function(){return {};});}
+function muElapsed(g){
+  if(!g||g.state==='pre')return 0;if(g.state==='post')return 1;if(!g.period)return .5;if(g.period>4)return .95;
+  var m=String(g.clock||'0:00').split(':'),left=(parseInt(m[0],10)||0)+((parseInt(m[1],10)||0)/60);
+  return Math.min(Math.max(((g.period-1)*15+(15-left))/60,0),1);}
+// Expected finals from the rows themselves: each starter's points so far plus
+// the unplayed share of the projection on his row (data-proj), by his game's
+// clock; the side's total follows. Written into the payload as players[pid].live
+// and teams[key].gs_live, which the live updater already knows how to draw.
+function muLiveProjections(payload,games){
+  var teams=(payload&&payload.teams)||{};
+  var wraps=document.querySelectorAll('[data-roster]');
+  for(var i=0;i<wraps.length;i++){var wrap=wraps[i],key=wrap.getAttribute('data-roster'),t=teams[key];
+    if(!t||!t.players)continue;
+    var rows=wrap.querySelectorAll('tr.starter[data-pid]');if(!rows.length)continue;
+    var total=0,any=false;
+    for(var j=0;j<rows.length;j++){var tr=rows[j],pid=tr.getAttribute('data-pid'),p=t.players[pid];
+      var proj=parseFloat(tr.getAttribute('data-proj'));if(isNaN(proj))proj=0;
+      var g=games[tr.getAttribute('data-gid')],done=muElapsed(g);
+      var pts=(p&&p.points!==undefined&&p.points!==null)?p.points:null;
+      if(pts===null){total+=proj*(1-done);continue;}
+      var e=pts+proj*(1-done);total+=e;any=true;
+      if(g&&g.state!=='pre')p.live=e;}
+    if(any)t.gs_live=total;}
+  return payload;}
 function muMergeGames(payload,games){
   var teams=(payload&&payload.teams)||{};
   var els=document.querySelectorAll('[data-pid][data-gid]');
