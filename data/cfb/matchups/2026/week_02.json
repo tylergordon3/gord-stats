@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-13T03:46:13+00:00",
+ "fetched": "2026-09-13T03:50:09+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 143.08,
      "projected": 191.42,
-     "win_probability": 0.39
+     "win_probability": 0.4
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 142.86,
      "projected": 185.21,
-     "win_probability": 0.61
+     "win_probability": 0.6
     }
    ]
   },
