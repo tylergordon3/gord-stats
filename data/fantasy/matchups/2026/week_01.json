@@ -1,7 +1,7 @@
 {
  "week": 1,
  "year": 2026,
- "fetched": "2026-09-13T23:20:12+00:00",
+ "fetched": "2026-09-13T23:30:06+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -166,7 +166,7 @@
     {
      "roster_id": 10,
      "matchup_id": 1,
-     "points": 107.7,
+     "points": 111.1,
      "starters": [
       "8183",
       "8138",
@@ -199,12 +199,12 @@
      "players_points": {
       "11631": 7.0,
       "12015": 1.0,
-      "12493": 3.6,
+      "12493": 5.2,
       "12506": 4.1,
       "12529": 0.0,
       "13287": 13.0,
       "4046": 0.0,
-      "5927": 0.0,
+      "5927": 3.4,
       "6794": 23.3,
       "7021": 4.1,
       "8138": 9.9,
@@ -222,7 +222,7 @@
     {
      "roster_id": 2,
      "matchup_id": 2,
-     "points": 150.12,
+     "points": 151.12,
      "starters": [
       "11564",
       "9509",
@@ -258,10 +258,10 @@
       "11564": 12.82,
       "11581": 3.7,
       "11604": 0.0,
-      "12533": 12.4,
+      "12533": 12.6,
       "13279": 7.8,
       "1945": 8.0,
-      "2449": 12.8,
+      "2449": 15.5,
       "4037": 8.3,
       "5892": 28.9,
       "7569": 21.2,
@@ -269,13 +269,13 @@
       "8146": 13.9,
       "9509": 31.3,
       "9754": 3.7,
-      "PHI": 4.0
+      "PHI": 5.0
      }
     },
     {
      "roster_id": 9,
      "matchup_id": 2,
-     "points": 130.46,
+     "points": 130.56,
      "starters": [
       "4984",
       "6813",
@@ -310,7 +310,7 @@
       "11533": 0.0,
       "11563": 0.0,
       "12481": 0.0,
-      "12527": 32.6,
+      "12527": 32.7,
       "12534": 20.4,
       "4984": 35.66,
       "5045": 0.0,
@@ -331,7 +331,7 @@
     {
      "roster_id": 5,
      "matchup_id": 3,
-     "points": 139.66,
+     "points": 141.16,
      "starters": [
       "4881",
       "9226",
@@ -375,7 +375,7 @@
       "8142": 10.1,
       "8150": 15.5,
       "8167": 30.1,
-      "9226": 9.1,
+      "9226": 10.6,
       "SEA": 13.0
      }
     },
@@ -413,7 +413,7 @@
       "BAL"
      ],
      "players_points": {
-      "10222": 1.6,
+      "10222": 3.3,
       "11584": 20.3,
       "11620": 7.2,
       "12507": 8.3,
@@ -438,7 +438,7 @@
     {
      "roster_id": 4,
      "matchup_id": 4,
-     "points": 132.78,
+     "points": 134.02,
      "starters": [
       "11566",
       "9221",
@@ -469,7 +469,7 @@
       "LAC"
      ],
      "players_points": {
-      "11566": 12.38,
+      "11566": 13.62,
       "12501": 10.7,
       "12514": 11.3,
       "12517": 0.0,
@@ -489,7 +489,7 @@
     {
      "roster_id": 7,
      "matchup_id": 4,
-     "points": 112.38,
+     "points": 113.06,
      "starters": [
       "6797",
       "9224",
@@ -527,9 +527,9 @@
       "12518": 10.3,
       "13417": 0.0,
       "2747": 7.0,
-      "6797": 13.58,
+      "6797": 14.26,
       "8126": 8.8,
-      "8132": 8.9,
+      "8132": 9.0,
       "8228": 10.3,
       "9224": 18.8,
       "9487": 19.3,
@@ -596,7 +596,7 @@
     {
      "roster_id": 3,
      "matchup_id": 5,
-     "points": 104.36,
+     "points": 104.26,
      "starters": [
       "6770",
       "7588",
@@ -639,9 +639,9 @@
       "7564": 3.2,
       "7588": 0.0,
       "8112": 5.5,
-      "8130": 24.6,
+      "8130": 24.5,
       "8148": 8.5,
-      "8408": 5.2,
+      "8408": 11.6,
       "9753": 0.0,
       "JAX": 15.0
      }
@@ -4016,8 +4016,8 @@
   {
    "game_id": "401872928",
    "date": "2026-09-13T20:25Z",
-   "state": "in",
-   "detail": "3:09 - 4th",
+   "state": "post",
+   "detail": "Final",
    "period": null,
    "clock": null,
    "home": "LV",
@@ -4034,12 +4034,12 @@
    "game_id": "401872927",
    "date": "2026-09-13T20:25Z",
    "state": "in",
-   "detail": "5:01 - 4th",
+   "detail": "3:55 - 4th",
    "period": null,
    "clock": null,
    "home": "MIN",
    "away": "GB",
-   "home_score": 25.0,
+   "home_score": 39.0,
    "away_score": 22.0,
    "home_implied": null,
    "away_implied": null,
@@ -4051,35 +4051,18 @@
    "game_id": "401872929",
    "date": "2026-09-13T20:25Z",
    "state": "in",
-   "detail": "4:13 - 4th",
+   "detail": "1:01 - 4th",
    "period": null,
    "clock": null,
    "home": "PHI",
    "away": "WAS",
    "home_score": 24.0,
-   "away_score": 16.0,
+   "away_score": 22.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "FOX"
-  },
-  {
-   "game_id": "401872926",
-   "date": "2026-09-13T20:25Z",
-   "state": "in",
-   "detail": "2:04 - 4th",
-   "period": null,
-   "clock": null,
-   "home": "LAC",
-   "away": "ARI",
-   "home_score": 14.0,
-   "away_score": 26.0,
-   "home_implied": null,
-   "away_implied": null,
-   "spread": null,
-   "total": null,
-   "tv": "CBS"
   },
   {
    "game_id": "401872925",
@@ -4211,6 +4194,23 @@
    "away": "BUF",
    "home_score": 31.0,
    "away_score": 36.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
+   "tv": "CBS"
+  },
+  {
+   "game_id": "401872926",
+   "date": "2026-09-13T20:25Z",
+   "state": "post",
+   "detail": "Final",
+   "period": null,
+   "clock": null,
+   "home": "LAC",
+   "away": "ARI",
+   "home_score": 14.0,
+   "away_score": 26.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
