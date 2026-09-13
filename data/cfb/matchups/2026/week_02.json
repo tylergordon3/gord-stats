@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-13T05:43:16+00:00",
+ "fetched": "2026-09-13T06:10:13+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -16,7 +16,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 152.1,
+     "points": 153.3,
      "projected": 195.53,
      "win_probability": 0.01
     },
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 170.22,
      "projected": 191.42,
-     "win_probability": 0.8300000000000001
+     "win_probability": 0.99
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 161.36,
      "projected": 185.21,
-     "win_probability": 0.16999999999999993
+     "win_probability": 0.010000000000000009
     }
    ]
   },
@@ -85,7 +85,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 249.56,
+     "points": 261.06,
      "projected": 185.16,
      "win_probability": 0.99
     },
@@ -278,10 +278,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 4.5,
+    "points": 5.7,
     "stats": {
-     "8": 8.0,
-     "9": 35.0,
+     "8": 10.0,
+     "9": 47.0,
      "11": 1.0,
      "12": 5.0
     }
@@ -672,8 +672,8 @@
     "team": "TCU",
     "team_full": "TCU Horned Frogs",
     "bye": 6.0,
-    "status": "O",
-    "status_full": "Out",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Foot",
     "slot": "BN",
     "points": 0.0,
@@ -2188,10 +2188,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 7.3,
+    "points": 18.8,
     "stats": {
-     "8": 14.0,
-     "9": 73.0
+     "8": 18.0,
+     "9": 128.0,
+     "10": 1.0
     }
    },
    {
