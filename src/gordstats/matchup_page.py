@@ -53,6 +53,12 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-cs .num.proj{font-weight:600;color:#475569}
 .mu-cs .wp{min-width:36px;text-align:right;font-size:12px;color:#64748b;
   font-variant-numeric:tabular-nums}
+.mu-cs .med{min-width:40px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;
+  color:#64748b}
+/* Against the median: green above it, red below, on the cards and in the table. */
+.mu-med-up{color:#1a7f4b!important}
+.mu-med-down{color:#b3382c!important}
+.mu-median{font-size:13px;color:#475569;margin:2px 0 8px}
 @media (max-width:700px){
   .mu-board-wrap{display:none}
   .mu-cards{display:block;margin:6px 0 12px}
@@ -278,7 +284,9 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   .mu-card{background:#16203a;border-color:#2b3852}
   .mu-cs+.mu-cs{border-color:#2b3852}
   .mu-cs .num.proj{color:#c5cfdc}
-  .mu-cs .wp{color:#aab7c9}
+  .mu-cs .wp,.mu-cs .med,.mu-median{color:#aab7c9}
+  .mu-med-up{color:#6ee7b7!important}
+  .mu-med-down{color:#ff9b91!important}
   table.mu-board td b.lead,.mu-side .num.lead,.mu-swap b{color:#8ff0bd}
   table.mu-roster tr.bench td{background:#1b2540;color:#aab7c9}
   table.mu-roster tr.sep td{background:#223052;color:#aab7c9}
@@ -376,8 +384,12 @@ def board_cards(rows: list, started: bool, final: bool) -> str:
             wp = s.get("wp")
             wp_html = ("" if final or wp is None else
                        f'<span class="wp" data-wpl="{s["key"]}">{wp * 100:.0f}%</span>')
+            med = s.get("med")
+            med_html = ("" if med is None else
+                        f'<span class="med {"mu-med-up" if med > 0 else "mu-med-down" if med < 0 else ""}" '
+                        f'data-vsmed="{s["key"]}" title="against the week\'s median">{med:+.1f}</span>')
             return (f'<div class="mu-cs">{s.get("logo") or ""}<span class="nm">{s["name"]}</span>'
-                    f"{num}{wp_html}</div>")
+                    f"{num}{med_html}{wp_html}</div>")
         cards.append(f'<a class="mu-card" href="#{anchor}">{side(a)}{side(b)}</a>')
     return f'<div class="mu-cards">{"".join(cards)}</div>'
 
@@ -475,6 +487,9 @@ LIVE_JS = """<script>
       each('[data-sb="'+key+'"]',function(el){el.innerHTML=fmt(pts);el.setAttribute('data-val',pts);});
       each('[data-tpts="'+key+'"]',function(el){el.textContent=fmt(pts);});
       if(t.gs_live!==undefined&&t.gs_live!==null){each('[data-tgs="'+key+'"]',function(el){el.textContent=fmt(t.gs_live);el.classList.add('live');});}
+      if(t.vs_median!==undefined&&t.vs_median!==null){each('[data-vsmed="'+key+'"]',function(el){
+        var v=t.vs_median;el.textContent=(v>0?'+':'')+(Math.round(v*10)/10).toFixed(1);
+        el.classList.toggle('mu-med-up',v>0);el.classList.toggle('mu-med-down',v<0);});}
       if(t.win_probability!==null&&t.win_probability!==undefined){
         var pc=(t.win_probability*100).toFixed(0)+'%';
         each('[data-wp="'+key+'"]',function(el){el.style.width=pc;});
@@ -498,6 +513,10 @@ LIVE_JS = """<script>
       cells[0].innerHTML=a>b?'<b class=lead>'+fmt(a)+'</b>':fmt(a);
       cells[1].innerHTML=b>a?'<b class=lead>'+fmt(b)+'</b>':fmt(b);
     });
+    if(data.median){
+      if(data.median.now!==null&&data.median.now!==undefined)each('[data-median-now]',function(el){el.textContent=fmt(data.median.now);});
+      if(data.median.proj!==null&&data.median.proj!==undefined)each('[data-median-proj]',function(el){el.textContent=fmt(data.median.proj);});
+    }
     var d=new Date();var h=d.getHours()%12||12,mn=('0'+d.getMinutes()).slice(-2);
     each('.mu-asof',function(el){el.textContent=' \u00b7 live, points as of '+h+':'+mn+(d.getHours()<12?' AM':' PM');});
     return true;

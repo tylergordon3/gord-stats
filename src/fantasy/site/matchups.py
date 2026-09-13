@@ -527,35 +527,51 @@ def win_probability(exp_a: float, var_a: float, exp_b: float, var_b: float) -> f
     return 0.5 * (1 + erf(((exp_a - exp_b) / sd) / sqrt(2)))
 
 
-def week_board(rows: list, started: bool) -> str:
+def week_board(rows: list, started: bool, med_now=None, med_proj=None) -> str:
     def num(s, o, key):
         v, ov = s.get(key), o.get(key)
         lead = v is not None and ov is not None and v > ov
         attr = (f' data-sb="{s["key"]}" data-val="{v if v is not None else ""}"'
                 if key == "pts" else "")
         return f"<td{attr}>{'<b class=lead>' if lead else ''}{ui.fmt(v)}{'</b>' if lead else ''}</td>"
+
+    def med(s):
+        v = s.get("med")
+        cls = "" if v is None else ("mu-med-up" if v > 0 else "mu-med-down" if v < 0 else "")
+        return (f'<td class="{cls}" data-vsmed="{s["key"]}">'
+                f'{"—" if v is None else f"{v:+.1f}"}</td>')
     cells = []
     for anchor, a, b in rows:
         cells.append(
             f'<tr><td class="mu-t"><a href="#{anchor}">{_avatar(a["team"])}'
             f'{escape(a["name"])}</a></td>'
-            + (num(a, b, "pts") if started else "") + num(a, b, "sp") + num(a, b, "gs")
+            + (num(a, b, "pts") if started else "") + num(a, b, "sp") + num(a, b, "gs") + med(a)
             + '<td class="mu-vs">vs</td>'
-            + num(b, a, "gs") + num(b, a, "sp") + (num(b, a, "pts") if started else "")
+            + med(b) + num(b, a, "gs") + num(b, a, "sp") + (num(b, a, "pts") if started else "")
             + f'<td class="mu-t r"><a href="#{anchor}">{escape(b["name"])}'
               f'{_avatar(b["team"])}</a></td></tr>')
     pts_h = "<th>Pts</th>" if started else ""
+    med_h = ("<th title='Margin against the week\'s median score - the league\'s second game "
+             "each week'>Med</th>")
+    strip = ""
+    if med_proj is not None:
+        strip = ('<p class="mu-median"><b>Week median</b> '
+                 + (f'<span data-median-now>{ui.fmt(med_now)}</span> now · ' if started else "")
+                 + f'<span data-median-proj>{ui.fmt(med_proj)}</span> projected'
+                 " - every team also plays the median each week; <b>Med</b> is the margin "
+                 "against it" + (", live" if started else ", on the expected finals") + ".</p>")
     final = all((a.get("pts") or 0) > 0 and (b.get("pts") or 0) > 0 for _, a, b in rows) and started
     cards = ui.board_cards(
         [(anchor, {"name": escape(a["name"]), "logo": _avatar(a["team"]), "key": a["key"],
-                   "pts": a["pts"], "gs": a["gs"], "wp": a.get("wp")},
+                   "pts": a["pts"], "gs": a["gs"], "wp": a.get("wp"), "med": a.get("med")},
           {"name": escape(b["name"]), "logo": _avatar(b["team"]), "key": b["key"],
-           "pts": b["pts"], "gs": b["gs"], "wp": b.get("wp")}) for anchor, a, b in rows],
+           "pts": b["pts"], "gs": b["gs"], "wp": b.get("wp"), "med": b.get("med")})
+         for anchor, a, b in rows],
         started, False)
-    return (cards + '<div class="mu-board-wrap"><div class="table-scroll"><table class="mu-board"><thead><tr>'
+    return (strip + cards + '<div class="mu-board-wrap"><div class="table-scroll"><table class="mu-board"><thead><tr>'
             f"<th>Team</th>{pts_h}<th title='Average of the outside projections for the lineup as set'>Consensus</th>"
-            "<th title='GordStats projected total for the lineup as set'>GS Proj</th><th></th>"
-            f"<th>GS Proj</th><th>Consensus</th>{pts_h}<th>Team</th>"
+            f"<th title='GordStats projected total for the lineup as set'>GS Proj</th>{med_h}<th></th>"
+            f"{med_h}<th>GS Proj</th><th>Consensus</th>{pts_h}<th>Team</th>"
             f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div></div>')
 
 
@@ -590,7 +606,13 @@ compute:function(rows,games){
     if(!o)return;var u=teams[o],sd=Math.sqrt(Math.max(t.v+u.v,4));
     t.win_probability=0.5*(1+erf(((t.exp-u.exp)/sd)/Math.SQRT2));
   });
-  return {teams:teams};
+  // The week's median: of the scores once anyone has one, of the expected finals as the projection.
+  function median(a){if(!a.length)return null;a=a.slice().sort(function(x,y){return x-y;});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
+  var ks=Object.keys(teams),pts=ks.map(function(k){return teams[k].points||0;}),exps=ks.map(function(k){return teams[k].exp;});
+  var started=pts.some(function(p){return p>0;});
+  var medNow=started?median(pts):null,medProj=median(exps);
+  ks.forEach(function(k){var t=teams[k];t.vs_median=started?((t.points||0)-medNow):(t.exp-medProj);});
+  return {teams:teams,median:{now:medNow,proj:medProj}};
 },
 fetch:function(){
   var self=this;
@@ -622,6 +644,16 @@ def week_view(data: dict, ctx: dict) -> str:
         if html:
             sections.append(html)
             rows.append((anchor, sides[0], sides[1]))
+    # The league plays a second game each week against the median score, so
+    # the board carries it: the live median of the ten scores once games are
+    # on, the median of the expected finals as the projection, and every
+    # side's margin against whichever applies.
+    import statistics
+    every = [s for _, a, b in rows for s in (a, b)]
+    med_proj = statistics.median(s["exp"] for s in every) if every else None
+    med_now = statistics.median((s["pts"] or 0.0) for s in every) if (every and started) else None
+    for s in every:
+        s["med"] = ((s["pts"] or 0.0) - med_now) if started else (s["exp"] - med_proj)
     dates = sorted(g["date"] for g in data["games"] if g.get("date"))
     span = ""
     if dates:
@@ -645,7 +677,7 @@ def week_view(data: dict, ctx: dict) -> str:
             .replace("__ESPN__", f"{data_mod.ESPN_SCOREBOARD}?week={week}&dates={UPCOMING_YEAR}&seasontype=2")
             .replace("__INTERVAL__", str(60000 if started else 300000)) + "</script>")
     return (f"<p><strong>Week {week}</strong>{span}{playoffs} · {state}{asof}</p>"
-            + week_board(rows, started) + extra + "".join(sections) + live)
+            + week_board(rows, started, med_now, med_proj) + extra + "".join(sections) + live)
 
 
 # --------------------------------------------------------------------------- #
@@ -856,7 +888,9 @@ def body() -> str:
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
         f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
         "are on.</p><details class='section'><summary>How to read this page</summary>"
-        "<p><b>GS Proj</b> is "
+        "<p><b>Med</b> is each team's margin against the week's median score - the league "
+        "plays a second game against it every week - live once games are on, on the "
+        "expected finals before. <b>GS Proj</b> is "
         "this site's projection for the week: the power model's points per game for "
         "each player, tilted by the market's implied total for his team this week "
         "(a defense the other way, on what its opponent is expected to score), and "
