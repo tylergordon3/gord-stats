@@ -267,6 +267,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
              if gid else "")
     return (f'<tr class="{"bench" if bench else "starter"}{live}" data-pid="{escape(pid)}" '
             f'data-team="{escape(card["team"] or "")}"{attrs} '
+            f'data-nm="{escape(_short_name(card["name"]))}" '
             f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}" '
             f'data-hproj="{"" if hproj is None else round(hproj, 2)}">'
             f'<td class="mu-pts">{hybrid_score(pts, hproj, g)}</td>'
@@ -418,7 +419,7 @@ def _record(t: dict) -> str:
 def _short_name(name: str) -> str:
     """"Ja'Marr Chase" -> "J. Chase": a full name does not fit half a phone."""
     parts = str(name).split()
-    if len(parts) < 2:
+    if len(parts) < 2 or parts[-1] == "D/ST":       # "DAL D/ST" is already short
         return str(name)
     return f"{parts[0][0]}. " + " ".join(parts[1:])
 
@@ -606,13 +607,8 @@ def week_board(rows: list, started: bool, med_now=None, med_proj=None) -> str:
     pts_h = "<th>Pts</th>" if started else ""
     med_h = ("<th title='Margin against the week\'s median score - the league\'s second game "
              "each week'>Med</th>")
+    # The week's median itself heads the median tracker (median_tracker) now.
     strip = ""
-    if med_proj is not None:
-        strip = ('<p class="mu-median"><b>Week median</b> '
-                 + (f'<span data-median-now>{ui.fmt(med_now)}</span> now · ' if started else "")
-                 + f'<span data-median-proj>{ui.fmt(med_proj)}</span> projected'
-                 " - every team also plays the median each week; <b>Med</b> is the margin "
-                 "against it" + (", live" if started else ", on the expected finals") + ".</p>")
     final = all((a.get("pts") or 0) > 0 and (b.get("pts") or 0) > 0 for _, a, b in rows) and started
     cards = ui.board_cards(
         [(anchor, {"name": escape(a["name"]), "logo": _avatar(a["team"]), "key": a["key"],
@@ -626,6 +622,132 @@ def week_board(rows: list, started: bool, med_now=None, med_proj=None) -> str:
             f"<th title='GordStats projected total for the lineup as set'>GS Proj</th>{med_h}<th></th>"
             f"{med_h}<th>GS Proj</th><th>Consensus</th>{pts_h}<th>Team</th>"
             f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div></div>')
+
+
+# --------------------------------------------------------------------------- #
+# The median game
+# --------------------------------------------------------------------------- #
+
+def tracker_side(s: dict, ctx: dict) -> dict:
+    """One team for the median tracker: points so far, expected final, and the
+    starters still to finish with what they are projected to add (the unplayed
+    share of the GordStats projection - the same sum as `expected`)."""
+    parts = s["parts"]
+    left = []
+    for r in parts["starters"]:
+        card = parts["cards"].get(r["pid"])
+        g = ctx["by_team"].get((card or {}).get("team")) if card else None
+        if not card or game_state(g) not in ("pre", "in"):
+            continue
+        rem = float(parts["proj"].get(r["pid"]) or 0.0) * (1.0 - float(g.get("elapsed", 0.0)))
+        left.append({"n": _short_name(card["name"]), "r": round(rem, 1),
+                     "live": game_state(g) == "in"})
+    return {"k": s["key"], "name": s["name"], "logo": _avatar(s["team"]),
+            "pts": round(float(s["pts"] or 0.0), 2), "exp": round(float(s["exp"]), 2),
+            "left": left}
+
+
+def median_tracker(rows: list, ctx: dict, week: int, started: bool, final: bool) -> str:
+    """The median game at a glance: every team ranked by expected final with
+    the median line drawn through the middle, and for each the team it has to
+    stay ahead of (or pass), the points that takes from the starters it has
+    left, and who those starters are. Rendered in the browser by
+    MEDIAN_TRACKER_JS from the JSON here, which the live poll rebuilds."""
+    import json
+    teams = [tracker_side(s, ctx) for _, a, b in rows for s in (a, b)]
+    if len(teams) < 3:
+        return ""
+    blob = escape(json.dumps({"started": started, "final": final, "teams": teams},
+                             separators=(",", ":")))
+    return (f'<details class="section mu-medt-sec" open><summary>Median Tracker</summary>'
+            f'<div class="mu-medt" data-medt-week="{week}" data-medt=\'{blob}\'></div>'
+            "</details>")
+
+
+# The tracker's arithmetic and markup, run on every view at load and again by
+# the live poll with fresh points. Winning the median game is finishing in the
+# top half, which is the same as beating the median of the *other* teams: for
+# a top-half team that is the best team below the line, for the rest the
+# weakest team above it - one rival to root against, named.
+MEDIAN_TRACKER_JS = """<style>
+.mu-medt-top{font-size:13px;color:#475569;margin:2px 0 6px}
+.mu-medt-row{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-left:3px solid #1a7f4b;
+  background:#fff;border-bottom:1px solid #eef2f7}
+.mu-medt-row.down{border-left-color:#b3382c}
+.mu-medt-row .rk{width:16px;flex:none;font-size:12px;color:#94a3b8;padding-top:3px;text-align:right}
+.mu-medt-row img.mu-tlogo{width:24px;height:24px}
+.mu-medt-row .mid{flex:1;min-width:0}
+.mu-medt-row .nm{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mu-medt-row .st{font-size:12px;font-weight:600;color:#1a7f4b}
+.mu-medt-row.down .st{color:#b3382c}
+.mu-medt-need{font-size:12px;color:#334155}
+.mu-medt-ps{font-size:11px;color:#64748b;line-height:1.35}
+.mu-medt-ps .lv{color:#b3382c;font-style:italic}
+.mu-medt-row .fig{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mu-medt-row .fig b{display:block;font-size:15px}
+.mu-medt-row .fig span{font-size:11px;color:#64748b}
+.mu-medt-line{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:11px;font-weight:700;
+  color:#64748b;text-transform:uppercase;letter-spacing:.04em}
+.mu-medt-line:before,.mu-medt-line:after{content:"";flex:1;border-top:2px dashed #94a3b8}
+@media (prefers-color-scheme: dark){
+  .mu-medt-row{background:#16203a;border-bottom-color:#2b3852}
+  .mu-medt-row .st{color:#6ee7b7}.mu-medt-row.down .st{color:#ff9b91}
+  .mu-medt-top,.mu-medt-need{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
+  .mu-medt-ps .lv{color:#ff9b91}
+}
+</style><script>
+window.muMedTrack=(function(){
+  function fmt(v){return (Math.round(v*10)/10).toFixed(1);}
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function render(el,d){
+    var ts=d.teams.slice(),n=ts.length;if(n<3)return;
+    ts.forEach(function(t){t.rem=0;t.left.forEach(function(p){t.rem+=p.r;});t.proj=t.pts+t.rem;});
+    ts.sort(function(a,b){return b.proj-a.proj;});
+    var done=d.final||ts.every(function(t){return !t.left.length;});
+    var cut=Math.ceil((n-1)/2),html=[];
+    var mid=n%2?ts[n>>1].proj:(ts[n/2-1].proj+ts[n/2].proj)/2;
+    var now=ts.map(function(t){return t.pts;}).sort(function(a,b){return a-b;});
+    var medNow=n%2?now[n>>1]:(now[n/2-1]+now[n/2])/2;
+    html.push('<p class="mu-medt-top"><b>Median</b> '+(d.started&&!done?fmt(medNow)+' now · ':'')+fmt(mid)+(done?' final':' projected')+'</p>');
+    ts.forEach(function(t,i){
+      var others=ts.filter(function(o){return o!==t;});
+      // The median of the other n-1: with an even league, one team.
+      var j=(others.length-1)>>1,rival=others[j],line=others.length%2?rival.proj:(others[j].proj+others[j+1].proj)/2;
+      if(others.length%2===0)rival=null;
+      var margin=t.proj-line,up=margin>=0,need=line-t.pts,who=rival?esc(rival.name):'the median';
+      var status;
+      if(done)status=(up?'Won':'Lost')+' the median game by '+fmt(Math.abs(margin));
+      else if(!t.left.length)status=up?'Done · '+fmt(margin)+' ahead of '+who+' — root against '+who:'Done · '+fmt(-margin)+' behind '+who+' — root against '+who;
+      else if(up)status='Keeping it · '+fmt(margin)+' ahead of '+who;
+      else status='Chasing '+who+' · '+fmt(-margin)+' short';
+      var sub='';
+      if(!done&&t.left.length){
+        var ps=t.left.slice().sort(function(a,b){return b.r-a.r;}).map(function(p){
+          return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
+        sub='<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b>':'Already past the line')+' · '+t.left.length+' left, proj '+fmt(t.rem)+'</div>'
+          +'<div class="mu-medt-ps">'+ps+'</div>';}
+      if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(mid)+'</span></div>');
+      html.push('<div class="mu-medt-row '+(up?'up':'down')+'">'
+        +'<span class="rk">'+(i+1)+'</span>'+(t.logo||'')
+        +'<div class="mid"><div class="nm">'+esc(t.name)+'</div><div class="st">'+status+'</div>'+sub+'</div>'
+        +'<div class="fig"><b>'+fmt(t.pts)+'</b>'+(done||!t.left.length?'':'<span>→ '+fmt(t.proj)+'</span>')+'</div></div>');
+    });
+    el.innerHTML=html.join('');}
+  function init(){var els=document.querySelectorAll('[data-medt]');
+    for(var i=0;i<els.length;i++){try{render(els[i],JSON.parse(els[i].getAttribute('data-medt')));}catch(e){}}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  // Live: fresh points and remaining projections from MU_LIVE.compute's teams.
+  return {update:function(week,live){
+    var el=document.querySelector('[data-medt-week="'+week+'"]');if(!el||!live||!live.teams)return;
+    var d;try{d=JSON.parse(el.getAttribute('data-medt'));}catch(e){return;}
+    var any=false;
+    d.teams.forEach(function(t){var u=live.teams[t.k];if(!u||!u.left)return;any=true;
+      t.pts=u.points||0;t.left=u.left;});
+    if(!any)return;
+    d.started=d.teams.some(function(t){return t.pts>0;});
+    el.setAttribute('data-medt',JSON.stringify(d));render(el,d);}};
+})();
+</script>"""
 
 
 # What the browser does between rebuilds: Sleeper's points per player and
@@ -644,18 +766,22 @@ compute:function(rows,games){
   (rows||[]).forEach(function(r){
     var key=String(r.roster_id),pp=r.players_points||{},players={},exp=0,v=0;
     var hexp=0;
-    document.querySelectorAll('[data-roster="'+key+'"] tr[data-pid]').forEach(function(tr){
+    var left=[];
+    document.querySelectorAll('#wk-view-__WEEK__ [data-roster="'+key+'"] tr[data-pid]').forEach(function(tr){
       var pid=tr.getAttribute('data-pid'),proj=parseFloat(tr.getAttribute('data-proj')),sd=parseFloat(tr.getAttribute('data-sd'))||2;
       var hp=parseFloat(tr.getAttribute('data-hproj'));
       var g=games[tr.getAttribute('data-team')],done=elapsed(g),pts=pp[pid]||0;
       if(isNaN(proj))proj=0;if(isNaN(hp))hp=proj;
       var e=pts+proj*(1-done),he=pts+hp*(1-done);
-      if(tr.classList.contains('starter')){exp+=e;v+=sd*sd*(1-done);hexp+=he;}
+      if(tr.classList.contains('starter')){exp+=e;v+=sd*sd*(1-done);hexp+=he;
+        if(g&&(g.state==='pre'||g.state==='in'))left.push({n:tr.getAttribute('data-nm')||'',r:proj*(1-done),live:g.state==='in'});}
       players[pid]={points:pp[pid],hexp:(g&&g.state!=='pre')?he:undefined,
         state:g?g.state:undefined,game:g?muGameText(g.state,g.score,g.opp_score,g.detail):undefined};
     });
     Object.keys(pp).forEach(function(k){if(!players[k])players[k]={points:pp[k]};});
     teams[key]={points:r.points,players:players,exp:exp,v:v,matchup:r.matchup_id,gs_live:exp,hexp:hexp};
+    // Who is still to play, for the median tracker - unknowable without the clocks.
+    if(Object.keys(games).length)teams[key].left=left;
   });
   Object.keys(teams).forEach(function(k){
     var t=teams[k],o=Object.keys(teams).filter(function(j){return j!==k&&teams[j].matchup===t.matchup;})[0];
@@ -680,7 +806,8 @@ fetch:function(){
         games[ab]={state:(st.type||{}).state||'pre',period:st.period,clock:st.displayClock,
           detail:(st.type||{}).shortDetail,score:x.score,opp_score:o.score};});});
     return games;}).catch(function(){return {};});
-  return Promise.all([sleeper,espn]).then(function(both){return self.compute(both[0],both[1]);});
+  return Promise.all([sleeper,espn]).then(function(both){var out=self.compute(both[0],both[1]);
+    if(window.muMedTrack)window.muMedTrack.update(__WEEK__,out);return out;});
 }};"""
 
 
@@ -731,8 +858,10 @@ def week_view(data: dict, ctx: dict) -> str:
             "<script>" + ui.LIVE_GAMES_JS + _LIVE_FETCH_JS
             .replace("__SLEEPER__", f"{data_mod.SLEEPER_API}/league/{UPCOMING_LEAGUE_ID}/matchups/{week}")
             .replace("__ESPN__", f"{data_mod.ESPN_SCOREBOARD}?week={week}&dates={UPCOMING_YEAR}&seasontype=2")
-            .replace("__INTERVAL__", str(60000 if started else 300000)) + "</script>")
+            .replace("__INTERVAL__", str(60000 if started else 300000))
+            .replace("__WEEK__", str(week)) + "</script>")
     return (f"<p><strong>Week {week}</strong>{span}{playoffs} · {state}{asof}</p>"
+            + median_tracker(rows, ctx, week, started, final)
             + week_board(rows, started, med_now, med_proj) + extra + "".join(sections) + live)
 
 
@@ -944,7 +1073,11 @@ def body() -> str:
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
         f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
         "are on.</p><details class='section'><summary>How to read this page</summary>"
-        "<p><b>Med</b> is each team's margin against the week's median score - the league "
+        "<p>The <b>Median Tracker</b> ranks every team by expected final (points so far "
+        "plus what its unfinished starters are projected to add) with the median line "
+        "through the middle; each team is told who it has to stay ahead of or pass, "
+        "how many points that takes, and which starters it has left to get them. "
+        "<b>Med</b> is each team's margin against the week's median score - the league "
         "plays a second game against it every week - live once games are on, on the "
         "expected finals before. <b>GS Proj</b> is "
         "this site's projection for the week: the power model's points per game for "
@@ -962,7 +1095,7 @@ def body() -> str:
         f"ten minutes while games are on (last: {built}); finished weeks stay on "
         "record. Season-long standing lives on the "
         '<a href="/fantasy/power/">power rankings</a>.</p></details>'
-        + scored + ui.week_switch(weeks, current, views) + ui.LIVE_JS)
+        + scored + ui.week_switch(weeks, current, views) + MEDIAN_TRACKER_JS + ui.LIVE_JS)
 
 
 def generate():
