@@ -5,7 +5,8 @@ dashboard (docs/cfb/league/, cfb.site.league) since 2026-09-08; the old
 
 Every roster priced the way the draft board priced the players: the best
 starting lineup it can field, in projected season points under this league's
-own scoring and slots. Follows Yahoo's live rosters, so waivers and trades
+own scoring and slots, with each player's preseason projection updated by
+his real scoring so far (in_season_board). Follows Yahoo's live rosters, so waivers and trades
 move the rankings all season; fresh off the draft (before Yahoo populates the
 roster feed) the draft results stand in.
 
@@ -81,6 +82,54 @@ def team_rosters() -> dict:
     return out
 
 
+# How many games of the preseason projection a player's real scoring is
+# weighed against. Estimated 2026-09-13 from the first two weeks of every
+# rostered player (146 with two games): week-to-week noise sd 8.3 pts/game,
+# true spread around the preseason per-game projection sd 3.8, so
+# noise_var / prior_var ~ 4.7. After five games the season so far counts as
+# much as the draft-day projection.
+PRIOR_GAMES = 5.0
+
+
+def season_so_far() -> pd.DataFrame:
+    """yahoo_id -> points and games played, from the weekly matchup archive.
+
+    A week counts as a game only when Yahoo has any stat for the player -
+    byes, injuries and games not yet kicked off come back empty, so an
+    in-progress week counts just the games already played. Only weeks a player
+    spent on a league roster are seen; free-agent weeks are not."""
+    seen = {}
+    for w in yahoo.archived_weeks():
+        for roster in yahoo.week_matchups(w)["rosters"].values():
+            for p in roster:
+                if p.get("stats"):
+                    seen[(w, str(p["yahoo_id"]))] = float(p["points"] or 0.0)
+    if not seen:
+        return pd.DataFrame(columns=["points", "played"])
+    pts = pd.Series(seen)
+    return pts.groupby(level=1).agg(points="sum", played="count")
+
+
+def in_season_board(board: pd.DataFrame) -> pd.DataFrame:
+    """The value board with each projection updated by what the player has
+    actually scored: per-game rate = (preseason rate x PRIOR_GAMES + points)
+    / (PRIOR_GAMES + games), back on the season scale so the Lineup column and
+    the archive keep their units."""
+    so_far = season_so_far().reindex(board.index)
+    played = so_far["played"].fillna(0.0)
+    if not played.any():
+        return board
+    board = board.copy()
+    prior = board["proj"] / board["games"]
+    rate = (prior * PRIOR_GAMES + so_far["points"].fillna(0.0)) / (PRIOR_GAMES + played)
+    scale = (rate / prior).where(prior > 0, 1.0)
+    for col in ("proj", "floor", "ceiling"):
+        board[col] = board[col] * scale
+    board["vorp"] = board["proj"] - board["replacement"]
+    board["played"] = played
+    return board
+
+
 def best_lineup(players: pd.DataFrame, lg: dict) -> dict:
     """The best starting lineup this roster supports.
 
@@ -139,8 +188,8 @@ def ranked_teams(lg: dict) -> list[dict]:
     rosters = team_rosters()
     if not any(rosters.values()):
         return []
-    board = (projections.value_board().drop_duplicates("yahoo_id")
-             .set_index("yahoo_id"))
+    board = in_season_board(projections.value_board().drop_duplicates("yahoo_id")
+                            .set_index("yahoo_id"))
     names = {t["team_key"]: t for t in lg["teams"]}
     rows = []
     for key, ids in rosters.items():
@@ -152,6 +201,13 @@ def ranked_teams(lg: dict) -> list[dict]:
         rows.append(r)
     rows.sort(key=lambda r: r["total"], reverse=True)
     return rows
+
+
+def _record(team: dict) -> str:
+    if team.get("wins") is None:
+        return "\u2014"
+    w, l, t = (int(team.get(k) or 0) for k in ("wins", "losses", "ties"))
+    return f"{w}-{l}" + (f"-{t}" if t else "")
 
 
 def _move(baseline, key, rank):
@@ -275,6 +331,7 @@ def section() -> str:
             f'{logo}{t["name"]}'
             + (f' <span class="mu-note">({r["unrated"]} unrated)</span>'
                if r["unrated"] else "") + f"</td>{move_tds}"
+            f"<td>{_record(t)}</td>"
             f"<td><b>{r['total']:.0f}</b></td>"
             f"<td>{r['total'] - avg:+.0f}</td>{pos_tds}"
             f"<td>{r['bench']:.0f}</td>"
@@ -296,7 +353,10 @@ def section() -> str:
     return (
         "<p>Every roster priced the way the draft board priced the players: the best "
         "starting lineup it can field, in projected season points under this "
-        "league's scoring. <b>Bench</b> is the value over replacement sitting "
+        "league's scoring. Each player's projection is updated by what he has "
+        f"actually scored &mdash; his real points per game weighed against "
+        f"{PRIOR_GAMES:.0f} games of the preseason projection, so two big weeks "
+        "move a player about a third of the way to his pace. <b>Bench</b> is the value over replacement sitting "
         f"behind the starters; <b>Wks {lg['playoff_start_week']}–"
         f"{lg['end_week']}</b> is how the lineup's schedule tilts across the "
         "fantasy playoffs. Follows the live rosters, so waivers and trades "
@@ -307,13 +367,14 @@ def section() -> str:
         "<b>±Avg</b> the same against the league average, and "
         "<b>Anchor</b> the roster's most valuable player.</p>"
         '<div class="table-scroll"><table class="lg-table">'
-        f"<thead><tr><th>Team</th>{move_heads}<th>Lineup</th>"
+        f"<thead><tr><th>Team</th>{move_heads}<th>Record</th><th>Lineup</th>"
         "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
         f"<th>Bench</th><th>Wks {lg['playoff_start_week']}–{lg['end_week']}</th>"
         "<th>Anchor</th></tr></thead>"
         f'<tbody>{"".join(cells)}</tbody></table></div>'
-        '<p class="mu-note">Projection-based: it prices rosters, not records - '
-        "the standings above say who is winning. The "
+        '<p class="mu-note">It prices rosters going forward, not records - a '
+        "hot start counts through the players who produced it, and "
+        "<b>Record</b> is there beside it. The "
         '<a href="/cfb/live/">draft review</a> grades how these rosters were '
         "assembled.</p>" + season)
 
