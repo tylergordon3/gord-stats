@@ -21,7 +21,6 @@ has.
 
     python -m cfb.site.league_power     # the section as a page of its own
 """
-from datetime import datetime
 
 import matplotlib
 matplotlib.use("Agg")
@@ -31,7 +30,7 @@ import numpy as np                                   # noqa: E402
 import pandas as pd                                  # noqa: E402
 
 from cfb import projections, yahoo                   # noqa: E402
-from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR   # noqa: E402
+from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
 from cfb.site import write_page                      # noqa: E402
 from gordstats import charts, palette, rankmoves     # noqa: E402
 
@@ -233,11 +232,7 @@ def _season_section(names: dict) -> str:
         what, base, invert, unit = "rank", None, True, ""
     else:
         return ("<h3>Through the Season</h3>"
-                "<p class='mu-note'>Every build is archived, and this chart draws each "
-                "roster's lineup points against the league average across them &mdash; "
-                "who is climbing, who is sliding, and whether a move is a real trend or "
-                "one waiver claim. One build is on record; the chart appears with the "
-                "second and fills in from there.</p>")
+                "<p class='mu-note'>The trend chart appears with the second build.</p>")
 
     order = pivot.iloc[-1].sort_values(ascending=invert).index.tolist()
     span_days = max(1, (pivot.index[-1] - pivot.index[0]).days + 1)
@@ -285,11 +280,9 @@ def _season_section(names: dict) -> str:
     up, down = swing.idxmax(), swing.idxmin()
     fmt = (lambda v: f"{v:+.0f}{unit}") if unit else (lambda v: f"{int(v):+d} places")
     return ("<h3>Through the Season</h3>"
-            f"<p class='mu-note'>Every build since <strong>{first:%b %-d}</strong>, one "
-            f"panel per team with the rest of the league behind it in grey, drawing "
-            f"{what}. Since then <strong>{up}</strong> has gained the most "
-            f"({fmt(swing[up])}) and <strong>{down}</strong> has given up the most "
-            f"({fmt(swing[down])}), as of {last:%b %-d}.</p>"
+            f"<p class='mu-note'>{what[0].upper() + what[1:]}, every build since "
+            f"<strong>{first:%b %-d}</strong>: <strong>{up}</strong> {fmt(swing[up])}, "
+            f"<strong>{down}</strong> {fmt(swing[down])}.</p>"
             f"<div class='lg-chart'>{chart}</div>")
 
 
@@ -349,34 +342,20 @@ def section() -> str:
                            index=[r["key"] for r in rows]))
     season = _season_section({r["key"]: r["team"]["name"] for r in rows})
 
-    built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
-        "<p>Every roster priced the way the draft board priced the players: the best "
-        "starting lineup it can field, in projected season points under this "
-        "league's scoring. Each player's projection is updated by what he has "
-        f"actually scored &mdash; his real points per game weighed against "
-        f"{PRIOR_GAMES:.0f} games of the preseason projection, so two big weeks "
-        "move a player about a third of the way to his pace. <b>Bench</b> is the value over replacement sitting "
-        f"behind the starters; <b>Wks {lg['playoff_start_week']}–"
-        f"{lg['end_week']}</b> is how the lineup's schedule tilts across the "
-        "fantasy playoffs. Follows the live rosters, so waivers and trades "
-        f"move it — rebuilt daily (last: {built}), every build archived, and "
-        "the Move columns track the climb: <b>Move</b> is places climbed "
-        "since the previous build, <b>7d</b> since a week ago. "
-        "<b>Lineup</b> is that best startable lineup's projected points, "
-        "<b>±Avg</b> the same against the league average, and "
-        "<b>Anchor</b> the roster's most valuable player.</p>"
+        "<p>Each roster's best startable lineup in projected season points under "
+        "this league's scoring, with every player's preseason projection updated "
+        f"by his real points per game (weighed against {PRIOR_GAMES:.0f} games of "
+        "the projection). <b>Bench</b>: value over replacement behind the starters; "
+        f"<b>Wks {lg['playoff_start_week']}–{lg['end_week']}</b>: playoff schedule "
+        "tilt; <b>Move</b>/<b>7d</b>: places climbed since the last build / a week "
+        "ago.</p>"
         '<div class="table-scroll"><table class="lg-table">'
         f"<thead><tr><th>Team</th>{move_heads}<th>Record</th><th>Lineup</th>"
         "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
         f"<th>Bench</th><th>Wks {lg['playoff_start_week']}–{lg['end_week']}</th>"
         "<th>Anchor</th></tr></thead>"
-        f'<tbody>{"".join(cells)}</tbody></table></div>'
-        '<p class="mu-note">It prices rosters going forward, not records - a '
-        "hot start counts through the players who produced it, and "
-        "<b>Record</b> is there beside it. The "
-        '<a href="/cfb/live/">draft review</a> grades how these rosters were '
-        "assembled.</p>" + season)
+        f'<tbody>{"".join(cells)}</tbody></table></div>' + season)
 
 
 def body() -> str:
