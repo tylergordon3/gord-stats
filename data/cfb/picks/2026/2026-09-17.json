@@ -1,0 +1,30 @@
+{
+ "day": "2026-09-17",
+ "locked_at": "Sun Sep 13, 12:00 AM",
+ "games": 1,
+ "picks": {
+  "underdog": {
+   "game_id": "401858225",
+   "side": "away",
+   "team": "Syracuse",
+   "opp": "Pitt",
+   "p": 0.1344,
+   "book_p": 0.24,
+   "ml": 300.0,
+   "line": 10.5,
+   "kick": "Thu 7:30p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": -10.5,
+    "p": 0.6761,
+    "book": 0.5,
+    "text": "Pitt -10.5",
+    "game_id": "401858225",
+    "game": "SYR at PITT \u00b7 Thu 7:30p"
+   }
+  ]
+ }
+}
