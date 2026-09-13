@@ -186,6 +186,13 @@ def _live_attrs(g) -> tuple:
     return (" live" if g.get("state") == "in" else ""), attrs
 
 
+def _state(g) -> str:
+    """pre/in/post for the Pts cell, "bye" where game_cell says Bye."""
+    if g is None or not isinstance(g.get("opp"), str):
+        return "bye"
+    return g.get("state") or "pre"
+
+
 def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: dict,
                hint: str = "") -> str:
     pid = p["yahoo_id"]
@@ -200,14 +207,14 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
     return (f'<tr class="{"bench" if bench else "starter"}{_live_attrs(g)[0]}" '
             f'data-pid="{escape(pid)}"{_live_attrs(g)[1]}'
             f' data-proj="{"" if proj is None or pd.isna(proj) else round(float(proj), 2)}">'
-            f"<td class=\"mu-pts\"><b>{ui.fmt(p.get('points'))}</b></td>"
-            f"<td class=\"mu-gs\">{ui.fmt(proj)}</td>"
+            f'<td class="mu-pts">{ui.score_cell(p.get("points"), proj, _state(g))}</td>'
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
             f'<td class="mu-p"><span class="mu-pc"><span class="nm">'
             f'{_school_logo(p["team_full"], to_school, espn)}{escape(p["player"])}</span> '
             f'<span class="mu-lbl"><span class="mu-meta">{escape(p["pos"])} · {escape(p["team"])}'
             f'</span>{inj}{tag}</span></span></td>'
             f'<td class="mu-g">{game_cell(g)}</td>'
+            f'<td class="mu-gs">{ui.fmt(proj)}</td>'
             f'<td class="mu-s">{escape(stat_line(p.get("stats") or {}, p["pos"]))}</td></tr>')
 
 
@@ -246,18 +253,23 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
     pts_total = sum(p.get("points") or 0 for p in starters)
     rows = [player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
             for p in starters]
-    rows.append(f'<tr class="total"><td class="mu-pts" data-tpts="{escape(key)}">{pts_total:.1f}</td>'
-                f'<td class="mu-gs" data-tgs="{escape(key)}">{proj_total:.1f}</td><td></td>'
-                '<td class="mu-p">Starters</td>'
-                "<td></td><td></td></tr>")
+    states = {_state(game_for(p, wk, by_team, to_school, espn)) for p in starters}
+    team_state = ("post" if final else
+                  "in" if pts_total > 0 or states & {"in", "post"} else "pre")
+    total_cell = (ui.score_cell(pts_total, proj_total, team_state, mark_proj=True)
+                  .replace('<b class="mu-now', f'<b data-tpts="{escape(key)}" class="mu-now', 1)
+                  .replace('<span class="mu-exp', f'<span data-thexp="{escape(key)}" class="mu-exp', 1))
+    rows.append(f'<tr class="total"><td class="mu-pts">{total_cell}</td><td></td>'
+                '<td class="mu-p">Starters</td><td></td>'
+                f'<td class="mu-gs">{proj_total:.1f}</td><td></td></tr>')
     if bench:
         rows.append('<tr class="sep"><td colspan="6">Bench</td></tr>')
         rows.extend(player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
                     for p in bench)
     html = (f'<div class="table-scroll" data-roster="{escape(key)}"><table class="mu-roster"><thead><tr>'
-            "<th class='mu-pts' title='Points actually scored this week, from Yahoo (live while games are on)'>Pts</th>"
-            "<th title='GordStats projection for this week'>GS Proj</th>"
+            "<th class='mu-pts' title='Points scored, from Yahoo, with the live expected final under them; the projection before kickoff'>Pts</th>"
             "<th>Slot</th><th>Player</th><th>Game</th>"
+            "<th title='GordStats projection for this week'>GS Proj</th>"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>{swaps}')
     # The ordered players travel back with the html so `matchup_section` can
@@ -320,8 +332,8 @@ def _pair_cell(p: dict | None, key: str, to_school: dict, espn: dict,
             f'{escape(_short_name(p["player"]))}</span>'
             f'<span class="mu-pm">{escape(p["pos"])} · {escape(p["team"])}{inj}{tag}</span>'
             f'<span class="mu-g">{game_cell(game)}</span></div>'
-            f'<div class="mu-pcol"><span class="mu-pts"><b>{ui.fmt(p.get("points"))}</b></span>'
-            f'<span class="mu-gs" title="GordStats projection">{ui.fmt(proj)}</span></div></div>')
+            f'<div class="mu-pcol"><span class="mu-pts">'
+            f'{ui.score_cell(p.get("points"), proj, _state(game))}</span></div></div>')
 
 
 def pair_view(a: dict, b: dict, to_school: dict, espn: dict) -> str:
@@ -573,8 +585,9 @@ def body() -> str:
         "<p><b>GS Proj</b> is this site's own "
         "projection for the week: each player's season projection spread over "
         "his school's games, tilted by what the game model expects of this "
-        "week's game, and zero on a bye. <b>Pts</b> is the points actually scored "
-        "so far, as Yahoo scores them, with the stat line behind them. <b>Med</b> is each "
+        "week's game, and zero on a bye. <b>Pts</b> is the projection (grey) "
+        "until a player's game kicks off, then his Yahoo points with the expected final "
+        "under them, then <i>final</i>. <b>Med</b> is each "
         "team's margin against the week's median score - the league plays a second game "
         "against it every week - live once games are on, on projection before. Yahoo projects a team "
         "total but no player-by-player number for the college game, so the "

@@ -237,7 +237,7 @@ table.mu-roster td.mu-g .live::before{content:"";display:inline-block;width:7px;
 table.mu-roster tr.live td{background:#fff5f4}
 table.mu-roster tr.live td.mu-pts{background:#ffe9e6}
 .mu-pr .mu-pp.live{background:#fff5f4}
-.mu-pr .mu-pp.live .mu-pts::after{content:"";display:inline-block;width:6px;height:6px;
+.mu-pr .mu-pp.live .mu-pts .mu-now::after{content:"";display:inline-block;width:6px;height:6px;
   border-radius:50%;background:#b3382c;margin-left:4px;vertical-align:1px;
   animation:mu-pulse 1.4s ease-in-out infinite}
 table.mu-roster td.mu-g .fin{color:#64748b}
@@ -272,7 +272,15 @@ table.mu-roster td.mu-p .mu-hint.out{background:#fde2dd;color:#b3382c}
    lists) carry the same logos; without this they got the theme's figure
    styling and rendered at full size. */
 /* A projection that has become an expected final mid-game reads in italics. */
-table.mu-roster td.mu-gs.live,.mu-side .sub b.live{font-style:italic}
+.mu-side .sub b.live{font-style:italic}
+/* The hybrid score cell (score_cell): the figure, then a small line under it -
+   proj before kickoff, the live expected final, or final. */
+.mu-pts .mu-now{display:block}
+.mu-pts .mu-now.proj{color:#94a3b8;font-style:italic;font-weight:600}
+.mu-pts .mu-exp{display:block;font-size:10px;font-weight:600;color:#64748b;line-height:1.1;
+  white-space:nowrap}
+.mu-pts .mu-exp:empty{display:none}
+.mu-pts .mu-exp.live{font-style:italic;color:#b3382c}
 table.mu-roster img.mu-logo,table.mu-board img.mu-logo{width:18px;height:18px;
   object-fit:contain;vertical-align:middle;
   margin:0 5px 0 0;border:none;padding:0;box-shadow:none;background:none;border-radius:0;
@@ -307,7 +315,10 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   table.mu-roster td.mu-slot,table.mu-roster td.mu-s,table.mu-roster td.mu-p .mu-meta{color:#aab7c9}
   table.mu-roster td.mu-g{color:#dde5ef}
   table.mu-roster td.mu-g .live{color:#ffb4ab}
-  table.mu-roster td.mu-g .live::before,.mu-pr .mu-pp.live .mu-pts::after{background:#ffb4ab}
+  table.mu-roster td.mu-g .live::before,.mu-pr .mu-pp.live .mu-pts .mu-now::after{background:#ffb4ab}
+  .mu-pts .mu-now.proj{color:#7c8ba1}
+  .mu-pts .mu-exp{color:#aab7c9}
+  .mu-pts .mu-exp.live{color:#ffb4ab}
   table.mu-roster tr.live td{background:#2a1f26}
   table.mu-roster tr.live td.mu-pts{background:#3a262b}
   .mu-pr .mu-pp.live{background:#2a1f26}
@@ -358,6 +369,26 @@ def fmt(v, dec: int = 1) -> str:
     if v is None or (isinstance(v, float) and pd.isna(v)):
         return "—"
     return f"{float(v):.{dec}f}"
+
+
+def score_cell(pts, proj, state, exp=None, mark_proj: bool = False) -> str:
+    """Inner HTML of a .mu-pts cell - one figure that is always the one that
+    matters: the projection before kickoff (grey, marked proj), the points
+    with the live expected final under them while the game is on, the points
+    marked final after it; `mark_proj` labels the projection (the totals -
+    on a player row the grey italic says it). `state` is the game's pre/in/post, "bye", or None
+    when no game is known. LIVE_JS rewrites the cell the same way."""
+    if state == "post":
+        return f'<b class="mu-now">{fmt(pts or 0)}</b><span class="mu-exp">final</span>'
+    if state == "in":
+        sub = f"&rarr; {fmt(exp)}" if exp is not None else "live"
+        return f'<b class="mu-now">{fmt(pts or 0)}</b><span class="mu-exp live">{sub}</span>'
+    if state == "bye" and not pts:
+        return '<b class="mu-now proj">&mdash;</b><span class="mu-exp">bye</span>'
+    if pts:
+        return f'<b class="mu-now">{fmt(pts)}</b><span class="mu-exp"></span>'
+    return (f'<b class="mu-now proj">{fmt(proj)}</b>'
+            f'<span class="mu-exp">{"proj" if mark_proj and proj is not None else ""}</span>')
 
 
 def week_switch(weeks: list, current: int, views: dict) -> str:
@@ -498,6 +529,13 @@ LIVE_JS = """<script>
   var timer=null;
   function fmt(v){return (v===null||v===undefined||isNaN(v))?'\u2014':(Math.round(v*10)/10).toFixed(1);}
   function each(sel,fn){var els=document.querySelectorAll(sel);for(var i=0;i<els.length;i++)fn(els[i]);}
+  // score_cell in the browser; null leaves a pre-game projection standing.
+  function score(p){var st=p.state,pts=p.points;
+    if(st==='post')return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp">final</span>';
+    if(st==='in'){var e=(p.hexp!==undefined&&p.hexp!==null)?p.hexp:p.live;
+      return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp live">'+((e!==undefined&&e!==null)?'\u2192 '+fmt(e):'live')+'</span>';}
+    if(pts)return '<b class="mu-now">'+fmt(pts)+'</b><span class="mu-exp"></span>';
+    return null;}
   function apply(data){
     var teams=(data&&data.teams)||{};var keys=Object.keys(teams);if(!keys.length)return false;
     keys.forEach(function(key){
@@ -513,10 +551,11 @@ LIVE_JS = """<script>
         // table rows add to the total, or every starter would count twice.
         each('[data-roster="'+key+'"] [data-pid], [data-pid][data-roster="'+key+'"]',function(el){
           var p=t.players[el.getAttribute('data-pid')];if(!p)return;
-          if(p.points!==undefined&&p.points!==null){scored=true;var c=el.querySelector('.mu-pts');if(c)c.innerHTML='<b>'+fmt(p.points)+'</b>';}
-          // A live expected final replaces the pre-game projection while a
-          // game is on: points so far plus the unplayed share.
-          if(p.live!==undefined&&p.live!==null){var gc=el.querySelector('.mu-gs');if(gc){gc.textContent=fmt(p.live);gc.classList.add('live');}}
+          if(p.points!==undefined&&p.points!==null)scored=true;
+          // The score cell: points, and under them the live expected final
+          // (points so far plus the unplayed share of the projection) or
+          // final. The GS column stays the pre-game projection.
+          var c=el.querySelector('.mu-pts'),h=c&&score(p);if(h)c.innerHTML=h;
           // The indicator: the row lights up while his game is on, and the
           // game cell carries the score and clock.
           if(p.state){el.classList.toggle('live',p.state==='in');
@@ -532,7 +571,10 @@ LIVE_JS = """<script>
       if(pts===null||pts===undefined)return;
       each('[data-num="'+key+'"]',function(el){el.textContent=fmt(pts);el.setAttribute('data-val',pts);});
       each('[data-sb="'+key+'"]',function(el){el.innerHTML=fmt(pts);el.setAttribute('data-val',pts);});
-      each('[data-tpts="'+key+'"]',function(el){el.textContent=fmt(pts);});
+      each('[data-tpts="'+key+'"]',function(el){el.textContent=fmt(pts);el.classList.remove('proj');});
+      var he=(t.hexp!==undefined&&t.hexp!==null)?t.hexp:t.gs_live;
+      if(he!==undefined&&he!==null)each('[data-thexp="'+key+'"]',function(el){
+        if(el.textContent!=='final'){el.innerHTML='\u2192 '+fmt(he);el.classList.add('live');}});
       if(t.gs_live!==undefined&&t.gs_live!==null){each('[data-tgs="'+key+'"]',function(el){el.textContent=fmt(t.gs_live);el.classList.add('live');});}
       if(t.vs_median!==undefined&&t.vs_median!==null){each('[data-vsmed="'+key+'"]',function(el){
         var v=t.vs_median;el.textContent=(v>0?'+':'')+(Math.round(v*10)/10).toFixed(1);

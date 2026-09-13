@@ -228,15 +228,29 @@ def expected(pts, proj, sd, g: dict | None) -> tuple:
     return pts + proj * left, _sd_for(sd, proj) ** 2 * left
 
 
+def game_state(g: dict | None) -> str:
+    """pre/in/post for a player's game, "bye" when his team has none."""
+    return (g.get("state") or "pre") if g else "bye"
+
+
+def hybrid_score(pts, hproj, g: dict | None) -> str:
+    """The Pts cell (ui.score_cell) on the consensus projection: what the
+    outside sources expect before kickoff, points plus the unplayed share of
+    it during the game, points after."""
+    state = game_state(g)
+    exp = expected(pts, hproj, None, g)[0] if state == "in" else None
+    return ui.score_cell(pts, hproj, state, exp)
+
+
 def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, stats: dict,
-               hint: str = "", grade: str = "", sd: float = 0.0) -> str:
+               hint: str = "", grade: str = "", sd: float = 0.0, hproj=None) -> str:
     pid, slot = row["pid"], row["slot"]
     bench = slot in ("BN", "IR")
     if pid == "0":
-        return (f'<tr class="starter"><td class="mu-pts">—</td><td>—</td>'
+        return (f'<tr class="starter"><td class="mu-pts">—</td>'
                 f'<td class="mu-slot">{escape(slot)}</td>'
                 f'<td class="mu-p"><span class="mu-meta">empty</span></td><td class="mu-g"></td>'
-                + "<td>—</td>" * (N_COLS - 6) + "<td class='mu-s'></td></tr>")
+                + "<td>—</td>" * (N_COLS - 5) + "<td class='mu-s'></td></tr>")
     inj = card.get("injury")
     inj_html = (f'<span class="inj" title="{escape(inj)}">'
                 f'{escape(INJURY_TAGS.get(inj, inj[:3].upper()))}</span>' if inj else "")
@@ -251,9 +265,9 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
              if gid else "")
     return (f'<tr class="{"bench" if bench else "starter"}{live}" data-pid="{escape(pid)}" '
             f'data-team="{escape(card["team"] or "")}"{attrs} '
-            f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}">'
-            f"<td class=\"mu-pts\"><b>{ui.fmt(pts)}</b></td>"
-            f"<td class=\"mu-gs\">{ui.fmt(proj)}</td>"
+            f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}" '
+            f'data-hproj="{"" if hproj is None else round(hproj, 2)}">'
+            f'<td class="mu-pts">{hybrid_score(pts, hproj, g)}</td>'
             f'<td class="mu-slot">{escape(slot)}</td>'
             f'<td class="mu-p"><span class="mu-pc"><span class="nm">{_logo(card["team"])}'
             f'{escape(card["name"])}</span> '
@@ -261,6 +275,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
             f"</span>{inj_html}{tag}{grade_html}</span></span></td>"
             f'<td class="mu-g">{game_cell(g)}</td>'
+            f'<td class="mu-gs">{ui.fmt(proj)}</td>'
             + "".join(f"<td>{ui.fmt(v)}</td>" for v in outside)
             + f'<td class="mu-s">{escape(stat_line(stats, card["pos"]))}</td></tr>')
 
@@ -282,6 +297,8 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     sources = outside_sources(data)
     outside = {pid: [src.get(pid) for src in sources.values()] for pid in cards}
     cons = ext.consensus(*sources.values())
+    # The Pts cell's projection: the outside consensus, ours where no source has him.
+    hproj = {pid: (cons[pid] if cons.get(pid) is not None else proj.get(pid)) for pid in cards}
     grades = (data.get("external") or {}).get("fp_rank") or {}
     pts = side.get("players_points") or {}
     starters = [r for r in rows if r["slot"] not in ("BN", "IR")]
@@ -311,7 +328,8 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
                           outside.get(r["pid"], [None] * len(sources)), pts.get(r["pid"]),
                           (data.get("stats") or {}).get(r["pid"]) or {}, hints.get(r["pid"]),
                           (grades.get(r["pid"]) or {}).get("grade") or "",
-                          sd=_sd_for(ctx.get("sd", {}).get(r["pid"]), proj.get(r["pid"])))
+                          sd=_sd_for(ctx.get("sd", {}).get(r["pid"]), proj.get(r["pid"])),
+                          hproj=hproj.get(r["pid"]))
 
     gs_total = sum(proj.get(r["pid"]) or 0 for r in starters)
     # Expected final and its variance over the starters, for the win bar.
@@ -327,11 +345,22 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     src_totals = [sum((src.get(r["pid"]) or 0) for r in starters) for src in sources.values()]
     cons_total = sum(cons.get(r["pid"]) or 0 for r in starters)
     pts_total = float(side.get("points") or 0)
+    games = [ctx["by_team"].get((cards.get(r["pid"]) or {}).get("team"))
+             for r in starters if r["pid"] != "0"]
+    states = {game_state(g) for g in games}
+    team_state = ("post" if final else
+                  "in" if pts_total > 0 or states & {"in", "post"} else "pre")
+    hexp_total = sum(expected(pts.get(r["pid"]), hproj.get(r["pid"]), None,
+                              ctx["by_team"].get((cards.get(r["pid"]) or {}).get("team")))[0]
+                     for r in starters if r["pid"] != "0")
+    total_cell = ui.score_cell(pts_total, hexp_total, team_state, hexp_total, mark_proj=True)
+    key = side["roster_id"]
+    total_cell = total_cell.replace('<b class="mu-now', f'<b data-tpts="{key}" class="mu-now', 1) \
+                           .replace('<span class="mu-exp', f'<span data-thexp="{key}" class="mu-exp', 1)
     html_rows = [cell(r) for r in starters]
-    html_rows.append(f'<tr class="total"><td class="mu-pts" data-tpts="{side["roster_id"]}">'
-                     f'{pts_total:.1f}</td><td class="mu-gs" data-tgs="{side["roster_id"]}">'
-                     f'{gs_total:.1f}</td><td></td>'
+    html_rows.append(f'<tr class="total"><td class="mu-pts">{total_cell}</td><td></td>'
                      '<td class="mu-p">Starters</td><td></td>'
+                     f'<td class="mu-gs">{gs_total:.1f}</td>'
                      + "".join(f"<td>{t:.1f}</td>" for t in src_totals)
                      + "<td></td></tr>")
     if bench:
@@ -340,13 +369,14 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     heads = "".join(f"<th title='{ext.SOURCES[k]} projection for this week'>{SHORT[k]}</th>"
                     for k in sources)
     html = (f'<div class="table-scroll" data-roster="{side["roster_id"]}"><table class="mu-roster"><thead><tr>'
-            "<th class='mu-pts' title='Points scored this week'>Pts</th>"
-            "<th title='GordStats projection for this week'>GS</th>"
-            f"<th>Slot</th><th>Player</th><th>Game</th>{heads}"
+            "<th class='mu-pts' title='Points scored, with the live expected final under them; "
+            "the consensus projection before kickoff'>Pts</th>"
+            "<th>Slot</th><th>Player</th><th>Game</th>"
+            f"<th title='GordStats projection for this week'>GS</th>{heads}"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>{swaps}')
     parts = {"starters": starters, "bench": bench, "cards": cards, "pts": pts,
-             "hints": hints, "pts_total": pts_total, "proj": proj}
+             "hints": hints, "pts_total": pts_total, "proj": proj, "hproj": hproj}
     return html, gs_total, cons_total, pts_total, exp_total, var_total, parts
 
 
@@ -392,7 +422,7 @@ def _short_name(name: str) -> str:
 
 
 def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | None,
-               hint: str = "", proj=None) -> str:
+               hint: str = "", hproj=None) -> str:
     """One team's player in the paired phone view - the same data-pid, .mu-pts
     and live attributes as the table row, inside a data-roster wrapper, so
     the live poll moves it exactly the same way."""
@@ -409,15 +439,15 @@ def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | Non
     attrs = (f' data-gid="{escape(str(gid))}" data-side="{"home" if g.get("home") else "away"}"'
              if gid else "")
     return (f'<div class="mu-pp{live}" data-roster="{escape(key)}" data-pid="{escape(row["pid"])}"'
-            f'{attrs}><div class="mu-pn">'
+            f'{attrs} data-hproj="{"" if hproj is None else round(hproj, 2)}"><div class="mu-pn">'
             f'<span class="nm" title="{escape(card["name"])}">{_logo(card["team"])}'
             f'{escape(_short_name(card["name"]))}</span>'
             f'<span class="mu-pm">{escape(card["pos"])}'
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
             f'{inj_html}{tag}</span>'
             f'<span class="mu-g">{game_cell(g)}</span></div>'
-            f'<div class="mu-pcol"><span class="mu-pts"><b>{ui.fmt(pts)}</b></span>'
-            f'<span class="mu-gs" title="GordStats projection">{ui.fmt(proj)}</span></div></div>')
+            f'<div class="mu-pcol"><span class="mu-pts">{hybrid_score(pts, hproj, g)}</span>'
+            f'</div></div>')
 
 
 def pair_view(a: dict, b: dict, ctx: dict) -> str:
@@ -433,7 +463,7 @@ def pair_view(a: dict, b: dict, ctx: dict) -> str:
         card = parts["cards"].get(row["pid"])
         g = ctx["by_team"].get((card or {}).get("team")) if card else None
         return _pair_cell(row, card, key, parts["pts"].get(row["pid"]), g,
-                          parts["hints"].get(row["pid"], ""), parts["proj"].get(row["pid"]))
+                          parts["hints"].get(row["pid"], ""), parts["hproj"].get(row["pid"]))
 
     def rows(a_list, b_list, bench=False) -> str:
         out = []
@@ -590,16 +620,19 @@ compute:function(rows,games){
     return Math.min(Math.max(((g.period-1)*15+(15-left))/60,0),1);}
   (rows||[]).forEach(function(r){
     var key=String(r.roster_id),pp=r.players_points||{},players={},exp=0,v=0;
-    document.querySelectorAll('[data-roster="'+key+'"] tr.starter[data-pid]').forEach(function(tr){
+    var hexp=0;
+    document.querySelectorAll('[data-roster="'+key+'"] tr[data-pid]').forEach(function(tr){
       var pid=tr.getAttribute('data-pid'),proj=parseFloat(tr.getAttribute('data-proj')),sd=parseFloat(tr.getAttribute('data-sd'))||2;
+      var hp=parseFloat(tr.getAttribute('data-hproj'));
       var g=games[tr.getAttribute('data-team')],done=elapsed(g),pts=pp[pid]||0;
-      if(isNaN(proj))proj=0;
-      var e=pts+proj*(1-done);exp+=e;v+=sd*sd*(1-done);
-      players[pid]={points:pp[pid],live:(g&&g.state!=='pre')?e:undefined,
-        state:g&&g.state,game:g?muGameText(g.state,g.score,g.opp_score,g.detail):undefined};
+      if(isNaN(proj))proj=0;if(isNaN(hp))hp=proj;
+      var e=pts+proj*(1-done),he=pts+hp*(1-done);
+      if(tr.classList.contains('starter')){exp+=e;v+=sd*sd*(1-done);hexp+=he;}
+      players[pid]={points:pp[pid],hexp:(g&&g.state!=='pre')?he:undefined,
+        state:g?g.state:undefined,game:g?muGameText(g.state,g.score,g.opp_score,g.detail):undefined};
     });
     Object.keys(pp).forEach(function(k){if(!players[k])players[k]={points:pp[k]};});
-    teams[key]={points:r.points,players:players,exp:exp,v:v,matchup:r.matchup_id,gs_live:exp};
+    teams[key]={points:r.points,players:players,exp:exp,v:v,matchup:r.matchup_id,gs_live:exp,hexp:hexp};
   });
   Object.keys(teams).forEach(function(k){
     var t=teams[k],o=Object.keys(teams).filter(function(j){return j!==k&&teams[j].matchup===t.matchup;})[0];
@@ -897,9 +930,10 @@ def body() -> str:
         "zero on a bye. Beside it, three outside projections for the same week: "
         "<b>Slpr</b> is Sleeper's, <b>ESPN</b> is ESPN's, <b>FP</b> is the FantasyPros "
         "expert consensus (whose start/sit grade sits by the name); their average is "
-        "the <b>Consensus</b> the scoreboard compares us against. <b>Pts</b> is what "
-        "the league has scored so far, with the stat line behind it; while games "
-        "are on, the points refresh in place about once a minute. "
+        "the <b>Consensus</b> the scoreboard compares us against. <b>Pts</b> is the "
+        "consensus projection (grey) until a player's game kicks off, then his points "
+        "with the expected final under them (points plus the unplayed share of the "
+        "consensus), refreshed about once a minute, then <i>final</i>. "
         "Ahead of the final whistle a roster whose bench out-projects a starter gets "
         f"the swap spelled out under the table. Rebuilt several times a day and every "
         f"ten minutes while games are on (last: {built}); finished weeks stay on "
