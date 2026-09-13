@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-13T16:42:16+00:00",
+ "fetched": "2026-09-13T16:45:32+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 0.0,
      "projected": 192.04,
-     "win_probability": 0.52
+     "win_probability": 0.53
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 188.18,
-     "win_probability": 0.48
+     "projected": 186.87,
+     "win_probability": 0.47
     }
    ]
   },
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 197.78,
-     "win_probability": 0.7
+     "projected": 197.82,
+     "win_probability": 0.71
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 164.7,
-     "win_probability": 0.30000000000000004
+     "win_probability": 0.29000000000000004
     }
    ]
   },
@@ -63,14 +63,14 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 192.11,
+     "projected": 192.53,
      "win_probability": 0.52
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 188.68,
+     "projected": 188.79,
      "win_probability": 0.48
     }
    ]
@@ -86,7 +86,7 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 179.98,
+     "projected": 180.11,
      "win_probability": 0.51
     },
     {
@@ -110,14 +110,14 @@
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 186.36,
-     "win_probability": 0.5700000000000001
+     "win_probability": 0.58
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 176.1,
-     "win_probability": 0.42999999999999994
+     "projected": 174.77,
+     "win_probability": 0.42000000000000004
     }
    ]
   }
