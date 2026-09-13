@@ -142,6 +142,10 @@ tr.g[data-state="in"] .sc-live{display:block}
 .gs-pick .gp-p{font-weight:800;color:#1a7f4b;white-space:nowrap;font-variant-numeric:tabular-nums}
 .gs-pick .gp-book{font-weight:400;color:#64748b;font-size:11.5px}
 .gs-pick .gp-note{font-size:11.5px;color:#64748b;margin-top:6px}
+.gs-pick .gp-hit{color:#1a7f4b;font-weight:800}
+.gs-pick .gp-miss{color:#b3382c;font-weight:800}
+.gs-pick .gp-missed{color:#b3382c;text-transform:none;letter-spacing:0}
+.gs-pick .gp-label .gp-hit{text-transform:none;letter-spacing:0}
 .tag-wx{background:#e0e7ff;color:#3730a3}
 /* Kick: time over TV. */
 td.t{color:#4a5a68;max-width:140px}
@@ -1240,49 +1244,39 @@ def _ml_text(ml) -> str:
     return f"{int(ml):+d}" if ml is not None else ""
 
 
-def _slate(df: pd.DataFrame, current: int) -> tuple:
-    """The day's games still to kick off with a book spread and a model line:
-    today's if any are left, else the next day with games. (frame, date)."""
-    # FBS against FBS only, as the predictions page scores it: the model
-    # rates every FCS opponent as one generic FCS team, so a Montana State or
-    # a UC Davis reads as a 30-point mismatch it never is, and those games
-    # would fill every slot here with the model's blind spot.
-    fbs = df["home_conf"].astype(str).ne("") & df["away_conf"].astype(str).ne("")
-    pending = df[(df["week"] == current) & (df["state"] == "pre") & fbs
-                 & df["dk_spread"].notna() & df["gs_margin"].notna()]
-    if pending.empty:
-        return pending, None
-    today = datetime.now(LEAGUE_TZ).date()
-    days = sorted(set(pending["local"].dt.date))
-    day = next((d for d in days if d >= today), days[0])
-    return pending[pending["local"].dt.date == day], day
+PICKS_DIR = DATA_DIR / "picks" / str(SEASON)
 
 
-def _picks(df: pd.DataFrame, current: int) -> str:
-    """GordStats' underdog and parlay of the day, from the day's slate.
+def _day_games(df: pd.DataFrame, current: int) -> tuple:
+    """The day's FBS-v-FBS games with a book spread and a model line, whatever
+    their state: today's if the day has games, else the next day that does.
+    (frame, date).
 
-    The underdog is the book's dog the model gives the best chance of
-    winning outright, our probability against the book's own (its two
-    moneylines with the vig taken out). The parlay is the model's surest
-    calls against the book, one leg per game: the side of the spread, the
-    side of the total, or a moneyline the book has not already priced as
-    near-certain, each with the chance the model's error spread gives it,
-    and the product beside what the book's numbers imply for the same legs.
+    FBS against FBS only, as the predictions page scores it: the model rates
+    every FCS opponent as one generic FCS team, so a Montana State or a UC
+    Davis reads as a 30-point mismatch it never is, and those games would
+    fill every slot here with the model's blind spot.
     """
-    slate, day = _slate(df, current)
-    if slate.empty:
-        return ""
+    fbs = df["home_conf"].astype(str).ne("") & df["away_conf"].astype(str).ne("")
+    lined = df[(df["week"] == current) & fbs & df["dk_spread"].notna() & df["gs_margin"].notna()]
+    if lined.empty:
+        return lined, None
+    today = datetime.now(LEAGUE_TZ).date()
+    days = sorted(set(lined["local"].dt.date))
+    day = next((d for d in days if d >= today), days[0])
+    return lined[lined["local"].dt.date == day], day
+
+
+def _compute_picks(slate: pd.DataFrame) -> dict:
+    """The underdog and the parlay from a slate, as plain data - what gets
+    frozen. Every leg carries what grading it later needs."""
     m_sd, t_sd = _sds()
     from scipy.stats import norm
 
     def kick(g):
         return f"{g.local:%a %-I:%M%p}".replace("AM", "a").replace("PM", "p")
 
-    def game_text(g):
-        return (f"{escape(str(g.away_abbr or g.away))} at {escape(str(g.home_abbr or g.home))}"
-                f" · {kick(g)}")
-
-    # --- the underdog ------------------------------------------------------
+    out = {"underdog": None, "legs": []}
     dog_best = None
     for g in slate.itertuples():
         spread, wp = float(g.dk_spread), _v(g.gs_wp)
@@ -1294,30 +1288,13 @@ def _picks(df: pd.DataFrame, current: int) -> str:
         book_p = (book if home_dog else 1 - book) if book is not None else None
         ml = _v(g.ml_home) if home_dog else _v(g.ml_away)
         if dog_best is None or p > dog_best["p"]:
-            dog_best = {"g": g, "p": p, "book_p": book_p, "home_dog": home_dog, "ml": ml,
-                        "line": abs(spread)}
-    dog_html = ""
-    if dog_best:
-        g, hd = dog_best["g"], dog_best["home_dog"]
-        dog = g.home if hd else g.away
-        fav = g.away if hd else g.home
-        where = "at home to" if hd else "at"
-        edge = (f"the book says {dog_best['book_p']:.0%}" if dog_best["book_p"] is not None
-                else f"the book has them at +{dog_best['line']:.1f}")
-        verdict = ("GordStats' pick to win outright" if dog_best["p"] >= 0.5
-                   else "the dog GordStats likes most, short of picking the upset")
-        ml_html = (f' <span class="gp-book">ML {_ml_text(dog_best["ml"])}</span>'
-                   if dog_best["ml"] is not None else "")
-        dog_html = (
-            '<div class="gs-pick"><div class="gp-label">Underdog of the day</div>'
-            f'<div class="gp-main"><a href="#g-{escape(str(g.game_id))}">{escape(str(dog))}'
-            f' +{dog_best["line"]:.1f}</a>{ml_html}</div>'
-            f'<div class="gp-sub">{where} {escape(str(fav))} · {kick(g)}'
-            f' · <span class="gp-p">{dog_best["p"]:.0%}</span> to win, {edge}</div>'
-            f"<div class='gp-note'>{verdict}: the model's chance for the book's underdog, "
-            "against the moneyline with the vig taken out.</div></div>")
+            dog_best = {"game_id": str(g.game_id), "side": "home" if home_dog else "away",
+                        "team": str(g.home if home_dog else g.away),
+                        "opp": str(g.away if home_dog else g.home),
+                        "p": round(p, 4), "book_p": round(book_p, 4) if book_p is not None else None,
+                        "ml": ml, "line": abs(spread), "kick": kick(g)}
+    out["underdog"] = dog_best
 
-    # --- the parlay --------------------------------------------------------
     legs = []
     for g in slate.itertuples():
         margin, spread = float(g.gs_margin), float(g.dk_spread)
@@ -1325,14 +1302,15 @@ def _picks(df: pd.DataFrame, current: int) -> str:
         edge = margin - (-spread)
         if abs(edge) > 0.25:
             home_side = edge > 0
-            team = g.home if home_side else g.away
             line = spread if home_side else -spread
-            cands.append({"p": float(norm.cdf(abs(edge) / m_sd)), "book": 0.5,
-                          "text": f"{escape(str(team))} {line:+.1f}"})
+            cands.append({"kind": "spread", "side": "home" if home_side else "away",
+                          "line": line, "p": float(norm.cdf(abs(edge) / m_sd)), "book": 0.5,
+                          "text": f"{g.home if home_side else g.away} {line:+.1f}"})
         total, gs_total = _v(g.dk_total), _v(g.gs_total)
         if total is not None and gs_total is not None and abs(gs_total - total) > 0.25:
             over = gs_total > total
-            cands.append({"p": float(norm.cdf(abs(gs_total - total) / t_sd)), "book": 0.5,
+            cands.append({"kind": "total", "over": over, "total": total,
+                          "p": float(norm.cdf(abs(gs_total - total) / t_sd)), "book": 0.5,
                           "text": f"{'Over' if over else 'Under'} {total:.1f}"})
         wp = _v(g.gs_wp)
         if wp is not None:
@@ -1342,38 +1320,131 @@ def _picks(df: pd.DataFrame, current: int) -> str:
             book = _devig(_v(g.ml_home), _v(g.ml_away))
             book_p = (book if home_side else 1 - book) if book is not None else None
             if ml is not None and book_p is not None and book_p < ML_CAP:
-                team = g.home if home_side else g.away
-                cands.append({"p": p, "book": book_p,
-                              "text": f"{escape(str(team))} ML {_ml_text(ml)}"})
+                cands.append({"kind": "ml", "side": "home" if home_side else "away",
+                              "p": p, "book": book_p,
+                              "text": f"{g.home if home_side else g.away} ML {_ml_text(ml)}"})
         if cands:
             best = max(cands, key=lambda c: c["p"])
-            best["game"] = game_text(g)
-            best["anchor"] = f"#g-{escape(str(g.game_id))}"
+            best.update({"game_id": str(g.game_id), "p": round(best["p"], 4),
+                         "book": round(best["book"], 4),
+                         "game": f"{g.away_abbr or g.away} at {g.home_abbr or g.home} · {kick(g)}"})
             legs.append(best)
     legs.sort(key=lambda c: -c["p"])
-    legs = legs[:PARLAY_LEGS]
+    out["legs"] = legs[:PARLAY_LEGS]
+    return out
+
+
+def _picks_for_day(df: pd.DataFrame, current: int) -> tuple:
+    """(picks, day, locked_at): the day's picks, set once and kept.
+
+    The first build to see a day with every game still to come computes the
+    picks and writes them to PICKS_DIR; every build after that reads the
+    file back, so the cards stop moving the moment the day's first game
+    kicks off. A day found already under way with nothing on file (the very
+    first deploy) is computed from what is still pending and frozen as is.
+    """
+    slate, day = _day_games(df, current)
+    if slate.empty:
+        return None, None, None
+    path = PICKS_DIR / f"{day:%Y-%m-%d}.json"
+    if path.exists():
+        try:
+            saved = json.loads(path.read_text())
+            return saved["picks"], day, saved.get("locked_at")
+        except (ValueError, KeyError):
+            pass
+    pending = slate[slate["state"] == "pre"]
+    if pending.empty:
+        return None, day, None
+    picks = _compute_picks(pending)
+    locked_at = datetime.now(LEAGUE_TZ).strftime("%a %b %-d, %-I:%M %p")
+    PICKS_DIR.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"day": f"{day:%Y-%m-%d}", "locked_at": locked_at,
+                                "games": int(len(pending)), "picks": picks}, indent=1))
+    return picks, day, locked_at
+
+
+def _grade(leg: dict, g) -> bool | None:
+    """True/False once the game is final, None while it is not."""
+    if g is None or g.state != "post" or _v(g.home_score) is None or _v(g.away_score) is None:
+        return None
+    hs, as_ = float(g.home_score), float(g.away_score)
+    if leg["kind"] == "spread":
+        margin = (hs - as_) if leg["side"] == "home" else (as_ - hs)
+        return None if margin + leg["line"] == 0 else margin + leg["line"] > 0
+    if leg["kind"] == "total":
+        if hs + as_ == leg["total"]:
+            return None
+        return (hs + as_ > leg["total"]) == bool(leg["over"])
+    if leg["kind"] == "ml":
+        return (hs > as_) if leg["side"] == "home" else (as_ > hs)
+    return None
+
+
+def _picks(df: pd.DataFrame, current: int) -> str:
+    """GordStats' underdog and parlay of the day: set before the day's first
+    kickoff and locked, then graded as the games finish."""
+    picks, day, locked_at = _picks_for_day(df, current)
+    if not picks or not (picks.get("underdog") or picks.get("legs")):
+        return ""
+    by_id = {str(g.game_id): g for g in df.itertuples()}
+
+    def mark(ok) -> str:
+        if ok is None:
+            return ""
+        return (' <span class="gp-hit">&#10003;</span>' if ok
+                else ' <span class="gp-miss">&#10007;</span>')
+
+    dog_html = ""
+    d = picks.get("underdog")
+    if d:
+        g = by_id.get(d["game_id"])
+        where = "at home to" if d["side"] == "home" else "at"
+        edge = (f"the book said {d['book_p']:.0%}" if d.get("book_p") is not None
+                else f"the book had them at +{d['line']:.1f}")
+        verdict = ("GordStats' pick to win outright" if d["p"] >= 0.5
+                   else "the dog GordStats liked most, short of picking the upset")
+        won = _grade({"kind": "ml", "side": d["side"]}, g)
+        ml_html = (f' <span class="gp-book">ML {_ml_text(d["ml"])}</span>'
+                   if d.get("ml") is not None else "")
+        dog_html = (
+            '<div class="gs-pick"><div class="gp-label">Underdog of the day</div>'
+            f'<div class="gp-main"><a href="#g-{escape(d["game_id"])}">{escape(d["team"])}'
+            f' +{d["line"]:.1f}</a>{ml_html}{mark(won)}</div>'
+            f'<div class="gp-sub">{where} {escape(d["opp"])} · {escape(d["kick"])}'
+            f' · <span class="gp-p">{d["p"]:.0%}</span> to win, {edge}</div>'
+            f"<div class='gp-note'>{verdict}: the model's chance for the book's underdog, "
+            "against the moneyline with the vig taken out.</div></div>")
+
     parlay_html = ""
+    legs = picks.get("legs") or []
     if len(legs) >= 2:
         ours = float(np.prod([c["p"] for c in legs]))
         book = float(np.prod([c["book"] for c in legs]))
+        grades = [_grade(c, by_id.get(c["game_id"])) for c in legs]
         items = "".join(
-            f'<li><span><a href="{c["anchor"]}">{c["text"]}</a>'
-            f'<span class="gp-game">{c["game"]}</span></span>'
-            f'<span class="gp-p">{c["p"]:.0%}</span></li>' for c in legs)
+            f'<li><span><a href="#g-{escape(c["game_id"])}">{escape(c["text"])}</a>'
+            f'<span class="gp-game">{escape(c["game"])}</span></span>'
+            f'<span class="gp-p">{c["p"]:.0%}{mark(ok)}</span></li>'
+            for c, ok in zip(legs, grades))
+        state = ("missed" if any(ok is False for ok in grades)
+                 else "hit" if all(ok is True for ok in grades) else "")
         parlay_html = (
-            '<div class="gs-pick"><div class="gp-label">Parlay of the day</div>'
+            '<div class="gs-pick"><div class="gp-label">Parlay of the day'
+            + (f' · <span class="gp-{state}">{state}</span>' if state else "") + "</div>"
             f'<div class="gp-main">{len(legs)} legs · <span class="gp-p">{ours:.0%}</span>'
-            f' <span class="gp-book">the book implies {book:.0%}</span></div>'
+            f' <span class="gp-book">the book implied {book:.0%}</span></div>'
             f'<ul class="gp-legs">{items}</ul>'
-            "<div class='gp-note'>The model's surest calls against the book today, one "
-            "per game, each with the chance its own error spread gives it; the combined "
-            "figure is those multiplied. How the spread and total calls have done is on "
-            "the <a href='/cfb/predictions/'>predictions page</a>.</div></div>")
+            "<div class='gp-note'>The model's surest calls against the book, one per game, "
+            "each with the chance its own error spread gave it; the combined figure is those "
+            "multiplied. How the spread and total calls have done is on the "
+            "<a href='/cfb/predictions/'>predictions page</a>.</div></div>")
 
     if not (dog_html or parlay_html):
         return ""
-    return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b> - from the '
-            f'{len(slate)} games still to kick off with a book line.</p>'
+    when = f", locked {escape(locked_at)}" if locked_at else ""
+    return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b> - set before the '
+            f"day's first kickoff{when}, and not touched since.</p>"
             f'<div class="gs-picks">{dog_html}{parlay_html}</div>')
 
 

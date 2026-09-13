@@ -1,0 +1,51 @@
+{
+ "day": "2026-09-12",
+ "locked_at": null,
+ "games": 47,
+ "picks": {
+  "underdog": {
+   "game_id": "401862705",
+   "side": "home",
+   "team": "North Texas",
+   "opp": "UNLV",
+   "p": 0.6759,
+   "book_p": 0.4066,
+   "ml": 136.0,
+   "line": 3.0,
+   "kick": "Sat 3:45p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 35.5,
+    "p": 0.8811,
+    "book": 0.5,
+    "text": "Louisiana Tech +35.5",
+    "game_id": "401867796",
+    "game": "LT at LSU \u00b7 Sat 7:30p"
+   },
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 17.5,
+    "p": 0.8267,
+    "book": 0.5,
+    "text": "Sacramento St +17.5",
+    "game_id": "401860883",
+    "game": "SAC at FRES \u00b7 Sat 10:30p"
+   },
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": 11.5,
+    "p": 0.8178,
+    "book": 0.5,
+    "text": "UConn +11.5",
+    "game_id": "401858444",
+    "game": "MD at CONN \u00b7 Sat 3:30p"
+   }
+  ]
+ },
+ "note": "first day: frozen from the picks the site showed before kickoff; the lock time was not recorded"
+}
