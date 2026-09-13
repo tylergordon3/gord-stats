@@ -4,7 +4,7 @@
  "week_end": "2026-09-12",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-13T04:29:53+00:00",
+ "fetched": "2026-09-13T05:00:11+00:00",
  "matchups": [
   {
    "week": 2.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 151.8,
      "projected": 195.53,
-     "win_probability": 0.06000000000000005
+     "win_probability": 0.030000000000000027
     },
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 168.28,
      "projected": 169.0,
-     "win_probability": 0.94
+     "win_probability": 0.97
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 177.64,
      "projected": 207.25,
-     "win_probability": 0.13
+     "win_probability": 0.14
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 174.3,
+     "points": 175.02,
      "projected": 181.73,
-     "win_probability": 0.87
+     "win_probability": 0.86
     }
    ]
   },
@@ -62,16 +62,16 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 152.86,
+     "points": 161.84,
      "projected": 191.42,
-     "win_probability": 0.38
+     "win_probability": 0.56
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 157.86,
+     "points": 158.46,
      "projected": 185.21,
-     "win_probability": 0.62
+     "win_probability": 0.43999999999999995
     }
    ]
   },
@@ -85,14 +85,14 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 240.46,
+     "points": 240.56,
      "projected": 185.16,
      "win_probability": 0.99
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 129.28,
+     "points": 132.98,
      "projected": 165.45,
      "win_probability": 0.010000000000000009
     }
@@ -1067,9 +1067,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 22.68,
+    "points": 23.4,
     "stats": {
-     "4": 167.0,
+     "4": 185.0,
      "5": 3.0,
      "6": 1.0
     }
@@ -1381,13 +1381,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 20.08,
+    "points": 29.06,
     "stats": {
-     "4": 142.0,
-     "5": 1.0,
+     "4": 229.0,
+     "5": 2.0,
      "6": 1.0,
-     "8": 7.0,
-     "9": 44.0,
+     "8": 9.0,
+     "9": 39.0,
      "10": 1.0
     }
    },
@@ -1844,10 +1844,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 28.8,
+    "points": 29.4,
     "stats": {
-     "8": 6.0,
-     "9": 27.0,
+     "8": 8.0,
+     "9": 33.0,
      "10": 2.0,
      "11": 4.0,
      "12": 61.0,
@@ -2187,10 +2187,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 6.8,
+    "points": 6.9,
     "stats": {
-     "8": 11.0,
-     "9": 68.0
+     "8": 12.0,
+     "9": 69.0
     }
    },
    {
@@ -2219,9 +2219,9 @@
     "team": "TTU",
     "team_full": "Texas Tech Red Raiders",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Foot",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2475,10 +2475,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 2.5,
+    "points": 6.2,
     "stats": {
-     "8": 10.0,
-     "9": 25.0
+     "8": 14.0,
+     "9": 62.0
     }
    },
    {
@@ -3151,10 +3151,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 1.9,
+    "points": 4.7,
     "stats": {
-     "11": 1.0,
-     "12": 14.0
+     "11": 3.0,
+     "12": 32.0
     }
    },
    {
