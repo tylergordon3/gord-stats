@@ -13,6 +13,7 @@ import math
 import pandas as pd
 
 from fantasy import paths
+from fantasy.league import head_to_head
 from fantasy.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
@@ -149,10 +150,43 @@ costs far more than losing a bench stash.</p>
 {img}"""
 
 
+def _h2h_cell(value: str) -> str:
+    """Green for a winning record, red for a losing one, plain when even."""
+    if not value:
+        return ""
+    w, l = (int(x) for x in value.split("-")[:2])
+    if w == l:
+        return "background-color:#f1f5f9"
+    return "background-color:#d5efdd" if w > l else "background-color:#fde2dd"
+
+
+def _h2h_table(kind: str) -> str:
+    grid = head_to_head.matrix(kind)
+    tot = head_to_head.totals(kind)
+    grid["Total"] = [f"{r.w}-{r.l}" + (f"-{r.t}" if r.t else "") for r in tot.loc[grid.index].itertuples()]
+    grid.index.name = None
+    styled = (grid.style.map(_h2h_cell)
+              .set_table_styles([styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE], overwrite=False)
+              .set_table_attributes('class="sticky-table"'))
+    return f"<div class='table-scroll'>{styled.to_html()}</div>"
+
+
+def h2h_section() -> str:
+    """Lifetime head-to-head: regular season and winners-bracket playoffs."""
+    views = [("regular", "Regular season", _h2h_table("regular")),
+             ("playoffs", "Playoffs", _h2h_table("playoff"))]
+    return ("<p>Each row's record against each column, every season on Sleeper. "
+            "<b>Playoffs</b> counts winners-bracket elimination games only "
+            "(no consolation or placement games); the weekly median game is not "
+            "head-to-head and is not counted.</p>"
+            + layout.view_switcher(views, group="h2h"))
+
+
 def generate(output=OUTPUT):
     """Write the homepage to `output` (default docs/index.html)."""
     sections = [
         ("metrics", "All-Time Metrics", metrics_section(), not LIVE_ADP_BOARD),
+        ("h2h", "Head-to-Head", h2h_section(), False),
         ("injuries", "All-Time Injury Impacts", injury_section(), False),
         ("adp", "All-Time Draft Values & Busts", adp.all_time_section(), False),
     ]

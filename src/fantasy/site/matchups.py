@@ -24,8 +24,10 @@ from html import escape
 import pandas as pd
 
 from fantasy import paths, projections
-from fantasy.config import LEAGUE_TZ, UPCOMING_LEAGUE_ID, UPCOMING_SEASON, UPCOMING_YEAR
+from fantasy.config import (LEAGUE_TZ, ROSTER_NAMES, UPCOMING_LEAGUE_ID, UPCOMING_SEASON,
+                            UPCOMING_YEAR)
 from fantasy.league import ext_projections as ext
+from fantasy.league import head_to_head as h2h
 from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import matchup_page as ui
@@ -497,6 +499,26 @@ def _label(t: dict) -> str:
     return name + (f' <span class="mu-meta">({escape(mgr)})</span>' if mgr and mgr not in name else "")
 
 
+def lifetime_note(key_a: str, key_b: str) -> str:
+    """The two managers' lifetime head-to-head, regular season and winners-bracket
+    playoffs kept apart (fantasy.league.head_to_head)."""
+    try:
+        a, b = int(key_a), int(key_b)
+        reg, po = h2h.record(a, b, "regular"), h2h.record(a, b, "playoff")
+    except Exception as exc:                            # noqa: BLE001
+        print(f"[matchups] head-to-head unavailable ({exc})")
+        return ""
+    na, nb = ROSTER_NAMES.get(a, key_a), ROSTER_NAMES.get(b, key_b)
+
+    def rec(r):
+        return f"{r['w']}&ndash;{r['l']}" + (f"&ndash;{r['t']}" if r["t"] else "")
+    regular = (f"regular season <b>{rec(reg)}</b> (avg {reg['pf'] / reg['games']:.1f}&ndash;"
+               f"{reg['pa'] / reg['games']:.1f})" if reg["games"] else "no regular-season meetings")
+    playoffs = f"playoffs <b>{rec(po)}</b>" if po["games"] else "never met in the playoffs"
+    return (f'<p class="mu-note mu-h2h">Lifetime, {escape(na)}&ndash;{escape(nb)}: '
+            f"{regular} &middot; {playoffs}</p>")
+
+
 def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     final = data_mod.week_final(data)
     started = data_mod.week_started(data)
@@ -541,6 +563,7 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
             f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{bar}<p class="mu-note">{note}</p>'
+            + lifetime_note(a["key"], b["key"])
             + pair_view(a, b, ctx)
             + f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
             f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')

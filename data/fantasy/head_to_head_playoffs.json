@@ -1,0 +1,188 @@
+{
+ "2324": [
+  {
+   "a": 4,
+   "a_pts": 145.68,
+   "b": 6,
+   "b_pts": 94.6,
+   "final": false,
+   "kind": "playoff",
+   "round": 1,
+   "season": "2324",
+   "week": 15,
+   "winner": 4
+  },
+  {
+   "a": 1,
+   "a_pts": 134.32,
+   "b": 7,
+   "b_pts": 108.46,
+   "final": false,
+   "kind": "playoff",
+   "round": 1,
+   "season": "2324",
+   "week": 15,
+   "winner": 1
+  },
+  {
+   "a": 3,
+   "a_pts": 207.04,
+   "b": 4,
+   "b_pts": 64.7,
+   "final": false,
+   "kind": "playoff",
+   "round": 2,
+   "season": "2324",
+   "week": 16,
+   "winner": 3
+  },
+  {
+   "a": 1,
+   "a_pts": 127.32,
+   "b": 5,
+   "b_pts": 140.88,
+   "final": false,
+   "kind": "playoff",
+   "round": 2,
+   "season": "2324",
+   "week": 16,
+   "winner": 5
+  },
+  {
+   "a": 3,
+   "a_pts": 164.58,
+   "b": 5,
+   "b_pts": 118.06,
+   "final": true,
+   "kind": "playoff",
+   "round": 3,
+   "season": "2324",
+   "week": 17,
+   "winner": 3
+  }
+ ],
+ "2425": [
+  {
+   "a": 3,
+   "a_pts": 151.76,
+   "b": 8,
+   "b_pts": 155.1,
+   "final": false,
+   "kind": "playoff",
+   "round": 1,
+   "season": "2425",
+   "week": 15,
+   "winner": 8
+  },
+  {
+   "a": 2,
+   "a_pts": 113.96,
+   "b": 10,
+   "b_pts": 129.18,
+   "final": false,
+   "kind": "playoff",
+   "round": 1,
+   "season": "2425",
+   "week": 15,
+   "winner": 10
+  },
+  {
+   "a": 1,
+   "a_pts": 190.52,
+   "b": 10,
+   "b_pts": 185.52,
+   "final": false,
+   "kind": "playoff",
+   "round": 2,
+   "season": "2425",
+   "week": 16,
+   "winner": 1
+  },
+  {
+   "a": 5,
+   "a_pts": 162.38,
+   "b": 8,
+   "b_pts": 148.08,
+   "final": false,
+   "kind": "playoff",
+   "round": 2,
+   "season": "2425",
+   "week": 16,
+   "winner": 5
+  },
+  {
+   "a": 1,
+   "a_pts": 163.88,
+   "b": 5,
+   "b_pts": 152.28,
+   "final": true,
+   "kind": "playoff",
+   "round": 3,
+   "season": "2425",
+   "week": 17,
+   "winner": 1
+  }
+ ],
+ "2526": [
+  {
+   "a": 5,
+   "a_pts": 156.52,
+   "b": 8,
+   "b_pts": 150.5,
+   "final": false,
+   "kind": "playoff",
+   "round": 1,
+   "season": "2526",
+   "week": 15,
+   "winner": 5
+  },
+  {
+   "a": 6,
+   "a_pts": 152.62,
+   "b": 9,
+   "b_pts": 158.16,
+   "final": false,
+   "kind": "playoff",
+   "round": 1,
+   "season": "2526",
+   "week": 15,
+   "winner": 9
+  },
+  {
+   "a": 4,
+   "a_pts": 112.16,
+   "b": 9,
+   "b_pts": 134.22,
+   "final": false,
+   "kind": "playoff",
+   "round": 2,
+   "season": "2526",
+   "week": 16,
+   "winner": 9
+  },
+  {
+   "a": 3,
+   "a_pts": 88.72,
+   "b": 5,
+   "b_pts": 114.76,
+   "final": false,
+   "kind": "playoff",
+   "round": 2,
+   "season": "2526",
+   "week": 16,
+   "winner": 5
+  },
+  {
+   "a": 5,
+   "a_pts": 141.1,
+   "b": 9,
+   "b_pts": 83.52,
+   "final": true,
+   "kind": "playoff",
+   "round": 3,
+   "season": "2526",
+   "week": 17,
+   "winner": 5
+  }
+ ]
+}
