@@ -740,7 +740,7 @@ def disagreements_section(data: dict, ctx: dict) -> str:
     if not rows:
         return ""
     sources = outside_sources(data)
-    heads = "".join(f"<th>{SHORT[k]}</th>" for k in sources)
+    heads = "".join(f'<th class="mu-src">{SHORT[k]}</th>' for k in sources)
     cells = []
     for r in rows[:DISAGREE_N]:
         up = r["gap"] > 0
@@ -749,7 +749,7 @@ def disagreements_section(data: dict, ctx: dict) -> str:
             f'<span class="mu-meta">{escape(r["pos"])}</span></td>'
             f'<td class="mu-t">{escape(r["owner"])} <span class="mu-meta">{escape(r["slot"])}</span></td>'
             f"<td><b>{ui.fmt(r['gs'])}</b></td>"
-            + "".join(f"<td>{ui.fmt(v)}</td>" for v in r["sources"])
+            + "".join(f'<td class="mu-src">{ui.fmt(v)}</td>' for v in r["sources"])
             + f"<td>{ui.fmt(r['cons'])}</td>"
             f'<td><b class="{"lead" if up else ""}">{r["gap"]:+.1f}</b></td></tr>')
     n_src = len(sources)
@@ -759,7 +759,7 @@ def disagreements_section(data: dict, ctx: dict) -> str:
             "list. A positive gap means we like him more than the market does; the Accuracy "
             "section below says, once weeks are final, which side of these calls has been "
             "right.</p>"
-            '<div class="table-scroll"><table class="mu-board"><thead><tr><th>Player</th>'
+            '<div class="table-scroll"><table class="mu-board mu-dis"><thead><tr><th>Player</th>'
             f"<th>Roster</th><th>GS</th>{heads}<th>Consensus</th><th>Gap</th></tr></thead>"
             f'<tbody>{"".join(cells)}</tbody></table></div>')
     return layout.details("Disagreements &mdash; where GordStats parts from the consensus",

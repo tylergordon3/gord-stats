@@ -62,6 +62,14 @@ table.mu-board td b.lead{color:#1a7f4b}
 @media (max-width:700px){
   .mu-board-wrap{display:none}
   .mu-cards{display:block;margin:6px 0 12px}
+  /* Lists styled as scoreboards (the NFL page's disagreements): the
+     scoreboard's shrink-to-fit team cells collapse a player column to
+     nothing here, so the text cells get their width back and wrap, and the
+     per-source columns give way to the consensus and the gap. */
+  table.mu-dis td.mu-t,table.mu-dis td.mu-t:first-child{max-width:none;white-space:normal;
+    overflow-wrap:anywhere}
+  table.mu-dis .mu-src{display:none}
+  table.mu-dis th,table.mu-dis td{padding:6px 5px;font-size:12.5px}
 }
 .mu-head{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;
   margin:6px 0 10px}
