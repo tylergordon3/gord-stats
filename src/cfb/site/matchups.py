@@ -420,8 +420,7 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
             + pair_view(a, b, to_school, espn)
             + f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
             f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')
-    head = (f'{escape(a["name"])} <span style="color:#94a3b8">vs</span> '
-            f'{escape(b["name"])}')
+    head = f'{escape(a["name"])}<span class="mu-vs-sum">vs</span>{escape(b["name"])}'
     html = (f'<details class="section" open id="{anchor}"><summary>{head}</summary>'
             f"{body}</details>")
     return html, sides
@@ -461,10 +460,16 @@ def week_board(rows: list[tuple], started: bool, final: bool) -> str:
     proj_h = "<th class='mu-proj' title='GordStats projected total for the lineup as set'>Proj</th>"
     # Once games are on, a narrow screen drops the projection columns (the
     # matchup headers carry them) so the names keep their room.
-    return (f'<div class="table-scroll"><table class="mu-board{" started" if started else ""}"><thead><tr>'
+    cards = ui.board_cards(
+        [(anchor, {"name": escape(a["name"]), "logo": _team_logo(a["team"]), "key": a["key"],
+                   "pts": a["pts"], "gs": a["gs"], "wp": a["wp"]},
+          {"name": escape(b["name"]), "logo": _team_logo(b["team"]), "key": b["key"],
+           "pts": b["pts"], "gs": b["gs"], "wp": b["wp"]}) for anchor, a, b in rows],
+        started, final)
+    return (cards + f'<div class="mu-board-wrap"><div class="table-scroll"><table class="mu-board{" started" if started else ""}"><thead><tr>'
             f"<th>Team</th>{pts_h}{proj_h}{wp_h}"
             f"<th></th>{wp_h}{proj_h}{pts_h}<th>Team</th>"
-            f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div>')
+            f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div></div>')
 
 
 def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,

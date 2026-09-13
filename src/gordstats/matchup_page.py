@@ -34,6 +34,29 @@ table.mu-board td.mu-t.r{text-align:right}
 table.mu-board td.mu-vs{color:#94a3b8;font-size:11px}
 table.mu-board tbody tr:nth-child(even) td{background:#f8fafc}
 table.mu-board td b.lead{color:#1a7f4b}
+/* The matchup title in a section summary: below the phone breakpoint the
+   site lays summaries out as flex boxes, which drops the spaces around a
+   bare "vs" - so it carries its own margins. */
+.mu-vs-sum{margin:0 .35em;color:#94a3b8;font-weight:400}
+/* The scoreboard on a phone: one card per matchup, a line per side, instead
+   of a nine-column table that truncates the names and scrolls sideways. */
+.mu-cards{display:none}
+.mu-card{display:block;border:1px solid #e2e8f0;border-radius:10px;background:#fff;
+  padding:4px 10px;margin:0 0 8px;color:inherit;text-decoration:none}
+.mu-cs{display:flex;align-items:center;gap:8px;padding:5px 0}
+.mu-cs+.mu-cs{border-top:1px solid #eef2f7}
+.mu-cs img.mu-tlogo{width:24px;height:24px}
+.mu-cs .nm{flex:1;min-width:0;font-weight:600;font-size:14px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.mu-cs .num{font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;min-width:44px;
+  text-align:right}
+.mu-cs .num.proj{font-weight:600;color:#475569}
+.mu-cs .wp{min-width:36px;text-align:right;font-size:12px;color:#64748b;
+  font-variant-numeric:tabular-nums}
+@media (max-width:700px){
+  .mu-board-wrap{display:none}
+  .mu-cards{display:block;margin:6px 0 12px}
+}
 .mu-head{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;
   margin:6px 0 10px}
 .mu-side{display:flex;align-items:center;gap:10px;min-width:0}
@@ -222,6 +245,10 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   table.mu-board th,table.mu-roster th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.mu-board td,table.mu-roster td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.mu-board tbody tr:nth-child(even) td{background:#1b2540}
+  .mu-card{background:#16203a;border-color:#2b3852}
+  .mu-cs+.mu-cs{border-color:#2b3852}
+  .mu-cs .num.proj{color:#c5cfdc}
+  .mu-cs .wp{color:#aab7c9}
   table.mu-board td b.lead,.mu-side .num.lead,.mu-swap b{color:#8ff0bd}
   table.mu-roster tr.bench td{background:#1b2540;color:#aab7c9}
   table.mu-roster tr.sep td{background:#223052;color:#aab7c9}
@@ -297,6 +324,29 @@ def week_switch(weeks: list, current: int, views: dict) -> str:
               '<div class="pin-bar"><div class="view-switch">'
               f'<span class="switch-label">Week:</span>{buttons}</div></div>')
     return f'<div class="mu-wrap">{switch}<div id="mu-weeks">{divs}</div></div>' + JS
+
+
+def board_cards(rows: list, started: bool, final: bool) -> str:
+    """The scoreboard as cards, for a phone: `rows` is [(anchor, a, b)] with
+    each side a dict of name, logo (html), key, pts, gs and wp (0-1 or None).
+    Carries the same data-sb / data-wpl hooks as the table, so the live poll
+    moves both."""
+    cards = []
+    for anchor, a, b in rows:
+        def side(s):
+            if started:
+                v = s.get("pts")
+                num = (f'<span class="num" data-sb="{s["key"]}" '
+                       f'data-val="{v if v is not None else ""}">{fmt(v)}</span>')
+            else:
+                num = f'<span class="num proj" title="GordStats projection">{fmt(s.get("gs"))}</span>'
+            wp = s.get("wp")
+            wp_html = ("" if final or wp is None else
+                       f'<span class="wp" data-wpl="{s["key"]}">{wp * 100:.0f}%</span>')
+            return (f'<div class="mu-cs">{s.get("logo") or ""}<span class="nm">{s["name"]}</span>'
+                    f"{num}{wp_html}</div>")
+        cards.append(f'<a class="mu-card" href="#{anchor}">{side(a)}{side(b)}</a>')
+    return f'<div class="mu-cards">{"".join(cards)}</div>'
 
 
 def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str = "") -> str:

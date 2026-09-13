@@ -345,7 +345,9 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
             f"<th>Slot</th><th>Player</th><th>Game</th>{heads}"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>{swaps}')
-    return html, gs_total, cons_total, pts_total, exp_total, var_total
+    parts = {"starters": starters, "bench": bench, "cards": cards, "pts": pts,
+             "hints": hints, "pts_total": pts_total}
+    return html, gs_total, cons_total, pts_total, exp_total, var_total, parts
 
 
 SHORT = {"sleeper": "Slpr", "espn": "ESPN", "fp": "FP"}
@@ -381,6 +383,83 @@ def _record(t: dict) -> str:
     return f"{t.get('wins', 0)}-{t.get('losses', 0)}" + (f"-{t['ties']}" if t.get("ties") else "")
 
 
+def _short_name(name: str) -> str:
+    """"Ja'Marr Chase" -> "J. Chase": a full name does not fit half a phone."""
+    parts = str(name).split()
+    if len(parts) < 2:
+        return str(name)
+    return f"{parts[0][0]}. " + " ".join(parts[1:])
+
+
+def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | None,
+               hint: str = "") -> str:
+    """One team's player in the paired phone view - the same data-pid, .mu-pts
+    and live attributes as the table row, inside a data-roster wrapper, so
+    the live poll moves it exactly the same way."""
+    if row is None or row["pid"] == "0":
+        return '<div class="mu-pp empty" aria-hidden="true"></div>'
+    card = card or {"name": f"Player {row['pid']}", "pos": "", "team": "", "injury": ""}
+    inj = card.get("injury")
+    inj_html = (f'<span class="inj">{escape(INJURY_TAGS.get(inj, inj[:3].upper()))}</span>'
+                if inj else "")
+    tag = {"in": '<span class="mu-hint in">start</span>',
+           "out": '<span class="mu-hint out">sit</span>'}.get(hint, "")
+    live = " live" if g and g.get("state") == "in" else ""
+    gid = (g or {}).get("game_id")
+    attrs = (f' data-gid="{escape(str(gid))}" data-side="{"home" if g.get("home") else "away"}"'
+             if gid else "")
+    return (f'<div class="mu-pp{live}" data-roster="{escape(key)}" data-pid="{escape(row["pid"])}"'
+            f'{attrs}><div class="mu-pn">'
+            f'<span class="nm" title="{escape(card["name"])}">{_logo(card["team"])}'
+            f'{escape(_short_name(card["name"]))}</span>'
+            f'<span class="mu-pm">{escape(card["pos"])}'
+            f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
+            f'{inj_html}{tag}</span></div>'
+            f'<span class="mu-pts"><b>{ui.fmt(pts)}</b></span></div>')
+
+
+def pair_view(a: dict, b: dict, ctx: dict) -> str:
+    """The two rosters as one column of slot-paired rows, for a phone - the
+    college page's layout: one row per lineup slot, your player on the left,
+    theirs on the right, the slot between them. Both sides fill the same
+    slots in the same order, so the rows pair by position."""
+    ap, bp = a["parts"], b["parts"]
+
+    def cell(parts, key, row):
+        if row is None:
+            return _pair_cell(None, None, key, None, None)
+        card = parts["cards"].get(row["pid"])
+        g = ctx["by_team"].get((card or {}).get("team")) if card else None
+        return _pair_cell(row, card, key, parts["pts"].get(row["pid"]), g,
+                          parts["hints"].get(row["pid"], ""))
+
+    def rows(a_list, b_list, bench=False) -> str:
+        out = []
+        for i in range(max(len(a_list), len(b_list))):
+            ra = a_list[i] if i < len(a_list) else None
+            rb = b_list[i] if i < len(b_list) else None
+            slot = (ra or rb or {}).get("slot", "")
+            out.append(f'<div class="mu-pr{" bench" if bench else ""}">'
+                       + cell(ap, a["key"], ra)
+                       + f'<div class="mu-pslot">{escape(slot)}</div>'
+                       + cell(bp, b["key"], rb) + "</div>")
+        return "".join(out)
+
+    starters = rows(ap["starters"], bp["starters"])
+    bench = ""
+    if ap["bench"] or bp["bench"]:
+        bench = ('<details class="mu-pbench"><summary>Bench</summary>'
+                 + rows(ap["bench"], bp["bench"], bench=True) + "</details>")
+    total = (f'<div class="mu-pr total">'
+             f'<div class="mu-pp"><div class="mu-pn"><span class="nm">Starters</span></div>'
+             f'<span class="mu-pts" data-tpts="{escape(a["key"])}">{ap["pts_total"]:.1f}</span></div>'
+             f'<div class="mu-pslot"></div>'
+             f'<div class="mu-pp"><span class="mu-pts" data-tpts="{escape(b["key"])}">'
+             f'{bp["pts_total"]:.1f}</span>'
+             f'<div class="mu-pn"><span class="nm">Starters</span></div></div></div>')
+    return f'<div class="mu-pair">{starters}{total}{bench}</div>'
+
+
 def _label(t: dict) -> str:
     name = escape(t.get("name") or "")
     mgr = t.get("manager")
@@ -393,11 +472,11 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     sides = []
     for s in m["sides"]:
         t = data["teams"].get(str(s["roster_id"])) or data["teams"].get(s["roster_id"]) or {}
-        html, gs, sp, pts, exp, var = roster_table(s, t, data, ctx, final)
+        html, gs, sp, pts, exp, var, parts = roster_table(s, t, data, ctx, final)
         sides.append({"team": t, "name": t.get("name") or f"Team {s['roster_id']}",
                       "key": str(s["roster_id"]),
                       "html": html, "gs": gs, "sp": sp, "pts": pts if started else None,
-                      "exp": exp, "var": var})
+                      "exp": exp, "var": var, "parts": parts})
     if len(sides) != 2:
         return "", sides
     a, b = sides
@@ -421,6 +500,7 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     # Our chance for each side: the expected finals against the spread that
     # is still to be played, from the players' own week-to-week variances.
     wp_a = win_probability(a["exp"], a["var"], b["exp"], b["var"])
+    a["wp"], b["wp"] = wp_a, 1 - wp_a
     bar = "" if final else ui.win_bar(wp_a, 1 - wp_a, "GordStats", a["key"], b["key"])
     edge = a["gs"] - b["gs"]
     note = (f"GordStats has <b>{escape(a['name'] if edge >= 0 else b['name'])}</b> by "
@@ -430,11 +510,10 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
             f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{bar}<p class="mu-note">{note}</p>'
-            f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
+            + pair_view(a, b, ctx)
+            + f'<div class="mu-grid"><div><div class="mu-who">{escape(a["name"])}</div>{a["html"]}</div>'
             f'<div><div class="mu-who">{escape(b["name"])}</div>{b["html"]}</div></div>')
-    head = (f'{escape(a["name"])} {ui.fmt(a["pts"]) if started else ""} '
-            f'<span style="color:#94a3b8">vs</span> '
-            f'{ui.fmt(b["pts"]) if started else ""} {escape(b["name"])}')
+    head = f'{escape(a["name"])}<span class="mu-vs-sum">vs</span>{escape(b["name"])}'
     return layout.details(head, body, open=True, anchor=anchor), sides
 
 
@@ -465,11 +544,18 @@ def week_board(rows: list, started: bool) -> str:
             + f'<td class="mu-t r"><a href="#{anchor}">{escape(b["name"])}'
               f'{_avatar(b["team"])}</a></td></tr>')
     pts_h = "<th>Pts</th>" if started else ""
-    return ('<div class="table-scroll"><table class="mu-board"><thead><tr>'
+    final = all((a.get("pts") or 0) > 0 and (b.get("pts") or 0) > 0 for _, a, b in rows) and started
+    cards = ui.board_cards(
+        [(anchor, {"name": escape(a["name"]), "logo": _avatar(a["team"]), "key": a["key"],
+                   "pts": a["pts"], "gs": a["gs"], "wp": a.get("wp")},
+          {"name": escape(b["name"]), "logo": _avatar(b["team"]), "key": b["key"],
+           "pts": b["pts"], "gs": b["gs"], "wp": b.get("wp")}) for anchor, a, b in rows],
+        started, False)
+    return (cards + '<div class="mu-board-wrap"><div class="table-scroll"><table class="mu-board"><thead><tr>'
             f"<th>Team</th>{pts_h}<th title='Average of the outside projections for the lineup as set'>Consensus</th>"
             "<th title='GordStats projected total for the lineup as set'>GS Proj</th><th></th>"
             f"<th>GS Proj</th><th>Consensus</th>{pts_h}<th>Team</th>"
-            f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div>')
+            f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div></div>')
 
 
 # What the browser does between rebuilds: Sleeper's points per player and
