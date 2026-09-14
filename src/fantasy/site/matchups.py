@@ -789,7 +789,7 @@ window.muMedTrack=(function(){
       var above=i<cut,count=above?cut-i:i-cut+1,of=t.foes.length;
       up=t.lock?t.lock==='up':above;
       var odds=above?'Loses median if '+count+' of '+of+' teams '+(count===1?'passes':'pass')
-        :'Wins median if it passes '+count+' of '+of+' teams';
+        :'Makes median if it passes '+count+' of '+of+' teams';
       if(done)status=(up?'Won':'Lost')+' the median game by '+fmt(Math.abs(margin));
       else if(t.lock==='up')status='Locked above the median'+(t.left.length?' · cannot be caught':'');
       else if(t.lock==='down')status='Locked below the median'+(t.left.length?' · even a record week falls short':'');
