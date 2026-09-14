@@ -727,6 +727,7 @@ MEDIAN_TRACKER_JS = """<style>
 .mu-medt-row.down .st{color:#b3382c}
 .mu-medt-need{font-size:12px;color:#334155}
 .mu-medt-ps{font-size:11px;color:#64748b;line-height:1.35}
+.mu-medt-root{font-size:12px;color:#334155}
 .mu-medt-ps .lv{color:#b3382c;font-style:italic}
 .mu-medt-row .fig{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .mu-medt-row .fig b{display:block;font-size:15px}
@@ -739,7 +740,7 @@ MEDIAN_TRACKER_JS = """<style>
   .mu-medt-row.lock.up{background:#173a2e}
   .mu-medt-row.lock.down{background:#3d1f24}
   .mu-medt-row .st{color:#6ee7b7}.mu-medt-row.down .st{color:#ff9b91}
-  .mu-medt-top,.mu-medt-need{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
+  .mu-medt-top,.mu-medt-need,.mu-medt-root{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
   .mu-medt-ps .lv{color:#ff9b91}
 }
 </style><script>
@@ -758,15 +759,20 @@ window.muMedTrack=(function(){
         var mx=(p.pos in hi)?hi[p.pos]:top,mn=(p.pos in lo)?lo[p.pos]:bot;
         t.ceil+=Math.max(mx-(p.p||0),0);t.floor+=Math.min(mn,0);});
       t.proj=t.pts+t.rem;});
-    // Locked: above - too few teams can still reach this one's floor to push it
-    // out of the top half; below - enough teams' floors already clear its ceiling.
-    var room=n%2?(n-3)/2:n/2-1;
-    ts.forEach(function(t){var o=ts.filter(function(x){return x!==t;});
-      t.lock=o.filter(function(x){return x.ceil>=t.floor;}).length<=room?'up'
-        :o.filter(function(x){return x.floor>t.ceil;}).length>room?'down':'';});
     ts.sort(function(a,b){return b.proj-a.proj;});
     var done=d.final||ts.every(function(t){return !t.left.length;});
+    // Locks by rank, with cut spots above the line: the team in spot i (0-based)
+    // above it drops out only if cut-i teams below it pass it, so it is locked in
+    // once fewer than that can still reach its floor (a finished team's score, or
+    // a record week, decides "can"); below the line it needs i-cut+1 teams above
+    // to finish under it, and is locked out once fewer than that can fall to its
+    // ceiling. `foes` are those teams - who to root against.
     var cut=Math.ceil((n-1)/2),html=[];
+    ts.forEach(function(t,i){
+      if(i<cut){t.foes=ts.slice(i+1).filter(function(o){return o.ceil>=t.floor;});
+        t.lock=t.foes.length<cut-i?'up':'';}
+      else{t.foes=ts.slice(0,i).filter(function(o){return o.floor<=t.ceil;}).reverse();
+        t.lock=t.foes.length<i-cut+1?'down':'';}});
     var mid=n%2?ts[n>>1].proj:(ts[n/2-1].proj+ts[n/2].proj)/2;
     var now=ts.map(function(t){return t.pts;}).sort(function(a,b){return a-b;});
     var medNow=n%2?now[n>>1]:(now[n/2-1]+now[n/2])/2;
@@ -777,26 +783,30 @@ window.muMedTrack=(function(){
       var j=(others.length-1)>>1,rival=others[j],line=others.length%2?rival.proj:(others[j].proj+others[j+1].proj)/2;
       if(others.length%2===0)rival=null;
       var margin=t.proj-line,up=margin>=0,need=line-t.pts,who=rival?esc(rival.name):'the median';
-      var status;
-      if(t.lock){up=t.lock==='up';}
+      var status,root='';
+      // Who to root against: above the line, a team drops out once enough of the
+      // teams below it pass it (4th of five spots: two), so it is every team
+      // below that can still get there; below the line it needs that many teams
+      // above to finish under it, so every team above it can still catch.
+      var above=i<cut,count=above?cut-i:i-cut+1;
+      up=t.lock?t.lock==='up':above;
+      var foes=t.foes.filter(function(o){return !o.lock&&o.left.length;});
+      if(!done&&!t.lock&&foes.length)root='<div class="mu-medt-root">Root against '
+        +foes.map(function(o){return esc(o.name);}).join(', ')+'</div>';
+      var pass=above?(count===1?'out if 1 passes':'out if '+count+' pass')
+        :(count===1?'must pass 1':'must pass '+count);
       if(done)status=(up?'Won':'Lost')+' the median game by '+fmt(Math.abs(margin));
       else if(t.lock==='up')status='Locked above the median'+(t.left.length?' · cannot be caught':'');
       else if(t.lock==='down')status='Locked below the median'+(t.left.length?' · even a record week falls short':'');
-      else if(!t.left.length){
-        // Done: the only teams that matter now are those still playing that can cross this score.
-        // One name: the rival if it is still playing and can cross, else whoever
-        // still playing projects closest to this score.
-        var cross=others.filter(function(o){return o.left.length&&o.ceil>=t.pts&&o.floor<=t.pts;});
-        var foe=(rival&&cross.indexOf(rival)>=0)?rival:cross.sort(function(a,b){return Math.abs(a.proj-t.pts)-Math.abs(b.proj-t.pts);})[0];
-        status='Done · '+fmt(Math.abs(margin))+(up?' above':' below')+' the line'+(foe?' — root against '+esc(foe.name):'');}
-      else if(up)status='Keeping it · '+fmt(margin)+' ahead of '+who;
-      else status='Chasing '+who+' · '+fmt(-margin)+' short';
-      var sub='';
+      else if(!t.left.length)status='Done · '+fmt(Math.abs(margin))+(up?' above':' below')+' the line · '+pass;
+      else if(up)status='Keeping it · '+fmt(margin)+' ahead of '+who+' · '+pass;
+      else status='Chasing '+who+' · '+fmt(-margin)+' short · '+pass;
+      var sub=root;
       if(!done&&t.left.length){
         var ps=t.left.slice().sort(function(a,b){return b.r-a.r;}).map(function(p){
           return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
         sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b>':'Already past the line')+' · '+t.left.length+' left, proj '+fmt(t.rem)+' · max '+fmt(t.ceil)+'</div>')
-          +'<div class="mu-medt-ps">'+ps+'</div>';}
+          +root+'<div class="mu-medt-ps">'+ps+'</div>';}
       if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(mid)+'</span></div>');
       html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'
         +'<span class="rk">'+(i+1)+'</span>'+(t.logo||'')
@@ -1148,6 +1158,8 @@ def body() -> str:
         "<p>The <b>Median Tracker</b> ranks every team by expected final (points so far "
         "plus what its unfinished starters are projected to add) with the median line "
         "through the middle; each team is told who it has to stay ahead of or pass, "
+        "how many teams would have to pass it (or it has to pass) to change sides, "
+        "and the teams that still can - the ones to root against, nearest first; "
         "how many points that takes, and which starters it has left to get them. A row "
         "turns solid green or red once a team is <b>locked</b> above or below the median: "
         "its ceiling (every starter still to play matching his position's best week in "
