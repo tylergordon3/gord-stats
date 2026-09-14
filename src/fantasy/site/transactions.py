@@ -10,16 +10,27 @@ data/season/<season>.json for pickup production):
 Every season lives on the one page (docs/transactions/index.html), picked with
 the season buttons - same shape as the schedule page.
 
+The season being played is not in LEAGUE_IDS (see fantasy.config), so it is
+handled here: its log is pulled from Sleeper on every build, its pickups are
+scored from the weekly matchup archive (data/fantasy/matchups/<year>/) rather
+than a season file, and it carries a move-by-move Waiver Log while the season
+is young enough that few pickups have started a game.
+
     python -m fantasy.site.transactions
 """
 from html import escape
+
+import json
 
 import pandas as pd
 
 from fantasy import paths
 from fantasy.config import (
     DATA_DIR, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_DIR,
+    UPCOMING_LEAGUE_ID, UPCOMING_SEASON, UPCOMING_YEAR,
 )
+from fantasy.league import transactions as transactions_data
+from fantasy.league.matchups import MATCHUPS_DIR
 from fantasy.identity.registry import load_registry
 from fantasy.site import layout, styles
 from gordstats.frontmatter import add_front_matter
@@ -28,6 +39,43 @@ _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
 
 # NFL team codes show up as "players" for team defenses (e.g. adds {"GB": 9}).
 _DEF_LABEL = "{} D/ST"
+
+# The season being played, in the same "2627" shape as LEAGUE_IDS' keys.
+CURRENT = f"{UPCOMING_YEAR % 100:02d}{(UPCOMING_YEAR + 1) % 100:02d}"
+
+
+def _refresh_current() -> bool:
+    """Pull the live season's log into data/transactions/<CURRENT>.json.
+    False when there is neither a fresh pull nor an earlier copy to show."""
+    path = DATA_DIR / "transactions" / f"{CURRENT}.json"
+    if CURRENT in LEAGUE_IDS:            # promoted into the keyed maps: data_manager owns it
+        return path.exists()
+    try:
+        df = transactions_data.get_transactions(UPCOMING_LEAGUE_ID)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_json(path)
+    except Exception as exc:
+        print(f"[transactions] {CURRENT} pull failed ({exc})"
+              + ("; using the saved copy" if path.exists() else ""))
+    return path.exists()
+
+
+def _archive_starters() -> tuple[dict, int]:
+    """({(roster_id, week): {player_id: points}}, last week) for the live
+    season, from the weekly matchup archive - the season file's shape."""
+    starters, last = {}, 0
+    for f in sorted((MATCHUPS_DIR / str(UPCOMING_YEAR)).glob("week_*.json")):
+        wk = json.loads(f.read_text(encoding="utf-8"))
+        played = False
+        for m in wk.get("matchups") or []:
+            for side in m.get("sides") or []:
+                pts = side.get("players_points") or {}
+                starters[(side["roster_id"], wk["week"])] = {
+                    pid: pts.get(pid, 0.0) for pid in side.get("starters") or []}
+                played = played or any(pts.values())
+        if played:
+            last = max(last, wk["week"])
+    return starters, min(last, FANTASY_REG_WEEKS)
 
 
 def _load_tx(season_str: str) -> pd.DataFrame:
@@ -93,16 +141,18 @@ def activity(tx: pd.DataFrame) -> pd.DataFrame:
 # Best pickups (points scored in the starting lineup after the add)
 # --------------------------------------------------------------------------- #
 
-def best_pickups(season_str: str, tx: pd.DataFrame, names: dict, top: int = 15) -> pd.DataFrame:
+def best_pickups(season_str: str, tx: pd.DataFrame, names: dict, top: int = 15,
+                 starters: dict = None, max_week: int = None) -> pd.DataFrame:
     """In-season adds ranked by points the player then scored as a starter.
 
     Counts weeks from the add through the earlier of: the manager dropping the
     player again, or the end of the fantasy regular season (the season file
     only stores weeks 1..14).
     """
-    season = pd.read_json(SEASON_DIR / f"{season_str}.json")
-    starters = {(r["roster_id"], r["week"]): r["starters_dict"] for _, r in season.iterrows()}
-    max_week = season["week"].max()
+    if starters is None:
+        season = pd.read_json(SEASON_DIR / f"{season_str}.json")
+        starters = {(r["roster_id"], r["week"]): r["starters_dict"] for _, r in season.iterrows()}
+        max_week = season["week"].max()
 
     adds = tx[tx["type"].isin(["waiver", "free_agent"])]
     # When was (player, roster) dropped again? First drop after the add wins.
@@ -143,6 +193,27 @@ def best_pickups(season_str: str, tx: pd.DataFrame, names: dict, top: int = 15) 
 
 
 # --------------------------------------------------------------------------- #
+# Waiver log (the live season)
+# --------------------------------------------------------------------------- #
+
+def waiver_log(tx: pd.DataFrame, names: dict) -> pd.DataFrame:
+    """Every completed add/drop, newest first."""
+    moves = tx[tx["type"].isin(["waiver", "free_agent"])].sort_values(
+        ["leg", "created"], ascending=False)
+    rows = []
+    for _, t in moves.iterrows():
+        def players(side):
+            return ", ".join(f"{_name(pid, names)} ({_pos(pid, names)})" if _pos(pid, names)
+                             else _name(pid, names) for pid in (t[side] or {}))
+        bid = t["waiver_bid"]
+        via = ("Free Agent" if t["type"] == "free_agent"
+               else f"Waiver (${int(bid)})" if pd.notna(bid) and bid > 0 else "Waiver")
+        rows.append({"Week": t["leg"], "Manager": t["manager"], "Added": players("adds"),
+                     "Dropped": players("drops"), "Via": via})
+    return pd.DataFrame(rows)
+
+
+# --------------------------------------------------------------------------- #
 # Trade log
 # --------------------------------------------------------------------------- #
 
@@ -175,15 +246,35 @@ def trade_log(tx: pd.DataFrame, names: dict) -> pd.DataFrame:
 # Page
 # --------------------------------------------------------------------------- #
 
-def _season_view(season_str: str, names: dict) -> str:
-    tx = _load_tx(season_str)
+def _table(frame: pd.DataFrame) -> str:
+    return (frame.style.set_table_styles(_GRID).set_table_attributes('class="sticky-table"')
+            .hide(axis="index").to_html())
+
+
+def _current_view(names: dict) -> str:
+    """The season being played: the same three sections, plus its waiver log."""
+    tx = _load_tx(CURRENT)
+    starters, last = _archive_starters()
+    view = _season_view(CURRENT, names, tx=tx, starters=starters, max_week=last)
+    log = waiver_log(tx, names)
+    log_html = (_table(log) if not log.empty
+                else "<p><em>No completed waiver claims or free-agent adds yet.</em></p>")
+    return ('<h2>Waiver Log</h2>'
+            f'<p>Every completed claim and free-agent add in {UPCOMING_SEASON}, newest first'
+            + (f', through week {last}' if last else '') + '.</p>'
+            f'<div class="table-scroll">{log_html}</div>' + view)
+
+
+def _season_view(season_str: str, names: dict, tx: pd.DataFrame = None,
+                 starters: dict = None, max_week: int = None) -> str:
+    tx = _load_tx(season_str) if tx is None else tx
     # reset_index() keeps Manager as a real column — a styled index renders
     # its name as a phantom second header row.
     act = (activity(tx).reset_index().style.set_table_styles(_GRID)
            .set_table_attributes('class="sticky-table"')
            .hide(axis="index").to_html())
 
-    pickups = best_pickups(season_str, tx, names)
+    pickups = best_pickups(season_str, tx, names, starters=starters, max_week=max_week)
     pickups_html = (pickups.style.set_table_styles(_GRID)
                     .set_table_attributes('class="sticky-table"')
                     .hide(axis="index").format({"Starter Pts": "{:.1f}"}).to_html()
@@ -211,8 +302,8 @@ def _season_view(season_str: str, names: dict) -> str:
     )
 
 
-def _all_time_view(names: dict) -> str:
-    frames = [activity(_load_tx(s)) for s in LEAGUE_IDS]
+def _all_time_view(names: dict, seasons: list) -> str:
+    frames = [activity(_load_tx(s)) for s in seasons]
     combined = pd.concat(frames)          # pre-FAAB seasons lack the FAAB column -> NaN
     total = combined.groupby("Manager").sum().astype(int).sort_values(
         ["Total Adds", "Waiver Claims"], ascending=False)
@@ -221,7 +312,7 @@ def _all_time_view(names: dict) -> str:
             .hide(axis="index").to_html())
     return (
         '<h2>All-Time Manager Activity</h2>'
-        f'<p>Every completed move across all {len(LEAGUE_IDS)} seasons. '
+        f'<p>Every completed move across all {len(seasons)} seasons. '
         'FAAB totals only count seasons with bid waivers.</p>'
         f'<div class="table-scroll">{html}</div>'
     )
@@ -230,8 +321,12 @@ def _all_time_view(names: dict) -> str:
 def generate():
     """Build and write docs/transactions/index.html - every season, switchable."""
     names = _player_names()
+    seasons = list(LEAGUE_IDS)
     views = [(s, FORMAL_SEASON[s], _season_view(s, names)) for s in LEAGUE_IDS]
-    views.append(("all", "All-Time", _all_time_view(names)))
+    if CURRENT not in LEAGUE_IDS and _refresh_current():
+        views.insert(0, (CURRENT, UPCOMING_SEASON, _current_view(names)))
+        seasons.insert(0, CURRENT)
+    views.append(("all", "All-Time", _all_time_view(names, seasons)))
     body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:", pin=True)
     page = add_front_matter(body, "Waivers & Trades")
 
