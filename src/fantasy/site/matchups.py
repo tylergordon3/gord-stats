@@ -236,8 +236,8 @@ def game_state(g: dict | None) -> str:
 
 
 def hybrid_score(pts, hproj, g: dict | None) -> str:
-    """The Pts cell (ui.score_cell) on the consensus projection: what the
-    outside sources expect before kickoff, points plus the unplayed share of
+    """The Pts cell (ui.score_cell) on the blended projection: what the
+    sources expect before kickoff, points plus the unplayed share of
     it during the game, points after."""
     state = game_state(g)
     exp = expected(pts, hproj, None, g)[0] if state == "in" else None
@@ -267,7 +267,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
              if gid else "")
     return (f'<tr class="{"bench" if bench else "starter"}{live}" data-pid="{escape(pid)}" '
             f'data-team="{escape(card["team"] or "")}"{attrs} '
-            f'data-nm="{escape(_short_name(card["name"]))}" '
+            f'data-nm="{escape(_short_name(card["name"]))}" data-pos="{escape(card["pos"])}" '
             f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}" '
             f'data-hproj="{"" if hproj is None else round(hproj, 2)}">'
             f'<td class="mu-pts">{hybrid_score(pts, hproj, g)}</td>'
@@ -300,8 +300,11 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     sources = outside_sources(data)
     outside = {pid: [src.get(pid) for src in sources.values()] for pid in cards}
     cons = ext.consensus(*sources.values())
-    # The Pts cell's projection: the outside consensus, ours where no source has him.
-    hproj = {pid: (cons[pid] if cons.get(pid) is not None else proj.get(pid)) for pid in cards}
+    # The projection the page tracks with (Pts cells, the median game): every
+    # source that has him averaged, ours included, so no one site's lean -
+    # ours ran 5-10% light in week 1 - sets the number. The scoreboard's
+    # Consensus column stays the outside three, the yardstick GS is read against.
+    hproj = ext.consensus({pid: v for pid, v in proj.items() if v is not None}, *sources.values())
     grades = (data.get("external") or {}).get("fp_rank") or {}
     pts = side.get("players_points") or {}
     starters = [r for r in rows if r["slot"] not in ("BN", "IR")]
@@ -373,13 +376,14 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
                     for k in sources)
     html = (f'<div class="table-scroll" data-roster="{side["roster_id"]}"><table class="mu-roster"><thead><tr>'
             "<th class='mu-pts' title='Points scored, with the live expected final under them; "
-            "the consensus projection before kickoff'>Pts</th>"
+            "the blended projection of all four sources before kickoff'>Pts</th>"
             "<th>Slot</th><th>Player</th><th>Game</th>"
             f"<th title='GordStats projection for this week'>GS</th>{heads}"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>{swaps}')
     parts = {"starters": starters, "bench": bench, "cards": cards, "pts": pts,
-             "hints": hints, "pts_total": pts_total, "proj": proj, "hproj": hproj}
+             "hints": hints, "pts_total": pts_total, "proj": proj, "hproj": hproj,
+             "hexp": hexp_total}
     return html, gs_total, cons_total, pts_total, exp_total, var_total, parts
 
 
@@ -639,12 +643,50 @@ def tracker_side(s: dict, ctx: dict) -> dict:
         g = ctx["by_team"].get((card or {}).get("team")) if card else None
         if not card or game_state(g) not in ("pre", "in"):
             continue
-        rem = float(parts["proj"].get(r["pid"]) or 0.0) * (1.0 - float(g.get("elapsed", 0.0)))
+        rem = float(parts["hproj"].get(r["pid"]) or 0.0) * (1.0 - float(g.get("elapsed", 0.0)))
         left.append({"n": _short_name(card["name"]), "r": round(rem, 1),
-                     "live": game_state(g) == "in"})
+                     "live": game_state(g) == "in", "pos": card["pos"],
+                     "p": round(float(parts["pts"].get(r["pid"]) or 0.0), 2)})
     return {"k": s["key"], "name": s["name"], "logo": _avatar(s["team"]),
-            "pts": round(float(s["pts"] or 0.0), 2), "exp": round(float(s["exp"]), 2),
+            "pts": round(float(s["pts"] or 0.0), 2), "exp": round(float(parts["hexp"]), 2),
             "left": left}
+
+
+def position_extremes(registry: dict, datas: dict) -> dict:
+    """{"max": {pos: pts}, "min": {pos: pts}}: the best and worst single weeks
+    any rostered player has put up at each position in league history - the
+    season files (every rostered player, starters and bench) plus this
+    season's finished weeks. The tracker's ceilings and floors: a starter
+    still to play can add at most his position's record, lose at most its
+    worst week."""
+    import glob
+    import json
+    hi, lo = {}, {}
+
+    def add(pid, pts, pos):
+        pos = "DEF" if str(pid).isalpha() else (pos or (registry.get(str(pid)) or {}).get("pos"))
+        if pos is None or pts is None:
+            return
+        hi[pos] = max(hi.get(pos, float("-inf")), float(pts))
+        lo[pos] = min(lo.get(pos, float("inf")), float(pts))
+    for f in sorted(glob.glob(str(paths.DATA_DIR / "season" / "*.json"))):
+        try:
+            season = json.loads(open(f, encoding="utf-8").read())
+        except (OSError, ValueError):
+            continue
+        for players in (season.get("players_dict") or {}).values():
+            for pid, pts in (players or {}).items():
+                add(pid, pts, None)
+    for d in datas.values():
+        if not data_mod.week_final(d):
+            continue
+        proj = d.get("projections") or {}
+        for m in d["matchups"]:
+            for side in m["sides"]:
+                for pid, pts in (side.get("players_points") or {}).items():
+                    add(pid, pts, (proj.get(pid) or {}).get("pos"))
+    return {"max": {k: round(v, 2) for k, v in hi.items()},
+            "min": {k: round(v, 2) for k, v in lo.items()}}
 
 
 def median_tracker(rows: list, ctx: dict, week: int, started: bool, final: bool) -> str:
@@ -657,7 +699,8 @@ def median_tracker(rows: list, ctx: dict, week: int, started: bool, final: bool)
     teams = [tracker_side(s, ctx) for _, a, b in rows for s in (a, b)]
     if len(teams) < 3:
         return ""
-    blob = escape(json.dumps({"started": started, "final": final, "teams": teams},
+    blob = escape(json.dumps({"started": started, "final": final, "teams": teams,
+                              "ext": ctx.get("extremes") or {}},
                              separators=(",", ":")))
     return (f'<details class="section mu-medt-sec" open><summary>Median Tracker</summary>'
             f'<div class="mu-medt" data-medt-week="{week}" data-medt=\'{blob}\'></div>'
@@ -674,6 +717,8 @@ MEDIAN_TRACKER_JS = """<style>
 .mu-medt-row{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-left:3px solid #1a7f4b;
   background:#fff;border-bottom:1px solid #eef2f7}
 .mu-medt-row.down{border-left-color:#b3382c}
+.mu-medt-row.lock.up{background:#e6f4ec}
+.mu-medt-row.lock.down{background:#fbe9e7}
 .mu-medt-row .rk{width:16px;flex:none;font-size:12px;color:#94a3b8;padding-top:3px;text-align:right}
 .mu-medt-row img.mu-tlogo{width:24px;height:24px}
 .mu-medt-row .mid{flex:1;min-width:0}
@@ -691,6 +736,8 @@ MEDIAN_TRACKER_JS = """<style>
 .mu-medt-line:before,.mu-medt-line:after{content:"";flex:1;border-top:2px dashed #94a3b8}
 @media (prefers-color-scheme: dark){
   .mu-medt-row{background:#16203a;border-bottom-color:#2b3852}
+  .mu-medt-row.lock.up{background:#173a2e}
+  .mu-medt-row.lock.down{background:#3d1f24}
   .mu-medt-row .st{color:#6ee7b7}.mu-medt-row.down .st{color:#ff9b91}
   .mu-medt-top,.mu-medt-need{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
   .mu-medt-ps .lv{color:#ff9b91}
@@ -701,7 +748,22 @@ window.muMedTrack=(function(){
   function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function render(el,d){
     var ts=d.teams.slice(),n=ts.length;if(n<3)return;
-    ts.forEach(function(t){t.rem=0;t.left.forEach(function(p){t.rem+=p.r;});t.proj=t.pts+t.rem;});
+    // Ceiling and floor: every starter still to play at his position's best
+    // (less what he already has) or worst week in league history.
+    var ext=d.ext||{},hi=ext.max||{},lo=ext.min||{},top=0,bot=0;
+    Object.keys(hi).forEach(function(k){top=Math.max(top,hi[k]);});
+    Object.keys(lo).forEach(function(k){bot=Math.min(bot,lo[k]);});
+    ts.forEach(function(t){t.rem=0;t.ceil=t.pts;t.floor=t.pts;
+      t.left.forEach(function(p){t.rem+=p.r;
+        var mx=(p.pos in hi)?hi[p.pos]:top,mn=(p.pos in lo)?lo[p.pos]:bot;
+        t.ceil+=Math.max(mx-(p.p||0),0);t.floor+=Math.min(mn,0);});
+      t.proj=t.pts+t.rem;});
+    // Locked: above - too few teams can still reach this one's floor to push it
+    // out of the top half; below - enough teams' floors already clear its ceiling.
+    var room=n%2?(n-3)/2:n/2-1;
+    ts.forEach(function(t){var o=ts.filter(function(x){return x!==t;});
+      t.lock=o.filter(function(x){return x.ceil>=t.floor;}).length<=room?'up'
+        :o.filter(function(x){return x.floor>t.ceil;}).length>room?'down':'';});
     ts.sort(function(a,b){return b.proj-a.proj;});
     var done=d.final||ts.every(function(t){return !t.left.length;});
     var cut=Math.ceil((n-1)/2),html=[];
@@ -716,18 +778,27 @@ window.muMedTrack=(function(){
       if(others.length%2===0)rival=null;
       var margin=t.proj-line,up=margin>=0,need=line-t.pts,who=rival?esc(rival.name):'the median';
       var status;
+      if(t.lock){up=t.lock==='up';}
       if(done)status=(up?'Won':'Lost')+' the median game by '+fmt(Math.abs(margin));
-      else if(!t.left.length)status=up?'Done · '+fmt(margin)+' ahead of '+who+' — root against '+who:'Done · '+fmt(-margin)+' behind '+who+' — root against '+who;
+      else if(t.lock==='up')status='Locked above the median'+(t.left.length?' · cannot be caught':'');
+      else if(t.lock==='down')status='Locked below the median'+(t.left.length?' · even a record week falls short':'');
+      else if(!t.left.length){
+        // Done: the only teams that matter now are those still playing that can cross this score.
+        // One name: the rival if it is still playing and can cross, else whoever
+        // still playing projects closest to this score.
+        var cross=others.filter(function(o){return o.left.length&&o.ceil>=t.pts&&o.floor<=t.pts;});
+        var foe=(rival&&cross.indexOf(rival)>=0)?rival:cross.sort(function(a,b){return Math.abs(a.proj-t.pts)-Math.abs(b.proj-t.pts);})[0];
+        status='Done · '+fmt(Math.abs(margin))+(up?' above':' below')+' the line'+(foe?' — root against '+esc(foe.name):'');}
       else if(up)status='Keeping it · '+fmt(margin)+' ahead of '+who;
       else status='Chasing '+who+' · '+fmt(-margin)+' short';
       var sub='';
       if(!done&&t.left.length){
         var ps=t.left.slice().sort(function(a,b){return b.r-a.r;}).map(function(p){
           return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
-        sub='<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b>':'Already past the line')+' · '+t.left.length+' left, proj '+fmt(t.rem)+'</div>'
+        sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b>':'Already past the line')+' · '+t.left.length+' left, proj '+fmt(t.rem)+' · max '+fmt(t.ceil)+'</div>')
           +'<div class="mu-medt-ps">'+ps+'</div>';}
       if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(mid)+'</span></div>');
-      html.push('<div class="mu-medt-row '+(up?'up':'down')+'">'
+      html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'
         +'<span class="rk">'+(i+1)+'</span>'+(t.logo||'')
         +'<div class="mid"><div class="nm">'+esc(t.name)+'</div><div class="st">'+status+'</div>'+sub+'</div>'
         +'<div class="fig"><b>'+fmt(t.pts)+'</b>'+(done||!t.left.length?'':'<span>→ '+fmt(t.proj)+'</span>')+'</div></div>');
@@ -774,7 +845,7 @@ compute:function(rows,games){
       if(isNaN(proj))proj=0;if(isNaN(hp))hp=proj;
       var e=pts+proj*(1-done),he=pts+hp*(1-done);
       if(tr.classList.contains('starter')){exp+=e;v+=sd*sd*(1-done);hexp+=he;
-        if(g&&(g.state==='pre'||g.state==='in'))left.push({n:tr.getAttribute('data-nm')||'',r:proj*(1-done),live:g.state==='in'});}
+        if(g&&(g.state==='pre'||g.state==='in'))left.push({n:tr.getAttribute('data-nm')||'',r:hp*(1-done),live:g.state==='in',pos:tr.getAttribute('data-pos')||'',p:pts});}
       players[pid]={points:pp[pid],hexp:(g&&g.state!=='pre')?he:undefined,
         state:g?g.state:undefined,game:g?muGameText(g.state,g.score,g.opp_score,g.detail):undefined};
     });
@@ -790,10 +861,10 @@ compute:function(rows,games){
   });
   // The week's median: of the scores once anyone has one, of the expected finals as the projection.
   function median(a){if(!a.length)return null;a=a.slice().sort(function(x,y){return x-y;});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
-  var ks=Object.keys(teams),pts=ks.map(function(k){return teams[k].points||0;}),exps=ks.map(function(k){return teams[k].exp;});
+  var ks=Object.keys(teams),pts=ks.map(function(k){return teams[k].points||0;}),exps=ks.map(function(k){return teams[k].hexp;});
   var started=pts.some(function(p){return p>0;});
   var medNow=started?median(pts):null,medProj=median(exps);
-  ks.forEach(function(k){var t=teams[k];t.vs_median=started?((t.points||0)-medNow):(t.exp-medProj);});
+  ks.forEach(function(k){var t=teams[k];t.vs_median=started?((t.points||0)-medNow):(t.hexp-medProj);});
   return {teams:teams,median:{now:medNow,proj:medProj}};
 },
 fetch:function(){
@@ -833,10 +904,10 @@ def week_view(data: dict, ctx: dict) -> str:
     # side's margin against whichever applies.
     import statistics
     every = [s for _, a, b in rows for s in (a, b)]
-    med_proj = statistics.median(s["exp"] for s in every) if every else None
+    med_proj = statistics.median(s["parts"]["hexp"] for s in every) if every else None
     med_now = statistics.median((s["pts"] or 0.0) for s in every) if (every and started) else None
     for s in every:
-        s["med"] = ((s["pts"] or 0.0) - med_now) if started else (s["exp"] - med_proj)
+        s["med"] = ((s["pts"] or 0.0) - med_now) if started else (s["parts"]["hexp"] - med_proj)
     dates = sorted(g["date"] for g in data["games"] if g.get("date"))
     span = ""
     if dates:
@@ -1060,6 +1131,7 @@ def body() -> str:
              for r in board_frame.drop_duplicates("sleeper_id").itertuples(index=False)}
     ctx = {"slots": lg["roster_positions"], "board_frame": board_frame, "board": board,
            "registry": _registry(), "playoff_start": lg.get("playoff_week_start") or 0}
+    ctx["extremes"] = position_extremes(ctx["registry"], datas)
     for d in datas.values():
         d["roster_positions"] = lg["roster_positions"]
     open_weeks = [w for w in weeks if not data_mod.week_final(datas[w])]
@@ -1076,7 +1148,11 @@ def body() -> str:
         "<p>The <b>Median Tracker</b> ranks every team by expected final (points so far "
         "plus what its unfinished starters are projected to add) with the median line "
         "through the middle; each team is told who it has to stay ahead of or pass, "
-        "how many points that takes, and which starters it has left to get them. "
+        "how many points that takes, and which starters it has left to get them. A row "
+        "turns solid green or red once a team is <b>locked</b> above or below the median: "
+        "its ceiling (every starter still to play matching his position's best week in "
+        "league history) or floor (his position's worst) can no longer change where it "
+        "finishes against the others' ceilings and floors. "
         "<b>Med</b> is each team's margin against the week's median score - the league "
         "plays a second game against it every week - live once games are on, on the "
         "expected finals before. <b>GS Proj</b> is "
@@ -1087,9 +1163,11 @@ def body() -> str:
         "<b>Slpr</b> is Sleeper's, <b>ESPN</b> is ESPN's, <b>FP</b> is the FantasyPros "
         "expert consensus (whose start/sit grade sits by the name); their average is "
         "the <b>Consensus</b> the scoreboard compares us against. <b>Pts</b> is the "
-        "consensus projection (grey) until a player's game kicks off, then his points "
+        "blended projection (grey) - GordStats, Sleeper, ESPN and FantasyPros averaged, "
+        "so no one source's lean sets it - until a player's game kicks off, then his points "
         "with the expected final under them (points plus the unplayed share of the "
-        "consensus), refreshed about once a minute, then <i>final</i>. "
+        "blend), refreshed about once a minute, then <i>final</i>. The Median Tracker "
+        "and <b>Med</b> run on the same blend; the win bars are GordStats alone. "
         "Ahead of the final whistle a roster whose bench out-projects a starter gets "
         f"the swap spelled out under the table. Rebuilt several times a day and every "
         f"ten minutes while games are on (last: {built}); finished weeks stay on "
