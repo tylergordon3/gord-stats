@@ -17,6 +17,7 @@ the way the NFL board's were.
     python -m cfb.yahoo --refresh
 """
 import json
+import re
 import time
 from datetime import datetime, timedelta, timezone
 
@@ -474,6 +475,45 @@ def _parse_team_roster(raw: dict) -> list[dict]:
     return out
 
 
+# Yahoo's per-player weekly projections (Rotowire's) are not in the API, but
+# the league's own team pages print them to anyone, logged in or not, with
+# stat2=PW ("projected, week"). The starters on that page add up exactly to
+# the scoreboard's team_projected_points, and a past week keeps its numbers,
+# so a final week can still be backfilled. One page per team per week.
+_WEB = "https://college.fantasysports.yahoo.com/cfb/{league}/{team}?week={week}&stat1=P&stat2=PW"
+_WEB_HEADERS = {"User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                               "(KHTML, like Gecko) Chrome/128.0 Safari/537.36")}
+_ROW_ID = re.compile(r'data-ys-playerid="(\d+)"')
+_ROW_PTS = re.compile(r'class="[^"]*\bpts\b[^"]*"><div\s*>(?:<span[^>]*>)?\s*([-\d.]+)')
+
+
+def _parse_projection_page(html: str) -> dict:
+    """{yahoo player id: projected points} from one team page."""
+    out = {}
+    for row in html.split("<tr")[1:]:
+        pid, pts = _ROW_ID.search(row), _ROW_PTS.search(row)
+        if pid and pts:
+            out.setdefault(pid.group(1), float(pts.group(1)))
+    return out
+
+
+def week_projections(week: int, team_keys) -> dict:
+    """{yahoo player id: Yahoo's projected points} for every rostered player
+    in `week`. A team whose page fails is skipped, not fatal."""
+    league_id = LEAGUE_KEY.split(".l.")[-1]
+    out = {}
+    for key in team_keys:
+        team = str(key).split(".t.")[-1]
+        try:
+            r = requests.get(_WEB.format(league=league_id, team=team, week=int(week)),
+                             headers=_WEB_HEADERS, timeout=_TIMEOUT)
+            r.raise_for_status()
+            out.update(_parse_projection_page(r.text))
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! Yahoo projections week {week} team {team} failed ({exc})")
+    return out
+
+
 def _fetch_week(week: int) -> dict:
     sb = _parse_scoreboard(_get(f"league/{LEAGUE_KEY}/scoreboard;week={week}"))
     rosters = {}
@@ -492,6 +532,7 @@ def _fetch_week(week: int) -> dict:
         "fetched": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "matchups": sb["matchups"],
         "rosters": rosters,
+        "yahoo_proj": week_projections(week, rosters),
     }
 
 
@@ -512,6 +553,12 @@ def week_matchups(week: int, refresh: bool = False,
     if cache.exists():
         data = json.loads(cache.read_text())
         if week_final(data) or (not refresh and _is_fresh(cache, max_age_hours)):
+            # Weeks archived before Yahoo's projections were read get them
+            # once; Yahoo keeps a past week's projections up.
+            if not data.get("yahoo_proj"):
+                data["yahoo_proj"] = week_projections(week, data.get("rosters") or {})
+                if data["yahoo_proj"]:
+                    cache.write_text(json.dumps(data, indent=1))
             return data
     data = _fetch_week(int(week))
     MATCHUPS_DIR.mkdir(parents=True, exist_ok=True)

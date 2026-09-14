@@ -194,7 +194,7 @@ def _state(g) -> str:
 
 
 def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: dict,
-               hint: str = "") -> str:
+               hint: str = "", yproj: dict = None) -> str:
     pid = p["yahoo_id"]
     g = game_for(p, wk, by_team, to_school, espn)
     proj = wk.loc[pid, "proj_week"] if pid in wk.index else None
@@ -215,14 +215,19 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
             f'</span>{inj}{tag}</span></span></td>'
             f'<td class="mu-g">{game_cell(g)}</td>'
             f'<td class="mu-gs">{ui.fmt(proj)}</td>'
+            f'<td class="mu-gs">{ui.fmt((yproj or {}).get(pid))}</td>'
             f'<td class="mu-s">{escape(stat_line(p.get("stats") or {}, p["pos"]))}</td></tr>')
 
 
 def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dict,
                  espn: dict, final: bool, key: str = "",
-                 by_team: dict = None) -> tuple[str, float, float]:
-    """One roster in lineup order. Returns (html, projected starters, points)."""
+                 by_team: dict = None, yproj: dict = None) -> tuple[str, float, float]:
+    """One roster in lineup order. Returns (html, projected starters, points).
+
+    `yproj` is Yahoo's own per-player projection for the week, shown beside
+    ours; the lineup advice stays on ours."""
     by_team = by_team or {}
+    yproj = yproj or {}
     ordered = order_roster(players, lg)
     proj = {p["yahoo_id"]: (float(wk.loc[p["yahoo_id"], "proj_week"])
                             if p["yahoo_id"] in wk.index
@@ -251,8 +256,10 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
 
     proj_total = sum(proj.get(p["yahoo_id"]) or 0 for p in starters)
     pts_total = sum(p.get("points") or 0 for p in starters)
-    rows = [player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
+    rows = [player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]), yproj)
             for p in starters]
+    y_total = (sum(yproj.get(p["yahoo_id"]) or 0 for p in starters)
+               if any(p["yahoo_id"] in yproj for p in starters) else None)
     states = {_state(game_for(p, wk, by_team, to_school, espn)) for p in starters}
     team_state = ("post" if final else
                   "in" if pts_total > 0 or states & {"in", "post"} else "pre")
@@ -261,15 +268,17 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
                   .replace('<span class="mu-exp', f'<span data-thexp="{escape(key)}" class="mu-exp', 1))
     rows.append(f'<tr class="total"><td class="mu-pts">{total_cell}</td><td></td>'
                 '<td class="mu-p">Starters</td><td></td>'
-                f'<td class="mu-gs">{proj_total:.1f}</td><td></td></tr>')
+                f'<td class="mu-gs">{proj_total:.1f}</td><td class="mu-gs">{ui.fmt(y_total)}</td>'
+                '<td></td></tr>')
     if bench:
-        rows.append('<tr class="sep"><td colspan="6">Bench</td></tr>')
-        rows.extend(player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]))
+        rows.append('<tr class="sep"><td colspan="7">Bench</td></tr>')
+        rows.extend(player_row(p, wk, by_team, to_school, espn, hints.get(p["yahoo_id"]), yproj)
                     for p in bench)
     html = (f'<div class="table-scroll" data-roster="{escape(key)}"><table class="mu-roster"><thead><tr>'
             "<th class='mu-pts' title='Points scored, from Yahoo, with the live expected final under them; the projection before kickoff'>Pts</th>"
             "<th>Slot</th><th>Player</th><th>Game</th>"
             "<th title='GordStats projection for this week'>GS Proj</th>"
+            "<th title='Yahoo projection for this week (Rotowire)'>Yahoo</th>"
             "<th>Stats</th>"
             f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>{swaps}')
     # The ordered players travel back with the html so `matchup_section` can
@@ -397,7 +406,7 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     for t in m["teams"]:
         html, proj_total, pts_total, parts = roster_table(
             data["rosters"].get(t["team_key"], []), lg, wk, to_school, espn, final,
-            key=t["team_key"], by_team=by_team)
+            key=t["team_key"], by_team=by_team, yproj=data.get("yahoo_proj"))
         sides.append({"team": teams.get(t["team_key"], {"name": t["name"]}),
                       "name": t["name"], "key": t["team_key"], "html": html,
                       "gs": proj_total, "pts": pts_total if started else None,
@@ -589,10 +598,11 @@ def body() -> str:
         "until a player's game kicks off, then his Yahoo points with the expected final "
         "under them, then <i>final</i>. <b>Med</b> is each "
         "team's margin against the week's median score - the league plays a second game "
-        "against it every week - live once games are on, on projection before. Yahoo projects a team "
-        "total but no player-by-player number for the college game, so the "
-        "player column is ours alone; a player past the board's depth shows "
-        "&mdash; there but still plays. While games are on, points, stat lines "
+        "against it every week - live once games are on, on projection before. <b>Yahoo</b> is "
+        "Yahoo's own projection for the player (Rotowire's numbers, read from the league's "
+        "team pages), whose starters add up to the Yahoo team total in each header; the "
+        "start/sit advice runs on GS Proj. A player past our board's depth shows "
+        "&mdash; under GS Proj; there but still plays. While games are on, points, stat lines "
         "and Yahoo's win odds refresh in place about once a minute. Ahead of "
         "kickoff a roster whose bench "
         "out-projects a starter gets the swap spelled out under the table. "
