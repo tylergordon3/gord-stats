@@ -709,9 +709,8 @@ def median_tracker(rows: list, ctx: dict, week: int, started: bool, final: bool)
 
 # The tracker's arithmetic and markup, run on every view at load and again by
 # the live poll with fresh points. Winning the median game is finishing in the
-# top half, which is the same as beating the median of the *other* teams: for
-# a top-half team that is the best team below the line, for the rest the
-# weakest team above it - one rival to root against, named.
+# top half, so each team's line is how many teams have to pass it (or it has to
+# pass) and how many still can.
 MEDIAN_TRACKER_JS = """<style>
 .mu-medt-top{font-size:13px;color:#475569;margin:2px 0 6px}
 .mu-medt-row{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-left:3px solid #1a7f4b;
@@ -727,7 +726,6 @@ MEDIAN_TRACKER_JS = """<style>
 .mu-medt-row.down .st{color:#b3382c}
 .mu-medt-need{font-size:12px;color:#334155}
 .mu-medt-ps{font-size:11px;color:#64748b;line-height:1.35}
-.mu-medt-root{font-size:12px;color:#334155}
 .mu-medt-ps .lv{color:#b3382c;font-style:italic}
 .mu-medt-row .fig{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .mu-medt-row .fig b{display:block;font-size:15px}
@@ -740,7 +738,7 @@ MEDIAN_TRACKER_JS = """<style>
   .mu-medt-row.lock.up{background:#173a2e}
   .mu-medt-row.lock.down{background:#3d1f24}
   .mu-medt-row .st{color:#6ee7b7}.mu-medt-row.down .st{color:#ff9b91}
-  .mu-medt-top,.mu-medt-need,.mu-medt-root{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
+  .mu-medt-top,.mu-medt-need{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
   .mu-medt-ps .lv{color:#ff9b91}
 }
 </style><script>
@@ -766,7 +764,7 @@ window.muMedTrack=(function(){
     // once fewer than that can still reach its floor (a finished team's score, or
     // a record week, decides "can"); below the line it needs i-cut+1 teams above
     // to finish under it, and is locked out once fewer than that can fall to its
-    // ceiling. `foes` are those teams - who to root against.
+    // ceiling. `foes` are those teams.
     var cut=Math.ceil((n-1)/2),html=[];
     ts.forEach(function(t,i){
       if(i<cut){t.foes=ts.slice(i+1).filter(function(o){return o.ceil>=t.floor;});
@@ -783,30 +781,25 @@ window.muMedTrack=(function(){
       var j=(others.length-1)>>1,rival=others[j],line=others.length%2?rival.proj:(others[j].proj+others[j+1].proj)/2;
       if(others.length%2===0)rival=null;
       var margin=t.proj-line,up=margin>=0,need=line-t.pts,who=rival?esc(rival.name):'the median';
-      var status,root='';
-      // Who to root against: above the line, a team drops out once enough of the
-      // teams below it pass it (4th of five spots: two), so it is every team
-      // below that can still get there; below the line it needs that many teams
-      // above to finish under it, so every team above it can still catch.
-      var above=i<cut,count=above?cut-i:i-cut+1;
+      var status;
+      // Above the line a team loses the median game once enough of the teams
+      // below it pass it (4th of five spots: two); below, it wins once it passes
+      // that many of the teams above. Of how many teams can still do it
+      // (t.foes: a record week for those still playing, the score for the rest).
+      var above=i<cut,count=above?cut-i:i-cut+1,of=t.foes.length;
       up=t.lock?t.lock==='up':above;
-      var foes=t.foes.filter(function(o){return !o.lock&&o.left.length;});
-      if(!done&&!t.lock&&foes.length)root='<div class="mu-medt-root">Root against '
-        +foes.map(function(o){return esc(o.name);}).join(', ')+'</div>';
-      var pass=above?(count===1?'out if 1 passes':'out if '+count+' pass')
-        :(count===1?'must pass 1':'must pass '+count);
+      var odds=above?'Loses median if '+count+' of '+of+' teams '+(count===1?'passes':'pass')
+        :'Wins median if it passes '+count+' of '+of+' teams';
       if(done)status=(up?'Won':'Lost')+' the median game by '+fmt(Math.abs(margin));
       else if(t.lock==='up')status='Locked above the median'+(t.left.length?' · cannot be caught':'');
       else if(t.lock==='down')status='Locked below the median'+(t.left.length?' · even a record week falls short':'');
-      else if(!t.left.length)status='Done · '+fmt(Math.abs(margin))+(up?' above':' below')+' the line · '+pass;
-      else if(up)status='Keeping it · '+fmt(margin)+' ahead of '+who+' · '+pass;
-      else status='Chasing '+who+' · '+fmt(-margin)+' short · '+pass;
-      var sub=root;
+      else status=t.left.length?odds:'Done · '+odds.charAt(0).toLowerCase()+odds.slice(1);
+      var sub='';
       if(!done&&t.left.length){
         var ps=t.left.slice().sort(function(a,b){return b.r-a.r;}).map(function(p){
           return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
         sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b> · ':'')+t.left.length+' left, proj '+fmt(t.rem)+' · hypothetical max '+fmt(t.ceil)+'</div>')
-          +root+'<div class="mu-medt-ps">'+ps+'</div>';}
+          +'<div class="mu-medt-ps">'+ps+'</div>';}
       if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(mid)+'</span></div>');
       html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'
         +'<span class="rk">'+(i+1)+'</span>'+(t.logo||'')
@@ -1158,8 +1151,8 @@ def body() -> str:
         "<p>The <b>Median Tracker</b> ranks every team by expected final (points so far "
         "plus what its unfinished starters are projected to add) with the median line "
         "through the middle; each team is told who it has to stay ahead of or pass, "
-        "how many teams would have to pass it (or it has to pass) to change sides, "
-        "and the teams that still can - the ones to root against, nearest first; "
+        "and how many teams would have to pass it (or it has to pass) out of the "
+        "teams that still can; "
         "how many points that takes, and which starters it has left to get them. A row "
         "turns solid green or red once a team is <b>locked</b> above or below the median: "
         "its ceiling (every starter still to play matching his position's best week in "
