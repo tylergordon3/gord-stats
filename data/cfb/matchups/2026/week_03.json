@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-14T09:43:08+00:00",
+ "fetched": "2026-09-14T15:36:11+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 182.96,
-     "win_probability": 0.51
+     "projected": 187.16,
+     "win_probability": 0.54
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
      "projected": 180.9,
-     "win_probability": 0.49
+     "win_probability": 0.45999999999999996
     }
    ]
   },
@@ -40,7 +40,7 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 196.89,
+     "projected": 196.87,
      "win_probability": 0.77
     },
     {
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 175.84,
+     "projected": 175.85,
      "win_probability": 0.49
     }
    ]
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 183.34,
+     "projected": 183.26,
      "win_probability": 0.45999999999999996
     }
    ]
@@ -167,12 +167,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "405245",
-    "player": "Rueben Owens II",
+    "yahoo_id": "469395",
+    "player": "Dierre Hill Jr.",
     "pos": "RB",
-    "team": "TAMU",
-    "team_full": "Texas A&M Aggies",
-    "bye": 9.0,
+    "team": "ORE",
+    "team_full": "Oregon Ducks",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -265,12 +265,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "469395",
-    "player": "Dierre Hill Jr.",
+    "yahoo_id": "405245",
+    "player": "Rueben Owens II",
     "pos": "RB",
-    "team": "ORE",
-    "team_full": "Oregon Ducks",
-    "bye": 5.0,
+    "team": "TAMU",
+    "team_full": "Texas A&M Aggies",
+    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",

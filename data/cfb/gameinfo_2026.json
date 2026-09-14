@@ -14263,14 +14263,14 @@
 "ml_home": -440.0,
 "ml_away": 340.0,
 "weather": {
-"temp": 79.0,
+"temp": 77.0,
 "cond": 4,
-"gust": 7.0,
+"gust": 5.0,
 "precip": 47.0
 },
 "mq": 66.881,
 "kickoff": "2026-09-17T23:30Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -14339,19 +14339,19 @@
 "401858226": {
 "espn_home_wp": 0.083,
 "book": "DraftKings",
-"spread": 21.5,
+"spread": 20.5,
 "total": 55.5,
-"ml_home": 1100.0,
-"ml_away": -2100.0,
+"ml_home": 1000.0,
+"ml_away": -1800.0,
 "weather": {
-"temp": 84.0,
-"cond": 6,
-"gust": 6.0,
-"precip": 27.0
+"temp": 83.0,
+"cond": 2,
+"gust": 5.0,
+"precip": 5.0
 },
 "mq": 82.223,
 "kickoff": "2026-09-18T23:30Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -14425,14 +14425,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 88.0,
-"cond": 17,
+"temp": 87.0,
+"cond": 15,
 "gust": 21.0,
 "precip": 51.0
 },
 "mq": 80.216,
 "kickoff": "2026-09-19T00:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -14507,13 +14507,13 @@
 "ml_away": null,
 "weather": {
 "temp": 69.0,
-"cond": 2,
+"cond": 1,
 "gust": 9.0,
 "precip": 0.0
 },
 "mq": 47.646,
 "kickoff": "2026-09-19T02:30Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -14582,19 +14582,19 @@
 "401869940": {
 "espn_home_wp": 0.733,
 "book": "DraftKings",
-"spread": -4.5,
+"spread": -5.5,
 "total": 57.5,
-"ml_home": -205.0,
-"ml_away": 170.0,
+"ml_home": -218.0,
+"ml_away": 180.0,
 "weather": {
-"temp": 73.0,
-"cond": 3,
+"temp": 70.0,
+"cond": 4,
 "gust": 10.0,
 "precip": 5.0
 },
 "mq": 36.512,
 "kickoff": "2026-09-19T15:30Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -14668,14 +14668,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 77.0,
+"temp": 75.0,
 "cond": 3,
-"gust": 9.0,
+"gust": 4.0,
 "precip": 7.0
 },
 "mq": 50.469,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -14746,17 +14746,17 @@
 "book": "DraftKings",
 "spread": 24.5,
 "total": 54.5,
-"ml_home": 1600.0,
-"ml_away": -4000.0,
+"ml_home": 1700.0,
+"ml_away": -4500.0,
 "weather": {
-"temp": 87.0,
+"temp": 86.0,
 "cond": 1,
 "gust": 18.0,
 "precip": 0.0
 },
 "mq": 76.544,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -14825,19 +14825,19 @@
 "401858456": {
 "espn_home_wp": 0.983,
 "book": "DraftKings",
-"spread": -38.5,
+"spread": -39.5,
 "total": 47.5,
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 68.0,
+"temp": 67.0,
 "cond": 3,
 "gust": 9.0,
-"precip": 7.0
+"precip": 25.0
 },
 "mq": 52.719,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -14911,14 +14911,14 @@
 "ml_home": -1800.0,
 "ml_away": 1000.0,
 "weather": {
-"temp": 79.0,
-"cond": 3,
+"temp": 80.0,
+"cond": 2,
 "gust": 17.0,
 "precip": 7.0
 },
 "mq": 64.104,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -14992,14 +14992,14 @@
 "ml_home": -3600.0,
 "ml_away": 1500.0,
 "weather": {
-"temp": 73.0,
-"cond": 6,
+"temp": 75.0,
+"cond": 4,
 "gust": 15.0,
-"precip": 20.0
+"precip": 43.0
 },
 "mq": 30.162,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -15068,14 +15068,14 @@
 "401856812": {
 "espn_home_wp": 0.465,
 "book": "DraftKings",
-"spread": 5.5,
+"spread": 6.0,
 "total": 52.5,
-"ml_home": 170.0,
-"ml_away": -205.0,
+"ml_home": 190.0,
+"ml_away": -230.0,
 "weather": null,
 "mq": 57.85,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -15150,13 +15150,13 @@
 "ml_away": null,
 "weather": {
 "temp": 85.0,
-"cond": 2,
-"gust": 7.0,
-"precip": 4.0
+"cond": 3,
+"gust": 4.0,
+"precip": 6.0
 },
 "mq": 33.942,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:14+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -15225,19 +15225,19 @@
 "401858229": {
 "espn_home_wp": 0.5329999999999999,
 "book": "DraftKings",
-"spread": -3.0,
+"spread": -3.5,
 "total": 44.5,
 "ml_home": -166.0,
 "ml_away": 140.0,
 "weather": {
-"temp": 84.0,
-"cond": 3,
-"gust": 6.0,
+"temp": 86.0,
+"cond": 2,
+"gust": 4.0,
 "precip": 5.0
 },
 "mq": 64.039,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -15307,18 +15307,18 @@
 "espn_home_wp": 0.8909999999999999,
 "book": "DraftKings",
 "spread": -24.5,
-"total": 48.5,
-"ml_home": -4000.0,
-"ml_away": 1600.0,
+"total": 49.5,
+"ml_home": -3200.0,
+"ml_away": 1400.0,
 "weather": {
-"temp": 64.0,
+"temp": 67.0,
 "cond": 7,
-"gust": 13.0,
-"precip": 20.0
+"gust": 8.0,
+"precip": 40.0
 },
 "mq": 30.765,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -15389,17 +15389,17 @@
 "book": "DraftKings",
 "spread": -3.0,
 "total": 63.5,
-"ml_home": -148.0,
-"ml_away": 124.0,
+"ml_home": -155.0,
+"ml_away": 130.0,
 "weather": {
-"temp": 85.0,
+"temp": 86.0,
 "cond": 2,
-"gust": 10.0,
+"gust": 1.0,
 "precip": 0.0
 },
 "mq": 44.324,
 "kickoff": "2026-09-19T16:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -15470,17 +15470,17 @@
 "book": "DraftKings",
 "spread": -24.5,
 "total": 45.5,
-"ml_home": -3600.0,
-"ml_away": 1500.0,
+"ml_home": -3200.0,
+"ml_away": 1400.0,
 "weather": {
-"temp": 74.0,
+"temp": 72.0,
 "cond": 7,
 "gust": 16.0,
-"precip": 34.0
+"precip": 49.0
 },
 "mq": 32.674,
 "kickoff": "2026-09-19T16:30Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -15554,14 +15554,14 @@
 "ml_home": -6500.0,
 "ml_away": 2000.0,
 "weather": {
-"temp": 84.0,
+"temp": 90.0,
 "cond": 2,
 "gust": 16.0,
 "precip": 6.0
 },
 "mq": 56.066,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -15635,14 +15635,14 @@
 "ml_home": -175.0,
 "ml_away": 145.0,
 "weather": {
-"temp": 87.0,
-"cond": 6,
-"gust": 7.0,
+"temp": 89.0,
+"cond": 2,
+"gust": 2.0,
 "precip": 5.0
 },
 "mq": 61.928,
 "kickoff": "2026-09-19T16:45Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -15716,14 +15716,14 @@
 "ml_home": -120.0,
 "ml_away": 100.0,
 "weather": {
-"temp": 70.0,
+"temp": 71.0,
 "cond": 15,
-"gust": 21.0,
-"precip": 60.0
+"gust": 18.0,
+"precip": 44.0
 },
 "mq": 8.531,
 "kickoff": "2026-09-19T17:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -15799,12 +15799,12 @@
 "weather": {
 "temp": 70.0,
 "cond": 4,
-"gust": 9.0,
-"precip": 5.0
+"gust": 4.0,
+"precip": 6.0
 },
 "mq": 26.336,
 "kickoff": "2026-09-19T18:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -15878,14 +15878,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 88.0,
-"cond": 15,
+"temp": 90.0,
+"cond": 2,
 "gust": 21.0,
-"precip": 55.0
+"precip": 6.0
 },
 "mq": 34.935,
 "kickoff": "2026-09-19T18:00Z",
-"captured": "2026-09-14T09:43:12+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -15960,13 +15960,13 @@
 "ml_away": 180.0,
 "weather": {
 "temp": 79.0,
-"cond": 6,
+"cond": 2,
 "gust": 13.0,
-"precip": 48.0
+"precip": 7.0
 },
 "mq": 43.7,
 "kickoff": "2026-09-19T19:00Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -16042,12 +16042,12 @@
 "weather": {
 "temp": 93.0,
 "cond": 2,
-"gust": 14.0,
+"gust": 13.0,
 "precip": 3.0
 },
 "mq": 77.43,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -16118,17 +16118,17 @@
 "book": "DraftKings",
 "spread": -20.5,
 "total": 49.5,
-"ml_home": -1650.0,
-"ml_away": 950.0,
+"ml_home": -1600.0,
+"ml_away": 900.0,
 "weather": {
-"temp": 91.0,
+"temp": 92.0,
 "cond": 6,
-"gust": 7.0,
+"gust": 6.0,
 "precip": 12.0
 },
 "mq": 82.448,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -16197,19 +16197,19 @@
 "401858457": {
 "espn_home_wp": 0.042,
 "book": "DraftKings",
-"spread": 24.5,
-"total": 58.5,
+"spread": 23.5,
+"total": 59.5,
 "ml_home": 1300.0,
 "ml_away": -2800.0,
 "weather": {
-"temp": 77.0,
-"cond": 2,
+"temp": 78.0,
+"cond": 7,
 "gust": 12.0,
 "precip": 6.0
 },
 "mq": 64.157,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -16283,14 +16283,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 76.0,
+"temp": 77.0,
 "cond": 6,
 "gust": 21.0,
 "precip": 47.0
 },
 "mq": 48.154,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -16361,17 +16361,17 @@
 "book": "DraftKings",
 "spread": -1.5,
 "total": 59.5,
-"ml_home": -125.0,
-"ml_away": 105.0,
+"ml_home": -115.0,
+"ml_away": -105.0,
 "weather": {
-"temp": 90.0,
-"cond": 17,
-"gust": 9.0,
-"precip": 51.0
+"temp": 94.0,
+"cond": 3,
+"gust": 7.0,
+"precip": 47.0
 },
 "mq": 81.205,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -16440,19 +16440,19 @@
 "401856801": {
 "espn_home_wp": 0.95,
 "book": "DraftKings",
-"spread": -28.5,
+"spread": -27.5,
 "total": 56.5,
 "ml_home": -8000.0,
 "ml_away": 2200.0,
 "weather": {
-"temp": 72.0,
+"temp": 73.0,
 "cond": 1,
 "gust": 15.0,
 "precip": 0.0
 },
 "mq": 62.195,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -16522,13 +16522,13 @@
 "espn_home_wp": 0.9309999999999999,
 "book": "DraftKings",
 "spread": -14.5,
-"total": 50.5,
-"ml_home": -650.0,
-"ml_away": 470.0,
+"total": 51.5,
+"ml_home": -675.0,
+"ml_away": 490.0,
 "weather": null,
 "mq": 48.753,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -16602,14 +16602,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 72.0,
-"cond": 1,
+"temp": 68.0,
+"cond": 2,
 "gust": 12.0,
 "precip": 0.0
 },
 "mq": 31.111,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -16684,13 +16684,13 @@
 "ml_away": null,
 "weather": {
 "temp": 66.0,
-"cond": 2,
-"gust": 9.0,
+"cond": 4,
+"gust": 8.0,
 "precip": 0.0
 },
 "mq": 24.787,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:15+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -16764,14 +16764,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 73.0,
-"cond": 6,
+"temp": 72.0,
+"cond": 4,
 "gust": 12.0,
 "precip": 6.0
 },
 "mq": 19.272,
 "kickoff": "2026-09-19T19:30Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -16845,14 +16845,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 89.0,
+"temp": 90.0,
 "cond": 3,
 "gust": 9.0,
 "precip": 6.0
 },
 "mq": 56.464,
 "kickoff": "2026-09-19T20:00Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -16926,14 +16926,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 81.0,
-"cond": 3,
+"temp": 83.0,
+"cond": 2,
 "gust": 20.0,
-"precip": 6.0
+"precip": 34.0
 },
 "mq": 41.7,
 "kickoff": "2026-09-19T20:00Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -17007,14 +17007,14 @@
 "ml_home": -375.0,
 "ml_away": 295.0,
 "weather": {
-"temp": 83.0,
-"cond": 3,
-"gust": 13.0,
+"temp": 84.0,
+"cond": 2,
+"gust": 12.0,
 "precip": 18.0
 },
 "mq": 53.922,
 "kickoff": "2026-09-19T20:00Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -17085,17 +17085,17 @@
 "book": "DraftKings",
 "spread": -14.0,
 "total": 49.5,
-"ml_home": -700.0,
-"ml_away": 500.0,
+"ml_home": -650.0,
+"ml_away": 470.0,
 "weather": {
-"temp": 84.0,
-"cond": 6,
-"gust": 7.0,
-"precip": 35.0
+"temp": 83.0,
+"cond": 16,
+"gust": 6.0,
+"precip": 51.0
 },
 "mq": 20.681,
 "kickoff": "2026-09-19T20:00Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17176,7 +17176,7 @@
 },
 "mq": 53.755,
 "kickoff": "2026-09-19T20:00Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17257,7 +17257,7 @@
 },
 "mq": 82.425,
 "kickoff": "2026-09-19T20:15Z",
-"captured": "2026-09-14T09:43:13+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17333,12 +17333,12 @@
 "weather": {
 "temp": 98.0,
 "cond": 2,
-"gust": 8.0,
-"precip": 2.0
+"gust": 5.0,
+"precip": 3.0
 },
 "mq": 5.526,
 "kickoff": "2026-09-19T20:30Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17412,14 +17412,14 @@
 "ml_home": -142.0,
 "ml_away": 120.0,
 "weather": {
-"temp": 78.0,
-"cond": 6,
+"temp": 79.0,
+"cond": 4,
 "gust": 16.0,
 "precip": 19.0
 },
 "mq": 40.465,
 "kickoff": "2026-09-19T22:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -17493,14 +17493,14 @@
 "ml_home": -265.0,
 "ml_away": 215.0,
 "weather": {
-"temp": 86.0,
+"temp": 87.0,
 "cond": 6,
-"gust": 14.0,
+"gust": 5.0,
 "precip": 47.0
 },
 "mq": 29.229,
 "kickoff": "2026-09-19T22:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17574,14 +17574,14 @@
 "ml_home": -1200.0,
 "ml_away": 750.0,
 "weather": {
-"temp": 71.0,
-"cond": 6,
-"gust": 6.0,
+"temp": 73.0,
+"cond": 2,
+"gust": 2.0,
 "precip": 19.0
 },
 "mq": 27.488,
 "kickoff": "2026-09-19T22:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -17655,14 +17655,14 @@
 "ml_home": 145.0,
 "ml_away": -175.0,
 "weather": {
-"temp": 92.0,
+"temp": 95.0,
 "cond": 2,
 "gust": 20.0,
 "precip": 5.0
 },
 "mq": 21.332,
 "kickoff": "2026-09-19T22:30Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17736,14 +17736,14 @@
 "ml_home": 114.0,
 "ml_away": -135.0,
 "weather": {
-"temp": 81.0,
-"cond": 7,
-"gust": 6.0,
-"precip": 47.0
+"temp": 82.0,
+"cond": 15,
+"gust": 4.0,
+"precip": 51.0
 },
 "mq": 87.171,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17812,19 +17812,19 @@
 "401856800": {
 "espn_home_wp": 0.878,
 "book": "DraftKings",
-"spread": -20.5,
-"total": 52.5,
-"ml_home": -1450.0,
-"ml_away": 850.0,
+"spread": -18.5,
+"total": 51.5,
+"ml_home": -1100.0,
+"ml_away": 700.0,
 "weather": {
 "temp": 80.0,
-"cond": 15,
-"gust": 8.0,
-"precip": 51.0
+"cond": 4,
+"gust": 5.0,
+"precip": 19.0
 },
 "mq": 46.166,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:16+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17901,11 +17901,11 @@
 "temp": 92.0,
 "cond": 2,
 "gust": 21.0,
-"precip": 3.0
+"precip": 4.0
 },
 "mq": 33.058,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -17979,14 +17979,14 @@
 "ml_home": 140.0,
 "ml_away": -166.0,
 "weather": {
-"temp": 85.0,
-"cond": 6,
+"temp": 86.0,
+"cond": 3,
 "gust": 10.0,
 "precip": 19.0
 },
 "mq": 31.383,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -18060,14 +18060,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 91.0,
+"temp": 92.0,
 "cond": 3,
-"gust": 9.0,
+"gust": 7.0,
 "precip": 19.0
 },
 "mq": 29.536,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -18138,17 +18138,17 @@
 "book": "DraftKings",
 "spread": 9.5,
 "total": 43.5,
-"ml_home": 310.0,
-"ml_away": -395.0,
+"ml_home": 295.0,
+"ml_away": -375.0,
 "weather": {
-"temp": 89.0,
+"temp": 91.0,
 "cond": 2,
 "gust": 15.0,
 "precip": 3.0
 },
 "mq": 36.096,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -18224,12 +18224,12 @@
 "weather": {
 "temp": 81.0,
 "cond": 6,
-"gust": 6.0,
-"precip": 36.0
+"gust": 2.0,
+"precip": 19.0
 },
 "mq": 30.847,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -18303,14 +18303,14 @@
 "ml_home": 185.0,
 "ml_away": -225.0,
 "weather": {
-"temp": 88.0,
+"temp": 90.0,
 "cond": 16,
-"gust": 8.0,
+"gust": 5.0,
 "precip": 51.0
 },
 "mq": 28.748,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -18384,14 +18384,14 @@
 "ml_home": -180.0,
 "ml_away": 150.0,
 "weather": {
-"temp": 82.0,
+"temp": 83.0,
 "cond": 4,
 "gust": 14.0,
-"precip": 19.0
+"precip": 15.0
 },
 "mq": 31.945,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:14+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -18465,14 +18465,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 90.0,
+"temp": 91.0,
 "cond": 1,
-"gust": 9.0,
+"gust": 5.0,
 "precip": 3.0
 },
 "mq": 15.72,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -18546,14 +18546,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 70.0,
+"temp": 69.0,
 "cond": 3,
 "gust": 10.0,
 "precip": 0.0
 },
 "mq": 35.846,
 "kickoff": "2026-09-19T23:15Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -18627,14 +18627,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 76.0,
+"temp": 81.0,
 "cond": 7,
-"gust": 14.0,
-"precip": 5.0
+"gust": 13.0,
+"precip": 47.0
 },
 "mq": 56.118,
 "kickoff": "2026-09-19T23:15Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -18708,14 +18708,14 @@
 "ml_home": -8000.0,
 "ml_away": 2200.0,
 "weather": {
-"temp": 76.0,
-"cond": 15,
+"temp": 78.0,
+"cond": 2,
 "gust": 17.0,
-"precip": 52.0
+"precip": 7.0
 },
 "mq": 77.54,
 "kickoff": "2026-09-19T23:30Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -18789,14 +18789,14 @@
 "ml_home": 130.0,
 "ml_away": -155.0,
 "weather": {
-"temp": 89.0,
+"temp": 90.0,
 "cond": 4,
 "gust": 6.0,
 "precip": 19.0
 },
 "mq": 94.898,
 "kickoff": "2026-09-19T23:30Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -18870,14 +18870,14 @@
 "ml_home": -2400.0,
 "ml_away": 1200.0,
 "weather": {
-"temp": 92.0,
+"temp": 94.0,
 "cond": 2,
 "gust": 20.0,
 "precip": 3.0
 },
 "mq": 74.773,
 "kickoff": "2026-09-19T23:30Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -18951,14 +18951,14 @@
 "ml_home": 650.0,
 "ml_away": -1000.0,
 "weather": {
-"temp": 76.0,
+"temp": 77.0,
 "cond": 3,
 "gust": 15.0,
 "precip": 24.0
 },
 "mq": 63.833,
 "kickoff": "2026-09-19T23:30Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -19027,14 +19027,14 @@
 "401856796": {
 "espn_home_wp": 0.498,
 "book": "DraftKings",
-"spread": -4.0,
+"spread": -4.5,
 "total": 48.5,
 "ml_home": -185.0,
 "ml_away": 154.0,
 "weather": null,
 "mq": 59.043,
 "kickoff": "2026-09-19T23:30Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:17+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -19108,14 +19108,14 @@
 "ml_home": -395.0,
 "ml_away": 310.0,
 "weather": {
-"temp": 82.0,
-"cond": 3,
+"temp": 83.0,
+"cond": 2,
 "gust": 10.0,
 "precip": 18.0
 },
 "mq": 67.995,
 "kickoff": "2026-09-19T23:30Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19189,14 +19189,14 @@
 "ml_home": 130.0,
 "ml_away": -155.0,
 "weather": {
-"temp": 78.0,
-"cond": 6,
-"gust": 8.0,
-"precip": 5.0
+"temp": 79.0,
+"cond": 4,
+"gust": 4.0,
+"precip": 25.0
 },
 "mq": 68.655,
 "kickoff": "2026-09-19T23:30Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -19270,14 +19270,14 @@
 "ml_home": null,
 "ml_away": 5000.0,
 "weather": {
-"temp": 82.0,
-"cond": 3,
-"gust": 6.0,
+"temp": 84.0,
+"cond": 2,
+"gust": 4.0,
 "precip": 19.0
 },
 "mq": 59.22,
 "kickoff": "2026-09-19T23:45Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19358,7 +19358,7 @@
 },
 "mq": 70.254,
 "kickoff": "2026-09-20T00:00Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19432,14 +19432,14 @@
 "ml_home": -1450.0,
 "ml_away": 850.0,
 "weather": {
-"temp": 91.0,
+"temp": 93.0,
 "cond": 2,
 "gust": 17.0,
 "precip": 1.0
 },
 "mq": 48.398,
 "kickoff": "2026-09-20T00:00Z",
-"captured": "2026-09-14T09:43:15+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19513,14 +19513,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 90.0,
+"temp": 94.0,
 "cond": 2,
 "gust": 17.0,
 "precip": 4.0
 },
 "mq": 26.755,
 "kickoff": "2026-09-20T00:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19591,17 +19591,17 @@
 "book": "DraftKings",
 "spread": -7.5,
 "total": 56.5,
-"ml_home": -310.0,
-"ml_away": 250.0,
+"ml_home": -325.0,
+"ml_away": 260.0,
 "weather": {
 "temp": 85.0,
-"cond": 6,
+"cond": 2,
 "gust": 9.0,
 "precip": 7.0
 },
 "mq": 28.092,
 "kickoff": "2026-09-20T00:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19675,14 +19675,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 71.0,
+"temp": 70.0,
 "cond": 33,
 "gust": 10.0,
 "precip": 0.0
 },
 "mq": 47.273,
 "kickoff": "2026-09-20T02:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19753,17 +19753,17 @@
 "book": "DraftKings",
 "spread": -2.5,
 "total": 46.5,
-"ml_home": -122.0,
-"ml_away": 102.0,
+"ml_home": -130.0,
+"ml_away": 110.0,
 "weather": {
-"temp": 73.0,
+"temp": 79.0,
 "cond": 36,
 "gust": 8.0,
 "precip": 0.0
 },
 "mq": 51.045,
 "kickoff": "2026-09-20T02:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19837,14 +19837,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 87.0,
+"temp": 86.0,
 "cond": 35,
-"gust": 12.0,
+"gust": 8.0,
 "precip": 1.0
 },
 "mq": 37.283,
 "kickoff": "2026-09-20T02:30Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19915,17 +19915,17 @@
 "book": "DraftKings",
 "spread": 27.5,
 "total": 53.5,
-"ml_home": 2200.0,
-"ml_away": -8000.0,
+"ml_home": 2500.0,
+"ml_away": -9000.0,
 "weather": {
-"temp": 82.0,
+"temp": 88.0,
 "cond": 1,
-"gust": 8.0,
+"gust": 4.0,
 "precip": 0.0
 },
 "mq": 24.353,
 "kickoff": "2026-09-20T02:30Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -19999,14 +19999,14 @@
 "ml_home": -675.0,
 "ml_away": 490.0,
 "weather": {
-"temp": 79.0,
+"temp": 83.0,
 "cond": 33,
-"gust": 5.0,
+"gust": 4.0,
 "precip": 0.0
 },
 "mq": 59.677,
 "kickoff": "2026-09-20T03:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -20080,14 +20080,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 65.0,
+"temp": 66.0,
 "cond": 33,
 "gust": 17.0,
 "precip": 0.0
 },
 "mq": 34.136,
 "kickoff": "2026-09-20T03:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -20161,14 +20161,14 @@
 "ml_home": 205.0,
 "ml_away": -250.0,
 "weather": {
-"temp": 69.0,
+"temp": 77.0,
 "cond": 33,
-"gust": 8.0,
+"gust": 5.0,
 "precip": 0.0
 },
 "mq": 38.451,
 "kickoff": "2026-09-20T03:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -20244,7 +20244,7 @@
 "weather": null,
 "mq": 30.904,
 "kickoff": "2026-09-24T23:30Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:18+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -20320,7 +20320,7 @@
 "weather": null,
 "mq": 43.087,
 "kickoff": "2026-09-25T20:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -20396,7 +20396,7 @@
 "weather": null,
 "mq": 22.889,
 "kickoff": "2026-09-25T23:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -20472,7 +20472,7 @@
 "weather": null,
 "mq": 28.003,
 "kickoff": "2026-09-25T23:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -20548,7 +20548,7 @@
 "weather": null,
 "mq": 76.491,
 "kickoff": "2026-09-26T00:00Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -20624,7 +20624,7 @@
 "weather": null,
 "mq": 55.852,
 "kickoff": "2026-09-26T02:30Z",
-"captured": "2026-09-14T09:43:16+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -20700,7 +20700,7 @@
 "weather": null,
 "mq": 78.433,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -20776,7 +20776,7 @@
 "weather": null,
 "mq": 91.044,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -20852,7 +20852,7 @@
 "weather": null,
 "mq": 93.54,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -20928,7 +20928,7 @@
 "weather": null,
 "mq": 77.405,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -21004,7 +21004,7 @@
 "weather": null,
 "mq": 98.681,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -21080,7 +21080,7 @@
 "weather": null,
 "mq": 88.172,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -21156,7 +21156,7 @@
 "weather": null,
 "mq": 52.095,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -21232,7 +21232,7 @@
 "weather": null,
 "mq": 90.029,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:19+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -21308,7 +21308,7 @@
 "weather": null,
 "mq": 79.428,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -21384,7 +21384,7 @@
 "weather": null,
 "mq": 57.212,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -21460,7 +21460,7 @@
 "weather": null,
 "mq": 73.66,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -21536,7 +21536,7 @@
 "weather": null,
 "mq": 53.503,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -21612,7 +21612,7 @@
 "weather": null,
 "mq": 69.463,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -21688,7 +21688,7 @@
 "weather": null,
 "mq": 53.456,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -21764,7 +21764,7 @@
 "weather": null,
 "mq": 70.143,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -21840,7 +21840,7 @@
 "weather": null,
 "mq": 79.63,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -21916,7 +21916,7 @@
 "weather": null,
 "mq": 75.705,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -21992,7 +21992,7 @@
 "weather": null,
 "mq": 65.817,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -22068,7 +22068,7 @@
 "weather": null,
 "mq": 73.279,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -22144,7 +22144,7 @@
 "weather": null,
 "mq": 63.453,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -22220,7 +22220,7 @@
 "weather": null,
 "mq": 56.179,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -22296,7 +22296,7 @@
 "weather": null,
 "mq": 38.33,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -22372,7 +22372,7 @@
 "weather": null,
 "mq": 62.802,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:17+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -22448,7 +22448,7 @@
 "weather": null,
 "mq": 58.858,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -22524,7 +22524,7 @@
 "weather": null,
 "mq": 65.433,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:20+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -22600,7 +22600,7 @@
 "weather": null,
 "mq": 71.98,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -22676,7 +22676,7 @@
 "weather": null,
 "mq": 49.206,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -22752,7 +22752,7 @@
 "weather": null,
 "mq": 42.268,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:18+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -22828,7 +22828,7 @@
 "weather": null,
 "mq": 61.007,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -22904,7 +22904,7 @@
 "weather": null,
 "mq": 27.419,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -22980,7 +22980,7 @@
 "weather": null,
 "mq": 27.79,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -23056,7 +23056,7 @@
 "weather": null,
 "mq": 11.625,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -23132,7 +23132,7 @@
 "weather": null,
 "mq": 43.29,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23208,7 +23208,7 @@
 "weather": null,
 "mq": 29.189,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -23284,7 +23284,7 @@
 "weather": null,
 "mq": 40.653,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23360,7 +23360,7 @@
 "weather": null,
 "mq": 20.797,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -23436,7 +23436,7 @@
 "weather": null,
 "mq": 28.139,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23512,7 +23512,7 @@
 "weather": null,
 "mq": 50.41,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23588,7 +23588,7 @@
 "weather": null,
 "mq": 4.807,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:19+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23664,7 +23664,7 @@
 "weather": null,
 "mq": 8.224,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23740,7 +23740,7 @@
 "weather": null,
 "mq": 45.127,
 "kickoff": "2026-09-26T04:00Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23816,7 +23816,7 @@
 "weather": null,
 "mq": 98.657,
 "kickoff": "2026-09-26T16:00Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23892,7 +23892,7 @@
 "weather": null,
 "mq": 42.409,
 "kickoff": "2026-09-26T16:00Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -23968,7 +23968,7 @@
 "weather": null,
 "mq": 46.943,
 "kickoff": "2026-09-26T16:45Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:21+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24044,7 +24044,7 @@
 "weather": null,
 "mq": 11.68,
 "kickoff": "2026-09-26T17:00Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24120,7 +24120,7 @@
 "weather": null,
 "mq": 22.235,
 "kickoff": "2026-09-26T19:00Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -24196,7 +24196,7 @@
 "weather": null,
 "mq": 36.517,
 "kickoff": "2026-09-26T19:30Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24272,7 +24272,7 @@
 "weather": null,
 "mq": 39.939,
 "kickoff": "2026-09-26T19:30Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24348,7 +24348,7 @@
 "weather": null,
 "mq": 15.652,
 "kickoff": "2026-09-26T19:30Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -24424,7 +24424,7 @@
 "weather": null,
 "mq": 21.45,
 "kickoff": "2026-09-26T19:30Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24500,7 +24500,7 @@
 "weather": null,
 "mq": 16.524,
 "kickoff": "2026-09-26T19:30Z",
-"captured": "2026-09-14T09:43:20+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24576,7 +24576,7 @@
 "weather": null,
 "mq": 25.879,
 "kickoff": "2026-09-26T20:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -24652,7 +24652,7 @@
 "weather": null,
 "mq": 24.048,
 "kickoff": "2026-09-26T22:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24728,7 +24728,7 @@
 "weather": null,
 "mq": 21.218,
 "kickoff": "2026-09-26T22:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24804,7 +24804,7 @@
 "weather": null,
 "mq": 50.86,
 "kickoff": "2026-09-26T22:30Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -24880,7 +24880,7 @@
 "weather": null,
 "mq": 29.697,
 "kickoff": "2026-09-26T23:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -24956,7 +24956,7 @@
 "weather": null,
 "mq": 16.848,
 "kickoff": "2026-09-26T23:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25032,7 +25032,7 @@
 "weather": null,
 "mq": 50.299,
 "kickoff": "2026-09-26T23:30Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25108,7 +25108,7 @@
 "weather": null,
 "mq": 34.163,
 "kickoff": "2026-09-26T23:30Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -25184,7 +25184,7 @@
 "weather": null,
 "mq": 30.612,
 "kickoff": "2026-09-26T23:30Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -25260,7 +25260,7 @@
 "weather": null,
 "mq": 46.787,
 "kickoff": "2026-09-27T00:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:22+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25336,7 +25336,7 @@
 "weather": null,
 "mq": 26.795,
 "kickoff": "2026-09-27T01:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25412,7 +25412,7 @@
 "weather": null,
 "mq": 31.812,
 "kickoff": "2026-09-27T02:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25488,7 +25488,7 @@
 "weather": null,
 "mq": 48.888,
 "kickoff": "2026-09-27T02:30Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25564,7 +25564,7 @@
 "weather": null,
 "mq": 19.32,
 "kickoff": "2026-10-02T00:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -25640,7 +25640,7 @@
 "weather": null,
 "mq": 49.492,
 "kickoff": "2026-10-02T01:00Z",
-"captured": "2026-09-14T09:43:21+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -25716,7 +25716,7 @@
 "weather": null,
 "mq": 76.267,
 "kickoff": "2026-10-02T23:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25792,7 +25792,7 @@
 "weather": null,
 "mq": 37.424,
 "kickoff": "2026-10-02T23:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25868,7 +25868,7 @@
 "weather": null,
 "mq": 73.161,
 "kickoff": "2026-10-03T00:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -25944,7 +25944,7 @@
 "weather": null,
 "mq": 89.725,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26020,7 +26020,7 @@
 "weather": null,
 "mq": 80.829,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26096,7 +26096,7 @@
 "weather": null,
 "mq": 86.346,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -26172,7 +26172,7 @@
 "weather": null,
 "mq": 84.007,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26248,7 +26248,7 @@
 "weather": null,
 "mq": 71.76,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26324,7 +26324,7 @@
 "weather": null,
 "mq": 74.85,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -26400,7 +26400,7 @@
 "weather": null,
 "mq": 91.17,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -26476,7 +26476,7 @@
 "weather": null,
 "mq": 76.173,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26552,7 +26552,7 @@
 "weather": null,
 "mq": 77.444,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:23+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26628,7 +26628,7 @@
 "weather": null,
 "mq": 66.686,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -26704,7 +26704,7 @@
 "weather": null,
 "mq": 64.165,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26780,7 +26780,7 @@
 "weather": null,
 "mq": 88.001,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -26856,7 +26856,7 @@
 "weather": null,
 "mq": 67.349,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -26932,7 +26932,7 @@
 "weather": null,
 "mq": 67.259,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -27008,7 +27008,7 @@
 "weather": null,
 "mq": 84.888,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:22+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27084,7 +27084,7 @@
 "weather": null,
 "mq": 73.624,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27160,7 +27160,7 @@
 "weather": null,
 "mq": 33.327,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27236,7 +27236,7 @@
 "weather": null,
 "mq": 65.785,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -27312,7 +27312,7 @@
 "weather": null,
 "mq": 67.509,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -27388,7 +27388,7 @@
 "weather": null,
 "mq": 53.952,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -27464,7 +27464,7 @@
 "weather": null,
 "mq": 50.794,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -27540,7 +27540,7 @@
 "weather": null,
 "mq": 74.082,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -27616,7 +27616,7 @@
 "weather": null,
 "mq": 56.321,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27692,7 +27692,7 @@
 "weather": null,
 "mq": 75.071,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27768,7 +27768,7 @@
 "weather": null,
 "mq": 58.09,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27844,7 +27844,7 @@
 "weather": null,
 "mq": 31.967,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27920,7 +27920,7 @@
 "weather": null,
 "mq": 30.994,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:27+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -27996,7 +27996,7 @@
 "weather": null,
 "mq": 45.444,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28072,7 +28072,7 @@
 "weather": null,
 "mq": 33.379,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28148,7 +28148,7 @@
 "weather": null,
 "mq": 9.496,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28224,7 +28224,7 @@
 "weather": null,
 "mq": 28.945,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:23+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -28300,7 +28300,7 @@
 "weather": null,
 "mq": 35.966,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -28376,7 +28376,7 @@
 "weather": null,
 "mq": 18.233,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -28452,7 +28452,7 @@
 "weather": null,
 "mq": 15.002,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28528,7 +28528,7 @@
 "weather": null,
 "mq": 17.695,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28604,7 +28604,7 @@
 "weather": null,
 "mq": 42.266,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28680,7 +28680,7 @@
 "weather": null,
 "mq": 37.045,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28756,7 +28756,7 @@
 "weather": null,
 "mq": 32.734,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -28832,7 +28832,7 @@
 "weather": null,
 "mq": 34.642,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -28908,7 +28908,7 @@
 "weather": null,
 "mq": 34.491,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -28984,7 +28984,7 @@
 "weather": null,
 "mq": 19.746,
 "kickoff": "2026-10-03T04:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -29060,7 +29060,7 @@
 "weather": null,
 "mq": 41.317,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -29136,7 +29136,7 @@
 "weather": null,
 "mq": 40.096,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -29212,7 +29212,7 @@
 "weather": null,
 "mq": 45.488,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -29288,7 +29288,7 @@
 "weather": null,
 "mq": 14.327,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -29364,7 +29364,7 @@
 "weather": null,
 "mq": 31.727,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -29440,7 +29440,7 @@
 "weather": null,
 "mq": 41.61,
 "kickoff": "2026-10-03T22:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -29516,7 +29516,7 @@
 "weather": null,
 "mq": 20.724,
 "kickoff": "2026-10-03T22:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -29592,7 +29592,7 @@
 "weather": null,
 "mq": 53.459,
 "kickoff": "2026-10-03T23:30Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -29668,7 +29668,7 @@
 "weather": null,
 "mq": 49.777,
 "kickoff": "2026-10-03T23:45Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -29744,7 +29744,7 @@
 "weather": null,
 "mq": 69.359,
 "kickoff": "2026-10-04T00:00Z",
-"captured": "2026-09-14T09:43:24+00:00",
+"captured": "2026-09-14T15:36:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -29820,7 +29820,7 @@
 "weather": null,
 "mq": 42.908,
 "kickoff": "2026-10-04T01:30Z",
-"captured": "2026-09-14T09:43:25+00:00",
+"captured": "2026-09-14T15:36:27+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -29896,7 +29896,7 @@
 "weather": null,
 "mq": 40.956,
 "kickoff": "2026-10-04T02:30Z",
-"captured": "2026-09-14T09:43:25+00:00",
+"captured": "2026-09-14T15:36:27+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -29972,7 +29972,7 @@
 "weather": null,
 "mq": 29.575,
 "kickoff": "2026-10-04T03:59Z",
-"captured": "2026-09-14T09:43:25+00:00",
+"captured": "2026-09-14T15:36:27+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -67815,9 +67815,9 @@
 "ml_home": -185.0,
 "ml_away": 154.0,
 "weather": {
-"temp": 83.0,
-"cond": 2,
-"gust": 7.0,
+"temp": 84.0,
+"cond": 4,
+"gust": 5.0,
 "precip": 19.0
 },
 "last5_home": [
@@ -67886,7 +67886,7 @@
 ],
 "mq": 33.518,
 "kickoff": "2026-09-19T23:00Z",
-"captured": "2026-09-14T09:43:15+00:00"
+"captured": "2026-09-14T15:36:17+00:00"
 },
 "401871048": {
 "espn_home_wp": 0.736,
@@ -67962,7 +67962,7 @@
 ],
 "mq": 23.029,
 "kickoff": "2026-09-26T23:00Z",
-"captured": "2026-09-14T09:43:21+00:00"
+"captured": "2026-09-14T15:36:22+00:00"
 },
 "401871051": {
 "espn_home_wp": 0.688,
