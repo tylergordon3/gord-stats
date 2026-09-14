@@ -1,7 +1,7 @@
 {
  "week": 1,
  "year": 2026,
- "fetched": "2026-09-14T03:20:07+00:00",
+ "fetched": "2026-09-14T09:42:54+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -115,7 +115,7 @@
     {
      "roster_id": 8,
      "matchup_id": 1,
-     "points": 143.86,
+     "points": 145.36,
      "starters": [
       "11560",
       "4866",
@@ -159,7 +159,7 @@
       "7547": 28.7,
       "7567": 2.8,
       "8121": 0.0,
-      "8131": 26.3,
+      "8131": 27.8,
       "HOU": -1.0
      }
     },
@@ -275,7 +275,7 @@
     {
      "roster_id": 9,
      "matchup_id": 2,
-     "points": 143.26,
+     "points": 145.66,
      "starters": [
       "4984",
       "6813",
@@ -309,7 +309,7 @@
       "10859": 9.8,
       "11533": 1.0,
       "11563": 0.0,
-      "12481": 11.7,
+      "12481": 14.1,
       "12527": 32.7,
       "12534": 20.4,
       "4984": 35.66,
@@ -382,7 +382,7 @@
     {
      "roster_id": 6,
      "matchup_id": 3,
-     "points": 123.4,
+     "points": 123.2,
      "starters": [
       "12508",
       "4034",
@@ -417,7 +417,7 @@
       "11584": 20.3,
       "11620": 7.2,
       "12507": 8.3,
-      "12508": 26.8,
+      "12508": 26.6,
       "13281": 0.0,
       "3294": 15.4,
       "4034": 13.8,
@@ -1899,8 +1899,8 @@
    "8151": 14.70000761,
    "10229": 14.36271763,
    "8144": 14.78334767,
-   "11564": 16.25394244,
    "7525": 14.83026881,
+   "11564": 16.25394244,
    "12518": 12.21754146,
    "13287": 13.86048194,
    "7588": 15.2939768,
@@ -1910,8 +1910,8 @@
    "8155": 16.49959332,
    "8150": 13.67255689,
    "6904": 21.05270363,
-   "12526": 14.78224367,
    "2133": 13.82096676,
+   "12526": 14.78224367,
    "8259": 10.26383132,
    "12481": 13.71360017,
    "6770": 18.15056965,
@@ -2032,8 +2032,8 @@
    "11560": 18.3,
    "7523": 17.8,
    "11564": 17.6,
-   "421": 17.4,
-   "12508": 17.2,
+   "12508": 17.4,
+   "421": 17.2,
    "11566": 17.1,
    "8183": 16.6,
    "11563": 16.4,
@@ -2187,7 +2187,7 @@
    },
    "6797": {
     "ecr": 4,
-    "grade": "A-"
+    "grade": "A"
    },
    "4984": {
     "ecr": 5,
@@ -2209,11 +2209,11 @@
     "ecr": 10,
     "grade": "B"
    },
-   "421": {
+   "12508": {
     "ecr": 11,
     "grade": "B-"
    },
-   "12508": {
+   "421": {
     "ecr": 12,
     "grade": "B-"
    },
@@ -2913,14 +2913,24 @@
    "pts_std": 18.2,
    "gp": 1.0
   },
+  "8131": {
+   "rec": 8.0,
+   "rec_tgt": 8.0,
+   "rec_yd": 78.0,
+   "rec_td": 2.0,
+   "pts_ppr": 27.8,
+   "pts_half_ppr": 23.8,
+   "pts_std": 19.8,
+   "gp": 1.0
+  },
   "12508": {
-   "pass_yd": 213.0,
+   "pass_yd": 230.0,
    "pass_td": 3.0,
-   "rush_att": 7.0,
-   "rush_yd": 58.0,
-   "pts_ppr": 26.32,
-   "pts_half_ppr": 26.32,
-   "pts_std": 26.32,
+   "rush_att": 11.0,
+   "rush_yd": 54.0,
+   "pts_ppr": 26.6,
+   "pts_half_ppr": 26.6,
+   "pts_std": 26.6,
    "gp": 1.0
   },
   "9488": {
@@ -2998,14 +3008,17 @@
    "pts_std": 15.5,
    "gp": 1.0
   },
-  "8131": {
-   "rec": 6.0,
-   "rec_tgt": 6.0,
-   "rec_yd": 61.0,
-   "rec_td": 2.0,
-   "pts_ppr": 24.1,
-   "pts_half_ppr": 21.1,
-   "pts_std": 18.1,
+  "7588": {
+   "rush_att": 12.0,
+   "rush_yd": 41.0,
+   "rush_td": 1.0,
+   "rec": 5.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 31.0,
+   "rec_td": 1.0,
+   "pts_ppr": 24.2,
+   "pts_half_ppr": 21.7,
+   "pts_std": 19.2,
    "gp": 1.0
   },
   "7594": {
@@ -3184,18 +3197,6 @@
    "pts_std": 10.9,
    "gp": 1.0
   },
-  "7588": {
-   "rush_att": 12.0,
-   "rush_yd": 41.0,
-   "rush_td": 1.0,
-   "rec": 4.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 14.0,
-   "pts_ppr": 15.5,
-   "pts_half_ppr": 13.5,
-   "pts_std": 11.5,
-   "gp": 1.0
-  },
   "2449": {
    "rec": 4.0,
    "rec_tgt": 9.0,
@@ -3236,6 +3237,17 @@
    "pts_ppr": 15.4,
    "pts_half_ppr": 12.9,
    "pts_std": 10.4,
+   "gp": 1.0
+  },
+  "3294": {
+   "pass_yd": 175.0,
+   "pass_td": 2.0,
+   "pass_int": 1.0,
+   "rush_att": 2.0,
+   "rush_yd": 14.0,
+   "pts_ppr": 15.4,
+   "pts_half_ppr": 15.4,
+   "pts_std": 15.4,
    "gp": 1.0
   },
   "6770": {
@@ -3302,6 +3314,15 @@
    "pts_std": 14.26,
    "gp": 1.0
   },
+  "12481": {
+   "rush_att": 18.0,
+   "rush_yd": 81.0,
+   "rush_td": 1.0,
+   "pts_ppr": 14.1,
+   "pts_half_ppr": 14.1,
+   "pts_std": 14.1,
+   "gp": 1.0
+  },
   "8146": {
    "rec": 6.0,
    "rec_tgt": 7.0,
@@ -3345,7 +3366,7 @@
   },
   "11632": {
    "rec": 6.0,
-   "rec_tgt": 8.0,
+   "rec_tgt": 9.0,
    "rec_yd": 69.0,
    "pts_ppr": 12.9,
    "pts_half_ppr": 9.9,
@@ -3413,15 +3434,6 @@
    "pts_ppr": 11.9,
    "pts_half_ppr": 11.9,
    "pts_std": 11.9,
-   "gp": 1.0
-  },
-  "12481": {
-   "rush_att": 13.0,
-   "rush_yd": 57.0,
-   "rush_td": 1.0,
-   "pts_ppr": 11.7,
-   "pts_half_ppr": 11.7,
-   "pts_std": 11.7,
    "gp": 1.0
   },
   "12514": {
@@ -3512,17 +3524,6 @@
    "pts_ppr": 10.1,
    "pts_half_ppr": 8.1,
    "pts_std": 6.1,
-   "gp": 1.0
-  },
-  "3294": {
-   "pass_yd": 141.0,
-   "pass_td": 1.0,
-   "pass_int": 1.0,
-   "rush_att": 2.0,
-   "rush_yd": 14.0,
-   "pts_ppr": 10.04,
-   "pts_half_ppr": 10.04,
-   "pts_std": 10.04,
    "gp": 1.0
   },
   "5189": {
@@ -4041,14 +4042,6 @@
    "pts_std": -0.5,
    "gp": 1.0
   },
-  "11533": {
-   "xpm": 2.0,
-   "xpa": 2.0,
-   "pts_ppr": 2.0,
-   "pts_half_ppr": 2.0,
-   "pts_std": 2.0,
-   "gp": 1.0
-  },
   "8259": {
    "xpm": 2.0,
    "xpa": 2.0,
@@ -4063,6 +4056,14 @@
    "pts_ppr": 2.0,
    "pts_half_ppr": 2.0,
    "pts_std": 2.0,
+   "gp": 1.0
+  },
+  "11533": {
+   "xpm": 2.0,
+   "xpa": 3.0,
+   "pts_ppr": 1.0,
+   "pts_half_ppr": 1.0,
+   "pts_std": 1.0,
    "gp": 1.0
   },
   "LAC": {
@@ -4114,21 +4115,55 @@
  },
  "games": [
   {
-   "game_id": "401872930",
-   "date": "2026-09-14T00:20Z",
-   "state": "in",
-   "detail": "2:16 - 4th",
+   "game_id": "401872931",
+   "date": "2026-09-15T00:15Z",
+   "state": "pre",
+   "detail": "9/14 - 8:15 PM EDT",
    "period": null,
    "clock": null,
-   "home": "NYG",
-   "away": "DAL",
-   "home_score": 28.0,
-   "away_score": 20.0,
+   "home": "KC",
+   "away": "DEN",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 23.0,
+   "away_implied": 20.5,
+   "spread": "KC -2.5",
+   "total": 43.5,
+   "tv": "ESPN"
+  },
+  {
+   "game_id": "401872656",
+   "date": "2026-09-10T00:20Z",
+   "state": "post",
+   "detail": "Final",
+   "period": null,
+   "clock": null,
+   "home": "SEA",
+   "away": "NE",
+   "home_score": 13.0,
+   "away_score": 10.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "NBC"
+  },
+  {
+   "game_id": "401872657",
+   "date": "2026-09-11T00:35Z",
+   "state": "post",
+   "detail": "Final",
+   "period": null,
+   "clock": null,
+   "home": "LAR",
+   "away": "SF",
+   "home_score": 7.0,
+   "away_score": 27.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
+   "tv": "Netflix"
   },
   {
    "game_id": "401872925",
@@ -4335,55 +4370,21 @@
    "tv": "CBS"
   },
   {
-   "game_id": "401872656",
-   "date": "2026-09-10T00:20Z",
+   "game_id": "401872930",
+   "date": "2026-09-14T00:20Z",
    "state": "post",
    "detail": "Final",
    "period": null,
    "clock": null,
-   "home": "SEA",
-   "away": "NE",
-   "home_score": 13.0,
-   "away_score": 10.0,
+   "home": "NYG",
+   "away": "DAL",
+   "home_score": 28.0,
+   "away_score": 20.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "NBC"
-  },
-  {
-   "game_id": "401872657",
-   "date": "2026-09-11T00:35Z",
-   "state": "post",
-   "detail": "Final",
-   "period": null,
-   "clock": null,
-   "home": "LAR",
-   "away": "SF",
-   "home_score": 7.0,
-   "away_score": 27.0,
-   "home_implied": null,
-   "away_implied": null,
-   "spread": null,
-   "total": null,
-   "tv": "Netflix"
-  },
-  {
-   "game_id": "401872931",
-   "date": "2026-09-15T00:15Z",
-   "state": "pre",
-   "detail": "9/14 - 8:15 PM EDT",
-   "period": null,
-   "clock": null,
-   "home": "KC",
-   "away": "DEN",
-   "home_score": 0.0,
-   "away_score": 0.0,
-   "home_implied": 23.0,
-   "away_implied": 20.5,
-   "spread": "KC -2.5",
-   "total": 43.5,
-   "tv": "ESPN"
   }
  ]
 }
