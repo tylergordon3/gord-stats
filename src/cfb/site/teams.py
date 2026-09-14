@@ -71,6 +71,10 @@ table.tm td.win-cell{font-variant-numeric:tabular-nums}
 .tm-loss{color:{bad};font-weight:700}
 /* A projected score for an unplayed game, so it never reads as a final. */
 .tm-proj{color:#94a3b8;font-style:italic}
+/* Projected record, one row per source. */
+table.tm-rec{width:auto;min-width:min(100%,420px);margin:0 0 20px}
+table.tm-rec td.tm-name{font-weight:600}
+table.tm-rec td.tm-src-note{text-align:left;color:#64748b;font-size:12px;white-space:normal}
 /* Identity leads every table; pin it while the stats scroll. Every cell
    above carries an opaque background in both themes, so nothing bleeds
    through the frozen column. */
@@ -87,6 +91,7 @@ table.tm th:first-child,table.tm td:first-child{position:sticky;left:0;z-index:1
   .tm-tile .t-label,.tm-tile .t-sub{color:#aab7c9}
   .tm-tile .t-value{color:#f1f5f9}
   .tm-proj{color:#7f8ea3}
+  table.tm-rec td.tm-src-note{color:#aab7c9}
   .tm-win{color:#8ff0bd}
   .tm-loss{color:#ffb4ab}
 }
@@ -172,7 +177,51 @@ def _schedule_rows(frame: pd.DataFrame, team: str, names: dict) -> str:
             f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 
-def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict) -> str:
+def _expected_record(frame: pd.DataFrame, team: str) -> tuple:
+    """(wins, losses) over the whole schedule: results where a game is played,
+    this model's win chance where it is not."""
+    wins = losses = 0.0
+    for _, g in frame[(frame["home_team"] == team) | (frame["away_team"] == team)].iterrows():
+        at_home = g["home_team"] == team
+        if g["played"]:
+            won = (g["actual_margin"] > 0) == at_home
+            wins, losses = wins + won, losses + (not won)
+        else:
+            p = g["home_win_prob"] if at_home else 1 - g["home_win_prob"]
+            wins, losses = wins + p, losses + (1 - p)
+    return wins, losses
+
+
+def espn_projections() -> dict:
+    """{espn team id: (projected wins, projected losses)} from the cached FPI
+    payload the rankings page keeps, or {} when there is none."""
+    from cfb.site import power      # power imports this module
+    try:
+        rows = power._rows(power.fpi())
+    except Exception as exc:
+        print(f"  ! FPI unavailable for team pages ({exc})")
+        return {}
+    return {t["id"]: (t["projectedw"], t["projectedl"]) for t in rows
+            if t.get("projectedw") is not None and t.get("projectedl") is not None}
+
+
+def _record_table(frame: pd.DataFrame, team: str, espn_proj: dict) -> str:
+    """Projected full-season record from every source that publishes one."""
+    sources = [("GordStats", _expected_record(frame, team),
+                "Results so far plus this model's win chance in each game left")]
+    if str(team) in espn_proj:
+        sources.append(("ESPN FPI", espn_proj[str(team)],
+                        "ESPN's simulation of the full schedule"))
+    rows = "".join(f"<tr><td class='tm-name'>{src}</td><td>{w:.1f}&ndash;{l:.1f}</td>"
+                   f"<td class='tm-src-note'>{note}</td></tr>"
+                   for src, (w, l), note in sources)
+    return ("<h3>Projected record</h3><div class='tm-scroll'><table class='tm tm-rec'>"
+            "<thead><tr><th>Source</th><th>W&ndash;L</th><th>How</th></tr></thead>"
+            f"<tbody>{rows}</tbody></table></div>")
+
+
+def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict,
+               espn_proj: dict | None = None) -> str:
     team, name = row["team"], escape(str(row["name"]))
     total = len(table)
     played = int(row["wins"] + row["losses"])
@@ -201,7 +250,8 @@ def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict) -> st
             "it. <strong>Win</strong> is the chance of winning an upcoming game. "
             "How well any of this has worked is on the "
             "<a href='/cfb/predictions/'>predictions page</a>.</p>")
-    return (_CSS + head + tile_html + _schedule_rows(frame, team, names) + note)
+    return (_CSS + head + tile_html + _record_table(frame, team, espn_proj or {})
+            + "<h3>Schedule</h3>" + _schedule_rows(frame, team, names) + note)
 
 
 def _ordinal(n: int) -> str:
@@ -282,10 +332,11 @@ def generate() -> None:
     # The index that lived at /cfb/teams/ is part of the rankings page now
     # (cfb.site.power carries the GordStats column); the URL redirects there.
     # `_index` stays, unused, should a standalone list be wanted again.
+    espn_proj = espn_projections()
     for _, row in table.iterrows():
         slug = team_slug(row["name"])
         write_page(WEB_DIR / "teams" / slug / "index.html",
-                   escape(str(row["name"])), _team_page(row, frame, table, names),
+                   escape(str(row["name"])), _team_page(row, frame, table, names, espn_proj),
                    subtitle=f"{row['name']} ratings, schedule and projected results")
 
 

@@ -11,7 +11,7 @@ which is why this page long showed only the two it could name for certain.
 It now reads the payload's own header block for the position of each field
 by name, so a column can never quietly come to hold the number next to it -
 the failure that kept the rest of them off the page. Two tabs divide
-them: Rating (the ratings, the projected record, schedule strength and, in
+them: Rating (the ratings with their ranks, schedule strength and, in
 season, ESPN's resume ranks) and Odds (the simulation probabilities).
 
 A figure ESPN has not computed yet reads as "-" in the payload rather than
@@ -73,6 +73,10 @@ table.cfb-power td.pwr-team a:hover{text-decoration:underline}
 /* The GordStats rank rides beside its rating, quiet. */
 table.cfb-power td .gs-rk{display:inline-block;min-width:22px;text-align:right;
   font-size:11px;color:#64748b;margin-right:6px}
+/* The mascot is the first thing to go when the window narrows: at half a
+   screen "Ohio State Buckeyes" pushes the figures off the right edge, and
+   "Ohio State" says the same thing. */
+@media (max-width:1000px){table.cfb-power .pwr-masc{display:none}}
 table.cfb-power tbody tr:nth-child(even) td{background:#f8fafc}
 table.cfb-power tr.top25 td{background:#fdf6e3}
 table.cfb-power tr.top25:nth-child(even) td{background:#faf0d2}
@@ -405,9 +409,18 @@ def _rows(data: dict) -> list:
             continue
         logos = team.get("logos") or []
         group = team.get("group") or {}
+        name = team.get("displayName") or team.get("nickname")
+        # "Ohio State Buckeyes" is the school plus the mascot ESPN calls
+        # `name`. Split off the tail rather than using `nickname`, which
+        # abbreviates ("Mississippi St", "Jax State").
+        mascot = team.get("name") or ""
+        school = (name[:-len(mascot)].rstrip()
+                  if mascot and name and name.endswith(" " + mascot) else name)
         out.append({
             "id": str(team.get("id")),
-            "name": team.get("displayName") or team.get("nickname"),
+            "name": name,
+            "school": school,
+            "mascot": name[len(school):] if school != name else "",
             "logo": logos[0]["href"] if logos else None,
             "conf": group.get("shortName"),
             **figures,
@@ -420,6 +433,13 @@ def _rows(data: dict) -> list:
 # the rows, the sort and the highlight exactly where they were.
 VIEWS = [("rating", "Rating"), ("odds", "Odds")]
 ALL = tuple(v for v, _ in VIEWS)
+
+# Columns built and archived but kept off the table. The projected record
+# lives on each team's page now, beside the other sources' projections; game
+# control was more noise than signal next to SOR. Flip one back to show it -
+# every snapshot still carries both figures, so its Move history is intact.
+SHOW_PROJ_RECORD = False
+SHOW_GAME_CONTROL = False
 
 # The figures each snapshot archives beyond the rank, and how a change in each
 # reads: "num" is the value now minus the baseline's, to `dec` places; "rank"
@@ -489,9 +509,10 @@ def _record(t) -> str:
 def _team(t, record: bool) -> str:
     logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
     rec = f"<span class='pwr-rec'>{_record(t)}</span>" if record else ""
+    label = t["school"] + (f"<span class='pwr-masc'>{t['mascot']}</span>" if t["mascot"] else "")
     # A rated team has a page of its own; the name is the way there.
-    name = (f"<a href='/cfb/teams/{teams_page.team_slug(t['gs_name'])}/'>{t['name']}</a>"
-            if t.get("gs_name") else t["name"])
+    name = (f"<a href='/cfb/teams/{teams_page.team_slug(t['gs_name'])}/'>{label}</a>"
+            if t.get("gs_name") else label)
     return logo + name + rec + favorites.star("cfb", t["id"], t["name"])
 
 
@@ -500,6 +521,11 @@ def _gordstats(t) -> tuple:
     if t.get("gs") is None:
         return None, ""
     return t["gs"], f"<span class='gs-rk'>{t['gs_rank']}</span>{t['gs']:+.1f}"
+
+
+def _fpi(t) -> tuple:
+    """The FPI cell: rank beside rating, the same shape as GordStats."""
+    return t["fpi"], f"<span class='gs-rk'>{t['rank']}</span>{t['fpi']:+.1f}"
 
 
 def _switcher() -> str:
@@ -596,9 +622,10 @@ def body() -> str:
     def col(views, label, tip, direction, cell, field=None):
         return views, label, tip, direction, cell, field
 
+    # The FPI rank rides in the FPI column, beside its rating, rather than
+    # leading the Team cell - where it read as the row's rank under any sort.
     cols = [
-        col(ALL, "Team", "FPI rank", None,
-            lambda t: (t["rank"], f"<span class='row-rank'>{t['rank']}</span>{_team(t, show_rec)}")),
+        col(ALL, "Team", None, None, lambda t: (t["rank"], _team(t, show_rec))),
     ]
     # Move opens on the first window and the rank, as the script would draw it.
     def opening(t):
@@ -611,14 +638,17 @@ def body() -> str:
         cols.append(col(("rating",), "AP", f"AP poll rank ({ap_label})" if ap_label else "AP poll rank", "asc",
                         lambda t: _plain(t["ap"]), "ap"))
     cols += [
-        col(("rating",), "FPI", "Expected point margin against an average FBS team",
-            "desc", lambda t: (t["fpi"], f"{t['fpi']:+.1f}"), "rank"),
+        col(("rating",), "FPI", "Expected point margin against an average FBS team, "
+            "with its rank", "desc", _fpi, "rank"),
         col(("rating",), "GordStats", "This site's own rating - points better than an "
             "average FBS team, the number the predictions run on - with its rank",
             "desc", _gordstats, "gs_rank"),
-        col(("rating",), "Proj W-L", "ESPN's simulation of the full schedule", "desc",
-            lambda t: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}"),
-            "projectedw"),
+    ]
+    if SHOW_PROJ_RECORD:
+        cols.append(col(("rating",), "Proj W-L", "ESPN's simulation of the full schedule",
+                        "desc", lambda t: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}"),
+                        "projectedw"))
+    cols += [
         col(("odds",), "Playoff%", "Chance of making the playoff", "desc",
             lambda t: _pct(t["probmakeplayoffs"]), "probmakeplayoffs"),
         col(("odds",), "Win Conf%", "Chance of winning the conference", "desc",
@@ -640,7 +670,7 @@ def body() -> str:
         cols.append(col(("rating",), "SOR", "Strength-of-record rank: where an average "
                         "top-25 team would sit with this resume", "asc",
                         lambda t: _plain(t["accomplishmentrank"]), "accomplishmentrank"))
-    if live("gamecontrolrank"):
+    if SHOW_GAME_CONTROL and live("gamecontrolrank"):
         cols.append(col(("rating",), "GC", "Game-control rank: share of game time "
                         "spent in the lead", "asc",
                         lambda t: _plain(t["gamecontrolrank"]), "gamecontrolrank"))
@@ -694,26 +724,25 @@ def body() -> str:
         + f", pulled {stamp}. Click a team for its page.</p>"
         "<details class='section'><summary>About these rankings</summary>"
         "<p class='power-note'>FPI is expected point margin against an average FBS team "
-        "on a neutral field; the projected record is ESPN's simulation of each team's "
-        "actual schedule. Preseason these are projections; once games are played the "
+        "on a neutral field. Preseason these are projections; once games are played the "
         "same numbers update with results. <strong>GordStats</strong> is the same idea "
         "from <a href='/cfb/predictions/'>this site's own model</a>, the rating the "
         "predictions run on, with its rank beside it; sort by it for our order, and "
         f"Move then counts places climbed in our ranking.{move_note}</p>"
-        "<p class='power-note'><strong>Rating</strong> is the ratings, the "
-        "projected record and what the schedule has been worth; <strong>Odds</strong> "
-        "what ESPN's simulations give each team. "
+        "<p class='power-note'><strong>Rating</strong> is the ratings, each with its rank, "
+        "and what the schedule has been worth; <strong>Odds</strong> "
+        "what ESPN's simulations give each team. Projected records - ESPN's and "
+        "ours - are on each team's page. "
         "Click a figure's header to sort by it; click again to reverse. Top 25 "
         "highlighted - the highlight follows the team, so the FPI top 25 stay "
         "marked however the table is sorted. "
         "<strong>SOS</strong> is strength-of-schedule rank (hardest first) and "
         "<strong>Rem SOS</strong> the same for the games still to play; "
         "<strong>SOR</strong> is strength of record - where an average top-25 "
-        "team would sit with this resume - and <strong>GC</strong> game "
-        "control, the share of game time spent in the lead.</p>"
+        "team would sit with this resume.</p>"
         + ("" if live("accomplishmentrank") else
            "<p class='power-note'>The resume ranks ESPN computes from results - "
-           "strength of record, game control - appear here once games have been "
+           "strength of record - appear here once games have been "
            "played.</p>")
         + "</details>")
 
