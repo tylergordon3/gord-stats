@@ -155,7 +155,7 @@ def _cbb_card(today: date) -> str:
     return f"""
 <section class="home-card">
   <div class="home-card-head">
-    <h2>College Basketball</h2>
+    <h2>CBB</h2>
     <a class="home-card-link" href="{href}">{label}</a>
   </div>
   {{% include countdown.html key="cbb" %}}
@@ -220,7 +220,7 @@ def _cfb_card() -> str:
     return """
 <section class="home-card">
   <div class="home-card-head">
-    <h2>College Football</h2>
+    <h2>CFB</h2>
     <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
   </div>
   {% include cfb_countdown.html %}
@@ -237,7 +237,7 @@ def _cfb_card() -> str:
 
 def _cbb_lead() -> str:
     return """
-<h1>College Basketball</h1>
+<h1>CBB</h1>
 <section class="home-card">
   <div class="home-card-head">
     <h2>March Madness Predictions</h2>
@@ -320,7 +320,7 @@ def render_cbb_home():
     path = paths.DOCS / "cbb" / "index.html"
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    fm = "---\nlayout: default\ntitle: College Basketball\n---\n"
+    fm = "---\nlayout: default\ntitle: CBB\n---\n"
     with open(path, "w", encoding="utf-8") as f:
         f.write(fm + html.lstrip())
     print(f"Wrote CBB home -> {path}")

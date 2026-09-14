@@ -1,8 +1,10 @@
 {% comment %}
 Two-level navigation, both levels driven by _data/nav.yml.
 
-  1. Section bar   Home / CBB / WNBA / Fantasy
-  2. Sub-nav       the pages inside whichever section you're in
+  1. Section bar   Home / CBB / CFB / Fantasy
+  2. Sub-nav       the pages inside whichever section you're in. Fantasy's
+                   opens with a league switcher (NFL / CFB / WNBA) and then
+                   lists that league's pages.
 
 The active section is resolved here at build time from page.url, so no page
 has to declare which section it belongs to.
@@ -32,14 +34,20 @@ reader who mistypes a CBB URL still lands somewhere with CBB navigation.
 {% if page.url == '/404.html' %}{% assign is404 = true %}{% endif %}
 
 {% assign sec = '' %}
-{% comment %} /cfb/ before /fantasy/: a /cfb/fantasy/-style URL would match both. {% endcomment %}
-{% if page.url contains '/cfb/' %}{% assign sec = 'cfb' %}
-{% elsif page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}
-{% elsif page.url contains '/wnba/' %}{% assign sec = 'wnba' %}
-{% elsif page.url contains '/cbb/' or page.url contains '/men/' or page.url contains '/women/' %}{% assign sec = 'cbb' %}
+{% comment %}
+`pages` is the nav.yml list the sub-nav draws. It is the section's own list
+except under Fantasy, where it is the league's: the college fantasy pages live
+under /cfb/ and the WNBA dashboard under /wnba/, so those URLs are claimed for
+Fantasy before the plain /cfb/ test.
+{% endcomment %}
+{% if page.url contains '/cfb/matchups/' or page.url contains '/cfb/league/' or page.url contains '/cfb/live/' %}{% assign sec = 'fantasy' %}{% assign pages = 'cfb_fantasy' %}
+{% elsif page.url contains '/cfb/' %}{% assign sec = 'cfb' %}{% assign pages = 'cfb' %}
+{% elsif page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}{% assign pages = 'fantasy' %}
+{% elsif page.url contains '/wnba/' %}{% assign sec = 'fantasy' %}{% assign pages = 'wnba' %}
+{% elsif page.url contains '/cbb/' or page.url contains '/men/' or page.url contains '/women/' %}{% assign sec = 'cbb' %}{% assign pages = 'cbb' %}
 {% endif %}
 
-{% assign subnav = site.data.nav[sec] %}
+{% assign subnav = site.data.nav[pages] %}
 
 <div id="nav">
   <div class="nav-inner">
@@ -74,8 +82,19 @@ reader who mistypes a CBB URL still lands somewhere with CBB navigation.
           {% endif %}
         {% endif %}
       {% endfor %}
-    {% elsif subnav and subnav.size > 1 %}
+    {% elsif subnav and subnav.size > 1 or sec == 'fantasy' %}
     <nav class="simple-nav sub-nav">
+      {% if sec == 'fantasy' %}
+      {% comment %}
+      The league switcher. Marked active here, not by the path-matching script
+      below: /fantasy/ is a prefix of every NFL page and would tie with Home.
+      {% endcomment %}
+      <span class="fl-leagues">
+        {% for lg in site.data.nav.fantasy_leagues %}
+        <a class="fl-league no-rewrite{% if lg.pages == pages %} active{% endif %}" href="{{ lg.url | relative_url }}">{{ lg.title }}</a>
+        {% endfor %}
+      </span>
+      {% endif %}
       {% comment %}
       A hairline between runs of related pages, for sections whose items set
       `group` in _data/nav.yml. Sections that do not set it render exactly as
@@ -175,7 +194,7 @@ tap from anywhere without stacking two bars on a small screen.
       if (best) best.classList.add("active");
     }
 
-    markBest([].slice.call(document.querySelectorAll(".sub-nav a")));
+    markBest([].slice.call(document.querySelectorAll(".sub-nav a:not(.fl-league)")));
   });
 </script>
 
@@ -250,9 +269,9 @@ tap from anywhere without stacking two bars on a small screen.
     document.addEventListener("DOMContentLoaded", function () {
       var p = location.pathname;
       var sec = "home";
-      if (p.indexOf("/cfb/") === 0) sec = "cfb";
-      else if (p.indexOf("/fantasy/") === 0) sec = "fantasy";
-      else if (p.indexOf("/wnba/") === 0) sec = "wnba";
+      if (/^\/cfb\/(matchups|league|live)\//.test(p)) sec = "fantasy";
+      else if (p.indexOf("/cfb/") === 0) sec = "cfb";
+      else if (p.indexOf("/fantasy/") === 0 || p.indexOf("/wnba/") === 0) sec = "fantasy";
       else if (p.indexOf("/cbb/") === 0 || p.indexOf("/men/") === 0 ||
                p.indexOf("/women/") === 0) sec = "cbb";
 

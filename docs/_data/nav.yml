@@ -16,29 +16,42 @@ sections:
     icon: "🏠"
     url: /index.html
 
-  - title: College Basketball
+  - title: CBB
     short: CBB
     icon: "🏀"
     url: /cbb/index.html
     section: cbb
 
-  - title: WNBA Fantasy
-    short: WNBA
-    icon: "📊"
-    url: /wnba/index.html
-    section: wnba
+  - title: CFB
+    short: CFB
+    icon: "🎓"
+    url: /cfb/index.html
+    section: cfb
 
-  - title: Fantasy Football
+  - title: Fantasy
     short: Fantasy
     icon: "🏈"
     url: /fantasy/index.html
     section: fantasy
 
-  - title: College Football
-    short: CFB
-    icon: "🎓"
-    url: /cfb/index.html
-    section: cfb
+
+# The Fantasy section holds three leagues. Its sub-nav opens with these as a
+# switcher, then lists the pages of whichever league the page belongs to --
+# `pages` names the list below that holds them. The league is resolved from
+# the URL in _includes/nav.html: the college fantasy pages still live under
+# /cfb/ and the WNBA dashboard under /wnba/, so no URL had to move.
+fantasy_leagues:
+  - title: NFL
+    url: /fantasy/index.html
+    pages: fantasy
+
+  - title: CFB
+    url: /cfb/matchups/
+    pages: cfb_fantasy
+
+  - title: WNBA
+    url: /wnba/index.html
+    pages: wnba
 
 
 cbb:
@@ -116,9 +129,9 @@ fantasy:
 
 
 cfb:
-  # `group` draws a hairline between runs of related pages. The section covers
-  # two unrelated things -- a Yahoo fantasy league and a prediction model for
-  # the real sport -- and seven flat links gave no hint which was which.
+  # `group` draws a hairline between runs of related pages. The Yahoo college
+  # fantasy league's pages moved to the Fantasy section (cfb_fantasy below);
+  # what is left here is the real sport.
   - title: Home
     short: Home
     icon: "🏠"
@@ -143,20 +156,20 @@ cfb:
     url: /cfb/schedule/
     group: reference
 
-  - title: Draft Review
-    short: Draft
-    icon: "📝"
-    url: /cfb/live/
-    group: fantasy
 
+# The Yahoo college fantasy league, shown under Fantasy > CFB.
+cfb_fantasy:
   - title: Matchups
     short: Matchups
     icon: "⚔️"
     url: /cfb/matchups/
-    group: fantasy
 
   - title: League Dashboard
     short: League
     icon: "🏆"
     url: /cfb/league/
-    group: fantasy
+
+  - title: Draft Review
+    short: Draft
+    icon: "📝"
+    url: /cfb/live/

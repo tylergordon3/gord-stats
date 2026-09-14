@@ -3200,6 +3200,42 @@ summary.team-report-header::after {
   vertical-align: middle;
 }
 
+/* Fantasy's league switcher: a small segmented control at the head of the
+   sub-nav, so it reads as "which league" rather than as three more pages. */
+.fl-leagues {
+  display: inline-flex;
+  vertical-align: middle;
+  border: 1px solid #d7dce3;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.sub-nav .fl-leagues a.fl-league {
+  display: flex;
+  align-items: center;
+  line-height: 1.2;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  padding: 4px 9px;
+  border-radius: 0;
+}
+
+.sub-nav .fl-leagues a.fl-league + a.fl-league {
+  border-left: 1px solid #d7dce3;
+}
+
+.sub-nav .fl-leagues a.fl-league.active {
+  background: var(--accent-soft, #FDF0E4);
+}
+
+@media (prefers-color-scheme: dark) {
+  .fl-leagues,
+  .sub-nav .fl-leagues a.fl-league + a.fl-league { border-color: #2b3852; }
+  .sub-nav .fl-leagues a.fl-league.active { background: var(--accent-soft, #3A2412); }
+}
+
 /* Phones drop the dividers. The sub-nav is built to fit 390px without
    scrolling sideways (see _includes/nav_label.html); three rules and their
    margins are 45px this row does not have, and grouping is the first thing

@@ -59,10 +59,14 @@ def test_every_section_in_the_bar_has_a_landing_page():
 
 
 def test_sub_nav_sections_match_the_bar():
-    """A section listed in the bar should have a sub-nav key, and vice versa."""
+    """A section listed in the bar, or a league under Fantasy, should have a
+    sub-nav key, and vice versa."""
     bar = {i["section"] for i in NAV["sections"] if i.get("section")}
-    subs = set(NAV) - {"sections"}
-    assert bar == subs, f"section bar {bar} does not match sub-nav keys {subs}"
+    leagues = {lg["pages"] for lg in NAV["fantasy_leagues"]}
+    subs = set(NAV) - {"sections", "fantasy_leagues"}
+    assert bar | leagues == subs, f"section bar {bar} + leagues {leagues} do not match sub-nav keys {subs}"
+    for lg in NAV["fantasy_leagues"]:
+        assert _resolves(lg["url"]), f"league {lg['title']} -> {lg['url']} is missing"
 
 
 def test_retired_draft_pages_are_gone_and_redirected():

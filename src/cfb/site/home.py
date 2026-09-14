@@ -2,7 +2,8 @@
 The college football section landing page (docs/cfb/index.html).
 
 Mirrors the CBB section home: a countdown, one paragraph of what the section
-is, then a card per page. League facts (name, draft time, roster shape) come
+is, then a card per page. The Yahoo fantasy league's pages belong to the
+Fantasy section of the nav now, so they share one card at the end. League facts (name, draft time, roster shape) come
 from the cached Yahoo pull rather than being retyped here.
 
     python -m cfb.site.home         # rebuild the page
@@ -21,38 +22,30 @@ def body() -> str:
     return f"""
 {{% include cfb_countdown.html %}}
 
-<p>College football, two ways: the real {SEASON} FBS season, and the
-   <a href="{lg['url']}">{lg['name']}</a> — a {lg['num_teams']}-team Yahoo
-   college fantasy league ({_roster_line(lg)}).{draft_line}</p>
+<p>The {SEASON} FBS season: this site's own game model, ESPN's FPI and the AP
+   poll, and every game on the schedule. The
+   <a href="{lg['url']}">{lg['name']}</a> Yahoo fantasy league
+   ({lg['num_teams']} teams, {_roster_line(lg)}) is under
+   <a href="/cfb/matchups/">Fantasy &rsaquo; CFB</a>.{draft_line}</p>
 
 <section class="home-card">
   <div class="home-card-head">
-    <h2>Draft Review</h2>
-    <a class="home-card-link" href="/cfb/live/">How it went &rarr;</a>
+    <h2>Predictions</h2>
+    <a class="home-card-link" href="/cfb/predictions/">This week's picks &rarr;</a>
   </div>
-  <p>The draft, graded: every pick against Yahoo's ADP and against this
-     site's own valuations, team grades, the steal and the reach, and how the
-     room actually priced a 2-QB league.</p>
+  <p>A score, a margin and a win chance for every FBS game from this site's
+     own model, set against the DraftKings line, and how the model has done.</p>
 </section>
 
 <section class="home-card">
   <div class="home-card-head">
-    <h2>Matchups</h2>
-    <a class="home-card-link" href="/cfb/matchups/">This week's rosters &rarr;</a>
+    <h2>Rankings</h2>
+    <a class="home-card-link" href="/cfb/power/">All FBS teams &rarr;</a>
   </div>
-  <p>Every matchup with both rosters in full: each player's game this week,
-     this site's own weekly projection, Yahoo's points and the stat line
-     behind them &mdash; and the lineup swap the projection would make.</p>
-</section>
-
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>League Dashboard</h2>
-    <a class="home-card-link" href="/cfb/league/">Standings, power &amp; matchups &rarr;</a>
-  </div>
-  <p>The league itself: standings, every roster priced as the best lineup it
-     can field and tracked all season, the week's matchups, waivers and
-     trades.</p>
+  <p>Every FBS team on ESPN's FPI, the AP poll and the GordStats rating, with
+     playoff and conference odds, and how far each has moved since any week.
+     Each team links to its own page: schedule, projected results and
+     projected record.</p>
 </section>
 
 <section class="home-card">
@@ -64,11 +57,25 @@ def body() -> str:
      DraftKings lines, FPI and the forecast, with sorting and filters; live
      scores, clock and drive situation while games are on.</p>
 </section>
+
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Fantasy League</h2>
+    <a class="home-card-link" href="/cfb/matchups/">This week's matchups &rarr;</a>
+  </div>
+  <p>The Yahoo college league: every matchup with both rosters and live
+     scoring, standings and power, and the draft graded.</p>
+  <p class="home-card-links">
+    <a href="/cfb/matchups/">Matchups</a> ·
+    <a href="/cfb/league/">League Dashboard</a> ·
+    <a href="/cfb/live/">Draft Review</a>
+  </p>
+</section>
 """
 
 
 def generate():
-    write_page(WEB_DIR / "index.html", "College Football", body())
+    write_page(WEB_DIR / "index.html", "CFB", body())
 
 
 if __name__ == "__main__":
