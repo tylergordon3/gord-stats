@@ -156,6 +156,40 @@ def sleeper_projections(week: int, year: int = UPCOMING_YEAR, only: set = None) 
     return out
 
 
+NFL_GAMES = 17
+
+
+def sleeper_season_projections(year: int = UPCOMING_YEAR) -> dict:
+    """{player_id: {pts, gp, ppg, name, pos, team}} - Sleeper's full-season
+    projection (PPR, Rotowire's numbers), refetched every call and kept on disk
+    so a build with Sleeper down still has last known figures."""
+    cache = paths.DATA_DIR / "projections" / f"sleeper_season_{year}.json"
+    try:
+        rows = _get(f"{SLEEPER_ROOT}/projections/nfl/{year}?season_type=regular&"
+                    f"{_positions_param()}&order_by=pts_ppr") or []
+        out = {}
+        for r in rows:
+            pid, st, pl = str(r.get("player_id") or ""), r.get("stats") or {}, r.get("player") or {}
+            pts, gp = _num(st.get("pts_ppr")), _num(st.get("gp"))
+            if not pid or pts is None:
+                continue
+            # Per game over the 17-game schedule, not Sleeper's `gp`: it says 18
+            # for players (weeks, byes included) and 1 for every defence.
+            out[pid] = {"pts": pts, "gp": gp, "ppg": pts / NFL_GAMES,
+                        "name": " ".join(x for x in (pl.get("first_name"), pl.get("last_name")) if x),
+                        "pos": pl.get("position") or "", "team": r.get("team")}
+        assert out, "no season projections"
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps(out), encoding="utf-8")
+        return out
+    except Exception as exc:
+        if not cache.exists():
+            print(f"  ! Sleeper season projections unavailable ({exc})")
+            return {}
+        print(f"  ! Sleeper season projections failed ({exc}); using the cached copy")
+        return json.loads(cache.read_text(encoding="utf-8"))
+
+
 def sleeper_stats(week: int, year: int = UPCOMING_YEAR, only: set = None) -> dict:
     """{player_id: {stat: value}} for the week, empty before games are played."""
     try:

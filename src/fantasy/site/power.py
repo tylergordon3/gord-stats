@@ -6,13 +6,13 @@ and it does it without looking at where anyone was drafted — see
 `fantasy.projections` for why that constraint shapes the whole model, and
 `fantasy.league.power` for the simulation that turns projections into wins.
 
-Sections, each collapsible and kept to its table or chart plus a line of
-context:
+Sections, each kept to its table or chart plus a line of context. All but
+Method are open on the page - they are the page; Method is reference:
   * The rankings, with record, playoff odds and the projected-wins range.
   * The frozen three-source draft-week rankings.
   * Every team's rating build by build.
-  * Where each team's strength sits, position by position.
-  * The starting lineup behind each team's number.
+  * Where each team's strength sits, position by position, starters and
+    bench, on Sleeper's season projections.
   * Method, with player accuracy and the roster backtest.
 
     python -m fantasy.site.power
@@ -32,6 +32,7 @@ from fantasy.config import (                                   # noqa: E402
     FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, UPCOMING_SEASON, UPCOMING_YEAR,
 )
 from fantasy.league import consensus, external, power, validation  # noqa: E402
+from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
 from gordstats import charts, palette                          # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
@@ -47,16 +48,15 @@ MUTED = palette.MUTED
 GRIDLINE = palette.GRIDLINE
 CONTEXT = palette.CONTEXT
 
-# The draft-week three-source table sits under the live rankings, closed:
-# frozen on draft week, it is the fixed point every later rating is read
-# against. The summary is the section's only heading - no <h2> repeats it.
+# (anchor, heading, jump-bar label, collapsible). The draft-week three-source
+# table sits under the live rankings: frozen on draft week, it is the fixed
+# point every later rating is read against. Only Method folds away.
 SECTIONS = [
-    ("rankings", "Power Rankings", "Rankings"),
-    ("draft-consensus", "Draft Rankings (frozen)", "Draft"),
-    ("season", "Through the Season", "Season"),
-    ("positions", "Positional Strength", "Positions"),
-    ("lineups", "Projected Lineups", "Lineups"),
-    ("method", "Method", "Method"),
+    ("rankings", "Power Rankings", "Rankings", False),
+    ("draft-consensus", "Draft Rankings (frozen)", "Draft", False),
+    ("season", "Through the Season", "Season", False),
+    ("positions", "Positional Strength", "Positions", False),
+    ("method", "Method", "Method", True),
 ]
 
 INTRO = f"""<p>Every Sleeper roster played through {UPCOMING_SEASON} ten thousand
@@ -364,82 +364,117 @@ def _range_chart(table: pd.DataFrame) -> str:
 # Positional strength
 # --------------------------------------------------------------------------- #
 
-def _positional_frame(board: pd.DataFrame, rosters: pd.DataFrame) -> pd.DataFrame:
-    """Points above replacement each team holds at each position."""
-    players = rosters.merge(board, on="sleeper_id", how="left").dropna(subset=["mu"])
-    players["manager"] = players["roster_id"].map(power.ROSTER_NAMES)
-    # Only the players deep enough to actually start: the eleventh receiver on a
-    # roster contributes nothing and would otherwise reward hoarding.
-    depth = {"QB": 2, "RB": 4, "WR": 4, "TE": 2, "K": 1, "DEF": 1}
-    kept = []
-    for (_, pos), group in players.groupby(["manager", "pos"]):
-        kept.append(group.nlargest(depth.get(pos, 3), "mu"))
-    players = pd.concat(kept)
-
-    pivot = players.pivot_table(index="manager", columns="pos", values="vor",
-                                aggfunc="sum").fillna(0.0)
-    order = [p for p in ["QB", "RB", "WR", "TE", "K", "DEF"] if p in pivot.columns]
-    pivot = pivot[order]
-    pivot.columns.name = None
-    return pivot
+# Bench depth that counts per position: the backups who would actually step
+# in for a starter. A fourth backup receiver never plays for this roster.
+BENCH_DEPTH = {"QB": 1, "RB": 2, "WR": 2, "TE": 1}
+POS_ORDER = ["QB", "RB", "WR", "TE", "FLEX", "K", "DEF"]
 
 
-def _positions_section(board: pd.DataFrame, rosters: pd.DataFrame,
-                       table: pd.DataFrame) -> str:
-    pivot = _positional_frame(board, rosters)
-    pivot = pivot.reindex(table["manager"]).dropna(how="all")
+def _positional_frame(rosters: pd.DataFrame, proj: dict) -> dict:
+    """{manager: {"start": {slot: [(name, ppg)]}, "bench": {pos: [(name, ppg)]}}}.
 
-    ax = pivot.plot(kind="bar", stacked=True, figsize=(10, 4.4), width=0.8,
-                    edgecolor="#333", colormap="tab10")
-    ax.axhline(0, color="#333", linewidth=0.9)
-    ax.set_xlabel("")
-    ax.set_ylabel("points above replacement, per game")
-    ax.set_title("Where each roster's edge comes from")
-    ax.tick_params(axis="x", labelrotation=35)
-    ax.legend(fontsize=9, ncol=len(pivot.columns))
-    chart = charts.save(_SECTION, "positional",
-                        alt="Points above replacement by position for each team")
+    Starters are filled the way the league's lineup is - QB, 2 RB, 2 WR, TE,
+    then the best two RB/WR/TE left for FLEX, K, DEF - on Sleeper's projected
+    points per game. Whoever is left at a position, best first, is its bench.
+    """
+    out = {}
+    for rid, group in rosters.groupby("roster_id"):
+        players = []
+        for pid in group["sleeper_id"].astype(str):
+            p = proj.get(pid)
+            if p and p.get("ppg") is not None and p.get("pos") in power.STARTERS:
+                players.append((p["pos"], p["name"] or pid, float(p["ppg"])))
+        players.sort(key=lambda x: -x[2])
+        start = {pos: [] for pos in POS_ORDER}
+        left = []
+        for pos, name, ppg in players:
+            if len(start[pos]) < power.STARTERS[pos]:
+                start[pos].append((name, ppg))
+            else:
+                left.append((pos, name, ppg))
+        bench = {pos: [] for pos in BENCH_DEPTH}
+        for pos, name, ppg in left:
+            if pos in power.FLEX_POSITIONS and len(start["FLEX"]) < power.FLEX_SLOTS:
+                start["FLEX"].append((name, ppg))
+            elif pos in bench and len(bench[pos]) < BENCH_DEPTH[pos]:
+                bench[pos].append((name, ppg))
+        out[power.ROSTER_NAMES.get(rid, f"Roster {rid}")] = {"start": start, "bench": bench}
+    return out
 
-    return ("<p>Points per game above replacement over each roster's startable depth. "
-            "K and DEF are zero by design (no predictive signal).</p>" + chart)
+
+def _heat(values: dict) -> dict:
+    """{manager: css background} - green for the league's best at a column,
+    red for its worst, by rank so one outlier cannot wash the rest out."""
+    order = sorted(values, key=lambda m: -values[m])
+    n = max(1, len(order) - 1)
+    cmap = matplotlib.colormaps["RdYlGn"]
+    out = {}
+    for i, m in enumerate(order):
+        r, g, b, _ = cmap(0.15 + 0.7 * (1 - i / n))
+        out[m] = f"background:rgba({int(r * 255)},{int(g * 255)},{int(b * 255)},.55)"
+    return out
 
 
-# --------------------------------------------------------------------------- #
-# Projected lineups
-# --------------------------------------------------------------------------- #
+def _positions_section(rosters: pd.DataFrame, table: pd.DataFrame) -> str:
+    proj = league_matchups.sleeper_season_projections(int(UPCOMING_YEAR))
+    if not proj:
+        return "<p>Sleeper's projections are unavailable right now.</p>"
+    frame = _positional_frame(rosters, proj)
+    managers = [m for m in table["manager"] if m in frame]
 
-_SLOT_ORDER = ["QB", "RB", "WR", "TE", "FLEX", "K", "DEF"]
+    def total(names):
+        return sum(ppg for _, ppg in names)
 
+    def tip(names):
+        return escape(", ".join(f"{n} {ppg:.1f}" for n, ppg in names), quote=True)
 
-def _lineups_section(board: pd.DataFrame, rosters: pd.DataFrame,
-                     table: pd.DataFrame) -> str:
-    lineups = power.starting_lineup(board, rosters)
-    lineups["manager"] = lineups["roster_id"].map(power.ROSTER_NAMES)
-    lineups["slot"] = pd.Categorical(lineups["slot"], _SLOT_ORDER, ordered=True)
+    cols = {pos: {m: total(frame[m]["start"][pos]) for m in managers} for pos in POS_ORDER}
+    bench_cols = {pos: {m: total(frame[m]["bench"][pos]) for m in managers} for pos in BENCH_DEPTH}
+    starters = {m: sum(cols[pos][m] for pos in POS_ORDER) for m in managers}
+    benches = {m: sum(bench_cols[pos][m] for pos in BENCH_DEPTH) for m in managers}
+    heat = {pos: _heat(cols[pos]) for pos in POS_ORDER}
+    heat_bench = {pos: _heat(bench_cols[pos]) for pos in BENCH_DEPTH}
+    heat_start, heat_all_bench = _heat(starters), _heat(benches)
+    rank_of = dict(zip(table["manager"], table["rank"]))
 
-    views = []
-    for manager in table["manager"]:
-        team = lineups[lineups["manager"] == manager].sort_values(["slot", "mu"],
-                                                                  ascending=[True, False])
-        if team.empty:
-            continue
-        display = team[["slot", "player", "pos", "team", "bye", "mu", "avail", "basis"]]
-        display = display.rename(columns={
-            "slot": "Slot", "player": "Player", "pos": "Pos", "team": "Team",
-            "bye": "Bye", "mu": "Proj. PPG", "avail": "Available", "basis": "From"})
-        html = (display.style.hide(axis="index")
-                .format({"Proj. PPG": "{:.1f}", "Available": "{:.0%}"})
-                .background_gradient(cmap="RdYlGn", subset=["Proj. PPG"])
-                .set_table_styles(_GRID, overwrite=False)
-                .set_table_attributes('class="sticky-table"')).to_html()
-        total = team["mu"].sum()
-        note = f"<p><strong>{total:.1f}</strong> projected points per week.</p>"
-        views.append((charts.slug(manager), manager, note +
-                      f"<div class='table-scroll'>{html}</div>"))
+    head = ("<tr><th rowspan='2'>Manager</th>"
+            + "".join(f"<th colspan='{2 if pos in BENCH_DEPTH else 1}'>{pos}</th>" for pos in POS_ORDER)
+            + "<th colspan='2'>Total</th></tr><tr>"
+            + "".join("<th>Start</th><th class='ps-bn'>Bench</th>" if pos in BENCH_DEPTH
+                      else "<th>Start</th>" for pos in POS_ORDER)
+            + "<th>Start</th><th class='ps-bn'>Bench</th></tr>")
+    rows = []
+    for m in managers:
+        cells = [f"<td>{_manager_col([rank_of[m]], [m])[0]}</td>"]
+        for pos in POS_ORDER:
+            names = frame[m]["start"][pos]
+            cells.append(f"<td style='{heat[pos][m]}' title='{tip(names)}'>"
+                         f"{cols[pos][m]:.1f}</td>")
+            if pos in BENCH_DEPTH:
+                names = frame[m]["bench"][pos]
+                cells.append(f"<td class='ps-bn' style='{heat_bench[pos][m]}' "
+                             f"title='{tip(names)}'>{bench_cols[pos][m]:.1f}</td>")
+        cells.append(f"<td class='ps-tot' style='{heat_start[m]}'>{starters[m]:.1f}</td>")
+        cells.append(f"<td class='ps-bn ps-tot' style='{heat_all_bench[m]}'>{benches[m]:.1f}</td>")
+        rows.append("<tr>" + "".join(cells) + "</tr>")
 
-    return ("<p>Who the simulation starts. <em>From</em> is where the projection came "
-            "from; <strong>+ form</strong> means this season's games are blended in.</p>"
-            + layout.view_switcher(views, group="lineup", label="Team:"))
+    css = ("<style>table.pos-strength{border-collapse:collapse;font-size:14px;width:100%}"
+           "table.pos-strength th,table.pos-strength td{padding:6px 8px;text-align:center;"
+           "white-space:nowrap;border:1px solid rgba(148,163,184,.35)}"
+           "table.pos-strength td:first-child{text-align:left;font-weight:600}"
+           "table.pos-strength th{font-size:12px;text-transform:uppercase;letter-spacing:.03em}"
+           "table.pos-strength .ps-bn{font-size:12px;opacity:.85}"
+           "table.pos-strength .ps-tot{font-weight:700}"
+           "table.pos-strength td[title]{cursor:help}</style>")
+    note = ("<p>Projected points per game from <strong>Sleeper's season projections</strong>, "
+            "split the way the lineup is filled: <strong>Start</strong> is the QB, two RBs, two "
+            "WRs, TE, the best two RB/WR/TE left over at <strong>FLEX</strong>, K and DEF; "
+            "<strong>Bench</strong> is the next "
+            + ", ".join(f"{n} {pos}" for pos, n in BENCH_DEPTH.items())
+            + " &mdash; the depth that would step in. Green is the league's best at a column, "
+            "red its worst. Hover a cell for the players.</p>")
+    return (css + note + "<div class='table-scroll'><table class='pos-strength sticky-table'>"
+            f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 
 # --------------------------------------------------------------------------- #
@@ -559,14 +594,14 @@ def body() -> str:
         "rankings": _rankings_section(table),
         "draft-consensus": draft_consensus_section(),
         "season": _season_section(),
-        "positions": _positions_section(board, rosters, table),
-        "lineups": _lineups_section(board, rosters, table),
+        "positions": _positions_section(rosters, table),
         "method": _method_section(),
     }
-    nav = layout.section_nav([(a, label) for a, _, label in SECTIONS])
+    nav = layout.section_nav([(a, label) for a, _, label, _ in SECTIONS])
     return INTRO + nav + "".join(
-        layout.details(summary, content[anchor], open=(i == 0), anchor=anchor)
-        for i, (anchor, summary, _) in enumerate(SECTIONS)
+        layout.details(summary, content[anchor], anchor=anchor) if folds
+        else f"<section id='{anchor}' class='pw-section'><h2>{summary}</h2>{content[anchor]}</section>"
+        for anchor, summary, _, folds in SECTIONS if content[anchor]
     )
 
 
