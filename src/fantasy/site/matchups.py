@@ -757,7 +757,10 @@ window.muMedTrack=(function(){
         var mx=(p.pos in hi)?hi[p.pos]:top,mn=(p.pos in lo)?lo[p.pos]:bot;
         t.ceil+=Math.max(mx-(p.p||0),0);t.floor+=Math.min(mn,0);});
       t.proj=t.pts+t.rem;});
-    ts.sort(function(a,b){return b.proj-a.proj;});
+    // Standing order is the scoreboard as it is: current points once games are
+    // on (projection breaking ties), the projection before kickoff. The locks
+    // below hold for any order - a team above is assumed to stay above.
+    ts.sort(function(a,b){return d.started?(b.pts-a.pts)||(b.proj-a.proj):b.proj-a.proj;});
     var done=d.final||ts.every(function(t){return !t.left.length;});
     // Locks by rank, with cut spots above the line: the team in spot i (0-based)
     // above it drops out only if cut-i teams below it pass it, so it is locked in
@@ -771,12 +774,13 @@ window.muMedTrack=(function(){
         t.lock=t.foes.length<cut-i?'up':'';}
       else{t.foes=ts.slice(0,i).filter(function(o){return o.floor<=t.ceil;}).reverse();
         t.lock=t.foes.length<i-cut+1?'down':'';}});
-    var mid=n%2?ts[n>>1].proj:(ts[n/2-1].proj+ts[n/2].proj)/2;
+    var byProj=ts.slice().sort(function(a,b){return b.proj-a.proj;});
+    var mid=n%2?byProj[n>>1].proj:(byProj[n/2-1].proj+byProj[n/2].proj)/2;
     var now=ts.map(function(t){return t.pts;}).sort(function(a,b){return a-b;});
     var medNow=n%2?now[n>>1]:(now[n/2-1]+now[n/2])/2;
     html.push('<p class="mu-medt-top"><b>Median</b> '+(d.started&&!done?fmt(medNow)+' now · ':'')+fmt(mid)+(done?' final':' projected')+'</p>');
     ts.forEach(function(t,i){
-      var others=ts.filter(function(o){return o!==t;});
+      var others=byProj.filter(function(o){return o!==t;});
       // The median of the other n-1: with an even league, one team.
       var j=(others.length-1)>>1,rival=others[j],line=others.length%2?rival.proj:(others[j].proj+others[j+1].proj)/2;
       if(others.length%2===0)rival=null;
@@ -800,7 +804,7 @@ window.muMedTrack=(function(){
           return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
         sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b> · ':'')+t.left.length+' left, proj '+fmt(t.rem)+' · hypothetical max '+fmt(t.ceil)+'</div>')
           +'<div class="mu-medt-ps">'+ps+'</div>';}
-      if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(mid)+'</span></div>');
+      if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(d.started&&!done?medNow:mid)+'</span></div>');
       html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'
         +'<span class="rk">'+(i+1)+'</span>'+(t.logo||'')
         +'<div class="mid"><div class="nm">'+esc(t.name)+'</div><div class="st">'+status+'</div>'+sub+'</div>'
@@ -1148,8 +1152,9 @@ def body() -> str:
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
         f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
         "are on.</p><details class='section'><summary>How to read this page</summary>"
-        "<p>The <b>Median Tracker</b> ranks every team by expected final (points so far "
-        "plus what its unfinished starters are projected to add) with the median line "
+        "<p>The <b>Median Tracker</b> ranks every team by points so far (by projection "
+        "before kickoff), each with its expected final (points plus what its unfinished "
+        "starters are projected to add), with the median line "
         "through the middle; each team is told who it has to stay ahead of or pass, "
         "and how many teams would have to pass it (or it has to pass) out of the "
         "teams that still can; "
