@@ -805,7 +805,7 @@ window.muMedTrack=(function(){
       if(!done&&t.left.length){
         var ps=t.left.slice().sort(function(a,b){return b.r-a.r;}).map(function(p){
           return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
-        sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b>':'Already past the line')+' · '+t.left.length+' left, proj '+fmt(t.rem)+' · max '+fmt(t.ceil)+'</div>')
+        sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b> · ':'')+t.left.length+' left, proj '+fmt(t.rem)+' · hypothetical max '+fmt(t.ceil)+'</div>')
           +root+'<div class="mu-medt-ps">'+ps+'</div>';}
       if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(mid)+'</span></div>');
       html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'
