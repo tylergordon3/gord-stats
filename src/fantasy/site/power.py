@@ -402,79 +402,150 @@ def _positional_frame(rosters: pd.DataFrame, proj: dict) -> dict:
     return out
 
 
-def _heat(values: dict) -> dict:
-    """{manager: css background} - green for the league's best at a column,
-    red for its worst, by rank so one outlier cannot wash the rest out."""
-    order = sorted(values, key=lambda m: -values[m])
-    n = max(1, len(order) - 1)
-    cmap = matplotlib.colormaps["RdYlGn"]
-    out = {}
-    for i, m in enumerate(order):
-        r, g, b, _ = cmap(0.15 + 0.7 * (1 - i / n))
-        out[m] = f"background:rgba({int(r * 255)},{int(g * 255)},{int(b * 255)},.55)"
-    return out
+_POS_CSS = """<style>
+.ps-viz{--ps-up:#2a78d6;--ps-down:#e34948;--ps-text:#0f172a;--ps-muted:#64748b;
+  --ps-rule:#e2e8f0;--ps-panel:#ffffff;--ps-border:#e5e7eb;--ps-avg:#94a3b8}
+@media (prefers-color-scheme: dark){
+  .ps-viz{--ps-up:#3987e5;--ps-down:#e66767;--ps-text:#e3eaf4;--ps-muted:#aab7c9;
+    --ps-rule:#2b3852;--ps-panel:#16203a;--ps-border:#2b3852;--ps-avg:#7f8ea3}
+}
+.ps-legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:13px;color:var(--ps-muted);margin:4px 0 10px}
+.ps-legend span{white-space:nowrap}
+.ps-legend i{display:inline-block;width:14px;height:8px;border-radius:0 4px 4px 0;margin-right:6px;vertical-align:middle}
+.ps-legend .avg{width:0;height:12px;border-left:2px solid var(--ps-avg);border-radius:0}
+.ps-legend .thick{height:10px;border-radius:4px;background:var(--ps-muted)}
+.ps-legend .thin{height:4px;border-radius:4px;background:var(--ps-muted)}
+.ps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.ps-panel{background:var(--ps-panel);border:1px solid var(--ps-border);border-radius:12px;padding:12px 14px 10px}
+.ps-panel h3{margin:0 0 2px;font-size:15px;color:var(--ps-text);text-align:left}
+.ps-panel .ps-sub{font-size:12px;color:var(--ps-muted);margin:0 0 8px}
+.ps-row{display:grid;grid-template-columns:78px 1fr 70px;align-items:center;column-gap:8px;
+  padding:3px 0;border-radius:6px;cursor:default}
+.ps-row:hover{background:var(--ps-rule)}
+.ps-name{font-size:13px;font-weight:600;color:var(--ps-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps-name .rk{display:inline-block;width:16px;font-size:11px;font-weight:500;color:var(--ps-muted)}
+.ps-track{position:relative;height:22px}
+.ps-bar{position:absolute;min-width:2px}
+.ps-bar.up{background:var(--ps-up);border-radius:0 4px 4px 0}
+.ps-bar.down{background:var(--ps-down);border-radius:4px 0 0 4px}
+.ps-bar.s{top:2px;height:11px}
+.ps-bar.b{top:15px;height:5px}
+.ps-avgline{position:absolute;left:50%;top:-3px;bottom:-3px;border-left:2px solid var(--ps-avg)}
+.ps-axis{display:grid;grid-template-columns:78px 1fr 70px;column-gap:8px;font-size:11px;color:var(--ps-muted);margin-bottom:2px}
+.ps-axis span{display:flex;justify-content:space-between}
+.ps-val{font-size:13px;font-weight:700;color:var(--ps-text);text-align:right;font-variant-numeric:tabular-nums;line-height:1.1}
+.ps-val small{display:block;font-size:11px;font-weight:500;color:var(--ps-muted)}
+.ps-val .d{font-weight:600;color:var(--ps-muted);font-size:11px;margin-left:3px}
+.ps-table{margin-top:12px}
+.ps-table table{border-collapse:collapse;font-size:13px;width:100%}
+.ps-table th,.ps-table td{padding:5px 8px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--ps-rule);color:var(--ps-text)}
+.ps-table td:first-child{text-align:left;font-weight:600}
+</style>"""
 
 
 def _positions_section(rosters: pd.DataFrame, table: pd.DataFrame) -> str:
+    """Small multiples: one panel per position, every team a row in power-rank
+    order (so a team sits on the same line in every panel), starters as the
+    main bar and bench depth as a thin one under it, on that panel's own scale
+    from zero, with the league's average starter figure dashed across."""
     proj = league_matchups.sleeper_season_projections(int(UPCOMING_YEAR))
     if not proj:
         return "<p>Sleeper's projections are unavailable right now.</p>"
     frame = _positional_frame(rosters, proj)
     managers = [m for m in table["manager"] if m in frame]
+    rank_of = dict(zip(table["manager"], table["rank"]))
 
     def total(names):
         return sum(ppg for _, ppg in names)
 
-    def tip(names):
-        return escape(", ".join(f"{n} {ppg:.1f}" for n, ppg in names), quote=True)
+    def players(names):
+        return ", ".join(f"{n} {ppg:.1f}" for n, ppg in names) or "nobody"
 
-    cols = {pos: {m: total(frame[m]["start"][pos]) for m in managers} for pos in POS_ORDER}
-    bench_cols = {pos: {m: total(frame[m]["bench"][pos]) for m in managers} for pos in BENCH_DEPTH}
-    starters = {m: sum(cols[pos][m] for pos in POS_ORDER) for m in managers}
-    benches = {m: sum(bench_cols[pos][m] for pos in BENCH_DEPTH) for m in managers}
-    heat = {pos: _heat(cols[pos]) for pos in POS_ORDER}
-    heat_bench = {pos: _heat(bench_cols[pos]) for pos in BENCH_DEPTH}
-    heat_start, heat_all_bench = _heat(starters), _heat(benches)
-    rank_of = dict(zip(table["manager"], table["rank"]))
+    panels = [("ALL", "Whole roster", "All starters, and the bench depth below them")]
+    panels += [(pos, pos, "Starters and the next " + str(BENCH_DEPTH[pos]) + " behind them"
+                if pos in BENCH_DEPTH else
+                "The best two RB/WR/TE left after the starters" if pos == "FLEX" else "The starter")
+               for pos in POS_ORDER]
 
-    head = ("<tr><th rowspan='2'>Manager</th>"
-            + "".join(f"<th colspan='{2 if pos in BENCH_DEPTH else 1}'>{pos}</th>" for pos in POS_ORDER)
-            + "<th colspan='2'>Total</th></tr><tr>"
-            + "".join("<th>Start</th><th class='ps-bn'>Bench</th>" if pos in BENCH_DEPTH
-                      else "<th>Start</th>" for pos in POS_ORDER)
-            + "<th>Start</th><th class='ps-bn'>Bench</th></tr>")
-    rows = []
+    html = []
+    for key, title, sub in panels:
+        rows = []
+        for m in managers:
+            if key == "ALL":
+                st = sum(total(frame[m]["start"][p]) for p in POS_ORDER)
+                bn = sum(total(frame[m]["bench"][p]) for p in BENCH_DEPTH)
+                tip = f"{m}: starters {st:.1f}, bench {bn:.1f} projected points per game"
+            else:
+                st = total(frame[m]["start"][key])
+                bn = total(frame[m]["bench"][key]) if key in BENCH_DEPTH else None
+                tip = (f"{m} {key}: {players(frame[m]['start'][key])}"
+                       + (f" | bench: {players(frame[m]['bench'][key])}" if bn is not None else ""))
+            rows.append((m, st, bn, tip))
+        # Each bar is the gap to the league's average at this position -
+        # starters against starters, bench against bench - on a scale shared
+        # by both and symmetric about the average, so left is below and right
+        # is above and the lengths compare across the panel.
+        avg = sum(st for _, st, _, _ in rows) / len(rows)
+        has_bench = rows[0][2] is not None
+        bavg = sum(bn for _, _, bn, _ in rows) / len(rows) if has_bench else 0.0
+        reach = max([abs(st - avg) for _, st, _, _ in rows]
+                    + ([abs(bn - bavg) for _, _, bn, _ in rows] if has_bench else [])) or 1.0
+
+        def bar(delta, cls):
+            w = abs(delta) / reach * 50
+            side = "up" if delta >= 0 else "down"
+            left = 50 if delta >= 0 else 50 - w
+            return f'<div class="ps-bar {cls} {side}" style="left:{left:.1f}%;width:{w:.1f}%"></div>'
+
+        lines = []
+        for m, st, bn, tip in rows:
+            val = (f"{st:.1f}<span class='d'>{st - avg:+.1f}</span>"
+                   + (f"<small>bench {bn:.1f}</small>" if bn is not None else ""))
+            lines.append(
+                f'<div class="ps-row" title="{escape(tip, quote=True)}">'
+                f'<div class="ps-name"><span class="rk">{int(rank_of[m])}</span>{escape(m)}</div>'
+                f'<div class="ps-track"><div class="ps-avgline"></div>{bar(st - avg, "s")}'
+                + (bar(bn - bavg, "b") if bn is not None else "")
+                + f'</div><div class="ps-val">{val}</div></div>')
+        axis = (f'<div class="ps-axis"><i></i><span><b>&minus;{reach:.1f}</b>'
+                f'<b>avg</b><b>+{reach:.1f}</b></span><i></i></div>')
+        avgs = f"avg {avg:.1f}" + (f", bench {bavg:.1f}" if has_bench else "")
+        html.append(f'<div class="ps-panel"><h3>{title}</h3><p class="ps-sub">{sub} &middot; '
+                    f'{avgs}</p>{axis}{"".join(lines)}</div>')
+
+    # The same numbers as a plain table, for anyone who wants to read across.
+    head = ("<tr><th>Manager</th>" + "".join(
+        f"<th>{p}</th>" + (f"<th>{p} bench</th>" if p in BENCH_DEPTH else "") for p in POS_ORDER)
+        + "<th>Starters</th><th>Bench</th></tr>")
+    body = []
     for m in managers:
-        cells = [f"<td>{_manager_col([rank_of[m]], [m])[0]}</td>"]
-        for pos in POS_ORDER:
-            names = frame[m]["start"][pos]
-            cells.append(f"<td style='{heat[pos][m]}' title='{tip(names)}'>"
-                         f"{cols[pos][m]:.1f}</td>")
-            if pos in BENCH_DEPTH:
-                names = frame[m]["bench"][pos]
-                cells.append(f"<td class='ps-bn' style='{heat_bench[pos][m]}' "
-                             f"title='{tip(names)}'>{bench_cols[pos][m]:.1f}</td>")
-        cells.append(f"<td class='ps-tot' style='{heat_start[m]}'>{starters[m]:.1f}</td>")
-        cells.append(f"<td class='ps-bn ps-tot' style='{heat_all_bench[m]}'>{benches[m]:.1f}</td>")
-        rows.append("<tr>" + "".join(cells) + "</tr>")
+        cells = [f"<td>{int(rank_of[m])} {escape(m)}</td>"]
+        for p in POS_ORDER:
+            cells.append(f"<td>{total(frame[m]['start'][p]):.1f}</td>")
+            if p in BENCH_DEPTH:
+                cells.append(f"<td>{total(frame[m]['bench'][p]):.1f}</td>")
+        cells.append(f"<td>{sum(total(frame[m]['start'][p]) for p in POS_ORDER):.1f}</td>")
+        cells.append(f"<td>{sum(total(frame[m]['bench'][p]) for p in BENCH_DEPTH):.1f}</td>")
+        body.append("<tr>" + "".join(cells) + "</tr>")
+    table_html = ("<details class='ps-table'><summary>Show as a table</summary>"
+                  "<div class='table-scroll'><table><thead>" + head + "</thead><tbody>"
+                  + "".join(body) + "</tbody></table></div></details>")
 
-    css = ("<style>table.pos-strength{border-collapse:collapse;font-size:14px;width:100%}"
-           "table.pos-strength th,table.pos-strength td{padding:6px 8px;text-align:center;"
-           "white-space:nowrap;border:1px solid rgba(148,163,184,.35)}"
-           "table.pos-strength td:first-child{text-align:left;font-weight:600}"
-           "table.pos-strength th{font-size:12px;text-transform:uppercase;letter-spacing:.03em}"
-           "table.pos-strength .ps-bn{font-size:12px;opacity:.85}"
-           "table.pos-strength .ps-tot{font-weight:700}"
-           "table.pos-strength td[title]{cursor:help}</style>")
     note = ("<p>Projected points per game from <strong>Sleeper's season projections</strong>, "
-            "split the way the lineup is filled: <strong>Start</strong> is the QB, two RBs, two "
-            "WRs, TE, the best two RB/WR/TE left over at <strong>FLEX</strong>, K and DEF; "
-            "<strong>Bench</strong> is the next "
+            "filled the way the lineup is: QB, two RBs, two WRs, TE, the best two RB/WR/TE left "
+            "at FLEX, K and DEF. The bench is the next "
             + ", ".join(f"{n} {pos}" for pos, n in BENCH_DEPTH.items())
-            + " &mdash; the depth that would step in. Green is the league's best at a column, "
-            "red its worst. Hover a cell for the players.</p>")
-    return (css + note + "<div class='table-scroll'><table class='pos-strength sticky-table'>"
-            f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>")
+            + " &mdash; the depth that would step in. Each bar is the gap to the league average "
+            "at that position: <strong>right of the line is better than average, left is "
+            "worse</strong>. Teams run in power-ranking order in every panel; hover a row for "
+            "the players.</p>")
+    legend = ('<div class="ps-legend"><span><i class="thick"></i>Starters</span>'
+              '<span><i class="thin"></i>Bench</span>'
+              '<span><i style="background:var(--ps-up)"></i>Above average</span>'
+              '<span><i style="background:var(--ps-down)"></i>Below average</span>'
+              '<span><i class="avg"></i>League average</span></div>')
+    return (_POS_CSS + '<div class="ps-viz">' + note + legend
+            + '<div class="ps-grid">' + "".join(html) + "</div>" + table_html + "</div>")
 
 
 # --------------------------------------------------------------------------- #
