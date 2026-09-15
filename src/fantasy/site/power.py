@@ -485,11 +485,17 @@ def _positions_section(rosters: pd.DataFrame, table: pd.DataFrame) -> str:
         # starters against starters, bench against bench - on a scale shared
         # by both and symmetric about the average, so left is below and right
         # is above and the lengths compare across the panel.
+        # A team with nobody behind its starters at a position draws no bench
+        # bar at all - a bar would read as a measured shortfall - and stays
+        # out of the bench average, which is over the benches that exist.
+        empty = {m for m in managers if key != "ALL" and key in BENCH_DEPTH
+                 and not frame[m]["bench"][key]}
         avg = sum(st for _, st, _, _ in rows) / len(rows)
         has_bench = rows[0][2] is not None
-        bavg = sum(bn for _, _, bn, _ in rows) / len(rows) if has_bench else 0.0
+        benches = [bn for m, _, bn, _ in rows if has_bench and m not in empty]
+        bavg = sum(benches) / len(benches) if benches else 0.0
         reach = max([abs(st - avg) for _, st, _, _ in rows]
-                    + ([abs(bn - bavg) for _, _, bn, _ in rows] if has_bench else [])) or 1.0
+                    + [abs(bn - bavg) for bn in benches]) or 1.0
 
         def bar(delta, cls):
             w = abs(delta) / reach * 50
@@ -500,12 +506,13 @@ def _positions_section(rosters: pd.DataFrame, table: pd.DataFrame) -> str:
         lines = []
         for m, st, bn, tip in rows:
             val = (f"{st:.1f}<span class='d'>{st - avg:+.1f}</span>"
-                   + (f"<small>bench {bn:.1f}</small>" if bn is not None else ""))
+                   + ("<small>no bench</small>" if m in empty
+                      else f"<small>bench {bn:.1f}</small>" if bn is not None else ""))
             lines.append(
                 f'<div class="ps-row" title="{escape(tip, quote=True)}">'
                 f'<div class="ps-name"><span class="rk">{int(rank_of[m])}</span>{escape(m)}</div>'
                 f'<div class="ps-track"><div class="ps-avgline"></div>{bar(st - avg, "s")}'
-                + (bar(bn - bavg, "b") if bn is not None else "")
+                + (bar(bn - bavg, "b") if bn is not None and m not in empty else "")
                 + f'</div><div class="ps-val">{val}</div></div>')
         axis = (f'<div class="ps-axis"><i></i><span><b>&minus;{reach:.1f}</b>'
                 f'<b>avg</b><b>+{reach:.1f}</b></span><i></i></div>')
