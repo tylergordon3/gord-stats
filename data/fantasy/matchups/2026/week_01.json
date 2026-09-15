@@ -1,7 +1,7 @@
 {
  "week": 1,
  "year": 2026,
- "fetched": "2026-09-15T00:10:08+00:00",
+ "fetched": "2026-09-15T00:20:06+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -479,7 +479,7 @@
       "3198": 35.3,
       "5859": 5.6,
       "6650": 11.0,
-      "6806": 0.0,
+      "6806": 0.2,
       "8136": 4.7,
       "9221": 33.6,
       "9500": 5.7,
@@ -489,7 +489,7 @@
     {
      "roster_id": 7,
      "matchup_id": 4,
-     "points": 125.96,
+     "points": 135.96,
      "starters": [
       "6797",
       "9224",
@@ -534,7 +534,7 @@
       "9224": 18.8,
       "9487": 19.3,
       "9488": 26.2,
-      "DEN": 0.0
+      "DEN": 10.0
      }
     }
    ]
@@ -4112,18 +4112,18 @@
   {
    "game_id": "401872931",
    "date": "2026-09-15T00:15Z",
-   "state": "pre",
-   "detail": "9/14 - 8:15 PM EDT",
+   "state": "in",
+   "detail": "13:30 - 1st",
    "period": null,
    "clock": null,
    "home": "KC",
    "away": "DEN",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 22.5,
-   "away_implied": 20.0,
-   "spread": "KC -2.5",
-   "total": 42.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "ESPN"
   },
   {
