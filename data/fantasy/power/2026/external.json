@@ -6,77 +6,77 @@
   "note": "Fetched on each build from getLeagueAnalysisJSON?key=<league_key>, which answers anonymously; see fantasy.league.external.",
   "league_key": "nfl~9b42e042-983c-4e34-b3fa-62e91bf82f79",
   "season": 2026,
-  "captured": "2026-09-14",
+  "captured": "2026-09-15",
   "teams": [
     {
-      "team": "Strictly Dickly",
-      "team_id": 4,
+      "team": "DRINK MAYE",
+      "team_id": 2,
       "rank": 1,
       "score": 100,
-      "vorp": 112.61
+      "vorp": 112.92
+    },
+    {
+      "team": "CCAM’s Convicts",
+      "team_id": 1,
+      "rank": 2,
+      "score": 98,
+      "vorp": 110.57
     },
     {
       "team": "Professional Fratson",
       "team_id": 3,
-      "rank": 2,
-      "score": 100,
-      "vorp": 112.36
-    },
-    {
-      "team": "DRINK MAYE",
-      "team_id": 2,
       "rank": 3,
-      "score": 94,
-      "vorp": 105.53
+      "score": 95,
+      "vorp": 107.08
     },
     {
       "team": "padgett",
       "team_id": 7,
       "rank": 4,
-      "score": 92,
-      "vorp": 104.15
+      "score": 94,
+      "vorp": 106.13
     },
     {
-      "team": "CCAM’s Convicts",
-      "team_id": 1,
+      "team": "Strictly Dickly",
+      "team_id": 4,
       "rank": 5,
       "score": 90,
-      "vorp": 101.66
+      "vorp": 101.4
     },
     {
       "team": "The Jackson 5",
       "team_id": 10,
       "rank": 6,
       "score": 87,
-      "vorp": 97.63
+      "vorp": 98.14
     },
     {
-      "team": "The Standard",
-      "team_id": 6,
+      "team": "LGBBQ+",
+      "team_id": 9,
       "rank": 7,
       "score": 86,
-      "vorp": 96.69
+      "vorp": 96.76
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 8,
-      "score": 83,
-      "vorp": 93.96
+      "score": 82,
+      "vorp": 92.24
     },
     {
-      "team": "LGBBQ+",
-      "team_id": 9,
+      "team": "The Standard",
+      "team_id": 6,
       "rank": 9,
-      "score": 83,
-      "vorp": 93.46
+      "score": 81,
+      "vorp": 91.37
     },
     {
       "team": "The Jahmyr Gibbies",
       "team_id": 8,
       "rank": 10,
-      "score": 73,
-      "vorp": 81.97
+      "score": 74,
+      "vorp": 83.39
     }
   ]
 }
