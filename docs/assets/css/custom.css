@@ -3200,17 +3200,18 @@ summary.team-report-header::after {
   vertical-align: middle;
 }
 
-/* Fantasy's league switcher: a small segmented control beside the sub-nav,
-   so it reads as "which league" rather than as three more pages. It sits in
-   its own row (.fl-row) so the sub-nav's sideways scroll cannot carry it off
-   screen; on a desktop .fl-line puts the two back on one line. */
+/* Fantasy's league switcher: a segmented control - a soft rounded track with
+   the current league raised out of it - so it reads as "which league" rather
+   than as three more page links. It sits in its own row (.fl-row) so the
+   sub-nav's sideways scroll cannot carry it off screen; on a desktop .fl-line
+   puts the two back on one line with a hairline between them. */
 .fl-line {
   display: flex;
   align-items: center;
   justify-content: center;
   border-top: 1px solid #e5e7eb;
   margin-top: 2px;
-  padding-top: 3px;
+  padding-top: 5px;
 }
 
 .fl-line .sub-nav {
@@ -3223,73 +3224,92 @@ summary.team-report-header::after {
 .fl-row {
   flex: 0 0 auto;
   overflow: visible;
+  align-items: center;
+}
+
+/* The hairline between the leagues and the pages. */
+.fl-row::after {
+  content: "";
+  width: 1px;
+  height: 20px;
+  margin: 0 14px 0 16px;
+  background: #d7dce3;
 }
 
 .fl-leagues {
   display: inline-flex;
-  vertical-align: middle;
-  border: 1px solid #d7dce3;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-right: 10px;
+  gap: 2px;
+  padding: 3px;
+  background: #eef1f5;
+  border-radius: 999px;
 }
 
 .fl-leagues a.fl-league {
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1.2;
-  font-size: 0.74rem;
+  min-width: 52px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: .03em;
-  padding: 4px 9px;
-  border-radius: 0;
-  color: #5d6b7e !important;
+  letter-spacing: .04em;
+  line-height: 1.2;
+  color: #64748b !important;
   text-decoration: none;
+  transition: background .15s, color .15s;
 }
 
-.fl-leagues a.fl-league + a.fl-league {
-  border-left: 1px solid #d7dce3;
+.fl-leagues a.fl-league:hover {
+  color: #1f2a3a !important;
 }
 
 .fl-leagues a.fl-league.active {
-  background: var(--accent-soft, #FDF0E4);
+  background: #ffffff;
   color: var(--accent-text, #A34F0A) !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .12), 0 0 0 1px rgba(15, 23, 42, .04);
 }
 
-/* Phones: the switcher is a full-width row above the pages, with thumb-sized
-   segments. */
+/* Phones: the track spans the row, each league an equal thumb-sized segment,
+   with breathing room above the pages. */
 @media (max-width: 767px) {
   .fl-line {
     flex-direction: column;
     align-items: stretch;
+    padding-top: 8px;
   }
 
   .fl-row {
-    padding: 2px 6px 4px;
+    padding: 0 10px 6px;
+  }
+
+  .fl-row::after {
+    display: none;
   }
 
   .fl-leagues {
     display: flex;
     width: 100%;
-    margin-right: 0;
+    box-sizing: border-box;
   }
 
   .fl-leagues a.fl-league {
     flex: 1 1 0;
     min-height: 34px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   .fl-line { border-top-color: #2b3852; }
-  .fl-leagues,
-  .fl-leagues a.fl-league + a.fl-league { border-color: #2b3852; }
+  .fl-row::after { background: #2b3852; }
+  .fl-leagues { background: #1b2540; }
   .fl-leagues a.fl-league { color: #aab7c9 !important; }
+  .fl-leagues a.fl-league:hover { color: #e3eaf4 !important; }
   .fl-leagues a.fl-league.active {
-    background: var(--accent-soft, #3A2412);
+    background: #2b3852;
     color: var(--accent-text, #F5A968) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .35);
   }
 }
 
