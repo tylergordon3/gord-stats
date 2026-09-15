@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-15T09:43:21+00:00",
+ "fetched": "2026-09-15T15:35:24+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 187.44,
-     "win_probability": 0.59
+     "projected": 187.13,
+     "win_probability": 0.58
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
      "projected": 173.7,
-     "win_probability": 0.41000000000000003
+     "win_probability": 0.42000000000000004
     }
    ]
   },
@@ -63,7 +63,7 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 188.88,
+     "projected": 188.83,
      "win_probability": 0.5700000000000001
     },
     {
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 175.87,
+     "projected": 175.84,
      "win_probability": 0.49
     }
    ]
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 183.26,
+     "projected": 183.24,
      "win_probability": 0.45999999999999996
     }
    ]
@@ -153,26 +153,26 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468744",
-    "player": "Ja'Kyrian Turner",
-    "pos": "RB",
-    "team": "PITT",
-    "team_full": "Pittsburgh Panthers",
-    "bye": 10.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Undisclosed",
-    "slot": "RB",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "469395",
     "player": "Dierre Hill Jr.",
     "pos": "RB",
     "team": "ORE",
     "team_full": "Oregon Ducks",
     "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "RB",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457379",
+    "player": "Fame Ijeboi",
+    "pos": "RB",
+    "team": "PUR",
+    "team_full": "Purdue Boilermakers",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -265,6 +265,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "468744",
+    "player": "Ja'Kyrian Turner",
+    "pos": "RB",
+    "team": "PITT",
+    "team_full": "Pittsburgh Panthers",
+    "bye": 10.0,
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "405245",
     "player": "Rueben Owens II",
     "pos": "RB",
@@ -313,20 +327,6 @@
     "team": "CAL",
     "team_full": "California Golden Bears",
     "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "457379",
-    "player": "Fame Ijeboi",
-    "pos": "RB",
-    "team": "PUR",
-    "team_full": "Purdue Boilermakers",
-    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1169,15 +1169,15 @@
     "stats": {}
    },
    {
-    "yahoo_id": "482179",
-    "player": "Trent Mosley",
+    "yahoo_id": "470164",
+    "player": "Donovan Olugbode",
     "pos": "WR",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Knee",
+    "team": "MIZZ",
+    "team_full": "Missouri Tigers",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "WR",
     "points": 0.0,
     "stats": {}
@@ -1221,6 +1221,20 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "482179",
+    "player": "Trent Mosley",
+    "pos": "WR",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Knee",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1290,20 +1304,6 @@
     "status": "Q",
     "status_full": "Questionable",
     "injury_note": "Leg",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "470164",
-    "player": "Donovan Olugbode",
-    "pos": "WR",
-    "team": "MIZZ",
-    "team_full": "Missouri Tigers",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2527,21 +2527,21 @@
  "yahoo_proj": {
   "333497": 28.05,
   "471748": 25.64,
-  "468744": 15.8,
   "469395": 14.74,
+  "457379": 15.52,
   "471011": 24.78,
   "458486": 10.22,
   "407241": 12.73,
   "405317": 8.38,
   "482918": 15.66,
   "404466": 15.12,
+  "468744": 15.8,
   "405245": 10.52,
   "470260": 10.92,
   "337423": 10.12,
   "468582": 26.24,
-  "457379": 15.52,
   "333084": 8.95,
-  "900104": 16.32,
+  "900104": 16.29,
   "404164": 30.86,
   "468738": 24.12,
   "404291": 16.96,
@@ -2599,16 +2599,16 @@
   "404876": 14.37,
   "456020": 21.64,
   "404730": 16.16,
-  "482179": 14.48,
+  "470164": 14.43,
   "336557": 3.09,
   "334875": 15.29,
   "467588": 16.04,
+  "482179": 14.48,
   "484035": 21.2,
   "334780": 6.4,
   "457622": 11.07,
   "338965": 10.87,
   "463244": 12.44,
-  "470164": 14.43,
   "900083": 13.35,
   "455500": 28.81,
   "404287": 31.39,
@@ -2660,7 +2660,7 @@
   "338689": 31.24,
   "406381": 7.74,
   "456249": 11.52,
-  "900068": 6.66,
+  "900068": 6.63,
   "337760": 28.64,
   "333511": 24.49,
   "472146": 23.92,
@@ -2694,6 +2694,6 @@
   "470091": 13.82,
   "456218": 1.85,
   "456178": 9.45,
-  "900086": 8.8
+  "900086": 8.78
  }
 }
