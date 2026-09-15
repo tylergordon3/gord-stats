@@ -3200,8 +3200,31 @@ summary.team-report-header::after {
   vertical-align: middle;
 }
 
-/* Fantasy's league switcher: a small segmented control at the head of the
-   sub-nav, so it reads as "which league" rather than as three more pages. */
+/* Fantasy's league switcher: a small segmented control beside the sub-nav,
+   so it reads as "which league" rather than as three more pages. It sits in
+   its own row (.fl-row) so the sub-nav's sideways scroll cannot carry it off
+   screen; on a desktop .fl-line puts the two back on one line. */
+.fl-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2px;
+  padding-top: 3px;
+}
+
+.fl-line .sub-nav {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+  min-width: 0;
+}
+
+.fl-row {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
 .fl-leagues {
   display: inline-flex;
   vertical-align: middle;
@@ -3211,29 +3234,63 @@ summary.team-report-header::after {
   margin-right: 10px;
 }
 
-.sub-nav .fl-leagues a.fl-league {
+.fl-leagues a.fl-league {
   display: flex;
   align-items: center;
+  justify-content: center;
   line-height: 1.2;
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: .03em;
   padding: 4px 9px;
   border-radius: 0;
+  color: #5d6b7e !important;
+  text-decoration: none;
 }
 
-.sub-nav .fl-leagues a.fl-league + a.fl-league {
+.fl-leagues a.fl-league + a.fl-league {
   border-left: 1px solid #d7dce3;
 }
 
-.sub-nav .fl-leagues a.fl-league.active {
+.fl-leagues a.fl-league.active {
   background: var(--accent-soft, #FDF0E4);
+  color: var(--accent-text, #A34F0A) !important;
+}
+
+/* Phones: the switcher is a full-width row above the pages, with thumb-sized
+   segments. */
+@media (max-width: 767px) {
+  .fl-line {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fl-row {
+    padding: 2px 6px 4px;
+  }
+
+  .fl-leagues {
+    display: flex;
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .fl-leagues a.fl-league {
+    flex: 1 1 0;
+    min-height: 34px;
+    font-size: 0.8rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
+  .fl-line { border-top-color: #2b3852; }
   .fl-leagues,
-  .sub-nav .fl-leagues a.fl-league + a.fl-league { border-color: #2b3852; }
-  .sub-nav .fl-leagues a.fl-league.active { background: var(--accent-soft, #3A2412); }
+  .fl-leagues a.fl-league + a.fl-league { border-color: #2b3852; }
+  .fl-leagues a.fl-league { color: #aab7c9 !important; }
+  .fl-leagues a.fl-league.active {
+    background: var(--accent-soft, #3A2412);
+    color: var(--accent-text, #F5A968) !important;
+  }
 }
 
 /* Phones drop the dividers. The sub-nav is built to fit 390px without

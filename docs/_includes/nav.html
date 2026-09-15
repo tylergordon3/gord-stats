@@ -83,18 +83,25 @@ Fantasy before the plain /cfb/ test.
         {% endif %}
       {% endfor %}
     {% elsif subnav and subnav.size > 1 or sec == 'fantasy' %}
-    <nav class="simple-nav sub-nav">
-      {% if sec == 'fantasy' %}
-      {% comment %}
-      The league switcher. Marked active here, not by the path-matching script
-      below: /fantasy/ is a prefix of every NFL page and would tie with Home.
-      {% endcomment %}
+    {% if sec == 'fantasy' %}
+    {% comment %}
+    The league switcher, a row of its own rather than the head of the sub-nav:
+    on a phone the sub-nav overflows and scrolls the current page into view,
+    which carried the switcher off the left edge where nothing showed it was
+    there. On a desktop .fl-line sets the two rows side by side again.
+    Marked active here, not by the path-matching script below: /fantasy/ is a
+    prefix of every NFL page and would tie with Home.
+    {% endcomment %}
+    <div class="fl-line">
+    <nav class="simple-nav fl-row" aria-label="Fantasy league">
       <span class="fl-leagues">
         {% for lg in site.data.nav.fantasy_leagues %}
         <a class="fl-league no-rewrite{% if lg.pages == pages %} active{% endif %}" href="{{ lg.url | relative_url }}">{{ lg.title }}</a>
         {% endfor %}
       </span>
-      {% endif %}
+    </nav>
+    {% endif %}
+    <nav class="simple-nav sub-nav">
       {% comment %}
       A hairline between runs of related pages, for sections whose items set
       `group` in _data/nav.yml. Sections that do not set it render exactly as
@@ -119,6 +126,7 @@ Fantasy before the plain /cfb/ test.
         {% endif %}
       {% endfor %}
     </nav>
+    {% if sec == 'fantasy' %}</div>{% endif %}
     {% endif %}
   </div>
 </div>
