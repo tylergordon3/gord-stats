@@ -264,21 +264,6 @@
    "points_against": 356.2
   },
   {
-   "team_key": "474.l.21318.t.3",
-   "name": "Jackson's Brilliant Team",
-   "manager": "",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png",
-   "faab": 84.0,
-   "moves": 6.0,
-   "trades": 0.0,
-   "rank": 5.0,
-   "wins": 2.0,
-   "losses": 2.0,
-   "ties": 0.0,
-   "points_for": 348.0,
-   "points_against": 305.66
-  },
-  {
    "team_key": "474.l.21318.t.10",
    "name": "I Stand With Diggs",
    "manager": "",
@@ -286,12 +271,27 @@
    "faab": 100.0,
    "moves": 0.0,
    "trades": 0.0,
-   "rank": 6.0,
+   "rank": 5.0,
    "wins": 2.0,
    "losses": 2.0,
    "ties": 0.0,
    "points_for": 347.44,
    "points_against": 336.62
+  },
+  {
+   "team_key": "474.l.21318.t.3",
+   "name": "Jackson's Brilliant Team",
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png",
+   "faab": 84.0,
+   "moves": 6.0,
+   "trades": 0.0,
+   "rank": 6.0,
+   "wins": 2.0,
+   "losses": 2.0,
+   "ties": 0.0,
+   "points_for": 346.0,
+   "points_against": 305.66
   },
   {
    "team_key": "474.l.21318.t.5",
@@ -351,7 +351,7 @@
    "losses": 4.0,
    "ties": 0.0,
    "points_for": 277.28,
-   "points_against": 440.84000000000003
+   "points_against": 438.84000000000003
   }
  ]
 }
