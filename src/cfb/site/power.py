@@ -113,9 +113,12 @@ table.cfb-power td.sorted-col::after{content:"";position:absolute;inset:0;
   background:rgba(37,99,235,.09);pointer-events:none}
 table.cfb-power th.mv-th .mv-of{font-weight:500;opacity:.75;margin-left:5px;text-transform:none}
 /* Places climbed answers "did it move"; the rating's own change answers "by
-   how much", which a one-place move in a tight table can badly overstate. The
-   amount rides beside the arrow, quieter, in brackets. */
-table.cfb-power td.mv-cell .mv-amt{font-size:11px;margin-left:4px;color:#64748b}
+   how much", which a one-place move in a tight table can badly overstate. It
+   is printed in the rating's own cell rather than packed into the Move cell,
+   beside the number it is the change in. */
+table.cfb-power td .pwr-chg{font-size:11px;margin-left:6px;font-variant-numeric:tabular-nums}
+table.cfb-power td .pwr-chg:empty{display:none}
+@media (max-width:600px){table.cfb-power td .pwr-chg{display:none}}
 /* Team is the first cell in every view, so pinning first-child holds the
    identity column while the wide tabs scroll. The cells already carry opaque
    backgrounds (zebra, top25, dark) from the rules above; the z-indexes keep
@@ -155,7 +158,6 @@ table.cfb-power th:first-child{left:0;z-index:3}
      against the navy rows. */
   table.cfb-power td.pwr-team img{filter:drop-shadow(0 0 1px rgba(255,255,255,.6))}
   .power-note{color:#aab7c9}
-  table.cfb-power td.mv-cell .mv-amt{color:#aab7c9}
   .power-wrap{border-color:#2b3852}
   table.cfb-power td.pwr-team .pwr-rec{color:#aab7c9}
   table.cfb-power td .gs-rk{color:#aab7c9}
@@ -180,8 +182,8 @@ var rows=Array.prototype.slice.call(body.rows);
 // column is in DELTA, as one array per (window, column) in rank order - the
 // order `rows` never leaves.
 var data=document.getElementById('pwr-deltas');
-var DELTA={},KIND={},WHEN={},DEFAULT='rank';
-if(data){try{var d=JSON.parse(data.textContent);DELTA=d.deltas;KIND=d.kinds;WHEN=d.when;}catch(e){}}
+var DELTA={},KIND={},WHEN={},CHG={},DEFAULT='rank';
+if(data){try{var d=JSON.parse(data.textContent);DELTA=d.deltas;KIND=d.kinds;WHEN=d.when;CHG=d.chg;}catch(e){}}
 var moveTh=head.querySelector('th.mv-th'), fpiTh=head.querySelector('th.sortable[data-field=rank]');
 var moveI=moveTh?Array.prototype.indexOf.call(head.cells,moveTh):-1;
 var win=null, field=DEFAULT;
@@ -278,8 +280,24 @@ Array.prototype.forEach.call(head.cells,function(th){
   });
 });
 
-// A new window redraws the Move column.
-document.addEventListener('winchange',function(e){win=e.detail;draw();});
+// --- the change in each rating's own cell ---------------------------------
+// FPI and GordStats print how far the rating itself has moved beside the
+// rating, where the Move column can only ever describe one figure at a time.
+function drawChanges(){
+  var cells=body.querySelectorAll('.pwr-chg');
+  Array.prototype.forEach.call(cells,function(span){
+    var f=span.getAttribute('data-chg'), col=(DELTA[win]||{})[f];
+    var k=Array.prototype.indexOf.call(rows,span.closest('tr'));
+    var v=(col&&k>=0)?col[k]:null, dec=CHG[f]===undefined?1:CHG[f];
+    // Flat prints nothing here - see _chg in the generator.
+    span.innerHTML=(v===null||v===undefined||Math.abs(v)<0.5*Math.pow(10,-dec))?'':signed(v,dec);
+    span.title=(v===null||v===undefined)?'':
+      f.toUpperCase().replace('GS','GordStats')+' change since '+(WHEN[win]||'the last build');
+  });
+}
+
+// A new window redraws the Move column and the ratings' own changes.
+document.addEventListener('winchange',function(e){win=e.detail;draw();drawChanges();});
 
 // --- tabs -----------------------------------------------------------------
 var TABS=document.querySelectorAll('.pv-btn');
@@ -532,12 +550,14 @@ def _gordstats(t) -> tuple:
     """The GordStats cell: rank beside rating, sorted by the rating."""
     if t.get("gs") is None:
         return None, ""
-    return t["gs"], f"<span class='gs-rk'>{t['gs_rank']}</span>{t['gs']:+.1f}"
+    return t["gs"], (f"<span class='gs-rk'>{t['gs_rank']}</span>{t['gs']:+.1f}"
+                     f"<span class='pwr-chg' data-chg='gs'>{t['gs_chg']}</span>")
 
 
 def _fpi(t) -> tuple:
     """The FPI cell: rank beside rating, the same shape as GordStats."""
-    return t["fpi"], f"<span class='gs-rk'>{t['rank']}</span>{t['fpi']:+.1f}"
+    return t["fpi"], (f"<span class='gs-rk'>{t['rank']}</span>{t['fpi']:+.1f}"
+                      f"<span class='pwr-chg' data-chg='fpi'>{t['fpi_chg']}</span>")
 
 
 def _switcher() -> str:
@@ -575,19 +595,21 @@ def _deltas(bases: dict, teams: list) -> dict:
     return out
 
 
-def _change(v, field, amount=None, amount_field=None) -> tuple:
-    """The Move cell as the page first renders it - the script redraws it.
-    A ranking column also shows its own figure's change in brackets."""
+def _chg(v, dec: int) -> str:
+    """A rating's own change, for the cell beside it. A rating that has not
+    moved prints nothing at all: a dot in all 138 rows of two columns is noise,
+    and the Move column already says whether anything happened."""
+    if v is None or abs(v) < 0.5 * 10 ** -dec:
+        return ""
+    return rankmoves.signed(v, dec)
+
+
+def _change(v, field) -> tuple:
+    """The Move cell as the page first renders it - the script redraws it."""
     kind, dec = TRACKED[field]
     if v is None:
         return None, ""
-    if kind != "rank":
-        return v, rankmoves.signed(v, dec)
-    extra = ""
-    dec = TRACKED[amount_field][1] if amount_field else 0
-    if amount is not None and amount_field and abs(amount) >= 0.5 * 10 ** -dec:
-        extra = f"<span class='mv-amt'>({rankmoves.signed(amount, dec)})</span>"
-    return v, rankmoves.cell(v) + extra
+    return v, (rankmoves.cell(v) if kind == "rank" else rankmoves.signed(v, dec))
 
 
 def body() -> str:
@@ -620,6 +642,14 @@ def body() -> str:
     def live(field) -> bool:
         return any(t[field] is not None for t in teams)
 
+    # The change each rating cell opens with, for the window the buttons open
+    # on; CHANGE_JS redraws them when another window is picked.
+    opening_win = deltas.get(first_win, {}) if first_win else {}
+    for i, t in enumerate(teams):
+        for field, key in (("fpi", "fpi_chg"), ("gs", "gs_chg")):
+            vals = opening_win.get(field)
+            t[key] = _chg(vals[i] if vals else None, TRACKED[field][1])
+
     show_rec = live("numwins") and any(t["numwins"] or t["numlosses"] for t in teams)
     # Until a game is played, what's left of a schedule is the whole schedule:
     # the two SOS columns hold the same 138 numbers, and printing both twice is
@@ -648,15 +678,11 @@ def body() -> str:
     ]
     # Move opens on the first window and the rank, as the script would draw it.
     def opening(t):
-        window = deltas[first_win] if first_win else {}
-        vals, amounts = window.get("rank"), window.get("fpi")
-        i = t["rank"] - 1
-        return _change(vals[i] if vals else None, "rank",
-                       amounts[i] if amounts else None, "fpi")
+        vals = deltas[first_win].get("rank") if first_win else None
+        return _change(vals[t["rank"] - 1] if vals else None, "rank")
 
     if show_move:
-        cols.append(col(ALL, "Move", f"Places climbed, and the FPI change, since "
-                        f"{first_at:%b %-d}", None, opening))
+        cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", None, opening))
     if show_ap:
         cols.append(col(("rating",), "AP", f"AP poll rank ({ap_label})" if ap_label else "AP poll rank", "asc",
                         lambda t: _plain(t["ap"]), "ap"))
@@ -700,12 +726,7 @@ def body() -> str:
 
     # What the script calls each figure once Move follows it: the column's own
     # label, and a tooltip phrase that reads right for a value or a rank.
-    # `v` is the figure whose change rides in brackets beside the arrows: the
-    # rating behind a ranking column.
-    AMOUNT = {"rank": "fpi", "gs_rank": "gs"}
-    kinds = {"rank": {"k": "rank", "d": 0, "label": "",
-                      "tip": "Places climbed, and the FPI change",
-                      "v": "fpi", "vd": TRACKED["fpi"][1]}}
+    kinds = {"rank": {"k": "rank", "d": 0, "label": "", "tip": "Places climbed"}}
     for _views, label, _tip, _dir, _cell, field in cols:
         if field and field != "rank" and field in TRACKED:
             kind, dec = TRACKED[field]
@@ -714,9 +735,6 @@ def body() -> str:
             if field == "gs_rank":
                 tip = "GordStats places climbed"
             kinds[field] = {"k": kind, "d": dec, "label": label, "tip": tip}
-            if AMOUNT.get(field):
-                kinds[field].update(v=AMOUNT[field], vd=TRACKED[AMOUNT[field]][1],
-                                    tip=f"{tip}, and the {label} change")
 
     rows = []
     for t in teams:
@@ -741,9 +759,8 @@ def body() -> str:
     move_note = ""
     if show_move:
         move_note = (" <strong>Move</strong> is the change in whichever column the table "
-                     "is sorted by - places climbed in the FPI rank, with the rating's own "
-                     "change beside it in brackets, until you sort by another, then that "
-                     "figure's change - since the point the buttons "
+                     "is sorted by - places climbed in the FPI rank until you sort by "
+                     "another, then that figure's change - since the point the buttons "
                      f"pick. Every build is archived, so the choice runs from the last "
                      f"build ({first_at:%b %-d}) back to the season's first, or to the end "
                      "of any week's games.")
@@ -760,7 +777,9 @@ def body() -> str:
         "same numbers update with results. <strong>GordStats</strong> is the same idea "
         "from <a href='/cfb/predictions/'>this site's own model</a>, the rating the "
         "predictions run on, with its rank beside it; sort by it for our order, and "
-        f"Move then counts places climbed in our ranking.{move_note}</p>"
+        f"Move then counts places climbed in our ranking. The <strong>FPI</strong> and "
+        f"<strong>GordStats</strong> cells carry how far that rating itself has moved over "
+        f"the same window, beside the number.{move_note}</p>"
         "<p class='power-note'><strong>Rating</strong> is the ratings, each with its rank, "
         "and what the schedule has been worth; <strong>Odds</strong> "
         "what ESPN's simulations give each team. Projected records - ESPN's and "
@@ -782,7 +801,9 @@ def body() -> str:
                        extra=pd.DataFrame({**{f: [t[f] for t in teams] for f in TRACKED if f != "rank"},
                                            "name": [t["name"] for t in teams]},
                                           index=[str(t["id"]) for t in teams]).round(3))
-    blob = json.dumps({"deltas": deltas, "kinds": kinds,
+    # The decimals each in-cell change is drawn to, by field.
+    chg = {f: TRACKED[f][1] for f in ("fpi", "gs")}
+    blob = json.dumps({"deltas": deltas, "kinds": kinds, "chg": chg,
                        "when": {win: f"{b['at']:%b %-d}" for win, b in bases.items()}},
                       separators=(",", ":"))
     return (_CSS + favorites.table_css("table.cfb-power") + intro
