@@ -59,14 +59,14 @@
      "name": "CCAM State",
      "points": 0.0,
      "projected": 186.19,
-     "win_probability": 0.56
+     "win_probability": 0.53
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 177.06,
-     "win_probability": 0.43999999999999995
+     "projected": 180.77,
+     "win_probability": 0.47
     }
    ]
   },
@@ -81,7 +81,7 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 177.32,
+     "projected": 177.3,
      "win_probability": 0.51
     },
     {
@@ -104,15 +104,15 @@
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 190.75,
-     "win_probability": 0.54
+     "projected": 188.89,
+     "win_probability": 0.53
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
      "projected": 183.84,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.47
     }
    ]
   }
