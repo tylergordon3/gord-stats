@@ -761,9 +761,10 @@ def body() -> str:
         move_note = (" <strong>Move</strong> is the change in whichever column the table "
                      "is sorted by - places climbed in the FPI rank until you sort by "
                      "another, then that figure's change - since the point the buttons "
-                     f"pick. Every build is archived, so the choice runs from the last "
-                     f"build ({first_at:%b %-d}) back to the season's first, or to the end "
-                     "of any week's games.")
+                     f"pick. It opens on the rankings as they stood before this week's "
+                     f"games ({first_at:%b %-d}); every build is archived, so the choice "
+                     "runs from there back to the season's first, or to the end of any "
+                     "week's games.")
 
     intro = (
         f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "

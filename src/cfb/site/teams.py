@@ -299,7 +299,7 @@ def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
         " <strong>Move</strong> is places climbed"
         + (" and <strong>&Delta;</strong> the rating's change" if show_delta else "")
         + " since the point the buttons pick - every build is archived, "
-        f"so the choice runs from the last build (<strong>{first:%b %-d}</strong>) back "
+        f"so the choice runs from before this week's games (<strong>{first:%b %-d}</strong>) back "
         "to the season's first, or to the end of any week's games." if bases else
         " Every build is archived; a Move column and a change-since chooser appear "
         "with the second one.")

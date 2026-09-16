@@ -20,11 +20,14 @@ def test_windows_resolve_to_distinct_baselines_only(tmp_path):
     _write(tmp_path, now - timedelta(hours=20), {"a": 2, "b": 1}, {"a": 5.0, "b": 9.0})
     _write(tmp_path, now - timedelta(hours=1), {"a": 1, "b": 2})       # this build: too young
     bases = rankmoves.baselines(tmp_path, now=now)
-    # last build = 20h ago; 1d, 3d and 7d all resolve to 8 days ago (one button);
-    # 14d and 30d to 40 days ago, which is also the season start (one button).
-    assert list(bases) == ["last", "1d", "14d"]
-    assert bases["last"]["at"] == now - timedelta(hours=20)
+    # No weeks passed, so nothing opens the bar. 1d, 3d and 7d all resolve to
+    # 8 days ago (one button); 14d and 30d to 40 days ago, which is also the
+    # season start (one button). The 20h-old build is now nobody's baseline -
+    # the window that used to offer it, "Last build", is gone.
+    assert list(bases) == ["1d", "14d"]
+    assert bases["1d"]["at"] == now - timedelta(days=8)
     assert bases["14d"]["at"] == now - timedelta(days=40)
+    assert all(b["at"] != now - timedelta(hours=20) for b in bases.values())
 
 
 def test_move_and_delta_spans_carry_every_window():
@@ -55,8 +58,8 @@ def test_window_buttons_say_when(tmp_path):
     _write(tmp_path, now - timedelta(days=9), {"a": 1})
     _write(tmp_path, now - timedelta(hours=20, minutes=26), {"a": 1})
     html = rankmoves.window_switch(rankmoves.baselines(tmp_path, now=now))
-    assert ">Sep 30, 3:34 PM</button>" in html          # the last build, by its clock
     assert "1 day <span class='win-when'>Sep 22</span>" in html   # 1d, 3d, 7d all resolve here
+    assert "Sep 30" not in html                   # yesterday's build is not a window of its own
 
 
 def test_week_windows_take_the_last_snapshot_before_the_next_kickoff(tmp_path):
@@ -73,9 +76,38 @@ def test_week_windows_take_the_last_snapshot_before_the_next_kickoff(tmp_path):
     assert bases["w1"]["at"] == datetime(2026, 9, 10, 5)
     assert bases["w1"]["group"] == "week" and bases["w1"]["label"] == "Wk 1"
     assert "w2" not in bases                       # nothing archived between weeks 2 and 3
-    # Week 3's baseline is also the last build: both buttons are offered.
-    assert bases["w3"]["at"] == bases["last"]["at"] == datetime(2026, 9, 21, 5)
+    assert bases["w3"]["at"] == datetime(2026, 9, 21, 5)
     html = rankmoves.window_switch(bases)
     assert "After week:" in html
     assert 'data-win="w1" title="After Week 1' in html
     assert "Wk 1 <span class='win-when'>Sep 10</span>" in html
+
+
+def test_the_bar_opens_on_the_rankings_before_this_week_kicked_off(tmp_path):
+    """The default window is the newest week's kickoff, not the last build:
+    two builds of the same afternoon differ by nothing, a week of football is
+    the thing that moves a rating."""
+    now = datetime(2026, 9, 22, 12)
+    weeks = [(2, datetime(2026, 9, 10, 20), datetime(2026, 9, 13, 4)),
+             (3, datetime(2026, 9, 17, 19, 30), datetime(2026, 9, 20, 3))]
+    _write(tmp_path, datetime(2026, 9, 10, 5), {"a": 4})     # before week 2
+    _write(tmp_path, datetime(2026, 9, 17, 6), {"a": 3})     # before week 3 kicked off
+    _write(tmp_path, datetime(2026, 9, 21, 5), {"a": 1})     # after week 3
+    bases = rankmoves.baselines(tmp_path, now=now, weeks=weeks)
+    first = next(iter(bases))
+    assert first == "pre3"
+    assert bases["pre3"]["at"] == datetime(2026, 9, 17, 6)
+    assert bases["pre3"]["label"] == "Before Wk 3" and bases["pre3"]["group"] == "time"
+    # Week 4 has not kicked off, so week 3 is still the one that opens the bar.
+    later = rankmoves.baselines(
+        tmp_path, now=now,
+        weeks=weeks + [(4, datetime(2026, 9, 24, 19), datetime(2026, 9, 27, 3))])
+    assert next(iter(later)) == "pre3"
+    html = rankmoves.window_switch(bases)
+    assert 'data-win="pre3" title="Since before Week 3 kicked off' in html
+    assert "Before Wk 3 <span class='win-when'>Sep 17</span>" in html
+    # No snapshot predates the first week on the list: no opening window, and
+    # the clock windows carry on as before.
+    bare = rankmoves.baselines(tmp_path, now=now,
+                               weeks=[(1, datetime(2026, 9, 1, 19), datetime(2026, 9, 3, 4))])
+    assert not any(k.startswith("pre") for k in bare)

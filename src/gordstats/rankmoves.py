@@ -115,9 +115,13 @@ def history(history_dir) -> pd.DataFrame:
 # passes them, and each finished week becomes a window too - "after Week 3",
 # the newest snapshot between that week's last game and the next week's
 # first, which is the table as it stood once the week's results were in.
+#
+# The calendar also supplies the opening window: the table as it stood before
+# the newest week kicked off, which is the one thing that reliably moves a
+# rating. "Last build" used to lead and was usually a column of dots - a
+# rating barely moves between two builds of the same afternoon.
 
 WINDOWS = [
-    ("last", "Last build", None),
     ("1d", "1 day", 1),
     ("3d", "3 days", 3),
     ("7d", "1 week", 7),
@@ -137,21 +141,35 @@ def baselines(history_dir, now=None, weeks=None) -> dict:
     """{window key: {label, at, frame, group}} for every window the archive can serve.
 
     `frame` is the baseline snapshot indexed by key (rank plus whatever extras
-    it was written with). "last" is the newest snapshot at least GAP_HOURS old,
-    "season" the oldest such snapshot, the rest the newest at least N days
-    old. A window whose baseline another window already uses is dropped.
+    it was written with). "season" is the oldest snapshot at least GAP_HOURS
+    old, the rest the newest at least N days old. A window whose baseline
+    another window already uses is dropped.
 
     `weeks` is an optional list of (number, first kickoff, last game over) in
-    the archive's own clock; each week whose games are done and that the
-    archive caught before the next week began becomes a "w<N>" window in
-    group "week" - deliberately not de-duplicated against the clock windows,
-    so "Last build" and "Wk 3" can both be offered when they coincide.
+    the archive's own clock. The newest week to have kicked off opens the bar
+    as "pre<N>" - the newest snapshot from before its first game, so the
+    default column is what this week's football has done to the ratings. Each
+    finished week also becomes a "w<N>" window in group "week" - deliberately
+    not de-duplicated against the clock windows, so "1 week" and "Wk 3" can
+    both be offered when they coincide.
     """
     now = now or datetime.now()
     snaps = [s for s in _snaps(history_dir) if s[0] <= now - timedelta(hours=GAP_HOURS)]
     if not snaps:
         return {}
     out, used = {}, set()
+    # The opening window, before anything on the clock: since the newest
+    # week's first kickoff.
+    ordered_weeks = sorted(weeks or [], key=lambda w: w[0])
+    started = [w for w in ordered_weeks if w[1] <= now]
+    if started:
+        number, kickoff, _over = started[-1]
+        before = [s for s in snaps if s[0] < kickoff]
+        if before:
+            pick = before[-1]
+            used.add(pick[1])
+            out[f"pre{number}"] = {"label": f"Before Wk {number}", "at": pick[0],
+                                   "frame": _load_full(pick[1]), "group": "time"}
     for key, label, days in WINDOWS:
         if days == "oldest":
             pick = snaps[0]
@@ -167,11 +185,10 @@ def baselines(history_dir, now=None, weeks=None) -> dict:
         used.add(pick[1])
         out[key] = {"label": label, "at": pick[0], "frame": _load_full(pick[1]),
                     "group": "time"}
-    weeks = sorted(weeks or [], key=lambda w: w[0])
-    for i, (number, _start, end) in enumerate(weeks):
+    for i, (number, _start, end) in enumerate(ordered_weeks):
         # Up to the following week's kickoff - not "the newest since", which
         # for every finished week would be today's build.
-        until = weeks[i + 1][1] if i + 1 < len(weeks) else None
+        until = ordered_weeks[i + 1][1] if i + 1 < len(ordered_weeks) else None
         eligible = [s for s in snaps if s[0] >= end and (until is None or s[0] < until)]
         if not eligible:
             continue
@@ -231,13 +248,13 @@ def window_switch(bases: dict, label: str = "Change since:") -> str:
     if not bases:
         return ""
     def text(win, b):
-        # The date is the point; "Last build" said nothing about when that was.
-        if win == "last":
-            return f"{b['at']:%b %-d, %-I:%M %p}"
         return f"{b['label']} <span class='win-when'>{b['at']:%b %-d}</span>"
     def tip(win, b):
         if b.get("group") == "week":
             return f"After Week {b['week']}'s games ({b['at']:%b %-d, %-I:%M %p})"
+        if win.startswith("pre"):
+            return (f"Since before Week {win[3:]} kicked off "
+                    f"({b['at']:%b %-d, %-I:%M %p}) - what this week's games have done")
         return f"Since {b['at']:%b %-d, %-I:%M %p}"
     def button(i, win, b):
         return (f'<button type="button" class="win-btn{" active" if i == 0 else ""}" '
