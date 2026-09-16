@@ -112,6 +112,10 @@ table.cfb-power td.sorted-col:not(:first-child){position:relative}
 table.cfb-power td.sorted-col::after{content:"";position:absolute;inset:0;
   background:rgba(37,99,235,.09);pointer-events:none}
 table.cfb-power th.mv-th .mv-of{font-weight:500;opacity:.75;margin-left:5px;text-transform:none}
+/* Places climbed answers "did it move"; the rating's own change answers "by
+   how much", which a one-place move in a tight table can badly overstate. The
+   amount rides beside the arrow, quieter, in brackets. */
+table.cfb-power td.mv-cell .mv-amt{font-size:11px;margin-left:4px;color:#64748b}
 /* Team is the first cell in every view, so pinning first-child holds the
    identity column while the wide tabs scroll. The cells already carry opaque
    backgrounds (zebra, top25, dark) from the rules above; the z-indexes keep
@@ -151,6 +155,7 @@ table.cfb-power th:first-child{left:0;z-index:3}
      against the navy rows. */
   table.cfb-power td.pwr-team img{filter:drop-shadow(0 0 1px rgba(255,255,255,.6))}
   .power-note{color:#aab7c9}
+  table.cfb-power td.mv-cell .mv-amt{color:#aab7c9}
   .power-wrap{border-color:#2b3852}
   table.cfb-power td.pwr-team .pwr-rec{color:#aab7c9}
   table.cfb-power td .gs-rk{color:#aab7c9}
@@ -195,10 +200,17 @@ function signed(v,dec){
 function draw(){
   if(moveI<0) return;
   var col=(DELTA[win]||{})[field], kind=KIND[field]||{k:'num',d:1,label:field,tip:field+' change'};
+  // A ranking column carries its own figure too (FPI's rating, GordStats'),
+  // so the cell says both: places climbed, and how far the number itself moved.
+  var amt=kind.v?(DELTA[win]||{})[kind.v]:null;
   rows.forEach(function(r,k){
     var td=r.cells[moveI], v=col?col[k]:null;
     if(v===null||v===undefined){td.innerHTML='';return;}
-    td.innerHTML=kind.k==='rank'?arrow(v):signed(v,kind.d);
+    // A rating that did not move prints nothing rather than "(.)": the dot
+    // beside the arrow's own dot was two ways of saying the same nothing.
+    var a=amt?amt[k]:null, flat=(a===null||a===undefined)||Math.abs(a)<0.5*Math.pow(10,-kind.vd);
+    td.innerHTML=kind.k!=='rank'?signed(v,kind.d)
+      :arrow(v)+(flat?'':"<span class='mv-amt'>("+signed(a,kind.vd)+")</span>");
   });
   moveTh.innerHTML='Move'+(kind.label?"<span class='mv-of'>"+kind.label+"</span>":'');
   moveTh.title=kind.tip+(WHEN[win]?' since '+WHEN[win]:'');
@@ -563,12 +575,19 @@ def _deltas(bases: dict, teams: list) -> dict:
     return out
 
 
-def _change(v, field) -> tuple:
-    """The Move cell as the page first renders it - the script redraws it."""
+def _change(v, field, amount=None, amount_field=None) -> tuple:
+    """The Move cell as the page first renders it - the script redraws it.
+    A ranking column also shows its own figure's change in brackets."""
     kind, dec = TRACKED[field]
     if v is None:
         return None, ""
-    return v, (rankmoves.cell(v) if kind == "rank" else rankmoves.signed(v, dec))
+    if kind != "rank":
+        return v, rankmoves.signed(v, dec)
+    extra = ""
+    dec = TRACKED[amount_field][1] if amount_field else 0
+    if amount is not None and amount_field and abs(amount) >= 0.5 * 10 ** -dec:
+        extra = f"<span class='mv-amt'>({rankmoves.signed(amount, dec)})</span>"
+    return v, rankmoves.cell(v) + extra
 
 
 def body() -> str:
@@ -629,11 +648,15 @@ def body() -> str:
     ]
     # Move opens on the first window and the rank, as the script would draw it.
     def opening(t):
-        vals = deltas[first_win].get("rank") if first_win else None
-        return _change(vals[t["rank"] - 1] if vals else None, "rank")
+        window = deltas[first_win] if first_win else {}
+        vals, amounts = window.get("rank"), window.get("fpi")
+        i = t["rank"] - 1
+        return _change(vals[i] if vals else None, "rank",
+                       amounts[i] if amounts else None, "fpi")
 
     if show_move:
-        cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", None, opening))
+        cols.append(col(ALL, "Move", f"Places climbed, and the FPI change, since "
+                        f"{first_at:%b %-d}", None, opening))
     if show_ap:
         cols.append(col(("rating",), "AP", f"AP poll rank ({ap_label})" if ap_label else "AP poll rank", "asc",
                         lambda t: _plain(t["ap"]), "ap"))
@@ -677,7 +700,12 @@ def body() -> str:
 
     # What the script calls each figure once Move follows it: the column's own
     # label, and a tooltip phrase that reads right for a value or a rank.
-    kinds = {"rank": {"k": "rank", "d": 0, "label": "", "tip": "Places climbed"}}
+    # `v` is the figure whose change rides in brackets beside the arrows: the
+    # rating behind a ranking column.
+    AMOUNT = {"rank": "fpi", "gs_rank": "gs"}
+    kinds = {"rank": {"k": "rank", "d": 0, "label": "",
+                      "tip": "Places climbed, and the FPI change",
+                      "v": "fpi", "vd": TRACKED["fpi"][1]}}
     for _views, label, _tip, _dir, _cell, field in cols:
         if field and field != "rank" and field in TRACKED:
             kind, dec = TRACKED[field]
@@ -686,6 +714,9 @@ def body() -> str:
             if field == "gs_rank":
                 tip = "GordStats places climbed"
             kinds[field] = {"k": kind, "d": dec, "label": label, "tip": tip}
+            if AMOUNT.get(field):
+                kinds[field].update(v=AMOUNT[field], vd=TRACKED[AMOUNT[field]][1],
+                                    tip=f"{tip}, and the {label} change")
 
     rows = []
     for t in teams:
@@ -710,8 +741,9 @@ def body() -> str:
     move_note = ""
     if show_move:
         move_note = (" <strong>Move</strong> is the change in whichever column the table "
-                     "is sorted by - places climbed in the FPI rank until you sort by "
-                     "another, then that figure's change - since the point the buttons "
+                     "is sorted by - places climbed in the FPI rank, with the rating's own "
+                     "change beside it in brackets, until you sort by another, then that "
+                     "figure's change - since the point the buttons "
                      f"pick. Every build is archived, so the choice runs from the last "
                      f"build ({first_at:%b %-d}) back to the season's first, or to the end "
                      "of any week's games.")

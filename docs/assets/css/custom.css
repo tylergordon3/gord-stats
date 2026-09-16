@@ -4025,6 +4025,20 @@ img {
 
   .sub-nav {
     padding-top: 2px;
+    /* Wrap onto a second line rather than scroll sideways. A scrolling row
+       puts pages off the edge with nothing to say they are there - and the
+       reveal script, centring the current page, pushed the first ones out of
+       reach - which is how the Fantasy section's seven links became four. */
+    flex-wrap: wrap;
+    overflow-x: visible;
+    justify-content: center;
+    row-gap: 2px;
+  }
+
+  /* Wrapped, not scrolled: a link sizing itself up to fill the row would leave
+     one item stretched across the second line. */
+  .sub-nav a {
+    flex: 0 1 auto;
   }
 
   /* The current page, filled. Everything else is plain text on the header,
