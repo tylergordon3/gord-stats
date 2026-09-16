@@ -1,0 +1,3045 @@
+{
+ "week": 2,
+ "year": 2026,
+ "fetched": "2026-09-16T09:35:55+00:00",
+ "teams": {
+  "1": {
+   "name": "CCAM\u2019s Convicts",
+   "manager": "Colin",
+   "avatar": "https://sleepercdn.com/uploads/08d1002e22506362ec95657654720097.jpg",
+   "wins": 2,
+   "losses": 0,
+   "ties": 0,
+   "fpts": 195.12,
+   "reserve": []
+  },
+  "2": {
+   "name": "DRINK MAYE",
+   "manager": "Tyler",
+   "avatar": "https://sleepercdn.com/uploads/6110eabf9d5dfb171113b7dd7149ed65.jpg",
+   "wins": 2,
+   "losses": 0,
+   "ties": 0,
+   "fpts": 150.12,
+   "reserve": [
+    "11604"
+   ]
+  },
+  "3": {
+   "name": "Professional Fratson",
+   "manager": "Jackson",
+   "avatar": "https://sleepercdn.com/avatars/thumbs/82aec8e811b839b8ec25d7b458afd57b",
+   "wins": 0,
+   "losses": 2,
+   "ties": 0,
+   "fpts": 128.46,
+   "reserve": [
+    "9753"
+   ]
+  },
+  "4": {
+   "name": "Strictly Dickly",
+   "manager": "Max",
+   "avatar": "https://sleepercdn.com/avatars/thumbs/534ed5b0b47420ece97a0f70021f3697",
+   "wins": 1,
+   "losses": 1,
+   "ties": 0,
+   "fpts": 138.06,
+   "reserve": []
+  },
+  "5": {
+   "name": "Lotta Cox (Balls Too)",
+   "manager": "Austin",
+   "avatar": "https://sleepercdn.com/avatars/thumbs/23fe4994d864928df8f99d56b60c9179",
+   "wins": 2,
+   "losses": 0,
+   "ties": 0,
+   "fpts": 169.26,
+   "reserve": []
+  },
+  "6": {
+   "name": "The Standard",
+   "manager": "Trevor",
+   "avatar": "https://sleepercdn.com/uploads/f4a8e4922b8086d6b960cce400e532c3.jpg",
+   "wins": 0,
+   "losses": 2,
+   "ties": 0,
+   "fpts": 123.2,
+   "reserve": []
+  },
+  "7": {
+   "name": "padgett",
+   "manager": "Padgett",
+   "avatar": "https://sleepercdn.com/avatars/thumbs/82aec8e811b839b8ec25d7b458afd57b",
+   "wins": 0,
+   "losses": 2,
+   "ties": 0,
+   "fpts": 128.96,
+   "reserve": []
+  },
+  "8": {
+   "name": "FX\u2019s The Bear(s)",
+   "manager": "Mark",
+   "avatar": "https://sleepercdn.com/uploads/e515abb0dd4f0a090e7f1603ba29b21d.jpg",
+   "wins": 2,
+   "losses": 0,
+   "ties": 0,
+   "fpts": 145.36,
+   "reserve": []
+  },
+  "9": {
+   "name": "3 big balls",
+   "manager": "George",
+   "avatar": "https://sleepercdn.com/uploads/1501279ebef40882f6ff68ec4b3e92b6.jpg",
+   "wins": 1,
+   "losses": 1,
+   "ties": 0,
+   "fpts": 146.86,
+   "reserve": []
+  },
+  "10": {
+   "name": "The Jackson 5",
+   "manager": "Everett",
+   "avatar": "https://sleepercdn.com/uploads/52e069fa138c51edc6f97e6c3705d2a0.jpg",
+   "wins": 0,
+   "losses": 2,
+   "ties": 0,
+   "fpts": 119.0,
+   "reserve": []
+  }
+ },
+ "matchups": [
+  {
+   "matchup_id": 1,
+   "sides": [
+    {
+     "roster_id": 8,
+     "matchup_id": 1,
+     "points": 0.0,
+     "starters": [
+      "11560",
+      "4866",
+      "7567",
+      "7547",
+      "12526",
+      "8131",
+      "12519",
+      "6819",
+      "11786",
+      "HOU"
+     ],
+     "players": [
+      "11560",
+      "11628",
+      "11786",
+      "12519",
+      "12526",
+      "4866",
+      "5850",
+      "5947",
+      "6819",
+      "7002",
+      "7547",
+      "7567",
+      "8121",
+      "8131",
+      "HOU"
+     ],
+     "players_points": {
+      "11560": 0.0,
+      "11628": 0.0,
+      "11786": 0.0,
+      "12519": 0.0,
+      "12526": 0.0,
+      "4866": 0.0,
+      "5850": 0.0,
+      "5947": 0.0,
+      "6819": 0.0,
+      "7002": 0.0,
+      "7547": 0.0,
+      "7567": 0.0,
+      "8121": 0.0,
+      "8131": 0.0,
+      "HOU": 0.0
+     }
+    },
+    {
+     "roster_id": 9,
+     "matchup_id": 1,
+     "points": 0.0,
+     "starters": [
+      "4984",
+      "6813",
+      "12527",
+      "7525",
+      "7526",
+      "10859",
+      "12481",
+      "5846",
+      "11533",
+      "DET"
+     ],
+     "players": [
+      "10859",
+      "11533",
+      "11563",
+      "12481",
+      "12527",
+      "12534",
+      "4984",
+      "5045",
+      "5846",
+      "5872",
+      "6813",
+      "7525",
+      "7526",
+      "8110",
+      "DET"
+     ],
+     "players_points": {
+      "10859": 0.0,
+      "11533": 0.0,
+      "11563": 0.0,
+      "12481": 0.0,
+      "12527": 0.0,
+      "12534": 0.0,
+      "4984": 0.0,
+      "5045": 0.0,
+      "5846": 0.0,
+      "5872": 0.0,
+      "6813": 0.0,
+      "7525": 0.0,
+      "7526": 0.0,
+      "8110": 0.0,
+      "DET": 0.0
+     }
+    }
+   ]
+  },
+  {
+   "matchup_id": 2,
+   "sides": [
+    {
+     "roster_id": 6,
+     "matchup_id": 2,
+     "points": 0.0,
+     "starters": [
+      "12508",
+      "4034",
+      "12507",
+      "8137",
+      "6801",
+      "9484",
+      "11584",
+      "4983",
+      "8259",
+      "BAL"
+     ],
+     "players": [
+      "10222",
+      "11584",
+      "11620",
+      "12507",
+      "12508",
+      "13281",
+      "3294",
+      "4034",
+      "4983",
+      "5012",
+      "6801",
+      "8137",
+      "8259",
+      "9484",
+      "BAL"
+     ],
+     "players_points": {
+      "10222": 0.0,
+      "11584": 0.0,
+      "11620": 0.0,
+      "12507": 0.0,
+      "12508": 0.0,
+      "13281": 0.0,
+      "3294": 0.0,
+      "4034": 0.0,
+      "4983": 0.0,
+      "5012": 0.0,
+      "6801": 0.0,
+      "8137": 0.0,
+      "8259": 0.0,
+      "9484": 0.0,
+      "BAL": 0.0
+     }
+    },
+    {
+     "roster_id": 10,
+     "matchup_id": 2,
+     "points": 0.0,
+     "starters": [
+      "8183",
+      "8138",
+      "13287",
+      "6794",
+      "8144",
+      "12506",
+      "7021",
+      "5927",
+      "12015",
+      "LAR"
+     ],
+     "players": [
+      "11631",
+      "12015",
+      "12493",
+      "12506",
+      "12529",
+      "13287",
+      "4046",
+      "5927",
+      "6794",
+      "7021",
+      "8138",
+      "8144",
+      "8183",
+      "9756",
+      "LAR"
+     ],
+     "players_points": {
+      "11631": 0.0,
+      "12015": 0.0,
+      "12493": 0.0,
+      "12506": 0.0,
+      "12529": 0.0,
+      "13287": 0.0,
+      "4046": 0.0,
+      "5927": 0.0,
+      "6794": 0.0,
+      "7021": 0.0,
+      "8138": 0.0,
+      "8144": 0.0,
+      "8183": 0.0,
+      "9756": 0.0,
+      "LAR": 0.0
+     }
+    }
+   ]
+  },
+  {
+   "matchup_id": 3,
+   "sides": [
+    {
+     "roster_id": 2,
+     "matchup_id": 3,
+     "points": 0.0,
+     "starters": [
+      "11564",
+      "9509",
+      "5892",
+      "7569",
+      "8146",
+      "10236",
+      "7594",
+      "4037",
+      "1945",
+      "PHI"
+     ],
+     "players": [
+      "10236",
+      "11564",
+      "11581",
+      "11604",
+      "12533",
+      "13279",
+      "1945",
+      "2449",
+      "4037",
+      "5892",
+      "7569",
+      "7594",
+      "8146",
+      "9509",
+      "9754",
+      "PHI"
+     ],
+     "players_points": {
+      "10236": 0.0,
+      "11564": 0.0,
+      "11581": 0.0,
+      "11604": 0.0,
+      "12533": 0.0,
+      "13279": 0.0,
+      "1945": 0.0,
+      "2449": 0.0,
+      "4037": 0.0,
+      "5892": 0.0,
+      "7569": 0.0,
+      "7594": 0.0,
+      "8146": 0.0,
+      "9509": 0.0,
+      "9754": 0.0,
+      "PHI": 0.0
+     }
+    },
+    {
+     "roster_id": 7,
+     "matchup_id": 3,
+     "points": 0.0,
+     "starters": [
+      "6797",
+      "9224",
+      "12512",
+      "9488",
+      "11632",
+      "12518",
+      "11635",
+      "8228",
+      "2747",
+      "DEN"
+     ],
+     "players": [
+      "11586",
+      "11632",
+      "11635",
+      "12512",
+      "12518",
+      "13417",
+      "2747",
+      "6797",
+      "8126",
+      "8132",
+      "8228",
+      "9224",
+      "9487",
+      "9488",
+      "DEN"
+     ],
+     "players_points": {
+      "11586": 0.0,
+      "11632": 0.0,
+      "11635": 0.0,
+      "12512": 0.0,
+      "12518": 0.0,
+      "13417": 0.0,
+      "2747": 0.0,
+      "6797": 0.0,
+      "8126": 0.0,
+      "8132": 0.0,
+      "8228": 0.0,
+      "9224": 0.0,
+      "9487": 0.0,
+      "9488": 0.0,
+      "DEN": 0.0
+     }
+    }
+   ]
+  },
+  {
+   "matchup_id": 4,
+   "sides": [
+    {
+     "roster_id": 3,
+     "matchup_id": 4,
+     "points": 0.0,
+     "starters": [
+      "6770",
+      "7588",
+      "7543",
+      "7564",
+      "8148",
+      "8130",
+      "8112",
+      "11646",
+      "11539",
+      "JAX"
+     ],
+     "players": [
+      "10232",
+      "11539",
+      "11646",
+      "12489",
+      "13294",
+      "6770",
+      "7523",
+      "7543",
+      "7564",
+      "7588",
+      "8112",
+      "8130",
+      "8148",
+      "8408",
+      "9753",
+      "JAX"
+     ],
+     "players_points": {
+      "10232": 0.0,
+      "11539": 0.0,
+      "11646": 0.0,
+      "12489": 0.0,
+      "13294": 0.0,
+      "6770": 0.0,
+      "7523": 0.0,
+      "7543": 0.0,
+      "7564": 0.0,
+      "7588": 0.0,
+      "8112": 0.0,
+      "8130": 0.0,
+      "8148": 0.0,
+      "8408": 0.0,
+      "9753": 0.0,
+      "JAX": 0.0
+     }
+    },
+    {
+     "roster_id": 5,
+     "matchup_id": 4,
+     "points": 0.0,
+     "starters": [
+      "4881",
+      "9226",
+      "8150",
+      "6786",
+      "2133",
+      "1466",
+      "6790",
+      "8167",
+      "3451",
+      "SEA"
+     ],
+     "players": [
+      "13320",
+      "1466",
+      "2133",
+      "3451",
+      "421",
+      "4881",
+      "5967",
+      "6786",
+      "6790",
+      "7553",
+      "8142",
+      "8150",
+      "8167",
+      "9226",
+      "SEA"
+     ],
+     "players_points": {
+      "13320": 0.0,
+      "1466": 0.0,
+      "2133": 0.0,
+      "3451": 0.0,
+      "421": 0.0,
+      "4881": 0.0,
+      "5967": 0.0,
+      "6786": 0.0,
+      "6790": 0.0,
+      "7553": 0.0,
+      "8142": 0.0,
+      "8150": 0.0,
+      "8167": 0.0,
+      "9226": 0.0,
+      "SEA": 0.0
+     }
+    }
+   ]
+  },
+  {
+   "matchup_id": 5,
+   "sides": [
+    {
+     "roster_id": 1,
+     "matchup_id": 5,
+     "points": 0.0,
+     "starters": [
+      "6904",
+      "8151",
+      "7611",
+      "9493",
+      "10229",
+      "5022",
+      "9997",
+      "8155",
+      "5189",
+      "PIT"
+     ],
+     "players": [
+      "10229",
+      "11583",
+      "11624",
+      "12490",
+      "1479",
+      "4217",
+      "5022",
+      "5189",
+      "6904",
+      "7611",
+      "8151",
+      "8155",
+      "9493",
+      "9997",
+      "PIT"
+     ],
+     "players_points": {
+      "10229": 0.0,
+      "11583": 0.0,
+      "11624": 0.0,
+      "12490": 0.0,
+      "1479": 0.0,
+      "4217": 0.0,
+      "5022": 0.0,
+      "5189": 0.0,
+      "6904": 0.0,
+      "7611": 0.0,
+      "8151": 0.0,
+      "8155": 0.0,
+      "9493": 0.0,
+      "9997": 0.0,
+      "PIT": 0.0
+     }
+    },
+    {
+     "roster_id": 4,
+     "matchup_id": 5,
+     "points": 0.0,
+     "starters": [
+      "11566",
+      "9221",
+      "3198",
+      "5859",
+      "12514",
+      "12517",
+      "2216",
+      "9500",
+      "6650",
+      "LAC"
+     ],
+     "players": [
+      "11566",
+      "12501",
+      "12514",
+      "12517",
+      "13286",
+      "13298",
+      "2216",
+      "3198",
+      "5859",
+      "6650",
+      "6806",
+      "8136",
+      "9221",
+      "9500",
+      "LAC"
+     ],
+     "players_points": {
+      "11566": 0.0,
+      "12501": 0.0,
+      "12514": 0.0,
+      "12517": 0.0,
+      "13286": 0.0,
+      "13298": 0.0,
+      "2216": 0.0,
+      "3198": 0.0,
+      "5859": 0.0,
+      "6650": 0.0,
+      "6806": 0.0,
+      "8136": 0.0,
+      "9221": 0.0,
+      "9500": 0.0,
+      "LAC": 0.0
+     }
+    }
+   ]
+  }
+ ],
+ "projections": {
+  "9221": {
+   "pts": 26.13,
+   "opp": "BUF",
+   "team": "DET",
+   "injury": "",
+   "name": "Jahmyr Gibbs",
+   "pos": "RB"
+  },
+  "9509": {
+   "pts": 22.25,
+   "opp": "CAR",
+   "team": "ATL",
+   "injury": "",
+   "name": "Bijan Robinson",
+   "pos": "RB"
+  },
+  "4984": {
+   "pts": 21.89,
+   "opp": "DET",
+   "team": "BUF",
+   "injury": "",
+   "name": "Josh Allen",
+   "pos": "QB"
+  },
+  "8183": {
+   "pts": 20.81,
+   "opp": "MIA",
+   "team": "SF",
+   "injury": "",
+   "name": "Brock Purdy",
+   "pos": "QB"
+  },
+  "6904": {
+   "pts": 20.79,
+   "opp": "TEN",
+   "team": "PHI",
+   "injury": "",
+   "name": "Jalen Hurts",
+   "pos": "QB"
+  },
+  "4881": {
+   "pts": 20.58,
+   "opp": "NO",
+   "team": "BAL",
+   "injury": "",
+   "name": "Lamar Jackson",
+   "pos": "QB"
+  },
+  "11566": {
+   "pts": 20.46,
+   "opp": "DAL",
+   "team": "WAS",
+   "injury": "",
+   "name": "Jayden Daniels",
+   "pos": "QB"
+  },
+  "3294": {
+   "pts": 20.26,
+   "opp": "WAS",
+   "team": "DAL",
+   "injury": "",
+   "name": "Dak Prescott",
+   "pos": "QB"
+  },
+  "9493": {
+   "pts": 20.14,
+   "opp": "NYG",
+   "team": "LAR",
+   "injury": "",
+   "name": "Puka Nacua",
+   "pos": "WR"
+  },
+  "4034": {
+   "pts": 19.75,
+   "opp": "MIA",
+   "team": "SF",
+   "injury": "",
+   "name": "Christian McCaffrey",
+   "pos": "RB"
+  },
+  "9488": {
+   "pts": 19.55,
+   "opp": "ARI",
+   "team": "SEA",
+   "injury": "",
+   "name": "Jaxon Smith-Njigba",
+   "pos": "WR"
+  },
+  "11564": {
+   "pts": 18.89,
+   "opp": "PIT",
+   "team": "NE",
+   "injury": "",
+   "name": "Drake Maye",
+   "pos": "QB"
+  },
+  "6813": {
+   "pts": 18.79,
+   "opp": "KC",
+   "team": "IND",
+   "injury": "",
+   "name": "Jonathan Taylor",
+   "pos": "RB"
+  },
+  "6786": {
+   "pts": 18.54,
+   "opp": "WAS",
+   "team": "DAL",
+   "injury": "",
+   "name": "CeeDee Lamb",
+   "pos": "WR"
+  },
+  "12508": {
+   "pts": 18.07,
+   "opp": "LAR",
+   "team": "NYG",
+   "injury": "",
+   "name": "Jaxson Dart",
+   "pos": "QB"
+  },
+  "6770": {
+   "pts": 17.81,
+   "opp": "HOU",
+   "team": "CIN",
+   "injury": "",
+   "name": "Joe Burrow",
+   "pos": "QB"
+  },
+  "4046": {
+   "pts": 17.76,
+   "opp": "IND",
+   "team": "KC",
+   "injury": "",
+   "name": "Patrick Mahomes",
+   "pos": "QB"
+  },
+  "7569": {
+   "pts": 17.75,
+   "opp": "CIN",
+   "team": "HOU",
+   "injury": "",
+   "name": "Nico Collins",
+   "pos": "WR"
+  },
+  "6794": {
+   "pts": 17.49,
+   "opp": "CHI",
+   "team": "MIN",
+   "injury": "",
+   "name": "Justin Jefferson",
+   "pos": "WR"
+  },
+  "7588": {
+   "pts": 17.47,
+   "opp": "WAS",
+   "team": "DAL",
+   "injury": "",
+   "name": "Javonte Williams",
+   "pos": "RB"
+  },
+  "7547": {
+   "pts": 17.44,
+   "opp": "BUF",
+   "team": "DET",
+   "injury": "",
+   "name": "Amon-Ra St. Brown",
+   "pos": "WR"
+  },
+  "7523": {
+   "pts": 17.2,
+   "opp": "DEN",
+   "team": "JAX",
+   "injury": "",
+   "name": "Trevor Lawrence",
+   "pos": "QB"
+  },
+  "9226": {
+   "pts": 17.07,
+   "opp": "SF",
+   "team": "MIA",
+   "injury": "",
+   "name": "De'Von Achane",
+   "pos": "RB"
+  },
+  "11560": {
+   "pts": 17.06,
+   "opp": "MIN",
+   "team": "CHI",
+   "injury": "",
+   "name": "Caleb Williams",
+   "pos": "QB"
+  },
+  "6797": {
+   "pts": 17.05,
+   "opp": "LV",
+   "team": "LAC",
+   "injury": "",
+   "name": "Justin Herbert",
+   "pos": "QB"
+  },
+  "8138": {
+   "pts": 17.01,
+   "opp": "DET",
+   "team": "BUF",
+   "injury": "",
+   "name": "James Cook",
+   "pos": "RB"
+  },
+  "8150": {
+   "pts": 16.99,
+   "opp": "NYG",
+   "team": "LAR",
+   "injury": "",
+   "name": "Kyren Williams",
+   "pos": "RB"
+  },
+  "5892": {
+   "pts": 16.94,
+   "opp": "CIN",
+   "team": "HOU",
+   "injury": "",
+   "name": "David Montgomery",
+   "pos": "RB"
+  },
+  "421": {
+   "pts": 16.84,
+   "opp": "NYG",
+   "team": "LAR",
+   "injury": "",
+   "name": "Matthew Stafford",
+   "pos": "QB"
+  },
+  "7564": {
+   "pts": 16.79,
+   "opp": "HOU",
+   "team": "CIN",
+   "injury": "",
+   "name": "Ja'Marr Chase",
+   "pos": "WR"
+  },
+  "4866": {
+   "pts": 16.64,
+   "opp": "TEN",
+   "team": "PHI",
+   "injury": "",
+   "name": "Saquon Barkley",
+   "pos": "RB"
+  },
+  "8137": {
+   "pts": 16.34,
+   "opp": "WAS",
+   "team": "DAL",
+   "injury": "",
+   "name": "George Pickens",
+   "pos": "WR"
+  },
+  "8151": {
+   "pts": 16.34,
+   "opp": "IND",
+   "team": "KC",
+   "injury": "",
+   "name": "Kenneth Walker",
+   "pos": "RB"
+  },
+  "11563": {
+   "pts": 15.74,
+   "opp": "JAX",
+   "team": "DEN",
+   "injury": "",
+   "name": "Bo Nix",
+   "pos": "QB"
+  },
+  "8144": {
+   "pts": 15.59,
+   "opp": "BAL",
+   "team": "NO",
+   "injury": "",
+   "name": "Chris Olave",
+   "pos": "WR"
+  },
+  "9224": {
+   "pts": 15.46,
+   "opp": "HOU",
+   "team": "CIN",
+   "injury": "",
+   "name": "Chase Brown",
+   "pos": "RB"
+  },
+  "8146": {
+   "pts": 15.11,
+   "opp": "GB",
+   "team": "NYJ",
+   "injury": "",
+   "name": "Garrett Wilson",
+   "pos": "WR"
+  },
+  "8130": {
+   "pts": 14.91,
+   "opp": "SEA",
+   "team": "ARI",
+   "injury": "",
+   "name": "Trey McBride",
+   "pos": "TE"
+  },
+  "8167": {
+   "pts": 14.84,
+   "opp": "NYJ",
+   "team": "GB",
+   "injury": "",
+   "name": "Christian Watson",
+   "pos": "WR"
+  },
+  "7525": {
+   "pts": 14.76,
+   "opp": "TEN",
+   "team": "PHI",
+   "injury": "",
+   "name": "DeVonta Smith",
+   "pos": "WR"
+  },
+  "3198": {
+   "pts": 14.74,
+   "opp": "NO",
+   "team": "BAL",
+   "injury": "",
+   "name": "Derrick Henry",
+   "pos": "RB"
+  },
+  "12527": {
+   "pts": 14.67,
+   "opp": "LAC",
+   "team": "LV",
+   "injury": "",
+   "name": "Ashton Jeanty",
+   "pos": "RB"
+  },
+  "12526": {
+   "pts": 14.6,
+   "opp": "ATL",
+   "team": "CAR",
+   "injury": "",
+   "name": "Tetairoa McMillan",
+   "pos": "WR"
+  },
+  "5927": {
+   "pts": 14.37,
+   "opp": "DAL",
+   "team": "WAS",
+   "injury": "",
+   "name": "Terry McLaurin",
+   "pos": "WR"
+  },
+  "9997": {
+   "pts": 14.35,
+   "opp": "NO",
+   "team": "BAL",
+   "injury": "Questionable",
+   "name": "Zay Flowers",
+   "pos": "WR"
+  },
+  "8112": {
+   "pts": 14.12,
+   "opp": "CAR",
+   "team": "ATL",
+   "injury": "",
+   "name": "Drake London",
+   "pos": "WR"
+  },
+  "8155": {
+   "pts": 13.91,
+   "opp": "GB",
+   "team": "NYJ",
+   "injury": "",
+   "name": "Breece Hall",
+   "pos": "RB"
+  },
+  "11632": {
+   "pts": 13.85,
+   "opp": "LAR",
+   "team": "NYG",
+   "injury": "",
+   "name": "Malik Nabers",
+   "pos": "WR"
+  },
+  "6801": {
+   "pts": 13.84,
+   "opp": "HOU",
+   "team": "CIN",
+   "injury": "",
+   "name": "Tee Higgins",
+   "pos": "WR"
+  },
+  "11584": {
+   "pts": 13.82,
+   "opp": "CLE",
+   "team": "TB",
+   "injury": "",
+   "name": "Bucky Irving",
+   "pos": "RB"
+  },
+  "2216": {
+   "pts": 13.69,
+   "opp": "MIA",
+   "team": "SF",
+   "injury": "",
+   "name": "Mike Evans",
+   "pos": "WR"
+  },
+  "12507": {
+   "pts": 13.68,
+   "opp": "LV",
+   "team": "LAC",
+   "injury": "",
+   "name": "Omarion Hampton",
+   "pos": "RB"
+  },
+  "11604": {
+   "pts": 13.68,
+   "opp": "LAC",
+   "team": "LV",
+   "injury": "Questionable",
+   "name": "Brock Bowers",
+   "pos": "TE"
+  },
+  "10229": {
+   "pts": 13.43,
+   "opp": "IND",
+   "team": "KC",
+   "injury": "",
+   "name": "Rashee Rice",
+   "pos": "WR"
+  },
+  "12481": {
+   "pts": 13.38,
+   "opp": "LAR",
+   "team": "NYG",
+   "injury": "",
+   "name": "Cam Skattebo",
+   "pos": "RB"
+  },
+  "11635": {
+   "pts": 13.3,
+   "opp": "LV",
+   "team": "LAC",
+   "injury": "Questionable",
+   "name": "Ladd McConkey",
+   "pos": "WR"
+  },
+  "4983": {
+   "pts": 13.12,
+   "opp": "DET",
+   "team": "BUF",
+   "injury": "",
+   "name": "DJ Moore",
+   "pos": "WR"
+  },
+  "11646": {
+   "pts": 12.91,
+   "opp": "ATL",
+   "team": "CAR",
+   "injury": "Questionable",
+   "name": "Jalen Coker",
+   "pos": "WR"
+  },
+  "7526": {
+   "pts": 12.71,
+   "opp": "JAX",
+   "team": "DEN",
+   "injury": "",
+   "name": "Jaylen Waddle",
+   "pos": "WR"
+  },
+  "8148": {
+   "pts": 12.62,
+   "opp": "BUF",
+   "team": "DET",
+   "injury": "",
+   "name": "Jameson Williams",
+   "pos": "WR"
+  },
+  "2449": {
+   "pts": 12.53,
+   "opp": "DAL",
+   "team": "WAS",
+   "injury": "",
+   "name": "Stefon Diggs",
+   "pos": "WR"
+  },
+  "13287": {
+   "pts": 12.46,
+   "opp": "SEA",
+   "team": "ARI",
+   "injury": "",
+   "name": "Jeremiyah Love",
+   "pos": "RB"
+  },
+  "12512": {
+   "pts": 12.44,
+   "opp": "TB",
+   "team": "CLE",
+   "injury": "",
+   "name": "Quinshon Judkins",
+   "pos": "RB"
+  },
+  "12533": {
+   "pts": 12.29,
+   "opp": "DAL",
+   "team": "WAS",
+   "injury": "",
+   "name": "Jacory Croskey-Merritt",
+   "pos": "RB"
+  },
+  "7611": {
+   "pts": 12.28,
+   "opp": "PIT",
+   "team": "NE",
+   "injury": "",
+   "name": "Rhamondre Stevenson",
+   "pos": "RB"
+  },
+  "10222": {
+   "pts": 12.23,
+   "opp": "NYJ",
+   "team": "GB",
+   "injury": "",
+   "name": "Jayden Reed",
+   "pos": "WR"
+  },
+  "7594": {
+   "pts": 12.17,
+   "opp": "ATL",
+   "team": "CAR",
+   "injury": "",
+   "name": "Chuba Hubbard",
+   "pos": "RB"
+  },
+  "10236": {
+   "pts": 12.16,
+   "opp": "DET",
+   "team": "BUF",
+   "injury": "",
+   "name": "Dalton Kincaid",
+   "pos": "TE"
+  },
+  "5846": {
+   "pts": 12.13,
+   "opp": "NE",
+   "team": "PIT",
+   "injury": "",
+   "name": "DK Metcalf",
+   "pos": "WR"
+  },
+  "2133": {
+   "pts": 12.11,
+   "opp": "NYG",
+   "team": "LAR",
+   "injury": "",
+   "name": "Davante Adams",
+   "pos": "WR"
+  },
+  "8228": {
+   "pts": 12.06,
+   "opp": "NE",
+   "team": "PIT",
+   "injury": "",
+   "name": "Jaylen Warren",
+   "pos": "RB"
+  },
+  "12517": {
+   "pts": 12.04,
+   "opp": "MIN",
+   "team": "CHI",
+   "injury": "",
+   "name": "Colston Loveland",
+   "pos": "TE"
+  },
+  "9484": {
+   "pts": 11.85,
+   "opp": "NYJ",
+   "team": "GB",
+   "injury": "",
+   "name": "Tucker Kraft",
+   "pos": "TE"
+  },
+  "13286": {
+   "pts": 11.83,
+   "opp": "ARI",
+   "team": "SEA",
+   "injury": "",
+   "name": "Jadarian Price",
+   "pos": "RB"
+  },
+  "6819": {
+   "pts": 11.71,
+   "opp": "NE",
+   "team": "PIT",
+   "injury": "",
+   "name": "Michael Pittman",
+   "pos": "WR"
+  },
+  "12519": {
+   "pts": 11.59,
+   "opp": "MIN",
+   "team": "CHI",
+   "injury": "",
+   "name": "Luther Burden",
+   "pos": "WR"
+  },
+  "8142": {
+   "pts": 11.58,
+   "opp": "KC",
+   "team": "IND",
+   "injury": "Questionable",
+   "name": "Alec Pierce",
+   "pos": "WR"
+  },
+  "4217": {
+   "pts": 11.33,
+   "opp": "MIA",
+   "team": "SF",
+   "injury": "",
+   "name": "George Kittle",
+   "pos": "TE"
+  },
+  "12518": {
+   "pts": 11.33,
+   "opp": "KC",
+   "team": "IND",
+   "injury": "",
+   "name": "Tyler Warren",
+   "pos": "TE"
+  },
+  "10859": {
+   "pts": 11.19,
+   "opp": "BUF",
+   "team": "DET",
+   "injury": "",
+   "name": "Sam LaPorta",
+   "pos": "TE"
+  },
+  "11581": {
+   "pts": 11.16,
+   "opp": "NYJ",
+   "team": "GB",
+   "injury": "",
+   "name": "MarShawn Lloyd",
+   "pos": "RB"
+  },
+  "7021": {
+   "pts": 11.14,
+   "opp": "NE",
+   "team": "PIT",
+   "injury": "",
+   "name": "Rico Dowdle",
+   "pos": "RB"
+  },
+  "6790": {
+   "pts": 11.11,
+   "opp": "MIN",
+   "team": "CHI",
+   "injury": "",
+   "name": "D'Andre Swift",
+   "pos": "RB"
+  },
+  "12501": {
+   "pts": 11.05,
+   "opp": "NYJ",
+   "team": "GB",
+   "injury": "",
+   "name": "Matthew Golden",
+   "pos": "WR"
+  },
+  "9487": {
+   "pts": 10.97,
+   "opp": "DEN",
+   "team": "JAX",
+   "injury": "",
+   "name": "Parker Washington",
+   "pos": "WR"
+  },
+  "5872": {
+   "pts": 10.95,
+   "opp": "MIA",
+   "team": "SF",
+   "injury": "",
+   "name": "Deebo Samuel",
+   "pos": "WR"
+  },
+  "9756": {
+   "pts": 10.9,
+   "opp": "CHI",
+   "team": "MIN",
+   "injury": "",
+   "name": "Jordan Addison",
+   "pos": "WR"
+  },
+  "12514": {
+   "pts": 10.8,
+   "opp": "CLE",
+   "team": "TB",
+   "injury": "",
+   "name": "Emeka Egbuka",
+   "pos": "WR"
+  },
+  "1466": {
+   "pts": 10.7,
+   "opp": "IND",
+   "team": "KC",
+   "injury": "",
+   "name": "Travis Kelce",
+   "pos": "TE"
+  },
+  "11586": {
+   "pts": 10.64,
+   "opp": "NYG",
+   "team": "LAR",
+   "injury": "",
+   "name": "Blake Corum",
+   "pos": "RB"
+  },
+  "8408": {
+   "pts": 10.5,
+   "opp": "CHI",
+   "team": "MIN",
+   "injury": "Questionable",
+   "name": "Jordan Mason",
+   "pos": "RB"
+  },
+  "4037": {
+   "pts": 10.37,
+   "opp": "CLE",
+   "team": "TB",
+   "injury": "",
+   "name": "Chris Godwin",
+   "pos": "WR"
+  },
+  "9500": {
+   "pts": 10.3,
+   "opp": "KC",
+   "team": "IND",
+   "injury": "",
+   "name": "Josh Downs",
+   "pos": "WR"
+  },
+  "7543": {
+   "pts": 10.23,
+   "opp": "BAL",
+   "team": "NO",
+   "injury": "",
+   "name": "Travis Etienne",
+   "pos": "RB"
+  },
+  "10232": {
+   "pts": 10.13,
+   "opp": "SEA",
+   "team": "ARI",
+   "injury": "",
+   "name": "Michael Wilson",
+   "pos": "WR"
+  },
+  "5012": {
+   "pts": 10.12,
+   "opp": "NO",
+   "team": "BAL",
+   "injury": "",
+   "name": "Mark Andrews",
+   "pos": "TE"
+  },
+  "8110": {
+   "pts": 10.01,
+   "opp": "WAS",
+   "team": "DAL",
+   "injury": "",
+   "name": "Jake Ferguson",
+   "pos": "TE"
+  },
+  "9754": {
+   "pts": 9.97,
+   "opp": "LV",
+   "team": "LAC",
+   "injury": "",
+   "name": "Quentin Johnston",
+   "pos": "WR"
+  },
+  "13298": {
+   "pts": 9.9,
+   "opp": "TB",
+   "team": "CLE",
+   "injury": "",
+   "name": "KC Concepcion",
+   "pos": "WR"
+  },
+  "7002": {
+   "pts": 9.87,
+   "opp": "BAL",
+   "team": "NO",
+   "injury": "",
+   "name": "Juwan Johnson",
+   "pos": "TE"
+  },
+  "11620": {
+   "pts": 9.82,
+   "opp": "MIN",
+   "team": "CHI",
+   "injury": "",
+   "name": "Rome Odunze",
+   "pos": "WR"
+  },
+  "5022": {
+   "pts": 9.8,
+   "opp": "TEN",
+   "team": "PHI",
+   "injury": "",
+   "name": "Dallas Goedert",
+   "pos": "TE"
+  },
+  "12506": {
+   "pts": 9.78,
+   "opp": "TB",
+   "team": "CLE",
+   "injury": "",
+   "name": "Harold Fannin",
+   "pos": "TE"
+  },
+  "7553": {
+   "pts": 9.75,
+   "opp": "CAR",
+   "team": "ATL",
+   "injury": "",
+   "name": "Kyle Pitts",
+   "pos": "TE"
+  },
+  "11624": {
+   "pts": 9.75,
+   "opp": "IND",
+   "team": "KC",
+   "injury": "",
+   "name": "Xavier Worthy",
+   "pos": "WR"
+  },
+  "5045": {
+   "pts": 9.62,
+   "opp": "JAX",
+   "team": "DEN",
+   "injury": "",
+   "name": "Courtland Sutton",
+   "pos": "WR"
+  },
+  "PHI": {
+   "pts": 9.6,
+   "opp": "TEN",
+   "team": "PHI",
+   "injury": "",
+   "name": "Philadelphia Eagles",
+   "pos": "DEF"
+  },
+  "12529": {
+   "pts": 9.54,
+   "opp": "PIT",
+   "team": "NE",
+   "injury": "Questionable",
+   "name": "TreVeyon Henderson",
+   "pos": "RB"
+  },
+  "11628": {
+   "pts": 9.46,
+   "opp": "SEA",
+   "team": "ARI",
+   "injury": "",
+   "name": "Marvin Harrison",
+   "pos": "WR"
+  },
+  "8136": {
+   "pts": 9.4,
+   "opp": "DAL",
+   "team": "WAS",
+   "injury": "",
+   "name": "Rachaad White",
+   "pos": "RB"
+  },
+  "5947": {
+   "pts": 9.37,
+   "opp": "DEN",
+   "team": "JAX",
+   "injury": "",
+   "name": "Jakobi Meyers",
+   "pos": "WR"
+  },
+  "6806": {
+   "pts": 9.36,
+   "opp": "JAX",
+   "team": "DEN",
+   "injury": "",
+   "name": "J.K. Dobbins",
+   "pos": "RB"
+  },
+  "8131": {
+   "pts": 9.35,
+   "opp": "LAR",
+   "team": "NYG",
+   "injury": "",
+   "name": "Isaiah Likely",
+   "pos": "TE"
+  },
+  "12489": {
+   "pts": 9.27,
+   "opp": "JAX",
+   "team": "DEN",
+   "injury": "",
+   "name": "RJ Harvey",
+   "pos": "RB"
+  },
+  "BAL": {
+   "pts": 9.21,
+   "opp": "NO",
+   "team": "BAL",
+   "injury": "",
+   "name": "Baltimore Ravens",
+   "pos": "DEF"
+  },
+  "12490": {
+   "pts": 9.1,
+   "opp": "DEN",
+   "team": "JAX",
+   "injury": "",
+   "name": "Bhayshul Tuten",
+   "pos": "RB"
+  },
+  "8121": {
+   "pts": 9.01,
+   "opp": "PIT",
+   "team": "NE",
+   "injury": "",
+   "name": "Romeo Doubs",
+   "pos": "WR"
+  },
+  "SEA": {
+   "pts": 8.91,
+   "opp": "ARI",
+   "team": "SEA",
+   "injury": "",
+   "name": "Seattle Seahawks",
+   "pos": "DEF"
+  },
+  "LAR": {
+   "pts": 8.75,
+   "opp": "NYG",
+   "team": "LAR",
+   "injury": "",
+   "name": "Los Angeles Rams",
+   "pos": "DEF"
+  },
+  "5967": {
+   "pts": 8.75,
+   "opp": "PHI",
+   "team": "TEN",
+   "injury": "",
+   "name": "Tony Pollard",
+   "pos": "RB"
+  },
+  "LAC": {
+   "pts": 8.52,
+   "opp": "LV",
+   "team": "LAC",
+   "injury": "",
+   "name": "Los Angeles Chargers",
+   "pos": "DEF"
+  },
+  "13279": {
+   "pts": 8.48,
+   "opp": "PHI",
+   "team": "TEN",
+   "injury": "",
+   "name": "Carnell Tate",
+   "pos": "WR"
+  },
+  "11631": {
+   "pts": 8.32,
+   "opp": "DEN",
+   "team": "JAX",
+   "injury": "Questionable",
+   "name": "Brian Thomas",
+   "pos": "WR"
+  },
+  "7567": {
+   "pts": 7.99,
+   "opp": "CLE",
+   "team": "TB",
+   "injury": "",
+   "name": "Kenny Gainwell",
+   "pos": "RB"
+  },
+  "8126": {
+   "pts": 7.65,
+   "opp": "PHI",
+   "team": "TEN",
+   "injury": "",
+   "name": "Wan'Dale Robinson",
+   "pos": "WR"
+  },
+  "8259": {
+   "pts": 7.36,
+   "opp": "LV",
+   "team": "LAC",
+   "injury": "",
+   "name": "Cameron Dicker",
+   "pos": "K"
+  },
+  "3451": {
+   "pts": 7.34,
+   "opp": "CIN",
+   "team": "HOU",
+   "injury": "",
+   "name": "Ka'imi Fairbairn",
+   "pos": "K"
+  },
+  "1479": {
+   "pts": 7.29,
+   "opp": "KC",
+   "team": "IND",
+   "injury": "",
+   "name": "Keenan Allen",
+   "pos": "WR"
+  },
+  "11533": {
+   "pts": 7.26,
+   "opp": "WAS",
+   "team": "DAL",
+   "injury": "",
+   "name": "Brandon Aubrey",
+   "pos": "K"
+  },
+  "12015": {
+   "pts": 7.04,
+   "opp": "NYG",
+   "team": "LAR",
+   "injury": "",
+   "name": "Harrison Mevis",
+   "pos": "K"
+  },
+  "HOU": {
+   "pts": 6.96,
+   "opp": "CIN",
+   "team": "HOU",
+   "injury": "",
+   "name": "Houston Texans",
+   "pos": "DEF"
+  },
+  "DEN": {
+   "pts": 6.9,
+   "opp": "JAX",
+   "team": "DEN",
+   "injury": "",
+   "name": "Denver Broncos",
+   "pos": "DEF"
+  },
+  "12534": {
+   "pts": 6.88,
+   "opp": "MIN",
+   "team": "CHI",
+   "injury": "",
+   "name": "Kyle Monangai",
+   "pos": "RB"
+  },
+  "5189": {
+   "pts": 6.8,
+   "opp": "MIA",
+   "team": "SF",
+   "injury": "",
+   "name": "Eddy Pineiro",
+   "pos": "K"
+  },
+  "2747": {
+   "pts": 6.75,
+   "opp": "ARI",
+   "team": "SEA",
+   "injury": "",
+   "name": "Jason Myers",
+   "pos": "K"
+  },
+  "11583": {
+   "pts": 6.73,
+   "opp": "ATL",
+   "team": "CAR",
+   "injury": "",
+   "name": "Jonathon Brooks",
+   "pos": "RB"
+  },
+  "6650": {
+   "pts": 6.53,
+   "opp": "CLE",
+   "team": "TB",
+   "injury": "",
+   "name": "Chase McLaughlin",
+   "pos": "K"
+  },
+  "8132": {
+   "pts": 6.34,
+   "opp": "SEA",
+   "team": "ARI",
+   "injury": "",
+   "name": "Tyler Allgeier",
+   "pos": "RB"
+  },
+  "JAX": {
+   "pts": 6.32,
+   "opp": "DEN",
+   "team": "JAX",
+   "injury": "",
+   "name": "Jacksonville Jaguars",
+   "pos": "DEF"
+  },
+  "13294": {
+   "pts": 6.28,
+   "opp": "TEN",
+   "team": "PHI",
+   "injury": "",
+   "name": "Makai Lemon",
+   "pos": "WR"
+  },
+  "11786": {
+   "pts": 6.19,
+   "opp": "DEN",
+   "team": "JAX",
+   "injury": "",
+   "name": "Cam Little",
+   "pos": "K"
+  },
+  "11539": {
+   "pts": 6.18,
+   "opp": "BUF",
+   "team": "DET",
+   "injury": "",
+   "name": "Jake Bates",
+   "pos": "K"
+  },
+  "PIT": {
+   "pts": 5.76,
+   "opp": "NE",
+   "team": "PIT",
+   "injury": "",
+   "name": "Pittsburgh Steelers",
+   "pos": "DEF"
+  },
+  "1945": {
+   "pts": 5.43,
+   "opp": "NE",
+   "team": "PIT",
+   "injury": "",
+   "name": "Chris Boswell",
+   "pos": "K"
+  },
+  "DET": {
+   "pts": 5.29,
+   "opp": "BUF",
+   "team": "DET",
+   "injury": "",
+   "name": "Detroit Lions",
+   "pos": "DEF"
+  },
+  "12493": {
+   "pts": 4.66,
+   "opp": "LV",
+   "team": "LAC",
+   "injury": "",
+   "name": "Oronde Gadsden",
+   "pos": "TE"
+  },
+  "13320": {
+   "pts": 3.25,
+   "opp": "CAR",
+   "team": "ATL",
+   "injury": "",
+   "name": "Zachariah Branch",
+   "pos": "WR"
+  },
+  "9753": {
+   "pts": null,
+   "opp": null,
+   "team": "SEA",
+   "injury": "PUP",
+   "name": "Zach Charbonnet",
+   "pos": "RB"
+  },
+  "5850": {
+   "pts": null,
+   "opp": null,
+   "team": "GB",
+   "injury": "NA",
+   "name": "Josh Jacobs",
+   "pos": "RB"
+  },
+  "13281": {
+   "pts": null,
+   "opp": null,
+   "team": "NO",
+   "injury": "IR",
+   "name": "Jordyn Tyson",
+   "pos": "WR"
+  },
+  "5859": {
+   "pts": null,
+   "opp": null,
+   "team": "NE",
+   "injury": "IR",
+   "name": "A.J. Brown",
+   "pos": "WR"
+  },
+  "13417": {
+   "pts": null,
+   "opp": "MIA",
+   "team": "SF",
+   "injury": "Doubtful",
+   "name": "De'Zhaun Stribling",
+   "pos": "WR"
+  }
+ },
+ "external": {
+  "espn": {
+   "9221": 24.10545788,
+   "7547": 20.35046076,
+   "4984": 22.5992435,
+   "9488": 18.4576599,
+   "9493": 21.21268207,
+   "9509": 22.24366367,
+   "6786": 18.85038735,
+   "4034": 21.39896015,
+   "7564": 18.96345632,
+   "6794": 18.30819947,
+   "6813": 18.27469808,
+   "8138": 16.53010844,
+   "8130": 14.39937316,
+   "3198": 17.07303456,
+   "4881": 21.55462977,
+   "9226": 17.14478972,
+   "4866": 17.67549052,
+   "11604": 14.40730529,
+   "12527": 17.62007627,
+   "7569": 16.21212244,
+   "8137": 14.66819093,
+   "9224": 15.41101728,
+   "8151": 17.84476723,
+   "8112": 15.49592942,
+   "11533": 10.60438997,
+   "12507": 15.88387339,
+   "8144": 15.82896101,
+   "10229": 15.07287987,
+   "11564": 18.21830735,
+   "7525": 13.99714533,
+   "13287": 12.85451947,
+   "12518": 11.39106052,
+   "7588": 16.67020225,
+   "11632": 14.85979068,
+   "11566": 19.67762536,
+   "8155": 15.73464576,
+   "8146": 15.79732949,
+   "8150": 14.15741313,
+   "6904": 19.87372067,
+   "12517": 11.42369905,
+   "9997": 15.19689667,
+   "12526": 13.72931793,
+   "12481": 12.7717011,
+   "2133": 13.65552744,
+   "5859": 0.0,
+   "6770": 16.55755282,
+   "7543": 12.24543498,
+   "12514": 13.78151781,
+   "SEA": 7.62298181,
+   "2747": 9.4104527,
+   "8259": 9.84094238,
+   "11635": 14.4696465,
+   "6801": 12.29450609,
+   "HOU": 6.28647309,
+   "6790": 13.42322918,
+   "10859": 11.22887897,
+   "12512": 11.99346832,
+   "11584": 14.9115869,
+   "4983": 12.47179398,
+   "7526": 12.10708485,
+   "5892": 14.02801538,
+   "DEN": 6.41088429,
+   "PIT": 5.94375456,
+   "3451": 9.84023866,
+   "8148": 12.30898112,
+   "5927": 12.643141,
+   "4217": 10.48776526,
+   "7553": 11.24533249,
+   "12508": 18.20561876,
+   "12506": 10.10349049,
+   "11620": 12.27530359,
+   "11560": 19.3202883,
+   "13286": 13.25080243,
+   "3294": 20.04296723,
+   "LAR": 5.88244746,
+   "12490": 9.32542797,
+   "5022": 10.8378317,
+   "12519": 12.44965297,
+   "7611": 12.94906226,
+   "2216": 12.96455601,
+   "6797": 19.47998681,
+   "5846": 11.18291347,
+   "421": 18.25445122,
+   "9484": 10.59233124,
+   "1466": 10.57357095,
+   "8167": 12.47677074,
+   "13279": 11.39802903,
+   "11628": 9.26371517,
+   "12529": 9.33259304,
+   "5045": 11.92124135,
+   "12015": 9.40778061,
+   "8228": 11.39069372,
+   "9487": 12.15243702,
+   "BAL": 6.75087722,
+   "6819": 11.53277341,
+   "7523": 15.89065195,
+   "5967": 11.12968947,
+   "PHI": 7.20182165,
+   "11786": 8.16443879,
+   "8131": 11.63197653,
+   "7594": 14.49762501,
+   "5850": 0.0,
+   "7021": 10.0842561,
+   "4046": 18.1912318,
+   "8183": 20.63244445,
+   "11563": 18.55026555,
+   "5189": 9.91750268,
+   "10232": 9.90913643,
+   "12501": 10.83199557,
+   "2449": 10.4500354,
+   "8142": 11.05018908,
+   "7567": 9.25679991,
+   "8110": 9.63883075,
+   "6806": 11.58840088,
+   "5012": 10.22934238,
+   "11583": 8.46570333,
+   "11631": 9.70970589,
+   "12534": 9.87226699,
+   "11581": 11.1597947,
+   "10236": 9.82002309,
+   "8126": 9.48606726,
+   "5947": 9.7402351,
+   "5872": 12.0056203,
+   "9756": 9.9479518,
+   "11586": 9.09316031,
+   "4037": 9.99924742,
+   "11646": 12.0347137,
+   "12489": 10.00789604,
+   "11624": 11.06408209,
+   "9754": 9.95598731,
+   "12533": 10.18363019,
+   "11539": 8.53607379,
+   "8136": 7.62079943,
+   "13294": 9.01713712,
+   "10222": 9.95077057,
+   "8408": 10.13015384,
+   "9500": 9.42655019,
+   "DET": 3.46264054,
+   "13298": 9.55695254,
+   "8121": 10.60743684,
+   "13417": 0.0,
+   "JAX": 4.27792673,
+   "9753": 0.0,
+   "7002": 8.88486586,
+   "LAC": 6.78513484,
+   "8132": 7.08512707,
+   "1945": 7.891759,
+   "13281": 0.0,
+   "1479": 8.72494285,
+   "6650": 8.7745228,
+   "13320": 3.91084706,
+   "12493": 4.04332993
+  },
+  "fp": {
+   "4984": 23.7,
+   "4881": 22.4,
+   "6904": 21.9,
+   "11560": 21.2,
+   "3294": 20.8,
+   "11566": 20.4,
+   "8183": 19.9,
+   "6770": 19.4,
+   "6797": 19.1,
+   "7523": 18.7,
+   "11564": 18.4,
+   "12508": 17.9,
+   "4046": 17.7,
+   "421": 17.5,
+   "11563": 16.8,
+   "9221": 24.9,
+   "9509": 23.8,
+   "4034": 20.5,
+   "3198": 17.8,
+   "6813": 17.8,
+   "12527": 17.7,
+   "8151": 17.2,
+   "8138": 17.0,
+   "4866": 16.9,
+   "9226": 16.7,
+   "9224": 16.1,
+   "7588": 15.3,
+   "12507": 15.1,
+   "6790": 14.8,
+   "8155": 14.8,
+   "8150": 14.4,
+   "5892": 14.1,
+   "11584": 14.0,
+   "12481": 13.6,
+   "13287": 13.4,
+   "7611": 12.5,
+   "7543": 12.4,
+   "7594": 12.3,
+   "13286": 12.2,
+   "12512": 12.0,
+   "8228": 11.4,
+   "12490": 10.8,
+   "8408": 10.8,
+   "11581": 10.7,
+   "12533": 10.4,
+   "6806": 10.3,
+   "5967": 9.9,
+   "7567": 9.9,
+   "12534": 9.8,
+   "12489": 9.8,
+   "7021": 9.7,
+   "11586": 9.7,
+   "8132": 8.9,
+   "11583": 8.4,
+   "8136": 8.1,
+   "12529": 6.8,
+   "9493": 21.6,
+   "7547": 19.7,
+   "7564": 19.4,
+   "9488": 18.3,
+   "6794": 17.5,
+   "6786": 17.2,
+   "8144": 16.9,
+   "7569": 16.6,
+   "8137": 16.6,
+   "7525": 16.3,
+   "8146": 16.2,
+   "10229": 15.8,
+   "4983": 15.6,
+   "8167": 14.8,
+   "8112": 14.4,
+   "11632": 14.3,
+   "2216": 13.9,
+   "6801": 13.6,
+   "9487": 13.6,
+   "7526": 13.3,
+   "12514": 12.9,
+   "12526": 12.9,
+   "2133": 12.8,
+   "12519": 12.5,
+   "8148": 12.4,
+   "5927": 12.3,
+   "9997": 12.3,
+   "4037": 12.0,
+   "11620": 11.6,
+   "5846": 11.5,
+   "11646": 11.3,
+   "9754": 11.2,
+   "2449": 11.2,
+   "11635": 11.2,
+   "6819": 11.1,
+   "10232": 11.0,
+   "5045": 10.9,
+   "12501": 10.7,
+   "11628": 10.6,
+   "5947": 10.6,
+   "5872": 10.3,
+   "9500": 10.3,
+   "13279": 9.9,
+   "8121": 9.8,
+   "9756": 9.8,
+   "10222": 9.7,
+   "11631": 9.7,
+   "8126": 9.5,
+   "8142": 9.5,
+   "13298": 9.5,
+   "11624": 9.1,
+   "1479": 8.7,
+   "13294": 8.2,
+   "13320": 4.7,
+   "13417": 3.2,
+   "8130": 15.4,
+   "12517": 13.5,
+   "12518": 12.1,
+   "9484": 11.7,
+   "10236": 11.7,
+   "10859": 11.5,
+   "5022": 11.5,
+   "8131": 11.4,
+   "1466": 11.3,
+   "7002": 10.9,
+   "4217": 10.8,
+   "5012": 10.7,
+   "12506": 10.2,
+   "8110": 10.2,
+   "7553": 9.9,
+   "12493": 5.6,
+   "11604": 5.5,
+   "11533": 9.6,
+   "8259": 8.9,
+   "5189": 8.8,
+   "3451": 8.7,
+   "11786": 8.7,
+   "2747": 8.7,
+   "6650": 8.1,
+   "12015": 7.6,
+   "11539": 7.5,
+   "1945": 7.5,
+   "PHI": 8.3,
+   "SEA": 8.1,
+   "BAL": 8.1,
+   "LAC": 7.8,
+   "LAR": 7.6,
+   "HOU": 7.1,
+   "DEN": 6.6,
+   "PIT": 6.5,
+   "JAX": 6.4,
+   "DET": 5.2
+  },
+  "fp_rank": {
+   "4984": {
+    "ecr": 1,
+    "grade": "A+"
+   },
+   "4881": {
+    "ecr": 2,
+    "grade": "A"
+   },
+   "6904": {
+    "ecr": 3,
+    "grade": "A"
+   },
+   "11560": {
+    "ecr": 4,
+    "grade": "A"
+   },
+   "3294": {
+    "ecr": 5,
+    "grade": "A"
+   },
+   "11566": {
+    "ecr": 6,
+    "grade": "B+"
+   },
+   "8183": {
+    "ecr": 7,
+    "grade": "B+"
+   },
+   "6770": {
+    "ecr": 8,
+    "grade": "B"
+   },
+   "6797": {
+    "ecr": 9,
+    "grade": "B"
+   },
+   "7523": {
+    "ecr": 10,
+    "grade": "B"
+   },
+   "11564": {
+    "ecr": 11,
+    "grade": "B"
+   },
+   "12508": {
+    "ecr": 13,
+    "grade": "B-"
+   },
+   "4046": {
+    "ecr": 14,
+    "grade": "C+"
+   },
+   "421": {
+    "ecr": 15,
+    "grade": "C"
+   },
+   "11563": {
+    "ecr": 18,
+    "grade": "C-"
+   },
+   "9221": {
+    "ecr": 1,
+    "grade": "A+"
+   },
+   "9509": {
+    "ecr": 2,
+    "grade": "A+"
+   },
+   "4034": {
+    "ecr": 3,
+    "grade": "A+"
+   },
+   "3198": {
+    "ecr": 4,
+    "grade": "A"
+   },
+   "6813": {
+    "ecr": 5,
+    "grade": "A"
+   },
+   "12527": {
+    "ecr": 6,
+    "grade": "A"
+   },
+   "8151": {
+    "ecr": 7,
+    "grade": "A"
+   },
+   "8138": {
+    "ecr": 8,
+    "grade": "A"
+   },
+   "4866": {
+    "ecr": 9,
+    "grade": "A"
+   },
+   "9226": {
+    "ecr": 10,
+    "grade": "A-"
+   },
+   "9224": {
+    "ecr": 11,
+    "grade": "A-"
+   },
+   "7588": {
+    "ecr": 12,
+    "grade": "A-"
+   },
+   "12507": {
+    "ecr": 13,
+    "grade": "A-"
+   },
+   "6790": {
+    "ecr": 14,
+    "grade": "B+"
+   },
+   "8155": {
+    "ecr": 15,
+    "grade": "B+"
+   },
+   "8150": {
+    "ecr": 16,
+    "grade": "B+"
+   },
+   "5892": {
+    "ecr": 17,
+    "grade": "B"
+   },
+   "11584": {
+    "ecr": 18,
+    "grade": "B"
+   },
+   "12481": {
+    "ecr": 19,
+    "grade": "B"
+   },
+   "13287": {
+    "ecr": 20,
+    "grade": "B"
+   },
+   "7611": {
+    "ecr": 21,
+    "grade": "B"
+   },
+   "7543": {
+    "ecr": 22,
+    "grade": "B-"
+   },
+   "7594": {
+    "ecr": 23,
+    "grade": "B-"
+   },
+   "13286": {
+    "ecr": 24,
+    "grade": "B-"
+   },
+   "12512": {
+    "ecr": 25,
+    "grade": "C+"
+   },
+   "8228": {
+    "ecr": 26,
+    "grade": "C+"
+   },
+   "12490": {
+    "ecr": 27,
+    "grade": "C+"
+   },
+   "8408": {
+    "ecr": 28,
+    "grade": "C"
+   },
+   "11581": {
+    "ecr": 29,
+    "grade": "C"
+   },
+   "12533": {
+    "ecr": 30,
+    "grade": "C"
+   },
+   "6806": {
+    "ecr": 31,
+    "grade": "C"
+   },
+   "5967": {
+    "ecr": 33,
+    "grade": "C"
+   },
+   "7567": {
+    "ecr": 34,
+    "grade": "C"
+   },
+   "12534": {
+    "ecr": 35,
+    "grade": "C"
+   },
+   "12489": {
+    "ecr": 36,
+    "grade": "C"
+   },
+   "7021": {
+    "ecr": 37,
+    "grade": "C"
+   },
+   "11586": {
+    "ecr": 38,
+    "grade": "C-"
+   },
+   "8132": {
+    "ecr": 40,
+    "grade": "D+"
+   },
+   "11583": {
+    "ecr": 41,
+    "grade": "D+"
+   },
+   "8136": {
+    "ecr": 42,
+    "grade": "D"
+   },
+   "12529": {
+    "ecr": 47,
+    "grade": "D"
+   },
+   "9493": {
+    "ecr": 1,
+    "grade": "A+"
+   },
+   "7547": {
+    "ecr": 2,
+    "grade": "A+"
+   },
+   "7564": {
+    "ecr": 3,
+    "grade": "A+"
+   },
+   "9488": {
+    "ecr": 4,
+    "grade": "A+"
+   },
+   "6794": {
+    "ecr": 5,
+    "grade": "A+"
+   },
+   "6786": {
+    "ecr": 6,
+    "grade": "A+"
+   },
+   "8144": {
+    "ecr": 7,
+    "grade": "A"
+   },
+   "7569": {
+    "ecr": 8,
+    "grade": "A"
+   },
+   "8137": {
+    "ecr": 9,
+    "grade": "A"
+   },
+   "7525": {
+    "ecr": 10,
+    "grade": "A"
+   },
+   "8146": {
+    "ecr": 11,
+    "grade": "A"
+   },
+   "10229": {
+    "ecr": 12,
+    "grade": "A"
+   },
+   "4983": {
+    "ecr": 13,
+    "grade": "A"
+   },
+   "8167": {
+    "ecr": 14,
+    "grade": "A"
+   },
+   "8112": {
+    "ecr": 15,
+    "grade": "A"
+   },
+   "11632": {
+    "ecr": 16,
+    "grade": "A"
+   },
+   "2216": {
+    "ecr": 17,
+    "grade": "A-"
+   },
+   "6801": {
+    "ecr": 18,
+    "grade": "A-"
+   },
+   "9487": {
+    "ecr": 19,
+    "grade": "A-"
+   },
+   "7526": {
+    "ecr": 20,
+    "grade": "A-"
+   },
+   "12514": {
+    "ecr": 21,
+    "grade": "A-"
+   },
+   "12526": {
+    "ecr": 22,
+    "grade": "B+"
+   },
+   "2133": {
+    "ecr": 23,
+    "grade": "B"
+   },
+   "12519": {
+    "ecr": 24,
+    "grade": "B"
+   },
+   "8148": {
+    "ecr": 25,
+    "grade": "B-"
+   },
+   "5927": {
+    "ecr": 26,
+    "grade": "B-"
+   },
+   "9997": {
+    "ecr": 27,
+    "grade": "B+"
+   },
+   "4037": {
+    "ecr": 28,
+    "grade": "C+"
+   },
+   "11620": {
+    "ecr": 29,
+    "grade": "C+"
+   },
+   "5846": {
+    "ecr": 30,
+    "grade": "C+"
+   },
+   "11646": {
+    "ecr": 31,
+    "grade": "C+"
+   },
+   "9754": {
+    "ecr": 32,
+    "grade": "C+"
+   },
+   "2449": {
+    "ecr": 33,
+    "grade": "C+"
+   },
+   "11635": {
+    "ecr": 34,
+    "grade": "B"
+   },
+   "6819": {
+    "ecr": 35,
+    "grade": "C"
+   },
+   "10232": {
+    "ecr": 36,
+    "grade": "C+"
+   },
+   "5045": {
+    "ecr": 37,
+    "grade": "C"
+   },
+   "12501": {
+    "ecr": 38,
+    "grade": "C"
+   },
+   "11628": {
+    "ecr": 39,
+    "grade": "C"
+   },
+   "5947": {
+    "ecr": 40,
+    "grade": "C"
+   },
+   "5872": {
+    "ecr": 41,
+    "grade": "C"
+   },
+   "9500": {
+    "ecr": 42,
+    "grade": "C"
+   },
+   "13279": {
+    "ecr": 43,
+    "grade": "C"
+   },
+   "8121": {
+    "ecr": 44,
+    "grade": "C"
+   },
+   "9756": {
+    "ecr": 45,
+    "grade": "C"
+   },
+   "10222": {
+    "ecr": 46,
+    "grade": "C"
+   },
+   "11631": {
+    "ecr": 48,
+    "grade": "C-"
+   },
+   "8126": {
+    "ecr": 49,
+    "grade": "C-"
+   },
+   "8142": {
+    "ecr": 50,
+    "grade": "C-"
+   },
+   "13298": {
+    "ecr": 51,
+    "grade": "C-"
+   },
+   "11624": {
+    "ecr": 53,
+    "grade": "C-"
+   },
+   "1479": {
+    "ecr": 58,
+    "grade": "D"
+   },
+   "13294": {
+    "ecr": 61,
+    "grade": "D-"
+   },
+   "13320": {
+    "ecr": 96,
+    "grade": "F"
+   },
+   "13417": {
+    "ecr": 107,
+    "grade": "F"
+   },
+   "8130": {
+    "ecr": 1,
+    "grade": "A+"
+   },
+   "12517": {
+    "ecr": 2,
+    "grade": "A"
+   },
+   "12518": {
+    "ecr": 3,
+    "grade": "A"
+   },
+   "9484": {
+    "ecr": 4,
+    "grade": "A-"
+   },
+   "10236": {
+    "ecr": 5,
+    "grade": "A-"
+   },
+   "10859": {
+    "ecr": 6,
+    "grade": "B+"
+   },
+   "5022": {
+    "ecr": 7,
+    "grade": "B"
+   },
+   "8131": {
+    "ecr": 8,
+    "grade": "B"
+   },
+   "1466": {
+    "ecr": 9,
+    "grade": "B-"
+   },
+   "7002": {
+    "ecr": 10,
+    "grade": "C+"
+   },
+   "4217": {
+    "ecr": 11,
+    "grade": "C+"
+   },
+   "5012": {
+    "ecr": 12,
+    "grade": "C"
+   },
+   "12506": {
+    "ecr": 13,
+    "grade": "C"
+   },
+   "8110": {
+    "ecr": 14,
+    "grade": "C-"
+   },
+   "7553": {
+    "ecr": 16,
+    "grade": "C-"
+   },
+   "12493": {
+    "ecr": 34,
+    "grade": "F"
+   },
+   "11604": {
+    "ecr": 35,
+    "grade": "F"
+   },
+   "11533": {
+    "ecr": 1,
+    "grade": "A"
+   },
+   "8259": {
+    "ecr": 2,
+    "grade": "B+"
+   },
+   "5189": {
+    "ecr": 3,
+    "grade": "B"
+   },
+   "3451": {
+    "ecr": 4,
+    "grade": "B-"
+   },
+   "11786": {
+    "ecr": 5,
+    "grade": "C+"
+   },
+   "2747": {
+    "ecr": 6,
+    "grade": "C+"
+   },
+   "6650": {
+    "ecr": 12,
+    "grade": "C"
+   },
+   "12015": {
+    "ecr": 14,
+    "grade": "C"
+   },
+   "11539": {
+    "ecr": 15,
+    "grade": "C"
+   },
+   "1945": {
+    "ecr": 16,
+    "grade": "C-"
+   },
+   "PHI": {
+    "ecr": 1,
+    "grade": "A+"
+   },
+   "SEA": {
+    "ecr": 4,
+    "grade": "A-"
+   },
+   "BAL": {
+    "ecr": 5,
+    "grade": "B+"
+   },
+   "LAC": {
+    "ecr": 6,
+    "grade": "B+"
+   },
+   "LAR": {
+    "ecr": 7,
+    "grade": "B"
+   },
+   "HOU": {
+    "ecr": 8,
+    "grade": "B"
+   },
+   "DEN": {
+    "ecr": 12,
+    "grade": "B-"
+   },
+   "PIT": {
+    "ecr": 13,
+    "grade": "C+"
+   },
+   "JAX": {
+    "ecr": 14,
+    "grade": "C"
+   },
+   "DET": {
+    "ecr": 28,
+    "grade": "F"
+   }
+  }
+ },
+ "stats": {},
+ "games": [
+  {
+   "game_id": "401872932",
+   "date": "2026-09-18T00:15Z",
+   "state": "pre",
+   "detail": "9/17 - 8:15 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "BUF",
+   "away": "DET",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 29.5,
+   "away_implied": 25.0,
+   "spread": "BUF -4.5",
+   "total": 54.5,
+   "tv": "Prime Video"
+  },
+  {
+   "game_id": "401872933",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "ATL",
+   "away": "CAR",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 20.5,
+   "away_implied": 23.0,
+   "spread": "CAR -2.5",
+   "total": 43.5,
+   "tv": "FOX"
+  },
+  {
+   "game_id": "401872937",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "CHI",
+   "away": "MIN",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 26.5,
+   "away_implied": 21.0,
+   "spread": "CHI -5.5",
+   "total": 47.5,
+   "tv": "FOX"
+  },
+  {
+   "game_id": "401872939",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "TEN",
+   "away": "PHI",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 16.25,
+   "away_implied": 23.25,
+   "spread": "PHI -7",
+   "total": 39.5,
+   "tv": "FOX"
+  },
+  {
+   "game_id": "401872946",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "NE",
+   "away": "PIT",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 23.0,
+   "away_implied": 18.5,
+   "spread": "NE -4.5",
+   "total": 41.5,
+   "tv": "CBS"
+  },
+  {
+   "game_id": "401872936",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "NYJ",
+   "away": "GB",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 20.0,
+   "away_implied": 24.5,
+   "spread": "GB -4.5",
+   "total": 44.5,
+   "tv": "FOX"
+  },
+  {
+   "game_id": "401872935",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "TB",
+   "away": "CLE",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 25.0,
+   "away_implied": 16.5,
+   "spread": "TB -8.5",
+   "total": 41.5,
+   "tv": "CBS"
+  },
+  {
+   "game_id": "401872938",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "BAL",
+   "away": "NO",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 27.5,
+   "away_implied": 20.0,
+   "spread": "BAL -7.5",
+   "total": 47.5,
+   "tv": "CBS"
+  },
+  {
+   "game_id": "401872934",
+   "date": "2026-09-20T17:00Z",
+   "state": "pre",
+   "detail": "9/20 - 1:00 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "HOU",
+   "away": "CIN",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 24.75,
+   "away_implied": 21.75,
+   "spread": "HOU -3",
+   "total": 46.5,
+   "tv": "CBS"
+  },
+  {
+   "game_id": "401872940",
+   "date": "2026-09-20T20:05Z",
+   "state": "pre",
+   "detail": "9/20 - 4:05 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "DEN",
+   "away": "JAX",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 24.0,
+   "away_implied": 21.5,
+   "spread": "DEN -2.5",
+   "total": 45.5,
+   "tv": "CBS"
+  },
+  {
+   "game_id": "401872941",
+   "date": "2026-09-20T20:05Z",
+   "state": "pre",
+   "detail": "9/20 - 4:05 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "LAC",
+   "away": "LV",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 25.0,
+   "away_implied": 18.5,
+   "spread": "LAC -6.5",
+   "total": 43.5,
+   "tv": "CBS"
+  },
+  {
+   "game_id": "401872944",
+   "date": "2026-09-20T20:25Z",
+   "state": "pre",
+   "detail": "9/20 - 4:25 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "DAL",
+   "away": "WAS",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 27.5,
+   "away_implied": 23.0,
+   "spread": "DAL -4.5",
+   "total": 50.5,
+   "tv": "FOX"
+  },
+  {
+   "game_id": "401872943",
+   "date": "2026-09-20T20:25Z",
+   "state": "pre",
+   "detail": "9/20 - 4:25 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "ARI",
+   "away": "SEA",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 18.5,
+   "away_implied": 22.0,
+   "spread": "SEA -3.5",
+   "total": 40.5,
+   "tv": "FOX"
+  },
+  {
+   "game_id": "401872942",
+   "date": "2026-09-20T20:25Z",
+   "state": "pre",
+   "detail": "9/20 - 4:25 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "SF",
+   "away": "MIA",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 29.5,
+   "away_implied": 16.0,
+   "spread": "SF -13.5",
+   "total": 45.5,
+   "tv": "FOX"
+  },
+  {
+   "game_id": "401872945",
+   "date": "2026-09-21T00:20Z",
+   "state": "pre",
+   "detail": "9/20 - 8:20 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "KC",
+   "away": "IND",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 26.5,
+   "away_implied": 20.0,
+   "spread": "KC -6.5",
+   "total": 46.5,
+   "tv": "NBC"
+  },
+  {
+   "game_id": "401872947",
+   "date": "2026-09-22T00:15Z",
+   "state": "pre",
+   "detail": "9/21 - 8:15 PM EDT",
+   "period": null,
+   "clock": null,
+   "home": "LAR",
+   "away": "NYG",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 27.25,
+   "away_implied": 20.25,
+   "spread": "LAR -7",
+   "total": 47.5,
+   "tv": "ESPN"
+  }
+ ]
+}

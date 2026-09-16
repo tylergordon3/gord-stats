@@ -6,77 +6,77 @@
   "note": "Fetched on each build from getLeagueAnalysisJSON?key=<league_key>, which answers anonymously; see fantasy.league.external.",
   "league_key": "nfl~9b42e042-983c-4e34-b3fa-62e91bf82f79",
   "season": 2026,
-  "captured": "2026-09-15",
+  "captured": "2026-09-16",
   "teams": [
     {
       "team": "DRINK MAYE",
       "team_id": 2,
       "rank": 1,
       "score": 100,
-      "vorp": 111.7
+      "vorp": 112.16
     },
     {
       "team": "CCAM’s Convicts",
       "team_id": 1,
       "rank": 2,
       "score": 98,
-      "vorp": 109.94
+      "vorp": 109.92
     },
     {
       "team": "Professional Fratson",
       "team_id": 3,
       "rank": 3,
       "score": 97,
-      "vorp": 108.05
+      "vorp": 108.26
     },
     {
       "team": "padgett",
       "team_id": 7,
       "rank": 4,
-      "score": 96,
-      "vorp": 107.05
+      "score": 95,
+      "vorp": 107.02
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
       "rank": 5,
-      "score": 92,
-      "vorp": 102.27
+      "score": 91,
+      "vorp": 102.18
     },
     {
       "team": "The Jackson 5",
       "team_id": 10,
       "rank": 6,
-      "score": 90,
-      "vorp": 100.07
+      "score": 89,
+      "vorp": 99.84
     },
     {
       "team": "LGBBQ+",
       "team_id": 9,
       "rank": 7,
-      "score": 88,
-      "vorp": 97.97
+      "score": 87,
+      "vorp": 97.91
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 8,
       "score": 82,
-      "vorp": 91.99
+      "vorp": 91.92
     },
     {
       "team": "The Standard",
       "team_id": 6,
       "rank": 9,
       "score": 80,
-      "vorp": 89.2
+      "vorp": 89.29
     },
     {
       "team": "The Jahmyr Gibbies",
       "team_id": 8,
       "rank": 10,
       "score": 73,
-      "vorp": 81.76
+      "vorp": 81.51
     }
   ]
 }

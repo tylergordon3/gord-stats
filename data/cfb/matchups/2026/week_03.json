@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-16T03:41:24+00:00",
+ "fetched": "2026-09-16T09:36:12+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 189.29,
-     "win_probability": 0.58
+     "projected": 186.19,
+     "win_probability": 0.56
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
      "projected": 177.04,
-     "win_probability": 0.42000000000000004
+     "win_probability": 0.43999999999999995
     }
    ]
   },
@@ -321,20 +321,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468582",
-    "player": "Jaron-Keawe Sagapolutele",
-    "pos": "QB",
-    "team": "CAL",
-    "team_full": "California Golden Bears",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "333084",
     "player": "Rocky Beers",
     "pos": "TE",
@@ -344,6 +330,20 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "405873",
+    "player": "Gio Lopez",
+    "pos": "QB",
+    "team": "WAKE",
+    "team_full": "Wake Forest Demon Deacons",
+    "bye": 8.0,
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -505,20 +505,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "462228",
-    "player": "DJ Vonnahme",
-    "pos": "TE",
-    "team": "IOWA",
-    "team_full": "Iowa Hawkeyes",
-    "bye": 7.0,
-    "status": "D",
-    "status_full": "Doubtful",
-    "injury_note": "Undisclosed",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "468738",
     "player": "Mason Heintschel",
     "pos": "QB",
@@ -581,6 +567,20 @@
     "team": "NW",
     "team_full": "Northwestern Wildcats",
     "bye": 2.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457898",
+    "player": "Benji Blackburn",
+    "pos": "TE",
+    "team": "STAN",
+    "team_full": "Stanford Cardinal",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -801,12 +801,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "469110",
-    "player": "Dre'lon Miller",
-    "pos": "WR",
-    "team": "BAY",
-    "team_full": "Baylor Bears",
-    "bye": 6.0,
+    "yahoo_id": "456077",
+    "player": "Decker DeGraaf",
+    "pos": "TE",
+    "team": "UW",
+    "team_full": "Washington Huskies",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -815,12 +815,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "456077",
-    "player": "Decker DeGraaf",
-    "pos": "TE",
-    "team": "UW",
-    "team_full": "Washington Huskies",
-    "bye": 8.0,
+    "yahoo_id": "457825",
+    "player": "J'Koby Williams",
+    "pos": "RB",
+    "team": "TTU",
+    "team_full": "Texas Tech Red Raiders",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1183,20 +1183,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "336557",
-    "player": "Garrett Oakley",
-    "pos": "TE",
-    "team": "KSU",
-    "team_full": "Kansas State Wildcats",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "334875",
     "player": "Wayne Knight",
     "pos": "RB",
@@ -1304,6 +1290,20 @@
     "status": "Q",
     "status_full": "Questionable",
     "injury_note": "Leg",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "334287",
+    "player": "Noah Bennee",
+    "pos": "TE",
+    "team": "UTAH",
+    "team_full": "Utah Utes",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2539,8 +2539,8 @@
   "405245": 10.72,
   "470260": 10.92,
   "337423": 10.19,
-  "468582": 26.35,
   "333084": 8.98,
+  "405873": 18.16,
   "900104": 16.18,
   "404164": 30.4,
   "404635": 19.67,
@@ -2552,12 +2552,12 @@
   "406200": 7.77,
   "457591": 14.05,
   "327462": 15.11,
-  "462228": 9.73,
   "468738": 24.28,
   "404055": 12.71,
   "336811": 10.61,
   "404437": 10.54,
   "451329": 8.82,
+  "457898": 11.11,
   "900028": 16.08,
   "470211": 32.18,
   "334043": 29.09,
@@ -2573,8 +2573,8 @@
   "405249": 28.03,
   "471560": 13.91,
   "335616": 7.48,
-  "469110": 4.22,
   "456077": 8.38,
+  "457825": 20.65,
   "900011": 10.26,
   "405071": 23.49,
   "469436": 21.45,
@@ -2600,7 +2600,6 @@
   "456020": 21.65,
   "404730": 16.27,
   "470164": 14.32,
-  "336557": 3.1,
   "334875": 15.54,
   "467588": 16.03,
   "482179": 14.48,
@@ -2609,6 +2608,7 @@
   "457622": 11.11,
   "338965": 10.92,
   "463244": 12.3,
+  "334287": 2.01,
   "900083": 13.42,
   "455500": 28.32,
   "404287": 31.52,
