@@ -170,7 +170,8 @@ def game_for(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: di
     if not games:
         return None
     g = games[0]
-    return pd.Series({"opp": g["opp"], "opp_rank": g.get("opp_rank"), "home": g["home"],
+    return pd.Series({"opp": g["opp"], "opp_id": g.get("opp_id"),
+                      "opp_rank": g.get("opp_rank"), "home": g["home"],
                       "kickoff": g["date"], "state": g["state"], "game_id": g.get("game_id"),
                       "score_for": g["score_for"], "score_against": g["score_against"]})
 

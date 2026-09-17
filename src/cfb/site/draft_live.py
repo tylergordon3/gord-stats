@@ -52,7 +52,7 @@ import pandas as pd
 
 from cfb import projections, schools as schools_mod, yahoo
 from cfb.config import (
-    DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, LEAGUE_URL, SEASON, WEB_DIR,
+    DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, LEAGUE_URL, MY_TEAM, SEASON, WEB_DIR,
 )
 from cfb.site import write_page
 
@@ -69,10 +69,9 @@ _FIELDS = ["player", "pos", "team", "school", "bye", "adp", "pct_drafted",
 # Positions the filter chips offer, in the order a roster fills.
 POSITIONS = ["QB", "RB", "WR", "TE", "DEF"]
 
-# Whose board this is, by team name. The page opens on this roster rather than
-# asking, since it is read on draft night with a clock running; the team menu
-# still changes it, and the choice is remembered per browser.
-MY_TEAM = "Puntaholics"
+# Whose board this is (config.MY_TEAM). The page opens on this roster rather
+# than asking, since it is read on draft night with a clock running; the team
+# menu still changes it, and the choice is remembered per browser.
 
 
 def _cell(value):

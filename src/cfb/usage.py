@@ -26,6 +26,7 @@ parquet after that.
 import argparse
 import json
 import re
+import unicodedata
 
 import pandas as pd
 
@@ -34,18 +35,79 @@ from cfb.config import DATA_DIR, SEASON
 
 # "to #0 E.Mitchell caught at ..." / "incomplete short left to #1 P.Billups II"
 _TARGET = re.compile(r"\bto #(\d+) ([A-Z][\w.'-]*(?: [\w.'-]+)*?)(?=,| caught| thrown| for |$)")
+# The feed's other two voices, neither with a jersey number:
+# "O. McCown pass to B. Young Jr. for 1 yd" and "Coy Eakin 32 Yd pass from Will Hammond".
+_TARGET_PLAIN = re.compile(r"\bpass (?:complete |incomplete )?to ([A-Z][\w.'-]*(?: [\w.'-]+)*?)"
+                           r"(?=,| for | \(|$)")
+_TARGET_SCORE = re.compile(r"^([A-Z][\w.'-]*(?: [\w.'-]+)*?) \d+ Yde? pass from ", re.I)
 _SACK = re.compile(r"\bsack(?:ed)?\b", re.I)
+_SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
+
+
+def _fold(text: str) -> str:
+    """Lower case, accents and punctuation off, generational suffix dropped -
+    "Melin Öhrström" and "Barney Jr." have to meet the roster's spelling."""
+    flat = unicodedata.normalize("NFKD", str(text)).encode("ascii", "ignore").decode()
+    words = [w for w in re.sub(r"[^a-z ]", "", flat.lower().replace("-", " ")).split()
+             if w not in _SUFFIXES]
+    return " ".join(words)
+
+
+def _split(token: str) -> tuple:
+    """"J.Burton" / "J. Burton" / "Jalen Burton" -> ("j", "burton").
+
+    Play text abbreviates the first name to an initial and can carry a suffix
+    or a two-word surname, so the surname is everything after the first name
+    with the suffix folded away.
+    """
+    token = str(token).strip()
+    if "." in token.split(" ")[0]:
+        first, tail = token.split(".", 1)
+    elif " " in token:
+        first, tail = token.split(" ", 1)
+    else:
+        first, tail = "", token
+    return _fold(first)[:1], _fold(tail)
 
 
 def _surname(token: str) -> str:
-    """"J.Burton" -> "burton"; "P.Billups II" -> "billups".
+    return _split(token)[1]
 
-    Play text abbreviates the first name to an initial and can carry a suffix,
-    so the surname is what sits between the initial's dot and any suffix.
+
+class _Receivers:
+    """One offence's names, looked up the three ways the play text allows.
+
+    Jersey and surname first - exact, but CFBD's roster numbers go stale with
+    every transfer window (Nebraska matched 6 of 32 passes on them). So the
+    fallbacks ignore the number: initial and surname, then surname alone, each
+    only where it names exactly one player. The box score's own names are
+    folded in because a freshman who caught a pass is in the box before he is
+    on the roster.
     """
-    tail = token.split(".", 1)[1] if "." in token else token
-    parts = [w for w in tail.split() if w]
-    return parts[0].lower() if parts else ""
+
+    def __init__(self, jerseys: dict, names: dict):
+        self.jersey = {}
+        for key, pid in jerseys.items():
+            number, _, last = key.partition(" ")
+            self.jersey[(number, _fold(last))] = pid
+        by_initial, by_last = {}, {}
+        for pid, name in names.items():
+            initial, last = _split(name)
+            if last:
+                by_initial.setdefault((initial, last), set()).add(pid)
+                by_last.setdefault(last, set()).add(pid)
+        self.initial = {k: next(iter(v)) for k, v in by_initial.items() if len(v) == 1}
+        self.last = {k: next(iter(v)) for k, v in by_last.items() if len(v) == 1}
+
+    def find(self, token: str, jersey: str = None):
+        initial, last = _split(token)
+        if jersey is not None:
+            pid = self.jersey.get((str(int(jersey)), last))
+            if pid:
+                return pid
+        return self.initial.get((initial, last)) or self.last.get(last)
+
+
 _STATS = {("rushing", "CAR"): "carries", ("rushing", "YDS"): "rush_yds",
           ("rushing", "TD"): "rush_td", ("receiving", "REC"): "rec",
           ("receiving", "YDS"): "rec_yds", ("receiving", "TD"): "rec_td",
@@ -122,25 +184,40 @@ def _box(season: int, week: int) -> dict:
     return out
 
 
-def _targets(season: int, week: int, roster: dict) -> dict:
+def _targets(season: int, week: int, roster: dict, box: dict = None) -> dict:
     """{(team, athlete id): targets} parsed out of the week's play text.
 
     Only the play text names the intended receiver, and only by jersey number
-    and abbreviated name, so each is matched inside the offence's own roster.
-    A receiver who cannot be matched is simply not counted - the team's pass
-    attempts come from the box score either way, so nobody's share inflates.
+    and abbreviated name, so each is matched inside the offence's own names
+    (_Receivers). A receiver who cannot be matched is simply not counted - the
+    team's pass attempts come from the box score either way, so nobody's share
+    inflates.
     """
-    out = {}
-    by_team = roster["by_team"]
+    out, finders = {}, {}
+    by_team, who = roster["by_team"], roster["who"]
+    box_names = {}
+    for (team, pid), row in (box or {}).items():
+        box_names.setdefault(team, {})[pid] = row["player"]
+
+    def finder(team: str) -> _Receivers:
+        if team not in finders:
+            jerseys = by_team.get(team) or {}
+            names = {pid: who[pid][0] for pid in jerseys.values() if pid in who}
+            names.update(box_names.get(team) or {})
+            finders[team] = _Receivers(jerseys, names)
+        return finders[team]
+
     for play in cfbd.get("/plays", year=season, week=week, classification="fbs") or []:
         text = str(play.get("playText") or "")
         if "pass" not in text.lower() or _SACK.search(text):
             continue
         offense = str(play.get("offense") or "")
         m = _TARGET.search(text)
-        if not m:
-            continue
-        pid = (by_team.get(offense) or {}).get(f"{int(m.group(1))} {_surname(m.group(2))}")
+        if m:
+            pid = finder(offense).find(m.group(2), m.group(1))
+        else:
+            m = _TARGET_PLAIN.search(text) or _TARGET_SCORE.search(text)
+            pid = finder(offense).find(m.group(1)) if m else None
         if pid:
             out[(offense, pid)] = out.get((offense, pid), 0) + 1
     return out
@@ -161,7 +238,7 @@ def week_rows(season: int, week: int, roster: dict) -> list:
     box = _box(season, week)
     if not box:
         return []
-    targets = _targets(season, week, roster)
+    targets = _targets(season, week, roster, box)
     ppa = _ppa(season, week)
     who = roster["who"]
     # The denominators come from the box score itself: a team's carries are its
@@ -220,22 +297,34 @@ def load(season: int = SEASON) -> pd.DataFrame:
 
 
 def shares(frame: pd.DataFrame, weeks: int = None) -> pd.DataFrame:
-    """Per player: games, carries and targets, and the share of his team's
-    that is. `weeks` limits it to the most recent N played weeks."""
+    """Per player: games, carries, targets and catches, and the share of his
+    team's that is. `weeks` limits it to the most recent N played weeks.
+
+    A `fpts` column on the way in (the page scores each game with the league's
+    modifiers) comes out summed, so the caller can divide it by games."""
     if frame.empty:
         return frame
     if weeks:
         keep = sorted(frame["week"].unique())[-weeks:]
         frame = frame[frame["week"].isin(keep)]
+    frame = frame.copy()
+    # Catches share the way carries do: against the team's own players added up.
+    frame["team_rec"] = frame.groupby(["team", "game_id"])["rec"].transform("sum")
+    if "fpts" not in frame:
+        frame["fpts"] = float("nan")
     grouped = frame.groupby(["team", "athlete_id", "player", "pos"], as_index=False).agg(
         games=("week", "nunique"), carries=("carries", "sum"), rush_yds=("rush_yds", "sum"),
         rush_td=("rush_td", "sum"), targets=("targets", "sum"), rec=("rec", "sum"),
         rec_yds=("rec_yds", "sum"), rec_td=("rec_td", "sum"), ppa=("ppa", "mean"),
-        team_carries=("team_carries", "sum"), team_pass_att=("team_pass_att", "sum"))
+        pass_yds=("pass_yds", "sum"), pass_td=("pass_td", "sum"), fpts=("fpts", "sum"),
+        team_carries=("team_carries", "sum"), team_pass_att=("team_pass_att", "sum"),
+        team_rec=("team_rec", "sum"))
     grouped["car_share"] = (grouped["carries"] / grouped["team_carries"]).where(
         grouped["team_carries"] > 0)
     grouped["tgt_share"] = (grouped["targets"] / grouped["team_pass_att"]).where(
         grouped["team_pass_att"] > 0)
+    grouped["rec_share"] = (grouped["rec"] / grouped["team_rec"]).where(
+        grouped["team_rec"] > 0)
     return grouped
 
 

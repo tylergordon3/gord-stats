@@ -67,6 +67,8 @@ def body() -> str:
      scoring, standings and power, and the draft graded.</p>
   <p class="home-card-links">
     <a href="/cfb/matchups/">Matchups</a> ·
+    <a href="/cfb/roster/">Team Dashboard</a> ·
+    <a href="/cfb/usage/">Usage</a> ·
     <a href="/cfb/league/">League Dashboard</a> ·
     <a href="/cfb/live/">Draft Review</a>
   </p>

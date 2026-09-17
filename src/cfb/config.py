@@ -21,6 +21,9 @@ LEAGUE_KEY = f"{GAME_KEY}.l.{LEAGUE_ID}"
 LEAGUE_URL = f"https://college.fantasysports.yahoo.com/cfb/{LEAGUE_ID}"
 
 LEAGUE_TEAMS = 10
+# Whose site this is, by Yahoo team name: the roster "My team" filters and the
+# team dashboard open on until a browser picks another (remembered per browser).
+MY_TEAM = "Puntaholics"
 LEAGUE_TZ = ZoneInfo("America/New_York")
 
 DATA_DIR = paths.DATA / "cfb"
