@@ -378,7 +378,9 @@ def render_home():
         html = _by_next_clock(
             [("cbb", _cbb_card(today)), ("fantasy", _fantasy_card()),
              ("cfb", _cfb_card()), (None, _wnba_card(in_season=True))])
-    html += _cfb_graphics(today)
+    # The graphics lead: they are the thing worth looking at today, and the
+    # preview cards are navigation, which can sit under them.
+    html = _cfb_graphics(today) + html
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

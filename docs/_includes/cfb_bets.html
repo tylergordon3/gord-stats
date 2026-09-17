@@ -43,9 +43,19 @@
   font-variant-numeric:tabular-nums}
 .hc-li img{width:16px;height:16px;object-fit:contain;border:none;padding:0;margin:0;
   box-shadow:none;background:none;border-radius:0;flex:none}
+/* Ohio State, Penn State and a dozen others ship a near-black mark, which on
+   the dark theme is a 16px hole. A white disc behind every logo is the only
+   treatment that works for all of them - a halo leaves dark-on-dark still
+   dark. */
+@media (prefers-color-scheme:dark){
+  .hc-li img{background:#fff;border-radius:50%;padding:1px;box-sizing:border-box}
+}
 .hc-li .hc-tm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hc-li.hc-split{background:#fdf6e3}
-@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#33301a}}
+.hc-li.hc-split{background:#fdf3d7}
+@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#2f2a16}}
+.hc-key{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--hc-mute)}
+.hc-key i{width:11px;height:11px;border-radius:3px;background:#fdf3d7;display:inline-block}
+@media (prefers-color-scheme:dark){.hc-key i{background:#2f2a16}}
 @media (max-width:560px){
   .hc-cols{gap:6px}
   .hc-li{font-size:11.5px;gap:3px;padding:2px 2px}

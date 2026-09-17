@@ -100,9 +100,19 @@ _CSS = """<style>
   font-variant-numeric:tabular-nums}
 .hc-li img{width:16px;height:16px;object-fit:contain;border:none;padding:0;margin:0;
   box-shadow:none;background:none;border-radius:0;flex:none}
+/* Ohio State, Penn State and a dozen others ship a near-black mark, which on
+   the dark theme is a 16px hole. A white disc behind every logo is the only
+   treatment that works for all of them - a halo leaves dark-on-dark still
+   dark. */
+@media (prefers-color-scheme:dark){
+  .hc-li img{background:#fff;border-radius:50%;padding:1px;box-sizing:border-box}
+}
 .hc-li .hc-tm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hc-li.hc-split{background:#fdf6e3}
-@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#33301a}}
+.hc-li.hc-split{background:#fdf3d7}
+@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#2f2a16}}
+.hc-key{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--hc-mute)}
+.hc-key i{width:11px;height:11px;border-radius:3px;background:#fdf3d7;display:inline-block}
+@media (prefers-color-scheme:dark){.hc-key i{background:#2f2a16}}
 @media (max-width:560px){
   .hc-cols{gap:6px}
   .hc-li{font-size:11.5px;gap:3px;padding:2px 2px}
@@ -183,26 +193,39 @@ def top25_html(limit: int = 25) -> str:
                 if team[s] is not None and (s != "ap" or team[s] <= 25)]
         return (max(seen) - min(seen)) if len(seen) > 1 else 0
 
+    def where(team) -> str:
+        """Each source's rank for one team, for the row's tooltip."""
+        return " \u00b7 ".join(
+            f"{label.replace(' Poll', '').replace('ESPN ', '')} "
+            + (str(team[key]) if team[key] is not None else "unranked")
+            for key, label in sources)
+
     columns = []
     for key, label in sources:
         items = []
         for rank, team_id, team in _ordered(teams, key, limit):
             logo = (f"<img src='{LOGO.format(team_id=escape(str(team_id)))}' alt='' "
                     f"loading='lazy'>")
-            argued = " hc-split" if spread(team) >= 8 else ""
-            items.append(f"<li class='hc-li{argued}'><span class='hc-n'>{rank}</span>"
+            gap = spread(team)
+            argued = " hc-split" if gap >= 8 else ""
+            tip = escape(where(team) + (f" - {gap} places apart" if gap >= 8 else ""),
+                         quote=True)
+            items.append(f"<li class='hc-li{argued}' title=\"{tip}\">"
+                         f"<span class='hc-n'>{rank}</span>"
                          f"{logo}<span class='hc-tm'>{escape(str(team['name']))}</span></li>")
         columns.append(f"<div class='hc-col'><div class='hc-src'>{label}</div>"
                        f"<ol class='hc-list'>{''.join(items)}</ol></div>")
 
     stamp = datetime.now().strftime("%b %-d")
-    note = ("Highlighted where the three disagree by eight or more places."
-            if show_ap else "Highlighted where the two disagree by eight or more places.")
+    many = "three" if show_ap else "two"
+    key = ("<span class='hc-key'><i></i>shaded: the "
+           f"{many} lists put this team 8+ places apart</span>")
     return (_CSS + "<div class='hc'>"
             f"<div class='hc-head'><b>Top 25 &middot; {SEASON}</b>"
             f"<span class='hc-when'>gordstats.com &middot; {stamp}</span></div>"
             f"<div class='hc-cols'>{''.join(columns)}</div>"
-            f"<p class='hc-note'>{note}</p></div>")
+            f"<p class='hc-note'>{key} &mdash; hover a team for all "
+            f"{many} of its ranks.</p></div>")
 
 
 # --------------------------------------------------------------------------- #

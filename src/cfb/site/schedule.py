@@ -575,6 +575,7 @@ def _frame() -> pd.DataFrame:
                  "line_hist": _line_history()})
 
     info = gameinfo.load(SEASON)
+    cfbd_wx = cfbd.weather()
     confs = espn.conferences()
     rows = []
     for g in df.itertuples():
@@ -596,7 +597,7 @@ def _frame() -> pd.DataFrame:
             "fpi_wp": e.get("espn_home_wp"),
             "last5_home": e.get("last5_home"), "last5_away": e.get("last5_away"),
             "mq": e.get("mq"),
-            "weather": e.get("weather"),
+            "weather": _merge_weather(e.get("weather"), cfbd_wx.get(str(g.game_id))),
             "home_conf": confs.get(str(g.home_id), ""),
             "away_conf": confs.get(str(g.away_id), ""),
         })
@@ -959,22 +960,58 @@ def _wx_icon(cond) -> str:
     return "&#9729;&#65039;"                         # cloud
 
 
+def _merge_weather(espn_wx: dict | None, cfbd_wx: dict | None) -> dict | None:
+    """One weather block out of the two feeds, which are good at different things.
+
+    ESPN forecasts about ten days out and freezes at kickoff, so it is what a
+    reader sees for an upcoming game - but it carries only a gust, and nothing
+    at all for the other two thirds of the season. CFBD lands a few days out
+    and keeps measuring through the game, so it supplies sustained wind, the
+    indoor flag and, once a game is over, what the conditions actually were.
+    """
+    if not espn_wx and not cfbd_wx:
+        return None
+    out = dict(espn_wx or {})
+    if cfbd_wx:
+        if cfbd_wx.get("indoors"):
+            out["indoors"] = True
+        if cfbd_wx.get("wind") is not None:
+            out["wind"] = cfbd_wx["wind"]
+        if out.get("temp") is None and cfbd_wx.get("temp") is not None:
+            out["temp"] = cfbd_wx["temp"]
+        # Rain in inches, not ESPN's chance of rain: both are worth keeping,
+        # and only this one says it is actually raining.
+        if cfbd_wx.get("precip") is not None:
+            out["rain_in"] = cfbd_wx["precip"]
+        if cfbd_wx.get("snow"):
+            out["snow_in"] = cfbd_wx["snow"]
+        if not out.get("cond") and cfbd_wx.get("text"):
+            out["text"] = cfbd_wx["text"]
+    return out
+
+
 def _wx_text(g) -> str:
     """The forecast line under the kickoff, or nothing when there is none."""
     wx = g.weather if isinstance(g.weather, dict) else None
     if not wx:
         return ""
+    if wx.get("indoors"):
+        return '<span class="t-wx">&#127967;&#65039; Indoors</span>'
     main = []
     temp = wx.get("temp")
     if temp is not None:
         main.append(f"{temp:.0f}&deg;")
-    text = gameinfo.weather_text(wx)
+    text = gameinfo.weather_text(wx) or wx.get("text") or ""
     if text:
         main.append(escape(text))
     sub = []
     if wx.get("precip") is not None and wx["precip"] > 0:
         sub.append(f"rain {wx['precip']:.0f}%")
-    if wx.get("gust") is not None and wx["gust"] >= 10:
+    # Sustained wind is the number that decides whether a game plays windy;
+    # ESPN only has the gust, so this is the CFBD half of the block.
+    if wx.get("wind") is not None and wx["wind"] >= 10:
+        sub.append(f"wind {wx['wind']:.0f} mph")
+    elif wx.get("gust") is not None and wx["gust"] >= 10:
         sub.append(f"gusts {wx['gust']:.0f} mph")
     return (f'<span class="t-wx">{_wx_icon(wx.get("cond"))} {" ".join(main)}'
             + (f'<span class="sub">{" &middot; ".join(sub)}</span>' if sub else "")

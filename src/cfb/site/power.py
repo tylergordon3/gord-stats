@@ -480,7 +480,7 @@ SHOW_GAME_CONTROL = False
 TRACKED = {
     "rank": ("rank", 0), "fpi": ("num", 1), "ap": ("rank", 0), "numwins": ("num", 0),
     "gs": ("num", 1), "gs_rank": ("rank", 0),
-    "sp": ("num", 1), "sp_rank": ("rank", 0),
+    "sp": ("num", 1), "sp_rank": ("rank", 0), "elo": ("num", 0),
     "projectedw": ("num", 1), "probmakeplayoffs": ("num", 1), "probwinconf": ("num", 1),
     "prob6wins": ("num", 1), "probwinout": ("num", 1), "probwintitle": ("num", 1),
     "avgsosrank": ("rank", 0), "sosremainingrank": ("rank", 0),
@@ -637,7 +637,7 @@ def body() -> str:
           for _, r in gs_table.iterrows()}
     # SP+ (CollegeFootballData), bridged onto ESPN ids the way the schedule
     # page does it.
-    sp = cfbd.sp_by_id()
+    sp, elo = cfbd.sp_by_id(), cfbd.elo_by_id()
     for rank, t in enumerate(teams, 1):
         t["rank"] = rank
         t["ap"] = ap_ranks.get(t["id"]) if show_ap else None
@@ -645,6 +645,7 @@ def body() -> str:
         entry = sp.get(t["id"]) or {}
         t["sp"] = entry.get("rating")
         t["sp_rank"] = entry.get("rank")
+        t["elo"] = elo.get(t["id"])
 
     bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
     show_move = bool(bases)
@@ -712,6 +713,11 @@ def body() -> str:
     if any(t.get("sp") is not None for t in teams):
         cols.append(col(("rating",), "SP+", "Bill Connelly's SP+ (CollegeFootballData): "
                         "points better than average, with its rank", "desc", _sp, "sp_rank"))
+    if any(t.get("elo") is not None for t in teams):
+        cols.append(col(("rating",), "Elo", "CollegeFootballData's Elo rating - a chess "
+                        "rating for football: every result moves it, nothing else does",
+                        "desc", lambda t: (t["elo"], "" if t["elo"] is None else f"{t['elo']:.0f}"),
+                        "elo"))
     if SHOW_PROJ_RECORD:
         cols.append(col(("rating",), "Proj W-L", "ESPN's simulation of the full schedule",
                         "desc", lambda t: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}"),
@@ -799,7 +805,8 @@ def body() -> str:
         "predictions run on, with its rank beside it; sort by it for our order, and "
         f"Move then counts places climbed in our ranking. <strong>SP+</strong> is Bill "
         f"Connelly's rating, from CollegeFootballData - a fourth opinion on the same "
-        f"scale. The <strong>FPI</strong> and "
+        f"scale - and <strong>Elo</strong> the same source's chess-style rating, which "
+        f"moves only on results. The <strong>FPI</strong> and "
         f"<strong>GordStats</strong> cells carry how far that rating itself has moved over "
         f"the same window, beside the number.{move_note}</p>"
         "<p class='power-note'><strong>Rating</strong> is the ratings, each with its rank, "

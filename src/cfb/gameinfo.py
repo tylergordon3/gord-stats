@@ -276,6 +276,9 @@ def weather_severity(wx: dict | None) -> float:
     """
     if not wx:
         return 0.0
+    # A dome has no weather, whatever the forecast for the car park says.
+    if wx.get("indoors"):
+        return 0.0
     cond = wx.get("cond")
     temp, gust, precip = wx.get("temp"), wx.get("gust"), wx.get("precip")
     score = 0.0

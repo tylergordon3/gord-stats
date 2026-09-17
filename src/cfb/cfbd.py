@@ -13,7 +13,17 @@ the cache only, never from the network at render time.
   - sp_ratings()       Bill Connelly's SP+ per team: overall, offence, defence
                        ratings and ranks (preseason projections until real
                        games replace them).
+  - elo_ratings()      CFBD's Elo per team. Unlike SP+ it is point-in-time -
+                       asking for a past week returns that week's number - so
+                       it is the one rating here that could honestly be fed to
+                       a model fitted on history.
   - pregame_wp(week)   CFBD's own pregame home win probability per game.
+  - weather()          conditions per game: temperature, sustained wind, rain
+                       and snow, and whether the stadium is indoors. Actuals
+                       once a game is played, a forecast only a few days out -
+                       the opposite of ESPN's block, which is a forecast ten
+                       days ahead and frozen at kickoff, so the two
+                       complement each other rather than compete.
   - records()          each team's record with home/away/conference splits,
                        and - the useful part - CFBD's teamId, which is ESPN's,
                        so SP+ (names only) can be keyed by id.
@@ -161,6 +171,27 @@ def _parse_wp(payload) -> dict:
             if g.get("gameId") is not None and g.get("homeWinProbability") is not None}
 
 
+def _parse_elo(payload) -> dict:
+    """team name -> Elo rating."""
+    return {t["team"]: t.get("elo") for t in payload or []
+            if t.get("team") and t.get("elo") is not None}
+
+
+def _parse_weather(payload) -> dict:
+    """game id -> conditions. One call covers the whole season (~3,200 games)."""
+    out = {}
+    for g in payload or []:
+        if g.get("id") is None:
+            continue
+        out[str(g["id"])] = {
+            "temp": g.get("temperature"), "wind": g.get("windSpeed"),
+            "precip": g.get("precipitation"), "snow": g.get("snowfall"),
+            "humidity": g.get("humidity"), "indoors": bool(g.get("gameIndoors")),
+            "text": g.get("weatherCondition") or "",
+        }
+    return out
+
+
 def _parse_records(payload) -> dict:
     """ESPN team id -> {team, total, home, away, conf} with 'W-L' strings"""
     def wl(block):
@@ -212,6 +243,12 @@ def capture(refresh: bool = False) -> dict:
         counts["wp"] = len(_cached("wp", DAILY_AGE_HOURS, pull_wp, refresh) or {})
     counts["sp"] = len(_cached("sp", DAILY_AGE_HOURS,
                                lambda: _parse_sp(_get("ratings/sp", year=SEASON)), refresh) or {})
+    counts["elo"] = len(_cached("elo", DAILY_AGE_HOURS,
+                                lambda: _parse_elo(_get("ratings/elo", year=SEASON)),
+                                refresh) or {})
+    counts["weather"] = len(_cached("weather", DAILY_AGE_HOURS,
+                                    lambda: _parse_weather(_get("games/weather", year=SEASON)),
+                                    refresh) or {})
     counts["records"] = len(_cached("records", DAILY_AGE_HOURS,
                                     lambda: _parse_records(_get("records", year=SEASON)),
                                     refresh) or {})
@@ -233,6 +270,25 @@ def pregame_wp() -> dict:
 
 def records() -> dict:
     return _read("records") or {}
+
+
+def weather() -> dict:
+    return _read("weather") or {}
+
+
+def elo_ratings() -> dict:
+    return _read("elo") or {}
+
+
+def elo_by_id() -> dict:
+    """ESPN team id -> Elo, bridged through the records feed's ids the same
+    way SP+ is: both name their teams, and only records carries the id."""
+    elo, out = elo_ratings(), {}
+    for team_id, rec in records().items():
+        got = elo.get(rec.get("team"))
+        if got is not None:
+            out[str(team_id)] = got
+    return out
 
 
 def sp_by_id() -> dict:
