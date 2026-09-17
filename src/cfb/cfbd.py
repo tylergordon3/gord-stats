@@ -18,11 +18,14 @@ the cache only, never from the network at render time.
                        and - the useful part - CFBD's teamId, which is ESPN's,
                        so SP+ (names only) can be keyed by id.
 
-The free tier allows about a thousand calls a month (`X-CallLimit-Remaining`
-comes back on every response), and the site builds several times a day, so
-every fetch here is gated on the cache's age: lines every LINES_AGE_HOURS for
-the weeks inside WINDOW_DAYS, everything else once a day. A build that cannot
-reach CFBD keeps serving the last cache.
+The plan allows 75,000 calls a month (`X-CallLimit-Remaining` comes back on
+every response), which a handful of builds a day cannot get near: lines
+refresh every LINES_AGE_HOURS for the weeks inside WINDOW_DAYS, the rest every
+DAILY_AGE_HOURS. It was a thousand calls a month until 2026-09-17, which is
+why these numbers used to be so conservative - the window was three weeks and
+lines moved once every six hours, so a line captured at noon was the one the
+page showed at six. A build that cannot reach CFBD keeps serving the last
+cache.
 
     python -m cfb.cfbd              # refresh what is stale, print coverage
     python -m cfb.cfbd --refresh
@@ -44,9 +47,14 @@ CFBD_DIR = DATA_DIR / "cfbd"
 API = "https://api.collegefootballdata.com"
 _TIMEOUT = 40
 
-WINDOW_DAYS = 21
-LINES_AGE_HOURS = 6
-DAILY_AGE_HOURS = 24
+# A month of lines rather than three weeks, refreshed every build rather than
+# four times a day. At ~5 weeks inside the window that is ~5 calls per build,
+# ~30 a day, ~900 a month against a 75,000 allowance.
+WINDOW_DAYS = 28
+LINES_AGE_HOURS = 1
+# SP+ moves once a week and records after each game; six hours is well inside
+# both, and it means a Saturday evening build shows Saturday's results.
+DAILY_AGE_HOURS = 6
 
 
 def _key() -> str | None:

@@ -37,7 +37,7 @@ from html import escape
 import pandas as pd
 import requests
 
-from cfb import espn, predict
+from cfb import cfbd, espn, predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import teams as teams_page
 from cfb.site import write_page
@@ -480,6 +480,7 @@ SHOW_GAME_CONTROL = False
 TRACKED = {
     "rank": ("rank", 0), "fpi": ("num", 1), "ap": ("rank", 0), "numwins": ("num", 0),
     "gs": ("num", 1), "gs_rank": ("rank", 0),
+    "sp": ("num", 1), "sp_rank": ("rank", 0),
     "projectedw": ("num", 1), "probmakeplayoffs": ("num", 1), "probwinconf": ("num", 1),
     "prob6wins": ("num", 1), "probwinout": ("num", 1), "probwintitle": ("num", 1),
     "avgsosrank": ("rank", 0), "sosremainingrank": ("rank", 0),
@@ -554,6 +555,15 @@ def _gordstats(t) -> tuple:
                      f"<span class='pwr-chg' data-chg='gs'>{t['gs_chg']}</span>")
 
 
+def _sp(t) -> tuple:
+    """The SP+ cell: Bill Connelly's rating with its rank, same shape as ours."""
+    if t.get("sp") is None:
+        return None, ""
+    rank = f"<span class='gs-rk'>{t['sp_rank']}</span>" if t.get("sp_rank") else ""
+    return t["sp"], (rank + f"{t['sp']:+.1f}"
+                     + f"<span class='pwr-chg' data-chg='sp'>{t['sp_chg']}</span>")
+
+
 def _fpi(t) -> tuple:
     """The FPI cell: rank beside rating, the same shape as GordStats."""
     return t["fpi"], (f"<span class='gs-rk'>{t['rank']}</span>{t['fpi']:+.1f}"
@@ -625,10 +635,16 @@ def body() -> str:
     gs_table = teams_page._standings(frame, model, names)
     gs = {str(r["team"]): (float(r["rating"]), int(r["rank"]), str(r["name"]))
           for _, r in gs_table.iterrows()}
+    # SP+ (CollegeFootballData), bridged onto ESPN ids the way the schedule
+    # page does it.
+    sp = cfbd.sp_by_id()
     for rank, t in enumerate(teams, 1):
         t["rank"] = rank
         t["ap"] = ap_ranks.get(t["id"]) if show_ap else None
         t["gs"], t["gs_rank"], t["gs_name"] = gs.get(t["id"], (None, None, None))
+        entry = sp.get(t["id"]) or {}
+        t["sp"] = entry.get("rating")
+        t["sp_rank"] = entry.get("rank")
 
     bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
     show_move = bool(bases)
@@ -646,7 +662,7 @@ def body() -> str:
     # on; CHANGE_JS redraws them when another window is picked.
     opening_win = deltas.get(first_win, {}) if first_win else {}
     for i, t in enumerate(teams):
-        for field, key in (("fpi", "fpi_chg"), ("gs", "gs_chg")):
+        for field, key in (("fpi", "fpi_chg"), ("gs", "gs_chg"), ("sp", "sp_chg")):
             vals = opening_win.get(field)
             t[key] = _chg(vals[i] if vals else None, TRACKED[field][1])
 
@@ -693,6 +709,9 @@ def body() -> str:
             "average FBS team, the number the predictions run on - with its rank",
             "desc", _gordstats, "gs_rank"),
     ]
+    if any(t.get("sp") is not None for t in teams):
+        cols.append(col(("rating",), "SP+", "Bill Connelly's SP+ (CollegeFootballData): "
+                        "points better than average, with its rank", "desc", _sp, "sp_rank"))
     if SHOW_PROJ_RECORD:
         cols.append(col(("rating",), "Proj W-L", "ESPN's simulation of the full schedule",
                         "desc", lambda t: (t["projectedw"], f"{t['projectedw']:.1f}-{t['projectedl']:.1f}"),
@@ -778,7 +797,9 @@ def body() -> str:
         "same numbers update with results. <strong>GordStats</strong> is the same idea "
         "from <a href='/cfb/predictions/'>this site's own model</a>, the rating the "
         "predictions run on, with its rank beside it; sort by it for our order, and "
-        f"Move then counts places climbed in our ranking. The <strong>FPI</strong> and "
+        f"Move then counts places climbed in our ranking. <strong>SP+</strong> is Bill "
+        f"Connelly's rating, from CollegeFootballData - a fourth opinion on the same "
+        f"scale. The <strong>FPI</strong> and "
         f"<strong>GordStats</strong> cells carry how far that rating itself has moved over "
         f"the same window, beside the number.{move_note}</p>"
         "<p class='power-note'><strong>Rating</strong> is the ratings, each with its rank, "
@@ -803,7 +824,7 @@ def body() -> str:
                                            "name": [t["name"] for t in teams]},
                                           index=[str(t["id"]) for t in teams]).round(3))
     # The decimals each in-cell change is drawn to, by field.
-    chg = {f: TRACKED[f][1] for f in ("fpi", "gs")}
+    chg = {f: TRACKED[f][1] for f in ("fpi", "gs", "sp")}
     blob = json.dumps({"deltas": deltas, "kinds": kinds, "chg": chg,
                        "when": {win: f"{b['at']:%b %-d}" for win, b in bases.items()}},
                       separators=(",", ":"))
