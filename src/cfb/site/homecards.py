@@ -57,10 +57,10 @@ PARLAY_LEGS = 3
 
 _CSS = """<style>
 .hc{--hc-line:#e5e7eb;--hc-ink:#0f172a;--hc-mute:#64748b;--hc-soft:#f8fafc;
-  --hc-up:#15803d;--hc-down:#b91c1c;--hc-accent:#2a78d6}
+  --hc-up:#15803d;--hc-down:#b91c1c;--hc-accent:#2a78d6;--hc-flag:#d08700}
 @media (prefers-color-scheme:dark){
   .hc{--hc-line:#2b3852;--hc-ink:#e3eaf4;--hc-mute:#aab7c9;--hc-soft:#1b2540;
-    --hc-up:#6ee7b7;--hc-down:#ff9b91;--hc-accent:#3987e5}
+    --hc-up:#6ee7b7;--hc-down:#ff9b91;--hc-accent:#6aa9f0;--hc-flag:#e0a92a}
 }
 .hc table{width:100%;border-collapse:collapse;font-size:13px;margin:0}
 /* The site theme paints every th a dark bar; these are column labels inside a
@@ -82,60 +82,58 @@ _CSS = """<style>
 .hc tr.hc-split td{background:#fdf6e3}
 @media (prefers-color-scheme:dark){.hc tr.hc-split td{background:#33301a}}
 .hc .hc-note{font-size:12px;color:var(--hc-mute);margin:8px 0 0;line-height:1.5}
-/* Three ranked lists, side by side - the shape a poll is read in, and the
-   shape that survives being screenshotted into a group chat. */
+/* One table: the rank written once down the left, the three sources across.
+   Three separate lists repeated the numbers 1-25 three times and, on the dark
+   theme, needed striping to keep the eye on a line - which came out muddy
+   against the highlight. Here the rank column does that job. */
 .hc-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
-  gap:8px;margin:0 0 8px;font-size:15px;color:var(--hc-ink)}
+  gap:8px;margin:0 0 10px;font-size:15px;color:var(--hc-ink)}
 .hc-head .hc-when{font-size:11px;color:var(--hc-mute);text-transform:uppercase;
   letter-spacing:.04em}
-.hc-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.hc-col{min-width:0}
-.hc-src{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-  color:var(--hc-mute);padding:0 0 4px;border-bottom:1px solid var(--hc-line);margin-bottom:2px}
-.hc-list{list-style:none;margin:0;padding:0;counter-reset:none}
-.hc-li{display:flex;align-items:center;gap:5px;padding:2px 3px;border-radius:5px;
-  font-size:13px;color:var(--hc-ink);min-width:0}
-.hc-li:nth-child(even){background:var(--hc-soft)}
-.hc-li .hc-n{min-width:16px;text-align:right;font-size:11px;color:var(--hc-mute);
-  font-variant-numeric:tabular-nums}
-.hc-li img{width:16px;height:16px;object-fit:contain;border:none;padding:0;margin:0;
-  box-shadow:none;background:none;border-radius:0;flex:none}
+table.hc-t25{width:100%;border-collapse:collapse;table-layout:fixed}
+/* The site theme boxes every cell, centres it and stripes the rows; this is a
+   card, so all three are reset here rather than fought row by row. */
+table.hc-t25 th{font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--hc-accent);text-align:left;padding:0 8px 6px;
+  border:0;border-bottom:2px solid var(--hc-line);background:transparent}
+table.hc-t25 th:first-child{width:36px;padding:0}
+table.hc-t25 td{padding:5px 8px;border:0;border-bottom:1px solid var(--hc-line);
+  color:var(--hc-ink);font-size:14px;line-height:1.25;background:transparent;
+  text-align:left;vertical-align:middle;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+table.hc-t25 tbody tr td,table.hc-t25 tbody tr:nth-child(even) td{background:transparent}
+table.hc-t25 tr:last-child td{border-bottom:0}
+td.hc-rk{width:36px;text-align:right;padding:5px 11px 5px 0;color:var(--hc-mute);
+  font-size:12px;font-variant-numeric:tabular-nums;border-bottom-color:transparent}
+/* Specific enough to beat the border reset above, which is two elements and a
+   class and would otherwise flatten the accent bar. */
+table.hc-t25 td.hc-tc{border-left:3px solid transparent}
+td.hc-tc img{width:18px;height:18px;object-fit:contain;border:none;padding:0;
+  margin:0 6px 0 0;box-shadow:none;background:none;border-radius:0;
+  vertical-align:middle}
 /* Ohio State, Penn State and a dozen others ship a near-black mark, which on
-   the dark theme is a 16px hole. A white disc behind every logo is the only
-   treatment that works for all of them - a halo leaves dark-on-dark still
-   dark. */
+   the dark theme is an 18px hole. A white disc behind every logo is the only
+   treatment that works for all of them - a halo leaves dark-on-dark dark. */
 @media (prefers-color-scheme:dark){
-  .hc-li img{background:#fff;border-radius:50%;padding:1px;box-sizing:border-box}
+  td.hc-tc img{background:#fff;border-radius:50%;padding:1px;box-sizing:border-box}
 }
-.hc-li .hc-tm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hc-li.hc-split{background:#fdf3d7}
-@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#2f2a16}}
-.hc-key{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--hc-mute)}
-.hc-key i{width:11px;height:11px;border-radius:3px;background:#fdf3d7;display:inline-block}
-@media (prefers-color-scheme:dark){.hc-key i{background:#2f2a16}}
+td.hc-tc .hc-tm{font-weight:500}
+/* The teams the lists argue about: an accent bar and a bolder name, rather
+   than a wash behind the text. */
+table.hc-t25 td.hc-tc.hc-split{border-left-color:var(--hc-flag)}
+td.hc-tc.hc-split .hc-tm{font-weight:700}
+.hc-key{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--hc-mute)}
+.hc-key i{width:3px;height:14px;border-radius:2px;background:var(--hc-flag);
+  display:inline-block}
 @media (max-width:560px){
-  .hc-cols{gap:6px}
-  .hc-li{font-size:11.5px;gap:3px;padding:2px 2px}
-  .hc-li img{width:13px;height:13px}
-  .hc-li .hc-n{min-width:13px;font-size:10px}
+  table.hc-t25 td{font-size:12px;padding:4px 4px}
+  table.hc-t25 th{font-size:10px;letter-spacing:.03em;padding:0 4px 5px}
+  td.hc-rk{width:26px;font-size:10px;padding-right:9px}
+  table.hc-t25 th:first-child{width:24px}
+  /* A third of 390px is about 115px, and a logo eats a fifth of it:
+     "Notre Dame" became "Notre D...". The name is the information. */
+  td.hc-tc img{display:none}
 }
-.hc .hc-scroll{overflow-x:auto}
-/* Bets */
-.hc-bet{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 4px}
-.hc-pick{flex:1 1 220px;border:1px solid var(--hc-line);border-radius:10px;padding:9px 11px}
-.hc-pick .hc-kind{font-size:10px;text-transform:uppercase;letter-spacing:.06em;
-  color:var(--hc-mute);font-weight:700}
-.hc-pick .hc-call{font-size:16px;font-weight:700;color:var(--hc-ink);margin:2px 0 1px}
-.hc-pick .hc-sub{font-size:12px;color:var(--hc-mute)}
-.hc-legs{list-style:none;margin:4px 0 0;padding:0}
-.hc-legs li{font-size:13px;color:var(--hc-ink);padding:3px 0;border-bottom:1px solid var(--hc-line)}
-.hc-legs li:last-child{border-bottom:0}
-.hc-legs .hc-sub{color:var(--hc-mute);font-size:12px}
-.hc-res{font-weight:700;margin-left:6px}
-.hc-res.win{color:var(--hc-up)}
-.hc-res.loss{color:var(--hc-down)}
-.hc-res.push{color:var(--hc-mute)}
-.hc-stamp{font-size:11px;color:var(--hc-mute);text-transform:uppercase;letter-spacing:.04em}
 </style>"""
 
 
@@ -177,12 +175,14 @@ def _ordered(teams: dict, source: str, limit: int) -> list:
 
 
 def top25_html(limit: int = 25) -> str:
-    """The three polls side by side, each as its own ranked list.
+    """The three polls as one table: the rank down the left, and what each
+    source puts there across the row.
 
-    Built to be screenshotted into a group chat: the three lists read top to
-    bottom the way a poll does, the card carries its own title and date so a
-    picture of it explains itself, and a team ranked eight or more places
-    apart by the others is marked, because the argument is the point.
+    Built to be screenshotted into a group chat. One rank column rather than
+    three means the numbers are written once and every row is a like-for-like
+    comparison - rank 8 is Ole Miss to the AP, Texas to us, Texas A&M to FPI -
+    which is the argument the card exists to start. A team the three place
+    eight or more apart carries an accent bar.
     """
     teams, show_ap = _rankings()
     sources = [("ap", "AP Poll")] if show_ap else []
@@ -194,37 +194,46 @@ def top25_html(limit: int = 25) -> str:
         return (max(seen) - min(seen)) if len(seen) > 1 else 0
 
     def where(team) -> str:
-        """Each source's rank for one team, for the row's tooltip."""
         return " \u00b7 ".join(
             f"{label.replace(' Poll', '').replace('ESPN ', '')} "
             + (str(team[key]) if team[key] is not None else "unranked")
             for key, label in sources)
 
-    columns = []
-    for key, label in sources:
-        items = []
-        for rank, team_id, team in _ordered(teams, key, limit):
+    ranked = {key: {rank: (team_id, team)
+                    for rank, team_id, team in _ordered(teams, key, limit)}
+              for key, _label in sources}
+
+    rows = []
+    for rank in range(1, limit + 1):
+        cells = []
+        for key, _label in sources:
+            got = ranked[key].get(rank)
+            if not got:
+                cells.append("<td class='hc-tc'></td>")
+                continue
+            team_id, team = got
+            gap = spread(team)
             logo = (f"<img src='{LOGO.format(team_id=escape(str(team_id)))}' alt='' "
                     f"loading='lazy'>")
-            gap = spread(team)
-            argued = " hc-split" if gap >= 8 else ""
             tip = escape(where(team) + (f" - {gap} places apart" if gap >= 8 else ""),
                          quote=True)
-            items.append(f"<li class='hc-li{argued}' title=\"{tip}\">"
-                         f"<span class='hc-n'>{rank}</span>"
-                         f"{logo}<span class='hc-tm'>{escape(str(team['name']))}</span></li>")
-        columns.append(f"<div class='hc-col'><div class='hc-src'>{label}</div>"
-                       f"<ol class='hc-list'>{''.join(items)}</ol></div>")
+            cells.append(f"<td class='hc-tc{' hc-split' if gap >= 8 else ''}' "
+                         f"title=\"{tip}\">{logo}"
+                         f"<span class='hc-tm'>{escape(str(team['name']))}</span></td>")
+        rows.append(f"<tr><td class='hc-rk'>{rank}</td>{''.join(cells)}</tr>")
 
+    head = ("<tr><th></th>"
+            + "".join(f"<th>{label}</th>" for _key, label in sources) + "</tr>")
     stamp = datetime.now().strftime("%b %-d")
     many = "three" if show_ap else "two"
-    key = ("<span class='hc-key'><i></i>shaded: the "
-           f"{many} lists put this team 8+ places apart</span>")
+    key_line = ("<span class='hc-key'><i></i>the "
+                f"{many} lists put this team 8+ places apart</span>")
     return (_CSS + "<div class='hc'>"
             f"<div class='hc-head'><b>Top 25 &middot; {SEASON}</b>"
             f"<span class='hc-when'>gordstats.com &middot; {stamp}</span></div>"
-            f"<div class='hc-cols'>{''.join(columns)}</div>"
-            f"<p class='hc-note'>{key} &mdash; hover a team for all "
+            f"<div class='hc-scroll'><table class='hc-t25'><thead>{head}</thead>"
+            f"<tbody>{''.join(rows)}</tbody></table></div>"
+            f"<p class='hc-note'>{key_line} &mdash; hover a team for all "
             f"{many} of its ranks.</p></div>")
 
 

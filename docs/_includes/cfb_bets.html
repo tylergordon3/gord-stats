@@ -1,9 +1,9 @@
 <style>
 .hc{--hc-line:#e5e7eb;--hc-ink:#0f172a;--hc-mute:#64748b;--hc-soft:#f8fafc;
-  --hc-up:#15803d;--hc-down:#b91c1c;--hc-accent:#2a78d6}
+  --hc-up:#15803d;--hc-down:#b91c1c;--hc-accent:#2a78d6;--hc-flag:#d08700}
 @media (prefers-color-scheme:dark){
   .hc{--hc-line:#2b3852;--hc-ink:#e3eaf4;--hc-mute:#aab7c9;--hc-soft:#1b2540;
-    --hc-up:#6ee7b7;--hc-down:#ff9b91;--hc-accent:#3987e5}
+    --hc-up:#6ee7b7;--hc-down:#ff9b91;--hc-accent:#6aa9f0;--hc-flag:#e0a92a}
 }
 .hc table{width:100%;border-collapse:collapse;font-size:13px;margin:0}
 /* The site theme paints every th a dark bar; these are column labels inside a
@@ -25,58 +25,56 @@
 .hc tr.hc-split td{background:#fdf6e3}
 @media (prefers-color-scheme:dark){.hc tr.hc-split td{background:#33301a}}
 .hc .hc-note{font-size:12px;color:var(--hc-mute);margin:8px 0 0;line-height:1.5}
-/* Three ranked lists, side by side - the shape a poll is read in, and the
-   shape that survives being screenshotted into a group chat. */
+/* One table: the rank written once down the left, the three sources across.
+   Three separate lists repeated the numbers 1-25 three times and, on the dark
+   theme, needed striping to keep the eye on a line - which came out muddy
+   against the highlight. Here the rank column does that job. */
 .hc-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
-  gap:8px;margin:0 0 8px;font-size:15px;color:var(--hc-ink)}
+  gap:8px;margin:0 0 10px;font-size:15px;color:var(--hc-ink)}
 .hc-head .hc-when{font-size:11px;color:var(--hc-mute);text-transform:uppercase;
   letter-spacing:.04em}
-.hc-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.hc-col{min-width:0}
-.hc-src{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-  color:var(--hc-mute);padding:0 0 4px;border-bottom:1px solid var(--hc-line);margin-bottom:2px}
-.hc-list{list-style:none;margin:0;padding:0;counter-reset:none}
-.hc-li{display:flex;align-items:center;gap:5px;padding:2px 3px;border-radius:5px;
-  font-size:13px;color:var(--hc-ink);min-width:0}
-.hc-li:nth-child(even){background:var(--hc-soft)}
-.hc-li .hc-n{min-width:16px;text-align:right;font-size:11px;color:var(--hc-mute);
-  font-variant-numeric:tabular-nums}
-.hc-li img{width:16px;height:16px;object-fit:contain;border:none;padding:0;margin:0;
-  box-shadow:none;background:none;border-radius:0;flex:none}
+table.hc-t25{width:100%;border-collapse:collapse;table-layout:fixed}
+/* The site theme boxes every cell, centres it and stripes the rows; this is a
+   card, so all three are reset here rather than fought row by row. */
+table.hc-t25 th{font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--hc-accent);text-align:left;padding:0 8px 6px;
+  border:0;border-bottom:2px solid var(--hc-line);background:transparent}
+table.hc-t25 th:first-child{width:36px;padding:0}
+table.hc-t25 td{padding:5px 8px;border:0;border-bottom:1px solid var(--hc-line);
+  color:var(--hc-ink);font-size:14px;line-height:1.25;background:transparent;
+  text-align:left;vertical-align:middle;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+table.hc-t25 tbody tr td,table.hc-t25 tbody tr:nth-child(even) td{background:transparent}
+table.hc-t25 tr:last-child td{border-bottom:0}
+td.hc-rk{width:36px;text-align:right;padding:5px 11px 5px 0;color:var(--hc-mute);
+  font-size:12px;font-variant-numeric:tabular-nums;border-bottom-color:transparent}
+/* Specific enough to beat the border reset above, which is two elements and a
+   class and would otherwise flatten the accent bar. */
+table.hc-t25 td.hc-tc{border-left:3px solid transparent}
+td.hc-tc img{width:18px;height:18px;object-fit:contain;border:none;padding:0;
+  margin:0 6px 0 0;box-shadow:none;background:none;border-radius:0;
+  vertical-align:middle}
 /* Ohio State, Penn State and a dozen others ship a near-black mark, which on
-   the dark theme is a 16px hole. A white disc behind every logo is the only
-   treatment that works for all of them - a halo leaves dark-on-dark still
-   dark. */
+   the dark theme is an 18px hole. A white disc behind every logo is the only
+   treatment that works for all of them - a halo leaves dark-on-dark dark. */
 @media (prefers-color-scheme:dark){
-  .hc-li img{background:#fff;border-radius:50%;padding:1px;box-sizing:border-box}
+  td.hc-tc img{background:#fff;border-radius:50%;padding:1px;box-sizing:border-box}
 }
-.hc-li .hc-tm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hc-li.hc-split{background:#fdf3d7}
-@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#2f2a16}}
-.hc-key{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--hc-mute)}
-.hc-key i{width:11px;height:11px;border-radius:3px;background:#fdf3d7;display:inline-block}
-@media (prefers-color-scheme:dark){.hc-key i{background:#2f2a16}}
+td.hc-tc .hc-tm{font-weight:500}
+/* The teams the lists argue about: an accent bar and a bolder name, rather
+   than a wash behind the text. */
+table.hc-t25 td.hc-tc.hc-split{border-left-color:var(--hc-flag)}
+td.hc-tc.hc-split .hc-tm{font-weight:700}
+.hc-key{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--hc-mute)}
+.hc-key i{width:3px;height:14px;border-radius:2px;background:var(--hc-flag);
+  display:inline-block}
 @media (max-width:560px){
-  .hc-cols{gap:6px}
-  .hc-li{font-size:11.5px;gap:3px;padding:2px 2px}
-  .hc-li img{width:13px;height:13px}
-  .hc-li .hc-n{min-width:13px;font-size:10px}
+  table.hc-t25 td{font-size:12px;padding:4px 4px}
+  table.hc-t25 th{font-size:10px;letter-spacing:.03em;padding:0 4px 5px}
+  td.hc-rk{width:26px;font-size:10px;padding-right:9px}
+  table.hc-t25 th:first-child{width:24px}
+  /* A third of 390px is about 115px, and a logo eats a fifth of it:
+     "Notre Dame" became "Notre D...". The name is the information. */
+  td.hc-tc img{display:none}
 }
-.hc .hc-scroll{overflow-x:auto}
-/* Bets */
-.hc-bet{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 4px}
-.hc-pick{flex:1 1 220px;border:1px solid var(--hc-line);border-radius:10px;padding:9px 11px}
-.hc-pick .hc-kind{font-size:10px;text-transform:uppercase;letter-spacing:.06em;
-  color:var(--hc-mute);font-weight:700}
-.hc-pick .hc-call{font-size:16px;font-weight:700;color:var(--hc-ink);margin:2px 0 1px}
-.hc-pick .hc-sub{font-size:12px;color:var(--hc-mute)}
-.hc-legs{list-style:none;margin:4px 0 0;padding:0}
-.hc-legs li{font-size:13px;color:var(--hc-ink);padding:3px 0;border-bottom:1px solid var(--hc-line)}
-.hc-legs li:last-child{border-bottom:0}
-.hc-legs .hc-sub{color:var(--hc-mute);font-size:12px}
-.hc-res{font-weight:700;margin-left:6px}
-.hc-res.win{color:var(--hc-up)}
-.hc-res.loss{color:var(--hc-down)}
-.hc-res.push{color:var(--hc-mute)}
-.hc-stamp{font-size:11px;color:var(--hc-mute);text-transform:uppercase;letter-spacing:.04em}
 </style><div class='hc'><div class='hc-bet'><div class='hc-pick'><div class='hc-kind'>Single bet</div><div class='hc-call'>Toledo -6.0</div><div class='hc-sub'>vs Temple &middot; we have them +15.7, the book +6.0</div></div><div class='hc-pick'><div class='hc-kind'>3-leg parlay</div><ul class='hc-legs'><li>Sacramento St +27.5<div class='hc-sub'>vs N Dakota St &middot; we have them -18.6, the book -27.5</div></li><li>FIU +7.0<div class='hc-sub'>vs FAU &middot; we have them +1.5, the book -7.0</div></li><li>Duke -9.5<div class='hc-sub'>vs Stanford &middot; we have them +17.9, the book +9.5</div></li></ul></div></div><p class='hc-note'><span class='hc-stamp'>Week 3 &middot; Provisional &middot; locks Thu morning</span><br>The model's widest disagreements with the DraftKings line (3+ points).  Across six held-out seasons picks like these went <strong>48% against the spread</strong> - under the 52.4% that standard juice needs - so read this as what the model thinks, not as an edge. <a href='/cfb/predictions/'>The full record</a>.</p></div>
