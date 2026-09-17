@@ -410,23 +410,48 @@ def _fit_big_play(league: dict, season: int):
     for row in r.json():
         per_team.setdefault(row["team"], {})[row["statName"]] = row["statValue"]
 
+    # Points allowed per game comes from the season's own results, not from
+    # this feed: it has the opponent's touchdowns but no field goals, extra
+    # points or return scores, and a defence that gives up nine field goals a
+    # month reads as elite through that lens. The scores are already on disk.
+    allowed_by_team = _points_allowed_per_game(season)
+
     points, allowed = [], []
     for team, stats in per_team.items():
         games = float(stats.get("games") or 0)
-        if games < 6:
+        got = allowed_by_team.get(team)
+        if games < 6 or got is None:
             continue
         big = sum(float(stats.get(stat) or 0) * mods.get(name, 0.0)
                   for stat, name in _DEF_STATS.items())
-        # Points allowed per game is not in this feed; the opponent's scoring
-        # plays are, and they add up to it closely enough to fit a line against.
-        opp = (float(stats.get("passingTDsOpponent") or 0)
-               + float(stats.get("rushingTDsOpponent") or 0)) * 7.0
         points.append(big / games)
-        allowed.append(opp / games)
+        allowed.append(got)
     if len(points) < 20:
         raise RuntimeError(f"only {len(points)} teams with a full season of stats")
     slope, intercept = np.polyfit(allowed, points, 1)
     return float(intercept), float(slope)
+
+
+def _points_allowed_per_game(season: int) -> dict:
+    """{CFBD school name: points allowed per game} from the stored results."""
+    from cfb import games as games_mod
+    from cfb import schools as schools_mod
+
+    frame = games_mod.load(season, season, classify=False)
+    if frame.empty:
+        return {}
+    conceded, played = {}, {}
+    for _, g in frame.iterrows():
+        for side, other in (("home", "away"), ("away", "home")):
+            team_id = str(g[f"{side}_id"])
+            score = g[f"{other}_score"]
+            if score is None or pd.isna(score):
+                continue
+            conceded[team_id] = conceded.get(team_id, 0.0) + float(score)
+            played[team_id] = played.get(team_id, 0) + 1
+    by_name = {str(v): k for k, v in schools_mod.espn_ids().items()}
+    return {by_name[tid]: conceded[tid] / played[tid]
+            for tid in conceded if played.get(tid) and tid in by_name}
 
 
 def defense_projections(env: pd.DataFrame, league: dict) -> pd.DataFrame:
