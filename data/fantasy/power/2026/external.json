@@ -13,70 +13,70 @@
       "team_id": 2,
       "rank": 1,
       "score": 100,
-      "vorp": 111.05
+      "vorp": 111.08
     },
     {
       "team": "Professional Fratson",
       "team_id": 3,
       "rank": 2,
-      "score": 98,
-      "vorp": 109.25
+      "score": 99,
+      "vorp": 109.6
     },
     {
       "team": "CCAM’s Convicts",
       "team_id": 1,
       "rank": 3,
       "score": 98,
-      "vorp": 109.05
+      "vorp": 109.07
     },
     {
       "team": "padgett",
       "team_id": 7,
       "rank": 4,
       "score": 96,
-      "vorp": 106.73
+      "vorp": 106.76
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
       "rank": 5,
       "score": 92,
-      "vorp": 102.2
+      "vorp": 102.22
     },
     {
       "team": "The Jackson 5",
       "team_id": 10,
       "rank": 6,
-      "score": 92,
-      "vorp": 102.05
+      "score": 91,
+      "vorp": 101.51
     },
     {
       "team": "LGBBQ+",
       "team_id": 9,
       "rank": 7,
       "score": 87,
-      "vorp": 96.79
+      "vorp": 96.82
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 8,
       "score": 82,
-      "vorp": 90.74
+      "vorp": 90.76
     },
     {
       "team": "The Standard",
       "team_id": 6,
       "rank": 9,
       "score": 81,
-      "vorp": 89.95
+      "vorp": 89.97
     },
     {
       "team": "The Jahmyr Gibbies",
       "team_id": 8,
       "rank": 10,
       "score": 74,
-      "vorp": 82.19
+      "vorp": 82.21
     }
   ]
 }

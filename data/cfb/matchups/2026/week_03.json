@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-17T15:45:19+00:00",
+ "fetched": "2026-09-17T20:37:44+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 183.84,
+     "projected": 183.82,
      "win_probability": 0.47
     }
    ]
@@ -1287,8 +1287,8 @@
     "team": "MIZZ",
     "team_full": "Missouri Tigers",
     "bye": 8.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "O",
+    "status_full": "Out",
     "injury_note": "Leg",
     "slot": "BN",
     "points": 0.0,
@@ -2672,7 +2672,7 @@
   "404392": 18.72,
   "456937": 12.1,
   "457801": 12.38,
-  "333511": 24.36,
+  "333511": 24.32,
   "451040": 8.01,
   "449475": 5.83,
   "482773": 7.58,
@@ -2694,6 +2694,6 @@
   "470091": 13.74,
   "456218": 1.86,
   "456178": 9.44,
-  "900086": 8.87
+  "900086": 8.85
  }
 }
