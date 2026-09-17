@@ -169,6 +169,11 @@ cfb_fantasy:
     icon: "🛡️"
     url: /cfb/strength/
 
+  - title: Usage
+    short: Usage
+    icon: "📦"
+    url: /cfb/usage/
+
   - title: League Dashboard
     short: League
     icon: "🏆"

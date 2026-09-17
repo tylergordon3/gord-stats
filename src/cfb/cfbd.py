@@ -90,6 +90,12 @@ def _get(path: str, **params):
     return r.json()
 
 
+def get(path: str, **params):
+    """One CFBD call, uncached - for modules that keep their own archive
+    (cfb.usage, cfb.excitement) rather than a refreshed JSON blob."""
+    return _get(path.lstrip("/"), **params)
+
+
 def _cached(name: str, hours: float, fetch, refresh: bool = False):
     """The cached payload, refetched when older than `hours` (or on refresh);
     the old cache survives a failed fetch."""

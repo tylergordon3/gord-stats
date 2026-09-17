@@ -40,7 +40,7 @@ except under Fantasy, where it is the league's: the college fantasy pages live
 under /cfb/ and the WNBA dashboard under /wnba/, so those URLs are claimed for
 Fantasy before the plain /cfb/ test.
 {% endcomment %}
-{% if page.url contains '/cfb/matchups/' or page.url contains '/cfb/league/' or page.url contains '/cfb/live/' or page.url contains '/cfb/strength/' %}{% assign sec = 'fantasy' %}{% assign pages = 'cfb_fantasy' %}
+{% if page.url contains '/cfb/matchups/' or page.url contains '/cfb/league/' or page.url contains '/cfb/live/' or page.url contains '/cfb/strength/' or page.url contains '/cfb/usage/' %}{% assign sec = 'fantasy' %}{% assign pages = 'cfb_fantasy' %}
 {% elsif page.url contains '/cfb/' %}{% assign sec = 'cfb' %}{% assign pages = 'cfb' %}
 {% elsif page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}{% assign pages = 'fantasy' %}
 {% elsif page.url contains '/wnba/' %}{% assign sec = 'fantasy' %}{% assign pages = 'wnba' %}
@@ -277,7 +277,7 @@ tap from anywhere without stacking two bars on a small screen.
     document.addEventListener("DOMContentLoaded", function () {
       var p = location.pathname;
       var sec = "home";
-      if (/^\/cfb\/(matchups|league|live|strength)\//.test(p)) sec = "fantasy";
+      if (/^\/cfb\/(matchups|league|live|strength|usage)\//.test(p)) sec = "fantasy";
       else if (p.indexOf("/cfb/") === 0) sec = "cfb";
       else if (p.indexOf("/fantasy/") === 0 || p.indexOf("/wnba/") === 0) sec = "fantasy";
       else if (p.indexOf("/cbb/") === 0 || p.indexOf("/men/") === 0 ||
