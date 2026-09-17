@@ -61,11 +61,15 @@ PARLAY_LEGS = 3
 _CSS = """<style>
 .hc{--hc-line:#e5e7eb;--hc-ink:#0f172a;--hc-mute:#64748b;--hc-soft:#f8fafc;
   --hc-up:#15803d;--hc-down:#b91c1c;--hc-accent:#2a78d6;--hc-flag:#d08700;
-  --hc-rank:#475569;--hc-disc:transparent}
+  --hc-rank:#475569;--hc-disc:transparent;
+  --hc-hi-bg:rgba(21,128,61,.10);--hc-lo-bg:rgba(185,28,28,.09);
+  --hc-focus:rgba(42,120,214,.14)}
 @media (prefers-color-scheme:dark){
   .hc{--hc-line:#2b3852;--hc-ink:#e3eaf4;--hc-mute:#aab7c9;--hc-soft:#1b2540;
     --hc-up:#6ee7b7;--hc-down:#ff9b91;--hc-accent:#6aa9f0;--hc-flag:#e0a92a;
-    --hc-rank:#cbd5e1;--hc-disc:#e8edf4}
+    --hc-rank:#cbd5e1;--hc-disc:#e8edf4;
+    --hc-hi-bg:rgba(110,231,183,.13);--hc-lo-bg:rgba(255,155,145,.13);
+    --hc-focus:rgba(106,169,240,.20)}
 }
 .hc .hc-note{font-size:12px;color:var(--hc-mute);margin:8px 0 0;line-height:1.5}
 /* One table: the rank written once down the left, the three sources across.
@@ -79,15 +83,17 @@ _CSS = """<style>
 table.hc-t25{width:100%;border-collapse:collapse;table-layout:fixed}
 /* The site theme boxes every cell, centres it and stripes the rows; this is a
    card, so all three are reset here rather than fought row by row. */
-table.hc-t25 th{font-size:12px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.06em;color:var(--hc-accent);text-align:left;padding:0 8px 6px;
-  border:0;border-bottom:2px solid var(--hc-line);background:transparent}
+table.hc-t25 th{font-size:13px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--hc-ink);text-align:left;padding:8px;
+  border:0;border-bottom:2px solid var(--hc-accent);background:var(--hc-soft)}
+table.hc-t25 th:not(:first-child){border-left:3px solid transparent}
 table.hc-t25 th:first-child{width:46px;padding:0}
 table.hc-t25 td{padding:5px 8px;border:0;border-bottom:1px solid var(--hc-line);
   color:var(--hc-ink);font-size:14px;line-height:1.25;background:transparent;
   text-align:left;vertical-align:middle;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis}
-table.hc-t25 tbody tr td,table.hc-t25 tbody tr:nth-child(even) td{background:transparent}
+table.hc-t25 tbody tr td.hc-rk,
+table.hc-t25 tbody tr:nth-child(even) td.hc-rk{background:transparent}
 table.hc-t25 tr:last-child td{border-bottom:0}
 /* The rank is the spine of the table, so it is read at the same weight as the
    names rather than as a grey subscript - and it gets enough room that the
@@ -118,9 +124,16 @@ td.hc-tc .hc-tm{font-weight:500}
    a green bar, the one that rates it lowest a red one. A bar rather than a
    wash behind the text - a tinted fill on the dark theme reads as muddy and
    costs the name its contrast. */
-table.hc-t25 td.hc-tc.hc-hi{border-left-color:var(--hc-up)}
-table.hc-t25 td.hc-tc.hc-lo{border-left-color:var(--hc-down)}
+table.hc-t25 td.hc-tc.hc-hi{border-left-color:var(--hc-up);background:var(--hc-hi-bg)}
+table.hc-t25 td.hc-tc.hc-lo{border-left-color:var(--hc-down);background:var(--hc-lo-bg)}
 td.hc-tc.hc-hi .hc-tm,td.hc-tc.hc-lo .hc-tm{font-weight:700}
+/* Hover (or tap) a team and the rest of the table steps back, so its three
+   placements line up on their own. The rank column stays lit - the whole
+   point is which rows the team sits on. */
+table.hc-t25.hc-following td.hc-tc{opacity:.22;transition:opacity .12s ease}
+table.hc-t25.hc-following td.hc-tc.hc-on{opacity:1;background:var(--hc-focus);
+  border-left-color:var(--hc-accent)}
+table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
 .hc-key{display:inline-flex;align-items:center;gap:6px;font-size:12px;
   color:var(--hc-mute);margin-right:14px}
 .hc-key i{width:3px;height:14px;border-radius:2px;display:inline-block}
@@ -227,8 +240,10 @@ def top25_html(limit: int = 25) -> str:
                     mark = " hc-lo"
             logo = (f"<img src='{LOGO.format(team_id=escape(str(team_id)))}' alt='' "
                     f"loading='lazy'>")
-            cells.append(f"<td class='hc-tc{mark}' title=\"{escape(where(team), quote=True)}\">"
-                         f"{logo}<span class='hc-tm'>{escape(str(team['name']))}</span></td>")
+            cells.append(
+                f"<td class='hc-tc{mark}' data-team='{escape(str(team_id), quote=True)}' "
+                f"title=\"{escape(where(team), quote=True)}\">"
+                f"{logo}<span class='hc-tm'>{escape(str(team['name']))}</span></td>")
         rows.append(f"<tr><td class='hc-rk'>{rank}</td>{''.join(cells)}</tr>")
 
     head = ("<tr><th></th>"
@@ -237,14 +252,51 @@ def top25_html(limit: int = 25) -> str:
     many = "three" if show_ap else "two"
     key_line = ("<span class='hc-key'><i class='hi'></i>rates them highest</span>"
                 "<span class='hc-key'><i class='lo'></i>lowest</span>")
-    return (_CSS + "<div class='hc'>"
+    return (_CSS + _FOLLOW_JS + "<div class='hc'>"
             f"<div class='hc-head'><b>Top 25 by Source &middot; {SEASON}</b>"
             f"<span class='hc-when'>gordstats.com &middot; {stamp}</span></div>"
             f"<div class='hc-scroll'><table class='hc-t25'><thead>{head}</thead>"
             f"<tbody>{''.join(rows)}</tbody></table></div>"
             f"<p class='hc-note'>{key_line} &mdash; "
             f"marked where the {many} lists are {MARK_GAP}+ places apart on a team. "
-            f"Hover one for all {many} of its ranks.</p></div>")
+            f"Hover a team (or tap, on a phone) to follow it across all "
+            f"{many}.</p></div>")
+
+
+_FOLLOW_JS = """{% raw %}<script>
+(function(){
+  function wire(table){
+    var body=table.tBodies[0]; if(!body) return;
+    var pinned=null;
+    function show(team){
+      var cells=body.querySelectorAll('td.hc-tc');
+      for(var i=0;i<cells.length;i++){
+        cells[i].classList.toggle('hc-on', !!team && cells[i].dataset.team===team);
+      }
+      table.classList.toggle('hc-following', !!team);
+    }
+    body.addEventListener('mouseover', function(e){
+      if(pinned) return;
+      var cell=e.target.closest('td.hc-tc');
+      show(cell&&cell.dataset.team);
+    });
+    body.addEventListener('mouseleave', function(){ if(!pinned) show(null); });
+    // A phone has no hover: a tap pins a team, a second tap lets it go.
+    body.addEventListener('click', function(e){
+      var cell=e.target.closest('td.hc-tc');
+      var team=cell&&cell.dataset.team;
+      pinned=(pinned===team)?null:team;
+      show(pinned);
+    });
+  }
+  function init(){
+    var tables=document.querySelectorAll('table.hc-t25');
+    for(var i=0;i<tables.length;i++) wire(tables[i]);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>{% endraw %}"""
 
 
 # --------------------------------------------------------------------------- #
