@@ -148,13 +148,12 @@ def switch_js(storage_key: str) -> str:
 PILL = {"in": "&#9650; Start", "out": "&#9660; Bench", "swap": "&#8644; Move"}
 
 
-def move_cell(kind: str, new_slot: str) -> str:
-    """The Change column: the pill, and the slot he is headed for."""
+def move_cell(kind: str, was_slot: str) -> str:
+    """The Change column: the pill, and the slot he has to be moved out of."""
     if not kind:
         return "<td class='rd-mv'></td>"
     return (f"<td class='rd-mv'><span class='rd-pill {kind}'>{PILL[kind]}</span>"
-            + (f"<span class='rd-to'>&rarr; {escape(new_slot)}</span>" if kind != "out" else "")
-            + "</td>")
+            f"<span class='rd-to'>now {escape(was_slot)}</span></td>")
 
 
 def legend() -> str:
@@ -340,8 +339,8 @@ document.addEventListener('click',function(e){
 
 _SLOT_CLASS = {"W/R/T": "FX", "FLEX": "FX", "IL": "BN", "IR": "BN", "TAXI": "BN"}
 _DO = {"in": "&#9650; START at {new}", "out": "&#9660; BENCH", "swap": "&#8644; MOVE to {new}"}
-_DONE = {"in": "&#9650; was on the bench", "out": "&#9660; was at {now}",
-         "swap": "&#8644; was at {now}"}
+_DONE = {"in": "&#9650; START - now on the bench", "out": "&#9660; BENCH - now at {now}",
+         "swap": "&#8644; MOVE here - now at {now}"}
 
 
 def _opp_box(c: dict) -> str:
@@ -379,8 +378,8 @@ def player_card(c: dict, suggested: bool = False) -> str:
 
 
 def phone_lineup(cards: list, slot_rank: dict, off, now_total: float, best_total: float) -> str:
-    """The roster as cards, twice: as it is set, and as it would be with the
-    changes made - the toggle on top flips between them.
+    """The roster as cards, twice: the lineup to set (showing), and the roster
+    as it is set now - the toggle on top flips between them.
 
     cards      player_card dicts in current roster order
     slot_rank  {slot: order} for laying out the suggested lineup
@@ -394,20 +393,20 @@ def phone_lineup(cards: list, slot_rank: dict, off, now_total: float, best_total
             + "<h4>Bench</h4>" + "".join(
             player_card({**c, "off": True}, suggested) for c in bench))
 
-    new_order = sorted(cards, key=lambda c: (slot_rank.get(c["new"], 99), -(c.get("proj") or 0)))
+    new_order = sorted((c for c in cards if not c.get("ghost")), key=lambda c: (slot_rank.get(c["new"], 99), -(c.get("proj") or 0)))
     gain = best_total - now_total
     toggle = (
         "<div class='rd-toggle'>"
         f"<div class='rd-tot'><b>{now_total:.1f}</b><span>As set</span></div>"
-        "<div class='rd-seg'><button type='button' class='on' data-mode='cur'>Current</button>"
-        "<button type='button' data-mode='new'>Suggested</button></div>"
+        "<div class='rd-seg'><button type='button' data-mode='cur'>Current</button>"
+        "<button type='button' class='on' data-mode='new'>Suggested</button></div>"
         f"<div class='rd-tot new'><b>{best_total:.1f}"
         + (f"<i>+{gain:.1f}</i>" if gain >= 0.05 else "") + "</b><span>Best lineup</span></div>"
         "</div>")
     return (f"<div class='rd-phone'>{toggle}"
-            f"<div class='rd-cards' data-mode='cur'>{section(cards, False)}</div>"
-            f"<div class='rd-cards' data-mode='new' style='display:none'>"
-            f"{section(new_order, True)}</div></div>")
+            f"<div class='rd-cards' data-mode='cur' style='display:none'>"
+            f"{section(cards, False)}</div>"
+            f"<div class='rd-cards' data-mode='new'>{section(new_order, True)}</div></div>")
 
 
 def phone_adds(cards: list) -> str:

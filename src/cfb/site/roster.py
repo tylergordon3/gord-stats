@@ -75,10 +75,11 @@ class Week:
         self.season_proj = (self.board.drop_duplicates("yahoo_id").set_index("yahoo_id")["proj"]
                             .to_dict())
 
-        # What each defence gives up by position, and where that ranks (1 = most).
+        # What each defence gives up by position, and where that ranks: 1 is the
+        # stingiest, the last place gives up the most.
         grid = defense.table()
         self.ratings = {str(k): row for k, row in grid.iterrows()} if not grid.empty else {}
-        self.ranks = ({pos: grid[pos].rank(ascending=False, method="min")
+        self.ranks = ({pos: grid[pos].rank(ascending=True, method="min")
                        for pos in defense.POSITIONS} if not grid.empty else {})
         self.n_def = len(grid)
 
@@ -141,7 +142,7 @@ def opp_cell(wkd: Week, g, pos: str) -> str:
         return "<td title='No rating: an FCS defence, or no games yet'>&mdash;</td>"
     rank = int(wkd.ranks[pos].get(str(opp_id)))
     return (f"<td style='{_heat(value)}' title='Fantasy points allowed to {pos}s against "
-            f"expectation; 1.00 is par. Rank 1 gives up the most.'>{value:.2f}"
+            f"expectation; 1.00 is par. Rank 1 is the toughest defence; the higher the number the more it gives up.'>{value:.2f}"
             f"<span class='rd-rk'>{_ordinal(rank)} of {wkd.n_def}</span></td>")
 
 
@@ -287,20 +288,27 @@ def p_unlocked(pid: str, wkd: Week) -> bool:
 
 def lineup_table(wkd: Week, roster: list, got: dict, now_total: float,
                  best_total: float) -> str:
-    """The roster exactly as it is set, each row coloured by what the plan
-    does with it: green comes off the bench, red goes to it, blue changes
-    starting slot for the kickoff order."""
+    """The lineup to set, each row coloured by what it takes to get there:
+    green comes off the bench, red goes to it, blue changes starting slot for
+    the kickoff order."""
     by_id = {p["yahoo_id"]: p for p in roster}
     rows, cards, benched = [], [], False
-    for p in order_roster(roster, wkd.lg):
+    slot_rank = {}
+    for i, slot in enumerate(slot_order(wkd.lg)):
+        slot_rank.setdefault(slot, i)
+    # The lineup to set, in lineup order; `cards` keeps the roster as it is now
+    # for the phone view's Current side.
+    current = {p["yahoo_id"]: i for i, p in enumerate(order_roster(roster, wkd.lg))}
+    for p in sorted(roster, key=lambda p: (slot_rank.get(got["slot"][p["yahoo_id"]], 99),
+                                           -(wkd.proj(p["yahoo_id"]) or 0.0))):
         pid = p["yahoo_id"]
-        bench = p["slot"] in lineup.BENCH
         new = got["slot"][pid]
+        bench = new in lineup.BENCH
         kind = _change(p, got)
         g = wkd.game(p)
         state = (g.get("state") if g is not None else None) or "pre"
         tag = "<span class='rd-tag lock'>locked</span>" if state in ("in", "post") else ""
-        move_td = page.move_cell(kind, new)
+        move_td = page.move_cell(kind, p["slot"])
         cover = got["cover"].get(pid)
         if new in lineup.BENCH or cover is None:
             cover_td = "<td class='rd-cov none'>&mdash;</td>"
@@ -319,28 +327,26 @@ def lineup_table(wkd: Week, roster: list, got: dict, now_total: float,
         split = " rd-split" if bench and not benched else ""
         benched = benched or bench
         cards.append({**card_info(wkd, p, g, wkd.proj(pid)), "slot": p["slot"], "new": new,
-                      "kind": kind, "locked": state in ("in", "post")})
+                      "kind": kind, "locked": state in ("in", "post"), "order": current[pid]})
         rows.append(
             f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}{' rd-' + kind if kind else ''}'>"
-            f"<td class='rd-slot'>{escape(p['slot'])}</td>" + move_td
+            f"<td class='rd-slot'>{escape(new)}</td>" + move_td
             + player_cell(wkd, p, tag)
             + f"<td class='rd-g'>{game_cell(g)}</td>"
             + opp_cell(wkd, g, p["pos"]) + weather_cell(wkd, g)
             + f"<td><b>{ui.fmt(wkd.proj(pid))}</b></td><td>{ui.fmt(wkd.yproj.get(pid))}</td>"
             + pts_td + usage_cells(wkd, pid, p["pos"]) + cover_td + "</tr>")
-    head = ("<tr><th title='Where he is set right now'>Slot</th>"
-            "<th title='What to do with him'>Change</th><th>Player</th><th>Game</th>"
+    head = ("<tr><th title='Where he belongs this week'>Slot</th>"
+            "<th title='What it takes to get him there'>Change</th><th>Player</th><th>Game</th>"
             "<th title='What the opposing defence allows to this position, against "
-            "expectation. 1.00 is par; rank 1 gives up the most.'>Opp vs pos</th>"
+            "expectation. 1.00 is par; rank 1 is the toughest, the highest number gives up the most.'>Opp vs pos</th>"
             "<th>Weather</th><th title='This site&#39;s projection for the week'>GS proj</th>"
             "<th>Yahoo</th><th>Pts</th>"
             f"<th title='Share of his team&#39;s carries, last {RECENT_WEEKS} played weeks'>Car%</th>"
             f"<th title='Share of his team&#39;s targets, last {RECENT_WEEKS} played weeks'>Tgt%</th>"
             "<th title='Once the changes are made: the best bench player who could still take "
             "this slot - eligible for it and not kicking off any earlier'>Late-swap cover</th></tr>")
-    slot_rank = {}
-    for i, slot in enumerate(slot_order(wkd.lg)):
-        slot_rank.setdefault(slot, i)
+    cards.sort(key=lambda c: c["order"])
     return (page.legend()
             + f"<div class='rd-desk rd-scroll'><table class='rd'><thead>{head}</thead>"
             f"<tbody>{''.join(rows)}</tbody></table></div>"
@@ -482,8 +488,8 @@ def body() -> str:
         "One roster at a time: who to start, which slot to put him in, what he is up "
         "against, and who on the wire would beat him.</p>"
         "<details class='section'><summary>How to read this page</summary>"
-        "<p class='rd-note'><b>Start / sit</b> shows the roster exactly as it is set and "
-        "colours what to change, by <b>GS proj</b>, this site's weekly projection (Yahoo's "
+        "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colours what has "
+        "to change to get there, by <b>GS proj</b>, this site's weekly projection (Yahoo's "
         "own sits beside it). <b style='color:#16a34a'>Green</b> comes off the bench into "
         "the slot named; <b style='color:#dc2626'>red</b> goes to the bench; "
         "<b style='color:#2563eb'>blue</b> stays a starter but changes slot for the kickoff "
@@ -496,7 +502,8 @@ def body() -> str:
         "<p class='rd-note'><b>Opp vs pos</b> is the opponent's row on the "
         "<a href='/cfb/strength/'>matchup strength</a> page: fantasy points allowed to that "
         "position against what the offences it faced should have scored. 1.00 is par, green "
-        f"is soft, and the rank runs 1 (gives up the most) to {wkd.n_def}; FCS defences have "
+        f"is soft, and the rank runs from 1 (the toughest, red) to {wkd.n_def} (gives up the most, "
+        "green); FCS defences have "
         "no rating. <b>Weather</b> is the forecast for the game, in amber when it is bad "
         "enough to matter (rain, storms, snow, or gusts past 25 mph). <b>Car%</b> and "
         f"<b>Tgt%</b> are the last {RECENT_WEEKS} played weeks from the "

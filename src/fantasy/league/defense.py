@@ -98,8 +98,9 @@ def ratings(year: int = UPCOMING_YEAR, data: dict = None) -> pd.DataFrame:
 
 
 def ranks(table: pd.DataFrame) -> dict:
-    """{position: {team: rank}}, 1 = gives up the most."""
-    return {pos: table[pos].rank(ascending=False, method="min").astype(int).to_dict()
+    """{position: {team: rank}}: 1 is the stingiest defence at the position,
+    the last place the one that gives up the most."""
+    return {pos: table[pos].rank(ascending=True, method="min").astype(int).to_dict()
             for pos in POSITIONS if pos in table}
 
 

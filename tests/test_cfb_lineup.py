@@ -155,7 +155,8 @@ def test_nfl_defence_ratings_shrink_toward_par_on_a_thin_sample():
     assert one.loc["BBB", "RB"] == pytest.approx(0.9)
     full = defense.ratings(data={str(w): week for w in range(1, 6)})
     assert full.loc["AAA", "RB"] == pytest.approx(1.5)
-    assert defense.ranks(full)["RB"] == {"AAA": 1, "BBB": 2}
+    # 1 is the toughest defence; the one giving up the most ranks last.
+    assert defense.ranks(full)["RB"] == {"AAA": 2, "BBB": 1}
 
 
 def test_nfl_scoreboard_weather_reads_either_field_order():
@@ -199,9 +200,11 @@ def test_phone_cards_show_the_roster_both_ways():
               "proj": 14.0, "opp_value": 1.2, "opp_rank": 2, "opp_label": "@ CAR"}]
     html = page.phone_lineup(cards, {"RB": 0}, {"BN"}, 9.0, 14.0)
     current, suggested = html.split("<div class='rd-cards' data-mode='new'")
-    # As set, the starter leads and is told to sit; suggested, the riser has his slot.
+    # As set, the veteran leads and is told to sit; suggested (the side that
+    # shows), the riser has his slot.
     assert current.index("Veteran") < current.index("Riser")
     assert "BENCH" in current and "START at RB" in current
     assert suggested.index("Riser") < suggested.index("Veteran")
-    assert "was on the bench" in suggested and "+5.0" in html
+    assert "now on the bench" in suggested and "display:none" not in suggested
+    assert "display:none" in current and "+5.0" in html
     assert "rd-c-opp hard" in html and "rd-c-opp soft" in html

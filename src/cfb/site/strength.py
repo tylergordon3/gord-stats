@@ -74,7 +74,9 @@ def _names() -> dict:
 
 def defense_section(grid: pd.DataFrame, names: dict) -> str:
     rows = []
-    for rank, (team_id, row) in enumerate(grid.iterrows(), 1):
+    # Ranked the way the dashboards rank a matchup: 1 is the stingiest defence,
+    # the last place gives up the most.
+    for rank, (team_id, row) in enumerate(grid.iloc[::-1].iterrows(), 1):
         cells = "".join(
             f"<td style='{_heat(row.get(pos))}'>"
             + ("&mdash;" if pd.isna(row.get(pos)) else f"{row[pos]:.2f}") + "</td>"
@@ -200,7 +202,7 @@ def body() -> str:
         "out rather than counted as par.</p>"
         + schedule_section(ratings, names, frame, board)
         + "<h2>Defence vs position</h2>"
-        "<p class='st-note'>Every FBS defence, most generous first.</p>"
+        "<p class='st-note'>Every FBS defence, toughest first: 1 gives up the least against expectation, the last place the most.</p>"
         + defense_section(grid, names))
 
 

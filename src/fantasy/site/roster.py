@@ -156,7 +156,7 @@ def opp_cell(wkd: Week, g: dict | None, pos: str) -> str:
     games = int(table.loc[g["opp"], "games"])
     return (f"<td style='{page.heat(value)}' title='Fantasy points {escape(g['opp'])} has "
             f"allowed to {pos}s against the league average, over {games} game"
-            f"{'' if games == 1 else 's'}; 1.00 is par. Rank 1 gives up the most.'>{value:.2f}"
+            f"{'' if games == 1 else 's'}; 1.00 is par. Rank 1 is the toughest defence; the higher the number the more it gives up.'>{value:.2f}"
             f"<span class='rd-rk'>{page.ordinal(rank)} of {len(table)}</span></td>")
 
 
@@ -244,18 +244,25 @@ def _plain(t: dict) -> str:
 def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts: dict,
                  now_total: float, best_total: float) -> str:
     body, phone, benched = [], [], False
-    for r in rows:
+    slot_rank = {}
+    for i, name in enumerate(wkd.slots):
+        slot_rank.setdefault(name, i)
+    # The phone view's Current side keeps the roster as it is, empty slots and all.
+    current = {r["pid"]: i for i, r in enumerate(rows)}
+    for i, r in enumerate(rows):
+        if r["pid"] == "0":
+            phone.append({"name": "Empty slot", "slot": r["slot"], "new": "BN", "kind": "",
+                          "pos": "", "team": "", "game": "", "proj": None, "order": i,
+                          "ghost": True})
+    # The table is the lineup to set, in lineup order.
+    filled = [r for r in rows if r["pid"] != "0"]
+    filled.sort(key=lambda r: (slot_rank.get(got["slot"][r["pid"]], 99),
+                               -(proj.get(r["pid"]) or 0.0)))
+    for r in filled:
         pid, slot = r["pid"], r["slot"]
-        bench = slot in OFF
+        bench = got["slot"][pid] in OFF
         split = " rd-split" if bench and not benched else ""
         benched = benched or bench
-        if pid == "0":
-            phone.append({"name": "Empty slot", "slot": slot, "new": slot, "kind": "",
-                          "pos": "", "team": "", "game": "", "proj": None})
-            body.append(f"<tr class='rd-st'><td class='rd-slot'>{escape(slot)}</td>"
-                        "<td class='rd-mv'></td><td class='rd-p' colspan='10'>"
-                        "<span class='rd-inj'>Empty slot</span></td></tr>")
-            continue
         card = cards[pid]
         g = wkd.by_team.get(card["team"])
         new = got["slot"][pid]
@@ -277,29 +284,28 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
         pts_td = (f"<td>{ui.fmt(scored)}</td>" if g and state in ("in", "post")
                   and scored is not None else "<td>&mdash;</td>")
         phone.append({**card_info(wkd, card, proj.get(pid)), "slot": slot, "new": new,
-                      "kind": kind, "locked": bool(g) and state in ("in", "post")})
+                      "kind": kind, "locked": bool(g) and state in ("in", "post"),
+                      "order": current[pid]})
         body.append(
             f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}{' rd-' + kind if kind else ''}'>"
-            f"<td class='rd-slot'>{escape(slot)}</td>" + page.move_cell(kind, new)
+            f"<td class='rd-slot'>{escape(new)}</td>" + page.move_cell(kind, slot)
             + player_cell(card, tag) + f"<td class='rd-g'>{mu.game_cell(g)}</td>"
             + total_cell(g, card["pos"]) + opp_cell(wkd, g, card["pos"]) + weather_cell(wkd, g)
             + f"<td><b>{ui.fmt(proj.get(pid))}</b></td>"
             f"<td>{ui.fmt(wkd.gs(pid, card['team']))}</td>"
             f"<td>{ui.fmt(wkd.sleeper_all.get(pid))}</td>" + pts_td + cover_td + "</tr>")
-    head = ("<tr><th title='Where he is set right now'>Slot</th>"
-            "<th title='What to do with him'>Change</th><th>Player</th><th>Game</th>"
+    head = ("<tr><th title='Where he belongs this week'>Slot</th>"
+            "<th title='What it takes to get him there'>Change</th><th>Player</th><th>Game</th>"
             "<th title='His team&#39;s implied points from the spread and total; for a "
             "defence, what it is expected to allow'>Team total</th>"
             "<th title='What the opposing defence has allowed to this position against the "
-            "league average. 1.00 is par; rank 1 gives up the most.'>Opp vs pos</th>"
+            "league average. 1.00 is par; rank 1 is the toughest, the highest number gives up the most.'>Opp vs pos</th>"
             "<th>Weather</th>"
             "<th title='Every projection on record for him, averaged: GordStats, Sleeper, "
             "ESPN and FantasyPros'>Proj</th><th>GS</th><th>Sleeper</th><th>Pts</th>"
             "<th title='Once the changes are made: the best bench player who could still take "
             "this slot - eligible for it and not kicking off any earlier'>Late-swap cover</th></tr>")
-    slot_rank = {}
-    for i, name in enumerate(wkd.slots):
-        slot_rank.setdefault(name, i)
+    phone.sort(key=lambda c: c["order"])
     return (page.legend()
             + f"<div class='rd-desk rd-scroll'><table class='rd'><thead>{head}</thead>"
             f"<tbody>{''.join(body)}</tbody></table></div>"
@@ -463,8 +469,8 @@ def body() -> str:
         + f"<p><strong>Week {wkd.week}</strong>. One roster at a time: who to start, which "
         "slot to put him in, what he is up against, and who on the wire would beat him.</p>"
         "<details class='section'><summary>How to read this page</summary>"
-        "<p class='rd-note'><b>Start / sit</b> shows the roster exactly as it is set and "
-        "colours what to change. <b style='color:#16a34a'>Green</b> comes off the bench into "
+        "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colours what has "
+        "to change to get there. <b style='color:#16a34a'>Green</b> comes off the bench into "
         "the slot named; <b style='color:#dc2626'>red</b> goes to the bench; "
         "<b style='color:#2563eb'>blue</b> stays a starter but changes slot for the kickoff "
         "order: Sleeper locks a player at his own kickoff, so Thursday's and the early "
@@ -479,7 +485,8 @@ def body() -> str:
         "agents have only the first two. <b>Team total</b> is his side's implied points "
         "from the spread and total. <b>Opp vs pos</b> is what the defence across from him "
         "has allowed to his position against the league average: 1.00 is par, green is "
-        f"soft, rank 1 of {n_def or 32} gives up the most, and ratings on fewer than "
+        f"soft, the rank runs from 1 (the toughest, red) to {n_def or 32} (gives up the most, "
+        "green), and ratings on fewer than "
         f"{defense.FULL_WEIGHT_GAMES} games are pulled toward par. <b>Weather</b> is ESPN's "
         "forecast, in amber for rain, storms, snow or a freeze. <b>Waiver adds</b> sets each "
         "free agent against the weakest starter he could replace, so the gain is what the "
