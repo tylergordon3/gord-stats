@@ -25,6 +25,33 @@
 .hc tr.hc-split td{background:#fdf6e3}
 @media (prefers-color-scheme:dark){.hc tr.hc-split td{background:#33301a}}
 .hc .hc-note{font-size:12px;color:var(--hc-mute);margin:8px 0 0;line-height:1.5}
+/* Three ranked lists, side by side - the shape a poll is read in, and the
+   shape that survives being screenshotted into a group chat. */
+.hc-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+  gap:8px;margin:0 0 8px;font-size:15px;color:var(--hc-ink)}
+.hc-head .hc-when{font-size:11px;color:var(--hc-mute);text-transform:uppercase;
+  letter-spacing:.04em}
+.hc-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hc-col{min-width:0}
+.hc-src{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--hc-mute);padding:0 0 4px;border-bottom:1px solid var(--hc-line);margin-bottom:2px}
+.hc-list{list-style:none;margin:0;padding:0;counter-reset:none}
+.hc-li{display:flex;align-items:center;gap:5px;padding:2px 3px;border-radius:5px;
+  font-size:13px;color:var(--hc-ink);min-width:0}
+.hc-li:nth-child(even){background:var(--hc-soft)}
+.hc-li .hc-n{min-width:16px;text-align:right;font-size:11px;color:var(--hc-mute);
+  font-variant-numeric:tabular-nums}
+.hc-li img{width:16px;height:16px;object-fit:contain;border:none;padding:0;margin:0;
+  box-shadow:none;background:none;border-radius:0;flex:none}
+.hc-li .hc-tm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-li.hc-split{background:#fdf6e3}
+@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#33301a}}
+@media (max-width:560px){
+  .hc-cols{gap:6px}
+  .hc-li{font-size:11.5px;gap:3px;padding:2px 2px}
+  .hc-li img{width:13px;height:13px}
+  .hc-li .hc-n{min-width:13px;font-size:10px}
+}
 .hc .hc-scroll{overflow-x:auto}
 /* Bets */
 .hc-bet{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 4px}

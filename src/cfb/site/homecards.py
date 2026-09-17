@@ -82,6 +82,33 @@ _CSS = """<style>
 .hc tr.hc-split td{background:#fdf6e3}
 @media (prefers-color-scheme:dark){.hc tr.hc-split td{background:#33301a}}
 .hc .hc-note{font-size:12px;color:var(--hc-mute);margin:8px 0 0;line-height:1.5}
+/* Three ranked lists, side by side - the shape a poll is read in, and the
+   shape that survives being screenshotted into a group chat. */
+.hc-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+  gap:8px;margin:0 0 8px;font-size:15px;color:var(--hc-ink)}
+.hc-head .hc-when{font-size:11px;color:var(--hc-mute);text-transform:uppercase;
+  letter-spacing:.04em}
+.hc-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hc-col{min-width:0}
+.hc-src{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--hc-mute);padding:0 0 4px;border-bottom:1px solid var(--hc-line);margin-bottom:2px}
+.hc-list{list-style:none;margin:0;padding:0;counter-reset:none}
+.hc-li{display:flex;align-items:center;gap:5px;padding:2px 3px;border-radius:5px;
+  font-size:13px;color:var(--hc-ink);min-width:0}
+.hc-li:nth-child(even){background:var(--hc-soft)}
+.hc-li .hc-n{min-width:16px;text-align:right;font-size:11px;color:var(--hc-mute);
+  font-variant-numeric:tabular-nums}
+.hc-li img{width:16px;height:16px;object-fit:contain;border:none;padding:0;margin:0;
+  box-shadow:none;background:none;border-radius:0;flex:none}
+.hc-li .hc-tm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-li.hc-split{background:#fdf6e3}
+@media (prefers-color-scheme:dark){.hc-li.hc-split{background:#33301a}}
+@media (max-width:560px){
+  .hc-cols{gap:6px}
+  .hc-li{font-size:11.5px;gap:3px;padding:2px 2px}
+  .hc-li img{width:13px;height:13px}
+  .hc-li .hc-n{min-width:13px;font-size:10px}
+}
 .hc .hc-scroll{overflow-x:auto}
 /* Bets */
 .hc-bet{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 4px}
@@ -132,55 +159,49 @@ def _cell(rank) -> str:
     return f"<span class='hc-none'>&mdash;</span>" if rank is None else f"{rank}"
 
 
-def top25_html(limit: int = 25) -> str:
-    teams, show_ap = _rankings()
-    sources = ["gs", "fpi"] + (["ap"] if show_ap else [])
-
-    def ranked(team) -> list:
-        # Outside a poll's top 25 is not a rank; the AP simply stops at 25, so
-        # a team the poll never named is ordered on the sources that do name it.
-        return [team[s] for s in sources if team[s] is not None and
-                (s != "ap" or team[s] <= 25)]
-
-    rows = []
-    for team_id, team in teams.items():
-        seen = ranked(team)
-        # In somebody's top 25 - one source liking a team enough is the whole
-        # reason a disagreement row exists.
-        if not seen or min(seen) > limit:
-            continue
-        rows.append((sum(seen) / len(seen), max(seen) - min(seen), team_id, team))
+def _ordered(teams: dict, source: str, limit: int) -> list:
+    """The top `limit` of one source, best first."""
+    rows = [(t[source], tid, t) for tid, t in teams.items() if t.get(source)]
     rows.sort(key=lambda r: r[0])
-    rows = rows[:limit]
+    return rows[:limit]
 
-    body = []
-    for i, (_avg, spread, team_id, team) in enumerate(rows, 1):
-        logo = (f"<img src='{LOGO.format(team_id=escape(str(team_id)))}' alt='' "
-                f"loading='lazy'>")
-        cells = "".join(f"<td>{_cell(team[s])}</td>" for s in ("gs", "ap", "fpi")
-                        if s != "ap" or show_ap)
-        body.append(f"<tr{' class=hc-split' if spread >= 8 else ''}>"
-                    f"<td class='hc-team'><span class='hc-rk'>{i}</span>{logo}"
-                    f"{escape(str(team['name']))}</td>{cells}</tr>")
 
-    head = ("<tr><th>Team</th><th>GS</th>" + ("<th>AP</th>" if show_ap else "")
-            + "<th>FPI</th></tr>")
-    # The row the three sources argue about hardest, named in words - a table
-    # of numbers does not say "look here" on its own.
-    argued = max(rows, key=lambda r: r[1]) if rows else None
-    note = ("<strong>GS</strong> is this site's rating, <strong>FPI</strong> ESPN's"
-            + (", <strong>AP</strong> the poll" if show_ap else "")
-            + ". Ordered by where they agree; highlighted where they are eight or "
-            "more places apart.")
-    if argued and argued[1] >= 8:
-        team = argued[3]
-        ranks = ", ".join(f"{s.upper() if s != 'gs' else 'GS'} {team[s]}"
-                          for s in ("gs", "ap", "fpi")
-                          if team[s] is not None and (s != "ap" or show_ap))
-        note = (f"Widest disagreement: <strong>{escape(str(team['name']))}</strong> "
-                f"({ranks}). ") + note
-    return (_CSS + "<div class='hc'><div class='hc-scroll'><table>"
-            f"<thead>{head}</thead><tbody>{''.join(body)}</tbody></table></div>"
+def top25_html(limit: int = 25) -> str:
+    """The three polls side by side, each as its own ranked list.
+
+    Built to be screenshotted into a group chat: the three lists read top to
+    bottom the way a poll does, the card carries its own title and date so a
+    picture of it explains itself, and a team ranked eight or more places
+    apart by the others is marked, because the argument is the point.
+    """
+    teams, show_ap = _rankings()
+    sources = [("ap", "AP Poll")] if show_ap else []
+    sources += [("gs", "GordStats"), ("fpi", "ESPN FPI")]
+
+    def spread(team) -> int:
+        seen = [team[s] for s, _ in sources
+                if team[s] is not None and (s != "ap" or team[s] <= 25)]
+        return (max(seen) - min(seen)) if len(seen) > 1 else 0
+
+    columns = []
+    for key, label in sources:
+        items = []
+        for rank, team_id, team in _ordered(teams, key, limit):
+            logo = (f"<img src='{LOGO.format(team_id=escape(str(team_id)))}' alt='' "
+                    f"loading='lazy'>")
+            argued = " hc-split" if spread(team) >= 8 else ""
+            items.append(f"<li class='hc-li{argued}'><span class='hc-n'>{rank}</span>"
+                         f"{logo}<span class='hc-tm'>{escape(str(team['name']))}</span></li>")
+        columns.append(f"<div class='hc-col'><div class='hc-src'>{label}</div>"
+                       f"<ol class='hc-list'>{''.join(items)}</ol></div>")
+
+    stamp = datetime.now().strftime("%b %-d")
+    note = ("Highlighted where the three disagree by eight or more places."
+            if show_ap else "Highlighted where the two disagree by eight or more places.")
+    return (_CSS + "<div class='hc'>"
+            f"<div class='hc-head'><b>Top 25 &middot; {SEASON}</b>"
+            f"<span class='hc-when'>gordstats.com &middot; {stamp}</span></div>"
+            f"<div class='hc-cols'>{''.join(columns)}</div>"
             f"<p class='hc-note'>{note}</p></div>")
 
 
