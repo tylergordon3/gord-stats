@@ -21,12 +21,14 @@ def projection_years() -> list[int]:
 # folded into the schedule page, which /cfb/scoreboard/ now redirects to.
 # league_power is a section of the league page now, built from there.
 PAGES = ["home", "draft_review", "league", "matchups",
-         "power", "teams", "predictions", "schedule", "countdown", "homecards"]
+         "power", "teams", "predictions", "schedule", "countdown", "homecards",
+         "strength"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
     """Fetch (or reuse) the data, build every page; returns failed page names."""
-    from cfb import cfbd, espn, gameinfo, odds, players, results, schools, yahoo
+    from cfb import (boxscores, cfbd, espn, gameinfo, odds, players, results,
+                     schools, yahoo)
 
     # Fetch up front so one network failure surfaces once, not per page, and a
     # fetch that does fail leaves the pages building from the last good cache.
@@ -60,7 +62,11 @@ def build_all(refresh: bool = False) -> list[str]:
                         ("espn betting lines", lambda: odds.capture()),
                         # Archive the predictions too: one scored after kickoff
                         # is not a prediction, so they have to be on record first.
-                        ("prediction archive", lambda: results.capture())]:
+                        ("prediction archive", lambda: results.capture()),
+                        # Box scores for games that have finished: one request
+                        # each, once, and the matchup-strength page reads them
+                        # from the parquet forever after.
+                        ("espn box scores", lambda: boxscores.capture(refresh=refresh))]:
         try:
             pull()
         except Exception as exc:

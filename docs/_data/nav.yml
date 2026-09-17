@@ -164,6 +164,11 @@ cfb_fantasy:
     icon: "⚔️"
     url: /cfb/matchups/
 
+  - title: Matchup Strength
+    short: Strength
+    icon: "🛡️"
+    url: /cfb/strength/
+
   - title: League Dashboard
     short: League
     icon: "🏆"
