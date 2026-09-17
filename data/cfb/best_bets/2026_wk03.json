@@ -1,0 +1,54 @@
+{
+ "week": 3,
+ "single": {
+  "kind": "spread",
+  "game_id": "401862774",
+  "team": "Toledo",
+  "opponent": "Temple",
+  "home": true,
+  "line": -6.0,
+  "market_margin": 6.0,
+  "model": 15.7,
+  "edge": 9.7,
+  "kickoff": "2026-09-19T19:00:00+00:00"
+ },
+ "parlay": [
+  {
+   "kind": "spread",
+   "game_id": "401856694",
+   "team": "Texas A&M",
+   "opponent": "Kentucky",
+   "home": true,
+   "line": -17.5,
+   "market_margin": 17.5,
+   "model": 26.6,
+   "edge": 9.1,
+   "kickoff": "2026-09-19T19:30:00+00:00"
+  },
+  {
+   "kind": "spread",
+   "game_id": "401864507",
+   "team": "Sacramento St",
+   "opponent": "N Dakota St",
+   "home": true,
+   "line": 27.5,
+   "market_margin": -27.5,
+   "model": -18.6,
+   "edge": 8.9,
+   "kickoff": "2026-09-20T02:30:00+00:00"
+  },
+  {
+   "kind": "spread",
+   "game_id": "401862771",
+   "team": "FIU",
+   "opponent": "FAU",
+   "home": false,
+   "line": 7.0,
+   "market_margin": -7.0,
+   "model": 1.5,
+   "edge": 8.5,
+   "kickoff": "2026-09-19T22:00:00+00:00"
+  }
+ ],
+ "locked": "2026-09-17T11:46:29"
+}
