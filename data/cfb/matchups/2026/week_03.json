@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-17T03:40:10+00:00",
+ "fetched": "2026-09-17T09:32:27+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -17,14 +17,14 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 187.36,
+     "projected": 187.08,
      "win_probability": 0.48
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 191.06,
+     "projected": 191.1,
      "win_probability": 0.52
     }
    ]
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 0.0,
      "projected": 196.62,
-     "win_probability": 0.77
+     "win_probability": 0.76
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 153.28,
-     "win_probability": 0.22999999999999998
+     "projected": 153.53,
+     "win_probability": 0.24
     }
    ]
   },
@@ -86,7 +86,7 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 177.3,
+     "projected": 177.29,
      "win_probability": 0.51
     },
     {
@@ -109,7 +109,7 @@
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 188.89,
+     "projected": 188.93,
      "win_probability": 0.53
     },
     {
@@ -1521,12 +1521,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "405765",
-    "player": "Dorian Fleming",
-    "pos": "TE",
-    "team": "UMD",
-    "team_full": "Maryland Terrapins",
-    "bye": 8.0,
+    "yahoo_id": "470796",
+    "player": "Tony Diaz",
+    "pos": "WR",
+    "team": "IOWA",
+    "team_full": "Iowa Hawkeyes",
+    "bye": 7.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1535,12 +1535,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "450275",
-    "player": "Yamir Knight",
-    "pos": "WR",
-    "team": "SMU",
-    "team_full": "SMU Mustangs",
-    "bye": 6.0,
+    "yahoo_id": "404631",
+    "player": "Jelani Thurman",
+    "pos": "TE",
+    "team": "UNC",
+    "team_full": "North Carolina Tar Heels",
+    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2255,15 +2255,15 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404831",
-    "player": "Eric Singleton Jr.",
+    "yahoo_id": "463325",
+    "player": "Na'eem Abdul-Rahim Gladding",
     "pos": "WR",
-    "team": "FLA",
-    "team_full": "Florida Gators",
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
     "bye": 8.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Ankle",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2534,7 +2534,7 @@
   "407241": 12.73,
   "405317": 8.41,
   "482918": 15.71,
-  "404466": 15.18,
+  "404466": 14.9,
   "468744": 15.88,
   "405245": 10.72,
   "470260": 10.92,
@@ -2558,7 +2558,7 @@
   "404437": 10.54,
   "451329": 8.82,
   "457898": 11.11,
-  "900028": 16.06,
+  "900028": 16.1,
   "470211": 32.18,
   "334043": 29.09,
   "404522": 21.27,
@@ -2581,7 +2581,7 @@
   "469228": 14.64,
   "404365": 13.01,
   "455576": 22.73,
-  "455543": 8.09,
+  "455543": 8.34,
   "470421": 7.76,
   "404809": 10.21,
   "468459": 9.96,
@@ -2624,8 +2624,8 @@
   "457217": 10.35,
   "404810": 14.58,
   "333810": 24.83,
-  "405765": 4.01,
-  "450275": 9.3,
+  "470796": 17.58,
+  "404631": 9.05,
   "900073": 9.87,
   "404544": 32.02,
   "404434": 27.57,
@@ -2643,7 +2643,7 @@
   "458035": 5.72,
   "333373": 2.5,
   "334139": 6.93,
-  "900033": 15.14,
+  "900033": 15.13,
   "464024": 35.52,
   "403957": 25.84,
   "404007": 15.51,
@@ -2671,13 +2671,13 @@
   "335940": 8.29,
   "404392": 18.72,
   "456937": 12.1,
-  "457801": 12.4,
+  "457801": 12.38,
   "333511": 24.36,
   "451040": 8.01,
   "449475": 5.83,
   "482773": 7.58,
-  "404831": 9.5,
-  "900060": 18.34,
+  "463325": 11.93,
+  "900060": 18.38,
   "333785": 27.86,
   "455480": 34.59,
   "456340": 16.38,

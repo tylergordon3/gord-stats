@@ -1,5 +1,80 @@
 [
  {
+  "id": 71.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1789631611.0,
+  "faab_bid": 1.0,
+  "players": [
+   {
+    "player": "Na'eem Abdul-Rahim Gladding",
+    "pos": "WR",
+    "team": "UMD",
+    "type": "add",
+    "source": null,
+    "destination": "Cameron's Choice Team"
+   },
+   {
+    "player": "Eric Singleton Jr.",
+    "pos": "WR",
+    "team": "FLA",
+    "type": "drop",
+    "source": "Cameron's Choice Team",
+    "destination": null
+   }
+  ]
+ },
+ {
+  "id": 70.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1789631611.0,
+  "faab_bid": 2.0,
+  "players": [
+   {
+    "player": "Jelani Thurman",
+    "pos": "TE",
+    "team": "UNC",
+    "type": "add",
+    "source": null,
+    "destination": "I Stand With Diggs"
+   },
+   {
+    "player": "Dorian Fleming",
+    "pos": "TE",
+    "team": "UMD",
+    "type": "drop",
+    "source": "I Stand With Diggs",
+    "destination": null
+   }
+  ]
+ },
+ {
+  "id": 69.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1789631611.0,
+  "faab_bid": 10.0,
+  "players": [
+   {
+    "player": "Tony Diaz",
+    "pos": "WR",
+    "team": "IOWA",
+    "type": "add",
+    "source": null,
+    "destination": "I Stand With Diggs"
+   },
+   {
+    "player": "Yamir Knight",
+    "pos": "WR",
+    "team": "SMU",
+    "type": "drop",
+    "source": "I Stand With Diggs",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 67.0,
   "type": "add/drop",
   "status": "successful",
