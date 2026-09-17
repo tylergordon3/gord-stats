@@ -33,125 +33,16 @@ from cfb import (cfbd, defense, gameinfo, lineup, ownership, predict, projection
                  schools as schools_mod, usage as usage_mod, weekly, yahoo)
 from cfb.config import LEAGUE_TZ, MY_TEAM, SEASON, WEB_DIR
 from cfb.site import write_page
-from cfb.site.matchups import _school_logo, game_cell, game_for, slot_order
+from cfb.site.matchups import _school_logo, game_cell, game_for, order_roster
 from cfb.site.schedule import _merge_weather, _wx_icon
 from cfb.site.strength import _heat
 from cfb.site.usage import RECENT_WEEKS
-from gordstats import matchup_page as ui
+from gordstats import lineup as shared_lineup, matchup_page as ui, roster_page as page
 
 OUTPUT = WEB_DIR / "roster" / "index.html"
 ADDS_SHOWN = 8
 MIN_GAIN = 0.5                  # an add worth less than this is a coin flip, not advice
 BAD_WEATHER = 2.0               # gameinfo.weather_severity's own "bad weather" cut
-
-_CSS = """<style>
-.rd-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:6px 0 10px}
-.rd-head img.rd-tlogo{width:44px;height:44px;border-radius:50%;border:0;padding:0;margin:0;
-  box-shadow:none;background:none}
-.rd-head .rd-nm{font-size:20px;font-weight:700;color:#0f172a;line-height:1.2}
-.rd-head .rd-sub{font-size:13px;color:#64748b}
-.rd-tiles{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
-.rd-tile{border:1px solid #e2e8f0;border-radius:10px;padding:6px 12px;background:#fff;
-  text-align:center;min-width:92px}
-.rd-tile b{display:block;font-size:18px;color:#0f172a}
-.rd-tile span{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#64748b}
-.rd-tile.up b{color:#15803d}
-.rd-pick{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0}
-.rd-pick select,.rd-pick button{font:inherit;font-size:13px;padding:5px 9px;border-radius:8px;
-  border:1px solid #cbd5e1;background:#fff;color:#0f172a}
-.rd-pick button{cursor:pointer;background:#f8fafc}
-.rd-pick button.on{background:#fef3c7;border-color:#f59e0b;color:#92400e;cursor:default}
-.rd-moves{margin:4px 0 12px;padding:10px 14px;border-left:4px solid #2a78d6;background:#f1f6fd;
-  border-radius:0 8px 8px 0;font-size:14px;line-height:1.6;color:#0f172a}
-.rd-moves.ok{border-left-color:#16a34a;background:#f0fdf4}
-.rd-moves ul{margin:0;padding-left:18px}
-.rd-scroll{overflow-x:auto}
-table.rd{width:100%;border-collapse:collapse;font-size:14px}
-table.rd th{background:#eef2f7;color:#334155;padding:6px 8px;text-align:center;font-size:11.5px;
-  text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;border:1px solid #e2e8f0}
-table.rd td{padding:5px 8px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
-  text-align:center;white-space:nowrap}
-table.rd td.rd-p{text-align:left}
-table.rd td.rd-p .nm{font-weight:600}
-table.rd td.rd-p img{width:18px;height:18px;vertical-align:-3px;margin:0 6px 0 0;border:0;
-  padding:0;box-shadow:none;background:none}
-table.rd td.rd-g{text-align:left;font-size:13px}
-table.rd td.rd-g .bye{color:#b91c1c;font-weight:600}
-table.rd td.rd-g .fin{color:#64748b}
-table.rd td.rd-g .live{color:#b91c1c;font-weight:700}
-table.rd tr.rd-bn td{color:#64748b;background:#fafbfc}
-table.rd tr.rd-bn td.rd-p .nm{font-weight:500}
-table.rd tr.rd-split td{border-top:3px solid #cbd5e1}
-table.rd td.rd-slot{font-weight:700;font-size:12.5px}
-.rd-now{display:block;font-weight:400;font-size:11px;color:#b45309}
-.rd-lbl{font-size:12px;color:#64748b;margin-left:4px}
-.rd-tag{display:inline-block;margin-left:6px;padding:0 6px;border-radius:8px;font-size:11px;
-  font-weight:700;text-transform:uppercase}
-.rd-tag.in{background:#dcfce7;color:#166534}
-.rd-tag.out{background:#fee2e2;color:#991b1b}
-.rd-tag.lock{background:#e2e8f0;color:#475569}
-.rd-inj{margin-left:5px;color:#b91c1c;font-weight:700;font-size:12px}
-.rd-rk{display:block;font-size:11px;color:#475569}
-.rd-wx .sub{display:block;font-size:11px;color:#64748b}
-.rd-wx.bad{font-weight:700;color:#b45309}
-.rd-cov{font-size:12.5px;text-align:left !important}
-.rd-cov.none{color:#94a3b8}
-.rd-cov.warn{color:#b45309;font-weight:600}
-.rd-note{font-size:13px;color:#4a5a68;margin:6px 0 12px;line-height:1.55}
-.rd-gain{color:#15803d;font-weight:700}
-@media (prefers-color-scheme: dark){
-  .rd-head .rd-nm,.rd-tile b{color:#e8eef7}
-  .rd-head .rd-sub,.rd-tile span,.rd-lbl,.rd-rk,.rd-wx .sub,.rd-note{color:#aab7c9}
-  .rd-tile{background:#16203a;border-color:#2b3852}
-  .rd-tile.up b,.rd-gain{color:#4ade80}
-  .rd-pick select,.rd-pick button{background:#16203a;color:#dde5ef;border-color:#2b3852}
-  .rd-pick button.on{background:#453312;border-color:#b45309;color:#ffd08a}
-  .rd-moves{background:#1b2540;color:#dde5ef}
-  .rd-moves.ok{background:#12291c}
-  table.rd th{background:#223052;color:#dde5ef;border-color:#2b3852}
-  table.rd td{background:#16203a;border-color:#2b3852;color:#dde5ef}
-  table.rd tr.rd-bn td{background:#131c33;color:#aab7c9}
-  table.rd tr.rd-split td{border-top-color:#475569}
-  table.rd td.rd-g .fin{color:#aab7c9}
-  .rd-now,.rd-wx.bad,.rd-cov.warn{color:#ffb457}
-  .rd-tag.in{background:#14532d;color:#bbf7d0}
-  .rd-tag.out{background:#5f1d1d;color:#fecaca}
-  .rd-tag.lock{background:#2b3852;color:#cbd5e1}
-  .rd-cov.none{color:#64748b}
-}
-</style>"""
-
-# One view per team, the menu shows one. The choice rides in the hash (so a
-# link can name a team) and "my team" in localStorage under the key the usage
-# page reads.
-_JS = """{% raw %}<script>
-(function(){
-  var CFG=JSON.parse(document.getElementById('rd-cfg').textContent);
-  var pick=document.getElementById('rd-team'), star=document.getElementById('rd-star');
-  function mine(){
-    try{var s=localStorage.getItem('cfbMyTeam'); if(s&&CFG.teams[s]) return s;}catch(e){}
-    return CFG.mine;
-  }
-  function show(key){
-    if(!CFG.teams[key]) key=mine()||Object.keys(CFG.teams)[0];
-    pick.value=key;
-    Array.prototype.forEach.call(document.querySelectorAll('.rd-view'),function(v){
-      v.style.display=v.dataset.key===key?'':'none';});
-    var is=key===mine();
-    star.classList.toggle('on',is);
-    star.textContent=is?'\\u2605 My team':'\\u2606 Make this my team';
-    history.replaceState(null,'','#'+CFG.teams[key]);
-  }
-  pick.addEventListener('change',function(){show(pick.value);});
-  star.addEventListener('click',function(){
-    try{localStorage.setItem('cfbMyTeam',pick.value);}catch(e){}
-    show(pick.value);});
-  var want=location.hash.replace(/^#/,''), start=null;
-  Object.keys(CFG.teams).forEach(function(k){ if(CFG.teams[k]===want) start=k; });
-  show(start||mine());
-})();
-</script>{% endraw %}"""
-
 
 # --------------------------------------------------------------------------- #
 # The week's shared data
@@ -312,46 +203,30 @@ def _name(p: dict, wkd: Week, with_proj: bool = True) -> str:
             + (f" ({v:.1f})" if with_proj and v is not None else ""))
 
 
+def _change(p: dict, got: dict) -> str:
+    return shared_lineup.change(p["slot"], got["slot"][p["yahoo_id"]], lineup.BENCH)
+
+
 def moves_box(wkd: Week, roster: list, got: dict, proj: dict, kick: dict, gain: float) -> str:
-    """The advice, in the order a manager would act on it."""
-    by_id = {p["yahoo_id"]: p for p in roster}
-    ins = [p for p in roster if p["slot"] in lineup.BENCH and p["yahoo_id"] in got["start"]]
-    outs = [p for p in roster if p["slot"] not in lineup.BENCH
-            and p["yahoo_id"] not in got["start"]]
-    items = []
-    if ins or outs:
-        items.append("<li><b>Start</b> " + ", ".join(_name(p, wkd) for p in ins)
-                     + (" &mdash; <b>sit</b> " + ", ".join(_name(p, wkd) for p in outs)
-                        if outs else "")
-                     + (" &mdash; a starting slot is sitting empty" if len(ins) > len(outs)
-                        else "")
-                     + f": <span class='rd-gain'>+{gain:.1f}</span> projected.</li>")
-    shuffles = [p for p in roster if p["yahoo_id"] in got["start"]
-                and p["slot"] not in lineup.BENCH
-                and got["slot"][p["yahoo_id"]] != p["slot"]]
-    flexed = [by_id[i] for i, s in got["slot"].items()
-              if s == lineup.FLEX and i in by_id and p_unlocked(i, wkd)]
-    if shuffles or (ins and flexed):
-        late = ", ".join(f"{_name(p, wkd, False)} ({_when(kick.get(p['yahoo_id']))})"
-                         for p in sorted(flexed, key=lambda p: str(kick.get(p["yahoo_id"]))))
-        moved = ", ".join(f"{_name(p, wkd, False)} {escape(p['slot'])} &rarr; "
-                          f"{escape(got['slot'][p['yahoo_id']])}" for p in shuffles)
-        items.append("<li><b>Slot order</b>: " + (moved + ". " if moved else "")
-                     + (f"The flex belongs to the latest kickoffs &mdash; {late} &mdash; so a "
-                        "late scratch leaves a slot any back, receiver or tight end can fill."
-                        if late else "") + "</li>")
+    """This roster's changes, handed to the shared box."""
+    changes = []
+    for p in roster:
+        kind = _change(p, got)
+        if kind:
+            pid = p["yahoo_id"]
+            changes.append({"kind": kind, "name": p["player"], "proj": wkd.proj(pid),
+                            "now": p["slot"], "new": got["slot"][pid],
+                            "when": _when(kick.get(pid)), "sort": str(kick.get(pid))})
     # A starter with an injury tag and nobody who could still replace him.
+    by_id = {p["yahoo_id"]: p for p in roster}
+    warns = []
     for pid in got["start"]:
         p = by_id[pid]
         if p.get("status") and pid in got["cover"] and not got["cover"][pid]:
-            items.append(f"<li>{_name(p, wkd, False)} is <b>{escape(p['status'])}</b> and "
-                         f"kicks off {_when(kick.get(pid))} with no eligible bench player "
-                         "left to play after him &mdash; decide before the earlier games "
-                         "lock.</li>")
-    if not items:
-        return ("<div class='rd-moves ok'>The lineup as set is the best one by projection, "
-                "and the flex already holds the latest kickoffs.</div>")
-    return f"<div class='rd-moves'><ul>{''.join(items)}</ul></div>"
+            warns.append(f"{_name(p, wkd, False)} is <b>{escape(p['status'])}</b> and kicks off "
+                         f"{_when(kick.get(pid))} with no eligible bench player left to play "
+                         "after him &mdash; decide before the earlier games lock.")
+    return page.moves_box(changes, warns, gain, lineup.FLEX)
 
 
 def p_unlocked(pid: str, wkd: Week) -> bool:
@@ -359,32 +234,22 @@ def p_unlocked(pid: str, wkd: Week) -> bool:
 
 
 def lineup_table(wkd: Week, roster: list, got: dict) -> str:
-    slots = slot_order(wkd.lg)
-    rank = {}
-    for i, s in enumerate(slots):
-        rank.setdefault(s, i)
+    """The roster exactly as it is set, each row coloured by what the plan
+    does with it: green comes off the bench, red goes to it, blue changes
+    starting slot for the kickoff order."""
     by_id = {p["yahoo_id"]: p for p in roster}
-
-    def order(p):
-        s = got["slot"][p["yahoo_id"]]
-        return (rank.get(s, len(slots)), -(wkd.proj(p["yahoo_id"]) or 0.0))
-
     rows, benched = [], False
-    for p in sorted(roster, key=order):
+    for p in order_roster(roster, wkd.lg):
         pid = p["yahoo_id"]
-        s = got["slot"][pid]
-        bench = s in lineup.BENCH
+        bench = p["slot"] in lineup.BENCH
+        new = got["slot"][pid]
+        kind = _change(p, got)
         g = wkd.game(p)
         state = (g.get("state") if g is not None else None) or "pre"
-        tag = ""
-        if state in ("in", "post"):
-            tag = "<span class='rd-tag lock'>locked</span>"
-        elif bench != (p["slot"] in lineup.BENCH):
-            tag = ("<span class='rd-tag out'>sit</span>" if bench
-                   else "<span class='rd-tag in'>start</span>")
-        now = ("" if s == p["slot"] else f"<span class='rd-now'>now {escape(p['slot'])}</span>")
+        tag = "<span class='rd-tag lock'>locked</span>" if state in ("in", "post") else ""
+        move_td = page.move_cell(kind, new)
         cover = got["cover"].get(pid)
-        if bench or cover is None:
+        if new in lineup.BENCH or cover is None:
             cover_td = "<td class='rd-cov none'>&mdash;</td>"
         elif cover:
             c = by_id[cover[0]]
@@ -401,23 +266,24 @@ def lineup_table(wkd: Week, roster: list, got: dict) -> str:
         split = " rd-split" if bench and not benched else ""
         benched = benched or bench
         rows.append(
-            f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}'>"
-            f"<td class='rd-slot'>{escape(s)}{now}</td>"
+            f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}{' rd-' + kind if kind else ''}'>"
+            f"<td class='rd-slot'>{escape(p['slot'])}</td>" + move_td
             + player_cell(wkd, p, tag)
             + f"<td class='rd-g'>{game_cell(g)}</td>"
             + opp_cell(wkd, g, p["pos"]) + weather_cell(wkd, g)
             + f"<td><b>{ui.fmt(wkd.proj(pid))}</b></td><td>{ui.fmt(wkd.yproj.get(pid))}</td>"
             + pts_td + usage_cells(wkd, pid, p["pos"]) + cover_td + "</tr>")
-    head = ("<tr><th>Slot</th><th>Player</th><th>Game</th>"
+    head = ("<tr><th title='Where he is set right now'>Slot</th>"
+            "<th title='What to do with him'>Change</th><th>Player</th><th>Game</th>"
             "<th title='What the opposing defence allows to this position, against "
             "expectation. 1.00 is par; rank 1 gives up the most.'>Opp vs pos</th>"
             "<th>Weather</th><th title='This site&#39;s projection for the week'>GS proj</th>"
             "<th>Yahoo</th><th>Pts</th>"
             f"<th title='Share of his team&#39;s carries, last {RECENT_WEEKS} played weeks'>Car%</th>"
             f"<th title='Share of his team&#39;s targets, last {RECENT_WEEKS} played weeks'>Tgt%</th>"
-            "<th title='Best bench player who could still take this slot: eligible for it "
-            "and not kicking off any earlier'>Late-swap cover</th></tr>")
-    return (f"<div class='rd-scroll'><table class='rd'><thead>{head}</thead>"
+            "<th title='Once the changes are made: the best bench player who could still take "
+            "this slot - eligible for it and not kicking off any earlier'>Late-swap cover</th></tr>")
+    return (page.legend() + f"<div class='rd-scroll'><table class='rd'><thead>{head}</thead>"
             f"<tbody>{''.join(rows)}</tbody></table></div>")
 
 
@@ -532,7 +398,7 @@ def team_view(wkd: Week, team: dict, free: pd.DataFrame) -> str:
 
 def body() -> str:
     if not yahoo.archived_weeks():
-        return (_CSS + "<p>No rosters yet — the page fills in on the first rebuild once "
+        return (page.CSS + "<p>No rosters yet — the page fills in on the first rebuild once "
                 "Yahoo has scheduled week 1.</p>")
     wkd = Week()
     free = yahoo.free_agents()
@@ -546,18 +412,20 @@ def body() -> str:
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     cfg = json.dumps({"mine": mine, "teams": slugs}).replace("</", "<\\/")
     return (
-        _CSS
+        page.CSS
         + f"<p><strong>Week {wkd.week}</strong> &middot; {start:%b %-d} &ndash; {end:%b %-d}. "
         "One roster at a time: who to start, which slot to put him in, what he is up "
         "against, and who on the wire would beat him.</p>"
         "<details class='section'><summary>How to read this page</summary>"
-        "<p class='rd-note'><b>Start / sit</b> is the best lineup by <b>GS proj</b>, this "
-        "site's weekly projection (Yahoo's own sits beside it). The <b>Slot</b> column is "
-        "where each starter belongs, not just whether he plays: Yahoo locks a player at his "
-        "own kickoff, so the earliest games take the position slots and the latest take the "
-        "flex &mdash; if Saturday night's receiver is scratched, the open slot is one any "
-        "back, receiver or tight end can fill. <i>now RB</i> under a slot means he is "
-        "somewhere else at the moment. <b>Late-swap cover</b> is the best bench player who "
+        "<p class='rd-note'><b>Start / sit</b> shows the roster exactly as it is set and "
+        "colours what to change, by <b>GS proj</b>, this site's weekly projection (Yahoo's "
+        "own sits beside it). <b style='color:#16a34a'>Green</b> comes off the bench into "
+        "the slot named; <b style='color:#dc2626'>red</b> goes to the bench; "
+        "<b style='color:#2563eb'>blue</b> stays a starter but changes slot for the kickoff "
+        "order: Yahoo locks a player at his own kickoff, so the earliest games take the "
+        "position slots and the latest take the flex &mdash; if Saturday night's receiver "
+        "is scratched, the open slot is one any back, receiver or tight end can fill. "
+        "<b>Late-swap cover</b> is, once the changes are made, the best bench player who "
         "could still take that slot: eligible for it and not kicking off any earlier. A "
         "player whose game has started is <i>locked</i> where he sits.</p>"
         "<p class='rd-note'><b>Opp vs pos</b> is the opponent's row on the "
@@ -573,7 +441,7 @@ def body() -> str:
         "<div class='pin-bar'><div class='rd-pick'><label>Team <select id='rd-team'>"
         f"{options}</select></label><button id='rd-star' type='button'></button></div></div>"
         + "".join(team_view(wkd, t, free) for t in teams)
-        + f"<script type='application/json' id='rd-cfg'>{cfg}</script>" + _JS)
+        + f"<script type='application/json' id='rd-cfg'>{cfg}</script>" + page.switch_js("cfbMyTeam"))
 
 
 def generate():

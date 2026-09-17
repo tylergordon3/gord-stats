@@ -74,6 +74,10 @@ ROSTER_NAMES = {
     6: "Trevor", 7: "Padgett", 8: "Mark", 9: "George", 10: "Everett",
 }
 
+# Whose site this is: the roster the team dashboard opens on until a browser
+# picks another (remembered per browser).
+MY_MANAGER = "Tyler"
+
 # Owners with at least one championship (drives the crown column).
 CHAMPIONS = {"Colin", "Jackson", "Austin"}
 

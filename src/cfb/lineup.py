@@ -1,127 +1,34 @@
 """
-The lineup a roster should set this week, and the order to set it in.
+The college league's lineup planner: gordstats.lineup with Yahoo's slot names.
 
-Two questions, answered separately because they are separate:
-
-  * Who starts. The best projection at each dedicated slot, then the flex
-    slots to the best skill players left - cfb.site.matchups.best_lineup's
-    rule, except that a player whose game has kicked off is locked where he
-    sits: a starter stays a starter, a bench player cannot come in.
-
-  * Which slot each starter goes in. Yahoo locks a player at his own kickoff,
-    so the slot a late player occupies is the slot that is still open when
-    news breaks. A flex slot takes any back, receiver or tight end; a
-    dedicated slot takes one position. So among the starters at a position the
-    earliest kickoffs take the dedicated slots and the latest ones go to the
-    flex - if Saturday night's receiver is scratched at 9pm, the hole is a flex
-    and anyone left on the bench can fill it. How many of a position sit in
-    the flex is fixed by who starts; only *which* of them is free, and that is
-    the choice made here.
-
-`cover` names the best bench player who could still step into each starter's
-slot: eligible for it, projected to score, and not kicking off before the
-starter does.
+Who starts and which slot each starter takes (latest kickoffs in the W/R/T
+flex, so a late scratch leaves a slot anyone can fill) is worked out in
+gordstats.lineup, which the NFL dashboard shares; this adapts the week
+archive's roster rows to it.
 
     python -m cfb.lineup
 """
-import pandas as pd
-
 from cfb import projections
+from gordstats import lineup as shared
+from gordstats.lineup import _points
 
 BENCH = {"BN", "IL", "IR"}
 RESERVE = {"IL", "IR"}
 FLEX = projections.FLEX_SLOT
 FLEX_POSITIONS = set(projections.FLEX_POSITIONS)
-_FAR = pd.Timestamp("2100-01-01", tz="UTC")
-
-
-def _kick(value):
-    """A kickoff as a sortable timestamp; a bye or an unknown game sorts last,
-    which is also the right place for it - it locks nothing."""
-    if value is None or pd.isna(value):
-        return _FAR
-    return pd.Timestamp(value)
-
-
-def _points(value) -> float:
-    return 0.0 if value is None or pd.isna(value) else float(value)
 
 
 def plan(players: list, roster_slots: list, proj: dict, kickoff: dict, locked: set) -> dict:
-    """The recommended lineup for one roster.
+    """The recommended lineup for one roster (see gordstats.lineup.plan).
 
-    players       the week archive's roster rows (yahoo_id, pos, slot, status)
+    players       the week archive's roster rows (yahoo_id, pos, slot)
     roster_slots  the league's [{position, count}]
-    proj          {yahoo_id: projected points}; missing counts as zero
-    kickoff       {yahoo_id: kickoff timestamp}; missing is a bye
-    locked        yahoo_ids whose game has started - they stay where they are
-
-    Returns {"slot": {yahoo_id: recommended slot}, "start": set of starters,
-    "cover": {yahoo_id: [bench yahoo_ids that could replace him, best first]}}.
     """
-    value = {p["yahoo_id"]: _points(proj.get(p["yahoo_id"])) for p in players}
-    by_id = {p["yahoo_id"]: p for p in players}
-    open_slots = {s["position"]: int(s["count"]) for s in roster_slots
-                  if s["position"] not in BENCH}
-    slot, pool = {}, []
-    for p in players:
-        pid = p["yahoo_id"]
-        if pid in locked:
-            slot[pid] = p["slot"]
-            if p["slot"] in open_slots:
-                open_slots[p["slot"]] -= 1
-        elif p["slot"] in RESERVE:
-            slot[pid] = p["slot"]                     # on the injured list: not available
-        else:
-            pool.append(pid)
-
-    # Who starts: dedicated slots by projection, then the flex.
-    ranked = {}
-    for pid in sorted(pool, key=lambda i: -value[i]):
-        ranked.setdefault(by_id[pid]["pos"], []).append(pid)
-    chosen = {}
-    for pos, n in open_slots.items():
-        if pos != FLEX:
-            chosen[pos] = ranked.get(pos, [])[:max(n, 0)]
-    flex = []
-    for _ in range(max(open_slots.get(FLEX, 0), 0)):
-        best = None
-        for pos in FLEX_POSITIONS:
-            rest = ranked.get(pos, [])[len(chosen.get(pos, [])):]
-            rest = [i for i in rest if i not in flex]
-            if rest and (best is None or value[rest[0]] > value[best]):
-                best = rest[0]
-        if best is None:
-            break
-        flex.append(best)
-
-    # Which slot: pool a position's starters, latest kickoffs to the flex.
-    for pos in set(chosen) | {by_id[i]["pos"] for i in flex}:
-        group = chosen.get(pos, []) + [i for i in flex if by_id[i]["pos"] == pos]
-        n_flex = sum(1 for i in flex if by_id[i]["pos"] == pos)
-        # Latest first; between equal kickoffs the weaker projection takes the
-        # flex (he is the likelier swap), and a player already there stays.
-        order = sorted(group, key=lambda i: (-_kick(kickoff.get(i)).value, value[i],
-                                             by_id[i]["slot"] != FLEX))
-        for n, pid in enumerate(order):
-            slot[pid] = FLEX if n < n_flex else pos
-    for pid in pool:
-        slot.setdefault(pid, "BN")
-
-    start = {pid for pid, s in slot.items() if s not in BENCH}
-    bench = [pid for pid in pool if slot[pid] == "BN"]
-    cover = {}
-    for pid in start:
-        if pid in locked:
-            continue
-        mine = by_id[pid]
-        ok = [b for b in bench
-              if value[b] > 0 and (by_id[b]["pos"] == mine["pos"]
-                  or (slot[pid] == FLEX and by_id[b]["pos"] in FLEX_POSITIONS))
-              and kickoff.get(b) is not None and not pd.isna(kickoff.get(b))
-              and _kick(kickoff.get(b)) >= _kick(kickoff.get(pid))]
-        cover[pid] = sorted(ok, key=lambda i: -value[i])
-    return {"slot": slot, "start": start, "cover": cover}
+    counts = {s["position"]: int(s["count"]) for s in roster_slots
+              if s["position"] not in BENCH}
+    rows = [{"id": p["yahoo_id"], "pos": p["pos"], "slot": p["slot"]} for p in players]
+    return shared.plan(rows, counts, proj, kickoff, locked, flex=FLEX,
+                       flex_positions=FLEX_POSITIONS, bench="BN", reserve=RESERVE)
 
 
 def total(players: list, slots: dict, proj: dict) -> float:

@@ -46,7 +46,7 @@ _ATTEMPTS = 3
 # Pages rebuilt when the gate opens, by their rebuild.PAGES slug and trigger:
 # a finished week re-ranks the power page and closes the week on the matchups
 # page; a game in progress refreshes only the matchups page (live points).
-PAGES = {"week": ["power", "matchups"], "live": ["matchups"]}
+PAGES = {"week": ["power", "matchups", "roster"], "live": ["matchups"]}
 
 
 def _get(url, attempts=_ATTEMPTS):

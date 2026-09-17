@@ -222,6 +222,21 @@ def _implied(odds: dict) -> tuple:
     return (total - spread) / 2, (total + spread) / 2
 
 
+def _weather(ev: dict, comp: dict) -> dict | None:
+    """{temp, cond (AccuWeather icon code), text, indoors} off a scoreboard
+    event. ESPN only carries it for the days before kickoff, and on game day
+    swaps the two fields - the code turns up in `displayValue` and the words
+    in `conditionId` - so whichever one is a number is the code."""
+    wx = ev.get("weather") or {}
+    indoors = bool((comp.get("venue") or {}).get("indoor"))
+    if not wx and not indoors:
+        return None
+    a, b = str(wx.get("conditionId") or ""), str(wx.get("displayValue") or "")
+    code, text = (a, b) if a.isdigit() else ((b, a) if b.isdigit() else ("", a or b))
+    return {"temp": _num(wx.get("temperature")), "cond": int(code) if code else None,
+            "text": text, "indoors": indoors}
+
+
 def parse_scoreboard(data: dict) -> list[dict]:
     games = []
     for ev in data.get("events") or []:
@@ -248,6 +263,7 @@ def parse_scoreboard(data: dict) -> list[dict]:
             "spread": odds.get("details"), "total": _num(odds.get("overUnder")),
             "tv": ", ".join(b.get("names", [""])[0] for b in c.get("broadcasts") or []
                             if b.get("names")),
+            "weather": _weather(ev, c),
         })
     return games
 
