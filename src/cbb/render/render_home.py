@@ -326,6 +326,36 @@ def render_cbb_home():
     print(f"Wrote CBB home -> {path}")
 
 
+# The two football graphics. Both are written by cfb.site.homecards as
+# includes, because the homepage has no business importing the football model;
+# they are placed here, in season, under the preview cards.
+def _cfb_graphics(today: date) -> str:
+    """The Top 25 comparison and the week's bets, if the season is on.
+
+    Out of season the includes still exist but say nothing useful, so the
+    whole block is left off rather than rendering two empty frames.
+    """
+    if not (date(today.year, 8, 20) <= today <= date(today.year, 12, 20)):
+        return ""
+    return """
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Top 25: three opinions</h2>
+    <a class="home-card-link" href="/cfb/power/">All 138 teams &rarr;</a>
+  </div>
+  {% include cfb_top25.html %}
+</section>
+
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>This week's bets</h2>
+    <a class="home-card-link" href="/cfb/predictions/">Every game &rarr;</a>
+  </div>
+  {% include cfb_bets.html %}
+</section>
+"""
+
+
 def render_home():
     """Season-aware homepage: every sport is a preview card, closest clock first.
 
@@ -348,6 +378,7 @@ def render_home():
         html = _by_next_clock(
             [("cbb", _cbb_card(today)), ("fantasy", _fantasy_card()),
              ("cfb", _cfb_card()), (None, _wnba_card(in_season=True))])
+    html += _cfb_graphics(today)
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

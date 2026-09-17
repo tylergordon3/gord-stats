@@ -21,7 +21,7 @@ def projection_years() -> list[int]:
 # folded into the schedule page, which /cfb/scoreboard/ now redirects to.
 # league_power is a section of the league page now, built from there.
 PAGES = ["home", "draft_review", "league", "matchups",
-         "power", "teams", "predictions", "schedule", "countdown"]
+         "power", "teams", "predictions", "schedule", "countdown", "homecards"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
