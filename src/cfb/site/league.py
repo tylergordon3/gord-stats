@@ -12,6 +12,8 @@ saying plainly what it is still waiting on:
                      projections and points once Yahoo serves them.
   * (The draft - grid, grades, every pick - lives on the draft review page,
      cfb.site.draft_review, not here.)
+  * Waiver Watch   - the best available player at each position for the week
+                     ahead, and the weakest thing each roster is holding.
   * Transactions   - player adds / drops / trades. Yahoo logs commissioner
                      actions too; those are noise and are filtered out here.
 
@@ -19,7 +21,9 @@ saying plainly what it is still waiting on:
 """
 from datetime import datetime
 
-from cfb import yahoo
+from html import escape
+
+from cfb import waivers, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import league_power, write_page
 
@@ -45,6 +49,11 @@ table.lg-table td:first-child,table.lg-table th:first-child{
 table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
   vertical-align:middle;margin:0 7px 0 0;border:none;padding:0;box-shadow:none}
 .mu-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
+.wv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;
+  margin:6px 0 16px}
+.wv-col h4{margin:0 0 4px;font-size:14px}
+.wv-col .mu-meta{font-size:12px;color:#64748b}
+.inj{font-size:10px;font-weight:700;color:#b3382c;margin-left:4px}
 @media (prefers-color-scheme: dark){
   .cfb-league{background:#1b2540;border-color:#2b3852;color:#dde5ef}
   table.lg-table th{background:#223052;color:#dde5ef;border-color:#2b3852}
@@ -174,6 +183,60 @@ def transactions_section(txns: list[dict]) -> str:
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
+def waiver_section(sb: dict) -> str:
+    """The pool and the roster spots it could take.
+
+    Ranked inside each position, never across them: a quarterback outscores a
+    running back every week, and a single combined list would be five
+    quarterbacks and nothing a reader could act on.
+    """
+    try:
+        available, rostered, week = waivers.pools()
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! waiver watch unavailable ({exc})")
+        return ""
+    by_pos = waivers.adds(available)
+    if not by_pos:
+        return "<p>Yahoo has no available players with a projection this week.</p>"
+
+    cols = []
+    for pos, rows in by_pos.items():
+        cells = "".join(
+            f'<tr><td class="lg-team">{escape(str(r["player"]))}'
+            f'<span class="mu-meta"> {escape(str(r["team"]))}</span></td>'
+            f'<td>{r["proj"]:.1f}</td></tr>'
+            for _, r in rows.iterrows())
+        cols.append('<div class="wv-col"><h4>' + pos + '</h4>'
+                    '<table class="lg-table"><thead><tr><th>Player</th><th>Proj</th>'
+                    f'</tr></thead><tbody>{cells}</tbody></table></div>')
+
+    drop_rows = waivers.drops(rostered)
+    # The scoreboard carries the names, one matchup at a time.
+    names = {t["team_key"]: t.get("name") or t["team_key"]
+             for m in (sb.get("matchups") or []) for t in m.get("teams") or []}
+    drop_rows = drop_rows.assign(
+        team_name=[names.get(k, k) for k in drop_rows["team_key"]]).sort_values(
+        ["team_name", "proj"])
+    drops = "".join(
+        f'<tr><td class="lg-team">{escape(str(r["team_name"]))}</td>'
+        f'<td class="lg-team">{escape(str(r["player"]))}'
+        + (f' <span class="inj">{escape(str(r["status"]))}</span>' if r["status"] else "")
+        + f'</td><td>{escape(str(r["pos"]))}</td><td>{escape(str(r["slot"]))}</td>'
+        f'<td>{r["proj"]:.1f}</td></tr>'
+        for _, r in drop_rows.iterrows())
+
+    return (
+        f'<p class="mu-note">The best available player at each position for '
+        f'<strong>week {week}</strong>, on this site\'s own weekly projection, and the '
+        'weakest player each roster is holding. Defences are left off the drop list '
+        '(every roster has to field one) and anyone Yahoo has flagged sorts to the top '
+        'of his team\'s row - an injured player is the roster spot doing nothing.</p>'
+        f'<div class="wv-grid">{"".join(cols)}</div>'
+        '<h4>Weakest rostered</h4><div class="table-scroll"><table class="lg-table">'
+        '<thead><tr><th>Team</th><th>Player</th><th>Pos</th><th>Slot</th><th>Proj</th>'
+        f'</tr></thead><tbody>{drops}</tbody></table></div>')
+
+
 # --------------------------------------------------------------------------- #
 # Page
 # --------------------------------------------------------------------------- #
@@ -197,6 +260,8 @@ def body() -> str:
         + _details("Power Rankings", league_power.section(), open=True, anchor="power")
         + _details(f"Matchups — Week {int(sb['week']) if sb.get('week') else '?'}",
                    matchups_section(sb), open=True)
+        + _details("Waiver Watch", waiver_section(sb), open=True,
+                   anchor="waivers")
         + _details("Waivers &amp; Trades", transactions_section(txns))
     )
 

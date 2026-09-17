@@ -29,6 +29,7 @@ from fantasy.config import (
     DATA_DIR, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_DIR,
     UPCOMING_LEAGUE_ID, UPCOMING_SEASON, UPCOMING_YEAR,
 )
+from fantasy.league import suggestions as suggest
 from fantasy.league import transactions as transactions_data
 from fantasy.league.matchups import MATCHUPS_DIR
 from fantasy.identity.registry import load_registry
@@ -193,6 +194,67 @@ def best_pickups(season_str: str, tx: pd.DataFrame, names: dict, top: int = 15,
 
 
 # --------------------------------------------------------------------------- #
+# Who to add, who to drop
+# --------------------------------------------------------------------------- #
+
+def _fmt_player(name: str, flag: str = "") -> str:
+    tag = f" <span class='tx-flag'>{escape(str(flag))}</span>" if flag else ""
+    return f"{escape(str(name))}{tag}"
+
+
+def waiver_watch() -> str:
+    """The free agents worth a claim, and the roster spots they would take.
+
+    Both tables are the same number: points expected next week (Sleeper's
+    projection where it has one, ours otherwise) less what the position hands
+    out for free, so an add and a drop can be read against each other.
+    """
+    week = suggest.current_week()
+    try:
+        free, owned = suggest.pools(week=week)
+    except Exception as exc:                            # noqa: BLE001
+        print(f"[transactions] no waiver suggestions ({exc})")
+        return ""
+    add_rows, drop_rows = suggest.adds(free), suggest.drops(owned)
+    if add_rows.empty:
+        return ""
+
+    adds_html = pd.DataFrame({
+        "Player": [f'<span class="row-rank">{i}</span>{_fmt_player(r["player"], r["flag"])}'
+                   for i, (_, r) in enumerate(add_rows.iterrows(), 1)],
+        "Pos": add_rows["pos"].values, "Team": add_rows["team"].values,
+        "Proj": add_rows["points"].values, "Over repl.": add_rows["score"].values,
+    })
+    drops_html = pd.DataFrame({
+        "Manager": drop_rows["manager"].values,
+        "Player": [_fmt_player(n) for n in drop_rows["player"]],
+        "Pos": drop_rows["pos"].values,
+        "Proj": drop_rows["points"].values, "Over repl.": drop_rows["score"].values,
+    })
+
+    def table(frame, gradient_low: bool):
+        styled = (frame.style.set_table_styles(_GRID)
+                  .set_table_attributes('class="sticky-table"')
+                  .hide(axis="index").format({"Proj": "{:.1f}", "Over repl.": "{:+.1f}"})
+                  .background_gradient(cmap="RdYlGn_r" if gradient_low else "RdYlGn",
+                                       subset=["Over repl."]))
+        return f'<div class="table-scroll">{styled.to_html()}</div>'
+
+    return (
+        '<h2>Waiver Watch</h2>'
+        f'<p>The best free agents in the pool for week {week}, and the weakest player on '
+        'each roster. <strong>Proj</strong> is points expected next week &mdash; '
+        "Sleeper's projection where it has one, this site's per-game number otherwise "
+        "&mdash; and <strong>Over repl.</strong> is that against what the position hands "
+        "out for free, which is what actually decides a claim: a quarterback outscores a "
+        "running back and always will.</p>"
+        '<h3>Worth adding</h3>' + table(adds_html, False)
+        + '<h3>Weakest rostered</h3>'
+        '<p>Kickers and defences are left out &mdash; every roster needs one of each.</p>'
+        + table(drops_html, True))
+
+
+# --------------------------------------------------------------------------- #
 # Waiver log (the live season)
 # --------------------------------------------------------------------------- #
 
@@ -259,7 +321,7 @@ def _current_view(names: dict) -> str:
     log = waiver_log(tx, names)
     log_html = (_table(log) if not log.empty
                 else "<p><em>No completed waiver claims or free-agent adds yet.</em></p>")
-    return ('<h2>Waiver Log</h2>'
+    return (waiver_watch() + '<h2>Waiver Log</h2>'
             f'<p>Every completed claim and free-agent add in {UPCOMING_SEASON}, newest first'
             + (f', through week {last}' if last else '') + '.</p>'
             f'<div class="table-scroll">{log_html}</div>' + view)

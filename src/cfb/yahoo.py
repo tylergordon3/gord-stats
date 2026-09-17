@@ -123,6 +123,45 @@ def _fetch_board() -> pd.DataFrame:
     return df
 
 
+# The waiver pool. `status=A` is Yahoo's "available" - free agents and players
+# on waivers - and the league players collection answers it without a token,
+# the same way the game's board does. (`status=FA` is not a code: it returns an
+# empty list rather than an error, which is how it reads as "no free agents".)
+_FA_MAX = 200
+
+
+def _fetch_free_agents() -> list:
+    rows = []
+    for start in range(0, _FA_MAX, _PAGE):
+        data = _get(f"league/{LEAGUE_KEY}/players;status=A;sort=AR"
+                    f";start={start};count={_PAGE}")
+        players = {}
+        for item in data.get("fantasy_content", {}).get("league", []):
+            if isinstance(item, dict) and "players" in item:
+                players = item["players"]
+        page = [r for k, e in players.items() if k != "count" if (r := _player_row(e))]
+        if not page:
+            break
+        rows.extend(page)
+    seen, out = set(), []
+    for r in rows:                       # the cache holds plain JSON, not a frame
+        if r["yahoo_id"] in seen:
+            continue
+        seen.add(r["yahoo_id"])
+        r["rank"] = len(out) + 1
+        out.append(r)
+    return out
+
+
+def free_agents(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.DataFrame:
+    """Every available player in the league, in Yahoo's own rank order.
+
+    Same columns as `board`, minus the draft analysis; cached beside it, since
+    the pool only changes when somebody makes a move.
+    """
+    return pd.DataFrame(_cached("free_agents", _fetch_free_agents, refresh, max_age_hours))
+
+
 def board(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.DataFrame:
     """Yahoo's CFB draft board, in average-rank order.
 
