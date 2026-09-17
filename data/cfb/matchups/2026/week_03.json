@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-17T21:59:54+00:00",
+ "fetched": "2026-09-17T22:45:11+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -17,7 +17,7 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 187.08,
+     "projected": 187.11,
      "win_probability": 0.48
     },
     {
@@ -40,7 +40,7 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 196.6,
+     "projected": 196.57,
      "win_probability": 0.76
     },
     {
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 186.19,
-     "win_probability": 0.47
+     "projected": 188.22,
+     "win_probability": 0.48
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
      "projected": 191.2,
-     "win_probability": 0.53
+     "win_probability": 0.52
     }
    ]
   },
@@ -1183,6 +1183,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "334287",
+    "player": "Noah Bennee",
+    "pos": "TE",
+    "team": "UTAH",
+    "team_full": "Utah Utes",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "TE",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "334875",
     "player": "Wayne Knight",
     "pos": "RB",
@@ -1290,20 +1304,6 @@
     "status": "O",
     "status_full": "Out",
     "injury_note": "Leg",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "334287",
-    "player": "Noah Bennee",
-    "pos": "TE",
-    "team": "UTAH",
-    "team_full": "Utah Utes",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2541,7 +2541,7 @@
   "337423": 10.19,
   "333084": 8.98,
   "405873": 18.16,
-  "900104": 16.18,
+  "900104": 16.21,
   "404164": 30.4,
   "404635": 19.67,
   "404291": 17.01,
@@ -2575,7 +2575,7 @@
   "335616": 7.48,
   "456077": 8.38,
   "457825": 20.65,
-  "900011": 10.27,
+  "900011": 10.24,
   "405071": 23.49,
   "469436": 21.45,
   "469228": 14.64,
@@ -2600,6 +2600,7 @@
   "456020": 21.65,
   "404730": 16.27,
   "470164": 14.32,
+  "334287": 2.01,
   "334875": 15.54,
   "467588": 16.03,
   "482179": 0.0,
@@ -2608,8 +2609,7 @@
   "457622": 11.11,
   "338965": 10.92,
   "463244": 0.0,
-  "334287": 2.01,
-  "900083": 13.42,
+  "900083": 13.44,
   "455500": 28.32,
   "404287": 31.52,
   "457240": 13.99,
