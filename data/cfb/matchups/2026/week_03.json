@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-17T00:38:58+00:00",
+ "fetched": "2026-09-17T00:45:44+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -709,9 +709,9 @@
     "team": "LSU",
     "team_full": "LSU Tigers",
     "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Undisclosed",
     "slot": "TE",
     "points": 0.0,
     "stats": {}
