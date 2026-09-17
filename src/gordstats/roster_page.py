@@ -243,3 +243,173 @@ def wx_icon(cond) -> str:
     if cond in (3, 4, 5, 35, 36):
         return "&#9925;"
     return "&#9729;&#65039;"
+
+
+# --------------------------------------------------------------------------- #
+# The phone view: one card per player instead of a twelve-column table
+# --------------------------------------------------------------------------- #
+
+CARD_CSS = """<style>
+.rd-phone{display:none}
+@media (max-width:760px){
+  .rd-desk{display:none}
+  .rd-phone{display:block}
+  .rd-head .rd-tiles{display:none}
+  .rd-moves{font-size:13px;padding:8px 10px}
+  .rd-moves .rd-lbl{display:block;margin:0 0 2px 76px}
+  .rd-pick{flex-wrap:nowrap}
+  .rd-pick label{display:flex;align-items:center;gap:6px;min-width:0}
+  .rd-pick select{min-width:0;max-width:52vw}
+  .rd-pick button{white-space:nowrap}
+}
+.rd-toggle{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0 12px}
+.rd-toggle .rd-tot{text-align:center;line-height:1.15;min-width:58px}
+.rd-toggle .rd-tot b{display:block;font-size:17px;color:#0f172a}
+.rd-toggle .rd-tot span{font-size:10.5px;color:#64748b}
+.rd-toggle .rd-tot.new b{color:#2563eb}
+.rd-toggle .rd-tot i{font-style:normal;font-size:11px;font-weight:700;color:#fff;
+  background:#2563eb;border-radius:9px;padding:1px 6px;margin-left:4px}
+.rd-seg{display:flex;background:#e2e8f0;border-radius:999px;padding:3px}
+.rd-seg button{font:inherit;font-size:13px;font-weight:700;border:0;border-radius:999px;
+  padding:6px 14px;background:transparent;color:#475569;cursor:pointer}
+.rd-seg button.on{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(15,23,42,.2)}
+.rd-cards h4{margin:14px 0 6px;font-size:15px}
+.rd-card{display:flex;align-items:stretch;margin:0 0 6px;border-radius:8px;overflow:hidden;
+  background:#fff;border:1px solid #e2e8f0;min-height:62px}
+.rd-card.in{background:#dcfce7;border-color:#16a34a}
+.rd-card.out{background:#fee2e2;border-color:#dc2626}
+.rd-card.swap{background:#dbeafe;border-color:#2563eb}
+.rd-card.bn{opacity:.92}
+.rd-c-slot{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-size:11.5px;font-weight:800;color:#fff;background:#64748b;
+  text-align:center;line-height:1.15}
+.rd-c-slot small{font-weight:600;font-size:9.5px;opacity:.9}
+.rd-c-slot.QB{background:#2563eb}.rd-c-slot.RB{background:#16a34a}
+.rd-c-slot.WR{background:#eab308;color:#1f2937}.rd-c-slot.TE{background:#ea580c}
+.rd-c-slot.FX{background:#7e22ce}.rd-c-slot.K{background:#475569}
+.rd-c-slot.DEF{background:#0f766e}.rd-c-slot.BN{background:#94a3b8}
+.rd-c-main{flex:1 1 auto;min-width:0;padding:6px 8px;display:flex;flex-direction:column;
+  justify-content:center}
+.rd-c-nm{font-weight:700;font-size:14.5px;color:#0f172a;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.rd-c-nm img{width:16px;height:16px;vertical-align:-2px;margin:0 5px 0 0;border:0;padding:0;
+  box-shadow:none;background:none}
+.rd-c-sub{font-size:12px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-c-sub + .rd-c-sub{white-space:normal}
+.rd-c-sub .bye{color:#b91c1c;font-weight:700}
+.rd-c-sub .live{color:#b91c1c;font-weight:700}
+.rd-c-do{font-size:11.5px;font-weight:800;margin-top:1px}
+.rd-card.in .rd-c-do{color:#15803d}.rd-card.out .rd-c-do{color:#b91c1c}
+.rd-card.swap .rd-c-do{color:#1d4ed8}
+.rd-c-proj{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-weight:700;font-size:15px;color:#0f172a}
+.rd-c-proj small{font-size:10px;font-weight:600;color:#64748b}
+.rd-c-opp{flex:0 0 56px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;line-height:1.1;background:#e2e8f0;color:#334155;font-size:10px;
+  text-align:center;padding:2px}
+.rd-c-opp b{font-size:17px}
+.rd-c-opp.soft{background:#166534;color:#dcfce7}.rd-c-opp.soft b{color:#4ade80}
+.rd-c-opp.par{background:#a16207;color:#fef9c3}.rd-c-opp.par b{color:#fde047}
+.rd-c-opp.hard{background:#7f1d1d;color:#fee2e2}.rd-c-opp.hard b{color:#f87171}
+@media (prefers-color-scheme: dark){
+  .rd-toggle .rd-tot b{color:#e8eef7}.rd-toggle .rd-tot span{color:#aab7c9}
+  .rd-toggle .rd-tot.new b{color:#60a5fa}
+  .rd-seg{background:#223052}.rd-seg button{color:#aab7c9}
+  .rd-seg button.on{background:#0b1220;color:#e8eef7}
+  .rd-card{background:#16203a;border-color:#2b3852}
+  .rd-card.in{background:#12351f;border-color:#16a34a}
+  .rd-card.out{background:#3f1a1d;border-color:#dc2626}
+  .rd-card.swap{background:#172f5c;border-color:#3b82f6}
+  .rd-c-nm,.rd-c-proj{color:#e8eef7}.rd-c-sub,.rd-c-proj small{color:#aab7c9}
+  .rd-card.in .rd-c-do{color:#4ade80}.rd-card.out .rd-c-do{color:#f87171}
+  .rd-card.swap .rd-c-do{color:#93c5fd}
+  .rd-c-opp{background:#223052;color:#aab7c9}
+}
+</style>"""
+
+CARD_JS = """<script>
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.rd-seg button'); if(!b) return;
+  var view=b.closest('.rd-phone'), mode=b.dataset.mode;
+  Array.prototype.forEach.call(view.querySelectorAll('.rd-seg button'),function(x){
+    x.classList.toggle('on',x===b);});
+  Array.prototype.forEach.call(view.querySelectorAll('.rd-cards'),function(c){
+    c.style.display=c.dataset.mode===mode?'':'none';});
+});
+</script>"""
+
+_SLOT_CLASS = {"W/R/T": "FX", "FLEX": "FX", "IL": "BN", "IR": "BN", "TAXI": "BN"}
+_DO = {"in": "&#9650; START at {new}", "out": "&#9660; BENCH", "swap": "&#8644; MOVE to {new}"}
+_DONE = {"in": "&#9650; was on the bench", "out": "&#9660; was at {now}",
+         "swap": "&#8644; was at {now}"}
+
+
+def _opp_box(c: dict) -> str:
+    value, rank = c.get("opp_value"), c.get("opp_rank")
+    label = escape(c.get("opp_label") or "")
+    if value is None or value != value:
+        note = escape(c.get("opp_note") or "")
+        return (f"<div class='rd-c-opp'>{note + '<br>' if note else ''}{label}</div>"
+                if (label or note) else "<div class='rd-c-opp'></div>")
+    tone = "soft" if value >= 1.05 else ("hard" if value <= 0.95 else "par")
+    return (f"<div class='rd-c-opp {tone}'>{value:.2f}<b>{ordinal(int(rank))}</b>{label}</div>")
+
+
+def player_card(c: dict, suggested: bool = False) -> str:
+    """One player as a card. `c`: slot, new, kind, off (bool: bench in this
+    view), logo (html), name, pos, team, game (html), proj, proj_note, inj,
+    locked, extra (html line), opp_value/opp_rank/opp_label/opp_note."""
+    slot = c["new"] if suggested else c["slot"]
+    kind = c.get("kind") or ""
+    words = (_DONE if suggested else _DO).get(kind, "")
+    do = (f"<div class='rd-c-do'>{words.format(new=escape(c['new']), now=escape(c['slot']))}"
+          "</div>" if words else "")
+    inj = f" <span class='rd-inj'>{escape(c['inj'])}</span>" if c.get("inj") else ""
+    lock = " <span class='rd-tag lock'>locked</span>" if c.get("locked") else ""
+    proj = c.get("proj")
+    return (
+        f"<div class='rd-card {kind}{' bn' if c.get('off') else ''}'>"
+        f"<div class='rd-c-slot {_SLOT_CLASS.get(slot, slot)}'>{escape(slot)}"
+        f"<small>{escape(c.get('pos') or '') if slot != c.get('pos') else ''}</small></div>"
+        f"<div class='rd-c-main'><div class='rd-c-nm'>{c.get('logo') or ''}{escape(c['name'])}"
+        f"{inj}{lock}</div><div class='rd-c-sub'>{escape(c.get('team') or '')} &middot; "
+        f"{c.get('game') or ''}</div>{c.get('extra') or ''}{do}</div>"
+        f"<div class='rd-c-proj'>{'&mdash;' if proj is None else f'{proj:.1f}'}"
+        f"<small>{escape(c.get('proj_note') or 'proj')}</small></div>" + _opp_box(c) + "</div>")
+
+
+def phone_lineup(cards: list, slot_rank: dict, off, now_total: float, best_total: float) -> str:
+    """The roster as cards, twice: as it is set, and as it would be with the
+    changes made - the toggle on top flips between them.
+
+    cards      player_card dicts in current roster order
+    slot_rank  {slot: order} for laying out the suggested lineup
+    off        the slots that do not score (bench, IR)
+    """
+    def section(items, suggested):
+        start = [c for c in items if (c["new"] if suggested else c["slot"]) not in off]
+        bench = [c for c in items if (c["new"] if suggested else c["slot"]) in off]
+        return ("<h4>Starters</h4>" + "".join(
+            player_card({**c, "off": False}, suggested) for c in start)
+            + "<h4>Bench</h4>" + "".join(
+            player_card({**c, "off": True}, suggested) for c in bench))
+
+    new_order = sorted(cards, key=lambda c: (slot_rank.get(c["new"], 99), -(c.get("proj") or 0)))
+    gain = best_total - now_total
+    toggle = (
+        "<div class='rd-toggle'>"
+        f"<div class='rd-tot'><b>{now_total:.1f}</b><span>As set</span></div>"
+        "<div class='rd-seg'><button type='button' class='on' data-mode='cur'>Current</button>"
+        "<button type='button' data-mode='new'>Suggested</button></div>"
+        f"<div class='rd-tot new'><b>{best_total:.1f}"
+        + (f"<i>+{gain:.1f}</i>" if gain >= 0.05 else "") + "</b><span>Best lineup</span></div>"
+        "</div>")
+    return (f"<div class='rd-phone'>{toggle}"
+            f"<div class='rd-cards' data-mode='cur'>{section(cards, False)}</div>"
+            f"<div class='rd-cards' data-mode='new' style='display:none'>"
+            f"{section(new_order, True)}</div></div>")
+
+
+def phone_adds(cards: list) -> str:
+    return ("<div class='rd-phone'><div class='rd-cards'>"
+            + "".join(player_card(c) for c in cards) + "</div></div>")

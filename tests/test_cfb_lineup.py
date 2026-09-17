@@ -168,3 +168,40 @@ def test_nfl_scoreboard_weather_reads_either_field_order():
     assert (today["cond"], today["text"]) == (7, "Cloudy")
     assert _weather({}, {"venue": {"indoor": True}})["indoors"] is True
     assert _weather({}, {"venue": {}}) is None
+
+
+def test_nfl_usage_shares_divide_by_the_teams_own_players():
+    from fantasy.league import usage as nfl_usage
+    base = {k: 0.0 for k in nfl_usage.STATS}
+    rows = [
+        {**base, "week": 1, "sleeper_id": "a", "player": "A", "pos": "RB", "team": "ATL",
+         "off_snp": 40, "tm_off_snp": 80, "rush_att": 15, "rec_tgt": 5, "rec_air_yd": -8},
+        {**base, "week": 1, "sleeper_id": "b", "player": "B", "pos": "WR", "team": "ATL",
+         "off_snp": 60, "tm_off_snp": 80, "rush_att": 5, "rec_tgt": 15, "rec_air_yd": 100},
+        {**base, "week": 2, "sleeper_id": "a", "player": "A", "pos": "RB", "team": "ATL",
+         "off_snp": 60, "tm_off_snp": 60, "rush_att": 20, "rec_tgt": 0, "rec_air_yd": 0}]
+    table = nfl_usage.shares(pd.DataFrame(rows)).set_index("sleeper_id")
+    assert table.loc["a", "games"] == 2
+    assert table.loc["a", "snap_share"] == pytest.approx(100 / 140)
+    assert table.loc["a", "car_share"] == pytest.approx(35 / 40)
+    assert table.loc["b", "tgt_share"] == pytest.approx(15 / 20)
+    # Yards behind the line are not a share of the team's depth.
+    assert table.loc["a", "air_share"] == 0 and table.loc["b", "air_share"] == 1
+    last = nfl_usage.shares(pd.DataFrame(rows), weeks=1).set_index("sleeper_id")
+    assert list(last.index) == ["a"] and last.loc["a", "car_share"] == 1
+
+
+def test_phone_cards_show_the_roster_both_ways():
+    from gordstats import roster_page as page
+    cards = [{"name": "Veteran", "slot": "RB", "new": "BN", "kind": "out", "pos": "RB",
+              "proj": 9.0, "opp_value": 0.9, "opp_rank": 30, "opp_label": "vs PIT"},
+             {"name": "Riser", "slot": "BN", "new": "RB", "kind": "in", "pos": "RB",
+              "proj": 14.0, "opp_value": 1.2, "opp_rank": 2, "opp_label": "@ CAR"}]
+    html = page.phone_lineup(cards, {"RB": 0}, {"BN"}, 9.0, 14.0)
+    current, suggested = html.split("<div class='rd-cards' data-mode='new'")
+    # As set, the starter leads and is told to sit; suggested, the riser has his slot.
+    assert current.index("Veteran") < current.index("Riser")
+    assert "BENCH" in current and "START at RB" in current
+    assert suggested.index("Riser") < suggested.index("Veteran")
+    assert "was on the bench" in suggested and "+5.0" in html
+    assert "rd-c-opp hard" in html and "rd-c-opp soft" in html

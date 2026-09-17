@@ -122,10 +122,15 @@ fantasy:
     icon: "⚔️"
     url: /fantasy/matchups/
 
-  - title: Team Dashboard
+  - title: My Team
     short: My Team
     icon: "📋"
     url: /fantasy/roster/
+
+  - title: Usage
+    short: Usage
+    icon: "📦"
+    url: /fantasy/usage/
 
   - title: Waivers & Trades
     short: Waivers

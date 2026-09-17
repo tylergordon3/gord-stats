@@ -30,6 +30,7 @@ PAGES = [
     ("power",        "Power Rankings (post-draft)",        lambda: _gen("power")),
     ("matchups",     "Weekly Matchups (rosters, projections, points)", lambda: _gen("matchups")),
     ("roster",       "Team Dashboard (start/sit, slot order, waiver adds)", lambda: _gen("roster")),
+    ("usage",        "Usage (snap, carry and target share)", lambda: _gen("usage")),
     ("homepage",     "Home (countdown + live ADP board)", lambda: _gen("homepage")),
 ]
 

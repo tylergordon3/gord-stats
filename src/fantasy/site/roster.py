@@ -201,20 +201,57 @@ def player_cell(card: dict, extra: str = "") -> str:
 # Sections
 # --------------------------------------------------------------------------- #
 
+def card_info(wkd: Week, card: dict, proj, note: str = "proj") -> dict:
+    """The fields gordstats.roster_page.player_card draws, for one player."""
+    g = wkd.by_team.get(card["team"])
+    pos = card["pos"]
+    info = {"name": card["name"], "pos": pos, "team": card["team"] or "FA",
+            "logo": mu._logo(card["team"]).replace("mu-logo", "rd-logo"),
+            "game": mu.game_cell(g), "proj": proj, "proj_note": note,
+            "inj": card.get("injury") or ""}
+    if not g:
+        return info
+    info["opp_label"] = f"{'vs' if g.get('home') else '@'} {g['opp']}"
+    table = wkd.dvp
+    if not table.empty and g["opp"] in table.index and pos in table:
+        info["opp_value"] = float(table.loc[g["opp"], pos])
+        info["opp_rank"] = wkd.dvp_ranks[pos][g["opp"]]
+    bits = []
+    wx = wkd.weather.get(g["game_id"])
+    if wx and wx.get("indoors"):
+        bits.append("&#127967;&#65039; indoors")
+    elif wx:
+        cond = wx.get("cond")
+        text = (f"{page.wx_icon(cond)} "
+                + (f"{wx['temp']:.0f}&deg; " if wx.get("temp") is not None else "")
+                + escape(wx.get("text") or ""))
+        bad = cond in page.WX_RAIN or cond in page.WX_STORM or cond in page.WX_SNOW
+        bits.append(f"<b style='color:#b45309'>{text}</b>" if bad else text)
+    total = g.get("implied_against") if pos == "DEF" else g.get("implied_for")
+    if total is not None:
+        bits.append(f"team total {total:.1f}" if pos != "DEF" else f"allows {total:.1f}")
+    if bits:
+        info["extra"] = f"<div class='rd-c-sub'>{' &middot; '.join(bits)}</div>"
+    return info
+
+
 def _plain(t: dict) -> str:
     """"Team name (Manager)" as text - for the menu and the sort."""
     name, mgr = t.get("name") or "", t.get("manager") or ""
     return name + (f" ({mgr})" if mgr and mgr not in name else "")
 
 
-def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts: dict) -> str:
-    body, benched = [], False
+def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts: dict,
+                 now_total: float, best_total: float) -> str:
+    body, phone, benched = [], [], False
     for r in rows:
         pid, slot = r["pid"], r["slot"]
         bench = slot in OFF
         split = " rd-split" if bench and not benched else ""
         benched = benched or bench
         if pid == "0":
+            phone.append({"name": "Empty slot", "slot": slot, "new": slot, "kind": "",
+                          "pos": "", "team": "", "game": "", "proj": None})
             body.append(f"<tr class='rd-st'><td class='rd-slot'>{escape(slot)}</td>"
                         "<td class='rd-mv'></td><td class='rd-p' colspan='10'>"
                         "<span class='rd-inj'>Empty slot</span></td></tr>")
@@ -239,6 +276,8 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
         scored = pts.get(pid)
         pts_td = (f"<td>{ui.fmt(scored)}</td>" if g and state in ("in", "post")
                   and scored is not None else "<td>&mdash;</td>")
+        phone.append({**card_info(wkd, card, proj.get(pid)), "slot": slot, "new": new,
+                      "kind": kind, "locked": bool(g) and state in ("in", "post")})
         body.append(
             f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}{' rd-' + kind if kind else ''}'>"
             f"<td class='rd-slot'>{escape(slot)}</td>" + page.move_cell(kind, new)
@@ -258,8 +297,13 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
             "ESPN and FantasyPros'>Proj</th><th>GS</th><th>Sleeper</th><th>Pts</th>"
             "<th title='Once the changes are made: the best bench player who could still take "
             "this slot - eligible for it and not kicking off any earlier'>Late-swap cover</th></tr>")
-    return (page.legend() + f"<div class='rd-scroll'><table class='rd'><thead>{head}</thead>"
-            f"<tbody>{''.join(body)}</tbody></table></div>")
+    slot_rank = {}
+    for i, name in enumerate(wkd.slots):
+        slot_rank.setdefault(name, i)
+    return (page.legend()
+            + f"<div class='rd-desk rd-scroll'><table class='rd'><thead>{head}</thead>"
+            f"<tbody>{''.join(body)}</tbody></table></div>"
+            + page.phone_lineup(phone, slot_rank, OFF, now_total, best_total))
 
 
 def adds_section(wkd: Week, cards: dict, got: dict, proj: dict, free: pd.DataFrame) -> str:
@@ -290,12 +334,17 @@ def adds_section(wkd: Week, cards: dict, got: dict, proj: dict, free: pd.DataFra
         return ("<p class='rd-note'>Nobody in the free-agent pool projects to outscore a "
                 "starter on this roster this week.</p>")
     found.sort(key=lambda r: -r[0])
-    body = []
+    body, phone = [], []
     for gain, f, value, worst in found[:ADDS_SHOWN]:
         pid = str(f["sleeper_id"])
         card = {"name": f["player"], "pos": f["pos"], "team": f["team"],
                 "injury": wkd.injuries.get(pid) or ""}
         g = wkd.by_team.get(f["team"])
+        info = card_info(wkd, card, value)
+        info["extra"] = (info.get("extra") or "") + (
+            f"<div class='rd-c-do' style='color:#15803d'>+{gain:.1f} over "
+            f"{escape(cards[worst]['name'])} ({ui.fmt(proj.get(worst))})</div>")
+        phone.append({**info, "slot": f["pos"], "new": f["pos"], "kind": ""})
         body.append(
             "<tr>" + player_cell(card) + f"<td class='rd-g'>{mu.game_cell(g)}</td>"
             + total_cell(g, f["pos"]) + opp_cell(wkd, g, f["pos"]) + weather_cell(wkd, g)
@@ -310,8 +359,8 @@ def adds_section(wkd: Week, cards: dict, got: dict, proj: dict, free: pd.DataFra
             "free agent'>Proj</th><th>GS</th><th>Sleeper</th><th>Would start over</th>"
             "<th>Gain</th><th title='Points per game the projection model expects from here "
             "on - whether he is worth keeping past Sunday'>Season ppg</th></tr>")
-    return (f"<div class='rd-scroll'><table class='rd'><thead>{head}</thead>"
-            f"<tbody>{''.join(body)}</tbody></table></div>")
+    return (f"<div class='rd-desk rd-scroll'><table class='rd'><thead>{head}</thead>"
+            f"<tbody>{''.join(body)}</tbody></table></div>" + page.phone_adds(phone))
 
 
 def drop_note(owned: pd.DataFrame, manager: str) -> str:
@@ -370,14 +419,16 @@ def team_view(wkd: Week, side: dict, foe: dict | None, free: pd.DataFrame,
         f"<div class='rd-sub'>{escape(team.get('manager') or '')} &middot; {mu._record(team)} "
         f"&middot; week {wkd.week}"
         + (f" vs <b>{escape(_plain(foe_team))}</b>" if foe_team else "")
-        + " &middot; <a href='/fantasy/matchups/'>matchup</a></div></div>"
+        + " &middot; <a href='/fantasy/matchups/'>matchup</a> &middot; "
+        f"<a href='/fantasy/usage/#own={escape(key, quote=True)}'>usage</a></div></div>"
         "<div class='rd-tiles'>"
         f"<div class='rd-tile'><b>{now_total:.1f}</b><span>As set</span></div>"
         f"<div class='rd-tile{' up' if gain >= MIN_GAIN else ''}'><b>{best_total:.1f}</b>"
         "<span>Best lineup</span></div></div></div>")
     return (f"<div class='rd-view' data-key='{escape(key, quote=True)}' style='display:none'>"
             + head + "<h2>Start / sit</h2>" + page.moves_box(changes, warns, gain, FLEX)
-            + lineup_table(wkd, rows, cards, got, proj, side.get("players_points") or {})
+            + lineup_table(wkd, rows, cards, got, proj, side.get("players_points") or {},
+                           now_total, best_total)
             + "<h2>Waiver adds</h2><p class='rd-note'>Free agents projected to outscore "
             "someone this roster would otherwise start this week, biggest gain first.</p>"
             + adds_section(wkd, cards, got, proj, free)
@@ -408,7 +459,7 @@ def body() -> str:
     n_def = len(wkd.dvp)
     cfg = json.dumps({"mine": mine, "teams": slugs}).replace("</", "<\\/")
     return (
-        page.CSS
+        page.CSS + page.CARD_CSS
         + f"<p><strong>Week {wkd.week}</strong>. One roster at a time: who to start, which "
         "slot to put him in, what he is up against, and who on the wire would beat him.</p>"
         "<details class='section'><summary>How to read this page</summary>"
@@ -438,7 +489,7 @@ def body() -> str:
         f"{options}</select></label><button id='rd-star' type='button'></button></div></div>"
         + "".join(team_view(wkd, s, foe, free, owned) for s, foe in sides)
         + f"<script type='application/json' id='rd-cfg'>{cfg}</script>"
-        + page.switch_js(STORAGE_KEY))
+        + page.switch_js(STORAGE_KEY) + page.CARD_JS)
 
 
 def generate():

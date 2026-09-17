@@ -33,7 +33,8 @@ from cfb import (cfbd, defense, gameinfo, lineup, ownership, predict, projection
                  schools as schools_mod, usage as usage_mod, weekly, yahoo)
 from cfb.config import LEAGUE_TZ, MY_TEAM, SEASON, WEB_DIR
 from cfb.site import write_page
-from cfb.site.matchups import _school_logo, game_cell, game_for, order_roster
+from cfb.site.matchups import (_school_logo, game_cell, game_for, order_roster,
+                                slot_order)
 from cfb.site.schedule import _merge_weather, _wx_icon
 from cfb.site.strength import _heat
 from cfb.site.usage import RECENT_WEEKS
@@ -193,6 +194,57 @@ def player_cell(wkd: Week, p: dict, extra: str = "") -> str:
             f"{inj}{extra}</td>")
 
 
+def _wx_short(wkd: Week, g) -> str:
+    """The forecast in a few characters, for a phone card."""
+    if g is None or not isinstance(g.get("opp"), str):
+        return ""
+    wx = wkd.weather.get(str(g.get("game_id")))
+    if not wx:
+        return ""
+    if wx.get("indoors"):
+        return "&#127967;&#65039; indoors"
+    text = gameinfo.weather_text(wx) or wx.get("text") or ""
+    temp = f"{wx['temp']:.0f}&deg; " if wx.get("temp") is not None else ""
+    out = f"{_wx_icon(wx.get('cond'))} {temp}{escape(text)}"
+    if gameinfo.weather_severity(wx) >= BAD_WEATHER:
+        out = f"<b style='color:#b45309'>{out}</b>"
+    return out
+
+
+def card_info(wkd: Week, p: dict, g, proj) -> dict:
+    """The fields gordstats.roster_page.player_card draws, for one player."""
+    pos = p["pos"]
+    info = {"name": p["player"], "pos": pos, "team": str(p.get("team") or ""),
+            "logo": _school_logo(p.get("team_full") or "", wkd.to_school, wkd.espn)
+            .replace("mu-logo", "rd-logo"),
+            "game": game_cell(g), "proj": proj, "inj": p.get("status") or ""}
+    playing = g is not None and isinstance(g.get("opp"), str)
+    if playing:
+        where = "vs" if g.get("home") else "@"
+        info["opp_label"] = f"{where} {g.get('opp_abbr') or g['opp']}"
+        if pos == "DEF":
+            pts = g.get("pred_against")
+            if pts is not None and not pd.isna(pts):
+                info["opp_note"] = f"opp {float(pts):.0f} pts"
+        else:
+            row = wkd.ratings.get(str(g.get("opp_id")))
+            value = None if row is None else row.get(pos)
+            if value is not None and not pd.isna(value):
+                info["opp_value"] = float(value)
+                info["opp_rank"] = int(wkd.ranks[pos].get(str(g.get("opp_id"))))
+    bits = [_wx_short(wkd, g)] if playing else []
+    use = wkd.usage.get(p["yahoo_id"])
+    if use is not None and pos != "DEF":
+        for label, col in (("car", "car_share"), ("tgt", "tgt_share")):
+            v = use[col]
+            if v is not None and not pd.isna(v) and float(v) >= 0.005:
+                bits.append(f"{label} {float(v):.0%}")
+    bits = [b for b in bits if b]
+    if bits:
+        info["extra"] = f"<div class='rd-c-sub'>{' &middot; '.join(bits)}</div>"
+    return info
+
+
 # --------------------------------------------------------------------------- #
 # Sections
 # --------------------------------------------------------------------------- #
@@ -233,12 +285,13 @@ def p_unlocked(pid: str, wkd: Week) -> bool:
     return not (pid in wkd.wk.index and wkd.wk.loc[pid, "state"] in ("in", "post"))
 
 
-def lineup_table(wkd: Week, roster: list, got: dict) -> str:
+def lineup_table(wkd: Week, roster: list, got: dict, now_total: float,
+                 best_total: float) -> str:
     """The roster exactly as it is set, each row coloured by what the plan
     does with it: green comes off the bench, red goes to it, blue changes
     starting slot for the kickoff order."""
     by_id = {p["yahoo_id"]: p for p in roster}
-    rows, benched = [], False
+    rows, cards, benched = [], [], False
     for p in order_roster(roster, wkd.lg):
         pid = p["yahoo_id"]
         bench = p["slot"] in lineup.BENCH
@@ -265,6 +318,8 @@ def lineup_table(wkd: Week, roster: list, got: dict) -> str:
                   else "<td>&mdash;</td>")
         split = " rd-split" if bench and not benched else ""
         benched = benched or bench
+        cards.append({**card_info(wkd, p, g, wkd.proj(pid)), "slot": p["slot"], "new": new,
+                      "kind": kind, "locked": state in ("in", "post")})
         rows.append(
             f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}{' rd-' + kind if kind else ''}'>"
             f"<td class='rd-slot'>{escape(p['slot'])}</td>" + move_td
@@ -283,8 +338,13 @@ def lineup_table(wkd: Week, roster: list, got: dict) -> str:
             f"<th title='Share of his team&#39;s targets, last {RECENT_WEEKS} played weeks'>Tgt%</th>"
             "<th title='Once the changes are made: the best bench player who could still take "
             "this slot - eligible for it and not kicking off any earlier'>Late-swap cover</th></tr>")
-    return (page.legend() + f"<div class='rd-scroll'><table class='rd'><thead>{head}</thead>"
-            f"<tbody>{''.join(rows)}</tbody></table></div>")
+    slot_rank = {}
+    for i, slot in enumerate(slot_order(wkd.lg)):
+        slot_rank.setdefault(slot, i)
+    return (page.legend()
+            + f"<div class='rd-desk rd-scroll'><table class='rd'><thead>{head}</thead>"
+            f"<tbody>{''.join(rows)}</tbody></table></div>"
+            + page.phone_lineup(cards, slot_rank, lineup.BENCH, now_total, best_total))
 
 
 def adds_section(wkd: Week, roster: list, got: dict, free: pd.DataFrame) -> str:
@@ -314,13 +374,18 @@ def adds_section(wkd: Week, roster: list, got: dict, free: pd.DataFrame) -> str:
         return ("<p class='rd-note'>Nobody in the free-agent pool projects to outscore a "
                 "starter on this roster this week.</p>")
     rows.sort(key=lambda r: -r[0])
-    body = []
+    body, cards = [], []
     for gain, f, pos, value, worst in rows[:ADDS_SHOWN]:
         pid = str(f["yahoo_id"])
         p = {"yahoo_id": pid, "player": f["player"], "pos": pos, "team": f["team"],
              "team_full": f.get("team_full")}
         g = wkd.game(p)
         ros = wkd.season_proj.get(pid)
+        card = card_info(wkd, p, g, value)
+        card["extra"] = (card.get("extra") or "") + (
+            f"<div class='rd-c-do' style='color:#15803d'>+{gain:.1f} over "
+            f"{escape(worst['player'])} ({ui.fmt(wkd.proj(worst['yahoo_id']))})</div>")
+        cards.append({**card, "slot": pos, "new": pos, "kind": ""})
         body.append(
             "<tr>" + player_cell(wkd, p) + f"<td class='rd-g'>{game_cell(g)}</td>"
             + opp_cell(wkd, g, pos) + weather_cell(wkd, g)
@@ -343,8 +408,8 @@ def adds_section(wkd: Week, roster: list, got: dict, free: pd.DataFrame) -> str:
         f"{escape(p['player'])} ({escape(p['pos'])}"
         + (f", {escape(p['status'])}" if p.get("status") else "")
         + f", season {wkd.season_proj.get(p['yahoo_id']) or 0:.0f})" for p in droppable[:3])
-    return (f"<div class='rd-scroll'><table class='rd'><thead>{head}</thead>"
-            f"<tbody>{''.join(body)}</tbody></table></div>"
+    return (f"<div class='rd-desk rd-scroll'><table class='rd'><thead>{head}</thead>"
+            f"<tbody>{''.join(body)}</tbody></table></div>" + page.phone_adds(cards)
             + (f"<p class='rd-note'><b>To make room:</b> the bench's weakest holds by season "
                f"projection, injured first &mdash; {drop}.</p>" if drop else ""))
 
@@ -389,7 +454,7 @@ def team_view(wkd: Week, team: dict, free: pd.DataFrame) -> str:
     return (f"<div class='rd-view' data-key='{escape(key, quote=True)}' style='display:none'>"
             + head + "<h2>Start / sit</h2>"
             + moves_box(wkd, roster, got, proj, kick, gain)
-            + lineup_table(wkd, roster, got)
+            + lineup_table(wkd, roster, got, now_total, best_total)
             + "<h2>Waiver adds</h2>"
             "<p class='rd-note'>Free agents projected to outscore someone this roster would "
             "otherwise start this week, biggest gain first.</p>"
@@ -412,7 +477,7 @@ def body() -> str:
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     cfg = json.dumps({"mine": mine, "teams": slugs}).replace("</", "<\\/")
     return (
-        page.CSS
+        page.CSS + page.CARD_CSS
         + f"<p><strong>Week {wkd.week}</strong> &middot; {start:%b %-d} &ndash; {end:%b %-d}. "
         "One roster at a time: who to start, which slot to put him in, what he is up "
         "against, and who on the wire would beat him.</p>"
@@ -441,7 +506,8 @@ def body() -> str:
         "<div class='pin-bar'><div class='rd-pick'><label>Team <select id='rd-team'>"
         f"{options}</select></label><button id='rd-star' type='button'></button></div></div>"
         + "".join(team_view(wkd, t, free) for t in teams)
-        + f"<script type='application/json' id='rd-cfg'>{cfg}</script>" + page.switch_js("cfbMyTeam"))
+        + f"<script type='application/json' id='rd-cfg'>{cfg}</script>"
+        + page.switch_js("cfbMyTeam") + page.CARD_JS)
 
 
 def generate():
