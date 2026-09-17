@@ -619,3 +619,168 @@ LIVE_JS = """<script>
   timer=setTimeout(poll,cfg.delay||8000);
 })();
 </script>"""
+
+
+# The tracker's arithmetic and markup, run on every view at load and again by
+# the live poll with fresh points. Winning the median game is finishing in the
+# top half, so each team's line is how many teams have to pass it (or it has to
+# pass) and how many still can.
+def median_tracker(teams: list, week: int, started: bool, final: bool,
+                   ext: dict = None) -> str:
+    """The median game at a glance, as a JSON blob MEDIAN_TRACKER_JS renders.
+
+    `teams` is one dict per side - {k, name, logo, pts, exp, left} where `left`
+    is the starters still to finish, each {n, r, live, pos, p} - and `ext` the
+    {"max": {pos: pts}, "min": {pos: pts}} the ceilings and floors are drawn
+    from. Both leagues build those from their own feeds; everything after this
+    is the same arithmetic, so it lives once.
+    """
+    import json
+    from html import escape as _escape
+    if len(teams) < 3:
+        return ""
+    blob = _escape(json.dumps({"started": started, "final": final, "teams": teams,
+                               "ext": ext or {}}, separators=(",", ":")))
+    return (f'<details class="section mu-medt-sec" open><summary>Median Tracker</summary>'
+            f'<div class="mu-medt" data-medt-week="{week}" data-medt=\'{blob}\'></div>'
+            "</details>")
+
+
+# The starters a live payload still has to come: read off the rows the page
+# already marks up (data-nm / data-pos / data-proj / data-gid), so a page whose
+# feed carries only points can still drive the tracker.
+LIVE_LEFT_JS = """
+function muTrackerLeft(payload,games){
+  var teams=(payload&&payload.teams)||{};
+  var wraps=document.querySelectorAll('[data-roster]');
+  for(var i=0;i<wraps.length;i++){var wrap=wraps[i],key=wrap.getAttribute('data-roster'),t=teams[key];
+    if(!t)continue;
+    var rows=wrap.querySelectorAll('tr.starter[data-pid]');if(!rows.length)continue;
+    var left=[];
+    for(var j=0;j<rows.length;j++){var tr=rows[j],pid=tr.getAttribute('data-pid');
+      var g=games[tr.getAttribute('data-gid')];if(!g||g.state==='post')continue;
+      var proj=parseFloat(tr.getAttribute('data-proj'));if(isNaN(proj))proj=0;
+      var p=(t.players||{})[pid]||{};
+      left.push({n:tr.getAttribute('data-nm')||'',pos:tr.getAttribute('data-pos')||'',
+                 r:Math.round(proj*(1-muElapsed(g))*10)/10,live:g.state==='in',
+                 p:p.points||0});}
+    t.left=left;}
+  return payload;}
+"""
+
+
+MEDIAN_TRACKER_JS = """<style>
+.mu-medt-top{font-size:13px;color:#475569;margin:2px 0 6px}
+.mu-medt-row{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-left:3px solid #1a7f4b;
+  background:#fff;border-bottom:1px solid #eef2f7}
+.mu-medt-row.down{border-left-color:#b3382c}
+.mu-medt-row.lock.up{background:#e6f4ec}
+.mu-medt-row.lock.down{background:#fbe9e7}
+.mu-medt-row .rk{width:16px;flex:none;font-size:12px;color:#94a3b8;padding-top:3px;text-align:right}
+.mu-medt-row img.mu-tlogo{width:24px;height:24px}
+.mu-medt-row .mid{flex:1;min-width:0}
+.mu-medt-row .nm{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mu-medt-row .st{font-size:12px;font-weight:600;color:#1a7f4b}
+.mu-medt-row.down .st{color:#b3382c}
+.mu-medt-need{font-size:12px;color:#334155}
+.mu-medt-ps{font-size:11px;color:#64748b;line-height:1.35}
+.mu-medt-ps .lv{color:#b3382c;font-style:italic}
+.mu-medt-row .fig{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mu-medt-row .fig b{display:block;font-size:15px}
+.mu-medt-row .fig span{font-size:11px;color:#64748b}
+.mu-medt-line{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:11px;font-weight:700;
+  color:#64748b;text-transform:uppercase;letter-spacing:.04em}
+.mu-medt-line:before,.mu-medt-line:after{content:"";flex:1;border-top:2px dashed #94a3b8}
+@media (prefers-color-scheme: dark){
+  .mu-medt-row{background:#16203a;border-bottom-color:#2b3852}
+  .mu-medt-row.lock.up{background:#173a2e}
+  .mu-medt-row.lock.down{background:#3d1f24}
+  .mu-medt-row .st{color:#6ee7b7}.mu-medt-row.down .st{color:#ff9b91}
+  .mu-medt-top,.mu-medt-need{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
+  .mu-medt-ps .lv{color:#ff9b91}
+}
+</style><script>
+window.muMedTrack=(function(){
+  function fmt(v){return (Math.round(v*10)/10).toFixed(1);}
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function render(el,d){
+    var ts=d.teams.slice(),n=ts.length;if(n<3)return;
+    // Ceiling and floor: every starter still to play at his position's best
+    // (less what he already has) or worst week in league history.
+    var ext=d.ext||{},hi=ext.max||{},lo=ext.min||{},top=0,bot=0;
+    Object.keys(hi).forEach(function(k){top=Math.max(top,hi[k]);});
+    Object.keys(lo).forEach(function(k){bot=Math.min(bot,lo[k]);});
+    ts.forEach(function(t){t.rem=0;t.ceil=t.pts;t.floor=t.pts;
+      t.left.forEach(function(p){t.rem+=p.r;
+        var mx=(p.pos in hi)?hi[p.pos]:top,mn=(p.pos in lo)?lo[p.pos]:bot;
+        t.ceil+=Math.max(mx-(p.p||0),0);t.floor+=Math.min(mn,0);});
+      t.proj=t.pts+t.rem;});
+    // Standing order is the scoreboard as it is: current points once games are
+    // on (projection breaking ties), the projection before kickoff. The locks
+    // below hold for any order - a team above is assumed to stay above.
+    ts.sort(function(a,b){return d.started?(b.pts-a.pts)||(b.proj-a.proj):b.proj-a.proj;});
+    var done=d.final||ts.every(function(t){return !t.left.length;});
+    // Locks by rank, with cut spots above the line: the team in spot i (0-based)
+    // above it drops out only if cut-i teams below it pass it, so it is locked in
+    // once fewer than that can still reach its floor (a finished team's score, or
+    // a record week, decides "can"); below the line it needs i-cut+1 teams above
+    // to finish under it, and is locked out once fewer than that can fall to its
+    // ceiling. `foes` are those teams.
+    var cut=Math.ceil((n-1)/2),html=[];
+    ts.forEach(function(t,i){
+      if(i<cut){t.foes=ts.slice(i+1).filter(function(o){return o.ceil>=t.floor;});
+        t.lock=t.foes.length<cut-i?'up':'';}
+      else{t.foes=ts.slice(0,i).filter(function(o){return o.floor<=t.ceil;}).reverse();
+        t.lock=t.foes.length<i-cut+1?'down':'';}});
+    var byProj=ts.slice().sort(function(a,b){return b.proj-a.proj;});
+    var mid=n%2?byProj[n>>1].proj:(byProj[n/2-1].proj+byProj[n/2].proj)/2;
+    var now=ts.map(function(t){return t.pts;}).sort(function(a,b){return a-b;});
+    var medNow=n%2?now[n>>1]:(now[n/2-1]+now[n/2])/2;
+    html.push('<p class="mu-medt-top"><b>Median</b> '+(d.started&&!done?fmt(medNow)+' now · ':'')+fmt(mid)+(done?' final':' projected')+'</p>');
+    ts.forEach(function(t,i){
+      var others=byProj.filter(function(o){return o!==t;});
+      // The median of the other n-1: with an even league, one team.
+      var j=(others.length-1)>>1,rival=others[j],line=others.length%2?rival.proj:(others[j].proj+others[j+1].proj)/2;
+      if(others.length%2===0)rival=null;
+      var margin=t.proj-line,up=margin>=0,need=line-t.pts,who=rival?esc(rival.name):'the median';
+      var status;
+      // Above the line a team loses the median game once enough of the teams
+      // below it pass it (4th of five spots: two); below, it wins once it passes
+      // that many of the teams above. Of how many teams can still do it
+      // (t.foes: a record week for those still playing, the score for the rest).
+      var above=i<cut,count=above?cut-i:i-cut+1,of=t.foes.length;
+      up=t.lock?t.lock==='up':above;
+      var odds=above?'Loses median if '+count+' of '+of+' teams '+(count===1?'passes':'pass')
+        :'Makes median if it passes '+count+' of '+of+' teams';
+      if(done)status=(up?'Won':'Lost')+' the median game by '+fmt(Math.abs(margin));
+      else if(t.lock==='up')status='Locked above the median'+(t.left.length?' · cannot be caught':'');
+      else if(t.lock==='down')status='Locked below the median'+(t.left.length?' · even a record week falls short':'');
+      else status=t.left.length?odds:'Done · '+odds.charAt(0).toLowerCase()+odds.slice(1);
+      var sub='';
+      if(!done&&t.left.length){
+        var ps=t.left.slice().sort(function(a,b){return b.r-a.r;}).map(function(p){
+          return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
+        sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b> · ':'')+t.left.length+' left, proj '+fmt(t.rem)+' · hypothetical max '+fmt(t.ceil)+'</div>')
+          +'<div class="mu-medt-ps">'+ps+'</div>';}
+      if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(d.started&&!done?medNow:mid)+'</span></div>');
+      html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'
+        +'<span class="rk">'+(i+1)+'</span>'+(t.logo||'')
+        +'<div class="mid"><div class="nm">'+esc(t.name)+'</div><div class="st">'+status+'</div>'+sub+'</div>'
+        +'<div class="fig"><b>'+fmt(t.pts)+'</b>'+(done||!t.left.length?'':'<span>→ '+fmt(t.proj)+'</span>')+'</div></div>');
+    });
+    el.innerHTML=html.join('');}
+  function init(){var els=document.querySelectorAll('[data-medt]');
+    for(var i=0;i<els.length;i++){try{render(els[i],JSON.parse(els[i].getAttribute('data-medt')));}catch(e){}}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  // Live: fresh points and remaining projections from MU_LIVE.compute's teams.
+  return {update:function(week,live){
+    var el=document.querySelector('[data-medt-week="'+week+'"]');if(!el||!live||!live.teams)return;
+    var d;try{d=JSON.parse(el.getAttribute('data-medt'));}catch(e){return;}
+    var any=false;
+    d.teams.forEach(function(t){var u=live.teams[t.k];if(!u||!u.left)return;any=true;
+      t.pts=u.points||0;t.left=u.left;});
+    if(!any)return;
+    d.started=d.teams.some(function(t){return t.pts>0;});
+    el.setAttribute('data-medt',JSON.stringify(d));render(el,d);}};
+})();
+</script>"""

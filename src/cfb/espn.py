@@ -102,6 +102,10 @@ def _game_row(event: dict, week: int) -> dict:
         "tv": tv,
         "state": status.get("state", "pre"),          # pre / in / post
         "detail": status.get("shortDetail", ""),
+        # The clock itself, not just its rendering: the median tracker needs to
+        # know how much of a game is left to play, and "3rd Qtr" is a string.
+        "period": int((comp.get("status") or {}).get("period") or 0),
+        "clock": str((comp.get("status") or {}).get("displayClock") or ""),
     }
 
 

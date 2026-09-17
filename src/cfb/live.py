@@ -75,7 +75,14 @@ def _patch_schedule(events: dict) -> None:
     upd = pd.DataFrame(rows)
     df.index = df["game_id"].astype(str)
     upd.index = upd["game_id"].astype(str)
-    df.update(upd[["state", "detail", "home_score", "away_score", "tv", "date_utc"]])
+    cols = ["state", "detail", "home_score", "away_score", "tv", "date_utc",
+            "period", "clock"]
+    # A parquet written before the clock columns existed has neither; create
+    # them rather than dropping the update on the floor.
+    for col in cols:
+        if col not in df.columns:
+            df[col] = pd.NA
+    df.update(upd[cols])
     df.reset_index(drop=True).to_parquet(path, index=False)
 
 

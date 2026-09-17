@@ -206,6 +206,10 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
            }.get(hint, "")
     return (f'<tr class="{"bench" if bench else "starter"}{_live_attrs(g)[0]}" '
             f'data-pid="{escape(pid)}"{_live_attrs(g)[1]}'
+            # The median tracker names the starters a team still has to come,
+            # and the live updater builds that list off these rows.
+            f' data-nm="{escape(_short_name(p["player"]), quote=True)}"'
+            f' data-pos="{escape(p["pos"], quote=True)}"'
             f' data-proj="{"" if proj is None or pd.isna(proj) else round(float(proj), 2)}">'
             f'<td class="mu-pts">{ui.score_cell(p.get("points"), proj, _state(g))}</td>'
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
@@ -516,8 +520,78 @@ def week_board(rows: list[tuple], started: bool, final: bool,
             f'</tr></thead><tbody>{"".join(cells)}</tbody></table></div></div>')
 
 
+def _elapsed(g) -> float:
+    """How much of a game has been played, 0..1 - the same arithmetic as the
+    browser's muElapsed, for the render that happens before any poll."""
+    if g is None or not isinstance(g.get("state"), str):
+        return 1.0
+    if g["state"] == "pre":
+        return 0.0
+    if g["state"] == "post":
+        return 1.0
+    period = int(g.get("period") or 0)
+    if not period:
+        return 0.5
+    if period > 4:
+        return 0.95
+    left = str(g.get("clock") or "0:00").split(":")
+    try:
+        mins = int(left[0]) + (int(left[1]) / 60 if len(left) > 1 else 0)
+    except ValueError:
+        mins = 0.0
+    return min(max(((period - 1) * 15 + (15 - mins)) / 60, 0.0), 1.0)
+
+
+def position_extremes(datas: dict) -> dict:
+    """{"max": {pos: pts}, "min": {pos: pts}} from every archived week.
+
+    The tracker's ceilings and floors: the best and worst single week anyone
+    on these ten rosters has put up at each position. The NFL page reads
+    seasons of history for this; the college league has only this season, so
+    early on the ceiling is whatever the young season has seen. A position
+    nobody has played yet falls back to FALLBACK_CEILING in the renderer.
+    """
+    hi, lo = {}, {}
+    for data in datas.values():
+        if not yahoo.week_final(data):
+            continue
+        for roster in data["rosters"].values():
+            for p in roster:
+                pos, pts = p.get("pos"), p.get("points")
+                if not pos or pts is None:
+                    continue
+                hi[pos] = max(hi.get(pos, float("-inf")), float(pts))
+                lo[pos] = min(lo.get(pos, float("inf")), float(pts))
+    return {"max": {k: round(v, 2) for k, v in hi.items()},
+            "min": {k: round(v, 2) for k, v in lo.items()}}
+
+
+def tracker_side(side: dict, wk: pd.DataFrame) -> dict:
+    """One roster for the median tracker: points so far, the expected final,
+    and the starters still to play with what they are projected to add."""
+    parts = side["parts"]
+    left, expected = [], 0.0
+    for p in parts["starters"]:
+        pid = p["yahoo_id"]
+        g = parts["games"].get(pid)
+        done = _elapsed(g)
+        proj = parts["proj"].get(pid) or 0.0
+        pts = float(p.get("points") or 0.0)
+        expected += pts + proj * (1 - done)
+        if done >= 1.0:
+            continue
+        left.append({"n": _short_name(p["player"]), "r": round(proj * (1 - done), 1),
+                     "live": bool(g is not None and g.get("state") == "in"),
+                     "pos": p["pos"], "p": round(pts, 2)})
+    # The name goes in raw: the renderer escapes it, and escaping here too
+    # turned every apostrophe into a visible &#x27;.
+    return {"k": side["key"], "name": side["name"], "logo": _team_logo(side["team"]),
+            "pts": round(float(side["pts"] or 0.0), 2), "exp": round(expected, 2),
+            "left": left}
+
+
 def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
-              to_school: dict, espn: dict, teams: dict) -> str:
+              to_school: dict, espn: dict, teams: dict, extremes: dict = None) -> str:
     week = int(data["week"])
     statuses = {p["yahoo_id"]: p["status"] for roster in data["rosters"].values()
                 for p in roster if p.get("status")}
@@ -555,16 +629,23 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
     # (functions/api/cfb-matchups.js): a minute apart while games are on,
     # five minutes before they start.
     live = ("" if final else
-            "<script>" + ui.LIVE_GAMES_JS + "window.MU_LIVE={fetch:function(){"
+            "<script>" + ui.LIVE_GAMES_JS + ui.LIVE_LEFT_JS + "window.MU_LIVE={fetch:function(){"
             "var api=fetch('/api/cfb-matchups?week="
             f"{week}&_='+Date.now()).then(function(r){{return r.json();}}).catch(function(){{return {{teams:{{}}}};}});"
             "var sb=muGames('https://site.api.espn.com/apis/site/v2/sports/football/college-football/"
             f"scoreboard?groups=80&limit=500&dates={start:%Y%m%d}-{end:%Y%m%d}');"
-            "return Promise.all([api,sb]).then(function(x){return muMedian(muLiveProjections(muMergeGames(x[0],x[1]),x[1]));});},"
+            "return Promise.all([api,sb]).then(function(x){"
+            "var out=muMedian(muTrackerLeft(muLiveProjections(muMergeGames(x[0],x[1]),x[1]),x[1]));"
+            f"if(window.muMedTrack)window.muMedTrack.update({week},out);return out;}});}},"
             f"interval:{60000 if started else 300000}}};</script>")
+    # "Median 0.0 now" before anyone has scored is noise: Yahoo flips a week
+    # off preevent at the start of its window, days before kickoff.
+    scoring = started and any((s["pts"] or 0) > 0 for s in every)
+    tracker = ui.median_tracker([tracker_side(s, wk) for s in every], week, scoring, final,
+                                extremes or {})
     return (f"<p><strong>Week {week}</strong> · {start:%b %-d} – {end:%b %-d}"
             + (" (playoffs)" if data.get("is_playoffs") else "")
-            + f" · {state}{asof}</p>"
+            + f" · {state}{asof}</p>" + tracker
             + week_board(rows, started, final, med_now, med_proj) + "".join(sections) + live)
 
 
@@ -583,7 +664,9 @@ def body() -> str:
     datas = {w: yahoo.week_matchups(w) for w in weeks}
     current = max(w for w in weeks if not yahoo.week_final(datas[w])) \
         if any(not yahoo.week_final(d) for d in datas.values()) else weeks[-1]
-    views = {w: week_view(datas[w], lg, board, frame, to_school, espn, teams) for w in weeks}
+    extremes = position_extremes(datas)
+    views = {w: week_view(datas[w], lg, board, frame, to_school, espn, teams, extremes)
+             for w in weeks}
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
@@ -610,7 +693,7 @@ def body() -> str:
         'record. Standings and waivers are on the <a href="/cfb/league/">league '
         'dashboard</a>, season-long roster strength on the '
         '<a href="/cfb/league/#power">power rankings</a>.</p></details>'
-        + ui.week_switch(weeks, current, views) + ui.LIVE_JS)
+        + ui.week_switch(weeks, current, views) + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS)
 
 
 def generate():
