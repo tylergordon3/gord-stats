@@ -340,7 +340,7 @@ def _cfb_graphics(today: date) -> str:
     return """
 <section class="home-card">
   <div class="home-card-head">
-    <h2>Top 25: three opinions</h2>
+    <h2>Top 25 by Source</h2>
     <a class="home-card-link" href="/cfb/power/">All 138 teams &rarr;</a>
   </div>
   {% include cfb_top25.html %}
