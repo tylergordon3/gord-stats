@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-18T02:00:23+00:00",
+ "fetched": "2026-09-18T02:10:21+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 0.0,
      "projected": 187.11,
-     "win_probability": 0.47
+     "win_probability": 0.48
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 10.1,
      "projected": 191.12,
-     "win_probability": 0.53
+     "win_probability": 0.52
     }
    ]
   },
@@ -520,12 +520,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 10.6,
+    "points": 11.12,
     "stats": {
-     "4": 95.0,
+     "4": 103.0,
      "6": 1.0,
-     "8": 6.0,
-     "9": 28.0,
+     "8": 7.0,
+     "9": 30.0,
      "10": 1.0
     }
    },
