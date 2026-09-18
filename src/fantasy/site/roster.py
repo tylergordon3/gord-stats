@@ -134,6 +134,11 @@ class Week:
 # Cells
 # --------------------------------------------------------------------------- #
 
+def _inj(status: str) -> str:
+    """Sleeper's designation as the matchups page shows it: Q, D, O, IR, PUP."""
+    return mu.INJURY_TAGS.get(status, status[:3].upper()) if status else ""
+
+
 def _when(g: dict | None) -> str:
     if not g or not g.get("date"):
         return "bye"
@@ -190,7 +195,8 @@ def weather_cell(wkd: Week, g: dict | None) -> str:
 
 
 def player_cell(card: dict, extra: str = "") -> str:
-    inj = (f"<span class='rd-inj'>{escape(card['injury'])}</span>" if card.get("injury") else "")
+    inj = (f"<span class='rd-inj' title='{escape(card['injury'], quote=True)}'>"
+           f"{escape(_inj(card['injury']))}</span>" if card.get("injury") else "")
     return (f"<td class='rd-p'>{mu._logo(card['team']).replace('mu-logo', 'rd-logo')}"
             f"<span class='nm'>{escape(card['name'])}</span>"
             f"<span class='rd-lbl'>{escape(card['pos'])} &middot; {escape(card['team'] or 'FA')}"
@@ -208,7 +214,7 @@ def card_info(wkd: Week, card: dict, proj, note: str = "proj") -> dict:
     info = {"name": card["name"], "pos": pos, "team": card["team"] or "FA",
             "logo": mu._logo(card["team"]).replace("mu-logo", "rd-logo"),
             "game": mu.game_cell(g), "proj": proj, "proj_note": note,
-            "inj": card.get("injury") or ""}
+            "inj": _inj(card.get("injury") or "")}
     if not g:
         return info
     info["opp_label"] = f"{'vs' if g.get('home') else '@'} {g['opp']}"
@@ -412,7 +418,7 @@ def team_view(wkd: Week, side: dict, foe: dict | None, free: pd.DataFrame,
                             "proj": proj.get(p["id"]), "now": p["slot"],
                             "new": got["slot"][p["id"]], "when": _when(g),
                             "sort": (g or {}).get("date") or "~"})
-    warns = [f"<b>{escape(cards[pid]['name'])}</b> is <b>{escape(cards[pid]['injury'])}</b> "
+    warns = [f"<b>{escape(cards[pid]['name'])}</b> is <b>{escape(_inj(cards[pid]['injury']))}</b> "
              f"and kicks off {_when(wkd.by_team.get(cards[pid]['team']))} with no eligible "
              "bench player left to play after him &mdash; decide before the earlier games lock."
              for pid in got["start"]
