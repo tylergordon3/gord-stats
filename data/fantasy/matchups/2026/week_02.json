@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-18T00:10:10+00:00",
+ "fetched": "2026-09-18T00:20:09+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -166,7 +166,7 @@
     {
      "roster_id": 9,
      "matchup_id": 1,
-     "points": 0.0,
+     "points": 10.0,
      "starters": [
       "4984",
       "6813",
@@ -211,7 +211,7 @@
       "7525": 0.0,
       "7526": 0.0,
       "8110": 0.0,
-      "DET": 0.0
+      "DET": 10.0
      }
     }
    ]
@@ -449,7 +449,7 @@
       "8112",
       "11646",
       "11539",
-      "0"
+      "TB"
      ],
      "players": [
       "10232",
@@ -2397,7 +2397,7 @@
     "grade": "D+"
    },
    "5850": {
-    "ecr": 121,
+    "ecr": 119,
     "grade": "F"
    },
    "9493": {
@@ -2638,7 +2638,7 @@
    },
    "9484": {
     "ecr": 7,
-    "grade": "B+"
+    "grade": "B"
    },
    "8131": {
     "ecr": 8,
@@ -2767,18 +2767,18 @@
   {
    "game_id": "401872932",
    "date": "2026-09-18T00:15Z",
-   "state": "pre",
-   "detail": "9/17 - 8:15 PM EDT",
+   "state": "in",
+   "detail": "14:25 - 1st",
    "period": null,
    "clock": null,
    "home": "BUF",
    "away": "DET",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 30.0,
-   "away_implied": 24.5,
-   "spread": "BUF -5.5",
-   "total": 54.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "Prime Video",
    "weather": {
     "temp": 67.0,

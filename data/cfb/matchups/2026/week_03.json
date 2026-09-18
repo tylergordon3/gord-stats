@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-18T00:17:05+00:00",
+ "fetched": "2026-09-18T00:20:17+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -23,7 +23,7 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 0.0,
+     "points": 0.5,
      "projected": 191.12,
      "win_probability": 0.5
     }
@@ -501,8 +501,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.5,
+    "stats": {
+     "11": 1.0
+    }
    },
    {
     "yahoo_id": "468738",
@@ -518,7 +520,7 @@
     "points": 1.58,
     "stats": {
      "4": 52.0,
-     "8": 1.0,
+     "8": 2.0,
      "9": -5.0
     }
    },
@@ -1829,8 +1831,8 @@
     "team": "LSU",
     "team_full": "LSU Tigers",
     "bye": 9.0,
-    "status": "D",
-    "status_full": "Doubtful",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Shoulder",
     "slot": "QB",
     "points": 0.0,
