@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-18T03:37:15+00:00",
+ "fetched": "2026-09-18T09:33:24+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -40,7 +40,7 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 196.57,
+     "projected": 196.55,
      "win_probability": 0.76
     },
     {
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 188.22,
-     "win_probability": 0.48
+     "projected": 186.19,
+     "win_probability": 0.47
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
      "projected": 191.2,
-     "win_probability": 0.52
+     "win_probability": 0.53
     }
    ]
   },
@@ -1194,20 +1194,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "334287",
-    "player": "Noah Bennee",
-    "pos": "TE",
-    "team": "UTAH",
-    "team_full": "Utah Utes",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "334875",
     "player": "Wayne Knight",
     "pos": "RB",
@@ -1315,6 +1301,20 @@
     "status": "O",
     "status_full": "Out",
     "injury_note": "Leg",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "482507",
+    "player": "Kari Ashley",
+    "pos": "TE",
+    "team": "TCU",
+    "team_full": "TCU Horned Frogs",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2586,7 +2586,7 @@
   "335616": 7.48,
   "456077": 8.38,
   "457825": 20.65,
-  "900011": 10.24,
+  "900011": 10.22,
   "405071": 23.49,
   "469436": 21.45,
   "469228": 14.64,
@@ -2611,7 +2611,6 @@
   "456020": 21.65,
   "404730": 16.27,
   "470164": 14.32,
-  "334287": 2.01,
   "334875": 15.54,
   "467588": 16.03,
   "482179": 0.0,
@@ -2620,7 +2619,8 @@
   "457622": 11.11,
   "338965": 10.92,
   "463244": 0.0,
-  "900083": 13.44,
+  "482507": 9.7,
+  "900083": 13.42,
   "455500": 28.32,
   "404287": 31.52,
   "457240": 13.99,
@@ -2632,7 +2632,7 @@
   "456295": 16.49,
   "457872": 19.67,
   "463879": 6.49,
-  "474632": 11.19,
+  "474632": 12.03,
   "456220": 12.37,
   "457217": 10.35,
   "404810": 14.58,

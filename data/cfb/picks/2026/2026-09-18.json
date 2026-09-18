@@ -1,0 +1,40 @@
+{
+ "day": "2026-09-18",
+ "locked_at": "Fri Sep 18, 5:34 AM",
+ "games": 2,
+ "picks": {
+  "underdog": {
+   "game_id": "401856811",
+   "side": "away",
+   "team": "Houston",
+   "opp": "Texas Tech",
+   "p": 0.2104,
+   "book_p": 0.2591,
+   "ml": 270.0,
+   "line": 7.5,
+   "kick": "Fri 8:00p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": -7.5,
+    "p": 0.6337,
+    "book": 0.5,
+    "text": "Texas Tech -7.5",
+    "game_id": "401856811",
+    "game": "HOU at TTU \u00b7 Fri 8:00p"
+   },
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": 20.5,
+    "p": 0.5179,
+    "book": 0.5,
+    "text": "Wake Forest +20.5",
+    "game_id": "401858226",
+    "game": "MIA at WAKE \u00b7 Fri 7:30p"
+   }
+  ]
+ }
+}

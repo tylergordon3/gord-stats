@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-17T23:36:06.582970-04:00",
+ "updated": "2026-09-18T05:32:07.144281-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -36126,6 +36126,239 @@
       "Haley Jones",
       "G",
       8.0
+     ]
+    ]
+   }
+  },
+  "401857193": {
+   "date": "2026-09-18",
+   "allowed": {
+    "PHX": {
+     "G": 73.0,
+     "FC": 105.0
+    },
+    "POR": {
+     "G": 89.0,
+     "FC": 99.0
+    }
+   },
+   "players": {
+    "PHX": [
+     [
+      "Alyssa Thomas",
+      "FC",
+      34.0
+     ],
+     [
+      "Natasha Mack",
+      "FC",
+      27.0
+     ],
+     [
+      "Noemie Brochant",
+      "FC",
+      29.0
+     ],
+     [
+      "Sami Whitcomb",
+      "G",
+      24.0
+     ],
+     [
+      "Lexi Held",
+      "G",
+      16.0
+     ],
+     [
+      "Maddy Westbeld",
+      "FC",
+      4.0
+     ],
+     [
+      "Marta Suarez",
+      "FC",
+      5.0
+     ],
+     [
+      "Saylor Poffenbarger",
+      "G",
+      8.0
+     ],
+     [
+      "Shay Ciezki",
+      "G",
+      34.0
+     ],
+     [
+      "Kara Dunn",
+      "G",
+      7.0
+     ]
+    ],
+    "POR": [
+     [
+      "Emily Engstler",
+      "FC",
+      42.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      15.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      23.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      21.0
+     ],
+     [
+      "Jordan Harrison",
+      "G",
+      23.0
+     ],
+     [
+      "Amy Okonkwo",
+      "FC",
+      20.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      5.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      29.0
+     ]
+    ]
+   }
+  },
+  "401857194": {
+   "date": "2026-09-18",
+   "allowed": {
+    "LV": {
+     "G": 76.0,
+     "FC": 78.0
+    },
+    "SEA": {
+     "G": 108.0,
+     "FC": 112.0
+    }
+   },
+   "players": {
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      18.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      5.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      48.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      21.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      45.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      25.0
+     ],
+     [
+      "Kierstan Bell",
+      "FC",
+      0.0
+     ],
+     [
+      "Kalani Brown",
+      "FC",
+      16.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      18.0
+     ],
+     [
+      "Dana Evans",
+      "G",
+      19.0
+     ],
+     [
+      "Justine Pissott",
+      "G",
+      0.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      5.0
+     ]
+    ],
+    "SEA": [
+     [
+      "Dominique Malonga",
+      "FC",
+      23.0
+     ],
+     [
+      "Awa Fam",
+      "FC",
+      19.0
+     ],
+     [
+      "Natisha Hiedeman",
+      "G",
+      23.0
+     ],
+     [
+      "Zia Cooke",
+      "G",
+      6.0
+     ],
+     [
+      "Flau'jae Johnson",
+      "G",
+      31.0
+     ],
+     [
+      "Mackenzie Holmes",
+      "FC",
+      8.0
+     ],
+     [
+      "Taylor Thierry",
+      "FC",
+      8.0
+     ],
+     [
+      "Stefanie Dolson",
+      "FC",
+      20.0
+     ],
+     [
+      "Jaylyn Sherrod",
+      "G",
+      16.0
      ]
     ]
    }

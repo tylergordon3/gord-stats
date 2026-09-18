@@ -1,5 +1,30 @@
 [
  {
+  "id": 72.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1789717999.0,
+  "faab_bid": 0.0,
+  "players": [
+   {
+    "player": "Kari Ashley",
+    "pos": "TE",
+    "team": "TCU",
+    "type": "add",
+    "source": null,
+    "destination": "CCAM State"
+   },
+   {
+    "player": "Noah Bennee",
+    "pos": "TE",
+    "team": "UTAH",
+    "type": "drop",
+    "source": "CCAM State",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 71.0,
   "type": "add/drop",
   "status": "successful",

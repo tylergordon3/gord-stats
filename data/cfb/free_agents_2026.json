@@ -708,6 +708,18 @@
   "rank": 59
  },
  {
+  "player": "Noah Bennee",
+  "pos": "TE",
+  "team": "UTAH",
+  "team_full": "Utah Utes",
+  "bye": 5.0,
+  "adp": null,
+  "avg_round": null,
+  "pct_drafted": null,
+  "yahoo_id": "334287",
+  "rank": 60
+ },
+ {
   "player": "Asaad Waseem",
   "pos": "WR",
   "team": "PUR",
@@ -717,7 +729,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404214",
-  "rank": 60
+  "rank": 61
  },
  {
   "player": "Colton Joseph",
@@ -729,7 +741,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405815",
-  "rank": 61
+  "rank": 62
  },
  {
   "player": "Maryland",
@@ -741,7 +753,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900005",
-  "rank": 62
+  "rank": 63
  },
  {
   "player": "Kansas State",
@@ -753,7 +765,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900021",
-  "rank": 63
+  "rank": 64
  },
  {
   "player": "USC",
@@ -765,7 +777,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900062",
-  "rank": 64
+  "rank": 65
  },
  {
   "player": "Byrd Ficklin",
@@ -777,7 +789,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468653",
-  "rank": 65
+  "rank": 66
  },
  {
   "player": "Hank Brown",
@@ -789,7 +801,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405444",
-  "rank": 66
+  "rank": 67
  },
  {
   "player": "Damon Ferguson Jr.",
@@ -801,7 +813,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "489749",
-  "rank": 67
+  "rank": 68
  },
  {
   "player": "Syracuse",
@@ -813,7 +825,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900014",
-  "rank": 68
+  "rank": 69
  },
  {
   "player": "Cataurus Hicks",
@@ -825,7 +837,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404836",
-  "rank": 69
+  "rank": 70
  },
  {
   "player": "Mark Bowman",
@@ -837,7 +849,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "482194",
-  "rank": 70
+  "rank": 71
  },
  {
   "player": "Que'Sean Brown",
@@ -849,18 +861,6 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404749",
-  "rank": 71
- },
- {
-  "player": "Kari Ashley",
-  "pos": "TE",
-  "team": "TCU",
-  "team_full": "TCU Horned Frogs",
-  "bye": 6.0,
-  "adp": null,
-  "avg_round": null,
-  "pct_drafted": null,
-  "yahoo_id": "482507",
   "rank": 72
  },
  {
