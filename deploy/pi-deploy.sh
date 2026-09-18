@@ -15,7 +15,7 @@ main() {
   cd "$(git rev-parse --show-toplevel)"
 
   local VENV="$PWD/.venv"
-  local TASKS="${TASKS:-wnba,fantasy,cfb,cbb_power}"
+  local TASKS="${TASKS:-wnba,fantasy,cfb,nfl,cbb_power}"
   local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
   # Fixed path, not $XDG_RUNTIME_DIR: this runs both as gordstats-daily.service
   # and over plain ssh from `pi deploy`, and the two don't reliably agree on
@@ -49,7 +49,7 @@ main() {
   # shellcheck source=/dev/null
   . "$SECRETS"
   set +o allexport
-  TASKS="${TASKS:-wnba,fantasy,cfb,cbb_power}"
+  TASKS="${TASKS:-wnba,fantasy,cfb,nfl,cbb_power}"
 
   [ -n "${CLOUDFLARE_API_TOKEN:-}" ] || {
     echo "❌ CLOUDFLARE_API_TOKEN not set — wrangler can't deploy unattended."

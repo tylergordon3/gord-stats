@@ -24,7 +24,7 @@ import argparse
 import json
 import time
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from wnba import paths
@@ -78,23 +78,48 @@ def fantasy_points(keys: list[str], stats: list[str]) -> float:
 
 # ── Fetch ─────────────────────────────────────────────────────────────────────
 
+def _months(start: str, end: str) -> list[str]:
+    """["202605", "202606", ...] covering start..end inclusive."""
+    y, m = int(start[:4]), int(start[5:7])
+    last = (int(end[:4]), int(end[5:7]))
+    out = []
+    while (y, m) <= last:
+        out.append(f"{y}{m:02d}")
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    return out
+
+
 def fetch_final_events(start: str = SEASON_START, end: str | None = None) -> list[dict]:
-    """All completed regular-matchup games between two dates (one request)."""
+    """All completed regular-matchup games between two dates.
+
+    One request per calendar month. ESPN used to take the whole span as a
+    `dates=YYYYMMDD-YYYYMMDD` range, and in September 2026 began answering
+    every range, on every sport, with 400 "Failed to get events endpoint";
+    a month (`dates=YYYYMM`) still answers, so the span is walked by month
+    and trimmed to the two dates here.
+    """
     end = end or datetime.now(ET).date().isoformat()
-    dates = f"{start.replace('-', '')}-{end.replace('-', '')}"
+    late = (datetime.fromisoformat(end) + timedelta(days=1)).date().isoformat()
+    raw = []
+    for month in _months(start, end):
+        r = requests.get(
+            SCOREBOARD_URL,
+            params={"dates": month, "limit": 500},
+            headers=HEADERS,
+            timeout=20,
+        )
+        r.raise_for_status()
+        raw.extend(r.json().get("events", []))
 
-    r = requests.get(
-        SCOREBOARD_URL,
-        params={"dates": dates, "limit": 500},
-        headers=HEADERS,
-        timeout=20,
-    )
-    r.raise_for_status()
-
-    events = []
-    for e in r.json().get("events", []):
+    events, seen = [], set()
+    for e in raw:
         if e.get("status", {}).get("type", {}).get("state") != "post":
             continue
+        # ESPN stamps games in UTC, so an evening tip on `end` carries the next
+        # day's date; a day of slack keeps it.
+        if e["id"] in seen or not (start <= e["date"][:10] <= late):
+            continue
+        seen.add(e["id"])
         comps = e.get("competitions", [{}])[0].get("competitors", [])
         abbrevs = {c["team"]["abbreviation"] for c in comps}
         if not abbrevs <= VALID_ABBREVS:

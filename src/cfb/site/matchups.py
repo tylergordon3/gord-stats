@@ -626,6 +626,13 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
         asof = (' <span class="mu-asof">· Yahoo points as of '
                 + datetime.fromisoformat(fetched).astimezone(LEAGUE_TZ)
                 .strftime("%a %-I:%M %p") + "</span>")
+    # ESPN's own week number for these games. The poll used to ask for the
+    # Yahoo week as a date range, and in September 2026 ESPN began answering
+    # every range with a 400; a week query still works. ESPN folds Week 0 into
+    # week 1, which only means a few extra games the page never looks up.
+    in_window = weekly.games_between(frame, data["week_start"], data["week_end"])
+    espn_week = (int(in_window["week"].mode().iloc[0])
+                 if "week" in in_window and in_window["week"].notna().any() else week)
     # The week still being played polls Yahoo through the site's own proxy
     # (functions/api/cfb-matchups.js): a minute apart while games are on,
     # five minutes before they start.
@@ -634,7 +641,7 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
             "var api=fetch('/api/cfb-matchups?week="
             f"{week}&_='+Date.now()).then(function(r){{return r.json();}}).catch(function(){{return {{teams:{{}}}};}});"
             "var sb=muGames('https://site.api.espn.com/apis/site/v2/sports/football/college-football/"
-            f"scoreboard?groups=80&limit=500&dates={start:%Y%m%d}-{end:%Y%m%d}');"
+            f"scoreboard?groups=80&limit=500&week={espn_week}&dates={SEASON}&seasontype=2');"
             "return Promise.all([api,sb]).then(function(x){"
             "var out=muMedian(muTrackerLeft(muLiveProjections(muMergeGames(x[0],x[1]),x[1]),x[1]));"
             f"if(window.muMedTrack)window.muMedTrack.update({week},out);return out;}});}},"

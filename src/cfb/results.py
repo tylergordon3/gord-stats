@@ -150,10 +150,17 @@ def scored(season: int = SEASON) -> pd.DataFrame:
     if latest.empty or finals.empty:
         return pd.DataFrame()
 
-    frame = latest.merge(finals, on="game_id", how="inner")
+    return grade(latest.merge(finals, on="game_id", how="inner"))
+
+
+def grade(frame: pd.DataFrame) -> pd.DataFrame:
+    """Every error and call on a frame of predictions joined to finals
+    (pred_margin, pred_total, market_spread, market_total, actual_margin,
+    actual_total, kickoff). Shared with the NFL archive, which is the same
+    record for a different sport."""
     if frame.empty:
         return frame
-
+    frame = frame.copy()
     frame["margin_error"] = frame["pred_margin"] - frame["actual_margin"]
     frame["total_error"] = frame["pred_total"] - frame["actual_total"]
     frame["correct"] = ((frame["pred_margin"] > 0) == (frame["actual_margin"] > 0))

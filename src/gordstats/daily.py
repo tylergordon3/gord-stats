@@ -131,11 +131,22 @@ def _cfb() -> None:
         raise RuntimeError(f"cfb pages failed to build: {', '.join(failed)}")
 
 
+def _nfl() -> None:
+    """Refetch this season's NFL results, archive the predictions, rebuild
+    the predictions page."""
+    from nfl import build
+
+    failed = build.build_all(refresh=True)
+    if failed:
+        raise RuntimeError(f"nfl pages failed to build: {', '.join(failed)}")
+
+
 TASKS = {
     "wnba": _wnba,
     "cbb": _cbb,
     "fantasy": _fantasy,
     "cfb": _cfb,
+    "nfl": _nfl,
     "cbb_power": _cbb_power,
 }
 

@@ -42,6 +42,7 @@ Fantasy before the plain /cfb/ test.
 {% endcomment %}
 {% if page.url contains '/cfb/matchups/' or page.url contains '/cfb/league/' or page.url contains '/cfb/live/' or page.url contains '/cfb/strength/' or page.url contains '/cfb/usage/' or page.url contains '/cfb/roster/' %}{% assign sec = 'fantasy' %}{% assign pages = 'cfb_fantasy' %}
 {% elsif page.url contains '/cfb/' %}{% assign sec = 'cfb' %}{% assign pages = 'cfb' %}
+{% elsif page.url contains '/nfl/' %}{% assign sec = 'nfl' %}{% assign pages = 'nfl' %}
 {% elsif page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}{% assign pages = 'fantasy' %}
 {% elsif page.url contains '/wnba/' %}{% assign sec = 'fantasy' %}{% assign pages = 'wnba' %}
 {% elsif page.url contains '/cbb/' or page.url contains '/men/' or page.url contains '/women/' %}{% assign sec = 'cbb' %}{% assign pages = 'cbb' %}

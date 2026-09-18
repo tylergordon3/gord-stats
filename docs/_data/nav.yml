@@ -28,6 +28,12 @@ sections:
     url: /cfb/index.html
     section: cfb
 
+  - title: NFL
+    short: NFL
+    icon: "🏟️"
+    url: /nfl/index.html
+    section: nfl
+
   - title: Fantasy
     short: Fantasy
     icon: "🏈"
@@ -165,6 +171,13 @@ cfb:
     icon: "🏈"
     url: /cfb/schedule/
     group: reference
+
+
+nfl:
+  - title: Predictions
+    short: Predict
+    icon: "🔮"
+    url: /nfl/index.html
 
 
 # The Yahoo college fantasy league, shown under Fantasy > CFB.
