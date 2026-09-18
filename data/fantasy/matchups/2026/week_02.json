@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-18T03:10:12+00:00",
+ "fetched": "2026-09-18T03:20:10+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -168,7 +168,7 @@
     {
      "roster_id": 9,
      "matchup_id": 1,
-     "points": 59.16,
+     "points": 57.32,
      "starters": [
       "4984",
       "6813",
@@ -205,7 +205,7 @@
       "12481": 0.0,
       "12527": 0.0,
       "12534": 0.0,
-      "4984": 39.96,
+      "4984": 41.12,
       "5045": 0.0,
       "5846": 0.0,
       "5872": 0.0,
@@ -213,7 +213,7 @@
       "7525": 0.0,
       "7526": 0.0,
       "8110": 0.0,
-      "DET": 2.0
+      "DET": -1.0
      }
     }
    ]
@@ -275,7 +275,7 @@
     {
      "roster_id": 10,
      "matchup_id": 2,
-     "points": 12.6,
+     "points": 20.8,
      "starters": [
       "8183",
       "8138",
@@ -316,7 +316,7 @@
       "5927": 0.0,
       "6794": 0.0,
       "7021": 0.0,
-      "8138": 12.6,
+      "8138": 20.8,
       "8144": 0.0,
       "8183": 0.0,
       "9756": 0.0,
@@ -600,7 +600,7 @@
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 21.1,
+     "points": 23.3,
      "starters": [
       "11566",
       "9221",
@@ -643,7 +643,7 @@
       "6650": 0.0,
       "6806": 0.0,
       "8136": 0.0,
-      "9221": 21.1,
+      "9221": 23.3,
       "9500": 0.0,
       "LAC": 0.0
      }
@@ -2496,7 +2496,7 @@
    },
    "2133": {
     "ecr": 24,
-    "grade": "B"
+    "grade": "B+"
    },
    "5927": {
     "ecr": 25,
@@ -2766,19 +2766,19 @@
  },
  "stats": {
   "4984": {
-   "pass_yd": 219.0,
+   "pass_yd": 248.0,
    "pass_td": 3.0,
    "rush_att": 11.0,
    "rush_yd": 72.0,
    "rush_td": 2.0,
-   "pts_ppr": 39.96,
-   "pts_half_ppr": 39.96,
-   "pts_std": 39.96,
+   "pts_ppr": 41.12,
+   "pts_half_ppr": 41.12,
+   "pts_std": 41.12,
    "gp": 1.0
   },
   "7547": {
    "rec": 8.0,
-   "rec_tgt": 11.0,
+   "rec_tgt": 12.0,
    "rec_yd": 115.0,
    "rec_td": 1.0,
    "pts_ppr": 25.5,
@@ -2798,14 +2798,26 @@
   },
   "9221": {
    "rush_att": 16.0,
-   "rush_yd": 53.0,
+   "rush_yd": 52.0,
    "rec": 5.0,
-   "rec_tgt": 6.0,
+   "rec_tgt": 7.0,
    "rec_yd": 49.0,
    "rec_td": 1.0,
-   "pts_ppr": 21.2,
-   "pts_half_ppr": 18.7,
-   "pts_std": 16.2,
+   "pts_ppr": 21.1,
+   "pts_half_ppr": 18.6,
+   "pts_std": 16.1,
+   "gp": 1.0
+  },
+  "8138": {
+   "rush_att": 20.0,
+   "rush_yd": 134.0,
+   "rush_td": 1.0,
+   "rec": 1.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 4.0,
+   "pts_ppr": 20.8,
+   "pts_half_ppr": 20.3,
+   "pts_std": 19.8,
    "gp": 1.0
   },
   "10859": {
@@ -2816,17 +2828,6 @@
    "pts_ppr": 17.2,
    "pts_half_ppr": 14.2,
    "pts_std": 11.2,
-   "gp": 1.0
-  },
-  "8138": {
-   "rush_att": 17.0,
-   "rush_yd": 114.0,
-   "rec": 1.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 4.0,
-   "pts_ppr": 12.8,
-   "pts_half_ppr": 12.3,
-   "pts_std": 11.8,
    "gp": 1.0
   },
   "11539": {
@@ -2848,20 +2849,20 @@
    "pts_std": 1.6,
    "gp": 1.0
   },
-  "DET": {
-   "pts_allow": 34.0,
-   "sack": 2.0,
-   "pts_ppr": 2.0,
-   "pts_half_ppr": 2.0,
-   "pts_std": 2.0,
-   "gp": 1.0
-  },
   "4983": {
    "rush_att": 1.0,
    "rush_yd": -1.0,
    "pts_ppr": -0.1,
    "pts_half_ppr": -0.1,
    "pts_std": -0.1,
+   "gp": 1.0
+  },
+  "DET": {
+   "pts_allow": 41.0,
+   "sack": 2.0,
+   "pts_ppr": -1.0,
+   "pts_half_ppr": -1.0,
+   "pts_std": -1.0,
    "gp": 1.0
   }
  },
@@ -2870,12 +2871,12 @@
    "game_id": "401872932",
    "date": "2026-09-18T00:15Z",
    "state": "in",
-   "detail": "4:30 - 4th",
+   "detail": "2:00 - 4th",
    "period": null,
    "clock": null,
    "home": "BUF",
    "away": "DET",
-   "home_score": 34.0,
+   "home_score": 41.0,
    "away_score": 24.0,
    "home_implied": null,
    "away_implied": null,
@@ -2883,7 +2884,7 @@
    "total": null,
    "tv": "Prime Video",
    "weather": {
-    "temp": 68.0,
+    "temp": 67.0,
     "cond": 38,
     "text": "Mostly cloudy",
     "indoors": false
