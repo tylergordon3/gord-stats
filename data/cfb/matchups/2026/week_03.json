@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-18T09:33:24+00:00",
+ "fetched": "2026-09-18T23:38:34+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 0.0,
-     "projected": 187.11,
-     "win_probability": 0.51
+     "points": 1.6,
+     "projected": 187.08,
+     "win_probability": 0.48
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 10.1,
-     "projected": 191.12,
-     "win_probability": 0.49
+     "projected": 197.22,
+     "win_probability": 0.52
     }
    ]
   },
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 0.0,
-     "projected": 196.55,
-     "win_probability": 0.76
+     "points": 10.0,
+     "projected": 197.19,
+     "win_probability": 0.75
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 153.51,
-     "win_probability": 0.24
+     "projected": 155.56,
+     "win_probability": 0.25
     }
    ]
   },
@@ -62,16 +62,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 0.0,
-     "projected": 186.19,
-     "win_probability": 0.47
+     "points": 0.64,
+     "projected": 195.91,
+     "win_probability": 0.52
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 191.2,
-     "win_probability": 0.53
+     "projected": 193.42,
+     "win_probability": 0.48
     }
    ]
   },
@@ -86,14 +86,14 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 177.29,
+     "projected": 177.3,
      "win_probability": 0.51
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 175.2,
+     "projected": 175.21,
      "win_probability": 0.49
     }
    ]
@@ -109,15 +109,15 @@
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 188.93,
-     "win_probability": 0.53
+     "projected": 184.03,
+     "win_probability": 0.5
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
      "projected": 183.82,
-     "win_probability": 0.47
+     "win_probability": 0.5
     }
    ]
   }
@@ -191,8 +191,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.6,
+    "stats": {
+     "11": 1.0,
+     "12": 11.0
+    }
    },
    {
     "yahoo_id": "458486",
@@ -341,9 +344,9 @@
     "team": "WAKE",
     "team_full": "Wake Forest Demon Deacons",
     "bye": 8.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -463,12 +466,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "406200",
-    "player": "Randy Pittman Jr.",
+    "yahoo_id": "457898",
+    "player": "Benji Blackburn",
     "pos": "TE",
-    "team": "SMU",
-    "team_full": "SMU Mustangs",
-    "bye": 6.0,
+    "team": "STAN",
+    "team_full": "Stanford Cardinal",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -508,6 +511,20 @@
      "11": 3.0,
      "12": 58.0
     }
+   },
+   {
+    "yahoo_id": "406200",
+    "player": "Randy Pittman Jr.",
+    "pos": "TE",
+    "team": "SMU",
+    "team_full": "SMU Mustangs",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
    },
    {
     "yahoo_id": "468738",
@@ -578,20 +595,6 @@
     "team": "NW",
     "team_full": "Northwestern Wildcats",
     "bye": 2.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "457898",
-    "player": "Benji Blackburn",
-    "pos": "TE",
-    "team": "STAN",
-    "team_full": "Stanford Cardinal",
-    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -728,20 +731,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457315",
-    "player": "DeJuan Williams",
-    "pos": "RB",
-    "team": "UMD",
-    "team_full": "Maryland Terrapins",
-    "bye": 8.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Undisclosed",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "456092",
     "player": "Dilin Jones",
     "pos": "RB",
@@ -752,6 +741,34 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457825",
+    "player": "J'Koby Williams",
+    "pos": "RB",
+    "team": "TTU",
+    "team_full": "Texas Tech Red Raiders",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457315",
+    "player": "DeJuan Williams",
+    "pos": "RB",
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
+    "bye": 8.0,
+    "status": "O",
+    "status_full": "Out",
+    "injury_note": "Undisclosed",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -826,20 +843,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457825",
-    "player": "J'Koby Williams",
-    "pos": "RB",
-    "team": "TTU",
-    "team_full": "Texas Tech Red Raiders",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "900011",
     "player": "Miami (FL)",
     "pos": "DEF",
@@ -850,8 +853,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 0.0,
-    "stats": {}
+    "points": 10.0,
+    "stats": {
+     "50": 1.0
+    }
    }
   ],
   "474.l.21318.t.7": [
@@ -1106,8 +1111,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.44,
+    "stats": {
+     "4": 11.0
+    }
    },
    {
     "yahoo_id": "468769",
@@ -1124,26 +1131,29 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468495",
-    "player": "Nate Sheppard",
-    "pos": "RB",
-    "team": "DUKE",
-    "team_full": "Duke Blue Devils",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "RB",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "404876",
     "player": "Mark Fletcher Jr.",
     "pos": "RB",
     "team": "MIA",
     "team_full": "Miami (FL) Hurricanes",
     "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "RB",
+    "points": 0.2,
+    "stats": {
+     "8": 1.0,
+     "9": 2.0
+    }
+   },
+   {
+    "yahoo_id": "467588",
+    "player": "King Miller",
+    "pos": "RB",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1194,11 +1204,25 @@
     "stats": {}
    },
    {
-    "yahoo_id": "334875",
-    "player": "Wayne Knight",
+    "yahoo_id": "482507",
+    "player": "Kari Ashley",
+    "pos": "TE",
+    "team": "TCU",
+    "team_full": "TCU Horned Frogs",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "TE",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "468495",
+    "player": "Nate Sheppard",
     "pos": "RB",
-    "team": "UCLA",
-    "team_full": "UCLA Bruins",
+    "team": "DUKE",
+    "team_full": "Duke Blue Devils",
     "bye": 5.0,
     "status": "",
     "status_full": "",
@@ -1208,12 +1232,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "467588",
-    "player": "King Miller",
+    "yahoo_id": "334875",
+    "player": "Wayne Knight",
     "pos": "RB",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
+    "team": "UCLA",
+    "team_full": "UCLA Bruins",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1256,8 +1280,8 @@
     "team": "TTU",
     "team_full": "Texas Tech Red Raiders",
     "bye": 6.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Foot",
     "slot": "BN",
     "points": 0.0,
@@ -1301,20 +1325,6 @@
     "status": "O",
     "status_full": "Out",
     "injury_note": "Leg",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "482507",
-    "player": "Kari Ashley",
-    "pos": "TE",
-    "team": "TCU",
-    "team_full": "TCU Horned Frogs",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2126,12 +2136,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404713",
-    "player": "Ian Strong",
+    "yahoo_id": "450577",
+    "player": "Jordan Faison",
     "pos": "WR",
-    "team": "CAL",
-    "team_full": "California Golden Bears",
-    "bye": 10.0,
+    "team": "ND",
+    "team_full": "Notre Dame Fighting Irish",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2140,11 +2150,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "450577",
-    "player": "Jordan Faison",
+    "yahoo_id": "463325",
+    "player": "Na'eem Abdul-Rahim Gladding",
     "pos": "WR",
-    "team": "ND",
-    "team_full": "Notre Dame Fighting Irish",
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
     "bye": 8.0,
     "status": "",
     "status_full": "",
@@ -2192,6 +2202,20 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "404713",
+    "player": "Ian Strong",
+    "pos": "WR",
+    "team": "CAL",
+    "team_full": "California Golden Bears",
+    "bye": 10.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -2258,20 +2282,6 @@
     "team": "MICH",
     "team_full": "Michigan Wolverines",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "463325",
-    "player": "Na'eem Abdul-Rahim Gladding",
-    "pos": "WR",
-    "team": "UMD",
-    "team_full": "Maryland Terrapins",
-    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2552,25 +2562,25 @@
   "337423": 10.19,
   "333084": 8.98,
   "405873": 18.16,
-  "900104": 16.21,
+  "900104": 16.18,
   "404164": 30.4,
-  "404635": 19.67,
+  "404635": 22.48,
   "404291": 17.01,
   "340537": 16.25,
-  "333783": 15.97,
+  "333783": 15.98,
   "337939": 19.57,
   "403842": 19.2,
-  "406200": 7.77,
+  "457898": 11.11,
   "457591": 14.05,
   "327462": 15.11,
+  "406200": 7.77,
   "468738": 24.28,
   "404055": 12.71,
   "336811": 10.61,
   "404437": 10.54,
   "451329": 8.82,
-  "457898": 11.11,
-  "900028": 16.12,
-  "470211": 32.18,
+  "900028": 16.06,
+  "470211": 29.67,
   "334043": 29.09,
   "404522": 21.27,
   "456169": 16.18,
@@ -2578,17 +2588,17 @@
   "405636": 15.12,
   "405846": 12.01,
   "456968": 12.41,
-  "457315": 17.48,
   "456092": 16.77,
+  "457825": 20.65,
+  "457315": 0.0,
   "405442": 9.97,
-  "405249": 28.03,
+  "405249": 23.66,
   "471560": 13.91,
   "335616": 7.48,
   "456077": 8.38,
-  "457825": 20.65,
-  "900011": 10.22,
+  "900011": 10.2,
   "405071": 23.49,
-  "469436": 21.45,
+  "469436": 23.5,
   "469228": 14.64,
   "404365": 13.01,
   "455576": 22.73,
@@ -2606,24 +2616,24 @@
   "900027": 13.47,
   "406169": 26.58,
   "468769": 23.33,
-  "468495": 24.66,
   "404876": 14.39,
+  "467588": 16.03,
   "456020": 21.65,
   "404730": 16.27,
   "470164": 14.32,
+  "482507": 9.7,
+  "468495": 24.66,
   "334875": 15.54,
-  "467588": 16.03,
   "482179": 0.0,
   "484035": 21.53,
   "334780": 6.32,
   "457622": 11.11,
   "338965": 10.92,
   "463244": 0.0,
-  "482507": 9.7,
-  "900083": 13.42,
+  "900083": 13.44,
   "455500": 28.32,
   "404287": 31.52,
-  "457240": 13.99,
+  "457240": 16.19,
   "469636": 16.08,
   "457478": 16.22,
   "406054": 12.41,
@@ -2637,7 +2647,7 @@
   "457217": 10.35,
   "404810": 14.58,
   "333810": 24.83,
-  "900073": 9.87,
+  "900073": 9.89,
   "404544": 32.02,
   "404434": 27.57,
   "448820": 20.53,
@@ -2649,12 +2659,12 @@
   "405205": 12.14,
   "471615": 14.14,
   "403802": 13.11,
-  "338757": 21.41,
+  "338757": 23.55,
   "335178": 0.0,
   "458035": 5.72,
   "333373": 2.5,
   "334139": 6.93,
-  "900033": 15.13,
+  "900033": 15.14,
   "464024": 35.52,
   "403957": 25.84,
   "404007": 15.51,
@@ -2671,24 +2681,24 @@
   "338689": 30.77,
   "406381": 7.75,
   "456249": 11.49,
-  "900068": 6.63,
-  "337760": 28.62,
+  "900068": 6.64,
+  "337760": 26.71,
   "469212": 22.28,
   "472146": 23.96,
   "403910": 16.41,
   "405225": 15.94,
-  "404713": 12.03,
   "450577": 12.2,
+  "463325": 11.93,
   "335940": 8.29,
   "404392": 18.72,
   "456937": 12.1,
+  "404713": 12.03,
   "457801": 12.38,
   "333511": 24.32,
   "451040": 8.01,
   "449475": 5.83,
   "482773": 7.58,
-  "463325": 11.93,
-  "900060": 18.38,
+  "900060": 15.49,
   "333785": 27.86,
   "455480": 34.59,
   "456340": 16.38,
