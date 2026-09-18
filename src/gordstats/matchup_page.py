@@ -176,8 +176,7 @@ table.mu-board td b.lead{color:#1a7f4b}
 /* The game, under the position: opponent and kickoff, then the live score
    and clock, then the final - the same span the live poll rewrites in the
    table, so it carries the same pulsing dot while the game is on. */
-.mu-pn .mu-g{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;max-width:100%}
+.mu-pn .mu-g{font-size:10px;color:#64748b;max-width:100%;overflow-wrap:anywhere}
 .mu-pn .mu-g .live{color:#b3382c;font-weight:700}
 .mu-pn .mu-g .live::before{content:"";display:inline-block;width:6px;height:6px;
   border-radius:50%;background:#b3382c;margin-right:4px;vertical-align:1px;
@@ -187,10 +186,11 @@ table.mu-board td b.lead{color:#1a7f4b}
 /* The projection under the points; italic once it is a live expected final. */
 .mu-pp .mu-gs{font-size:10px;color:#64748b;font-variant-numeric:tabular-nums}
 .mu-pp .mu-gs.live{font-style:italic}
-/* The name truncates rather than wrapping: a wrapped name makes rows different
-   heights and the two sides stop lining up, which is the whole point. */
-.mu-pn .nm{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;max-width:100%}
+/* Names and game lines wrap rather than truncate: "C. McCaff..." and
+   "Live 21-0 . D..." hid the thing the row was there to say. Both sides of a
+   pair share one flex row, so a wrapped line grows the row and the two players
+   still sit level with each other. */
+.mu-pn .nm{font-size:12.5px;font-weight:600;max-width:100%;overflow-wrap:anywhere}
 .mu-pn .mu-pm{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;max-width:100%}
 .mu-pp .mu-pts{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;
