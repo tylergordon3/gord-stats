@@ -13,14 +13,14 @@
      "name": "Puntaholics",
      "points": 1.6,
      "projected": 187.08,
-     "win_probability": 0.48
+     "win_probability": 0.47
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 10.1,
      "projected": 197.22,
-     "win_probability": 0.52
+     "win_probability": 0.53
     }
    ]
   },
@@ -57,7 +57,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 0.64,
+     "points": 1.52,
      "projected": 195.91,
      "win_probability": 0.52
     },
