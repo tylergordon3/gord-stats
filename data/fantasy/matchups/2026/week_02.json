@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-18T01:50:24+00:00",
+ "fetched": "2026-09-18T02:00:15+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -440,7 +440,7 @@
     {
      "roster_id": 3,
      "matchup_id": 4,
-     "points": 3.6,
+     "points": 6.6,
      "starters": [
       "6770",
       "7588",
@@ -473,7 +473,7 @@
      ],
      "players_points": {
       "10232": 0.0,
-      "11539": 1.0,
+      "11539": 4.0,
       "11646": 0.0,
       "12489": 0.0,
       "13294": 0.0,
@@ -600,7 +600,7 @@
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 18.0,
+     "points": 18.7,
      "starters": [
       "11566",
       "9221",
@@ -643,7 +643,7 @@
       "6650": 0.0,
       "6806": 0.0,
       "8136": 0.0,
-      "9221": 18.0,
+      "9221": 18.7,
       "9500": 0.0,
       "LAC": 0.0
      }
@@ -2728,7 +2728,7 @@
    },
    "SF": {
     "ecr": 3,
-    "grade": "A-"
+    "grade": "A"
    },
    "SEA": {
     "ecr": 4,
@@ -2864,13 +2864,13 @@
    "game_id": "401872932",
    "date": "2026-09-18T00:15Z",
    "state": "in",
-   "detail": "0:01 - 2nd",
+   "detail": "Halftime",
    "period": null,
    "clock": null,
    "home": "BUF",
    "away": "DET",
    "home_score": 27.0,
-   "away_score": 7.0,
+   "away_score": 10.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -3147,10 +3147,10 @@
    "away": "SEA",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 19.0,
-   "away_implied": 22.5,
+   "home_implied": 18.5,
+   "away_implied": 22.0,
    "spread": "SEA -3.5",
-   "total": 41.5,
+   "total": 40.5,
    "tv": "FOX",
    "weather": {
     "temp": 97.0,
