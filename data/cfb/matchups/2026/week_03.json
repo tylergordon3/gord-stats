@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-19T04:11:01+00:00",
+ "fetched": "2026-09-19T05:21:01+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 54.2,
      "projected": 187.08,
-     "win_probability": 0.51
+     "win_probability": 0.52
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 24.8,
      "projected": 197.22,
-     "win_probability": 0.49
+     "win_probability": 0.48
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 41.0,
      "projected": 197.2,
-     "win_probability": 0.71
+     "win_probability": 0.76
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 21.5,
      "projected": 155.56,
-     "win_probability": 0.29000000000000004
+     "win_probability": 0.24
     }
    ]
   },
@@ -64,14 +64,14 @@
      "name": "CCAM State",
      "points": 41.8,
      "projected": 195.91,
-     "win_probability": 0.4
+     "win_probability": 0.45999999999999996
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 34.9,
      "projected": 193.42,
-     "win_probability": 0.6
+     "win_probability": 0.54
     }
    ]
   },
@@ -87,14 +87,14 @@
      "name": "Austin's Best Team",
      "points": 10.9,
      "projected": 177.3,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.49
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 12.4,
      "projected": 175.21,
-     "win_probability": 0.54
+     "win_probability": 0.51
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 30.0,
+     "points": 37.0,
      "projected": 184.03,
-     "win_probability": 0.5
+     "win_probability": 0.54
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 37.88,
      "projected": 183.82,
-     "win_probability": 0.5
+     "win_probability": 0.45999999999999996
     }
    ]
   }
@@ -2375,9 +2375,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 13.0,
+    "points": 20.0,
     "stats": {
-     "32": 1.0,
+     "32": 2.0,
+     "33": 3.0,
      "34": 1.0,
      "50": 1.0
     }
