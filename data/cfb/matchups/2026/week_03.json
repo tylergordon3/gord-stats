@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-19T14:21:01+00:00",
+ "fetched": "2026-09-19T15:31:01+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -17,14 +17,14 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 54.2,
-     "projected": 187.08,
+     "projected": 187.03,
      "win_probability": 0.52
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 24.8,
-     "projected": 197.26,
+     "projected": 197.24,
      "win_probability": 0.48
     }
    ]
@@ -70,7 +70,7 @@
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 34.9,
-     "projected": 193.45,
+     "projected": 193.44,
      "win_probability": 0.5
     }
    ]
@@ -86,7 +86,7 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 10.9,
-     "projected": 177.3,
+     "projected": 177.32,
      "win_probability": 0.51
     },
     {
@@ -1921,8 +1921,8 @@
     "team": "MINN",
     "team_full": "Minnesota Golden Gophers",
     "bye": 7.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "O",
+    "status_full": "Out",
     "injury_note": "Undisclosed",
     "slot": "RB",
     "points": 0.0,
@@ -2468,9 +2468,9 @@
     "team": "ASU",
     "team_full": "Arizona State Sun Devils",
     "bye": 4.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "WR",
     "points": 0.0,
     "stats": {}
@@ -2656,7 +2656,7 @@
   "337423": 10.19,
   "333084": 8.98,
   "405873": 18.16,
-  "900104": 16.18,
+  "900104": 16.13,
   "404164": 30.4,
   "404635": 22.48,
   "404291": 17.01,
@@ -2673,7 +2673,7 @@
   "336811": 10.61,
   "404437": 10.54,
   "451329": 8.82,
-  "900028": 16.1,
+  "900028": 16.08,
   "470211": 29.67,
   "334043": 29.09,
   "404522": 21.27,
@@ -2741,7 +2741,7 @@
   "457217": 10.35,
   "404810": 14.58,
   "333810": 24.83,
-  "900073": 9.92,
+  "900073": 9.91,
   "404544": 32.02,
   "404434": 27.57,
   "448820": 20.53,
@@ -2758,7 +2758,7 @@
   "458035": 5.72,
   "333373": 2.5,
   "334139": 6.93,
-  "900033": 15.14,
+  "900033": 15.16,
   "464024": 35.52,
   "403957": 25.84,
   "404007": 15.51,
