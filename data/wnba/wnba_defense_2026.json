@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-18T23:31:30.982666-04:00",
+ "updated": "2026-09-19T05:39:59.202556-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -36587,6 +36587,130 @@
       "Maya Caldwell",
       "G",
       17.0
+     ]
+    ]
+   }
+  },
+  "401857197": {
+   "date": "2026-09-19",
+   "allowed": {
+    "POR": {
+     "G": 119.0,
+     "FC": 73.0
+    },
+    "GS": {
+     "G": 61.0,
+     "FC": 90.0
+    }
+   },
+   "players": {
+    "POR": [
+     [
+      "Emily Engstler",
+      "FC",
+      18.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      22.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      19.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      7.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      23.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      24.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      7.0
+     ],
+     [
+      "Charisma Osborne",
+      "G",
+      11.0
+     ],
+     [
+      "Holly Winterburn",
+      "G",
+      15.0
+     ],
+     [
+      "Jordan Harrison",
+      "G",
+      5.0
+     ]
+    ],
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      21.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      17.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      27.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      19.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      25.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      34.0
+     ],
+     [
+      "Ashten Prechtel",
+      "FC",
+      1.0
+     ],
+     [
+      "Nadia Fingall",
+      "FC",
+      0.0
+     ],
+     [
+      "Miela Sowah",
+      "G",
+      0.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      28.0
+     ],
+     [
+      "Juste Jocyte",
+      "G",
+      20.0
      ]
     ]
    }
