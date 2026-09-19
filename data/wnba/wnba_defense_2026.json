@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-19T15:00:56.779628-04:00",
+ "updated": "2026-09-19T17:43:59.335585-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -36711,6 +36711,125 @@
       "Juste Jocyte",
       "G",
       20.0
+     ]
+    ]
+   }
+  },
+  "401857198": {
+   "date": "2026-09-19",
+   "allowed": {
+    "PHX": {
+     "G": 110.0,
+     "FC": 72.0
+    },
+    "DAL": {
+     "G": 60.0,
+     "FC": 107.0
+    }
+   },
+   "players": {
+    "PHX": [
+     [
+      "Alyssa Thomas",
+      "FC",
+      46.0
+     ],
+     [
+      "Natasha Mack",
+      "FC",
+      29.0
+     ],
+     [
+      "Noemie Brochant",
+      "FC",
+      16.0
+     ],
+     [
+      "Sami Whitcomb",
+      "G",
+      10.0
+     ],
+     [
+      "Lexi Held",
+      "G",
+      38.0
+     ],
+     [
+      "Valeriane Ayayi",
+      "FC",
+      15.0
+     ],
+     [
+      "Maddy Westbeld",
+      "FC",
+      1.0
+     ],
+     [
+      "Marta Suarez",
+      "FC",
+      0.0
+     ],
+     [
+      "Shay Ciezki",
+      "G",
+      8.0
+     ],
+     [
+      "Kara Dunn",
+      "G",
+      4.0
+     ]
+    ],
+    "DAL": [
+     [
+      "Jessica Shepard",
+      "FC",
+      21.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      5.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      23.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      35.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      48.0
+     ],
+     [
+      "Alysha Clark",
+      "FC",
+      9.0
+     ],
+     [
+      "Li Yueru",
+      "FC",
+      14.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      5.0
+     ],
+     [
+      "Kitija Laksa",
+      "G",
+      4.0
+     ],
+     [
+      "Aziaha James",
+      "G",
+      18.0
      ]
     ]
    }
