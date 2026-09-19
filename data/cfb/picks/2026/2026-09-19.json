@@ -1,0 +1,50 @@
+{
+ "day": "2026-09-19",
+ "locked_at": "Sat Sep 19, 12:00 AM",
+ "games": 54,
+ "picks": {
+  "underdog": {
+   "game_id": "401860887",
+   "side": "away",
+   "team": "James Madison",
+   "opp": "San Diego St",
+   "p": 0.7912,
+   "book_p": 0.4783,
+   "ml": 100.0,
+   "line": 1.5,
+   "kick": "Sat 10:00p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 3.0,
+    "p": 0.8308,
+    "book": 0.5,
+    "text": "North Texas +3.0",
+    "game_id": "401860889",
+    "game": "UNT at TXST \u00b7 Sat 12:00p"
+   },
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 1.5,
+    "p": 0.8169,
+    "book": 0.5,
+    "text": "James Madison +1.5",
+    "game_id": "401860887",
+    "game": "JMU at SDSU \u00b7 Sat 10:00p"
+   },
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 20.5,
+    "p": 0.774,
+    "book": 0.5,
+    "text": "Louisiana Tech +20.5",
+    "game_id": "401867804",
+    "game": "LT at BAY \u00b7 Sat 4:00p"
+   }
+  ]
+ }
+}
