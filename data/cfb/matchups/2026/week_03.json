@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-19T00:41:04+00:00",
+ "fetched": "2026-09-19T01:51:04+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 9.3,
+     "points": 25.1,
      "projected": 187.08,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.5
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 10.1,
      "projected": 197.22,
-     "win_probability": 0.54
+     "win_probability": 0.5
     }
    ]
   },
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 4.0,
+     "points": 8.9,
      "projected": 197.2,
-     "win_probability": 0.67
+     "win_probability": 0.65
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 155.56,
-     "win_probability": 0.32999999999999996
+     "win_probability": 0.35
     }
    ]
   },
@@ -62,7 +62,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 29.02,
+     "points": 40.64,
      "projected": 195.91,
      "win_probability": 0.6
     },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 4.9,
+     "points": 7.7,
      "projected": 177.3,
-     "win_probability": 0.53
+     "win_probability": 0.52
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
      "projected": 175.21,
-     "win_probability": 0.47
+     "win_probability": 0.48
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 9.1,
+     "points": 13.2,
      "projected": 184.03,
-     "win_probability": 0.55
+     "win_probability": 0.53
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 14.14,
+     "points": 24.46,
      "projected": 183.82,
-     "win_probability": 0.44999999999999996
+     "win_probability": 0.47
     }
    ]
   }
@@ -191,10 +191,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 9.3,
+    "points": 22.8,
     "stats": {
-     "11": 6.0,
-     "12": 63.0
+     "11": 11.0,
+     "12": 113.0,
+     "13": 1.0
     }
    },
    {
@@ -236,8 +237,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 0.0,
-    "stats": {}
+    "points": 2.3,
+    "stats": {
+     "11": 2.0,
+     "12": 13.0
+    }
    },
    {
     "yahoo_id": "482918",
@@ -348,12 +352,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 9.46,
+    "points": 9.28,
     "stats": {
-     "4": 59.0,
+     "4": 92.0,
      "5": 1.0,
-     "8": 4.0,
-     "9": 11.0
+     "8": 6.0,
+     "9": -4.0
     }
    },
    {
@@ -718,8 +722,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.7,
+    "stats": {
+     "11": 2.0,
+     "12": 7.0
+    }
    },
    {
     "yahoo_id": "456968",
@@ -760,8 +767,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.2,
+    "stats": {
+     "8": 2.0,
+     "9": 5.0,
+     "11": 1.0,
+     "12": 2.0
+    }
    },
    {
     "yahoo_id": "457315",
@@ -830,10 +842,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.9,
+    "points": 2.8,
     "stats": {
-     "11": 1.0,
-     "12": 4.0
+     "11": 3.0,
+     "12": 13.0
     }
    },
    {
@@ -861,9 +873,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 4.0,
+    "points": 6.0,
     "stats": {
      "31": 7.0,
+     "32": 2.0,
      "52": 1.0
     }
    }
@@ -1120,10 +1133,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 17.72,
+    "points": 26.34,
     "stats": {
-     "4": 143.0,
-     "5": 2.0
+     "4": 211.0,
+     "5": 3.0,
+     "8": 1.0,
+     "9": -1.0
     }
    },
    {
@@ -1151,10 +1166,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 11.3,
+    "points": 14.3,
     "stats": {
-     "8": 9.0,
-     "9": 53.0,
+     "8": 15.0,
+     "9": 83.0,
      "10": 1.0
     }
    },
@@ -1291,12 +1306,15 @@
     "team": "TTU",
     "team_full": "Texas Tech Red Raiders",
     "bye": 6.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Foot",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 4.4,
+    "stats": {
+     "11": 2.0,
+     "12": 34.0
+    }
    },
    {
     "yahoo_id": "457622",
@@ -1649,12 +1667,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 4.9,
+    "points": 7.7,
     "stats": {
-     "8": 7.0,
-     "9": 23.0,
-     "11": 1.0,
-     "12": 21.0
+     "8": 9.0,
+     "9": 39.0,
+     "11": 2.0,
+     "12": 28.0
     }
    },
    {
@@ -2148,10 +2166,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 9.1,
+    "points": 13.2,
     "stats": {
-     "11": 2.0,
-     "12": 21.0,
+     "11": 5.0,
+     "12": 47.0,
      "13": 1.0
     }
    },
@@ -2250,10 +2268,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": -0.3,
+    "points": 2.5,
     "stats": {
-     "8": 1.0,
-     "9": -3.0
+     "8": 6.0,
+     "9": 25.0
     }
    },
    {
@@ -2339,12 +2357,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 10.14,
+    "points": 20.46,
     "stats": {
-     "4": 56.0,
-     "5": 1.0,
-     "8": 4.0,
-     "9": 19.0
+     "4": 154.0,
+     "5": 2.0,
+     "8": 8.0,
+     "9": 43.0,
+     "18": 1.0
     }
    },
    {
@@ -2574,8 +2593,10 @@
     "slot": "DEF",
     "points": 4.0,
     "stats": {
-     "31": 10.0,
-     "52": 1.0
+     "31": 17.0,
+     "32": 1.0,
+     "34": 1.0,
+     "53": 1.0
     }
    }
   ]

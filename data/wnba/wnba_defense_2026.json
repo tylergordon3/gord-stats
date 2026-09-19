@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-18T20:40:57.853687-04:00",
+ "updated": "2026-09-18T21:50:58.268362-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -36359,6 +36359,234 @@
       "Jaylyn Sherrod",
       "G",
       16.0
+     ]
+    ]
+   }
+  },
+  "401857195": {
+   "date": "2026-09-18",
+   "allowed": {
+    "IND": {
+     "G": 64.0,
+     "FC": 95.0
+    },
+    "TOR": {
+     "G": 131.0,
+     "FC": 69.0
+    }
+   },
+   "players": {
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      13.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      28.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      48.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      8.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      50.0
+     ],
+     [
+      "Myisha Hines-Allen",
+      "FC",
+      20.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      0.0
+     ],
+     [
+      "Mercedes Russell",
+      "FC",
+      8.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      13.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      11.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      1.0
+     ]
+    ],
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      29.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      35.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      24.0
+     ],
+     [
+      "Julie Allemand",
+      "G",
+      19.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      30.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      7.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      7.0
+     ],
+     [
+      "Zaay Green",
+      "G",
+      0.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      8.0
+     ]
+    ]
+   }
+  },
+  "401857196": {
+   "date": "2026-09-18",
+   "allowed": {
+    "NY": {
+     "G": 107.0,
+     "FC": 70.0
+    },
+    "MIN": {
+     "G": 87.0,
+     "FC": 101.0
+    }
+   },
+   "players": {
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      46.0
+     ],
+     [
+      "Leonie Fiebich",
+      "FC",
+      19.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      35.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      35.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      24.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      1.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      6.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      5.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      17.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      0.0
+     ]
+    ],
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      21.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      29.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      28.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      23.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      39.0
+     ],
+     [
+      "Nia Brodie",
+      "FC",
+      14.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      6.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      17.0
      ]
     ]
    }
