@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-20T17:00:56.651008-04:00",
+ "updated": "2026-09-20T17:10:56.852601-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -37182,6 +37182,140 @@
       "Ashlon Jackson",
       "G",
       11.0
+     ]
+    ]
+   }
+  },
+  "401857202": {
+   "date": "2026-09-20",
+   "allowed": {
+    "NY": {
+     "G": 44.0,
+     "FC": 88.0
+    },
+    "TOR": {
+     "G": 117.0,
+     "FC": 100.0
+    }
+   },
+   "players": {
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      45.0
+     ],
+     [
+      "Leonie Fiebich",
+      "FC",
+      16.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      21.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      23.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      25.0
+     ],
+     [
+      "Anneli Maley",
+      "FC",
+      3.0
+     ],
+     [
+      "Raquel Carrera",
+      "FC",
+      2.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      13.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      6.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      25.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      20.0
+     ],
+     [
+      "Madison Scott",
+      "G",
+      5.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      13.0
+     ]
+    ],
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      18.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      36.0
+     ],
+     [
+      "Temi Fagbenle",
+      "FC",
+      10.0
+     ],
+     [
+      "Julie Allemand",
+      "G",
+      13.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      26.0
+     ],
+     [
+      "Maria Conde",
+      "FC",
+      11.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      13.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      2.0
+     ],
+     [
+      "Zaay Green",
+      "G",
+      0.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      3.0
      ]
     ]
    }
