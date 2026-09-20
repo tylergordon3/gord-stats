@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-20T19:40:59+00:00",
+ "fetched": "2026-09-20T19:50:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -118,7 +118,7 @@
     {
      "roster_id": 8,
      "matchup_id": 1,
-     "points": 75.52,
+     "points": 77.52,
      "starters": [
       "11560",
       "4866",
@@ -154,12 +154,12 @@
       "11786": 0.0,
       "12519": 0.0,
       "12526": 15.1,
-      "4199": 8.5,
+      "4199": 10.5,
       "4866": 3.0,
       "5850": 0.0,
       "5947": 0.0,
       "6819": 0.0,
-      "7002": 9.0,
+      "7002": 10.6,
       "7547": 35.2,
       "7567": 4.5,
       "8131": 0.0,
@@ -225,7 +225,7 @@
     {
      "roster_id": 6,
      "matchup_id": 2,
-     "points": 32.9,
+     "points": 31.9,
      "starters": [
       "12508",
       "4034",
@@ -270,13 +270,13 @@
       "8137": 0.0,
       "8259": 0.0,
       "9484": 3.5,
-      "BAL": 4.0
+      "BAL": 3.0
      }
     },
     {
      "roster_id": 10,
      "matchup_id": 2,
-     "points": 63.0,
+     "points": 66.5,
      "starters": [
       "8183",
       "8138",
@@ -309,8 +309,8 @@
      "players_points": {
       "11631": 0.0,
       "12015": 0.0,
-      "12506": 7.0,
-      "12529": 13.2,
+      "12506": 10.4,
+      "12529": 13.6,
       "13287": 0.0,
       "13296": 0.0,
       "4046": 0.0,
@@ -320,7 +320,7 @@
       "8138": 20.9,
       "8144": 22.6,
       "8183": 0.0,
-      "9756": 4.0,
+      "9756": 4.1,
       "LAR": 0.0
      }
     }
@@ -332,7 +332,7 @@
     {
      "roster_id": 2,
      "matchup_id": 3,
-     "points": 88.52,
+     "points": 89.52,
      "starters": [
       "11564",
       "9509",
@@ -366,7 +366,7 @@
      "players_points": {
       "10236": 22.5,
       "11564": 9.32,
-      "11581": 10.8,
+      "11581": 10.6,
       "11604": 0.0,
       "12533": 0.0,
       "13279": 3.2,
@@ -379,13 +379,13 @@
       "8146": 12.8,
       "9509": 11.1,
       "9754": 0.0,
-      "PHI": 3.0
+      "PHI": 4.0
      }
     },
     {
      "roster_id": 7,
      "matchup_id": 3,
-     "points": 15.0,
+     "points": 19.2,
      "starters": [
       "6797",
       "9224",
@@ -419,14 +419,14 @@
       "11586": 0.0,
       "11632": 0.0,
       "11635": 0.0,
-      "12512": 5.8,
+      "12512": 9.8,
       "12518": 0.0,
       "13417": 0.0,
       "2747": 0.0,
       "6797": 0.0,
       "8126": 1.9,
       "8132": 0.0,
-      "8228": 5.5,
+      "8228": 9.7,
       "9224": 9.5,
       "9487": 0.0,
       "9488": 0.0,
@@ -441,7 +441,7 @@
     {
      "roster_id": 3,
      "matchup_id": 4,
-     "points": 86.98,
+     "points": 88.68,
      "starters": [
       "6770",
       "7588",
@@ -480,10 +480,10 @@
       "11646": 14.6,
       "12489": 0.0,
       "13294": 1.9,
-      "6770": 16.08,
+      "6770": 16.28,
       "7523": 0.0,
       "7543": 7.1,
-      "7564": 25.0,
+      "7564": 26.5,
       "7588": 0.0,
       "8112": 8.9,
       "8130": 0.0,
@@ -533,7 +533,7 @@
       "3451": 6.0,
       "421": 0.0,
       "4881": 14.66,
-      "5967": 7.2,
+      "5967": 7.5,
       "6786": 0.0,
       "6790": 12.9,
       "7553": 2.5,
@@ -552,7 +552,7 @@
     {
      "roster_id": 1,
      "matchup_id": 5,
-     "points": 33.82,
+     "points": 33.92,
      "starters": [
       "6904",
       "8155",
@@ -591,7 +591,7 @@
       "4217": 0.0,
       "5022": 1.4,
       "6904": 11.32,
-      "7611": 3.3,
+      "7611": 3.4,
       "8151": 0.0,
       "8155": 13.8,
       "9493": 0.0,
@@ -603,7 +603,7 @@
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 65.6,
+     "points": 68.6,
      "starters": [
       "11566",
       "9221",
@@ -635,7 +635,7 @@
      ],
      "players_points": {
       "11566": 0.0,
-      "12501": 1.8,
+      "12501": 4.7,
       "12514": 10.3,
       "12517": 1.3,
       "13286": 0.0,
@@ -643,7 +643,7 @@
       "2216": 0.0,
       "3198": 17.7,
       "5859": 0.0,
-      "6650": 13.0,
+      "6650": 16.0,
       "6806": 0.0,
       "8136": 0.0,
       "9221": 23.3,
@@ -1323,7 +1323,7 @@
    "pts": 11.03,
    "opp": "NE",
    "team": "PIT",
-   "injury": "Questionable",
+   "injury": "Out",
    "name": "Rico Dowdle",
    "pos": "RB"
   },
@@ -2087,8 +2087,8 @@
    "7567": 10.1,
    "12534": 10.0,
    "5967": 9.9,
-   "12529": 9.7,
-   "11586": 9.3,
+   "11586": 9.7,
+   "12529": 9.3,
    "8132": 9.0,
    "8136": 8.9,
    "11583": 7.6,
@@ -2382,11 +2382,11 @@
     "ecr": 35,
     "grade": "C"
    },
-   "12529": {
+   "11586": {
     "ecr": 36,
     "grade": "C-"
    },
-   "11586": {
+   "12529": {
     "ecr": 37,
     "grade": "C-"
    },
@@ -2779,13 +2779,13 @@
    "gp": 1.0
   },
   "7564": {
-   "rec": 6.0,
-   "rec_tgt": 8.0,
-   "rec_yd": 70.0,
+   "rec": 7.0,
+   "rec_tgt": 9.0,
+   "rec_yd": 75.0,
    "rec_td": 2.0,
-   "pts_ppr": 25.0,
-   "pts_half_ppr": 22.0,
-   "pts_std": 19.0,
+   "pts_ppr": 26.5,
+   "pts_half_ppr": 23.0,
+   "pts_std": 19.5,
    "gp": 1.0
   },
   "9221": {
@@ -2800,6 +2800,16 @@
    "pts_std": 17.3,
    "gp": 1.0
   },
+  "8144": {
+   "rec": 8.0,
+   "rec_tgt": 10.0,
+   "rec_yd": 86.0,
+   "rec_td": 1.0,
+   "pts_ppr": 22.6,
+   "pts_half_ppr": 18.6,
+   "pts_std": 14.6,
+   "gp": 1.0
+  },
   "10236": {
    "rec": 7.0,
    "rec_tgt": 8.0,
@@ -2808,16 +2818,6 @@
    "pts_ppr": 22.5,
    "pts_half_ppr": 19.0,
    "pts_std": 15.5,
-   "gp": 1.0
-  },
-  "8144": {
-   "rec": 7.0,
-   "rec_tgt": 9.0,
-   "rec_yd": 83.0,
-   "rec_td": 1.0,
-   "pts_ppr": 21.3,
-   "pts_half_ppr": 17.8,
-   "pts_std": 14.3,
    "gp": 1.0
   },
   "8138": {
@@ -2865,11 +2865,21 @@
    "gp": 1.0
   },
   "6770": {
-   "pass_yd": 179.0,
+   "pass_yd": 207.0,
    "pass_td": 2.0,
-   "pts_ppr": 15.16,
-   "pts_half_ppr": 15.16,
-   "pts_std": 15.16,
+   "pts_ppr": 16.28,
+   "pts_half_ppr": 16.28,
+   "pts_std": 16.28,
+   "gp": 1.0
+  },
+  "6650": {
+   "fgm": 4.0,
+   "fga": 4.0,
+   "xpm": 1.0,
+   "xpa": 1.0,
+   "pts_ppr": 16.0,
+   "pts_half_ppr": 16.0,
+   "pts_std": 16.0,
    "gp": 1.0
   },
   "12526": {
@@ -2900,34 +2910,57 @@
    "pts_std": 6.6,
    "gp": 1.0
   },
-  "8155": {
-   "rush_att": 12.0,
-   "rush_yd": 24.0,
+  "6801": {
    "rec": 5.0,
-   "rec_tgt": 6.0,
+   "rec_tgt": 10.0,
+   "rec_yd": 95.0,
+   "pts_ppr": 14.5,
+   "pts_half_ppr": 12.0,
+   "pts_std": 9.5,
+   "gp": 1.0
+  },
+  "7594": {
+   "rush_att": 12.0,
+   "rush_yd": 53.0,
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 11.0,
+   "rec_td": 1.0,
+   "pts_ppr": 14.4,
+   "pts_half_ppr": 13.4,
+   "pts_std": 12.4,
+   "gp": 1.0
+  },
+  "8155": {
+   "rush_att": 13.0,
+   "rush_yd": 25.0,
+   "rec": 5.0,
+   "rec_tgt": 5.0,
    "rec_yd": 63.0,
-   "pts_ppr": 13.7,
-   "pts_half_ppr": 11.2,
-   "pts_std": 8.7,
+   "pts_ppr": 13.8,
+   "pts_half_ppr": 11.3,
+   "pts_std": 8.8,
    "gp": 1.0
   },
   "12529": {
-   "rush_att": 12.0,
-   "rush_yd": 73.0,
+   "rush_att": 16.0,
+   "rush_yd": 76.0,
    "rush_td": 1.0,
-   "pts_ppr": 13.3,
-   "pts_half_ppr": 13.3,
-   "pts_std": 13.3,
+   "pts_ppr": 13.6,
+   "pts_half_ppr": 13.6,
+   "pts_std": 13.6,
    "gp": 1.0
   },
-  "6650": {
-   "fgm": 3.0,
-   "fga": 3.0,
-   "xpm": 1.0,
-   "xpa": 1.0,
-   "pts_ppr": 13.0,
-   "pts_half_ppr": 13.0,
-   "pts_std": 13.0,
+  "6790": {
+   "rush_att": 16.0,
+   "rush_yd": 45.0,
+   "rec": 5.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 54.0,
+   "fum_lost": 1.0,
+   "pts_ppr": 12.9,
+   "pts_half_ppr": 10.4,
+   "pts_std": 7.9,
    "gp": 1.0
   },
   "8146": {
@@ -2940,28 +2973,13 @@
    "pts_std": 9.8,
    "gp": 1.0
   },
-  "7594": {
-   "rush_att": 9.0,
-   "rush_yd": 36.0,
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 11.0,
-   "rec_td": 1.0,
-   "pts_ppr": 12.7,
-   "pts_half_ppr": 11.7,
-   "pts_std": 10.7,
-   "gp": 1.0
-  },
-  "6790": {
-   "rush_att": 16.0,
-   "rush_yd": 45.0,
-   "rec": 4.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 53.0,
-   "fum_lost": 1.0,
-   "pts_ppr": 11.8,
-   "pts_half_ppr": 9.8,
-   "pts_std": 7.8,
+  "11834": {
+   "rec": 5.0,
+   "rec_tgt": 7.0,
+   "rec_yd": 64.0,
+   "pts_ppr": 11.4,
+   "pts_half_ppr": 8.9,
+   "pts_std": 6.4,
    "gp": 1.0
   },
   "6904": {
@@ -2977,34 +2995,74 @@
   },
   "9509": {
    "rush_att": 16.0,
-   "rush_yd": 73.0,
+   "rush_yd": 72.0,
    "rec": 3.0,
    "rec_tgt": 4.0,
    "rec_yd": 9.0,
-   "pts_ppr": 11.2,
-   "pts_half_ppr": 9.7,
-   "pts_std": 8.2,
+   "pts_ppr": 11.1,
+   "pts_half_ppr": 9.6,
+   "pts_std": 8.1,
    "gp": 1.0
   },
-  "6801": {
+  "11584": {
+   "rush_att": 13.0,
+   "rush_yd": 69.0,
    "rec": 4.0,
-   "rec_tgt": 7.0,
-   "rec_yd": 72.0,
-   "pts_ppr": 11.2,
-   "pts_half_ppr": 9.2,
-   "pts_std": 7.2,
+   "rec_tgt": 4.0,
+   "rec_yd": 1.0,
+   "pts_ppr": 11.0,
+   "pts_half_ppr": 9.0,
+   "pts_std": 7.0,
+   "gp": 1.0
+  },
+  "7002": {
+   "rec": 4.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 66.0,
+   "pts_ppr": 10.6,
+   "pts_half_ppr": 8.6,
+   "pts_std": 6.6,
    "gp": 1.0
   },
   "11581": {
-   "rush_att": 5.0,
-   "rush_yd": 18.0,
+   "rush_att": 6.0,
+   "rush_yd": 20.0,
    "rec": 2.0,
    "rec_tgt": 2.0,
    "rec_yd": 6.0,
    "rec_td": 1.0,
+   "pts_ppr": 10.6,
+   "pts_half_ppr": 9.6,
+   "pts_std": 8.6,
+   "gp": 1.0
+  },
+  "4199": {
+   "rush_att": 23.0,
+   "rush_yd": 105.0,
+   "pts_ppr": 10.5,
+   "pts_half_ppr": 10.5,
+   "pts_std": 10.5,
+   "gp": 1.0
+  },
+  "12506": {
+   "rec": 5.0,
+   "rec_tgt": 6.0,
+   "rec_yd": 54.0,
    "pts_ppr": 10.4,
-   "pts_half_ppr": 9.4,
-   "pts_std": 8.4,
+   "pts_half_ppr": 7.9,
+   "pts_std": 5.4,
+   "gp": 1.0
+  },
+  "12514": {
+   "rush_att": 1.0,
+   "rush_yd": -3.0,
+   "rec": 3.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 16.0,
+   "rec_td": 1.0,
+   "pts_ppr": 10.3,
+   "pts_half_ppr": 8.8,
+   "pts_std": 7.3,
    "gp": 1.0
   },
   "PIT": {
@@ -3017,38 +3075,47 @@
    "pts_std": 10.0,
    "gp": 1.0
   },
-  "11584": {
-   "rush_att": 13.0,
-   "rush_yd": 69.0,
-   "rec": 3.0,
-   "rec_tgt": 3.0,
-   "rec_yd": -3.0,
-   "pts_ppr": 9.6,
-   "pts_half_ppr": 8.1,
-   "pts_std": 6.6,
+  "12512": {
+   "rush_att": 12.0,
+   "rush_yd": 21.0,
+   "rec": 5.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 27.0,
+   "pts_ppr": 9.8,
+   "pts_half_ppr": 7.3,
+   "pts_std": 4.8,
+   "gp": 1.0
+  },
+  "8228": {
+   "rush_att": 11.0,
+   "rush_yd": 43.0,
+   "rec": 2.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 34.0,
+   "pts_ppr": 9.7,
+   "pts_half_ppr": 8.7,
+   "pts_std": 7.7,
    "gp": 1.0
   },
   "9224": {
-   "rush_att": 12.0,
-   "rush_yd": 58.0,
+   "rush_att": 14.0,
+   "rush_yd": 63.0,
    "rec": 3.0,
    "rec_tgt": 5.0,
    "rec_yd": 2.0,
-   "pts_ppr": 9.0,
-   "pts_half_ppr": 7.5,
-   "pts_std": 6.0,
+   "pts_ppr": 9.5,
+   "pts_half_ppr": 8.0,
+   "pts_std": 6.5,
    "gp": 1.0
   },
-  "12514": {
-   "rush_att": 1.0,
-   "rush_yd": -3.0,
-   "rec": 2.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 12.0,
-   "rec_td": 1.0,
-   "pts_ppr": 8.9,
-   "pts_half_ppr": 7.9,
-   "pts_std": 6.9,
+  "11564": {
+   "pass_yd": 208.0,
+   "pass_int": 1.0,
+   "rush_att": 2.0,
+   "rush_yd": 20.0,
+   "pts_ppr": 9.32,
+   "pts_half_ppr": 9.32,
+   "pts_std": 9.32,
    "gp": 1.0
   },
   "8112": {
@@ -3090,15 +3157,6 @@
    "pts_std": 5.5,
    "gp": 1.0
   },
-  "11834": {
-   "rec": 3.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 53.0,
-   "pts_ppr": 8.3,
-   "pts_half_ppr": 6.8,
-   "pts_std": 5.3,
-   "gp": 1.0
-  },
   "13298": {
    "rush_att": 1.0,
    "rush_yd": -6.0,
@@ -3110,33 +3168,26 @@
    "pts_std": 2.2,
    "gp": 1.0
   },
-  "11564": {
-   "pass_yd": 208.0,
-   "pass_int": 1.0,
-   "rush_att": 1.0,
-   "rush_yd": 7.0,
-   "pts_ppr": 8.02,
-   "pts_half_ppr": 8.02,
-   "pts_std": 8.02,
-   "gp": 1.0
-  },
-  "4199": {
-   "rush_att": 16.0,
-   "rush_yd": 80.0,
-   "pts_ppr": 8.0,
-   "pts_half_ppr": 8.0,
-   "pts_std": 8.0,
-   "gp": 1.0
-  },
   "12534": {
-   "rush_att": 9.0,
-   "rush_yd": 45.0,
+   "rush_att": 10.0,
+   "rush_yd": 47.0,
    "rec": 2.0,
    "rec_tgt": 2.0,
    "rec_yd": 11.0,
-   "pts_ppr": 7.6,
-   "pts_half_ppr": 6.6,
-   "pts_std": 5.6,
+   "pts_ppr": 7.8,
+   "pts_half_ppr": 6.8,
+   "pts_std": 5.8,
+   "gp": 1.0
+  },
+  "5967": {
+   "rush_att": 14.0,
+   "rush_yd": 64.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 1.0,
+   "pts_ppr": 7.5,
+   "pts_half_ppr": 7.0,
+   "pts_std": 6.5,
    "gp": 1.0
   },
   "7543": {
@@ -3150,13 +3201,15 @@
    "pts_std": 5.1,
    "gp": 1.0
   },
-  "12506": {
-   "rec": 3.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 40.0,
+  "4037": {
+   "rush_att": 1.0,
+   "rush_yd": 12.0,
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 38.0,
    "pts_ppr": 7.0,
-   "pts_half_ppr": 5.5,
-   "pts_std": 4.0,
+   "pts_half_ppr": 6.0,
+   "pts_std": 5.0,
    "gp": 1.0
   },
   "11539": {
@@ -3167,6 +3220,15 @@
    "pts_ppr": 7.0,
    "pts_half_ppr": 7.0,
    "pts_std": 7.0,
+   "gp": 1.0
+  },
+  "5846": {
+   "rec": 4.0,
+   "rec_tgt": 9.0,
+   "rec_yd": 27.0,
+   "pts_ppr": 6.7,
+   "pts_half_ppr": 4.7,
+   "pts_std": 2.7,
    "gp": 1.0
   },
   "7021": {
@@ -3188,37 +3250,6 @@
    "pts_std": 6.0,
    "gp": 1.0
   },
-  "12512": {
-   "rush_att": 12.0,
-   "rush_yd": 20.0,
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 18.0,
-   "pts_ppr": 5.8,
-   "pts_half_ppr": 4.8,
-   "pts_std": 3.8,
-   "gp": 1.0
-  },
-  "7002": {
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 35.0,
-   "pts_ppr": 5.5,
-   "pts_half_ppr": 4.5,
-   "pts_std": 3.5,
-   "gp": 1.0
-  },
-  "5967": {
-   "rush_att": 11.0,
-   "rush_yd": 43.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 1.0,
-   "pts_ppr": 5.4,
-   "pts_half_ppr": 4.9,
-   "pts_std": 4.4,
-   "gp": 1.0
-  },
   "8167": {
    "rec": 2.0,
    "rec_tgt": 7.0,
@@ -3238,30 +3269,20 @@
    "gp": 1.0
   },
   "HOU": {
-   "pts_allow": 17.0,
+   "pts_allow": 20.0,
    "sack": 4.0,
    "pts_ppr": 5.0,
    "pts_half_ppr": 5.0,
    "pts_std": 5.0,
    "gp": 1.0
   },
-  "2020": {
-   "fgm": 1.0,
-   "fga": 1.0,
-   "pts_ppr": 5.0,
-   "pts_half_ppr": 5.0,
-   "pts_std": 5.0,
-   "gp": 1.0
-  },
-  "4037": {
-   "rush_att": 1.0,
-   "rush_yd": 12.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 24.0,
-   "pts_ppr": 4.6,
-   "pts_half_ppr": 4.1,
-   "pts_std": 3.6,
+  "12501": {
+   "rec": 2.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 27.0,
+   "pts_ppr": 4.7,
+   "pts_half_ppr": 3.7,
+   "pts_std": 2.7,
    "gp": 1.0
   },
   "7567": {
@@ -3295,6 +3316,15 @@
    "pts_std": 2.2,
    "gp": 1.0
   },
+  "9756": {
+   "rec": 2.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 21.0,
+   "pts_ppr": 4.1,
+   "pts_half_ppr": 3.1,
+   "pts_std": 2.1,
+   "gp": 1.0
+  },
   "1945": {
    "fgm": 1.0,
    "fga": 2.0,
@@ -3303,9 +3333,17 @@
    "pts_std": 4.0,
    "gp": 1.0
   },
-  "BAL": {
-   "pts_allow": 17.0,
-   "sack": 3.0,
+  "PHI": {
+   "pts_allow": 20.0,
+   "sack": 2.0,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 4.0,
+   "pts_std": 4.0,
+   "gp": 1.0
+  },
+  "2020": {
+   "fgm": 1.0,
+   "fga": 2.0,
    "pts_ppr": 4.0,
    "pts_half_ppr": 4.0,
    "pts_std": 4.0,
@@ -3321,23 +3359,24 @@
    "gp": 1.0
   },
   "7611": {
-   "rush_att": 4.0,
-   "rush_yd": 40.0,
+   "rush_att": 5.0,
+   "rush_yd": 41.0,
    "rec": 1.0,
    "rec_tgt": 2.0,
    "rec_yd": 3.0,
    "fum_lost": 1.0,
-   "pts_ppr": 3.3,
-   "pts_half_ppr": 2.8,
-   "pts_std": 2.3,
+   "pts_ppr": 3.4,
+   "pts_half_ppr": 2.9,
+   "pts_std": 2.4,
    "gp": 1.0
   },
-  "PHI": {
-   "pts_allow": 17.0,
-   "sack": 1.0,
-   "pts_ppr": 3.0,
-   "pts_half_ppr": 3.0,
-   "pts_std": 3.0,
+  "13279": {
+   "rec": 2.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 12.0,
+   "pts_ppr": 3.2,
+   "pts_half_ppr": 2.2,
+   "pts_std": 1.2,
    "gp": 1.0
   },
   "4866": {
@@ -3351,21 +3390,20 @@
    "pts_std": 2.0,
    "gp": 1.0
   },
+  "BAL": {
+   "pts_allow": 24.0,
+   "sack": 3.0,
+   "pts_ppr": 3.0,
+   "pts_half_ppr": 3.0,
+   "pts_std": 3.0,
+   "gp": 1.0
+  },
   "TB": {
    "pts_allow": 16.0,
    "sack": 2.0,
    "pts_ppr": 3.0,
    "pts_half_ppr": 3.0,
    "pts_std": 3.0,
-   "gp": 1.0
-  },
-  "8228": {
-   "rush_att": 9.0,
-   "rush_yd": 28.0,
-   "rec_tgt": 2.0,
-   "pts_ppr": 2.8,
-   "pts_half_ppr": 2.8,
-   "pts_std": 2.8,
    "gp": 1.0
   },
   "7553": {
@@ -3377,13 +3415,15 @@
    "pts_std": 1.5,
    "gp": 1.0
   },
-  "5846": {
-   "rec": 2.0,
-   "rec_tgt": 6.0,
-   "rec_yd": 2.0,
-   "pts_ppr": 2.2,
-   "pts_half_ppr": 1.2,
-   "pts_std": 0.2,
+  "11583": {
+   "rush_att": 5.0,
+   "rush_yd": 16.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": -5.0,
+   "pts_ppr": 2.1,
+   "pts_half_ppr": 1.6,
+   "pts_std": 1.1,
    "gp": 1.0
   },
   "8126": {
@@ -3404,44 +3444,6 @@
    "pts_ppr": 1.9,
    "pts_half_ppr": 1.4,
    "pts_std": 0.9,
-   "gp": 1.0
-  },
-  "12501": {
-   "rec": 1.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 8.0,
-   "pts_ppr": 1.8,
-   "pts_half_ppr": 1.3,
-   "pts_std": 0.8,
-   "gp": 1.0
-  },
-  "11583": {
-   "rush_att": 4.0,
-   "rush_yd": 12.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": -5.0,
-   "pts_ppr": 1.7,
-   "pts_half_ppr": 1.2,
-   "pts_std": 0.7,
-   "gp": 1.0
-  },
-  "9756": {
-   "rec": 1.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 6.0,
-   "pts_ppr": 1.6,
-   "pts_half_ppr": 1.1,
-   "pts_std": 0.6,
-   "gp": 1.0
-  },
-  "13279": {
-   "rec": 1.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 6.0,
-   "pts_ppr": 1.6,
-   "pts_half_ppr": 1.1,
-   "pts_std": 0.6,
    "gp": 1.0
   },
   "5022": {
@@ -3506,7 +3508,7 @@
    "game_id": "401872933",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "11:15 - 4th",
+   "detail": "6:08 - 4th",
    "period": null,
    "clock": null,
    "home": "ATL",
@@ -3519,9 +3521,9 @@
    "total": null,
    "tv": "FOX",
    "weather": {
-    "temp": 89.0,
-    "cond": 2,
-    "text": "Mostly sunny",
+    "temp": 90.0,
+    "cond": 3,
+    "text": "Partly sunny",
     "indoors": true
    }
   },
@@ -3529,7 +3531,7 @@
    "game_id": "401872937",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "4:51 - 4th",
+   "detail": "1:13 - 4th",
    "period": null,
    "clock": null,
    "home": "CHI",
@@ -3552,12 +3554,12 @@
    "game_id": "401872939",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "2:44 - 4th",
+   "detail": "1:56 - 4th",
    "period": null,
    "clock": null,
    "home": "TEN",
    "away": "PHI",
-   "home_score": 17.0,
+   "home_score": 20.0,
    "away_score": 17.0,
    "home_implied": null,
    "away_implied": null,
@@ -3565,9 +3567,9 @@
    "total": null,
    "tv": "FOX",
    "weather": {
-    "temp": 98.0,
-    "cond": 6,
-    "text": "Mostly cloudy",
+    "temp": 95.0,
+    "cond": 3,
+    "text": "Partly sunny",
     "indoors": false
    }
   },
@@ -3575,7 +3577,7 @@
    "game_id": "401872946",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "6:24 - 4th",
+   "detail": "2:09 - 4th",
    "period": null,
    "clock": null,
    "home": "NE",
@@ -3588,7 +3590,7 @@
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 59.0,
+    "temp": 61.0,
     "cond": 7,
     "text": "Cloudy",
     "indoors": false
@@ -3598,12 +3600,12 @@
    "game_id": "401872936",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "11:59 - 4th",
+   "detail": "9:19 - 4th",
    "period": null,
    "clock": null,
    "home": "NYJ",
    "away": "GB",
-   "home_score": 14.0,
+   "home_score": 17.0,
    "away_score": 7.0,
    "home_implied": null,
    "away_implied": null,
@@ -3621,20 +3623,20 @@
    "game_id": "401872935",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "9:52 - 4th",
+   "detail": "3:51 - 4th",
    "period": null,
    "clock": null,
    "home": "TB",
    "away": "CLE",
    "home_score": 19.0,
-   "away_score": 16.0,
+   "away_score": 22.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 81.0,
+    "temp": 87.0,
     "cond": 3,
     "text": "Partly sunny",
     "indoors": false
@@ -3644,13 +3646,13 @@
    "game_id": "401872938",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "1:54 - 4th",
+   "detail": "1:28 - 4th",
    "period": null,
    "clock": null,
    "home": "BAL",
    "away": "NO",
    "home_score": 17.0,
-   "away_score": 17.0,
+   "away_score": 24.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -3658,8 +3660,8 @@
    "tv": "CBS",
    "weather": {
     "temp": 82.0,
-    "cond": 7,
-    "text": "Cloudy",
+    "cond": 6,
+    "text": "Mostly cloudy",
     "indoors": false
    }
   },
@@ -3667,7 +3669,7 @@
    "game_id": "401872934",
    "date": "2026-09-20T17:00Z",
    "state": "in",
-   "detail": "10:55 - 4th",
+   "detail": "8:24 - 4th",
    "period": null,
    "clock": null,
    "home": "HOU",
@@ -3680,9 +3682,9 @@
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 91.0,
-    "cond": 6,
-    "text": "Mostly cloudy",
+    "temp": 93.0,
+    "cond": 7,
+    "text": "Cloudy",
     "indoors": true
    }
   },
