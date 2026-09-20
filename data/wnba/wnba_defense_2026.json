@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-19T20:30:56.688204-04:00",
+ "updated": "2026-09-19T21:40:57.330733-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -36830,6 +36830,130 @@
       "Aziaha James",
       "G",
       18.0
+     ]
+    ]
+   }
+  },
+  "401857199": {
+   "date": "2026-09-19",
+   "allowed": {
+    "CHI": {
+     "G": 124.0,
+     "FC": 95.0
+    },
+    "ATL": {
+     "G": 119.0,
+     "FC": 47.0
+    }
+   },
+   "players": {
+    "CHI": [
+     [
+      "Kamilla Cardoso",
+      "FC",
+      23.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      25.0
+     ],
+     [
+      "Aicha Coulibaly",
+      "G",
+      12.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      11.0
+     ],
+     [
+      "Gabriela Jaquez",
+      "G",
+      22.0
+     ],
+     [
+      "Elizabeth Williams",
+      "FC",
+      24.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      12.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      19.0
+     ],
+     [
+      "Morgan Maly",
+      "G",
+      18.0
+     ]
+    ],
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      12.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      48.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      31.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      28.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      26.0
+     ],
+     [
+      "DeWanna Bonner",
+      "FC",
+      16.0
+     ],
+     [
+      "Sika Kone",
+      "FC",
+      6.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      13.0
+     ],
+     [
+      "Shatori Walker-Kimbrough",
+      "G",
+      2.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      6.0
+     ],
+     [
+      "Indya Nivar",
+      "G",
+      2.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      29.0
      ]
     ]
    }
