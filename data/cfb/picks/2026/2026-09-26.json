@@ -1,0 +1,50 @@
+{
+ "day": "2026-09-26",
+ "locked_at": "Sat Sep 19, 11:10 PM",
+ "games": 15,
+ "picks": {
+  "underdog": {
+   "game_id": "401856881",
+   "side": "home",
+   "team": "West Virginia",
+   "opp": "Oklahoma St",
+   "p": 0.6886,
+   "book_p": 0.4573,
+   "ml": 110.0,
+   "line": 2.5,
+   "kick": "Sat 7:00p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": 2.5,
+    "p": 0.741,
+    "book": 0.5,
+    "text": "West Virginia +2.5",
+    "game_id": "401856881",
+    "game": "OKST at WVU \u00b7 Sat 7:00p"
+   },
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": -11.5,
+    "p": 0.6907,
+    "book": 0.5,
+    "text": "Penn State -11.5",
+    "game_id": "401858466",
+    "game": "WIS at PSU \u00b7 Sat 5:00p"
+   },
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": 1.5,
+    "p": 0.6752,
+    "book": 0.5,
+    "text": "Maryland +1.5",
+    "game_id": "401858462",
+    "game": "UCLA at MD \u00b7 Sat 1:30p"
+   }
+  ]
+ }
+}
