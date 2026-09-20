@@ -1,0 +1,30 @@
+{
+ "day": "2026-09-25",
+ "locked_at": "Sun Sep 20, 5:45 AM",
+ "games": 1,
+ "picks": {
+  "underdog": {
+   "game_id": "401858461",
+   "side": "away",
+   "team": "Northwestern",
+   "opp": "Indiana",
+   "p": 0.031,
+   "book_p": 0.0569,
+   "ml": 1600.0,
+   "line": 23.5,
+   "kick": "Fri 8:00p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": -23.5,
+    "p": 0.6604,
+    "book": 0.5,
+    "text": "Indiana -23.5",
+    "game_id": "401858461",
+    "game": "NU at IU \u00b7 Fri 8:00p"
+   }
+  ]
+ }
+}

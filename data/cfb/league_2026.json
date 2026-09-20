@@ -2,7 +2,7 @@
  "name": "B1G West Memorial FFL",
  "url": "https://college.fantasysports.yahoo.com/cfb/21318",
  "num_teams": 10,
- "current_week": 3,
+ "current_week": 4,
  "scoring_label": "H2H",
  "draft_status": "postdraft",
  "draft_time": 1788134400.0,
@@ -212,11 +212,11 @@
    "moves": 4.0,
    "trades": 0.0,
    "rank": 1.0,
-   "wins": 4.0,
+   "wins": 6.0,
    "losses": 0.0,
    "ties": 0.0,
-   "points_for": 516.12,
-   "points_against": 360.15999999999997
+   "points_for": 717.2,
+   "points_against": 501.9
   },
   {
    "team_key": "474.l.21318.t.6",
@@ -227,41 +227,11 @@
    "moves": 0.0,
    "trades": 0.0,
    "rank": 2.0,
-   "wins": 3.0,
+   "wins": 5.0,
    "losses": 1.0,
    "ties": 0.0,
-   "points_for": 359.78,
-   "points_against": 304.67999999999995
-  },
-  {
-   "team_key": "474.l.21318.t.3",
-   "name": "Jackson's Brilliant Team",
-   "manager": "",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png",
-   "faab": 82.0,
-   "moves": 7.0,
-   "trades": 0.0,
-   "rank": 3.0,
-   "wins": 3.0,
-   "losses": 1.0,
-   "ties": 0.0,
-   "points_for": 348.0,
-   "points_against": 305.66
-  },
-  {
-   "team_key": "474.l.21318.t.2",
-   "name": "Mike Locksley",
-   "manager": "",
-   "logo": "https://yahoofantasysports-res.cloudinary.com/image/upload/t_s192sq/fantasy-logos/3d881e2caea39942a4f20711358fda28131f9853d549795493e90281f25eb2c3.jpg",
-   "faab": 90.0,
-   "moves": 1.0,
-   "trades": 0.0,
-   "rank": 4.0,
-   "wins": 2.0,
-   "losses": 2.0,
-   "ties": 0.0,
-   "points_for": 402.92,
-   "points_against": 445.12
+   "points_for": 540.46,
+   "points_against": 466.2199999999999
   },
   {
    "team_key": "474.l.21318.t.1",
@@ -271,27 +241,57 @@
    "faab": 87.0,
    "moves": 7.0,
    "trades": 0.0,
-   "rank": 5.0,
-   "wins": 2.0,
+   "rank": 3.0,
+   "wins": 4.0,
    "losses": 2.0,
    "ties": 0.0,
-   "points_for": 397.58,
-   "points_against": 356.2
+   "points_for": 598.52,
+   "points_against": 545.7
   },
   {
-   "team_key": "474.l.21318.t.10",
-   "name": "I Stand With Diggs",
+   "team_key": "474.l.21318.t.3",
+   "name": "Jackson's Brilliant Team",
    "manager": "",
-   "logo": "https://s.yimg.com/ba/images/7c80bce12605641f09da029eb50bcbfc939417842593818ba42db47f04daeabb.png",
-   "faab": 88.0,
-   "moves": 2.0,
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-helmet-2-png_1721175003165.png",
+   "faab": 82.0,
+   "moves": 7.0,
    "trades": 0.0,
-   "rank": 6.0,
-   "wins": 2.0,
+   "rank": 4.0,
+   "wins": 4.0,
    "losses": 2.0,
    "ties": 0.0,
-   "points_for": 347.44,
-   "points_against": 338.62
+   "points_for": 537.5,
+   "points_against": 506.6
+  },
+  {
+   "team_key": "474.l.21318.t.2",
+   "name": "Mike Locksley",
+   "manager": "",
+   "logo": "https://yahoofantasysports-res.cloudinary.com/image/upload/t_s192sq/fantasy-logos/3d881e2caea39942a4f20711358fda28131f9853d549795493e90281f25eb2c3.jpg",
+   "faab": 90.0,
+   "moves": 1.0,
+   "trades": 0.0,
+   "rank": 5.0,
+   "wins": 3.0,
+   "losses": 3.0,
+   "ties": 0.0,
+   "points_for": 582.04,
+   "points_against": 620.72
+  },
+  {
+   "team_key": "474.l.21318.t.9",
+   "name": "Benjamin Brahman",
+   "manager": "",
+   "logo": "https://s.yimg.com/ba/images/eacc385c2cb12bc7f6d0b46483514043fc1fa737beeffd12dc3d60d37e1a51c2.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
+   "rank": 6.0,
+   "wins": 3.0,
+   "losses": 3.0,
+   "ties": 0.0,
+   "points_for": 529.88,
+   "points_against": 611.06
   },
   {
    "team_key": "474.l.21318.t.8",
@@ -303,25 +303,25 @@
    "trades": 0.0,
    "rank": 7.0,
    "wins": 2.0,
-   "losses": 2.0,
+   "losses": 4.0,
    "ties": 0.0,
-   "points_for": 335.98,
-   "points_against": 351.08
+   "points_for": 516.42,
+   "points_against": 534.28
   },
   {
-   "team_key": "474.l.21318.t.9",
-   "name": "Benjamin Brahman",
+   "team_key": "474.l.21318.t.10",
+   "name": "I Stand With Diggs",
    "manager": "",
-   "logo": "https://s.yimg.com/ba/images/eacc385c2cb12bc7f6d0b46483514043fc1fa737beeffd12dc3d60d37e1a51c2.png",
-   "faab": 100.0,
-   "moves": 0.0,
+   "logo": "https://s.yimg.com/ba/images/7c80bce12605641f09da029eb50bcbfc939417842593818ba42db47f04daeabb.png",
+   "faab": 88.0,
+   "moves": 2.0,
    "trades": 0.0,
    "rank": 8.0,
-   "wins": 1.0,
-   "losses": 3.0,
+   "wins": 2.0,
+   "losses": 4.0,
    "ties": 0.0,
-   "points_for": 346.68,
-   "points_against": 430.62
+   "points_for": 489.18,
+   "points_against": 539.7
   },
   {
    "team_key": "474.l.21318.t.5",
@@ -333,10 +333,10 @@
    "trades": 0.0,
    "rank": 9.0,
    "wins": 1.0,
-   "losses": 3.0,
+   "losses": 5.0,
    "ties": 0.0,
-   "points_for": 336.68,
-   "points_against": 339.38
+   "points_for": 498.22,
+   "points_against": 520.06
   },
   {
    "team_key": "474.l.21318.t.7",
@@ -348,10 +348,10 @@
    "trades": 0.0,
    "rank": 10.0,
    "wins": 0.0,
-   "losses": 4.0,
+   "losses": 6.0,
    "ties": 0.0,
-   "points_for": 279.18,
-   "points_against": 438.84000000000003
+   "points_for": 454.78,
+   "points_against": 617.96
   }
  ]
 }

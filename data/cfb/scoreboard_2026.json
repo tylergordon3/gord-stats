@@ -1,118 +1,118 @@
 {
- "week": 3.0,
+ "week": 4.0,
  "matchups": [
   {
-   "week": 3.0,
-   "week_start": "2026-09-13",
-   "week_end": "2026-09-19",
+   "week": 4.0,
+   "week_start": "2026-09-20",
+   "week_end": "2026-09-26",
    "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 76.3,
-     "projected": 187.08,
-     "win_probability": 0.36
+     "points": 0.0,
+     "projected": 176.08,
+     "win_probability": 0.63
     },
     {
-     "team_key": "474.l.21318.t.3",
-     "name": "Jackson's Brilliant Team",
-     "points": 130.02,
-     "projected": 197.2,
-     "win_probability": 0.64
+     "team_key": "474.l.21318.t.4",
+     "name": "CCAM State",
+     "points": 0.0,
+     "projected": 155.85,
+     "win_probability": 0.37
     }
    ]
   },
   {
-   "week": 3.0,
-   "week_start": "2026-09-13",
-   "week_end": "2026-09-19",
+   "week": 4.0,
+   "week_start": "2026-09-20",
+   "week_end": "2026-09-26",
    "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 65.38,
-     "projected": 197.2,
-     "win_probability": 0.71
+     "points": 0.0,
+     "projected": 195.69,
+     "win_probability": 0.64
     },
     {
-     "team_key": "474.l.21318.t.7",
-     "name": "Too B1G Too Strong Too Fast",
-     "points": 101.84,
-     "projected": 155.54,
-     "win_probability": 0.29000000000000004
+     "team_key": "474.l.21318.t.9",
+     "name": "Benjamin Brahman",
+     "points": 0.0,
+     "projected": 173.92,
+     "win_probability": 0.36
     }
    ]
   },
   {
-   "week": 3.0,
-   "week_start": "2026-09-13",
-   "week_end": "2026-09-19",
+   "week": 4.0,
+   "week_start": "2026-09-20",
+   "week_end": "2026-09-26",
    "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
-     "team_key": "474.l.21318.t.4",
-     "name": "CCAM State",
-     "points": 99.9,
-     "projected": 195.91,
-     "win_probability": 0.79
+     "team_key": "474.l.21318.t.3",
+     "name": "Jackson's Brilliant Team",
+     "points": 0.0,
+     "projected": 146.62,
+     "win_probability": 0.47
     },
     {
-     "team_key": "474.l.21318.t.10",
-     "name": "I Stand With Diggs",
-     "points": 86.54,
-     "projected": 193.39,
-     "win_probability": 0.20999999999999996
+     "team_key": "474.l.21318.t.6",
+     "name": "Max's Majestic Team",
+     "points": 0.0,
+     "projected": 150.96,
+     "win_probability": 0.53
     }
    ]
   },
   {
-   "week": 3.0,
-   "week_start": "2026-09-13",
-   "week_end": "2026-09-19",
+   "week": 4.0,
+   "week_start": "2026-09-20",
+   "week_end": "2026-09-26",
    "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 80.98,
-     "projected": 178.26,
-     "win_probability": 0.71
+     "points": 0.0,
+     "projected": 151.85,
+     "win_probability": 0.45999999999999996
     },
     {
-     "team_key": "474.l.21318.t.6",
-     "name": "Max's Majestic Team",
-     "points": 51.8,
-     "projected": 159.7,
-     "win_probability": 0.29000000000000004
+     "team_key": "474.l.21318.t.8",
+     "name": "Cameron's Choice Team",
+     "points": 0.0,
+     "projected": 157.22,
+     "win_probability": 0.54
     }
    ]
   },
   {
-   "week": 3.0,
-   "week_start": "2026-09-13",
-   "week_end": "2026-09-19",
+   "week": 4.0,
+   "week_start": "2026-09-20",
+   "week_end": "2026-09-26",
    "status": "midevent",
    "is_playoffs": false,
    "teams": [
     {
-     "team_key": "474.l.21318.t.8",
-     "name": "Cameron's Choice Team",
-     "points": 90.82,
-     "projected": 184.03,
-     "win_probability": 0.77
+     "team_key": "474.l.21318.t.7",
+     "name": "Too B1G Too Strong Too Fast",
+     "points": 0.0,
+     "projected": 130.17,
+     "win_probability": 0.24
     },
     {
-     "team_key": "474.l.21318.t.9",
-     "name": "Benjamin Brahman",
-     "points": 56.38,
-     "projected": 183.82,
-     "win_probability": 0.22999999999999998
+     "team_key": "474.l.21318.t.10",
+     "name": "I Stand With Diggs",
+     "points": 0.0,
+     "projected": 167.87,
+     "win_probability": 0.76
     }
    ]
   }
