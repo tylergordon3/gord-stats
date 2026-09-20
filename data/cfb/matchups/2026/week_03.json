@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-20T05:01:01+00:00",
+ "fetched": "2026-09-20T06:11:03+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 194.34,
+     "points": 200.94,
      "projected": 187.0,
-     "win_probability": 0.9099999999999999
+     "win_probability": 0.99
     },
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 189.5,
      "projected": 197.2,
-     "win_probability": 0.09000000000000008
+     "win_probability": 0.010000000000000009
     }
    ]
   },
@@ -62,7 +62,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 180.28,
+     "points": 192.58,
      "projected": 195.91,
      "win_probability": 0.99
     },
@@ -195,11 +195,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 10.1,
+    "points": 16.7,
     "stats": {
-     "8": 11.0,
-     "9": 41.0,
-     "10": 1.0
+     "8": 17.0,
+     "9": 47.0,
+     "10": 2.0
     }
    },
    {
@@ -1568,11 +1568,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 12.7,
+    "points": 25.0,
     "stats": {
-     "8": 7.0,
-     "9": 39.0,
-     "10": 1.0,
+     "8": 15.0,
+     "9": 102.0,
+     "10": 2.0,
      "11": 2.0,
      "12": 18.0
     }
@@ -1990,9 +1990,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 43.16,
+    "points": 43.4,
     "stats": {
-     "4": 319.0,
+     "4": 325.0,
      "5": 4.0,
      "8": 6.0,
      "9": 4.0,
@@ -2560,10 +2560,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 2.7,
+    "points": 7.5,
     "stats": {
-     "11": 1.0,
-     "12": 22.0
+     "11": 2.0,
+     "12": 65.0
     }
    },
    {
