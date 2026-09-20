@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-20T15:10:56.679498-04:00",
+ "updated": "2026-09-20T15:20:56.912227-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -37063,6 +37063,125 @@
       "Juste Jocyte",
       "G",
       22.0
+     ]
+    ]
+   }
+  },
+  "401857201": {
+   "date": "2026-09-20",
+   "allowed": {
+    "MIN": {
+     "G": 100.0,
+     "FC": 75.0
+    },
+    "CON": {
+     "G": 96.0,
+     "FC": 89.0
+    }
+   },
+   "players": {
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      35.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      34.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      29.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      18.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      35.0
+     ],
+     [
+      "Nia Brodie",
+      "FC",
+      9.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      9.0
+     ],
+     [
+      "Liatu King",
+      "FC",
+      2.0
+     ],
+     [
+      "Aari McDonald",
+      "G",
+      4.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      10.0
+     ]
+    ],
+    "CON": [
+     [
+      "Aaliyah Edwards",
+      "FC",
+      26.0
+     ],
+     [
+      "Diamond Miller",
+      "FC",
+      23.0
+     ],
+     [
+      "Saniya Rivers",
+      "G",
+      1.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      29.0
+     ],
+     [
+      "Leila Lacan",
+      "G",
+      28.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      15.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      11.0
+     ],
+     [
+      "Hailey Van Lith",
+      "G",
+      6.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      25.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      11.0
      ]
     ]
    }
