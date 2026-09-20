@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-20T16:41:00+00:00",
+ "fetched": "2026-09-20T16:50:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -768,7 +768,7 @@
    "pos": "WR"
   },
   "11560": {
-   "pts": 18.54,
+   "pts": 18.55,
    "opp": "MIN",
    "team": "CHI",
    "injury": "",
@@ -1536,7 +1536,7 @@
    "pos": "RB"
   },
   "BAL": {
-   "pts": 9.0,
+   "pts": 9.03,
    "opp": "NO",
    "team": "BAL",
    "injury": "",
@@ -1551,6 +1551,14 @@
    "name": "Tony Pollard",
    "pos": "RB"
   },
+  "SEA": {
+   "pts": 8.87,
+   "opp": "ARI",
+   "team": "SEA",
+   "injury": "",
+   "name": "Seattle Seahawks",
+   "pos": "DEF"
+  },
   "13296": {
    "pts": 8.86,
    "opp": "SF",
@@ -1558,14 +1566,6 @@
    "injury": "",
    "name": "Caleb Douglas",
    "pos": "WR"
-  },
-  "SEA": {
-   "pts": 8.84,
-   "opp": "ARI",
-   "team": "SEA",
-   "injury": "",
-   "name": "Seattle Seahawks",
-   "pos": "DEF"
   },
   "7553": {
    "pts": 8.81,
@@ -1704,7 +1704,7 @@
    "pos": "RB"
   },
   "2747": {
-   "pts": 6.69,
+   "pts": 6.72,
    "opp": "ARI",
    "team": "SEA",
    "injury": "",
@@ -1727,14 +1727,6 @@
    "name": "Pittsburgh Steelers",
    "pos": "DEF"
   },
-  "2020": {
-   "pts": 6.36,
-   "opp": "MIN",
-   "team": "CHI",
-   "injury": "",
-   "name": "Cairo Santos",
-   "pos": "K"
-  },
   "8132": {
    "pts": 6.35,
    "opp": "SEA",
@@ -1742,6 +1734,14 @@
    "injury": "",
    "name": "Tyler Allgeier",
    "pos": "RB"
+  },
+  "2020": {
+   "pts": 6.34,
+   "opp": "MIN",
+   "team": "CHI",
+   "injury": "",
+   "name": "Cairo Santos",
+   "pos": "K"
   },
   "13294": {
    "pts": 6.28,
@@ -2048,8 +2048,8 @@
    "7523": 19.1,
    "11564": 18.7,
    "12508": 18.4,
-   "6770": 18.1,
-   "4046": 17.9,
+   "4046": 18.1,
+   "6770": 17.9,
    "421": 17.6,
    "11563": 16.8,
    "9221": 25.0,
@@ -2165,8 +2165,8 @@
    "8259": 8.9,
    "3451": 8.8,
    "11786": 8.7,
-   "2020": 8.5,
    "2747": 8.5,
+   "2020": 8.5,
    "6650": 7.9,
    "12015": 7.6,
    "11539": 7.5,
@@ -2228,11 +2228,11 @@
     "ecr": 11,
     "grade": "B"
    },
-   "6770": {
+   "4046": {
     "ecr": 12,
     "grade": "B-"
    },
-   "4046": {
+   "6770": {
     "ecr": 13,
     "grade": "B-"
    },
@@ -2696,16 +2696,16 @@
     "ecr": 6,
     "grade": "C+"
    },
-   "2020": {
+   "2747": {
     "ecr": 7,
     "grade": "C+"
    },
-   "2747": {
+   "2020": {
     "ecr": 8,
     "grade": "C+"
    },
    "6650": {
-    "ecr": 12,
+    "ecr": 11,
     "grade": "C"
    },
    "12015": {
@@ -2734,11 +2734,11 @@
    },
    "SEA": {
     "ecr": 4,
-    "grade": "A-"
+    "grade": "A"
    },
    "BAL": {
     "ecr": 5,
-    "grade": "B+"
+    "grade": "A-"
    },
    "LAC": {
     "ecr": 6,
@@ -2750,7 +2750,7 @@
    },
    "HOU": {
     "ecr": 10,
-    "grade": "B-"
+    "grade": "B"
    },
    "DEN": {
     "ecr": 12,
@@ -2886,9 +2886,9 @@
    "total": 43.5,
    "tv": "FOX",
    "weather": {
-    "temp": 81.0,
-    "cond": 6,
-    "text": "Mostly cloudy",
+    "temp": 80.0,
+    "cond": 4,
+    "text": "Intermittent clouds",
     "indoors": true
    }
   },
@@ -2932,7 +2932,7 @@
    "total": 39.5,
    "tv": "FOX",
    "weather": {
-    "temp": 94.0,
+    "temp": 93.0,
     "cond": 2,
     "text": "Mostly sunny",
     "indoors": false
@@ -3001,9 +3001,9 @@
    "total": 41.5,
    "tv": "CBS",
    "weather": {
-    "temp": 88.0,
-    "cond": 6,
-    "text": "Mostly cloudy",
+    "temp": 87.0,
+    "cond": 7,
+    "text": "Cloudy",
     "indoors": false
    }
   },
