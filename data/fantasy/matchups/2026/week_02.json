@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-20T16:50:59+00:00",
+ "fetched": "2026-09-20T17:11:00+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -118,7 +118,7 @@
     {
      "roster_id": 8,
      "matchup_id": 1,
-     "points": 35.2,
+     "points": 46.0,
      "starters": [
       "11560",
       "4866",
@@ -154,7 +154,7 @@
       "11786": 0.0,
       "12519": 0.0,
       "12526": 0.0,
-      "4199": 0.0,
+      "4199": 0.8,
       "4866": 0.0,
       "5850": 0.0,
       "5947": 0.0,
@@ -163,7 +163,7 @@
       "7547": 35.2,
       "7567": 0.0,
       "8131": 0.0,
-      "HOU": 0.0
+      "HOU": 10.0
      }
     },
     {
@@ -225,7 +225,7 @@
     {
      "roster_id": 6,
      "matchup_id": 2,
-     "points": -0.1,
+     "points": 9.9,
      "starters": [
       "12508",
       "4034",
@@ -256,7 +256,7 @@
       "BAL"
      ],
      "players_points": {
-      "10222": 0.0,
+      "10222": 0.4,
       "11584": 0.0,
       "11620": 0.0,
       "12507": 0.0,
@@ -270,13 +270,13 @@
       "8137": 0.0,
       "8259": 0.0,
       "9484": 0.0,
-      "BAL": 0.0
+      "BAL": 10.0
      }
     },
     {
      "roster_id": 10,
      "matchup_id": 2,
-     "points": 20.9,
+     "points": 26.5,
      "starters": [
       "8183",
       "8138",
@@ -315,12 +315,12 @@
       "13296": 0.0,
       "4046": 0.0,
       "5927": 0.0,
-      "6794": 0.0,
-      "7021": 0.0,
+      "6794": 4.0,
+      "7021": 0.3,
       "8138": 20.9,
       "8144": 0.0,
       "8183": 0.0,
-      "9756": 0.0,
+      "9756": 1.6,
       "LAR": 0.0
      }
     }
@@ -332,7 +332,7 @@
     {
      "roster_id": 2,
      "matchup_id": 3,
-     "points": 22.5,
+     "points": 37.64,
      "starters": [
       "11564",
       "9509",
@@ -365,21 +365,21 @@
      ],
      "players_points": {
       "10236": 22.5,
-      "11564": 0.0,
+      "11564": 1.64,
       "11581": 0.0,
       "11604": 0.0,
       "12533": 0.0,
       "13279": 0.0,
       "1945": 0.0,
       "2449": 0.0,
-      "4037": 0.0,
-      "5892": 0.0,
+      "4037": 1.2,
+      "5892": 0.2,
       "7569": 0.0,
-      "7594": 0.0,
+      "7594": 2.1,
       "8146": 0.0,
       "9509": 0.0,
       "9754": 0.0,
-      "PHI": 0.0
+      "PHI": 10.0
      }
     },
     {
@@ -419,7 +419,7 @@
       "11586": 0.0,
       "11632": 0.0,
       "11635": 0.0,
-      "12512": 0.0,
+      "12512": 0.2,
       "12518": 0.0,
       "13417": 0.0,
       "2747": 0.0,
@@ -441,7 +441,7 @@
     {
      "roster_id": 3,
      "matchup_id": 4,
-     "points": 12.3,
+     "points": 25.04,
      "starters": [
       "6770",
       "7588",
@@ -480,17 +480,17 @@
       "11646": 0.0,
       "12489": 0.0,
       "13294": 0.0,
-      "6770": 0.0,
+      "6770": 0.24,
       "7523": 0.0,
-      "7543": 0.0,
-      "7564": 0.0,
+      "7543": 0.9,
+      "7564": 1.6,
       "7588": 0.0,
       "8112": 0.0,
       "8130": 0.0,
       "8148": 5.3,
       "8408": 0.0,
       "9753": 0.0,
-      "TB": 0.0
+      "TB": 10.0
      }
     },
     {
@@ -533,7 +533,7 @@
       "3451": 0.0,
       "421": 0.0,
       "4881": 0.0,
-      "5967": 0.0,
+      "5967": 0.9,
       "6786": 0.0,
       "6790": 0.0,
       "7553": 0.0,
@@ -552,7 +552,7 @@
     {
      "roster_id": 1,
      "matchup_id": 5,
-     "points": 0.0,
+     "points": 0.6,
      "starters": [
       "6904",
       "8155",
@@ -590,20 +590,20 @@
       "2020": 0.0,
       "4217": 0.0,
       "5022": 0.0,
-      "6904": 0.0,
-      "7611": 0.0,
+      "6904": 1.0,
+      "7611": -0.4,
       "8151": 0.0,
       "8155": 0.0,
       "9493": 0.0,
       "9997": 0.0,
-      "PIT": 0.0,
+      "PIT": 13.0,
       "SF": 0.0
      }
     },
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 23.3,
+     "points": 23.5,
      "starters": [
       "11566",
       "9221",
@@ -636,12 +636,12 @@
      "players_points": {
       "11566": 0.0,
       "12501": 0.0,
-      "12514": 0.0,
+      "12514": -0.2,
       "12517": 0.0,
       "13286": 0.0,
-      "13298": 0.0,
+      "13298": 1.3,
       "2216": 0.0,
-      "3198": 0.0,
+      "3198": 0.4,
       "5859": 0.0,
       "6650": 0.0,
       "6806": 0.0,
@@ -2081,18 +2081,18 @@
    "12490": 11.7,
    "12512": 11.4,
    "6806": 10.9,
-   "11581": 10.8,
-   "12533": 10.3,
+   "12533": 10.8,
+   "11581": 10.3,
    "7021": 10.1,
    "7567": 10.1,
    "12534": 10.0,
    "5967": 9.9,
-   "12529": 9.7,
-   "11586": 9.3,
+   "11586": 9.7,
+   "12529": 9.3,
    "8132": 9.0,
    "8136": 8.9,
    "11583": 7.6,
-   "12489": 2.1,
+   "12489": 1.4,
    "5850": 0.0,
    "7547": 21.7,
    "9488": 19.7,
@@ -2121,20 +2121,20 @@
    "11646": 12.3,
    "5846": 12.1,
    "2449": 12.0,
-   "9493": 12.0,
-   "4037": 11.9,
-   "9754": 11.7,
-   "11620": 11.3,
+   "4037": 12.0,
+   "9754": 11.9,
+   "11620": 11.7,
    "12501": 11.3,
    "5872": 11.3,
+   "9493": 11.3,
    "10232": 10.9,
-   "5045": 10.7,
-   "9500": 10.6,
-   "11635": 10.5,
+   "11635": 10.7,
+   "5045": 10.6,
+   "9500": 10.5,
    "5947": 10.4,
-   "11628": 10.1,
-   "9756": 10.0,
-   "10222": 9.8,
+   "9756": 10.1,
+   "11628": 10.0,
+   "10222": 9.9,
    "11834": 9.8,
    "13279": 9.7,
    "8142": 9.6,
@@ -2160,14 +2160,14 @@
    "12506": 10.0,
    "8110": 9.9,
    "7553": 9.3,
-   "11604": 3.0,
+   "11604": 2.5,
    "11533": 9.6,
    "8259": 8.9,
    "3451": 8.8,
    "11786": 8.7,
    "2747": 8.5,
    "2020": 8.5,
-   "6650": 7.9,
+   "6650": 8.1,
    "12015": 7.6,
    "11539": 7.5,
    "1945": 7.3,
@@ -2202,11 +2202,11 @@
    },
    "11560": {
     "ecr": 5,
-    "grade": "A"
+    "grade": "B+"
    },
    "8183": {
     "ecr": 6,
-    "grade": "B+"
+    "grade": "A"
    },
    "11566": {
     "ecr": 7,
@@ -2330,7 +2330,7 @@
    },
    "7594": {
     "ecr": 22,
-    "grade": "B-"
+    "grade": "B"
    },
    "7543": {
     "ecr": 23,
@@ -2342,7 +2342,7 @@
    },
    "13286": {
     "ecr": 25,
-    "grade": "C+"
+    "grade": "B-"
    },
    "8228": {
     "ecr": 26,
@@ -2360,11 +2360,11 @@
     "ecr": 29,
     "grade": "C"
    },
-   "11581": {
+   "12533": {
     "ecr": 30,
     "grade": "C"
    },
-   "12533": {
+   "11581": {
     "ecr": 31,
     "grade": "C"
    },
@@ -2384,11 +2384,11 @@
     "ecr": 35,
     "grade": "C"
    },
-   "12529": {
+   "11586": {
     "ecr": 36,
     "grade": "C-"
    },
-   "11586": {
+   "12529": {
     "ecr": 37,
     "grade": "C-"
    },
@@ -2405,8 +2405,8 @@
     "grade": "D"
    },
    "12489": {
-    "ecr": 69,
-    "grade": "D-"
+    "ecr": 77,
+    "grade": "F"
    },
    "5850": {
     "ecr": 118,
@@ -2520,60 +2520,60 @@
     "ecr": 27,
     "grade": "B"
    },
-   "9493": {
-    "ecr": 28,
-    "grade": "A"
-   },
    "4037": {
-    "ecr": 29,
+    "ecr": 28,
     "grade": "B-"
    },
    "9754": {
-    "ecr": 30,
-    "grade": "B-"
+    "ecr": 29,
+    "grade": "C+"
    },
    "11620": {
-    "ecr": 31,
+    "ecr": 30,
     "grade": "C+"
    },
    "12501": {
-    "ecr": 32,
+    "ecr": 31,
     "grade": "C+"
    },
    "5872": {
-    "ecr": 33,
+    "ecr": 32,
     "grade": "C+"
+   },
+   "9493": {
+    "ecr": 33,
+    "grade": "A"
    },
    "10232": {
     "ecr": 34,
     "grade": "C+"
    },
-   "5045": {
+   "11635": {
     "ecr": 35,
-    "grade": "C+"
+    "grade": "B-"
    },
-   "9500": {
+   "5045": {
     "ecr": 36,
     "grade": "C+"
    },
-   "11635": {
+   "9500": {
     "ecr": 37,
-    "grade": "B"
+    "grade": "C+"
    },
    "5947": {
     "ecr": 38,
     "grade": "C"
    },
-   "11628": {
+   "9756": {
     "ecr": 40,
     "grade": "C"
    },
-   "9756": {
+   "11628": {
     "ecr": 41,
     "grade": "C"
    },
    "10222": {
-    "ecr": 43,
+    "ecr": 42,
     "grade": "C"
    },
    "11834": {
@@ -2658,7 +2658,7 @@
    },
    "4217": {
     "ecr": 11,
-    "grade": "C"
+    "grade": "C+"
    },
    "7002": {
     "ecr": 13,
@@ -2677,7 +2677,7 @@
     "grade": "D+"
    },
    "11604": {
-    "ecr": 54,
+    "ecr": 61,
     "grade": "F"
    },
    "11533": {
@@ -2702,7 +2702,7 @@
    },
    "2020": {
     "ecr": 8,
-    "grade": "C+"
+    "grade": "C"
    },
    "6650": {
     "ecr": 11,
@@ -2832,6 +2832,37 @@
    "pts_std": 11.2,
    "gp": 1.0
   },
+  "PIT": {
+   "fum_rec": 1.0,
+   "pts_ppr": 13.0,
+   "pts_half_ppr": 13.0,
+   "pts_std": 13.0,
+   "gp": 1.0
+  },
+  "PHI": {
+   "pts_ppr": 10.0,
+   "pts_half_ppr": 10.0,
+   "pts_std": 10.0,
+   "gp": 1.0
+  },
+  "HOU": {
+   "pts_ppr": 10.0,
+   "pts_half_ppr": 10.0,
+   "pts_std": 10.0,
+   "gp": 1.0
+  },
+  "BAL": {
+   "pts_ppr": 10.0,
+   "pts_half_ppr": 10.0,
+   "pts_std": 10.0,
+   "gp": 1.0
+  },
+  "TB": {
+   "pts_ppr": 10.0,
+   "pts_half_ppr": 10.0,
+   "pts_std": 10.0,
+   "gp": 1.0
+  },
   "11539": {
    "fgm": 1.0,
    "fga": 1.0,
@@ -2851,12 +2882,305 @@
    "pts_std": 3.3,
    "gp": 1.0
   },
+  "6794": {
+   "rec": 1.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 30.0,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 3.5,
+   "pts_std": 3.0,
+   "gp": 1.0
+  },
+  "7594": {
+   "rush_att": 1.0,
+   "rush_yd": 3.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 8.0,
+   "pts_ppr": 2.1,
+   "pts_half_ppr": 1.6,
+   "pts_std": 1.1,
+   "gp": 1.0
+  },
+  "11564": {
+   "pass_yd": 41.0,
+   "pts_ppr": 1.64,
+   "pts_half_ppr": 1.64,
+   "pts_std": 1.64,
+   "gp": 1.0
+  },
+  "9756": {
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 6.0,
+   "pts_ppr": 1.6,
+   "pts_half_ppr": 1.1,
+   "pts_std": 0.6,
+   "gp": 1.0
+  },
+  "7564": {
+   "rec": 1.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 6.0,
+   "pts_ppr": 1.6,
+   "pts_half_ppr": 1.1,
+   "pts_std": 0.6,
+   "gp": 1.0
+  },
+  "13298": {
+   "rush_att": 1.0,
+   "rush_yd": -6.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 9.0,
+   "pts_ppr": 1.3,
+   "pts_half_ppr": 0.8,
+   "pts_std": 0.3,
+   "gp": 1.0
+  },
+  "4037": {
+   "rush_att": 1.0,
+   "rush_yd": 12.0,
+   "pts_ppr": 1.2,
+   "pts_half_ppr": 1.2,
+   "pts_std": 1.2,
+   "gp": 1.0
+  },
+  "6904": {
+   "pass_yd": 25.0,
+   "pts_ppr": 1.0,
+   "pts_half_ppr": 1.0,
+   "pts_std": 1.0,
+   "gp": 1.0
+  },
+  "5967": {
+   "rush_att": 1.0,
+   "rush_yd": -2.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 1.0,
+   "pts_ppr": 0.9,
+   "pts_half_ppr": 0.4,
+   "pts_std": -0.1,
+   "gp": 1.0
+  },
+  "7543": {
+   "rush_att": 2.0,
+   "rush_yd": 9.0,
+   "pts_ppr": 0.9,
+   "pts_half_ppr": 0.9,
+   "pts_std": 0.9,
+   "gp": 1.0
+  },
+  "4199": {
+   "rush_att": 1.0,
+   "rush_yd": 8.0,
+   "rec_tgt": 1.0,
+   "pts_ppr": 0.8,
+   "pts_half_ppr": 0.8,
+   "pts_std": 0.8,
+   "gp": 1.0
+  },
+  "10222": {
+   "rush_att": 1.0,
+   "rush_yd": 4.0,
+   "pts_ppr": 0.4,
+   "pts_half_ppr": 0.4,
+   "pts_std": 0.4,
+   "gp": 1.0
+  },
+  "3198": {
+   "rush_att": 2.0,
+   "rush_yd": 4.0,
+   "pts_ppr": 0.4,
+   "pts_half_ppr": 0.4,
+   "pts_std": 0.4,
+   "gp": 1.0
+  },
+  "7021": {
+   "rush_att": 2.0,
+   "rush_yd": 3.0,
+   "pts_ppr": 0.3,
+   "pts_half_ppr": 0.3,
+   "pts_std": 0.3,
+   "gp": 1.0
+  },
+  "6770": {
+   "pass_yd": 6.0,
+   "pts_ppr": 0.24,
+   "pts_half_ppr": 0.24,
+   "pts_std": 0.24,
+   "gp": 1.0
+  },
+  "12512": {
+   "rush_att": 1.0,
+   "rush_yd": 2.0,
+   "pts_ppr": 0.2,
+   "pts_half_ppr": 0.2,
+   "pts_std": 0.2,
+   "gp": 1.0
+  },
+  "9509": {
+   "gp": 1.0
+  },
+  "9484": {
+   "gp": 1.0
+  },
+  "8146": {
+   "gp": 1.0
+  },
+  "7553": {
+   "gp": 1.0
+  },
+  "7525": {
+   "gp": 1.0
+  },
+  "5022": {
+   "rec_tgt": 1.0,
+   "gp": 1.0
+  },
+  "1945": {
+   "gp": 1.0
+  },
+  "13279": {
+   "rec_tgt": 1.0,
+   "gp": 1.0
+  },
+  "12519": {
+   "gp": 1.0
+  },
+  "11560": {
+   "gp": 1.0
+  },
+  "8167": {
+   "gp": 1.0
+  },
+  "8112": {
+   "gp": 1.0
+  },
+  "7567": {
+   "gp": 1.0
+  },
+  "5892": {
+   "gp": 1.0
+  },
+  "4866": {
+   "rush_att": 1.0,
+   "gp": 1.0
+  },
+  "9224": {
+   "rec_tgt": 1.0,
+   "gp": 1.0
+  },
+  "8126": {
+   "gp": 1.0
+  },
+  "7002": {
+   "gp": 1.0
+  },
+  "6790": {
+   "gp": 1.0
+  },
+  "3451": {
+   "gp": 1.0
+  },
+  "2020": {
+   "gp": 1.0
+  },
+  "13294": {
+   "gp": 1.0
+  },
+  "11620": {
+   "gp": 1.0
+  },
+  "11583": {
+   "gp": 1.0
+  },
+  "8228": {
+   "gp": 1.0
+  },
+  "8144": {
+   "gp": 1.0
+  },
+  "5846": {
+   "rec_tgt": 1.0,
+   "gp": 1.0
+  },
+  "13320": {
+   "gp": 1.0
+  },
+  "12534": {
+   "gp": 1.0
+  },
+  "12501": {
+   "gp": 1.0
+  },
+  "11581": {
+   "gp": 1.0
+  },
+  "8155": {
+   "gp": 1.0
+  },
+  "6650": {
+   "gp": 1.0
+  },
+  "5012": {
+   "rec_tgt": 1.0,
+   "gp": 1.0
+  },
+  "12526": {
+   "gp": 1.0
+  },
+  "11834": {
+   "gp": 1.0
+  },
+  "11646": {
+   "gp": 1.0
+  },
+  "6801": {
+   "gp": 1.0
+  },
+  "4881": {
+   "gp": 1.0
+  },
+  "12529": {
+   "gp": 1.0
+  },
+  "12517": {
+   "gp": 1.0
+  },
+  "12506": {
+   "gp": 1.0
+  },
+  "11584": {
+   "gp": 1.0
+  },
   "4983": {
    "rush_att": 1.0,
    "rush_yd": -1.0,
    "pts_ppr": -0.1,
    "pts_half_ppr": -0.1,
    "pts_std": -0.1,
+   "gp": 1.0
+  },
+  "12514": {
+   "rush_att": 1.0,
+   "rush_yd": -2.0,
+   "pts_ppr": -0.2,
+   "pts_half_ppr": -0.2,
+   "pts_std": -0.2,
+   "gp": 1.0
+  },
+  "7611": {
+   "rush_att": 1.0,
+   "rush_yd": 4.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 2.0,
+   "fum_lost": 1.0,
+   "pts_ppr": -0.4,
+   "pts_half_ppr": -0.9,
+   "pts_std": -1.4,
    "gp": 1.0
   },
   "DET": {
@@ -2872,41 +3196,41 @@
   {
    "game_id": "401872933",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "12:56 - 1st",
    "period": null,
    "clock": null,
    "home": "ATL",
    "away": "CAR",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 20.5,
-   "away_implied": 23.0,
-   "spread": "CAR -2.5",
-   "total": 43.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "FOX",
    "weather": {
     "temp": 80.0,
-    "cond": 4,
-    "text": "Intermittent clouds",
+    "cond": 6,
+    "text": "Mostly cloudy",
     "indoors": true
    }
   },
   {
    "game_id": "401872937",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "11:03 - 1st",
    "period": null,
    "clock": null,
    "home": "CHI",
    "away": "MIN",
    "home_score": 0.0,
-   "away_score": 0.0,
-   "home_implied": 25.5,
-   "away_implied": 21.0,
-   "spread": "CHI -4.5",
-   "total": 46.5,
+   "away_score": 3.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "FOX",
    "weather": {
     "temp": 66.0,
@@ -2918,41 +3242,41 @@
   {
    "game_id": "401872939",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "10:28 - 1st",
    "period": null,
    "clock": null,
    "home": "TEN",
    "away": "PHI",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 16.25,
-   "away_implied": 23.25,
-   "spread": "PHI -7",
-   "total": 39.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "FOX",
    "weather": {
     "temp": 93.0,
-    "cond": 2,
-    "text": "Mostly sunny",
+    "cond": 6,
+    "text": "Mostly cloudy",
     "indoors": false
    }
   },
   {
    "game_id": "401872946",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "11:32 - 1st",
    "period": null,
    "clock": null,
    "home": "NE",
    "away": "PIT",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 23.0,
-   "away_implied": 18.5,
-   "spread": "NE -4.5",
-   "total": 41.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "CBS",
    "weather": {
     "temp": 61.0,
@@ -2964,92 +3288,92 @@
   {
    "game_id": "401872936",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "13:56 - 1st",
    "period": null,
    "clock": null,
    "home": "NYJ",
    "away": "GB",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 20.5,
-   "away_implied": 24.0,
-   "spread": "GB -3.5",
-   "total": 44.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "FOX",
    "weather": {
-    "temp": 68.0,
-    "cond": 18,
-    "text": "Rain",
+    "temp": 70.0,
+    "cond": 12,
+    "text": "Light rain",
     "indoors": false
    }
   },
   {
    "game_id": "401872935",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "11:10 - 1st",
    "period": null,
    "clock": null,
    "home": "TB",
    "away": "CLE",
-   "home_score": 0.0,
+   "home_score": 3.0,
    "away_score": 0.0,
-   "home_implied": 25.0,
-   "away_implied": 16.5,
-   "spread": "TB -8.5",
-   "total": 41.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 87.0,
-    "cond": 7,
-    "text": "Cloudy",
+    "temp": 89.0,
+    "cond": 6,
+    "text": "Mostly cloudy",
     "indoors": false
    }
   },
   {
    "game_id": "401872938",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "9:43 - 1st",
    "period": null,
    "clock": null,
    "home": "BAL",
    "away": "NO",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 27.0,
-   "away_implied": 18.5,
-   "spread": "BAL -8.5",
-   "total": 45.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "CBS",
    "weather": {
     "temp": 78.0,
-    "cond": 7,
-    "text": "Cloudy",
+    "cond": 6,
+    "text": "Mostly cloudy",
     "indoors": false
    }
   },
   {
    "game_id": "401872934",
    "date": "2026-09-20T17:00Z",
-   "state": "pre",
-   "detail": "9/20 - 1:00 PM EDT",
+   "state": "in",
+   "detail": "13:55 - 1st",
    "period": null,
    "clock": null,
    "home": "HOU",
    "away": "CIN",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 24.25,
-   "away_implied": 21.25,
-   "spread": "HOU -3",
-   "total": 45.5,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 91.0,
-    "cond": 4,
-    "text": "Intermittent clouds",
+    "temp": 90.0,
+    "cond": 2,
+    "text": "Mostly sunny",
     "indoors": true
    }
   },
@@ -3110,10 +3434,10 @@
    "away": "WAS",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 27.5,
-   "away_implied": 23.0,
+   "home_implied": 28.0,
+   "away_implied": 23.5,
    "spread": "DAL -4.5",
-   "total": 50.5,
+   "total": 51.5,
    "tv": "FOX",
    "weather": {
     "temp": 96.0,
