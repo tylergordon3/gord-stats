@@ -4,7 +4,7 @@
  "week_end": "2026-09-19",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-20T04:01:01+00:00",
+ "fetched": "2026-09-20T05:01:01+00:00",
  "matchups": [
   {
    "week": 3.0,
@@ -16,7 +16,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 193.34,
+     "points": 194.34,
      "projected": 187.0,
      "win_probability": 0.9099999999999999
     },
@@ -62,7 +62,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 178.08,
+     "points": 180.28,
      "projected": 195.91,
      "win_probability": 0.99
     },
@@ -108,7 +108,7 @@
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 181.14,
+     "points": 180.44,
      "projected": 184.03,
      "win_probability": 0.0
     },
@@ -195,10 +195,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 9.1,
+    "points": 10.1,
     "stats": {
-     "8": 8.0,
-     "9": 31.0,
+     "8": 11.0,
+     "9": 41.0,
      "10": 1.0
     }
    },
@@ -1568,13 +1568,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 10.5,
+    "points": 12.7,
     "stats": {
-     "8": 4.0,
-     "9": 26.0,
+     "8": 7.0,
+     "9": 39.0,
      "10": 1.0,
-     "11": 1.0,
-     "12": 14.0
+     "11": 2.0,
+     "12": 18.0
     }
    },
    {
@@ -1990,12 +1990,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 24.02,
+    "points": 43.16,
     "stats": {
-     "4": 223.0,
-     "5": 3.0,
-     "8": 4.0,
-     "9": -29.0
+     "4": 319.0,
+     "5": 4.0,
+     "8": 6.0,
+     "9": 4.0,
+     "10": 1.0
     }
    },
    {
@@ -2672,9 +2673,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 34.16,
+    "points": 33.96,
     "stats": {
-     "4": 364.0,
+     "4": 359.0,
      "5": 3.0,
      "8": 4.0,
      "9": 16.0
@@ -2759,10 +2760,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 7.2,
+    "points": 6.7,
     "stats": {
      "11": 3.0,
-     "12": 57.0
+     "12": 52.0
     }
    },
    {
