@@ -1,0 +1,30 @@
+{
+ "day": "2026-09-24",
+ "locked_at": "Sun Sep 20, 11:40 AM",
+ "games": 1,
+ "picks": {
+  "underdog": {
+   "game_id": "401869941",
+   "side": "away",
+   "team": "Liberty",
+   "opp": "Coastal",
+   "p": 0.4747,
+   "book_p": 0.4783,
+   "ml": 100.0,
+   "line": 1.5,
+   "kick": "Thu 7:30p"
+  },
+  "legs": [
+   {
+    "kind": "total",
+    "over": false,
+    "total": 54.5,
+    "p": 0.5698,
+    "book": 0.5,
+    "text": "Under 54.5",
+    "game_id": "401869941",
+    "game": "LIB at CCU \u00b7 Thu 7:30p"
+   }
+  ]
+ }
+}
