@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-20T23:30:59+00:00",
+ "fetched": "2026-09-20T23:50:07+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -2778,6 +2778,16 @@
    "pts_std": 40.82,
    "gp": 1.0
   },
+  "6786": {
+   "rec": 8.0,
+   "rec_tgt": 9.0,
+   "rec_yd": 153.0,
+   "rec_td": 2.0,
+   "pts_ppr": 35.3,
+   "pts_half_ppr": 31.3,
+   "pts_std": 27.3,
+   "gp": 1.0
+  },
   "7547": {
    "rec": 9.0,
    "rec_tgt": 13.0,
@@ -2786,6 +2796,16 @@
    "pts_ppr": 35.2,
    "pts_half_ppr": 30.7,
    "pts_std": 26.2,
+   "gp": 1.0
+  },
+  "3294": {
+   "pass_yd": 279.0,
+   "pass_td": 4.0,
+   "rush_att": 4.0,
+   "rush_yd": 26.0,
+   "pts_ppr": 29.76,
+   "pts_half_ppr": 29.76,
+   "pts_std": 29.76,
    "gp": 1.0
   },
   "8183": {
@@ -2817,26 +2837,6 @@
    "pts_ppr": 26.5,
    "pts_half_ppr": 23.0,
    "pts_std": 19.5,
-   "gp": 1.0
-  },
-  "6786": {
-   "rec": 7.0,
-   "rec_tgt": 8.0,
-   "rec_yd": 129.0,
-   "rec_td": 1.0,
-   "pts_ppr": 25.9,
-   "pts_half_ppr": 22.4,
-   "pts_std": 18.9,
-   "gp": 1.0
-  },
-  "3294": {
-   "pass_yd": 255.0,
-   "pass_td": 3.0,
-   "rush_att": 4.0,
-   "rush_yd": 26.0,
-   "pts_ppr": 24.8,
-   "pts_half_ppr": 24.8,
-   "pts_std": 24.8,
    "gp": 1.0
   },
   "9221": {
@@ -3029,6 +3029,16 @@
    "pts_std": 16.0,
    "gp": 1.0
   },
+  "11533": {
+   "fgm": 3.0,
+   "fga": 3.0,
+   "xpm": 4.0,
+   "xpa": 4.0,
+   "pts_ppr": 16.0,
+   "pts_half_ppr": 16.0,
+   "pts_std": 16.0,
+   "gp": 1.0
+  },
   "4881": {
    "pass_yd": 235.0,
    "pass_td": 1.0,
@@ -3058,16 +3068,6 @@
    "pts_ppr": 15.1,
    "pts_half_ppr": 12.6,
    "pts_std": 10.1,
-   "gp": 1.0
-  },
-  "11533": {
-   "fgm": 3.0,
-   "fga": 3.0,
-   "xpm": 3.0,
-   "xpa": 3.0,
-   "pts_ppr": 15.0,
-   "pts_half_ppr": 15.0,
-   "pts_std": 15.0,
    "gp": 1.0
   },
   "11566": {
@@ -3439,6 +3439,17 @@
    "pts_std": 2.2,
    "gp": 1.0
   },
+  "7588": {
+   "rush_att": 12.0,
+   "rush_yd": 30.0,
+   "rec": 3.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 20.0,
+   "pts_ppr": 8.0,
+   "pts_half_ppr": 6.5,
+   "pts_std": 5.0,
+   "gp": 1.0
+  },
   "SEA": {
    "pts_allow": 7.0,
    "sack": 2.0,
@@ -3466,17 +3477,6 @@
    "pts_ppr": 7.8,
    "pts_half_ppr": 6.8,
    "pts_std": 5.8,
-   "gp": 1.0
-  },
-  "7588": {
-   "rush_att": 11.0,
-   "rush_yd": 26.0,
-   "rec": 3.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 20.0,
-   "pts_ppr": 7.6,
-   "pts_half_ppr": 6.1,
-   "pts_std": 4.6,
    "gp": 1.0
   },
   "5967": {
@@ -3971,29 +3971,6 @@
  },
  "games": [
   {
-   "game_id": "401872944",
-   "date": "2026-09-20T20:25Z",
-   "state": "in",
-   "detail": "2:00 - 4th",
-   "period": null,
-   "clock": null,
-   "home": "DAL",
-   "away": "WAS",
-   "home_score": 37.0,
-   "away_score": 20.0,
-   "home_implied": null,
-   "away_implied": null,
-   "spread": null,
-   "total": null,
-   "tv": "FOX",
-   "weather": {
-    "temp": 91.0,
-    "cond": 15,
-    "text": "Thunderstorm",
-    "indoors": true
-   }
-  },
-  {
    "game_id": "401872933",
    "date": "2026-09-20T17:00Z",
    "state": "post",
@@ -4184,6 +4161,29 @@
    "weather": null
   },
   {
+   "game_id": "401872944",
+   "date": "2026-09-20T20:25Z",
+   "state": "post",
+   "detail": "Final",
+   "period": null,
+   "clock": null,
+   "home": "DAL",
+   "away": "WAS",
+   "home_score": 37.0,
+   "away_score": 20.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
+   "tv": "FOX",
+   "weather": {
+    "temp": null,
+    "cond": null,
+    "text": "",
+    "indoors": true
+   }
+  },
+  {
    "game_id": "401872943",
    "date": "2026-09-20T20:25Z",
    "state": "post",
@@ -4242,8 +4242,8 @@
    "tv": "NBC",
    "weather": {
     "temp": 71.0,
-    "cond": 7,
-    "text": "Cloudy",
+    "cond": 6,
+    "text": "Mostly cloudy",
     "indoors": false
    }
   },
