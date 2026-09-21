@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-20T21:20:56.730820-04:00",
+ "updated": "2026-09-20T21:30:57.317956-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -37455,6 +37455,125 @@
       "Raven Johnson",
       "G",
       16.0
+     ]
+    ]
+   }
+  },
+  "401857204": {
+   "date": "2026-09-20",
+   "allowed": {
+    "POR": {
+     "G": 128.0,
+     "FC": 62.0
+    },
+    "LA": {
+     "G": 77.0,
+     "FC": 77.0
+    }
+   },
+   "players": {
+    "POR": [
+     [
+      "Emily Engstler",
+      "FC",
+      16.0
+     ],
+     [
+      "Nyadiew Puoch",
+      "FC",
+      17.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      23.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      12.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      32.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      7.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      14.0
+     ],
+     [
+      "Charisma Osborne",
+      "G",
+      18.0
+     ],
+     [
+      "Jordan Harrison",
+      "G",
+      15.0
+     ]
+    ],
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      42.0
+     ],
+     [
+      "Emma Cannon",
+      "FC",
+      15.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      14.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      24.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      28.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      5.0
+     ],
+     [
+      "Shyanne Sellers",
+      "G",
+      4.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      19.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      17.0
+     ],
+     [
+      "Ndjakalenga Mwenentanda",
+      "G",
+      11.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      11.0
      ]
     ]
    }
