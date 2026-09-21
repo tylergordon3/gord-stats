@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-20T23:10:58.170365-04:00",
+ "updated": "2026-09-20T23:45:00.558881-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -37574,6 +37574,135 @@
       "Monique Akoa Makani",
       "G",
       11.0
+     ]
+    ]
+   }
+  },
+  "401857205": {
+   "date": "2026-09-21",
+   "allowed": {
+    "SEA": {
+     "G": 102.0,
+     "FC": 91.0
+    },
+    "LV": {
+     "G": 72.0,
+     "FC": 90.0
+    }
+   },
+   "players": {
+    "SEA": [
+     [
+      "Jordan Horston",
+      "FC",
+      3.0
+     ],
+     [
+      "Dominique Malonga",
+      "FC",
+      40.0
+     ],
+     [
+      "Awa Fam",
+      "FC",
+      17.0
+     ],
+     [
+      "Natisha Hiedeman",
+      "G",
+      7.0
+     ],
+     [
+      "Flau'jae Johnson",
+      "G",
+      56.0
+     ],
+     [
+      "Mackenzie Holmes",
+      "FC",
+      13.0
+     ],
+     [
+      "Taylor Thierry",
+      "FC",
+      10.0
+     ],
+     [
+      "Stefanie Dolson",
+      "FC",
+      7.0
+     ],
+     [
+      "Jaylyn Sherrod",
+      "G",
+      0.0
+     ],
+     [
+      "Jade Melbourne",
+      "G",
+      9.0
+     ]
+    ],
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      6.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      7.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      50.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      29.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      41.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      27.0
+     ],
+     [
+      "Kierstan Bell",
+      "FC",
+      1.0
+     ],
+     [
+      "Kalani Brown",
+      "FC",
+      0.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      10.0
+     ],
+     [
+      "Dana Evans",
+      "G",
+      0.0
+     ],
+     [
+      "Ta'Niya Latson",
+      "G",
+      9.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      13.0
      ]
     ]
    }
