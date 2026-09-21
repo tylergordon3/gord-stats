@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-21T09:46:02+00:00",
+ "fetched": "2026-09-21T15:31:59+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -24,7 +24,7 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 187.07,
+     "projected": 187.16,
      "win_probability": 0.51
     }
    ]
@@ -63,7 +63,7 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 138.99,
+     "projected": 138.94,
      "win_probability": 0.33999999999999997
     },
     {
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 178.32,
+     "projected": 178.37,
      "win_probability": 0.66
     }
    ]
@@ -181,20 +181,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "458486",
-    "player": "Nick Marsh",
-    "pos": "WR",
-    "team": "IND",
-    "team_full": "Indiana Hoosiers",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "WR",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "407241",
     "player": "Deuce Alexander",
     "pos": "WR",
@@ -223,6 +209,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "458486",
+    "player": "Nick Marsh",
+    "pos": "WR",
+    "team": "IND",
+    "team_full": "Indiana Hoosiers",
+    "bye": 10.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "WR",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "405317",
     "player": "Patrick Overmyer",
     "pos": "TE",
@@ -237,11 +237,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457379",
-    "player": "Fame Ijeboi",
+    "yahoo_id": "482918",
+    "player": "Jamal Rule",
     "pos": "RB",
-    "team": "PUR",
-    "team_full": "Purdue Boilermakers",
+    "team": "NEB",
+    "team_full": "Nebraska Cornhuskers",
     "bye": 8.0,
     "status": "",
     "status_full": "",
@@ -251,11 +251,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "482918",
-    "player": "Jamal Rule",
+    "yahoo_id": "457379",
+    "player": "Fame Ijeboi",
     "pos": "RB",
-    "team": "NEB",
-    "team_full": "Nebraska Cornhuskers",
+    "team": "PUR",
+    "team_full": "Purdue Boilermakers",
     "bye": 8.0,
     "status": "",
     "status_full": "",
@@ -1203,9 +1203,9 @@
     "team": "MICH",
     "team_full": "Michigan Wolverines",
     "bye": 6.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
@@ -2529,12 +2529,12 @@
   "471748": 26.98,
   "468744": 17.77,
   "404466": 13.77,
-  "458486": 10.81,
   "407241": 14.07,
   "471011": 25.42,
+  "458486": 10.81,
   "405317": 11.48,
-  "457379": 12.86,
   "482918": 15.0,
+  "457379": 12.86,
   "469395": 11.11,
   "405245": 9.25,
   "470260": 9.61,
@@ -2551,12 +2551,12 @@
   "457622": 12.43,
   "482507": 10.08,
   "404876": 15.15,
-  "334875": 18.82,
+  "334875": 18.81,
   "482179": 0.0,
   "334780": 5.13,
   "338965": 9.91,
   "463244": 0.0,
-  "900083": 10.16,
+  "900083": 10.26,
   "470211": 28.37,
   "334043": 24.81,
   "404522": 21.56,
@@ -2604,7 +2604,7 @@
   "336811": 10.83,
   "404437": 9.86,
   "451329": 8.98,
-  "900028": 6.01,
+  "900028": 5.96,
   "464024": 33.95,
   "403957": 22.52,
   "404007": 13.74,
@@ -2653,7 +2653,7 @@
   "451040": 10.33,
   "449475": 6.05,
   "482773": 8.2,
-  "900060": 6.93,
+  "900060": 6.98,
   "405071": 21.44,
   "469436": 18.76,
   "469228": 13.37,
