@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-21T01:40:59+00:00",
+ "fetched": "2026-09-21T01:50:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -169,7 +169,7 @@
     {
      "roster_id": 9,
      "matchup_id": 1,
-     "points": 145.82,
+     "points": 154.42,
      "starters": [
       "4984",
       "6813",
@@ -210,7 +210,7 @@
       "5045": 5.5,
       "5846": 6.7,
       "5872": 6.5,
-      "6813": 6.3,
+      "6813": 14.9,
       "7525": 27.7,
       "7526": 21.8,
       "8110": 20.3,
@@ -313,7 +313,7 @@
       "12529": 13.6,
       "13287": 7.5,
       "13296": 3.9,
-      "4046": 13.2,
+      "4046": 13.52,
       "5927": 7.0,
       "6794": 8.5,
       "7021": 6.4,
@@ -603,7 +603,7 @@
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 108.14,
+     "points": 109.84,
      "starters": [
       "11566",
       "9221",
@@ -647,7 +647,7 @@
       "6806": 3.6,
       "8136": 14.3,
       "9221": 23.3,
-      "9500": 6.4,
+      "9500": 8.1,
       "LAC": 5.0
      }
     }
@@ -3479,6 +3479,15 @@
    "pts_std": 2.2,
    "gp": 1.0
   },
+  "9500": {
+   "rec": 4.0,
+   "rec_tgt": 6.0,
+   "rec_yd": 41.0,
+   "pts_ppr": 8.1,
+   "pts_half_ppr": 6.1,
+   "pts_std": 4.1,
+   "gp": 1.0
+  },
   "7588": {
    "rush_att": 12.0,
    "rush_yd": 30.0,
@@ -3679,6 +3688,17 @@
    "pts_std": 4.4,
    "gp": 1.0
   },
+  "6813": {
+   "rush_att": 12.0,
+   "rush_yd": 49.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 4.0,
+   "pts_ppr": 6.3,
+   "pts_half_ppr": 5.8,
+   "pts_std": 5.3,
+   "gp": 1.0
+  },
   "12519": {
    "rec": 3.0,
    "rec_tgt": 7.0,
@@ -3722,17 +3742,6 @@
    "pts_ppr": 5.7,
    "pts_half_ppr": 4.2,
    "pts_std": 2.7,
-   "gp": 1.0
-  },
-  "6813": {
-   "rush_att": 10.0,
-   "rush_yd": 41.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 4.0,
-   "pts_ppr": 5.5,
-   "pts_half_ppr": 5.0,
-   "pts_std": 4.5,
    "gp": 1.0
   },
   "5045": {
@@ -3783,15 +3792,6 @@
    "pts_ppr": 4.5,
    "pts_half_ppr": 3.0,
    "pts_std": 1.5,
-   "gp": 1.0
-  },
-  "9500": {
-   "rec": 2.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 25.0,
-   "pts_ppr": 4.5,
-   "pts_half_ppr": 3.5,
-   "pts_std": 2.5,
    "gp": 1.0
   },
   "5892": {
@@ -4063,22 +4063,22 @@
    "game_id": "401872945",
    "date": "2026-09-21T00:20Z",
    "state": "in",
-   "detail": "1:10 - 2nd",
+   "detail": "Halftime",
    "period": null,
    "clock": null,
    "home": "KC",
    "away": "IND",
    "home_score": 17.0,
-   "away_score": 13.0,
+   "away_score": 20.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "NBC",
    "weather": {
-    "temp": 70.0,
-    "cond": 38,
-    "text": "Mostly cloudy",
+    "temp": 69.0,
+    "cond": 7,
+    "text": "Cloudy",
     "indoors": false
    }
   },
