@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-21T03:40:59+00:00",
+ "fetched": "2026-09-21T03:50:57+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -169,7 +169,7 @@
     {
      "roster_id": 9,
      "matchup_id": 1,
-     "points": 168.92,
+     "points": 168.72,
      "starters": [
       "4984",
       "6813",
@@ -210,7 +210,7 @@
       "5045": 5.5,
       "5846": 6.7,
       "5872": 6.5,
-      "6813": 29.4,
+      "6813": 29.2,
       "7525": 27.7,
       "7526": 21.8,
       "8110": 20.3,
@@ -2809,15 +2809,15 @@
    "gp": 1.0
   },
   "6813": {
-   "rush_att": 22.0,
-   "rush_yd": 95.0,
+   "rush_att": 24.0,
+   "rush_yd": 93.0,
    "rush_td": 2.0,
    "rec": 4.0,
    "rec_tgt": 4.0,
    "rec_yd": 40.0,
-   "pts_ppr": 29.5,
-   "pts_half_ppr": 27.5,
-   "pts_std": 25.5,
+   "pts_ppr": 29.3,
+   "pts_half_ppr": 27.3,
+   "pts_std": 25.3,
    "gp": 1.0
   },
   "8183": {
@@ -2845,10 +2845,10 @@
    "pass_yd": 360.0,
    "pass_td": 3.0,
    "rush_att": 1.0,
-   "rush_yd": 12.0,
-   "pts_ppr": 27.6,
-   "pts_half_ppr": 27.6,
-   "pts_std": 27.6,
+   "rush_yd": 13.0,
+   "pts_ppr": 27.7,
+   "pts_half_ppr": 27.7,
+   "pts_std": 27.7,
    "gp": 1.0
   },
   "7564": {
@@ -2957,14 +2957,14 @@
    "gp": 1.0
   },
   "8151": {
-   "rush_att": 19.0,
-   "rush_yd": 96.0,
+   "rush_att": 20.0,
+   "rush_yd": 97.0,
    "rec": 5.0,
-   "rec_tgt": 8.0,
+   "rec_tgt": 9.0,
    "rec_yd": 39.0,
-   "pts_ppr": 18.5,
-   "pts_half_ppr": 16.0,
-   "pts_std": 13.5,
+   "pts_ppr": 18.6,
+   "pts_half_ppr": 16.1,
+   "pts_std": 13.6,
    "gp": 1.0
   },
   "6904": {
@@ -4066,13 +4066,13 @@
    "game_id": "401872945",
    "date": "2026-09-21T00:20Z",
    "state": "in",
-   "detail": "4:05 - OT",
+   "detail": "1:30 - OT",
    "period": null,
    "clock": null,
    "home": "KC",
    "away": "IND",
    "home_score": 30.0,
-   "away_score": 27.0,
+   "away_score": 30.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
