@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-21T03:50:57+00:00",
+ "fetched": "2026-09-21T09:45:42+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -313,7 +313,7 @@
       "12529": 13.6,
       "13287": 7.5,
       "13296": 3.9,
-      "4046": 27.7,
+      "4046": 28.98,
       "5927": 7.0,
       "6794": 8.5,
       "7021": 6.4,
@@ -552,7 +552,7 @@
     {
      "roster_id": 1,
      "matchup_id": 5,
-     "points": 95.46,
+     "points": 100.66,
      "starters": [
       "6904",
       "8155",
@@ -592,7 +592,7 @@
       "5022": 1.4,
       "6904": 18.16,
       "7611": 3.6,
-      "8151": 18.6,
+      "8151": 23.8,
       "8155": 14.2,
       "9493": 0.0,
       "9997": 0.0,
@@ -1923,8 +1923,8 @@
    "12517": 11.43044397,
    "8150": 14.47471087,
    "9997": 0.0,
-   "12481": 12.83219918,
    "2133": 15.49770958,
+   "12481": 12.83219918,
    "SEA": 7.60917733,
    "12526": 13.6238554,
    "12514": 13.79998904,
@@ -1988,8 +1988,8 @@
    "5850": 0.0,
    "7021": 10.11721188,
    "4199": 14.14553816,
-   "12501": 10.84889434,
    "2449": 10.32716219,
+   "12501": 10.84889434,
    "11646": 11.92887535,
    "11563": 18.55112576,
    "8142": 11.02902355,
@@ -2228,7 +2228,7 @@
    },
    "4046": {
     "ecr": 12,
-    "grade": "B-"
+    "grade": "B"
    },
    "6770": {
     "ecr": 13,
@@ -2810,14 +2810,24 @@
   },
   "6813": {
    "rush_att": 24.0,
-   "rush_yd": 93.0,
+   "rush_yd": 92.0,
    "rush_td": 2.0,
    "rec": 4.0,
    "rec_tgt": 4.0,
    "rec_yd": 40.0,
-   "pts_ppr": 29.3,
-   "pts_half_ppr": 27.3,
-   "pts_std": 25.3,
+   "pts_ppr": 29.2,
+   "pts_half_ppr": 27.2,
+   "pts_std": 25.2,
+   "gp": 1.0
+  },
+  "4046": {
+   "pass_yd": 382.0,
+   "pass_td": 3.0,
+   "rush_att": 2.0,
+   "rush_yd": 17.0,
+   "pts_ppr": 28.98,
+   "pts_half_ppr": 28.98,
+   "pts_std": 28.98,
    "gp": 1.0
   },
   "8183": {
@@ -2841,16 +2851,6 @@
    "pts_std": 17.7,
    "gp": 1.0
   },
-  "4046": {
-   "pass_yd": 360.0,
-   "pass_td": 3.0,
-   "rush_att": 1.0,
-   "rush_yd": 13.0,
-   "pts_ppr": 27.7,
-   "pts_half_ppr": 27.7,
-   "pts_std": 27.7,
-   "gp": 1.0
-  },
   "7564": {
    "rec": 7.0,
    "rec_tgt": 9.0,
@@ -2869,6 +2869,17 @@
    "pts_ppr": 25.1,
    "pts_half_ppr": 20.6,
    "pts_std": 16.1,
+   "gp": 1.0
+  },
+  "8151": {
+   "rush_att": 24.0,
+   "rush_yd": 117.0,
+   "rec": 6.0,
+   "rec_tgt": 10.0,
+   "rec_yd": 61.0,
+   "pts_ppr": 23.8,
+   "pts_half_ppr": 20.8,
+   "pts_std": 17.8,
    "gp": 1.0
   },
   "9221": {
@@ -2954,17 +2965,6 @@
    "pts_ppr": 20.3,
    "pts_half_ppr": 18.3,
    "pts_std": 16.3,
-   "gp": 1.0
-  },
-  "8151": {
-   "rush_att": 20.0,
-   "rush_yd": 97.0,
-   "rec": 5.0,
-   "rec_tgt": 9.0,
-   "rec_yd": 39.0,
-   "pts_ppr": 18.6,
-   "pts_half_ppr": 16.1,
-   "pts_std": 13.6,
    "gp": 1.0
   },
   "6904": {
@@ -4063,27 +4063,45 @@
  },
  "games": [
   {
-   "game_id": "401872945",
-   "date": "2026-09-21T00:20Z",
-   "state": "in",
-   "detail": "1:30 - OT",
+   "game_id": "401872947",
+   "date": "2026-09-22T00:15Z",
+   "state": "pre",
+   "detail": "9/21 - 8:15 PM EDT",
    "period": null,
    "clock": null,
-   "home": "KC",
-   "away": "IND",
-   "home_score": 30.0,
-   "away_score": 30.0,
+   "home": "LAR",
+   "away": "NYG",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 27.25,
+   "away_implied": 20.25,
+   "spread": "LAR -7",
+   "total": 47.5,
+   "tv": "ESPN",
+   "weather": {
+    "temp": 74.0,
+    "cond": 2,
+    "text": "Mostly sunny",
+    "indoors": false
+   }
+  },
+  {
+   "game_id": "401872932",
+   "date": "2026-09-18T00:15Z",
+   "state": "post",
+   "detail": "Final",
+   "period": null,
+   "clock": null,
+   "home": "BUF",
+   "away": "DET",
+   "home_score": 41.0,
+   "away_score": 31.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
-   "tv": "NBC",
-   "weather": {
-    "temp": 70.0,
-    "cond": 7,
-    "text": "Cloudy",
-    "indoors": false
-   }
+   "tv": "Prime Video",
+   "weather": null
   },
   {
    "game_id": "401872933",
@@ -4340,45 +4358,22 @@
    "weather": null
   },
   {
-   "game_id": "401872932",
-   "date": "2026-09-18T00:15Z",
+   "game_id": "401872945",
+   "date": "2026-09-21T00:20Z",
    "state": "post",
-   "detail": "Final",
+   "detail": "Final/OT",
    "period": null,
    "clock": null,
-   "home": "BUF",
-   "away": "DET",
-   "home_score": 41.0,
-   "away_score": 31.0,
+   "home": "KC",
+   "away": "IND",
+   "home_score": 33.0,
+   "away_score": 30.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
-   "tv": "Prime Video",
+   "tv": "NBC",
    "weather": null
-  },
-  {
-   "game_id": "401872947",
-   "date": "2026-09-22T00:15Z",
-   "state": "pre",
-   "detail": "9/21 - 8:15 PM EDT",
-   "period": null,
-   "clock": null,
-   "home": "LAR",
-   "away": "NYG",
-   "home_score": 0.0,
-   "away_score": 0.0,
-   "home_implied": 27.25,
-   "away_implied": 20.25,
-   "spread": "LAR -7",
-   "total": 47.5,
-   "tv": "ESPN",
-   "weather": {
-    "temp": 74.0,
-    "cond": 2,
-    "text": "Mostly sunny",
-    "indoors": false
-   }
   }
  ]
 }
