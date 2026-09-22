@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-22T03:36:52+00:00",
+ "fetched": "2026-09-22T09:31:56+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -24,7 +24,7 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 187.21,
+     "projected": 187.09,
      "win_probability": 0.51
     }
    ]
@@ -40,14 +40,14 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 194.46,
+     "projected": 194.23,
      "win_probability": 0.5700000000000001
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 183.82,
+     "projected": 183.32,
      "win_probability": 0.42999999999999994
     }
    ]
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 159.63,
-     "win_probability": 0.49
+     "projected": 153.67,
+     "win_probability": 0.44999999999999996
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
      "projected": 160.95,
-     "win_probability": 0.51
+     "win_probability": 0.55
     }
    ]
   },
@@ -86,7 +86,7 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 154.55,
+     "projected": 154.82,
      "win_probability": 0.33999999999999997
     },
     {
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 163.87,
+     "projected": 163.91,
      "win_probability": 0.62
     }
    ]
@@ -293,20 +293,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "470260",
-    "player": "Waymond Jordan",
-    "pos": "RB",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "337423",
     "player": "Louis Brown IV",
     "pos": "WR",
@@ -359,6 +345,20 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "900082",
+    "player": "SMU",
+    "pos": "DEF",
+    "team": "SMU",
+    "team_full": "SMU Mustangs",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    }
@@ -1267,20 +1267,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468738",
-    "player": "Mason Heintschel",
-    "pos": "QB",
-    "team": "PITT",
-    "team_full": "Pittsburgh Panthers",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "404055",
     "player": "Caleb Komolafe",
     "pos": "RB",
@@ -1309,16 +1295,30 @@
     "stats": {}
    },
    {
-    "yahoo_id": "900028",
-    "player": "Iowa",
-    "pos": "DEF",
-    "team": "IOWA",
-    "team_full": "Iowa Hawkeyes",
-    "bye": 7.0,
+    "yahoo_id": "455922",
+    "player": "Chris Durr Jr.",
+    "pos": "WR",
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "DEF",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "900002",
+    "player": "Duke",
+    "pos": "DEF",
+    "team": "DUKE",
+    "team_full": "Duke Blue Devils",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    }
@@ -2537,18 +2537,18 @@
   "457379": 12.86,
   "469395": 11.11,
   "405245": 9.25,
-  "470260": 9.61,
   "337423": 9.41,
   "333084": 8.06,
   "405873": 20.65,
   "900104": 13.45,
+  "900082": 12.87,
   "406169": 25.49,
   "484035": 16.6,
   "467588": 14.26,
   "468495": 27.84,
   "456020": 22.55,
   "470164": 13.69,
-  "457622": 12.43,
+  "457622": 12.31,
   "482507": 10.08,
   "404876": 15.15,
   "334875": 18.81,
@@ -2562,7 +2562,7 @@
   "404522": 21.56,
   "456169": 14.39,
   "455490": 13.12,
-  "405636": 14.71,
+  "405636": 14.48,
   "405846": 13.93,
   "456968": 12.47,
   "456092": 17.38,
@@ -2576,7 +2576,7 @@
   "900011": 13.73,
   "333785": 31.88,
   "455480": 31.39,
-  "456340": 20.67,
+  "456340": 20.17,
   "463126": 20.85,
   "457676": 11.75,
   "457039": 10.8,
@@ -2600,11 +2600,11 @@
   "457898": 9.2,
   "336811": 10.83,
   "404437": 9.86,
-  "406200": 7.68,
-  "468738": 25.49,
+  "406200": 7.91,
   "404055": 8.48,
   "451329": 8.98,
-  "900028": 5.96,
+  "455922": 15.78,
+  "900002": 14.39,
   "464024": 33.95,
   "403957": 22.52,
   "404007": 13.74,
@@ -2618,7 +2618,7 @@
   "456315": 10.71,
   "470081": 6.52,
   "338689": 32.48,
-  "406381": 5.73,
+  "406381": 5.64,
   "456249": 8.33,
   "900068": 6.02,
   "404544": 31.3,
@@ -2627,7 +2627,7 @@
   "338839": 14.69,
   "457893": 15.29,
   "405075": 8.28,
-  "470531": 11.55,
+  "470531": 11.82,
   "403914": 4.11,
   "471615": 14.6,
   "405205": 8.95,
@@ -2685,6 +2685,6 @@
   "457217": 13.14,
   "404810": 12.62,
   "333810": 24.66,
-  "900073": 8.6
+  "900073": 8.64
  }
 }

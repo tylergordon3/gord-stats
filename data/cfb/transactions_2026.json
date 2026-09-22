@@ -1,5 +1,80 @@
 [
  {
+  "id": 75.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1790063636.0,
+  "faab_bid": 0.0,
+  "players": [
+   {
+    "player": "SMU",
+    "pos": "DEF",
+    "team": "SMU",
+    "type": "add",
+    "source": null,
+    "destination": "Puntaholics"
+   },
+   {
+    "player": "Waymond Jordan",
+    "pos": "RB",
+    "team": "USC",
+    "type": "drop",
+    "source": "Puntaholics",
+    "destination": null
+   }
+  ]
+ },
+ {
+  "id": 74.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1790063636.0,
+  "faab_bid": 5.0,
+  "players": [
+   {
+    "player": "Duke",
+    "pos": "DEF",
+    "team": "DUKE",
+    "type": "add",
+    "source": null,
+    "destination": "Jackson's Brilliant Team"
+   },
+   {
+    "player": "Iowa",
+    "pos": "DEF",
+    "team": "IOWA",
+    "type": "drop",
+    "source": "Jackson's Brilliant Team",
+    "destination": null
+   }
+  ]
+ },
+ {
+  "id": 73.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1790063636.0,
+  "faab_bid": 5.0,
+  "players": [
+   {
+    "player": "Chris Durr Jr.",
+    "pos": "WR",
+    "team": "UMD",
+    "type": "add",
+    "source": null,
+    "destination": "Jackson's Brilliant Team"
+   },
+   {
+    "player": "Mason Heintschel",
+    "pos": "QB",
+    "team": "PITT",
+    "type": "drop",
+    "source": "Jackson's Brilliant Team",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 72.0,
   "type": "add/drop",
   "status": "successful",

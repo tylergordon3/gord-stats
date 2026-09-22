@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-09-21",
+  "fetched_on": "2026-09-22",
   "season": 2026,
   "total_games": 362,
   "schedule": {
@@ -7267,7 +7267,7 @@
           "id": 25071,
           "home": "PHX",
           "away": "DAL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-21"
@@ -7278,7 +7278,7 @@
           "id": 25071,
           "home": "PHX",
           "away": "DAL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-21"
