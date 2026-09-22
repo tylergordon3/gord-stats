@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-21T22:10:56.628517-04:00",
+ "updated": "2026-09-21T22:20:56.792307-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -37703,6 +37703,110 @@
       "Mai Yamamoto",
       "G",
       13.0
+     ]
+    ]
+   }
+  },
+  "401857206": {
+   "date": "2026-09-22",
+   "allowed": {
+    "ATL": {
+     "G": 61.0,
+     "FC": 97.0
+    },
+    "NY": {
+     "G": 97.0,
+     "FC": 75.0
+    }
+   },
+   "players": {
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      14.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      32.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      22.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      38.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      31.0
+     ],
+     [
+      "DeWanna Bonner",
+      "FC",
+      29.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      5.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      1.0
+     ]
+    ],
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      47.0
+     ],
+     [
+      "Leonie Fiebich",
+      "FC",
+      9.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      36.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      19.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      26.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      5.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      6.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      8.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      2.0
      ]
     ]
    }

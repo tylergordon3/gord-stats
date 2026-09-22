@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-22T02:11:00+00:00",
+ "fetched": "2026-09-22T02:21:00+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -276,7 +276,7 @@
     {
      "roster_id": 10,
      "matchup_id": 2,
-     "points": 120.48,
+     "points": 121.48,
      "starters": [
       "8183",
       "8138",
@@ -308,7 +308,7 @@
      ],
      "players_points": {
       "11631": 7.0,
-      "12015": 1.0,
+      "12015": 2.0,
       "12506": 10.4,
       "12529": 13.6,
       "13287": 7.5,
@@ -496,7 +496,7 @@
     {
      "roster_id": 5,
      "matchup_id": 4,
-     "points": 164.7,
+     "points": 181.2,
      "starters": [
       "4881",
       "9226",
@@ -529,16 +529,16 @@
      "players_points": {
       "13320": 3.4,
       "1466": 25.1,
-      "2133": 25.5,
+      "2133": 39.5,
       "3451": 6.0,
-      "421": 15.12,
+      "421": 21.92,
       "4881": 15.8,
       "5967": 7.5,
       "6786": 35.3,
       "6790": 12.9,
       "7553": 2.5,
       "8142": 2.1,
-      "8150": 9.7,
+      "8150": 12.2,
       "8167": 14.1,
       "9226": 12.3,
       "SEA": 8.0
@@ -771,7 +771,7 @@
    "pts": 18.38,
    "opp": "LAR",
    "team": "NYG",
-   "injury": "Questionable",
+   "injury": "Out",
    "name": "Jaxson Dart",
    "pos": "QB"
   },
@@ -3383,6 +3383,19 @@
    "pts_std": 6.3,
    "gp": 1.0
   },
+  "8150": {
+   "rush_att": 5.0,
+   "rush_yd": 30.0,
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 12.0,
+   "rec_td": 1.0,
+   "fum_lost": 1.0,
+   "pts_ppr": 10.2,
+   "pts_half_ppr": 9.2,
+   "pts_std": 8.2,
+   "gp": 1.0
+  },
   "LAR": {
    "pts_allow": 3.0,
    "sack": 1.0,
@@ -3440,19 +3453,6 @@
    "pts_ppr": 9.8,
    "pts_half_ppr": 7.3,
    "pts_std": 4.8,
-   "gp": 1.0
-  },
-  "8150": {
-   "rush_att": 4.0,
-   "rush_yd": 25.0,
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 12.0,
-   "rec_td": 1.0,
-   "fum_lost": 1.0,
-   "pts_ppr": 9.7,
-   "pts_half_ppr": 8.7,
-   "pts_std": 7.7,
    "gp": 1.0
   },
   "8228": {
@@ -3620,6 +3620,17 @@
    "pts_std": 4.5,
    "gp": 1.0
   },
+  "12481": {
+   "rush_att": 9.0,
+   "rush_yd": 24.0,
+   "rec": 3.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 19.0,
+   "pts_ppr": 7.3,
+   "pts_half_ppr": 5.8,
+   "pts_std": 4.3,
+   "gp": 1.0
+  },
   "11620": {
    "rec": 3.0,
    "rec_tgt": 4.0,
@@ -3763,17 +3774,6 @@
    "pts_std": 6.0,
    "gp": 1.0
   },
-  "12481": {
-   "rush_att": 7.0,
-   "rush_yd": 18.0,
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 21.0,
-   "pts_ppr": 5.9,
-   "pts_half_ppr": 4.9,
-   "pts_std": 3.9,
-   "gp": 1.0
-  },
   "12533": {
    "rush_att": 12.0,
    "rush_yd": 43.0,
@@ -3810,6 +3810,15 @@
    "pts_ppr": 5.3,
    "pts_half_ppr": 4.3,
    "pts_std": 3.3,
+   "gp": 1.0
+  },
+  "8131": {
+   "rec": 3.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 22.0,
+   "pts_ppr": 5.2,
+   "pts_half_ppr": 3.7,
+   "pts_std": 2.2,
    "gp": 1.0
   },
   "LAC": {
@@ -3983,15 +3992,6 @@
    "pts_std": 3.0,
    "gp": 1.0
   },
-  "8131": {
-   "rec": 2.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 9.0,
-   "pts_ppr": 2.9,
-   "pts_half_ppr": 1.9,
-   "pts_std": 0.9,
-   "gp": 1.0
-  },
   "11586": {
    "rush_att": 5.0,
    "rush_yd": 27.0,
@@ -4097,7 +4097,7 @@
   },
   "11632": {
    "rec": 1.0,
-   "rec_tgt": 3.0,
+   "rec_tgt": 4.0,
    "rec_yd": 1.0,
    "pts_ppr": 1.1,
    "pts_half_ppr": 0.6,
@@ -4155,12 +4155,12 @@
    "game_id": "401872947",
    "date": "2026-09-22T00:15Z",
    "state": "in",
-   "detail": "9:56 - 3rd",
+   "detail": "5:54 - 3rd",
    "period": null,
    "clock": null,
    "home": "LAR",
    "away": "NYG",
-   "home_score": 14.0,
+   "home_score": 21.0,
    "away_score": 3.0,
    "home_implied": null,
    "away_implied": null,
@@ -4168,9 +4168,9 @@
    "total": null,
    "tv": "ESPN",
    "weather": {
-    "temp": 71.0,
-    "cond": 1,
-    "text": "Sunny",
+    "temp": 72.0,
+    "cond": 33,
+    "text": "Clear",
     "indoors": false
    }
   },
