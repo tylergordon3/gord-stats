@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-21T15:31:59+00:00",
+ "fetched": "2026-09-22T03:36:52+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -17,14 +17,14 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 186.11,
+     "projected": 186.13,
      "win_probability": 0.49
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 187.16,
+     "projected": 187.21,
      "win_probability": 0.51
     }
    ]
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 197.46,
-     "win_probability": 0.58
+     "projected": 194.46,
+     "win_probability": 0.5700000000000001
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 183.84,
-     "win_probability": 0.42000000000000004
+     "projected": 183.82,
+     "win_probability": 0.42999999999999994
     }
    ]
   },
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 138.94,
-     "win_probability": 0.33999999999999997
+     "projected": 159.63,
+     "win_probability": 0.49
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
      "projected": 160.95,
-     "win_probability": 0.66
+     "win_probability": 0.51
     }
    ]
   },
@@ -109,14 +109,14 @@
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 147.07,
+     "projected": 147.03,
      "win_probability": 0.38
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 163.91,
+     "projected": 163.87,
      "win_probability": 0.62
     }
    ]
@@ -201,9 +201,9 @@
     "team": "MIA",
     "team_full": "Miami (FL) Hurricanes",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Undisclosed",
     "slot": "WR",
     "points": 0.0,
     "stats": {}
@@ -483,8 +483,8 @@
     "team": "MIA",
     "team_full": "Miami (FL) Hurricanes",
     "bye": 6.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Upper Body",
     "slot": "W/R/T",
     "points": 0.0,
@@ -553,9 +553,9 @@
     "team": "TTU",
     "team_full": "Texas Tech Red Raiders",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Foot",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -1113,12 +1113,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404291",
-    "player": "LJ Martin",
+    "yahoo_id": "340537",
+    "player": "Cam Edwards",
     "pos": "RB",
-    "team": "BYU",
-    "team_full": "BYU Cougars",
-    "bye": 4.0,
+    "team": "MSU",
+    "team_full": "Michigan State Spartans",
+    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1127,12 +1127,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "340537",
-    "player": "Cam Edwards",
+    "yahoo_id": "457591",
+    "player": "Jordan Marshall",
     "pos": "RB",
-    "team": "MSU",
-    "team_full": "Michigan State Spartans",
-    "bye": 9.0,
+    "team": "MICH",
+    "team_full": "Michigan Wolverines",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1197,12 +1197,26 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457591",
-    "player": "Jordan Marshall",
+    "yahoo_id": "336811",
+    "player": "Isaiah Sategna III",
+    "pos": "WR",
+    "team": "OU",
+    "team_full": "Oklahoma Sooners",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "404437",
+    "player": "Joe Jackson",
     "pos": "RB",
-    "team": "MICH",
-    "team_full": "Michigan Wolverines",
-    "bye": 6.0,
+    "team": "KSU",
+    "team_full": "Kansas State Wildcats",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1220,7 +1234,21 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "W/R/T",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "404291",
+    "player": "LJ Martin",
+    "pos": "RB",
+    "team": "BYU",
+    "team_full": "BYU Cougars",
+    "bye": 4.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1259,34 +1287,6 @@
     "team": "NW",
     "team_full": "Northwestern Wildcats",
     "bye": 2.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "336811",
-    "player": "Isaiah Sategna III",
-    "pos": "WR",
-    "team": "OU",
-    "team_full": "Oklahoma Sooners",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "404437",
-    "player": "Joe Jackson",
-    "pos": "RB",
-    "team": "KSU",
-    "team_full": "Kansas State Wildcats",
-    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1599,9 +1599,9 @@
     "team": "TENN",
     "team_full": "Tennessee Volunteers",
     "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Undisclosed",
     "slot": "RB",
     "points": 0.0,
     "stats": {}
@@ -2149,8 +2149,8 @@
     "team": "ORE",
     "team_full": "Oregon Ducks",
     "bye": 5.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "TE",
     "points": 0.0,
@@ -2541,7 +2541,7 @@
   "337423": 9.41,
   "333084": 8.06,
   "405873": 20.65,
-  "900104": 13.43,
+  "900104": 13.45,
   "406169": 25.49,
   "484035": 16.6,
   "467588": 14.26,
@@ -2556,7 +2556,7 @@
   "334780": 5.13,
   "338965": 9.91,
   "463244": 0.0,
-  "900083": 10.26,
+  "900083": 10.31,
   "470211": 28.37,
   "334043": 24.81,
   "404522": 21.56,
@@ -2573,7 +2573,7 @@
   "471560": 18.07,
   "335616": 7.39,
   "456077": 5.91,
-  "900011": 16.73,
+  "900011": 13.73,
   "333785": 31.88,
   "455480": 31.39,
   "456340": 20.67,
@@ -2589,20 +2589,20 @@
   "470091": 12.12,
   "456218": 4.67,
   "456178": 8.82,
-  "900086": 14.39,
+  "900086": 14.37,
   "404164": 28.6,
   "404635": 20.82,
   "340537": 15.15,
+  "457591": 12.62,
   "333783": 15.46,
   "337939": 15.99,
   "403842": 15.14,
   "457898": 9.2,
-  "457591": 12.62,
+  "336811": 10.83,
+  "404437": 9.86,
   "406200": 7.68,
   "468738": 25.49,
   "404055": 8.48,
-  "336811": 10.83,
-  "404437": 9.86,
   "451329": 8.98,
   "900028": 5.96,
   "464024": 33.95,
@@ -2670,7 +2670,7 @@
   "456603": 10.09,
   "336586": 0.0,
   "404559": 12.89,
-  "900027": 8.66,
+  "900027": 8.62,
   "455500": 26.27,
   "404287": 28.43,
   "469636": 14.78,
@@ -2685,6 +2685,6 @@
   "457217": 13.14,
   "404810": 12.62,
   "333810": 24.66,
-  "900073": 8.64
+  "900073": 8.6
  }
 }
