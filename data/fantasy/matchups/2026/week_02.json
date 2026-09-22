@@ -1,7 +1,7 @@
 {
  "week": 2,
  "year": 2026,
- "fetched": "2026-09-22T02:31:00+00:00",
+ "fetched": "2026-09-22T02:41:00+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -416,7 +416,7 @@
       "DEN"
      ],
      "players_points": {
-      "11586": 3.4,
+      "11586": 4.7,
       "11632": 1.1,
       "11635": 6.5,
       "12512": 9.8,
@@ -531,7 +531,7 @@
       "1466": 25.1,
       "2133": 39.5,
       "3451": 6.0,
-      "421": 22.4,
+      "421": 22.6,
       "4881": 15.8,
       "5967": 7.5,
       "6786": 35.3,
@@ -2899,6 +2899,17 @@
    "pts_std": 17.3,
    "gp": 1.0
   },
+  "421": {
+   "pass_yd": 285.0,
+   "pass_td": 3.0,
+   "pass_int": 1.0,
+   "rush_att": 1.0,
+   "rush_yd": 2.0,
+   "pts_ppr": 22.6,
+   "pts_half_ppr": 22.6,
+   "pts_std": 22.6,
+   "gp": 1.0
+  },
   "8144": {
    "rec": 8.0,
    "rec_tgt": 10.0,
@@ -2929,15 +2940,6 @@
    "pts_ppr": 22.5,
    "pts_half_ppr": 19.0,
    "pts_std": 15.5,
-   "gp": 1.0
-  },
-  "421": {
-   "pass_yd": 273.0,
-   "pass_td": 3.0,
-   "pass_int": 1.0,
-   "pts_ppr": 21.92,
-   "pts_half_ppr": 21.92,
-   "pts_std": 21.92,
    "gp": 1.0
   },
   "7526": {
@@ -3842,6 +3844,14 @@
    "pts_std": 4.0,
    "gp": 1.0
   },
+  "11586": {
+   "rush_att": 8.0,
+   "rush_yd": 47.0,
+   "pts_ppr": 4.7,
+   "pts_half_ppr": 4.7,
+   "pts_std": 4.7,
+   "gp": 1.0
+  },
   "7567": {
    "rush_att": 2.0,
    "rush_yd": 10.0,
@@ -3990,14 +4000,6 @@
    "pts_ppr": 3.0,
    "pts_half_ppr": 3.0,
    "pts_std": 3.0,
-   "gp": 1.0
-  },
-  "11586": {
-   "rush_att": 5.0,
-   "rush_yd": 27.0,
-   "pts_ppr": 2.7,
-   "pts_half_ppr": 2.7,
-   "pts_std": 2.7,
    "gp": 1.0
   },
   "7553": {
@@ -4155,7 +4157,7 @@
    "game_id": "401872947",
    "date": "2026-09-22T00:15Z",
    "state": "in",
-   "detail": "0:50 - 3rd",
+   "detail": "14:33 - 4th",
    "period": null,
    "clock": null,
    "home": "LAR",
@@ -4168,9 +4170,9 @@
    "total": null,
    "tv": "ESPN",
    "weather": {
-    "temp": 72.0,
-    "cond": 33,
-    "text": "Clear",
+    "temp": 70.0,
+    "cond": 35,
+    "text": "Partly cloudy",
     "indoors": false
    }
   },
