@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-22T23:37:58.614912-04:00",
+ "updated": "2026-09-23T05:41:59.114053-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -38288,6 +38288,239 @@
       "Morgan Maly",
       "G",
       19.0
+     ]
+    ]
+   }
+  },
+  "401857211": {
+   "date": "2026-09-23",
+   "allowed": {
+    "LA": {
+     "G": 92.0,
+     "FC": 82.0
+    },
+    "LV": {
+     "G": 107.0,
+     "FC": 47.0
+    }
+   },
+   "players": {
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      33.0
+     ],
+     [
+      "Emma Cannon",
+      "FC",
+      2.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      29.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      17.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      14.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      12.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      23.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      4.0
+     ],
+     [
+      "Ndjakalenga Mwenentanda",
+      "G",
+      9.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      11.0
+     ]
+    ],
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      25.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      9.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      35.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      28.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      31.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      13.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      14.0
+     ],
+     [
+      "Dana Evans",
+      "G",
+      7.0
+     ],
+     [
+      "Ta'Niya Latson",
+      "G",
+      3.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      9.0
+     ]
+    ]
+   }
+  },
+  "401857212": {
+   "date": "2026-09-23",
+   "allowed": {
+    "GS": {
+     "G": 77.0,
+     "FC": 100.0
+    },
+    "POR": {
+     "G": 67.0,
+     "FC": 105.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      23.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      30.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      16.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      12.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      36.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      5.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      19.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      16.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      14.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      1.0
+     ]
+    ],
+    "POR": [
+     [
+      "Bridget Carleton",
+      "FC",
+      39.0
+     ],
+     [
+      "Emily Engstler",
+      "FC",
+      27.0
+     ],
+     [
+      "Megan DiLeo",
+      "FC",
+      28.0
+     ],
+     [
+      "Karlie Samuelson",
+      "G",
+      7.0
+     ],
+     [
+      "Carla Leite",
+      "G",
+      28.0
+     ],
+     [
+      "Frieda Buhner",
+      "FC",
+      5.0
+     ],
+     [
+      "Serah Williams",
+      "FC",
+      1.0
+     ],
+     [
+      "Charisma Osborne",
+      "G",
+      22.0
+     ],
+     [
+      "Jordan Harrison",
+      "G",
+      20.0
      ]
     ]
    }

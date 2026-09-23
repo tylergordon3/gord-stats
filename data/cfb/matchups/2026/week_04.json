@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-23T03:39:06+00:00",
+ "fetched": "2026-09-23T09:43:02+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 0.0,
      "projected": 188.25,
-     "win_probability": 0.51
+     "win_probability": 0.61
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 186.47,
-     "win_probability": 0.49
+     "projected": 169.81,
+     "win_probability": 0.39
     }
    ]
   },
@@ -63,7 +63,7 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 173.0,
+     "projected": 172.86,
      "win_probability": 0.58
     },
     {
@@ -379,20 +379,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "484035",
-    "player": "Faizon Brandon",
-    "pos": "QB",
-    "team": "TENN",
-    "team_full": "Tennessee Volunteers",
-    "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "QB",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "468495",
     "player": "Nate Sheppard",
     "pos": "RB",
@@ -570,6 +556,34 @@
     "status": "Q",
     "status_full": "Questionable",
     "injury_note": "Leg",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457283",
+    "player": "Michael Hawkins Jr.",
+    "pos": "QB",
+    "team": "WVU",
+    "team_full": "West Virginia Mountaineers",
+    "bye": 9.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "336276",
+    "player": "Justin Bowick",
+    "pos": "WR",
+    "team": "OKST",
+    "team_full": "Oklahoma State Cowboys",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -1775,11 +1789,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "334139",
-    "player": "Kaleb Webb",
-    "pos": "WR",
-    "team": "UMD",
-    "team_full": "Maryland Terrapins",
+    "yahoo_id": "407183",
+    "player": "Anthony Colandrea",
+    "pos": "QB",
+    "team": "NEB",
+    "team_full": "Nebraska Cornhuskers",
     "bye": 8.0,
     "status": "",
     "status_full": "",
@@ -2541,12 +2555,11 @@
   "333084": 8.08,
   "405873": 20.96,
   "900082": 12.95,
-  "900104": 13.51,
+  "900104": 13.54,
   "406169": 25.2,
-  "484035": 16.56,
   "468495": 27.79,
   "334875": 18.95,
-  "456020": 22.54,
+  "456020": 22.44,
   "470164": 13.66,
   "457622": 12.23,
   "482507": 10.1,
@@ -2555,6 +2568,8 @@
   "334780": 5.06,
   "338965": 9.85,
   "463244": 0.0,
+  "457283": 28.02,
+  "336276": 15.6,
   "482179": 0.0,
   "900083": 10.3,
   "470211": 28.15,
@@ -2596,7 +2611,7 @@
   "457591": 12.41,
   "333783": 16.32,
   "337939": 16.19,
-  "403842": 15.14,
+  "403842": 15.0,
   "457898": 9.14,
   "455922": 15.9,
   "336811": 10.86,
@@ -2635,7 +2650,7 @@
   "338757": 19.39,
   "458035": 7.32,
   "333373": 1.93,
-  "334139": 9.03,
+  "407183": 26.64,
   "900033": 7.37,
   "337760": 24.36,
   "469212": 26.49,

@@ -208,8 +208,8 @@
    "name": "CCAM State",
    "manager": "",
    "logo": "https://yahoofantasysports-res.cloudinary.com/image/upload/t_s192sq/fantasy-logos/77ceeb50018b0af9762d4b6b97560c016818f1358eb292fd2a86a55923bc4f91.png",
-   "faab": 94.0,
-   "moves": 4.0,
+   "faab": 80.0,
+   "moves": 6.0,
    "trades": 0.0,
    "rank": 1.0,
    "wins": 6.0,
@@ -219,21 +219,6 @@
    "points_against": 501.9
   },
   {
-   "team_key": "474.l.21318.t.6",
-   "name": "Max's Majestic Team",
-   "manager": "",
-   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-unicorn-png_1721174459352.png",
-   "faab": 100.0,
-   "moves": 0.0,
-   "trades": 0.0,
-   "rank": 2.0,
-   "wins": 5.0,
-   "losses": 1.0,
-   "ties": 0.0,
-   "points_for": 540.46,
-   "points_against": 466.2199999999999
-  },
-  {
    "team_key": "474.l.21318.t.1",
    "name": "Puntaholics",
    "manager": "",
@@ -241,12 +226,27 @@
    "faab": 87.0,
    "moves": 8.0,
    "trades": 0.0,
+   "rank": 2.0,
+   "wins": 4.0,
+   "losses": 2.0,
+   "ties": 0.0,
+   "points_for": 598.62,
+   "points_against": 545.7
+  },
+  {
+   "team_key": "474.l.21318.t.6",
+   "name": "Max's Majestic Team",
+   "manager": "",
+   "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-unicorn-png_1721174459352.png",
+   "faab": 100.0,
+   "moves": 0.0,
+   "trades": 0.0,
    "rank": 3.0,
    "wins": 4.0,
    "losses": 2.0,
    "ties": 0.0,
-   "points_for": 598.52,
-   "points_against": 545.7
+   "points_for": 540.46,
+   "points_against": 467.7199999999999
   },
   {
    "team_key": "474.l.21318.t.3",
@@ -261,7 +261,7 @@
    "losses": 2.0,
    "ties": 0.0,
    "points_for": 537.5,
-   "points_against": 506.6
+   "points_against": 506.70000000000005
   },
   {
    "team_key": "474.l.21318.t.2",
@@ -290,8 +290,8 @@
    "wins": 3.0,
    "losses": 3.0,
    "ties": 0.0,
-   "points_for": 529.88,
-   "points_against": 611.06
+   "points_for": 529.92,
+   "points_against": 612.06
   },
   {
    "team_key": "474.l.21318.t.8",
@@ -302,11 +302,11 @@
    "moves": 1.0,
    "trades": 0.0,
    "rank": 7.0,
-   "wins": 2.0,
-   "losses": 4.0,
+   "wins": 3.0,
+   "losses": 3.0,
    "ties": 0.0,
-   "points_for": 516.42,
-   "points_against": 534.28
+   "points_for": 517.42,
+   "points_against": 534.3199999999999
   },
   {
    "team_key": "474.l.21318.t.10",
@@ -328,14 +328,14 @@
    "name": "Austin's Best Team",
    "manager": "",
    "logo": "https://s.yimg.com/ep/cx/blendr/v2/image-gold-y-trophy-png_1721174646089.png",
-   "faab": 100.0,
-   "moves": 0.0,
+   "faab": 98.0,
+   "moves": 1.0,
    "trades": 0.0,
    "rank": 9.0,
    "wins": 1.0,
    "losses": 5.0,
    "ties": 0.0,
-   "points_for": 498.22,
+   "points_for": 499.72,
    "points_against": 520.06
   },
   {

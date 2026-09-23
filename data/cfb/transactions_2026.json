@@ -1,5 +1,72 @@
 [
  {
+  "id": 79.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1790150024.0,
+  "faab_bid": 2.0,
+  "players": [
+   {
+    "player": "Anthony Colandrea",
+    "pos": "QB",
+    "team": "NEB",
+    "type": "add",
+    "source": null,
+    "destination": "Austin's Best Team"
+   },
+   {
+    "player": "Kaleb Webb",
+    "pos": "WR",
+    "team": "UMD",
+    "type": "drop",
+    "source": "Austin's Best Team",
+    "destination": null
+   }
+  ]
+ },
+ {
+  "id": 78.0,
+  "type": "add",
+  "status": "successful",
+  "timestamp": 1790150024.0,
+  "faab_bid": 4.0,
+  "players": [
+   {
+    "player": "Justin Bowick",
+    "pos": "WR",
+    "team": "OKST",
+    "type": "add",
+    "source": null,
+    "destination": "CCAM State"
+   }
+  ]
+ },
+ {
+  "id": 77.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1790150024.0,
+  "faab_bid": 10.0,
+  "players": [
+   {
+    "player": "Michael Hawkins Jr.",
+    "pos": "QB",
+    "team": "WVU",
+    "type": "add",
+    "source": null,
+    "destination": "CCAM State"
+   },
+   {
+    "player": "Faizon Brandon",
+    "pos": "QB",
+    "team": "TENN",
+    "type": "drop",
+    "source": "CCAM State",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 75.0,
   "type": "add/drop",
   "status": "successful",
