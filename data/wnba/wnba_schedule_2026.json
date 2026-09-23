@@ -7291,7 +7291,7 @@
           "id": 25072,
           "home": "WSH",
           "away": "CON",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7302,7 +7302,7 @@
           "id": 25072,
           "home": "WSH",
           "away": "CON",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7313,7 +7313,7 @@
           "id": 25073,
           "home": "IND",
           "away": "MIN",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7324,7 +7324,7 @@
           "id": 25073,
           "home": "IND",
           "away": "MIN",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7335,7 +7335,7 @@
           "id": 25074,
           "home": "CHI",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7346,7 +7346,7 @@
           "id": 25074,
           "home": "CHI",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7357,7 +7357,7 @@
           "id": 25075,
           "home": "LV",
           "away": "LA",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7368,7 +7368,7 @@
           "id": 25075,
           "home": "LV",
           "away": "LA",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7379,7 +7379,7 @@
           "id": 25076,
           "home": "POR",
           "away": "GS",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"
@@ -7390,7 +7390,7 @@
           "id": 25076,
           "home": "POR",
           "away": "GS",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-22"

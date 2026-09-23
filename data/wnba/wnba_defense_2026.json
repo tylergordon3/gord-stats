@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-22T21:20:57.774237-04:00",
+ "updated": "2026-09-22T22:30:58.425960-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -37926,6 +37926,368 @@
       "Kara Dunn",
       "G",
       18.0
+     ]
+    ]
+   }
+  },
+  "401857208": {
+   "date": "2026-09-22",
+   "allowed": {
+    "CON": {
+     "G": 65.0,
+     "FC": 89.0
+    },
+    "WSH": {
+     "G": 56.0,
+     "FC": 100.0
+    }
+   },
+   "players": {
+    "CON": [
+     [
+      "Aaliyah Edwards",
+      "FC",
+      24.0
+     ],
+     [
+      "Diamond Miller",
+      "FC",
+      38.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      17.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      21.0
+     ],
+     [
+      "Leila Lacan",
+      "G",
+      19.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      11.0
+     ],
+     [
+      "Rayah Marshall",
+      "FC",
+      10.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      10.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      6.0
+     ]
+    ],
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      8.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      10.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      47.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      24.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      13.0
+     ],
+     [
+      "Angela Dugalic",
+      "FC",
+      0.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      24.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      6.0
+     ],
+     [
+      "Rori Harmon",
+      "G",
+      0.0
+     ],
+     [
+      "Lucy Olsen",
+      "G",
+      0.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      20.0
+     ],
+     [
+      "Cassandre Prosper",
+      "G",
+      0.0
+     ],
+     [
+      "Alicia Florez",
+      "G",
+      2.0
+     ]
+    ]
+   }
+  },
+  "401857209": {
+   "date": "2026-09-23",
+   "allowed": {
+    "MIN": {
+     "G": 127.0,
+     "FC": 72.0
+    },
+    "IND": {
+     "G": 39.0,
+     "FC": 118.0
+    }
+   },
+   "players": {
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      14.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      14.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      2.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      5.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      12.0
+     ],
+     [
+      "Nia Brodie",
+      "FC",
+      7.0
+     ],
+     [
+      "Chloe Bibby",
+      "FC",
+      23.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      26.0
+     ],
+     [
+      "Liatu King",
+      "FC",
+      24.0
+     ],
+     [
+      "Antonia Delaere",
+      "FC",
+      10.0
+     ],
+     [
+      "Aari McDonald",
+      "G",
+      20.0
+     ]
+    ],
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      15.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      32.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      29.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      7.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      54.0
+     ],
+     [
+      "Myisha Hines-Allen",
+      "FC",
+      10.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      15.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      18.0
+     ],
+     [
+      "Tyasha Harris",
+      "G",
+      13.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      6.0
+     ]
+    ]
+   }
+  },
+  "401857210": {
+   "date": "2026-09-23",
+   "allowed": {
+    "TOR": {
+     "G": 135.0,
+     "FC": 58.0
+    },
+    "CHI": {
+     "G": 84.0,
+     "FC": 101.0
+    }
+   },
+   "players": {
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      39.0
+     ],
+     [
+      "Maria Conde",
+      "FC",
+      10.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      40.0
+     ],
+     [
+      "Julie Allemand",
+      "G",
+      15.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      26.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      12.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      21.0
+     ],
+     [
+      "Zaay Green",
+      "G",
+      6.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      16.0
+     ]
+    ],
+    "CHI": [
+     [
+      "Elizabeth Williams",
+      "FC",
+      26.0
+     ],
+     [
+      "Kamilla Cardoso",
+      "FC",
+      32.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      23.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      35.0
+     ],
+     [
+      "Gabriela Jaquez",
+      "G",
+      27.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      5.0
+     ],
+     [
+      "Kate Martin",
+      "G",
+      7.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      19.0
+     ],
+     [
+      "Morgan Maly",
+      "G",
+      19.0
      ]
     ]
    }
