@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-22T21:32:55+00:00",
+ "fetched": "2026-09-23T03:39:06+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 185.81,
-     "win_probability": 0.5
+     "projected": 188.25,
+     "win_probability": 0.51
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
      "projected": 186.47,
-     "win_probability": 0.5
+     "win_probability": 0.49
     }
    ]
   },
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 194.05,
-     "win_probability": 0.5700000000000001
+     "projected": 197.62,
+     "win_probability": 0.59
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
      "projected": 183.41,
-     "win_probability": 0.42999999999999994
+     "win_probability": 0.41000000000000003
     }
    ]
   },
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 174.43,
-     "win_probability": 0.59
+     "projected": 173.0,
+     "win_probability": 0.58
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
      "projected": 161.77,
-     "win_probability": 0.41000000000000003
+     "win_probability": 0.42000000000000004
     }
    ]
   },
@@ -393,12 +393,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "467588",
-    "player": "King Miller",
+    "yahoo_id": "468495",
+    "player": "Nate Sheppard",
     "pos": "RB",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
+    "team": "DUKE",
+    "team_full": "Duke Blue Devils",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -407,11 +407,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468495",
-    "player": "Nate Sheppard",
+    "yahoo_id": "334875",
+    "player": "Wayne Knight",
     "pos": "RB",
-    "team": "DUKE",
-    "team_full": "Duke Blue Devils",
+    "team": "UCLA",
+    "team_full": "UCLA Bruins",
     "bye": 5.0,
     "status": "",
     "status_full": "",
@@ -477,6 +477,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "467588",
+    "player": "King Miller",
+    "pos": "RB",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "404876",
     "player": "Mark Fletcher Jr.",
     "pos": "RB",
@@ -486,20 +500,6 @@
     "status": "P",
     "status_full": "Probable",
     "injury_note": "Upper Body",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "334875",
-    "player": "Wayne Knight",
-    "pos": "RB",
-    "team": "UCLA",
-    "team_full": "UCLA Bruins",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
     "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
@@ -528,20 +528,6 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "482179",
-    "player": "Trent Mosley",
-    "pos": "WR",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
-    "status": "O",
-    "status_full": "Out",
-    "injury_note": "Knee",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -585,6 +571,20 @@
     "status_full": "Questionable",
     "injury_note": "Leg",
     "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "482179",
+    "player": "Trent Mosley",
+    "pos": "WR",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
+    "status": "O",
+    "status_full": "Out",
+    "injury_note": "Knee",
+    "slot": "IL",
     "points": 0.0,
     "stats": {}
    },
@@ -647,12 +647,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "456169",
-    "player": "Isaac Brown",
+    "yahoo_id": "457825",
+    "player": "J'Koby Williams",
     "pos": "RB",
-    "team": "LOU",
-    "team_full": "Louisville Cardinals",
-    "bye": 8.0,
+    "team": "TTU",
+    "team_full": "Texas Tech Red Raiders",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -731,16 +731,30 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457825",
-    "player": "J'Koby Williams",
+    "yahoo_id": "471560",
+    "player": "Ousmane Kromah",
     "pos": "RB",
-    "team": "TTU",
-    "team_full": "Texas Tech Red Raiders",
-    "bye": 6.0,
+    "team": "FSU",
+    "team_full": "Florida State Seminoles",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "456169",
+    "player": "Isaac Brown",
+    "pos": "RB",
+    "team": "LOU",
+    "team_full": "Louisville Cardinals",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -779,20 +793,6 @@
     "team": "TAMU",
     "team_full": "Texas A&M Aggies",
     "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "471560",
-    "player": "Ousmane Kromah",
-    "pos": "RB",
-    "team": "FSU",
-    "team_full": "Florida State Seminoles",
-    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1485,8 +1485,8 @@
     "team": "OKST",
     "team_full": "Oklahoma State Cowboys",
     "bye": 5.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
@@ -2525,7 +2525,7 @@
   ]
  },
  "yahoo_proj": {
-  "333497": 24.46,
+  "333497": 26.9,
   "471748": 27.43,
   "468744": 17.73,
   "404466": 13.69,
@@ -2544,33 +2544,33 @@
   "900104": 13.51,
   "406169": 25.2,
   "484035": 16.56,
-  "467588": 14.18,
   "468495": 27.79,
+  "334875": 18.95,
   "456020": 22.54,
   "470164": 13.66,
   "457622": 12.23,
   "482507": 10.1,
+  "467588": 14.18,
   "404876": 14.96,
-  "334875": 18.95,
-  "482179": 0.0,
   "334780": 5.06,
   "338965": 9.85,
   "463244": 0.0,
+  "482179": 0.0,
   "900083": 10.3,
   "470211": 28.15,
   "334043": 24.68,
   "404522": 21.3,
-  "456169": 14.42,
+  "457825": 19.63,
   "455490": 13.28,
   "405636": 14.42,
   "405846": 14.03,
   "456968": 12.6,
   "456092": 17.76,
-  "457825": 19.63,
+  "471560": 17.99,
+  "456169": 14.42,
   "457315": 0.0,
   "405442": 10.96,
   "405249": 25.2,
-  "471560": 17.99,
   "335616": 7.34,
   "456077": 5.91,
   "900011": 13.78,
@@ -2592,7 +2592,7 @@
   "900086": 14.41,
   "404164": 28.32,
   "404635": 20.88,
-  "340537": 14.97,
+  "340537": 13.54,
   "457591": 12.41,
   "333783": 16.32,
   "337939": 16.19,
@@ -2681,7 +2681,7 @@
   "457240": 13.7,
   "457872": 17.4,
   "474632": 6.97,
-  "456220": 12.26,
+  "456220": 14.3,
   "457217": 13.27,
   "404810": 12.71,
   "333810": 24.48,
