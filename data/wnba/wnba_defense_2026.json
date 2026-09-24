@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-23T21:40:56.811165-04:00",
+ "updated": "2026-09-23T22:40:56.987883-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -38521,6 +38521,145 @@
       "Jordan Harrison",
       "G",
       20.0
+     ]
+    ]
+   }
+  },
+  "401857213": {
+   "date": "2026-09-24",
+   "allowed": {
+    "ATL": {
+     "G": 71.0,
+     "FC": 70.0
+    },
+    "NY": {
+     "G": 105.0,
+     "FC": 74.0
+    }
+   },
+   "players": {
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      26.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      21.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      45.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      23.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      22.0
+     ],
+     [
+      "DeWanna Bonner",
+      "FC",
+      23.0
+     ],
+     [
+      "Sika Kone",
+      "FC",
+      0.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      4.0
+     ],
+     [
+      "Shatori Walker-Kimbrough",
+      "G",
+      1.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      2.0
+     ],
+     [
+      "Indya Nivar",
+      "G",
+      0.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      12.0
+     ]
+    ],
+    "NY": [
+     [
+      "Leonie Fiebich",
+      "FC",
+      4.0
+     ],
+     [
+      "Raquel Carrera",
+      "FC",
+      21.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      28.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      15.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      9.0
+     ],
+     [
+      "Anneli Maley",
+      "FC",
+      2.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      15.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      6.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      15.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      5.0
+     ],
+     [
+      "Madison Scott",
+      "G",
+      0.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      21.0
      ]
     ]
    }
