@@ -33,6 +33,7 @@ import json
 import time
 from datetime import datetime
 from html import escape
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 import requests
@@ -53,6 +54,7 @@ HISTORY_DIR = DATA_DIR / "power_history" / str(SEASON)
 _HEADERS = {}
 _TIMEOUT = 25
 MAX_AGE_HOURS = 12
+ET = ZoneInfo("America/New_York")
 
 _CSS = """<style>
 /* Separate borders, not collapsed: a collapsed border belongs to the grid,
@@ -93,6 +95,8 @@ table.cfb-power.view-odds td:not(.v-odds),table.cfb-power.view-odds th:not(.v-od
   display:none}
 /* The record rides in the Team cell, quiet beside the name. */
 table.cfb-power td.pwr-team .pwr-rec{font-weight:400;font-size:12px;color:#64748b;margin-left:7px}
+p.power-stamp{font-size:12px;color:#64748b;text-transform:uppercase;
+  letter-spacing:.04em;margin:0 0 10px}
 table.cfb-power th.sortable{cursor:pointer;user-select:none}
 table.cfb-power th.sortable:hover{color:#0f172a}
 /* The caret is always drawn, faint until the column is the one sorting, so a
@@ -146,6 +150,7 @@ table.cfb-power th:first-child{left:0;z-index:3}
   table.cfb-power td{padding:5px 7px}
 }
 @media (prefers-color-scheme: dark){
+  p.power-stamp{color:#aab7c9}
   table.cfb-power th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.cfb-power th.sortable:hover{color:#fff}
   table.cfb-power th.sorted{background:#2f4a7a;color:#fff}
@@ -176,15 +181,15 @@ var head=table.tHead.rows[0], body=table.tBodies[0];
 var rows=Array.prototype.slice.call(body.rows);
 
 // --- the Move column ------------------------------------------------------------
-// Move follows the column the table is sorted by: places climbed in the FPI
-// rank until the reader sorts by Playoff%, SOS, AP or anything else archived,
+// Move follows the column the table is sorted by: places climbed in the
+// GordStats rank until the reader sorts by FPI, Playoff%, SOS or anything else,
 // and then that figure's change. Every window's figure for every tracked
 // column is in DELTA, as one array per (window, column) in rank order - the
 // order `rows` never leaves.
 var data=document.getElementById('pwr-deltas');
-var DELTA={},KIND={},WHEN={},CHG={},DEFAULT='rank';
+var DELTA={},KIND={},WHEN={},CHG={},DEFAULT='gs_rank';
 if(data){try{var d=JSON.parse(data.textContent);DELTA=d.deltas;KIND=d.kinds;WHEN=d.when;CHG=d.chg;}catch(e){}}
-var moveTh=head.querySelector('th.mv-th'), fpiTh=head.querySelector('th.sortable[data-field=rank]');
+var moveTh=head.querySelector('th.mv-th'), baseTh=head.querySelector('th.sortable[data-field=gs_rank]');
 var moveI=moveTh?Array.prototype.indexOf.call(head.cells,moveTh):-1;
 var win=null, field=DEFAULT;
 var first=document.querySelector('.win-btn.active');
@@ -307,10 +312,11 @@ Array.prototype.forEach.call(TABS,function(btn){
     table.className='cfb-power view-'+view;
     Array.prototype.forEach.call(TABS,function(b){b.classList.toggle('active',b===btn);});
     // A sort running on a column this tab doesn't show would leave the table in
-    // an order with nothing on screen to explain it, so it falls back to FPI
-    // order - the live column then being one this tab hides, nothing is tinted.
+    // an order with nothing on screen to explain it, so it falls back to the
+    // GordStats order the page opens in - the live column then being one this
+    // tab hides, nothing is tinted.
     var live=head.querySelector('th.sorted');
-    if(live&&!live.classList.contains('v-'+view)&&fpiTh) sortBy(fpiTh,fpiTh.dataset.dir);
+    if(live&&!live.classList.contains('v-'+view)&&baseTh) sortBy(baseTh,baseTh.dataset.dir);
   });
 });
 })();
@@ -510,8 +516,8 @@ def _th(views, label, tip, direction, first=False, team=False, tips=None,
         attrs += f" data-dir='{direction}'"
     if field:
         attrs += f" data-field='{field}'"
-    # The table arrives in FPI order, so FPI opens as the live column, in
-    # its own direction.
+    # The table is written in GordStats order, so that column opens as the
+    # live one, in its own direction.
     if first:
         cls += f" sorted {direction}"
         attrs += f" data-now='{direction}' aria-sort='{'ascending' if direction == 'asc' else 'descending'}'"
@@ -626,7 +632,7 @@ def body() -> str:
     data = fpi()
     teams = _rows(data)
     season = (data.get("requestedSeason") or {}).get("year") or SEASON
-    stamp = datetime.fromtimestamp(_cache_path().stat().st_mtime).strftime("%b %-d")
+    stamp = datetime.now(ET).strftime("%b %-d, %-I:%M %p ET")
 
     ap_ranks, ap_season, ap_label = ap_poll()
     show_ap = bool(ap_ranks) and ap_season == season
@@ -646,6 +652,16 @@ def body() -> str:
         t["sp"] = entry.get("rating")
         t["sp_rank"] = entry.get("rank")
         t["elo"] = elo.get(t["id"])
+
+    # Our own order is the one the page opens in: this is the site's ranking,
+    # and FPI is the column beside it. `rank` stays ESPN's - it is what the FPI
+    # cell prints, what the top-25 highlight marks and what the archive stores;
+    # only the order the rows are written in changes. Everything positional
+    # downstream (the deltas, the opening change cells, the script's DELTA
+    # arrays) is built from `teams` after this sort, so they stay in step.
+    # A team we have no rating for sinks to the bottom rather than to rank 0.
+    teams.sort(key=lambda t: (t["gs_rank"] is None, t["gs_rank"] or 0))
+    order = {t["id"]: i for i, t in enumerate(teams)}
 
     bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
     show_move = bool(bases)
@@ -681,10 +697,10 @@ def body() -> str:
     # the Move column shows while this column sorts the table.
     # Team leads with the FPI rank folded in: a leading RK column froze a bare
     # counter on phones while the names scrolled away. Neither Team nor Move
-    # sorts: the figures do, and FPI - the order the table arrives in - is the
-    # opening sort and the one the tab switcher falls back to. Its Move figure
-    # is places climbed in the FPI rank, since FPI order is the ranking itself;
-    # every other column's is the change in that column's own figure.
+    # sorts: the figures do, and GordStats - the order the table is written in -
+    # is the opening sort and the one the tab switcher falls back to. Its Move
+    # figure is places climbed in our own ranking; every other column's is the
+    # change in that column's own figure.
     def col(views, label, tip, direction, cell, field=None):
         return views, label, tip, direction, cell, field
 
@@ -695,21 +711,22 @@ def body() -> str:
     ]
     # Move opens on the first window and the rank, as the script would draw it.
     def opening(t):
-        vals = deltas[first_win].get("rank") if first_win else None
-        return _change(vals[t["rank"] - 1] if vals else None, "rank")
+        vals = deltas[first_win].get("gs_rank") if first_win else None
+        return _change(vals[order[t["id"]]] if vals else None, "gs_rank")
 
     if show_move:
         cols.append(col(ALL, "Move", f"Places climbed since {first_at:%b %-d}", None, opening))
+    # Our column leads the figures: it is the order the table opens in, and on
+    # a phone the rest scroll off to the right - the sorted column cannot be
+    # one you have to go looking for.
+    cols.append(col(("rating",), "GordStats", "This site's own rating - points better than "
+                    "an average FBS team, the number the predictions run on - with its rank",
+                    "desc", _gordstats, "gs_rank"))
     if show_ap:
         cols.append(col(("rating",), "AP", f"AP poll rank ({ap_label})" if ap_label else "AP poll rank", "asc",
                         lambda t: _plain(t["ap"]), "ap"))
-    cols += [
-        col(("rating",), "FPI", "Expected point margin against an average FBS team, "
-            "with its rank", "desc", _fpi, "rank"),
-        col(("rating",), "GordStats", "This site's own rating - points better than an "
-            "average FBS team, the number the predictions run on - with its rank",
-            "desc", _gordstats, "gs_rank"),
-    ]
+    cols.append(col(("rating",), "FPI", "Expected point margin against an average FBS team, "
+                    "with its rank", "desc", _fpi, "rank"))
     if any(t.get("sp") is not None for t in teams):
         cols.append(col(("rating",), "SP+", "Bill Connelly's SP+ (CollegeFootballData): "
                         "points better than average, with its rank", "desc", _sp, "sp_rank"))
@@ -769,7 +786,7 @@ def body() -> str:
             cells.append(_td(views, value, text, team=(label == "Team"),
                              sortable=direction is not None,
                              extra=(" mv-cell" if label == "Move"
-                                    else " sorted-col" if label == "FPI" else "")))
+                                    else " sorted-col" if label == "GordStats" else "")))
         rows.append(f"<tr{' class=\"top25\"' if t['rank'] <= 25 else ''}"
                     f"{favorites.row_attr('cfb', t['id'])}>"
                     + "".join(cells) + "</tr>")
@@ -777,38 +794,29 @@ def body() -> str:
     # Move's header is retitled by the script as the sorted column changes, so
     # it carries no data-tips for WINDOW_JS to retitle it with.
     head = "".join(
-        _th(views, label, tip, direction, first=(label == "FPI"), team=(label == "Team"),
+        _th(views, label, tip, direction, first=(label == "GordStats"), team=(label == "Team"),
             field=field, extra=(" mv-th" if label == "Move" else ""))
         for views, label, tip, direction, _cell, field in cols)
 
     move_note = ""
     if show_move:
         move_note = (" <strong>Move</strong> is the change in whichever column the table "
-                     "is sorted by - places climbed in the FPI rank until you sort by "
-                     "another, then that figure's change - since the point the buttons "
+                     "is sorted by - places climbed in the GordStats rank until you "
+                     "sort by another, then that figure's change - since the point the buttons "
                      f"pick. It opens on the rankings as they stood before this week's "
                      f"games ({first_at:%b %-d}); every build is archived, so the choice "
                      "runs from there back to the season's first, or to the end of any "
                      "week's games.")
 
     intro = (
-        f"<p>All {len(teams)} FBS teams, ranked by <strong>ESPN's Football Power "
-        f"Index</strong> for the {season} season"
-        + (", with the <strong>AP poll</strong>" if show_ap else "")
-        + " and this site's own <strong>GordStats</strong> rating beside it"
-        + f", pulled {stamp}. Click a team for its page.</p>"
+        f"<p class='power-stamp'>Updated {stamp}</p>"
         "<details class='section'><summary>About these rankings</summary>"
-        "<p class='power-note'>FPI is expected point margin against an average FBS team "
-        "on a neutral field. Preseason these are projections; once games are played the "
-        "same numbers update with results. <strong>GordStats</strong> is the same idea "
-        "from <a href='/cfb/predictions/'>this site's own model</a>, the rating the "
-        "predictions run on, with its rank beside it; sort by it for our order, and "
-        f"Move then counts places climbed in our ranking. <strong>SP+</strong> is Bill "
-        f"Connelly's rating, from CollegeFootballData - a fourth opinion on the same "
-        f"scale - and <strong>Elo</strong> the same source's chess-style rating, which "
-        f"moves only on results. The <strong>FPI</strong> and "
-        f"<strong>GordStats</strong> cells carry how far that rating itself has moved over "
-        f"the same window, beside the number.{move_note}</p>"
+        "<p class='power-note'><strong>GordStats</strong> is "
+        "<a href='/cfb/predictions/'>this site's own rating</a> - points better than an "
+        "average FBS team - and the order the table opens in. <strong>FPI</strong> is "
+        "ESPN's version of the same idea, and <strong>AP</strong> the writers' poll. "
+        "<strong>SP+</strong> (Bill Connelly) and <strong>Elo</strong> come from "
+        f"CollegeFootballData.{move_note}</p>"
         "<p class='power-note'><strong>Rating</strong> is the ratings, each with its rank, "
         "and what the schedule has been worth; <strong>Odds</strong> "
         "what ESPN's simulations give each team. Projected records - ESPN's and "
@@ -847,7 +855,7 @@ def body() -> str:
 
 def generate():
     write_page(WEB_DIR / "power" / "index.html", "CFB Rankings", body(),
-               subtitle=f"{SEASON} season · FPI, the AP poll and GordStats")
+               subtitle=f"{SEASON} season")
 
 
 if __name__ == "__main__":
