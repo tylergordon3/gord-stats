@@ -79,6 +79,46 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
 .hc-key i{width:3px;height:14px;border-radius:2px;display:inline-block}
 .hc-key i.hi{background:var(--hc-up)}
 .hc-key i.lo{background:var(--hc-down)}
+/* --- The week's bets ------------------------------------------------------
+   These classes went out unstyled, so the card rendered as the site theme's
+   default list - which is what "it is just a list" meant. The pick is the
+   headline, so it is set big; everything explaining it is small and muted. */
+.hc-bet{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.hc-pick{border:1px solid var(--hc-line);border-radius:10px;padding:11px 13px;
+  background:var(--hc-soft);min-width:0}
+.hc-kind{font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--hc-accent);margin:0 0 6px}
+.hc-call{font-size:19px;font-weight:800;color:var(--hc-ink);line-height:1.2;
+  font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;
+  flex-wrap:wrap}
+.hc .hc-sub{font-size:12px;color:var(--hc-mute);line-height:1.45;margin-top:3px}
+/* Legs are rows, not bullets: three picks stacked with a rule between them
+   read as three picks. A disc in front of each read as prose. */
+.hc .hc-legs{list-style:none;margin:0;padding:0}
+.hc .hc-legs li{margin:0;padding:7px 0;border-top:1px solid var(--hc-line);
+  font-size:15px;font-weight:700;color:var(--hc-ink);
+  font-variant-numeric:tabular-nums}
+.hc .hc-legs li:first-child{border-top:0;padding-top:0}
+.hc .hc-legs li:last-child{padding-bottom:0}
+.hc-res{font-size:11px;font-weight:800;padding:1px 6px;border-radius:999px;
+  text-transform:uppercase;letter-spacing:.04em;vertical-align:middle}
+.hc-res.win{color:var(--hc-up);background:var(--hc-hi-bg)}
+.hc-res.loss{color:var(--hc-down);background:var(--hc-lo-bg)}
+.hc-res.push{color:var(--hc-mute);background:var(--hc-focus)}
+/* When it was worked out, and how long it stands. Its own line above the
+   record so neither has to be hunted for in a paragraph. */
+.hc-when-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;
+  margin:11px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--hc-mute)}
+.hc-lock{font-weight:800;color:var(--hc-flag)}
+.hc-lock.hc-locked{color:var(--hc-mute)}
+.hc-rec{font-size:13px;color:var(--hc-ink);margin:7px 0 0;line-height:1.45}
+.hc-rec .hc-dis{color:var(--hc-mute)}
+@media (max-width:560px){
+  .hc-bet{grid-template-columns:1fr;gap:8px}
+  .hc-call{font-size:17px}
+  .hc .hc-legs li{font-size:14px}
+}
 @media (max-width:560px){
   table.hc-t25 td{font-size:12px;padding:4px 4px}
   table.hc-t25 th{font-size:10px;letter-spacing:.03em;padding:0 4px 5px}
@@ -88,4 +128,27 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
      "Notre Dame" became "Notre D...". The name is the information. */
   td.hc-tc img{display:none}
 }
-</style><div class='hc'><div class='hc-bet'><div class='hc-pick'><div class='hc-kind'>Single bet</div><div class='hc-call'>South Florida -17.5</div><div class='hc-sub'>vs Bowling Green &middot; we have them +27.3, the book +17.5</div></div><div class='hc-pick'><div class='hc-kind'>3-leg parlay</div><ul class='hc-legs'><li>Penn State -10.0<div class='hc-sub'>vs Wisconsin &middot; we have them +19.5, the book +10.0</div></li><li>Indiana -21.0<div class='hc-sub'>vs Northwestern &middot; we have them +30.2, the book +21.0</div></li><li>Washington St +10.0<div class='hc-sub'>vs Arizona &middot; we have them -2.3, the book -10.0</div></li></ul></div></div><p class='hc-note'><span class='hc-stamp'>Week 4 &middot; Locked Thu 11:44 AM</span><br>The model's widest disagreements with the DraftKings line (3+ points). Locked picks this season: <strong>2-2</strong>. Across six held-out seasons picks like these went <strong>48% against the spread</strong> - under the 52.4% that standard juice needs - so read this as what the model thinks, not as an edge. <a href='/cfb/predictions/'>The full record</a>.</p></div>
+</style>{% raw %}<script>
+(function(){
+  // Counts the provisional card down to its lock. Server-rendered text is
+  // already correct ("Locks Thu 9 AM ET"), so this only sharpens it while the
+  // page is open and never leaves it blank if the date will not parse.
+  function tick(){
+    var els=document.querySelectorAll('.hc-lock[data-lock]');
+    for(var i=0;i<els.length;i++){
+      var at=Date.parse(els[i].dataset.lock);
+      if(isNaN(at)) continue;
+      var left=at-Date.now();
+      if(left<=0){
+        els[i].textContent='Locking now';
+        els[i].removeAttribute('data-lock');
+        continue;
+      }
+      var m=Math.floor(left/60000), h=Math.floor(m/60), d=Math.floor(h/24);
+      els[i].textContent='Locks in '+(d?d+'d '+(h%24)+'h':h?h+'h '+(m%60)+'m':m+'m');
+    }
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+</script>{% endraw %}<div class='hc'><div class='hc-bet'><div class='hc-pick'><div class='hc-kind'>Single bet</div><div class='hc-call'>South Florida -17.5</div><div class='hc-sub'>vs Bowling Green &middot; we have them +27.3, the book +17.5</div></div><div class='hc-pick'><div class='hc-kind'>3-leg parlay</div><ul class='hc-legs'><li>Penn State -10.0<div class='hc-sub'>vs Wisconsin &middot; we have them +19.5, the book +10.0</div></li><li>Indiana -21.0<div class='hc-sub'>vs Northwestern &middot; we have them +30.2, the book +21.0</div></li><li>Washington St +10.0<div class='hc-sub'>vs Arizona &middot; we have them -2.3, the book -10.0</div></li></ul></div></div><div class='hc-when-row'><span>Week 4</span><span>Generated Thu 24 Sep, 11:44 AM ET</span><span class='hc-lock hc-locked'>Locked</span></div><p class='hc-rec'>Locked picks this season: <strong>2-2</strong>. <span class='hc-dis'>Not gambling advice.</span> <a href='/cfb/predictions/'>Full record</a>.</p></div>

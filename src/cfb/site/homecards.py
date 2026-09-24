@@ -139,6 +139,46 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
 .hc-key i{width:3px;height:14px;border-radius:2px;display:inline-block}
 .hc-key i.hi{background:var(--hc-up)}
 .hc-key i.lo{background:var(--hc-down)}
+/* --- The week's bets ------------------------------------------------------
+   These classes went out unstyled, so the card rendered as the site theme's
+   default list - which is what "it is just a list" meant. The pick is the
+   headline, so it is set big; everything explaining it is small and muted. */
+.hc-bet{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.hc-pick{border:1px solid var(--hc-line);border-radius:10px;padding:11px 13px;
+  background:var(--hc-soft);min-width:0}
+.hc-kind{font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--hc-accent);margin:0 0 6px}
+.hc-call{font-size:19px;font-weight:800;color:var(--hc-ink);line-height:1.2;
+  font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;
+  flex-wrap:wrap}
+.hc .hc-sub{font-size:12px;color:var(--hc-mute);line-height:1.45;margin-top:3px}
+/* Legs are rows, not bullets: three picks stacked with a rule between them
+   read as three picks. A disc in front of each read as prose. */
+.hc .hc-legs{list-style:none;margin:0;padding:0}
+.hc .hc-legs li{margin:0;padding:7px 0;border-top:1px solid var(--hc-line);
+  font-size:15px;font-weight:700;color:var(--hc-ink);
+  font-variant-numeric:tabular-nums}
+.hc .hc-legs li:first-child{border-top:0;padding-top:0}
+.hc .hc-legs li:last-child{padding-bottom:0}
+.hc-res{font-size:11px;font-weight:800;padding:1px 6px;border-radius:999px;
+  text-transform:uppercase;letter-spacing:.04em;vertical-align:middle}
+.hc-res.win{color:var(--hc-up);background:var(--hc-hi-bg)}
+.hc-res.loss{color:var(--hc-down);background:var(--hc-lo-bg)}
+.hc-res.push{color:var(--hc-mute);background:var(--hc-focus)}
+/* When it was worked out, and how long it stands. Its own line above the
+   record so neither has to be hunted for in a paragraph. */
+.hc-when-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;
+  margin:11px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--hc-mute)}
+.hc-lock{font-weight:800;color:var(--hc-flag)}
+.hc-lock.hc-locked{color:var(--hc-mute)}
+.hc-rec{font-size:13px;color:var(--hc-ink);margin:7px 0 0;line-height:1.45}
+.hc-rec .hc-dis{color:var(--hc-mute)}
+@media (max-width:560px){
+  .hc-bet{grid-template-columns:1fr;gap:8px}
+  .hc-call{font-size:17px}
+  .hc .hc-legs li{font-size:14px}
+}
 @media (max-width:560px){
   table.hc-t25 td{font-size:12px;padding:4px 4px}
   table.hc-t25 th{font-size:10px;letter-spacing:.03em;padding:0 4px 5px}
@@ -248,13 +288,12 @@ def top25_html(limit: int = 25) -> str:
 
     head = ("<tr><th></th>"
             + "".join(f"<th>{label}</th>" for _key, label in sources) + "</tr>")
-    stamp = datetime.now().strftime("%b %-d")
+    stamp = datetime.now(ET).strftime("%b %-d, %-I:%M %p ET")
     many = "three" if show_ap else "two"
     key_line = ("<span class='hc-key'><i class='hi'></i>rates them highest</span>"
                 "<span class='hc-key'><i class='lo'></i>lowest</span>")
     return (_CSS + _FOLLOW_JS + "<div class='hc'>"
-            f"<div class='hc-head'><b>Top 25 by Source &middot; {SEASON}</b>"
-            f"<span class='hc-when'>gordstats.com &middot; {stamp}</span></div>"
+            f"<div class='hc-head'><span class='hc-when'>Updated {stamp}</span></div>"
             f"<div class='hc-scroll'><table class='hc-t25'><thead>{head}</thead>"
             f"<tbody>{''.join(rows)}</tbody></table></div>"
             f"<p class='hc-note'>{key_line} &mdash; "
@@ -295,6 +334,32 @@ _FOLLOW_JS = """{% raw %}<script>
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
   else init();
+})();
+</script>{% endraw %}"""
+
+
+_LOCK_JS = """{% raw %}<script>
+(function(){
+  // Counts the provisional card down to its lock. Server-rendered text is
+  // already correct ("Locks Thu 9 AM ET"), so this only sharpens it while the
+  // page is open and never leaves it blank if the date will not parse.
+  function tick(){
+    var els=document.querySelectorAll('.hc-lock[data-lock]');
+    for(var i=0;i<els.length;i++){
+      var at=Date.parse(els[i].dataset.lock);
+      if(isNaN(at)) continue;
+      var left=at-Date.now();
+      if(left<=0){
+        els[i].textContent='Locking now';
+        els[i].removeAttribute('data-lock');
+        continue;
+      }
+      var m=Math.floor(left/60000), h=Math.floor(m/60), d=Math.floor(h/24);
+      els[i].textContent='Locks in '+(d?d+'d '+(h%24)+'h':h?h+'h '+(m%60)+'m':m+'m');
+    }
+  }
+  tick();
+  setInterval(tick, 60000);
 })();
 </script>{% endraw %}"""
 
@@ -496,8 +561,6 @@ def bets_html(now: datetime = None) -> str:
                 "no bet to name.</p></div>")
 
     single = picks["single"]
-    stamp = (f"Locked {when:%a %-I:%M %p}" if frozen
-             else f"Provisional &middot; locks {when:%a} morning")
     body = [f"<div class='hc-bet'><div class='hc-pick'>"
             f"<div class='hc-kind'>Single bet</div>"
             f"<div class='hc-call'>{escape(single['team'])} {single['line']:+.1f}"
@@ -511,15 +574,27 @@ def bets_html(now: datetime = None) -> str:
                     f"<ul class='hc-legs'>{legs}</ul></div>")
     body.append("</div>")
 
-    # The caveat is the honest part of the card, not small print: the backtest
-    # says this model does not beat the number it is disagreeing with.
-    note = (f"<span class='hc-stamp'>Week {week} &middot; {stamp}</span><br>"
-            f"The model's widest disagreements with the DraftKings line "
-            f"({EDGE_MIN:.0f}+ points). {_season_record()} Across six held-out seasons "
-            f"picks like these went <strong>48% against the spread</strong> - under the "
-            f"52.4% that standard juice needs - so read this as what the model thinks, "
-            f"not as an edge. <a href='/cfb/predictions/'>The full record</a>.")
-    return _CSS + "<div class='hc'>" + "".join(body) + f"<p class='hc-note'>{note}</p></div>"
+    # Two short lines instead of a paragraph: when the call was made and how
+    # long it stands, then the record. The backtest caveat that used to live
+    # here (these picks hit 48% ATS, under the 52.4% juice needs) was four
+    # lines of small print nobody read on a phone; it belongs with the rest of
+    # the record, one tap away on the predictions page.
+    if frozen:
+        timing = (f"<span>Generated {when:%a %-d %b, %-I:%M %p ET}</span>"
+                  f"<span class='hc-lock hc-locked'>Locked</span>")
+    else:
+        # Emitted as an instant, not a wall clock: week_spans is naive ET and
+        # the reader may not be.
+        lock_iso = when.replace(tzinfo=ET).isoformat()
+        timing = (f"<span>Generated {now:%a %-d %b, %-I:%M %p ET}</span>"
+                  f"<span class='hc-lock' data-lock='{lock_iso}'>"
+                  f"Locks {when:%a %-I %p ET}</span>")
+    record = _season_record()
+    note = (f"<div class='hc-when-row'><span>Week {week}</span>{timing}</div>"
+            f"<p class='hc-rec'>{record} <span class='hc-dis'>Not gambling "
+            f"advice.</span> <a href='/cfb/predictions/'>Full record</a>.</p>")
+    return (_CSS + _LOCK_JS + "<div class='hc'>" + "".join(body)
+            + note + "</div>")
 
 
 def generate() -> None:
