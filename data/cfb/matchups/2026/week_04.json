@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-24T09:34:54+00:00",
+ "fetched": "2026-09-24T21:38:58+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -63,14 +63,14 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 173.48,
+     "projected": 173.52,
      "win_probability": 0.58
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 161.77,
+     "projected": 161.75,
      "win_probability": 0.42000000000000004
     }
    ]
@@ -87,14 +87,14 @@
      "name": "Austin's Best Team",
      "points": 0.0,
      "projected": 164.48,
-     "win_probability": 0.4
+     "win_probability": 0.41000000000000003
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 178.85,
-     "win_probability": 0.6
+     "projected": 177.15,
+     "win_probability": 0.59
     }
    ]
   },
@@ -109,7 +109,7 @@
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 169.52,
+     "projected": 169.5,
      "win_probability": 0.54
     },
     {
@@ -1861,15 +1861,15 @@
     "stats": {}
    },
    {
-    "yahoo_id": "403910",
-    "player": "Kamari Moulton",
+    "yahoo_id": "404392",
+    "player": "Justice Haynes",
     "pos": "RB",
-    "team": "IOWA",
-    "team_full": "Iowa Hawkeyes",
-    "bye": 7.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Undisclosed",
+    "team": "GT",
+    "team_full": "Georgia Tech Yellow Jackets",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "RB",
     "points": 0.0,
     "stats": {}
@@ -1889,11 +1889,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "450577",
-    "player": "Jordan Faison",
+    "yahoo_id": "463325",
+    "player": "Na'eem Abdul-Rahim Gladding",
     "pos": "WR",
-    "team": "ND",
-    "team_full": "Notre Dame Fighting Irish",
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
     "bye": 8.0,
     "status": "",
     "status_full": "",
@@ -1903,11 +1903,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "463325",
-    "player": "Na'eem Abdul-Rahim Gladding",
+    "yahoo_id": "451040",
+    "player": "Duce Robinson",
     "pos": "WR",
-    "team": "UMD",
-    "team_full": "Maryland Terrapins",
+    "team": "FSU",
+    "team_full": "Florida State Seminoles",
     "bye": 8.0,
     "status": "",
     "status_full": "",
@@ -1931,15 +1931,15 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404392",
-    "player": "Justice Haynes",
+    "yahoo_id": "403910",
+    "player": "Kamari Moulton",
     "pos": "RB",
-    "team": "GT",
-    "team_full": "Georgia Tech Yellow Jackets",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "team": "IOWA",
+    "team_full": "Iowa Hawkeyes",
+    "bye": 7.0,
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
     "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
@@ -1955,6 +1955,20 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "450577",
+    "player": "Jordan Faison",
+    "pos": "WR",
+    "team": "ND",
+    "team_full": "Notre Dame Fighting Irish",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1993,20 +2007,6 @@
     "team": "AUB",
     "team_full": "Auburn Tigers",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "451040",
-    "player": "Duce Robinson",
-    "pos": "WR",
-    "team": "FSU",
-    "team_full": "Florida State Seminoles",
-    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2619,7 +2619,7 @@
   "406200": 7.91,
   "404055": 8.43,
   "451329": 8.95,
-  "900002": 14.92,
+  "900002": 14.96,
   "464024": 34.1,
   "403957": 23.09,
   "404007": 13.64,
@@ -2635,7 +2635,7 @@
   "338689": 32.54,
   "406381": 5.64,
   "456249": 8.34,
-  "900068": 6.03,
+  "900068": 6.01,
   "404544": 31.14,
   "404434": 26.96,
   "448820": 17.52,
@@ -2655,17 +2655,17 @@
   "337760": 24.36,
   "469212": 26.49,
   "472146": 21.45,
-  "403910": 13.32,
-  "405225": 18.64,
-  "450577": 12.0,
-  "463325": 12.02,
-  "335940": 9.18,
   "404392": 19.98,
+  "405225": 18.64,
+  "463325": 12.02,
+  "451040": 10.3,
+  "335940": 9.18,
+  "403910": 13.32,
   "456937": 14.46,
+  "450577": 12.0,
   "404713": 10.74,
   "457801": 15.82,
   "333511": 28.8,
-  "451040": 10.3,
   "449475": 0.0,
   "482773": 8.06,
   "900060": 6.95,
@@ -2685,7 +2685,7 @@
   "468459": 11.46,
   "404365": 11.03,
   "336586": 0.0,
-  "900027": 8.64,
+  "900027": 8.62,
   "455500": 25.95,
   "404287": 28.64,
   "469636": 14.59,
