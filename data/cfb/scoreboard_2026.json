@@ -19,7 +19,7 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 201.07,
+     "projected": 201.02,
      "win_probability": 0.5700000000000001
     }
    ]
@@ -35,15 +35,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 190.93,
-     "win_probability": 0.55
+     "projected": 185.04,
+     "win_probability": 0.51
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
      "projected": 183.41,
-     "win_probability": 0.44999999999999996
+     "win_probability": 0.49
     }
    ]
   },

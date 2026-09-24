@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-24T03:45:02+00:00",
+ "fetched": "2026-09-24T09:34:54+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -24,7 +24,7 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 201.07,
+     "projected": 201.02,
      "win_probability": 0.5700000000000001
     }
    ]
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 190.93,
-     "win_probability": 0.55
+     "projected": 185.04,
+     "win_probability": 0.51
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
      "projected": 183.41,
-     "win_probability": 0.44999999999999996
+     "win_probability": 0.49
     }
    ]
   },
@@ -335,6 +335,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "469860",
+    "player": "Nolan James Jr.",
+    "pos": "RB",
+    "team": "ND",
+    "team_full": "Notre Dame Fighting Irish",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "900104",
     "player": "Notre Dame",
     "pos": "DEF",
@@ -345,20 +359,6 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "900082",
-    "player": "SMU",
-    "pos": "DEF",
-    "team": "SMU",
-    "team_full": "SMU Mustangs",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
     "points": 0.0,
     "stats": {}
    }
@@ -717,20 +717,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "456077",
-    "player": "Decker DeGraaf",
-    "pos": "TE",
-    "team": "UW",
-    "team_full": "Washington Huskies",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "456092",
     "player": "Dilin Jones",
     "pos": "RB",
@@ -838,6 +824,20 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "462228",
+    "player": "DJ Vonnahme",
+    "pos": "TE",
+    "team": "IOWA",
+    "team_full": "Iowa Hawkeyes",
+    "bye": 7.0,
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2554,8 +2554,8 @@
   "337423": 9.51,
   "333084": 8.08,
   "405873": 20.96,
+  "469860": 11.92,
   "900104": 13.54,
-  "900082": 12.95,
   "406169": 25.2,
   "457283": 28.02,
   "468495": 27.79,
@@ -2571,7 +2571,7 @@
   "338965": 9.85,
   "463244": 0.0,
   "482179": 0.11,
-  "900083": 10.17,
+  "900083": 10.12,
   "470211": 28.15,
   "334043": 24.68,
   "404522": 21.3,
@@ -2579,7 +2579,6 @@
   "455490": 13.28,
   "405636": 14.42,
   "405846": 14.03,
-  "456077": 5.91,
   "456092": 17.76,
   "471560": 17.99,
   "456968": 0.0,
@@ -2588,7 +2587,8 @@
   "405442": 10.96,
   "405249": 25.2,
   "335616": 7.34,
-  "900011": 13.78,
+  "462228": 8.7,
+  "900011": 13.8,
   "333785": 31.8,
   "455480": 31.33,
   "456340": 20.19,

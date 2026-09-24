@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-23T23:50:56.566197-04:00",
+ "updated": "2026-09-24T05:33:59.193924-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -38660,6 +38660,125 @@
       "Marine Fauthoux",
       "G",
       21.0
+     ]
+    ]
+   }
+  },
+  "401857214": {
+   "date": "2026-09-24",
+   "allowed": {
+    "DAL": {
+     "G": 73.0,
+     "FC": 99.0
+    },
+    "SEA": {
+     "G": 105.0,
+     "FC": 100.0
+    }
+   },
+   "players": {
+    "DAL": [
+     [
+      "Jessica Shepard",
+      "FC",
+      45.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      18.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      34.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      39.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      46.0
+     ],
+     [
+      "Li Yueru",
+      "FC",
+      3.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      7.0
+     ],
+     [
+      "Kitija Laksa",
+      "G",
+      0.0
+     ],
+     [
+      "Christyn Williams",
+      "G",
+      0.0
+     ],
+     [
+      "Aziaha James",
+      "G",
+      8.0
+     ],
+     [
+      "Haley Jones",
+      "G",
+      5.0
+     ]
+    ],
+    "SEA": [
+     [
+      "Jordan Horston",
+      "FC",
+      4.0
+     ],
+     [
+      "Dominique Malonga",
+      "FC",
+      42.0
+     ],
+     [
+      "Awa Fam",
+      "FC",
+      35.0
+     ],
+     [
+      "Natisha Hiedeman",
+      "G",
+      28.0
+     ],
+     [
+      "Flau'jae Johnson",
+      "G",
+      33.0
+     ],
+     [
+      "Mackenzie Holmes",
+      "FC",
+      8.0
+     ],
+     [
+      "Taylor Thierry",
+      "FC",
+      9.0
+     ],
+     [
+      "Stefanie Dolson",
+      "FC",
+      1.0
+     ],
+     [
+      "Jade Melbourne",
+      "G",
+      12.0
      ]
     ]
    }
