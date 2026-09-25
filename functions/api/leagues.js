@@ -16,6 +16,25 @@
  */
 import { configured, json, readSession } from "./_lib/session.js";
 
+/**
+ * The leagues table arrives in a migration, which is applied by hand and can
+ * lag the deploy that needs it. Until it lands, every query here throws "no
+ * such table" - a 500 and a blank page. Answer 503 with something true
+ * instead, so the page can say the feature is not switched on yet rather than
+ * looking broken.
+ */
+async function db(run) {
+  try {
+    return { ok: true, value: await run() };
+  } catch (err) {
+    if (String(err && err.message || err).includes("no such table")) {
+      return { ok: false, response: json({ ok: false, migrating: true,
+        error: "League sync is not switched on for this site yet." }, 503) };
+    }
+    throw err;
+  }
+}
+
 // A reader with more leagues than this is probing; the row count stays bounded.
 const MAX = 20;
 // Sleeper ids are long digit strings; Yahoo keys are "<game>.l.<id>".
@@ -33,12 +52,13 @@ export async function onRequestGet({ request, env }) {
   const session = await guard(request, env);
   if (session instanceof Response) return session;
 
-  const { results } = await env.DB.prepare(
+  const got = await db(() => env.DB.prepare(
     `SELECT provider, sport, league_id, name, season, last_synced_at
        FROM leagues WHERE user_id = ? ORDER BY created_at`)
-    .bind(session.uid).all();
+    .bind(session.uid).all());
+  if (!got.ok) return got.response;
 
-  return json({ leagues: results || [] });
+  return json({ leagues: got.value.results || [] });
 }
 
 export async function onRequestPost({ request, env }) {
@@ -61,9 +81,11 @@ export async function onRequestPost({ request, env }) {
       : "A Yahoo league key looks like 474.l.21318." }, 400);
   }
 
-  const existing = await env.DB.prepare(
+  const found0 = await db(() => env.DB.prepare(
     "SELECT last_synced_at FROM leagues WHERE user_id = ? AND provider = ? AND league_id = ?")
-    .bind(session.uid, provider, leagueId).first();
+    .bind(session.uid, provider, leagueId).first());
+  if (!found0.ok) return found0.response;
+  const existing = found0.value;
 
   // The rate limit is on the stored timestamp rather than anything in the
   // browser, so it holds across reloads and second tabs.
@@ -109,9 +131,10 @@ export async function onRequestDelete({ request, env }) {
     return json({ ok: false, error: "provider and league_id are required" }, 400);
   }
 
-  await env.DB.prepare(
+  const gone = await db(() => env.DB.prepare(
     "DELETE FROM leagues WHERE user_id = ? AND provider = ? AND league_id = ?")
-    .bind(session.uid, provider, leagueId).run();
+    .bind(session.uid, provider, leagueId).run());
+  if (!gone.ok) return gone.response;
 
   return json({ ok: true });
 }

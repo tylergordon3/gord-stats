@@ -76,8 +76,17 @@ title: Sync your league
   }
   function load(){
     fetch('/api/leagues',{credentials:'same-origin'})
-      .then(function(r){return r.ok?r.json():{leagues:[]};})
-      .then(function(d){render(d.leagues||[]);})
+      .then(function(r){return r.json().then(function(d){return {s:r.status,d:d};});})
+      .then(function(res){
+        // The table arrives in a migration applied by hand, so the endpoint
+        // can be live before it exists. Say that, rather than an empty list.
+        if(res.d && res.d.migrating){
+          main.hidden=true; gate.hidden=false;
+          gate.textContent=res.d.error;
+          return;
+        }
+        render((res.d && res.d.leagues)||[]);
+      })
       .catch(function(){});
   }
   function add(provider,inputId,msgId,btn){
@@ -95,6 +104,7 @@ title: Sync your league
             +(res.d.retry_after||60)+'s.','err');
           return;
         }
+        if(res.d.migrating){ msg(msgId,res.d.error,'err'); return; }
         if(!res.d.ok){ msg(msgId,res.d.error||'That did not work.','err'); return; }
         msg(msgId,'Synced '+(res.d.league.name||'the league')+'.','ok');
         document.getElementById(inputId).value='';
