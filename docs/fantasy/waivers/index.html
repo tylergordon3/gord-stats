@@ -1,8 +1,8 @@
 ---
 layout: default
-title: League History
+title: Waivers & Trades
 ---
-<h1>League History</h1><h3>Champions, records and head-to-head</h3><script>
+<h1>Waivers & Trades</h1><h3>Every claim, add and trade in your league</h3><script>
 function openHashTarget(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);
   if(e&&e.tagName==='DETAILS'){e.open=true;e.scrollIntoView();}}
 window.addEventListener('hashchange',openHashTarget);
@@ -36,39 +36,42 @@ window.addEventListener('load',openHashTarget);
   .ml-msg.err{color:#ff9b91}
 }
 </style><div class='ml-bar' id='ml-bar'></div><style>
-.hi{margin:8px 0 20px}
-.hi h2{margin:20px 0 6px;font-size:18px}
-.hi-note{font-size:12.5px;color:#64748b;margin:0 0 10px;line-height:1.5}
-.hi-none{font-size:14px;color:#475569}
-table.hi-t{width:100%;border-collapse:collapse;font-size:13.5px}
-table.hi-t th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:left;
+.wv{margin:8px 0 20px}
+.wv h2{margin:20px 0 6px;font-size:18px}
+.wv-note{font-size:12.5px;color:#64748b;margin:0 0 10px;line-height:1.5}
+.wv-none{font-size:14px;color:#475569}
+.wv-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;
+  font-size:13px;color:#475569}
+.wv-bar select{font:inherit;font-size:13px;padding:5px 9px;border:1px solid #cbd5e1;
+  border-radius:8px}
+table.wv-t{width:100%;border-collapse:collapse;font-size:13.5px}
+table.wv-t th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:left;
   font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;
   border:1px solid #e2e8f0;white-space:nowrap}
-table.hi-t td{padding:6px 9px;border:1px solid #eef2f7;background:#fff;color:#0f172a}
-table.hi-t td.n{text-align:right;font-variant-numeric:tabular-nums}
-table.hi-t tr.me td{background:#fffbeb}
-.hi-crown{color:#b45309;font-weight:800}
-.hi-sub{font-size:11px;color:#94a3b8;margin-left:5px}
-.hi-scroll{overflow-x:auto}
-table.hi-h2h td,table.hi-h2h th{text-align:center;font-size:12.5px;padding:5px 7px}
-table.hi-h2h th.row,table.hi-h2h td.row{text-align:left;font-weight:700;white-space:nowrap;
-  position:sticky;left:0;background:#eef2f7;z-index:1}
-table.hi-h2h td.self{background:#f1f5f9;color:#94a3b8}
-.hi-w{color:#15803d;font-weight:700}
-.hi-l{color:#b91c1c}
-.hi-load{font-size:12.5px;color:#64748b}
+table.wv-t td{padding:6px 9px;border:1px solid #eef2f7;background:#fff;color:#0f172a;
+  vertical-align:top}
+table.wv-t td.n{text-align:right;font-variant-numeric:tabular-nums}
+.wv-in{color:#15803d;font-weight:600}
+.wv-out{color:#b91c1c}
+.wv-pos{font-size:10.5px;color:#94a3b8;font-weight:700;margin-left:4px}
+.wv-how{font-size:11.5px;color:#64748b;white-space:nowrap}
+.wv-bid{font-weight:800;color:#0f172a}
+.wv-when{font-size:11.5px;color:#64748b;white-space:nowrap}
+.wv-failed td{background:#fdf6f6;color:#94a3b8}
+.wv-more{font:inherit;font-size:12.5px;padding:6px 14px;border-radius:999px;
+  border:1px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer;margin:10px 0 0}
+.wv-load{font-size:12.5px;color:#64748b}
 @media (prefers-color-scheme: dark){
-  .hi-note,.hi-none,.hi-load{color:#aab7c9}
-  table.hi-t th{background:#223052;color:#dde5ef;border-color:#2b3852}
-  table.hi-t td{background:#16203a;border-color:#2b3852;color:#dde5ef}
-  table.hi-t tr.me td{background:#33301a}
-  table.hi-h2h th.row,table.hi-h2h td.row{background:#223052}
-  table.hi-h2h td.self{background:#1b2540;color:#64748b}
-  .hi-crown{color:#e0a92a}
-  .hi-w{color:#6ee7b7}
-  .hi-l{color:#ff9b91}
+  .wv-note,.wv-none,.wv-how,.wv-when,.wv-load,.wv-bar{color:#aab7c9}
+  table.wv-t th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.wv-t td{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  .wv-in{color:#6ee7b7}
+  .wv-out{color:#ff9b91}
+  .wv-bid{color:#f1f5f9}
+  .wv-failed td{background:#2a1e1e;color:#7f8ea3}
+  .wv-bar select,.wv-more{background:#16203a;border-color:#2b3852;color:#dde5ef}
 }
-</style><div class='hi' id='hi-host'></div>{% raw %}<script>
+</style><div class='wv' id='wv-host'></div>{% raw %}<script>
 window.GSL = (function(){
   var KEY='gsSleeperLeague';
   var cache={};
@@ -448,34 +451,32 @@ window.GSL = (function(){
 })();
 </script>{% endraw %}{% raw %}<script>
 (function(){
-  var host=document.getElementById('hi-host');
+  var host=document.getElementById('wv-host');
   if(!host||!window.GSL) return;
   var have=GSL.saved();
   if(!have||!have.id||have.site){
-    host.innerHTML='<p class="hi-none">Pick a league above, or '
-      +'<a href="/fantasy/sync/">sync yours</a>, to see its history.</p>';
+    host.innerHTML='<p class="wv-none">Pick a league above, or '
+      +'<a href="/fantasy/sync/">connect yours</a>, to see its waivers.</p>';
     return;
   }
 
   var API='https://api.sleeper.app/v1';
-  var MAX_SEASONS=12;
-  function get(path){
-    return fetch(API+path).then(function(r){return r.ok?r.json():null;})
+  var MAX_SEASONS=12, WEEKS=18, PAGE=40;
+  var shown=PAGE, state=null;
+
+  function get(p){
+    return fetch(API+p).then(function(r){return r.ok?r.json():null;})
       .catch(function(){return null;});
   }
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"]/g,function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
   }
-  function pts(s){
-    // Sleeper keeps points as an integer and its decimal part, separately.
-    return (s.fpts||0)+((s.fpts_decimal||0)/100);
-  }
-  function against(s){
-    return (s.fpts_against||0)+((s.fpts_against_decimal||0)/100);
+  function when(ms){
+    var d=new Date(ms);
+    return isNaN(d)?'':d.toLocaleDateString([], {year:'numeric', month:'short', day:'numeric'});
   }
 
-  /** Every season of this league, newest first. */
   function chain(id){
     var out=[], seen={};
     function step(lid){
@@ -490,207 +491,195 @@ window.GSL = (function(){
     return step(id);
   }
 
-  /** One season: who was in it, what they did, and who won. */
-  function season(lg){
-    return Promise.all([
-      get('/league/'+lg.league_id+'/rosters'),
-      get('/league/'+lg.league_id+'/users'),
-      get('/league/'+lg.league_id+'/winners_bracket')
-    ]).then(function(o){
-      var rosters=o[0]||[], users=o[1]||[], bracket=o[2]||[];
-      var who={};
-      users.forEach(function(u){
-        who[u.user_id]={team:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',
-                        manager:u.display_name||''};
+  /** roster_id -> manager, for one season. */
+  function managers(lid){
+    return Promise.all([get('/league/'+lid+'/rosters'), get('/league/'+lid+'/users')])
+      .then(function(o){
+        var rosters=o[0]||[], users=o[1]||[], who={}, out={};
+        users.forEach(function(u){
+          who[u.user_id]=(u.metadata&&u.metadata.team_name)||u.display_name||'Team';
+        });
+        rosters.forEach(function(r){
+          out[r.roster_id]=who[r.owner_id]||('Roster '+r.roster_id);
+        });
+        return out;
       });
-      // The championship game is the one placing first; a season still being
-      // played has no bracket at all.
-      var final=bracket.filter(function(m){return m.p===1;})[0];
-      var championRoster=final?final.w:null;
-      var teams=rosters.map(function(r){
-        var s=r.settings||{};
-        return {roster_id:r.roster_id, owner:r.owner_id,
-                team:(who[r.owner_id]||{}).team||('Roster '+r.roster_id),
-                manager:(who[r.owner_id]||{}).manager||'',
-                wins:s.wins||0, losses:s.losses||0, ties:s.ties||0,
-                pf:pts(s), pa:against(s),
-                champion:r.roster_id===championRoster};
+  }
+
+  function player(index, pid){
+    var meta=index[String(pid)];
+    if(!meta) return esc(pid);
+    return esc(meta[0])+'<span class="wv-pos">'+esc(meta[1])+'</span>';
+  }
+
+  function collect(seasons, index){
+    var jobs=[];
+    seasons.forEach(function(s){
+      for(var w=1; w<=WEEKS; w++){
+        jobs.push(get('/league/'+s.league_id+'/transactions/'+w)
+          .then(function(rows){ return {season:s.season, names:s.names, rows:rows||[]}; }));
+      }
+    });
+    return Promise.all(jobs).then(function(weeks){
+      var all=[];
+      weeks.forEach(function(wk){
+        wk.rows.forEach(function(t){
+          if(!t || !t.type) return;
+          all.push({
+            season: wk.season, names: wk.names, type: t.type,
+            status: t.status, created: t.created || 0,
+            adds: t.adds || {}, drops: t.drops || {},
+            rosters: t.roster_ids || [],
+            bid: (t.settings && t.settings.waiver_bid) || 0,
+            budget: t.waiver_budget || [],
+          });
+        });
       });
-      return {season:lg.season, league_id:lg.league_id, name:lg.name,
-              status:lg.status, teams:teams,
-              playoff_start:(lg.settings||{}).playoff_week_start||15};
+      all.sort(function(a,b){ return b.created-a.created; });
+      return all;
     });
   }
 
-  function recordOf(t){
-    return t.wins+'-'+t.losses+(t.ties?'-'+t.ties:'');
-  }
-
-  function renderChampions(seasons){
-    var done=seasons.filter(function(s){
-      return s.teams.some(function(t){return t.champion;});});
-    if(!done.length){
-      return '<h2>Champions</h2><p class="hi-none">No season has finished yet.</p>';
+  function howCell(t){
+    if(t.type==='trade') return '<span class="wv-how">Trade</span>';
+    if(t.type==='waiver'){
+      return '<span class="wv-how">Waiver</span>'
+        + (t.bid ? ' <span class="wv-bid">$'+t.bid+'</span>' : '');
     }
-    var rows=done.map(function(s){
-      var c=s.teams.filter(function(t){return t.champion;})[0];
-      return '<tr><td class="n">'+esc(s.season)+'</td>'
-        +'<td><span class="hi-crown">&#9818;</span> '+esc(c.team)
-        +'<span class="hi-sub">'+esc(c.manager)+'</span></td>'
-        +'<td class="n">'+recordOf(c)+'</td>'
-        +'<td class="n">'+c.pf.toFixed(1)+'</td></tr>';
+    return '<span class="wv-how">Free agent</span>';
+  }
+
+  function rowsFor(list, index){
+    return list.map(function(t){
+      var ins=Object.keys(t.adds).map(function(pid){
+        return '<div class="wv-in">+ '+player(index,pid)
+          +' <span class="wv-how">'+esc(t.names[t.adds[pid]]||'')+'</span></div>';
+      }).join('');
+      var outs=Object.keys(t.drops).map(function(pid){
+        return '<div class="wv-out">&minus; '+player(index,pid)
+          +' <span class="wv-how">'+esc(t.names[t.drops[pid]]||'')+'</span></div>';
+      }).join('');
+      var faab=(t.budget||[]).map(function(b){
+        return '<div class="wv-how">$'+b.amount+' '+esc(t.names[b.sender]||'')
+          +' &rarr; '+esc(t.names[b.receiver]||'')+'</div>';
+      }).join('');
+      return '<tr'+(t.status!=='complete'?' class="wv-failed"':'')+'>'
+        +'<td class="wv-when">'+when(t.created)
+          // The date already carries a year. The season is only worth saying
+          // when the two differ - a playoff move in January belongs to the
+          // season before it.
+          +(String(new Date(t.created).getFullYear())!==String(t.season)
+            ? '<div class="wv-how">'+esc(t.season)+' season</div>' : '')
+          +'</td>'
+        +'<td>'+howCell(t)+(t.status!=='complete'
+            ? '<div class="wv-how">'+esc(t.status)+'</div>' : '')+'</td>'
+        +'<td>'+(ins||'<span class="wv-how">&mdash;</span>')+'</td>'
+        +'<td>'+(outs||'<span class="wv-how">&mdash;</span>')+faab+'</td></tr>';
     }).join('');
-    return '<h2>Champions</h2><table class="hi-t"><thead><tr><th>Season</th>'
-      +'<th>Winner</th><th>Record</th><th>Points</th></tr></thead><tbody>'
-      +rows+'</tbody></table>';
   }
 
-  function renderSeasons(seasons){
-    var html='<h2>Season by season</h2>';
-    seasons.forEach(function(s){
-      var teams=s.teams.slice().sort(function(a,b){
-        return (b.wins-a.wins) || (b.pf-a.pf);});
-      html+='<h3 style="margin:14px 0 4px;font-size:15px">'+esc(s.season)
-        +(s.status&&s.status!=='complete'?' <span class="hi-sub">in progress</span>':'')
-        +'</h3><table class="hi-t"><thead><tr><th>Team</th><th>Record</th>'
-        +'<th>Points for</th><th>Points against</th></tr></thead><tbody>';
-      teams.forEach(function(t){
-        html+='<tr'+(t.champion?' class="me"':'')+'><td>'
-          +(t.champion?'<span class="hi-crown">&#9818;</span> ':'')+esc(t.team)
-          +'<span class="hi-sub">'+esc(t.manager)+'</span></td>'
-          +'<td class="n">'+recordOf(t)+'</td>'
-          +'<td class="n">'+t.pf.toFixed(1)+'</td>'
-          +'<td class="n">'+t.pa.toFixed(1)+'</td></tr>';
-      });
-      html+='</tbody></table>';
-    });
-    return html;
-  }
-
-  function renderAllTime(seasons){
+  function summary(all){
     var by={};
-    seasons.forEach(function(s){
-      s.teams.forEach(function(t){
-        if(!t.owner) return;
-        var a=by[t.owner]=by[t.owner]||{team:t.team, manager:t.manager, wins:0,
-                                        losses:0, ties:0, pf:0, titles:0, seasons:0};
-        a.wins+=t.wins; a.losses+=t.losses; a.ties+=t.ties;
-        a.pf+=t.pf; a.seasons+=1;
-        if(t.champion) a.titles+=1;
-        // The name they go by now: seasons arrive newest first.
-        if(a.seasons===1){ a.team=t.team; a.manager=t.manager; }
+    all.forEach(function(t){
+      if(t.status!=='complete') return;
+      t.rosters.forEach(function(rid){
+        var name=t.names[rid];
+        if(!name) return;
+        var a=by[name]=by[name]||{claims:0, faab:0, adds:0, drops:0, trades:0};
+        if(t.type==='trade') a.trades+=1;
+        else if(t.type==='waiver'){ a.claims+=1; a.faab+=t.bid||0; }
+        else a.adds+=1;
+      });
+      Object.keys(t.drops).forEach(function(pid){
+        var name=t.names[t.drops[pid]];
+        if(by[name]) by[name].drops+=1;
       });
     });
-    var rows=Object.keys(by).map(function(k){return by[k];})
-      .sort(function(a,b){
-        return (b.titles-a.titles) || (b.wins-a.wins) || (b.pf-a.pf);});
+    var rows=Object.keys(by).sort(function(a,b){
+      return (by[b].claims+by[b].adds)-(by[a].claims+by[a].adds);});
     if(!rows.length) return '';
-    return '<h2>All time</h2><table class="hi-t"><thead><tr><th>Manager</th>'
-      +'<th>Seasons</th><th>Titles</th><th>Record</th><th>Points</th></tr></thead><tbody>'
-      + rows.map(function(r){
-          return '<tr><td>'+esc(r.team)+'<span class="hi-sub">'+esc(r.manager)
-            +'</span></td><td class="n">'+r.seasons+'</td>'
-            +'<td class="n">'+(r.titles?'<span class="hi-crown">'+r.titles+'</span>':'0')
-            +'</td><td class="n">'+r.wins+'-'+r.losses+(r.ties?'-'+r.ties:'')+'</td>'
-            +'<td class="n">'+r.pf.toFixed(0)+'</td></tr>';
+    var faabUsed=rows.some(function(n){ return by[n].faab>0; });
+    return '<h2>Who works the wire</h2><table class="wv-t"><thead><tr><th>Manager</th>'
+      +'<th>Claims</th>'+(faabUsed?'<th>FAAB</th>':'')
+      +'<th>Free agents</th><th>Drops</th><th>Trades</th></tr></thead><tbody>'
+      + rows.map(function(n){
+          var a=by[n];
+          return '<tr><td>'+esc(n)+'</td><td class="n">'+a.claims+'</td>'
+            +(faabUsed?'<td class="n">$'+a.faab+'</td>':'')
+            +'<td class="n">'+a.adds+'</td><td class="n">'+a.drops+'</td>'
+            +'<td class="n">'+a.trades+'</td></tr>';
         }).join('')
       +'</tbody></table>';
   }
 
-  /** Who played whom, every regular-season week of every season. */
-  function headToHead(seasons){
-    var jobs=[];
-    seasons.forEach(function(s){
-      var last=Math.max(1,(s.playoff_start||15)-1);
-      var owner={};
-      s.teams.forEach(function(t){ owner[t.roster_id]=t.owner; });
-      for(var w=1; w<=last; w++){
-        jobs.push(get('/league/'+s.league_id+'/matchups/'+w)
-          .then(function(rows){ return {rows:rows||[], owner:owner}; }));
-      }
+  function draw(){
+    var seasonPick=document.getElementById('wv-season');
+    var typePick=document.getElementById('wv-type');
+    var season=seasonPick?seasonPick.value:'';
+    var kind=typePick?typePick.value:'';
+    var list=state.all.filter(function(t){
+      if(season && t.season!==season) return false;
+      if(kind==='failed') return t.status!=='complete';
+      if(kind && t.type!==kind) return false;
+      if(!kind && t.status!=='complete') return false;   // failed only when asked for
+      return true;
     });
-    return Promise.all(jobs).then(function(weeks){
-      var h2h={};
-      weeks.forEach(function(wk){
-        var by={};
-        wk.rows.forEach(function(r){
-          if(r.matchup_id==null) return;
-          (by[r.matchup_id]=by[r.matchup_id]||[]).push(r);
-        });
-        Object.keys(by).forEach(function(m){
-          var pair=by[m];
-          if(pair.length!==2) return;
-          var a=pair[0], b=pair[1];
-          var ao=wk.owner[a.roster_id], bo=wk.owner[b.roster_id];
-          if(!ao||!bo||ao===bo) return;
-          if((a.points||0)===(b.points||0)) return;       // a tie counts for neither
-          var win=(a.points||0)>(b.points||0)?ao:bo;
-          var lose=win===ao?bo:ao;
-          (h2h[win]=h2h[win]||{})[lose]=((h2h[win]||{})[lose]||0)+1;
-        });
-      });
-      return h2h;
-    });
+    var slot=document.getElementById('wv-log');
+    slot.innerHTML='<table class="wv-t"><thead><tr><th>When</th><th>How</th>'
+      +'<th>In</th><th>Out</th></tr></thead><tbody>'
+      + (list.length ? rowsFor(list.slice(0, shown), state.index)
+         : '<tr><td colspan="4"><span class="wv-none">Nothing here.</span></td></tr>')
+      +'</tbody></table>'
+      + (list.length>shown
+         ? '<button class="wv-more" id="wv-more">Show more ('
+           +(list.length-shown)+' left)</button>' : '');
+    var more=document.getElementById('wv-more');
+    if(more) more.addEventListener('click',function(){ shown+=PAGE; draw(); });
   }
 
-  function renderH2H(seasons, h2h){
-    var names={};
-    seasons.forEach(function(s){
-      s.teams.forEach(function(t){
-        if(t.owner && !names[t.owner]) names[t.owner]=t.manager||t.team;
-      });
-    });
-    var ids=Object.keys(names);
-    if(ids.length<2) return '';
-    ids.sort(function(a,b){ return names[a].toLowerCase()<names[b].toLowerCase()?-1:1; });
-    var html='<h2>Head to head</h2><p class="hi-note">Regular-season meetings, '
-      +'every season. Read across: wins for the manager on the left.</p>'
-      +'<div class="hi-scroll"><table class="hi-t hi-h2h"><thead><tr><th class="row"></th>'
-      + ids.map(function(i){return '<th>'+esc(names[i].slice(0,10))+'</th>';}).join('')
-      +'</tr></thead><tbody>';
-    ids.forEach(function(a){
-      html+='<tr><td class="row">'+esc(names[a])+'</td>';
-      ids.forEach(function(b){
-        if(a===b){ html+='<td class="self">&middot;</td>'; return; }
-        var w=((h2h[a]||{})[b])||0, l=((h2h[b]||{})[a])||0;
-        html+='<td>'+(w+l
-          ? '<span class="'+(w>l?'hi-w':w<l?'hi-l':'')+'">'+w+'&#8211;'+l+'</span>'
-          : '<span class="hi-load">&mdash;</span>')+'</td>';
-      });
-      html+='</tr>';
-    });
-    return html+'</tbody></table></div>';
-  }
-
-  host.innerHTML='<p class="hi-load">Reading '+esc(have.name||'your league')+'\u2026</p>';
+  host.innerHTML='<p class="wv-load">Reading '+esc(have.name||'your league')+'\u2026</p>';
   chain(have.id)
     .then(function(lgs){
       if(!lgs.length) throw new Error('none');
-      return Promise.all(lgs.map(season));
+      return Promise.all(lgs.map(function(lg){
+        return managers(lg.league_id).then(function(names){
+          return {league_id:lg.league_id, season:lg.season, name:lg.name, names:names};
+        });
+      }));
     })
     .then(function(seasons){
-      var span=seasons.length>1
-        ? seasons[seasons.length-1].season+'\u2013'+seasons[0].season
-        : seasons[0].season;
-      var head='<p class="hi-note"><strong>'+esc(seasons[0].name||'This league')
-        +'</strong> &middot; '+seasons.length+' season'+(seasons.length===1?'':'s')
-        +' &middot; '+esc(span)+'. Records are Sleeper\u2019s own: a league playing '
-        +'a weekly median scores two results a week, which is why a fourteen-week '
-        +'season can show a 28-game record.</p>';
-      host.innerHTML=head+renderChampions(seasons)+renderAllTime(seasons)
-        +'<div id="hi-h2h"><h2>Head to head</h2>'
-        +'<p class="hi-load">Reading every week of every season\u2026</p></div>'
-        +renderSeasons(seasons);
-
-      // The expensive half, once the rest is on screen.
-      headToHead(seasons).then(function(h2h){
-        var slot=document.getElementById('hi-h2h');
-        if(slot) slot.innerHTML=renderH2H(seasons, h2h)
-          || '<h2>Head to head</h2><p class="hi-none">Not enough played yet.</p>';
+      return Promise.all([seasons, collect(seasons, null), GSL.players()]);
+    })
+    .then(function(o){
+      var seasons=o[0], all=o[1], index=o[2]||{};
+      state={all:all, index:index, seasons:seasons};
+      var complete=all.filter(function(t){return t.status==='complete';}).length;
+      host.innerHTML=
+        '<p class="wv-note"><strong>'+esc(seasons[0].name||'This league')+'</strong> &middot; '
+        +complete+' completed move'+(complete===1?'':'s')+' across '+seasons.length
+        +' season'+(seasons.length===1?'':'s')+'. A failed claim is somebody being '
+        +'outbid, so they are kept - pick <em>Failed claims</em> to see them.</p>'
+        + summary(all)
+        + '<h2>Every move</h2>'
+        + '<div class="wv-bar"><label>Season <select id="wv-season">'
+        + '<option value="">All</option>'
+        + seasons.map(function(s){
+            return '<option value="'+esc(s.season)+'">'+esc(s.season)+'</option>';
+          }).join('')
+        + '</select></label><label>Kind <select id="wv-type">'
+        + '<option value="">Completed</option><option value="waiver">Waivers</option>'
+        + '<option value="free_agent">Free agents</option>'
+        + '<option value="trade">Trades</option>'
+        + '<option value="failed">Failed claims</option>'
+        + '</select></label></div><div id="wv-log"></div>';
+      ['wv-season','wv-type'].forEach(function(id){
+        document.getElementById(id).addEventListener('change',function(){
+          shown=PAGE; draw();});
       });
+      draw();
     })
     .catch(function(){
-      host.innerHTML='<p class="hi-none">Could not read that league from Sleeper.</p>';
+      host.innerHTML='<p class="wv-none">Could not read that league from Sleeper.</p>';
     });
 })();
 </script>{% endraw %}

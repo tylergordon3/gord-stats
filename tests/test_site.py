@@ -279,9 +279,12 @@ def test_the_league_override_works_without_an_account():
     this browser and works signed out. The account only carries it to another
     device, and must never become the gate."""
     assert "localStorage" in MY_LEAGUE
-    # The account lookup is a later refinement, not a precondition: it is
-    # fetched after the saved league has already been drawn.
-    assert MY_LEAGUE.index("var have=saved();") < MY_LEAGUE.index("'/api/leagues'")
+    # The account lookup is a later refinement, not a precondition: it runs
+    # after the saved league has already been drawn. Anchored on the call
+    # itself - /api/leagues is also named inside connect(), which is a
+    # definition rather than a step in the order things happen.
+    assert (MY_LEAGUE.index("var have=saved();")
+            < MY_LEAGUE.index("fetch('/api/leagues',{credentials:'same-origin'})"))
 
 
 def test_asking_for_the_sites_own_league_sticks():
@@ -502,3 +505,42 @@ def test_a_season_still_being_played_has_no_champion():
 def test_the_history_walk_is_bounded():
     """Same reason as the server's: these ids come from an API."""
     assert "MAX_SEASONS" in MY_HISTORY and "seen[lid]" in MY_HISTORY
+
+
+# --------------------------------------------------------------------------- #
+# Waivers and trades, and connecting a league
+# --------------------------------------------------------------------------- #
+
+MY_WAIVERS = (ROOT / "src" / "gordstats" / "my_waivers.py").read_text()
+
+
+def test_waivers_reads_the_readers_league():
+    doc = (DOCS / "fantasy" / "waivers" / "index.html").read_text()
+    assert "wv-host" in doc and "previous_league_id" in doc
+    assert "ml-bar" in doc and "function restore()" in doc, "no league control"
+
+
+def test_failed_claims_are_kept():
+    """Being outbid is half the story of a waiver wire. A log that silently
+    drops failed claims makes every claim look uncontested."""
+    assert "failed" in MY_WAIVERS
+    assert "t.status!=='complete'" in MY_WAIVERS.replace(" ", "")
+
+
+def test_defences_resolve_like_players():
+    """Sleeper keys a defence by team code ("GB") where everyone else is a
+    number, so a naive lookup prints "GB" in the log."""
+    index = json.loads((DOCS / "fantasy" / "players-index.json").read_text())
+    for code in ("GB", "SEA", "KC"):
+        assert code in index, f"{code} defence missing from the player index"
+        assert index[code][1] == "DEF"
+
+
+def test_a_league_can_be_connected_without_leaving_the_page():
+    """It used to mean finding the Analytics hub and then a settings page. The
+    reader is already looking at a page that would show their league."""
+    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    assert "function connect(" in picker
+    assert "/user/" in picker and "/leagues/nfl/" in picker
+    # And it works signed out, so the account stays a convenience.
+    assert "gsSleeperLeagues" in picker, "the found leagues are not kept locally"

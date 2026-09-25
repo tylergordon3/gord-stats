@@ -50,6 +50,7 @@ CSS = """<style>
 JS = """{% raw %}<script>
 (function(){
   var KEY='gsSleeperLeague';          // {id, name} of the league being shown
+  var LIST='gsSleeperLeagues';        // every league this browser knows about
   var bar=document.getElementById('ml-bar');
   if(!bar) return;
   // The usage table is the thing whose ownership can be re-pointed. On the
@@ -66,6 +67,19 @@ JS = """{% raw %}<script>
 
   function saved(){
     try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; }
+  }
+  // The leagues found for this browser, kept beside the chosen one. Without
+  // this, connecting by username signed out found four leagues and then lost
+  // three of them on the next page load: the list only existed in memory, and
+  // /api/leagues has nothing to say to someone who is not signed in.
+  function savedList(){
+    try{ return JSON.parse(localStorage.getItem(LIST)||'[]')||[]; }catch(e){ return []; }
+  }
+  function saveList(rows){
+    try{
+      if(rows&&rows.length) localStorage.setItem(LIST,JSON.stringify(rows));
+      else localStorage.removeItem(LIST);
+    }catch(e){}
   }
   function save(v){
     try{ v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY); }
@@ -157,7 +171,7 @@ JS = """{% raw %}<script>
   // Leagues synced to the account, filled in once /api/leagues answers. More
   // than one is normal for anybody in two, and picking the first silently left
   // the rest unreachable.
-  var SYNCED=[];
+  var SYNCED=savedList();
 
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"]/g,function(c){
@@ -225,21 +239,76 @@ JS = """{% raw %}<script>
       document.getElementById('ml-clear').addEventListener('click',restore);
       return;
     }
-    bar.innerHTML='<span class="ml-label">Your Sleeper league</span>'
-      +'<input id="ml-id" type="text" inputmode="numeric" '
-      +'placeholder="league id" aria-label="Sleeper league id">'
-      +'<button type="button" id="ml-go">Show mine</button>'
+    // Connecting happens here rather than on a settings page: a reader who
+    // wants their own league is already looking at a page that would show it.
+    // One field, because a Sleeper username and a league id cannot be mistaken
+    // for each other - an id is a long run of digits and a username is not.
+    bar.innerHTML='<span class="ml-label">Your Sleeper username</span>'
+      +'<input id="ml-id" type="text" autocapitalize="none" autocorrect="off" '
+      +'spellcheck="false" placeholder="username" '
+      +'aria-label="Sleeper username, or a league id">'
+      +'<button type="button" id="ml-go">Connect</button>'
       +'<span class="ml-msg" id="ml-msg"></span>';
-    document.getElementById('ml-go').addEventListener('click',function(){
+    function go(){
+      var btn=document.getElementById('ml-go');
       var v=(document.getElementById('ml-id').value||'').trim();
-      if(!/^[0-9]{6,32}$/.test(v)){
-        msg('A Sleeper league id is the long number in the league\\u2019s web address.','err');
-        return;
-      }
-      this.disabled=true;
-      var btn=this;
-      load(v).then(function(){ btn.disabled=false; });
+      if(!v){ msg('Enter your Sleeper username.','err'); return; }
+      btn.disabled=true;
+      var done=function(){ btn.disabled=false; };
+      if(/^[0-9]{6,32}$/.test(v)) load(v).then(done);       // a league id
+      else connect(v).then(done);                           // a username
+    }
+    document.getElementById('ml-go').addEventListener('click',go);
+    document.getElementById('ml-id').addEventListener('keydown',function(e){
+      if(e.key==='Enter') go();
     });
+  }
+
+  /** Every league a Sleeper account is in, found from the username.
+   *
+   *  Resolved in the browser so it works signed out - the league is then kept
+   *  in this browser like a starred team. Signing in only adds persistence,
+   *  so the POST is a best-effort extra rather than the thing that makes it
+   *  work.
+   */
+  function connect(username){
+    msg('Asking Sleeper\u2026');
+    var API='https://api.sleeper.app/v1';
+    return fetch(API+'/user/'+encodeURIComponent(username))
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(user){
+        if(!user||!user.user_id) throw new Error('no user');
+        return fetch(API+'/state/nfl').then(function(r){return r.json();})
+          .then(function(st){
+            return fetch(API+'/user/'+user.user_id+'/leagues/nfl/'
+                         +(st&&st.season||new Date().getFullYear()))
+              .then(function(r){ return r.ok?r.json():[]; });
+          });
+      })
+      .then(function(lgs){
+        if(!lgs||!lgs.length) throw new Error('no leagues');
+        SYNCED=lgs.map(function(l){
+          return {provider:'sleeper', league_id:String(l.league_id),
+                  name:l.name, season:String(l.season||''),
+                  lineage_id:String(l.league_id)};
+        });
+        saveList(SYNCED);
+        // Persist to the account when there is one; the page does not wait on
+        // it, and nothing breaks when it is not there.
+        fetch('/api/leagues',{method:'POST',credentials:'same-origin',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({provider:'sleeper', username:username})})
+          // Persisting is the extra, not the feature: signed out there is
+          // nowhere to put it and the local copy is already doing the work.
+          .catch(function(){ /* best effort */ });
+        msg('');
+        draw(leagueLabel(SYNCED[0]));
+        return load(SYNCED[0].league_id, true);
+      })
+      .catch(function(){
+        msg('Sleeper has no NFL leagues for that username this season.','err');
+        return false;
+      });
   }
 
   var have=saved();
@@ -253,8 +322,11 @@ JS = """{% raw %}<script>
     .then(function(d){
       if(!d||!d.leagues) return;
       // One entry per league, not one per season.
-      SYNCED=leagues(d.leagues.filter(function(l){return l.provider==='sleeper';}))
-        .map(function(g){ return g.current; });
+      // The account is the better answer when there is one: it has the team
+      // names and the season history this browser's own list does not.
+      var fromAccount=leagues(d.leagues.filter(function(l){
+        return l.provider==='sleeper';})).map(function(g){ return g.current; });
+      if(fromAccount.length){ SYNCED=fromAccount; saveList(SYNCED); }
       if(!SYNCED.length) return;
       if(have&&have.site) return;          // they asked for this site's league
       // Keep showing whatever this browser already had, if the account knows

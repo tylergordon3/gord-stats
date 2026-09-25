@@ -202,8 +202,10 @@ def test_the_league_lookup_does_not_swallow_its_own_bugs():
     """An empty catch around the account lookup hid a TypeError - a function
     shadowed by a parameter - and the picker just silently never appeared."""
     picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
-    assert ".catch(function(){});" not in picker
-    assert "console.error" in picker
+    lookup = picker[picker.index("fetch('/api/leagues',{credentials:'same-origin'})"):]
+    assert ".catch(function(){});" not in lookup, \
+        "the account lookup swallows its own errors again"
+    assert "console.error" in lookup
 
 
 def test_syncing_a_league_takes_its_history_with_it():

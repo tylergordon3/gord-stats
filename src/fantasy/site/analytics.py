@@ -27,8 +27,11 @@ CARDS = [
      "The board, what each pick returned against what it cost, and the habits "
      "that show up across every draft this league has held."),
     ("/fantasy/transactions/", "&#128260;", "Waivers & Trades",
-     "Every claim, free-agent add and trade, and what the players involved "
-     "did afterwards."),
+     "Every claim, free-agent add and trade in this league, and what the "
+     "players involved did afterwards."),
+    ("/fantasy/waivers/", "&#128220;", "Your league's waivers",
+     "The same for your own league: who works the wire, what they paid, and "
+     "every claim, add and trade across its seasons."),
     ("/fantasy/sync/", "&#128279;", "Sync your league",
      "Attach your own Sleeper or Yahoo league to your account, so these pages "
      "can show yours rather than this one."),
