@@ -175,3 +175,54 @@ def test_local_assets_are_cache_busted():
                             LAYOUT):
         path, version = asset
         assert version, f"{path} is served without ?v= and will be cached stale"
+
+
+# --------------------------------------------------------------------------- #
+# Usage tables: a column is hidden by class, so the header and the body have to
+# agree about which classes a column carries.
+# --------------------------------------------------------------------------- #
+
+USAGE_PAGES = ["fantasy/usage/index.html", "cfb/usage/index.html"]
+
+
+def _usage_table(path):
+    doc = (DOCS / path).read_text()
+    head = re.search(r"<thead>(.*?)</thead>", doc, re.S)
+    body = re.search(r"<tbody>(.*?)</tbody>", doc, re.S)
+    assert head and body, f"{path} has no usage table"
+    ths = re.findall(r"<th[^>]*>", head.group(1))
+    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", body.group(1), re.S)
+    return ths, rows
+
+
+@pytest.mark.parametrize("path", USAGE_PAGES)
+def test_usage_rows_have_one_cell_per_column(path):
+    ths, rows = _usage_table(path)
+    for i, row in enumerate(rows):
+        tds = re.findall(r"<td[^>]*>", row)
+        assert len(tds) == len(ths), f"{path} row {i}: {len(tds)} cells for {len(ths)} columns"
+
+
+@pytest.mark.parametrize("path", USAGE_PAGES)
+def test_usage_headers_hide_with_their_column(path):
+    """Every class that hides a cell - the position views and the two the phone
+    layout drops - has to be on the header too.
+
+    A header without its column's class stays visible when the cells go, and
+    every column right of it reads under the wrong heading. That shipped once:
+    on a phone the owner cell was hidden and its "Fantasy" header was not, so
+    games sat under Fantasy and carries under G.
+    """
+    ths, rows = _usage_table(path)
+    hiders = re.compile(r"\b(v-overall|v-rb|v-wr|v-te|us-own|us-lead)\b")
+
+    def marks(tag):
+        cls = re.search(r"class=[\"']([^\"']*)[\"']", tag)
+        return set(hiders.findall(cls.group(1))) if cls else set()
+
+    head_marks = [marks(t) for t in ths]
+    for i, row in enumerate(rows):
+        for col, td in enumerate(re.findall(r"<td[^>]*>", row)):
+            assert marks(td) == head_marks[col], (
+                f"{path} row {i} column {col}: cell has {marks(td) or '{}'}, "
+                f"header has {head_marks[col] or '{}'}")

@@ -29,6 +29,28 @@ RECENT_WEEKS = 3
 MIN_TOUCHES = 3                 # carries + targets; below it a share is noise
 SORT_COLUMN = 5                 # snap share
 
+# Quarterbacks, kickers and defences are not what this page is for: it is about
+# who the ball goes to among the backs and receivers. QB usage is a passing
+# stat and belongs with the passing numbers, not beside a carry share.
+SHOWN = ("RB", "WR", "TE")
+
+# The page is read one position at a time. Each view keeps its own positions,
+# opens on the share that matters for them, and ranks only players with enough
+# volume for a share to mean anything - a back with two carries can top a carry
+# share table on a wet Sunday. Unqualified players still appear, greyed.
+VIEWS = [
+    {"key": "overall", "label": "Overall", "sort": "snap_share"},
+    {"key": "rb", "label": "RB", "pos": ["RB"], "sort": "car_share",
+     "min": {"field": "car", "n": 15,
+             "label": "Ranked among backs with 15+ carries over these weeks."}},
+    {"key": "wr", "label": "WR", "pos": ["WR"], "sort": "tgt_share",
+     "min": {"field": "tgt", "n": 12,
+             "label": "Ranked among receivers with 12+ targets over these weeks."}},
+    {"key": "te", "label": "TE", "pos": ["TE"], "sort": "tgt_share",
+     "min": {"field": "tgt", "n": 8,
+             "label": "Ranked among tight ends with 8+ targets over these weeks."}},
+]
+
 
 def owners(year: int = UPCOMING_YEAR) -> tuple:
     """({sleeper_id: roster key}, {roster key: "Team (Manager)"}) from the
@@ -46,6 +68,17 @@ def owners(year: int = UPCOMING_YEAR) -> tuple:
     return held, names
 
 
+# Which views each column belongs to. A back's page does not need air-yard
+# share and a receiver's does not need carries, so a column a view has no use
+# for is hidden rather than printed empty.
+ALL = "v-overall v-rb v-wr v-te"
+POSV = "v-rb v-wr v-te"                 # the rank column: position views only
+OVR = "v-overall"
+RUSH = "v-overall v-rb"
+CATCH = "v-overall v-wr v-te"
+RECV = "v-wr v-te"
+
+
 def _rows(recent: pd.DataFrame, season: pd.DataFrame, held: dict, names: dict) -> str:
     whole = season.set_index("sleeper_id")
     out = []
@@ -59,25 +92,37 @@ def _rows(recent: pd.DataFrame, season: pd.DataFrame, held: dict, names: dict) -
         label = (escape(names.get(own, own)) if own else "<span class='us-fa'>FA</span>")
         rz = r["rush_rz_att"] + r["rec_rz_tgt"]
         per_game = r["pts_ppr"] / r["games"] if r["games"] else None
+        # Targets per snap: the nearest thing we can publish to a target rate.
+        # Routes run is the figure that belongs here, and neither Sleeper nor
+        # nflverse/PFR carries it - it is charted data. Snaps are the honest
+        # denominator we do have.
+        snaps = r.get("off_snp")
+        per_snap = (r["rec_tgt"] / snaps) if snaps else None
         out.append(
             f'<tr data-team="{escape(r["team"], quote=True)}" data-conf=""'
             f' data-pos="{escape(r["pos"], quote=True)}" data-own="{escape(own, quote=True)}"'
+            f' data-car="{int(r["rush_att"])}" data-tgt="{int(r["rec_tgt"])}"'
             f' data-name="{escape(str(r["player"]).lower(), quote=True)}">'
-            f'<td class="us-name">{escape(str(r["player"]))}</td>'
-            f'<td class="us-team">{escape(r["team"])}</td><td>{escape(r["pos"])}</td>'
-            f'<td class="us-own">{label}</td>' + ui.num(r["games"])
-            + f'<td data-v="{ui.v(r["snap_share"])}">{ui.bar(r["snap_share"])}</td>'
-            f'<td class="us-lead" data-v="{ui.v(before("snap_share"))}">{ui.pct(before("snap_share"))}</td>'
-            + ui.num(r["rush_att"])
-            + f'<td data-v="{ui.v(r["car_share"])}">{ui.bar(r["car_share"])}</td>'
-            f'<td class="us-lead" data-v="{ui.v(before("car_share"))}">{ui.pct(before("car_share"))}</td>'
-            + ui.num(r["rec_tgt"])
-            + f'<td data-v="{ui.v(r["tgt_share"])}">{ui.bar(r["tgt_share"])}</td>'
-            f'<td class="us-lead" data-v="{ui.v(before("tgt_share"))}">{ui.pct(before("tgt_share"))}</td>'
-            + ui.num(r["rec"])
-            + f'<td data-v="{ui.v(r["air_share"])}">{ui.pct(r["air_share"])}</td>'
-            + ui.num(rz) + ui.num(r["rush_yd"] + r["rec_yd"]) + ui.num(r["rush_td"] + r["rec_td"])
-            + f'<td data-v="{ui.v(per_game)}">'
+            f'<td class="us-rank {POSV}"></td>'
+            f'<td class="us-name {ALL}">{escape(str(r["player"]))}</td>'
+            f'<td class="us-team {ALL}">{escape(r["team"])}</td>'
+            f'<td class="{OVR}">{escape(r["pos"])}</td>'
+            f'<td class="us-own {ALL}">{label}</td>' + ui.num(r["games"], cls=ALL)
+            + f'<td class="{ALL}" data-v="{ui.v(r["snap_share"])}">{ui.bar(r["snap_share"])}</td>'
+            f'<td class="us-lead {ALL}" data-v="{ui.v(before("snap_share"))}">{ui.pct(before("snap_share"))}</td>'
+            + ui.num(r["rush_att"], cls=RUSH)
+            + f'<td class="{RUSH}" data-v="{ui.v(r["car_share"])}">{ui.bar(r["car_share"])}</td>'
+            f'<td class="us-lead {RUSH}" data-v="{ui.v(before("car_share"))}">{ui.pct(before("car_share"))}</td>'
+            + ui.num(r["rec_tgt"], cls=ALL)
+            + f'<td class="{ALL}" data-v="{ui.v(r["tgt_share"])}">{ui.bar(r["tgt_share"])}</td>'
+            f'<td class="us-lead {ALL}" data-v="{ui.v(before("tgt_share"))}">{ui.pct(before("tgt_share"))}</td>'
+            + f'<td class="{RECV}" data-v="{ui.v(per_snap)}">'
+            + ("&mdash;" if per_snap is None else f"{per_snap:.2f}") + "</td>"
+            + ui.num(r["rec"], cls=CATCH)
+            + f'<td class="{CATCH}" data-v="{ui.v(r["air_share"])}">{ui.pct(r["air_share"])}</td>'
+            + ui.num(rz, cls=ALL) + ui.num(r["rush_yd"] + r["rec_yd"], cls=ALL)
+            + ui.num(r["rush_td"] + r["rec_td"], cls=ALL)
+            + f'<td class="{ALL}" data-v="{ui.v(per_game)}">'
             + ("&mdash;" if per_game is None else f"{per_game:.1f}") + "</td></tr>")
     return "".join(out)
 
@@ -91,13 +136,12 @@ def body() -> str:
     if frame.empty:
         return (ui.CSS + f"<p>No {UPCOMING_SEASON} games have been played yet — this page "
                 "fills in after the first one.</p>")
-    frame = frame[frame["pos"].isin(usage_mod.POSITIONS)]
+    frame = frame[frame["pos"].isin(SHOWN)]
     weeks = sorted(int(w) for w in frame["week"].unique())
     recent_weeks = weeks[-RECENT_WEEKS:]
     recent = usage_mod.shares(frame, weeks=RECENT_WEEKS)
     season = usage_mod.shares(frame)
-    recent = recent[(recent["rush_att"] + recent["rec_tgt"] >= MIN_TOUCHES)
-                    | (recent["pos"] == "QB") & (recent["pass_att"] >= 10)]
+    recent = recent[recent["rush_att"] + recent["rec_tgt"] >= MIN_TOUCHES]
     recent = recent.sort_values(["snap_share", "tgt_share"], ascending=False)
 
     held, names = owners()
@@ -113,8 +157,6 @@ def body() -> str:
         f"<optgroup label='Teams'>{ui.options(by_name, names)}</optgroup></select></label>"
         f"<label>NFL team <select id='us-team'><option value=''>All</option>"
         f"{ui.options(teams)}</select></label>"
-        f"<label>Position <select id='us-pos'><option value=''>All</option>"
-        f"{ui.options(usage_mod.POSITIONS)}</select></label>"
         "<label>Find <input id='us-find' type='search' placeholder='player'></label>"
         "<label title='Keep each NFL team together, sorted inside by the chosen column'>"
         "<input id='us-group' type='checkbox'> Group by team</label>"
@@ -122,43 +164,68 @@ def body() -> str:
         "<span class='us-count' id='us-count'></span></div></div>")
     span = (f"week {recent_weeks[0]}" if len(recent_weeks) == 1
             else f"weeks {recent_weeks[0]}&ndash;{recent_weeks[-1]}")
-    head = ("<tr><th data-k='text'>Player</th><th data-k='text'>Team</th>"
-            "<th data-k='text'>Pos</th><th data-k='text'>Fantasy</th><th data-k='n'>G</th>"
-            "<th data-k='n' title='Offensive snaps played out of the team&#39;s'>Snap share</th>"
-            "<th data-k='n' class='us-lead'>Season</th>"
-            "<th data-k='n'>Car</th><th data-k='n'>Car share</th>"
-            "<th data-k='n' class='us-lead'>Season</th>"
-            "<th data-k='n'>Tgt</th><th data-k='n'>Tgt share</th>"
-            "<th data-k='n' class='us-lead'>Season</th><th data-k='n'>Rec</th>"
-            "<th data-k='n' title='Share of the team&#39;s air yards: how far downfield "
-            "the targets are, not just how many'>Air share</th>"
-            "<th data-k='n' title='Red-zone carries plus red-zone targets'>RZ looks</th>"
-            "<th data-k='n'>Yds</th><th data-k='n'>TD</th>"
-            "<th data-k='n' title='PPR points per game played'>PPR/G</th></tr>")
+    head = (f"<tr><th class='{POSV}' title='Rank in this view, among players past the "
+            f"minimum'>#</th>"
+            f"<th data-k='text' class='{ALL}'>Player</th>"
+            f"<th data-k='text' class='{ALL}'>Team</th>"
+            f"<th data-k='text' class='{OVR}'>Pos</th>"
+            f"<th data-k='text' class='us-own {ALL}'>Fantasy</th>"
+            f"<th data-k='n' class='{ALL}'>G</th>"
+            f"<th data-k='n' class='{ALL}' data-field='snap_share' "
+            f"title='Offensive snaps played out of the team&#39;s'>Snap share</th>"
+            f"<th data-k='n' class='us-lead {ALL}'>Season</th>"
+            f"<th data-k='n' class='{RUSH}' data-field='car'>Car</th>"
+            f"<th data-k='n' class='{RUSH}' data-field='car_share'>Car share</th>"
+            f"<th data-k='n' class='us-lead {RUSH}'>Season</th>"
+            f"<th data-k='n' class='{ALL}' data-field='tgt'>Tgt</th>"
+            f"<th data-k='n' class='{ALL}' data-field='tgt_share'>Tgt share</th>"
+            f"<th data-k='n' class='us-lead {ALL}'>Season</th>"
+            f"<th data-k='n' class='{RECV}' data-field='tgt_per_snap' "
+            f"title='Targets per offensive snap - the closest stand-in we can publish "
+            f"for a target rate, since routes run is charted data no free source carries'>"
+            f"Tgt/snap</th>"
+            f"<th data-k='n' class='{CATCH}'>Rec</th>"
+            f"<th data-k='n' class='{CATCH}' title='Share of the team&#39;s air yards: how "
+            f"far downfield the targets are, not just how many'>Air share</th>"
+            f"<th data-k='n' class='{ALL}' title='Red-zone carries plus red-zone targets'>"
+            f"RZ looks</th>"
+            f"<th data-k='n' class='{ALL}'>Yds</th><th data-k='n' class='{ALL}'>TD</th>"
+            f"<th data-k='n' class='{ALL}' title='PPR points per game played'>PPR/G</th></tr>")
     cfg = json.dumps({"mine": mine, "teams": names, "storage": "nflMyTeam",
-                      "sort": SORT_COLUMN}).replace("</", "<\\/")
+                      "sort": SORT_COLUMN, "views": VIEWS}).replace("</", "<\\/")
     return (
         ui.CSS
-        + "<p>Every skill player's share of his team's snaps, carries, targets and air "
-        f"yards over the last three played weeks (<strong>{span}</strong>), with the season "
-        "share beside it in grey, and who in the league owns him. A back whose snap share "
-        "is climbing while his carries are flat is about to get the carries.</p>"
+        + "<p>Backs, receivers and tight ends: each one's share of his team's snaps, "
+        f"carries and targets over the last three played weeks (<strong>{span}</strong>), "
+        "with the season share beside it in grey, and who in the league owns him. A back "
+        "whose snap share is climbing while his carries are flat is about to get the "
+        "carries.</p>"
         "<details class='section'><summary>How to use this page</summary>"
-        "<p class='us-note'><strong>Click any column</strong> to sort by it, again to "
-        "reverse. <strong>Fantasy</strong> narrows the table to one roster, to everybody "
-        "rostered, or to the <span class='us-fa'>FA</span> free agents; <em>My team</em> is "
-        "the roster chosen on the <a href='/fantasy/roster/'>team dashboard</a>. For one "
-        "backfield pick the NFL team and Position RB; for all of them tick <strong>Group "
+        "<p class='us-note'><strong>Overall / RB / WR / TE</strong> picks both the "
+        "players and the columns: the RB view leads on carry share, the receiver views on "
+        "target share, and each ranks only players past a minimum, since a back with two "
+        "carries can otherwise top a carry-share table. Players under it still appear, "
+        "greyed, with no rank - <strong>Qualified only</strong> hides them. "
+        "<strong>Click any column</strong> to sort by it, again to reverse. "
+        "<strong>Fantasy</strong> narrows the table to one roster, to everybody rostered, "
+        "or to the <span class='us-fa'>FA</span> free agents; <em>My team</em> is the "
+        "roster chosen on the <a href='/fantasy/roster/'>team dashboard</a>. For one "
+        "backfield pick the NFL team and the RB view; for all of them tick <strong>Group "
         "by team</strong>. The filters live in the page address, so a view can be "
         "bookmarked or shared.</p>"
         "<p class='us-note'>All from Sleeper's weekly stats. <strong>Snap share</strong> is "
         "offensive snaps played out of the team's. Carry, target and air-yard shares divide "
         "by the team's own players added up, so a share cannot exceed what the team ran. "
         "<strong>RZ looks</strong> are carries and targets inside the twenty, where the "
-        "touchdowns come from. A week still being played counts what has been played."
+        "touchdowns come from. A week still being played counts what has been played. "
+        "<strong>Tgt/snap</strong> stands in for a target rate: routes run is the figure "
+        "that belongs there, and it is charted data that no free source publishes, so "
+        "snaps are the honest denominator we have. Quarterbacks, kickers and defences are "
+        "not on this page - it is about who the ball goes to."
         "</p></details>"
+        + ui.views_bar(VIEWS)
         + controls
-        + f"<div class='us-scroll'><table class='us'><thead>{head}</thead>"
+        + f"<div class='us-scroll'><table class='us view-overall'><thead>{head}</thead>"
         f"<tbody>{_rows(recent, season, held, names)}</tbody></table></div>"
         + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + ui.JS)
 

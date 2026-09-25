@@ -26,10 +26,38 @@ from cfb.config import MY_TEAM, SEASON, WEB_DIR
 from cfb.site import write_page
 from gordstats.usage_page import CSS as _CSS, JS as _JS, bar as _bar, num as _num
 from gordstats.usage_page import options as _options, pct as _pct, v as _v
+from gordstats.usage_page import views_bar as _views_bar
 
 RECENT_WEEKS = 3
 MIN_TOUCHES = 4                 # below this a share is one carry of noise
 POSITIONS = ("QB", "RB", "WR", "TE")
+# The page is about who the ball goes to, so it holds the three positions that
+# answer that. A quarterback's usage is a passing stat and reads nothing like a
+# carry share.
+SHOWN = ("RB", "WR", "TE")
+
+# Minimums are lower than the NFL page's: a college team runs more plays, but
+# the archive only has the weeks the season has played.
+VIEWS = [
+    {"key": "overall", "label": "Overall", "sort": "car_share"},
+    {"key": "rb", "label": "RB", "pos": ["RB"], "sort": "car_share",
+     "min": {"field": "car", "n": 15,
+             "label": "Ranked among backs with 15+ carries over these weeks."}},
+    {"key": "wr", "label": "WR", "pos": ["WR"], "sort": "tgt_share",
+     "min": {"field": "tgt", "n": 10,
+             "label": "Ranked among receivers with 10+ targets over these weeks."}},
+    {"key": "te", "label": "TE", "pos": ["TE"], "sort": "tgt_share",
+     "min": {"field": "tgt", "n": 6,
+             "label": "Ranked among tight ends with 6+ targets over these weeks."}},
+]
+
+# Which views own which columns. College has no published snap counts, so the
+# receiver views lead on target share rather than on snaps.
+ALL = "v-overall v-rb v-wr v-te"
+POSV = "v-rb v-wr v-te"
+OVR = "v-overall"
+RUSH = "v-overall v-rb"
+CATCH = "v-overall v-wr v-te"
 
 def _conferences() -> dict:
     """CFBD school name -> this season's conference. ESPN's FPI pull knows the
@@ -64,24 +92,26 @@ def _rows(recent: pd.DataFrame, season: pd.DataFrame, conf: dict) -> str:
             f' data-conf="{escape(conf.get(r["team"], ""), quote=True)}"'
             f' data-pos="{escape(str(r["pos"]), quote=True)}"'
             f' data-own="{escape(str(r["team_key"]), quote=True)}"'
+            f' data-car="{int(r["carries"])}" data-tgt="{int(r["targets"])}"'
             f' data-name="{escape(str(r["player"]).lower(), quote=True)}">'
-            f'<td class="us-name">{escape(str(r["player"]))}</td>'
-            f'<td class="us-team">{escape(str(r["team"]))}</td>'
-            f'<td>{escape(str(r["pos"]))}</td>'
-            f'<td class="us-own">{own}</td>'
-            + _num(r["games"]) + _num(r["carries"])
-            + f'<td data-v="{_v(r["car_share"])}">{_bar(r["car_share"])}</td>'
-            f'<td class="us-lead" data-v="{_v(was("car_share"))}">{_pct(was("car_share"))}</td>'
-            + _num(r["targets"])
-            + f'<td data-v="{_v(r["tgt_share"])}">{_bar(r["tgt_share"])}</td>'
-            f'<td class="us-lead" data-v="{_v(was("tgt_share"))}">{_pct(was("tgt_share"))}</td>'
-            + _num(r["rec"])
-            + f'<td data-v="{_v(r["rec_share"])}">{_pct(r["rec_share"])}</td>'
-            f'<td data-v="{_v(catch)}">{_pct(catch)}</td>'
-            + _num(yards) + _num(tds)
-            + f'<td data-v="{_v(per_game)}">'
+            f'<td class="us-rank {POSV}"></td>'
+            f'<td class="us-name {ALL}">{escape(str(r["player"]))}</td>'
+            f'<td class="us-team {ALL}">{escape(str(r["team"]))}</td>'
+            f'<td class="{OVR}">{escape(str(r["pos"]))}</td>'
+            f'<td class="us-own {ALL}">{own}</td>'
+            + _num(r["games"], cls=ALL) + _num(r["carries"], cls=RUSH)
+            + f'<td class="{RUSH}" data-v="{_v(r["car_share"])}">{_bar(r["car_share"])}</td>'
+            f'<td class="us-lead {RUSH}" data-v="{_v(was("car_share"))}">{_pct(was("car_share"))}</td>'
+            + _num(r["targets"], cls=ALL)
+            + f'<td class="{ALL}" data-v="{_v(r["tgt_share"])}">{_bar(r["tgt_share"])}</td>'
+            f'<td class="us-lead {ALL}" data-v="{_v(was("tgt_share"))}">{_pct(was("tgt_share"))}</td>'
+            + _num(r["rec"], cls=CATCH)
+            + f'<td class="{CATCH}" data-v="{_v(r["rec_share"])}">{_pct(r["rec_share"])}</td>'
+            f'<td class="{CATCH}" data-v="{_v(catch)}">{_pct(catch)}</td>'
+            + _num(yards, cls=ALL) + _num(tds, cls=ALL)
+            + f'<td class="{ALL}" data-v="{_v(per_game)}">'
             + ("&mdash;" if per_game is None or pd.isna(per_game) else f"{per_game:.1f}") + "</td>"
-            f'<td data-v="{_v(r["ppa"])}">'
+            f'<td class="{ALL}" data-v="{_v(r["ppa"])}">'
             + ("&mdash;" if pd.isna(r["ppa"]) else f"{r['ppa']:+.2f}") + "</td></tr>")
     return "".join(out)
 
@@ -100,7 +130,7 @@ def body() -> str:
 
     recent = usage_mod.shares(frame, weeks=RECENT_WEEKS)
     season = usage_mod.shares(frame)
-    recent = recent[recent["pos"].isin(POSITIONS)]
+    recent = recent[recent["pos"].isin(SHOWN)]
     recent = recent[(recent["carries"] + recent["targets"] + recent["rec"]) >= MIN_TOUCHES]
     recent = recent.sort_values(["car_share", "tgt_share"], ascending=False)
     recent = ownership.attach(recent)
@@ -121,8 +151,6 @@ def body() -> str:
         f"{_options(confs)}</select></label>"
         f"<label>School <select id='us-team'><option value=''>All</option>"
         f"{_options(teams, data=conf)}</select></label>"
-        f"<label>Position <select id='us-pos'><option value=''>All</option>"
-        f"{_options(POSITIONS)}</select></label>"
         "<label>Find <input id='us-find' type='search' placeholder='player'></label>"
         "<label title='Keep each school together, sorted inside by the chosen column'>"
         "<input id='us-group' type='checkbox'> Group by school</label>"
@@ -132,19 +160,28 @@ def body() -> str:
 
     span = (f"week {recent_weeks[0]}" if len(recent_weeks) == 1
             else f"weeks {recent_weeks[0]}&ndash;{recent_weeks[-1]}")
-    head = ("<tr><th data-k='text'>Player</th><th data-k='text'>School</th>"
-            "<th data-k='text'>Pos</th><th data-k='text'>Fantasy</th><th data-k='n'>G</th>"
-            "<th data-k='n'>Car</th><th data-k='n'>Car share</th>"
-            "<th data-k='n' class='us-lead'>Season</th>"
-            "<th data-k='n'>Tgt</th><th data-k='n'>Tgt share</th>"
-            "<th data-k='n' class='us-lead'>Season</th>"
-            "<th data-k='n'>Rec</th><th data-k='n'>Rec share</th>"
-            "<th data-k='n' title='Catches per target'>Catch%</th>"
-            "<th data-k='n'>Yds</th><th data-k='n'>TD</th>"
-            "<th data-k='n' title='League fantasy points per game played'>FPts/G</th>"
-            "<th data-k='n'>PPA</th></tr>")
+    head = (f"<tr><th class='{POSV}' title='Rank in this view, among players past the "
+            f"minimum'>#</th>"
+            f"<th data-k='text' class='{ALL}'>Player</th>"
+            f"<th data-k='text' class='{ALL}'>School</th>"
+            f"<th data-k='text' class='{OVR}'>Pos</th>"
+            f"<th data-k='text' class='us-own {ALL}'>Fantasy</th>"
+            f"<th data-k='n' class='{ALL}'>G</th>"
+            f"<th data-k='n' class='{RUSH}' data-field='car'>Car</th>"
+            f"<th data-k='n' class='{RUSH}' data-field='car_share'>Car share</th>"
+            f"<th data-k='n' class='us-lead {RUSH}'>Season</th>"
+            f"<th data-k='n' class='{ALL}' data-field='tgt'>Tgt</th>"
+            f"<th data-k='n' class='{ALL}' data-field='tgt_share'>Tgt share</th>"
+            f"<th data-k='n' class='us-lead {ALL}'>Season</th>"
+            f"<th data-k='n' class='{CATCH}'>Rec</th>"
+            f"<th data-k='n' class='{CATCH}'>Rec share</th>"
+            f"<th data-k='n' class='{CATCH}' title='Catches per target'>Catch%</th>"
+            f"<th data-k='n' class='{ALL}'>Yds</th><th data-k='n' class='{ALL}'>TD</th>"
+            f"<th data-k='n' class='{ALL}' title='League fantasy points per game played'>"
+            f"FPts/G</th>"
+            f"<th data-k='n' class='{ALL}'>PPA</th></tr>")
     cfg = json.dumps({"mine": mine, "teams": league_teams, "storage": "cfbMyTeam",
-                      "sort": 6}).replace("</", "<\\/")
+                      "sort": 7, "views": VIEWS}).replace("</", "<\\/")
     return (
         _CSS
         + f"<p>Every FBS skill player's share of his own team's carries, targets and catches "
@@ -174,8 +211,9 @@ def body() -> str:
         "Snap counts do not exist free for college football; share of touches is the honest "
         "substitute. A player counts as a free agent when no roster in the league holds "
         "him.</p></details>"
+        + _views_bar(VIEWS)
         + controls
-        + f"<div class='us-scroll'><table class='us'><thead>{head}</thead>"
+        + f"<div class='us-scroll'><table class='us view-overall'><thead>{head}</thead>"
         f"<tbody>{_rows(recent, season, conf)}</tbody></table></div>"
         + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + _JS)
 

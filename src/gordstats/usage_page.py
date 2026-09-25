@@ -29,12 +29,60 @@ table.us td.us-team{text-align:left;color:#475569}
 table.us td.us-own{text-align:left;font-size:12.5px;color:#475569}
 table.us tbody tr:nth-child(even) td{background:#f8fafc}
 table.us tbody tr.us-break td{border-top:2px solid #94a3b8}
+table.us.view-overall th:not(.v-overall),table.us.view-overall td:not(.v-overall),
+table.us.view-rb th:not(.v-rb),table.us.view-rb td:not(.v-rb),
+table.us.view-wr th:not(.v-wr),table.us.view-wr td:not(.v-wr),
+table.us.view-te th:not(.v-te),table.us.view-te td:not(.v-te){display:none}
 table.us tbody tr.us-mine td.us-own{color:#b45309;font-weight:700}
 .us-fa{display:inline-block;padding:1px 7px;border-radius:9px;background:#dcfce7;color:#166534;
   font-weight:700;font-size:11.5px}
 .us-bar{display:inline-block;width:52px;height:7px;border-radius:4px;background:#e2e8f0;
   vertical-align:middle;margin-right:6px;overflow:hidden}
 .us-bar i{display:block;height:100%;background:#2a78d6}
+/* Position views. The page is read one position at a time - a back's carry
+   share and a receiver's target share are different questions - so the view
+   picks both the rows and the columns, and a column a view does not want is
+   hidden rather than left blank. Cell indexes are untouched, so sorting still
+   works off the same positions. */
+.us-views{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}
+.uv-btn{font:inherit;font-size:13px;font-weight:700;padding:6px 15px;border-radius:999px;
+  border:1px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer}
+.uv-btn:hover{background:#f1f5f9}
+.uv-btn.on{background:#2a78d6;border-color:#2a78d6;color:#fff}
+.us-qual{font-size:12.5px;color:#475569;white-space:nowrap}
+table.us td.us-rank{font-weight:700;color:#334155;font-variant-numeric:tabular-nums}
+table.us tr.us-thin td{color:#94a3b8}
+table.us tr.us-thin td.us-name{font-weight:500}
+table.us tr.us-thin td.us-rank::after{content:"\2013"}
+.us-minnote{font-size:12px;color:#64748b;margin:0 0 8px}
+/* One team's room, in a position view: how the carries or the targets are
+   actually split. The table can be read for this, but a backfield is a
+   question about proportions and proportions want a picture. */
+.us-chart{margin:0 0 12px;padding:13px 15px;border:1px solid #e2e8f0;border-radius:10px;
+  background:#fff}
+.us-chart h3{margin:0 0 2px;font-size:15px;color:#0f172a}
+.us-chart .uc-sub{font-size:12px;color:#64748b;margin:0 0 10px}
+.uc-row{display:grid;grid-template-columns:minmax(84px,30%) 1fr auto;gap:9px;
+  align-items:center;margin:0 0 6px;font-size:13px}
+.uc-name{color:#0f172a;font-weight:600;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.uc-track{height:13px;border-radius:4px;background:#e2e8f0;overflow:hidden}
+.uc-track i{display:block;height:100%;background:#2a78d6}
+.uc-row.uc-thin .uc-track i{background:#94a3b8}
+.uc-val{font-variant-numeric:tabular-nums;color:#334155;font-weight:700;min-width:38px;
+  text-align:right}
+.uc-rest .uc-name,.uc-rest .uc-val{color:#64748b;font-weight:600}
+/* On a phone the table scrolls sideways, so what sits in the first few columns
+   is what gets read. The owner and the grey season columns are reference, not
+   the point, and between them they pushed the share itself off the screen. */
+@media (max-width:560px){
+  table.us th.us-own,table.us td.us-own,
+  table.us th.us-lead,table.us td.us-lead{display:none}
+  table.us{font-size:13px}
+  table.us th,table.us td{padding:5px 7px}
+  .us-bar{width:34px}
+  .uv-btn{padding:5px 13px}
+}
 .us-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0}
 .us-controls label{font-size:12.5px;color:#475569;white-space:nowrap}
 .us-controls select,.us-controls input[type=search]{font:inherit;font-size:13px;padding:5px 8px;
@@ -57,6 +105,17 @@ table.us tbody tr.us-mine td.us-own{color:#b45309;font-weight:700}
   .us-bar{background:#2b3852}
   .us-controls select,.us-controls input[type=search],.us-controls button{background:#16203a;
     color:#dde5ef;border-color:#2b3852}
+  .uv-btn{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  .uv-btn:hover{background:#1b2540}
+  .uv-btn.on{background:#2a78d6;border-color:#2a78d6;color:#fff}
+  .us-qual,.us-minnote{color:#aab7c9}
+  .us-chart{background:#16203a;border-color:#2b3852}
+  .us-chart h3{color:#f1f5f9}
+  .us-chart .uc-sub,.uc-rest .uc-name,.uc-rest .uc-val{color:#aab7c9}
+  .uc-name,.uc-val{color:#dde5ef}
+  .uc-track{background:#2b3852}
+  table.us td.us-rank{color:#dde5ef}
+  table.us tr.us-thin td{color:#6b7a91}
 }
 </style>"""
 
@@ -72,7 +131,96 @@ JS = """{% raw %}<script>
   var el={own:document.getElementById('us-own'),conf:document.getElementById('us-conf'),
     team:document.getElementById('us-team'),pos:document.getElementById('us-pos'),
     find:document.getElementById('us-find'),group:document.getElementById('us-group'),
-    count:document.getElementById('us-count')};
+    count:document.getElementById('us-count'),qual:document.getElementById('us-qual'),
+    minnote:document.getElementById('us-minnote')};
+  // --- position views ------------------------------------------------------
+  // Each view names the positions it keeps, the column it opens sorted by, and
+  // the minimum a player needs before he is ranked. Below that minimum a row
+  // still shows - leaving a back out entirely hides the fact that he exists -
+  // but it is greyed and carries a dash instead of a rank.
+  var VIEWS=CFG.views||[], view=VIEWS.length?VIEWS[0]:null;
+  var viewBtns=Array.prototype.slice.call(document.querySelectorAll('.uv-btn'));
+  function fieldCol(name){
+    for(var i=0;i<heads.length;i++) if(heads[i].dataset.field===name) return i;
+    return null;
+  }
+  function qualified(r){
+    if(!view||!view.min) return true;
+    return (+r.dataset[view.min.field]||0)>=view.min.n;
+  }
+  function inView(r){
+    return !view||!view.pos||view.pos.indexOf(r.dataset.pos)>=0;
+  }
+  // Rank is over every qualified player in the view, not over what the other
+  // filters leave on screen: "7th in carry share" should not become "1st"
+  // because the table was narrowed to one team.
+  function rankView(){
+    if(!view) return;
+    var key=view.sort?fieldCol(view.sort):null;
+    var pool=rows.filter(function(r){return inView(r)&&qualified(r);});
+    if(key!==null) pool.sort(function(a,b){
+      var x=val(a,key),y=val(b,key);
+      if(x===null||y===null) return (x===null)-(y===null);
+      return y-x;});
+    rows.forEach(function(r){
+      var c=r.querySelector('td.us-rank'); if(c) c.textContent='';
+      r.classList.toggle('us-thin',inView(r)&&!qualified(r));
+    });
+    pool.forEach(function(r,i){
+      var c=r.querySelector('td.us-rank'); if(c) c.textContent=String(i+1);
+    });
+  }
+  // One team's split, drawn when a position view is narrowed to a single team:
+  // the question "who has this backfield" is about proportions, and reading
+  // proportions off a sorted column is work the page can do for you.
+  var chart=document.createElement('div');
+  chart.className='us-chart'; chart.style.display='none';
+  var scroll=table.closest('.us-scroll')||table;
+  scroll.parentNode.insertBefore(chart,scroll);
+  function drawChart(visible){
+    var t=el.team.value;
+    if(!view||!view.pos||!t||!view.sort){chart.style.display='none';return;}
+    var key=fieldCol(view.sort);
+    if(key===null){chart.style.display='none';return;}
+    var ranked=visible.filter(function(r){return val(r,key)!==null;})
+      .sort(function(a,b){return val(b,key)-val(a,key);});
+    if(ranked.length<2){chart.style.display='none';return;}
+    var top=ranked.slice(0,6), sum=0;
+    ranked.forEach(function(r){sum+=val(r,key);});
+    var rest=ranked.slice(6).reduce(function(a,r){return a+val(r,key);},0);
+    var html='<h3>'+t+' &middot; '+view.label+'</h3>'
+      +'<p class="uc-sub">'+heads[key].textContent.trim()
+      +' over these weeks. '+(sum<0.98?('These '+ranked.length+' account for '
+        +Math.round(sum*100)+'% of the team&rsquo;s; the rest went to players outside '
+        +'this view.'):'')+'</p>';
+    top.forEach(function(r){
+      var share=val(r,key);
+      html+='<div class="uc-row'+(qualified(r)?'':' uc-thin')+'">'
+        +'<span class="uc-name">'+r.cells[nameCol].textContent+'</span>'
+        +'<span class="uc-track"><i style="width:'+Math.round(share*100)+'%"></i></span>'
+        +'<span class="uc-val">'+Math.round(share*100)+'%</span></div>';
+    });
+    if(rest>0.005) html+='<div class="uc-row uc-rest"><span class="uc-name">'
+      +(ranked.length-6)+' more</span><span class="uc-track"><i style="width:'
+      +Math.round(rest*100)+'%"></i></span><span class="uc-val">'
+      +Math.round(rest*100)+'%</span></div>';
+    chart.innerHTML=html; chart.style.display='';
+  }
+  var nameCol=(function(){
+    for(var i=0;i<heads.length;i++) if(/player/i.test(heads[i].textContent)) return i;
+    return 1;
+  })();
+  function applyView(key,skipDraw){
+    for(var i=0;i<VIEWS.length;i++) if(VIEWS[i].key===key) view=VIEWS[i];
+    table.className='us view-'+view.key;
+    viewBtns.forEach(function(b){b.classList.toggle('on',b.dataset.view===view.key);});
+    var c=view.sort?fieldCol(view.sort):null;
+    if(c!==null){sortCol=c; sortAsc=false;}
+    if(el.minnote) el.minnote.textContent=view.min?view.min.label:'';
+    if(el.qual) el.qual.parentNode.style.display=view.min?'':'none';
+    rankView();
+    if(!skipDraw) draw();
+  }
   var mine=CFG.mine;
   try{var saved=localStorage.getItem(CFG.storage||'cfbMyTeam'); if(saved&&CFG.teams[saved]) mine=saved;}catch(e){}
   var mineOpt=el.own.querySelector('option[value="mine"]');
@@ -93,11 +241,14 @@ JS = """{% raw %}<script>
     var by=cmp(sortCol,sortAsc), sorted=rows.slice().sort(by);
     if(el.group.checked) sorted.sort(function(a,b){
       return a.dataset.team<b.dataset.team?-1:a.dataset.team>b.dataset.team?1:0;});
-    var o=el.own.value,c=el.conf?el.conf.value:'',t=el.team.value,p=el.pos.value,
+    var o=el.own.value,c=el.conf?el.conf.value:'',t=el.team.value,
+        p=el.pos?el.pos.value:'',
         q=(el.find.value||'').toLowerCase(), shown=0, last=null;
+    var onlyQual=el.qual&&el.qual.checked&&view&&view.min;
     sorted.forEach(function(r){
       var d=r.dataset, own=d.own;
-      var ok=(!o||(o==='fa'?!own:o==='held'?!!own:o==='mine'?own===mine:own===o))
+      var ok=inView(r)&&(!onlyQual||qualified(r))
+        &&(!o||(o==='fa'?!own:o==='held'?!!own:o==='mine'?own===mine:own===o))
         &&(!c||d.conf===c)&&(!t||d.team===t)&&(!p||d.pos===p)&&(!q||d.name.indexOf(q)>=0);
       r.style.display=ok?'':'none';
       r.classList.toggle('us-break',ok&&el.group.checked&&last!==null&&last!==d.team);
@@ -105,9 +256,11 @@ JS = """{% raw %}<script>
       body.appendChild(r);
     });
     el.count.textContent=shown+' player'+(shown===1?'':'s');
+    drawChart(sorted.filter(function(r){return r.style.display!=='none';}));
     heads.forEach(function(h,i){h.classList.toggle('us-on',i===sortCol);
       h.classList.toggle('us-asc',i===sortCol&&sortAsc);});
     var bits=[];
+    if(view&&VIEWS.length&&view.key!==VIEWS[0].key) bits.push('view='+view.key);
     [['own',o],['conf',c],['team',t],['pos',p]].forEach(function(kv){
       if(kv[1]) bits.push(kv[0]+'='+encodeURIComponent(kv[1]));});
     if(el.group.checked) bits.push('group=1');
@@ -132,18 +285,47 @@ JS = """{% raw %}<script>
       var i=kv.indexOf('='); if(i<0) return;
       var k=kv.slice(0,i), v=decodeURIComponent(kv.slice(i+1));
       if(k==='group') el.group.checked=v==='1';
+      else if(k==='view') applyView(v,true);
       else if(el[k]&&el[k].tagName==='SELECT') el[k].value=v;
     });
   }
-  [el.own,el.team,el.pos,el.group].forEach(function(x){x.addEventListener('change',draw);});
+  viewBtns.forEach(function(b){
+    b.addEventListener('click',function(){applyView(b.dataset.view);});});
+  if(el.qual) el.qual.addEventListener('change',draw);
+  [el.own,el.team,el.pos,el.group].forEach(function(x){
+    if(x) x.addEventListener('change',draw);});
   if(el.conf) el.conf.addEventListener('change',function(){schools();draw();});
   el.find.addEventListener('input',draw);
   document.getElementById('us-reset').addEventListener('click',function(){
-    el.own.value=el.team.value=el.pos.value=el.find.value=''; if(el.conf) el.conf.value='';
-    el.group.checked=false; schools(); draw();});
-  fromHash(); schools(); draw();
+    el.own.value=el.team.value=el.find.value='';
+    if(el.pos) el.pos.value=''; if(el.conf) el.conf.value='';
+    if(el.qual) el.qual.checked=false;
+    el.group.checked=false; schools();
+    if(VIEWS.length) applyView(VIEWS[0].key); else draw();});
+  if(VIEWS.length) applyView(VIEWS[0].key,true);
+  fromHash(); schools();
+  if(VIEWS.length) rankView();
+  draw();
 })();
 </script>{% endraw %}"""
+
+
+def views_bar(views: list) -> str:
+    """The Overall / RB / WR / TE buttons, plus the qualifying controls.
+
+    `views` is the same list handed to the script in the config: dicts with
+    `key`, `label`, optionally `pos` (the positions the view keeps), `sort`
+    (the th data-field it opens sorted by) and `min` ({field, n, label}).
+    """
+    btns = "".join(
+        f"<button type='button' class='uv-btn{' on' if i == 0 else ''}' "
+        f"data-view=\"{escape(str(v['key']), quote=True)}\">"
+        f"{escape(str(v['label']))}</button>"
+        for i, v in enumerate(views))
+    return ("<div class='us-views'>" + btns
+            + "<label class='us-qual'><input id='us-qual' type='checkbox'> "
+              "Qualified only</label></div>"
+            "<p class='us-minnote' id='us-minnote'></p>")
 
 
 def bar(share) -> str:
@@ -163,8 +345,9 @@ def v(value, digits: int = 4) -> str:
     return "" if value is None or pd.isna(value) else f"{round(float(value), digits):g}"
 
 
-def num(value, fmt: str = "{:.0f}") -> str:
-    return f"<td data-v='{v(value)}'>{fmt.format(value)}</td>"
+def num(value, fmt: str = "{:.0f}", cls: str = "") -> str:
+    return (f"<td{f' class=\'{cls}\'' if cls else ''} data-v='{v(value)}'>"
+            f"{fmt.format(value)}</td>")
 
 
 def options(values, labels: dict = None, data: dict = None) -> str:
