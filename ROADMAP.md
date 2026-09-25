@@ -50,30 +50,47 @@ is obvious what it measures. Right/wrong, not accuracy:
 
 ## 3. Usage pages (Fantasy NFL + CFB)
 
-- [ ] Position filter, defaulting to Overall, then RB / WR / TE with the stats
+- [x] Position filter, defaulting to Overall, then RB / WR / TE with the stats
       that matter for that position
-- [ ] Drop QB, K and DEF from these pages
-- [ ] RB: carry share, plus a rank showing the carry count, with a minimum to
+- [x] Drop QB, K and DEF from these pages
+- [x] RB: carry share, plus a rank showing the carry count, with a minimum to
       qualify; snap %
-- [ ] WR/TE: snap %, routes run, target %; same sort of minimum
-- [ ] CFB especially: per-team breakdown, including RB backfield graphs
+- [x] WR/TE: snap %, routes run, target %; same sort of minimum
+- [x] CFB especially: per-team breakdown, including RB backfield graphs
 
 ## 4. Navigation / information architecture
 
-- [ ] Standardise tab names across CFB and NFL fantasy: **League Home,
+- [x] Standardise tab names across CFB and NFL fantasy: **League Home,
       Matchups, My Team**
-- [ ] Work out how to combine the rest. NFL has schedule stats, draft
+- [x] Work out how to combine the rest. NFL has schedule stats, draft
       analytics, etc - could those become one "Analytics" section that is still
       easy to navigate?
-- [ ] When switching sport, decide whether to keep the user on the same tab
+- [x] When switching sport, decide whether to keep the user on the same tab
 
-## 5. League sync (largest item - needs auth)
+## 5. League sync
 
-- [ ] Let users sync their own league: Sleeper for NFL, Yahoo for CFB only
-- [ ] Requires being signed in so the league stays attached to the account
-- [ ] Probably means converting these pages from generated to scripted
-- [ ] Work out what we actually need to prompt the user for
-- [ ] A "refresh my league" button, rate-limited by time
+The sync half is built (46056842): `/fantasy/sync/` verifies a league with the
+provider and stores it against the signed-in account, refresh rate-limited to
+five minutes on the stored timestamp. No provider credentials are stored
+because neither provider needs any.
+
+- [x] Let users sync their own league: Sleeper for NFL, Yahoo for CFB only
+- [x] Requires being signed in so the league stays attached to the account
+- [x] Work out what we actually need to prompt the user for - a Sleeper league
+      id (the long number in the league URL) or a Yahoo league key
+      (`474.l.21318`). Nothing else: no username, password or token.
+- [x] A "refresh my league" button, rate-limited by time
+- [ ] **Convert the pages to scripted.** Matchups, My Team and Usage still
+      render the league baked into the build. Pointing them at a reader's
+      synced league is the bigger half and wants its own change: the data
+      pipeline behind those pages assumes one known league all the way down.
+- [ ] **Private Yahoo leagues.** Yahoo's public API answers 401 for a league
+      that is not set public, so those cannot be synced at all without OAuth -
+      app registration, user consent and stored refresh tokens. Worth deciding
+      whether that is wanted before building it; Sleeper needs none of it.
+
+**Before this works on the live site**, the migration has to be applied once:
+`wrangler d1 execute gordstats --remote --file=deploy/d1-schema.sql`
 
 ## 6. Bugs
 
@@ -92,6 +109,10 @@ is obvious what it measures. Right/wrong, not accuracy:
       below already showed. Both are worth checking for before writing
       anything new.
 - [x] **Section 6**, the `2627` season label (20f4cf60).
+- [x] **Section 3, the usage pages** (66094cc4). Routes run is not obtainable:
+      neither Sleeper nor nflverse/PFR publishes it, so Tgt/snap stands in.
+- [x] **Section 4, navigation** (76b8cefb). Both fantasy leagues now carry the
+      same five tabs and the switcher keeps the reader's tab across sports.
 - [x] **Section 2, the prediction scorecard** (15efcb99). Both pages now render
       `gordstats.scorecard`. Two things learned that the remaining sections
       should reuse: the NFL page already had the over/under data captured and
