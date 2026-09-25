@@ -249,7 +249,7 @@ def _plain(t: dict) -> str:
 
 
 def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts: dict,
-                 now_total: float, best_total: float) -> str:
+                 now_total: float, best_total: float, actual: dict = None) -> str:
     body, phone, benched = [], [], False
     slot_rank = {}
     for i, name in enumerate(wkd.slots):
@@ -298,8 +298,11 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
             f"<td class='rd-slot'>{escape(new)}</td>" + page.move_cell(kind, slot)
             + player_cell(card, tag) + f"<td class='rd-g'>{mu.game_cell(g)}</td>"
             + total_cell(g, card["pos"]) + opp_cell(wkd, g, card["pos"]) + weather_cell(wkd, g)
-            + f"<td><b>{ui.fmt(proj.get(pid))}</b></td>"
-            f"<td>{ui.fmt(wkd.gs(pid, card['team']))}</td>"
+            + (f"<td class='rd-spent' title='His game is over; the points "
+               f"column is what he actually scored'>{ui.fmt(proj.get(pid))}</td>"
+               if (actual or {}).get(pid) is not None
+               else f"<td><b>{ui.fmt(proj.get(pid))}</b></td>")
+            + f"<td>{ui.fmt(wkd.gs(pid, card['team']))}</td>"
             f"<td>{ui.fmt(wkd.sleeper_all.get(pid))}</td>" + pts_td + cover_td + "</tr>")
     head = ("<tr><th title='Where he belongs this week'>Slot</th>"
             "<th title='What it takes to get him there'>Change</th><th>Player</th><th>Game</th>"
@@ -387,6 +390,18 @@ def drop_note(owned: pd.DataFrame, manager: str) -> str:
             "<a href='/fantasy/transactions/'>waivers page</a>.</p>")
 
 
+def settled(states: dict, pts: dict) -> dict:
+    """{player: what he actually scored}, for games that are over.
+
+    "Over" means final, not started. A game in progress carries partial points
+    - a back with one carry in the first quarter is on 0.4 - and a projection
+    is still the better guess at where he finishes. Only when the game is done
+    does the scoreboard beat the forecast.
+    """
+    return {pid: pts[pid] for pid, state in states.items()
+            if state == "post" and pts.get(pid) is not None}
+
+
 def team_view(wkd: Week, side: dict, foe: dict | None, free: pd.DataFrame,
               owned: pd.DataFrame) -> str:
     key = str(side["roster_id"])
@@ -404,8 +419,23 @@ def team_view(wkd: Week, side: dict, foe: dict | None, free: pd.DataFrame,
     got = planner.plan(players, counts, proj, kick, locked, flex=FLEX,
                        flex_positions=data_mod.FLEX_POSITIONS, bench="BN", reserve=RESERVE)
 
+    # A game that is over has an answer, not a forecast. Counting a finished
+    # player at his projection made the team totals wrong by however much he
+    # beat or missed it - a back projected for 20.6 who scored 35.3 still went
+    # into "As set" as 20.6, which is the number a reader checks on a Sunday.
+    #
+    # Only when the game is *final*. A game in progress has partial points on
+    # it, and the projection is still the better guess at where it lands.
+    pts = side.get("players_points") or {}
+    states = {pid: ((wkd.by_team.get(c["team"]) or {}).get("state") or "pre")
+              for pid, c in cards.items()}
+    actual = settled(states, pts)
+    # `plan` keeps its projections: it chooses among players who have *not*
+    # played, and the ones who have are locked where they sit either way.
+    effective = {pid: actual.get(pid, proj.get(pid)) for pid in cards}
+
     def total(slots):
-        return sum(proj.get(p["id"]) or 0.0 for p in players if slots[p["id"]] not in OFF)
+        return sum(effective.get(p["id"]) or 0.0 for p in players if slots[p["id"]] not in OFF)
     now_total = total({p["id"]: p["slot"] for p in players})
     best_total = total(got["slot"])
     gain = best_total - now_total
@@ -440,8 +470,8 @@ def team_view(wkd: Week, side: dict, foe: dict | None, free: pd.DataFrame,
         "<span>Best lineup</span></div></div></div>")
     return (f"<div class='rd-view' data-key='{escape(key, quote=True)}' style='display:none'>"
             + head + "<h2>Start / sit</h2>" + page.moves_box(changes, warns, gain, FLEX)
-            + lineup_table(wkd, rows, cards, got, proj, side.get("players_points") or {},
-                           now_total, best_total)
+            + lineup_table(wkd, rows, cards, got, proj, pts,
+                           now_total, best_total, actual)
             + "<h2>Waiver adds</h2><p class='rd-note'>Free agents projected to outscore "
             "someone this roster would otherwise start this week, biggest gain first.</p>"
             + adds_section(wkd, cards, got, proj, free)

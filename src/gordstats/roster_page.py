@@ -81,6 +81,10 @@ table.rd td.rd-slot{font-weight:700;font-size:12.5px}
 .rd-wx.bad{font-weight:700;color:#b45309}
 .rd-cov{font-size:12.5px;text-align:left !important}
 .rd-cov.none{color:#94a3b8}
+/* A projection for a game that is over is spent: the points column is the
+   live number, and two bold figures side by side invite reading the wrong
+   one. */
+.rd-spent{color:#94a3b8;font-weight:400}
 .rd-cov.warn{color:#b45309;font-weight:600}
 .rd-note{font-size:13px;color:#4a5a68;margin:6px 0 12px;line-height:1.55}
 .rd-gain{color:#15803d;font-weight:700}
@@ -105,6 +109,7 @@ table.rd td.rd-slot{font-weight:700;font-size:12.5px}
   .rd-wx.bad,.rd-cov.warn{color:#ffb457}
   .rd-tag.lock{background:#2b3852;color:#cbd5e1}
   .rd-cov.none{color:#64748b}
+  .rd-spent{color:#7c8aa3}
 }
 </style>"""
 
