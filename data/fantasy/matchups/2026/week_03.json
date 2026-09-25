@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-25T02:41:00+00:00",
+ "fetched": "2026-09-25T02:51:00+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -331,7 +331,7 @@
     {
      "roster_id": 3,
      "matchup_id": 3,
-     "points": 20.8,
+     "points": 23.4,
      "starters": [
       "7523",
       "7588",
@@ -375,7 +375,7 @@
       "7543": 0.0,
       "7564": 0.0,
       "7588": 0.0,
-      "8112": 20.8,
+      "8112": 23.4,
       "8130": 0.0,
       "8148": 0.0,
       "8408": 0.0,
@@ -602,7 +602,7 @@
     {
      "roster_id": 5,
      "matchup_id": 5,
-     "points": 12.1,
+     "points": 16.6,
      "starters": [
       "4881",
       "9226",
@@ -645,7 +645,7 @@
       "7553": 1.5,
       "8142": 0.0,
       "8150": 0.0,
-      "8167": 12.1,
+      "8167": 16.6,
       "9226": 0.0,
       "SEA": 0.0
      }
@@ -2772,24 +2772,24 @@
  },
  "stats": {
   "9509": {
-   "rush_att": 20.0,
-   "rush_yd": 158.0,
+   "rush_att": 23.0,
+   "rush_yd": 169.0,
    "rush_td": 1.0,
    "rec": 2.0,
    "rec_tgt": 2.0,
    "rec_yd": 19.0,
-   "pts_ppr": 25.7,
-   "pts_half_ppr": 24.7,
-   "pts_std": 23.7,
+   "pts_ppr": 26.8,
+   "pts_half_ppr": 25.8,
+   "pts_std": 24.8,
    "gp": 1.0
   },
   "8112": {
-   "rec": 6.0,
-   "rec_tgt": 7.0,
-   "rec_yd": 70.0,
-   "pts_ppr": 13.0,
-   "pts_half_ppr": 10.0,
-   "pts_std": 7.0,
+   "rec": 7.0,
+   "rec_tgt": 8.0,
+   "rec_yd": 138.0,
+   "pts_ppr": 20.8,
+   "pts_half_ppr": 17.3,
+   "pts_std": 13.8,
    "gp": 1.0
   },
   "8167": {
@@ -2857,13 +2857,13 @@
    "game_id": "401872948",
    "date": "2026-09-25T00:15Z",
    "state": "in",
-   "detail": "12:55 - 4th",
+   "detail": "9:08 - 4th",
    "period": null,
    "clock": null,
    "home": "GB",
    "away": "ATL",
    "home_score": 7.0,
-   "away_score": 24.0,
+   "away_score": 27.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -3008,7 +3008,7 @@
    "total": 38.5,
    "tv": "CBS",
    "weather": {
-    "temp": 62.0,
+    "temp": 61.0,
     "cond": 18,
     "text": "Rain",
     "indoors": false
