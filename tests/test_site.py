@@ -420,3 +420,45 @@ def test_a_reader_in_two_leagues_can_reach_both(name, path):
     somebody syncs a second one - which is the normal case for anyone in two."""
     doc = (DOCS / path).read_text()
     assert "ml-pick" in doc, f"{name} offers no way to switch between synced leagues"
+
+
+# --------------------------------------------------------------------------- #
+# The season being played
+# --------------------------------------------------------------------------- #
+
+def test_the_season_being_played_is_in_the_keyed_maps():
+    """LEAGUE_IDS drives every per-season page. While the live season sat only
+    in UPCOMING_*, the schedule, draft and waiver pages silently showed last
+    season and nothing said so."""
+    from fantasy.config import (DRAFT_IDS, FORMAL_SEASON, LEAGUE_IDS,
+                                SEASON_YEAR, UPCOMING_LEAGUE_ID)
+    from fantasy import util
+
+    now = util.year_str()
+    assert now in LEAGUE_IDS, f"{now} is being played but is not in LEAGUE_IDS"
+    assert LEAGUE_IDS[now] == UPCOMING_LEAGUE_ID, "the two names disagree about the league"
+    for name, m in (("DRAFT_IDS", DRAFT_IDS), ("FORMAL_SEASON", FORMAL_SEASON),
+                    ("SEASON_YEAR", SEASON_YEAR)):
+        assert now in m, f"{now} is missing from {name}"
+
+
+def test_the_season_rolls_over_at_kickoff_not_in_october():
+    """The old rule was `month > 9`, so through September - weeks one to four -
+    the site believed it was still in last season. It also anchored the week
+    count to the first Thursday of September rather than the Thursday after
+    Labor Day, which in 2026 is a week out.
+    """
+    from datetime import date
+    from fantasy import util
+
+    assert util.opening_thursday(2026) == date(2026, 9, 10)
+    assert util.opening_thursday(2025) == date(2025, 9, 4)
+    assert util.opening_thursday(2024) == date(2024, 9, 5)
+
+
+def test_every_keyed_season_has_its_data_file():
+    """A season in LEAGUE_IDS without a season file is a page that raises."""
+    from fantasy.config import LEAGUE_IDS
+    for code in LEAGUE_IDS:
+        assert (ROOT / "data" / "fantasy" / "season" / f"{code}.json").exists(), \
+            f"no season file for {code}"

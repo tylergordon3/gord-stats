@@ -443,6 +443,11 @@ def champion_blueprint(df) -> str:
 
     champ = vs[vs["Who"] == "Champion"].set_index("Season")
     field = vs[vs["Who"] == "Everyone else"].set_index("Season")
+    # Only seasons that have actually been won. The season being played has a
+    # field but no champion yet, so the two frames stopped lining up the moment
+    # it joined LEAGUE_IDS and every comparison below raised.
+    decided = champ.index.intersection(field.index)
+    champ, field = champ.loc[decided], field.loc[decided]
     seasons = len(champ)
     beat_hits = int((champ["Starter Hit %"] > field["Starter Hit %"]).sum())
     beat_finish = int((champ["Avg Finish vs Pick"] > field["Avg Finish vs Pick"]).sum())

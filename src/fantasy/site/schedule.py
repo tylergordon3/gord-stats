@@ -94,8 +94,18 @@ def schedule_metrics(season_str: str):
     last["SOS"] = (last["OW%"] * 2 + last["OOW%"]) / 3
 
     def sov(roster_id):
+        """Average win rate of the teams this roster has beaten.
+
+        Undefined with no wins, which is not a hypothetical: two weeks into a
+        season somebody is 0-2, and dividing by nobody took the whole page
+        down. NaN rather than zero - a winless team has not got a strength of
+        victory of zero, it has not got one at all - and the formatter prints
+        it as a dash.
+        """
         team = reg[reg["roster_id"] == roster_id]
         beaten = team[team["win"] == 1]["opp"]
+        if not len(beaten):
+            return float("nan")
         return sum(winp[o] for o in beaten) / len(beaten)
 
     last["SOV"] = last["roster_id"].map(sov)
@@ -106,7 +116,8 @@ def schedule_metrics(season_str: str):
     df = last[["team_name", "SOS", "SOV", "Exp W (Actual)"]].sort_values("SOS", ascending=False)
     df = df.rename(columns={"team_name": "Team"})
     return (df.style.hide(axis="index")
-            .format(lambda x: f"{x:.3f}" if isinstance(x, float) else x)
+            .format(lambda x: ("&mdash;" if pd.isna(x) else f"{x:.3f}")
+                    if isinstance(x, float) else x)
             .background_gradient(cmap="RdYlGn_r", subset=["SOS"])
             .background_gradient(cmap="RdYlGn", subset=["SOV"])
             .apply(styles.bg_from_pythag_str, subset=["Exp W (Actual)"])

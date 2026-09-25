@@ -24,6 +24,7 @@ from fantasy.league import injuries, season as season_data, transactions as tran
 
 # (four-digit season key used by the league helpers, folder/file season string).
 SEASONS = [
+    ("2026", "2627"),
     ("2025", "2526"),
     ("2024", "2425"),
     ("2023", "2324"),

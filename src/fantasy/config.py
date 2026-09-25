@@ -83,17 +83,20 @@ CHAMPIONS = {"Colin", "Jackson", "Austin"}
 
 # Per-season identifiers, keyed by the 4-digit season string (e.g. "2526").
 LEAGUE_IDS = {
+    "2627": "1385675901408153600",
     "2526": "1257466498994143232",
     "2425": "1121158268379820032",
     "2324": "994410685717102592",
 }
 DRAFT_IDS = {
+    "2627": "1385675901416534016",
     "2526": "1257466498994143233",
     "2425": "1121158268379820033",
     "2324": "994410687084507136",
 }
-FORMAL_SEASON = {"2526": "2025-2026", "2425": "2024-2025", "2324": "2023-2024"}
-SEASON_YEAR = {"2526": 2025, "2425": 2024, "2324": 2023}
+FORMAL_SEASON = {"2627": "2026-2027", "2526": "2025-2026",
+                 "2425": "2024-2025", "2324": "2023-2024"}
+SEASON_YEAR = {"2627": 2026, "2526": 2025, "2425": 2024, "2324": 2023}
 
 
 def formal_season(code: str) -> str:
@@ -116,11 +119,12 @@ def formal_season(code: str) -> str:
 # --------------------------------------------------------------------------- #
 UPCOMING_YEAR = 2026                 # NFL season being drafted for
 UPCOMING_SEASON = "2026-2027"        # display label
-# The league being drafted, kept out of LEAGUE_IDS / DRAFT_IDS on purpose: those
-# are keyed by season code and drive the per-season data builds, which would go
-# looking for matchups and points a season that has not kicked off yet does not
-# have. This pair only has to name the draft the live board watches; it joins
-# the keyed maps once the season has games in it.
+# The season being played. It was kept out of LEAGUE_IDS / DRAFT_IDS until it
+# had games - those keys drive the per-season data builds, which would have gone
+# looking for matchups a season that had not kicked off did not have - and it
+# joined them on 2026-09-25, in week 3. These two names stay because the live
+# draft board and every "this season" caller reads them, and they point at the
+# same league as LEAGUE_IDS["2627"].
 UPCOMING_LEAGUE_ID = "1385675901408153600"
 UPCOMING_DRAFT_ID = "1385675901416534016"
 # The draft's date and time are not here any more: they are one entry in
