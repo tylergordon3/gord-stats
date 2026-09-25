@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-24T21:30:56.708812-04:00",
+ "updated": "2026-09-24T21:40:56.959623-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -38888,6 +38888,120 @@
       "Ashlon Jackson",
       "G",
       26.0
+     ]
+    ]
+   }
+  },
+  "401857216": {
+   "date": "2026-09-24",
+   "allowed": {
+    "CHI": {
+     "G": 83.0,
+     "FC": 105.0
+    },
+    "WSH": {
+     "G": 121.0,
+     "FC": 57.0
+    }
+   },
+   "players": {
+    "CHI": [
+     [
+      "Elizabeth Williams",
+      "FC",
+      25.0
+     ],
+     [
+      "Kamilla Cardoso",
+      "FC",
+      32.0
+     ],
+     [
+      "Courtney Vandersloot",
+      "G",
+      33.0
+     ],
+     [
+      "Sydney Taylor",
+      "G",
+      22.0
+     ],
+     [
+      "Gabriela Jaquez",
+      "G",
+      15.0
+     ],
+     [
+      "Rachel Banham",
+      "G",
+      16.0
+     ],
+     [
+      "Kate Martin",
+      "G",
+      7.0
+     ],
+     [
+      "Jacy Sheldon",
+      "G",
+      10.0
+     ],
+     [
+      "Morgan Maly",
+      "G",
+      18.0
+     ]
+    ],
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      23.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      36.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      25.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      35.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      19.0
+     ],
+     [
+      "Angela Dugalic",
+      "FC",
+      0.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      21.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      5.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      16.0
+     ],
+     [
+      "Alicia Florez",
+      "G",
+      8.0
      ]
     ]
    }
