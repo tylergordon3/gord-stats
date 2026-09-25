@@ -35,9 +35,9 @@ CARDS = [
     ("/fantasy/waivers/", "&#128220;", "Your league's waivers",
      "The same for your own league: who works the wire, what they paid, and "
      "every claim, add and trade across its seasons."),
-    ("/fantasy/sync/", "&#128279;", "Sync your league",
-     "Attach your own Sleeper or Yahoo league to your account, so these pages "
-     "can show yours rather than this one."),
+    ("/profile/", "&#128100;", "Your profile",
+     "Your account, the leagues you have connected and the teams you follow, "
+     "all in one place."),
 ]
 
 

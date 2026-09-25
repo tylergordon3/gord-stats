@@ -188,6 +188,31 @@ JS = """{% raw %}<script>
     return l.team_name ? (name+' \u2014 '+l.team_name) : name;
   }
 
+  /** Labels for a set of leagues, guaranteed to differ from one another.
+   *
+   *  The team name is what usually separates two leagues called the same
+   *  thing, and it is there for anything synced since team names were stored.
+   *  A row from before that has none, so the season and then the tail of the
+   *  id are added until the entries are actually distinguishable - an option
+   *  list with the same words twice is a choice nobody can make.
+   */
+  function labelsFor(list){
+    var out=list.map(leagueLabel);
+    var seen={};
+    out.forEach(function(v){ seen[v]=(seen[v]||0)+1; });
+    return out.map(function(v,i){
+      if(seen[v]<2) return v;
+      var l=list[i];
+      var extra=l.season||('#'+String(l.league_id).slice(-4));
+      return v+' ('+extra+')';
+    }).map(function(v,i,all){
+      // Still equal? Only an id can separate them.
+      var again={};
+      all.forEach(function(x){ again[x]=(again[x]||0)+1; });
+      return again[v]<2 ? v : v+' #'+String(list[i].league_id).slice(-4);
+    });
+  }
+
   /** One entry per league, newest season first.
    *
    *  A synced league is one row per season, so a reader in four leagues with a
@@ -212,11 +237,12 @@ JS = """{% raw %}<script>
     if(label){
       if(SYNCED.length>1){
         var here=String((saved()||{}).id||'');
+        var labels=labelsFor(SYNCED);
         bar.innerHTML='<label>League <select id="ml-pick">'
-          + SYNCED.map(function(l){
+          + SYNCED.map(function(l,i){
               return '<option value="'+esc(l.league_id)+'"'
                 + (String(l.league_id)===here?' selected':'') + '>'
-                + esc(leagueLabel(l)) + '</option>';
+                + esc(labels[i]) + '</option>';
             }).join('')
           + '</select></label>'
           + '<button type="button" id="ml-clear">Show this site\\u2019s league</button>'

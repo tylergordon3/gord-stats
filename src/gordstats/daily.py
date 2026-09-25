@@ -196,6 +196,13 @@ def main(argv=None) -> int:
         print("--- render home ---", flush=True)
         rh.render_home()
         rh.render_cbb_home()
+        # Last: the profile page reads the stars every other page has just
+        # written, so it cannot be built before them.
+        try:
+            from fantasy.site import profile
+            profile.generate()
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! profile page: {exc}", flush=True)
 
     if failed:
         print(f"FAILED: {', '.join(failed)}", file=sys.stderr)

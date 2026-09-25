@@ -131,7 +131,7 @@ fantasy:
     icon: "📊"
     key: analytics
     url: /fantasy/analytics/
-    covers: "/fantasy/power/ /fantasy/schedule/ /fantasy/draft/ /fantasy/transactions/ /fantasy/sync/ /fantasy/history/ /fantasy/waivers/ /fantasy/draft-review/"
+    covers: "/fantasy/power/ /fantasy/schedule/ /fantasy/draft/ /fantasy/transactions/ /fantasy/sync/ /profile/ /fantasy/history/ /fantasy/waivers/ /fantasy/draft-review/"
 
 
 cfb:

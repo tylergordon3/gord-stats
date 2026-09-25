@@ -296,8 +296,15 @@
       link.className = "acct-link";
       link.href = "/api/auth/login?next=" + next;
       link.textContent = "Sign in";
-      link.title = "Sync your starred teams across devices";
+      link.title = "Sync your starred teams and leagues across devices";
       slot.appendChild(link);
+
+      var prof = document.createElement("a");
+      prof.className = "acct-link";
+      prof.href = "/profile/";
+      prof.textContent = "Profile";
+      prof.title = "Your leagues and followed teams";
+      slot.appendChild(prof);
       return;
     }
 
@@ -325,8 +332,14 @@
 
     var synced = document.createElement("p");
     synced.className = "acct-note";
-    synced.textContent = "Starred teams sync across your devices.";
+    synced.textContent = "Starred teams and leagues sync across your devices.";
     menu.appendChild(synced);
+
+    var prof = document.createElement("a");
+    prof.className = "acct-out";
+    prof.href = "/profile/";
+    prof.textContent = "Your profile";
+    menu.appendChild(prof);
 
     var out = document.createElement("a");
     out.className = "acct-out";
@@ -379,6 +392,23 @@
       paint();
     }
   });
+
+  // The one way in from outside this file. The profile page lists a reader's
+  // starred teams and takes them off, and writing localStorage behind this
+  // script's back would not survive: `favorites` is held in a variable here,
+  // the storage event only fires for *other* documents, and the next push()
+  // would put the stale list back. So there is one owner of the list and
+  // everybody else asks it.
+  window.GSFavorites = {
+    list: function () { return favorites.slice(); },
+    remove: function (key) {
+      favorites = favorites.filter(function (k) { return k !== key; });
+      write(favorites);
+      paint();
+      push();
+      return favorites.slice();
+    },
+  };
 
   function boot() {
     // Paint from the browser copy first, then reconcile. The stars a reader

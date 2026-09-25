@@ -577,3 +577,40 @@ def test_season_points_are_shipped_not_fetched_from_sleeper():
 def test_draft_value_uses_the_leagues_own_scoring():
     """A half-PPR league reading PPR totals would rate every receiver wrong."""
     assert "state.basis" in MY_DRAFT and "basis.index" in MY_DRAFT
+
+
+# --------------------------------------------------------------------------- #
+# The profile page
+# --------------------------------------------------------------------------- #
+
+def test_the_profile_page_gathers_the_account_things():
+    doc = (DOCS / "profile" / "index.html").read_text()
+    for want in ("pf-who", "pf-favs", "ls-user-go"):
+        assert want in doc, f"the profile page has no {want}"
+
+
+def test_followed_teams_have_names_not_keys():
+    """They are stored as sport:id, which is no use to read. The names come off
+    the stars the rest of the site has already rendered."""
+    index = json.loads((DOCS / "assets" / "favourite-teams.json").read_text())
+    assert index, "no team-name index"
+    total = sum(len(v) for v in index.values())
+    assert total > 100, f"only {total} names indexed"
+    assert "cfb" in index and index["cfb"].get("194")
+
+
+def test_the_profile_page_does_not_own_the_favourites_list():
+    """favorites.js holds the list in a variable, its storage event only fires
+    for other documents, and its next push would put back anything removed
+    behind its back. One owner, and everybody else asks it."""
+    page = (ROOT / "src" / "gordstats" / "profile_page.py").read_text()
+    assert "window.GSFavorites" in page
+    js = (DOCS / "assets" / "js" / "favorites.js").read_text()
+    assert "window.GSFavorites" in js, "favorites.js exposes no API to ask"
+
+
+def test_two_leagues_named_the_same_are_never_the_same_entry():
+    """An option list with the same words twice is a choice nobody can make."""
+    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    assert "function labelsFor(" in picker
+    assert "team_name" in picker
