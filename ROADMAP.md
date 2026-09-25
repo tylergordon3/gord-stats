@@ -84,10 +84,13 @@ because neither provider needs any.
       Fantasy filter re-point to a Sleeper league in the browser; everything
       else on the page is NFL-wide and does not move. Local-first, so it works
       signed out; syncing carries it between devices.
-- [ ] **Matchups and My Team** still render the built league. Harder than
-      usage was: usage only needed rosters, where these need the week's
-      matchups, projections and start/sit, and the pipeline behind them
-      assumes one known league all the way down.
+- [x] **Matchups** reads your league (e552ddd1). Every matchup, both lineups,
+      live points, rendered beside the built page rather than mixed into it.
+      Names and projections come from two small files the browser fetches only
+      when someone is viewing their own league.
+- [ ] **My Team** still renders the built league. It needs start/sit, slot
+      order and waiver suggestions, which is the model's work rather than a
+      read of Sleeper - the hardest of the three.
 - [ ] **Private Yahoo leagues.** Yahoo's public API answers 401 for a league
       that is not set public, so those cannot be synced at all without OAuth -
       app registration, user consent and stored refresh tokens. Worth deciding
