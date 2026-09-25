@@ -2,10 +2,14 @@
 "Sync my league": the page where a reader attaches their own fantasy league
 to their account (docs/fantasy/sync/).
 
-The site's own league is baked into the build - one Sleeper league for the NFL
-pages and one Yahoo league for the college ones. This is the first step of
-letting a reader see their own instead: the league is verified with the
-provider, stored against their account, and listed back to them.
+The site's own league is baked into the build. This is how a reader attaches
+theirs instead: they give their Sleeper username, Sleeper says which leagues
+that account is in, and all of them are stored against their account with the
+name of their team in each.
+
+The username is the way in because the league-id flow asked people to dig a
+sixteen-digit number out of a URL, once per league, which is where it lost
+them. The id is still accepted for anyone who wants one league only.
 
 Sleeper only, and no credentials are involved because its API is keyless.
 Yahoo was offered here briefly: its public API serves only leagues set public,
@@ -58,6 +62,10 @@ JS = """{% raw %}<script>
   var gate=document.getElementById('ls-gate'), main=document.getElementById('ls-main');
   var list=document.getElementById('ls-list');
 
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+  }
   function msg(where,text,cls){
     var el=document.getElementById(where);
     el.textContent=text||''; el.className='ls-msg'+(cls?' '+cls:'');
@@ -77,8 +85,9 @@ JS = """{% raw %}<script>
     leagues.forEach(function(l){
       var li=document.createElement('li');
       var left=document.createElement('div');
-      left.innerHTML='<div class="ls-name">'+(l.name||l.league_id)+'</div>'
-        +'<div class="ls-meta">'+l.provider+(l.season?' &middot; '+l.season:'')
+      left.innerHTML='<div class="ls-name">'+esc(l.name||l.league_id)+'</div>'
+        +'<div class="ls-meta">'+(l.team_name?esc(l.team_name)+' &middot; ':'')
+        +esc(l.provider)+(l.season?' &middot; '+esc(l.season):'')
         +' &middot; synced '+when(l.last_synced_at)+'</div>';
       var drop=document.createElement('button');
       drop.className='ls-drop'; drop.textContent='Remove';
@@ -131,6 +140,30 @@ JS = """{% raw %}<script>
       .catch(function(){ btn.disabled=false; msg(msgId,'Network error.','err'); });
   }
 
+  function findAll(btn){
+    var name=(document.getElementById('ls-user').value||'').trim();
+    if(!name){ msg('ls-user-msg','Enter your Sleeper username first.','err'); return; }
+    btn.disabled=true; msg('ls-user-msg','Asking Sleeper\u2026');
+    fetch('/api/leagues',{method:'POST',credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({provider:'sleeper', username:name})})
+      .then(function(r){return r.json().then(function(d){return {s:r.status,d:d};});})
+      .then(function(res){
+        btn.disabled=false;
+        if(res.s===429){
+          msg('ls-user-msg','Just refreshed \u2014 try again in '
+            +(res.d.retry_after||60)+'s.','err');
+          return;
+        }
+        if(!res.d.ok){ msg('ls-user-msg',res.d.error||'That did not work.','err'); return; }
+        msg('ls-user-msg','Found '+res.d.synced+' league'
+          +(res.d.synced===1?'':'s')+'.','ok');
+        document.getElementById('ls-user').value='';
+        load();
+      })
+      .catch(function(){ btn.disabled=false; msg('ls-user-msg','Network error.','err'); });
+  }
+
   // Inert unless this deploy has accounts and the reader is signed in - the
   // same rule the header's account control follows.
   fetch('/api/me',{credentials:'same-origin'})
@@ -143,6 +176,10 @@ JS = """{% raw %}<script>
       gate.hidden=true; main.hidden=false;
       document.getElementById('ls-sleeper-go').addEventListener('click',function(){
         add('sleeper','ls-sleeper','ls-sleeper-msg',this);});
+      document.getElementById('ls-user-go').addEventListener('click',function(){
+        findAll(this);});
+      document.getElementById('ls-user').addEventListener('keydown',function(e){
+        if(e.key==='Enter') findAll(document.getElementById('ls-user-go'));});
       load();
     })
     .catch(function(){ gate.textContent='Could not reach the server.'; });
@@ -158,15 +195,28 @@ def body() -> str:
             "<div class='ls-card'><h2>Your synced leagues</h2>"
             "<ul class='ls-list' id='ls-list'></ul></div>"
 
-            "<div class='ls-card'><h2>Your Sleeper league</h2>"
-            "<p>The league id is the long number in your league's web address: "
-            "<code>sleeper.com/leagues/<strong>1234567890123456</strong>/team</code>. "
-            "Nothing is asked of your Sleeper account - the league is read "
-            "through Sleeper's public API.</p>"
-            "<div class='ls-row'><input id='ls-sleeper' type='text' inputmode='numeric' "
-            "placeholder='Sleeper league id' aria-label='Sleeper league id'>"
-            "<button id='ls-sleeper-go' type='button'>Sync</button></div>"
-            "<p class='ls-msg' id='ls-sleeper-msg'></p></div>"
+            "<div class='ls-card'><h2>Find my leagues</h2>"
+            "<p>Your Sleeper username - the one you sign in with. Every NFL "
+            "league that account is in this season is added at once, with your "
+            "team name in each. Nothing is asked of your Sleeper account: this "
+            "is read through Sleeper's public API, and no password or token is "
+            "involved.</p>"
+            "<div class='ls-row'><input id='ls-user' type='text' "
+            "autocapitalize='none' autocorrect='off' spellcheck='false' "
+            "placeholder='sleeper username' aria-label='Sleeper username'>"
+            "<button id='ls-user-go' type='button'>Find my leagues</button></div>"
+            "<p class='ls-msg' id='ls-user-msg'></p></div>"
+
+            "<details class='ls-card'><summary>Add one league by id instead"
+            "</summary>"
+            "<p>The id is the long number in that league's web address: "
+            "<code>sleeper.com/leagues/<strong>1234567890123456</strong>/team</code>."
+            "</p>"
+            "<div class='ls-row'><input id='ls-sleeper' type='text' "
+            "inputmode='numeric' placeholder='Sleeper league id' "
+            "aria-label='Sleeper league id'>"
+            "<button id='ls-sleeper-go' type='button'>Add it</button></div>"
+            "<p class='ls-msg' id='ls-sleeper-msg'></p></details>"
 
             "<p class='ls-meta'>A league can be re-synced every five minutes. "
             "Removing it deletes the row; deleting your account takes every "

@@ -60,6 +60,12 @@ CREATE TABLE IF NOT EXISTS leagues (
   league_id      TEXT NOT NULL,
   name           TEXT,
   season         TEXT,
+  -- The reader's own team in that league, and their id with the provider.
+  -- Both are filled in at sync: the league picker says "League - Your Team",
+  -- which is the only way to tell two leagues apart when someone names them
+  -- the same thing, and people do.
+  team_name        TEXT,
+  provider_user_id TEXT,
   created_at     TEXT NOT NULL,
   last_synced_at TEXT NOT NULL,
   PRIMARY KEY (user_id, provider, league_id)

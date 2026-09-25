@@ -165,3 +165,42 @@ def test_the_refresh_limit_is_read_from_the_stored_timestamp():
 def test_deleting_an_account_takes_the_leagues_with_it():
     table = SCHEMA[SCHEMA.index("CREATE TABLE IF NOT EXISTS leagues"):]
     assert "REFERENCES users(id) ON DELETE CASCADE" in table
+
+
+def test_a_username_syncs_every_league_that_account_is_in():
+    """The league-id flow asked people to dig a sixteen-digit number out of a
+    URL, once per league, which is where it lost them. Sleeper will say which
+    leagues an account is in, so the username is the way in."""
+    assert "syncAll(" in LEAGUES
+    assert "/leagues/nfl/" in LEAGUES, "it never asks Sleeper for the account's leagues"
+    assert "USERNAME" in LEAGUES, "the username is not shape-checked"
+    # Still no credentials: this works because Sleeper is keyless, not because
+    # anyone signed in to it.
+    for word in ("password", "access_token", "refresh_token"):
+        assert word not in LEAGUES
+
+
+def test_the_bulk_sync_is_rate_limited_on_the_account():
+    """One button that fans out to every league is the one worth holding down,
+    so the limit is the whole account rather than each league."""
+    block = LEAGUES[LEAGUES.index("async function syncAll("):]
+    assert "MAX(last_synced_at)" in block
+    assert "429" in block
+
+
+def test_each_league_stores_the_team_in_it():
+    """Two leagues named the same thing are one entry twice in a picker, and
+    people do name them the same thing."""
+    assert "team_name" in LEAGUES
+    leagues_table = SCHEMA[SCHEMA.index("CREATE TABLE IF NOT EXISTS leagues"):]
+    assert "team_name" in leagues_table
+    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    assert "leagueLabel" in picker and "team_name" in picker
+
+
+def test_the_league_lookup_does_not_swallow_its_own_bugs():
+    """An empty catch around the account lookup hid a TypeError - a function
+    shadowed by a parameter - and the picker just silently never appeared."""
+    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    assert ".catch(function(){});" not in picker
+    assert "console.error" in picker

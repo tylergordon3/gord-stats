@@ -1,10 +1,17 @@
 /**
  * The signed-in reader's own fantasy leagues.
  *
- *   GET    /api/leagues                     -> { leagues: [...] }
- *   POST   /api/leagues  <- { provider, league_id }   add, after checking it
- *   POST   /api/leagues  <- { provider, league_id, refresh: true }  re-fetch
+ *   GET    /api/leagues                          -> { leagues: [...] }
+ *   POST   /api/leagues  <- { provider, username }    every league they are in
+ *   POST   /api/leagues  <- { provider, league_id }   one league, by id
  *   DELETE /api/leagues?provider=..&league_id=..      remove
+ *
+ * The username form is the one people should use: Sleeper will say which
+ * leagues an account is in, so nobody has to go and copy a sixteen-digit id
+ * out of a URL - once per league, which is where the old flow lost people.
+ * Each league's own team name is stored with it, because two leagues named
+ * the same thing are otherwise indistinguishable in a picker, and people do
+ * name them the same thing.
  *
  * Sleeper only. No credentials are stored because none are needed: its API is
  * keyless. Yahoo was here briefly and came out again - its public API serves
@@ -50,14 +57,17 @@ const SPORT = { sleeper: "nfl" };
 // providers are generous, but a refresh button with no floor is a button that
 // gets held down.
 const REFRESH_SECONDS = 300;
+// Sleeper usernames: what its own signup allows, and nothing that could be
+// read as a path.
+const USERNAME = /^[A-Za-z0-9_.-]{1,64}$/;
 
 export async function onRequestGet({ request, env }) {
   const session = await guard(request, env);
   if (session instanceof Response) return session;
 
   const got = await db(() => env.DB.prepare(
-    `SELECT provider, sport, league_id, name, season, last_synced_at
-       FROM leagues WHERE user_id = ? ORDER BY created_at`)
+    `SELECT provider, sport, league_id, name, season, team_name, last_synced_at
+       FROM leagues WHERE user_id = ? ORDER BY name, league_id`)
     .bind(session.uid).all());
   if (!got.ok) return got.response;
 
@@ -76,8 +86,12 @@ export async function onRequestPost({ request, env }) {
   }
 
   const provider = String(body?.provider || "").toLowerCase();
-  const leagueId = String(body?.league_id || "").trim();
   if (!SHAPES[provider]) return json({ ok: false, error: "unknown provider" }, 400);
+
+  const username = String(body?.username || "").trim();
+  if (username) return syncAll(env, session, provider, username);
+
+  const leagueId = String(body?.league_id || "").trim();
   if (!SHAPES[provider].test(leagueId)) {
     return json({ ok: false,
       error: "A Sleeper league id is the long number in the league's web address." }, 400);
@@ -107,15 +121,9 @@ export async function onRequestPost({ request, env }) {
   if (!found.ok) return json(found, found.status || 502);
 
   const now = new Date().toISOString();
-  await env.DB.prepare(
-    `INSERT INTO leagues (user_id, provider, sport, league_id, name, season,
-                          created_at, last_synced_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT (user_id, provider, league_id)
-     DO UPDATE SET name = excluded.name, season = excluded.season,
-                   last_synced_at = excluded.last_synced_at`)
-    .bind(session.uid, provider, SPORT[provider], leagueId,
-          found.name, found.season, now, now).run();
+  await env.DB.prepare(UPSERT).bind(
+    session.uid, provider, SPORT[provider], leagueId,
+    found.name, found.season, null, null, now, now).run();
 
   return json({ ok: true, league: { provider, sport: SPORT[provider],
     league_id: leagueId, name: found.name, season: found.season,
@@ -139,6 +147,96 @@ export async function onRequestDelete({ request, env }) {
   if (!gone.ok) return gone.response;
 
   return json({ ok: true });
+}
+
+const UPSERT =
+  `INSERT INTO leagues (user_id, provider, sport, league_id, name, season,
+                        team_name, provider_user_id, created_at, last_synced_at)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+   ON CONFLICT (user_id, provider, league_id)
+   DO UPDATE SET name = excluded.name, season = excluded.season,
+                 team_name = COALESCE(excluded.team_name, leagues.team_name),
+                 provider_user_id = COALESCE(excluded.provider_user_id,
+                                             leagues.provider_user_id),
+                 last_synced_at = excluded.last_synced_at`;
+
+/**
+ * Every league a Sleeper account is in this season, with the name of their
+ * team in each.
+ *
+ * Rate-limited on the whole account rather than per league: this is one
+ * button, and it is the one worth holding down.
+ */
+async function syncAll(env, session, provider, username) {
+  if (provider !== "sleeper") {
+    return json({ ok: false, error: "only Sleeper can be synced by username" }, 400);
+  }
+  if (!USERNAME.test(username)) {
+    return json({ ok: false, error: "That does not look like a Sleeper username." }, 400);
+  }
+
+  const last = await db(() => env.DB.prepare(
+    "SELECT MAX(last_synced_at) AS at FROM leagues WHERE user_id = ?")
+    .bind(session.uid).first());
+  if (!last.ok) return last.response;
+  if (last.value?.at) {
+    const age = (Date.now() - Date.parse(last.value.at)) / 1000;
+    if (age < REFRESH_SECONDS) {
+      return json({ ok: false, error: "just refreshed",
+        retry_after: Math.ceil(REFRESH_SECONDS - age) }, 429);
+    }
+  }
+
+  let season, user, leagues;
+  try {
+    const state = await fetch("https://api.sleeper.app/v1/state/nfl").then((r) => r.json());
+    season = String(state?.season || new Date().getFullYear());
+
+    const u = await fetch(
+      `https://api.sleeper.app/v1/user/${encodeURIComponent(username)}`);
+    user = u.ok ? await u.json() : null;
+    if (!user || !user.user_id) {
+      return json({ ok: false, error: `Sleeper has no user called "${username}".` }, 404);
+    }
+
+    const r = await fetch(
+      `https://api.sleeper.app/v1/user/${user.user_id}/leagues/nfl/${season}`);
+    leagues = r.ok ? await r.json() : [];
+  } catch {
+    return json({ ok: false, error: "could not reach Sleeper" }, 502);
+  }
+
+  if (!leagues.length) {
+    return json({ ok: false,
+      error: `Sleeper shows no ${season} NFL leagues for "${username}".` }, 404);
+  }
+  leagues = leagues.slice(0, MAX);
+
+  // One extra call per league for the team name; a league that will not answer
+  // is still worth storing, just without it.
+  const rows = await Promise.all(leagues.map(async (lg) => {
+    let team = null;
+    try {
+      const us = await fetch(
+        `https://api.sleeper.app/v1/league/${lg.league_id}/users`);
+      if (us.ok) {
+        const mine = (await us.json()).find((x) => x.user_id === user.user_id);
+        team = (mine?.metadata?.team_name) || mine?.display_name || null;
+      }
+    } catch { /* the league is still worth having */ }
+    return { league_id: String(lg.league_id), name: lg.name || null,
+             season: String(lg.season || season), team_name: team };
+  }));
+
+  const now = new Date().toISOString();
+  const wrote = await db(() => env.DB.batch(rows.map((r) => env.DB.prepare(UPSERT).bind(
+    session.uid, provider, SPORT[provider], r.league_id, r.name, r.season,
+    r.team_name, user.user_id, now, now))));
+  if (!wrote.ok) return wrote.response;
+
+  return json({ ok: true, synced: rows.length, username,
+    leagues: rows.map((r) => ({ provider, sport: SPORT[provider], ...r,
+                                last_synced_at: now })) });
 }
 
 /** Ask Sleeper whether this league exists, and what it is called. */

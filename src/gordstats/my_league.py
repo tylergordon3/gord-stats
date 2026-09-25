@@ -164,6 +164,16 @@ JS = """{% raw %}<script>
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
   }
 
+  /** "League - Your Team": two leagues named the same thing are otherwise the
+   *  same entry twice, and people do name them the same thing.
+   *
+   *  Not called `label`: draw() takes a parameter by that name, which shadowed
+   *  this inside the one function that needs it. */
+  function leagueLabel(l){
+    var name=l.name||('League '+l.league_id);
+    return l.team_name ? (name+' \u2014 '+l.team_name) : name;
+  }
+
   function draw(label){
     if(label){
       if(SYNCED.length>1){
@@ -172,7 +182,7 @@ JS = """{% raw %}<script>
           + SYNCED.map(function(l){
               return '<option value="'+esc(l.league_id)+'"'
                 + (String(l.league_id)===here?' selected':'') + '>'
-                + esc(l.name||('League '+l.league_id)) + '</option>';
+                + esc(leagueLabel(l)) + '</option>';
             }).join('')
           + '</select></label>'
           + '<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
@@ -182,7 +192,7 @@ JS = """{% raw %}<script>
           var chosen=SYNCED.filter(function(l){
             return String(l.league_id)===String(want);})[0];
           if(!chosen) return;
-          save({id:chosen.league_id, name:chosen.name});
+          save({id:chosen.league_id, name:leagueLabel(chosen)});
           // Pages that render from the stored key read it once, at load.
           if(owns) load(chosen.league_id); else location.reload();
         });
@@ -230,13 +240,19 @@ JS = """{% raw %}<script>
       var chosen=SYNCED.filter(function(l){
         return have&&String(l.league_id)===String(have.id);})[0] || SYNCED[0];
       if(!have||String(have.id)!==String(chosen.league_id)){
-        draw(chosen.name||('League '+chosen.league_id));
+        draw(leagueLabel(chosen));
         load(chosen.league_id,true);
       } else {
-        draw(chosen.name||('League '+chosen.league_id));   // redraw, now with the picker
+        draw(leagueLabel(chosen));               // redraw, now with the picker
       }
     })
-    .catch(function(){});
+    // A network failure here is expected (signed out, or no accounts on this
+    // deploy) and says nothing. A TypeError is a bug in the lines above, and
+    // swallowing it cost an afternoon - so it goes to the console.
+    .catch(function(e){
+      if(e && e.name !== 'TypeError') return;
+      if(window.console) console.error('[my-league]', e);
+    });
 })();
 </script>{% endraw %}"""
 
