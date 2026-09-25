@@ -32,6 +32,7 @@ from cfb import results                              # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
 from cfb.site import teams as teams_page              # noqa: E402
 from cfb.site import write_page                      # noqa: E402
+from gordstats import scorecard                        # noqa: E402
 from gordstats import charts, favorites, palette     # noqa: E402
 
 _SECTION = "cfb-predictions"
@@ -116,7 +117,7 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 /* The record, at the top of the page. Two numbers, and both of them are simply
    right or wrong -- no averages, nothing to convert in your head. They were
    four screens down under a heading most readers never reached. */
-.pred-record{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+.pred-record{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));
   gap:14px;margin:14px 0 10px}
 .rec-cell{background:#fff;border:1px solid #e2e8f0;border-radius:12px;
   padding:15px 18px 16px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
@@ -125,11 +126,30 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 /* Proportional figures, not tabular: at this size tabular-nums leaves a gap
    inside 88% wide enough to read as two numbers. */
 .rec-value{font-size:46px;font-weight:800;color:#0f172a;line-height:1.05;margin:5px 0 1px}
+/* A record too small to quote a rate prints the fraction instead, at a size
+   that does not claim to be a percentage. */
+.rec-value.rec-frac{font-size:34px}
+.rec-value.rec-frac .rec-of{font-size:19px;font-weight:700;color:#64748b}
+.rec-value.rec-none{color:#94a3b8}
 .rec-sub{font-size:13.5px;color:#475569}
 .rec-meter{position:relative;height:9px;border-radius:5px;background:#dbe7f7;margin-top:13px}
 .rec-meter>i{display:block;height:100%;border-radius:5px;background:{accent}}
 .rec-note{font-size:11.5px;color:#64748b;margin-top:8px}
 .rec-more{font-size:13px;margin:0 0 4px}
+/* Two across on a phone rather than four stacked: the whole point of these is
+   that they are the first thing on the page, which they stop being if reaching
+   the fourth takes four screens. */
+@media (max-width:560px){
+  .pred-record{grid-template-columns:1fr 1fr;gap:9px}
+  .rec-cell{padding:11px 12px 12px;border-radius:10px}
+  .rec-label{font-size:10.5px;letter-spacing:.03em}
+  .rec-value{font-size:31px;margin:3px 0 1px}
+  .rec-value.rec-frac{font-size:25px}
+  .rec-value.rec-frac .rec-of{font-size:14px}
+  .rec-sub{font-size:11.5px;line-height:1.35}
+  .rec-meter{height:7px;margin-top:9px}
+  .rec-note{font-size:10.5px;margin-top:6px;line-height:1.35}
+}
 .pred-tile .t-meter{position:relative;height:7px;border-radius:4px;background:#dbe7f7;
   margin-top:10px}
 .pred-tile .t-meter>i{display:block;height:100%;border-radius:4px;background:{accent}}
@@ -197,6 +217,8 @@ h3.pred-sub{border-top-color:#2b3852}
   .rec-cell{background:#16203a;border-color:#2b3852;box-shadow:none}
   .rec-label,.rec-note{color:#aab7c9}
   .rec-value{color:#f1f5f9}
+  .rec-value.rec-frac .rec-of{color:#aab7c9}
+  .rec-value.rec-none{color:#64748b}
   .rec-sub{color:#c3cfdd}
   .rec-meter{background:#24406b}
   .pred-tile .t-note{color:#aab7c9}
@@ -508,57 +530,17 @@ def _week_block(frame: pd.DataFrame, label: str, is_open: bool) -> str:
             f"<div class='pw-body'>{_result_rows(ordered)}</div></details>")
 
 
-def _record_cell(label: str, wins: int, games: int, sub: str,
-                 benchmark: float | None = None, mark_label: str = "break-even") -> str:
-    """One of the three records at the top: the rate, the fraction under it,
-    and the book's number drawn on the bar - break-even for a bet, or the
-    book's own rate on the same games."""
-    if not games:
-        return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
-                f"<div class='rec-value'>&mdash;</div><div class='rec-sub'>{sub}</div></div>")
-    pct = wins / games
-    mark = note = ""
-    if benchmark is not None:
-        mark = f"<span class='t-mark' style='left:{benchmark * 100:.1f}%'></span>"
-        gap = (benchmark - pct) * 100
-        note = (f"<div class='rec-note'>the mark is {mark_label} at "
-                f"{benchmark:.0%} &middot; "
-                + (f"{abs(gap):.0f} points clear" if gap <= 0
-                   else f"{gap:.0f} points under") + "</div>")
-    return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
-            f"<div class='rec-value'>{pct:.0%}</div>"
-            f"<div class='rec-sub'>{wins} of {games} {sub}</div>"
-            f"<div class='rec-meter'><i style='width:{pct * 100:.0f}%'></i>{mark}</div>"
-            f"{note}</div>")
-
-
 def _record_band(frame: pd.DataFrame) -> str:
-    """Right or wrong, at the top of the page: our three calls against the book.
-
-    The winner we named, against the book's favourite on the same games; and
-    where our number differs from the book's by three points or more - the
-    bets worth placing - our side of the spread and of the total, against
-    the break-even a bet has to clear. The ungated over/under figure (every
-    game the book priced, however small our lean) is a different claim and
-    stays with the analysis further down.
-    """
+    """The four calls at the top of the page - see gordstats.scorecard, which
+    renders the same band for the NFL page."""
     if frame.empty:
         return ""
     stat = results.summary(frame)
-    book_rate = (stat["book_correct"] / stat["book_games"]) if stat["book_games"] else None
-    cells = [
-        _record_cell("Winners called right", stat["correct"], stat["games"], "games",
-                     book_rate, "the book's favourite"),
-        _record_cell("Against the spread", stat["ats_wins"], stat["ats_games"],
-                     "bets where we differed from the book by 3+", BREAK_EVEN),
-        _record_cell("Over/under", stat["ou_wins"], stat["ou_games"],
-                     "bets where we differed from the book by 3+", BREAK_EVEN),
-    ]
     return (f"<p class='pred-note'>Every prediction is archived before kickoff and "
             f"scored against the result - {stat['games']} finished game"
             f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}.</p>"
-            "<div class='pred-record'>" + "".join(cells) + "</div>"
-            "<p class='pred-note rec-more'><a href='#how-it-has-gone'>How close the "
+            + scorecard.band(stat, break_even=BREAK_EVEN)
+            + "<p class='pred-note rec-more'><a href='#how-it-has-gone'>How close the "
             "scores were, every total we leaned on, and every game week by week "
             "&rarr;</a></p>")
 

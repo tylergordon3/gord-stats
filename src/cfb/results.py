@@ -207,6 +207,21 @@ def grade(frame: pd.DataFrame) -> pd.DataFrame:
     frame["ou_correct"] = np.where(
         no_call | (ou_edge.abs() < BET_MIN), np.nan, (ou_edge > 0) == (ou_result > 0))
     frame["market_total_error"] = frame["market_total"] - frame["actual_total"]
+
+    # Our own number, scored the way a spread is: did the side we favoured beat
+    # the margin we gave it? This is a calibration figure, not a skill one - an
+    # unbiased projection wins it about half the time by construction, so the
+    # page that prints it has to say so. An exact hit is a push and stays out,
+    # as a book would treat it.
+    our_result = frame["actual_margin"] - frame["pred_margin"]
+    frame["our_cover"] = np.where(
+        frame["pred_margin"].isna() | frame["actual_margin"].isna()
+        | (our_result == 0) | (frame["pred_margin"] == 0),
+        np.nan, (frame["pred_margin"] > 0) == (our_result > 0))
+    # Which way we lean, in points: how much more than reality we gave the side
+    # we picked. Positive means we flatter favourites.
+    fav = np.sign(frame["pred_margin"])
+    frame["fav_margin_error"] = frame["pred_margin"].abs() - frame["actual_margin"] * fav
     return frame.sort_values("kickoff").reset_index(drop=True)
 
 
@@ -220,6 +235,7 @@ def summary(frame: pd.DataFrame) -> dict:
     ou = frame["ou_correct"].dropna()
     ou_all = frame["ou_called"].dropna()
     book = frame["book_correct"].dropna()
+    cover = frame["our_cover"].dropna() if "our_cover" in frame else pd.Series(dtype=float)
     return {
         "games": len(frame),
         "correct": int(frame["correct"].sum()),
@@ -245,6 +261,11 @@ def summary(frame: pd.DataFrame) -> dict:
         "market_total_mae": (float(totals_priced["market_total_error"].abs().mean())
                              if len(totals_priced) else None),
         "totals_priced": int(len(totals_priced)),
+        # Our own number as a spread, and the lean behind it.
+        "cover_games": int(len(cover)),
+        "cover_wins": int(cover.sum()) if len(cover) else 0,
+        "fav_bias": (float(frame["fav_margin_error"].mean())
+                     if "fav_margin_error" in frame else None),
     }
 
 

@@ -18,6 +18,7 @@ import numpy as np
 import pandas as pd
 
 from cfb.site.predictions import _CSS, _fmt_spread
+from gordstats import scorecard
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
 from nfl import predict, results
@@ -140,12 +141,22 @@ def _card(game, record: dict) -> str:
                 other = game["away"] if home_wins else game["home"]
                 side = favourite if diff > 0 else other
                 lean = f" <span class='pg-lean'>lean {escape(str(side))}</span>"
+        # The total gets the same treatment as the spread: where we are a field
+        # goal or more off the book's number, say which side that is. Without it
+        # the over/under record at the top of the page counts games the cards
+        # never showed a call on.
+        ou_lean = ""
+        if book_total is not None and not pd.isna(book_total):
+            ou_diff = total - book_total
+            if abs(ou_diff) >= EDGE:
+                ou_lean = (f" <span class='pg-lean'>lean "
+                           f"{'over' if ou_diff > 0 else 'under'}</span>")
         line = (f"<div class='pg-line'><span><b>{escape(str(favourite))} {-abs(margin):.1f}</b>"
                 + ("" if book is None or pd.isna(book) else f" &middot; book {_fmt_spread(book)}")
                 + lean + "</span>"
                 f"<span>O/U {total:.0f}"
                 + ("" if book_total is None or pd.isna(book_total) else f" ({book_total:g})")
-                + f" &middot; {prob:.0%}</span></div>")
+                + ou_lean + f" &middot; {prob:.0%}</span></div>")
     return f"<article class='pg'>{when}{rows}{bar}{line}</article>"
 
 
@@ -161,25 +172,31 @@ def _week_key(block) -> str:
 
 
 def _record_band(scored: pd.DataFrame) -> str:
+    """The same four calls the college page leads with."""
     if scored.empty:
         return ("<p class='pred-note'>No finished game has a prediction on record yet; the "
                 "record starts with the first kickoff after this page went up.</p>")
+    return scorecard.band(results.summary(scored), break_even=BREAK_EVEN)
+
+
+def _closeness(scored: pd.DataFrame) -> str:
+    """How close the misses were, against the book on the same games. This is
+    the averages half of the record - it used to sit in the band up top, where
+    a points figure had to be read in the same glance as three percentages."""
+    if scored.empty:
+        return ""
     got = results.summary(scored)
-    ats = (f"{got['ats_wins']}/{got['ats_games']}" if got["ats_games"] else "&mdash;")
+    book = (f"{got['market_margin_mae']:.1f} pts" if got.get("market_margin_mae")
+            else "&mdash;")
     tiles = [
-        ("Winners", f"{got['correct']}/{got['games']}",
-         f"{got['winner_accuracy']:.0%} straight up"),
-        ("The book's favourites", f"{got['book_correct']}/{got['book_games']}",
-         f"we had {got['correct_on_book_games']} of those {got['book_games']}"),
-        ("Margin error", f"{got['margin_mae']:.1f} pts",
-         "the book: " + (f"{got['market_margin_mae']:.1f} pts" if got["market_margin_mae"] else "&mdash;")),
-        ("Against the spread", ats,
-         f"where we differed from the book by {EDGE:g}+ (break-even {BREAK_EVEN:.1%})"),
+        ("Our average miss", f"{got['margin_mae']:.1f} pts", f"the book: {book}"),
+        ("On the total", f"{got['total_mae']:.1f} pts", "average miss on the points scored"),
     ]
-    return ("<div class='pred-tiles pred-tiles-wide'>" + "".join(
-        f"<div class='pred-tile'><div class='t-label'>{label}</div>"
-        f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
-        for label, value, sub in tiles) + "</div>")
+    return ("<h2>How close it was</h2>"
+            "<div class='pred-tiles pred-tiles-wide'>" + "".join(
+                f"<div class='pred-tile'><div class='t-label'>{label}</div>"
+                f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
+                for label, value, sub in tiles) + "</div>")
 
 
 def _ratings_table(model, names: dict, schedule: pd.DataFrame) -> str:
@@ -270,6 +287,7 @@ def body() -> str:
         "Off and Def are what the model expects a team to score and allow against an "
         "average opponent.</p>"
         + _ratings_table(model, names, frame)
+        + _closeness(scored)
         + _method(model, valid))
 
 

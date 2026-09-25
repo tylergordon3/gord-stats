@@ -228,12 +228,14 @@ def test_calling_under_and_getting_it_right_counts(tmp_path, monkeypatch):
 
 
 def test_the_game_log_can_be_added_up_to_the_headline():
-    """The log is the working behind the three records at the top.
+    """The log is the working behind the records at the top.
 
     The top of the page is our recommendations against the book - winner,
-    spread and total, the last two gated at three points - so the per-game
-    columns, the week chips and the headline all read the same gated calls.
-    A dash in a gated column is a game with no bet, not a wrong one.
+    our own spread, and the spread and total against the book gated at three
+    points - so the per-game columns, the week chips and the headline all read
+    the same gated calls. A dash in a gated column is a game with no bet, not a
+    wrong one. The band itself moved to gordstats.scorecard, which renders it
+    for the NFL page too.
     """
     from conftest import ROOT
     src = (ROOT / "src" / "cfb" / "site" / "predictions.py").read_text()
@@ -246,8 +248,10 @@ def test_the_game_log_can_be_added_up_to_the_headline():
     assert "stat['ou_wins']" in block and "stat['ats_wins']" in block
     assert "ou_all_games" not in block
 
-    band = src.split("def _record_band")[1].split("\ndef ")[0]
+    band = (ROOT / "src" / "gordstats" / "scorecard.py").read_text()
+    band = band.split("def band")[1]
     assert 'stat["ou_wins"]' in band and 'stat["ats_wins"]' in band
+    assert "ou_all" not in band
 
 
 def test_both_over_under_records_keep_a_place_on_the_page():
@@ -256,9 +260,9 @@ def test_both_over_under_records_keep_a_place_on_the_page():
     and should not simply disappear - it lives in the analysis tiles."""
     from conftest import ROOT
     src = (ROOT / "src" / "cfb" / "site" / "predictions.py").read_text()
-    band = src.split("def _record_band")[1].split("\ndef ")[0]
-    assert '"Over/under", stat["ou_wins"], stat["ou_games"]' in band
-    assert '"Against the spread", stat["ats_wins"], stat["ats_games"]' in band
+    band = (ROOT / "src" / "gordstats" / "scorecard.py").read_text().split("def band")[1]
+    assert 'stat["ou_wins"], stat["ou_games"]' in band
+    assert 'stat["ats_wins"], stat["ats_games"]' in band
     section = src.split("def _results_section")[1].split("\ndef ")[0]
     assert 'stat["ou_all_wins"], stat["ou_all_games"]' in section
     # ...and below the log, not above it.
@@ -299,3 +303,68 @@ def test_a_game_the_model_never_priced_is_not_a_loss(tmp_path, monkeypatch):
     frame = results.scored(2026)
     assert np.isnan(frame["ou_called"].iloc[0])
     assert results.summary(frame)["ou_all_games"] == 0
+
+
+# --------------------------------------------------------------------------- #
+# Our own number, scored as a spread (the calibration figure on the band)
+# --------------------------------------------------------------------------- #
+
+def test_our_own_spread_is_covered_when_the_side_we_picked_beats_our_number(
+        tmp_path, monkeypatch):
+    """We gave the home side 7; they won by 10, so they beat our number."""
+    _archive([_row("2026-09-04T12:00:00+00:00", margin=7.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, margin=10.0)
+    frame = results.scored(2026)
+    assert bool(frame["our_cover"].iloc[0]) is True
+    # We were 3 points short on the side we picked, so the lean is negative:
+    # we gave the favourite too few.
+    assert frame["fav_margin_error"].iloc[0] == pytest.approx(-3.0)
+
+
+def test_winning_by_less_than_our_number_is_not_a_cover(tmp_path, monkeypatch):
+    """The winner was right and the spread was not: the two are different
+    questions, which is the whole reason the tile exists."""
+    _archive([_row("2026-09-04T12:00:00+00:00", margin=7.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, margin=3.0)
+    frame = results.scored(2026)
+    assert bool(frame["correct"].iloc[0]) is True
+    assert bool(frame["our_cover"].iloc[0]) is False
+    assert frame["fav_margin_error"].iloc[0] == pytest.approx(4.0)
+
+
+def test_our_spread_works_the_same_way_for_an_away_favourite(tmp_path, monkeypatch):
+    """Margins are home-relative, so the sign convention is the easy thing to
+    get backwards: we gave the away side 7 and they won by 10."""
+    _archive([_row("2026-09-04T12:00:00+00:00", margin=-7.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, margin=-10.0)
+    frame = results.scored(2026)
+    assert bool(frame["our_cover"].iloc[0]) is True
+    assert frame["fav_margin_error"].iloc[0] == pytest.approx(-3.0)
+
+
+def test_landing_exactly_on_our_number_is_a_push_not_a_loss(tmp_path, monkeypatch):
+    _archive([_row("2026-09-04T12:00:00+00:00", margin=7.0)], tmp_path, monkeypatch)
+    _finals(monkeypatch, margin=7.0)
+    frame = results.scored(2026)
+    assert pd.isna(frame["our_cover"].iloc[0])
+    assert results.summary(frame)["cover_games"] == 0
+
+
+def test_an_unbiased_set_of_predictions_covers_about_half(tmp_path, monkeypatch):
+    """The point of the tile's framing: 50% is the target, not a failing grade.
+    Four games missed by 3 points each way come out even."""
+    rows = [_row("2026-09-04T12:00:00+00:00", margin=7.0, game_id=str(i))
+            for i in range(4)]
+    _archive(rows, tmp_path, monkeypatch)
+    finals = pd.DataFrame([
+        {"game_id": "0", "actual_margin": 10.0, "actual_total": 52.0},
+        {"game_id": "1", "actual_margin": 4.0, "actual_total": 52.0},
+        {"game_id": "2", "actual_margin": 13.0, "actual_total": 52.0},
+        {"game_id": "3", "actual_margin": 1.0, "actual_total": 52.0},
+    ])
+    finals["home_score"] = (finals["actual_total"] + finals["actual_margin"]) / 2
+    finals["away_score"] = (finals["actual_total"] - finals["actual_margin"]) / 2
+    monkeypatch.setattr(results, "_finals", lambda season=2026: finals)
+    got = results.summary(results.scored(2026))
+    assert got["cover_games"] == 4 and got["cover_wins"] == 2
+    assert got["fav_bias"] == pytest.approx(0.0)
