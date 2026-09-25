@@ -93,11 +93,8 @@ because neither provider needs any.
       in a browser - which found a pre-existing bug: the Python's flex
       tie-break ran off set iteration order, so the same roster could come out
       differently between builds.
-- [ ] **Waiver adds for your own league.** The lineup is done; the wire is not.
-      It needs a free-agent pool for an arbitrary league (everyone priced,
-      minus everyone rostered there) scored against the weakest starter - the
-      data is all shipped already, so this is renderer work rather than new
-      plumbing.
+- [x] **Waiver adds for your own league** (386db822b). Same rule, thresholds
+      and wording as the built page.
 - [x] **Yahoo withdrawn entirely** (c4eb8b71b). Its public API reaches only
       leagues a commissioner set public, and the rest need OAuth and a stored
       refresh token - which would turn a database worth very little if taken
