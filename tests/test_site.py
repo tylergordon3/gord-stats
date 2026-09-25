@@ -320,10 +320,18 @@ def test_the_files_the_browser_needs_are_built():
     proj = DOCS / "fantasy" / "week-projections.json"
     assert index.exists() and proj.exists()
     names = json.loads(index.read_text())
-    points = json.loads(proj.read_text())
+    week = json.loads(proj.read_text())
     assert len(names) > 500, "the player index looks truncated"
-    assert len(points) > 100, "the week projections look truncated"
     assert all(isinstance(v, list) and len(v) == 2 for v in list(names.values())[:50])
+
+    assert len(week["proj"]) > 100, "the week projections look truncated"
+    assert week["kick"], "no kickoffs, so no lineup can lock"
+    # Three scoring bases and the player's team, in that order: a half-PPR
+    # league reads the second number, and reading the wrong one is silent.
+    for pid, row in list(week["proj"].items())[:50]:
+        assert len(row) == 4, f"{pid} does not carry three bases and a team"
+        ppr, half, std, team = row
+        assert ppr >= half >= std, f"{pid}: the bases are out of order"
 
 
 def test_projections_are_served_from_here_not_from_sleeper():
@@ -349,3 +357,36 @@ def test_the_matchups_page_and_the_usage_page_share_one_league():
     only notice on the second page."""
     assert "gsSleeperLeague" in MY_MATCHUPS
     assert "gsSleeperLeague" in MY_LEAGUE
+
+
+# --------------------------------------------------------------------------- #
+# "Your team this week" on the dashboard
+# --------------------------------------------------------------------------- #
+
+MY_TEAM = (ROOT / "src" / "gordstats" / "my_team.py").read_text()
+
+
+def test_the_reader_s_team_is_rendered_apart_from_the_built_one():
+    """The built page's projections, defence-vs-position and weather are this
+    league's sources for this league's players. Mixing a reader's roster into
+    them would attribute numbers to players they were never computed for."""
+    assert "mt-built" in MY_TEAM and "built.hidden=true" in MY_TEAM
+    page = (ROOT / "src" / "fantasy" / "site" / "roster.py").read_text()
+    assert '<div id="mt-built">' in page
+
+
+def test_the_scoring_basis_comes_from_the_league_not_from_us():
+    """This site plays PPR. A half-PPR league reading PPR numbers is wrong on
+    every row and says nothing about it, which is the worst way to be wrong."""
+    data = (ROOT / "src" / "gordstats" / "my_league_data.py").read_text()
+    assert "scoring_settings" in data
+    assert "['PPR','half-PPR','standard']" in data
+    # And a league further off than that is told, rather than quietly rounded.
+    assert "custom" in data and "custom" in MY_TEAM
+
+
+def test_every_league_shares_one_stored_league():
+    """Usage, matchups and the dashboard all read the same key - three pages
+    each remembering their own league is a bug you meet on the second one."""
+    for src in (MY_TEAM, MY_LEAGUE, MY_MATCHUPS):
+        assert "gsSleeperLeague" in src or "GSL.saved()" in src

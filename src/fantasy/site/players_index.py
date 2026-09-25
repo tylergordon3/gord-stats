@@ -14,14 +14,26 @@ keeps: every active player at a fantasy position, about 3,200 of them and
 under 100 KB. It is fetched lazily by the browser and only when someone is
 actually looking at their own league, so it costs a normal reader nothing.
 
-docs/fantasy/week-projections.json - Sleeper player id -> this week's points.
+docs/fantasy/week-projections.json - this week's projections and kickoffs.
 
 Sleeper's own projections endpoint cannot be used from a browser: it answers a
 cross-origin request with every player id mapped to an empty object, stats
-stripped, where the same URL from a server returns the numbers. The build
-already downloads the full set anyway - `sleeper_projections` fetches
-everything and then filters to the rostered players - so the unfiltered copy
-is written out here at about 40 KB instead.
+stripped, where the same URL from a server returns the numbers. So the build
+writes what the browser needs instead:
+
+    {"week": 4, "year": 2026,
+     "kick": {"SEA": "<kickoff iso>", ...},          team -> kickoff
+     "proj": {"4034": [ppr, half, std, "SEA"], ...}} player -> the three bases
+
+All three scoring bases, because the reader's league may not be the PPR this
+site plays. Sleeper prices each player under all three, so half-PPR and
+standard leagues cost one extra number each rather than a re-scoring; the
+league's own `scoring_settings.rec` picks the column. A league with genuinely
+custom scoring (six-point passing touchdowns, reception bonuses) is still
+approximate, and the page says so rather than quietly being wrong.
+
+Kickoffs are here because the lineup planner needs to know whose game has
+started: a player already playing cannot be moved.
 
     python -m fantasy.site.players_index
 """
@@ -53,16 +65,42 @@ def build() -> dict:
 
 
 def projections(week: int = None, year: int = UPCOMING_YEAR) -> dict:
-    """{player_id: points} for every player Sleeper prices this week."""
+    """This week's three scoring bases per player, and every kickoff.
+
+    Fetched raw rather than through `sleeper_projections`, which keeps only the
+    PPR figure - the archive has no use for the other two and there is no
+    reason to widen it.
+    """
     from fantasy.league import matchups as matchups_mod
     if week is None:
         weeks = matchups_mod.archived_weeks(year)
         if not weeks:
             return {}
         week = weeks[-1]
-    rows = matchups_mod.sleeper_projections(week, year)      # no `only`: all of them
-    return {pid: round(float(v["pts"]), 2)
-            for pid, v in rows.items() if v.get("pts") is not None}
+
+    url = (f"{matchups_mod.SLEEPER_ROOT}/projections/nfl/{year}/{week}"
+           f"?season_type=regular&{matchups_mod._positions_param()}&order_by=pts_ppr")
+    rows = matchups_mod._get(url) or []
+    proj = {}
+    for r in rows:
+        st, pid = r.get("stats") or {}, str(r.get("player_id") or "")
+        if not pid or st.get("pts_ppr") is None:
+            continue
+        proj[pid] = [round(float(st.get("pts_ppr") or 0), 2),
+                     round(float(st.get("pts_half_ppr") or 0), 2),
+                     round(float(st.get("pts_std") or 0), 2),
+                     r.get("team") or ""]
+
+    kick = {}
+    try:
+        for g in matchups_mod.espn_games(week, year):
+            for side in ("home", "away"):
+                if g.get(side) and g.get("date"):
+                    kick[g[side]] = g["date"]
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! kickoffs unavailable ({exc}); lineups will not lock")
+
+    return {"week": int(week), "year": int(year), "kick": kick, "proj": proj}
 
 
 def generate():
@@ -77,9 +115,10 @@ def generate():
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! week projections unavailable ({exc}); keeping the last copy")
         return
-    if proj:
+    if proj.get("proj"):
         PROJ_OUT.write_text(json.dumps(proj, separators=(",", ":")), encoding="utf-8")
-        print(f"Wrote week projections ({len(proj)} players) -> {PROJ_OUT}")
+        print(f"Wrote week {proj['week']} projections ({len(proj['proj'])} players, "
+              f"{len(proj['kick'])} kickoffs) -> {PROJ_OUT}")
 
 
 if __name__ == "__main__":

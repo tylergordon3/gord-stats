@@ -38,6 +38,7 @@ from fantasy.league import suggestions
 from fantasy.site import layout
 from fantasy.site import matchups as mu
 from gordstats import lineup as planner
+from gordstats import my_league, my_league_data, my_team
 from gordstats import matchup_page as ui
 from gordstats import roster_page as page
 from gordstats.frontmatter import add_front_matter
@@ -472,6 +473,12 @@ def body() -> str:
     cfg = json.dumps({"mine": mine, "teams": slugs}).replace("</", "<\\/")
     return (
         page.CSS + page.CARD_CSS
+        # The reader's own league renders above, and hides the built one - the
+        # projections, defence-vs-position and weather below are this league's
+        # sources for this league's players.
+        + my_league.bar()
+        + my_team.section()
+        + '<div id="mt-built">'
         + f"<p><strong>Week {wkd.week}</strong>. One roster at a time: who to start, which "
         "slot to put him in, what he is up against, and who on the wire would beat him.</p>"
         "<details class='section'><summary>How to read this page</summary>"
@@ -502,7 +509,9 @@ def body() -> str:
         f"{options}</select></label><button id='rd-star' type='button'></button></div></div>"
         + "".join(team_view(wkd, s, foe, free, owned) for s, foe in sides)
         + f"<script type='application/json' id='rd-cfg'>{cfg}</script>"
-        + page.switch_js(STORAGE_KEY) + page.CARD_JS)
+        + page.switch_js(STORAGE_KEY) + page.CARD_JS
+        + "</div>"
+        + my_league_data.JS + my_team.PLANNER_JS + my_team.VIEW_JS)
 
 
 def generate():

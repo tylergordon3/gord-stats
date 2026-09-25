@@ -57,7 +57,14 @@ def plan(players: list, slot_counts: dict, proj: dict, kickoff: dict, locked: se
     Returns {"slot": {id: recommended slot}, "start": set of starters,
     "cover": {id: [bench ids that could replace him, best first]}}.
     """
-    flex_positions = set(flex_positions)
+    # Order matters and a set does not have one. Two players tied on
+    # projection are separated by whichever position the flex loop below
+    # reaches first, so iterating a set made the recommended lineup depend on
+    # string hash order: the same roster came out differently under different
+    # PYTHONHASHSEED values, which is to say between builds. The caller's order
+    # is the tie-break now, and the set is kept only for membership tests.
+    flex_order = list(dict.fromkeys(flex_positions))
+    flex_positions = set(flex_order)
     value = {p["id"]: _points(proj.get(p["id"])) for p in players}
     by_id = {p["id"]: p for p in players}
     open_slots = dict(slot_counts)
@@ -84,7 +91,7 @@ def plan(players: list, slot_counts: dict, proj: dict, kickoff: dict, locked: se
     flexed = []
     for _ in range(max(open_slots.get(flex, 0), 0)):
         best = None
-        for pos in flex_positions:
+        for pos in flex_order:
             rest = ranked.get(pos, [])[len(chosen.get(pos, [])):]
             rest = [i for i in rest if i not in flexed]
             if rest and (best is None or value[rest[0]] > value[best]):
