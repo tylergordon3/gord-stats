@@ -386,7 +386,15 @@ def _weekly_scores(players: pd.DataFrame, weeks: int, sims: int,
 
 
 def _round_robin(rng: np.random.Generator, teams: int, weeks: int) -> np.ndarray:
-    """(weeks, teams) opponent indices from a randomly rotated circle schedule."""
+    """(weeks, teams) opponent indices from a randomly rotated circle schedule.
+
+    Even-sized leagues only, which this one has always been. With an odd number
+    of teams one sits out each week and its row here stays zero, which reads as
+    a fixture against whoever holds index 0 rather than as the bye it is. The
+    browser's port of this (gordstats.my_power) fills with -1 and skips it,
+    because a reader's league can be any size; fix it the same way here if this
+    is ever pointed at one.
+    """
     order = rng.permutation(teams)
     fixed, rotating = order[0], list(order[1:])
     table = np.zeros((weeks, teams), dtype=int)

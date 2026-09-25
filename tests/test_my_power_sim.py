@@ -455,3 +455,30 @@ def test_a_standard_league_scores_less_than_a_ppr_one(browser):
     # worth 224 points across the season and half of that at half-PPR.
     assert abs((ppr - std) - 4*4*14) < 0.12 * (4*4*14)
     assert abs((ppr - half) - (ppr - std)/2) < 0.12 * (ppr - std)/2
+
+
+def test_an_odd_sized_league_gives_somebody_a_bye_not_a_phantom_fixture(browser):
+    """The circle schedule leaves one team out each week when the league has an
+    odd number of them. An opponent table filled with zeroes rather than -1
+    scored that team against whoever sat at index 0 - a fixture that does not
+    exist, every week, for the whole season."""
+    teams = 11
+    board = {str(i): [i % 6, 7, 10.0, 6.0, 3.0, 0.9, 2.0, 0]
+             for i in range(1, teams * 12 + 1)}
+    rosters = [{"roster_id": t + 1,
+                "players": [str(t * 12 + j + 1) for j in range(12)]}
+               for t in range(teams)]
+    spec = {"board": board, "posNames": POSITIONS, "rosters": rosters,
+            "slots": SLOTS, "basis": 0, "weeks": 14, "playoffTeams": 6,
+            "median": False, "schedule": None, "sims": 500, "seed": 8}
+    result = json.loads(browser.evaluate(
+        "JSON.stringify(GSPower.run(" + json.dumps(spec) + "))"))
+
+    # Eleven near-identical teams, one sitting out each week: nobody plays more
+    # than the fourteen weeks there are, and the team at index 0 is not carrying
+    # everyone else's missing fixture.
+    for team in result["teams"]:
+        assert 0 <= team["projWins"] <= 14
+    wins = [t["projWins"] for t in result["teams"]]
+    assert max(wins) - min(wins) < 3, (
+        f"one team is playing a different season from the rest: {wins}")

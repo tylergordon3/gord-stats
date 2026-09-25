@@ -285,7 +285,14 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
     return field[0];
   }
 
-  /** (weeks, teams) opponent indices from a randomly rotated circle. */
+  /** (weeks, teams) opponent indices from a randomly rotated circle.
+   *
+   * -1 means nobody, and every row starts that way. An odd-sized league leaves
+   * one team out each week, which is what actually happens to it; filled with
+   * zeroes instead, that team would have been scored against whoever sat at
+   * index 0 - a phantom fixture, every week, for a league this page has no
+   * other reason to get wrong.
+   */
   function roundRobin(rng, teams, weeks){
     var order = [];
     for(var i = 0; i < teams; i++) order.push(i);
@@ -297,6 +304,7 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
     var table = [];
     for(var w = 0; w < weeks; w++){
       var row = new Int32Array(teams);
+      for(i = 0; i < teams; i++) row[i] = -1;
       row[fixed] = rotating[0];
       row[rotating[0]] = fixed;
       for(var p = 1; p < teams / 2; p++){

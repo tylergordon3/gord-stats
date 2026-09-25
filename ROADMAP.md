@@ -95,6 +95,19 @@ because neither provider needs any.
       differently between builds.
 - [x] **Waiver adds for your own league** (386db822b). Same rule, thresholds
       and wording as the built page.
+- [x] **League history, waivers and the draft read your league** - the three
+      pages that are reads and arithmetic over Sleeper, each beside the built
+      page rather than mixed into it.
+- [x] **Power rankings for your own league** (ff5c9c8ef). The last of these
+      and the only one that is a model: ten thousand seasons, in the reader's
+      browser, in a Worker. The projection board is the part no browser could
+      compute, so it is published (13 KB gzipped) and carries a per-player
+      catch rate, which makes half-PPR and standard exact rather than
+      approximate. Checked against the Python exactly where the answer is
+      deterministic and inside Monte Carlo error where it is not; on this
+      league the two agree to 0.7 of a power point. The published Rating
+      blends FantasyPros, which is keyed to this league, so a reader's shows
+      the simulation alone and says so.
 - [x] **Yahoo withdrawn entirely** (c4eb8b71b). Its public API reaches only
       leagues a commissioner set public, and the rest need OAuth and a stored
       refresh token - which would turn a database worth very little if taken
