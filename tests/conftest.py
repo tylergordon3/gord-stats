@@ -112,3 +112,11 @@ def declared(body: str, prop: str):
     """
     m = re.search(rf"(?<![-\w]){re.escape(prop)}\s*:\s*([^;}}]+)", body)
     return m.group(1).strip() if m else None
+
+
+@pytest.fixture(scope="module")
+def monkeypatch_module():
+    """`monkeypatch`, for a fixture that builds something once per module."""
+    patch = pytest.MonkeyPatch()
+    yield patch
+    patch.undo()

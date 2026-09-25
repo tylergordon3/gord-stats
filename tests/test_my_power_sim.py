@@ -293,27 +293,57 @@ def test_power_is_centred_on_a_hundred(both):
 # The page. A container without its script is the bug that shipped before.
 # --------------------------------------------------------------------------- #
 
-def test_the_page_carries_the_container_and_every_script():
+@pytest.fixture(scope="module")
+def page_html(monkeypatch_module):
+    """The page, built without running the model.
+
+    `body()` normally simulates this site's league, which is a network call and
+    ten thousand seasons - and writes a snapshot into data/, so running it from
+    a test put a second snapshot minutes after the Pi's and made the Move
+    column's baseline arbitrary. Making the ranking unavailable takes the
+    page's other branch, which carries the same reader's-league wiring and is
+    the branch most of the year serves anyway.
+
+    `charts.clear` is stubbed for the same reason and it is not fussiness: it
+    deletes the section's rendered charts, and the branch taken here does not
+    draw them again, so one test run left the published page with two missing
+    images.
+    """
+    from fantasy.league import power as model
+    from fantasy.site import power as page
+    from gordstats import charts
+
+    def unavailable(*args, **kwargs):
+        raise RuntimeError("no rosters yet")
+
+    monkeypatch_module.setattr(model, "rankings", unavailable)
+    monkeypatch_module.setattr(charts, "clear", lambda *a, **k: None)
+    monkeypatch_module.setattr(page.charts, "clear", lambda *a, **k: None)
+    return page.body()
+
+
+def test_the_page_carries_the_container_and_every_script(page_html):
     """The roster page once shipped the league control's container without the
     control's script, and only passed testing because localStorage had been set
     by hand. Nothing here renders without all four."""
-    from fantasy.site import power as page
-
-    html = page.body()
-    assert "id='mp-host'" in html
-    assert 'id="gs-power-sim"' in html, "the simulation itself is missing"
-    assert "window.GSPower" in html or "root.GSPower" in html
-    assert "window.GSL" in html, "the shared league loader is missing"
-    assert "id='ml-bar'" in html, "no way to pick a league"
+    assert "id='mp-host'" in page_html
+    assert 'id="gs-power-sim"' in page_html, "the simulation itself is missing"
+    assert "root.GSPower" in page_html
+    assert "window.GSL" in page_html, "the shared league loader is missing"
+    assert "id='ml-bar'" in page_html, "no way to pick a league"
 
 
-def test_the_simulation_is_defined_before_the_page_asks_for_it():
+def test_the_simulation_is_defined_before_the_page_asks_for_it(page_html):
     """The page builds its Worker from the simulation's own <script> element,
     so that element has to exist by the time the page script runs."""
-    from fantasy.site import power as page
+    assert page_html.index('id="gs-power-sim"') < page_html.index("gs-power-sim'")
 
-    html = page.body()
-    assert html.index('id="gs-power-sim"') < html.index("gs-power-sim'")
+
+def test_the_readers_league_is_offered_before_the_draft_too(page_html):
+    """For most of the year this site has no roster to rank and the page is the
+    method write-up. A reader's league is drafted long before this one's data
+    exists, and the page they land on must still be able to rank it."""
+    assert "Your League" in page_html
 
 
 def test_the_page_says_it_is_not_the_blended_rating():
