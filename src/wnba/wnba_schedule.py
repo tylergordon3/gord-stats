@@ -25,6 +25,8 @@ from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from wnba import paths
 
+from wnba import season
+
 ET = ZoneInfo("America/New_York")
 
 def today_et() -> str:
@@ -40,7 +42,7 @@ BASE_URL      = "https://api.balldontlie.io"
 HEADERS       = {"Authorization": API_KEY}
 SCHEDULE_FILE =  paths.WNBA_DATA / "wnba_schedule_2026.json"
 
-SEASON        = 2026
+SEASON        = season.current_season()
 
 # ── Team dictionary ───────────────────────────────────────────────────────────
 

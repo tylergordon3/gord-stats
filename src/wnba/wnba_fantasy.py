@@ -35,12 +35,14 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from wnba import paths
 
+from wnba import season
+
 # ── Config ────────────────────────────────────────────────────────────────────
 DEBUG = False
 load_dotenv()
 
 LEAGUE_ID        = 1039832288
-SEASON           = 2026
+SEASON           = season.current_season()
 DEFAULT_OUT_PATH = paths.WNBA_DATA / "wnba_fantasy_data.json"
 ET               = ZoneInfo("America/New_York")
 

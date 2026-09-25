@@ -29,11 +29,13 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from wnba import paths
 
+from wnba import season
+
 ET     = ZoneInfo("America/New_York")
 DEBUG  = False
-SEASON = 2026
+SEASON = season.current_season()
 
-SEASON_START = "2026-05-08"
+SEASON_START = season.season_start(SEASON)
 DEFENSE_FILE = paths.WNBA_DATA / "wnba_defense_2026.json"
 
 SCOREBOARD_URL = "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard"

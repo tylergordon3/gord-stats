@@ -30,6 +30,8 @@ from wnba import wnba_schedule
 from wnba import wnba_fantasy
 from wnba import wnba_defense
 
+from wnba import season as wnba_season
+
 ET = ZoneInfo("America/New_York")
 DEBUG = False
 
@@ -102,8 +104,9 @@ def teams_playing_on(schedule: dict, date_str: str) -> set[str]:
                 break
     return playing
  
-def get_avg_points(player: dict, season: int = 2026) -> float:
+def get_avg_points(player: dict, season: int = None) -> float:
     """Season-average fantasy points; falls back to ESPN's season projection."""
+    season = season or wnba_season.current_season()
     stats = {s["id"]: s for s in player.get("stats", [])}
     for stat_id in (f"00{season}", f"10{season}"):
         s = stats.get(stat_id)
@@ -113,8 +116,9 @@ def get_avg_points(player: dict, season: int = 2026) -> float:
 
 MINUTES_STAT = "40"  # averageStats["40"] = minutes per game
 
-def get_avg_minutes(player: dict, season: int = 2026) -> float:
+def get_avg_minutes(player: dict, season: int = None) -> float:
     """Season-average minutes per game; falls back to ESPN's season projection."""
+    season = season or wnba_season.current_season()
     stats = {s["id"]: s for s in player.get("stats", [])}
     for stat_id in (f"00{season}", f"10{season}"):
         s = stats.get(stat_id)
