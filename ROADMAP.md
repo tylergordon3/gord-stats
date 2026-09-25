@@ -80,10 +80,14 @@ because neither provider needs any.
       id (the long number in the league URL) or a Yahoo league key
       (`474.l.21318`). Nothing else: no username, password or token.
 - [x] A "refresh my league" button, rate-limited by time
-- [ ] **Convert the pages to scripted.** Matchups, My Team and Usage still
-      render the league baked into the build. Pointing them at a reader's
-      synced league is the bigger half and wants its own change: the data
-      pipeline behind those pages assumes one known league all the way down.
+- [x] **Usage** reads your league (5d788857). The ownership column and the
+      Fantasy filter re-point to a Sleeper league in the browser; everything
+      else on the page is NFL-wide and does not move. Local-first, so it works
+      signed out; syncing carries it between devices.
+- [ ] **Matchups and My Team** still render the built league. Harder than
+      usage was: usage only needed rosters, where these need the week's
+      matchups, projections and start/sit, and the pipeline behind them
+      assumes one known league all the way down.
 - [ ] **Private Yahoo leagues.** Yahoo's public API answers 401 for a league
       that is not set public, so those cannot be synced at all without OAuth -
       app registration, user consent and stored refresh tokens. Worth deciding
