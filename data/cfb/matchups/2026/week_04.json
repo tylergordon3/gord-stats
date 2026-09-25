@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-25T22:42:49+00:00",
+ "fetched": "2026-09-25T22:51:01+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 176.98,
-     "win_probability": 0.36
+     "projected": 182.92,
+     "win_probability": 0.39
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
      "projected": 201.04,
-     "win_probability": 0.64
+     "win_probability": 0.61
     }
    ]
   },
@@ -139,15 +139,15 @@
     "stats": {}
    },
    {
-    "yahoo_id": "405873",
-    "player": "Gio Lopez",
+    "yahoo_id": "333497",
+    "player": "Josh Hoover",
     "pos": "QB",
-    "team": "WAKE",
-    "team_full": "Wake Forest Demon Deacons",
-    "bye": 8.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "team": "IND",
+    "team_full": "Indiana Hoosiers",
+    "bye": 10.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "QB",
     "points": 0.0,
     "stats": {}
@@ -265,6 +265,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "405873",
+    "player": "Gio Lopez",
+    "pos": "QB",
+    "team": "WAKE",
+    "team_full": "Wake Forest Demon Deacons",
+    "bye": 8.0,
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Undisclosed",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "468744",
     "player": "Ja'Kyrian Turner",
     "pos": "RB",
@@ -274,20 +288,6 @@
     "status": "Q",
     "status_full": "Questionable",
     "injury_note": "Undisclosed",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "333497",
-    "player": "Josh Hoover",
-    "pos": "QB",
-    "team": "IND",
-    "team_full": "Indiana Hoosiers",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2540,7 +2540,7 @@
  },
  "yahoo_proj": {
   "471748": 27.43,
-  "405873": 20.96,
+  "333497": 26.9,
   "404466": 13.69,
   "469860": 11.92,
   "407241": 14.19,
@@ -2549,8 +2549,8 @@
   "405317": 11.46,
   "482918": 14.96,
   "457379": 12.89,
+  "405873": 20.96,
   "468744": 17.73,
-  "333497": 26.9,
   "469395": 11.19,
   "405245": 9.45,
   "337423": 9.51,
