@@ -96,8 +96,10 @@ because neither provider needs any.
       app registration, user consent and stored refresh tokens. Worth deciding
       whether that is wanted before building it; Sleeper needs none of it.
 
-**Before this works on the live site**, the migration has to be applied once:
-`wrangler d1 execute gordstats --remote --file=deploy/d1-schema.sql`
+**The migration was applied on 2026-09-25.** The `leagues` table is live and
+verified: the endpoint's upsert updates rather than duplicating on a refresh,
+and deleting a user cascades their leagues away. `users` and `favorites` were
+untouched.
 
 ## 6. Bugs
 
