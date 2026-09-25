@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-24T23:41:19.995004-04:00",
+ "updated": "2026-09-25T05:42:59.466840-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -39144,6 +39144,239 @@
      ],
      [
       "Aari McDonald",
+      "G",
+      15.0
+     ]
+    ]
+   }
+  },
+  "401857218": {
+   "date": "2026-09-25",
+   "allowed": {
+    "GS": {
+     "G": 84.0,
+     "FC": 63.0
+    },
+    "LA": {
+     "G": 72.0,
+     "FC": 73.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      9.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      22.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      3.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      27.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      28.0
+     ],
+     [
+      "Laeticia Amihere",
+      "FC",
+      1.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      11.0
+     ],
+     [
+      "Aminata Gueye",
+      "FC",
+      0.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      9.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      9.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      26.0
+     ]
+    ],
+    "LA": [
+     [
+      "Nneka Ogwumike",
+      "FC",
+      39.0
+     ],
+     [
+      "Dearica Hamby",
+      "FC",
+      24.0
+     ],
+     [
+      "Erica Wheeler",
+      "G",
+      13.0
+     ],
+     [
+      "Ariel Atkins",
+      "G",
+      15.0
+     ],
+     [
+      "Rae Burrell",
+      "G",
+      26.0
+     ],
+     [
+      "Jihyun Park",
+      "FC",
+      0.0
+     ],
+     [
+      "Tonie Morgan",
+      "G",
+      10.0
+     ],
+     [
+      "Chance Gray",
+      "G",
+      6.0
+     ],
+     [
+      "Monique Akoa Makani",
+      "G",
+      14.0
+     ]
+    ]
+   }
+  },
+  "401857219": {
+   "date": "2026-09-25",
+   "allowed": {
+    "LV": {
+     "G": 65.0,
+     "FC": 111.0
+    },
+    "PHX": {
+     "G": 103.0,
+     "FC": 100.0
+    }
+   },
+   "players": {
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      25.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      5.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      51.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      37.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      30.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      5.0
+     ],
+     [
+      "Kalani Brown",
+      "FC",
+      14.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      32.0
+     ],
+     [
+      "Mai Yamamoto",
+      "G",
+      4.0
+     ]
+    ],
+    "PHX": [
+     [
+      "Alyssa Thomas",
+      "FC",
+      24.0
+     ],
+     [
+      "Natasha Mack",
+      "FC",
+      36.0
+     ],
+     [
+      "Noemie Brochant",
+      "FC",
+      20.0
+     ],
+     [
+      "Sami Whitcomb",
+      "G",
+      9.0
+     ],
+     [
+      "Kahleah Copper",
+      "G",
+      35.0
+     ],
+     [
+      "Valeriane Ayayi",
+      "FC",
+      8.0
+     ],
+     [
+      "Maddy Westbeld",
+      "FC",
+      13.0
+     ],
+     [
+      "Marta Suarez",
+      "FC",
+      10.0
+     ],
+     [
+      "Lexi Held",
+      "G",
+      6.0
+     ],
+     [
+      "Shay Ciezki",
       "G",
       15.0
      ]

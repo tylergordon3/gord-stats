@@ -1,5 +1,30 @@
 [
  {
+  "id": 84.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1790322824.0,
+  "faab_bid": 0.0,
+  "players": [
+   {
+    "player": "Iowa",
+    "pos": "DEF",
+    "team": "IOWA",
+    "type": "add",
+    "source": null,
+    "destination": "Cameron's Choice Team"
+   },
+   {
+    "player": "Oregon",
+    "pos": "DEF",
+    "team": "ORE",
+    "type": "drop",
+    "source": "Cameron's Choice Team",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 83.0,
   "type": "add/drop",
   "status": "successful",
