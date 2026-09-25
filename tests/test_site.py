@@ -390,3 +390,33 @@ def test_every_league_shares_one_stored_league():
     each remembering their own league is a bug you meet on the second one."""
     for src in (MY_TEAM, MY_LEAGUE, MY_MATCHUPS):
         assert "gsSleeperLeague" in src or "GSL.saved()" in src
+
+
+LEAGUE_PAGES = {
+    "usage": "fantasy/usage/index.html",
+    "matchups": "fantasy/matchups/index.html",
+    "My Team": "fantasy/roster/index.html",
+}
+
+
+@pytest.mark.parametrize("name,path", sorted(LEAGUE_PAGES.items()))
+def test_the_league_control_has_its_script_on_every_page(name, path):
+    """The container and the behaviour are two separate things to wire, and
+    wiring only the first leaves a control that renders nothing.
+
+    That shipped: the dashboard had the bar and no script, so there was no way
+    to choose a league from the page that most needed one. It only looked fine
+    in testing because the league had been put into localStorage by hand.
+    """
+    doc = (DOCS / path).read_text()
+    assert "ml-bar" in doc, f"{name} has no league control"
+    assert "function restore()" in doc, f"{name} has the control but not its script"
+    assert "SYNCED" in doc, f"{name} cannot offer a synced league"
+
+
+@pytest.mark.parametrize("name,path", sorted(LEAGUE_PAGES.items()))
+def test_a_reader_in_two_leagues_can_reach_both(name, path):
+    """Picking the first synced league and ignoring the rest is invisible until
+    somebody syncs a second one - which is the normal case for anyone in two."""
+    doc = (DOCS / path).read_text()
+    assert "ml-pick" in doc, f"{name} offers no way to switch between synced leagues"

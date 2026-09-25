@@ -154,12 +154,44 @@ JS = """{% raw %}<script>
     });
   }
 
+  // Leagues synced to the account, filled in once /api/leagues answers. More
+  // than one is normal for anybody in two, and picking the first silently left
+  // the rest unreachable.
+  var SYNCED=[];
+
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+  }
+
   function draw(label){
     if(label){
-      bar.innerHTML='Showing <span class="ml-who"></span> '
-        +'<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
-        +'<span class="ml-msg" id="ml-msg"></span>';
-      bar.querySelector('.ml-who').textContent=label;
+      if(SYNCED.length>1){
+        var here=String((saved()||{}).id||'');
+        bar.innerHTML='<label>League <select id="ml-pick">'
+          + SYNCED.map(function(l){
+              return '<option value="'+esc(l.league_id)+'"'
+                + (String(l.league_id)===here?' selected':'') + '>'
+                + esc(l.name||('League '+l.league_id)) + '</option>';
+            }).join('')
+          + '</select></label>'
+          + '<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
+          + '<span class="ml-msg" id="ml-msg"></span>';
+        document.getElementById('ml-pick').addEventListener('change',function(){
+          var want=this.value;
+          var chosen=SYNCED.filter(function(l){
+            return String(l.league_id)===String(want);})[0];
+          if(!chosen) return;
+          save({id:chosen.league_id, name:chosen.name});
+          // Pages that render from the stored key read it once, at load.
+          if(owns) load(chosen.league_id); else location.reload();
+        });
+      } else {
+        bar.innerHTML='Showing <span class="ml-who"></span> '
+          +'<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
+          +'<span class="ml-msg" id="ml-msg"></span>';
+        bar.querySelector('.ml-who').textContent=label;
+      }
       document.getElementById('ml-clear').addEventListener('click',restore);
       return;
     }
@@ -190,11 +222,18 @@ JS = """{% raw %}<script>
     .then(function(r){return r.ok?r.json():null;})
     .then(function(d){
       if(!d||!d.leagues) return;
+      SYNCED=d.leagues.filter(function(l){return l.provider==='sleeper';});
+      if(!SYNCED.length) return;
       if(have&&have.site) return;          // they asked for this site's league
-      var mine=d.leagues.filter(function(l){return l.provider==='sleeper';})[0];
-      if(mine&&(!have||have.id!==mine.league_id)){
-        draw(mine.name||('League '+mine.league_id));
-        load(mine.league_id,true);
+      // Keep showing whatever this browser already had, if the account knows
+      // it; otherwise the first synced league.
+      var chosen=SYNCED.filter(function(l){
+        return have&&String(l.league_id)===String(have.id);})[0] || SYNCED[0];
+      if(!have||String(have.id)!==String(chosen.league_id)){
+        draw(chosen.name||('League '+chosen.league_id));
+        load(chosen.league_id,true);
+      } else {
+        draw(chosen.name||('League '+chosen.league_id));   // redraw, now with the picker
       }
     })
     .catch(function(){});

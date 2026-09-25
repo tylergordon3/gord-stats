@@ -511,7 +511,8 @@ def body() -> str:
         + f"<script type='application/json' id='rd-cfg'>{cfg}</script>"
         + page.switch_js(STORAGE_KEY) + page.CARD_JS
         + "</div>"
-        + my_league_data.JS + my_team.PLANNER_JS + my_team.VIEW_JS)
+        + my_league.JS + my_league_data.JS
+        + my_team.PLANNER_JS + my_team.VIEW_JS)
 
 
 def generate():
