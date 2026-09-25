@@ -102,4 +102,7 @@ docs/_includes/cfb_top25.html
 docs/_includes/wnba_dashboard.html
 docs/_includes/wnba_scoreboard.html
 docs/_data/cfb_countdown.json
-docs/_data/countdowns.yml
+# NOT countdowns.yml: nothing writes it. It is hand-maintained source that
+# cbb.render.render_home reads back, and ignoring it broke the homepage
+# render on the first deploy after this change. "A generator mentions the
+# filename" is not the test - "a generator writes it" is.

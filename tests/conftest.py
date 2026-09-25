@@ -24,7 +24,11 @@ sys.path.insert(0, str(SRC))
 # of history a month so this laptop could read them was the wrong trade. Tests
 # that check the *built* site therefore need a build present, and say so rather
 # than failing with a confusing missing-file error on a fresh clone.
-SITE_BUILT = (DOCS / "index.html").exists()
+# Two pages, not one: rendering the homepage alone is enough to recreate
+# docs/index.html, and a half-built tree that claims to be built fails these
+# tests with a confusing missing-file error instead of skipping them.
+SITE_BUILT = all((DOCS / p).exists() for p in (
+    "index.html", "fantasy/power/index.html", "cfb/schedule/index.html"))
 
 needs_built_site = pytest.mark.skipif(
     not SITE_BUILT,

@@ -88,9 +88,9 @@ def test_retired_draft_pages_are_gone_and_redirected():
 # Countdown clocks
 # --------------------------------------------------------------------------- #
 
-# Generated, so it may not be here at all. Empty rather than absent, because
-# this is also read at collection time by a parametrize - which would turn a
-# fresh clone into a collection error instead of a skip.
+# Tracked source, but read defensively: this is also read at collection time by
+# a parametrize, and a missing file there is a collection error rather than a
+# skip - which is a bad way to find out about a mistake.
 def _countdowns():
     path = DOCS / "_data" / "countdowns.yml"
     return yaml.safe_load(path.read_text()) if path.exists() else {}
