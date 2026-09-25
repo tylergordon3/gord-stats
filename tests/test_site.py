@@ -226,3 +226,41 @@ def test_usage_headers_hide_with_their_column(path):
             assert marks(td) == head_marks[col], (
                 f"{path} row {i} column {col}: cell has {marks(td) or '{}'}, "
                 f"header has {head_marks[col] or '{}'}")
+
+
+# --------------------------------------------------------------------------- #
+# The two fantasy leagues are navigated the same way
+# --------------------------------------------------------------------------- #
+
+def test_both_fantasy_leagues_offer_the_same_tabs():
+    """The league switcher keeps the reader on their tab by matching `key`
+    across the two lists, so a key on one side with no twin on the other
+    silently drops them back at a league home."""
+    nfl = [i.get("key") for i in NAV["fantasy"]]
+    cfb = [i.get("key") for i in NAV["cfb_fantasy"]]
+    assert None not in nfl and None not in cfb, "every fantasy tab needs a key"
+    assert nfl == cfb, f"tab keys differ: NFL {nfl} vs CFB {cfb}"
+
+
+def test_pages_behind_a_hub_are_still_reachable():
+    """Moving a page out of the sub-nav and behind Analytics must not strand
+    it: every url a chip `covers` has to exist, and be linked from the hub."""
+    for section in ("fantasy", "cfb_fantasy"):
+        for item in NAV[section]:
+            if not item.get("covers"):
+                continue
+            hub = (DOCS / item["url"].strip("/") / "index.html")
+            assert hub.exists(), f"{section}: hub page {item['url']} is missing"
+            # Reachable from the hub, or from a page the hub links to: the
+            # draft sub-pages hang off Draft Analytics rather than sitting on
+            # the hub itself, and the chip stays lit for them all the same.
+            reach = hub.read_text()
+            for linked in set(re.findall(r'href=[\'"](/[^\'"#?]*)', reach)):
+                child = DOCS / linked.strip("/") / "index.html"
+                if child.exists():
+                    reach += child.read_text()
+            for url in item["covers"].split():
+                assert _resolves(url), f"{section}: {url} is covered but does not exist"
+                assert url in reach, (
+                    f"{section}: {url} is covered by {item['url']} but nothing "
+                    "on or one hop from the hub links to it")

@@ -22,7 +22,7 @@ def projection_years() -> list[int]:
 # league_power is a section of the league page now, built from there.
 PAGES = ["home", "draft_review", "league", "matchups",
          "power", "teams", "predictions", "schedule", "countdown", "homecards",
-         "strength", "usage", "roster"]
+         "strength", "usage", "roster", "analytics"]
 
 
 def build_all(refresh: bool = False) -> list[str]:

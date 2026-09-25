@@ -52,7 +52,7 @@ fantasy_leagues:
     pages: fantasy
 
   - title: CFB
-    url: /cfb/matchups/
+    url: /cfb/league/
     pages: cfb_fantasy
 
   - title: WNBA
@@ -102,46 +102,36 @@ wnba:
 
 
 fantasy:
-  - title: Home
+  - title: League Home
     short: Home
     icon: "🏠"
+    key: home
     url: /fantasy/index.html
-
-  - title: Schedule Stats
-    short: Schedule
-    icon: "📅"
-    url: /fantasy/schedule/
-
-
-  - title: Draft Analytics
-    short: Draft
-    icon: "📋"
-    url: /fantasy/draft/
-
-  - title: Power Rankings
-    short: Power
-    icon: "⚡"
-    url: /fantasy/power/
 
   - title: Matchups
     short: Matchups
     icon: "⚔️"
+    key: matchups
     url: /fantasy/matchups/
 
   - title: My Team
     short: My Team
     icon: "📋"
+    key: myteam
     url: /fantasy/roster/
 
   - title: Usage
     short: Usage
     icon: "📦"
+    key: usage
     url: /fantasy/usage/
 
-  - title: Waivers & Trades
-    short: Waivers
-    icon: "🔄"
-    url: /fantasy/transactions/
+  - title: Analytics
+    short: Analytics
+    icon: "📊"
+    key: analytics
+    url: /fantasy/analytics/
+    covers: "/fantasy/power/ /fantasy/schedule/ /fantasy/draft/ /fantasy/transactions/"
 
 
 cfb:
@@ -182,32 +172,33 @@ nfl:
 
 # The Yahoo college fantasy league, shown under Fantasy > CFB.
 cfb_fantasy:
+  - title: League Home
+    short: Home
+    icon: "🏠"
+    key: home
+    url: /cfb/league/
+
   - title: Matchups
     short: Matchups
     icon: "⚔️"
+    key: matchups
     url: /cfb/matchups/
 
-  - title: Team Dashboard
+  - title: My Team
     short: My Team
     icon: "📋"
+    key: myteam
     url: /cfb/roster/
-
-  - title: Matchup Strength
-    short: Strength
-    icon: "🛡️"
-    url: /cfb/strength/
 
   - title: Usage
     short: Usage
     icon: "📦"
+    key: usage
     url: /cfb/usage/
 
-  - title: League Dashboard
-    short: League
-    icon: "🏆"
-    url: /cfb/league/
-
-  - title: Draft Review
-    short: Draft
-    icon: "📝"
-    url: /cfb/live/
+  - title: Analytics
+    short: Analytics
+    icon: "📊"
+    key: analytics
+    url: /cfb/analytics/
+    covers: "/cfb/strength/ /cfb/live/"
