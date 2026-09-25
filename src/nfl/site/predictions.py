@@ -219,29 +219,20 @@ def _method(model, valid: dict) -> str:
     overall = valid.get("overall") or {}
     hp = valid.get("hyperparameters") or {}
     return (
-        "<h2>How it works</h2>"
+        "<h2>How it Works</h2>"
         "<p class='pred-note'>The same model as the <a href='/cfb/predictions/'>college "
-        "page</a>: one strength number per team and one pace number, fitted by ridge "
-        "regression to every game since 2014 so that the difference between two teams' "
-        f"strengths plus home field (currently <b>{model.hfa:.1f}</b> points) best explains "
-        "the margins actually played, with games fading by age on a "
-        f"{hp.get('half_life_days', 180):.0f}-day half-life. The shrinkage is sixteen times "
-        "the college model's: with thirty-two teams who all play one another the evidence "
-        "for any one team's strength is thinner and the parity is real, so a rating has to "
-        "be earned. Margin and total are modelled separately and the two scores fall out "
-        "of them; the win probability is the margin under the model's own measured error."
-        "</p>"
-        + (f"<p class='pred-note'><b>Track record before this page existed:</b> tuned on "
-           f"{escape(str(valid.get('tuned_on', '')))}, then scored once, walk-forward, on "
-           f"{escape(str(valid.get('scored_on', '')))} &mdash; {overall.get('games', 0)} games: "
-           f"margin RMSE <b>{overall.get('margin_rmse', 0):.2f}</b> (home field alone "
-           f"{overall.get('baseline_home_rmse', 0):.2f}), winners "
-           f"<b>{overall.get('winner_accuracy', 0):.1%}</b>, total RMSE "
-           f"{overall.get('total_rmse', 0):.2f}. For scale, the closing line runs about 13.3 "
-           "and 66-67% over the same years; this is a ratings model with no injuries, no "
-           "weather and no quarterback news in it, and the book knows all three. Where the "
-           "two differ by a field goal or more the card says <i>lean</i>, and the record above "
-           "keeps count of how those leans did against the number.</p>"
+        "page</a>: one strength number per team plus home field "
+        f"(<b>{model.hfa:.1f}</b> points), fitted by ridge regression to every game since "
+        f"2014, with older games fading on a {hp.get('half_life_days', 180):.0f}-day "
+        "half-life. Margin and total are modelled separately; the scores and the win "
+        "probability fall out of them.</p>"
+        + (f"<p class='pred-note'><b>Before this page existed</b> it was scored "
+           f"walk-forward on {overall.get('games', 0)} games: margin RMSE "
+           f"<b>{overall.get('margin_rmse', 0):.2f}</b>, winners "
+           f"<b>{overall.get('winner_accuracy', 0):.1%}</b>. The closing line runs about "
+           "13.3 and 66-67% over the same years - there are no injuries, no weather and "
+           "no quarterback news in this model, and the book has all three. Where the two "
+           "differ by a field goal the card says <i>lean</i>.</p>"
            if overall else ""))
 
 
@@ -269,15 +260,10 @@ def body() -> str:
                                     f'id="wk-tab-{key}">{escape(label)}</button>')
     return (
         _CSS + _EXTRA_CSS
-        + f"<p>Every {SEASON} game with a projected score, a spread and a win probability, "
-        "the book's line beside ours, and the record as the season goes. Fitted fresh on "
-        "every rebuild from twelve seasons of results, this one included.</p>"
-        "<h2>The record</h2>" + _record_band(scored)
+        # The subtitle under the title already says what the page is; saying it
+        # again in the first line of the body is the Top 25 card's old problem.
+        + "<h2>Season scorecard</h2>" + _record_band(scored)
         + f"<h2>{escape(labels[current])}</h2>"
-        "<p class='pred-note'>Cards show the projected score, our line with the book's, "
-        "the total and the favourite's win probability. Once a game is final the card "
-        "keeps the line that was on record before kickoff and marks the call. A finished "
-        "week is a click away.</p>"
         + switch
         + "<h2>Ratings</h2>"
         "<p class='pred-note'>Points better than an average team on a neutral field; "
@@ -291,7 +277,7 @@ def generate():
     WEB_DIR.mkdir(parents=True, exist_ok=True)
     out = WEB_DIR / "index.html"
     out.write_text(add_front_matter(body(), f"NFL Predictions {SEASON}",
-                                    "A score, a spread and a win probability for every game"),
+                                    "Every game, with the book's line beside ours"),
                    encoding="utf-8")
     print(f"Wrote NFL Predictions -> {out}")
 

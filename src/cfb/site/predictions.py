@@ -554,11 +554,8 @@ def _record_band(frame: pd.DataFrame) -> str:
         _record_cell("Over/under", stat["ou_wins"], stat["ou_games"],
                      "bets where we differed from the book by 3+", BREAK_EVEN),
     ]
-    return ("<p class='pred-note'>Every prediction below is archived before "
-            "kickoff and scored against the result: the winner we named, and - "
-            "where our number differs from the book's by three points or more - "
-            "our side of the spread and of the total. Here is how that has gone "
-            f"across {stat['games']} finished game"
+    return (f"<p class='pred-note'>Every prediction is archived before kickoff and "
+            f"scored against the result - {stat['games']} finished game"
             f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}.</p>"
             "<div class='pred-record'>" + "".join(cells) + "</div>"
             "<p class='pred-note rec-more'><a href='#how-it-has-gone'>How close the "
@@ -714,49 +711,33 @@ def _method(games: pd.DataFrame) -> str:
 
     scored = record.get("scored_on", "held-out seasons")
     lines = [
-        f"<p class='pred-note'>Every roster of results since 2014 &mdash; "
-        f"{record.get('scored_games', 'FBS games')} &mdash; fitted as ridge team "
-        f"ratings, one number per team, chosen so the gap between two of them plus "
-        f"home field best explains the margins actually played. Margin and total are "
-        f"modelled separately and the score is rebuilt from the two, because over "
-        f"these seasons they barely correlate. Games decay with a half-life of "
-        f"{record.get('hyperparameters', {}).get('half_life_days', 180):.0f} days, so "
-        f"in week one the evidence is almost all last season's and by November almost "
-        f"all of this one's.</p>",
-        f"<p class='pred-note'>Tuned on {record.get('tuned_on', 'earlier seasons')} and "
-        f"then scored once on {scored}, predicting each week from only what had "
-        f"finished before it: <strong>{overall.get('margin_rmse', 0):.1f}</strong> "
+        f"<p class='pred-note'>Ridge team ratings fitted to every result since 2014 - "
+        f"one number per team, chosen so the gap between two of them plus home field "
+        f"best explains the margins actually played. Margin and total are modelled "
+        f"separately and the score rebuilt from the two. Games decay on a "
+        f"{record.get('hyperparameters', {}).get('half_life_days', 180):.0f}-day "
+        f"half-life, so by November the evidence is almost all this season's.</p>",
+        f"<p class='pred-note'>Scored once on {scored}, predicting each week from only "
+        f"what had finished before it: <strong>{overall.get('margin_rmse', 0):.1f}</strong> "
         f"points of margin RMSE against <strong>"
-        f"{overall.get('baseline_home_rmse', 0):.1f}</strong> for knowing nothing but "
-        f"who is at home, and the winner right "
-        f"<strong>{overall.get('winner_accuracy', 0):.0%}</strong> of the time.</p>",
+        f"{overall.get('baseline_home_rmse', 0):.1f}</strong> for knowing nothing but who "
+        f"is at home, and the winner right "
+        f"<strong>{overall.get('winner_accuracy', 0):.0%}</strong> of the time. It is "
+        f"least reliable on lopsided lines, where it has historically overstated the "
+        f"favourite.</p>",
     ]
     if market:
         lines.append(
-            f"<p class='pred-note'><strong>It does not beat the market, and it is worth "
-            f"saying so plainly.</strong> On the "
+            f"<p class='pred-note'><strong>It does not beat the market.</strong> On the "
             f"{market.get('games', 0):,} games with a closing line it managed "
             f"{market.get('our_margin_rmse', 0):.2f} against the book's "
-            f"{market.get('market_margin_rmse', 0):.2f} &mdash; within "
-            f"{market.get('gap_rmse', 0):.2f} of a number built from injuries, weather "
-            f"and everyone else's money, which is the part worth being pleased about. "
-            f"But on the {market.get('ats_sample', 0):,} games where the two disagreed "
-            f"by three points or more, this model went "
+            f"{market.get('market_margin_rmse', 0):.2f}. But where the two disagreed by "
+            f"three points or more it went "
             f"<strong>{market.get('ats_when_we_disagree_by_3', 0):.1%}</strong> against "
-            f"the spread &mdash; under a coin flip, and under the "
-            f"{market.get('break_even_at_minus_110', 0.524):.1%} that standard juice "
-            f"needs. Its error grows with the size of the disagreement; the market's "
-            f"does not. Every point between the two columns above is this model being "
-            f"wrong, not the book. Read it as a description of who is strong, and not "
-            f"as a tip.</p>")
-    lines.append(
-        "<p class='pred-note'>It is at its worst on mismatches. Past about 45 points "
-        "of predicted margin it has historically said winner 53, loser 3, where the "
-        "truth was nearer 51 and 8 &mdash; so the lopsided lines on this page are the "
-        "ones to trust least, and a promoted team playing its first FBS season is "
-        "rated on the division it just left. Between two established teams, which is "
-        "most of the board, it is on much firmer ground.</p>")
-    return "<h2>How this is built, and how well it works</h2>" + "".join(lines)
+            f"the spread - under a coin flip, and under the "
+            f"{market.get('break_even_at_minus_110', 0.524):.1%} standard juice needs. "
+            f"Read this as a description of who is strong, not as a tip.</p>")
+    return "<h2>How it Works</h2>" + "".join(lines)
 
 
 def body() -> str:
@@ -774,12 +755,10 @@ def body() -> str:
     span = ("" if len(weeks) < 2 else
             f" That window straddles week {weeks[0]} and week {weeks[-1]}, so both "
             f"are below.")
+    # The cards describe themselves; this used to walk through each of their
+    # parts in prose before the reader reached one.
     intro = (f"<p class='pred-note'>Every FBS game kicking off in the next seven days, "
-             f"{len(games)} of them.{span} Each card carries the score this model expects, "
-             f"each team's rating &mdash; points better than an average FBS side "
-             f"&mdash; and the book's line beside ours. The bar is the favourite's "
-             f"chance of winning, taken from the margin and the spread of this model's "
-             f"own errors: not a second model, and not a promise.</p>")
+             f"{len(games)} of them.{span}</p>")
 
     parts = [_CSS, _record_band(scored), f"<h2>{_week_label(games)}</h2>", intro,
              _tiles(games), _cards(games), _results_section(scored)]
@@ -793,7 +772,7 @@ def generate() -> None:
     charts.clear(_SECTION)
     write_page(WEB_DIR / "predictions" / "index.html",
                "CFB Predictions", body(),
-               subtitle="Predicted scores for this week's college football")
+               subtitle="Every game this week, with the book's line beside ours")
 
 
 if __name__ == "__main__":
