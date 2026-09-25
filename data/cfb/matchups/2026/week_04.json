@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-25T09:43:59+00:00",
+ "fetched": "2026-09-25T15:32:21+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -40,7 +40,7 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 185.07,
+     "projected": 185.04,
      "win_probability": 0.51
     },
     {
@@ -175,7 +175,7 @@
     "bye": 5.0,
     "status": "Q",
     "status_full": "Questionable",
-    "injury_note": "Undisclosed",
+    "injury_note": "Ankle",
     "slot": "RB",
     "points": 0.0,
     "stats": {}
@@ -2588,7 +2588,7 @@
   "405249": 25.2,
   "335616": 7.34,
   "462228": 8.7,
-  "900011": 13.83,
+  "900011": 13.8,
   "333785": 31.8,
   "455480": 31.33,
   "456340": 20.19,
