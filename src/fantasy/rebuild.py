@@ -28,6 +28,8 @@ PAGES = [
     ("transactions", "Waivers & Trades",                  lambda: _gen("transactions")),
     ("draft",        "Draft Analytics (board, values, report, DNA)", lambda: _gen("draft_analytics")),
     ("power",        "Power Rankings (post-draft)",        lambda: _gen("power")),
+    ("players",      "Player index + week projections (for your own league)",
+                                                          lambda: _gen("players_index")),
     ("matchups",     "Weekly Matchups (rosters, projections, points)", lambda: _gen("matchups")),
     ("roster",       "Team Dashboard (start/sit, slot order, waiver adds)", lambda: _gen("roster")),
     ("usage",        "Usage (snap, carry and target share)", lambda: _gen("usage")),

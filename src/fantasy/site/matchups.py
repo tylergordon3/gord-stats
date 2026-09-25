@@ -31,6 +31,7 @@ from fantasy.league import head_to_head as h2h
 from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import matchup_page as ui
+from gordstats import my_league, my_matchups
 from gordstats.frontmatter import add_front_matter
 
 LOGO = "https://a.espncdn.com/i/teamlogos/nfl/500/{abbr}.png"
@@ -1026,6 +1027,9 @@ def body() -> str:
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
         ui.CSS
+        + my_league.bar()
+        + my_matchups.section(current, UPCOMING_YEAR)
+        + '<div id="mm-built">'
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
         f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
         "are on.</p><details class='section'><summary>How to read this page</summary>"
@@ -1060,7 +1064,9 @@ def body() -> str:
         f"ten minutes while games are on (last: {built}); finished weeks stay on "
         "record. Season-long standing lives on the "
         '<a href="/fantasy/power/">power rankings</a>.</p></details>'
-        + scored + ui.week_switch(weeks, current, views) + MEDIAN_TRACKER_JS + ui.LIVE_JS)
+        + scored + ui.week_switch(weeks, current, views)
+        + "</div>"
+        + MEDIAN_TRACKER_JS + ui.LIVE_JS + my_league.JS + my_matchups.JS)
 
 
 def generate():

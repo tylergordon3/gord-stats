@@ -5,6 +5,7 @@ Covers the navigation failures: links that pointed nowhere, and a layout script
 that rewrote them at click time so they only broke in a browser.
 """
 
+import json
 import re
 from datetime import datetime
 
@@ -303,3 +304,48 @@ def test_usage_rows_carry_the_player_id_the_override_needs():
     rows = re.findall(r"<tr[^>]*>", body)
     assert rows, "no usage rows"
     assert all("data-pid=" in r for r in rows), "a row has no Sleeper id to match on"
+
+
+# --------------------------------------------------------------------------- #
+# "Your league this week" on the matchups page
+# --------------------------------------------------------------------------- #
+
+MY_MATCHUPS = (ROOT / "src" / "gordstats" / "my_matchups.py").read_text()
+
+
+def test_the_files_the_browser_needs_are_built():
+    """Both are fetched at view time, so a missing one is a silently empty
+    scoreboard rather than a build error."""
+    index = DOCS / "fantasy" / "players-index.json"
+    proj = DOCS / "fantasy" / "week-projections.json"
+    assert index.exists() and proj.exists()
+    names = json.loads(index.read_text())
+    points = json.loads(proj.read_text())
+    assert len(names) > 500, "the player index looks truncated"
+    assert len(points) > 100, "the week projections look truncated"
+    assert all(isinstance(v, list) and len(v) == 2 for v in list(names.values())[:50])
+
+
+def test_projections_are_served_from_here_not_from_sleeper():
+    """Sleeper answers a cross-origin request to its projections endpoint with
+    every player mapped to an empty object - the stats are stripped - so the
+    numbers have to come off our own build. If this ever points back at
+    api.sleeper.app for projections, the page silently loses them."""
+    assert "/fantasy/week-projections.json" in MY_MATCHUPS
+    assert "api.sleeper.app/v1/projections" not in MY_MATCHUPS
+
+
+def test_a_readers_league_does_not_borrow_this_leagues_numbers():
+    """The built page's median tracker and four-source scoring come out of an
+    archive that exists only for this league. The reader's view is rendered
+    separately and the built one is hidden, rather than the two being mixed."""
+    assert "mm-built" in MY_MATCHUPS and "built.hidden=true" in MY_MATCHUPS
+    page = (ROOT / "src" / "fantasy" / "site" / "matchups.py").read_text()
+    assert '<div id="mm-built">' in page
+
+
+def test_the_matchups_page_and_the_usage_page_share_one_league():
+    """Two controls that each remembered their own league would be a bug you
+    only notice on the second page."""
+    assert "gsSleeperLeague" in MY_MATCHUPS
+    assert "gsSleeperLeague" in MY_LEAGUE

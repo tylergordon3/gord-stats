@@ -52,14 +52,17 @@ JS = """{% raw %}<script>
   var KEY='gsSleeperLeague';          // {id, name} of the league being shown
   var bar=document.getElementById('ml-bar');
   if(!bar) return;
+  // The usage table is the thing whose ownership can be re-pointed. On the
+  // matchups page there is none: the league is picked here and a different
+  // script draws it, so everything below is guarded rather than assumed.
   var table=document.querySelector('table.us');
   var sel=document.getElementById('us-own');
-  if(!table||!sel) return;
-  var rows=Array.prototype.slice.call(table.tBodies[0].rows);
+  var owns=!!(table&&sel&&table.tBodies[0]);
+  var rows=owns?Array.prototype.slice.call(table.tBodies[0].rows):[];
   // The league the page was built with, kept so "show this site's league"
   // can put everything back without a reload.
   var BUILT=rows.map(function(r){return r.dataset.own||'';});
-  var builtOptions=sel.innerHTML;
+  var builtOptions=owns?sel.innerHTML:'';
 
   function saved(){
     try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; }
@@ -74,6 +77,7 @@ JS = """{% raw %}<script>
   }
 
   function apply(held,names,label){
+    if(!owns){ draw(label); return; }
     rows.forEach(function(r){
       var own=held[r.dataset.pid]||'';
       r.dataset.own=own;
@@ -102,10 +106,12 @@ JS = """{% raw %}<script>
   }
 
   function restore(){
-    rows.forEach(function(r,i){ r.dataset.own=BUILT[i]; });
-    sel.innerHTML=builtOptions;
-    sel.value='';
-    sel.dispatchEvent(new Event('change'));
+    if(owns){
+      rows.forEach(function(r,i){ r.dataset.own=BUILT[i]; });
+      sel.innerHTML=builtOptions;
+      sel.value='';
+      sel.dispatchEvent(new Event('change'));
+    }
     save({site:true});
     location.reload();   // the built cells are the simplest thing to put back
   }
@@ -135,9 +141,12 @@ JS = """{% raw %}<script>
       });
       if(!Object.keys(names).length) throw new Error('empty');
       var label=league.name||('League '+id);
+      var first=!(saved()||{}).id;
       save({id:id, name:label});
       apply(held,names,label);
       msg('');
+      // Pages that render the league from this key read it once, at load.
+      if(!owns&&first) location.reload();
       return true;
     }).catch(function(){
       msg('Could not read that league. Check the id.','err');
