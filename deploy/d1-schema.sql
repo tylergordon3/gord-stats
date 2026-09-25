@@ -37,11 +37,14 @@ CREATE INDEX IF NOT EXISTS favorites_by_user ON favorites (user_id);
 -- --------------------------------------------------------------------------
 -- Synced leagues: the reader's own fantasy league, attached to their account.
 --
--- Only what is needed to fetch the league again from the provider's public
--- API: no Yahoo or Sleeper credentials, because neither is needed. Sleeper's
--- API is keyless, and Yahoo's pub-api-ro serves a league its owner has made
--- public. A private Yahoo league cannot be synced at all without OAuth, which
--- is not built - the endpoint says so rather than storing a token.
+-- Only what is needed to fetch the league again from Sleeper's public API,
+-- which is keyless - so there are no credentials here, and a copy of this
+-- database stays worth very little to anyone who takes it.
+--
+-- Sleeper only. Yahoo was offered briefly and withdrawn: its public API serves
+-- only leagues a commissioner has set public, and a private one needs OAuth
+-- and a stored refresh token, which is a different security posture and wants
+-- its own decision. `provider` stays so that decision needs no migration.
 --
 -- `last_synced_at` is what the refresh button is rate-limited on, so the
 -- limit survives a reader reloading the page or opening a second tab.

@@ -141,10 +141,17 @@ def test_league_ids_are_shape_checked_before_they_are_used():
     assert "SHAPES" in LEAGUES and "SHAPES[provider].test(" in LEAGUES
 
 
-def test_a_private_yahoo_league_is_explained_not_retried():
-    """Yahoo answers 401 for a league that is not public, and there is nothing
-    the reader can retype that changes it - so the message says what to do."""
-    assert "401" in LEAGUES and "public" in LEAGUES
+def test_only_sleeper_can_be_synced():
+    """Yahoo came out again: its public API serves only leagues set public, and
+    a private one needs OAuth and stored refresh tokens - which would change
+    what a leaked database costs, for leagues nobody has asked for.
+
+    The `provider` column stays so a second platform needs no migration, but
+    nothing should accept one until that decision is actually taken."""
+    assert "SHAPES = { sleeper:" in LEAGUES
+    assert "yahoo" not in LEAGUES.lower().replace("yahoo was here", "")
+    page = (ROOT / "src" / "gordstats" / "league_sync.py").read_text()
+    assert "ls-yahoo" not in page, "the sync page still offers a Yahoo box"
 
 
 def test_the_refresh_limit_is_read_from_the_stored_timestamp():

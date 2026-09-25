@@ -7,11 +7,11 @@ pages and one Yahoo league for the college ones. This is the first step of
 letting a reader see their own instead: the league is verified with the
 provider, stored against their account, and listed back to them.
 
-No provider credentials are involved, because neither provider needs any:
-Sleeper's API is keyless, and Yahoo's public read-only API serves a league
-whose owner has set it public. A private Yahoo league answers 401 and the page
-says so - there is nothing to retype that fixes it, and signing a reader in to
-Yahoo would be OAuth this does not have.
+Sleeper only, and no credentials are involved because its API is keyless.
+Yahoo was offered here briefly: its public API serves only leagues set public,
+and a private one needs OAuth and stored refresh tokens - a change in what a
+leaked database would cost, for leagues nobody has asked for. It came out
+again.
 
 The page is inert on a deploy without accounts (`/api/me` says
 `configured: false`), the same rule the rest of the account UI follows.
@@ -143,8 +143,6 @@ JS = """{% raw %}<script>
       gate.hidden=true; main.hidden=false;
       document.getElementById('ls-sleeper-go').addEventListener('click',function(){
         add('sleeper','ls-sleeper','ls-sleeper-msg',this);});
-      document.getElementById('ls-yahoo-go').addEventListener('click',function(){
-        add('yahoo','ls-yahoo','ls-yahoo-msg',this);});
       load();
     })
     .catch(function(){ gate.textContent='Could not reach the server.'; });
@@ -160,7 +158,7 @@ def body() -> str:
             "<div class='ls-card'><h2>Your synced leagues</h2>"
             "<ul class='ls-list' id='ls-list'></ul></div>"
 
-            "<div class='ls-card'><h2>Sleeper (NFL)</h2>"
+            "<div class='ls-card'><h2>Your Sleeper league</h2>"
             "<p>The league id is the long number in your league's web address: "
             "<code>sleeper.com/leagues/<strong>1234567890123456</strong>/team</code>. "
             "Nothing is asked of your Sleeper account - the league is read "
@@ -170,20 +168,13 @@ def body() -> str:
             "<button id='ls-sleeper-go' type='button'>Sync</button></div>"
             "<p class='ls-msg' id='ls-sleeper-msg'></p></div>"
 
-            "<div class='ls-card'><h2>Yahoo (college)</h2>"
-            "<p>The league key looks like <code>474.l.21318</code> - the game "
-            "code, then <code>.l.</code>, then your league id. Yahoo only "
-            "shares a league its commissioner has set to <strong>public</strong>; "
-            "a private one cannot be read without signing in to Yahoo, which "
-            "this site does not do.</p>"
-            "<div class='ls-row'><input id='ls-yahoo' type='text' "
-            "placeholder='474.l.21318' aria-label='Yahoo league key'>"
-            "<button id='ls-yahoo-go' type='button'>Sync</button></div>"
-            "<p class='ls-msg' id='ls-yahoo-msg'></p></div>"
-
             "<p class='ls-meta'>A league can be re-synced every five minutes. "
             "Removing it deletes the row; deleting your account takes every "
-            "synced league with it.</p>"
+            "synced league with it. Once a league is here, "
+            "<a href='/fantasy/matchups/'>Matchups</a>, "
+            "<a href='/fantasy/roster/'>My Team</a> and "
+            "<a href='/fantasy/usage/'>Usage</a> all read yours instead of "
+            "this site's.</p>"
             "</div></div>" + JS)
 
 

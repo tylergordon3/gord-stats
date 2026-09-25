@@ -35,7 +35,7 @@ title: Sync your league
   .ls-msg.err{color:#ff9b91}
   .ls-msg.ok{color:#6ee7b7}
 }
-</style><div class='ls-wrap'><p class='ls-gate' id='ls-gate'>Loading…</p><div id='ls-main' hidden><div class='ls-card'><h2>Your synced leagues</h2><ul class='ls-list' id='ls-list'></ul></div><div class='ls-card'><h2>Sleeper (NFL)</h2><p>The league id is the long number in your league's web address: <code>sleeper.com/leagues/<strong>1234567890123456</strong>/team</code>. Nothing is asked of your Sleeper account - the league is read through Sleeper's public API.</p><div class='ls-row'><input id='ls-sleeper' type='text' inputmode='numeric' placeholder='Sleeper league id' aria-label='Sleeper league id'><button id='ls-sleeper-go' type='button'>Sync</button></div><p class='ls-msg' id='ls-sleeper-msg'></p></div><div class='ls-card'><h2>Yahoo (college)</h2><p>The league key looks like <code>474.l.21318</code> - the game code, then <code>.l.</code>, then your league id. Yahoo only shares a league its commissioner has set to <strong>public</strong>; a private one cannot be read without signing in to Yahoo, which this site does not do.</p><div class='ls-row'><input id='ls-yahoo' type='text' placeholder='474.l.21318' aria-label='Yahoo league key'><button id='ls-yahoo-go' type='button'>Sync</button></div><p class='ls-msg' id='ls-yahoo-msg'></p></div><p class='ls-meta'>A league can be re-synced every five minutes. Removing it deletes the row; deleting your account takes every synced league with it.</p></div></div>{% raw %}<script>
+</style><div class='ls-wrap'><p class='ls-gate' id='ls-gate'>Loading…</p><div id='ls-main' hidden><div class='ls-card'><h2>Your synced leagues</h2><ul class='ls-list' id='ls-list'></ul></div><div class='ls-card'><h2>Your Sleeper league</h2><p>The league id is the long number in your league's web address: <code>sleeper.com/leagues/<strong>1234567890123456</strong>/team</code>. Nothing is asked of your Sleeper account - the league is read through Sleeper's public API.</p><div class='ls-row'><input id='ls-sleeper' type='text' inputmode='numeric' placeholder='Sleeper league id' aria-label='Sleeper league id'><button id='ls-sleeper-go' type='button'>Sync</button></div><p class='ls-msg' id='ls-sleeper-msg'></p></div><p class='ls-meta'>A league can be re-synced every five minutes. Removing it deletes the row; deleting your account takes every synced league with it. Once a league is here, <a href='/fantasy/matchups/'>Matchups</a>, <a href='/fantasy/roster/'>My Team</a> and <a href='/fantasy/usage/'>Usage</a> all read yours instead of this site's.</p></div></div>{% raw %}<script>
 (function(){
   var gate=document.getElementById('ls-gate'), main=document.getElementById('ls-main');
   var list=document.getElementById('ls-list');
@@ -125,8 +125,6 @@ title: Sync your league
       gate.hidden=true; main.hidden=false;
       document.getElementById('ls-sleeper-go').addEventListener('click',function(){
         add('sleeper','ls-sleeper','ls-sleeper-msg',this);});
-      document.getElementById('ls-yahoo-go').addEventListener('click',function(){
-        add('yahoo','ls-yahoo','ls-yahoo-msg',this);});
       load();
     })
     .catch(function(){ gate.textContent='Could not reach the server.'; });

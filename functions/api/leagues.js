@@ -6,13 +6,19 @@
  *   POST   /api/leagues  <- { provider, league_id, refresh: true }  re-fetch
  *   DELETE /api/leagues?provider=..&league_id=..      remove
  *
- * No provider credentials are stored, because none are needed: Sleeper's API
- * is keyless, and Yahoo's pub-api-ro serves a league whose owner has made it
- * public. A private Yahoo league answers 401 there, and this says so plainly
- * rather than pretending it can sign the reader in to Yahoo.
+ * Sleeper only. No credentials are stored because none are needed: its API is
+ * keyless. Yahoo was here briefly and came out again - its public API serves
+ * only leagues a commissioner has set public, and reaching a private one means
+ * OAuth, an app registration and stored refresh tokens. That would turn a
+ * database worth very little if taken into one holding read access to other
+ * people's accounts, which is not a trade worth making for a league nobody has
+ * asked for yet. "Ask your commissioner to make it public" costs nothing.
  *
- * Adding a league verifies it against the provider first, so a typo is caught
- * here rather than becoming a row that never resolves to anything.
+ * The `provider` column stays in the table so a second platform later needs no
+ * migration; today it only ever holds "sleeper".
+ *
+ * Adding a league verifies it against Sleeper first, so a typo is caught here
+ * rather than becoming a row that never resolves to anything.
  */
 import { configured, json, readSession } from "./_lib/session.js";
 
@@ -37,12 +43,9 @@ async function db(run) {
 
 // A reader with more leagues than this is probing; the row count stays bounded.
 const MAX = 20;
-// Sleeper ids are long digit strings; Yahoo keys are "<game>.l.<id>".
-const SHAPES = {
-  sleeper: /^[0-9]{6,32}$/,
-  yahoo: /^[0-9]{1,4}\.l\.[0-9]{1,12}$/,
-};
-const SPORT = { sleeper: "nfl", yahoo: "cfb" };
+// Sleeper ids are long digit strings.
+const SHAPES = { sleeper: /^[0-9]{6,32}$/ };
+const SPORT = { sleeper: "nfl" };
 // How long a reader has to wait before pulling the same league again. The
 // providers are generous, but a refresh button with no floor is a button that
 // gets held down.
@@ -76,9 +79,8 @@ export async function onRequestPost({ request, env }) {
   const leagueId = String(body?.league_id || "").trim();
   if (!SHAPES[provider]) return json({ ok: false, error: "unknown provider" }, 400);
   if (!SHAPES[provider].test(leagueId)) {
-    return json({ ok: false, error: provider === "sleeper"
-      ? "A Sleeper league id is the long number in the league's web address."
-      : "A Yahoo league key looks like 474.l.21318." }, 400);
+    return json({ ok: false,
+      error: "A Sleeper league id is the long number in the league's web address." }, 400);
   }
 
   const found0 = await db(() => env.DB.prepare(
@@ -139,42 +141,19 @@ export async function onRequestDelete({ request, env }) {
   return json({ ok: true });
 }
 
-/** Ask the provider whether this league exists, and what it is called. */
+/** Ask Sleeper whether this league exists, and what it is called. */
 async function lookup(provider, leagueId) {
   try {
-    if (provider === "sleeper") {
-      const r = await fetch(`https://api.sleeper.app/v1/league/${leagueId}`);
-      if (r.status === 404) return { ok: false, error: "no Sleeper league with that id", status: 404 };
-      if (!r.ok) return { ok: false, error: "Sleeper did not answer", status: 502 };
-      const data = await r.json();
-      if (!data || !data.league_id) {
-        return { ok: false, error: "no Sleeper league with that id", status: 404 };
-      }
-      return { ok: true, name: data.name || null, season: data.season || null };
-    }
-
-    // Yahoo's public API answers for a league its owner has made public and
-    // 401s for one they have not. That distinction is the whole message here:
-    // there is nothing the reader can type that fixes a private league.
-    const r = await fetch(
-      `https://pub-api-ro.fantasysports.yahoo.com/fantasy/v2/league/${leagueId}?format=json`,
-      { headers: { "User-Agent": "Mozilla/5.0" } });
-    if (r.status === 401 || r.status === 403) {
-      return { ok: false, status: 403, error:
-        "Yahoo only shares a league that is set to public. Change the league's "
-        + "visibility in Yahoo, or ask its commissioner to." };
-    }
-    if (r.status === 404) return { ok: false, error: "no Yahoo league with that key", status: 404 };
-    if (!r.ok) return { ok: false, error: "Yahoo did not answer", status: 502 };
+    const r = await fetch(`https://api.sleeper.app/v1/league/${leagueId}`);
+    if (r.status === 404) return { ok: false, error: "no Sleeper league with that id", status: 404 };
+    if (!r.ok) return { ok: false, error: "Sleeper did not answer", status: 502 };
     const data = await r.json();
-    const league = data?.fantasy_content?.league;
-    // Yahoo nests everything as a list of single-key objects; the league's own
-    // fields are the first entry.
-    const fields = Array.isArray(league) ? league[0] : league;
-    if (!fields) return { ok: false, error: "no Yahoo league with that key", status: 404 };
-    return { ok: true, name: fields.name || null, season: fields.season || null };
+    if (!data || !data.league_id) {
+      return { ok: false, error: "no Sleeper league with that id", status: 404 };
+    }
+    return { ok: true, name: data.name || null, season: data.season || null };
   } catch {
-    return { ok: false, error: "could not reach the provider", status: 502 };
+    return { ok: false, error: "could not reach Sleeper", status: 502 };
   }
 }
 
