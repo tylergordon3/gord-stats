@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-25T00:31:00+00:00",
+ "fetched": "2026-09-25T00:41:01+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -117,7 +117,7 @@
     {
      "roster_id": 6,
      "matchup_id": 1,
-     "points": 1.6,
+     "points": 3.4,
      "starters": [
       "3294",
       "4034",
@@ -148,7 +148,7 @@
       "BAL"
      ],
      "players_points": {
-      "11581": 0.0,
+      "11581": 2.7,
       "11584": 0.0,
       "11620": 0.0,
       "12507": 0.0,
@@ -161,7 +161,7 @@
       "8134": 0.0,
       "8137": 0.0,
       "8259": 0.0,
-      "9484": 1.6,
+      "9484": 3.4,
       "BAL": 0.0
      }
     },
@@ -582,7 +582,7 @@
      ],
      "players_points": {
       "11566": 0.0,
-      "12501": 0.0,
+      "12501": 5.5,
       "12514": 0.0,
       "12517": 0.0,
       "13286": 0.0,
@@ -2772,26 +2772,27 @@
  },
  "stats": {
   "9509": {
-   "rush_att": 1.0,
-   "rush_yd": 4.0,
+   "rush_att": 4.0,
+   "rush_yd": 13.0,
    "rec": 1.0,
    "rec_tgt": 1.0,
    "rec_yd": 17.0,
-   "pts_ppr": 3.1,
-   "pts_half_ppr": 2.6,
-   "pts_std": 2.1,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 3.5,
+   "pts_std": 3.0,
    "gp": 1.0
   },
   "9484": {
    "rec": 1.0,
    "rec_tgt": 1.0,
-   "rec_yd": 7.0,
-   "pts_ppr": 1.7,
-   "pts_half_ppr": 1.2,
-   "pts_std": 0.7,
+   "rec_yd": 6.0,
+   "pts_ppr": 1.6,
+   "pts_half_ppr": 1.1,
+   "pts_std": 0.6,
    "gp": 1.0
   },
   "13320": {
+   "rec_tgt": 1.0,
    "gp": 1.0
   },
   "11581": {
@@ -2799,13 +2800,14 @@
    "gp": 1.0
   },
   "8112": {
-   "rec_tgt": 1.0,
    "gp": 1.0
   },
   "7553": {
+   "rec_tgt": 1.0,
    "gp": 1.0
   },
   "8167": {
+   "rec_tgt": 1.0,
    "gp": 1.0
   },
   "12501": {
@@ -2817,12 +2819,12 @@
    "game_id": "401872948",
    "date": "2026-09-25T00:15Z",
    "state": "in",
-   "detail": "10:06 - 1st",
+   "detail": "5:13 - 1st",
    "period": null,
    "clock": null,
    "home": "GB",
    "away": "ATL",
-   "home_score": 0.0,
+   "home_score": 6.0,
    "away_score": 0.0,
    "home_implied": null,
    "away_implied": null,
@@ -2830,9 +2832,9 @@
    "total": null,
    "tv": "Prime Video",
    "weather": {
-    "temp": 60.0,
-    "cond": 38,
-    "text": "Mostly cloudy",
+    "temp": 62.0,
+    "cond": 7,
+    "text": "Cloudy",
     "indoors": false
    }
   },
