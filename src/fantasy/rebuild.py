@@ -37,6 +37,7 @@ PAGES = [
     ("sync",         "Sync your league (accounts)", lambda: _gen("sync")),
     ("history",      "League History (your league's seasons)", lambda: _gen("history")),
     ("waivers",      "Waivers & Trades (your league)", lambda: _gen("waivers")),
+    ("draftreview",  "Draft Review (your league)", lambda: _gen("draft_review")),
     ("homepage",     "Home (countdown + live ADP board)", lambda: _gen("homepage")),
 ]
 

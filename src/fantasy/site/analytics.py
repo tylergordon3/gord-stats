@@ -29,6 +29,9 @@ CARDS = [
     ("/fantasy/transactions/", "&#128260;", "Waivers & Trades",
      "Every claim, free-agent add and trade in this league, and what the "
      "players involved did afterwards."),
+    ("/fantasy/draft-review/", "&#128203;", "Your league's drafts",
+     "Every draft your league has held, with what each pick returned against "
+     "where it was taken."),
     ("/fantasy/waivers/", "&#128220;", "Your league's waivers",
      "The same for your own league: who works the wire, what they paid, and "
      "every claim, add and trade across its seasons."),

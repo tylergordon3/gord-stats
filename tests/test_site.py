@@ -544,3 +544,36 @@ def test_a_league_can_be_connected_without_leaving_the_page():
     assert "/user/" in picker and "/leagues/nfl/" in picker
     # And it works signed out, so the account stays a convenience.
     assert "gsSleeperLeagues" in picker, "the found leagues are not kept locally"
+
+
+MY_DRAFT = (ROOT / "src" / "gordstats" / "my_draft.py").read_text()
+
+
+def test_draft_value_is_measured_against_results_not_our_adp():
+    """This site's ADP is its own league's and says nothing about a stranger's,
+    so a pick is set against where its player finished among everyone drafted -
+    the same question, answered from results rather than somebody's market."""
+    assert "_finish" in MY_DRAFT and "pick_no-p._finish" in MY_DRAFT.replace(" ", "")
+    assert "adp" not in MY_DRAFT.lower().replace("this site’s adp", "") \
+        or "not measured against ADP" in MY_DRAFT
+
+
+def test_season_points_are_shipped_not_fetched_from_sleeper():
+    """Sleeper's season endpoint is 2.3 MB a year; four seasons of drafts would
+    be nine megabytes to find out how the picks did."""
+    assert "/fantasy/season-points/" in MY_DRAFT
+    assert "api.sleeper.app/v1/stats" not in MY_DRAFT
+    points = DOCS / "fantasy" / "season-points"
+    assert points.is_dir(), "no season points shipped"
+    files = sorted(points.glob("*.json"))
+    assert len(files) >= 4, f"only {len(files)} seasons of points"
+    for f in files:
+        rows = json.loads(f.read_text())
+        assert len(rows) > 300, f"{f.name} looks truncated"
+        ppr, half, std = next(iter(rows.values()))
+        assert ppr >= half >= std, f"{f.name}: scoring bases out of order"
+
+
+def test_draft_value_uses_the_leagues_own_scoring():
+    """A half-PPR league reading PPR totals would rate every receiver wrong."""
+    assert "state.basis" in MY_DRAFT and "basis.index" in MY_DRAFT

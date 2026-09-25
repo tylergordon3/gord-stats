@@ -49,6 +49,12 @@ from fantasy.config import UPCOMING_YEAR
 FANTASY_POSITIONS = ("QB", "RB", "WR", "TE", "K", "DEF")
 OUT = paths.WEB_FANTASY_DIR / "players-index.json"
 PROJ_OUT = paths.WEB_FANTASY_DIR / "week-projections.json"
+POINTS_DIR = paths.WEB_FANTASY_DIR / "season-points"
+# How far back season totals are written. Sleeper's own season endpoint is
+# 2.3 MB a year, so a reader looking at four seasons of drafts would pull 9 MB
+# to find out what the picks returned; these are about 25 KB each and fetched
+# one season at a time.
+FIRST_POINTS_SEASON = 2020
 
 
 def build() -> dict:
@@ -106,6 +112,47 @@ def projections(week: int = None, year: int = UPCOMING_YEAR) -> dict:
     return {"week": int(week), "year": int(year), "kick": kick, "proj": proj}
 
 
+def season_points(year: int) -> dict:
+    """{player_id: [ppr, half, std]} for a whole season."""
+    from fantasy.league import matchups as matchups_mod
+    url = (f"{matchups_mod.SLEEPER_ROOT}/stats/nfl/{year}"
+           f"?season_type=regular&{matchups_mod._positions_param()}&order_by=pts_ppr")
+    rows = matchups_mod._get(url) or []
+    out = {}
+    for r in rows:
+        st, pid = r.get("stats") or {}, str(r.get("player_id") or "")
+        if not pid or st.get("pts_ppr") is None:
+            continue
+        out[pid] = [round(float(st.get("pts_ppr") or 0), 1),
+                    round(float(st.get("pts_half_ppr") or 0), 1),
+                    round(float(st.get("pts_std") or 0), 1)]
+    return out
+
+
+def write_season_points(year: int = None) -> None:
+    """Season totals per player, one file a year.
+
+    A finished season never changes, so it is written once and skipped after;
+    the season being played is rewritten every build.
+    """
+    POINTS_DIR.mkdir(parents=True, exist_ok=True)
+    now = UPCOMING_YEAR
+    years = [year] if year else range(FIRST_POINTS_SEASON, now + 1)
+    for y in years:
+        path = POINTS_DIR / f"{y}.json"
+        if path.exists() and y != now:
+            continue                                  # a finished season is finished
+        try:
+            points = season_points(y)
+        except Exception as exc:                      # noqa: BLE001
+            print(f"  ! {y} season points unavailable ({exc})")
+            continue
+        if not points:
+            continue
+        path.write_text(json.dumps(points, separators=(",", ":")), encoding="utf-8")
+        print(f"Wrote {y} season points ({len(points)} players) -> {path}")
+
+
 def generate():
     index = build()
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -122,6 +169,8 @@ def generate():
         PROJ_OUT.write_text(json.dumps(proj, separators=(",", ":")), encoding="utf-8")
         print(f"Wrote week {proj['week']} projections ({len(proj['proj'])} players, "
               f"{len(proj['kick'])} kickoffs) -> {PROJ_OUT}")
+
+    write_season_points()
 
 
 if __name__ == "__main__":
