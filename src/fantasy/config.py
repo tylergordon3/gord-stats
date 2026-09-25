@@ -95,6 +95,22 @@ DRAFT_IDS = {
 FORMAL_SEASON = {"2526": "2025-2026", "2425": "2024-2025", "2324": "2023-2024"}
 SEASON_YEAR = {"2526": 2025, "2425": 2024, "2324": 2023}
 
+
+def formal_season(code: str) -> str:
+    """'2627' -> '2026-2027'.
+
+    FORMAL_SEASON is written out by hand and only covers seasons that have a
+    league in LEAGUE_IDS. The season being played is keyed the same way but
+    lives in UPCOMING_* until it has games in it, so it fell through the map
+    and the site printed the raw code - "2627" in the season-by-season table.
+    """
+    code = str(code)
+    if code in FORMAL_SEASON:
+        return FORMAL_SEASON[code]
+    if len(code) == 4 and code.isdigit():
+        return f"20{code[:2]}-20{code[2:]}"
+    return code
+
 # --------------------------------------------------------------------------- #
 # Upcoming season / draft (drives the live ADP board).
 # --------------------------------------------------------------------------- #

@@ -15,7 +15,7 @@ from html import escape
 
 import pandas as pd
 
-from fantasy.config import FORMAL_SEASON, ROSTER_NAMES
+from fantasy.config import ROSTER_NAMES, formal_season
 from fantasy.league import head_to_head as h2h
 
 MIN_SPLIT_GAMES = 3          # meetings before an opponent can be a nemesis or a favourite
@@ -136,7 +136,7 @@ def _pct(df: pd.DataFrame) -> float:
 
 
 def _season_name(code: str) -> str:
-    return FORMAL_SEASON.get(code, code)
+    return formal_season(code)
 
 
 def _finish(log: pd.DataFrame, season: str) -> str:
