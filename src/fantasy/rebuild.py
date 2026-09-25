@@ -32,6 +32,7 @@ PAGES = [
     ("roster",       "Team Dashboard (start/sit, slot order, waiver adds)", lambda: _gen("roster")),
     ("usage",        "Usage (snap, carry and target share)", lambda: _gen("usage")),
     ("analytics",    "Analytics hub (links the occasional pages)", lambda: _gen("analytics")),
+    ("sync",         "Sync your league (accounts)", lambda: _gen("sync")),
     ("homepage",     "Home (countdown + live ADP board)", lambda: _gen("homepage")),
 ]
 

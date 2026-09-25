@@ -19,7 +19,7 @@ SESSION = (FUNCTIONS / "_lib" / "session.js").read_text()
 AUTH = (FUNCTIONS / "auth" / "[[route]].js").read_text()
 JS = (DOCS / "assets" / "js" / "favorites.js").read_text()
 
-ENDPOINTS = ["me.js", "favorites.js", "account.js"]
+ENDPOINTS = ["me.js", "favorites.js", "account.js", "leagues.js"]
 
 
 @pytest.mark.parametrize("name", ENDPOINTS)
@@ -105,3 +105,56 @@ def test_first_sign_in_merges_and_afterwards_the_server_wins():
     assert "union(favorites, remote)" in JS
     assert "favorites = remote" in JS
     assert "readSyncedAs() !== account.email" in JS
+
+
+# --------------------------------------------------------------------------- #
+# Synced leagues
+#
+# Same principle as the rest of this file: the endpoint cannot be run from
+# pytest, so what is pinned here is the contract - above all that syncing a
+# league never becomes a reason to hold someone's provider credentials.
+# --------------------------------------------------------------------------- #
+
+LEAGUES = (FUNCTIONS / "leagues.js").read_text()
+
+
+def test_syncing_a_league_stores_no_provider_credentials():
+    """The feature exists in this shape *because* neither provider needs one:
+    Sleeper is keyless and Yahoo's public API serves a public league. If a
+    token ever has to be stored, that is a different design and a different
+    review, not a column quietly added here."""
+    for word in ("access_token", "refresh_token", "client_secret", "password"):
+        assert word not in LEAGUES, f"leagues.js mentions {word}"
+    leagues_table = SCHEMA[SCHEMA.index("CREATE TABLE IF NOT EXISTS leagues"):]
+    for word in ("token", "secret", "password"):
+        assert word not in leagues_table.lower(), f"the leagues table has a {word} column"
+
+
+def test_a_league_is_checked_with_the_provider_before_it_is_stored():
+    """A typo should fail at the point of typing, not become a row that never
+    resolves to anything."""
+    assert "async function lookup(" in LEAGUES
+    assert LEAGUES.index("await lookup(") < LEAGUES.index("INSERT INTO leagues")
+
+
+def test_league_ids_are_shape_checked_before_they_are_used():
+    assert "SHAPES" in LEAGUES and "SHAPES[provider].test(" in LEAGUES
+
+
+def test_a_private_yahoo_league_is_explained_not_retried():
+    """Yahoo answers 401 for a league that is not public, and there is nothing
+    the reader can retype that changes it - so the message says what to do."""
+    assert "401" in LEAGUES and "public" in LEAGUES
+
+
+def test_the_refresh_limit_is_read_from_the_stored_timestamp():
+    """A limit kept in the browser is no limit: it resets on reload and does
+    not exist in a second tab."""
+    assert "last_synced_at" in LEAGUES
+    assert "REFRESH_SECONDS" in LEAGUES
+    assert "429" in LEAGUES
+
+
+def test_deleting_an_account_takes_the_leagues_with_it():
+    table = SCHEMA[SCHEMA.index("CREATE TABLE IF NOT EXISTS leagues"):]
+    assert "REFERENCES users(id) ON DELETE CASCADE" in table

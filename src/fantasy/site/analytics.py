@@ -26,6 +26,9 @@ CARDS = [
     ("/fantasy/transactions/", "&#128260;", "Waivers & Trades",
      "Every claim, free-agent add and trade, and what the players involved "
      "did afterwards."),
+    ("/fantasy/sync/", "&#128279;", "Sync your league",
+     "Attach your own Sleeper or Yahoo league to your account, so these pages "
+     "can show yours rather than this one."),
 ]
 
 

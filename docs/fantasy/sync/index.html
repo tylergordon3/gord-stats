@@ -1,0 +1,124 @@
+---
+layout: default
+title: Sync your league
+---
+<h1>Sync your league</h1><h3>Attach your own fantasy league to your account</h3><style>
+.ls-wrap{max-width:720px}
+.ls-card{border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px;background:#fff;
+  margin:0 0 14px}
+.ls-card h2{margin:0 0 3px;font-size:17px}
+.ls-card p{margin:0 0 11px;font-size:13.5px;color:#475569;line-height:1.5}
+.ls-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ls-row input{font:inherit;font-size:14px;padding:8px 10px;border:1px solid #cbd5e1;
+  border-radius:8px;min-width:210px;flex:1}
+.ls-row button{font:inherit;font-size:14px;font-weight:700;padding:8px 16px;border-radius:8px;
+  border:1px solid #2a78d6;background:#2a78d6;color:#fff;cursor:pointer}
+.ls-row button[disabled]{opacity:.55;cursor:default}
+.ls-msg{font-size:13px;margin:9px 0 0;line-height:1.45}
+.ls-msg.err{color:#b91c1c}
+.ls-msg.ok{color:#15803d}
+.ls-list{list-style:none;padding:0;margin:0}
+.ls-list li{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;
+  padding:10px 0;border-top:1px solid #e2e8f0}
+.ls-list li:first-child{border-top:0}
+.ls-name{font-weight:700;color:#0f172a}
+.ls-meta{font-size:12px;color:#64748b}
+.ls-drop{font:inherit;font-size:12.5px;padding:5px 11px;border-radius:7px;border:1px solid #cbd5e1;
+  background:#fff;color:#334155;cursor:pointer}
+.ls-gate{font-size:14px;color:#475569}
+@media (prefers-color-scheme: dark){
+  .ls-card{background:#16203a;border-color:#2b3852}
+  .ls-card p,.ls-meta,.ls-gate{color:#aab7c9}
+  .ls-name{color:#f1f5f9}
+  .ls-list li{border-top-color:#2b3852}
+  .ls-row input,.ls-drop{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  .ls-msg.err{color:#ff9b91}
+  .ls-msg.ok{color:#6ee7b7}
+}
+</style><div class='ls-wrap'><p class='ls-gate' id='ls-gate'>Loading…</p><div id='ls-main' hidden><div class='ls-card'><h2>Your synced leagues</h2><ul class='ls-list' id='ls-list'></ul></div><div class='ls-card'><h2>Sleeper (NFL)</h2><p>The league id is the long number in your league's web address: <code>sleeper.com/leagues/<strong>1234567890123456</strong>/team</code>. Nothing is asked of your Sleeper account - the league is read through Sleeper's public API.</p><div class='ls-row'><input id='ls-sleeper' type='text' inputmode='numeric' placeholder='Sleeper league id' aria-label='Sleeper league id'><button id='ls-sleeper-go' type='button'>Sync</button></div><p class='ls-msg' id='ls-sleeper-msg'></p></div><div class='ls-card'><h2>Yahoo (college)</h2><p>The league key looks like <code>474.l.21318</code> - the game code, then <code>.l.</code>, then your league id. Yahoo only shares a league its commissioner has set to <strong>public</strong>; a private one cannot be read without signing in to Yahoo, which this site does not do.</p><div class='ls-row'><input id='ls-yahoo' type='text' placeholder='474.l.21318' aria-label='Yahoo league key'><button id='ls-yahoo-go' type='button'>Sync</button></div><p class='ls-msg' id='ls-yahoo-msg'></p></div><p class='ls-meta'>A league can be re-synced every five minutes. Removing it deletes the row; deleting your account takes every synced league with it.</p></div></div>{% raw %}<script>
+(function(){
+  var gate=document.getElementById('ls-gate'), main=document.getElementById('ls-main');
+  var list=document.getElementById('ls-list');
+
+  function msg(where,text,cls){
+    var el=document.getElementById(where);
+    el.textContent=text||''; el.className='ls-msg'+(cls?' '+cls:'');
+  }
+  function when(iso){
+    if(!iso) return '';
+    var d=new Date(iso);
+    return isNaN(d)?'':d.toLocaleString([], {month:'short', day:'numeric',
+      hour:'numeric', minute:'2-digit'});
+  }
+  function render(leagues){
+    if(!leagues.length){
+      list.innerHTML='<li><span class="ls-meta">No league synced yet.</span></li>';
+      return;
+    }
+    list.innerHTML='';
+    leagues.forEach(function(l){
+      var li=document.createElement('li');
+      var left=document.createElement('div');
+      left.innerHTML='<div class="ls-name">'+(l.name||l.league_id)+'</div>'
+        +'<div class="ls-meta">'+l.provider+(l.season?' &middot; '+l.season:'')
+        +' &middot; synced '+when(l.last_synced_at)+'</div>';
+      var drop=document.createElement('button');
+      drop.className='ls-drop'; drop.textContent='Remove';
+      drop.addEventListener('click',function(){
+        drop.disabled=true;
+        fetch('/api/leagues?provider='+encodeURIComponent(l.provider)
+              +'&league_id='+encodeURIComponent(l.league_id),
+              {method:'DELETE', credentials:'same-origin'})
+          .then(function(){ load(); });
+      });
+      li.appendChild(left); li.appendChild(drop); list.appendChild(li);
+    });
+  }
+  function load(){
+    fetch('/api/leagues',{credentials:'same-origin'})
+      .then(function(r){return r.ok?r.json():{leagues:[]};})
+      .then(function(d){render(d.leagues||[]);})
+      .catch(function(){});
+  }
+  function add(provider,inputId,msgId,btn){
+    var value=(document.getElementById(inputId).value||'').trim();
+    if(!value){ msg(msgId,'Enter a league id first.','err'); return; }
+    btn.disabled=true; msg(msgId,'Checking with '+provider+'\u2026');
+    fetch('/api/leagues',{method:'POST',credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({provider:provider, league_id:value})})
+      .then(function(r){return r.json().then(function(d){return {s:r.status,d:d};});})
+      .then(function(res){
+        btn.disabled=false;
+        if(res.s===429){
+          msg(msgId,'Just refreshed \u2014 try again in '
+            +(res.d.retry_after||60)+'s.','err');
+          return;
+        }
+        if(!res.d.ok){ msg(msgId,res.d.error||'That did not work.','err'); return; }
+        msg(msgId,'Synced '+(res.d.league.name||'the league')+'.','ok');
+        document.getElementById(inputId).value='';
+        load();
+      })
+      .catch(function(){ btn.disabled=false; msg(msgId,'Network error.','err'); });
+  }
+
+  // Inert unless this deploy has accounts and the reader is signed in - the
+  // same rule the header's account control follows.
+  fetch('/api/me',{credentials:'same-origin'})
+    .then(function(r){return r.json();})
+    .then(function(me){
+      if(!me.configured){ gate.textContent=
+        'Accounts are not enabled on this deployment yet.'; return; }
+      if(!me.signedIn){ gate.innerHTML=
+        'Sign in (top right) to attach a league to your account.'; return; }
+      gate.hidden=true; main.hidden=false;
+      document.getElementById('ls-sleeper-go').addEventListener('click',function(){
+        add('sleeper','ls-sleeper','ls-sleeper-msg',this);});
+      document.getElementById('ls-yahoo-go').addEventListener('click',function(){
+        add('yahoo','ls-yahoo','ls-yahoo-msg',this);});
+      load();
+    })
+    .catch(function(){ gate.textContent='Could not reach the server.'; });
+})();
+</script>{% endraw %}

@@ -33,3 +33,33 @@ CREATE TABLE IF NOT EXISTS favorites (
 
 -- Deleting an account is one statement; the cascade takes the stars with it.
 CREATE INDEX IF NOT EXISTS favorites_by_user ON favorites (user_id);
+
+-- --------------------------------------------------------------------------
+-- Synced leagues: the reader's own fantasy league, attached to their account.
+--
+-- Only what is needed to fetch the league again from the provider's public
+-- API: no Yahoo or Sleeper credentials, because neither is needed. Sleeper's
+-- API is keyless, and Yahoo's pub-api-ro serves a league its owner has made
+-- public. A private Yahoo league cannot be synced at all without OAuth, which
+-- is not built - the endpoint says so rather than storing a token.
+--
+-- `last_synced_at` is what the refresh button is rate-limited on, so the
+-- limit survives a reader reloading the page or opening a second tab.
+CREATE TABLE IF NOT EXISTS leagues (
+  user_id        TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  -- "sleeper" or "yahoo". The sport follows from it here (Sleeper for the NFL
+  -- league, Yahoo for the college one), but it is stored so that a second
+  -- Sleeper sport later does not need a migration.
+  provider       TEXT NOT NULL,
+  sport          TEXT NOT NULL,
+  -- The provider's own id: a Sleeper league id, or a Yahoo league key
+  -- ("474.l.21318"). Opaque here; the provider is the one that parses it.
+  league_id      TEXT NOT NULL,
+  name           TEXT,
+  season         TEXT,
+  created_at     TEXT NOT NULL,
+  last_synced_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, provider, league_id)
+);
+
+CREATE INDEX IF NOT EXISTS leagues_by_user ON leagues (user_id);
