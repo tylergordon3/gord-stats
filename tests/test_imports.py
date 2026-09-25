@@ -96,3 +96,46 @@ def test_no_module_level_infinite_loop():
         for node in tree.body:
             if isinstance(node, ast.While) and isinstance(node.test, ast.Constant):
                 assert not node.test.value, f"{path.relative_to(SRC)} loops forever on import"
+
+
+# --------------------------------------------------------------------------- #
+# Every call to Sleeper retries
+# --------------------------------------------------------------------------- #
+
+def test_nothing_calls_sleeper_without_a_retry():
+    """Sleeper drops the occasional TLS handshake, and a bare requests.get
+    against it fails whatever page it is behind.
+
+    This was fixed once by patching sleeper_wrapper, and then the matchups
+    page - which has its own _get - took the fantasy section of the daily run
+    down for the same reason a fortnight later. So the rule lives in the file
+    rather than in anyone's memory: a call to api.sleeper.app goes through
+    fantasy.sleeper_retry (get_json, or the patched library) or through
+    fantasy.live._get, which has its own retry loop.
+
+    Only Sleeper. The other hosts here (ESPN, Yahoo, FantasyPros) have not
+    shown this failure and are left alone.
+    """
+    import re
+    from conftest import ROOT
+
+    allowed = {
+        "src/fantasy/sleeper_retry.py",   # the retry itself
+        "src/fantasy/live.py",            # its own documented retry loop
+    }
+    # The URL is the argument, so look at what the call actually opens with -
+    # a module can talk to four hosts and only one of them is Sleeper.
+    marker = re.compile(r"SLEEPER|sleeper\.app", re.I)
+    offenders = []
+    for path in sorted((ROOT / "src").rglob("*.py")):
+        rel = path.relative_to(ROOT).as_posix()
+        if rel in allowed:
+            continue
+        text = path.read_text()
+        for call in re.finditer(r"\brequests\.(?:get|post)\(", text):
+            arg = text[call.end():call.end() + 160]
+            if marker.search(arg.split(")")[0]):
+                line = text[:call.start()].count("\n") + 1
+                offenders.append(f"{rel}:{line}")
+    assert not offenders, (
+        "these call Sleeper without a retry: " + ", ".join(offenders))

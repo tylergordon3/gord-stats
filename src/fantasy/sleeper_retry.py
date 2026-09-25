@@ -1,5 +1,5 @@
 """
-Retries for the `sleeper_wrapper` library's HTTP layer.
+Retries for the flaky hosts this package talks to - Sleeper above all.
 
 `sleeper_wrapper.base_api.BaseApi._call` is a bare `requests.get(url)`: no
 timeout, no retry. api.sleeper.app drops the occasional TLS handshake
@@ -13,6 +13,12 @@ fortnight to 2026-09-24, each time a different step.
 This patches the library so every other call site gets the same treatment.
 Installed by `fantasy/__init__.py`, so importing anything under `fantasy`
 is enough; it is idempotent.
+
+`get_json` is the same behaviour for code that calls `requests` directly.
+The first version of this only patched the library, and the matchups page -
+which has its own `_get` - went on failing the daily run for the same reason
+a fortnight later. Anything here that talks to api.sleeper.app should go
+through one of the two.
 """
 import time
 
@@ -41,6 +47,42 @@ def _session() -> requests.Session:
     )
     session.mount("https://", HTTPAdapter(max_retries=retries))
     return session
+
+
+def get_json(url, params=None, headers=None, timeout=TIMEOUT, attempts=ATTEMPTS):
+    """GET and parse JSON, retrying a dropped connection.
+
+    Headers are passed through untouched: some callers (ESPN) must send no
+    User-Agent at all, because its edge 403s a browser-like one coming from a
+    non-browser TLS stack.
+    """
+    session = _shared()
+    last = None
+    for attempt in range(1, attempts + 1):
+        try:
+            r = session.get(url, params=params, headers=headers or {}, timeout=timeout)
+            r.raise_for_status()
+            return r.json()
+        except requests.RequestException as e:
+            last = e
+            # A bad status is the server's answer, not a broken pipe: retrying
+            # a 404 just waits six seconds to be told the same thing.
+            if e.response is not None and e.response.status_code < 500:
+                raise
+            if attempt == attempts:
+                raise
+            time.sleep(2 * attempt)
+    raise last                                    # pragma: no cover
+
+
+_shared_session = None
+
+
+def _shared() -> requests.Session:
+    global _shared_session
+    if _shared_session is None:
+        _shared_session = _session()
+    return _shared_session
 
 
 def install():

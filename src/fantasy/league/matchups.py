@@ -27,6 +27,7 @@ import pandas as pd
 import requests
 
 from fantasy import paths
+from fantasy import sleeper_retry
 from fantasy.config import LEAGUE_TZ, ROSTER_NAMES, UPCOMING_LEAGUE_ID, UPCOMING_YEAR
 
 AVATAR_THUMB = "https://sleepercdn.com/avatars/thumbs/{id}"
@@ -63,11 +64,18 @@ PREGAME_BUFFER_MIN = 30
 
 
 def _get(url: str, params: dict = None, headers: dict = None):
-    """GET JSON. ESPN 403s browser-like User-Agents from python-requests, so
-    calls to it send none (requests' own default is what it answers)."""
-    r = requests.get(url, params=params, headers=headers or {}, timeout=_TIMEOUT)
-    r.raise_for_status()
-    return r.json()
+    """GET JSON, retrying a dropped connection.
+
+    ESPN 403s browser-like User-Agents from python-requests, so calls to it
+    send none (requests' own default is what it answers) - which is why the
+    headers go through untouched.
+
+    The retry matters: Sleeper drops the occasional TLS handshake, and this
+    one bare call took the whole matchups page - and with it the fantasy
+    section of the daily run - down with it on 2026-09-25.
+    """
+    return sleeper_retry.get_json(url, params=params, headers=headers,
+                                  timeout=_TIMEOUT)
 
 
 def _num(v):

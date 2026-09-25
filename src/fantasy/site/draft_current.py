@@ -20,6 +20,7 @@ from html import escape
 import pandas as pd
 import requests
 
+from fantasy import sleeper_retry
 from fantasy.config import (
     LEAGUE_TEAMS, LEAGUE_TZ, ROSTER_NAMES, UPCOMING_DRAFT_ID, UPCOMING_SEASON,
     UPCOMING_YEAR,
@@ -75,9 +76,8 @@ def picks(draft_id: str = UPCOMING_DRAFT_ID) -> pd.DataFrame:
     the player lasted past where the market had him (a value) and negative
     means he was taken ahead of it (a reach).
     """
-    r = requests.get(f"{SLEEPER_API}/draft/{draft_id}/picks", timeout=_TIMEOUT)
-    r.raise_for_status()
-    raw = r.json() or []
+    raw = sleeper_retry.get_json(f"{SLEEPER_API}/draft/{draft_id}/picks",
+                                 timeout=_TIMEOUT) or []
     if not raw:
         return pd.DataFrame()
 

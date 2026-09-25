@@ -41,6 +41,7 @@ import pandas as pd
 import requests
 
 from fantasy import paths
+from fantasy import sleeper_retry
 from fantasy.config import UPCOMING_LEAGUE_ID, UPCOMING_YEAR
 
 SLEEPER_API = "https://api.sleeper.app/v1"
@@ -84,14 +85,14 @@ def _key(name: str) -> str:
 
 def team_names(league_id: str = UPCOMING_LEAGUE_ID) -> dict:
     """roster_id -> the team name Sleeper shows, falling back to the handle."""
-    users = requests.get(f"{SLEEPER_API}/league/{league_id}/users", timeout=_TIMEOUT)
-    rosters = requests.get(f"{SLEEPER_API}/league/{league_id}/rosters", timeout=_TIMEOUT)
-    users.raise_for_status()
-    rosters.raise_for_status()
+    users = sleeper_retry.get_json(f"{SLEEPER_API}/league/{league_id}/users",
+                                   timeout=_TIMEOUT)
+    rosters = sleeper_retry.get_json(f"{SLEEPER_API}/league/{league_id}/rosters",
+                                     timeout=_TIMEOUT)
 
-    by_user = {u["user_id"]: u for u in users.json()}
+    by_user = {u["user_id"]: u for u in users}
     out = {}
-    for roster in rosters.json():
+    for roster in rosters:
         user = by_user.get(roster.get("owner_id")) or {}
         name = (user.get("metadata") or {}).get("team_name") or user.get("display_name")
         if name:
