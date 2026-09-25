@@ -1,0 +1,624 @@
+---
+layout: default
+title: League History
+---
+<h1>League History</h1><h3>Champions, records and head-to-head</h3><script>
+function openHashTarget(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);
+  if(e&&e.tagName==='DETAILS'){e.open=true;e.scrollIntoView();}}
+window.addEventListener('hashchange',openHashTarget);
+window.addEventListener('load',openHashTarget);
+</script><style>
+.ml-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 9px;
+  font-size:13px;color:#475569}
+.ml-who{font-weight:700;color:#0f172a}
+.ml-bar button{font:inherit;font-size:12.5px;padding:5px 12px;border-radius:999px;
+  border:1px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer}
+.ml-bar button:hover{background:#f1f5f9}
+.ml-bar input{font:inherit;font-size:13px;padding:6px 9px;border:1px solid #cbd5e1;
+  border-radius:8px;min-width:180px}
+.ml-msg{font-size:12.5px}
+.ml-msg.err{color:#b91c1c}
+/* The input takes the whole row at its default width and pushes the button
+   to a third line. On a phone this control is one line of label and one of
+   input-plus-button. */
+@media (max-width:560px){
+  .ml-bar{gap:6px}
+  .ml-bar .ml-label{flex:1 1 100%;font-size:12.5px}
+  .ml-bar input{min-width:0;flex:1}
+  .ml-bar button{white-space:nowrap}
+  .ml-bar .ml-msg{flex:1 1 100%}
+}
+@media (prefers-color-scheme: dark){
+  .ml-bar{color:#aab7c9}
+  .ml-who{color:#f1f5f9}
+  .ml-bar button,.ml-bar input{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  .ml-bar button:hover{background:#1b2540}
+  .ml-msg.err{color:#ff9b91}
+}
+</style><div class='ml-bar' id='ml-bar'></div><style>
+.hi{margin:8px 0 20px}
+.hi h2{margin:20px 0 6px;font-size:18px}
+.hi-note{font-size:12.5px;color:#64748b;margin:0 0 10px;line-height:1.5}
+.hi-none{font-size:14px;color:#475569}
+table.hi-t{width:100%;border-collapse:collapse;font-size:13.5px}
+table.hi-t th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:left;
+  font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;
+  border:1px solid #e2e8f0;white-space:nowrap}
+table.hi-t td{padding:6px 9px;border:1px solid #eef2f7;background:#fff;color:#0f172a}
+table.hi-t td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.hi-t tr.me td{background:#fffbeb}
+.hi-crown{color:#b45309;font-weight:800}
+.hi-sub{font-size:11px;color:#94a3b8;margin-left:5px}
+.hi-scroll{overflow-x:auto}
+table.hi-h2h td,table.hi-h2h th{text-align:center;font-size:12.5px;padding:5px 7px}
+table.hi-h2h th.row,table.hi-h2h td.row{text-align:left;font-weight:700;white-space:nowrap;
+  position:sticky;left:0;background:#eef2f7;z-index:1}
+table.hi-h2h td.self{background:#f1f5f9;color:#94a3b8}
+.hi-w{color:#15803d;font-weight:700}
+.hi-l{color:#b91c1c}
+.hi-load{font-size:12.5px;color:#64748b}
+@media (prefers-color-scheme: dark){
+  .hi-note,.hi-none,.hi-load{color:#aab7c9}
+  table.hi-t th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  table.hi-t td{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  table.hi-t tr.me td{background:#33301a}
+  table.hi-h2h th.row,table.hi-h2h td.row{background:#223052}
+  table.hi-h2h td.self{background:#1b2540;color:#64748b}
+  .hi-crown{color:#e0a92a}
+  .hi-w{color:#6ee7b7}
+  .hi-l{color:#ff9b91}
+}
+</style><div class='hi' id='hi-host'></div>{% raw %}<script>
+window.GSL = (function(){
+  var KEY='gsSleeperLeague';
+  var cache={};
+
+  function saved(){
+    try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; }
+  }
+  function once(name, url, shape){
+    if(cache[name]) return cache[name];
+    cache[name]=fetch(url).then(function(r){return r.ok?r.json():shape;})
+      .catch(function(){return shape;});
+    return cache[name];
+  }
+  function players(){ return once('players','/fantasy/players-index.json',{}); }
+  function week(){ return once('week','/fantasy/week-projections.json',
+                               {week:0,kick:{},proj:{}}); }
+
+  function api(id, path){
+    return fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+path)
+      .then(function(r){return r.ok?r.json():null;});
+  }
+
+  /** Everything about one league: settings, rosters, and who owns what. */
+  function league(id){
+    return Promise.all([api(id,''), api(id,'/rosters'), api(id,'/users')])
+      .then(function(o){
+        var info=o[0]||{}, rosters=o[1]||[], users=o[2]||[];
+        var byUser={};
+        users.forEach(function(u){
+          var team=(u.metadata&&u.metadata.team_name)||u.display_name||'Team';
+          var mgr=u.display_name||'';
+          byUser[u.user_id]=(mgr&&team.indexOf(mgr)<0)?(team+' ('+mgr+')'):team;
+        });
+        var names={}, held={};
+        rosters.forEach(function(r){
+          var key=String(r.roster_id);
+          names[key]=byUser[r.owner_id]||('Roster '+key);
+          (r.players||[]).forEach(function(p){ held[String(p)]=key; });
+        });
+        return {info:info, rosters:rosters, names:names, held:held,
+                basis:basis(info), slots:info.roster_positions||[]};
+      });
+  }
+
+  /** Which of Sleeper's three published bases this league is closest to. */
+  function basis(info){
+    var sc=(info&&info.scoring_settings)||{};
+    var rec=sc.rec;
+    var i = (rec>=0.75)?0 : (rec>=0.25)?1 : 2;          // ppr / half / standard
+    // Anything materially off the default is flagged so the page can say the
+    // numbers are close rather than exact.
+    var custom = (sc.pass_td!=null && Math.abs(sc.pass_td-4)>0.01)
+      || (sc.rec_td!=null && Math.abs(sc.rec_td-6)>0.01)
+      || Object.keys(sc).some(function(k){return k.indexOf('bonus')===0 && sc[k];});
+    return {index:i, name:['PPR','half-PPR','standard'][i], custom:!!custom};
+  }
+
+  /** {player_id: points} under one basis. */
+  function points(wk, basisIndex){
+    var out={};
+    for(var pid in wk.proj) out[pid]=wk.proj[pid][basisIndex];
+    return out;
+  }
+  /** {player_id: kickoff ms} from the player's team this week. */
+  function kickoffs(wk){
+    var out={};
+    for(var pid in wk.proj){
+      var t=wk.proj[pid][3], k=t&&wk.kick[t];
+      if(k){ var ms=Date.parse(k); if(!isNaN(ms)) out[pid]=ms; }
+    }
+    return out;
+  }
+
+  return {saved:saved, players:players, week:week, league:league,
+          basis:basis, points:points, kickoffs:kickoffs};
+})();
+</script>{% endraw %}{% raw %}<script>
+(function(){
+  var KEY='gsSleeperLeague';          // {id, name} of the league being shown
+  var bar=document.getElementById('ml-bar');
+  if(!bar) return;
+  // The usage table is the thing whose ownership can be re-pointed. On the
+  // matchups page there is none: the league is picked here and a different
+  // script draws it, so everything below is guarded rather than assumed.
+  var table=document.querySelector('table.us');
+  var sel=document.getElementById('us-own');
+  var owns=!!(table&&sel&&table.tBodies[0]);
+  var rows=owns?Array.prototype.slice.call(table.tBodies[0].rows):[];
+  // The league the page was built with, kept so "show this site's league"
+  // can put everything back without a reload.
+  var BUILT=rows.map(function(r){return r.dataset.own||'';});
+  var builtOptions=owns?sel.innerHTML:'';
+
+  function saved(){
+    try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; }
+  }
+  function save(v){
+    try{ v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY); }
+    catch(e){}
+  }
+  function msg(text,cls){
+    var el=document.getElementById('ml-msg');
+    el.textContent=text||''; el.className='ml-msg'+(cls?' '+cls:'');
+  }
+
+  function apply(held,names,label){
+    if(!owns){ draw(label); return; }
+    rows.forEach(function(r){
+      var own=held[r.dataset.pid]||'';
+      r.dataset.own=own;
+      var cell=r.querySelector('td.us-own');
+      if(cell) cell.innerHTML=own
+        ? names[own].replace(/[&<>]/g,function(c){
+            return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];})
+        : '<span class="us-fa">FA</span>';
+    });
+    // The Fantasy filter is a list of this league's teams, so it is rebuilt
+    // from the same maps rather than left pointing at the old one.
+    var keys=Object.keys(names).sort(function(a,b){
+      return names[a].toLowerCase()<names[b].toLowerCase()?-1:1;});
+    var html='<option value="">Everyone</option>'
+      +'<option value="fa">Free agents</option>'
+      +'<option value="held">Rostered</option><optgroup label="Teams">';
+    keys.forEach(function(k){
+      html+='<option value="'+k+'">'+names[k].replace(/[&<>"]/g,function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];})+'</option>';
+    });
+    sel.innerHTML=html+'</optgroup>';
+    rows.forEach(function(r){ r.classList.remove('us-mine'); });
+    sel.value='';
+    sel.dispatchEvent(new Event('change'));
+    draw(label);
+  }
+
+  function restore(){
+    if(owns){
+      rows.forEach(function(r,i){ r.dataset.own=BUILT[i]; });
+      sel.innerHTML=builtOptions;
+      sel.value='';
+      sel.dispatchEvent(new Event('change'));
+    }
+    save({site:true});
+    location.reload();   // the built cells are the simplest thing to put back
+  }
+
+  function load(id,quiet){
+    msg(quiet?'':'Reading the league\u2026');
+    return Promise.all([
+      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+'/rosters'),
+      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+'/users'),
+      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id))
+    ]).then(function(rs){
+      if(!rs[0].ok||!rs[1].ok) throw new Error('not found');
+      return Promise.all(rs.map(function(r){return r.ok?r.json():null;}));
+    }).then(function(out){
+      var rosters=out[0]||[], users=out[1]||[], league=out[2]||{};
+      var byUser={};
+      users.forEach(function(u){
+        var team=(u.metadata&&u.metadata.team_name)||u.display_name||'Team';
+        var mgr=u.display_name||'';
+        byUser[u.user_id]=(mgr&&team.indexOf(mgr)<0)?(team+' ('+mgr+')'):team;
+      });
+      var held={}, names={};
+      rosters.forEach(function(ro){
+        var key=String(ro.roster_id);
+        names[key]=byUser[ro.owner_id]||('Team '+key);
+        (ro.players||[]).forEach(function(pid){ held[String(pid)]=key; });
+      });
+      if(!Object.keys(names).length) throw new Error('empty');
+      var label=league.name||('League '+id);
+      var first=!(saved()||{}).id;
+      save({id:id, name:label});
+      apply(held,names,label);
+      msg('');
+      // Pages that render the league from this key read it once, at load.
+      if(!owns&&first) location.reload();
+      return true;
+    }).catch(function(){
+      msg('Could not read that league. Check the id.','err');
+      return false;
+    });
+  }
+
+  // Leagues synced to the account, filled in once /api/leagues answers. More
+  // than one is normal for anybody in two, and picking the first silently left
+  // the rest unreachable.
+  var SYNCED=[];
+
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+  }
+
+  /** "League - Your Team": two leagues named the same thing are otherwise the
+   *  same entry twice, and people do name them the same thing.
+   *
+   *  Not called `label`: draw() takes a parameter by that name, which shadowed
+   *  this inside the one function that needs it. */
+  function leagueLabel(l){
+    var name=l.name||('League '+l.league_id);
+    return l.team_name ? (name+' — '+l.team_name) : name;
+  }
+
+  /** One entry per league, newest season first.
+   *
+   *  A synced league is one row per season, so a reader in four leagues with a
+   *  few years of history each has a dozen rows - listing them raw would be a
+   *  dozen near-identical picker entries. They group on lineage_id, which is
+   *  the oldest league id in the chain and therefore stable as seasons are
+   *  added. */
+  function leagues(rows){
+    var groups={};
+    rows.forEach(function(l){
+      var key=l.lineage_id||l.league_id;
+      (groups[key]=groups[key]||[]).push(l);
+    });
+    return Object.keys(groups).map(function(k){
+      var seasons=groups[k].slice().sort(function(a,b){
+        return String(b.season||'').localeCompare(String(a.season||''));});
+      return {current:seasons[0], seasons:seasons};
+    });
+  }
+
+  function draw(label){
+    if(label){
+      if(SYNCED.length>1){
+        var here=String((saved()||{}).id||'');
+        bar.innerHTML='<label>League <select id="ml-pick">'
+          + SYNCED.map(function(l){
+              return '<option value="'+esc(l.league_id)+'"'
+                + (String(l.league_id)===here?' selected':'') + '>'
+                + esc(leagueLabel(l)) + '</option>';
+            }).join('')
+          + '</select></label>'
+          + '<button type="button" id="ml-clear">Show this site\u2019s league</button>'
+          + '<span class="ml-msg" id="ml-msg"></span>';
+        document.getElementById('ml-pick').addEventListener('change',function(){
+          var want=this.value;
+          var chosen=SYNCED.filter(function(l){
+            return String(l.league_id)===String(want);})[0];
+          if(!chosen) return;
+          save({id:chosen.league_id, name:leagueLabel(chosen)});
+          // Pages that render from the stored key read it once, at load.
+          if(owns) load(chosen.league_id); else location.reload();
+        });
+      } else {
+        bar.innerHTML='Showing <span class="ml-who"></span> '
+          +'<button type="button" id="ml-clear">Show this site\u2019s league</button>'
+          +'<span class="ml-msg" id="ml-msg"></span>';
+        bar.querySelector('.ml-who').textContent=label;
+      }
+      document.getElementById('ml-clear').addEventListener('click',restore);
+      return;
+    }
+    bar.innerHTML='<span class="ml-label">Your Sleeper league</span>'
+      +'<input id="ml-id" type="text" inputmode="numeric" '
+      +'placeholder="league id" aria-label="Sleeper league id">'
+      +'<button type="button" id="ml-go">Show mine</button>'
+      +'<span class="ml-msg" id="ml-msg"></span>';
+    document.getElementById('ml-go').addEventListener('click',function(){
+      var v=(document.getElementById('ml-id').value||'').trim();
+      if(!/^[0-9]{6,32}$/.test(v)){
+        msg('A Sleeper league id is the long number in the league\u2019s web address.','err');
+        return;
+      }
+      this.disabled=true;
+      var btn=this;
+      load(v).then(function(){ btn.disabled=false; });
+    });
+  }
+
+  var have=saved();
+  if(have&&have.id){ draw(have.name); load(have.id,true); }
+  else draw(null);
+
+  // A league synced to the account wins over whatever this browser remembers,
+  // so a second device shows the same thing without being told again.
+  fetch('/api/leagues',{credentials:'same-origin'})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){
+      if(!d||!d.leagues) return;
+      // One entry per league, not one per season.
+      SYNCED=leagues(d.leagues.filter(function(l){return l.provider==='sleeper';}))
+        .map(function(g){ return g.current; });
+      if(!SYNCED.length) return;
+      if(have&&have.site) return;          // they asked for this site's league
+      // Keep showing whatever this browser already had, if the account knows
+      // it; otherwise the first synced league.
+      var chosen=SYNCED.filter(function(l){
+        return have&&String(l.league_id)===String(have.id);})[0] || SYNCED[0];
+      if(!have||String(have.id)!==String(chosen.league_id)){
+        draw(leagueLabel(chosen));
+        load(chosen.league_id,true);
+      } else {
+        draw(leagueLabel(chosen));               // redraw, now with the picker
+      }
+    })
+    // A network failure here is expected (signed out, or no accounts on this
+    // deploy) and says nothing. A TypeError is a bug in the lines above, and
+    // swallowing it cost an afternoon - so it goes to the console.
+    .catch(function(e){
+      if(e && e.name !== 'TypeError') return;
+      if(window.console) console.error('[my-league]', e);
+    });
+})();
+</script>{% endraw %}{% raw %}<script>
+(function(){
+  var host=document.getElementById('hi-host');
+  if(!host||!window.GSL) return;
+  var have=GSL.saved();
+  if(!have||!have.id||have.site){
+    host.innerHTML='<p class="hi-none">Pick a league above, or '
+      +'<a href="/fantasy/sync/">sync yours</a>, to see its history.</p>';
+    return;
+  }
+
+  var API='https://api.sleeper.app/v1';
+  var MAX_SEASONS=12;
+  function get(path){
+    return fetch(API+path).then(function(r){return r.ok?r.json():null;})
+      .catch(function(){return null;});
+  }
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+  }
+  function pts(s){
+    // Sleeper keeps points as an integer and its decimal part, separately.
+    return (s.fpts||0)+((s.fpts_decimal||0)/100);
+  }
+  function against(s){
+    return (s.fpts_against||0)+((s.fpts_against_decimal||0)/100);
+  }
+
+  /** Every season of this league, newest first. */
+  function chain(id){
+    var out=[], seen={};
+    function step(lid){
+      if(!lid||seen[lid]||out.length>=MAX_SEASONS) return Promise.resolve(out);
+      seen[lid]=1;
+      return get('/league/'+lid).then(function(d){
+        if(!d||!d.league_id) return out;
+        out.push(d);
+        return step(d.previous_league_id);
+      });
+    }
+    return step(id);
+  }
+
+  /** One season: who was in it, what they did, and who won. */
+  function season(lg){
+    return Promise.all([
+      get('/league/'+lg.league_id+'/rosters'),
+      get('/league/'+lg.league_id+'/users'),
+      get('/league/'+lg.league_id+'/winners_bracket')
+    ]).then(function(o){
+      var rosters=o[0]||[], users=o[1]||[], bracket=o[2]||[];
+      var who={};
+      users.forEach(function(u){
+        who[u.user_id]={team:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',
+                        manager:u.display_name||''};
+      });
+      // The championship game is the one placing first; a season still being
+      // played has no bracket at all.
+      var final=bracket.filter(function(m){return m.p===1;})[0];
+      var championRoster=final?final.w:null;
+      var teams=rosters.map(function(r){
+        var s=r.settings||{};
+        return {roster_id:r.roster_id, owner:r.owner_id,
+                team:(who[r.owner_id]||{}).team||('Roster '+r.roster_id),
+                manager:(who[r.owner_id]||{}).manager||'',
+                wins:s.wins||0, losses:s.losses||0, ties:s.ties||0,
+                pf:pts(s), pa:against(s),
+                champion:r.roster_id===championRoster};
+      });
+      return {season:lg.season, league_id:lg.league_id, name:lg.name,
+              status:lg.status, teams:teams,
+              playoff_start:(lg.settings||{}).playoff_week_start||15};
+    });
+  }
+
+  function recordOf(t){
+    return t.wins+'-'+t.losses+(t.ties?'-'+t.ties:'');
+  }
+
+  function renderChampions(seasons){
+    var done=seasons.filter(function(s){
+      return s.teams.some(function(t){return t.champion;});});
+    if(!done.length){
+      return '<h2>Champions</h2><p class="hi-none">No season has finished yet.</p>';
+    }
+    var rows=done.map(function(s){
+      var c=s.teams.filter(function(t){return t.champion;})[0];
+      return '<tr><td class="n">'+esc(s.season)+'</td>'
+        +'<td><span class="hi-crown">&#9818;</span> '+esc(c.team)
+        +'<span class="hi-sub">'+esc(c.manager)+'</span></td>'
+        +'<td class="n">'+recordOf(c)+'</td>'
+        +'<td class="n">'+c.pf.toFixed(1)+'</td></tr>';
+    }).join('');
+    return '<h2>Champions</h2><table class="hi-t"><thead><tr><th>Season</th>'
+      +'<th>Winner</th><th>Record</th><th>Points</th></tr></thead><tbody>'
+      +rows+'</tbody></table>';
+  }
+
+  function renderSeasons(seasons){
+    var html='<h2>Season by season</h2>';
+    seasons.forEach(function(s){
+      var teams=s.teams.slice().sort(function(a,b){
+        return (b.wins-a.wins) || (b.pf-a.pf);});
+      html+='<h3 style="margin:14px 0 4px;font-size:15px">'+esc(s.season)
+        +(s.status&&s.status!=='complete'?' <span class="hi-sub">in progress</span>':'')
+        +'</h3><table class="hi-t"><thead><tr><th>Team</th><th>Record</th>'
+        +'<th>Points for</th><th>Points against</th></tr></thead><tbody>';
+      teams.forEach(function(t){
+        html+='<tr'+(t.champion?' class="me"':'')+'><td>'
+          +(t.champion?'<span class="hi-crown">&#9818;</span> ':'')+esc(t.team)
+          +'<span class="hi-sub">'+esc(t.manager)+'</span></td>'
+          +'<td class="n">'+recordOf(t)+'</td>'
+          +'<td class="n">'+t.pf.toFixed(1)+'</td>'
+          +'<td class="n">'+t.pa.toFixed(1)+'</td></tr>';
+      });
+      html+='</tbody></table>';
+    });
+    return html;
+  }
+
+  function renderAllTime(seasons){
+    var by={};
+    seasons.forEach(function(s){
+      s.teams.forEach(function(t){
+        if(!t.owner) return;
+        var a=by[t.owner]=by[t.owner]||{team:t.team, manager:t.manager, wins:0,
+                                        losses:0, ties:0, pf:0, titles:0, seasons:0};
+        a.wins+=t.wins; a.losses+=t.losses; a.ties+=t.ties;
+        a.pf+=t.pf; a.seasons+=1;
+        if(t.champion) a.titles+=1;
+        // The name they go by now: seasons arrive newest first.
+        if(a.seasons===1){ a.team=t.team; a.manager=t.manager; }
+      });
+    });
+    var rows=Object.keys(by).map(function(k){return by[k];})
+      .sort(function(a,b){
+        return (b.titles-a.titles) || (b.wins-a.wins) || (b.pf-a.pf);});
+    if(!rows.length) return '';
+    return '<h2>All time</h2><table class="hi-t"><thead><tr><th>Manager</th>'
+      +'<th>Seasons</th><th>Titles</th><th>Record</th><th>Points</th></tr></thead><tbody>'
+      + rows.map(function(r){
+          return '<tr><td>'+esc(r.team)+'<span class="hi-sub">'+esc(r.manager)
+            +'</span></td><td class="n">'+r.seasons+'</td>'
+            +'<td class="n">'+(r.titles?'<span class="hi-crown">'+r.titles+'</span>':'0')
+            +'</td><td class="n">'+r.wins+'-'+r.losses+(r.ties?'-'+r.ties:'')+'</td>'
+            +'<td class="n">'+r.pf.toFixed(0)+'</td></tr>';
+        }).join('')
+      +'</tbody></table>';
+  }
+
+  /** Who played whom, every regular-season week of every season. */
+  function headToHead(seasons){
+    var jobs=[];
+    seasons.forEach(function(s){
+      var last=Math.max(1,(s.playoff_start||15)-1);
+      var owner={};
+      s.teams.forEach(function(t){ owner[t.roster_id]=t.owner; });
+      for(var w=1; w<=last; w++){
+        jobs.push(get('/league/'+s.league_id+'/matchups/'+w)
+          .then(function(rows){ return {rows:rows||[], owner:owner}; }));
+      }
+    });
+    return Promise.all(jobs).then(function(weeks){
+      var h2h={};
+      weeks.forEach(function(wk){
+        var by={};
+        wk.rows.forEach(function(r){
+          if(r.matchup_id==null) return;
+          (by[r.matchup_id]=by[r.matchup_id]||[]).push(r);
+        });
+        Object.keys(by).forEach(function(m){
+          var pair=by[m];
+          if(pair.length!==2) return;
+          var a=pair[0], b=pair[1];
+          var ao=wk.owner[a.roster_id], bo=wk.owner[b.roster_id];
+          if(!ao||!bo||ao===bo) return;
+          if((a.points||0)===(b.points||0)) return;       // a tie counts for neither
+          var win=(a.points||0)>(b.points||0)?ao:bo;
+          var lose=win===ao?bo:ao;
+          (h2h[win]=h2h[win]||{})[lose]=((h2h[win]||{})[lose]||0)+1;
+        });
+      });
+      return h2h;
+    });
+  }
+
+  function renderH2H(seasons, h2h){
+    var names={};
+    seasons.forEach(function(s){
+      s.teams.forEach(function(t){
+        if(t.owner && !names[t.owner]) names[t.owner]=t.manager||t.team;
+      });
+    });
+    var ids=Object.keys(names);
+    if(ids.length<2) return '';
+    ids.sort(function(a,b){ return names[a].toLowerCase()<names[b].toLowerCase()?-1:1; });
+    var html='<h2>Head to head</h2><p class="hi-note">Regular-season meetings, '
+      +'every season. Read across: wins for the manager on the left.</p>'
+      +'<div class="hi-scroll"><table class="hi-t hi-h2h"><thead><tr><th class="row"></th>'
+      + ids.map(function(i){return '<th>'+esc(names[i].slice(0,10))+'</th>';}).join('')
+      +'</tr></thead><tbody>';
+    ids.forEach(function(a){
+      html+='<tr><td class="row">'+esc(names[a])+'</td>';
+      ids.forEach(function(b){
+        if(a===b){ html+='<td class="self">&middot;</td>'; return; }
+        var w=((h2h[a]||{})[b])||0, l=((h2h[b]||{})[a])||0;
+        html+='<td>'+(w+l
+          ? '<span class="'+(w>l?'hi-w':w<l?'hi-l':'')+'">'+w+'&#8211;'+l+'</span>'
+          : '<span class="hi-load">&mdash;</span>')+'</td>';
+      });
+      html+='</tr>';
+    });
+    return html+'</tbody></table></div>';
+  }
+
+  host.innerHTML='<p class="hi-load">Reading '+esc(have.name||'your league')+'\u2026</p>';
+  chain(have.id)
+    .then(function(lgs){
+      if(!lgs.length) throw new Error('none');
+      return Promise.all(lgs.map(season));
+    })
+    .then(function(seasons){
+      var span=seasons.length>1
+        ? seasons[seasons.length-1].season+'\u2013'+seasons[0].season
+        : seasons[0].season;
+      var head='<p class="hi-note"><strong>'+esc(seasons[0].name||'This league')
+        +'</strong> &middot; '+seasons.length+' season'+(seasons.length===1?'':'s')
+        +' &middot; '+esc(span)+'. Records are Sleeper\u2019s own: a league playing '
+        +'a weekly median scores two results a week, which is why a fourteen-week '
+        +'season can show a 28-game record.</p>';
+      host.innerHTML=head+renderChampions(seasons)+renderAllTime(seasons)
+        +'<div id="hi-h2h"><h2>Head to head</h2>'
+        +'<p class="hi-load">Reading every week of every season\u2026</p></div>'
+        +renderSeasons(seasons);
+
+      // The expensive half, once the rest is on screen.
+      headToHead(seasons).then(function(h2h){
+        var slot=document.getElementById('hi-h2h');
+        if(slot) slot.innerHTML=renderH2H(seasons, h2h)
+          || '<h2>Head to head</h2><p class="hi-none">Not enough played yet.</p>';
+      });
+    })
+    .catch(function(){
+      host.innerHTML='<p class="hi-none">Could not read that league from Sleeper.</p>';
+    });
+})();
+</script>{% endraw %}

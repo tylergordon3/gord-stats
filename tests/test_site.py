@@ -462,3 +462,43 @@ def test_every_keyed_season_has_its_data_file():
     for code in LEAGUE_IDS:
         assert (ROOT / "data" / "fantasy" / "season" / f"{code}.json").exists(), \
             f"no season file for {code}"
+
+
+# --------------------------------------------------------------------------- #
+# League history
+# --------------------------------------------------------------------------- #
+
+MY_HISTORY = (ROOT / "src" / "gordstats" / "my_history.py").read_text()
+
+
+def test_history_reads_the_readers_league_not_this_one():
+    doc = (DOCS / "fantasy" / "history" / "index.html").read_text()
+    assert "hi-host" in doc and "previous_league_id" in doc, \
+        "the history page does not walk the reader's own seasons"
+    assert "ml-bar" in doc and "function restore()" in doc, \
+        "the history page has no league control"
+
+
+def test_managers_are_tracked_by_owner_not_by_team_name():
+    """People rename their team most years - in this league 2023's "Matt" is
+    later "padgett". Aggregating on the name would split one manager into
+    several and hand out their titles twice."""
+    assert "t.owner" in MY_HISTORY
+    assert "owner_id" in MY_HISTORY
+
+
+def test_the_champion_is_the_winner_of_the_placing_game():
+    """Sleeper's bracket marks the championship game with p == 1. Taking the
+    last round's winner instead picks up third-place games."""
+    assert "m.p===1" in MY_HISTORY.replace(" ", "")
+
+
+def test_a_season_still_being_played_has_no_champion():
+    """The live season is in the chain and has no bracket; it must not crown
+    anybody, and must not drop out of the season-by-season table either."""
+    assert "championRoster=final?final.w:null" in MY_HISTORY.replace(" ", "")
+
+
+def test_the_history_walk_is_bounded():
+    """Same reason as the server's: these ids come from an API."""
+    assert "MAX_SEASONS" in MY_HISTORY and "seen[lid]" in MY_HISTORY

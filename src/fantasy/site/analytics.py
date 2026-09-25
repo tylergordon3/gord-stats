@@ -14,6 +14,9 @@ from gordstats import hub
 from gordstats.frontmatter import add_front_matter
 
 CARDS = [
+    ("/fantasy/history/", "&#127942;", "League History",
+     "Champions, season by season and all-time head-to-head - for your own "
+     "league once you have synced one, read live from Sleeper."),
     ("/fantasy/power/", "&#9889;", "Power Rankings",
      "Every roster played through the rest of the season ten thousand times: "
      "who is actually good, rather than who has had the schedule."),
