@@ -7449,7 +7449,7 @@
           "id": 25079,
           "home": "CON",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-24"
@@ -7460,7 +7460,7 @@
           "id": 25079,
           "home": "CON",
           "away": "TOR",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-24"
@@ -7493,7 +7493,7 @@
           "id": 25081,
           "home": "MIN",
           "away": "IND",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-24"
@@ -7504,7 +7504,7 @@
           "id": 25081,
           "home": "MIN",
           "away": "IND",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-24"

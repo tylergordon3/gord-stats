@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-24T21:00:56.700505-04:00",
+ "updated": "2026-09-24T21:10:58.344633-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -38779,6 +38779,115 @@
       "Jade Melbourne",
       "G",
       12.0
+     ]
+    ]
+   }
+  },
+  "401857215": {
+   "date": "2026-09-24",
+   "allowed": {
+    "TOR": {
+     "G": 98.0,
+     "FC": 77.0
+    },
+    "CON": {
+     "G": 83.0,
+     "FC": 74.0
+    }
+   },
+   "players": {
+    "TOR": [
+     [
+      "Isabelle Harrison",
+      "FC",
+      31.0
+     ],
+     [
+      "Laura Juskaite",
+      "FC",
+      33.0
+     ],
+     [
+      "Kia Nurse",
+      "G",
+      15.0
+     ],
+     [
+      "Julie Allemand",
+      "G",
+      12.0
+     ],
+     [
+      "Kiki Rice",
+      "G",
+      42.0
+     ],
+     [
+      "Teonni Key",
+      "FC",
+      10.0
+     ],
+     [
+      "Zaay Green",
+      "G",
+      9.0
+     ],
+     [
+      "Ornella Bankole",
+      "G",
+      5.0
+     ]
+    ],
+    "CON": [
+     [
+      "Aaliyah Edwards",
+      "FC",
+      23.0
+     ],
+     [
+      "Diamond Miller",
+      "FC",
+      7.0
+     ],
+     [
+      "Raegan Beers",
+      "FC",
+      30.0
+     ],
+     [
+      "Charlisse Leger-Walker",
+      "G",
+      10.0
+     ],
+     [
+      "Leila Lacan",
+      "G",
+      8.0
+     ],
+     [
+      "Nell Angloma",
+      "FC",
+      17.0
+     ],
+     [
+      "Rayah Marshall",
+      "FC",
+      0.0
+     ],
+     [
+      "Hailey Van Lith",
+      "G",
+      31.0
+     ],
+     [
+      "Gianna Kneepkens",
+      "G",
+      23.0
+     ],
+     [
+      "Ashlon Jackson",
+      "G",
+      26.0
      ]
     ]
    }
