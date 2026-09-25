@@ -20,7 +20,8 @@ from sleeper_wrapper import Drafts, League
 from fantasy import archive, stats
 from fantasy.league import weekly_points
 from fantasy.config import (  # noqa: F401  (PLAYABLE_WEEKS re-exported for call sites)
-    DATA_DIR, DRAFT_IDS, FANTASY_REG_WEEKS, LEAGUE_IDS, PLAYABLE_WEEKS, SEASON_YEAR,
+    DATA_DIR, DRAFT_IDS, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS,
+    PLAYABLE_WEEKS, SEASON_YEAR, UPCOMING_SEASON,
 )
 
 REG_WEEKS = FANTASY_REG_WEEKS
@@ -68,15 +69,31 @@ def _final_rank_missed_szn(final_ranks, position, pts):
 
 
 @lru_cache(maxsize=None)
+def _season_rosters(season_str: str) -> pd.DataFrame:
+    """The season's rosters, fetched once a run. Callers must not mutate.
+
+    `_build` and `_pickup_detail` each used to fetch this for themselves, so a
+    single games-missed run asked Sleeper for the same league, users, rosters
+    and draft picks twice - eight calls where four would do, for every season
+    on every run.
+    """
+    return _rosters(League(LEAGUE_IDS[season_str]))
+
+
+@lru_cache(maxsize=None)
+def _season_picks(season_str: str) -> tuple:
+    """The season's draft picks, fetched once a run. See `_season_rosters`."""
+    return tuple(Drafts(DRAFT_IDS[season_str]).get_all_picks())
+
+
+@lru_cache(maxsize=None)
 def _build(season_str: str, keep_streamers: bool = False):
     """Return (picks df, final_ranks) for the season. Cached; callers must not mutate.
 
     K / team-defense picks are dropped by default (the value pages judge skill
     positions only); keep_streamers=True keeps them for full-draft views.
     """
-    league = League(LEAGUE_IDS[season_str])
-    draft = Drafts(DRAFT_IDS[season_str])
-    rosters = _rosters(league)
+    rosters = _season_rosters(season_str)
 
     players = weekly_points.build(SEASON_YEAR[season_str])
     players = players[players["week"] <= REG_WEEKS]
@@ -90,7 +107,7 @@ def _build(season_str: str, keep_streamers: bool = False):
     final_ranks = final_ranks.sort_values("overall")
     final_ranks["pos_rank"] = final_ranks.groupby("pos")["tot_pts"].rank(ascending=False).astype(int)
 
-    picks = pd.DataFrame(draft.get_all_picks())
+    picks = pd.DataFrame(list(_season_picks(season_str)))
     # Drop metadata fields that collide with pick columns (esp. player_id) or add noise.
     meta = picks["metadata"].apply(pd.Series).drop(
         columns=["team_abbr", "team_changed_at", "sport", "news_updated", "years_exp",
@@ -172,8 +189,8 @@ def _pickup_detail(season_str: str) -> pd.DataFrame:
         return pd.DataFrame()
     tx = pd.read_json(path)
 
-    drafted_ids = {str(p["player_id"]) for p in Drafts(DRAFT_IDS[season_str]).get_all_picks()}
-    rosters = _rosters(League(LEAGUE_IDS[season_str]))
+    drafted_ids = {str(p["player_id"]) for p in _season_picks(season_str)}
+    rosters = _season_rosters(season_str)
     team_by_roster = dict(zip(rosters["roster_id"], rosters["team_name"]))
 
     players = weekly_points.build(SEASON_YEAR[season_str])
@@ -223,9 +240,35 @@ def _pickup_detail(season_str: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def save_games_missed(season_str: str):
+#: The statistics this writes. Both have to be present for a season to count
+#: as already done.
+GAMES_MISSED_STATS = ("missing_df", "injury_detail_df")
+
+
+def is_finished(season_str: str) -> bool:
+    """True for a season that is over, so its figures can never change again."""
+    return FORMAL_SEASON[season_str] != UPCOMING_SEASON
+
+
+def save_games_missed(season_str: str, force: bool = False):
     """Archive per-team games missed by drafted players and substantial pickups
-    (feeds the homepage injury section)."""
+    (feeds the homepage injury section).
+
+    A finished season is written once and skipped after. Its inputs - a final
+    draft, final rosters, a played-out schedule - stopped changing when the
+    season did, so re-deriving them four times a day bought nothing and cost a
+    great deal: this step was re-fetching three dead seasons from Sleeper on
+    every run, and because api.sleeper.app drops the occasional TLS handshake,
+    it took the whole fantasy section down with it in 6 of 29 runs in the week
+    to 2026-09-25 - five of those six on a season that ended months ago.
+
+    `force` re-derives anyway, for when the calculation itself has changed.
+    """
+    if not force and is_finished(season_str) \
+            and archive.has_statistic(season_str, *GAMES_MISSED_STATS):
+        print(f"[games-missed] {season_str} is finished and already archived")
+        return
+
     df, _ = _build(season_str)
     detail = df[["Owner", "roster_id", "Name", "Pos.", "round", "Pick",
                  "Pts.", "Games Played", "Med PPG"]].copy()

@@ -252,7 +252,8 @@ def run(plan: Plan) -> int:
         from fantasy.site import draft
         for season in plan.seasons:
             _step(f"games-missed [{season}]",
-                  lambda s=season: draft.save_games_missed(s), results)
+                  lambda s=season: draft.save_games_missed(s, force=plan.force_refresh),
+                  results)
 
     for slug, _, fn in plan.pages:
         _step(f"page: {slug}", fn, results)
