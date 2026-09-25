@@ -12,7 +12,7 @@ from datetime import datetime
 import pytest
 import yaml
 
-from conftest import DOCS, ROOT
+from conftest import DOCS, needs_built_site, ROOT
 
 NAV = yaml.safe_load((DOCS / "_data" / "nav.yml").read_text())
 LAYOUT = (DOCS / "_layouts" / "default.html").read_text()
@@ -40,6 +40,7 @@ def _resolves(url: str) -> bool:
 
 
 @pytest.mark.parametrize("section,url", list(_targets()))
+@needs_built_site
 def test_nav_links_point_at_real_pages(section, url):
     assert _resolves(url), f"nav.yml [{section}] -> {url} has no page behind it"
 
@@ -54,11 +55,13 @@ def test_no_script_rewrites_nav_hrefs():
         "something in the layout is rewriting nav hrefs at runtime"
 
 
+@needs_built_site
 def test_every_section_in_the_bar_has_a_landing_page():
     for item in NAV["sections"]:
         assert _resolves(item["url"]), f"section {item['title']} -> {item['url']} is missing"
 
 
+@needs_built_site
 def test_sub_nav_sections_match_the_bar():
     """A section listed in the bar, or a league under Fantasy, should have a
     sub-nav key, and vice versa."""
@@ -85,7 +88,12 @@ def test_retired_draft_pages_are_gone_and_redirected():
 # Countdown clocks
 # --------------------------------------------------------------------------- #
 
-COUNTDOWNS = yaml.safe_load((DOCS / "_data" / "countdowns.yml").read_text())
+# Generated, so it may not be here at all. Empty rather than absent, because
+# this is also read at collection time by a parametrize - which would turn a
+# fresh clone into a collection error instead of a skip.
+def _countdowns():
+    path = DOCS / "_data" / "countdowns.yml"
+    return yaml.safe_load(path.read_text()) if path.exists() else {}
 _COUNTDOWN_KEY = re.compile(r'include\s+countdown\.html\s+key="([^"]+)"')
 
 
@@ -107,14 +115,16 @@ def _countdown_uses():
             yield path.relative_to(ROOT), key
 
 
+@needs_built_site
 def test_every_countdown_on_a_page_has_data_behind_it():
     """A key with no entry renders nothing at all — the include is silent about
     it, so the clock just quietly stops appearing."""
     missing = [f"{where} -> {key!r}" for where, key in _countdown_uses()
-               if key not in COUNTDOWNS]
+               if key not in _countdowns()]
     assert not missing, ("countdowns.yml has no entry for:\n  " + "\n  ".join(missing))
 
 
+@needs_built_site
 def test_the_homepage_carries_both_countdowns():
     """They live inside the preview boxes; two clocks on one page is the case
     the old per-page includes could not do, since each hardcoded id="days"."""
@@ -122,9 +132,9 @@ def test_the_homepage_carries_both_countdowns():
     assert "cbb" in keys and "fantasy" in keys, f"homepage countdowns: {keys}"
 
 
-@pytest.mark.parametrize("key", sorted(COUNTDOWNS))
+@pytest.mark.parametrize("key", sorted(_countdowns()))
 def test_countdown_entries_are_complete_and_parseable(key):
-    entry = COUNTDOWNS[key]
+    entry = _countdowns()[key]
     for field in ("eyebrow", "title", "target", "expired"):
         assert entry.get(field), f"countdowns.yml [{key}] is missing {field}"
     # Naive on purpose: the browser reads it as the reader's local time, so a
@@ -197,6 +207,7 @@ def _usage_table(path):
 
 
 @pytest.mark.parametrize("path", USAGE_PAGES)
+@needs_built_site
 def test_usage_rows_have_one_cell_per_column(path):
     ths, rows = _usage_table(path)
     for i, row in enumerate(rows):
@@ -205,6 +216,7 @@ def test_usage_rows_have_one_cell_per_column(path):
 
 
 @pytest.mark.parametrize("path", USAGE_PAGES)
+@needs_built_site
 def test_usage_headers_hide_with_their_column(path):
     """Every class that hides a cell - the position views and the two the phone
     layout drops - has to be on the header too.
@@ -243,6 +255,7 @@ def test_both_fantasy_leagues_offer_the_same_tabs():
     assert nfl == cfb, f"tab keys differ: NFL {nfl} vs CFB {cfb}"
 
 
+@needs_built_site
 def test_pages_behind_a_hub_are_still_reachable():
     """Moving a page out of the sub-nav and behind Analytics must not strand
     it: every url a chip `covers` has to exist, and be linked from the hub."""
@@ -301,6 +314,7 @@ def test_only_ownership_is_re_pointed():
         assert cell not in MY_LEAGUE, f"the override touches {cell}"
 
 
+@needs_built_site
 def test_usage_rows_carry_the_player_id_the_override_needs():
     doc = (DOCS / "fantasy" / "usage" / "index.html").read_text()
     body = re.search(r"<tbody>(.*?)</tbody>", doc, re.S).group(1)
@@ -316,6 +330,7 @@ def test_usage_rows_carry_the_player_id_the_override_needs():
 MY_MATCHUPS = (ROOT / "src" / "gordstats" / "my_matchups.py").read_text()
 
 
+@needs_built_site
 def test_the_files_the_browser_needs_are_built():
     """Both are fetched at view time, so a missing one is a silently empty
     scoreboard rather than a build error."""
@@ -403,6 +418,7 @@ LEAGUE_PAGES = {
 
 
 @pytest.mark.parametrize("name,path", sorted(LEAGUE_PAGES.items()))
+@needs_built_site
 def test_the_league_control_has_its_script_on_every_page(name, path):
     """The container and the behaviour are two separate things to wire, and
     wiring only the first leaves a control that renders nothing.
@@ -418,6 +434,7 @@ def test_the_league_control_has_its_script_on_every_page(name, path):
 
 
 @pytest.mark.parametrize("name,path", sorted(LEAGUE_PAGES.items()))
+@needs_built_site
 def test_a_reader_in_two_leagues_can_reach_both(name, path):
     """Picking the first synced league and ignoring the rest is invisible until
     somebody syncs a second one - which is the normal case for anyone in two."""
@@ -474,6 +491,7 @@ def test_every_keyed_season_has_its_data_file():
 MY_HISTORY = (ROOT / "src" / "gordstats" / "my_history.py").read_text()
 
 
+@needs_built_site
 def test_history_reads_the_readers_league_not_this_one():
     doc = (DOCS / "fantasy" / "history" / "index.html").read_text()
     assert "hi-host" in doc and "previous_league_id" in doc, \
@@ -514,6 +532,7 @@ def test_the_history_walk_is_bounded():
 MY_WAIVERS = (ROOT / "src" / "gordstats" / "my_waivers.py").read_text()
 
 
+@needs_built_site
 def test_waivers_reads_the_readers_league():
     doc = (DOCS / "fantasy" / "waivers" / "index.html").read_text()
     assert "wv-host" in doc and "previous_league_id" in doc
@@ -527,6 +546,7 @@ def test_failed_claims_are_kept():
     assert "t.status!=='complete'" in MY_WAIVERS.replace(" ", "")
 
 
+@needs_built_site
 def test_defences_resolve_like_players():
     """Sleeper keys a defence by team code ("GB") where everyone else is a
     number, so a naive lookup prints "GB" in the log."""
@@ -583,12 +603,14 @@ def test_draft_value_uses_the_leagues_own_scoring():
 # The profile page
 # --------------------------------------------------------------------------- #
 
+@needs_built_site
 def test_the_profile_page_gathers_the_account_things():
     doc = (DOCS / "profile" / "index.html").read_text()
     for want in ("pf-who", "pf-favs", "ls-user-go"):
         assert want in doc, f"the profile page has no {want}"
 
 
+@needs_built_site
 def test_followed_teams_have_names_not_keys():
     """They are stored as sport:id, which is no use to read. The names come off
     the stars the rest of the site has already rendered."""

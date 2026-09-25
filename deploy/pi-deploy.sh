@@ -152,9 +152,13 @@ main() {
   ########################################
   # COMMIT GENERATED DATA
   ########################################
-  # docs/_site is gitignored, so this records the refreshed source data and
-  # pages, not the build output. Publishing already happened above — this is
-  # so the laptop can pull down what the Pi generated.
+  # Publishing already happened above, with wrangler — git is not in the
+  # publish path. What is recorded here is the refreshed *data*: the archives
+  # that are the only record of what the page said, and the caches the next
+  # build reads. The generated pages and charts are gitignored, because
+  # committing them cost about 100 MB of history a month (one 4 MB page
+  # rewritten 422 times in 30 days) purely so the laptop could read them.
+  # The laptop uses `pi pull-site` for that instead.
   git add -A docs data
 
   if git diff --cached --quiet; then

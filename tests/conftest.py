@@ -19,6 +19,19 @@ CSS = DOCS / "assets" / "css" / "custom.css"
 
 sys.path.insert(0, str(SRC))
 
+# The generated pages are no longer committed (see .gitignore): the Pi rebuilds
+# them on every run and uploads them straight to Cloudflare, so keeping ~100 MB
+# of history a month so this laptop could read them was the wrong trade. Tests
+# that check the *built* site therefore need a build present, and say so rather
+# than failing with a confusing missing-file error on a fresh clone.
+SITE_BUILT = (DOCS / "index.html").exists()
+
+needs_built_site = pytest.mark.skipif(
+    not SITE_BUILT,
+    reason="no built site here - run `pi pull-site` to copy the Pi's, or "
+           "rebuild locally",
+)
+
 
 @pytest.fixture(scope="session")
 def css_text() -> str:
