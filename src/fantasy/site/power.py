@@ -35,6 +35,7 @@ from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
 from gordstats import charts, palette                          # noqa: E402
+from gordstats import my_league, my_league_data, my_power       # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
 
 _GRID = [styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE]
@@ -52,6 +53,7 @@ CONTEXT = palette.CONTEXT
 # table sits under the live rankings: frozen on draft week, it is the fixed
 # point every later rating is read against. Only Method folds away.
 SECTIONS = [
+    ("mine", "Your League", "Yours", False),
     ("rankings", "Power Rankings", "Rankings", False),
     ("draft-consensus", "Draft Rankings (frozen)", "Draft", False),
     ("season", "Through the Season", "Season", False),
@@ -664,11 +666,17 @@ def body() -> str:
         table, board, rosters = power.rankings(UPCOMING_YEAR)
     except Exception as exc:
         print(f"[power] no rankings yet: {exc}")
-        return PRE_DRAFT + layout.details(
-            "Method &mdash; what this will measure, and how well it works",
-            _method_section(), open=True, anchor="method")
+        return (PRE_DRAFT + my_league.bar()
+                + f"<section id='mine' class='pw-section'><h2>Your League</h2>"
+                + my_power.section() + "</section>"
+                + layout.details(
+                    "Method &mdash; what this will measure, and how well it works",
+                    _method_section(), open=True, anchor="method")
+                + my_league_data.JS + my_league.JS
+                + my_power.SIM_JS + my_power.JS)
 
     content = {
+        "mine": my_power.section(),
         "rankings": _rankings_section(table),
         "draft-consensus": draft_consensus_section(),
         "season": _season_section(),
@@ -676,11 +684,11 @@ def body() -> str:
         "method": _method_section(),
     }
     nav = layout.section_nav([(a, label) for a, _, label, _ in SECTIONS])
-    return INTRO + nav + "".join(
+    return INTRO + my_league.bar() + nav + "".join(
         layout.details(summary, content[anchor], anchor=anchor) if folds
         else f"<section id='{anchor}' class='pw-section'><h2>{summary}</h2>{content[anchor]}</section>"
         for anchor, summary, _, folds in SECTIONS if content[anchor]
-    )
+    ) + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.JS
 
 
 def generate():

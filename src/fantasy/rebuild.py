@@ -30,6 +30,9 @@ PAGES = [
     ("power",        "Power Rankings (post-draft)",        lambda: _gen("power")),
     ("players",      "Player index + week projections (for your own league)",
                                                           lambda: _gen("players_index")),
+    # After "players": the board reads the week's projections for catch rates.
+    ("board",        "Season projection board (ranks your own league)",
+                                                          lambda: _gen("season_board")),
     ("matchups",     "Weekly Matchups (rosters, projections, points)", lambda: _gen("matchups")),
     ("roster",       "Team Dashboard (start/sit, slot order, waiver adds)", lambda: _gen("roster")),
     ("usage",        "Usage (snap, carry and target share)", lambda: _gen("usage")),
