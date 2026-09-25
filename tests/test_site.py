@@ -329,8 +329,8 @@ def test_the_files_the_browser_needs_are_built():
     # Three scoring bases and the player's team, in that order: a half-PPR
     # league reads the second number, and reading the wrong one is silent.
     for pid, row in list(week["proj"].items())[:50]:
-        assert len(row) == 4, f"{pid} does not carry three bases and a team"
-        ppr, half, std, team = row
+        assert len(row) == 5, f"{pid} does not carry three bases, a team and a status"
+        ppr, half, std, team, injury = row
         assert ppr >= half >= std, f"{pid}: the bases are out of order"
 
 

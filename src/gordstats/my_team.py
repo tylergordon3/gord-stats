@@ -159,6 +159,9 @@ VIEW_JS = """{% raw %}<script>
   if(!have||!have.id||have.site) return;        // the built league is the default
 
   var BENCH='BN', RESERVE=['IR','IL','TAXI'];
+  var ADDS_SHOWN=8, MIN_GAIN=0.5;   // the built page's numbers
+  // Sleeper's own words for a player who will not play.
+  var OUT={'Out':1,'Doubtful':1,'IR':1,'PUP':1,'NA':1,'Sus':1,'DNR':1,'COV':1};
   var FLEX='FLEX', FLEX_POS=['RB','WR','TE'];
   // Sleeper's other flex names, mapped onto the one the planner knows.
   var FLEXLIKE={'FLEX':['RB','WR','TE'],'WRRB_FLEX':['RB','WR'],
@@ -195,6 +198,58 @@ VIEW_JS = """{% raw %}<script>
     });
     (roster.reserve||[]).forEach(function(p){ out[String(p)]='IR'; });
     return out;
+  }
+
+  /** Free agents who project past someone this roster would start.
+   *
+   *  Same rule as the built page: each is set against the weakest unlocked
+   *  starter in a slot he could take, and the gain is what the lineup total
+   *  would move by. A player on a bye, already playing, or ruled out is not an
+   *  add - which is why the injury status ships with the projections.
+   */
+  function adds(lg, wk, index, players, out, proj, kick, now, conf){
+    var starters=players.filter(function(p){
+      return out.start.indexOf(p.id)>=0 && kick[p.id]!=null && kick[p.id]>now;
+    });
+    if(!starters.length) return '';
+
+    var found=[];
+    for(var pid in wk.proj){
+      if(lg.held[pid]) continue;                       // somebody in this league has him
+      var row=wk.proj[pid];
+      if(OUT[row[4]]) continue;
+      if(kick[pid]==null || kick[pid]<=now) continue;  // bye, or already playing
+      var value=proj[pid];
+      if(!value || value<=0) continue;
+      var meta=index[pid]; if(!meta) continue;
+      var pos=meta[1];
+      var rivals=starters.filter(function(s){
+        return s.pos===pos
+          || (out.slot[s.id]===conf.flex && conf.positions.indexOf(pos)>=0);
+      });
+      if(!rivals.length) continue;
+      var worst=rivals.reduce(function(a,b){
+        return (proj[a.id]||0)<=(proj[b.id]||0)?a:b;});
+      var gain=value-(proj[worst.id]||0);
+      if(gain>=MIN_GAIN) found.push({pid:pid, name:meta[0], pos:pos, value:value,
+                                     worst:worst, gain:gain});
+    }
+    if(!found.length){
+      return '<h2>Waiver adds</h2><p class="mt-none">Nobody unrostered in your '
+        + 'league projects to outscore a starter this week.</p>';
+    }
+    found.sort(function(a,b){ return b.gain-a.gain; });
+
+    var html='<h2>Waiver adds</h2><table class="mt-t"><thead><tr><th>Add</th>'
+      +'<th style="text-align:right">Proj</th><th>Would start over</th>'
+      +'<th style="text-align:right">Gain</th></tr></thead><tbody>';
+    found.slice(0, ADDS_SHOWN).forEach(function(f){
+      html+='<tr><td class="nm">'+esc(f.name)+'<span class="mt-pos">'+esc(f.pos)
+        +'</span></td><td class="n">'+num(f.value)+'</td>'
+        +'<td>'+esc(f.worst.name)+' <span class="mt-pos">'+num(proj[f.worst.id])+'</span></td>'
+        +'<td class="n" style="color:#15803d">+'+num(f.gain)+'</td></tr>';
+    });
+    return html+'</tbody></table>';
   }
 
   function render(lg, wk, index, rosterId){
@@ -259,7 +314,9 @@ VIEW_JS = """{% raw %}<script>
         +'<td class="n">'+num(proj[p.id])+'</td>'
         +'<td class="mt-slot">'+(moved?esc(p.slot):'')+'</td></tr>';
     });
-    host.innerHTML=html+'</tbody></table>'
+    html+='</tbody></table>';
+    html+=adds(lg, wk, index, players, out, proj, kick, now, conf);
+    host.innerHTML=html
       +'<p class="mt-note">Scoring read from your league: <b>'+esc(lg.basis.name)+'</b>.'
       +(lg.basis.custom
         ? ' <span class="mt-warn">Your league also scores something this site does not '

@@ -23,7 +23,8 @@ writes what the browser needs instead:
 
     {"week": 4, "year": 2026,
      "kick": {"SEA": "<kickoff iso>", ...},          team -> kickoff
-     "proj": {"4034": [ppr, half, std, "SEA"], ...}} player -> the three bases
+     "proj": {"4034": [ppr, half, std, "SEA", ""], ...}}
+                                   the three bases, his team, his injury status
 
 All three scoring bases, because the reader's league may not be the PPR this
 site plays. Sleeper prices each player under all three, so half-PPR and
@@ -33,7 +34,8 @@ custom scoring (six-point passing touchdowns, reception bonuses) is still
 approximate, and the page says so rather than quietly being wrong.
 
 Kickoffs are here because the lineup planner needs to know whose game has
-started: a player already playing cannot be moved.
+started: a player already playing cannot be moved. The injury status is here
+because the waiver section should not offer a player who is out.
 
     python -m fantasy.site.players_index
 """
@@ -89,7 +91,8 @@ def projections(week: int = None, year: int = UPCOMING_YEAR) -> dict:
         proj[pid] = [round(float(st.get("pts_ppr") or 0), 2),
                      round(float(st.get("pts_half_ppr") or 0), 2),
                      round(float(st.get("pts_std") or 0), 2),
-                     r.get("team") or ""]
+                     r.get("team") or "",
+                     (r.get("player") or {}).get("injury_status") or ""]
 
     kick = {}
     try:
