@@ -122,6 +122,16 @@ untouched.
 
 ## 6. Bugs
 
+- [x] **The fantasy section failed 6 of 29 scheduled runs** in the week to
+      2026-09-25 (be37fe97c). Not the flaky Sleeper handshake, though that is
+      the error that surfaced: `games-missed` re-derived every season on every
+      run, and five of the six failures were on a season that ended months ago.
+      A finished season is written once and skipped after, and the two
+      consumers share one fetch. 32 Sleeper calls a run became 4.
+- [x] **The FantasyPros id audit cried wolf on every build** (40405495f). It
+      compared team names; three managers had renamed their teams. It compares
+      roster overlap now, which is what an id actually means.
+
 - [x] Fantasy NFL season-by-season shows `2627` where it should read
       `2026-2027`. The compact `2627` form is the internal season key
       (`fantasy.util.year_str`); it is leaking into the UI.
