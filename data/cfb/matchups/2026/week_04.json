@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-25T19:39:54+00:00",
+ "fetched": "2026-09-25T20:27:55+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 188.03,
-     "win_probability": 0.53
+     "projected": 196.73,
+     "win_probability": 0.58
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
      "projected": 183.44,
-     "win_probability": 0.47
+     "win_probability": 0.42000000000000004
     }
    ]
   },
@@ -717,6 +717,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "462228",
+    "player": "DJ Vonnahme",
+    "pos": "TE",
+    "team": "IOWA",
+    "team_full": "Iowa Hawkeyes",
+    "bye": 7.0,
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
+    "slot": "TE",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "456092",
     "player": "Dilin Jones",
     "pos": "RB",
@@ -824,20 +838,6 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "462228",
-    "player": "DJ Vonnahme",
-    "pos": "TE",
-    "team": "IOWA",
-    "team_full": "Iowa Hawkeyes",
-    "bye": 7.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2579,6 +2579,7 @@
   "455490": 13.28,
   "405636": 14.42,
   "405846": 14.03,
+  "462228": 8.7,
   "456092": 17.76,
   "471560": 17.99,
   "456968": 0.0,
@@ -2587,7 +2588,6 @@
   "405442": 10.96,
   "405249": 25.2,
   "335616": 7.34,
-  "462228": 8.7,
   "900011": 16.79,
   "333785": 31.8,
   "455480": 31.33,
