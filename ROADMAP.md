@@ -12,28 +12,28 @@ Nothing here is new functionality - it is all removing or tightening what is
 already shipped.
 
 ### Home - Top 25 by Source
-- [ ] Retitle to **Top 25 Comparison**; drop the subtitle that just repeats the title
-- [ ] Add a "last updated" timestamp
+- [x] Retitle to **Top 25 Comparison**; drop the subtitle that just repeats the title
+- [x] Add a "last updated" timestamp
 
 ### Home - This week's bets
-- [ ] Organise it; today it is an undifferentiated list
-- [ ] Timestamp for when the current recommendation was generated
-- [ ] Countdown to when the picks lock
-- [ ] Cut the long description at the bottom - nobody reads it. Keep only the
+- [x] Organise it; today it is an undifferentiated list
+- [x] Timestamp for when the current recommendation was generated
+- [x] Countdown to when the picks lock
+- [x] Cut the long description at the bottom - nobody reads it. Keep only the
       season record of our picks + a "not gambling advice" disclaimer
 
 ### CFB rankings
-- [ ] Default the sort to GordStats
-- [ ] Description becomes just the generation timestamp
-- [ ] Keep the FPI / AP / GordStats glossary, drop the sources from the mini title
+- [x] Default the sort to GordStats
+- [x] Description becomes just the generation timestamp
+- [x] Keep the FPI / AP / GordStats glossary, drop the sources from the mini title
 
 ### NFL predictions (then mirror onto CFB predictions)
-- [ ] Drop the score / spread / win-prob line
-- [ ] Keep a shorter description but remove the "fitted fresh" section
-- [ ] Rename "The record" to something clearer
-- [ ] Drop the text between "week 2" and the week filter
-- [ ] "How it works" -> "How it Works", condensed
-- [ ] Apply the same cuts to the CFB predictions page
+- [x] Drop the score / spread / win-prob line
+- [x] Keep a shorter description but remove the "fitted fresh" section
+- [x] Rename "The record" to something clearer
+- [x] Drop the text between "week 2" and the week filter
+- [x] "How it works" -> "How it Works", condensed
+- [x] Apply the same cuts to the CFB predictions page
 
 ## 2. Prediction scorecard (NFL + CFB)
 
@@ -77,7 +77,7 @@ is obvious what it measures. Right/wrong, not accuracy:
 
 ## 6. Bugs
 
-- [ ] Fantasy NFL season-by-season shows `2627` where it should read
+- [x] Fantasy NFL season-by-season shows `2627` where it should read
       `2026-2027`. The compact `2627` form is the internal season key
       (`fantasy.util.year_str`); it is leaking into the UI.
 
@@ -85,3 +85,10 @@ is obvious what it measures. Right/wrong, not accuracy:
 
 - [x] Fantasy section failing ~1 run in 4 on the Pi: Sleeper drops the odd TLS
       handshake and `sleeper_wrapper` retried nothing (0762a208).
+- [x] **Section 1, readability and trimming**, in full (66c9ce1b, 01e8dcbe,
+      8fdc8d2f). Worth knowing for the sections still to do: the bets card
+      read as "just a list" because its classes had no CSS at all, and three
+      separate pages led with a paragraph restating what the table or cards
+      below already showed. Both are worth checking for before writing
+      anything new.
+- [x] **Section 6**, the `2627` season label (20f4cf60).
