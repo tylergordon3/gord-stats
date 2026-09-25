@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-25T02:11:21+00:00",
+ "fetched": "2026-09-25T02:21:08+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -1683,9 +1683,9 @@
     "team": "UCF",
     "team_full": "UCF Knights",
     "bye": 7.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "TE",
     "points": 0.0,
     "stats": {}
