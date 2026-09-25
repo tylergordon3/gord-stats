@@ -45,6 +45,7 @@ import requests
 
 from fantasy import paths, projections
 from fantasy.league import consensus, external
+from fantasy import sleeper_retry
 from fantasy.config import (
     FANTASY_REG_WEEKS, ROSTER_NAMES, UPCOMING_DRAFT_ID,
     UPCOMING_LEAGUE_ID, UPCOMING_YEAR,
@@ -76,9 +77,13 @@ SIM_CHUNK = 500              # sims per vectorized batch, to cap peak memory
 # --------------------------------------------------------------------------- #
 
 def _get(url: str):
-    response = requests.get(url, timeout=_TIMEOUT)
-    response.raise_for_status()
-    return response.json()
+    """GET JSON, retrying a dropped handshake - see fantasy.sleeper_retry.
+
+    This one was missed twice: once when the retry was added to the library,
+    and again when it was added to the direct callers, because the URL here is
+    a variable rather than a literal and the test was matching on the argument.
+    """
+    return sleeper_retry.get_json(url, timeout=_TIMEOUT)
 
 
 def rosters(league_id: str = UPCOMING_LEAGUE_ID,

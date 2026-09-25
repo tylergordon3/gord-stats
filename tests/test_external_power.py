@@ -82,12 +82,11 @@ def test_the_displayed_score_is_vorp_rescaled_to_the_leader(monkeypatch):
                  {"teamName": "B", "teamId": 2, "rank": 2, "vorpPerc": 108.25},
                  {"teamName": "C", "teamId": 8, "rank": 3, "vorpPerc": 87.80}]
 
-    class Response:
-        status_code = 200
-        def raise_for_status(self): pass
-        def json(self): return {"standings": standings}
-
-    monkeypatch.setattr(external.requests, "get", lambda *a, **k: Response())
+    # The fetch goes through the retrying helper, which owns its own session -
+    # so the stub replaces the helper rather than requests.get, which it no
+    # longer calls.
+    monkeypatch.setattr(external.sleeper_retry, "get_json",
+                        lambda *a, **k: {"standings": standings})
     monkeypatch.setattr(external, "team_names", lambda league_id: {})
     rows = external.fetch("nfl~abc", league_id="x")
     assert [r["score"] for r in rows] == [100, 98, 79]

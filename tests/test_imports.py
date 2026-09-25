@@ -103,19 +103,24 @@ def test_no_module_level_infinite_loop():
 # --------------------------------------------------------------------------- #
 
 def test_nothing_calls_sleeper_without_a_retry():
-    """Sleeper drops the occasional TLS handshake, and a bare requests.get
+    """Sleeper drops the occasional TLS handshake, and a bare requests call
     against it fails whatever page it is behind.
 
-    This was fixed once by patching sleeper_wrapper, and then the matchups
-    page - which has its own _get - took the fantasy section of the daily run
-    down for the same reason a fortnight later. So the rule lives in the file
-    rather than in anyone's memory: a call to api.sleeper.app goes through
-    fantasy.sleeper_retry (get_json, or the patched library) or through
-    fantasy.live._get, which has its own retry loop.
+    Fixed three times, each on a path the last fix missed: the sleeper_wrapper
+    patch missed the modules with their own _get; the first version of this
+    test missed fantasy.league.power, whose _get takes the URL as a variable,
+    so matching on the call's argument saw nothing.
 
-    Only Sleeper. The other hosts here (ESPN, Yahoo, FantasyPros) have not
-    shown this failure and are left alone.
+    Hence the blunt rule: a module that references the Sleeper API does not
+    call requests directly, whoever built the URL. The one non-Sleeper call
+    that lived in such a module (FantasyPros, in external.fetch) was moved
+    onto the same helper rather than kept as an exception, because an
+    allowlist here is how the next one gets missed.
+
+    The marker is the API constants, not the word "sleeper": adp_board has a
+    function called sleeper() that fetches beatadp.com, and it is fine.
     """
+    import ast
     import re
     from conftest import ROOT
 
@@ -123,19 +128,22 @@ def test_nothing_calls_sleeper_without_a_retry():
         "src/fantasy/sleeper_retry.py",   # the retry itself
         "src/fantasy/live.py",            # its own documented retry loop
     }
-    # The URL is the argument, so look at what the call actually opens with -
-    # a module can talk to four hosts and only one of them is Sleeper.
-    marker = re.compile(r"SLEEPER|sleeper\.app", re.I)
+    marker = re.compile(r"SLEEPER_API|SLEEPER_ROOT|api\.sleeper\.app")
     offenders = []
+
     for path in sorted((ROOT / "src").rglob("*.py")):
         rel = path.relative_to(ROOT).as_posix()
-        if rel in allowed:
+        if rel in allowed or not marker.search(path.read_text()):
             continue
         text = path.read_text()
-        for call in re.finditer(r"\brequests\.(?:get|post)\(", text):
-            arg = text[call.end():call.end() + 160]
-            if marker.search(arg.split(")")[0]):
-                line = text[:call.start()].count("\n") + 1
-                offenders.append(f"{rel}:{line}")
+        for node in ast.walk(ast.parse(text)):
+            if (isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr in {"get", "post"}
+                    and isinstance(node.func.value, ast.Name)
+                    and node.func.value.id == "requests"):
+                offenders.append(f"{rel}:{node.lineno}")
+
     assert not offenders, (
-        "these call Sleeper without a retry: " + ", ".join(offenders))
+        "these modules reach Sleeper and call requests directly, so a dropped "
+        "handshake takes the page down: " + ", ".join(offenders))

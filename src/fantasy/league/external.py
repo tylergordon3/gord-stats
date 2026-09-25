@@ -123,10 +123,12 @@ def _audit(teams: list, league_id: str):
 
 def fetch(league_key: str, league_id: str = UPCOMING_LEAGUE_ID) -> list:
     """The analyzer's standings, as the rows a snapshot stores."""
-    response = requests.get(ANALYZER_API, params={"key": league_key},
-                            headers={"User-Agent": _UA}, timeout=_TIMEOUT)
-    response.raise_for_status()
-    payload = response.json()
+    # Through the retrying helper like everything else in this module. It is
+    # FantasyPros rather than Sleeper, but a dropped connection costs the power
+    # page its external column either way, and it keeps the rule here absolute:
+    # nothing that talks to Sleeper calls requests directly.
+    payload = sleeper_retry.get_json(ANALYZER_API, params={"key": league_key},
+                                     headers={"User-Agent": _UA}, timeout=_TIMEOUT)
     if "error" in payload:
         raise ValueError(payload["error"])
 
