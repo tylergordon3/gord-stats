@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-25T23:14:19+00:00",
+ "fetched": "2026-09-25T23:51:01+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 0.0,
      "projected": 182.92,
-     "win_probability": 0.4
+     "win_probability": 0.32999999999999996
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 0.0,
+     "points": 17.7,
      "projected": 201.04,
-     "win_probability": 0.6
+     "win_probability": 0.67
     }
    ]
   },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 0.0,
      "projected": 196.73,
-     "win_probability": 0.5
+     "win_probability": 0.42999999999999994
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 5.1,
+     "points": 20.2,
      "projected": 193.35,
-     "win_probability": 0.5
+     "win_probability": 0.5700000000000001
     }
    ]
   },
@@ -109,7 +109,7 @@
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 169.54,
+     "projected": 169.5,
      "win_probability": 0.54
     },
     {
@@ -431,8 +431,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 17.7,
+    "stats": {
+     "11": 3.0,
+     "12": 102.0,
+     "13": 1.0
+    }
    },
    {
     "yahoo_id": "470164",
@@ -911,10 +915,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 5.1,
+    "points": 20.2,
     "stats": {
-     "8": 1.0,
-     "9": 51.0
+     "8": 6.0,
+     "9": 82.0,
+     "10": 2.0
     }
    },
    {
@@ -2688,7 +2693,7 @@
   "468459": 11.46,
   "404365": 11.03,
   "336586": 0.0,
-  "900027": 8.66,
+  "900027": 8.62,
   "404287": 28.64,
   "333810": 24.48,
   "469636": 14.59,
