@@ -22,7 +22,7 @@ from fantasy.config import MY_MANAGER, UPCOMING_SEASON, UPCOMING_YEAR
 from fantasy.league import matchups as matchups_mod
 from fantasy.league import usage as usage_mod
 from fantasy.site import layout
-from gordstats import usage_page as ui
+from gordstats import my_league, usage_page as ui
 from gordstats.frontmatter import add_front_matter
 
 RECENT_WEEKS = 3
@@ -101,6 +101,7 @@ def _rows(recent: pd.DataFrame, season: pd.DataFrame, held: dict, names: dict) -
         out.append(
             f'<tr data-team="{escape(r["team"], quote=True)}" data-conf=""'
             f' data-pos="{escape(r["pos"], quote=True)}" data-own="{escape(own, quote=True)}"'
+            f' data-pid="{escape(str(r["sleeper_id"]), quote=True)}"'
             f' data-car="{int(r["rush_att"])}" data-tgt="{int(r["rec_tgt"])}"'
             f' data-name="{escape(str(r["player"]).lower(), quote=True)}">'
             f'<td class="us-rank {POSV}"></td>'
@@ -209,7 +210,13 @@ def body() -> str:
         "<strong>Click any column</strong> to sort by it, again to reverse. "
         "<strong>Fantasy</strong> narrows the table to one roster, to everybody rostered, "
         "or to the <span class='us-fa'>FA</span> free agents; <em>My team</em> is the "
-        "roster chosen on the <a href='/fantasy/roster/'>team dashboard</a>. For one "
+        "roster chosen on the <a href='/fantasy/roster/'>team dashboard</a>. "
+        "<strong>Your Sleeper league</strong> re-points that column at your own "
+        "league instead of this one - the id is the long number in your league's "
+        "web address, it is remembered in this browser, and "
+        "<a href='/fantasy/sync/'>syncing it to an account</a> carries it to "
+        "another device. Only who owns whom changes; snaps, carries and targets "
+        "belong to the NFL, not to a league. For one "
         "backfield pick the NFL team and the RB view; for all of them tick <strong>Group "
         "by team</strong>. The filters live in the page address, so a view can be "
         "bookmarked or shared.</p>"
@@ -224,10 +231,12 @@ def body() -> str:
         "not on this page - it is about who the ball goes to."
         "</p></details>"
         + ui.views_bar(VIEWS)
+        + my_league.bar()
         + controls
         + f"<div class='us-scroll'><table class='us view-overall'><thead>{head}</thead>"
         f"<tbody>{_rows(recent, season, held, names)}</tbody></table></div>"
-        + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + ui.JS)
+        + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + ui.JS
+        + my_league.JS)
 
 
 def generate():

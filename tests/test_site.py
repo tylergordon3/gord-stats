@@ -264,3 +264,42 @@ def test_pages_behind_a_hub_are_still_reachable():
                 assert url in reach, (
                     f"{section}: {url} is covered by {item['url']} but nothing "
                     "on or one hop from the hub links to it")
+
+
+# --------------------------------------------------------------------------- #
+# "Show my league" on the usage page
+# --------------------------------------------------------------------------- #
+
+MY_LEAGUE = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+
+
+def test_the_league_override_works_without_an_account():
+    """Local first, like the stars: a league id typed on the page is kept in
+    this browser and works signed out. The account only carries it to another
+    device, and must never become the gate."""
+    assert "localStorage" in MY_LEAGUE
+    # The account lookup is a later refinement, not a precondition: it is
+    # fetched after the saved league has already been drawn.
+    assert MY_LEAGUE.index("var have=saved();") < MY_LEAGUE.index("'/api/leagues'")
+
+
+def test_asking_for_the_sites_own_league_sticks():
+    """Otherwise the account lookup re-applies the synced league a moment after
+    the reader asked for this one, and the button looks broken."""
+    assert "save({site:true})" in MY_LEAGUE
+    assert "if(have&&have.site) return;" in MY_LEAGUE
+
+
+def test_only_ownership_is_re_pointed():
+    """Snaps, carries and targets are properties of the NFL, not of anyone's
+    league. If this ever starts rewriting them, the page is lying."""
+    for cell in ("snap_share", "car_share", "tgt_share", "data-v"):
+        assert cell not in MY_LEAGUE, f"the override touches {cell}"
+
+
+def test_usage_rows_carry_the_player_id_the_override_needs():
+    doc = (DOCS / "fantasy" / "usage" / "index.html").read_text()
+    body = re.search(r"<tbody>(.*?)</tbody>", doc, re.S).group(1)
+    rows = re.findall(r"<tr[^>]*>", body)
+    assert rows, "no usage rows"
+    assert all("data-pid=" in r for r in rows), "a row has no Sleeper id to match on"
