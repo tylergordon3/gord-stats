@@ -21,7 +21,7 @@ sys.path.insert(0, str(SRC))
 
 # The generated pages are no longer committed (see .gitignore): the Pi rebuilds
 # them on every run and uploads them straight to Cloudflare, so keeping ~100 MB
-# of history a month so this laptop could read them was the wrong trade. Tests
+# of history a month so this PC could read them was the wrong trade. Tests
 # that check the *built* site therefore need a build present, and say so rather
 # than failing with a confusing missing-file error on a fresh clone.
 # Two pages, not one: rendering the homepage alone is enough to recreate

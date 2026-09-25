@@ -157,8 +157,8 @@ main() {
   # that are the only record of what the page said, and the caches the next
   # build reads. The generated pages and charts are gitignored, because
   # committing them cost about 100 MB of history a month (one 4 MB page
-  # rewritten 422 times in 30 days) purely so the laptop could read them.
-  # The laptop uses `pi pull-site` for that instead.
+  # rewritten 422 times in 30 days) purely so the PC could read them.
+  # The PC uses `pi pull-site` for that instead.
   git add -A docs data
 
   if git diff --cached --quiet; then

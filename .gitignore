@@ -77,9 +77,9 @@ data/wnba/wnba_fantasy_data.json
 # ---------------------------------------------------------------------------
 # Generated site output. The Pi rebuilds all of this on every run and uploads
 # it with `wrangler pages deploy` — git is not in the publish path, so these
-# were committed for one reason only: so the laptop could see what the Pi
+# were committed for one reason only: so the PC could see what the Pi
 # built. That cost about 100 MB of history a month (one 4 MB page rewritten
-# 422 times in 30 days), so the laptop uses `pi pull-site` instead.
+# 422 times in 30 days), so the PC uses `pi pull-site` instead.
 #
 # What stays tracked: the code, the templates, the real assets, the per-day
 # prediction archives, and the ~2 MB of archives that ARE the record of what

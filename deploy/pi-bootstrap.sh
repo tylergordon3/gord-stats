@@ -24,7 +24,7 @@ command -v wrangler >/dev/null || { echo "❌ wrangler missing — sudo npm inst
 [ -f "$SECRETS" ] || { echo "❌ no secrets at $SECRETS"; exit 1; }
 grep -q '^CLOUDFLARE_API_TOKEN=' "$SECRETS" || {
   echo "❌ CLOUDFLARE_API_TOKEN missing from $SECRETS."
-  echo "   wrangler on your laptop is authenticated interactively via OAuth,"
+  echo "   wrangler on your PC is authenticated interactively via OAuth,"
   echo "   which can't work here. Create an API token with the"
   echo "   'Cloudflare Pages: Edit' permission and add it to that file."
   exit 1; }

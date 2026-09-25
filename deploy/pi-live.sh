@@ -11,7 +11,7 @@
 # direct-upload path as pi-deploy.sh. Git gets a commit at most once an hour
 # for WNBA ticks, and immediately when fantasy fires, since those are rare and
 # the power rankings archive a snapshot that should be recorded: publishing
-# doesn't need git, commits are for the laptop to pull.
+# doesn't need git, commits are for the PC to pull.
 #
 # It does pull, though. The tick rebuilds and republishes the whole site, so a
 # tick running from a stale checkout republishes a stale site.
