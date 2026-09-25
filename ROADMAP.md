@@ -88,13 +88,22 @@ because neither provider needs any.
       live points, rendered beside the built page rather than mixed into it.
       Names and projections come from two small files the browser fetches only
       when someone is viewing their own league.
-- [ ] **My Team** still renders the built league. It needs start/sit, slot
-      order and waiver suggestions, which is the model's work rather than a
-      read of Sleeper - the hardest of the three.
-- [ ] **Private Yahoo leagues.** Yahoo's public API answers 401 for a league
-      that is not set public, so those cannot be synced at all without OAuth -
-      app registration, user consent and stored refresh tokens. Worth deciding
-      whether that is wanted before building it; Sleeper needs none of it.
+- [x] **My Team** reads your league (81dd68b02). The lineup planner is ported
+      to JS and both implementations are asserted equal over generated rosters
+      in a browser - which found a pre-existing bug: the Python's flex
+      tie-break ran off set iteration order, so the same roster could come out
+      differently between builds.
+- [ ] **Waiver adds for your own league.** The lineup is done; the wire is not.
+      It needs a free-agent pool for an arbitrary league (everyone priced,
+      minus everyone rostered there) scored against the weakest starter - the
+      data is all shipped already, so this is renderer work rather than new
+      plumbing.
+- [x] **Yahoo withdrawn entirely** (c4eb8b71b). Its public API reaches only
+      leagues a commissioner set public, and the rest need OAuth and a stored
+      refresh token - which would turn a database worth very little if taken
+      into one holding read access to other people's accounts, for leagues
+      nobody has asked for. The `provider` column stays so this needs no
+      migration if it is ever picked up.
 
 **The migration was applied on 2026-09-25.** The `leagues` table is live and
 verified: the endpoint's upsert updates rather than duplicating on a refresh,
