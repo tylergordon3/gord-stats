@@ -40,13 +40,13 @@ already shipped.
 Headline metrics at the **top** of the predictions page, each one labelled so it
 is obvious what it measures. Right/wrong, not accuracy:
 
-- [ ] How many winners the model called correctly
-- [ ] How often our projected spread was on the right side (we say -5.5, team
+- [x] How many winners the model called correctly
+- [x] How often our projected spread was on the right side (we say -5.5, team
       wins by 7 -> correct)
-- [ ] How often the spread we suggested taking against the book was correct
+- [x] How often the spread we suggested taking against the book was correct
       (we had A 36-30; DK had A -7.5; we said take B +7.5 - did that cash?)
-- [ ] The same for over/unders
-- [ ] Consider adding over/under predictions for the NFL in the first place
+- [x] The same for over/unders
+- [x] Consider adding over/under predictions for the NFL in the first place
 
 ## 3. Usage pages (Fantasy NFL + CFB)
 
@@ -92,3 +92,9 @@ is obvious what it measures. Right/wrong, not accuracy:
       below already showed. Both are worth checking for before writing
       anything new.
 - [x] **Section 6**, the `2627` season label (20f4cf60).
+- [x] **Section 2, the prediction scorecard** (15efcb99). Both pages now render
+      `gordstats.scorecard`. Two things learned that the remaining sections
+      should reuse: the NFL page already had the over/under data captured and
+      graded and simply never displayed it (check for that before building),
+      and "our projected spread" is ~50% by construction, so it is framed as a
+      calibration figure rather than a success rate.
