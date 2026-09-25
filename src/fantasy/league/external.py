@@ -100,24 +100,89 @@ def team_names(league_id: str = UPCOMING_LEAGUE_ID) -> dict:
     return out
 
 
-def _audit(teams: list, league_id: str):
-    """Warn if teamId and the Sleeper roster it claims to be have drifted apart.
+def _player_names() -> dict:
+    """{sleeper_id: player name}, from the player table the build already keeps."""
+    path = paths.PLAYERS_DIR / "sleeper.parquet"
+    if not path.exists():
+        return {}
+    frame = pd.read_parquet(path, columns=["sleeper_id", "full_name"]).dropna()
+    return {str(row.sleeper_id): str(row.full_name) for row in frame.itertuples()}
+
+
+def _sleeper_rosters(league_id: str) -> dict:
+    """{roster_id: folded names of the players on it}."""
+    names = _player_names()
+    if not names:
+        return {}
+    rosters = sleeper_retry.get_json(f"{SLEEPER_API}/league/{league_id}/rosters",
+                                     timeout=_TIMEOUT)
+    # Sleeper answers a league it does not know with something that is not a
+    # list of rosters. The audit is a nicety and must never be the thing that
+    # raises, so anything of the wrong shape is simply nothing to check.
+    if not isinstance(rosters, list):
+        return {}
+    out = {}
+    for roster in rosters:
+        if not isinstance(roster, dict):
+            continue
+        held = {_key(names[str(p)]) for p in (roster.get("players") or [])
+                if str(p) in names}
+        if held:
+            out[int(roster["roster_id"])] = held
+    return out
+
+
+def _upstream_rosters(payload: dict) -> dict:
+    """{teamId: folded player names}, out of the analyzer's own position grid.
+
+    The grid is a row per position, and every cell in it carries the player and
+    the teamId holding him - which is the only part of the payload that says
+    what a team actually *is*.
+    """
+    out = {}
+    for row in payload.get("grid") or []:
+        if row.get("position") == "Teams":
+            continue                                  # the header row, not players
+        for cell in row.get("cells") or []:
+            team, name = cell.get("teamId"), cell.get("name")
+            if team and name:
+                out.setdefault(int(team), set()).add(_key(name))
+    return out
+
+
+def _audit(payload: dict, league_id: str):
+    """Warn if a teamId is attached to a different roster than it claims.
 
     The join is on teamId because that is what the payload gives us. Nothing
     promises FantasyPros will keep numbering teams the way Sleeper does, and a
     silently transposed pair of rows would look like a real disagreement
-    between the two models rather than a bug. So every fetch checks the names
-    behind the ids and says so when they stop lining up.
+    between the two models rather than a bug.
+
+    This used to compare team *names*, and it cried wolf: three managers in
+    this league renamed their teams, FantasyPros kept the names it last synced,
+    and the build warned about all three on every run - for a join that was
+    perfectly correct. A name is a label somebody can change at any moment; the
+    roster is what the id means. So the check is now which Sleeper roster each
+    upstream team's players actually match, and it stays quiet unless that is
+    somebody else's.
     """
     try:
-        names = team_names(league_id)
-    except (requests.RequestException, KeyError, TypeError, ValueError):
+        mine = _sleeper_rosters(league_id)
+        theirs = _upstream_rosters(payload)
+    except (requests.RequestException, KeyError, TypeError, ValueError, OSError):
         return                        # the audit is a nicety; it never gates a build
-    for team in teams:
-        mine = names.get(int(team["teamId"]))
-        if mine and _key(mine) != _key(team["teamName"]):
-            print(f"[power] external teamId {team['teamId']} is "
-                  f"{team['teamName']!r} upstream but {mine!r} in Sleeper — "
+    if not mine or not theirs:
+        return
+
+    for team_id, players in sorted(theirs.items()):
+        overlap = {rid: len(players & held) for rid, held in mine.items()}
+        if not overlap or max(overlap.values()) == 0:
+            continue                  # nobody recognised: a stale player table, not drift
+        best = max(overlap, key=lambda rid: (overlap[rid], -rid))
+        if best != team_id:
+            print(f"[power] external teamId {team_id} looks like Sleeper roster "
+                  f"{best} ({overlap[best]} of {len(players)} players match, "
+                  f"{overlap.get(team_id, 0)} on the roster it claims) — "
                   "the column may be attached to the wrong rosters")
 
 
@@ -134,7 +199,7 @@ def fetch(league_key: str, league_id: str = UPCOMING_LEAGUE_ID) -> list:
 
     standings = payload["standings"]
     top = max(float(t["vorpPerc"]) for t in standings)
-    _audit(standings, league_id)
+    _audit(payload, league_id)
     return [{"team": t["teamName"],
              "team_id": int(t["teamId"]),
              "rank": int(t["rank"]),
