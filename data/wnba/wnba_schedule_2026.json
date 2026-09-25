@@ -7556,74 +7556,88 @@
       ]
     },
     "2026-09-27": {
-      "TBD": [
+      "ATL": [
         {
           "id": 1392661,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "ATL",
+          "away": "WSH",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-27"
-        },
+        }
+      ],
+      "WSH": [
         {
           "id": 1392661,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "ATL",
+          "away": "WSH",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-27"
-        },
+        }
+      ],
+      "MIN": [
         {
           "id": 1392662,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "MIN",
+          "away": "NY",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-27"
-        },
+        }
+      ],
+      "NY": [
         {
           "id": 1392662,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "MIN",
+          "away": "NY",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-27"
-        },
+        }
+      ],
+      "LV": [
         {
           "id": 1392663,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "IND",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-27"
-        },
+        }
+      ],
+      "IND": [
         {
           "id": 1392663,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "IND",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-27"
-        },
+        }
+      ],
+      "GS": [
         {
           "id": 1392664,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "DAL",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-27"
-        },
+        }
+      ],
+      "DAL": [
         {
           "id": 1392664,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "DAL",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -7632,38 +7646,44 @@
       ]
     },
     "2026-09-29": {
-      "TBD": [
+      "NY": [
         {
           "id": 1392671,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "NY",
+          "away": "MIN",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-29"
-        },
+        }
+      ],
+      "MIN": [
         {
           "id": 1392671,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "NY",
+          "away": "MIN",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-29"
-        },
+        }
+      ],
+      "IND": [
         {
           "id": 1392672,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "IND",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-29"
-        },
+        }
+      ],
+      "LV": [
         {
           "id": 1392672,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "IND",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -7672,38 +7692,44 @@
       ]
     },
     "2026-09-30": {
-      "TBD": [
+      "WSH": [
         {
           "id": 1392673,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "WSH",
+          "away": "ATL",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-30"
-        },
+        }
+      ],
+      "ATL": [
         {
           "id": 1392673,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "WSH",
+          "away": "ATL",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-30"
-        },
+        }
+      ],
+      "DAL": [
         {
           "id": 1392674,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "DAL",
+          "away": "GS",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-30"
-        },
+        }
+      ],
+      "GS": [
         {
           "id": 1392674,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "DAL",
+          "away": "GS",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -7712,38 +7738,44 @@
       ]
     },
     "2026-10-01": {
-      "TBD": [
+      "MIN": [
         {
           "id": 1392675,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "MIN",
+          "away": "NY",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-01"
-        },
+        }
+      ],
+      "NY": [
         {
           "id": 1392675,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "MIN",
+          "away": "NY",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-01"
-        },
+        }
+      ],
+      "LV": [
         {
           "id": 1392676,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "IND",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-01"
-        },
+        }
+      ],
+      "IND": [
         {
           "id": 1392676,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "IND",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -7752,38 +7784,44 @@
       ]
     },
     "2026-10-02": {
-      "TBD": [
+      "ATL": [
         {
           "id": 1392677,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "ATL",
+          "away": "WSH",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-02"
-        },
+        }
+      ],
+      "WSH": [
         {
           "id": 1392677,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "ATL",
+          "away": "WSH",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-02"
-        },
+        }
+      ],
+      "GS": [
         {
           "id": 1392678,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "DAL",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-02"
-        },
+        }
+      ],
+      "DAL": [
         {
           "id": 1392678,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "DAL",
           "status": "pre",
           "home_score": null,
           "away_score": null,
