@@ -110,11 +110,11 @@ def test_script_does_not_reorder_rows():
     """Ranked tables: starring a team highlights it, it never moves it.
 
     appendChild/insertBefore is how that rule gets broken, so the DOM-moving
-    calls are banned everywhere except `paintAccount`, which builds the
-    sign-in control out of fresh elements and touches no row. Excluding that
-    one function by name keeps the rule precise: a move added anywhere else
-    still fails, which a blanket ban would have stopped being able to say once
-    the control needed to build itself.
+    calls are banned everywhere except the two functions that build controls
+    out of fresh elements and touch no row: `paintAccount` and `paintInvite`,
+    which sit together for that reason. Excluding them by position keeps the
+    rule precise - a move added anywhere else still fails, which a blanket ban
+    would have stopped being able to say once the controls built themselves.
     """
     body = JS
     start = body.index("function paintAccount(")
@@ -122,7 +122,7 @@ def test_script_does_not_reorder_rows():
     outside = body[:start] + body[end:]
     for banned in ("appendChild", "insertBefore", "prepend("):
         assert banned not in outside, (
-            f"favorites.js must not move rows ({banned} outside paintAccount)")
+            f"favorites.js must not move rows ({banned} outside the builders)")
 
 
 # Every module that marks table *rows* must also emit the scoped row CSS.
@@ -162,3 +162,41 @@ def test_opted_in_pages_emit_rows_stars_and_a_filter(module, sport):
     assert "_attr(" in src or "row_attr(" in src, f"{module} has no data-fav rows"
     assert "star(" in src, f"{module} has no star buttons"
     assert "favorites.controls()" in src, f"{module} has no filter control"
+
+
+def test_account_menu_links_are_separated():
+    """Two inline anchors in the menu read "Your profileSign out".
+
+    They are built as siblings with no text between them, so the only thing
+    keeping them apart is the stylesheet. A regression here is invisible to
+    every other test and perfectly visible to a reader.
+    """
+    css = (DOCS / "assets" / "css" / "custom.css").read_text()
+    rule = re.search(r"a\.acct-out\s*\{[^}]*\}", css)
+    assert rule and "display: block" in rule.group(0)
+
+
+def test_the_signed_out_invite_is_dismissible_and_stays_dismissed():
+    """A banner that comes back after it is closed is an advert."""
+    assert 'id = "gs-invite"' in JS
+    assert "gs:invite" in JS
+    # It is written on dismiss and read before the banner is built.
+    assert re.search(r'setItem\(INVITE_KEY, "off"\)', JS)
+    assert re.search(r'getItem\(INVITE_KEY\) === "off"', JS)
+
+
+def test_the_invite_only_shows_to_a_signed_out_reader():
+    """Signed in, or on a deploy with no accounts at all, there is nothing to
+    offer - and the profile page makes the same offer in more room."""
+    body = re.search(r"function paintInvite\(\) \{(.+?)\n  \}", JS, re.S)
+    assert body, "paintInvite is gone"
+    wanted = body.group(1)
+    assert "account.configured" in wanted
+    assert "!account.signedIn" in wanted
+    assert "/profile" in wanted
+
+
+def test_the_invite_is_repainted_when_the_account_is_known():
+    """/api/me answers after the first paint, so a banner built only on load
+    would never appear for the reader it is for."""
+    assert re.search(r"paintAccount\(\);\s*\n\s*paintInvite\(\);", JS)

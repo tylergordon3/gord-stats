@@ -4932,12 +4932,19 @@ a.acct-link:focus-visible,
   color: #64748b;
 }
 
+/* Two links, one under the other. As inline anchors they had no separation
+   at all and the menu read "Your profileSign out"; as rows they also get a
+   thumb-sized tap target, which is what a phone needs anyway. */
 a.acct-out {
+  display: block;
+  padding: 7px 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--accent-text, #A34F0A);
   text-decoration: none;
 }
+
+a.acct-out + a.acct-out { border-top: 1px solid #eef1f6; }
 
 a.acct-out:hover { text-decoration: underline; }
 
@@ -4976,4 +4983,78 @@ a.acct-out:hover { text-decoration: underline; }
   .acct-email { color: #e9ecf4; }
   .acct-note { color: #94a3b8; }
   a.acct-out { color: var(--accent-text, #F5A968); }
+  a.acct-out + a.acct-out { border-top-color: #2b3852; }
+}
+
+
+/* ---------- the signed-out invitation ---------- */
+/* One line at the top of the page saying what an account is for. It is the
+   only thing on the site that asks the reader for anything, so it stays quiet:
+   a tinted card rather than a coloured bar, and a dismiss that is remembered. */
+.gs-invite {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  margin: 0 0 18px;
+  padding: 10px 40px 10px 14px;
+  background: #f6f8fc;
+  border: 1px solid #e2e8f2;
+  border-left: 3px solid var(--accent, #C2410C);
+  border-radius: 8px;
+}
+
+.gs-invite-text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.gs-invite-links {
+  margin: 0;
+  display: flex;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+.gs-invite-links a {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent-text, #A34F0A);
+  text-decoration: none;
+}
+
+.gs-invite-links a:hover { text-decoration: underline; }
+
+.gs-invite-shut {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 19px;
+  line-height: 1;
+  color: #94a3b8;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.gs-invite-shut:hover { color: #334155; background: #e9eef7; }
+
+@media (max-width: 600px) {
+  .gs-invite { padding: 10px 36px 10px 12px; }
+  .gs-invite-text { font-size: 13px; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .gs-invite { background: #1b2540; border-color: #2b3852; }
+  .gs-invite-text { color: #cbd5e1; }
+  .gs-invite-links a { color: var(--accent-text, #F5A968); }
+  .gs-invite-shut { color: #7c8aa3; }
+  .gs-invite-shut:hover { color: #e9ecf4; background: #24304d; }
 }

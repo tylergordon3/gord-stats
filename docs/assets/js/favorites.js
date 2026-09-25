@@ -229,6 +229,7 @@
 
     paintControls();
     paintAccount();
+    paintInvite();
   }
 
   function paintControls() {
@@ -349,6 +350,80 @@
 
     wrap.appendChild(menu);
     slot.appendChild(wrap);
+  }
+
+  // Signed out, nothing on the page says the site can hold anything for you.
+  // The header's "Sign in" is a verb with no reason attached, and a reader who
+  // has never seen the account control does not go looking for one. So one
+  // line, once, at the top of the page, saying what signing in is for - and a
+  // dismiss that sticks, because a banner that comes back is an advert.
+  var INVITE_KEY = "gs:invite";
+
+  function inviteDismissed() {
+    try {
+      return window.localStorage.getItem(INVITE_KEY) === "off";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function paintInvite() {
+    var bar = document.getElementById("gs-invite");
+    var wanted = account.configured && !account.signedIn && !inviteDismissed()
+      // The profile page makes this offer itself, in more room than a banner
+      // has. Two of them on one screen is one too many.
+      && location.pathname.indexOf("/profile") !== 0;
+
+    if (!wanted) {
+      if (bar) bar.remove();
+      return;
+    }
+    if (bar) return;
+
+    var host = document.getElementById("main_content");
+    if (!host) return;
+
+    bar = document.createElement("aside");
+    bar.id = "gs-invite";
+    bar.className = "gs-invite";
+
+    var text = document.createElement("p");
+    text.className = "gs-invite-text";
+    text.textContent = "Sign in to follow teams and connect your fantasy leagues \u2014 they will be here on every device.";
+    bar.appendChild(text);
+
+    var links = document.createElement("p");
+    links.className = "gs-invite-links";
+
+    var go = document.createElement("a");
+    go.className = "gs-invite-go";
+    go.href = "/api/auth/login?next="
+      + encodeURIComponent(location.pathname + location.search);
+    go.textContent = "Sign in";
+    links.appendChild(go);
+
+    var more = document.createElement("a");
+    more.className = "gs-invite-more";
+    more.href = "/profile/";
+    more.textContent = "What you get";
+    links.appendChild(more);
+
+    bar.appendChild(links);
+
+    var shut = document.createElement("button");
+    shut.type = "button";
+    shut.className = "gs-invite-shut";
+    shut.setAttribute("aria-label", "Dismiss");
+    shut.textContent = "\u00d7";
+    shut.addEventListener("click", function () {
+      try {
+        window.localStorage.setItem(INVITE_KEY, "off");
+      } catch (e) {}
+      bar.remove();
+    });
+    bar.appendChild(shut);
+
+    host.insertBefore(bar, host.firstChild);
   }
 
   // A menu that only closes by clicking the badge again is a menu people leave
