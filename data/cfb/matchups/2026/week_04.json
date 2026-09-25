@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-25T23:07:13+00:00",
+ "fetched": "2026-09-25T23:14:19+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 0.0,
      "projected": 196.73,
-     "win_probability": 0.5700000000000001
+     "win_probability": 0.5
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 5.1,
-     "projected": 181.06,
-     "win_probability": 0.42999999999999994
+     "projected": 193.35,
+     "win_probability": 0.5
     }
    ]
   },
@@ -932,12 +932,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404143",
-    "player": "Omarion Miller",
+    "yahoo_id": "457039",
+    "player": "Mike Matthews",
     "pos": "WR",
-    "team": "ASU",
-    "team_full": "Arizona State Sun Devils",
-    "bye": 4.0,
+    "team": "TENN",
+    "team_full": "Tennessee Volunteers",
+    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -946,11 +946,11 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457039",
-    "player": "Mike Matthews",
+    "yahoo_id": "470091",
+    "player": "Winston Watkins Jr.",
     "pos": "WR",
-    "team": "TENN",
-    "team_full": "Tennessee Volunteers",
+    "team": "LSU",
+    "team_full": "LSU Tigers",
     "bye": 9.0,
     "status": "",
     "status_full": "",
@@ -1002,6 +1002,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "404143",
+    "player": "Omarion Miller",
+    "pos": "WR",
+    "team": "ASU",
+    "team_full": "Arizona State Sun Devils",
+    "bye": 4.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "340392",
     "player": "Braden Pegan",
     "pos": "WR",
@@ -1036,20 +1050,6 @@
     "team": "ND",
     "team_full": "Notre Dame Fighting Irish",
     "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "470091",
-    "player": "Winston Watkins Jr.",
-    "pos": "WR",
-    "team": "LSU",
-    "team_full": "LSU Tigers",
-    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2598,13 +2598,13 @@
   "463126": 20.83,
   "457676": 11.72,
   "457039": 10.78,
+  "470091": 12.29,
   "404367": 7.21,
   "405130": 19.3,
   "404353": 13.46,
   "340392": 11.54,
   "457038": 5.77,
   "457576": 26.06,
-  "470091": 12.29,
   "456218": 4.65,
   "456178": 8.79,
   "900086": 14.44,
