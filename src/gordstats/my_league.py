@@ -174,6 +174,26 @@ JS = """{% raw %}<script>
     return l.team_name ? (name+' \u2014 '+l.team_name) : name;
   }
 
+  /** One entry per league, newest season first.
+   *
+   *  A synced league is one row per season, so a reader in four leagues with a
+   *  few years of history each has a dozen rows - listing them raw would be a
+   *  dozen near-identical picker entries. They group on lineage_id, which is
+   *  the oldest league id in the chain and therefore stable as seasons are
+   *  added. */
+  function leagues(rows){
+    var groups={};
+    rows.forEach(function(l){
+      var key=l.lineage_id||l.league_id;
+      (groups[key]=groups[key]||[]).push(l);
+    });
+    return Object.keys(groups).map(function(k){
+      var seasons=groups[k].slice().sort(function(a,b){
+        return String(b.season||'').localeCompare(String(a.season||''));});
+      return {current:seasons[0], seasons:seasons};
+    });
+  }
+
   function draw(label){
     if(label){
       if(SYNCED.length>1){
@@ -232,7 +252,9 @@ JS = """{% raw %}<script>
     .then(function(r){return r.ok?r.json():null;})
     .then(function(d){
       if(!d||!d.leagues) return;
-      SYNCED=d.leagues.filter(function(l){return l.provider==='sleeper';});
+      // One entry per league, not one per season.
+      SYNCED=leagues(d.leagues.filter(function(l){return l.provider==='sleeper';}))
+        .map(function(g){ return g.current; });
       if(!SYNCED.length) return;
       if(have&&have.site) return;          // they asked for this site's league
       // Keep showing whatever this browser already had, if the account knows

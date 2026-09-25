@@ -66,6 +66,12 @@ CREATE TABLE IF NOT EXISTS leagues (
   -- the same thing, and people do.
   team_name        TEXT,
   provider_user_id TEXT,
+  -- A league is one row per season: Sleeper gives each season its own id and
+  -- links them with previous_league_id. `lineage_id` is the oldest id in that
+  -- chain, so every season of one league groups under it and the picker can
+  -- offer "this league, that season" instead of four unrelated entries with
+  -- the same name.
+  lineage_id       TEXT,
   created_at     TEXT NOT NULL,
   last_synced_at TEXT NOT NULL,
   PRIMARY KEY (user_id, provider, league_id)

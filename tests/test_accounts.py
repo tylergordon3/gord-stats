@@ -204,3 +204,36 @@ def test_the_league_lookup_does_not_swallow_its_own_bugs():
     picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
     assert ".catch(function(){});" not in picker
     assert "console.error" in picker
+
+
+def test_syncing_a_league_takes_its_history_with_it():
+    """Sleeper gives each season its own league id and links them backwards
+    with previous_league_id, so one walk gets the lot - the site's own league
+    chains 2026 back to 2023 that way."""
+    assert "previous_league_id" in LEAGUES
+    assert "async function history(" in LEAGUES
+    # Both ways in get it: a league added by id should not be a poorer relation.
+    assert LEAGUES.count("history(") >= 3
+
+
+def test_the_history_walk_cannot_loop_or_run_away():
+    """These ids come from an API. A cycle would be an endless one, and a long
+    chain would be an unbounded row count on somebody's account."""
+    block = LEAGUES[LEAGUES.index("async function history("):]
+    assert "seen.has(id)" in block and "MAX_SEASONS" in block
+    assert "MAX_ROWS" in LEAGUES
+
+
+def test_seasons_group_under_their_league_everywhere_they_are_shown():
+    """A league with four years of history is four rows. Listed raw that reads
+    as four leagues, in a picker it is four near-identical entries."""
+    for path in ("src/gordstats/my_league.py", "src/gordstats/league_sync.py"):
+        src = (ROOT / path).read_text()
+        assert "lineage_id" in src, f"{path} does not group seasons"
+
+
+def test_removing_a_league_removes_its_seasons():
+    """Otherwise "Remove" takes this year and leaves three older rows behind,
+    which come back as a league the reader thought they had deleted."""
+    block = LEAGUES[LEAGUES.index("export async function onRequestDelete"):]
+    assert "lineage_id = ?" in block

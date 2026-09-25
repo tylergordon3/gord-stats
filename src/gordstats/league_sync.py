@@ -76,21 +76,44 @@ JS = """{% raw %}<script>
     return isNaN(d)?'':d.toLocaleString([], {month:'short', day:'numeric',
       hour:'numeric', minute:'2-digit'});
   }
-  function render(leagues){
-    if(!leagues.length){
+  /** One entry per league, its seasons folded in - a league with four years
+   *  of history is four rows, and listing them raw reads as four leagues. */
+  function grouped(rows){
+    var g={};
+    rows.forEach(function(l){
+      var key=l.lineage_id||l.league_id;
+      (g[key]=g[key]||[]).push(l);
+    });
+    return Object.keys(g).map(function(k){
+      var seasons=g[k].slice().sort(function(a,b){
+        return String(b.season||'').localeCompare(String(a.season||''));});
+      return {top:seasons[0], seasons:seasons};
+    });
+  }
+
+  function render(rows){
+    if(!rows.length){
       list.innerHTML='<li><span class="ls-meta">No league synced yet.</span></li>';
       return;
     }
     list.innerHTML='';
-    leagues.forEach(function(l){
+    grouped(rows).forEach(function(group){
+      var l=group.top, n=group.seasons.length;
+      var span='';
+      if(n>1){
+        var oldest=group.seasons[n-1].season, newest=l.season;
+        span=n+' seasons &middot; '+esc(oldest)+'\u2013'+esc(newest);
+      } else {
+        span=esc(l.season||'');
+      }
       var li=document.createElement('li');
       var left=document.createElement('div');
       left.innerHTML='<div class="ls-name">'+esc(l.name||l.league_id)+'</div>'
         +'<div class="ls-meta">'+(l.team_name?esc(l.team_name)+' &middot; ':'')
-        +esc(l.provider)+(l.season?' &middot; '+esc(l.season):'')
-        +' &middot; synced '+when(l.last_synced_at)+'</div>';
+        +span+' &middot; synced '+when(l.last_synced_at)+'</div>';
       var drop=document.createElement('button');
       drop.className='ls-drop'; drop.textContent='Remove';
+      drop.title='Removes every season of this league';
       drop.addEventListener('click',function(){
         drop.disabled=true;
         fetch('/api/leagues?provider='+encodeURIComponent(l.provider)
@@ -133,7 +156,9 @@ JS = """{% raw %}<script>
         }
         if(res.d.migrating){ msg(msgId,res.d.error,'err'); return; }
         if(!res.d.ok){ msg(msgId,res.d.error||'That did not work.','err'); return; }
-        msg(msgId,'Synced '+(res.d.league.name||'the league')+'.','ok');
+        msg(msgId,'Synced '+(res.d.league.name||'the league')
+          +(res.d.synced>1?' and its '+(res.d.synced-1)+' earlier season'
+            +(res.d.synced===2?'':'s'):'')+'.','ok');
         document.getElementById(inputId).value='';
         load();
       })
@@ -156,8 +181,10 @@ JS = """{% raw %}<script>
           return;
         }
         if(!res.d.ok){ msg('ls-user-msg',res.d.error||'That did not work.','err'); return; }
-        msg('ls-user-msg','Found '+res.d.synced+' league'
-          +(res.d.synced===1?'':'s')+'.','ok');
+        var found=res.d.leagues_found||res.d.synced;
+        msg('ls-user-msg','Found '+found+' league'+(found===1?'':'s')
+          +(res.d.synced>found
+            ? ', '+res.d.synced+' seasons in all' : '')+'.','ok');
         document.getElementById('ls-user').value='';
         load();
       })
@@ -197,10 +224,10 @@ def body() -> str:
 
             "<div class='ls-card'><h2>Find my leagues</h2>"
             "<p>Your Sleeper username - the one you sign in with. Every NFL "
-            "league that account is in this season is added at once, with your "
-            "team name in each. Nothing is asked of your Sleeper account: this "
-            "is read through Sleeper's public API, and no password or token is "
-            "involved.</p>"
+            "league that account is in is added at once, each with its earlier "
+            "seasons and your team name in each of them. Nothing is asked of "
+            "your Sleeper account: this is read through Sleeper's public API, "
+            "and no password or token is involved.</p>"
             "<div class='ls-row'><input id='ls-user' type='text' "
             "autocapitalize='none' autocorrect='off' spellcheck='false' "
             "placeholder='sleeper username' aria-label='Sleeper username'>"
