@@ -26,6 +26,21 @@ CSS = """<style>
 .ml-bar button:hover{background:#f1f5f9}
 .ml-bar input{font:inherit;font-size:13px;padding:6px 9px;border:1px solid #cbd5e1;
   border-radius:8px;min-width:180px}
+/* The league picker. It had no rule at all, so it rendered as the operating
+   system's own dropdown - a white box on a dark page, beside controls that
+   are all rounded and slate. Styled like every other select on these pages
+   (.mt-pick, .dr-bar, .wv-bar), with the arrow drawn rather than left to the
+   platform, because a native arrow stays dark on a dark control. */
+.ml-bar select{font:inherit;font-size:13px;padding:6px 26px 6px 10px;
+  border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;
+  cursor:pointer;max-width:min(100%,420px);
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;
+  background-size:10px 7px}
+.ml-bar select:hover{border-color:#94a3b8}
+.ml-bar select:focus-visible{outline:2px solid var(--accent,#C2410C);outline-offset:1px}
+.ml-bar label{display:inline-flex;align-items:center;gap:7px;min-width:0}
 .ml-msg{font-size:12.5px}
 .ml-msg.err{color:#b91c1c}
 /* The sign-in offer sits where the username box would be, so it is styled as
@@ -42,6 +57,7 @@ CSS = """<style>
   .ml-bar{gap:6px}
   .ml-bar .ml-label{flex:1 1 100%;font-size:12.5px}
   .ml-bar input{min-width:0;flex:1}
+  .ml-bar select{flex:1;min-width:0;max-width:none}
   .ml-bar button{white-space:nowrap}
   .ml-bar .ml-msg{flex:1 1 100%}
   .ml-bar .ml-or{flex:1 1 100%}
@@ -51,6 +67,11 @@ CSS = """<style>
   .ml-who{color:#f1f5f9}
   .ml-bar button,.ml-bar input{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .ml-bar button:hover{background:#1b2540}
+  .ml-bar select{background-color:#16203a;border-color:#2b3852;color:#dde5ef;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23aab7c9' d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E")}
+  .ml-bar select:hover{border-color:#3d4d6b}
+  /* The open list is drawn by the platform, which reads these two. */
+  .ml-bar select option{background:#16203a;color:#dde5ef}
   .ml-or{color:#94a3b8}
   .ml-msg.err{color:#ff9b91}
 }

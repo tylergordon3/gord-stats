@@ -47,6 +47,8 @@ each slot is fixed before the first simulated week, and the inner loop is a
 walk rather than a sort. Ten thousand seasons of a twelve-team league run in
 under three seconds.
 """
+from gordstats import tables
+
 
 CSS = """<style>
 .mp{margin:8px 0 22px}
@@ -818,4 +820,4 @@ JS = """{% raw %}<script>
 
 
 def section() -> str:
-    return CSS + "<div class='mp' id='mp-host'></div>"
+    return CSS + tables.dark_rows(".mp") + "<div class='mp' id='mp-host'></div>"

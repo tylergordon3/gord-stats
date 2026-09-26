@@ -18,6 +18,8 @@ fantasy.site.players_index: Sleeper's own season endpoint is 2.3 MB a year,
 and a reader looking at four drafts should not pull nine megabytes to find out
 how they did.
 """
+from gordstats import tables
+
 
 CSS = """<style>
 .dr{margin:8px 0 20px}
@@ -286,4 +288,4 @@ JS = """{% raw %}<script>
 
 
 def section() -> str:
-    return CSS + "<div class='dr' id='dr-host'></div>"
+    return CSS + tables.dark_rows(".dr") + "<div class='dr' id='dr-host'></div>"

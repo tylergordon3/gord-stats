@@ -177,14 +177,20 @@ def game_for(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: di
 
 
 def _live_attrs(g) -> tuple:
-    """(" live" while the game is on, and the data attributes the live script
-    keys on: ESPN's game id and which side the player is)."""
+    """(the row's state class, and the data attributes the live script keys
+    on: ESPN's game id and which side the player is).
+
+    " live" while the game is on, " done" once it is over - the NFL page's
+    classes, styled once in gordstats.matchup_page. A finished player is muted
+    whole so the eye goes to the ones still to play.
+    """
     if g is None or not isinstance(g.get("opp"), str):
         return "", ""
     gid = g.get("game_id")
     attrs = (f' data-gid="{escape(str(gid))}"' if gid and not pd.isna(gid) else "") \
         + f' data-side="{"home" if g.get("home") else "away"}"'
-    return (" live" if g.get("state") == "in" else ""), attrs
+    state = g.get("state")
+    return (" live" if state == "in" else " done" if state == "post" else ""), attrs
 
 
 def _state(g) -> str:

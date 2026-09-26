@@ -102,3 +102,73 @@ def test_the_draft_board_keeps_its_own_dark_mode():
     flat = "".join(dark.split())
     assert "table.dr-btd{" in flat, "the board has no dark rules"
     assert "table.dr-bth" in flat
+
+
+def test_the_readers_tables_have_a_dark_body():
+    """`.sticky-table` in dark mode gives its cells a light slate, because the
+    built tables are pandas Stylers whose cells mostly carry a heatmap colour
+    and the slate is only what the styler left alone. These sections have no
+    styler, so every cell fell through to it and a whole page came out light
+    on a dark screen.
+
+    The shared rule cannot simply change: `styles.style_win_loss` and its
+    neighbours set a light background per cell and rely on inheriting that
+    dark text.
+    """
+    from gordstats import my_draft, my_history, my_power, my_waivers, tables
+
+    for mod, sel in ((my_history, ".hi"), (my_draft, ".dr"),
+                     (my_waivers, ".wv"), (my_power, ".mp")):
+        out = mod.section()
+        assert tables.dark_rows(sel) in out, f"{mod.__name__} has no dark body"
+    css = tables.dark_rows(".hi")
+    assert "prefers-color-scheme: dark" in css
+    assert ".hi table.sticky-table td{background:#16203a" in css
+    # Scoped, or it would reach the built tables on the same page.
+    assert "@media (prefers-color-scheme: dark){.hi " in css
+
+
+def test_the_shared_slate_rule_is_left_alone():
+    """Changing it globally would put light text on the pale green cells
+    `style_win_loss` paints, on several other pages."""
+    from conftest import ROOT
+
+    css = (ROOT / "docs" / "assets" / "css" / "custom.css").read_text()
+    assert ".sticky-table td {\n    background: #cbd5e1;" in css, \
+        "the shared dark rule moved; re-check the scoped override"
+    styles = (ROOT / "src" / "fantasy" / "site" / "styles.py").read_text()
+    assert 'background-color: #c8e6c9"' in styles, \
+        "style_win_loss changed; the reason for scoping may be gone"
+
+
+def test_the_league_picker_is_styled():
+    """It had no rule at all, so it rendered as the operating system's own
+    dropdown - a white box on a dark page, beside controls that are all
+    rounded slate."""
+    from gordstats import my_league
+
+    css = my_league.CSS
+    # The base rule, not the dark-mode one - checking the whole stylesheet for
+    # `.ml-bar select{` passes on the dark override alone, which leaves the
+    # control unstyled for everybody in light mode.
+    base = css[:css.index("@media (prefers-color-scheme: dark)")]
+    assert ".ml-bar select{" in base, "the picker is unstyled"
+    assert "border-radius:8px" in base[base.index(".ml-bar select{"):]
+    assert "appearance:none" in base, "the platform arrow stays dark on a dark control"
+    dark = css[css.index("prefers-color-scheme: dark"):]
+    assert ".ml-bar select{background-color:#16203a" in dark
+    assert ".ml-bar select option{" in dark, "the open list is drawn by the platform"
+
+
+def test_the_college_matchups_mute_a_finished_player_too():
+    """The classes are styled once in gordstats.matchup_page; the college page
+    renders its own rows and has to mark them."""
+    from cfb.site import matchups
+
+    src = open(matchups.__file__).read()
+    assert '" done" if state == "post"' in src, "finished players are not marked"
+    # One helper feeds both the wide table and the paired phone view.
+    assert src.count("_live_attrs(") >= 3
+    from gordstats import matchup_page
+    assert "table.mu-roster tr.done td{" in matchup_page.CSS
+    assert ".mu-pr .mu-pp.done{" in matchup_page.CSS

@@ -14,6 +14,8 @@ Failed claims are kept and shown separately: being outbid is half the story of
 a waiver wire, and a log that silently drops them makes every claim look
 uncontested.
 """
+from gordstats import tables
+
 
 CSS = """<style>
 .wv{margin:8px 0 20px}
@@ -296,4 +298,4 @@ JS = """{% raw %}<script>
 
 
 def section() -> str:
-    return CSS + "<div class='wv' id='wv-host'></div>"
+    return CSS + tables.dark_rows(".wv") + "<div class='wv' id='wv-host'></div>"
