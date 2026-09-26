@@ -90,3 +90,53 @@ def test_the_projection_is_a_blend_not_one_source():
     assert "projFor" in my_week.JS
     body = my_week.JS[my_week.JS.index("function projFor"):]
     assert "vals.reduce" in body[:600], "projFor must average, not pick"
+
+
+# --------------------------------------------------------------------------- #
+# The matchups page, same idea.
+# --------------------------------------------------------------------------- #
+
+def test_the_client_matchup_uses_the_built_paired_view():
+    """The built page pairs the two lineups slot by slot for a phone. The
+    client drew its own card grid beside it, so one page had two ideas of what
+    a matchup looks like."""
+    from gordstats import my_matchups
+
+    for cls in ("mu-pair", "mu-pr", "mu-pslot", "mu-pp", "mu-pn", "mu-pcol"):
+        assert cls in my_matchups.JS + my_week.JS, f"{cls} missing"
+
+
+def test_the_paired_row_is_labelled_with_the_slot_not_a_number():
+    """It used to number the rows 1..n, which says nothing; the built page
+    names the slot, which is the thing the two players have in common."""
+    from gordstats import my_matchups
+
+    assert "SLOTS[i]" in my_matchups.JS
+    assert "roster_positions" in my_matchups.JS
+
+
+def test_the_matchup_projection_is_read_per_basis():
+    """It indexed the whole week-projections file by player id, which never
+    resolved - so before kickoff the card showed nothing where a projection
+    was meant to be. A half-PPR league must not be shown PPR numbers either."""
+    from gordstats import my_matchups
+
+    assert "GSL.points(wk, GSL.basis(info).index)" in my_matchups.JS
+    assert "PROJ=d||{}" not in my_matchups.JS, "the old whole-file PROJ is back"
+
+
+def test_the_matchups_page_carries_what_the_client_needs():
+    from fantasy.site import matchups as page
+
+    src = open(page.__file__).read()
+    for mod in ("my_league_data.JS", "my_week.JS", "my_matchups.JS"):
+        assert mod in src, f"the matchups page does not load {mod}"
+
+
+def test_the_score_cell_matches_the_built_one():
+    """One figure, always the one that matters: projection before kickoff,
+    points during, points marked final after."""
+    assert "mu-now" in my_week.JS and "mu-exp" in my_week.JS
+    for state in ("'post'", "'in'", "'bye'"):
+        assert state in my_week.JS, f"scoreCell does not handle {state}"
+    assert "final" in my_week.JS and "live" in my_week.JS

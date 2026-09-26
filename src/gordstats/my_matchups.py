@@ -66,7 +66,7 @@ JS = """{% raw %}<script>
   if(!host) return;
   var WEEK=parseInt(host.dataset.week||'0',10);
   var built=document.getElementById('mm-built');
-  var INDEX=null, PROJ=null;
+  var INDEX=null, PROJ=null, WEEKPROJ=null, CTX=null, SLOTS=[];
 
   function saved(){
     try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; }
@@ -118,14 +118,23 @@ JS = """{% raw %}<script>
         +'<div class="mm-pts r'+(bp>ap?' mm-lead':'')+'" style="text-align:right">'
         +num(bp)+'</div></div>';
 
+      // The built page's paired phone view: one row per lineup slot, this
+      // side's player on the left, theirs on the right, the slot between.
+      // Same classes, so the stylesheet already on this page does the rest.
       var la=a.starters||[], lb=b.starters||[];
       var n=Math.max(la.length, lb.length);
-      html+='<div class="mm-rows">';
+      html+='<div class="mu-pair">';
       for(var i=0;i<n;i++){
-        html+=side(la[i], a, index, false)
-           +'<div class="mm-slot">'+(i+1)+'</div>'
-           +side(lb[i], b, index, true);
+        html+='<div class="mu-pr">'+pairSide(la[i], a, index)
+           +'<div class="mu-pslot">'+esc(SLOTS[i]||'')+'</div>'
+           +pairSide(lb[i], b, index)+'</div>';
       }
+      html+='<div class="mu-pr total">'
+        +'<div class="mu-pp"><div class="mu-pn"><span class="nm">Starters</span></div>'
+        +'<span class="mu-pts">'+num(ap)+'</span></div>'
+        +'<div class="mu-pslot"></div>'
+        +'<div class="mu-pp"><span class="mu-pts">'+num(bp)+'</span>'
+        +'<div class="mu-pn"><span class="nm">Starters</span></div></div></div>';
       html+='</div></div>';
     });
     host.innerHTML=html+'</div>';
@@ -137,37 +146,53 @@ JS = """{% raw %}<script>
       return t+(v||0);
     },0);
   }
+  // PROJ used to be the whole week-projections file, indexed by player id -
+  // which never resolved, so before kickoff the card showed nothing where a
+  // projection was meant to be. It is the per-basis points map now.
 
-  function side(pid, row, index, right){
-    if(!pid||pid==='0') return '<div class="mm-p'+(right?' r':'')+'"></div>';
-    var meta=index[String(pid)]||[pid,''];
-    var pts=(row.players_points||{})[String(pid)];
-    // Before kickoff every points figure is zero, so show the projection there
-    // instead once it has been asked for - otherwise the card is a wall of 0.0.
-    var shown=pts;
-    if(PROJ&&(!pts)) shown=PROJ[String(pid)];
-    var val='<span class="mm-v">'+num(shown)+'</span>';
-    var nm='<span class="mm-nm">'+esc(meta[0])+'</span>'
-      +'<span class="mm-pos">'+esc(meta[1])+'</span>';
-    return '<div class="mm-p'+(right?' r':'')+'">'
-      +(right?val+nm:nm+val)+'</div>';
+
+  /** One side of a paired row, through the shared cells so it is the same
+   *  markup the built page emits. */
+  function pairSide(pid, row, index){
+    var W=window.GSWeek;
+    if(!pid||pid==='0') return W.pairCell(null);
+    var key=String(pid), meta=index[key]||[key,''];
+    var wkrow=(WEEKPROJ&&WEEKPROJ[key])||[];
+    var card={id:key, name:meta[0], pos:meta[1]||'', team:wkrow[3]||'',
+              injury:wkrow[4]||''};
+    var g=W.gameFor(CTX, card.team);
+    // Sleeper's points are the truth once a game is on; before kickoff the
+    // projection is the figure that means anything, which is what the built
+    // cell shows too.
+    return W.pairCell(card, (row.players_points||{})[key],
+                      PROJ?PROJ[key]:null, g);
   }
 
   function show(league){
     var id=league.id;
     host.innerHTML='<p class="mm-note">Reading '+esc(league.name||'your league')+'\\u2026</p>';
     if(built) built.hidden=true;
+    var API='https://api.sleeper.app/v1/league/'+encodeURIComponent(id);
     Promise.all([
-      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+'/matchups/'+WEEK)
-        .then(function(r){return r.ok?r.json():[];}),
-      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+'/rosters')
-        .then(function(r){return r.ok?r.json():[];}),
-      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+'/users')
-        .then(function(r){return r.ok?r.json():[];}),
+      fetch(API+'/matchups/'+WEEK).then(function(r){return r.ok?r.json():[];}),
+      fetch(API+'/rosters').then(function(r){return r.ok?r.json():[];}),
+      fetch(API+'/users').then(function(r){return r.ok?r.json():[];}),
       players(),
-      projections()
+      // The league itself, for its slot names and the basis it scores on;
+      // the week's projections; and the lines and forecasts behind the
+      // player cells.
+      fetch(API).then(function(r){return r.ok?r.json():{};}).catch(function(){return {};}),
+      GSL.week(),
+      window.GSWeek.load()
     ]).then(function(out){
       var rows=out[0]||[], rosters=out[1]||[], users=out[2]||[], index=out[3]||{};
+      var info=out[4]||{}, wk=out[5]||{proj:{}}, ctx=out[6];
+      CTX=ctx; WEEKPROJ=wk.proj||{};
+      // Sleeper's three bases, as everywhere else: a half-PPR league must not
+      // be shown PPR numbers.
+      PROJ=GSL.points(wk, GSL.basis(info).index);
+      SLOTS=(info.roster_positions||[]).filter(function(x){
+        return x!=='BN'&&x!=='IR'&&x!=='TAXI';});
       var byUser={};
       users.forEach(function(u){
         var team=(u.metadata&&u.metadata.team_name)||u.display_name||'Team';
@@ -182,14 +207,6 @@ JS = """{% raw %}<script>
     }).catch(function(){
       host.innerHTML='<p class="mm-note">Could not read that league from Sleeper.</p>';
     });
-  }
-
-  function projections(){
-    if(PROJ) return Promise.resolve(PROJ);
-    return fetch('/fantasy/week-projections.json')
-      .then(function(r){return r.ok?r.json():{};})
-      .then(function(d){ PROJ=d||{}; return PROJ; })
-      .catch(function(){ PROJ={}; return PROJ; });
   }
 
   var have=saved();

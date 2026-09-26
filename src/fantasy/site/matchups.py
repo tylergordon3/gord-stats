@@ -31,7 +31,7 @@ from fantasy.league import head_to_head as h2h
 from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import matchup_page as ui
-from gordstats import my_league, my_matchups
+from gordstats import my_league, my_league_data, my_matchups, my_week
 from gordstats.frontmatter import add_front_matter
 
 LOGO = "https://a.espncdn.com/i/teamlogos/nfl/500/{abbr}.png"
@@ -1066,7 +1066,8 @@ def body() -> str:
         '<a href="/fantasy/power/">power rankings</a>.</p></details>'
         + scored + ui.week_switch(weeks, current, views)
         + "</div>"
-        + MEDIAN_TRACKER_JS + ui.LIVE_JS + my_league.JS + my_matchups.JS)
+        + MEDIAN_TRACKER_JS + ui.LIVE_JS + my_league.JS
+        + my_league_data.JS + my_week.JS + my_matchups.JS)
 
 
 def generate():

@@ -161,6 +161,50 @@ window.GSWeek = (function(){
       +'</span>'+inj+(extra||'')+'</td>';
   }
 
+  // ----- the matchups page's paired phone view ---------------------------- //
+
+  /** "Ja'Marr Chase" -> "J. Chase": a full name does not fit half a phone. */
+  function shortName(name){
+    var parts=String(name||'').split(/\\s+/);
+    if(parts.length<2||parts[parts.length-1]==='D/ST') return String(name||'');
+    return parts[0].charAt(0)+'. '+parts.slice(1).join(' ');
+  }
+
+  /** The .mu-pts cell: one figure, always the one that matters. Mirrors
+   *  gordstats.matchup_page.score_cell. `exp` is the live expected final,
+   *  which this side does not compute - the built cell falls back to "live"
+   *  for exactly that case, so it reads the same. */
+  function scoreCell(pts,proj,state,exp){
+    if(state==='post')
+      return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp">final</span>';
+    if(state==='in'){
+      var sub=exp!=null?('&rarr; '+fmt(exp)):'live';
+      return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp live">'+sub+'</span>';
+    }
+    if(state==='bye'&&!pts)
+      return '<b class="mu-now proj">&mdash;</b><span class="mu-exp">bye</span>';
+    if(pts) return '<b class="mu-now">'+fmt(pts)+'</b><span class="mu-exp"></span>';
+    return '<b class="mu-now proj">'+fmt(proj)+'</b><span class="mu-exp"></span>';
+  }
+
+  /** One side of a paired row, mirroring fantasy.site.matchups._pair_cell. */
+  function pairCell(card,pts,proj,g){
+    if(!card) return '<div class="mu-pp empty" aria-hidden="true"></div>';
+    var inj=card.injury
+      ? '<span class="inj">'+esc(INJURY[card.injury]||card.injury.slice(0,3).toUpperCase())+'</span>'
+      : '';
+    var live=(g&&g.state==='in')?' live':'';
+    var state=g?(g.state||'pre'):'bye';
+    return '<div class="mu-pp'+live+'" data-pid="'+esc(card.id)+'"><div class="mu-pn">'
+      +'<span class="nm" title="'+esc(card.name)+'">'+logo(card.team)
+      +esc(shortName(card.name))+'</span>'
+      +'<span class="mu-pm">'+esc(card.pos)
+      +((card.team&&card.pos!=='DEF')?(' \u00b7 '+esc(card.team)):'')+inj+'</span>'
+      +'<span class="mu-g">'+gameCell(g)+'</span></div>'
+      +'<div class="mu-pcol"><span class="mu-pts">'+scoreCell(pts,proj,state)
+      +'</span></div></div>';
+  }
+
   // ----- the week's context ----------------------------------------------- //
 
   var cached=null;
@@ -193,6 +237,7 @@ window.GSWeek = (function(){
   }
 
   return {load:load, gameFor:gameFor, projFor:projFor, when:when,
+          shortName:shortName, scoreCell:scoreCell, pairCell:pairCell,
           gameCell:gameCell, totalCell:totalCell, oppCell:oppCell, wxCell:wxCell,
           moveCell:moveCell, playerCell:playerCell,
           heat:heat, ordinal:ordinal, wxIcon:wxIcon, fmt:fmt, esc:esc};
