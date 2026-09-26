@@ -28,6 +28,13 @@ CSS = """<style>
   border-radius:8px;min-width:180px}
 .ml-msg{font-size:12.5px}
 .ml-msg.err{color:#b91c1c}
+/* The sign-in offer sits where the username box would be, so it is styled as
+   the primary thing on the row and the league id as the alternative. */
+.ml-in{font:inherit;font-size:12.5px;font-weight:600;padding:5px 12px;
+  border-radius:999px;border:1px solid transparent;background:var(--accent,#C2410C);
+  color:#fff;text-decoration:none;white-space:nowrap}
+.ml-in:hover{filter:brightness(1.08)}
+.ml-or{font-size:12.5px;color:#64748b}
 /* The input takes the whole row at its default width and pushes the button
    to a third line. On a phone this control is one line of label and one of
    input-plus-button. */
@@ -37,12 +44,14 @@ CSS = """<style>
   .ml-bar input{min-width:0;flex:1}
   .ml-bar button{white-space:nowrap}
   .ml-bar .ml-msg{flex:1 1 100%}
+  .ml-bar .ml-or{flex:1 1 100%}
 }
 @media (prefers-color-scheme: dark){
   .ml-bar{color:#aab7c9}
   .ml-who{color:#f1f5f9}
   .ml-bar button,.ml-bar input{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .ml-bar button:hover{background:#1b2540}
+  .ml-or{color:#94a3b8}
   .ml-msg.err{color:#ff9b91}
 }
 </style>"""
@@ -173,6 +182,13 @@ JS = """{% raw %}<script>
   // the rest unreachable.
   var SYNCED=savedList();
 
+  // Whether there is an account behind this browser. Learned from the
+  // /api/leagues call below rather than a second request: it answers 401 when
+  // nobody is signed in, 503 when this deploy has no accounts at all, and 200
+  // with the leagues when there is somebody. `null` until it answers, which is
+  // why nothing is drawn as signed-out until we actually know.
+  var signedIn=null;
+
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"]/g,function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
@@ -267,18 +283,33 @@ JS = """{% raw %}<script>
     }
     // Connecting happens here rather than on a settings page: a reader who
     // wants their own league is already looking at a page that would show it.
-    // One field, because a Sleeper username and a league id cannot be mistaken
-    // for each other - an id is a long run of digits and a username is not.
-    bar.innerHTML='<span class="ml-label">Your Sleeper username</span>'
+    //
+    // What is offered depends on whether there is an account. Finding every
+    // league from a username is a sync - it belongs to somebody - so signed
+    // out that is a sign-in prompt, and a league id, which needs nobody and
+    // lives in this browser, stays open to everyone. One field either way,
+    // because a username and an id cannot be mistaken for each other: an id is
+    // a long run of digits and a username is not.
+    var out=signedIn===false
+      ? '<span class="ml-label">Your leagues, on every device</span>'
+        + '<a class="ml-in" href="/api/auth/login?next='
+        + encodeURIComponent(location.pathname+location.search) + '">Sign in</a>'
+        + '<span class="ml-or">or paste a league id</span>'
+      : '<span class="ml-label">Your Sleeper username</span>';
+    bar.innerHTML=out
       +'<input id="ml-id" type="text" autocapitalize="none" autocorrect="off" '
-      +'spellcheck="false" placeholder="username" '
-      +'aria-label="Sleeper username, or a league id">'
-      +'<button type="button" id="ml-go">Connect</button>'
+      +'spellcheck="false" placeholder="'+(signedIn===false?'league id':'username')+'" '
+      +'aria-label="'+(signedIn===false?'Sleeper league id':'Sleeper username, or a league id')+'">'
+      +'<button type="button" id="ml-go">'+(signedIn===false?'Show':'Connect')+'</button>'
       +'<span class="ml-msg" id="ml-msg"></span>';
     function go(){
       var btn=document.getElementById('ml-go');
       var v=(document.getElementById('ml-id').value||'').trim();
-      if(!v){ msg('Enter your Sleeper username.','err'); return; }
+      if(!v){
+        msg(signedIn===false?'Paste a league id — the long number in its URL.'
+                            :'Enter your Sleeper username.','err');
+        return;
+      }
       btn.disabled=true;
       var done=function(){ btn.disabled=false; };
       if(/^[0-9]{6,32}$/.test(v)) load(v).then(done);       // a league id
@@ -298,6 +329,11 @@ JS = """{% raw %}<script>
    *  work.
    */
   function connect(username){
+    if(signedIn===false){
+      msg('Sign in first — finding every league from a username saves them to '
+          +'your account.','err');
+      return Promise.resolve(false);
+    }
     msg('Asking Sleeper\u2026');
     var API='https://api.sleeper.app/v1';
     return fetch(API+'/user/'+encodeURIComponent(username))
@@ -324,8 +360,8 @@ JS = """{% raw %}<script>
         fetch('/api/leagues',{method:'POST',credentials:'same-origin',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({provider:'sleeper', username:username})})
-          // Persisting is the extra, not the feature: signed out there is
-          // nowhere to put it and the local copy is already doing the work.
+          // The endpoint is the authority - it answers 401 to anyone without a
+          // session - so this is belt and braces over the check in connect().
           .catch(function(){ /* best effort */ });
         msg('');
         draw(leagueLabel(SYNCED[0]));
@@ -344,8 +380,19 @@ JS = """{% raw %}<script>
   // A league synced to the account wins over whatever this browser remembers,
   // so a second device shows the same thing without being told again.
   fetch('/api/leagues',{credentials:'same-origin'})
-    .then(function(r){return r.ok?r.json():null;})
+    .then(function(r){
+      // The status is the answer, not a failure to handle. 401 is "nobody is
+      // signed in"; 503 is "this deploy has no accounts at all", which is not
+      // the same thing and must not become a sign-in link that goes nowhere.
+      if(r.status===401) signedIn=false;
+      else if(r.ok) signedIn=true;
+      return r.ok?r.json():null;
+    })
     .then(function(d){
+      var mine=d&&d.leagues&&d.leagues.length;
+      // Nothing to show and now we know why: redraw so a signed-out reader is
+      // offered a sign-in rather than a username box that cannot sync.
+      if(!(saved()||{}).id && !mine) draw(null);
       if(!d||!d.leagues) return;
       // One entry per league, not one per season.
       // The account is the better answer when there is one: it has the team
