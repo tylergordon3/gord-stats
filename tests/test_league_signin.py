@@ -85,3 +85,30 @@ def test_every_fantasy_page_with_a_league_carries_the_control():
         src = (ROOT / "src" / "fantasy" / "site" / f"{name}.py").read_text()
         assert "my_league.bar()" in src, f"{name} has no league control"
         assert "my_league.JS" in src, f"{name} has the control but not its script"
+
+
+def test_the_four_sections_share_one_empty_state():
+    """They were four copies of the same sentence, which is how three came to
+    say "connect yours" and one "sync yours"."""
+    from gordstats import my_draft, my_history, my_power, my_waivers
+
+    for mod in (my_history, my_waivers, my_draft, my_power):
+        assert "GSLeague.empty(" in mod.JS, f"{mod.__name__} still rolls its own"
+        # Drawn twice, because the account state is not known at first paint.
+        assert "GSLeague.ready" in mod.JS, f"{mod.__name__} never redraws"
+
+
+def test_the_empty_state_asks_a_signed_out_reader_to_sign_in():
+    assert "Sign in to see your league" in JS
+    assert "Pick a league above" in JS, "and still guides a signed-in one"
+
+
+def test_a_section_without_the_control_still_says_something():
+    """my_league.JS could be missing from a page by mistake - that has
+    happened - and a blank panel is a worse way to find out than a sentence
+    that is merely less helpful."""
+    from gordstats import my_history
+
+    assert "window.GSLeague\n" in my_history.JS or "window.GSLeague?" in my_history.JS \
+        or "window.GSLeague" in my_history.JS
+    assert "Pick a league above to see its history" in my_history.JS

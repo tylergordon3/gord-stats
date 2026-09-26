@@ -83,3 +83,26 @@ def test_a_failed_fetch_is_recoverable(page):
     clickable again, not sit blank for ever."""
     assert "could not be loaded" in page
     assert "setAttribute('data-src'" in page, "a failure must leave the week retryable"
+
+
+def test_browsing_the_season_does_not_rebuild_the_old_page(page):
+    """Lazy loading alone only defers the cost: a reader working through the
+    weeks would arrive back at 125,000 nodes. Three fetched weeks are kept,
+    measured at 21,220 nodes after visiting all fifteen."""
+    assert "KEEP_WEEKS" in page
+    assert "shownOrder" in page and "function evict()" in page
+
+
+def test_an_evicted_week_can_come_back(page):
+    """Dropping the rows without remembering where they came from is a week
+    that never loads again."""
+    assert "data-was" in page, "an evicted week must remember its source"
+    assert "v.setAttribute('data-src',v.getAttribute('data-was'))" in page
+
+
+def test_the_week_in_the_page_is_never_evicted(page):
+    """It was rendered server-side and has no fragment to fetch, so dropping
+    it would empty the tab for good. It has no data-was, which is what keeps
+    it - and the week being read is skipped besides."""
+    assert "if(old===current) continue;" in page
+    assert "if(!v||!v.getAttribute('data-was')) continue;" in page

@@ -1637,6 +1637,7 @@ function loadWeek(view){
   var src=view.getAttribute('data-src');
   if(!src) return Promise.resolve(view);          // already here
   if(view._loading) return view._loading;         // a second click while in flight
+  view.setAttribute('data-was',src);      // so it can be dropped and refetched
   view.removeAttribute('data-src');
   // Bare path first, `.html` if that is not a thing on this host.
   view._loading=fetch(src).then(function(r){
@@ -1663,6 +1664,25 @@ function loadWeek(view){
   return view._loading;
 }
 
+/* How many weeks' rows to keep. Loading one week is ~12,000 nodes, so a
+   reader working through the season would arrive back at the 125,000 this
+   change exists to avoid. Three is enough to flick between neighbouring
+   weeks without refetching, and an evicted week costs one small request to
+   come back. The current week is never evicted. */
+var KEEP_WEEKS=3, shownOrder=[];
+
+function evict(){
+  while(shownOrder.length>KEEP_WEEKS){
+    var old=shownOrder.shift();
+    if(old===current) continue;                 // never the one being read
+    var v=document.getElementById('wk-view-'+old);
+    if(!v||!v.getAttribute('data-was')) continue;
+    v.innerHTML='';
+    v.setAttribute('data-src',v.getAttribute('data-was'));
+    v._loading=null;
+  }
+}
+
 window.show_wk=function(w){
   current=+w;
   var view=document.getElementById('wk-view-'+w);
@@ -1674,6 +1694,10 @@ window.show_wk=function(w){
   return loadWeek(view).then(function(){
     Array.prototype.forEach.call(document.querySelectorAll('.wk-view'),function(e){e.style.display='none';});
     view.style.display='';
+    var at=shownOrder.indexOf(+w);
+    if(at>=0) shownOrder.splice(at,1);
+    shownOrder.push(+w);                  // most recently read, last
+    evict();
     return view;
   });
 };

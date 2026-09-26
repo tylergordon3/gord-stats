@@ -379,7 +379,7 @@ JS = """{% raw %}<script>
 
   // A league synced to the account wins over whatever this browser remembers,
   // so a second device shows the same thing without being told again.
-  fetch('/api/leagues',{credentials:'same-origin'})
+  var accountReady = fetch('/api/leagues',{credentials:'same-origin'})
     .then(function(r){
       // The status is the answer, not a failure to handle. 401 is "nobody is
       // signed in"; 503 is "this deploy has no accounts at all", which is not
@@ -420,6 +420,29 @@ JS = """{% raw %}<script>
       if(e && e.name !== 'TypeError') return;
       if(window.console) console.error('[my-league]', e);
     });
+
+  /** The empty state for a section that has no league to show.
+   *
+   *  Shared because there are four of these and they were four copies of the
+   *  same sentence, which is how three of them come to say "connect yours"
+   *  and one "sync yours". What it says depends on whether there is an
+   *  account to connect to, and that is not known at first paint - so the
+   *  caller draws it, waits on `ready`, and draws it again.
+   */
+  window.GSLeague = {
+    ready: accountReady,
+    signedIn: function(){ return signedIn; },
+    empty: function(cls, noun){
+      if(signedIn===false){
+        return '<p class="'+cls+'">Sign in to see your league\u2019s '+noun+'. '
+          + '<a class="ml-in" href="/api/auth/login?next='
+          + encodeURIComponent(location.pathname+location.search)
+          + '">Sign in</a></p>';
+      }
+      return '<p class="'+cls+'">Pick a league above, or '
+        + '<a href="/fantasy/sync/">connect yours</a>, to see its '+noun+'.</p>';
+    }
+  };
 })();
 </script>{% endraw %}"""
 

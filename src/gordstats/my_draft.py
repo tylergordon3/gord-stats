@@ -66,8 +66,13 @@ JS = """{% raw %}<script>
   if(!host||!window.GSL) return;
   var have=GSL.saved();
   if(!have||!have.id||have.site){
-    host.innerHTML='<p class="dr-none">Pick a league above, or '
-      +'<a href="/fantasy/sync/">connect yours</a>, to see its drafts.</p>';
+    // Drawn twice: once now, and again when the account call settles, because
+    // whether to offer a sign-in or a league picker is not known at first paint.
+    var none=function(){ host.innerHTML=window.GSLeague
+      ? GSLeague.empty('dr-none','drafts')
+      : '<p class="dr-none">Pick a league above to see its drafts.</p>'; };
+    none();
+    if(window.GSLeague&&GSLeague.ready) GSLeague.ready.then(none,none);
     return;
   }
 
