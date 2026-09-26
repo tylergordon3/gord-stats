@@ -476,6 +476,10 @@
   // everybody else asks it.
   window.GSFavorites = {
     list: function () { return favorites.slice(); },
+    // Rows that arrive after boot - the schedule page fetches a week at a
+    // time now - have never been painted, so their stars would sit empty
+    // whatever the reader had starred.
+    repaint: function () { paint(); },
     remove: function (key) {
       favorites = favorites.filter(function (k) { return k !== key; });
       write(favorites);

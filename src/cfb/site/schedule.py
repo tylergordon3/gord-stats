@@ -1630,13 +1630,48 @@ function readHash(){
   chips.forEach(function(b){b.classList.toggle('active',!!on[b.getAttribute('data-f')]);});
 }
 
+/* Only the current week's rows are in the page; the rest are fetched once,
+   on the first click. Returns a promise so a deep link into another week can
+   wait for its row to exist. */
+function loadWeek(view){
+  var src=view.getAttribute('data-src');
+  if(!src) return Promise.resolve(view);          // already here
+  if(view._loading) return view._loading;         // a second click while in flight
+  view.removeAttribute('data-src');
+  view._loading=fetch(src).then(function(r){
+    if(!r.ok) throw new Error(r.status);
+    return r.text();
+  }).then(function(html){
+    view.innerHTML=html;
+    // Rows that arrive after boot have never been through either of these:
+    // the sort/filter that the controls are currently set to, and the star
+    // painting that turns a reader's favourites on.
+    layout(view);
+    if(window.GSFavorites&&window.GSFavorites.repaint)window.GSFavorites.repaint();
+    return view;
+  }).catch(function(){
+    view.innerHTML='<p class="sc-intro">That week could not be loaded. '
+      +'Check your connection and try again.</p>';
+    view.setAttribute('data-src',src);           // let a later click retry
+    view._loading=null;
+    return view;
+  });
+  return view._loading;
+}
+
 window.show_wk=function(w){
   current=+w;
-  Array.prototype.forEach.call(document.querySelectorAll('.wk-view'),function(e){e.style.display='none';});
-  document.getElementById('wk-view-'+w).style.display='';
+  var view=document.getElementById('wk-view-'+w);
   Array.prototype.forEach.call(document.querySelectorAll('.wk-btn'),function(b){b.classList.remove('active');});
-  document.getElementById('wk-tab-'+w).classList.add('active');
+  var tab=document.getElementById('wk-tab-'+w);if(tab)tab.classList.add('active');
   writeHash();
+  if(!view) return Promise.resolve(null);
+  if(view.getAttribute('data-src'))view.innerHTML='<p class="sc-intro">Loading week '+w+'\u2026</p>';
+  return loadWeek(view).then(function(){
+    Array.prototype.forEach.call(document.querySelectorAll('.wk-view'),function(e){e.style.display='none';});
+    view.style.display='';
+    return view;
+  });
 };
 
 /* ---- live scores for the current week ---- */
@@ -1748,15 +1783,16 @@ document.addEventListener('visibilitychange',function(){
 });
 
 readHash();
-window.show_wk(current);
 applyAll();
-if(openGame){
+// A deep link can name a game in a week whose rows are not here yet, so the
+// scroll waits for the fetch rather than looking for a row that cannot exist.
+window.show_wk(current).then(function(){
+  if(!openGame)return;
   var row=document.getElementById('g-'+openGame);
-  if(row){
-    var v=row.closest('.wk-view');if(v){show_wk(v.id.replace('wk-view-',''));}
-    setOpen(row,true);
-    if(!noScroll)row.scrollIntoView({block:'start'});}
-}
+  if(!row)return;
+  setOpen(row,true);
+  if(!noScroll)row.scrollIntoView({block:'start'});
+});
 poll();
 })();
 </script>"""
@@ -1783,20 +1819,37 @@ def _controls(confs: dict) -> str:
 
 def _switcher(week_ids: list[int], current: int, views: dict[int, str],
               controls: str = "") -> str:
+    """The week tabs, with only the current week's rows in the page.
+
+    Every week used to be rendered here and all but one hidden with
+    `display:none`. That is 15 weeks of a season in the DOM to show one of
+    them: 4.2 MB and 125,000 nodes, which a phone must parse and hold whatever
+    it ends up painting. The rest are fetched on the first click instead - see
+    `show_wk` - so the page arrives at about a fifteenth of the size and the
+    switch still feels like a switch.
+    """
     buttons = "".join(
         f'<button class="wk-btn{" active" if w == current else ""}" '
         f"onclick=\"show_wk('{w}')\" id=\"wk-tab-{w}\">{w}</button>"
         for w in week_ids)
     divs = "".join(
         f'<div id="wk-view-{w}" class="wk-view"'
-        f'{"" if w == current else " style=\'display:none\'"}>{views[w]}</div>'
+        + ("" if w == current
+           else f" style='display:none' data-src='{WEEK_URL % w}'")
+        + f">{views[w] if w == current else ''}</div>"
         for w in week_ids)
     return ('<div class="pin-bar sc-pin">' + controls
             + f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div></div>'
             f'<div id="cfb-weeks">{divs}</div>')
 
 
-def body() -> str:
+#: Where a week's rows live once they are not all in the page.
+WEEK_URL = "/cfb/schedule/week-%s.html"
+WEEK_FILE = "week-%s.html"
+
+
+def build() -> tuple:
+    """(page html, {week: its rows}) - the fragments are written beside it."""
     df = _frame()
     week_ids = sorted(int(w) for w in df["week"].unique())
     current = _current_week(df)
@@ -1824,14 +1877,26 @@ def body() -> str:
     # `table.cfb-sched tbody tr.g:nth-child(even) td`, and a selector one
     # element shorter loses to it on every second row. Emitted after _CSS so a
     # tie in specificity goes to the highlight.
-    return (_CSS + favorites.table_css("table.cfb-sched tbody") + intro + _LEGEND
+    html = (_CSS + favorites.table_css("table.cfb-sched tbody") + intro + _LEGEND
             + _switcher(week_ids, current, views, controls=_controls(espn.conferences()))
             + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
                      "url": json.dumps(f"/api/cfb-scores?week={current}&dates={SEASON}")})
+    return html, {w: v for w, v in views.items() if w != current}
+
+
+def body() -> str:
+    return build()[0]
 
 
 def generate():
-    write_page(WEB_DIR / "schedule" / "index.html", f"CFB Schedule & Scores {SEASON}", body())
+    html, fragments = build()
+    out = WEB_DIR / "schedule"
+    write_page(out / "index.html", f"CFB Schedule & Scores {SEASON}", html)
+    # Plain fragments, no front matter: Jekyll copies a file it cannot parse as
+    # a page straight through, which is what these want to be.
+    for week, view in fragments.items():
+        (out / (WEEK_FILE % week)).write_text(view, encoding="utf-8")
+    print(f"  {len(fragments)} weeks written beside it, fetched on demand")
 
 
 if __name__ == "__main__":
