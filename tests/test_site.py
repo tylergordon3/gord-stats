@@ -81,6 +81,13 @@ def test_sub_nav_sections_match_the_bar():
     assert not missing, f"{missing} are in the bar with no sub-nav"
     orphans = subs - (bar | leagues) - PARKED_SUB_NAVS
     assert not orphans, f"{orphans} are sub-navs nothing links to"
+    # A parked list that turns out to be reachable is a stale exception - and
+    # it is how a nav edit can be reverted without anything noticing, which is
+    # exactly what happened to the WNBA one on 2026-09-25.
+    live = PARKED_SUB_NAVS & (bar | leagues)
+    assert not live, (
+        f"{live} are in PARKED_SUB_NAVS but are linked from the bar or the "
+        "Fantasy switcher - put them back or take them out of the parked set")
     for lg in NAV["fantasy_leagues"]:
         assert _resolves(lg["url"]), f"league {lg['title']} -> {lg['url']} is missing"
 
@@ -648,3 +655,42 @@ def test_two_leagues_named_the_same_are_never_the_same_entry():
     picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
     assert "function labelsFor(" in picker
     assert "team_name" in picker
+
+
+@needs_built_site
+def test_no_phone_rule_shrinks_text_below_the_floor():
+    """This site is read standing in a car park, and the schedule page was
+    actively shrinking its labels *further* on phones to fit more in - a tag
+    from 10.5px down to 9.5px, form badges to 9.5px. That is the wrong trade on
+    the device where reading is hardest, and it is the complaint this site
+    started from.
+
+    Only rules inside a phone media query are checked: a 10px label on a
+    desktop table is fine, and several are deliberately raised for phones by a
+    later query rather than changed outright.
+
+    Swept in a browser at 390px afterwards: 41 pages, nothing under 10.5px and
+    no horizontal scroll anywhere.
+    """
+    import re
+
+    FLOOR = 10.5
+    offenders = []
+    for path in sorted(ROOT.joinpath("src").rglob("*.py")):
+        text = path.read_text(errors="ignore")
+        for block in re.finditer(r"@media\s*\(max-width:\s*([0-9]+)px\)\s*\{", text):
+            if int(block.group(1)) > 700:
+                continue                       # a tablet rule, not a phone one
+            # The body of the query, to its matching brace.
+            depth, i = 1, block.end()
+            while i < len(text) and depth:
+                depth += (text[i] == "{") - (text[i] == "}")
+                i += 1
+            body = text[block.end():i]
+            for rule in re.finditer(r"([^{};\n]+)\{([^}]*)\}", body):
+                for size in re.findall(r"font-size:\s*([0-9.]+)px", rule.group(2)):
+                    if float(size) < FLOOR:
+                        sel = " ".join(rule.group(1).split())[-40:]
+                        offenders.append(f"{path.name}: {sel} -> {size}px")
+    assert not offenders, (
+        "phone rules below the floor:\n  " + "\n  ".join(sorted(offenders)))

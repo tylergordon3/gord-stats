@@ -163,7 +163,7 @@ table.cfb-sched table.lnt,table.cfb-sched table.frt{border:none;border-collapse:
   width:auto;margin:0;background:none;font-size:12px;white-space:nowrap;
   font-variant-numeric:tabular-nums}
 table.cfb-sched table.lnt th,table.cfb-sched table.frt th{background:none;border:none;
-  border-bottom:1px solid #e2e8f0;padding:0 8px 2px 0;font-size:10px;color:#94a3b8;
+  border-bottom:1px solid #e2e8f0;padding:0 8px 2px 0;font-size:11px;color:#94a3b8;
   text-align:left;letter-spacing:.04em}
 table.cfb-sched table.lnt td,table.cfb-sched table.frt td{background:none;border:none;
   padding:2px 6px 2px 0;font-size:12px;color:#334155;vertical-align:middle}
@@ -180,7 +180,7 @@ table.cfb-sched table.lnt td:first-child{padding-left:4px}
 .sc-stat{font-size:10.5px;color:#64748b;margin:-1px 0 2px 28px;white-space:nowrap;
   font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
 .sc-stat b{color:#334155;font-weight:600}
-.sc-stat .l5{width:13px;height:13px;line-height:13px;font-size:9px;margin-right:1px}
+.sc-stat .l5{width:14px;height:14px;line-height:14px;font-size:10px;margin-right:1px}
 .call{margin-top:5px;font-size:12.5px;color:#334155}
 .call b{color:#0f172a}
 .call .strong b{color:var(--accent-dark,#1e40af)}
@@ -280,11 +280,15 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   table.cfb-sched>tbody>tr.g{padding:6px 8px 5px;margin:6px 0}
   table.cfb-sched .sc-row img{width:18px;height:18px}
   .sc-mu{gap:2px}
+  /* This block used to shrink the labels below their desktop size to fit
+     more in. On the device where reading is hardest that is the wrong
+     trade, and it is the complaint this site started from - a tag at
+     9.5px is not a size anyone reads standing in a car park. */
   .sc-name{font-size:13px}
   .sc-pts{font-size:14px}
   .sc-meta{font-size:10.5px;margin-top:2px;gap:3px 5px}
   .sc-venue{display:none}
-  .tag{font-size:9.5px;padding:0 5px}
+  .tag{font-size:10.5px;padding:0 5px}
   .sub{font-size:11px}
   .t-tv{font-size:11px}
   table.cfb-sched td.d .c{min-width:0}
@@ -292,11 +296,11 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   /* Rank alone beside FPI and SP+ on a phone; the rating rides in the title
      on desktop-width screens and the whole form row then fits the card. */
   table.cfb-sched table.frt td .mv{display:none}
-  .sc-stat{margin-left:24px;font-size:10px}
+  .sc-stat{margin-left:24px;font-size:11px}
   table.cfb-sched table.frt td{padding-right:6px}
-  .l5{width:14px;height:14px;line-height:14px;font-size:9.5px;margin-right:1px}
+  .l5{width:15px;height:15px;line-height:15px;font-size:10.5px;margin-right:1px}
   .call{font-size:12px}
-  .det-btn{font-size:10.5px}
+  .det-btn{font-size:11.5px}
   table.cfb-sched>tbody>tr.det{display:none}
   table.cfb-sched>tbody>tr.det.show{display:block}
   table.cfb-sched>tbody>tr.det>td{border:1px solid #e2e8f0;border-radius:10px;
@@ -316,7 +320,7 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .sc-mu{min-width:0}
   table.cfb-sched td.d{display:grid;grid-template-columns:40px 1fr;gap:4px;
     font-size:12px;white-space:normal;max-width:none;padding:1px 0}
-  table.cfb-sched td.d::before{content:attr(data-s);font-size:10px;text-transform:uppercase;
+  table.cfb-sched td.d::before{content:attr(data-s);font-size:11px;text-transform:uppercase;
     letter-spacing:.04em;color:#94a3b8;font-weight:700;padding-top:2px}
   table.cfb-sched td.na{display:none}
   .sc-venue{max-width:none}

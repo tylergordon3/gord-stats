@@ -343,6 +343,16 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   .mu-pr.bench .mu-pts{color:#aab7c9}
   .mu-pbench>summary{color:#dde5ef}
 }
+
+/* A phone readability floor. Read standing in a car park, 9 and 10px is not a
+   size anyone reads - which is the complaint this site started from. Only on a
+   phone: the desktop density is fine because it is read sitting down, and
+   these rules sit last so they win on equal specificity. */
+@media (max-width:600px){
+  .mu-pn .mu-g,.mu-pn .mu-pm,.mu-pslot,.mu-pbench-h,
+  .mu-pts .mu-exp,.mu-pp .mu-gs{font-size:11px}
+  .mu-pair .inj,.mu-pair .mu-hint{font-size:10.5px}
+}
 </style>"""
 
 JS = """<script>

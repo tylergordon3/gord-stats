@@ -181,7 +181,7 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
 }
 @media (max-width:560px){
   table.hc-t25 td{font-size:12px;padding:4px 4px}
-  table.hc-t25 th{font-size:10px;letter-spacing:.03em;padding:0 4px 5px}
+  table.hc-t25 th{font-size:11px;letter-spacing:.03em;padding:0 4px 5px}
   td.hc-rk{width:30px;font-size:12px;padding-right:9px}
   table.hc-t25 th:first-child{width:30px}
   /* A third of 390px is about 115px, and a logo eats a fifth of it:

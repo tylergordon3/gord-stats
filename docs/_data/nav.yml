@@ -55,9 +55,12 @@ fantasy_leagues:
     url: /cfb/league/
     pages: cfb_fantasy
 
-  - title: WNBA
-    url: /wnba/index.html
-    pages: wnba
+# WNBA is out of the switcher while its season is over. The `wnba:` page list
+# below and everything under src/wnba are left alone - putting it back is
+# uncommenting these three lines.
+#  - title: WNBA
+#    url: /wnba/index.html
+#    pages: wnba
 
 
 cbb:

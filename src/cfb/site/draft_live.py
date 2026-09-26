@@ -291,10 +291,18 @@ td.p-TE{background:#fadfc8}td.p-DEF{background:#d4f0f7}
   .ld-lineup td.slot,.ld-lineup td.pts{color:#aab7c9}
   .ld-need{color:#dde5ef}
 }
+/* The positions table is injected into #ld-positions by the board script,
+   without the .ld-scroll wrapper its sibling gets in the markup. On a phone
+   that left 450px of table inside a 347px panel whose overflow is hidden, so
+   the last three columns could not be reached at all - not narrow, gone. */
+#ld-positions{overflow-x:auto}
+
 @media (max-width:700px){
   .ld-scroll{max-height:60vh}
-  table.ld-grid{font-size:10px}
+  table.ld-grid{font-size:10.5px}
   table.ld-grid td{height:30px}
+  /* Pick numbers in the grid, at 9px, were the smallest text on the site. */
+  table.ld-grid .pk{font-size:10.5px}
 }
 </style>"""
 

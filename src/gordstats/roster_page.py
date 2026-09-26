@@ -329,6 +329,15 @@ CARD_CSS = """<style>
   .rd-card.swap .rd-c-do{color:#93c5fd}
   .rd-c-opp{background:#223052;color:#aab7c9}
 }
+
+/* A phone readability floor. Read standing in a car park, 9 and 10px is not a
+   size anyone reads - which is the complaint this site started from. Only on a
+   phone: the desktop density is fine because it is read sitting down, and
+   these rules sit last so they win on equal specificity. */
+@media (max-width:600px){
+  .rd-c-slot small,.rd-c-opp,.rd-c-proj small,
+  .rd-toggle .rd-tot span{font-size:11px}
+}
 </style>"""
 
 CARD_JS = """<script>

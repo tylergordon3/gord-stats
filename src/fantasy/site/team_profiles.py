@@ -73,7 +73,7 @@ CSS = """<style>
 .tp-bar i{display:block;height:12px}
 .tp-bar .l i{background:var(--tp-loss);border-radius:4px 0 0 4px}
 .tp-bar .r i{background:var(--tp-win);border-radius:0 4px 4px 0}
-.tp-po{font-size:10px;font-weight:700;border-radius:4px;padding:0 4px;margin-left:5px;
+.tp-po{font-size:11px;font-weight:700;border-radius:4px;padding:0 4px;margin-left:5px;
   background:var(--tp-soft);border:1px solid var(--tp-rule);color:var(--tp-ink)}
 .tp-seasons{width:100%;border-collapse:collapse;font-size:13px}
 .tp-seasons th{font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--tp-muted);
