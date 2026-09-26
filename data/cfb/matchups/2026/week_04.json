@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-26T21:11:02+00:00",
+ "fetched": "2026-09-26T21:42:36+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 77.04,
+     "points": 83.36,
      "projected": 182.91,
-     "win_probability": 0.14
+     "win_probability": 0.13
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 69.4,
+     "points": 73.5,
      "projected": 201.12,
-     "win_probability": 0.86
+     "win_probability": 0.87
     }
    ]
   },
@@ -39,16 +39,16 @@
     {
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
-     "points": 69.92,
+     "points": 68.32,
      "projected": 196.68,
-     "win_probability": 0.31000000000000005
+     "win_probability": 0.18999999999999995
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 128.82,
+     "points": 144.72,
      "projected": 193.32,
-     "win_probability": 0.69
+     "win_probability": 0.81
     }
    ]
   },
@@ -62,14 +62,14 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 95.66,
+     "points": 99.76,
      "projected": 178.66,
      "win_probability": 0.43999999999999995
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 56.2,
+     "points": 53.2,
      "projected": 161.68,
      "win_probability": 0.56
     }
@@ -85,14 +85,14 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 45.44,
+     "points": 47.54,
      "projected": 164.44,
      "win_probability": 0.32999999999999996
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 16.18,
+     "points": 18.98,
      "projected": 170.2,
      "win_probability": 0.67
     }
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 108.98,
+     "points": 109.42,
      "projected": 169.5,
-     "win_probability": 0.54
+     "win_probability": 0.55
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 60.5,
+     "points": 63.6,
      "projected": 171.14,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.44999999999999996
     }
    ]
   }
@@ -135,9 +135,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 2.5,
+    "points": 4.62,
     "stats": {
-     "4": 35.0,
+     "4": 88.0,
      "8": 1.0,
      "9": 11.0
     }
@@ -207,8 +207,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.0,
-    "stats": {}
+    "points": 3.8,
+    "stats": {
+     "11": 2.0,
+     "12": 28.0
+    }
    },
    {
     "yahoo_id": "471011",
@@ -270,8 +273,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
+    "points": 0.4,
+    "stats": {
+     "8": 3.0,
+     "9": 4.0
+    }
    },
    {
     "yahoo_id": "457379",
@@ -381,10 +387,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 7.3,
+    "points": 15.5,
     "stats": {
-     "11": 5.0,
-     "12": 48.0
+     "11": 6.0,
+     "12": 65.0,
+     "13": 1.0
     }
    },
    {
@@ -400,7 +407,7 @@
     "slot": "DEF",
     "points": 18.0,
     "stats": {
-     "31": 9.0,
+     "31": 10.0,
      "32": 6.0,
      "34": 1.0,
      "35": 1.0,
@@ -448,10 +455,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 15.8,
+    "points": 18.9,
     "stats": {
-     "8": 8.0,
-     "9": 85.0,
+     "8": 9.0,
+     "9": 116.0,
      "10": 1.0,
      "11": 1.0,
      "12": 8.0
@@ -534,8 +541,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.0,
+    "stats": {
+     "11": 1.0,
+     "12": 5.0
+    }
    },
    {
     "yahoo_id": "467588",
@@ -666,8 +676,8 @@
     "team": "USC",
     "team_full": "USC Trojans",
     "bye": 10.0,
-    "status": "D",
-    "status_full": "Doubtful",
+    "status": "O",
+    "status_full": "Out",
     "injury_note": "Knee",
     "slot": "IL",
     "points": 0.0,
@@ -718,10 +728,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 10.22,
+    "points": 8.22,
     "stats": {
      "4": 103.0,
      "5": 1.0,
+     "6": 1.0,
      "8": 2.0,
      "9": 1.0
     }
@@ -848,10 +859,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 22.6,
+    "points": 23.0,
     "stats": {
-     "8": 10.0,
-     "9": 82.0,
+     "8": 11.0,
+     "9": 86.0,
      "10": 2.0,
      "11": 1.0,
      "12": 19.0
@@ -977,13 +988,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 17.22,
+    "points": 30.82,
     "stats": {
-     "4": 118.0,
-     "5": 1.0,
-     "8": 1.0,
-     "9": 5.0,
-     "10": 1.0
+     "4": 148.0,
+     "5": 2.0,
+     "8": 4.0,
+     "9": 9.0,
+     "10": 2.0
     }
    },
    {
@@ -1011,10 +1022,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 22.1,
+    "points": 22.0,
     "stats": {
-     "8": 15.0,
-     "9": 84.0,
+     "8": 17.0,
+     "9": 83.0,
      "10": 2.0,
      "11": 1.0,
      "12": 12.0
@@ -1098,10 +1109,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 2.4,
+    "points": 4.8,
     "stats": {
-     "11": 2.0,
-     "12": 14.0
+     "11": 3.0,
+     "12": 33.0
     }
    },
    {
@@ -1218,7 +1229,7 @@
     "slot": "BN",
     "points": 5.1,
     "stats": {
-     "8": 9.0,
+     "8": 11.0,
      "9": 44.0,
      "11": 1.0,
      "12": 2.0
@@ -1311,10 +1322,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 1.3,
+    "points": 4.4,
     "stats": {
-     "8": 3.0,
-     "9": 13.0
+     "8": 4.0,
+     "9": 16.0,
+     "11": 1.0,
+     "12": 23.0
     }
    },
    {
@@ -1537,10 +1550,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 8.0,
+    "points": 9.0,
     "stats": {
      "31": 7.0,
-     "32": 2.0,
+     "32": 3.0,
      "37": 1.0,
      "52": 1.0
     }
@@ -1812,13 +1825,14 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 25.0,
+    "points": 22.0,
     "stats": {
+     "31": 6.0,
      "32": 3.0,
      "33": 1.0,
      "34": 2.0,
      "35": 1.0,
-     "50": 1.0
+     "51": 1.0
     }
    }
   ],
@@ -1888,7 +1902,7 @@
     "slot": "RB",
     "points": 4.7,
     "stats": {
-     "8": 7.0,
+     "8": 8.0,
      "9": 28.0,
      "11": 1.0,
      "12": 14.0
@@ -1936,10 +1950,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 1.2,
+    "points": 2.1,
     "stats": {
-     "11": 1.0,
-     "12": 7.0
+     "11": 2.0,
+     "12": 11.0
     }
    },
    {
@@ -1988,10 +2002,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 7.9,
+    "points": 9.1,
     "stats": {
-     "11": 3.0,
-     "12": 64.0
+     "11": 4.0,
+     "12": 71.0
     }
    },
    {
@@ -2038,12 +2052,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": -1.94,
+    "points": 6.24,
     "stats": {
-     "4": 139.0,
+     "4": 156.0,
+     "5": 1.0,
      "6": 1.0,
-     "8": 6.0,
-     "9": -15.0,
+     "8": 9.0,
      "18": 2.0
     }
    },
@@ -2091,8 +2105,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 0.0,
-    "stats": {}
+    "points": 1.18,
+    "stats": {
+     "4": 17.0,
+     "8": 1.0,
+     "9": 5.0
+    }
    },
    {
     "yahoo_id": "900033",
@@ -2217,10 +2235,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 9.4,
+    "points": 12.2,
     "stats": {
-     "11": 1.0,
-     "12": 29.0,
+     "11": 2.0,
+     "12": 52.0,
      "13": 1.0
     }
    },
@@ -2339,9 +2357,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 7.66,
+    "points": 8.46,
     "stats": {
-     "4": 54.0,
+     "4": 74.0,
      "5": 1.0,
      "6": 1.0,
      "8": 1.0,
@@ -2373,10 +2391,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 1.9,
+    "points": 4.4,
     "stats": {
-     "8": 5.0,
-     "9": 19.0
+     "8": 7.0,
+     "9": 20.0,
+     "11": 1.0,
+     "12": 19.0
     }
    },
    {
@@ -2390,10 +2410,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 11.0,
+    "points": 13.0,
     "stats": {
      "31": 10.0,
      "32": 1.0,
+     "33": 1.0,
      "49": 1.0,
      "52": 1.0
     }
@@ -2425,12 +2446,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 14.08,
+    "points": 14.52,
     "stats": {
-     "4": 162.0,
+     "4": 213.0,
      "5": 1.0,
-     "8": 7.0,
-     "9": 16.0
+     "6": 1.0,
+     "8": 8.0,
+     "9": 20.0
     }
    },
    {
@@ -2605,10 +2627,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 8.5,
+    "points": 12.2,
     "stats": {
-     "11": 4.0,
-     "12": 65.0
+     "11": 6.0,
+     "12": 92.0
     }
    },
    {
@@ -2771,10 +2793,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 0.8,
+    "points": 1.6,
     "stats": {
-     "11": 1.0,
-     "12": 3.0
+     "11": 2.0,
+     "12": 6.0
     }
    },
    {
@@ -2839,13 +2861,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 10.4,
+    "points": 12.7,
     "stats": {
-     "8": 10.0,
-     "9": 26.0,
+     "8": 13.0,
+     "9": 43.0,
      "10": 1.0,
-     "11": 2.0,
-     "12": 8.0
+     "11": 3.0,
+     "12": 9.0
     }
    },
    {
