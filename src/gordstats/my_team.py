@@ -321,8 +321,15 @@ VIEW_JS = """{% raw %}<script>
     // The built page's table, cell for cell - see gordstats.my_week. Its
     // classes are already in the stylesheet on this page, so matching the
     // format is a matter of emitting the same markup.
+    //
+    // `rd`, inside `rd-desk rd-scroll`, because that is what the built page
+    // emits and what the stylesheet is written against. It used to say
+    // `rd-t sticky-table`, which matches nothing on this page: the table fell
+    // back to the theme's default, every team logo rendered as a framed
+    // thumbnail the height of a row, and the names were pushed out of sight.
     var W=window.GSWeek, ctx=conf.ctx||{teams:{},wx:{},dvp:{},gs:{}};
-    html+='<div class="table-scroll"><table class="rd-t sticky-table"><thead><tr>'
+    html+=W.legend();
+    html+='<div class="rd-desk rd-scroll"><table class="rd"><thead><tr>'
       +"<th title='Where he belongs this week'>Slot</th>"
       +"<th title='What it takes to get him there'>Change</th>"
       +'<th>Player</th><th>Game</th>'
@@ -333,7 +340,7 @@ VIEW_JS = """{% raw %}<script>
       +'<th>Weather</th><th>Proj</th><th>GS</th><th>Sleeper</th><th>Pts</th>'
       +"<th title='The best bench player who could still take his place'>Late-swap cover</th>"
       +'</tr></thead><tbody>';
-    var benched=false;
+    var benched=false, cards=[];
     rows.forEach(function(r){
       var p=r.p, bench=r.slot===BENCH||RESERVE.indexOf(r.slot)>=0;
       var split=(bench&&!benched)?' rd-split':''; benched=benched||bench;
@@ -351,6 +358,12 @@ VIEW_JS = """{% raw %}<script>
       }
       var scored=(conf.pts||{})[p.id];
       var done=g&&g.state==='post';
+      // The same player for the phone view, which is the same information in
+      // the layout that fits a phone.
+      var card=W.cardInfo(ctx, p, proj[p.id], done&&scored!=null?'spent':'proj');
+      card.id=p.id; card.slot=p.slot; card['new']=r.slot;
+      card.kind=kind; card.locked=isLocked;
+      cards.push(card);
       html+='<tr class="'+(bench?'rd-bn':'rd-st')+split+(kind?' rd-'+kind:'')+'">'
         +'<td class="rd-slot">'+esc(r.slot)+'</td>'
         +W.moveCell(kind,p.slot)
@@ -367,6 +380,21 @@ VIEW_JS = """{% raw %}<script>
         +coverTd+'</tr>';
     });
     html+='</tbody></table></div>';
+    // Below 760px the table is display:none and this takes its place. The
+    // table is the lineup to set; the cards are handed over in the order the
+    // roster is set in, because the toggle's Current side shows exactly that
+    // and phoneLineup re-sorts its own Suggested side.
+    var slotRank={};
+    order.forEach(function(s,i){ slotRank[s]=i; });
+    RESERVE.forEach(function(s){ slotRank[s]=order.length+1; });
+    var curOrder={};
+    (roster.starters||[]).forEach(function(pid,i){ curOrder[String(pid)]=i; });
+    (roster.players||[]).forEach(function(pid,i){
+      var key=String(pid);
+      if(curOrder[key]==null) curOrder[key]=1000+i;          // the bench, after
+    });
+    cards.sort(function(a,b){ return (curOrder[a.id]||0)-(curOrder[b.id]||0); });
+    html+=W.phoneLineup(cards, slotRank, [BENCH].concat(RESERVE), nowTotal, total);
     html+=adds(lg, wk, index, players, out, proj, kick, now, conf);
     host.innerHTML=html
       +'<p class="mt-note">Scoring read from your league: <b>'+esc(lg.basis.name)+'</b>.'
@@ -404,15 +432,21 @@ VIEW_JS = """{% raw %}<script>
         var lg=o[0], wk=o[1], index=o[2], ctx=o[3], live=o[4];
         var bar=document.getElementById('mt-bar');
         var keys=Object.keys(lg.names);
+        // Their own team, not roster 1. The account stores the reader's
+        // Sleeper user id with each league they synced, so the roster it owns
+        // is the one to open on; without it (a league entered by id, or a row
+        // from before the id was stored) the first is all there is.
+        var start=GSL.myRoster(lg, have.id) || keys[0];
         if(bar){
           bar.innerHTML='<label>Team <select id="mt-who">'
             +keys.map(function(k){
-              return '<option value="'+esc(k)+'">'+esc(lg.names[k])+'</option>';}).join('')
+              return '<option value="'+esc(k)+'"'+(k===start?' selected':'')+'>'
+                +esc(lg.names[k])+'</option>';}).join('')
             +'</select></label>';
           document.getElementById('mt-who').addEventListener('change',function(){
             render(lg, wk, index, this.value, ctx, live);});
         }
-        render(lg, wk, index, keys[0], ctx, live);
+        render(lg, wk, index, start, ctx, live);
       })
       .catch(function(){
         host.innerHTML='<p class="mt-none">Could not read that league from Sleeper.</p>';

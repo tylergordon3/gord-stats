@@ -164,6 +164,116 @@ window.GSWeek = (function(){
       +'</span>'+inj+(extra||'')+'</td>';
   }
 
+  // ----- the dashboard's phone cards -------------------------------------- //
+  //
+  // Mirrors gordstats.roster_page.player_card / phone_lineup. Below 760px the
+  // built page replaces its twelve-column table with one card per player and
+  // a Current/Suggested toggle; a reader's league had only the table, which
+  // on a phone is a sideways scroll through twelve columns.
+
+  var SLOT_CLASS={'W/R/T':'FX','FLEX':'FX','WRRB_FLEX':'FX','REC_FLEX':'FX',
+                  'SUPER_FLEX':'FX','IL':'BN','IR':'BN','TAXI':'BN'};
+  var DO={'in':'\\u25b2 START at {new}','out':'\\u25bc BENCH',
+          'swap':'\\u21c4 MOVE to {new}'};
+  var DONE={'in':'\\u25b2 START - now on the bench','out':'\\u25bc BENCH - now at {now}',
+            'swap':'\\u21c4 MOVE here - now at {now}'};
+
+  /** The fields a card draws, for one player - roster.card_info. */
+  function cardInfo(ctx,p,proj,note){
+    var g=gameFor(ctx,p.team);
+    var c={name:p.name, pos:p.pos, team:p.team||'FA', logo:logo(p.team),
+           game:gameCell(g), proj:proj, projNote:note||'proj', inj:p.injury||''};
+    if(!g) return c;
+    c.oppLabel=(g.home?'vs ':'@ ')+(g.opp||'');
+    var row=ctx.dvp&&ctx.dvp[g.opp];
+    if(row&&row[p.pos]){ c.oppValue=row[p.pos][0]; c.oppRank=row[p.pos][1]; }
+    var bits=[], wx=ctx.wx&&ctx.wx[g.gid];
+    if(wx&&wx.indoors) bits.push('\\ud83c\\udfdf\\ufe0f indoors');
+    else if(wx){
+      var text=wxIcon(wx.cond)+' '+(wx.temp!=null?(Math.round(wx.temp)+'\\u00b0 '):'')
+        +esc(wx.text||'');
+      var bad=WX_RAIN.concat(WX_STORM,WX_SNOW).indexOf(wx.cond)>=0
+        || (wx.temp!=null && wx.temp<=32);
+      bits.push(bad?("<b style='color:#b45309'>"+text+'</b>'):text);
+    }
+    var total=(p.pos==='DEF')?g.against:g['for'];
+    if(total!=null)
+      bits.push((p.pos==='DEF'?'allows ':'team total ')+Number(total).toFixed(1));
+    if(bits.length) c.extra="<div class='rd-c-sub'>"+bits.join(' &middot; ')+'</div>';
+    return c;
+  }
+
+  function oppBox(c){
+    var label=esc(c.oppLabel||'');
+    if(c.oppValue==null||c.oppValue!==c.oppValue)
+      return label?("<div class='rd-c-opp'>"+label+'</div>'):"<div class='rd-c-opp'></div>";
+    var tone=c.oppValue>=1.05?'soft':(c.oppValue<=0.95?'hard':'par');
+    return "<div class='rd-c-opp "+tone+"'>"+c.oppValue.toFixed(2)
+      +'<b>'+ordinal(c.oppRank)+'</b>'+label+'</div>';
+  }
+
+  /** One player as a card. `suggested` shows the lineup to set rather than
+   *  the one that is set now. */
+  function phoneCard(c,suggested){
+    var slot=suggested?c['new']:c.slot, kind=c.kind||'';
+    var words=(suggested?DONE:DO)[kind]||'';
+    var doLine=words
+      ? "<div class='rd-c-do'>"
+        +words.replace('{new}',esc(c['new'])).replace('{now}',esc(c.slot))+'</div>'
+      : '';
+    var inj=c.inj?(" <span class='rd-inj'>"+esc(c.inj)+'</span>'):'';
+    var lock=c.locked?" <span class='rd-tag lock'>locked</span>":'';
+    return "<div class='rd-card "+kind+(c.off?' bn':'')+"'>"
+      +"<div class='rd-c-slot "+(SLOT_CLASS[slot]||slot)+"'>"+esc(slot)
+      +'<small>'+esc(slot!==c.pos?(c.pos||''):'')+'</small></div>'
+      +"<div class='rd-c-main'><div class='rd-c-nm'>"+(c.logo||'')+esc(c.name)+inj+lock
+      +"</div><div class='rd-c-sub'>"+esc(c.team||'')+' &middot; '+(c.game||'')+'</div>'
+      +(c.extra||'')+doLine+'</div>'
+      +"<div class='rd-c-proj'>"+(c.proj==null?'&mdash;':Number(c.proj).toFixed(1))
+      +'<small>'+esc(c.projNote||'proj')+'</small></div>'+oppBox(c)+'</div>';
+  }
+
+  /** The roster as cards twice - the lineup to set, and the one set now -
+   *  with the toggle on top. roster_page.CARD_JS already listens for it. */
+  function phoneLineup(cards,slotRank,off,nowTotal,bestTotal){
+    function part(items,suggested){
+      var start=[], bench=[];
+      items.forEach(function(c){
+        (off.indexOf(suggested?c['new']:c.slot)>=0?bench:start).push(c);
+      });
+      return '<h4>Starters</h4>'+start.map(function(c){
+          c.off=false; return phoneCard(c,suggested);}).join('')
+        +'<h4>Bench</h4>'+bench.map(function(c){
+          c.off=true; return phoneCard(c,suggested);}).join('');
+    }
+    // Two passes over the same objects, and `off` is set per pass, so each
+    // gets its own copies rather than the second rewriting the first.
+    function copy(list){ return list.map(function(c){
+      var o={}; for(var k in c) o[k]=c[k]; return o; }); }
+    var byNew=copy(cards).sort(function(a,b){
+      var ra=slotRank[a['new']], rb=slotRank[b['new']];
+      if(ra==null) ra=99; if(rb==null) rb=99;
+      return ra-rb || (b.proj||0)-(a.proj||0);
+    });
+    var gain=bestTotal-nowTotal;
+    var toggle="<div class='rd-toggle'>"
+      +"<div class='rd-tot'><b>"+fmt(nowTotal)+"</b><span>As set</span></div>"
+      +"<div class='rd-seg'><button type='button' data-mode='cur'>Current</button>"
+      +"<button type='button' class='on' data-mode='new'>Suggested</button></div>"
+      +"<div class='rd-tot new'><b>"+fmt(bestTotal)
+      +(gain>=0.05?('<i>+'+fmt(gain)+'</i>'):'')+"</b><span>Best lineup</span></div></div>";
+    return "<div class='rd-phone'>"+toggle
+      +"<div class='rd-cards' data-mode='cur' style='display:none'>"+part(copy(cards),false)
+      +"</div><div class='rd-cards' data-mode='new'>"+part(byNew,true)+'</div></div>';
+  }
+
+  /** The key above the table, roster_page.legend. */
+  function legend(){
+    return "<div class='rd-legend'><span><i class='in'></i>Bench &rarr; start</span>"
+      +"<span><i class='out'></i>Starter &rarr; bench</span>"
+      +"<span><i class='swap'></i>Swap slots for kickoff order</span></div>";
+  }
+
   // ----- the matchups page's paired phone view ---------------------------- //
 
   /** "Ja'Marr Chase" -> "J. Chase": a full name does not fit half a phone. */
@@ -285,6 +395,8 @@ window.GSWeek = (function(){
           hybridScore:hybridScore,
           gameCell:gameCell, totalCell:totalCell, oppCell:oppCell, wxCell:wxCell,
           moveCell:moveCell, playerCell:playerCell,
+          cardInfo:cardInfo, phoneCard:phoneCard, phoneLineup:phoneLineup,
+          legend:legend,
           heat:heat, ordinal:ordinal, wxIcon:wxIcon, fmt:fmt, esc:esc};
 })();
 </script>{% endraw %}"""

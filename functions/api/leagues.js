@@ -2,6 +2,10 @@
  * The signed-in reader's own fantasy leagues.
  *
  *   GET    /api/leagues                          -> { leagues: [...] }
+ *
+ * `provider_user_id` comes back with each row - the reader's own Sleeper user
+ * id. It is what tells a page which of the twelve rosters is theirs, so "My
+ * Team" opens on their team rather than on whoever holds roster 1.
  *   POST   /api/leagues  <- { provider, username }    every league they are in
  *   POST   /api/leagues  <- { provider, league_id }   one league, by id
  *   DELETE /api/leagues?provider=..&league_id=..      remove
@@ -71,7 +75,7 @@ export async function onRequestGet({ request, env }) {
 
   const got = await db(() => env.DB.prepare(
     `SELECT provider, sport, league_id, name, season, team_name, lineage_id,
-            last_synced_at
+            provider_user_id, last_synced_at
        FROM leagues WHERE user_id = ? ORDER BY name, season DESC`)
     .bind(session.uid).all());
   if (!got.ok) return got.response;

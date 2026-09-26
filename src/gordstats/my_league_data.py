@@ -33,6 +33,48 @@ window.GSL = (function(){
   function week(){ return once('week','/fantasy/week-projections.json',
                                {week:0,kick:{},proj:{}}); }
 
+  // Every league this browser knows about, as /api/leagues answered - the
+  // list gordstats.my_league caches. Read here rather than re-requested.
+  var LIST='gsSleeperLeagues';
+
+  /** What the account knows about the reader in one league: their own Sleeper
+   *  user id, and their team's name as a fallback for a row synced before the
+   *  id was stored.
+   *
+   *  A page showing somebody's league has twelve rosters and, without this,
+   *  no idea which is theirs - so "My Team" opened on whoever happened to
+   *  hold roster 1.
+   */
+  function mine(leagueId){
+    var rows=[];
+    try{ rows=JSON.parse(localStorage.getItem(LIST)||'[]')||[]; }catch(e){}
+    if(!rows.length) return {uid:null, team:null};
+    var row=rows.filter(function(l){
+      return String(l.league_id)===String(leagueId);})[0];
+    // Any row of theirs identifies the account; it is one Sleeper user
+    // whichever league is on screen.
+    var any=rows.filter(function(l){ return l.provider_user_id; })[0];
+    return {uid:String((row&&row.provider_user_id)||(any&&any.provider_user_id)||'')||null,
+            team:(row&&row.team_name)||null};
+  }
+
+  /** The roster id the reader owns in `lg` (from `league`), or null. */
+  function myRoster(lg, leagueId){
+    var who=mine(leagueId);
+    if(who.uid){
+      var hit=(lg.rosters||[]).filter(function(r){
+        return String(r.owner_id)===String(who.uid);})[0];
+      if(hit) return String(hit.roster_id);
+    }
+    if(who.team){
+      // `names` reads "Team (manager)", so the stored team name is a prefix.
+      var keys=Object.keys(lg.names||{});
+      for(var i=0;i<keys.length;i++)
+        if(String(lg.names[keys[i]]).indexOf(who.team)===0) return keys[i];
+    }
+    return null;
+  }
+
   function api(id, path){
     return fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+path)
       .then(function(r){return r.ok?r.json():null;});
@@ -90,6 +132,7 @@ window.GSL = (function(){
   }
 
   return {saved:saved, players:players, week:week, league:league,
-          basis:basis, points:points, kickoffs:kickoffs};
+          basis:basis, points:points, kickoffs:kickoffs,
+          mine:mine, myRoster:myRoster};
 })();
 </script>{% endraw %}"""

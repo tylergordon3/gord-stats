@@ -13,12 +13,15 @@ Verified in a browser against a real league: the two rows come out with
 identical cell classes, down to `img.rd-logo, span.nm, span.rd-lbl` inside the
 player cell.
 """
+import pathlib
 import re
 
 import pytest
 
 from fantasy.site import roster
-from gordstats import my_team, my_week
+from gordstats import my_league_data, my_team, my_week
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 #: The lineup table is split across two modules by design - the row in
 #: my_team, the cells in my_week - so the markup is the pair of them.
@@ -39,10 +42,21 @@ def test_the_client_table_has_the_built_columns_in_order():
 
 def test_it_uses_the_built_pages_classes_not_its_own():
     """They are already in the stylesheet on this page, so matching the format
-    is emitting the same markup - not restyling anything."""
-    for cls in ("rd-t", "rd-slot", "rd-mv", "rd-p", "rd-g", "rd-wx", "rd-cov",
-                "rd-st", "rd-bn", "rd-split"):
+    is emitting the same markup - not restyling anything.
+
+    This list used to include `rd-t`, which is not a class anything defines:
+    it was read off the markup rather than off the stylesheet, so it pinned
+    the bug in place. Every name here is now checked against the stylesheets
+    that are actually on the page as well as against the markup.
+    """
+    styles = _styles()
+    for cls in ("rd-slot", "rd-mv", "rd-p", "rd-g", "rd-wx", "rd-cov", "rd-bn",
+                "rd-split", "rd-card", "rd-phone"):
         assert cls in CLIENT, f"{cls} missing from the client table"
+        assert _styled(cls, styles), f"nothing styles .{cls}"
+    # `rd-st` is the built page's marker for a starter row and carries no
+    # styling of its own, so it is checked for presence only.
+    assert "rd-st" in CLIENT
 
 
 def test_the_cells_live_in_one_place():
@@ -188,3 +202,94 @@ def test_the_paired_view_marks_its_logos_for_the_page_it_is_on():
     player = my_week.JS[my_week.JS.index("function playerCell"):]
     player = player[:player.index("\n  }")]
     assert "mu-logo" not in player, "the dashboard's cell took the matchup class"
+
+
+def _styled(cls: str, styles: str) -> bool:
+    """Is there a selector for exactly this class? A plain substring accepts
+    `.rd-t` because the stylesheet defines `.rd-tag` - which is how the
+    missing class went unnoticed for a month."""
+    return re.search(r"\." + re.escape(cls) + r"(?![\w-])", styles) is not None
+
+
+def _emitted(source: str) -> set:
+    """The class names a script actually puts in a class attribute.
+
+    Source-level `"rd-desk" in JS` passes on a mention in a comment, so the
+    attributes are parsed instead: what the browser gets is the only thing
+    the stylesheet can match against.
+    """
+    out = set()
+    for attr in re.findall(r"""class=\\?["']([a-z0-9 _-]+)\\?["']""", source):
+        out.update(attr.split())
+    return out
+
+
+def _code(source: str) -> str:
+    """The script with its `//` comments stripped.
+
+    `"phoneLineup" in JS` passed with the call deleted, because the comment
+    above it named the function. A test that a comment can satisfy is not a
+    test of anything.
+    """
+    return "\n".join(re.sub(r"(?<!:)//.*$", "", line) for line in source.splitlines())
+
+
+def _styles() -> str:
+    """Every stylesheet that is actually on /fantasy/roster/."""
+    from gordstats import roster_page
+
+    return (roster_page.CSS + roster_page.CARD_CSS + my_team.CSS
+            + (ROOT / "docs" / "assets" / "css" / "custom.css").read_text())
+
+
+def test_the_readers_dashboard_uses_classes_the_page_actually_styles():
+    """It emitted `<table class="rd-t sticky-table">`. Nothing on the page
+    defines either: the table fell back to the theme's default, every team
+    logo rendered as a framed thumbnail the height of a row, and the names
+    were pushed out of the viewport. The built page's table is `rd`."""
+    styles = _styles()
+    used = _emitted(my_team.VIEW_JS)
+    assert {"rd", "rd-desk", "rd-scroll"} <= used, sorted(used)
+    missing = sorted(c for c in used if not _styled(c, styles))
+    assert not missing, f"the dashboard emits classes nothing styles: {missing}"
+
+
+def test_the_readers_dashboard_has_a_phone_view():
+    """Below 760px the built page replaces its twelve-column table with one
+    card per player and a Current/Suggested toggle - `.rd-desk` is
+    display:none there. Without the cards a reader's league was a sideways
+    scroll through twelve columns, which is the readability complaint this
+    whole section started from."""
+    from gordstats import roster_page
+
+    assert "rd-desk" in _emitted(my_team.VIEW_JS), \
+        "the table is not in the desktop-only wrapper"
+    assert "W.phoneLineup(" in _code(my_team.VIEW_JS), "no phone view is rendered"
+    assert "rd-phone" in _emitted(my_week.JS), "the cards are not in the phone wrapper"
+    # The toggle is wired by the built page's own listener, so the markup has
+    # to be the markup it listens for.
+    assert ".rd-seg button" in roster_page.CARD_JS
+    assert "rd-seg" in my_week.JS and "data-mode" in my_week.JS
+
+
+def test_my_team_opens_on_the_readers_own_team():
+    """Twelve rosters and no idea which is theirs, so it opened on whoever
+    held roster 1. The account stores the reader's own Sleeper user id
+    against each league they synced; that is what says which roster is
+    theirs."""
+    assert "myRoster" in my_league_data.JS and "myRoster:myRoster" in my_league_data.JS
+    assert "provider_user_id" in my_league_data.JS, "the id is never read"
+    assert "GSL.myRoster(" in my_team.VIEW_JS, "the dashboard still opens on roster 1"
+    # The select has to agree with what is rendered, or the menu says one team
+    # and the table shows another.
+    assert "k===start?' selected':''" in my_team.VIEW_JS.replace('"', "'") \
+        or "selected" in my_team.VIEW_JS
+    assert "render(lg, wk, index, start, ctx, live)" in my_team.VIEW_JS
+
+
+def test_the_leagues_endpoint_returns_the_readers_sleeper_id():
+    """It is in the table and was simply not selected, so every page had to
+    guess which roster belonged to the reader."""
+    src = (ROOT / "functions" / "api" / "leagues.js").read_text()
+    select = src[src.index("SELECT provider"):src.index("FROM leagues WHERE user_id")]
+    assert "provider_user_id" in select, "the GET does not return it"
