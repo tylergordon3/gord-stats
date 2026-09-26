@@ -200,3 +200,33 @@ def test_the_invite_is_repainted_when_the_account_is_known():
     """/api/me answers after the first paint, so a banner built only on load
     would never appear for the reader it is for."""
     assert re.search(r"paintAccount\(\);\s*\n\s*paintInvite\(\);", JS)
+
+
+def test_the_highlight_stops_at_the_row_it_is_for():
+    """The CFB schedule puts whole tables inside its cells - each game's season
+    form (Rec / ATS / O/U / PF-PA) and each game's lines (GS / DK / FPI / SP+).
+
+    A descendant selector reached every one of their rows: each got the tint,
+    and each got the 3px rail drawn down its left edge, through the team
+    abbreviation beside it. Six nested rows on one starred game. `> td` is what
+    keeps a starred row's highlight to the starred row.
+    """
+    from gordstats import favorites
+
+    css = favorites.table_css("table.cfb-sched tbody")
+    assert "tr.is-fav > td" in css
+    assert "tr.is-fav > td:first-child" in css
+    # A bare descendant anywhere in the block puts it back.
+    assert "tr.is-fav td" not in css, "the descendant selector is back"
+    assert "tr.is-fav:nth-child(even) td" not in css
+
+
+def test_every_table_the_highlight_is_used_on_keeps_the_child_selector():
+    """`table_css` is shared, so the fix is shared - but only while the
+    selector it is handed is the row's own table."""
+    from gordstats import favorites
+
+    for selector in ("table.cfb-power", "table.tm", "table.cfb-sched tbody",
+                     "table.cbb-power"):
+        css = favorites.table_css(selector)
+        assert f"{selector} tr.is-fav > td{{" in css, selector

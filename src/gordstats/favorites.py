@@ -169,10 +169,16 @@ def table_css(selector: str) -> str:
     def block(tint_fallback, tint, rail):
         # Both the plain and the :nth-child(even) selector, because the Top 25
         # band defines both and the even one carries the higher specificity.
+        #
+        # `> td`, not ` td`. The CFB schedule puts whole tables inside its
+        # cells - each game's season form, each game's lines - and a
+        # descendant selector tinted their rows too and drew the 3px rail down
+        # the left of every one of them, through the team abbreviation. A
+        # starred row is the outer row; its nested tables are its contents.
         return "".join(
-            f"{selector} tr.is-fav{stripe} td{{background:{tint_fallback};"
+            f"{selector} tr.is-fav{stripe} > td{{background:{tint_fallback};"
             f"background:{tint}}}"
-            f"{selector} tr.is-fav{stripe} td:first-child{{"
+            f"{selector} tr.is-fav{stripe} > td:first-child{{"
             f"background:linear-gradient(to right,{rail} 0 3px,{tint_fallback} 3px);"
             f"background:linear-gradient(to right,{rail} 0 3px,{tint} 3px)}}"
             for stripe in ("", ":nth-child(even)")
