@@ -61,9 +61,9 @@ SECTIONS = [
     ("method", "Method", "Method", True),
 ]
 
-INTRO = f"""<p>Every Sleeper roster played through {UPCOMING_SEASON} ten thousand
-times, averaged with the FantasyPros League Analyzer. <strong>100 is the league
-average</strong>; a point is one percent better.</p>"""
+INTRO = f"""<p id="pw-intro">Every Sleeper roster played through {UPCOMING_SEASON}
+ten thousand times, averaged with the FantasyPros League Analyzer. <strong>100 is
+the league average</strong>; a point is one percent better.</p>"""
 
 
 # --------------------------------------------------------------------------- #
@@ -666,12 +666,14 @@ def body() -> str:
         table, board, rosters = power.rankings(UPCOMING_YEAR)
     except Exception as exc:
         print(f"[power] no rankings yet: {exc}")
-        return (PRE_DRAFT + my_league.bar()
-                + f"<section id='mine' class='pw-section'><h2>Your League</h2>"
+        return (f"<div id='pw-intro'>{PRE_DRAFT}</div>" + my_league.bar()
+                + "<section id='mine' class='pw-section'>"
+                + "<h2 id='pw-mine-h'>Your League</h2>"
                 + my_power.section() + "</section>"
-                + layout.details(
+                + "<div id='pw-built'>" + layout.details(
                     "Method &mdash; what this will measure, and how well it works",
                     _method_section(), open=True, anchor="method")
+                + "</div>"
                 + my_league_data.JS + my_league.JS
                 + my_power.SIM_JS + my_power.JS)
 
@@ -683,12 +685,21 @@ def body() -> str:
         "positions": _positions_section(rosters, table),
         "method": _method_section(),
     }
-    nav = layout.section_nav([(a, label) for a, _, label, _ in SECTIONS])
-    return INTRO + my_league.bar() + nav + "".join(
+    nav = layout.section_nav([(a, label) for a, _, label, _ in SECTIONS if a != "mine"])
+    # This league's sections are wrapped so the reader's own ranking can take
+    # the page over: somebody who has synced a league is here for that league,
+    # and two rankings of two different leagues on one page only invites the
+    # question of whose numbers are on screen. my_power hides this.
+    rest = "".join(
         layout.details(summary, content[anchor], anchor=anchor) if folds
         else f"<section id='{anchor}' class='pw-section'><h2>{summary}</h2>{content[anchor]}</section>"
-        for anchor, summary, _, folds in SECTIONS if content[anchor]
-    ) + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.JS
+        for anchor, summary, _, folds in SECTIONS
+        if anchor != "mine" and content[anchor])
+    return (INTRO + my_league.bar()
+            + "<section id='mine' class='pw-section'>"
+            + "<h2 id='pw-mine-h'>Your League</h2>" + content["mine"] + "</section>"
+            + f"<div id='pw-built'>{nav}{rest}</div>"
+            + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.JS)
 
 
 def generate():

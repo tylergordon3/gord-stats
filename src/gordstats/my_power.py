@@ -56,37 +56,14 @@ CSS = """<style>
 .mp-load{font-size:13px;color:#64748b}
 .mp-warn{font-size:12.5px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;
   border-radius:8px;padding:8px 11px;margin:0 0 12px;line-height:1.5}
-table.mp-t{width:100%;border-collapse:collapse;font-size:13.5px}
-table.mp-t th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:left;
-  font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;
-  border:1px solid #e2e8f0;white-space:nowrap}
-table.mp-t td{padding:6px 9px;border:1px solid #eef2f7;background:#fff;color:#0f172a}
-table.mp-t td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-table.mp-t tr.me td{background:#fffbeb}
-.mp-rank{display:inline-block;min-width:1.6em;color:#94a3b8;font-variant-numeric:tabular-nums}
-.mp-sub{font-size:11px;color:#94a3b8;margin-left:5px}
-.mp-scroll{overflow-x:auto}
-/* The number above its own bar, not inside it. Printing it on top of a partial
-   fill left the fill cutting through the digits, which reads as a rendering
-   fault rather than as a scale. */
-.mp-power{display:block;min-width:58px}
-.mp-power b{display:block;font-weight:600;font-size:13.5px;text-align:right;
-  font-variant-numeric:tabular-nums;color:#0f172a}
-.mp-track{display:block;height:4px;margin-top:3px;border-radius:2px;background:#eef2f7}
-.mp-track i{display:block;height:100%;border-radius:2px;background:#93c5fd}
-@media (max-width:640px){
-  table.mp-t th,table.mp-t td{padding:5px 6px;font-size:12.5px}
-  table.mp-t .mp-hide{display:none}
-}
+/* The table itself is the site's `sticky-table` inside `.table-scroll`, the
+   same pair the built ranking beside it uses - a reader's league should not
+   be a second look. What is left here is the page furniture around it: the
+   loading line, the caveats and the note. The old `mp-t` table, its own rank
+   column and its little power bars are gone with it. */
 @media (prefers-color-scheme: dark){
   .mp-note,.mp-none,.mp-load{color:#aab7c9}
   .mp-warn{color:#fcd34d;background:#2a2410;border-color:#4a3c13}
-  table.mp-t th{background:#223052;color:#dde5ef;border-color:#2b3852}
-  table.mp-t td{background:#16203a;border-color:#2b3852;color:#dde5ef}
-  table.mp-t tr.me td{background:#33301a}
-  .mp-power b{color:#dde5ef}
-  .mp-track{background:#223052}
-  .mp-track i{background:#2f5c96}
 }
 </style>"""
 
@@ -647,23 +624,92 @@ JS = """{% raw %}<script>
     });
   }
 
-  function table(result, names, order, settling){
-    var best=Math.max.apply(null, result.teams.map(function(t){ return t.power; }));
-    var worst=Math.min.apply(null, result.teams.map(function(t){ return t.power; }));
-    var span=Math.max(best-worst, 1);
+  // matplotlib's RdYlGn, the eleven anchors pandas interpolates between, so a
+  // reader's column is shaded on the same scale as the built page's.
+  var RDYLGN=[[165,0,38],[215,48,39],[244,109,67],[253,174,97],[254,224,139],
+              [255,255,191],[217,239,139],[166,217,106],[102,189,99],[26,152,80],
+              [0,104,55]];
+  function ramp(t){
+    t=Math.min(Math.max(t,0),1);
+    var x=t*(RDYLGN.length-1), i=Math.min(Math.floor(x),RDYLGN.length-2), f=x-i;
+    var a=RDYLGN[i], b=RDYLGN[i+1];
+    return [Math.round(a[0]+(b[0]-a[0])*f), Math.round(a[1]+(b[1]-a[1])*f),
+            Math.round(a[2]+(b[2]-a[2])*f)];
+  }
+  /** A cell shaded like pandas' background_gradient: the column normalised
+   *  over its own min and max, and the text flipped where the fill is dark. */
+  function shade(value, lo, hi){
+    if(value==null||value!==value||hi<=lo) return '';
+    var c=ramp((value-lo)/(hi-lo));
+    var lum=(0.299*c[0]+0.587*c[1]+0.114*c[2])/255;
+    return 'background-color:rgb('+c[0]+','+c[1]+','+c[2]+');color:'
+      +(lum<0.5?'#f8fafc':'#0f172a');
+  }
+  function bounds(values){
+    var ok=values.filter(function(v){ return v!=null&&v===v; });
+    if(!ok.length) return [0,1];
+    return [Math.min.apply(null,ok), Math.max.apply(null,ok)];
+  }
+
+  /** Each team's real record so far, and how far it sits from what its
+   *  scores deserved - fantasy.league.power.actual_records, in the browser.
+   *  `actual` is one array of scores per played week, in `order`. */
+  function records(actual, schedule, median){
+    var n=(actual[0]||[]).length, h2h=[], med=[], allplay=[];
+    for(var i=0;i<n;i++){ h2h.push(0); med.push(0); allplay.push(0); }
+    actual.forEach(function(week, w){
+      var pairs=(schedule&&schedule[w])||[];
+      for(var a=0;a<n;a++){
+        var b=pairs[a];
+        if(b!=null&&b>=0&&week[a]>week[b]) h2h[a]+=1;
+      }
+      // Rank 0 is the week's top scorer, as the built page counts it.
+      var seats=[];
+      for(var i2=0;i2<n;i2++) seats.push(i2);
+      seats.sort(function(x,y){ return week[y]-week[x]; });
+      seats.forEach(function(seat, rank){
+        if(median && rank < Math.floor(n/2)) med[seat]+=1;
+        allplay[seat]+=(n-1)-rank;
+      });
+    });
+    var played=actual.length, perWeek=median?2:1;
+    return h2h.map(function(w, i){
+      var pct=played?allplay[i]/(played*(n-1)):0;
+      return {wins:w+med[i], losses:perWeek*played-(w+med[i]),
+              luck:(w+med[i])-pct*perWeek*played};
+    });
+  }
+
+  function table(result, names, order, settling, real){
     var games=result.weeks*(result.median?2:1);
+    var pw=bounds(result.teams.map(function(t){ return t.power; }));
+    var po=bounds(result.teams.map(function(t){ return t.playoffOdds; }));
+    // A seat's index in `order`, which is what `records` is laid out by.
+    var seat={};
+    order.forEach(function(rid, i){ seat[String(rid)]=i; });
+    var played=real&&real.length?result.played:0;
+    var luckBound=1;
+    if(played) luckBound=Math.max(1, Math.max.apply(null,
+      real.map(function(r){ return Math.abs(r.luck); })));
+
     var rows=result.teams.map(function(t, i){
-      var width=Math.round(6+94*(t.power-worst)/span);
-      var record=t.projWins.toFixed(1)+'-'+(games-t.projWins).toFixed(1);
-      return '<tr><td><span class="mp-rank">'+(i+1)+'</span>'
+      var mine=real&&real[seat[String(t.roster_id)]];
+      var record=played&&mine
+        ? ('<td>'+mine.wins+'-'+mine.losses+'</td>'
+           +'<td style="'+shade(mine.luck,-luckBound,luckBound)+'">'
+           +(mine.luck>=0?'+':'')+mine.luck.toFixed(1)+'</td>')
+        : '';
+      return '<tr><td><span class="row-rank">'+(i+1)+'</span>'
         +esc(names[String(t.roster_id)]||('Roster '+t.roster_id))+'</td>'
-        +'<td><span class="mp-power"><b>'+t.power.toFixed(1)+'</b>'
-        +'<span class="mp-track"><i style="width:'+width+'%"></i></span></span></td>'
-        +'<td class="n mp-hide">'+record+'</td>'
-        +'<td class="n mp-hide">'+Math.round(t.projPoints)+'</td>'
-        +'<td class="n">'+pct(t.playoffOdds)+'</td>'
-        +'<td class="n">'+pct(t.titleOdds)+'</td></tr>';
+        +'<td style="'+shade(t.power,pw[0],pw[1])+'">'+t.power.toFixed(1)+'</td>'
+        +record
+        +'<td>'+t.projWins.toFixed(1)+'-'+(games-t.projWins).toFixed(1)+'</td>'
+        +'<td style="'+shade(t.playoffOdds,po[0],po[1])+'">'+pct(t.playoffOdds)+'</td>'
+        +'<td>'+pct(t.titleOdds)+'</td></tr>';
     }).join('');
+    var head='<th>Team</th><th>Power</th>'
+      +(played?'<th>Record</th><th>Luck</th>':'')
+      +'<th>Proj. Record</th><th>Playoffs</th><th>Title</th>';
 
     var caveats=[];
     if(result.unsupported.length){
@@ -678,17 +724,18 @@ JS = """{% raw %}<script>
     }
 
     return (caveats.length?'<p class="mp-warn">'+caveats.join(' ')+'</p>':'')
-      +'<div class="mp-scroll"><table class="mp-t"><thead><tr>'
-      +'<th>Team</th><th>Power</th><th class="mp-hide">Proj. record</th>'
-      +'<th class="mp-hide">Proj. points</th><th>Playoffs</th><th>Title</th>'
-      +'</tr></thead><tbody>'+rows+'</tbody></table></div>'
+      +'<div class="table-scroll"><table class="sticky-table"><thead><tr>'
+      +head+'</tr></thead><tbody>'+rows+'</tbody></table></div>'
       +'<p class="mp-note">'
       +(settling?'<strong>Settling&hellip;</strong> ':'')
       +'Every roster played through the rest of the season '
       +result.sims.toLocaleString()+' times. <strong>100 is this league\\u2019s '
       +'average</strong>; a point is one percent better. '
-      +(result.played?('Weeks 1&ndash;'+result.played+' are what actually '
-                       +'happened, not a simulation. '):'')
+      +(played?('Weeks 1&ndash;'+result.played+' are what actually happened, not a '
+                +'simulation; <strong>Record</strong> is what they returned'
+                +(result.median?', the weekly median win included':'')
+                +', and <strong>Luck</strong> is that record minus what an '
+                +'all-play schedule says the scores deserved. '):'')
       +'</p>';
   }
 
@@ -731,12 +778,23 @@ JS = """{% raw %}<script>
                 schedule:run.schedule,
                 actual:run.actual.slice(0, played),
                 sims:FIRST, seed:20260821};
+      // What the played weeks actually returned, so the table can carry the
+      // built page's Record and Luck columns rather than projections alone.
+      var real=played?records(spec.actual, run.schedule, spec.median):null;
+      var head=document.getElementById('pw-mine-h');
+      if(head) head.textContent=league.info.name||'Your league';
+      var built=document.getElementById('pw-built');
+      var intro=document.getElementById('pw-intro');
+      // A reader who has picked a league is here for that league: this site's
+      // ranking would only raise the question of whose numbers are on screen.
+      if(built) built.hidden=true;
+      if(intro) intro.hidden=true;
       return simulate(spec).then(function(quick){
-        host.innerHTML=table(quick, league.names, order, true);
+        host.innerHTML=table(quick, league.names, order, true, real);
         spec.sims=SIMS;
         return simulate(spec);
       }).then(function(full){
-        host.innerHTML=table(full, league.names, order, false);
+        host.innerHTML=table(full, league.names, order, false, real);
         var note=host.querySelector('.mp-note');
         if(note&&league.basis.custom){
           note.insertAdjacentHTML('beforeend',
