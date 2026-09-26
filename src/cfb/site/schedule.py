@@ -1638,9 +1638,13 @@ function loadWeek(view){
   if(!src) return Promise.resolve(view);          // already here
   if(view._loading) return view._loading;         // a second click while in flight
   view.removeAttribute('data-src');
+  // Bare path first, `.html` if that is not a thing on this host.
   view._loading=fetch(src).then(function(r){
-    if(!r.ok) throw new Error(r.status);
-    return r.text();
+    if(r.ok) return r.text();
+    return fetch(src+'.html').then(function(r2){
+      if(!r2.ok) throw new Error(r2.status);
+      return r2.text();
+    });
   }).then(function(html){
     view.innerHTML=html;
     // Rows that arrive after boot have never been through either of these:
@@ -1844,7 +1848,14 @@ def _switcher(week_ids: list[int], current: int, views: dict[int, str],
 
 
 #: Where a week's rows live once they are not all in the page.
-WEEK_URL = "/cfb/schedule/week-%s.html"
+#
+#: Requested without the extension, because Cloudflare Pages canonicalises
+#: `/x.html` to `/x` with a 308 and a redirect is a whole round trip on the
+#: connection this page is most often read over. The file on disk keeps its
+#: `.html` - that is what Pages serves the bare path from - and `show_wk`
+#: falls back to it if the bare path ever 404s, so this does not quietly
+#: depend on one host's URL habits.
+WEEK_URL = "/cfb/schedule/week-%s"
 WEEK_FILE = "week-%s.html"
 
 

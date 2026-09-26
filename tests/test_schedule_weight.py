@@ -45,12 +45,15 @@ def test_every_other_week_says_where_to_fetch_it(page):
     assert len(lazy) == len(views) - 1, "every week but the current one is fetched"
     for week, attrs in views:
         if "data-src" in attrs:
-            assert f"week-{week}.html" in attrs, f"week {week} points at the wrong file"
+            assert f"week-{week}" in attrs, f"week {week} points at the wrong file"
+            assert ".html'" not in attrs, (
+                "ask for the bare path: Cloudflare Pages 308s /x.html to /x, "
+                "and a redirect is a round trip per week")
 
 
 def test_the_fragments_exist_beside_the_page(page):
     """A data-src with nothing behind it is a week that will not open."""
-    for week in re.findall(r"data-src='/cfb/schedule/week-(\d+)\.html'", page):
+    for week in re.findall(r"data-src='/cfb/schedule/week-(\d+)'", page):
         assert (PAGE.parent / f"week-{week}.html").exists(), f"week {week} is missing"
 
 
