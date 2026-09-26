@@ -362,9 +362,10 @@ VIEW_JS = """{% raw %}<script>
       // the layout that fits a phone.
       var card=W.cardInfo(ctx, p, proj[p.id], done&&scored!=null?'spent':'proj');
       card.id=p.id; card.slot=p.slot; card['new']=r.slot;
-      card.kind=kind; card.locked=isLocked;
+      card.kind=kind; card.locked=isLocked; card.done=!!done;
       cards.push(card);
-      html+='<tr class="'+(bench?'rd-bn':'rd-st')+split+(kind?' rd-'+kind:'')+'">'
+      html+='<tr class="'+(bench?'rd-bn':'rd-st')+split+(kind?' rd-'+kind:'')
+        +(done?' rd-done':'')+'">'
         +'<td class="rd-slot">'+esc(r.slot)+'</td>'
         +W.moveCell(kind,p.slot)
         +W.playerCell(p, isLocked?'<span class="rd-tag lock">locked</span>':'')

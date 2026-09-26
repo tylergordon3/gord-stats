@@ -263,10 +263,11 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
     grade_html = (f'<span class="mu-meta" title="FantasyPros start/sit grade">{escape(grade)}</span>'
                   if grade else "")
     live = " live" if g and g.get("state") == "in" else ""
+    done = " done" if g and g.get("state") == "post" else ""
     gid = (g or {}).get("game_id")
     attrs = (f' data-gid="{escape(str(gid))}" data-side="{"home" if g.get("home") else "away"}"'
              if gid else "")
-    return (f'<tr class="{"bench" if bench else "starter"}{live}" data-pid="{escape(pid)}" '
+    return (f'<tr class="{"bench" if bench else "starter"}{live}{done}" data-pid="{escape(pid)}" '
             f'data-team="{escape(card["team"] or "")}"{attrs} '
             f'data-nm="{escape(_short_name(card["name"]))}" data-pos="{escape(card["pos"])}" '
             f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}" '
@@ -443,10 +444,12 @@ def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | Non
     tag = {"in": '<span class="mu-hint in">start</span>',
            "out": '<span class="mu-hint out">sit</span>'}.get(hint, "")
     live = " live" if g and g.get("state") == "in" else ""
+    done = " done" if g and g.get("state") == "post" else ""
     gid = (g or {}).get("game_id")
     attrs = (f' data-gid="{escape(str(gid))}" data-side="{"home" if g.get("home") else "away"}"'
              if gid else "")
-    return (f'<div class="mu-pp{live}" data-roster="{escape(key)}" data-pid="{escape(row["pid"])}"'
+    return (f'<div class="mu-pp{live}{done}" data-roster="{escape(key)}" '
+            f'data-pid="{escape(row["pid"])}"'
             f'{attrs} data-hproj="{"" if hproj is None else round(hproj, 2)}"><div class="mu-pn">'
             f'<span class="nm" title="{escape(card["name"])}">{_logo(card["team"])}'
             f'{escape(_short_name(card["name"]))}</span>'

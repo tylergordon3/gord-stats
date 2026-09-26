@@ -320,18 +320,22 @@ def test_the_league_override_works_without_an_account():
 
 
 def test_asking_for_the_sites_own_league_sticks_but_the_picker_stays():
-    """Two halves, and pinning only the first cost a real bug.
+    """Who can ask for it, and what happens when they do.
 
-    The account lookup must not re-apply the synced league a moment after the
-    reader asked for this one, or the button looks broken. But it must still
-    *draw*: the version that simply returned left the bar as a username box,
-    so somebody signed in with three leagues synced had no way back to them
-    (2026-09-25)."""
+    A reader with nothing synced presses the button and it has to stick - the
+    account lookup must not re-apply a league a moment later, or the button
+    looks broken. A signed-in reader with leagues of their own is never shown
+    the button at all, and a {site:true} left over from before they synced is
+    dropped rather than honoured (2026-09-25).
+    """
     assert "save({site:true})" in MY_LEAGUE
-    assert "if(have&&have.site){ draw(null); return; }" in MY_LEAGUE
-    # The return comes before the load, so their league is not pulled back in.
-    after = MY_LEAGUE[MY_LEAGUE.index("if(have&&have.site)"):]
-    assert after.index("return;") < after.index("load(chosen.league_id")
+    # Nothing synced: the lookup redraws and returns without loading anything.
+    branch = MY_LEAGUE[MY_LEAGUE.index("var mine=d&&d.leagues"):]
+    branch = branch[:branch.index("var fromAccount")]
+    assert "draw(" in branch and branch.index("draw(") < branch.index("return;")
+    assert "load(" not in branch, "a league is pulled back in over their choice"
+    # Leagues of their own: the stale choice is cleared, not acted on.
+    assert "if(have&&have.site) have=null;" in MY_LEAGUE
 
 
 def test_only_ownership_is_re_pointed():

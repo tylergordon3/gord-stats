@@ -68,6 +68,13 @@ table.rd td.rd-g .bye{color:#b91c1c;font-weight:600}
 table.rd td.rd-g .fin{color:#64748b}
 table.rd td.rd-g .live{color:#b91c1c;font-weight:700}
 table.rd tr.rd-bn td{color:#64748b;background:#fafbfc}
+/* His game is over: nothing on this row is a decision any more, so it is
+   muted whole and the eye goes to the players still to play. After the
+   change tints below it, so a finished player does not read as a swap. */
+table.rd tr.rd-done td{background:#f4f6f8;color:#8b98a8;box-shadow:none}
+table.rd tr.rd-done td.rd-p .nm{color:#64748b;font-weight:500}
+table.rd tr.rd-done td.rd-p img{opacity:.55}
+table.rd tr.rd-done td.rd-spent{color:#475569;font-weight:700}
 table.rd tr.rd-bn td.rd-p .nm{font-weight:500}
 table.rd tr.rd-split td{border-top:3px solid #cbd5e1}
 table.rd td.rd-slot{font-weight:700;font-size:12.5px}
@@ -100,6 +107,9 @@ table.rd td.rd-slot{font-weight:700;font-size:12.5px}
   table.rd th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.rd td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.rd tr.rd-bn td{background:#131c33;color:#aab7c9}
+  table.rd tr.rd-done td{background:#121a2e;color:#77869c}
+  table.rd tr.rd-done td.rd-p .nm{color:#8fa0b8}
+  table.rd tr.rd-done td.rd-spent{color:#c5cfdc}
   table.rd tr.rd-split td{border-top-color:#475569}
   table.rd tbody tr.rd-in td{background:#12351f;color:#e8eef7}
   table.rd tbody tr.rd-out td{background:#3f1a1d;color:#e8eef7}
@@ -284,6 +294,14 @@ CARD_CSS = """<style>
 .rd-card.out{background:#fee2e2;border-color:#dc2626}
 .rd-card.swap{background:#dbeafe;border-color:#2563eb}
 .rd-card.bn{opacity:.92}
+/* The same on a phone: a finished card recedes, its projection column left
+   legible because "what he actually did" is the one thing still being read. */
+.rd-card.done{background:#f4f6f8;border-color:#e2e8f0}
+.rd-card.done .rd-c-nm{color:#64748b}
+.rd-card.done .rd-c-nm img{opacity:.55}
+.rd-card.done .rd-c-sub{color:#8b98a8}
+.rd-card.done .rd-c-slot{background:#b4bdc9}
+.rd-card.done .rd-c-opp{opacity:.6}
 .rd-c-slot{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;
   justify-content:center;font-size:11.5px;font-weight:800;color:#fff;background:#64748b;
   text-align:center;line-height:1.15}
@@ -324,6 +342,10 @@ CARD_CSS = """<style>
   .rd-card.in{background:#12351f;border-color:#16a34a}
   .rd-card.out{background:#3f1a1d;border-color:#dc2626}
   .rd-card.swap{background:#172f5c;border-color:#3b82f6}
+  .rd-card.done{background:#121a2e;border-color:#243150}
+  .rd-card.done .rd-c-nm{color:#8fa0b8}
+  .rd-card.done .rd-c-sub{color:#77869c}
+  .rd-card.done .rd-c-slot{background:#3a465c}
   .rd-c-nm,.rd-c-proj{color:#e8eef7}.rd-c-sub,.rd-c-proj small{color:#aab7c9}
   .rd-card.in .rd-c-do{color:#4ade80}.rd-card.out .rd-c-do{color:#f87171}
   .rd-card.swap .rd-c-do{color:#93c5fd}
@@ -370,8 +392,9 @@ def _opp_box(c: dict) -> str:
 
 def player_card(c: dict, suggested: bool = False) -> str:
     """One player as a card. `c`: slot, new, kind, off (bool: bench in this
-    view), logo (html), name, pos, team, game (html), proj, proj_note, inj,
-    locked, extra (html line), opp_value/opp_rank/opp_label/opp_note."""
+    view), done (bool: his game is over), logo (html), name, pos, team, game
+    (html), proj, proj_note, inj, locked, extra (html line),
+    opp_value/opp_rank/opp_label/opp_note."""
     slot = c["new"] if suggested else c["slot"]
     kind = c.get("kind") or ""
     words = (_DONE if suggested else _DO).get(kind, "")
@@ -381,7 +404,8 @@ def player_card(c: dict, suggested: bool = False) -> str:
     lock = " <span class='rd-tag lock'>locked</span>" if c.get("locked") else ""
     proj = c.get("proj")
     return (
-        f"<div class='rd-card {kind}{' bn' if c.get('off') else ''}'>"
+        f"<div class='rd-card {kind}{' bn' if c.get('off') else ''}"
+        f"{' done' if c.get('done') else ''}'>"
         f"<div class='rd-c-slot {_SLOT_CLASS.get(slot, slot)}'>{escape(slot)}"
         f"<small>{escape(c.get('pos') or '') if slot != c.get('pos') else ''}</small></div>"
         f"<div class='rd-c-main'><div class='rd-c-nm'>{c.get('logo') or ''}{escape(c['name'])}"

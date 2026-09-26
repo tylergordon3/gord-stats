@@ -223,7 +223,7 @@ window.GSWeek = (function(){
       : '';
     var inj=c.inj?(" <span class='rd-inj'>"+esc(c.inj)+'</span>'):'';
     var lock=c.locked?" <span class='rd-tag lock'>locked</span>":'';
-    return "<div class='rd-card "+kind+(c.off?' bn':'')+"'>"
+    return "<div class='rd-card "+kind+(c.off?' bn':'')+(c.done?' done':'')+"'>"
       +"<div class='rd-c-slot "+(SLOT_CLASS[slot]||slot)+"'>"+esc(slot)
       +'<small>'+esc(slot!==c.pos?(c.pos||''):'')+'</small></div>'
       +"<div class='rd-c-main'><div class='rd-c-nm'>"+(c.logo||'')+esc(c.name)+inj+lock
@@ -317,7 +317,8 @@ window.GSWeek = (function(){
       ? '<span class="inj">'+esc(INJURY[card.injury]||card.injury.slice(0,3).toUpperCase())+'</span>'
       : '';
     var live=(g&&g.state==='in')?' live':'';
-    return '<div class="mu-pp'+live+'" data-pid="'+esc(card.id)+'"><div class="mu-pn">'
+    var done=(g&&g.state==='post')?' done':'';
+    return '<div class="mu-pp'+live+done+'" data-pid="'+esc(card.id)+'"><div class="mu-pn">'
       +'<span class="nm" title="'+esc(card.name)+'">'+logo(card.team,'mu-logo')
       +esc(shortName(card.name))+'</span>'
       +'<span class="mu-pm">'+esc(card.pos)

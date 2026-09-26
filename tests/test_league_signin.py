@@ -61,9 +61,15 @@ def test_the_sign_in_link_comes_back_to_this_page():
 
 
 def test_the_empty_state_is_redrawn_once_the_answer_arrives():
-    """It is drawn before the API answers, so a signed-out reader would
-    otherwise keep the username box they cannot use."""
-    assert "if(!(saved()||{}).id && !mine) draw(null);" in JS
+    """The bar is drawn before /api/leagues answers, and it reads differently
+    once it has: a signed-out reader gets a sign-in rather than a username box
+    they cannot use, and this site's league goes back in the picker. So the
+    no-leagues path has to redraw, not just return."""
+    branch = JS[JS.index("var mine=d&&d.leagues"):]
+    branch = branch[:branch.index("var fromAccount")]
+    assert "draw(" in branch, "the answer arrives and nothing is redrawn"
+    assert branch.index("draw(") < branch.index("return;"), \
+        "it returns before redrawing"
 
 
 def test_a_signed_in_reader_gets_their_leagues_without_a_username():
@@ -127,10 +133,7 @@ def test_the_picker_survives_showing_this_sites_league():
     of the options rather than a door that only opens one way.
     """
     assert "if(SYNCED.length){" in JS, "the picker must not depend on one already showing"
-    assert "value=\"site\"" in JS, "this site's league must be an option, not a dead end"
     assert "if(want==='site'){ restore(); return; }" in JS
-    # And the handler must draw rather than bail out.
-    assert "if(have&&have.site){ draw(null); return; }" in JS
     assert "if(have&&have.site) return;" not in JS, "the early return is back"
 
 
@@ -139,3 +142,35 @@ def test_a_league_entered_by_id_is_still_named():
     named with a way back rather than dropped into a picker of one."""
     assert "Showing <span class=\"ml-who\"></span>" in JS
     assert "ml-clear" in JS
+
+
+def test_a_signed_in_reader_with_leagues_is_not_offered_this_sites_league():
+    """"If a user is signed in and has at least one league synced, they should
+    not even be able to see the site's main league. Just to keep things
+    clear."
+
+    So the option is drawn only once the account has answered that nobody is
+    signed in - not on the way there, where `signedIn` is still null - and a
+    stored {site:true} from before is not honoured for a reader who now has
+    leagues of their own.
+    """
+    assert "var offerSite=(signedIn===false);" in JS, \
+        "the site option is offered on something other than being signed out"
+    site = JS[JS.index("var offerSite"):]
+    site = site[:site.index("SYNCED.map(")]
+    assert "offerSite" in site and 'value="site"' in site, \
+        "the option is not behind the check"
+    # An old choice is cleared rather than acted on.
+    assert "if(have&&have.site) have=null;" in JS
+    # ...and then the first of their leagues is what the menu shows, or the
+    # select sits on nothing and the page looks broken.
+    assert "!offerSite && !here && i===0" in JS
+
+
+def test_a_reader_with_nothing_synced_can_still_reach_this_sites_league():
+    """It is the whole site for them. The ask was to hide it from somebody
+    who has a league of their own, not to make it unreachable."""
+    # The way back for a league entered by id, which is the case that has no
+    # picker to put the option in.
+    assert "ml-clear" in JS and "Show this site" in JS
+    assert "addEventListener('click',restore)" in JS

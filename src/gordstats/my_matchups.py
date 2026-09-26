@@ -40,7 +40,26 @@ CSS = """<style>
 .mm-head{display:flex;flex-wrap:wrap;gap:9px;align-items:baseline;margin:0 0 10px}
 .mm-head h2{margin:0;font-size:18px}
 .mm-note{font-size:12.5px;color:#64748b;margin:0 0 11px;line-height:1.5}
-@media (prefers-color-scheme: dark){ .mm-note{color:#8fa0b8} }
+/* The reader's own matchup is first and says so - on the scoreboard, on the
+   phone card and on the section itself. Every other matchup in the league is
+   worth reading; this is the one they came for. */
+.mm-tag{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:#1a7f4b;background:#d5efdd;border-radius:999px;padding:1px 7px;margin-left:8px;
+  vertical-align:1px}
+tr.mm-yours td{box-shadow:inset 0 2px 0 #1a7f4b,inset 0 -2px 0 #1a7f4b}
+tr.mm-yours td:first-child{box-shadow:inset 4px 0 0 #1a7f4b,inset 0 2px 0 #1a7f4b,
+  inset 0 -2px 0 #1a7f4b}
+a.mu-card.mm-yours{border-color:#1a7f4b;box-shadow:inset 3px 0 0 #1a7f4b}
+details.section.mm-yours>summary{color:#1a7f4b}
+@media (prefers-color-scheme: dark){
+  .mm-note{color:#8fa0b8}
+  .mm-tag{color:#8ff0bd;background:#123c2e}
+  tr.mm-yours td{box-shadow:inset 0 2px 0 #6ee7b7,inset 0 -2px 0 #6ee7b7}
+  tr.mm-yours td:first-child{box-shadow:inset 4px 0 0 #6ee7b7,inset 0 2px 0 #6ee7b7,
+    inset 0 -2px 0 #6ee7b7}
+  a.mu-card.mm-yours{border-color:#6ee7b7;box-shadow:inset 3px 0 0 #6ee7b7}
+  details.section.mm-yours>summary{color:#8ff0bd}
+}
 </style>"""
 
 JS = """{% raw %}<script>
@@ -52,6 +71,7 @@ JS = """{% raw %}<script>
   var built=document.getElementById('mm-built');
   var W=window.GSWeek;
   var CTX=null, PROJ={}, WEEKPROJ={}, INDEX={}, SLOTS=[], BENCH={BN:1,IR:1,TAXI:1};
+  var LEAGUE_ID='';
   var AVATAR='https://sleepercdn.com/avatars/thumbs/';
 
   function saved(){
@@ -148,7 +168,8 @@ JS = """{% raw %}<script>
     var inj=c.injury
       ? '<span class="inj" title="'+esc(c.injury)+'">'+esc(tag(c.injury))+'</span>' : '';
     return '<tr class="'+(BENCH[r.slot]?'bench':'starter')
-      +((g&&g.state==='in')?' live':'')+'" data-pid="'+esc(c.id)
+      +((g&&g.state==='in')?' live':'')+((g&&g.state==='post')?' done':'')
+      +'" data-pid="'+esc(c.id)
       +'" data-team="'+esc(c.team)+'">'
       +'<td class="mu-pts">'+W.hybridScore(p, blend(c), g)+'</td>'
       +'<td class="mu-slot">'+esc(r.slot)+'</td>'
@@ -228,7 +249,7 @@ JS = """{% raw %}<script>
       +((s.mgr&&s.name.indexOf(s.mgr)<0)?(' <span class="mu-meta">('+esc(s.mgr)+')</span>'):'');
   }
 
-  function matchup(a, b, anchor, started){
+  function matchup(a, b, anchor, started, yours){
     var lead=(!started||a.total===b.total)?null:(a.total>b.total?'a':'b');
     var final=(a.state==='post'&&b.state==='post');
     function sideHtml(s, which){
@@ -260,8 +281,10 @@ JS = """{% raw %}<script>
       +'<div class="mu-grid"><div><div class="mu-who">'+esc(a.name)+'</div>'
       +rosterTable(a)+'</div><div><div class="mu-who">'+esc(b.name)+'</div>'
       +rosterTable(b)+'</div></div>';
-    return '<details class="section" id="'+anchor+'" open><summary>'+esc(a.name)
-      +'<span class="mu-vs-sum">vs</span>'+esc(b.name)+'</summary>'+body+'</details>';
+    return '<details class="section'+(yours?' mm-yours':'')+'" id="'+anchor
+      +'" open><summary>'+esc(a.name)
+      +'<span class="mu-vs-sum">vs</span>'+esc(b.name)
+      +(yours?'<span class="mm-tag">yours</span>':'')+'</summary>'+body+'</details>';
   }
 
   function board(pairs, started){
@@ -274,7 +297,8 @@ JS = """{% raw %}<script>
           +'</span>'+num
           +(done?'':('<span class="wp">'+Math.round(wp*100)+'%</span>'))+'</div>';
       }
-      return '<a class="mu-card" href="#'+p.anchor+'">'+one(p.a,p.wp)+one(p.b,1-p.wp)+'</a>';
+      return '<a class="mu-card'+(p.mine?' mm-yours':'')+'" href="#'+p.anchor+'">'
+        +one(p.a,p.wp)+one(p.b,1-p.wp)+'</a>';
     }).join('');
     function num(v, o){
       var lead=(v!=null&&o!=null&&v>o);
@@ -282,7 +306,8 @@ JS = """{% raw %}<script>
     }
     var rows=pairs.map(function(p){
       var a=p.a, b=p.b;
-      return '<tr><td class="mu-t"><a href="#'+p.anchor+'">'+avatarImg(a.avatar)
+      return '<tr'+(p.mine?' class="mm-yours"':'')+'><td class="mu-t"><a href="#'
+        +p.anchor+'">'+avatarImg(a.avatar)
         +esc(a.name)+'</a></td>'
         +(started?num(a.total,b.total):'')+num(a.sp,b.sp)+num(a.gs,b.gs)
         +'<td class="mu-vs">vs</td>'
@@ -344,15 +369,32 @@ JS = """{% raw %}<script>
     var started=pairs.some(function(p){
       return p.a.total>0 || p.b.total>0 || p.a.state!=='pre' || p.b.state!=='pre';
     });
+    // Theirs first. The built page has no "you" to put first - it is one
+    // league's own page - but a reader opening this has come to see one
+    // matchup, and it was wherever Sleeper's ids happened to put it.
+    var names={};
+    rosters.forEach(function(r){ names[String(r.roster_id)]=who(r).name; });
+    var mine=GSL.myRoster({rosters:rosters, names:names}, LEAGUE_ID);
+    pairs.forEach(function(p){
+      p.mine=!!mine && (p.a.key===String(mine) || p.b.key===String(mine));
+      // Their own team on the left, so the two sides never swap between the
+      // scoreboard and the section below it.
+      if(p.mine && p.b.key===String(mine)){
+        var t=p.a; p.a=p.b; p.b=t; p.wp=1-p.wp;
+      }
+    });
+    pairs.sort(function(x,y){ return (y.mine?1:0)-(x.mine?1:0); });
     var off=idle.filter(Boolean);
     host.innerHTML=board(pairs, started)
       + (off.length?('<p class="mm-note">No opponent this week: '
          +off.map(esc).join(', ')+'.</p>'):'')
-      + pairs.map(function(p){ return matchup(p.a, p.b, p.anchor, started); }).join('');
+      + pairs.map(function(p){
+          return matchup(p.a, p.b, p.anchor, started, p.mine); }).join('');
   }
 
   function show(league){
     var id=league.id;
+    LEAGUE_ID=String(id);
     host.innerHTML='<p class="mm-note">Reading '+esc(league.name||'your league')+'\\u2026</p>';
     if(built) built.hidden=true;
     var API='https://api.sleeper.app/v1/league/'+encodeURIComponent(id);

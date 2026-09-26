@@ -247,6 +247,19 @@ table.mu-roster tr.live td.mu-pts{background:#ffe9e6}
 .mu-pr .mu-pp.live .mu-pts .mu-now::after{content:"";display:inline-block;width:6px;height:6px;
   border-radius:50%;background:#b3382c;margin-left:4px;vertical-align:1px;
   animation:mu-pulse 1.4s ease-in-out infinite}
+/* A player whose game is over. The page is read while games are on, so the
+   rows that still matter are the ones still to come: a finished row is muted
+   whole - paler text, a flatter background - with the score left at full
+   strength, because that part is still the answer. Placed after the live and
+   bench tints so it wins on equal specificity. */
+table.mu-roster tr.done td{background:#f4f6f8;color:#8b98a8}
+table.mu-roster tr.done td.mu-p .nm{color:#64748b;font-weight:500}
+table.mu-roster tr.done td.mu-pts{background:#eef2f7;color:#334155}
+table.mu-roster tr.done img.mu-logo{opacity:.55}
+.mu-pr .mu-pp.done{background:#f4f6f8}
+.mu-pr .mu-pp.done .mu-pn .nm{color:#64748b;font-weight:500}
+.mu-pr .mu-pp.done .mu-pn .mu-g,.mu-pr .mu-pp.done .mu-pn .mu-pm{color:#94a3b8}
+.mu-pr .mu-pp.done img.mu-logo{opacity:.55}
 table.mu-roster td.mu-g .fin{color:#64748b}
 table.mu-roster td.mu-g .bye{color:#94a3b8;font-style:italic}
 table.mu-roster tr.bench td{background:#f8fafc;color:#475569}
@@ -332,6 +345,12 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   .mu-pn .mu-g,.mu-pn .mu-g .fin,.mu-pp .mu-gs{color:#aab7c9}
   .mu-pn .mu-g .live{color:#ffb4ab}
   .mu-pn .mu-g .live::before{background:#ffb4ab}
+  table.mu-roster tr.done td{background:#121a2e;color:#77869c}
+  table.mu-roster tr.done td.mu-p .nm{color:#8fa0b8}
+  table.mu-roster tr.done td.mu-pts{background:#18233f;color:#c5cfdc}
+  .mu-pr .mu-pp.done{background:#121a2e}
+  .mu-pr .mu-pp.done .mu-pn .nm{color:#8fa0b8}
+  .mu-pr .mu-pp.done .mu-pn .mu-g,.mu-pr .mu-pp.done .mu-pn .mu-pm{color:#77869c}
   table.mu-roster td.mu-g .fin,table.mu-roster td.mu-g .bye{color:#aab7c9}
   table.mu-roster td.mu-p .inj{color:#ffb4ab}
   table.mu-roster td.mu-p .mu-hint.in{background:#123c2e;color:#8ff0bd}

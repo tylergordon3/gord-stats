@@ -292,9 +292,10 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
                   and scored is not None else "<td>&mdash;</td>")
         phone.append({**card_info(wkd, card, proj.get(pid)), "slot": slot, "new": new,
                       "kind": kind, "locked": bool(g) and state in ("in", "post"),
-                      "order": current[pid]})
+                      "done": state == "post", "order": current[pid]})
         body.append(
-            f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}{' rd-' + kind if kind else ''}'>"
+            f"<tr class='{'rd-bn' if bench else 'rd-st'}{split}"
+            f"{' rd-' + kind if kind else ''}{' rd-done' if state == 'post' else ''}'>"
             f"<td class='rd-slot'>{escape(new)}</td>" + page.move_cell(kind, slot)
             + player_cell(card, tag) + f"<td class='rd-g'>{mu.game_cell(g)}</td>"
             + total_cell(g, card["pos"]) + opp_cell(wkd, g, card["pos"]) + weather_cell(wkd, g)

@@ -262,11 +262,20 @@ JS = """{% raw %}<script>
     if(SYNCED.length){
       var here=String(cur.id||'');
       var labels=labelsFor(SYNCED);
+      // Somebody signed in with a league of their own is here for that
+      // league, and offering this site's alongside it only invites the
+      // question of whose numbers are on screen. It stays in the list for a
+      // reader with nothing synced - it is the whole site for them - and
+      // comes back if the account turns out to be signed out.
+      var offerSite=(signedIn===false);
       bar.innerHTML='<label>League <select id="ml-pick">'
-        + '<option value="site"'+(here?'':' selected')+'>This site\\u2019s league</option>'
+        + (offerSite
+            ? '<option value="site"'+(here?'':' selected')+'>This site\\u2019s league</option>'
+            : '')
         + SYNCED.map(function(l,i){
             return '<option value="'+esc(l.league_id)+'"'
-              + (String(l.league_id)===here?' selected':'') + '>'
+              + ((String(l.league_id)===here
+                  || (!offerSite && !here && i===0))?' selected':'') + '>'
               + esc(labels[i]) + '</option>';
           }).join('')
         + '</select></label><span class="ml-msg" id="ml-msg"></span>';
@@ -401,10 +410,16 @@ JS = """{% raw %}<script>
     })
     .then(function(d){
       var mine=d&&d.leagues&&d.leagues.length;
-      // Nothing to show and now we know why: redraw so a signed-out reader is
-      // offered a sign-in rather than a username box that cannot sync.
-      if(!(saved()||{}).id && !mine) draw(null);
-      if(!d||!d.leagues) return;
+      if(!mine){
+        // No account, or an account with nothing synced - and the bar reads
+        // differently now that we know which. A signed-out reader is offered
+        // a sign-in rather than a username box that cannot sync, and this
+        // site's league goes back in the picker for anyone who may want it.
+        // The saved name is passed so a league entered by id keeps its label.
+        var cur=saved()||{};
+        draw(cur.id?(cur.name||null):null);
+        return;
+      }
       // One entry per league, not one per season.
       // The account is the better answer when there is one: it has the team
       // names and the season history this browser's own list does not.
@@ -412,9 +427,10 @@ JS = """{% raw %}<script>
         return l.provider==='sleeper';})).map(function(g){ return g.current; });
       if(fromAccount.length){ SYNCED=fromAccount; saveList(SYNCED); }
       if(!SYNCED.length) return;
-      // They asked for this site's league: keep showing it, but draw so the
-      // picker appears with their own one tap away rather than gone.
-      if(have&&have.site){ draw(null); return; }
+      // "Show this site's league" was a choice a signed-in reader with a
+      // league of their own can no longer make, so an old one is not honoured
+      // - they are put back on their own league instead.
+      if(have&&have.site) have=null;
       // Keep showing whatever this browser already had, if the account knows
       // it; otherwise the first synced league.
       var chosen=SYNCED.filter(function(l){
