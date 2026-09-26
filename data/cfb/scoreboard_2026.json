@@ -12,14 +12,14 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 33.84,
-     "projected": 182.92,
+     "projected": 182.95,
      "win_probability": 0.36
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 21.6,
-     "projected": 201.15,
+     "projected": 201.12,
      "win_probability": 0.64
     }
    ]
@@ -42,7 +42,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 32.0,
-     "projected": 193.35,
+     "projected": 193.37,
      "win_probability": 0.55
     }
    ]
@@ -105,14 +105,14 @@
      "name": "Too B1G Too Strong Too Fast",
      "points": 15.6,
      "projected": 169.5,
-     "win_probability": 0.51
+     "win_probability": 0.45999999999999996
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 6.8,
-     "projected": 163.37,
-     "win_probability": 0.49
+     "projected": 171.14,
+     "win_probability": 0.54
     }
    ]
   }
