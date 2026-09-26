@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-26T05:24:50+00:00",
+ "fetched": "2026-09-26T05:51:01+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -86,7 +86,7 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 13.3,
-     "projected": 164.44,
+     "projected": 164.47,
      "win_probability": 0.44999999999999996
     },
     {
@@ -110,14 +110,14 @@
      "name": "Too B1G Too Strong Too Fast",
      "points": 15.6,
      "projected": 169.5,
-     "win_probability": 0.53
+     "win_probability": 0.52
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 6.8,
      "projected": 163.37,
-     "win_probability": 0.47
+     "win_probability": 0.48
     }
    ]
   }
@@ -1576,13 +1576,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 2.94,
+    "points": 4.34,
     "stats": {
      "4": 26.0,
      "8": 2.0,
      "9": 4.0,
-     "11": 2.0,
-     "12": 5.0
+     "11": 3.0,
+     "12": 14.0
     }
    },
    {
@@ -2299,11 +2299,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 12.8,
+    "points": 28.6,
     "stats": {
-     "8": 18.0,
-     "9": 61.0,
-     "10": 1.0,
+     "8": 22.0,
+     "9": 159.0,
+     "10": 2.0,
      "11": 1.0,
      "12": 2.0
     }
@@ -2712,7 +2712,7 @@
   "458035": 7.32,
   "333373": 1.93,
   "407183": 26.64,
-  "900033": 7.3,
+  "900033": 7.33,
   "337760": 24.36,
   "469212": 26.49,
   "472146": 21.45,
