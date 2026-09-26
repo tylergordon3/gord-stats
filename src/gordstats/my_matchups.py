@@ -239,6 +239,62 @@ JS = """{% raw %}<script>
     return '<div class="mu-pair">'+rows(a.starters, b.starters, false)+total+bench+'</div>';
   }
 
+  // ----- the median game ---------------------------------------------------- //
+
+  /** One side for the tracker, mirroring fantasy.site.matchups.tracker_side:
+   *  points so far, expected final, and the starters still to finish with
+   *  what each is projected to add. */
+  function trackerSide(s){
+    var left=[];
+    s.starters.forEach(function(r){
+      if(r.pid==='0') return;
+      var c=card(r.pid), g=W.gameFor(CTX, c.team);
+      var state=g?(g.state||'pre'):'bye';
+      if(state!=='pre' && state!=='in') return;
+      var rem=Number(blend(c)||0)*(1-(g?Number(g.el||0):0));
+      left.push({n:W.shortName(c.name), r:Math.round(rem*10)/10,
+                 live:state==='in', pos:c.pos,
+                 p:Math.round(Number(s.pts[c.id]||0)*100)/100});
+    });
+    var hexp=0;
+    s.starters.forEach(function(r){
+      if(r.pid==='0') return;
+      var c=card(r.pid);
+      hexp+=W.expected(s.pts[c.id], blend(c), W.gameFor(CTX, c.team))[0];
+    });
+    return {k:s.key, name:s.name, logo:avatarImg(s.avatar),
+            pts:Math.round(s.total*100)/100, exp:Math.round(hexp*100)/100, left:left};
+  }
+
+  /** The tracker, if this league plays a median game at all.
+   *
+   *  Most leagues do not, and a tracker for a game nobody is playing is worse
+   *  than none - so it appears only when `league_average_match` is set. The
+   *  markup and the arithmetic are the built page's own
+   *  (gordstats.matchup_page.median_tracker); only the blob is built here.
+   *
+   *  `ext` is left empty: the ceilings and floors come from the best and worst
+   *  week any rostered player has had in league history, which is years of
+   *  this site's archive and not something Sleeper hands back. Without it the
+   *  tracker still ranks and still draws the line; it just never says a team
+   *  is mathematically locked.
+   */
+  function medianTracker(pairs, started, week, median){
+    if(!median) return '';
+    var teams=[];
+    pairs.forEach(function(p){ teams.push(trackerSide(p.a)); teams.push(trackerSide(p.b)); });
+    if(teams.length<3) return '';
+    var final=pairs.every(function(p){
+      return p.a.state==='post' && p.b.state==='post'; });
+    var blob=esc(JSON.stringify({started:started, final:final, teams:teams, ext:{}}));
+    return '<details class="section mu-medt-sec" open><summary>Median Tracker</summary>'
+      // Double quotes, because `esc` turns a quote into &quot; - the single
+      // quotes the built page uses would need an escape that this module's
+      // own Python string would eat before the browser ever saw it.
+      +'<div class="mu-medt" data-medt-week="'+week+'" data-medt="'+blob+'"></div>'
+      +'</details>';
+  }
+
   // ----- a matchup, and the scoreboard over them --------------------------- //
 
   function avatarImg(src){
@@ -385,11 +441,15 @@ JS = """{% raw %}<script>
     });
     pairs.sort(function(x,y){ return (y.mine?1:0)-(x.mine?1:0); });
     var off=idle.filter(Boolean);
-    host.innerHTML=board(pairs, started)
+    host.innerHTML=medianTracker(pairs, started, WEEK,
+                                 (info.settings||{}).league_average_match)
+      + board(pairs, started)
       + (off.length?('<p class="mm-note">No opponent this week: '
          +off.map(esc).join(', ')+'.</p>'):'')
       + pairs.map(function(p){
           return matchup(p.a, p.b, p.anchor, started, p.mine); }).join('');
+    // The renderer is already on the page; it ran before this existed.
+    if(window.muMedTrack && muMedTrack.init) muMedTrack.init();
   }
 
   function show(league){

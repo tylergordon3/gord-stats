@@ -744,10 +744,20 @@ window.muMedTrack=(function(){
     // Ceiling and floor: every starter still to play at his position's best
     // (less what he already has) or worst week in league history.
     var ext=d.ext||{},hi=ext.max||{},lo=ext.min||{},top=0,bot=0;
+    // A ceiling and a floor are claims about what a team can still do, and the
+    // only thing that knows is the best and worst week each position has ever
+    // had in this league. A reader's own league has no such history, and with
+    // none every ceiling came out equal to every floor equal to the score so
+    // far - which made every team with a point on the board read as locked,
+    // against nought opponents. Unbounded is the truthful answer there: a team
+    // with anyone left to play could finish anywhere, a team with nobody left
+    // is fixed. The locks below then fire only when they are really decided.
+    var known=Object.keys(hi).length>0||Object.keys(lo).length>0;
     Object.keys(hi).forEach(function(k){top=Math.max(top,hi[k]);});
     Object.keys(lo).forEach(function(k){bot=Math.min(bot,lo[k]);});
     ts.forEach(function(t){t.rem=0;t.ceil=t.pts;t.floor=t.pts;
       t.left.forEach(function(p){t.rem+=p.r;
+        if(!known){t.ceil=Infinity;t.floor=-Infinity;return;}
         var mx=(p.pos in hi)?hi[p.pos]:top,mn=(p.pos in lo)?lo[p.pos]:bot;
         t.ceil+=Math.max(mx-(p.p||0),0);t.floor+=Math.min(mn,0);});
       t.proj=t.pts+t.rem;});
@@ -808,8 +818,10 @@ window.muMedTrack=(function(){
   function init(){var els=document.querySelectorAll('[data-medt]');
     for(var i=0;i<els.length;i++){try{render(els[i],JSON.parse(els[i].getAttribute('data-medt')));}catch(e){}}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-  // Live: fresh points and remaining projections from MU_LIVE.compute's teams.
-  return {update:function(week,live){
+  // `init` is exposed because a reader's own league builds its tracker after
+  // this has already run - the blob is fetched from Sleeper rather than
+  // rendered into the page - and it needs the same renderer, not a second one.
+  return {init:init, update:function(week,live){
     var el=document.querySelector('[data-medt-week="'+week+'"]');if(!el||!live||!live.teams)return;
     var d;try{d=JSON.parse(el.getAttribute('data-medt'));}catch(e){return;}
     var any=false;

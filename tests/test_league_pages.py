@@ -223,3 +223,36 @@ def test_the_college_matchups_mute_a_finished_player_too():
     from gordstats import matchup_page
     assert "table.mu-roster tr.done td{" in matchup_page.CSS
     assert ".mu-pr .mu-pp.done{" in matchup_page.CSS
+
+
+def test_a_readers_league_gets_the_median_tracker():
+    """It lives inside `#mm-built`, so picking your own league took it off the
+    page. The renderer is already there; only the blob had to be built."""
+    from gordstats import my_matchups
+
+    src = my_matchups.JS
+    assert "function medianTracker(" in src and "function trackerSide(" in src
+    assert 'class="mu-medt"' in src and "data-medt=" in src
+    # Most leagues do not play a median game, and a tracker for a game nobody
+    # is playing is worse than none.
+    assert "if(!median) return ''" in src
+    assert "league_average_match" in src
+    # The renderer ran before this existed, so it has to be told.
+    assert "muMedTrack.init()" in src
+    from gordstats import matchup_page
+    assert "return {init:init," in matchup_page.MEDIAN_TRACKER_JS
+
+
+def test_an_unknown_ceiling_is_unbounded_not_zero():
+    """With no league history the ceiling and the floor both collapsed onto
+    the score so far, so every team with a point on the board read as locked,
+    against nought opponents. A team with anyone left to play could finish
+    anywhere."""
+    from gordstats import matchup_page
+
+    js = matchup_page.MEDIAN_TRACKER_JS
+    assert "if(!known){t.ceil=Infinity;t.floor=-Infinity;return;}" in js
+    assert "var known=Object.keys(hi).length>0||Object.keys(lo).length>0;" in js
+    # The lock itself is not special-cased: unbounded ceilings make it fire
+    # only when the order really is decided.
+    assert "t.lock=t.foes.length<cut-i?'up':'';" in js

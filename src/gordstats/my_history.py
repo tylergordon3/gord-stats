@@ -61,7 +61,23 @@ table.hi-h2h td.self{background:#f1f5f9;color:#94a3b8}
   color:#64748b;font-weight:700}
 .hi-rival .v{display:block;font-size:17px;font-weight:800;color:#0f172a}
 .hi-rival .s{display:block;font-size:12px;color:#64748b}
+/* Every game on one margin axis. The playoff ring is the table's own ink, so
+   it reads as an outline in both themes rather than a second colour. */
+.hi-strip{margin:0 0 14px}
+.hi-strip svg{width:100%;height:auto;overflow:visible}
+.hi-strip svg text{fill:#64748b}
+.hi-strip svg .axis{stroke:#cbd5e1}
+.hi-strip svg .zero{stroke:#94a3b8;stroke-dasharray:3 3}
+.hi-strip svg circle.w{fill:#15803d}
+.hi-strip svg circle.l{fill:#b91c1c}
+.hi-strip svg circle.po{stroke:#0f172a;stroke-width:2}
+.hi-key{font-size:12px;color:#64748b;margin:4px 0 0}
+.hi-key b.w{color:#15803d}
+.hi-key b.l{color:#b91c1c}
+.hi-strip .strip-narrow{display:none}
 @media (max-width:560px){
+  .hi-strip .strip-wide{display:none}
+  .hi-strip .strip-narrow{display:block}
   .hi-bar{gap:7px}
   .hi-bar select{flex:1;min-width:0;max-width:none}
   .hi-seg button{padding:5px 9px;font-size:12px}
@@ -80,6 +96,17 @@ table.hi-h2h td.self{background:#f1f5f9;color:#94a3b8}
   .hi-rival{background:#16203a;border-left-color:#2b3852}
   .hi-rival .k,.hi-rival .s{color:#aab7c9}
   .hi-rival .v{color:#f1f5f9}
+  .hi-strip svg text{fill:#aab7c9}
+  .hi-strip svg .axis{stroke:#2b3852}
+  .hi-strip svg .zero{stroke:#64748b}
+  .hi-strip svg circle.w{fill:#34d399}
+  .hi-strip svg circle.l{fill:#f87171}
+  /* The ring is the page's own light ink here, which is what makes a playoff
+     dot read as outlined rather than as a third colour. */
+  .hi-strip svg circle.po{stroke:#e8eef7}
+  .hi-key{color:#aab7c9}
+  .hi-key b.w{color:#6ee7b7}
+  .hi-key b.l{color:#ff9b91}
   table.hi-h2h th.row,table.hi-h2h td.row{background:#223052}
   table.hi-h2h td.self{background:#1b2540;color:#64748b}
   .hi-crown{color:#e0a92a}
@@ -425,6 +452,64 @@ JS = """{% raw %}<script>
 
   function rec(w,l){ return w+'&#8211;'+l; }
 
+  /** Every game as a dot on one margin axis - wins right of zero, losses
+   *  left, playoff games ringed, stacked where they would overlap. A port of
+   *  fantasy.site.team_profiles._strip_svg, geometry and all.
+   *
+   *  Drawn twice: scaling the wide one down for a phone shrinks every dot to
+   *  a speck, so the narrow one has its own radius and type size and CSS
+   *  shows whichever fits.
+   */
+  function stripSvg(games, names, who, width, r, font){
+    var lim=20;
+    games.forEach(function(g){ lim=Math.max(lim, Math.abs(g.margin)); });
+    lim=Math.floor(lim/20+1)*20;
+    var pad=18;
+    function X(m){ return pad+(m+lim)/(2*lim)*(width-2*pad); }
+    var placed=[], dots=[];
+    games.slice().sort(function(a,b){ return a.margin-b.margin; }).forEach(function(g){
+      var cx=X(g.margin), level=0, clash=true;
+      while(clash){
+        clash=placed.some(function(p){
+          return Math.abs(cx-p[0])<2*r+1 && p[1]===level; });
+        if(clash) level++;
+      }
+      placed.push([cx, level]);
+      dots.push([cx, level, (g.result==='W'?'w':'l')+(g.kind==='playoff'?' po':''),
+                 g.season+' '+(g.kind==='playoff'?'playoffs':'week '+g.week)+': '
+                 +g.result+' vs '+(names[g.opp]||'Unknown')+', '
+                 +g.pf.toFixed(1)+'\u2013'+g.pa.toFixed(1)
+                 +' ('+(g.margin>=0?'+':'')+g.margin.toFixed(1)+')']);
+    });
+    var levels=placed.reduce(function(m,p){ return Math.max(m,p[1]); },0)+1;
+    var base=12+levels*(2*r+1), height=base+30;
+    var circles=dots.map(function(d){
+      return '<circle class="'+d[2]+'" cx="'+d[0].toFixed(1)+'" cy="'
+        +(base-r-d[1]*(2*r+1)).toFixed(1)+'" r="'+r+'"><title>'+esc(d[3])
+        +'</title></circle>';
+    }).join('');
+    var step=lim>=40?Math.round(lim/4):10, ticks='';
+    for(var t=-lim; t<=lim; t+=step){
+      ticks+='<text x="'+X(t).toFixed(1)+'" y="'+(base+18)+'" text-anchor="middle">'
+        +(t?(t>0?'+':'')+t:'0')+'</text>';
+    }
+    return '<svg viewBox="0 0 '+width+' '+height+'" role="img" style="font-size:'+font+'px"'
+      +' aria-label="Every game '+esc(names[who]||'this manager')+' has played, by margin">'
+      +'<line class="axis" x1="'+pad+'" x2="'+(width-pad)+'" y1="'+base+'" y2="'+base+'"/>'
+      +'<line class="zero" x1="'+X(0).toFixed(1)+'" x2="'+X(0).toFixed(1)+'" y1="4" y2="'+base+'"/>'
+      +circles+ticks+'</svg>';
+  }
+
+  function marginStrip(games, names, who){
+    if(!games.length) return '';
+    return '<div class="hi-strip">'
+      +'<div class="strip-wide">'+stripSvg(games, names, who, 640, 5.5, 11)+'</div>'
+      +'<div class="strip-narrow">'+stripSvg(games, names, who, 340, 4.5, 10)+'</div>'
+      +'<p class="hi-key">One dot per game, by margin: <b class="w">wins</b> right of '
+      +'zero, <b class="l">losses</b> left; ringed dots are playoff games. Hover or tap '
+      +'a dot for the game.</p></div>';
+  }
+
   /** One manager: the two books, the rivals, and every opponent. */
   function renderProfile(names, log, who, season){
     var games=logFor(log, who, season==='all'?null:season);
@@ -478,7 +563,7 @@ JS = """{% raw %}<script>
           +'<td class="n">'+(s.avg==null?'&mdash;':s.avg.toFixed(1))+'</td>'
           +'<td class="n">'+(s.margin>=0?'+':'')+s.margin.toFixed(1)+'</td></tr>';
       }).join('');
-    return tiles+cards
+    return tiles+cards+marginStrip(games, names, who)
       +'<div class="table-scroll"><table class="sticky-table"><thead><tr>'
       +'<th>Opponent</th><th>Overall</th><th>Regular</th><th>Playoffs</th>'
       +'<th>Points a game</th><th>Margin</th></tr></thead><tbody>'

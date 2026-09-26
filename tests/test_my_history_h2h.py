@@ -84,3 +84,40 @@ def test_the_grid_says_which_book_it_is_showing():
     src = code()
     assert "hi-legend" in src
     assert "Winners-bracket elimination games only" in src
+
+
+def test_the_margin_strip_is_back():
+    """One dot per game by margin, wins right of zero, playoff games ringed -
+    the drawing team_profiles puts under each manager."""
+    from gordstats import my_history
+
+    src = code()
+    assert "function stripSvg(" in src and "function marginStrip(" in src
+    # Defined is not drawn: the profile has to call it, or the strip is dead
+    # code that a test about the strip happily passes over.
+    assert "marginStrip(games, names, who)" in src.replace("+marginStrip", " marginStrip"), \
+        "the strip is never rendered"
+    profile = src[src.index("function renderProfile("):]
+    profile = profile[:profile.index("\n  }")]
+    assert "marginStrip(" in profile, "the strip is not in the manager profile"
+    # Two drawings: scaling the wide one down turns every dot into a speck.
+    assert "strip-wide" in src and "strip-narrow" in src
+    assert "stripSvg(games, names, who, 640" in src
+    assert "stripSvg(games, names, who, 340" in src
+    # The ring is an outline, not a third fill colour.
+    assert "circle.po{stroke" in my_history.CSS
+    dark = my_history.CSS[my_history.CSS.index("prefers-color-scheme: dark"):]
+    assert "circle.po{stroke" in dark, "the ring vanishes on a dark page"
+
+
+def test_the_wire_totals_are_by_account():
+    """A manager renames his team most years, so totalling on the team name
+    listed one person once per name he had used - the opposite of the
+    high-level view the page is for."""
+    from gordstats import my_waivers
+
+    src = my_waivers.JS
+    assert "owners:" in src and "who:" in src, "the account never reaches the summary"
+    assert "var id=(t.owners||{})[rid]" in src
+    assert "by[id]=by[id]" in src, "still keyed by something other than the account"
+    assert "by[name]=by[name]" not in src, "the team-name key is back"
