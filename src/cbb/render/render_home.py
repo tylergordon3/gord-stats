@@ -44,11 +44,13 @@ def bids():
     def highlight(row):
       ret = ["", "", ""]
 
+      # The fill is light in both themes, so the ink is stated rather than
+      # inherited - the table's own text is light in dark mode.
       if "team-logo" in row.Women:
-        ret[2] = "font-weight: bold; background:#e8f7e8 !important;"
-      
+        ret[2] = "font-weight: bold; background:#e8f7e8 !important; color:#0f172a;"
+
       if "team-logo" in row.Men:
-        ret[0] = "font-weight: bold; background:#e8f7e8 !important;"
+        ret[0] = "font-weight: bold; background:#e8f7e8 !important; color:#0f172a;"
       return ret
       
     styler = (

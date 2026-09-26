@@ -20,10 +20,14 @@ GRID_TD = {
     "selector": "td",
     "props": [("border", "1px solid #eef2f7"), ("padding", "6px 10px"), ("text-align", "center")],
 }
+# No background or colour on th either, and for the same reason as td below:
+# pandas emits these as `#T_xxx th`, an ID rule that outranks custom.css, so a
+# colour here is a colour in both themes. The site styles `.sticky-table th`
+# per theme and every table carrying GRID_TH is a `.sticky-table`.
 GRID_TH = {
     "selector": "th",
     "props": [("border", "1px solid #e2e8f0"), ("padding", "8px 10px"), ("text-align", "center"),
-              ("background-color", "#eef2f7"), ("color", "#334155"), ("font-weight", "700"),
+              ("font-weight", "700"),
               ("font-size", "12px"), ("text-transform", "uppercase"),
               ("letter-spacing", "0.03em")],
 }
@@ -67,18 +71,24 @@ def _record_parts(text) -> tuple[int, int]:
     return int(m.group(1)), int(m.group(2))
 
 
+#: Dark ink, stated rather than inherited. These fills are light in both
+#: themes - a pale green record cell is a pale green record cell at night too -
+#: so the text on them cannot come from the table, which is dark after hours.
+ON_LIGHT = "color: #0f172a"
+
+
 def _record_color(text) -> str:
     wins, loss = _record_parts(text)
     color = "#CCDDAA" if wins > loss else "#FFCCCC" if wins < loss else "#F1EABE"
-    return f"background-color: {color}"
+    return f"background-color: {color}; {ON_LIGHT}"
 
 
 def highlight_roto(col):
     """Green for the most wins in a column, red for the fewest."""
     wins = col.apply(lambda x: int(str(x).split("-")[0]))
     hi, lo = wins.max(), wins.min()
-    return ["background-color: #c8e6c9" if w == hi
-            else "background-color: #ffcdd2" if w == lo else "" for w in wins]
+    return [f"background-color: #c8e6c9; {ON_LIGHT}" if w == hi
+            else f"background-color: #ffcdd2; {ON_LIGHT}" if w == lo else "" for w in wins]
 
 
 def highlight_on_record(col):

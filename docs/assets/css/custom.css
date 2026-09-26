@@ -320,6 +320,14 @@ body {
 /* A rank folded into the frozen identity cell ("3 Kraft YAC-N-Chee"). It used
    to be its own leading "#" column, which made the frozen column a counter
    while the name scrolled away — the pickups-table trap, solved the same way. */
+/* Rank movement. These cells have no fill of their own - they sit on the
+   table's own background, white by day and navy at night - so the colours are
+   here rather than inline on the cell, where one value would have to serve
+   both themes. Set by cbb.html_util._arrow_class. */
+.rk-up { color: #15803d; }
+.rk-down { color: #b91c1c; }
+.rk-flat { color: #475569; }
+
 .row-rank {
   display: inline-block;
   min-width: 1.7em;
@@ -3062,22 +3070,37 @@ summary.team-report-header::after {
     border-bottom-color: #334155;
   }
 
+  /* The body is the site's dark table, the one table.mu-roster and table.rd
+     use. It used to be a light slate, on the reasoning that these are pandas
+     tables whose cells mostly carry a colour from a heatmap and the slate is
+     only what the styler left alone - but a table with no styler came out
+     light on a dark screen, whole. Every styler that paints a light cell now
+     states its own dark text (fantasy.site.styles.ON_LIGHT), so those still
+     read; everything else takes this. */
   .sticky-table td {
-    background: #cbd5e1;
-    color: #0f172a;
-    border-bottom-color: #aab7c9;
+    background: #16203a;
+    color: #dde5ef;
+    border-bottom-color: #2b3852;
   }
 
   .sticky-table tbody tr:nth-child(even) td {
-    background: #bfcbdb;
+    background: #1b2540;
   }
 
   .sticky-table th:first-child,
   .sticky-table td:first-child {
-    background: #b7c3d5;
-    border-right-color: #aab7c9;
-    color: #0f172a;
+    background: #1b2540;
+    border-right-color: #2b3852;
+    color: #dde5ef;
   }
+
+  .sticky-table tbody tr:hover td {
+    filter: brightness(1.25);
+  }
+
+  .rk-up { color: #6ee7b7; }
+  .rk-down { color: #ff9b91; }
+  .rk-flat { color: #aab7c9; }
 
   .filter-bar label {
     color: #aab7c9;

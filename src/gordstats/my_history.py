@@ -17,7 +17,6 @@ record, and the page says so rather than leaving it to be puzzled out.
 The cheap half (records, champions) renders first; head-to-head needs every
 week of every season and fills in behind it.
 """
-from gordstats import tables
 
 
 CSS = """<style>
@@ -310,4 +309,4 @@ JS = """{% raw %}<script>
 
 
 def section() -> str:
-    return CSS + tables.dark_rows(".hi") + "<div class='hi' id='hi-host'></div>"
+    return CSS + "<div class='hi' id='hi-host'></div>"

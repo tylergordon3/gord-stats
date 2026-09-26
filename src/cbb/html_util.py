@@ -28,22 +28,39 @@ def _format_arrow(val):
     )
 
 
-def _color_arrow(val):
-    """
-    Colors arrow based on direction
+#: The rank-movement columns, named once.
+MOVE_COLS = ["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"]
 
-    :param val: Change since previous week
-    :type val: int
-    :return: Color of arrow
-    """
-    if (val == "NR") | (val == "-"):
-        return "color: black"
 
-    return (
-        "color: green"
-        if int(val) > 0
-        else "color: red" if int(val) < 0 else "color: black"
-    )
+def _arrow_class(val) -> str:
+    """Which way a team moved, as a class rather than a colour.
+
+    Named `rk-*` rather than `mv-*`: gordstats.rankmoves already owns those
+    for the small arrow spans it puts inside a cell, at 12px and bold, and
+    reusing them here would resize every cell in the column.
+
+    It used to return `color: green` / `color: red` / `color: black` inline.
+    Inline means one colour for both themes, and these cells have no fill of
+    their own - they sit on the table's own background, which is white by day
+    and navy at night, so black was about to become invisible. The classes are
+    styled per theme in custom.css (`.rk-up`, `.rk-down`, `.rk-flat`).
+    """
+    if val == "NR" or val == "-":
+        return "rk-flat"
+    try:
+        moved = int(val)
+    except (TypeError, ValueError):
+        return "rk-flat"
+    return "rk-up" if moved > 0 else "rk-down" if moved < 0 else "rk-flat"
+
+
+def _arrow_classes(df, columns) -> pd.DataFrame:
+    """A class per cell for `Styler.set_td_classes`, empty outside `columns`."""
+    out = pd.DataFrame("", index=df.index, columns=df.columns)
+    for col in columns:
+        if col in df.columns:
+            out[col] = df[col].map(_arrow_class)
+    return out
 
 
 def bold_row(row, conf_champ_dict, bid_dict):
@@ -183,8 +200,8 @@ def style_bracketology(df, gender="M", original=None, conference=None):
             # earlier formatter targeted "Rtg", a column that never existed,
             # so the rating rendered as a raw 6-decimal float.
             .format({"Gord": "{:.3f}"})
-            .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
-            .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
+            .format(_format_arrow, subset=MOVE_COLS)
+            .set_td_classes(_arrow_classes(df, MOVE_COLS))
             .set_table_attributes(table_attr)
             .apply(lambda x: bold_row(x, conf_champ_dict, bids_dict), axis=1)
         )
@@ -192,8 +209,8 @@ def style_bracketology(df, gender="M", original=None, conference=None):
         styler = (
             df.style.hide(axis="index")
             .format({"Pwr": "{:.3f}"})  # was "Rtg", a column that never existed
-            .format(_format_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
-            .map(_color_arrow, subset=["Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"])
+            .format(_format_arrow, subset=MOVE_COLS)
+            .set_td_classes(_arrow_classes(df, MOVE_COLS))
             .set_table_attributes(table_attr)
             .apply(lambda x: bold_row(x, conf_champ_dict, bids_dict), axis=1)
         )

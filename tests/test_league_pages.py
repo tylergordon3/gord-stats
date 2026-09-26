@@ -104,41 +104,92 @@ def test_the_draft_board_keeps_its_own_dark_mode():
     assert "table.dr-bth" in flat
 
 
-def test_the_readers_tables_have_a_dark_body():
-    """`.sticky-table` in dark mode gives its cells a light slate, because the
-    built tables are pandas Stylers whose cells mostly carry a heatmap colour
-    and the slate is only what the styler left alone. These sections have no
-    styler, so every cell fell through to it and a whole page came out light
-    on a dark screen.
-
-    The shared rule cannot simply change: `styles.style_win_loss` and its
-    neighbours set a light background per cell and rely on inheriting that
-    dark text.
+def test_the_dark_table_body_is_dark():
+    """`.sticky-table` used to give its cells a light slate in dark mode. The
+    reasoning held for a pandas table whose cells mostly carry a heatmap
+    colour - the slate was only the fallback - but a table with no styler came
+    out light on a dark screen, whole, which is how League Home was reported.
     """
-    from gordstats import my_draft, my_history, my_power, my_waivers, tables
-
-    for mod, sel in ((my_history, ".hi"), (my_draft, ".dr"),
-                     (my_waivers, ".wv"), (my_power, ".mp")):
-        out = mod.section()
-        assert tables.dark_rows(sel) in out, f"{mod.__name__} has no dark body"
-    css = tables.dark_rows(".hi")
-    assert "prefers-color-scheme: dark" in css
-    assert ".hi table.sticky-table td{background:#16203a" in css
-    # Scoped, or it would reach the built tables on the same page.
-    assert "@media (prefers-color-scheme: dark){.hi " in css
-
-
-def test_the_shared_slate_rule_is_left_alone():
-    """Changing it globally would put light text on the pale green cells
-    `style_win_loss` paints, on several other pages."""
     from conftest import ROOT
 
     css = (ROOT / "docs" / "assets" / "css" / "custom.css").read_text()
-    assert ".sticky-table td {\n    background: #cbd5e1;" in css, \
-        "the shared dark rule moved; re-check the scoped override"
-    styles = (ROOT / "src" / "fantasy" / "site" / "styles.py").read_text()
-    assert 'background-color: #c8e6c9"' in styles, \
-        "style_win_loss changed; the reason for scoping may be gone"
+    dark = css[css.index("@media (prefers-color-scheme: dark)"):]
+    body = dark[dark.index(".sticky-table td {"):]
+    body = body[:body.index("}")]
+    assert "background: #16203a" in body, body
+    assert "color: #dde5ef" in body, body
+
+
+def test_every_styler_that_paints_a_light_cell_states_its_own_ink():
+    """The blocker for the rule above. A styler that sets only a background
+    inherits the table's text colour, which is now light - so a pale green
+    record cell would have had light text on it.
+    """
+    from fantasy.site import styles
+
+    assert styles.ON_LIGHT.startswith("color:"), styles.ON_LIGHT
+    for fn, arg in ((styles._record_color, "3-1"),
+                    (styles._record_color, "1-3"),
+                    (styles._record_color, "2-2")):
+        out = fn(arg)
+        assert "background-color" in out and "color:" in out.replace("background-color", ""), out
+
+    import pandas as pd
+    roto = styles.highlight_roto(pd.Series(["5-1", "3-3", "1-5"]))
+    for cell in roto:
+        if "background-color" in cell:
+            assert styles.ON_LIGHT in cell, cell
+
+    # The CBB homepage highlight paints a pale green row the same way.
+    from conftest import ROOT
+    home = (ROOT / "src" / "cbb" / "render" / "render_home.py").read_text()
+    for line in home.splitlines():
+        if "background:#e8f7e8" in line:
+            assert "color:#0f172a" in line, line
+
+
+def test_the_grid_header_leaves_its_colours_to_the_theme():
+    """pandas emits these as `#T_xxx th`, an ID rule that outranks custom.css,
+    so a colour here is one colour for both themes - a light header over what
+    is now a dark body."""
+    from fantasy.site import styles
+
+    props = dict(styles.GRID_TH["props"])
+    assert "background-color" not in props, props
+    assert "color" not in props, props
+
+
+def test_rank_movement_is_a_class_not_an_inline_colour():
+    """Those cells have no fill of their own, so they sit on the table's own
+    background - white by day, navy at night. `color: black` inline was about
+    to become invisible."""
+    from cbb import html_util
+    from conftest import ROOT
+
+    assert not hasattr(html_util, "_color_arrow"), "the inline colour is back"
+    assert [html_util._arrow_class(v) for v in ("NR", "-", 5, -3, 0)] == \
+        ["rk-flat", "rk-flat", "rk-up", "rk-down", "rk-flat"]
+
+    css = (ROOT / "docs" / "assets" / "css" / "custom.css").read_text()
+    assert ".rk-up { color: #15803d; }" in css, "no light-mode colour"
+    dark = css[css.index("@media (prefers-color-scheme: dark)"):]
+    assert ".rk-up { color: #6ee7b7; }" in dark, "no dark-mode colour"
+    assert ".rk-down" in dark and ".rk-flat" in dark
+    # gordstats.rankmoves owns `.mv-*` for the small arrow spans it puts
+    # inside a cell; these tint a whole cell and must not collide.
+    from gordstats import rankmoves
+    assert ".mv-up{" in rankmoves.CSS and "rk-up" not in rankmoves.CSS
+
+
+def test_the_scoped_override_is_gone():
+    """It was the workaround for the shared rule; the shared rule is fixed, so
+    two descriptions of one dark table would only drift."""
+    from conftest import ROOT
+
+    assert not (ROOT / "src" / "gordstats" / "tables.py").exists()
+    for mod in ("my_history", "my_draft", "my_waivers", "my_power"):
+        src = (ROOT / "src" / "gordstats" / f"{mod}.py").read_text()
+        assert "dark_rows" not in src, mod
 
 
 def test_the_league_picker_is_styled():
