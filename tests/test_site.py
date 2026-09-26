@@ -61,14 +61,26 @@ def test_every_section_in_the_bar_has_a_landing_page():
         assert _resolves(item["url"]), f"section {item['title']} -> {item['url']} is missing"
 
 
+#: Sub-nav lists kept in nav.yml but not reachable from anywhere right now.
+#: WNBA was taken out of the Fantasy switcher on 2026-09-25 with its regular
+#: season over; its pages stay defined so putting it back is uncommenting four
+#: lines. Naming them here rather than loosening the check keeps a genuinely
+#: orphaned list from appearing unnoticed.
+PARKED_SUB_NAVS = {"wnba"}
+
+
 @needs_built_site
 def test_sub_nav_sections_match_the_bar():
-    """A section listed in the bar, or a league under Fantasy, should have a
-    sub-nav key, and vice versa."""
+    """A section listed in the bar, or a league under Fantasy, must have a
+    sub-nav key - without one its pages have no navigation at all. The reverse
+    is a tidiness check, so a deliberately parked list is allowed for it."""
     bar = {i["section"] for i in NAV["sections"] if i.get("section")}
     leagues = {lg["pages"] for lg in NAV["fantasy_leagues"]}
     subs = set(NAV) - {"sections", "fantasy_leagues"}
-    assert bar | leagues == subs, f"section bar {bar} + leagues {leagues} do not match sub-nav keys {subs}"
+    missing = (bar | leagues) - subs
+    assert not missing, f"{missing} are in the bar with no sub-nav"
+    orphans = subs - (bar | leagues) - PARKED_SUB_NAVS
+    assert not orphans, f"{orphans} are sub-navs nothing links to"
     for lg in NAV["fantasy_leagues"]:
         assert _resolves(lg["url"]), f"league {lg['title']} -> {lg['url']} is missing"
 

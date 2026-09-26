@@ -172,7 +172,14 @@ def _cbb_card(today: date) -> str:
 
 
 def _wnba_card(in_season: bool) -> str:
-    """Compact WNBA card. The full scoreboard lives only on /wnba/ now."""
+    """Compact WNBA card. The full scoreboard lives only on /wnba/ now.
+
+    `in_season` is passed False everywhere from 2026-09-25: the regular season
+    is over, and the card was offering a "live fantasy scoreboard" for games
+    that had stopped. The WNBA is also out of the fantasy switcher in
+    docs/_data/nav.yml, so this card is the only way to /wnba/ at the moment -
+    which is why it stays rather than going with it.
+    """
     what = ("Live fantasy scoreboard, player games remaining, and suggested\n"
             "     pickups &amp; drops for the WNBA fantasy league."
             if in_season else
@@ -377,7 +384,7 @@ def render_home():
     else:
         html = _by_next_clock(
             [("cbb", _cbb_card(today)), ("fantasy", _fantasy_card()),
-             ("cfb", _cfb_card()), (None, _wnba_card(in_season=True))])
+             ("cfb", _cfb_card()), (None, _wnba_card(in_season=False))])
     # The graphics lead: they are the thing worth looking at today, and the
     # preview cards are navigation, which can sit under them.
     html = _cfb_graphics(today) + html
