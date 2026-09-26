@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-26T05:51:01+00:00",
+ "fetched": "2026-09-26T09:43:55+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -110,14 +110,14 @@
      "name": "Too B1G Too Strong Too Fast",
      "points": 15.6,
      "projected": 169.5,
-     "win_probability": 0.52
+     "win_probability": 0.51
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 6.8,
      "projected": 163.37,
-     "win_probability": 0.48
+     "win_probability": 0.49
     }
    ]
   }
@@ -1021,20 +1021,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404143",
-    "player": "Omarion Miller",
-    "pos": "WR",
-    "team": "ASU",
-    "team_full": "Arizona State Sun Devils",
-    "bye": 4.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "340392",
     "player": "Braden Pegan",
     "pos": "WR",
@@ -1097,6 +1083,20 @@
     "team": "UCF",
     "team_full": "UCF Knights",
     "bye": 7.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "455505",
+    "player": "Daniel Hill",
+    "pos": "RB",
+    "team": "ALA",
+    "team_full": "Alabama Crimson Tide",
+    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2542,20 +2542,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "463879",
-    "player": "Walker Lyons",
-    "pos": "TE",
-    "team": "BYU",
-    "team_full": "BYU Cougars",
-    "bye": 4.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "474632",
     "player": "Tanook Hines",
     "pos": "WR",
@@ -2576,6 +2562,20 @@
     "team": "BC",
     "team_full": "Boston College Eagles",
     "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "405765",
+    "player": "Dorian Fleming",
+    "pos": "TE",
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2665,6 +2665,7 @@
   "457576": 26.06,
   "456218": 4.65,
   "456178": 8.79,
+  "455505": 15.5,
   "900086": 14.44,
   "404164": 28.32,
   "404635": 26.05,
@@ -2692,7 +2693,7 @@
   "457959": 13.48,
   "405101": 13.24,
   "456315": 10.73,
-  "470081": 6.56,
+  "470081": 6.47,
   "338689": 32.54,
   "406381": 5.64,
   "456249": 8.34,
@@ -2761,6 +2762,7 @@
   "457240": 0.0,
   "474632": 6.97,
   "404810": 12.71,
+  "405765": 7.77,
   "900073": 8.61
  }
 }
