@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-26T00:26:02+00:00",
+ "fetched": "2026-09-26T00:29:52+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 10.0,
+     "points": 12.0,
      "projected": 169.5,
-     "win_probability": 0.53
+     "win_probability": 0.54
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 4.1,
      "projected": 163.4,
-     "win_probability": 0.47
+     "win_probability": 0.45999999999999996
     }
    ]
   }
@@ -2308,8 +2308,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 10.0,
+    "points": 12.0,
     "stats": {
+     "36": 1.0,
      "50": 1.0
     }
    }
