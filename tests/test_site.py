@@ -319,11 +319,19 @@ def test_the_league_override_works_without_an_account():
             < MY_LEAGUE.index("fetch('/api/leagues',{credentials:'same-origin'})"))
 
 
-def test_asking_for_the_sites_own_league_sticks():
-    """Otherwise the account lookup re-applies the synced league a moment after
-    the reader asked for this one, and the button looks broken."""
+def test_asking_for_the_sites_own_league_sticks_but_the_picker_stays():
+    """Two halves, and pinning only the first cost a real bug.
+
+    The account lookup must not re-apply the synced league a moment after the
+    reader asked for this one, or the button looks broken. But it must still
+    *draw*: the version that simply returned left the bar as a username box,
+    so somebody signed in with three leagues synced had no way back to them
+    (2026-09-25)."""
     assert "save({site:true})" in MY_LEAGUE
-    assert "if(have&&have.site) return;" in MY_LEAGUE
+    assert "if(have&&have.site){ draw(null); return; }" in MY_LEAGUE
+    # The return comes before the load, so their league is not pulled back in.
+    after = MY_LEAGUE[MY_LEAGUE.index("if(have&&have.site)"):]
+    assert after.index("return;") < after.index("load(chosen.league_id")
 
 
 def test_only_ownership_is_re_pointed():

@@ -250,34 +250,45 @@ JS = """{% raw %}<script>
   }
 
   function draw(label){
+    var cur=saved()||{};
+    // A picker whenever there are leagues to pick between, whatever is on
+    // screen right now - and this site's league is one of the choices rather
+    // than a door that only opens one way.
+    //
+    // It used to appear only while a league of the reader's own was already
+    // showing, so anyone who had pressed "Show this site's league" was left
+    // with a username box for ever: signed in, leagues synced, and no way back
+    // to them but typing the name in again.
+    if(SYNCED.length){
+      var here=String(cur.id||'');
+      var labels=labelsFor(SYNCED);
+      bar.innerHTML='<label>League <select id="ml-pick">'
+        + '<option value="site"'+(here?'':' selected')+'>This site\\u2019s league</option>'
+        + SYNCED.map(function(l,i){
+            return '<option value="'+esc(l.league_id)+'"'
+              + (String(l.league_id)===here?' selected':'') + '>'
+              + esc(labels[i]) + '</option>';
+          }).join('')
+        + '</select></label><span class="ml-msg" id="ml-msg"></span>';
+      document.getElementById('ml-pick').addEventListener('change',function(){
+        var want=this.value;
+        if(want==='site'){ restore(); return; }
+        var chosen=SYNCED.filter(function(l){
+          return String(l.league_id)===String(want);})[0];
+        if(!chosen) return;
+        save({id:chosen.league_id, name:leagueLabel(chosen)});
+        // Pages that render from the stored key read it once, at load.
+        if(owns) load(chosen.league_id); else location.reload();
+      });
+      return;
+    }
+    // A league entered by id, which the account does not know about: there is
+    // nothing to pick between, so it is named with a way back.
     if(label){
-      if(SYNCED.length>1){
-        var here=String((saved()||{}).id||'');
-        var labels=labelsFor(SYNCED);
-        bar.innerHTML='<label>League <select id="ml-pick">'
-          + SYNCED.map(function(l,i){
-              return '<option value="'+esc(l.league_id)+'"'
-                + (String(l.league_id)===here?' selected':'') + '>'
-                + esc(labels[i]) + '</option>';
-            }).join('')
-          + '</select></label>'
-          + '<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
-          + '<span class="ml-msg" id="ml-msg"></span>';
-        document.getElementById('ml-pick').addEventListener('change',function(){
-          var want=this.value;
-          var chosen=SYNCED.filter(function(l){
-            return String(l.league_id)===String(want);})[0];
-          if(!chosen) return;
-          save({id:chosen.league_id, name:leagueLabel(chosen)});
-          // Pages that render from the stored key read it once, at load.
-          if(owns) load(chosen.league_id); else location.reload();
-        });
-      } else {
-        bar.innerHTML='Showing <span class="ml-who"></span> '
-          +'<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
-          +'<span class="ml-msg" id="ml-msg"></span>';
-        bar.querySelector('.ml-who').textContent=label;
-      }
+      bar.innerHTML='Showing <span class="ml-who"></span> '
+        +'<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
+        +'<span class="ml-msg" id="ml-msg"></span>';
+      bar.querySelector('.ml-who').textContent=label;
       document.getElementById('ml-clear').addEventListener('click',restore);
       return;
     }
@@ -401,7 +412,9 @@ JS = """{% raw %}<script>
         return l.provider==='sleeper';})).map(function(g){ return g.current; });
       if(fromAccount.length){ SYNCED=fromAccount; saveList(SYNCED); }
       if(!SYNCED.length) return;
-      if(have&&have.site) return;          // they asked for this site's league
+      // They asked for this site's league: keep showing it, but draw so the
+      // picker appears with their own one tap away rather than gone.
+      if(have&&have.site){ draw(null); return; }
       // Keep showing whatever this browser already had, if the account knows
       // it; otherwise the first synced league.
       var chosen=SYNCED.filter(function(l){

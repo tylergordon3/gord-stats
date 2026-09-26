@@ -112,3 +112,30 @@ def test_a_section_without_the_control_still_says_something():
     assert "window.GSLeague\n" in my_history.JS or "window.GSLeague?" in my_history.JS \
         or "window.GSLeague" in my_history.JS
     assert "Pick a league above to see its history" in my_history.JS
+
+
+def test_the_picker_survives_showing_this_sites_league():
+    """The bug behind "still can't have teams auto here even though signed in".
+
+    Pressing "Show this site's league" stored {site:true}, and the account
+    handler then returned before drawing anything - so the bar fell back to a
+    username box and stayed there. Signed in, three leagues synced, and the
+    only way back to them was typing the name in again.
+
+    Reproduced with the real six rows from D1 and fixed: the picker is drawn
+    whenever there are leagues to pick between, and this site's league is one
+    of the options rather than a door that only opens one way.
+    """
+    assert "if(SYNCED.length){" in JS, "the picker must not depend on one already showing"
+    assert "value=\"site\"" in JS, "this site's league must be an option, not a dead end"
+    assert "if(want==='site'){ restore(); return; }" in JS
+    # And the handler must draw rather than bail out.
+    assert "if(have&&have.site){ draw(null); return; }" in JS
+    assert "if(have&&have.site) return;" not in JS, "the early return is back"
+
+
+def test_a_league_entered_by_id_is_still_named():
+    """One the account has never heard of: nothing to pick between, so it is
+    named with a way back rather than dropped into a picker of one."""
+    assert "Showing <span class=\"ml-who\"></span>" in JS
+    assert "ml-clear" in JS
