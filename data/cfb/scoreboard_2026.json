@@ -11,7 +11,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 1.52,
+     "points": 2.36,
      "projected": 182.92,
      "win_probability": 0.32000000000000006
     },
@@ -36,14 +36,14 @@
      "name": "Mike Locksley",
      "points": 0.0,
      "projected": 196.73,
-     "win_probability": 0.39
+     "win_probability": 0.4
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 30.5,
      "projected": 193.35,
-     "win_probability": 0.61
+     "win_probability": 0.6
     }
    ]
   },
@@ -80,16 +80,16 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 1.9,
+     "points": 4.5,
      "projected": 164.46,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.47
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 170.2,
-     "win_probability": 0.54
+     "win_probability": 0.53
     }
    ]
   },
@@ -110,7 +110,7 @@
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 4.1,
+     "points": 4.5,
      "projected": 163.4,
      "win_probability": 0.45999999999999996
     }

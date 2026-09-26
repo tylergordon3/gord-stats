@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-26T00:29:52+00:00",
+ "fetched": "2026-09-26T00:38:18+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -16,7 +16,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 1.52,
+     "points": 2.36,
      "projected": 182.92,
      "win_probability": 0.32000000000000006
     },
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 0.0,
      "projected": 196.73,
-     "win_probability": 0.39
+     "win_probability": 0.4
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 30.5,
      "projected": 193.35,
-     "win_probability": 0.61
+     "win_probability": 0.6
     }
    ]
   },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 1.9,
+     "points": 4.5,
      "projected": 164.46,
-     "win_probability": 0.45999999999999996
+     "win_probability": 0.47
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 170.2,
-     "win_probability": 0.54
+     "win_probability": 0.53
     }
    ]
   },
@@ -115,7 +115,7 @@
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
-     "points": 4.1,
+     "points": 4.5,
      "projected": 163.4,
      "win_probability": 0.45999999999999996
     }
@@ -149,9 +149,9 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 1.52,
+    "points": 2.36,
     "stats": {
-     "4": 23.0,
+     "4": 44.0,
      "8": 1.0,
      "9": 6.0
     }
@@ -1657,10 +1657,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 1.9,
+    "points": 4.5,
     "stats": {
-     "11": 2.0,
-     "12": 9.0
+     "11": 3.0,
+     "12": 30.0
     }
    },
    {
@@ -2369,10 +2369,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 4.1,
+    "points": 4.5,
     "stats": {
-     "8": 5.0,
-     "9": 41.0
+     "8": 6.0,
+     "9": 45.0
     }
    },
    {
