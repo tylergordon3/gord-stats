@@ -479,3 +479,29 @@ JS = """{% raw %}<script>
 def bar() -> str:
     """The control itself; the script fills it in."""
     return CSS + "<div class='ml-bar' id='ml-bar'></div>"
+
+
+def takeover(mine: str, built: str) -> str:
+    """One of two blocks, chosen before the page paints.
+
+    League Home and Analytics both hold two versions of themselves: this
+    league's, built on the Pi out of an archive, and the reader's, rendered in
+    the browser from Sleeper. Only one of them is ever the answer to "what am
+    I looking at", so only one is ever on the page.
+
+    Read straight out of localStorage rather than waiting on /api/leagues,
+    because a section that appears a second late has already been scrolled
+    past - and because the account lookup redraws everything it changes
+    anyway. Inline, immediately after both blocks, so neither is ever painted
+    and then taken away.
+    """
+    return ("{% raw %}<script>(function(){"
+            "var have=null;"
+            "try{ have=JSON.parse(localStorage.getItem('gsSleeperLeague')||'null'); }"
+            "catch(e){}"
+            "var own=!!(have&&have.id&&!have.site);"
+            f"var m=document.getElementById('{mine}'),"
+            f" b=document.getElementById('{built}');"
+            "if(m) m.hidden=!own;"
+            "if(b) b.hidden=own;"
+            "})();</script>{% endraw %}")

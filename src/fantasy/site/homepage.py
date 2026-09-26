@@ -1,12 +1,26 @@
 """
-League homepage generation (src/).
+League Home (docs/fantasy/index.html).
 
-First migrated page. Sections:
-  * All-Time Metrics  - computed directly from data/season/*.json (no archive).
-  * All-Time Injury Impacts - aggregated from the archive's per-season
-    missing_df (see src/site/injuries.py).
+The page holds two versions of itself and shows one.
 
-    python -m fantasy.site.homepage            # writes docs/index.html
+  * **This league**, built on the Pi out of the archive: all-time metrics
+    (SOS, SOV, expected wins) computed from data/season/*.json, and the team
+    profiles. None of it exists for anybody else's league - it is years of
+    this one, kept here.
+
+  * **The reader's league**, rendered in the browser from Sleeper: champions,
+    season by season, all-time records, head-to-head (gordstats.my_history)
+    and every draft it has held (gordstats.my_draft). Those two used to be
+    links on the Analytics hub, which is a strange place for the history of
+    the league whose home page this is.
+
+`my_league.takeover` picks between them before the page paints.
+
+The all-time studies that need the archive rather than the league - injury
+impacts, draft values and busts - moved to Analytics, where the rest of the
+deeper work lives.
+
+    python -m fantasy.site.homepage
 """
 import math
 
@@ -16,8 +30,8 @@ from fantasy import paths
 from fantasy.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from fantasy.site import adp, injuries, layout, styles, team_profiles, upcoming
-from fantasy.site.draft import PICKUP_MIN_WEEKS
+from fantasy.site import layout, styles, team_profiles, upcoming
+from gordstats import my_draft, my_history, my_league, my_league_data
 from gordstats.frontmatter import add_front_matter
 
 OUTPUT = paths.WEB_FANTASY_HOME
@@ -116,39 +130,6 @@ def metrics_section() -> str:
 </div>"""
 
 
-def injury_section() -> str:
-    """The All-Time Draft Injury Impacts block (heading, note, tables, by-season chart)."""
-    img, table, top = injuries.all_time_missed()
-    premium = injuries.PREMIUM_ROUNDS
-    top_pct = round((1 - injuries.STARTER_PCTL) * 100)
-    min_games = injuries.MIN_SAMPLE_GAMES
-    top_html = "" if top is None else f"""<h2>Most Impactful Injuries</h2>
-<p>The single most damaging player absences across all seasons, ranked by estimated points lost.
-<strong>Drafted</strong> is where the manager got the player: the draft slot (round.pick), or the
-week a pickup was added.</p>
-<div class="table-scroll">
-{top.to_html()}
-</div>"""
-    return f"""<p>Eligible players: drafted by a team (accountable all {injuries.REG_WEEKS} weeks), plus
-    waiver / free-agent pickups held at least {PICKUP_MIN_WEEKS} weeks — a pickup only answers for games
-    missed while actually on the roster (add week until dropped or traded).<br>
-    Not eligible: short-term streamers, and pickups of players drafted that season
-    (their missed games are already charged to the drafter).</p>
-<p>Not all missed games hurt equally, so each injury is also weighted by how much the player mattered:<br>
-<strong>High-Impact Games Missed</strong> — games missed by players drafted in the first {premium} rounds
-or scoring at weekly-starter pace: top {top_pct}% <em>median</em> weekly points among drafted players at
-their position that season, with at least {min_games} games played (so a couple of spike weeks
-don't count as starter production).<br>
-<strong>Est. Pts Lost</strong> — games missed &times; the player's median weekly score, so losing a stud
-costs far more than losing a bench stash.</p>
-<div class="table-scroll">
-{table.to_html()}
-</div>
-{top_html}
-<h2>Injury Breakdown by Season</h2>
-{img}"""
-
-
 def teams_section() -> str:
     """The team profiles (fantasy.site.team_profiles), with the current Sleeper
     team names and pictures where Sleeper answers."""
@@ -161,27 +142,33 @@ def teams_section() -> str:
     return team_profiles.section(current)
 
 
+def mine_section() -> str:
+    """The reader's own league: its history, and its drafts."""
+    return ("<div id='lh-mine' hidden>"
+            + my_history.section() + my_draft.section()
+            + "<p class='lh-more'>Both of these also have pages of their own: "
+            + layout.internal_link("/fantasy/history/", "League History")
+            + " and "
+            + layout.internal_link("/fantasy/draft-review/", "your league's drafts")
+            + ".</p></div>")
+
+
 def generate(output=OUTPUT):
-    """Write the homepage to `output` (default docs/index.html)."""
-    # The two sections everyone comes for sit inline, open, metrics first; the
-    # deeper all-time studies stay behind toggles below them.
+    """Write League Home to `output`."""
     inline = [
         ("metrics", "All-Time Metrics", metrics_section()),
         ("teams", "Teams", teams_section()),
     ]
-    sections = [
-        ("injuries", "All-Time Injury Impacts", injury_section(), False),
-        ("adp", "All-Time Draft Values & Busts", adp.all_time_section(), False),
-    ]
     board = (layout.details("Draft Board - Live ADP by Site", upcoming.adp_board_section(),
                             open=True, anchor="board") if LIVE_ADP_BOARD else "")
     nav = layout.section_nav(([("board", "Draft Board")] if LIVE_ADP_BOARD else [])
-                             + [(a, title) for a, title, _ in inline]
-                             + [(a, title) for a, title, _, _ in sections])
-    body = (layout.HEAD + upcoming.countdown_banner() + nav + board
-            + "".join(f'<h2 id="{a}">{title}</h2>{html}' for a, title, html in inline)
-            + "".join(layout.details(title, html, open=is_open, anchor=a)
-                      for a, title, html, is_open in sections))
+                             + [(a, title) for a, title, _ in inline])
+    built = ("<div id='lh-built'>" + nav + board
+             + "".join(f'<h2 id="{a}">{title}</h2>{html}' for a, title, html in inline)
+             + "</div>")
+    body = (layout.HEAD + upcoming.countdown_banner() + my_league.bar()
+            + mine_section() + built + my_league.takeover("lh-mine", "lh-built")
+            + my_league_data.JS + my_league.JS + my_history.JS + my_draft.JS)
 
     page = add_front_matter(body, "Fantasy Football")
     output.parent.mkdir(parents=True, exist_ok=True)

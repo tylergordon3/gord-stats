@@ -105,11 +105,15 @@ wnba:
 
 
 fantasy:
+  # League Home holds this league's all-time metrics and, for a reader who
+  # has synced one, their own league's history and drafts - so the two pages
+  # those sections came from belong to this chip.
   - title: League Home
     short: Home
     icon: "🏠"
     key: home
     url: /fantasy/index.html
+    covers: "/fantasy/history/ /fantasy/draft-review/"
 
   - title: Matchups
     short: Matchups
@@ -134,7 +138,7 @@ fantasy:
     icon: "📊"
     key: analytics
     url: /fantasy/analytics/
-    covers: "/fantasy/power/ /fantasy/schedule/ /fantasy/draft/ /fantasy/transactions/ /fantasy/sync/ /profile/ /fantasy/history/ /fantasy/waivers/ /fantasy/draft-review/"
+    covers: "/fantasy/power/ /fantasy/schedule/ /fantasy/draft/ /fantasy/transactions/ /fantasy/sync/ /profile/ /fantasy/waivers/"
 
 
 cfb:

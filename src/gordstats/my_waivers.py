@@ -24,13 +24,6 @@ CSS = """<style>
   font-size:13px;color:#475569}
 .wv-bar select{font:inherit;font-size:13px;padding:5px 9px;border:1px solid #cbd5e1;
   border-radius:8px}
-table.wv-t{width:100%;border-collapse:collapse;font-size:13.5px}
-table.wv-t th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:left;
-  font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;
-  border:1px solid #e2e8f0;white-space:nowrap}
-table.wv-t td{padding:6px 9px;border:1px solid #eef2f7;background:#fff;color:#0f172a;
-  vertical-align:top}
-table.wv-t td.n{text-align:right;font-variant-numeric:tabular-nums}
 .wv-in{color:#15803d;font-weight:600}
 .wv-out{color:#b91c1c}
 .wv-pos{font-size:10.5px;color:#94a3b8;font-weight:700;margin-left:4px}
@@ -43,13 +36,21 @@ table.wv-t td.n{text-align:right;font-variant-numeric:tabular-nums}
 .wv-load{font-size:12.5px;color:#64748b}
 @media (prefers-color-scheme: dark){
   .wv-note,.wv-none,.wv-how,.wv-when,.wv-load,.wv-bar{color:#aab7c9}
-  table.wv-t th{background:#223052;color:#dde5ef;border-color:#2b3852}
-  table.wv-t td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .wv-in{color:#6ee7b7}
   .wv-out{color:#ff9b91}
   .wv-bid{color:#f1f5f9}
   .wv-failed td{background:#2a1e1e;color:#7f8ea3}
   .wv-bar select,.wv-more{background:#16203a;border-color:#2b3852;color:#dde5ef}
+}
+/* The tables are the site's `sticky-table` inside `.table-scroll` - the pair
+   every built table on these pages uses. This section now sits beside them on
+   League Home and Analytics, and two table styles on one page reads as two
+   different features. `.n` stays: it right-aligns the figures these tables
+   put in text columns. */
+table.sticky-table td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.sticky-table tr.me td{background:#fffbeb}
+@media (prefers-color-scheme: dark){
+  table.sticky-table tr.me td{background:#33301a}
 }
 </style>"""
 
@@ -208,7 +209,7 @@ JS = """{% raw %}<script>
       return (by[b].claims+by[b].adds)-(by[a].claims+by[a].adds);});
     if(!rows.length) return '';
     var faabUsed=rows.some(function(n){ return by[n].faab>0; });
-    return '<h2>Who works the wire</h2><table class="wv-t"><thead><tr><th>Manager</th>'
+    return '<h2>Who works the wire</h2><table class="sticky-table"><thead><tr><th>Manager</th>'
       +'<th>Claims</th>'+(faabUsed?'<th>FAAB</th>':'')
       +'<th>Free agents</th><th>Drops</th><th>Trades</th></tr></thead><tbody>'
       + rows.map(function(n){
@@ -234,7 +235,7 @@ JS = """{% raw %}<script>
       return true;
     });
     var slot=document.getElementById('wv-log');
-    slot.innerHTML='<table class="wv-t"><thead><tr><th>When</th><th>How</th>'
+    slot.innerHTML='<table class="sticky-table"><thead><tr><th>When</th><th>How</th>'
       +'<th>In</th><th>Out</th></tr></thead><tbody>'
       + (list.length ? rowsFor(list.slice(0, shown), state.index)
          : '<tr><td colspan="4"><span class="wv-none">Nothing here.</span></td></tr>')

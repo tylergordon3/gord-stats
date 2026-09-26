@@ -282,7 +282,9 @@ def test_pages_behind_a_hub_are_still_reachable():
         for item in NAV[section]:
             if not item.get("covers"):
                 continue
-            hub = (DOCS / item["url"].strip("/") / "index.html")
+            # A hub is usually a directory; League Home is /fantasy/index.html.
+            href = item["url"].split("#")[0].lstrip("/")
+            hub = DOCS / (href if href.endswith(".html") else f"{href.rstrip('/')}/index.html")
             assert hub.exists(), f"{section}: hub page {item['url']} is missing"
             # Reachable from the hub, or from a page the hub links to: the
             # draft sub-pages hang off Draft Analytics rather than sitting on

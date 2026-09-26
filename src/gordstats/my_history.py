@@ -23,16 +23,8 @@ CSS = """<style>
 .hi h2{margin:20px 0 6px;font-size:18px}
 .hi-note{font-size:12.5px;color:#64748b;margin:0 0 10px;line-height:1.5}
 .hi-none{font-size:14px;color:#475569}
-table.hi-t{width:100%;border-collapse:collapse;font-size:13.5px}
-table.hi-t th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:left;
-  font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;
-  border:1px solid #e2e8f0;white-space:nowrap}
-table.hi-t td{padding:6px 9px;border:1px solid #eef2f7;background:#fff;color:#0f172a}
-table.hi-t td.n{text-align:right;font-variant-numeric:tabular-nums}
-table.hi-t tr.me td{background:#fffbeb}
 .hi-crown{color:#b45309;font-weight:800}
 .hi-sub{font-size:11px;color:#94a3b8;margin-left:5px}
-.hi-scroll{overflow-x:auto}
 table.hi-h2h td,table.hi-h2h th{text-align:center;font-size:12.5px;padding:5px 7px}
 table.hi-h2h th.row,table.hi-h2h td.row{text-align:left;font-weight:700;white-space:nowrap;
   position:sticky;left:0;background:#eef2f7;z-index:1}
@@ -42,14 +34,21 @@ table.hi-h2h td.self{background:#f1f5f9;color:#94a3b8}
 .hi-load{font-size:12.5px;color:#64748b}
 @media (prefers-color-scheme: dark){
   .hi-note,.hi-none,.hi-load{color:#aab7c9}
-  table.hi-t th{background:#223052;color:#dde5ef;border-color:#2b3852}
-  table.hi-t td{background:#16203a;border-color:#2b3852;color:#dde5ef}
-  table.hi-t tr.me td{background:#33301a}
   table.hi-h2h th.row,table.hi-h2h td.row{background:#223052}
   table.hi-h2h td.self{background:#1b2540;color:#64748b}
   .hi-crown{color:#e0a92a}
   .hi-w{color:#6ee7b7}
   .hi-l{color:#ff9b91}
+}
+/* The tables are the site's `sticky-table` inside `.table-scroll` - the pair
+   every built table on these pages uses. This section now sits beside them on
+   League Home and Analytics, and two table styles on one page reads as two
+   different features. `.n` stays: it right-aligns the figures these tables
+   put in text columns. */
+table.sticky-table td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.sticky-table tr.me td{background:#fffbeb}
+@media (prefers-color-scheme: dark){
+  table.sticky-table tr.me td{background:#33301a}
 }
 </style>"""
 
@@ -152,7 +151,7 @@ JS = """{% raw %}<script>
         +'<td class="n">'+recordOf(c)+'</td>'
         +'<td class="n">'+c.pf.toFixed(1)+'</td></tr>';
     }).join('');
-    return '<h2>Champions</h2><table class="hi-t"><thead><tr><th>Season</th>'
+    return '<h2>Champions</h2><table class="sticky-table"><thead><tr><th>Season</th>'
       +'<th>Winner</th><th>Record</th><th>Points</th></tr></thead><tbody>'
       +rows+'</tbody></table>';
   }
@@ -164,7 +163,7 @@ JS = """{% raw %}<script>
         return (b.wins-a.wins) || (b.pf-a.pf);});
       html+='<h3 style="margin:14px 0 4px;font-size:15px">'+esc(s.season)
         +(s.status&&s.status!=='complete'?' <span class="hi-sub">in progress</span>':'')
-        +'</h3><table class="hi-t"><thead><tr><th>Team</th><th>Record</th>'
+        +'</h3><table class="sticky-table"><thead><tr><th>Team</th><th>Record</th>'
         +'<th>Points for</th><th>Points against</th></tr></thead><tbody>';
       teams.forEach(function(t){
         html+='<tr'+(t.champion?' class="me"':'')+'><td>'
@@ -197,7 +196,7 @@ JS = """{% raw %}<script>
       .sort(function(a,b){
         return (b.titles-a.titles) || (b.wins-a.wins) || (b.pf-a.pf);});
     if(!rows.length) return '';
-    return '<h2>All time</h2><table class="hi-t"><thead><tr><th>Manager</th>'
+    return '<h2>All time</h2><table class="sticky-table"><thead><tr><th>Manager</th>'
       +'<th>Seasons</th><th>Titles</th><th>Record</th><th>Points</th></tr></thead><tbody>'
       + rows.map(function(r){
           return '<tr><td>'+esc(r.team)+'<span class="hi-sub">'+esc(r.manager)
@@ -257,7 +256,7 @@ JS = """{% raw %}<script>
     ids.sort(function(a,b){ return names[a].toLowerCase()<names[b].toLowerCase()?-1:1; });
     var html='<h2>Head to head</h2><p class="hi-note">Regular-season meetings, '
       +'every season. Read across: wins for the manager on the left.</p>'
-      +'<div class="hi-scroll"><table class="hi-t hi-h2h"><thead><tr><th class="row"></th>'
+      +'<div class="table-scroll"><table class="sticky-table hi-h2h"><thead><tr><th class="row"></th>'
       + ids.map(function(i){return '<th>'+esc(names[i].slice(0,10))+'</th>';}).join('')
       +'</tr></thead><tbody>';
     ids.forEach(function(a){

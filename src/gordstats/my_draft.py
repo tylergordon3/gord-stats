@@ -28,16 +28,9 @@ CSS = """<style>
   font-size:13px;color:#475569}
 .dr-bar select{font:inherit;font-size:13px;padding:5px 9px;border:1px solid #cbd5e1;
   border-radius:8px}
-table.dr-t{width:100%;border-collapse:collapse;font-size:13.5px}
-table.dr-t th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:left;
-  font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;
-  border:1px solid #e2e8f0;white-space:nowrap}
-table.dr-t td{padding:6px 9px;border:1px solid #eef2f7;background:#fff;color:#0f172a}
-table.dr-t td.n{text-align:right;font-variant-numeric:tabular-nums}
 .dr-up{color:#15803d;font-weight:700}
 .dr-down{color:#b91c1c;font-weight:700}
 .dr-pos{font-size:10.5px;color:#94a3b8;font-weight:700;margin-left:4px}
-.dr-scroll{overflow-x:auto}
 table.dr-b{border-collapse:collapse;font-size:11.5px;width:100%}
 table.dr-b th{background:#eef2f7;color:#334155;padding:4px 6px;font-size:10.5px;
   text-transform:uppercase;letter-spacing:.03em;border:1px solid #e2e8f0;
@@ -51,12 +44,25 @@ table.dr-b td.rd{position:sticky;left:0;background:#eef2f7;font-weight:800;z-ind
 .dr-v{font-variant-numeric:tabular-nums;font-size:10.5px;margin-left:4px}
 @media (prefers-color-scheme: dark){
   .dr-note,.dr-none,.dr-bar{color:#aab7c9}
-  table.dr-t th,table.dr-b th,table.dr-b td.rd{background:#223052;color:#dde5ef;
-    border-color:#2b3852}
-  table.dr-t td,table.dr-b td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .dr-up{color:#6ee7b7}
   .dr-down{color:#ff9b91}
   .dr-bar select{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  /* The draft board is its own table - too many narrow columns for the
+     site's - and its dark rules used to share a selector with the summary
+     table that has now become a `sticky-table`. */
+  table.dr-b th,table.dr-b td.rd{background:#223052;color:#dde5ef;
+    border-color:#2b3852}
+  table.dr-b td{background:#16203a;border-color:#2b3852;color:#dde5ef}
+}
+/* The tables are the site's `sticky-table` inside `.table-scroll` - the pair
+   every built table on these pages uses. This section now sits beside them on
+   League Home and Analytics, and two table styles on one page reads as two
+   different features. `.n` stays: it right-aligns the figures these tables
+   put in text columns. */
+table.sticky-table td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.sticky-table tr.me td{background:#fffbeb}
+@media (prefers-color-scheme: dark){
+  table.sticky-table tr.me td{background:#33301a}
 }
 </style>"""
 
@@ -175,7 +181,7 @@ JS = """{% raw %}<script>
     var names=Object.keys(by).filter(function(n){ return by[n].scored; });
     if(!names.length) return '';
     names.sort(function(a,b){ return (by[b].value/by[b].scored)-(by[a].value/by[a].scored); });
-    return '<h2>How each manager drafted</h2><table class="dr-t"><thead><tr>'
+    return '<h2>How each manager drafted</h2><table class="sticky-table"><thead><tr>'
       +'<th>Manager</th><th>Picks</th><th>Avg value</th><th>Best</th><th>Worst</th>'
       +'</tr></thead><tbody>'
       + names.map(function(n){
@@ -208,7 +214,7 @@ JS = """{% raw %}<script>
     });
     var html='<h2>The board</h2><p class="dr-note">Each pick with what it '
       +'returned beside it. A snake draft reverses every round, so the same '
-      +'column is the same manager throughout.</p><div class="dr-scroll">'
+      +'column is the same manager throughout.</p><div class="table-scroll">'
       +'<table class="dr-b"><thead><tr><th class="rd">Rd</th>'
       + headers.map(function(h){return '<th>'+esc(String(h).slice(0,14))+'</th>';}).join('')
       +'</tr></thead><tbody>';
