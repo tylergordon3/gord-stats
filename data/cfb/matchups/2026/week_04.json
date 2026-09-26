@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-26T02:12:52+00:00",
+ "fetched": "2026-09-26T02:21:01+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -18,14 +18,14 @@
      "name": "Puntaholics",
      "points": 23.28,
      "projected": 182.92,
-     "win_probability": 0.39
+     "win_probability": 0.38
     },
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 21.6,
      "projected": 201.15,
-     "win_probability": 0.61
+     "win_probability": 0.62
     }
    ]
   },
@@ -108,16 +108,16 @@
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 16.0,
+     "points": 10.0,
      "projected": 169.5,
-     "win_probability": 0.6
+     "win_probability": 0.56
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 6.8,
      "projected": 163.37,
-     "win_probability": 0.4
+     "win_probability": 0.43999999999999995
     }
    ]
   }
@@ -1341,10 +1341,11 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 1.0,
+    "points": 7.9,
     "stats": {
-     "11": 1.0,
-     "12": 5.0
+     "11": 2.0,
+     "12": 9.0,
+     "13": 1.0
     }
    },
    {
@@ -2321,11 +2322,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
-    "points": 16.0,
+    "points": 10.0,
     "stats": {
+     "31": 7.0,
      "32": 4.0,
      "36": 1.0,
-     "50": 1.0
+     "52": 1.0
     }
    }
   ],
