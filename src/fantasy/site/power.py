@@ -121,14 +121,14 @@ def _rankings_table(table: pd.DataFrame) -> str:
     if blended:
         fmt.update({"Rating": "{:.1f}", "GordStats": "{:.1f}", short: "{:.1f}"})
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
-              .background_gradient(cmap="RdYlGn", subset=["Rating" if blended else "Power"])
-              .background_gradient(cmap="RdYlGn", subset=["Playoffs"]))
+              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Rating" if blended else "Power"])
+              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Playoffs"]))
     if table["move"].notna().any():
         bound = max(1.0, float(table["move"].abs().max()))
-        styled = styled.background_gradient(cmap="RdYlGn", subset=["Move"], vmin=-bound, vmax=bound)
+        styled = styled.background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Move"], vmin=-bound, vmax=bound)
     if in_season:
         bound = max(1.0, float(table["luck"].abs().max()))
-        styled = styled.background_gradient(cmap="RdYlGn", subset=["Luck"], vmin=-bound, vmax=bound)
+        styled = styled.background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Luck"], vmin=-bound, vmax=bound)
     return (styled.set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -253,7 +253,7 @@ def draft_consensus_section() -> str:
 
     fmt = {c: "{:.1f}" for c in ["Consensus", "GordStats", "FP", "FF"]}
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
-              .background_gradient(cmap="RdYlGn", subset=["Consensus"])
+              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Consensus"])
               .set_table_styles(_GRID, overwrite=False)
               .set_table_attributes('class="sticky-table"'))
 
@@ -574,7 +574,7 @@ def _player_accuracy_section(scored: dict) -> str:
     pivot.index.name = "Position"
 
     html = (pivot.style.format("{:+.2f}")
-            .background_gradient(cmap="RdYlGn", vmin=-0.8, vmax=0.8)
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", vmin=-0.8, vmax=0.8)
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
     return f"<div class='table-scroll'>{html}</div>"
@@ -595,7 +595,7 @@ def _backtest_section(scored: dict) -> str:
             "actual_rank": "Actual", "PF": "Actual Points", "total_wins": "Wins"})
         html = (display.style.hide(axis="index")
                 .format({"Proj. Points": "{:,.0f}", "Actual Points": "{:,.0f}"})
-                .background_gradient(cmap="RdYlGn_r", subset=["Projected", "Actual"])
+                .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Projected", "Actual"])
                 .set_table_styles(_GRID, overwrite=False)
                 .set_table_attributes('class="sticky-table"')).to_html()
         blocks.append((season_str, FORMAL_SEASON[season_str],

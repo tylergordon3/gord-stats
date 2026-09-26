@@ -151,7 +151,7 @@ def pick_table(df: pd.DataFrame) -> str:
                      for p, n in zip(out["Pick"], out["Player"])]
     out = out[["Player", "Manager", "Pos", "Team", "ADP", "Δ"]]
     styled = (out.style.hide(axis="index")
-              .background_gradient(cmap="RdYlGn", subset=["Δ"], vmin=-3 * NUDGE, vmax=3 * NUDGE)
+              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Δ"], vmin=-3 * NUDGE, vmax=3 * NUDGE)
               .format({"ADP": lambda v: "—" if pd.isna(v) else f"{v:.0f}",
                        "Δ": lambda v: "—" if pd.isna(v) else f"{v:+.0f}"})
               .set_table_styles([styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE],
@@ -176,7 +176,7 @@ def manager_table(df: pd.DataFrame) -> str:
         })
     out = pd.DataFrame(rows).sort_values("Avg Δ", ascending=False)
     styled = (out.style.hide(axis="index")
-              .background_gradient(cmap="RdYlGn", subset=["Avg Δ"], vmin=-NUDGE, vmax=NUDGE)
+              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Avg Δ"], vmin=-NUDGE, vmax=NUDGE)
               .format({"Avg Δ": "{:+.1f}"})
               .set_table_styles([styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE],
                                 overwrite=False)

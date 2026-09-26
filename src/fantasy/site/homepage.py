@@ -109,8 +109,8 @@ def _style(df: pd.DataFrame):
         df.style
         .hide(axis="index")
         .format(lambda x: f"{x:.3f}" if isinstance(x, float) else x)
-        .background_gradient(cmap="RdYlGn_r", subset=["SOS"])
-        .background_gradient(cmap="RdYlGn", subset=["SOV"])
+        .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["SOS"])
+        .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["SOV"])
         .apply(styles.bg_from_pythag_str, subset=["Exp W (Actual)"])
         .set_table_styles([styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE], overwrite=False)
         .set_table_attributes('class="sticky-table"')

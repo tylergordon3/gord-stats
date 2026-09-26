@@ -70,7 +70,7 @@ def _style_summary(g):
     d = d[["Manager", "Picks", "Avg vs Finish", "Avg ADP Value"]]
     return (d.style.hide(axis="index")
             .format({"Avg ADP Value": "{:+.1f}", "Avg vs Finish": "{:+.1f}"})
-            .background_gradient(cmap="RdYlGn", subset=["Avg vs Finish"])
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Avg vs Finish"])
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -83,7 +83,7 @@ def _style_pivot(p):
     pos = list(p.columns)
     return (p.reset_index().style.hide(axis="index")
             .format("{:+.1f}", na_rep="—", subset=pos)
-            .background_gradient(cmap="RdYlGn", axis=None, vmin=-bound, vmax=bound, subset=pos)
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", axis=None, vmin=-bound, vmax=bound, subset=pos)
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 

@@ -236,7 +236,7 @@ def waiver_watch() -> str:
         styled = (frame.style.set_table_styles(_GRID)
                   .set_table_attributes('class="sticky-table"')
                   .hide(axis="index").format({"Proj": "{:.1f}", "Over repl.": "{:+.1f}"})
-                  .background_gradient(cmap="RdYlGn_r" if gradient_low else "RdYlGn",
+                  .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r" if gradient_low else "RdYlGn",
                                        subset=["Over repl."]))
         return f'<div class="table-scroll">{styled.to_html()}</div>'
 

@@ -342,9 +342,29 @@ JS = """{% raw %}<script>
     });
   }
 
+  //: Sleeper's own clock, so a week still being played is not read as a
+  //: result. Fetched once with the rest.
+  var STATE=null;
+
+  /** Is that week of that season actually over?
+   *
+   *  "Somebody has scored" is not the same thing. Half a league's starters
+   *  finish on Sunday afternoon and the rest on Monday night, so a week in
+   *  progress has points on the board all weekend - and counting it gave
+   *  every manager a win or a loss for a game that had not been played,
+   *  in the grid, in his record, and in who his nemesis is.
+   */
+  function finished(season, week){
+    if(!STATE) return false;                   // unknown: do not guess
+    if(String(STATE.season)!==String(season)) return true;    // a past season
+    var live=STATE.display_week||STATE.week||1;
+    return week<live;
+  }
+
   function push(log, wk, a, b, ap, bp){
     if(!a||!b||a===b) return;
     if(ap==null||bp==null) return;
+    if(!finished(wk.season.season, wk.week)) return;
     if(!ap && !bp) return;                     // a week nobody has played yet
     log.push({season:wk.season.season, week:wk.week, kind:wk.kind,
               a:a, b:b, ap:ap, bp:bp});
@@ -632,7 +652,8 @@ JS = """{% raw %}<script>
   var MINE=(window.GSL&&GSL.mine?GSL.mine(have.id).uid:null)||'';
 
   host.innerHTML='<p class="hi-load">Reading '+esc(have.name||'your league')+'\\u2026</p>';
-  chain(have.id)
+  Promise.resolve(get('/state/nfl')).then(function(st){ STATE=st||null; })
+    .then(function(){ return chain(have.id); })
     .then(function(lgs){
       if(!lgs.length) throw new Error('none');
       return Promise.all(lgs.map(season));

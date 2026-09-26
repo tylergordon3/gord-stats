@@ -142,7 +142,7 @@ def _clock_tables(first):
     # Each position on its own scale: green = goes earliest, red = waits longest.
     heat = (avg.reset_index().style.hide(axis="index")
             .format("{:.1f}", na_rep="—", subset=pos)
-            .background_gradient(cmap="RdYlGn_r", axis=0, subset=pos)
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", axis=0, subset=pos)
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -219,7 +219,7 @@ def early_blueprint(df) -> str:
     # renders its name as a phantom second header row.
     grid = (counts.reset_index().style.hide(axis="index")
             .format("{:d}", subset=list(counts.columns))
-            .background_gradient(cmap="Blues", axis=None, subset=list(counts.columns))
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="Blues", axis=None, subset=list(counts.columns))
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -228,7 +228,7 @@ def early_blueprint(df) -> str:
     opens = _pivot(opener, "overall_pick", "count").fillna(0).astype(int)
     opens_html = (opens.reset_index().style.hide(axis="index")
                   .format("{:d}", subset=list(opens.columns))
-                  .background_gradient(cmap="Blues", axis=None, subset=list(opens.columns))
+                  .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="Blues", axis=None, subset=list(opens.columns))
                   .set_table_styles(_GRID, overwrite=False)
                   .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -285,10 +285,10 @@ def health(df) -> str:
     shown = table.drop(columns=["RawRank", "AdjRank", "Move"])
     html = (shown.style.hide(axis="index")
             .format({"Starter Hit %": "{:.0f}%", "Healthy Hit %": "{:.0f}%", "Swing": "{:+.0f}"})
-            .background_gradient(cmap="RdYlGn_r", subset=["Weeks Lost"])
-            .background_gradient(cmap="RdYlGn_r", subset=["High-Impact Weeks Lost"])
-            .background_gradient(cmap="RdYlGn_r", subset=["Est. Pts Lost"])
-            .background_gradient(cmap="RdYlGn", subset=["Healthy Hit %"])
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Weeks Lost"])
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["High-Impact Weeks Lost"])
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Est. Pts Lost"])
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Healthy Hit %"])
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -402,8 +402,8 @@ def _champ_picks_table(df, season) -> str:
     d = c[_CHAMP_PICK_COLS].rename(columns=_CHAMP_PICK_RENAME)
     return (d.style.hide(axis="index")
             .format({"ADP": "{:.1f}", "Finish vs Pick": "{:+.0f}"}, na_rep="—")
-            .background_gradient(cmap="RdYlGn_r", subset=["Pos Finish"])
-            .background_gradient(cmap="RdYlGn", subset=["Finish vs Pick"])
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Pos Finish"])
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Finish vs Pick"])
             .set_table_styles(_GRID, overwrite=False)
             .set_table_attributes('class="sticky-table"')).to_html()
 
@@ -424,9 +424,9 @@ def champion_blueprint(df) -> str:
     vs_html = (vs.style.hide(axis="index")
                .format({"Starter Hit %": "{:.0f}%", "Weeks Lost / Pick": "{:.1f}",
                         "Avg Finish vs Pick": "{:+.1f}", "Avg ADP Value": "{:+.1f}"})
-               .background_gradient(cmap="RdYlGn", subset=["Starter Hit %"])
-               .background_gradient(cmap="RdYlGn", subset=["Avg Finish vs Pick"])
-               .background_gradient(cmap="RdYlGn_r", subset=["Weeks Lost / Pick"])
+               .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Starter Hit %"])
+               .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Avg Finish vs Pick"])
+               .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Weeks Lost / Pick"])
                .set_table_styles(_GRID, overwrite=False)
                .set_table_attributes('class="sticky-table"')).to_html()
 

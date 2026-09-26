@@ -288,3 +288,37 @@ def test_the_stale_note_never_invents_a_date():
     assert "Last season" in render_home._stale_note(30)
     assert "March 15" in render_home._stale_note(30, "March 15, 2026")
     assert render_home._stale_note(0) == "", "it claims staleness in season"
+
+
+def test_the_gradient_keeps_its_text_readable():
+    """pandas puts *light* text below this luminance, so a bigger number means
+    more white text, not less - which is how the first attempt at this made it
+    worse. The default 0.408 sits a hair above the RdYlGn mid-greens, so the
+    middle of every scale came out white-on-green at about 2:1."""
+    from fantasy.site import styles
+
+    assert styles.GRADIENT_INK < 0.408, "raising it puts white text on more cells"
+    # White is still right at the deep ends of the ramp.
+    assert styles.GRADIENT_INK > 0.15, "nothing would ever get light text"
+
+
+def test_every_gradient_passes_the_threshold():
+    """Thirty-three call sites across ten modules; one left on the default is
+    one table with unreadable middles."""
+    import pathlib
+
+    root = pathlib.Path(__file__).resolve().parents[1] / "src"
+    missed = []
+    for path in root.rglob("*.py"):
+        for line in path.read_text().splitlines():
+            if ".background_gradient(" in line and "text_color_threshold" not in line:
+                missed.append(f"{path.relative_to(root)}: {line.strip()[:60]}")
+    assert not missed, "gradients on the default threshold: " + "; ".join(missed)
+
+
+def test_the_readers_own_shading_agrees_with_pandas():
+    """my_power shades its own cells rather than going through pandas, so it
+    has to make the same call about ink."""
+    from gordstats import my_power
+
+    assert "lum<0.5?'#f8fafc':'#0f172a'" in my_power.JS.replace(" ", "")

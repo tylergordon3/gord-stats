@@ -129,7 +129,7 @@ def pick_table(df) -> str:
     cols = ["Player", "Manager", "Pos.", "Drafted", "Finished", "Tier Δ", "Pts."]
     out = out[cols]
     styled = (out.style.hide(axis="index")
-              .background_gradient(cmap="RdYlGn", subset=["Tier Δ"],
+              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Tier Δ"],
                                    vmin=-TIER_SPAN, vmax=TIER_SPAN)
               .format({"Pts.": "{:.0f}", "Tier Δ": "{:+d}"})
               .set_table_styles([styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE],

@@ -59,7 +59,7 @@ def _font_for_bg(rgb) -> str:
 def default_style(df, gradient_cols, cmap: str = "RdYlGn"):
     """Styled table: hidden index, grid borders, sticky, + a gradient on `gradient_cols`."""
     return (df.style.hide(axis="index")
-            .background_gradient(cmap=cmap, subset=gradient_cols)
+            .background_gradient(text_color_threshold=GRADIENT_INK, cmap=cmap, subset=gradient_cols)
             .set_table_styles([GRID_TD, GRID_TH, TABLE_STYLE], overwrite=False)
             .set_table_attributes('class="sticky-table"'))
 
@@ -70,6 +70,15 @@ def _record_parts(text) -> tuple[int, int]:
     m = re.search(r"(\d{1,2})-(\d{1,2})", str(text))
     return int(m.group(1)), int(m.group(2))
 
+
+#: When pandas puts *light* text on a gradient fill: it does so below this
+#: luminance, so a bigger number means more white text, not less. The default
+#: 0.408 sits a hair above the RdYlGn mid-greens (#66bd63 is 0.397), which is
+#: why the middle of every scale on this site came out white-on-green at about
+#: 2:1. At 0.22 white is kept for the deep ends of the ramp, where it really is
+#: the readable choice (#d73027 takes white at 5.2:1 and dark at 4.0:1), and
+#: everything from the mid-oranges up takes dark ink.
+GRADIENT_INK = 0.22
 
 #: Dark ink, stated rather than inherited. These fills are light in both
 #: themes - a pale green record cell is a pale green record cell at night too -
