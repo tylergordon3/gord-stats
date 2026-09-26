@@ -265,12 +265,51 @@ def _cbb_lead() -> str:
 """
 
 
+def _stale_note(days: int, what: str = "") -> str:
+    """That a page is last season's, said plainly.
+
+    Out of season the daily task refuses to run - the feeds keep serving last
+    season's numbers, so rebuilding would republish March as if it were now -
+    which means these pages are frozen at whatever they last had. A reader has
+    no way to know that from the page, and a bracket with no date on it reads
+    as current.
+
+    `what` is the date where one is actually known; the file's own timestamp
+    is not it, because any edit to the file moves it and a fresh checkout on
+    the Pi resets it to the checkout.
+    """
+    if days <= 0:
+        return ""
+    when = f"{what} &mdash; " if what else "Last season&rsquo;s &mdash; "
+    return (f'<p class="home-card-stale">{when}this fills in again when the '
+            "season starts.</p>")
+
+
+def _latest_predict_date() -> str:
+    """The date the newest bracketology page was predicted for, from its own
+    name - which is the real prediction date, not a file timestamp."""
+    dates = sorted(
+        f.name.removeprefix("predict_").removesuffix(".html")
+        for f in paths.WEB_M_DIR.glob("predict_*.html"))
+    if not dates:
+        return ""
+    try:
+        return f"{date.fromisoformat(dates[-1]):%B %-d, %Y}"
+    except ValueError:
+        return ""
+
+
 def _cbb_home_body(today: date) -> str:
     """The college basketball section landing page.
 
     Deliberately league-agnostic: it sits above the men's/women's split so the
     section has somewhere to land that isn't already a scores page. The
     countdown include is the same one the season banner uses.
+
+    Out of season the page leads with what is actually live. The power
+    rankings are built from Torvik's preseason projections and rebuild every
+    day of the year; the bracket, the conference table and the scoreboard all
+    need games, and say when they last had any.
     """
     days = (CBB_TIPOFF - today).days
     if days > 0:
@@ -279,6 +318,20 @@ def _cbb_home_body(today: date) -> str:
     else:
         when = "The season is underway."
     href, label = _latest_predict_link()
+    preseason = days > 0
+
+    lead = ("" if not preseason else f"""
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Power Rankings</h2>
+    <a class="home-card-link" href="/cbb/power/">Rankings &rarr;</a>
+  </div>
+  <p>Where every team stands going into {CBB_TIPOFF:%Y}&ndash;{CBB_TIPOFF.year % 100 + 1:02d},
+     on Torvik's preseason projections. This is the one page here that does not
+     need a game to have been played, so it is rebuilt every day through the
+     summer as rosters settle.</p>
+</section>
+""")
 
     return f"""
 {{% include countdown.html key="cbb" %}}
@@ -291,6 +344,7 @@ def _cbb_home_body(today: date) -> str:
 
 <p>Every page below carries a men's/women's toggle in the header &mdash; it
    remembers which league you last looked at.</p>
+{lead}
 
 <section class="home-card">
   <div class="home-card-head">
@@ -299,6 +353,7 @@ def _cbb_home_body(today: date) -> str:
   </div>
   <p>The projected tournament field: seeds, bubble, and the teams on the wrong
      side of the cut.</p>
+  {_stale_note(days, _latest_predict_date())}
   <p class="home-card-links">
     <a href="/men/history.html">Prediction History</a>
   </p>
@@ -310,6 +365,7 @@ def _cbb_home_body(today: date) -> str:
     <a class="home-card-link" href="/men/index.html">Scoreboard &rarr;</a>
   </div>
   <p>Live scores and the day's slate.</p>
+  {"" if not preseason else '<p class="home-card-stale">Nothing until ' + f"{CBB_TIPOFF:%B %-d}" + '.</p>'}
 </section>
 
 <section class="home-card">
@@ -318,6 +374,7 @@ def _cbb_home_body(today: date) -> str:
     <a class="home-card-link" href="/men/conference.html">Standings &rarr;</a>
   </div>
   <p>Conference-by-conference strength, and how many bids each is projected to get.</p>
+  {_stale_note(days)}
 </section>
 """
 

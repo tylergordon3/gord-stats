@@ -256,3 +256,35 @@ def test_an_unknown_ceiling_is_unbounded_not_zero():
     # The lock itself is not special-cased: unbounded ceilings make it fire
     # only when the order really is decided.
     assert "t.lock=t.foes.length<cut-i?'up':'';" in js
+
+
+def test_the_cbb_home_leads_with_what_is_actually_live():
+    """Out of season the bracket, the conference table and the scoreboard all
+    need games nobody has played. The power rankings are built from Torvik's
+    preseason projections and rebuild every day of the year, so preseason they
+    go first - and the rest say they are last season's."""
+    from datetime import date
+
+    from cbb.render.render_home import CBB_TIPOFF, _cbb_home_body, _stale_note
+
+    pre = _cbb_home_body(CBB_TIPOFF - date.resolution * 30)
+    assert pre.index("Power Rankings") < pre.index("Bracketology"), \
+        "preseason, the live page is not first"
+    assert "home-card-stale" in pre
+
+    during = _cbb_home_body(CBB_TIPOFF + date.resolution * 30)
+    assert "home-card-stale" not in during, "in season, nothing is stale"
+    assert during.index("Bracketology") < during.index("Today's Scores")
+
+
+def test_the_stale_note_never_invents_a_date():
+    """A file's timestamp is not when it was built: any edit moves it, and a
+    fresh checkout on the Pi resets it to the checkout. Claiming "rebuilt
+    today" for a page frozen since August is worse than saying nothing."""
+    from cbb.render import render_home
+
+    src = open(render_home.__file__).read()
+    assert "st_mtime" not in src, "the note is back on a file timestamp"
+    assert "Last season" in render_home._stale_note(30)
+    assert "March 15" in render_home._stale_note(30, "March 15, 2026")
+    assert render_home._stale_note(0) == "", "it claims staleness in season"

@@ -324,6 +324,9 @@ body {
    table's own background, white by day and navy at night - so the colours are
    here rather than inline on the cell, where one value would have to serve
    both themes. Set by cbb.html_util._arrow_class. */
+/* A card whose page needs games that have not been played yet. */
+.home-card-stale { font-size: 12.5px; color: #64748b; font-style: italic; margin: 6px 0 0; }
+
 .rk-up { color: #15803d; }
 .rk-down { color: #b91c1c; }
 .rk-flat { color: #475569; }
@@ -3097,6 +3100,8 @@ summary.team-report-header::after {
   .sticky-table tbody tr:hover td {
     filter: brightness(1.25);
   }
+
+  .home-card-stale { color: #aab7c9; }
 
   .rk-up { color: #6ee7b7; }
   .rk-down { color: #ff9b91; }
