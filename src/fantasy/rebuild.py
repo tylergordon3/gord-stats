@@ -34,6 +34,9 @@ PAGES = [
     ("board",        "Season projection board (ranks your own league)",
                                                           lambda: _gen("season_board")),
     ("matchups",     "Weekly Matchups (rosters, projections, points)", lambda: _gen("matchups")),
+    # After "matchups": the week context reads the archive that step refreshes.
+    ("context",      "This week's lines, forecasts and defence-vs-position",
+                                                          lambda: _gen("week_context")),
     ("roster",       "Team Dashboard (start/sit, slot order, waiver adds)", lambda: _gen("roster")),
     ("usage",        "Usage (snap, carry and target share)", lambda: _gen("usage")),
     ("analytics",    "Analytics hub (links the occasional pages)", lambda: _gen("analytics")),

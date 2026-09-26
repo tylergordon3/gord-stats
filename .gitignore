@@ -107,3 +107,4 @@ docs/_data/cfb_countdown.json
 # render on the first deploy after this change. "A generator mentions the
 # filename" is not the test - "a generator writes it" is.
 docs/cfb/schedule/week-*.html
+docs/fantasy/week-context.json

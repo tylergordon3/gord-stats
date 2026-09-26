@@ -252,19 +252,35 @@ VIEW_JS = """{% raw %}<script>
     return html+'</tbody></table>';
   }
 
-  function render(lg, wk, index, rosterId){
+  function render(lg, wk, index, rosterId, ctx, live){
     var roster=lg.rosters.filter(function(r){return String(r.roster_id)===String(rosterId);})[0];
     if(!roster){ host.innerHTML='<p class="mt-none">No roster.</p>'; return; }
 
+    var W=window.GSWeek;
     var conf=slotCounts(lg.slots);
+    conf.ctx=ctx; conf.pts=(live&&live[String(rosterId)])||{};
     var here=current(roster, lg.slots);
-    var proj=GSL.points(wk, lg.basis.index);
+    var sleeper=GSL.points(wk, lg.basis.index);
+    conf.sleeper=sleeper;
     var kick=GSL.kickoffs(wk);
     var now=Date.now();
 
     var players=(roster.players||[]).map(function(p){
       var pid=String(p), meta=index[pid]||['Player '+pid,''];
-      return {id:pid, pos:meta[1]||'', slot:here[pid]||BENCH, name:meta[0]};
+      var row=(wk.proj||{})[pid]||[];
+      return {id:pid, pos:meta[1]||'', slot:here[pid]||BENCH, name:meta[0],
+              team:row[3]||'', injury:row[4]||''};
+    });
+    var byId={};
+    players.forEach(function(p){ byId[p.id]=p; });
+
+    // The Proj column is the built page's blend - the mean of the sources that
+    // have him - not Sleeper's number alone. See gordstats.my_week for why
+    // there are fewer sources here than on the built page.
+    var proj={};
+    players.forEach(function(p){
+      var v=W.projFor(ctx,p.id,p.team,sleeper[p.id]);
+      proj[p.id]=v==null?0:v;
     });
     var locked=players.filter(function(p){
       return kick[p.id]!=null && kick[p.id]<=now;
@@ -302,19 +318,55 @@ VIEW_JS = """{% raw %}<script>
       html+='<p class="mt-none">Your lineup already matches the recommendation.</p>';
     }
 
-    html+='<table class="mt-t"><thead><tr><th>Slot</th><th>Player</th>'
-      +'<th style="text-align:right">Proj</th><th>Now</th></tr></thead><tbody>';
+    // The built page's table, cell for cell - see gordstats.my_week. Its
+    // classes are already in the stylesheet on this page, so matching the
+    // format is a matter of emitting the same markup.
+    var W=window.GSWeek, ctx=conf.ctx||{teams:{},wx:{},dvp:{},gs:{}};
+    html+='<div class="table-scroll"><table class="rd-t sticky-table"><thead><tr>'
+      +"<th title='Where he belongs this week'>Slot</th>"
+      +"<th title='What it takes to get him there'>Change</th>"
+      +'<th>Player</th><th>Game</th>'
+      +"<th title='His team\u2019s implied points from the spread and total; for a "
+      +"defence, what it is expected to allow'>Team total</th>"
+      +"<th title='What the opposing defence has allowed to this position against "
+      +"the league average. 1.00 is par; rank 1 is the toughest.'>Opp vs pos</th>"
+      +'<th>Weather</th><th>Proj</th><th>GS</th><th>Sleeper</th><th>Pts</th>'
+      +"<th title='The best bench player who could still take his place'>Late-swap cover</th>"
+      +'</tr></thead><tbody>';
+    var benched=false;
     rows.forEach(function(r){
-      var p=r.p, moved=out.slot[p.id]!==p.slot;
-      var into=moved&&r.slot!==BENCH, outOf=moved&&r.slot===BENCH;
-      var cls=(r.slot===BENCH?'bench':'')+(into?' mt-move':'')+(outOf?' mt-out':'');
-      html+='<tr class="'+cls+'"><td class="mt-slot">'+esc(r.slot)+'</td>'
-        +'<td class="nm">'+esc(p.name)+'<span class="mt-pos">'+esc(p.pos)+'</span>'
-        +(locked.indexOf(p.id)>=0?'<span class="mt-lock">locked</span>':'')+'</td>'
-        +'<td class="n">'+num(proj[p.id])+'</td>'
-        +'<td class="mt-slot">'+(moved?esc(p.slot):'')+'</td></tr>';
+      var p=r.p, bench=r.slot===BENCH||RESERVE.indexOf(r.slot)>=0;
+      var split=(bench&&!benched)?' rd-split':''; benched=benched||bench;
+      var kind=p.slot===r.slot?'':(bench?'out':(p.slot===BENCH||RESERVE.indexOf(p.slot)>=0?'in':'swap'));
+      var g=W.gameFor(ctx,p.team), isLocked=locked.indexOf(p.id)>=0;
+      var cover=(out.cover||{})[p.id];
+      var coverTd;
+      if(bench||cover==null){ coverTd='<td class="rd-cov none">&mdash;</td>'; }
+      else if(cover.length){
+        var c=byId[cover[0]], cg=W.gameFor(ctx,c.team);
+        coverTd='<td class="rd-cov">'+esc(c.name)+' <span class="rd-lbl">'
+          +W.fmt(proj[cover[0]])+' &middot; '+W.when(cg)+'</span></td>';
+      } else {
+        coverTd='<td class="rd-cov '+(p.injury?'warn':'none')+'">nobody later</td>';
+      }
+      var scored=(conf.pts||{})[p.id];
+      var done=g&&g.state==='post';
+      html+='<tr class="'+(bench?'rd-bn':'rd-st')+split+(kind?' rd-'+kind:'')+'">'
+        +'<td class="rd-slot">'+esc(r.slot)+'</td>'
+        +W.moveCell(kind,p.slot)
+        +W.playerCell(p, isLocked?'<span class="rd-tag lock">locked</span>':'')
+        +'<td class="rd-g">'+W.gameCell(g)+'</td>'
+        +W.totalCell(g,p.pos)+W.oppCell(ctx,g,p.pos)+W.wxCell(ctx,g)
+        +(done&&scored!=null
+          ? "<td class='rd-spent' title='His game is over; the points column is what "
+            +"he actually scored'>"+W.fmt(proj[p.id])+'</td>'
+          : '<td><b>'+W.fmt(proj[p.id])+'</b></td>')
+        +'<td>'+W.fmt(ctx.gs&&ctx.gs[p.id])+'</td>'
+        +'<td>'+W.fmt(conf.sleeper&&conf.sleeper[p.id])+'</td>'
+        +'<td>'+((g&&(g.state==='in'||g.state==='post')&&scored!=null)?W.fmt(scored):'&mdash;')+'</td>'
+        +coverTd+'</tr>';
     });
-    html+='</tbody></table>';
+    html+='</tbody></table></div>';
     html+=adds(lg, wk, index, players, out, proj, kick, now, conf);
     host.innerHTML=html
       +'<p class="mt-note">Scoring read from your league: <b>'+esc(lg.basis.name)+'</b>.'
@@ -329,9 +381,27 @@ VIEW_JS = """{% raw %}<script>
   function start(){
     host.innerHTML='<p class="mt-note">Reading '+esc(have.name||'your league')+'\\u2026</p>';
     if(built) built.hidden=true;
-    Promise.all([GSL.league(have.id), GSL.week(), GSL.players()])
+    Promise.all([GSL.league(have.id), GSL.week(), GSL.players(),
+                 window.GSWeek.load()])
       .then(function(o){
-        var lg=o[0], wk=o[1], index=o[2];
+        var lg=o[0], wk=o[1], index=o[2], ctx=o[3];
+        // What everyone has actually scored this week, so the Pts column and
+        // the finished-game rule have something to read. Its own request
+        // because nothing else here needs it, and a failure costs one column.
+        return fetch('https://api.sleeper.app/v1/league/'
+                     +encodeURIComponent(have.id)+'/matchups/'+(wk.week||ctx.week||1))
+          .then(function(r){ return r.ok?r.json():[]; })
+          .catch(function(){ return []; })
+          .then(function(rows){
+            var live={};
+            (rows||[]).forEach(function(r){
+              live[String(r.roster_id)]=r.players_points||{};
+            });
+            return [lg, wk, index, ctx, live];
+          });
+      })
+      .then(function(o){
+        var lg=o[0], wk=o[1], index=o[2], ctx=o[3], live=o[4];
         var bar=document.getElementById('mt-bar');
         var keys=Object.keys(lg.names);
         if(bar){
@@ -340,9 +410,9 @@ VIEW_JS = """{% raw %}<script>
               return '<option value="'+esc(k)+'">'+esc(lg.names[k])+'</option>';}).join('')
             +'</select></label>';
           document.getElementById('mt-who').addEventListener('change',function(){
-            render(lg, wk, index, this.value);});
+            render(lg, wk, index, this.value, ctx, live);});
         }
-        render(lg, wk, index, keys[0]);
+        render(lg, wk, index, keys[0], ctx, live);
       })
       .catch(function(){
         host.innerHTML='<p class="mt-none">Could not read that league from Sleeper.</p>';

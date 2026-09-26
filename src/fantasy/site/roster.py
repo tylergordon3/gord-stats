@@ -38,7 +38,7 @@ from fantasy.league import suggestions
 from fantasy.site import layout
 from fantasy.site import matchups as mu
 from gordstats import lineup as planner
-from gordstats import my_league, my_league_data, my_team
+from gordstats import my_league, my_league_data, my_team, my_week
 from gordstats import matchup_page as ui
 from gordstats import roster_page as page
 from gordstats.frontmatter import add_front_matter
@@ -541,7 +541,7 @@ def body() -> str:
         + f"<script type='application/json' id='rd-cfg'>{cfg}</script>"
         + page.switch_js(STORAGE_KEY) + page.CARD_JS
         + "</div>"
-        + my_league.JS + my_league_data.JS
+        + my_league.JS + my_league_data.JS + my_week.JS
         + my_team.PLANNER_JS + my_team.VIEW_JS)
 
 
