@@ -151,9 +151,9 @@ JS = """{% raw %}<script>
         +'<td class="n">'+recordOf(c)+'</td>'
         +'<td class="n">'+c.pf.toFixed(1)+'</td></tr>';
     }).join('');
-    return '<h2>Champions</h2><table class="sticky-table"><thead><tr><th>Season</th>'
+    return '<h2>Champions</h2><div class="table-scroll"><table class="sticky-table"><thead><tr><th>Season</th>'
       +'<th>Winner</th><th>Record</th><th>Points</th></tr></thead><tbody>'
-      +rows+'</tbody></table>';
+      +rows+'</tbody></table></div>';
   }
 
   function renderSeasons(seasons){
@@ -163,7 +163,7 @@ JS = """{% raw %}<script>
         return (b.wins-a.wins) || (b.pf-a.pf);});
       html+='<h3 style="margin:14px 0 4px;font-size:15px">'+esc(s.season)
         +(s.status&&s.status!=='complete'?' <span class="hi-sub">in progress</span>':'')
-        +'</h3><table class="sticky-table"><thead><tr><th>Team</th><th>Record</th>'
+        +'</h3><div class="table-scroll"><table class="sticky-table"><thead><tr><th>Team</th><th>Record</th>'
         +'<th>Points for</th><th>Points against</th></tr></thead><tbody>';
       teams.forEach(function(t){
         html+='<tr'+(t.champion?' class="me"':'')+'><td>'
@@ -173,7 +173,7 @@ JS = """{% raw %}<script>
           +'<td class="n">'+t.pf.toFixed(1)+'</td>'
           +'<td class="n">'+t.pa.toFixed(1)+'</td></tr>';
       });
-      html+='</tbody></table>';
+      html+='</tbody></table></div>';
     });
     return html;
   }
@@ -196,7 +196,7 @@ JS = """{% raw %}<script>
       .sort(function(a,b){
         return (b.titles-a.titles) || (b.wins-a.wins) || (b.pf-a.pf);});
     if(!rows.length) return '';
-    return '<h2>All time</h2><table class="sticky-table"><thead><tr><th>Manager</th>'
+    return '<h2>All time</h2><div class="table-scroll"><table class="sticky-table"><thead><tr><th>Manager</th>'
       +'<th>Seasons</th><th>Titles</th><th>Record</th><th>Points</th></tr></thead><tbody>'
       + rows.map(function(r){
           return '<tr><td>'+esc(r.team)+'<span class="hi-sub">'+esc(r.manager)
@@ -205,7 +205,7 @@ JS = """{% raw %}<script>
             +'</td><td class="n">'+r.wins+'-'+r.losses+(r.ties?'-'+r.ties:'')+'</td>'
             +'<td class="n">'+r.pf.toFixed(0)+'</td></tr>';
         }).join('')
-      +'</tbody></table>';
+      +'</tbody></table></div>';
   }
 
   /** Who played whom, every regular-season week of every season. */

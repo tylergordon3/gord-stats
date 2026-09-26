@@ -181,7 +181,7 @@ JS = """{% raw %}<script>
     var names=Object.keys(by).filter(function(n){ return by[n].scored; });
     if(!names.length) return '';
     names.sort(function(a,b){ return (by[b].value/by[b].scored)-(by[a].value/by[a].scored); });
-    return '<h2>How each manager drafted</h2><table class="sticky-table"><thead><tr>'
+    return '<h2>How each manager drafted</h2><div class="table-scroll"><table class="sticky-table"><thead><tr>'
       +'<th>Manager</th><th>Picks</th><th>Avg value</th><th>Best</th><th>Worst</th>'
       +'</tr></thead><tbody>'
       + names.map(function(n){
@@ -194,7 +194,7 @@ JS = """{% raw %}<script>
             +'<td>'+esc(a.worst._name)+'<span class="dr-pos">'+esc(a.worst._pos)+'</span>'
             +' <span class="dr-down dr-v">'+signed(a.worst._value)+'</span></td></tr>';
         }).join('')
-      +'</tbody></table>';
+      +'</tbody></table></div>';
   }
 
   function board(d){

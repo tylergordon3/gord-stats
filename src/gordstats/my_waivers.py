@@ -209,7 +209,7 @@ JS = """{% raw %}<script>
       return (by[b].claims+by[b].adds)-(by[a].claims+by[a].adds);});
     if(!rows.length) return '';
     var faabUsed=rows.some(function(n){ return by[n].faab>0; });
-    return '<h2>Who works the wire</h2><table class="sticky-table"><thead><tr><th>Manager</th>'
+    return '<h2>Who works the wire</h2><div class="table-scroll"><table class="sticky-table"><thead><tr><th>Manager</th>'
       +'<th>Claims</th>'+(faabUsed?'<th>FAAB</th>':'')
       +'<th>Free agents</th><th>Drops</th><th>Trades</th></tr></thead><tbody>'
       + rows.map(function(n){
@@ -219,7 +219,7 @@ JS = """{% raw %}<script>
             +'<td class="n">'+a.adds+'</td><td class="n">'+a.drops+'</td>'
             +'<td class="n">'+a.trades+'</td></tr>';
         }).join('')
-      +'</tbody></table>';
+      +'</tbody></table></div>';
   }
 
   function draw(){
@@ -235,11 +235,11 @@ JS = """{% raw %}<script>
       return true;
     });
     var slot=document.getElementById('wv-log');
-    slot.innerHTML='<table class="sticky-table"><thead><tr><th>When</th><th>How</th>'
+    slot.innerHTML='<div class="table-scroll"><table class="sticky-table"><thead><tr><th>When</th><th>How</th>'
       +'<th>In</th><th>Out</th></tr></thead><tbody>'
       + (list.length ? rowsFor(list.slice(0, shown), state.index)
          : '<tr><td colspan="4"><span class="wv-none">Nothing here.</span></td></tr>')
-      +'</tbody></table>'
+      +'</tbody></table></div>'
       + (list.length>shown
          ? '<button class="wv-more" id="wv-more">Show more ('
            +(list.length-shown)+' left)</button>' : '');
