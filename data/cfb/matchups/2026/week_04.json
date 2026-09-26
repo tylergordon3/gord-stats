@@ -4,7 +4,7 @@
  "week_end": "2026-09-26",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-26T05:09:30+00:00",
+ "fetched": "2026-09-26T05:12:07+00:00",
  "matchups": [
   {
    "week": 4.0,
@@ -2299,10 +2299,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 11.4,
+    "points": 12.1,
     "stats": {
-     "8": 15.0,
-     "9": 54.0,
+     "8": 17.0,
+     "9": 61.0,
      "10": 1.0
     }
    },
