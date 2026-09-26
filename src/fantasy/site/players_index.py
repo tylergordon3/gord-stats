@@ -2,7 +2,7 @@
 Two small files the browser fetches when someone is looking at their own
 league: a player index, and this week's projections.
 
-docs/fantasy/players-index.json - Sleeper player id -> [name, position].
+docs/fantasy/players-index.json - Sleeper player id -> [name, position, team].
 
 The matchups page can show a reader's own league, and a league's rosters are
 just player ids. Names have to come from somewhere, and Sleeper's own player
@@ -11,7 +11,7 @@ scoreboard.
 
 So the index is written here instead, from the player table the build already
 keeps: every active player at a fantasy position, about 3,200 of them and
-under 100 KB. It is fetched lazily by the browser and only when someone is
+about 110 KB. It is fetched lazily by the browser and only when someone is
 actually looking at their own league, so it costs a normal reader nothing.
 
 docs/fantasy/week-projections.json - this week's projections and kickoffs.
@@ -68,7 +68,13 @@ def build() -> dict:
         name = getattr(row, "full_name", None)
         if pid is None or pd.isna(pid) or not name or pd.isna(name):
             continue
-        out[str(pid)] = [str(name), str(row.position)]
+        team = getattr(row, "team", None)
+        # The team is here for the players this week's projections do not
+        # cover - a bench player on a bye, or one nobody projects. Without it
+        # his row has no logo and no game, which reads as missing data rather
+        # than as a quiet week.
+        out[str(pid)] = [str(name), str(row.position),
+                         "" if team is None or pd.isna(team) else str(team)]
     return out
 
 

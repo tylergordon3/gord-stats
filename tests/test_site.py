@@ -367,7 +367,11 @@ def test_the_files_the_browser_needs_are_built():
     names = json.loads(index.read_text())
     week = json.loads(proj.read_text())
     assert len(names) > 500, "the player index looks truncated"
-    assert all(isinstance(v, list) and len(v) == 2 for v in list(names.values())[:50])
+    # Name, position and team. The team is what gives a player with no
+    # projection this week - a bench back on a bye - a logo and a game; it
+    # was added third so the two existing readers keep their indexes.
+    assert all(isinstance(v, list) and len(v) == 3 for v in names.values())
+    assert any(v[2] for v in names.values()), "no player carries a team"
 
     assert len(week["proj"]) > 100, "the week projections look truncated"
     assert week["kick"], "no kickoffs, so no lineup can lock"

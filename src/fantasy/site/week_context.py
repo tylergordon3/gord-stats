@@ -13,7 +13,7 @@ So the same numbers are published, once a build:
      "teams": {"BUF": {"opp": "LAC", "home": true, "state": "pre",
                        "when": "9/27 - 1:00 PM EDT", "for": 28.2,
                        "against": 21.2, "spread": "BUF -7", "total": 49.5,
-                       "tv": "FOX", "gid": "401872953"}},
+                       "tv": "FOX", "gid": "401872953", "el": 0}},
      "wx":    {"401872953": {"indoors": false, "cond": "Clear", "temp": 66}},
      "dvp":   {"ARI": {"QB": [1.00, 17], ..., "games": 2}, "n": 32},
      "gs":    {"9221": 28.6}}
@@ -55,6 +55,10 @@ def build(year: int = UPCOMING_YEAR) -> dict:
             # The kickoff itself, so the browser can render both the long form
             # ("9/27 - 1:00 PM EDT") and the short one the cover column uses.
             "date": g.get("date"),
+            # The share of the game already played, for the live expected
+            # finals - fantasy.league.matchups.elapsed, computed once here
+            # rather than from a period and a clock in the browser.
+            "el": _round(g.get("elapsed"), 2),
             "for": _round(g.get("implied_for")), "against": _round(g.get("implied_against")),
             "spread": g.get("spread"), "total": _round(g.get("total")),
             "tv": g.get("tv"),

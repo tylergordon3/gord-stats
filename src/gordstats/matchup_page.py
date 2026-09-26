@@ -216,6 +216,13 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-pair .mu-hint.in{background:#d5efdd;color:#1a7f4b}
 .mu-pair .mu-hint.out{background:#fde2dd;color:#b3382c}
 table.mu-roster{width:100%;border-collapse:collapse;font-size:13px}
+/* The fantasy section sizes tables inside .table-scroll to their content, and
+   wins on specificity. The built league's nine columns overflow anyway, so it
+   never showed; a reader's league has six and left a dead strip at the inner
+   edge of the left roster - exactly where the two teams' points are supposed
+   to meet. min-width can only widen a table that was narrower than its
+   column, so the built page is untouched. */
+.table-scroll table.mu-roster{min-width:100%}
 table.mu-roster th{background:#eef2f7;color:#334155;padding:5px 7px;text-align:center;
   font-size:11px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
   border:1px solid #e2e8f0}

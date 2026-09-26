@@ -85,10 +85,13 @@ window.GSWeek = (function(){
     return day+' '+h+':'+String(d.getMinutes()).padStart(2,'0')+ap;
   }
 
-  function logo(team){
+  /** The dashboard styles its marks `.rd-logo`, the matchup pages `.mu-logo`,
+   *  and each stylesheet is only on its own page - a logo carrying the other
+   *  page's class gets the theme's framed-thumbnail treatment instead. */
+  function logo(team,cls){
     if(!team) return '';
     var abbr=(LOGO_FIX[team]||team).toLowerCase();
-    return '<img class="rd-logo" src="'+LOGO.replace('{abbr}',esc(abbr))
+    return '<img class="'+(cls||'rd-logo')+'" src="'+LOGO.replace('{abbr}',esc(abbr))
       +'" alt="" loading="lazy">';
   }
 
@@ -174,7 +177,7 @@ window.GSWeek = (function(){
    *  gordstats.matchup_page.score_cell. `exp` is the live expected final,
    *  which this side does not compute - the built cell falls back to "live"
    *  for exactly that case, so it reads the same. */
-  function scoreCell(pts,proj,state,exp){
+  function scoreCell(pts,proj,state,exp,markProj){
     if(state==='post')
       return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp">final</span>';
     if(state==='in'){
@@ -184,7 +187,17 @@ window.GSWeek = (function(){
     if(state==='bye'&&!pts)
       return '<b class="mu-now proj">&mdash;</b><span class="mu-exp">bye</span>';
     if(pts) return '<b class="mu-now">'+fmt(pts)+'</b><span class="mu-exp"></span>';
-    return '<b class="mu-now proj">'+fmt(proj)+'</b><span class="mu-exp"></span>';
+    return '<b class="mu-now proj">'+fmt(proj)+'</b><span class="mu-exp">'
+      +((markProj&&proj!=null)?'proj':'')+'</span>';
+  }
+
+  /** The .mu-pts cell on the blended projection, mirroring
+   *  fantasy.site.matchups.hybrid_score: what the sources expect before
+   *  kickoff, points plus the unplayed share of it during the game, points
+   *  after. `expected` needs the week's context, so this lives beside it. */
+  function hybridScore(pts,proj,g){
+    var state=g?(g.state||'pre'):'bye';
+    return scoreCell(pts,proj,state,state==='in'?expected(pts,proj,g)[0]:null);
   }
 
   /** One side of a paired row, mirroring fantasy.site.matchups._pair_cell. */
@@ -194,15 +207,45 @@ window.GSWeek = (function(){
       ? '<span class="inj">'+esc(INJURY[card.injury]||card.injury.slice(0,3).toUpperCase())+'</span>'
       : '';
     var live=(g&&g.state==='in')?' live':'';
-    var state=g?(g.state||'pre'):'bye';
     return '<div class="mu-pp'+live+'" data-pid="'+esc(card.id)+'"><div class="mu-pn">'
-      +'<span class="nm" title="'+esc(card.name)+'">'+logo(card.team)
+      +'<span class="nm" title="'+esc(card.name)+'">'+logo(card.team,'mu-logo')
       +esc(shortName(card.name))+'</span>'
       +'<span class="mu-pm">'+esc(card.pos)
       +((card.team&&card.pos!=='DEF')?(' \u00b7 '+esc(card.team)):'')+inj+'</span>'
       +'<span class="mu-g">'+gameCell(g)+'</span></div>'
-      +'<div class="mu-pcol"><span class="mu-pts">'+scoreCell(pts,proj,state)
+      +'<div class="mu-pcol"><span class="mu-pts">'+hybridScore(pts,proj,g)
       +'</span></div></div>';
+  }
+
+  // ----- expected finals, mirroring fantasy.site.matchups ----------------- //
+
+  /** The spread of a player's week. The built page reads the projection
+   *  board's own standard deviation where it has one; that is not published,
+   *  so every player takes the fallback the built page uses for a player it
+   *  has no figure for. The shape is the same, the spread a little wider. */
+  function sdFor(proj){ return Math.max(2, 0.6*(proj||0)); }
+
+  /** (expected final, variance) for one player: the projection before
+   *  kickoff, the points once it is over, and in between the points so far
+   *  plus the unplayed share of the projection. */
+  function expected(pts,proj,g){
+    proj=Number(proj||0); pts=Number(pts||0);
+    var left=1-(g?Number(g.el||0):0);
+    return [pts+proj*left, sdFor(proj)*sdFor(proj)*left];
+  }
+
+  function erf(x){
+    var t=1/(1+0.3275911*Math.abs(x));
+    var y=1-(((((1.061405429*t-1.453152027)*t+1.421413741)*t-0.284496736)*t
+      +0.254829592)*t)*Math.exp(-x*x);
+    return x>=0?y:-y;
+  }
+  /** P(A outscores B), on a normal over the difference of expected finals,
+   *  with the same floor on the spread the built page uses so a matchup that
+   *  is all but over still reads as odds rather than a certainty. */
+  function winProb(ea,va,eb,vb){
+    var sd=Math.sqrt(Math.max(va+vb,4));
+    return 0.5*(1+erf(((ea-eb)/sd)/Math.SQRT2));
   }
 
   // ----- the week's context ----------------------------------------------- //
@@ -236,8 +279,10 @@ window.GSWeek = (function(){
     return vals.reduce(function(a,b){return a+b;},0)/vals.length;
   }
 
-  return {load:load, gameFor:gameFor, projFor:projFor, when:when,
+  return {load:load, gameFor:gameFor, projFor:projFor, when:when, logo:logo,
+          sdFor:sdFor, expected:expected, winProb:winProb,
           shortName:shortName, scoreCell:scoreCell, pairCell:pairCell,
+          hybridScore:hybridScore,
           gameCell:gameCell, totalCell:totalCell, oppCell:oppCell, wxCell:wxCell,
           moveCell:moveCell, playerCell:playerCell,
           heat:heat, ordinal:ordinal, wxIcon:wxIcon, fmt:fmt, esc:esc};
