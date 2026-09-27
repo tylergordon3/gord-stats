@@ -3298,17 +3298,34 @@ summary.team-report-header::after {
   box-shadow: 0 1px 2px rgba(15, 23, 42, .12), 0 0 0 1px rgba(15, 23, 42, .04);
 }
 
-/* Phones: the track spans the row, each league an equal thumb-sized segment,
-   with breathing room above the pages. */
+/* Phones: the switcher heads the sub-nav row rather than taking a row of its
+   own. As a full-width track it cost 46px, and beside it the five pages
+   wrapped "Analytics" onto a second line - 225px of header on every Fantasy
+   page, a quarter of the screen. Two compact chips, the hairline and the
+   pages now share one 38px row. The row cannot be dragged sideways (it
+   wraps, see MOBILE NAV ROWS), so the switcher can no longer be carried off
+   the left edge, which is why it had been split out in the first place. */
 @media (max-width: 767px) {
   .fl-line {
-    flex-direction: column;
-    align-items: stretch;
-    padding-top: 8px;
+    justify-content: center;
+    margin-top: 0;
+    padding-top: 2px;
   }
 
+  /* Every pixel of the row is spoken for: no row padding, no link margins. */
+  .fl-line .simple-nav {
+    gap: 0;
+    padding: 0;
+  }
+
+  .fl-line .simple-nav a {
+    margin-right: 0;
+  }
+
+  /* The track's own grey already sets the leagues apart from the pages; the
+     hairline's 9px is what lets the row fit a 375px phone. */
   .fl-row {
-    padding: 0 10px 6px;
+    margin-right: 4px;
   }
 
   .fl-row::after {
@@ -3316,15 +3333,19 @@ summary.team-report-header::after {
   }
 
   .fl-leagues {
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
+    padding: 2px;
   }
 
   .fl-leagues a.fl-league {
-    flex: 1 1 0;
+    min-width: 0;
     min-height: 34px;
-    font-size: 0.82rem;
+    padding: 0 6px;
+    font-size: 0.74rem;
+    letter-spacing: .02em;
+  }
+
+  .fl-line .sub-nav a {
+    padding: 0 4px;
   }
 }
 
@@ -3930,6 +3951,19 @@ img {
    ========================================================= */
 
 @media (max-width: 767px) {
+  /* Phones: the header scrolls away with the page instead of staying pinned.
+     Pinned, it stood 127-225px tall, and a page's own pinned controls stacked
+     under it: on /cfb/usage/ the two together covered 475px of an 844px
+     screen, leaving about nine rows of table. The page's own pin-bar (the week
+     chips, the filters) is the chrome worth keeping in reach, and the nav is
+     one flick back to the top. `relative`, not `static`, so its z-index still
+     lifts the account menu over the page. The layout's measuring script reads
+     this and sets --header-h to 0, so everything that pinned under the header
+     now pins to the top of the screen. */
+  #site-header {
+    position: relative;
+  }
+
   .site-header-inner {
     flex-direction: column;
     align-items: stretch;

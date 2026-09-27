@@ -105,6 +105,10 @@ wnba:
 
 
 fantasy:
+  # On a phone the NFL/CFB switcher shares one row with these five, so the
+  # short labels are as short as they can be read: "Team", not "My Team", is
+  # what lets the row fit a 360px screen (Sleeper's own tab says "Team").
+  #
   # League Home holds this league's all-time metrics and, for a reader who
   # has synced one, their own league's history and drafts - so the two pages
   # those sections came from belong to this chip.
@@ -122,7 +126,7 @@ fantasy:
     url: /fantasy/matchups/
 
   - title: My Team
-    short: My Team
+    short: Team
     icon: "📋"
     key: myteam
     url: /fantasy/roster/
@@ -192,7 +196,7 @@ cfb_fantasy:
     url: /cfb/matchups/
 
   - title: My Team
-    short: My Team
+    short: Team
     icon: "📋"
     key: myteam
     url: /cfb/roster/

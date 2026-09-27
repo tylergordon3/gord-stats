@@ -86,10 +86,11 @@ Fantasy before the plain /cfb/ test.
     {% elsif subnav and subnav.size > 1 or sec == 'fantasy' %}
     {% if sec == 'fantasy' %}
     {% comment %}
-    The league switcher, a row of its own rather than the head of the sub-nav:
-    on a phone the sub-nav overflows and scrolls the current page into view,
-    which carried the switcher off the left edge where nothing showed it was
-    there. On a desktop .fl-line sets the two rows side by side again.
+    The league switcher, a nav of its own beside the sub-nav rather than a link
+    inside it: when the sub-nav scrolled sideways it carried the switcher off
+    the left edge where nothing showed it was there. .fl-line sets the two side
+    by side at every width - on a phone as one row, which the sub-nav can share
+    now that it wraps instead of scrolling (see custom.css).
     Marked active here, not by the path-matching script below: /fantasy/ is a
     prefix of every NFL page and would tie with Home.
     {% endcomment %}

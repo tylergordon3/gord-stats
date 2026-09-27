@@ -82,16 +82,22 @@ resolution in _includes/nav.html.
     </div>
   </header>
 
-  <!-- The header is sticky and its height depends on the viewport (one nav
-       row or two). Anything else that pins under it reads these instead of
-       guessing a number: --header-h for the header, --pin-h for a page's
-       pinned control bar, so a table header can stack under both. -->
+  <!-- The header is sticky on a desktop and its height depends on the viewport
+       (one nav row or two). Anything else that pins under it reads these
+       instead of guessing a number: --header-h for the header, --pin-h for a
+       page's pinned control bar, so a table header can stack under both. On a
+       phone the header scrolls away with the page (custom.css, MOBILE HEADER),
+       so --header-h is 0 there and pinned bars sit at the top of the screen. -->
   <script>
   (function(){
     var root=document.documentElement;
     function measure(){
       var h=document.getElementById('site-header');
-      if(h)root.style.setProperty('--header-h',h.offsetHeight+'px');
+      if(h){
+        var pos=getComputedStyle(h).position;
+        var pinned=pos==='sticky'||pos==='fixed';
+        root.style.setProperty('--header-h',pinned?h.offsetHeight+'px':'0px');
+      }
       var p=document.querySelector('.pin-bar');
       root.style.setProperty('--pin-h',p?p.offsetHeight+'px':'0px');
     }
@@ -101,6 +107,12 @@ resolution in _includes/nav.html.
     if(window.ResizeObserver){
       var h=document.getElementById('site-header');
       if(h)new ResizeObserver(measure).observe(h);
+      // A pin-bar can change height with no resize at all - the usage pages'
+      // Filters button unfolds one - and it is not parsed yet at this point.
+      document.addEventListener('DOMContentLoaded',function(){
+        var p=document.querySelector('.pin-bar');
+        if(p)new ResizeObserver(measure).observe(p);
+      });
     }
   })();
   </script>
