@@ -1,11 +1,11 @@
 /**
  * GET /api/cfb-matchups?week=N  -> the college league's week, live, with CORS
  *
- * A Cloudflare Pages Function in the mould of cfb-draft.js: Yahoo's public
- * read-only API answers anyone but sends no access-control-allow-origin, so
- * the matchups page cannot poll it from the reader's browser. This asks Yahoo
- * for the week's scoreboard and every team's roster with weekly stats (eleven
- * calls, in parallel) and hands back one small JSON the page can apply:
+ * A Cloudflare Pages Function: Yahoo's public read-only API answers anyone
+ * but sends no access-control-allow-origin, so the matchups page cannot poll
+ * it from the reader's browser. This asks Yahoo for the week's scoreboard and
+ * every team's roster with weekly stats (eleven calls, in parallel) and hands
+ * back one small JSON the page can apply:
  *
  *   { ok, week, fetched,
  *     teams: { team_key: { name, points, projected, win_probability,
@@ -14,11 +14,21 @@
  * `line` is the stat line as text ("13 car, 37 rush yds"), formatted here
  * from Yahoo's stat ids the same way src/cfb/site/matchups.py formats it at
  * build time, so the page swaps text rather than re-deriving it.
+ *
+ * Eleven calls a hit was eleven calls for every poll of every open tab. The
+ * answer is shared for CACHE_SECONDS now (_lib/cache.js), keyed on the week
+ * alone - the page adds `_=<time>` to its own URL, and a key that kept it
+ * would never be hit twice. The page polls a minute apart during games, so
+ * nobody sees older points than before.
  */
+import { cached } from "./_lib/cache.js";
 
 const API = "https://pub-api-ro.fantasysports.yahoo.com/fantasy/v2";
 const LEAGUE = "474.l.21318";
 const TIMEOUT_MS = 8000;
+const CACHE_SECONDS = 30;
+// Yahoo's fantasy weeks start at 1; a college season has no week past 20.
+const MAX_WEEK = 20;
 
 // Stat ids -> how the line reads, by group. Mirrors _LINE in the page builder.
 const LINE = [
@@ -30,8 +40,8 @@ const LINE = [
            ["36", "saf"], ["37", "blk"], ["49", "ret TD"]]],
 ];
 
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
+function send(text, status = 200) {
+  return new Response(text, {
     status,
     headers: {
       "content-type": "application/json; charset=utf-8",
@@ -41,6 +51,12 @@ function json(body, status = 200) {
   });
 }
 
+function json(body, status = 200) {
+  return send(JSON.stringify(body), status);
+}
+
+// Yahoo's edge holds this family for five minutes, so the changing `_` is
+// what makes it live; how live is decided by the cache in front of it.
 async function yahoo(path) {
   const res = await fetch(`${API}/${path}?format=json&_=${Date.now()}`, {
     cf: { cacheTtl: 0, cacheEverything: false },
@@ -143,21 +159,35 @@ export function parseRoster(raw) {
   return out;
 }
 
-export async function onRequestGet(context) {
-  const week = new URL(context.request.url).searchParams.get("week") || "";
-  if (!/^\d{1,2}$/.test(week)) return json({ ok: false, error: "bad params" }, 400);
+/** The week asked for, as a number, or null. */
+export function weekOf(params) {
+  const week = params.get("week") || "";
+  if (!/^\d{1,2}$/.test(week)) return null;
+  const n = Number(week);
+  return n >= 1 && n <= MAX_WEEK ? n : null;
+}
 
-  let teams;
-  try {
-    teams = parseScoreboard(await yahoo(`league/${LEAGUE}/scoreboard;week=${week}`));
-  } catch (err) {
-    return json({ ok: false, error: String(err) }, 502);
-  }
-  const keys = Object.keys(teams);
-  const rosters = await Promise.allSettled(keys.map((key) =>
-    yahoo(`team/${key}/roster;week=${week}/players/stats;type=week;week=${week}`)));
-  rosters.forEach((r, i) => {
-    teams[keys[i]].players = r.status === "fulfilled" ? parseRoster(r.value) : null;
-  });
-  return json({ ok: true, week: Number(week), fetched: new Date().toISOString(), teams });
+export async function onRequestGet(context) {
+  const url = new URL(context.request.url);
+  const week = weekOf(url.searchParams);
+  if (week === null) return json({ ok: false, error: "bad params" }, 400);
+
+  const out = await cached(context, `${url.origin}/api/cfb-matchups?week=${week}`,
+    CACHE_SECONDS, async () => {
+      let teams;
+      try {
+        teams = parseScoreboard(await yahoo(`league/${LEAGUE}/scoreboard;week=${week}`));
+      } catch (err) {
+        return { status: 502, body: JSON.stringify({ ok: false, error: String(err) }) };
+      }
+      const keys = Object.keys(teams);
+      const rosters = await Promise.allSettled(keys.map((key) =>
+        yahoo(`team/${key}/roster;week=${week}/players/stats;type=week;week=${week}`)));
+      rosters.forEach((r, i) => {
+        teams[keys[i]].players = r.status === "fulfilled" ? parseRoster(r.value) : null;
+      });
+      return { status: 200, body: JSON.stringify(
+        { ok: true, week, fetched: new Date().toISOString(), teams }) };
+    });
+  return send(out.body, out.status);
 }

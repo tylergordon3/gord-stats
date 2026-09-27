@@ -6,13 +6,18 @@
  * time) against the VISITS KV namespace bound in wrangler.toml.
  *
  * Two numbers:
- *   total  - visits since launch. The footer script calls with count=1 once
- *            per browser tab (sessionStorage), so this is closer to sessions
- *            than raw page loads.
+ *   total  - visitors since launch, each counted once per Eastern-time day.
  *   today  - approximate unique visitors in the current Eastern-time day
  *            (the site's clock; a UTC day rolled the footer over at 8 PM ET),
  *            found by hashing IP + user agent + day; the hash key expires
  *            with the day.
+ *
+ * `total` used to go up on every count=1, deduplicated only by the footer
+ * script's own sessionStorage - which a script calling this URL does not
+ * have. KV's free tier allows 1,000 writes a day, so a few hundred scripted
+ * hits stopped both counters until midnight UTC. It now moves only when the
+ * per-visitor `seen:` key is new, like `today`: a repeat visitor costs one
+ * read and no writes.
  *
  * KV is eventually consistent and rate-limits writes to one key to ~1/s, so a
  * burst can drop a few increments. Fine for a footer number; nothing here is
@@ -58,15 +63,13 @@ async function record(request, kv, day) {
   const ua = request.headers.get("user-agent") || "";
   const seenKey = `seen:${day}:${await sha256(`${day}|${ip}|${ua}`)}`;
 
-  const writes = [bump(kv, "total")];
-  if (!(await kv.get(seenKey))) {
-    writes.push(
-      bump(kv, `day:${day}`),
-      // Expire a little past the day boundary so a late read still finds it.
-      kv.put(seenKey, "1", { expirationTtl: 60 * 60 * 26 }),
-    );
-  }
-  await Promise.all(writes);
+  if (await kv.get(seenKey)) return;
+  await Promise.all([
+    bump(kv, "total"),
+    bump(kv, `day:${day}`),
+    // Expire a little past the day boundary so a late read still finds it.
+    kv.put(seenKey, "1", { expirationTtl: 60 * 60 * 26 }),
+  ]);
 }
 
 async function bump(kv, key) {
