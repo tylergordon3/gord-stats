@@ -99,12 +99,57 @@
     if (i === -1) favorites.push(key);
     else favorites.splice(i, 1);
     write(favorites);
-    push();
+    changed();
   }
 
   /* ---------- sync ---------- */
 
+  // "This browser has a change the account has not confirmed." Set on every
+  // local edit, cleared only by a PUT that came back 2xx. Without it the push
+  // was fire-and-forget and the next page load took the server's list as the
+  // truth - so a star set in the 600ms before navigating away, or before the
+  // account lookup answered, or refused by the server, silently came undone.
+  var DIRTY_KEY = "gs:favorites:dirty";
+
+  function isDirty() {
+    try {
+      return window.localStorage.getItem(DIRTY_KEY) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function setDirty(on) {
+    try {
+      if (on) window.localStorage.setItem(DIRTY_KEY, "1");
+      else window.localStorage.removeItem(DIRTY_KEY);
+    } catch (e) {}
+  }
+
+  function changed() {
+    setDirty(true);
+    push();
+  }
+
   var pushTimer = null;
+
+  function send(keepalive) {
+    // The list is sent as it stands when the request goes, and the flag is only
+    // cleared if nothing changed while it was in flight.
+    var sent = favorites.slice();
+    return fetch("/api/favorites", {
+      method: "PUT",
+      credentials: "same-origin",
+      keepalive: !!keepalive,
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ favorites: sent }),
+    }).then(function (r) {
+      if (r.ok && JSON.stringify(sent) === JSON.stringify(favorites)) setDirty(false);
+      else if (!r.ok && r.status !== 401) setTimeout(push, 15000);   // throttled or down
+    }).catch(function () {
+      /* Offline; the flag stays set and the next load sends it. */
+    });
+  }
 
   // Starring five teams in five seconds is one write, not five. The local list
   // is already saved and already painted by the time this fires, so a slow or
@@ -114,16 +159,18 @@
     if (pushTimer) clearTimeout(pushTimer);
     pushTimer = setTimeout(function () {
       pushTimer = null;
-      fetch("/api/favorites", {
-        method: "PUT",
-        credentials: "same-origin",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ favorites: favorites }),
-      }).catch(function () {
-        /* Offline or signed out elsewhere; the browser copy still stands. */
-      });
+      send(false);
     }, 600);
   }
+
+  // Leaving inside the debounce: send now, with keepalive so the request
+  // outlives the page.
+  window.addEventListener("pagehide", function () {
+    if (!pushTimer) return;
+    clearTimeout(pushTimer);
+    pushTimer = null;
+    send(true);
+  });
 
   function union(a, b) {
     var out = a.slice();
@@ -151,6 +198,10 @@
               favorites = union(favorites, remote);
               write(favorites);
               writeSyncedAs(account.email);
+              changed();
+            } else if (isDirty()) {
+              // A change from this browser the server never confirmed: it is
+              // newer than the server's copy, so it is sent, not overwritten.
               push();
             } else {
               favorites = remote;
@@ -484,7 +535,7 @@
       favorites = favorites.filter(function (k) { return k !== key; });
       write(favorites);
       paint();
-      push();
+      changed();
       return favorites.slice();
     },
   };
