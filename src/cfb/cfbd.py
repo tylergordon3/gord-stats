@@ -221,6 +221,14 @@ def _window_weeks() -> list[int]:
     return sorted(int(w) for w in ahead["week"].unique())
 
 
+def _week(week: int) -> dict:
+    """CFBD's parameters for one of this site's weeks: the postseason is its
+    seasonType=postseason, week 1 (see espn.POSTSEASON_WEEK)."""
+    if int(week) == espn.POSTSEASON_WEEK:
+        return {"week": 1, "seasonType": "postseason"}
+    return {"week": int(week)}
+
+
 def capture(refresh: bool = False) -> dict:
     """Bring every cache up to date; returns {name: number of entries}."""
     counts = {}
@@ -229,13 +237,13 @@ def capture(refresh: bool = False) -> dict:
     def pull_lines():
         merged = _read("lines") or {}
         for week in weeks:
-            merged.update(_parse_lines(_get("lines", year=SEASON, week=week)))
+            merged.update(_parse_lines(_get("lines", year=SEASON, **_week(week))))
         return merged
 
     def pull_wp():
         merged = _read("wp") or {}
         for week in weeks:
-            merged.update(_parse_wp(_get("metrics/wp/pregame", year=SEASON, week=week)))
+            merged.update(_parse_wp(_get("metrics/wp/pregame", year=SEASON, **_week(week))))
         return merged
 
     if weeks:

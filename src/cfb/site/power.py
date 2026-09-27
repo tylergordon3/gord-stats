@@ -663,7 +663,8 @@ def body() -> str:
     teams.sort(key=lambda t: (t["gs_rank"] is None, t["gs_rank"] or 0))
     order = {t["id"]: i for i, t in enumerate(teams)}
 
-    bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
+    bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans(),
+                                  week_label=espn.short_week_label)
     show_move = bool(bases)
     first_win = next(iter(bases)) if bases else None
     first_at = bases[first_win]["at"] if bases else None

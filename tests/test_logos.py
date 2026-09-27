@@ -41,3 +41,12 @@ def test_no_page_asks_espn_for_the_500px_file():
         if p.parts[len(SRC.parts)] != "cbb" and p.name != "draft_live.py"
         and raw.search(p.read_text(errors="ignore"))]
     assert not offenders, f"full-size ESPN logos requested in: {offenders}"
+
+
+def test_a_side_not_yet_decided_has_no_logo():
+    """ESPN files every bowl before its pairing as TBD with ids -1 and -2; the
+    bowl week drew 47 broken images before this."""
+    from gordstats import logos
+
+    assert logos.img("ncaa", "-1", 20) == "" and logos.img("ncaa", None, 20) == ""
+    assert logos.img("ncaa", "333", 20).startswith("<img")

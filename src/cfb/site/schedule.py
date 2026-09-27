@@ -470,8 +470,8 @@ def _records(week: int) -> dict:
     """Event id -> {'home': '2-0', 'away': '1-1'} from the live feed, for the
     current week only; the page's own polling keeps them moving after that."""
     try:
-        data = espn._get({"groups": espn._FBS, "week": week, "dates": SEASON,
-                          "seasontype": 2, "limit": 500})
+        data = espn._get({"groups": espn._FBS, "dates": SEASON, "limit": 500,
+                          **espn.query(week)})
     except Exception:
         return {}
     out = {}
@@ -1087,7 +1087,10 @@ def _row(g, idx: int, records: dict) -> str:
         return f' data-{name}="{fmt.format(value)}"' if value is not None else ""
 
     classes = ["g"] + (["wx-bad"] if severity >= 2 else [])
-    where = [escape(str(x)) for x in (g.venue, g.place) if x]
+    # The bowl's name leads where there is one ("Rose Bowl" says more than
+    # the stadium does).
+    where = [escape(str(x)) for x in (getattr(g, "note", ""), g.venue, g.place)
+             if isinstance(x, str) and x]
     venue = ('<div class="sc-venue">' + "".join(f"<span>{x}</span>" for x in where)
              + "</div>") if where else ""
     return (
@@ -1227,7 +1230,8 @@ def _detail(g, spread, gs_margin, home_won, sp_margin) -> str:
         opinions += ('<div class="det-line"><b>Against the number:</b> '
                      + "; ".join(edges) + ". The model has no edge on the book "
                      "historically &mdash; read these as disagreements, not tips.</div>")
-    where = " &middot; ".join(escape(str(x)) for x in (g.venue, g.place) if x)
+    where = " &middot; ".join(escape(str(x)) for x in (getattr(g, "note", ""), g.venue, g.place)
+                              if isinstance(x, str) and x)
     if where:
         opinions += f'<div class="det-line mv">{where}</div>'
 
@@ -1512,6 +1516,12 @@ def _picks(df: pd.DataFrame, current: int) -> str:
         note = " - set before the day's first kickoff, and not touched since."
     return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b>{note}</p>'
             f'<div class="gs-picks">{dog_html}{parlay_html}</div>')
+
+
+def _live_url(week: int) -> str:
+    """The scores proxy's URL for one of this site's weeks (bowls included)."""
+    q = espn.query(week)
+    return f"/api/cfb-scores?week={q['week']}&dates={SEASON}&seasontype={q['seasontype']}"
 
 
 def _current_week(df: pd.DataFrame) -> int:
@@ -1891,7 +1901,8 @@ def _switcher(week_ids: list[int], current: int, views: dict[int, str],
     """
     buttons = "".join(
         f'<button class="wk-btn{" active" if w == current else ""}" '
-        f"onclick=\"show_wk('{w}')\" id=\"wk-tab-{w}\">{w}</button>"
+        f"onclick=\"show_wk('{w}')\" id=\"wk-tab-{w}\">"
+        f"{espn.POSTSEASON_LABEL if w == espn.POSTSEASON_WEEK else w}</button>"
         for w in week_ids)
     divs = "".join(
         f'<div id="wk-view-{w}" class="wk-view"'
@@ -1941,7 +1952,7 @@ def build() -> tuple:
     html = (_CSS + favorites.table_css("table.cfb-sched tbody") + intro + _LEGEND
             + _switcher(week_ids, current, views, controls=_controls(espn.conferences()))
             + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
-                     "url": json.dumps(f"/api/cfb-scores?week={current}&dates={SEASON}")})
+                     "url": json.dumps(_live_url(current))})
     return html, {w: v for w, v in views.items() if w != current}
 
 

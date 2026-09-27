@@ -42,15 +42,46 @@ def _get(params: dict) -> dict:
     return r.json()
 
 
+# The postseason - every bowl and CFP game - kept as one more week of the
+# season. ESPN files it all as seasontype 3, week 1 (mid-December to the title
+# game in January); here it is week 20, after any regular-season week and
+# inside what the scores proxy accepts, and query() translates it back.
+# Without it the section stopped at the conference title games.
+POSTSEASON_WEEK = 20
+POSTSEASON_LABEL = "Bowls"
+
+
+def query(week: int) -> dict:
+    """ESPN's scoreboard parameters for one of this site's weeks."""
+    if int(week) == POSTSEASON_WEEK:
+        return {"week": 1, "seasontype": 3}
+    return {"week": int(week), "seasontype": 2}
+
+
+def week_label(week: int) -> str:
+    return POSTSEASON_LABEL if int(week) == POSTSEASON_WEEK else f"Week {int(week)}"
+
+
+def short_week_label(week: int) -> str:
+    return POSTSEASON_LABEL if int(week) == POSTSEASON_WEEK else f"Wk {int(week)}"
+
+
 def weeks() -> list[dict]:
-    """Regular-season week list from ESPN's calendar: value, label, start, end."""
+    """The season's week list from ESPN's calendar - the regular season, then
+    the postseason as POSTSEASON_WEEK: value, label, start, end."""
     data = _get({"groups": _FBS, "limit": 1, "dates": SEASON})
+    out = []
     for block in data["leagues"][0].get("calendar", []):
         if block.get("label") == "Regular Season":
-            return [{"week": int(e["value"]), "label": e["label"],
+            out += [{"week": int(e["value"]), "label": e["label"],
                      "start": e["startDate"], "end": e["endDate"]}
                     for e in block.get("entries", [])]
-    return []
+        elif block.get("label") == "Postseason":
+            bowls = [e for e in block.get("entries", []) if str(e.get("value")) == "1"]
+            if bowls:
+                out.append({"week": POSTSEASON_WEEK, "label": POSTSEASON_LABEL,
+                            "start": bowls[0]["startDate"], "end": bowls[0]["endDate"]})
+    return out
 
 
 def _rank(competitor) -> float | None:
@@ -102,6 +133,9 @@ def _game_row(event: dict, week: int) -> dict:
         "neutral": bool(comp.get("neutralSite")),
         "conference_game": bool(comp.get("conferenceCompetition")),
         "venue": venue.get("fullName", ""),
+        # The bowl's name ("Rose Bowl", "CFP Semifinal ..."); empty in the
+        # regular season except for the odd neutral-site classic.
+        "note": ((comp.get("notes") or [{}])[0] or {}).get("headline", ""),
         "place": place,
         "tv": tv,
         "state": status.get("state", "pre"),          # pre / in / post
@@ -114,15 +148,15 @@ def _game_row(event: dict, week: int) -> dict:
 
 
 def schedule(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.DataFrame:
-    """Every FBS regular-season game of the season, one row per game."""
+    """Every FBS game of the season, one row per game - bowls and the CFP as
+    POSTSEASON_WEEK."""
     cache = DATA_DIR / f"schedule_{SEASON}.parquet"
     if cache.exists() and not refresh and _is_fresh(cache, max_age_hours):
         return pd.read_parquet(cache)
 
     rows = []
     for wk in weeks():
-        data = _get({"groups": _FBS, "week": wk["week"], "dates": SEASON,
-                     "seasontype": 2, "limit": 500})
+        data = _get({"groups": _FBS, "dates": SEASON, "limit": 500, **query(wk["week"])})
         for event in data.get("events", []):
             # ESPN's 2026 feeds slip empty stub events (no id, no
             # competitions) into some weeks; a row can't be built from one.

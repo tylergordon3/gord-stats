@@ -1,5 +1,5 @@
 /**
- * GET /api/cfb-scores?week=N&dates=YYYY  -> ESPN's CFB scoreboard, with CORS
+ * GET /api/cfb-scores?week=N&dates=YYYY[&seasontype=2|3]  -> ESPN's CFB scoreboard, with CORS
  *
  * A Cloudflare Pages Function (picked up from /functions at deploy time):
  * ESPN's site.api.espn.com answers anyone, but a real browser gets the JSON
@@ -12,6 +12,8 @@
  * is a scoreboard proxy, not an open proxy. They are held to what a college
  * season can ask for - weeks 0 to 20, a season from 2000 to next year - and
  * normalised, so "07" and "7" are one question and one cache entry.
+ * seasontype is 2 (the regular season, the default) or 3 (bowls and the CFP,
+ * which ESPN files as week 1 of seasontype 3).
  *
  * Answers are shared for CACHE_SECONDS through the Workers cache
  * (_lib/cache.js): the page polls every 30 s at its fastest, so readers in
@@ -33,12 +35,13 @@ const HEADERS = {
   "access-control-allow-origin": "*",
 };
 
-/** The validated question, or null. -> { week, dates } as numbers */
+/** The validated question, or null. -> { week, dates, seasontype } as numbers */
 export function question(params, now = new Date()) {
   const week = params.get("week") || "";
   const dates = params.get("dates") || "";
-  if (!/^\d{1,2}$/.test(week) || !/^\d{4}$/.test(dates)) return null;
-  const q = { week: Number(week), dates: Number(dates) };
+  const type = params.get("seasontype") || "2";
+  if (!/^\d{1,2}$/.test(week) || !/^\d{4}$/.test(dates) || !/^[23]$/.test(type)) return null;
+  const q = { week: Number(week), dates: Number(dates), seasontype: Number(type) };
   if (q.week > MAX_WEEK) return null;
   if (q.dates < FIRST_SEASON || q.dates > now.getUTCFullYear() + 1) return null;
   return q;
@@ -52,12 +55,12 @@ export async function onRequestGet(context) {
       { status: 400, headers: HEADERS });
   }
 
-  const key = `${url.origin}/api/cfb-scores?week=${q.week}&dates=${q.dates}`;
+  const key = `${url.origin}/api/cfb-scores?week=${q.week}&dates=${q.dates}&seasontype=${q.seasontype}`;
   let out;
   try {
     out = await cached(context, key, CACHE_SECONDS, async () => {
       const res = await fetch(
-        `${API}?groups=${FBS}&week=${q.week}&dates=${q.dates}&seasontype=2&limit=500`, {
+        `${API}?groups=${FBS}&week=${q.week}&dates=${q.dates}&seasontype=${q.seasontype}&limit=500`, {
           // Cloudflare's own fetch cache stays out of it: the Workers cache
           // above is the one deciding how fresh "live" is.
           cf: { cacheTtl: 0, cacheEverything: false },

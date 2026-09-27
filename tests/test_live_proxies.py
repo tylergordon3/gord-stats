@@ -77,7 +77,7 @@ def test_scores_are_shared_across_polls_and_spellings(worker):
     # What sits in the cache says how long it may.
     stored = worker.js("""
       return [...edge.store].map(([k, r]) => [k, r.headers.get("cache-control")]);""")
-    assert stored == [["https://www.gordstats.com/api/cfb-scores?week=5&dates=2026",
+    assert stored == [["https://www.gordstats.com/api/cfb-scores?week=5&dates=2026&seasontype=2",
                        "public, max-age=20"]]
 
     # Once the entry is gone, the next poll asks ESPN again.
@@ -88,6 +88,8 @@ def test_scores_are_shared_across_polls_and_spellings(worker):
 @pytest.mark.parametrize("query", [
     "week=21&dates=2026", "week=-1&dates=2026", "week=abc&dates=2026", "week=5",
     "week=5&dates=1999", "week=5&dates=20266", "week=5&dates=2090", "week=100&dates=2026",
+    "week=1&dates=2026&seasontype=1", "week=1&dates=2026&seasontype=4",
+    "week=1&dates=2026&seasontype=x",
 ])
 def test_scores_refuse_what_no_season_asks(worker, query):
     worker.js("espn();")
@@ -144,3 +146,13 @@ def test_without_a_workers_cache_they_still_answer(worker):
         got = worker.call("scores.onRequestGet", f"{SCORES}?week=2&dates=2026")
         assert got["status"] == 200 and got["json"]["call"] == call
     assert json.loads(got["text"])["events"] == []
+
+
+def test_bowl_week_asks_espn_for_the_postseason(worker):
+    """Bowls and the CFP are ESPN's seasontype 3, week 1; the schedule page asks
+    for them as such (cfb.espn.query) once its current week is the postseason."""
+    worker.js("espn();")
+    got = worker.call("scores.onRequestGet", f"{SCORES}?week=1&dates=2026&seasontype=3")
+    assert got["status"] == 200
+    upstream = worker.js("return T.fetches.filter(u => u.includes('espn.com')).pop();")
+    assert "week=1" in upstream and "seasontype=3" in upstream

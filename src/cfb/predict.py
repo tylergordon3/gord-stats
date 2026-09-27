@@ -80,13 +80,24 @@ def _current_season_games() -> pd.DataFrame:
     schedule = espn.schedule()
     if schedule.empty or "home_id" not in schedule.columns:
         return pd.DataFrame()
+    # Regular season only, as the archive it extends: bowls and the CFP are a
+    # different game to model (layoffs, opt-outs) - see cfb.games. And no 0-0
+    # "finals": ESPN files a cancelled game that way, and one would have
+    # trained as a scoreless tie.
     played = schedule[(schedule["state"] == "post")
                       & schedule["home_score"].notna()
-                      & schedule["away_score"].notna()].copy()
+                      & schedule["away_score"].notna()
+                      & (schedule["home_score"] + schedule["away_score"] > 0)
+                      & (schedule["week"] != espn.POSTSEASON_WEEK)].copy()
     if played.empty:
         return pd.DataFrame()
     played["season"] = SEASON
     return played
+
+
+def _placeholder(ids: pd.Series) -> pd.Series:
+    """ESPN's stand-in ids for a side not yet decided (-1, -2, ...)."""
+    return ids.astype(str).str.startswith("-")
 
 
 def history() -> tuple:
@@ -108,6 +119,12 @@ def history() -> tuple:
 
     schedule = espn.schedule().copy()
     schedule["date"] = pd.to_datetime(schedule["date_utc"], format="ISO8601", utc=True)
+    # A game whose teams are not decided yet - every bowl until the pairings,
+    # each conference title game until its last Saturday - is filed with
+    # placeholder ids (-1, -2, named TBD). There is nothing to predict, and
+    # counted here TBD would even pass for an FBS team with forty games.
+    schedule = schedule[~(_placeholder(schedule["home_id"])
+                          | _placeholder(schedule["away_id"]))]
 
     # Membership is this season's, applied to the whole archive -- deliberately
     # not the per-season identity `games.load` uses for the backtest.
@@ -161,7 +178,7 @@ def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
     # Carry the ESPN team ids: names are for reading, ids are what joins to the
     # betting board without arguing about how a school spells itself.
     carry = ["week", "game_id", "date", "home", "away", "neutral",
-             "home_id", "away_id", "home_rank", "away_rank", "tv", "venue", "place"]
+             "home_id", "away_id", "home_rank", "away_rank", "tv", "venue", "place", "note"]
     out = upcoming[[c for c in carry if c in upcoming.columns]].join(preds)
     out["home_rating"] = upcoming["home_team"].map(model.rating)
     out["away_rating"] = upcoming["away_team"].map(model.rating)

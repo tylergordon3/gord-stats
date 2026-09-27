@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt                      # noqa: E402
 import numpy as np                                   # noqa: E402
 import pandas as pd                                  # noqa: E402
 
+from cfb import espn                                 # noqa: E402
 from cfb import odds as odds_mod                     # noqa: E402
 from cfb import predict                              # noqa: E402
 from cfb import results                              # noqa: E402
@@ -314,7 +315,9 @@ def _card(game) -> str:
     prob = game["home_win_prob"] if home_wins else 1 - game["home_win_prob"]
 
     kick = game["date"].astimezone(ET)
-    where = "neutral site" if game.get("neutral") else escape(str(game.get("place") or ""))
+    note = game.get("note")
+    where = (escape(note) if isinstance(note, str) and note
+             else "neutral site" if game.get("neutral") else escape(str(game.get("place") or "")))
     tv = escape(str(game.get("tv") or "").split(",")[0])
     when = (f"<div class='pg-when'><span>{kick:%a %-d %b, %-I:%M %p} ET"
             + (f" &middot; {where}" if where else "") + "</span>"
@@ -355,7 +358,9 @@ def _week_label(games: pd.DataFrame) -> str:
     if not weeks:
         return "This week"
     if len(weeks) == 1:
-        return f"Week {weeks[0]}"
+        return espn.week_label(weeks[0])
+    if weeks[-1] == espn.POSTSEASON_WEEK:
+        return f"{espn.week_label(weeks[0])} &amp; {espn.POSTSEASON_LABEL}"
     return f"Weeks {weeks[0]}&ndash;{weeks[-1]}"
 
 
@@ -366,7 +371,7 @@ def _cards(games: pd.DataFrame) -> str:
     out = []
     for week in weeks:
         block = games[games["week"] == week]
-        out.append(f"<h3 class='pred-weekhead'>Week {week}"
+        out.append(f"<h3 class='pred-weekhead'>{espn.week_label(week)}"
                    f"<span>{len(block)} games</span></h3>")
         out.append(_grid(block))
     return "".join(out)
@@ -582,7 +587,7 @@ def _results_section(frame: pd.DataFrame) -> str:
     weeks = sorted(filed.unique(), reverse=True)
     blocks = "".join(
         _week_block(frame[filed == week],
-                    f"Week {week}" if week >= 0 else "Unfiled",
+                    espn.week_label(week) if week >= 0 else "Unfiled",
                     is_open=(i == 0))
         for i, week in enumerate(weeks))
 

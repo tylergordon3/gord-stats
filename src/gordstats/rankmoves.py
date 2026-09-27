@@ -137,7 +137,7 @@ def _load_full(path) -> pd.DataFrame:
     return pd.read_csv(path, dtype={"key": str}).set_index("key")
 
 
-def baselines(history_dir, now=None, weeks=None) -> dict:
+def baselines(history_dir, now=None, weeks=None, week_label=None) -> dict:
     """{window key: {label, at, frame, group}} for every window the archive can serve.
 
     `frame` is the baseline snapshot indexed by key (rank plus whatever extras
@@ -153,6 +153,10 @@ def baselines(history_dir, now=None, weeks=None) -> dict:
     not de-duplicated against the clock windows, so "1 week" and "Wk 3" can
     both be offered when they coincide.
     """
+    # `week_label` names a week number for a button ("Wk 5"; the college
+    # section's postseason is one week, "Bowls").
+    def name(number):
+        return week_label(number) if week_label else f"Wk {number}"
     now = now or datetime.now()
     snaps = [s for s in _snaps(history_dir) if s[0] <= now - timedelta(hours=GAP_HOURS)]
     if not snaps:
@@ -168,7 +172,7 @@ def baselines(history_dir, now=None, weeks=None) -> dict:
         if before:
             pick = before[-1]
             used.add(pick[1])
-            out[f"pre{number}"] = {"label": f"Before Wk {number}", "at": pick[0],
+            out[f"pre{number}"] = {"label": f"Before {name(number)}", "at": pick[0],
                                    "frame": _load_full(pick[1]), "group": "time"}
     for key, label, days in WINDOWS:
         if days == "oldest":
@@ -193,7 +197,7 @@ def baselines(history_dir, now=None, weeks=None) -> dict:
         if not eligible:
             continue
         pick = eligible[-1]
-        out[f"w{number}"] = {"label": f"Wk {number}", "at": pick[0],
+        out[f"w{number}"] = {"label": name(number), "at": pick[0],
                              "frame": _load_full(pick[1]), "group": "week",
                              "week": number}
     return out

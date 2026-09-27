@@ -28,8 +28,8 @@ ODDS_DIR = DATA_DIR / "odds"
 
 
 def _rows(week: int, season: int) -> list:
-    data = espn._get({"groups": espn._FBS, "week": week, "dates": season,
-                      "seasontype": 2, "limit": 500})
+    data = espn._get({"groups": espn._FBS, "dates": season, "limit": 500,
+                      **espn.query(week)})
     captured = datetime.now(timezone.utc).isoformat(timespec="seconds")
     out = []
     for event in data.get("events", []):

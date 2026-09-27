@@ -260,7 +260,8 @@ def _ordinal(n: int) -> str:
 
 
 def _index(table: pd.DataFrame, frame: pd.DataFrame) -> str:
-    bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans())
+    bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans(),
+                                  week_label=espn.short_week_label)
     show_delta = any("rating" in b["frame"].columns for b in bases.values())
     rows = []
     for _, r in table.iterrows():

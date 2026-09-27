@@ -40,6 +40,10 @@ def img(league: str, key, shown: int, cls: str = "") -> str:
     main thread, and with width/height so the row does not jump when it lands.
     The page's own CSS still sets the drawn size; the attributes are the
     fallback and the layout hint."""
+    # No team yet (ESPN's -1/-2 for a bowl before its pairing), no team at
+    # all: nothing, rather than a request for a logo that does not exist.
+    if key is None or str(key).strip() in ("", "nan", "None") or str(key).startswith("-"):
+        return ""
     klass = f" class='{escape(cls, quote=True)}'" if cls else ""
     src = escape(url(league, key, fetch_px(shown)), quote=True)
     return (f"<img{klass} src='{src}' alt='' width='{shown}' height='{shown}' "

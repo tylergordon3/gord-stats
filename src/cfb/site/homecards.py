@@ -588,7 +588,7 @@ def bets_html(now: datetime = None) -> str:
                   f"<span class='hc-lock' data-lock='{lock_iso}'>"
                   f"Locks {when:%a %-I %p ET}</span>")
     record = _season_record()
-    note = (f"<div class='hc-when-row'><span>Week {week}</span>{timing}</div>"
+    note = (f"<div class='hc-when-row'><span>{espn.week_label(week)}</span>{timing}</div>"
             f"<p class='hc-rec'>{record} <span class='hc-dis'>Not gambling "
             f"advice.</span> <a href='/cfb/predictions/'>Full record</a>.</p>")
     return (_CSS + _LOCK_JS + "<div class='hc'>" + "".join(body)
