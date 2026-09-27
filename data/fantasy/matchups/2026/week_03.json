@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-27T20:31:00+00:00",
+ "fetched": "2026-09-27T20:40:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -121,7 +121,7 @@
     {
      "roster_id": 6,
      "matchup_id": 1,
-     "points": 67.16,
+     "points": 71.58,
      "starters": [
       "3294",
       "4034",
@@ -157,16 +157,16 @@
       "11620": 0.0,
       "12507": 5.6,
       "3163": 19.36,
-      "3294": 0.36,
-      "4034": 0.3,
+      "3294": 0.88,
+      "4034": 3.9,
       "4983": 12.7,
       "5012": 0.0,
       "6801": 20.9,
       "8134": 1.6,
-      "8137": 0.0,
+      "8137": 2.3,
       "8259": 9.0,
       "9484": 6.6,
-      "BAL": 10.0
+      "BAL": 8.0
      }
     },
     {
@@ -279,7 +279,7 @@
     {
      "roster_id": 9,
      "matchup_id": 2,
-     "points": 71.06,
+     "points": 76.36,
      "starters": [
       "4984",
       "6813",
@@ -311,15 +311,15 @@
      ],
      "players_points": {
       "10859": 7.4,
-      "11533": 0.0,
+      "11533": 3.0,
       "11563": 0.0,
       "12481": 13.0,
-      "12527": 0.0,
+      "12527": 2.0,
       "12534": 0.0,
       "4984": 19.46,
       "5045": 0.0,
       "5846": 12.1,
-      "5872": 14.0,
+      "5872": 14.3,
       "6813": 9.2,
       "7525": 0.0,
       "7526": 0.0,
@@ -335,7 +335,7 @@
     {
      "roster_id": 3,
      "matchup_id": 3,
-     "points": 100.88,
+     "points": 105.28,
      "starters": [
       "7523",
       "7588",
@@ -378,7 +378,7 @@
       "7523": 20.78,
       "7543": 0.2,
       "7564": 24.8,
-      "7588": 0.0,
+      "7588": 4.4,
       "8112": 28.4,
       "8130": 0.0,
       "8148": 8.9,
@@ -390,7 +390,7 @@
     {
      "roster_id": 10,
      "matchup_id": 3,
-     "points": 79.58,
+     "points": 80.28,
      "starters": [
       "8183",
       "8138",
@@ -425,7 +425,7 @@
       "12015": 0.0,
       "12506": 24.2,
       "12529": 3.9,
-      "13287": 3.9,
+      "13287": 4.0,
       "13296": 0.0,
       "4046": 16.94,
       "5927": 19.7,
@@ -433,7 +433,7 @@
       "7021": 0.0,
       "8138": 19.4,
       "8144": 0.0,
-      "8183": 3.28,
+      "8183": 3.88,
       "9756": 0.0,
       "LAR": 0.0
      }
@@ -497,7 +497,7 @@
     {
      "roster_id": 2,
      "matchup_id": 4,
-     "points": 100.4,
+     "points": 105.3,
      "starters": [
       "12545",
       "9509",
@@ -531,7 +531,7 @@
      "players_points": {
       "10236": 3.8,
       "11564": 5.76,
-      "11604": 1.8,
+      "11604": 6.7,
       "12533": 5.3,
       "12545": 0.0,
       "13279": 11.8,
@@ -555,7 +555,7 @@
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 101.76,
+     "points": 102.96,
      "starters": [
       "4943",
       "9221",
@@ -594,14 +594,14 @@
       "12517": 0.0,
       "13286": 1.2,
       "13298": 2.9,
-      "2216": 1.2,
-      "3198": 0.6,
+      "2216": 1.4,
+      "3198": 1.6,
       "4943": 29.66,
       "5001": 6.0,
       "5859": 0.0,
       "6650": 1.0,
       "6806": 0.0,
-      "8136": 11.0,
+      "8136": 11.1,
       "9221": 41.4,
       "9500": 12.7,
       "NYG": 8.0
@@ -758,20 +758,20 @@
    "name": "Jared Goff",
    "pos": "QB"
   },
-  "3294": {
-   "pts": 19.38,
-   "opp": "BAL",
-   "team": "DAL",
-   "injury": "",
-   "name": "Dak Prescott",
-   "pos": "QB"
-  },
   "7523": {
    "pts": 19.29,
    "opp": "NE",
    "team": "JAX",
    "injury": "",
    "name": "Trevor Lawrence",
+   "pos": "QB"
+  },
+  "3294": {
+   "pts": 18.99,
+   "opp": "BAL",
+   "team": "DAL",
+   "injury": "",
+   "name": "Dak Prescott",
    "pos": "QB"
   },
   "3198": {
@@ -814,14 +814,6 @@
    "name": "Chris Olave",
    "pos": "WR"
   },
-  "6786": {
-   "pts": 17.52,
-   "opp": "BAL",
-   "team": "DAL",
-   "injury": "",
-   "name": "CeeDee Lamb",
-   "pos": "WR"
-  },
   "6770": {
    "pts": 17.48,
    "opp": "PIT",
@@ -829,6 +821,14 @@
    "injury": "",
    "name": "Joe Burrow",
    "pos": "QB"
+  },
+  "6786": {
+   "pts": 17.39,
+   "opp": "BAL",
+   "team": "DAL",
+   "injury": "",
+   "name": "CeeDee Lamb",
+   "pos": "WR"
   },
   "11563": {
    "pts": 16.97,
@@ -958,14 +958,6 @@
    "name": "Breece Hall",
    "pos": "RB"
   },
-  "7588": {
-   "pts": 15.67,
-   "opp": "BAL",
-   "team": "DAL",
-   "injury": "",
-   "name": "Javonte Williams",
-   "pos": "RB"
-  },
   "8167": {
    "pts": 15.6,
    "opp": "ATL",
@@ -981,6 +973,14 @@
    "injury": "",
    "name": "DeVonta Smith",
    "pos": "WR"
+  },
+  "7588": {
+   "pts": 15.41,
+   "opp": "BAL",
+   "team": "DAL",
+   "injury": "",
+   "name": "Javonte Williams",
+   "pos": "RB"
   },
   "9487": {
    "pts": 15.25,
@@ -999,7 +999,7 @@
    "pos": "RB"
   },
   "8137": {
-   "pts": 15.0,
+   "pts": 14.9,
    "opp": "BAL",
    "team": "DAL",
    "injury": "",
@@ -1494,14 +1494,6 @@
    "name": "Michael Pittman",
    "pos": "WR"
   },
-  "8110": {
-   "pts": 9.34,
-   "opp": "BAL",
-   "team": "DAL",
-   "injury": "",
-   "name": "Jake Ferguson",
-   "pos": "TE"
-  },
   "SEA": {
    "pts": 9.33,
    "opp": "WAS",
@@ -1509,6 +1501,14 @@
    "injury": "",
    "name": "Seattle Seahawks",
    "pos": "DEF"
+  },
+  "8110": {
+   "pts": 9.26,
+   "opp": "BAL",
+   "team": "DAL",
+   "injury": "",
+   "name": "Jake Ferguson",
+   "pos": "TE"
   },
   "2449": {
    "pts": 9.19,
@@ -3492,6 +3492,14 @@
    "pts_std": 2.0,
    "gp": 1.0
   },
+  "13287": {
+   "rush_att": 7.0,
+   "rush_yd": 40.0,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 4.0,
+   "pts_std": 4.0,
+   "gp": 1.0
+  },
   "12529": {
    "rush_att": 8.0,
    "rush_yd": 23.0,
@@ -3567,14 +3575,6 @@
    "pts_std": 3.28,
    "gp": 1.0
   },
-  "13287": {
-   "rush_att": 6.0,
-   "rush_yd": 32.0,
-   "pts_ppr": 3.2,
-   "pts_half_ppr": 3.2,
-   "pts_std": 3.2,
-   "gp": 1.0
-  },
   "8132": {
    "rec": 2.0,
    "rec_tgt": 2.0,
@@ -3593,6 +3593,15 @@
    "pts_std": 0.9,
    "gp": 1.0
   },
+  "8137": {
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 13.0,
+   "pts_ppr": 2.3,
+   "pts_half_ppr": 1.8,
+   "pts_std": 1.3,
+   "gp": 1.0
+  },
   "SEA": {
    "pts_allow": 27.0,
    "sack": 2.0,
@@ -3609,13 +3618,13 @@
    "pts_std": 1.8,
    "gp": 1.0
   },
-  "11584": {
-   "rush_att": 4.0,
-   "rush_yd": 18.0,
+  "11604": {
+   "rec": 1.0,
    "rec_tgt": 1.0,
+   "rec_yd": 8.0,
    "pts_ppr": 1.8,
-   "pts_half_ppr": 1.8,
-   "pts_std": 1.8,
+   "pts_half_ppr": 1.3,
+   "pts_std": 0.8,
    "gp": 1.0
   },
   "11631": {
@@ -3629,6 +3638,15 @@
   },
   "9226": {
    "rush_att": 3.0,
+   "rush_yd": 17.0,
+   "rec_tgt": 1.0,
+   "pts_ppr": 1.7,
+   "pts_half_ppr": 1.7,
+   "pts_std": 1.7,
+   "gp": 1.0
+  },
+  "11584": {
+   "rush_att": 4.0,
    "rush_yd": 17.0,
    "rec_tgt": 1.0,
    "pts_ppr": 1.7,
@@ -3701,12 +3719,27 @@
    "pts_std": 0.2,
    "gp": 1.0
   },
+  "7588": {
+   "rush_att": 2.0,
+   "rush_yd": 11.0,
+   "pts_ppr": 1.1,
+   "pts_half_ppr": 1.1,
+   "pts_std": 1.1,
+   "gp": 1.0
+  },
   "6650": {
    "xpm": 1.0,
    "xpa": 1.0,
    "pts_ppr": 1.0,
    "pts_half_ppr": 1.0,
    "pts_std": 1.0,
+   "gp": 1.0
+  },
+  "3294": {
+   "pass_yd": 22.0,
+   "pts_ppr": 0.88,
+   "pts_half_ppr": 0.88,
+   "pts_std": 0.88,
    "gp": 1.0
   },
   "3198": {
@@ -3728,25 +3761,20 @@
   "7543": {
    "rush_att": 1.0,
    "rush_yd": 2.0,
-   "rec_tgt": 1.0,
+   "rec_tgt": 2.0,
    "pts_ppr": 0.2,
    "pts_half_ppr": 0.2,
    "pts_std": 0.2,
    "gp": 1.0
   },
-  "11604": {
-   "gp": 1.0
-  },
   "9997": {
-   "gp": 1.0
-  },
-  "7588": {
    "gp": 1.0
   },
   "6786": {
    "gp": 1.0
   },
   "5012": {
+   "rec_tgt": 1.0,
    "gp": 1.0
   },
   "12545": {
@@ -3755,13 +3783,7 @@
   "12514": {
    "gp": 1.0
   },
-  "8137": {
-   "gp": 1.0
-  },
   "4881": {
-   "gp": 1.0
-  },
-  "3294": {
    "gp": 1.0
   },
   "8110": {
@@ -3792,55 +3814,24 @@
   "4217": {
    "gp": 1.0
   },
-  "12527": {
+  "11533": {
    "gp": 1.0
   },
-  "11533": {
+  "12527": {
+   "rush_att": 1.0,
+   "rush_yd": -1.0,
+   "pts_ppr": -0.1,
+   "pts_half_ppr": -0.1,
+   "pts_std": -0.1,
    "gp": 1.0
   }
  },
  "games": [
   {
-   "game_id": "401872949",
-   "date": "2026-09-27T17:00Z",
-   "state": "post",
-   "detail": "Final",
-   "period": null,
-   "clock": null,
-   "home": "CLE",
-   "away": "CAR",
-   "home_score": 21.0,
-   "away_score": 18.0,
-   "home_implied": null,
-   "away_implied": null,
-   "spread": null,
-   "total": null,
-   "tv": "FOX",
-   "weather": null
-  },
-  {
-   "game_id": "401872955",
-   "date": "2026-09-27T17:00Z",
-   "state": "post",
-   "detail": "Final",
-   "period": null,
-   "clock": null,
-   "home": "WAS",
-   "away": "SEA",
-   "home_score": 33.0,
-   "away_score": 31.0,
-   "home_implied": null,
-   "away_implied": null,
-   "spread": null,
-   "total": null,
-   "tv": "FOX",
-   "weather": null
-  },
-  {
    "game_id": "401872958",
    "date": "2026-09-27T20:05Z",
    "state": "in",
-   "detail": "5:25 - 1st",
+   "detail": "1:27 - 1st",
    "period": null,
    "clock": null,
    "home": "SF",
@@ -3863,7 +3854,7 @@
    "game_id": "401872959",
    "date": "2026-09-27T20:05Z",
    "state": "in",
-   "detail": "6:44 - 1st",
+   "detail": "2:25 - 1st",
    "period": null,
    "clock": null,
    "home": "TB",
@@ -3883,6 +3874,47 @@
    }
   },
   {
+   "game_id": "401872960",
+   "date": "2026-09-27T20:25Z",
+   "state": "in",
+   "detail": "6:50 - 1st",
+   "period": null,
+   "clock": null,
+   "home": "DAL",
+   "away": "BAL",
+   "home_score": 3.0,
+   "away_score": 0.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
+   "tv": "CBS",
+   "weather": null
+  },
+  {
+   "game_id": "401872961",
+   "date": "2026-09-27T20:25Z",
+   "state": "in",
+   "detail": "7:35 - 1st",
+   "period": null,
+   "clock": null,
+   "home": "NO",
+   "away": "LV",
+   "home_score": 0.0,
+   "away_score": 3.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
+   "tv": "CBS",
+   "weather": {
+    "temp": 87.0,
+    "cond": 3,
+    "text": "Partly sunny",
+    "indoors": true
+   }
+  },
+  {
    "game_id": "401872953",
    "date": "2026-09-27T17:00Z",
    "state": "post",
@@ -3893,6 +3925,24 @@
    "away": "LAC",
    "home_score": 24.0,
    "away_score": 16.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
+   "tv": "FOX",
+   "weather": null
+  },
+  {
+   "game_id": "401872949",
+   "date": "2026-09-27T17:00Z",
+   "state": "post",
+   "detail": "Final",
+   "period": null,
+   "clock": null,
+   "home": "CLE",
+   "away": "CAR",
+   "home_score": 21.0,
+   "away_score": 18.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -4001,6 +4051,24 @@
    "weather": null
   },
   {
+   "game_id": "401872955",
+   "date": "2026-09-27T17:00Z",
+   "state": "post",
+   "detail": "Final",
+   "period": null,
+   "clock": null,
+   "home": "WAS",
+   "away": "SEA",
+   "home_score": 33.0,
+   "away_score": 31.0,
+   "home_implied": null,
+   "away_implied": null,
+   "spread": null,
+   "total": null,
+   "tv": "FOX",
+   "weather": null
+  },
+  {
    "game_id": "401872957",
    "date": "2026-09-27T17:00Z",
    "state": "post",
@@ -4017,47 +4085,6 @@
    "total": null,
    "tv": "CBS",
    "weather": null
-  },
-  {
-   "game_id": "401872960",
-   "date": "2026-09-27T20:25Z",
-   "state": "in",
-   "detail": "11:56 - 1st",
-   "period": null,
-   "clock": null,
-   "home": "DAL",
-   "away": "BAL",
-   "home_score": 0.0,
-   "away_score": 0.0,
-   "home_implied": null,
-   "away_implied": null,
-   "spread": null,
-   "total": null,
-   "tv": "CBS",
-   "weather": null
-  },
-  {
-   "game_id": "401872961",
-   "date": "2026-09-27T20:25Z",
-   "state": "in",
-   "detail": "12:58 - 1st",
-   "period": null,
-   "clock": null,
-   "home": "NO",
-   "away": "LV",
-   "home_score": 0.0,
-   "away_score": 0.0,
-   "home_implied": null,
-   "away_implied": null,
-   "spread": null,
-   "total": null,
-   "tv": "CBS",
-   "weather": {
-    "temp": 87.0,
-    "cond": 3,
-    "text": "Partly sunny",
-    "indoors": true
-   }
   },
   {
    "game_id": "401872962",
