@@ -22,7 +22,7 @@ from html import escape
 
 import pandas as pd
 
-from cfb import in_season, predict, projections, schools as schools_mod, weekly, yahoo
+from cfb import in_season, predict, pregame, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
 from gordstats import logos, matchup_page as ui
@@ -447,11 +447,19 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     wp = "" if final else ui.win_bar(wp_a, wp_b, "Yahoo", a["key"], b["key"])
     mid = "Final" if final else ("Live" if started else "Preview")
     gs_edge = a["gs"] - b["gs"]
-    edge = (f"GordStats has <b>{escape(a['name'] if gs_edge >= 0 else b['name'])}</b> "
-            f"by {abs(gs_edge):.1f} on projection."
-            if not final else
-            f"GordStats had <b>{escape(a['name'] if gs_edge >= 0 else b['name'])}</b> "
-            f"by {abs(gs_edge):.1f} going in.")
+    leader = escape(a['name'] if gs_edge >= 0 else b['name'])
+    # "Going in" only when every number behind it was recorded before its
+    # kickoff. The weeks before the archive existed are rebuilt from today's
+    # fit, which has seen the games - so they say so.
+    ids = [str(p["yahoo_id"]) for t in m["teams"] for p in data["rosters"].get(t["team_key"], [])]
+    honest = pregame.complete(wk.loc[wk.index.intersection(ids)])
+    if not final:
+        edge = f"GordStats has <b>{leader}</b> by {abs(gs_edge):.1f} on projection."
+    elif honest:
+        edge = f"GordStats had <b>{leader}</b> by {abs(gs_edge):.1f} going in."
+    else:
+        edge = (f"On today's projections GordStats would have had <b>{leader}</b> "
+                f"by {abs(gs_edge):.1f}.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{wp}<p class="mu-note">{edge}</p>'
             + pair_view(a, b, to_school, espn)
@@ -603,6 +611,9 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
                 for p in roster if p.get("status")}
     wk = weekly.week_projections(data["week_start"], data["week_end"],
                                  board=board, league=lg, frame=frame, injuries=statuses)
+    # A started player's number is the one recorded before his kickoff, not
+    # today's, which has already seen his game (see cfb.pregame).
+    wk = pregame.freeze(week, wk)
     final = yahoo.week_final(data)
     started = any(m.get("status") != "preevent" for m in data["matchups"])
     start = datetime.strptime(data["week_start"], "%Y-%m-%d")

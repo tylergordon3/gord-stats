@@ -63,3 +63,25 @@ def test_on_record_keeps_only_the_last_pre_kickoff_capture(tmp_path, monkeypatch
     rows.to_parquet(tmp_path / "2026.parquet", index=False)
     got = results.on_record(2026)
     assert len(got) == 1 and got.loc[0, "pred_margin"] == 2.0
+
+
+def test_a_game_already_under_way_is_not_captured_over_its_pre_game_line(tmp_path, monkeypatch):
+    """The 17:30 ET Sunday run is mid-game for the 4:25 slate and the same UTC
+    day as the morning's run; capturing the game then replaced the morning's
+    pre-kickoff prediction, which is the one on_record keeps."""
+    monkeypatch.setattr(results, "PRED_DIR", tmp_path)
+    now = pd.Timestamp.now(tz="UTC")
+
+    def board(margin):
+        return pd.DataFrame([{
+            "week": 3, "seasontype": 2, "game_id": g, "date": when, "home_id": "1",
+            "away_id": "2", "home": "H", "away": "A", "neutral": False, "played": False,
+            "pred_margin": margin, "pred_total": 44.0, "home_win_prob": 0.6,
+            "book_spread": -3.0, "book_total": 44.5}
+            for g, when in (("late", now + pd.Timedelta(hours=1)),
+                            ("early", now - pd.Timedelta(hours=1)))])
+
+    monkeypatch.setattr(results.predict, "season", lambda: (board(3.0), None, None))
+    results.capture(2026)
+    archived = pd.read_parquet(tmp_path / "2026.parquet")
+    assert list(archived["game_id"]) == ["late"], "a game in progress was archived"

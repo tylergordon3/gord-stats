@@ -23,7 +23,7 @@ from html import escape
 
 import pandas as pd
 
-from fantasy import paths, projections
+from fantasy import paths, pregame, projections
 from fantasy.config import (LEAGUE_TZ, ROSTER_NAMES, UPCOMING_LEAGUE_ID, UPCOMING_SEASON,
                             UPCOMING_YEAR)
 from fantasy.league import ext_projections as ext
@@ -572,11 +572,17 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     a["wp"], b["wp"] = wp_a, 1 - wp_a
     bar = "" if final else ui.win_bar(wp_a, 1 - wp_a, "GordStats", a["key"], b["key"])
     edge = a["gs"] - b["gs"]
+    ids = [str(p) for s in m["sides"] for p in (s.get("players") or [])]
+    honest = pregame.complete(ctx["wk"].loc[ctx["wk"].index.intersection(ids)])
     note = (f"GordStats has <b>{escape(a['name'] if edge >= 0 else b['name'])}</b> by "
             f"{abs(edge):.1f} on projection ({ui.fmt(a['gs'])}–{ui.fmt(b['gs'])}); the "
             f"consensus has {ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}." if not final else
-            f"GordStats projected {ui.fmt(a['gs'])}–{ui.fmt(b['gs'])} going in, the consensus "
-            f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}.")
+            (f"GordStats projected {ui.fmt(a['gs'])}–{ui.fmt(b['gs'])} going in, the consensus "
+             f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}." if honest else
+             # Weeks from before the archive: rebuilt from today's fit, which
+             # has seen the games, so not "going in".
+             f"On today's projections GordStats would have had {ui.fmt(a['gs'])}–"
+             f"{ui.fmt(b['gs'])}; the consensus had {ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}."))
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{bar}<p class="mu-note">{note}</p>'
             + lifetime_note(a["key"], b["key"])
@@ -780,9 +786,11 @@ fetch:function(){
 def week_view(data: dict, ctx: dict) -> str:
     week = int(data["week"])
     bf = ctx["board_frame"].drop_duplicates("sleeper_id")
+    # A started player's GordStats number is the one recorded before his
+    # kickoff, not today's, which has already seen his game (gordstats.pregame).
     ctx = {**ctx, "by_team": data_mod.team_games(data["games"]),
-           "wk": data_mod.week_projections(ctx["board_frame"], data["games"],
-                                           injuries=injury_status(data)),
+           "wk": pregame.freeze(week, data_mod.week_projections(
+               ctx["board_frame"], data["games"], injuries=injury_status(data))),
            "sd": dict(zip(bf["sleeper_id"].astype(str), bf["sd"])) if "sd" in bf else {}}
     final = data_mod.week_final(data)
     started = data_mod.week_started(data)
@@ -926,8 +934,12 @@ def accuracy(datas: dict, ctx: dict) -> pd.DataFrame | None:
             continue
         sources = outside_sources(data)
         cons = ext.consensus(*sources.values())
-        wk = data_mod.week_projections(ctx["board_frame"], data["games"],
-                                       injuries=injury_status(data))
+        # Only numbers recorded before kickoff score GordStats. A week from
+        # before the archive has none, and rebuilt now it had seen the games -
+        # it flattered us against sources whose pre-game numbers were kept.
+        wk = pregame.freeze(w, data_mod.week_projections(
+            ctx["board_frame"], data["games"], injuries=injury_status(data)))
+        wk = wk[wk["pregame"]]
         for m in data["matchups"]:
             for s in m["sides"]:
                 pts = s.get("players_points") or {}
@@ -972,7 +984,10 @@ def accuracy_section(datas: dict, ctx: dict) -> str:
             f"week{'s' if len(weeks) > 1 else ''} {', '.join(map(str, weeks))}. "
             "<b>MAE</b> is the average miss in points, <b>Bias</b> the average signed "
             "miss (positive = projected too high), <b>r</b> the correlation with the "
-            "real score. Lowest MAE first.</p>"
+            "real score. Lowest MAE first."
+            + ("" if "gordstats" in set(table["source"]) else
+               " GordStats joins once a week it projected before kickoff has finished.")
+            + "</p>"
             '<div class="table-scroll"><table class="mu-board"><thead><tr><th>Source</th>'
             "<th>Players</th><th>MAE</th><th>Bias</th><th>r</th></tr></thead>"
             f"<tbody>{cells}</tbody></table></div>")

@@ -24,9 +24,19 @@ def season_path(season: int = SEASON):
 
 
 def capture(season: int = SEASON) -> pd.DataFrame:
-    """Append every unplayed game's prediction to the archive."""
+    """Append the prediction for every game still to kick off to the archive.
+
+    Still to kick off, not merely unfinished. A game in progress was captured
+    too, and since one capture per game per UTC day is kept, the 17:30 ET
+    Sunday run - mid-game for the 4:25 slate, and the same UTC day as the
+    morning's run - replaced that morning's pre-kickoff prediction with one
+    on_record() then threw away, leaving the game graded on Saturday's line
+    or on nothing.
+    """
     board, _model, _names = predict.season()
-    games = board[~board["played"]]
+    now = pd.Timestamp.now(tz="UTC")
+    kick = pd.to_datetime(board["date"], utc=True)
+    games = board[~board["played"] & (kick > now)]
     if games.empty:
         return pd.DataFrame(columns=_COLS)
     fresh = pd.DataFrame({
