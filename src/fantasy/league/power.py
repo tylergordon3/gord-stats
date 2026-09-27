@@ -128,6 +128,33 @@ def matchups(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS
     return found
 
 
+def playoff_points(order: list, over: int | None, league_id: str = UPCOMING_LEAGUE_ID,
+                   first: int = FANTASY_REG_WEEKS + 1):
+    """(played playoff weeks, teams) real scores, teams in `order` - for the
+    playoff weeks Sleeper's clock has moved past - or None before any.
+
+    The simulation drew the bracket from scratch every time, so after week 14
+    a team knocked out in week 15 kept its title odds into January. Played
+    playoff weeks are now taken as they happened, the way played regular-
+    season weeks already were, and "higher score advances" does the rest. A
+    team with no score that week (eliminated, or on a bye) counts 0; the
+    bracket never reads it.
+    """
+    weeks = [w for w in range(first, first + PLAYOFF_WEEKS) if over is not None and w <= over]
+    if not weeks:
+        return None
+    index = {int(rid): i for i, rid in enumerate(order)}
+    out = []
+    for week in weeks:
+        scores = np.zeros(len(order))
+        for r in _get(f"{SLEEPER_API}/league/{league_id}/matchups/{week}") or []:
+            i = index.get(int(r.get("roster_id") or -1))
+            if i is not None:
+                scores[i] = float(r.get("points") or 0.0)
+        out.append(scores)
+    return np.array(out)
+
+
 def schedule(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS,
              posted: dict = None):
     """{week: {roster_id: opponent_roster_id}}, or None before Sleeper posts it.
@@ -436,12 +463,13 @@ def _bracket(points: np.ndarray, seeds: np.ndarray) -> np.ndarray:
 def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
              weeks: int = FANTASY_REG_WEEKS, sims: int = DEFAULT_SIMS,
              fixed_schedule=None, actual_points=None, seed: int = 20260821,
-             injuries: dict = None) -> pd.DataFrame:
+             injuries: dict = None, playoff_points=None) -> pd.DataFrame:
     """Run the season `sims` times and summarize each team's outcomes.
 
     `actual_points` is a (played weeks, teams) array of real scores, in
     ascending roster_id order; those weeks are taken as they happened in every
-    simulation and only the rest of the season is drawn. `injuries` is
+    simulation and only the rest of the season is drawn. `playoff_points` is
+    the same for the playoff weeks already played (see playoff_points). `injuries` is
     {sleeper_id: Sleeper injury status} today; a player on a reserve list is
     held out of the next weeks (FORCED_OUT) instead of opening healthy.
     """
@@ -480,6 +508,9 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
         team_points = np.stack(
             [_lineup_points(scores[:, :, team.slice], available[:, :, team.slice], team)
              for team in teams], axis=-1)
+        if playoff_points is not None and len(playoff_points):
+            k = min(len(playoff_points), PLAYOFF_WEEKS)
+            team_points[:, weeks:weeks + k, :] = playoff_points[None, :k, :]
         regular = team_points[:, :weeks, :]
         if actual_points is not None and len(actual_points):
             played = min(len(actual_points), weeks)
@@ -689,7 +720,8 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     posted = matchups()
     # A week is "played" only when Sleeper has scored all of it AND nflverse
     # has published it; each source gets ahead of the other in its own way.
-    scored = scored_weeks(posted, over=matchups_mod.weeks_over(year))
+    over = matchups_mod.weeks_over(year)
+    scored = scored_weeks(posted, over=over)
     # Once the season is under way the rankings follow it: see
     # projections.current_form. Before kickoff this is a no-op.
     board = projections.current_form(board, year, through_week=scored)
@@ -704,8 +736,13 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     through = min(scored, projections.completed_weeks(year))
     actual = actual_results(through_week=through, posted=posted)
     points = actual["points"] if actual else None
+    # With the regular season in, the bracket's played weeks are taken as
+    # they happened too - a team knocked out stops holding title odds.
+    playoff = (playoff_points(actual["order"], over)
+               if actual and actual["weeks"] >= FANTASY_REG_WEEKS else None)
     summary = simulate(board, roster_frame, sims=sims, fixed_schedule=fixed,
-                       actual_points=points, injuries=injury_designations(year))
+                       actual_points=points, injuries=injury_designations(year),
+                       playoff_points=playoff)
 
     week = actual["weeks"] if actual else 0
     summary["week"] = week
