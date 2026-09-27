@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-27T18:10:57.324525-04:00",
+ "updated": "2026-09-27T18:18:40.965856-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -39511,6 +39511,130 @@
      ],
      [
       "Maya Caldwell",
+      "G",
+      4.0
+     ]
+    ]
+   }
+  },
+  "401918015": {
+   "date": "2026-09-27",
+   "allowed": {
+    "IND": {
+     "G": 91.0,
+     "FC": 103.0
+    },
+    "LV": {
+     "G": 95.0,
+     "FC": 62.0
+    }
+   },
+   "players": {
+    "IND": [
+     [
+      "Makayla Timpson",
+      "FC",
+      12.0
+     ],
+     [
+      "Aliyah Boston",
+      "FC",
+      35.0
+     ],
+     [
+      "Kelsey Mitchell",
+      "G",
+      18.0
+     ],
+     [
+      "Lexie Hull",
+      "G",
+      7.0
+     ],
+     [
+      "Caitlin Clark",
+      "G",
+      31.0
+     ],
+     [
+      "Monique Billings",
+      "FC",
+      11.0
+     ],
+     [
+      "Grace VanSlooten",
+      "FC",
+      2.0
+     ],
+     [
+      "Mercedes Russell",
+      "FC",
+      2.0
+     ],
+     [
+      "Sophie Cunningham",
+      "G",
+      19.0
+     ],
+     [
+      "Raven Johnson",
+      "G",
+      20.0
+     ]
+    ],
+    "LV": [
+     [
+      "Stephanie Talbot",
+      "FC",
+      16.0
+     ],
+     [
+      "Brianna Turner",
+      "FC",
+      2.0
+     ],
+     [
+      "A'ja Wilson",
+      "FC",
+      70.0
+     ],
+     [
+      "Chelsea Gray",
+      "G",
+      29.0
+     ],
+     [
+      "Jackie Young",
+      "G",
+      42.0
+     ],
+     [
+      "Cheyenne Parker-Tyus",
+      "FC",
+      15.0
+     ],
+     [
+      "Kierstan Bell",
+      "FC",
+      0.0
+     ],
+     [
+      "Kalani Brown",
+      "FC",
+      0.0
+     ],
+     [
+      "Jewell Loyd",
+      "G",
+      16.0
+     ],
+     [
+      "Justine Pissott",
+      "G",
+      0.0
+     ],
+     [
+      "Mai Yamamoto",
       "G",
       4.0
      ]
