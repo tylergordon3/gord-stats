@@ -1,7 +1,7 @@
 {
   "name": "GordStats",
   "short_name": "GordStats",
-  "description": "College basketball, WNBA and fantasy football, updated daily.",
+  "description": "College football, NFL, college basketball and fantasy football, updated daily.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1B2340",

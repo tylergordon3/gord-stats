@@ -15,11 +15,14 @@ collections:
 # Feeds jekyll-seo-tag: the browser tab, the search snippet and the link
 # preview all come from here. Without a title/description it was emitting a
 # bare page name and no summary at all.
+# Keep these to what the nav actually holds (see _data/nav.yml); every page
+# without its own description shares this one.
 title: GordStats
-tagline: College basketball, WNBA and fantasy football
+tagline: College football, NFL, college basketball and fantasy football
 description: >-
-  Machine-learning March Madness bracketology, a WNBA fantasy dashboard, and a
-  five-site fantasy football ADP board. Rebuilt daily.
+  College football and NFL game predictions beside the betting line, college
+  basketball bracketology, and fantasy football matchups, usage and power
+  rankings. Rebuilt daily.
 author: Tyler Gordon
 logo: /assets/images/brand/icon-512.png
 
