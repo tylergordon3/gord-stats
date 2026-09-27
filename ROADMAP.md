@@ -157,3 +157,41 @@ untouched.
       graded and simply never displayed it (check for that before building),
       and "our projected spread" is ~50% by construction, so it is framed as a
       calibration figure rather than a success rate.
+
+## 7. Audit, 2026-09-27
+
+A six-way review of the whole repo (CFB, fantasy/NFL, shared site code and
+browser JS, Functions/deploy/security, CBB/WNBA, and a phone-width visual pass).
+Everything below is tested; the commits carry the detail.
+
+- [x] **One failed section no longer stops the site publishing** (4eaa3f80c).
+      The Sep 23-24 fantasy failures had left CFB and NFL unpublished too. A
+      conflicting pull no longer wedges the Pi.
+- [x] **CBB ready for tipoff** (213dfd487): models retrained (the 2026 pickles
+      would not load under scikit-learn 1.9) and pinned; KenPom year and
+      auto-bids derived; Torvik from its CSVs; daily bracket pages back on and
+      archived; NET waits for its first release; the live scoreboard is fed by
+      the live tick for the first time.
+- [x] **CFB numbers** (be3c60017, 9e666404f): picks locked on the day, spread
+      pushes, TBD kickoffs, late games live, drop list, one in-season board
+      (frozen at the draft, blended with box-score points), box-score archive
+      never shrinks, zero games count in defence-vs-position, title-game
+      rematches keep their own line.
+- [x] **Fantasy numbers** (49949e2ed): a week counts once Sleeper moves past
+      it, 2026-27 not graded as finished, season file refreshes, Waiver Watch
+      back, usage shares include the QB, all-play sorts as numbers, the power
+      page no longer says "no draft yet" on a Sleeper outage.
+- [x] **Live matchups** (0b427741c): projection columns move during games;
+      the live poll stays inside the week being played.
+- [x] **Readers' leagues** (92768dc5b): superflex, taxi squads.
+- [x] **Security** (87c2fa77c): the sign-in open redirect.
+- [x] **Favourites** (d3714c3f8): a star set just before leaving is not undone.
+- [ ] **Security hardening**: rate limits and row-diffing on favourites and
+      league sync, cached score proxies, session hardening (in progress).
+- [ ] **Phone layout**: one-row sub-nav and shorter sticky chrome, the usage
+      pages' nested scroller, right-sized logos (/men/conference.html pulls
+      19 MB), contrast, dark-mode leaks (in progress).
+- [ ] Verify at tipoff that Torvik publishes `2027_fffinal.csv` in season.
+- [ ] Still by hand each year: `nfl/config.SEASON`, `wnba_remaining.WEEK_DATES`,
+      `cfb/lines.load(last=...)`, `cfb/schools.BRIDGE_SEASON`, and
+      `data/cfb/games/<season>.parquet` for the next season's fit.
