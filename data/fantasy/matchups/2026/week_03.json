@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-27T22:30:59+00:00",
+ "fetched": "2026-09-27T22:41:00+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -121,7 +121,7 @@
     {
      "roster_id": 6,
      "matchup_id": 1,
-     "points": 105.66,
+     "points": 106.02,
      "starters": [
       "3294",
       "4034",
@@ -153,17 +153,17 @@
      ],
      "players_points": {
       "11581": 3.8,
-      "11584": 7.8,
+      "11584": 8.3,
       "11620": 0.0,
       "12507": 5.6,
       "3163": 19.36,
-      "3294": 5.46,
+      "3294": 5.42,
       "4034": 16.7,
       "4983": 12.7,
       "5012": 1.9,
       "6801": 21.0,
       "8134": 1.6,
-      "8137": 9.8,
+      "8137": 9.7,
       "8259": 9.0,
       "9484": 6.6,
       "BAL": 11.0
@@ -172,7 +172,7 @@
     {
      "roster_id": 8,
      "matchup_id": 1,
-     "points": 75.94,
+     "points": 76.24,
      "starters": [
       "9228",
       "4866",
@@ -208,7 +208,7 @@
       "11786": 4.0,
       "12519": 0.0,
       "12526": 3.7,
-      "4199": 4.9,
+      "4199": 5.2,
       "4866": 0.0,
       "5850": 0.0,
       "5947": 19.4,
@@ -279,7 +279,7 @@
     {
      "roster_id": 9,
      "matchup_id": 2,
-     "points": 83.26,
+     "points": 83.66,
      "starters": [
       "4984",
       "6813",
@@ -314,7 +314,7 @@
       "11533": 6.0,
       "11563": 0.0,
       "12481": 13.0,
-      "12527": 5.9,
+      "12527": 6.3,
       "12534": 0.0,
       "4984": 19.46,
       "5045": 0.0,
@@ -368,7 +368,7 @@
       "KC"
      ],
      "players_points": {
-      "10232": 20.1,
+      "10232": 21.7,
       "11624": 4.0,
       "11646": 3.8,
       "12487": 0.0,
@@ -390,7 +390,7 @@
     {
      "roster_id": 10,
      "matchup_id": 3,
-     "points": 112.4,
+     "points": 111.0,
      "starters": [
       "8183",
       "8138",
@@ -425,7 +425,7 @@
       "12015": 0.0,
       "12506": 24.1,
       "12529": 3.9,
-      "13287": 13.6,
+      "13287": 12.2,
       "13296": 0.0,
       "4046": 16.94,
       "5927": 19.7,
@@ -536,7 +536,7 @@
       "12545": 26.44,
       "13279": 11.8,
       "2449": 7.3,
-      "4037": 2.3,
+      "4037": 3.7,
       "5892": 6.8,
       "7569": 0.0,
       "7594": 15.0,
@@ -610,7 +610,7 @@
     {
      "roster_id": 5,
      "matchup_id": 5,
-     "points": 59.62,
+     "points": 64.98,
      "starters": [
       "4881",
       "9226",
@@ -646,7 +646,7 @@
       "2133": 0.0,
       "3451": 5.0,
       "421": 0.0,
-      "4881": 4.52,
+      "4881": 9.88,
       "5967": 13.6,
       "6786": 9.9,
       "6790": 0.0,
@@ -831,7 +831,7 @@
    "pos": "WR"
   },
   "11563": {
-   "pts": 16.97,
+   "pts": 17.18,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
@@ -918,6 +918,14 @@
    "name": "Chase Brown",
    "pos": "RB"
   },
+  "421": {
+   "pts": 15.98,
+   "opp": "DEN",
+   "team": "LAR",
+   "injury": "",
+   "name": "Matthew Stafford",
+   "pos": "QB"
+  },
   "8146": {
    "pts": 15.96,
    "opp": "DET",
@@ -925,14 +933,6 @@
    "injury": "",
    "name": "Garrett Wilson",
    "pos": "WR"
-  },
-  "421": {
-   "pts": 15.93,
-   "opp": "DEN",
-   "team": "LAR",
-   "injury": "",
-   "name": "Matthew Stafford",
-   "pos": "QB"
   },
   "4866": {
    "pts": 15.92,
@@ -1046,20 +1046,20 @@
    "name": "David Montgomery",
    "pos": "RB"
   },
+  "2133": {
+   "pts": 14.27,
+   "opp": "DEN",
+   "team": "LAR",
+   "injury": "",
+   "name": "Davante Adams",
+   "pos": "WR"
+  },
   "12526": {
    "pts": 14.23,
    "opp": "CLE",
    "team": "CAR",
    "injury": "",
    "name": "Tetairoa McMillan",
-   "pos": "WR"
-  },
-  "2133": {
-   "pts": 14.22,
-   "opp": "DEN",
-   "team": "LAR",
-   "injury": "",
-   "name": "Davante Adams",
    "pos": "WR"
   },
   "11635": {
@@ -1095,7 +1095,7 @@
    "pos": "WR"
   },
   "8150": {
-   "pts": 13.57,
+   "pts": 13.54,
    "opp": "DEN",
    "team": "LAR",
    "injury": "",
@@ -1118,6 +1118,14 @@
    "name": "Drake London",
    "pos": "WR"
   },
+  "7526": {
+   "pts": 13.28,
+   "opp": "LAR",
+   "team": "DEN",
+   "injury": "",
+   "name": "Jaylen Waddle",
+   "pos": "WR"
+  },
   "10236": {
    "pts": 13.23,
    "opp": "LAC",
@@ -1133,14 +1141,6 @@
    "injury": "",
    "name": "D'Andre Swift",
    "pos": "RB"
-  },
-  "7526": {
-   "pts": 13.19,
-   "opp": "LAR",
-   "team": "DEN",
-   "injury": "",
-   "name": "Jaylen Waddle",
-   "pos": "WR"
   },
   "11604": {
    "pts": 13.04,
@@ -1286,20 +1286,20 @@
    "name": "Deebo Samuel",
    "pos": "WR"
   },
+  "6806": {
+   "pts": 11.28,
+   "opp": "LAR",
+   "team": "DEN",
+   "injury": "",
+   "name": "J.K. Dobbins",
+   "pos": "RB"
+  },
   "7543": {
    "pts": 11.25,
    "opp": "LV",
    "team": "NO",
    "injury": "",
    "name": "Travis Etienne",
-   "pos": "RB"
-  },
-  "6806": {
-   "pts": 11.22,
-   "opp": "LAR",
-   "team": "DEN",
-   "injury": "",
-   "name": "J.K. Dobbins",
    "pos": "RB"
   },
   "5846": {
@@ -1335,7 +1335,7 @@
    "pos": "RB"
   },
   "12489": {
-   "pts": 10.64,
+   "pts": 10.72,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
@@ -1366,6 +1366,14 @@
    "name": "Juwan Johnson",
    "pos": "TE"
   },
+  "5045": {
+   "pts": 10.22,
+   "opp": "LAR",
+   "team": "DEN",
+   "injury": "",
+   "name": "Courtland Sutton",
+   "pos": "WR"
+  },
   "11581": {
    "pts": 10.15,
    "opp": "ATL",
@@ -1373,14 +1381,6 @@
    "injury": "",
    "name": "MarShawn Lloyd",
    "pos": "RB"
-  },
-  "5045": {
-   "pts": 10.14,
-   "opp": "LAR",
-   "team": "DEN",
-   "injury": "",
-   "name": "Courtland Sutton",
-   "pos": "WR"
   },
   "13346": {
    "pts": 10.08,
@@ -1631,7 +1631,7 @@
    "pos": "K"
   },
   "11586": {
-   "pts": 8.26,
+   "pts": 8.24,
    "opp": "DEN",
    "team": "LAR",
    "injury": "",
@@ -1703,7 +1703,7 @@
    "pos": "K"
   },
   "12487": {
-   "pts": 7.68,
+   "pts": 7.71,
    "opp": "DEN",
    "team": "LAR",
    "injury": "",
@@ -1783,7 +1783,7 @@
    "pos": "DEF"
   },
   "DEN": {
-   "pts": 6.42,
+   "pts": 6.48,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
@@ -3969,20 +3969,20 @@
    "game_id": "401872958",
    "date": "2026-09-27T20:05Z",
    "state": "in",
-   "detail": "15:00 - 4th",
+   "detail": "12:29 - 4th",
    "period": null,
    "clock": null,
    "home": "SF",
    "away": "ARI",
    "home_score": 23.0,
-   "away_score": 13.0,
+   "away_score": 20.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "FOX",
    "weather": {
-    "temp": 70.0,
+    "temp": 68.0,
     "cond": 2,
     "text": "Mostly sunny",
     "indoors": false
@@ -3992,7 +3992,7 @@
    "game_id": "401872959",
    "date": "2026-09-27T20:05Z",
    "state": "in",
-   "detail": "2:13 - 3rd",
+   "detail": "14:06 - 4th",
    "period": null,
    "clock": null,
    "home": "TB",
@@ -4006,8 +4006,8 @@
    "tv": "FOX",
    "weather": {
     "temp": 82.0,
-    "cond": 1,
-    "text": "Sunny",
+    "cond": 3,
+    "text": "Partly sunny",
     "indoors": false
    }
   },
@@ -4015,13 +4015,13 @@
    "game_id": "401872960",
    "date": "2026-09-27T20:25Z",
    "state": "in",
-   "detail": "4:27 - 3rd",
+   "detail": "1:48 - 3rd",
    "period": null,
    "clock": null,
    "home": "DAL",
    "away": "BAL",
-   "home_score": 13.0,
-   "away_score": 17.0,
+   "home_score": 19.0,
+   "away_score": 24.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -4033,20 +4033,20 @@
    "game_id": "401872961",
    "date": "2026-09-27T20:25Z",
    "state": "in",
-   "detail": "5:46 - 3rd",
+   "detail": "3:20 - 3rd",
    "period": null,
    "clock": null,
    "home": "NO",
    "away": "LV",
    "home_score": 27.0,
-   "away_score": 16.0,
+   "away_score": 22.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 89.0,
+    "temp": 88.0,
     "cond": 2,
     "text": "Mostly sunny",
     "indoors": true
