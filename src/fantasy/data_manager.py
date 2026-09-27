@@ -16,6 +16,8 @@ SEASON_JOBS - same extensibility idea as sources/.
 """
 import argparse
 
+import pandas as pd
+
 from fantasy import util
 from fantasy.config import DATA_DIR, FANTASY_REG_WEEKS, LEAGUE_IDS
 from fantasy.identity.history import build_player_seasons
@@ -79,13 +81,27 @@ def update_injuries(season4: str, season_str: str, refresh: bool = False, **_):
     print(f"[injuries] {season_str} -> {path}")
 
 
+def _weeks_in(path) -> int:
+    """The last week a saved season file holds (0 if it cannot be read)."""
+    try:
+        return int(pd.read_json(path)["week"].max())
+    except (ValueError, KeyError):
+        return 0
+
+
 def update_season(season4: str, season_str: str, refresh: bool = False, **_):
     """Pull league matchup/record data for a season -> data/season/<szn>.json."""
     path = DATA_DIR / "season" / f"{season_str}.json"
     if path.exists() and season_str != CURRENT_SEASON_STR and not refresh:
         print(f"[season] {season_str} already saved, skipping.")
         return
-    df = season_data.get_season(_end_week(season_str), LEAGUE_IDS[season_str])
+    end = _end_week(season_str)
+    # The season being played refetches only once it has a finished week the
+    # file lacks - about once a week, rather than ~17 Sleeper calls a build.
+    if path.exists() and not refresh and _weeks_in(path) >= end:
+        print(f"[season] {season_str} already has week {end}, skipping.")
+        return
+    df = season_data.get_season(end, LEAGUE_IDS[season_str])
     df = df.reset_index(drop=True)
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_json(path)

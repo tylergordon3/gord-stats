@@ -89,9 +89,72 @@ def _num(v):
 # Sleeper
 # --------------------------------------------------------------------------- #
 
+_STATE: tuple = (0.0, None)          # (fetched at, payload)
+_STATE_TTL = 600
+
+
 def nfl_state() -> dict:
-    """Sleeper's view of the NFL calendar: week, season, season_type."""
-    return _get(f"{SLEEPER_ROOT}/v1/state/nfl")
+    """Sleeper's view of the NFL calendar: week, season, season_type.
+
+    Kept for ten minutes: a build asks it from several pages (which weeks are
+    over, which seasons can be graded), and every Sleeper request is another
+    chance at the dropped handshake that used to fail the fantasy section.
+    """
+    global _STATE
+    at, payload = _STATE
+    if payload is None or time.time() - at > _STATE_TTL:
+        payload = _get(f"{SLEEPER_ROOT}/v1/state/nfl")
+        _STATE = (time.time(), payload)
+    return payload
+
+
+def weeks_over(year: int = UPCOMING_YEAR) -> int | None:
+    """How many weeks of `year`'s season are over, by Sleeper's own clock.
+
+    Every team having points is not the same thing: half a league's starters
+    finish on Sunday and the rest on Monday night, so a week in progress has
+    points on the board all weekend. The power page locked in week 2 at 1:21 PM
+    on the Sunday. A week is over once Sleeper's display week has moved past
+    it - the same rule the browser pages use (see gordstats/my_history.py).
+
+    None when Sleeper will not answer; callers fall back to the points.
+    A season Sleeper has moved past is over in full; one not yet begun, not
+    at all.
+    """
+    try:
+        st = nfl_state() or {}
+        season = int(st["season"])
+    except Exception:                                   # noqa: BLE001
+        return None
+    if season > int(year):
+        return 99
+    if season < int(year) or st.get("season_type") == "pre":
+        return 0
+    return max(0, int(st.get("display_week") or st.get("week") or 1) - 1)
+
+
+def regular_season_over(season_str: str) -> bool:
+    """True once every regular-season week of `season_str` ("2627") is played.
+
+    Season-end figures - games missed out of a full window, final positional
+    ranks, value against ADP - mean nothing before then, and the live season
+    was graded on two weeks as if they were fourteen: healthy stars topped the
+    injury list (Josh Allen "11 games missed"), and 69 drafted players "sat out
+    too much of the season". A season before the one being played is over; the
+    live one once Sleeper's clock has passed its last regular-season week.
+    Sleeper not answering counts as "not yet".
+    """
+    from fantasy.config import FANTASY_REG_WEEKS, FORMAL_SEASON, SEASON_YEAR, UPCOMING_SEASON
+
+    if FORMAL_SEASON[season_str] != UPCOMING_SEASON:
+        return True
+    over = weeks_over(SEASON_YEAR[season_str])
+    return over is not None and over >= FANTASY_REG_WEEKS
+
+
+def played_seasons(seasons) -> list:
+    """`seasons`, less any whose regular season is still being played."""
+    return [s for s in seasons if regular_season_over(s)]
 
 
 def league(league_id: str = UPCOMING_LEAGUE_ID) -> dict:

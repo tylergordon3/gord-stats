@@ -79,7 +79,9 @@ def all_picks() -> pd.DataFrame:
     Kickers and defenses are already excluded upstream by fantasy.site.draft.
     """
     frames = []
-    for season_str in LEAGUE_IDS:
+    # Hit, Missed and Weeks Lost are season-end figures: the season still being
+    # played joins once its regular season is over (see adp._graded).
+    for season_str in adp._graded():
         m = adp._picks_with_adp(season_str).copy()
         m["Season"] = FORMAL_SEASON[season_str]
         m["Manager"] = m["roster_id"].map(ROSTER_NAMES)

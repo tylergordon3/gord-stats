@@ -268,6 +268,13 @@ def save_games_missed(season_str: str, force: bool = False):
             and archive.has_statistic(season_str, *GAMES_MISSED_STATS):
         print(f"[games-missed] {season_str} is finished and already archived")
         return
+    # Games missed are counted out of the whole regular season's window, so a
+    # season still being played has nothing meaningful to archive yet - and
+    # skipping it saves the Sleeper calls.
+    from fantasy.league.matchups import regular_season_over
+    if not regular_season_over(season_str):
+        print(f"[games-missed] {season_str} is still being played; nothing to archive")
+        return
 
     df, _ = _build(season_str)
     detail = df[["Owner", "roster_id", "Name", "Pos.", "round", "Pick",

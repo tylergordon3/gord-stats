@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd              # noqa: E402
 
 from fantasy.config import (                                           # noqa: E402
-    DATA_DIR, FANTASY_REG_WEEKS, LOST_SEASON_GAMES, PLAYABLE_WEEKS, ROSTER_NAMES,
+    DATA_DIR, FANTASY_REG_WEEKS, FORMAL_SEASON, LOST_SEASON_GAMES, PLAYABLE_WEEKS, ROSTER_NAMES,
 )
 from fantasy.site import styles                                         # noqa: E402
 from gordstats import charts                                            # noqa: E402
@@ -91,11 +91,22 @@ def impact_detail(detail: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def _played(history: dict) -> dict:
+    """The archive's seasons whose regular season is over. A live season's
+    games missed are counted out of a full fourteen-week window, so two weeks
+    in, every healthy starter reads as having missed eleven games."""
+    from fantasy.league.matchups import regular_season_over
+
+    code = {formal: c for c, formal in FORMAL_SEASON.items()}
+    return {szn: stats for szn, stats in history.items()
+            if szn not in code or regular_season_over(code[szn])}
+
+
 def _load_detail():
     """All-seasons per-player impact frame, skipping seasons archived before
-    injury_detail_df existed. May be empty."""
+    injury_detail_df existed and the season still being played. May be empty."""
     with open(ARCHIVE_PATH, encoding="utf-8") as f:
-        history = json.load(f)
+        history = _played(json.load(f))
     frames = []
     for szn, stats in history.items():
         if "injury_detail_df" not in stats:
@@ -111,7 +122,7 @@ def _load_detail():
 def _load_missing():
     """Return (all-seasons missing_df, ordered season keys) from the archive."""
     with open(ARCHIVE_PATH, encoding="utf-8") as f:
-        history = json.load(f)
+        history = _played(json.load(f))
     seasons = list(history.keys())
     frames = []
     for szn in seasons:

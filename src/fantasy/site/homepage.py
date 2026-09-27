@@ -57,11 +57,10 @@ def all_time_metrics() -> pd.DataFrame:
     Metrics mirror the legacy schedule_stats.all_time_metrics, but are computed
     from the raw season files instead of the pre-archived per-season stats.
     """
-    season_frames, n_seasons = [], 0
+    season_frames = []
     for path in sorted(SEASON_DIR.glob("*.json")):
         df = pd.read_json(path)
         season_frames.append(df[df["week"] <= FANTASY_REG_WEEKS])
-        n_seasons += 1
 
     # Per-team season totals (final-week snapshot) + full opponent / win history.
     snapshots, opps, if_win = [], {}, {}
@@ -88,10 +87,11 @@ def all_time_metrics() -> pd.DataFrame:
         lambda r: _avg([winp[o] for o, w in zip(opps[r], if_win[r]) if w == 1])
     )
 
-    # Expected wins via Pythagorean expectation, scaled to total h2h games played.
-    exp_games = FANTASY_REG_WEEKS * n_seasons
+    # Expected wins via Pythagorean expectation, scaled to the head-to-head
+    # games each team has actually played - not 14 a season, which credited a
+    # season two weeks old with fourteen games (280 expected wins against 220).
     g["Exp W (Actual)"] = g.apply(
-        lambda x: f"{(x.PF**EXPW_RATIO) / (x.PF**EXPW_RATIO + x.PA**EXPW_RATIO) * exp_games:.1f}"
+        lambda x: f"{(x.PF**EXPW_RATIO) / (x.PF**EXPW_RATIO + x.PA**EXPW_RATIO) * (x.h2h_wins + x.h2h_loss):.1f}"
                   f" ({int(x.h2h_wins)})",
         axis=1,
     )

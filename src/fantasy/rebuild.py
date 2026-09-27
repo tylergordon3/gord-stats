@@ -171,6 +171,11 @@ def plan_from_preset(preset: str) -> Plan:
     if preset in ("pages", "predraft", "full"):
         plan.pages = list(PAGES)
         plan.games_missed = True
+        # The season being played is read from its season file by the schedule,
+        # League Home records and head-to-head. Without this the scheduled
+        # preset never refreshed it: 2026-27 sat at the two weeks it had on the
+        # day it was added. Finished seasons skip without a request.
+        plan.data_jobs = ["season"]
     if preset in ("predraft", "full"):
         plan.refresh_adp = True
     if preset == "full":

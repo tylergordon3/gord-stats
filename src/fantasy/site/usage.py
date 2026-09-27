@@ -128,6 +128,21 @@ def _rows(recent: pd.DataFrame, season: pd.DataFrame, held: dict, names: dict) -
     return "".join(out)
 
 
+def share_tables(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """(recent, season) shares for the players this page shows.
+
+    Shares first, positions after, as the college page does: a team's carries
+    include its quarterback's. Filtering to RB/WR/TE first made each back's
+    "share of the team" his share of the non-QB carries - James Cook read 92%
+    against a real 60%.
+    """
+    recent = usage_mod.shares(frame, weeks=RECENT_WEEKS)
+    season = usage_mod.shares(frame)
+    recent = recent[recent["pos"].isin(SHOWN)]
+    recent = recent[recent["rush_att"] + recent["rec_tgt"] >= MIN_TOUCHES]
+    return recent, season
+
+
 def body() -> str:
     try:
         frame = usage_mod.capture(UPCOMING_YEAR)
@@ -137,12 +152,9 @@ def body() -> str:
     if frame.empty:
         return (ui.CSS + f"<p>No {UPCOMING_SEASON} games have been played yet — this page "
                 "fills in after the first one.</p>")
-    frame = frame[frame["pos"].isin(SHOWN)]
     weeks = sorted(int(w) for w in frame["week"].unique())
     recent_weeks = weeks[-RECENT_WEEKS:]
-    recent = usage_mod.shares(frame, weeks=RECENT_WEEKS)
-    season = usage_mod.shares(frame)
-    recent = recent[recent["rush_att"] + recent["rec_tgt"] >= MIN_TOUCHES]
+    recent, season = share_tables(frame)
     recent = recent.sort_values(["snap_share", "tgt_share"], ascending=False)
 
     held, names = owners()

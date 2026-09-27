@@ -35,6 +35,15 @@ _GRID = [styles.GRID_TD, styles.GRID_TH]
 
 
 @lru_cache(maxsize=None)
+def _graded() -> list:
+    """The seasons a pick can be graded in: finish rank and games played are
+    season-end figures, so the one still being played waits until it is over.
+    Graded two weeks in, 69 of its picks "sat out too much of the season"."""
+    from fantasy.league.matchups import played_seasons
+
+    return played_seasons(LEAGUE_IDS)
+
+
 def _picks_with_adp(season_str: str) -> pd.DataFrame:
     """Drafted players joined to consensus ADP (overall + positional ranks).
 
@@ -206,7 +215,7 @@ def matched_with_manager(season_str) -> pd.DataFrame:
 
 def _all_seasons() -> pd.DataFrame:
     """Every season's matched picks, tagged with Season + stable Manager name."""
-    return pd.concat([matched_with_manager(s) for s in LEAGUE_IDS], ignore_index=True)
+    return pd.concat([matched_with_manager(s) for s in _graded()], ignore_index=True)
 
 
 def _manager_summary(df):
@@ -280,7 +289,7 @@ def _match_note(m, matched) -> str:
 
 def body() -> str:
     """The Values & Busts section of the Draft Analytics page."""
-    seasons = [(s, FORMAL_SEASON[s]) for s in LEAGUE_IDS]
+    seasons = [(s, FORMAL_SEASON[s]) for s in _graded()]
     views = [("overall", "Overall"), ("positional", "By Position")]
 
     content = {}

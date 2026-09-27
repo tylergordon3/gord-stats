@@ -314,7 +314,7 @@ def page_html(monkeypatch_module):
     from gordstats import charts
 
     def unavailable(*args, **kwargs):
-        raise RuntimeError("no rosters yet")
+        raise model.NoRosters("no rosters yet")
 
     monkeypatch_module.setattr(model, "rankings", unavailable)
     monkeypatch_module.setattr(charts, "clear", lambda *a, **k: None)
@@ -512,3 +512,22 @@ def test_an_odd_sized_league_gives_somebody_a_bye_not_a_phantom_fixture(browser)
     wins = [t["projWins"] for t in result["teams"]]
     assert max(wins) - min(wins) < 3, (
         f"one team is playing a different season from the rest: {wins}")
+
+
+def test_a_failure_that_is_not_a_missing_draft_is_not_the_pre_draft_page(monkeypatch):
+    """Any error used to publish "the draft has not happened yet" - which a
+    Sleeper glitch did, three weeks into the season. Only NoRosters means that;
+    anything else fails the step and the page on disk stands, charts and all."""
+    from fantasy.league import power as model
+    from fantasy.site import power as page
+
+    cleared = []
+
+    def down(*args, **kwargs):
+        raise ConnectionError("Sleeper dropped the handshake")
+
+    monkeypatch.setattr(model, "rankings", down)
+    monkeypatch.setattr(page.charts, "clear", lambda *a, **k: cleared.append(1))
+    with pytest.raises(ConnectionError):
+        page.body()
+    assert not cleared, "the last good page's charts were deleted"

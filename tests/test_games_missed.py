@@ -49,9 +49,24 @@ def test_a_finished_season_not_yet_archived_is_built(monkeypatch):
         draft.save_games_missed("2324")
 
 
-def test_the_season_being_played_is_never_skipped(monkeypatch):
-    """Its draft, rosters and transactions are all still moving."""
+def test_the_season_being_played_is_not_archived_mid_season(monkeypatch):
+    """Games missed are out of the whole regular season's window: two weeks in,
+    every healthy starter read as having missed eleven games."""
+    from fantasy.league import matchups
+
     live = next(s for s in FORMAL_SEASON if not draft.is_finished(s))
+    monkeypatch.setattr(matchups, "weeks_over", lambda year: 2)
+    monkeypatch.setattr(draft, "_build", lambda s, **k: (_ for _ in ()).throw(
+        AssertionError("a season two weeks old was archived")))
+    draft.save_games_missed(live)
+
+
+def test_the_live_season_is_never_skipped_once_its_regular_season_is_over(monkeypatch):
+    """From then until the rollover its rosters and transactions can still move."""
+    from fantasy.league import matchups
+
+    live = next(s for s in FORMAL_SEASON if not draft.is_finished(s))
+    monkeypatch.setattr(matchups, "weeks_over", lambda year: 14)
     monkeypatch.setattr(archive, "has_statistic", lambda season, *stats: True)
     monkeypatch.setattr(draft, "_build", lambda s, **k: (_ for _ in ()).throw(
         RuntimeError("built")))

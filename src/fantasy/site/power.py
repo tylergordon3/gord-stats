@@ -661,11 +661,15 @@ def body() -> str:
     to rank. Raising here would fail the whole nightly build over a page that is
     simply waiting, so instead it publishes the part that is already true.
     """
-    charts.clear(_SECTION)
+    # Only "no rosters" is the pre-draft page. Anything else - Sleeper down
+    # after its retries, a bug - raises, so the step fails and the page on disk
+    # stands: a Sleeper glitch in week 3 (2026-09-23) published "the draft has
+    # not happened yet" to a league three weeks into its season.
     try:
         table, board, rosters = power.rankings(UPCOMING_YEAR)
-    except Exception as exc:
+    except power.NoRosters as exc:
         print(f"[power] no rankings yet: {exc}")
+        charts.clear(_SECTION)
         return (f"<div id='pw-intro'>{PRE_DRAFT}</div>" + my_league.bar()
                 + "<section id='mine' class='pw-section'>"
                 + "<h2 id='pw-mine-h'>Your League</h2>"
@@ -677,6 +681,7 @@ def body() -> str:
                 + my_league_data.JS + my_league.JS
                 + my_power.SIM_JS + my_power.JS)
 
+    charts.clear(_SECTION)            # only now: a failed run keeps the last page's charts
     content = {
         "mine": my_power.section(),
         "rankings": _rankings_section(table),

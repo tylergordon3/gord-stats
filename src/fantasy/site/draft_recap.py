@@ -165,9 +165,15 @@ def body() -> str:
     with the other draft sections without their controls colliding.
     """
     # The draft just made has no finishes to colour by, so it gets the
-    # position / ADP view (fantasy.site.draft_current) and comes first.
-    views = ([("current", UPCOMING_SEASON, draft_current.view())]
-             + [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS])
+    # position / ADP view (fantasy.site.draft_current) and comes first - until
+    # its regular season is over and it can be graded like the rest. Listing
+    # it both ways gave the page two "2026-2027" buttons.
+    from fantasy.league.matchups import played_seasons
+
+    graded = played_seasons(LEAGUE_IDS)
+    live = [] if any(FORMAL_SEASON[s] == UPCOMING_SEASON for s in graded) else [
+        ("current", UPCOMING_SEASON, draft_current.view())]
+    views = live + [(s, FORMAL_SEASON[s], _season_view(s)) for s in graded]
     return _BOARD_CSS + layout.view_switcher(views, group="recap", label="Season:")
 
 

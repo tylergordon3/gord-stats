@@ -45,6 +45,7 @@ import requests
 
 from fantasy import paths, projections
 from fantasy.league import consensus, external
+from fantasy.league import matchups as matchups_mod
 from fantasy import sleeper_retry
 from fantasy.config import (
     FANTASY_REG_WEEKS, ROSTER_NAMES, UPCOMING_DRAFT_ID,
@@ -150,15 +151,18 @@ def schedule(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS
     return found or None
 
 
-def scored_weeks(posted: dict) -> int:
+def scored_weeks(posted: dict, over: int | None = None) -> int:
     """How many regular-season weeks Sleeper has fully scored, counting from 1.
 
-    A week counts once every team has points on it: Sleeper shows Thursday
-    night's score on a week that is otherwise still to be played, and a
-    zero-point team on a scored week does not happen.
+    A week counts once every team has points on it AND it is one of the `over`
+    weeks Sleeper's clock has moved past (matchups.weeks_over). Points alone
+    are true from Sunday lunchtime: Sleeper shows Thursday night's score on a
+    week otherwise still to be played, and everyone has points long before
+    Monday night is done. `over=None` (Sleeper would not say) leaves the
+    points to decide, as they always did.
     """
     week = 0
-    while (week + 1) in posted:
+    while (week + 1) in posted and (over is None or week + 1 <= over):
         rows = posted[week + 1]
         if not all(float(r.get("points") or 0) > 0 for r in rows):
             break
@@ -662,6 +666,11 @@ def with_movement(table: pd.DataFrame, year: int, now=None) -> pd.DataFrame:
 # The whole thing
 # --------------------------------------------------------------------------- #
 
+class NoRosters(RuntimeError):
+    """Nothing to rank: the draft has not happened, or Sleeper has not posted
+    it. The one failure the power page answers with its pre-draft text."""
+
+
 def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
              refresh: bool = False) -> tuple:
     """(rankings, projection board, rosters) for the upcoming season.
@@ -673,14 +682,14 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     board = projections.load(year, refresh=refresh)
     roster_frame = rosters()
     if roster_frame.empty:
-        raise RuntimeError(
+        raise NoRosters(
             "No rosters yet — the draft has not happened, or Sleeper has not "
             "published its picks. Nothing to rank.")
 
     posted = matchups()
     # A week is "played" only when Sleeper has scored all of it AND nflverse
     # has published it; each source gets ahead of the other in its own way.
-    scored = scored_weeks(posted)
+    scored = scored_weeks(posted, over=matchups_mod.weeks_over(year))
     # Once the season is under way the rankings follow it: see
     # projections.current_form. Before kickoff this is a no-op.
     board = projections.current_form(board, year, through_week=scored)

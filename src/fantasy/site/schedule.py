@@ -55,9 +55,11 @@ def all_play(season_str: str):
 
     roto = pd.concat([roto, summary])
     pivot = roto.pivot(index="team_name", columns="week", values="roto")
-    pivot[["win", "loss"]] = pivot["Total"].str.extract(r"(\d+)-(\d+)")
+    # Numbers, not the extracted strings: sorted as text "8" beat "17", and an
+    # 8-10 team led the table over a 17-1 one.
+    pivot[["win", "loss"]] = pivot["Total"].str.extract(r"(\d+)-(\d+)").astype(int)
     pivot = pivot.sort_values("win", ascending=False)
-    win, loss = pd.to_numeric(pivot["win"]), pd.to_numeric(pivot["loss"])
+    win, loss = pivot["win"], pivot["loss"]
     pivot["Win %"] = (win / (win + loss)).map("{:.1%}".format)
     pivot = pivot.drop(columns=["win", "loss"])
     # reset_index() makes Team a real, labelled column — a styled index renders
@@ -110,7 +112,7 @@ def schedule_metrics(season_str: str):
 
     last["SOV"] = last["roster_id"].map(sov)
     last["Exp W (Actual)"] = last.apply(
-        lambda x: f"{(x.PF**EXPW_RATIO) / (x.PF**EXPW_RATIO + x.PA**EXPW_RATIO) * FANTASY_REG_WEEKS:.1f}"
+        lambda x: f"{(x.PF**EXPW_RATIO) / (x.PF**EXPW_RATIO + x.PA**EXPW_RATIO) * (x.h2h_wins + x.h2h_loss):.1f}"
                   f" ({int(x.h2h_wins)})", axis=1)
 
     df = last[["team_name", "SOS", "SOV", "Exp W (Actual)"]].sort_values("SOS", ascending=False)

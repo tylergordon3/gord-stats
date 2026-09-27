@@ -99,14 +99,21 @@ def week_scored(week: int, league_id: str = UPCOMING_LEAGUE_ID) -> bool:
     return bool(rows) and all(float(r.get("points") or 0) > 0 for r in rows)
 
 
-def latest_scored_week(after: int, league_id: str = UPCOMING_LEAGUE_ID) -> int:
+def latest_scored_week(after: int, league_id: str = UPCOMING_LEAGUE_ID,
+                       year: int = UPCOMING_YEAR) -> int:
     """The highest fully scored regular-season week past `after` (or `after`).
 
     One request per week checked, and only the weeks beyond the last one
     published, so in-season ticks cost a single call most of the time.
     """
+    # Only weeks Sleeper's clock has moved past: every team has points by
+    # Sunday lunchtime, and a week published then was never republished once
+    # Monday night finished, because its number was already saved as done.
+    from fantasy.league import matchups
+    over = matchups.weeks_over(year)
+    last = FANTASY_REG_WEEKS if over is None else min(FANTASY_REG_WEEKS, over)
     week = after
-    while week < FANTASY_REG_WEEKS and week_scored(week + 1, league_id):
+    while week < last and week_scored(week + 1, league_id):
         week += 1
     return week
 
@@ -136,7 +143,7 @@ def pending(state: dict, league_id: str = UPCOMING_LEAGUE_ID,
     """
     due = {}
     published = int(state.get("week", 0))
-    week = latest_scored_week(published, league_id)
+    week = latest_scored_week(published, league_id, year)
     if week > published and nflverse_has(week, year):
         due["week"] = week
     if games_live(year):

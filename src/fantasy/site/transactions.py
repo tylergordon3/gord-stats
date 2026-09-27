@@ -10,8 +10,8 @@ data/season/<season>.json for pickup production):
 Every season lives on the one page (docs/transactions/index.html), picked with
 the season buttons - same shape as the schedule page.
 
-The season being played is not in LEAGUE_IDS (see fantasy.config), so it is
-handled here: its log is pulled from Sleeper on every build, its pickups are
+The season being played is handled here, whether or not it has been added to
+LEAGUE_IDS (see fantasy.config): its log is pulled from Sleeper on every build, its pickups are
 scored from the weekly matchup archive (data/fantasy/matchups/<year>/) rather
 than a season file, and it carries a move-by-move Waiver Log while the season
 is young enough that few pickups have started a game.
@@ -47,10 +47,14 @@ CURRENT = f"{UPCOMING_YEAR % 100:02d}{(UPCOMING_YEAR + 1) % 100:02d}"
 
 def _refresh_current() -> bool:
     """Pull the live season's log into data/transactions/<CURRENT>.json.
-    False when there is neither a fresh pull nor an earlier copy to show."""
+    False when there is neither a fresh pull nor an earlier copy to show.
+
+    Pulled on every build, whether or not the season has been promoted into
+    LEAGUE_IDS. It used to hand a promoted season to data_manager, but the
+    scheduled preset runs no data jobs - so from the 2026-09-25 rollover the
+    log stopped at that day and the page lost its Waiver Watch and Log.
+    """
     path = DATA_DIR / "transactions" / f"{CURRENT}.json"
-    if CURRENT in LEAGUE_IDS:            # promoted into the keyed maps: data_manager owns it
-        return path.exists()
     try:
         df = transactions_data.get_transactions(UPCOMING_LEAGUE_ID)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -383,9 +387,11 @@ def _all_time_view(names: dict, seasons: list) -> str:
 def generate():
     """Build and write docs/transactions/index.html - every season, switchable."""
     names = _player_names()
-    seasons = list(LEAGUE_IDS)
-    views = [(s, FORMAL_SEASON[s], _season_view(s, names)) for s in LEAGUE_IDS]
-    if CURRENT not in LEAGUE_IDS and _refresh_current():
+    seasons = [s for s in LEAGUE_IDS if s != CURRENT]
+    views = [(s, FORMAL_SEASON[s], _season_view(s, names)) for s in seasons]
+    # The season being played gets the live view - Waiver Watch, the log,
+    # pickups scored from the matchup archive - in or out of LEAGUE_IDS.
+    if _refresh_current():
         views.insert(0, (CURRENT, UPCOMING_SEASON, _current_view(names)))
         seasons.insert(0, CURRENT)
     views.append(("all", "All-Time", _all_time_view(names, seasons)))
