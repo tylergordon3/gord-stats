@@ -233,6 +233,8 @@ table.mu-roster td.mu-slot{font-weight:700;color:#64748b;font-size:11px}
 /* No min-width: before kickoff every stat line is empty and the column
    should cost nothing; once lines arrive the cell wraps to what is left. */
 table.mu-roster td.mu-s{color:#64748b;font-size:12px;white-space:normal}
+/* A projection column gone live mid-game (see LIVE_JS): an expected final. */
+table.mu-roster td[data-pre].live,table.mu-roster td[data-tcol].live{font-style:italic}
 table.mu-roster td.mu-g{font-size:12px;color:#334155}
 /* A player whose game is on: a pulsing dot on the game cell, a tint on
    the row (and on the paired phone cell), in both themes. */
@@ -482,6 +484,8 @@ def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str =
 # scoreboard (it allows browser fetches) into {game id: {state, detail,
 # home/away scores}}, render a game's text from one side, and fold the
 # states into a points payload by the data-gid / data-side each row carries.
+# The row readers take an optional root (the week being played); without it
+# they read every week on the page, whose rosters share their keys.
 LIVE_GAMES_JS = """
 function muGameText(state,score,opp,detail){
   var sc=(score!==undefined&&score!==null&&opp!==undefined&&opp!==null)?' '+score+'\u2013'+opp:'';
@@ -503,9 +507,9 @@ function muElapsed(g){
 // the unplayed share of the projection on his row (data-proj), by his game's
 // clock; the side's total follows. Written into the payload as players[pid].live
 // and teams[key].gs_live, which the live updater already knows how to draw.
-function muLiveProjections(payload,games){
+function muLiveProjections(payload,games,root){
   var teams=(payload&&payload.teams)||{};
-  var wraps=document.querySelectorAll('[data-roster]');
+  var wraps=(root||document).querySelectorAll('[data-roster]');
   for(var i=0;i<wraps.length;i++){var wrap=wraps[i],key=wrap.getAttribute('data-roster'),t=teams[key];
     if(!t||!t.players)continue;
     var rows=wrap.querySelectorAll('tr.starter[data-pid]');if(!rows.length)continue;
@@ -534,9 +538,9 @@ function muMedian(payload){
     if(medNow!==null&&t.points!==null&&t.points!==undefined)t.vs_median=t.points-medNow;
     else if(medProj!==null&&t.gs_live!==null&&t.gs_live!==undefined)t.vs_median=t.gs_live-medProj;});
   payload.median={now:medNow,proj:medProj};return payload;}
-function muMergeGames(payload,games){
+function muMergeGames(payload,games,root){
   var teams=(payload&&payload.teams)||{};
-  var els=document.querySelectorAll('[data-pid][data-gid]');
+  var els=(root||document).querySelectorAll('[data-pid][data-gid]');
   for(var i=0;i<els.length;i++){var el=els[i];
     var g=games[el.getAttribute('data-gid')];if(!g)continue;
     var key=el.getAttribute('data-roster')||(el.closest('[data-roster]')||{}).getAttribute&&el.closest('[data-roster]').getAttribute('data-roster');
@@ -551,7 +555,9 @@ function muMergeGames(payload,games){
 # The live updater. A page that wants it sets window.MU_LIVE before this runs:
 #   { fetch: function -> Promise of { teams: { key: { points, projected,
 #            win_probability, players: { pid: { points, line } } } } },
-#     interval: ms between polls }
+#     interval: ms between polls,
+#     root: selector of the week being played - everything is read and
+#           written inside it (optional; the whole document without it) }
 # and marks its markup: any element with data-pid holding a .mu-pts cell (a
 # table row in the wide layout, a div in the paired phone one; only rows
 # add to the starters total, or both layouts would count each player) (.mu-s for
@@ -563,8 +569,13 @@ LIVE_JS = """<script>
 (function(){
   var cfg=window.MU_LIVE;if(!cfg||!cfg.fetch)return;
   var timer=null;
+  // Everything below reads and writes inside `root`: the week being played.
+  // Every week's view is in the page with the same roster keys, and so is a
+  // reader's own league, so an unscoped poll wrote this week's live points
+  // into weeks gone by and into the reader's teams.
+  var root=(cfg.root&&document.querySelector(cfg.root))||document;
   function fmt(v){return (v===null||v===undefined||isNaN(v))?'\u2014':(Math.round(v*10)/10).toFixed(1);}
-  function each(sel,fn){var els=document.querySelectorAll(sel);for(var i=0;i<els.length;i++)fn(els[i]);}
+  function each(sel,fn){var els=root.querySelectorAll(sel);for(var i=0;i<els.length;i++)fn(els[i]);}
   // score_cell in the browser; null leaves a pre-game projection standing.
   function score(p){var st=p.state,pts=p.points;
     if(st==='post')return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp">final</span>';
@@ -576,7 +587,7 @@ LIVE_JS = """<script>
     var teams=(data&&data.teams)||{};var keys=Object.keys(teams);if(!keys.length)return false;
     keys.forEach(function(key){
       var t=teams[key];var pts=t.points;
-      var roster=document.querySelector('[data-roster="'+key+'"]');
+      var roster=root.querySelector('[data-roster="'+key+'"]');
       // A payload can carry game states without points (the points feed
       // failed, the scoreboard did not): then only the indicators move.
       var scored=false;
@@ -590,7 +601,7 @@ LIVE_JS = """<script>
           if(p.points!==undefined&&p.points!==null)scored=true;
           // The score cell: points, and under them the live expected final
           // (points so far plus the unplayed share of the projection) or
-          // final. The GS column stays the pre-game projection.
+          // final.
           var c=el.querySelector('.mu-pts'),h=c&&score(p);if(h)c.innerHTML=h;
           // The indicator: the row lights up while his game is on, and the
           // game cell carries the score and clock.
@@ -600,8 +611,26 @@ LIVE_JS = """<script>
               if(!sp){sp=document.createElement('span');g.insertBefore(document.createTextNode(' '),g.firstChild);g.insertBefore(sp,g.firstChild);}
               sp.className=p.state==='in'?'live':'fin';sp.textContent=p.game;}}
           if(p.line!==undefined&&p.line!==null){var s=el.querySelector('.mu-s');if(s)s.textContent=p.line;}
+          // Projection cells a page marks with data-pre (its pre-game number)
+          // become live the way Sleeper's own app shows them: points so far
+          // plus the unplayed share of that number, by his game's clock (p.done,
+          // 0-1), and his points once it is over. No projection feed moves in
+          // play - Sleeper's still says 23.5 for a back who has finished on 41 -
+          // so without this every source column froze at kickoff.
+          if(p.state&&p.state!=='pre'&&p.done!==undefined&&p.done!==null){
+            var got=p.points||0,cells=el.querySelectorAll('td[data-pre]');
+            for(var i=0;i<cells.length;i++){var td=cells[i],pre=parseFloat(td.getAttribute('data-pre'));
+              if(isNaN(pre))continue;
+              td.textContent=fmt(p.state==='post'?got:got+pre*(1-p.done));
+              td.classList.add('live');td.title='Pre-game '+fmt(pre);}}
           if(el.tagName==='TR'&&el.classList.contains('starter'))total+=(p.points||0);
         });
+        // ...and each column's starters total follows its cells.
+        each('[data-roster="'+key+'"] tr.total td[data-tcol]',function(td){
+          var col=td.getAttribute('data-tcol'),sum=0,moved=false;
+          each('[data-roster="'+key+'"] tr.starter td[data-col="'+col+'"]',function(x){
+            var v=parseFloat(x.textContent);if(!isNaN(v))sum+=v;if(x.classList.contains('live'))moved=true;});
+          if(moved){td.textContent=fmt(sum);td.classList.add('live');}});
         if((pts===null||pts===undefined)&&scored)pts=total;
       }
       if(pts===null||pts===undefined)return;
@@ -629,7 +658,6 @@ LIVE_JS = """<script>
       var a=parseFloat(els[0].getAttribute('data-val')),b=parseFloat(els[1].getAttribute('data-val'));
       if(isNaN(a)||isNaN(b))return;
       els[0].classList.toggle('lead',a>b);els[1].classList.toggle('lead',b>a);
-      var sb=document.querySelectorAll('[data-sb]');
     });
     each('[data-sb]',function(el){
       var row=el.parentNode;var cells=row.querySelectorAll('[data-sb]');if(cells.length!==2)return;
@@ -646,12 +674,22 @@ LIVE_JS = """<script>
     each('.mu-asof',function(el){el.textContent=' \u00b7 live, points as of '+h+':'+mn+(d.getHours()<12?' AM':' PM');});
     return true;
   }
+  // Hidden tab, or a root not on screen (another week picked, or the reader's
+  // own league shown instead): nothing to draw, so nothing to fetch.
+  function unseen(){return document.hidden||(root!==document&&!root.getClientRects().length);}
+  // One loop, ever. Coming back to the tab polls at once - but not while a
+  // fetch is out: its timer has already fired, so clearing it did nothing and
+  // every return mid-fetch used to start another loop alongside it.
+  var busy=false;
+  function next(ms){clearTimeout(timer);timer=setTimeout(poll,ms);}
   function poll(){
-    if(document.hidden){timer=setTimeout(poll,cfg.interval||60000);return;}
-    cfg.fetch().then(function(data){apply(data);timer=setTimeout(poll,cfg.interval||60000);})
-      .catch(function(){timer=setTimeout(poll,120000);});
+    if(busy)return;
+    if(unseen()){next(cfg.interval||60000);return;}
+    busy=true;
+    cfg.fetch().then(function(data){busy=false;apply(data);next(cfg.interval||60000);})
+      .catch(function(){busy=false;next(120000);});
   }
-  document.addEventListener('visibilitychange',function(){if(!document.hidden){clearTimeout(timer);poll();}});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)poll();});
   timer=setTimeout(poll,cfg.delay||8000);
 })();
 </script>"""
@@ -686,9 +724,9 @@ def median_tracker(teams: list, week: int, started: bool, final: bool,
 # already marks up (data-nm / data-pos / data-proj / data-gid), so a page whose
 # feed carries only points can still drive the tracker.
 LIVE_LEFT_JS = """
-function muTrackerLeft(payload,games){
+function muTrackerLeft(payload,games,root){
   var teams=(payload&&payload.teams)||{};
-  var wraps=document.querySelectorAll('[data-roster]');
+  var wraps=(root||document).querySelectorAll('[data-roster]');
   for(var i=0;i<wraps.length;i++){var wrap=wraps[i],key=wrap.getAttribute('data-roster'),t=teams[key];
     if(!t)continue;
     var rows=wrap.querySelectorAll('tr.starter[data-pid]');if(!rows.length)continue;
@@ -821,8 +859,10 @@ window.muMedTrack=(function(){
   // `init` is exposed because a reader's own league builds its tracker after
   // this has already run - the blob is fetched from Sleeper rather than
   // rendered into the page - and it needs the same renderer, not a second one.
-  return {init:init, update:function(week,live){
-    var el=document.querySelector('[data-medt-week="'+week+'"]');if(!el||!live||!live.teams)return;
+  // `root` keeps the update to the page's own league: a reader's league on the
+  // same page renders a tracker with the same week number, and it comes first.
+  return {init:init, update:function(week,live,root){
+    var el=(root||document).querySelector('[data-medt-week="'+week+'"]');if(!el||!live||!live.teams)return;
     var d;try{d=JSON.parse(el.getAttribute('data-medt'));}catch(e){return;}
     var any=false;
     d.teams.forEach(function(t){var u=live.teams[t.k];if(!u||!u.left)return;any=true;

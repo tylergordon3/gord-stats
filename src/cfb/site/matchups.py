@@ -649,9 +649,10 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
             "var sb=muGames('https://site.api.espn.com/apis/site/v2/sports/football/college-football/"
             f"scoreboard?groups=80&limit=500&week={espn_week}&dates={SEASON}&seasontype=2');"
             "return Promise.all([api,sb]).then(function(x){"
-            "var out=muMedian(muTrackerLeft(muLiveProjections(muMergeGames(x[0],x[1]),x[1]),x[1]));"
-            f"if(window.muMedTrack)window.muMedTrack.update({week},out);return out;}});}},"
-            f"interval:{60000 if started else 300000}}};</script>")
+            f"var R=document.querySelector('#wk-view-{week}');"
+            "var out=muMedian(muTrackerLeft(muLiveProjections(muMergeGames(x[0],x[1],R),x[1],R),x[1],R));"
+            f"if(window.muMedTrack)window.muMedTrack.update({week},out,R);return out;}});}},"
+            f"interval:{60000 if started else 300000},root:'#wk-view-{week}'}};</script>")
     # "Median 0.0 now" before anyone has scored is noise: Yahoo flips a week
     # off preevent at the start of its window, days before kickoff.
     scoring = started and any((s["pts"] or 0) > 0 for s in every)

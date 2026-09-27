@@ -245,6 +245,12 @@ def hybrid_score(pts, hproj, g: dict | None) -> str:
     return ui.score_cell(pts, hproj, state, exp)
 
 
+def _proj_cell(v, col: str, cls: str = "") -> str:
+    pre = "" if v is None else f' data-pre="{round(float(v), 2)}"'
+    klass = f' class="{cls}"' if cls else ""
+    return f'<td{klass} data-col="{col}"{pre}>{ui.fmt(v)}</td>'
+
+
 def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, stats: dict,
                hint: str = "", grade: str = "", sd: float = 0.0, hproj=None) -> str:
     pid, slot = row["pid"], row["slot"]
@@ -280,8 +286,10 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
             f"</span>{inj_html}{tag}{grade_html}</span></span></td>"
             f'<td class="mu-g">{game_cell(g)}</td>'
-            f'<td class="mu-gs">{ui.fmt(proj)}</td>'
-            + "".join(f"<td>{ui.fmt(v)}</td>" for v in outside)
+            # data-pre / data-col: LIVE_JS turns each projection into a live
+            # expected final once his game starts, and the totals follow.
+            + _proj_cell(proj, "gs", "mu-gs")
+            + "".join(_proj_cell(v, f"s{i}") for i, v in enumerate(outside))
             + f'<td class="mu-s">{escape(stat_line(stats, card["pos"]))}</td></tr>')
 
 
@@ -368,8 +376,9 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     html_rows = [cell(r) for r in starters]
     html_rows.append(f'<tr class="total"><td class="mu-pts">{total_cell}</td><td></td>'
                      '<td class="mu-p">Starters</td><td></td>'
-                     f'<td class="mu-gs">{gs_total:.1f}</td>'
-                     + "".join(f"<td>{t:.1f}</td>" for t in src_totals)
+                     f'<td class="mu-gs" data-tcol="gs">{gs_total:.1f}</td>'
+                     + "".join(f'<td data-tcol="s{i}">{t:.1f}</td>'
+                               for i, t in enumerate(src_totals))
                      + "<td></td></tr>")
     if bench:
         html_rows.append(f'<tr class="sep"><td colspan="{4 + len(sources) + 2}">Bench</td></tr>')
@@ -715,7 +724,7 @@ MEDIAN_TRACKER_JS = ui.MEDIAN_TRACKER_JS
 # the same arithmetic as `expected` and `win_probability` above. Projections
 # and spreads are read off the rows, so nothing the page already knows is
 # refetched. `compute` is exposed so it can be exercised with a fake payload.
-_LIVE_FETCH_JS = """window.MU_LIVE={interval:__INTERVAL__,
+_LIVE_FETCH_JS = """window.MU_LIVE={interval:__INTERVAL__,root:'#mm-built #wk-view-__WEEK__',
 compute:function(rows,games){
   var teams={};
   function erf(x){var t=1/(1+0.3275911*Math.abs(x));var y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y;}
@@ -726,7 +735,7 @@ compute:function(rows,games){
     var key=String(r.roster_id),pp=r.players_points||{},players={},exp=0,v=0;
     var hexp=0;
     var left=[];
-    document.querySelectorAll('#wk-view-__WEEK__ [data-roster="'+key+'"] tr[data-pid]').forEach(function(tr){
+    document.querySelectorAll('#mm-built #wk-view-__WEEK__ [data-roster="'+key+'"] tr[data-pid]').forEach(function(tr){
       var pid=tr.getAttribute('data-pid'),proj=parseFloat(tr.getAttribute('data-proj')),sd=parseFloat(tr.getAttribute('data-sd'))||2;
       var hp=parseFloat(tr.getAttribute('data-hproj'));
       var g=games[tr.getAttribute('data-team')],done=elapsed(g),pts=pp[pid]||0;
@@ -734,7 +743,7 @@ compute:function(rows,games){
       var e=pts+proj*(1-done),he=pts+hp*(1-done);
       if(tr.classList.contains('starter')){exp+=e;v+=sd*sd*(1-done);hexp+=he;
         if(g&&(g.state==='pre'||g.state==='in'))left.push({n:tr.getAttribute('data-nm')||'',r:hp*(1-done),live:g.state==='in',pos:tr.getAttribute('data-pos')||'',p:pts});}
-      players[pid]={points:pp[pid],hexp:(g&&g.state!=='pre')?he:undefined,
+      players[pid]={points:pp[pid],hexp:(g&&g.state!=='pre')?he:undefined,done:g?done:undefined,
         state:g?g.state:undefined,game:g?muGameText(g.state,g.score,g.opp_score,g.detail):undefined};
     });
     Object.keys(pp).forEach(function(k){if(!players[k])players[k]={points:pp[k]};});
@@ -766,7 +775,7 @@ fetch:function(){
           detail:(st.type||{}).shortDetail,score:x.score,opp_score:o.score};});});
     return games;}).catch(function(){return {};});
   return Promise.all([sleeper,espn]).then(function(both){var out=self.compute(both[0],both[1]);
-    if(window.muMedTrack)window.muMedTrack.update(__WEEK__,out);return out;});
+    if(window.muMedTrack)window.muMedTrack.update(__WEEK__,out,document.getElementById('mm-built'));return out;});
 }};"""
 
 
