@@ -61,9 +61,17 @@ def test_the_callback_checks_state_against_its_own_cookie():
 
 
 def test_redirects_cannot_leave_the_site():
-    """`next` arrives in the query string, so it is attacker-controlled."""
+    """`next` arrives in the query string, so it is attacker-controlled. The
+    check is behavioural - tests/test_safe_next.py runs it in a browser - since
+    a pattern on the source is what let "/\\evil.com" through."""
     assert "function safeNext" in AUTH
-    assert re.search(r"\^\\/\(\?!\\/\)", AUTH), "safeNext does not reject //host"
+    for start in (m.end() for m in re.finditer(r"(?<!function )safeNext\(", AUTH)):
+        depth, i = 1, start
+        while depth:
+            depth += {"(": 1, ")": -1}.get(AUTH[i], 0)
+            i += 1
+        assert AUTH[start:i - 1].endswith(", url.origin"), \
+            f"a safeNext call without the origin to resolve against: {AUTH[start:i - 1]}"
 
 
 def test_no_google_token_is_ever_stored():

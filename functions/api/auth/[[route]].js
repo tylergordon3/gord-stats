@@ -45,10 +45,21 @@ export async function onRequestGet(context) {
   return json({ ok: false, error: "not found" }, 404);
 }
 
-/** Only same-site paths: `next` comes from the query string, so it is untrusted. */
-function safeNext(raw) {
-  const next = raw || "/";
-  return /^\/(?!\/)/.test(next) ? next : "/";
+/**
+ * Only same-site paths: `next` comes from the query string, so it is untrusted.
+ * Resolved the way a browser resolves the Location header it ends up in, and
+ * kept only if it lands on this origin. A pattern on the raw string let
+ * "/\evil.com" through - browsers read the backslash as a slash - so
+ * /api/auth/logout?next=/%5Cevil.com signed a reader out onto another site.
+ */
+function safeNext(raw, origin) {
+  try {
+    const to = new URL(raw || "/", origin);
+    if (to.origin === origin) return to.pathname + to.search + to.hash;
+  } catch (e) {
+    // not a URL at all
+  }
+  return "/";
 }
 
 function redirectUri(url) {
@@ -57,7 +68,7 @@ function redirectUri(url) {
 
 async function login(url, env) {
   const state = crypto.randomUUID();
-  const next = safeNext(url.searchParams.get("next"));
+  const next = safeNext(url.searchParams.get("next"), url.origin);
 
   // State is carried in a signed cookie, not in a store: it only has to
   // survive the round trip to Google, and this way the CSRF check needs no
@@ -118,7 +129,7 @@ async function callback(request, url, env) {
     exp: Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400,
   }, env.SESSION_SECRET);
 
-  const headers = new Headers({ location: safeNext(stamp.next), "cache-control": "no-store" });
+  const headers = new Headers({ location: safeNext(stamp.next, url.origin), "cache-control": "no-store" });
   headers.append("set-cookie",
     setCookie(SESSION_COOKIE, session, { maxAge: SESSION_DAYS * 86400 }));
   headers.append("set-cookie", setCookie(STATE_COOKIE, "", { maxAge: 0 }));
@@ -181,7 +192,7 @@ function logout(url) {
   return new Response(null, {
     status: 302,
     headers: {
-      location: safeNext(url.searchParams.get("next")),
+      location: safeNext(url.searchParams.get("next"), url.origin),
       "set-cookie": setCookie(SESSION_COOKIE, "", { maxAge: 0 }),
       "cache-control": "no-store",
     },
@@ -190,7 +201,7 @@ function logout(url) {
 
 /** Back to the page they came from, with something the UI can show. */
 function fail(url, message) {
-  const to = new URL(safeNext(url.searchParams.get("next")), url.origin);
+  const to = new URL(safeNext(url.searchParams.get("next"), url.origin), url.origin);
   to.searchParams.set("signin", "failed");
   to.searchParams.set("why", message);
   const headers = new Headers({ location: to.toString(), "cache-control": "no-store" });
