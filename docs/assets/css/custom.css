@@ -4841,6 +4841,17 @@ body.sec-cfb, body.sec-fantasy, body.sec-wnba {
   color: var(--accent-dark, #8A420A);
 }
 
+/* The line under a generated page's title (gordstats.frontmatter). It was an
+   <h3>, 21px bold on a phone under a 24px title, so it read as a second
+   heading; it is a caption. Pulled up to the title it belongs to. */
+#main_content .page-sub {
+  margin: -8px 0 16px;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--gs-muted);
+}
+
 @media (prefers-color-scheme: dark) {
   .sub-nav a.active {
     box-shadow: inset 0 -2px 0 var(--accent-text, #F5A968);

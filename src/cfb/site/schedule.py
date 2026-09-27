@@ -1926,21 +1926,14 @@ def build() -> tuple:
     views = {int(w): _week_view(grp.sort_values("local"), records if int(w) == current else {},
                                 picks if int(w) == current else "")
              for w, grp in df.groupby("week")}
-    info = gameinfo.load(SEASON)
-    lined = sum(1 for e in info.values() if e.get("spread") is not None)
-    forecast = sum(1 for e in info.values() if e.get("weather"))
-
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
+    # One sentence. This was 110 words - most of the first screen on a phone -
+    # listing what every card visibly shows; the legend below it, folded,
+    # explains the columns and tags for whoever wants them.
     intro = (
-        f'<p class="sc-intro">Every FBS game of {SEASON}, week by week. For each one: who '
-        "<b>GordStats</b> picks and how sure it is, which side it would take against the "
-        "<b>DraftKings</b> number and the Over/Under, with ESPN's <b>FPI</b> and <b>SP+</b> "
-        "stacked beside them; both teams' record, ATS, points, ratings and last five; and "
-        "the kickoff forecast. <b>More</b> opens every book's line and how it has moved. "
-        "Above the current week: GordStats' underdog and parlay of the day. "
-        "This week's scores update in place while games are on. "
-        f"{lined} upcoming games have a book line and {forecast} a forecast so far. "
-        f"Rebuilt daily (last: {built}).</p>")
+        f'<p class="sc-intro">Every FBS game of {SEASON}: the <b>GordStats</b> pick beside '
+        "the <b>DraftKings</b> line, <b>FPI</b> and <b>SP+</b>; <b>More</b> opens every "
+        f"book's line. Scores update live; rebuilt {built}.</p>")
     # Scoped through tbody, not just the table: this page's own stripe rule is
     # `table.cfb-sched tbody tr.g:nth-child(even) td`, and a selector one
     # element shorter loses to it on every second row. Emitted after _CSS so a

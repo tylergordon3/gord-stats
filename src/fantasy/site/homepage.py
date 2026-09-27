@@ -120,11 +120,12 @@ def _style(df: pd.DataFrame):
 def metrics_section() -> str:
     """The All-Time Metrics block of the homepage (legend, table)."""
     table = _style(all_time_metrics()).to_html()
-    return f"""<p><strong>PF / PA - Points For / Points Against</strong>: total points scored and allowed, all seasons</p>
-<p><strong>SOS - Strength of Schedule</strong>: Green = Easier | Red = Harder</p>
-<p><strong>SOV - Strength of Victory</strong>: More Wins Against [Green = Stronger Teams | Read = Weaker Teams] </p>
-<p><strong>Exp W (Actual) - Expected H2H Wins vs Actual H2H Wins</strong>: Green = Better than Expected | Red = Worse than Expected
-*Expected Wins calculated using Pythagorean Wins formula using a constant of {EXPW_RATIO}.</p>
+    # One line per column. "Read = Weaker Teams" was a typo for Red that had
+    # stood here since the page was ported.
+    return f"""<p><strong>PF / PA</strong>: points for and against, all seasons.</p>
+<p><strong>SOS</strong> (strength of schedule): green easier, red harder.</p>
+<p><strong>SOV</strong> (strength of victory): green = wins over stronger teams, red = over weaker ones.</p>
+<p><strong>Exp W (Actual)</strong>: head-to-head wins expected from points scored and allowed (Pythagorean, constant {EXPW_RATIO}), actual in parentheses; green beat it, red fell short.</p>
 <div class="table-scroll">
 {table}
 </div>"""
