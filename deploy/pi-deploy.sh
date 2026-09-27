@@ -60,6 +60,12 @@ main() {
   ########################################
   # CLEAN SLATE
   ########################################
+  # A rebase an earlier run left half-done makes every command below fail
+  # ("path is unmerged") on every run until someone backs it out by hand.
+  if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+    log "backing out a rebase an earlier run left unfinished"
+    git rebase --abort
+  fi
   # Generated output from an interrupted run would block the rebase. Everything
   # tracked under docs/ and data/ is regenerated, so discarding it costs nothing.
   if ! git diff --quiet -- docs data; then
@@ -79,7 +85,7 @@ main() {
   BRANCH="$(git branch --show-current)"
   BEFORE="$(git rev-parse HEAD)"
   git fetch --quiet origin "$BRANCH"
-  git pull --rebase --quiet origin "$BRANCH"
+  pull_rebase
   AFTER="$(git rev-parse HEAD)"
   [ "$BEFORE" = "$AFTER" ] \
     && log "already at $(git rev-parse --short HEAD)" \
@@ -110,8 +116,14 @@ main() {
   ########################################
   # REFRESH
   ########################################
+  # A failed section no longer cancels the deploy. Under `set -e` it used to:
+  # one fantasy failure on 2026-09-23 left CFB, NFL and every other section
+  # unpublished for the day. The rest of the site now goes out, the data is
+  # committed, and the script exits non-zero at the very end so OnFailure
+  # still sends the alert.
   log "refreshing sections: $TASKS"
-  python -m gordstats.daily --tasks "$TASKS"
+  local SECTIONS_RC=0
+  run_sections || SECTIONS_RC=$?
 
   ########################################
   # JEKYLL
@@ -141,8 +153,9 @@ main() {
   if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD; then
     log "origin moved during the build — rebasing and rebuilding before publish"
     git checkout -- docs data       # generated, and regenerated on the next line
-    git pull --rebase --quiet origin "$BRANCH"
-    python -m gordstats.daily --tasks "$TASKS"
+    pull_rebase
+    SECTIONS_RC=0
+    run_sections || SECTIONS_RC=$?
     bundle exec jekyll build --source docs --destination docs/_site --quiet
   fi
 
@@ -167,15 +180,48 @@ main() {
     git commit -q -m "Daily refresh ($TASKS) $(date '+%Y-%m-%d %H:%M')"
     if ! git push --quiet origin "$BRANCH" 2>/dev/null; then
       log "push rejected — rebasing onto origin and retrying"
-      git pull --rebase --quiet origin "$BRANCH"
+      pull_rebase
       git push --quiet origin "$BRANCH"
     fi
     log "recorded $(git rev-parse --short HEAD)"
   fi
 
+  if [ "$SECTIONS_RC" -ne 0 ]; then
+    echo "❌ published, but a section failed (see FAILED: above) — its pages may be stale"
+    exit "$SECTIONS_RC"
+  fi
   log "✅ done"
 }
 
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
+
+# `git pull --rebase` that backs out on a conflict instead of leaving the repo
+# mid-rebase, where it wedges this script and pi-live.sh alike until someone
+# aborts it by hand. Fails either way, so `set -e` still stops the run - but
+# the next run starts clean. pi-live.sh has always done this.
+pull_rebase() {
+  git pull --rebase --quiet origin "$BRANCH" && return 0
+  git rebase --abort 2>/dev/null || true
+  echo "❌ git pull --rebase conflicted with origin/$BRANCH; backed it out"
+  return 1
+}
+
+# Refresh the sections. Returns 0, or 4 (gordstats.daily.SECTIONS_FAILED) when
+# some sections failed but the run finished — the homepage rendered and every
+# other section wrote its pages, so the caller publishes anyway. Any other
+# status is the runner itself breaking (render_home raising, say): the tree
+# can't be trusted, so this exits instead of returning. Callers use it in an
+# `||`, where `set -e` is off, so every status is handled explicitly here.
+run_sections() {
+  local rc=0
+  python -m gordstats.daily --tasks "$TASKS" || rc=$?
+  case "$rc" in
+    0 | 4) return "$rc" ;;
+    *)
+      echo "❌ gordstats.daily exited $rc — not publishing a half-built site"
+      exit "$rc"
+      ;;
+  esac
+}
 
 main "$@"

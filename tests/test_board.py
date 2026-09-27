@@ -179,8 +179,93 @@ def test_cbb_task_is_registered_and_refuses_to_run_out_of_season():
         "out of season, _cbb() must decline rather than rebuild from stale feeds"
 
 
+def test_a_failed_section_finishes_the_run_with_the_status_the_deploy_publishes_on(monkeypatch):
+    """One failing section used to cancel the whole deploy: daily exited 1 and
+    pi-deploy.sh, under `set -e`, stopped before Jekyll. The Sep 23 and 24 runs
+    published nothing because fantasy failed. The run has to carry on past the
+    failure and say so with the status the deploy script treats as "publish"."""
+    from gordstats import daily
+
+    ran = []
+
+    def boom():
+        raise RuntimeError("feed down")
+
+    monkeypatch.setattr(daily, "TASKS", {"a": boom, "b": lambda: ran.append("b")})
+    assert daily.main(["--tasks", "a,b", "--skip-render"]) == daily.SECTIONS_FAILED
+    assert ran == ["b"], "the section after the failure must still run"
+    assert daily.main(["--tasks", "b", "--skip-render"]) == 0
+
+
+@pytest.mark.parametrize("status, publishes", [(0, True), (None, True), (1, False), (2, False)])
+def test_the_deploy_publishes_after_a_failed_section_and_stops_on_a_broken_run(status, publishes):
+    """Runs pi-deploy.sh's own run_sections() with `python` stubbed, so the
+    script and daily.SECTIONS_FAILED cannot drift apart. `None` stands for
+    SECTIONS_FAILED itself."""
+    import re
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from gordstats import daily
+
+    if not shutil.which("bash"):
+        pytest.skip("no bash")
+    script = (Path(__file__).parent.parent / "deploy" / "pi-deploy.sh").read_text()
+    fn = re.search(r"^run_sections\(\) \{.*?^\}", script, re.S | re.M)
+    assert fn, "run_sections() is gone from pi-deploy.sh"
+    status = daily.SECTIONS_FAILED if status is None else status
+    probe = (f"python() {{ return {status}; }}\nTASKS=x\n{fn.group(0)}\n"
+             "rc=0; run_sections || rc=$?; echo \"returned $rc\"")
+    out = subprocess.run(["bash", "-c", probe], capture_output=True, text=True)
+    if publishes:
+        assert out.returncode == 0 and f"returned {status}" in out.stdout
+    else:
+        assert out.returncode == status and "returned" not in out.stdout, \
+            "a broken run must stop the deploy, not return to it"
+
+
 def test_every_task_in_the_table_is_callable():
     from gordstats import daily
 
     for name, fn in daily.TASKS.items():
         assert callable(fn), f"task {name} is not callable"
+
+
+def test_a_conflicting_pull_leaves_the_pi_repo_usable(tmp_path):
+    """pi-deploy.sh's pulls used to leave the repo mid-rebase on a conflict,
+    and every run after - this script's and pi-live.sh's - then failed at the
+    clean slate ("path is unmerged") until someone aborted it by hand. Runs the
+    script's own pull_rebase() against two clones that disagree."""
+    import re
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    if not shutil.which("git") or not shutil.which("bash"):
+        pytest.skip("no git/bash")
+
+    def git(cwd, *args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                       cwd=cwd, check=True, capture_output=True)
+
+    origin, pi, pc = tmp_path / "origin.git", tmp_path / "pi", tmp_path / "pc"
+    git(tmp_path, "init", "-q", "--bare", "-b", "main", str(origin))
+    git(tmp_path, "clone", "-q", str(origin), str(pc))
+    (pc / "f").write_text("base\n")
+    git(pc, "add", "f"); git(pc, "commit", "-qm", "base"); git(pc, "push", "-q", "origin", "main")
+    git(tmp_path, "clone", "-q", str(origin), str(pi))
+    (pc / "f").write_text("pc\n"); git(pc, "commit", "-qam", "pc"); git(pc, "push", "-q", "origin", "main")
+    (pi / "f").write_text("pi\n"); git(pi, "commit", "-qam", "pi")
+
+    script = (Path(__file__).parent.parent / "deploy" / "pi-deploy.sh").read_text()
+    fn = re.search(r"^pull_rebase\(\) \{.*?^\}", script, re.S | re.M).group(0)
+    probe = (f"git() {{ command git -c user.name=t -c user.email=t@t \"$@\"; }}\n"
+             f"BRANCH=main\n{fn}\npull_rebase")
+    out = subprocess.run(["bash", "-c", probe], cwd=pi, capture_output=True, text=True)
+
+    assert out.returncode != 0, "a conflict must still stop the run"
+    assert not (pi / ".git" / "rebase-merge").exists() and not (pi / ".git" / "rebase-apply").exists()
+    status = subprocess.run(["git", "status", "--porcelain"], cwd=pi,
+                            capture_output=True, text=True).stdout
+    assert "UU" not in status and (pi / "f").read_text() == "pi\n"

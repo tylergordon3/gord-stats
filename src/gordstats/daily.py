@@ -141,6 +141,13 @@ def _nfl() -> None:
         raise RuntimeError(f"nfl pages failed to build: {', '.join(failed)}")
 
 
+# Exit status for "some sections failed, but the run finished": the homepage
+# rendered and every section that worked has written its pages. pi-deploy.sh
+# publishes on this status and reports the failure afterwards. Any other
+# non-zero exit — an uncaught error in the runner itself, render_home raising —
+# means the tree may be half-built, and the deploy stops before Jekyll.
+SECTIONS_FAILED = 4
+
 TASKS = {
     "wnba": _wnba,
     "cbb": _cbb,
@@ -206,7 +213,7 @@ def main(argv=None) -> int:
 
     if failed:
         print(f"FAILED: {', '.join(failed)}", file=sys.stderr)
-        return 1
+        return SECTIONS_FAILED
     print(f"{len(names)}/{len(names)} section(s) ok", flush=True)
     return 0
 
