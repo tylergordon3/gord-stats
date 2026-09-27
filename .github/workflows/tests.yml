@@ -9,6 +9,11 @@ on:
   push:
   pull_request:
 
+# Nothing here writes to the repository, so the token cannot either - one
+# that could would only be something for a compromised action to use.
+permissions:
+  contents: read
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -16,6 +21,30 @@ jobs:
       MPLBACKEND: Agg
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      # The Pages Functions are compiled by the Pi's `wrangler pages deploy`,
+      # so a syntax error in one fails the whole site's upload - found at
+      # deploy time, by the Pi. This finds it at push. `node --check` parses
+      # and runs nothing.
+      #
+      # They are ES modules in a repo with no package.json, so a bare
+      # `node --check file.js` would take them for CommonJS (or, from Node
+      # 22.7, guess from their syntax). `--input-type=module` makes the module
+      # parse explicit, but it applies only to stdin and --eval - hence the
+      # redirect. `--experimental-default-type=module` once did the same for
+      # files; Node 23 removed it, so it fails outright on the current LTS.
+      - name: Syntax-check the Pages Functions
+        run: |
+          status=0
+          while IFS= read -r -d '' f; do
+            if ! node --check --input-type=module < "$f"; then
+              echo "::error file=$f::does not parse as an ES module"
+              status=1
+            fi
+          done < <(find functions -name '*.js' -print0)
+          exit $status
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"

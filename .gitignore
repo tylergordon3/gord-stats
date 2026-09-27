@@ -42,6 +42,9 @@ vendor/
 
 .wrangler/
 node_modules/
+# `wrangler pages dev` reads local secrets from here (SESSION_SECRET, the
+# Google client secret). Never committed: the real ones are Pages secrets.
+.dev.vars
 
 # ========================
 # OS
