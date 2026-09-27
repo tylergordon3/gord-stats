@@ -534,7 +534,7 @@ body {
   height: 32px;
   padding: 0;
   border: 1px solid #4a5a68;
-  border-radius: 16px;
+  border-radius: 999px;
   background: #f8f9fa;
   cursor: pointer;
   font-size: 13px;
@@ -551,12 +551,15 @@ body {
 
 #league-toggle-btn .slider {
   position: absolute;
+  /* Pinned to both edges rather than a fixed 26px: on a phone the button is
+     44px tall (the tap-target rule below), and a 26px slider left the "Men"
+     label hanging out of the bottom of its pill. */
   top: 2px;
+  bottom: 2px;
   left: 2px;
   width: 52px;
-  height: 26px;
   background: #111;
-  border-radius: 13px;
+  border-radius: 999px;
   transition: transform 0.2s ease;
   z-index: 1;
 }
@@ -736,6 +739,9 @@ body {
 .filter-bar {
   gap: 20px;
   width: 100%;
+  /* border-box, or the 28px of padding lands on top of 100% and the whole
+     page pans sideways on a phone (the conference and bracketology pages). */
+  box-sizing: border-box;
   padding: 10px 14px 8px;
 }
 
@@ -4831,6 +4837,24 @@ tr:hover .fav-star {
   outline: 2px solid var(--accent, #A34F0A);
   outline-offset: 2px;
   border-radius: 3px;
+}
+
+/* Phones: the star is a thumb target. As drawn it was 18x14px - a tap had to
+   land on the glyph itself. Padding makes the button about 40px square and
+   equal negative margins take the padding back out of the layout, so the
+   glyph, its 6px gap from the name and the row height stay exactly as they
+   were. Lifted so the next cell does not paint over the widened target. */
+@media (max-width: 767px) {
+  .fav-star {
+    position: relative;
+    z-index: 1;
+    padding: 13px 18px 13px 10px;
+    margin: -13px -18px -13px -4px;
+  }
+
+  .fav-filter {
+    min-height: 40px;
+  }
 }
 
 /* Highlight for anything that isn't a table row - the predictions page marks

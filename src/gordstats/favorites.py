@@ -132,7 +132,7 @@ def controls(label: str = "Only my teams") -> str:
         "<div class='fav-controls'>"
         "<span class='fav-hint'>"
         "<span class='fav-hint-star' aria-hidden='true'>&#9734;</span> "
-        "Click a star to follow a team"
+        "Tap a star to follow a team"
         "</span>"
         f"<button type='button' class='fav-filter' aria-pressed='false' hidden>"
         f"<span aria-hidden='true'>&#9733;</span> {escape(label)}"

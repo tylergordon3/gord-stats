@@ -300,7 +300,9 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   table.cfb-sched table.frt td{padding-right:6px}
   .l5{width:15px;height:15px;line-height:15px;font-size:10.5px;margin-right:1px}
   .call{font-size:12px}
-  .det-btn{font-size:11.5px}
+  /* A 14px-tall link is not a thumb target: padding makes it about 40px,
+     the negative margins keep the card's line where it was. */
+  .det-btn{font-size:11.5px;padding:14px 10px;margin:-14px -10px -14px auto}
   table.cfb-sched>tbody>tr.det{display:none}
   table.cfb-sched>tbody>tr.det.show{display:block}
   table.cfb-sched>tbody>tr.det>td{border:1px solid #e2e8f0;border-radius:10px;
