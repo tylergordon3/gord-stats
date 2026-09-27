@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-27T18:30:59+00:00",
+ "fetched": "2026-09-27T18:41:01+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -121,7 +121,7 @@
     {
      "roster_id": 6,
      "matchup_id": 1,
-     "points": 21.7,
+     "points": 31.5,
      "starters": [
       "3294",
       "4034",
@@ -156,12 +156,12 @@
       "11584": 0.0,
       "11620": 0.0,
       "12507": 2.2,
-      "3163": 8.68,
+      "3163": 11.0,
       "3294": 0.0,
       "4034": 0.0,
       "4983": 7.9,
       "5012": 0.0,
-      "6801": 2.0,
+      "6801": 11.8,
       "8134": 0.0,
       "8137": 0.0,
       "8259": 3.0,
@@ -172,7 +172,7 @@
     {
      "roster_id": 8,
      "matchup_id": 1,
-     "points": 33.28,
+     "points": 32.28,
      "starters": [
       "9228",
       "4866",
@@ -205,7 +205,7 @@
      "players_points": {
       "11560": 0.0,
       "11628": 0.0,
-      "11786": 2.0,
+      "11786": 1.0,
       "12519": 0.0,
       "12526": 3.7,
       "4199": 0.0,
@@ -228,7 +228,7 @@
     {
      "roster_id": 7,
      "matchup_id": 2,
-     "points": 56.7,
+     "points": 58.0,
      "starters": [
       "6797",
       "9224",
@@ -272,14 +272,14 @@
       "8228": 9.5,
       "9224": 4.7,
       "9487": 4.3,
-      "9488": 12.2,
+      "9488": 13.5,
       "DEN": 0.0
      }
     },
     {
      "roster_id": 9,
      "matchup_id": 2,
-     "points": 30.28,
+     "points": 34.08,
      "starters": [
       "4984",
       "6813",
@@ -310,7 +310,7 @@
       "DET"
      ],
      "players_points": {
-      "10859": 3.6,
+      "10859": 7.4,
       "11533": 0.0,
       "11563": 0.0,
       "12481": 7.5,
@@ -335,7 +335,7 @@
     {
      "roster_id": 3,
      "matchup_id": 3,
-     "points": 73.76,
+     "points": 74.04,
      "starters": [
       "7523",
       "7588",
@@ -374,8 +374,8 @@
       "12487": 0.0,
       "12489": 0.0,
       "4227": 2.0,
-      "6770": 8.96,
-      "7523": 11.96,
+      "6770": 14.08,
+      "7523": 12.24,
       "7543": 0.0,
       "7564": 16.7,
       "7588": 0.0,
@@ -478,7 +478,7 @@
      ],
      "players_points": {
       "10229": 5.0,
-      "11435": 1.3,
+      "11435": 1.2,
       "11834": 0.0,
       "12490": 6.0,
       "13346": 0.0,
@@ -497,7 +497,7 @@
     {
      "roster_id": 2,
      "matchup_id": 4,
-     "points": 59.7,
+     "points": 60.7,
      "starters": [
       "12545",
       "9509",
@@ -530,9 +530,9 @@
      ],
      "players_points": {
       "10236": 2.4,
-      "11564": 2.28,
+      "11564": 2.32,
       "11604": 0.0,
-      "12533": 5.1,
+      "12533": 5.2,
       "12545": 0.0,
       "13279": 1.6,
       "2449": 0.0,
@@ -540,7 +540,7 @@
       "5892": 4.3,
       "7569": 0.0,
       "7594": 5.7,
-      "7839": 6.0,
+      "7839": 7.0,
       "8146": 6.0,
       "9486": 0.0,
       "9509": 35.3,
@@ -555,7 +555,7 @@
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 43.84,
+     "points": 54.68,
      "starters": [
       "4943",
       "9221",
@@ -596,13 +596,13 @@
       "13298": 1.4,
       "2216": 0.0,
       "3198": 0.0,
-      "4943": 10.84,
+      "4943": 10.88,
       "5001": 0.0,
       "5859": 0.0,
       "6650": 0.0,
       "6806": 0.0,
       "8136": 7.8,
-      "9221": 11.0,
+      "9221": 21.8,
       "9500": 11.2,
       "NYG": 12.0
      }
@@ -610,7 +610,7 @@
     {
      "roster_id": 5,
      "matchup_id": 5,
-     "points": 32.1,
+     "points": 33.1,
      "starters": [
       "4881",
       "9226",
@@ -655,7 +655,7 @@
       "8150": 0.0,
       "8167": 22.6,
       "9226": 1.7,
-      "SEA": 1.0
+      "SEA": 2.0
      }
     }
    ]
@@ -871,7 +871,7 @@
    "pos": "WR"
   },
   "6794": {
-   "pts": 16.69,
+   "pts": 16.67,
    "opp": "TB",
    "team": "MIN",
    "injury": "",
@@ -1014,6 +1014,14 @@
    "name": "Chuba Hubbard",
    "pos": "RB"
   },
+  "11584": {
+   "pts": 14.74,
+   "opp": "MIN",
+   "team": "TB",
+   "injury": "",
+   "name": "Bucky Irving",
+   "pos": "RB"
+  },
   "11646": {
    "pts": 14.72,
    "opp": "CLE",
@@ -1021,14 +1029,6 @@
    "injury": "",
    "name": "Jalen Coker",
    "pos": "WR"
-  },
-  "11584": {
-   "pts": 14.68,
-   "opp": "MIN",
-   "team": "TB",
-   "injury": "",
-   "name": "Bucky Irving",
-   "pos": "RB"
   },
   "13287": {
    "pts": 14.65,
@@ -1151,7 +1151,7 @@
    "pos": "TE"
   },
   "4199": {
-   "pts": 12.92,
+   "pts": 12.86,
    "opp": "TB",
    "team": "MIN",
    "injury": "",
@@ -1431,7 +1431,7 @@
    "pos": "WR"
   },
   "12514": {
-   "pts": 9.67,
+   "pts": 9.7,
    "opp": "MIN",
    "team": "TB",
    "injury": "",
@@ -1463,7 +1463,7 @@
    "pos": "TE"
   },
   "4037": {
-   "pts": 9.44,
+   "pts": 9.47,
    "opp": "MIN",
    "team": "TB",
    "injury": "",
@@ -1518,20 +1518,20 @@
    "name": "Stefon Diggs",
    "pos": "WR"
   },
-  "9756": {
-   "pts": 9.19,
-   "opp": "TB",
-   "team": "MIN",
-   "injury": "",
-   "name": "Jordan Addison",
-   "pos": "WR"
-  },
   "9486": {
    "pts": 9.18,
    "opp": "CHI",
    "team": "PHI",
    "injury": "",
    "name": "Dontayvion Wicks",
+   "pos": "WR"
+  },
+  "9756": {
+   "pts": 9.18,
+   "opp": "TB",
+   "team": "MIN",
+   "injury": "",
+   "name": "Jordan Addison",
    "pos": "WR"
   },
   "KC": {
@@ -1686,20 +1686,20 @@
    "name": "Jason Myers",
    "pos": "K"
   },
+  "6650": {
+   "pts": 7.77,
+   "opp": "MIN",
+   "team": "TB",
+   "injury": "",
+   "name": "Chase McLaughlin",
+   "pos": "K"
+  },
   "8259": {
    "pts": 7.74,
    "opp": "BUF",
    "team": "LAC",
    "injury": "",
    "name": "Cameron Dicker",
-   "pos": "K"
-  },
-  "6650": {
-   "pts": 7.73,
-   "opp": "MIN",
-   "team": "TB",
-   "injury": "",
-   "name": "Chase McLaughlin",
    "pos": "K"
   },
   "12487": {
@@ -2842,18 +2842,37 @@
    "gp": 1.0
   },
   "7564": {
-   "rec": 5.0,
-   "rec_tgt": 6.0,
-   "rec_yd": 38.0,
+   "rec": 6.0,
+   "rec_tgt": 7.0,
+   "rec_yd": 47.0,
    "rec_td": 1.0,
-   "pts_ppr": 14.8,
-   "pts_half_ppr": 12.3,
-   "pts_std": 9.8,
+   "pts_ppr": 16.7,
+   "pts_half_ppr": 13.7,
+   "pts_std": 10.7,
+   "gp": 1.0
+  },
+  "6770": {
+   "pass_yd": 152.0,
+   "pass_td": 2.0,
+   "pts_ppr": 14.08,
+   "pts_half_ppr": 14.08,
+   "pts_std": 14.08,
+   "gp": 1.0
+  },
+  "7523": {
+   "pass_yd": 111.0,
+   "pass_td": 2.0,
+   "pass_int": 1.0,
+   "rush_att": 2.0,
+   "rush_yd": 8.0,
+   "pts_ppr": 12.24,
+   "pts_half_ppr": 12.24,
+   "pts_std": 12.24,
    "gp": 1.0
   },
   "9488": {
    "rec": 3.0,
-   "rec_tgt": 3.0,
+   "rec_tgt": 4.0,
    "rec_yd": 32.0,
    "rec_td": 1.0,
    "pts_ppr": 12.2,
@@ -2877,15 +2896,24 @@
    "pts_std": 7.9,
    "gp": 1.0
   },
-  "7523": {
-   "pass_yd": 94.0,
-   "pass_td": 2.0,
-   "pass_int": 1.0,
-   "rush_att": 1.0,
-   "rush_yd": 7.0,
-   "pts_ppr": 11.46,
-   "pts_half_ppr": 11.46,
-   "pts_std": 11.46,
+  "6801": {
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 38.0,
+   "rec_td": 1.0,
+   "pts_ppr": 11.8,
+   "pts_half_ppr": 10.8,
+   "pts_std": 9.8,
+   "gp": 1.0
+  },
+  "5947": {
+   "rec": 3.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 25.0,
+   "rec_td": 1.0,
+   "pts_ppr": 11.5,
+   "pts_half_ppr": 10.0,
+   "pts_std": 8.5,
    "gp": 1.0
   },
   "12506": {
@@ -2918,14 +2946,26 @@
    "pts_std": 7.0,
    "gp": 1.0
   },
-  "5947": {
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 15.0,
-   "rec_td": 1.0,
-   "pts_ppr": 9.5,
-   "pts_half_ppr": 8.5,
-   "pts_std": 7.5,
+  "4943": {
+   "pass_yd": 173.0,
+   "pass_td": 1.0,
+   "pts_ppr": 10.92,
+   "pts_half_ppr": 10.92,
+   "pts_std": 10.92,
+   "gp": 1.0
+  },
+  "4984": {
+   "pass_yd": 112.0,
+   "pass_int": 2.0,
+   "rush_att": 3.0,
+   "rush_yd": 3.0,
+   "rush_td": 1.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 1.0,
+   "pts_ppr": 9.88,
+   "pts_half_ppr": 9.38,
+   "pts_std": 8.88,
    "gp": 1.0
   },
   "8228": {
@@ -2949,12 +2989,22 @@
    "gp": 1.0
   },
   "HOU": {
-   "pts_allow": 10.0,
+   "pts_allow": 13.0,
    "sack": 2.0,
    "fum_rec": 1.0,
    "pts_ppr": 9.0,
    "pts_half_ppr": 9.0,
    "pts_std": 9.0,
+   "gp": 1.0
+  },
+  "6797": {
+   "pass_yd": 85.0,
+   "pass_td": 1.0,
+   "rush_att": 2.0,
+   "rush_yd": 13.0,
+   "pts_ppr": 8.7,
+   "pts_half_ppr": 8.7,
+   "pts_std": 8.7,
    "gp": 1.0
   },
   "3163": {
@@ -2966,28 +3016,12 @@
    "gp": 1.0
   },
   "4046": {
-   "pass_yd": 131.0,
+   "pass_yd": 134.0,
    "pass_td": 1.0,
    "pass_int": 1.0,
-   "pts_ppr": 8.24,
-   "pts_half_ppr": 8.24,
-   "pts_std": 8.24,
-   "gp": 1.0
-  },
-  "4943": {
-   "pass_yd": 105.0,
-   "pass_td": 1.0,
-   "pts_ppr": 8.2,
-   "pts_half_ppr": 8.2,
-   "pts_std": 8.2,
-   "gp": 1.0
-  },
-  "6770": {
-   "pass_yd": 102.0,
-   "pass_td": 1.0,
-   "pts_ppr": 8.08,
-   "pts_half_ppr": 8.08,
-   "pts_std": 8.08,
+   "pts_ppr": 8.36,
+   "pts_half_ppr": 8.36,
+   "pts_std": 8.36,
    "gp": 1.0
   },
   "4983": {
@@ -2997,16 +3031,6 @@
    "pts_ppr": 7.9,
    "pts_half_ppr": 5.9,
    "pts_std": 3.9,
-   "gp": 1.0
-  },
-  "6797": {
-   "pass_yd": 64.0,
-   "pass_td": 1.0,
-   "rush_att": 2.0,
-   "rush_yd": 13.0,
-   "pts_ppr": 7.86,
-   "pts_half_ppr": 7.86,
-   "pts_std": 7.86,
    "gp": 1.0
   },
   "8136": {
@@ -3019,6 +3043,17 @@
    "pts_ppr": 7.8,
    "pts_half_ppr": 7.3,
    "pts_std": 6.8,
+   "gp": 1.0
+  },
+  "12481": {
+   "rush_att": 13.0,
+   "rush_yd": 18.0,
+   "rec": 2.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 37.0,
+   "pts_ppr": 7.5,
+   "pts_half_ppr": 6.5,
+   "pts_std": 5.5,
    "gp": 1.0
   },
   "8155": {
@@ -3060,17 +3095,6 @@
    "pts_std": 5.4,
    "gp": 1.0
   },
-  "12481": {
-   "rush_att": 11.0,
-   "rush_yd": 6.0,
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 37.0,
-   "pts_ppr": 6.3,
-   "pts_half_ppr": 5.3,
-   "pts_std": 4.3,
-   "gp": 1.0
-  },
   "12490": {
    "rush_att": 8.0,
    "rush_yd": 48.0,
@@ -3092,6 +3116,15 @@
    "pts_std": 6.0,
    "gp": 1.0
   },
+  "8146": {
+   "rec": 4.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 20.0,
+   "pts_ppr": 6.0,
+   "pts_half_ppr": 4.0,
+   "pts_std": 2.0,
+   "gp": 1.0
+  },
   "1466": {
    "rec": 1.0,
    "rec_tgt": 1.0,
@@ -3099,6 +3132,26 @@
    "pts_ppr": 5.8,
    "pts_half_ppr": 5.3,
    "pts_std": 4.8,
+   "gp": 1.0
+  },
+  "7594": {
+   "rush_att": 10.0,
+   "rush_yd": 18.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 29.0,
+   "pts_ppr": 5.7,
+   "pts_half_ppr": 5.2,
+   "pts_std": 4.7,
+   "gp": 1.0
+  },
+  "11632": {
+   "rec": 4.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 14.0,
+   "pts_ppr": 5.4,
+   "pts_half_ppr": 3.4,
+   "pts_std": 1.4,
    "gp": 1.0
   },
   "8126": {
@@ -3138,6 +3191,24 @@
    "pts_std": 2.0,
    "gp": 1.0
   },
+  "9224": {
+   "rush_att": 6.0,
+   "rush_yd": 25.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 12.0,
+   "pts_ppr": 4.7,
+   "pts_half_ppr": 4.2,
+   "pts_std": 3.7,
+   "gp": 1.0
+  },
+  "9228": {
+   "pass_yd": 117.0,
+   "pts_ppr": 4.68,
+   "pts_half_ppr": 4.68,
+   "pts_std": 4.68,
+   "gp": 1.0
+  },
   "9487": {
    "rec": 2.0,
    "rec_tgt": 2.0,
@@ -3156,6 +3227,26 @@
    "pts_ppr": 4.3,
    "pts_half_ppr": 3.8,
    "pts_std": 3.3,
+   "gp": 1.0
+  },
+  "6813": {
+   "rush_att": 9.0,
+   "rush_yd": 19.0,
+   "rec": 2.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 4.0,
+   "pts_ppr": 4.3,
+   "pts_half_ppr": 3.3,
+   "pts_std": 2.3,
+   "gp": 1.0
+  },
+  "11624": {
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 20.0,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 3.0,
+   "pts_std": 2.0,
    "gp": 1.0
   },
   "12529": {
@@ -3178,15 +3269,6 @@
    "pts_std": 1.9,
    "gp": 1.0
   },
-  "8146": {
-   "rec": 3.0,
-   "rec_tgt": 4.0,
-   "rec_yd": 9.0,
-   "pts_ppr": 3.9,
-   "pts_half_ppr": 2.4,
-   "pts_std": 0.9,
-   "gp": 1.0
-  },
   "8138": {
    "rush_att": 10.0,
    "rush_yd": 59.0,
@@ -3197,20 +3279,9 @@
    "pts_std": 3.9,
    "gp": 1.0
   },
-  "6813": {
-   "rush_att": 8.0,
-   "rush_yd": 15.0,
-   "rec": 2.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 4.0,
-   "pts_ppr": 3.9,
-   "pts_half_ppr": 2.9,
-   "pts_std": 1.9,
-   "gp": 1.0
-  },
   "11646": {
    "rec": 2.0,
-   "rec_tgt": 3.0,
+   "rec_tgt": 4.0,
    "rec_yd": 18.0,
    "pts_ppr": 3.8,
    "pts_half_ppr": 2.8,
@@ -3228,17 +3299,13 @@
    "pts_std": 1.8,
    "gp": 1.0
   },
-  "4984": {
-   "pass_yd": 112.0,
-   "pass_int": 2.0,
-   "rush_att": 2.0,
-   "rush_yd": 2.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 1.0,
-   "pts_ppr": 3.78,
-   "pts_half_ppr": 3.28,
-   "pts_std": 2.78,
+  "12526": {
+   "rec": 2.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 17.0,
+   "pts_ppr": 3.7,
+   "pts_half_ppr": 2.7,
+   "pts_std": 1.7,
    "gp": 1.0
   },
   "5927": {
@@ -3261,27 +3328,11 @@
   },
   "6819": {
    "rec": 2.0,
-   "rec_tgt": 2.0,
+   "rec_tgt": 3.0,
    "rec_yd": 16.0,
    "pts_ppr": 3.6,
    "pts_half_ppr": 2.6,
    "pts_std": 1.6,
-   "gp": 1.0
-  },
-  "11632": {
-   "rec": 3.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 4.0,
-   "pts_ppr": 3.4,
-   "pts_half_ppr": 1.9,
-   "pts_std": 0.4,
-   "gp": 1.0
-  },
-  "9228": {
-   "pass_yd": 76.0,
-   "pts_ppr": 3.04,
-   "pts_half_ppr": 3.04,
-   "pts_std": 3.04,
    "gp": 1.0
   },
   "8259": {
@@ -3292,15 +3343,6 @@
    "pts_ppr": 3.0,
    "pts_half_ppr": 3.0,
    "pts_std": 3.0,
-   "gp": 1.0
-  },
-  "11624": {
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 17.0,
-   "pts_ppr": 2.7,
-   "pts_half_ppr": 2.2,
-   "pts_std": 1.7,
    "gp": 1.0
   },
   "10236": {
@@ -3314,8 +3356,9 @@
   },
   "11564": {
    "pass_yd": 87.0,
-   "rush_att": 1.0,
-   "rush_yd": 8.0,
+   "pass_int": 1.0,
+   "rush_att": 3.0,
+   "rush_yd": 18.0,
    "fum_lost": 1.0,
    "pts_ppr": 2.28,
    "pts_half_ppr": 2.28,
@@ -3340,12 +3383,15 @@
    "pts_std": 1.1,
    "gp": 1.0
   },
-  "9224": {
-   "rush_att": 5.0,
-   "rush_yd": 21.0,
+  "7611": {
+   "rush_att": 3.0,
+   "rush_yd": 9.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 2.0,
    "pts_ppr": 2.1,
-   "pts_half_ppr": 2.1,
-   "pts_std": 2.1,
+   "pts_half_ppr": 1.6,
+   "pts_std": 1.1,
    "gp": 1.0
   },
   "4227": {
@@ -3366,7 +3412,7 @@
   },
   "8131": {
    "rec": 1.0,
-   "rec_tgt": 3.0,
+   "rec_tgt": 4.0,
    "rec_yd": 10.0,
    "pts_ppr": 2.0,
    "pts_half_ppr": 1.5,
@@ -3382,34 +3428,6 @@
    "pts_ppr": 2.0,
    "pts_half_ppr": 1.5,
    "pts_std": 1.0,
-   "gp": 1.0
-  },
-  "6801": {
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 10.0,
-   "pts_ppr": 2.0,
-   "pts_half_ppr": 1.5,
-   "pts_std": 1.0,
-   "gp": 1.0
-  },
-  "7611": {
-   "rush_att": 2.0,
-   "rush_yd": 7.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 2.0,
-   "pts_ppr": 1.9,
-   "pts_half_ppr": 1.4,
-   "pts_std": 0.9,
-   "gp": 1.0
-  },
-  "7594": {
-   "rush_att": 10.0,
-   "rush_yd": 18.0,
-   "pts_ppr": 1.8,
-   "pts_half_ppr": 1.8,
-   "pts_std": 1.8,
    "gp": 1.0
   },
   "11631": {
@@ -3448,13 +3466,13 @@
    "pts_std": 0.7,
    "gp": 1.0
   },
-  "12526": {
+  "13279": {
    "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 5.0,
-   "pts_ppr": 1.5,
-   "pts_half_ppr": 1.0,
-   "pts_std": 0.5,
+   "rec_tgt": 2.0,
+   "rec_yd": 6.0,
+   "pts_ppr": 1.6,
+   "pts_half_ppr": 1.1,
+   "pts_std": 0.6,
    "gp": 1.0
   },
   "7553": {
@@ -3476,11 +3494,11 @@
    "gp": 1.0
   },
   "11435": {
-   "rush_att": 5.0,
-   "rush_yd": 12.0,
-   "pts_ppr": 1.2,
-   "pts_half_ppr": 1.2,
-   "pts_std": 1.2,
+   "rush_att": 7.0,
+   "rush_yd": 11.0,
+   "pts_ppr": 1.1,
+   "pts_half_ppr": 1.1,
+   "pts_std": 1.1,
    "gp": 1.0
   },
   "3451": {
@@ -3512,10 +3530,6 @@
   },
   "2449": {
    "rec_tgt": 3.0,
-   "gp": 1.0
-  },
-  "13279": {
-   "rec_tgt": 1.0,
    "gp": 1.0
   },
   "5001": {
@@ -3563,13 +3577,13 @@
    "game_id": "401872949",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "0:37 - 2nd",
+   "detail": "Halftime",
    "period": null,
    "clock": null,
    "home": "CLE",
    "away": "CAR",
    "home_score": 10.0,
-   "away_score": 0.0,
+   "away_score": 3.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -3586,12 +3600,12 @@
    "game_id": "401872954",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "Halftime",
+   "detail": "10:51 - 3rd",
    "period": null,
    "clock": null,
    "home": "DET",
    "away": "NYJ",
-   "home_score": 10.0,
+   "home_score": 17.0,
    "away_score": 7.0,
    "home_implied": null,
    "away_implied": null,
@@ -3678,13 +3692,13 @@
    "game_id": "401872950",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "0:34 - 2nd",
+   "detail": "Halftime",
    "period": null,
    "clock": null,
    "home": "PIT",
    "away": "CIN",
    "home_score": 17.0,
-   "away_score": 16.0,
+   "away_score": 17.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
@@ -3701,7 +3715,7 @@
    "game_id": "401872955",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "2:00 - 2nd",
+   "detail": "0:57 - 2nd",
    "period": null,
    "clock": null,
    "home": "WAS",
@@ -3724,7 +3738,7 @@
    "game_id": "401872957",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "0:07 - 2nd",
+   "detail": "Halftime",
    "period": null,
    "clock": null,
    "home": "JAX",
