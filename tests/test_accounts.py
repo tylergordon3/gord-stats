@@ -118,9 +118,9 @@ def test_first_sign_in_merges_and_afterwards_the_server_wins():
 # --------------------------------------------------------------------------- #
 # Synced leagues
 #
-# Same principle as the rest of this file: the endpoint cannot be run from
-# pytest, so what is pinned here is the contract - above all that syncing a
-# league never becomes a reason to hold someone's provider credentials.
+# What is pinned here is the contract - above all that syncing a league never
+# becomes a reason to hold someone's provider credentials. The endpoint itself
+# is run, against SQLite and a stubbed Sleeper, in tests/test_leagues_api.py.
 # --------------------------------------------------------------------------- #
 
 LEAGUES = (FUNCTIONS / "leagues.js").read_text()
@@ -140,9 +140,10 @@ def test_syncing_a_league_stores_no_provider_credentials():
 
 def test_a_league_is_checked_with_the_provider_before_it_is_stored():
     """A typo should fail at the point of typing, not become a row that never
-    resolves to anything."""
-    assert "async function lookup(" in LEAGUES
-    assert LEAGUES.index("await lookup(") < LEAGUES.index("INSERT INTO leagues")
+    resolves to anything - nor start the refresh clock."""
+    block = LEAGUES[LEAGUES.index("async function addOne("):]
+    asked = block.index("await ask(`league/${leagueId}`)")
+    assert asked < block.index("await claim(") < block.index("await store(")
 
 
 def test_league_ids_are_shape_checked_before_they_are_used():
@@ -190,10 +191,11 @@ def test_a_username_syncs_every_league_that_account_is_in():
 
 def test_the_bulk_sync_is_rate_limited_on_the_account():
     """One button that fans out to every league is the one worth holding down,
-    so the limit is the whole account rather than each league."""
+    so the limit is the whole account rather than each league - claimed in one
+    conditional UPDATE, since a read-then-write let parallel POSTs through."""
     block = LEAGUES[LEAGUES.index("async function syncAll("):]
-    assert "MAX(last_synced_at)" in block
-    assert "429" in block
+    assert "claim(env.DB, session.uid, CLAIM, REFRESH_SECONDS)" in block
+    assert 'const CLAIM = "last_league_sync"' in LEAGUES
 
 
 def test_each_league_stores_the_team_in_it():
@@ -221,17 +223,18 @@ def test_syncing_a_league_takes_its_history_with_it():
     with previous_league_id, so one walk gets the lot - the site's own league
     chains 2026 back to 2023 that way."""
     assert "previous_league_id" in LEAGUES
-    assert "async function history(" in LEAGUES
+    assert "async function walkBack(" in LEAGUES
     # Both ways in get it: a league added by id should not be a poorer relation.
-    assert LEAGUES.count("history(") >= 3
+    assert LEAGUES.count("walkBack(") >= 3
 
 
 def test_the_history_walk_cannot_loop_or_run_away():
     """These ids come from an API. A cycle would be an endless one, and a long
-    chain would be an unbounded row count on somebody's account."""
-    block = LEAGUES[LEAGUES.index("async function history("):]
-    assert "seen.has(id)" in block and "MAX_SEASONS" in block
-    assert "MAX_ROWS" in LEAGUES
+    chain would be an unbounded row count on somebody's account - or, before
+    the call budget, ~480 calls to Sleeper from one POST."""
+    block = LEAGUES[LEAGUES.index("async function walkBack("):]
+    assert "seen.has(" in block and "MAX_SEASONS" in block
+    assert "MAX_ROWS" in LEAGUES and "asker(FETCH_BUDGET)" in LEAGUES
 
 
 def test_seasons_group_under_their_league_everywhere_they_are_shown():

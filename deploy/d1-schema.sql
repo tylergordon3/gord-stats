@@ -24,7 +24,12 @@ CREATE TABLE IF NOT EXISTS users (
   -- writes for the whole site, and without a per-account ceiling a single
   -- script could empty it - taking sign-in down for everyone with it.
   write_day     TEXT,
-  write_count   INTEGER NOT NULL DEFAULT 0
+  write_count   INTEGER NOT NULL DEFAULT 0,
+  -- When this reader last synced a league, which is what the refresh button
+  -- is rate-limited on. On the account rather than on the leagues' own rows,
+  -- so it can be claimed in one atomic UPDATE and so removing a league does
+  -- not reset it.
+  last_league_sync TEXT
 );
 
 -- Deleting an account is one statement; the cascade takes the stars with it.
@@ -53,8 +58,8 @@ CREATE TABLE IF NOT EXISTS favorites (
 -- and a stored refresh token, which is a different security posture and wants
 -- its own decision. `provider` stays so that decision needs no migration.
 --
--- `last_synced_at` is what the refresh button is rate-limited on, so the
--- limit survives a reader reloading the page or opening a second tab.
+-- `last_synced_at` is when each row last came from Sleeper - the "synced"
+-- time the page shows. The refresh limit is users.last_league_sync.
 CREATE TABLE IF NOT EXISTS leagues (
   user_id        TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   -- "sleeper" or "yahoo". The sport follows from it here (Sleeper for the NFL
