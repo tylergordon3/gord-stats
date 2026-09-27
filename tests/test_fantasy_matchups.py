@@ -42,6 +42,21 @@ def test_scoreboard_parse_reads_implied_totals_and_sleeper_team_codes():
     assert not by_team["NYG"]["home"]
 
 
+def test_the_game_clock_comes_off_the_status_not_its_type():
+    """ESPN puts period and displayClock beside status.type. Read off the
+    type they were None, and every game in play read as half over."""
+    data = {"events": [{"id": "9", "date": "2026-09-27T20:25Z",
+                        "status": {"period": 4, "displayClock": "2:50",
+                                   "type": {"state": "in", "shortDetail": "2:50 - 4th"}},
+                        "competitions": [{"competitors": [
+                            {"homeAway": "home", "score": "29", "team": {"abbreviation": "SF"}},
+                            {"homeAway": "away", "score": "27", "team": {"abbreviation": "ARI"}}],
+                            "odds": []}]}]}
+    game = data_mod.parse_scoreboard(data)[0]
+    assert (game["period"], game["clock"]) == (4, "2:50")
+    assert abs(data_mod.elapsed(game) - (57 + 10 / 60) / 60) < 1e-9
+
+
 def test_active_sees_a_game_in_progress_or_about_to_kick():
     games = data_mod.parse_scoreboard(_scoreboard())
     assert data_mod.active(games)

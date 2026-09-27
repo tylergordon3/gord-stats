@@ -321,13 +321,18 @@ def parse_scoreboard(data: dict) -> list[dict]:
             continue
         odds = (c.get("odds") or [{}])[0]
         hi, ai = _implied(odds)
-        status = (ev.get("status") or {}).get("type") or {}
+        # The clock is on the status itself, beside its `type`: read off the
+        # type, period and clock were always None, and every game in play
+        # counted as exactly half over - a player in the fourth quarter kept
+        # half his projection still to come on every page built mid-game.
+        clock = ev.get("status") or {}
+        status = clock.get("type") or {}
         abbr = lambda t: ESPN_TO_SLEEPER.get(t["team"].get("abbreviation"),   # noqa: E731
                                              t["team"].get("abbreviation"))
         games.append({
             "game_id": str(ev.get("id")), "date": ev.get("date"),
             "state": status.get("state") or "pre", "detail": status.get("shortDetail") or "",
-            "period": status.get("period"), "clock": status.get("displayClock"),
+            "period": clock.get("period"), "clock": clock.get("displayClock"),
             "home": abbr(home), "away": abbr(away),
             "home_score": _num(home.get("score")), "away_score": _num(away.get("score")),
             "home_implied": hi, "away_implied": ai,
