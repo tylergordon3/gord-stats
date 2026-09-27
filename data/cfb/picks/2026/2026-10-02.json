@@ -1,0 +1,40 @@
+{
+ "day": "2026-10-02",
+ "locked_at": "Sat Sep 26, 11:10 PM",
+ "games": 2,
+ "picks": {
+  "underdog": {
+   "game_id": "401858245",
+   "side": "away",
+   "team": "Pitt",
+   "opp": "Virginia Tech",
+   "p": 0.5771,
+   "book_p": 0.3425,
+   "ml": 180.0,
+   "line": 6.0,
+   "kick": "Fri 7:00p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 6.0,
+    "p": 0.7141,
+    "book": 0.5,
+    "text": "Pitt +6.0",
+    "game_id": "401858245",
+    "game": "PITT at VT \u00b7 Fri 7:00p"
+   },
+   {
+    "kind": "total",
+    "over": false,
+    "total": 48.5,
+    "p": 0.5263,
+    "book": 0.5,
+    "text": "Under 48.5",
+    "game_id": "401858476",
+    "game": "PSU at NU \u00b7 Fri 8:00p"
+   }
+  ]
+ }
+}
