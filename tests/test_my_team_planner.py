@@ -179,3 +179,77 @@ def test_the_planner_is_deterministic_under_a_tie():
                              capture_output=True, text=True, env=env, check=True)
         seen.add(out.stdout.strip())
     assert len(seen) == 1, f"the lineup changes with PYTHONHASHSEED: {seen}"
+
+
+# --------------------------------------------------------------------------- #
+# Leagues with more than one kind of flex
+# --------------------------------------------------------------------------- #
+#
+# Sleeper's superflex leagues carry a SUPER_FLEX beside the FLEX. The planner
+# knew one flex, so the second read as a position nobody plays: left empty,
+# the second quarterback benched. Both planners now take every flex, fill the
+# narrowest first, and must still agree.
+
+SF_SLOTS = {"QB": 1, "RB": 2, "WR": 2, "TE": 1, FLEX: 1, "WRRB_FLEX": 1,
+            "SUPER_FLEX": 1, "K": 1, "DEF": 1}
+MORE = [("WRRB_FLEX", ["RB", "WR"]), ("SUPER_FLEX", ["QB", "RB", "WR", "TE"])]
+
+
+def _sf_case(seed):
+    rng = random.Random(1000 + seed)
+    players, pid = [], 0
+    for slot, count in SF_SLOTS.items():
+        for _ in range(count):
+            pid += 1
+            pos = {FLEX: rng.choice(FLEX_POSITIONS), "WRRB_FLEX": rng.choice(["RB", "WR"]),
+                   "SUPER_FLEX": rng.choice(["QB", "RB", "WR"])}.get(slot, slot)
+            players.append({"id": f"p{pid}", "pos": pos, "slot": slot})
+    for _ in range(8):
+        pid += 1
+        players.append({"id": f"p{pid}", "pos": rng.choice(["QB", "QB", "RB", "WR", "TE"]),
+                        "slot": "BN"})
+    proj, kick_iso, kick_ms = {}, {}, {}
+    base = pd.Timestamp("2026-09-27T17:00:00Z")
+    for p in players:
+        proj[p["id"]] = round(rng.uniform(0, 25), 2)
+        if rng.random() > 0.2:
+            when = base + pd.Timedelta(hours=rng.choice([0, 3, 6, 50, 72]))
+            kick_iso[p["id"]] = when.isoformat()
+            kick_ms[p["id"]] = int(when.timestamp() * 1000)
+    locked = [p["id"] for p in players if kick_iso.get(p["id"]) and rng.random() < 0.15]
+    return players, proj, kick_iso, kick_ms, locked
+
+
+@pytest.mark.parametrize("seed", range(30))
+def test_the_two_planners_agree_on_a_superflex_league(browser, seed):
+    players, proj, kick_iso, kick_ms, locked = _sf_case(seed)
+    got = lineup.plan(players, SF_SLOTS, proj, kick_iso, set(locked), FLEX,
+                      FLEX_POSITIONS, more_flexes=MORE)
+    js = browser.evaluate(
+        f"JSON.stringify(window.GSPlan({json.dumps(players)}, {json.dumps(SF_SLOTS)}, "
+        f"{json.dumps(proj)}, {json.dumps(kick_ms)}, {json.dumps(locked)}, "
+        f"{json.dumps(FLEX)}, {json.dumps(list(FLEX_POSITIONS))}, 'BN', ['IR','IL'], "
+        f"{json.dumps(MORE)}))")
+    mine = json.loads(js)
+    assert mine["slot"] == got["slot"], f"seed {seed}: different slots"
+    assert sorted(mine["start"]) == sorted(got["start"]), f"seed {seed}: different starters"
+    assert {k: v for k, v in mine["cover"].items() if v} == \
+           {k: v for k, v in got["cover"].items() if v}, f"seed {seed}: different cover"
+    # Every starting slot is filled when the roster can fill it.
+    for name, count in SF_SLOTS.items():
+        assert sum(1 for s in got["slot"].values() if s == name) <= count
+
+
+def test_a_superflex_starts_the_second_quarterback():
+    """The failure itself: two good QBs and a SUPER_FLEX. The second one is the
+    best player left for it, and used to sit while the slot stayed empty."""
+    players = [{"id": "qb1", "pos": "QB", "slot": "QB"},
+               {"id": "qb2", "pos": "QB", "slot": "BN"},
+               {"id": "rb1", "pos": "RB", "slot": "RB"},
+               {"id": "rb2", "pos": "RB", "slot": "BN"},
+               {"id": "wr1", "pos": "WR", "slot": "FLEX"}]
+    proj = {"qb1": 22.0, "qb2": 19.0, "rb1": 14.0, "rb2": 9.0, "wr1": 12.0}
+    got = lineup.plan(players, {"QB": 1, "RB": 1, FLEX: 1, "SUPER_FLEX": 1}, proj, {}, set(),
+                      FLEX, FLEX_POSITIONS, more_flexes=[("SUPER_FLEX", ["QB", "RB", "WR", "TE"])])
+    assert got["slot"]["qb2"] == "SUPER_FLEX"
+    assert got["slot"]["wr1"] == FLEX and got["slot"]["rb2"] == "BN"

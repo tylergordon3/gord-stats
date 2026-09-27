@@ -62,9 +62,15 @@ table.mt-t tr.mt-out td.nm{font-weight:600}
 # the Python - same names, same order - so the two can be read side by side.
 PLANNER_JS = """{% raw %}<script>
 window.GSPlan = function(players, slotCounts, proj, kickoff, locked, flex, flexPositions,
-                         bench, reserve){
+                         bench, reserve, moreFlexes){
   bench = bench || 'BN';
   reserve = reserve || ['IR','IL'];
+  // Every flex slot, with who may fill it; filled narrowest first (a stable
+  // sort, so ties keep the caller's order) - see lineup.plan.
+  var flexes = [[flex, flexPositions]].concat(moreFlexes || []);
+  var eligible = {};
+  flexes.forEach(function(f){ eligible[f[0]] = f[1]; });
+  var fillOrder = flexes.slice().sort(function(a, b){ return a[1].length - b[1].length; });
   var isReserve = function(s){ return reserve.indexOf(s) >= 0; };
   var value = {}, byId = {};
   players.forEach(function(p){
@@ -93,40 +99,44 @@ window.GSPlan = function(players, slotCounts, proj, kickoff, locked, flex, flexP
   });
   var chosen = {};
   for (var pos in open){
-    if (pos !== flex) chosen[pos] = (ranked[pos] || []).slice(0, Math.max(open[pos], 0));
+    if (!eligible[pos]) chosen[pos] = (ranked[pos] || []).slice(0, Math.max(open[pos], 0));
   }
-  var flexed = [];
-  for (var n = 0; n < Math.max(open[flex] || 0, 0); n++){
-    var best = null;
-    flexPositions.forEach(function(p){
-      var rest = (ranked[p] || []).slice((chosen[p] || []).length)
-        .filter(function(i){ return flexed.indexOf(i) < 0; });
-      if (rest.length && (best === null || value[rest[0]] > value[best])) best = rest[0];
-    });
-    if (best === null) break;
-    flexed.push(best);
-  }
+  var flexed = [];                                  // [[id, flex slot]]
+  var flexedIds = function(){ return flexed.map(function(f){ return f[0]; }); };
+  fillOrder.forEach(function(f){
+    for (var n = 0; n < Math.max(open[f[0]] || 0, 0); n++){
+      var taken = flexedIds(), best = null;
+      f[1].forEach(function(p){
+        var rest = (ranked[p] || []).slice((chosen[p] || []).length)
+          .filter(function(i){ return taken.indexOf(i) < 0; });
+        if (rest.length && (best === null || value[rest[0]] > value[best])) best = rest[0];
+      });
+      if (best === null) break;
+      flexed.push([best, f[0]]);
+    }
+  });
 
   // Which slot: pool a position's starters, latest kickoffs to the flex.
   var positions = {};
   for (var c in chosen) positions[c] = true;
-  flexed.forEach(function(i){ positions[byId[i].pos] = true; });
+  flexed.forEach(function(f){ positions[byId[f[0]].pos] = true; });
   var LATE = 8.64e15;
   Object.keys(positions).forEach(function(pos){
-    var group = (chosen[pos] || []).concat(
-      flexed.filter(function(i){ return byId[i].pos === pos; }));
-    var nFlex = flexed.filter(function(i){ return byId[i].pos === pos; }).length;
-    // Latest first; between equal kickoffs whoever is already in the flex
+    var mineFlexed = flexed.filter(function(f){ return byId[f[0]].pos === pos; });
+    var group = (chosen[pos] || []).concat(mineFlexed.map(function(f){ return f[0]; }));
+    var names = mineFlexed.map(function(f){ return f[1]; })
+      .sort(function(a, b){ return eligible[b].length - eligible[a].length; });
+    // Latest first; between equal kickoffs whoever is already in a flex
     // stays, then the weaker projection takes it as the likelier swap.
     group.sort(function(a, b){
       var ka = kickoff[a] == null ? LATE : kickoff[a];
       var kb = kickoff[b] == null ? LATE : kickoff[b];
       if (ka !== kb) return kb - ka;
-      var fa = byId[a].slot !== flex, fb = byId[b].slot !== flex;
+      var fa = !eligible[byId[a].slot], fb = !eligible[byId[b].slot];
       if (fa !== fb) return fa ? 1 : -1;
       return value[a] - value[b];
     });
-    group.forEach(function(pid, i){ slot[pid] = i < nFlex ? flex : pos; });
+    group.forEach(function(pid, i){ slot[pid] = i < names.length ? names[i] : pos; });
   });
   pool.forEach(function(pid){ if (slot[pid] == null) slot[pid] = bench; });
 
@@ -140,7 +150,7 @@ window.GSPlan = function(players, slotCounts, proj, kickoff, locked, flex, flexP
     cover[pid] = sitting.filter(function(b){
       return value[b] > 0
         && (byId[b].pos === mine.pos
-            || (slot[pid] === flex && flexPositions.indexOf(byId[b].pos) >= 0))
+            || (eligible[slot[pid]] || []).indexOf(byId[b].pos) >= 0)
         && kickoff[b] != null
         && (kickoff[b] >= (kickoff[pid] == null ? LATE : kickoff[pid]));
     }).sort(function(a, b){ return value[b] - value[a]; });
@@ -173,15 +183,22 @@ VIEW_JS = """{% raw %}<script>
   }
   function num(v){ return (v==null||isNaN(v))?'-':(Math.round(v*10)/10).toFixed(1); }
 
+  // Every flex-like slot the league has: the first is the planner's `flex`,
+  // the rest go in as further flexes. Only the first used to count, so a
+  // superflex beside the FLEX read as a position nobody plays - left empty,
+  // the QB2 benched, and the "gain" negative.
   function slotCounts(slots){
-    var counts={}, flexName=null;
+    var counts={}, names=[];
     slots.forEach(function(s){
       if(s===BENCH||RESERVE.indexOf(s)>=0) return;
-      if(FLEXLIKE[s]) flexName=flexName||s;
+      if(FLEXLIKE[s]&&names.indexOf(s)<0) names.push(s);
       counts[s]=(counts[s]||0)+1;
     });
-    return {counts:counts, flex:flexName||FLEX,
-            positions:FLEXLIKE[flexName||FLEX]||FLEX_POS};
+    var first=names[0]||FLEX, eligible={};
+    eligible[first]=FLEXLIKE[first]||FLEX_POS;
+    names.slice(1).forEach(function(n){ eligible[n]=FLEXLIKE[n]; });
+    return {counts:counts, flex:first, positions:eligible[first], eligible:eligible,
+            more:names.slice(1).map(function(n){ return [n, FLEXLIKE[n]]; })};
   }
 
   /** Where each player sits now, from the roster's starters array. */
@@ -197,6 +214,8 @@ VIEW_JS = """{% raw %}<script>
       if(!out[String(p)]) out[String(p)]=BENCH;
     });
     (roster.reserve||[]).forEach(function(p){ out[String(p)]='IR'; });
+    // A dynasty taxi squad cannot start either; unmapped, it read as bench.
+    (roster.taxi||[]).forEach(function(p){ out[String(p)]='TAXI'; });
     return out;
   }
 
@@ -225,7 +244,7 @@ VIEW_JS = """{% raw %}<script>
       var pos=meta[1];
       var rivals=starters.filter(function(s){
         return s.pos===pos
-          || (out.slot[s.id]===conf.flex && conf.positions.indexOf(pos)>=0);
+          || (conf.eligible[out.slot[s.id]]||[]).indexOf(pos)>=0;
       });
       if(!rivals.length) continue;
       var worst=rivals.reduce(function(a,b){
@@ -287,7 +306,7 @@ VIEW_JS = """{% raw %}<script>
     }).map(function(p){return p.id;});
 
     var out=GSPlan(players, conf.counts, proj, kick, locked,
-                   conf.flex, conf.positions, BENCH, RESERVE);
+                   conf.flex, conf.positions, BENCH, RESERVE, conf.more);
 
     // Order: starting slots as the league lists them, then the bench.
     var order=[], seen={};

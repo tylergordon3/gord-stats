@@ -43,7 +43,8 @@ def _points(value) -> float:
 
 
 def plan(players: list, slot_counts: dict, proj: dict, kickoff: dict, locked: set,
-         flex: str, flex_positions, bench: str = "BN", reserve=("IL", "IR")) -> dict:
+         flex: str, flex_positions, bench: str = "BN", reserve=("IL", "IR"),
+         more_flexes=()) -> dict:
     """The recommended lineup for one roster.
 
     players        [{"id", "pos", "slot"}] - where each player sits now
@@ -53,6 +54,14 @@ def plan(players: list, slot_counts: dict, proj: dict, kickoff: dict, locked: se
     locked         ids whose game has started - they stay where they are
     flex           the flex slot's name, and `flex_positions` who may fill it
     bench/reserve  the bench slot's name, and the slots nobody can start from
+    more_flexes    any further flex slots, [(name, positions)] - a superflex
+                   beside the FLEX, say. Without them a SUPER_FLEX read as a
+                   position nobody plays, and stayed empty.
+
+    Flex slots fill narrowest first: a flex takes what a wider one could, so
+    it chooses before it. At a position the latest kickoffs go to the flex
+    slots, the widest of them first, since it has the most players able to
+    step in when late news breaks.
 
     Returns {"slot": {id: recommended slot}, "start": set of starters,
     "cover": {id: [bench ids that could replace him, best first]}}.
@@ -63,8 +72,10 @@ def plan(players: list, slot_counts: dict, proj: dict, kickoff: dict, locked: se
     # string hash order: the same roster came out differently under different
     # PYTHONHASHSEED values, which is to say between builds. The caller's order
     # is the tie-break now, and the set is kept only for membership tests.
-    flex_order = list(dict.fromkeys(flex_positions))
-    flex_positions = set(flex_order)
+    flexes = [(flex, list(dict.fromkeys(flex_positions)))] + [
+        (name, list(dict.fromkeys(positions))) for name, positions in more_flexes]
+    eligible = {name: set(positions) for name, positions in flexes}
+    fill_order = sorted(flexes, key=lambda f: len(f[1]))    # stable: ties keep caller order
     value = {p["id"]: _points(proj.get(p["id"])) for p in players}
     by_id = {p["id"]: p for p in players}
     open_slots = dict(slot_counts)
@@ -86,31 +97,34 @@ def plan(players: list, slot_counts: dict, proj: dict, kickoff: dict, locked: se
         ranked.setdefault(by_id[pid]["pos"], []).append(pid)
     chosen = {}
     for pos, n in open_slots.items():
-        if pos != flex:
+        if pos not in eligible:
             chosen[pos] = ranked.get(pos, [])[:max(n, 0)]
-    flexed = []
-    for _ in range(max(open_slots.get(flex, 0), 0)):
-        best = None
-        for pos in flex_order:
-            rest = ranked.get(pos, [])[len(chosen.get(pos, [])):]
-            rest = [i for i in rest if i not in flexed]
-            if rest and (best is None or value[rest[0]] > value[best]):
-                best = rest[0]
-        if best is None:
-            break
-        flexed.append(best)
+    flexed = []                                     # [(id, flex slot)]
+    for name, order in fill_order:
+        for _ in range(max(open_slots.get(name, 0), 0)):
+            taken = {i for i, _ in flexed}
+            best = None
+            for pos in order:
+                rest = ranked.get(pos, [])[len(chosen.get(pos, [])):]
+                rest = [i for i in rest if i not in taken]
+                if rest and (best is None or value[rest[0]] > value[best]):
+                    best = rest[0]
+            if best is None:
+                break
+            flexed.append((best, name))
 
     # Which slot: pool a position's starters, latest kickoffs to the flex.
-    for pos in set(chosen) | {by_id[i]["pos"] for i in flexed}:
-        group = chosen.get(pos, []) + [i for i in flexed if by_id[i]["pos"] == pos]
-        n_flex = sum(1 for i in flexed if by_id[i]["pos"] == pos)
-        # Latest first. Between equal kickoffs whoever is already in the flex
+    for pos in set(chosen) | {by_id[i]["pos"] for i, _ in flexed}:
+        group = chosen.get(pos, []) + [i for i, _ in flexed if by_id[i]["pos"] == pos]
+        names = sorted((n for i, n in flexed if by_id[i]["pos"] == pos),
+                       key=lambda n: -len(eligible[n]))
+        # Latest first. Between equal kickoffs whoever is already in a flex
         # stays - moving him buys nothing - and after that the weaker
         # projection takes it, as the likelier swap.
         order = sorted(group, key=lambda i: (-_kick(kickoff.get(i)).value,
-                                             by_id[i]["slot"] != flex, value[i]))
+                                             by_id[i]["slot"] not in eligible, value[i]))
         for n, pid in enumerate(order):
-            slot[pid] = flex if n < n_flex else pos
+            slot[pid] = names[n] if n < len(names) else pos
     for pid in pool:
         slot.setdefault(pid, bench)
 
@@ -124,7 +138,7 @@ def plan(players: list, slot_counts: dict, proj: dict, kickoff: dict, locked: se
         mine = by_id[pid]
         ok = [b for b in sitting
               if value[b] > 0 and (by_id[b]["pos"] == mine["pos"]
-                                   or (slot[pid] == flex and by_id[b]["pos"] in flex_positions))
+                                   or by_id[b]["pos"] in eligible.get(slot[pid], ()))
               and kickoff.get(b) is not None and not pd.isna(kickoff.get(b))
               and _kick(kickoff.get(b)) >= _kick(kickoff.get(pid))]
         cover[pid] = sorted(ok, key=lambda i: -value[i])
