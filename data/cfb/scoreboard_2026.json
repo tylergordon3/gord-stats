@@ -12,15 +12,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 122.28,
-     "win_probability": 0.32000000000000006
+     "projected": 125.22,
+     "win_probability": 0.33999999999999997
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 147.26,
-     "win_probability": 0.6799999999999999
+     "win_probability": 0.66
     }
    ]
   },
@@ -35,7 +35,7 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 192.3,
+     "projected": 192.24,
      "win_probability": 0.9299999999999999
     },
     {
@@ -81,15 +81,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 151.14,
-     "win_probability": 0.65
+     "projected": 159.99,
+     "win_probability": 0.7
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
      "projected": 130.85,
-     "win_probability": 0.35
+     "win_probability": 0.30000000000000004
     }
    ]
   },
@@ -111,7 +111,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 185.11,
+     "projected": 185.08,
      "win_probability": 0.94
     }
    ]

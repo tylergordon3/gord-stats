@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-27T22:35:59+00:00",
+ "fetched": "2026-09-27T23:37:29+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 122.28,
-     "win_probability": 0.32000000000000006
+     "projected": 125.22,
+     "win_probability": 0.33999999999999997
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 147.26,
-     "win_probability": 0.6799999999999999
+     "win_probability": 0.66
     }
    ]
   },
@@ -40,7 +40,7 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 192.3,
+     "projected": 192.24,
      "win_probability": 0.9299999999999999
     },
     {
@@ -86,15 +86,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 151.14,
-     "win_probability": 0.65
+     "projected": 159.99,
+     "win_probability": 0.7
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
      "projected": 130.85,
-     "win_probability": 0.35
+     "win_probability": 0.30000000000000004
     }
    ]
   },
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 185.11,
+     "projected": 185.08,
      "win_probability": 0.94
     }
    ]
@@ -1691,6 +1691,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "482179",
+    "player": "Trent Mosley",
+    "pos": "WR",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Knee",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "334780",
     "player": "Terrance Carter Jr.",
     "pos": "TE",
@@ -1700,7 +1714,7 @@
     "status": "Q",
     "status_full": "Questionable",
     "injury_note": "Shoulder",
-    "slot": "W/R/T",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1784,20 +1798,6 @@
     "status": "O",
     "status_full": "Out",
     "injury_note": "Leg",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "482179",
-    "player": "Trent Mosley",
-    "pos": "WR",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Knee",
     "slot": "IL",
     "points": 0.0,
     "stats": {}
@@ -2550,7 +2550,7 @@
   "468744": 15.55,
   "405245": 11.25,
   "337423": 8.89,
-  "900104": 12.51,
+  "900104": 15.45,
   "405071": 22.43,
   "469436": 22.36,
   "455519": 17.94,
@@ -2580,7 +2580,7 @@
   "405442": 8.78,
   "405249": 28.0,
   "335616": 7.35,
-  "900011": 9.78,
+  "900011": 9.72,
   "333810": 24.84,
   "469636": 11.47,
   "456220": 15.46,
@@ -2629,10 +2629,10 @@
   "404730": 15.49,
   "482507": 9.51,
   "457622": 11.15,
+  "482179": 13.72,
   "334780": 4.87,
   "468769": 20.31,
   "463244": 0.0,
-  "482179": 13.72,
   "403957": 25.73,
   "404007": 13.51,
   "457567": 14.02,
@@ -2674,6 +2674,6 @@
   "456218": 4.65,
   "456178": 12.28,
   "455505": 14.1,
-  "900086": 10.3
+  "900086": 10.27
  }
 }
