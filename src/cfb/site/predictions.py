@@ -255,8 +255,8 @@ def _with_market(games: pd.DataFrame) -> pd.DataFrame:
         games["market_total"] = np.nan
         return games
     board = board.rename(columns={"spread": "market_spread", "total": "market_total"})
-    return games.merge(board[["home_id", "away_id", "market_spread", "market_total"]],
-                       on=["home_id", "away_id"], how="left")
+    return games.merge(board[odds_mod.KEY + ["market_spread", "market_total"]],
+                       on=odds_mod.KEY, how="left")
 
 
 ET = ZoneInfo("America/New_York")

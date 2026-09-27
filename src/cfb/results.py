@@ -59,9 +59,9 @@ def capture(season: int = SEASON) -> pd.DataFrame:
         # Rename before the merge, not after: `predict.week` already publishes a
         # `spread` of its own, and merging two of them silently yields
         # spread_x/spread_y and no column by either name.
-        board = board[["home_id", "away_id", "spread", "total"]].rename(
+        board = board[odds_mod.KEY + ["spread", "total"]].rename(
             columns={"spread": "market_spread", "total": "market_total"})
-        games = games.merge(board, on=["home_id", "away_id"], how="left")
+        games = games.merge(board, on=odds_mod.KEY, how="left")
     else:
         games["market_spread"] = np.nan
         games["market_total"] = np.nan

@@ -261,13 +261,18 @@ def week_rows(season: int, week: int, roster: dict) -> list:
 
 
 def capture(season: int = SEASON, refresh: bool = False) -> pd.DataFrame:
-    """Every played week on disk; only missing weeks are fetched."""
+    """Every played week on disk; only missing weeks are fetched.
+
+    `refresh` no longer throws the archive away: it refetched every week's
+    CFBD plays on every run, and a week that failed was written back missing.
+    The newest week is refetched regardless (below), which is what a refresh
+    needs; a week is only replaced by what came back for it."""
     schedule = espn.schedule()
     done = schedule[(schedule["state"] == "post")
                     & (schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) > 0)]
     weeks = sorted({int(w) for w in done["week"].dropna().unique()})
     out = path(season)
-    have = pd.read_parquet(out) if (out.exists() and not refresh) else pd.DataFrame()
+    have = pd.read_parquet(out) if out.exists() else pd.DataFrame()
     seen = set(have["week"].unique()) if len(have) else set()
     # The newest played week is refetched once more: a game finishing after the
     # build would otherwise be missing from it for good.

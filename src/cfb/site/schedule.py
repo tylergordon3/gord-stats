@@ -568,9 +568,8 @@ def _frame() -> pd.DataFrame:
                "bd_ml_home", "bd_ml_away", "bd_ml_home_open", "bd_ml_away_open"]
     if not board.empty:
         board = board.rename(columns={c: "bd_" + c for c in odds_mod._LATEST_COLS
-                                      if c not in ("home_id", "away_id")})
-        df = df.merge(board[["home_id", "away_id"] + bd_cols],
-                      on=["home_id", "away_id"], how="left")
+                                      if c not in odds_mod.KEY})
+        df = df.merge(board[odds_mod.KEY + bd_cols], on=odds_mod.KEY, how="left")
     for col in bd_cols + ["gs_margin", "gs_total", "gs_wp", "gs_home", "gs_away"]:
         if col not in df.columns:
             df[col] = np.nan
@@ -661,16 +660,16 @@ def _fpi_by_id() -> dict:
 
 
 def _line_history() -> dict:
-    """(home_id, away_id) -> [(day, spread, total)] - one entry per capture day."""
+    """(week, home_id, away_id) -> [(day, spread, total)] - one entry per capture day."""
     hist = odds_mod.history(SEASON)
     if hist.empty:
         return {}
     hist = hist.copy()
     hist["day"] = hist["captured"].str[:10]
-    hist = hist.drop_duplicates(subset=["home_id", "away_id", "day"], keep="last")
+    hist = hist.drop_duplicates(subset=odds_mod.KEY + ["day"], keep="last")
     out = {}
     for r in hist.itertuples():
-        out.setdefault((str(r.home_id), str(r.away_id)), []).append(
+        out.setdefault((int(r.week), str(r.home_id), str(r.away_id)), []).append(
             (r.day, _v(r.spread), _v(r.total)))
     return out
 
@@ -1175,7 +1174,7 @@ def _detail(g, spread, gs_margin, home_won, sp_margin) -> str:
              if rows else '<div class="det-line">No line posted yet.</div>')
 
     lines = []
-    hist = _CTX.get("line_hist", {}).get((str(g.home_id), str(g.away_id)), [])
+    hist = _CTX.get("line_hist", {}).get((int(g.week), str(g.home_id), str(g.away_id)), [])
     if len(hist) > 1:
         steps = " &middot; ".join(
             f"{pd.Timestamp(d):%b %-d} {_side_line(g, sp)}" + (f" / {t:g}" if t is not None else "")

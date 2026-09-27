@@ -393,8 +393,8 @@ def _candidates(week: int) -> pd.DataFrame:
     board = odds_mod.latest(SEASON)
     if games.empty or board.empty:
         return pd.DataFrame()
-    games = games.merge(board[["home_id", "away_id", "spread", "total"]],
-                        on=["home_id", "away_id"], how="left")
+    games = games.merge(board[odds_mod.KEY + ["spread", "total"]],
+                        on=odds_mod.KEY, how="left")
     # The book prices the home side; the model talks in home margin.
     games["market_margin"] = -games["spread"]
     games["edge"] = games["pred_margin"] - games["market_margin"]

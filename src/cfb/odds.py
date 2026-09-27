@@ -101,12 +101,19 @@ def capture(weeks=None, season: int = SEASON) -> pd.DataFrame:
         fresh = pd.concat([pd.read_parquet(path), fresh], ignore_index=True)
     # One line per game per capture run; re-running the same day is not new data.
     fresh["day"] = fresh["captured"].str[:10]
-    fresh = fresh.drop_duplicates(subset=["season", "home_id", "away_id", "day"], keep="last")
+    fresh = fresh.drop_duplicates(subset=["season", "week", "home_id", "away_id", "day"],
+                                  keep="last")
     fresh.drop(columns="day").to_parquet(path, index=False)
     return fresh
 
 
-_LATEST_COLS = ["home_id", "away_id", "spread", "total", "book", "spread_open",
+# A game is (week, home, away), never (home, away) alone: every season has a
+# conference title game or two that repeats a regular-season pairing (2025:
+# Texas Tech-BYU, Boise-UNLV), and keyed on the pair the December line wrote
+# over September's - its cover ticks and both teams' ATS records with it.
+KEY = ["week", "home_id", "away_id"]
+
+_LATEST_COLS = ["week", "home_id", "away_id", "spread", "total", "book", "spread_open",
                 "total_open", "ml_home", "ml_away", "ml_home_open", "ml_away_open"]
 
 
@@ -120,14 +127,15 @@ def latest(season: int = SEASON) -> pd.DataFrame:
     for col in _LATEST_COLS:
         if col not in frame.columns:
             frame[col] = pd.NA
-    return frame.drop_duplicates(subset=["home_id", "away_id"], keep="last")
+    frame["week"] = frame["week"].astype(int)
+    return frame.drop_duplicates(subset=KEY, keep="last")
 
 
 def history(season: int = SEASON) -> pd.DataFrame:
     """Every capture of every game, oldest first - for a line-movement strip."""
     path = ODDS_DIR / f"{season}.parquet"
     if not path.exists():
-        return pd.DataFrame(columns=["home_id", "away_id", "captured", "spread", "total"])
+        return pd.DataFrame(columns=["week", "home_id", "away_id", "captured", "spread", "total"])
     return pd.read_parquet(path).sort_values("captured")
 
 

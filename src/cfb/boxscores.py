@@ -159,15 +159,24 @@ def _fetch(game: tuple) -> list:
 
 def capture(season: int = SEASON, refresh: bool = False,
             limit: int = None) -> pd.DataFrame:
-    """Every finished game's box score, fetching only what is missing."""
+    """Every finished game's box score, fetching only what is missing.
+
+    `refresh` re-pulls the latest finished week too, where late stat
+    corrections land. It used to throw the archive away and refetch every
+    game of the season (330 ESPN calls in week 5, ~850 by November, four
+    times a day) - and then write back only what that run got, so one failed
+    request silently dropped a game from the defence-vs-position table.
+    Archived games are only ever replaced by a fresh copy of themselves.
+    """
     schedule = espn.schedule()
     done = schedule[(schedule["state"] == "post")
                     & (schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) > 0)]
     out = path(season)
-    have = pd.read_parquet(out) if (out.exists() and not refresh) else pd.DataFrame()
+    have = pd.read_parquet(out) if out.exists() else pd.DataFrame()
     seen = set(have["game_id"].astype(str)) if len(have) else set()
-    todo = [(str(g["game_id"]), int(g["week"]))
-            for _, g in done.iterrows() if str(g["game_id"]) not in seen]
+    latest = int(done["week"].max()) if len(done) else None
+    todo = [(str(g["game_id"]), int(g["week"])) for _, g in done.iterrows()
+            if str(g["game_id"]) not in seen or (refresh and int(g["week"]) == latest)]
     if limit:
         todo = todo[:limit]
     if not todo:
@@ -181,7 +190,12 @@ def capture(season: int = SEASON, refresh: bool = False,
             rows.extend(got)
     if not rows:
         return have
-    frame = pd.concat([have, pd.DataFrame(rows)], ignore_index=True) if len(have) else pd.DataFrame(rows)
+    new = pd.DataFrame(rows)
+    if len(have):
+        # A game that came back replaces its old rows whole; one that failed
+        # keeps them.
+        have = have[~have["game_id"].astype(str).isin(set(new["game_id"].astype(str)))]
+    frame = pd.concat([have, new], ignore_index=True) if len(have) else new
     frame = frame.drop_duplicates(subset=["game_id", "team_id", "athlete_id"], keep="last")
     out.parent.mkdir(parents=True, exist_ok=True)
     frame.to_parquet(out, index=False)

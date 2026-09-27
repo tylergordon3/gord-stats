@@ -50,12 +50,21 @@ def allowed(season: int = SEASON, league: dict = None) -> pd.DataFrame:
     if league is None:
         from cfb import yahoo
         league = yahoo.league()
+    # Every (game, offence) the box scores cover, before the position filter:
+    # a position that did nothing has no rows, and a defence that held tight
+    # ends to zero used to lose that game from its average and its game count
+    # alike - 132 of 228 defences had one, and stingy read as generous.
+    sides = (box[["game_id", "opp_id", "team_id"]].drop_duplicates()
+             .rename(columns={"opp_id": "defense", "team_id": "offense"}))
     box = _positions(box)
     box["points"] = players.fantasy_points(box, league)
 
-    per_game = (box.groupby(["game_id", "opp_id", "team_id", "pos"], as_index=False)
-                ["points"].sum()
-                .rename(columns={"opp_id": "defense", "team_id": "offense"}))
+    scored = (box.groupby(["game_id", "opp_id", "team_id", "pos"], as_index=False)
+              ["points"].sum()
+              .rename(columns={"opp_id": "defense", "team_id": "offense"}))
+    grid = sides.merge(pd.DataFrame({"pos": POSITIONS}), how="cross")
+    per_game = grid.merge(scored, on=["game_id", "defense", "offense", "pos"], how="left")
+    per_game["points"] = per_game["points"].fillna(0.0)
 
     # What the model said that offence would score in that game. The ratio of
     # actual fantasy points to it is the schedule adjustment: a defence that
