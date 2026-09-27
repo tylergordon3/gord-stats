@@ -588,7 +588,13 @@ JS = """{% raw %}<script>
       GSL.players(),
       fetch(API).then(function(r){return r.ok?r.json():{};}).catch(function(){return {};}),
       GSL.week(),
-      W.load()
+      // The clocks in week-context.json are as old as the last full build
+      // (live ticks rebuild only the built page), so ESPN's are read before
+      // the first draw, not a poll later.
+      W.load().then(function(ctx){
+        CTX=ctx||{teams:{},gs:{}};
+        return clocks().then(function(){ return CTX; });
+      })
     ]).then(function(out){
       var rows=out[0]||[], rosters=out[1]||[], users=out[2]||[];
       INDEX=out[3]||{};
@@ -616,9 +622,7 @@ JS = """{% raw %}<script>
       (CTX.late||[]).forEach(function(pid){ LATE[String(pid)]=1; });
       POLL={api:API, rows:rows, rosters:rosters, users:users, info:info, over:false};
       render(rows, rosters, users, info);
-      // Soon while a game is on: the clocks in week-context.json are as old
-      // as the last build.
-      if(!POLL.over) next(anyLive()?8000:300000);
+      if(!POLL.over) next(anyLive()?60000:300000);
     }).catch(function(){
       host.innerHTML='<p class="mm-note">Could not read that league from Sleeper.</p>';
     });
