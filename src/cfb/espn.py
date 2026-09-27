@@ -77,6 +77,10 @@ def _game_row(event: dict, week: int) -> dict:
         # exact match rather than a fight over team-name spellings.
         "game_id": str(event.get("id", "")),
         "date_utc": event["date"],
+        # False until a kickoff time is set. ESPN files those games at 04:00
+        # UTC - midnight Eastern - which the schedule showed as "12:00 AM" (37
+        # games of week 6) and the homepage clock counted down to.
+        "time_valid": bool(comp.get("timeValid", True)),
         # ESPN's numeric team id, not the name: display names and abbreviations
         # get rewritten and reused between seasons, and a ratings model that
         # loses track of who is who silently rates two teams as one.

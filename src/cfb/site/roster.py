@@ -29,8 +29,8 @@ from html import escape
 
 import pandas as pd
 
-from cfb import (cfbd, defense, gameinfo, lineup, ownership, predict, projections,
-                 schools as schools_mod, usage as usage_mod, weekly, yahoo)
+from cfb import (cfbd, defense, gameinfo, in_season, lineup, ownership, predict,
+                 schools as schools_mod, usage as usage_mod, waivers, weekly, yahoo)
 from cfb.config import LEAGUE_TZ, MY_TEAM, SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.matchups import (_school_logo, game_cell, game_for, order_roster,
@@ -61,7 +61,7 @@ class Week:
         self.data = datas[self.week]
         self.final = yahoo.week_final(self.data)
         self.frame, _model, _names = predict.season()
-        self.board = projections.value_board(frame=self.frame)
+        self.board = in_season.board(frame=self.frame)
         statuses = {p["yahoo_id"]: p["status"] for roster in self.data["rosters"].values()
                     for p in roster if p.get("status")}
         self.wk = weekly.week_projections(self.data["week_start"], self.data["week_end"],
@@ -408,7 +408,8 @@ def adds_section(wkd: Week, roster: list, got: dict, free: pd.DataFrame) -> str:
     # The roster spot has to come from somewhere: the weakest things held.
     droppable = [p for p in roster if got["slot"][p["yahoo_id"]] in lineup.BENCH
                  and p["pos"] != "DEF"]
-    droppable.sort(key=lambda p: (not p.get("status"),
+    # Ruled out first (not merely tagged: a Q plays), then the weakest season.
+    droppable.sort(key=lambda p: (not waivers.ruled_out(p.get("status")),
                                   wkd.season_proj.get(p["yahoo_id"]) or 0.0))
     drop = ", ".join(
         f"{escape(p['player'])} ({escape(p['pos'])}"

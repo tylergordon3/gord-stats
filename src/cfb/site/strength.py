@@ -18,7 +18,7 @@ from html import escape
 
 import pandas as pd
 
-from cfb import defense, espn, predict, projections, schools as schools_mod, yahoo
+from cfb import defense, espn, in_season, predict, schools as schools_mod, yahoo
 from cfb.config import SEASON, WEB_DIR
 from cfb.site import write_page
 
@@ -176,7 +176,7 @@ def body() -> str:
     ratings = {str(k): {p: (None if pd.isna(v) else float(v)) for p, v in row.items()}
                for k, row in grid.iterrows()}
     frame, _model, _names_map = predict.season()
-    board = projections.value_board(frame=frame)
+    board = in_season.board(frame=frame)
     played = int(frame["played"].sum())
 
     return (

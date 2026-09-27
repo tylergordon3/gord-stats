@@ -175,11 +175,25 @@ def board(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.Dat
     df = _fetch_board()
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     df.to_parquet(cache, index=False)
-    hist = DATA_DIR / "adp_history"
-    hist.mkdir(exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    df.to_parquet(hist / f"{SEASON}_{stamp}.parquet", index=False)
+    # The archive is draft-season history: predraft_board() reads the last
+    # snapshot before the draft, and after it Yahoo's order is season-to-date
+    # form rather than ADP. Four snapshots a day of that grew the archive to
+    # 306 files for nothing.
+    if not _drafted():
+        hist = DATA_DIR / "adp_history"
+        hist.mkdir(exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        df.to_parquet(hist / f"{SEASON}_{stamp}.parquet", index=False)
     return df
+
+
+def _drafted() -> bool:
+    """Whether the league's draft has started (unknown counts as no)."""
+    try:
+        when = league().get("draft_time")
+    except Exception:                                   # noqa: BLE001
+        return False
+    return bool(when) and datetime.fromtimestamp(when, tz=timezone.utc) <= datetime.now(timezone.utc)
 
 
 # --------------------------------------------------------------------------- #

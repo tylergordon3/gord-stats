@@ -105,6 +105,19 @@ def test_a_real_disagreement_that_lands_is_a_win(tmp_path, monkeypatch):
     assert bool(results.scored(2026)["beat_the_book"].iloc[0]) is True
 
 
+@pytest.mark.parametrize("pred_margin", [14.0, -8.0], ids=["leaned-home", "leaned-away"])
+def test_a_game_landing_on_the_spread_is_a_push_whichever_side_we_took(
+        tmp_path, monkeypatch, pred_margin):
+    """Home -3, home wins by 3. It used to score as a loss when we leaned home
+    and a win when we leaned away; a book refunds it either way."""
+    _archive([_row("2026-09-04T12:00:00+00:00", margin=pred_margin, market=-3.0)],
+             tmp_path, monkeypatch)
+    _finals(monkeypatch, margin=3.0)
+    frame = results.scored(2026)
+    assert np.isnan(frame["beat_the_book"].iloc[0])
+    assert results.summary(frame)["ats_games"] == 0
+
+
 def test_no_archive_is_an_empty_report_not_an_error(tmp_path, monkeypatch):
     monkeypatch.setattr(results, "season_path", lambda season=2026: tmp_path / "none.parquet")
     assert results.scored(2026).empty

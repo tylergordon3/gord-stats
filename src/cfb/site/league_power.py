@@ -6,7 +6,7 @@ dashboard (docs/cfb/league/, cfb.site.league) since 2026-09-08; the old
 Every roster priced the way the draft board priced the players: the best
 starting lineup it can field, in projected season points under this league's
 own scoring and slots, with each player's preseason projection updated by
-his real scoring so far (in_season_board). Follows Yahoo's live rosters, so waivers and trades
+his real scoring so far (cfb.in_season). Follows Yahoo's live rosters, so waivers and trades
 move the rankings all season; fresh off the draft (before Yahoo populates the
 roster feed) the draft results stand in.
 
@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt                      # noqa: E402
 import numpy as np                                   # noqa: E402
 import pandas as pd                                  # noqa: E402
 
-from cfb import projections, yahoo                   # noqa: E402
+from cfb import in_season, projections, yahoo        # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
 from cfb.site import write_page                      # noqa: E402
 from gordstats import charts, palette, rankmoves     # noqa: E402
@@ -79,54 +79,6 @@ def team_rosters() -> dict:
         pid = str(p["player_key"] or "").rsplit(".", 1)[-1]
         out.setdefault(p["team_key"], []).append(pid)
     return out
-
-
-# How many games of the preseason projection a player's real scoring is
-# weighed against. Estimated 2026-09-13 from the first two weeks of every
-# rostered player (146 with two games): week-to-week noise sd 8.3 pts/game,
-# true spread around the preseason per-game projection sd 3.8, so
-# noise_var / prior_var ~ 4.7. After five games the season so far counts as
-# much as the draft-day projection.
-PRIOR_GAMES = 5.0
-
-
-def season_so_far() -> pd.DataFrame:
-    """yahoo_id -> points and games played, from the weekly matchup archive.
-
-    A week counts as a game only when Yahoo has any stat for the player -
-    byes, injuries and games not yet kicked off come back empty, so an
-    in-progress week counts just the games already played. Only weeks a player
-    spent on a league roster are seen; free-agent weeks are not."""
-    seen = {}
-    for w in yahoo.archived_weeks():
-        for roster in yahoo.week_matchups(w)["rosters"].values():
-            for p in roster:
-                if p.get("stats"):
-                    seen[(w, str(p["yahoo_id"]))] = float(p["points"] or 0.0)
-    if not seen:
-        return pd.DataFrame(columns=["points", "played"])
-    pts = pd.Series(seen)
-    return pts.groupby(level=1).agg(points="sum", played="count")
-
-
-def in_season_board(board: pd.DataFrame) -> pd.DataFrame:
-    """The value board with each projection updated by what the player has
-    actually scored: per-game rate = (preseason rate x PRIOR_GAMES + points)
-    / (PRIOR_GAMES + games), back on the season scale so the Lineup column and
-    the archive keep their units."""
-    so_far = season_so_far().reindex(board.index)
-    played = so_far["played"].fillna(0.0)
-    if not played.any():
-        return board
-    board = board.copy()
-    prior = board["proj"] / board["games"]
-    rate = (prior * PRIOR_GAMES + so_far["points"].fillna(0.0)) / (PRIOR_GAMES + played)
-    scale = (rate / prior).where(prior > 0, 1.0)
-    for col in ("proj", "floor", "ceiling"):
-        board[col] = board[col] * scale
-    board["vorp"] = board["proj"] - board["replacement"]
-    board["played"] = played
-    return board
 
 
 def best_lineup(players: pd.DataFrame, lg: dict) -> dict:
@@ -187,8 +139,8 @@ def ranked_teams(lg: dict) -> list[dict]:
     rosters = team_rosters()
     if not any(rosters.values()):
         return []
-    board = in_season_board(projections.value_board().drop_duplicates("yahoo_id")
-                            .set_index("yahoo_id"))
+    # The in-season board: frozen at the draft, then blended with the season.
+    board = in_season.board().drop_duplicates("yahoo_id").set_index("yahoo_id")
     names = {t["team_key"]: t for t in lg["teams"]}
     rows = []
     for key, ids in rosters.items():
@@ -345,7 +297,7 @@ def section() -> str:
     return (
         "<p>Each roster's best startable lineup in projected season points under "
         "this league's scoring, with every player's preseason projection updated "
-        f"by his real points per game (weighed against {PRIOR_GAMES:.0f} games of "
+        f"by his real points per game (weighed against {in_season.PRIOR_GAMES:.0f} games of "
         "the projection). <b>Bench</b>: value over replacement behind the starters; "
         f"<b>Wks {lg['playoff_start_week']}–{lg['end_week']}</b>: playoff schedule "
         "tilt; <b>Move</b>/<b>7d</b>: places climbed since the last build / a week "

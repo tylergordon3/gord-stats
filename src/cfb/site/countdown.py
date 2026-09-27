@@ -45,7 +45,10 @@ def payload(df: pd.DataFrame, now: datetime) -> dict:
 
     # assign before filtering: .assign on an already-empty selection aligns
     # the full-length series back in and resurrects rows as all-NaN.
-    upcoming = df.assign(kick=kicks)[(df["state"] == "pre") & (kicks > now)]
+    # A kickoff ESPN has not set is filed at midnight Eastern: never count to it.
+    known = (df["time_valid"].fillna(True).astype(bool) if "time_valid" in df
+             else pd.Series(True, index=df.index))
+    upcoming = df.assign(kick=kicks)[(df["state"] == "pre") & (kicks > now) & known]
     if upcoming.empty:
         return {"mode": "off"}
 

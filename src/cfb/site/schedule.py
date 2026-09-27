@@ -760,11 +760,20 @@ def _kick_cell(g) -> str:
         when = g.detail if "Final" in (g.detail or "") else "Final"
     elif g.state == "in":
         when, live = escape(str(g.detail or "Live")), " t-live"
+    elif not _time_known(g):
+        when = "TBD"
     else:
         when = local.strftime("%-I:%M %p")
     tv = f'<span class="t-tv">{escape(str(g.tv))}</span>' if g.tv else ""
     return (f'<td class="t d" data-l="Kick" data-s="Kick"><div class="c">{day}'
             f'<span class="t-when{live}">{when}</span>{tv}{_wx_text(g)}</div></td>')
+
+
+def _time_known(g) -> bool:
+    """False for a kickoff ESPN has not set (see espn._game_row). A schedule
+    cached before the column existed has no attribute, and counts as known."""
+    v = getattr(g, "time_valid", True)
+    return v is None or pd.isna(v) or bool(v)
 
 
 def _fav(g, margin) -> tuple:
@@ -1315,6 +1324,8 @@ def _compute_picks(slate: pd.DataFrame) -> dict:
     from scipy.stats import norm
 
     def kick(g):
+        if not _time_known(g):
+            return f"{g.local:%a} TBD"
         return f"{g.local:%a %-I:%M%p}".replace("AM", "a").replace("PM", "p")
 
     out = {"underdog": None, "legs": []}
@@ -1378,11 +1389,17 @@ def _compute_picks(slate: pd.DataFrame) -> dict:
 def _picks_for_day(df: pd.DataFrame, current: int) -> tuple:
     """(picks, day, locked_at): the day's picks, set once and kept.
 
-    The first build to see a day with every game still to come computes the
+    The first build ON the day, with every game still to come, computes the
     picks and writes them to PICKS_DIR; every build after that reads the
     file back, so the cards stop moving the moment the day's first game
     kicks off. A day found already under way with nothing on file (the very
     first deploy) is computed from what is still pending and frozen as is.
+
+    A later day is a preview - computed on every build, never written, and
+    locked_at is None. Its lines and injury news are still moving, and once
+    Saturday's last game kicked off the schedule moved on to next week, so
+    freezing on first sight locked the following Thursday to Saturday a
+    week early (2026-09-26's picks were set on Sep 19, from 15 games).
     """
     slate, day = _day_games(df, current)
     if slate.empty:
@@ -1398,6 +1415,8 @@ def _picks_for_day(df: pd.DataFrame, current: int) -> tuple:
     if pending.empty:
         return None, day, None
     picks = _compute_picks(pending)
+    if day > datetime.now(LEAGUE_TZ).date():
+        return picks, day, None
     locked_at = datetime.now(LEAGUE_TZ).strftime("%a %b %-d, %-I:%M %p")
     PICKS_DIR.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({"day": f"{day:%Y-%m-%d}", "locked_at": locked_at,
@@ -1483,16 +1502,25 @@ def _picks(df: pd.DataFrame, current: int) -> str:
 
     if not (dog_html or parlay_html):
         return ""
-    when = f", locked {escape(locked_at)}" if locked_at else ""
-    return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b> - set before the '
-            f"day's first kickoff{when}, and not touched since.</p>"
+    if locked_at:
+        note = (f" - set before the day's first kickoff, locked {escape(locked_at)}, "
+                "and not touched since.")
+    elif day > datetime.now(LEAGUE_TZ).date():
+        note = f" - a preview. They lock on the morning of {day:%A}."
+    else:
+        note = " - set before the day's first kickoff, and not touched since."
+    return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b>{note}</p>'
             f'<div class="gs-picks">{dog_html}{parlay_html}</div>')
 
 
 def _current_week(df: pd.DataFrame) -> int:
-    """The first week with games still to play, else the last week."""
+    """The first week with a game in progress or still to kick off, else the
+    last week. In progress counts: after Saturday's last kickoff the page used
+    to move on to next week - default tab and live poll both - while the late
+    games were still being played."""
     now = datetime.now(timezone.utc).isoformat()
-    pending = df[df["date_utc"] >= now]
+    live = df["state"] == "in" if "state" in df else False
+    pending = df[(df["date_utc"] >= now) | live]
     return int(pending["week"].min()) if len(pending) else int(df["week"].max())
 
 

@@ -173,7 +173,11 @@ def grade(frame: pd.DataFrame) -> pd.DataFrame:
     # Did the side we leaned toward cover the number the book put up?
     edge = frame["pred_margin"] - (-frame["market_spread"])
     cover = frame["actual_margin"] - (-frame["market_spread"])
-    frame["beat_the_book"] = np.where(edge.abs() >= 3, (edge > 0) == (cover > 0), np.nan)
+    # Landing exactly on the number is a push, and out of the record the same
+    # way it is for the over/under below. Without the guard it counted as a
+    # loss when we leaned home and a win when we leaned away.
+    frame["beat_the_book"] = np.where((edge.abs() >= 3) & (cover != 0),
+                                      (edge > 0) == (cover > 0), np.nan)
 
     # Over/under, scored the same way as the spread. Our total against the
     # book's: leaning over means predicting more points than the number, and

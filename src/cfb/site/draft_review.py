@@ -124,7 +124,7 @@ def graded() -> pd.DataFrame:
     two starting quarterbacks are worth something.
     """
     lg = yahoo.league()
-    board = (projections.value_board().drop_duplicates("yahoo_id")
+    board = (projections.value_board(frozen=True).drop_duplicates("yahoo_id")
              .set_index("yahoo_id"))
     pre = yahoo.predraft_board().drop_duplicates("yahoo_id").set_index("yahoo_id")
     team_names = {t["team_key"]: t["name"] for t in lg["teams"]}
@@ -170,7 +170,7 @@ def _tag(delta, dim_within=NUDGE) -> str:
 
 def grade_rows(df: pd.DataFrame, lg: dict) -> list[dict]:
     """One dict per team, best drafted roster first, letter attached."""
-    board = (projections.value_board().drop_duplicates("yahoo_id")
+    board = (projections.value_board(frozen=True).drop_duplicates("yahoo_id")
              .set_index("yahoo_id"))
     rows = []
     for key, g in df.groupby("team_key"):

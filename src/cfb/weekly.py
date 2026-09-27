@@ -28,7 +28,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 
-from cfb import predict, projections, schools as schools_mod, yahoo
+from cfb import in_season, predict, projections, schools as schools_mod, yahoo
 from cfb.config import LEAGUE_TZ
 
 # The exponent on (this game's predicted score / the offence's season average)
@@ -124,7 +124,9 @@ def week_projections(start: str, end: str, board: pd.DataFrame = None,
     league = yahoo.league() if league is None else league
     if frame is None:
         frame, _model, _names = predict.season()
-    board = projections.value_board(frame=frame) if board is None else board
+    # Frozen at the draft and blended with the season (cfb.in_season), not
+    # Yahoo's in-season order, which swung a projection week to week.
+    board = in_season.board(frame=frame) if board is None else board
     board = board.drop_duplicates("yahoo_id").set_index("yahoo_id")
 
     by_team = team_games(games_between(frame, start, end))
@@ -168,7 +170,7 @@ def week_projections(start: str, end: str, board: pd.DataFrame = None,
 if __name__ == "__main__":
     sb = yahoo.scoreboard()
     mu = sb["matchups"][0]
-    board = projections.value_board()
+    board = in_season.board()
     wk = week_projections(mu["week_start"], mu["week_end"], board=board)
     show = board.drop_duplicates("yahoo_id").set_index("yahoo_id")[["player", "pos", "team"]]
     show = show.join(wk[["proj_week", "opp", "home", "state"]])

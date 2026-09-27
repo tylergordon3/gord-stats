@@ -16,7 +16,7 @@ replacement level for college positions to subtract.
 """
 import pandas as pd
 
-from cfb import predict, projections, weekly, yahoo
+from cfb import in_season, predict, weekly, yahoo
 
 # Slots that hold a real player; BN/IL are where a drop candidate lives.
 BENCH = {"BN", "IL", "IR"}
@@ -45,7 +45,7 @@ def pools(week: int = None) -> tuple:
     week = week or (weeks[-1] if weeks else int(lg.get("current_week") or 1))
     data = yahoo.week_matchups(week)
     frame, _model, _names = predict.season()
-    board = projections.value_board(frame=frame)
+    board = in_season.board(frame=frame)
     wk = _week(data, board, frame, lg)
 
     def proj(pid):
@@ -83,18 +83,25 @@ def adds(available: pd.DataFrame, top: int = TOP_PER_POS) -> dict:
     return out
 
 
+def ruled_out(status) -> bool:
+    """True for a Yahoo designation worth nothing this week (O, IR, SUSP...)."""
+    return weekly.STATUS_FACTOR.get(status or "", 1.0) == 0.0
+
+
 def drops(rostered: pd.DataFrame, per_team: int = DROPS_PER_TEAM) -> pd.DataFrame:
     """The weakest player each roster is holding, bench first.
 
     A defence is never suggested: every roster has to field one, and a college
     defence's projection is a bracket calculation rather than a read on the
-    player. Anyone Yahoo has flagged (O, IR) sorts to the top of a team's list
-    - that is the roster spot doing nothing at all.
+    player. Anyone ruled out (O, IR, SUSP - a zero in weekly.STATUS_FACTOR)
+    sorts to the top of a team's list - that is the roster spot doing nothing
+    at all. Questionable and probable play: flagging any status at all put
+    healthy starters tagged Q ahead of bench players projecting nothing.
     """
     if rostered.empty:
         return rostered
     live = rostered[rostered["pos"] != "DEF"].copy()
-    live["flagged"] = live["status"].astype(bool)
+    live["flagged"] = live["status"].map(ruled_out)
     live = live.sort_values(["team_key", "flagged", "proj"],
                             ascending=[True, False, True])
     return live.groupby("team_key", as_index=False, group_keys=False).head(per_team)

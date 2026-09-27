@@ -22,7 +22,7 @@ from html import escape
 
 import pandas as pd
 
-from cfb import predict, projections, schools as schools_mod, weekly, yahoo
+from cfb import in_season, predict, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
 from gordstats import matchup_page as ui
@@ -670,7 +670,7 @@ def body() -> str:
         return (ui.CSS + "<p>No matchups yet — the page fills in on the first "
                 "rebuild once Yahoo has scheduled week 1.</p>")
     frame, _model, _names = predict.season()
-    board = projections.value_board(frame=frame)
+    board = in_season.board(frame=frame)
     to_school = schools_mod.yahoo_school()
     espn = schools_mod.espn_ids()
     teams = {t["team_key"]: t for t in lg["teams"]}

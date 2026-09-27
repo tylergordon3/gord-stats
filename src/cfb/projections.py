@@ -507,16 +507,24 @@ def _tiers(points: pd.Series) -> pd.Series:
     return pd.Series(out)
 
 
-def value_board(refresh: bool = False, frame: pd.DataFrame = None) -> pd.DataFrame:
+def value_board(refresh: bool = False, frame: pd.DataFrame = None,
+                frozen: bool = False) -> pd.DataFrame:
     """Yahoo's board, priced: projection, floor, ceiling, VORP, tier, schedule.
 
     One row per rosterable player, in Yahoo's own rank order with the team
     offence units removed and the ranks closed up behind them - this league has
     no slot for one, so leaving them in would have every player below them
     looking a round cheaper than he is. `frame` as in team_environment.
+
+    `frozen` prices the board as it stood at the draft (yahoo.predraft_board).
+    After the draft Yahoo's rank order becomes season-to-date rank, so anything
+    that grades the draft, or adds the season on top itself (league power's
+    in_season_board), must start from the frozen one: otherwise picks are
+    graded against September's form (Arch Manning a -367 "reach") and the
+    season is counted twice.
     """
     league = yahoo.league(refresh=refresh)
-    board = yahoo.board(refresh=refresh)
+    board = yahoo.predraft_board() if frozen else yahoo.board(refresh=refresh)
     board = board[board["pos"].isin(POSITIONS)].copy()
     board["rank"] = range(1, len(board) + 1)
     board["pos_rank"] = board.groupby("pos").cumcount() + 1
