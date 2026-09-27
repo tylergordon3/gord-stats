@@ -20,8 +20,10 @@
   // The last three are page-local scroller classes (CFB/CBB power, CFB teams,
   // CFB predictions) that shipped without any of this — the widest tables on
   // the site were exactly the ones with no swipe affordance.
+  // .gs-chart-box is the matplotlib charts' box, which a phone shows wider
+  // than the screen so the labels can be read (see custom.css, CHARTS).
   var TABLES = ".table-scroll, .table-container, .adp-wrap, .ld-wrap, " +
-               ".power-wrap, .tm-scroll, .pred-scroll";
+               ".power-wrap, .tm-scroll, .pred-scroll, .gs-chart-box";
   // Control strips scroll too — the draft page's season and round switchers run
   // 276px past their box — but they only get the fade. A "swipe" label sitting
   // inside a row of buttons reads as another button.

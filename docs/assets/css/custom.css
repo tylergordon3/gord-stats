@@ -3117,6 +3117,19 @@ summary.team-report-header::after {
     border-bottom-color: #2b3852;
   }
 
+  /* The pandas tables state their grid in ID rules (fantasy.site.styles:
+     `#T_x td {border: 1px solid #eef2f7}`), which outrank everything above,
+     so after dark they drew a pale grid across the dark cells. Important is
+     the only way past an ID rule from here; the per-cell rules that matter
+     (the heavy totals line) are themselves important and more specific. */
+  .sticky-table td {
+    border-color: #2b3852 !important;
+  }
+
+  .sticky-table th {
+    border-color: #334155 !important;
+  }
+
   .sticky-table tbody tr:nth-child(even) td {
     background: #1b2540;
   }
@@ -4194,6 +4207,48 @@ img {
 
 
 /* =========================================================
+   CHARTS (gordstats.charts)
+   The matplotlib PNGs are drawn 800-990px wide on white. Slate
+   framed each one like a photo (5px padding, a border, on top of
+   max-width:100% - which also panned the page 2px on a phone), and
+   squeezed into a 370px screen their 9-10pt labels came out at
+   about 6px. The frame is gone; on a phone the chart is shown up
+   to 640px wide in its own swipeable box, where the labels read
+   at about 10px, and the page itself still never pans.
+   ========================================================= */
+img.gs-chart {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+@media (max-width: 700px) {
+  .gs-chart-box {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Never wider than it was drawn: a 600px chart stays 600px. */
+  .gs-chart-box img.gs-chart {
+    max-width: 640px;
+  }
+}
+
+/* The charts keep their white ground and dark ink in dark mode - a light
+   card, like the draft grid - dimmed so it does not glare off the page. */
+@media (prefers-color-scheme: dark) {
+  img.gs-chart {
+    filter: brightness(0.88);
+  }
+}
+
+
+/* =========================================================
    WIDE TABLES ON A PHONE
    Every wide table already scrolls inside its own box, so the
    page never pans sideways. What was missing is any sign that
@@ -4236,12 +4291,14 @@ img {
 .ld-wrap.scroll-start,
 .view-switch.scroll-start,
 .section-nav.scroll-start,
+.gs-chart-box.scroll-start,
 .table-scroll.scroll-mid,
 .table-container.scroll-mid,
 .adp-wrap.scroll-mid,
 .ld-wrap.scroll-mid,
 .view-switch.scroll-mid,
-.section-nav.scroll-mid {
+.section-nav.scroll-mid,
+.gs-chart-box.scroll-mid {
   mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
 }
 

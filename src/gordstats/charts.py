@@ -24,6 +24,7 @@ the Pi regenerate them.
 
 import re
 import matplotlib.pyplot as plt
+from PIL import Image                   # matplotlib's own dependency
 
 from gordstats.paths import ASSET_IMG_DIR
 
@@ -63,9 +64,19 @@ def save(section: str, name: str, alt: str = "", lazy: bool = True,
                 metadata={"Software": None})
     plt.close()
 
+    # The PNG's own size, so the page reserves the chart's box before the
+    # (lazy) file arrives instead of jumping when it lands; CSS scales it.
+    with Image.open(d / fname) as png:
+        width, height = png.size
+
     # relative_url keeps the path correct if the site ever moves under a
     # baseurl; generated pages carry front matter, so Jekyll resolves it.
     src = "{{ '/assets/images/charts/%s/%s' | relative_url }}" % (section, fname)
     attrs = ' loading="lazy" decoding="async"' if lazy else ""
-    return (f'<img src="{src}" alt="{alt}"{attrs} '
-            f'style="max-width:100%;height:auto;display:block;margin:0 auto"/>')
+    # .gs-chart (custom.css) takes off the frame the Slate theme puts on every
+    # <img> - 5px of padding and a border on top of max-width:100%, which also
+    # panned the page 2px sideways on a phone. The box is a scroller there:
+    # squeezed to 370px an 800-990px chart set its labels at about 6px, so a
+    # phone shows it wider and lets it be swiped, like the wide tables.
+    return (f'<div class="gs-chart-box"><img class="gs-chart" src="{src}" alt="{alt}" '
+            f'width="{width}" height="{height}"{attrs}/></div>')
