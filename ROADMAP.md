@@ -198,7 +198,20 @@ Everything below is tested; the commits carry the detail.
       fetched at their drawn size (/men/conference.html 19.9 MB -> ~1.6 MB);
       muted text, footer and live line pass contrast; bigger tap targets;
       charts and grids in dark mode; shorter intros.
-- [ ] Verify at tipoff that Torvik publishes `2027_fffinal.csv` in season.
+- [x] **Pre-game projections archived** (1bdbbf60a): CFB and NFL matchups keep
+      what GordStats projected before each kickoff; "going in" and the NFL
+      accuracy table use only those. The NFL prediction archive no longer
+      loses a game's pre-kickoff line to a mid-game capture.
+- [x] **Fantasy title odds follow the real bracket** (82d33f99b), checked
+      against 2023-24, 2024-25 and 2025-26 (each champion at 100%).
+- [x] **CBB rehearsal** (ed89fde39): the in-season path run end to end; the
+      live scoreboard crash on events with no description and unreadable,
+      unbounded KenPom errors fixed.
+- [x] **Bowls and the CFP** (fa8337cf6): the CFB section's postseason week.
+- [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
+      ratings (it answers 400 until then).
+- [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
+      `2027_fffinal.csv` and `ncaaw/2027_team_results.csv` (both 404 today).
 - [ ] Still by hand each year: `nfl/config.SEASON`, `wnba_remaining.WEEK_DATES`,
       `cfb/lines.load(last=...)`, `cfb/schools.BRIDGE_SEASON`, and
       `data/cfb/games/<season>.parquet` for the next season's fit.
