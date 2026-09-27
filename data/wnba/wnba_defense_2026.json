@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-27T16:00:56.736392-04:00",
+ "updated": "2026-09-27T16:20:56.885222-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -39379,6 +39379,140 @@
       "Shay Ciezki",
       "G",
       15.0
+     ]
+    ]
+   }
+  },
+  "401918014": {
+   "date": "2026-09-27",
+   "allowed": {
+    "NY": {
+     "G": 77.0,
+     "FC": 66.0
+    },
+    "MIN": {
+     "G": 64.0,
+     "FC": 135.0
+    }
+   },
+   "players": {
+    "NY": [
+     [
+      "Breanna Stewart",
+      "FC",
+      62.0
+     ],
+     [
+      "Leonie Fiebich",
+      "FC",
+      35.0
+     ],
+     [
+      "Jonquel Jones",
+      "FC",
+      22.0
+     ],
+     [
+      "Sabrina Ionescu",
+      "G",
+      26.0
+     ],
+     [
+      "Pauline Astier",
+      "G",
+      23.0
+     ],
+     [
+      "Anneli Maley",
+      "FC",
+      1.0
+     ],
+     [
+      "Raquel Carrera",
+      "FC",
+      2.0
+     ],
+     [
+      "Han Xu",
+      "FC",
+      13.0
+     ],
+     [
+      "Rebekah Gardner",
+      "G",
+      9.0
+     ],
+     [
+      "Rebecca Allen",
+      "G",
+      0.0
+     ],
+     [
+      "Marine Johannes",
+      "G",
+      4.0
+     ],
+     [
+      "Marine Fauthoux",
+      "G",
+      2.0
+     ]
+    ],
+    "MIN": [
+     [
+      "Natasha Howard",
+      "FC",
+      12.0
+     ],
+     [
+      "Napheesa Collier",
+      "FC",
+      22.0
+     ],
+     [
+      "Kayla McBride",
+      "G",
+      26.0
+     ],
+     [
+      "Courtney Williams",
+      "G",
+      22.0
+     ],
+     [
+      "Olivia Miles",
+      "G",
+      23.0
+     ],
+     [
+      "Nia Brodie",
+      "FC",
+      23.0
+     ],
+     [
+      "Chloe Bibby",
+      "FC",
+      6.0
+     ],
+     [
+      "Dorka Juhasz",
+      "FC",
+      3.0
+     ],
+     [
+      "Antonia Delaere",
+      "FC",
+      0.0
+     ],
+     [
+      "Aari McDonald",
+      "G",
+      2.0
+     ],
+     [
+      "Maya Caldwell",
+      "G",
+      4.0
      ]
     ]
    }
