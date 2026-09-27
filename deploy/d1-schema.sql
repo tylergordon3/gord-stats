@@ -18,9 +18,19 @@ CREATE TABLE IF NOT EXISTS users (
   -- would hand the new holder the old holder's favourites.
   provider_sub  TEXT NOT NULL UNIQUE,
   created_at    TEXT NOT NULL,
-  last_seen_at  TEXT NOT NULL
+  last_seen_at  TEXT NOT NULL,
+  -- How many rows this reader has changed today (UTC), against the daily
+  -- allowance in functions/api/_lib/limits.js. D1's free tier has one pool of
+  -- writes for the whole site, and without a per-account ceiling a single
+  -- script could empty it - taking sign-in down for everyone with it.
+  write_day     TEXT,
+  write_count   INTEGER NOT NULL DEFAULT 0
 );
 
+-- Deleting an account is one statement; the cascade takes the stars with it.
+-- It finds them through the primary key, whose first column is user_id - a
+-- separate index on user_id alone was a copy of that prefix, and cost a
+-- third write for every star saved.
 CREATE TABLE IF NOT EXISTS favorites (
   user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   -- Stored split rather than as the "cfb:194" key the browser uses, so a
@@ -30,9 +40,6 @@ CREATE TABLE IF NOT EXISTS favorites (
   created_at TEXT NOT NULL,
   PRIMARY KEY (user_id, sport, team_id)
 );
-
--- Deleting an account is one statement; the cascade takes the stars with it.
-CREATE INDEX IF NOT EXISTS favorites_by_user ON favorites (user_id);
 
 -- --------------------------------------------------------------------------
 -- Synced leagues: the reader's own fantasy league, attached to their account.
@@ -74,7 +81,7 @@ CREATE TABLE IF NOT EXISTS leagues (
   lineage_id       TEXT,
   created_at     TEXT NOT NULL,
   last_synced_at TEXT NOT NULL,
+  -- user_id leads the key, so "this reader's leagues" is a range of the
+  -- primary key's own index and needs no second one.
   PRIMARY KEY (user_id, provider, league_id)
 );
-
-CREATE INDEX IF NOT EXISTS leagues_by_user ON leagues (user_id);
