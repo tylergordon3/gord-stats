@@ -30,11 +30,10 @@ from fantasy.league import ext_projections as ext
 from fantasy.league import head_to_head as h2h
 from fantasy.league import matchups as data_mod
 from fantasy.site import layout
-from gordstats import matchup_page as ui
+from gordstats import logos, matchup_page as ui
 from gordstats import my_league, my_league_data, my_matchups, my_week
 from gordstats.frontmatter import add_front_matter
 
-LOGO = "https://a.espncdn.com/i/teamlogos/nfl/500/{abbr}.png"
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
 
 SWAP_MIN = 1.0
@@ -203,8 +202,7 @@ def game_cell(g: dict | None) -> str:
 def _logo(team: str) -> str:
     if not team:
         return ""
-    abbr = {"WAS": "wsh"}.get(team, team.lower())
-    return f'<img class="mu-logo" src="{LOGO.format(abbr=escape(abbr))}" alt="" loading="lazy">'
+    return logos.img("nfl", team, 18, cls="mu-logo")
 
 
 N_COLS = 9

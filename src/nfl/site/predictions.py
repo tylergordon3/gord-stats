@@ -18,13 +18,12 @@ import numpy as np
 import pandas as pd
 
 from cfb.site.predictions import _CSS, _fmt_spread
-from gordstats import scorecard
+from gordstats import logos, scorecard
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
 from nfl import predict, results
 from nfl.config import DATA_DIR, SEASON, TZ, WEB_DIR
 
-LOGO = "https://a.espncdn.com/i/teamlogos/nfl/500/{abbr}.png"
 EDGE = 3.0                      # points from the book before a lean is worth naming
 BREAK_EVEN = 0.524
 
@@ -68,11 +67,11 @@ def _scores(game) -> tuple:
 
 
 def _side(game, side: str, winning: bool, score: int, actual=None) -> str:
-    logo = LOGO.format(abbr=escape(str(game[f"{side}_abbr"]).lower()))
+    logo = logos.img("nfl", game[f"{side}_abbr"], 26)
     rating = game.get(f"{side}_rating")
     record = game.get(f"{side}_record") or ""
     return (f"<div class='pg-row{' pg-win' if winning else ''}'>"
-            f"<img src='{logo}' alt='' loading='lazy'>"
+            f"{logo}"
             f"<span class='pg-name'>{escape(str(game[side]))}"
             + (f" <span class='pg-rank'>{escape(str(record))}</span>" if record else "")
             + "</span>"
@@ -221,7 +220,7 @@ def _ratings_table(model, names: dict, schedule: pd.DataFrame) -> str:
                + (f"left:{50 - width:.0f}%;width:{width:.0f}%" if r.rating < 0
                   else f"left:50%;width:{width:.0f}%") + "'></i></span>")
         rows.append(f"<tr><td>{n}</td><td class='rt-name'>"
-                    f"<img src='{LOGO.format(abbr=escape(abbr.lower()))}' alt=''>{escape(name)}"
+                    f"{logos.img('nfl', abbr, 22)}{escape(name)}"
                     f"</td><td>{escape(records.get(r.team, ''))}</td>"
                     f"<td>{r.rating:+.1f}{bar}</td><td>{r.off:.1f}</td><td>{r.dfn:.1f}</td></tr>")
     head = ("<tr><th>#</th><th>Team</th><th>Record</th>"

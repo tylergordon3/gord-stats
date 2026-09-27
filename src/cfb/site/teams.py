@@ -27,14 +27,13 @@ from cfb import games as games_mod
 from cfb import predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import charts, favorites, palette, rankmoves
+from gordstats import charts, favorites, logos, palette, rankmoves
 
 # Every build's rank and rating, one CSV per build (at most two a day), so the
 # index can say how far a team has moved since any point in the season.
 HISTORY_DIR = DATA_DIR / "ratings_history" / str(SEASON)
 
 ET = ZoneInfo("America/New_York")
-LOGO = "https://a.espncdn.com/i/teamlogos/ncaa/500/{team_id}.png"
 
 _CSS = ("""<style>
 .tm-note{color:#475569;font-size:14px;line-height:1.55}
@@ -104,8 +103,8 @@ def team_slug(name: str) -> str:
     return charts.slug(name)
 
 
-def _logo(team_id: str) -> str:
-    return f"<img src='{LOGO.format(team_id=escape(str(team_id)))}' alt='' loading='lazy'>"
+def _logo(team_id: str, shown: int = 22) -> str:
+    return logos.img("ncaa", team_id, shown)
 
 
 def _standings(frame: pd.DataFrame, model, names: dict) -> pd.DataFrame:
@@ -237,7 +236,7 @@ def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict,
         f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
         for label, value, sub in tiles) + "</div>")
 
-    head = (f"<div class='tm-head'>{_logo(team)}<div><div class='tm-title'>{name}</div>"
+    head = (f"<div class='tm-head'>{_logo(team, 56)}<div><div class='tm-title'>{name}</div>"
             f"<div class='tm-sub'>Rated {row['rating']:+.1f}, "
             f"{int(row['rank'])}{_ordinal(int(row['rank']))} of {total} FBS teams"
             f"</div></div></div>")

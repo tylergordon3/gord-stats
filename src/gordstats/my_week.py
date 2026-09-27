@@ -25,12 +25,13 @@ than papered over:
   * A **defence** with no finished week to rate yet shows a dash, exactly as
     the built page does.
 """
+from gordstats import logos
 
 JS = """{% raw %}<script>
 window.GSWeek = (function(){
   'use strict';
 
-  var LOGO='https://a.espncdn.com/i/teamlogos/nfl/500/{abbr}.png';
+  var LOGO='""" + logos.url("nfl", "{abbr}") + """';
   var LOGO_FIX={WAS:'wsh'};
   var INJURY={Questionable:'Q',Doubtful:'D',Out:'O',IR:'IR',PUP:'PUP',
               Sus:'SUS',NA:'NA',DNR:'DNR',COV:'COV'};

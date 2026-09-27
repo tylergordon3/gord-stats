@@ -33,7 +33,7 @@ from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
 from cfb.site import teams as teams_page              # noqa: E402
 from cfb.site import write_page                      # noqa: E402
 from gordstats import scorecard                        # noqa: E402
-from gordstats import charts, favorites, palette     # noqa: E402
+from gordstats import charts, favorites, logos, palette  # noqa: E402
 
 _SECTION = "cfb-predictions"
 ACCENT = palette.BLUE
@@ -260,7 +260,6 @@ def _with_market(games: pd.DataFrame) -> pd.DataFrame:
 
 
 ET = ZoneInfo("America/New_York")
-LOGO = "https://a.espncdn.com/i/teamlogos/ncaa/500/{team_id}.png"
 
 
 def _fmt_spread(value) -> str:
@@ -293,7 +292,7 @@ def _side(game, side: str, winning: bool, score: int) -> str:
     badge = "" if pd.isna(rank) else f"<span class='pg-rank'>#{int(rank)}</span>"
     rating = game.get(f"{side}_rating")
     rating_txt = "" if pd.isna(rating) else f"{rating:+.1f}"
-    logo = LOGO.format(team_id=escape(str(game[f"{side}_id"])))
+    logo = logos.img("ncaa", game[f"{side}_id"], 26)
     # Only FBS teams get a page; an FCS visitor is pooled and has no rating to
     # show, so it gets a badge and no link rather than a link to nothing. Team
     # pages are built before this one -- see cfb.build.PAGES -- so the file is
@@ -303,7 +302,7 @@ def _side(game, side: str, winning: bool, score: int) -> str:
     open_a = f"<a href='/cfb/teams/{slug}/'>" if linked else ""
     close_a = "</a>" if linked else ""
     return (f"<div class='pg-row{' pg-win' if winning else ''}'>"
-            f"{open_a}<img src='{logo}' alt='' loading='lazy'>{close_a}"
+            f"{open_a}{logo}{close_a}"
             f"<span class='pg-name'>{badge}{open_a}{name}{close_a}</span>"
             f"<span class='pg-rating'>{rating_txt}</span>"
             f"<span class='pg-score'>{score}</span></div>")

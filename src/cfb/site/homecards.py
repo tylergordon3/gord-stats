@@ -28,13 +28,12 @@ from cfb import espn, games as games_mod, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, SEASON
 from cfb.site import power, teams as teams_page
-from gordstats import paths
+from gordstats import logos, paths
 
 ET = ZoneInfo("America/New_York")
 TOP25_OUT = paths.DOCS / "_includes" / "cfb_top25.html"
 BETS_OUT = paths.DOCS / "_includes" / "cfb_bets.html"
 BETS_DIR = DATA_DIR / "best_bets"
-LOGO = "https://a.espncdn.com/i/teamlogos/ncaa/500/{team_id}.png"
 # How far apart the sources have to be before a team is marked high/low. One
 # place is not an opinion.
 MARK_GAP = 3
@@ -278,8 +277,7 @@ def top25_html(limit: int = 25) -> str:
                     mark = " hc-hi"
                 elif marks.get(key) == worst:
                     mark = " hc-lo"
-            logo = (f"<img src='{LOGO.format(team_id=escape(str(team_id)))}' alt='' "
-                    f"loading='lazy'>")
+            logo = logos.img("ncaa", team_id, 22)
             cells.append(
                 f"<td class='hc-tc{mark}' data-team='{escape(str(team_id), quote=True)}' "
                 f"title=\"{escape(where(team), quote=True)}\">"

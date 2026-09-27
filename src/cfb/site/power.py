@@ -42,7 +42,7 @@ from cfb import cfbd, espn, predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import teams as teams_page
 from cfb.site import write_page
-from gordstats import favorites, rankmoves
+from gordstats import favorites, logos, rankmoves
 
 _URL = ("https://site.web.api.espn.com/apis/fitt/v3/sports/football/"
         "college-football/powerindex")
@@ -544,7 +544,7 @@ def _record(t) -> str:
 
 
 def _team(t, record: bool) -> str:
-    logo = f"<img src='{t['logo']}' alt='' loading='lazy'>" if t["logo"] else ""
+    logo = logos.img("ncaa", t["id"], 22) if t["logo"] else ""
     rec = f"<span class='pwr-rec'>{_record(t)}</span>" if record else ""
     label = t["school"] + (f"<span class='pwr-masc'>{t['mascot']}</span>" if t["mascot"] else "")
     # A rated team has a page of its own; the name is the way there.

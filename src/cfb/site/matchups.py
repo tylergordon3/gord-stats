@@ -25,10 +25,9 @@ import pandas as pd
 from cfb import in_season, predict, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import matchup_page as ui
+from gordstats import logos, matchup_page as ui
 
 OUTPUT = WEB_DIR / "matchups" / "index.html"
-LOGO = "https://a.espncdn.com/i/teamlogos/ncaa/500/{team_id}.png"
 
 # A lineup hint is worth printing past this many projected points.
 SWAP_MIN = 1.0
@@ -155,7 +154,7 @@ def _school_logo(team_full: str, to_school: dict, espn: dict) -> str:
     tid = espn.get(to_school.get(team_full, ""))
     if not tid:
         return ""
-    return f'<img class="mu-logo" src="{LOGO.format(team_id=escape(str(tid)))}" alt="" loading="lazy">'
+    return logos.img("ncaa", tid, 18, cls="mu-logo")
 
 
 def game_for(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: dict):

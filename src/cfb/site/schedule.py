@@ -55,9 +55,9 @@ import pandas as pd
 from cfb import cfbd, espn, gameinfo, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
-from gordstats import favorites
+from gordstats import favorites, logos
 from cfb.site import write_page
-from cfb.site.teams import LOGO, team_slug
+from cfb.site.teams import team_slug
 
 POWER4 = {"ACC", "Big 12", "Big Ten", "SEC"}
 HOME_EDGE = 2.5           # points SP+ ratings are read with for a home team
@@ -703,7 +703,7 @@ def _side_row(g, side: str, records: dict) -> str:
     slug = team_slug(name)
     a, a_close = ((f'<a href="/cfb/teams/{slug}/">', "</a>")
                   if slug in _team_pages() else ("", ""))
-    logo = LOGO.format(team_id=tid)
+    logo = logos.img("ncaa", getattr(g, f"{side}_id"), 20)
 
     score = getattr(g, f"{side}_score")
     other = getattr(g, "home_score" if side == "away" else "away_score")
@@ -711,7 +711,7 @@ def _side_row(g, side: str, records: dict) -> str:
     won = g.state == "post" and scored and score > other
     pts = f'<span class="sc-pts">{score:.0f}</span>' if scored else ""
     return (f'<div class="sc-row{" sc-win" if won else ""}" data-tid="{tid}">'
-            f'{a}<img src="{logo}" alt="" loading="lazy">{a_close}'
+            f'{a}{logo}{a_close}'
             f'<span class="sc-name">{joiner}{badge}{a}{escape(name)}{a_close}{rec_tag}</span>'
             f"{pts}</div>{_stat_line(g, side)}")
 
