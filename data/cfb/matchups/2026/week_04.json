@@ -2,15 +2,15 @@
  "week": 4,
  "week_start": "2026-09-20",
  "week_end": "2026-09-26",
- "status": "midevent",
+ "status": "postevent",
  "is_playoffs": false,
- "fetched": "2026-09-27T06:01:01+00:00",
+ "fetched": "2026-09-27T21:15:13+00:00",
  "matchups": [
   {
    "week": 4.0,
    "week_start": "2026-09-20",
    "week_end": "2026-09-26",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -33,7 +33,7 @@
    "week": 4.0,
    "week_start": "2026-09-20",
    "week_end": "2026-09-26",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -41,14 +41,14 @@
      "name": "Mike Locksley",
      "points": 201.34,
      "projected": 196.68,
-     "win_probability": 0.01
+     "win_probability": 0.0
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 218.2,
+     "points": 226.42,
      "projected": 193.32,
-     "win_probability": 0.99
+     "win_probability": 1.0
     }
    ]
   },
@@ -56,7 +56,7 @@
    "week": 4.0,
    "week_start": "2026-09-20",
    "week_end": "2026-09-26",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -69,7 +69,7 @@
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 182.14,
+     "points": 182.54,
      "projected": 161.68,
      "win_probability": 0.99
     }
@@ -79,7 +79,7 @@
    "week": 4.0,
    "week_start": "2026-09-20",
    "week_end": "2026-09-26",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
@@ -92,7 +92,7 @@
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
-     "points": 130.22,
+     "points": 125.72,
      "projected": 170.2,
      "win_probability": 0.99
     }
@@ -102,22 +102,22 @@
    "week": 4.0,
    "week_start": "2026-09-20",
    "week_end": "2026-09-26",
-   "status": "midevent",
+   "status": "postevent",
    "is_playoffs": false,
    "teams": [
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
-     "points": 166.94,
+     "points": 169.84,
      "projected": 169.5,
-     "win_probability": 0.17999999999999994
+     "win_probability": 0.0
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 173.86,
      "projected": 171.14,
-     "win_probability": 0.8200000000000001
+     "win_probability": 1.0
     }
    ]
   }
@@ -334,8 +334,8 @@
     "team": "PITT",
     "team_full": "Pittsburgh Panthers",
     "bye": 10.0,
-    "status": "D",
-    "status_full": "Doubtful",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
@@ -949,8 +949,8 @@
     "team": "LSU",
     "team_full": "LSU Tigers",
     "bye": 9.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "O",
+    "status_full": "Out",
     "injury_note": "Leg",
     "slot": "BN",
     "points": 0.0,
@@ -1097,13 +1097,14 @@
     "status_full": "",
     "injury_note": "",
     "slot": "QB",
-    "points": 16.84,
+    "points": 25.06,
     "stats": {
-     "4": 186.0,
+     "4": 239.0,
      "5": 2.0,
      "6": 2.0,
-     "8": 13.0,
-     "9": 14.0
+     "8": 15.0,
+     "9": 15.0,
+     "10": 1.0
     }
    },
    {
@@ -1740,10 +1741,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 8.8,
+    "points": 9.2,
     "stats": {
-     "8": 16.0,
-     "9": 32.0,
+     "8": 19.0,
+     "9": 36.0,
      "11": 4.0,
      "12": 36.0
     }
@@ -2393,12 +2394,13 @@
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 12.3,
+    "points": 7.8,
     "stats": {
-     "8": 17.0,
-     "9": 110.0,
+     "8": 18.0,
+     "9": 107.0,
      "11": 2.0,
-     "12": 3.0
+     "12": -19.0,
+     "18": 1.0
     }
    },
    {
@@ -2763,10 +2765,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "WR",
-    "points": 15.3,
+    "points": 18.2,
     "stats": {
-     "11": 5.0,
-     "12": 68.0,
+     "11": 7.0,
+     "12": 87.0,
      "13": 1.0
     }
    },
@@ -2794,8 +2796,8 @@
     "team": "UGA",
     "team_full": "Georgia Bulldogs",
     "bye": 8.0,
-    "status": "D",
-    "status_full": "Doubtful",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Undisclosed",
     "slot": "W/R/T",
     "points": 0.0,
@@ -2953,7 +2955,7 @@
     "bye": 5.0,
     "status": "Q",
     "status_full": "Questionable",
-    "injury_note": "Undisclosed",
+    "injury_note": "Concussion",
     "slot": "QB",
     "points": 4.08,
     "stats": {
