@@ -186,11 +186,18 @@ Everything below is tested; the commits carry the detail.
 - [x] **Readers' leagues** (92768dc5b): superflex, taxi squads.
 - [x] **Security** (87c2fa77c): the sign-in open redirect.
 - [x] **Favourites** (d3714c3f8): a star set just before leaving is not undone.
-- [ ] **Security hardening**: rate limits and row-diffing on favourites and
-      league sync, cached score proxies, session hardening (in progress).
-- [ ] **Phone layout**: one-row sub-nav and shorter sticky chrome, the usage
-      pages' nested scroller, right-sized logos (/men/conference.html pulls
-      19 MB), contrast, dark-mode leaks (in progress).
+- [x] **Security hardening** (b4ad43e19..3b3eba338): favourites write only
+      changed rows under a per-account daily ceiling; league sync is bounded
+      (40 Sleeper calls), claimed atomically and capped per account; score
+      proxies cached; typed session tokens, ID-token `exp`/`email_verified`,
+      no cross-site sign-out; Functions syntax-checked in CI. D1 migration
+      004 applied 2026-09-27.
+- [x] **Phone layout** (58d3c0a9e..9dcc721fc): the header scrolls away on
+      phones and Fantasy's nav is one row (pinned chrome 475px -> 53px on
+      /cfb/usage/); usage pages have one scroller and folded filters; logos
+      fetched at their drawn size (/men/conference.html 19.9 MB -> ~1.6 MB);
+      muted text, footer and live line pass contrast; bigger tap targets;
+      charts and grids in dark mode; shorter intros.
 - [ ] Verify at tipoff that Torvik publishes `2027_fffinal.csv` in season.
 - [ ] Still by hand each year: `nfl/config.SEASON`, `wnba_remaining.WEEK_DATES`,
       `cfb/lines.load(last=...)`, `cfb/schools.BRIDGE_SEASON`, and
