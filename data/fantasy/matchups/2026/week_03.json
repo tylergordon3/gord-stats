@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-27T17:31:01+00:00",
+ "fetched": "2026-09-27T17:40:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -121,7 +121,7 @@
     {
      "roster_id": 6,
      "matchup_id": 1,
-     "points": 12.7,
+     "points": 16.4,
      "starters": [
       "3294",
       "4034",
@@ -155,8 +155,8 @@
       "11581": 3.8,
       "11584": 0.0,
       "11620": 0.0,
-      "12507": 1.3,
-      "3163": 2.2,
+      "12507": 2.0,
+      "3163": 2.76,
       "3294": 0.0,
       "4034": 0.0,
       "4983": 1.8,
@@ -164,7 +164,7 @@
       "6801": 2.0,
       "8134": 0.0,
       "8137": 0.0,
-      "8259": 1.0,
+      "8259": 4.0,
       "9484": 6.6,
       "BAL": 0.0
      }
@@ -212,7 +212,7 @@
       "4866": 0.0,
       "5850": 0.0,
       "5947": 1.5,
-      "6819": 0.0,
+      "6819": 1.8,
       "7002": 0.0,
       "7547": 2.6,
       "8131": 2.0,
@@ -228,7 +228,7 @@
     {
      "roster_id": 7,
      "matchup_id": 2,
-     "points": 21.88,
+     "points": 25.32,
      "starters": [
       "6797",
       "9224",
@@ -262,16 +262,16 @@
       "11586": 0.0,
       "11632": 2.5,
       "11635": 1.7,
-      "12512": 1.8,
+      "12512": 2.9,
       "12518": 6.2,
       "13417": 0.0,
       "2747": 0.0,
-      "6797": 4.98,
-      "8126": 0.0,
+      "6797": 5.22,
+      "8126": 1.2,
       "8132": 0.0,
-      "8228": 5.2,
+      "8228": 5.6,
       "9224": 1.3,
-      "9487": 0.0,
+      "9487": 2.8,
       "9488": 0.0,
       "DEN": 0.0
      }
@@ -279,7 +279,7 @@
     {
      "roster_id": 9,
      "matchup_id": 2,
-     "points": 19.36,
+     "points": 18.06,
      "starters": [
       "4984",
       "6813",
@@ -313,10 +313,10 @@
       "10859": 1.8,
       "11533": 0.0,
       "11563": 0.0,
-      "12481": 4.5,
+      "12481": 4.2,
       "12527": 0.0,
       "12534": 0.0,
-      "4984": 1.56,
+      "4984": 0.56,
       "5045": 0.0,
       "5846": 2.1,
       "5872": 0.0,
@@ -335,7 +335,7 @@
     {
      "roster_id": 3,
      "matchup_id": 3,
-     "points": 49.54,
+     "points": 50.66,
      "starters": [
       "7523",
       "7588",
@@ -375,7 +375,7 @@
       "12489": 0.0,
       "4227": 1.0,
       "6770": 6.4,
-      "7523": 1.34,
+      "7523": 2.46,
       "7543": 0.0,
       "7564": 10.9,
       "7588": 0.0,
@@ -390,7 +390,7 @@
     {
      "roster_id": 10,
      "matchup_id": 3,
-     "points": 3.6,
+     "points": 6.1,
      "starters": [
       "8183",
       "8138",
@@ -421,17 +421,17 @@
       "LAR"
      ],
      "players_points": {
-      "11631": 0.0,
+      "11631": 1.8,
       "12015": 0.0,
       "12506": 2.3,
       "12529": 1.2,
       "13287": 0.0,
       "13296": 0.0,
-      "4046": 2.12,
-      "5927": 0.0,
+      "4046": 3.76,
+      "5927": 2.1,
       "6794": 0.0,
       "7021": 0.0,
-      "8138": 0.1,
+      "8138": 0.5,
       "8144": 0.0,
       "8183": 0.0,
       "9756": 0.0,
@@ -446,7 +446,7 @@
     {
      "roster_id": 1,
      "matchup_id": 4,
-     "points": 12.9,
+     "points": 20.3,
      "starters": [
       "6904",
       "8151",
@@ -477,17 +477,17 @@
       "SF"
      ],
      "players_points": {
-      "10229": 1.5,
+      "10229": 5.0,
       "11435": 0.1,
       "11834": 0.0,
-      "12490": 1.2,
+      "12490": 3.6,
       "13346": 0.0,
       "2020": 0.0,
       "4217": 0.0,
       "5022": 0.0,
       "6904": 0.0,
-      "7611": 1.8,
-      "8151": 7.4,
+      "7611": 1.9,
+      "8151": 8.9,
       "8155": 2.8,
       "9493": 0.0,
       "9997": 0.0,
@@ -497,7 +497,7 @@
     {
      "roster_id": 2,
      "matchup_id": 4,
-     "points": 40.4,
+     "points": 41.4,
      "starters": [
       "12545",
       "9509",
@@ -530,9 +530,9 @@
      ],
      "players_points": {
       "10236": 0.0,
-      "11564": 0.34,
+      "11564": 2.24,
       "11604": 0.0,
-      "12533": 3.1,
+      "12533": 3.3,
       "12545": 0.0,
       "13279": 0.0,
       "2449": 0.0,
@@ -541,7 +541,7 @@
       "7569": 0.0,
       "7594": 0.6,
       "7839": 1.0,
-      "8146": 2.9,
+      "8146": 3.9,
       "9486": 0.0,
       "9509": 35.3,
       "PHI": 0.0
@@ -555,7 +555,7 @@
     {
      "roster_id": 4,
      "matchup_id": 5,
-     "points": 17.04,
+     "points": 20.94,
      "starters": [
       "4943",
       "9221",
@@ -593,7 +593,7 @@
       "12514": 0.0,
       "12517": 0.0,
       "13286": -1.2,
-      "13298": 0.0,
+      "13298": 1.4,
       "2216": 0.0,
       "3198": 0.0,
       "4943": 0.64,
@@ -601,8 +601,8 @@
       "5859": 0.0,
       "6650": 0.0,
       "6806": 0.0,
-      "8136": 7.6,
-      "9221": 2.2,
+      "8136": 7.8,
+      "9221": 6.1,
       "9500": 3.4,
       "NYG": 12.0
      }
@@ -610,7 +610,7 @@
     {
      "roster_id": 5,
      "matchup_id": 5,
-     "points": 34.2,
+     "points": 34.1,
      "starters": [
       "4881",
       "9226",
@@ -647,14 +647,14 @@
       "3451": 0.0,
       "421": 0.0,
       "4881": 0.0,
-      "5967": 0.8,
+      "5967": 1.7,
       "6786": 0.0,
       "6790": 0.0,
       "7553": 1.5,
       "8142": 0.0,
       "8150": 0.0,
       "8167": 22.6,
-      "9226": 1.8,
+      "9226": 1.7,
       "SEA": 4.0
      }
     }
@@ -890,7 +890,7 @@
    "pts": 16.35,
    "opp": "KC",
    "team": "MIA",
-   "injury": "",
+   "injury": "Questionable",
    "name": "De'Von Achane",
    "pos": "RB"
   },
@@ -1118,14 +1118,6 @@
    "name": "Drake London",
    "pos": "WR"
   },
-  "6790": {
-   "pts": 13.3,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "D'Andre Swift",
-   "pos": "RB"
-  },
   "10236": {
    "pts": 13.23,
    "opp": "LAC",
@@ -1133,6 +1125,14 @@
    "injury": "",
    "name": "Dalton Kincaid",
    "pos": "TE"
+  },
+  "6790": {
+   "pts": 13.22,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "D'Andre Swift",
+   "pos": "RB"
   },
   "7526": {
    "pts": 13.19,
@@ -1439,7 +1439,7 @@
    "pos": "WR"
   },
   "12519": {
-   "pts": 9.55,
+   "pts": 9.53,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
@@ -1543,7 +1543,7 @@
    "pos": "DEF"
   },
   "12517": {
-   "pts": 9.09,
+   "pts": 9.05,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
@@ -1647,12 +1647,20 @@
    "pos": "DEF"
   },
   "11620": {
-   "pts": 8.13,
+   "pts": 8.1,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
    "name": "Rome Odunze",
    "pos": "WR"
+  },
+  "12534": {
+   "pts": 8.08,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Kyle Monangai",
+   "pos": "RB"
   },
   "12015": {
    "pts": 7.97,
@@ -1740,14 +1748,6 @@
    "team": "ARI",
    "injury": "",
    "name": "Tyler Allgeier",
-   "pos": "RB"
-  },
-  "12534": {
-   "pts": 7.13,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Kyle Monangai",
    "pos": "RB"
   },
   "8136": {
@@ -2828,40 +2828,45 @@
    "pts_std": 16.0,
    "gp": 1.0
   },
-  "HOU": {
-   "sack": 1.0,
-   "fum_rec": 1.0,
-   "pts_ppr": 14.0,
-   "pts_half_ppr": 14.0,
-   "pts_std": 14.0,
-   "gp": 1.0
-  },
   "NYG": {
    "pts_ppr": 12.0,
    "pts_half_ppr": 12.0,
    "pts_std": 12.0,
    "gp": 1.0
   },
-  "7564": {
-   "rec": 3.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 18.0,
-   "rec_td": 1.0,
-   "pts_ppr": 10.8,
-   "pts_half_ppr": 9.3,
-   "pts_std": 7.8,
-   "gp": 1.0
-  },
-  "KC": {
-   "pts_ppr": 10.0,
-   "pts_half_ppr": 10.0,
-   "pts_std": 10.0,
+  "HOU": {
+   "pts_allow": 3.0,
+   "sack": 1.0,
+   "fum_rec": 1.0,
+   "pts_ppr": 11.0,
+   "pts_half_ppr": 11.0,
+   "pts_std": 11.0,
    "gp": 1.0
   },
   "DET": {
-   "pts_ppr": 10.0,
-   "pts_half_ppr": 10.0,
-   "pts_std": 10.0,
+   "sack": 1.0,
+   "pts_ppr": 11.0,
+   "pts_half_ppr": 11.0,
+   "pts_std": 11.0,
+   "gp": 1.0
+  },
+  "7564": {
+   "rec": 3.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 19.0,
+   "rec_td": 1.0,
+   "pts_ppr": 10.9,
+   "pts_half_ppr": 9.4,
+   "pts_std": 7.9,
+   "gp": 1.0
+  },
+  "8151": {
+   "rush_att": 3.0,
+   "rush_yd": 21.0,
+   "rush_td": 1.0,
+   "pts_ppr": 8.1,
+   "pts_half_ppr": 8.1,
+   "pts_std": 8.1,
    "gp": 1.0
   },
   "8136": {
@@ -2872,22 +2877,6 @@
    "pts_ppr": 7.6,
    "pts_half_ppr": 7.1,
    "pts_std": 6.6,
-   "gp": 1.0
-  },
-  "8151": {
-   "rush_att": 2.0,
-   "rush_yd": 14.0,
-   "rush_td": 1.0,
-   "pts_ppr": 7.4,
-   "pts_half_ppr": 7.4,
-   "pts_std": 7.4,
-   "gp": 1.0
-  },
-  "SEA": {
-   "pts_allow": 6.0,
-   "pts_ppr": 7.0,
-   "pts_half_ppr": 7.0,
-   "pts_std": 7.0,
    "gp": 1.0
   },
   "9484": {
@@ -2907,6 +2896,15 @@
    "pts_std": 6.4,
    "gp": 1.0
   },
+  "12518": {
+   "rec": 3.0,
+   "rec_tgt": 3.0,
+   "rec_yd": 32.0,
+   "pts_ppr": 6.2,
+   "pts_half_ppr": 4.7,
+   "pts_std": 3.2,
+   "gp": 1.0
+  },
   "1466": {
    "rec": 1.0,
    "rec_tgt": 1.0,
@@ -2916,32 +2914,50 @@
    "pts_std": 4.8,
    "gp": 1.0
   },
-  "6797": {
-   "pass_yd": 6.0,
-   "pass_td": 1.0,
-   "rush_att": 1.0,
-   "rush_yd": 7.0,
-   "pts_ppr": 4.94,
-   "pts_half_ppr": 4.94,
-   "pts_std": 4.94,
-   "gp": 1.0
-  },
-  "12518": {
-   "rec": 2.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 24.0,
-   "pts_ppr": 4.4,
-   "pts_half_ppr": 3.4,
-   "pts_std": 2.4,
-   "gp": 1.0
-  },
   "8228": {
+   "rush_att": 3.0,
+   "rush_yd": 16.0,
    "rec": 1.0,
    "rec_tgt": 1.0,
    "rec_yd": 30.0,
+   "pts_ppr": 5.6,
+   "pts_half_ppr": 5.1,
+   "pts_std": 4.6,
+   "gp": 1.0
+  },
+  "6797": {
+   "pass_yd": 7.0,
+   "pass_td": 1.0,
+   "rush_att": 1.0,
+   "rush_yd": 7.0,
+   "pts_ppr": 4.98,
+   "pts_half_ppr": 4.98,
+   "pts_std": 4.98,
+   "gp": 1.0
+  },
+  "12481": {
+   "rush_att": 4.0,
+   "rush_yd": 5.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 30.0,
+   "pts_ppr": 4.5,
+   "pts_half_ppr": 4.0,
+   "pts_std": 3.5,
+   "gp": 1.0
+  },
+  "KC": {
+   "pts_allow": 7.0,
    "pts_ppr": 4.0,
-   "pts_half_ppr": 3.5,
-   "pts_std": 3.0,
+   "pts_half_ppr": 4.0,
+   "pts_std": 4.0,
+   "gp": 1.0
+  },
+  "SEA": {
+   "pts_allow": 7.0,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 4.0,
+   "pts_std": 4.0,
    "gp": 1.0
   },
   "8148": {
@@ -2966,7 +2982,7 @@
   },
   "9500": {
    "rec": 1.0,
-   "rec_tgt": 2.0,
+   "rec_tgt": 4.0,
    "rec_yd": 24.0,
    "pts_ppr": 3.4,
    "pts_half_ppr": 2.9,
@@ -2974,14 +2990,14 @@
    "gp": 1.0
   },
   "12533": {
-   "rush_att": 4.0,
-   "rush_yd": 15.0,
+   "rush_att": 5.0,
+   "rush_yd": 14.0,
    "rec": 1.0,
    "rec_tgt": 1.0,
    "rec_yd": 7.0,
-   "pts_ppr": 3.2,
-   "pts_half_ppr": 2.7,
-   "pts_std": 2.2,
+   "pts_ppr": 3.1,
+   "pts_half_ppr": 2.6,
+   "pts_std": 2.1,
    "gp": 1.0
   },
   "8146": {
@@ -3004,6 +3020,70 @@
    "pts_std": 1.8,
    "gp": 1.0
   },
+  "7547": {
+   "rec": 1.0,
+   "rec_tgt": 4.0,
+   "rec_yd": 16.0,
+   "pts_ppr": 2.6,
+   "pts_half_ppr": 2.1,
+   "pts_std": 1.6,
+   "gp": 1.0
+  },
+  "11632": {
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 5.0,
+   "pts_ppr": 2.5,
+   "pts_half_ppr": 1.5,
+   "pts_std": 0.5,
+   "gp": 1.0
+  },
+  "12490": {
+   "rush_att": 1.0,
+   "rush_yd": 12.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 2.0,
+   "pts_ppr": 2.4,
+   "pts_half_ppr": 1.9,
+   "pts_std": 1.4,
+   "gp": 1.0
+  },
+  "12506": {
+   "rec": 1.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 13.0,
+   "pts_ppr": 2.3,
+   "pts_half_ppr": 1.8,
+   "pts_std": 1.3,
+   "gp": 1.0
+  },
+  "12512": {
+   "rush_att": 6.0,
+   "rush_yd": 23.0,
+   "pts_ppr": 2.3,
+   "pts_half_ppr": 2.3,
+   "pts_std": 2.3,
+   "gp": 1.0
+  },
+  "3163": {
+   "pass_yd": 55.0,
+   "pts_ppr": 2.2,
+   "pts_half_ppr": 2.2,
+   "pts_std": 2.2,
+   "gp": 1.0
+  },
+  "9221": {
+   "rush_att": 2.0,
+   "rush_yd": 5.0,
+   "rec": 1.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 7.0,
+   "pts_ppr": 2.2,
+   "pts_half_ppr": 1.7,
+   "pts_std": 1.2,
+   "gp": 1.0
+  },
   "4046": {
    "pass_yd": 53.0,
    "pts_ppr": 2.12,
@@ -3011,12 +3091,19 @@
    "pts_std": 2.12,
    "gp": 1.0
   },
-  "9221": {
-   "rush_att": 1.0,
-   "rush_yd": 3.0,
+  "5846": {
    "rec": 1.0,
    "rec_tgt": 2.0,
-   "rec_yd": 7.0,
+   "rec_yd": 11.0,
+   "pts_ppr": 2.1,
+   "pts_half_ppr": 1.6,
+   "pts_std": 1.1,
+   "gp": 1.0
+  },
+  "8131": {
+   "rec": 1.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 10.0,
    "pts_ppr": 2.0,
    "pts_half_ppr": 1.5,
    "pts_std": 1.0,
@@ -3058,6 +3145,26 @@
    "pts_std": 0.8,
    "gp": 1.0
   },
+  "7611": {
+   "rush_att": 2.0,
+   "rush_yd": 6.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 2.0,
+   "pts_ppr": 1.8,
+   "pts_half_ppr": 1.3,
+   "pts_std": 0.8,
+   "gp": 1.0
+  },
+  "11635": {
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 7.0,
+   "pts_ppr": 1.7,
+   "pts_half_ppr": 1.2,
+   "pts_std": 0.7,
+   "gp": 1.0
+  },
   "13320": {
    "rec": 1.0,
    "rec_tgt": 2.0,
@@ -3065,13 +3172,6 @@
    "pts_ppr": 1.7,
    "pts_half_ppr": 1.2,
    "pts_std": 0.7,
-   "gp": 1.0
-  },
-  "3163": {
-   "pass_yd": 39.0,
-   "pts_ppr": 1.56,
-   "pts_half_ppr": 1.56,
-   "pts_std": 1.56,
    "gp": 1.0
   },
   "9228": {
@@ -3117,23 +3217,13 @@
    "pts_std": 0.5,
    "gp": 1.0
   },
-  "4984": {
-   "pass_yd": 9.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 1.0,
-   "pts_ppr": 1.46,
-   "pts_half_ppr": 0.96,
-   "pts_std": 0.46,
-   "gp": 1.0
-  },
   "7523": {
-   "pass_yd": 16.0,
+   "pass_yd": 18.0,
    "rush_att": 1.0,
    "rush_yd": 7.0,
-   "pts_ppr": 1.34,
-   "pts_half_ppr": 1.34,
-   "pts_std": 1.34,
+   "pts_ppr": 1.42,
+   "pts_half_ppr": 1.42,
+   "pts_std": 1.42,
    "gp": 1.0
   },
   "12507": {
@@ -3152,21 +3242,12 @@
    "pts_std": 1.3,
    "gp": 1.0
   },
-  "12490": {
-   "rush_att": 1.0,
+  "12529": {
+   "rush_att": 4.0,
    "rush_yd": 12.0,
    "pts_ppr": 1.2,
    "pts_half_ppr": 1.2,
    "pts_std": 1.2,
-   "gp": 1.0
-  },
-  "7611": {
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 2.0,
-   "pts_ppr": 1.2,
-   "pts_half_ppr": 0.7,
-   "pts_std": 0.2,
    "gp": 1.0
   },
   "4227": {
@@ -3185,19 +3266,27 @@
    "pts_std": 1.0,
    "gp": 1.0
   },
-  "11564": {
-   "pass_yd": 23.0,
-   "pts_ppr": 0.92,
-   "pts_half_ppr": 0.92,
-   "pts_std": 0.92,
+  "7839": {
+   "xpm": 1.0,
+   "xpa": 1.0,
+   "pts_ppr": 1.0,
+   "pts_half_ppr": 1.0,
+   "pts_std": 1.0,
    "gp": 1.0
   },
-  "12512": {
-   "rush_att": 2.0,
-   "rush_yd": 7.0,
-   "pts_ppr": 0.7,
-   "pts_half_ppr": 0.7,
-   "pts_std": 0.7,
+  "5967": {
+   "rush_att": 3.0,
+   "rush_yd": 8.0,
+   "pts_ppr": 0.8,
+   "pts_half_ppr": 0.8,
+   "pts_std": 0.8,
+   "gp": 1.0
+  },
+  "4943": {
+   "pass_yd": 16.0,
+   "pts_ppr": 0.64,
+   "pts_half_ppr": 0.64,
+   "pts_std": 0.64,
    "gp": 1.0
   },
   "7594": {
@@ -3216,43 +3305,52 @@
    "pts_std": 0.6,
    "gp": 1.0
   },
-  "5967": {
-   "rush_att": 2.0,
+  "4984": {
+   "pass_yd": 9.0,
+   "pass_int": 1.0,
+   "rush_att": 1.0,
+   "rush_yd": 1.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 1.0,
+   "pts_ppr": 0.56,
+   "pts_half_ppr": 0.06,
+   "pts_std": -0.44,
+   "gp": 1.0
+  },
+  "6813": {
+   "rush_att": 5.0,
    "rush_yd": 5.0,
    "pts_ppr": 0.5,
    "pts_half_ppr": 0.5,
    "pts_std": 0.5,
    "gp": 1.0
   },
-  "12529": {
-   "rush_att": 2.0,
-   "rush_yd": 4.0,
-   "pts_ppr": 0.4,
-   "pts_half_ppr": 0.4,
-   "pts_std": 0.4,
+  "11564": {
+   "pass_yd": 36.0,
+   "rush_att": 1.0,
+   "rush_yd": 9.0,
+   "fum_lost": 1.0,
+   "pts_ppr": 0.34,
+   "pts_half_ppr": 0.34,
+   "pts_std": 0.34,
    "gp": 1.0
   },
-  "4943": {
-   "pass_yd": 9.0,
-   "pts_ppr": 0.36,
-   "pts_half_ppr": 0.36,
-   "pts_std": 0.36,
+  "11435": {
+   "rush_att": 1.0,
+   "rush_yd": 1.0,
+   "pts_ppr": 0.1,
+   "pts_half_ppr": 0.1,
+   "pts_std": 0.1,
    "gp": 1.0
   },
-  "12481": {
+  "8138": {
    "rush_att": 3.0,
-   "rush_yd": 3.0,
-   "pts_ppr": 0.3,
-   "pts_half_ppr": 0.3,
-   "pts_std": 0.3,
-   "gp": 1.0
-  },
-  "6813": {
-   "rush_att": 3.0,
-   "rush_yd": 2.0,
-   "pts_ppr": 0.2,
-   "pts_half_ppr": 0.2,
-   "pts_std": 0.2,
+   "rush_yd": 21.0,
+   "fum_lost": 1.0,
+   "pts_ppr": 0.1,
+   "pts_half_ppr": 0.1,
+   "pts_std": 0.1,
    "gp": 1.0
   },
   "9488": {
@@ -3265,9 +3363,6 @@
    "gp": 1.0
   },
   "13346": {
-   "gp": 1.0
-  },
-  "11632": {
    "gp": 1.0
   },
   "2747": {
@@ -3284,13 +3379,6 @@
    "rec_tgt": 1.0,
    "gp": 1.0
   },
-  "7547": {
-   "rec_tgt": 1.0,
-   "gp": 1.0
-  },
-  "5846": {
-   "gp": 1.0
-  },
   "2449": {
    "rec_tgt": 1.0,
    "gp": 1.0
@@ -3302,10 +3390,6 @@
   "13279": {
    "gp": 1.0
   },
-  "8131": {
-   "rec_tgt": 1.0,
-   "gp": 1.0
-  },
   "5001": {
    "gp": 1.0
   },
@@ -3315,38 +3399,16 @@
   "8134": {
    "gp": 1.0
   },
-  "7839": {
-   "gp": 1.0
-  },
   "6819": {
    "gp": 1.0
   },
   "5927": {
    "gp": 1.0
   },
-  "12506": {
-   "rec_tgt": 1.0,
-   "gp": 1.0
-  },
   "11631": {
    "gp": 1.0
   },
-  "11435": {
-   "gp": 1.0
-  },
   "11646": {
-   "gp": 1.0
-  },
-  "11635": {
-   "gp": 1.0
-  },
-  "8138": {
-   "rush_att": 2.0,
-   "rush_yd": 12.0,
-   "fum_lost": 1.0,
-   "pts_ppr": -0.8,
-   "pts_half_ppr": -0.8,
-   "pts_std": -0.8,
    "gp": 1.0
   },
   "13286": {
@@ -3364,22 +3426,22 @@
    "game_id": "401872953",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "3:42 - 1st",
+   "detail": "15:00 - 2nd",
    "period": null,
    "clock": null,
    "home": "BUF",
    "away": "LAC",
    "home_score": 0.0,
-   "away_score": 7.0,
+   "away_score": 10.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "FOX",
    "weather": {
-    "temp": 68.0,
-    "cond": 7,
-    "text": "Cloudy",
+    "temp": 67.0,
+    "cond": 6,
+    "text": "Mostly cloudy",
     "indoors": false
    }
   },
@@ -3387,7 +3449,7 @@
    "game_id": "401872949",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "2:19 - 1st",
+   "detail": "12:37 - 2nd",
    "period": null,
    "clock": null,
    "home": "CLE",
@@ -3410,7 +3472,7 @@
    "game_id": "401872954",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "0:17 - 1st",
+   "detail": "11:31 - 2nd",
    "period": null,
    "clock": null,
    "home": "DET",
@@ -3423,7 +3485,7 @@
    "total": null,
    "tv": "FOX",
    "weather": {
-    "temp": 72.0,
+    "temp": 73.0,
     "cond": 1,
     "text": "Sunny",
     "indoors": true
@@ -3433,7 +3495,7 @@
    "game_id": "401872951",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "4:28 - 1st",
+   "detail": "1:39 - 1st",
    "period": null,
    "clock": null,
    "home": "IND",
@@ -3446,9 +3508,9 @@
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 70.0,
-    "cond": 3,
-    "text": "Partly sunny",
+    "temp": 71.0,
+    "cond": 1,
+    "text": "Sunny",
     "indoors": true
    }
   },
@@ -3456,7 +3518,7 @@
    "game_id": "401872952",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "3:27 - 1st",
+   "detail": "13:49 - 2nd",
    "period": null,
    "clock": null,
    "home": "MIA",
@@ -3479,7 +3541,7 @@
    "game_id": "401872956",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "5:14 - 1st",
+   "detail": "1:10 - 1st",
    "period": null,
    "clock": null,
    "home": "NYG",
@@ -3492,7 +3554,7 @@
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 62.0,
+    "temp": 64.0,
     "cond": 12,
     "text": "Light rain",
     "indoors": false
@@ -3502,12 +3564,12 @@
    "game_id": "401872950",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "3:36 - 1st",
+   "detail": "End of 1st",
    "period": null,
    "clock": null,
    "home": "PIT",
    "away": "CIN",
-   "home_score": 7.0,
+   "home_score": 14.0,
    "away_score": 7.0,
    "home_implied": null,
    "away_implied": null,
@@ -3515,7 +3577,7 @@
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 70.0,
+    "temp": 71.0,
     "cond": 1,
     "text": "Sunny",
     "indoors": false
@@ -3525,7 +3587,7 @@
    "game_id": "401872955",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "7:25 - 1st",
+   "detail": "3:25 - 1st",
    "period": null,
    "clock": null,
    "home": "WAS",
@@ -3548,12 +3610,12 @@
    "game_id": "401872957",
    "date": "2026-09-27T17:00Z",
    "state": "in",
-   "detail": "3:52 - 1st",
+   "detail": "13:25 - 2nd",
    "period": null,
    "clock": null,
    "home": "JAX",
    "away": "NE",
-   "home_score": 0.0,
+   "home_score": 7.0,
    "away_score": 0.0,
    "home_implied": null,
    "away_implied": null,
@@ -3561,9 +3623,9 @@
    "total": null,
    "tv": "CBS",
    "weather": {
-    "temp": 82.0,
-    "cond": 3,
-    "text": "Partly sunny",
+    "temp": 84.0,
+    "cond": 2,
+    "text": "Mostly sunny",
     "indoors": false
    }
   },
