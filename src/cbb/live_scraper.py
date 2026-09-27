@@ -280,8 +280,11 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     is_ap = bool(home_ap or away_ap)
 
     # ---- game info ----
-    game_type = g["game_type"]
-    game_descript = g["game_description"]
+    # theScore leaves both out of some events (exhibitions, early-season
+    # tournaments): a missing description was `"NCAA Tournament" in None`
+    # and took the whole snapshot down - found by the 2026-09-27 rehearsal.
+    game_type = g.get("game_type") or ""
+    game_descript = g.get("game_description") or ""
     status = g.get("status")
     stadium = g.get("stadium")
 

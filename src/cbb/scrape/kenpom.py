@@ -5,6 +5,8 @@ Documentation:
 """
 
 import json
+import socket
+from contextlib import contextmanager
 from datetime import datetime
 
 import kenpom_wrapper
@@ -20,6 +22,32 @@ load_dotenv()
 kenpom = kenpom_wrapper.KenpomData()
 
 
+# kenpom_wrapper calls requests with no timeout, so one stalled KenPom request
+# held the Pi's whole daily run until systemd killed it, publishing nothing.
+# It takes no timeout argument; the socket default bounds it instead.
+KENPOM_TIMEOUT = 60
+
+
+@contextmanager
+def _timeout(seconds):
+    before = socket.getdefaulttimeout()
+    socket.setdefaulttimeout(seconds)
+    try:
+        yield
+    finally:
+        socket.setdefaulttimeout(before)
+
+
+def _table(got, what: str, season: int) -> pd.DataFrame:
+    """kenpom_wrapper returns an HTTP error rather than raising it, which then
+    surfaced as "DataFrame constructor not properly called!". Before KenPom
+    publishes a season (its preseason ratings arrive in late October) every
+    endpoint answers 400 for it."""
+    if isinstance(got, Exception) or not isinstance(got, list):
+        raise RuntimeError(f"KenPom has no {season} {what} ({got})")
+    return pd.DataFrame(got)
+
+
 def kenpom_now():
     now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
     str = now.strftime("%Y-%m-%d")
@@ -27,11 +55,12 @@ def kenpom_now():
     # This was a literal 2026, which would have fed last season's final
     # ratings to the model all year under today's filename.
     season = utils.season_year(now)
-    ratings = pd.DataFrame(kenpom.get_ratings(season))
-    ff = pd.DataFrame(kenpom.get_four_factors(season))
-    dist = pd.DataFrame(kenpom.get_point_distribution(season))
-    height = pd.DataFrame(kenpom.get_height(season))
-    misc = pd.DataFrame(kenpom.get_misc_stats(season))
+    with _timeout(KENPOM_TIMEOUT):
+        ratings = _table(kenpom.get_ratings(season), "ratings", season)
+        ff = _table(kenpom.get_four_factors(season), "four factors", season)
+        dist = _table(kenpom.get_point_distribution(season), "point distribution", season)
+        height = _table(kenpom.get_height(season), "height", season)
+        misc = _table(kenpom.get_misc_stats(season), "misc stats", season)
 
     merge1 = pd.merge(ratings, ff, how="outer")
     merge2 = pd.merge(merge1, dist, how="outer")

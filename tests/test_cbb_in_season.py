@@ -71,3 +71,25 @@ def test_the_live_gate_runs_in_playing_hours_only(hour, minute, on):
     from cbb import live
 
     assert live.in_hours(datetime(2026, 11, 10, hour, minute, tzinfo=live.ET)) is on
+
+
+def test_kenpom_errors_say_what_happened():
+    """kenpom_wrapper returns an HTTP error instead of raising it, which used to
+    surface as "DataFrame constructor not properly called!"."""
+    import requests
+
+    from cbb.scrape import kenpom
+
+    with pytest.raises(RuntimeError, match="KenPom has no 2027 ratings"):
+        kenpom._table(requests.HTTPError("400 Client Error: Bad Request"), "ratings", 2027)
+
+
+def test_a_game_with_no_description_does_not_sink_the_scoreboard(monkeypatch):
+    """Found by the rehearsal: theScore leaves game_description out of some
+    early-season events, and `"NCAA Tournament" in None` lost the snapshot."""
+    import inspect
+
+    from cbb import live_scraper
+
+    src = inspect.getsource(live_scraper.format_event)
+    assert 'g.get("game_description") or ""' in src
