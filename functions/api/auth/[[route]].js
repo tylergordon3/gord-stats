@@ -11,15 +11,18 @@
  * by a third party, and this one is not - it comes straight back from a POST
  * this Function made to oauth2.googleapis.com over TLS. Google's own guidance
  * says the signature may be skipped in exactly this case. The claims that
- * still matter (`aud`, `iss`, `exp`) are checked, because a right answer from
- * the wrong client is still the wrong answer.
+ * still matter are checked (checkClaims): `aud` and `iss`, because a right
+ * answer from the wrong client is still the wrong answer; `exp`; and
+ * `email_verified`, because an address Google has not verified is only what
+ * somebody typed, and it is the name the account goes by here. (Until
+ * 2026-09-27 this comment said `exp` was checked and the code did not.)
  *
  * Every endpoint is inert until GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and
  * SESSION_SECRET exist as Pages environment variables and DB is bound, so
  * deploying this before any of that is configured changes nothing on the site.
  */
 import {
-  SESSION_COOKIE, SESSION_DAYS, cookies, configured, json,
+  SESSION_COOKIE, SESSION_DAYS, TYP, cookies, configured, json,
   setCookie, sign, verify,
 } from "../_lib/session.js";
 
@@ -41,7 +44,7 @@ export async function onRequestGet(context) {
 
   if (route === "login") return login(url, env);
   if (route === "callback") return callback(request, url, env);
-  if (route === "logout") return logout(url);
+  if (route === "logout") return logout(request, url);
   return json({ ok: false, error: "not found" }, 404);
 }
 
@@ -75,7 +78,7 @@ async function login(url, env) {
   // database and cannot be defeated by editing the cookie.
   const stamp = await sign(
     { state, next, exp: Math.floor(Date.now() / 1000) + STATE_MINUTES * 60 },
-    env.SESSION_SECRET);
+    env.SESSION_SECRET, TYP.state);
 
   const to = new URL(AUTH);
   to.searchParams.set("client_id", env.GOOGLE_CLIENT_ID);
@@ -99,7 +102,7 @@ async function login(url, env) {
 async function callback(request, url, env) {
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
-  const stamp = await verify(cookies(request)[STATE_COOKIE], env.SESSION_SECRET);
+  const stamp = await verify(cookies(request)[STATE_COOKIE], env.SESSION_SECRET, TYP.state);
 
   // A callback without the cookie this Function set is not a login this
   // Function started.
@@ -115,19 +118,15 @@ async function callback(request, url, env) {
     return fail(url, "could not complete sign-in with Google");
   }
 
-  if (!ISSUERS.has(claims.iss) || claims.aud !== env.GOOGLE_CLIENT_ID) {
-    return fail(url, "sign-in did not verify");
-  }
-  if (!claims.sub || !claims.email) {
-    return fail(url, "Google did not return an email address");
-  }
+  const problem = checkClaims(claims, env.GOOGLE_CLIENT_ID);
+  if (problem) return fail(url, problem);
 
   const user = await upsert(env.DB, claims);
   const session = await sign({
     uid: user.id,
     email: claims.email,
     exp: Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400,
-  }, env.SESSION_SECRET);
+  }, env.SESSION_SECRET, TYP.session);
 
   const headers = new Headers({ location: safeNext(stamp.next, url.origin), "cache-control": "no-store" });
   headers.append("set-cookie",
@@ -153,6 +152,26 @@ async function exchange(code, url, env) {
   const body = await res.json();
   if (!body.id_token) throw new Error("no id_token in token response");
   return claimsOf(body.id_token);
+}
+
+/**
+ * What is wrong with an ID token's claims, as the reader should hear it, or
+ * null if nothing is.
+ */
+export function checkClaims(claims, clientId, now = Date.now()) {
+  if (!claims || !ISSUERS.has(claims.iss) || claims.aud !== clientId) {
+    return "sign-in did not verify";
+  }
+  if (typeof claims.exp !== "number" || claims.exp * 1000 <= now) {
+    return "sign-in did not verify";
+  }
+  if (!claims.sub || !claims.email) return "Google did not return an email address";
+  // A boolean in an ID token; the string form is what Google's tokeninfo
+  // endpoint returns, accepted in case the two ever meet.
+  if (claims.email_verified !== true && claims.email_verified !== "true") {
+    return "Google has not verified that email address";
+  }
+  return null;
 }
 
 /** The payload of a JWT we just fetched ourselves; see the note at the top. */
@@ -188,7 +207,23 @@ async function upsert(db, claims) {
   return { id };
 }
 
-function logout(url) {
+/**
+ * Whether a request came from another site, by the browser's own account.
+ *
+ * Signing out is a GET, because the site's links to it are plain links. That
+ * made it one any other page could fire - an <img src> is enough - so a
+ * cross-site request is refused. Only when the browser says so, though: an
+ * absent Sec-Fetch-Site (an older browser, a typed URL in some) is let
+ * through, or those readers could not sign out at all.
+ */
+export function crossSite(request) {
+  return (request.headers.get("sec-fetch-site") || "").toLowerCase() === "cross-site";
+}
+
+function logout(request, url) {
+  if (crossSite(request)) {
+    return json({ ok: false, error: "sign out from the site itself" }, 403);
+  }
   return new Response(null, {
     status: 302,
     headers: {

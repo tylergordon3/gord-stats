@@ -1,11 +1,12 @@
 """
 Google sign-in, so a reader's stars follow them between devices.
 
-The endpoints cannot be exercised from pytest - they are Cloudflare Pages
-Functions and need a real Google client, a D1 binding and an edge to run on.
-What is checked here is the contract around them, and above all the property
-that matters while the credentials do not yet exist: **all of this is inert
-until it is configured**, so shipping it changes nothing on the live site.
+The endpoints themselves are run in headless Chromium against a real SQLite
+(tests/functions_harness.py and the test_*_api.py / test_auth_session.py
+files that use it). What is checked here is the contract around them, and
+above all the property that matters while the credentials do not yet exist:
+**all of this is inert until it is configured**, so shipping it changes
+nothing on the live site.
 """
 import re
 
@@ -51,8 +52,10 @@ def test_the_session_expiry_is_inside_the_signature():
 
 
 def test_the_callback_checks_audience_and_issuer():
-    """A valid Google token issued to somebody else's client is not a sign-in."""
-    assert "claims.aud !== env.GOOGLE_CLIENT_ID" in AUTH
+    """A valid Google token issued to somebody else's client is not a sign-in.
+    tests/test_auth_session.py runs the callback with each claim wrong."""
+    assert "checkClaims(claims, env.GOOGLE_CLIENT_ID)" in AUTH
+    assert "claims.aud !== clientId" in AUTH
     assert "ISSUERS.has(claims.iss)" in AUTH
 
 
