@@ -1,0 +1,40 @@
+{
+ "day": "2026-10-01",
+ "locked_at": "Sun Sep 27, 11:44 AM",
+ "games": 2,
+ "picks": {
+  "underdog": {
+   "game_id": "401862786",
+   "side": "away",
+   "team": "North Texas",
+   "opp": "Tulsa",
+   "p": 0.7769,
+   "book_p": 0.4957,
+   "ml": -108.0,
+   "line": 1.5,
+   "kick": "Thu 9:00p"
+  },
+  "legs": [
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 1.5,
+    "p": 0.8036,
+    "book": 0.5,
+    "text": "North Texas +1.5",
+    "game_id": "401862786",
+    "game": "UNT at TLSA \u00b7 Thu 9:00p"
+   },
+   {
+    "kind": "spread",
+    "side": "away",
+    "line": 1.5,
+    "p": 0.5609,
+    "book": 0.5,
+    "text": "Western KY +1.5",
+    "game_id": "401871049",
+    "game": "WKU at NMSU \u00b7 Thu 8:00p"
+   }
+  ]
+ }
+}

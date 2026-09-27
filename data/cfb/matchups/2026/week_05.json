@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-27T09:36:54+00:00",
+ "fetched": "2026-09-27T15:43:00+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 112.7,
-     "win_probability": 0.49
+     "projected": 142.41,
+     "win_probability": 0.7
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 113.99,
-     "win_probability": 0.51
+     "win_probability": 0.30000000000000004
     }
    ]
   },
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 122.39,
+     "projected": 122.53,
      "win_probability": 0.52
     }
    ]
@@ -110,14 +110,14 @@
      "name": "Austin's Best Team",
      "points": 0.0,
      "projected": 101.9,
-     "win_probability": 0.09999999999999998
+     "win_probability": 0.08000000000000007
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 169.02,
-     "win_probability": 0.9
+     "projected": 174.81,
+     "win_probability": 0.9199999999999999
     }
    ]
   }
@@ -853,7 +853,7 @@
     "bye": 5.0,
     "status": "Q",
     "status_full": "Questionable",
-    "injury_note": "Undisclosed",
+    "injury_note": "Concussion",
     "slot": "QB",
     "points": 0.0,
     "stats": {}
@@ -1127,30 +1127,16 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457591",
-    "player": "Jordan Marshall",
+    "yahoo_id": "404291",
+    "player": "LJ Martin",
     "pos": "RB",
-    "team": "MICH",
-    "team_full": "Michigan Wolverines",
-    "bye": 6.0,
+    "team": "BYU",
+    "team_full": "BYU Cougars",
+    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
     "slot": "RB",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "333783",
-    "player": "Evan Stewart",
-    "pos": "WR",
-    "team": "ORE",
-    "team_full": "Oregon Ducks",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "WR",
     "points": 0.0,
     "stats": {}
    },
@@ -1175,6 +1161,20 @@
     "team": "ILL",
     "team_full": "Illinois Fighting Illini",
     "bye": 7.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "WR",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "327462",
+    "player": "Umari Hatcher",
+    "pos": "WR",
+    "team": "SYR",
+    "team_full": "Syracuse Orange",
+    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1211,6 +1211,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "451329",
+    "player": "Griffin Wilde",
+    "pos": "WR",
+    "team": "NW",
+    "team_full": "Northwestern Wildcats",
+    "bye": 2.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "336811",
     "player": "Isaiah Sategna III",
     "pos": "WR",
@@ -1220,7 +1234,35 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "W/R/T",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "333783",
+    "player": "Evan Stewart",
+    "pos": "WR",
+    "team": "ORE",
+    "team_full": "Oregon Ducks",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457591",
+    "player": "Jordan Marshall",
+    "pos": "RB",
+    "team": "MICH",
+    "team_full": "Michigan Wolverines",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1231,34 +1273,6 @@
     "team": "KSU",
     "team_full": "Kansas State Wildcats",
     "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "327462",
-    "player": "Umari Hatcher",
-    "pos": "WR",
-    "team": "SYR",
-    "team_full": "Syracuse Orange",
-    "bye": 4.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "404291",
-    "player": "LJ Martin",
-    "pos": "RB",
-    "team": "BYU",
-    "team_full": "BYU Cougars",
-    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1284,20 +1298,6 @@
     "yahoo_id": "404055",
     "player": "Caleb Komolafe",
     "pos": "RB",
-    "team": "NW",
-    "team_full": "Northwestern Wildcats",
-    "bye": 2.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "451329",
-    "player": "Griffin Wilde",
-    "pos": "WR",
     "team": "NW",
     "team_full": "Northwestern Wildcats",
     "bye": 2.0,
@@ -2355,20 +2355,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457676",
-    "player": "Ryan Wingo",
-    "pos": "WR",
-    "team": "TEX",
-    "team_full": "Texas Longhorns",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "WR",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "457039",
     "player": "Mike Matthews",
     "pos": "WR",
@@ -2397,6 +2383,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "457038",
+    "player": "Braylon Staley",
+    "pos": "WR",
+    "team": "TENN",
+    "team_full": "Tennessee Volunteers",
+    "bye": 9.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "WR",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "404367",
     "player": "Benjamin Brahmer",
     "pos": "TE",
@@ -2407,20 +2407,6 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "405130",
-    "player": "Jamal Roberts",
-    "pos": "RB",
-    "team": "MIZZ",
-    "team_full": "Missouri Tigers",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
    },
@@ -2439,11 +2425,25 @@
     "stats": {}
    },
    {
-    "yahoo_id": "340392",
-    "player": "Braden Pegan",
+    "yahoo_id": "405130",
+    "player": "Jamal Roberts",
+    "pos": "RB",
+    "team": "MIZZ",
+    "team_full": "Missouri Tigers",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457676",
+    "player": "Ryan Wingo",
     "pos": "WR",
-    "team": "UTAH",
-    "team_full": "Utah Utes",
+    "team": "TEX",
+    "team_full": "Texas Longhorns",
     "bye": 5.0,
     "status": "",
     "status_full": "",
@@ -2453,12 +2453,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457038",
-    "player": "Braylon Staley",
+    "yahoo_id": "340392",
+    "player": "Braden Pegan",
     "pos": "WR",
-    "team": "TENN",
-    "team_full": "Tennessee Volunteers",
-    "bye": 9.0,
+    "team": "UTAH",
+    "team_full": "Utah Utes",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2596,16 +2596,16 @@
   "900073": 7.96,
   "404635": 26.21,
   "340537": 16.12,
-  "457591": 12.7,
+  "404291": 17.82,
   "337939": 15.13,
   "403842": 18.86,
+  "327462": 15.52,
   "457898": 8.51,
   "455922": 15.17,
-  "327462": 15.52,
-  "404291": 17.82,
+  "451329": 9.07,
+  "457591": 12.7,
   "406200": 7.32,
   "404055": 8.4,
-  "451329": 9.07,
   "337760": 24.39,
   "469212": 23.78,
   "405225": 17.52,
@@ -2645,7 +2645,7 @@
   "338689": 31.39,
   "406381": 5.46,
   "456249": 10.67,
-  "900068": 6.5,
+  "900068": 6.64,
   "448820": 18.18,
   "338839": 13.12,
   "457893": 14.58,
@@ -2666,10 +2666,10 @@
   "463126": 17.92,
   "457039": 10.81,
   "470091": 13.84,
-  "404367": 6.98,
-  "405130": 18.32,
-  "404353": 12.48,
   "457038": 5.79,
+  "404367": 6.98,
+  "404353": 12.48,
+  "405130": 18.32,
   "457576": 25.46,
   "456218": 4.65,
   "456178": 8.6,
