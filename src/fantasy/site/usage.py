@@ -162,8 +162,7 @@ def body() -> str:
                  or n == MY_MANAGER), "")
     by_name = sorted(names, key=lambda k: names[k].lower())
     teams = sorted(recent["team"].unique())
-    controls = (
-        "<div class='pin-bar'><div class='us-controls'>"
+    controls = ui.pin(
         "<label>Fantasy <select id='us-own'><option value=''>Everyone</option>"
         "<option value='mine'>My team</option><option value='fa'>Free agents</option>"
         "<option value='held'>Rostered</option>"
@@ -173,13 +172,12 @@ def body() -> str:
         "<label>Find <input id='us-find' type='search' placeholder='player'></label>"
         "<label title='Keep each NFL team together, sorted inside by the chosen column'>"
         "<input id='us-group' type='checkbox'> Group by team</label>"
-        "<button id='us-reset' type='button'>Reset</button>"
-        "<span class='us-count' id='us-count'></span></div></div>")
+        "<button id='us-reset' type='button'>Reset</button>")
     span = (f"week {recent_weeks[0]}" if len(recent_weeks) == 1
             else f"weeks {recent_weeks[0]}&ndash;{recent_weeks[-1]}")
     head = (f"<tr><th class='{POSV}' title='Rank in this view, among players past the "
             f"minimum'>#</th>"
-            f"<th data-k='text' class='{ALL}'>Player</th>"
+            f"<th data-k='text' class='us-name {ALL}'>Player</th>"
             f"<th data-k='text' class='{ALL}'>Team</th>"
             f"<th data-k='text' class='{OVR}'>Pos</th>"
             f"<th data-k='text' class='us-own {ALL}'>Fantasy</th>"

@@ -89,10 +89,41 @@ table.us tr.us-thin td.us-rank::after{content:"\2013"}
   border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;max-width:170px}
 .us-controls button{font:inherit;font-size:12.5px;padding:5px 10px;border-radius:8px;
   border:1px solid #cbd5e1;background:#f8fafc;color:#334155;cursor:pointer}
-.us-count{font-size:12.5px;color:#64748b;margin-left:auto}
+.us-count{font-size:12.5px;color:#64748b}
+.us-pinrow{display:flex;align-items:center;gap:10px}
+.us-filt{display:none}
 .us-note{font-size:13px;color:#4a5a68;margin:6px 0 12px;line-height:1.55}
 .us-scroll{overflow-x:auto;max-height:70vh;overflow-y:auto}
 .us-lead{font-size:12px;color:#64748b}
+/* Phones. Three things made the table a trap there: its own 70vh vertical
+   scroller nested inside the page's (under the pinned filters, about nine rows
+   showed, and a swipe scrolled the box or the page depending on where it
+   landed); the filter stack, pinned, stood 146-250px tall; and a sideways
+   swipe to reach the shares carried the player's name off the screen. So on a
+   phone the table is as tall as its rows and the page does the scrolling, the
+   filters fold behind one button whose label counts the ones in force, and
+   the player column stays put while the numbers slide under it. */
+@media (max-width:700px){
+  .us-scroll{max-height:none;overflow-y:visible}
+  .us-pin{flex-direction:column;align-items:stretch;padding:4px 10px}
+  .us-pinrow{order:-1;min-height:44px}
+  .us-filt{display:inline-flex;align-items:center;gap:6px;min-height:40px;font:inherit;
+    font-size:14px;font-weight:700;padding:0 16px;border-radius:999px;border:1px solid #cbd5e1;
+    background:#fff;color:#334155;cursor:pointer}
+  .us-filt::after{content:"\\25BE"}
+  .us-filt[aria-expanded=true]::after{content:"\\25B4"}
+  .us-filt.us-some{border-color:#2a78d6;color:#1d4ed8}
+  .us-pinrow .us-count{margin-left:auto;font-size:13px}
+  .us-pin .us-controls{display:none;padding:2px 0 8px;gap:10px 12px}
+  .us-pin.us-open .us-controls{display:flex}
+  .us-controls select,.us-controls input[type=search]{font-size:16px;min-height:40px;max-width:200px}
+  .us-controls button{min-height:40px;font-size:14px;padding:0 14px}
+  table.us .us-name{position:sticky;left:0;z-index:1;box-shadow:inset -1px 0 0 #cbd5e1}
+  table.us th.us-name{z-index:3}
+  /* "Florida International" alone was a third of the screen; the shares are
+     what the page is for, so the school gives way to them. */
+  table.us td.us-team{max-width:92px;overflow:hidden;text-overflow:ellipsis}
+}
 @media (prefers-color-scheme: dark){
   table.us th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.us th[data-k]:hover{background:#2b3852}
@@ -103,8 +134,9 @@ table.us tr.us-thin td.us-rank::after{content:"\2013"}
   table.us tbody tr.us-mine td.us-own{color:#ffb457}
   .us-fa{background:#14532d;color:#bbf7d0}
   .us-bar{background:#2b3852}
-  .us-controls select,.us-controls input[type=search],.us-controls button{background:#16203a;
-    color:#dde5ef;border-color:#2b3852}
+  .us-controls select,.us-controls input[type=search],.us-controls button,.us-filt{
+    background:#16203a;color:#dde5ef;border-color:#2b3852}
+  .us-filt.us-some{border-color:#8ab4ff;color:#8ab4ff}
   .uv-btn{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .uv-btn:hover{background:#1b2540}
   .uv-btn.on{background:#2a78d6;border-color:#2a78d6;color:#fff}
@@ -116,6 +148,9 @@ table.us tr.us-thin td.us-rank::after{content:"\2013"}
   .uc-track{background:#2b3852}
   table.us td.us-rank{color:#dde5ef}
   table.us tr.us-thin td{color:#6b7a91}
+}
+@media (max-width:700px) and (prefers-color-scheme: dark){
+  table.us .us-name{box-shadow:inset -1px 0 0 #3a4a6b}
 }
 </style>"""
 
@@ -256,6 +291,10 @@ JS = """{% raw %}<script>
       body.appendChild(r);
     });
     el.count.textContent=shown+' player'+(shown===1?'':'s');
+    // The folded filters still say how many are narrowing the table, so a
+    // short list is never a mystery on a phone.
+    var nf=[o,c,t,p,q,el.group.checked].filter(Boolean).length;
+    if(filt){filt.textContent='Filters'+(nf?' \\u00b7 '+nf:''); filt.classList.toggle('us-some',!!nf);}
     drawChart(sorted.filter(function(r){return r.style.display!=='none';}));
     heads.forEach(function(h,i){h.classList.toggle('us-on',i===sortCol);
       h.classList.toggle('us-asc',i===sortCol&&sortAsc);});
@@ -291,6 +330,13 @@ JS = """{% raw %}<script>
   }
   viewBtns.forEach(function(b){
     b.addEventListener('click',function(){applyView(b.dataset.view);});});
+  // Phones only: the button is hidden on a desktop, where the filters sit open.
+  var filt=document.getElementById('us-filt');
+  if(filt) filt.addEventListener('click',function(){
+    var pin=filt.closest('.us-pin'), open=!pin.classList.contains('us-open');
+    pin.classList.toggle('us-open',open);
+    filt.setAttribute('aria-expanded',open?'true':'false');
+  });
   if(el.qual) el.qual.addEventListener('change',draw);
   [el.own,el.team,el.pos,el.group].forEach(function(x){
     if(x) x.addEventListener('change',draw);});
@@ -326,6 +372,21 @@ def views_bar(views: list) -> str:
             + "<label class='us-qual'><input id='us-qual' type='checkbox'> "
               "Qualified only</label></div>"
             "<p class='us-minnote' id='us-minnote'></p>")
+
+
+def pin(controls: str) -> str:
+    """The pinned filter card around a page's `controls` (the labelled selects,
+    the find box, the group toggle and the Reset button).
+
+    On a phone they fold behind one Filters button, with the player count
+    beside it so a folded card still says what the filters left; on a desktop
+    the button is hidden and the controls sit open as before.
+    """
+    return ("<div class='pin-bar us-pin'>"
+            f"<div class='us-controls' id='us-ctl'>{controls}</div>"
+            "<div class='us-pinrow'><button type='button' class='us-filt' id='us-filt' "
+            "aria-expanded='false' aria-controls='us-ctl'>Filters</button>"
+            "<span class='us-count' id='us-count'></span></div></div>")
 
 
 def bar(share) -> str:

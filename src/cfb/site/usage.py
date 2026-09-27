@@ -25,7 +25,7 @@ from cfb import espn, ownership, players, schools as schools_mod, usage as usage
 from cfb.config import MY_TEAM, SEASON, WEB_DIR
 from cfb.site import write_page
 from gordstats.usage_page import CSS as _CSS, JS as _JS, bar as _bar, num as _num
-from gordstats.usage_page import options as _options, pct as _pct, v as _v
+from gordstats.usage_page import options as _options, pct as _pct, pin as _pin, v as _v
 from gordstats.usage_page import views_bar as _views_bar
 
 RECENT_WEEKS = 3
@@ -141,8 +141,7 @@ def body() -> str:
     league_teams = {t["team_key"]: t["name"] for t in lg["teams"]}
     mine = next((k for k, n in league_teams.items() if n == MY_TEAM), "")
     by_name = sorted(league_teams, key=lambda k: league_teams[k].lower())
-    controls = (
-        "<div class='pin-bar'><div class='us-controls'>"
+    controls = _pin(
         "<label>Fantasy <select id='us-own'><option value=''>Everyone</option>"
         "<option value='mine'>My team</option><option value='fa'>Free agents</option>"
         "<option value='held'>Rostered</option>"
@@ -154,15 +153,13 @@ def body() -> str:
         "<label>Find <input id='us-find' type='search' placeholder='player'></label>"
         "<label title='Keep each school together, sorted inside by the chosen column'>"
         "<input id='us-group' type='checkbox'> Group by school</label>"
-        "<button id='us-reset' type='button'>Reset</button>"
-        "<span class='us-count' id='us-count'></span>"
-        "</div></div>")
+        "<button id='us-reset' type='button'>Reset</button>")
 
     span = (f"week {recent_weeks[0]}" if len(recent_weeks) == 1
             else f"weeks {recent_weeks[0]}&ndash;{recent_weeks[-1]}")
     head = (f"<tr><th class='{POSV}' title='Rank in this view, among players past the "
             f"minimum'>#</th>"
-            f"<th data-k='text' class='{ALL}'>Player</th>"
+            f"<th data-k='text' class='us-name {ALL}'>Player</th>"
             f"<th data-k='text' class='{ALL}'>School</th>"
             f"<th data-k='text' class='{OVR}'>Pos</th>"
             f"<th data-k='text' class='us-own {ALL}'>Fantasy</th>"
