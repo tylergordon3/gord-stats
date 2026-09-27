@@ -16,11 +16,14 @@ So the same numbers are published, once a build:
                        "tv": "FOX", "gid": "401872953", "el": 0}},
      "wx":    {"401872953": {"indoors": false, "cond": "Clear", "temp": 66}},
      "dvp":   {"ARI": {"QB": [1.00, 17], ..., "games": 2}, "n": 32},
-     "gs":    {"9221": 28.6}}
+     "gs":    {"9221": 28.6},
+     "late":  ["4984"]}
 
 `gs` is this site's own weekly projection and covers the whole board - 1,231
 players, not the 154 on this league's rosters - which is what makes it usable
-for somebody else's league. The other weekly sources (ESPN, FantasyPros) are
+for somebody else's league. A started player's is the number recorded before
+his kickoff (fantasy.pregame); `late` names any started player with no such
+record, whose number has seen his game. The other weekly sources (ESPN, FantasyPros) are
 only collected for this league's players, so a reader's blend is the mean of
 what exists for him rather than of four sources; `roster.Week.blend` already
 works that way, so the rule is the same, only the inputs are fewer.
@@ -33,8 +36,9 @@ import json
 
 import pandas as pd
 
-from fantasy import paths
+from fantasy import paths, pregame
 from fantasy.config import UPCOMING_YEAR
+from gordstats.pregame import load as load_pregame
 
 OUT = paths.WEB_FANTASY_DIR / "week-context.json"
 
@@ -84,14 +88,28 @@ def build(year: int = UPCOMING_YEAR) -> dict:
             dvp[str(team)] = row
         dvp["n"] = int(len(table))
 
-    gs = {}
+    # A started player's number as it stood before his kickoff, as on the
+    # built matchups page; `late` lists the started ones with no record, so a
+    # reader's page knows when not to say "going in". Read, never written:
+    # the matchups step keeps the archive, and this reads the week's games
+    # from its own fetch, so two writers would take turns overwriting it.
+    gs, late = {}, []
     if wkd.wk is not None and not wkd.wk.empty and "proj_week" in wkd.wk:
+        kept = load_pregame(pregame.path(wkd.week, year))
+        state = (wkd.wk["state"] if "state" in wkd.wk
+                 else pd.Series("pre", index=wkd.wk.index)).fillna("pre")
         for pid, value in wkd.wk["proj_week"].items():
-            if pd.notna(value):
-                gs[str(pid)] = round(float(value), 2)
+            if pd.isna(value):
+                continue
+            if state.get(pid) != "pre":
+                if str(pid) in kept:
+                    value = kept[str(pid)]
+                else:
+                    late.append(str(pid))
+            gs[str(pid)] = round(float(value), 2)
 
     return {"week": int(wkd.week), "year": int(year), "teams": teams,
-            "wx": wx, "dvp": dvp, "gs": gs}
+            "wx": wx, "dvp": dvp, "gs": gs, "late": late}
 
 
 def _round(value, places: int = 1):

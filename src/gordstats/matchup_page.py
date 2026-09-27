@@ -471,13 +471,42 @@ def board_cards(rows: list, started: bool, final: bool) -> str:
     return f'<div class="mu-cards">{"".join(cards)}</div>'
 
 
-def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str = "") -> str:
+def spread_for(sd, proj) -> float:
+    """The spread of a player's week: his own figure where there is one, else
+    a share of the projection, never trivially small. The share holds up: on
+    Yahoo's pre-game CFB numbers for weeks 1-4 of 2026 it gives a lineup a
+    spread of 35 points where the real misses ran at 33."""
+    if sd is not None and not pd.isna(sd) and sd > 0:
+        return float(sd)
+    return max(2.0, 0.6 * float(proj or 0.0))
+
+
+def win_probability(exp_a: float, var_a: float, exp_b: float, var_b: float) -> float:
+    """P(A outscores B): a normal on the difference of expected finals, with a
+    floor on the spread so a matchup that is all but over still reads as odds
+    rather than a certainty. muWp in the browser."""
+    from math import erf, sqrt
+    sd = sqrt(max(var_a + var_b, 4.0))
+    return 0.5 * (1 + erf(((exp_a - exp_b) / sd) / sqrt(2)))
+
+
+def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str = "",
+            src: str = "") -> str:
     """Two-colour probability bar with the percentages under it. The keys let
-    the live script move it as the source's probability changes."""
-    return (f'<div class="mu-wp"><i data-wp="{key_a}" style="width:{wp_a * 100:.0f}%"></i>'
-            f'<i class="b" data-wp="{key_b}" style="width:{wp_b * 100:.0f}%"></i></div>'
-            f'<div class="mu-wp-lbl"><span><span data-wpl="{key_a}">{wp_a * 100:.0f}%</span> '
-            f'({source})</span><span data-wpl="{key_b}">{wp_b * 100:.0f}%</span></div>')
+    the live script move it as the source's probability changes: a bar with
+    a `src` follows that source's number in the payload (teams[key].wps[src]),
+    one without follows teams[key].win_probability, as the scoreboard does."""
+    tag = f' data-src="{src}"' if src else ""
+    return (f'<div class="mu-wp"><i data-wp="{key_a}"{tag} style="width:{wp_a * 100:.0f}%"></i>'
+            f'<i class="b" data-wp="{key_b}"{tag} style="width:{wp_b * 100:.0f}%"></i></div>'
+            f'<div class="mu-wp-lbl"><span><span data-wpl="{key_a}"{tag}>{wp_a * 100:.0f}%</span> '
+            f'({source})</span><span data-wpl="{key_b}"{tag}>{wp_b * 100:.0f}%</span></div>')
+
+
+def live_total(key: str, src: str, value) -> str:
+    """A source's expected final in a matchup header, which the live script
+    keeps moving (teams[key].tlive[src])."""
+    return f"<b data-tlive='{key}' data-src='{src}'>{fmt(value)}</b>"
 
 
 # Game-state helpers a page's own MU_LIVE fetch can lean on: read ESPN's
@@ -503,25 +532,52 @@ function muElapsed(g){
   if(!g||g.state==='pre')return 0;if(g.state==='post')return 1;if(!g.period)return .5;if(g.period>4)return .95;
   var m=String(g.clock||'0:00').split(':'),left=(parseInt(m[0],10)||0)+((parseInt(m[1],10)||0)/60);
   return Math.min(Math.max(((g.period-1)*15+(15-left))/60,0),1);}
+// P(A outscores B) on a normal over the difference of expected finals, with
+// the floor on the spread fantasy.site.matchups.win_probability uses.
+function muErf(x){var t=1/(1+0.3275911*Math.abs(x));var y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y;}
+function muWp(ea,va,eb,vb){var sd=Math.sqrt(Math.max(va+vb,4));return 0.5*(1+muErf(((ea-eb)/sd)/Math.SQRT2));}
+// A player's week-to-week spread where the page has no figure for him: a share
+// of the projection, never trivially small (fantasy.site.matchups._sd_for).
+function muSd(proj){return Math.max(2,0.6*(proj||0));}
+// Each matchup's two keys, off the header numbers.
+function muPairs(root){var by={},out=[];
+  var els=(root||document).querySelectorAll('[data-num][data-mu]');
+  for(var i=0;i<els.length;i++){var m=els[i].getAttribute('data-mu');(by[m]=by[m]||[]).push(els[i].getAttribute('data-num'));}
+  Object.keys(by).forEach(function(m){if(by[m].length===2)out.push(by[m]);});return out;}
 // Expected finals from the rows themselves: each starter's points so far plus
 // the unplayed share of the projection on his row (data-proj), by his game's
 // clock; the side's total follows. Written into the payload as players[pid].live
 // and teams[key].gs_live, which the live updater already knows how to draw.
-function muLiveProjections(payload,games,root){
-  var teams=(payload&&payload.teams)||{};
+// `alt` names other sources' row attributes ({yahoo:'data-yproj'}): each gets
+// the same sum, in teams[key].tlive beside gs. The spread still to be played
+// (data-sd, or muSd of the projection) gives each side's GordStats chance
+// against the other as teams[key].wps.gs.
+function muLiveProjections(payload,games,root,alt){
+  var teams=(payload&&payload.teams)||{};alt=alt||{};
   var wraps=(root||document).querySelectorAll('[data-roster]');
   for(var i=0;i<wraps.length;i++){var wrap=wraps[i],key=wrap.getAttribute('data-roster'),t=teams[key];
     if(!t||!t.players)continue;
     var rows=wrap.querySelectorAll('tr.starter[data-pid]');if(!rows.length)continue;
-    var total=0,any=false;
+    var total=0,any=false,v=0,other={};
+    Object.keys(alt).forEach(function(src){other[src]=0;});
     for(var j=0;j<rows.length;j++){var tr=rows[j],pid=tr.getAttribute('data-pid'),p=t.players[pid];
       var proj=parseFloat(tr.getAttribute('data-proj'));if(isNaN(proj))proj=0;
       var g=games[tr.getAttribute('data-gid')],done=muElapsed(g);
       var pts=(p&&p.points!==undefined&&p.points!==null)?p.points:null;
+      var sd=parseFloat(tr.getAttribute('data-sd'));
+      Object.keys(alt).forEach(function(src){var x=parseFloat(tr.getAttribute(alt[src]));if(isNaN(x))x=0;
+        other[src]+=(pts||0)+x*(1-done);if(isNaN(sd)&&!proj)sd=muSd(x);});
+      if(isNaN(sd))sd=muSd(proj);
+      v+=sd*sd*(1-done);
       if(pts===null){total+=proj*(1-done);continue;}
       var e=pts+proj*(1-done);total+=e;any=true;
       if(g&&g.state!=='pre')p.live=e;}
-    if(any)t.gs_live=total;}
+    t.gs_exp=total;t.gs_var=v;
+    if(any){t.gs_live=total;t.tlive={gs:total};Object.keys(other).forEach(function(src){t.tlive[src]=other[src];});}}
+  muPairs(root).forEach(function(k){var a=teams[k[0]],b=teams[k[1]];
+    if(!a||!b||a.gs_exp===undefined||b.gs_exp===undefined)return;
+    var p=muWp(a.gs_exp,a.gs_var,b.gs_exp,b.gs_var);
+    a.wps=a.wps||{};b.wps=b.wps||{};a.wps.gs=p;b.wps.gs=1-p;});
   return payload;}
 // The week's median for a page whose feed brings only points: of the sides'
 // points once anyone has scored, of the live expected totals as the
@@ -646,9 +702,16 @@ LIVE_JS = """<script>
         el.classList.toggle('mu-med-up',v>0);el.classList.toggle('mu-med-down',v<0);});}
       if(t.win_probability!==null&&t.win_probability!==undefined){
         var pc=(t.win_probability*100).toFixed(0)+'%';
-        each('[data-wp="'+key+'"]',function(el){el.style.width=pc;});
-        each('[data-wpl="'+key+'"]',function(el){el.textContent=pc;});
+        each('[data-wp="'+key+'"]:not([data-src])',function(el){el.style.width=pc;});
+        each('[data-wpl="'+key+'"]:not([data-src])',function(el){el.textContent=pc;});
       }
+      // Each source's own bar and expected final, where the page draws one.
+      Object.keys(t.wps||{}).forEach(function(src){var v=t.wps[src];if(v===null||v===undefined||isNaN(v))return;
+        var pc=(v*100).toFixed(0)+'%';
+        each('[data-wp="'+key+'"][data-src="'+src+'"]',function(el){el.style.width=pc;});
+        each('[data-wpl="'+key+'"][data-src="'+src+'"]',function(el){el.textContent=pc;});});
+      Object.keys(t.tlive||{}).forEach(function(src){var v=t.tlive[src];if(v===null||v===undefined||isNaN(v))return;
+        each('[data-tlive="'+key+'"][data-src="'+src+'"]',function(el){el.textContent=fmt(v);el.classList.add('live');});});
     });
     // The leader in each matchup, by the numbers just written.
     var byMu={};

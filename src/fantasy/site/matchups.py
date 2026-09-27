@@ -210,10 +210,8 @@ N_COLS = 9
 
 def _sd_for(sd, proj) -> float:
     """The spread of a player's week: the board's, or a share of the
-    projection when it has none for him, and never trivially small."""
-    if sd is not None and not pd.isna(sd) and sd > 0:
-        return float(sd)
-    return max(2.0, 0.6 * float(proj or 0.0))
+    projection when it has none for him (gordstats.matchup_page.spread_for)."""
+    return ui.spread_for(sd, proj)
 
 
 def expected(pts, proj, sd, g: dict | None) -> tuple:
@@ -275,6 +273,9 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
             f'data-team="{escape(card["team"] or "")}"{attrs} '
             f'data-nm="{escape(_short_name(card["name"]))}" data-pos="{escape(card["pos"])}" '
             f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}" '
+            # Sleeper's number (outside_sources puts it first), for its live
+            # expected final and its win bar.
+            f'data-sproj="{"" if not outside or outside[0] is None else round(float(outside[0]), 2)}" '
             f'data-hproj="{"" if hproj is None else round(hproj, 2)}">'
             f'<td class="mu-pts">{hybrid_score(pts, hproj, g)}</td>'
             f'<td class="mu-slot">{escape(slot)}</td>'
@@ -356,6 +357,12 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
                         ctx.get("sd", {}).get(r["pid"]), ctx["by_team"].get(c.get("team")))
         exp_total += e
         var_total += v
+    # Sleeper's expected final the same way, on the same spread: the second
+    # win bar differs from ours only in whose projections it believes.
+    sleeper = sources.get("sleeper") or {}
+    sl_exp = sum(expected(pts.get(r["pid"]), sleeper.get(r["pid"]), None,
+                          ctx["by_team"].get((cards.get(r["pid"]) or {}).get("team")))[0]
+                 for r in starters if r["pid"] != "0")
     src_totals = [sum((src.get(r["pid"]) or 0) for r in starters) for src in sources.values()]
     cons_total = sum(cons.get(r["pid"]) or 0 for r in starters)
     pts_total = float(side.get("points") or 0)
@@ -392,7 +399,8 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
             f'</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>{swaps}')
     parts = {"starters": starters, "bench": bench, "cards": cards, "pts": pts,
              "hints": hints, "pts_total": pts_total, "proj": proj, "hproj": hproj,
-             "hexp": hexp_total}
+             "hexp": hexp_total, "sl": src_totals[0] if sleeper else None,
+             "sl_exp": sl_exp if sleeper else None}
     return html, gs_total, cons_total, pts_total, exp_total, var_total, parts
 
 
@@ -552,12 +560,27 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     lead = (None if not started or a["pts"] == b["pts"]
             else ("a" if (a["pts"] or 0) > (b["pts"] or 0) else "b"))
 
+    have_sl = a["parts"]["sl"] is not None and b["parts"]["sl"] is not None
+
     def side_html(s, which):
         big = ui.fmt(s["pts"]) if started else ui.fmt(s["gs"])
         cls = " lead" if lead == which else ""
-        sub = (f"GordStats <b data-tgs='{s['key']}'>{ui.fmt(s['gs'])}</b> · "
-               f"Consensus <b>{ui.fmt(s['sp'])}</b>"
-               if started else f"projected · Consensus <b>{ui.fmt(s['sp'])}</b>")
+        parts = s["parts"]
+        theirs = (f"Sleeper <b>{ui.fmt(parts['sl'])}</b>" if have_sl
+                  else f"Consensus <b>{ui.fmt(s['sp'])}</b>")
+        if not started:
+            sub = f"projected · {theirs}"
+        elif final:
+            sub = f"GordStats <b>{ui.fmt(s['gs'])}</b> · {theirs}"
+        else:
+            # While it is being played, each source's expected final - the
+            # points so far plus the unplayed share of its projections - and
+            # the live poll keeps them moving. The pre-game totals were a
+            # number fixed at kickoff sitting under a score that was not.
+            sub = ("<span title='Expected finals: points so far plus the unplayed share "
+                   "of each projection'>GordStats " + ui.live_total(s["key"], "gs", s["exp"])
+                   + (" · Sleeper " + ui.live_total(s["key"], "sleeper", parts["sl_exp"])
+                      if have_sl else f" · Consensus <b>{ui.fmt(s['sp'])}</b>") + "</span>")
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_avatar(s["team"])}'
                 f'<div><div class="nm">{_label(s["team"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
@@ -568,21 +591,38 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     mid = "Final" if final else ("Live" if started else "Preview")
     # Our chance for each side: the expected finals against the spread that
     # is still to be played, from the players' own week-to-week variances.
+    # Sleeper's is the same arithmetic on Sleeper's projections - Sleeper
+    # publishes none of its own - so the two bars differ only in whose
+    # numbers they believe.
     wp_a = win_probability(a["exp"], a["var"], b["exp"], b["var"])
     a["wp"], b["wp"] = wp_a, 1 - wp_a
     bar = "" if final else ui.win_bar(wp_a, 1 - wp_a, "GordStats", a["key"], b["key"])
+    if have_sl and not final:
+        ws = win_probability(a["parts"]["sl_exp"], a["var"], b["parts"]["sl_exp"], b["var"])
+        bar += ui.win_bar(ws, 1 - ws, "Sleeper", a["key"], b["key"], src="sleeper")
     edge = a["gs"] - b["gs"]
     ids = [str(p) for s in m["sides"] for p in (s.get("players") or [])]
     honest = pregame.complete(ctx["wk"].loc[ctx["wk"].index.intersection(ids)])
-    note = (f"GordStats has <b>{escape(a['name'] if edge >= 0 else b['name'])}</b> by "
-            f"{abs(edge):.1f} on projection ({ui.fmt(a['gs'])}–{ui.fmt(b['gs'])}); the "
-            f"consensus has {ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}." if not final else
-            (f"GordStats projected {ui.fmt(a['gs'])}–{ui.fmt(b['gs'])} going in, the consensus "
-             f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}." if honest else
-             # Weeks from before the archive: rebuilt from today's fit, which
-             # has seen the games, so not "going in".
-             f"On today's projections GordStats would have had {ui.fmt(a['gs'])}–"
-             f"{ui.fmt(b['gs'])}; the consensus had {ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}."))
+    leader = escape(a["name"] if edge >= 0 else b["name"])
+    gs_pair = f"{ui.fmt(a['gs'])}–{ui.fmt(b['gs'])}"
+    cons_pair = f"{ui.fmt(a['sp'])}–{ui.fmt(b['sp'])}"
+    if not started:
+        note = (f"GordStats has <b>{leader}</b> by {abs(edge):.1f} on projection ({gs_pair}); "
+                f"the consensus has {cons_pair}.")
+    elif not final and honest:
+        # The header moves with the games now, so this is what it moved from.
+        note = (f"Going in, GordStats had <b>{leader}</b> by {abs(edge):.1f} ({gs_pair}); "
+                f"the consensus had {cons_pair}.")
+    elif not final:
+        note = (f"GordStats has <b>{leader}</b> by {abs(edge):.1f} on projection ({gs_pair}); "
+                f"the consensus has {cons_pair}.")
+    elif honest:
+        note = f"GordStats projected {gs_pair} going in, the consensus {cons_pair}."
+    else:
+        # Weeks from before the archive: rebuilt from today's fit, which
+        # has seen the games, so not "going in".
+        note = (f"On today's projections GordStats would have had {gs_pair}; "
+                f"the consensus had {cons_pair}.")
     body = (f'<div class="mu-head">{side_html(a, "a")}<div class="mu-mid">{mid}</div>'
             f'{side_html(b, "b")}</div>{bar}<p class="mu-note">{note}</p>'
             + lifetime_note(a["key"], b["key"])
@@ -593,13 +633,7 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     return layout.details(head, body, open=True, anchor=anchor), sides
 
 
-def win_probability(exp_a: float, var_a: float, exp_b: float, var_b: float) -> float:
-    """P(A outscores B): a normal on the difference of expected finals, with a
-    floor on the spread so a matchup that is all but over still reads as odds
-    rather than a certainty."""
-    from math import erf, sqrt
-    sd = sqrt(max(var_a + var_b, 4.0))
-    return 0.5 * (1 + erf(((exp_a - exp_b) / sd) / sqrt(2)))
+win_probability = ui.win_probability
 
 
 def week_board(rows: list, started: bool, med_now=None, med_proj=None) -> str:
@@ -737,21 +771,22 @@ compute:function(rows,games){
     return Math.min(Math.max(((g.period-1)*15+(15-left))/60,0),1);}
   (rows||[]).forEach(function(r){
     var key=String(r.roster_id),pp=r.players_points||{},players={},exp=0,v=0;
-    var hexp=0;
+    var hexp=0,sexp=0,hasS=false;
     var left=[];
     document.querySelectorAll('#mm-built #wk-view-__WEEK__ [data-roster="'+key+'"] tr[data-pid]').forEach(function(tr){
       var pid=tr.getAttribute('data-pid'),proj=parseFloat(tr.getAttribute('data-proj')),sd=parseFloat(tr.getAttribute('data-sd'))||2;
-      var hp=parseFloat(tr.getAttribute('data-hproj'));
+      var hp=parseFloat(tr.getAttribute('data-hproj')),sp=parseFloat(tr.getAttribute('data-sproj'));
       var g=games[tr.getAttribute('data-team')],done=elapsed(g),pts=pp[pid]||0;
-      if(isNaN(proj))proj=0;if(isNaN(hp))hp=proj;
+      if(isNaN(proj))proj=0;if(isNaN(hp))hp=proj;if(!isNaN(sp))hasS=true;else sp=0;
       var e=pts+proj*(1-done),he=pts+hp*(1-done);
-      if(tr.classList.contains('starter')){exp+=e;v+=sd*sd*(1-done);hexp+=he;
+      if(tr.classList.contains('starter')){exp+=e;v+=sd*sd*(1-done);hexp+=he;sexp+=pts+sp*(1-done);
         if(g&&(g.state==='pre'||g.state==='in'))left.push({n:tr.getAttribute('data-nm')||'',r:hp*(1-done),live:g.state==='in',pos:tr.getAttribute('data-pos')||'',p:pts});}
       players[pid]={points:pp[pid],hexp:(g&&g.state!=='pre')?he:undefined,done:g?done:undefined,
         state:g?g.state:undefined,game:g?muGameText(g.state,g.score,g.opp_score,g.detail):undefined};
     });
     Object.keys(pp).forEach(function(k){if(!players[k])players[k]={points:pp[k]};});
-    teams[key]={points:r.points,players:players,exp:exp,v:v,matchup:r.matchup_id,gs_live:exp,hexp:hexp};
+    teams[key]={points:r.points,players:players,exp:exp,v:v,matchup:r.matchup_id,gs_live:exp,hexp:hexp,
+      tlive:{gs:exp,sleeper:hasS?sexp:undefined},sexp:hasS?sexp:undefined};
     // Who is still to play, for the median tracker - unknowable without the clocks.
     if(Object.keys(games).length)teams[key].left=left;
   });
@@ -759,6 +794,8 @@ compute:function(rows,games){
     var t=teams[k],o=Object.keys(teams).filter(function(j){return j!==k&&teams[j].matchup===t.matchup;})[0];
     if(!o)return;var u=teams[o],sd=Math.sqrt(Math.max(t.v+u.v,4));
     t.win_probability=0.5*(1+erf(((t.exp-u.exp)/sd)/Math.SQRT2));
+    // Sleeper's bar: its projections, the same spread.
+    if(t.sexp!==undefined&&u.sexp!==undefined)t.wps={sleeper:0.5*(1+erf(((t.sexp-u.sexp)/sd)/Math.SQRT2))};
   });
   // The week's median: of the scores once anyone has one, of the expected finals as the projection.
   function median(a){if(!a.length)return null;a=a.slice().sort(function(x,y){return x-y;});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
@@ -1053,7 +1090,9 @@ def body() -> str:
     return (
         ui.CSS
         + my_league.bar()
-        + my_matchups.section(current, UPCOMING_YEAR)
+        + my_matchups.section(current, UPCOMING_YEAR,
+                              f"{data_mod.ESPN_SCOREBOARD}?week={current}&dates={UPCOMING_YEAR}"
+                              "&seasontype=2")
         + '<div id="mm-built">'
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
         f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "

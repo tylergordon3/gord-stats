@@ -204,6 +204,7 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
     pid = p["yahoo_id"]
     g = game_for(p, wk, by_team, to_school, espn)
     proj = wk.loc[pid, "proj_week"] if pid in wk.index else None
+    y = (yproj or {}).get(pid)
     bench = p["slot"] in _BENCH
     inj = (f'<span class="inj" title="{escape(p.get("injury_note") or p.get("status_full") or "")}">'
            f'{escape(p["status"])}</span>' if p.get("status") else "")
@@ -216,7 +217,9 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
             # and the live updater builds that list off these rows.
             f' data-nm="{escape(_short_name(p["player"]), quote=True)}"'
             f' data-pos="{escape(p["pos"], quote=True)}"'
-            f' data-proj="{"" if proj is None or pd.isna(proj) else round(float(proj), 2)}">'
+            f' data-proj="{"" if proj is None or pd.isna(proj) else round(float(proj), 2)}"'
+            # Yahoo's number, for its live expected final in the header.
+            f' data-yproj="{"" if y is None else round(float(y), 2)}">'
             f'<td class="mu-pts">{ui.score_cell(p.get("points"), proj, _state(g))}</td>'
             f'<td class="mu-slot">{escape(p["slot"])}</td>'
             f'<td class="mu-p"><span class="mu-pc"><span class="nm">'
@@ -225,7 +228,7 @@ def player_row(p: dict, wk: pd.DataFrame, by_team: dict, to_school: dict, espn: 
             f'</span>{inj}{tag}</span></span></td>'
             f'<td class="mu-g">{game_cell(g)}</td>'
             f'<td class="mu-gs">{ui.fmt(proj)}</td>'
-            f'<td class="mu-gs">{ui.fmt((yproj or {}).get(pid))}</td>'
+            f'<td class="mu-gs">{ui.fmt(y)}</td>'
             f'<td class="mu-s">{escape(stat_line(p.get("stats") or {}, p["pos"]))}</td></tr>')
 
 
@@ -295,9 +298,22 @@ def roster_table(players: list[dict], lg: dict, wk: pd.DataFrame, to_school: dic
     # build the paired phone view without redoing the ordering and the best
     # lineup - both of which have to agree with the table or the two views
     # would disagree about who is starting.
-    parts = {"starters": starters, "bench": bench, "proj": proj,
-             "games": {p["yahoo_id"]: game_for(p, wk, by_team, to_school, espn) for p in ordered},
-             "hints": hints, "pts": pts_total, "gs": proj_total}
+    games = {p["yahoo_id"]: game_for(p, wk, by_team, to_school, espn) for p in ordered}
+    # Each source's expected final - points so far plus the unplayed share of
+    # its projections, by the clock - and the spread still to be played, for
+    # the header and the GordStats win bar. The browser redoes this sum
+    # (muLiveProjections) on every poll.
+    gs_exp = y_exp = var = 0.0
+    for p in starters:
+        pid = p["yahoo_id"]
+        left = 1.0 - _elapsed(games.get(pid))
+        got = float(p.get("points") or 0.0)
+        gs_exp += got + (proj.get(pid) or 0.0) * left
+        y_exp += got + float(yproj.get(pid) or 0.0) * left
+        var += ui.spread_for(None, proj.get(pid) or yproj.get(pid)) ** 2 * left
+    parts = {"starters": starters, "bench": bench, "proj": proj, "games": games,
+             "hints": hints, "pts": pts_total, "gs": proj_total,
+             "gs_exp": gs_exp, "y_exp": y_exp if y_total is not None else None, "var": var}
     return html, proj_total, pts_total, parts
 
 
@@ -432,9 +448,21 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     def side_html(s, which):
         big = ui.fmt(s["pts"]) if started else ui.fmt(s["gs"])
         cls = " lead" if lead == which else ""
-        sub = (f"GordStats <b data-tgs='{escape(s['key'])}'>{ui.fmt(s['gs'])}</b> · "
-               f"Yahoo <b>{ui.fmt(s['yproj'])}</b>"
-               if started else f"projected · Yahoo <b>{ui.fmt(s['yproj'])}</b>")
+        parts = s["parts"]
+        if not started:
+            sub = f"projected · Yahoo <b>{ui.fmt(s['yproj'])}</b>"
+        elif final:
+            sub = f"GordStats <b>{ui.fmt(s['gs'])}</b> · Yahoo <b>{ui.fmt(s['yproj'])}</b>"
+        else:
+            # Each source's expected final while the week is played, kept
+            # moving by the live poll: Yahoo's own projected total stays where
+            # it was at kickoff (week 1 finished 244 against a Yahoo 180).
+            key = escape(s["key"])
+            yahoo = (ui.live_total(key, "yahoo", parts["y_exp"]) if parts["y_exp"] is not None
+                     else f"<b>{ui.fmt(s['yproj'])}</b>")
+            sub = ("<span title='Expected finals: points so far plus the unplayed share "
+                   "of each projection'>GordStats " + ui.live_total(key, "gs", parts["gs_exp"])
+                   + f" · Yahoo {yahoo}</span>")
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_team_logo(s["team"])}'
                 f'<div><div class="nm">{escape(s["name"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
@@ -442,9 +470,15 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
                 f'data-val="{s["pts"] if s["pts"] is not None else ""}">{big}</div>'
                 f'<div class="sub">{sub}</div></div></div>')
 
+    # Two bars: ours, from the GordStats expected finals and the spread still
+    # to be played (gordstats.matchup_page.win_probability), and Yahoo's own.
     wp_a = a["wp"] if a["wp"] is not None else 0.5
     wp_b = b["wp"] if b["wp"] is not None else 1 - wp_a
-    wp = "" if final else ui.win_bar(wp_a, wp_b, "Yahoo", a["key"], b["key"])
+    gs_a = ui.win_probability(a["parts"]["gs_exp"], a["parts"]["var"],
+                              b["parts"]["gs_exp"], b["parts"]["var"])
+    wp = ("" if final else
+          ui.win_bar(gs_a, 1 - gs_a, "GordStats", escape(a["key"]), escape(b["key"]), src="gs")
+          + ui.win_bar(wp_a, wp_b, "Yahoo", a["key"], b["key"]))
     mid = "Final" if final else ("Live" if started else "Preview")
     gs_edge = a["gs"] - b["gs"]
     leader = escape(a['name'] if gs_edge >= 0 else b['name'])
@@ -453,7 +487,11 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     # fit, which has seen the games - so they say so.
     ids = [str(p["yahoo_id"]) for t in m["teams"] for p in data["rosters"].get(t["team_key"], [])]
     honest = pregame.complete(wk.loc[wk.index.intersection(ids)])
-    if not final:
+    kicked = any(_state(g) in ("in", "post") for s in sides for g in s["parts"]["games"].values())
+    if not final and kicked and honest:
+        # The header moves with the games, so this is what it moved from.
+        edge = f"Going in, GordStats had <b>{leader}</b> by {abs(gs_edge):.1f}."
+    elif not final:
         edge = f"GordStats has <b>{leader}</b> by {abs(gs_edge):.1f} on projection."
     elif honest:
         edge = f"GordStats had <b>{leader}</b> by {abs(gs_edge):.1f} going in."
@@ -660,7 +698,7 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
             f"scoreboard?groups=80&limit=500&week={espn_week}&dates={SEASON}&seasontype=2');"
             "return Promise.all([api,sb]).then(function(x){"
             f"var R=document.querySelector('#wk-view-{week}');"
-            "var out=muMedian(muTrackerLeft(muLiveProjections(muMergeGames(x[0],x[1],R),x[1],R),x[1],R));"
+            "var out=muMedian(muTrackerLeft(muLiveProjections(muMergeGames(x[0],x[1],R),x[1],R,{yahoo:'data-yproj'}),x[1],R));"
             f"if(window.muMedTrack)window.muMedTrack.update({week},out,R);return out;}});}},"
             f"interval:{60000 if started else 300000},root:'#wk-view-{week}'}};</script>")
     # "Median 0.0 now" before anyone has scored is noise: Yahoo flips a week

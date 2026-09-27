@@ -26,7 +26,7 @@ page rather than papered over:
     FantasyPros' weekly numbers for its own league's rosters only, so a
     reader gets GordStats and Sleeper. The blend the Pts cell runs on is the
     mean of what exists, which is the built page's rule with fewer inputs.
-  * **The win bar's spread is the fallback one.** The built bar reads each
+  * **The win bars' spread is the fallback one.** The built bars read each
     player's week-to-week standard deviation off the projection board, which
     is not published; every player here takes the share-of-projection
     fallback the built page uses for a player it has no figure for.
@@ -34,6 +34,8 @@ page rather than papered over:
     reader's own dashboard (/fantasy/roster/) already does properly, and
     guessing at the opponent's lineup is not worth a wrong answer.
 """
+
+from html import escape
 
 CSS = """<style>
 .mm{margin:10px 0 18px}
@@ -73,6 +75,10 @@ JS = """{% raw %}<script>
   var CTX=null, PROJ={}, WEEKPROJ={}, INDEX={}, SLOTS=[], BENCH={BN:1,IR:1,TAXI:1};
   var LEAGUE_ID='';
   var AVATAR='https://sleepercdn.com/avatars/thumbs/';
+  // The week is being played: projection cells turn into expected finals, as
+  // the built page's live script does them. LATE is the started players whose
+  // GordStats number was not recorded before kickoff (week-context.json).
+  var LIVE=false, LATE={};
 
   function saved(){
     try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; }
@@ -133,14 +139,21 @@ JS = """{% raw %}<script>
     var pts=row.players_points||{};
     var starters=[], bench=[];
     rows.forEach(function(r){ (BENCH[r.slot]?bench:starters).push(r); });
-    var gs=0, sp=0, exp=0, varr=0, states={};
+    // Each source's expected final (points so far plus the unplayed share of
+    // its projections) beside its pre-game total, and one spread for both
+    // win bars, so they differ only in whose projections they believe.
+    var gs=0, sp=0, gsx=0, spx=0, exp=0, varr=0, states={}, late=false;
     starters.forEach(function(r){
       if(r.pid==='0') return;
-      var c=card(r.pid), g=W.gameFor(CTX, c.team);
-      gs+=gsFor(c)||0;
-      sp+=PROJ[c.id]||0;
-      var e=W.expected(pts[c.id], blend(c), g);
+      var c=card(r.pid), g=W.gameFor(CTX, c.team), got=pts[c.id];
+      var mine=gsFor(c), theirs=PROJ[c.id];
+      gs+=mine||0;
+      sp+=theirs||0;
+      gsx+=W.expected(got, mine, g)[0];
+      spx+=W.expected(got, theirs, g)[0];
+      var e=W.expected(got, blend(c), g);
       exp+=e[0]; varr+=e[1];
+      if(LATE[c.id]) late=true;
       states[g?(g.state||'pre'):'bye']=1;
     });
     var total=Number(row.points||0);
@@ -151,7 +164,7 @@ JS = """{% raw %}<script>
     return {key:String(row.roster_id), name:name, mgr:mgr, avatar:avatar,
             rec:(set.wins||0)+'-'+(set.losses||0)+(set.ties?('-'+set.ties):''),
             rows:rows, starters:starters, bench:bench, pts:pts, total:total,
-            gs:gs, sp:sp, exp:exp, varr:varr, state:st};
+            gs:gs, sp:sp, gsx:gsx, spx:spx, exp:exp, varr:varr, late:late, state:st};
   }
 
   // ----- the roster table ------------------------------------------------- //
@@ -177,8 +190,20 @@ JS = """{% raw %}<script>
       +esc(c.name)+'</span> <span class="mu-lbl"><span class="mu-meta">'+esc(c.pos)
       +((c.team&&c.pos!=='DEF')?(' \\u00b7 '+esc(c.team)):'')+'</span>'+inj+'</span></span></td>'
       +'<td class="mu-g">'+W.gameCell(g)+'</td>'
-      +'<td class="mu-gs">'+fmt(gsFor(c))+'</td>'
-      +'<td>'+fmt(PROJ[c.id]!=null?PROJ[c.id]:null)+'</td></tr>';
+      +projCell(gsFor(c), p, g, 'mu-gs')
+      +projCell(PROJ[c.id]!=null?PROJ[c.id]:null, p, g, '')+'</tr>';
+  }
+
+  /** A projection cell. Once his game is on it is the expected final instead
+   *  (his points, plus the unplayed share of this projection), and his points
+   *  once it is over, with the pre-game number on hover - what the built
+   *  page's live script does to its data-pre cells. */
+  function projCell(v, got, g, cls){
+    var st=g?(g.state||'pre'):'bye';
+    if(!LIVE||v==null||st==='pre'||st==='bye')
+      return '<td'+(cls?(' class="'+cls+'"'):'')+'>'+fmt(v)+'</td>';
+    return '<td class="'+(cls?(cls+' '):'')+'live" data-pre="'+v+'" title="Pre-game '+fmt(v)+'">'
+      +fmt(W.expected(got, v, g)[0])+'</td>';
   }
   var INJURY={Questionable:'Q',Doubtful:'D',Out:'O',IR:'IR',PUP:'PUP',
               Sus:'SUS',NA:'NA',DNR:'DNR',COV:'COV'};
@@ -195,7 +220,10 @@ JS = """{% raw %}<script>
     body+='<tr class="total"><td class="mu-pts">'
       +W.scoreCell(s.total, hexp, s.state, hexp, true)
       +'</td><td></td><td class="mu-p">Starters</td><td></td>'
-      +'<td class="mu-gs">'+fmt(s.gs)+'</td><td>'+fmt(s.sp)+'</td></tr>';
+      +(LIVE&&s.state!=='pre'
+        ? ('<td class="mu-gs live" data-tcol="gs" title="Pre-game '+fmt(s.gs)+'">'+fmt(s.gsx)+'</td>'
+           +'<td class="live" data-tcol="s0" title="Pre-game '+fmt(s.sp)+'">'+fmt(s.spx)+'</td>')
+        : ('<td class="mu-gs">'+fmt(s.gs)+'</td><td>'+fmt(s.sp)+'</td>'))+'</tr>';
     if(s.bench.length){
       body+='<tr class="sep"><td colspan="'+N_COLS+'">Bench</td></tr>'
         +s.bench.map(function(r){ return playerRow(r,s); }).join('');
@@ -310,29 +338,46 @@ JS = """{% raw %}<script>
     var final=(a.state==='post'&&b.state==='post');
     function sideHtml(s, which){
       var big=started?fmt(s.total):fmt(s.gs);
-      var sub=started
+      // While it is being played, each source's expected final: the pre-game
+      // totals were a number fixed at kickoff under a score that was not.
+      var sub=!started
+        ? ('projected \\u00b7 Sleeper <b>'+fmt(s.sp)+'</b>')
+        : final
         ? ('GordStats <b>'+fmt(s.gs)+'</b> \\u00b7 Sleeper <b>'+fmt(s.sp)+'</b>')
-        : ('projected \\u00b7 Sleeper <b>'+fmt(s.sp)+'</b>');
+        : ('<span title="Expected finals: points so far plus the unplayed share of each '
+           +'projection">GordStats <b class="live">'+fmt(s.gsx)+'</b> \\u00b7 Sleeper '
+           +'<b class="live">'+fmt(s.spx)+'</b></span>');
       return '<div class="mu-side '+(which==='b'?'r':'')+'">'+avatarImg(s.avatar)
         +'<div><div class="nm">'+label(s)+'<span class="rec">'+esc(s.rec)+'</span></div>'
         +'<div class="num'+(lead===which?' lead':'')+'">'+big+'</div>'
         +'<div class="sub">'+sub+'</div></div></div>';
     }
-    var wpa=W.winProb(a.exp, a.varr, b.exp, b.varr);
-    var bar=final?'':('<div class="mu-wp"><i style="width:'+Math.round(wpa*100)+'%"></i>'
-      +'<i class="b" style="width:'+Math.round((1-wpa)*100)+'%"></i></div>'
-      +'<div class="mu-wp-lbl"><span>'+Math.round(wpa*100)+'% (GordStats)</span>'
-      +'<span>'+Math.round((1-wpa)*100)+'%</span></div>');
-    var edge=a.gs-b.gs;
-    var note=final
-      ? ('GordStats projected '+fmt(a.gs)+'\\u2013'+fmt(b.gs)+' going in, Sleeper '
-         +fmt(a.sp)+'\\u2013'+fmt(b.sp)+'.')
-      : ('GordStats has <b>'+esc(edge>=0?a.name:b.name)+'</b> by '
-         +Math.abs(edge).toFixed(1)+' on projection ('+fmt(a.gs)+'\\u2013'+fmt(b.gs)
-         +'); Sleeper has '+fmt(a.sp)+'\\u2013'+fmt(b.sp)+'.');
+    // Two bars, ours and Sleeper's: the same arithmetic on each source's
+    // expected finals (Sleeper publishes no probability of its own).
+    function bar(p, source){
+      return '<div class="mu-wp"><i style="width:'+Math.round(p*100)+'%"></i>'
+        +'<i class="b" style="width:'+Math.round((1-p)*100)+'%"></i></div>'
+        +'<div class="mu-wp-lbl"><span>'+Math.round(p*100)+'% ('+source+')</span>'
+        +'<span>'+Math.round((1-p)*100)+'%</span></div>';
+    }
+    var bars=final?'':(bar(W.winProb(a.gsx, a.varr, b.gsx, b.varr), 'GordStats')
+                       +bar(W.winProb(a.spx, a.varr, b.spx, b.varr), 'Sleeper'));
+    var edge=a.gs-b.gs, honest=!a.late&&!b.late;
+    var by='<b>'+esc(edge>=0?a.name:b.name)+'</b> by '+Math.abs(edge).toFixed(1);
+    var gsPair=fmt(a.gs)+'\\u2013'+fmt(b.gs), slPair=fmt(a.sp)+'\\u2013'+fmt(b.sp);
+    // "Going in" only when every GordStats number behind it was recorded
+    // before its kickoff - the built page's rule.
+    var note=(!started||(!final&&!honest))
+      ? ('GordStats has '+by+' on projection ('+gsPair+'); Sleeper has '+slPair+'.')
+      : !final
+      ? ('Going in, GordStats had '+by+' ('+gsPair+'); Sleeper had '+slPair+'.')
+      : honest
+      ? ('GordStats projected '+gsPair+' going in, Sleeper '+slPair+'.')
+      : ('On today\\u2019s projections GordStats would have had '+gsPair
+         +'; Sleeper had '+slPair+'.');
     var body='<div class="mu-head">'+sideHtml(a,'a')
       +'<div class="mu-mid">'+(final?'Final':(started?'Live':'Preview'))+'</div>'
-      +sideHtml(b,'b')+'</div>'+bar+'<p class="mu-note">'+note+'</p>'
+      +sideHtml(b,'b')+'</div>'+bars+'<p class="mu-note">'+note+'</p>'
       +pairView(a,b)
       +'<div class="mu-grid"><div><div class="mu-who">'+esc(a.name)+'</div>'
       +rosterTable(a)+'</div><div><div class="mu-who">'+esc(b.name)+'</div>'
@@ -420,11 +465,15 @@ JS = """{% raw %}<script>
       });
       if(sides.length!==2){ idle.push(sides.length?sides[0].name:''); return; }
       pairs.push({anchor:'mm-'+mid, a:sides[0], b:sides[1],
-                  wp:W.winProb(sides[0].exp, sides[0].varr, sides[1].exp, sides[1].varr)});
+                  wp:W.winProb(sides[0].gsx, sides[0].varr, sides[1].gsx, sides[1].varr)});
     });
     var started=pairs.some(function(p){
       return p.a.total>0 || p.b.total>0 || p.a.state!=='pre' || p.b.state!=='pre';
     });
+    var over=pairs.length>0 && pairs.every(function(p){
+      return p.a.state==='post' && p.b.state==='post'; });
+    LIVE=started && !over;
+    if(POLL) POLL.over=over;
     // Theirs first. The built page has no "you" to put first - it is one
     // league's own page - but a reader opening this has come to see one
     // matchup, and it was wherever Sleeper's ids happened to put it.
@@ -451,6 +500,80 @@ JS = """{% raw %}<script>
     // The renderer is already on the page; it ran before this existed.
     if(window.muMedTrack && muMedTrack.init) muMedTrack.init();
   }
+
+  // ----- live ------------------------------------------------------------- //
+
+  // The built league polls (gordstats.matchup_page.LIVE_JS); this drew once,
+  // so a reader's own week stood still until a reload - the score moved on
+  // Sleeper while every projection and bar here sat at kickoff. Sleeper's
+  // points and ESPN's clocks, a minute apart while a game is on (five
+  // before), and the week drawn again from them.
+  var POLL=null, TIMER=null, BUSY=false;
+  var SCOREBOARD=host.dataset.espn||'';
+
+  /** fantasy.league.matchups.elapsed: the share of a game played. */
+  function elapsed(state, period, clock){
+    if(state==='pre') return 0;
+    if(state==='post') return 1;
+    if(!period) return 0.5;
+    if(period>4) return 0.95;
+    var m=String(clock||'0:00').split(':');
+    var left=(parseInt(m[0],10)||0)+((parseInt(m[1],10)||0)/60);
+    return Math.min(Math.max(((period-1)*15+(15-left))/60,0),1);
+  }
+
+  /** ESPN's scoreboard folded into the week's context, team by team. */
+  function clocks(){
+    if(!SCOREBOARD) return Promise.resolve(false);
+    return fetch(SCOREBOARD).then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){
+        (d&&d.events||[]).forEach(function(e){
+          var c=(e.competitions||[])[0]; if(!c) return;
+          var st=c.status||{}, state=(st.type||{}).state||'pre', cs=c.competitors||[];
+          cs.forEach(function(x, i){
+            var ab=x.team&&x.team.abbreviation; if(ab==='WSH') ab='WAS';
+            var g=CTX.teams&&CTX.teams[ab], o=cs[1-i]||{};
+            if(!g) return;
+            g.state=state; g.el=elapsed(state, st.period, st.displayClock);
+            if(state!=='pre'){ g.sf=Number(x.score); g.sa=Number(o.score); }
+          });
+        });
+        return !!d;
+      }).catch(function(){ return false; });
+  }
+
+  function anyLive(){
+    var t=CTX&&CTX.teams||{};
+    return Object.keys(t).some(function(k){ return t[k].state==='in'; });
+  }
+  function next(ms){ clearTimeout(TIMER); TIMER=setTimeout(poll, ms); }
+  function poll(){
+    if(!POLL||BUSY||POLL.over) return;
+    if(document.hidden){ next(60000); return; }
+    BUSY=true;
+    Promise.all([
+      fetch(POLL.api+'/matchups/'+WEEK).then(function(r){ return r.ok?r.json():null; })
+        .catch(function(){ return null; }),
+      clocks()
+    ]).then(function(out){
+      BUSY=false;
+      if(out[0]&&out[0].length) POLL.rows=out[0];
+      // Drawn again whole, so keep what the reader had folded away.
+      var shut={};
+      host.querySelectorAll('details').forEach(function(d){
+        if(!d.open) shut[d.id||d.className]=1; });
+      render(POLL.rows, POLL.rosters, POLL.users, POLL.info);
+      host.querySelectorAll('details').forEach(function(d){
+        if(shut[d.id||d.className]) d.open=false; });
+      var now=new Date(), h=now.getHours()%12||12, mn=('0'+now.getMinutes()).slice(-2);
+      var asof=document.getElementById('mm-asof');
+      if(asof) asof.textContent=POLL.over?'':(' \u00b7 live, as of '+h+':'+mn
+        +(now.getHours()<12?' AM':' PM'));
+      next(anyLive()?60000:300000);
+    });
+  }
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden && POLL && !POLL.over) poll(); });
 
   function show(league){
     var id=league.id;
@@ -480,7 +603,7 @@ JS = """{% raw %}<script>
       var bar=document.getElementById('mm-bar');
       if(bar){
         bar.innerHTML='<h2>'+esc(league.name||info.name||'Your league')
-          +' &middot; week '+WEEK+'</h2>'
+          +' &middot; week '+WEEK+'<span class="mm-note" id="mm-asof"></span></h2>'
           +'<span class="mm-note">Live points from Sleeper, in this page\\u2019s layout. '
           +'<b>Pts</b> is the blend of the two projections below it until a player\\u2019s '
           +'game kicks off, then his points with the expected final under them. Scored on '
@@ -489,7 +612,13 @@ JS = """{% raw %}<script>
           +'median tracker and lineup advice are its own - your best lineup is on the '
           +'<a href="/fantasy/roster/">team dashboard</a>.</span>';
       }
+      LATE={};
+      (CTX.late||[]).forEach(function(pid){ LATE[String(pid)]=1; });
+      POLL={api:API, rows:rows, rosters:rosters, users:users, info:info, over:false};
       render(rows, rosters, users, info);
+      // Soon while a game is on: the clocks in week-context.json are as old
+      // as the last build.
+      if(!POLL.over) next(anyLive()?8000:300000);
     }).catch(function(){
       host.innerHTML='<p class="mm-note">Could not read that league from Sleeper.</p>';
     });
@@ -502,9 +631,11 @@ JS = """{% raw %}<script>
 </script>{% endraw %}"""
 
 
-def section(week: int, year: int) -> str:
-    """The container the script fills, and the note explaining what it is."""
+def section(week: int, year: int, scoreboard: str = "") -> str:
+    """The container the script fills, and the note explaining what it is.
+    `scoreboard` is ESPN's for the week, which the live poll reads clocks from."""
+    espn = f" data-espn='{escape(scoreboard, quote=True)}'" if scoreboard else ""
     return (CSS + f"<div class='mm' id='mm-wrap'>"
             f"<div class='mm-head' id='mm-bar'></div>"
-            f"<div id='mm-host' data-week='{int(week)}' data-year='{int(year)}'></div>"
+            f"<div id='mm-host' data-week='{int(week)}' data-year='{int(year)}'{espn}></div>"
             "</div>")
