@@ -197,7 +197,7 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
 def _rankings() -> tuple:
     """({espn id: {name, logo, gs, ap, fpi}}, whether the AP poll is live)."""
     rows = power._rows(power.fpi())
-    ap_ranks, ap_season, _label = power.ap_poll()
+    ap_ranks, ap_season, _label = power.ap_poll(others=True)
     show_ap = bool(ap_ranks) and ap_season == SEASON
 
     teams = {}
@@ -243,16 +243,28 @@ def top25_html(limit: int = 25) -> str:
     teams, show_ap = _rankings()
     sources = [("ap", "AP Poll")] if show_ap else []
     sources += [("gs", "GordStats"), ("fpi", "ESPN FPI")]
+    # Where the AP puts a team without a vote: below every team with one. Ours
+    # and FPI rank all of FBS, so only the poll runs out - and leaving it out
+    # of the comparison is how Penn State (15th to FPI, 17th to us, 28th by AP
+    # votes) went unmarked while a team we both rank sat beside it marked.
+    ap_floor = 1 + max((t["ap"] or 0) for t in teams.values())
 
     def seen(team) -> dict:
-        """{source: rank} over the sources that rank this team at all."""
-        return {key: team[key] for key, _label in sources
-                if team[key] is not None and (key != "ap" or team[key] <= 25)}
+        """{source: rank} over the sources, an AP vote-less team at ap_floor."""
+        got = {key: team[key] for key, _label in sources if team[key] is not None}
+        if show_ap and got and "ap" not in got:
+            got["ap"] = ap_floor
+        return got
 
     def where(team) -> str:
+        def say(key, rank):
+            if rank is None:
+                return "unranked"
+            if key == "ap" and rank > 25:
+                return f"unranked ({rank}{teams_page._ordinal(rank)} by votes)"
+            return str(rank)
         return " \u00b7 ".join(
-            f"{label.replace(' Poll', '').replace('ESPN ', '')} "
-            + (str(team[key]) if team[key] is not None else "unranked")
+            f"{label.replace(' Poll', '').replace('ESPN ', '')} " + say(key, team[key])
             for key, label in sources)
 
     ranked = {key: {rank: (team_id, team)

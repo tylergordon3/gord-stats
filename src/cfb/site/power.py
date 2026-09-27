@@ -350,12 +350,15 @@ def fpi(refresh: bool = False) -> dict:
     return data
 
 
-def ap_poll(refresh: bool = True):
+def ap_poll(refresh: bool = True, others: bool = False):
     """({espn team id: AP rank}, poll season year, poll label), or (None, None, None).
 
     Fetched on every build: the poll moves once a week and this is one small
     request, so a 12-hour cache only ever served a stale Sunday. The cached
     copy is the fallback when ESPN does not answer.
+
+    `others` goes on down "others receiving votes" by points, 26 and on, ties
+    sharing a place - where the poll puts a team it does not rank.
     """
     cache = DATA_DIR / "ap.json"
     data = None
@@ -382,6 +385,15 @@ def ap_poll(refresh: bool = True):
         label = (poll.get("occurrence") or {}).get("displayValue") or ""
         ranks = {str((r.get("team") or {}).get("id")): int(r["current"])
                  for r in poll.get("ranks", []) if r.get("current")}
+        if ranks and others:
+            votes = sorted(((float(o.get("points") or 0), str((o.get("team") or {}).get("id")))
+                            for o in poll.get("others", []) if o.get("points")),
+                           key=lambda v: -v[0])
+            top, place, last = len(ranks), len(ranks), None
+            for i, (points, team_id) in enumerate(votes):
+                if points != last:
+                    place, last = top + 1 + i, points
+                ranks.setdefault(team_id, place)
         return (ranks or None), season, label
     return None, None, None
 
