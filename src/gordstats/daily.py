@@ -88,6 +88,12 @@ def _cbb() -> None:
     rc.main(mens, "M")
     rc.main(womens, "W")
 
+    # Each day writes a new predict_<date>.html. Fold every one into the JSON
+    # archive the history pages read, and keep only the newest as a page —
+    # the tool did this by hand at season end, which left the dailies piling up.
+    from cbb.tools import archive_predictions
+    archive_predictions.archive()
+
 
 def _cbb_power() -> None:
     """Rebuild the CBB power rankings page (docs/cbb/power/).

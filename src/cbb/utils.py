@@ -9,6 +9,17 @@ import pandas as pd
 from cbb import paths
 
 
+def season_year(day) -> int:
+    """The season a date belongs to, named for the year it ends in.
+
+    Nov 2026 - Apr 2027 is 2027: KenPom, Torvik and data/teams/bids.json all
+    key a season that way. Takes a date/datetime or a 'YYYY-MM-DD' string.
+    """
+    if isinstance(day, str):
+        day = date.fromisoformat(day[:10])
+    return day.year + 1 if day.month >= 7 else day.year
+
+
 def root():
     return Path(__file__).parent.parent
 

@@ -23,11 +23,15 @@ kenpom = kenpom_wrapper.KenpomData()
 def kenpom_now():
     now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
     str = now.strftime("%Y-%m-%d")
-    ratings = pd.DataFrame(kenpom.get_ratings(2026))
-    ff = pd.DataFrame(kenpom.get_four_factors(2026))
-    dist = pd.DataFrame(kenpom.get_point_distribution(2026))
-    height = pd.DataFrame(kenpom.get_height(2026))
-    misc = pd.DataFrame(kenpom.get_misc_stats(2026))
+    # KenPom names a season for the year it ends in: November 2026 is 2027.
+    # This was a literal 2026, which would have fed last season's final
+    # ratings to the model all year under today's filename.
+    season = utils.season_year(now)
+    ratings = pd.DataFrame(kenpom.get_ratings(season))
+    ff = pd.DataFrame(kenpom.get_four_factors(season))
+    dist = pd.DataFrame(kenpom.get_point_distribution(season))
+    height = pd.DataFrame(kenpom.get_height(season))
+    misc = pd.DataFrame(kenpom.get_misc_stats(season))
 
     merge1 = pd.merge(ratings, ff, how="outer")
     merge2 = pd.merge(merge1, dist, how="outer")

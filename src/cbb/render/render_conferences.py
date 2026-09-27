@@ -36,18 +36,26 @@ def main(df, gender):
     # The tables shipped with no key: Pwr/Gord, Ovr and the Δ arrows were
     # unexplained everywhere on the site. Column name differs by gender.
     rating = "Pwr" if gender == "M" else "Gord"
+    # Conference records come from ESPN's men's BPI table, and the women's page
+    # was reading it too: UConn's women (34-0) showed the men's 17-3. There is
+    # no women's source wired in yet, so their page goes without the column.
+    records = gender == "M"
     html += (
-        f"<p class='week-meta'><strong>Conf Record</strong> is the record in conference "
-        f"play; <strong>{rating}</strong> is the model's power rating (0&ndash;1, higher "
+        "<p class='week-meta'>"
+        + ("<strong>Conf Record</strong> is the record in conference play; " if records else "")
+        + f"<strong>{rating}</strong> is the model's power rating (0&ndash;1, higher "
         f"is better); <strong>Ovr</strong> is overall rank with projected tournament seed; "
         f"<strong>&Delta;</strong> is movement in overall rank over the selected window "
         f"(&uarr;/&darr; places, <strong>NR</strong> = newly ranked, "
         f"<strong>-</strong> = no change).</p>"
     )
 
-    conf_record_dict = bpi.get_conf_records()
+    conf_record_dict = bpi.get_conf_records() if records else {}
     for k, v in conf_dict.items():
-        v['Conf Record'] = v.apply(lambda x: conf_record_dict[x.Team], axis=1)
+        if records:
+            # .get: a team BPI does not list (a school new to D1) is a blank,
+            # not a KeyError that stops the whole page.
+            v['Conf Record'] = v["Team"].map(lambda t: conf_record_dict.get(t, ""))
         styler = html_util.style_bracketology(
             df=v,
             gender=gender,

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import requests
 
-from cbb import paths, teams
+from cbb import paths, teams, utils
 
 # =========================
 # CONFIG
@@ -257,7 +257,14 @@ def get_last_x(gender, team, x):
     with open(file, "r") as f:
         all = json.load(f)
 
-    team_dict = all.get(name)
+    # This season's games only, in date order. The file is never reset, so on
+    # opening night "the last ten" were last March's; and a team it has never
+    # seen (every non-D1 opponent) used to be len(None) and a crash.
+    season = utils.season_year(date.today())
+    team_dict = {d: g for d, g in sorted((all.get(name) or {}).items())
+                 if utils.season_year(d) == season}
+    if not team_dict:
+        return ""
     if x > len(team_dict) or x < 0:
         x = len(team_dict)
     last_x_dict = list(team_dict.keys())[(len(team_dict)-x):]

@@ -118,8 +118,17 @@ main() {
     echo "❌ CFB live refresh failed (rc=$CFB)"
     exit "$CFB"
   fi
+  # College basketball's scoreboard is served by its own Worker, not by a
+  # rebuilt page, so its gate pushes and never asks for a build. A failure is
+  # reported at the end of the tick rather than stopping the gates that do.
+  local CBB=0
+  python -m cbb.live || CBB=$?
+  [ "$CBB" -ne 0 ] && [ "$CBB" -ne 3 ] && echo "❌ CBB live scoreboard push failed (rc=$CBB)"
+  local CBB_RC=0
+  [ "$CBB" -ne 0 ] && [ "$CBB" -ne 3 ] && CBB_RC="$CBB"
+
   if [ "$WNBA" -eq 3 ] && [ "$FANTASY" -eq 3 ] && [ "$CFB" -eq 3 ]; then
-    exit 0                       # nothing live anywhere — quiet tick
+    exit "$CBB_RC"               # nothing to rebuild — quiet tick
   fi
   local WHAT=""
   [ "$WNBA" -eq 0 ] && WHAT="wnba"
@@ -167,6 +176,7 @@ main() {
   fi
 
   log "✅ live tick done"
+  exit "$CBB_RC"
 }
 
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }

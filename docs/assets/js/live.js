@@ -104,9 +104,15 @@ async function pollScores () {
   const res = await fetch(WORKER_URL)
   const data = await res.json()
 
+  // The Worker is refreshed every ten minutes and polled every thirty
+  // seconds. Rebuilding the board on every poll closed any section the reader
+  // had opened ("Past Games") twenty times between updates.
+  if (data.generated && data.generated === lastGenerated) return
+  lastGenerated = data.generated
+
   let medalByDate = {}
 
-  const games = LEAGUE === 'men' ? data.leagues.men : data.leagues.women
+  const games = (data.leagues && data.leagues[LEAGUE]) || {}
 
   medalByDate = getBottom3MedalsByDate(games)
   applyMedalsToGames(games, medalByDate)
@@ -950,10 +956,24 @@ function renderGames (games, medalByDate = {}) {
   })
 }
 
+// A failed first fetch (offline, the Worker slow to wake) used to throw out of
+// start() before the interval was set, and the board never polled again.
+async function safePoll () {
+  try {
+    await pollScores()
+  } catch (e) {
+    console.warn('scoreboard poll failed', e)
+  }
+}
+
 async function start () {
-  await loadTeamLogos()
-  await pollScores()
-  setInterval(pollScores, POLL_INTERVAL)
+  try {
+    await loadTeamLogos()
+  } catch (e) {
+    console.warn('team logos failed to load', e)
+  }
+  await safePoll()
+  setInterval(safePoll, POLL_INTERVAL)
 }
 
 start()

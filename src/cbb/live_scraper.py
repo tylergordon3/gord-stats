@@ -23,7 +23,14 @@ HEADERS = {
     "Referer": "https://www.thescore.com/",
 }
 
-UTC_OFFSET_SECONDS = -18000  # EST
+UTC_OFFSET_SECONDS = -18000  # EST - kept for callers; see _utc_offset()
+
+
+def _utc_offset() -> int:
+    """US Eastern's offset now, in seconds: -18000 in winter, -14400 from the
+    second Sunday of March, when a fixed EST put games an hour out."""
+    from zoneinfo import ZoneInfo
+    return int(datetime.now(ZoneInfo("America/New_York")).utcoffset().total_seconds())
 POLL_INTERVAL = 25  # seconds
 BATCH_SIZE = 120
 
@@ -102,7 +109,7 @@ def normalize_conf_name(conf: str) -> str:
 # =========================
 
 
-def get_today_event_ids(conference_strings, league_path):
+def get_today_event_ids(league_path):
     from datetime import datetime, timedelta
     from zoneinfo import ZoneInfo
 
@@ -115,38 +122,37 @@ def get_today_event_ids(conference_strings, league_path):
 
     all_ids = set()
 
-    for conf in conference_strings:
-        if conf in SKIP_CONFERENCES:
+    # One request. This used to sit inside a loop over the conferences, but the
+    # conference was never part of it: the same schedule was fetched ~30 times
+    # a league on every tick.
+    resp = requests.get(
+        f"{BASE}/{league_path}/schedule",
+        params={"utc_offset": _utc_offset()},
+        headers=HEADERS,
+        timeout=10,
+    )
+    resp.raise_for_status()
+    sched = resp.json()
+    current = sched.get("current_group")
+    if current:
+        all_ids.update(current.get("event_ids", []))
+
+    groups = sched.get("current_season", [])
+
+    for group in groups:
+        group_date = group.get("start_date")
+        event_ids = group.get("event_ids", [])
+
+        if not group_date or not event_ids:
             continue
 
-        resp = requests.get(
-            f"{BASE}/{league_path}/schedule",
-            params={"utc_offset": UTC_OFFSET_SECONDS},
-            headers=HEADERS,
-            timeout=10,
-        )
-        resp.raise_for_status()
-        sched = resp.json()
-        current = sched.get("current_group")
-        if current:
-            all_ids.update(current.get("event_ids", []))
+        try:
+            group_day = datetime.fromisoformat(group_date).date()
+        except Exception:
+            continue
 
-        groups = sched.get("current_season", [])
-
-        for group in groups:
-            group_date = group.get("start_date")
-            event_ids = group.get("event_ids", [])
-
-            if not group_date or not event_ids:
-                continue
-
-            try:
-                group_day = datetime.fromisoformat(group_date).date()
-            except Exception:
-                continue
-
-            if yesterday_et <= group_day <= cutoff_et:
-                all_ids.update(event_ids)
+        if yesterday_et <= group_day <= cutoff_et:
+            all_ids.update(event_ids)
 
     return sorted(all_ids)
 
@@ -239,8 +245,10 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     )
 
     # ---- gord model rankings ----
-    home_model = ranks[home_name]["Ovr"] if home_name else ""
-    away_model = ranks[away_name]["Ovr"] if away_name else ""
+    # .get: a team the model never ranked (a non-D1 opponent, a new program)
+    # is a blank on the card, not a KeyError that loses the whole board.
+    home_model = ranks.get(home_name, {}).get("Ovr", "") if home_name else ""
+    away_model = ranks.get(away_name, {}).get("Ovr", "") if away_name else ""
 
     hm_safe = safe_float(home_model)
     am_safe = safe_float(away_model)
@@ -249,8 +257,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     )
 
     # ---- basic team stats ----
-    home_record = ranks[home_name]["Record"] if home_name else ""
-    away_record = ranks[away_name]["Record"] if away_name else ""
+    home_record = ranks.get(home_name, {}).get("Record", "") if home_name else ""
+    away_record = ranks.get(away_name, {}).get("Record", "") if away_name else ""
 
     standings = g.get("standings") or {}
     home_standings_obj = standings.get("home") or {}
@@ -460,8 +468,7 @@ def get_current_live_dataset(league_key):
     cfg = LEAGUES[league_key]
     league_path = cfg["path"]
 
-    conferences = get_conference_strings(league_path)
-    event_ids = get_today_event_ids(conferences, league_path)
+    event_ids = get_today_event_ids(league_path)
 
     if not event_ids:
         return {

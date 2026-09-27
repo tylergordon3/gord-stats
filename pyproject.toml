@@ -29,12 +29,14 @@ dependencies = [
     "browser-cookie3",
 
     # --- college basketball model ---
-    # The section is not enabled in TASKS yet: the feeds only carry
-    # current-season numbers once the season starts, so _cbb() refuses to run
-    # before tipoff (Nov 2). Installing the deps now means the switch is one
-    # edit to TASKS rather than a deploy on the night.
+    # `cbb` is in the Pi's TASKS but _cbb() refuses to run before tipoff
+    # (Nov 2): the feeds only carry current-season numbers once games start.
     # aarch64 wheels exist for all of these, so nothing compiles on the Pi.
-    "scikit-learn",
+    # Pinned exactly: the bracketology models are pickles, and a pickle loads
+    # only under the version that wrote it (1.2.2's failed outright under 1.9).
+    # Moving this means retraining with src/cbb/models/train_*.py; the
+    # tests/test_cbb_models.py load check fails until that is done.
+    "scikit-learn==1.9.0",
     "joblib",
     "pytz",                                     # cbb.daily_data
     # Not on PyPI -- Tyler's own wrapper. Pinned to the commit that was in the

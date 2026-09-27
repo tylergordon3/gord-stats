@@ -162,27 +162,6 @@ def image_formatter(url):
     return f'<img src="{url}" class="team-logo" >'
 
 
-def getUrl(x, save_df, master, gender="M"):
-    """
-    Finds path/url for team logo
-
-    :param x: Row for current team
-    :type x: Series
-    :param save_df: Predictions DataFrame with all D1 teams
-    :type save_df: DataFrame
-    :param master: Master Team Name DataFrame
-    :type master: DataFrame
-    :return: Link/Path to logo
-    :rtype: str
-    """
-    if gender == "M":
-        saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
-    elif gender == "W":
-        saved_index = list(save_df[save_df["Team"] == x["Team"]]["Index"])[0]
-    link = "/assets/images/" + master.at[saved_index, "path"]
-    return link
-
-
 def getRecord(x, winloss):
     """
     Gets record and returns formatted with name
@@ -214,6 +193,26 @@ def getWinPer(record):
     wins, losses = map(int, m.groups())
     total = wins + losses
     return wins / total if total else 0.0
+
+
+def _this_season_net(net_dir, date):
+    """The latest NET table if it belongs to `date`'s season, else None.
+
+    The NCAA publishes the first NET in early December. Until then ncaa.com
+    serves last season's final table (scrape.net now refuses to file it), and
+    the newest file on disk is last March's - which is not this season either.
+    """
+    files = sorted(net_dir.glob("*.json"))
+    if not files or utils.season_year(files[-1].stem) != utils.season_year(date):
+        return None
+    return json.loads(files[-1].read_text(encoding="utf-8"))
+
+
+def _net_ranks(net_json) -> pd.DataFrame:
+    net_df = pd.DataFrame(net_json["rows"], columns=net_json["headers"])
+    net_df = net_df[["Rank", "School"]].copy()
+    net_df["Team"] = net_df.apply(lambda x: teams.getTeamOfficialName(x["School"]), axis=1)
+    return net_df.rename(columns={"Rank": "Net"})[["Net", "Team"]]
 
 
 def get_recent_file(path):
@@ -289,24 +288,17 @@ def predict_womens(date):
     df["Torvik"] = df["Torvik"].astype(float)
     df["Torvik"] = 1 - (df["Torvik"] - 1) / (n - 1)
 
-    net_json = get_recent_file(paths.W_NET_DIR)
-    net_df = pd.DataFrame(net_json["rows"], columns=net_json["headers"])
-    net_df = net_df[["Rank", "School"]].copy()
-    net_df["Team"] = net_df.apply(
-        lambda x: teams.getTeamOfficialName(x["School"]), axis=1
-    )
-    net_df = net_df.rename(columns={"Rank": "Net"})
-    df = pd.merge(df, net_df[["Net", "Team"]].copy(), "inner", "Team")
+    net_json = _this_season_net(paths.W_NET_DIR, date)
+    if net_json is None:
+        # No NET yet this season: the other two, re-weighted to the same scale.
+        df["Rank"] = (0.3 * df["Torvik"] + 0.5 * df["Gord"]) / 0.8
+    else:
+        df = pd.merge(df, _net_ranks(net_json), "inner", "Team")
+        df["Net"] = df["Net"].astype(float)
+        df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
+        df["Rank"] = 0.3 * df["Torvik"] + 0.5 * df["Gord"] + 0.2 * df["Net"]
 
-    df["Net"] = df["Net"].astype(float)
-    df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
-
-    df["Rank"] = df.apply(
-        lambda x: (0.3 * x["Torvik"] + 0.5 * x["Gord"] + 0.2 * x["Net"]),
-        axis=1,
-    )
-
-    df = df.drop(columns=["Torvik", "Net"])
+    df = df.drop(columns=["Torvik", "Net"], errors="ignore")
     df = df.sort_values("Rank", ascending=False)
     df["Ovr"] = range(1, len(df) + 1)
 
@@ -320,9 +312,10 @@ def predict_womens(date):
     with open(paths.BIDS_FILE) as f:
         CHAMPS = json.load(f)
     
-    year = "2026"
-    gender = "Women"
-    manual = CHAMPS[gender][year]
+    # Keyed by season, and empty until the conference tournaments are played:
+    # this was a literal "2026", which forced last March's champions into the
+    # new season's field from opening night.
+    manual = CHAMPS["Women"].get(str(utils.season_year(date)), {})
     
     df["ConfChamp"] = 0
     df['Bid'] = 0
@@ -382,7 +375,7 @@ def predict_womens(date):
         confs = ", ".join(grouped[bids])
         conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
 
-    tz = timezone("EST")
+    tz = timezone("US/Eastern")
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
@@ -399,12 +392,12 @@ def predict_womens(date):
     df_html += "<script src='/assets/js/rank-toggle.js'></script>"
 
     # MAIN -> DF with Conf col data
-    #path = paths.WEB_W_DIR / f"predict_{date}.html"
-    #path.parent.mkdir(parents=True, exist_ok=True)
-    #html = frontmatter.add_front_matter(df_html, "NCAAW Bracketology", f"{date} FINAL Prediction")
-    #with open(path, "w") as f:
-    #    f.write(html)
-    #    print(f"Wrote to: {path} for {date}")
+    path = paths.WEB_W_DIR / f"predict_{date}.html"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    html = frontmatter.add_front_matter(df_html, "NCAAW Bracketology", f"{date} Prediction")
+    with open(path, "w") as f:
+        f.write(html)
+        print(f"Wrote to: {path} for {date}")
 
     return [save_df, df]
 
@@ -529,20 +522,21 @@ def full_prediction(date) -> pd.DataFrame:
     kenpom_full = predict_ken(date)
     kenpom = kenpom_full[["Team", "Conf", "Record", "Kenpom", "GordKen"]].copy()
 
-    df = pd.merge(kenpom, torvik, on=["Team", "Conf"], how="outer")
+    # On the team alone. On [Team, Conf], a school the two sources file under
+    # different conferences - every realignment summer, and Torvik's data can
+    # lag - split into two half-empty rows that sank to the bottom.
+    df = pd.merge(kenpom, torvik.rename(columns={"Conf": "ConfTor"}), on="Team", how="outer")
+    df["Conf"] = df["Conf"].fillna(df["ConfTor"])
+    df = df.drop(columns="ConfTor")
 
-    net_json = get_recent_file(paths.M_NET_DIR)
-    net_df = pd.DataFrame(net_json["rows"], columns=net_json["headers"])
-    net_df = net_df[["Rank", "School"]].copy()
-    net_df["Team"] = net_df.apply(
-        lambda x: teams.getTeamOfficialName(x["School"]), axis=1
-    )
-    net_df = net_df.rename(columns={"Rank": "Net"})
-    df = pd.merge(df, net_df[["Net", "Team"]].copy(), "inner", "Team")
+    net_json = _this_season_net(paths.M_NET_DIR, date)
+    if net_json is not None:
+        df = pd.merge(df, _net_ranks(net_json), "inner", "Team")
 
     n = len(df)
-    df["Net"] = df["Net"].astype(float)
-    df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
+    if net_json is not None:
+        df["Net"] = df["Net"].astype(float)
+        df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
 
     bpi_json = get_recent_file(paths.M_ESPN_DIR)
     bpi_df = pd.DataFrame(bpi_json["rows"], columns=bpi_json["headers"])
@@ -564,17 +558,13 @@ def full_prediction(date) -> pd.DataFrame:
 
     model_cons = 0.4
     ranks_cons = 0.05
-    df["Pwr"] = df.apply(
-        lambda x: (
-            ranks_cons * x["Torvik"]
-            + model_cons * x["GordTor"]
-            + model_cons * x["GordKen"]
-            + ranks_cons * x["Net"]
-            + ranks_cons * x["Kenpom"]
-            + ranks_cons * x["BPI"]
-        ),
-        axis=1,
-    )
+    df["Pwr"] = (ranks_cons * df["Torvik"] + model_cons * df["GordTor"]
+                 + model_cons * df["GordKen"] + ranks_cons * df["Kenpom"]
+                 + ranks_cons * df["BPI"])
+    if net_json is not None:
+        df["Pwr"] += ranks_cons * df["Net"]
+    else:
+        df["Pwr"] /= 1 - ranks_cons          # no NET yet: the same scale without it
     df = df.sort_values("Pwr", ascending=False)
     df["Ovr"] = range(1, len(df) + 1)
 
@@ -592,9 +582,7 @@ def predict(date):
         CHAMPS = json.load(f)
     [df, save_df] = full_prediction(date)
 
-    year = "2026"
-    gender = "Men"
-    manual = CHAMPS[gender][year]
+    manual = CHAMPS["Men"].get(str(utils.season_year(date)), {})
     
     df["ConfChamp"] = 0
     df['Bid'] = 0
@@ -655,7 +643,7 @@ def predict(date):
         confs = ", ".join(grouped[bids])
         conf_html += f"<div><strong>{bids}</strong>: {confs}</div>\n"
 
-    tz = timezone("EST")
+    tz = timezone("US/Eastern")
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
@@ -678,9 +666,9 @@ def predict(date):
     # MAIN -> DF with Conf col data
     path = paths.WEB_M_DIR / f"predict_{date}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
-    html = frontmatter.add_front_matter(df_html, "NCAAM Bracketology", f"{date} FINAL Prediction")
-    #with open(path, "w") as f:
-    #    f.write(html)
-    #    print(f"Wrote to: {path} for {date}")
+    html = frontmatter.add_front_matter(df_html, "NCAAM Bracketology", f"{date} Prediction")
+    with open(path, "w") as f:
+        f.write(html)
+        print(f"Wrote to: {path} for {date}")
 
     return [save_df, main]

@@ -1,13 +1,46 @@
-import re
-import time
+"""
+Bart Torvik's T-Rank tables, men's and women's, for the bracketology models.
+
+Built from two files Torvik publishes as plain CSV: `{season}_team_results.csv`
+(ratings, record, tempo, WAB) and `{season}_fffinal.csv` (the four factors).
+Joined on the team, they are the 24 columns of his main table that the models
+were trained on. That table sits behind a "Verifying your browser" check only
+a real browser clears, which is why this module drove Chromium through
+Playwright - and why, when that broke in March 2026, it was commented out of
+daily_data and the Torvik and women's models kept scoring March's file.
+
+Written to the same {"headers", "rows"} JSON as the scrape was, so nothing
+downstream changes.
+"""
+import io
 import json
+import warnings
 from datetime import datetime
 
-from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright
+import pandas as pd
+import requests
 
 from cbb import utils
-from cbb import paths, url
+from cbb import paths
+
+_BASE = {"M": "https://barttorvik.com", "W": "https://barttorvik.com/ncaaw"}
+_UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                     "(KHTML, like Gecko) Chrome/126 Safari/537.36"}
+_TIMEOUT = 30
+
+# The main table's columns, in its order, and where each comes from.
+HEADERS = ["Rk", "Team", "Conf", "G", "Rec", "AdjOE", "AdjDE", "Barthag", "EFG%", "EFGD%",
+           "TOR", "TORD", "ORB", "DRB", "FTR", "FTRD", "2P%", "2P%D", "3P%", "3P%D",
+           "3PR", "3PRD", "Adj T.", "WAB"]
+_RESULTS = {"Rk": "rank", "Team": "team", "Conf": "conf", "Rec": "record",
+            "AdjOE": "adjoe", "AdjDE": "adjde", "Barthag": "barthag", "Adj T.": "adjt",
+            "WAB": "WAB"}
+# DRB on the main table is the offensive rebound rate a team ALLOWS (lower is
+# better), which is what fffinal calls DR% - checked against the March scrape.
+_FACTORS = {"EFG%": "eFG%", "EFGD%": "eFG% Def", "TOR": "TO%", "TORD": "TO% Def.",
+            "ORB": "OR%", "DRB": "DR%", "FTR": "FTR", "FTRD": "FTR Def",
+            "2P%": "2p%", "2P%D": "2p%D", "3P%": "3P%", "3P%D": "3pD%",
+            "3PR": "3P rate", "3PRD": "3P rate D"}
 
 def get_today_tor(gender="M"):
     if gender == "M":
@@ -41,80 +74,48 @@ def get_today_tor(gender="M"):
 
     return data
 
+def _csv(url: str) -> pd.DataFrame:
+    r = requests.get(url, headers=_UA, timeout=_TIMEOUT)
+    r.raise_for_status()
+    if "csv" not in (r.headers.get("content-type") or ""):
+        # The browser check answers 200 with an HTML page, so a status test
+        # alone would read "Verifying your browser" as an empty season.
+        raise RuntimeError(f"{url} did not return a CSV (behind Torvik's browser check, "
+                           "or not published for this season yet)")
+    # fffinal's rows carry more fields than its header names. Left alone, pandas
+    # turns the leading columns into an index and everything shifts; this keeps
+    # the header aligned from the left and drops the unnamed tail.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", pd.errors.ParserWarning)
+        return pd.read_csv(io.StringIO(r.text), index_col=False)
+
+
+def table(gender: str, season: int) -> dict:
+    """{"headers", "rows"}: the season's T-Rank table for "M" or "W"."""
+    base = _BASE[gender]
+    results = _csv(f"{base}/{season}_team_results.csv")
+    factors = _csv(f"{base}/{season}_fffinal.csv")
+    merged = results.merge(factors, left_on="team", right_on="TeamName", how="inner")
+    # A name the two files spell differently drops a team from the field. A
+    # couple is tolerable; losing a meaningful share is a changed format.
+    if len(merged) < 0.97 * len(results):
+        raise RuntimeError(f"Torvik's two {gender} files matched only {len(merged)} of "
+                           f"{len(results)} teams")
+    out = pd.DataFrame({h: merged[c] for h, c in {**_RESULTS, **_FACTORS}.items()})
+    wl = out["Rec"].astype(str).str.extract(r"(\d+)-(\d+)").astype(float)
+    out["G"] = (wl[0] + wl[1]).fillna(0).astype(int)
+    out = out.sort_values("Rk")[HEADERS]
+    return {"headers": HEADERS, "rows": out.astype(str).values.tolist()}
+
+
+def _write(directory, gender: str, date: str) -> None:
+    data = table(gender, utils.season_year(date))
+    utils.save_json_data(data, directory / f"{date}.json")
+
+
 def mens_tor(date):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(url.NCAAM_TOR)
-        time.sleep(5)
-
-        html = page.content()
-        soup = BeautifulSoup(html, "html.parser")
-
-        table = soup.find("table")
-        headers = []
-
-        table_rows = table.find_all("tr")
-        header_row = table_rows[1]
-        if header_row:
-            headers = [
-                cell.get_text(strip=True) for cell in header_row.find_all(["th", "td"])
-            ]
-        rows = []
-        for row in table.find_all("tr"):
-            cols = [col.get_text(strip=True) for col in row.find_all("td")]
-            if any(cols):
-                rows.append(cols)
-        if rows and rows[0] == headers:
-            rows = rows[1:]
-
-        headers = [str(h) for h in headers]
-        rows = [[str(c) for c in r] for r in rows]
-
-        output = {"headers": headers, "rows": rows}
-        path = paths.M_TOR_DIR / f"{date}.json"
-        utils.save_json_data(output, path)
-        browser.close()
+    _write(paths.M_TOR_DIR, "M", date)
 
 
 def womens_tor(date):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(url.NCAAW_TOR, wait_until="domcontentloaded")
-        time.sleep(5)
-
-        html = page.content()
-        soup = BeautifulSoup(html, "html.parser")
-
-        table = soup.find("table")
-        headers = []
-
-        table_rows = table.find_all("tr")
-        header_row = table_rows[1]
-        if header_row:
-
-            headers = [
-                cell.get_text(strip=True) for cell in header_row.find_all(["th", "td"])
-            ]
-
-        rows = []
-        for row in table.find_all("tr"):
-            cols = [col.get_text(strip=True) for col in row.find_all("td")]
-            if any(cols):
-                pattern = r"(^[^\\(]+)"
-                match = re.findall(pattern, cols[1])
-                if any(match):
-                    cols[1] = match[0]
-                rows.append(cols)
-
-        if rows and rows[0] == headers:
-            rows = rows[1:]
-
-        headers = [str(h) for h in headers]
-        rows = [[str(c) for c in r] for r in rows]
-
-        output = {"headers": headers, "rows": rows}
-        path = paths.W_TOR_DIR / f"{date}.json"
-        utils.save_json_data(output, path)
-        browser.close()
+    _write(paths.W_TOR_DIR, "W", date)

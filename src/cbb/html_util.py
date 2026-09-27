@@ -105,31 +105,27 @@ def image_formatter(url):
     :return: Logo HTML
     :rtype: str
     """
-    return f'<img src="{url}" class="team-logo" >'
+    if not url:
+        return ""
+    return f'<img src="{url}" class="team-logo" loading="lazy" width="40" height="40">'
 
 
-def getUrl(x, save_df, master, gender="M"):
+def logo_urls() -> dict:
+    """Every name master.json knows a team by -> that team's logo URL.
+
+    Names more than one school answers to ("Wildcats", "Cougars") are left
+    out rather than handed to whichever school came first.
     """
-    Finds path/url for team logo
-
-    :param x: Row for current team
-    :type x: Series
-    :param save_df: Predictions DataFrame with all D1 teams
-    :type save_df: DataFrame
-    :param master: Master Team Name DataFrame
-    :type master: DataFrame
-    :return: Link/Path to logo
-    :rtype: str
-    """
-
-    if gender == "M":
-        saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
-    elif gender == "W":
-        saved_index = list(save_df[save_df["Team"] == x["Team"]].index)[0]
-
-    link = "/assets/images/" + master.at[saved_index, "path"]
-
-    return link
+    master = teams.getTeams()
+    urls, clash = {}, set()
+    for names, path in zip(master["names"], master["path"]):
+        for name in names:
+            url = "/assets/images/" + path
+            if urls.setdefault(name, url) != url:
+                clash.add(name)
+    for name in clash:
+        del urls[name]
+    return urls
 
 
 def strip_team_html(row):
@@ -151,33 +147,27 @@ def format_team_cell(x, dayton_set):
 
 
 def style_bracketology(df, gender="M", original=None, conference=None):
-    # Lazy: cbb.scraper imports playwright at module level, and this is the only
-    # function here that needs it. Importing it at the top made every consumer of
-    # html_util — including the WNBA/homepage path, which never calls this —
-    # depend on a browser automation stack it doesn't use.
-    from cbb import scraper
-
-    master = scraper.getMasterTeams()
-
     df = df.copy()
     df["BracketRank"] = range(len(df))
+    # By name, for both leagues. The men's side used to take each row's index
+    # label as a row number into master.json, which is right only while the
+    # field is exactly master's 365 teams in master's order: one school leaving
+    # D1 shifted 108 logos onto the wrong teams. The women's side looked up by
+    # name but crashed on a team it could not find.
+    logos = logo_urls()
+    df["Logo"] = df["Team"].map(logos).fillna("")
     if gender == "W":
         output_cols = ["Team", "Conf", "Gord", "Ovr", "Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"]
-        df["Logo"] = df.apply(
-            lambda x: "/assets/images/" + scraper.get_image_name(x["Team"]), axis=1
-        )
-        df["Team"] = df.apply(lambda x: format_team_cell(x, DAYTON_SLOTS), axis=1)
     else:
         output_cols = ["Team", "Conf", "Pwr", "Ovr", "Δ 1d", "Δ 7d", "Δ 14d", "Δ 1mo"]
-        df["Logo"] = df.apply(lambda x: getUrl(x, df, master, "M"), axis=1)
-        df["Team"] = df.apply(lambda x: format_team_cell(x, DAYTON_SLOTS), axis=1)
+    df["Team"] = df.apply(lambda x: format_team_cell(x, DAYTON_SLOTS), axis=1)
 
     team_index = df["Team"].apply(lambda x: strip_team_html(x))
 
     conf_champ_dict = pd.Series(df.ConfChamp.values, index=team_index).to_dict()
     bids_dict = pd.Series(df.Bid.values, index=team_index).to_dict()
 
-    if conference:
+    if conference and "Conf Record" in df.columns:
         output_cols.insert(2, "Conf Record")
     df = df[output_cols]
 

@@ -2,11 +2,9 @@ import json
 import re
 from datetime import date, datetime
 
-import pandas as pd
 
 from cbb import html_util
-from cbb import paths, teams
-from cbb.tools import compare_bracket
+from cbb import paths, teams, utils
 
 def team_logos(df):
     if teams.getTeamOfficialName(df['Men'], debug=False) != None:
@@ -19,54 +17,27 @@ def team_logos(df):
 
     return df
 
-def bids():
-    with open(paths.BIDS_FILE, "r") as f:
-        bid_json = json.load(f)
-    
-    men = bid_json["Men"]["2026"]
-    women = bid_json["Women"]["2026"]
-    
-    men_df = pd.DataFrame.from_dict(men, orient="index")
-    women_df = pd.DataFrame.from_dict(women, orient="index")
-    combo = pd.merge(men_df, women_df, "inner", left_index=True, right_index=True)
-    combo['Conf'] = combo.index
-    combo = combo.reset_index(drop=True)
-    combo = combo.rename(columns={
-        "0_x" : "Men",
-        "0_y" : "Women"
-    })
-    combo = combo[["Men", "Conf", "Women"]].copy()
-
-    combo = combo.apply(lambda x: team_logos(x), axis=1)
-    classes = ["sticky-table", "bids-table"]
-    table_attr = f'class="{" ".join(classes)}"'
-    
-    def highlight(row):
-      ret = ["", "", ""]
-
-      # The fill is light in both themes, so the ink is stated rather than
-      # inherited - the table's own text is light in dark mode.
-      if "team-logo" in row.Women:
-        ret[2] = "font-weight: bold; background:#e8f7e8 !important; color:#0f172a;"
-
-      if "team-logo" in row.Men:
-        ret[0] = "font-weight: bold; background:#e8f7e8 !important; color:#0f172a;"
-      return ret
-      
-    styler = (
-        combo.style
-        .hide(axis="index")
-        .set_table_attributes(table_attr)
-        .apply(lambda x: highlight(x), axis=1)
-    )
-    
-    return styler
-
 
 # CBB regular season window: the homepage leads with college basketball
 # inside it, and with WNBA fantasy outside it. Update yearly.
 CBB_TIPOFF     = date(2026, 11, 2)
 CBB_SEASON_END = date(2027, 4, 10)
+
+
+def _season_status(today: date, ndash: str, mdash: str) -> str:
+    """One line on where the season stands, for the homepage and /cbb/ cards.
+
+    The dashes come in as arguments because the two cards spell them
+    differently (a literal character on one, an entity on the other).
+    """
+    label = f"{CBB_TIPOFF.year}{ndash}{str(CBB_TIPOFF.year + 1)[2:]}"
+    days = (CBB_TIPOFF - today).days
+    if days > 0:
+        return (f"The {label} season tips off <strong>{CBB_TIPOFF:%B %-d}</strong>"
+                f"{mdash} {days} days away.")
+    if today <= CBB_SEASON_END:
+        return "The season is underway."
+    return f"The {label} season is over."
 
 
 def _latest_predict_link() -> tuple[str, str]:
@@ -78,8 +49,12 @@ def _latest_predict_link() -> tuple[str, str]:
     if not dates:
         return "/men/history.html", "Prediction Archive →"
     latest = dates[-1]
-    season = int(latest[:4]) + 1 if int(latest[5:7]) >= 7 else int(latest[:4])
-    return f"/men/predict_{latest}.html", f"Final {season} Bracketology →"
+    season = utils.season_year(latest)
+    # "Final" only once that season's bracket can no longer change - the page
+    # is rewritten daily in season, and the link used to call it final anyway.
+    today = date.today()
+    final = season < utils.season_year(today) or today > CBB_SEASON_END
+    return f"/men/predict_{latest}.html", f"{'Final ' if final else ''}{season} Bracketology →"
 
 
 def _countdown_targets() -> dict:
@@ -148,11 +123,7 @@ def _by_next_clock(cards) -> str:
 def _cbb_card(today: date) -> str:
     """Compact college-basketball card for the WNBA-season homepage."""
     days = (CBB_TIPOFF - today).days
-    if days > 0:
-        when = (f"The 2026–27 season tips off <strong>{CBB_TIPOFF:%B %-d}</strong> "
-                f"— {days} days away.")
-    else:
-        when = "The season is underway."
+    when = _season_status(today, "–", " —")
     href, label = _latest_predict_link()
     return f"""
 <section class="home-card">
@@ -312,11 +283,7 @@ def _cbb_home_body(today: date) -> str:
     need games, and say when they last had any.
     """
     days = (CBB_TIPOFF - today).days
-    if days > 0:
-        when = (f"The 2026&ndash;27 season tips off <strong>{CBB_TIPOFF:%B %-d}</strong>"
-                f" &mdash; {days} days away.")
-    else:
-        when = "The season is underway."
+    when = _season_status(today, "&ndash;", " &mdash;")
     href, label = _latest_predict_link()
     preseason = days > 0
 
