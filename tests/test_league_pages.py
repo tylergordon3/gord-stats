@@ -110,10 +110,12 @@ def test_the_dark_table_body_is_dark():
     colour - the slate was only the fallback - but a table with no styler came
     out light on a dark screen, whole, which is how League Home was reported.
     """
-    from conftest import ROOT
+    from conftest import ROOT, dark_block
 
     css = (ROOT / "docs" / "assets" / "css" / "custom.css").read_text()
-    dark = css[css.index("@media (prefers-color-scheme: dark)"):]
+    # Only the dark blocks: slicing from the first dark block onward stopped
+    # working once the stylesheet opened with one (the --gs-muted token).
+    dark = dark_block(css)
     body = dark[dark.index(".sticky-table td {"):]
     body = body[:body.index("}")]
     assert "background: #16203a" in body, body

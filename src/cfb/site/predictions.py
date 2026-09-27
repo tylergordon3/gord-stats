@@ -50,7 +50,7 @@ h3.pred-sub{font-size:17px;margin:26px 0 4px;padding-top:16px;
 .pred-scroll{overflow-x:auto}
 /* A pick that was never live - no book total on record - reads as absent
    rather than as a loss. */
-table.cfb-pred td.pred-na{color:#94a3b8}
+table.cfb-pred td.pred-na{color:var(--gs-muted,#5d6b7e)}
 table.cfb-pred td.pred-ou{white-space:nowrap;font-variant-numeric:tabular-nums}
 table.cfb-pred{width:100%;border-collapse:collapse;font-size:14px}
 table.cfb-pred th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:center;
@@ -91,11 +91,11 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 .pg-row .pg-name{flex:1;color:#475569;font-size:14.5px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .pg-rank{color:#64748b;font-size:11.5px;font-weight:700;margin-right:3px}
-.pg-rating{color:#94a3b8;font-size:11.5px;font-variant-numeric:tabular-nums;
+.pg-rating{color:var(--gs-muted,#5d6b7e);font-size:11.5px;font-variant-numeric:tabular-nums;
   min-width:44px;text-align:right}
 .pg-score{font-size:19px;font-weight:700;color:#0f172a;min-width:32px;text-align:right;
   font-variant-numeric:tabular-nums}
-.pg-row:not(.pg-win) .pg-score{color:#94a3b8;font-weight:600}
+.pg-row:not(.pg-win) .pg-score{color:var(--gs-muted,#5d6b7e);font-weight:600}
 /* The Slate remote theme frames every <img> - border, padding, shadow, margins.
    Reset it here or every logo becomes a boxed figure and the row grows. */
 .pg-row img,.pred-chart img{border:none;padding:0;box-shadow:none;background:none;
@@ -130,7 +130,7 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
    that does not claim to be a percentage. */
 .rec-value.rec-frac{font-size:34px}
 .rec-value.rec-frac .rec-of{font-size:19px;font-weight:700;color:#64748b}
-.rec-value.rec-none{color:#94a3b8}
+.rec-value.rec-none{color:var(--gs-muted,#5d6b7e)}
 .rec-sub{font-size:13.5px;color:#475569}
 .rec-meter{position:relative;height:9px;border-radius:5px;background:#dbe7f7;margin-top:13px}
 .rec-meter>i{display:block;height:100%;border-radius:5px;background:{accent}}
@@ -171,7 +171,7 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 .pred-week>summary{cursor:pointer;list-style:none;padding:11px 14px;display:flex;
   flex-wrap:wrap;align-items:center;gap:8px 12px}
 .pred-week>summary::-webkit-details-marker{display:none}
-.pred-week>summary::before{content:"▸";color:#94a3b8;font-size:11px;flex:none}
+.pred-week>summary::before{content:"▸";color:var(--gs-muted,#5d6b7e);font-size:11px;flex:none}
 .pred-week[open]>summary::before{content:"▾"}
 .pw-name{font-weight:700;color:#0f172a;font-size:15px}
 .pw-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-left:auto}

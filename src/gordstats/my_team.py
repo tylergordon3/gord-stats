@@ -35,8 +35,8 @@ table.mt-t td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:7
 table.mt-t tr.bench td{background:#f8fafc;color:#64748b}
 table.mt-t tr.bench td.nm{font-weight:500}
 .mt-slot{font-weight:800;font-size:11.5px;color:#475569;white-space:nowrap}
-.mt-pos{font-size:10.5px;color:#94a3b8;font-weight:700;margin-left:5px}
-.mt-lock{font-size:10.5px;color:#94a3b8;margin-left:5px}
+.mt-pos{font-size:10.5px;color:var(--gs-muted,#5d6b7e);font-weight:700;margin-left:5px}
+.mt-lock{font-size:10.5px;color:var(--gs-muted,#5d6b7e);margin-left:5px}
 table.mt-t tr.mt-move td{background:#ecfdf5;border-color:#a7f3d0}
 table.mt-t tr.mt-out td{background:#fef2f2;border-color:#fecaca;color:#0f172a}
 table.mt-t tr.mt-out td.nm{font-weight:600}

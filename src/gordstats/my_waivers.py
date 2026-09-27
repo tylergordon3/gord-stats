@@ -27,11 +27,11 @@ CSS = """<style>
   border-radius:8px}
 .wv-in{color:#15803d;font-weight:600}
 .wv-out{color:#b91c1c}
-.wv-pos{font-size:10.5px;color:#94a3b8;font-weight:700;margin-left:4px}
+.wv-pos{font-size:10.5px;color:var(--gs-muted,#5d6b7e);font-weight:700;margin-left:4px}
 .wv-how{font-size:11.5px;color:#64748b;white-space:nowrap}
 .wv-bid{font-weight:800;color:#0f172a}
 .wv-when{font-size:11.5px;color:#64748b;white-space:nowrap}
-.wv-failed td{background:#fdf6f6;color:#94a3b8}
+.wv-failed td{background:#fdf6f6;color:var(--gs-muted,#5d6b7e)}
 .wv-more{font:inherit;font-size:12.5px;padding:6px 14px;border-radius:999px;
   border:1px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer;margin:10px 0 0}
 .wv-load{font-size:12.5px;color:#64748b}

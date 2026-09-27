@@ -99,12 +99,12 @@ table.cfb-sched .sc-row img{width:20px;height:20px;object-fit:contain;flex:none;
   color:#334155;font-size:14px}
 .sc-name a{color:inherit;text-decoration:none}
 .sc-name a:hover{text-decoration:underline}
-.sc-joiner{color:#94a3b8;font-size:12px}
+.sc-joiner{color:var(--gs-muted,#5d6b7e);font-size:12px}
 .sc-pts{min-width:24px;text-align:right;font-variant-numeric:tabular-nums;
-  font-size:15px;font-weight:600;color:#94a3b8}
+  font-size:15px;font-weight:600;color:var(--gs-muted,#5d6b7e)}
 .sc-row.sc-win .sc-name{font-weight:700;color:#0f172a}
 .sc-row.sc-win .sc-pts{color:#0f172a;font-weight:700}
-.sc-rec{color:#94a3b8;font-size:11px;font-variant-numeric:tabular-nums;margin-left:4px}
+.sc-rec{color:var(--gs-muted,#5d6b7e);font-size:11px;font-variant-numeric:tabular-nums;margin-left:4px}
 .sc-row.sc-ball .sc-name::after{content:" \\1F3C8";font-size:11px}
 /* The drive line, only while a game is on. */
 .sc-live{display:none;margin-top:5px;padding-top:5px;border-top:1px dashed #e2e8f0}
@@ -115,7 +115,7 @@ tr.g[data-state="in"] .sc-live{display:block}
 .sc-meta{margin-top:4px;font-size:11.5px;color:#64748b;display:flex;flex-wrap:wrap;
   gap:4px 6px;align-items:center}
 /* Where: stadium over city, one line each, clipped rather than wrapped. */
-.sc-venue{margin-top:3px;font-size:11px;color:#94a3b8;line-height:1.35;max-width:230px}
+.sc-venue{margin-top:3px;font-size:11px;color:var(--gs-muted,#5d6b7e);line-height:1.35;max-width:230px}
 .sc-venue span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tag{display:inline-block;padding:1px 6px;border-radius:999px;font-size:10.5px;
   font-weight:700;letter-spacing:.03em;text-transform:uppercase;line-height:1.5}
@@ -152,7 +152,7 @@ td.t{color:#4a5a68;max-width:140px}
 td.t .t-when{white-space:nowrap}
 .t-tv{display:block;font-size:11.5px;color:#64748b;margin-top:2px;line-height:1.3}
 .t-live{color:#0a7d33;font-weight:700}
-.t-day{display:none;color:#94a3b8}
+.t-day{display:none;color:var(--gs-muted,#5d6b7e)}
 table.cfb-sched.sorted .t-day{display:inline}
 /* Line cells: the favourite and spread, then the small print. */
 td.ln,td.fpi{white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -163,7 +163,7 @@ table.cfb-sched table.lnt,table.cfb-sched table.frt{border:none;border-collapse:
   width:auto;margin:0;background:none;font-size:12px;white-space:nowrap;
   font-variant-numeric:tabular-nums}
 table.cfb-sched table.lnt th,table.cfb-sched table.frt th{background:none;border:none;
-  border-bottom:1px solid #e2e8f0;padding:0 8px 2px 0;font-size:11px;color:#94a3b8;
+  border-bottom:1px solid #e2e8f0;padding:0 8px 2px 0;font-size:11px;color:var(--gs-muted,#5d6b7e);
   text-align:left;letter-spacing:.04em}
 table.cfb-sched table.lnt td,table.cfb-sched table.frt td{background:none;border:none;
   padding:2px 6px 2px 0;font-size:12px;color:#334155;vertical-align:middle}
@@ -196,7 +196,7 @@ table.cfb-sched table.frt td{padding:2px 7px 2px 0}
 .t-wx{display:block;font-size:12px;color:#334155;margin-top:4px;white-space:nowrap}
 .t-wx .sub{display:block;margin:1px 0 0;font-size:11px}
 tr.g.wx-bad .t-wx{color:#3730a3;font-weight:600}
-td.na{color:#94a3b8}
+td.na{color:var(--gs-muted,#5d6b7e)}
 .wk-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
 /* Sort, conference, search, the Show chips and the week buttons all live in
    the pinned bar, each on its own row. The bar itself is a wrapping flex row
@@ -254,13 +254,13 @@ table.cfb-sched table.det-t{border:none;width:auto;margin:0;background:none}
 table.det-t{border-collapse:collapse;font-size:12px;white-space:nowrap;
   font-variant-numeric:tabular-nums}
 table.cfb-sched table.det-t th{background:none;border:none;border-bottom:1px solid #e2e8f0;
-  padding:2px 8px 3px 0;font-size:10.5px;color:#94a3b8;text-align:left;letter-spacing:.04em}
+  padding:2px 8px 3px 0;font-size:10.5px;color:var(--gs-muted,#5d6b7e);text-align:left;letter-spacing:.04em}
 table.cfb-sched table.det-t td{background:none;border:none;padding:3px 8px 3px 0;
   font-size:12px;color:#334155;vertical-align:middle}
 table.det-t td.k{font-weight:600;color:#0f172a}
 .det-line{margin:3px 0;line-height:1.45;white-space:normal}
 .det-line b{color:#0f172a}
-.mv{color:#94a3b8;font-size:11px}
+.mv{color:var(--gs-muted,#5d6b7e);font-size:11px}
 .mv.up{color:#15803d}
 .mv.dn{color:#b91c1c}
 .best{background:#dcfce7;border-radius:3px;padding:0 3px}
@@ -321,7 +321,7 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   table.cfb-sched td.d{display:grid;grid-template-columns:40px 1fr;gap:4px;
     font-size:12px;white-space:normal;max-width:none;padding:1px 0}
   table.cfb-sched td.d::before{content:attr(data-s);font-size:11px;text-transform:uppercase;
-    letter-spacing:.04em;color:#94a3b8;font-weight:700;padding-top:2px}
+    letter-spacing:.04em;color:var(--gs-muted,#5d6b7e);font-weight:700;padding-top:2px}
   table.cfb-sched td.na{display:none}
   .sc-venue{max-width:none}
   .t-tv{display:inline;margin:0 0 0 6px}

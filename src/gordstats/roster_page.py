@@ -87,11 +87,11 @@ table.rd td.rd-slot{font-weight:700;font-size:12.5px}
 .rd-wx .sub{display:block;font-size:11px;color:#64748b}
 .rd-wx.bad{font-weight:700;color:#b45309}
 .rd-cov{font-size:12.5px;text-align:left !important}
-.rd-cov.none{color:#94a3b8}
+.rd-cov.none{color:var(--gs-muted,#5d6b7e)}
 /* A projection for a game that is over is spent: the points column is the
    live number, and two bold figures side by side invite reading the wrong
    one. */
-.rd-spent{color:#94a3b8;font-weight:400}
+.rd-spent{color:var(--gs-muted,#5d6b7e);font-weight:400}
 .rd-cov.warn{color:#b45309;font-weight:600}
 .rd-note{font-size:13px;color:#4a5a68;margin:6px 0 12px;line-height:1.55}
 .rd-gain{color:#15803d;font-weight:700}
@@ -309,7 +309,7 @@ CARD_CSS = """<style>
 .rd-c-slot.QB{background:#2563eb}.rd-c-slot.RB{background:#16a34a}
 .rd-c-slot.WR{background:#eab308;color:#1f2937}.rd-c-slot.TE{background:#ea580c}
 .rd-c-slot.FX{background:#7e22ce}.rd-c-slot.K{background:#475569}
-.rd-c-slot.DEF{background:#0f766e}.rd-c-slot.BN{background:#94a3b8}
+.rd-c-slot.DEF{background:#0f766e}.rd-c-slot.BN{background:#64748b}
 .rd-c-main{flex:1 1 auto;min-width:0;padding:6px 8px;display:flex;flex-direction:column;
   justify-content:center}
 .rd-c-nm{font-weight:700;font-size:14.5px;color:#0f172a;white-space:nowrap;overflow:hidden;

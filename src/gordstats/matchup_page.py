@@ -31,13 +31,13 @@ table.mu-board td.mu-t a{display:block;overflow:hidden;text-overflow:ellipsis;wh
 table.mu-board td.mu-t.r{text-align:right}
 @media (max-width:900px){table.mu-board th,table.mu-board td{padding:6px 6px}
   table.mu-board.started .mu-proj{display:none}}
-table.mu-board td.mu-vs{color:#94a3b8;font-size:11px}
+table.mu-board td.mu-vs{color:var(--gs-muted,#5d6b7e);font-size:11px}
 table.mu-board tbody tr:nth-child(even) td{background:#f8fafc}
 table.mu-board td b.lead{color:#1a7f4b}
 /* The matchup title in a section summary: below the phone breakpoint the
    site lays summaries out as flex boxes, which drops the spaces around a
    bare "vs" - so it carries its own margins. */
-.mu-vs-sum{margin:0 .35em;color:#94a3b8;font-weight:400}
+.mu-vs-sum{margin:0 .35em;color:var(--gs-muted,#5d6b7e);font-weight:400}
 /* The scoreboard on a phone: one card per matchup, a line per side, instead
    of a nine-column table that truncates the names and scrolls sideways. */
 .mu-cards{display:none}
@@ -82,7 +82,7 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-side .num.lead{color:#1a7f4b}
 .mu-side .sub{font-size:12px;color:#64748b;white-space:nowrap;font-style:italic}
 .mu-side .sub b{color:#334155}
-.mu-mid{text-align:center;color:#94a3b8;font-size:12px;text-transform:uppercase;
+.mu-mid{text-align:center;color:var(--gs-muted,#5d6b7e);font-size:12px;text-transform:uppercase;
   letter-spacing:.06em;white-space:nowrap}
 .mu-wp{height:6px;border-radius:3px;background:#e2e8f0;overflow:hidden;margin:6px 0 2px;
   display:flex}
@@ -182,7 +182,7 @@ table.mu-board td b.lead{color:#1a7f4b}
   border-radius:50%;background:#b3382c;margin-right:4px;vertical-align:1px;
   animation:mu-pulse 1.4s ease-in-out infinite}
 .mu-pn .mu-g .fin{color:#64748b}
-.mu-pn .mu-g .bye{font-style:italic;color:#94a3b8}
+.mu-pn .mu-g .bye{font-style:italic;color:var(--gs-muted,#5d6b7e)}
 /* The projection under the points; italic once it is a live expected final. */
 .mu-pp .mu-gs{font-size:10px;color:#64748b;font-variant-numeric:tabular-nums}
 .mu-pp .mu-gs.live{font-style:italic}
@@ -199,7 +199,7 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-pr.bench .mu-pts{font-weight:600;color:#475569}
 .mu-pslot{display:flex;align-items:center;justify-content:center;font-size:10px;
   font-weight:700;color:#64748b;background:#f1f5f9;letter-spacing:.02em}
-.mu-pr.bench .mu-pslot{color:#94a3b8}
+.mu-pr.bench .mu-pslot{color:var(--gs-muted,#5d6b7e)}
 .mu-pr.total .mu-pslot{background:transparent}
 /* The site stylesheet frames every img - border, padding, shadow, pale
    background - which turned each 14px school mark into a boxed thumbnail
@@ -210,7 +210,7 @@ table.mu-board td b.lead{color:#1a7f4b}
   vertical-align:middle}
 /* The bench stays in view under the starters, behind a quiet divider. */
 .mu-pbench-h{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  color:#94a3b8;padding:9px 4px 3px}
+  color:var(--gs-muted,#5d6b7e);padding:9px 4px 3px}
 .mu-pair .inj{font-size:9px;font-weight:700;color:#b3382c;margin-left:3px}
 .mu-pair .mu-hint{font-size:9px;font-weight:700;margin-left:3px;border-radius:3px;padding:0 3px}
 .mu-pair .mu-hint.in{background:#d5efdd;color:#1a7f4b}
@@ -260,12 +260,12 @@ table.mu-roster tr.done td.mu-pts{background:#eef2f7;color:#334155}
 table.mu-roster tr.done img.mu-logo{opacity:.55}
 .mu-pr .mu-pp.done{background:#f4f6f8}
 .mu-pr .mu-pp.done .mu-pn .nm{color:#64748b;font-weight:500}
-.mu-pr .mu-pp.done .mu-pn .mu-g,.mu-pr .mu-pp.done .mu-pn .mu-pm{color:#94a3b8}
+.mu-pr .mu-pp.done .mu-pn .mu-g,.mu-pr .mu-pp.done .mu-pn .mu-pm{color:var(--gs-muted,#5d6b7e)}
 .mu-pr .mu-pp.done img.mu-logo{opacity:.55}
 table.mu-roster td.mu-g .fin{color:#64748b}
-table.mu-roster td.mu-g .bye{color:#94a3b8;font-style:italic}
+table.mu-roster td.mu-g .bye{color:var(--gs-muted,#5d6b7e);font-style:italic}
 table.mu-roster tr.bench td{background:#f8fafc;color:#475569}
-table.mu-roster tr.bench td.mu-slot{color:#94a3b8}
+table.mu-roster tr.bench td.mu-slot{color:var(--gs-muted,#5d6b7e)}
 table.mu-roster tr.sep td{background:#f1f5f9;color:#475569;font-weight:700;font-size:11px;
   text-align:left;text-transform:uppercase;letter-spacing:.04em;padding:3px 7px}
 table.mu-roster tr.total td{background:#eef2f7;font-weight:700}
@@ -298,7 +298,7 @@ table.mu-roster td.mu-p .mu-hint.out{background:#fde2dd;color:#b3382c}
 /* The hybrid score cell (score_cell): the figure, then a small line under it -
    proj before kickoff, the live expected final, or final. */
 .mu-pts .mu-now{display:block}
-.mu-pts .mu-now.proj{color:#94a3b8;font-style:italic;font-weight:600}
+.mu-pts .mu-now.proj{color:var(--gs-muted,#5d6b7e);font-style:italic;font-weight:600}
 .mu-pts .mu-exp{display:block;font-size:10px;font-weight:600;color:#64748b;line-height:1.1;
   white-space:nowrap}
 .mu-pts .mu-exp:empty{display:none}
@@ -750,7 +750,7 @@ MEDIAN_TRACKER_JS = """<style>
 .mu-medt-row.down{border-left-color:#b3382c}
 .mu-medt-row.lock.up{background:#e6f4ec}
 .mu-medt-row.lock.down{background:#fbe9e7}
-.mu-medt-row .rk{width:16px;flex:none;font-size:12px;color:#94a3b8;padding-top:3px;text-align:right}
+.mu-medt-row .rk{width:16px;flex:none;font-size:12px;color:var(--gs-muted,#5d6b7e);padding-top:3px;text-align:right}
 .mu-medt-row img.mu-tlogo{width:24px;height:24px}
 .mu-medt-row .mid{flex:1;min-width:0}
 .mu-medt-row .nm{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

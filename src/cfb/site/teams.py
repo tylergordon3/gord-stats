@@ -69,7 +69,7 @@ table.tm td.win-cell{font-variant-numeric:tabular-nums}
 .tm-win{color:{good};font-weight:700}
 .tm-loss{color:{bad};font-weight:700}
 /* A projected score for an unplayed game, so it never reads as a final. */
-.tm-proj{color:#94a3b8;font-style:italic}
+.tm-proj{color:var(--gs-muted,#5d6b7e);font-style:italic}
 /* Projected record, one row per source. */
 table.tm-rec{width:auto;min-width:min(100%,420px);margin:0 0 20px}
 table.tm-rec td.tm-name{font-weight:600}

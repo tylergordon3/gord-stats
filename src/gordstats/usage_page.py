@@ -51,7 +51,7 @@ table.us tbody tr.us-mine td.us-own{color:#b45309;font-weight:700}
 .uv-btn.on{background:#2a78d6;border-color:#2a78d6;color:#fff}
 .us-qual{font-size:12.5px;color:#475569;white-space:nowrap}
 table.us td.us-rank{font-weight:700;color:#334155;font-variant-numeric:tabular-nums}
-table.us tr.us-thin td{color:#94a3b8}
+table.us tr.us-thin td{color:var(--gs-muted,#5d6b7e)}
 table.us tr.us-thin td.us-name{font-weight:500}
 table.us tr.us-thin td.us-rank::after{content:"\2013"}
 .us-minnote{font-size:12px;color:#64748b;margin:0 0 8px}

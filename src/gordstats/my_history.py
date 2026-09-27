@@ -25,11 +25,11 @@ CSS = """<style>
 .hi-note{font-size:12.5px;color:#64748b;margin:0 0 10px;line-height:1.5}
 .hi-none{font-size:14px;color:#475569}
 .hi-crown{color:#b45309;font-weight:800}
-.hi-sub{font-size:11px;color:#94a3b8;margin-left:5px}
+.hi-sub{font-size:11px;color:var(--gs-muted,#5d6b7e);margin-left:5px}
 table.hi-h2h td,table.hi-h2h th{text-align:center;font-size:12.5px;padding:5px 7px}
 table.hi-h2h th.row,table.hi-h2h td.row{text-align:left;font-weight:700;white-space:nowrap;
   position:sticky;left:0;background:#eef2f7;z-index:1}
-table.hi-h2h td.self{background:#f1f5f9;color:#94a3b8}
+table.hi-h2h td.self{background:#f1f5f9;color:var(--gs-muted,#5d6b7e)}
 .hi-w{color:#15803d;font-weight:700}
 .hi-l{color:#b91c1c}
 .hi-load{font-size:12.5px;color:#64748b}

@@ -7,6 +7,22 @@ body {
   color: #334155;
 }
 
+/* De-emphasised text: ranks, records, projections, venues, column notes.
+   It was #94a3b8 across the site, 2.4-2.6:1 on the light grounds - the
+   figures that were meant to be quiet were unreadable in daylight. This
+   clears 4.8:1 on every light surface (white, #f7f9fc, #f1f5f9, #eef2f7);
+   dark mode keeps #94a3b8, which is 5.9:1 on its cards. Generated pages use
+   it as var(--gs-muted, #5d6b7e). */
+:root {
+  --gs-muted: #5d6b7e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gs-muted: #94a3b8;
+  }
+}
+
 #main_content_wrap {
   background: #f7f9fc;
   border-top: none;
@@ -76,12 +92,20 @@ body {
   padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
   border-top: 1px solid #e5e7eb;
   text-align: center;
-  color: #64748b;
+  color: var(--gs-muted);
   font-size: 0.82rem;
 }
 
 #site-footer p {
   margin: 0;
+}
+
+/* Slate paints `footer p, footer a` #f2f2f2 for its own dark footer bar. On
+   this light page that was 1.1:1 - the footer was there but invisible - so
+   the text takes the footer's colour back by id. */
+#site-footer p,
+#site-footer a {
+  color: inherit;
 }
 
 #site-footer .visit-counter {
@@ -334,7 +358,7 @@ body {
 .row-rank {
   display: inline-block;
   min-width: 1.7em;
-  color: #94a3b8;
+  color: var(--gs-muted);
   font-size: 0.85em;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -2133,7 +2157,8 @@ h3 {
   justify-content: center;
   min-width: 0;
   overflow: hidden;
-  background: #94a3b8;
+  /* #94a3b8 put its white label at 2.6:1. */
+  background: #64748b;
   color: #fff;
   font-size: 0.68rem;
   font-weight: 800;
@@ -2912,7 +2937,7 @@ summary.team-report-header::after {
 
   #site-footer {
     border-top-color: #1e293b;
-    color: #64748b;
+    color: var(--gs-muted);
   }
 
   .bottom-nav {
@@ -4427,6 +4452,13 @@ img {
   color: #ffffff;
 }
 
+/* The same trap for the "games on right now" line the CFB card shows in
+   place of a clock: .countdown-done alone lost to `.home-card p` and read
+   #475569 on navy, about 2:1. */
+.countdown-card .countdown-done {
+  color: #F5A968;
+}
+
 .countdown-eyebrow {
   margin: 0 0 4px;
   font-size: 15px;
@@ -5099,7 +5131,7 @@ a.acct-out:hover { text-decoration: underline; }
   padding: 0;
   font-size: 19px;
   line-height: 1;
-  color: #94a3b8;
+  color: var(--gs-muted);
   background: none;
   border: 0;
   border-radius: 6px;
