@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt                      # noqa: E402
 import numpy as np                                   # noqa: E402
 import pandas as pd                                  # noqa: E402
 
-from cfb import in_season, projections, yahoo        # noqa: E402
+from cfb import in_season, league_sim, projections, yahoo  # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
 from cfb.site import write_page                      # noqa: E402
 from gordstats import charts, palette, rankmoves     # noqa: E402
@@ -131,6 +131,7 @@ def best_lineup(players: pd.DataFrame, lg: dict) -> dict:
         "bench": float(bench["vorp"].clip(lower=0).sum()),
         "playoff": float(ratio),
         "anchor": (lineup.loc[lineup["vorp"].idxmax()] if len(lineup) else None),
+        "starters": list(starters),
     }
 
 
@@ -175,10 +176,15 @@ def _season_section(names: dict) -> str:
     if hist.empty:
         return ""
     hist["team"] = hist["key"].map(lambda k: names.get(k, k))
-    rated = hist.dropna(subset=["vs_avg"]) if "vs_avg" in hist.columns else pd.DataFrame()
+    # The per-week gap since the season simulation arrived (2026-09-28); the
+    # season-total gap before it is on another scale, so the two never share
+    # a line - with fewer than two builds of the new one, rank carries it.
+    rated = (hist.dropna(subset=["wk_vs_avg"]) if "wk_vs_avg" in hist.columns
+             else pd.DataFrame())
     if not rated.empty and rated["taken"].nunique() >= 2:
-        pivot = rated.pivot_table(index="taken", columns="team", values="vs_avg").sort_index()
-        what, base, invert, unit = "lineup points against the league average", 0.0, False, " pts"
+        pivot = rated.pivot_table(index="taken", columns="team", values="wk_vs_avg").sort_index()
+        what, base, invert, unit = ("lineup points a week against the league average",
+                                    0.0, False, " pts")
     elif hist["taken"].nunique() >= 2:
         pivot = hist.pivot_table(index="taken", columns="team", values="rank").sort_index()
         what, base, invert, unit = "rank", None, True, ""
@@ -238,6 +244,18 @@ def _season_section(names: dict) -> str:
             f"<div class='lg-chart'>{chart}</div>")
 
 
+def _pct(p) -> str:
+    """A chance as the table prints it: never a flat 0% or 100% for something
+    that is merely very unlikely or very likely."""
+    if p is None or pd.isna(p):
+        return "\u2014"
+    if 0 < p < 0.005:
+        return "<1%"
+    if 0.995 < p < 1:
+        return ">99%"
+    return f"{p:.0%}"
+
+
 def section() -> str:
     """The rankings, the table and the season chart - the dashboard's Power
     Rankings section. Every build archives a snapshot here, so the dashboard
@@ -250,8 +268,30 @@ def section() -> str:
                 "first rebuild after the draft, priced off the same "
                 "projections as the draft board.</p>")
 
-    avg = sum(r["total"] for r in rows) / len(rows)
-    best_pos = {p: max(r["by_pos"][p] for r in rows) for p in projections.POSITIONS}
+    # The rest of the season played out (cfb.league_sim): each roster's best
+    # lineup every week left, on that week's projections, and the standings,
+    # median game and bracket that follow. Ranked by lineup points a week -
+    # strength - with what the schedule makes of it beside.
+    sim = pd.DataFrame()
+    try:
+        sim = league_sim.run(lg, team_rosters()).set_index("team_key")
+    except Exception as exc:                              # noqa: BLE001
+        print(f"  ! season simulation skipped ({exc})")
+    for r in rows:
+        got = sim.loc[r["key"]] if r["key"] in sim.index else None
+        r["per_week"] = float(got["per_week"]) if got is not None else None
+        r["sim"] = got
+    if not sim.empty:
+        rows.sort(key=lambda r: r["per_week"] or 0.0, reverse=True)
+    avg = (np.mean([r["per_week"] for r in rows if r["per_week"] is not None])
+           if not sim.empty else None)
+    has_odds = not sim.empty and "title" in sim.columns
+
+    def pos_pts(r, p):
+        if r["sim"] is None:
+            return None
+        return (r["sim"]["by_pos"] or {}).get(p, 0.0)
+    best_pos = {p: max((pos_pts(r, p) or 0.0) for r in rows) for p in projections.POSITIONS}
     moves = rankmoves.movement(HISTORY_DIR)
     prev = moves.get("prev")
     week = (moves.get("prev7")
@@ -262,51 +302,83 @@ def section() -> str:
         t = r["team"]
         logo = (f'<img class="lg-logo" src="{t["logo"]}" alt="" loading="lazy">'
                 if t.get("logo") else "")
-        pos_tds = "".join(
-            f"<td>{'<b>' if r['by_pos'][p] == best_pos[p] and r['by_pos'][p] else ''}"
-            f"{r['by_pos'][p]:.0f}"
-            f"{'</b>' if r['by_pos'][p] == best_pos[p] and r['by_pos'][p] else ''}</td>"
-            for p in projections.POSITIONS)
+
+        def pos_td(p):
+            v = pos_pts(r, p)
+            if v is None:
+                return "<td>\u2014</td>"
+            top = v and v == best_pos[p]
+            return f"<td>{'<b>' if top else ''}{v:.0f}{'</b>' if top else ''}</td>"
+        pos_tds = "".join(pos_td(p) for p in projections.POSITIONS)
         anchor = (f"{r['anchor']['player']} ({r['anchor']['pos']})"
                   if r["anchor"] is not None else "—")
         move_tds = (f"<td>{_move(prev, r['key'], i)}</td>" if prev is not None else "") \
             + (f"<td>{_move(week, r['key'], i)}</td>" if week is not None else "")
+        g = r["sim"]
+        proj_rec = (f"{g['wins']:.1f}&ndash;{g['losses']:.1f}" if g is not None else "\u2014")
+        odds = (f"<td>{_pct(g['playoffs'])}</td><td><b>{_pct(g['title'])}</b></td>"
+                if has_odds and g is not None else ("<td>\u2014</td>" * 2 if has_odds else ""))
+        bye = (f"<td>{_pct(g['bye'])}</td>" if has_odds and g is not None
+               else ("<td>\u2014</td>" if has_odds else ""))
+        per_week = (f"<td><b>{r['per_week']:.1f}</b></td>" if r["per_week"] is not None
+                    else "<td>\u2014</td>")
+        vs_avg = (f"<td>{r['per_week'] - avg:+.1f}</td>" if r["per_week"] is not None
+                  else "<td></td>")
         cells.append(
             f'<tr><td class="lg-team"><span class="row-rank">{i}</span>'
             f'{logo}{t["name"]}'
             + (f' <span class="mu-note">({r["unrated"]} unrated)</span>'
-               if r["unrated"] else "") + f"</td>{move_tds}"
-            f"<td>{_record(t)}</td>"
-            f"<td><b>{r['total']:.0f}</b></td>"
-            f"<td>{r['total'] - avg:+.0f}</td>{pos_tds}"
+               if r["unrated"] else "") + "</td>"
+            # What a phone sees first: strength and what it is worth, then
+            # the record, then the movement and the detail.
+            f"{per_week}{odds}<td>{proj_rec}</td><td>{_record(t)}</td>{move_tds}"
+            f"{bye}{vs_avg}{pos_tds}"
             f"<td>{r['bench']:.0f}</td>"
-            f"<td>{(r['playoff'] - 1) * 100:+.0f}%</td>"
             f'<td class="lg-team">{anchor}</td></tr>')
 
     move_heads = ("<th title='Since the previous build'>Move</th>" if prev is not None else "") \
         + ("<th title='Since a week ago'>7d</th>" if week is not None else "")
+    odds_heads = ("<th title='Chance of a playoff place'>Playoffs</th>"
+                  "<th title='Chance of winning the title'>Title</th>") if has_odds else ""
+    bye_head = "<th title='Chance of a first-round bye'>Bye</th>" if has_odds else ""
 
     rankmoves.snapshot(
         HISTORY_DIR, pd.Series({r["key"]: i for i, r in enumerate(rows, 1)}),
         extra=pd.DataFrame({"team": [r["team"]["name"] for r in rows],
-                            "lineup": [round(r["total"], 1) for r in rows],
-                            "vs_avg": [round(r["total"] - avg, 1) for r in rows]},
+                            "per_week": [round(r["per_week"], 1) if r["per_week"] is not None
+                                         else None for r in rows],
+                            "wk_vs_avg": [round(r["per_week"] - avg, 1)
+                                          if r["per_week"] is not None else None for r in rows],
+                            "playoffs": [round(float(r["sim"]["playoffs"]), 4)
+                                         if has_odds and r["sim"] is not None else None
+                                         for r in rows],
+                            "title": [round(float(r["sim"]["title"]), 4)
+                                      if has_odds and r["sim"] is not None else None
+                                      for r in rows]},
                            index=[r["key"] for r in rows]))
     season = _season_section({r["key"]: r["team"]["name"] for r in rows})
 
+    field = lg.get("num_playoff_teams") or 0
     return (
-        "<p>Each roster's best startable lineup in projected season points under "
-        "this league's scoring, with every player's preseason projection updated "
-        f"by his real points per game (weighed against {in_season.PRIOR_GAMES:.0f} games of "
-        "the projection). <b>Bench</b>: value over replacement behind the starters; "
-        f"<b>Wks {lg['playoff_start_week']}–{lg['end_week']}</b>: playoff schedule "
-        "tilt; <b>Move</b>/<b>7d</b>: places climbed since the last build / a week "
-        "ago.</p>"
+        f"<p>The rest of the season played out {league_sim.SIMS:,} times, ranked by "
+        "<b>Pts/wk</b>: each roster's best lineup, projected a week from here on.</p>"
+        "<details class='section'><summary>How it works</summary>"
+        "<p class='mu-note'>Every week left, each roster starts its best lineup on that "
+        "week's projections - byes, opponents and injuries included - with each "
+        "player's preseason projection updated by his real points per game (weighed "
+        f"against {in_season.PRIOR_GAMES:.0f} games of the projection). A week is won head "
+        "to head and against the median, on top of Yahoo's standings"
+        + (f"; the top {field} make the bracket" if field else "")
+        + ". <b>Proj.</b> is the final record; <b>Bench</b> the value over replacement "
+        "behind the starters; <b>Move</b>/<b>7d</b> the places climbed since the last "
+        "build / a week ago.</p></details>"
         '<div class="table-scroll"><table class="lg-table">'
-        f"<thead><tr><th>Team</th>{move_heads}<th>Record</th><th>Lineup</th>"
+        "<thead><tr><th>Team</th>"
+        "<th title='Projected lineup points a week, rest of the regular season'>Pts/wk</th>"
+        f"{odds_heads}<th title='Projected final record'>Proj.</th><th>Record</th>"
+        f"{move_heads}{bye_head}"
         "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
-        f"<th>Bench</th><th>Wks {lg['playoff_start_week']}–{lg['end_week']}</th>"
-        "<th>Anchor</th></tr></thead>"
+        "<th>Bench</th><th>Anchor</th></tr></thead>"
         f'<tbody>{"".join(cells)}</tbody></table></div>' + season)
 
 

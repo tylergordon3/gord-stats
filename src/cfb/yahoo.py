@@ -382,6 +382,10 @@ def _parse_league(raw: dict) -> dict:
         "start_date": meta.get("start_date"),
         "end_date": meta.get("end_date"),
         "playoff_start_week": int(settings.get("playoff_start_week", 0) or 0),
+        # The bracket and the median game, for the season simulation.
+        "num_playoff_teams": int(settings.get("num_playoff_teams", 0) or 0),
+        "uses_median_score": str(settings.get("uses_median_score", "")).lower() in ("1", "true"),
+        "uses_playoff_reseeding": str(settings.get("uses_playoff_reseeding", "")) in ("1", "True", "true"),
         "roster": roster,
         "modifiers": modifiers,
         # Every scored category by id, display-only ones (rush attempts,
@@ -395,7 +399,11 @@ def league(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> dict:
     """This league's settings, roster shape, scoring, and teams."""
     cache = DATA_DIR / f"league_{SEASON}.json"
     if cache.exists() and not refresh and _is_fresh(cache, max_age_hours):
-        return json.loads(cache.read_text())
+        cached = json.loads(cache.read_text())
+        # A copy from before the playoff settings were parsed is refetched
+        # once, or the season simulation would run without a bracket.
+        if "num_playoff_teams" in cached:
+            return cached
 
     parsed = _parse_league(_get(f"league/{LEAGUE_KEY};out=settings,standings"))
     DATA_DIR.mkdir(parents=True, exist_ok=True)
