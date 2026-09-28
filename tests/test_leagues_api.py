@@ -182,7 +182,7 @@ def test_parallel_syncs_cannot_all_pass_the_refresh_limit(worker):
       return await Promise.all(out.map(async (r) => [r.status, await r.json()]));
     """)
     codes = [s for s, _ in statuses]
-    assert codes.count(200) == 1 and codes.count(429) == 5
+    assert codes.count(200) == 1 and codes.count(429) == 5, statuses
     for status, body in statuses:
         if status == 429:
             assert 0 < body["retry_after"] <= 300 and body["error"] == "just refreshed"

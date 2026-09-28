@@ -39,7 +39,10 @@ export function secondsToMidnight(now) {
 export function secondsLeft(at, seconds, now) {
   const then = Date.parse(at || "");
   if (!Number.isFinite(then)) return 0;
-  return Math.max(0, Math.ceil(seconds - (now.getTime() - then) / 1000));
+  // Never more than the window: a parallel request can stamp its claim a few
+  // milliseconds after this one read the clock, and "300 less a negative
+  // age" rounded up to 301.
+  return Math.max(0, Math.min(seconds, Math.ceil(seconds - (now.getTime() - then) / 1000)));
 }
 
 function missingColumn(err) {
