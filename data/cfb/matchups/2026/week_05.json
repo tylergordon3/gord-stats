@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-28T15:37:59+00:00",
+ "fetched": "2026-09-28T21:02:18+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 176.62,
-     "win_probability": 0.65
+     "projected": 173.59,
+     "win_probability": 0.63
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 153.39,
-     "win_probability": 0.35
+     "projected": 153.37,
+     "win_probability": 0.37
     }
    ]
   },
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 193.5,
-     "win_probability": 0.9299999999999999
+     "projected": 193.48,
+     "win_probability": 0.94
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 108.87,
-     "win_probability": 0.07000000000000006
+     "projected": 107.91,
+     "win_probability": 0.06000000000000005
     }
    ]
   },
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 137.91,
-     "win_probability": 0.6799999999999999
+     "projected": 123.17,
+     "win_probability": 0.5700000000000001
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 114.27,
-     "win_probability": 0.32000000000000006
+     "win_probability": 0.42999999999999994
     }
    ]
   },
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 130.33,
+     "projected": 130.32,
      "win_probability": 0.30000000000000004
     }
    ]
@@ -441,9 +441,9 @@
     "team": "TEX",
     "team_full": "Texas Longhorns",
     "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "P",
+    "status_full": "Probable",
+    "injury_note": "Back",
     "slot": "WR",
     "points": 0.0,
     "stats": {}
@@ -1119,8 +1119,8 @@
     "team": "MSU",
     "team_full": "Michigan State Spartans",
     "bye": 9.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "OFS",
+    "status_full": "Out For Season",
     "injury_note": "Knee",
     "slot": "RB",
     "points": 0.0,
@@ -2163,9 +2163,9 @@
     "team": "UCF",
     "team_full": "UCF Knights",
     "bye": 7.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Shoulder",
     "slot": "TE",
     "points": 0.0,
     "stats": {}
@@ -2550,7 +2550,7 @@
   "405245": 11.25,
   "457379": 11.71,
   "469860": 9.9,
-  "900104": 15.45,
+  "900104": 12.42,
   "405071": 22.43,
   "469436": 22.36,
   "455519": 18.02,
@@ -2563,7 +2563,7 @@
   "469439": 13.08,
   "468459": 12.19,
   "404365": 8.78,
-  "900027": 9.04,
+  "900027": 9.02,
   "470211": 30.45,
   "334043": 25.17,
   "404522": 24.28,
@@ -2580,7 +2580,7 @@
   "405442": 8.78,
   "405249": 28.0,
   "335616": 7.35,
-  "900011": 9.7,
+  "900011": 9.68,
   "333810": 24.84,
   "469636": 11.47,
   "456220": 15.46,
@@ -2593,9 +2593,9 @@
   "470796": 11.43,
   "474632": 6.21,
   "404810": 11.47,
-  "900073": 7.91,
+  "900073": 6.95,
   "404635": 26.21,
-  "340537": 14.74,
+  "340537": 0.0,
   "404291": 17.82,
   "337939": 15.13,
   "403842": 18.86,
@@ -2645,7 +2645,7 @@
   "338689": 31.39,
   "406381": 6.73,
   "456249": 10.67,
-  "900068": 6.57,
+  "900068": 6.56,
   "448820": 15.12,
   "338839": 13.12,
   "457893": 17.01,

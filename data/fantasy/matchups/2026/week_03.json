@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T15:37:44+00:00",
+ "fetched": "2026-09-28T21:02:04+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -799,7 +799,7 @@
    "pos": "QB"
   },
   "6904": {
-   "pts": 18.26,
+   "pts": 18.24,
    "opp": "CHI",
    "team": "PHI",
    "injury": "",
@@ -890,7 +890,7 @@
    "pts": 16.35,
    "opp": "KC",
    "team": "MIA",
-   "injury": "Out",
+   "injury": "IR",
    "name": "De'Von Achane",
    "pos": "RB"
   },
@@ -908,14 +908,6 @@
    "team": "PIT",
    "injury": "",
    "name": "Jaylen Warren",
-   "pos": "RB"
-  },
-  "4866": {
-   "pts": 16.14,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Saquon Barkley",
    "pos": "RB"
   },
   "9224": {
@@ -958,6 +950,14 @@
    "name": "Matthew Stafford",
    "pos": "QB"
   },
+  "4866": {
+   "pts": 15.88,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Saquon Barkley",
+   "pos": "RB"
+  },
   "8167": {
    "pts": 15.6,
    "opp": "ATL",
@@ -974,14 +974,6 @@
    "name": "Javonte Williams",
    "pos": "RB"
   },
-  "7525": {
-   "pts": 15.27,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "DeVonta Smith",
-   "pos": "WR"
-  },
   "9487": {
    "pts": 15.25,
    "opp": "NE",
@@ -997,6 +989,14 @@
    "injury": "",
    "name": "Cam Skattebo",
    "pos": "RB"
+  },
+  "7525": {
+   "pts": 15.1,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "DeVonta Smith",
+   "pos": "WR"
   },
   "8137": {
    "pts": 14.9,
@@ -1086,6 +1086,14 @@
    "name": "Zay Flowers",
    "pos": "WR"
   },
+  "6790": {
+   "pts": 14.02,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "D'Andre Swift",
+   "pos": "RB"
+  },
   "11632": {
    "pts": 13.72,
    "opp": "TEN",
@@ -1093,14 +1101,6 @@
    "injury": "",
    "name": "Malik Nabers",
    "pos": "WR"
-  },
-  "6790": {
-   "pts": 13.68,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "D'Andre Swift",
-   "pos": "RB"
   },
   "6801": {
    "pts": 13.53,
@@ -1298,7 +1298,7 @@
    "pts": 11.25,
    "opp": "LV",
    "team": "NO",
-   "injury": "Questionable",
+   "injury": "Out",
    "name": "Travis Etienne",
    "pos": "RB"
   },
@@ -1430,20 +1430,20 @@
    "name": "Terry McLaurin",
    "pos": "WR"
   },
+  "12519": {
+   "pts": 9.7,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Luther Burden",
+   "pos": "WR"
+  },
   "12514": {
    "pts": 9.7,
    "opp": "MIN",
    "team": "TB",
    "injury": "",
    "name": "Emeka Egbuka",
-   "pos": "WR"
-  },
-  "12519": {
-   "pts": 9.69,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Luther Burden",
    "pos": "WR"
   },
   "13298": {
@@ -1494,14 +1494,6 @@
    "name": "Michael Pittman",
    "pos": "WR"
   },
-  "9486": {
-   "pts": 9.38,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Dontayvion Wicks",
-   "pos": "WR"
-  },
   "SEA": {
    "pts": 9.33,
    "opp": "WAS",
@@ -1509,6 +1501,14 @@
    "injury": "",
    "name": "Seattle Seahawks",
    "pos": "DEF"
+  },
+  "9486": {
+   "pts": 9.26,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Dontayvion Wicks",
+   "pos": "WR"
   },
   "8110": {
    "pts": 9.26,
@@ -1542,14 +1542,6 @@
    "name": "Kansas City Chiefs",
    "pos": "DEF"
   },
-  "12517": {
-   "pts": 9.11,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Colston Loveland",
-   "pos": "TE"
-  },
   "13279": {
    "pts": 9.05,
    "opp": "NYG",
@@ -1565,6 +1557,14 @@
    "injury": "",
    "name": "Brian Thomas",
    "pos": "WR"
+  },
+  "12517": {
+   "pts": 8.96,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Colston Loveland",
+   "pos": "TE"
   },
   "NYG": {
    "pts": 8.86,
@@ -1631,7 +1631,7 @@
    "pos": "K"
   },
   "11620": {
-   "pts": 8.27,
+   "pts": 8.25,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
@@ -1653,14 +1653,6 @@
    "injury": "",
    "name": "San Francisco 49ers",
    "pos": "DEF"
-  },
-  "12534": {
-   "pts": 7.96,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Kyle Monangai",
-   "pos": "RB"
   },
   "12015": {
    "pts": 7.94,
@@ -1709,6 +1701,14 @@
    "injury": "Questionable",
    "name": "Terrance Ferguson",
    "pos": "TE"
+  },
+  "12534": {
+   "pts": 7.67,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Kyle Monangai",
+   "pos": "RB"
   },
   "11628": {
    "pts": 7.6,
@@ -1932,8 +1932,8 @@
    "7525": 15.62002324,
    "12507": 15.0130892,
    "8112": 15.39077108,
-   "8155": 16.16674747,
    "10229": 12.73091484,
+   "8155": 16.16674747,
    "2133": 15.61740326,
    "7588": 15.04715916,
    "8146": 16.08742203,
@@ -1979,10 +1979,10 @@
    "13286": 12.08173064,
    "7594": 14.54471027,
    "10236": 11.6245828,
-   "11620": 9.94460502,
    "8131": 12.24866153,
-   "12529": 10.5042672,
+   "11620": 9.94460502,
    "7611": 12.05243524,
+   "12529": 10.5042672,
    "11560": 0.0,
    "12519": 11.16368303,
    "421": 15.72953359,
@@ -1995,8 +1995,8 @@
    "PHI": 8.02482423,
    "7523": 17.47131556,
    "4199": 13.64445387,
-   "13279": 11.75330639,
    "8259": 9.10295946,
+   "13279": 11.75330639,
    "2449": 10.81243045,
    "11786": 8.68358261,
    "5045": 10.93605996,
@@ -2038,8 +2038,8 @@
    "11834": 11.50911625,
    "8142": 0.0,
    "11581": 8.62676561,
-   "5001": 10.98839866,
    "8136": 9.29832238,
+   "5001": 10.98839866,
    "8134": 10.40480612,
    "KC": 6.32169788,
    "8126": 8.00417237,
