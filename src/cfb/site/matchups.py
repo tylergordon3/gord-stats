@@ -717,6 +717,93 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
             + week_board(rows, started, final, med_now, med_proj) + "".join(sections) + live)
 
 
+_BENCH_SLOTS = {"BN", "IR", "IL"}
+
+
+def accuracy(datas: dict) -> tuple:
+    """(table, weeks, gordstats_closer) - GordStats and Yahoo scored on the
+    same player-weeks: starters who played, in finished weeks, whom both
+    projected before kickoff. Before GordStats has such a week, Yahoo alone.
+
+    Ours is read from the pre-game archive (cfb.pregame), never rebuilt: a
+    projection rebuilt after the games has seen them, and scored against
+    Yahoo's kept pre-game numbers it would flatter us. Yahoo's are the ones
+    the week's archive captured before kickoff.
+    """
+    from gordstats.pregame import load as load_pregame
+    rows = []
+    for w, data in sorted(datas.items()):
+        if not yahoo.week_final(data):
+            continue
+        ours = load_pregame(pregame.path(w))
+        theirs = data.get("yahoo_proj") or {}
+        for roster in data["rosters"].values():
+            for p in roster:
+                pid = str(p["yahoo_id"])
+                if p["slot"] in _BENCH_SLOTS or not p.get("stats") or theirs.get(pid) is None:
+                    continue
+                rows.append({"week": w, "actual": float(p.get("points") or 0.0),
+                             "yahoo": float(theirs[pid]),
+                             "gordstats": (float(ours[pid]) if ours.get(pid) is not None
+                                           else None)})
+    if not rows:
+        return None, [], None
+    frame = pd.DataFrame(rows)
+    both = frame.dropna(subset=["gordstats"])
+    if not both.empty:
+        frame = both.assign(average=(both["gordstats"] + both["yahoo"]) / 2)
+        cols = ["gordstats", "yahoo", "average"]
+    else:
+        cols = ["yahoo"]
+    table = []
+    for c in cols:
+        err = frame[c] - frame["actual"]
+        table.append({"source": c, "n": len(frame), "mae": err.abs().mean(),
+                      "bias": err.mean(),
+                      "corr": (frame[c].corr(frame["actual"]) if len(frame) >= 3
+                               else float("nan"))})
+    closer = None
+    if not both.empty:
+        g = (frame["gordstats"] - frame["actual"]).abs()
+        y = (frame["yahoo"] - frame["actual"]).abs()
+        closer = float((g < y).mean() + 0.5 * (g == y).mean())
+    return pd.DataFrame(table).sort_values("mae"), sorted(frame["week"].unique()), closer
+
+
+def accuracy_section(datas: dict) -> str:
+    table, weeks, closer = accuracy(datas)
+    if table is None or table.empty:
+        return ""
+    names = {"gordstats": "GordStats", "yahoo": "Yahoo", "average": "Both, averaged"}
+    cells = "".join(
+        f'<tr><td class="mu-t"><b>{names[r.source]}</b></td><td>{r.n}</td>'
+        f"<td>{r.mae:.2f}</td><td>{r.bias:+.2f}</td>"
+        f"<td>{'&mdash;' if pd.isna(r.corr) else f'{r.corr:.2f}'}</td></tr>"
+        for r in table.itertuples())
+    span = f"week{'s' if len(weeks) > 1 else ''} {', '.join(str(int(w)) for w in weeks)}"
+    lead = (f"Head to head, GordStats was closer on <b>{closer:.0%}</b> of them. "
+            if closer is not None else "")
+    alone = "gordstats" not in set(table["source"])
+    who = ("Yahoo's projection against what starters actually scored, "
+           f"over {span}. " if alone else
+           "Each projection against what starters actually scored, "
+           f"over {span} - every source on the same players, the ones they all "
+           "projected before kickoff. ")
+    body = ('<p class="mu-note">' + who + lead
+            + "<b>MAE</b> is the average miss in points, <b>Bias</b> the average signed miss "
+            "(positive = projected too high), <b>r</b> the correlation with the real score. "
+            "Lowest MAE first."
+            + ("" if not alone else
+               " GordStats joins once a week it projected before kickoff has finished - "
+               "week 5 is the first.")
+            + "</p>"
+            '<div class="table-scroll"><table class="mu-board"><thead><tr><th>Source</th>'
+            "<th>Players</th><th>MAE</th><th>Bias</th><th>r</th></tr></thead>"
+            f"<tbody>{cells}</tbody></table></div>")
+    return ("<details class='section'><summary>Projection accuracy &mdash; who has been "
+            f"right</summary>{body}</details>")
+
+
 def body() -> str:
     lg = yahoo.league()
     weeks = yahoo.archived_weeks()
@@ -754,14 +841,15 @@ def body() -> str:
         "team pages), whose starters add up to the Yahoo team total in each header; the "
         "start/sit advice runs on GS Proj. A player past our board's depth shows "
         "&mdash; under GS Proj; there but still plays. While games are on, points, stat lines "
-        "and Yahoo's win odds refresh in place about once a minute. Ahead of "
+        "and each source's expected final and win chance refresh in place about once a minute. Ahead of "
         "kickoff a roster whose bench "
         "out-projects a starter gets the swap spelled out under the table. "
         f"Rebuilt several times a day (last: {built}); finished weeks stay on "
         'record. Standings and waivers are on the <a href="/cfb/league/">league '
         'dashboard</a>, season-long roster strength on the '
         '<a href="/cfb/league/#power">power rankings</a>.</p></details>'
-        + ui.week_switch(weeks, current, views) + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS)
+        + ui.week_switch(weeks, current, views) + accuracy_section(datas)
+        + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS)
 
 
 def generate():
