@@ -22,7 +22,7 @@ from html import escape
 import pandas as pd
 
 from cfb import espn, ownership, players, schools as schools_mod, usage as usage_mod, yahoo
-from cfb.config import MY_TEAM, SEASON, WEB_DIR
+from cfb.config import MY_TEAM, SEASON, WEB_DIR, league_school
 from cfb.site import write_page
 from gordstats.usage_page import CSS as _CSS, JS as _JS, bar as _bar, num as _num
 from gordstats.usage_page import options as _options, pct as _pct, pin as _pin, v as _v
@@ -121,8 +121,13 @@ def body() -> str:
     if frame.empty:
         return (_CSS + "<p>No games have been played yet — this page fills in once "
                 "<code>python -m cfb.usage</code> has a week to read.</p>")
+    # Only schools whose players this league can roster: CFBD's box scores
+    # cover all of FBS, and a Sun Belt back leading his team in carries is
+    # someone nobody here can add.
+    conf = _conferences()
     fbs = set(schools_mod.load()["schools"])
-    frame = frame[frame["team"].isin(fbs)].copy()
+    frame = frame[frame["team"].isin(fbs)
+                  & frame["team"].map(lambda t: league_school(t, conf.get(t, "")))].copy()
     lg = yahoo.league()
     frame["fpts"] = players.fantasy_points(frame, lg)
     weeks = sorted(int(w) for w in frame["week"].unique())
@@ -135,7 +140,6 @@ def body() -> str:
     recent = recent.sort_values(["car_share", "tgt_share"], ascending=False)
     recent = ownership.attach(recent)
 
-    conf = _conferences()
     teams = sorted(recent["team"].unique())
     confs = sorted({conf.get(t) for t in teams if conf.get(t)})
     league_teams = {t["team_key"]: t["name"] for t in lg["teams"]}
