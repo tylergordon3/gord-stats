@@ -9,7 +9,7 @@ import pandas as pd
 from pytz import timezone
 
 from gordstats import frontmatter
-from cbb import change, scraper, utils
+from cbb import change, constants, scraper, utils
 from cbb import paths
 from cbb import html_util, teams
 
@@ -50,15 +50,7 @@ def clean_teams(df, kenpom_bool=False):
     :return: Torvik data with clean names
     :rtype: DataFrame
     """
-    dict = {
-        "SIU Edwardsville": "SIUE",
-        "Cal St. Northridge": "CSUN",
-        "McNeese St.": "McNeese",
-        "Nicholls St.": "Nicholls",
-        "Southeast Missouri": "SEMO",
-        "Southeast Missouri St.": "SEMO",
-        "Kansas City": "UMKC",
-    }
+    dict = constants.TORVIK_RENAMES
 
     def strip(team):
         for i, char in enumerate(team):

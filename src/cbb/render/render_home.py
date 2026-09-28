@@ -370,10 +370,7 @@ def _cfb_graphics(today: date) -> str:
     """
     if not (date(today.year, 8, 20) <= today <= date(today.year, 12, 20)):
         return ""
-    # The reader's own teams first - their games, our pick and the live score
-    # (gordstats.my_teams_today) - then the league-wide cards.
-    from gordstats import my_teams_today
-    return my_teams_today.section() + """
+    return """
 <section class="home-card">
   <div class="home-card-head">
     <h2>Top 25 Comparison</h2>
@@ -390,6 +387,18 @@ def _cfb_graphics(today: date) -> str:
   {% include cfb_bets.html %}
 </section>
 """
+
+
+def _my_teams(today: date) -> str:
+    """The reader's own teams (gordstats.my_teams_today), ahead of everything:
+    football's week from late August through the playoff final, basketball's
+    day from tipoff to the last game."""
+    cfb = today >= date(today.year, 8, 20) or today <= date(today.year, 1, 20)
+    cbb = CBB_TIPOFF <= today <= CBB_SEASON_END
+    if not (cfb or cbb):
+        return ""
+    from gordstats import my_teams_today
+    return my_teams_today.section(cfb=cfb, cbb=cbb)
 
 
 def render_home():
@@ -416,7 +425,7 @@ def render_home():
              ("cfb", _cfb_card()), (None, _wnba_card(in_season=False))])
     # The graphics lead: they are the thing worth looking at today, and the
     # preview cards are navigation, which can sit under them.
-    html = _cfb_graphics(today) + html
+    html = _my_teams(today) + _cfb_graphics(today) + html
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -31,7 +31,7 @@ from datetime import datetime
 import pandas as pd
 import requests
 
-from cbb import paths
+from cbb import constants, paths
 from gordstats import favorites, rankmoves
 from gordstats.frontmatter import add_front_matter
 
@@ -48,6 +48,8 @@ _AP_URL = ("https://site.api.espn.com/apis/site/v2/sports/basketball/"
            "mens-college-basketball/rankings")
 MAX_AGE_HOURS = 12
 HISTORY_DIR = paths.DATA / "cbb" / "power_history" / str(TRANK_YEAR)
+# For the home page's "My teams" card (gordstats.my_teams_today); gitignored.
+STAR_TEAMS_OUT = paths.DOCS / "cbb" / "star-teams.json"
 
 # Torvik's name for a school where normalising ESPN's doesn't get there.
 _ALIASES = {
@@ -324,12 +326,40 @@ def body() -> str:
             + f"<tbody>{''.join(rows)}</tbody></table></div>")
 
 
+def star_teams(names) -> dict:
+    """Each starrable team's key -> [its name on the live scoreboard, its logo].
+
+    The stars on this page are keyed on T-Rank's names. The scoreboard the home
+    page's "My teams" card reads (cbb.live_scraper) names teams the master
+    list's way, and the logos are filed under names that follow no pattern, so
+    the browser is handed the translation rather than the whole master list.
+    A school the master list does not know yet (one new to D-1) is left out:
+    the scoreboard cannot name it either.
+    """
+    master = pd.read_json(paths.MASTER_DICT)
+    look = {}
+    for team, path in zip(master["team"], master["path"]):
+        look[team] = (team, path)
+    for team, aliases, path in zip(master["team"], master["names"], master["path"]):
+        for alias in aliases:
+            look.setdefault(alias, (team, path))
+    out = {}
+    for name in names:
+        hit = look.get(constants.TORVIK_RENAMES.get(name, name))
+        if hit:
+            out[favorites.name_key("cbb-men", name)] = [hit[0], "/assets/images/" + hit[1]]
+    return out
+
+
 def generate():
     out = paths.DOCS / "cbb" / "power" / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(body(), "CBB Power Rankings",
                                     f"{SEASON_LABEL} season"), encoding="utf-8")
     print(f"Wrote CBB power rankings -> {out}")
+    STAR_TEAMS_OUT.write_text(json.dumps(star_teams(trank()["team"]), separators=(",", ":")),
+                              encoding="utf-8")
+    print(f"Wrote CBB star teams -> {STAR_TEAMS_OUT}")
 
 
 if __name__ == "__main__":

@@ -43,3 +43,17 @@ CONF_MAP = {
     "WAC": ["WAC", "Western Athletic", "Western Athletic Conference"],
     "WCC": ["WCC", "West Coast", "West Coast Conference", "West Coast Women"],
 }
+
+
+# Torvik's name -> the site's (docs/assets/data/master.json `team`), where the
+# two differ. Also read by the CBB power page to find a starred team on the
+# live scoreboard, which names teams the master list's way.
+TORVIK_RENAMES = {
+    "SIU Edwardsville": "SIUE",
+    "Cal St. Northridge": "CSUN",
+    "McNeese St.": "McNeese",
+    "Nicholls St.": "Nicholls",
+    "Southeast Missouri": "SEMO",
+    "Southeast Missouri St.": "SEMO",
+    "Kansas City": "UMKC",
+}
