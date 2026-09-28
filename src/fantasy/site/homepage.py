@@ -31,7 +31,7 @@ from fantasy.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
 from fantasy.site import layout, styles, team_profiles, upcoming
-from gordstats import my_history, my_home, my_league, my_league_data
+from gordstats import my_history, my_home, my_league, my_league_data, week_strip
 from gordstats.frontmatter import add_front_matter
 
 OUTPUT = paths.WEB_FANTASY_HOME
@@ -170,11 +170,15 @@ def generate(output=OUTPUT):
     built = ("<div id='lh-built'>" + nav + board
              + "".join(f'<h2 id="{a}">{title}</h2>{html}' for a, title, html in inline)
              + "</div>")
+    # The week first - every matchup and the standings, for whichever league
+    # is on screen (gordstats.week_strip) - then the all-time sections.
     body = (layout.HEAD + upcoming.countdown_banner() + my_league.bar()
+            + week_strip.section()
             + mine_section() + built + my_league.takeover("lh-mine", "lh-built")
             # my_history's script carries the Sleeper reading my_home draws
             # from (window.GSHist); its own section is not on this page.
-            + my_league_data.JS + my_league.JS + my_history.JS + my_home.JS)
+            + my_league_data.JS + my_league.JS + my_history.JS + my_home.JS
+            + week_strip.JS)
 
     page = add_front_matter(body, "Fantasy Football")
     output.parent.mkdir(parents=True, exist_ok=True)
