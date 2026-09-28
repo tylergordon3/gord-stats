@@ -336,8 +336,9 @@ def test_asking_for_the_sites_own_league_sticks_but_the_picker_stays():
     branch = branch[:branch.index("var fromAccount")]
     assert "draw(" in branch and branch.index("draw(") < branch.index("return;")
     assert "load(" not in branch, "a league is pulled back in over their choice"
-    # Leagues of their own: the stale choice is cleared, not acted on.
-    assert "if(have&&have.site) have=null;" in MY_LEAGUE
+    # Leagues of their own: the stale choice is cleared, not acted on - unless
+    # the choice is this site's own league, synced by id, which is theirs too.
+    assert "if(have&&have.site&&!isSite(have.id)) have=null;" in MY_LEAGUE
 
 
 def test_only_ownership_is_re_pointed():

@@ -8,12 +8,15 @@ The styling for every class emitted here (.section-nav, details.section,
 theme, so light/dark mode and mobile rules cascade normally.
 """
 
+from gordstats import my_league
+
+
 HEAD = """<script>
 function openHashTarget(){var h=location.hash.slice(1);if(!h)return;var e=document.getElementById(h);
   if(e&&e.tagName==='DETAILS'){e.open=true;e.scrollIntoView();}}
 window.addEventListener('hashchange',openHashTarget);
 window.addEventListener('load',openHashTarget);
-</script>"""
+</script>""" + my_league.site_league_js()
 
 
 def internal_link(path: str, label: str) -> str:

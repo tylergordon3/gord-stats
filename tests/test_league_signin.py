@@ -160,8 +160,9 @@ def test_a_signed_in_reader_with_leagues_is_not_offered_this_sites_league():
     site = site[:site.index("SYNCED.map(")]
     assert "offerSite" in site and 'value="site"' in site, \
         "the option is not behind the check"
-    # An old choice is cleared rather than acted on.
-    assert "if(have&&have.site) have=null;" in JS
+    # An old choice is cleared rather than acted on (this site's own league,
+    # picked by id, is theirs and stays).
+    assert "if(have&&have.site&&!isSite(have.id)) have=null;" in JS
     # ...and then the first of their leagues is what the menu shows, or the
     # select sits on nothing and the page looks broken.
     assert "!offerSite && !here && i===0" in JS

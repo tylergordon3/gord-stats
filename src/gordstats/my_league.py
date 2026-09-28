@@ -111,7 +111,14 @@ JS = """{% raw %}<script>
       else localStorage.removeItem(LIST);
     }catch(e){}
   }
+  // This site's own league, every season of it. Picked by id - synced from
+  // an account, or typed in - it is still this league, and gets the built
+  // pages rather than the plainer ones drawn in the browser for somebody
+  // else's (site_league_js has already said so before anything painted).
+  var SITE=__SITE_IDS__;
+  function isSite(id){ return !!id && SITE.indexOf(String(id))>=0; }
   function save(v){
+    if(v && isSite(v.id)) v.site=true;
     try{ v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY); }
     catch(e){}
   }
@@ -313,8 +320,9 @@ JS = """{% raw %}<script>
       return;
     }
     // A league entered by id, which the account does not know about: there is
-    // nothing to pick between, so it is named with a way back.
-    if(label){
+    // nothing to pick between, so it is named with a way back - unless it is
+    // this site's own, which is what is on screen anyway.
+    if(label && !isSite(cur.id)){
       bar.innerHTML='Showing <span class="ml-who"></span> '
         +'<button type="button" id="ml-clear">Show this site\\u2019s league</button>'
         +'<span class="ml-msg" id="ml-msg"></span>';
@@ -415,7 +423,8 @@ JS = """{% raw %}<script>
   }
 
   var have=saved();
-  if(have&&have.id){ draw(have.name); load(have.id,true); }
+  // This site's own league is already what every built page shows.
+  if(have&&have.id&&!isSite(have.id)){ draw(have.name); load(have.id,true); }
   else draw(null);
 
   // A league synced to the account wins over whatever this browser remembers,
@@ -451,7 +460,7 @@ JS = """{% raw %}<script>
       // "Show this site's league" was a choice a signed-in reader with a
       // league of their own can no longer make, so an old one is not honoured
       // - they are put back on their own league instead.
-      if(have&&have.site) have=null;
+      if(have&&have.site&&!isSite(have.id)) have=null;
       // Keep showing whatever this browser already had, if the account knows
       // it; otherwise the first synced league.
       var chosen=SYNCED.filter(function(l){
@@ -502,6 +511,28 @@ def bar() -> str:
     return CSS + "<div class='ml-bar' id='ml-bar'></div>"
 
 
+def _site_ids() -> list:
+    from fantasy.config import LEAGUE_IDS
+    return sorted(set(str(v) for v in LEAGUE_IDS.values()))
+
+
+def site_league_js() -> str:
+    """Runs first on every fantasy page: a saved league that is this site's
+    own - synced from an account or picked by id - is marked as such, so every
+    page shows its built version.
+
+    Without it the site's own manager, having synced the league he runs, got
+    the browser-drawn pages meant for a stranger's league: League Home lost
+    its all-time metrics and team profiles to a plainer history, and every
+    other page its archive-backed half."""
+    return ("{% raw %}<script>(function(){try{"
+            f"var ids={_site_ids()!r},k='gsSleeperLeague',"
+            "h=JSON.parse(localStorage.getItem(k)||'null');"
+            "if(h&&h.id&&!h.site&&ids.indexOf(String(h.id))>=0){"
+            "h.site=true;localStorage.setItem(k,JSON.stringify(h));}"
+            "}catch(e){}})();</script>{% endraw %}")
+
+
 def takeover(mine: str, built: str) -> str:
     """One of two blocks, chosen before the page paints.
 
@@ -526,3 +557,6 @@ def takeover(mine: str, built: str) -> str:
             "if(m) m.hidden=!own;"
             "if(b) b.hidden=own;"
             "})();</script>{% endraw %}")
+
+
+JS = JS.replace("__SITE_IDS__", repr(_site_ids()))
