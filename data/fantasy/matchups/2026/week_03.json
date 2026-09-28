@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T21:02:04+00:00",
+ "fetched": "2026-09-28T23:50:58+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -674,7 +674,7 @@
    "pts": 23.71,
    "opp": "LAC",
    "team": "BUF",
-   "injury": "",
+   "injury": "Questionable",
    "name": "Josh Allen",
    "pos": "QB"
   },
@@ -790,20 +790,20 @@
    "name": "Drake Maye",
    "pos": "QB"
   },
+  "6904": {
+   "pts": 18.47,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Jalen Hurts",
+   "pos": "QB"
+  },
   "12545": {
    "pts": 18.35,
    "opp": "LV",
    "team": "NO",
    "injury": "",
    "name": "Tyler Shough",
-   "pos": "QB"
-  },
-  "6904": {
-   "pts": 18.24,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Jalen Hurts",
    "pos": "QB"
   },
   "8144": {
@@ -926,6 +926,14 @@
    "name": "Garrett Wilson",
    "pos": "WR"
   },
+  "4866": {
+   "pts": 15.95,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Saquon Barkley",
+   "pos": "RB"
+  },
   "12527": {
    "pts": 15.9,
    "opp": "NO",
@@ -949,14 +957,6 @@
    "injury": "",
    "name": "Matthew Stafford",
    "pos": "QB"
-  },
-  "4866": {
-   "pts": 15.88,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Saquon Barkley",
-   "pos": "RB"
   },
   "8167": {
    "pts": 15.6,
@@ -982,6 +982,14 @@
    "name": "Parker Washington",
    "pos": "WR"
   },
+  "7525": {
+   "pts": 15.23,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "DeVonta Smith",
+   "pos": "WR"
+  },
   "12481": {
    "pts": 15.12,
    "opp": "TEN",
@@ -989,14 +997,6 @@
    "injury": "",
    "name": "Cam Skattebo",
    "pos": "RB"
-  },
-  "7525": {
-   "pts": 15.1,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "DeVonta Smith",
-   "pos": "WR"
   },
   "8137": {
    "pts": 14.9,
@@ -1070,6 +1070,14 @@
    "name": "Ladd McConkey",
    "pos": "WR"
   },
+  "6790": {
+   "pts": 14.12,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "D'Andre Swift",
+   "pos": "RB"
+  },
   "12507": {
    "pts": 14.11,
    "opp": "BUF",
@@ -1085,14 +1093,6 @@
    "injury": "",
    "name": "Zay Flowers",
    "pos": "WR"
-  },
-  "6790": {
-   "pts": 14.02,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "D'Andre Swift",
-   "pos": "RB"
   },
   "11632": {
    "pts": 13.72,
@@ -1358,6 +1358,14 @@
    "name": "Tyler Warren",
    "pos": "TE"
   },
+  "12519": {
+   "pts": 10.31,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Luther Burden",
+   "pos": "WR"
+  },
   "7002": {
    "pts": 10.29,
    "opp": "LV",
@@ -1430,14 +1438,6 @@
    "name": "Terry McLaurin",
    "pos": "WR"
   },
-  "12519": {
-   "pts": 9.7,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Luther Burden",
-   "pos": "WR"
-  },
   "12514": {
    "pts": 9.7,
    "opp": "MIN",
@@ -1453,6 +1453,14 @@
    "injury": "",
    "name": "KC Concepcion",
    "pos": "WR"
+  },
+  "12517": {
+   "pts": 9.51,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Colston Loveland",
+   "pos": "TE"
   },
   "7553": {
    "pts": 9.48,
@@ -1494,6 +1502,14 @@
    "name": "Michael Pittman",
    "pos": "WR"
   },
+  "9486": {
+   "pts": 9.35,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Dontayvion Wicks",
+   "pos": "WR"
+  },
   "SEA": {
    "pts": 9.33,
    "opp": "WAS",
@@ -1501,14 +1517,6 @@
    "injury": "",
    "name": "Seattle Seahawks",
    "pos": "DEF"
-  },
-  "9486": {
-   "pts": 9.26,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Dontayvion Wicks",
-   "pos": "WR"
   },
   "8110": {
    "pts": 9.26,
@@ -1558,13 +1566,13 @@
    "name": "Brian Thomas",
    "pos": "WR"
   },
-  "12517": {
-   "pts": 8.96,
+  "11620": {
+   "pts": 8.9,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
-   "name": "Colston Loveland",
-   "pos": "TE"
+   "name": "Rome Odunze",
+   "pos": "WR"
   },
   "NYG": {
    "pts": 8.86,
@@ -1590,6 +1598,14 @@
    "name": "Ka'imi Fairbairn",
    "pos": "K"
   },
+  "PHI": {
+   "pts": 8.75,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Philadelphia Eagles",
+   "pos": "DEF"
+  },
   "11533": {
    "pts": 8.72,
    "opp": "BAL",
@@ -1597,14 +1613,6 @@
    "injury": "",
    "name": "Brandon Aubrey",
    "pos": "K"
-  },
-  "PHI": {
-   "pts": 8.68,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Philadelphia Eagles",
-   "pos": "DEF"
   },
   "5947": {
    "pts": 8.4,
@@ -1629,14 +1637,6 @@
    "injury": "",
    "name": "Cam Little",
    "pos": "K"
-  },
-  "11620": {
-   "pts": 8.25,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Rome Odunze",
-   "pos": "WR"
   },
   "11586": {
    "pts": 8.23,
@@ -1678,6 +1678,14 @@
    "name": "Jason Myers",
    "pos": "K"
   },
+  "12534": {
+   "pts": 7.78,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Kyle Monangai",
+   "pos": "RB"
+  },
   "6650": {
    "pts": 7.77,
    "opp": "MIN",
@@ -1702,14 +1710,6 @@
    "name": "Terrance Ferguson",
    "pos": "TE"
   },
-  "12534": {
-   "pts": 7.67,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Kyle Monangai",
-   "pos": "RB"
-  },
   "11628": {
    "pts": 7.6,
    "opp": "SF",
@@ -1727,7 +1727,7 @@
    "pos": "K"
   },
   "2020": {
-   "pts": 7.39,
+   "pts": 7.46,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
@@ -2078,7 +2078,6 @@
    "11563": 16.6,
    "421": 16.3,
    "4943": 15.2,
-   "11560": 0.3,
    "9221": 26.5,
    "8151": 21.1,
    "9509": 20.3,
@@ -2270,10 +2269,6 @@
    "4943": {
     "ecr": 21,
     "grade": "D"
-   },
-   "11560": {
-    "ecr": 58,
-    "grade": "F"
    },
    "9221": {
     "ecr": 1,
@@ -4119,15 +4114,15 @@
    "away": "PHI",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 19.0,
-   "away_implied": 22.5,
+   "home_implied": 19.5,
+   "away_implied": 23.0,
    "spread": "PHI -3.5",
-   "total": 41.5,
+   "total": 42.5,
    "tv": "ESPN",
    "weather": {
     "temp": 64.0,
-    "cond": 34,
-    "text": "Mostly clear",
+    "cond": 33,
+    "text": "Clear",
     "indoors": false
    }
   },
