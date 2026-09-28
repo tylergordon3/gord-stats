@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-27T23:50:59+00:00",
+ "fetched": "2026-09-28T00:00:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -822,14 +822,6 @@
    "name": "Joe Burrow",
    "pos": "QB"
   },
-  "11563": {
-   "pts": 17.41,
-   "opp": "LAR",
-   "team": "DEN",
-   "injury": "",
-   "name": "Bo Nix",
-   "pos": "QB"
-  },
   "6786": {
    "pts": 17.39,
    "opp": "BAL",
@@ -837,6 +829,14 @@
    "injury": "",
    "name": "CeeDee Lamb",
    "pos": "WR"
+  },
+  "11563": {
+   "pts": 17.3,
+   "opp": "LAR",
+   "team": "DEN",
+   "injury": "",
+   "name": "Bo Nix",
+   "pos": "QB"
   },
   "4943": {
    "pts": 16.94,
@@ -918,14 +918,6 @@
    "name": "Chase Brown",
    "pos": "RB"
   },
-  "421": {
-   "pts": 16.0,
-   "opp": "DEN",
-   "team": "LAR",
-   "injury": "",
-   "name": "Matthew Stafford",
-   "pos": "QB"
-  },
   "8146": {
    "pts": 15.96,
    "opp": "DET",
@@ -957,6 +949,14 @@
    "injury": "Out",
    "name": "Breece Hall",
    "pos": "RB"
+  },
+  "421": {
+   "pts": 15.89,
+   "opp": "DEN",
+   "team": "LAR",
+   "injury": "",
+   "name": "Matthew Stafford",
+   "pos": "QB"
   },
   "8167": {
    "pts": 15.6,
@@ -1046,20 +1046,20 @@
    "name": "David Montgomery",
    "pos": "RB"
   },
-  "2133": {
-   "pts": 14.28,
-   "opp": "DEN",
-   "team": "LAR",
-   "injury": "",
-   "name": "Davante Adams",
-   "pos": "WR"
-  },
   "12526": {
    "pts": 14.23,
    "opp": "CLE",
    "team": "CAR",
    "injury": "",
    "name": "Tetairoa McMillan",
+   "pos": "WR"
+  },
+  "2133": {
+   "pts": 14.21,
+   "opp": "DEN",
+   "team": "LAR",
+   "injury": "",
+   "name": "Davante Adams",
    "pos": "WR"
   },
   "11635": {
@@ -1094,14 +1094,6 @@
    "name": "Malik Nabers",
    "pos": "WR"
   },
-  "8150": {
-   "pts": 13.55,
-   "opp": "DEN",
-   "team": "LAR",
-   "injury": "",
-   "name": "Kyren Williams",
-   "pos": "RB"
-  },
   "6801": {
    "pts": 13.53,
    "opp": "PIT",
@@ -1109,6 +1101,14 @@
    "injury": "",
    "name": "Tee Higgins",
    "pos": "WR"
+  },
+  "8150": {
+   "pts": 13.52,
+   "opp": "DEN",
+   "team": "LAR",
+   "injury": "",
+   "name": "Kyren Williams",
+   "pos": "RB"
   },
   "8112": {
    "pts": 13.5,
@@ -1119,7 +1119,7 @@
    "pos": "WR"
   },
   "7526": {
-   "pts": 13.35,
+   "pts": 13.3,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
@@ -1287,7 +1287,7 @@
    "pos": "WR"
   },
   "6806": {
-   "pts": 11.35,
+   "pts": 11.34,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
@@ -1327,7 +1327,7 @@
    "pos": "WR"
   },
   "12489": {
-   "pts": 10.81,
+   "pts": 10.77,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
@@ -1367,7 +1367,7 @@
    "pos": "TE"
   },
   "5045": {
-   "pts": 10.28,
+   "pts": 10.23,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
@@ -1631,7 +1631,7 @@
    "pos": "K"
   },
   "11586": {
-   "pts": 8.25,
+   "pts": 8.23,
    "opp": "DEN",
    "team": "LAR",
    "injury": "",
@@ -1663,7 +1663,7 @@
    "pos": "RB"
   },
   "12015": {
-   "pts": 7.97,
+   "pts": 7.94,
    "opp": "DEN",
    "team": "LAR",
    "injury": "",
@@ -1703,7 +1703,7 @@
    "pos": "K"
   },
   "12487": {
-   "pts": 7.72,
+   "pts": 7.68,
    "opp": "DEN",
    "team": "LAR",
    "injury": "",
@@ -1775,7 +1775,7 @@
    "pos": "DEF"
   },
   "LAR": {
-   "pts": 6.53,
+   "pts": 6.5,
    "opp": "DEN",
    "team": "LAR",
    "injury": "",
@@ -1783,7 +1783,7 @@
    "pos": "DEF"
   },
   "DEN": {
-   "pts": 6.48,
+   "pts": 6.45,
    "opp": "LAR",
    "team": "DEN",
    "injury": "",
