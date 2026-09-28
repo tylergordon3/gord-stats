@@ -37,6 +37,7 @@ CSS = """<style>
 .ls-msg{font-size:13px;margin:9px 0 0;line-height:1.45}
 .ls-msg.err{color:#b91c1c}
 .ls-msg.ok{color:#15803d}
+.ls-msg.warn{color:#a16207}
 .ls-list{list-style:none;padding:0;margin:0}
 .ls-list li{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;
   padding:10px 0;border-top:1px solid #e2e8f0}
@@ -54,6 +55,7 @@ CSS = """<style>
   .ls-row input,.ls-drop{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .ls-msg.err{color:#ff9b91}
   .ls-msg.ok{color:#6ee7b7}
+  .ls-msg.warn{color:#fcd34d}
 }
 </style>"""
 
@@ -69,6 +71,14 @@ JS = """{% raw %}<script>
   function msg(where,text,cls){
     var el=document.getElementById(where);
     el.textContent=text||''; el.className='ls-msg'+(cls?' '+cls:'');
+  }
+  /** A sync that ran out of room says so (functions/api/leagues.js
+   *  `unfinished`): the account's league cap, or the Sleeper calls one sync
+   *  may make. Shown with the success line rather than left for the reader
+   *  to notice a league or a season missing. */
+  function done(where, text, d){
+    var note=(d && d.complete===false && d.unfinished && d.unfinished.note) || '';
+    msg(where, text+(note?' '+note:''), note?'warn':'ok');
   }
   function when(iso){
     if(!iso) return '';
@@ -156,9 +166,9 @@ JS = """{% raw %}<script>
         }
         if(res.d.migrating){ msg(msgId,res.d.error,'err'); return; }
         if(!res.d.ok){ msg(msgId,res.d.error||'That did not work.','err'); return; }
-        msg(msgId,'Synced '+(res.d.league.name||'the league')
+        done(msgId,'Synced '+(res.d.league.name||'the league')
           +(res.d.synced>1?' and its '+(res.d.synced-1)+' earlier season'
-            +(res.d.synced===2?'':'s'):'')+'.','ok');
+            +(res.d.synced===2?'':'s'):'')+'.', res.d);
         document.getElementById(inputId).value='';
         load();
       })
@@ -182,9 +192,9 @@ JS = """{% raw %}<script>
         }
         if(!res.d.ok){ msg('ls-user-msg',res.d.error||'That did not work.','err'); return; }
         var found=res.d.leagues_found||res.d.synced;
-        msg('ls-user-msg','Found '+found+' league'+(found===1?'':'s')
+        done('ls-user-msg','Found '+found+' league'+(found===1?'':'s')
           +(res.d.synced>found
-            ? ', '+res.d.synced+' seasons in all' : '')+'.','ok');
+            ? ', '+res.d.synced+' seasons in all' : '')+'.', res.d);
         document.getElementById('ls-user').value='';
         load();
       })
