@@ -13,70 +13,70 @@
       "team_id": 1,
       "rank": 1,
       "score": 100,
-      "vorp": 109.86
+      "vorp": 109.46
     },
     {
       "team": "LGBBQ+",
       "team_id": 9,
       "rank": 2,
-      "score": 99,
-      "vorp": 108.91
+      "score": 100,
+      "vorp": 108.98
     },
     {
       "team": "padgett",
       "team_id": 7,
       "rank": 3,
       "score": 99,
-      "vorp": 108.33
+      "vorp": 108.28
     },
     {
       "team": "Professional Fratson",
       "team_id": 3,
       "rank": 4,
-      "score": 97,
-      "vorp": 107.09
+      "score": 98,
+      "vorp": 107.0
     },
     {
       "team": "DRINK MAYE",
       "team_id": 2,
       "rank": 5,
-      "score": 94,
-      "vorp": 103.25
+      "score": 96,
+      "vorp": 105.59
     },
     {
       "team": "The Jackson 5",
       "team_id": 10,
       "rank": 6,
       "score": 89,
-      "vorp": 97.64
-    },
-    {
-      "team": "The Standard",
-      "team_id": 6,
-      "rank": 7,
-      "score": 87,
-      "vorp": 95.6
+      "vorp": 97.43
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
-      "rank": 8,
+      "rank": 7,
       "score": 87,
-      "vorp": 95.41
+      "vorp": 95.28
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
+      "rank": 8,
+      "score": 87,
+      "vorp": 94.8
+    },
+    {
+      "team": "The Standard",
+      "team_id": 6,
       "rank": 9,
       "score": 86,
-      "vorp": 94.45
+      "vorp": 93.65
     },
     {
       "team": "The Jahmyr Gibbies",
       "team_id": 8,
       "rank": 10,
-      "score": 72,
-      "vorp": 79.45
+      "score": 73,
+      "vorp": 79.53
     }
   ]
 }

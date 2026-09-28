@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-28T09:40:57+00:00",
+ "fetched": "2026-09-28T15:37:59+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -24,7 +24,7 @@
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 153.34,
+     "projected": 153.39,
      "win_probability": 0.35
     }
    ]
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 130.34,
+     "projected": 130.33,
      "win_probability": 0.30000000000000004
     }
    ]
@@ -1105,9 +1105,9 @@
     "team": "LOU",
     "team_full": "Louisville Cardinals",
     "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
     "slot": "QB",
     "points": 0.0,
     "stats": {}
@@ -2563,7 +2563,7 @@
   "469439": 13.08,
   "468459": 12.19,
   "404365": 8.78,
-  "900027": 8.99,
+  "900027": 9.04,
   "470211": 30.45,
   "334043": 25.17,
   "404522": 24.28,
@@ -2645,7 +2645,7 @@
   "338689": 31.39,
   "406381": 6.73,
   "456249": 10.67,
-  "900068": 6.58,
+  "900068": 6.57,
   "448820": 15.12,
   "338839": 13.12,
   "457893": 17.01,

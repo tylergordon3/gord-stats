@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T09:40:43+00:00",
+ "fetched": "2026-09-28T15:37:44+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -782,14 +782,6 @@
    "name": "Derrick Henry",
    "pos": "RB"
   },
-  "6904": {
-   "pts": 18.75,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Jalen Hurts",
-   "pos": "QB"
-  },
   "11564": {
    "pts": 18.57,
    "opp": "JAX",
@@ -804,6 +796,14 @@
    "team": "NO",
    "injury": "",
    "name": "Tyler Shough",
+   "pos": "QB"
+  },
+  "6904": {
+   "pts": 18.26,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Jalen Hurts",
    "pos": "QB"
   },
   "8144": {
@@ -910,6 +910,14 @@
    "name": "Jaylen Warren",
    "pos": "RB"
   },
+  "4866": {
+   "pts": 16.14,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Saquon Barkley",
+   "pos": "RB"
+  },
   "9224": {
    "pts": 16.08,
    "opp": "PIT",
@@ -925,14 +933,6 @@
    "injury": "",
    "name": "Garrett Wilson",
    "pos": "WR"
-  },
-  "4866": {
-   "pts": 15.93,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Saquon Barkley",
-   "pos": "RB"
   },
   "12527": {
    "pts": 15.9,
@@ -966,14 +966,6 @@
    "name": "Christian Watson",
    "pos": "WR"
   },
-  "7525": {
-   "pts": 15.57,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "DeVonta Smith",
-   "pos": "WR"
-  },
   "7588": {
    "pts": 15.41,
    "opp": "BAL",
@@ -981,6 +973,14 @@
    "injury": "",
    "name": "Javonte Williams",
    "pos": "RB"
+  },
+  "7525": {
+   "pts": 15.27,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "DeVonta Smith",
+   "pos": "WR"
   },
   "9487": {
    "pts": 15.25,
@@ -1094,6 +1094,14 @@
    "name": "Malik Nabers",
    "pos": "WR"
   },
+  "6790": {
+   "pts": 13.68,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "D'Andre Swift",
+   "pos": "RB"
+  },
   "6801": {
    "pts": 13.53,
    "opp": "PIT",
@@ -1133,14 +1141,6 @@
    "injury": "",
    "name": "Dalton Kincaid",
    "pos": "TE"
-  },
-  "6790": {
-   "pts": 13.22,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "D'Andre Swift",
-   "pos": "RB"
   },
   "11604": {
    "pts": 13.04,
@@ -1439,7 +1439,7 @@
    "pos": "WR"
   },
   "12519": {
-   "pts": 9.53,
+   "pts": 9.69,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
@@ -1494,6 +1494,14 @@
    "name": "Michael Pittman",
    "pos": "WR"
   },
+  "9486": {
+   "pts": 9.38,
+   "opp": "CHI",
+   "team": "PHI",
+   "injury": "",
+   "name": "Dontayvion Wicks",
+   "pos": "WR"
+  },
   "SEA": {
    "pts": 9.33,
    "opp": "WAS",
@@ -1518,14 +1526,6 @@
    "name": "Stefon Diggs",
    "pos": "WR"
   },
-  "9486": {
-   "pts": 9.18,
-   "opp": "CHI",
-   "team": "PHI",
-   "injury": "",
-   "name": "Dontayvion Wicks",
-   "pos": "WR"
-  },
   "9756": {
    "pts": 9.18,
    "opp": "TB",
@@ -1543,7 +1543,7 @@
    "pos": "DEF"
   },
   "12517": {
-   "pts": 9.05,
+   "pts": 9.11,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
@@ -1630,6 +1630,14 @@
    "name": "Cam Little",
    "pos": "K"
   },
+  "11620": {
+   "pts": 8.27,
+   "opp": "PHI",
+   "team": "CHI",
+   "injury": "",
+   "name": "Rome Odunze",
+   "pos": "WR"
+  },
   "11586": {
    "pts": 8.23,
    "opp": "DEN",
@@ -1646,16 +1654,8 @@
    "name": "San Francisco 49ers",
    "pos": "DEF"
   },
-  "11620": {
-   "pts": 8.1,
-   "opp": "PHI",
-   "team": "CHI",
-   "injury": "",
-   "name": "Rome Odunze",
-   "pos": "WR"
-  },
   "12534": {
-   "pts": 8.08,
+   "pts": 7.96,
    "opp": "PHI",
    "team": "CHI",
    "injury": "",
@@ -1981,8 +1981,8 @@
    "10236": 11.6245828,
    "11620": 9.94460502,
    "8131": 12.24866153,
-   "7611": 12.05243524,
    "12529": 10.5042672,
+   "7611": 12.05243524,
    "11560": 0.0,
    "12519": 11.16368303,
    "421": 15.72953359,
@@ -1995,8 +1995,8 @@
    "PHI": 8.02482423,
    "7523": 17.47131556,
    "4199": 13.64445387,
-   "8259": 9.10295946,
    "13279": 11.75330639,
+   "8259": 9.10295946,
    "2449": 10.81243045,
    "11786": 8.68358261,
    "5045": 10.93605996,
@@ -2038,8 +2038,8 @@
    "11834": 11.50911625,
    "8142": 0.0,
    "11581": 8.62676561,
-   "8136": 9.29832238,
    "5001": 10.98839866,
+   "8136": 9.29832238,
    "8134": 10.40480612,
    "KC": 6.32169788,
    "8126": 8.00417237,
@@ -2047,8 +2047,8 @@
    "13298": 10.97363256,
    "7002": 9.17550306,
    "9753": 0.0,
-   "DET": 6.63192069,
    "9486": 9.89671268,
+   "DET": 6.63192069,
    "7839": 7.80356722,
    "12487": 10.5998239,
    "11435": 8.89437391,
