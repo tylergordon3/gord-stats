@@ -1,0 +1,9 @@
+# Every page is public and rebuilt daily. Kept out: the JSON API (Pages
+# Functions), and the two pages that only mean something signed in.
+User-agent: *
+Disallow: /api/
+Disallow: /auth/
+Disallow: /profile/
+Disallow: /fantasy/sync/
+
+Sitemap: https://www.gordstats.com/sitemap.xml

@@ -1,0 +1,21 @@
+---
+layout: null
+# Built from site.pages at every Jekyll build, so a new section page is listed
+# the day it first renders - no plugin (jekyll-sitemap would be a new gem on
+# the Pi) and no list to keep. Left out: the 404 page, the signed-in pages
+# robots.txt already closes, and anything that is not a page (the JSON and
+# schedule fragments have no front matter, so they are not in site.pages).
+# No <lastmod>: most pages are rebuilt every day and the dated archives never
+# change, so one build time for all of them would say nothing true.
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- assign skip = "/404.html,/profile/,/fantasy/sync/" | split: "," %}
+{%- for page in site.pages %}
+{%- assign last = page.url | slice: -1 %}
+{%- assign ext = page.url | slice: -5, 5 %}
+{%- if last != "/" and ext != ".html" %}{% continue %}{% endif %}
+{%- if skip contains page.url or page.sitemap == false %}{% continue %}{% endif %}
+  <url><loc>{{ page.url | absolute_url | xml_escape }}</loc></url>
+{%- endfor %}
+</urlset>
