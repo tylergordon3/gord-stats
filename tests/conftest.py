@@ -19,6 +19,14 @@ CSS = DOCS / "assets" / "css" / "custom.css"
 
 sys.path.insert(0, str(SRC))
 
+# Sleeper's NFL state is read at import (fantasy.data_manager's season string,
+# through fantasy.util._sleeper_state). Tests start from the calendar fallback
+# that function settles on when Sleeper is unreachable - which, under the
+# network guard below, it always is - instead of retrying a blocked request.
+import fantasy.util as _fantasy_util  # noqa: E402
+
+_fantasy_util._state = {}
+
 # The generated pages are no longer committed (see .gitignore): the Pi rebuilds
 # them on every run and uploads them straight to Cloudflare, so keeping ~100 MB
 # of history a month so this PC could read them was the wrong trade. Tests
@@ -137,3 +145,29 @@ def monkeypatch_module():
     patch = pytest.MonkeyPatch()
     yield patch
     patch.undo()
+
+
+# No test reaches the internet. A test that did - a page builder calling
+# yahoo.league() with a stale cache - refetched live settings and rewrote
+# data/cfb/league_2026.json, a file the Pi commits, on every full run. The
+# browser tests talk to a local Chromium, so loopback stays open.
+_LOOPBACK = ("127.", "::1", "localhost")
+
+
+@pytest.fixture(autouse=True)
+def _no_network(monkeypatch):
+    import socket
+    real = socket.socket.connect
+
+    def connect(self, address):
+        host = address[0] if isinstance(address, tuple) else str(address)
+        if isinstance(host, str) and not host.startswith(_LOOPBACK) and self.family in (
+                socket.AF_INET, socket.AF_INET6):
+            import os as _os
+            if _os.environ.get("NETLOG"):
+                with open(_os.environ["NETLOG"], "a") as log:
+                    log.write(f"{_os.environ.get('PYTEST_CURRENT_TEST', '?')} {host}\n")
+            raise OSError(f"tests do not reach the network ({host})")
+        return real(self, address)
+    monkeypatch.setattr(socket.socket, "connect", connect)
+    yield
