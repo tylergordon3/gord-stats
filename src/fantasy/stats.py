@@ -4,8 +4,13 @@ kicker and DST scoring.
 
 Canonical implementation: py/player_db.get() delegates here, and the src/ site
 pages (draft, ...) build on it. Identity (sleeper_id) is attached via an exact
-gsis_id join to the registry - no fuzzy name matching.
+gsis_id join to the registry; a player whose registry entry has the gsis_id but
+not the Sleeper id - the registry splits a few in-season arrivals in two - is
+matched on his exact name (suffix aside) and team, when that pair is unique.
+No fuzzy name matching.
 """
+import re
+
 import nflreadpy as nfl
 import pandas as pd
 
@@ -117,13 +122,45 @@ def player_points(season=None) -> pd.DataFrame:
     players.loc[is_k, "fantasy_points"] = kicker_points(players[is_k])
     players.loc[is_k, "fantasy_points_ppr"] = players.loc[is_k, "fantasy_points"]
 
-    # Exact Sleeper id via gsis_id (nflverse player_id IS gsis_id).
-    reg = load_registry()[["gsis_id", "sleeper_id"]]
+    # Exact Sleeper id via gsis_id (nflverse player_id IS gsis_id). Neither
+    # side's missing ids take part: pandas matches NaN keys to each other, so
+    # one nflverse row with no player id joined every registry row with no
+    # gsis_id - 3,279 zero-point "games" a week, 9,837 rows in three weeks of
+    # 2026. `validate` stops any key doing that again.
+    reg = load_registry()
+    by_gsis = reg.dropna(subset=["gsis_id"]).drop_duplicates("gsis_id")[["gsis_id", "sleeper_id"]]
+    players = players[players["player_id"].notna()].copy()
     players["gsis_id"] = players["player_id"].astype(str)
-    players = players.merge(reg, on="gsis_id", how="left").rename(
+    players = players.merge(by_gsis, on="gsis_id", how="left", validate="m:1").rename(
         columns={"player_id": "nflstats_id"})
+    players["sleeper_id"] = _by_name(players, reg)
 
     return pd.concat([players, defense_points(season)], ignore_index=True)
+
+
+_SUFFIX = re.compile(r"\b(jr|sr|ii|iii|iv|v)\b")
+
+
+def _name_team(names: pd.Series, teams: pd.Series) -> pd.Series:
+    key = (names.fillna("").str.lower().str.replace(r"[.'-]", "", regex=True)
+           .str.replace(_SUFFIX, "", regex=True).str.split().str.join(" "))
+    return key + "|" + teams.fillna("").astype(str)
+
+
+def _by_name(players: pd.DataFrame, reg: pd.DataFrame) -> pd.Series:
+    """sleeper_id, with the gaps filled by an exact name-and-team match against
+    registry entries that have one - only where that pair is unique."""
+    out = players["sleeper_id"].copy()
+    missing = out.isna()
+    if not missing.any():
+        return out
+    known = reg.dropna(subset=["sleeper_id"])
+    keys = _name_team(known["full_name"], known["team"])
+    unique = pd.Series(known["sleeper_id"].to_numpy(), index=keys.to_numpy())
+    unique = unique[~unique.index.duplicated(keep=False)]
+    wanted = _name_team(players.loc[missing, "player_display_name"], players.loc[missing, "team"])
+    out.loc[missing] = wanted.map(unique).to_numpy()
+    return out
 
 
 def get(week, season=None) -> pd.DataFrame:
