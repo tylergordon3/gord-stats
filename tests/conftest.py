@@ -171,3 +171,24 @@ def _no_network(monkeypatch):
         return real(self, address)
     monkeypatch.setattr(socket.socket, "connect", connect)
     yield
+
+
+# ...and no test depends on how old a cache is. The page builders refetch a
+# cached feed once it passes its age (Yahoo's board every few hours), so the
+# same test passed in the morning and failed under the guard above by night.
+# Any cache on disk is fresh here; a test that means to exercise the refetch
+# patches these itself.
+_FRESHNESS = [("cfb.yahoo", "_is_fresh"), ("cfb.espn", "_is_fresh"), ("cfb.players", "_is_fresh"),
+              ("cfb.cfbd", "_fresh"), ("fantasy.league.adp", "_is_fresh")]
+
+
+@pytest.fixture(autouse=True)
+def _caches_never_age(monkeypatch):
+    import importlib
+    for module, name in _FRESHNESS:
+        try:
+            mod = importlib.import_module(module)
+        except Exception:                                   # noqa: BLE001
+            continue
+        monkeypatch.setattr(mod, name, lambda path, *_a, **_k: path.exists())
+    yield
