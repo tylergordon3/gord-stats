@@ -12,6 +12,9 @@
  "start_date": "2026-09-03",
  "end_date": "2026-11-28",
  "playoff_start_week": 11,
+ "num_playoff_teams": 6,
+ "uses_median_score": true,
+ "uses_playoff_reseeding": true,
  "roster": [
   {
    "position": "QB",
