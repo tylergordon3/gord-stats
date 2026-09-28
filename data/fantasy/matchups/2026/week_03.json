@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T01:00:59+00:00",
+ "fetched": "2026-09-28T01:10:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -610,7 +610,7 @@
     {
      "roster_id": 5,
      "matchup_id": 5,
-     "points": 91.74,
+     "points": 98.74,
      "starters": [
       "4881",
       "9226",
@@ -645,14 +645,14 @@
       "1466": 13.9,
       "2133": 3.2,
       "3451": 5.0,
-      "421": 7.64,
+      "421": 8.36,
       "4881": 20.44,
       "5967": 13.6,
       "6786": 20.2,
       "6790": 0.0,
       "7553": 1.5,
       "8142": 0.0,
-      "8150": 2.7,
+      "8150": 9.7,
       "8167": 22.6,
       "9226": 1.7,
       "SEA": 2.0
@@ -1706,7 +1706,7 @@
    "pts": 7.68,
    "opp": "DEN",
    "team": "LAR",
-   "injury": "",
+   "injury": "Questionable",
    "name": "Terrance Ferguson",
    "pos": "TE"
   },
@@ -3620,13 +3620,13 @@
    "gp": 1.0
   },
   "421": {
-   "pass_yd": 68.0,
+   "pass_yd": 66.0,
    "pass_td": 1.0,
    "rush_att": 1.0,
-   "rush_yd": 9.0,
-   "pts_ppr": 7.62,
-   "pts_half_ppr": 7.62,
-   "pts_std": 7.62,
+   "rush_yd": 10.0,
+   "pts_ppr": 7.64,
+   "pts_half_ppr": 7.64,
+   "pts_std": 7.64,
    "gp": 1.0
   },
   "11632": {
@@ -3722,6 +3722,17 @@
    "pts_ppr": 6.0,
    "pts_half_ppr": 6.0,
    "pts_std": 6.0,
+   "gp": 1.0
+  },
+  "8150": {
+   "rush_att": 5.0,
+   "rush_yd": 45.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 5.0,
+   "pts_ppr": 6.0,
+   "pts_half_ppr": 5.5,
+   "pts_std": 5.0,
    "gp": 1.0
   },
   "11564": {
@@ -3898,6 +3909,17 @@
    "pts_std": 1.6,
    "gp": 1.0
   },
+  "12489": {
+   "rush_att": 1.0,
+   "rush_yd": 4.0,
+   "rec": 2.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 11.0,
+   "pts_ppr": 3.5,
+   "pts_half_ppr": 2.5,
+   "pts_std": 1.5,
+   "gp": 1.0
+  },
   "8131": {
    "rec": 2.0,
    "rec_tgt": 5.0,
@@ -3925,23 +3947,21 @@
    "pts_std": 0.9,
    "gp": 1.0
   },
-  "8150": {
-   "rush_att": 3.0,
-   "rush_yd": 12.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 6.0,
-   "pts_ppr": 2.8,
-   "pts_half_ppr": 2.3,
-   "pts_std": 1.8,
-   "gp": 1.0
-  },
   "SEA": {
    "pts_allow": 27.0,
    "sack": 2.0,
    "pts_ppr": 2.0,
    "pts_half_ppr": 2.0,
    "pts_std": 2.0,
+   "gp": 1.0
+  },
+  "5045": {
+   "rec": 1.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 10.0,
+   "pts_ppr": 2.0,
+   "pts_half_ppr": 1.5,
+   "pts_std": 1.0,
    "gp": 1.0
   },
   "11631": {
@@ -3969,15 +3989,6 @@
    "pts_ppr": 1.7,
    "pts_half_ppr": 1.2,
    "pts_std": 0.7,
-   "gp": 1.0
-  },
-  "12489": {
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 6.0,
-   "pts_ppr": 1.6,
-   "pts_half_ppr": 1.1,
-   "pts_std": 0.6,
    "gp": 1.0
   },
   "8134": {
@@ -4034,6 +4045,13 @@
    "pts_std": 1.0,
    "gp": 1.0
   },
+  "11563": {
+   "pass_yd": 21.0,
+   "pts_ppr": 0.84,
+   "pts_half_ppr": 0.84,
+   "pts_std": 0.84,
+   "gp": 1.0
+  },
   "11586": {
    "rush_att": 2.0,
    "rush_yd": 6.0,
@@ -4042,29 +4060,20 @@
    "pts_std": 0.6,
    "gp": 1.0
   },
-  "11563": {
-   "pass_yd": 6.0,
-   "pts_ppr": 0.24,
-   "pts_half_ppr": 0.24,
-   "pts_std": 0.24,
+  "6806": {
+   "rush_att": 2.0,
+   "rush_yd": 2.0,
+   "pts_ppr": 0.2,
+   "pts_half_ppr": 0.2,
+   "pts_std": 0.2,
    "gp": 1.0
   },
   "7526": {
-   "gp": 1.0
-  },
-  "5045": {
+   "rec_tgt": 2.0,
    "gp": 1.0
   },
   "12487": {
    "rec_tgt": 1.0,
-   "gp": 1.0
-  },
-  "6806": {
-   "rush_att": 1.0,
-   "rush_yd": -2.0,
-   "pts_ppr": -0.2,
-   "pts_half_ppr": -0.2,
-   "pts_std": -0.2,
    "gp": 1.0
   }
  },
@@ -4073,22 +4082,22 @@
    "game_id": "401872962",
    "date": "2026-09-28T00:20Z",
    "state": "in",
-   "detail": "1:19 - 1st",
-   "period": 1,
-   "clock": "1:19",
+   "detail": "13:17 - 2nd",
+   "period": 2,
+   "clock": "13:17",
    "home": "DEN",
    "away": "LAR",
    "home_score": 0.0,
-   "away_score": 7.0,
+   "away_score": 10.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
    "tv": "NBC",
    "weather": {
-    "temp": 76.0,
-    "cond": 6,
-    "text": "Mostly cloudy",
+    "temp": 78.0,
+    "cond": 7,
+    "text": "Cloudy",
     "indoors": false
    }
   },
