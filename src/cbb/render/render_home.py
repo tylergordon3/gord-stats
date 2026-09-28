@@ -370,7 +370,10 @@ def _cfb_graphics(today: date) -> str:
     """
     if not (date(today.year, 8, 20) <= today <= date(today.year, 12, 20)):
         return ""
-    return """
+    # The reader's own teams first - their games, our pick and the live score
+    # (gordstats.my_teams_today) - then the league-wide cards.
+    from gordstats import my_teams_today
+    return my_teams_today.section() + """
 <section class="home-card">
   <div class="home-card-head">
     <h2>Top 25 Comparison</h2>

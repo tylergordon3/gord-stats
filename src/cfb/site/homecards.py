@@ -607,7 +607,60 @@ def bets_html(now: datetime = None) -> str:
             + note + "</div>")
 
 
+WEEK_GAMES_OUT = paths.DOCS / "cfb" / "week-games.json"
+WEEK_GAMES_DAYS = 7
+
+
+def week_games(now: datetime = None) -> dict:
+    """Every FBS game from the start of today (ET) to a week out, with our
+    prediction and the book's line, for the home page's "My teams" card
+    (gordstats.my_teams_today) - which picks out the reader's starred teams in
+    the browser and polls the live score itself. `teams` names every team on
+    the schedule, so a starred team with no game can be named on its bye."""
+    import json
+    now = now or datetime.now(ET)
+    start = now.astimezone(ET).replace(hour=0, minute=0, second=0, microsecond=0)
+    frame, _model, _names = predict.season()
+    frame = frame[(frame["date"] >= start) & (frame["date"] < now + timedelta(days=WEEK_GAMES_DAYS))]
+    board = odds_mod.latest(SEASON)
+    if not board.empty and not frame.empty:
+        frame = frame.merge(board[odds_mod.KEY + ["spread", "total"]].rename(
+            columns={"spread": "book_spread", "total": "book_total"}), on=odds_mod.KEY, how="left")
+
+    def num(v, places=1):
+        return None if v is None or pd.isna(v) else round(float(v), places)
+
+    games = []
+    for _, g in frame.sort_values("date").iterrows():
+        q = espn.query(int(g["week"]))
+        games.append({
+            "id": str(g["game_id"]), "week": q["week"], "seasontype": q["seasontype"],
+            "kickoff": g["date"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "time_known": bool(g.get("time_valid", True)) if not pd.isna(g.get("time_valid", True)) else True,
+            "home": {"id": str(g["home_id"]), "name": g["home"], "rank": num(g.get("home_rank"), 0),
+                     "pred": num(g.get("pred_home")), "score": num(g.get("home_score"), 0)},
+            "away": {"id": str(g["away_id"]), "name": g["away"], "rank": num(g.get("away_rank"), 0),
+                     "pred": num(g.get("pred_away")), "score": num(g.get("away_score"), 0)},
+            "neutral": bool(g.get("neutral")), "tv": g.get("tv") or "",
+            "note": g.get("note") or "", "state": g.get("state") or "pre",
+            "home_win": num(g.get("home_win_prob"), 3),
+            "book_spread": num(g.get("book_spread")), "book_total": num(g.get("book_total")),
+        })
+    teams = {}
+    full = espn.schedule()
+    for side in ("home", "away"):
+        for tid, name in zip(full[f"{side}_id"].astype(str), full[side]):
+            if not tid.startswith("-"):
+                teams.setdefault(tid, name)
+    return {"season": SEASON, "generated": now.astimezone(ET).isoformat(timespec="minutes"),
+            "games": games, "teams": teams}
+
+
 def generate() -> None:
+    import json
+    WEEK_GAMES_OUT.parent.mkdir(parents=True, exist_ok=True)
+    WEEK_GAMES_OUT.write_text(json.dumps(week_games(), separators=(",", ":")), encoding="utf-8")
+    print(f"Wrote CFB week games -> {WEEK_GAMES_OUT}")
     TOP25_OUT.parent.mkdir(parents=True, exist_ok=True)
     TOP25_OUT.write_text(top25_html(), encoding="utf-8")
     print(f"Wrote CFB top 25 card -> {TOP25_OUT}")

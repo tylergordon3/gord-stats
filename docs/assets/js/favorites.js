@@ -49,6 +49,9 @@
     } catch (e) {
       /* Storage full or blocked. The stars still work for this page view. */
     }
+    // Anything drawn from the stars (the home page's "My teams" card) redraws:
+    // a star set elsewhere on the page, or a list the account sync brought in.
+    try { document.dispatchEvent(new CustomEvent("gs:favorites")); } catch (e) { /* old browser */ }
   }
 
   function readFilter() {
