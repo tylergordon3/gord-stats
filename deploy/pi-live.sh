@@ -146,7 +146,13 @@ main() {
   bundle exec jekyll build --source docs --destination docs/_site --quiet
 
   log "deploying to Cloudflare Pages ($PROJECT)"
-  wrangler pages deploy docs/_site --project-name="$PROJECT" --commit-dirty=true >/dev/null
+  # The daily run's own time rides along, so the freshness check sees it.
+  local DAILY_AT="" DAILY_RC="null"
+  if [ -f "$PWD/.last_daily_publish" ]; then
+    read -r DAILY_AT DAILY_RC < "$PWD/.last_daily_publish" || true
+  fi
+  write_status "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$DAILY_AT" "$DAILY_RC"
+  publish "$PROJECT" >/dev/null
 
   ########################################
   # COMMIT: hourly for WNBA, at once for fantasy
@@ -180,5 +186,9 @@ main() {
 }
 
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
+
+# publish (the upload, retried) and write_status (docs/_site/status.json).
+# shellcheck source=deploy/publish.sh
+source "$(dirname "${BASH_SOURCE[0]}")/publish.sh"
 
 main "$@"

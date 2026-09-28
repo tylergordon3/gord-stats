@@ -1,0 +1,26 @@
+# Opens an issue when the live site stops being refreshed, and closes it when
+# it recovers. See deploy/freshness.py.
+name: freshness
+
+on:
+  schedule:
+    - cron: "23 */2 * * *"
+  workflow_dispatch:
+
+# Reads the public site; writes nothing but the one issue.
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: deploy/freshness.py
+          sparse-checkout-cone-mode: false
+      - name: Check the live site's status.json
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 deploy/freshness.py

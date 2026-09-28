@@ -160,7 +160,11 @@ main() {
   fi
 
   log "deploying to Cloudflare Pages ($PROJECT)"
-  wrangler pages deploy docs/_site --project-name="$PROJECT" --commit-dirty=true
+  local STAMP_AT
+  STAMP_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  write_status "$STAMP_AT" "$STAMP_AT" "$SECTIONS_RC"
+  publish "$PROJECT"
+  printf '%s %s\n' "$STAMP_AT" "$SECTIONS_RC" > "$PWD/.last_daily_publish"
 
   ########################################
   # COMMIT GENERATED DATA
@@ -194,6 +198,10 @@ main() {
 }
 
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
+
+# publish (the upload, retried) and write_status (docs/_site/status.json).
+# shellcheck source=deploy/publish.sh
+source "$(dirname "${BASH_SOURCE[0]}")/publish.sh"
 
 # `git pull --rebase` that backs out on a conflict instead of leaving the repo
 # mid-rebase, where it wedges this script and pi-live.sh alike until someone
