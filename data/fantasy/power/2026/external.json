@@ -6,7 +6,7 @@
   "note": "Fetched on each build from getLeagueAnalysisJSON?key=<league_key>, which answers anonymously; see fantasy.league.external.",
   "league_key": "nfl~9b42e042-983c-4e34-b3fa-62e91bf82f79",
   "season": 2026,
-  "captured": "2026-09-27",
+  "captured": "2026-09-28",
   "teams": [
     {
       "team": "CCAM’s Convicts",
