@@ -30,7 +30,14 @@ defaults:
   - scope:
       path: ""
     values:
-      image: /assets/images/brand/icon-512.png
+      # The link preview in a text or a chat: a wide card, since the tags
+      # jekyll-seo-tag writes ask for a large image (the square icon was drawn
+      # cropped). `logo` above stays the icon - that one is the site's mark.
+      image:
+        path: /assets/images/brand/share.png
+        width: 1200
+        height: 630
+        alt: GordStats - college football, NFL, college basketball and fantasy football
 
 url: "https://www.gordstats.com"
 baseurl: ""
