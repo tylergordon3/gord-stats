@@ -244,8 +244,11 @@ Everything below is tested; the commits carry the detail.
       never depend on a cache's age.
 - [x] **"My teams this week" on Home** (b3747f44e): starred college teams' games,
       our pick, the line and the live score.
-- [ ] My teams: add CBB games from tipoff (Nov 3) - the stars exist; the card needs
-      a day's games and predictions as JSON, like week-games.json.
+- [x] **My teams carries college basketball** (a897a3fa4): the day's games from the
+      live scoreboard Worker, GordStats' ranks and the line, beside football from Nov 2.
+      CBB has no per-game model, so a rank stands where football shows a pick.
+- [x] **CBB scoreboard payload** (cf39e5e30): every game carried Torvik's whole table
+      (~92 KB, unread) - ~30 MB on opening night, past KV's 25 MB limit.
 - [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
       ratings (it answers 400 until then).
 - [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
