@@ -71,17 +71,10 @@ JS = """{% raw %}<script>
 (function(){
   var host=document.getElementById('dr-host');
   if(!host||!window.GSL) return;
+  // The reader's league, or - with none picked, or "this site's league" -
+  // this site's own: its drafts are Sleeper's either way.
   var have=GSL.saved();
-  if(!have||!have.id||have.site){
-    // Drawn twice: once now, and again when the account call settles, because
-    // whether to offer a sign-in or a league picker is not known at first paint.
-    var none=function(){ host.innerHTML=window.GSLeague
-      ? GSLeague.empty('dr-none','drafts')
-      : '<p class="dr-none">Pick a league above to see its drafts.</p>'; };
-    none();
-    if(window.GSLeague&&GSLeague.ready) GSLeague.ready.then(none,none);
-    return;
-  }
+  if(!have||!have.id) have={id:'__SITE_LEAGUE__', name:null, site:true};
 
   var API='https://api.sleeper.app/v1', MAX_SEASONS=12;
   var state={seasons:[], basis:0};
@@ -288,3 +281,11 @@ JS = """{% raw %}<script>
 
 def section() -> str:
     return CSS + "<div class='dr' id='dr-host'></div>"
+
+
+def _site_league() -> str:
+    from fantasy.config import UPCOMING_LEAGUE_ID
+    return str(UPCOMING_LEAGUE_ID)
+
+
+JS = JS.replace("__SITE_LEAGUE__", _site_league())

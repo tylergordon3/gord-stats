@@ -31,7 +31,7 @@ from fantasy.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
 from fantasy.site import layout, styles, team_profiles, upcoming
-from gordstats import my_draft, my_history, my_league, my_league_data
+from gordstats import my_history, my_home, my_league, my_league_data
 from gordstats.frontmatter import add_front_matter
 
 OUTPUT = paths.WEB_FANTASY_HOME
@@ -144,14 +144,17 @@ def teams_section() -> str:
 
 
 def mine_section() -> str:
-    """The reader's own league: its history, and its drafts."""
-    return ("<div id='lh-mine' hidden>"
-            + my_history.section() + my_draft.section()
-            + "<p class='lh-more'>Both of these also have pages of their own: "
-            + layout.internal_link("/fantasy/history/", "League History")
-            + " and "
-            + layout.internal_link("/fantasy/draft-review/", "your league's drafts")
-            + ".</p></div>")
+    """The reader's own league, in this page's own format (gordstats.my_home):
+    All-Time Metrics and the team profiles, drawn from Sleeper in the browser.
+    It used to be a different page - champions, a table per season, an
+    all-time table and a head-to-head grid, one after another - longer,
+    plainer, and not what everybody else was looking at."""
+    nav = layout.section_nav([("mh-metrics-h", "All-Time Metrics"), ("mh-teams-h", "Teams")])
+    links = ("<p class='lh-more'>Champions, every season's table and the head-to-head grid "
+             "are on " + layout.internal_link("/fantasy/history/", "League History")
+             + "; every draft on "
+             + layout.internal_link("/fantasy/draft-review/", "Draft Review") + ".</p>")
+    return "<div id='lh-mine' hidden>" + my_home.section(nav, links) + "</div>"
 
 
 def generate(output=OUTPUT):
@@ -169,7 +172,9 @@ def generate(output=OUTPUT):
              + "</div>")
     body = (layout.HEAD + upcoming.countdown_banner() + my_league.bar()
             + mine_section() + built + my_league.takeover("lh-mine", "lh-built")
-            + my_league_data.JS + my_league.JS + my_history.JS + my_draft.JS)
+            # my_history's script carries the Sleeper reading my_home draws
+            # from (window.GSHist); its own section is not on this page.
+            + my_league_data.JS + my_league.JS + my_history.JS + my_home.JS)
 
     page = add_front_matter(body, "Fantasy Football")
     output.parent.mkdir(parents=True, exist_ok=True)

@@ -98,10 +98,15 @@ def test_the_four_sections_share_one_empty_state():
     say "connect yours" and one "sync yours"."""
     from gordstats import my_draft, my_history, my_power, my_waivers
 
-    for mod in (my_history, my_waivers, my_draft, my_power):
+    for mod in (my_waivers, my_power):
         assert "GSLeague.empty(" in mod.JS, f"{mod.__name__} still rolls its own"
         # Drawn twice, because the account state is not known at first paint.
         assert "GSLeague.ready" in mod.JS, f"{mod.__name__} never redraws"
+    # History and drafts are Sleeper's for any league, this site's included:
+    # with none picked they show this one rather than an empty state.
+    from fantasy.config import UPCOMING_LEAGUE_ID
+    for mod in (my_history, my_draft):
+        assert f"if(!have||!have.id) have={{id:'{UPCOMING_LEAGUE_ID}'" in mod.JS, mod.__name__
 
 
 def test_the_empty_state_asks_a_signed_out_reader_to_sign_in():
@@ -115,9 +120,8 @@ def test_a_section_without_the_control_still_says_something():
     that is merely less helpful."""
     from gordstats import my_history
 
-    assert "window.GSLeague\n" in my_history.JS or "window.GSLeague?" in my_history.JS \
-        or "window.GSLeague" in my_history.JS
-    assert "Pick a league above to see its history" in my_history.JS
+    # It no longer needs one: with no league picked it reads this site's.
+    assert "have={id:'" in my_history.JS
 
 
 def test_the_picker_survives_showing_this_sites_league():

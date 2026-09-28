@@ -127,22 +127,32 @@ table.sticky-table tr.me td{background:#fffbeb}
 
 JS = """{% raw %}<script>
 (function(){
-  var host=document.getElementById('hi-host');
-  if(!host||!window.GSL) return;
-  var have=GSL.saved();
-  if(!have||!have.id||have.site){
-    // Drawn twice: once now, and again when the account call settles, because
-    // whether to offer a sign-in or a league picker is not known at first paint.
-    var none=function(){ host.innerHTML=window.GSLeague
-      ? GSLeague.empty('hi-none','history')
-      : '<p class="hi-none">Pick a league above to see its history.</p>'; };
-    none();
-    if(window.GSLeague&&GSLeague.ready) GSLeague.ready.then(none,none);
-    return;
-  }
-
   var API='https://api.sleeper.app/v1';
   var MAX_SEASONS=12;
+  //: A placement game is not a meeting anybody remembers - the same two
+  //: constants fantasy.league.head_to_head uses.
+  var PLACEMENT={3:1, 5:1};
+  var MIN_SPLIT=3;          // meetings before an opponent can be a nemesis
+  //: Sleeper's own clock, so a week still being played is not read as a
+  //: result. Fetched once with the rest.
+  var STATE=null;
+  // The data layer, for League Home's reading of a reader's league
+  // (gordstats.my_home): the same seasons, game log and rules, not a copy.
+  // Declarations below are hoisted, so this works before the page's own
+  // early return.
+  window.GSHist={get:get, esc:esc, chain:chain, season:season, gameLog:gameLog,
+    logFor:logFor, splits:splits, rivalsOf:rivalsOf, managers:managers,
+    stripSvg:stripSvg,
+    loadState:function(){
+      return Promise.resolve(get('/state/nfl')).then(function(st){ STATE=st||null; }); }};
+  var host=document.getElementById('hi-host');
+  if(!host||!window.GSL) return;
+  // The reader's league, or - with none picked, or "this site's league" -
+  // this site's own: a history is Sleeper's either way, so nobody is shown
+  // an empty page.
+  var have=GSL.saved();
+  if(!have||!have.id) have={id:'__SITE_LEAGUE__', name:null, site:true};
+
   function get(path){
     return fetch(API+path).then(function(r){return r.ok?r.json():null;})
       .catch(function(){return null;});
@@ -185,7 +195,9 @@ JS = """{% raw %}<script>
       var who={};
       users.forEach(function(u){
         who[u.user_id]={team:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',
-                        manager:u.display_name||''};
+                        manager:u.display_name||'',
+                        avatar:(u.metadata&&u.metadata.avatar)
+                          ||(u.avatar?'https://sleepercdn.com/avatars/thumbs/'+u.avatar:'')};
       });
       // The championship game is the one placing first; a season still being
       // played has no bracket at all.
@@ -196,6 +208,7 @@ JS = """{% raw %}<script>
         return {roster_id:r.roster_id, owner:r.owner_id,
                 team:(who[r.owner_id]||{}).team||('Roster '+r.roster_id),
                 manager:(who[r.owner_id]||{}).manager||'',
+                avatar:(who[r.owner_id]||{}).avatar||'',
                 wins:s.wins||0, losses:s.losses||0, ties:s.ties||0,
                 pf:pts(s), pa:against(s),
                 champion:r.roster_id===championRoster};
@@ -281,11 +294,6 @@ JS = """{% raw %}<script>
       +'</tbody></table></div>';
   }
 
-  //: A placement game is not a meeting anybody remembers - the same two
-  //: constants fantasy.league.head_to_head uses.
-  var PLACEMENT={3:1, 5:1};
-  var MIN_SPLIT=3;          // meetings before an opponent can be a nemesis
-
   /** Every game anyone in this league has played, as one flat log.
    *
    *  `{season, week, kind, a, b, ap, bp}` with a and b as owner ids, because
@@ -341,10 +349,6 @@ JS = """{% raw %}<script>
       return log;
     });
   }
-
-  //: Sleeper's own clock, so a week still being played is not read as a
-  //: result. Fetched once with the rest.
-  var STATE=null;
 
   /** Is that week of that season actually over?
    *
@@ -652,7 +656,7 @@ JS = """{% raw %}<script>
   var MINE=(window.GSL&&GSL.mine?GSL.mine(have.id).uid:null)||'';
 
   host.innerHTML='<p class="hi-load">Reading '+esc(have.name||'your league')+'\\u2026</p>';
-  Promise.resolve(get('/state/nfl')).then(function(st){ STATE=st||null; })
+  GSHist.loadState()
     .then(function(){ return chain(have.id); })
     .then(function(lgs){
       if(!lgs.length) throw new Error('none');
@@ -693,3 +697,11 @@ JS = """{% raw %}<script>
 
 def section() -> str:
     return CSS + "<div class='hi' id='hi-host'></div>"
+
+
+def _site_league() -> str:
+    from fantasy.config import UPCOMING_LEAGUE_ID
+    return str(UPCOMING_LEAGUE_ID)
+
+
+JS = JS.replace("__SITE_LEAGUE__", _site_league())
