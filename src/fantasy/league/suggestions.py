@@ -44,6 +44,7 @@ def _board(year: int = UPCOMING_YEAR) -> pd.DataFrame:
         try:
             board = projections.current_form(board, year, refresh=False,
                                              through_week=through)
+            board = projections.with_sleeper(board, year, through_week=through)
         except Exception as exc:                        # noqa: BLE001
             print(f"[suggestions] preseason board only ({exc})")
     return board

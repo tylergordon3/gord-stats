@@ -725,6 +725,7 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     # Once the season is under way the rankings follow it: see
     # projections.current_form. Before kickoff this is a no-op.
     board = projections.current_form(board, year, through_week=scored)
+    board = projections.with_sleeper(board, year, through_week=scored)
     table = schedule(posted=posted)
     fixed = None
     if table:

@@ -54,6 +54,8 @@ spread) and `avail` (share of weeks available), which is exactly the triple
 """
 import argparse
 
+import functools
+
 import numpy as np
 import pandas as pd
 
@@ -650,6 +652,59 @@ def current_form(board: pd.DataFrame, year: int = UPCOMING_YEAR,
     merged["replacement"] = merged["pos"].map(_projected_replacement(merged))
     merged["vor"] = merged["mu"] - merged["replacement"]
     return merged.drop(columns=["played", "actual_ppg", "actual_sd"])
+
+
+# In season, Sleeper's weekly numbers know what the box scores cannot yet - a
+# depth chart that changed on Wednesday, a new role - and ours knows the
+# season's rate. Replayed on 2023-2025 (2,505 player-weeks), predicting the
+# mean of each player's next four weeks from what was known before the week:
+# ours 5.14 RMSE, Sleeper's own projection 5.17, half of each 5.05 - better
+# in all three seasons, the 95% interval of the gain -0.15 to -0.02. For
+# backs, receivers and tight ends: for quarterbacks it was worse (5.03 ->
+# 5.28), so they keep ours. The preseason weight (PRIOR_GAMES = 5) was the
+# best of 1-40 on the same replay.
+SLEEPER_WEIGHT = 0.5
+SLEEPER_POSITIONS = ("RB", "WR", "TE")
+SLEEPER_WEEKS = 3
+
+
+@functools.lru_cache(maxsize=None)
+def _sleeper_week(year: int, week: int) -> dict:
+    from fantasy.league import matchups as data_mod
+    return {pid: v["pts"] for pid, v in data_mod.sleeper_projections(week, year).items()}
+
+
+def with_sleeper(board: pd.DataFrame, year: int = UPCOMING_YEAR,
+                 through_week: int = 0) -> pd.DataFrame:
+    """`board` (after current_form) with each back's, receiver's and tight
+    end's rate halfway to Sleeper's: the mean of its projections for the week
+    coming up and the two before it. A bye or a player ruled out projects
+    nothing and says nothing about his rate, so only positive numbers count.
+    Before kickoff, or with Sleeper unreachable, the board is unchanged."""
+    if not through_week:
+        return board
+    upcoming = min(int(through_week) + 1, 18)
+    seen = {}
+    for week in range(max(1, upcoming - SLEEPER_WEEKS + 1), upcoming + 1):
+        try:
+            for pid, pts in _sleeper_week(int(year), week).items():
+                if pts and pts > 0:
+                    seen.setdefault(pid, []).append(pts)
+        except Exception as exc:                        # noqa: BLE001
+            print(f"[projections] Sleeper week {week} unavailable ({exc})")
+    if not seen:
+        return board
+    board = board.copy()
+    rate = board["sleeper_id"].astype(str).map(lambda pid: np.mean(seen[pid]) if pid in seen
+                                               else np.nan)
+    use = board["pos"].isin(SLEEPER_POSITIONS) & rate.notna()
+    board.loc[use, "mu"] = ((1 - SLEEPER_WEIGHT) * board.loc[use, "mu"]
+                            + SLEEPER_WEIGHT * rate[use])
+    if "basis" in board:
+        board.loc[use, "basis"] = board.loc[use, "basis"] + " + Sleeper"
+    board["replacement"] = board["pos"].map(_projected_replacement(board))
+    board["vor"] = board["mu"] - board["replacement"]
+    return board
 
 
 def completed_weeks(year: int = UPCOMING_YEAR) -> int:

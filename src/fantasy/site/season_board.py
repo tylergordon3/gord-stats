@@ -232,6 +232,7 @@ def build(year: int = UPCOMING_YEAR) -> dict:
     board = projections.load(year)
     weeks = absorbed_weeks(year)
     board = projections.current_form(board, year, through_week=weeks)
+    board = projections.with_sleeper(board, year, through_week=weeks)
     rec, past = receptions_per_week(year)
     injuries = injury_status()
 
