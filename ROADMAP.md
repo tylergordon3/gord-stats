@@ -254,6 +254,11 @@ Everything below is tested; the commits carry the detail.
       preview fetcher - both fixed in the dashboard. Then robots.txt, a sitemap
       (a8a80319b) and a wide link-preview card (f9f72c084). Optional: add the site to
       Google Search Console and submit /sitemap.xml.
+- [x] **Weekly recap + lineup accuracy, both leagues** (e3fdf872c): /fantasy/recap/ and
+      /cfb/recap/ - scores, fifteen awards, and share of the best possible lineup started
+      (week and season). NFL max points equal Sleeper's own for every team. Projection
+      awards start with the first week the pregame archive fully covers (NFL week 4,
+      CFB week 5). Possible next: the same for readers' synced leagues, in the browser.
 - [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
       ratings (it answers 400 until then).
 - [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
