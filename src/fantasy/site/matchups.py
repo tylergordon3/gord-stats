@@ -568,25 +568,21 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
         parts = s["parts"]
         theirs = (f"Sleeper <b>{ui.fmt(parts['sl'])}</b>" if have_sl
                   else f"Consensus <b>{ui.fmt(s['sp'])}</b>")
+        # Each source's numbers are on its own row under the header now
+        # (ui.source_bar); here only what the big number is, and once the
+        # week is over, what the sources had going in.
         if not started:
-            sub = f"projected · {theirs}"
+            sub = "projected"
         elif final:
             sub = f"GordStats <b>{ui.fmt(s['gs'])}</b> · {theirs}"
         else:
-            # While it is being played, each source's expected final - the
-            # points so far plus the unplayed share of its projections - and
-            # the live poll keeps them moving. The pre-game totals were a
-            # number fixed at kickoff sitting under a score that was not.
-            sub = ("<span title='Expected finals: points so far plus the unplayed share "
-                   "of each projection'>GordStats " + ui.live_total(s["key"], "gs", s["exp"])
-                   + (" · Sleeper " + ui.live_total(s["key"], "sleeper", parts["sl_exp"])
-                      if have_sl else f" · Consensus <b>{ui.fmt(s['sp'])}</b>") + "</span>")
+            sub = ""
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_avatar(s["team"])}'
                 f'<div><div class="nm">{_label(s["team"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
                 f'<div class="num{cls}" data-num="{s["key"]}" data-mu="{anchor}" '
                 f'data-val="{s["pts"] if s["pts"] is not None else ""}">{big}</div>'
-                f'<div class="sub">{sub}</div></div></div>')
+                + (f'<div class="sub">{sub}</div>' if sub else "") + '</div></div>')
 
     mid = "Final" if final else ("Live" if started else "Preview")
     # Our chance for each side: the expected finals against the spread that
@@ -594,12 +590,18 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
     # Sleeper's is the same arithmetic on Sleeper's projections - Sleeper
     # publishes none of its own - so the two bars differ only in whose
     # numbers they believe.
+    # While it is being played the finals are expected ones - the points so
+    # far plus the unplayed share of each source's projections - and the live
+    # poll keeps them moving: the pre-game totals were a number fixed at
+    # kickoff sitting under a score that was not.
     wp_a = win_probability(a["exp"], a["var"], b["exp"], b["var"])
     a["wp"], b["wp"] = wp_a, 1 - wp_a
-    bar = "" if final else ui.win_bar(wp_a, 1 - wp_a, "GordStats", a["key"], b["key"])
-    if have_sl and not final:
+    rows = [ui.source_bar("GordStats", "gs", a["key"], b["key"], a["exp"], b["exp"], wp_a)]
+    if have_sl:
         ws = win_probability(a["parts"]["sl_exp"], a["var"], b["parts"]["sl_exp"], b["var"])
-        bar += ui.win_bar(ws, 1 - ws, "Sleeper", a["key"], b["key"], src="sleeper")
+        rows.append(ui.source_bar("Sleeper", "sleeper", a["key"], b["key"], a["parts"]["sl_exp"],
+                                  b["parts"]["sl_exp"], ws, follows="sleeper", alt=True))
+    bar = "" if final else ui.source_bars(rows, started)
     edge = a["gs"] - b["gs"]
     ids = [str(p) for s in m["sides"] for p in (s.get("players") or [])]
     honest = pregame.complete(ctx["wk"].loc[ctx["wk"].index.intersection(ids)])

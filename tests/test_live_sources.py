@@ -22,11 +22,14 @@ from test_my_team_planner import CHROME, Browser
 needs_chrome = pytest.mark.skipif(CHROME is None, reason="no Chromium to run the JS in")
 
 
-def test_a_bar_with_a_source_is_tagged_and_one_without_is_not():
-    tagged = ui.win_bar(0.6, 0.4, "Sleeper", "1", "2", src="sleeper")
-    assert tagged.count('data-src="sleeper"') == 4
-    assert "data-src" not in ui.win_bar(0.6, 0.4, "GordStats", "1", "2")
-    assert ui.live_total("7", "gs", 131.26) == "<b data-tlive='7' data-src='gs'>131.3</b>"
+def test_a_source_row_carries_its_finals_and_follows_its_own_chance():
+    row = ui.source_bar("Sleeper", "sleeper", "1", "2", 131.26, 120.0, 0.6,
+                        follows="sleeper", alt=True)
+    assert row.count('data-src="sleeper"') == 4, "both bar halves and both percentages"
+    assert "<b class='mu-src-a hi' data-tlive='1' data-src='sleeper'>131.3</b>" in row
+    assert "mu-src alt" in row.replace("mu-src-sleeper ", "")
+    plain = ui.source_bar("GordStats", "gs", "1", "2", 100, 110, 0.4)
+    assert 'data-src="' not in plain and "<b class='mu-src-b hi'" in plain
 
 
 def test_win_probability_is_even_on_level_finals_and_floored_when_all_but_over():
@@ -60,8 +63,8 @@ def test_the_college_poll_moves_both_totals_and_both_bars():
     row = ("<tr class='starter' data-pid='{0}' data-gid='{1}' data-side='home' "
            "data-proj='{2}' data-yproj='{3}'><td class='mu-pts'></td></tr>")
     dom = ("<div id='wk-view-5'>" + _head("AB")
-           + ui.win_bar(0.5, 0.5, "GordStats", "A", "B", src="gs")
-           + ui.win_bar(0.5, 0.5, "Yahoo", "A", "B")
+           + ui.source_bar("GordStats", "gs", "A", "B", 0, 0, 0.5, follows="gs")
+           + ui.source_bar("Yahoo", "yahoo", "A", "B", 0, 0, 0.5, alt=True)
            + _side("A", row.format("a1", "g1", 20, 16) + row.format("a2", "g2", 10, 12))
            + _side("B", row.format("b1", "g1", 15, 15) + row.format("b2", "g2", 10, 10))
            + "</div>")
@@ -78,8 +81,10 @@ def test_the_college_poll_moves_both_totals_and_both_bars():
         got = json.loads(browser.evaluate(
             "JSON.stringify({t:Array.from(document.querySelectorAll('[data-tlive]'))"
             ".map(function(e){return e.getAttribute('data-tlive')+e.getAttribute('data-src')"
-            "+'='+e.textContent;}),w:Array.from(document.querySelectorAll('.mu-wp i'))"
-            ".map(function(e){return e.style.width;})})"))
+            "+'='+e.textContent;}),w:Array.from(document.querySelectorAll('.mu-bar i'))"
+            ".map(function(e){return e.style.width;}),hi:Array.from(document.querySelectorAll("
+            "'.mu-src .hi')).map(function(e){return e.getAttribute('data-tlive')"
+            "+e.getAttribute('data-src');})})"))
     finally:
         browser.close()
     # A: 10 + 20/2 + 8 ours, 10 + 16/2 + 8 Yahoo's; B: 6 + 15/2 + 12 on both.
@@ -88,6 +93,7 @@ def test_the_college_poll_moves_both_totals_and_both_bars():
     assert got["t"][2] == "Asleeper=0.0", "a source the payload has no number for stands"
     # Ours: 2.5 ahead with sd 12 and 9 halved still to play -> 59%. Yahoo's is Yahoo's.
     assert got["w"] == ["59%", "41%", "70%", "30%"]
+    assert got["hi"] == ["Ags", "Ayahoo"], "each row marks the side it has ahead"
 
 
 @needs_chrome

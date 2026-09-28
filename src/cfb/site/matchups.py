@@ -448,27 +448,21 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     def side_html(s, which):
         big = ui.fmt(s["pts"]) if started else ui.fmt(s["gs"])
         cls = " lead" if lead == which else ""
-        parts = s["parts"]
+        # Each source's numbers are on its own row under the header
+        # (ui.source_bar); here only what the big number is, and once the
+        # week is over, what the sources had going in.
         if not started:
-            sub = f"projected · Yahoo <b>{ui.fmt(s['yproj'])}</b>"
+            sub = "projected"
         elif final:
             sub = f"GordStats <b>{ui.fmt(s['gs'])}</b> · Yahoo <b>{ui.fmt(s['yproj'])}</b>"
         else:
-            # Each source's expected final while the week is played, kept
-            # moving by the live poll: Yahoo's own projected total stays where
-            # it was at kickoff (week 1 finished 244 against a Yahoo 180).
-            key = escape(s["key"])
-            yahoo = (ui.live_total(key, "yahoo", parts["y_exp"]) if parts["y_exp"] is not None
-                     else f"<b>{ui.fmt(s['yproj'])}</b>")
-            sub = ("<span title='Expected finals: points so far plus the unplayed share "
-                   "of each projection'>GordStats " + ui.live_total(key, "gs", parts["gs_exp"])
-                   + f" · Yahoo {yahoo}</span>")
+            sub = ""
         return (f'<div class="mu-side {"r" if which == "b" else ""}">{_team_logo(s["team"])}'
                 f'<div><div class="nm">{escape(s["name"])}'
                 f'<span class="rec">{_record(s["team"])}</span></div>'
                 f'<div class="num{cls}" data-num="{escape(s["key"])}" data-mu="{anchor}" '
                 f'data-val="{s["pts"] if s["pts"] is not None else ""}">{big}</div>'
-                f'<div class="sub">{sub}</div></div></div>')
+                + (f'<div class="sub">{sub}</div>' if sub else "") + '</div></div>')
 
     # Two bars: ours, from the GordStats expected finals and the spread still
     # to be played (gordstats.matchup_page.win_probability), and Yahoo's own.
@@ -476,9 +470,21 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     wp_b = b["wp"] if b["wp"] is not None else 1 - wp_a
     gs_a = ui.win_probability(a["parts"]["gs_exp"], a["parts"]["var"],
                               b["parts"]["gs_exp"], b["parts"]["var"])
-    wp = ("" if final else
-          ui.win_bar(gs_a, 1 - gs_a, "GordStats", escape(a["key"]), escape(b["key"]), src="gs")
-          + ui.win_bar(wp_a, wp_b, "Yahoo", a["key"], b["key"]))
+    # Each source's expected final while the week is played, kept moving by
+    # the live poll. Yahoo's own projected total stays where it was at kickoff
+    # (week 1 finished 244 against a Yahoo 180), so its row sums Yahoo's
+    # player projections the same way ours does.
+    ka, kb = escape(a["key"]), escape(b["key"])
+    # Yahoo leaves "preevent" days before the first kickoff.
+    kicked = any(_state(g) in ("in", "post") for s in sides for g in s["parts"]["games"].values())
+
+    def yahoo_final(s):
+        return s["parts"]["y_exp"] if s["parts"]["y_exp"] is not None else s["yproj"]
+    wp = ("" if final else ui.source_bars([
+        ui.source_bar("GordStats", "gs", ka, kb, a["parts"]["gs_exp"], b["parts"]["gs_exp"],
+                      gs_a, follows="gs"),
+        ui.source_bar("Yahoo", "yahoo", ka, kb, yahoo_final(a), yahoo_final(b), wp_a, alt=True)],
+        kicked))
     mid = "Final" if final else ("Live" if started else "Preview")
     gs_edge = a["gs"] - b["gs"]
     leader = escape(a['name'] if gs_edge >= 0 else b['name'])
@@ -487,7 +493,6 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
     # fit, which has seen the games - so they say so.
     ids = [str(p["yahoo_id"]) for t in m["teams"] for p in data["rosters"].get(t["team_key"], [])]
     honest = pregame.complete(wk.loc[wk.index.intersection(ids)])
-    kicked = any(_state(g) in ("in", "post") for s in sides for g in s["parts"]["games"].values())
     if not final and kicked and honest:
         # The header moves with the games, so this is what it moved from.
         edge = f"Going in, GordStats had <b>{leader}</b> by {abs(gs_edge):.1f}."

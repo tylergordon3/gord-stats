@@ -17,7 +17,8 @@ So the same numbers are published, once a build:
      "wx":    {"401872953": {"indoors": false, "cond": "Clear", "temp": 66}},
      "dvp":   {"ARI": {"QB": [1.00, 17], ..., "games": 2}, "n": 32},
      "gs":    {"9221": 28.6},
-     "late":  ["4984"]}
+     "late":  ["4984"],
+     "ext":   {"ppr": {"max": {"WR": 57.9, ...}, "min": {"QB": -6.66, ...}}, ...}}
 
 `gs` is this site's own weekly projection and covers the whole board - 1,231
 players, not the 154 on this league's rosters - which is what makes it usable
@@ -109,7 +110,41 @@ def build(year: int = UPCOMING_YEAR) -> dict:
             gs[str(pid)] = round(float(value), 2)
 
     return {"week": int(wkd.week), "year": int(year), "teams": teams,
-            "wx": wx, "dvp": dvp, "gs": gs, "late": late}
+            "wx": wx, "dvp": dvp, "gs": gs, "late": late, "ext": records()}
+
+
+POSITIONS = ("QB", "RB", "WR", "TE", "K", "DEF")
+
+
+def records() -> dict:
+    """{basis: {"max": {pos: pts}, "min": {pos: pts}}}: the best and worst week
+    anyone at each position has had since 2018, on each of Sleeper's three
+    scoring bases.
+
+    The median tracker's ceilings and floors. The built league reads its own
+    history for them; a reader's league has none this site can see, and with
+    none the tracker called every team with a player left unbounded - a
+    "hypothetical max" of Infinity, and a team with nobody left told it could
+    still pass three teams that would each have had to lose thirty points.
+    """
+    frames = []
+    for path in sorted(paths.POINTS_DIR.glob("*.parquet")):
+        try:
+            frames.append(pd.read_parquet(path, columns=["position", "fantasy_points",
+                                                         "fantasy_points_ppr"]))
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! {path.name} unreadable ({exc})")
+    if not frames:
+        return {}
+    pts = pd.concat(frames, ignore_index=True)
+    pts = pts[pts["position"].isin(POSITIONS)]
+    pts["half"] = (pts["fantasy_points"] + pts["fantasy_points_ppr"]) / 2
+    out = {}
+    for basis, col in (("ppr", "fantasy_points_ppr"), ("half", "half"), ("std", "fantasy_points")):
+        by = pts.groupby("position")[col]
+        out[basis] = {"max": {k: round(float(v), 2) for k, v in by.max().items()},
+                      "min": {k: round(float(v), 2) for k, v in by.min().items()}}
+    return out
 
 
 def _round(value, places: int = 1):

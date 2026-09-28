@@ -177,7 +177,7 @@ def test_a_readers_league_is_drawn_in_the_built_pages_layout():
     for cls in ("mu-board",        # the scoreboard over the week
                 "mu-cards",        # ...as cards, on a phone
                 "mu-head",         # the two-column matchup header
-                "mu-wp",           # the win bar
+                "mu-src",          # a win bar per projection source
                 "mu-pair",         # the paired phone view
                 "mu-grid",         # the two rosters side by side
                 "mu-roster"):      # ...each one a full table

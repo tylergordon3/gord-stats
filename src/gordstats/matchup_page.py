@@ -84,12 +84,44 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-side .sub b{color:#334155}
 .mu-mid{text-align:center;color:var(--gs-muted,#5d6b7e);font-size:12px;text-transform:uppercase;
   letter-spacing:.06em;white-space:nowrap}
-.mu-wp{height:6px;border-radius:3px;background:#e2e8f0;overflow:hidden;margin:6px 0 2px;
-  display:flex}
-.mu-wp i{display:block;height:100%;background:#2f6db5}
-.mu-wp i.b{background:#c0392b}
-.mu-wp-lbl{display:flex;justify-content:space-between;font-size:11px;color:#64748b;
-  margin-bottom:8px}
+/* One row per projection source: its name, each side's expected final at
+   that side's end, and its win chance as a bar between them (source_bar).
+   Blue and red are the two teams on every row; the source is the label and
+   the row's edge, and the outside source's bar is striped, so the rows read
+   apart at a glance without the team colours changing meaning. */
+.mu-srcs{display:grid;gap:5px;margin:10px 0 6px}
+.mu-srcs-h{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;
+  text-align:center}
+.mu-src{display:grid;grid-template-columns:84px 54px minmax(0,1fr) 54px;align-items:center;
+  gap:10px;padding:5px 10px;border-radius:8px;background:#f4f7fb;border-left:4px solid var(--src)}
+.mu-src-l{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--src);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mu-src-a,.mu-src-b{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;color:#475569}
+.mu-src-a{text-align:right}
+.mu-src-a.hi,.mu-src-b.hi{color:#0f172a}
+.mu-src-a.hi::after,.mu-src-b.hi::before{content:"";display:inline-block;width:6px;height:6px;
+  border-radius:50%;background:var(--src);vertical-align:3px}
+.mu-src-a.hi::after{margin-left:5px}
+.mu-src-b.hi::before{margin-right:5px}
+.mu-bar{position:relative;display:flex;height:20px;border-radius:10px;overflow:hidden;
+  background:#e2e8f0}
+.mu-bar i{display:block;height:100%;background:#2f6db5;transition:width .6s}
+.mu-bar i.b{background:#c0392b}
+.mu-src.alt .mu-bar i{background-image:repeating-linear-gradient(135deg,
+  rgba(255,255,255,.26) 0 5px,transparent 5px 10px)}
+.mu-bar span{position:absolute;top:0;line-height:20px;font-size:11.5px;font-weight:800;color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.55);font-variant-numeric:tabular-nums}
+.mu-bar .pa{left:8px}
+.mu-bar .pb{right:8px}
+.mu-src-gs{--src:#1a7f4b}
+.mu-src-sleeper{--src:#b45309}
+.mu-src-yahoo{--src:#6001d2}
+@media (max-width:600px){
+  .mu-src{grid-template-columns:70px 44px minmax(0,1fr) 44px;gap:6px;padding:5px 7px}
+  .mu-src-l{font-size:10.5px;letter-spacing:0}
+  .mu-src-a,.mu-src-b{font-size:14px}
+  .mu-src-a.hi::after,.mu-src-b.hi::before{display:none}
+}
 /* Two rosters side by side only while each can have ~600px - nine columns
    need that to read without a scrollbar. Narrower (half a laptop screen, a
    tablet, a phone) and they stack; min(100%,...) keeps a phone from
@@ -357,9 +389,16 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   table.mu-roster td.mu-p .inj{color:#ffb4ab}
   table.mu-roster td.mu-p .mu-hint.in{background:#123c2e;color:#8ff0bd}
   table.mu-roster td.mu-p .mu-hint.out{background:#4a1f1a;color:#ffb4ab}
-  .mu-side .rec,.mu-side .sub,.mu-wp-lbl,.mu-mid{color:#aab7c9}
+  .mu-side .rec,.mu-side .sub,.mu-mid{color:#aab7c9}
   .mu-side .sub b{color:#dde5ef}
-  .mu-wp{background:#2b3852}
+  .mu-srcs-h{color:#aab7c9}
+  .mu-src{background:#1c2940}
+  .mu-src-a,.mu-src-b{color:#aab7c9}
+  .mu-src-a.hi,.mu-src-b.hi{color:#f1f5fb}
+  .mu-bar{background:#2b3852}
+  .mu-src-gs{--src:#6ee7b7}
+  .mu-src-sleeper{--src:#fbbf24}
+  .mu-src-yahoo{--src:#c4a3ff}
   .mu-note{color:#aab7c9}
   .mu-swap{color:#dde5ef}
   .mu-pr{border-bottom-color:#2b3852}
@@ -490,17 +529,38 @@ def win_probability(exp_a: float, var_a: float, exp_b: float, var_b: float) -> f
     return 0.5 * (1 + erf(((exp_a - exp_b) / sd) / sqrt(2)))
 
 
-def win_bar(wp_a: float, wp_b: float, source: str, key_a: str = "", key_b: str = "",
-            src: str = "") -> str:
-    """Two-colour probability bar with the percentages under it. The keys let
-    the live script move it as the source's probability changes: a bar with
-    a `src` follows that source's number in the payload (teams[key].wps[src]),
-    one without follows teams[key].win_probability, as the scoreboard does."""
-    tag = f' data-src="{src}"' if src else ""
-    return (f'<div class="mu-wp"><i data-wp="{key_a}"{tag} style="width:{wp_a * 100:.0f}%"></i>'
-            f'<i class="b" data-wp="{key_b}"{tag} style="width:{wp_b * 100:.0f}%"></i></div>'
-            f'<div class="mu-wp-lbl"><span><span data-wpl="{key_a}"{tag}>{wp_a * 100:.0f}%</span> '
-            f'({source})</span><span data-wpl="{key_b}"{tag}>{wp_b * 100:.0f}%</span></div>')
+def source_bar(label: str, src: str, key_a: str, key_b: str, proj_a, proj_b, wp_a: float,
+               follows: str = "", alt: bool = False) -> str:
+    """One projection source's row: its name, each side's expected final at
+    that side's end, and its win chance as a bar between them, the two
+    percentages inside it.
+
+    The finals follow teams[key].tlive[src] in the live payload; the bar
+    follows teams[key].wps[follows], or win_probability when `follows` is
+    empty (as the scoreboard does). `alt` stripes the bar - the outside
+    source's, so the two rows cannot be mistaken for each other."""
+    tag = f' data-src="{follows}"' if follows else ""
+    a, b = float(proj_a or 0.0), float(proj_b or 0.0)
+    return (f'<div class="mu-src mu-src-{src}{" alt" if alt else ""}">'
+            f'<span class="mu-src-l">{label}</span>'
+            f"<b class='mu-src-a{' hi' if a > b else ''}' data-tlive='{key_a}' data-src='{src}'>"
+            f"{fmt(proj_a)}</b>"
+            f'<div class="mu-bar" title="{label} win chance">'
+            f'<i data-wp="{key_a}"{tag} style="width:{wp_a * 100:.0f}%"></i>'
+            f'<i class="b" data-wp="{key_b}"{tag} style="width:{(1 - wp_a) * 100:.0f}%"></i>'
+            f'<span class="pa" data-wpl="{key_a}"{tag}>{wp_a * 100:.0f}%</span>'
+            f'<span class="pb" data-wpl="{key_b}"{tag}>{(1 - wp_a) * 100:.0f}%</span></div>'
+            f"<b class='mu-src-b{' hi' if b > a else ''}' data-tlive='{key_b}' data-src='{src}'>"
+            f"{fmt(proj_b)}</b></div>")
+
+
+def source_bars(rows: list, live: bool) -> str:
+    """The rows under a matchup's header, with a line saying what they are."""
+    what = ("Expected finals · win chance" if live else "Projections · win chance")
+    return (f'<div class="mu-srcs" title="Each source\'s projected final for each side - '
+            "while games are on, points so far plus the unplayed share of its projections - "
+            f'and the chance it gives each side"><div class="mu-srcs-h">{what}</div>'
+            + "".join(rows) + "</div>")
 
 
 def live_total(key: str, src: str, value) -> str:
@@ -713,6 +773,10 @@ LIVE_JS = """<script>
       Object.keys(t.tlive||{}).forEach(function(src){var v=t.tlive[src];if(v===null||v===undefined||isNaN(v))return;
         each('[data-tlive="'+key+'"][data-src="'+src+'"]',function(el){el.textContent=fmt(v);el.classList.add('live');});});
     });
+    // Each source row marks the side it has ahead.
+    each('.mu-src',function(row){var a=row.querySelector('.mu-src-a'),b=row.querySelector('.mu-src-b');
+      if(!a||!b)return;var x=parseFloat(a.textContent),y=parseFloat(b.textContent);if(isNaN(x)||isNaN(y))return;
+      a.classList.toggle('hi',x>y);b.classList.toggle('hi',y>x);});
     // The leader in each matchup, by the numbers just written.
     var byMu={};
     each('[data-num][data-mu]',function(el){var m=el.getAttribute('data-mu');(byMu[m]=byMu[m]||[]).push(el);});
@@ -907,7 +971,7 @@ window.muMedTrack=(function(){
       if(!done&&t.left.length){
         var ps=t.left.slice().sort(function(a,b){return b.r-a.r;}).map(function(p){
           return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
-        sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b> · ':'')+t.left.length+' left, proj '+fmt(t.rem)+' · hypothetical max '+fmt(t.ceil)+'</div>')
+        sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b> · ':'')+t.left.length+' left, proj '+fmt(t.rem)+(isFinite(t.ceil)?' · hypothetical max '+fmt(t.ceil):'')+'</div>')
           +'<div class="mu-medt-ps">'+ps+'</div>';}
       if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(d.started&&!done?medNow:mid)+'</span></div>');
       html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'

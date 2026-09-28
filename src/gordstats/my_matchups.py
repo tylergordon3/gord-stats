@@ -78,7 +78,7 @@ JS = """{% raw %}<script>
   // The week is being played: projection cells turn into expected finals, as
   // the built page's live script does them. LATE is the started players whose
   // GordStats number was not recorded before kickoff (week-context.json).
-  var LIVE=false, LATE={};
+  var LIVE=false, LATE={}, EXT={};
 
   function saved(){
     try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; }
@@ -301,11 +301,13 @@ JS = """{% raw %}<script>
    *  markup and the arithmetic are the built page's own
    *  (gordstats.matchup_page.median_tracker); only the blob is built here.
    *
-   *  `ext` is left empty: the ceilings and floors come from the best and worst
-   *  week any rostered player has had in league history, which is years of
-   *  this site's archive and not something Sleeper hands back. Without it the
-   *  tracker still ranks and still draws the line; it just never says a team
-   *  is mathematically locked.
+   *  `ext` is the ceilings and floors. The built league's come from its own
+   *  history, which Sleeper does not hand back for this one, so these are the
+   *  best and worst week anyone at each position has had since 2018 on this
+   *  league's scoring basis (week-context.json `ext`). Without them every team
+   *  with a player left was unbounded - a "hypothetical max" of Infinity, and
+   *  a finished team below the line told it could still pass teams that would
+   *  have had to lose thirty points.
    */
   function medianTracker(pairs, started, week, median){
     if(!median) return '';
@@ -314,7 +316,7 @@ JS = """{% raw %}<script>
     if(teams.length<3) return '';
     var final=pairs.every(function(p){
       return p.a.state==='post' && p.b.state==='post'; });
-    var blob=esc(JSON.stringify({started:started, final:final, teams:teams, ext:{}}));
+    var blob=esc(JSON.stringify({started:started, final:final, teams:teams, ext:EXT}));
     return '<details class="section mu-medt-sec" open><summary>Median Tracker</summary>'
       // Double quotes, because `esc` turns a quote into &quot; - the single
       // quotes the built page uses would need an escape that this module's
@@ -338,30 +340,37 @@ JS = """{% raw %}<script>
     var final=(a.state==='post'&&b.state==='post');
     function sideHtml(s, which){
       var big=started?fmt(s.total):fmt(s.gs);
-      // While it is being played, each source's expected final: the pre-game
-      // totals were a number fixed at kickoff under a score that was not.
-      var sub=!started
-        ? ('projected \\u00b7 Sleeper <b>'+fmt(s.sp)+'</b>')
-        : final
-        ? ('GordStats <b>'+fmt(s.gs)+'</b> \\u00b7 Sleeper <b>'+fmt(s.sp)+'</b>')
-        : ('<span title="Expected finals: points so far plus the unplayed share of each '
-           +'projection">GordStats <b class="live">'+fmt(s.gsx)+'</b> \\u00b7 Sleeper '
-           +'<b class="live">'+fmt(s.spx)+'</b></span>');
+      // Each source's numbers are on its own row below; here only what the
+      // big number is, and once it is over, what the sources had going in.
+      var sub=!started ? 'projected'
+        : final ? ('GordStats <b>'+fmt(s.gs)+'</b> \\u00b7 Sleeper <b>'+fmt(s.sp)+'</b>')
+        : '';
       return '<div class="mu-side '+(which==='b'?'r':'')+'">'+avatarImg(s.avatar)
         +'<div><div class="nm">'+label(s)+'<span class="rec">'+esc(s.rec)+'</span></div>'
         +'<div class="num'+(lead===which?' lead':'')+'">'+big+'</div>'
-        +'<div class="sub">'+sub+'</div></div></div>';
+        +(sub?'<div class="sub">'+sub+'</div>':'')+'</div></div>';
     }
-    // Two bars, ours and Sleeper's: the same arithmetic on each source's
-    // expected finals (Sleeper publishes no probability of its own).
-    function bar(p, source){
-      return '<div class="mu-wp"><i style="width:'+Math.round(p*100)+'%"></i>'
-        +'<i class="b" style="width:'+Math.round((1-p)*100)+'%"></i></div>'
-        +'<div class="mu-wp-lbl"><span>'+Math.round(p*100)+'% ('+source+')</span>'
-        +'<span>'+Math.round((1-p)*100)+'%</span></div>';
+    // A row per source - its expected finals at each side's end and its win
+    // chance between them - as gordstats.matchup_page.source_bar draws it.
+    // Sleeper's is our arithmetic on its projections (it publishes no
+    // probability of its own), striped so the two rows read apart.
+    function row(name, cls, alt, pa, pb, p){
+      var ca=pa>pb?' hi':'', cb=pb>pa?' hi':'';
+      return '<div class="mu-src mu-src-'+cls+(alt?' alt':'')+'">'
+        +'<span class="mu-src-l">'+name+'</span>'
+        +'<b class="mu-src-a'+ca+'">'+fmt(pa)+'</b>'
+        +'<div class="mu-bar" title="'+name+' win chance">'
+        +'<i style="width:'+Math.round(p*100)+'%"></i>'
+        +'<i class="b" style="width:'+Math.round((1-p)*100)+'%"></i>'
+        +'<span class="pa">'+Math.round(p*100)+'%</span>'
+        +'<span class="pb">'+Math.round((1-p)*100)+'%</span></div>'
+        +'<b class="mu-src-b'+cb+'">'+fmt(pb)+'</b></div>';
     }
-    var bars=final?'':(bar(W.winProb(a.gsx, a.varr, b.gsx, b.varr), 'GordStats')
-                       +bar(W.winProb(a.spx, a.varr, b.spx, b.varr), 'Sleeper'));
+    var bars=final?'':('<div class="mu-srcs"><div class="mu-srcs-h">'
+      +(started?'Expected finals':'Projections')+' \\u00b7 win chance</div>'
+      +row('GordStats', 'gs', false, a.gsx, b.gsx, W.winProb(a.gsx, a.varr, b.gsx, b.varr))
+      +row('Sleeper', 'sleeper', true, a.spx, b.spx, W.winProb(a.spx, a.varr, b.spx, b.varr))
+      +'</div>');
     var edge=a.gs-b.gs, honest=!a.late&&!b.late;
     var by='<b>'+esc(edge>=0?a.name:b.name)+'</b> by '+Math.abs(edge).toFixed(1);
     var gsPair=fmt(a.gs)+'\\u2013'+fmt(b.gs), slPair=fmt(a.sp)+'\\u2013'+fmt(b.sp);
@@ -605,6 +614,7 @@ JS = """{% raw %}<script>
       // be shown PPR numbers.
       var basis=GSL.basis(info);
       PROJ=GSL.points(wk, basis.index);
+      EXT=(CTX.ext||{})[['ppr','half','std'][basis.index]]||{};
       SLOTS=(info.roster_positions||[]).filter(function(x){ return !BENCH[x]; });
       var bar=document.getElementById('mm-bar');
       if(bar){
