@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T03:40:58+00:00",
+ "fetched": "2026-09-28T03:50:57+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -312,7 +312,7 @@
      "players_points": {
       "10859": 7.4,
       "11533": 10.0,
-      "11563": 18.94,
+      "11563": 25.14,
       "12481": 13.0,
       "12527": 12.3,
       "12534": 0.0,
@@ -3167,14 +3167,14 @@
    "gp": 1.0
   },
   "11563": {
-   "pass_yd": 185.0,
+   "pass_yd": 186.0,
    "pass_td": 2.0,
    "pass_int": 1.0,
    "rush_att": 2.0,
    "rush_yd": 5.0,
-   "pts_ppr": 18.9,
-   "pts_half_ppr": 18.9,
-   "pts_std": 18.9,
+   "pts_ppr": 18.94,
+   "pts_half_ppr": 18.94,
+   "pts_std": 18.94,
    "gp": 1.0
   },
   "8126": {
@@ -3515,6 +3515,17 @@
    "pts_std": 11.0,
    "gp": 1.0
   },
+  "12489": {
+   "rush_att": 2.0,
+   "rush_yd": 6.0,
+   "rec": 6.0,
+   "rec_tgt": 7.0,
+   "rec_yd": 41.0,
+   "pts_ppr": 10.7,
+   "pts_half_ppr": 7.7,
+   "pts_std": 4.7,
+   "gp": 1.0
+  },
   "11635": {
    "rec": 4.0,
    "rec_tgt": 5.0,
@@ -3543,17 +3554,6 @@
    "pts_ppr": 9.9,
    "pts_half_ppr": 8.9,
    "pts_std": 7.9,
-   "gp": 1.0
-  },
-  "12489": {
-   "rush_att": 2.0,
-   "rush_yd": 6.0,
-   "rec": 5.0,
-   "rec_tgt": 6.0,
-   "rec_yd": 39.0,
-   "pts_ppr": 9.5,
-   "pts_half_ppr": 7.0,
-   "pts_std": 4.5,
    "gp": 1.0
   },
   "8110": {
@@ -3697,7 +3697,7 @@
   },
   "5045": {
    "rec": 3.0,
-   "rec_tgt": 6.0,
+   "rec_tgt": 7.0,
    "rec_yd": 46.0,
    "pts_ppr": 7.6,
    "pts_half_ppr": 6.1,
@@ -3782,6 +3782,17 @@
    "pts_std": 4.4,
    "gp": 1.0
   },
+  "6806": {
+   "rush_att": 17.0,
+   "rush_yd": 50.0,
+   "rec": 1.0,
+   "rec_tgt": 2.0,
+   "rec_yd": 4.0,
+   "pts_ppr": 6.4,
+   "pts_half_ppr": 5.9,
+   "pts_std": 5.4,
+   "gp": 1.0
+  },
   "5001": {
    "rec": 3.0,
    "rec_tgt": 3.0,
@@ -3799,17 +3810,6 @@
    "pts_ppr": 6.0,
    "pts_half_ppr": 6.0,
    "pts_std": 6.0,
-   "gp": 1.0
-  },
-  "6806": {
-   "rush_att": 15.0,
-   "rush_yd": 46.0,
-   "rec": 1.0,
-   "rec_tgt": 2.0,
-   "rec_yd": 4.0,
-   "pts_ppr": 6.0,
-   "pts_half_ppr": 5.5,
-   "pts_std": 5.0,
    "gp": 1.0
   },
   "11564": {
@@ -4111,12 +4111,12 @@
    "game_id": "401872962",
    "date": "2026-09-28T00:20Z",
    "state": "in",
-   "detail": "0:51 - 4th",
+   "detail": "0:26 - 4th",
    "period": 4,
-   "clock": "0:51",
+   "clock": "0:26",
    "home": "DEN",
    "away": "LAR",
-   "home_score": 23.0,
+   "home_score": 30.0,
    "away_score": 26.0,
    "home_implied": null,
    "away_implied": null,
@@ -4124,7 +4124,7 @@
    "total": null,
    "tv": "NBC",
    "weather": {
-    "temp": 68.0,
+    "temp": 66.0,
     "cond": 7,
     "text": "Cloudy",
     "indoors": false
