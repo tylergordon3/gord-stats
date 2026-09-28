@@ -25,7 +25,7 @@ from html import escape
 
 from cfb import waivers, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
-from cfb.site import league_power, write_page
+from cfb.site import league_power, recap, write_page
 
 _CSS = """<style>
 .cfb-league{font-size:14px;color:#334155;border:1px solid #e5e7eb;border-radius:12px;
@@ -256,6 +256,7 @@ def body() -> str:
         f'{lg["playoff_start_week"]}. Rebuilt daily (last: {built}); every '
         "section below fills in as the season generates it. The draft - every "
         'pick, graded - is on the <a href="/cfb/live/">draft review</a>.</p>'
+        + recap.teaser()
         + _details("Standings", standings_section(lg), open=True)
         + _details("Power Rankings", league_power.section(), open=True, anchor="power")
         + _details(f"Matchups — Week {int(sb['week']) if sb.get('week') else '?'}",

@@ -804,6 +804,11 @@ def accuracy_section(datas: dict) -> str:
             f"right</summary>{body}</details>")
 
 
+def _recap_teaser() -> str:
+    from cfb.site import recap              # it reads this module's best_lineup
+    return recap.teaser()
+
+
 def body() -> str:
     lg = yahoo.league()
     weeks = yahoo.archived_weeks()
@@ -827,8 +832,11 @@ def body() -> str:
     return (
         ui.CSS
         + f'<p><a href="{lg["url"]}"><strong>{lg["name"]}</strong></a> — every '
-        "matchup with both rosters in full, live while games are on.</p>"
-        "<details class='section'><summary>How to read this page</summary>"
+        "matchup with both rosters in full, live while games are on. Each finished "
+        "week gets a <a href='/cfb/recap/'>recap</a>: the awards and every team's "
+        "lineup accuracy.</p>"
+        + _recap_teaser()
+        + "<details class='section'><summary>How to read this page</summary>"
         "<p><b>GS Proj</b> is this site's own "
         "projection for the week: each player's season projection spread over "
         "his school's games, tilted by what the game model expects of this "

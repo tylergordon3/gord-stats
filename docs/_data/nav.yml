@@ -124,6 +124,7 @@ fantasy:
     icon: "⚔️"
     key: matchups
     url: /fantasy/matchups/
+    covers: "/fantasy/recap/"
 
   - title: My Team
     short: Team
@@ -194,6 +195,7 @@ cfb_fantasy:
     icon: "⚔️"
     key: matchups
     url: /cfb/matchups/
+    covers: "/cfb/recap/"
 
   - title: My Team
     short: Team

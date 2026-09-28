@@ -30,7 +30,7 @@ from fantasy import paths
 from fantasy.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from fantasy.site import layout, styles, team_profiles, upcoming
+from fantasy.site import layout, recap, styles, team_profiles, upcoming
 from gordstats import my_history, my_home, my_league, my_league_data, week_strip
 from gordstats.frontmatter import add_front_matter
 
@@ -167,7 +167,7 @@ def generate(output=OUTPUT):
                             open=True, anchor="board") if LIVE_ADP_BOARD else "")
     nav = layout.section_nav(([("board", "Draft Board")] if LIVE_ADP_BOARD else [])
                              + [(a, title) for a, title, _ in inline])
-    built = ("<div id='lh-built'>" + nav + board
+    built = ("<div id='lh-built'>" + recap.teaser() + nav + board
              + "".join(f'<h2 id="{a}">{title}</h2>{html}' for a, title, html in inline)
              + "</div>")
     # The week first - every matchup and the standings, for whichever league

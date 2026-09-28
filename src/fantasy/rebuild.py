@@ -33,6 +33,8 @@ PAGES = [
     # After "players": the board reads the week's projections for catch rates.
     ("board",        "Season projection board (ranks your own league)",
                                                           lambda: _gen("season_board")),
+    # Before "matchups" and "homepage": both point at the newest recap.
+    ("recap",        "Weekly Recap (scores, awards, lineup accuracy)", lambda: _gen("recap")),
     ("matchups",     "Weekly Matchups (rosters, projections, points)", lambda: _gen("matchups")),
     # After "matchups": the week context reads the archive that step refreshes.
     ("context",      "This week's lines, forecasts and defence-vs-position",

@@ -1048,6 +1048,11 @@ def _board(weeks: list, datas: dict) -> pd.DataFrame:
     return board
 
 
+def _recap_teaser() -> str:
+    from fantasy.site import recap          # it reads this module's lineup rules
+    return recap.teaser()
+
+
 def body() -> str:
     # Fetch for itself, the way the power page does: the current week
     # refetches when its cache is older than a few hours, finished weeks
@@ -1095,10 +1100,11 @@ def body() -> str:
         + my_matchups.section(current, UPCOMING_YEAR,
                               f"{data_mod.ESPN_SCOREBOARD}?week={current}&dates={UPCOMING_YEAR}"
                               "&seasontype=2")
-        + '<div id="mm-built">'
+        + '<div id="mm-built">' + _recap_teaser()
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
         f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
-        "are on.</p><details class='section'><summary>How to read this page</summary>"
+        "are on. Each finished week gets a <a href='/fantasy/recap/'>recap</a>: the "
+        "awards and every team's lineup accuracy.</p><details class='section'><summary>How to read this page</summary>"
         "<p>The <b>Median Tracker</b> ranks every team by points so far (by projection "
         "before kickoff), each with its expected final (points plus what its unfinished "
         "starters are projected to add), with the median line "
