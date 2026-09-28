@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T00:00:59+00:00",
+ "fetched": "2026-09-28T00:10:59+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -4235,10 +4235,10 @@
    "away": "LAR",
    "home_score": 0.0,
    "away_score": 0.0,
-   "home_implied": 21.5,
-   "away_implied": 23.0,
+   "home_implied": 21.0,
+   "away_implied": 22.5,
    "spread": "LAR -1.5",
-   "total": 44.5,
+   "total": 43.5,
    "tv": "NBC",
    "weather": {
     "temp": 80.0,
