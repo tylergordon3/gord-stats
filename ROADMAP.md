@@ -249,6 +249,11 @@ Everything below is tested; the commits carry the detail.
       CBB has no per-game model, so a rank stands where football shows a pick.
 - [x] **CBB scoreboard payload** (cf39e5e30): every game carried Torvik's whole table
       (~92 KB, unread) - ~30 MB on opening night, past KV's 25 MB limit.
+- [x] **Links in texts work** (2026-09-28): the bare domain's redirect rule pointed at
+      `https://gordstats.com{2}` (dead), and Cloudflare Bot Fight Mode challenged every
+      preview fetcher - both fixed in the dashboard. Then robots.txt, a sitemap
+      (a8a80319b) and a wide link-preview card (f9f72c084). Optional: add the site to
+      Google Search Console and submit /sitemap.xml.
 - [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
       ratings (it answers 400 until then).
 - [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
