@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-27T21:10:56.721213-04:00",
+ "updated": "2026-09-27T21:20:58.092215-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -39637,6 +39637,130 @@
       "Mai Yamamoto",
       "G",
       4.0
+     ]
+    ]
+   }
+  },
+  "401918013": {
+   "date": "2026-09-27",
+   "allowed": {
+    "WSH": {
+     "G": 100.0,
+     "FC": 86.0
+    },
+    "ATL": {
+     "G": 71.0,
+     "FC": 89.0
+    }
+   },
+   "players": {
+    "WSH": [
+     [
+      "Michaela Onyenwere",
+      "FC",
+      15.0
+     ],
+     [
+      "Kiki Iriafen",
+      "FC",
+      31.0
+     ],
+     [
+      "Shakira Austin",
+      "FC",
+      30.0
+     ],
+     [
+      "Sonia Citron",
+      "G",
+      40.0
+     ],
+     [
+      "Georgia Amoore",
+      "G",
+      17.0
+     ],
+     [
+      "Angela Dugalic",
+      "FC",
+      0.0
+     ],
+     [
+      "Lauren Betts",
+      "FC",
+      13.0
+     ],
+     [
+      "Betnijah Laney-Hamilton",
+      "G",
+      6.0
+     ],
+     [
+      "Lucy Olsen",
+      "G",
+      0.0
+     ],
+     [
+      "Cotie McMahon",
+      "G",
+      7.0
+     ],
+     [
+      "Cassandre Prosper",
+      "G",
+      1.0
+     ],
+     [
+      "Alicia Florez",
+      "G",
+      0.0
+     ]
+    ],
+    "ATL": [
+     [
+      "Naz Hillmon",
+      "FC",
+      14.0
+     ],
+     [
+      "Angel Reese",
+      "FC",
+      33.0
+     ],
+     [
+      "Allisha Gray",
+      "G",
+      30.0
+     ],
+     [
+      "Jordin Canada",
+      "G",
+      28.0
+     ],
+     [
+      "Rhyne Howard",
+      "G",
+      42.0
+     ],
+     [
+      "DeWanna Bonner",
+      "FC",
+      26.0
+     ],
+     [
+      "Madina Okot",
+      "FC",
+      13.0
+     ],
+     [
+      "Te-Hina Paopao",
+      "G",
+      0.0
+     ],
+     [
+      "Isobel Borlase",
+      "G",
+      0.0
      ]
     ]
    }
