@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T02:00:59+00:00",
+ "fetched": "2026-09-28T02:21:00+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -259,7 +259,7 @@
       "DEN"
      ],
      "players_points": {
-      "11586": 2.8,
+      "11586": 3.1,
       "11632": 7.6,
       "11635": 10.6,
       "12512": 9.9,
@@ -600,7 +600,7 @@
       "5001": 6.0,
       "5859": 0.0,
       "6650": 12.0,
-      "6806": 2.3,
+      "6806": 2.9,
       "8136": 11.1,
       "9221": 41.4,
       "9500": 12.7,
@@ -3315,13 +3315,13 @@
   },
   "8150": {
    "rush_att": 9.0,
-   "rush_yd": 68.0,
+   "rush_yd": 69.0,
    "rec": 3.0,
    "rec_tgt": 3.0,
    "rec_yd": 33.0,
-   "pts_ppr": 13.1,
-   "pts_half_ppr": 11.6,
-   "pts_std": 10.1,
+   "pts_ppr": 13.2,
+   "pts_half_ppr": 11.7,
+   "pts_std": 10.2,
    "gp": 1.0
   },
   "9487": {
@@ -3373,6 +3373,16 @@
    "pts_std": 7.7,
    "gp": 1.0
   },
+  "421": {
+   "pass_yd": 190.0,
+   "pass_td": 1.0,
+   "rush_att": 1.0,
+   "rush_yd": 10.0,
+   "pts_ppr": 12.6,
+   "pts_half_ppr": 12.6,
+   "pts_std": 12.6,
+   "gp": 1.0
+  },
   "2216": {
    "rec": 3.0,
    "rec_tgt": 6.0,
@@ -3392,16 +3402,6 @@
    "pts_ppr": 12.3,
    "pts_half_ppr": 10.8,
    "pts_std": 9.3,
-   "gp": 1.0
-  },
-  "421": {
-   "pass_yd": 179.0,
-   "pass_td": 1.0,
-   "rush_att": 1.0,
-   "rush_yd": 10.0,
-   "pts_ppr": 12.16,
-   "pts_half_ppr": 12.16,
-   "pts_std": 12.16,
    "gp": 1.0
   },
   "5846": {
@@ -3464,6 +3464,15 @@
    "pts_std": 10.1,
    "gp": 1.0
   },
+  "2133": {
+   "rec": 4.0,
+   "rec_tgt": 6.0,
+   "rec_yd": 71.0,
+   "pts_ppr": 11.1,
+   "pts_half_ppr": 9.1,
+   "pts_std": 7.1,
+   "gp": 1.0
+  },
   "LAR": {
    "sack": 1.0,
    "pts_ppr": 11.0,
@@ -3481,13 +3490,14 @@
    "pts_std": 11.0,
    "gp": 1.0
   },
-  "2133": {
-   "rec": 4.0,
-   "rec_tgt": 5.0,
-   "rec_yd": 70.0,
+  "12015": {
+   "fgm": 3.0,
+   "fga": 3.0,
+   "xpm": 1.0,
+   "xpa": 1.0,
    "pts_ppr": 11.0,
-   "pts_half_ppr": 9.0,
-   "pts_std": 7.0,
+   "pts_half_ppr": 11.0,
+   "pts_std": 11.0,
    "gp": 1.0
   },
   "11635": {
@@ -3613,6 +3623,17 @@
    "pts_std": 5.5,
    "gp": 1.0
   },
+  "12489": {
+   "rush_att": 2.0,
+   "rush_yd": 6.0,
+   "rec": 4.0,
+   "rec_tgt": 5.0,
+   "rec_yd": 39.0,
+   "pts_ppr": 8.5,
+   "pts_half_ppr": 6.5,
+   "pts_std": 4.5,
+   "gp": 1.0
+  },
   "13346": {
    "rec": 2.0,
    "rec_tgt": 4.0,
@@ -3686,16 +3707,6 @@
    "pts_std": 4.0,
    "gp": 1.0
   },
-  "12015": {
-   "fgm": 2.0,
-   "fga": 2.0,
-   "xpm": 1.0,
-   "xpa": 1.0,
-   "pts_ppr": 7.0,
-   "pts_half_ppr": 7.0,
-   "pts_std": 7.0,
-   "gp": 1.0
-  },
   "11834": {
    "rec": 3.0,
    "rec_tgt": 6.0,
@@ -3725,17 +3736,6 @@
    "pts_ppr": 6.8,
    "pts_half_ppr": 5.8,
    "pts_std": 4.8,
-   "gp": 1.0
-  },
-  "12489": {
-   "rush_att": 2.0,
-   "rush_yd": 6.0,
-   "rec": 3.0,
-   "rec_tgt": 3.0,
-   "rec_yd": 30.0,
-   "pts_ppr": 6.6,
-   "pts_half_ppr": 5.1,
-   "pts_std": 3.6,
    "gp": 1.0
   },
   "9484": {
@@ -3844,14 +3844,6 @@
    "pts_std": 5.0,
    "gp": 1.0
   },
-  "DEN": {
-   "pts_allow": 13.0,
-   "sack": 1.0,
-   "pts_ppr": 5.0,
-   "pts_half_ppr": 5.0,
-   "pts_std": 5.0,
-   "gp": 1.0
-  },
   "8132": {
    "rush_att": 2.0,
    "rush_yd": -1.0,
@@ -3879,6 +3871,17 @@
    "pts_ppr": 4.0,
    "pts_half_ppr": 3.0,
    "pts_std": 2.0,
+   "gp": 1.0
+  },
+  "6806": {
+   "rush_att": 8.0,
+   "rush_yd": 26.0,
+   "rec": 1.0,
+   "rec_tgt": 1.0,
+   "rec_yd": 4.0,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 3.5,
+   "pts_std": 3.0,
    "gp": 1.0
   },
   "12529": {
@@ -3949,6 +3952,25 @@
    "pts_std": 1.3,
    "gp": 1.0
   },
+  "11586": {
+   "rush_att": 4.0,
+   "rush_yd": 11.0,
+   "rec": 2.0,
+   "rec_tgt": 4.0,
+   "pts_ppr": 3.1,
+   "pts_half_ppr": 2.1,
+   "pts_std": 1.1,
+   "gp": 1.0
+  },
+  "11563": {
+   "pass_yd": 62.0,
+   "rush_att": 2.0,
+   "rush_yd": 5.0,
+   "pts_ppr": 2.98,
+   "pts_half_ppr": 2.98,
+   "pts_std": 2.98,
+   "gp": 1.0
+  },
   "13298": {
    "rec": 2.0,
    "rec_tgt": 9.0,
@@ -3958,34 +3980,12 @@
    "pts_std": 0.9,
    "gp": 1.0
   },
-  "11586": {
-   "rush_att": 3.0,
-   "rush_yd": 8.0,
-   "rec": 2.0,
-   "rec_tgt": 4.0,
-   "pts_ppr": 2.8,
-   "pts_half_ppr": 1.8,
-   "pts_std": 0.8,
-   "gp": 1.0
-  },
-  "11563": {
-   "pass_yd": 53.0,
-   "rush_att": 1.0,
-   "rush_yd": 4.0,
-   "pts_ppr": 2.52,
-   "pts_half_ppr": 2.52,
-   "pts_std": 2.52,
-   "gp": 1.0
-  },
-  "6806": {
-   "rush_att": 4.0,
-   "rush_yd": 9.0,
-   "rec": 1.0,
-   "rec_tgt": 1.0,
-   "rec_yd": 4.0,
-   "pts_ppr": 2.3,
-   "pts_half_ppr": 1.8,
-   "pts_std": 1.3,
+  "DEN": {
+   "pts_allow": 16.0,
+   "sack": 1.0,
+   "pts_ppr": 2.0,
+   "pts_half_ppr": 2.0,
+   "pts_std": 2.0,
    "gp": 1.0
   },
   "SEA": {
@@ -4007,7 +4007,7 @@
   },
   "7526": {
    "rec": 1.0,
-   "rec_tgt": 5.0,
+   "rec_tgt": 6.0,
    "rec_yd": 9.0,
    "pts_ppr": 1.9,
    "pts_half_ppr": 1.4,
@@ -4102,9 +4102,9 @@
    "game_id": "401872962",
    "date": "2026-09-28T00:20Z",
    "state": "in",
-   "detail": "Halftime",
-   "period": 2,
-   "clock": "0:00",
+   "detail": "9:56 - 3rd",
+   "period": 3,
+   "clock": "9:56",
    "home": "DEN",
    "away": "LAR",
    "home_score": 0.0,
@@ -4115,7 +4115,7 @@
    "total": null,
    "tv": "NBC",
    "weather": {
-    "temp": 69.0,
+    "temp": 73.0,
     "cond": 7,
     "text": "Cloudy",
     "indoors": false
