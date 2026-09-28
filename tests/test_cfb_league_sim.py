@@ -66,9 +66,28 @@ def test_playoff_weeks_run_on_a_week_at_a_time(monkeypatch):
     board = {"week_start": "2026-11-08", "week_end": "2026-11-14",
              "matchups": [{"teams": [{"team_key": "a"}, {"team_key": "b"}]}]}
     monkeypatch.setattr(sim.yahoo, "archived_weeks", lambda: [])
-    monkeypatch.setattr(sim.yahoo, "_get", lambda path: {})
-    monkeypatch.setattr(sim.yahoo, "_parse_scoreboard", lambda raw: board)
+    # Yahoo gives a playoff week neither pairings nor dates until it arrives.
+    monkeypatch.setattr(sim.yahoo, "_get", lambda path: path.rsplit("=", 1)[-1])
+    monkeypatch.setattr(sim.yahoo, "_parse_scoreboard",
+                        lambda raw: board if raw == "10" else {"matchups": []})
     got = sim.schedule(lg)
     assert got[10]["pairs"] == [("a", "b")]
     assert (got[11]["start"], got[12]["end"]) == ("2026-11-15", "2026-11-28")
     assert got[11]["pairs"] == []
+
+
+def test_a_played_round_is_taken_as_it_happened(monkeypatch):
+    """Four seeds, week 6 played: the fourth seed beat the first, and the
+    strongest team is out - whatever the model thinks of it."""
+    monkeypatch.setattr(sim.yahoo, "archived_weeks", lambda: [])
+    lg = {"current_week": 7, "end_week": 7, "playoff_start_week": 6, "num_playoff_teams": 4,
+          "uses_median_score": False, "uses_playoff_reseeding": True,
+          "teams": [{"team_key": f"t{i}", "wins": 10 - i, "losses": i, "ties": 0,
+                     "points_for": 0.0} for i in range(4)]}
+    keys = [t["team_key"] for t in lg["teams"]]
+    played = {6: {"t0": 50.0, "t1": 100.0, "t2": 90.0, "t3": 200.0}}
+    mean = np.array([[300.0, 100.0, 90.0, 150.0]])          # week 7: t0 best on paper
+    out = sim.simulate(lg, {7: {"pairs": []}}, keys, [7], mean, np.full_like(mean, 1e-9),
+                       sims=10, played_playoffs=played)
+    titles = dict(zip(out["team_key"], out["title"]))
+    assert titles == {"t0": 0.0, "t1": 0.0, "t2": 0.0, "t3": 1.0}

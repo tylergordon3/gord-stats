@@ -45,19 +45,25 @@ def schedule(lg: dict) -> dict:
     on a week at a time from the last one it has given."""
     out = {}
     last = None
+    playoff_start = int(lg["playoff_start_week"] or lg["end_week"] + 1)
     for week in range(int(lg["current_week"]), int(lg["end_week"]) + 1):
         pairs, start, end = [], None, None
-        if week < int(lg["playoff_start_week"] or lg["end_week"] + 1):
+        try:
             data = (yahoo.week_matchups(week) if week in yahoo.archived_weeks()
                     else yahoo._parse_scoreboard(yahoo._get(
                         f"league/{LEAGUE_KEY}/scoreboard;week={week}")))
-            for m in data["matchups"]:
+        except Exception:                               # noqa: BLE001
+            data = {"matchups": []}
+        first = data["matchups"][0] if data.get("matchups") else {}
+        start = data.get("week_start") or first.get("week_start")
+        end = data.get("week_end") or first.get("week_end")
+        # Head-to-head pairings count only in the regular season; the bracket
+        # makes its own from the seeds.
+        if week < playoff_start:
+            for m in data.get("matchups") or []:
                 keys = [t["team_key"] for t in m["teams"]]
                 if len(keys) == 2:
                     pairs.append(tuple(keys))
-            first = data["matchups"][0] if data["matchups"] else {}
-            start = data.get("week_start") or first.get("week_start")
-            end = data.get("week_end") or first.get("week_end")
         if not start and last:
             s = datetime.strptime(last[0], "%Y-%m-%d") + timedelta(days=7)
             e = datetime.strptime(last[1], "%Y-%m-%d") + timedelta(days=7)
@@ -178,7 +184,11 @@ def _bracket(order: np.ndarray, scores: np.ndarray, reseed: bool) -> np.ndarray:
 
 
 def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
-             sd: np.ndarray, sims: int = SIMS, seed: int = SEED) -> pd.DataFrame:
+             sd: np.ndarray, sims: int = SIMS, seed: int = SEED,
+             played_playoffs: dict = None) -> pd.DataFrame:
+    """`played_playoffs` is {week: {team_key: points}} for bracket rounds
+    already final: they are taken as they happened, and only the rounds left
+    are drawn."""
     rng = np.random.default_rng(seed)
     n = len(keys)
     idx = {k: i for i, k in enumerate(keys)}
@@ -188,7 +198,6 @@ def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
     pf = np.array([float(standing.get(k, {}).get("points_for") or 0) for k in keys])
     playoff_start = int(lg["playoff_start_week"] or lg["end_week"] + 1)
     regular = [i for i, w in enumerate(weeks) if w < playoff_start]
-    playoff = [i for i, w in enumerate(weeks) if w >= playoff_start]
 
     scores = rng.normal(mean[None], sd[None], size=(sims, len(weeks), n))
     total_w = np.tile(wins, (sims, 1))
@@ -207,10 +216,16 @@ def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
     # Seeds: wins, then points for.
     order = np.lexsort((-total_pf, -total_w), axis=1)
     field = int(lg.get("num_playoff_teams") or 0)
-    # A bracket already under way is not replayed from the seeds.
-    if any(w >= playoff_start for w in yahoo.archived_weeks()
-           if yahoo.week_final(yahoo.week_matchups(w))):
-        field = 0
+    # Every bracket round in week order: a played one as it happened, the one
+    # being played and those to come drawn like any other week.
+    played_playoffs = played_playoffs or {}
+    rounds = []
+    for week in range(playoff_start, int(lg["end_week"]) + 1):
+        if week in played_playoffs:
+            got = played_playoffs[week]
+            rounds.append(np.tile([float(got.get(k, 0.0)) for k in keys], (sims, 1)))
+        elif week in weeks:
+            rounds.append(scores[:, weeks.index(week), :])
     out = pd.DataFrame({"team_key": keys,
                         "wins": total_w.mean(axis=0),
                         "per_week": mean[regular].mean(axis=0) if regular else mean.mean(axis=0)})
@@ -224,14 +239,47 @@ def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
         size = 1 << int(np.ceil(np.log2(field)))
         byes = np.zeros(n)
         np.add.at(byes, seeds[:, :size - field].ravel(), 1)
-        champ = (_bracket(seeds, scores[:, playoff, :] if playoff
-                          else scores[:, -1:, :], bool(lg.get("uses_playoff_reseeding")))
+        champ = (_bracket(seeds, np.stack(rounds, axis=1) if rounds else scores[:, -1:, :],
+                          bool(lg.get("uses_playoff_reseeding")))
                  if field > 1 else seeds[:, 0])
         titles = np.bincount(champ, minlength=n)
         out["playoffs"] = made / sims
         out["bye"] = byes / sims
         out["title"] = titles / sims
     return out
+
+
+def _week_points(week: int) -> dict:
+    """{team_key: points} for one archived week."""
+    return {t["team_key"]: float(t.get("points") or 0.0)
+            for m in yahoo.week_matchups(week)["matchups"] for t in m["teams"]}
+
+
+def regular_season(lg: dict) -> dict:
+    """{team_key: (wins, points for)} over the regular season, from the week
+    archive - head to head, and against the median where the league plays it.
+    What seeds the bracket once it is being played: Yahoo's standings then
+    describe the playoffs as well, and the seeds must not move with them."""
+    playoff_start = int(lg["playoff_start_week"])
+    wins, pf = {}, {}
+    for week in range(int(lg["start_week"] or 1), playoff_start):
+        if week not in yahoo.archived_weeks():
+            continue
+        data = yahoo.week_matchups(week)
+        pts = _week_points(week)
+        for m in data["matchups"]:
+            if len(m["teams"]) != 2:
+                continue
+            a, b = (t["team_key"] for t in m["teams"])
+            wins[a] = wins.get(a, 0.0) + (pts[a] > pts[b]) + 0.5 * (pts[a] == pts[b])
+            wins[b] = wins.get(b, 0.0) + (pts[b] > pts[a]) + 0.5 * (pts[a] == pts[b])
+        if lg.get("uses_median_score") and pts:
+            median = float(np.median(list(pts.values())))
+            for k, v in pts.items():
+                wins[k] = wins.get(k, 0.0) + (v > median)
+        for k, v in pts.items():
+            pf[k] = pf.get(k, 0.0) + v
+    return {k: (wins.get(k, 0.0), pf.get(k, 0.0)) for k in pf}
 
 
 def run(lg: dict = None, rosters: dict = None, sims: int = SIMS) -> pd.DataFrame:
@@ -243,7 +291,18 @@ def run(lg: dict = None, rosters: dict = None, sims: int = SIMS) -> pd.DataFrame
     if not sched:
         return pd.DataFrame()
     keys, weeks, mean, sd, by_pos = weekly_means(lg, sched, rosters)
-    out = simulate(lg, sched, keys, weeks, mean, sd, sims=sims)
+    playoff_start = int(lg["playoff_start_week"] or lg["end_week"] + 1)
+    played = {}
+    if int(lg["current_week"]) >= playoff_start:
+        # The bracket is under way: seeds from the regular season as it
+        # finished, and the rounds already final as they happened.
+        final = regular_season(lg)
+        lg = {**lg, "teams": [{**t, "wins": final.get(t["team_key"], (0, 0))[0], "ties": 0,
+                               "losses": 0, "points_for": final.get(t["team_key"], (0, 0))[1]}
+                              for t in lg["teams"]]}
+        played = {w: _week_points(w) for w in range(playoff_start, int(lg["current_week"]))
+                  if w in yahoo.archived_weeks() and yahoo.week_final(yahoo.week_matchups(w))}
+    out = simulate(lg, sched, keys, weeks, mean, sd, sims=sims, played_playoffs=played)
     out["by_pos"] = out["team_key"].map(by_pos)
     return out
 
