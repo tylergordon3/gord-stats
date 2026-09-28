@@ -222,6 +222,14 @@ Everything below is tested; the commits carry the detail.
       week, median game, six-team reseeded bracket - playoff, bye and title odds.
 - [x] **NFL power: backs, receivers and TEs halfway to Sleeper in season**
       (f241619f5): next-four-weeks RMSE 5.14 -> 5.05 on a 2023-25 replay.
+- [x] **NFL efficiency correction: tried, not shipped.** nflverse team-week EPA and
+      friends, adjusted the CFB way, never beat the score-only ratings on 2015-19
+      (13.08) or 2020-25 (13.13 vs 13.12). Play-by-play with garbage time filtered
+      is the only untried variant.
+- [x] **CFB title odds through the playoffs** (ddfcc66a4): played rounds as they
+      happened, seeds from the archived regular season.
+- [x] **Tests never reach the network** (efaaf792c); the league-sync race that
+      made one test flaky was a real 301-second retry-after (732e4dce0).
 - [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
       ratings (it answers 400 until then).
 - [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
