@@ -208,10 +208,26 @@ Everything below is tested; the commits carry the detail.
       live scoreboard crash on events with no description and unreadable,
       unbounded KenPom errors fixed.
 - [x] **Bowls and the CFP** (fa8337cf6): the CFB section's postseason week.
+- [x] **Matchups move with the games** (82a09fb3a..2f61290de, 36f9d43e6): each
+      source's expected final and a win bar per source (GordStats and Sleeper /
+      Yahoo) in its own row; readers' leagues poll Sleeper and ESPN; NFL game
+      clocks were read off the wrong object and every live game counted as half
+      over; readers' median trackers get real ceilings and floors.
+- [x] **Top 25**: a team outside the AP poll is compared at its place in the votes.
+- [x] **CFB predictions corrected by opponent-adjusted efficiency** (d2e834334):
+      CFBD box-score stats, margin RMSE 16.18 -> 16.07 on 2020-25, better in all
+      six seasons. Refit with `python -m cfb.backtest --report` once a season ends.
+- [x] **CFB usage lists only rosterable players** (e1e6ae8f7): Power 4 + Notre Dame.
+- [x] **CFB power plays out the rest of the season** (3c223e193): best lineup each
+      week, median game, six-team reseeded bracket - playoff, bye and title odds.
+- [x] **NFL power: backs, receivers and TEs halfway to Sleeper in season**
+      (f241619f5): next-four-weeks RMSE 5.14 -> 5.05 on a 2023-25 replay.
 - [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
       ratings (it answers 400 until then).
 - [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
       `2027_fffinal.csv` and `ncaaw/2027_team_results.csv` (both 404 today).
 - [ ] Still by hand each year: `nfl/config.SEASON`, `wnba_remaining.WEEK_DATES`,
       `cfb/lines.load(last=...)`, `cfb/schools.BRIDGE_SEASON`, and
-      `data/cfb/games/<season>.parquet` for the next season's fit.
+      `data/cfb/games/<season>.parquet` for the next season's fit; then
+      `python -m cfb.backtest --report` to refit the efficiency correction on the
+      finished season, and `cfb.config.LEAGUE_CONFERENCES` if the league's pool moves.
