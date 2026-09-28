@@ -98,8 +98,11 @@ def get_conference_strings(league_path):
 
 
 def normalize_conf_name(conf: str) -> str:
+    # theScore sends no conference for some opponents (non-D1 schools early in
+    # the season): None.strip() used to take the whole snapshot down.
+    conf = (conf or "").strip()
     for name, vals in constants.CONF_MAP.items():
-        if conf.strip() in vals:
+        if conf in vals:
             return name
     return conf
 
@@ -213,24 +216,10 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     # ---- both genders lookup dicts ----
     net_lookup = {row[1]: row[0] for row in net["rows"]}
     wab_lookup = {teams.cleanTorvikNames(row[1]): row[-1] for row in tor_dict["rows"]}
-    tor_lookup = {
-        teams.cleanTorvikNames(row[1]): {
-            "AdjOE": row[5],
-            "AdjDE": row[6],
-            "TOR": row[9],
-            "TORD": row[10],
-            "ORB": row[11],
-            "DRB": row[12],
-            "FTR": row[13],
-            "2P%": row[14],
-            "2P%D": row[15],
-            "3P%": row[16],
-            "3P%D": row[17],
-            "3PRD": row[18],
-            "WAB": row[20],
-        }
-        for row in tor_dict["rows"]
-    }
+    # Not the whole Torvik table: it rode along on every game (22a3d95d7), ~92 KB
+    # each that nothing reads - fine for a four-game tournament day, ~30 MB on
+    # opening night, over KV's 25 MB value limit and downloaded by every phone
+    # on /men/ and /women/ each poll.
 
     # ---- team objects ----
     home_obj = g["home_team"]
@@ -391,7 +380,6 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         "is_nit": is_nit,
         "wab_home": wab_home,
         "wab_away": wab_away,
-        "torvik" : tor_lookup
     }
 
 

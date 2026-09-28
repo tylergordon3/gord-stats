@@ -93,3 +93,27 @@ def test_a_game_with_no_description_does_not_sink_the_scoreboard(monkeypatch):
 
     src = inspect.getsource(live_scraper.format_event)
     assert 'g.get("game_description") or ""' in src
+
+
+def test_a_game_on_the_scoreboard_carries_its_own_teams_not_the_whole_league(monkeypatch):
+    """Every game used to carry Torvik's full 365-team table (~92 KB, read by
+    nothing): ~30 MB on opening night, past KV's 25 MB value limit, and
+    downloaded by every phone on /men/ each poll."""
+    import pandas as pd
+
+    from cbb import live_scraper
+
+    monkeypatch.setattr(live_scraper.season, "get_last_x", lambda g, t, x: "")
+    master = pd.DataFrame({"team": ["Duke", "Kansas"], "index": [0, 1],
+                           "names": [["DUKE", "Duke"], ["KU", "Kansas"]], "short": ["Duke", "KU"]})
+    tor = {"rows": [[i, f"School {i}"] + [str(i)] * 19 + ["+1.0"] for i in range(365)]
+           + [[400, "Duke"] + ["1"] * 19 + ["+9.5"], [401, "Kansas"] + ["1"] * 19 + ["+4.2"]]}
+    net = {"rows": [["3", "Duke"], ["12", "Kansas"]]}
+    g = {"home_team": {"abbreviation": "DUKE"}, "away_team": {"abbreviation": "KU"},
+         "game_date": "Tue, 03 Nov 2026 19:00:00 -0500", "status": "pre_game"}
+
+    out = live_scraper.format_event(g, {}, master, None, net, None, tor, "M")
+    assert "torvik" not in out
+    assert out["wab_home"] == "+9.5" and out["wab_away"] == "+4.2"
+    assert len(json.dumps(out)) < 3000, "one game, not the league"
+    assert out["conference_home"] == "", "no conference (a non-D1 opponent) took the snapshot down"
