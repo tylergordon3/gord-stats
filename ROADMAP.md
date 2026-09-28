@@ -230,6 +230,22 @@ Everything below is tested; the commits carry the detail.
       happened, seeds from the archived regular season.
 - [x] **Tests never reach the network** (efaaf792c); the league-sync race that
       made one test flaky was a real 301-second retry-after (732e4dce0).
+- [x] **League Home in one format** (c4e623174, 7d65771e2): the site's own league
+      synced by id gets the built pages; a synced league's home is the built format
+      (All-Time Metrics, team profiles) from Sleeper; History/Draft Review show this
+      league when none is picked.
+- [x] **League Home leads with the week** (4b4f3f3a0): matchups with live scores and
+      the standings, for whichever league is on screen.
+- [x] **Publishing** (5e632541f): the upload retried; status.json; a freshness issue
+      when the daily run goes stale - **waiting on GitHub Actions being re-enabled for
+      the account** (no workflow has ever run in this repo, tests included).
+- [x] **Small fixes** (41db51a58, b2601de44, 29ac0e005): NFL points file junk rows
+      and two unmatched players; the sync page says when a sync was cut short; tests
+      never depend on a cache's age.
+- [x] **"My teams this week" on Home** (b3747f44e): starred college teams' games,
+      our pick, the line and the live score.
+- [ ] My teams: add CBB games from tipoff (Nov 3) - the stars exist; the card needs
+      a day's games and predictions as JSON, like week-games.json.
 - [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
       ratings (it answers 400 until then).
 - [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
