@@ -25,6 +25,7 @@ import json
 import numpy as np
 import pandas as pd
 
+from cfb import efficiency
 from cfb import games as games_mod
 from cfb import ratings as ratings_mod
 
@@ -130,10 +131,16 @@ def report(games: pd.DataFrame, dev=(2015, 2019), test=(2020, 2025)) -> dict:
     have finished, it takes minutes rather than milliseconds, and a number a
     page uses to describe its own accuracy should not quietly change.
     """
-    preds = walk_forward(games, test[0], test[1])
-    fbs = fbs_only(preds)
+    # The ratings from the first season the correction can learn on, so every
+    # test season has seasons behind it to fit the correction; each is then
+    # corrected by a stack fitted only on the seasons before it.
+    base = walk_forward(games, efficiency.STACK_FIRST, test[1])
+    rows = efficiency.walk_forward_features(games, base)
+    alone = fbs_only(base[base["season"].between(*test)])
+    fbs = fbs_only(efficiency.validate(rows, test))[base.columns]
     overall = score(fbs)
     market = _versus_market(games, fbs)
+    ratings_alone = score(alone)
 
     seasons = []
     for season, block in fbs.groupby("season"):
@@ -145,7 +152,8 @@ def report(games: pd.DataFrame, dev=(2015, 2019), test=(2020, 2025)) -> dict:
                         "winner_accuracy": round(row["winner_accuracy"], 4)})
 
     record = {
-        "model": "ridge team ratings, margin and total fitted separately",
+        "model": ("ridge team ratings, margin and total fitted separately; margins "
+                  "corrected by opponent-adjusted efficiency (cfb.efficiency)"),
         "tuned_on": f"{dev[0]}-{dev[1]}",
         "scored_on": f"{test[0]}-{test[1]}",
         "scored_games": "FBS vs FBS only; FCS opponents train the ratings but are not scored",
@@ -157,11 +165,22 @@ def report(games: pd.DataFrame, dev=(2015, 2019), test=(2020, 2025)) -> dict:
         },
         "overall": {k: (round(v, 4) if isinstance(v, float) else v)
                     for k, v in overall.items()},
+        "ratings_alone": {k: (round(v, 4) if isinstance(v, float) else v)
+                          for k, v in ratings_alone.items()},
+        "efficiency": {"half_life_days": efficiency.HALF_LIFE, "alpha": efficiency.ALPHA,
+                       "stack": "refitted each season on every season before it, "
+                                f"from {efficiency.STACK_FIRST}"},
         "by_season": seasons,
         "versus_market": market,
     }
     path = games_mod.DATA_DIR / "model_validation.json"
     path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    # The correction the site uses: every finished season, the same fit.
+    efficiency.write_stack(rows, test[1], {
+        "scored_on": record["scored_on"], "games": overall["games"],
+        "margin_rmse": round(overall["margin_rmse"], 4),
+        "ratings_alone_rmse": round(ratings_alone["margin_rmse"], 4),
+        "winner_accuracy": round(overall["winner_accuracy"], 4)})
     return record
 
 

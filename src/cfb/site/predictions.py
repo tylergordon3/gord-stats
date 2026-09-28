@@ -651,8 +651,8 @@ def _agreement_chart(games: pd.DataFrame) -> str:
 
     The diagonal is agreement. Distance from it is not an edge -- the backtest
     says the disagreements are the model's error, not the market's -- so the
-    chart is here to show how closely a model built only from final scores
-    tracks a line built from everything else.
+    chart is here to show how closely a model built from results and box
+    scores tracks a line built from everything else.
     """
     both = games.dropna(subset=["market_spread"])
     if len(both) < 5:
@@ -702,7 +702,10 @@ def _method(games: pd.DataFrame) -> str:
         f"best explains the margins actually played. Margin and total are modelled "
         f"separately and the score rebuilt from the two. Games decay on a "
         f"{record.get('hyperparameters', {}).get('half_life_days', 180):.0f}-day "
-        f"half-life, so by November the evidence is almost all this season's.</p>",
+        f"half-life, so by November the evidence is almost all this season's. The "
+        f"margin is then corrected by how each side has been playing - EPA per play, "
+        f"success rate, explosiveness and line yards, opponent-adjusted, from "
+        f"CollegeFootballData's box scores.</p>",
         f"<p class='pred-note'>Scored once on {scored}, predicting each week from only "
         f"what had finished before it: <strong>{overall.get('margin_rmse', 0):.1f}</strong> "
         f"points of margin RMSE against <strong>"
@@ -720,7 +723,10 @@ def _method(games: pd.DataFrame) -> str:
             f"{market.get('market_margin_rmse', 0):.2f}. But where the two disagreed by "
             f"three points or more it went "
             f"<strong>{market.get('ats_when_we_disagree_by_3', 0):.1%}</strong> against "
-            f"the spread - under a coin flip, and under the "
+            f"the spread - "
+            + ("under a coin flip, and " if market.get('ats_when_we_disagree_by_3', 0) < 0.5
+               else "")
+            + f"under the "
             f"{market.get('break_even_at_minus_110', 0.524):.1%} standard juice needs. "
             f"Read this as a description of who is strong, not as a tip.</p>")
     return "<h2>How it Works</h2>" + "".join(lines)

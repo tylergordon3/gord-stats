@@ -18,6 +18,11 @@ half-life a game from last November still carries about a third of the weight
 of a game from last week, and nothing switches over on a particular date. It
 is at its weakest in week one and gets better every Saturday.
 
+The ratings' margins are then corrected by opponent-adjusted efficiency - EPA,
+success rate and the rest from CFBD's box scores (cfb.efficiency) - worth a
+tenth of a point of margin error on 2020-2025. A team's rating is on that
+corrected scale.
+
     python -m cfb.predict                # this week
     python -m cfb.predict --week 3
 """
@@ -27,7 +32,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
-from cfb import espn, games as games_mod, ratings as ratings_mod
+from cfb import efficiency, espn, games as games_mod, ratings as ratings_mod
 from cfb.config import SEASON
 
 WINDOW_DAYS = 7
@@ -173,6 +178,9 @@ def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
 
     train = frame[frame["date"] < upcoming["date"].min()]
     model = ratings_mod.fit(train, asof=upcoming["date"].min())
+    # The margins corrected by how each side has been playing, not only what
+    # it has scored (cfb.efficiency) - as of the same moment.
+    model = efficiency.corrected(model, frame, upcoming["date"].min())
     preds = model.predict(upcoming)
 
     # Carry the ESPN team ids: names are for reading, ids are what joins to the
@@ -203,7 +211,7 @@ def season(asof: pd.Timestamp = None) -> pd.DataFrame:
     real = played & (schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) > 0)
 
     train = frame[frame["date"] < asof]
-    model = ratings_mod.fit(train, asof=asof)
+    model = efficiency.corrected(ratings_mod.fit(train, asof=asof), frame, asof)
     preds = model.predict(schedule)
 
     out = floor_scores(schedule.copy().join(preds))
