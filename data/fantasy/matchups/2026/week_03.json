@@ -1,7 +1,7 @@
 {
  "week": 3,
  "year": 2026,
- "fetched": "2026-09-28T03:50:57+00:00",
+ "fetched": "2026-09-28T09:40:43+00:00",
  "teams": {
   "1": {
    "name": "CCAM\u2019s Convicts",
@@ -228,7 +228,7 @@
     {
      "roster_id": 7,
      "matchup_id": 2,
-     "points": 145.5,
+     "points": 147.5,
      "starters": [
       "6797",
       "9224",
@@ -273,7 +273,7 @@
       "9224": 8.9,
       "9487": 13.0,
       "9488": 35.36,
-      "DEN": 12.0
+      "DEN": 14.0
      }
     },
     {
@@ -600,7 +600,7 @@
       "5001": 6.0,
       "5859": 0.0,
       "6650": 12.0,
-      "6806": 6.4,
+      "6806": 6.3,
       "8136": 11.1,
       "9221": 41.4,
       "9500": 12.7,
@@ -610,7 +610,7 @@
     {
      "roster_id": 5,
      "matchup_id": 5,
-     "points": 122.44,
+     "points": 128.34,
      "starters": [
       "4881",
       "9226",
@@ -645,14 +645,14 @@
       "1466": 13.9,
       "2133": 20.7,
       "3451": 5.0,
-      "421": 21.78,
+      "421": 22.9,
       "4881": 20.44,
       "5967": 13.6,
       "6786": 20.2,
       "6790": 0.0,
       "7553": 1.5,
       "8142": 0.0,
-      "8150": 15.9,
+      "8150": 21.8,
       "8167": 22.6,
       "9226": 1.7,
       "SEA": 2.0
@@ -927,7 +927,7 @@
    "pos": "WR"
   },
   "4866": {
-   "pts": 15.92,
+   "pts": 15.93,
    "opp": "CHI",
    "team": "PHI",
    "injury": "",
@@ -2888,6 +2888,18 @@
    "pts_std": 14.9,
    "gp": 1.0
   },
+  "11563": {
+   "pass_yd": 186.0,
+   "pass_td": 2.0,
+   "pass_int": 1.0,
+   "rush_att": 4.0,
+   "rush_yd": 7.0,
+   "rush_td": 1.0,
+   "pts_ppr": 25.14,
+   "pts_half_ppr": 25.14,
+   "pts_std": 25.14,
+   "gp": 1.0
+  },
   "7564": {
    "rec": 9.0,
    "rec_tgt": 12.0,
@@ -2929,6 +2941,17 @@
    "pts_ppr": 23.3,
    "pts_half_ppr": 19.3,
    "pts_std": 15.3,
+   "gp": 1.0
+  },
+  "421": {
+   "pass_yd": 390.0,
+   "pass_td": 2.0,
+   "pass_int": 2.0,
+   "rush_att": 2.0,
+   "rush_yd": 13.0,
+   "pts_ppr": 22.9,
+   "pts_half_ppr": 22.9,
+   "pts_std": 22.9,
    "gp": 1.0
   },
   "8167": {
@@ -2975,15 +2998,15 @@
    "pts_std": 16.9,
    "gp": 1.0
   },
-  "421": {
-   "pass_yd": 337.0,
-   "pass_td": 2.0,
-   "pass_int": 1.0,
-   "rush_att": 2.0,
-   "rush_yd": 13.0,
-   "pts_ppr": 21.78,
-   "pts_half_ppr": 21.78,
-   "pts_std": 21.78,
+  "8150": {
+   "rush_att": 15.0,
+   "rush_yd": 88.0,
+   "rec": 6.0,
+   "rec_tgt": 7.0,
+   "rec_yd": 70.0,
+   "pts_ppr": 21.8,
+   "pts_half_ppr": 18.8,
+   "pts_std": 15.8,
    "gp": 1.0
   },
   "4034": {
@@ -3044,7 +3067,7 @@
   },
   "2133": {
    "rec": 7.0,
-   "rec_tgt": 10.0,
+   "rec_tgt": 13.0,
    "rec_yd": 137.0,
    "pts_ppr": 20.7,
    "pts_half_ppr": 17.2,
@@ -3166,17 +3189,6 @@
    "pts_std": 18.94,
    "gp": 1.0
   },
-  "11563": {
-   "pass_yd": 186.0,
-   "pass_td": 2.0,
-   "pass_int": 1.0,
-   "rush_att": 2.0,
-   "rush_yd": 5.0,
-   "pts_ppr": 18.94,
-   "pts_half_ppr": 18.94,
-   "pts_std": 18.94,
-   "gp": 1.0
-  },
   "8126": {
    "rec": 7.0,
    "rec_tgt": 11.0,
@@ -3239,17 +3251,6 @@
    "pts_ppr": 16.0,
    "pts_half_ppr": 16.0,
    "pts_std": 16.0,
-   "gp": 1.0
-  },
-  "8150": {
-   "rush_att": 15.0,
-   "rush_yd": 88.0,
-   "rec": 4.0,
-   "rec_tgt": 5.0,
-   "rec_yd": 31.0,
-   "pts_ppr": 15.9,
-   "pts_half_ppr": 13.9,
-   "pts_std": 11.9,
    "gp": 1.0
   },
   "10229": {
@@ -3331,6 +3332,16 @@
    "pts_ppr": 14.2,
    "pts_half_ppr": 11.7,
    "pts_std": 9.2,
+   "gp": 1.0
+  },
+  "DEN": {
+   "pts_allow": 26.0,
+   "sack": 4.0,
+   "int": 2.0,
+   "def_td": 1.0,
+   "pts_ppr": 14.0,
+   "pts_half_ppr": 14.0,
+   "pts_std": 14.0,
    "gp": 1.0
   },
   "1466": {
@@ -3450,16 +3461,6 @@
    "fga": 3.0,
    "xpm": 1.0,
    "xpa": 1.0,
-   "pts_ppr": 12.0,
-   "pts_half_ppr": 12.0,
-   "pts_std": 12.0,
-   "gp": 1.0
-  },
-  "DEN": {
-   "pts_allow": 26.0,
-   "sack": 4.0,
-   "int": 1.0,
-   "def_td": 1.0,
    "pts_ppr": 12.0,
    "pts_half_ppr": 12.0,
    "pts_std": 12.0,
@@ -3784,13 +3785,13 @@
   },
   "6806": {
    "rush_att": 17.0,
-   "rush_yd": 50.0,
+   "rush_yd": 49.0,
    "rec": 1.0,
    "rec_tgt": 2.0,
    "rec_yd": 4.0,
-   "pts_ppr": 6.4,
-   "pts_half_ppr": 5.9,
-   "pts_std": 5.4,
+   "pts_ppr": 6.3,
+   "pts_half_ppr": 5.8,
+   "pts_std": 5.3,
    "gp": 1.0
   },
   "5001": {
@@ -3870,15 +3871,6 @@
    "pts_std": 3.2,
    "gp": 1.0
   },
-  "LAR": {
-   "pts_allow": 17.0,
-   "sack": 1.0,
-   "int": 1.0,
-   "pts_ppr": 5.0,
-   "pts_half_ppr": 5.0,
-   "pts_std": 5.0,
-   "gp": 1.0
-  },
   "4227": {
    "fgm": 1.0,
    "fga": 2.0,
@@ -3908,6 +3900,15 @@
    "pts_ppr": 4.9,
    "pts_half_ppr": 2.9,
    "pts_std": 0.9,
+   "gp": 1.0
+  },
+  "LAR": {
+   "pts_allow": 24.0,
+   "sack": 1.0,
+   "int": 1.0,
+   "pts_ppr": 4.0,
+   "pts_half_ppr": 4.0,
+   "pts_std": 4.0,
    "gp": 1.0
   },
   "11786": {
@@ -4108,27 +4109,45 @@
  },
  "games": [
   {
-   "game_id": "401872962",
-   "date": "2026-09-28T00:20Z",
-   "state": "in",
-   "detail": "0:26 - 4th",
+   "game_id": "401872963",
+   "date": "2026-09-29T00:15Z",
+   "state": "pre",
+   "detail": "9/28 - 8:15 PM EDT",
+   "period": 0,
+   "clock": "0:00",
+   "home": "CHI",
+   "away": "PHI",
+   "home_score": 0.0,
+   "away_score": 0.0,
+   "home_implied": 19.0,
+   "away_implied": 22.5,
+   "spread": "PHI -3.5",
+   "total": 41.5,
+   "tv": "ESPN",
+   "weather": {
+    "temp": 64.0,
+    "cond": 34,
+    "text": "Mostly clear",
+    "indoors": false
+   }
+  },
+  {
+   "game_id": "401872948",
+   "date": "2026-09-25T00:15Z",
+   "state": "post",
+   "detail": "Final",
    "period": 4,
-   "clock": "0:26",
-   "home": "DEN",
-   "away": "LAR",
-   "home_score": 30.0,
-   "away_score": 26.0,
+   "clock": "0:00",
+   "home": "GB",
+   "away": "ATL",
+   "home_score": 14.0,
+   "away_score": 35.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
-   "tv": "NBC",
-   "weather": {
-    "temp": 66.0,
-    "cond": 7,
-    "text": "Cloudy",
-    "indoors": false
-   }
+   "tv": "Prime Video",
+   "weather": null
   },
   {
    "game_id": "401872953",
@@ -4380,45 +4399,22 @@
    }
   },
   {
-   "game_id": "401872948",
-   "date": "2026-09-25T00:15Z",
+   "game_id": "401872962",
+   "date": "2026-09-28T00:20Z",
    "state": "post",
    "detail": "Final",
    "period": 4,
    "clock": "0:00",
-   "home": "GB",
-   "away": "ATL",
-   "home_score": 14.0,
-   "away_score": 35.0,
+   "home": "DEN",
+   "away": "LAR",
+   "home_score": 30.0,
+   "away_score": 26.0,
    "home_implied": null,
    "away_implied": null,
    "spread": null,
    "total": null,
-   "tv": "Prime Video",
+   "tv": "NBC",
    "weather": null
-  },
-  {
-   "game_id": "401872963",
-   "date": "2026-09-29T00:15Z",
-   "state": "pre",
-   "detail": "9/28 - 8:15 PM EDT",
-   "period": 0,
-   "clock": "0:00",
-   "home": "CHI",
-   "away": "PHI",
-   "home_score": 0.0,
-   "away_score": 0.0,
-   "home_implied": 18.5,
-   "away_implied": 23.0,
-   "spread": "PHI -4.5",
-   "total": 41.5,
-   "tv": "ESPN",
-   "weather": {
-    "temp": 64.0,
-    "cond": 33,
-    "text": "Clear",
-    "indoors": false
-   }
   }
  ]
 }
