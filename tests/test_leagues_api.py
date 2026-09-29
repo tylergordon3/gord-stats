@@ -392,3 +392,14 @@ def test_an_espn_league_not_yet_renewed_is_last_seasons(worker):
     miss = espn_sync(worker, who, "999")
     assert miss["status"] == 404 and len(fetched(worker)) == 2
     assert espn_sync(worker, who, "espn:2019:12x")["status"] == 400
+
+
+def test_signed_out_is_an_answer_not_a_console_error(worker):
+    """Every fantasy page asks on load; a 401 was a red console error on each
+    of them for everyone never signed in. Writes still refuse."""
+    got = worker.call("leagues.onRequestGet", URL, headers={})
+    assert got["status"] == 200
+    assert got["json"] == {"ok": True, "signedIn": False, "leagues": []}
+    post = worker.call("leagues.onRequestPost", URL, method="POST", headers={},
+                       body={"provider": "sleeper", "league_id": "123456789"})
+    assert post["status"] == 401

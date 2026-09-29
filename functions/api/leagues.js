@@ -91,6 +91,13 @@ const USERNAME = /^[A-Za-z0-9_.-]{1,64}$/;
 const CLAIM = "last_league_sync";
 
 export async function onRequestGet({ request, env }) {
+  // Signed out is an answer here, not an error: every fantasy page asks this
+  // on load, and a 401 put a red console error on each of them for every
+  // reader who never signs in (the 2026-09-28 phone audit). POST and DELETE
+  // still answer 401.
+  if (configured(env) && !(await readSession(request, env))) {
+    return json({ ok: true, signedIn: false, leagues: [] });
+  }
   const session = await guard(request, env);
   if (session instanceof Response) return session;
 

@@ -179,3 +179,10 @@ def test_a_reader_with_nothing_synced_can_still_reach_this_sites_league():
     # picker to put the option in.
     assert "ml-clear" in JS and "Show this site" in JS
     assert "addEventListener('click',restore)" in JS
+
+
+def test_a_signed_out_answer_in_the_body_counts_too():
+    """GET /api/leagues answers a signed-out reader 200 {signedIn: false} (a
+    401 was a console error on every fantasy page); the 401 check stays for a
+    deploy from before."""
+    assert "if(d && d.signedIn===false) signedIn=false;" in JS

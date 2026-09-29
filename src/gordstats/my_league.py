@@ -455,6 +455,9 @@ JS = """{% raw %}<script>
       return r.ok?r.json():null;
     })
     .then(function(d){
+      // Signed out answers 200 with signedIn:false (a 401 was a console
+      // error on every page); the 401 check above stays for older deploys.
+      if(d && d.signedIn===false) signedIn=false;
       var mine=d&&d.leagues&&d.leagues.length;
       if(!mine){
         // No account, or an account with nothing synced - and the bar reads
