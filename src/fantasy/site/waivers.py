@@ -22,7 +22,7 @@ def body() -> str:
 def generate():
     out = paths.WEB_WAIVERS
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(add_front_matter(layout.HEAD + body(), "Waivers & Trades",
+    out.write_text(add_front_matter(layout.HEAD + body(), "Your League's Waivers & Trades",
                                     "Every claim, add and trade in your league"),
                    encoding="utf-8")
     print(f"Wrote Waivers & Trades -> {out}")

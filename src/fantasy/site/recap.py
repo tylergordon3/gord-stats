@@ -164,7 +164,7 @@ def _write(path, week: recap.Week, all_weeks: list, league_name: str) -> None:
     links = ('<p class="rc-note"><a href="/fantasy/matchups/">Every roster, player by player '
              '&rarr;</a></p>')
     html = add_front_matter(layout.HEAD + recap.page(week, all_weeks, BASE, links),
-                            f"Week {week.number} Recap", escape(league_name),
+                            f"NFL Week {week.number} Recap", escape(league_name),
                             description=recap.headline(week))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8")
@@ -177,7 +177,7 @@ def generate() -> None:
     if not all_weeks:
         (OUT / "index.html").write_text(add_front_matter(
             layout.HEAD + "<p>The first recap is written once week 1 is over - after "
-            "Monday night's game.</p>", "Weekly Recap"), encoding="utf-8")
+            "Monday night's game.</p>", "NFL Weekly Recap"), encoding="utf-8")
         recap.write_latest(OUT, None)
         print("Wrote Weekly Recap (no final week yet)")
         return

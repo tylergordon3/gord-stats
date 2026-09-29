@@ -85,7 +85,8 @@ def main(df, gender):
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    html = frontmatter.add_front_matter(html, "Conferences")
+    html = frontmatter.add_front_matter(
+        html, "Men's Conferences" if gender == "M" else "Women's Conferences")
 
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
