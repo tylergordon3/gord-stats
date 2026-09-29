@@ -256,10 +256,13 @@ def update_cache(rebuild: bool = False, path: Path = DEFENSE_FILE) -> dict:
             print(f"  ⚠ event {e['id']}: {err}")
         time.sleep(0.15)
 
-    cache["updated"] = datetime.now(ET).isoformat()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(cache, f, indent=1)
+    # Rewritten (and restamped) only when a game was added: every tick used to
+    # change "updated" alone - 182 commits of the file in a week.
+    if new or not path.exists():
+        cache["updated"] = datetime.now(ET).isoformat()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w") as f:
+            json.dump(cache, f, indent=1)
 
     if DEBUG or new:
         print(f"Defense cache: {len(games)} games total ({len(new)} added)")

@@ -14,6 +14,7 @@ import pandas as pd
 from cfb import results as _college
 from nfl import games as games_mod, predict
 from nfl.config import DATA_DIR, SEASON
+from gordstats import stable
 
 PRED_DIR = DATA_DIR / "predictions"
 _COLS = _college._COLS + ["seasontype"]
@@ -56,10 +57,13 @@ def capture(season: int = SEASON) -> pd.DataFrame:
     PRED_DIR.mkdir(parents=True, exist_ok=True)
     path = season_path(season)
     if path.exists():
-        fresh = pd.concat([pd.read_parquet(path), fresh], ignore_index=True)
+        old = pd.read_parquet(path)
+        # Unchanged same-day captures keep the row already there (cfb.results).
+        fresh = pd.concat([old, stable.drop_repeats(old, fresh, ["game_id"])],
+                          ignore_index=True)
     fresh["day"] = fresh["captured"].str[:10]
     fresh = fresh.drop_duplicates(subset=["game_id", "day"], keep="last")
-    fresh.drop(columns="day").to_parquet(path, index=False)
+    stable.write_parquet(fresh.drop(columns="day"), path)
     return fresh
 
 

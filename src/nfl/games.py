@@ -24,6 +24,7 @@ import pandas as pd
 import requests
 
 from nfl.config import DATA_DIR, SEASON
+from gordstats import stable
 
 _SCOREBOARD = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
 # ESPN 403s a browser-like User-Agent from python-requests (TLS fingerprint)
@@ -159,7 +160,7 @@ def schedule(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.
     if frame.empty:
         return pd.read_parquet(path) if path.exists() else frame
     GAMES_DIR.mkdir(parents=True, exist_ok=True)
-    frame.to_parquet(path, index=False)
+    stable.write_parquet(frame, path)     # unchanged: mtime only, no new git version
     return frame
 
 

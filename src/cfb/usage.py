@@ -32,6 +32,7 @@ import pandas as pd
 
 from cfb import cfbd, espn
 from cfb.config import DATA_DIR, SEASON
+from gordstats import stable
 
 # "to #0 E.Mitchell caught at ..." / "incomplete short left to #1 P.Billups II"
 _TARGET = re.compile(r"\bto #(\d+) ([A-Z][\w.'-]*(?: [\w.'-]+)*?)(?=,| caught| thrown| for |$)")
@@ -292,7 +293,9 @@ def capture(season: int = SEASON, refresh: bool = False) -> pd.DataFrame:
     if len(have):
         have = have[~have["week"].isin(frame["week"].unique())]
         frame = pd.concat([have, frame], ignore_index=True)
-    frame.to_parquet(out, index=False)
+    # Sorted, and written only if different: CFBD's rows arrive in any order,
+    # and five identical-but-reordered copies a day were ~21 MB a week of history.
+    stable.write_parquet(frame, out, sort_by=["week", "game_id", "team", "athlete_id", "player"])
     return frame
 
 

@@ -26,6 +26,7 @@ import pandas as pd
 
 from cfb import espn, odds as odds_mod, predict
 from cfb.config import DATA_DIR, SEASON
+from gordstats import stable
 
 PRED_DIR = DATA_DIR / "predictions"
 
@@ -86,11 +87,15 @@ def capture(season: int = SEASON) -> pd.DataFrame:
     PRED_DIR.mkdir(parents=True, exist_ok=True)
     path = season_path(season)
     if path.exists():
-        fresh = pd.concat([pd.read_parquet(path), fresh], ignore_index=True)
+        old = pd.read_parquet(path)
+        # A same-day capture that says what the last one said keeps the last
+        # one (and its time), so an unchanged board is an unchanged file.
+        fresh = pd.concat([old, stable.drop_repeats(old, fresh, ["game_id"])],
+                          ignore_index=True)
     # One row per game per capture run; running twice in a day is not new data.
     fresh["day"] = fresh["captured"].str[:10]
     fresh = fresh.drop_duplicates(subset=["game_id", "day"], keep="last")
-    fresh.drop(columns="day").to_parquet(path, index=False)
+    stable.write_parquet(fresh.drop(columns="day"), path)
     return fresh
 
 

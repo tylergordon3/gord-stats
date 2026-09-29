@@ -23,6 +23,7 @@ import pandas as pd
 
 from cfb import espn
 from cfb.config import DATA_DIR, SEASON
+from gordstats import stable
 
 ODDS_DIR = DATA_DIR / "odds"
 
@@ -97,13 +98,15 @@ def capture(weeks=None, season: int = SEASON) -> pd.DataFrame:
 
     ODDS_DIR.mkdir(parents=True, exist_ok=True)
     path = ODDS_DIR / f"{season}.parquet"
+    key = ["season", "week", "home_id", "away_id"]
     if path.exists():
-        fresh = pd.concat([pd.read_parquet(path), fresh], ignore_index=True)
+        old = pd.read_parquet(path)
+        # An unchanged same-day line keeps the row already there (cfb.results).
+        fresh = pd.concat([old, stable.drop_repeats(old, fresh, key)], ignore_index=True)
     # One line per game per capture run; re-running the same day is not new data.
     fresh["day"] = fresh["captured"].str[:10]
-    fresh = fresh.drop_duplicates(subset=["season", "week", "home_id", "away_id", "day"],
-                                  keep="last")
-    fresh.drop(columns="day").to_parquet(path, index=False)
+    fresh = fresh.drop_duplicates(subset=key + ["day"], keep="last")
+    stable.write_parquet(fresh.drop(columns="day"), path)
     return fresh
 
 

@@ -18,6 +18,7 @@ import pandas as pd
 import requests
 
 from cfb.config import DATA_DIR, SEASON
+from gordstats import stable
 
 _SCOREBOARD = ("https://site.api.espn.com/apis/site/v2/sports/football/"
                "college-football/scoreboard")
@@ -165,7 +166,7 @@ def schedule(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.
 
     df = pd.DataFrame(rows).sort_values(["week", "date_utc"]).reset_index(drop=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(cache, index=False)
+    stable.write_parquet(df, cache)       # unchanged: mtime only, no new git version
     return df
 
 
