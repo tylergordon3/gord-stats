@@ -75,6 +75,11 @@ def _cbb() -> None:
         print(f"  outside the {CBB_TIPOFF:%b %-d}-{CBB_SEASON_END:%b %-d} season; nothing to do")
         return
 
+    # The live tick's betting lines into the committed record (cbb.lines),
+    # before anything below can fail the task.
+    from cbb import lines
+    print(f"  cbb: {lines.publish()} games' lines on record")
+
     # daily_data reports rather than raises, so a partial scrape has to be
     # turned into a failure here: predictions built on half the feeds are
     # worse than no update at all. main() records the task as failed and

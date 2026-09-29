@@ -55,6 +55,12 @@ def main() -> int:
     from cbb import live_scraper, push_scores
 
     leagues = {k: live_scraper.get_current_live_dataset(k)["games"] for k in ("men", "women")}
+    # The lines first, and never at the push's expense: they exist nowhere else.
+    try:
+        from cbb import lines
+        lines.record(leagues)
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! cbb: betting lines not recorded ({exc})")
     push_scores.push(payload(leagues))
     print(f"  cbb: pushed {len(leagues['men'])} men's and {len(leagues['women'])} "
           "women's games")

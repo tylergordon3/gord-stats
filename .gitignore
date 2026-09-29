@@ -116,3 +116,5 @@ docs/cfb/week-games.json
 docs/cbb/star-teams.json
 docs/fantasy/recap/latest.json
 docs/cfb/recap/latest.json
+# Written every live tick by cbb.lines; the daily run copies it to data/cbb/lines/.
+data/cbb/lines_live/
