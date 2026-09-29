@@ -148,14 +148,19 @@ SLOTS = ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX", "FLEX", "K", "DEF",
          "BN", "BN", "BN", "BN", "BN"]
 
 
-def _nfl_week(n, adds=None, ranks=None):
+def _nfl_data(n):
+    return json.loads((ROOT / "data/fantasy/matchups/2026" / f"week_{n:02d}.json").read_text())
+
+
+def _nfl_week(n, adds=None, ranks=None, prev=None, playoff_start=15):
     from fantasy.site import matchups as mu
     from fantasy.site import recap as nfl
-    d = json.loads((ROOT / "data/fantasy/matchups/2026" / f"week_{n:02d}.json").read_text())
+    d = _nfl_data(n)
     cards = {str(p): mu.player_card(str(p), d, {}, {})
              for m in d["matchups"] for s in m["sides"] for p in s["players"]}
-    adds = adds if adds is not None else pd.DataFrame(columns=["week", "pid", "roster_id"])
-    return nfl.build_week(d, SLOTS, cards, {}, adds, ranks or {})
+    adds = adds if adds is not None else pd.DataFrame(columns=["week", "pid", "roster_id", "kind"])
+    return nfl.build_week(d, SLOTS, cards, {}, adds, ranks or {}, prev=prev,
+                          playoff_start=playoff_start)
 
 
 def test_nfl_max_points_match_sleepers_own():
@@ -172,9 +177,11 @@ def test_nfl_max_points_match_sleepers_own():
 
 
 def test_nfl_week_pickups_and_power():
-    adds = pd.DataFrame([{"week": 1, "pid": "PIT", "roster_id": "1"},
-                         {"week": 1, "pid": "9999999", "roster_id": "1"},   # not his
-                         {"week": 2, "pid": "PIT", "roster_id": "1"}])
+    from fantasy.site import recap as nfl
+    # Week 1 has no week before: its pickups are claims since the draft.
+    adds = pd.DataFrame([{"week": 1, "pid": "PIT", "roster_id": "1", "kind": "claim"},
+                         {"week": 1, "pid": "9999999", "roster_id": "1", "kind": "claim"},
+                         {"week": 2, "pid": "PIT", "roster_id": "1", "kind": "claim"}])
     w = _nfl_week(1, adds, {0: {str(i): i for i in range(1, 11)},
                             1: {str(i): 11 - i for i in range(1, 11)}})
     assert [(p.key, p.player.name, p.started) for p in w.pickups] == [("1", "PIT D/ST", True)]
@@ -182,6 +189,19 @@ def test_nfl_week_pickups_and_power():
     assert len(w.games) == 5 and w.median
     # Injured reserve is nobody's bench.
     assert all(p.slot == "" for s in w.sides.values() for p in s.bench)
+
+    # Later weeks read the rosters: new since last week, and not traded for.
+    # Sleeper filed the claim for SF's defense under week 1 (its `leg`), and
+    # the old recap missed it in week 2, where it was started.
+    prev = nfl.roster_ids(_nfl_data(1))
+    w2 = _nfl_week(2, prev=prev)
+    got = {(p.key, p.player.name, p.started) for p in w2.pickups}
+    assert ("1", "SF D/ST", True) in got and not any(n == "PIT D/ST" for _, n, _ in got)
+    traded = pd.DataFrame([{"week": 2, "pid": "SF", "roster_id": "1", "kind": "trade"}])
+    assert "SF D/ST" not in {p.player.name for p in _nfl_week(2, traded, prev=prev).pickups}
+
+    # No median game once the playoffs start.
+    assert not _nfl_week(2, prev=prev, playoff_start=2).median
 
 
 # --------------------------------------------------------------------------- #
@@ -226,7 +246,15 @@ def test_cfb_week(tmp_path, monkeypatch):
                          ("20261002-120000", "t1,2\nt2,1\n")):     # next week's games
         (hist / f"{stamp}.csv").write_text("key,rank\n" + ranks)
     monkeypatch.setattr(cfbr, "HISTORY_DIR", hist)
+    # After the week before (the first snapshot the morning after the 19th)
+    # against after this one; mid-week and next week's are neither.
+    assert cfbr._power("2026-09-20", "2026-09-26", "2026-09-19") == {"t1": (2, 1), "t2": (1, 2)}
+    # The first week: the last snapshot before it began.
+    (hist / "20260919-120000.csv").write_text("key,rank\nt1,2\nt2,1\n")
     assert cfbr._power("2026-09-20", "2026-09-26") == {"t1": (2, 1), "t2": (1, 2)}
+    # Across a change of ranking method, no movers at all.
+    (hist / "20260927-120000.csv").write_text("key,rank,per_week\nt1,1,10\nt2,2,9\n")
+    assert cfbr._power("2026-09-20", "2026-09-26", "2026-09-19") == {}
 
 
 def test_the_recap_is_built_and_found():

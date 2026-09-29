@@ -88,7 +88,7 @@ class Week:
     sides: dict                     # {key: Side}
     median: bool = False            # a second game against the week's median
     flex: dict = field(default_factory=dict)    # {flex slot: positions it takes}
-    pickups: list = field(default_factory=list)  # [Pickup] added for this week
+    pickups: list = field(default_factory=list)  # [Pickup]: new to the roster this week
     power: dict = field(default_factory=dict)    # {key: (rank before, rank after)}
 
     def median_score(self) -> float:
@@ -250,7 +250,8 @@ def awards(week: Week) -> list:
     if started:
         pk = max(started, key=lambda x: x.player.pts)
         out.append(Award("Pickup of the week", pk.key, num(pk.player.pts),
-                         f"{_who(pk.player)}, added this week", "good"))
+                         f"{_who(pk.player)}, added "
+                         + ("since the draft" if week.number == 1 else "this week"), "good"))
 
     moves = {k: before - after for k, (before, after) in week.power.items()}
     if moves:

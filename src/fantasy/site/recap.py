@@ -31,18 +31,30 @@ def _season_key(year: int) -> str:
     return f"{str(year)[2:]}{str(year + 1)[2:]}"
 
 
+_MOVE_COLS = ["week", "pid", "roster_id", "kind"]
+
+
 def _adds(year: int) -> pd.DataFrame:
-    """Completed waiver and free-agent claims, one row per player added:
-    [week, pid, roster_id]. Sleeper files each under the week (`leg`) it was
-    made for."""
+    """Every completed player add: [week, pid, roster_id, kind], kind "claim"
+    (waiver or free agent) or "trade". `week` is Sleeper's `leg`: the week in
+    force when the move was made, which for a Tuesday waiver claim is the week
+    *before* the one he was claimed for - so it only places moves roughly;
+    build_week works from the rosters themselves."""
     path = paths.DATA_DIR / "transactions" / f"{_season_key(year)}.json"
     if not path.exists():
-        return pd.DataFrame(columns=["week", "pid", "roster_id"])
+        return pd.DataFrame(columns=_MOVE_COLS)
     tx = pd.read_json(path, dtype={"transaction_id": str})
-    tx = tx[tx["type"].isin(["waiver", "free_agent"]) & tx["status"].eq("complete")]
-    rows = [{"week": int(t.leg), "pid": str(pid), "roster_id": str(rid)}
+    tx = tx[tx["type"].isin(["waiver", "free_agent", "trade"]) & tx["status"].eq("complete")]
+    rows = [{"week": int(t.leg), "pid": str(pid), "roster_id": str(rid),
+             "kind": "trade" if t.type == "trade" else "claim"}
             for t in tx.itertuples(index=False) for pid, rid in (t.adds or {}).items()]
-    return pd.DataFrame(rows, columns=["week", "pid", "roster_id"])
+    return pd.DataFrame(rows, columns=_MOVE_COLS)
+
+
+def roster_ids(d: dict) -> dict:
+    """{roster_id: every player id on the roster that week, IR included}."""
+    return {str(s["roster_id"]): {str(p) for p in s.get("players") or []}
+            for m in d.get("matchups") or [] for s in m["sides"]}
 
 
 def _power(year: int) -> dict:
@@ -61,14 +73,18 @@ def _power(year: int) -> dict:
 
 
 def build_week(d: dict, slots: list, cards: dict, gs: dict, adds: pd.DataFrame,
-               ranks: dict) -> recap.Week:
-    """One archived week as a recap.Week."""
+               ranks: dict, prev: dict | None = None, playoff_start: int = 0) -> recap.Week:
+    """One archived week as a recap.Week. `prev` is roster_ids() of the week
+    before (None for week 1); `playoff_start` the league's first playoff week,
+    from which there is no median game."""
     week = int(d["week"])
     teams = {str(k): recap.Team(t.get("name") or f"Team {k}", t.get("manager") or "",
                                 t.get("avatar") or "")
              for k, t in (d.get("teams") or {}).items()}
     sides, games = {}, []
     for m in d.get("matchups") or []:
+        if m.get("matchup_id") is None:
+            continue                    # a playoff bye: no game, nothing to award
         keys = []
         for s in m["sides"]:
             key = str(s["roster_id"])
@@ -90,20 +106,32 @@ def build_week(d: dict, slots: list, cards: dict, gs: dict, adds: pd.DataFrame,
             sides[key] = recap.Side(key, float(s.get("points") or 0), starters, bench,
                                     mu.best_lineup(rows, cards, pts, slots), proj)
             keys.append(key)
-        if len(keys) == 2 and m.get("matchup_id") is not None:
+        if len(keys) == 2:
             games.append(tuple(keys))
+    # A pickup is a player on this week's roster who was not on it last week
+    # and did not come in a trade - read off the rosters, because Sleeper's
+    # `leg` files a Tuesday claim under the week before the one it was for
+    # (the audit: week 2 missed two defenses that were started, and week 1
+    # credited one claimed in August). Week 1 has no week before: its
+    # pickups are the claims made since the draft.
+    traded = {(a.roster_id, a.pid) for a in adds.itertuples(index=False)
+              if a.kind == "trade" and week - 1 <= a.week <= week}
     pickups = []
-    for a in adds[adds["week"] == week].itertuples(index=False):
-        side = sides.get(a.roster_id)
-        if not side:
-            continue
-        on = {p.id: p for p in side.starters}
-        sat = {p.id: p for p in side.bench}
-        if a.pid in on or a.pid in sat:
-            pickups.append(recap.Pickup(a.roster_id, on.get(a.pid) or sat[a.pid], a.pid in on))
+    for key, side in sides.items():
+        if prev is not None:
+            new = {p.id for p in side.starters + side.bench
+                   if p.id not in prev.get(key, set()) and (key, p.id) not in traded}
+        else:
+            new = {a.pid for a in adds.itertuples(index=False)
+                   if a.kind == "claim" and a.roster_id == key and a.week <= week}
+        on = {p.id for p in side.starters}
+        pickups += [recap.Pickup(key, p, p.id in on) for p in side.starters + side.bench
+                    if p.id in new]
     before, after = ranks.get(week - 1) or {}, ranks.get(week) or {}
     power = {k: (before[k], after[k]) for k in sides if k in before and k in after}
-    return recap.Week(week, teams, games, sides, median=True, flex=FLEX,
+    # Sleeper plays the median in the regular season only.
+    median = not playoff_start or week < playoff_start
+    return recap.Week(week, teams, games, sides, median=median, flex=FLEX,
                       pickups=pickups, power=power)
 
 
@@ -119,12 +147,16 @@ def weeks(lg: dict, year: int = UPCOMING_YEAR) -> list:
              for r in board.drop_duplicates("sleeper_id").itertuples(index=False)}
     registry = mu._registry()
     adds, ranks = _adds(year), _power(year)
+    by_week = {int(d["week"]): d for d in datas}
     out = []
     for d in datas:
         cards = {str(p): mu.player_card(str(p), d, board, registry)
                  for m in d["matchups"] for s in m["sides"] for p in s["players"]}
         gs = frozen.load(pregame.path(d["week"], year))
-        out.append(build_week(d, slots, cards, gs, adds, ranks))
+        before = by_week.get(int(d["week"]) - 1)
+        out.append(build_week(d, slots, cards, gs, adds, ranks,
+                              prev=roster_ids(before) if before else None,
+                              playoff_start=int(lg.get("playoff_week_start") or 0)))
     return out
 
 

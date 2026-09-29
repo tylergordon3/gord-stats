@@ -32,25 +32,43 @@ def _day(s: str) -> datetime:
     return datetime.strptime(s, "%Y-%m-%d")
 
 
-def _power(start: str, end: str) -> dict:
-    """{team_key: (rank before, rank after)} from the league power archive:
-    the last snapshot before the week's Thursday, and the last one after its
-    Saturday but before the next Thursday - no games in either."""
-    snaps = rankmoves._snaps(HISTORY_DIR)
-    before = [p for t, p in snaps if t < _day(start) + timedelta(days=4)]
-    after = [p for t, p in snaps
-             if _day(end) + timedelta(days=1) <= t < _day(end) + timedelta(days=5)]
-    if not before or not after:
+def _after(end: str):
+    """The first league power snapshot once a week is over: the morning after
+    its last day (Yahoo's weeks are not Sunday-Saturday - week 1 ran Thursday
+    to Monday, week 2 Tuesday to Saturday)."""
+    cut = _day(end) + timedelta(days=1, hours=3)
+    return next((p for t, p in rankmoves._snaps(HISTORY_DIR) if t >= cut), None)
+
+
+def _header(path) -> str:
+    with open(path, encoding="utf-8") as f:
+        return f.readline().strip()
+
+
+def _power(start: str, end: str, prev_end: str | None = None) -> dict:
+    """{team_key: (rank before, rank after)}: after the week before (or, for
+    the first week, the last snapshot before it began) against after this one."""
+    if prev_end:
+        before = _after(prev_end)
+    else:
+        earlier = [p for t, p in rankmoves._snaps(HISTORY_DIR) if t < _day(start)]
+        before = earlier[-1] if earlier else None
+    after = _after(end)
+    if before is None or after is None or before == after:
         return {}
-    a, b = rankmoves._load(before[-1]), rankmoves._load(after[-1])
+    # The ranking itself has changed method twice (rank alone, then season
+    # lineup value, then points a week - see a file's header): a move across a
+    # change is the method's, not the team's.
+    if _header(before) != _header(after):
+        return {}
+    a, b = rankmoves._load(before), rankmoves._load(after)
     return {k: (int(a[k]), int(b[k])) for k in b.index if k in a.index}
 
 
-def _adds(tx: list, start: str, end: str, names: dict) -> list:
-    """[(team_key, player name, school)] added during the week (Sunday to
-    Saturday, Eastern). Yahoo files a move by the team's name, not its key."""
-    lo, hi = _day(start), _day(end) + timedelta(days=1)
-    out = []
+def _moves(tx: list, lo: datetime, hi: datetime, names: dict, kind: str) -> set:
+    """{(team_key, player name)} for Yahoo moves of `kind` ("add" or "trade")
+    made between lo and hi (Eastern). Yahoo files a move by the team's name."""
+    out = set()
     for t in tx:
         if t.get("status") != "successful" or not t.get("timestamp"):
             continue
@@ -59,13 +77,15 @@ def _adds(tx: list, start: str, end: str, names: dict) -> list:
             continue
         for p in t.get("players") or []:
             key = names.get(p.get("destination"))
-            if p.get("type") == "add" and key:
-                out.append((key, p.get("player"), p.get("team")))
+            if key and (p.get("type") == kind or (kind == "trade" and t.get("type") == "trade")):
+                out.add((key, p.get("player")))
     return out
 
 
-def build_week(d: dict, lg: dict, gs: dict, tx: list, power: dict) -> recap.Week:
-    """One archived week as a recap.Week."""
+def build_week(d: dict, lg: dict, gs: dict, tx: list, power: dict,
+               prev: dict | None = None) -> recap.Week:
+    """One archived week as a recap.Week; `prev` is the week before's archive
+    (None for the first week)."""
     teams = {t["team_key"]: recap.Team(t.get("name") or t["team_key"], t.get("manager") or "",
                                        t.get("logo") or "")
              for t in lg.get("teams") or []}
@@ -90,15 +110,27 @@ def build_week(d: dict, lg: dict, gs: dict, tx: list, power: dict) -> recap.Week
             keys.append(key)
         if len(keys) == 2:
             games.append(tuple(keys))
+    # A pickup is a player on this week's roster who was not on last week's
+    # and did not come in a trade; the first week's are the adds since the draft.
     names = {t.name: k for k, t in teams.items()}
+    end = _day(d["week_end"]) + timedelta(days=1)
     pickups = []
-    for key, name, school in _adds(tx, d["week_start"], d["week_end"], names):
-        side = sides.get(key)
-        hit = side and next((p for p in side.starters + side.bench if p.name == name), None)
-        if hit:
-            pickups.append(recap.Pickup(key, hit, hit in side.starters))
-    return recap.Week(int(d["week"]), teams, games, sides,
-                      median=bool(lg.get("uses_median_score")), flex=FLEX,
+    if prev is not None:
+        had = {k: {p["yahoo_id"] for p in r} for k, r in (prev.get("rosters") or {}).items()}
+        traded = _moves(tx, _day(prev["week_start"]), end, names, "trade")
+        for key, side in sides.items():
+            for p in side.starters + side.bench:
+                if p.id not in had.get(key, set()) and (key, p.name) not in traded:
+                    pickups.append(recap.Pickup(key, p, p in side.starters))
+    else:
+        added = _moves(tx, datetime(1970, 1, 1), end, names, "add")
+        for key, side in sides.items():
+            for p in side.starters + side.bench:
+                if (key, p.name) in added:
+                    pickups.append(recap.Pickup(key, p, p in side.starters))
+    # Yahoo plays the median in the regular season only.
+    median = bool(lg.get("uses_median_score")) and not d.get("is_playoffs")
+    return recap.Week(int(d["week"]), teams, games, sides, median=median, flex=FLEX,
                       pickups=pickups, power=power)
 
 
@@ -110,8 +142,14 @@ def weeks() -> list:
         return []
     lg = yahoo.league()
     tx = yahoo.transactions()
-    return [build_week(d, lg, frozen.load(pregame.path(d["week"])), tx,
-                       _power(d["week_start"], d["week_end"])) for d in datas]
+    by_week = {int(d["week"]): d for d in datas}
+    out = []
+    for d in datas:
+        prev = by_week.get(int(d["week"]) - 1)
+        out.append(build_week(d, lg, frozen.load(pregame.path(d["week"])), tx,
+                              _power(d["week_start"], d["week_end"],
+                                     prev["week_end"] if prev else None), prev))
+    return out
 
 
 def _write(path, week: recap.Week, all_weeks: list, league_name: str) -> None:
