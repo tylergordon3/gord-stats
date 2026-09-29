@@ -441,6 +441,9 @@ _POS_CSS = """<style>
 .ps-table{margin-top:12px}
 .ps-table table{border-collapse:collapse;font-size:13px;width:100%}
 .ps-table th,.ps-table td{padding:5px 8px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--ps-rule);color:var(--ps-text)}
+/* The theme paints every th #373737, and this header set only its text:
+   #0f172a on it read at 1.5:1 in the light theme (the 2026-09-28 phone audit). */
+.ps-table th{background:var(--ps-rule)}
 .ps-table td:first-child{text-align:left;font-weight:600}
 </style>"""
 

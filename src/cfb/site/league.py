@@ -61,6 +61,7 @@ table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
   table.lg-table td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.lg-table tbody tr:nth-child(even) td{background:#1b2540}
   .mu-note{color:#aab7c9}
+  .inj{color:#ffb4ab}
 }
 </style>"""
 

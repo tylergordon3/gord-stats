@@ -300,7 +300,7 @@ CARD_CSS = """<style>
 .rd-card.done .rd-c-nm{color:#64748b}
 .rd-card.done .rd-c-nm img{opacity:.55}
 .rd-card.done .rd-c-sub{color:#8b98a8}
-.rd-card.done .rd-c-slot{background:#b4bdc9}
+.rd-card.done .rd-c-slot{background:#b4bdc9;color:#1f2937}
 .rd-card.done .rd-c-opp{opacity:.6}
 .rd-c-slot{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;
   justify-content:center;font-size:11.5px;font-weight:800;color:#fff;background:#64748b;
@@ -345,7 +345,11 @@ CARD_CSS = """<style>
   .rd-card.done{background:#121a2e;border-color:#243150}
   .rd-card.done .rd-c-nm{color:#8fa0b8}
   .rd-card.done .rd-c-sub{color:#77869c}
-  .rd-card.done .rd-c-slot{background:#3a465c}
+  /* Every finished slot light-on-dark: the WR slot kept its dark text on
+     this grey (1.55:1), and the red tags below read at 2.3-2.9:1 until
+     lightened (the 2026-09-28 phone audit). */
+  .rd-card.done .rd-c-slot{background:#3a465c;color:#e8eef7}
+  .rd-inj,.rd-c-sub .bye,.rd-c-sub .live,table.rd td.rd-g .bye{color:#f87171}
   .rd-c-nm,.rd-c-proj{color:#e8eef7}.rd-c-sub,.rd-c-proj small{color:#aab7c9}
   .rd-card.in .rd-c-do{color:#4ade80}.rd-card.out .rd-c-do{color:#f87171}
   .rd-card.swap .rd-c-do{color:#93c5fd}

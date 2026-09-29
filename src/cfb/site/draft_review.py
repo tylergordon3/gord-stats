@@ -90,6 +90,12 @@ table.draft-board td .v.down{color:#b3382c}
 .mu-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
 @media (prefers-color-scheme: dark){
   table.draft-board th{background:#223052;color:#dde5ef;border-color:#2b3852}
+  /* This board goes dark with the page (the NFL one stays a light island), so
+     its round column must too: on a phone that column is frozen, and the
+     frozen-column rule in custom.css paints it #eef2f7 in both themes -
+     #dde5ef on it was 1.13:1. One element more specific than that rule. */
+  table.draft-board thead th:first-child,
+  table.draft-board tbody th:first-child{background:#223052}
   table.draft-board td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.draft-board td .t{color:#aab7c9}
   table.draft-board td.cur-QB{background:#1e2c52}

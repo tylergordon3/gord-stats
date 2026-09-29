@@ -52,6 +52,9 @@ h3.pred-sub{font-size:17px;margin:26px 0 4px;padding-top:16px;
 /* A pick that was never live - no book total on record - reads as absent
    rather than as a loss. */
 table.cfb-pred td.pred-na{color:var(--gs-muted,#5d6b7e)}
+table.cfb-pred td.pred-mk{font-weight:700}
+table.cfb-pred td.pred-mk.hit{color:#15803d}
+table.cfb-pred td.pred-mk.miss{color:#b91c1c}
 table.cfb-pred td.pred-ou{white-space:nowrap;font-variant-numeric:tabular-nums}
 table.cfb-pred{width:100%;border-collapse:collapse;font-size:14px}
 table.cfb-pred th{background:#eef2f7;color:#334155;padding:7px 10px;text-align:center;
@@ -198,6 +201,8 @@ h3.pred-sub{border-top-color:#2b3852}
   table.cfb-pred th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.cfb-pred td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.cfb-pred tbody tr:nth-child(even) td{background:#1b2540}
+  table.cfb-pred td.pred-mk.hit{color:#4ade80}
+  table.cfb-pred td.pred-mk.miss{color:#f87171}
   .pred-tile{background:#16203a;border-color:#2b3852}
   .pred-tile .t-label,.pred-tile .t-sub{color:#aab7c9}
   .pred-tile .t-value{color:#f1f5f9}
@@ -481,9 +486,10 @@ def _mark(ok) -> str:
     """A tick, a cross, or a dash where the pick was never live."""
     if ok is None or (isinstance(ok, float) and pd.isna(ok)):
         return "<td class='pred-na'>&mdash;</td>"
-    glyph = "&#10003;" if ok else "&#10007;"
-    colour = teams_page.GOOD if ok else teams_page.BAD
-    return f"<td style='color:{colour};font-weight:700'>{glyph}</td>"
+    # Classes, not an inline colour: an inline red cannot follow the dark
+    # theme, where it read at 2.3:1 (the 2026-09-28 phone audit).
+    return ("<td class='pred-mk hit'>&#10003;</td>" if ok
+            else "<td class='pred-mk miss'>&#10007;</td>")
 
 
 def _result_rows(frame: pd.DataFrame) -> str:

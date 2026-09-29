@@ -386,7 +386,7 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   .mu-pr .mu-pp.done .mu-pn .nm{color:#8fa0b8}
   .mu-pr .mu-pp.done .mu-pn .mu-g,.mu-pr .mu-pp.done .mu-pn .mu-pm{color:#77869c}
   table.mu-roster td.mu-g .fin,table.mu-roster td.mu-g .bye{color:#aab7c9}
-  table.mu-roster td.mu-p .inj{color:#ffb4ab}
+  table.mu-roster td.mu-p .inj,.mu-pair .inj{color:#ffb4ab}
   table.mu-roster td.mu-p .mu-hint.in{background:#123c2e;color:#8ff0bd}
   table.mu-roster td.mu-p .mu-hint.out{background:#4a1f1a;color:#ffb4ab}
   .mu-side .rec,.mu-side .sub,.mu-mid{color:#aab7c9}
