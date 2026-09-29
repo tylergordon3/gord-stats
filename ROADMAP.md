@@ -314,6 +314,8 @@ Open:
 - [x] **Per-page preview images** (9b96f42c0, 6c79937f9): recaps, matchups, both power pages and
       the CFB Top 25 draw their own 1200x630 card (gordstats.share_card); the home page keeps the
       site card.
+- [x] **Fantasy tabs** (ffa9989a0): Home · Matchups · Team · Power · Usage in both leagues; the
+      Analytics archive is League Home's League Records (finding cards); /fantasy/injuries/.
 - [ ] **Features, ranked:** a share button; playoff-odds swing / game of
       the week; an honest bets record (CLV); CBB game predictions; Saturday watch guide.
 
