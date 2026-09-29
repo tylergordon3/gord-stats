@@ -235,8 +235,12 @@ def test_every_task_in_the_table_is_callable():
 def test_a_conflicting_pull_leaves_the_pi_repo_usable(tmp_path):
     """pi-deploy.sh's pulls used to leave the repo mid-rebase on a conflict,
     and every run after - this script's and pi-live.sh's - then failed at the
-    clean slate ("path is unmerged") until someone aborted it by hand. Runs the
-    script's own pull_rebase() against two clones that disagree."""
+    clean slate ("path is unmerged") until someone aborted it by hand. Then a
+    conflict was backed out but the Pi's data commit left local, and every run
+    after stopped at its pull (the 2026-09-28 audit). Now the Pi's generated
+    data wins a content conflict; only what even that can't settle stops the
+    run, backed out. Runs the scripts' own pull_rebase() against clones that
+    disagree."""
     import re
     import shutil
     import subprocess
@@ -246,26 +250,46 @@ def test_a_conflicting_pull_leaves_the_pi_repo_usable(tmp_path):
         pytest.skip("no git/bash")
 
     def git(cwd, *args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                       cwd=cwd, check=True, capture_output=True)
+        return subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                              cwd=cwd, check=True, capture_output=True, text=True).stdout
 
-    origin, pi, pc = tmp_path / "origin.git", tmp_path / "pi", tmp_path / "pc"
-    git(tmp_path, "init", "-q", "--bare", "-b", "main", str(origin))
-    git(tmp_path, "clone", "-q", str(origin), str(pc))
-    (pc / "f").write_text("base\n")
-    git(pc, "add", "f"); git(pc, "commit", "-qm", "base"); git(pc, "push", "-q", "origin", "main")
-    git(tmp_path, "clone", "-q", str(origin), str(pi))
-    (pc / "f").write_text("pc\n"); git(pc, "commit", "-qam", "pc"); git(pc, "push", "-q", "origin", "main")
-    (pi / "f").write_text("pi\n"); git(pi, "commit", "-qam", "pi")
-
-    script = (Path(__file__).parent.parent / "deploy" / "pi-deploy.sh").read_text()
+    script = (Path(__file__).parent.parent / "deploy" / "publish.sh").read_text()
     fn = re.search(r"^pull_rebase\(\) \{.*?^\}", script, re.S | re.M).group(0)
     probe = (f"git() {{ command git -c user.name=t -c user.email=t@t \"$@\"; }}\n"
-             f"BRANCH=main\n{fn}\npull_rebase")
-    out = subprocess.run(["bash", "-c", probe], cwd=pi, capture_output=True, text=True)
+             f"log() {{ :; }}\nBRANCH=main\n{fn}\npull_rebase")
 
-    assert out.returncode != 0, "a conflict must still stop the run"
-    assert not (pi / ".git" / "rebase-merge").exists() and not (pi / ".git" / "rebase-apply").exists()
-    status = subprocess.run(["git", "status", "--porcelain"], cwd=pi,
-                            capture_output=True, text=True).stdout
-    assert "UU" not in status and (pi / "f").read_text() == "pi\n"
+    def repos(name, pc_change):
+        origin, pi, pc = (tmp_path / f"{name}-origin.git", tmp_path / f"{name}-pi",
+                          tmp_path / f"{name}-pc")
+        git(tmp_path, "init", "-q", "--bare", "-b", "main", str(origin))
+        git(tmp_path, "clone", "-q", str(origin), str(pc))
+        (pc / "f").write_text("base\n")
+        git(pc, "add", "f"); git(pc, "commit", "-qm", "base"); git(pc, "push", "-q", "origin", "main")
+        git(tmp_path, "clone", "-q", str(origin), str(pi))
+        pc_change(pc); git(pc, "push", "-q", "origin", "main")
+        (pi / "f").write_text("pi\n"); git(pi, "commit", "-qam", "pi")
+        return pi
+
+    def clean(pi):
+        assert not (pi / ".git" / "rebase-merge").exists()
+        assert not (pi / ".git" / "rebase-apply").exists()
+        assert "UU" not in git(pi, "status", "--porcelain")
+
+    # Both rewrote the file: the Pi's copy wins, on top of origin's history.
+    def edit(pc):
+        (pc / "f").write_text("pc\n"); git(pc, "commit", "-qam", "pc")
+    pi = repos("edit", edit)
+    out = subprocess.run(["bash", "-c", probe], cwd=pi, capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr
+    clean(pi)
+    assert (pi / "f").read_text() == "pi\n"
+    assert git(pi, "log", "--format=%s").split() == ["pi", "pc", "base"]
+
+    # Origin deleted what the Pi changed: nothing to prefer - stop, backed out.
+    def delete(pc):
+        git(pc, "rm", "-q", "f"); git(pc, "commit", "-qm", "gone")
+    pi = repos("delete", delete)
+    out = subprocess.run(["bash", "-c", probe], cwd=pi, capture_output=True, text=True)
+    assert out.returncode != 0, "what can't be settled must still stop the run"
+    clean(pi)
+    assert (pi / "f").read_text() == "pi\n"
