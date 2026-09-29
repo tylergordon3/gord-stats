@@ -211,9 +211,16 @@ td.na{color:var(--gs-muted,#5d6b7e)}
     -webkit-overflow-scrolling:touch;padding-bottom:2px}
   .sc-pin .sc-chips::-webkit-scrollbar{display:none}
   .sc-pin .sc-chips button{white-space:nowrap;flex:none}
-  .sc-pin .sc-controls{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  /* Sort, conference and search share the row instead of scrolling it: the
+     conference picker was cut mid-word and the search box sat off-screen,
+     with nothing to say there was more (the 2026-09-28 phone audit). The
+     label goes - each control says what it is - and the search is 16px,
+     under which iOS zooms the page on focus. */
+  .sc-pin .sc-controls{flex-wrap:nowrap;min-width:0}
+  .sc-pin .sc-controls .lbl{display:none}
+  .sc-pin .sc-controls .sc-select,.sc-pin .sc-controls .sc-search{flex:1 1 0;min-width:0;width:auto}
+  .sc-pin .sc-controls .sc-search{font-size:16px;padding:4px 8px}
   .sc-pin>*{justify-content:flex-start}
-  .sc-pin .sc-controls .sc-search{min-width:110px}
 }
 .sc-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px}
 .sc-controls .lbl,.sc-chips .lbl{font-weight:800;font-size:.72rem;text-transform:uppercase;
@@ -380,6 +387,7 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .bar{background:#223052}
   .mk.hit{color:#4ade80}
   .mk.miss{color:#f87171}
+  .gs-pick .gp-miss,.gs-pick .gp-missed{color:#f87171}
   .t-wx{color:#c3cfdd}
   tr.g.wx-bad .t-wx{color:#c7d2fe}
   td.na{color:#7f8ea3}
@@ -1872,7 +1880,7 @@ poll();
 def _controls(confs: dict) -> str:
     names = set(confs.values())
     ordered = [c for c in _CONF_LEAD if c in names] + sorted(names - set(_CONF_LEAD))
-    conf_opts = '<option value="">All conferences</option>' + "".join(
+    conf_opts = '<option value="">All confs</option>' + "".join(
         f'<option value="{escape(c)}">{escape(c)}</option>' for c in ordered)
     sort_opts = "".join(f'<option value="{k}">{v}</option>' for k, v in _SORTS)
     chips = "".join(f'<button type="button" data-f="{k}">{v}</button>' for k, v in _CHIPS)
