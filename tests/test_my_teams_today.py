@@ -40,11 +40,18 @@ def _iso(hours):
     return (datetime.now(timezone.utc) + timedelta(hours=hours)).isoformat(timespec="seconds")
 
 
+def _et_day(hours):
+    """The Eastern date cbb.live_scraper files a game under."""
+    from zoneinfo import ZoneInfo
+    return (datetime.now(timezone.utc) + timedelta(hours=hours)).astimezone(
+        ZoneInfo("America/New_York")).date().isoformat()
+
+
 def _hoops(generated_hours=0.0):
     """Today's scoreboard as the Worker serves it (cbb.live_scraper.format_event)."""
     base = {"home_rank": None, "away_rank": None, "overtime": False, "is_mm": False,
             "is_nit": False, "game_description": "", "clock": "", "period": ""}
-    return {"generated": _iso(generated_hours), "leagues": {"men": {
+    games = {"generated": _iso(generated_hours), "leagues": {"men": {
         "1": dict(base, status="final", start_time_utc=_iso(-3), home_team="Duke",
                   away_team="Kansas", home_score=81, away_score=77, overtime=True,
                   home_rank=4, away_rank=9, home_model=3, away_model=11, spread_close="DUKE -2.5"),
@@ -52,7 +59,14 @@ def _hoops(generated_hours=0.0):
                   away_team="St. John's", home_score=40, away_score=44, period="2nd",
                   clock="15:02", home_model=30, away_model=18, spread_close="SJU -3"),
         "3": dict(base, status="pre_game", start_time_utc=_iso(2), home_team="Butler",
-                  away_team="Xavier", home_model=50, away_model=60)}}}
+                  away_team="Xavier", home_model=50, away_model=60),
+        # The feed runs a week ahead: Duke's next game is not today's.
+        "4": dict(base, status="pre_game", start_time_utc=_iso(72), home_team="Duke",
+                  away_team="Arizona", home_model=3, away_model=8)}}}
+    for g in games["leagues"]["men"].values():
+        g["date"] = _et_day((datetime.fromisoformat(g["start_time_utc"])
+                             - datetime.now(timezone.utc)).total_seconds() / 3600)
+    return games
 
 
 def _run(stars, cfb=True, cbb=False, week=WEEK, hoops=None):
@@ -122,14 +136,16 @@ def test_basketball_games_beside_football_with_the_sport_marked():
 
 
 @needs_chrome
-def test_before_the_days_first_push_it_does_not_say_nobody_plays():
-    # The Worker still holds yesterday's slate (pushed ~20 hours ago), and
-    # SIUE was not in it: the reader's team may well play tonight.
-    html, _, hidden = _run(["cbb-men:siu-edwardsville"], cfb=False, cbb=True,
-                           hoops=_hoops(generated_hours=-30))
-    assert "from 11 a.m. Eastern" in html and "None of your teams" not in html and not hidden
-    html, _, _ = _run(["cbb-men:siu-edwardsville"], cfb=False, cbb=True, hoops=_hoops())
-    assert "None of your teams plays today." in html
+def test_the_card_is_the_days_basketball_and_a_stale_feed_is_ignored():
+    html, _, _ = _run(["cbb-men:duke"], cfb=False, cbb=True, hoops=_hoops())
+    assert "Arizona" not in html, "the feed's week ahead is not today"
+    html, _, hidden = _run(["cbb-men:siu-edwardsville"], cfb=False, cbb=True, hoops=_hoops())
+    assert "None of your teams plays today." in html and not hidden
+    # Not pushed for two days: the Pi has gone quiet and the scores can't be
+    # trusted, so basketball is treated as not there at all.
+    html, _, hidden = _run(["cbb-men:duke"], cfb=False, cbb=True,
+                           hoops=_hoops(generated_hours=-48))
+    assert "Duke" not in html and hidden
 
 
 @needs_chrome

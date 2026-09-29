@@ -75,10 +75,11 @@ JS = """{% raw %}<script>
   var LOGO='https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/{id}.png&w=80&h=80';
   var HOOPS='https://cbb-live-scores.tmgordon33.workers.dev/scores?league=men';
   // A football file the daily run stopped rebuilding is last season's, not
-  // this week's; a scoreboard game older than a day is the Pi gone quiet.
-  var GAME_HOURS=4.5, HOOP_HOURS=2.5, STALE_DAYS=3, HOOP_KEEP_HOURS=30;
+  // this week's; a scoreboard not pushed for a day and a half is the Pi gone
+  // quiet, and its scores are not to be trusted.
+  var GAME_HOURS=4.5, HOOP_HOURS=2.5, STALE_DAYS=3, HOOP_STALE_HOURS=36;
   var cfb=null, live={}, timer=null;
-  var hoops=null, hoopsAt=null, hoopTeams=null, hoopTimer=null, hoopLoading=false;
+  var hoops=null, hoopTeams=null, hoopTimer=null, hoopLoading=false;
 
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"]/g,function(c){
@@ -161,9 +162,14 @@ JS = """{% raw %}<script>
     if(!hoops||!hoopTeams) return [];
     var set={}, byName={};
     cbbStars().forEach(function(k){ if(hoopTeams[k]) set[hoopTeams[k][0]]=k; });
-    var cutoff=Date.now()-HOOP_KEEP_HOURS*3600e3;
+    // The scoreboard carries two days back and a week ahead (cbb.live_scraper):
+    // the card is the day's - today's games, and last night's, finished or
+    // (tipped at 11 and still going past midnight) not.
+    var today=etDate(Date.now()), yday=etDate(Date.now()-864e5);
     return Object.keys(hoops).map(function(id){ return hoops[id]; }).filter(function(g){
-      return (set[g.home_team]||set[g.away_team]) && !(Date.parse(g.start_time_utc)<cutoff);
+      var d=g.date||etDate(Date.parse(g.start_time_utc));
+      return (set[g.home_team]||set[g.away_team])
+        && (d===today || (d===yday && hoopState(g)!=='pre'));
     }).map(function(g){
       return {g:g, side:(set[g.away_team]&&!set[g.home_team])?'away':'home',
               key:set[g.away_team]&&!set[g.home_team]?set[g.away_team]:set[g.home_team]};
@@ -218,12 +224,8 @@ JS = """{% raw %}<script>
     rows.sort(function(a,b){ return (a.t||0)-(b.t||0); });
     var both=rows.some(function(o){ return o.sport==='CFB'; }) && rows.some(function(o){ return o.sport==='CBB'; });
     rows.forEach(function(o){ if(both) o.pick='<span class="mt-sp">'+o.sport+'</span>'+(o.pick||''); });
-    // Before the first push of the day (cbb.live starts at 11 ET) the
-    // scoreboard still holds last night: "none today" would be a guess.
     var kf=!!(cfb&&fs.length), kb=!!(hoops&&hoopTeams&&bs.length), none='';
-    if(kb && !hoopsToday()) none=(kf?'Your football teams are off this week. ':'')
-      +'Today&rsquo;s basketball shows up here from 11 a.m. Eastern.';
-    else if(kf&&kb) none='None of your teams plays today, and your football teams are off this week.';
+    if(kf&&kb) none='None of your teams plays today, and your football teams are off this week.';
     else if(kb) none='None of your teams plays today.';
     else if(kf) none='None of your teams plays in the next week.';
     var html=(rows.length?'<div class="mt-list">'+rows.map(shell).join('')+'</div>'
@@ -234,10 +236,10 @@ JS = """{% raw %}<script>
     host.closest('section').hidden=!html;
   }
   function etDate(t){ return new Date(t).toLocaleDateString('en-CA',{timeZone:'America/New_York'}); }
-  function hoopsToday(){
+  function pushedAt(stamp){
     // The old pusher stamped naive UTC; the live tick stamps an offset.
-    var g=String(hoopsAt||''), t=Date.parse(/[zZ]|[+-]\\d\\d:\\d\\d$/.test(g)?g:g+'Z');
-    return !isNaN(t) && etDate(t)===etDate(Date.now());
+    var g=String(stamp||''), t=Date.parse(/[zZ]|[+-]\\d\\d:\\d\\d$/.test(g)?g:g+'Z');
+    return isNaN(t)?0:t;
   }
 
   /** Football scores for every game of the reader's on right now, from the proxy. */
@@ -273,15 +275,18 @@ JS = """{% raw %}<script>
   }
   function hoopScores(){
     return json(HOOPS).then(function(d){
-      if(d && d.leagues){ hoops=d.leagues.men||{}; hoopsAt=d.generated; }
+      if(d && d.leagues && Date.now()-pushedAt(d.generated)<HOOP_STALE_HOURS*3600e3)
+        hoops=d.leagues.men||{};
     });
   }
   /** The day's basketball, the first time a reader with a basketball star needs it. */
   function loadHoops(){
-    if(!CBB_ON || hoopLoading || !cbbStars().length) return Promise.resolve();
+    if(!CBB_ON || hoopLoading || (hoops&&hoopTeams) || !cbbStars().length) return Promise.resolve();
     hoopLoading=true;
-    return Promise.all([json('/cbb/star-teams.json'), hoopScores()]).then(function(r){
-      hoopTeams=r[0];
+    return Promise.all([hoopTeams?Promise.resolve(hoopTeams):json('/cbb/star-teams.json'),
+                        hoopScores()]).then(function(r){
+      // A fetch that failed is asked again on the next star or return to the tab.
+      hoopTeams=r[0]; hoopLoading=false;
     });
   }
   /** The scoreboard is pushed every ten minutes: a few polls a push is plenty. */
@@ -303,7 +308,10 @@ JS = """{% raw %}<script>
     draw(); poll();
     loadHoops().then(function(){ draw(); pollHoops(); });
   });
-  document.addEventListener('visibilitychange', function(){ if(!document.hidden){ poll(); pollHoops(); } });
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) return;
+    poll(); loadHoops().then(function(){ draw(); pollHoops(); });
+  });
 })();
 </script>{% endraw %}"""
 

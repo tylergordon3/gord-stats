@@ -3,7 +3,12 @@ const LEAGUE = board?.dataset.league || 'men' // default fallback
 
 const WORKER_URL = `https://cbb-live-scores.tmgordon33.workers.dev/scores?league=${LEAGUE}`
 
-const POLL_INTERVAL = 30000
+// The Worker's data changes once a push (every ten minutes in playing hours),
+// and every poll counts against the account's shared daily Workers quota -
+// the same one sign-in and the other APIs run on. Two minutes, and none at all
+// while the tab is hidden (the 2026-09-28 audit: every 30s, hidden or not,
+// was 2,880 requests a tab a day).
+const POLL_INTERVAL = 120000
 const LOGO_BASE = '/assets/images/'
 
 let lastGenerated = null
@@ -112,7 +117,7 @@ async function pollScores () {
 
   let medalByDate = {}
 
-  const games = (data.leagues && data.leagues[LEAGUE]) || {}
+  const games = scrub((data.leagues && data.leagues[LEAGUE]) || {})
 
   medalByDate = getBottom3MedalsByDate(games)
   applyMedalsToGames(games, medalByDate)
@@ -274,6 +279,24 @@ function statusLabel (status) {
   if (s === 'delay' || s === 'delayed')
     return { text: 'DELAY', cls: 'st-delay' }
   return { text: status.toString().toUpperCase(), cls: 'st-unk' }
+}
+
+// Every string in the feed is text - team names, venues, descriptions from
+// theScore - but the board is built as HTML. Neutralised once, on arrival, so
+// no render path can forget: < > and " are all markup needs to break out of
+// text or a double-quoted attribute. & and ' stay, because the names are also
+// the keys for logo lookups ("Texas A&M", "St. John's").
+function scrub (v) {
+  if (typeof v === 'string') {
+    return v.replace(/[<>"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+  }
+  if (Array.isArray(v)) return v.map(scrub)
+  if (v && typeof v === 'object') {
+    const out = {}
+    for (const k of Object.keys(v)) out[scrub(k)] = scrub(v[k])
+    return out
+  }
+  return v
 }
 
 function safe (v, fallback = '') {
@@ -973,7 +996,9 @@ async function start () {
     console.warn('team logos failed to load', e)
   }
   await safePoll()
-  setInterval(safePoll, POLL_INTERVAL)
+  setInterval(() => { if (!document.hidden) safePoll() }, POLL_INTERVAL)
+  // Back to a tab after a while: catch up at once rather than on the next tick.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) safePoll() })
 }
 
 start()
