@@ -403,3 +403,22 @@ def test_resolving_an_id(browser):
     got = browser.run("GSAPI.resolve('555')")           # not renewed: last season's
     assert got["id"].startswith("espn:") and got["id"].endswith(":555")
     assert got["name"] == "Test League"
+
+
+def test_the_team_picked_on_my_team_is_remembered_per_league(browser):
+    """A league added by id has no account id to find the reader's team by;
+    the one they pick on My Team is kept for that league (GSL.remember)."""
+    from gordstats import my_league_data
+    js = re.sub(r"\{% (end)?raw %\}|</?script>", "", my_league_data.JS)
+    # about:blank has no storage of its own; an in-memory one stands in.
+    mem = ("(function(){var m={};Object.defineProperty(window,'localStorage',{configurable:true,"
+           "value:{getItem:function(k){return k in m?m[k]:null;},"
+           "setItem:function(k,v){m[k]=String(v);},removeItem:function(k){delete m[k];}}});})();")
+    got = browser.run(mem + js + ";localStorage.removeItem('gsMyRoster');"
+                      "var lg={rosters:[{roster_id:1,owner_id:'a'},{roster_id:4,owner_id:'b'}],"
+                      "names:{'1':'Team 1','4':'Team 4'}};"
+                      "var before=GSL.myRoster(lg,'" + ID + "');"
+                      "GSL.remember('" + ID + "','4');"
+                      "[before, GSL.myRoster(lg,'" + ID + "'), GSL.myRoster(lg,'other'),"
+                      " GSL.myRoster({rosters:[], names:{'1':'x'}},'" + ID + "')]")
+    assert got == [None, "4", None, None]      # a team no longer there is not chosen

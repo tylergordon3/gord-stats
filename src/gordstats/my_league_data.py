@@ -60,6 +60,19 @@ window.GSL = (function(){
             team:(row&&row.team_name)||null};
   }
 
+  /** The team the reader picked on My Team, per league: a league added by id
+   *  (every ESPN league, and a Sleeper one pasted in) has no account id to
+   *  find theirs by, and without this it opened on roster 1 every time. */
+  var PICKED='gsMyRoster';
+  function picked(){
+    try{ return JSON.parse(localStorage.getItem(PICKED)||'{}')||{}; }catch(e){ return {}; }
+  }
+  function remember(leagueId, rosterId){
+    var all=picked();
+    all[String(leagueId)]=String(rosterId);
+    try{ localStorage.setItem(PICKED, JSON.stringify(all)); }catch(e){}
+  }
+
   /** The roster id the reader owns in `lg` (from `league`), or null. */
   function myRoster(lg, leagueId){
     var who=mine(leagueId);
@@ -68,6 +81,8 @@ window.GSL = (function(){
         return String(r.owner_id)===String(who.uid);})[0];
       if(hit) return String(hit.roster_id);
     }
+    var chose=picked()[String(leagueId)];
+    if(chose && (lg.names||{})[chose]) return chose;
     if(who.team){
       // `names` reads "Team (manager)", so the stored team name is a prefix.
       var keys=Object.keys(lg.names||{});
@@ -134,6 +149,6 @@ window.GSL = (function(){
 
   return {saved:saved, players:players, week:week, league:league,
           basis:basis, points:points, kickoffs:kickoffs,
-          mine:mine, myRoster:myRoster};
+          mine:mine, myRoster:myRoster, remember:remember};
 })();
 </script>{% endraw %}"""

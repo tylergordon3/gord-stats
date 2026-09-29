@@ -464,12 +464,13 @@ VIEW_JS = """{% raw %}<script>
                 +esc(lg.names[k])+'</option>';}).join('')
             +'</select></label>';
           document.getElementById('mt-who').addEventListener('change',function(){
+            GSL.remember(have.id, this.value);
             render(lg, wk, index, this.value, ctx, live);});
         }
         render(lg, wk, index, start, ctx, live);
       })
       .catch(function(){
-        host.innerHTML='<p class="mt-none">Could not read that league from Sleeper.</p>';
+        host.innerHTML='<p class="mt-none">Could not read that league.</p>';
       });
   }
   start();
