@@ -32,3 +32,43 @@ write_status() {
   printf '{"published":"%s","daily":"%s","daily_sections_rc":%s,"commit":"%s"}\n' \
     "$published" "$daily" "${rc:-null}" "$(git rev-parse --short HEAD)" > docs/_site/status.json
 }
+
+# `git pull --rebase` that cannot wedge the Pi. A plain rebase first; on a
+# conflict, back out and replay the Pi's own commits with `-X theirs` (in a
+# rebase, "theirs" is the commits being replayed - the Pi's). Everything the Pi
+# commits is generated data under docs/ and data/, so its copy is the one to
+# keep. Before this, a rejected push whose rebase conflicted (a parquet file
+# both sides had rewritten - they never merge) left the data commit local, and
+# every later daily run stopped at its pull and every live tick skipped,
+# quietly, until someone cleaned up by hand (the 2026-09-28 audit). Fails only
+# if both tries do, backed out either way so the next run starts clean.
+# Callers set BRANCH.
+pull_rebase() {
+  git pull --rebase --quiet origin "$BRANCH" && return 0
+  git rebase --abort 2>/dev/null || true
+  log "rebase conflicted — replaying this machine's generated data over origin's"
+  git pull --rebase --quiet -X theirs origin "$BRANCH" && return 0
+  git rebase --abort 2>/dev/null || true
+  echo "❌ git pull --rebase conflicted with origin/$BRANCH even preferring local data; backed it out"
+  return 1
+}
+
+# Exit status for a live tick that could not do its job for a passing reason
+# (a network blip, the deploy holding a new dependency): 0 - a skipped tick -
+# unless it has been failing for an hour, then 1 so the notify unit mails once
+# an hour rather than every ten minutes (a day-long ESPN outage used to be 144
+# mails, past Resend's free 100 a day, burying the daily run's own alerts).
+# `ok` clears the streak.
+tick_trouble() {
+  local mark="$PWD/.live_trouble_since" now
+  now=$(date +%s)
+  if [ "${1:-}" = "ok" ]; then rm -f "$mark"; return 0; fi
+  [ -f "$mark" ] || echo "$now" > "$mark"
+  local since
+  since=$(cat "$mark")
+  if [ $((now - since)) -ge 3600 ]; then
+    echo "$now" > "$mark"                 # the next mail an hour from now
+    return 1
+  fi
+  return 0
+}

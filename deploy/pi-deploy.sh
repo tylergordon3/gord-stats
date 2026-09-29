@@ -15,7 +15,7 @@ main() {
   cd "$(git rev-parse --show-toplevel)"
 
   local VENV="$PWD/.venv"
-  local TASKS="${TASKS:-wnba,fantasy,cfb,nfl,cbb_power}"
+  local TASKS="${TASKS:-wnba,fantasy,cfb,nfl,cbb,cbb_power}"
   local PROJECT="${CF_PAGES_PROJECT:-gordstats-cbb}"
   # Fixed path, not $XDG_RUNTIME_DIR: this runs both as gordstats-daily.service
   # and over plain ssh from `pi deploy`, and the two don't reliably agree on
@@ -49,7 +49,7 @@ main() {
   # shellcheck source=/dev/null
   . "$SECRETS"
   set +o allexport
-  TASKS="${TASKS:-wnba,fantasy,cfb,nfl,cbb_power}"
+  TASKS="${TASKS:-wnba,fantasy,cfb,nfl,cbb,cbb_power}"
 
   [ -n "${CLOUDFLARE_API_TOKEN:-}" ] || {
     echo "❌ CLOUDFLARE_API_TOKEN not set — wrangler can't deploy unattended."
@@ -84,7 +84,15 @@ main() {
   local BRANCH BEFORE AFTER
   BRANCH="$(git branch --show-current)"
   BEFORE="$(git rev-parse HEAD)"
-  git fetch --quiet origin "$BRANCH"
+  # A network blip here used to abort the run and leave the site six hours
+  # stale; three tries first.
+  local tries=0
+  until git fetch --quiet origin "$BRANCH"; do
+    tries=$((tries + 1))
+    [ "$tries" -ge 3 ] && { echo "❌ git fetch failed three times"; exit 1; }
+    log "git fetch failed — retrying in 20s"
+    sleep 20
+  done
   pull_rebase
   AFTER="$(git rev-parse HEAD)"
   [ "$BEFORE" = "$AFTER" ] \
@@ -203,16 +211,7 @@ log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 # shellcheck source=deploy/publish.sh
 source "$(dirname "${BASH_SOURCE[0]}")/publish.sh"
 
-# `git pull --rebase` that backs out on a conflict instead of leaving the repo
-# mid-rebase, where it wedges this script and pi-live.sh alike until someone
-# aborts it by hand. Fails either way, so `set -e` still stops the run - but
-# the next run starts clean. pi-live.sh has always done this.
-pull_rebase() {
-  git pull --rebase --quiet origin "$BRANCH" && return 0
-  git rebase --abort 2>/dev/null || true
-  echo "❌ git pull --rebase conflicted with origin/$BRANCH; backed it out"
-  return 1
-}
+# pull_rebase comes from publish.sh (shared with pi-live.sh).
 
 # Refresh the sections. Returns 0, or 4 (gordstats.daily.SECTIONS_FAILED) when
 # some sections failed but the run finished — the homepage rendered and every

@@ -15,7 +15,7 @@ Usage:
 
 Exit codes:
     0 = updated
-    3 = skipped (no active games)
+    3 = skipped (no active games, the offseason, or ESPN unreachable)
 """
 
 import argparse
@@ -31,6 +31,7 @@ from wnba import wnba_defense, wnba_fantasy, wnba_remaining, wnba_schedule
 ET = ZoneInfo("America/New_York")
 PREGAME_BUFFER_MIN = 30
 SCHEDULE_MAX_AGE_MIN = 60
+OFFSEASON_MONTHS = (11, 12, 1, 2, 3, 4)
 
 
 def games_active(buffer_min: int = PREGAME_BUFFER_MIN) -> bool:
@@ -76,8 +77,20 @@ def main(argv=None) -> int:
                         help="Update even if no games are active")
     args = parser.parse_args(argv)
 
-    if not args.force and not games_active():
-        print(f"{datetime.now(ET):%F %T} — no active WNBA games, skipping.")
+    now = datetime.now(ET)
+    # November to April there is nothing to check for; the gate called ESPN
+    # every ten minutes all winter.
+    if not args.force and now.month in OFFSEASON_MONTHS:
+        return 3
+    try:
+        active = args.force or games_active()
+    except requests.RequestException as exc:
+        # A blip is a skipped tick, not a failed one (pi-live.sh alerts on any
+        # other status, and used to on every ESPN hiccup).
+        print(f"{now:%F %T} — ESPN unreachable ({exc}), skipping.")
+        return 3
+    if not active:
+        print(f"{now:%F %T} — no active WNBA games, skipping.")
         return 3
 
     print(f"{datetime.now(ET):%F %T} — games active, running live update.")

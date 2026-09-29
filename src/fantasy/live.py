@@ -23,7 +23,8 @@ committed.
     python -m fantasy.live --force      # rebuild regardless
 
 Exit codes:
-    0 = rebuilt
+    0 = rebuilt for a finished week (pi-live.sh commits at once)
+    5 = rebuilt for a game in progress only (committed with the hour's others)
     3 = nothing to do
 """
 import argparse
@@ -220,7 +221,7 @@ def main(argv=None) -> int:
     state.update({k: v for k, v in due.items() if k != "live"})
     state["published"] = now.isoformat(timespec="seconds")
     _save_state(state)
-    return 0
+    return 5 if set(due) == {"live"} else 0
 
 
 if __name__ == "__main__":

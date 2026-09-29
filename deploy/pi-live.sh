@@ -77,14 +77,19 @@ main() {
     git checkout -- docs data
   fi
   if git diff --quiet && git diff --cached --quiet; then
-    git fetch --quiet origin "$BRANCH"
+    # A network blip is a skipped tick, not an alert - unless it lasts an hour.
+    if ! git fetch --quiet origin "$BRANCH"; then
+      log "⚠️ git fetch failed — skipping this tick"
+      tick_trouble || { echo "❌ git fetch failing for over an hour"; exit 1; }
+      exit 0
+    fi
     if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD; then
       log "origin moved — rebasing before rebuild"
-      git pull --rebase --quiet origin "$BRANCH" || {
-        git rebase --abort 2>/dev/null || true
+      if ! pull_rebase; then
         log "⚠️ rebase failed — skipping this tick rather than publishing stale"
+        tick_trouble || { echo "❌ the live tick has not been able to rebase for over an hour"; exit 1; }
         exit 0
-      }
+      fi
     fi
   else
     # Something outside docs/ and data/ is uncommitted, which is not this
@@ -100,8 +105,19 @@ main() {
   # shellcheck source=/dev/null
   . "$VENV/bin/activate"
 
-  # Each gate exits 0 (regenerated something) or 3 (nothing to do); anything
-  # else is a failure worth the notify unit.
+  # New code that needs a package the venv doesn't have yet would fail every
+  # gate with an ImportError, every ten minutes, until the daily run installs
+  # it (pi-deploy.sh, same stamp). Wait for it instead.
+  if [ "$(cat "$VENV/.requirements-sha256" 2>/dev/null)" != \
+       "$(sha256sum pyproject.toml | cut -d' ' -f1)" ]; then
+    log "dependencies changed — skipping until the daily run installs them"
+    exit 0
+  fi
+
+  # Each gate exits 0 (regenerated something) or 3 (nothing to do; also what
+  # the gates answer when their feed is unreachable); anything else is a
+  # failure worth the notify unit. Fantasy also has 5: regenerated for a game
+  # in progress, which is not worth a commit of its own.
   local WNBA=0 FANTASY=0 CFB=0
   python -m wnba.wnba_live || WNBA=$?
   if [ "$WNBA" -ne 0 ] && [ "$WNBA" -ne 3 ]; then
@@ -109,7 +125,7 @@ main() {
     exit "$WNBA"
   fi
   python -m fantasy.live || FANTASY=$?
-  if [ "$FANTASY" -ne 0 ] && [ "$FANTASY" -ne 3 ]; then
+  if [ "$FANTASY" -ne 0 ] && [ "$FANTASY" -ne 3 ] && [ "$FANTASY" -ne 5 ]; then
     echo "❌ fantasy live refresh failed (rc=$FANTASY)"
     exit "$FANTASY"
   fi
@@ -128,11 +144,12 @@ main() {
   [ "$CBB" -ne 0 ] && [ "$CBB" -ne 3 ] && CBB_RC="$CBB"
 
   if [ "$WNBA" -eq 3 ] && [ "$FANTASY" -eq 3 ] && [ "$CFB" -eq 3 ]; then
+    tick_trouble ok
     exit "$CBB_RC"               # nothing to rebuild — quiet tick
   fi
   local WHAT=""
   [ "$WNBA" -eq 0 ] && WHAT="wnba"
-  [ "$FANTASY" -eq 0 ] && WHAT="${WHAT:+$WHAT,}fantasy"
+  { [ "$FANTASY" -eq 0 ] || [ "$FANTASY" -eq 5 ]; } && WHAT="${WHAT:+$WHAT,}fantasy"
   [ "$CFB" -eq 0 ] && WHAT="${WHAT:+$WHAT,}cfb"
 
   ########################################
@@ -155,7 +172,9 @@ main() {
   publish "$PROJECT" >/dev/null
 
   ########################################
-  # COMMIT: hourly for WNBA, at once for fantasy
+  # COMMIT: hourly, and at once when a fantasy week closes. A game in
+  # progress (fantasy 5) waits for the hour: every tick of a Sunday used to
+  # commit and push (63 commits on 2026-09-27).
   ########################################
   local STAMP="$PWD/.last_live_commit" NOW LAST=0
   NOW=$(date +%s)
@@ -169,10 +188,9 @@ main() {
       git commit -q -m "Live update ($WHAT) $(date '+%Y-%m-%d %H:%M')"
       if ! git push --quiet origin "$BRANCH" 2>/dev/null; then
         log "push rejected — rebasing onto origin and retrying"
-        if git pull --rebase --quiet origin "$BRANCH"; then
+        if pull_rebase; then
           git push --quiet origin "$BRANCH" || log "⚠️ push still failing — will retry next hour"
         else
-          git rebase --abort || true
           log "⚠️ rebase failed — leaving commit local, will retry next hour"
         fi
       fi
@@ -181,6 +199,7 @@ main() {
     touch "$STAMP"
   fi
 
+  tick_trouble ok
   log "✅ live tick done"
   exit "$CBB_RC"
 }

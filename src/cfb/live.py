@@ -87,7 +87,13 @@ def _patch_schedule(events: dict) -> None:
 
 
 def main(force: bool = False) -> int:
-    events = _events_today()
+    try:
+        events = _events_today()
+    except Exception as exc:                            # noqa: BLE001
+        # Unreachable ESPN is a skipped tick (pi-live.sh alerts on anything
+        # but 0 and 3, and used to mail on every blip).
+        print(f"  cfb: ESPN scoreboard unreachable ({exc}), skipping")
+        return 3
     if not (force or _active(events)):
         return 3
     _patch_schedule(events)

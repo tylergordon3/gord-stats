@@ -29,10 +29,14 @@ grep -q '^CLOUDFLARE_API_TOKEN=' "$SECRETS" || {
   echo "   'Cloudflare Pages: Edit' permission and add it to that file."
   exit 1; }
 
-# Which sections the daily job refreshes. Only WNBA is automated today.
+# Which sections the daily job refreshes - every one, as pi-deploy.sh defaults.
 grep -q '^TASKS=' "$SECRETS" || {
-  echo 'TASKS=wnba,fantasy' >> "$SECRETS"
-  log "defaulted TASKS=wnba,fantasy in $SECRETS"; }
+  echo 'TASKS=wnba,fantasy,cfb,nfl,cbb,cbb_power' >> "$SECRETS"
+  log "defaulted TASKS in $SECRETS"; }
+
+# Keys are for this user alone: the repo's .env (CFBD_KEY) was left 664.
+chmod 600 "$SECRETS"
+[ -f .env ] && chmod 600 .env
 
 # The Pi records generated data back to the repo, so it needs a push identity
 # and a write-enabled remote.
