@@ -307,9 +307,10 @@ the Pi, features). Done the same night:
 Open:
 - [ ] **Dec/Jan:** bets card locks once for all bowls; "Week 20" labels; bowls lack CFBD weather
       and usage; NFL postponed games / TBD playoff placeholders; yearly CFB refit stuck on 2020-25.
-- [ ] **Phone polish:** /fantasy/power/ table header (light), /cfb/live/ round column (dark),
-      women's History link, CFB team pages light "Home", dark-mode slot and red-accent contrast,
-      401 console noise signed out, nav .html redirects.
+- [x] **Phone polish** (f2dea6629..af7e8340a): power table header, CFB round column, finished
+      slots and red tags in dark; women's History/Conf routed and lit; team pages light Rankings;
+      clean URLs in nav/home/sitemap; no signed-out 401; CFB schedule controls on one row;
+      distinct tab titles.
 - [ ] **Features, ranked:** per-page preview images; a share button; playoff-odds swing / game of
       the week; an honest bets record (CLV); CBB game predictions; Saturday watch guide.
 
