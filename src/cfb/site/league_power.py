@@ -22,6 +22,8 @@ has.
     python -m cfb.site.league_power     # the section as a page of its own
 """
 
+from html import escape
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.dates as mdates                    # noqa: E402
@@ -310,7 +312,7 @@ def section() -> str:
             top = v and v == best_pos[p]
             return f"<td>{'<b>' if top else ''}{v:.0f}{'</b>' if top else ''}</td>"
         pos_tds = "".join(pos_td(p) for p in projections.POSITIONS)
-        anchor = (f"{r['anchor']['player']} ({r['anchor']['pos']})"
+        anchor = (escape(f"{r['anchor']['player']} ({r['anchor']['pos']})")
                   if r["anchor"] is not None else "—")
         move_tds = (f"<td>{_move(prev, r['key'], i)}</td>" if prev is not None else "") \
             + (f"<td>{_move(week, r['key'], i)}</td>" if week is not None else "")
@@ -326,7 +328,7 @@ def section() -> str:
                   else "<td></td>")
         cells.append(
             f'<tr><td class="lg-team"><span class="row-rank">{i}</span>'
-            f'{logo}{t["name"]}'
+            f'{logo}{escape(t["name"])}'
             + (f' <span class="mu-note">({r["unrated"]} unrated)</span>'
                if r["unrated"] else "") + "</td>"
             # What a phone sees first: strength and what it is worth, then

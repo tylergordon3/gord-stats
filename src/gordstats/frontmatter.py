@@ -4,8 +4,48 @@ Jekyll front-matter helpers for generated pages.
 Every section writes plain HTML fragments; Jekyll needs front matter and the
 page needs its own <h1>, so both get prepended here. Shared so the sections
 can't drift into producing subtly different page headers.
+
+A page body is also made literal to Jekyll here. Jekyll runs Liquid over every
+page, and the bodies carry text nobody here wrote - team names a league member
+chose, league names, provider data - which html.escape leaves alone: a team
+named `{%x%}` failed the whole build (no publish that day), and a name built
+from Liquid tags could reassemble a <script> after escaping (found by the
+2026-09-28 audit). So the body is wrapped in {% raw %}, and only the tags a
+generator means Jekyll to run - an include, a relative_url - pass through,
+each marked with liquid().
 """
 import json
+import re
+import secrets
+
+# A fresh token per process: a marker cannot be written into a team name ahead
+# of time, so nothing but liquid() can open a hole in the raw wrapping.
+_TOKEN = secrets.token_hex(8)
+_OPEN, _CLOSE = f"{_TOKEN}:", f":{_TOKEN}"
+_MARKED = re.compile(re.escape(_OPEN) + "(.*?)" + re.escape(_CLOSE), re.S)
+# Liquid's own pattern for the tags that begin and end a raw block.
+_RAW_TAG = re.compile(r"\{%-?\s*(?:end)?raw\s*-?%\}")
+
+
+def liquid(tag: str) -> str:
+    """A Liquid tag Jekyll is meant to run inside a generated page body."""
+    return f"{_OPEN}{tag}{_CLOSE}"
+
+
+def literal(body: str) -> str:
+    """`body` with nothing for Liquid to run but the tags liquid() marked.
+
+    The {% raw %} guards the sections put around their scripts come out first
+    (the whole body is raw now), and so does any raw or endraw tag inside a
+    name - which is what would otherwise end the wrapping early.
+    """
+    out = []
+    for i, part in enumerate(_MARKED.split(_RAW_TAG.sub("", body))):
+        if i % 2:
+            out.append(part)
+        elif part:
+            out.append("{% raw %}" + part + "{% endraw %}")
+    return "".join(out)
 
 
 def add_front_matter(html: str, title: str, subtitle: str | None = None,
@@ -30,4 +70,4 @@ title: {title}
     header = f"<h1>{title}</h1>"
     if subtitle:
         header += f"<p class='page-sub'>{subtitle}</p>"
-    return (fm + header + html).lstrip()
+    return fm + literal((header + html).lstrip())

@@ -26,6 +26,7 @@ import re
 import matplotlib.pyplot as plt
 from PIL import Image                   # matplotlib's own dependency
 
+from gordstats.frontmatter import liquid
 from gordstats.paths import ASSET_IMG_DIR
 
 CHART_DIR = ASSET_IMG_DIR / "charts"
@@ -71,7 +72,7 @@ def save(section: str, name: str, alt: str = "", lazy: bool = True,
 
     # relative_url keeps the path correct if the site ever moves under a
     # baseurl; generated pages carry front matter, so Jekyll resolves it.
-    src = "{{ '/assets/images/charts/%s/%s' | relative_url }}" % (section, fname)
+    src = liquid("{{ '/assets/images/charts/%s/%s' | relative_url }}" % (section, fname))
     attrs = ' loading="lazy" decoding="async"' if lazy else ""
     # .gs-chart (custom.css) takes off the frame the Slate theme puts on every
     # <img> - 5px of padding and a border on top of max-width:100%, which also

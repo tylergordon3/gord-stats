@@ -9,6 +9,7 @@ theme, so light/dark mode and mobile rules cascade normally.
 """
 
 from gordstats import my_league
+from gordstats.frontmatter import liquid
 
 
 HEAD = """<script>
@@ -26,7 +27,7 @@ def internal_link(path: str, label: str) -> str:
     correct if the site ever moves under a baseurl. Generated pages carry front
     matter, so Jekyll resolves this on build.
     """
-    return "<a href=\"{{ '%s' | relative_url }}\">%s</a>" % (path, label)
+    return "<a href=\"%s\">%s</a>" % (liquid("{{ '%s' | relative_url }}" % path), label)
 
 
 def section_nav(items) -> str:

@@ -21,6 +21,7 @@ scoring - applied to the 170 picks that actually happened:
 """
 import json
 from datetime import datetime
+from html import escape
 
 import matplotlib
 matplotlib.use("Agg")
@@ -208,7 +209,7 @@ def team_grades(df: pd.DataFrame, lg: dict) -> str:
     rows = grade_rows(df, lg)
     avg = sum(r["total"] for r in rows) / len(rows)
     cells = "".join(
-        f"<tr><td class='lg-team'>{_badge(r['grade'])} {r['team']}</td>"
+        f"<tr><td class='lg-team'>{_badge(r['grade'])} {escape(r['team'])}</td>"
         f"<td><b>{r['total']:.0f}</b></td><td>{r['total'] - avg:+.0f}</td>"
         f"<td>{r['vorp']:.0f}</td><td>{r['bench']:.0f}</td>"
         f"<td>{_tag(r['avg_adp'], 2)}</td>"
@@ -297,7 +298,7 @@ def yahoo_grades(v: dict) -> str:
     alias = v.get("alias", {})
     recs = {alias.get(t, t): rec for t, rec in v["projected"]}
     rows = "".join(
-        f"<tr><td class='lg-team'><span class='row-rank'>{i}</span>{name}</td>"
+        f"<tr><td class='lg-team'><span class='row-rank'>{i}</span>{escape(name)}</td>"
         f"<td>{_badge(v['grades'].get(name, '—'))}</td>"
         f"<td>{pts:g}</td><td>{recs.get(alias.get(name, name), '—')}</td></tr>"
         for i, (name, pts) in enumerate(v["power"], 1))
@@ -325,7 +326,7 @@ def comparison_section(df: pd.DataFrame, lg: dict, v: dict) -> str:
         if gap is not None:
             gaps.append((gap, y[1], our_rank, y[0]))
         rows.append(
-            f"<tr><td class='lg-team'>{y[1] if y else r['team']}</td>"
+            f"<tr><td class='lg-team'>{escape(y[1] if y else r['team'])}</td>"
             f"<td>{_badge(r['grade'])} <span class='rv-dim'>#{our_rank}</span></td>"
             f"<td>{_badge(y[2]) if y else '—'}"
             + (f" <span class='rv-dim'>#{y[0]}</span>" if y else "")
@@ -419,7 +420,7 @@ def _draft_grid(df: pd.DataFrame) -> str:
                          for p, rd in zip(df["pick"], df["round"])])
     slot_owner = (df[df["round"] == 1].sort_values("slot")
                   .set_index("slot")["team"].to_dict())
-    header = "".join(f"<th>{slot_owner.get(s, '?')}</th>" for s in sorted(slot_owner))
+    header = "".join(f"<th>{escape(str(slot_owner.get(s, '?')))}</th>" for s in sorted(slot_owner))
     rows = []
     for rnd, grp in df.groupby("round"):
         by_slot = grp.set_index("slot")
@@ -452,8 +453,9 @@ def _manager_table(df: pd.DataFrame) -> str:
                      f"{worst['player']} ({worst['delta_board']:+.0f})"))
     rows.sort(key=lambda x: x[1], reverse=True)
     cells = "".join(
-        f'<tr><td class="lg-team">{team}</td><td>{avg:+.1f}</td><td>{val}</td>'
-        f'<td>{rch}</td><td class="lg-team">{best}</td><td class="lg-team">{worst}</td></tr>'
+        f'<tr><td class="lg-team">{escape(team)}</td><td>{avg:+.1f}</td><td>{val}</td>'
+        f'<td>{rch}</td><td class="lg-team">{escape(best)}</td>'
+        f'<td class="lg-team">{escape(worst)}</td></tr>'
         for team, avg, val, rch, best, worst in rows)
     return ('<table class="lg-table"><thead><tr><th>Team</th><th>Avg Δ</th>'
             "<th>Values</th><th>Reaches</th><th>Best value</th><th>Biggest reach</th>"

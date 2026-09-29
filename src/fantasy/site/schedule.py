@@ -11,6 +11,8 @@ season buttons - same shape as the draft report.
 
     python -m fantasy.site.schedule
 """
+from html import escape
+
 import pandas as pd
 
 from fantasy import paths
@@ -25,6 +27,10 @@ _GRID = [styles.GRID_TD, styles.GRID_TH]
 
 def _load(season_str: str) -> pd.DataFrame:
     df = pd.read_json(SEASON_DIR / f"{season_str}.json")
+    # Team names are whatever a manager typed into Sleeper, and pandas' Styler
+    # writes cell values out raw: escaped here, once, before any table sees them.
+    if "team_name" in df:
+        df["team_name"] = df["team_name"].map(lambda n: escape(str(n)))
     return df[df["week"] <= FANTASY_REG_WEEKS]
 
 

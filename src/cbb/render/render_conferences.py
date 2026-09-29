@@ -22,7 +22,7 @@ def main(df, gender):
 
     html = """
     <div class="filter-bar">
-    {% include global-toggle.html %}
+    """ + frontmatter.liquid("{% include global-toggle.html %}") + """
 
     <div class="conference-filter">
     <label for="conference-select"><strong>Conference:</strong></label>

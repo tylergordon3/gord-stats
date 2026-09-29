@@ -831,7 +831,7 @@ def body() -> str:
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
         ui.CSS
-        + f'<p><a href="{lg["url"]}"><strong>{lg["name"]}</strong></a> — every '
+        + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> — every '
         "matchup with both rosters in full, live while games are on. Each finished "
         "week gets a <a href='/cfb/recap/'>recap</a>: the awards and every team's "
         "lineup accuracy.</p>"

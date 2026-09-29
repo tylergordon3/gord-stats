@@ -20,6 +20,8 @@ from datetime import datetime
 
 import pandas as pd
 
+from gordstats.frontmatter import liquid
+
 from fantasy.config import (
     LEAGUE_TEAMS, LEAGUE_TZ, UPCOMING_SEASON, UPCOMING_YEAR,
 )
@@ -63,7 +65,7 @@ def countdown_banner() -> str:
 
     This page carries front matter, so Liquid runs over what we write here.
     """
-    return '{% include countdown.html key="fantasy" %}'
+    return liquid('{% include countdown.html key="fantasy" %}')
 
 
 # --------------------------------------------------------------------------- #
@@ -234,7 +236,7 @@ def _table_js(rows) -> str:
         "moves": {key: _FIELDS.index(spec["move"]) for key, spec in WINDOWS.items()},
         "moveHeads": {key: [spec["short"], _TIPS[spec["move"]]] for key, spec in WINDOWS.items()},
         "minMove": MIN_MOVE,
-    }, separators=(",", ":"))
+    }, separators=(",", ":")).replace("</", "<\\/")
     return """{% raw %}<script>
 (function(){
 var CFG=""" + cfg + """;

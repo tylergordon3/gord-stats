@@ -26,6 +26,7 @@ from html import escape
 from cfb import waivers, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import league_power, recap, write_page
+from gordstats.frontmatter import liquid
 
 _CSS = """<style>
 .cfb-league{font-size:14px;color:#334155;border:1px solid #e5e7eb;border-radius:12px;
@@ -89,13 +90,13 @@ def standings_section(lg: dict) -> str:
     rows = []
     for i, t in enumerate(teams, 1):
         rank = int(t["rank"]) if t.get("rank") else i
-        logo = (f'<img class="lg-logo" src="{t["logo"]}" alt="" loading="lazy">'
-                if t.get("logo") else "")
-        mgr = f"<td>{t['manager'] or '—'}</td>" if named else ""
+        logo = (f'<img class="lg-logo" src="{escape(t["logo"], quote=True)}" alt="" '
+                'loading="lazy">' if t.get("logo") else "")
+        mgr = f"<td>{escape(t['manager'] or '—')}</td>" if named else ""
         rows.append(
             '<tr><td class="lg-team">'
             + (f'<span class="row-rank">{rank}</span>' if played else "")
-            + f'{logo}{t["name"]}</td>'
+            + f'{logo}{escape(t["name"])}</td>'
             f"{mgr}<td>{_rec(t)}</td>"
             f"<td>{t.get('points_for') or 0:g}</td>"
             f"<td>{t.get('points_against') or 0:g}</td>"
@@ -132,7 +133,7 @@ def matchups_section(sb: dict) -> str:
             pts = t.get("points")
             proj = t.get("projected")
             num = (f"{pts:g}" if pts else "") or (f"proj {proj:g}" if proj else "—")
-            return t["name"], num
+            return escape(t["name"]), num
         an, ax = side(a)
         bn, bx = side(b)
         rows.append(f'<tr><td class="lg-team">{an}</td><td>{ax}</td>'
@@ -167,15 +168,15 @@ def transactions_section(txns: list[dict]) -> str:
                 .strftime("%b %-d") if t["timestamp"] else "—")
         bits = []
         for p in t["players"]:
-            tag = f"{p['player']} ({p['pos']} · {p['team']})"
+            tag = escape(f"{p['player']} ({p['pos']} · {p['team']})")
+            src, dest = escape(p.get("source") or ""), escape(p.get("destination") or "")
             if p["type"] == "add":
-                dest = p.get("destination") or ""
                 bid = f" for ${t['faab_bid']:g}" if t.get("faab_bid") else ""
                 bits.append(f"{dest} added {tag}{bid}")
             elif p["type"] == "drop":
-                bits.append(f"{p.get('source') or ''} dropped {tag}")
+                bits.append(f"{src} dropped {tag}")
             else:
-                bits.append(f"{p.get('source') or ''} → {p.get('destination') or ''}: {tag}")
+                bits.append(f"{src} → {dest}: {tag}")
         rows.append(f'<tr><td>{when}</td><td>{t["type"]}</td>'
                     f'<td class="lg-team">{"; ".join(bits) or "—"}</td></tr>')
     return ('<div class="table-scroll"><table class="lg-table">'
@@ -249,8 +250,8 @@ def body() -> str:
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
         _CSS + league_power._CSS
-        + '{% include cfb_countdown.html %}'
-        + f'<p><a href="{lg["url"]}"><strong>{lg["name"]}</strong></a> on Yahoo — '
+        + liquid('{% include cfb_countdown.html %}')
+        + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> on Yahoo — '
         f'{lg["num_teams"]} teams, {lg["scoring_label"]}, weeks '
         f'{lg["start_week"]}–{lg["end_week"]}, playoffs from week '
         f'{lg["playoff_start_week"]}. Rebuilt daily (last: {built}); every '

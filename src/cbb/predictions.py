@@ -372,7 +372,7 @@ def predict_womens(date):
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
     df_html += '<div class="filter-bar">'
-    df_html += """{% include global-toggle.html %} """
+    df_html += frontmatter.liquid("{% include global-toggle.html %}") + " "
     df_html += "</div>"
     df_html += '<div class="table-container">'
     df_html += march_df.to_html()
@@ -644,7 +644,7 @@ def predict(date):
     df_html += f"<p>Future plans include using machine learning to specifically rank teams seperately from tournament projections.</p>"
     df_html += f"<p><strong>Teams highlighted green have won their conference tournament, earning the bid to the NCAA Tournament! </storng></p>"
     df_html += '<div class="filter-bar">'
-    df_html += """{% include global-toggle.html %} """
+    df_html += frontmatter.liquid("{% include global-toggle.html %}") + " "
     df_html += "</div>"
     df_html += '<div class="table-container">'
     df_html += march_df.to_html()

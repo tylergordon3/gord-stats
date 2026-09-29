@@ -10,6 +10,7 @@ link to send.
     python -m cfb.site.recap
 """
 from datetime import datetime, timedelta
+from html import escape
 from zoneinfo import ZoneInfo
 
 from cfb import pregame, projections, yahoo
@@ -117,7 +118,7 @@ def _write(path, week: recap.Week, all_weeks: list, league_name: str) -> None:
     links = ('<p class="rc-note"><a href="/cfb/matchups/">Every roster, player by player '
              '&rarr;</a></p>')
     html = add_front_matter(recap.page(week, all_weeks, BASE, links),
-                            f"Week {week.number} Recap", league_name,
+                            f"Week {week.number} Recap", escape(league_name),
                             description=recap.headline(week))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8")

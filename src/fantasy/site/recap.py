@@ -9,6 +9,8 @@ so the first recap of a week lands with the build after Monday night's game.
 
     python -m fantasy.site.recap
 """
+from html import escape
+
 import pandas as pd
 
 from fantasy import paths, pregame
@@ -130,7 +132,7 @@ def _write(path, week: recap.Week, all_weeks: list, league_name: str) -> None:
     links = ('<p class="rc-note"><a href="/fantasy/matchups/">Every roster, player by player '
              '&rarr;</a></p>')
     html = add_front_matter(layout.HEAD + recap.page(week, all_weeks, BASE, links),
-                            f"Week {week.number} Recap", league_name,
+                            f"Week {week.number} Recap", escape(league_name),
                             description=recap.headline(week))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8")

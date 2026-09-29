@@ -55,6 +55,7 @@ from cfb.config import (
     DATA_DIR, LEAGUE_TEAMS, LEAGUE_TZ, LEAGUE_URL, MY_TEAM, SEASON, WEB_DIR,
 )
 from cfb.site import write_page
+from gordstats.frontmatter import liquid
 
 OUTPUT = WEB_DIR / "live" / "index.html"
 
@@ -1492,14 +1493,14 @@ def body() -> str:
     board = projections.value_board()
     # ESPN team id per school, for the logo CDN the rest of the section uses.
     board["espn"] = board["school"].map(schools_mod.espn_ids())
-    payload = json.dumps(config(board, league), separators=(",", ":"))
+    payload = json.dumps(config(board, league), separators=(",", ":")).replace("</", "<\\/")
     script = ("{% raw %}<script>window.LD_CFG=" + payload + ";</script>"
               "<script>" + _ENGINE + _RENDER + _RENDER2 + _WIRE + "</script>{% endraw %}")
 
     when = pd.Timestamp(league["draft_time"], unit="s", tz="UTC").tz_convert(LEAGUE_TZ)
     return (
         _CSS
-        + '{% include cfb_countdown.html %}'
+        + liquid('{% include cfb_countdown.html %}')
         + f'<p>The <a href="{league["url"]}">{league["name"]}</a> draft, live: '
         f'{league["num_teams"]} teams, {config(board, league)["rounds"]} rounds, '
         f'{when.strftime("%A %B %-d at %-I:%M %p %Z")}. The order is already set, so '

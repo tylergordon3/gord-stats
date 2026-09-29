@@ -21,6 +21,7 @@ import pandas as pd
 from cfb import yahoo
 from cfb.config import LEAGUE_TEAMS, LEAGUE_TZ, LEAGUE_URL, SEASON, WEB_DIR
 from cfb.site import write_page
+from gordstats.frontmatter import liquid
 
 POSITIONS = ["QB", "RB", "WR", "TE", "DEF"]
 
@@ -185,7 +186,7 @@ def _header(move_col: int | None) -> str:
 
 def _table_js(rows: list, cfg: dict) -> str:
     payload = json.dumps({"rows": rows, "teams": LEAGUE_TEAMS, **cfg},
-                         separators=(",", ":"))
+                         separators=(",", ":")).replace("</", "<\\/")
     return """{% raw %}<script>
 (function(){
 var CFG=""" + payload + """;
@@ -596,7 +597,7 @@ def body() -> str:
 
     return (
         _CSS
-        + '{% include cfb_countdown.html %}'
+        + liquid('{% include cfb_countdown.html %}')
         + _league_card(lg)
         + tracker
         + "<h2>Draft Board</h2>"

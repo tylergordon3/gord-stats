@@ -8,10 +8,13 @@ from the cached Yahoo pull rather than being retyped here.
 
     python -m cfb.site.home         # rebuild the page
 """
+from html import escape
+
 from cfb import yahoo
 from cfb.config import SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.draft import _draft_when, _roster_line
+from gordstats.frontmatter import liquid
 
 
 def body() -> str:
@@ -20,11 +23,11 @@ def body() -> str:
     draft_line = (f" The draft is <strong>{when}</strong>."
                   if when and lg.get("draft_status") == "predraft" else "")
     return f"""
-{{% include cfb_countdown.html %}}
+{liquid('{% include cfb_countdown.html %}')}
 
 <p>The {SEASON} FBS season: this site's own game model, ESPN's FPI and the AP
    poll, and every game on the schedule. The
-   <a href="{lg['url']}">{lg['name']}</a> Yahoo fantasy league
+   <a href="{escape(lg['url'], quote=True)}">{escape(lg['name'])}</a> Yahoo fantasy league
    ({lg['num_teams']} teams, {_roster_line(lg)}) is under
    <a href="/cfb/matchups/">Fantasy &rsaquo; CFB</a>.{draft_line}</p>
 
