@@ -1,0 +1,11 @@
+# Response headers for every page, read by Cloudflare Pages at deploy time
+# (Jekyll copies this file through: it is in _config.yml's `include`).
+#
+# HSTS: the site is HTTPS-only already; this tells browsers never to try
+# otherwise. No includeSubDomains - nothing says every future subdomain will be.
+# Framing: no page of this site is ever meant to sit inside another site's
+# frame (added after the 2026-09-28 audit).
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'

@@ -9,7 +9,7 @@
  *   total  - visitors since launch, each counted once per Eastern-time day.
  *   today  - approximate unique visitors in the current Eastern-time day
  *            (the site's clock; a UTC day rolled the footer over at 8 PM ET),
- *            found by hashing IP + user agent + day; the hash key expires
+ *            found by hashing IP + day (capped - see DAILY_CAP); the hash key expires
  *            with the day.
  *
  * `total` used to go up on every count=1, deduplicated only by the footer
@@ -58,12 +58,21 @@ export async function onRequestGet({ request, env }) {
   });
 }
 
+// KV's free tier is 1,000 writes a day for the whole account, and the college
+// basketball scoreboard (cbb.live -> the cbb-live-scores Worker) spends ~90 of
+// them in season. A new visitor costs three, so past this many in a day the
+// counter stops climbing rather than taking the scoreboard down with it.
+const DAILY_CAP = 250;
+
 async function record(request, kv, day) {
+  // The address alone: the user agent is the caller's to choose, and keying
+  // on it let one script count itself as a new visitor per request (found by
+  // the 2026-09-28 audit, with Bot Fight Mode off).
   const ip = request.headers.get("cf-connecting-ip") || "";
-  const ua = request.headers.get("user-agent") || "";
-  const seenKey = `seen:${day}:${await sha256(`${day}|${ip}|${ua}`)}`;
+  const seenKey = `seen:${day}:${await sha256(`${day}|${ip}`)}`;
 
   if (await kv.get(seenKey)) return;
+  if ((Number(await kv.get(`day:${day}`)) || 0) >= DAILY_CAP) return;
   await Promise.all([
     bump(kv, "total"),
     bump(kv, `day:${day}`),
