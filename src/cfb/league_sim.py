@@ -108,15 +108,17 @@ def _live_week(week: int, wk: pd.DataFrame, frame: pd.DataFrame) -> dict:
 
 
 def weekly_means(lg: dict, sched: dict, rosters: dict, board: pd.DataFrame = None,
-                 frame: pd.DataFrame = None) -> tuple:
+                 frame: pd.DataFrame = None, live: bool = True) -> tuple:
     """(keys, weeks, mean[w, t], sd[w, t], {key: {pos: points per regular week}})."""
     if frame is None:
         frame, _m, _n = predict.season()
     board = in_season.board(frame=frame) if board is None else board
     board = board.drop_duplicates("yahoo_id")
+    # `live` off for a past week's view (cfb.league_backfill): Yahoo's injury
+    # tags and the week's points in the archive are from after it.
     injuries = {str(p["yahoo_id"]): p.get("status") or ""
                 for r in yahoo.week_matchups(int(lg["current_week"]))["rosters"].values()
-                for p in r} if int(lg["current_week"]) in yahoo.archived_weeks() else {}
+                for p in r} if live and int(lg["current_week"]) in yahoo.archived_weeks() else {}
     keys = sorted(rosters)
     weeks = sorted(sched)
     mean = np.zeros((len(weeks), len(keys)))
@@ -129,10 +131,10 @@ def weekly_means(lg: dict, sched: dict, rosters: dict, board: pd.DataFrame = Non
         # Yahoo's designations describe today, so they price the week at hand.
         wk = weekly.week_projections(span["start"], span["end"], board=board, league=lg,
                                      frame=frame, injuries=injuries if i == 0 else None)
-        live = _live_week(week, wk, frame) if i == 0 else {}
+        now = _live_week(week, wk, frame) if i == 0 and live else {}
         for j, key in enumerate(keys):
-            if key in live:
-                mean[i, j], var[i, j] = live[key]
+            if key in now:
+                mean[i, j], var[i, j] = now[key]
                 continue
             ids = [str(x) for x in dict.fromkeys(rosters[key]) if str(x) in wk.index]
             players = board.set_index(board["yahoo_id"].astype(str)).reindex(ids)[["pos"]]
@@ -255,14 +257,15 @@ def _week_points(week: int) -> dict:
             for m in yahoo.week_matchups(week)["matchups"] for t in m["teams"]}
 
 
-def regular_season(lg: dict) -> dict:
+def regular_season(lg: dict, before: int = None) -> dict:
     """{team_key: (wins, points for, losses)} over the regular season, from the week
     archive - head to head, and against the median where the league plays it.
     What seeds the bracket once it is being played: Yahoo's standings then
     describe the playoffs as well, and the seeds must not move with them."""
     playoff_start = int(lg["playoff_start_week"])
+    last = playoff_start if before is None else min(playoff_start, before)
     wins, pf, games = {}, {}, {}
-    for week in range(int(lg["start_week"] or 1), playoff_start):
+    for week in range(int(lg["start_week"] or 1), last):
         if week not in yahoo.archived_weeks():
             continue
         data = yahoo.week_matchups(week)
@@ -286,7 +289,8 @@ def regular_season(lg: dict) -> dict:
             for k in pf}
 
 
-def run(lg: dict = None, rosters: dict = None, sims: int = SIMS) -> pd.DataFrame:
+def run(lg: dict = None, rosters: dict = None, sims: int = SIMS, board: pd.DataFrame = None,
+        frame: pd.DataFrame = None, live: bool = True) -> pd.DataFrame:
     lg = yahoo.league() if lg is None else lg
     if rosters is None:
         from cfb.site.league_power import team_rosters
@@ -294,7 +298,8 @@ def run(lg: dict = None, rosters: dict = None, sims: int = SIMS) -> pd.DataFrame
     sched = schedule(lg)
     if not sched:
         return pd.DataFrame()
-    keys, weeks, mean, sd, by_pos = weekly_means(lg, sched, rosters)
+    keys, weeks, mean, sd, by_pos = weekly_means(lg, sched, rosters, board=board, frame=frame,
+                                                 live=live)
     playoff_start = int(lg["playoff_start_week"] or lg["end_week"] + 1)
     played = {}
     if int(lg["current_week"]) >= playoff_start:

@@ -34,7 +34,7 @@ from cfb.config import SEASON
 PRIOR_GAMES = 5.0
 
 
-def yahoo_season() -> pd.DataFrame:
+def yahoo_season(before_week: int = None) -> pd.DataFrame:
     """yahoo_id -> points and games played, from the weekly matchup archive.
 
     A week counts as a game only when Yahoo has any stat for the player -
@@ -43,6 +43,8 @@ def yahoo_season() -> pd.DataFrame:
     spent on a league roster are seen; free-agent weeks are not."""
     seen = {}
     for w in yahoo.archived_weeks():
+        if before_week is not None and w >= before_week:
+            continue                    # as it stood before that week (league_backfill)
         for roster in yahoo.week_matchups(w)["rosters"].values():
             for p in roster:
                 if p.get("stats"):
@@ -54,12 +56,14 @@ def yahoo_season() -> pd.DataFrame:
 
 
 def box_score_season(board: pd.DataFrame, league: dict = None,
-                     season: int = SEASON) -> pd.DataFrame:
+                     season: int = SEASON, before_week: int = None) -> pd.DataFrame:
     """board index -> points and games played, from ESPN box scores, matched
     to the board's rows by name and school (the ownership page's matcher)."""
     from cfb.ownership import Index                     # late: it imports usage
 
     box = boxscores.load(season)
+    if before_week is not None and "week" in box:
+        box = box[box["week"] < before_week]
     if box.empty:
         return pd.DataFrame(columns=["points", "played"])
     league = yahoo.league() if league is None else league
@@ -78,16 +82,18 @@ def box_score_season(board: pd.DataFrame, league: dict = None,
     return pd.DataFrame.from_dict(rows, orient="index", columns=["points", "played"])
 
 
-def blend(board: pd.DataFrame, league: dict = None) -> pd.DataFrame:
+def blend(board: pd.DataFrame, league: dict = None, before_week: int = None) -> pd.DataFrame:
     """`board` (value_board rows, any index) with proj/floor/ceiling pulled
-    toward the season so far, `vorp` recomputed and `played` added."""
+    toward the season so far, `vorp` recomputed and `played` added -
+    or toward the weeks before `before_week`, for a past week's view."""
     board = board.copy()
     # Floats throughout: an empty source (week 1, or no box scores yet) comes
     # back as object columns, which pandas will not write into float ones.
-    so_far = box_score_season(board, league).reindex(board.index).astype(float)
+    so_far = box_score_season(board, league, before_week=before_week).reindex(
+        board.index).astype(float)
     ids = board["yahoo_id"].astype(str) if "yahoo_id" in board else pd.Series(
         board.index.astype(str), index=board.index)
-    fallback = yahoo_season().reindex(ids.to_numpy()).astype(float)
+    fallback = yahoo_season(before_week).reindex(ids.to_numpy()).astype(float)
     fallback.index = board.index
     missing = so_far["played"].isna()
     so_far.loc[missing] = fallback.loc[missing]
@@ -104,10 +110,12 @@ def blend(board: pd.DataFrame, league: dict = None) -> pd.DataFrame:
     return board
 
 
-def board(frame: pd.DataFrame = None, refresh: bool = False) -> pd.DataFrame:
+def board(frame: pd.DataFrame = None, refresh: bool = False,
+          before_week: int = None) -> pd.DataFrame:
     """The in-season board: frozen and blended, plus the late arrivals at
-    Yahoo's current price. Same columns as projections.value_board."""
+    Yahoo's current price. Same columns as projections.value_board.
+    `before_week` blends only the weeks before it (cfb.league_backfill)."""
     frozen = projections.value_board(refresh=refresh, frame=frame, frozen=True)
     current = projections.value_board(refresh=refresh, frame=frame)
     late = current[~current["yahoo_id"].isin(frozen["yahoo_id"])].assign(played=0.0)
-    return pd.concat([blend(frozen), late], ignore_index=True)
+    return pd.concat([blend(frozen, before_week=before_week), late], ignore_index=True)

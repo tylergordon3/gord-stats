@@ -22,9 +22,9 @@ def _board(**extra):
 def test_a_projection_is_pulled_toward_the_season_so_far(monkeypatch):
     from cfb import in_season
 
-    monkeypatch.setattr(in_season, "box_score_season", lambda board, league=None:
+    monkeypatch.setattr(in_season, "box_score_season", lambda board, league=None, **k:
                         pd.DataFrame({"points": [100.0], "played": [5.0]}, index=[0]))
-    monkeypatch.setattr(in_season, "yahoo_season", lambda: pd.DataFrame(columns=["points", "played"]))
+    monkeypatch.setattr(in_season, "yahoo_season", lambda *a: pd.DataFrame(columns=["points", "played"]))
     got = in_season.blend(_board(), league={})
     # 10 a game before, 20 a game over five: (10 x 5 + 100) / (5 + 5) = 15 a game.
     assert got.loc[0, "proj"] == pytest.approx(150.0)
@@ -35,9 +35,9 @@ def test_a_projection_is_pulled_toward_the_season_so_far(monkeypatch):
 def test_yahoos_archive_covers_what_box_scores_cannot_name(monkeypatch):
     from cfb import in_season
 
-    monkeypatch.setattr(in_season, "box_score_season", lambda board, league=None:
+    monkeypatch.setattr(in_season, "box_score_season", lambda board, league=None, **k:
                         pd.DataFrame(columns=["points", "played"]))
-    monkeypatch.setattr(in_season, "yahoo_season", lambda: pd.DataFrame(
+    monkeypatch.setattr(in_season, "yahoo_season", lambda *a: pd.DataFrame(
         {"points": [0.0], "played": [5.0]}, index=["2"]))
     got = in_season.blend(_board(), league={})
     assert got.loc[1, "proj"] == pytest.approx(25.0)      # (5 x 5 + 0) / 10 a game
@@ -53,7 +53,7 @@ def test_a_player_the_draft_board_never_had_joins_at_yahoos_price(monkeypatch):
     monkeypatch.setattr(projections, "value_board",
                         lambda refresh=False, frame=None, frozen=False: (
                             _board() if frozen else current))
-    monkeypatch.setattr(in_season, "blend", lambda board, league=None: board.assign(played=1.0))
+    monkeypatch.setattr(in_season, "blend", lambda board, league=None, **k: board.assign(played=1.0))
     got = in_season.board()
     assert list(got["yahoo_id"]) == ["1", "2", "9"]
     late = got.set_index("yahoo_id").loc["9"]
