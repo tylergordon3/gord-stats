@@ -32,7 +32,7 @@ from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import logos, matchup_page as ui
 from gordstats import my_league, my_league_data, my_matchups, my_week
-from gordstats import share_button, share_card
+from gordstats import share_button, share_card, stakes
 from gordstats.frontmatter import add_front_matter
 
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
@@ -875,6 +875,8 @@ def week_view(data: dict, ctx: dict) -> str:
     playoffs = " (playoffs)" if ctx["playoff_start"] and week >= ctx["playoff_start"] else ""
     _CARDS[week] = {"pairs": [(a["name"], a["pts"], a["gs"], b["name"], b["pts"], b["gs"])
                               for _, a, b in rows],
+                    "names": {s["key"]: s["name"] for _, a, b in rows for s in (a, b)},
+                    "anchors": {s["key"]: anc for anc, a, b in rows for s in (a, b)},
                     "started": started, "final": final,
                     "asof": (datetime.fromisoformat(data["fetched"]).astimezone(LEAGUE_TZ)
                              .strftime("%a %-I:%M %p") if data.get("fetched") else "")}
@@ -1108,6 +1110,7 @@ def body() -> str:
     current = open_weeks[0] if open_weeks else weeks[-1]
     _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
     views = {w: week_view(datas[w], ctx) for w in weeks}
+    views[current] = _game_of_week(current) + views[current]
     scored = accuracy_section(datas, ctx)
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
@@ -1162,6 +1165,21 @@ def body() -> str:
 # The week each week_view drew, for the page's link-preview card: which week
 # is current is only known once body() has looked at them all.
 _CARDS: dict = {}
+
+
+def _game_of_week(week: int) -> str:
+    """The week's biggest game by playoff odds (gordstats.stakes), from what the
+    power page left - until the week is final."""
+    info = _CARDS.get(week)
+    teams = stakes.read(paths.WEB_STAKES, week)
+    if not info or info["final"] or not teams:
+        return ""
+    ranked = stakes.games(teams)
+    if not ranked:
+        return ""
+    return stakes.callout(week, teams, names=info["names"],
+                          anchor=info["anchors"].get(ranked[0][0], ""),
+                          more="<a href='/fantasy/power/#stakes'>Every team's stakes &rarr;</a>")
 
 
 def _share_row() -> str:

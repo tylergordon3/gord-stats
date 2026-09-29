@@ -17,6 +17,7 @@ Method are open on the page - they are the page; Method is reference:
 
     python -m fantasy.site.power
 """
+import json
 from datetime import datetime
 from html import escape
 
@@ -34,7 +35,7 @@ from fantasy.config import (                                   # noqa: E402
 from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
-from gordstats import charts, palette, share_button, share_card  # noqa: E402
+from gordstats import charts, palette, share_button, share_card, stakes  # noqa: E402
 from gordstats import my_league, my_league_data, my_power       # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
 
@@ -55,6 +56,7 @@ CONTEXT = palette.CONTEXT
 SECTIONS = [
     ("mine", "Your League", "Yours", False),
     ("rankings", "Power Rankings", "Rankings", False),
+    ("stakes", "This Week's Stakes", "Stakes", False),
     ("draft-consensus", "Draft Rankings (frozen)", "Draft", False),
     ("season", "Through the Season", "Season", False),
     ("positions", "Positional Strength", "Positions", False),
@@ -692,9 +694,12 @@ def body() -> str:
 
     charts.clear(_SECTION)            # only now: a failed run keeps the last page's charts
     _CARD["table"] = table
+    stakes_week, stakes_teams = _stakes(table)
+    stakes.write(STAKES_OUT, stakes_week, stakes_teams)
     content = {
         "mine": my_power.section(),
         "rankings": _rankings_section(table),
+        "stakes": stakes.table(stakes_week, stakes_teams) if stakes_week else "",
         "draft-consensus": draft_consensus_section(),
         "season": _season_section(),
         "positions": _positions_section(rosters, table),
@@ -718,6 +723,33 @@ def body() -> str:
 
 
 _CARD: dict = {}
+
+# This week's stakes, for the matchups page's game of the week (gordstats.stakes).
+STAKES_OUT = paths.WEB_STAKES
+
+
+def _stakes(table: pd.DataFrame) -> tuple:
+    """(week, teams) for the next week's games, or (None, {}) when that week
+    is over already: the model counts a week once nflverse has it too, a day
+    or two after Sleeper finishes it, and until then its "next" week has been
+    played. Over is either test saying so - the week's archive final (every
+    game over, every side scored: what the matchups page goes by), or
+    Sleeper's display week past it - since Sleeper keeps a finished week on
+    display into Tuesday."""
+    teams = stakes.teams_from(table, "roster_id", "manager")
+    if not teams:
+        return None, {}
+    week = int(table["stakes_week"].dropna().iloc[0])
+    over = league_matchups.weeks_over(UPCOMING_YEAR)
+    if over is not None and week <= over:
+        return None, {}
+    path = league_matchups._path(week, UPCOMING_YEAR)
+    try:
+        if path.exists() and league_matchups.week_final(json.loads(path.read_text())):
+            return None, {}
+    except (OSError, ValueError):
+        pass
+    return week, teams
 
 
 def card() -> dict | None:

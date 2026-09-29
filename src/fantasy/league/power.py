@@ -472,6 +472,13 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     the same for the playoff weeks already played (see playoff_points). `injuries` is
     {sleeper_id: Sleeper injury status} today; a player on a reserve list is
     held out of the next weeks (FORCED_OUT) instead of opening healthy.
+
+    With a fixed schedule and a regular-season week still to play, each team's
+    playoff odds are also split on the next week's head-to-head game - the
+    same runs, counted by whether it won that game - into `playoff_if_win` and
+    `playoff_if_loss`, with `win_prob`, `opponent` and `stakes_week` (1-based).
+    The gap between the two is what the game is worth: the matchups page's
+    game of the week and the power page's stakes table read it.
     """
     players = roster_frame.merge(board, on="sleeper_id", how="left")
     players["out_weeks"] = (players["sleeper_id"].astype(str)
@@ -498,6 +505,9 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     made_playoffs = np.zeros(n_teams)
     titles = np.zeros(n_teams)
     seed_counts = np.zeros((n_teams, n_teams))
+    # The next regular-season week's game: [made & won, won, made & lost, lost].
+    stakes_week = played if (fixed_schedule is not None and played < min(weeks, len(fixed_schedule))) else None
+    stakes = np.zeros((4, n_teams))
     done = 0
 
     while done < sims:
@@ -538,6 +548,12 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
         order = np.lexsort((-batch_points, -batch_wins), axis=-1)
         seeds = order[:, :PLAYOFF_TEAMS]
         made_playoffs += np.bincount(seeds.ravel(), minlength=n_teams)
+        if stakes_week is not None:
+            made = np.zeros((batch, n_teams), dtype=bool)
+            made[np.arange(batch)[:, None], seeds] = True
+            won = regular[:, stakes_week, :] > regular[:, stakes_week, fixed_schedule[stakes_week]]
+            stakes += [(made & won).sum(axis=0), won.sum(axis=0),
+                       (made & ~won).sum(axis=0), (~won).sum(axis=0)]
         for position in range(n_teams):
             seed_counts[:, position] += np.bincount(order[:, position], minlength=n_teams)
 
@@ -561,6 +577,13 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
         "first_seed_odds": seed_counts[:, 0] / sims,
         "last_odds": seed_counts[:, -1] / sims,
     })
+
+    if stakes_week is not None:
+        summary["stakes_week"] = stakes_week + 1
+        summary["opponent"] = [teams[j].roster_id for j in fixed_schedule[stakes_week]]
+        summary["win_prob"] = stakes[1] / sims
+        summary["playoff_if_win"] = np.where(stakes[1] > 0, stakes[0] / np.maximum(stakes[1], 1), np.nan)
+        summary["playoff_if_loss"] = np.where(stakes[3] > 0, stakes[2] / np.maximum(stakes[3], 1), np.nan)
 
     # One readable number, on the scale everyone already reads: points per week
     # relative to the league. Ranking on it and ranking on projected wins agree,

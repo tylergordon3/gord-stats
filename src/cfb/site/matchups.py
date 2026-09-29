@@ -25,7 +25,7 @@ import pandas as pd
 from cfb import in_season, predict, pregame, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import logos, matchup_page as ui, share_button, share_card
+from gordstats import logos, matchup_page as ui, share_button, share_card, stakes
 
 OUTPUT = WEB_DIR / "matchups" / "index.html"
 
@@ -685,6 +685,8 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
     fetched = data.get("fetched")
     _CARDS[week] = {"pairs": [(a["name"], a["pts"], a["gs"], b["name"], b["pts"], b["gs"])
                               for _, a, b in rows],
+                    "names": {s["key"]: s["name"] for _, a, b in rows for s in (a, b)},
+                    "anchors": {s["key"]: anc for anc, a, b in rows for s in (a, b)},
                     "started": started, "final": final,
                     "asof": (datetime.fromisoformat(fetched).astimezone(LEAGUE_TZ)
                              .strftime("%a %-I:%M %p") if fetched else "")}
@@ -837,6 +839,7 @@ def body() -> str:
     _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
     views = {w: week_view(datas[w], lg, board, frame, to_school, espn, teams, extremes)
              for w in weeks}
+    views[current] = _game_of_week(current) + views[current]
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     info = _CARDS.get(current)
@@ -876,6 +879,21 @@ def body() -> str:
 # The week each week_view drew, for the page's link-preview card: which week
 # is current is only known once body() has looked at them all.
 _CARDS: dict = {}
+
+
+def _game_of_week(week: int) -> str:
+    """The week's biggest game by playoff odds (gordstats.stakes), from what the
+    power page left - until the week is final."""
+    info = _CARDS.get(week)
+    teams = stakes.read(WEB_DIR / "stakes.json", week)
+    if not info or info["final"] or not teams:
+        return ""
+    ranked = stakes.games(teams)
+    if not ranked:
+        return ""
+    return stakes.callout(week, teams, names=info["names"],
+                          anchor=info["anchors"].get(ranked[0][0], ""),
+                          more="<a href='/cfb/league/power/#stakes'>Every team's stakes &rarr;</a>")
 
 
 def card() -> dict | None:

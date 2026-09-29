@@ -190,7 +190,12 @@ def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
              played_playoffs: dict = None) -> pd.DataFrame:
     """`played_playoffs` is {week: {team_key: points}} for bracket rounds
     already final: they are taken as they happened, and only the rounds left
-    are drawn."""
+    are drawn.
+
+    With a regular-season week still to play, each team's playoff odds are
+    also split on its next head-to-head game - the same runs, counted by
+    whether it won - into `playoff_if_win` / `playoff_if_loss`, with
+    `win_prob`, `opponent` and `stakes_week` (gordstats.stakes reads them)."""
     rng = np.random.default_rng(seed)
     n = len(keys)
     idx = {k: i for i, k in enumerate(keys)}
@@ -238,6 +243,8 @@ def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
         seeds = order[:, :field]
         made = np.zeros(n)
         np.add.at(made, seeds.ravel(), 1)
+        if regular:
+            _stakes(out, sched, weeks, regular[0], scores, seeds, idx, keys, sims)
         size = 1 << int(np.ceil(np.log2(field)))
         byes = np.zeros(n)
         np.add.at(byes, seeds[:, :size - field].ravel(), 1)
@@ -249,6 +256,30 @@ def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
         out["bye"] = byes / sims
         out["title"] = titles / sims
     return out
+
+
+def _stakes(out: pd.DataFrame, sched: dict, weeks: list, i: int, scores: np.ndarray,
+            seeds: np.ndarray, idx: dict, keys: list, sims: int) -> None:
+    """Split each team's playoff odds on week `weeks[i]`'s head to head."""
+    made = np.zeros((sims, len(keys)), dtype=bool)
+    made[np.arange(sims)[:, None], seeds] = True
+    s = scores[:, i, :]
+    opp = {}
+    for a, b in sched[weeks[i]]["pairs"]:
+        if a in idx and b in idx:
+            opp[a], opp[b] = b, a
+    win, loss, wp = [], [], []
+    for k in keys:
+        if k not in opp:
+            win.append(np.nan); loss.append(np.nan); wp.append(np.nan)
+            continue
+        won = s[:, idx[k]] > s[:, idx[opp[k]]]
+        win.append(made[won, idx[k]].mean() if won.any() else np.nan)
+        loss.append(made[~won, idx[k]].mean() if (~won).any() else np.nan)
+        wp.append(won.mean())
+    out["stakes_week"] = weeks[i]
+    out["opponent"] = [opp.get(k) for k in keys]
+    out["win_prob"], out["playoff_if_win"], out["playoff_if_loss"] = wp, win, loss
 
 
 def _week_points(week: int) -> dict:

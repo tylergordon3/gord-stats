@@ -65,6 +65,8 @@ WEB_DRAFT_RECAP = WEB_FANTASY_DIR / "draft-recap" / "index.html"
 WEB_DRAFT_REPORT = WEB_FANTASY_DIR / "draft-report" / "index.html"
 WEB_SCHEDULE = WEB_FANTASY_DIR / "schedule" / "index.html"
 WEB_POWER = WEB_FANTASY_DIR / "power" / "index.html"
+# This week's stakes, left by the power page for the matchups page (gordstats.stakes).
+WEB_STAKES = WEB_FANTASY_DIR / "stakes.json"
 WEB_MATCHUPS = WEB_FANTASY_DIR / "matchups" / "index.html"
 WEB_ROSTER = WEB_FANTASY_DIR / "roster" / "index.html"
 WEB_USAGE = WEB_FANTASY_DIR / "usage" / "index.html"

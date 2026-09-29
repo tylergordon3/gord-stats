@@ -38,7 +38,7 @@ import pandas as pd                                  # noqa: E402
 from cfb import in_season, league_sim, projections, yahoo  # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import charts, palette, rankmoves, share_button, share_card  # noqa: E402
+from gordstats import charts, palette, rankmoves, share_button, share_card, stakes  # noqa: E402
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
 OUTPUT = WEB_DIR / "league" / "power" / "index.html"
@@ -267,6 +267,28 @@ def _pct(p) -> str:
 
 _CARD: dict = {}
 
+# This week's stakes, for the matchups page's game of the week (gordstats.stakes).
+STAKES_OUT = WEB_DIR / "stakes.json"
+
+
+def _stakes(sim: pd.DataFrame, names: dict) -> tuple:
+    """(week, teams) for the week being played or next, or (None, {}) once
+    that week is final."""
+    if sim.empty or "playoff_if_win" not in sim:
+        return None, {}
+    frame = sim.reset_index()
+    frame["name"] = frame["team_key"].map(names)
+    teams = stakes.teams_from(frame, "team_key", "name")
+    if not teams:
+        return None, {}
+    week = int(frame["stakes_week"].iloc[0])
+    try:
+        if week in yahoo.archived_weeks() and yahoo.week_final(yahoo.week_matchups(week)):
+            return None, {}
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! stakes: week {week} state unknown ({exc})")
+    return week, teams
+
 
 def card(week: int | None = None) -> dict | None:
     """The league dashboard's link-preview card (gordstats.share_card): the top
@@ -307,6 +329,8 @@ def section() -> str:
         r["sim"] = got
     if not sim.empty:
         rows.sort(key=lambda r: r["per_week"] or 0.0, reverse=True)
+    _CARD["stakes"] = _stakes(sim, {r["key"]: r["team"].get("name") or r["key"] for r in rows})
+    stakes.write(STAKES_OUT, *_CARD["stakes"])
     avg = (np.mean([r["per_week"] for r in rows if r["per_week"] is not None])
            if not sim.empty else None)
     has_odds = not sim.empty and "title" in sim.columns
@@ -415,6 +439,9 @@ def body() -> str:
     # The schedule ahead is the other half of "who is actually good": the
     # matchup strength page, under this tab too.
     html = section()
+    week, teams = _CARD.get("stakes") or (None, {})
+    if week:
+        html += "<h2 id='stakes'>This Week's Stakes</h2>" + stakes.table(week, teams)
     top = ", ".join(f"{r[0]}. {r[1]}" for r in (_CARD.get("rows") or [])[:3])
     share = share_button.row("/cfb/league/power/",
                              f"CFB league power rankings: {top}" if top else "")
