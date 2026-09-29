@@ -334,7 +334,8 @@ CSS = """<style>
 .rc-side .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#475569}
 .rc-side .sc{font-variant-numeric:tabular-nums;color:#475569}
 .rc-side.w .nm,.rc-side.w .sc{color:#0f172a;font-weight:700}
-.rc-med{font-size:11px;font-weight:700;border-radius:4px;padding:0 4px;min-width:14px;text-align:center}
+.rc-med{font-size:11px;font-weight:700;border-radius:4px;padding:0 5px;text-align:center;
+  white-space:nowrap}
 .rc-med.w{background:#dcfce7;color:#166534}.rc-med.l{background:#fee2e2;color:#991b1b}
 .rc-meta{font-size:12px;color:#64748b;margin-top:2px}
 .rc-awards{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
@@ -403,9 +404,11 @@ def _games(week: Week) -> str:
         def side(s, won):
             chip = ""
             if med is not None:
+                # "Med W", not a bare "W": beside a score it read as the head
+                # to head, so a team that won its game showed an L.
                 chip = (f'<span class="rc-med {"w" if s.points > med else "l"}" '
                         f'title="Against the median, {num(med)}">'
-                        f'{"W" if s.points > med else "L"}</span>')
+                        f'Med {"W" if s.points > med else "L"}</span>')
             return (f'<div class="rc-side{" w" if won else ""}">{_avatar(T[s.key])}'
                     f'<span class="nm">{escape(T[s.key].name)}</span>{chip}'
                     f'<span class="sc">{num(s.points)}</span></div>')
@@ -414,8 +417,9 @@ def _games(week: Week) -> str:
                    + side(sb, sb.points > sa.points)
                    + f'<div class="rc-meta">by {num(m)} &middot; best lineups '
                    f'{num(sa.max)} / {num(sb.max)}</div></div>')
-    note = (f'<p class="rc-note">W / L beside a score is its second game, against the '
-            f'week\'s median ({num(med)}).</p>' if med is not None else "")
+    note = (f'<p class="rc-note">The winner of each game is in bold. <b>Med W</b> / '
+            f'<b>Med L</b> is each team\'s second game, against the week\'s median '
+            f'({num(med)}).</p>' if med is not None else "")
     return '<div class="rc-games">' + "".join(out) + "</div>" + note
 
 

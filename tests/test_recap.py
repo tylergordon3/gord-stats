@@ -1,6 +1,7 @@
 """The weekly recap and lineup accuracy (gordstats.recap, with the two
 leagues' adapters fantasy.site.recap and cfb.site.recap)."""
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -121,6 +122,10 @@ def test_the_page():
     assert '<a href="/fantasy/recap/week-1/">1</a>' in html and "<span>3</span>" in html
     assert html.count('class="rc-game"') == 2 and html.count('class="rc-award') >= 10
     assert 'class="rc-med w"' in html, "median results shown in a median league"
+    # labelled as the median game: a bare W/L beside a score read as the head
+    # to head, so a team that had won its game showed an L
+    assert re.search(r'class="rc-med [wl]"[^>]*>Med [WL]<', html)
+    assert ">W<" not in html and ">L<" not in html
     assert "<th>Wk 3</th>" in html and 'class="pf"' in html
 
 
