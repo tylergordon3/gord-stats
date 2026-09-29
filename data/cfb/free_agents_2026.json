@@ -756,6 +756,18 @@
   "rank": 63
  },
  {
+  "player": "Cam Edwards",
+  "pos": "RB",
+  "team": "MSU",
+  "team_full": "Michigan State Spartans",
+  "bye": 9.0,
+  "adp": null,
+  "avg_round": null,
+  "pct_drafted": null,
+  "yahoo_id": "340537",
+  "rank": 64
+ },
+ {
   "player": "Asaad Waseem",
   "pos": "WR",
   "team": "PUR",
@@ -765,7 +777,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404214",
-  "rank": 64
+  "rank": 65
  },
  {
   "player": "Jason Patterson",
@@ -777,7 +789,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456599",
-  "rank": 65
+  "rank": 66
  },
  {
   "player": "UCLA",
@@ -789,7 +801,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900064",
-  "rank": 66
+  "rank": 67
  },
  {
   "player": "Ja'Kobi Jackson",
@@ -801,7 +813,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "451445",
-  "rank": 67
+  "rank": 68
  },
  {
   "player": "UCF",
@@ -813,7 +825,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900210",
-  "rank": 68
+  "rank": 69
  },
  {
   "player": "Davis Warren",
@@ -825,7 +837,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "327426",
-  "rank": 69
+  "rank": 70
  },
  {
   "player": "Iverson Howard",
@@ -837,7 +849,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "469214",
-  "rank": 70
+  "rank": 71
  },
  {
   "player": "Nebraska",
@@ -849,7 +861,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900023",
-  "rank": 71
+  "rank": 72
  },
  {
   "player": "Auburn",
@@ -861,7 +873,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900075",
-  "rank": 72
+  "rank": 73
  },
  {
   "player": "Tennessee",
@@ -873,7 +885,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900071",
-  "rank": 73
+  "rank": 74
  },
  {
   "player": "Tyrell Henry",
@@ -885,7 +897,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "338901",
-  "rank": 74
+  "rank": 75
  },
  {
   "player": "Jaleel Skinner",
@@ -897,7 +909,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "333590",
-  "rank": 75
+  "rank": 76
  },
  {
   "player": "Re'Shaun Sanford II",
@@ -909,7 +921,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405535",
-  "rank": 76
+  "rank": 77
  },
  {
   "player": "Caden High",
@@ -921,7 +933,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "467367",
-  "rank": 77
+  "rank": 78
  },
  {
   "player": "Jayden McGowan",
@@ -933,7 +945,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "333843",
-  "rank": 78
+  "rank": 79
  },
  {
   "player": "Chase Hendricks",
@@ -945,7 +957,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "406011",
-  "rank": 79
+  "rank": 80
  },
  {
   "player": "Chas Nimrod",
@@ -957,7 +969,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "334137",
-  "rank": 80
+  "rank": 81
  },
  {
   "player": "Koby Young",
@@ -969,7 +981,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "455920",
-  "rank": 81
+  "rank": 82
  },
  {
   "player": "Censere Lee",
@@ -981,7 +993,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "338146",
-  "rank": 82
+  "rank": 83
  },
  {
   "player": "Penn State",
@@ -993,7 +1005,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900034",
-  "rank": 83
+  "rank": 84
  },
  {
   "player": "Vanderbilt",
@@ -1005,7 +1017,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900072",
-  "rank": 84
+  "rank": 85
  },
  {
   "player": "Dylan Raiola",
@@ -1017,7 +1029,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457863",
-  "rank": 85
+  "rank": 86
  },
  {
   "player": "Xavier Williams",
@@ -1029,7 +1041,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456277",
-  "rank": 86
+  "rank": 87
  },
  {
   "player": "Jackson Harris",
@@ -1041,7 +1053,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404265",
-  "rank": 87
+  "rank": 88
  },
  {
   "player": "Javian Mallory",
@@ -1053,7 +1065,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "484275",
-  "rank": 88
+  "rank": 89
  },
  {
   "player": "Virginia Tech",
@@ -1065,7 +1077,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900016",
-  "rank": 89
+  "rank": 90
  },
  {
   "player": "Isaiah Horton",
@@ -1077,7 +1089,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "340917",
-  "rank": 90
+  "rank": 91
  },
  {
   "player": "Ryan Wingo",
@@ -1089,7 +1101,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457676",
-  "rank": 91
+  "rank": 92
  },
  {
   "player": "Baylor",
@@ -1101,7 +1113,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900079",
-  "rank": 92
+  "rank": 93
  },
  {
   "player": "Joseph Himon II",
@@ -1113,7 +1125,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "337857",
-  "rank": 93
+  "rank": 94
  },
  {
   "player": "Jacory Barney Jr.",
@@ -1125,7 +1137,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457834",
-  "rank": 94
+  "rank": 95
  },
  {
   "player": "Que'Sean Brown",
@@ -1137,7 +1149,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404749",
-  "rank": 95
+  "rank": 96
  },
  {
   "player": "Ty Clark III",
@@ -1149,7 +1161,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457411",
-  "rank": 96
+  "rank": 97
  },
  {
   "player": "Noah Jennings",
@@ -1161,7 +1173,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "406531",
-  "rank": 97
+  "rank": 98
  },
  {
   "player": "Minnesota",
@@ -1173,7 +1185,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900031",
-  "rank": 98
+  "rank": 99
  },
  {
   "player": "Kenny Johnson",
@@ -1185,7 +1197,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405242",
-  "rank": 99
+  "rank": 100
  },
  {
   "player": "Will Wilson",
@@ -1197,7 +1209,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "471505",
-  "rank": 100
+  "rank": 101
  },
  {
   "player": "Talyn Taylor",
@@ -1209,7 +1221,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "470331",
-  "rank": 101
+  "rank": 102
  },
  {
   "player": "Kenny Darby",
@@ -1221,7 +1233,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "482254",
-  "rank": 102
+  "rank": 103
  },
  {
   "player": "Florida",
@@ -1233,7 +1245,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900067",
-  "rank": 103
+  "rank": 104
  },
  {
   "player": "Rashid Williams",
@@ -1245,7 +1257,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405388",
-  "rank": 104
+  "rank": 105
  },
  {
   "player": "Daune Morris",
@@ -1257,7 +1269,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "469866",
-  "rank": 105
+  "rank": 106
  },
  {
   "player": "Theo Melin Ohrstrom",
@@ -1269,7 +1281,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "339699",
-  "rank": 106
+  "rank": 107
  },
  {
   "player": "TJ Thomas",
@@ -1281,7 +1293,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "465541",
-  "rank": 107
+  "rank": 108
  },
  {
   "player": "Oklahoma",
@@ -1293,7 +1305,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900024",
-  "rank": 108
+  "rank": 109
  },
  {
   "player": "Keyjuan Brown",
@@ -1305,7 +1317,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404825",
-  "rank": 109
+  "rank": 110
  },
  {
   "player": "Steve Angeli",
@@ -1317,7 +1329,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "334501",
-  "rank": 110
+  "rank": 111
  },
  {
   "player": "Nik McMillan",
@@ -1329,7 +1341,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "338352",
-  "rank": 111
+  "rank": 112
  },
  {
   "player": "Zion Ragins",
@@ -1341,7 +1353,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457298",
-  "rank": 112
+  "rank": 113
  },
  {
   "player": "Ed Small",
@@ -1353,7 +1365,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468953",
-  "rank": 113
+  "rank": 114
  },
  {
   "player": "Utah",
@@ -1365,7 +1377,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900094",
-  "rank": 114
+  "rank": 115
  },
  {
   "player": "Mark Bowman",
@@ -1377,7 +1389,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "482194",
-  "rank": 115
+  "rank": 116
  },
  {
   "player": "DJ Lagway",
@@ -1389,7 +1401,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456332",
-  "rank": 116
+  "rank": 117
  },
  {
   "player": "Braeden Jackson",
@@ -1401,7 +1413,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "474311",
-  "rank": 117
+  "rank": 118
  },
  {
   "player": "Keyone Jenkins",
@@ -1413,7 +1425,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404917",
-  "rank": 118
+  "rank": 119
  },
  {
   "player": "Alessio Milivojevic",
@@ -1425,7 +1437,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "458501",
-  "rank": 119
+  "rank": 120
  },
  {
   "player": "Byrd Ficklin",
@@ -1437,7 +1449,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468653",
-  "rank": 120
+  "rank": 121
  },
  {
   "player": "Kansas State",
@@ -1449,7 +1461,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900021",
-  "rank": 121
+  "rank": 122
  },
  {
   "player": "Wisconsin",
@@ -1461,7 +1473,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900036",
-  "rank": 122
+  "rank": 123
  },
  {
   "player": "Texas A&M",
@@ -1473,7 +1485,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900084",
-  "rank": 123
+  "rank": 124
  },
  {
   "player": "Coy Eakin",
@@ -1485,7 +1497,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "334802",
-  "rank": 124
+  "rank": 125
  },
  {
   "player": "Jalen Cooper",
@@ -1497,7 +1509,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468742",
-  "rank": 125
+  "rank": 126
  },
  {
   "player": "EJ Crowell",
@@ -1509,7 +1521,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "483904",
-  "rank": 126
+  "rank": 127
  },
  {
   "player": "Aidan Laughery",
@@ -1521,7 +1533,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "333882",
-  "rank": 127
+  "rank": 128
  },
  {
   "player": "Marquis Johnson",
@@ -1533,7 +1545,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405105",
-  "rank": 128
+  "rank": 129
  },
  {
   "player": "Iowa State",
@@ -1545,7 +1557,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900019",
-  "rank": 129
+  "rank": 130
  },
  {
   "player": "Landen Clark",
@@ -1557,7 +1569,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "465503",
-  "rank": 130
+  "rank": 131
  },
  {
   "player": "Yannick Smith",
@@ -1569,7 +1581,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456452",
-  "rank": 131
+  "rank": 132
  },
  {
   "player": "Semaj Morgan",
@@ -1581,7 +1593,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "403962",
-  "rank": 132
+  "rank": 133
  },
  {
   "player": "Jabree Coleman",
@@ -1593,7 +1605,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "471865",
-  "rank": 133
+  "rank": 134
  },
  {
   "player": "T.J. Moore",
@@ -1605,7 +1617,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457631",
-  "rank": 134
+  "rank": 135
  },
  {
   "player": "Pittsburgh",
@@ -1617,7 +1629,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900012",
-  "rank": 135
+  "rank": 136
  },
  {
   "player": "California",
@@ -1629,7 +1641,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900059",
-  "rank": 136
+  "rank": 137
  },
  {
   "player": "Jaivian Thomas",
@@ -1641,7 +1653,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404130",
-  "rank": 137
+  "rank": 138
  },
  {
   "player": "Benjamin Hall",
@@ -1653,7 +1665,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "403930",
-  "rank": 138
+  "rank": 139
  },
  {
   "player": "Chris Brooks Jr.",
@@ -1665,7 +1677,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "339139",
-  "rank": 139
+  "rank": 140
  },
  {
   "player": "Cataurus Hicks",
@@ -1677,7 +1689,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404836",
-  "rank": 140
+  "rank": 141
  },
  {
   "player": "Shavane Anderson Jr.",
@@ -1689,7 +1701,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "483186",
-  "rank": 141
+  "rank": 142
  },
  {
   "player": "Louis Brown IV",
@@ -1701,7 +1713,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "337423",
-  "rank": 142
+  "rank": 143
  },
  {
   "player": "Trae'shawn Brown",
@@ -1713,7 +1725,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "483913",
-  "rank": 143
+  "rank": 144
  },
  {
   "player": "Darrion Dupree",
@@ -1725,7 +1737,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456105",
-  "rank": 144
+  "rank": 145
  },
  {
   "player": "Rodney Bullard Jr.",
@@ -1737,7 +1749,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "469305",
-  "rank": 145
+  "rank": 146
  },
  {
   "player": "AJ Surace",
@@ -1749,7 +1761,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456023",
-  "rank": 146
+  "rank": 147
  },
  {
   "player": "Landen Chambers",
@@ -1761,7 +1773,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "407941",
-  "rank": 147
+  "rank": 148
  },
  {
   "player": "Clemson",
@@ -1773,7 +1785,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900001",
-  "rank": 148
+  "rank": 149
  },
  {
   "player": "Duke",
@@ -1785,7 +1797,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900002",
-  "rank": 149
+  "rank": 150
  },
  {
   "player": "Missouri",
@@ -1797,7 +1809,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900022",
-  "rank": 150
+  "rank": 151
  },
  {
   "player": "South Carolina",
@@ -1809,7 +1821,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900070",
-  "rank": 151
+  "rank": 152
  },
  {
   "player": "Micah Welch",
@@ -1821,7 +1833,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "455819",
-  "rank": 152
+  "rank": 153
  },
  {
   "player": "Josh Manning",
@@ -1833,7 +1845,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405124",
-  "rank": 153
+  "rank": 154
  },
  {
   "player": "Kedrick Reescano",
@@ -1845,7 +1857,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "405280",
-  "rank": 154
+  "rank": 155
  },
  {
   "player": "Terrence Lewis",
@@ -1857,7 +1869,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "472145",
-  "rank": 155
+  "rank": 156
  },
  {
   "player": "DeAndre Moore Jr.",
@@ -1869,7 +1881,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404541",
-  "rank": 156
+  "rank": 157
  },
  {
   "player": "Kameron Courtney",
@@ -1881,7 +1893,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456484",
-  "rank": 157
+  "rank": 158
  },
  {
   "player": "Chris Lawson",
@@ -1893,7 +1905,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "469666",
-  "rank": 158
+  "rank": 159
  },
  {
   "player": "Messiah Hampton",
@@ -1905,7 +1917,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "484513",
-  "rank": 159
+  "rank": 160
  },
  {
   "player": "Jayvan Boggs",
@@ -1917,7 +1929,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468498",
-  "rank": 160
+  "rank": 161
  },
  {
   "player": "Baron Naone",
@@ -1929,7 +1941,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "469698",
-  "rank": 161
+  "rank": 162
  },
  {
   "player": "Michigan",
@@ -1941,7 +1953,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900029",
-  "rank": 162
+  "rank": 163
  },
  {
   "player": "Oregon",
@@ -1953,7 +1965,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900060",
-  "rank": 163
+  "rank": 164
  },
  {
   "player": "Arizona",
@@ -1965,7 +1977,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900057",
-  "rank": 164
+  "rank": 165
  },
  {
   "player": "Horatio Fields",
@@ -1977,7 +1989,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "323868",
-  "rank": 165
+  "rank": 166
  },
  {
   "player": "Chase Sowell",
@@ -1989,7 +2001,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "336422",
-  "rank": 166
+  "rank": 167
  },
  {
   "player": "Caleb Odom",
@@ -2001,7 +2013,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "455479",
-  "rank": 167
+  "rank": 168
  },
  {
   "player": "Billy Edwards Jr.",
@@ -2013,7 +2025,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "323862",
-  "rank": 168
+  "rank": 169
  },
  {
   "player": "James Peoples",
@@ -2025,7 +2037,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "455600",
-  "rank": 169
+  "rank": 170
  },
  {
   "player": "Dalen Penson",
@@ -2037,7 +2049,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "471566",
-  "rank": 170
+  "rank": 171
  },
  {
   "player": "Noah Bennee",
@@ -2049,7 +2061,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "334287",
-  "rank": 171
+  "rank": 172
  },
  {
   "player": "Syracuse",
@@ -2061,7 +2073,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900014",
-  "rank": 172
+  "rank": 173
  },
  {
   "player": "Virginia",
@@ -2073,7 +2085,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900008",
-  "rank": 173
+  "rank": 174
  },
  {
   "player": "USC",
@@ -2085,7 +2097,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900062",
-  "rank": 174
+  "rank": 175
  },
  {
   "player": "Alonza Barnett III",
@@ -2097,7 +2109,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "333966",
-  "rank": 175
+  "rank": 176
  },
  {
   "player": "Jacob Harris",
@@ -2109,7 +2121,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "406099",
-  "rank": 176
+  "rank": 177
  },
  {
   "player": "Bryce Yates",
@@ -2121,7 +2133,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468767",
-  "rank": 177
+  "rank": 178
  },
  {
   "player": "Reece Vander Zee",
@@ -2133,7 +2145,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456275",
-  "rank": 178
+  "rank": 179
  },
  {
   "player": "Ryan Puglisi",
@@ -2145,7 +2157,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "459143",
-  "rank": 179
+  "rank": 180
  },
  {
   "player": "Traylon Ray",
@@ -2157,7 +2169,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404611",
-  "rank": 180
+  "rank": 181
  },
  {
   "player": "Hudson Clement",
@@ -2169,7 +2181,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "342063",
-  "rank": 181
+  "rank": 182
  },
  {
   "player": "Tate Nagy",
@@ -2181,7 +2193,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "469258",
-  "rank": 182
+  "rank": 183
  },
  {
   "player": "Jonah Burton",
@@ -2193,7 +2205,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "327348",
-  "rank": 183
+  "rank": 184
  },
  {
   "player": "Trelain Maddox",
@@ -2205,7 +2217,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456163",
-  "rank": 184
+  "rank": 185
  },
  {
   "player": "Demon June",
@@ -2217,7 +2229,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "471451",
-  "rank": 185
+  "rank": 186
  },
  {
   "player": "Kentucky",
@@ -2229,7 +2241,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900069",
-  "rank": 186
+  "rank": 187
  },
  {
   "player": "Washington",
@@ -2241,7 +2253,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900065",
-  "rank": 187
+  "rank": 188
  },
  {
   "player": "Jaron Tibbs",
@@ -2253,7 +2265,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "404692",
-  "rank": 188
+  "rank": 189
  },
  {
   "player": "Johnathan Montague Jr.",
@@ -2265,7 +2277,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "456223",
-  "rank": 189
+  "rank": 190
  },
  {
   "player": "Jalen Smith",
@@ -2277,7 +2289,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457383",
-  "rank": 190
+  "rank": 191
  },
  {
   "player": "Donovan Murph",
@@ -2289,7 +2301,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "294507",
-  "rank": 191
+  "rank": 192
  },
  {
   "player": "Jeremy Scott",
@@ -2301,7 +2313,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "463469",
-  "rank": 192
+  "rank": 193
  },
  {
   "player": "Nathan McNeil",
@@ -2313,7 +2325,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468907",
-  "rank": 193
+  "rank": 194
  },
  {
   "player": "Brandon White",
@@ -2325,7 +2337,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "338692",
-  "rank": 194
+  "rank": 195
  },
  {
   "player": "Boston College",
@@ -2337,7 +2349,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "900010",
-  "rank": 195
+  "rank": 196
  },
  {
   "player": "Davion Chandler",
@@ -2349,7 +2361,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "468265",
-  "rank": 196
+  "rank": 197
  },
  {
   "player": "Micah Ford",
@@ -2361,7 +2373,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "457894",
-  "rank": 197
+  "rank": 198
  },
  {
   "player": "Ty Robinson",
@@ -2373,7 +2385,7 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "327034",
-  "rank": 198
+  "rank": 199
  },
  {
   "player": "Deuce Lawrence",
@@ -2385,18 +2397,6 @@
   "avg_round": null,
   "pct_drafted": null,
   "yahoo_id": "481854",
-  "rank": 199
- },
- {
-  "player": "Kevin Roche Jr.",
-  "pos": "TE",
-  "team": "GT",
-  "team_full": "Georgia Tech Yellow Jackets",
-  "bye": 5.0,
-  "adp": null,
-  "avg_round": null,
-  "pct_drafted": null,
-  "yahoo_id": "471568",
   "rank": 200
  }
 ]
