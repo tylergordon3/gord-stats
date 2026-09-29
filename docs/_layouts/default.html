@@ -191,28 +191,6 @@ resolution in _includes/nav.html.
     })();
   </script>
 
-  <script>
-    /**
-     * TODAY'S SCORES ROUTING
-     * --------------------------------------------------
-     * Forces the "Today's Scores" nav item to point to
-     * the current league's dashboard:
-     *
-     *   Men   → /men/index.html
-     *   Women → /women/index.html
-     *
-     * This keeps "Home" (root index.html) and "Today"
-     * as two distinct navigation concepts.
-     */
-    (function () {
-      const path = window.location.pathname;
-      const league = path.startsWith("/women/") ? "women" : "men";
-
-      document.querySelectorAll(".today-scores-link").forEach(link => {
-        link.href = `/${league}/index.html`;
-      });
-    })();
-  </script>
 </body>
 
 </html>

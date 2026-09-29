@@ -69,7 +69,7 @@ Fantasy before the plain /cfb/ test.
             {% for item in items %}
               {% if item.route == 'bracketology' %}
       <a class="league-route no-rewrite" data-page="bracketology"
-         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{% include nav_label.html item=item %}</a>
+         href="{{ '/men/predict_' | append: latest_m | relative_url }}">{% include nav_label.html item=item %}</a>
               {% elsif item.route == 'today-scores' %}
       <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
               {% elsif item.route %}
@@ -140,7 +140,7 @@ Fantasy before the plain /cfb/ test.
         {% assign prev_group = item.group | default: prev_group %}
         {% if item.route == 'bracketology' %}
       <a class="league-route no-rewrite" data-page="bracketology"
-         href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">{% include nav_label.html item=item %}</a>
+         href="{{ '/men/predict_' | append: latest_m | relative_url }}">{% include nav_label.html item=item %}</a>
         {% elsif item.route == 'today-scores' %}
       <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
         {% elsif item.route %}
@@ -163,14 +163,14 @@ tap from anywhere without stacking two bars on a small screen.
 {% endcomment %}
 <nav class="bottom-nav">
   {% if subnav and subnav.size > 1 %}
-    <a class="no-rewrite bottom-up" href="{{ '/index.html' | relative_url }}">
+    <a class="no-rewrite bottom-up" href="{{ '/' | relative_url }}">
       <span class="icon">🏠</span>
       <span class="label">Home</span>
     </a>
     {% for item in subnav %}
       {% if item.route == 'bracketology' %}
     <a class="league-route no-rewrite" data-page="bracketology"
-       href="{{ '/men/predict_' | append: latest_m | append: '.html' | relative_url }}">
+       href="{{ '/men/predict_' | append: latest_m | relative_url }}">
       <span class="icon">{{ item.icon | default: "•" }}</span>
       <span class="label">{{ item.short | default: item.title }}</span>
     </a>
@@ -189,7 +189,7 @@ tap from anywhere without stacking two bars on a small screen.
     {% endfor %}
   {% else %}
     {% for item in site.data.nav.sections %}
-    <a class="no-rewrite{% if item.url == '/index.html' %} nav-home{% endif %}" href="{{ item.url | relative_url }}">
+    <a class="no-rewrite{% if item.url == '/' %} nav-home{% endif %}" href="{{ item.url | relative_url }}">
       <span class="icon">{{ item.icon | default: "•" }}</span>
       <span class="label">{{ item.short | default: item.title }}</span>
     </a>
@@ -330,45 +330,47 @@ tap from anywhere without stacking two bars on a small screen.
 
 <script>
   /**
-   * LEAGUE-AWARE NAV REWRITE (college basketball only)
-   * Converts the generic men's URLs in nav.yml into whichever league the
-   * reader last chose, remembered in localStorage by the header toggle.
+   * LEAGUE-AWARE NAV (college basketball only)
+   * nav.yml writes the men's URLs; the links marked with a route are pointed
+   * at whichever league the reader is in. On a /men/ or /women/ page that is
+   * the page's own league; elsewhere (the CBB hub, power) the last one read.
    *
-   * Safety rules:
-   *   - never rewrite Home, or anything marked .no-rewrite without a route
-   *   - never touch external links
+   * The hrefs themselves are rewritten, as the page is parsed - before the
+   * active-link script above runs on DOMContentLoaded. They used to keep the
+   * men's URLs and switch only on click, so on a women's page the active-link
+   * match found only "Scores" (Conf and History lit nothing), "open in new
+   * tab" went to the men's page, and History had no route at all: it always
+   * opened the men's archive (the 2026-09-28 phone audit).
+   *
+   * Clean URLs, which is what Cloudflare Pages serves: a .html link cost a
+   * 308 on every tap.
    */
-  document.addEventListener("DOMContentLoaded", function () {
-    // Computed per league at build time from the pages that exist
+  (function () {
     const latestPredictionDate = { men: "{{ latest_m }}", women: "{{ latest_w }}" };
+    const path = window.location.pathname;
+    const here = path.startsWith("/women/") ? "women" : path.startsWith("/men/") ? "men" : null;
+    try { if (here) localStorage.setItem("league", here); } catch (e) {}
 
-    function getLeague() {
+    function league() {
+      if (here) return here;
       try {
         const stored = localStorage.getItem("league");
         if (stored === "men" || stored === "women") return stored;
       } catch (e) {}
-      return window.location.pathname.startsWith("/women/") ? "women" : "men";
+      return "men";
     }
 
-    const routeBuilders = {
-      conference: league => `/${league}/conference.html`,
-      bracketology: league => `/${league}/predict_${latestPredictionDate[league]}.html`
+    const routes = {
+      "today-scores": l => `/${l}/`,
+      conference: l => `/${l}/conference`,
+      history: l => `/${l}/history`,
+      bracketology: l => latestPredictionDate[l] ? `/${l}/predict_${latestPredictionDate[l]}` : `/${l}/`
     };
-
-    document.querySelectorAll(".league-route").forEach(link => {
-      link.addEventListener("click", function (e) {
-        const page = this.dataset.page;
-        if (!page || !routeBuilders[page]) return;
-        e.preventDefault();
-        window.location.href = routeBuilders[page](getLeague());
-      });
+    const l = league();
+    document.querySelectorAll(".league-route").forEach(a => {
+      const route = routes[a.dataset.page];
+      if (route) a.href = route(l);
     });
-
-    document.querySelectorAll(".today-scores-link").forEach(link => {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        window.location.href = `/${getLeague()}/index.html`;
-      });
-    });
-  });
+    document.querySelectorAll(".today-scores-link").forEach(a => { a.href = routes["today-scores"](l); });
+  })();
 </script>

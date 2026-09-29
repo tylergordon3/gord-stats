@@ -50,14 +50,14 @@ def _latest_predict_link() -> tuple[str, str]:
         for f in paths.WEB_M_DIR.glob("predict_*.html")
     )
     if not dates:
-        return "/men/history.html", "Prediction Archive →"
+        return "/men/history", "Prediction Archive →"
     latest = dates[-1]
     season = utils.season_year(latest)
     # "Final" only once that season's bracket can no longer change - the page
     # is rewritten daily in season, and the link used to call it final anyway.
     today = date.today()
     final = season < utils.season_year(today) or today > CBB_SEASON_END
-    return f"/men/predict_{latest}.html", f"{'Final ' if final else ''}{season} Bracketology →"
+    return f"/men/predict_{latest}", f"{'Final ' if final else ''}{season} Bracketology →"
 
 
 def _countdown_targets() -> dict:
@@ -140,8 +140,8 @@ def _cbb_card(today: date) -> str:
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
      from <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
   <p class="home-card-links">
-    <a href="/men/conference.html">Conference Rankings</a> ·
-    <a href="/men/history.html">Prediction History</a>
+    <a href="/men/conference">Conference Rankings</a> ·
+    <a href="/men/history">Prediction History</a>
   </p>
 </section>
 """
@@ -165,7 +165,7 @@ def _wnba_card(in_season: bool) -> str:
 <section class="home-card">
   <div class="home-card-head">
     <h2>WNBA Fantasy</h2>
-    <a class="home-card-link" href="/wnba/index.html">Full dashboard →</a>
+    <a class="home-card-link" href="/wnba/">Full dashboard →</a>
   </div>
   <p>{what}</p>
 </section>
@@ -178,7 +178,7 @@ def _fantasy_card() -> str:
 <section class="home-card">
   <div class="home-card-head">
     <h2>Fantasy Football</h2>
-    <a class="home-card-link" href="/fantasy/index.html">League dashboard →</a>
+    <a class="home-card-link" href="/fantasy/">League dashboard →</a>
   </div>
   {% include countdown.html key="fantasy" %}
   <p>Draft boards, values and busts, simulated power rankings, schedule
@@ -204,13 +204,12 @@ def _cfb_card() -> str:
 <section class="home-card">
   <div class="home-card-head">
     <h2>CFB</h2>
-    <a class="home-card-link" href="/cfb/index.html">CFB home →</a>
+    <a class="home-card-link" href="/cfb/">CFB home →</a>
   </div>
   {% include cfb_countdown.html %}
   <p>The Yahoo college fantasy league, and every FBS game of the season —
      model predictions, live scores, kickoffs, TV, and ranks.</p>
   <p class="home-card-links">
-    <a href="/cfb/scoreboard/">Scoreboard</a> ·
     <a href="/cfb/league/">League Dashboard</a> ·
     <a href="/cfb/schedule/">CFB Schedule</a>
   </p>
@@ -224,7 +223,7 @@ def _cbb_lead() -> str:
 <section class="home-card">
   <div class="home-card-head">
     <h2>March Madness Predictions</h2>
-    <a class="home-card-link" href="/men/index.html">Today's Scores →</a>
+    <a class="home-card-link" href="/men/">Today's Scores →</a>
   </div>
   {% include countdown.html key="cbb" %}
   <p>Machine-learning predictions of the NCAA tournament field, updated daily.
@@ -232,8 +231,8 @@ def _cbb_lead() -> str:
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
      from <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
   <p class="home-card-links">
-    <a href="/men/conference.html">Conference Rankings</a> ·
-    <a href="/men/history.html">Prediction History</a>
+    <a href="/men/conference">Conference Rankings</a> ·
+    <a href="/men/history">Prediction History</a>
   </p>
 </section>
 """
@@ -325,14 +324,14 @@ def _cbb_home_body(today: date) -> str:
      side of the cut.</p>
   {_stale_note(days, _latest_predict_date())}
   <p class="home-card-links">
-    <a href="/men/history.html">Prediction History</a>
+    <a href="/men/history">Prediction History</a>
   </p>
 </section>
 
 <section class="home-card">
   <div class="home-card-head">
     <h2>Today's Scores</h2>
-    <a class="home-card-link" href="/men/index.html">Scoreboard &rarr;</a>
+    <a class="home-card-link" href="/men/">Scoreboard &rarr;</a>
   </div>
   <p>Live scores and the day's slate.</p>
   {"" if not preseason else '<p class="home-card-stale">Nothing until ' + f"{CBB_TIPOFF:%B %-d}" + '.</p>'}
@@ -341,7 +340,7 @@ def _cbb_home_body(today: date) -> str:
 <section class="home-card">
   <div class="home-card-head">
     <h2>Conference Rankings</h2>
-    <a class="home-card-link" href="/men/conference.html">Standings &rarr;</a>
+    <a class="home-card-link" href="/men/conference">Standings &rarr;</a>
   </div>
   <p>Conference-by-conference strength, and how many bids each is projected to get.</p>
   {_stale_note(days)}

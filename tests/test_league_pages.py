@@ -75,7 +75,7 @@ def test_the_moved_pages_are_covered_by_league_home():
     """A page out of the sub-nav needs a chip that lights for it, and it has
     to be the chip whose page carries the content."""
     covers = {i["url"]: (i.get("covers") or "").split() for i in NAV["fantasy"]}
-    home = covers["/fantasy/index.html"]
+    home = covers["/fantasy/"]
     assert "/fantasy/history/" in home and "/fantasy/draft-review/" in home
     analytics = covers["/fantasy/analytics/"]
     assert "/fantasy/history/" not in analytics

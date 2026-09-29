@@ -16,6 +16,10 @@ layout: null
 {%- assign ext = page.url | slice: -5, 5 %}
 {%- if last != "/" and ext != ".html" %}{% continue %}{% endif %}
 {%- if skip contains page.url or page.sitemap == false %}{% continue %}{% endif %}
-  <url><loc>{{ page.url | absolute_url | xml_escape }}</loc></url>
+{%- comment %} Cloudflare Pages serves a .html page at its clean URL and 308s the
+     .html one, so the clean one is what is listed. {% endcomment %}
+{%- assign loc = page.url %}
+{%- if ext == ".html" %}{% assign n = page.url | size | minus: 5 %}{% assign loc = page.url | slice: 0, n %}{% endif %}
+  <url><loc>{{ loc | absolute_url | xml_escape }}</loc></url>
 {%- endfor %}
 </urlset>

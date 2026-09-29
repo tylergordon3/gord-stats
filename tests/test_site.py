@@ -34,6 +34,10 @@ def _resolves(url: str) -> bool:
         path += "index.html"
     if (DOCS / path).exists():
         return True
+    # Cloudflare Pages serves x.html at /x (and 308s the .html), which is the
+    # form nav.yml uses now
+    if not path.endswith(".html") and (DOCS / (path + ".html")).exists():
+        return True
     # a redirect rule counts as resolving
     return any(line.split()[0].rstrip("*").rstrip("/") == "/" + url.rstrip("/").lstrip("/")
                for line in REDIRECTS.splitlines() if line and not line.startswith("#"))

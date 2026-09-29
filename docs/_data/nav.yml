@@ -14,30 +14,30 @@ sections:
   - title: Home
     short: Home
     icon: "🏠"
-    url: /index.html
+    url: /
 
   - title: CBB
     short: CBB
     icon: "🏀"
-    url: /cbb/index.html
+    url: /cbb/
     section: cbb
 
   - title: CFB
     short: CFB
     icon: "🎓"
-    url: /cfb/index.html
+    url: /cfb/
     section: cfb
 
   - title: NFL
     short: NFL
     icon: "🏟️"
-    url: /nfl/index.html
+    url: /nfl/
     section: nfl
 
   - title: Fantasy
     short: Fantasy
     icon: "🏈"
-    url: /fantasy/index.html
+    url: /fantasy/
     section: fantasy
 
 
@@ -48,7 +48,7 @@ sections:
 # /cfb/ and the WNBA dashboard under /wnba/, so no URL had to move.
 fantasy_leagues:
   - title: NFL
-    url: /fantasy/index.html
+    url: /fantasy/
     pages: fantasy
 
   - title: CFB
@@ -59,7 +59,7 @@ fantasy_leagues:
 # below and everything under src/wnba are left alone - putting it back is
 # uncommenting these three lines.
 #  - title: WNBA
-#    url: /wnba/index.html
+#    url: /wnba/
 #    pages: wnba
 
 
@@ -67,12 +67,12 @@ cbb:
   - title: Home
     short: Home
     icon: "🏠"
-    url: /cbb/index.html
+    url: /cbb/
 
   - title: Today's Scores
     short: Scores
     icon: "🏀"
-    url: /men/index.html
+    url: /men/
     route: today-scores
 
   - title: Bracketology
@@ -83,13 +83,14 @@ cbb:
   - title: Conference Rankings
     short: Conf
     icon: "🏆"
-    url: /men/conference.html
+    url: /men/conference
     route: conference
 
   - title: Prediction History
     short: History
     icon: "📜"
-    url: /men/history.html
+    url: /men/history
+    route: history
 
   - title: Power Rankings
     short: Power
@@ -101,7 +102,7 @@ wnba:
   - title: Dashboard
     short: Dashboard
     icon: "📊"
-    url: /wnba/index.html
+    url: /wnba/
 
 
 fantasy:
@@ -116,7 +117,7 @@ fantasy:
     short: Home
     icon: "🏠"
     key: home
-    url: /fantasy/index.html
+    url: /fantasy/
     covers: "/fantasy/history/ /fantasy/draft-review/"
 
   - title: Matchups
@@ -153,7 +154,7 @@ cfb:
   - title: Home
     short: Home
     icon: "🏠"
-    url: /cfb/index.html
+    url: /cfb/
     group: home
 
   - title: Predictions
@@ -166,6 +167,9 @@ cfb:
     short: Rankings
     icon: "📈"
     url: /cfb/power/
+    # A team page is reached from the rankings; without this, /cfb/ (Home) was
+    # the longest match for all 138 of them and lit up instead.
+    covers: "/cfb/teams/"
     group: model
 
   - title: Schedule & Scores
@@ -179,7 +183,7 @@ nfl:
   - title: Predictions
     short: Predict
     icon: "🔮"
-    url: /nfl/index.html
+    url: /nfl/
 
 
 # The Yahoo college fantasy league, shown under Fantasy > CFB.
