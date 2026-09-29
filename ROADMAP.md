@@ -296,9 +296,13 @@ the Pi, features). Done the same night:
 
 - [x] **Since:** CBB game predictions on the scoreboard and My teams (1bef36312); bets card in
       sportsbook signs (ea41f47ce); CFB league power backfilled to the draft (4ae0271a6).
-- [ ] **ESPN leagues for readers:** public-league sync, a translation layer to the Sleeper shapes the
-      reader pages use (player ids already map). Build against the WNBA ESPN league + ESPN's
-      public football defaults; verify on a friend's public NFL league when it exists.
+- [x] **ESPN leagues for readers** (6db064df4, b22d4c21a): `window.GSAPI` answers ESPN public
+      leagues in Sleeper's shapes for every reader page; ids/URLs in the league bar; account sync by
+      id with every season. Built on the WNBA league's real (anonymised) shapes + ESPN's football
+      defaults; League Home, Matchups and My Team checked in a browser on a stubbed league.
+- [ ] **ESPN follow-ups:** verify on the friend's public NFL league; confirm ESPN answers the
+      Worker (account sync). A league added by id opens on the team last picked on My Team
+      (d9abb9f7d); matching the reader's ESPN team automatically would need their login.
 
 Open:
 - [ ] **Dec/Jan:** bets card locks once for all bowls; "Week 20" labels; bowls lack CFBD weather
