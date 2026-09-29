@@ -34,7 +34,7 @@ from fantasy.config import (                                   # noqa: E402
 from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
-from gordstats import charts, palette                          # noqa: E402
+from gordstats import charts, palette, share_card              # noqa: E402
 from gordstats import my_league, my_league_data, my_power       # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
 
@@ -688,6 +688,7 @@ def body() -> str:
                 + my_power.SIM_JS + my_power.JS)
 
     charts.clear(_SECTION)            # only now: a failed run keeps the last page's charts
+    _CARD["table"] = table
     content = {
         "mine": my_power.section(),
         "rankings": _rankings_section(table),
@@ -713,8 +714,27 @@ def body() -> str:
             + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.JS)
 
 
+_CARD: dict = {}
+
+
+def card() -> dict | None:
+    """The link-preview card (gordstats.share_card): the top five and their
+    playoff odds, which say more in a chat than a rating does."""
+    table = _CARD.get("table")
+    if table is None or table.empty:
+        return None
+    week = int(table["week"].iloc[0])
+    rows = [(str(int(r["rank"])), str(r["manager"]), f"{r['playoff_odds']:.0%} playoffs")
+            for _, r in table.head(5).iterrows()]
+    return share_card.ranked("nfl-power", "NFL Fantasy" + (f" \u00b7 Week {week}" if week else ""),
+                             "Power Rankings",
+                             f"Through week {week}" if week else "Out of the draft", rows,
+                             alt="Power rankings: " + ", ".join(f"{r[0]}. {r[1]}" for r in rows))
+
+
 def generate():
-    page = add_front_matter(layout.HEAD + body(), "Power Rankings")
+    html = body()
+    page = add_front_matter(layout.HEAD + html, "Power Rankings", image=card())
     out = paths.WEB_POWER
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")

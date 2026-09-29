@@ -165,7 +165,8 @@ def _write(path, week: recap.Week, all_weeks: list, league_name: str) -> None:
              '&rarr;</a></p>')
     html = add_front_matter(layout.HEAD + recap.page(week, all_weeks, BASE, links),
                             f"NFL Week {week.number} Recap", escape(league_name),
-                            description=recap.headline(week))
+                            description=recap.headline(week),
+                            image=recap.card(week, "nfl-recap", "NFL Fantasy", league_name))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8")
 

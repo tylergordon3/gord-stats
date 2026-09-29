@@ -32,6 +32,7 @@ from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import logos, matchup_page as ui
 from gordstats import my_league, my_league_data, my_matchups, my_week
+from gordstats import share_card
 from gordstats.frontmatter import add_front_matter
 
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
@@ -872,6 +873,11 @@ def week_view(data: dict, ctx: dict) -> str:
         asof = (' <span class="mu-asof">· points as of ' + datetime.fromisoformat(data["fetched"])
                 .astimezone(LEAGUE_TZ).strftime("%a %-I:%M %p") + "</span>")
     playoffs = " (playoffs)" if ctx["playoff_start"] and week >= ctx["playoff_start"] else ""
+    _CARDS[week] = {"pairs": [(a["name"], a["pts"], a["gs"], b["name"], b["pts"], b["gs"])
+                              for _, a, b in rows],
+                    "started": started, "final": final,
+                    "asof": (datetime.fromisoformat(data["fetched"]).astimezone(LEAGUE_TZ)
+                             .strftime("%a %-I:%M %p") if data.get("fetched") else "")}
     # Sleeper answers browsers directly (it sends CORS), so the week still
     # being played polls its matchups for live points: every minute while
     # games are on, every five before they start. Stat lines wait for the
@@ -1100,6 +1106,7 @@ def body() -> str:
         d["roster_positions"] = lg["roster_positions"]
     open_weeks = [w for w in weeks if not data_mod.week_final(datas[w])]
     current = open_weeks[0] if open_weeks else weeks[-1]
+    _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
     views = {w: week_view(datas[w], ctx) for w in weeks}
     scored = accuracy_section(datas, ctx)
 
@@ -1152,8 +1159,24 @@ def body() -> str:
         + my_league_data.JS + my_week.JS + my_matchups.JS)
 
 
+# The week each week_view drew, for the page's link-preview card: which week
+# is current is only known once body() has looked at them all.
+_CARDS: dict = {}
+
+
+def card() -> dict | None:
+    """The current week's link-preview card (gordstats.share_card)."""
+    info = _CARDS.get(_CARDS.get("current"))
+    if not info:
+        return None
+    return share_card.matchups("nfl-matchups", "NFL Fantasy", _CARDS["current"], info["pairs"],
+                               info["started"], info["final"], _CARDS.get("league", ""),
+                               info["asof"])
+
+
 def generate():
-    page = add_front_matter(layout.HEAD + body(), "Weekly Matchups")
+    html = body()
+    page = add_front_matter(layout.HEAD + html, "Weekly Matchups", image=card())
     out = paths.WEB_MATCHUPS
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")

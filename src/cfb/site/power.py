@@ -42,7 +42,7 @@ from cfb import cfbd, espn, predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import teams as teams_page
 from cfb.site import write_page
-from gordstats import favorites, logos, rankmoves
+from gordstats import favorites, logos, rankmoves, share_card
 
 _URL = ("https://site.web.api.espn.com/apis/fitt/v3/sports/football/"
         "college-football/powerindex")
@@ -674,6 +674,12 @@ def body() -> str:
     # A team we have no rating for sinks to the bottom rather than to rank 0.
     teams.sort(key=lambda t: (t["gs_rank"] is None, t["gs_rank"] or 0))
     order = {t["id"]: i for i, t in enumerate(teams)}
+    _CARD["rows"] = [
+        (str(t["gs_rank"]), t["school"] or t["name"],
+         " \u00b7 ".join(x for x in (
+             f"{int(t['numwins'])}-{int(t['numlosses'] or 0)}" if t.get("numwins") is not None else "",
+             f"AP {t['ap']}" if t.get("ap") else "") if x))
+        for t in teams[:5] if t["gs_rank"] is not None]
 
     bases = rankmoves.baselines(HISTORY_DIR, weeks=espn.week_spans(),
                                   week_label=espn.short_week_label)
@@ -866,9 +872,25 @@ def body() -> str:
             + "</script>{% endraw %}" + _JS + rankmoves.WINDOW_JS)
 
 
+_CARD: dict = {}
+
+
+def card() -> dict | None:
+    """The link-preview card (gordstats.share_card): our top five, with each
+    team's record and AP rank."""
+    rows = _CARD.get("rows")
+    if not rows:
+        return None
+    return share_card.ranked("cfb-rankings", f"College football \u00b7 {SEASON}",
+                             "GordStats Top 25", "The model's ranking, ahead of the AP and FPI",
+                             rows, alt="GordStats college football rankings: "
+                             + ", ".join(f"{r[0]}. {r[1]}" for r in rows))
+
+
 def generate():
-    write_page(WEB_DIR / "power" / "index.html", "CFB Rankings", body(),
-               subtitle=f"{SEASON} season")
+    html = body()
+    write_page(WEB_DIR / "power" / "index.html", "CFB Rankings", html,
+               subtitle=f"{SEASON} season", image=card())
 
 
 if __name__ == "__main__":

@@ -283,6 +283,17 @@ def headline(week: Week) -> str:
     return f"Week {week.number}: {text}."
 
 
+def card(week: Week, slug: str, kicker: str, league: str) -> dict:
+    """The week's link-preview card (gordstats.share_card): every game's
+    score, the highest-scoring first, the headline as its alt text."""
+    from gordstats import share_card
+    S, T = week.sides, week.teams
+    rows = sorted(((T[a].name, S[a].points, S[b].points, T[b].name) for a, b in week.games),
+                  key=lambda r: -max(r[1], r[2]))
+    return share_card.games(f"{slug}-w{week.number}", f"{kicker} \u00b7 Week {week.number}",
+                            f"Week {week.number} Recap", league, rows, alt=headline(week))
+
+
 def season(weeks: list) -> list:
     """Lineup accuracy to date: [{key, started, max, left, pct, perfect, weeks}],
     best first."""

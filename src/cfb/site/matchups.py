@@ -25,7 +25,7 @@ import pandas as pd
 from cfb import in_season, predict, pregame, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import logos, matchup_page as ui
+from gordstats import logos, matchup_page as ui, share_card
 
 OUTPUT = WEB_DIR / "matchups" / "index.html"
 
@@ -683,6 +683,11 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
         s["med"] = ((s["pts"] or 0.0) - med_now) if started else (s["gs"] - med_proj)
     state = ("Final" if final else "In progress" if started else "Not started")
     fetched = data.get("fetched")
+    _CARDS[week] = {"pairs": [(a["name"], a["pts"], a["gs"], b["name"], b["pts"], b["gs"])
+                              for _, a, b in rows],
+                    "started": started, "final": final,
+                    "asof": (datetime.fromisoformat(fetched).astimezone(LEAGUE_TZ)
+                             .strftime("%a %-I:%M %p") if fetched else "")}
     asof = ""
     if fetched and started and not final:
         asof = (' <span class="mu-asof">· Yahoo points as of '
@@ -829,6 +834,7 @@ def body() -> str:
     current = max(w for w in weeks if not yahoo.week_final(datas[w])) \
         if any(not yahoo.week_final(d) for d in datas.values()) else weeks[-1]
     extremes = position_extremes(datas)
+    _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
     views = {w: week_view(datas[w], lg, board, frame, to_school, espn, teams, extremes)
              for w in weeks}
 
@@ -864,8 +870,24 @@ def body() -> str:
         + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS)
 
 
+# The week each week_view drew, for the page's link-preview card: which week
+# is current is only known once body() has looked at them all.
+_CARDS: dict = {}
+
+
+def card() -> dict | None:
+    """The current week's link-preview card (gordstats.share_card)."""
+    info = _CARDS.get(_CARDS.get("current"))
+    if not info:
+        return None
+    return share_card.matchups("cfb-matchups", "CFB Fantasy", _CARDS["current"], info["pairs"],
+                               info["started"], info["final"], _CARDS.get("league", ""),
+                               info["asof"])
+
+
 def generate():
-    write_page(OUTPUT, f"CFB League Matchups {SEASON}", body())
+    html = body()
+    write_page(OUTPUT, f"CFB League Matchups {SEASON}", html, image=card())
 
 
 if __name__ == "__main__":

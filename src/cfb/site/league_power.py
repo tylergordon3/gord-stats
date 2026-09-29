@@ -34,7 +34,7 @@ import pandas as pd                                  # noqa: E402
 from cfb import in_season, league_sim, projections, yahoo  # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import charts, palette, rankmoves     # noqa: E402
+from gordstats import charts, palette, rankmoves, share_card  # noqa: E402
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
 OUTPUT = WEB_DIR / "league-power" / "index.html"
@@ -261,6 +261,21 @@ def _pct(p) -> str:
     return f"{p:.0%}"
 
 
+_CARD: dict = {}
+
+
+def card(week: int | None = None) -> dict | None:
+    """The league dashboard's link-preview card (gordstats.share_card): the top
+    five as section() last ranked them."""
+    rows = _CARD.get("rows")
+    if not rows:
+        return None
+    return share_card.ranked("cfb-power", "CFB Fantasy" + (f" \u00b7 Week {week}" if week else ""),
+                             "Power Rankings", "Best lineup, the rest of the season played out",
+                             rows, alt="CFB league power rankings: "
+                             + ", ".join(f"{r[0]}. {r[1]}" for r in rows))
+
+
 def section() -> str:
     """The rankings, the table and the season chart - the dashboard's Power
     Rankings section. Every build archives a snapshot here, so the dashboard
@@ -291,6 +306,11 @@ def section() -> str:
     avg = (np.mean([r["per_week"] for r in rows if r["per_week"] is not None])
            if not sim.empty else None)
     has_odds = not sim.empty and "title" in sim.columns
+    _CARD["rows"] = [
+        (str(i), r["team"].get("name") or r["key"],
+         f"{r['sim']['playoffs']:.0%} playoffs" if has_odds and r["sim"] is not None
+         else (f"{r['per_week'] - avg:+.1f} a week" if r["per_week"] is not None else ""))
+        for i, r in enumerate(rows[:5], 1)]
 
     def pos_pts(r, p):
         if r["sim"] is None:

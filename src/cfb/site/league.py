@@ -270,8 +270,10 @@ def body() -> str:
 
 
 def generate():
-    write_page(WEB_DIR / "league" / "index.html",
-               f"CFB League Dashboard {SEASON}", body())
+    html = body()
+    week = yahoo.league().get("current_week")
+    write_page(WEB_DIR / "league" / "index.html", f"CFB League Dashboard {SEASON}", html,
+               image=league_power.card(int(week) if week else None))
 
 
 if __name__ == "__main__":
