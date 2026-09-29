@@ -239,10 +239,13 @@ def _season_section(names: dict) -> str:
         swing = -swing                 # climbing the table is a smaller rank
     up, down = swing.idxmax(), swing.idxmin()
     fmt = (lambda v: f"{v:+.0f}{unit}") if unit else (lambda v: f"{int(v):+d} places")
+    # Name a riser and a faller only when someone moved: on a young archive
+    # (or a quiet week) both came out as the same team at +0.
+    moved = (f": <strong>{up}</strong> {fmt(swing[up])}, <strong>{down}</strong> "
+             f"{fmt(swing[down])}") if up != down and round(swing[up] - swing[down], 1) else ""
     return ("<h3>Through the Season</h3>"
             f"<p class='mu-note'>{what[0].upper() + what[1:]}, every build since "
-            f"<strong>{first:%b %-d}</strong>: <strong>{up}</strong> {fmt(swing[up])}, "
-            f"<strong>{down}</strong> {fmt(swing[down])}.</p>"
+            f"<strong>{first:%b %-d}</strong>{moved}.</p>"
             f"<div class='lg-chart'>{chart}</div>")
 
 
