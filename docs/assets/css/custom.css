@@ -478,6 +478,16 @@ body {
   font-weight: 700;
 }
 
+/* GordStats' own call (cbb.game_model), under the book's. */
+.meta-line.meta-pick {
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .meta-line.meta-pick { color: #93c5fd; }
+}
+
 @media (max-width: 360px) {
   .teams {
     font-size: 14px;

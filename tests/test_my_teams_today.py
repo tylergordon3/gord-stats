@@ -57,7 +57,8 @@ def _hoops(generated_hours=0.0):
                   home_rank=4, away_rank=9, home_model=3, away_model=11, spread_close="DUKE -2.5"),
         "2": dict(base, status="in_progress", start_time_utc=_iso(-1), home_team="Villanova",
                   away_team="St. John's", home_score=40, away_score=44, period="2nd",
-                  clock="15:02", home_model=30, away_model=18, spread_close="SJU -3"),
+                  clock="15:02", home_model=30, away_model=18, spread_close="SJU -3",
+                  pred_home=70.1, pred_away=73.4, home_win_prob=0.39),
         "3": dict(base, status="pre_game", start_time_utc=_iso(2), home_team="Butler",
                   away_team="Xavier", home_model=50, away_model=60),
         # The feed runs a week ahead: Duke's next game is not today's.
@@ -130,6 +131,8 @@ def test_basketball_games_beside_football_with_the_sport_marked():
     # St. John's is on the road and on now; its logo's file name has a space.
     assert ' live"' in johns and "Live 44\u201340 \u00b7 2nd 15:02" in johns.replace("&middot;", "\u00b7")
     assert re.search(r'<span class="me">St\. John\'s</span> <span class="at">at</span>', johns)
+    # GordStats' call where the game has one (cbb.game_model); ranks where not (Duke).
+    assert "GordStats: <b>St. John's</b> by 3.3 \u00b7 61%" in johns.replace("&middot;", "\u00b7")
     assert "/assets/images/st%20johns.png" in johns
     assert '<span class="mt-sp">CFB</span>' in home and "Home U" in home, "sorted by start time"
     assert "/cbb/star-teams.json" in asked

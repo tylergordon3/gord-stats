@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 import pytz
 import requests
 
-from cbb import scraper, utils
+from cbb import game_model, scraper, utils
 from cbb.push_scores import push
 from cbb import paths
 from cbb import teams, constants
@@ -219,7 +219,7 @@ import pytz
 EASTERN = pytz.timezone("US/Eastern")
 
 
-def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
+def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender, model=None):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -348,6 +348,12 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     period = progress.get("segment_string")
     overtime = progress.get("overtime", False)
 
+    # ---- GordStats' call (cbb.game_model) ----
+    # theScore marks no neutral sites: a named tournament is taken as one.
+    neutral = bool(g.get("tournament_name")) or is_mm or is_nit or "Tournament" in game_descript
+    pick = (game_model.predict(home_name, away_name, model, neutral=neutral, gender=gender)
+            if model else None) or {}
+
     # ---- odds ----
     odd = g.get("odd") or {}
     spread_close = odd.get("line")
@@ -405,6 +411,10 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         "is_nit": is_nit,
         "wab_home": wab_home,
         "wab_away": wab_away,
+        "pred_home": pick.get("pred_home"),
+        "pred_away": pick.get("pred_away"),
+        "home_win_prob": pick.get("home_win_prob"),
+        "neutral": neutral,
     }
 
 
@@ -522,13 +532,16 @@ def get_current_live_dataset(league_key):
         tor_dict = torvik.get_today_tor("W")
         gender = "W"
 
+    # This season's Torvik table for GordStats' calls; none before it exists.
+    model = game_model.today_table(gender)
+
     for g in events:
         game_id = g.get("id")
         if not game_id:
             continue
 
         games[str(game_id)] = format_event(
-            g, ranks, master, ats_dict, net_dict, bpi_dict, tor_dict, gender
+            g, ranks, master, ats_dict, net_dict, bpi_dict, tor_dict, gender, model
         )
 
     return {

@@ -366,6 +366,21 @@ function formatMeta (g) {
     })
   }
 
+  // --- GORDSTATS' CALL (cbb.game_model): favourite, margin, chance ---
+  const hp = safe(g.pred_home, null)
+  const ap = safe(g.pred_away, null)
+  const hw = safe(g.home_win_prob, null)
+  if (hp !== null && ap !== null && hw !== null) {
+    const homeFav = hw >= 0.5
+    const fav = homeFav ? (g.home_abb || getTeamName(g.home_team)) : (g.away_abb || getTeamName(g.away_team))
+    const by = Math.abs(hp - ap).toFixed(1)
+    const pct = Math.round((homeFav ? hw : 1 - hw) * 100)
+    parts.push({
+      type: 'pick',
+      text: `GordStats: ${fav} by ${by} • ${pct}%`
+    })
+  }
+
   return parts
 }
 

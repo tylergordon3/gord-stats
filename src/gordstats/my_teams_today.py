@@ -15,7 +15,8 @@ to an account by docs/assets/js/favorites.js).
             /api/cfb-scores - the scoreboard proxy the schedule page already
             uses - once a minute.
   Basketball  the live scoreboard Worker /men/ reads (cbb.live pushes it every
-            ten minutes in playing hours), and /cbb/star-teams.json
+            ten minutes in playing hours; each game carries GordStats' call,
+            cbb.game_model), and /cbb/star-teams.json
             (cbb.render.render_power.star_teams) to find a starred team in it:
             the stars are keyed on T-Rank's names, the scoreboard uses the
             site's. Only fetched for a reader with a basketball star.
@@ -190,7 +191,14 @@ JS = """{% raw %}<script>
     } else if(st==='pre'){ o.when=day(g.start_time_utc,true); }
     else { o.when=esc(String(g.status).replace(/_/g,' ')); }
     var pick='';
-    if(g[side+'_model']!==''&&g[side+'_model']!=null)
+    // GordStats' call (cbb.game_model) like football's; the ranks where there
+    // is none yet (no ratings for the season, or an unrated opponent).
+    if(g.home_win_prob!=null && g.pred_home!=null && g.pred_away!=null){
+      var homeFav=g.home_win_prob>=0.5, fav=homeFav?g.home_team:g.away_team;
+      var p=homeFav?g.home_win_prob:1-g.home_win_prob;
+      pick='GordStats: <b>'+esc(fav)+'</b> by '+Math.abs(g.pred_home-g.pred_away).toFixed(1)
+        +' &middot; '+Math.round(p*100)+'%';
+    } else if(g[side+'_model']!==''&&g[side+'_model']!=null)
       pick='GordStats rank: <b>'+esc(o.me)+'</b> #'+esc(g[side+'_model'])
         +(g[other+'_model']!==''&&g[other+'_model']!=null?', '+esc(o.them)+' #'+esc(g[other+'_model']):'');
     if(g.spread_close) pick+=(pick?' &middot; ':'')+'Line: '+esc(g.spread_close).replace(/ -(?=\\d)/,' &minus;');
