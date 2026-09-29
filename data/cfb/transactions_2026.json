@@ -1,5 +1,22 @@
 [
  {
+  "id": 92.0,
+  "type": "drop",
+  "status": "successful",
+  "timestamp": 1790698915.0,
+  "faab_bid": null,
+  "players": [
+   {
+    "player": "Cam Edwards",
+    "pos": "RB",
+    "team": "MSU",
+    "type": "drop",
+    "source": "Jackson's Brilliant Team",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 90.0,
   "type": "add/drop",
   "status": "successful",

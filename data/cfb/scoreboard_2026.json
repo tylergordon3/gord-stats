@@ -35,15 +35,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 193.48,
-     "win_probability": 0.94
+     "projected": 193.44,
+     "win_probability": 0.9299999999999999
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 107.88,
-     "win_probability": 0.06000000000000005
+     "projected": 108.86,
+     "win_probability": 0.07000000000000006
     }
    ]
   },
@@ -58,15 +58,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 175.78,
-     "win_probability": 0.87
+     "projected": 177.02,
+     "win_probability": 0.88
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 114.12,
-     "win_probability": 0.13
+     "win_probability": 0.12
     }
    ]
   },
@@ -111,7 +111,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 188.41,
+     "projected": 188.38,
      "win_probability": 0.94
     }
    ]

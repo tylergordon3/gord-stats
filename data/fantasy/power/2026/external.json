@@ -9,74 +9,74 @@
   "captured": "2026-09-29",
   "teams": [
     {
-      "team": "CCAM’s Convicts",
-      "team_id": 1,
+      "team": "Professional Fratson",
+      "team_id": 3,
       "rank": 1,
       "score": 100,
-      "vorp": 114.35
+      "vorp": 118.18
+    },
+    {
+      "team": "CCAM’s Convicts",
+      "team_id": 1,
+      "rank": 2,
+      "score": 95,
+      "vorp": 112.4
     },
     {
       "team": "padgett",
       "team_id": 7,
-      "rank": 2,
-      "score": 98,
-      "vorp": 112.43
+      "rank": 3,
+      "score": 95,
+      "vorp": 112.04
     },
     {
       "team": "LGBBQ+",
       "team_id": 9,
-      "rank": 3,
-      "score": 97,
-      "vorp": 111.32
-    },
-    {
-      "team": "Professional Fratson",
-      "team_id": 3,
       "rank": 4,
-      "score": 97,
-      "vorp": 111.06
+      "score": 93,
+      "vorp": 109.69
     },
     {
       "team": "The Jackson 5",
       "team_id": 10,
       "rank": 5,
-      "score": 90,
-      "vorp": 102.54
+      "score": 86,
+      "vorp": 101.92
     },
     {
       "team": "DRINK MAYE",
       "team_id": 2,
       "rank": 6,
-      "score": 88,
-      "vorp": 100.42
-    },
-    {
-      "team": "The Standard",
-      "team_id": 6,
-      "rank": 7,
-      "score": 80,
-      "vorp": 91.35
+      "score": 85,
+      "vorp": 100.23
     },
     {
       "team": "Strictly Dickly",
       "team_id": 4,
-      "rank": 8,
-      "score": 80,
-      "vorp": 91.15
+      "rank": 7,
+      "score": 78,
+      "vorp": 92.22
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
+      "rank": 8,
+      "score": 77,
+      "vorp": 90.83
+    },
+    {
+      "team": "The Standard",
+      "team_id": 6,
       "rank": 9,
-      "score": 78,
-      "vorp": 89.65
+      "score": 75,
+      "vorp": 88.66
     },
     {
       "team": "The Jahmyr Gibbies",
       "team_id": 8,
       "rank": 10,
-      "score": 66,
-      "vorp": 75.74
+      "score": 62,
+      "vorp": 73.84
     }
   ]
 }
