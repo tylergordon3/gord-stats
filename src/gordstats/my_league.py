@@ -17,6 +17,8 @@ Only the ownership changes. Snap shares, carries and targets are properties of
 the NFL, not of anyone's league, so nothing else on the page moves.
 """
 
+from gordstats import league_api
+
 CSS = """<style>
 .ml-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 9px;
   font-size:13px;color:#475569}
@@ -169,14 +171,10 @@ JS = """{% raw %}<script>
 
   function load(id,quiet){
     msg(quiet?'':'Reading the league\\u2026');
-    return Promise.all([
-      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+'/rosters'),
-      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+'/users'),
-      fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id))
-    ]).then(function(rs){
-      if(!rs[0].ok||!rs[1].ok) throw new Error('not found');
-      return Promise.all(rs.map(function(r){return r.ok?r.json():null;}));
-    }).then(function(out){
+    var path='/league/'+encodeURIComponent(id);
+    return Promise.all([GSAPI.get(path+'/rosters'), GSAPI.get(path+'/users'),
+                        GSAPI.get(path)]).then(function(out){
+      if(!out[0]||!out[1]) throw new Error('not found');
       var rosters=out[0]||[], users=out[1]||[], league=out[2]||{};
       var byUser={};
       users.forEach(function(u){
@@ -193,7 +191,7 @@ JS = """{% raw %}<script>
       if(!Object.keys(names).length) throw new Error('empty');
       var label=league.name||('League '+id);
       var first=!(saved()||{}).id;
-      save({id:id, name:label});
+      save(GSAPI.isEspn(id)?{id:id, name:label, provider:'espn'}:{id:id, name:label});
       apply(held,names,label);
       msg('');
       // Pages that render the league from this key read it once, at load.
@@ -343,30 +341,48 @@ JS = """{% raw %}<script>
       ? '<span class="ml-label">Your leagues, on every device</span>'
         + '<a class="ml-in" href="/api/auth/login?next='
         + encodeURIComponent(location.pathname+location.search) + '">Sign in</a>'
-        + '<span class="ml-or">or paste a league id</span>'
-      : '<span class="ml-label">Your Sleeper username</span>';
+        + '<span class="ml-or">or paste a Sleeper or ESPN league id</span>'
+      : '<span class="ml-label">Your Sleeper username, or an ESPN league id</span>';
     bar.innerHTML=out
       +'<input id="ml-id" type="text" autocapitalize="none" autocorrect="off" '
       +'spellcheck="false" placeholder="'+(signedIn===false?'league id':'username')+'" '
-      +'aria-label="'+(signedIn===false?'Sleeper league id':'Sleeper username, or a league id')+'">'
+      +'aria-label="'+(signedIn===false?'Sleeper or ESPN league id'
+                    :'Sleeper username, or a Sleeper or ESPN league id')+'">'
       +'<button type="button" id="ml-go">'+(signedIn===false?'Show':'Connect')+'</button>'
       +'<span class="ml-msg" id="ml-msg"></span>';
     function go(){
       var btn=document.getElementById('ml-go');
       var v=(document.getElementById('ml-id').value||'').trim();
       if(!v){
-        msg(signedIn===false?'Paste a league id — the long number in its URL.'
-                            :'Enter your Sleeper username.','err');
+        msg(signedIn===false?'Paste a league id \u2014 the number in its web address.'
+                            :'Enter your Sleeper username or an ESPN league id.','err');
         return;
       }
       btn.disabled=true;
       var done=function(){ btn.disabled=false; };
-      if(/^[0-9]{6,32}$/.test(v)) load(v).then(done);       // a league id
-      else connect(v).then(done);                           // a username
+      // A league id or web address - Sleeper's or ESPN's - or a username.
+      var ref=GSAPI.parseRef(v);
+      if(ref && ref.id) load(ref.id).then(done);
+      else if(ref) espn(ref).then(done);
+      else connect(v).then(done);
     }
     document.getElementById('ml-go').addEventListener('click',go);
     document.getElementById('ml-id').addEventListener('keydown',function(e){
       if(e.key==='Enter') go();
+    });
+  }
+
+  /** An ESPN league by its id: this season's, or last season's if it has not
+   *  been renewed yet. ESPN answers only a league set public, and says so,
+   *  which is worth passing on - the fix is one setting, not a login. */
+  function espn(ref){
+    msg('Asking ESPN\u2026');
+    return GSAPI.resolve(ref.league, ref.season).then(function(res){
+      if(res.id) return load(res.id);
+      msg(res.error==='private' ? GSAPI.PRIVATE
+        : res.error==='missing' ? 'ESPN has no football league with that id.'
+        : 'Could not reach ESPN. Try again in a minute.', 'err');
+      return false;
     });
   }
 
@@ -454,7 +470,8 @@ JS = """{% raw %}<script>
       // The account is the better answer when there is one: it has the team
       // names and the season history this browser's own list does not.
       var fromAccount=leagues(d.leagues.filter(function(l){
-        return l.provider==='sleeper';})).map(function(g){ return g.current; });
+        return l.provider==='sleeper' || l.provider==='espn';}))
+        .map(function(g){ return g.current; });
       if(fromAccount.length){ SYNCED=fromAccount; saveList(SYNCED); }
       if(!SYNCED.length) return;
       // "Show this site's league" was a choice a signed-in reader with a
@@ -559,4 +576,6 @@ def takeover(mine: str, built: str) -> str:
             "})();</script>{% endraw %}")
 
 
-JS = JS.replace("__SITE_IDS__", repr(_site_ids()))
+# GSAPI first: this control is on every page that reads a reader's league,
+# and on some it runs before gordstats.my_league_data's script does.
+JS = league_api.JS + JS.replace("__SITE_IDS__", repr(_site_ids()))

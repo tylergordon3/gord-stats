@@ -86,12 +86,12 @@ JS = """{% raw %}<script>
   // The league on screen: the reader's, or this site's own.
   var have=GSL.saved();
   var ID=String((have&&have.id)||'__SITE_LEAGUE__');
-  var API='https://api.sleeper.app/v1', AVATAR='https://sleepercdn.com/avatars/thumbs/';
+  var AVATAR='https://sleepercdn.com/avatars/thumbs/';
   var GAME_HOURS=3.75;
   var timer=null, ctx=null;
 
   function get(p){
-    return fetch(API+p).then(function(r){return r.ok?r.json():null;})
+    return GSAPI.get(p)
       .catch(function(){return null;});
   }
   function esc(v){

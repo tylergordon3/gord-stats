@@ -44,7 +44,7 @@ def test_a_deploy_without_accounts_is_not_a_signed_out_reader():
 def test_signed_out_offers_a_sign_in_and_a_league_id():
     assert "ml-in" in JS and "/api/auth/login?next=" in JS
     assert "'league id'" in JS, "the field takes an id, not a username"
-    assert "or paste a league id" in JS
+    assert "or paste a Sleeper or ESPN league id" in JS
 
 
 def test_signed_out_cannot_sync_a_username():

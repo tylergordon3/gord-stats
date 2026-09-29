@@ -101,6 +101,7 @@ docs/assets/images/charts/
 docs/assets/favourite-teams.json
 docs/fantasy/players-index.json
 docs/fantasy/week-projections.json
+docs/fantasy/espn-ids.json
 docs/fantasy/season-board.json
 docs/_includes/cfb_bets.html
 docs/_includes/cfb_top25.html

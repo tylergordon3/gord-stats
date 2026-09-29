@@ -29,7 +29,9 @@ window.GSL = (function(){
       .catch(function(){return shape;});
     return cache[name];
   }
-  function players(){ return once('players','/fantasy/players-index.json',{}); }
+  // One copy of the index, shared with GSAPI: an ESPN league adds the
+  // players it cannot map to Sleeper to it, by name, so they can be shown.
+  function players(){ return GSAPI.players(); }
   function week(){ return once('week','/fantasy/week-projections.json',
                                {week:0,kick:{},proj:{}}); }
 
@@ -76,8 +78,7 @@ window.GSL = (function(){
   }
 
   function api(id, path){
-    return fetch('https://api.sleeper.app/v1/league/'+encodeURIComponent(id)+path)
-      .then(function(r){return r.ok?r.json():null;});
+    return GSAPI.get('/league/'+encodeURIComponent(id)+path);
   }
 
   /** Everything about one league: settings, rosters, and who owns what. */

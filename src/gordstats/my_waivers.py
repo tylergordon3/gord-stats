@@ -71,12 +71,11 @@ JS = """{% raw %}<script>
     return;
   }
 
-  var API='https://api.sleeper.app/v1';
   var MAX_SEASONS=12, WEEKS=18, PAGE=40;
   var shown=PAGE, state=null;
 
   function get(p){
-    return fetch(API+p).then(function(r){return r.ok?r.json():null;})
+    return GSAPI.get(p)
       .catch(function(){return null;});
   }
   function esc(v){

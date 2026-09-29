@@ -436,9 +436,9 @@ VIEW_JS = """{% raw %}<script>
         // What everyone has actually scored this week, so the Pts column and
         // the finished-game rule have something to read. Its own request
         // because nothing else here needs it, and a failure costs one column.
-        return fetch('https://api.sleeper.app/v1/league/'
-                     +encodeURIComponent(have.id)+'/matchups/'+(wk.week||ctx.week||1))
-          .then(function(r){ return r.ok?r.json():[]; })
+        return GSAPI.get('/league/'+encodeURIComponent(have.id)+'/matchups/'
+                         +(wk.week||ctx.week||1))
+          .then(function(rows){ return rows||[]; })
           .catch(function(){ return []; })
           .then(function(rows){
             var live={};

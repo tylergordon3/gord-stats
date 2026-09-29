@@ -127,7 +127,6 @@ table.sticky-table tr.me td{background:#fffbeb}
 
 JS = """{% raw %}<script>
 (function(){
-  var API='https://api.sleeper.app/v1';
   var MAX_SEASONS=12;
   //: A placement game is not a meeting anybody remembers - the same two
   //: constants fantasy.league.head_to_head uses.
@@ -154,7 +153,7 @@ JS = """{% raw %}<script>
   if(!have||!have.id) have={id:'__SITE_LEAGUE__', name:null, site:true};
 
   function get(path){
-    return fetch(API+path).then(function(r){return r.ok?r.json():null;})
+    return GSAPI.get(path)
       .catch(function(){return null;});
   }
   function esc(v){

@@ -76,11 +76,11 @@ JS = """{% raw %}<script>
   var have=GSL.saved();
   if(!have||!have.id) have={id:'__SITE_LEAGUE__', name:null, site:true};
 
-  var API='https://api.sleeper.app/v1', MAX_SEASONS=12;
+  var MAX_SEASONS=12;
   var state={seasons:[], basis:0};
 
   function get(p){
-    return fetch(API+p).then(function(r){return r.ok?r.json():null;})
+    return GSAPI.get(p)
       .catch(function(){return null;});
   }
   function esc(v){

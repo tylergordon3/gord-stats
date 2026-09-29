@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from fantasy.config import UPCOMING_LEAGUE_ID
-from gordstats import week_strip
+from gordstats import league_api, week_strip
 from test_my_team_planner import CHROME, Browser
 
 needs_chrome = pytest.mark.skipif(CHROME is None, reason="no Chromium to run the JS in")
@@ -52,7 +52,8 @@ def test_matchups_standings_and_states():
             {"roster_id": 3, "matchup_id": 2, "points": 0, "starters": ["p4", "p5"]},
             {"roster_id": 4, "matchup_id": 2, "points": 0, "starters": ["p6"]}],
     }
-    script = re.sub(r"\{% (end)?raw %\}|</?script>", "", week_strip.JS)
+    # GSAPI comes with the league control on every page that has the strip.
+    script = re.sub(r"\{% (end)?raw %\}|</?script>", "", league_api.JS + week_strip.JS)
     setup = (
         "document.body.innerHTML=\"<div id='ws-host'></div>\";"
         "var S=" + json.dumps(sleeper) + ",WK=" + json.dumps(wk) + ";"

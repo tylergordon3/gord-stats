@@ -524,7 +524,6 @@ JS = """{% raw %}<script>
     return;
   }
 
-  var API='https://api.sleeper.app/v1';
   var SIMS=10000;
   // What a reader sees while the full run finishes. Two thousand seasons is
   // a tenth of the work and lands within a point of the answer, so the table
@@ -538,7 +537,7 @@ JS = """{% raw %}<script>
   }
   function pct(v){ return Math.round(v*100)+'%'; }
   function get(path){
-    return fetch(API+path).then(function(r){return r.ok?r.json():null;})
+    return GSAPI.get(path)
       .catch(function(){return null;});
   }
 

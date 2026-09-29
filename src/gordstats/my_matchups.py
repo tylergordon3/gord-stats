@@ -564,7 +564,7 @@ JS = """{% raw %}<script>
     if(document.hidden){ next(60000); return; }
     BUSY=true;
     Promise.all([
-      fetch(POLL.api+'/matchups/'+WEEK).then(function(r){ return r.ok?r.json():null; })
+      GSAPI.get(POLL.api+'/matchups/'+WEEK)
         .catch(function(){ return null; }),
       clocks()
     ]).then(function(out){
@@ -592,13 +592,14 @@ JS = """{% raw %}<script>
     LEAGUE_ID=String(id);
     host.innerHTML='<p class="mm-note">Reading '+esc(league.name||'your league')+'\\u2026</p>';
     if(built) built.hidden=true;
-    var API='https://api.sleeper.app/v1/league/'+encodeURIComponent(id);
+    var API='/league/'+encodeURIComponent(id);
+    function or(v){ return function(x){ return x||v; }; }
     Promise.all([
-      fetch(API+'/matchups/'+WEEK).then(function(r){return r.ok?r.json():[];}),
-      fetch(API+'/rosters').then(function(r){return r.ok?r.json():[];}),
-      fetch(API+'/users').then(function(r){return r.ok?r.json():[];}),
+      GSAPI.get(API+'/matchups/'+WEEK).then(or([])),
+      GSAPI.get(API+'/rosters').then(or([])),
+      GSAPI.get(API+'/users').then(or([])),
       GSL.players(),
-      fetch(API).then(function(r){return r.ok?r.json():{};}).catch(function(){return {};}),
+      GSAPI.get(API).then(or({})).catch(function(){return {};}),
       GSL.week(),
       // The clocks in week-context.json are as old as the last full build
       // (live ticks rebuild only the built page), so ESPN's are read before

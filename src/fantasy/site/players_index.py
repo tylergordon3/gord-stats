@@ -14,6 +14,14 @@ keeps: every active player at a fantasy position, about 3,200 of them and
 about 110 KB. It is fetched lazily by the browser and only when someone is
 actually looking at their own league, so it costs a normal reader nothing.
 
+docs/fantasy/espn-ids.json - ESPN player id -> Sleeper player id.
+
+For a reader whose league is on ESPN (gordstats.league_api): ESPN's rosters
+name players by ESPN's own ids, and every projection and index here is keyed
+by Sleeper's. From the player registry, every fantasy-position player both
+ids are known for, retired ones included, since a league's history reaches
+back. About 60 KB, fetched only for an ESPN league.
+
 docs/fantasy/week-projections.json - this week's projections and kickoffs.
 
 Sleeper's own projections endpoint cannot be used from a browser: it answers a
@@ -49,6 +57,7 @@ from fantasy.config import UPCOMING_YEAR
 FANTASY_POSITIONS = ("QB", "RB", "WR", "TE", "K", "DEF")
 OUT = paths.WEB_FANTASY_DIR / "players-index.json"
 PROJ_OUT = paths.WEB_FANTASY_DIR / "week-projections.json"
+ESPN_OUT = paths.WEB_FANTASY_DIR / "espn-ids.json"
 POINTS_DIR = paths.WEB_FANTASY_DIR / "season-points"
 # How far back season totals are written. Sleeper's own season endpoint is
 # 2.3 MB a year, so a reader looking at four seasons of drafts would pull 9 MB
@@ -159,12 +168,34 @@ def write_season_points(year: int = None) -> None:
         print(f"Wrote {y} season points ({len(points)} players) -> {path}")
 
 
+def espn_ids(frame: pd.DataFrame = None) -> dict:
+    """{espn id: sleeper id} for every fantasy-position player with both."""
+    if frame is None:
+        path = paths.PLAYERS_DIR / "registry.parquet"
+        if not path.exists():
+            return {}
+        frame = pd.read_parquet(path, columns=["sleeper_id", "espn_id", "position"])
+    frame = frame[frame["position"].isin(FANTASY_POSITIONS)].dropna(subset=["sleeper_id", "espn_id"])
+    out = {}
+    for r in frame.itertuples(index=False):
+        try:
+            espn = str(int(float(r.espn_id)))
+        except (TypeError, ValueError):
+            continue
+        out.setdefault(espn, str(r.sleeper_id))
+    return dict(sorted(out.items(), key=lambda kv: int(kv[0])))
+
+
 def generate():
     index = build()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     # Compact: these are fetched, not read.
     OUT.write_text(json.dumps(index, separators=(",", ":")), encoding="utf-8")
     print(f"Wrote player index ({len(index)} players) -> {OUT}")
+    ids = espn_ids()
+    if ids:
+        ESPN_OUT.write_text(json.dumps(ids, separators=(",", ":")), encoding="utf-8")
+        print(f"Wrote ESPN id map ({len(ids)} players) -> {ESPN_OUT}")
 
     try:
         proj = projections()
