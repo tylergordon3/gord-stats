@@ -268,3 +268,39 @@ Everything below is tested; the commits carry the detail.
       `data/cfb/games/<season>.parquet` for the next season's fit; then
       `python -m cfb.backtest --report` to refit the efficiency correction on the
       finished season, and `cfb.config.LEAGUE_CONFERENCES` if the league's pool moves.
+
+## 8. Audit, 2026-09-28
+
+Six reviews (security, a live phone sweep of 56 pages, fantasy/NFL code, CFB/CBB code, ops on
+the Pi, features). Done the same night:
+
+- [x] **Names are text** (39d1e82a8): page bodies are literal to Jekyll except tags marked with
+      `frontmatter.liquid()` - a team named `{%x%}` used to fail the build; unescaped Yahoo/Sleeper
+      team names on the CFB league, league power, draft review and NFL schedule pages.
+- [x] **API on www only; visit counter capped; HSTS / no framing** (8cec18485).
+- [x] **CBB opening night** (099d6ea7e): the scoreboard died on any non-D1 opponent; last
+      season's NET/BPI/ATS/ranks; BPI not-released; tipoff Nov 1; timeouts.
+- [x] **CBB scoreboard page + My teams** (a0227759c): 2-minute polling paused when hidden, feed
+      text neutralised, dark cards; My teams shows the day's games.
+- [x] **CBB lines archived** (7cbed974b): closing spread/total + final, data/cbb/lines/.
+
+Open, in order:
+- [ ] **Delete the old Pages deployments** (needs the user's OK): each still serves the live API
+      with the code it shipped with; everything from 7cbed974b on refuses /api off www.
+- [ ] **User, Cloudflare dashboard:** a rate-limiting rule on www `/api/*`.
+- [ ] **Pi:** a conflicting rebase wedges publishing silently; parquet rewrites with no change
+      (~7 MB/day of history); live-tick network blips alert every 10 min; ticks don't install
+      new deps; fantasy live commits every tick; `.env` mode 664.
+- [ ] **Wrong numbers:** recap pickups use Sleeper's `leg` (claims land a week early) and the
+      recap's CFB power windows assume Sun-Sat weeks; median shown in playoff weeks (both leagues,
+      recap + matchups); readers' power counts a week on Monday; week files lag the rollover;
+      CFB "Proj." 13.0-0.0 from week 11; "12:00 AM" for unset CFB kickoffs; outside
+      projections refetched after kickoff (the accuracy table isn't pregame).
+- [ ] **Dec/Jan:** bets card locks once for all bowls; "Week 20" labels; bowls lack CFBD weather
+      and usage; NFL postponed games / TBD playoff placeholders; yearly CFB refit stuck on 2020-25.
+- [ ] **Phone polish:** /fantasy/power/ table header (light), /cfb/live/ round column (dark),
+      women's History link, CFB team pages light "Home", dark-mode slot and red-accent contrast,
+      401 console noise signed out, nav .html redirects.
+- [ ] **Features, ranked:** per-page preview images; a share button; playoff-odds swing / game of
+      the week; an honest bets record (CLV); CBB game predictions; Saturday watch guide.
+
