@@ -284,18 +284,17 @@ the Pi, features). Done the same night:
       text neutralised, dark cards; My teams shows the day's games.
 - [x] **CBB lines archived** (7cbed974b): closing spread/total + final, data/cbb/lines/.
 
-Open, in order:
-- [ ] **Delete the old Pages deployments** (needs the user's OK): each still serves the live API
-      with the code it shipped with; everything from 7cbed974b on refuses /api off www.
-- [ ] **User, Cloudflare dashboard:** a rate-limiting rule on www `/api/*`.
-- [ ] **Pi:** a conflicting rebase wedges publishing silently; parquet rewrites with no change
-      (~7 MB/day of history); live-tick network blips alert every 10 min; ticks don't install
-      new deps; fantasy live commits every tick; `.env` mode 664.
-- [ ] **Wrong numbers:** recap pickups use Sleeper's `leg` (claims land a week early) and the
-      recap's CFB power windows assume Sun-Sat weeks; median shown in playoff weeks (both leagues,
-      recap + matchups); readers' power counts a week on Monday; week files lag the rollover;
-      CFB "Proj." 13.0-0.0 from week 11; "12:00 AM" for unset CFB kickoffs; outside
-      projections refetched after kickoff (the accuracy table isn't pregame).
+- [x] **Old Pages deployments deleted** (8,507, running 2026-09-28 night) and a rate-limit
+      rule on www `/api/*` (added by the user).
+- [x] **Pi** (ca0c9ebbd, 699cfc9c1): a conflicting rebase resolves in the Pi's favour; network
+      blips skip a tick and mail at most hourly; ticks wait for new deps; fantasy live commits
+      hourly during games; key files 600; data files rewritten only when changed (~7 MB/day).
+- [x] **Wrong numbers** (4c6be0d83..4108e61ec): recap pickups from rosters, CFB power windows,
+      no median in the playoffs (recaps and matchups), byes, finished-week cards, CFB Proj.
+      in the playoffs, "time TBA" kickoffs, outside projections frozen at kickoff, stat
+      corrections re-read once, week files after the rollover, readers' power on Monday.
+
+Open:
 - [ ] **Dec/Jan:** bets card locks once for all bowls; "Week 20" labels; bowls lack CFBD weather
       and usage; NFL postponed games / TBD playoff placeholders; yearly CFB refit stuck on 2020-25.
 - [ ] **Phone polish:** /fantasy/power/ table header (light), /cfb/live/ round column (dark),
