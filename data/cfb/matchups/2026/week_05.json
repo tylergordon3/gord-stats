@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-29T04:05:53+00:00",
+ "fetched": "2026-09-29T09:41:06+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 173.59,
-     "win_probability": 0.63
+     "projected": 166.82,
+     "win_probability": 0.59
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 153.37,
-     "win_probability": 0.37
+     "projected": 153.39,
+     "win_probability": 0.41000000000000003
     }
    ]
   },
@@ -47,7 +47,7 @@
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 107.91,
+     "projected": 107.88,
      "win_probability": 0.06000000000000005
     }
    ]
@@ -63,14 +63,14 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 123.17,
+     "projected": 123.12,
      "win_probability": 0.5700000000000001
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 114.27,
+     "projected": 114.12,
      "win_probability": 0.42999999999999994
     }
    ]
@@ -86,7 +86,7 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 160.17,
+     "projected": 160.08,
      "win_probability": 0.6799999999999999
     },
     {
@@ -109,14 +109,14 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 101.16,
+     "projected": 101.02,
      "win_probability": 0.06000000000000005
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 188.35,
+     "projected": 188.41,
      "win_probability": 0.94
     }
    ]
@@ -201,20 +201,6 @@
     "team": "IND",
     "team_full": "Indiana Hoosiers",
     "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "WR",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "337423",
-    "player": "Louis Brown IV",
-    "pos": "WR",
-    "team": "BAY",
-    "team_full": "Baylor Bears",
-    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -341,6 +327,20 @@
     "team": "OU",
     "team_full": "Oklahoma Sooners",
     "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "471478",
+    "player": "JJ Buchanan",
+    "pos": "WR",
+    "team": "MICH",
+    "team_full": "Michigan Wolverines",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1295,12 +1295,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404055",
-    "player": "Caleb Komolafe",
-    "pos": "RB",
-    "team": "NW",
-    "team_full": "Northwestern Wildcats",
-    "bye": 2.0,
+    "yahoo_id": "470424",
+    "player": "Keelon Russell",
+    "pos": "QB",
+    "team": "ALA",
+    "team_full": "Alabama Crimson Tide",
+    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1309,16 +1309,16 @@
     "stats": {}
    },
    {
-    "yahoo_id": "900002",
-    "player": "Duke",
+    "yahoo_id": "900076",
+    "player": "LSU",
     "pos": "DEF",
-    "team": "DUKE",
-    "team_full": "Duke Blue Devils",
-    "bye": 5.0,
+    "team": "LSU",
+    "team_full": "LSU Tigers",
+    "bye": 9.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "DEF",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    }
@@ -2439,20 +2439,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457676",
-    "player": "Ryan Wingo",
-    "pos": "WR",
-    "team": "TEX",
-    "team_full": "Texas Longhorns",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "340392",
     "player": "Braden Pegan",
     "pos": "WR",
@@ -2523,6 +2509,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "404143",
+    "player": "Omarion Miller",
+    "pos": "WR",
+    "team": "ASU",
+    "team_full": "Arizona State Sun Devils",
+    "bye": 4.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "900086",
     "player": "Texas Tech",
     "pos": "DEF",
@@ -2545,11 +2545,11 @@
   "482918": 14.64,
   "471011": 24.16,
   "458486": 17.23,
-  "337423": 6.77,
   "405317": 10.93,
   "405245": 11.25,
   "457379": 11.71,
   "469860": 9.9,
+  "471478": 12.98,
   "900104": 12.42,
   "405071": 22.43,
   "469436": 22.36,
@@ -2563,7 +2563,7 @@
   "469439": 13.08,
   "468459": 12.19,
   "404365": 8.78,
-  "900027": 9.02,
+  "900027": 9.04,
   "470211": 30.45,
   "334043": 25.17,
   "404522": 24.28,
@@ -2584,9 +2584,9 @@
   "333810": 24.84,
   "469636": 11.47,
   "456220": 15.46,
-  "406054": 13.24,
+  "406054": 13.36,
   "457217": 14.19,
-  "405765": 7.51,
+  "405765": 7.36,
   "457872": 14.25,
   "404631": 8.8,
   "455500": 25.21,
@@ -2601,15 +2601,16 @@
   "403842": 18.86,
   "327462": 14.15,
   "457898": 6.76,
-  "455922": 15.17,
+  "455922": 15.12,
   "451329": 9.07,
   "457591": 11.64,
   "406200": 8.0,
-  "404055": 7.69,
+  "470424": 24.76,
+  "900076": 16.26,
   "337760": 26.07,
   "469212": 23.78,
   "405225": 15.85,
-  "463325": 10.07,
+  "463325": 9.92,
   "451040": 9.1,
   "403910": 12.35,
   "456937": 17.05,
@@ -2623,7 +2624,7 @@
   "406169": 24.5,
   "457283": 24.06,
   "404876": 13.88,
-  "467588": 14.4,
+  "467588": 14.31,
   "456020": 21.27,
   "470164": 12.94,
   "404730": 15.49,
@@ -2653,7 +2654,7 @@
   "470531": 11.13,
   "403914": 4.92,
   "471615": 11.46,
-  "335178": 12.9,
+  "335178": 12.76,
   "403802": 15.66,
   "405205": 8.53,
   "458035": 5.02,
@@ -2666,14 +2667,15 @@
   "463126": 17.92,
   "457039": 12.35,
   "470091": 13.05,
-  "457038": 8.35,
-  "404367": 6.98,
+  "457038": 8.49,
+  "404367": 6.9,
   "404353": 12.48,
   "405130": 20.01,
   "457576": 22.64,
   "456218": 4.65,
   "456178": 12.28,
   "455505": 14.1,
+  "404143": 14.75,
   "900086": 10.23
  }
 }
