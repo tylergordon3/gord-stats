@@ -11,7 +11,9 @@ The username is the way in because the league-id flow asked people to dig a
 sixteen-digit number out of a URL, once per league, which is where it lost
 them. The id is still accepted for anyone who wants one league only.
 
-Sleeper only, and no credentials are involved because its API is keyless.
+Sleeper, and ESPN leagues set public, by id or web address - ESPN has no
+keyless way to list an account's leagues. No credentials are involved: Sleeper's
+API is keyless, and ESPN's answers a public league to anyone.
 Yahoo was offered here briefly: its public API serves only leagues set public,
 and a private one needs OAuth and stored refresh tokens - a change in what a
 leaked database would cost, for leagues nobody has asked for. It came out
@@ -152,6 +154,9 @@ JS = """{% raw %}<script>
   function add(provider,inputId,msgId,btn){
     var value=(document.getElementById(inputId).value||'').trim();
     if(!value){ msg(msgId,'Enter a league id first.','err'); return; }
+    // An ESPN web address carries the id (and maybe the season) as a query.
+    var id=/[?&]leagueId=(\\d{1,12})/.exec(value), yr=/[?&]seasonId=(\\d{4})/.exec(value);
+    if(provider==='espn' && id) value=yr?('espn:'+yr[1]+':'+id[1]):id[1];
     btn.disabled=true; msg(msgId,'Checking with '+provider+'\\u2026');
     fetch('/api/leagues',{method:'POST',credentials:'same-origin',
       headers:{'Content-Type':'application/json'},
@@ -213,6 +218,8 @@ JS = """{% raw %}<script>
       gate.hidden=true; main.hidden=false;
       document.getElementById('ls-sleeper-go').addEventListener('click',function(){
         add('sleeper','ls-sleeper','ls-sleeper-msg',this);});
+      document.getElementById('ls-espn-go').addEventListener('click',function(){
+        add('espn','ls-espn','ls-espn-msg',this);});
       document.getElementById('ls-user-go').addEventListener('click',function(){
         findAll(this);});
       document.getElementById('ls-user').addEventListener('keydown',function(e){
@@ -254,6 +261,18 @@ def body() -> str:
             "aria-label='Sleeper league id'>"
             "<button id='ls-sleeper-go' type='button'>Add it</button></div>"
             "<p class='ls-msg' id='ls-sleeper-msg'></p></details>"
+
+            "<div class='ls-card'><h2>An ESPN league</h2>"
+            "<p>Paste the league's web address, or the <code>leagueId</code> number in "
+            "it: <code>fantasy.espn.com/football/league?leagueId=<strong>123456</strong></code>. "
+            "Its earlier seasons come with it. ESPN only shows a league its commissioner "
+            "has made public (League Manager, Basic Settings) - no ESPN login is asked "
+            "for or kept.</p>"
+            "<div class='ls-row'><input id='ls-espn' type='text' "
+            "autocapitalize='none' autocorrect='off' spellcheck='false' "
+            "placeholder='ESPN league id or address' aria-label='ESPN league id or web address'>"
+            "<button id='ls-espn-go' type='button'>Add it</button></div>"
+            "<p class='ls-msg' id='ls-espn-msg'></p></div>"
 
             "<p class='ls-meta'>A league can be re-synced every five minutes. "
             "Removing it deletes the row; deleting your account takes every "

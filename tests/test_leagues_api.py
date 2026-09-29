@@ -319,3 +319,76 @@ def test_before_the_leagues_table_exists_it_says_so():
         assert got["status"] == 503 and got["json"]["migrating"] is True
         post = sync(w, who, {"provider": "sleeper", "username": "tyler"}, world())
         assert post["status"] == 503 and post["json"]["migrating"] is True
+
+
+# ESPN: public leagues by id, one request for the league and every season it
+# lists. Private leagues are refused with the setting that opens them.
+ESPN_STUB = r"""
+window.espn = (W) => {
+  T.routes.push(["^https://lm-api-reads\\.fantasy\\.espn\\.com/", (url) => {
+    const m = url.match(/seasons\/(\d{4})\/segments\/0\/leagues\/(\d+)\?/);
+    if (!m) return { status: 404, body: null };
+    const key = m[2] + "@" + m[1];
+    if (W.private.includes(m[2])) return { status: 401, body: { messages: ["not visible"] } };
+    return W.leagues[key] ? { body: W.leagues[key] } : { status: 404, body: null };
+  }]);
+};
+"""
+
+
+def _espn_season():
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+    return now.year - 1 if now.month <= 2 else now.year
+
+
+def espn_world():
+    y = _espn_season()
+    return {"private": ["777"], "leagues": {
+        f"123456@{y}": {"settings": {"name": "Friends ESPN"},
+                        "status": {"previousSeasons": [y - 2, y - 1]}},
+        f"555@{y - 1}": {"settings": {"name": "Not renewed"}, "status": {"previousSeasons": []}}}}
+
+
+def espn_sync(w, who, league_id):
+    w.js(f"sleeper({json.dumps(world())}); espn({json.dumps(espn_world())}); T.fetches.length = 0;")
+    return w.call("leagues.onRequestPost", URL, method="POST", headers=who,
+                  body={"provider": "espn", "league_id": league_id})
+
+
+def test_an_espn_league_is_every_season_it_lists_from_one_request(worker):
+    worker.js(ESPN_STUB)
+    who = worker.user()
+    y = _espn_season()
+    got = espn_sync(worker, who, "123456")
+    assert got["status"] == 200, got
+    assert got["json"]["league"]["league_id"] == f"espn:{y}:123456"
+    assert len(fetched(worker)) == 1
+    stored = rows(worker)
+    assert [r["league_id"] for r in stored] == [f"espn:{s}:123456" for s in (y - 2, y - 1, y)]
+    assert {r["provider"] for r in stored} == {"espn"}
+    assert {r["lineage_id"] for r in stored} == {f"espn:{y - 2}:123456"}
+    assert {r["name"] for r in stored} == {"Friends ESPN"}
+
+
+def test_a_private_espn_league_says_what_to_change_and_costs_no_wait(worker):
+    worker.js(ESPN_STUB)
+    who = worker.user()
+    got = espn_sync(worker, who, "777")
+    assert got["status"] == 403 and got["json"]["private"] is True
+    assert "public" in got["json"]["error"]
+    assert rows(worker) == []
+    # nothing claimed: the corrected id goes straight through
+    assert espn_sync(worker, who, "123456")["status"] == 200
+
+
+def test_an_espn_league_not_yet_renewed_is_last_seasons(worker):
+    worker.js(ESPN_STUB)
+    who = worker.user()
+    y = _espn_season()
+    got = espn_sync(worker, who, "555")
+    assert got["status"] == 200 and got["json"]["league"]["league_id"] == f"espn:{y - 1}:555"
+    reopen(worker)
+    miss = espn_sync(worker, who, "999")
+    assert miss["status"] == 404 and len(fetched(worker)) == 2
+    assert espn_sync(worker, who, "espn:2019:12x")["status"] == 400

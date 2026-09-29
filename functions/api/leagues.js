@@ -17,16 +17,16 @@
  * the same thing are otherwise indistinguishable in a picker, and people do
  * name them the same thing.
  *
- * Sleeper only. No credentials are stored because none are needed: its API is
- * keyless. Yahoo was here briefly and came out again - its public API serves
+ * Sleeper, and ESPN leagues set public. No credentials are stored because
+ * none are needed: Sleeper's API is keyless, and ESPN's answers a public
+ * league to anyone (see addEspn). Yahoo was here briefly and came out again - its public API serves
  * only leagues a commissioner has set public, and reaching a private one means
  * OAuth, an app registration and stored refresh tokens. That would turn a
  * database worth very little if taken into one holding read access to other
  * people's accounts, which is not a trade worth making for a league nobody has
  * asked for yet. "Ask your commissioner to make it public" costs nothing.
  *
- * The `provider` column stays in the table so a second platform later needs no
- * migration; today it only ever holds "sleeper".
+ * The `provider` column holds "sleeper" or "espn".
  *
  * Adding a league verifies it against Sleeper first, so a typo is caught here
  * rather than becoming a row that never resolves to anything.
@@ -70,9 +70,11 @@ async function db(run) {
 const MAX = 20;
 const MAX_SEASONS = 12;    // seasons walked back per league
 const MAX_ROWS = 120;      // rows one account can hold, across every sync
-// Sleeper ids are long digit strings.
-const SHAPES = { sleeper: /^[0-9]{6,32}$/ };
-const SPORT = { sleeper: "nfl" };
+// Sleeper ids are long digit strings. An ESPN league is stored per season as
+// "espn:<season>:<id>" (gordstats/league_api.py), and may be given bare.
+const SHAPES = { sleeper: /^[0-9]{6,32}$/, espn: /^(?:espn:(\d{4}):)?(\d{1,12})$/ };
+const SPORT = { sleeper: "nfl", espn: "nfl" };
+const ESPN = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl";
 // How long a reader has to wait between syncs. The providers are generous,
 // but a refresh button with no floor is a button that gets held down. Adding
 // one league by id costs a dozen calls rather than dozens, so it waits less.
@@ -121,9 +123,11 @@ export async function onRequestPost({ request, env }) {
 
   const leagueId = String(body?.league_id || "").trim();
   if (!SHAPES[provider].test(leagueId)) {
-    return json({ ok: false,
-      error: "A Sleeper league id is the long number in the league's web address." }, 400);
+    return json({ ok: false, error: provider === "espn"
+      ? "An ESPN league id is the leagueId number in the league's web address."
+      : "A Sleeper league id is the long number in the league's web address." }, 400);
   }
+  if (provider === "espn") return addEspn(env, session, leagueId);
   return addOne(env, session, provider, leagueId);
 }
 
@@ -458,6 +462,89 @@ async function addOne(env, session, provider, leagueId) {
     league: { provider, sport: SPORT[provider], league_id: leagueId,
               name: first.data.name || null, season: first.data.season || null,
               last_synced_at: done.now } });
+}
+
+/** One ESPN league season's settings: { ok, status, data }. */
+async function espnLeague(season, league) {
+  const url = season >= 2018
+    ? `${ESPN}/seasons/${season}/segments/0/leagues/${league}?view=mSettings&view=mStatus`
+    : `${ESPN}/leagueHistory/${league}?seasonId=${season}&view=mSettings&view=mStatus`;
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS),
+                                 headers: { accept: "application/json" } });
+    if (!r.ok) return { ok: false, status: r.status };
+    const d = await r.json();
+    return { ok: true, status: 200, data: Array.isArray(d) ? d[0] : d };
+  } catch {
+    return { ok: false, status: 0 };
+  }
+}
+
+/**
+ * One ESPN league and every season ESPN lists for it.
+ *
+ * ESPN keeps a league's id from year to year where Sleeper issues a new one,
+ * so the season is part of the id stored here and the seasons before come
+ * from this one's status.previousSeasons - one request, not a walk. Without a
+ * season this one is tried, then last year's (a league not yet renewed).
+ *
+ * Public leagues only, deliberately: the request carries no ESPN login and
+ * none is ever stored. A private league is refused with the one setting its
+ * commissioner can change, rather than an offer to hold anybody's cookies.
+ */
+async function addEspn(env, session, raw) {
+  const [, given, league] = SHAPES.espn.exec(raw);
+  const early = await tooSoon(env, session.uid, ADD_SECONDS, env.DB.prepare(
+    `SELECT MAX(last_synced_at) AS at FROM leagues
+      WHERE user_id = ? AND provider = 'espn' AND league_id LIKE ?`)
+    .bind(session.uid, `espn:%:${league}`));
+  if (early) return early;
+
+  const now = new Date();
+  const current = now.getUTCMonth() < 2 ? now.getUTCFullYear() - 1 : now.getUTCFullYear();
+  let found = null;
+  let status = 404;
+  for (const season of given ? [Number(given)] : [current, current - 1]) {
+    const got = await espnLeague(season, league);
+    status = got.status;
+    if (got.ok && got.data) { found = { season, data: got.data }; break; }
+    if (status === 0 || status === 401 || status === 403) break;
+  }
+  if (!found) {
+    if (status === 401 || status === 403) {
+      return json({ ok: false, private: true, error: "ESPN keeps that league private. Its "
+        + "commissioner can open it to the public in the league's settings (League "
+        + "Manager, Basic Settings); no ESPN login is needed after that." }, 403);
+    }
+    if (status === 0) return json({ ok: false, error: "could not reach ESPN" }, 502);
+    return json({ ok: false, error: "ESPN has no football league with that id." }, 404);
+  }
+
+  const claimed = await claim(env.DB, session.uid, CLAIM, ADD_SECONDS);
+  if (claimed.ok === false) return wait(claimed.retryAfter, "just refreshed");
+
+  const name = found.data.settings?.name || null;
+  const earlier = (found.data.status?.previousSeasons || [])
+    .map(Number).filter((y) => y < found.season).sort((a, b) => b - a);
+  const seasons = [found.season, ...earlier].slice(0, MAX_SEASONS);
+  const lineage = `espn:${seasons[seasons.length - 1]}:${league}`;
+  const rows = seasons.map((y, i) => ({
+    league_id: `espn:${y}:${league}`, name, season: String(y), team_name: null,
+    lineage_id: lineage, current: i === 0 }));
+
+  const stored = await storedRows(env, session, "espn");
+  if (!stored.ok) return stored.response;
+  const done = await store(env, session, "espn", stored.rows, rows);
+  if (done instanceof Response) return done;
+  const id = rows[0].league_id;
+  if (!done.leagues.find((l) => l.league_id === id)) {
+    return json({ ok: false, error: "too many leagues" }, 413);
+  }
+  const left = unfinished({ seasons_not_added: done.dropped.rows });
+  return json({ ok: true, synced: done.leagues.length, complete: !left,
+    ...(left ? { unfinished: left } : {}),
+    league: { provider: "espn", sport: "nfl", league_id: id, name,
+              season: String(found.season), last_synced_at: done.now } });
 }
 
 /**
