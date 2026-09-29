@@ -316,6 +316,8 @@ Open:
       site card.
 - [x] **Fantasy tabs** (ffa9989a0): Home · Matchups · Team · Power · Usage in both leagues; the
       Analytics archive is League Home's League Records (finding cards); /fantasy/injuries/.
-- [ ] **Features, ranked:** a share button; playoff-odds swing / game of
+- [x] **Share button** (31bc10572): recaps (week permalink + headline), matchups, both power
+      pages and the home bets card; share sheet on phones, copied link elsewhere.
+- [ ] **Features, ranked:** playoff-odds swing / game of
       the week; an honest bets record (CLV); CBB game predictions; Saturday watch guide.
 
