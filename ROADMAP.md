@@ -318,6 +318,7 @@ Open:
       Analytics archive is League Home's League Records (finding cards); /fantasy/injuries/.
 - [x] **Share button** (31bc10572): recaps (week permalink + headline), matchups, both power
       pages and the home bets card; share sheet on phones, copied link elsewhere.
-- [ ] **Features, ranked:** playoff-odds swing / game of
-      the week; an honest bets record (CLV); CBB game predictions; Saturday watch guide.
+- [x] **Stakes / game of the week** (637a7e3a9): both sims split playoff odds on the next game;
+      power pages' stakes table, matchups' game-of-the-week callout (ranked by 2p(1-p) x swing).
+- [ ] **Features, ranked:** an honest bets record (CLV); CBB game predictions; Saturday watch guide.
 
