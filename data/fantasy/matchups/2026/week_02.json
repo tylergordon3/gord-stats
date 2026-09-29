@@ -11,9 +11,7 @@
    "losses": 2,
    "ties": 0,
    "fpts": 295.78,
-   "reserve": [
-    "5022"
-   ]
+   "reserve": []
   },
   "2": {
    "name": "DRINK MAYE",
@@ -49,14 +47,13 @@
    "ties": 0,
    "fpts": 254.0,
    "reserve": [
-    "11566",
     "5859"
    ]
   },
   "5": {
    "name": "Lotta Cox (Balls Too)",
    "manager": "Austin",
-   "avatar": "https://sleepercdn.com/avatars/thumbs/dde3531a030f74a4a9d77b49e084a7c5",
+   "avatar": "https://sleepercdn.com/avatars/thumbs/23fe4994d864928df8f99d56b60c9179",
    "wins": 4,
    "losses": 0,
    "ties": 0,
@@ -104,9 +101,9 @@
    "reserve": []
   },
   "10": {
-   "name": "Fuck Strictly Dickly",
+   "name": "The Jackson 5",
    "manager": "Everett",
-   "avatar": "https://sleepercdn.com/uploads/26bf23b0c868f6c130001427a0ce01bf.jpg",
+   "avatar": "https://sleepercdn.com/uploads/52e069fa138c51edc6f97e6c3705d2a0.jpg",
    "wins": 2,
    "losses": 2,
    "ties": 0,

@@ -8,23 +8,21 @@
    "manager": "Colin",
    "avatar": "https://sleepercdn.com/uploads/08d1002e22506362ec95657654720097.jpg",
    "wins": 2,
-   "losses": 2,
+   "losses": 0,
    "ties": 0,
-   "fpts": 295.78,
-   "reserve": [
-    "5022"
-   ]
+   "fpts": 195.12,
+   "reserve": []
   },
   "2": {
    "name": "DRINK MAYE",
    "manager": "Tyler",
    "avatar": "https://sleepercdn.com/uploads/6110eabf9d5dfb171113b7dd7149ed65.jpg",
-   "wins": 3,
-   "losses": 1,
+   "wins": 2,
+   "losses": 0,
    "ties": 0,
-   "fpts": 266.74,
+   "fpts": 150.12,
    "reserve": [
-    "7569"
+    "11604"
    ]
   },
   "3": {
@@ -32,11 +30,10 @@
    "manager": "Jackson",
    "avatar": "https://sleepercdn.com/avatars/thumbs/82aec8e811b839b8ec25d7b458afd57b",
    "wins": 0,
-   "losses": 4,
+   "losses": 2,
    "ties": 0,
-   "fpts": 242.14,
+   "fpts": 128.46,
    "reserve": [
-    "8408",
     "9753"
    ]
   },
@@ -44,23 +41,20 @@
    "name": "Strictly Dickly",
    "manager": "Max",
    "avatar": "https://sleepercdn.com/avatars/thumbs/534ed5b0b47420ece97a0f70021f3697",
-   "wins": 2,
-   "losses": 2,
+   "wins": 1,
+   "losses": 1,
    "ties": 0,
-   "fpts": 254.0,
-   "reserve": [
-    "11566",
-    "5859"
-   ]
+   "fpts": 138.06,
+   "reserve": []
   },
   "5": {
    "name": "Lotta Cox (Balls Too)",
    "manager": "Austin",
-   "avatar": "https://sleepercdn.com/avatars/thumbs/dde3531a030f74a4a9d77b49e084a7c5",
-   "wins": 4,
+   "avatar": "https://sleepercdn.com/avatars/thumbs/23fe4994d864928df8f99d56b60c9179",
+   "wins": 2,
    "losses": 0,
    "ties": 0,
-   "fpts": 353.96,
+   "fpts": 169.26,
    "reserve": []
   },
   "6": {
@@ -68,19 +62,19 @@
    "manager": "Trevor",
    "avatar": "https://sleepercdn.com/uploads/f4a8e4922b8086d6b960cce400e532c3.jpg",
    "wins": 0,
-   "losses": 4,
+   "losses": 2,
    "ties": 0,
-   "fpts": 209.0,
+   "fpts": 123.2,
    "reserve": []
   },
   "7": {
    "name": "padgett",
    "manager": "Padgett",
    "avatar": "https://sleepercdn.com/avatars/thumbs/82aec8e811b839b8ec25d7b458afd57b",
-   "wins": 2,
+   "wins": 0,
    "losses": 2,
    "ties": 0,
-   "fpts": 256.04,
+   "fpts": 128.96,
    "reserve": []
   },
   "8": {
@@ -88,29 +82,29 @@
    "manager": "Mark",
    "avatar": "https://sleepercdn.com/uploads/e515abb0dd4f0a090e7f1603ba29b21d.jpg",
    "wins": 2,
-   "losses": 2,
+   "losses": 0,
    "ties": 0,
-   "fpts": 245.38,
+   "fpts": 145.36,
    "reserve": []
   },
   "9": {
    "name": "3 big balls",
    "manager": "George",
    "avatar": "https://sleepercdn.com/uploads/1501279ebef40882f6ff68ec4b3e92b6.jpg",
-   "wins": 3,
+   "wins": 1,
    "losses": 1,
    "ties": 0,
-   "fpts": 325.08,
+   "fpts": 146.86,
    "reserve": []
   },
   "10": {
-   "name": "Fuck Strictly Dickly",
+   "name": "The Jackson 5",
    "manager": "Everett",
-   "avatar": "https://sleepercdn.com/uploads/26bf23b0c868f6c130001427a0ce01bf.jpg",
-   "wins": 2,
+   "avatar": "https://sleepercdn.com/uploads/52e069fa138c51edc6f97e6c3705d2a0.jpg",
+   "wins": 0,
    "losses": 2,
    "ties": 0,
-   "fpts": 243.48,
+   "fpts": 119.0,
    "reserve": []
   }
  },

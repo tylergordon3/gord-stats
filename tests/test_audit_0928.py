@@ -207,16 +207,19 @@ def test_a_finished_week_is_read_once_more_for_corrections(tmp_path, monkeypatch
     from fantasy.league import matchups
     final = _nfl_week_data(("post", "post"), 10.0)
     final["matchups"] = [{"matchup_id": 1, "sides": [{"points": 100.0}, {"points": 90.0}]}]
+    final["teams"] = {"1": {"name": "Then", "reserve": []}}
     cache = tmp_path / "week_03.json"
     cache.write_text(json.dumps(final))
     corrected = json.loads(json.dumps(final))
     corrected["matchups"][0]["sides"][0]["points"] = 101.5
     corrected["projections"]["1"]["pts"] = 0.0          # post-game: must not replace kickoff's
+    corrected["teams"] = {"1": {"name": "Now", "reserve": ["4034"]}}   # today's IR, not that week's
     calls = []
     monkeypatch.setattr(matchups, "_fetch_week", lambda *a: calls.append(a) or json.loads(json.dumps(corrected)))
     out = matchups._settle(json.loads(cache.read_text()), 3, 2026, "L", cache)
     assert out["settled"] and out["matchups"][0]["sides"][0]["points"] == 101.5
     assert out["projections"]["1"]["pts"] == 10.0
+    assert out["teams"] == {"1": {"name": "Then", "reserve": []}}, "the week's own rosters"
     assert matchups._settle(out, 3, 2026, "L", cache) is out and len(calls) == 1, "once"
     # A failed read keeps the archive and tries again later.
     monkeypatch.setattr(matchups, "_fetch_week", lambda *a: (_ for _ in ()).throw(OSError("down")))

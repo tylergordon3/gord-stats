@@ -519,6 +519,10 @@ def _settle(data: dict, week: int, year: int, league_id: str, cache) -> dict:
         return data
     if not again.get("matchups") or not week_final(again):
         return data
+    # The teams as they were that week: a refetch reads today's names and,
+    # worse, today's injured reserve - a player on IR now but not then left
+    # that week's best lineup short (roster 3's week 1 max fell 3.8 points).
+    again["teams"] = data.get("teams") or again.get("teams")
     again["settled"] = True
     cache.write_text(json.dumps(again, indent=1))
     return again
