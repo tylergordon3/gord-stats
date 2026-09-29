@@ -91,3 +91,14 @@ def test_a_played_round_is_taken_as_it_happened(monkeypatch):
                        sims=10, played_playoffs=played)
     titles = dict(zip(out["team_key"], out["title"]))
     assert titles == {"t0": 0.0, "t1": 0.0, "t2": 0.0, "t3": 1.0}
+
+
+def test_the_playoffs_keep_the_regular_seasons_losses():
+    """Once the bracket starts, the standings are rebuilt from the regular
+    season - losses included: they were set to 0, and every team's projected
+    record read 13.0-0.0 from week 11."""
+    from cfb import league_sim, yahoo
+    lg = dict(yahoo.league(), playoff_start_week=5)
+    got = league_sim.regular_season(lg)
+    assert got["474.l.21318.t.4"][0] == 8 and got["474.l.21318.t.4"][2] == 0
+    assert all(w + l == 8 for w, _, l in got.values()), "four weeks, head to head and median"

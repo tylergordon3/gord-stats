@@ -319,7 +319,12 @@ def _card(game) -> str:
     where = (escape(note) if isinstance(note, str) and note
              else "neutral site" if game.get("neutral") else escape(str(game.get("place") or "")))
     tv = escape(str(game.get("tv") or "").split(",")[0])
-    when = (f"<div class='pg-when'><span>{kick:%a %-d %b, %-I:%M %p} ET"
+    # ESPN files a game with no kickoff time yet at midnight: "12:00 AM ET" for
+    # a dozen or more games a week, sorted to the top of the day (the audit).
+    timed = game.get("time_valid")
+    timed = True if timed is None or pd.isna(timed) else bool(timed)
+    at = f"{kick:%a %-d %b, %-I:%M %p} ET" if timed else f"{kick:%a %-d %b} &middot; time TBA"
+    when = (f"<div class='pg-when'><span>{at}"
             + (f" &middot; {where}" if where else "") + "</span>"
             + (f"<span class='pg-tv'>{tv}</span>" if tv else "") + "</div>")
 
@@ -338,6 +343,12 @@ def _card(game) -> str:
 
 
 def _grid(games: pd.DataFrame) -> str:
+    # A game with no time yet goes to the end of its day, not the top.
+    if "time_valid" in games:
+        tba = ~games["time_valid"].fillna(True).astype(bool)
+        day = games["date"].map(lambda d: d.astimezone(ET).date())
+        games = games.assign(_day=day, _tba=tba).sort_values(
+            ["_day", "_tba", "date"], kind="mergesort")
     return ("<div class='pred-grid'>"
             + "".join(_card(g) for _, g in games.iterrows()) + "</div>")
 

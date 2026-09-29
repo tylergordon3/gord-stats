@@ -256,12 +256,12 @@ def _week_points(week: int) -> dict:
 
 
 def regular_season(lg: dict) -> dict:
-    """{team_key: (wins, points for)} over the regular season, from the week
+    """{team_key: (wins, points for, losses)} over the regular season, from the week
     archive - head to head, and against the median where the league plays it.
     What seeds the bracket once it is being played: Yahoo's standings then
     describe the playoffs as well, and the seeds must not move with them."""
     playoff_start = int(lg["playoff_start_week"])
-    wins, pf = {}, {}
+    wins, pf, games = {}, {}, {}
     for week in range(int(lg["start_week"] or 1), playoff_start):
         if week not in yahoo.archived_weeks():
             continue
@@ -273,13 +273,17 @@ def regular_season(lg: dict) -> dict:
             a, b = (t["team_key"] for t in m["teams"])
             wins[a] = wins.get(a, 0.0) + (pts[a] > pts[b]) + 0.5 * (pts[a] == pts[b])
             wins[b] = wins.get(b, 0.0) + (pts[b] > pts[a]) + 0.5 * (pts[a] == pts[b])
+            for k in (a, b):
+                games[k] = games.get(k, 0) + 1
         if lg.get("uses_median_score") and pts:
             median = float(np.median(list(pts.values())))
             for k, v in pts.items():
                 wins[k] = wins.get(k, 0.0) + (v > median)
+                games[k] = games.get(k, 0) + 1
         for k, v in pts.items():
             pf[k] = pf.get(k, 0.0) + v
-    return {k: (wins.get(k, 0.0), pf.get(k, 0.0)) for k in pf}
+    return {k: (wins.get(k, 0.0), pf.get(k, 0.0), games.get(k, 0) - wins.get(k, 0.0))
+            for k in pf}
 
 
 def run(lg: dict = None, rosters: dict = None, sims: int = SIMS) -> pd.DataFrame:
@@ -296,9 +300,12 @@ def run(lg: dict = None, rosters: dict = None, sims: int = SIMS) -> pd.DataFrame
     if int(lg["current_week"]) >= playoff_start:
         # The bracket is under way: seeds from the regular season as it
         # finished, and the rounds already final as they happened.
+        # Losses too: they were 0, and with no regular weeks left to add any,
+        # every team's projected record read 13.0-0.0 (the 2026-09-28 audit).
         final = regular_season(lg)
-        lg = {**lg, "teams": [{**t, "wins": final.get(t["team_key"], (0, 0))[0], "ties": 0,
-                               "losses": 0, "points_for": final.get(t["team_key"], (0, 0))[1]}
+        lg = {**lg, "teams": [{**t, "wins": final.get(t["team_key"], (0, 0, 0))[0], "ties": 0,
+                               "losses": final.get(t["team_key"], (0, 0, 0))[2],
+                               "points_for": final.get(t["team_key"], (0, 0, 0))[1]}
                               for t in lg["teams"]]}
         played = {w: _week_points(w) for w in range(playoff_start, int(lg["current_week"]))
                   if w in yahoo.archived_weeks() and yahoo.week_final(yahoo.week_matchups(w))}
