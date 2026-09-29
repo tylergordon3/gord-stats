@@ -40,7 +40,7 @@ except under Fantasy, where it is the league's: the college fantasy pages live
 under /cfb/ and the WNBA dashboard under /wnba/, so those URLs are claimed for
 Fantasy before the plain /cfb/ test.
 {% endcomment %}
-{% if page.url contains '/cfb/matchups/' or page.url contains '/cfb/league/' or page.url contains '/cfb/live/' or page.url contains '/cfb/strength/' or page.url contains '/cfb/usage/' or page.url contains '/cfb/roster/' or page.url contains '/cfb/analytics/' or page.url contains '/cfb/recap/' %}{% assign sec = 'fantasy' %}{% assign pages = 'cfb_fantasy' %}
+{% if page.url contains '/cfb/matchups/' or page.url contains '/cfb/league/' or page.url contains '/cfb/live/' or page.url contains '/cfb/strength/' or page.url contains '/cfb/usage/' or page.url contains '/cfb/roster/' or page.url contains '/cfb/recap/' %}{% assign sec = 'fantasy' %}{% assign pages = 'cfb_fantasy' %}
 {% elsif page.url contains '/cfb/' %}{% assign sec = 'cfb' %}{% assign pages = 'cfb' %}
 {% elsif page.url contains '/nfl/' %}{% assign sec = 'nfl' %}{% assign pages = 'nfl' %}
 {% elsif page.url contains '/fantasy/' %}{% assign sec = 'fantasy' %}{% assign pages = 'fantasy' %}

@@ -10,8 +10,13 @@
 # The GordStats rankings index joined the FPI page as one rankings page;
 # the team pages under /cfb/teams/<team>/ stay where they are.
 /cfb/teams/              /cfb/power/        301
-# The league power rankings became a section of the league dashboard.
-/cfb/league-power/*      /cfb/league/#power 301
+# The league power rankings: a section of the league dashboard from
+# 2026-09-08, the league's Power tab (its own page again) from 2026-09-29.
+/cfb/league-power/*      /cfb/league/power/ 301
+# Both fantasy leagues' Analytics tabs became Power on 2026-09-29; the
+# archive they held is League Home's records.
+/fantasy/analytics/*     /fantasy/#records  301
+/cfb/analytics/*         /cfb/league/#records 301
 # The CFB pre-draft board retired when the draft did; its analysis lives on
 # the draft review, which took over the live board's URL.
 /cfb/draft/*             /cfb/live/        301

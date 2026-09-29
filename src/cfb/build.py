@@ -19,11 +19,12 @@ def projection_years() -> list[int]:
 # exist, and ask the filesystem. The pre-draft pages (draft, draft_live)
 # retired when the draft did - draft_review now owns their URL; the scoreboard
 # folded into the schedule page, which /cfb/scoreboard/ now redirects to.
-# league_power is a section of the league page now, built from there. recap
-# before league and matchups: both point at the newest one.
-PAGES = ["home", "draft_review", "recap", "league", "matchups",
+# league_power is the league's Power tab (its own page again since
+# 2026-09-29, and the build that archives its snapshots). recap before league
+# and matchups: both point at the newest one.
+PAGES = ["home", "draft_review", "recap", "league", "league_power", "matchups",
          "power", "teams", "predictions", "schedule", "countdown", "homecards",
-         "strength", "usage", "roster", "analytics"]
+         "strength", "usage", "roster"]
 
 
 def build_all(refresh: bool = False) -> list[str]:

@@ -1,7 +1,10 @@
 """
-League power rankings - the ten fantasy rosters, a section of the league
-dashboard (docs/cfb/league/, cfb.site.league) since 2026-09-08; the old
-/cfb/league-power/ URL redirects there.
+League power rankings - the ten fantasy rosters, the Power tab of the college
+fantasy league (docs/cfb/league/power/). A section of the league dashboard
+from 2026-09-08; its own page again from 2026-09-29, when both leagues' tabs
+became Home, Matchups, Team, Power, Usage and the power rankings - read every
+week - stopped sharing a tab or a page with the archive. The old
+/cfb/league-power/ URL redirects here.
 
 Every roster priced the way the draft board priced the players: the best
 starting lineup it can field, in projected season points under this league's
@@ -19,9 +22,10 @@ each roster's points against the league average build by build. Until two
 builds carry the points, the panels draw rank instead, which every snapshot
 has.
 
-    python -m cfb.site.league_power     # the section as a page of its own
+    python -m cfb.site.league_power     # writes docs/cfb/league/power/
 """
 
+import shutil
 from html import escape
 
 import matplotlib
@@ -37,7 +41,7 @@ from cfb.site import write_page                      # noqa: E402
 from gordstats import charts, palette, rankmoves, share_card  # noqa: E402
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
-OUTPUT = WEB_DIR / "league-power" / "index.html"
+OUTPUT = WEB_DIR / "league" / "power" / "index.html"
 _SECTION = "cfb-league-power"
 
 _CSS = """<style>
@@ -408,13 +412,26 @@ def section() -> str:
 
 
 def body() -> str:
-    return _CSS + section()
+    # The schedule ahead is the other half of "who is actually good": the
+    # matchup strength page, under this tab too.
+    return (_CSS + "<p class='mu-note'>The schedule ahead - whose helps from here, and which "
+            "defences give up points to each position - is on "
+            "<a href='/cfb/strength/'>Matchup Strength</a>.</p>" + section())
 
 
 def generate():
-    """The section as a page of its own - not in build.PAGES; the dashboard
-    hosts it now."""
-    write_page(OUTPUT, f"CFB League Power Rankings {SEASON}", body())
+    html = body()
+    week = yahoo.league().get("current_week")
+    write_page(OUTPUT, f"CFB League Power Rankings {SEASON}", html,
+               description="The college fantasy league's rosters ranked, the rest of the "
+                           "season played out.",
+               image=card(int(week) if week else None))
+    # The pages this replaced, generated on the Pi and never committed: gone,
+    # so docs/_redirects is what answers their addresses.
+    for old in (WEB_DIR / "analytics", WEB_DIR / "league-power"):
+        if old.exists():
+            shutil.rmtree(old)
+            print(f"Removed {old}; _redirects answers it")
 
 
 if __name__ == "__main__":

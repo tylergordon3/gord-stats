@@ -16,9 +16,9 @@ The page holds two versions of itself and shows one.
 
 `my_league.takeover` picks between them before the page paints.
 
-The all-time studies that need the archive rather than the league - injury
-impacts, draft values and busts - moved to Analytics, where the rest of the
-deeper work lives.
+Both versions open with the league's records (fantasy.site.records): a card
+per archive page, leading with what it found. They sat behind an Analytics
+tab until 2026-09-29, filed beside the power rankings; that tab is Power now.
 
     python -m fantasy.site.homepage
 """
@@ -30,7 +30,7 @@ from fantasy import paths
 from fantasy.config import (
     CHAMPIONS, EXPW_RATIO, FANTASY_REG_WEEKS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
-from fantasy.site import layout, recap, styles, team_profiles, upcoming
+from fantasy.site import layout, recap, records, styles, team_profiles, upcoming
 from gordstats import my_history, my_home, my_league, my_league_data, week_strip
 from gordstats.frontmatter import add_front_matter
 
@@ -149,17 +149,20 @@ def mine_section() -> str:
     It used to be a different page - champions, a table per season, an
     all-time table and a head-to-head grid, one after another - longer,
     plainer, and not what everybody else was looking at."""
-    nav = layout.section_nav([("mh-metrics-h", "All-Time Metrics"), ("mh-teams-h", "Teams")])
-    links = ("<p class='lh-more'>Champions, every season's table and the head-to-head grid "
-             "are on " + layout.internal_link("/fantasy/history/", "League History")
-             + "; every draft on "
-             + layout.internal_link("/fantasy/draft-review/", "Draft Review") + ".</p>")
-    return "<div id='lh-mine' hidden>" + my_home.section(nav, links) + "</div>"
+    nav = layout.section_nav([("mh-records-h", "Records"), ("mh-metrics-h", "All-Time Metrics"),
+                              ("mh-teams-h", "Teams")])
+    # The league's records first: the history, drafts and waivers pages, which
+    # the Analytics tab used to hold (fantasy.site.records).
+    cards = "<h2 id='mh-records-h'>League Records</h2>" + records.mine_cards()
+    return "<div id='lh-mine' hidden>" + nav + cards + my_home.section("", "") + "</div>"
 
 
 def generate(output=OUTPUT):
     """Write League Home to `output`."""
+    # The league's records lead: the archive the Analytics tab used to hold,
+    # a card each, the tab now being Power (fantasy.site.records).
     inline = [
+        ("records", "League Records", records.built_cards()),
         ("metrics", "All-Time Metrics", metrics_section()),
         ("teams", "Teams", teams_section()),
     ]

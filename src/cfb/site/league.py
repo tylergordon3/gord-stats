@@ -5,15 +5,17 @@ Four sections, each rendering whatever the season has produced so far and
 saying plainly what it is still waiting on:
 
   * Standings      - records, points, FAAB and moves (teams exist predraft).
-  * Power Rankings - every roster priced as its best lineup, tracked build by
-                     build (cfb.site.league_power renders it; its snapshot
-                     archive is written from here).
+  * (Power Rankings - every roster priced as its best lineup - are the league's
+     Power tab, docs/cfb/league/power/ (cfb.site.league_power); the
+     Standings end with a link there, id="power" for the old anchor.)
   * Matchups       - the current week's scoreboard; pairings before kickoff,
                      projections and points once Yahoo serves them.
   * (The draft - grid, grades, every pick - lives on the draft review page,
      cfb.site.draft_review, not here.)
   * Waiver Watch   - the best available player at each position for the week
                      ahead, and the weakest thing each roster is holding.
+  * League Records - the archive as finding cards (gordstats.hub): the draft
+                     review, leading with the best-graded draft.
   * Transactions   - player adds / drops / trades. Yahoo logs commissioner
                      actions too; those are noise and are filtered out here.
 
@@ -25,7 +27,8 @@ from html import escape
 
 from cfb import waivers, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
-from cfb.site import league_power, recap, write_page
+from cfb.site import recap, write_page
+from gordstats import hub
 from gordstats.frontmatter import liquid
 
 _CSS = """<style>
@@ -250,7 +253,7 @@ def body() -> str:
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
-        _CSS + league_power._CSS
+        _CSS
         + liquid('{% include cfb_countdown.html %}')
         + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> on Yahoo — '
         f'{lg["num_teams"]} teams, {lg["scoring_label"]}, weeks '
@@ -259,21 +262,44 @@ def body() -> str:
         "section below fills in as the season generates it. The draft - every "
         'pick, graded - is on the <a href="/cfb/live/">draft review</a>.</p>'
         + recap.teaser()
-        + _details("Standings", standings_section(lg), open=True)
-        + _details("Power Rankings", league_power.section(), open=True, anchor="power")
+        + _details("Standings", standings_section(lg) + _POWER_LINK, open=True)
         + _details(f"Matchups — Week {int(sb['week']) if sb.get('week') else '?'}",
                    matchups_section(sb), open=True)
+        + _details("League Records", records_section(), open=True, anchor="records")
         + _details("Waiver Watch", waiver_section(sb), open=True,
                    anchor="waivers")
         + _details("Waivers &amp; Trades", transactions_section(txns))
     )
 
 
+# The power rankings are the Power tab now (docs/cfb/league/power/). id="power"
+# keeps the section's old anchor landing somewhere that says where they went.
+_POWER_LINK = ("<p class='mu-note' id='power'><a href='/cfb/league/power/'><b>Power "
+               "rankings &rarr;</b></a> every roster's best lineup, the rest of the season "
+               "played out.</p>")
+
+
+def _draft_finding() -> str:
+    try:
+        from cfb.site import draft_review
+        top = draft_review.grade_rows(draft_review.graded(), yahoo.league())[0]
+        return f"Best draft by our grades: {top['team']} ({top['grade']})"
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! records finding (draft): {type(exc).__name__}: {exc}")
+        return ""
+
+
+def records_section() -> str:
+    """The archive, as on the NFL League Home (fantasy.site.records): a card
+    per page, leading with what it found."""
+    return hub.cards([
+        ("/cfb/live/", "Draft review", _draft_finding(),
+         "Every pick graded against where it went, our grades beside Yahoo's"),
+    ])
+
+
 def generate():
-    html = body()
-    week = yahoo.league().get("current_week")
-    write_page(WEB_DIR / "league" / "index.html", f"CFB League Dashboard {SEASON}", html,
-               image=league_power.card(int(week) if week else None))
+    write_page(WEB_DIR / "league" / "index.html", f"CFB League Dashboard {SEASON}", body())
 
 
 if __name__ == "__main__":

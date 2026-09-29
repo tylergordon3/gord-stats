@@ -509,7 +509,7 @@ def body() -> str:
         + (f" {unrated} pick{'s' if unrated != 1 else ''} came from beyond "
            "the board's 500 rated players." if unrated else "") + " Every "
         "pick is in the grid at the bottom; how these rosters rank now, and "
-        'all season, is on the <a href="/cfb/league/#power">league '
+        'all season, is on the <a href="/cfb/league/power/">league '
         "dashboard</a>.</p>"
         + headlines(df)
         + "<h2>GordStats Team Grades</h2>" + team_grades(df, lg)

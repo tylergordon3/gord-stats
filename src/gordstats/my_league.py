@@ -556,7 +556,8 @@ def site_league_js() -> str:
 def takeover(mine: str, built: str) -> str:
     """One of two blocks, chosen before the page paints.
 
-    League Home and Analytics both hold two versions of themselves: this
+    League Home holds two versions of itself (Analytics did too, until it
+    became the Power tab on 2026-09-29): this
     league's, built on the Pi out of an archive, and the reader's, rendered in
     the browser from Sleeper. Only one of them is ever the answer to "what am
     I looking at", so only one is ever on the page.

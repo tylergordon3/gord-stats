@@ -110,15 +110,17 @@ fantasy:
   # short labels are as short as they can be read: "Team", not "My Team", is
   # what lets the row fit a 360px screen (Sleeper's own tab says "Team").
   #
-  # League Home holds this league's all-time metrics and, for a reader who
-  # has synced one, their own league's history and drafts - so the two pages
-  # those sections came from belong to this chip.
+  # League Home holds the league's records (fantasy.site.records): the
+  # archive a card each, and for a reader who has synced one, their own
+  # league's history, drafts and waivers - so every page those cards open
+  # belongs to this chip. Until 2026-09-29 they sat behind an Analytics chip
+  # beside the power rankings; that chip is Power now.
   - title: League Home
     short: Home
     icon: "🏠"
     key: home
     url: /fantasy/
-    covers: "/fantasy/history/ /fantasy/draft-review/"
+    covers: "/fantasy/history/ /fantasy/draft-review/ /fantasy/schedule/ /fantasy/transactions/ /fantasy/draft/ /fantasy/injuries/ /fantasy/waivers/ /fantasy/sync/ /profile/"
 
   - title: Matchups
     short: Matchups
@@ -133,18 +135,17 @@ fantasy:
     key: myteam
     url: /fantasy/roster/
 
+  - title: Power Rankings
+    short: Power
+    icon: "⚡"
+    key: power
+    url: /fantasy/power/
+
   - title: Usage
     short: Usage
     icon: "📦"
     key: usage
     url: /fantasy/usage/
-
-  - title: Analytics
-    short: Analytics
-    icon: "📊"
-    key: analytics
-    url: /fantasy/analytics/
-    covers: "/fantasy/power/ /fantasy/schedule/ /fantasy/draft/ /fantasy/transactions/ /fantasy/sync/ /profile/ /fantasy/waivers/"
 
 
 cfb:
@@ -193,6 +194,7 @@ cfb_fantasy:
     icon: "🏠"
     key: home
     url: /cfb/league/
+    covers: "/cfb/live/"
 
   - title: Matchups
     short: Matchups
@@ -207,15 +209,16 @@ cfb_fantasy:
     key: myteam
     url: /cfb/roster/
 
+  - title: Power Rankings
+    short: Power
+    icon: "⚡"
+    key: power
+    url: /cfb/league/power/
+    covers: "/cfb/strength/"
+
   - title: Usage
     short: Usage
     icon: "📦"
     key: usage
     url: /cfb/usage/
 
-  - title: Analytics
-    short: Analytics
-    icon: "📊"
-    key: analytics
-    url: /cfb/analytics/
-    covers: "/cfb/strength/ /cfb/live/"

@@ -865,7 +865,7 @@ def body() -> str:
         f"Rebuilt several times a day (last: {built}); finished weeks stay on "
         'record. Standings and waivers are on the <a href="/cfb/league/">league '
         'dashboard</a>, season-long roster strength on the '
-        '<a href="/cfb/league/#power">power rankings</a>.</p></details>'
+        '<a href="/cfb/league/power/">power rankings</a>.</p></details>'
         + ui.week_switch(weeks, current, views) + accuracy_section(datas)
         + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS)
 

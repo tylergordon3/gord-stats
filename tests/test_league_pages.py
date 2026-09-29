@@ -1,5 +1,6 @@
 """
-League Home and Analytics each hold two versions of themselves.
+League Home holds two versions of itself (Analytics did too, until it became
+the Power tab on 2026-09-29).
 
 This league's, built on the Pi out of the archive, and the reader's, rendered
 in the browser from Sleeper. Only one of them answers "what am I looking at",
@@ -35,12 +36,14 @@ def test_league_home_holds_both_versions_and_shows_one():
     assert "id='lh-mine' hidden" in src
 
 
-def test_analytics_holds_both_versions_and_shows_one():
-    from fantasy.site import analytics
+def test_both_versions_of_league_home_open_with_the_records():
+    """The archive the Analytics tab held is League Home's records now, in the
+    site league's version and a reader's alike."""
+    from fantasy.site import homepage
 
-    src = open(analytics.__file__).read()
-    assert 'takeover("an-mine", "an-built")' in src
-    assert "id='an-mine' hidden" in src
+    src = open(homepage.__file__).read()
+    assert '("records", "League Records", records.built_cards())' in src
+    assert "records.mine_cards()" in src
 
 
 def test_the_takeover_runs_before_the_account_answers():
@@ -55,20 +58,37 @@ def test_the_takeover_runs_before_the_account_answers():
     assert "m.hidden=!own" in js and "b.hidden=own" in js
 
 
-def test_analytics_renders_its_studies_rather_than_linking_them():
-    """"The analytics page also feels clunky." It was a grid of cards. The
-    four studies are on the page now; what stays a link is a page that
-    answers one question well and is too big to inline."""
-    from fantasy.site import analytics
+def test_the_records_lead_with_findings_not_descriptions(monkeypatch):
+    """An earlier Analytics page was a grid of plain link cards and read as a
+    menu in the way. Each record card leads with what its page found; one
+    whose finding fails still shows, with its description."""
+    from fantasy.site import records
 
-    src = open(analytics.__file__).read()
-    for fn in ("schedule_section", "transactions_section", "injury_section"):
-        assert f"def {fn}" in src, f"{fn} is not rendered here"
-    assert "adp.all_time_section()" in src
-    # The old hub, and the two cards that moved to League Home.
-    assert "hub.cards" not in src, "the card grid is back"
-    assert "/fantasy/history/" not in src, "history is on League Home now"
-    assert "/fantasy/draft-review/" not in src, "the drafts are on League Home now"
+    monkeypatch.setattr(records, "schedule_finding", lambda: "Luckiest: A, 3 wins")
+    monkeypatch.setattr(records, "transactions_finding", lambda: "B: 208 adds")
+    monkeypatch.setattr(records, "draft_finding", lambda: "Best pick ever: C")
+
+    def broken():
+        raise KeyError("Est. Pts Lost")
+    monkeypatch.setattr(records, "injury_finding", broken)
+    html = records.built_cards()
+    for url in ("/fantasy/schedule/", "/fantasy/transactions/", "/fantasy/draft/",
+                "/fantasy/injuries/", "/profile/", "/fantasy/sync/"):
+        assert f"href='{url}'" in html, url
+    finds = re.findall(r"<span class='fc-find'>([^<]*)</span>", html)
+    assert finds[:3] == ["Luckiest: A, 3 wins", "B: 208 adds", "Best pick ever: C"]
+    assert finds[3].startswith("Games and points")        # the description stands in
+
+
+def test_the_tabs_are_the_same_in_both_leagues():
+    """Home, Matchups, Team, Power, Usage in each - the same key in the same
+    place, so the league switcher lands on the same kind of page - and no
+    Analytics tab: Power is read every week and has its own."""
+    keys = {sec: [i["key"] for i in NAV[sec]] for sec in ("fantasy", "cfb_fantasy")}
+    assert keys["fantasy"] == keys["cfb_fantasy"] == ["home", "matchups", "myteam", "power", "usage"]
+    urls = {sec: {i["key"]: i["url"] for i in NAV[sec]} for sec in ("fantasy", "cfb_fantasy")}
+    assert urls["fantasy"]["power"] == "/fantasy/power/"
+    assert urls["cfb_fantasy"]["power"] == "/cfb/league/power/"
 
 
 def test_the_moved_pages_are_covered_by_league_home():
@@ -76,10 +96,14 @@ def test_the_moved_pages_are_covered_by_league_home():
     to be the chip whose page carries the content."""
     covers = {i["url"]: (i.get("covers") or "").split() for i in NAV["fantasy"]}
     home = covers["/fantasy/"]
-    assert "/fantasy/history/" in home and "/fantasy/draft-review/" in home
-    analytics = covers["/fantasy/analytics/"]
-    assert "/fantasy/history/" not in analytics
-    assert "/fantasy/draft-review/" not in analytics
+    for url in ("/fantasy/history/", "/fantasy/draft-review/", "/fantasy/schedule/",
+                "/fantasy/transactions/", "/fantasy/draft/", "/fantasy/injuries/",
+                "/fantasy/waivers/"):
+        assert url in home, url
+    assert "/fantasy/analytics/" not in covers
+    cfb = {i["url"]: (i.get("covers") or "").split() for i in NAV["cfb_fantasy"]}
+    assert "/cfb/live/" in cfb["/cfb/league/"]
+    assert "/cfb/strength/" in cfb["/cfb/league/power/"]
 
 
 def test_the_readers_sections_use_the_sites_table():
