@@ -381,3 +381,16 @@ def test_an_unbiased_set_of_predictions_covers_about_half(tmp_path, monkeypatch)
     got = results.summary(results.scored(2026))
     assert got["cover_games"] == 4 and got["cover_wins"] == 2
     assert got["fav_bias"] == pytest.approx(0.0)
+
+
+def test_the_bets_card_writes_margins_the_way_a_sportsbook_does():
+    """"South Florida -6.0 ... we have them +14.9, the book +6.0" mixed a line
+    with margins; the favourite is negative throughout now."""
+    from cfb.site import homecards
+    fav = {"kind": "spread", "team": "South Florida", "opponent": "Temple", "line": -6.0,
+           "model": 14.9, "market_margin": 6.0, "game_id": "1"}
+    dog = {"kind": "spread", "team": "Pitt", "opponent": "Virginia Tech", "line": 3.5,
+           "model": 4.3, "market_margin": -3.5, "game_id": "2"}
+    assert "we have them -14.9, the book -6.0" in homecards._leg_html(fav, {})
+    assert "we have them -4.3, the book +3.5" in homecards._leg_html(dog, {})
+    assert homecards._as_line(0.0) == "pk"

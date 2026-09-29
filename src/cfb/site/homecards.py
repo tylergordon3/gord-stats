@@ -417,7 +417,8 @@ def _spread_pick(game) -> dict:
 
     Both numbers are quoted from that side's own point of view - a pick on the
     underdog reading "we make it +29, the book +56" is two different sign
-    conventions in one sentence.
+    conventions in one sentence. `model` and `market_margin` are margins (the
+    side wins by); the card writes them as lines (_as_line).
     """
     home = game["edge"] > 0
     side, other = (game["home"], game["away"]) if home else (game["away"], game["home"])
@@ -545,11 +546,19 @@ def _season_record() -> str:
             + (f"-{pushes}" if pushes else "") + "</strong>.")
 
 
+def _as_line(margin: float) -> str:
+    """A side's winning margin written as a sportsbook line, the favourite
+    negative: we have them winning by 14.9 -> -14.9 (the card read "+14.9"
+    beside a call of "-6.0", two conventions in one sentence)."""
+    line = -float(margin)
+    return "pk" if abs(line) < 0.05 else f"{line:+.1f}"
+
+
 def _leg_html(pick: dict, finals: dict) -> str:
     if pick["kind"] == "spread":
         call = f"{escape(pick['team'])} {pick['line']:+.1f}"
         sub = (f"vs {escape(pick['opponent'])} &middot; we have them "
-               f"{pick['model']:+.1f}, the book {pick['market_margin']:+.1f}")
+               f"{_as_line(pick['model'])}, the book {_as_line(pick['market_margin'])}")
     else:
         call = f"{pick['side']} {pick['line']:.1f}"
         sub = f"{escape(pick['team'])} &middot; we make it {pick['model']:.1f}"
@@ -576,7 +585,7 @@ def bets_html(now: datetime = None) -> str:
             f"<div class='hc-call'>{escape(single['team'])} {single['line']:+.1f}"
             f"{_mark(_grade(single, finals))}</div>"
             f"<div class='hc-sub'>vs {escape(single['opponent'])} &middot; we have them "
-            f"{single['model']:+.1f}, the book {single['market_margin']:+.1f}</div></div>"]
+            f"{_as_line(single['model'])}, the book {_as_line(single['market_margin'])}</div></div>"]
     if picks["parlay"]:
         legs = "".join(_leg_html(p, finals) for p in picks["parlay"])
         body.append(f"<div class='hc-pick'><div class='hc-kind'>"
