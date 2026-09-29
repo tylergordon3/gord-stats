@@ -294,6 +294,12 @@ the Pi, features). Done the same night:
       in the playoffs, "time TBA" kickoffs, outside projections frozen at kickoff, stat
       corrections re-read once, week files after the rollover, readers' power on Monday.
 
+- [x] **Since:** CBB game predictions on the scoreboard and My teams (1bef36312); bets card in
+      sportsbook signs (ea41f47ce); CFB league power backfilled to the draft (4ae0271a6).
+- [ ] **ESPN leagues for readers:** public-league sync, a translation layer to the Sleeper shapes the
+      reader pages use (player ids already map). Build against the WNBA ESPN league + ESPN's
+      public football defaults; verify on a friend's public NFL league when it exists.
+
 Open:
 - [ ] **Dec/Jan:** bets card locks once for all bowls; "Week 20" labels; bowls lack CFBD weather
       and usage; NFL postponed games / TBD playoff placeholders; yearly CFB refit stuck on 2020-25.
