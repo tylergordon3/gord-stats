@@ -6,10 +6,10 @@ import pytz
 import requests
 from bs4 import BeautifulSoup
 
-from cbb import paths, url
+from cbb import paths, url, utils
 
 def parse_to_df(url):
-    resp = requests.get(url)
+    resp = requests.get(url, timeout=30)
     soup = BeautifulSoup(resp.content, "html.parser")
     table = soup.find("table")
 
@@ -56,25 +56,10 @@ def main():
 def get_today_ats():
     ats_dir = paths.M_ATS_DIR
 
-    # Today's filename
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    today_file = ats_dir / f"{today_str}.json"
-
-    # If today's file exists, return it
-    if today_file.exists():
-        target_file = today_file
-
-    # Otherwise get most recent file
-    files = sorted(
-        ats_dir.glob("*.json"),
-        key=lambda f: f.name,
-        reverse=True,
-    )
-
-    if not files:
+    # This season's newest, never last season's (utils.latest_this_season).
+    target_file = utils.latest_this_season(ats_dir)
+    if target_file is None:
         return None
-
-    target_file = files[0]
 
     # Load JSON
     with open(target_file, "r", encoding="utf-8") as f:

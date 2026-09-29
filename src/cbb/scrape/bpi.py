@@ -85,14 +85,23 @@ def parse_team_entry(entry):
 def main():
     teams = []
 
-    r = requests.get(url.NCAAM_BPI, params={**params, "page": 1})
+    r = requests.get(url.NCAAM_BPI, params={**params, "page": 1}, timeout=30)
     data = r.json()
+    # Until ESPN publishes the new season's index it serves the last one
+    # (requestedSeason 2026 under currentSeason 2027 in late September), and
+    # filing that under today's date made it this season's BPI - blended into
+    # the power rating and read as this season's conference records.
+    have = (data.get("requestedSeason") or {}).get("year")
+    want = (data.get("currentSeason") or {}).get("year")
+    if have and want and have != want:
+        from cbb.scrape.net import NotReleased
+        raise NotReleased(f"BPI not out for {want} yet (ESPN serves {have})")
 
     pages = data["pagination"]["pages"]
     teams.extend(data["teams"])
 
     for page in range(2, pages + 1):
-        r = requests.get(url.NCAAM_BPI, params={**params, "page": page})
+        r = requests.get(url.NCAAM_BPI, params={**params, "page": page}, timeout=30)
         teams.extend(r.json()["teams"])
 
     rows = [parse_team_entry(t) for t in teams]
@@ -115,25 +124,10 @@ def main():
 def get_today_bpi():
     bpi_dir = paths.M_ESPN_DIR
 
-    # Today's filename
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    today_file = bpi_dir / f"{today_str}.json"
-
-    # If today's file exists, return it
-    if today_file.exists():
-        target_file = today_file
-
-    # Otherwise get most recent file
-    files = sorted(
-        bpi_dir.glob("*.json"),
-        key=lambda f: f.name,
-        reverse=True,
-    )
-
-    if not files:
+    # This season's newest, never last season's (utils.latest_this_season).
+    target_file = utils.latest_this_season(bpi_dir)
+    if target_file is None:
         return None
-
-    target_file = files[0]
 
     # Load JSON
     with open(target_file, "r", encoding="utf-8") as f:
@@ -144,7 +138,8 @@ def get_today_bpi():
 
 def get_conf_records():
     bpi = get_today_bpi()
-    
+    if bpi is None:
+        return {}                           # this season's table not out yet
     conf_records = {teams.getTeamOfficialName(row[1]): f"{int(row[17])}-{int(row[18])}" for row in bpi["rows"]}
     return conf_records
  

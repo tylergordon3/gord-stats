@@ -82,25 +82,10 @@ def get_today_net(gender):
         print("Invalid gender given to get_today_net.")
         return None
 
-    # Today's filename
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    today_file = net_dir / f"{today_str}.json"
-
-    # If today's file exists, return it
-    if today_file.exists():
-        target_file = today_file
-
-    # Otherwise get most recent file
-    files = sorted(
-        net_dir.glob("*.json"),
-        key=lambda f: f.name,  # filenames are YYYY-MM-DD.json so this works
-        reverse=True,
-    )
-
-    if not files:
+    # This season's newest, never last season's (utils.latest_this_season).
+    target_file = utils.latest_this_season(net_dir)
+    if target_file is None:
         return None
-
-    target_file = files[0]
 
     # Load JSON
     with open(target_file, "r", encoding="utf-8") as f:

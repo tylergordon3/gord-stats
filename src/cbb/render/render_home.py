@@ -19,8 +19,11 @@ def team_logos(df):
 
 
 # CBB regular season window: the homepage leads with college basketball
-# inside it, and with WNBA fantasy outside it. Update yearly.
-CBB_TIPOFF     = date(2026, 11, 2)
+# inside it, and with WNBA fantasy outside it. Update yearly - from the first
+# game on the schedule, not the usual Monday: 2026-27 opens Sunday Nov 1
+# (Notre Dame-Villanova in Rome, men and women), and a Nov 2 tipoff left
+# the live scoreboard off for it.
+CBB_TIPOFF     = date(2026, 11, 1)
 CBB_SEASON_END = date(2027, 4, 10)
 
 
@@ -393,7 +396,9 @@ def _my_teams(today: date) -> str:
     """The reader's own teams (gordstats.my_teams_today), ahead of everything:
     football's week from late August through the playoff final, basketball's
     day from tipoff to the last game."""
-    cfb = today >= date(today.year, 8, 20) or today <= date(today.year, 1, 20)
+    # Through January: the CFP final is Jan 25, 2027, and ESPN's postseason
+    # window runs to the 28th.
+    cfb = today >= date(today.year, 8, 20) or today <= date(today.year, 1, 31)
     cbb = CBB_TIPOFF <= today <= CBB_SEASON_END
     if not (cfb or cbb):
         return ""

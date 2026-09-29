@@ -1,4 +1,5 @@
 import json
+import re
 import time
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -53,11 +54,37 @@ def chunks(lst, n):
         yield lst[i : i + n]
 
 def get_stat(idx, master, lookup):
+    if idx is None:
+        return None                     # a team the master list does not know
     aliases = master["names"][idx]
     for alias in aliases:
         if alias in lookup:
             return lookup[alias]
     return None
+
+
+_DIVISION_I = re.compile(r"NCAA Division I( Women)?")
+
+
+def resolve_team(obj: dict, master) -> tuple:
+    """(master index, name, short name) for one of theScore's teams.
+
+    Only a Division I school is the master list's to name. Below it theScore's
+    codes collide with the list's aliases - its UMD is Michigan-Dearborn (NAIA),
+    which the list files under Maryland (theScore's MD) - and a non-D1 opponent
+    is not on the list at all, which used to end in a KeyError that took the
+    whole scoreboard down: 56 of 172 men's and 67 of 160 women's games on the
+    2026 opening slate (the 2026-09-28 audit). Those keep theScore's own name
+    and no index, so every stat lookup is a blank.
+    """
+    division = obj.get("division")
+    if not division or _DIVISION_I.fullmatch(division.strip()):
+        idx, name, short = scraper.getNameFromCode(obj.get("abbreviation"), master, True)
+        if name is not None:
+            return idx, name, short
+    own = (obj.get("medium_name") or obj.get("full_name") or obj.get("name")
+           or obj.get("abbreviation") or "TBD").strip()
+    return None, own, obj.get("abbreviation") or own
 
 
 def get_rank_dict_for_league(league):
@@ -214,8 +241,10 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
         bpi_lookup = {row[1]: row[7] for row in bpi["rows"]}
 
     # ---- both genders lookup dicts ----
-    net_lookup = {row[1]: row[0] for row in net["rows"]}
-    wab_lookup = {teams.cleanTorvikNames(row[1]): row[-1] for row in tor_dict["rows"]}
+    # Either may be missing: neither is published for a new season on day one.
+    net_lookup = {row[1]: row[0] for row in net["rows"]} if net else {}
+    wab_lookup = ({teams.cleanTorvikNames(row[1]): row[-1] for row in tor_dict["rows"]}
+                  if tor_dict else {})
     # Not the whole Torvik table: it rode along on every game (22a3d95d7), ~92 KB
     # each that nothing reads - fine for a four-game tournament day, ~30 MB on
     # opening night, over KV's 25 MB value limit and downloaded by every phone
@@ -226,12 +255,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender):
     away_obj = g["away_team"]
 
     # ---- get team info from master dict ----
-    [home_idx, home_name, home_abb] = scraper.getNameFromCode(
-        home_obj.get("abbreviation"), master, True
-    )
-    [away_idx, away_name, away_abb] = scraper.getNameFromCode(
-        away_obj.get("abbreviation"), master, True
-    )
+    home_idx, home_name, home_abb = resolve_team(home_obj, master)
+    away_idx, away_name, away_abb = resolve_team(away_obj, master)
 
     # ---- gord model rankings ----
     # .get: a team the model never ranked (a non-D1 opponent, a new program)
@@ -475,13 +500,11 @@ def get_current_live_dataset(league_key):
 
     today = datetime.today().date().isoformat()
 
-    if today in ranks_dict:
-        ranks_date = today
-    else:
-        # fallback to most recent available date
-        ranks_date = max(ranks_dict.keys())
-
-    ranks = ranks_dict.get(ranks_date, {})
+    # Today's ranks, else the newest from this season - never last season's,
+    # which put "Duke #1 (35-3)" on the first night of the next one.
+    this_season = [d for d in ranks_dict if utils.season_year(d) == utils.season_year(today)]
+    ranks_date = today if today in ranks_dict else max(this_season, default=None)
+    ranks = ranks_dict.get(ranks_date, {}) if ranks_date else {}
 
     master = scraper.getMasterTeams()
 

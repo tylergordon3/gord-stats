@@ -20,6 +20,29 @@ def season_year(day) -> int:
     return day.year + 1 if day.month >= 7 else day.year
 
 
+def latest_this_season(folder, day=None):
+    """The newest dated file (YYYY-MM-DD.json) in `folder` from the season
+    `day` falls in - today by default - or None.
+
+    The scrapers' getters used to take the newest file on disk whatever its
+    season, so from tipoff until each source published again the live
+    scoreboard showed last season's NET, BPI, ATS records and WAB (found by the
+    2026-09-28 audit). Blank beats wrong.
+    """
+    season = season_year(day or date.today())
+    files = sorted(Path(folder).glob("*.json"), key=lambda f: f.name)
+    for f in reversed(files):
+        try:
+            year = season_year(f.stem)
+        except ValueError:
+            continue                        # not a dated file
+        if year == season:
+            return f
+        if year < season:
+            break                           # sorted: nothing older is this season
+    return None
+
+
 def root():
     return Path(__file__).parent.parent
 

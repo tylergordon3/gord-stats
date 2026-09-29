@@ -39,7 +39,10 @@ def main(df, gender):
     # Conference records come from ESPN's men's BPI table, and the women's page
     # was reading it too: UConn's women (34-0) showed the men's 17-3. There is
     # no women's source wired in yet, so their page goes without the column.
-    records = gender == "M"
+    # And none until ESPN publishes this season's table: last season's
+    # records read as this season's until December otherwise.
+    conf_record_dict = bpi.get_conf_records() if gender == "M" else {}
+    records = bool(conf_record_dict)
     html += (
         "<p class='week-meta'>"
         + ("<strong>Conf Record</strong> is the record in conference play; " if records else "")
@@ -50,7 +53,6 @@ def main(df, gender):
         f"<strong>-</strong> = no change).</p>"
     )
 
-    conf_record_dict = bpi.get_conf_records() if records else {}
     for k, v in conf_dict.items():
         if records:
             # .get: a team BPI does not list (a school new to D1) is a blank,

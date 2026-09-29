@@ -530,17 +530,20 @@ def full_prediction(date) -> pd.DataFrame:
         df["Net"] = df["Net"].astype(float)
         df["Net"] = 1 - (df["Net"] - 1) / (n - 1)
 
-    bpi_json = get_recent_file(paths.M_ESPN_DIR)
-    bpi_df = pd.DataFrame(bpi_json["rows"], columns=bpi_json["headers"])
-    bpi_df = bpi_df[["team", "rank"]].copy()
-    bpi_df["Team"] = bpi_df.apply(
-        lambda x: teams.getTeamOfficialName(x["team"]), axis=1
-    )
-    bpi_df = bpi_df.rename(columns={"rank": "BPI"})
-    df = pd.merge(df, bpi_df[["BPI", "Team"]].copy(), "inner", "Team")
-
-    df["BPI"] = df["BPI"].astype(float)
-    df["BPI"] = 1 - (df["BPI"] - 1) / (n - 1)
+    # This season's BPI only, like NET: ESPN serves last season's until the new
+    # index is out, and blending that in ranked teams on a year-old rating.
+    bpi_path = utils.latest_this_season(paths.M_ESPN_DIR, date)
+    bpi_json = json.loads(bpi_path.read_text(encoding="utf-8")) if bpi_path else None
+    if bpi_json is not None:
+        bpi_df = pd.DataFrame(bpi_json["rows"], columns=bpi_json["headers"])
+        bpi_df = bpi_df[["team", "rank"]].copy()
+        bpi_df["Team"] = bpi_df.apply(
+            lambda x: teams.getTeamOfficialName(x["team"]), axis=1
+        )
+        bpi_df = bpi_df.rename(columns={"rank": "BPI"})
+        df = pd.merge(df, bpi_df[["BPI", "Team"]].copy(), "inner", "Team")
+        df["BPI"] = df["BPI"].astype(float)
+        df["BPI"] = 1 - (df["BPI"] - 1) / (n - 1)
 
     df["Torvik"] = df["Torvik"].astype(float)
     df["Torvik"] = 1 - (df["Torvik"] - 1) / (n - 1)
@@ -551,12 +554,16 @@ def full_prediction(date) -> pd.DataFrame:
     model_cons = 0.4
     ranks_cons = 0.05
     df["Pwr"] = (ranks_cons * df["Torvik"] + model_cons * df["GordTor"]
-                 + model_cons * df["GordKen"] + ranks_cons * df["Kenpom"]
-                 + ranks_cons * df["BPI"])
-    if net_json is not None:
-        df["Pwr"] += ranks_cons * df["Net"]
-    else:
-        df["Pwr"] /= 1 - ranks_cons          # no NET yet: the same scale without it
+                 + model_cons * df["GordKen"] + ranks_cons * df["Kenpom"])
+    # NET and BPI each join once this season's is out; until then the same
+    # scale without them.
+    missing = 0
+    for col, got in (("Net", net_json), ("BPI", bpi_json)):
+        if got is not None:
+            df["Pwr"] += ranks_cons * df[col]
+        else:
+            missing += 1
+    df["Pwr"] /= 1 - missing * ranks_cons
     df = df.sort_values("Pwr", ascending=False)
     df["Ovr"] = range(1, len(df) + 1)
 
