@@ -311,6 +311,9 @@ Open:
       slots and red tags in dark; women's History/Conf routed and lit; team pages light Rankings;
       clean URLs in nav/home/sitemap; no signed-out 401; CFB schedule controls on one row;
       distinct tab titles.
-- [ ] **Features, ranked:** per-page preview images; a share button; playoff-odds swing / game of
+- [x] **Per-page preview images** (9b96f42c0, 6c79937f9): recaps, matchups, both power pages and
+      the CFB Top 25 draw their own 1200x630 card (gordstats.share_card); the home page keeps the
+      site card.
+- [ ] **Features, ranked:** a share button; playoff-odds swing / game of
       the week; an honest bets record (CLV); CBB game predictions; Saturday watch guide.
 
