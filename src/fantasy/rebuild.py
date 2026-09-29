@@ -28,14 +28,17 @@ PAGES = [
     ("transactions", "Waivers & Trades",                  lambda: _gen("transactions")),
     ("draft",        "Draft Analytics (board, values, report, DNA)", lambda: _gen("draft_analytics")),
     ("power",        "Power Rankings (post-draft)",        lambda: _gen("power")),
+    # Before "matchups" and "homepage": both point at the newest recap.
+    ("recap",        "Weekly Recap (scores, awards, lineup accuracy)", lambda: _gen("recap")),
+    ("matchups",     "Weekly Matchups (rosters, projections, points)", lambda: _gen("matchups")),
+    # After "matchups", which captures the new week at a rollover: before it,
+    # the week files were a run behind every Tuesday and League Home drew the
+    # new week's games as "0.0-0.0 final" off last week's kickoffs.
     ("players",      "Player index + week projections (for your own league)",
                                                           lambda: _gen("players_index")),
     # After "players": the board reads the week's projections for catch rates.
     ("board",        "Season projection board (ranks your own league)",
                                                           lambda: _gen("season_board")),
-    # Before "matchups" and "homepage": both point at the newest recap.
-    ("recap",        "Weekly Recap (scores, awards, lineup accuracy)", lambda: _gen("recap")),
-    ("matchups",     "Weekly Matchups (rosters, projections, points)", lambda: _gen("matchups")),
     # After "matchups": the week context reads the archive that step refreshes.
     ("context",      "This week's lines, forecasts and defence-vs-position",
                                                           lambda: _gen("week_context")),

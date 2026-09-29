@@ -771,7 +771,11 @@ JS = """{% raw %}<script>
       // into each player's form. Taking the lesser keeps a week from being
       // counted as played by one and still projected by the other - the same
       // rule `power.rankings` follows on the page beside this one.
-      var played=Math.min(run.played, board.week||0, weeks);
+      // And Sleeper's own word on which weeks are over: every roster has
+      // points by Monday afternoon, but a week is not over until Monday
+      // night's game is (last_scored_leg says 2 all through week 3's).
+      var scored=typeof settings.last_scored_leg==='number'?settings.last_scored_leg:weeks;
+      var played=Math.min(run.played, board.week||0, weeks, scored);
       var spec={board:board.board, posNames:board.pos, rosters:rosters,
                 slots:league.slots, basis:league.basis.index, weeks:weeks,
                 playoffTeams:settings.playoff_teams||6,

@@ -173,3 +173,63 @@ def test_the_closing_line_and_the_final_are_kept(tmp_path, monkeypatch):
     before = (tmp_path / "record" / "2027.json").stat().st_mtime_ns
     lines.publish(2027)
     assert (tmp_path / "record" / "2027.json").stat().st_mtime_ns == before, "unchanged, unwritten"
+
+
+# --------------------------------------------------------------------------- #
+# Numbers that were wrong
+# --------------------------------------------------------------------------- #
+
+def _nfl_week_data(states, sleeper_pts):
+    return {"games": [{"game_id": "1", "date": "2026-09-13T17:00Z", "home": "KC", "away": "DEN",
+                       "state": states[0], "detail": "", "home_score": 0, "away_score": 0,
+                       "home_implied": None, "away_implied": None},
+                      {"game_id": "2", "date": "2026-09-15T00:15Z", "home": "CHI", "away": "PHI",
+                       "state": states[1], "detail": "", "home_score": 0, "away_score": 0,
+                       "home_implied": None, "away_implied": None}],
+            "projections": {"1": {"pts": sleeper_pts, "team": "KC"},
+                            "2": {"pts": sleeper_pts, "team": "PHI"}},
+            "external": {"espn": {"1": sleeper_pts, "2": sleeper_pts, "KC": sleeper_pts}}}
+
+
+def test_outside_projections_stay_as_they_were_at_kickoff():
+    from fantasy.league import matchups
+    old = _nfl_week_data(("pre", "pre"), 10.0)
+    new = _nfl_week_data(("in", "pre"), 2.0)       # KC-DEN is on; CHI-PHI is not
+    out = matchups.keep_pregame(old, new)
+    assert out["projections"]["1"]["pts"] == 10.0, "KC kicked off: the pregame number stands"
+    assert out["projections"]["2"]["pts"] == 2.0, "PHI has not: today's number is the pregame one"
+    assert out["external"]["espn"]["1"] == 10.0 and out["external"]["espn"]["KC"] == 10.0
+    assert out["external"]["espn"]["2"] == 2.0
+    assert matchups.keep_pregame(None, new) is new
+
+
+def test_a_finished_week_is_read_once_more_for_corrections(tmp_path, monkeypatch):
+    from fantasy.league import matchups
+    final = _nfl_week_data(("post", "post"), 10.0)
+    final["matchups"] = [{"matchup_id": 1, "sides": [{"points": 100.0}, {"points": 90.0}]}]
+    cache = tmp_path / "week_03.json"
+    cache.write_text(json.dumps(final))
+    corrected = json.loads(json.dumps(final))
+    corrected["matchups"][0]["sides"][0]["points"] = 101.5
+    corrected["projections"]["1"]["pts"] = 0.0          # post-game: must not replace kickoff's
+    calls = []
+    monkeypatch.setattr(matchups, "_fetch_week", lambda *a: calls.append(a) or json.loads(json.dumps(corrected)))
+    out = matchups._settle(json.loads(cache.read_text()), 3, 2026, "L", cache)
+    assert out["settled"] and out["matchups"][0]["sides"][0]["points"] == 101.5
+    assert out["projections"]["1"]["pts"] == 10.0
+    assert matchups._settle(out, 3, 2026, "L", cache) is out and len(calls) == 1, "once"
+    # A failed read keeps the archive and tries again later.
+    monkeypatch.setattr(matchups, "_fetch_week", lambda *a: (_ for _ in ()).throw(OSError("down")))
+    assert matchups._settle(final, 3, 2026, "L", cache) is final
+
+
+def test_a_game_with_no_kickoff_time_says_so():
+    from datetime import datetime, timezone
+    from cfb.site import predictions
+    game = {"pred_margin": 7.0, "home": "Iowa", "away": "Ohio State", "home_win_prob": 0.7,
+            "date": datetime(2026, 10, 17, 4, 0, tzinfo=timezone.utc), "time_valid": False,
+            "pred_total": 50.0, "home_id": "2294", "away_id": "194", "neutral": False,
+            "pred_home": 28.5, "pred_away": 21.5, "home_rank": float("nan"),
+            "away_rank": 2.0, "home_rating": 3.0, "away_rating": 9.0}
+    html = predictions._card(pd.Series(game))
+    assert "12:00 AM" not in html and "time TBA" in html

@@ -499,6 +499,8 @@ JS = """{% raw %}<script>
     });
     pairs.sort(function(x,y){ return (y.mine?1:0)-(x.mine?1:0); });
     var off=idle.filter(Boolean);
+    // Sleeper plays the median in the regular season only.
+    var st=info.settings||{};
     host.innerHTML=medianTracker(pairs, started, WEEK,
                                  st.league_average_match
                                  && !(st.playoff_week_start && WEEK>=st.playoff_week_start))
@@ -609,7 +611,10 @@ JS = """{% raw %}<script>
       var rows=out[0]||[], rosters=out[1]||[], users=out[2]||[];
       INDEX=out[3]||{};
       var info=out[4]||{}, wk=out[5]||{proj:{}};
+      // Another week's projections (the file trails a rollover) are none.
+      if(wk.week && +wk.week!==+WEEK) wk={proj:{}};
       CTX=out[6]||{teams:{},gs:{}};
+      if(CTX.week && +CTX.week!==+WEEK) CTX={teams:{},gs:{}};
       WEEKPROJ=wk.proj||{};
       // Sleeper's three bases, as everywhere else: a half-PPR league must not
       // be shown PPR numbers.

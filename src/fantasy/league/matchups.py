@@ -460,16 +460,84 @@ def _path(week: int, year: int):
     return MATCHUPS_DIR / str(year) / f"week_{int(week):02d}.json"
 
 
+def keep_pregame(old: dict, new: dict) -> dict:
+    """`new` with every projection - Sleeper's, ESPN's, FantasyPros' - held at
+    what `old` had for a player whose game has kicked off.
+
+    A week refetches until it is final, and each refetch used to replace the
+    outside projections with whatever the sources said then: in-game and
+    post-game numbers, which the accuracy table then scored as if they had
+    been made beforehand (the 2026-09-28 audit). Ours are frozen the same way
+    (fantasy.pregame).
+    """
+    if not old:
+        return new
+    started = {t for t, g in team_games(new.get("games") or []).items() if g["state"] != "pre"}
+    teams = {pid: (p or {}).get("team") for pid, p in (old.get("projections") or {}).items()}
+    teams.update({pid: (p or {}).get("team") for pid, p in (new.get("projections") or {}).items()})
+
+    def kicked(pid):
+        return (teams.get(pid) or (pid if pid.isalpha() else None)) in started
+
+    for pid, v in (old.get("projections") or {}).items():
+        if kicked(pid):
+            new.setdefault("projections", {})[pid] = v
+    for src, vals in (old.get("external") or {}).items():
+        cur = new.setdefault("external", {}).setdefault(src, {})
+        for pid, v in vals.items():
+            if kicked(pid):
+                cur[pid] = v
+    return new
+
+
+#: Days after a week's last game before it is read once more for Sleeper's
+#: stat corrections, which land in the days after (usually by Thursday).
+SETTLE_DAYS = 2
+
+
+def _settle(data: dict, week: int, year: int, league_id: str, cache) -> dict:
+    """A final week, read once more after its stat corrections - then never.
+
+    A finished week used to be frozen at the first fetch after its last game:
+    corrections never reached the archive, the recap or the accuracy table,
+    and a fetch seconds after the final whistle could catch Sleeper before its
+    final stats (the audit). The projections stay as they were at kickoff
+    (keep_pregame); a failed read leaves the archive as it is, to try again.
+    """
+    if data.get("settled"):
+        return data
+    dates = [g.get("date") for g in data.get("games") or [] if g.get("date")]
+    if not dates:
+        return data
+    last = max(datetime.fromisoformat(d.replace("Z", "+00:00")) for d in dates)
+    if datetime.now(timezone.utc) < last + timedelta(days=SETTLE_DAYS):
+        return data
+    try:
+        again = keep_pregame(data, _fetch_week(int(week), year, league_id))
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! week {week} not re-read for corrections ({exc})")
+        return data
+    if not again.get("matchups") or not week_final(again):
+        return data
+    again["settled"] = True
+    cache.write_text(json.dumps(again, indent=1))
+    return again
+
+
 def week_matchups(week: int, year: int = UPCOMING_YEAR, league_id: str = UPCOMING_LEAGUE_ID,
                   refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> dict:
     """One week: Sleeper matchups and rosters, projections, stats, NFL games."""
     cache = _path(week, year)
+    old = None
     if cache.exists():
         data = json.loads(cache.read_text())
         fresh = (time.time() - cache.stat().st_mtime) < max_age_hours * 3600
-        if week_final(data) or (not refresh and fresh):
+        if week_final(data):
+            return _settle(data, week, year, league_id, cache)
+        if not refresh and fresh:
             return data
-    data = _fetch_week(int(week), year, league_id)
+        old = data
+    data = keep_pregame(old, _fetch_week(int(week), year, league_id))
     if not data["matchups"]:
         raise RuntimeError(f"Sleeper has no matchups for week {week}")
     cache.parent.mkdir(parents=True, exist_ok=True)

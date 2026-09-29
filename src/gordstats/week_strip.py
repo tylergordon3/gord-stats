@@ -204,6 +204,10 @@ JS = """{% raw %}<script>
     if(!info||!rosters.length||!week||String(info.season)!==String(state.season)){
       host.innerHTML=''; return;                 // offseason, or a league Sleeper cannot find
     }
+    // The site's week file trails Sleeper for a few hours at a rollover: last
+    // week's kickoffs drew the new week's games as "0.0-0.0 final". Another
+    // week's file is no file.
+    if(wk.week && +wk.week!==week) wk={proj:{},kick:{}};
     var byUser={}, byRoster={};
     users.forEach(function(u){
       byUser[u.user_id]={team:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',

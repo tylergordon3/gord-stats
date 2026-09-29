@@ -202,12 +202,18 @@ def absorbed_weeks(year: int = UPCOMING_YEAR) -> int:
     thing a second implementation must not do.
 
     The built page avoids this by taking the lesser of nflverse and the weeks
-    its own league has fully scored. There is no league here, so the week's own
-    size is the test.
+    its own league has fully scored. There is no league here, so the NFL's own
+    calendar is the test: a week is over once Sleeper's display week has moved
+    past it (the same rule the pages use). Only if Sleeper will not answer does
+    the week's own size decide - and that test rejected finished bye weeks,
+    whose four to six missing teams read as a week part played (the audit).
     """
-    from fantasy.league import weekly_points
+    from fantasy.league import matchups, weekly_points
 
     weeks = projections.completed_weeks(year)
+    over = matchups.weeks_over(year)
+    if over is not None:
+        return min(weeks, over)
     if weeks < 2:
         return weeks
     path = weekly_points.path(year)

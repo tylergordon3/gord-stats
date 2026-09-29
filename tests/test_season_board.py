@@ -122,3 +122,23 @@ def test_a_part_played_week_is_not_absorbed(tmp_path, monkeypatch):
     pd.DataFrame([{"week": 1}] * 3700 + [{"week": 2}] * 3700
                  + [{"week": 3}] * 3600).to_parquet(path)
     assert season_board.absorbed_weeks(2026) == 3
+
+
+def test_sleepers_calendar_decides_when_it_answers(tmp_path, monkeypatch):
+    """A bye week has four to six fewer teams' rows, which the size test read
+    as a week part played; Monday afternoon, every team has rows but Monday
+    night's game is still to come. Sleeper's display week knows both."""
+    import pandas as pd
+    from fantasy import projections
+    from fantasy.league import matchups, weekly_points
+
+    path = tmp_path / "weekly.parquet"
+    # Week 3 is a bye week: 83% of a full week's rows - "part played" by size.
+    pd.DataFrame([{"week": 1}] * 3700 + [{"week": 2}] * 3700
+                 + [{"week": 3}] * 3080).to_parquet(path)
+    monkeypatch.setattr(weekly_points, "path", lambda year: path)
+    monkeypatch.setattr(projections, "completed_weeks", lambda year=None: 3)
+    monkeypatch.setattr(matchups, "weeks_over", lambda year=None: 3)
+    assert season_board.absorbed_weeks(2026) == 3
+    monkeypatch.setattr(matchups, "weeks_over", lambda year=None: 2)
+    assert season_board.absorbed_weeks(2026) == 2, "Monday: week 3 is not over"
