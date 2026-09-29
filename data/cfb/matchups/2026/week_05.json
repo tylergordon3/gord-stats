@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-29T09:41:06+00:00",
+ "fetched": "2026-09-29T15:35:57+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 166.82,
-     "win_probability": 0.59
+     "projected": 179.8,
+     "win_probability": 0.66
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 153.39,
-     "win_probability": 0.41000000000000003
+     "win_probability": 0.33999999999999997
     }
    ]
   },
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 123.12,
-     "win_probability": 0.5700000000000001
+     "projected": 175.78,
+     "win_probability": 0.87
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 114.12,
-     "win_probability": 0.42999999999999994
+     "win_probability": 0.13
     }
    ]
   },
@@ -209,6 +209,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "471478",
+    "player": "JJ Buchanan",
+    "pos": "WR",
+    "team": "MICH",
+    "team_full": "Michigan Wolverines",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "WR",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "405317",
     "player": "Patrick Overmyer",
     "pos": "TE",
@@ -327,20 +341,6 @@
     "team": "OU",
     "team_full": "Oklahoma Sooners",
     "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "471478",
-    "player": "JJ Buchanan",
-    "pos": "WR",
-    "team": "MICH",
-    "team_full": "Michigan Wolverines",
-    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1085,20 +1085,6 @@
   ],
   "474.l.21318.t.3": [
    {
-    "yahoo_id": "404164",
-    "player": "Devon Dampier",
-    "pos": "QB",
-    "team": "UTAH",
-    "team_full": "Utah Utes",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "QB",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "404635",
     "player": "Lincoln Kienholz",
     "pos": "QB",
@@ -1113,16 +1099,16 @@
     "stats": {}
    },
    {
-    "yahoo_id": "340537",
-    "player": "Cam Edwards",
-    "pos": "RB",
-    "team": "MSU",
-    "team_full": "Michigan State Spartans",
+    "yahoo_id": "470424",
+    "player": "Keelon Russell",
+    "pos": "QB",
+    "team": "ALA",
+    "team_full": "Alabama Crimson Tide",
     "bye": 9.0,
-    "status": "OFS",
-    "status_full": "Out For Season",
-    "injury_note": "Knee",
-    "slot": "RB",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "QB",
     "points": 0.0,
     "stats": {}
    },
@@ -1133,6 +1119,20 @@
     "team": "BYU",
     "team_full": "BYU Cougars",
     "bye": 4.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "RB",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457591",
+    "player": "Jordan Marshall",
+    "pos": "RB",
+    "team": "MICH",
+    "team_full": "Michigan Wolverines",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1169,12 +1169,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "327462",
-    "player": "Umari Hatcher",
+    "yahoo_id": "455922",
+    "player": "Chris Durr Jr.",
     "pos": "WR",
-    "team": "SYR",
-    "team_full": "Syracuse Orange",
-    "bye": 4.0,
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1197,12 +1197,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "455922",
-    "player": "Chris Durr Jr.",
+    "yahoo_id": "327462",
+    "player": "Umari Hatcher",
     "pos": "WR",
-    "team": "UMD",
-    "team_full": "Maryland Terrapins",
-    "bye": 8.0,
+    "team": "SYR",
+    "team_full": "Syracuse Orange",
+    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1221,6 +1221,34 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "340537",
+    "player": "Cam Edwards",
+    "pos": "RB",
+    "team": "MSU",
+    "team_full": "Michigan State Spartans",
+    "bye": 9.0,
+    "status": "OFS",
+    "status_full": "Out For Season",
+    "injury_note": "Knee",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "404164",
+    "player": "Devon Dampier",
+    "pos": "QB",
+    "team": "UTAH",
+    "team_full": "Utah Utes",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1245,20 +1273,6 @@
     "team": "ORE",
     "team_full": "Oregon Ducks",
     "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "457591",
-    "player": "Jordan Marshall",
-    "pos": "RB",
-    "team": "MICH",
-    "team_full": "Michigan Wolverines",
-    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1295,20 +1309,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "470424",
-    "player": "Keelon Russell",
-    "pos": "QB",
-    "team": "ALA",
-    "team_full": "Alabama Crimson Tide",
-    "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "900076",
     "player": "LSU",
     "pos": "DEF",
@@ -1318,7 +1318,7 @@
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "BN",
+    "slot": "DEF",
     "points": 0.0,
     "stats": {}
    }
@@ -2545,11 +2545,11 @@
   "482918": 14.64,
   "471011": 24.16,
   "458486": 17.23,
+  "471478": 12.98,
   "405317": 10.93,
   "405245": 11.25,
   "457379": 11.71,
   "469860": 9.9,
-  "471478": 12.98,
   "900104": 12.42,
   "405071": 22.43,
   "469436": 22.36,
@@ -2595,17 +2595,17 @@
   "404810": 11.47,
   "900073": 6.95,
   "404635": 26.21,
-  "340537": 0.0,
+  "470424": 24.76,
   "404291": 17.82,
+  "457591": 11.64,
   "337939": 15.13,
   "403842": 18.86,
-  "327462": 14.15,
-  "457898": 6.76,
   "455922": 15.12,
+  "457898": 6.76,
+  "327462": 14.15,
   "451329": 9.07,
-  "457591": 11.64,
+  "340537": 0.0,
   "406200": 8.0,
-  "470424": 24.76,
   "900076": 16.26,
   "337760": 26.07,
   "469212": 23.78,
