@@ -34,7 +34,7 @@ from fantasy.config import (                                   # noqa: E402
 from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
-from gordstats import charts, palette, share_card              # noqa: E402
+from gordstats import charts, palette, share_button, share_card  # noqa: E402
 from gordstats import my_league, my_league_data, my_power       # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
 
@@ -181,7 +181,10 @@ def _rankings_section(table: pd.DataFrame) -> str:
                       f"simulation) and <strong>{short}</strong> ({named}"
                       + (f", {when}" if when else "") + ") as ratings, not ranks")
 
-    return (f"{note}"
+    top = ", ".join(f"{int(r['rank'])}. {r['manager']}" for _, r in table.head(3).iterrows())
+    share = share_button.row("/fantasy/power/", (f"Power rankings through week {week}: {top}"
+                                                 if week else f"Power rankings out of the draft: {top}"))
+    return (f"{share}{note}"
             f"<div class='table-scroll'>{_rankings_table(table)}</div>"
             f"<p>{'. '.join(legend)}.</p>"
             + layout.details("Projected wins range", _range_chart(table)))

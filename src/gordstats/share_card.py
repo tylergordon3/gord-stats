@@ -214,3 +214,15 @@ def matchups(slug: str, kicker: str, week: int, pairs: list, started: bool,
     rows = [(a, ga, gb, b) for a, _pa, ga, b, _pb, gb in pairs]
     return games(slug, kicker, f"Week {week} Matchups", "GordStats projections", rows,
                  final=False, alt=f"Week {week} matchups and projections, {league}")
+
+
+def matchups_line(week: int, pairs: list, started: bool, final: bool) -> str:
+    """What a Share of a matchups page says: the same three states as its
+    card (matchups(), above) - projections, live once somebody has scored,
+    or final."""
+    live = started and any((p[1] or 0) > 0 or (p[4] or 0) > 0 for p in pairs)
+    if final:
+        return f"Week {week} final scores"
+    if live:
+        return f"Week {week}, live"
+    return f"Week {week} matchups, with GordStats projections"

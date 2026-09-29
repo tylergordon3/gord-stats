@@ -25,7 +25,7 @@ import pandas as pd
 from cfb import in_season, predict, pregame, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import logos, matchup_page as ui, share_card
+from gordstats import logos, matchup_page as ui, share_button, share_card
 
 OUTPUT = WEB_DIR / "matchups" / "index.html"
 
@@ -839,8 +839,11 @@ def body() -> str:
              for w in weeks}
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
+    info = _CARDS.get(current)
+    share = share_button.row("/cfb/matchups/", share_card.matchups_line(
+        current, info["pairs"], info["started"], info["final"]) if info else "")
     return (
-        ui.CSS
+        ui.CSS + share
         + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> — every '
         "matchup with both rosters in full, live while games are on. Each finished "
         "week gets a <a href='/cfb/recap/'>recap</a>: the awards and every team's "

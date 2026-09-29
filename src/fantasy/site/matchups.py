@@ -32,7 +32,7 @@ from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import logos, matchup_page as ui
 from gordstats import my_league, my_league_data, my_matchups, my_week
-from gordstats import share_card
+from gordstats import share_button, share_card
 from gordstats.frontmatter import add_front_matter
 
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
@@ -1117,7 +1117,7 @@ def body() -> str:
         + my_matchups.section(current, UPCOMING_YEAR,
                               f"{data_mod.ESPN_SCOREBOARD}?week={current}&dates={UPCOMING_YEAR}"
                               "&seasontype=2")
-        + '<div id="mm-built">' + _recap_teaser()
+        + '<div id="mm-built">' + _share_row() + _recap_teaser()
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
         f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
         "are on. Each finished week gets a <a href='/fantasy/recap/'>recap</a>: the "
@@ -1162,6 +1162,14 @@ def body() -> str:
 # The week each week_view drew, for the page's link-preview card: which week
 # is current is only known once body() has looked at them all.
 _CARDS: dict = {}
+
+
+def _share_row() -> str:
+    """The Share button, saying what state the current week is in."""
+    info = _CARDS.get(_CARDS.get("current"))
+    text = (share_card.matchups_line(_CARDS["current"], info["pairs"], info["started"],
+                                     info["final"]) if info else "")
+    return share_button.row("/fantasy/matchups/", text)
 
 
 def card() -> dict | None:

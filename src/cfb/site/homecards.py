@@ -28,7 +28,7 @@ from cfb import espn, games as games_mod, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, SEASON
 from cfb.site import power, teams as teams_page
-from gordstats import logos, paths
+from gordstats import logos, paths, share_button
 
 ET = ZoneInfo("America/New_York")
 TOP25_OUT = paths.DOCS / "_includes" / "cfb_top25.html"
@@ -612,8 +612,14 @@ def bets_html(now: datetime = None) -> str:
     note = (f"<div class='hc-when-row'><span>{espn.week_label(week)}</span>{timing}</div>"
             f"<p class='hc-rec'>{record} <span class='hc-dis'>Not gambling "
             f"advice.</span> <a href='/cfb/predictions/'>Full record</a>.</p>")
+    # The bet, as the sender would have typed it; the home page it links to
+    # carries this card.
+    line = (f"GordStats' {espn.week_label(week)} bet: {single['team']} {single['line']:+.1f} "
+            f"vs {single['opponent']}")
+    if picks["parlay"]:
+        line += f", plus a {len(picks['parlay'])}-leg parlay"
     return (_CSS + _LOCK_JS + "<div class='hc'>" + "".join(body)
-            + note + "</div>")
+            + note + share_button.row("/", line) + "</div>")
 
 
 WEEK_GAMES_OUT = paths.DOCS / "cfb" / "week-games.json"

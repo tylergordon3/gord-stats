@@ -26,6 +26,8 @@ import statistics
 from dataclasses import dataclass, field
 from html import escape
 
+from gordstats import share_button
+
 
 @dataclass
 class Player:
@@ -461,7 +463,10 @@ def page(week: Week, weeks: list, base: str, links: str = "") -> str:
     every final week of the season (for the week chips and the season
     column); `links` goes under the lead - the section's own pointers."""
     to_date = season([w for w in weeks if w.number <= week.number])
-    return (CSS + '<div class="rc">'
+    # The week's own address, not the recap's front page, which moves on to
+    # next week: a link sent on Tuesday should still say this on Friday.
+    share = share_button.row(f"{base}week-{week.number}/", headline(week))
+    return (CSS + '<div class="rc">' + share
             + f'<p class="rc-lead">{escape(headline(week))}</p>' + links
             + week_nav([w.number for w in weeks], week.number, base)
             + "<h2>Scores</h2>" + _games(week)

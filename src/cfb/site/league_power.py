@@ -38,7 +38,7 @@ import pandas as pd                                  # noqa: E402
 from cfb import in_season, league_sim, projections, yahoo  # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import charts, palette, rankmoves, share_card  # noqa: E402
+from gordstats import charts, palette, rankmoves, share_button, share_card  # noqa: E402
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
 OUTPUT = WEB_DIR / "league" / "power" / "index.html"
@@ -414,9 +414,13 @@ def section() -> str:
 def body() -> str:
     # The schedule ahead is the other half of "who is actually good": the
     # matchup strength page, under this tab too.
-    return (_CSS + "<p class='mu-note'>The schedule ahead - whose helps from here, and which "
-            "defences give up points to each position - is on "
-            "<a href='/cfb/strength/'>Matchup Strength</a>.</p>" + section())
+    html = section()
+    top = ", ".join(f"{r[0]}. {r[1]}" for r in (_CARD.get("rows") or [])[:3])
+    share = share_button.row("/cfb/league/power/",
+                             f"CFB league power rankings: {top}" if top else "")
+    return (_CSS + share + "<p class='mu-note'>The schedule ahead - whose helps from here, and "
+            "which defences give up points to each position - is on "
+            "<a href='/cfb/strength/'>Matchup Strength</a>.</p>" + html)
 
 
 def generate():

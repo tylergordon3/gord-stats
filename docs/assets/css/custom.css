@@ -5260,3 +5260,70 @@ a.acct-out:hover { text-decoration: underline; }
   .gs-invite-shut { color: #7c8aa3; }
   .gs-invite-shut:hover { color: #e9ecf4; background: #24304d; }
 }
+
+/* =========================
+   SHARE BUTTON
+   A page's link, sent to a chat: the phone's share sheet where there is one,
+   a copied link where there is not (gordstats/share_button.py writes it,
+   assets/js/share.js sends it). Thumb-sized on a phone.
+========================= */
+.gs-share-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 8px;
+}
+
+.gs-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 7px 14px;
+  min-height: 36px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.gs-share:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.gs-share:focus-visible {
+  outline: 2px solid var(--accent, #C2410C);
+  outline-offset: 2px;
+}
+
+.gs-share.done {
+  border-color: #16a34a;
+  color: #15803d;
+}
+
+@media (max-width: 767px) {
+  .gs-share {
+    min-height: 40px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .gs-share {
+    background: #16203a;
+    border-color: #2b3852;
+    color: #e8eef7;
+  }
+
+  .gs-share:hover {
+    background: #1b2540;
+    border-color: #3d4d6b;
+  }
+
+  .gs-share.done {
+    border-color: #4ade80;
+    color: #4ade80;
+  }
+}
