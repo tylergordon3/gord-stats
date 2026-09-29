@@ -49,7 +49,7 @@ def literal(body: str) -> str:
 
 
 def add_front_matter(html: str, title: str, subtitle: str | None = None,
-                     description: str | None = None) -> str:
+                     description: str | None = None, image: dict | None = None) -> str:
     """Prepend Jekyll front matter and an <h1> title to a page body.
 
     `subtitle` renders as a small muted line under the title — used for things
@@ -60,8 +60,14 @@ def add_front_matter(html: str, title: str, subtitle: str | None = None,
     `description` is the page's own line in search results and link previews
     (jekyll-seo-tag); without one it is the site's. Written as a JSON string,
     which YAML reads as a double-quoted scalar whatever the text holds.
+
+    `image` is the page's own link-preview card (gordstats.share_card: path,
+    width, height, alt); without one it is the site's. JSON again, which YAML
+    reads as a flow mapping.
     """
     desc = f"description: {json.dumps(description)}\n" if description else ""
+    if image:
+        desc += f"image: {json.dumps(image)}\n"
     fm = f"""---
 layout: default
 title: {title}

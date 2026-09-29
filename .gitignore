@@ -98,6 +98,7 @@ docs/**/index.html
 !docs/women/index.html
 !docs/wnba/index.html
 docs/assets/images/charts/
+docs/assets/images/share/
 docs/assets/favourite-teams.json
 docs/fantasy/players-index.json
 docs/fantasy/week-projections.json
