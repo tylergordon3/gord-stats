@@ -638,7 +638,8 @@ def matchup_section(m: dict, data: dict, ctx: dict, anchor: str) -> tuple:
 win_probability = ui.win_probability
 
 
-def week_board(rows: list, started: bool, med_now=None, med_proj=None) -> str:
+def week_board(rows: list, started: bool, med_now=None, med_proj=None,
+               median: bool = True, final: bool = False) -> str:
     def num(s, o, key):
         v, ov = s.get(key), o.get(key)
         lead = v is not None and ov is not None and v > ov
@@ -656,24 +657,26 @@ def week_board(rows: list, started: bool, med_now=None, med_proj=None) -> str:
         cells.append(
             f'<tr><td class="mu-t"><a href="#{anchor}">{_avatar(a["team"])}'
             f'{escape(a["name"])}</a></td>'
-            + (num(a, b, "pts") if started else "") + num(a, b, "sp") + num(a, b, "gs") + med(a)
-            + '<td class="mu-vs">vs</td>'
-            + med(b) + num(b, a, "gs") + num(b, a, "sp") + (num(b, a, "pts") if started else "")
+            + (num(a, b, "pts") if started else "") + num(a, b, "sp") + num(a, b, "gs")
+            + (med(a) if median else "") + '<td class="mu-vs">vs</td>'
+            + (med(b) if median else "") + num(b, a, "gs") + num(b, a, "sp")
+            + (num(b, a, "pts") if started else "")
             + f'<td class="mu-t r"><a href="#{anchor}">{escape(b["name"])}'
               f'{_avatar(b["team"])}</a></td></tr>')
     pts_h = "<th>Pts</th>" if started else ""
     med_h = ("<th title='Margin against the week\'s median score - the league\'s second game "
-             "each week'>Med</th>")
+             "each week'>Med</th>") if median else ""
     # The week's median itself heads the median tracker (median_tracker) now.
     strip = ""
-    final = all((a.get("pts") or 0) > 0 and (b.get("pts") or 0) > 0 for _, a, b in rows) and started
     cards = ui.board_cards(
         [(anchor, {"name": escape(a["name"]), "logo": _avatar(a["team"]), "key": a["key"],
                    "pts": a["pts"], "gs": a["gs"], "wp": a.get("wp"), "med": a.get("med")},
           {"name": escape(b["name"]), "logo": _avatar(b["team"]), "key": b["key"],
            "pts": b["pts"], "gs": b["gs"], "wp": b.get("wp"), "med": b.get("med")})
          for anchor, a, b in rows],
-        started, False)
+        # A finished week's cards show the result, not a win chance (the audit:
+        # week 1 read 95% / 5% on a game decided by 3.26).
+        started, final)
     return (strip + cards + '<div class="mu-board-wrap"><div class="table-scroll"><table class="mu-board"><thead><tr>'
             f"<th>Team</th>{pts_h}<th title='Average of the outside projections for the lineup as set'>Consensus</th>"
             f"<th title='GordStats projected total for the lineup as set'>GS Proj</th>{med_h}<th></th>"
@@ -801,7 +804,9 @@ compute:function(rows,games){
   });
   // The week's median: of the scores once anyone has one, of the expected finals as the projection.
   function median(a){if(!a.length)return null;a=a.slice().sort(function(x,y){return x-y;});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
-  var ks=Object.keys(teams),pts=ks.map(function(k){return teams[k].points||0;}),exps=ks.map(function(k){return teams[k].hexp;});
+  // Teams with a game only: a playoff bye has no matchup_id and plays no median.
+  var ks=Object.keys(teams).filter(function(k){return teams[k].matchup!=null;});
+  var pts=ks.map(function(k){return teams[k].points||0;}),exps=ks.map(function(k){return teams[k].hexp;});
   var started=pts.some(function(p){return p>0;});
   var medNow=started?median(pts):null,medProj=median(exps);
   ks.forEach(function(k){var t=teams[k];t.vs_median=started?((t.points||0)-medNow):(t.hexp-medProj);});
@@ -835,6 +840,8 @@ def week_view(data: dict, ctx: dict) -> str:
     started = data_mod.week_started(data)
     sections, rows = [], []
     for i, m in enumerate(data["matchups"], 1):
+        if m.get("matchup_id") is None:
+            continue        # playoff byes, which Sleeper files under one null matchup
         anchor = f"wk{week}-m{i}"
         html, sides = matchup_section(m, data, ctx, anchor)
         if html:
@@ -844,8 +851,10 @@ def week_view(data: dict, ctx: dict) -> str:
     # the board carries it: the live median of the ten scores once games are
     # on, the median of the expected finals as the projection, and every
     # side's margin against whichever applies.
+    # Regular season only: Sleeper plays no median game in the playoffs.
     import statistics
-    every = [s for _, a, b in rows for s in (a, b)]
+    median_on = not (ctx["playoff_start"] and week >= ctx["playoff_start"])
+    every = [s for _, a, b in rows for s in (a, b)] if median_on else []
     med_proj = statistics.median(s["parts"]["hexp"] for s in every) if every else None
     med_now = statistics.median((s["pts"] or 0.0) for s in every) if (every and started) else None
     for s in every:
@@ -874,8 +883,9 @@ def week_view(data: dict, ctx: dict) -> str:
             .replace("__INTERVAL__", str(60000 if started else 300000))
             .replace("__WEEK__", str(week)) + "</script>")
     return (f"<p><strong>Week {week}</strong>{span}{playoffs} · {state}{asof}</p>"
-            + median_tracker(rows, ctx, week, started, final)
-            + week_board(rows, started, med_now, med_proj) + extra + "".join(sections) + live)
+            + (median_tracker(rows, ctx, week, started, final) if median_on else "")
+            + week_board(rows, started, med_now, med_proj, median_on, final)
+            + extra + "".join(sections) + live)
 
 
 # --------------------------------------------------------------------------- #

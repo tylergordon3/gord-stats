@@ -500,7 +500,8 @@ JS = """{% raw %}<script>
     pairs.sort(function(x,y){ return (y.mine?1:0)-(x.mine?1:0); });
     var off=idle.filter(Boolean);
     host.innerHTML=medianTracker(pairs, started, WEEK,
-                                 (info.settings||{}).league_average_match)
+                                 st.league_average_match
+                                 && !(st.playoff_week_start && WEEK>=st.playoff_week_start))
       + board(pairs, started)
       + (off.length?('<p class="mm-note">No opponent this week: '
          +off.map(esc).join(', ')+'.</p>'):'')

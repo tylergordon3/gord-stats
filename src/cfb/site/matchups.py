@@ -515,7 +515,7 @@ def matchup_section(m: dict, data: dict, lg: dict, wk: pd.DataFrame, to_school: 
 
 
 def week_board(rows: list[tuple], started: bool, final: bool,
-               med_now=None, med_proj=None) -> str:
+               med_now=None, med_proj=None, median: bool = True) -> str:
     """The scoreboard: one row per matchup linking down to the full view.
 
     Per side: the points (once games are on), the GordStats projection and
@@ -542,11 +542,11 @@ def week_board(rows: list[tuple], started: bool, final: bool,
             f'<tr><td class="mu-t"><a href="#{anchor}" title="{escape(a["name"])}">'
             f'{_team_logo(a["team"])}{escape(a["name"])}</a></td>'
             + (num(a, b, "pts") if started else "")
-            + num(a, b, "gs") + med(a)
+            + num(a, b, "gs") + (med(a) if median else "")
             + (f"<td>{ui.fmt((a['wp'] or 0) * 100, 0)}%</td>" if not final else "")
             + '<td class="mu-vs">vs</td>'
             + (f"<td>{ui.fmt((b['wp'] or 0) * 100, 0)}%</td>" if not final else "")
-            + med(b) + num(b, a, "gs")
+            + (med(b) if median else "") + num(b, a, "gs")
             + (num(b, a, "pts") if started else "")
             + f'<td class="mu-t r"><a href="#{anchor}" title="{escape(b["name"])}">'
               f'{escape(b["name"])}{_team_logo(b["team"])}</a></td></tr>')
@@ -554,7 +554,7 @@ def week_board(rows: list[tuple], started: bool, final: bool,
     wp_h = "<th title='Yahoo win probability'>Win%</th>" if not final else ""
     proj_h = "<th class='mu-proj' title='GordStats projected total for the lineup as set'>Proj</th>"
     med_h = ("<th title='Margin against the week\'s median score - the league\'s second game "
-             "each week'>Med</th>")
+             "each week'>Med</th>") if median else ""
     strip = ""
     if med_proj is not None:
         strip = ('<p class="mu-median"><b>Week median</b> '
@@ -672,11 +672,14 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
     # The league plays a second game each week against the median score: the
     # median of the live totals once games are on, of the projections before,
     # and every side's margin against whichever applies.
+    # Yahoo plays it in the regular season only.
     import statistics
+    median_on = bool(lg.get("uses_median_score", True)) and not data.get("is_playoffs")
     every = [s for _, a, b in rows for s in (a, b)]
-    med_proj = statistics.median(s["gs"] for s in every) if every else None
-    med_now = statistics.median((s["pts"] or 0.0) for s in every) if (every and started) else None
-    for s in every:
+    med_proj = statistics.median(s["gs"] for s in every) if (every and median_on) else None
+    med_now = (statistics.median((s["pts"] or 0.0) for s in every)
+               if (every and started and median_on) else None)
+    for s in every if median_on else []:
         s["med"] = ((s["pts"] or 0.0) - med_now) if started else (s["gs"] - med_proj)
     state = ("Final" if final else "In progress" if started else "Not started")
     fetched = data.get("fetched")
@@ -709,12 +712,13 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
     # "Median 0.0 now" before anyone has scored is noise: Yahoo flips a week
     # off preevent at the start of its window, days before kickoff.
     scoring = started and any((s["pts"] or 0) > 0 for s in every)
-    tracker = ui.median_tracker([tracker_side(s, wk) for s in every], week, scoring, final,
-                                extremes or {})
+    tracker = (ui.median_tracker([tracker_side(s, wk) for s in every], week, scoring, final,
+                                 extremes or {}) if median_on else "")
     return (f"<p><strong>Week {week}</strong> · {start:%b %-d} – {end:%b %-d}"
             + (" (playoffs)" if data.get("is_playoffs") else "")
             + f" · {state}{asof}</p>" + tracker
-            + week_board(rows, started, final, med_now, med_proj) + "".join(sections) + live)
+            + week_board(rows, started, final, med_now, med_proj, median_on)
+            + "".join(sections) + live)
 
 
 _BENCH_SLOTS = {"BN", "IR", "IL"}
