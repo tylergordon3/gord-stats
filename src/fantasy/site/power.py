@@ -50,16 +50,17 @@ MUTED = palette.MUTED
 GRIDLINE = palette.GRIDLINE
 CONTEXT = palette.CONTEXT
 
-# (anchor, heading, jump-bar label, collapsible). The draft-week three-source
-# table sits under the live rankings: frozen on draft week, it is the fixed
-# point every later rating is read against. Only Method folds away.
+# (anchor, heading, jump-bar label, collapsible). How the rankings have moved
+# through the season sits right under them; the draft-week three-source table,
+# frozen on draft week, folds away with Method - it is the fixed point later
+# ratings are read against, and by October a reference rather than the news.
 SECTIONS = [
     ("mine", "Your League", "Yours", False),
     ("rankings", "Power Rankings", "Rankings", False),
-    ("stakes", "This Week's Stakes", "Stakes", False),
-    ("draft-consensus", "Draft Rankings (frozen)", "Draft", False),
     ("season", "Through the Season", "Season", False),
+    ("stakes", "This Week's Stakes", "Stakes", False),
     ("positions", "Positional Strength", "Positions", False),
+    ("draft-consensus", "Draft Rankings (frozen)", "Draft", True),
     ("method", "Method", "Method", True),
 ]
 
