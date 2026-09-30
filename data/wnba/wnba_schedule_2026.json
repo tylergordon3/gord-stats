@@ -7651,7 +7651,7 @@
           "id": 1392671,
           "home": "NY",
           "away": "MIN",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-29"
@@ -7662,7 +7662,7 @@
           "id": 1392671,
           "home": "NY",
           "away": "MIN",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-29"
@@ -7673,7 +7673,7 @@
           "id": 1392672,
           "home": "IND",
           "away": "LV",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-29"
@@ -7684,7 +7684,7 @@
           "id": 1392672,
           "home": "IND",
           "away": "LV",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-29"
