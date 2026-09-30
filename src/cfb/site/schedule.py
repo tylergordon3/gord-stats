@@ -36,8 +36,10 @@ filters that stack: ranked teams, conference or non-conference games, the
 Power 4, home underdogs, toss-ups, bad weather, upset watch, still to play,
 one conference, or a team name. Sorting by anything but kickoff flattens the
 day groups into one ranked list; the URL hash carries the state so a view
-can be shared. On a phone the rows become stacked cards, one labelled line
-per figure, with empty figures dropped.
+can be shared. On a phone the rows become stacked cards, folded to the
+matchup, the kickoff and the GordStats and DraftKings lines, with More
+unfolding the rest; only the week row stays pinned, the other controls
+folded behind a Filters button.
 
 The tab that opens first is the current week, computed at build time - the
 page is rebuilt daily, so "current" stays current.
@@ -97,8 +99,12 @@ table.cfb-sched .sc-row img{width:20px;height:20px;object-fit:contain;flex:none;
   border:none;padding:0;box-shadow:none;background:none;border-radius:0;margin:0}
 .sc-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   color:#334155;font-size:14px}
-.sc-name a{color:inherit;text-decoration:none}
-.sc-name a:hover{text-decoration:underline}
+/* One link per team, logo and name together. They were two links to the same
+   page - the logo a nameless 18px one - and on a phone neither was a target a
+   thumb could find; one link across the line is (see the phone block). */
+.sc-team{display:flex;align-items:center;gap:8px;flex:1;min-width:0;
+  color:inherit;text-decoration:none}
+a.sc-team:hover .sc-tn{text-decoration:underline}
 .sc-joiner{color:var(--gs-muted,#5d6b7e);font-size:12px}
 .sc-pts{min-width:24px;text-align:right;font-variant-numeric:tabular-nums;
   font-size:15px;font-weight:600;color:var(--gs-muted,#5d6b7e)}
@@ -158,6 +164,9 @@ table.cfb-sched.sorted .t-day{display:inline}
 td.ln,td.fpi{white-space:nowrap;font-variant-numeric:tabular-nums}
 .ln b,.fpi b{color:#0f172a;font-weight:700}
 .pct{color:#334155;font-weight:600;margin-left:6px}
+/* The folded phone card's two lines (GordStats, DraftKings); the table below
+   carries both, so a desktop never shows these. */
+.ln-sum{display:none}
 /* The Lines box: one small table, the GordStats row highlighted as the pick. */
 table.cfb-sched table.lnt,table.cfb-sched table.frt{border:none;border-collapse:collapse;
   width:auto;margin:0;background:none;font-size:12px;white-space:nowrap;
@@ -201,10 +210,36 @@ td.na{color:var(--gs-muted,#5d6b7e)}
 /* Sort, conference, search, the Show chips and the week buttons all live in
    the pinned bar, each on its own row. The bar itself is a wrapping flex row
    (custom.css), so each block takes the full width to stack. */
-.sc-pin>*{flex:1 1 100%;justify-content:center}
+.sc-pin>*{flex:1 1 100%}
+.sc-pin .sc-controls,.sc-pin .sc-chips,.sc-weekrow{justify-content:center}
 .sc-pin .sc-controls{margin:4px 0 2px}
 .sc-pin .sc-chips{margin:2px 0 4px}
+.sc-weekrow{display:flex;align-items:center;gap:8px}
+.sc-filt{display:none}
 @media (max-width:700px){
+  /* Pinned, those rows stood 146px over every card on a phone - a sixth of
+     the screen, and on the device with least of it (the 2026-09-29 phone
+     audit). Only the week row stays in reach now: the rest fold behind a
+     Filters button at its head, which counts the filters in force so a
+     folded bar still says the list is cut down, and unfolds below it so the
+     button does not move under the thumb that pressed it. The bar is still
+     the one .pin-bar the layout measures into --pin-h, and it watches the
+     bar's size, so the fold opening and closing is measured too. */
+  .sc-pin{padding-top:4px;padding-bottom:4px}
+  /* min-width:0 on the row and the fold, or the week strip's full width
+     becomes the row's minimum and it runs off the bar instead of scrolling. */
+  .sc-weekrow{order:-1;justify-content:flex-start;min-width:0}
+  .sc-weekrow .view-switch{flex:1 1 auto;min-width:0;margin:0;flex-wrap:nowrap;overflow-x:auto}
+  .sc-weekrow .view-switch button{flex:none}
+  .sc-weekrow .switch-label{display:none}
+  .sc-pin .sc-fold{display:none;min-width:0}
+  .sc-pin.sc-open .sc-fold{display:block}
+  .sc-filt{display:inline-flex;align-items:center;gap:5px;flex:none;min-height:42px;
+    padding:0 13px;border:1px solid #cbd5e1;border-radius:999px;background:#fff;
+    font:inherit;font-size:14px;font-weight:700;color:#334155;cursor:pointer;white-space:nowrap}
+  .sc-filt::after{content:"\\25BE"}
+  .sc-filt[aria-expanded=true]::after{content:"\\25B4"}
+  .sc-filt.sc-some{border-color:var(--accent,#A34F0A);color:var(--accent-dark,#8A420A)}
   /* A phone cannot give three rows of chips to a pinned bar: one row that
      scrolls sideways, like the week buttons. */
   .sc-pin .sc-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
@@ -214,13 +249,15 @@ td.na{color:var(--gs-muted,#5d6b7e)}
   /* Sort, conference and search share the row instead of scrolling it: the
      conference picker was cut mid-word and the search box sat off-screen,
      with nothing to say there was more (the 2026-09-28 phone audit). The
-     label goes - each control says what it is - and the search is 16px,
-     under which iOS zooms the page on focus. */
+     labels go - each control says what it is, and the Filters button names
+     the lot - and the search is 16px, under which iOS zooms the page on
+     focus. */
   .sc-pin .sc-controls{flex-wrap:nowrap;min-width:0}
-  .sc-pin .sc-controls .lbl{display:none}
+  .sc-pin .sc-controls .lbl,.sc-pin .sc-chips .lbl{display:none}
   .sc-pin .sc-controls .sc-select,.sc-pin .sc-controls .sc-search{flex:1 1 0;min-width:0;width:auto}
   .sc-pin .sc-controls .sc-search{font-size:16px;padding:4px 8px}
-  .sc-pin>*{justify-content:flex-start}
+  .sc-pin .sc-select,.sc-pin .sc-search,.sc-pin .sc-chips button{min-height:40px}
+  .sc-pin .sc-controls,.sc-pin .sc-chips{justify-content:flex-start}
 }
 .sc-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px}
 .sc-controls .lbl,.sc-chips .lbl{font-weight:800;font-size:.72rem;text-transform:uppercase;
@@ -238,6 +275,7 @@ td.na{color:var(--gs-muted,#5d6b7e)}
 .sc-chips button.clear{border-style:dashed;color:#64748b;font-weight:500}
 .sc-legend{margin:8px 0 14px;font-size:13px;color:#475569}
 .sc-legend summary{cursor:pointer;font-weight:600;color:#334155}
+.sc-legend p{margin:6px 0 0}
 .sc-legend ul{margin:6px 0 0 18px;padding:0}
 .sc-legend li{margin:3px 0}
 tr.g.hide,tr.hdr.hide{display:none}
@@ -282,40 +320,83 @@ table.det-t td.k{font-weight:600;color:#0f172a}
 @media (max-width:700px){
   #cfb-weeks .table-scroll{border:none;box-shadow:none;border-radius:0;overflow:visible;
     background:transparent}
-  /* Tighter cards: smaller type and logos, short labels, venue and the
-     projected-score / moneyline small print moved into the More panel. */
+  /* The "How to read it" line is a 40px target, not a 20px one. */
+  .sc-legend{margin:2px 0 8px}
+  .sc-legend summary{padding:10px 0}
+  /* Tighter cards: smaller logos, short labels, venue and the projected-
+     score / moneyline small print moved into the More panel. */
   table.cfb-sched>tbody>tr.g{padding:6px 8px 5px;margin:6px 0}
   table.cfb-sched .sc-row img{width:18px;height:18px}
-  .sc-mu{gap:2px}
+  .sc-mu{gap:0}
+  /* The whole team line is the link, 36px tall: the name alone was a 15px
+     target and the logo beside it an 18px one. */
+  .sc-team{min-height:36px}
   /* This block used to shrink the labels below their desktop size to fit
      more in. On the device where reading is hardest that is the wrong
      trade, and it is the complaint this site started from - a tag at
-     9.5px is not a size anyone reads standing in a car park. */
-  .sc-name{font-size:13px}
-  .sc-pts{font-size:14px}
-  .sc-meta{font-size:10.5px;margin-top:2px;gap:3px 5px}
+     9.5px is not a size anyone reads standing in a car park. So nothing
+     here goes under 12px, the W/L and weather pills under 11.5px, and a
+     figure the desktop sets smaller is raised to that for a phone. The
+     room it takes comes out of what a card shows folded, not the type. */
+  .sc-name{font-size:14px}
+  .sc-pts{font-size:15px}
+  table.cfb-sched .rk,.sc-rec,.sc-joiner,.sc-play,.sc-sit{font-size:12px}
+  .sc-row.sc-ball .sc-name::after{font-size:12px}
+  .sc-meta{font-size:12px;margin-top:2px;gap:3px 6px}
   .sc-venue{display:none}
-  .tag{font-size:10.5px;padding:0 5px}
-  .sub{font-size:11px}
-  .t-tv{font-size:11px}
+  .tag{font-size:11.5px;padding:0 6px}
+  .sub,.t-wx .sub,.mlx,.mv{font-size:12px}
+  .t-tv{font-size:12px}
+  table.cfb-sched tr.hdr.sec td{font-size:12px}
   table.cfb-sched td.d .c{min-width:0}
-  table.cfb-sched table.lnt td,table.cfb-sched table.frt td{font-size:11.5px;padding-right:7px}
+  table.cfb-sched table.lnt td,table.cfb-sched table.frt td,
+  table.cfb-sched table.lnt th,table.cfb-sched table.frt th,
+  table.cfb-sched table.lnt td.k,table.cfb-sched table.frt td.k{font-size:12px}
+  table.cfb-sched table.lnt td,table.cfb-sched table.frt td{padding-right:7px}
   /* Rank alone beside FPI and SP+ on a phone; the rating rides in the title
      on desktop-width screens and the whole form row then fits the card. */
   table.cfb-sched table.frt td .mv{display:none}
-  .sc-stat{margin-left:24px;font-size:11px}
+  .sc-stat{margin:-4px 0 4px 26px;font-size:12px}
   table.cfb-sched table.frt td{padding-right:6px}
-  .l5{width:15px;height:15px;line-height:15px;font-size:10.5px;margin-right:1px}
-  .call{font-size:12px}
+  .l5,.sc-stat .l5{width:16px;height:16px;line-height:16px;font-size:11.5px;margin-right:1px}
+  .call{font-size:13px}
   /* A 14px-tall link is not a thumb target: padding makes it about 40px,
-     the negative margins keep the card's line where it was. */
-  .det-btn{font-size:11.5px;padding:14px 10px;margin:-14px -10px -14px auto}
+     the negative margins keep the card's line where it was. It is the one
+     way to the rest of a folded card now, so it reads at 13px. */
+  .det-btn{font-size:13px;padding:13px 10px;margin:-13px -10px -13px auto}
+  .det-block h4,table.cfb-sched table.det-t th,table.cfb-sched table.det-t td{font-size:12px}
+  .gs-pick .gp-label,.gs-pick .gp-legs .gp-game,.gs-pick .gp-book,
+  .gs-pick .gp-note{font-size:12px}
+  /* The picks' jumps to their games, 15-21px tall as text: padded to a
+     thumb, margined back so the cards keep their lines. */
+  .gs-pick .gp-main a,.gs-pick .gp-legs li a{display:inline-block;padding:12px 0;margin:-12px 0}
+  /* Folded, a card is the matchup, the kickoff and the two lines that
+     matter - GordStats' and DraftKings' - with More unfolding the rest in
+     place: ratings and form under each team, the forecast, every read of
+     the line with the call under it, the season, and the panel below. Open,
+     it carries every figure it did before. Everything open by default made
+     each card about 410px, two games to a screen; folded they are under
+     half that. The same `open` class the More button already sets drives
+     it, so a deep link to a game (#g=) opens it unfolded. */
+  table.cfb-sched>tbody>tr.g:not(.open) .sc-stat,
+  table.cfb-sched>tbody>tr.g:not(.open) .t-wx,
+  table.cfb-sched>tbody>tr.g:not(.open) td.frm,
+  table.cfb-sched>tbody>tr.g:not(.open) td.ln>.c,
+  table.cfb-sched>tbody>tr.g:not(.open) td.ln.no-sum{display:none}
+  table.cfb-sched>tbody>tr.g:not(.open) td.ln:not(.no-sum){display:block}
+  table.cfb-sched>tbody>tr.g:not(.open) td.ln::before{content:none}
+  table.cfb-sched>tbody>tr.g:not(.open) .ln-sum{display:grid}
+  .ln-sum{grid-template-columns:40px 1fr;gap:1px 4px;font-size:13px;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ln-sum .k{font-size:12px;font-weight:700;color:var(--gs-muted,#5d6b7e);letter-spacing:.04em}
+  .ln-sum b{color:#0f172a}
+  .ln-sum .o{color:#475569}
   table.cfb-sched>tbody>tr.det{display:none}
   table.cfb-sched>tbody>tr.det.show{display:block}
   table.cfb-sched>tbody>tr.det>td{border:1px solid #e2e8f0;border-radius:10px;
     margin:-4px 0 8px;padding:8px 10px}
   table.det-t{width:100%}
-  .det-wrap{grid-template-columns:1fr;gap:8px;font-size:12px}
+  .det-wrap{grid-template-columns:1fr;gap:8px;font-size:12.5px}
   table.cfb-sched{border:none;background:transparent}
   table.cfb-sched,table.cfb-sched>tbody,table.cfb-sched>tbody>tr,
   table.cfb-sched>tbody>tr>td{display:block}
@@ -326,10 +407,12 @@ table.det-t td.k{font-weight:600;color:#0f172a}
     padding:2px 0;background:transparent}
   table.cfb-sched td.mu{position:static;padding-bottom:6px;border-bottom:1px solid #eef2f7;
     margin-bottom:4px}
-  .sc-mu{min-width:0}
+  /* The card's full width, not the desktop column's 240px: the score sat
+     mid-card and the team link stopped short of the thumb. */
+  .sc-mu{min-width:0;max-width:none}
   table.cfb-sched td.d{display:grid;grid-template-columns:40px 1fr;gap:4px;
     font-size:12px;white-space:normal;max-width:none;padding:1px 0}
-  table.cfb-sched td.d::before{content:attr(data-s);font-size:11px;text-transform:uppercase;
+  table.cfb-sched td.d::before{content:attr(data-s);font-size:12px;text-transform:uppercase;
     letter-spacing:.04em;color:var(--gs-muted,#5d6b7e);font-weight:700;padding-top:2px}
   table.cfb-sched td.na{display:none}
   .sc-venue{max-width:none}
@@ -399,6 +482,8 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .sc-chips button.active{background:var(--accent,#A34F0A);color:#fff;
     border-color:var(--accent-dark,#8A420A)}
   .sc-chips button.clear{color:#aab7c9}
+  .sc-filt{background:#16203a;border-color:#2b3852;color:#dde5ef}
+  .sc-filt.sc-some{border-color:var(--accent-text,#F5A968);color:var(--accent-text,#F5A968)}
   .sc-legend{color:#aab7c9}
   .sc-legend summary{color:#dde5ef}
   .det-btn{color:#7fb3ff}
@@ -414,14 +499,44 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .l5.l{background:#7f1d1d;color:#fecaca}
   @media (max-width:700px){
     table.cfb-sched>tbody>tr.g{border-color:#2b3852;background:#16203a}
+    /* The desktop stripe above outranks the light phone rule that clears it,
+       and drew a lighter box round every other card's cells. */
+    table.cfb-sched>tbody>tr.g>td,
+    table.cfb-sched>tbody>tr.g:nth-child(even)>td{background:transparent}
     table.cfb-sched td.mu{border-color:#2b3852}
     table.cfb-sched td.d::before{color:#7f8ea3}
+    .ln-sum .k{color:#8fa0b8}
+    .ln-sum b{color:#f1f5f9}
+    .ln-sum .o{color:#aab7c9}
     table.cfb-sched>tbody>tr.det>td{border-color:#2b3852}
   }
 }
 </style>"""
 
-_LEGEND = """<details class="sc-legend"><summary>What the columns and tags mean</summary>
+# Without JS nothing can unfold a phone card, so none is folded: every figure
+# shows as it did before the fold, and the two buttons that would do nothing
+# (More, Filters) are not drawn. Same selectors as the fold, later in the page.
+_NOSCRIPT = ("<noscript><style>.det-btn,.sc-filt{display:none}"
+             "@media (max-width:700px){"
+             "table.cfb-sched>tbody>tr.g:not(.open) .sc-stat{display:flex}"
+             "table.cfb-sched>tbody>tr.g:not(.open) .t-wx{display:block}"
+             "table.cfb-sched>tbody>tr.g:not(.open) td.frm,"
+             "table.cfb-sched>tbody>tr.g:not(.open) td.ln:not(.na){display:grid}"
+             "table.cfb-sched>tbody>tr.g:not(.open) td.ln>.c{display:block}"
+             "table.cfb-sched>tbody>tr.g:not(.open) td.ln::before{content:attr(data-s)}"
+             "table.cfb-sched>tbody>tr.g:not(.open) .ln-sum{display:none}}"
+             "</style></noscript>")
+
+
+# The page's one explanation, folded. Everything that is not the games -
+# what a card shows, how the picks are set, when the page was built - lives
+# here rather than above the first game, where on a phone it ran to about
+# eighty words before a single score.
+_LEGEND = """<details class="sc-legend"><summary>How to read it</summary>
+<p>Each game carries this site's <b>GordStats</b> pick beside the <b>DraftKings</b> line.
+On a phone a card opens folded to those two; <b>More</b> unfolds the rest &mdash; FPI and
+SP+, the forecast, the season, every book's line. Scores update live while games are on;
+the rest was rebuilt {built}.</p>
 <ul>
 <li><b>Lines</b> &mdash; every read of the game stacked so they can be compared: the
 <b>GS</b> row is this site's <a href="/cfb/predictions/">model</a> and is highlighted because
@@ -460,6 +575,13 @@ GordStats and SP+ lean against the number.</li>
 <li><b>Sorting</b> by anything other than kickoff turns the week into one ranked list;
 games without the figure being sorted on fall to the bottom. <i>Matchup quality</i> is
 ESPN's 0&ndash;100 measure of how competitive and consequential a game projects to be.</li>
+<li><b>Picks of the day</b> &mdash; set before the day's first kickoff, locked, and not
+touched since; a later day's picks are a preview until that morning. The <i>underdog</i> is
+the book's underdog the model gives the best chance, set against the moneyline with the
+vig taken out. The <i>parlay</i> is the model's surest call against the book in each game,
+one per game, each with the chance its own error spread gave it; the combined figure is
+those multiplied. How the spread and total calls have done is on the
+<a href="/cfb/predictions/">predictions page</a>.</li>
 </ul></details>"""
 
 
@@ -711,9 +833,13 @@ def _side_row(g, side: str, records: dict) -> str:
     joiner = ("" if side == "away"
               else f'<span class="sc-joiner">{"vs" if g.neutral else "at"}</span> ')
     slug = team_slug(name)
-    a, a_close = ((f'<a href="/cfb/teams/{slug}/">', "</a>")
-                  if slug in _team_pages() else ("", ""))
     logo = logos.img("ncaa", getattr(g, f"{side}_id"), 20)
+    # Logo, rank and name in one link where the team has a page (an FCS
+    # visitor has none, and stays plain text) - see .sc-team in _CSS.
+    team = (f'{logo}<span class="sc-name">{joiner}{badge}'
+            f'<span class="sc-tn">{escape(name)}</span>{rec_tag}</span>')
+    team = (f'<a class="sc-team" href="/cfb/teams/{slug}/">{team}</a>'
+            if slug in _team_pages() else f'<span class="sc-team">{team}</span>')
 
     score = getattr(g, f"{side}_score")
     other = getattr(g, "home_score" if side == "away" else "away_score")
@@ -721,9 +847,7 @@ def _side_row(g, side: str, records: dict) -> str:
     won = g.state == "post" and scored and score > other
     pts = f'<span class="sc-pts">{score:.0f}</span>' if scored else ""
     return (f'<div class="sc-row{" sc-win" if won else ""}" data-tid="{tid}">'
-            f'{a}{logo}{a_close}'
-            f'<span class="sc-name">{joiner}{badge}{a}{escape(name)}{a_close}{rec_tag}</span>'
-            f"{pts}</div>{_stat_line(g, side)}")
+            f"{team}{pts}</div>{_stat_line(g, side)}")
 
 
 def _stat_line(g, side: str) -> str:
@@ -842,7 +966,7 @@ def _lines_cell(g, home_won, sp_margin) -> str:
     dk_spread, dk_total = _v(g.dk_spread), _v(g.dk_total)
     gs_total, fpi = _v(g.gs_total), _v(g.fpi_wp)
     if margin is None and dk_spread is None and fpi is None and sp_margin is None:
-        return '<td class="ln na d" data-l="Lines" data-s="Lines">&mdash;</td>'
+        return '<td class="ln na no-sum d" data-l="Lines" data-s="Lines">&mdash;</td>'
 
     final_margin = final_total = None
     if home_won is not None:
@@ -929,7 +1053,45 @@ def _lines_cell(g, home_won, sp_margin) -> str:
     else:
         sentence = ""
     call = f'<div class="call">{sentence}</div>' if sentence else ""
-    return f'<td class="ln d" data-l="Lines" data-s="Lines"><div class="c">{table}{call}</div></td>'
+    summary = _lines_summary(g, home_won)
+    return (f'<td class="ln d{"" if summary else " no-sum"}" data-l="Lines" data-s="Lines">'
+            f'{summary}<div class="c">{table}{call}</div></td>')
+
+
+def _short_line(g, spread) -> str:
+    """'NMSU -2.5' from a home-convention spread: _line_text with the
+    abbreviation, so a folded phone card's line never wraps."""
+    if abs(spread) < 0.25:
+        return "Pick"
+    _, abbr, _ = _fav(g, -spread)
+    number = f"{-abs(spread):.1f}".removesuffix(".0")
+    return f"{escape(str(abbr))} {number}"
+
+
+def _lines_summary(g, home_won) -> str:
+    """The two rows of the Lines box a folded phone card keeps - GordStats'
+    spread, win chance and total, DraftKings' spread and total - or "" when
+    neither has a line yet. Hidden everywhere else (.ln-sum in _CSS)."""
+    margin, wp, gs_total = _v(g.gs_margin), _v(g.gs_wp), _v(g.gs_total)
+    dk_spread, dk_total = _v(g.dk_spread), _v(g.dk_total)
+    rows = []
+    if margin is not None:
+        _, _, home_fav = _fav(g, margin)
+        bits = [f"<b>{_short_line(g, -margin)}</b>"]
+        if wp is not None:
+            bits.append(f"{max(wp, 1 - wp):.0%}{_mark(home_fav, home_won)}")
+        if gs_total is not None:
+            bits.append(f'<span class="o">O/U {gs_total:.0f}</span>')
+        rows.append(("GS", " &middot; ".join(bits)))
+    if dk_spread is not None or dk_total is not None:
+        bits = [_short_line(g, dk_spread)] if dk_spread is not None else []
+        if dk_total is not None:
+            bits.append(f'<span class="o">O/U {dk_total:g}</span>')
+        rows.append(("DK", " &middot; ".join(bits)))
+    if not rows:
+        return ""
+    return ('<div class="ln-sum">' + "".join(
+        f'<span class="k">{k}</span><span>{v}</span>' for k, v in rows) + "</div>")
 
 
 def _form_row(g, side: str) -> str:
@@ -1475,8 +1637,10 @@ def _picks(df: pd.DataFrame, current: int) -> str:
         where = "at home to" if d["side"] == "home" else "at"
         edge = (f"the book said {d['book_p']:.0%}" if d.get("book_p") is not None
                 else f"the book had them at +{d['line']:.1f}")
-        verdict = ("GordStats' pick to win outright" if d["p"] >= 0.5
-                   else "the dog GordStats liked most, short of picking the upset")
+        # The verdict only; how the chance is read against the book is in the
+        # legend with the rest of the picks' small print.
+        verdict = ("GordStats' pick to win outright." if d["p"] >= 0.5
+                   else "The dog GordStats liked most, short of picking the upset.")
         won = _grade({"kind": "ml", "side": d["side"]}, g)
         ml_html = (f' <span class="gp-book">ML {_ml_text(d["ml"])}</span>'
                    if d.get("ml") is not None else "")
@@ -1486,8 +1650,7 @@ def _picks(df: pd.DataFrame, current: int) -> str:
             f' +{d["line"]:.1f}</a>{ml_html}{mark(won)}</div>'
             f'<div class="gp-sub">{where} {escape(d["opp"])} · {escape(d["kick"])}'
             f' · <span class="gp-p">{d["p"]:.0%}</span> to win, {edge}</div>'
-            f"<div class='gp-note'>{verdict}: the model's chance for the book's underdog, "
-            "against the moneyline with the vig taken out.</div></div>")
+            f"<div class='gp-note'>{verdict}</div></div>")
 
     parlay_html = ""
     legs = picks.get("legs") or []
@@ -1507,21 +1670,17 @@ def _picks(df: pd.DataFrame, current: int) -> str:
             + (f' · <span class="gp-{state}">{state}</span>' if state else "") + "</div>"
             f'<div class="gp-main">{len(legs)} legs · <span class="gp-p">{ours:.0%}</span>'
             f' <span class="gp-book">the book implied {book:.0%}</span></div>'
-            f'<ul class="gp-legs">{items}</ul>'
-            "<div class='gp-note'>The model's surest calls against the book, one per game, "
-            "each with the chance its own error spread gave it; the combined figure is those "
-            "multiplied. How the spread and total calls have done is on the "
-            "<a href='/cfb/predictions/'>predictions page</a>.</div></div>")
+            f'<ul class="gp-legs">{items}</ul></div>')
 
     if not (dog_html or parlay_html):
         return ""
+    # When, not how: what locking means is in the legend.
     if locked_at:
-        note = (f" - set before the day's first kickoff, locked {escape(locked_at)}, "
-                "and not touched since.")
+        note = f" &middot; locked {escape(locked_at)}"
     elif day > datetime.now(LEAGUE_TZ).date():
-        note = f" - a preview. They lock on the morning of {day:%A}."
+        note = f" &middot; a preview until {day:%A} morning"
     else:
-        note = " - set before the day's first kickoff, and not touched since."
+        note = " &middot; set before the first kickoff"
     return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b>{note}</p>'
             f'<div class="gs-picks">{dog_html}{parlay_html}</div>')
 
@@ -1652,8 +1811,27 @@ function layout(view){
 
 function applyAll(){
   Array.prototype.forEach.call(weeks.querySelectorAll('.wk-view'),layout);
+  markFilt();
   writeHash();
 }
+
+/* The phone's Filters button, which folds everything but the week row out of
+   the pinned bar. Shut, its label counts what is cutting the list down - the
+   chips, a conference, a search - since the controls that would show it are
+   out of sight. The sort is not counted: it drops nothing. */
+var filt=document.getElementById('sc-filt');
+function markFilt(){
+  if(!filt)return;
+  var n=Object.keys(on).filter(function(k){return on[k];}).length
+    +(confSel.value?1:0)+(search.value.trim()?1:0);
+  filt.textContent='Filters'+(n?' \\u00b7 '+n:'');
+  filt.classList.toggle('sc-some',!!n);
+}
+if(filt)filt.addEventListener('click',function(){
+  var pin=filt.closest('.sc-pin'),open=!pin.classList.contains('sc-open');
+  pin.classList.toggle('sc-open',open);
+  filt.setAttribute('aria-expanded',open?'true':'false');
+});
 
 function writeHash(){
   var parts=['w='+current];
@@ -1739,6 +1917,11 @@ window.show_wk=function(w){
   var view=document.getElementById('wk-view-'+w);
   Array.prototype.forEach.call(document.querySelectorAll('.wk-btn'),function(b){b.classList.remove('active');});
   var tab=document.getElementById('wk-tab-'+w);if(tab)tab.classList.add('active');
+  // On a phone the week row scrolls sideways and shows five or six weeks, so
+  // by October the current one opened out of sight. Centre it in the row -
+  // the row only, never the page.
+  if(tab){var sw=tab.parentNode,a=tab.getBoundingClientRect(),b=sw.getBoundingClientRect();
+    if(sw.scrollWidth>sw.clientWidth)sw.scrollLeft+=a.left-b.left-(b.width-a.width)/2;}
   writeHash();
   if(!view) return Promise.resolve(null);
   if(view.getAttribute('data-src'))view.innerHTML='<p class="sc-intro">Loading week '+w+'\u2026</p>';
@@ -1918,9 +2101,15 @@ def _switcher(week_ids: list[int], current: int, views: dict[int, str],
            else f" style='display:none' data-src='{WEEK_URL % w}'")
         + f">{views[w] if w == current else ''}</div>"
         for w in week_ids)
-    return ('<div class="pin-bar sc-pin">' + controls
-            + f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div></div>'
-            f'<div id="cfb-weeks">{divs}</div>')
+    # The controls sit in a fold a phone keeps shut behind the Filters button;
+    # on a desktop the button is hidden and the fold is simply open.
+    fold = (f'<div class="sc-fold" id="sc-fold">{controls}</div>'
+            '<div class="sc-weekrow"><button type="button" class="sc-filt" id="sc-filt" '
+            'aria-expanded="false" aria-controls="sc-fold">Filters</button>'
+            if controls else '<div class="sc-weekrow">')
+    return ('<div class="pin-bar sc-pin">' + fold
+            + f'<div class="view-switch"><span class="switch-label">Week:</span>{buttons}</div>'
+            f'</div></div><div id="cfb-weeks">{divs}</div>')
 
 
 #: Where a week's rows live once they are not all in the page.
@@ -1946,18 +2135,17 @@ def build() -> tuple:
                                 picks if int(w) == current else "")
              for w, grp in df.groupby("week")}
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
-    # One sentence. This was 110 words - most of the first screen on a phone -
-    # listing what every card visibly shows; the legend below it, folded,
-    # explains the columns and tags for whoever wants them.
-    intro = (
-        f'<p class="sc-intro">Every FBS game of {SEASON}: the <b>GordStats</b> pick beside '
-        "the <b>DraftKings</b> line, <b>FPI</b> and <b>SP+</b>; <b>More</b> opens every "
-        f"book's line. Scores update live; rebuilt {built}.</p>")
+    # One short sentence. This was 110 words - most of the first screen on a
+    # phone - and then 30, listing what every card visibly shows; the rest,
+    # the build time included, is in the folded legend below it.
+    intro = (f'<p class="sc-intro">Every FBS game of {SEASON}: live scores, the '
+             "<b>GordStats</b> pick and the <b>DraftKings</b> line.</p>")
+    legend = _LEGEND.replace("{built}", built)
     # Scoped through tbody, not just the table: this page's own stripe rule is
     # `table.cfb-sched tbody tr.g:nth-child(even) td`, and a selector one
     # element shorter loses to it on every second row. Emitted after _CSS so a
     # tie in specificity goes to the highlight.
-    html = (_CSS + favorites.table_css("table.cfb-sched tbody") + intro + _LEGEND
+    html = (_CSS + favorites.table_css("table.cfb-sched tbody") + _NOSCRIPT + intro + legend
             + _switcher(week_ids, current, views, controls=_controls(espn.conferences()))
             + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
                      "url": json.dumps(_live_url(current))})
