@@ -345,6 +345,17 @@ Open:
       EPA/success, havoc, line yards, points per trip, box score, talent, player EPA); NFL from nflverse
       play-by-play (EPA, success, PROE, pace, red zone, leave-one-out opponent adjustment, QB CPOE).
       Every CFB team page carries an Advanced block with FBS ranks.
+- [x] **NFL mirrors CFB** (49efb509d, df40ce9b2): /nfl/power/ (GordStats + FPI, odds, movement, stars),
+      32 team pages with an Advanced block, /nfl/schedule/, and the bets card (shared gordstats.bets_card)
+      on Home and /nfl/.
+- [x] **CBB Team Stats** (dc975ed16): Torvik's efficiency, tempo, SOS; four factors once he publishes them.
+- [x] **Playoff picture** (b31235a72): clinched / eliminated / magic number / win-and-in on both fantasy
+      power pages (gordstats.clinch), never contradicting the sims.
+- [x] **Recaps for readers' leagues** (0749184e6): Sleeper and ESPN, in the browser (gordstats.my_recap).
+- [ ] **Shared-module follow-ups** (from the agents): GSAPI ESPN lineups for weeks older than last week
+      (my_recap works around it); a per-page Sleeper cache in GSAPI; expose my_team's flex table; the
+      built recap's empty avatar disc in dark; clinch.summary() as a matchups callout; a share link that
+      carries the reader's league.
 - [ ] **Phone, still open:** the reader's own power table (gordstats/my_power) keeps the old column
       order and solid fills (tests pin it); pinned bars on /cfb/power/ are still two rows; the
       schedule's picks cards are ~620px above the first game; bracketology and /men/history intros.
