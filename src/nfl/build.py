@@ -1,6 +1,8 @@
 """
 Rebuild the NFL section: refetch this season's games, archive the board,
-build the page. gordstats.daily's nfl task calls build_all().
+build the pages (the stats page refetches its own nflverse play-by-play, at
+most every 12 hours - nfl.advanced). gordstats.daily's nfl task calls
+build_all().
 
     python -m nfl.build
     python -m nfl.build --refresh
@@ -8,7 +10,7 @@ build the page. gordstats.daily's nfl task calls build_all().
 import argparse
 import traceback
 
-PAGES = ["predictions", "watch"]
+PAGES = ["predictions", "watch", "stats"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
