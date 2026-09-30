@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-09-30T03:37:55+00:00",
+ "fetched": "2026-09-30T09:43:58+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 179.8,
-     "win_probability": 0.66
+     "projected": 168.55,
+     "win_probability": 0.6
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 153.37,
-     "win_probability": 0.33999999999999997
+     "win_probability": 0.4
     }
    ]
   },
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 177.02,
-     "win_probability": 0.88
+     "projected": 169.02,
+     "win_probability": 0.85
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 114.12,
-     "win_probability": 0.12
+     "win_probability": 0.15000000000000002
     }
    ]
   },
@@ -86,15 +86,15 @@
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
      "points": 0.0,
-     "projected": 165.35,
-     "win_probability": 0.71
+     "projected": 128.29,
+     "win_probability": 0.45999999999999996
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 133.3,
-     "win_probability": 0.29000000000000004
+     "projected": 133.02,
+     "win_probability": 0.54
     }
    ]
   },
@@ -237,20 +237,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "405245",
-    "player": "Rueben Owens II",
-    "pos": "RB",
-    "team": "TAMU",
-    "team_full": "Texas A&M Aggies",
-    "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "457379",
     "player": "Fame Ijeboi",
     "pos": "RB",
@@ -341,6 +327,20 @@
     "team": "OU",
     "team_full": "Oklahoma Sooners",
     "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457709",
+    "player": "Matt Fuller",
+    "pos": "RB",
+    "team": "SC",
+    "team_full": "South Carolina Gamecocks",
+    "bye": 7.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1183,20 +1183,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "406200",
-    "player": "Randy Pittman Jr.",
-    "pos": "TE",
-    "team": "SMU",
-    "team_full": "SMU Mustangs",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "327462",
     "player": "Umari Hatcher",
     "pos": "WR",
@@ -1221,20 +1207,6 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "457898",
-    "player": "Benji Blackburn",
-    "pos": "TE",
-    "team": "STAN",
-    "team_full": "Stanford Cardinal",
-    "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1287,6 +1259,34 @@
     "team": "KSU",
     "team_full": "Kansas State Wildcats",
     "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "405815",
+    "player": "Colton Joseph",
+    "pos": "QB",
+    "team": "WIS",
+    "team_full": "Wisconsin Badgers",
+    "bye": 6.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "482194",
+    "player": "Mark Bowman",
+    "pos": "TE",
+    "team": "USC",
+    "team_full": "USC Trojans",
+    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1621,20 +1621,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "470164",
-    "player": "Donovan Olugbode",
-    "pos": "WR",
-    "team": "MIZZ",
-    "team_full": "Missouri Tigers",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "WR",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "404730",
     "player": "Reed Harris",
     "pos": "WR",
@@ -1659,34 +1645,6 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "457622",
-    "player": "Bryant Wesco Jr.",
-    "pos": "WR",
-    "team": "CLEM",
-    "team_full": "Clemson Tigers",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "W/R/T",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "482179",
-    "player": "Trent Mosley",
-    "pos": "WR",
-    "team": "USC",
-    "team_full": "USC Trojans",
-    "bye": 10.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Knee",
-    "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
    },
@@ -1747,12 +1705,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "468769",
-    "player": "Bear Bachmeier",
-    "pos": "QB",
-    "team": "BYU",
-    "team_full": "BYU Cougars",
-    "bye": 4.0,
+    "yahoo_id": "338965",
+    "player": "Raleek Brown",
+    "pos": "RB",
+    "team": "TEX",
+    "team_full": "Texas Longhorns",
+    "bye": 5.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1761,12 +1719,40 @@
     "stats": {}
    },
    {
-    "yahoo_id": "338965",
-    "player": "Raleek Brown",
+    "yahoo_id": "468975",
+    "player": "Jeffrey Overton Jr.",
     "pos": "RB",
-    "team": "TEX",
-    "team_full": "Texas Longhorns",
-    "bye": 5.0,
+    "team": "VT",
+    "team_full": "Virginia Tech Hokies",
+    "bye": 9.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "405273",
+    "player": "Cayden Lee",
+    "pos": "WR",
+    "team": "MIZZ",
+    "team_full": "Missouri Tigers",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "457547",
+    "player": "Joseph Williams",
+    "pos": "WR",
+    "team": "COLO",
+    "team_full": "Colorado Buffaloes",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -1799,6 +1785,20 @@
     "status_full": "",
     "injury_note": "",
     "slot": "DEF",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "900023",
+    "player": "Nebraska",
+    "pos": "DEF",
+    "team": "NEB",
+    "team_full": "Nebraska Cornhuskers",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    }
@@ -2533,9 +2533,9 @@
   "458486": 17.23,
   "471478": 12.98,
   "405317": 10.93,
-  "405245": 11.25,
   "457379": 11.71,
   "469860": 9.9,
+  "457709": 13.9,
   "900104": 12.42,
   "405071": 22.43,
   "469436": 22.36,
@@ -2587,10 +2587,10 @@
   "337939": 15.13,
   "403842": 18.86,
   "455922": 15.12,
-  "406200": 8.0,
   "327462": 14.15,
   "451329": 9.07,
-  "457898": 6.76,
+  "405815": 28.69,
+  "482194": 9.75,
   "900076": 16.26,
   "337760": 26.07,
   "469212": 23.78,
@@ -2599,7 +2599,7 @@
   "451040": 9.1,
   "403910": 12.35,
   "456937": 17.05,
-  "450577": 10.85,
+  "450577": 10.79,
   "404713": 10.38,
   "457801": 15.54,
   "333511": 26.82,
@@ -2611,16 +2611,16 @@
   "404876": 13.88,
   "467588": 14.31,
   "456020": 21.27,
-  "470164": 12.94,
   "404730": 15.49,
   "482507": 9.51,
-  "457622": 10.4,
-  "482179": 13.72,
   "334780": 4.87,
-  "468769": 20.31,
+  "468975": 14.67,
+  "405273": 14.57,
+  "457547": 14.3,
   "463244": 0.0,
+  "900023": 5.34,
   "403957": 25.73,
-  "404007": 13.83,
+  "404007": 13.55,
   "457567": 14.02,
   "456628": 10.0,
   "457310": 8.33,
