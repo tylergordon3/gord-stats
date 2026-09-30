@@ -337,6 +337,14 @@ Open:
       (stickyhead.js); matchups fold on a phone; the predictions record swipes; a 12px text floor;
       schedule cards 410 -> 185px with one pinned row; league tables lead with record and odds; the
       fantasy heatmap in dark; /cfb/ leads with numbers; CBB power, offseason scoreboard, tip-off.
+- [x] **Watch guides in all three sports** (53066e4a8..6fa08e49a): one engine (gordstats.watch_page);
+      /nfl/watch/ ranks by ESPN matchup quality with your Sleeper starters and your opponent's in
+      each game; /cbb/watch/ is built in the browser from the live scoreboard feed, men's and women's.
+- [x] **Team Stats, CFB and NFL** (8059ab835..c4e995fa1): one sortable, shaded table in tabs
+      (gordstats.stats_page) with player leaderboards. CFB from CollegeFootballData (opponent-adjusted
+      EPA/success, havoc, line yards, points per trip, box score, talent, player EPA); NFL from nflverse
+      play-by-play (EPA, success, PROE, pace, red zone, leave-one-out opponent adjustment, QB CPOE).
+      Every CFB team page carries an Advanced block with FBS ranks.
 - [ ] **Phone, still open:** the reader's own power table (gordstats/my_power) keeps the old column
       order and solid fills (tests pin it); pinned bars on /cfb/power/ are still two rows; the
       schedule's picks cards are ~620px above the first game; bracketology and /men/history intros.
