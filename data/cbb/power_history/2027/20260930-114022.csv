@@ -1,0 +1,366 @@
+key,rank
+Duke,1
+Arizona,2
+Virginia,3
+Florida,4
+Houston,5
+Illinois,6
+St. John's,7
+Louisville,8
+Gonzaga,9
+Michigan St.,10
+Kansas,11
+Connecticut,12
+Michigan,13
+Texas Tech,14
+Nebraska,15
+Tennessee,16
+Ohio St.,17
+Miami FL,18
+Iowa St.,19
+Alabama,20
+Arkansas,21
+Purdue,22
+UCLA,23
+Vanderbilt,24
+Kentucky,25
+Texas,26
+Villanova,27
+Marquette,28
+Indiana,29
+USC,30
+Georgia,31
+Oregon,32
+Oklahoma,33
+Auburn,34
+Clemson,35
+Virginia Tech,36
+Maryland,37
+N.C. State,38
+Cincinnati,39
+BYU,40
+Creighton,41
+Missouri,42
+LSU,43
+North Carolina,44
+Grand Canyon,45
+Texas A&M,46
+Iowa,47
+Baylor,48
+Wisconsin,49
+UCF,50
+TCU,51
+SMU,52
+VCU,53
+Providence,54
+Mississippi,55
+Oklahoma St.,56
+Xavier,57
+Syracuse,58
+San Diego St.,59
+West Virginia,60
+Utah St.,61
+Mississippi St.,62
+Arizona St.,63
+DePaul,64
+Saint Mary's,65
+New Mexico,66
+Washington,67
+High Point,68
+Saint Louis,69
+Wichita St.,70
+Florida St.,71
+South Carolina,72
+Dayton,73
+Rutgers,74
+Seton Hall,75
+Northwestern,76
+Pittsburgh,77
+Utah,78
+Wake Forest,79
+Minnesota,80
+Tulsa,81
+Georgetown,82
+Kansas St.,83
+Notre Dame,84
+Colorado St.,85
+Colorado,86
+George Washington,87
+Boise St.,88
+Nevada,89
+California,90
+McNeese St.,91
+South Florida,92
+Charlotte,93
+Butler,94
+Santa Clara,95
+Oregon St.,96
+Illinois Chicago,97
+George Mason,98
+UNLV,99
+Stanford,100
+UC Santa Barbara,101
+Miami OH,102
+Murray St.,103
+Boston College,104
+Illinois St.,105
+Penn St.,106
+Western Kentucky,107
+UNC Wilmington,108
+Memphis,109
+Georgia Tech,110
+Akron,111
+Richmond,112
+Belmont,113
+North Texas,114
+Davidson,115
+Hawaii,116
+Northern Iowa,117
+Wyoming,118
+Fresno St.,119
+St. Bonaventure,120
+Harvard,121
+Utah Valley,122
+Stephen F. Austin,123
+Florida Atlantic,124
+UAB,125
+UC Irvine,126
+Saint Joseph's,127
+Penn,128
+Texas St.,129
+Loyola Marymount,130
+UC San Diego,131
+Pacific,132
+Fordham,133
+Kennesaw St.,134
+Toledo,135
+San Diego,136
+Troy,137
+Rhode Island,138
+UTEP,139
+Kent St.,140
+Liberty,141
+Tarleton St.,142
+Valparaiso,143
+Middle Tennessee,144
+Drake,145
+St. Thomas,146
+La Salle,147
+James Madison,148
+Temple,149
+North Dakota St.,150
+Loyola Chicago,151
+Seattle,152
+Pepperdine,153
+Wright St.,154
+Duquesne,155
+New Mexico St.,156
+Princeton,157
+UC Davis,158
+Sacramento St.,159
+FIU,160
+Campbell,161
+Hofstra,162
+Tulane,163
+Portland,164
+Eastern Michigan,165
+Washington St.,166
+Bowling Green,167
+Central Arkansas,168
+San Francisco,169
+Montana St.,170
+Cal Poly,171
+Western Michigan,172
+Austin Peay,173
+East Tennessee St.,174
+Western Carolina,175
+Furman,176
+Cal Baptist,177
+Texas A&M Corpus Chris,178
+Robert Morris,179
+Merrimack,180
+Sam Houston St.,181
+Towson,182
+San Jose St.,183
+Green Bay,184
+Charleston,185
+Eastern Washington,186
+Vermont,187
+Hampton,188
+American,189
+Massachusetts,190
+Cal St. Fullerton,191
+Bethune Cookman,192
+Ohio,193
+Columbia,194
+East Carolina,195
+Arkansas St.,196
+William & Mary,197
+Yale,198
+Northern Colorado,199
+Southern Miss,200
+Montana,201
+Lamar,202
+UT Rio Grande Valley,203
+Marist,204
+Bradley,205
+UTSA,206
+Idaho,207
+Queens,208
+Central Michigan,209
+Tennessee St.,210
+Colgate,211
+Portland St.,212
+UT Arlington,213
+Louisiana,214
+Cal St. Northridge,215
+Georgia St.,216
+New Orleans,217
+Northern Kentucky,218
+Longwood,219
+Buffalo,220
+Oakland,221
+Jacksonville St.,222
+Jacksonville,223
+Tennessee Tech,224
+Winthrop,225
+Lipscomb,226
+Monmouth,227
+Cornell,228
+Samford,229
+Howard,230
+Presbyterian,231
+Indiana St.,232
+Brown,233
+Fairfield,234
+Coastal Carolina,235
+Quinnipiac,236
+Rice,237
+Elon,238
+Stony Brook,239
+Detroit Mercy,240
+Old Dominion,241
+Missouri St.,242
+Northern Illinois,243
+Northeastern,244
+Milwaukee,245
+Southeast Missouri St.,246
+Oral Roberts,247
+Abilene Christian,248
+Iona,249
+Denver,250
+Southern Illinois,251
+Little Rock,252
+SIU Edwardsville,253
+Mercer,254
+Long Beach St.,255
+Southeastern Louisiana,256
+Delaware,257
+Lehigh,258
+South Dakota St.,259
+Eastern Kentucky,260
+South Alabama,261
+Youngstown St.,262
+UC Riverside,263
+Florida Gulf Coast,264
+IU Indy,265
+Prairie View A&M,266
+UMBC,267
+Appalachian St.,268
+Wofford,269
+Air Force,270
+LIU,271
+UNC Asheville,272
+Ball St.,273
+Siena,274
+Louisiana Tech,275
+Evansville,276
+Alabama St.,277
+Chattanooga,278
+Purdue Fort Wayne,279
+Radford,280
+Cleveland St.,281
+Stetson,282
+Saint Peter's,283
+Jackson St.,284
+Marshall,285
+South Dakota,286
+Albany,287
+Lindenwood,288
+Nebraska Omaha,289
+Boston University,290
+Houston Christian,291
+Mount St. Mary's,292
+UNC Greensboro,293
+Northwestern St.,294
+Nicholls St.,295
+New Hampshire,296
+Sacred Heart,297
+Weber St.,298
+Southern Utah,299
+West Georgia,300
+North Alabama,301
+Bellarmine,302
+North Carolina A&T,303
+Drexel,304
+Niagara,305
+Mercyhurst,306
+UMKC,307
+Alabama A&M,308
+Navy,309
+NJIT,310
+Dartmouth,311
+Morehead St.,312
+UMass Lowell,313
+Cal St. Bakersfield,314
+Northern Arizona,315
+Tennessee Martin,316
+North Dakota,317
+Florida A&M,318
+Idaho St.,319
+East Texas A&M,320
+Canisius,321
+Le Moyne,322
+Incarnate Word,323
+Southern Indiana,324
+North Florida,325
+Louisiana Monroe,326
+Charleston Southern,327
+Manhattan,328
+Maine,329
+Holy Cross,330
+Binghamton,331
+Eastern Illinois,332
+VMI,333
+Lafayette,334
+Utah Tech,335
+Georgia Southern,336
+Loyola MD,337
+Central Connecticut,338
+USC Upstate,339
+Wagner,340
+Fairleigh Dickinson,341
+Southern,342
+Texas Southern,343
+Stonehill,344
+Norfolk St.,345
+Bryant,346
+The Citadel,347
+Chicago St.,348
+Delaware St.,349
+Bucknell,350
+New Haven,351
+Gardner Webb,352
+Western Illinois,353
+South Carolina St.,354
+North Carolina Central,355
+Grambling St.,356
+Coppin St.,357
+Army,358
+Alcorn St.,359
+Arkansas Pine Bluff,360
+Morgan St.,361
+Rider,362
+West Florida,363
+Mississippi Valley St.,364
+Maryland Eastern Shore,365
