@@ -322,5 +322,12 @@ Open:
       power pages' stakes table, matchups' game-of-the-week callout (ranked by 2p(1-p) x swing).
 - [x] **Schedule difficulty** (b5a372b59): record vs all-play split into opponents' strength and
       timing (gordstats.schedule_luck); /fantasy/schedule/, League Records card, CFB League Home.
-- [ ] **Features, ranked:** an honest bets record (CLV); CBB game predictions; Saturday watch guide.
+- [x] **Honest bets record** (gordstats.bet_record): the home card's locked picks in units (a unit on
+      each week's single and parlay at -110) and against DraftKings' last line before kickoff, per
+      pick and for the season; both predictions pages carry units on their two records against the
+      book and a fifth tile, "Line moved our way", from each early-week call. At launch the CFB
+      model's early-week lines moved toward it 127 of 213 times (+0.4 pts a call) while its spread
+      calls ran 46% at the close and 97-105 at the open - it sees some of what the market later
+      does, not enough to pay; totals at the open 59-49.
+- [ ] **Features, ranked:** Saturday watch guide.
 
