@@ -96,43 +96,105 @@ def _manager_col(ranks, managers) -> list[str]:
             for r, m in zip(ranks, managers)]
 
 
+# --------------------------------------------------------------------------- #
+# Heat shading, for both themes
+# --------------------------------------------------------------------------- #
+
+def _heat(col: pd.Series, cmap: str = "RdYlGn", vmin=None, vmax=None) -> list[str]:
+    """The RdYlGn shading as a translucent wash over the cell's own background.
+
+    pandas' background_gradient paints opaque colours in an ID rule, so the
+    table's dark theme never reached them: at night the neutral "·" of Move
+    and every middling rating were pale-yellow blocks on navy. A wash - the
+    ramp's colour at an opacity that grows with the distance from the middle
+    - sits on whatever the cell already is, white or zebra or navy, with the
+    theme's own ink on top, and the middle of the scale is no colour at all.
+
+    It is a background-image layer rather than a background-color so the
+    themed colour underneath survives. How strong the ends get is --heat,
+    set per theme on .pw-table (_TABLE_CSS): .35 keeps the light theme's
+    slate ink at 4.8:1 on the reddest cell, and the dark theme can take .6.
+    """
+    values = pd.to_numeric(col, errors="coerce")
+    lo = values.min() if vmin is None else vmin
+    hi = values.max() if vmax is None else vmax
+    span = (hi - lo) or 1.0
+    ramp = matplotlib.colormaps[cmap]
+    out = []
+    for v in values:
+        t = 0.5 if pd.isna(v) else min(max((v - lo) / span, 0.0), 1.0)
+        strength = abs(2 * t - 1)
+        if strength < 0.03:
+            out.append("")
+            continue
+        r, g, b = (round(c * 255) for c in ramp(t)[:3])
+        wash = f"rgb({r} {g} {b} / calc(var(--heat, .35) * {strength:.2f}))"
+        out.append(f"background-image: linear-gradient({wash}, {wash})")
+    return out
+
+
+# Every pandas table on the page carries .pw-table. The phone rules undo the
+# site-wide sticky-table floor (every column 70px or more, the first 150px),
+# which gave "+2" a 90px column and put Record, Playoffs and Title past the
+# edge of a 390px screen; each column now takes what its header needs.
+_TABLE_CSS = """<style>
+.pw-table{--heat:.35}
+@media (prefers-color-scheme: dark){ .pw-table{--heat:.6} }
+@media (max-width:600px){
+  /* important: pandas states the padding in an ID rule (styles.GRID_TD). */
+  .sticky-table.pw-table th,.sticky-table.pw-table td{min-width:0;padding:6px 7px !important}
+  .sticky-table.pw-table td:first-child,.sticky-table.pw-table th:first-child{
+    min-width:0;max-width:122px}
+  .sticky-table.pw-table .row-rank{min-width:1.5em;font-size:12px}
+}
+</style>"""
+
+# The name column reads left to right like every name column; pandas states
+# its grid centred in an ID rule, so the override has to be one too.
+_NAME_LEFT = [{"selector": "td.col0", "props": [("text-align", "left")]},
+              {"selector": "th.col0", "props": [("text-align", "left")]}]
+
+
 def _rankings_table(table: pd.DataFrame) -> str:
     in_season = "wins" in table.columns and table["week"].iloc[0] > 0
     display = pd.DataFrame(
         {"Manager": _manager_col(table["rank"], table["manager"])})
-    display["Move"] = table["move"]
     blended = "combined" in table.columns and table.get("ext_vorp") is not None \
         and table["ext_vorp"].notna().any()
     short = table.attrs.get("ext_short", "Ext")
-    if blended:
-        display["Rating"] = table["combined"]
-        display["GordStats"] = table["power"]
-        display[short] = table["ext_vorp"]
-    else:
-        display["Power"] = table["power"]
+    rating = "Rating" if blended else "Power"
+    # What a phone sees beside the name is what a reader came for - the
+    # record, then the playoff and title odds - with the rating the rows are
+    # ranked by after it, and the movement and the parts of the blend last.
     if in_season:
         display["Record"] = (table["wins"].astype(int).astype(str) + "-"
                              + table["losses"].astype(int).astype(str))
-        display["Luck"] = table["luck"]
-    display["Proj. Record"] = table["proj_wins"].map(_record)
     display["Playoffs"] = table["playoff_odds"]
     display["Title"] = table["title_odds"]
+    display[rating] = table["combined"] if blended else table["power"]
+    display["Move"] = table["move"]
+    if blended:
+        display["GordStats"] = table["power"]
+        display[short] = table["ext_vorp"]
+    display["Proj. Record"] = table["proj_wins"].map(_record)
+    if in_season:
+        display["Luck"] = table["luck"]
 
     fmt = {"Move": _signed, "Power": "{:.1f}", "Playoffs": "{:.0%}",
            "Title": "{:.0%}", "Luck": "{:+.1f}"}
     if blended:
         fmt.update({"Rating": "{:.1f}", "GordStats": "{:.1f}", short: "{:.1f}"})
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
-              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Rating" if blended else "Power"])
-              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Playoffs"]))
+              .apply(_heat, subset=[rating])
+              .apply(_heat, subset=["Playoffs"]))
     if table["move"].notna().any():
         bound = max(1.0, float(table["move"].abs().max()))
-        styled = styled.background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Move"], vmin=-bound, vmax=bound)
+        styled = styled.apply(_heat, subset=["Move"], vmin=-bound, vmax=bound)
     if in_season:
         bound = max(1.0, float(table["luck"].abs().max()))
-        styled = styled.background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Luck"], vmin=-bound, vmax=bound)
-    return (styled.set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+        styled = styled.apply(_heat, subset=["Luck"], vmin=-bound, vmax=bound)
+    return (styled.set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
+            .set_table_attributes('class="sticky-table pw-table"')).to_html()
 
 
 def _with_external(table: pd.DataFrame) -> pd.DataFrame:
@@ -258,9 +320,9 @@ def draft_consensus_section() -> str:
 
     fmt = {c: "{:.1f}" for c in ["Consensus", "GordStats", "FP", "FF"]}
     styled = (display.style.hide(axis="index").format(fmt, na_rep="")
-              .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Consensus"])
-              .set_table_styles(_GRID, overwrite=False)
-              .set_table_attributes('class="sticky-table"'))
+              .apply(_heat, subset=["Consensus"])
+              .set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
+              .set_table_attributes('class="sticky-table pw-table"'))
 
     frozen = snap.get("frozen", "")
     try:
@@ -450,6 +512,11 @@ _POS_CSS = """<style>
    #0f172a on it read at 1.5:1 in the light theme (the 2026-09-28 phone audit). */
 .ps-table th{background:var(--ps-rule)}
 .ps-table td:first-child{text-align:left;font-weight:600}
+/* The phone floor: the ranks, the gaps to average, the bench line and the
+   axis were 11px, which is the size this site stopped using for numbers. */
+@media (max-width:600px){
+  .ps-name .rk,.ps-axis,.ps-val small,.ps-val .d{font-size:12px}
+}
 </style>"""
 
 
@@ -582,9 +649,9 @@ def _player_accuracy_section(scored: dict) -> str:
     pivot.index.name = "Position"
 
     html = (pivot.style.format("{:+.2f}")
-            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", vmin=-0.8, vmax=0.8)
+            .apply(_heat, vmin=-0.8, vmax=0.8)
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table pw-table"')).to_html()
     return f"<div class='table-scroll'>{html}</div>"
 
 
@@ -603,9 +670,9 @@ def _backtest_section(scored: dict) -> str:
             "actual_rank": "Actual", "PF": "Actual Points", "total_wins": "Wins"})
         html = (display.style.hide(axis="index")
                 .format({"Proj. Points": "{:,.0f}", "Actual Points": "{:,.0f}"})
-                .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Projected", "Actual"])
-                .set_table_styles(_GRID, overwrite=False)
-                .set_table_attributes('class="sticky-table"')).to_html()
+                .apply(_heat, cmap="RdYlGn_r", subset=["Projected", "Actual"])
+                .set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
+                .set_table_attributes('class="sticky-table pw-table"')).to_html()
         blocks.append((season_str, FORMAL_SEASON[season_str],
                        f"<p>Rank correlation: <strong>{spearman:+.2f}</strong>.</p>"
                        f"<div class='table-scroll'>{html}</div>"))
@@ -685,7 +752,7 @@ def body() -> str:
                 + "<section id='mine' class='pw-section'>"
                 + "<h2 id='pw-mine-h'>Your League</h2>"
                 + my_power.section() + "</section>"
-                + "<div id='pw-built'>" + layout.details(
+                + "<div id='pw-built'>" + _TABLE_CSS + layout.details(
                     "Method &mdash; what this will measure, and how well it works",
                     _method_section(), open=True, anchor="method")
                 + "</div>"
@@ -718,7 +785,7 @@ def body() -> str:
     return (INTRO + my_league.bar()
             + "<section id='mine' class='pw-section'>"
             + "<h2 id='pw-mine-h'>Your League</h2>" + content["mine"] + "</section>"
-            + f"<div id='pw-built'>{nav}{rest}</div>"
+            + f"<div id='pw-built'>{_TABLE_CSS}{nav}{rest}</div>"
             + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.JS)
 
 

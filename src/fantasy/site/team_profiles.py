@@ -27,6 +27,7 @@ CSS = """<style>
 @media (prefers-color-scheme: dark){
   .tp{--tp-win:#5fd08f;--tp-loss:#ff8f84;--tp-ink:#e6edf6;--tp-muted:#9fb0c6;
     --tp-rule:#2b3852;--tp-card:#16203a;--tp-soft:#1b2540;--tp-winbg:#18402c;--tp-lossbg:#4a2227}
+  .tp-seasons td.champ{color:#facc15}
 }
 .tp-pick{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
 .tp-pick label{font-weight:700;color:var(--tp-ink)}

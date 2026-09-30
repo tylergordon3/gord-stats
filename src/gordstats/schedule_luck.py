@@ -53,6 +53,13 @@ table.sl td.big{font-weight:800}
 table.sl .neg{color:#b91c1c}
 table.sl .pos{color:#15803d}
 .sl-note{font-size:13px;color:#475569;line-height:1.55;margin:6px 0 10px}
+/* A phone sees the name and the three win figures without scrolling: the
+   bold team column was 157px of a 390px screen. */
+@media (max-width:600px){
+  table.sl td.t{max-width:120px;overflow:hidden;text-overflow:ellipsis}
+  table.sl th{font-size:12px}
+  table.sl th,table.sl td{padding:6px 6px}
+}
 @media (prefers-color-scheme: dark){
   table.sl th{color:#dde5ef;background:#223052;border-color:#2b3852}
   table.sl td{border-color:#2b3852}

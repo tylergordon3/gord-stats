@@ -40,6 +40,10 @@ table.stk th{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;colo
 table.stk td{padding:6px 8px;border-bottom:1px solid #eef2f7;text-align:center;white-space:nowrap}
 table.stk td.t{text-align:left;font-weight:700}
 table.stk td.sw{font-weight:800}
+@media (max-width:600px){
+  table.stk th{font-size:12px}
+  table.stk td.t{max-width:130px;overflow:hidden;text-overflow:ellipsis}
+}
 table.stk tr.gw-row td{background:#fff7ed}
 @media (prefers-color-scheme: dark){
   .gw{background:#16203a;border-color:#2b3852;border-left-color:var(--accent,#C2410C)}

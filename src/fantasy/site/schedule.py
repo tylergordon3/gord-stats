@@ -26,6 +26,26 @@ from gordstats import schedule_luck
 from gordstats.frontmatter import add_front_matter
 
 _GRID = [styles.GRID_TD, styles.GRID_TH]
+# The team column reads left to right like every name column; pandas states
+# its grid centred in an ID rule, so the override has to be one too.
+_NAME_LEFT = [{"selector": "td.col0", "props": [("text-align", "left")]},
+              {"selector": "th.col0", "props": [("text-align", "left")]}]
+_CLASS = 'class="sticky-table sc-table"'
+
+# On a phone the site-wide sticky-table floor (every column 70px or more, the
+# first 150px) left the all-play table three columns on a 390px screen - the
+# name and two weeks, never the season's total. Here each column takes what
+# its values need (a two-word header wraps rather than set the width) and the
+# name gives way to an ellipsis first.
+_CSS = """<style>
+@media (max-width:600px){
+  /* important: pandas states the padding in an ID rule (styles.GRID_TD). */
+  .sticky-table.sc-table th,.sticky-table.sc-table td{min-width:0;padding:6px 7px !important}
+  .sticky-table.sc-table thead th{white-space:normal;vertical-align:bottom}
+  .sticky-table.sc-table td:first-child,.sticky-table.sc-table th:first-child{
+    min-width:0;max-width:114px}
+}
+</style>"""
 
 
 def _load(season_str: str) -> pd.DataFrame:
@@ -76,12 +96,17 @@ def all_play(season_str: str):
     # sitting over the frozen team column.
     pivot.columns.name = None
     pivot = pivot.rename_axis("Team").reset_index()
+    # The season's answer beside the name, the weeks behind it: on a phone
+    # the total and the win rate were past the edge of the screen, after
+    # every week of the season.
+    weeks = [c for c in pivot.columns if c not in ("Team", "Total", "Win %")]
+    pivot = pivot[["Team", "Total", "Win %", *weeks]]
 
     return (pivot.style.hide(axis="index")
-            .apply(styles.highlight_roto, subset=list(pivot.columns[1:-2]))
+            .apply(styles.highlight_roto, subset=weeks)
             .apply(styles.highlight_on_record, subset=["Total"])
-            .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"'))
+            .set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
+            .set_table_attributes(_CLASS))
 
 
 # --------------------------------------------------------------------------- #
@@ -141,10 +166,13 @@ def schedule_metrics(season_str: str):
             .format(lambda x: ("&mdash;" if pd.isna(x) else f"{x:.3f}")
                     if isinstance(x, float) else x)
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["SOS"])
-            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["SOV"])
+            # Only the teams with a win: the ramp has no colour for a missing
+            # value and pandas writes its transparent "bad" colour out as
+            # #000000, so a winless team's SOV dash sat in a solid black block.
+            .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=pd.IndexSlice[df.index[df["SOV"].notna()], ["SOV"]])
             .apply(styles.bg_from_pythag_str, subset=["Exp W (Actual)"])
-            .set_table_styles(_GRID + [styles.TABLE_STYLE], overwrite=False)
-            .set_table_attributes('class="sticky-table"'))
+            .set_table_styles(_GRID + [styles.TABLE_STYLE] + _NAME_LEFT, overwrite=False)
+            .set_table_attributes(_CLASS))
 
 
 # --------------------------------------------------------------------------- #
@@ -180,13 +208,19 @@ def schedule_compare(season_str: str):
     # stays (hidden): highlight_actual_records darkens the diagonal by
     # comparing row labels to column names.
     df.insert(0, "Schedule", df.index)
+    # Each schedule's total - the whole league against it - is the row's
+    # answer, so it sits beside the name rather than a dozen columns right.
+    df.insert(1, "Schedule Totals", df.pop("Schedule Totals"))
+
+    def rule_after(col):
+        return ["font-weight: bold; border-right: 3px solid black !important;" for _ in col]
 
     return (df.style.hide(axis="index")
-            .set_table_styles(_GRID, overwrite=False)
+            .set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
             .apply(styles.highlight_actual_records, axis=None, subset=list(df.columns[1:]))
             .apply(styles.style_total_bottom, axis=1, subset=pd.IndexSlice[df.index[-1]:, :])
-            .apply(styles.style_total_right, axis=0, subset=pd.IndexSlice[:, df.columns[-1]:])
-            .set_table_attributes('class="sticky-table"'))
+            .apply(rule_after, axis=0, subset=["Schedule Totals"])
+            .set_table_attributes(_CLASS))
 
 
 # --------------------------------------------------------------------------- #
@@ -218,7 +252,8 @@ def _season_view(season_str: str) -> str:
 def generate():
     """Build and write docs/schedule/index.html - every season, switchable."""
     views = [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS]
-    body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:", pin=True)
+    body = layout.HEAD + _CSS + layout.view_switcher(views, group="season", label="Season:",
+                                                     pin=True)
     page = add_front_matter(body, "Schedule Stats")
 
     out = paths.WEB_SCHEDULE

@@ -53,13 +53,19 @@ table.lg-table td{padding:6px 10px;border:1px solid #eef2f7;color:#0f172a;
   background:#fff;text-align:center;white-space:nowrap}
 table.lg-table td.lg-team{text-align:left}
 table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
+/* max-width:none - the site's img{max-width:100%} lets the table size the
+   team column as though the logo could shrink to nothing. */
 table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
-  vertical-align:middle;margin:0 7px 0 0;border:none;padding:0;box-shadow:none}
+  vertical-align:middle;margin:0 7px 0 0;border:none;padding:0;box-shadow:none;
+  max-width:none}
 /* Team leads the table, so pinning first-child holds the identity column
    while the rest scrolls on a phone. The cells already carry opaque themed
    backgrounds (zebra and dark) from the rules above. */
 table.lg-table td:first-child,table.lg-table th:first-child{
   position:sticky;left:0;z-index:1}
+table.lg-table th:first-child{text-align:left}
+.lg-nm{display:inline-block;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
 .mu-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
 .lg-chart{margin:10px 0 18px}
 .lg-chart img{border:none;padding:0;box-shadow:none;background:none;border-radius:0}
@@ -69,6 +75,16 @@ table.lg-table td:first-child,table.lg-table th:first-child{
   table.lg-table td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.lg-table tbody tr:nth-child(even) td{background:#1b2540}
   .mu-note{color:#aab7c9}
+}
+/* On a phone the longest Yahoo name ("Jackson's Brilliant Team (1 unrated)")
+   made the pinned column 264px of a 390px screen, and the odds sat off it.
+   The name gives way instead: rank, logo and ~85px of name, the ellipsis
+   for the rest, and Record, Playoffs and Title beside it. */
+@media (max-width:600px){
+  table.lg-table th,table.lg-table td{padding:6px 7px}
+  table.lg-table .lg-nm{max-width:86px}
+  table.lg-table img.lg-logo{width:18px;height:18px;margin-right:5px}
+  table.lg-table .row-rank{min-width:1.4em;font-size:12px}
 }
 </style>"""
 
@@ -378,13 +394,14 @@ def section() -> str:
         vs_avg = (f"<td>{r['per_week'] - avg:+.1f}</td>" if r["per_week"] is not None
                   else "<td></td>")
         cells.append(
-            f'<tr><td class="lg-team"><span class="row-rank">{i}</span>'
-            f'{logo}{escape(t["name"])}'
+            f'<tr><td class="lg-team" title="{escape(t["name"], quote=True)}">'
+            f'<span class="row-rank">{i}</span>{logo}<span class="lg-nm">{escape(t["name"])}'
             + (f' <span class="mu-note">({r["unrated"]} unrated)</span>'
-               if r["unrated"] else "") + "</td>"
-            # What a phone sees first: strength and what it is worth, then
-            # the record, then the movement and the detail.
-            f"{per_week}{odds}<td>{proj_rec}</td><td>{_record(t)}</td>{move_tds}"
+               if r["unrated"] else "") + "</span></td>"
+            # What a phone sees first, beside the name: the record and what
+            # the season is worth - playoffs, title - then the strength the
+            # rows are ranked by, and the movement and the detail after.
+            f"<td>{_record(t)}</td>{odds}{per_week}<td>{proj_rec}</td>{move_tds}"
             f"{bye}{vs_avg}{pos_tds}"
             f"<td>{r['bench']:.0f}</td>"
             f'<td class="lg-team">{anchor}</td></tr>')
@@ -426,9 +443,9 @@ def section() -> str:
         "behind the starters; <b>Move</b>/<b>7d</b> the places climbed since the last "
         "build / a week ago.</p></details>"
         '<div class="table-scroll"><table class="lg-table">'
-        "<thead><tr><th>Team</th>"
+        f"<thead><tr><th>Team</th><th>Record</th>{odds_heads}"
         "<th title='Projected lineup points a week, rest of the regular season'>Pts/wk</th>"
-        f"{odds_heads}<th title='Projected final record'>Proj.</th><th>Record</th>"
+        "<th title='Projected final record'>Proj.</th>"
         f"{move_heads}{bye_head}"
         "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
         "<th>Bench</th><th>Anchor</th></tr></thead>"

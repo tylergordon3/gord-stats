@@ -65,14 +65,16 @@ table.rd td.rd-p img{width:18px;height:18px;vertical-align:-3px;margin:0 6px 0 0
   padding:0;box-shadow:none;background:none}
 table.rd td.rd-g{text-align:left;font-size:13px}
 table.rd td.rd-g .bye{color:#b91c1c;font-weight:600}
-table.rd td.rd-g .fin{color:#64748b}
+table.rd td.rd-g .fin{color:#5d6b7e}
 table.rd td.rd-g .live{color:#b91c1c;font-weight:700}
 table.rd tr.rd-bn td{color:#64748b;background:#fafbfc}
 /* His game is over: nothing on this row is a decision any more, so it is
    muted whole and the eye goes to the players still to play. After the
-   change tints below it, so a finished player does not read as a swap. */
-table.rd tr.rd-done td{background:#f4f6f8;color:#8b98a8;box-shadow:none}
-table.rd tr.rd-done td.rd-p .nm{color:#64748b;font-weight:500}
+   change tints below it, so a finished player does not read as a swap.
+   Muted is the grey panel, the faded logo and the lighter weight - the ink
+   stays at 5:1 (#8b98a8 here read at 2.7:1, the 2026-09-29 phone audit). */
+table.rd tr.rd-done td{background:#f4f6f8;color:#5d6b7e;box-shadow:none}
+table.rd tr.rd-done td.rd-p .nm{color:#5d6b7e;font-weight:500}
 table.rd tr.rd-done td.rd-p img{opacity:.55}
 table.rd tr.rd-done td.rd-spent{color:#475569;font-weight:700}
 table.rd tr.rd-bn td.rd-p .nm{font-weight:500}
@@ -95,7 +97,11 @@ table.rd td.rd-slot{font-weight:700;font-size:12.5px}
 .rd-cov.warn{color:#b45309;font-weight:600}
 .rd-note{font-size:13px;color:#4a5a68;margin:6px 0 12px;line-height:1.55}
 .rd-gain{color:#15803d;font-weight:700}
+/* The legend's colour words, as classes: they were inline styles, which no
+   dark rule can reach - "blue" measured 2.9:1 on the dark page. */
+.rd-key-g{color:#15803d}.rd-key-r{color:#b91c1c}.rd-key-b{color:#1d4ed8}.rd-key-w{color:#b45309}
 @media (prefers-color-scheme: dark){
+  .rd-key-g{color:#4ade80}.rd-key-r{color:#f87171}.rd-key-b{color:#93c5fd}.rd-key-w{color:#fbbf24}
   .rd-head .rd-nm,.rd-tile b{color:#e8eef7}
   .rd-head .rd-sub,.rd-tile span,.rd-lbl,.rd-rk,.rd-wx .sub,.rd-note{color:#aab7c9}
   .rd-tile{background:#16203a;border-color:#2b3852}
@@ -295,11 +301,17 @@ CARD_CSS = """<style>
 .rd-card.swap{background:#dbeafe;border-color:#2563eb}
 .rd-card.bn{opacity:.92}
 /* The same on a phone: a finished card recedes, its projection column left
-   legible because "what he actually did" is the one thing still being read. */
+   legible because "what he actually did" is the one thing still being read.
+   It recedes by the grey card, the faded logo and slot, not by ink too faint
+   to read: the game line (the final score) was #8b98a8 at 2.7:1. */
 .rd-card.done{background:#f4f6f8;border-color:#e2e8f0}
-.rd-card.done .rd-c-nm{color:#64748b}
+.rd-card.done .rd-c-nm{color:#5d6b7e}
 .rd-card.done .rd-c-nm img{opacity:.55}
-.rd-card.done .rd-c-sub{color:#8b98a8}
+.rd-card.done .rd-c-sub{color:#5d6b7e}
+/* "Locked" on a finished card says what the grey card already does, and at
+   the 12px floor it pushed longer names into an ellipsis. It stays on a game
+   in progress, where the card is not grey. */
+.rd-card.done .rd-tag.lock{display:none}
 .rd-card.done .rd-c-slot{background:#b4bdc9;color:#1f2937}
 .rd-card.done .rd-c-opp{opacity:.6}
 .rd-c-slot{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;
@@ -359,10 +371,11 @@ CARD_CSS = """<style>
 /* A phone readability floor. Read standing in a car park, 9 and 10px is not a
    size anyone reads - which is the complaint this site started from. Only on a
    phone: the desktop density is fine because it is read sitting down, and
-   these rules sit last so they win on equal specificity. */
+   these rules sit last so they win on equal specificity. 12px, the site's
+   floor for data (11px left the slot, the matchup box and "proj" under it). */
 @media (max-width:600px){
-  .rd-c-slot small,.rd-c-opp,.rd-c-proj small,
-  .rd-toggle .rd-tot span{font-size:11px}
+  .rd-c-slot,.rd-c-slot small,.rd-c-opp,.rd-c-proj small,.rd-c-do,.rd-tag,.rd-pill,
+  .rd-toggle .rd-tot span{font-size:12px}
 }
 </style>"""
 

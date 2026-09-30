@@ -50,11 +50,19 @@ table.lg-table tbody tr:nth-child(even) td{background:#f8fafc}
    already carry opaque themed backgrounds (zebra and dark) from these rules. */
 table.lg-table td:first-child,table.lg-table th:first-child{
   position:sticky;left:0;z-index:1}
+table.lg-table th:first-child{text-align:left}
+/* A matchup reads like a scoreboard: one name at each end, the numbers between. */
+table.lg-table td.lg-away,table.lg-mu th:last-child{text-align:right}
+.lg-nm{display:inline-block;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
 /* The remote theme decorates every img with a border, padding, margins and a
    drop shadow — figure styling that turns a 22px logo into a postage stamp.
-   Reset all of it here. */
+   Reset all of it here - max-width too: the site's img{max-width:100%} lets
+   a table size the column as though the logo could shrink to nothing, and
+   the name then ran past the pinned column's edge. */
 table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
-  vertical-align:middle;margin:0 7px 0 0;border:none;padding:0;box-shadow:none}
+  vertical-align:middle;margin:0 7px 0 0;border:none;padding:0;box-shadow:none;
+  max-width:none}
 .mu-note{font-size:13px;color:#4a5a68;margin:4px 0 10px}
 .wv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;
   margin:6px 0 16px}
@@ -68,6 +76,22 @@ table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
   table.lg-table tbody tr:nth-child(even) td{background:#1b2540}
   .mu-note{color:#aab7c9}
   .inj{color:#ffb4ab}
+}
+/* A phone gets the name capped and the numbers beside it: the standings'
+   pinned team column was 231px of a 341px box, so PF and PA - half of what
+   the table is for - were never on screen. A long name ends in an ellipsis
+   (the full one is the cell's title). The matchup names and the move log
+   wrap rather than run sideways - the matchups are four columns that fit
+   once they do, the log ran a thousand pixels - and no data is under 12px. */
+@media (max-width:600px){
+  table.lg-table th,table.lg-table td{padding:6px 7px}
+  table.lg-table .lg-nm{max-width:110px}
+  table.lg-table img.lg-logo + .lg-nm{max-width:86px}
+  table.lg-table img.lg-logo{width:18px;height:18px;margin-right:5px}
+  table.lg-table .row-rank{min-width:1.4em;font-size:12px}
+  table.lg-table td.lg-log{white-space:normal;min-width:170px}
+  table.lg-mu td.lg-team,table.lg-mu .lg-nm{white-space:normal;max-width:none}
+  .inj{font-size:12px}
 }
 </style>"""
 
@@ -99,16 +123,18 @@ def standings_section(lg: dict) -> str:
         rank = int(t["rank"]) if t.get("rank") else i
         logo = (f'<img class="lg-logo" src="{escape(t["logo"], quote=True)}" alt="" '
                 'loading="lazy">' if t.get("logo") else "")
+        # The manager, when Yahoo names one, goes last: an identity column
+        # between the team and its record pushed the record off a phone.
         mgr = f"<td>{escape(t['manager'] or '—')}</td>" if named else ""
         rows.append(
-            '<tr><td class="lg-team">'
+            f'<tr><td class="lg-team" title="{escape(t["name"], quote=True)}">'
             + (f'<span class="row-rank">{rank}</span>' if played else "")
-            + f'{logo}{escape(t["name"])}</td>'
-            f"{mgr}<td>{_rec(t)}</td>"
+            + f'{logo}<span class="lg-nm">{escape(t["name"])}</span></td>'
+            f"<td>{_rec(t)}</td>"
             f"<td>{t.get('points_for') or 0:g}</td>"
             f"<td>{t.get('points_against') or 0:g}</td>"
             f"<td>${t.get('faab') or 0:g}</td>"
-            f"<td>{int(t.get('moves') or 0)}</td></tr>")
+            f"<td>{int(t.get('moves') or 0)}</td>{mgr}</tr>")
     note = ('<p class="mu-note">'
             + ("" if played else "Everyone is 0-0 until the games start. ")
             + "<strong>PF</strong>/<strong>PA</strong> are points for and "
@@ -116,8 +142,8 @@ def standings_section(lg: dict) -> str:
             "budget.</p>")
     mgr_head = "<th>Manager</th>" if named else ""
     return (note + '<div class="table-scroll"><table class="lg-table">'
-            f"<thead><tr><th>Team</th>{mgr_head}<th>Record</th>"
-            "<th>PF</th><th>PA</th><th>FAAB</th><th>Moves</th></tr></thead>"
+            "<thead><tr><th>Team</th><th>Record</th>"
+            f"<th>PF</th><th>PA</th><th>FAAB</th><th>Moves</th>{mgr_head}</tr></thead>"
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -139,12 +165,17 @@ def matchups_section(sb: dict) -> str:
         def side(t):
             pts = t.get("points")
             proj = t.get("projected")
-            num = (f"{pts:g}" if pts else "") or (f"proj {proj:g}" if proj else "—")
+            # Before kickoff every figure is a projection and the header says
+            # so once; "proj" on each of them was twenty words of chrome.
+            num = (f"{pts:g}" if pts else "") or (
+                (f"proj {proj:.1f}" if live else f"{proj:.1f}") if proj else "—")
             return escape(t["name"]), num
         an, ax = side(a)
         bn, bx = side(b)
-        rows.append(f'<tr><td class="lg-team">{an}</td><td>{ax}</td>'
-                    f'<td>{bx}</td><td class="lg-team">{bn}</td></tr>')
+        rows.append(f'<tr><td class="lg-team" title="{an}"><span class="lg-nm">{an}</span></td>'
+                    f'<td>{ax}</td><td>{bx}</td>'
+                    f'<td class="lg-team lg-away" title="{bn}"><span class="lg-nm">{bn}</span>'
+                    "</td></tr>")
     note = ('<p class="mu-note">'
             + ("" if live else "Pairings are set; points appear once the "
                "week's games kick off. ")
@@ -152,8 +183,9 @@ def matchups_section(sb: dict) -> str:
             '<a href="/cfb/matchups/">matchups page</a>.</p>')
     return (f"<p><strong>Week {int(sb['week'])}</strong> · {start} – {end}"
             + (" (playoffs)" if mu0.get("is_playoffs") else "") + "</p>" + note
-            + '<div class="table-scroll"><table class="lg-table">'
-              "<thead><tr><th>Team</th><th colspan='2'>Score</th><th>Team</th></tr></thead>"
+            + '<div class="table-scroll"><table class="lg-table lg-mu">'
+              "<thead><tr><th>Team</th><th colspan='2'>"
+            + ("Score" if live else "Projected") + "</th><th>Team</th></tr></thead>"
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -185,7 +217,7 @@ def transactions_section(txns: list[dict]) -> str:
             else:
                 bits.append(f"{src} → {dest}: {tag}")
         rows.append(f'<tr><td>{when}</td><td>{t["type"]}</td>'
-                    f'<td class="lg-team">{"; ".join(bits) or "—"}</td></tr>')
+                    f'<td class="lg-team lg-log">{"; ".join(bits) or "—"}</td></tr>')
     return ('<div class="table-scroll"><table class="lg-table">'
             "<thead><tr><th>Date</th><th>Type</th><th>Move</th></tr></thead>"
             f'<tbody>{"".join(rows)}</tbody></table></div>')
@@ -226,11 +258,14 @@ def waiver_section(sb: dict) -> str:
         team_name=[names.get(k, k) for k in drop_rows["team_key"]]).sort_values(
         ["team_name", "proj"])
     drops = "".join(
-        f'<tr><td class="lg-team">{escape(str(r["team_name"]))}</td>'
+        f'<tr><td class="lg-team" title="{escape(str(r["team_name"]), quote=True)}">'
+        f'<span class="lg-nm">{escape(str(r["team_name"]))}</span></td>'
         f'<td class="lg-team">{escape(str(r["player"]))}'
         + (f' <span class="inj">{escape(str(r["status"]))}</span>' if r["status"] else "")
-        + f'</td><td>{escape(str(r["pos"]))}</td><td>{escape(str(r["slot"]))}</td>'
-        f'<td>{r["proj"]:.1f}</td></tr>'
+        # The projection - why he is on this list - beside him, not past
+        # the edge of a phone after his position and slot.
+        + f'</td><td>{r["proj"]:.1f}</td><td>{escape(str(r["pos"]))}</td>'
+        f'<td>{escape(str(r["slot"]))}</td></tr>'
         for _, r in drop_rows.iterrows())
 
     return (
@@ -241,7 +276,7 @@ def waiver_section(sb: dict) -> str:
         'of his team\'s row - an injured player is the roster spot doing nothing.</p>'
         f'<div class="wv-grid">{"".join(cols)}</div>'
         '<h4>Weakest rostered</h4><div class="table-scroll"><table class="lg-table">'
-        '<thead><tr><th>Team</th><th>Player</th><th>Pos</th><th>Slot</th><th>Proj</th>'
+        '<thead><tr><th>Team</th><th>Player</th><th>Proj</th><th>Pos</th><th>Slot</th>'
         f'</tr></thead><tbody>{drops}</tbody></table></div>')
 
 

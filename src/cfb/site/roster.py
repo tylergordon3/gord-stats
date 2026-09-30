@@ -208,7 +208,7 @@ def _wx_short(wkd: Week, g) -> str:
     temp = f"{wx['temp']:.0f}&deg; " if wx.get("temp") is not None else ""
     out = f"{_wx_icon(wx.get('cond'))} {temp}{escape(text)}"
     if gameinfo.weather_severity(wx) >= BAD_WEATHER:
-        out = f"<b style='color:#b45309'>{out}</b>"
+        out = f"<b class='rd-key-w'>{out}</b>"
     return out
 
 
@@ -491,9 +491,9 @@ def body() -> str:
         "<details class='section'><summary>How to read this page</summary>"
         "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colours what has "
         "to change to get there, by <b>GS proj</b>, this site's weekly projection (Yahoo's "
-        "own sits beside it). <b style='color:#16a34a'>Green</b> comes off the bench into "
-        "the slot named; <b style='color:#dc2626'>red</b> goes to the bench; "
-        "<b style='color:#2563eb'>blue</b> stays a starter but changes slot for the kickoff "
+        "own sits beside it). <b class='rd-key-g'>Green</b> comes off the bench into "
+        "the slot named; <b class='rd-key-r'>red</b> goes to the bench; "
+        "<b class='rd-key-b'>blue</b> stays a starter but changes slot for the kickoff "
         "order: Yahoo locks a player at his own kickoff, so the earliest games take the "
         "position slots and the latest take the flex &mdash; if Saturday night's receiver "
         "is scratched, the open slot is one any back, receiver or tight end can fill. "

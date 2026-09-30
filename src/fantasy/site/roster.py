@@ -233,7 +233,7 @@ def card_info(wkd: Week, card: dict, proj, note: str = "proj") -> dict:
                 + (f"{wx['temp']:.0f}&deg; " if wx.get("temp") is not None else "")
                 + escape(wx.get("text") or ""))
         bad = cond in page.WX_RAIN or cond in page.WX_STORM or cond in page.WX_SNOW
-        bits.append(f"<b style='color:#b45309'>{text}</b>" if bad else text)
+        bits.append(f"<b class='rd-key-w'>{text}</b>" if bad else text)
     total = g.get("implied_against") if pos == "DEF" else g.get("implied_for")
     if total is not None:
         bits.append(f"team total {total:.1f}" if pos != "DEF" else f"allows {total:.1f}")
@@ -514,9 +514,9 @@ def body() -> str:
         "slot to put him in, what he is up against, and who on the wire would beat him.</p>"
         "<details class='section'><summary>How to read this page</summary>"
         "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colours what has "
-        "to change to get there. <b style='color:#16a34a'>Green</b> comes off the bench into "
-        "the slot named; <b style='color:#dc2626'>red</b> goes to the bench; "
-        "<b style='color:#2563eb'>blue</b> stays a starter but changes slot for the kickoff "
+        "to change to get there. <b class='rd-key-g'>Green</b> comes off the bench into "
+        "the slot named; <b class='rd-key-r'>red</b> goes to the bench; "
+        "<b class='rd-key-b'>blue</b> stays a starter but changes slot for the kickoff "
         "order: Sleeper locks a player at his own kickoff, so Thursday's and the early "
         "Sunday games take the position slots and the latest take the FLEX &mdash; if Monday "
         "night's receiver is scratched, the open slot is one any back, receiver or tight end "
