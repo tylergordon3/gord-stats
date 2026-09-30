@@ -329,5 +329,15 @@ Open:
       model's early-week lines moved toward it 127 of 213 times (+0.4 pts a call) while its spread
       calls ran 46% at the close and 97-105 at the open - it sees some of what the market later
       does, not enough to pay; totals at the open 59-49.
-- [ ] **Features, ranked:** Saturday watch guide.
+- [x] **Watch guide** (1df7cf8c7): /cfb/watch/ - the day in Eastern kickoff windows, each ranked by
+      ESPN's matchup quality nudged for Top 25 matchups and playoff stakes; starred teams first,
+      the reader's Yahoo players named, live games that are close late jump the queue.
+- [x] **Phone pass, 2026-09-29** (d6faaac15..2bf3e3fbc): a 30-page audit at 390px. One sign-in
+      offer a screen; 40-44px controls; CBB nav on one row; long tables keep their column names
+      (stickyhead.js); matchups fold on a phone; the predictions record swipes; a 12px text floor;
+      schedule cards 410 -> 185px with one pinned row; league tables lead with record and odds; the
+      fantasy heatmap in dark; /cfb/ leads with numbers; CBB power, offseason scoreboard, tip-off.
+- [ ] **Phone, still open:** the reader's own power table (gordstats/my_power) keeps the old column
+      order and solid fills (tests pin it); pinned bars on /cfb/power/ are still two rows; the
+      schedule's picks cards are ~620px above the first game; bracketology and /men/history intros.
 
