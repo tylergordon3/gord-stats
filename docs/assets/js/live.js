@@ -11,6 +11,22 @@ const WORKER_URL = `https://cbb-live-scores.tmgordon33.workers.dev/scores?league
 const POLL_INTERVAL = 120000
 const LOGO_BASE = '/assets/images/'
 
+// Out of season the Worker keeps the last slate it was pushed - in September,
+// April's championship - and on a day without games it holds none. Either way
+// the board used to show only its controls: five filter chips, Expand All, a
+// polling rate and a "Past Games" fold around months-old finals (the
+// 2026-09-29 phone audit). A feed with no game from the last STALE_DAYS days
+// gets one line instead, and the controls come back with the first slate.
+// Two days, not one: before 11 ET in season the Worker still holds last
+// night's games, and those are worth their "Past Games" fold.
+const STALE_DAYS = 2
+// Only for that line: ESPN's calendar lists every date with a game this
+// season, so the board can say when the next one is. CORS-open, and asked for
+// one day and at most one event: a few kilobytes, once a page view.
+const ESPN_SCOREBOARD = 'https://site.api.espn.com/apis/site/v2/sports/basketball/' +
+  `${LEAGUE === 'women' ? 'womens' : 'mens'}-college-basketball/scoreboard`
+const controls = board?.querySelector('.meta-bar')
+
 let lastGenerated = null
 
 let TEAM_LOGO_MAP = {}
@@ -119,6 +135,13 @@ async function pollScores () {
 
   const games = scrub((data.leagues && data.leagues[LEAGUE]) || {})
 
+  if (!hasCurrentGames(games)) {
+    LAST_GAMES = null
+    await renderNoGames()
+    return
+  }
+  showControls(true)
+
   medalByDate = getBottom3MedalsByDate(games)
   applyMedalsToGames(games, medalByDate)
 
@@ -137,6 +160,84 @@ async function pollScores () {
           : `Polling: every ${sec}s`
     }
   }
+}
+
+// Today's date where the games are dated: Eastern, as YYYY-MM-DD.
+function etToday () {
+  return new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+}
+
+// YYYY-MM-DD minus n days. Worked at noon UTC so no DST change can land it on
+// the wrong day.
+function daysBefore (iso, n) {
+  const d = new Date(iso + 'T12:00:00Z')
+  d.setUTCDate(d.getUTCDate() - n)
+  return d.toISOString().slice(0, 10)
+}
+
+function hasCurrentGames (games) {
+  const cutoff = daysBefore(etToday(), STALE_DAYS)
+  return Object.values(games).some(g => g && (!g.date || g.date >= cutoff))
+}
+
+// The chips, Expand All, the legend and the polling rate all act on games;
+// with none they are only chrome. style.display rather than `hidden`: the
+// bar's CSS display would beat the attribute.
+function showControls (on) {
+  if (controls) controls.style.display = on ? '' : 'none'
+}
+// Hidden until the first poll says there is a board to control, so an empty
+// day does not flash five chips and then drop them.
+showControls(false)
+
+// The one line for a board with nothing on it. Every branch is something the
+// calendar actually says; when it says nothing (the request failed, or the
+// season's dates are all behind us) the line claims no more than today.
+async function nextGameText (today) {
+  try {
+    const res = await fetch(`${ESPN_SCOREBOARD}?dates=${today.replace(/-/g, '')}&limit=1`)
+    const days = (((await res.json())?.leagues?.[0]?.calendar) || [])
+      .map(c => String(c).slice(0, 10))
+      .filter(d => /^\d{4}-\d\d-\d\d$/.test(d))
+      .sort()
+    const next = days.find(d => d >= today)
+    if (!next) return 'No games today.'
+    // They arrive with the Worker's first push of the day, at 11 ET.
+    if (next === today) return 'Today’s games aren’t posted yet.'
+    const when = new Date(next + 'T12:00:00').toLocaleDateString(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    })
+    return `No games until ${when}.`
+  } catch (e) {
+    return 'No games today.'
+  }
+}
+
+let noGamesLine = null // { day, text }: one ESPN request a day, not a poll
+
+async function renderNoGames () {
+  showControls(false)
+  const container = document.getElementById('games')
+  if (!container) return
+  const today = etToday()
+  if (!noGamesLine || noGamesLine.day !== today) {
+    noGamesLine = { day: today, text: nextGameText(today) }
+  }
+  container.innerHTML = boardLine(await noGamesLine.text)
+}
+
+// Body colour and a readable size: it is the whole page on a day like this,
+// and .scoreboard-empty's grey has no dark-mode shade.
+function boardLine (text) {
+  return '<p class="scoreboard-empty" style="color:inherit;font-size:17px;margin:12px 0">' +
+    `${text}</p>`
 }
 
 function applyMedalsToGames (games, medalByDate) {
@@ -721,12 +822,7 @@ function renderGames (games, medalByDate = {}) {
     return
   }
 
-  const todayStr = new Date().toLocaleDateString('en-CA', {
-    timeZone: 'America/New_York',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  })
+  const todayStr = etToday()
 
   const activeByDate = {}
   const pastByDate = {}
@@ -1001,6 +1097,12 @@ async function safePoll () {
     await pollScores()
   } catch (e) {
     console.warn('scoreboard poll failed', e)
+    // With the controls hidden until a poll lands, a first poll that fails
+    // would otherwise leave nothing under the heading at all.
+    const container = document.getElementById('games')
+    if (container && !container.innerHTML.trim()) {
+      container.innerHTML = boardLine('Scores didn’t load — trying again shortly.')
+    }
   }
 }
 

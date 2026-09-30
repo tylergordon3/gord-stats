@@ -1,6 +1,6 @@
 import json
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 from cbb import html_util
@@ -19,25 +19,46 @@ def team_logos(df):
 
 
 # CBB regular season window: the homepage leads with college basketball
-# inside it, and with WNBA fantasy outside it. Update yearly - from the first
-# game on the schedule, not the usual Monday: 2026-27 opens Sunday Nov 1
-# (Notre Dame-Villanova in Rome, men and women), and a Nov 2 tipoff left
-# the live scoreboard off for it.
+# inside it. Update yearly - from the first game on the schedule, not the
+# usual Monday: 2026-27 opens Sunday Nov 1 (Notre Dame-Villanova in Rome, men
+# and women), and a Nov 2 tipoff left the live scoreboard off for it. This is
+# a switch - the live tick (cbb.live), the daily run (gordstats.daily) and the
+# homepage layout all key on it - so it stays the first game. The date the
+# words give is opening day, from the countdown: see _tipoff_shown.
 CBB_TIPOFF     = date(2026, 11, 1)
 CBB_SEASON_END = date(2027, 4, 10)
 
 
-def _season_status(today: date, ndash: str, mdash: str) -> str:
+def _tipoff_shown() -> date:
+    """The opening day the words name: the countdown's own date.
+
+    The clock in countdowns.yml counts to opening day, the Monday all of
+    Division I starts, while CBB_TIPOFF is the first game on the schedule -
+    this season a day earlier. The line under the clock used to print
+    CBB_TIPOFF - "tips off November 1" under a card reading "Monday,
+    November 2" (the 2026-09-29 phone audit). Reading the clock's date means
+    the two cannot disagree. A clock that is missing, or plainly another
+    season's (not within the week after CBB_TIPOFF), falls back to the
+    switch date.
+    """
+    target = _countdown_targets().get("cbb")
+    if target and CBB_TIPOFF <= target.date() <= CBB_TIPOFF + timedelta(days=7):
+        return target.date()
+    return CBB_TIPOFF
+
+
+def _season_status(today: date, ndash: str) -> str:
     """One line on where the season stands, for the homepage and /cbb/ cards.
 
-    The dashes come in as arguments because the two cards spell them
+    The dash comes in as an argument because the two cards spell it
     differently (a literal character on one, an entity on the other).
     """
     label = f"{CBB_TIPOFF.year}{ndash}{str(CBB_TIPOFF.year + 1)[2:]}"
-    days = (CBB_TIPOFF - today).days
-    if days > 0:
-        return (f"The {label} season tips off <strong>{CBB_TIPOFF:%B %-d}</strong>"
-                f"{mdash} {days} days away.")
+    if today < CBB_TIPOFF:
+        # No "N days away": both cards carry the live clock right above this,
+        # and a count fixed at build time read "34 days" under "33 DAYS"
+        # for most of every day.
+        return f"The {label} season tips off <strong>{_tipoff_shown():%B %-d}</strong>."
     if today <= CBB_SEASON_END:
         return "The season is underway."
     return f"The {label} season is over."
@@ -124,9 +145,8 @@ def _by_next_clock(cards) -> str:
 
 
 def _cbb_card(today: date) -> str:
-    """Compact college-basketball card for the WNBA-season homepage."""
-    days = (CBB_TIPOFF - today).days
-    when = _season_status(today, "–", " —")
+    """Compact college-basketball card for the homepage outside the season."""
+    when = _season_status(today, "–")
     href, label = _latest_predict_link()
     return f"""
 <section class="home-card">
@@ -147,29 +167,11 @@ def _cbb_card(today: date) -> str:
 """
 
 
-def _wnba_card(in_season: bool) -> str:
-    """Compact WNBA card. The full scoreboard lives only on /wnba/ now.
-
-    `in_season` is passed False everywhere from 2026-09-25: the regular season
-    is over, and the card was offering a "live fantasy scoreboard" for games
-    that had stopped. The WNBA is also out of the fantasy switcher in
-    docs/_data/nav.yml, so this card is the only way to /wnba/ at the moment -
-    which is why it stays rather than going with it.
-    """
-    what = ("Live fantasy scoreboard, player games remaining, and suggested\n"
-            "     pickups &amp; drops for the WNBA fantasy league."
-            if in_season else
-            "League matchup projections, live win odds, pickups and drops —\n"
-            "     back when the WNBA season resumes.")
-    return f"""
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>WNBA Fantasy</h2>
-    <a class="home-card-link" href="/wnba/">Full dashboard →</a>
-  </div>
-  <p>{what}</p>
-</section>
-"""
+# No WNBA card (2026-09-29). With the season over it was a whole card of phone
+# promising pages that come "back when the WNBA season resumes", and the
+# section is out of the switcher in docs/_data/nav.yml already. The /wnba/
+# pages are still built; when the season resumes, the card comes back from
+# git history (it lived here as _wnba_card) alongside the nav entry.
 
 
 def _fantasy_card() -> str:
@@ -286,9 +288,11 @@ def _cbb_home_body(today: date) -> str:
     need games, and say when they last had any.
     """
     days = (CBB_TIPOFF - today).days
-    when = _season_status(today, "&ndash;", " &mdash;")
+    when = _season_status(today, "&ndash;")
     href, label = _latest_predict_link()
     preseason = days > 0
+    # The scores card names CBB_TIPOFF, not the countdown's opening day: the
+    # scoreboard switches on with the first game, which can come before it.
 
     lead = ("" if not preseason else f"""
 <section class="home-card">
@@ -335,7 +339,7 @@ def _cbb_home_body(today: date) -> str:
     <a class="home-card-link" href="/men/">Scoreboard &rarr;</a>
   </div>
   <p>Live scores and the day's slate.</p>
-  {"" if not preseason else '<p class="home-card-stale">Nothing until ' + f"{CBB_TIPOFF:%B %-d}" + '.</p>'}
+  {"" if not preseason else '<p class="home-card-stale">First games ' + f"{CBB_TIPOFF:%A, %B %-d}" + '.</p>'}
 </section>
 
 <section class="home-card">
@@ -412,7 +416,7 @@ def render_home():
     The WNBA scoreboard used to lead the page outside the college basketball
     season; it moved to /wnba/ only (2026-08-31), so the homepage is now cards
     all the way down in both layouts — in CBB season the basketball lead
-    stays on top.
+    stays on top. The WNBA's own card went too, with its season (2026-09-29).
     """
     today = date.today()
     cbb_in_season = CBB_TIPOFF <= today <= CBB_SEASON_END
@@ -422,12 +426,11 @@ def render_home():
     # each date passes rather than being re-argued by hand.
     if cbb_in_season:
         html = _cbb_lead() + _by_next_clock(
-            [(None, _wnba_card(in_season=False)), ("fantasy", _fantasy_card()),
-             ("cfb", _cfb_card())])
+            [("fantasy", _fantasy_card()), ("cfb", _cfb_card())])
     else:
         html = _by_next_clock(
             [("cbb", _cbb_card(today)), ("fantasy", _fantasy_card()),
-             ("cfb", _cfb_card()), (None, _wnba_card(in_season=False))])
+             ("cfb", _cfb_card())])
     # The graphics lead: they are the thing worth looking at today, and the
     # preview cards are navigation, which can sit under them.
     html = _my_teams(today) + _cfb_graphics(today) + html

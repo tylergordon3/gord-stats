@@ -101,6 +101,11 @@ table.cbb-power tr.top25:nth-child(even) td{background:#faf0d2}
   .power-wrap{overflow:auto;max-height:calc(100vh - 170px)}
 }
 .power-note{font-size:13px;color:#4a5a68;margin:6px 0 10px}
+.power-lede{margin:6px 0 4px}
+/* custom.css sizes .row-rank at .85em, which in the 13px phone table was
+   11px - a rank is the number a reader looks for first (2026-09-29 phone
+   audit). A floor in px, whatever the table's font does. */
+table.cbb-power .row-rank{font-size:12px}
 """ + rankmoves.CSS + """
 @media (max-width:600px){
   table.cbb-power{font-size:13px}
@@ -243,16 +248,60 @@ def body() -> str:
 
     moves = rankmoves.movement(HISTORY_DIR)
     ranks_now = df.set_index("team")["rk"]
-    show_move = "prev" in moves
-    show_week = ("prev7" in moves
-                 and moves.get("prev7_at") != moves.get("prev_at"))
-    if show_move:
+    if "prev" in moves:
         df["move"] = (df["team"].map(moves["prev"]) - df["rk"])
-    if show_week:
+    if "prev7" in moves and moves.get("prev7_at") != moves.get("prev_at"):
         df["move7"] = (df["team"].map(moves["prev7"]) - df["rk"])
+    # A move column is shown only once somebody has moved. Preseason, T-Rank's
+    # projections sit still for days at a time, and Move against the morning's
+    # build was a column of dots in one of the four places a phone has room
+    # for (the 2026-09-29 phone audit). The first build with a mover brings it
+    # back - nothing seasonal to switch.
+    show_move = "move" in df and bool(df["move"].fillna(0).ne(0).any())
+    show_week = "move7" in df and bool(df["move7"].fillna(0).ne(0).any())
+    # "7d" is the newest snapshot at least a week old, which a young or gappy
+    # archive can put a month back: headed by the days it really spans.
+    week_head = ""
+    if show_week:
+        span = (datetime.now() - moves["prev7_at"]).total_seconds() / 86400
+        week_head = f"{max(1, round(span))}d"
+
+    # Until BPI counts, the order *is* T-Rank, and its column repeated the row
+    # number beside the team. It comes back when the two differ.
+    show_trank = bool((df["trank"] != df["rk"]).any())
 
     played = df["record"].astype(str).str.split("-").str[0].astype(int).sum() > 0
     stamp = datetime.fromtimestamp(_cache_path().stat().st_mtime).strftime("%b %-d")
+
+    bpi_head = ""
+    if bpi_rows:
+        bpi_head = ("BPI" if bpi_current else
+                    f"BPI '{str(bpi_season - 1)[2:]}-{str(bpi_season)[2:]}")
+
+    def bpi_cell(t):
+        return f"<td>{'&mdash;' if pd.isna(t.bpi) else int(t.bpi)}</td>"
+
+    # (header, cell, shown). One list, so the header and the cells cannot fall
+    # out of step. The order is for a phone, where the frozen team column
+    # leaves room for three or four more: the record (in season) and T-Rank's
+    # projected one first, then movement, then the rest. Last season's final
+    # BPI is context, not a rating of this team, so it goes to the far end;
+    # this season's is half the ordering and sits beside T-Rank.
+    columns = [
+        ("Record", lambda t: f"<td>{t.record}</td>", played),
+        ("Proj W-L", lambda t: f"<td>{round(t.pw)}-{round(t.pl)}</td>", True),
+        ("Move", lambda t: f"<td>{rankmoves.cell(t.move)}</td>", show_move),
+        (week_head, lambda t: f"<td>{rankmoves.cell(t.move7)}</td>", show_week),
+        ("Conf", lambda t: f"<td class='conf'>{t.conf}</td>", True),
+        ("AP", lambda t: f"<td>{'' if pd.isna(t.ap) else int(t.ap)}</td>", show_ap),
+        ("T-Rank", lambda t: f"<td>{int(t.trank)}</td>", show_trank),
+        (bpi_head, bpi_cell, bool(bpi_rows) and bpi_current),
+        ("AdjOE", lambda t: f"<td>{t.adjoe:.1f}</td>", True),
+        ("AdjDE", lambda t: f"<td>{t.adjde:.1f}</td>", True),
+        ("Barthag", lambda t: f"<td>{t.barthag:.3f}</td>", True),
+        (bpi_head, bpi_cell, bool(bpi_rows) and not bpi_current),
+    ]
+    columns = [(label, fn) for label, fn, shown in columns if shown]
 
     rows = []
     for t in df.itertuples(index=False):
@@ -268,59 +317,48 @@ def body() -> str:
             # first column pinned a counter while the team name slid away.
             f"<td class='pwr-team'><span class=\"row-rank\">{rank}</span>{t.team}"
             f"{favorites.name_star('cbb-men', t.team)}</td>"
-            + (f"<td>{rankmoves.cell(t.move)}</td>" if show_move else "")
-            + (f"<td>{rankmoves.cell(t.move7)}</td>" if show_week else "")
-            + f"<td class='conf'>{t.conf}</td>"
-            + (f"<td>{'' if pd.isna(t.ap) else int(t.ap)}</td>" if show_ap else "")
-            + f"<td>{int(t.trank)}</td>"
-            + (f"<td>{'&mdash;' if pd.isna(t.bpi) else int(t.bpi)}</td>" if bpi_rows else "")
-            + (f"<td>{t.record}</td>" if played else "")
-            + f"<td>{round(t.pw)}-{round(t.pl)}</td>"
-            f"<td>{t.adjoe:.1f}</td><td>{t.adjde:.1f}</td><td>{t.barthag:.3f}</td></tr>")
+            + "".join(fn(t) for _, fn in columns) + "</tr>")
 
-    bpi_head = ""
-    if bpi_rows:
-        bpi_head = ("<th>BPI</th>" if bpi_current else
-                    f"<th>BPI '{str(bpi_season - 1)[2:]}-{str(bpi_season)[2:]}</th>")
-    head = ("<th class='pwr-team'>Team</th>"
-            + ("<th>Move</th>" if show_move else "")
-            + ("<th>7d</th>" if show_week else "")
-            + "<th>Conf</th>"
-            + ("<th>AP</th>" if show_ap else "")
-            + "<th>T-Rank</th>" + bpi_head
-            + ("<th>Record</th>" if played else "")
-            + "<th>Proj W-L</th><th>AdjOE</th><th>AdjDE</th><th>Barthag</th>")
+    head = "<th class='pwr-team'>Team</th>" + "".join(f"<th>{label}</th>" for label, _ in columns)
 
     ordering = ("the average of T-Rank and BPI" if bpi_current else
                 "T-Rank" + (f", with last season's final BPI as context" if bpi_rows else ""))
-    move_note = ""
+    moved = []
     if show_move:
-        move_note = f" <strong>Move</strong> is places climbed since {moves['prev_at']:%b %-d}"
-        if show_week:
-            move_note += f"; <strong>7d</strong> since {moves['prev7_at']:%b %-d}"
-        move_note += "."
+        moved.append(f"<strong>Move</strong> is places climbed since {moves['prev_at']:%b %-d}")
+    if show_week:
+        moved.append(f"<strong>{week_head}</strong> since {moves['prev7_at']:%b %-d}")
+    move_note = (" " + "; ".join(moved) + ".") if moved else ""
 
-    intro = (
-        f"<p>Every Division I team, ordered by {ordering}. "
+    # One line above the table; the rest folds. The whole explanation used to
+    # run ~160 words ahead of it, which put the first team at 769px on a phone
+    # (2026-09-29 audit) - the table is what the page is for.
+    basis = "T-Rank and BPI, averaged" if bpi_current else "Bart Torvik's T-Rank"
+    lede = (f"<p class='power-lede'>Every Division I team, ranked by {basis}"
+            f"{'' if played else ' (preseason)'}. Updated {stamp}.</p>")
+    about = (
+        "<details class='section'><summary>About these numbers</summary>"
+        f"<p class='power-note'>Ordered by {ordering}. "
         f"<a href='https://barttorvik.com/' target='_blank'>T-Rank</a> is one of the two "
         f"sources the March Madness model trains on; <strong>BPI</strong> is ESPN's power "
         f"index" + ("" if bpi_current else " (still showing last season until its preseason run)")
         + (", <strong>AP</strong> the human poll" if show_ap else "")
-        + f". Pulled {stamp}. "
+        + ". "
         + ("Until tip-off T-Rank carries <strong>preseason projections</strong> &mdash; returning "
            "production, recruiting and transfers; once games are played the same numbers "
            "become the live ratings." if not played else
            "These are the live in-season ratings.")
         + move_note + "</p>"
-        "<p class='power-note'>The number beside each team is its rank in this ordering; "
-        "<strong>Proj W-L</strong> is T-Rank's projected final record. "
+        "<p class='power-note'>The number beside each team is its rank in this ordering"
+        + ("; <strong>T-Rank</strong> is Torvik's own" if show_trank else "")
+        + ". <strong>Proj W-L</strong> is T-Rank's projected final record. "
         "<strong>AdjOE / AdjDE</strong> are points scored / allowed "
         "per 100 possessions against an average opponent (offense high is good, defense low "
         "is good); <strong>Barthag</strong> is the chance of beating an average team on a "
-        "neutral floor. Top 25 highlighted.</p>")
+        "neutral floor. Top 25 highlighted.</p></details>")
 
     rankmoves.snapshot(HISTORY_DIR, ranks_now)
-    return (_CSS + favorites.table_css("table.cbb-power") + intro
+    return (_CSS + favorites.table_css("table.cbb-power") + lede + about
             + "<div class='pin-bar'>" + favorites.controls() + "</div>"
             + f"<div class='power-wrap'><table class='cbb-power'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(rows)}</tbody></table></div>")
