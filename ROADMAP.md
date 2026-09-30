@@ -320,5 +320,7 @@ Open:
       pages and the home bets card; share sheet on phones, copied link elsewhere.
 - [x] **Stakes / game of the week** (637a7e3a9): both sims split playoff odds on the next game;
       power pages' stakes table, matchups' game-of-the-week callout (ranked by 2p(1-p) x swing).
+- [x] **Schedule difficulty** (b5a372b59): record vs all-play split into opponents' strength and
+      timing (gordstats.schedule_luck); /fantasy/schedule/, League Records card, CFB League Home.
 - [ ] **Features, ranked:** an honest bets record (CLV); CBB game predictions; Saturday watch guide.
 
