@@ -8,7 +8,7 @@ build the page. gordstats.daily's nfl task calls build_all().
 import argparse
 import traceback
 
-PAGES = ["predictions"]
+PAGES = ["predictions", "watch"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
