@@ -7,6 +7,9 @@ A week is written once it is final (every NFL game over, every side scored),
 so the first recap of a week lands with the build after Monday night's game.
 /fantasy/recap/ is the newest week; /fantasy/recap/week-N/ is the link to send.
 
+A reader who has picked a league of their own gets that league's recap in its
+place, drawn in the browser (gordstats.my_recap) - see _with_reader.
+
     python -m fantasy.site.recap
 """
 from html import escape
@@ -18,7 +21,7 @@ from fantasy.config import UPCOMING_YEAR
 from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from fantasy.site import matchups as mu
-from gordstats import pregame as frozen, recap
+from gordstats import my_league, my_league_data, my_recap, my_team, pregame as frozen, recap
 from gordstats.frontmatter import add_front_matter
 
 BASE = "/fantasy/recap/"
@@ -160,10 +163,26 @@ def weeks(lg: dict, year: int = UPCOMING_YEAR) -> list:
     return out
 
 
-def _write(path, week: recap.Week, all_weeks: list, league_name: str) -> None:
+def _with_reader(built: str, week: int = 0, css: bool = False) -> str:
+    """The page body: this league's recap, and the reader's own league's in its
+    place once they have picked one that is not this site's - chosen before
+    the page paints (my_league.takeover), as on every other fantasy page.
+    `week` is the week this address is for, which the reader's league opens
+    on too (0, the front page: its latest); `css` where `built` does not
+    already carry the recap's stylesheet."""
+    return (my_league.bar()
+            + "<div id='rc-mine' hidden>" + my_recap.section(week, css) + "</div>"
+            + "<div id='rc-built'>" + built + "</div>"
+            + my_league.takeover("rc-mine", "rc-built")
+            + my_league_data.JS + my_league.JS + my_team.PLANNER_JS
+            + my_recap.CORE_JS + my_recap.JS)
+
+
+def _write(path, week: recap.Week, all_weeks: list, league_name: str, pinned: int = 0) -> None:
     links = ('<p class="rc-note"><a href="/fantasy/matchups/">Every roster, player by player '
              '&rarr;</a></p>')
-    html = add_front_matter(layout.HEAD + recap.page(week, all_weeks, BASE, links),
+    html = add_front_matter(layout.HEAD + _with_reader(recap.page(week, all_weeks, BASE, links),
+                                                       pinned),
                             f"NFL Week {week.number} Recap", escape(league_name),
                             description=recap.headline(week),
                             image=recap.card(week, "nfl-recap", "NFL Fantasy", league_name))
@@ -177,14 +196,15 @@ def generate() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     if not all_weeks:
         (OUT / "index.html").write_text(add_front_matter(
-            layout.HEAD + "<p>The first recap is written once week 1 is over - after "
-            "Monday night's game.</p>", "NFL Weekly Recap"), encoding="utf-8")
+            layout.HEAD + _with_reader("<p>The first recap is written once week 1 is over - "
+                                       "after Monday night's game.</p>", css=True),
+            "NFL Weekly Recap"), encoding="utf-8")
         recap.write_latest(OUT, None)
         print("Wrote Weekly Recap (no final week yet)")
         return
     name = lg.get("name") or ""
     for w in all_weeks:
-        _write(OUT / f"week-{w.number}" / "index.html", w, all_weeks, name)
+        _write(OUT / f"week-{w.number}" / "index.html", w, all_weeks, name, pinned=w.number)
     _write(OUT / "index.html", all_weeks[-1], all_weeks, name)
     recap.write_latest(OUT, all_weeks[-1])
     print(f"Wrote Weekly Recap, weeks {all_weeks[0].number}-{all_weeks[-1].number} -> {OUT}")
