@@ -107,6 +107,7 @@ docs/fantasy/stakes.json
 docs/cfb/stakes.json
 docs/fantasy/season-board.json
 docs/_includes/cfb_bets.html
+docs/_includes/nfl_bets.html
 docs/_includes/cfb_top25.html
 docs/_includes/wnba_dashboard.html
 docs/_includes/wnba_scoreboard.html

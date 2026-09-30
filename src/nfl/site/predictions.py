@@ -253,6 +253,17 @@ def _method(model, valid: dict) -> str:
            if overall else ""))
 
 
+def _bets_card() -> str:
+    """This week's bets, as Home carries them (nfl.site.homecards writes the
+    include). Only once the include exists: a missing one fails the whole
+    Jekyll build, and homecards builds after this page on a first run."""
+    from nfl.site import homecards
+    from gordstats.frontmatter import liquid
+    if not homecards.BETS_OUT.exists():
+        return ""
+    return "<h2>This week's bets</h2>" + liquid("{% include nfl_bets.html %}")
+
+
 def body() -> str:
     frame, model, names = predict.season()
     record = {str(r["game_id"]): r for _, r in results.on_record(SEASON).iterrows()}
@@ -280,6 +291,7 @@ def body() -> str:
         # The subtitle under the title already says what the page is; saying it
         # again in the first line of the body is the Top 25 card's old problem.
         + "<h2>Season scorecard</h2>" + _record_band(scored)
+        + _bets_card()
         + f"<h2>{escape(labels[current])}</h2>"
         + switch
         + "<h2>Ratings</h2>"

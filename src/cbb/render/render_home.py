@@ -332,6 +332,7 @@ def _cbb_home_body(today: date) -> str:
   <p class="home-card-links">
     <a href="/men/">Today's Scores</a> ·
     <a href="/cbb/watch/">Watch Guide</a> ·
+    <a href="/cbb/stats/">Team Stats</a> ·
     <a href="/men/conference">Conference Rankings</a> ·
     <a href="/men/history">Prediction History</a>
   </p>
@@ -400,10 +401,32 @@ def _cfb_graphics(today: date) -> str:
 
 <section class="home-card">
   <div class="home-card-head">
-    <h2>This week's bets</h2>
+    <h2>This week's CFB bets</h2>
     <a class="home-card-link" href="/cfb/predictions/">Every game &rarr;</a>
   </div>
   {% include cfb_bets.html %}
+</section>
+"""
+
+
+def _nfl_graphics(today: date) -> str:
+    """The NFL week's bets (nfl.site.homecards writes the include, as the
+    college build writes its own), from September through the Super Bowl.
+
+    Left off, too, until the NFL build has written the card at least once: an
+    include that is not there fails the whole Jekyll build, not just this box.
+    """
+    if not (today >= date(today.year, 9, 1) or today <= date(today.year, 2, 15)):
+        return ""
+    if not (paths.DOCS / "_includes" / "nfl_bets.html").exists():
+        return ""
+    return """
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>This week's NFL bets</h2>
+    <a class="home-card-link" href="/nfl/">Every game &rarr;</a>
+  </div>
+  {% include nfl_bets.html %}
 </section>
 """
 
@@ -445,7 +468,7 @@ def render_home():
              ("cfb", _cfb_card())])
     # The graphics lead: they are the thing worth looking at today, and the
     # preview cards are navigation, which can sit under them.
-    html = _my_teams(today) + _cfb_graphics(today) + html
+    html = _my_teams(today) + _cfb_graphics(today) + _nfl_graphics(today) + html
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

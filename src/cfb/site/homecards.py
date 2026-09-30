@@ -13,8 +13,10 @@ site theme for one card.
             the point of the table rather than a footnote.
   Best bets one spread bet and a short parlay, taken from the model's widest
             disagreements with the book and frozen for the week the morning
-            of its first kickoff. What that is worth is printed on the card:
-            see the note below.
+            of its first kickoff. What that is worth is printed on the card.
+            The card itself is gordstats.bets_card, shared with the NFL's
+            (nfl.site.homecards); what is the college game's is here - which
+            games may be bet, the gates, the finals and the closing line.
 
     python -m cfb.site.homecards
 """
@@ -28,7 +30,7 @@ from cfb import espn, gameinfo, games as games_mod, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, SEASON
 from cfb.site import power, teams as teams_page
-from gordstats import bet_record, logos, paths, share_button
+from gordstats import bets_card, logos, paths
 
 ET = ZoneInfo("America/New_York")
 TOP25_OUT = paths.DOCS / "_includes" / "cfb_top25.html"
@@ -42,7 +44,7 @@ MARK_GAP = 3
 # "Thursday morning" for a normal week, and the right morning for the weeks
 # that open on a Tuesday. Before it the card shows what it would take and says
 # so; after it the file on disk is the card, whatever the model later thinks.
-LOCK_HOUR = 9
+LOCK_HOUR = bets_card.LOCK_HOUR
 
 # A disagreement worth pricing, in points. Same gate as the predictions page's
 # scored record (cfb.results.BET_MIN), so the record printed on this card is
@@ -55,23 +57,12 @@ EDGE_MIN = results.BET_MIN
 # games are dropped outright, and a disagreement bigger than this on a real
 # matchup is treated as a modelling artefact rather than a bet.
 EDGE_MAX = 10
-PARLAY_LEGS = 3
+PARLAY_LEGS = bets_card.PARLAY_LEGS
 
-_CSS = """<style>
-.hc{--hc-line:#e5e7eb;--hc-ink:#0f172a;--hc-mute:#64748b;--hc-soft:#f8fafc;
-  --hc-up:#15803d;--hc-down:#b91c1c;--hc-accent:#2a78d6;--hc-flag:#d08700;
-  --hc-rank:#475569;--hc-disc:transparent;
-  --hc-hi-bg:rgba(21,128,61,.10);--hc-lo-bg:rgba(185,28,28,.09);
-  --hc-focus:rgba(42,120,214,.14)}
-@media (prefers-color-scheme:dark){
-  .hc{--hc-line:#2b3852;--hc-ink:#e3eaf4;--hc-mute:#aab7c9;--hc-soft:#1b2540;
-    --hc-up:#6ee7b7;--hc-down:#ff9b91;--hc-accent:#6aa9f0;--hc-flag:#e0a92a;
-    --hc-rank:#cbd5e1;--hc-disc:#e8edf4;
-    --hc-hi-bg:rgba(110,231,183,.13);--hc-lo-bg:rgba(255,155,145,.13);
-    --hc-focus:rgba(106,169,240,.20)}
-}
-.hc .hc-note{font-size:12px;color:var(--hc-mute);margin:8px 0 0;line-height:1.5}
-/* One table: the rank written once down the left, the three sources across.
+# The table's own rules. The card colours and the bets rules are
+# gordstats.bets_card's, shared with the NFL's bets card; the Top 25 carries
+# them all, as it always has, so the two college includes stand alone.
+_T25_CSS = """/* One table: the rank written once down the left, the three sources across.
    Three separate lists repeated the numbers 1-25 three times and, on the dark
    theme, needed striping to keep the eye on a line - which came out muddy
    against the highlight. Here the rank column does that job. */
@@ -138,49 +129,8 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
 .hc-key i{width:3px;height:14px;border-radius:2px;display:inline-block}
 .hc-key i.hi{background:var(--hc-up)}
 .hc-key i.lo{background:var(--hc-down)}
-/* --- The week's bets ------------------------------------------------------
-   These classes went out unstyled, so the card rendered as the site theme's
-   default list - which is what "it is just a list" meant. The pick is the
-   headline, so it is set big; everything explaining it is small and muted. */
-.hc-bet{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.hc-pick{border:1px solid var(--hc-line);border-radius:10px;padding:11px 13px;
-  background:var(--hc-soft);min-width:0}
-.hc-kind{font-size:11px;font-weight:800;text-transform:uppercase;
-  letter-spacing:.07em;color:var(--hc-accent);margin:0 0 6px}
-.hc-call{font-size:19px;font-weight:800;color:var(--hc-ink);line-height:1.2;
-  font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;
-  flex-wrap:wrap}
-.hc .hc-sub{font-size:12px;color:var(--hc-mute);line-height:1.45;margin-top:3px}
-/* Legs are rows, not bullets: three picks stacked with a rule between them
-   read as three picks. A disc in front of each read as prose. */
-.hc .hc-legs{list-style:none;margin:0;padding:0}
-.hc .hc-legs li{margin:0;padding:7px 0;border-top:1px solid var(--hc-line);
-  font-size:15px;font-weight:700;color:var(--hc-ink);
-  font-variant-numeric:tabular-nums}
-.hc .hc-legs li:first-child{border-top:0;padding-top:0}
-.hc .hc-legs li:last-child{padding-bottom:0}
-.hc-res{font-size:11px;font-weight:800;padding:1px 6px;border-radius:999px;
-  text-transform:uppercase;letter-spacing:.04em;vertical-align:middle}
-.hc-res.win{color:var(--hc-up);background:var(--hc-hi-bg)}
-.hc-res.loss{color:var(--hc-down);background:var(--hc-lo-bg)}
-.hc-res.push{color:var(--hc-mute);background:var(--hc-focus)}
-/* When it was worked out, and how long it stands. Its own line above the
-   record so neither has to be hunted for in a paragraph. */
-.hc-when-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;
-  margin:11px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:.04em;
-  color:var(--hc-mute)}
-.hc-lock{font-weight:800;color:var(--hc-flag)}
-.hc-lock.hc-locked{color:var(--hc-mute)}
-.hc-rec{font-size:13px;color:var(--hc-ink);margin:7px 0 0;line-height:1.45}
-.hc .hc-up{color:var(--hc-up);font-weight:700}
-.hc .hc-down{color:var(--hc-down);font-weight:700}
-.hc-rec .hc-dis{color:var(--hc-mute)}
-@media (max-width:560px){
-  .hc-bet{grid-template-columns:1fr;gap:8px}
-  .hc-call{font-size:17px}
-  .hc .hc-legs li{font-size:14px}
-}
-@media (max-width:560px){
+"""
+_T25_PHONE_CSS = """@media (max-width:560px){
   table.hc-t25 td{font-size:12px;padding:4px 4px}
   table.hc-t25 th{font-size:11px;letter-spacing:.03em;padding:0 4px 5px}
   td.hc-rk{width:30px;font-size:12px;padding-right:9px}
@@ -189,7 +139,9 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
      "Notre Dame" became "Notre D...". The name is the information. */
   td.hc-tc img{display:none}
 }
-</style>"""
+"""
+_CSS = ("<style>\n" + bets_card.VARS_CSS + _T25_CSS + bets_card.BETS_CSS
+        + _T25_PHONE_CSS + "</style>")
 
 
 # --------------------------------------------------------------------------- #
@@ -350,32 +302,6 @@ _FOLLOW_JS = """{% raw %}<script>
 </script>{% endraw %}"""
 
 
-_LOCK_JS = """{% raw %}<script>
-(function(){
-  // Counts the provisional card down to its lock. Server-rendered text is
-  // already correct ("Locks Thu 9 AM ET"), so this only sharpens it while the
-  // page is open and never leaves it blank if the date will not parse.
-  function tick(){
-    var els=document.querySelectorAll('.hc-lock[data-lock]');
-    for(var i=0;i<els.length;i++){
-      var at=Date.parse(els[i].dataset.lock);
-      if(isNaN(at)) continue;
-      var left=at-Date.now();
-      if(left<=0){
-        els[i].textContent='Locking now';
-        els[i].removeAttribute('data-lock');
-        continue;
-      }
-      var m=Math.floor(left/60000), h=Math.floor(m/60), d=Math.floor(h/24);
-      els[i].textContent='Locks in '+(d?d+'d '+(h%24)+'h':h?h+'h '+(m%60)+'m':m+'m');
-    }
-  }
-  tick();
-  setInterval(tick, 60000);
-})();
-</script>{% endraw %}"""
-
-
 # --------------------------------------------------------------------------- #
 # Best bets, frozen for the week
 # --------------------------------------------------------------------------- #
@@ -407,91 +333,26 @@ def _candidates(week: int) -> pd.DataFrame:
         return pd.DataFrame()
     games = games.merge(board[odds_mod.KEY + ["spread", "total"]],
                         on=odds_mod.KEY, how="left")
-    # The book prices the home side; the model talks in home margin.
-    games["market_margin"] = -games["spread"]
-    games["edge"] = games["pred_margin"] - games["market_margin"]
-    games["ou_edge"] = games["pred_total"] - games["total"]
-    return games
-
-
-def _spread_pick(game) -> dict:
-    """The side the model wants, and the number it is laying or taking.
-
-    Both numbers are quoted from that side's own point of view - a pick on the
-    underdog reading "we make it +29, the book +56" is two different sign
-    conventions in one sentence. `model` and `market_margin` are margins (the
-    side wins by); the card writes them as lines (_as_line).
-    """
-    home = game["edge"] > 0
-    side, other = (game["home"], game["away"]) if home else (game["away"], game["home"])
-    flip = 1 if home else -1
-    return {"kind": "spread", "game_id": str(game["game_id"]),
-            "team": str(side), "opponent": str(other), "home": bool(home),
-            "line": round(float(game["spread"] * flip), 1),
-            "market_margin": round(float(game["market_margin"] * flip), 1),
-            "model": round(float(game["pred_margin"] * flip), 1),
-            "edge": round(float(abs(game["edge"])), 1),
-            "kickoff": pd.Timestamp(game["date"]).isoformat()}
-
-
-def _total_pick(game) -> dict:
-    over = game["ou_edge"] > 0
-    return {"kind": "total", "game_id": str(game["game_id"]),
-            "team": f"{game['away']} at {game['home']}", "opponent": "",
-            "side": "Over" if over else "Under", "line": round(float(game["total"]), 1),
-            "model": round(float(game["pred_total"]), 1),
-            "edge": round(float(abs(game["ou_edge"])), 1),
-            "kickoff": pd.Timestamp(game["date"]).isoformat()}
+    return bets_card.with_edges(games)
 
 
 def _pick_week(week: int) -> dict:
     """The card's picks for a week, as they would be taken right now."""
-    games = _candidates(week)
-    out = {"week": week, "single": None, "parlay": []}
-    if games.empty:
-        return out
-    spreads = games.dropna(subset=["spread", "edge"])
-    spreads = spreads[spreads["edge"].abs().between(EDGE_MIN, EDGE_MAX)].sort_values(
-        "edge", key=lambda s: s.abs(), ascending=False)
-    totals = games.dropna(subset=["total", "ou_edge"])
-    totals = totals[totals["ou_edge"].abs().between(EDGE_MIN, EDGE_MAX)].sort_values(
-        "ou_edge", key=lambda s: s.abs(), ascending=False)
-
-    picks = [_spread_pick(g) for _, g in spreads.iterrows()]
-    if picks:
-        out["single"] = picks[0]
-    # The parlay is the next-best calls, and deliberately not the single again:
-    # one bet repeated inside a parlay is one opinion priced twice.
-    rest = picks[1:] + [_total_pick(g) for _, g in totals.iterrows()]
-    rest.sort(key=lambda p: -p["edge"])
-    out["parlay"] = rest[:PARLAY_LEGS]
-    return out
+    return bets_card.pick_week(_candidates(week), week, EDGE_MIN, EDGE_MAX, PARLAY_LEGS)
 
 
 def _lock_path(week: int):
-    return BETS_DIR / f"{SEASON}_wk{int(week):02d}.json"
+    return bets_card.lock_path(BETS_DIR, SEASON, week)
 
 
 def locked_picks(week: int, first_kick: datetime, now: datetime) -> tuple:
-    """(picks, locked at, whether they are frozen).
-
-    Frozen from LOCK_HOUR on the day of the week's first kickoff: the file is
-    written once and then read, so a card published on Saturday says what it
-    said on Thursday even if the ratings have moved since.
-    """
-    import json
-    path = _lock_path(week)
-    if path.exists():
-        saved = json.loads(path.read_text(encoding="utf-8"))
-        return saved, datetime.fromisoformat(saved["locked"]), True
-    picks = _pick_week(week)
-    lock_at = first_kick.replace(hour=LOCK_HOUR, minute=0, second=0, microsecond=0)
-    if now < lock_at or not picks["single"]:
-        return picks, lock_at, False
-    picks["locked"] = now.isoformat(timespec="seconds")
-    BETS_DIR.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(picks, indent=1), encoding="utf-8")
-    return picks, now, True
+    """(picks, locked at, whether they are frozen) - bets_card.locked_picks
+    on this week's file. Frozen from LOCK_HOUR on the day of the week's first
+    kickoff: the file is written once and then read, so a card published on
+    Saturday says what it said on Thursday even if the ratings have moved
+    since."""
+    return bets_card.locked_picks(_lock_path(week), lambda: _pick_week(week),
+                                  first_kick, now, LOCK_HOUR)
 
 
 def _finals() -> dict:
@@ -501,21 +362,6 @@ def _finals() -> dict:
     return {str(g["game_id"]): (float(g["home_score"] - g["away_score"]),
                                 float(g["home_score"] + g["away_score"]))
             for _, g in done.iterrows()}
-
-
-def _grade(pick: dict, finals: dict):
-    """True, False, None (push) or "" for a game that has not finished."""
-    got = finals.get(pick["game_id"])
-    if got is None:
-        return ""
-    margin, total = got
-    if pick["kind"] == "spread":
-        # The pick's own margin: the side it took, against the line it took.
-        mine = margin if pick["home"] else -margin
-        cover = mine + pick["line"]
-        return None if abs(cover) < 1e-9 else cover > 0
-    diff = total - pick["line"]
-    return None if abs(diff) < 1e-9 else (diff > 0) == (pick["side"] == "Over")
 
 
 def _closes(game_ids) -> dict:
@@ -551,168 +397,39 @@ def _closes(game_ids) -> dict:
     return out
 
 
-def _close_of(pick: dict, closes: dict):
-    """The closing line from the pick's side: the picked team's spread, or
-    the total."""
-    got = closes.get(str(pick["game_id"]))
-    if not got:
-        return None
-    spread, total = got
-    if pick["kind"] == "spread":
-        return spread if pick["home"] else -spread
-    return total
-
-
-def _close_html(pick: dict, closes: dict) -> str:
-    """"Closed -18.5 · beat it by 1.0" under a pick whose game has started."""
-    close = _close_of(pick, closes)
-    gain = bet_record.clv(pick, close)
-    if gain is None:
-        return ""
-    shown = f"{close:+.1f}" if pick["kind"] == "spread" else f"{close:.1f}"
-    if gain > 0:
-        verdict = f"<span class='hc-up'>beat it by {gain:.1f}</span>"
-    elif gain < 0:
-        verdict = f"<span class='hc-down'>{-gain:.1f} worse</span>"
-    else:
-        verdict = "the same number"
-    return f"<div class='hc-sub'>Closed {shown} &middot; {verdict}</div>"
-
-
-def _mark(state) -> str:
-    if state == "":
-        return ""
-    if state is None:
-        return "<span class='hc-res push'>push</span>"
-    return ("<span class='hc-res win'>&check;</span>" if state
-            else "<span class='hc-res loss'>&times;</span>")
+# The card's parts, under the names they had here before they moved to
+# gordstats.bets_card (the tests still call them by these).
+_spread_pick = bets_card.spread_pick
+_total_pick = bets_card.total_pick
+_grade = bets_card.grade
+_close_of = bets_card.close_of
+_close_html = bets_card.close_html
+_mark = bets_card.mark
+_as_line = bets_card.as_line
+_leg_html = bets_card.leg_html
 
 
 def _season_record(finals: dict = None, closes: dict = None) -> str:
-    """How every locked pick of the season has done: the picks graded on the
-    results, what the bets as offered would have paid (a unit on each week's
-    single and a unit on its parlay, at -110), and how the numbers taken
-    compare with where the lines closed (gordstats.bet_record)."""
-    import json
-    weeks = [json.loads(p.read_text(encoding="utf-8"))
-             for p in sorted(BETS_DIR.glob(f"{SEASON}_wk*.json"))]
-    legs = [p for w in weeks for p in ([w["single"]] if w.get("single") else []) + w.get("parlay", [])]
+    """How every locked pick of the season has done (bets_card.season_record):
+    graded on the results, in units, and against the closing line."""
+    weeks = bets_card.saved_weeks(BETS_DIR, SEASON)
     finals = _finals() if finals is None else finals
-    closes = _closes(p["game_id"] for p in legs) if closes is None else closes
-    wins = losses = pushes = 0
-    paid, settled = 0.0, 0
-    for w in weeks:
-        if w.get("single"):
-            state = _grade(w["single"], finals)
-            if state not in ("", None):
-                paid += bet_record.units(int(state), int(not state))
-            settled += state != ""
-        if w.get("parlay"):
-            got = bet_record.parlay_units(_grade(p, finals) for p in w["parlay"])
-            if got is not None:
-                paid, settled = paid + got, settled + 1
-    for pick in legs:
-        state = _grade(pick, finals)
-        if state == "":
-            continue
-        if state is None:
-            pushes += 1
-        else:
-            wins, losses = wins + int(state), losses + int(not state)
-    if not (wins + losses + pushes):
-        return ""
-    gains = [g for g in (bet_record.clv(p, _close_of(p, closes)) for p in legs) if g is not None]
-    out = (f"Locked picks this season: <strong>{wins}-{losses}"
-           + (f"-{pushes}" if pushes else "") + "</strong>")
-    if settled:
-        sign = "+" if paid >= 0 else "&minus;"
-        out += (f", <strong title='A unit on each week&#39;s single and one on its parlay, "
-                f"at -110'>{sign}{abs(paid):.1f} units</strong>")
-    if gains:
-        better, worse = sum(g > 0 for g in gains), sum(g < 0 for g in gains)
-        out += (f"; against the closing line, <strong>{better} better</strong>, "
-                f"<strong>{worse} worse</strong>")
-        if len(gains) - better - worse:
-            out += f", {len(gains) - better - worse} the same"
-    return out + "."
-
-
-def _as_line(margin: float) -> str:
-    """A side's winning margin written as a sportsbook line, the favourite
-    negative: we have them winning by 14.9 -> -14.9 (the card read "+14.9"
-    beside a call of "-6.0", two conventions in one sentence)."""
-    line = -float(margin)
-    return "pk" if abs(line) < 0.05 else f"{line:+.1f}"
-
-
-def _leg_html(pick: dict, finals: dict, closes: dict = None) -> str:
-    if pick["kind"] == "spread":
-        call = f"{escape(pick['team'])} {pick['line']:+.1f}"
-        sub = (f"vs {escape(pick['opponent'])} &middot; we have them "
-               f"{_as_line(pick['model'])}, the book {_as_line(pick['market_margin'])}")
-    else:
-        call = f"{pick['side']} {pick['line']:.1f}"
-        sub = f"{escape(pick['team'])} &middot; we make it {pick['model']:.1f}"
-    return (f"<li>{call}{_mark(_grade(pick, finals))}"
-            f"<div class='hc-sub'>{sub}</div>{_close_html(pick, closes or {})}</li>")
+    closes = _closes(p["game_id"] for p in bets_card.legs(weeks)) if closes is None else closes
+    return bets_card.season_record(weeks, finals, closes)
 
 
 def bets_html(now: datetime = None) -> str:
     now = now or datetime.now()
     week, first_kick = _current_week(now)
     if week is None:
-        return _CSS + "<div class='hc'><p class='hc-note'>No games scheduled.</p></div>"
+        return bets_card.note("No games scheduled.")
     picks, when, frozen = locked_picks(week, first_kick, now)
     finals = _finals()
-
     if not picks.get("single"):
-        return (_CSS + "<div class='hc'><p class='hc-note'>The model and the book agree "
-                f"to within {EDGE_MIN:.0f} points on every game this week, so there is "
-                "no bet to name.</p></div>")
-
-    single = picks["single"]
-    closes = _closes(p["game_id"] for p in [single] + picks["parlay"])
-    body = [f"<div class='hc-bet'><div class='hc-pick'>"
-            f"<div class='hc-kind'>Single bet</div>"
-            f"<div class='hc-call'>{escape(single['team'])} {single['line']:+.1f}"
-            f"{_mark(_grade(single, finals))}</div>"
-            f"<div class='hc-sub'>vs {escape(single['opponent'])} &middot; we have them "
-            f"{_as_line(single['model'])}, the book {_as_line(single['market_margin'])}</div>"
-            f"{_close_html(single, closes)}</div>"]
-    if picks["parlay"]:
-        legs = "".join(_leg_html(p, finals, closes) for p in picks["parlay"])
-        body.append(f"<div class='hc-pick'><div class='hc-kind'>"
-                    f"{len(picks['parlay'])}-leg parlay</div>"
-                    f"<ul class='hc-legs'>{legs}</ul></div>")
-    body.append("</div>")
-
-    # Two short lines instead of a paragraph: when the call was made and how
-    # long it stands, then the record. The backtest caveat that used to live
-    # here (these picks hit 48% ATS, under the 52.4% juice needs) was four
-    # lines of small print nobody read on a phone; it belongs with the rest of
-    # the record, one tap away on the predictions page.
-    if frozen:
-        timing = (f"<span>Generated {when:%a %-d %b, %-I:%M %p ET}</span>"
-                  f"<span class='hc-lock hc-locked'>Locked</span>")
-    else:
-        # Emitted as an instant, not a wall clock: week_spans is naive ET and
-        # the reader may not be.
-        lock_iso = when.replace(tzinfo=ET).isoformat()
-        timing = (f"<span>Generated {now:%a %-d %b, %-I:%M %p ET}</span>"
-                  f"<span class='hc-lock' data-lock='{lock_iso}'>"
-                  f"Locks {when:%a %-I %p ET}</span>")
-    record = _season_record(finals)
-    note = (f"<div class='hc-when-row'><span>{espn.week_label(week)}</span>{timing}</div>"
-            f"<p class='hc-rec'>{record} <span class='hc-dis'>Not gambling "
-            f"advice.</span> <a href='/cfb/predictions/'>Full record</a>.</p>")
-    # The bet, as the sender would have typed it; the home page it links to
-    # carries this card.
-    line = (f"GordStats' {espn.week_label(week)} bet: {single['team']} {single['line']:+.1f} "
-            f"vs {single['opponent']}")
-    if picks["parlay"]:
-        line += f", plus a {len(picks['parlay'])}-leg parlay"
-    return (_CSS + _LOCK_JS + "<div class='hc'>" + "".join(body)
-            + note + share_button.row("/", line) + "</div>")
+        return bets_card.no_bet(EDGE_MIN)
+    closes = _closes(p["game_id"] for p in [picks["single"]] + picks["parlay"])
+    return bets_card.card_html(picks, espn.week_label(week), now, when, frozen, finals,
+                               closes, _season_record(finals), "/cfb/predictions/")
 
 
 WEEK_GAMES_OUT = paths.DOCS / "cfb" / "week-games.json"
