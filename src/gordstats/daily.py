@@ -106,11 +106,16 @@ def _cbb_power() -> None:
     Its own task rather than part of _cbb: that one refuses to run outside
     the basketball season, and this page is most alive before it - Torvik's
     preseason projections move all autumn as rosters settle.
+
+    The watch guide (docs/cbb/watch/) rides along: its games come from the
+    live scoreboard in the browser, so the page only has to exist, all year -
+    out of season it says when the next game is.
     """
-    from cbb.render import render_power
+    from cbb.render import render_power, render_watch
 
     render_power.trank(refresh=True)
     render_power.generate()
+    render_watch.generate()
 
 
 def _fantasy() -> None:
