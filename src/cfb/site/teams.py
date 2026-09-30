@@ -219,8 +219,57 @@ def _record_table(frame: pd.DataFrame, team: str, espn_proj: dict) -> str:
             f"<tbody>{rows}</tbody></table></div>")
 
 
+# The advanced block: a handful of the team stats page's figures, each with
+# where it ranks among FBS teams (cfb.advanced; the full table is /cfb/stats/).
+_ADVANCED = [("adj_off", "Offense EPA/play", "epa", "high"),
+             ("adj_def", "Defense EPA/play", "epa", "low"),
+             ("adj_sr", "Success rate", "pct", "high"),
+             ("adj_sr_a", "Success allowed", "pct", "low"),
+             ("adj_expl", "Explosiveness", "num2", "high"),
+             ("def_havoc", "Defensive havoc", "pct", "high"),
+             ("third", "3rd down", "pct", "high"),
+             ("to_margin", "Turnover margin/g", "epa", "high")]
+
+
+def advanced_ranks() -> dict:
+    """{ESPN id: {key: (value, rank, of)}} for the block, or {} before CFBD has
+    the season."""
+    from cfb import advanced
+    try:
+        rows = advanced.teams()
+    except Exception as exc:                     # the pages stand without it
+        print(f"  ! team pages: no advanced stats ({exc})")
+        return {}
+    out = {}
+    for key, _label, _fmt, better in _ADVANCED:
+        have = [r for r in rows if r.get(key) is not None]
+        have.sort(key=lambda r: r[key], reverse=better == "high")
+        for i, r in enumerate(have, 1):
+            out.setdefault(str(r["id"]), {})[key] = (r[key], i, len(have))
+    return out
+
+
+def _advanced_block(ranks: dict) -> str:
+    if not ranks:
+        return ""
+    from gordstats import stats_page
+    cells = "".join(
+        f"<div class='tm-adv-c'><span>{escape(label)}</span><b>{stats_page.fmt(ranks[key][0], fmt)}</b>"
+        f"<small>{ranks[key][1]}{_ordinal(ranks[key][1])} of {ranks[key][2]}</small></div>"
+        for key, label, fmt, _better in _ADVANCED if key in ranks)
+    return ("<style>.tm-adv{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));"
+            "gap:8px;margin:6px 0 4px}.tm-adv-c{border:1px solid #e2e8f0;border-radius:10px;"
+            "padding:8px 10px;background:#fff}.tm-adv-c span{display:block;font-size:12px;"
+            "color:#64748b;font-weight:700}.tm-adv-c b{font-size:18px}.tm-adv-c small{display:block;"
+            "font-size:12px;color:#475569}@media (prefers-color-scheme: dark){.tm-adv-c{"
+            "background:#16203a;border-color:#2b3852}.tm-adv-c span,.tm-adv-c small{color:#aab7c9}}"
+            "</style><h3>Advanced</h3><div class='tm-adv'>" + cells + "</div>"
+            "<p class='tm-note'>Opponent-adjusted where it can be; every team, every figure, "
+            "on <a href='/cfb/stats/'>Team Stats</a>.</p>")
+
+
 def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict,
-               espn_proj: dict | None = None) -> str:
+               espn_proj: dict | None = None, adv: dict | None = None) -> str:
     team = row["team"]
     total = len(table)
 
@@ -244,6 +293,7 @@ def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict,
             "How well any of this has worked is on the "
             "<a href='/cfb/predictions/'>predictions page</a>.</p>")
     return (_CSS + head + _record_table(frame, team, espn_proj or {})
+            + _advanced_block((adv or {}).get(str(team), {}))
             + "<h3>Schedule</h3>" + _schedule_rows(frame, team, names) + note)
 
 
@@ -327,10 +377,11 @@ def generate() -> None:
     # (cfb.site.power carries the GordStats column); the URL redirects there.
     # `_index` stays, unused, should a standalone list be wanted again.
     espn_proj = espn_projections()
+    adv = advanced_ranks()
     for _, row in table.iterrows():
         slug = team_slug(row["name"])
         write_page(WEB_DIR / "teams" / slug / "index.html",
-                   escape(str(row["name"])), _team_page(row, frame, table, names, espn_proj),
+                   escape(str(row["name"])), _team_page(row, frame, table, names, espn_proj, adv),
                    description=f"{row['name']} ratings, schedule and projected results")
 
 

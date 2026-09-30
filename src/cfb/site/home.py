@@ -83,6 +83,7 @@ def body() -> str:
   <p class="home-card-links">
     <a href="/cfb/predictions/">Predictions</a> ·
     <a href="/cfb/power/">Rankings</a> ·
+    <a href="/cfb/stats/">Team Stats</a> ·
     <a href="/cfb/watch/">Watch Guide</a> ·
     <a href="/cfb/schedule/">Schedule &amp; Scores</a> ·
     <a href="/cfb/strength/">Strength of Schedule</a>

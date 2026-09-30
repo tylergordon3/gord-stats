@@ -24,12 +24,12 @@ def projection_years() -> list[int]:
 # and matchups: both point at the newest one.
 PAGES = ["home", "draft_review", "recap", "league", "league_power", "matchups",
          "power", "teams", "predictions", "schedule", "countdown", "homecards",
-         "watch", "strength", "usage", "roster"]
+         "watch", "strength", "usage", "roster", "stats"]
 
 
 def build_all(refresh: bool = False) -> list[str]:
     """Fetch (or reuse) the data, build every page; returns failed page names."""
-    from cfb import (boxscores, cfbd, espn, gameinfo, odds, players, results,
+    from cfb import (advanced, boxscores, cfbd, espn, gameinfo, odds, players, results,
                      schools, usage, yahoo)
 
     # Fetch up front so one network failure surfaces once, not per page, and a
@@ -70,7 +70,10 @@ def build_all(refresh: bool = False) -> list[str]:
                         # from the parquet forever after.
                         ("espn box scores", lambda: boxscores.capture(refresh=refresh)),
                         # Carries, targets and PPA per player per week.
-                        ("cfbd player usage", lambda: usage.capture(refresh=refresh))]:
+                        ("cfbd player usage", lambda: usage.capture(refresh=refresh)),
+                        # The team stats page's numbers: opponent-adjusted EPA,
+                        # the advanced splits, the box score, player EPA.
+                        ("cfbd advanced stats", lambda: advanced.capture(refresh=refresh))]:
         try:
             pull()
         except Exception as exc:
