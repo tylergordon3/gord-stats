@@ -416,9 +416,11 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
    phone: the desktop density is fine because it is read sitting down, and
    these rules sit last so they win on equal specificity. */
 @media (max-width:600px){
-  .mu-pn .mu-g,.mu-pn .mu-pm,.mu-pslot,.mu-pbench-h,
-  .mu-pts .mu-exp,.mu-pp .mu-gs{font-size:11px}
-  .mu-pair .inj,.mu-pair .mu-hint{font-size:10.5px}
+  .mu-pn .mu-g,.mu-pn .mu-pm,.mu-pts .mu-exp,.mu-pp .mu-gs,
+  .mu-side .sub{font-size:12px}
+  .mu-pslot,.mu-pbench-h,.mu-src-l,.mu-srcs-h{font-size:11.5px}
+  .mu-pn .nm{font-size:13.5px}
+  .mu-pair .inj,.mu-pair .mu-hint{font-size:11px}
 }
 </style>"""
 
@@ -437,6 +439,37 @@ JS = """<script>
   window.show_wk=show;
   var m=(location.hash||'').match(/^#wk-(\\d+)$/);
   if(m&&document.getElementById('wk-view-'+m[1]))show(m[1]);
+})();
+(function(){
+  // A matchup opened by its link on the scoreboard, or by an address with its
+  // anchor, is opened rather than scrolled to shut.
+  function openHash(){
+    var id=(location.hash||'').slice(1), d=id&&document.getElementById(id);
+    if(d&&d.tagName==='DETAILS') d.open=true;
+  }
+  window.addEventListener('hashchange', openHash);
+  // On a phone every matchup open made the page 9,000-12,000px, 1,700px a
+  // matchup: there, only the ones a reader came for stay open - their own
+  // (the team picked on My Team), the game of the week - or the first of the
+  // week when neither is on it. The scoreboard above lists every score and
+  // opens the rest.
+  if(window.matchMedia&&matchMedia('(max-width:600px)').matches){
+    var mine={};
+    try{ ['cfbMyTeam','nflMyTeam'].forEach(function(k){ var v=localStorage.getItem(k); if(v) mine[v]=1; }); }catch(e){}
+    var gw=document.querySelector('.gw a[href^="#"]'), keep=gw?gw.getAttribute('href').slice(1):'';
+    var views=document.querySelectorAll('.wk-view');
+    for(var i=0;i<views.length;i++){
+      var secs=[].filter.call(views[i].querySelectorAll('details.section'),function(d){ return d.querySelector('.mu-head'); });
+      var any=false;
+      secs.forEach(function(d){
+        var own=[].some.call(d.querySelectorAll('.mu-head [data-num]'),function(x){ return mine[x.getAttribute('data-num')]; });
+        d.open=own||d.id===keep;
+        any=any||d.open;
+      });
+      if(!any&&secs.length) secs[0].open=true;
+    }
+  }
+  openHash();
 })();
 </script>"""
 
@@ -842,7 +875,12 @@ def median_tracker(teams: list, week: int, started: bool, final: bool,
         return ""
     blob = _escape(json.dumps({"started": started, "final": final, "teams": teams,
                                "ext": ext or {}}, separators=(",", ":")))
-    return (f'<details class="section mu-medt-sec" open><summary>Median Tracker</summary>'
+    # Open only while the week is being played: before kickoff every line is
+    # 0.0 and "loses the median if 1 of 5 passes", 1,700px of it on a phone
+    # above the first matchup; after the final it is a result the standings
+    # already show.
+    return (f'<details class="section mu-medt-sec"{" open" if started and not final else ""}>'
+            f'<summary>Median Tracker</summary>'
             f'<div class="mu-medt" data-medt-week="{week}" data-medt=\'{blob}\'></div>'
             "</details>")
 
@@ -899,6 +937,9 @@ MEDIAN_TRACKER_JS = """<style>
   .mu-medt-row .st{color:#6ee7b7}.mu-medt-row.down .st{color:#ff9b91}
   .mu-medt-top,.mu-medt-need{color:#c5cfdc}.mu-medt-ps,.mu-medt-row .fig span{color:#aab7c9}
   .mu-medt-ps .lv{color:#ff9b91}
+}
+@media (max-width:600px){
+  .mu-medt-ps,.mu-medt-line,.mu-medt-row .fig span{font-size:12px}
 }
 </style><script>
 window.muMedTrack=(function(){

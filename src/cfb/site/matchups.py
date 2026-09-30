@@ -847,10 +847,9 @@ def body() -> str:
         current, info["pairs"], info["started"], info["final"]) if info else "")
     return (
         ui.CSS + share
+        # One line: the recap teaser under it says the rest.
         + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> — every '
-        "matchup with both rosters in full, live while games are on. Each finished "
-        "week gets a <a href='/cfb/recap/'>recap</a>: the awards and every team's "
-        "lineup accuracy.</p>"
+        "matchup, live while games are on.</p>"
         + _recap_teaser()
         + "<details class='section'><summary>How to read this page</summary>"
         "<p><b>GS Proj</b> is this site's own "

@@ -28,12 +28,12 @@ CSS = """<style>
 .dr-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;
   font-size:13px;color:#475569}
 .dr-bar select{font:inherit;font-size:13px;padding:5px 9px;border:1px solid #cbd5e1;
-  border-radius:8px}
+  border-radius:8px;min-height:40px}
 .dr-up{color:#15803d;font-weight:700}
 .dr-down{color:#b91c1c;font-weight:700}
-.dr-pos{font-size:10.5px;color:var(--gs-muted,#5d6b7e);font-weight:700;margin-left:4px}
-table.dr-b{border-collapse:collapse;font-size:11.5px;width:100%}
-table.dr-b th{background:#eef2f7;color:#334155;padding:4px 6px;font-size:10.5px;
+.dr-pos{font-size:11.5px;color:var(--gs-muted,#5d6b7e);font-weight:700;margin-left:4px}
+table.dr-b{border-collapse:collapse;font-size:13px;width:100%}
+table.dr-b th{background:#eef2f7;color:#334155;padding:4px 6px;font-size:11.5px;
   text-transform:uppercase;letter-spacing:.03em;border:1px solid #e2e8f0;
   white-space:nowrap;text-align:left}
 table.dr-b th.rd{position:sticky;left:0;z-index:1}
@@ -42,7 +42,7 @@ table.dr-b td{padding:4px 6px;border:1px solid #eef2f7;background:#fff;
   text-overflow:ellipsis}
 table.dr-b td.rd{position:sticky;left:0;background:#eef2f7;font-weight:800;z-index:1}
 .dr-nm{font-weight:600}
-.dr-v{font-variant-numeric:tabular-nums;font-size:10.5px;margin-left:4px}
+.dr-v{font-variant-numeric:tabular-nums;font-size:11.5px;margin-left:4px}
 @media (prefers-color-scheme: dark){
   .dr-note,.dr-none,.dr-bar{color:#aab7c9}
   .dr-up{color:#6ee7b7}

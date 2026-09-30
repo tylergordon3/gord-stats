@@ -1122,9 +1122,8 @@ def body() -> str:
                               "&seasontype=2")
         + '<div id="mm-built">' + _share_row() + _recap_teaser()
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
-        f"— every {UPCOMING_SEASON} matchup with both rosters in full, live while games "
-        "are on. Each finished week gets a <a href='/fantasy/recap/'>recap</a>: the "
-        "awards and every team's lineup accuracy.</p><details class='section'><summary>How to read this page</summary>"
+        f"— every {UPCOMING_SEASON} matchup, live while games are on.</p>"
+        "<details class='section'><summary>How to read this page</summary>"
         "<p>The <b>Median Tracker</b> ranks every team by points so far (by projection "
         "before kickoff), each with its expected final (points plus what its unfinished "
         "starters are projected to add), with the median line "

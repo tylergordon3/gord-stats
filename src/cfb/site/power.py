@@ -71,10 +71,13 @@ table.cfb-power td{padding:6px 10px;border:0;border-right:1px solid #eef2f7;
 table.cfb-power th:last-child,table.cfb-power td:last-child{border-right:0}
 table.cfb-power td.pwr-team{text-align:left;font-weight:600}
 table.cfb-power td.pwr-team a{color:inherit;text-decoration:none}
+/* A 15px-tall link: padding makes the finger's target taller without moving
+   the row. */
+table.cfb-power td.pwr-team a{padding:10px 0}
 table.cfb-power td.pwr-team a:hover{text-decoration:underline}
 /* The GordStats rank rides beside its rating, quiet. */
 table.cfb-power td .gs-rk{display:inline-block;min-width:22px;text-align:right;
-  font-size:11px;color:#64748b;margin-right:6px}
+  font-size:12px;color:#64748b;margin-right:6px}
 /* The mascot is the first thing to go when the window narrows: at half a
    screen "Ohio State Buckeyes" pushes the figures off the right edge, and
    "Ohio State" says the same thing. */

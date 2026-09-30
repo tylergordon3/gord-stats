@@ -147,16 +147,36 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
    that they are the first thing on the page, which they stop being if reaching
    the fourth takes four screens. */
 @media (max-width:560px){
-  .pred-record{grid-template-columns:1fr 1fr;gap:9px}
+  /* On a phone the record is one row that swipes, not a grid: five tiles two
+     across were 523px before the first game (1,385px down on the college
+     page). A tile and a half showing says there is more to the side. */
+  .pred-record{display:flex;overflow-x:auto;gap:9px;scroll-snap-type:x mandatory;
+    padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .pred-record>.rec-cell{flex:0 0 58%;scroll-snap-align:start;min-width:0}
+  .pred-record>.rec-cell.rec-wide{flex-basis:78%}
   .rec-cell{padding:11px 12px 12px;border-radius:10px}
-  .rec-label{font-size:10.5px;letter-spacing:.03em}
-  .rec-value{font-size:31px;margin:3px 0 1px}
+  .rec-label{font-size:11.5px;letter-spacing:.03em}
+  .rec-value{font-size:30px;margin:3px 0 1px}
   .rec-value.rec-frac{font-size:25px}
   .rec-value.rec-frac .rec-of{font-size:14px}
-  .rec-sub{font-size:11.5px;line-height:1.35}
+  .rec-sub{font-size:12px;line-height:1.35}
   .rec-meter{height:7px;margin-top:9px}
-  .rec-note{font-size:10.5px;margin-top:6px;line-height:1.35}
+  .rec-note{font-size:12px;margin-top:6px;line-height:1.35}
+  /* The week's summary tiles the same way. */
+  .pred-tiles:not(.pred-tiles-wide){display:flex;overflow-x:auto;gap:9px;padding-bottom:4px}
+  .pred-tiles:not(.pred-tiles-wide)>.pred-tile{flex:0 0 44%;min-width:0}
+  /* The rating beside each team is unlabelled at this size and the score or
+     projection beside it is what the row is for. */
+  .pg-rating{display:none}
+  /* A card's second half wraps whole ("O/U 47 (39.5) lean over · 54%") rather
+     than leaving "· 54%" on a line of its own. */
+  .pg-line{flex-wrap:wrap;row-gap:2px}
+  .pg-line>span:last-child{margin-left:auto}
+  .pg-rank{font-size:12px}
 }
+/* A team name is a 16px-tall link: the padding makes the finger's target
+   taller without moving the row. */
+.pg-row .pg-name a,.pg-row>a{padding:9px 0}
 .pred-tile .t-meter{position:relative;height:7px;border-radius:4px;background:#dbe7f7;
   margin-top:10px}
 .pred-tile .t-meter>i{display:block;height:100%;border-radius:4px;background:{accent}}
@@ -762,16 +782,12 @@ def body() -> str:
                 + _results_section(scored) + _method(games))
 
     games = _with_market(games)
-    weeks = _weeks(games)
     matched = games["market_spread"].notna().sum()
 
-    span = ("" if len(weeks) < 2 else
-            f" That window straddles week {weeks[0]} and week {weeks[-1]}, so both "
-            f"are below.")
     # The cards describe themselves; this used to walk through each of their
     # parts in prose before the reader reached one.
-    intro = (f"<p class='pred-note'>Every FBS game kicking off in the next seven days, "
-             f"{len(games)} of them.{span}</p>")
+    intro = (f"<p class='pred-note'>Every FBS game in the next seven days, "
+             f"{len(games)} of them.</p>")
 
     parts = [_CSS, _record_band(scored), f"<h2>{_week_label(games)}</h2>", intro,
              _tiles(games), _cards(games), _results_section(scored)]

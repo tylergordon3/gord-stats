@@ -181,12 +181,14 @@ def body() -> str:
 
     return (
         _CSS
-        + "<p>Fantasy points allowed per position, against what this site's model said "
-        "the opposing offence should have scored. <strong>1.00 is par</strong> — a "
-        "defence giving up exactly what its schedule implies. Above 1 is a defence to "
-        "attack; below 1 one to avoid. Scored in this league's own points, from "
-        f"{played} games played so far.</p>"
+        # One line up top; the rest of what used to be two paragraphs before the
+        # first table is one tap away.
+        + "<p><strong>1.00 is par</strong>: above 1, a defence to attack; below 1, one "
+        f"to avoid. From {played} games so far.</p>"
         "<details class='section'><summary>How this is worked out</summary>"
+        "<p class='st-note'>Fantasy points allowed per position, in this league's own "
+        "scoring, against what this site's model said the opposing offence should have "
+        "scored - 1.00 is a defence giving up exactly what its schedule implies.</p>"
         "<p class='st-note'>Every finished game's ESPN box score is scored with the "
         "league's modifiers, then each position's haul is set against the share of the "
         "opposing offence's <em>predicted</em> points that position normally takes. That "
@@ -195,11 +197,9 @@ def body() -> str:
         "have managed. Ratings on fewer than five games are pulled toward par, so one "
         "shootout in September does not brand a defence for the season.</p></details>"
         "<h2>Schedule ahead</h2>"
-        "<p class='st-note'>Each roster's next weeks, priced by who its players face: "
-        "every player's opponent rated at <em>his</em> position and weighted by what he "
-        "is projected to be worth, so a soft week for your third receiver counts for "
-        "less than a soft week for your quarterback. Higher is easier. A bye is left "
-        "out rather than counted as par.</p>"
+        "<p class='st-note'>Each roster's next weeks, priced by who its players face "
+        "(weighted by what each is projected to be worth). Higher is easier; a bye is "
+        "left out.</p>"
         + schedule_section(ratings, names, frame, board)
         + "<h2>Defence vs position</h2>"
         "<p class='st-note'>Every FBS defence, toughest first: 1 gives up the least against expectation, the last place the most.</p>"
