@@ -28,7 +28,7 @@ from fantasy import paths
 from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROSTER_NAMES
 from fantasy.site import adp, injuries, layout, schedule, transactions
 from fantasy.site.draft import PICKUP_MIN_WEEKS
-from gordstats import hub
+from gordstats import hub, schedule_luck
 from gordstats.recap import ordinal
 from gordstats.frontmatter import add_front_matter
 
@@ -58,9 +58,13 @@ def _year(season: str) -> str:
 
 
 def schedule_finding() -> str:
-    """This season's luckiest record against its Pythagorean expectation, or
-    the toughest schedule while nobody is ahead of it yet."""
+    """Whom the schedule has cost most this season (gordstats.schedule_luck);
+    before anybody is a real win down, the luckiest record against its
+    Pythagorean expectation, or the toughest schedule by opponents' records."""
     season = next(iter(LEAGUE_IDS))                         # newest first
+    got = schedule_luck.finding(*schedule.difficulty(season), when=" this season")
+    if got:
+        return got
     table = schedule.schedule_metrics(season).data
     best, gap = None, 0.0
     for _, r in table.iterrows():
@@ -105,7 +109,8 @@ def built_cards() -> str:
     """The site league's records, for League Home."""
     return hub.cards([
         ("/fantasy/schedule/", "What the schedule was worth", _quiet(schedule_finding),
-         "Strength of schedule, all-play records and every schedule swapped, each season"),
+         "Schedule difficulty - opponents' strength and timing - all-play records and every "
+         "schedule swapped, each season"),
         ("/fantasy/transactions/", "Waivers & trades", _quiet(transactions_finding),
          "Every claim, add and trade, and what the players did afterwards"),
         ("/fantasy/draft/", "Draft values & busts", _quiet(draft_finding),

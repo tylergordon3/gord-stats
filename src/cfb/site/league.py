@@ -8,6 +8,9 @@ saying plainly what it is still waiting on:
   * (Power Rankings - every roster priced as its best lineup - are the league's
      Power tab, docs/cfb/league/power/ (cfb.site.league_power); the
      Standings end with a link there, id="power" for the old anchor.)
+  * Schedule Difficulty - what the schedule has done to each record, in
+                     wins: opponents' strength and their timing
+                     (gordstats.schedule_luck), from the finished weeks.
   * Matchups       - the current week's scoreboard; pairings before kickoff,
                      projections and points once Yahoo serves them.
   * (The draft - grid, grades, every pick - lives on the draft review page,
@@ -28,7 +31,7 @@ from html import escape
 from cfb import waivers, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import recap, write_page
-from gordstats import hub
+from gordstats import hub, schedule_luck
 from gordstats.frontmatter import liquid
 
 _CSS = """<style>
@@ -263,6 +266,7 @@ def body() -> str:
         'pick, graded - is on the <a href="/cfb/live/">draft review</a>.</p>'
         + recap.teaser()
         + _details("Standings", standings_section(lg) + _POWER_LINK, open=True)
+        + _details("Schedule Difficulty", schedule_section(lg), open=True, anchor="schedule")
         + _details(f"Matchups — Week {int(sb['week']) if sb.get('week') else '?'}",
                    matchups_section(sb), open=True)
         + _details("League Records", records_section(), open=True, anchor="records")
@@ -287,6 +291,28 @@ def _draft_finding() -> str:
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! records finding (draft): {type(exc).__name__}: {exc}")
         return ""
+
+
+def schedule_section(lg: dict) -> str:
+    """Schedule difficulty over the finished regular-season weeks."""
+    first = int(lg.get("start_week") or 1)
+    playoff_start = int(lg.get("playoff_start_week") or int(lg["end_week"]) + 1)
+    rows = []
+    for week in yahoo.archived_weeks():
+        if not first <= week < playoff_start:
+            continue
+        data = yahoo.week_matchups(week)
+        if not yahoo.week_final(data):
+            continue
+        for m in data["matchups"]:
+            if len(m["teams"]) != 2:
+                continue
+            a, b = m["teams"]
+            pa, pb = float(a.get("points") or 0.0), float(b.get("points") or 0.0)
+            rows += [(week, a["team_key"], b["team_key"], pa, pb),
+                     (week, b["team_key"], a["team_key"], pb, pa)]
+    names = {t["team_key"]: t["name"] for t in lg["teams"]}
+    return schedule_luck.html(schedule_luck.table(rows), names)
 
 
 def records_section() -> str:

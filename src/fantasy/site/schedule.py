@@ -1,7 +1,9 @@
 """
 Schedule-stats page (src/).
 
-Three sections, all computed from data/season/<season>.json:
+Four sections, all computed from data/season/<season>.json:
+  * Schedule Difficulty - what the schedule has done to each record, in wins,
+    split into opponents' strength and their timing (gordstats.schedule_luck).
   * All-Play (roto) standings - everyone vs everyone, every week.
   * Strength of Schedule / Victory / Expected Wins.
   * Records vs every other team's schedule (matrix).
@@ -11,7 +13,7 @@ season buttons - same shape as the draft report.
 
     python -m fantasy.site.schedule
 """
-from html import escape
+from html import escape, unescape
 
 import pandas as pd
 
@@ -20,6 +22,7 @@ from fantasy.config import (
     EXPW_RATIO, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
 from fantasy.site import layout, styles
+from gordstats import schedule_luck
 from gordstats.frontmatter import add_front_matter
 
 _GRID = [styles.GRID_TD, styles.GRID_TH]
@@ -84,6 +87,17 @@ def all_play(season_str: str):
 # --------------------------------------------------------------------------- #
 # Strength of schedule / victory / expected wins (single season)
 # --------------------------------------------------------------------------- #
+
+def difficulty(season_str: str) -> tuple:
+    """(schedule_luck table, {roster_id: team name}) for one season's
+    head-to-head games."""
+    reg = _load(season_str)
+    games = reg[reg["opp"].notna()]
+    rows = games[["week", "roster_id", "opp", "points", "opp_points"]].values.tolist()
+    # _load escapes the names for the Styler tables; schedule_luck escapes its own.
+    names = {rid: unescape(str(n)) for rid, n in zip(reg["roster_id"], reg["team_name"])}
+    return schedule_luck.table(rows), names
+
 
 def _avg_over(roster_id, season, value_by_roster):
     opps = season[season["roster_id"] == roster_id]["opp"]
@@ -181,8 +195,10 @@ def schedule_compare(season_str: str):
 
 def _season_view(season_str: str) -> str:
     """One season's three tables, with the first column frozen on h-scroll."""
+    frame, names = difficulty(season_str)
     html = (
-        '<h2>All-Play Standings</h2><p>Whole league goes H2H, every week.</p>'
+        '<h2>Schedule Difficulty</h2>' + schedule_luck.html(frame, names)
+        + '<h2>All-Play Standings</h2><p>Whole league goes H2H, every week.</p>'
         f'<div class="table-scroll">{all_play(season_str).to_html()}</div>'
         '<h2>Strength of Schedule & Victory</h2>'
         '<p><strong>SOS:</strong> Strength of Schedule - difficulty of schedule '
