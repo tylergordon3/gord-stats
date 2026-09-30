@@ -10,7 +10,7 @@ build_all().
 import argparse
 import traceback
 
-PAGES = ["predictions", "watch", "stats"]
+PAGES = ["predictions", "power", "teams", "watch", "stats", "schedule", "homecards"]
 
 
 def build_all(refresh: bool = False) -> list[str]:

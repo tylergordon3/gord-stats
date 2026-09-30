@@ -108,6 +108,13 @@ cbb:
     icon: "📺"
     url: /cbb/watch/
 
+  - title: Team Stats
+    short: Stats
+    icon: "📊"
+    url: /cbb/stats/
+    # A sixth link would wrap the phone row: Power's intro and the CBB home link it.
+    phone: false
+
 
 wnba:
   - title: Dashboard
@@ -210,6 +217,19 @@ nfl:
     short: Predict
     icon: "🔮"
     url: /nfl/
+
+  - title: Schedule & Scores
+    short: Schedule
+    icon: "🏈"
+    url: /nfl/schedule/
+
+  - title: Rankings
+    short: Rankings
+    icon: "📈"
+    url: /nfl/power/
+    # A team page is reached from the rankings; without this, Predictions
+    # (/nfl/) is the longest match for all 32 of them and lights up instead.
+    covers: "/nfl/teams/"
 
   - title: Watch Guide
     short: Watch
