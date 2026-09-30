@@ -168,6 +168,8 @@ cfb:
     icon: "🏠"
     url: /cfb/
     group: home
+    # Six links would wrap the phone row; the CFB chip above goes home.
+    phone: false
 
   - title: Predictions
     short: Predict
@@ -182,6 +184,12 @@ cfb:
     # A team page is reached from the rankings; without this, /cfb/ (Home) was
     # the longest match for all 138 of them and lit up instead.
     covers: "/cfb/teams/"
+    group: model
+
+  - title: Team Stats
+    short: Stats
+    icon: "📊"
+    url: /cfb/stats/
     group: model
 
   - title: Watch Guide
@@ -207,6 +215,11 @@ nfl:
     short: Watch
     icon: "📺"
     url: /nfl/watch/
+
+  - title: Team Stats
+    short: Stats
+    icon: "📊"
+    url: /nfl/stats/
 
 
 # The Yahoo college fantasy league, shown under Fantasy > CFB.
