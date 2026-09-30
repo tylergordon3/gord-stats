@@ -57,8 +57,8 @@ table.tm td.win-cell{font-variant-numeric:tabular-nums}
 """ + rankmoves.CSS + """
 .tm-head{display:flex;align-items:center;gap:14px;margin:6px 0 4px}
 .tm-head img{width:56px;height:56px;object-fit:contain}
-.tm-head .tm-title{font-size:24px;font-weight:700;color:#0f172a}
-.tm-head .tm-sub{color:#64748b;font-size:13px;margin-top:2px}
+.tm-head .tm-title{font-size:22px;font-weight:800;color:#0f172a}
+.tm-head .tm-sub{color:#475569;font-size:13.5px;margin-top:2px;line-height:1.4}
 .tm-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
   gap:12px;margin:16px 0 22px}
 .tm-tile{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px}
@@ -221,25 +221,19 @@ def _record_table(frame: pd.DataFrame, team: str, espn_proj: dict) -> str:
 
 def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict,
                espn_proj: dict | None = None) -> str:
-    team, name = row["team"], escape(str(row["name"]))
+    team = row["team"]
     total = len(table)
-    played = int(row["wins"] + row["losses"])
 
-    tiles = [("Rating", f"{row['rating']:+.1f}", "points vs an average FBS team"),
-             ("Rank", f"{int(row['rank'])} of {total}", "by this model"),
-             ("Record", f"{int(row['wins'])}&ndash;{int(row['losses'])}",
-              f"{played} game{'s' if played != 1 else ''} played"),
-             ("Scoring", f"{row['pace']:+.1f}",
-              "points of shootout vs the average game")]
-    tile_html = ("<div class='tm-tiles'>" + "".join(
-        f"<div class='tm-tile'><div class='t-label'>{label}</div>"
-        f"<div class='t-value'>{value}</div><div class='t-sub'>{sub}</div></div>"
-        for label, value, sub in tiles) + "</div>")
-
-    head = (f"<div class='tm-head'>{_logo(team, 56)}<div><div class='tm-title'>{name}</div>"
-            f"<div class='tm-sub'>Rated {row['rating']:+.1f}, "
-            f"{int(row['rank'])}{_ordinal(int(row['rank']))} of {total} FBS teams"
-            f"</div></div></div>")
+    # One block under the page title, not three: the name was the title, the
+    # header and again beside the logo, and rating and rank were a sentence
+    # and then two tiles - 900px of phone before the schedule.
+    rank = int(row["rank"])
+    head = (f"<div class='tm-head'>{_logo(team, 56)}<div>"
+            f"<div class='tm-title'>{int(row['wins'])}&ndash;{int(row['losses'])}"
+            f" &middot; {rank}{_ordinal(rank)} of {total}</div>"
+            f"<div class='tm-sub'>Rated <b>{row['rating']:+.1f}</b> points vs an average FBS "
+            f"team &middot; scoring {row['pace']:+.1f} vs the average game</div>"
+            f"</div></div>")
 
     note = ("<p class='tm-note'>Games without a final yet show this model's "
             "projected score, tagged <em>proj</em>. "
@@ -249,7 +243,7 @@ def _team_page(row, frame: pd.DataFrame, table: pd.DataFrame, names: dict,
             "it. <strong>Win</strong> is the chance of winning an upcoming game. "
             "How well any of this has worked is on the "
             "<a href='/cfb/predictions/'>predictions page</a>.</p>")
-    return (_CSS + head + tile_html + _record_table(frame, team, espn_proj or {})
+    return (_CSS + head + _record_table(frame, team, espn_proj or {})
             + "<h3>Schedule</h3>" + _schedule_rows(frame, team, names) + note)
 
 
@@ -337,7 +331,7 @@ def generate() -> None:
         slug = team_slug(row["name"])
         write_page(WEB_DIR / "teams" / slug / "index.html",
                    escape(str(row["name"])), _team_page(row, frame, table, names, espn_proj),
-                   subtitle=f"{row['name']} ratings, schedule and projected results")
+                   description=f"{row['name']} ratings, schedule and projected results")
 
 
 if __name__ == "__main__":

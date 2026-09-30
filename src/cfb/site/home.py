@@ -1,89 +1,99 @@
 """
 The college football section landing page (docs/cfb/index.html).
 
-Mirrors the CBB section home: a countdown, one paragraph of what the section
-is, then a card per page. The Yahoo fantasy league's pages belong to the
-Fantasy section of the nav now, so they share one card at the end. League facts (name, draft time, roster shape) come
+A countdown, one line of what the section is, then the numbers - the
+reader's starred teams, the day's best games (the watch guide), the week's
+bets and the Top 25 - and one card of links. The Yahoo fantasy league's pages
+belong to the Fantasy section of the nav, so they share a line at the end. League facts (name, draft time, roster shape) come
 from the cached Yahoo pull rather than being retyped here.
 
     python -m cfb.site.home         # rebuild the page
 """
+from datetime import date
 from html import escape
 
 from cfb import yahoo
 from cfb.config import SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.draft import _draft_when, _roster_line
+from gordstats import my_teams_today
 from gordstats.frontmatter import liquid
 
 
+def _watch() -> str:
+    """The day's best games from the watch guide, or nothing between seasons."""
+    try:
+        from cfb.site import watch
+        return watch.teaser(watch.games())
+    except Exception as exc:                     # the page stands without it
+        print(f"cfb home: no watch teaser ({exc})")
+        return ""
+
+
 def body() -> str:
+    """The numbers first - the reader's teams, the day's best games, the
+    week's bets and the Top 25 - then one card of links. It was a countdown
+    and four cards describing the pages in the nav above them: mid-season the
+    site's front page showed more college football than this one did."""
     lg = yahoo.league()
     when = _draft_when(lg)
     draft_line = (f" The draft is <strong>{when}</strong>."
                   if when and lg.get("draft_status") == "predraft" else "")
+    watch_card = _watch()
+    # The bets and Top 25 includes exist all year but say nothing useful out
+    # of season (the site home leaves them off the same way).
+    today = date.today()
+    in_season = today >= date(today.year, 8, 20) or today <= date(today.year, 1, 31)
+    watch_html = (f"""
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>What to watch</h2>
+    <a class="home-card-link" href="/cfb/watch/">Watch guide &rarr;</a>
+  </div>
+  {watch_card}
+</section>""" if watch_card else "")
     return f"""
 {liquid('{% include cfb_countdown.html %}')}
 
-<p>The {SEASON} FBS season: this site's own game model, ESPN's FPI and the AP
-   poll, and every game on the schedule. The
-   <a href="{escape(lg['url'], quote=True)}">{escape(lg['name'])}</a> Yahoo fantasy league
-   ({lg['num_teams']} teams, {_roster_line(lg)}) is under
-   <a href="/cfb/matchups/">Fantasy &rsaquo; CFB</a>.{draft_line}</p>
+<p>The {SEASON} FBS season on this site's own game model, ESPN's FPI and the AP poll.{draft_line}</p>
 
-<section class="home-card">
+{my_teams_today.section(cfb=True, cbb=False)}
+{watch_html}
+
+<section class="home-card"{"" if in_season else " hidden"}>
   <div class="home-card-head">
-    <h2>Predictions</h2>
-    <a class="home-card-link" href="/cfb/predictions/">This week's picks &rarr;</a>
+    <h2>This week's bets</h2>
+    <a class="home-card-link" href="/cfb/predictions/">Every game &rarr;</a>
   </div>
-  <p>A score, a margin and a win chance for every FBS game from this site's
-     own model, set against the DraftKings line, and how the model has done.</p>
+  {liquid('{% include cfb_bets.html %}')}
 </section>
 
-<section class="home-card">
+<section class="home-card"{"" if in_season else " hidden"}>
   <div class="home-card-head">
-    <h2>Rankings</h2>
+    <h2>Top 25 Comparison</h2>
     <a class="home-card-link" href="/cfb/power/">All FBS teams &rarr;</a>
   </div>
-  <p>Every FBS team on ESPN's FPI, the AP poll and the GordStats rating, with
-     playoff and conference odds, and how far each has moved since any week.
-     Each team links to its own page: schedule, projected results and
-     projected record.</p>
+  {liquid('{% include cfb_top25.html %}')}
 </section>
 
 <section class="home-card">
   <div class="home-card-head">
-    <h2>Watch Guide</h2>
-    <a class="home-card-link" href="/cfb/watch/">Today's games &rarr;</a>
+    <h2>Everything else</h2>
   </div>
-  <p>What to have on, window by window: every game of the day ranked by how
-     much it is worth watching, your starred teams and fantasy players first,
-     and the close games late jumping the queue.</p>
-</section>
-
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>Schedule &amp; Scores</h2>
-    <a class="home-card-link" href="/cfb/schedule/">This week's games &rarr;</a>
-  </div>
-  <p>Every FBS game, week by week &mdash; kickoffs, TV, ranks, the GordStats and
-     DraftKings lines, FPI and the forecast, with sorting and filters; live
-     scores, clock and drive situation while games are on.</p>
-</section>
-
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>Fantasy League</h2>
-    <a class="home-card-link" href="/cfb/matchups/">This week's matchups &rarr;</a>
-  </div>
-  <p>The Yahoo college league: every matchup with both rosters and live
-     scoring, standings and power, and the draft graded.</p>
   <p class="home-card-links">
+    <a href="/cfb/predictions/">Predictions</a> ·
+    <a href="/cfb/power/">Rankings</a> ·
+    <a href="/cfb/watch/">Watch Guide</a> ·
+    <a href="/cfb/schedule/">Schedule &amp; Scores</a> ·
+    <a href="/cfb/strength/">Strength of Schedule</a>
+  </p>
+  <p class="home-card-links">
+    <a href="{escape(lg['url'], quote=True)}">{escape(lg['name'])}</a> ({lg['num_teams']} teams,
+    {_roster_line(lg)}):
+    <a href="/cfb/league/">League Home</a> ·
     <a href="/cfb/matchups/">Matchups</a> ·
-    <a href="/cfb/roster/">Team Dashboard</a> ·
-    <a href="/cfb/usage/">Usage</a> ·
-    <a href="/cfb/league/">League Dashboard</a> ·
-    <a href="/cfb/live/">Draft Review</a>
+    <a href="/cfb/roster/">Team</a> ·
+    <a href="/cfb/usage/">Usage</a>
   </p>
 </section>
 """

@@ -469,6 +469,51 @@ def body(data: dict) -> str:
             + f"<script type='application/json' id='wg-data'>{blob}</script>" + JS)
 
 
+def best_day(games: list, today: str) -> str:
+    """The day the guide opens on: today if there are games today, otherwise
+    the biggest day coming (on a Wednesday, Saturday rather than Thursday's
+    two games). The browser makes the same choice (JS)."""
+    days = {}
+    for g in games:
+        if g["day"] >= today:
+            days[g["day"]] = days.get(g["day"], 0) + 1
+    if not days:
+        return ""
+    return today if today in days else min(days, key=lambda d: (-days[d], d))
+
+
+def teaser(games: list, now: datetime = None, n: int = 3) -> str:
+    """The day's best few, for the CFB home page: the guide's own ranking
+    without the reader's part, which only the guide itself can add."""
+    now = now or datetime.now(ET)
+    day = best_day(games, now.astimezone(ET).strftime("%Y-%m-%d"))
+    todo = sorted((g for g in games if g["day"] == day and g["state"] != "post"),
+                  key=lambda g: -g["score"])[:n]
+    if not todo:
+        return ""
+    when = ("Today" if day == now.astimezone(ET).strftime("%Y-%m-%d")
+            else datetime.strptime(day, "%Y-%m-%d").strftime("%A"))
+
+    def team(t):
+        return (f"{'<span class=wt-rk>' + str(int(t['rk'])) + '</span> ' if t['rk'] else ''}"
+                f"{escape(t['nm'])}")
+    rows = "".join(
+        f"<li><span class='wt-g'>{team(g['a'])} <span class='wt-at'>{'vs' if g['n'] else 'at'}</span> "
+        f"{team(g['h'])}</span><span class='wt-w'>"
+        + (pd.Timestamp(g["ko"]).tz_convert(ET).strftime("%-I:%M %p ET") if g["tk"] else "TBA")
+        + (f" &middot; {escape(g['tv'])}" if g["tv"] else "")
+        + f" &middot; <b>Watch {min(100, round(g['score']))}</b></span></li>"
+        for g in todo)
+    return ("<style>.wt{list-style:none;margin:0;padding:0}.wt li{padding:8px 0;"
+            "border-top:1px solid var(--gs-line,#e2e8f0);display:flex;flex-direction:column;gap:2px}"
+            ".wt li:first-child{border-top:0}.wt-g{font-weight:700;font-size:15px}"
+            ".wt-at{font-weight:500;color:var(--gs-muted,#5d6b7e);font-size:13px}"
+            ".wt-rk{font-size:12px;color:var(--gs-muted,#5d6b7e)}"
+            ".wt-w{font-size:13px;color:var(--gs-muted,#5d6b7e)}"
+            "@media (prefers-color-scheme: dark){.wt li{border-color:#2b3852}}</style>"
+            f"<p class='wt-day'><b>{when}</b>, best first:</p><ul class='wt'>{rows}</ul>")
+
+
 def generate() -> None:
     now = datetime.now(ET)
     try:
