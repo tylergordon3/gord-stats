@@ -425,8 +425,11 @@
     var bar = document.getElementById("gs-invite");
     var wanted = account.configured && !account.signedIn && !inviteDismissed()
       // The profile page makes this offer itself, in more room than a banner
-      // has. Two of them on one screen is one too many.
-      && location.pathname.indexOf("/profile") !== 0;
+      // has, and so does every fantasy page's league bar (#ml-bar, with a
+      // Sign in button of its own). Two of them on one screen is one too many
+      // - on a phone, 240px of sign-in before the table.
+      && location.pathname.indexOf("/profile") !== 0
+      && !document.getElementById("ml-bar");
 
     if (!wanted) {
       if (bar) bar.remove();

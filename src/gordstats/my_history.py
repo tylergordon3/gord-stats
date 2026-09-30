@@ -80,7 +80,7 @@ table.hi-h2h td.self{background:#f1f5f9;color:var(--gs-muted,#5d6b7e)}
   .hi-strip .strip-narrow{display:block}
   .hi-bar{gap:7px}
   .hi-bar select{flex:1;min-width:0;max-width:none}
-  .hi-seg button{padding:5px 9px;font-size:12px}
+  .hi-seg button{padding:5px 11px;font-size:13px;min-height:38px}
 }
 @media (prefers-color-scheme: dark){
   .hi-note,.hi-none,.hi-load{color:#aab7c9}

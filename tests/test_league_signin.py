@@ -12,6 +12,7 @@ browser, so it stays open to everyone.
 """
 import re
 
+from conftest import ROOT
 from gordstats import my_league
 
 JS = my_league.JS
@@ -43,7 +44,7 @@ def test_a_deploy_without_accounts_is_not_a_signed_out_reader():
 
 def test_signed_out_offers_a_sign_in_and_a_league_id():
     assert "ml-in" in JS and "/api/auth/login?next=" in JS
-    assert "'league id'" in JS, "the field takes an id, not a username"
+    assert "'or paste a league id'" in JS, "the field takes an id, not a username"
     assert "or paste a Sleeper or ESPN league id" in JS
 
 
@@ -110,8 +111,18 @@ def test_the_four_sections_share_one_empty_state():
 
 
 def test_the_empty_state_asks_a_signed_out_reader_to_sign_in():
-    assert "Sign in to see your league" in JS
+    assert "Paste a league id above, or sign in, to see your" in JS
     assert "Pick a league above" in JS, "and still guides a signed-in one"
+
+
+def test_one_sign_in_offer_a_screen():
+    """The league bar has its Sign in button; the site-wide invite stays off
+    pages that carry the bar, and the empty state under it names no second
+    button."""
+    fav = (ROOT / "docs" / "assets" / "js" / "favorites.js").read_text()
+    assert '!document.getElementById("ml-bar")' in fav
+    empty = JS[JS.index("empty: function"):JS.index("Pick a league above")]
+    assert "ml-in" not in empty
 
 
 def test_a_section_without_the_control_still_says_something():

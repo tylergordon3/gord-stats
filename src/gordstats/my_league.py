@@ -56,13 +56,18 @@ CSS = """<style>
    to a third line. On a phone this control is one line of label and one of
    input-plus-button. */
 @media (max-width:560px){
-  .ml-bar{gap:6px}
-  .ml-bar .ml-label{flex:1 1 100%;font-size:12.5px}
-  .ml-bar input{min-width:0;flex:1}
-  .ml-bar select{flex:1;min-width:0;max-width:none}
-  .ml-bar button{white-space:nowrap}
+  /* One line, not four: the labels go (the placeholder carries them) and
+     what is left - Sign in, the id box, Show - shares the row at a size a
+     thumb can hit. It was 136px of chrome above every fantasy page. */
+  .ml-bar{gap:6px;flex-wrap:nowrap}
+  .ml-bar .ml-label,.ml-bar .ml-or{display:none}
+  .ml-bar:has(.ml-msg:not(:empty)){flex-wrap:wrap}
+  .ml-bar input{min-width:0;flex:1;min-height:40px;box-sizing:border-box;font-size:16px}
+  .ml-bar select{flex:1;min-width:0;max-width:none;min-height:40px}
+  .ml-bar button,.ml-bar .ml-in{white-space:nowrap;min-height:40px;box-sizing:border-box;
+    display:inline-flex;align-items:center}
   .ml-bar .ml-msg{flex:1 1 100%}
-  .ml-bar .ml-or{flex:1 1 100%}
+  .ml-bar .ml-msg:empty{display:none}
 }
 @media (prefers-color-scheme: dark){
   .ml-bar{color:#aab7c9}
@@ -343,9 +348,12 @@ JS = """{% raw %}<script>
         + encodeURIComponent(location.pathname+location.search) + '">Sign in</a>'
         + '<span class="ml-or">or paste a Sleeper or ESPN league id</span>'
       : '<span class="ml-label">Your Sleeper username, or an ESPN league id</span>';
+    // The placeholders say what the labels say, because a phone drops the
+    // labels to keep the bar to one line (see the CSS).
     bar.innerHTML=out
       +'<input id="ml-id" type="text" autocapitalize="none" autocorrect="off" '
-      +'spellcheck="false" placeholder="'+(signedIn===false?'league id':'username')+'" '
+      +'spellcheck="false" placeholder="'+(signedIn===false?'or paste a league id'
+                                           :'Sleeper username or ESPN league id')+'" '
       +'aria-label="'+(signedIn===false?'Sleeper or ESPN league id'
                     :'Sleeper username, or a Sleeper or ESPN league id')+'">'
       +'<button type="button" id="ml-go">'+(signedIn===false?'Show':'Connect')+'</button>'
@@ -513,10 +521,10 @@ JS = """{% raw %}<script>
     signedIn: function(){ return signedIn; },
     empty: function(cls, noun){
       if(signedIn===false){
-        return '<p class="'+cls+'">Sign in to see your league\u2019s '+noun+'. '
-          + '<a class="ml-in" href="/api/auth/login?next='
-          + encodeURIComponent(location.pathname+location.search)
-          + '">Sign in</a></p>';
+        // The bar above already has the Sign in button; a second one here
+        // made three sign-in offers on one phone screen.
+        return '<p class="'+cls+'">Paste a league id above, or sign in, to see your '
+          + 'league\u2019s '+noun+'.</p>';
       }
       return '<p class="'+cls+'">Pick a league above, or '
         + '<a href="/fantasy/sync/">connect yours</a>, to see its '+noun+'.</p>';

@@ -81,7 +81,10 @@ table.us tr.us-thin td.us-rank::after{content:"\2013"}
   table.us{font-size:13px}
   table.us th,table.us td{padding:5px 7px}
   .us-bar{width:34px}
-  .uv-btn{padding:5px 13px}
+  /* Thumb-sized: the view buttons were 32px and the sort headers 29px. */
+  .uv-btn{padding:5px 13px;min-height:40px}
+  table.us th[data-k]{padding-top:11px;padding-bottom:11px}
+  .us-controls select,.us-controls button{min-height:40px}
 }
 .us-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0}
 .us-controls label{font-size:12.5px;color:#475569;white-space:nowrap}

@@ -64,10 +64,14 @@ fantasy_leagues:
 
 
 cbb:
+  # `phone: false` leaves a link off the sub-nav on a phone. Six CBB links
+  # wrapped to a second row at 390px ("Power" alone on it); the section's own
+  # chip in the row above already goes to its home.
   - title: Home
     short: Home
     icon: "🏠"
     url: /cbb/
+    phone: false
 
   - title: Today's Scores
     short: Scores

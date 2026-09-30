@@ -1338,6 +1338,10 @@ h3 {
   color: #6b7280;
 }
 
+@media (prefers-color-scheme: dark) {
+  .scoreboard-empty { color: #aab7c9; }
+}
+
 /* Status colors */
 .st-live {
   background: #ecfdf5;
@@ -3398,9 +3402,9 @@ summary.team-report-header::after {
 
   .fl-leagues a.fl-league {
     min-width: 0;
-    min-height: 34px;
-    padding: 0 6px;
-    font-size: 0.74rem;
+    min-height: 40px;
+    padding: 0 8px;
+    font-size: 0.8rem;
     letter-spacing: .02em;
   }
 
@@ -3428,6 +3432,8 @@ summary.team-report-header::after {
    worth losing when the alternative is a row you have to drag. */
 @media (max-width: 640px) {
   .sub-nav-sep { display: none; }
+  /* nav.yml `phone: false`: a link the row above already covers. */
+  .sub-nav a.nav-no-phone { display: none !important; }
 }
 
 /* Phones: keep both rows, shrink the chrome rather than drop a row.
@@ -3535,13 +3541,18 @@ details.section>summary::-webkit-details-marker {
   display: none;
 }
 
+/* The gap is a margin, not spaces in `content`: the space after a CSS
+   escape ends the escape and the next one collapsed, so every summary read
+   "▸About these numbers". */
 details.section>summary::before {
-  content: '\25B8  ';
+  content: '\25B8';
+  display: inline-block;
+  margin-right: 8px;
   color: #64748b;
 }
 
 details.section[open]>summary::before {
-  content: '\25BE  ';
+  content: '\25BE';
   color: #64748b;
 }
 
@@ -3832,7 +3843,12 @@ img {
   .archive-controls button,
   .filter-bar button,
   .mv-win,
-  .adp-pos {
+  .adp-pos,
+  /* Measured again 2026-09-29: Sign in 26px, the invite's links 20px, the
+     Home cards' page links 16px. */
+  a.acct-link,
+  .gs-invite-links a,
+  .home-card-links a {
     min-height: 44px;
     /* border-box, or the padding adds to min-height and a 44px target renders
        62px tall — with two nav rows that alone cost 36px of screen. */
@@ -5232,10 +5248,10 @@ a.acct-out:hover { text-decoration: underline; }
 
 .gs-invite-shut {
   position: absolute;
-  top: 4px;
-  right: 6px;
-  width: 28px;
-  height: 28px;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
   padding: 0;
   font-size: 19px;
   line-height: 1;
@@ -5325,5 +5341,44 @@ a.acct-out:hover { text-decoration: underline; }
   .gs-share.done {
     border-color: #4ade80;
     color: #4ade80;
+  }
+}
+
+
+/* =========================================================
+   STICKY TABLE HEADERS (assets/js/stickyhead.js)
+   The copy of a long table's header row drawn under the pinned controls
+   while the real one is scrolled away. It clips to the table's scroller and
+   slides with it; the table's own th rules paint it.
+   ========================================================= */
+.gs-sticky-head {
+  position: fixed;
+  z-index: 19;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12);
+  pointer-events: auto;
+}
+
+.gs-sticky-head th {
+  cursor: pointer;
+}
+
+/* The favourites hint ("Tap a star to follow a team") was a third row of
+   pinned chrome on a phone - 139px of bar on /cfb/power/, and the only thing
+   in /cbb/power/'s. The stars in the rows say the same thing once seen. */
+@media (max-width: 767px) {
+  .pin-bar .fav-hint {
+    display: none;
+  }
+  /* Nothing starred: nothing to filter, so no box - and a pinned bar that
+     held only this is no bar at all. */
+  .pin-bar .fav-controls:has(> .fav-filter[hidden]) {
+    display: none;
+  }
+  .pin-bar:has(> .fav-controls:only-child > .fav-filter[hidden]) {
+    display: none;
   }
 }
