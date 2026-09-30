@@ -188,9 +188,10 @@ def _fantasy_card() -> str:
      strength, and a full waiver and trade history for the
      <a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team</a> league.</p>
   <p class="home-card-links">
-    <a href="/fantasy/draft/">Draft Analytics</a> ·
+    <a href="/fantasy/matchups/">Matchups</a> ·
     <a href="/fantasy/power/">Power Rankings</a> ·
-    <a href="/fantasy/transactions/">Waivers &amp; Trades</a>
+    <a href="/nfl/watch/">NFL Watch Guide</a> ·
+    <a href="/nfl/">NFL Predictions</a>
   </p>
 </section>
 """
@@ -330,6 +331,7 @@ def _cbb_home_body(today: date) -> str:
   </div>
   <p class="home-card-links">
     <a href="/men/">Today's Scores</a> ·
+    <a href="/cbb/watch/">Watch Guide</a> ·
     <a href="/men/conference">Conference Rankings</a> ·
     <a href="/men/history">Prediction History</a>
   </p>

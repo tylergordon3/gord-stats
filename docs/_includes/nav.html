@@ -144,7 +144,7 @@ Fantasy before the plain /cfb/ test.
         {% elsif item.route == 'today-scores' %}
       <a class="today-scores-link no-rewrite" href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
         {% elsif item.route %}
-      <a class="league-route no-rewrite" data-page="{{ item.route }}"
+      <a class="league-route no-rewrite{% if item.phone == false %} nav-no-phone{% endif %}" data-page="{{ item.route }}"
          href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>
         {% else %}
       <a{% if item.covers %} data-covers="{{ item.covers }}"{% endif %}{% if item.phone == false %} class="nav-no-phone"{% endif %} href="{{ item.url | relative_url }}">{% include nav_label.html item=item %}</a>

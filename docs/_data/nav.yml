@@ -95,11 +95,18 @@ cbb:
     icon: "📜"
     url: /men/history
     route: history
+    # Off the phone row for the Watch Guide; the CBB home links it.
+    phone: false
 
   - title: Power Rankings
     short: Power
     icon: "⚡"
     url: /cbb/power/
+
+  - title: Watch Guide
+    short: Watch
+    icon: "📺"
+    url: /cbb/watch/
 
 
 wnba:
@@ -195,6 +202,11 @@ nfl:
     short: Predict
     icon: "🔮"
     url: /nfl/
+
+  - title: Watch Guide
+    short: Watch
+    icon: "📺"
+    url: /nfl/watch/
 
 
 # The Yahoo college fantasy league, shown under Fantasy > CFB.
