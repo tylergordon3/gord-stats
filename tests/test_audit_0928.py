@@ -20,7 +20,7 @@ def test_a_team_name_cannot_run_liquid_or_end_the_raw_wrapping():
     hostile = "{%x%} {{ site.time }} {% endraw %}{%- endraw -%}<b>"
     page = add_front_matter(
         f"<p>{hostile}</p>{{% raw %}}<script>var a={{b:1}};</script>{{% endraw %}}"
-        + liquid("{% include cfb_countdown.html %}") + "<i>after</i>", "Title")
+        + liquid("{% include cfb_countdown.html %}") + "<i>after</i>", "Title", updated=False)
     body = page.split("---\n", 2)[2]
     # One raw block before the include, one after, and nothing else Liquid can see.
     assert body.startswith("{% raw %}<h1>Title</h1><p>{%x%} {{ site.time }} <b></p>")

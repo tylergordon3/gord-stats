@@ -286,7 +286,6 @@ def body() -> str:
     show_trank = bool((df["trank"] != df["rk"]).any())
 
     played = df["record"].astype(str).str.split("-").str[0].astype(int).sum() > 0
-    stamp = datetime.fromtimestamp(_cache_path().stat().st_mtime).strftime("%b %-d")
 
     bpi_head = ""
     if bpi_rows:
@@ -350,7 +349,7 @@ def body() -> str:
     # (2026-09-29 audit) - the table is what the page is for.
     basis = "T-Rank and BPI, averaged" if bpi_current else "Bart Torvik's T-Rank"
     lede = (f"<p class='power-lede'>Every Division I team, ranked by {basis}"
-            f"{'' if played else ' (preseason)'}. Updated {stamp}.</p>")
+            f"{'' if played else ' (preseason)'}.</p>")
     about = (
         "<details class='section'><summary>About these numbers</summary>"
         f"<p class='power-note'>Ordered by {ordering}. "
@@ -407,8 +406,12 @@ def star_teams(names) -> dict:
 def generate():
     out = paths.DOCS / "cbb" / "power" / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
+    # "Updated" is when T-Rank was last downloaded, not when the page was
+    # rebuilt: out of season the build runs daily on a cached table.
+    fetched = datetime.fromtimestamp(_cache_path().stat().st_mtime)
     out.write_text(add_front_matter(body(), "CBB Power Rankings",
-                                    f"{SEASON_LABEL} season"), encoding="utf-8")
+                                    f"{SEASON_LABEL} season", updated=fetched),
+                   encoding="utf-8")
     print(f"Wrote CBB power rankings -> {out}")
     STAR_TEAMS_OUT.write_text(json.dumps(star_teams(trank()["team"]), separators=(",", ":")),
                               encoding="utf-8")

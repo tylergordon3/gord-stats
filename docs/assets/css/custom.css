@@ -2951,6 +2951,15 @@ summary.team-report-header::after {
   font-size: 0.8rem;
 }
 
+/* Under a page title (frontmatter.updated_line): tucked up to the title or
+   subtitle above it, a line of its own before the page starts. */
+h1 + .page-updated,
+.page-sub + .page-updated {
+  margin: -6px auto 14px;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
 /* -----------------------------
    DARK MODE
    Targeted overrides for the major surfaces; pandas-styled data tables
@@ -3230,7 +3239,7 @@ summary.team-report-header::after {
   }
 
   .page-updated {
-    color: #64748b;
+    color: #94a3b8;
   }
 
   .bracket-title {

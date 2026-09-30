@@ -98,8 +98,6 @@ table.cfb-power.view-odds td:not(.v-odds),table.cfb-power.view-odds th:not(.v-od
   display:none}
 /* The record rides in the Team cell, quiet beside the name. */
 table.cfb-power td.pwr-team .pwr-rec{font-weight:400;font-size:12px;color:#64748b;margin-left:7px}
-p.power-stamp{font-size:12px;color:#64748b;text-transform:uppercase;
-  letter-spacing:.04em;margin:0 0 10px}
 table.cfb-power th.sortable{cursor:pointer;user-select:none}
 table.cfb-power th.sortable:hover{color:#0f172a}
 /* The caret is always drawn, faint until the column is the one sorting, so a
@@ -153,8 +151,7 @@ table.cfb-power th:first-child{left:0;z-index:3}
   table.cfb-power td{padding:5px 7px}
 }
 @media (prefers-color-scheme: dark){
-  p.power-stamp{color:#aab7c9}
-  table.cfb-power th{background:#223052;color:#dde5ef;border-color:#2b3852}
+    table.cfb-power th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.cfb-power th.sortable:hover{color:#fff}
   table.cfb-power th.sorted{background:#2f4a7a;color:#fff}
   table.cfb-power td.sorted-col::after{background:rgba(147,197,253,.13)}
@@ -647,7 +644,6 @@ def body() -> str:
     data = fpi()
     teams = _rows(data)
     season = (data.get("requestedSeason") or {}).get("year") or SEASON
-    stamp = datetime.now(ET).strftime("%b %-d, %-I:%M %p ET")
 
     ap_ranks, ap_season, ap_label = ap_poll()
     show_ap = bool(ap_ranks) and ap_season == season
@@ -831,7 +827,6 @@ def body() -> str:
                      "week's games.")
 
     intro = (
-        f"<p class='power-stamp'>Updated {stamp}</p>"
         "<details class='section'><summary>About these rankings</summary>"
         "<p class='power-note'><strong>GordStats</strong> is "
         "<a href='/cfb/predictions/'>this site's own rating</a> - points better than an "

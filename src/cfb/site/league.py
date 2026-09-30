@@ -289,16 +289,14 @@ def body() -> str:
     sb = yahoo.scoreboard()
     txns = yahoo.transactions()
 
-    built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
         _CSS
         + liquid('{% include cfb_countdown.html %}')
         + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> on Yahoo — '
         f'{lg["num_teams"]} teams, {lg["scoring_label"]}, weeks '
         f'{lg["start_week"]}–{lg["end_week"]}, playoffs from week '
-        f'{lg["playoff_start_week"]}. Rebuilt daily (last: {built}); every '
-        "section below fills in as the season generates it. The draft - every "
-        'pick, graded - is on the <a href="/cfb/live/">draft review</a>.</p>'
+        f'{lg["playoff_start_week"]}. The draft - every pick, graded - is on the '
+        '<a href="/cfb/live/">draft review</a>.</p>'
         + recap.teaser()
         + _details("Standings", standings_section(lg) + _POWER_LINK, open=True)
         + _details("Schedule Difficulty", schedule_section(lg), open=True, anchor="schedule")

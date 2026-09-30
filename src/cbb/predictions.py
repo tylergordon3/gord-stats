@@ -386,7 +386,8 @@ def predict_womens(date):
     # MAIN -> DF with Conf col data
     path = paths.WEB_W_DIR / f"predict_{date}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
-    html = frontmatter.add_front_matter(df_html, "NCAAW Bracketology", f"{date} Prediction")
+    html = frontmatter.add_front_matter(df_html, "NCAAW Bracketology", f"{date} Prediction",
+                                        updated=False)   # its own "Last Update" line is the archive's key
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")
@@ -669,7 +670,8 @@ def predict(date):
     # MAIN -> DF with Conf col data
     path = paths.WEB_M_DIR / f"predict_{date}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
-    html = frontmatter.add_front_matter(df_html, "NCAAM Bracketology", f"{date} Prediction")
+    html = frontmatter.add_front_matter(df_html, "NCAAM Bracketology", f"{date} Prediction",
+                                        updated=False)   # its own "Last Update" line is the archive's key
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")

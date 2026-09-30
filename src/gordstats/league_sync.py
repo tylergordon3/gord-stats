@@ -287,6 +287,7 @@ def body() -> str:
 def generate(out, title: str = "Sync your league") -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(body(), title,
-                                    "Attach your own fantasy league to your account"),
+                                    "Attach your own fantasy league to your account",
+                                    updated=False),
                    encoding="utf-8")
     print(f"Wrote {title} -> {out}")

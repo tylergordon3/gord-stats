@@ -17,6 +17,10 @@ each marked with liquid().
 import json
 import re
 import secrets
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+ET = ZoneInfo("America/New_York")
 
 # A fresh token per process: a marker cannot be written into a team name ahead
 # of time, so nothing but liquid() can open a hole in the raw wrapping.
@@ -48,8 +52,26 @@ def literal(body: str) -> str:
     return "".join(out)
 
 
+def updated_line(when: datetime | None = None) -> str:
+    """"Updated Tue, Sep 29 · 11:30 PM ET" under a page's title, carrying the
+    instant too, which the layout's script turns into the reader's own clock
+    and how long ago ("Updated 2 hr ago · Tue, Sep 29, 8:30 PM").
+
+    `when` defaults to now - the build, which for every page on a schedule is
+    when its data was last read. A page whose data has its own clock passes
+    that instead (the CBB rankings: when T-Rank was last downloaded). A naive
+    time is taken as Eastern, the Pi's clock."""
+    when = when or datetime.now(ET)
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=ET)
+    local = when.astimezone(ET)
+    return (f"<p class='page-updated' data-updated='{local.isoformat(timespec='minutes')}'>"
+            f"Updated {local:%a, %b %-d} &middot; {local:%-I:%M %p} ET</p>")
+
+
 def add_front_matter(html: str, title: str, subtitle: str | None = None,
-                     description: str | None = None, image: dict | None = None) -> str:
+                     description: str | None = None, image: dict | None = None,
+                     updated: datetime | bool = True) -> str:
     """Prepend Jekyll front matter and an <h1> title to a page body.
 
     `subtitle` renders as a small muted line under the title — used for things
@@ -64,6 +86,10 @@ def add_front_matter(html: str, title: str, subtitle: str | None = None,
     `image` is the page's own link-preview card (gordstats.share_card: path,
     width, height, alt); without one it is the site's. JSON again, which YAML
     reads as a flow mapping.
+
+    `updated` puts the "Updated ..." line under the title (updated_line):
+    True for the build's own time, a datetime for the data's, False for a
+    page with nothing that goes out of date (profile, sync).
     """
     desc = f"description: {json.dumps(description)}\n" if description else ""
     if image:
@@ -76,4 +102,6 @@ title: {title}
     header = f"<h1>{title}</h1>"
     if subtitle:
         header += f"<p class='page-sub'>{subtitle}</p>"
+    if updated:
+        header += updated_line(updated if isinstance(updated, datetime) else None)
     return fm + literal((header + html).lstrip())
