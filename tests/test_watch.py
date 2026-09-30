@@ -206,3 +206,13 @@ def test_a_starred_team_goes_first_in_its_window(site):
     early = got["Early"]
     assert [g["id"] for g in early] == ["3", "1"]
     assert "Your team" in early[0]["text"]
+
+
+def test_the_small_hours_belong_to_the_night_before():
+    """Hawaii's 12:30 AM ET kickoff ends Saturday; it does not open Sunday's
+    early window."""
+    from gordstats import watch_page
+    late = pd.Timestamp("2026-10-04T04:30:00Z")            # 12:30 AM ET, Sunday
+    assert watch.slot(late) == "late"
+    assert watch_page.game_day(late) == "2026-10-03"
+    assert watch_page.game_day(pd.Timestamp("2026-10-04T16:00:00Z")) == "2026-10-04"
