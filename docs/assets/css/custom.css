@@ -509,6 +509,16 @@ body {
   /* keep consistent sizing */
 }
 
+/* The theme frames every img - 5px of padding and 10px of margin above and
+   below - which made each row of the CBB conference, bracketology and
+   history tables 61px tall for a 22px logo. */
+img.team-logo {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  background: none;
+}
+
 .conf-table {
   width: 100%;
   max-width: 400px;
@@ -794,6 +804,38 @@ body {
   .filter-bar {
     flex-wrap: wrap;
     gap: 10px;
+  }
+
+  /* One pinned row, not two: Period and Conference side by side, their
+     labels dropped - the choices name themselves ("2 Weeks", "All
+     Conferences"). It was 115px of pinned bar on /men/conference. */
+  .filter-bar {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 6px 10px;
+  }
+
+  .filter-bar .change-toggle label,
+  .filter-bar .conference-filter label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .filter-bar .change-toggle,
+  .filter-bar .conference-filter {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .filter-bar .change-toggle select,
+  .filter-bar .conference-filter select {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    min-height: 42px;
   }
 }
 
@@ -3844,9 +3886,9 @@ img {
   .filter-bar button,
   .mv-win,
   .adp-pos,
-  /* Measured again 2026-09-29: Sign in 26px, the invite's links 20px, the
-     Home cards' page links 16px. */
-  a.acct-link,
+  /* Measured again 2026-09-29: the invite's links 20px, the Home cards' page
+     links 16px. (Sign in is sized with the rest of the account control, where
+     the brand row's height caps it.) */
   .gs-invite-links a,
   .home-card-links a {
     min-height: 44px;
@@ -5176,12 +5218,21 @@ a.acct-out:hover { text-decoration: underline; }
 
   .site-account {
     position: absolute;
-    top: 8px;
+    top: 3px;
     right: 14px;
     margin-left: 0;
   }
 
-  a.acct-link { padding: 5px 10px; font-size: 12px; }
+  /* As tall as the brand row allows and no taller: at 44px it hung over the
+     section links below (2026-09-29). */
+  a.acct-link {
+    padding: 0 12px;
+    font-size: 12.5px;
+    min-height: 34px;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+  }
   .acct-badge { width: 27px; height: 27px; font-size: 12px; }
   .acct-menu { min-width: 190px; }
 }
@@ -5265,8 +5316,14 @@ a.acct-out:hover { text-decoration: underline; }
 .gs-invite-shut:hover { color: #334155; background: #e9eef7; }
 
 @media (max-width: 600px) {
-  .gs-invite { padding: 10px 36px 10px 12px; }
-  .gs-invite-text { font-size: 13px; }
+  /* One run of text with its link at the end, not a sentence and then a row
+     of links: 110px of every page's top became about 60 (2026-09-29). */
+  .gs-invite { display: block; padding: 9px 40px 9px 12px; }
+  .gs-invite-text { font-size: 13px; display: inline; }
+  .gs-invite-links { display: inline; margin-left: 6px; }
+  .gs-invite-links .gs-invite-more { display: none; }
+  /* Inline, with padding that grows the finger's target but not the line. */
+  .gs-invite-links a { min-height: 0; display: inline; padding: 10px 6px; }
 }
 
 @media (prefers-color-scheme: dark) {

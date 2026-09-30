@@ -144,3 +144,38 @@ def test_the_scoreboard_has_an_empty_state_ahead_of_its_controls():
     assert re.search(r"const STALE_DAYS = [2-9]\b", js), \
         "before 11 ET the Worker still holds last night's games - one day is too few"
     assert ".meta-bar" in js, "the chips, Expand All and the polling rate go with no games"
+
+
+def test_the_account_buttons_fit_the_brand_row():
+    """At 44px (the thumb rule) Sign in and Profile hung over the section
+    links below them on every page (2026-09-29); they are sized with the rest
+    of the account control, as tall as the brand row allows."""
+    import re
+    from conftest import ROOT
+    css = (ROOT / "docs" / "assets" / "css" / "custom.css").read_text()
+    thumb = css[css.index("Thumb-sized targets for every control"):]
+    thumb = thumb[:thumb.index("min-height: 44px")]
+    assert "a.acct-link" not in thumb
+    phone = css[css.index("Pinning it to the corner"):]
+    assert re.search(r"a\.acct-link \{[^}]*min-height: 34px", phone)
+
+
+def test_cbb_tables_do_not_frame_their_logos():
+    """The theme's img padding and margins made each CBB table row 61px for a
+    22px logo."""
+    from conftest import ROOT
+    css = (ROOT / "docs" / "assets" / "css" / "custom.css").read_text()
+    rule = css[css.index("img.team-logo {"):]
+    rule = rule[:rule.index("}")]
+    assert "padding: 0" in rule and "margin-top: 0" in rule
+
+
+def test_the_cbb_home_top_ten_is_the_power_pages_order(monkeypatch):
+    import pandas as pd
+    from cbb.render import render_home, render_power
+    rows = pd.DataFrame({"rk": [1, 2], "team": ["Duke", "A&M <b>"], "conf": ["ACC", "SEC"],
+                         "pw": [25.8, 22.4], "pl": [6.2, 8.6]})
+    monkeypatch.setattr(render_power, "top", lambda n=10: rows)
+    html = render_home._top_ten()
+    assert html.index("Duke") < html.index("A&amp;M &lt;b&gt;")
+    assert "26&ndash;6" in html and "22&ndash;9" in html

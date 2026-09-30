@@ -646,10 +646,14 @@ def predict(date):
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
-    df_html += f"<p>Pwr is derived from using machine learning models on Kenpom & Torvik data in aggregate to calculate tournament probabilties.</p>"
-    df_html += f"<p>This value is then balanced by rankings from ESPN BPI, NCAA Net, Kenpom and Torvik to help rank/seed teams.</p>"
-    df_html += f"<p>Future plans include using machine learning to specifically rank teams seperately from tournament projections.</p>"
-    df_html += f"<p><strong>Teams highlighted green have won their conference tournament, earning the bid to the NCAA Tournament! </storng></p>"
+    # One line and the method folded (2026-09-29 phone pass): four paragraphs
+    # stood between the date and the field. The final 2026 page, which is
+    # tracked, was edited to match.
+    df_html += "<p>Green: won its conference tournament, and the automatic bid with it.</p>"
+    df_html += ("<details class='section'><summary>How the field is built</summary>"
+                "<p><strong>Pwr</strong> is the tournament probability from machine-learning models "
+                "on KenPom and Torvik data, balanced with the ESPN BPI, NET, KenPom and Torvik "
+                "rankings to rank and seed the teams.</p></details>")
     df_html += '<div class="filter-bar">'
     df_html += frontmatter.liquid("{% include global-toggle.html %}") + " "
     df_html += "</div>"

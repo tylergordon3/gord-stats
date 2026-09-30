@@ -210,7 +210,11 @@ def trank(refresh: bool = False) -> pd.DataFrame:
     return pd.read_csv(cache)
 
 
-def body() -> str:
+def ranked():
+    """The table in the page's order, with the sources behind it: (frame with
+    `rk`, BPI rows, BPI season, whether that BPI is this season's, AP ranks,
+    whether to show AP). The page and the CBB home's top ten share it, so the
+    two can never disagree about who is first."""
     df = trank()
     bpi_rows, bpi_season = bpi()
     ap_ranks, ap_season = ap_poll()
@@ -245,6 +249,17 @@ def body() -> str:
         df["order"] = df["trank"]
     df = df.sort_values(["order", "trank"]).reset_index(drop=True)
     df["rk"] = df.index + 1
+    return df, bpi_rows, bpi_season, bpi_current, ap_ranks, show_ap
+
+
+def top(n: int = 10) -> pd.DataFrame:
+    """The first `n` teams: rank, team, conference, projected record."""
+    df = ranked()[0]
+    return df.head(n)[["rk", "team", "conf", "pw", "pl"]]
+
+
+def body() -> str:
+    df, bpi_rows, bpi_season, bpi_current, ap_ranks, show_ap = ranked()
 
     moves = rankmoves.movement(HISTORY_DIR)
     ranks_now = df.set_index("team")["rk"]

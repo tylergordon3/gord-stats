@@ -446,7 +446,7 @@
 
     var text = document.createElement("p");
     text.className = "gs-invite-text";
-    text.textContent = "Sign in to follow teams and connect your fantasy leagues \u2014 they will be here on every device.";
+    text.textContent = "Follow teams and keep your fantasy leagues on every device.";
     bar.appendChild(text);
 
     var links = document.createElement("p");

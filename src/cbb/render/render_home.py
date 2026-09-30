@@ -1,6 +1,7 @@
 import json
 import re
 from datetime import date, datetime, timedelta
+from html import escape
 
 
 from cbb import html_util
@@ -287,39 +288,26 @@ def _cbb_home_body(today: date) -> str:
     day of the year; the bracket, the conference table and the scoreboard all
     need games, and say when they last had any.
     """
+    from gordstats import my_teams_today
     days = (CBB_TIPOFF - today).days
     when = _season_status(today, "&ndash;")
     href, label = _latest_predict_link()
     preseason = days > 0
-    # The scores card names CBB_TIPOFF, not the countdown's opening day: the
-    # scoreboard switches on with the first game, which can come before it.
 
-    lead = ("" if not preseason else f"""
+    # The numbers first, as on /cfb/: this page was a countdown, two
+    # paragraphs and four cards describing the nav above them. The top ten is
+    # live all year (Torvik's preseason projections rebuild daily), so it
+    # leads preseason; in season the bracket does.
+    power = f"""
 <section class="home-card">
   <div class="home-card-head">
     <h2>Power Rankings</h2>
-    <a class="home-card-link" href="/cbb/power/">Rankings &rarr;</a>
+    <a class="home-card-link" href="/cbb/power/">All teams &rarr;</a>
   </div>
-  <p>Where every team stands going into {CBB_TIPOFF:%Y}&ndash;{CBB_TIPOFF.year % 100 + 1:02d},
-     on Torvik's preseason projections. This is the one page here that does not
-     need a game to have been played, so it is rebuilt every day through the
-     summer as rosters settle.</p>
+  {_top_ten()}
 </section>
-""")
-
-    return f"""
-{{% include countdown.html key="cbb" %}}
-
-<p>{when} Machine-learning predictions of the NCAA tournament field, rebuilt daily
-   through the season and scored against what actually happened. Built on
-   <a href="https://kenpom.com/" target="_blank">KenPom</a> and
-   <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores from
-   <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
-
-<p>Every page below carries a men's/women's toggle in the header &mdash; it
-   remembers which league you last looked at.</p>
-{lead}
-
+"""
+    bracket = f"""
 <section class="home-card">
   <div class="home-card-head">
     <h2>Bracketology</h2>
@@ -328,29 +316,51 @@ def _cbb_home_body(today: date) -> str:
   <p>The projected tournament field: seeds, bubble, and the teams on the wrong
      side of the cut.</p>
   {_stale_note(days, _latest_predict_date())}
-  <p class="home-card-links">
-    <a href="/men/history">Prediction History</a>
-  </p>
-</section>
-
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>Today's Scores</h2>
-    <a class="home-card-link" href="/men/">Scoreboard &rarr;</a>
-  </div>
-  <p>Live scores and the day's slate.</p>
-  {"" if not preseason else '<p class="home-card-stale">First games ' + f"{CBB_TIPOFF:%A, %B %-d}" + '.</p>'}
-</section>
-
-<section class="home-card">
-  <div class="home-card-head">
-    <h2>Conference Rankings</h2>
-    <a class="home-card-link" href="/men/conference">Standings &rarr;</a>
-  </div>
-  <p>Conference-by-conference strength, and how many bids each is projected to get.</p>
-  {_stale_note(days)}
 </section>
 """
+    return f"""
+{{% include countdown.html key="cbb" %}}
+
+<p>{when} Power rankings, bracketology and live scores, men's and women's.</p>
+{my_teams_today.section(cfb=False, cbb=True) if not preseason else ""}
+{power + bracket if preseason else bracket + power}
+<section class="home-card">
+  <div class="home-card-head">
+    <h2>Everything else</h2>
+  </div>
+  <p class="home-card-links">
+    <a href="/men/">Today's Scores</a> ·
+    <a href="/men/conference">Conference Rankings</a> ·
+    <a href="/men/history">Prediction History</a>
+  </p>
+  {_stale_note(days) if preseason else ""}
+</section>
+"""
+
+
+def _top_ten() -> str:
+    """The power rankings' first ten, in the page's own order
+    (render_power.ranked), or nothing if the table cannot be read."""
+    try:
+        from cbb.render import render_power
+        rows = render_power.top(10)
+    except Exception as exc:                     # the page stands without it
+        print(f"  ! CBB home: no top ten ({exc})")
+        return ""
+    body = "".join(
+        f"<tr><td class='tt-rk'>{int(r.rk)}</td><td class='tt-t'>{escape(str(r.team))}</td>"
+        f"<td>{r.pw:.0f}&ndash;{r.pl:.0f}</td><td class='tt-c'>{escape(str(r.conf))}</td></tr>"
+        for r in rows.itertuples(index=False))
+    return ("<style>table.tt{width:100%;border-collapse:collapse;font-size:15px;border:0;"
+            "margin:0;box-shadow:none}"
+            "table.tt td{padding:7px 6px;border:0;border-bottom:1px solid var(--gs-line,#e2e8f0);"
+            "background:transparent}"
+            "table.tt tr:last-child td{border-bottom:0}"
+            "table.tt td.tt-rk{width:28px;color:var(--gs-muted,#5d6b7e);font-weight:700}"
+            "table.tt td.tt-t{font-weight:700}"
+            "table.tt td.tt-c{color:var(--gs-muted,#5d6b7e);text-align:right}"
+            "@media (prefers-color-scheme: dark){table.tt td{border-color:#2b3852}}</style>"
+            "<table class='tt'><tbody>" + body + "</tbody></table>")
 
 
 def render_cbb_home():
