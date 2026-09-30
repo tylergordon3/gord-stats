@@ -26,7 +26,7 @@ import pandas as pd
 
 from cfb import espn, odds as odds_mod, predict
 from cfb.config import DATA_DIR, SEASON
-from gordstats import stable
+from gordstats import bet_record, stable
 
 PRED_DIR = DATA_DIR / "predictions"
 
@@ -146,6 +146,13 @@ def on_record(season: int = SEASON) -> pd.DataFrame:
     return (before.sort_values("captured_at")
             .drop_duplicates(subset="game_id", keep="last")
             .reset_index(drop=True))
+
+
+def line_moves(season: int = SEASON) -> pd.DataFrame:
+    """Each call made on the early-week line and how far the book's number
+    moved toward it by kickoff (gordstats.bet_record)."""
+    path = season_path(season)
+    return bet_record.moves(pd.read_parquet(path) if path.exists() else None, BET_MIN)
 
 
 def scored(season: int = SEASON) -> pd.DataFrame:

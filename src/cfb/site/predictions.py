@@ -33,7 +33,7 @@ from cfb import results                              # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
 from cfb.site import teams as teams_page              # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import scorecard                        # noqa: E402
+from gordstats import bet_record, scorecard            # noqa: E402
 from gordstats import charts, favorites, logos, palette  # noqa: E402
 
 _SECTION = "cfb-predictions"
@@ -140,6 +140,9 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
 .rec-meter>i{display:block;height:100%;border-radius:5px;background:{accent}}
 .rec-note{font-size:11.5px;color:#64748b;margin-top:8px}
 .rec-more{font-size:13px;margin:0 0 4px}
+/* The closing-line tile runs the width of the band: a fifth tile left alone
+   in a row of two reads as an afterthought, and this is the one to read. */
+.rec-cell.rec-wide{grid-column:1/-1}
 /* Two across on a phone rather than four stacked: the whole point of these is
    that they are the first thing on the page, which they stop being if reaching
    the fourth takes four screens. */
@@ -552,7 +555,7 @@ def _week_block(frame: pd.DataFrame, label: str, is_open: bool) -> str:
 
 
 def _record_band(frame: pd.DataFrame) -> str:
-    """The four calls at the top of the page - see gordstats.scorecard, which
+    """The record at the top of the page - see gordstats.scorecard, which
     renders the same band for the NFL page."""
     if frame.empty:
         return ""
@@ -560,7 +563,8 @@ def _record_band(frame: pd.DataFrame) -> str:
     return (f"<p class='pred-note'>Every prediction is archived before kickoff and "
             f"scored against the result - {stat['games']} finished game"
             f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}.</p>"
-            + scorecard.band(stat, break_even=BREAK_EVEN)
+            + scorecard.band(stat, break_even=BREAK_EVEN,
+                             clv=bet_record.summary(results.line_moves()))
             + "<p class='pred-note rec-more'><a href='#how-it-has-gone'>How close the "
             "scores were, every total we leaned on, and every game week by week "
             "&rarr;</a></p>")

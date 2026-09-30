@@ -24,11 +24,11 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from cfb import espn, games as games_mod, predict, results
+from cfb import espn, gameinfo, games as games_mod, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, SEASON
 from cfb.site import power, teams as teams_page
-from gordstats import logos, paths, share_button
+from gordstats import bet_record, logos, paths, share_button
 
 ET = ZoneInfo("America/New_York")
 TOP25_OUT = paths.DOCS / "_includes" / "cfb_top25.html"
@@ -172,6 +172,8 @@ table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
 .hc-lock{font-weight:800;color:var(--hc-flag)}
 .hc-lock.hc-locked{color:var(--hc-mute)}
 .hc-rec{font-size:13px;color:var(--hc-ink);margin:7px 0 0;line-height:1.45}
+.hc .hc-up{color:var(--hc-up);font-weight:700}
+.hc .hc-down{color:var(--hc-down);font-weight:700}
 .hc-rec .hc-dis{color:var(--hc-mute)}
 @media (max-width:560px){
   .hc-bet{grid-template-columns:1fr;gap:8px}
@@ -516,6 +518,67 @@ def _grade(pick: dict, finals: dict):
     return None if abs(diff) < 1e-9 else (diff > 0) == (pick["side"] == "Over")
 
 
+def _closes(game_ids) -> dict:
+    """{game id: (home spread, total)}, DraftKings' last line before kickoff,
+    for the games that have kicked off: the later of two looks at it - the
+    game summary's (cfb.gameinfo, refetched every few hours and frozen at
+    kickoff, so usually inside the last hour or two) and the daily odds
+    archive's."""
+    now = pd.Timestamp.now(tz="UTC")
+    info = gameinfo.load(SEASON)
+    sched = espn.schedule()
+    hist = odds_mod.history(SEASON)
+    out = {}
+    for gid in {str(g) for g in game_ids}:
+        seen = []                                   # (captured, spread, total)
+        e = info.get(gid) or {}
+        if e.get("captured") and e.get("kickoff") and e.get("spread") is not None:
+            seen.append((pd.Timestamp(e["captured"]), pd.Timestamp(e["kickoff"]),
+                         e["spread"], e.get("total")))
+        row = sched[sched["game_id"].astype(str) == gid] if "game_id" in sched else sched.iloc[0:0]
+        if not row.empty and not hist.empty:
+            g = row.iloc[0]
+            h = hist[(hist["week"].astype(int) == int(g["week"]))
+                     & (hist["home_id"].astype(str) == str(g["home_id"]))
+                     & (hist["away_id"].astype(str) == str(g["away_id"]))]
+            for r in h.itertuples(index=False):
+                seen.append((pd.Timestamp(r.captured), pd.Timestamp(r.date_utc),
+                             r.spread, r.total))
+        before = [x for x in seen if x[0] < x[1] <= now]
+        if before:
+            _cap, _kick, spread, total = max(before, key=lambda x: x[0])
+            out[gid] = (float(spread), None if total is None or pd.isna(total) else float(total))
+    return out
+
+
+def _close_of(pick: dict, closes: dict):
+    """The closing line from the pick's side: the picked team's spread, or
+    the total."""
+    got = closes.get(str(pick["game_id"]))
+    if not got:
+        return None
+    spread, total = got
+    if pick["kind"] == "spread":
+        return spread if pick["home"] else -spread
+    return total
+
+
+def _close_html(pick: dict, closes: dict) -> str:
+    """"Closed -18.5 · beat it by 1.0" under a pick whose game has started."""
+    close = _close_of(pick, closes)
+    gain = bet_record.clv(pick, close)
+    if gain is None:
+        return ""
+    shown = f"{close:+.1f}" if pick["kind"] == "spread" else f"{close:.1f}"
+    if gain > 0:
+        verdict = f"<span class='hc-up'>beat it by {gain:.1f}</span>"
+    elif gain < 0:
+        verdict = f"<span class='hc-down'>{-gain:.1f} worse</span>"
+    else:
+        verdict = "the same number"
+    return f"<div class='hc-sub'>Closed {shown} &middot; {verdict}</div>"
+
+
 def _mark(state) -> str:
     if state == "":
         return ""
@@ -525,25 +588,53 @@ def _mark(state) -> str:
             else "<span class='hc-res loss'>&times;</span>")
 
 
-def _season_record() -> str:
-    """How every locked pick of the season has done, graded on the results."""
+def _season_record(finals: dict = None, closes: dict = None) -> str:
+    """How every locked pick of the season has done: the picks graded on the
+    results, what the bets as offered would have paid (a unit on each week's
+    single and a unit on its parlay, at -110), and how the numbers taken
+    compare with where the lines closed (gordstats.bet_record)."""
     import json
-    finals = _finals()
+    weeks = [json.loads(p.read_text(encoding="utf-8"))
+             for p in sorted(BETS_DIR.glob(f"{SEASON}_wk*.json"))]
+    legs = [p for w in weeks for p in ([w["single"]] if w.get("single") else []) + w.get("parlay", [])]
+    finals = _finals() if finals is None else finals
+    closes = _closes(p["game_id"] for p in legs) if closes is None else closes
     wins = losses = pushes = 0
-    for path in sorted(BETS_DIR.glob(f"{SEASON}_wk*.json")):
-        saved = json.loads(path.read_text(encoding="utf-8"))
-        for pick in ([saved["single"]] if saved.get("single") else []) + saved.get("parlay", []):
-            state = _grade(pick, finals)
-            if state == "":
-                continue
-            if state is None:
-                pushes += 1
-            else:
-                wins, losses = wins + int(state), losses + int(not state)
+    paid, settled = 0.0, 0
+    for w in weeks:
+        if w.get("single"):
+            state = _grade(w["single"], finals)
+            if state not in ("", None):
+                paid += bet_record.units(int(state), int(not state))
+            settled += state != ""
+        if w.get("parlay"):
+            got = bet_record.parlay_units(_grade(p, finals) for p in w["parlay"])
+            if got is not None:
+                paid, settled = paid + got, settled + 1
+    for pick in legs:
+        state = _grade(pick, finals)
+        if state == "":
+            continue
+        if state is None:
+            pushes += 1
+        else:
+            wins, losses = wins + int(state), losses + int(not state)
     if not (wins + losses + pushes):
         return ""
-    return (f"Locked picks this season: <strong>{wins}-{losses}"
-            + (f"-{pushes}" if pushes else "") + "</strong>.")
+    gains = [g for g in (bet_record.clv(p, _close_of(p, closes)) for p in legs) if g is not None]
+    out = (f"Locked picks this season: <strong>{wins}-{losses}"
+           + (f"-{pushes}" if pushes else "") + "</strong>")
+    if settled:
+        sign = "+" if paid >= 0 else "&minus;"
+        out += (f", <strong title='A unit on each week&#39;s single and one on its parlay, "
+                f"at -110'>{sign}{abs(paid):.1f} units</strong>")
+    if gains:
+        better, worse = sum(g > 0 for g in gains), sum(g < 0 for g in gains)
+        out += (f"; against the closing line, <strong>{better} better</strong>, "
+                f"<strong>{worse} worse</strong>")
+        if len(gains) - better - worse:
+            out += f", {len(gains) - better - worse} the same"
+    return out + "."
 
 
 def _as_line(margin: float) -> str:
@@ -554,7 +645,7 @@ def _as_line(margin: float) -> str:
     return "pk" if abs(line) < 0.05 else f"{line:+.1f}"
 
 
-def _leg_html(pick: dict, finals: dict) -> str:
+def _leg_html(pick: dict, finals: dict, closes: dict = None) -> str:
     if pick["kind"] == "spread":
         call = f"{escape(pick['team'])} {pick['line']:+.1f}"
         sub = (f"vs {escape(pick['opponent'])} &middot; we have them "
@@ -563,7 +654,7 @@ def _leg_html(pick: dict, finals: dict) -> str:
         call = f"{pick['side']} {pick['line']:.1f}"
         sub = f"{escape(pick['team'])} &middot; we make it {pick['model']:.1f}"
     return (f"<li>{call}{_mark(_grade(pick, finals))}"
-            f"<div class='hc-sub'>{sub}</div></li>")
+            f"<div class='hc-sub'>{sub}</div>{_close_html(pick, closes or {})}</li>")
 
 
 def bets_html(now: datetime = None) -> str:
@@ -580,14 +671,16 @@ def bets_html(now: datetime = None) -> str:
                 "no bet to name.</p></div>")
 
     single = picks["single"]
+    closes = _closes(p["game_id"] for p in [single] + picks["parlay"])
     body = [f"<div class='hc-bet'><div class='hc-pick'>"
             f"<div class='hc-kind'>Single bet</div>"
             f"<div class='hc-call'>{escape(single['team'])} {single['line']:+.1f}"
             f"{_mark(_grade(single, finals))}</div>"
             f"<div class='hc-sub'>vs {escape(single['opponent'])} &middot; we have them "
-            f"{_as_line(single['model'])}, the book {_as_line(single['market_margin'])}</div></div>"]
+            f"{_as_line(single['model'])}, the book {_as_line(single['market_margin'])}</div>"
+            f"{_close_html(single, closes)}</div>"]
     if picks["parlay"]:
-        legs = "".join(_leg_html(p, finals) for p in picks["parlay"])
+        legs = "".join(_leg_html(p, finals, closes) for p in picks["parlay"])
         body.append(f"<div class='hc-pick'><div class='hc-kind'>"
                     f"{len(picks['parlay'])}-leg parlay</div>"
                     f"<ul class='hc-legs'>{legs}</ul></div>")
@@ -608,7 +701,7 @@ def bets_html(now: datetime = None) -> str:
         timing = (f"<span>Generated {now:%a %-d %b, %-I:%M %p ET}</span>"
                   f"<span class='hc-lock' data-lock='{lock_iso}'>"
                   f"Locks {when:%a %-I %p ET}</span>")
-    record = _season_record()
+    record = _season_record(finals)
     note = (f"<div class='hc-when-row'><span>{espn.week_label(week)}</span>{timing}</div>"
             f"<p class='hc-rec'>{record} <span class='hc-dis'>Not gambling "
             f"advice.</span> <a href='/cfb/predictions/'>Full record</a>.</p>")

@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 
 from cfb.site.predictions import _CSS, _fmt_spread
-from gordstats import logos, scorecard
+from gordstats import bet_record, logos, scorecard
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
 from nfl import predict, results
@@ -171,11 +171,12 @@ def _week_key(block) -> str:
 
 
 def _record_band(scored: pd.DataFrame) -> str:
-    """The same four calls the college page leads with."""
+    """The same record the college page leads with."""
     if scored.empty:
         return ("<p class='pred-note'>No finished game has a prediction on record yet; the "
                 "record starts with the first kickoff after this page went up.</p>")
-    return scorecard.band(results.summary(scored), break_even=BREAK_EVEN)
+    return scorecard.band(results.summary(scored), break_even=BREAK_EVEN,
+                          clv=bet_record.summary(results.line_moves(SEASON)))
 
 
 def _closeness(scored: pd.DataFrame) -> str:

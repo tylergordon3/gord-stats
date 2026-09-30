@@ -21,10 +21,20 @@ The four:
                    or more, did our side cover. The mark is what a bet has to
                    clear to break even at standard juice.
   Over/under       the same, for the total.
+  Line moved       the calls made on the early-week line, and how often the
+  our way          book's number had moved toward them by kickoff
+                   (gordstats.bet_record). A record against the result needs
+                   hundreds of bets to mean much; this one starts saying
+                   something in dozens, and its mark is a coin flip.
+
+The two records against the book carry what they would have paid, a unit a
+bet at -110.
 
 A record is shown as a fraction until it has enough games to carry a
 percentage: "1 of 5" is honest about its own size, where "20%" is not.
 """
+
+from gordstats import bet_record
 
 MIN_FOR_PCT = 20          # bets before a rate means anything
 BREAK_EVEN = 0.524        # what -110 needs
@@ -32,17 +42,18 @@ BREAK_EVEN = 0.524        # what -110 needs
 
 def _cell(label: str, wins: int, games: int, sub: str, benchmark=None,
           mark_label: str = "break-even", note: str = "", target: bool = False,
-          min_for_pct: int = MIN_FOR_PCT) -> str:
+          min_for_pct: int = MIN_FOR_PCT, wide: bool = False) -> str:
     """One tile. Below `min_for_pct` games the fraction is the headline and no
     bar is drawn - a meter under five games invites a conclusion it cannot
     support."""
+    cls = "rec-cell rec-wide" if wide else "rec-cell"
     if not games:
-        return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
+        return (f"<div class='{cls}'><div class='rec-label'>{label}</div>"
                 f"<div class='rec-value rec-none'>&mdash;</div>"
                 f"<div class='rec-sub'>nothing scored yet</div></div>")
 
     if games < min_for_pct:
-        return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
+        return (f"<div class='{cls}'><div class='rec-label'>{label}</div>"
                 f"<div class='rec-value rec-frac'>{wins}<span class='rec-of'>"
                 f" of {games}</span></div>"
                 f"<div class='rec-sub'>{sub}</div>"
@@ -64,7 +75,7 @@ def _cell(label: str, wins: int, games: int, sub: str, benchmark=None,
                     f"{abs(gap)} point{'' if abs(gap) == 1 else 's'} "
                     + ("clear" if gap <= 0 else "under"))
     full = " &middot; ".join(x for x in (tail, note) if x)
-    return (f"<div class='rec-cell'><div class='rec-label'>{label}</div>"
+    return (f"<div class='{cls}'><div class='rec-label'>{label}</div>"
             f"<div class='rec-value'>{pct:.0%}</div>"
             f"<div class='rec-sub'>{wins} of {games} {sub}</div>"
             f"<div class='rec-meter'><i style='width:{pct * 100:.0f}%'></i>{mark}</div>"
@@ -82,9 +93,37 @@ def _lean(bias) -> str:
     return f"we give favourites {abs(bias):.1f} pts {side}"
 
 
+def _signed(v: float, places: int = 1) -> str:
+    return f"{'+' if v >= 0 else '&minus;'}{abs(v):.{places}f}"
+
+
+def _paid(wins: int, games: int) -> str:
+    """What a record against the book would have paid; pushes are out of it
+    already, as they are out of the record."""
+    if not games:
+        return ""
+    return f"{_signed(bet_record.units(wins, games - wins))} units at &minus;110"
+
+
+def _clv_cell(clv: dict, min_for_pct: int) -> str:
+    """The closing line: of the calls on the early-week line that the market
+    then moved, how many it moved toward."""
+    if not clv or not clv.get("calls"):
+        return ""
+    avg = clv.get("avg") or 0.0
+    drift = (f"on average it moved {avg:.1f} pts our way" if avg >= 0.05 else
+             f"on average it moved {-avg:.1f} pts against us" if avg <= -0.05 else
+             "on average it did not move")
+    note = f"{drift} &middot; {clv['calls'] - clv['moved']} of {clv['calls']} calls saw no move"
+    return _cell("Line moved our way", clv["our_way"], clv["moved"],
+                 "calls where the early-week line moved by kickoff", 0.50, "a coin flip",
+                 note=note, min_for_pct=min_for_pct, wide=True)
+
+
 def band(stat: dict, *, min_for_pct: int = MIN_FOR_PCT,
-         break_even: float = BREAK_EVEN) -> str:
-    """The four tiles, from a `results.summary()` dict."""
+         break_even: float = BREAK_EVEN, clv: dict = None) -> str:
+    """The tiles, from a `results.summary()` dict and, for the fifth, a
+    `bet_record.summary()` of the calls on the early-week line."""
     if not stat or not stat.get("games"):
         return ""
     book_rate = ((stat["book_correct"] / stat["book_games"])
@@ -98,9 +137,10 @@ def band(stat: dict, *, min_for_pct: int = MIN_FOR_PCT,
               note=_lean(stat.get("fav_bias")), min_for_pct=min_for_pct),
         _cell("Spread calls vs the book", stat["ats_wins"], stat["ats_games"],
               "bets where we differed from the book by 3+", break_even,
-              min_for_pct=min_for_pct),
+              note=_paid(stat["ats_wins"], stat["ats_games"]), min_for_pct=min_for_pct),
         _cell("Over/under vs the book", stat["ou_wins"], stat["ou_games"],
               "bets where we differed from the book by 3+", break_even,
-              min_for_pct=min_for_pct),
+              note=_paid(stat["ou_wins"], stat["ou_games"]), min_for_pct=min_for_pct),
+        _clv_cell(clv, min_for_pct),
     ]
     return "<div class='pred-record'>" + "".join(cells) + "</div>"

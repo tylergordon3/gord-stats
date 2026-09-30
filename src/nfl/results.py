@@ -14,7 +14,7 @@ import pandas as pd
 from cfb import results as _college
 from nfl import games as games_mod, predict
 from nfl.config import DATA_DIR, SEASON
-from gordstats import stable
+from gordstats import bet_record, stable
 
 PRED_DIR = DATA_DIR / "predictions"
 _COLS = _college._COLS + ["seasontype"]
@@ -98,6 +98,13 @@ def scored(season: int = SEASON) -> pd.DataFrame:
 
 
 summary = _college.summary
+
+
+def line_moves(season: int = SEASON) -> pd.DataFrame:
+    """The college archive's line_moves, on this one."""
+    path = season_path(season)
+    return bet_record.moves(pd.read_parquet(path) if path.exists() else None,
+                            _college.BET_MIN)
 
 
 if __name__ == "__main__":
