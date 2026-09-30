@@ -9,6 +9,7 @@ and it does it without looking at where anyone was drafted — see
 Sections, each kept to its table or chart plus a line of context. All but
 Method are open on the page - they are the page; Method is reference:
   * The rankings, with record, playoff odds and the projected-wins range.
+  * The playoff picture: who has clinched, who is out, what the rest need.
   * The frozen three-source draft-week rankings.
   * Every team's rating build by build.
   * Where each team's strength sits, position by position, starters and
@@ -35,7 +36,7 @@ from fantasy.config import (                                   # noqa: E402
 from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
-from gordstats import charts, palette, share_button, share_card, stakes  # noqa: E402
+from gordstats import charts, clinch, palette, share_button, share_card, stakes  # noqa: E402
 from gordstats import my_league, my_league_data, my_power       # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
 
@@ -50,13 +51,15 @@ MUTED = palette.MUTED
 GRIDLINE = palette.GRIDLINE
 CONTEXT = palette.CONTEXT
 
-# (anchor, heading, jump-bar label, collapsible). How the rankings have moved
-# through the season sits right under them; the draft-week three-source table,
+# (anchor, heading, jump-bar label, collapsible). The playoff picture - who
+# has clinched, who is out, what the rest need - sits right under the
+# rankings, and how the rankings have moved after it; the draft-week table,
 # frozen on draft week, folds away with Method - it is the fixed point later
 # ratings are read against, and by October a reference rather than the news.
 SECTIONS = [
     ("mine", "Your League", "Yours", False),
     ("rankings", "Power Rankings", "Rankings", False),
+    ("playoffs", "Playoff Picture", "Playoffs", False),
     ("season", "Through the Season", "Season", False),
     ("stakes", "This Week's Stakes", "Stakes", False),
     ("positions", "Positional Strength", "Positions", False),
@@ -767,13 +770,17 @@ def body() -> str:
     content = {
         "mine": my_power.section(),
         "rankings": _rankings_section(table),
+        "playoffs": _playoffs_section(table, stakes_week, stakes_teams),
         "stakes": stakes.table(stakes_week, stakes_teams) if stakes_week else "",
         "draft-consensus": draft_consensus_section(),
         "season": _season_section(),
         "positions": _positions_section(rosters, table),
         "method": _method_section(),
     }
-    nav = layout.section_nav([(a, label) for a, _, label, _ in SECTIONS if a != "mine"])
+    # Only sections with something in them: an empty one (no stakes between
+    # a week's end and the model counting it) left the jump bar a dead link.
+    nav = layout.section_nav([(a, label) for a, _, label, _ in SECTIONS
+                              if a != "mine" and content[a]])
     # This league's sections are wrapped so the reader's own ranking can take
     # the page over: somebody who has synced a league is here for that league,
     # and two rankings of two different leagues on one page only invites the
@@ -818,6 +825,31 @@ def _stakes(table: pd.DataFrame) -> tuple:
     except (OSError, ValueError):
         pass
     return week, teams
+
+
+def _playoffs_section(table: pd.DataFrame, week, teams: dict) -> str:
+    """Who has clinched, who is out, and what the rest need (gordstats.clinch),
+    from the record the simulation locked in and the weeks it has left - two
+    games a week, head to head and the median. `week`/`teams` are this week's
+    stakes, (None, {}) once the week is over: a "win and in" is only offered
+    for a game still to be played. Nothing before the first week is in, when
+    every record is 0-0 and the rankings table already has the odds."""
+    if "wins" not in table.columns or int(table["week"].iloc[0]) == 0:
+        return ""
+    played = int(table["week"].iloc[0])
+    left = 2 * max(FANTASY_REG_WEEKS - played, 0)
+    rows = {}
+    for _, r in table.iterrows():
+        key = str(int(r["roster_id"]))
+        split = teams.get(key) or {}
+        rows[key] = {"name": str(r["manager"]), "wins": float(r["wins"]),
+                     "losses": float(r["losses"]), "left": left,
+                     "pf": float(r["points_for"]), "odds": float(r["playoff_odds"]),
+                     "opp": split.get("opp"), "win": split.get("win")}
+    field = power.PLAYOFF_TEAMS
+    for problem in clinch.check(rows, clinch.picture(rows, field, clinch.byes(field), True)):
+        print(f"  ! playoff picture: {problem}")
+    return clinch.section(rows, field, clinch.byes(field), median=True, week=week)
 
 
 def card() -> dict | None:

@@ -22,6 +22,10 @@ each roster's points against the league average build by build. Until two
 builds carry the points, the panels draw rank instead, which every snapshot
 has.
 
+Under the table, the Playoff Picture (gordstats.clinch, shared with the NFL
+league's power page): who has clinched a place or a bye, who is out, and what
+the rest need, from the standings and games left the simulation started from.
+
     python -m cfb.site.league_power     # writes docs/cfb/league/power/
 """
 
@@ -38,7 +42,8 @@ import pandas as pd                                  # noqa: E402
 from cfb import in_season, league_sim, projections, yahoo  # noqa: E402
 from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import charts, palette, rankmoves, share_button, share_card, stakes  # noqa: E402
+from gordstats import (charts, clinch, palette, rankmoves, share_button,  # noqa: E402
+                       share_card, stakes)
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
 OUTPUT = WEB_DIR / "league" / "power" / "index.html"
@@ -427,6 +432,8 @@ def section() -> str:
                                       for r in rows]},
                            index=[r["key"] for r in rows]))
     season = _season_section({r["key"]: r["team"]["name"] for r in rows})
+    playoffs = _playoffs_section(sim, lg, {r["key"]: r["team"].get("name") or r["key"]
+                                           for r in rows})
 
     field = lg.get("num_playoff_teams") or 0
     return (
@@ -449,7 +456,33 @@ def section() -> str:
         f"{move_heads}{bye_head}"
         "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
         "<th>Bench</th><th>Anchor</th></tr></thead>"
-        f'<tbody>{"".join(cells)}</tbody></table></div>' + season)
+        f'<tbody>{"".join(cells)}</tbody></table></div>' + playoffs + season)
+
+
+def _playoffs_section(sim: pd.DataFrame, lg: dict, names: dict) -> str:
+    """Who has clinched, who is out, and what the rest need (gordstats.clinch),
+    between the rankings and the season chart. The standings and games left
+    are the ones the simulation started from (league_sim's now_* and
+    games_left, the median game counted), so a team called clinched is in
+    every run; the week's head-to-head is offered only while _stakes still
+    has it, i.e. before the week is final."""
+    field = int(lg.get("num_playoff_teams") or 0)
+    if sim.empty or not field or "games_left" not in sim.columns:
+        return ""
+    week, split = _CARD.get("stakes") or (None, {})
+    teams = {}
+    for key, g in sim.iterrows():
+        s = split.get(key) or {}
+        teams[key] = {"name": names.get(key, key), "wins": float(g["now_wins"]),
+                      "losses": float(g["now_losses"]), "left": float(g["games_left"]),
+                      "pf": float(g["now_pf"]),
+                      "odds": float(g["playoffs"]) if "playoffs" in g else None,
+                      "opp": s.get("opp"), "win": s.get("win")}
+    median = bool(lg.get("uses_median_score"))
+    for problem in clinch.check(teams, clinch.picture(teams, field, clinch.byes(field), median)):
+        print(f"  ! playoff picture: {problem}")
+    return ("<h3 id='playoffs'>Playoff Picture</h3>"
+            + clinch.section(teams, field, clinch.byes(field), median=median, week=week))
 
 
 def body() -> str:

@@ -239,6 +239,23 @@ def simulate(lg: dict, sched: dict, keys: list, weeks: list, mean: np.ndarray,
     games = len(regular) * (2 if lg.get("uses_median_score") else 1)
     out["losses"] = [float(standing.get(k, {}).get("losses") or 0) for k in keys]
     out["losses"] += games - (out["wins"] - wins)
+    # The standings the runs start from and the games each team has left in
+    # them - what gordstats.clinch needs to say who is in and who is out, read
+    # off the simulation so the arithmetic and the odds can never be handed
+    # different seasons (once the bracket is on, run() rebuilds the standings).
+    left = np.zeros(n)
+    for i in regular:
+        for a, b in sched[weeks[i]]["pairs"]:
+            if a in idx and b in idx:
+                left[idx[a]] += 1
+                left[idx[b]] += 1
+    if lg.get("uses_median_score"):
+        left += len(regular)
+    out["now_wins"] = wins
+    out["now_losses"] = [float(standing.get(k, {}).get("losses") or 0)
+                         + 0.5 * float(standing.get(k, {}).get("ties") or 0) for k in keys]
+    out["now_pf"] = pf
+    out["games_left"] = left
     if field:
         seeds = order[:, :field]
         made = np.zeros(n)
