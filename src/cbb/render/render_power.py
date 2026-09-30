@@ -349,7 +349,8 @@ def body() -> str:
     # (2026-09-29 audit) - the table is what the page is for.
     basis = "T-Rank and BPI, averaged" if bpi_current else "Bart Torvik's T-Rank"
     lede = (f"<p class='power-lede'>Every Division I team, ranked by {basis}"
-            f"{'' if played else ' (preseason)'}.</p>")
+            f"{'' if played else ' (preseason)'}. Every figure, sortable: "
+            "<a href='/cbb/stats/'>Team Stats</a>.</p>")
     about = (
         "<details class='section'><summary>About these numbers</summary>"
         f"<p class='power-note'>Ordered by {ordering}. "

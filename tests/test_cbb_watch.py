@@ -71,8 +71,10 @@ def test_the_daily_run_builds_it_beside_the_rankings(monkeypatch):
     monkeypatch.setattr(render_power, "trank", lambda refresh=False: calls.append("trank"))
     monkeypatch.setattr(render_power, "generate", lambda: calls.append("power"))
     monkeypatch.setattr(watch, "generate", lambda: calls.append("watch"))
+    from cbb.render import render_stats
+    monkeypatch.setattr(render_stats, "generate", lambda: calls.append("stats"))
     daily._cbb_power()
-    assert calls == ["trank", "power", "watch"]
+    assert calls == ["trank", "power", "watch", "stats"]
 
 
 # --------------------------------------------------------------------------- #

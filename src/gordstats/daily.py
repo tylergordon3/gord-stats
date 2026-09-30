@@ -111,11 +111,14 @@ def _cbb_power() -> None:
     live scoreboard in the browser, so the page only has to exist, all year -
     out of season it says when the next game is.
     """
-    from cbb.render import render_power, render_watch
+    from cbb.render import render_power, render_stats, render_watch
 
     render_power.trank(refresh=True)
     render_power.generate()
     render_watch.generate()
+    # The team stats page reads the same T-Rank table, and Torvik's four
+    # factors once he publishes them for the season.
+    render_stats.generate()
 
 
 def _fantasy() -> None:
