@@ -13,6 +13,7 @@ from gordstats import logos, paths, stats_page
 from gordstats.frontmatter import add_front_matter
 from nfl import advanced
 from nfl.config import SEASON
+from nfl.site import teams as teams_page
 
 OUT = paths.DOCS / "nfl" / "stats" / "index.html"
 
@@ -126,6 +127,10 @@ def rows(data: dict) -> list:
         r = dict(t)
         r.update({k: t.get(src) for k, src in _ALIASES.items()})
         r["rec"] = _record(t)
+        # A team links to its page once it has one (nfl.site.teams builds
+        # first); nflverse's nickname is the one the page's URL is made from.
+        page = teams_page.OUT_DIR / teams_page.team_slug(t["name"]) / "index.html"
+        r["link"] = teams_page.url(t["name"]) if page.exists() else None
         r["logo"] = logos.url("nfl", _ESPN.get(t["abbr"], t["abbr"]), logos.fetch_px(20))
         r["group"] = t.get("div") or ""
         r["tags"] = [t["conf"]] if t.get("conf") else []

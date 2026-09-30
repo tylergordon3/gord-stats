@@ -51,7 +51,7 @@ table.tm a:hover{text-decoration:underline}
 /* The Slate theme frames every img; these are inline badges, not figures. */
 table.tm img,.tm-head img{border:none;padding:0;box-shadow:none;background:none;
   border-radius:0;margin:0}
-table.tm img{width:22px;height:22px;object-fit:contain;vertical-align:middle;
+table.tm img{width:22px;height:22px;max-width:none;object-fit:contain;vertical-align:middle;
   margin-right:8px}
 table.tm td.win-cell{font-variant-numeric:tabular-nums}
 """ + rankmoves.CSS + """

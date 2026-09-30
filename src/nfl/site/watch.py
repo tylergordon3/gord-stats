@@ -172,8 +172,20 @@ ADAPTER_JS = """<script>
   var BOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=';
   GSWatch(D, {
     myKey:'nflMyTeam', link:'/nfl/', pickLabel:'Your team',
-    hint:'Pick your team to see your starters, and your opponent\\u2019s, in each game.',
+    hint:'Star teams on the <a href="/nfl/power/">rankings</a> to put their games first, or pick your team to see your starters.',
     staleHtml:'This guide has not been rebuilt for a few days; the <a href="/nfl/">predictions page</a> is current.',
+    /* A star is stored by ESPN id (nfl:<id>, as /nfl/power/ writes it); the
+       engine knows a team by k, the Sleeper abbreviation the rosters use, so
+       each starred id is turned into its k through this guide's own games. */
+    stars:function(){
+      var ids={}, set={}, list=[];
+      try{ list=JSON.parse(localStorage.getItem('gs:favorites')||'[]')||[]; }catch(e){}
+      list.forEach(function(k){ if(typeof k==='string'&&k.indexOf('nfl:')===0) ids[k.slice(4)]=1; });
+      (D.games||[]).forEach(function(g){
+        [g.h,g.a].forEach(function(t){ if(t&&ids[t.id]) set[t.k!=null?t.k:t.id]=1; });
+      });
+      return set;
+    },
     /* ESPN's scoreboard answers any origin: one call per day on now. */
     live:function(games){
       var dates={}, out={};

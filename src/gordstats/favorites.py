@@ -32,7 +32,7 @@ from gordstats import charts
 # Every section allowed to carry favourites. A typo in a caller is a broken
 # key that silently never matches the reader's stored list, so it raises here
 # rather than rendering a star that can't be un-starred.
-SPORTS = ("cfb", "cbb-men", "cbb-women", "wnba")
+SPORTS = ("cfb", "nfl", "cbb-men", "cbb-women", "wnba")
 
 # Straight and curly, plus the accent some feeds use in its place.
 _APOSTROPHE = re.compile(r"['\u2019\u02bc\u0060]")

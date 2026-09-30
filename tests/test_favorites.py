@@ -39,7 +39,7 @@ def test_every_declared_sport_builds_a_key(sport):
 def test_unknown_sport_raises():
     """A typo must fail the build, not render a star that can never match."""
     with pytest.raises(ValueError):
-        favorites.team_key("nfl", "1")
+        favorites.team_key("nhl", "1")
 
 
 def test_empty_team_id_raises():
@@ -135,6 +135,8 @@ ROW_MARKING_MODULES = [
     ("src/cfb/site/teams.py", "table.tm"),
     ("src/cbb/render/render_power.py", "table.cbb-power"),
     ("src/cfb/site/schedule.py", "table.cfb-sched"),
+    ("src/nfl/site/power.py", "table.cfb-power"),
+    ("src/nfl/site/teams.py", "table.tm"),
 ]
 
 
@@ -152,6 +154,7 @@ def test_a_page_that_marks_rows_also_styles_them(module, selector):
     ("src/cfb/site/power.py", "cfb"),
     ("src/cfb/site/teams.py", "cfb"),
     ("src/cbb/render/render_power.py", "cbb-men"),
+    ("src/nfl/site/power.py", "nfl"),
 ])
 def test_opted_in_pages_emit_rows_stars_and_a_filter(module, sport):
     """Each wired page needs all three, or the feature is half-present on it."""

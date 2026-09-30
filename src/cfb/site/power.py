@@ -88,7 +88,9 @@ table.cfb-power tr.top25:nth-child(even) td{background:#faf0d2}
 /* The Slate theme styles every <img> as a framed figure - padding, a border,
    a drop shadow and 10px vertical margins - which boxes each logo and stretches
    the row. Reset all of it here, same as the league table does. */
-table.cfb-power td.pwr-team img{width:22px;height:22px;object-fit:contain;
+/* max-width:none: the theme's img{max-width:100%} reads to a table sizing its
+   columns as a logo with no width, and the name ran into the next column. */
+table.cfb-power td.pwr-team img{width:22px;height:22px;max-width:none;object-fit:contain;
   vertical-align:middle;margin:0 8px 0 0;border:none;padding:0;box-shadow:none;
   background:none;border-radius:0}
 /* One table, two tabs: the live view keeps its own columns and hides the
