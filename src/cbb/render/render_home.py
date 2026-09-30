@@ -210,8 +210,9 @@ def _cfb_card() -> str:
   <p>The Yahoo college fantasy league, and every FBS game of the season —
      model predictions, live scores, kickoffs, TV, and ranks.</p>
   <p class="home-card-links">
-    <a href="/cfb/league/">League Dashboard</a> ·
-    <a href="/cfb/schedule/">CFB Schedule</a>
+    <a href="/cfb/watch/">Watch Guide</a> ·
+    <a href="/cfb/schedule/">CFB Schedule</a> ·
+    <a href="/cfb/league/">League Dashboard</a>
   </p>
 </section>
 """

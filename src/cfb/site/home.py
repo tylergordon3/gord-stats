@@ -53,6 +53,16 @@ def body() -> str:
 
 <section class="home-card">
   <div class="home-card-head">
+    <h2>Watch Guide</h2>
+    <a class="home-card-link" href="/cfb/watch/">Today's games &rarr;</a>
+  </div>
+  <p>What to have on, window by window: every game of the day ranked by how
+     much it is worth watching, your starred teams and fantasy players first,
+     and the close games late jumping the queue.</p>
+</section>
+
+<section class="home-card">
+  <div class="home-card-head">
     <h2>Schedule &amp; Scores</h2>
     <a class="home-card-link" href="/cfb/schedule/">This week's games &rarr;</a>
   </div>

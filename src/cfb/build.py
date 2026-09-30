@@ -24,7 +24,7 @@ def projection_years() -> list[int]:
 # and matchups: both point at the newest one.
 PAGES = ["home", "draft_review", "recap", "league", "league_power", "matchups",
          "power", "teams", "predictions", "schedule", "countdown", "homecards",
-         "strength", "usage", "roster"]
+         "watch", "strength", "usage", "roster"]
 
 
 def build_all(refresh: bool = False) -> list[str]:

@@ -173,6 +173,12 @@ cfb:
     covers: "/cfb/teams/"
     group: model
 
+  - title: Watch Guide
+    short: Watch
+    icon: "📺"
+    url: /cfb/watch/
+    group: reference
+
   - title: Schedule & Scores
     short: Schedule
     icon: "🏈"
