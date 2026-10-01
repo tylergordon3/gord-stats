@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-01T09:34:05+00:00",
+ "fetched": "2026-10-01T15:32:02+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,15 +17,15 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 168.42,
-     "win_probability": 0.59
+     "projected": 181.14,
+     "win_probability": 0.67
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 153.91,
-     "win_probability": 0.41000000000000003
+     "projected": 153.93,
+     "win_probability": 0.32999999999999996
     }
    ]
   },
@@ -47,7 +47,7 @@
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 155.71,
+     "projected": 156.4,
      "win_probability": 0.25
     }
    ]
@@ -63,7 +63,7 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 181.76,
+     "projected": 181.78,
      "win_probability": 0.73
     },
     {
@@ -167,6 +167,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "457709",
+    "player": "Matt Fuller",
+    "pos": "RB",
+    "team": "SC",
+    "team_full": "South Carolina Gamecocks",
+    "bye": 7.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "RB",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "471011",
     "player": "Malachi Toney",
     "pos": "WR",
@@ -237,12 +251,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "457709",
-    "player": "Matt Fuller",
+    "yahoo_id": "457918",
+    "player": "Cole Tabb",
     "pos": "RB",
-    "team": "SC",
-    "team_full": "South Carolina Gamecocks",
-    "bye": 7.0,
+    "team": "CIN",
+    "team_full": "Cincinnati Bearcats",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -327,20 +341,6 @@
     "team": "OU",
     "team_full": "Oklahoma Sooners",
     "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "457918",
-    "player": "Cole Tabb",
-    "pos": "RB",
-    "team": "CIN",
-    "team_full": "Cincinnati Bearcats",
-    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2528,15 +2528,15 @@
   "333497": 27.57,
   "405873": 21.86,
   "468744": 15.42,
+  "457709": 14.05,
   "471011": 24.03,
   "458486": 17.29,
   "471478": 13.0,
   "405317": 10.8,
   "457379": 12.02,
-  "457709": 14.05,
-  "482918": 0.0,
   "457918": 9.75,
-  "900104": 12.38,
+  "482918": 0.0,
+  "900104": 15.35,
   "405071": 22.7,
   "469436": 22.45,
   "455519": 17.81,
@@ -2549,7 +2549,7 @@
   "469439": 13.11,
   "468459": 12.17,
   "404365": 8.88,
-  "900027": 8.92,
+  "900027": 8.94,
   "470211": 30.78,
   "405249": 27.35,
   "404522": 24.55,
@@ -2574,12 +2574,12 @@
   "406054": 13.27,
   "457217": 13.93,
   "470796": 11.57,
-  "405765": 7.33,
+  "405765": 8.0,
   "457872": 14.31,
   "404810": 11.53,
   "404631": 8.76,
   "450275": 15.19,
-  "900073": 6.7,
+  "900073": 6.72,
   "470424": 24.49,
   "405815": 28.8,
   "404291": 17.74,
@@ -2591,7 +2591,7 @@
   "327462": 14.13,
   "451329": 9.03,
   "404635": 26.57,
-  "900076": 16.74,
+  "900076": 16.76,
   "337760": 25.98,
   "333511": 26.47,
   "456937": 17.25,

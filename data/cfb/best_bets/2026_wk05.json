@@ -1,0 +1,52 @@
+{
+ "week": 5,
+ "single": {
+  "kind": "spread",
+  "game_id": "401862786",
+  "team": "North Texas",
+  "opponent": "Tulsa",
+  "home": false,
+  "line": -1.5,
+  "market_margin": 1.5,
+  "model": 10.4,
+  "edge": 8.9,
+  "kickoff": "2026-10-02T01:00:00+00:00"
+ },
+ "parlay": [
+  {
+   "kind": "total",
+   "game_id": "401862791",
+   "team": "Navy at Air Force",
+   "opponent": "",
+   "side": "Over",
+   "line": 46.5,
+   "model": 55.4,
+   "edge": 8.9,
+   "kickoff": "2026-10-03T16:00:00+00:00"
+  },
+  {
+   "kind": "spread",
+   "game_id": "401856822",
+   "team": "Iowa State",
+   "opponent": "West Virginia",
+   "home": true,
+   "line": -3.0,
+   "market_margin": 3.0,
+   "model": 11.8,
+   "edge": 8.8,
+   "kickoff": "2026-10-03T16:00:00+00:00"
+  },
+  {
+   "kind": "total",
+   "game_id": "401862792",
+   "team": "Temple at South Florida",
+   "opponent": "",
+   "side": "Over",
+   "line": 48.5,
+   "model": 57.0,
+   "edge": 8.5,
+   "kickoff": "2026-10-03T23:30:00+00:00"
+  }
+ ],
+ "locked": "2026-10-01T11:33:35"
+}

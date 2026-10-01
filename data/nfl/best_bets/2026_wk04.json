@@ -1,0 +1,52 @@
+{
+ "week": 4,
+ "single": {
+  "kind": "spread",
+  "game_id": "401872968",
+  "team": "Buccaneers",
+  "opponent": "Packers",
+  "home": true,
+  "line": 3.5,
+  "market_margin": -3.5,
+  "model": 1.4,
+  "edge": 4.9,
+  "kickoff": "2026-10-04T17:00:00+00:00"
+ },
+ "parlay": [
+  {
+   "kind": "total",
+   "game_id": "401872965",
+   "team": "Colts at Commanders",
+   "opponent": "",
+   "side": "Over",
+   "line": 47.5,
+   "model": 52.3,
+   "edge": 4.8,
+   "kickoff": "2026-10-04T13:30:00+00:00"
+  },
+  {
+   "kind": "total",
+   "game_id": "401872976",
+   "team": "Chiefs at Raiders",
+   "opponent": "",
+   "side": "Under",
+   "line": 47.5,
+   "model": 42.8,
+   "edge": 4.7,
+   "kickoff": "2026-10-04T20:25:00+00:00"
+  },
+  {
+   "kind": "spread",
+   "game_id": "401872966",
+   "team": "Giants",
+   "opponent": "Cardinals",
+   "home": true,
+   "line": 2.5,
+   "market_margin": -2.5,
+   "model": 1.9,
+   "edge": 4.4,
+   "kickoff": "2026-10-04T17:00:00+00:00"
+  }
+ ],
+ "locked": "2026-10-01T11:34:05-04:00"
+}
