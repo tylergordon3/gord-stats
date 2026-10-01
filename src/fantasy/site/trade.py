@@ -267,7 +267,7 @@ def adapter_js() -> str:
 
 
 def body() -> str:
-    return (INTRO + my_league.bar() + trade_page.section()
+    return (INTRO + my_league.bar() + trade_page.section('/fantasy/trade/', league=True)
             + layout.details("How it works", METHOD, anchor="method")
             + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.LEAGUE_JS
             + trade_page.JS + adapter_js() + trade_page.start())

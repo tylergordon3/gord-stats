@@ -40,6 +40,8 @@ ESPN league, on gordstats.my_power's simulation) and cfb.site.trade (the
 Yahoo college league, on a port of cfb.league_sim).
 """
 
+from gordstats import share_button
+
 CSS = """<style>
 .tr{margin:6px 0 24px}
 .tr-teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
@@ -94,6 +96,7 @@ CSS = """<style>
 .tr-note{font-size:12.5px;color:#64748b;line-height:1.5;margin:10px 0 0}
 .tr-clear{font:inherit;font-size:13px;border:0;background:none;color:#2563eb;cursor:pointer;
   padding:8px 0;min-height:40px}
+.tr-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 0}
 @media (max-width:640px){
   .tr-sides,.tr-cards{gap:8px}
   .tr-p{font-size:13px;padding:3px 6px;gap:5px}
@@ -148,11 +151,14 @@ window.GSTrade = function(host, adapter){
     return {a:p[0], b:p[1], give:(p[2]||'').split('.').filter(Boolean),
             get:(p[3]||'').split('.').filter(Boolean)};
   }
-  function writeHash(){
+  function dealHash(){
     var g = keys(give), t = keys(get);
-    var h = (a && b && (g.length || t.length))
+    return (a && b && (g.length || t.length))
       ? '#trade=' + encodeURIComponent([a, b, g.join('.'), t.join('.')].join('~')) : '';
-    try{ history.replaceState(null, '', location.pathname + location.search + h); }catch(e){}
+  }
+  function writeHash(){
+    try{ history.replaceState(null, '', location.pathname + location.search + dealHash()); }
+    catch(e){}
   }
 
   // ----- drawing ---------------------------------------------------------- //
@@ -288,6 +294,20 @@ window.GSTrade = function(host, adapter){
       + pts(mine) + ' for you, ' + pts(theirs) + ' for them.</p>';
   }
 
+  /** The Share button, pointed at this deal: the address carries it. */
+  function share(g, t){
+    var tpl = document.getElementById('tr-share'), acts = host.querySelector('.tr-acts');
+    if(!tpl || !acts || !tpl.content) return;
+    var btn = tpl.content.firstElementChild.cloneNode(true);
+    function names(ids){
+      return ids.map(function(id){ return (data.players[id] || {}).name || id; }).join(' and ');
+    }
+    btn.setAttribute('data-url', btn.getAttribute('data-url') + dealHash());
+    btn.setAttribute('data-text', 'Trade idea: ' + (g.length ? names(g) : 'nothing') + ' for '
+                     + (t.length ? names(t) : 'nothing') + '.');
+    acts.insertBefore(btn, acts.firstChild);
+  }
+
   function run(){
     writeHash();
     var g = keys(give), t = keys(get), me = ++seq;
@@ -304,7 +324,8 @@ window.GSTrade = function(host, adapter){
       out().innerHTML = verdict(x0, x1, y0, y1)
         + '<div class="tr-cards">' + card(a, true, x0, x1, (res.moves || {})[a])
         + card(b, false, y0, y1, (res.moves || {})[b]) + '</div>'
-        + '<button type="button" class="tr-clear">Clear the trade</button>';
+        + '<div class="tr-acts"><button type="button" class="tr-clear">Clear the trade</button></div>';
+      share(g, t);
       out().querySelector('.tr-clear').addEventListener('click', function(){
         give = {}; get = {}; draw();
       });
@@ -341,9 +362,15 @@ window.GSTrade = function(host, adapter){
 </script>{% endraw %}"""
 
 
-def section(host_id: str = "tr-host") -> str:
-    """The page's slot for the analyzer; the adapter's script fills it."""
-    return CSS + f"<div class='tr' id='{host_id}'></div>"
+def section(path: str, host_id: str = "tr-host", league: bool = False) -> str:
+    """The page's slot for the analyzer; the adapter's script fills it. The
+    Share button it hands the deal to is a template: the script sets its
+    address (the page plus the deal) each time a deal is played, and `league`
+    adds the reader's league to it (gordstats.share_button)."""
+    return (CSS + f"<div class='tr' id='{host_id}'></div>"
+            + "<template id='tr-share'>"
+            + share_button.button(path, label="Send this trade", league=league)
+            + "</template>")
 
 
 def start(host_id: str = "tr-host") -> str:

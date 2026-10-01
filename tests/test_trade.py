@@ -455,10 +455,11 @@ def test_nfl_rosters_stay_legal(browser, nfl):
 def test_nfl_page_draws_and_plays_a_trade(browser, nfl):
     """The whole page: pickers, a tap on each side, the two result cards."""
     _load_nfl(browser, nfl)
+    section = trade_page.section("/fantasy/trade/", league=True)
     got = browser.evaluate("""
       new Promise(function(done){
-        var host = document.createElement('div');
-        document.body.appendChild(host);
+        document.body.insertAdjacentHTML('beforeend', """ + json.dumps(section) + """);
+        var host = document.getElementById('tr-host');
         window.GSTrade(host, window.GSTradeAdapter);
         var tries = 0;
         (function wait(){
@@ -468,9 +469,12 @@ def test_nfl_page_draws_and_plays_a_trade(browser, nfl):
           b.querySelectorAll('.tr-p')[1].click();
           (function res(){
             var cards = host.querySelectorAll('.tr-card');
+            var btn = host.querySelector('.gs-share');
             if(cards.length === 2) return done({cards: cards.length,
               verdict: host.querySelector('.tr-verdict').textContent,
-              hash: location.hash, selects: host.querySelectorAll('select').length});
+              hash: location.hash, selects: host.querySelectorAll('select').length,
+              share: btn && btn.getAttribute('data-url'), text: btn && btn.getAttribute('data-text'),
+              league: btn && btn.hasAttribute('data-league')});
             if(++tries > 400) return done('no result');
             setTimeout(res, 50);
           })();
@@ -480,6 +484,10 @@ def test_nfl_page_draws_and_plays_a_trade(browser, nfl):
     assert isinstance(got, dict), got
     assert got["cards"] == 2 and got["selects"] == 2
     assert got["verdict"]
+    # The Share button sends this deal: the address carries it, and the
+    # reader's league rides along (share.js adds ?league= when one is on).
+    assert got["share"].startswith("/fantasy/trade/#trade=")
+    assert got["text"].startswith("Trade idea: Player ") and got["league"]
 
 
 def test_college_data_cannot_end_its_script_or_meet_liquid():

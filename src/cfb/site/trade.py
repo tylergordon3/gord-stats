@@ -443,7 +443,7 @@ def body() -> str:
     if not got:
         return (trade_page.CSS + "<p>The trade analyzer opens once the season has rosters "
                 "and a schedule.</p>")
-    return (INTRO + trade_page.section()
+    return (INTRO + trade_page.section('/cfb/trade/')
             + "<details class='section' id='method'><summary>How it works</summary>"
             + METHOD + "</details>" + data_script(got)
             + trade_page.JS + ADAPTER_JS + trade_page.start())
