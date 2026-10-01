@@ -72,6 +72,9 @@ dependencies = [
 dev = [
     "pytest",
     "pyyaml",
+    # The browser tests drive headless Chromium over DevTools; GitHub's
+    # runner has Chromium, so without this they error rather than skip.
+    "websockets",
 ]
 
 [tool.setuptools.packages.find]

@@ -43,7 +43,11 @@ def before_004() -> str:
     Built backwards from today's schema - its new columns dropped, the two
     indexes it removes put back - so it cannot drift from what 004 undoes.
     """
-    sql = SCHEMA.read_text()
+    # Comments out first: SQLite before 3.50 rewrites a table's CREATE
+    # statement on DROP COLUMN and chokes on a trailing `--` comment ("error
+    # in table users after drop column: incomplete input") - GitHub's runner
+    # has one of those. The shape compared is columns and indexes, not text.
+    sql = re.sub(r"--[^\n]*", "", SCHEMA.read_text())
     for table, col in re.findall(r"ALTER TABLE (\w+) ADD COLUMN (\w+)",
                                  MIGRATION_004.read_text()):
         sql += f"\nALTER TABLE {table} DROP COLUMN {col};"
