@@ -370,3 +370,14 @@ Open:
       screen (sound on the best, never two on one broadcast channel - NFL assumes Sunday Ticket), the
       next in line, and an On now box that keeps its places and swaps out a game that ends or turns
       into a blowout (also now a -30 on the watch score in the second half).
+
+- [x] **Game previews** (04a25cad8, eabb0cb75): /cfb/game/, /nfl/game/ and (from tip-off) /cbb/game/ -
+      the call against the book, unit against unit with national ranks, players, form; linked from
+      the schedules, watch guides and predictions.
+- [x] **Playoff odds** (cdd9962d9): /cfb/playoff/ (2026-27 CFP rules) and /nfl/playoff/ on our model,
+      beside ESPN FPI, with the likeliest bracket.
+- [x] **Matchup Strength for the NFL league** (30b74a476): /fantasy/strength/, readers' leagues too.
+- [x] **CBB stats fixes** (8fb302345): Torvik's four factors read by team (would have been empty in
+      November), OR% allowed low-good, Siena's logo.
+- [ ] **CBB previews, first real day (Nov 3):** check /cbb/game/ pages appear and the guide links them;
+      women's previews need the women's T-Rank/four factors cached first.
