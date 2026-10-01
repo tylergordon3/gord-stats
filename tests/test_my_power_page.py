@@ -46,7 +46,7 @@ def test_the_reader_table_is_the_sites_table():
     header, `.row-rank`. A table of its own got none of it."""
     from gordstats import my_power
 
-    assert 'class="sticky-table"' in my_power.JS
+    assert 'class="sticky-table pw-table"' in my_power.JS
     assert 'class="table-scroll"' in my_power.JS
     assert 'class="row-rank"' in my_power.JS
     for dead in ('class="mp-t"', "mp-power", "mp-track", "mp-rank", "mp-scroll"):
@@ -58,13 +58,19 @@ def test_the_reader_table_carries_the_built_columns():
     from gordstats import my_power
 
     heads = re.findall(r"<th>([^<]+)</th>", my_power.JS)
-    assert heads == ["Team", "Power", "Record", "Luck", "Proj. Record",
-                     "Playoffs", "Title"], heads
+    assert heads == ["Team", "Record", "Playoffs", "Title", "Power",
+                     "Proj. Record", "Luck"], heads
     # Move needs an archive of previous builds, which a reader's league has
     # none of - so it is the one built column deliberately absent.
     assert "Move" not in heads
     built = open(power.__file__).read()
     assert '"Move"' in built, "the built table lost Move; this note is stale"
+    # And the order is the built table's, read off the order its columns are
+    # added in: the record, the odds, the rating, then the projection and luck.
+    table = built[built.index("def _rankings_table("):]
+    at = [table.index(f'display[{col}]') for col in
+          ('"Record"', '"Playoffs"', '"Title"', "rating", '"Proj. Record"', '"Luck"')]
+    assert at == sorted(at), "the built order moved; the reader's has not"
 
 
 def test_record_and_luck_are_the_built_definition():
@@ -89,12 +95,36 @@ def test_record_and_luck_are_the_built_definition():
 
 
 def test_the_gradient_is_the_one_pandas_uses():
-    """The built columns are shaded by pandas' RdYlGn over the column's own
-    min and max. A reader's league shaded on any other scale is a different
-    chart wearing the same colours."""
+    """The built columns are shaded by RdYlGn over the column's own min and
+    max. A reader's league shaded on any other scale is a different chart
+    wearing the same colours."""
     from gordstats import my_power
 
     assert "RDYLGN" in my_power.JS
     # matplotlib's eleven anchors, ends first.
     assert "[165,0,38]" in my_power.JS and "[0,104,55]" in my_power.JS
     assert "(value-lo)/(hi-lo)" in my_power.JS
+
+
+def test_the_shading_is_the_built_wash():
+    """The built table's `_heat`: a translucent wash over the cell's own
+    background, stronger with the distance from the middle and nothing at the
+    middle, with --heat per theme. A solid fill (the old pandas look) is a
+    pale-yellow block on a navy row at night and fights the theme's ink."""
+    from fantasy.site import power
+    from gordstats import my_power
+
+    js = my_power.JS[my_power.JS.index("function shade("):]
+    js = js[:js.index("\n  function ", 10)]
+    assert "background-image:linear-gradient(" in js
+    assert "var(--heat, .35)" in js
+    assert "Math.abs(2*t-1)" in js and "strength<0.03" in js, "the middle is shaded"
+    assert "background-color" not in js, "a solid fill is back"
+    # The table wears the built classes, and the per-theme strength is the
+    # built one - the contrast test in test_phone_tables is written against it.
+    built = re.search(r"\.pw-table\{--heat:([\d.]+)\}", power._TABLE_CSS).group(1)
+    built_dark = re.search(r"dark\)\{\s*\.pw-table\{--heat:([\d.]+)\}",
+                           power._TABLE_CSS).group(1)
+    assert re.search(r"\.mp \.pw-table\{--heat:" + re.escape(built) + r"[;}]", my_power.CSS)
+    dark = my_power.CSS[my_power.CSS.index("prefers-color-scheme: dark"):]
+    assert ".mp .pw-table{--heat:" + built_dark + "}" in dark

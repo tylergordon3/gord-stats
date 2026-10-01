@@ -52,17 +52,30 @@ under three seconds.
 CSS = """<style>
 .mp{margin:8px 0 22px}
 .mp h2{margin:18px 0 6px;font-size:18px}
-.mp-note{font-size:12.5px;color:#64748b;margin:0 0 10px;line-height:1.5}
+.mp-note{font-size:12.5px;color:#64748b;margin:8px 0 10px;line-height:1.5}
 .mp-none{font-size:14px;color:#475569}
 .mp-load{font-size:13px;color:#64748b}
 .mp-warn{font-size:12.5px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;
   border-radius:8px;padding:8px 11px;margin:0 0 12px;line-height:1.5}
-/* The table itself is the site's `sticky-table` inside `.table-scroll`, the
-   same pair the built ranking beside it uses - a reader's league should not
-   be a second look. What is left here is the page furniture around it: the
-   loading line, the caveats and the note. The old `mp-t` table, its own rank
-   column and its little power bars are gone with it. */
+/* The table itself is the site's `sticky-table pw-table` inside
+   `.table-scroll`, the classes the built ranking beside it wears - a reader's
+   league should not be a second look. Its rules are restated here rather
+   than borrowed from the <style> inside #pw-built (fantasy.site.power
+   _TABLE_CSS and styles.GRID_*): --heat is how strong the shading's ends get
+   per theme, the grid and centring are pandas', and on a phone each column
+   takes what its header needs, so Record, Playoffs and Title sit beside the
+   name at 390px. */
+.mp .pw-table{--heat:.35;font-size:14px}
+.mp .pw-table td{border:1px solid #eef2f7;text-align:center}
+.mp .pw-table th{text-align:center}
+.mp .pw-table td:first-child,.mp .pw-table th:first-child{text-align:left}
+@media (max-width:600px){
+  .mp .pw-table th,.mp .pw-table td{min-width:0;padding:6px 7px}
+  .mp .pw-table td:first-child,.mp .pw-table th:first-child{min-width:0;max-width:122px}
+  .mp .pw-table .row-rank{min-width:1.5em;font-size:12px}
+}
 @media (prefers-color-scheme: dark){
+  .mp .pw-table{--heat:.6}
   .mp-note,.mp-none,.mp-load{color:#aab7c9}
   .mp-warn{color:#fcd34d;background:#2a2410;border-color:#4a3c13}
 }
@@ -305,6 +318,22 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
 
     var players = preparePlayers(spec.board || {}, spec.posNames || [],
                                  rosters, spec.basis || 0);
+    // `pool`: players on no roster who still draw their numbers - the free
+    // agents a trade may sign, and whoever it drops. With them in every run
+    // the set of players is the same whichever rosters are handed in.
+    if(spec.pool && spec.pool.length){
+      var seen = {};
+      for(var q = 0; q < players.length; q++) seen[players[q].id] = 1;
+      var extra = preparePlayers(spec.board || {}, spec.posNames || [],
+        [{players:spec.pool.filter(function(id){ return !seen[String(id)]; })}],
+        spec.basis || 0);
+      for(q = 0; q < extra.length; q++){ extra[q].team = -1; players.push(extra[q]); }
+    }
+    // `stable` lays the players out by id rather than by roster, so every
+    // player draws the same numbers whichever team holds him. The trade page
+    // runs a league twice, before and after a deal, and with the draws shared
+    // the difference between the runs is the deal rather than the dice.
+    if(spec.stable) players.sort(function(a, b){ return a.id < b.id ? -1 : a.id > b.id ? 1 : 0; });
     var found = startingSlots(spec.slots);
     var slots = found.slots;
     var regular = Math.max(spec.weeks || 14, 1);
@@ -344,6 +373,7 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
     var wins = [], pointsFor = [];
     for(var t = 0; t < teams; t++){ wins.push([]); pointsFor.push([]); }
     var madePlayoffs = new Float64Array(teams), titles = new Float64Array(teams);
+    var restPoints = new Float64Array(teams);
     var weekPoints = [];
     for(var w = 0; w < total; w++) weekPoints.push(new Float64Array(teams));
 
@@ -419,7 +449,10 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
       var seasonWins = new Float64Array(teams), seasonPoints = new Float64Array(teams);
       for(week = 0; week < regular; week++){
         var row = weekPoints[week];
-        for(t = 0; t < teams; t++) seasonPoints[t] += row[t];
+        for(t = 0; t < teams; t++){
+          seasonPoints[t] += row[t];
+          if(week >= played) restPoints[t] += row[t];
+        }
         var pairs = table[week % table.length];
         if(pairs){
           for(t = 0; t < teams; t++){
@@ -473,6 +506,8 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
                 projWins:wSum / sims,
                 winsP10:percentile(wins[t], 10), winsP90:percentile(wins[t], 90),
                 projPoints:projPoints,
+                // Points a week over the regular weeks still to be played.
+                restPerWeek:regular > played ? restPoints[t] / sims / (regular - played) : 0,
                 playoffOdds:madePlayoffs[t] / sims,
                 titleOdds:titles[t] / sims});
     }
@@ -486,7 +521,7 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
     out.sort(function(a, b){ return b.power - a.power; });
 
     var missing = 0;
-    for(i = 0; i < players.length; i++) if(!players[i].known) missing++;
+    for(i = 0; i < players.length; i++) if(!players[i].known && players[i].team >= 0) missing++;
     return {teams:out, sims:sims, weeks:regular, playoffWeeks:playoffWeeks,
             playoffTeams:playoffTeams, slots:slots.map(function(s){ return s.name; }),
             unsupported:found.unsupported, unknownPlayers:missing,
@@ -508,49 +543,23 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
 </script>{% endraw %}"""
 
 
-JS = """{% raw %}<script>
-(function(){
-  var host=document.getElementById('mp-host');
-  if(!host||!window.GSL) return;
-  var have=GSL.saved();
-  if(!have||!have.id||have.site){
-    // Drawn twice: once now, and again when the account call settles, because
-    // whether to offer a sign-in or a league picker is not known at first paint.
-    var none=function(){ host.innerHTML=window.GSLeague
-      ? GSLeague.empty('mp-none','power rankings')
-      : '<p class="mp-none">Pick a league above to see its power rankings.</p>'; };
-    none();
-    if(window.GSLeague&&GSLeague.ready) GSLeague.ready.then(none,none);
-    return;
-  }
 
-  var SIMS=10000;
-  // What a reader sees while the full run finishes. Two thousand seasons is
-  // a tenth of the work and lands within a point of the answer, so the table
-  // appears almost at once and then settles rather than sitting empty.
-  var FIRST=2000;
+# Reading a league into the simulation's terms, and running it off the main
+# thread: shared by the reader's power table and the trade page (gordstats.
+# trade_page), which runs one league twice.
+LEAGUE_JS = """{% raw %}<script>
+window.GSPowerLeague = (function(){
   var DEFAULT_WEEKS=14;
 
-  function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
-  }
-  function pct(v){ return Math.round(v*100)+'%'; }
   function get(path){
-    return GSAPI.get(path)
-      .catch(function(){return null;});
+    return GSAPI.get(path).catch(function(){ return null; });
   }
-
-  /** Sleeper keeps a roster's points as an integer and its decimal, apart. */
-  function points(s){ return (s.fpts||0)+((s.fpts_decimal||0)/100); }
 
   /** Every regular week's pairings, and the scores of the ones already played.
    *
-   * Sleeper posts a week's matchup ids as soon as the schedule exists, so the
-   * whole season's opponents are readable in advance; the points arrive as the
-   * weeks do. A week counts as played only when every roster has a score -
-   * part of a week is worse than none of it, because the teams still to play
-   * would be simulated as having been shut out.
+   * A week counts as played only when every roster has a score - part of a
+   * week is worse than none of it, because the teams still to play would be
+   * simulated as having been shut out.
    */
   function season(id, weeks, order){
     var want=[];
@@ -589,24 +598,17 @@ JS = """{% raw %}<script>
     });
   }
 
-  /** Run the simulation off the main thread, falling back to it if we must.
-   *
-   * Ten thousand seasons is seconds of solid arithmetic and a phone would
-   * simply stop responding. The Worker is built from the simulation's own
-   * <script> element, so there is one copy of it rather than one per thread.
-   */
+  /** Run the simulation in a Worker built from its own <script> element,
+   *  falling back to the main thread if there is no Worker to be had. */
   function simulate(spec){
     return new Promise(function(resolve, reject){
       var src=document.getElementById('gs-power-sim');
       var url=null, worker=null;
       try{
-        url=URL.createObjectURL(new Blob([src.textContent],
-                                         {type:'text/javascript'}));
+        url=URL.createObjectURL(new Blob([src.textContent], {type:'text/javascript'}));
         worker=new Worker(url);
       }catch(e){
         if(url) URL.revokeObjectURL(url);
-        // No Worker: run it here rather than show nothing. The page freezes
-        // for a moment, which is worse than a Worker and better than a blank.
         try{ return resolve(window.GSPower.run(spec)); }
         catch(err){ return reject(err); }
       }
@@ -624,6 +626,77 @@ JS = """{% raw %}<script>
     });
   }
 
+  /** One league read into a simulation spec: {league, board, order, weeks,
+   *  played, run, spec}. The caller sets `sims` and anything else it needs. */
+  function setup(id){
+    return Promise.all([
+      GSL.league(id),
+      fetch('/fantasy/season-board.json').then(function(r){
+        return r.ok?r.json():null; }).catch(function(){ return null; })
+    ]).then(function(o){
+      var league=o[0], board=o[1];
+      if(!board||!board.board) throw new Error('board');
+      if(!league||!league.rosters.length) throw new Error('league');
+      var settings=(league.info&&league.info.settings)||{};
+      var weeks=Math.max((settings.playoff_week_start||(DEFAULT_WEEKS+1))-1, 1);
+      var order=league.rosters.map(function(r){ return r.roster_id; })
+        .sort(function(a,b){ return a-b; });
+      var byId={};
+      league.rosters.forEach(function(r){ byId[String(r.roster_id)]=r; });
+      var rosters=order.map(function(rid){
+        return {roster_id:rid, players:(byId[String(rid)].players)||[]};
+      });
+      return season(id, weeks, order).then(function(run){
+        // Sleeper has the scores and the board has absorbed them into form;
+        // the lesser of the two (and of Sleeper's own last scored week) keeps
+        // a week from being counted as played by one and projected by the
+        // other - the rule fantasy.league.power.rankings follows.
+        var scored=typeof settings.last_scored_leg==='number'?settings.last_scored_leg:weeks;
+        var played=Math.min(run.played, board.week||0, weeks, scored);
+        var spec={board:board.board, posNames:board.pos, rosters:rosters,
+                  slots:league.slots, basis:league.basis.index, weeks:weeks,
+                  playoffTeams:settings.playoff_teams||6,
+                  median:!!settings.league_average_match,
+                  schedule:run.schedule,
+                  actual:run.actual.slice(0, played),
+                  sims:2000, seed:20260821};
+        return {league:league, board:board, order:order, weeks:weeks,
+                played:played, run:run, spec:spec};
+      });
+    });
+  }
+
+  return {season:season, simulate:simulate, setup:setup};
+})();
+</script>{% endraw %}"""
+
+JS = """{% raw %}<script>
+(function(){
+  var host=document.getElementById('mp-host');
+  if(!host||!window.GSL) return;
+  var have=GSL.saved();
+  if(!have||!have.id||have.site){
+    // Drawn twice: once now, and again when the account call settles, because
+    // whether to offer a sign-in or a league picker is not known at first paint.
+    var none=function(){ host.innerHTML=window.GSLeague
+      ? GSLeague.empty('mp-none','power rankings')
+      : '<p class="mp-none">Pick a league above to see its power rankings.</p>'; };
+    none();
+    if(window.GSLeague&&GSLeague.ready) GSLeague.ready.then(none,none);
+    return;
+  }
+
+  var SIMS=10000;
+  // What a reader sees while the full run finishes. Two thousand seasons is
+  // a tenth of the work and lands within a point of the answer, so the table
+  // appears almost at once and then settles rather than sitting empty.
+  var FIRST=2000;
+
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+  }
+  function pct(v){ return Math.round(v*100)+'%'; }
   // matplotlib's RdYlGn, the eleven anchors pandas interpolates between, so a
   // reader's column is shaded on the same scale as the built page's.
   var RDYLGN=[[165,0,38],[215,48,39],[244,109,67],[253,174,97],[254,224,139],
@@ -636,14 +709,22 @@ JS = """{% raw %}<script>
     return [Math.round(a[0]+(b[0]-a[0])*f), Math.round(a[1]+(b[1]-a[1])*f),
             Math.round(a[2]+(b[2]-a[2])*f)];
   }
-  /** A cell shaded like pandas' background_gradient: the column normalised
-   *  over its own min and max, and the text flipped where the fill is dark. */
+  /** A cell shaded the way the built table's `_heat` shades it: the column
+   *  normalised over its own min and max, and the ramp's colour laid on as a
+   *  wash whose strength grows with the distance from the middle - so the
+   *  middle of a column is no colour at all. A background-image, not a
+   *  background-color, so the themed cell underneath (white, zebra or navy)
+   *  and the theme's own ink survive; `--heat` (CSS) is how strong the ends
+   *  get in each theme. A solid fill here was a pale-yellow block at night. */
   function shade(value, lo, hi){
     if(value==null||value!==value||hi<=lo) return '';
-    var c=ramp((value-lo)/(hi-lo));
-    var lum=(0.299*c[0]+0.587*c[1]+0.114*c[2])/255;
-    return 'background-color:rgb('+c[0]+','+c[1]+','+c[2]+');color:'
-      +(lum<0.5?'#f8fafc':'#0f172a');
+    var t=Math.min(Math.max((value-lo)/(hi-lo),0),1);
+    var strength=Math.abs(2*t-1);
+    if(strength<0.03) return '';
+    var c=ramp(t);
+    var wash='rgb('+c[0]+' '+c[1]+' '+c[2]+' / calc(var(--heat, .35) * '
+      +strength.toFixed(2)+'))';
+    return 'background-image:linear-gradient('+wash+', '+wash+')';
   }
   function bounds(values){
     var ok=values.filter(function(v){ return v!=null&&v===v; });
@@ -692,24 +773,27 @@ JS = """{% raw %}<script>
     if(played) luckBound=Math.max(1, Math.max.apply(null,
       real.map(function(r){ return Math.abs(r.luck); })));
 
+    // The built table's order (fantasy.site.power._rankings_table): what a
+    // phone sees beside the name is what a reader came for - the record, then
+    // the playoff and title odds - with the figure the rows are ranked by
+    // after it, and the projection and the luck last. A played week with no
+    // record for a seat keeps its cells, empty, so the columns stay aligned.
     var rows=result.teams.map(function(t, i){
-      var mine=real&&real[seat[String(t.roster_id)]];
-      var record=played&&mine
-        ? ('<td>'+mine.wins+'-'+mine.losses+'</td>'
-           +'<td style="'+shade(mine.luck,-luckBound,luckBound)+'">'
-           +(mine.luck>=0?'+':'')+mine.luck.toFixed(1)+'</td>')
-        : '';
+      var mine=played&&real[seat[String(t.roster_id)]];
       return '<tr><td><span class="row-rank">'+(i+1)+'</span>'
         +esc(names[String(t.roster_id)]||('Roster '+t.roster_id))+'</td>'
-        +'<td style="'+shade(t.power,pw[0],pw[1])+'">'+t.power.toFixed(1)+'</td>'
-        +record
-        +'<td>'+t.projWins.toFixed(1)+'-'+(games-t.projWins).toFixed(1)+'</td>'
+        +(played?'<td>'+(mine?mine.wins+'-'+mine.losses:'')+'</td>':'')
         +'<td style="'+shade(t.playoffOdds,po[0],po[1])+'">'+pct(t.playoffOdds)+'</td>'
-        +'<td>'+pct(t.titleOdds)+'</td></tr>';
+        +'<td>'+pct(t.titleOdds)+'</td>'
+        +'<td style="'+shade(t.power,pw[0],pw[1])+'">'+t.power.toFixed(1)+'</td>'
+        +'<td>'+t.projWins.toFixed(1)+'-'+(games-t.projWins).toFixed(1)+'</td>'
+        +(played?'<td style="'+(mine?shade(mine.luck,-luckBound,luckBound):'')+'">'
+                 +(mine?(mine.luck>=0?'+':'')+mine.luck.toFixed(1):'')+'</td>':'')
+        +'</tr>';
     }).join('');
-    var head='<th>Team</th><th>Power</th>'
-      +(played?'<th>Record</th><th>Luck</th>':'')
-      +'<th>Proj. Record</th><th>Playoffs</th><th>Title</th>';
+    var head='<th>Team</th>'+(played?'<th>Record</th>':'')
+      +'<th>Playoffs</th><th>Title</th><th>Power</th><th>Proj. Record</th>'
+      +(played?'<th>Luck</th>':'');
 
     var caveats=[];
     if(result.unsupported.length){
@@ -724,7 +808,7 @@ JS = """{% raw %}<script>
     }
 
     return (caveats.length?'<p class="mp-warn">'+caveats.join(' ')+'</p>':'')
-      +'<div class="table-scroll"><table class="sticky-table"><thead><tr>'
+      +'<div class="table-scroll"><table class="sticky-table pw-table"><thead><tr>'
       +head+'</tr></thead><tbody>'+rows+'</tbody></table></div>'
       +'<p class="mp-note">'
       +(settling?'<strong>Settling&hellip;</strong> ':'')
@@ -742,75 +826,37 @@ JS = """{% raw %}<script>
   host.innerHTML='<p class="mp-load">Reading '+esc(have.name||'your league')
     +'\\u2026</p>';
 
-  Promise.all([
-    GSL.league(have.id),
-    fetch('/fantasy/season-board.json').then(function(r){
-      return r.ok?r.json():null; }).catch(function(){ return null; })
-  ]).then(function(o){
-    var league=o[0], board=o[1];
-    if(!board||!board.board) throw new Error('board');
-    if(!league||!league.rosters.length) throw new Error('league');
-
-    var settings=(league.info&&league.info.settings)||{};
-    var weeks=Math.max((settings.playoff_week_start||(DEFAULT_WEEKS+1))-1, 1);
-    var order=league.rosters.map(function(r){ return r.roster_id; })
-      .sort(function(a,b){ return a-b; });
-    var byId={};
-    league.rosters.forEach(function(r){ byId[String(r.roster_id)]=r; });
-    var rosters=order.map(function(rid){
-      return {roster_id:rid, players:(byId[String(rid)].players)||[]};
-    });
-
-    host.innerHTML='<p class="mp-load">Playing '+esc(league.info.name||'the league')
-      +'\\u2019s season out\\u2026</p>';
-
-    return season(have.id, weeks, order).then(function(run){
-      // Two sources have to agree about how much of the season has happened:
-      // Sleeper, which has the scores, and the board, which has absorbed them
-      // into each player's form. Taking the lesser keeps a week from being
-      // counted as played by one and still projected by the other - the same
-      // rule `power.rankings` follows on the page beside this one.
-      // And Sleeper's own word on which weeks are over: every roster has
-      // points by Monday afternoon, but a week is not over until Monday
-      // night's game is (last_scored_leg says 2 all through week 3's).
-      var scored=typeof settings.last_scored_leg==='number'?settings.last_scored_leg:weeks;
-      var played=Math.min(run.played, board.week||0, weeks, scored);
-      var spec={board:board.board, posNames:board.pos, rosters:rosters,
-                slots:league.slots, basis:league.basis.index, weeks:weeks,
-                playoffTeams:settings.playoff_teams||6,
-                median:!!settings.league_average_match,
-                schedule:run.schedule,
-                actual:run.actual.slice(0, played),
-                sims:FIRST, seed:20260821};
-      // What the played weeks actually returned, so the table can carry the
-      // built page's Record and Luck columns rather than projections alone.
-      var real=played?records(spec.actual, run.schedule, spec.median):null;
-      var head=document.getElementById('pw-mine-h');
-      if(head) head.textContent=league.info.name||'Your league';
-      var built=document.getElementById('pw-built');
-      var intro=document.getElementById('pw-intro');
-      // A reader who has picked a league is here for that league: this site's
-      // ranking would only raise the question of whose numbers are on screen.
-      if(built) built.hidden=true;
-      if(intro) intro.hidden=true;
-      return simulate(spec).then(function(quick){
-        host.innerHTML=table(quick, league.names, order, true, real);
-        spec.sims=SIMS;
-        return simulate(spec);
-      }).then(function(full){
-        host.innerHTML=table(full, league.names, order, false, real);
-        var note=host.querySelector('.mp-note');
-        if(note&&league.basis.custom){
-          note.insertAdjacentHTML('beforeend',
-            'This league\\u2019s scoring is close to '+esc(league.basis.name)
-            +' but not exactly it, so the numbers are approximate. ');
-        }
-        if(note){
-          note.insertAdjacentHTML('beforeend',
-            'The ranking beside this one blends an outside source; this is '
-            +'this site\\u2019s simulation alone.');
-        }
-      });
+  GSPowerLeague.setup(have.id).then(function(s){
+    var league=s.league, order=s.order, run=s.run, spec=s.spec, played=s.played;
+    spec.sims=FIRST;
+    // What the played weeks actually returned, so the table can carry the
+    // built page's Record and Luck columns rather than projections alone.
+    var real=played?records(spec.actual, run.schedule, spec.median):null;
+    var head=document.getElementById('pw-mine-h');
+    if(head) head.textContent=league.info.name||'Your league';
+    var built=document.getElementById('pw-built');
+    var intro=document.getElementById('pw-intro');
+    // A reader who has picked a league is here for that league: this site's
+    // ranking would only raise the question of whose numbers are on screen.
+    if(built) built.hidden=true;
+    if(intro) intro.hidden=true;
+    return GSPowerLeague.simulate(spec).then(function(quick){
+      host.innerHTML=table(quick, league.names, order, true, real);
+      spec.sims=SIMS;
+      return GSPowerLeague.simulate(spec);
+    }).then(function(full){
+      host.innerHTML=table(full, league.names, order, false, real);
+      var note=host.querySelector('.mp-note');
+      if(note&&league.basis.custom){
+        note.insertAdjacentHTML('beforeend',
+          'This league\\u2019s scoring is close to '+esc(league.basis.name)
+          +' but not exactly it, so the numbers are approximate. ');
+      }
+      if(note){
+        note.insertAdjacentHTML('beforeend',
+          'The ranking beside this one blends an outside source; this is '
+          +'this site\\u2019s simulation alone.');
+      }
     });
   }).catch(function(err){
     if(err instanceof TypeError) console.error(err);
@@ -819,6 +865,11 @@ JS = """{% raw %}<script>
   });
 })();
 </script>{% endraw %}"""
+
+
+# The page script needs the shared loader first; a page that carries the
+# trade analyzer as well defines it twice, harmlessly.
+JS = LEAGUE_JS + JS
 
 
 def section() -> str:

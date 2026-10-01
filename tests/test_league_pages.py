@@ -344,7 +344,15 @@ def test_every_gradient_passes_the_threshold():
 
 def test_the_readers_own_shading_agrees_with_pandas():
     """my_power shades its own cells rather than going through pandas, so it
-    has to make the same call about ink."""
+    has to paint them the way the built table does: the same wash under the
+    theme's own ink (fantasy.site.power._heat), never a fill with ink of its
+    own."""
+    import inspect
+
+    from fantasy.site import power as built
     from gordstats import my_power
 
-    assert "lum<0.5?'#f8fafc':'#0f172a'" in my_power.JS.replace(" ", "")
+    wash = "calc(var(--heat, .35) * "
+    assert wash in inspect.getsource(built._heat)
+    assert wash in my_power.JS
+    assert "background-color:" not in my_power.JS
