@@ -57,12 +57,21 @@ it, since a disagreement means the two were handed different standings).
 
 `opp` and `win` only for a week not yet played (the stakes week); `odds` from
 the season simulation.
+
+The matchups pages open the week with the news of it (callout(): who has
+clinched, who is out, who is playing for a place this week), read from a file
+the power build leaves beside its stakes (write() / read()): the picture needs
+the simulation's standings, and a matchups page rebuilt every ten minutes of a
+game day has no business running twenty thousand seasons to get them.
 """
+import json
 import math
 from html import escape
+from pathlib import Path
 
 EPS = 1e-9
 NEAR = 0.99                     # a win's odds from here up earn a chip of their own
+FILE = "playoff-picture.json"   # beside stakes.json in each league's web folder (write())
 
 CSS = """<style>
 /* The theme boxes every cell in #373737; this table draws rows only, so the
@@ -261,7 +270,8 @@ def _names(keys: list, teams: dict) -> str:
 
 def summary(teams: dict, status: dict, week: int | None = None) -> str:
     """One line: who is in, who is out, who can settle it this week - the
-    section's lead, and the line a matchups page could open with."""
+    section's lead. A matchups page opens with callout(), which says only
+    what is settled or at stake this week."""
     order = standing(teams)
 
     def by(test):
@@ -411,3 +421,89 @@ def section(teams: dict, spots: int, bye_spots: int = 0, median: bool = False,
     return (CSS + lead + "<div class='table-scroll'><table class='clp'><thead><tr>" + heads
             + "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>"
             + f"<p class='cl-note'>{' '.join(notes)}</p>")
+
+
+CALL_CSS = """<style>
+.cl-call{border:1px solid #e2e8f0;border-radius:10px;background:#fff;padding:8px 12px;
+  margin:0 0 14px;font-size:13.5px;line-height:1.5;color:#334155}
+.cl-call .cl-lb{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  color:#475569;margin-right:6px}
+.cl-call b{color:#0f172a}
+.cl-call a{white-space:nowrap}
+@media (prefers-color-scheme: dark){
+  .cl-call{background:#16203a;border-color:#2b3852;color:#c3cfdd}
+  .cl-call .cl-lb{color:#aab7c9}
+  .cl-call b{color:#f1f5f9}
+}
+</style>"""
+
+
+def callout(teams: dict, spots: int, bye_spots: int = 0, median: bool = False,
+            names: dict = None, more: str = "") -> str:
+    """The week's playoff news for the top of a matchups page, only when there
+    is some: who has clinched (a bye, the top seed), whose win this week puts
+    them in, whose loss puts them out (must win), who is out already. Nothing while it is
+    all still open - the magic numbers are the power page's. `names` maps a
+    key to the name that page uses (team names there, managers on NFL power);
+    `more` goes at the end (a link to the whole picture)."""
+    if not teams or not spots:
+        return ""
+    names = names or {}
+    named = {k: {**t, "name": names.get(k) or t["name"]} for k, t in teams.items()}
+    status = picture(named, spots, bye_spots, median)
+    order = standing(named)
+
+    def by(test):
+        return [k for k in order if test(status[k])]
+
+    def tag(k):
+        s = status[k]
+        extra = " (#1)" if s["top"] else " (bye)" if s["bye"] else ""
+        return escape(str(named[k]["name"])) + extra
+
+    def names_of(keys):
+        got = [tag(k) for k in keys]
+        return got[0] if len(got) == 1 else ", ".join(got[:-1]) + " and " + got[-1]
+    parts = []
+    for label, keys in (("Clinched", by(lambda s: s["clinched"])),
+                        ("Win and in", by(lambda s: s["win_in"])),
+                        ("Win both and in", by(lambda s: s["both_in"])),
+                        ("Must win", by(lambda s: s["must_win"])),
+                        ("Eliminated", by(lambda s: s["eliminated"]))):
+        if keys:
+            parts.append(f"<b>{label}</b>: {names_of(keys)}.")
+    if not parts:
+        return ""
+    return (CALL_CSS + "<p class='cl-call'><span class='cl-lb'>Playoff picture</span>"
+            + " ".join(parts) + (f" {more}" if more else "") + "</p>")
+
+
+def write(path: Path, week: int | None = None, teams: dict = None, spots: int = 0,
+          bye_spots: int = 0, median: bool = False) -> None:
+    """Leave the picture the power page drew for the matchups page of `week`
+    (the week being played); clear it when there is no week to show - the
+    same rule as gordstats.stakes, and for the same reason."""
+    path = Path(path)
+    if not week or not teams or not spots:
+        if path.exists():
+            path.unlink()
+        return
+    keep = ("name", "wins", "losses", "left", "pf", "odds", "opp", "win")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"week": int(week), "spots": int(spots),
+                                "byes": int(bye_spots), "median": bool(median),
+                                "teams": {str(k): {f: t.get(f) for f in keep}
+                                          for k, t in teams.items()}},
+                               separators=(",", ":")), encoding="utf-8")
+
+
+def read(path: Path, week: int) -> dict:
+    """The picture left for `week` - {week, spots, byes, median, teams} - or
+    {} if there is none for it."""
+    try:
+        d = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    if int(d.get("week") or 0) != int(week) or not d.get("teams"):
+        return {}
+    return d

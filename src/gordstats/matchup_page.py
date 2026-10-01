@@ -4,8 +4,14 @@ fantasy.site.matchups): the scoreboard table, the matchup header, the
 roster tables and the week switcher. Each section renders its own rows -
 the leagues score different things - but a matchup should read the same
 way on both pages, so the classes and the styling live here once.
+
+The current week opens with what is at stake: the game of the week
+(gordstats.stakes) and the playoff picture's news (playoff_callout), both read
+from what the league's power build left beside the page.
 """
 import pandas as pd
+
+from gordstats import clinch
 
 CSS = """<style>
 .mu-wrap{margin:8px 0 18px}
@@ -499,6 +505,18 @@ def score_cell(pts, proj, state, exp=None, mark_proj: bool = False) -> str:
         return f'<b class="mu-now">{fmt(pts)}</b><span class="mu-exp"></span>'
     return (f'<b class="mu-now proj">{fmt(proj)}</b>'
             f'<span class="mu-exp">{"proj" if mark_proj and proj is not None else ""}</span>')
+
+
+def playoff_callout(path, week: int, names: dict = None, more: str = "") -> str:
+    """Who has clinched, who is out and who plays for a place in `week`
+    (gordstats.clinch.callout), from the picture the power build left at
+    `path` for that week - or nothing, when it left none or there is no news.
+    `names` maps a team key to the name this page uses."""
+    pic = clinch.read(path, week)
+    if not pic:
+        return ""
+    return clinch.callout(pic["teams"], pic.get("spots") or 0, pic.get("byes") or 0,
+                          bool(pic.get("median")), names=names, more=more)
 
 
 def week_switch(weeks: list, current: int, views: dict) -> str:

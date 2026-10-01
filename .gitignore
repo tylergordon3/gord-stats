@@ -105,6 +105,8 @@ docs/fantasy/week-projections.json
 docs/fantasy/espn-ids.json
 docs/fantasy/stakes.json
 docs/cfb/stakes.json
+docs/fantasy/playoff-picture.json
+docs/cfb/playoff-picture.json
 docs/fantasy/season-board.json
 docs/_includes/cfb_bets.html
 docs/_includes/nfl_bets.html

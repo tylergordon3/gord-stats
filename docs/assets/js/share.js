@@ -12,11 +12,35 @@
  *
  *   <button class="gs-share" data-url="/fantasy/recap/week-3/"
  *           data-text="Week 3: ..." data-title="NFL Week 3 Recap">Share</button>
+ *
+ * A button with data-league shares the reader's own league when one is on
+ * screen: the address gets ?league=<its id>, so a friend opens the same
+ * league (gordstats/my_league.py shows it for that visit), and "{league}" in
+ * the line becomes its name. This site's league adds nothing.
  */
 (function () {
   function absolute(path) {
     try { return new URL(path || location.pathname, location.origin).href; }
     catch (e) { return location.href; }
+  }
+
+  /** The reader's league on screen, {id, name}, or null for this site's. The
+   *  same saved league every reader page reads (or the one shared with this
+   *  visit, which my_league answers for it). */
+  function readerLeague() {
+    try {
+      var h = JSON.parse(localStorage.getItem("gsSleeperLeague") || "null");
+      return h && h.id && !h.site ? h : null;
+    } catch (e) { return null; }
+  }
+
+  function withLeague(url, id) {
+    var hash = "", i = url.indexOf("#");
+    if (i >= 0) { hash = url.slice(i); url = url.slice(0, i); }
+    url = url.replace(/([?&])league=[^&]*&?/, "$1").replace(/[?&]$/, "");
+    // An ESPN id's colons are fine in a query and easier on the eye unescaped.
+    var value = encodeURIComponent(String(id)).replace(/%3A/gi, ":");
+    return url + (url.indexOf("?") >= 0 ? "&" : "?") + "league=" + value + hash;
   }
 
   function flash(btn, text) {
@@ -50,6 +74,11 @@
     e.preventDefault();
     var url = absolute(btn.dataset.url);
     var text = btn.dataset.text || "";
+    if (btn.hasAttribute("data-league")) {
+      var lg = readerLeague();
+      if (lg) url = withLeague(url, lg.id);
+      text = text.replace(/\{league\}/g, (lg && lg.name) || "My league");
+    }
     var data = { title: btn.dataset.title || document.title, text: text, url: url };
     if (navigator.share && (!navigator.canShare || navigator.canShare(data))) {
       navigator.share(data).catch(function (err) {

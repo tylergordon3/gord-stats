@@ -777,6 +777,7 @@ def body() -> str:
         "positions": _positions_section(rosters, table),
         "method": _method_section(),
     }
+    _leave_picture()
     # Only sections with something in them: an empty one (no stakes between
     # a week's end and the model counting it) left the jump bar a dead link.
     nav = layout.section_nav([(a, label) for a, _, label, _ in SECTIONS
@@ -790,11 +791,17 @@ def body() -> str:
         else f"<section id='{anchor}' class='pw-section'><h2>{summary}</h2>{content[anchor]}</section>"
         for anchor, summary, _, folds in SECTIONS
         if anchor != "mine" and content[anchor])
-    return (INTRO + my_league.bar()
+    return (INTRO + my_league.bar() + _reader_share()
             + "<section id='mine' class='pw-section'>"
             + "<h2 id='pw-mine-h'>Your League</h2>" + content["mine"] + "</section>"
             + f"<div id='pw-built'>{_TABLE_CSS}{nav}{rest}</div>"
             + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.JS)
+
+
+def _reader_share() -> str:
+    """The Share button for a reader's own league, shown only while it is on
+    screen; it sends that league (gordstats.share_button.league_row)."""
+    return share_button.league_row("/fantasy/power/", "{league} power rankings")
 
 
 _CARD: dict = {}
@@ -834,6 +841,7 @@ def _playoffs_section(table: pd.DataFrame, week, teams: dict) -> str:
     stakes, (None, {}) once the week is over: a "win and in" is only offered
     for a game still to be played. Nothing before the first week is in, when
     every record is 0-0 and the rankings table already has the odds."""
+    _CARD.pop("picture", None)
     if "wins" not in table.columns or int(table["week"].iloc[0]) == 0:
         return ""
     played = int(table["week"].iloc[0])
@@ -849,7 +857,19 @@ def _playoffs_section(table: pd.DataFrame, week, teams: dict) -> str:
     field = power.PLAYOFF_TEAMS
     for problem in clinch.check(rows, clinch.picture(rows, field, clinch.byes(field), True)):
         print(f"  ! playoff picture: {problem}")
+    _CARD["picture"] = dict(week=week, teams=rows, spots=field, bye_spots=clinch.byes(field),
+                            median=True)
     return clinch.section(rows, field, clinch.byes(field), median=True, week=week)
+
+
+# The playoff picture, for the matchups page's callout (gordstats.clinch).
+PICTURE_OUT = paths.WEB_FANTASY_DIR / clinch.FILE
+
+
+def _leave_picture() -> None:
+    """What _playoffs_section drew, left for the matchups page; cleared when
+    it drew nothing or the week is over (clinch.write)."""
+    clinch.write(PICTURE_OUT, **(_CARD.pop("picture", None) or {}))
 
 
 def card() -> dict | None:

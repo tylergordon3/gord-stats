@@ -434,6 +434,7 @@ def section() -> str:
     season = _season_section({r["key"]: r["team"]["name"] for r in rows})
     playoffs = _playoffs_section(sim, lg, {r["key"]: r["team"].get("name") or r["key"]
                                            for r in rows})
+    _leave_picture()
 
     field = lg.get("num_playoff_teams") or 0
     return (
@@ -466,6 +467,7 @@ def _playoffs_section(sim: pd.DataFrame, lg: dict, names: dict) -> str:
     games_left, the median game counted), so a team called clinched is in
     every run; the week's head-to-head is offered only while _stakes still
     has it, i.e. before the week is final."""
+    _CARD.pop("picture", None)
     field = int(lg.get("num_playoff_teams") or 0)
     if sim.empty or not field or "games_left" not in sim.columns:
         return ""
@@ -481,8 +483,20 @@ def _playoffs_section(sim: pd.DataFrame, lg: dict, names: dict) -> str:
     median = bool(lg.get("uses_median_score"))
     for problem in clinch.check(teams, clinch.picture(teams, field, clinch.byes(field), median)):
         print(f"  ! playoff picture: {problem}")
+    _CARD["picture"] = dict(week=week, teams=teams, spots=field, bye_spots=clinch.byes(field),
+                            median=median)
     return ("<h3 id='playoffs'>Playoff Picture</h3>"
             + clinch.section(teams, field, clinch.byes(field), median=median, week=week))
+
+
+# The playoff picture, for the matchups page's callout (gordstats.clinch).
+PICTURE_OUT = WEB_DIR / clinch.FILE
+
+
+def _leave_picture() -> None:
+    """What _playoffs_section drew, left for the matchups page; cleared when
+    it drew nothing or the week is over (clinch.write)."""
+    clinch.write(PICTURE_OUT, **(_CARD.pop("picture", None) or {}))
 
 
 def body() -> str:

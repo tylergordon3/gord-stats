@@ -32,7 +32,7 @@ from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import logos, matchup_page as ui
 from gordstats import my_league, my_league_data, my_matchups, my_week
-from gordstats import share_button, share_card, stakes
+from gordstats import clinch, share_button, share_card, stakes
 from gordstats.frontmatter import add_front_matter
 
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
@@ -1110,13 +1110,15 @@ def body() -> str:
     current = open_weeks[0] if open_weeks else weeks[-1]
     _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
     views = {w: week_view(datas[w], ctx) for w in weeks}
-    views[current] = _game_of_week(current) + views[current]
+    views[current] = _game_of_week(current) + _playoff_news(current) + views[current]
     scored = accuracy_section(datas, ctx)
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     return (
         ui.CSS
         + my_league.bar()
+        # A reader's league shares itself: shown only while it is on screen.
+        + share_button.league_row("/fantasy/matchups/", f"{{league}}: week {current} matchups")
         + my_matchups.section(current, UPCOMING_YEAR,
                               f"{data_mod.ESPN_SCOREBOARD}?week={current}&dates={UPCOMING_YEAR}"
                               "&seasontype=2")
@@ -1179,6 +1181,17 @@ def _game_of_week(week: int) -> str:
     return stakes.callout(week, teams, names=info["names"],
                           anchor=info["anchors"].get(ranked[0][0], ""),
                           more="<a href='/fantasy/power/#stakes'>Every team's stakes &rarr;</a>")
+
+
+def _playoff_news(week: int) -> str:
+    """Who has clinched, who is out and who plays for a place this week
+    (gordstats.clinch), from the picture the power page left - until the
+    week is final."""
+    info = _CARDS.get(week)
+    if not info or info["final"]:
+        return ""
+    return ui.playoff_callout(paths.WEB_FANTASY_DIR / clinch.FILE, week, names=info["names"],
+                              more="<a href='/fantasy/power/#playoffs'>The picture &rarr;</a>")
 
 
 def _share_row() -> str:

@@ -15,6 +15,15 @@ one.
 
 Only the ownership changes. Snap shares, carries and targets are properties of
 the NFL, not of anyone's league, so nothing else on the page moves.
+
+A league shared by link. The Share button on a reader's page sends the address
+with `?league=<id>` (gordstats.share_button). Whoever opens it sees that league
+for the visit - this tab, until it is closed or they choose otherwise - and
+their own saved league is left alone: site_league_js answers every page's read
+of the saved league with the shared one while the visit lasts, so no page has
+to know. The bar says whose league it is, with "Use this league" to keep it
+(the browser's saved league then, and the account's when signed in) and a way
+back to their own.
 """
 
 from gordstats import league_api
@@ -45,6 +54,9 @@ CSS = """<style>
 .ml-bar label{display:inline-flex;align-items:center;gap:7px;min-width:0}
 .ml-msg{font-size:12.5px}
 .ml-msg.err{color:#b91c1c}
+/* A league shared by link: its name gives way before either button does. */
+.ml-bar.ml-vis .ml-who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ml-bar button.ml-keep{font-weight:700;border-color:var(--accent,#C2410C);color:var(--accent,#C2410C)}
 /* The sign-in offer sits where the username box would be, so it is styled as
    the primary thing on the row and the league id as the alternative. */
 .ml-in{font:inherit;font-size:12.5px;font-weight:600;padding:5px 12px;
@@ -68,6 +80,7 @@ CSS = """<style>
     display:inline-flex;align-items:center}
   .ml-bar .ml-msg{flex:1 1 100%}
   .ml-bar .ml-msg:empty{display:none}
+  .ml-bar.ml-vis .ml-who{flex:1 1 0}
 }
 @media (prefers-color-scheme: dark){
   .ml-bar{color:#aab7c9}
@@ -81,6 +94,7 @@ CSS = """<style>
   .ml-bar select option{background:#16203a;color:#dde5ef}
   .ml-or{color:#94a3b8}
   .ml-msg.err{color:#ff9b91}
+  .ml-bar button.ml-keep{border-color:#fb923c;color:#fdba74}
 }
 </style>"""
 
@@ -280,7 +294,49 @@ JS = """{% raw %}<script>
     });
   }
 
+  /** Whose league a shared link is showing, with the two ways out of it:
+   *  keep it, or go back to their own (or this site's). */
+  function drawVisit(label){
+    var own=GSVisit.own()||{};
+    var theirs=!!(own.id&&!own.site&&!isSite(own.id));
+    bar.className='ml-bar ml-vis';
+    bar.innerHTML='<span class="ml-label">Shared with you</span><span class="ml-who"></span>'
+      +'<button type="button" class="ml-keep" id="ml-keep">Use this league</button>'
+      +'<button type="button" id="ml-back">'+(theirs?'Back to yours':'This site\u2019s league')
+      +'</button><span class="ml-msg" id="ml-msg"></span>';
+    bar.querySelector('.ml-who').textContent=label||'A shared league';
+    document.getElementById('ml-keep').addEventListener('click',keep);
+    document.getElementById('ml-back').addEventListener('click',function(){
+      GSVisit.end();
+      location.reload();
+    });
+  }
+
+  /** "Use this league": the shared league becomes this browser's saved one,
+   *  and the account's too when there is one (the same best-effort POST as
+   *  connecting by username), or the account's list would put the reader
+   *  back on its first league on the next page. */
+  function keep(){
+    var v=GSVisit.keep();
+    if(!v) return;
+    var row={provider:v.provider==='espn'?'espn':'sleeper', league_id:String(v.id),
+             name:v.name||'', lineage_id:String(v.id)};
+    if(SYNCED.length && !SYNCED.some(function(l){ return String(l.league_id)===row.league_id; })){
+      SYNCED=[row].concat(SYNCED);
+      saveList(SYNCED);
+    }
+    if(signedIn) fetch('/api/leagues',{method:'POST',credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({provider:row.provider, league_id:row.league_id})})
+      .catch(function(){ /* best effort */ });
+    draw(v.name);
+  }
+
+  function visiting(){ return !!(window.GSVisit&&GSVisit.league()); }
+
   function draw(label){
+    if(visiting()){ drawVisit(label||(GSVisit.league()||{}).name); return; }
+    bar.className='ml-bar';
     var cur=saved()||{};
     // A picker whenever there are leagues to pick between, whatever is on
     // screen right now - and this site's league is one of the choices rather
@@ -485,6 +541,9 @@ JS = """{% raw %}<script>
         .map(function(g){ return g.current; });
       if(fromAccount.length){ SYNCED=fromAccount; saveList(SYNCED); }
       if(!SYNCED.length) return;
+      // A league shared by link is what this visit is for: the account's own
+      // leagues wait until the reader goes back to them.
+      if(visiting()){ draw(); return; }
       // "Show this site's league" was a choice a signed-in reader with a
       // league of their own can no longer make, so an old one is not honoured
       // - they are put back on their own league instead.
@@ -545,20 +604,113 @@ def _site_ids() -> list:
 
 
 def site_league_js() -> str:
-    """Runs first on every fantasy page: a saved league that is this site's
-    own - synced from an account or picked by id - is marked as such, so every
-    page shows its built version.
+    """Runs first on every fantasy page, before anything reads the saved
+    league.
 
-    Without it the site's own manager, having synced the league he runs, got
-    the browser-drawn pages meant for a stranger's league: League Home lost
-    its all-time metrics and team profiles to a plainer history, and every
-    other page its archive-backed half."""
-    return ("{% raw %}<script>(function(){try{"
-            f"var ids={_site_ids()!r},k='gsSleeperLeague',"
-            "h=JSON.parse(localStorage.getItem(k)||'null');"
-            "if(h&&h.id&&!h.site&&ids.indexOf(String(h.id))>=0){"
-            "h.site=true;localStorage.setItem(k,JSON.stringify(h));}"
-            "}catch(e){}})();</script>{% endraw %}")
+    A saved league that is this site's own - synced from an account or picked
+    by id - is marked as such, so every page shows its built version. Without
+    it the site's own manager, having synced the league he runs, got the
+    browser-drawn pages meant for a stranger's league: League Home lost its
+    all-time metrics and team profiles to a plainer history, and every other
+    page its archive-backed half.
+
+    And a league shared by link (`?league=<id>`, see the top of this module)
+    is shown for the visit: kept in sessionStorage, and handed to every read
+    of the saved league (localStorage 'gsSleeperLeague') while it lasts, so
+    the pages - several of which read the key themselves - all show it and
+    none writes it over the reader's own. Saving that same league (the bar
+    names it once read) stays in the visit; saving any other is the reader
+    choosing, which ends the visit and is kept. `window.GSVisit` is the bar's
+    handle on it: league(), own() (the reader's real saved league), keep()
+    and end()."""
+    return "{% raw %}<script>" + _SITE_JS.replace("__IDS__", repr(_site_ids())) \
+        + "</script>{% endraw %}"
+
+
+# site_league_js's script. The storage shim touches one key of localStorage
+# and nothing else, and only while a visit is on.
+_SITE_JS = r"""(function(){
+  var ids=__IDS__, K='gsSleeperLeague', V='gsVisitLeague';
+  try{
+    var h=JSON.parse(localStorage.getItem(K)||'null');
+    if(h&&h.id&&!h.site&&ids.indexOf(String(h.id))>=0){
+      h.site=true; localStorage.setItem(K,JSON.stringify(h)); }
+  }catch(e){}
+  try{
+    var LS=localStorage, SS=sessionStorage;
+    var m=/[?&]league=([^&#]*)/.exec(location.search), q=null, visit=null;
+    if(m){ try{ q=decodeURIComponent(m[1]); }catch(e){} }
+    // Only a league id a reader could have saved: Sleeper's digits, or ESPN's.
+    if(q && /^(\d{13,32}|espn:\d{4}:\d{1,12})$/.test(q)){
+      var own=null, prev=null;
+      try{ own=JSON.parse(LS.getItem(K)||'null'); }catch(e){}
+      try{ prev=JSON.parse(SS.getItem(V)||'null'); }catch(e){}
+      // Their own league, or this site's: nothing to show them but that.
+      if(ids.indexOf(q)>=0 || (own&&String(own.id)===q)) SS.removeItem(V);
+      else {
+        visit=(prev&&String(prev.id)===q)?prev:{id:q, name:''};
+        visit.visit=true;
+        if(/^espn:/.test(q)) visit.provider='espn';
+        SS.setItem(V, JSON.stringify(visit));
+      }
+    } else {
+      try{ visit=JSON.parse(SS.getItem(V)||'null'); }catch(e){}
+    }
+    if(!visit||!visit.id) return;
+    var P=Storage.prototype, get=P.getItem, set=P.setItem, rm=P.removeItem;
+    function cur(){ try{ return JSON.parse(get.call(SS, V)||'null'); }catch(e){ return null; } }
+    function end(){
+      rm.call(SS, V);
+      // The address stops saying which league, so a reload shows the choice.
+      try{
+        var u=new URL(location.href);
+        if(u.searchParams.has('league')){
+          u.searchParams.delete('league');
+          history.replaceState(history.state, '', u.pathname+u.search+u.hash);
+        }
+      }catch(e){}
+    }
+    P.getItem=function(k){
+      if(k===K && this===LS){ var v=cur(); if(v&&v.id) return JSON.stringify(v); }
+      return get.apply(this, arguments);
+    };
+    P.setItem=function(k, val){
+      if(k===K && this===LS){
+        var v=cur();
+        if(v&&v.id){
+          var o=null;
+          try{ o=JSON.parse(val); }catch(e){}
+          if(o && String(o.id)===String(v.id)){
+            if(o.name) v.name=o.name;
+            if(o.provider) v.provider=o.provider;
+            set.call(SS, V, JSON.stringify(v));
+            return;
+          }
+          end();
+        }
+      }
+      return set.apply(this, arguments);
+    };
+    P.removeItem=function(k){
+      if(k===K && this===LS && cur()) end();
+      return rm.apply(this, arguments);
+    };
+    window.GSVisit={
+      league:cur,
+      own:function(){ try{ return JSON.parse(get.call(LS, K)||'null'); }catch(e){ return null; } },
+      keep:function(){
+        var v=cur();
+        if(!v) return null;
+        end();
+        var o={id:v.id, name:v.name||''};
+        if(v.provider) o.provider=v.provider;
+        set.call(LS, K, JSON.stringify(o));
+        return o;
+      },
+      end:end
+    };
+  }catch(e){}
+})();"""
 
 
 def takeover(mine: str, built: str) -> str:

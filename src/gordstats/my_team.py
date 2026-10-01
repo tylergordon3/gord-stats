@@ -157,6 +157,33 @@ window.GSPlan = function(players, slotCounts, proj, kickoff, locked, flex, flexP
   });
   return {slot: slot, start: start, cover: cover};
 };
+
+// Who may fill each flex slot a league names - Sleeper's names, which GSAPI
+// gives ESPN's slots too. One table for every page that sets or judges a
+// lineup (this dashboard, the recap), so none can think a slot takes a
+// position another says it does not.
+window.GSPlan.FLEXES = {FLEX: ['RB','WR','TE'], WRRB_FLEX: ['RB','WR'],
+                        REC_FLEX: ['WR','TE'], SUPER_FLEX: ['QB','RB','WR','TE'],
+                        IDP_FLEX: ['DL','LB','DB']};
+
+/** A league's slots as the planner takes them: `counts` of each starting
+ *  slot, the first flex-like slot as `flex` (FLEX in a league with none)
+ *  with its `positions`, the rest as `more` flexes, filled narrowest first,
+ *  and `eligible` for every one. `off` are the slots nobody starts from.
+ *  Every flex used to be FLEX alone, so a superflex beside it read as a
+ *  position nobody plays - left empty, the QB2 benched. */
+window.GSPlan.slots = function(slots, off){
+  var F = window.GSPlan.FLEXES, counts = {}, names = [];
+  (slots || []).forEach(function(s){
+    if ((off || []).indexOf(s) >= 0) return;
+    if (F[s] && names.indexOf(s) < 0) names.push(s);
+    counts[s] = (counts[s] || 0) + 1;
+  });
+  var first = names[0] || 'FLEX', eligible = {};
+  names.concat([first]).forEach(function(n){ eligible[n] = F[n]; });
+  return {counts: counts, flex: first, positions: F[first], eligible: eligible,
+          more: names.slice(1).map(function(n){ return [n, F[n]]; })};
+};
 </script>{% endraw %}"""
 
 
@@ -172,10 +199,6 @@ VIEW_JS = """{% raw %}<script>
   var ADDS_SHOWN=8, MIN_GAIN=0.5;   // the built page's numbers
   // Sleeper's own words for a player who will not play.
   var OUT={'Out':1,'Doubtful':1,'IR':1,'PUP':1,'NA':1,'Sus':1,'DNR':1,'COV':1};
-  var FLEX='FLEX', FLEX_POS=['RB','WR','TE'];
-  // Sleeper's other flex names, mapped onto the one the planner knows.
-  var FLEXLIKE={'FLEX':['RB','WR','TE'],'WRRB_FLEX':['RB','WR'],
-                'REC_FLEX':['WR','TE'],'SUPER_FLEX':['QB','RB','WR','TE']};
 
   function esc(s){
     return String(s==null?'':s).replace(/[&<>"]/g,function(c){
@@ -183,23 +206,9 @@ VIEW_JS = """{% raw %}<script>
   }
   function num(v){ return (v==null||isNaN(v))?'-':(Math.round(v*10)/10).toFixed(1); }
 
-  // Every flex-like slot the league has: the first is the planner's `flex`,
-  // the rest go in as further flexes. Only the first used to count, so a
-  // superflex beside the FLEX read as a position nobody plays - left empty,
-  // the QB2 benched, and the "gain" negative.
-  function slotCounts(slots){
-    var counts={}, names=[];
-    slots.forEach(function(s){
-      if(s===BENCH||RESERVE.indexOf(s)>=0) return;
-      if(FLEXLIKE[s]&&names.indexOf(s)<0) names.push(s);
-      counts[s]=(counts[s]||0)+1;
-    });
-    var first=names[0]||FLEX, eligible={};
-    eligible[first]=FLEXLIKE[first]||FLEX_POS;
-    names.slice(1).forEach(function(n){ eligible[n]=FLEXLIKE[n]; });
-    return {counts:counts, flex:first, positions:eligible[first], eligible:eligible,
-            more:names.slice(1).map(function(n){ return [n, FLEXLIKE[n]]; })};
-  }
+  // Every flex-like slot the league has (GSPlan.slots): the first is the
+  // planner's `flex`, the rest go in as further flexes.
+  function slotCounts(slots){ return GSPlan.slots(slots, [BENCH].concat(RESERVE)); }
 
   /** Where each player sits now, from the roster's starters array. */
   function current(roster, slots){

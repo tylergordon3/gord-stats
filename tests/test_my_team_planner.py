@@ -253,3 +253,25 @@ def test_a_superflex_starts_the_second_quarterback():
                       FLEX, FLEX_POSITIONS, more_flexes=[("SUPER_FLEX", ["QB", "RB", "WR", "TE"])])
     assert got["slot"]["qb2"] == "SUPER_FLEX"
     assert got["slot"]["wr1"] == FLEX and got["slot"]["rb2"] == "BN"
+
+
+def test_one_flex_table_for_every_page_that_sets_a_lineup(browser):
+    """Who may fill each flex, and how a league's slots are read, live with
+    the planner (GSPlan.FLEXES, GSPlan.slots): the team dashboard and the
+    recap read them there rather than keeping copies that could drift."""
+    from gordstats import my_recap
+    got = json.loads(browser.evaluate(
+        "JSON.stringify([GSPlan.FLEXES,"
+        " GSPlan.slots(['QB','RB','WR','REC_FLEX','SUPER_FLEX','REC_FLEX','BN','IR','TAXI'],"
+        "              ['BN','IR','IL','TAXI']),"
+        " GSPlan.slots(['QB','RB','K','BN'], ['BN'])])"))
+    flexes, superflex, plain = got
+    assert flexes["SUPER_FLEX"] == ["QB", "RB", "WR", "TE"] and flexes["IDP_FLEX"] == ["DL", "LB", "DB"]
+    assert superflex["counts"] == {"QB": 1, "RB": 1, "WR": 1, "REC_FLEX": 2, "SUPER_FLEX": 1}
+    assert superflex["flex"] == "REC_FLEX" and superflex["positions"] == ["WR", "TE"]
+    assert superflex["more"] == [["SUPER_FLEX", ["QB", "RB", "WR", "TE"]]]
+    assert set(superflex["eligible"]) == {"REC_FLEX", "SUPER_FLEX"}
+    # No flex at all: the planner's FLEX, which nothing fills.
+    assert plain["flex"] == "FLEX" and plain["positions"] == ["RB", "WR", "TE"]
+    assert plain["counts"] == {"QB": 1, "RB": 1, "K": 1} and plain["more"] == []
+    assert "FLEXLIKE" not in my_team.VIEW_JS and "SUPER_FLEX" not in my_recap.CORE_JS

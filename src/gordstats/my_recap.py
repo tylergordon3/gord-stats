@@ -21,12 +21,11 @@ What is read, and when:
 Everything read is kept for the page view, so moving between weeks costs a
 request only for a week not yet seen.
 
-An ESPN league goes through GSAPI's translation, with one difference: GSAPI
-asks ESPN for lineups only for this week and last (the pages it was written
-for show no others), and a recap needs them for any finished week. So the week
-is asked for here, with the lineup views, and handed to GSAPI's own translator
-(`GSAPI._espn.matchupsOf`), which keeps the player ids the ones every other
-page uses.
+An ESPN league goes through GSAPI like any other: each week is asked for with
+its lineups (`{lineups: true}` - GSAPI otherwise has them for this week and
+last only), and ESPN's rows say who sat on injured reserve that week. Its team
+names come from GSAPI.teams, because ESPN's rosters carry every player's
+stats and nothing here needs them.
 
 The best lineup is `GSPlan` (gordstats.my_team's port of lineup.plan) run on
 the points each player actually scored, with the league's own slots - every
@@ -53,7 +52,9 @@ What the browser cannot have, and so is not here:
     lineup is still judged; one on the bench cannot be placed at all.
 """
 
-from gordstats import recap
+import json
+
+from gordstats import recap, share_button
 
 CSS = """<style>
 /* The rest is the built recap's own (gordstats.recap.CSS): only what the
@@ -68,8 +69,14 @@ CSS = """<style>
 /* A league with no pictures at all (every ESPN league) is a column of blank
    discs otherwise. */
 #rc-host.rc-noav .rc-av{display:none}
+/* A team without a picture, beside teams with one: its initial on the disc,
+   as Sleeper draws a missing avatar - a blank disc read as a hole, most of
+   all in dark mode. The page puts the letter in (initials()). */
+#rc-host span.rc-av{display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;line-height:1;color:#475569;background:#e2e8f0}
 @media (prefers-color-scheme: dark){
   #rc-host .rc-av{background:#2b3852}
+  #rc-host span.rc-av{background:#334363;color:#dde5ef}
   .rc-acc tr.rc-me td:first-child{box-shadow:inset 3px 0 0 #6ee7b7}
   .rc-acc td.rc-wait{color:#94a3b8}
 }
@@ -82,10 +89,9 @@ CSS = """<style>
 CORE_JS = r"""{% raw %}<script>
 window.GSRecap=(function(){
   'use strict';
-  // Who may fill each flex Sleeper names: gordstats.my_team's FLEXLIKE, so
-  // the best lineup here is the one the team dashboard would set.
-  var FLEXES={FLEX:['RB','WR','TE'], WRRB_FLEX:['RB','WR'], REC_FLEX:['WR','TE'],
-              SUPER_FLEX:['QB','RB','WR','TE'], IDP_FLEX:['DL','LB','DB']};
+  // Who may fill each flex a league names is the planner's own table
+  // (gordstats.my_team, GSPlan.FLEXES), so the best lineup here is the one
+  // the team dashboard would set.
   var OFF={BN:1, IR:1, TAXI:1};
 
   // ----- Python's formatting ----------------------------------------------- //
@@ -142,20 +148,10 @@ window.GSRecap=(function(){
             started:started, max:mx, left:r2(mx-started), pct:mx>0?started/mx:1};
   }
 
-  /** The planner's reading of a league's slots - gordstats.my_team's
-   *  slotCounts: the first flex-like slot is its `flex`, the rest go in as
-   *  further flexes, filled narrowest first. */
-  function slotConf(slots){
-    var counts={}, names=[];
-    slots.forEach(function(s){
-      if(OFF[s]) return;
-      if(FLEXES[s] && names.indexOf(s)<0) names.push(s);
-      counts[s]=(counts[s]||0)+1;
-    });
-    var first=names[0]||'FLEX';
-    return {counts:counts, flex:first, positions:FLEXES[first],
-            more:names.slice(1).map(function(n){ return [n, FLEXES[n]]; })};
-  }
+  /** The planner's reading of a league's slots (GSPlan.slots, as the team
+   *  dashboard reads them): the first flex-like slot is its `flex`, the rest
+   *  go in as further flexes, filled narrowest first. */
+  function slotConf(slots){ return window.GSPlan.slots(slots, Object.keys(OFF)); }
 
   /** Name and position for a rostered id, as my_matchups names him: a
    *  defence is its team code. */
@@ -245,7 +241,7 @@ window.GSRecap=(function(){
     // Sleeper plays the median in the regular season only.
     return {number:k, teams:ctx.teams, games:games, sides:sides, order:order,
             median:!!ctx.median && !(ctx.playoffStart && k>=ctx.playoffStart),
-            flex:FLEXES, pickups:[], held:held, unplaced:unplaced};
+            flex:window.GSPlan.FLEXES, pickups:[], held:held, unplaced:unplaced};
   }
 
   /** New to a roster this week and not traded for - fantasy.site.recap's rule,
@@ -551,8 +547,8 @@ window.GSRecap=(function(){
     }).join('')+'</nav>';
   }
 
-  /** One week's recap - recap.page, less the share button (its address is
-   *  this site's league's week, not the reader's). */
+  /** One week's recap - recap.page, less the share button, which the page
+   *  adds (its address is the reader's league's, not this site's week). */
   function view(week, numbers, toDate, o){
     o=o||{};
     return '<p class="rc-lead">'+esc(headline(week))+'</p>'
@@ -563,7 +559,7 @@ window.GSRecap=(function(){
       +(o.foot||'');
   }
 
-  return {FLEXES:FLEXES, fixed:fixed, num:num, esc:esc, side:side, slotConf:slotConf,
+  return {fixed:fixed, num:num, esc:esc, side:side, slotConf:slotConf,
           build:build, pickups:pickups, awards:awards, headline:headline, season:season,
           games:games, awardCards:awardCards, accuracy:accuracy, weekNav:weekNav,
           view:view};
@@ -583,7 +579,9 @@ JS = r"""{% raw %}<script>
   // The week this address is for (a /week-N/ page); 0 opens on the latest.
   var PIN=parseInt(host.dataset.week||'0',10)||0;
   var AVATAR='https://sleepercdn.com/avatars/thumbs/';
-  var ESPN_API='https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl';
+  // The recap's front page, from this page or a week's (/week-N/).
+  var BASE=location.pathname.replace(/week-\d+\/?$/, '');
+  var SHARE=__SHARE__;
   var CTX=null, NAME='', WEEKS=[], ROSTERS=[], CUR=0;
   // Kept for the page view: a week read once is drawn again from memory, and
   // the season columns reuse every week the reader has already opened.
@@ -597,57 +595,18 @@ JS = r"""{% raw %}<script>
     busy(!done);
   }
 
-  /** One ESPN week, with its lineups. GSAPI's /matchups/<wk> asks ESPN for
-   *  lineups for this week and last only, so the week is asked for here with
-   *  the lineup views (and the settings and teams its translator reads) and
-   *  handed to GSAPI's own translator. The raw answer also says who was on
-   *  injured reserve that week and what each team is called, which the
-   *  translation drops. The same request GSAPI makes: no ESPN session. */
-  function espnWeek(k){
-    var e=GSAPI.parse(ID);
-    var q='view=mSettings&view=mTeam&view=mMatchupScore&view=mScoreboard&scoringPeriodId='+k;
-    var url=e.season>=2018
-      ? ESPN_API+'/seasons/'+e.season+'/segments/0/leagues/'+e.league+'?'+q
-      : ESPN_API+'/leagueHistory/'+e.league+'?seasonId='+e.season+'&'+q;
-    return Promise.all([
-      GSAPI._espn.idMap(),
-      fetch(url,{credentials:'omit'}).then(function(r){ return r.ok?r.json():null; })
-    ]).then(function(o){
-      var M=o[0], d=Array.isArray(o[1])?(o[1][0]||null):o[1];
-      if(!d) return null;
-      var rows=GSAPI._espn.matchupsOf(d, d.schedule, k, M);
-      var periods=((d.settings||{}).scheduleSettings||{}).matchupPeriods||{}, mp=k;
-      for(var p in periods)
-        if((periods[p]||[]).map(Number).indexOf(k)>=0){ mp=+p; break; }
-      var ir={}, teams={};
-      (d.schedule||[]).forEach(function(g){
-        if(+g.matchupPeriodId!==mp) return;
-        [g.home, g.away].forEach(function(s){
-          var r=s&&s.rosterForCurrentScoringPeriod;
-          if(!r||!r.entries) return;
-          ir[s.teamId]=r.entries.filter(function(x){ return x.lineupSlotId===21; })
-            .map(function(x){ return M.seen[Number(x.playerId)]; }).filter(Boolean);
-        });
-      });
-      (d.teams||[]).forEach(function(t){
-        teams[String(t.id)]=t.name||((t.location||'')+' '+(t.nickname||'')).trim()
-          ||('Team '+t.id);
-      });
-      return {rows:rows, ir:ir, teams:teams};
-    });
-  }
-
-  /** A week, built - or null if the site would not say. */
+  /** A week, built - or null if the site would not say. Asked with its
+   *  lineups, which an ESPN league has for this week and last only unless
+   *  asked; its rows also say who was on injured reserve that week. */
   function weekFor(k){
     if(ASKED[k]) return ASKED[k];
-    var got=ESPN ? espnWeek(k)
-      : GSAPI.get(API+'/matchups/'+k).then(function(rows){ return rows?{rows:rows}:null; });
-    var p=ASKED[k]=got.then(function(g){
-      if(!g||!g.rows||!g.rows.length) return null;
-      Object.keys(g.teams||{}).forEach(function(key){
-        if(!CTX.teams[key]) CTX.teams[key]={name:g.teams[key], avatar:''};
+    var p=ASKED[k]=GSAPI.get(API+'/matchups/'+k, {lineups:true}).then(function(rows){
+      if(!rows||!rows.length) return null;
+      var ir=null;
+      rows.forEach(function(r){
+        if(r.reserve) (ir=ir||{})[String(r.roster_id)]=r.reserve.map(String);
       });
-      var w=R.build(k, g.rows, CTX, g.ir);
+      var w=R.build(k, rows, CTX, ir);
       return (BUILT[k]=w.order.length?w:null);
     }).catch(function(e){
       if(e instanceof TypeError && window.console) console.error('[recap]', e);
@@ -706,6 +665,33 @@ JS = r"""{% raw %}<script>
       +'</p>';
   }
 
+  /** The Share button, as the built recap has it, for this league's week:
+   *  the address carries the league (share.js adds ?league=<id>), so a
+   *  friend opens the same league on the same week. */
+  function share(k, w){
+    var d=document.createElement('div');
+    d.innerHTML=SHARE;
+    var b=d.querySelector('.gs-share');
+    if(b){
+      b.setAttribute('data-url', BASE+'#week-'+k);
+      b.setAttribute('data-text', NAME+' \u2014 '+R.headline(w));
+    }
+    return d.innerHTML;
+  }
+
+  /** A team without a picture gets its initial on its disc (see the CSS),
+   *  where there are pictures beside it - with none, no disc is shown. Put
+   *  in after the markup is drawn, which stays the built recap's own. */
+  function initials(){
+    if(host.classList.contains('rc-noav')) return;
+    [].forEach.call(host.querySelectorAll('span.rc-av:empty'), function(d){
+      var n=d.nextElementSibling;
+      var t=String((n&&n.textContent)||'').replace(/^[^A-Za-z0-9]+/, '');
+      d.textContent=t.charAt(0).toUpperCase();
+      d.setAttribute('aria-hidden', 'true');
+    });
+  }
+
   /** The page's title is the built week's and its line this site's league. */
   function retitle(k){
     var h=document.querySelector('h1');
@@ -742,8 +728,9 @@ JS = r"""{% raw %}<script>
     var settled=whole && pk!==null, yours=mine();
     host.classList.toggle('rc-noav', !Object.keys(CTX.teams).some(function(t){
       return CTX.teams[t].avatar; }));
-    host.innerHTML=R.view(w, WEEKS, whole?R.season(span):null,
+    host.innerHTML=share(k, w)+R.view(w, WEEKS, whole?R.season(span):null,
                           {pending:!settled && !DONE[k], mine:yours, foot:foot(span, yours)});
+    initials();
     busy(!settled && !DONE[k]);
     retitle(k);
     if(!settled && !DONE[k]) rest(k).then(function(){
@@ -754,9 +741,10 @@ JS = r"""{% raw %}<script>
 
   note('Reading '+esc(have.name||'your league')+'&hellip;');
   var asks=[GSAPI.get(API), GSL.players()];
-  // ESPN's team names come with each week; its rosters are the heaviest
-  // thing it serves, and nothing here needs them.
-  if(!ESPN) asks.push(GSAPI.get(API+'/rosters'), GSAPI.get(API+'/users'));
+  // ESPN's rosters are the heaviest thing it serves, and nothing here needs
+  // them but the team names, which come lighter.
+  if(ESPN) asks.push(null, null, GSAPI.teams(ID));
+  else asks.push(GSAPI.get(API+'/rosters'), GSAPI.get(API+'/users'));
   Promise.all(asks.map(function(p){
     return Promise.resolve(p).catch(function(){ return null; });
   })).then(function(o){
@@ -766,6 +754,9 @@ JS = r"""{% raw %}<script>
     NAME=info.name||have.name||'Your league';
     ROSTERS=o[2]||[];
     var byUser={}, teams={}, reserve={}, taxi={};
+    Object.keys(o[4]||{}).forEach(function(key){
+      teams[key]={name:o[4][key], avatar:''};
+    });
     (o[3]||[]).forEach(function(u){
       byUser[u.user_id]={name:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',
         avatar:(u.metadata&&u.metadata.avatar)||(u.avatar?AVATAR+u.avatar:'')};
@@ -804,6 +795,9 @@ JS = r"""{% raw %}<script>
   });
 })();
 </script>{% endraw %}"""
+
+
+JS = JS.replace("__SHARE__", json.dumps(share_button.row("", "", league=True)))
 
 
 def section(week: int = 0, css: bool = True) -> str:

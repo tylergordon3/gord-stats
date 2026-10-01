@@ -148,6 +148,11 @@ FINISHED = SCHEDULE[:6] + [
 BOX3 = [dict(g, home=side(g["home"]["teamId"], g["home"]["pointsByScoringPeriod"],
                           roster=T1 if g["home"]["teamId"] == 1 else []))
         if g["matchupPeriodId"] == 3 else g for g in SCHEDULE]
+# Week 1, older than "this week and last", with lineups: what a page gets
+# when it asks for them.
+BOX1 = [dict(g, home=side(g["home"]["teamId"], g["home"]["pointsByScoringPeriod"],
+                          roster=T1 if g["home"]["teamId"] == 1 else []))
+        if g["matchupPeriodId"] == 1 else g for g in SCHEDULE]
 
 TX = [
     {"id": "a", "type": "FREEAGENT", "status": "EXECUTED", "scoringPeriodId": 2, "teamId": 1,
@@ -174,6 +179,7 @@ FIXTURES = {
     "schedule": {"schedule": SCHEDULE},
     "finished": {"schedule": FINISHED},
     "box3": {"schedule": BOX3},
+    "box1": {"schedule": BOX1},
     "draft": {"draftDetail": {"drafted": True, "picks": PICKS}},
     "tx": {"transactions": TX},
     "index": INDEX, "ids": ESPN_IDS,
@@ -201,6 +207,7 @@ window.fetch=function(url, init){
   if(q.indexOf('mSettings')>=0) body=F.base;
   else if(q.indexOf('mRoster')>=0) body=F.rosters;
   else if(q.indexOf('mScoreboard')>=0 && q.indexOf('scoringPeriodId=3')>=0) body=F.box3;
+  else if(q.indexOf('mScoreboard')>=0 && q.indexOf('scoringPeriodId=1')>=0) body=F.box1;
   else if(q.indexOf('mMatchupScore')>=0) body=window.__DONE?F.finished:F.schedule;
   else if(q.indexOf('mDraftDetail')>=0) body=F.draft;
   else if(q.indexOf('mTransactions2')>=0) body=F.tx;
@@ -316,6 +323,84 @@ def test_this_weeks_matchups_have_lineups(browser):
     assert rows[1]["starters"][0] == "19" and rows[1]["starters_points"][0] == 18.5
     assert rows[1]["players_points"]["9487"] == 12.0            # bench points kept
     assert rows[1]["points"] == 66.75                           # starters only
+    # who sat on injured reserve that week, which Sleeper's rows never say
+    assert rows[1]["reserve"] == ["e99999902"]
+    assert "reserve" not in rows[5] and "reserve" not in rows[2]    # no lineup, no claim
+
+
+def _espn_calls(browser, needle):
+    return browser.run("__calls.filter(function(c){ return c.url.indexOf('lm-api-reads')>0 && "
+                       f"c.url.indexOf({json.dumps(needle)})>0; }}).length")
+
+
+def test_an_older_week_has_lineups_when_a_page_asks(browser):
+    """Week 1 is older than this week and last: a page that wants who started
+    (the recap) asks, and gets them from one request for that week - kept, so
+    asking again costs nothing; a page that does not ask gets the schedule."""
+    before = _espn_calls(browser, "scoringPeriodId=1")
+    plain = {r["roster_id"]: r for r in get(browser, f"/league/{ID}/matchups/1")}
+    assert plain[1]["starters"] == [] and _espn_calls(browser, "scoringPeriodId=1") == before
+    got = browser.run(f"Promise.all([GSAPI.get('/league/{ID}/matchups/1', {{lineups:true}}),"
+                      f" GSAPI.get('/league/{ID}/matchups/1', {{lineups:true}})])")
+    assert _espn_calls(browser, "scoringPeriodId=1") == before + 1, "one request, shared"
+    rows = {r["roster_id"]: r for r in got[0]}
+    assert rows[1]["starters"][0] == "19" and rows[1]["reserve"] == ["e99999902"]
+    assert rows[1]["matchup_id"] == rows[2]["matchup_id"]         # week 1's pairings
+    assert got[0] == got[1]
+    # Weeks further ahead than next have no lineups to ask for: the schedule
+    # answers, however many of them a season's simulation reads.
+    before5 = _espn_calls(browser, "scoringPeriodId=5")
+    get(browser, f"/league/{ID}/matchups/5")
+    browser.run(f"GSAPI.get('/league/{ID}/matchups/5', {{lineups:true}})")
+    assert _espn_calls(browser, "scoringPeriodId=5") == before5
+
+
+def test_team_names_without_espns_rosters(browser):
+    before = _espn_calls(browser, "mRoster")
+    assert browser.run(f"GSAPI.teams('{ID}')") == {
+        "1": "Team 1", "2": "Team 2", "4": "Team 4", "5": "Team 5", "6": "Team 6"}
+    assert _espn_calls(browser, "mRoster") == before
+
+
+def test_a_sleeper_path_is_fetched_once_a_page(browser):
+    """The bar, the page and the planner each ask for the league, its rosters
+    and users: one fetch between them, a copy each; a failure is asked again,
+    and a week's matchups are asked again after 30 seconds, for a live poll."""
+    got = browser.run(r"""(async function(){
+      var L='/league/1180208989471400001', real=window.fetch, n={}, now=Date.now, shift=0;
+      Date.now=function(){ return now()+shift; };
+      window.fetch=function(u, i){
+        u=String(u); n[u]=(n[u]||0)+1;
+        if(u.indexOf('/nope')>0) return Promise.resolve({ok:false, status:404,
+          json:function(){ return Promise.resolve(null); }});
+        if(u.indexOf('/rosters')>0) return Promise.resolve({ok:true, status:200,
+          json:function(){ return Promise.resolve([{roster_id:1, owner_id:'u1'},
+                                                   {roster_id:2, owner_id:'u9'}]); }});
+        if(u.indexOf('/users')>0) return Promise.resolve({ok:true, status:200,
+          json:function(){ return Promise.resolve([{user_id:'u1', display_name:'al',
+            metadata:{team_name:'Alpha'}}]); }});
+        return real(u, i);
+      };
+      try{
+        var a=await Promise.all([GSAPI.get(L+'/rosters'), GSAPI.get(L+'/rosters')]);
+        a[0][0].roster_id=99;                        // one page's copy, not the next's
+        var again=await GSAPI.get(L+'/rosters');
+        var teams=await GSAPI.teams('1180208989471400001');
+        await GSAPI.get(L+'/nope'); await GSAPI.get(L+'/nope');
+        await GSAPI.get(L+'/matchups/4'); await GSAPI.get(L+'/matchups/4');
+        shift=31000;
+        await GSAPI.get(L+'/matchups/4'); await GSAPI.get(L+'/rosters');
+        var S='https://api.sleeper.app/v1'+L;
+        return {second:a[1][0].roster_id, again:again[0].roster_id, teams:teams,
+                rosters:n[S+'/rosters'], users:n[S+'/users'], nope:n[S+'/nope'],
+                matchups:n[S+'/matchups/4']};
+      } finally { window.fetch=real; Date.now=now; }
+    })()""")
+    assert got["second"] == 1 and got["again"] == 1
+    assert got["teams"] == {"1": "Alpha", "2": "Roster 2"}
+    assert got["rosters"] == 1 and got["users"] == 1, "once for the page, however often asked"
+    assert got["nope"] == 2, "a failure is not kept"
+    assert got["matchups"] == 2, "a week's points are read again for a live poll"
 
 
 def test_earlier_weeks_come_from_the_schedule(browser):

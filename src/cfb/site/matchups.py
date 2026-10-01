@@ -25,7 +25,7 @@ import pandas as pd
 from cfb import in_season, predict, pregame, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import logos, matchup_page as ui, share_button, share_card, stakes
+from gordstats import clinch, logos, matchup_page as ui, share_button, share_card, stakes
 
 OUTPUT = WEB_DIR / "matchups" / "index.html"
 
@@ -839,7 +839,7 @@ def body() -> str:
     _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
     views = {w: week_view(datas[w], lg, board, frame, to_school, espn, teams, extremes)
              for w in weeks}
-    views[current] = _game_of_week(current) + views[current]
+    views[current] = _game_of_week(current) + _playoff_news(current) + views[current]
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     info = _CARDS.get(current)
@@ -893,6 +893,17 @@ def _game_of_week(week: int) -> str:
     return stakes.callout(week, teams, names=info["names"],
                           anchor=info["anchors"].get(ranked[0][0], ""),
                           more="<a href='/cfb/league/power/#stakes'>Every team's stakes &rarr;</a>")
+
+
+def _playoff_news(week: int) -> str:
+    """Who has clinched, who is out and who plays for a place this week
+    (gordstats.clinch), from the picture the power page left - until the
+    week is final."""
+    info = _CARDS.get(week)
+    if not info or info["final"]:
+        return ""
+    return ui.playoff_callout(WEB_DIR / clinch.FILE, week, names=info["names"],
+                              more="<a href='/cfb/league/power/#playoffs'>The picture &rarr;</a>")
 
 
 def card() -> dict | None:

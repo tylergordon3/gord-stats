@@ -258,3 +258,81 @@ def test_cfb_statuses_never_contradict_the_simulation(monkeypatch):
         if s["no_bye"]:
             assert out.loc[k, "bye"] == 0.0
     assert any(s["bye"] or s["no_bye"] for s in status.values())
+
+
+# --------------------------------------------------------------------------- #
+# The matchups pages' callout, and the file the power build leaves for it
+# --------------------------------------------------------------------------- #
+
+# The last regular week, two places: a is in with the top seed, b and c meet
+# for the other (win and in, a loss and out), d is out.
+LAST_WEEK = {"a": _t(9, 1, 1, pf=900, odds=1.0), "b": _t(6, 1, 4, pf=700, opp="c"),
+             "c": _t(6, 1, 4, pf=650, opp="b"), "e": _t(5, 1, 5, pf=640, opp="d"),
+             "d": _t(3, 1, 7, pf=500, opp="e")}
+
+
+def test_the_matchups_callout_says_what_is_settled_or_at_stake():
+    teams = _named(LAST_WEEK)
+    html = clinch.callout(teams, 2, 1, names={"a": "Alpha <FC>", "b": "Bravo"})
+    text = re.sub(r"<[^>]+>", "", html.split("</style>")[1])
+    assert text == ("Playoff pictureClinched: Alpha &lt;FC&gt; (#1). Win and in: Bravo and c. "
+                    "Must win: Bravo, c and e. Eliminated: d."), "the page's own names, escaped"
+    assert "prefers-color-scheme: dark" in html
+    # Nothing settled and nothing at stake this week: nothing to say.
+    early = _named({k: _t(w, 20, 6 - w) for k, w in zip("abcdef", (6, 5, 4, 3, 2, 1))})
+    assert clinch.callout(early, 4, 1) == ""
+    assert clinch.callout({}, 4) == "" and clinch.callout(teams, 0) == ""
+
+
+def test_the_picture_left_for_the_matchups_page_is_for_its_week_only(tmp_path):
+    from gordstats import matchup_page
+
+    path = tmp_path / clinch.FILE
+    clinch.write(path, 14, _named(LAST_WEEK), 2, 1, median=False)
+    got = clinch.read(path, 14)
+    assert got["spots"] == 2 and got["byes"] == 1 and set(got["teams"]) == set(LAST_WEEK)
+    assert clinch.read(path, 15) == {}, "another week's picture"
+    html = matchup_page.playoff_callout(path, 14, names={"a": "Alpha"},
+                                        more="<a href='/fantasy/power/#playoffs'>x</a>")
+    assert "Alpha (#1)" in html and "/fantasy/power/#playoffs" in html
+    assert matchup_page.playoff_callout(path, 15) == ""
+    clinch.write(path, None, {})                        # the week is over: cleared
+    assert not path.exists() and clinch.read(path, 14) == {}
+    assert matchup_page.playoff_callout(path, 14) == ""
+
+
+def test_both_power_pages_leave_their_picture_for_the_matchups_page(monkeypatch, tmp_path):
+    """What each power page draws is what its matchups page reads - the same
+    standings, the same week - and nothing is left once the week is over."""
+    from cfb.site import league_power
+    from fantasy.site import power as page
+
+    monkeypatch.setattr(page, "PICTURE_OUT", tmp_path / "nfl.json")
+    ids = list(range(1, 11))
+    table = pd.DataFrame({"roster_id": ids, "manager": [f"M{i}" for i in ids],
+                          "wins": [26 - 2 * i for i in ids], "losses": [2 * i for i in ids],
+                          "points_for": [1500.0 - i for i in ids],
+                          "playoff_odds": [1.0] * 5 + [0.5] * 2 + [0.0] * 3,
+                          "week": power.FANTASY_REG_WEEKS - 1})
+    page._playoffs_section(table, power.FANTASY_REG_WEEKS, {"1": {"opp": "2", "win": 1.0}})
+    page._leave_picture()
+    got = clinch.read(tmp_path / "nfl.json", power.FANTASY_REG_WEEKS)
+    assert got["spots"] == power.PLAYOFF_TEAMS and got["median"] is True
+    assert got["teams"]["1"]["name"] == "M1" and got["teams"]["1"]["opp"] == "2"
+    assert got["teams"]["1"]["left"] == 2
+    page._playoffs_section(table, None, {})           # the week over: no stakes week
+    page._leave_picture()
+    assert not (tmp_path / "nfl.json").exists()
+
+    monkeypatch.setattr(league_power, "PICTURE_OUT", tmp_path / "cfb.json")
+    keys = ["t1", "t2", "t3", "t4"]
+    sim = pd.DataFrame({"now_wins": [8.0, 6.0, 5.0, 1.0], "now_losses": [2.0, 4.0, 5.0, 9.0],
+                        "games_left": [2.0] * 4, "now_pf": [900.0, 800.0, 700.0, 600.0],
+                        "playoffs": [1.0, 0.7, 0.3, 0.0]}, index=pd.Index(keys, name="team_key"))
+    monkeypatch.setitem(league_power._CARD, "stakes", (6, {"t2": {"opp": "t3", "win": 0.8}}))
+    league_power._playoffs_section(sim, {"num_playoff_teams": 2, "uses_median_score": True},
+                                   {"t1": "One"})
+    league_power._leave_picture()
+    got = clinch.read(tmp_path / "cfb.json", 6)
+    assert got["spots"] == 2 and got["teams"]["t1"]["name"] == "One"
+    assert got["teams"]["t2"]["opp"] == "t3" and got["teams"]["t4"]["name"] == "t4"

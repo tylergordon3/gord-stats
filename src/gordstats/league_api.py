@@ -29,10 +29,32 @@ ESPN gzips them to about a tenth):
     schedule  mMatchupScore                ~40 KB   every week's scores and
                                            pairings: history, brackets, power
     week      mMatchupScore mScoreboard    lineups and player points for one
-              + scoringPeriodId            week, asked only for this week and
-                                           last, and re-asked when a live page
-                                           polls
+              + scoringPeriodId            week, one request a week: last
+                                           week, this week and next always (a
+                                           live page polls them); any other
+                                           week played only for a caller that
+                                           asks, `get(path, {lineups: true})`
+                                           - the recap, which judges every
+                                           week's lineup. History and power
+                                           want scores and pairings alone,
+                                           which the one schedule request has
+                                           for every week at once
     draft     mDraftDetail;  transactions  mTransactions2 + scoringPeriodId
+
+An ESPN week read with its lineups also says who sat on injured reserve that
+week (`reserve` on each row, which Sleeper's rows do not carry).
+
+GSAPI.teams(id) is a league's team names by roster id, for a page that wants
+nothing else of the rosters: ESPN's come from the base request.
+
+Every answer is kept for the page view, so the league, its rosters and users,
+asked by the bar, the page and the planner in turn, are fetched once; a second
+ask while the first is still on its way shares it. What changes while a page
+is open is kept briefly instead - Sleeper's matchups and transactions for 30
+seconds, ESPN's weeks around this one for 45 - so a live page's poll still
+reads new points. A failure is never kept: the next ask tries again. Each
+caller gets its own copy of a Sleeper answer, as it did when each ask was a
+fetch.
 
 Players: ESPN ids become Sleeper ids through /fantasy/espn-ids.json (written
 by fantasy.site.players_index from the player registry), then by name and
@@ -95,6 +117,18 @@ window.GSAPI = window.GSAPI || (function(){
 
   // ------------------------------------------------------------- fetching --
   var cache={};
+  /** One request's {status, data}, made once for the page: kept `ttl`
+   *  seconds (0: the whole page view), shared while it is on its way, and
+   *  dropped if it fails, so the next ask tries again. */
+  function once(key, ttl, make){
+    var hit=cache[key], now=Date.now();
+    if(hit && (!ttl || now-hit.at<ttl*1000)) return hit.p;
+    var p=make();
+    function drop(){ if(cache[key] && cache[key].p===p) delete cache[key]; }
+    p.then(function(res){ if(!res || res.status!==200) drop(); }, drop);
+    cache[key]={at:now, p:p};
+    return p;
+  }
   /** {status, data} for one ESPN request; kept `ttl` seconds (0: the page). */
   function ask(season, league, views, extra, ttl){
     var q=views.map(function(v){ return 'view='+v; });
@@ -102,19 +136,30 @@ window.GSAPI = window.GSAPI || (function(){
     var url=season>=2018
       ? ESPN+'/seasons/'+season+'/segments/0/leagues/'+league+'?'+q.join('&')
       : ESPN+'/leagueHistory/'+league+'?seasonId='+season+'&'+q.join('&');
-    var hit=cache[url], now=Date.now();
-    if(hit && (!ttl || now-hit.at<ttl*1000)) return hit.p;
-    var p=fetch(url,{credentials:'omit'}).then(function(r){
-      if(!r.ok) return {status:r.status, data:null};
-      return r.json().then(function(d){
-        return {status:200, data:Array.isArray(d)?(d[0]||null):d};
+    return once(url, ttl, function(){
+      return fetch(url,{credentials:'omit'}).then(function(r){
+        if(!r.ok) return {status:r.status, data:null};
+        return r.json().then(function(d){
+          return {status:200, data:Array.isArray(d)?(d[0]||null):d};
+        });
       });
     });
-    // A failure is not kept: the next ask tries again.
-    p.then(function(res){ if(res.status!==200) delete cache[url]; },
-           function(){ delete cache[url]; });
-    cache[url]={at:now, p:p};
-    return p;
+  }
+  // What a Sleeper page may poll while it is open: kept 30 seconds, not the
+  // page view, so the next minute's poll reads the next minute's points.
+  var MOVING=/\\/(matchups|transactions)\\/|^\\/state\\//;
+  /** A Sleeper path's JSON (null where Sleeper said no), fetched once. */
+  function sleeper(path){
+    return once(SLEEPER+path, MOVING.test(path)?30:0, function(){
+      return fetch(SLEEPER+path).then(function(r){
+        if(!r.ok) return {status:r.status, data:null};
+        return r.json().then(function(d){ return {status:200, data:d}; });
+      });
+    }).then(function(res){
+      // A copy each: a page that sorts or annotates what it was handed must
+      // not change what the next page is handed.
+      return res.status===200 && res.data!=null ? JSON.parse(JSON.stringify(res.data)) : null;
+    });
   }
   var BASE=['mSettings','mTeam','mStatus'];
 
@@ -277,16 +322,21 @@ window.GSAPI = window.GSAPI || (function(){
     var r=s.rosterForCurrentScoringPeriod, by=s.pointsByScoringPeriod||{};
     var pts=(r && r.appliedStatTotal!=null) ? +r.appliedStatTotal
       : by[wk]!=null ? +by[wk] : single ? (+s.totalPoints||0) : 0;
-    var ent=(r&&r.entries)||[], players=[], pp={};
+    var ent=(r&&r.entries)||[], players=[], pp={}, ir=[];
     ent.forEach(function(e){
       var id=pid(M, e.playerId, ppe(e).player);
       players.push(id);
       pp[id]=Math.round((+ppe(e).appliedStatTotal||0)*100)/100;
+      if(e.lineupSlotId===IR) ir.push(id);
     });
     var starters=ent.length?lineup(ent, positions, M):[];
-    return {roster_id:s.teamId, matchup_id:mid, points:Math.round(pts*100)/100,
+    var row={roster_id:s.teamId, matchup_id:mid, points:Math.round(pts*100)/100,
       starters:starters, starters_points:starters.map(function(p){ return pp[p]||0; }),
       players:players, players_points:pp, custom_points:null};
+    // Who sat on injured reserve that week: ESPN's lineups say, Sleeper's
+    // rows do not, so it is there only where there was a lineup to read.
+    if(ent.length) row.reserve=ir;
+    return row;
   }
   /** Sleeper's /matchups/<wk>: one row per team, a shared matchup_id for the
    *  two sides of a game, null for a bye or a team out of the playoffs. */
@@ -384,7 +434,7 @@ window.GSAPI = window.GSAPI || (function(){
   }
 
   // --------------------------------------------------------------- routes --
-  function espn(kind, id, rest){
+  function espn(kind, id, rest, opts){
     var e=parse(id);
     if(!e) return Promise.resolve(null);
     var S=e.season, L=e.league;
@@ -421,12 +471,18 @@ window.GSAPI = window.GSAPI || (function(){
       });
       var m=/^\\/matchups\\/(\\d{1,2})$/.exec(rest);
       if(m){
-        var wk=+m[1], st=d.status||{};
-        // Lineups for this week and last, where a page shows who started;
-        // every other week from the one light schedule request.
-        var near=!complete(d, S) && wk>=(+st.latestScoringPeriod||0)-1;
-        var got=near ? ask(S, L, ['mMatchupScore','mScoreboard'], 'scoringPeriodId='+wk, 45)
-                     : schedule(300);
+        var wk=+m[1], st=d.status||{}, latest=+st.latestScoringPeriod||0, done=complete(d, S);
+        // Lineups for this week, last week and next (a page can be a day
+        // ahead of ESPN), where a page shows who started - asked again after
+        // 45 seconds, for a live page's poll - and for any other week played
+        // when the caller asks for them: one request for that week, kept for
+        // the page. Every other week, and the weeks further ahead that a
+        // season's simulation reads its pairings from, come from the one
+        // light schedule request.
+        var near=!done && wk>=latest-1 && wk<=latest+1;
+        var got=(near || (opts.lineups && (done || wk<=latest)))
+          ? ask(S, L, ['mMatchupScore','mScoreboard'], 'scoringPeriodId='+wk, near?45:0)
+          : schedule(300);
         return got.then(function(r){
           var x=data(r); return x?matchupsOf(d, x.schedule, wk, M):null;
         });
@@ -439,14 +495,40 @@ window.GSAPI = window.GSAPI || (function(){
   }
 
   /** A Sleeper API path, answered by whichever site the league is on:
-   *  the JSON, or null where the site said no (as `r.ok?r.json():null`). */
-  function get(path){
+   *  the JSON, or null where the site said no (as `r.ok?r.json():null`).
+   *  `opts.lineups`: an ESPN week's matchups with who started, for any week
+   *  played rather than this week and last only (Sleeper's always have). */
+  function get(path, opts){
     var m=/^\\/(league|draft)\\/([^\\/?]+)(\\/[^?]*)?$/.exec(path);
     if(m){
       var id=decodeURIComponent(m[2]);
-      if(isEspn(id)) return espn(m[1], id, m[3]||'');
+      if(isEspn(id)) return espn(m[1], id, m[3]||'', opts||{});
     }
-    return fetch(SLEEPER+path).then(function(r){ return r.ok?r.json():null; });
+    return sleeper(path);
+  }
+
+  /** {roster id: team name} for a league: what a page that names the teams,
+   *  and needs nothing else of the rosters, can have without ESPN's rosters
+   *  (every player's stats ride along with them). null if it cannot be read. */
+  function teams(id){
+    var api='/league/'+encodeURIComponent(id), e=parse(id);
+    if(e) return ask(e.season, e.league, BASE, '', 300).then(function(res){
+      if(!res || res.status!==200 || !res.data) return null;
+      var out={};
+      (res.data.teams||[]).forEach(function(t){ out[String(t.id)]=teamName(t); });
+      return out;
+    });
+    return Promise.all([get(api+'/rosters'), get(api+'/users')]).then(function(o){
+      if(!o[0]) return null;
+      var byUser={}, out={};
+      (o[1]||[]).forEach(function(u){
+        byUser[u.user_id]=(u.metadata&&u.metadata.team_name)||u.display_name||'';
+      });
+      o[0].forEach(function(r){
+        out[String(r.roster_id)]=byUser[r.owner_id]||('Roster '+r.roster_id);
+      });
+      return out;
+    });
   }
 
   /** An ESPN league id (and season, if known) as {id, name, season}, or
@@ -469,8 +551,8 @@ window.GSAPI = window.GSAPI || (function(){
     return next(0);
   }
 
-  return {get:get, players:players, isEspn:isEspn, parse:parse, parseRef:parseRef,
-          resolve:resolve,
+  return {get:get, teams:teams, players:players, isEspn:isEspn, parse:parse,
+          parseRef:parseRef, resolve:resolve,
           PRIVATE:'ESPN keeps that league private. Its commissioner can open it '
             +'to the public in the league\\u2019s settings (League Manager \\u2192 '
             +'Basic Settings), and nothing else is needed \\u2014 no ESPN login.',

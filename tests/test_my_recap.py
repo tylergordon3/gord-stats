@@ -589,6 +589,22 @@ def test_a_sleeper_league_takes_the_page_over(chrome, site):
 
 
 @browser_only
+def test_the_readers_recap_shares_its_own_league_and_week(chrome, site):
+    """The built recap's Share button sends this site's week; the reader's
+    sends the reader's: its week on the recap page, the league added to the
+    address by share.js (data-league), its name leading the line."""
+    (got,), errors = drive(chrome, site + "?league=sleeper", [
+        ("wait", _week_ready(3)),
+        ("eval", "(function(){ var b=document.querySelector('#rc-host .gs-share');"
+                 " return b && {url:b.dataset.url, text:b.dataset.text,"
+                 " league:b.hasAttribute('data-league')}; })()")])
+    assert not errors, errors
+    assert got == {"url": "/#week-3", "league": True,
+                   "text": "Fake League \u2014 Week 3: Bravo & Co top-scored with 105, Alpha "
+                           "left 31 on the bench and 1 team was beaten by their own bench."}
+
+
+@browser_only
 def test_the_week_picker_moves_between_weeks_from_memory(chrome, site):
     (w1, w2, w3, calls), errors = drive(chrome, site + "?league=sleeper", [
         ("wait", _week_ready(3)),
