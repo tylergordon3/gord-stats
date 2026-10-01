@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-09-30T21:24:37.227510-04:00",
+ "updated": "2026-10-01T05:32:58.558892-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -40252,6 +40252,110 @@
       "Alicia Florez",
       "G",
       0.0
+     ]
+    ]
+   }
+  },
+  "401918020": {
+   "date": "2026-10-01",
+   "allowed": {
+    "GS": {
+     "G": 119.0,
+     "FC": 66.0
+    },
+    "DAL": {
+     "G": 60.0,
+     "FC": 122.0
+    }
+   },
+   "players": {
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      22.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      62.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      14.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      6.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      25.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      18.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      11.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      18.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      6.0
+     ]
+    ],
+    "DAL": [
+     [
+      "Jessica Shepard",
+      "FC",
+      18.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      3.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      16.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      67.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      23.0
+     ],
+     [
+      "Alysha Clark",
+      "FC",
+      29.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      8.0
+     ],
+     [
+      "Aziaha James",
+      "G",
+      21.0
      ]
     ]
    }
