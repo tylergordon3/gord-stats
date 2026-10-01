@@ -57,7 +57,7 @@ import pandas as pd
 from cfb import cfbd, espn, gameinfo, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
-from gordstats import favorites, logos
+from gordstats import favorites, logos, preview_page
 from cfb.site import write_page
 from cfb.site.teams import team_slug
 
@@ -1419,6 +1419,12 @@ def _detail(g, spread, gs_margin, home_won, sp_margin) -> str:
                               if isinstance(x, str) and x)
     if where:
         opinions += f'<div class="det-line mv">{where}</div>'
+    # The game's preview page (cfb.site.previews, built before this page),
+    # only where one is on disk.
+    preview = preview_page.href("cfb", g.game_id)
+    if preview:
+        opinions += (f'<div class="det-line"><a href="{preview}">Full preview &rarr;</a>'
+                     ' <span class="mv">unit vs unit, players, form</span></div>')
 
     return (f'<tr class="det" data-for="g-{escape(str(g.game_id))}"><td colspan="{_COLS}">'
             '<div class="det-wrap">'

@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 
 from cfb.site.predictions import _CSS, _fmt_spread
-from gordstats import bet_record, logos, scorecard
+from gordstats import bet_record, logos, preview_page, scorecard
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
 from nfl import predict, results
@@ -104,9 +104,14 @@ def _card(game, record: dict) -> str:
     kick = game["date"].tz_convert(TZ)
     where = "neutral site" if game.get("neutral") else escape(str(game.get("place") or ""))
     tv = escape(str(game.get("tv") or "").split(",")[0])
+    # The game's preview page (nfl.site.previews), only where one is on disk.
+    preview = preview_page.href("nfl", game.get("game_id"))
     when = (f"<div class='pg-when'><span>{kick:%a %-d %b, %-I:%M %p} ET"
             + (f" &middot; {where}" if where else "") + "</span>"
-            + (f"<span class='pg-tv'>{tv}</span>" if tv else "") + "</div>")
+            + (f"<span class='pg-tv'>{tv}</span>" if tv and not preview else "")
+            + (f"<span class='pg-tv'>{tv + ' &middot; ' if tv else ''}"
+               f"<a href='{preview}'>Preview &rarr;</a></span>" if preview else "")
+            + "</div>")
 
     home_score, away_score = _scores({"pred_home": (total + margin) / 2,
                                       "pred_away": (total - margin) / 2, "pred_margin": margin})

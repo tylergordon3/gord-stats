@@ -22,7 +22,7 @@ import pandas as pd
 from cfb import espn, gameinfo, odds as odds_mod, predict, schools as schools_mod, yahoo
 from cfb.config import SEASON
 from cfb.site import power, write_page
-from gordstats import logos, paths, watch_page
+from gordstats import logos, paths, preview_page, watch_page
 from gordstats.watch_page import ET, best_day, teaser  # noqa: F401  (cfb.site.home)
 
 OUT = paths.DOCS / "cfb" / "watch" / "index.html"
@@ -115,6 +115,11 @@ def games(now: datetime = None) -> list:
             "hw": _num(r.get("home_win_prob"), 3), "fw": _num(e.get("espn_home_wp"), 3),
             "sp": _num(r.get("book_spread")), "mq": _num(e.get("mq"), 0),
         }
+        # A card opens the game's preview where one is on disk
+        # (cfb.site.previews builds first); the engine's link otherwise.
+        preview = preview_page.href("cfb", gid)
+        if preview:
+            g["href"] = preview
         g["score"], g["tags"], g["fav"] = judge({
             **g, "margin": _num(r.get("pred_margin")), "hr": g["h"]["rk"], "ar": g["a"]["rk"],
             "hpo": _num(po.get(g["h"]["id"])), "apo": _num(po.get(g["a"]["id"]))})

@@ -22,9 +22,11 @@ def projection_years() -> list[int]:
 # league_power is the league's Power tab (its own page again since
 # 2026-09-29, and the build that archives its snapshots). recap before league
 # and matchups: both point at the newest one. trade carries the week's rosters
-# and projections, so it rebuilds with them.
+# and projections, so it rebuilds with them. previews after teams (links to
+# team pages) and before predictions, schedule and watch, which link to a
+# preview only when it is on disk.
 PAGES = ["home", "draft_review", "recap", "league", "league_power", "trade", "matchups",
-         "power", "teams", "predictions", "schedule", "countdown", "homecards",
+         "power", "teams", "previews", "predictions", "schedule", "countdown", "homecards",
          "watch", "strength", "usage", "roster", "stats"]
 
 

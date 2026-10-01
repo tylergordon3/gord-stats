@@ -26,7 +26,7 @@ from html import escape
 
 import pandas as pd
 
-from gordstats import logos
+from gordstats import logos, preview_page
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
 from nfl import predict, results
@@ -232,6 +232,13 @@ def _card(g, call: dict | None, records: dict) -> str:
     elif played and not _tbd(g):
         rows.append("<div class='ns-c'><span class='ns-lab'>GordStats</span>"
                     "<span class='ns-v ns-none'>No pick on record</span></div>")
+    # The game's preview page (nfl.site.previews, built before this page),
+    # only where one is on disk.
+    preview = preview_page.href("nfl", gid)
+    if preview:
+        rows.append(f"<div class='ns-c'><span class='ns-lab'>Preview</span>"
+                    f"<span class='ns-v'><a href='{preview}'>Unit vs unit, players &rarr;</a>"
+                    "</span></div>")
 
     attrs = (f" id='g-{gid}' data-state='{escape(str(g.get('state') or 'pre'))}'"
              f" data-ko='{g['date']:%Y-%m-%dT%H:%M:%SZ}' data-tk='{int(_time_known(g))}'")

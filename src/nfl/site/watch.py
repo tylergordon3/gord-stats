@@ -26,7 +26,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import requests
 
-from gordstats import logos, paths, watch_page
+from gordstats import logos, paths, preview_page, watch_page
 from gordstats.frontmatter import add_front_matter
 from gordstats.watch_page import ET
 from nfl import predict
@@ -124,6 +124,11 @@ def games(now: datetime = None, espn: dict = None) -> list:
             "hw": _num(r.get("home_win_prob"), 3), "fw": e.get("fw"),
             "sp": _num(r.get("book_spread")), "mq": e.get("mq"),
         }
+        # A card opens the game's preview where one is on disk
+        # (nfl.site.previews builds first); the engine's link otherwise.
+        preview = preview_page.href("nfl", gid)
+        if preview:
+            g["href"] = preview
         g["score"], g["tags"], g["fav"] = judge({
             **g, "margin": _num(r.get("pred_margin")),
             "hrec": g["h"]["rec"], "arec": g["a"]["rec"]})

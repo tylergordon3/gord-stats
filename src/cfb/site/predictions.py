@@ -34,7 +34,7 @@ from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
 from cfb.site import teams as teams_page              # noqa: E402
 from cfb.site import write_page                      # noqa: E402
 from gordstats import bet_record, scorecard            # noqa: E402
-from gordstats import charts, favorites, logos, palette  # noqa: E402
+from gordstats import charts, favorites, logos, palette, preview_page  # noqa: E402
 
 _SECTION = "cfb-predictions"
 ACCENT = palette.BLUE
@@ -352,9 +352,14 @@ def _card(game) -> str:
     timed = game.get("time_valid")
     timed = True if timed is None or pd.isna(timed) else bool(timed)
     at = f"{kick:%a %-d %b, %-I:%M %p} ET" if timed else f"{kick:%a %-d %b} &middot; time TBA"
+    # The game's preview page (cfb.site.previews), only where one is on disk.
+    preview = preview_page.href("cfb", game.get("game_id"))
     when = (f"<div class='pg-when'><span>{at}"
             + (f" &middot; {where}" if where else "") + "</span>"
-            + (f"<span class='pg-tv'>{tv}</span>" if tv else "") + "</div>")
+            + (f"<span class='pg-tv'>{tv}</span>" if tv and not preview else "")
+            + (f"<span class='pg-tv'>{tv + ' &middot; ' if tv else ''}"
+               f"<a href='{preview}'>Preview &rarr;</a></span>" if preview else "")
+            + "</div>")
 
     ours = f"<b>{escape(str(favourite))} {-abs(game['pred_margin']):.1f}</b>"
     market = ("" if pd.isna(game.get("market_spread"))
