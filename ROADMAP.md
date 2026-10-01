@@ -352,11 +352,21 @@ Open:
 - [x] **Playoff picture** (b31235a72): clinched / eliminated / magic number / win-and-in on both fantasy
       power pages (gordstats.clinch), never contradicting the sims.
 - [x] **Recaps for readers' leagues** (0749184e6): Sleeper and ESPN, in the browser (gordstats.my_recap).
-- [ ] **Shared-module follow-ups** (from the agents): GSAPI ESPN lineups for weeks older than last week
-      (my_recap works around it); a per-page Sleeper cache in GSAPI; expose my_team's flex table; the
-      built recap's empty avatar disc in dark; clinch.summary() as a matchups callout; a share link that
-      carries the reader's league.
-- [ ] **Phone, still open:** the reader's own power table (gordstats/my_power) keeps the old column
-      order and solid fills (tests pin it); pinned bars on /cfb/power/ are still two rows; the
-      schedule's picks cards are ~620px above the first game; bracketology and /men/history intros.
-
+- [x] **Trade analyzer** (/fantasy/trade/, /cfb/trade/, under the Team tab): pick a deal and see both
+      teams' points a week, record, playoff and title odds before and after (gordstats.trade_page).
+      NFL and readers' Sleeper/ESPN leagues run gordstats.my_power's simulation in the browser; the
+      college league ships its weekly projections and runs a JS port of cfb.league_sim. Both runs
+      share their draws, so a trade of nothing changes nothing; rosters stay legal (drop the worst
+      bench player / sign the best free agent at the position given up).
+- [x] **Shared-module follow-ups**: GSAPI answers ESPN lineups for any played week on request
+      (`{lineups:true}`) and caches each path per page; my_recap uses both and GSPlan's flex table;
+      the recap's empty avatar disc has an initial; the Playoff Picture is a callout on both matchups
+      pages (clinch.callout, docs/*/playoff-picture.json); Share on a reader's league sends
+      `?league=<id>`, shown for the visit without replacing the recipient's own league.
+- [x] **Phone, the last open items**: the reader's own power table in the built table's order and
+      wash; /cfb/power/'s pinned bar one row (a Since menu); the CFB schedule's picks folded to one line
+      (first game 799 -> 523px); bracketology and history intros were already trimmed.
+- [x] **Quadbox** on all three watch guides: a List / Quadbox switch; each window's best four on one
+      screen (sound on the best, never two on one broadcast channel - NFL assumes Sunday Ticket), the
+      next in line, and an On now box that keeps its places and swaps out a game that ends or turns
+      into a blowout (also now a -30 on the watch score in the second half).
