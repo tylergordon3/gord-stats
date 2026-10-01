@@ -12,7 +12,7 @@ import traceback
 
 # previews after teams (it links to team pages) and before everything that
 # links to a preview - predictions, watch, schedule - which ask the disk.
-PAGES = ["power", "teams", "previews", "predictions", "watch", "stats", "schedule",
+PAGES = ["power", "teams", "playoff", "previews", "predictions", "watch", "stats", "schedule",
          "homecards"]
 
 

@@ -24,9 +24,10 @@ def projection_years() -> list[int]:
 # and matchups: both point at the newest one. trade carries the week's rosters
 # and projections, so it rebuilds with them. previews after teams (links to
 # team pages) and before predictions, schedule and watch, which link to a
-# preview only when it is on disk.
+# preview only when it is on disk. playoff after power (the FPI cache it reads)
+# and teams (it links to them).
 PAGES = ["home", "draft_review", "recap", "league", "league_power", "trade", "matchups",
-         "power", "teams", "previews", "predictions", "schedule", "countdown", "homecards",
+         "power", "teams", "playoff", "previews", "predictions", "schedule", "countdown", "homecards",
          "watch", "strength", "usage", "roster", "stats"]
 
 

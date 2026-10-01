@@ -926,7 +926,9 @@ def body() -> str:
            "<p class='power-note'>The resume ranks ESPN computes from results - "
            "strength of record - appear here once games have been "
            "played.</p>")
-        + "</details>")
+        + "</details>"
+        + "<p class='power-note'><a href='/cfb/playoff/'>Playoff odds</a>: who makes the field, "
+        "on our model beside ESPN's.</p>")
 
     rankmoves.snapshot(HISTORY_DIR, pd.Series(ranks_now),
                        extra=pd.DataFrame({**{f: [t[f] for t in teams] for f in TRACKED if f != "rank"},

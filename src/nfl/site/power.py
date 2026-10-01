@@ -362,7 +362,9 @@ def body() -> str:
         "projected record, and the chance of the playoffs, the division, the Super Bowl "
         "(<strong>Conf%</strong>) and winning it (<strong>SB%</strong>). <strong>SOS</strong> "
         "is strength-of-schedule rank, hardest first. Tap a header to sort, again to "
-        "reverse; each team's page has its schedule and projected record.</p></details>")
+        "reverse; each team's page has its schedule and projected record.</p></details>"
+        "<p class='power-note'><a href='/nfl/playoff/'>Playoff odds</a>: who makes the field, "
+        "on our model beside ESPN's.</p>")
 
     _snapshot(teams)
     blob = json.dumps({"deltas": deltas, "kinds": kinds, "chg": {"fpi": 1, "gs": 1},

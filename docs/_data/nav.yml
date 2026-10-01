@@ -183,6 +183,8 @@ cfb:
     short: Predict
     icon: "🔮"
     url: /cfb/predictions/
+    # A game's preview belongs to the picks it explains.
+    covers: "/cfb/game/"
     group: model
 
   - title: Rankings
@@ -193,6 +195,14 @@ cfb:
     # the longest match for all 138 of them and lit up instead.
     covers: "/cfb/teams/"
     group: model
+
+  # Off the phone row (it holds five); the Rankings page links to it.
+  - title: Playoff Odds
+    short: Playoff
+    icon: "🏆"
+    url: /cfb/playoff/
+    group: model
+    phone: false
 
   - title: Team Stats
     short: Stats
@@ -231,6 +241,13 @@ nfl:
     # A team page is reached from the rankings; without this, Predictions
     # (/nfl/) is the longest match for all 32 of them and lights up instead.
     covers: "/nfl/teams/"
+
+  # Off the phone row (it holds five); the Rankings page links to it.
+  - title: Playoff Odds
+    short: Playoff
+    icon: "🏆"
+    url: /nfl/playoff/
+    phone: false
 
   - title: Watch Guide
     short: Watch
