@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-01T15:32:02+00:00",
+ "fetched": "2026-10-01T21:40:05+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,14 +17,14 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 181.14,
+     "projected": 181.15,
      "win_probability": 0.67
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 153.93,
+     "projected": 153.96,
      "win_probability": 0.32999999999999996
     }
    ]
@@ -47,7 +47,7 @@
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 156.4,
+     "projected": 156.43,
      "win_probability": 0.25
     }
    ]
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
      "projected": 181.78,
-     "win_probability": 0.73
+     "win_probability": 0.65
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 147.2,
-     "win_probability": 0.27
+     "projected": 159.34,
+     "win_probability": 0.35
     }
    ]
   },
@@ -1409,30 +1409,16 @@
     "stats": {}
    },
    {
-    "yahoo_id": "335940",
-    "player": "Jeremiah Hasley",
+    "yahoo_id": "333590",
+    "player": "Jaleel Skinner",
     "pos": "TE",
-    "team": "DUKE",
-    "team_full": "Duke Blue Devils",
-    "bye": 5.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "TE",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "463325",
-    "player": "Na'eem Abdul-Rahim Gladding",
-    "pos": "WR",
-    "team": "UMD",
-    "team_full": "Maryland Terrapins",
+    "team": "LOU",
+    "team_full": "Louisville Cardinals",
     "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
-    "slot": "W/R/T",
+    "slot": "TE",
     "points": 0.0,
     "stats": {}
    },
@@ -1447,6 +1433,48 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "339490",
+    "player": "Lee Beebe Jr.",
+    "pos": "RB",
+    "team": "IND",
+    "team_full": "Indiana Hoosiers",
+    "bye": 10.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "463325",
+    "player": "Na'eem Abdul-Rahim Gladding",
+    "pos": "WR",
+    "team": "UMD",
+    "team_full": "Maryland Terrapins",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "335940",
+    "player": "Jeremiah Hasley",
+    "pos": "TE",
+    "team": "DUKE",
+    "team_full": "Duke Blue Devils",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1499,34 +1527,6 @@
     "team": "MICH",
     "team_full": "Michigan Wolverines",
     "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "333590",
-    "player": "Jaleel Skinner",
-    "pos": "TE",
-    "team": "LOU",
-    "team_full": "Louisville Cardinals",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "339490",
-    "player": "Lee Beebe Jr.",
-    "pos": "RB",
-    "team": "IND",
-    "team_full": "Indiana Hoosiers",
-    "bye": 10.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2536,7 +2536,7 @@
   "457379": 12.02,
   "457918": 9.75,
   "482918": 0.0,
-  "900104": 15.35,
+  "900104": 15.36,
   "405071": 22.7,
   "469436": 22.45,
   "455519": 17.81,
@@ -2549,7 +2549,7 @@
   "469439": 13.11,
   "468459": 12.17,
   "404365": 8.88,
-  "900027": 8.94,
+  "900027": 8.97,
   "470211": 30.78,
   "405249": 27.35,
   "404522": 24.55,
@@ -2579,7 +2579,7 @@
   "404810": 11.53,
   "404631": 8.76,
   "450275": 15.19,
-  "900073": 6.72,
+  "900073": 6.75,
   "470424": 24.49,
   "405815": 28.8,
   "404291": 17.74,
@@ -2599,12 +2599,12 @@
   "405225": 15.7,
   "451040": 9.04,
   "450577": 10.78,
-  "463325": 9.88,
+  "333590": 7.79,
   "457801": 15.45,
+  "339490": 14.23,
+  "463325": 9.88,
   "469212": 23.58,
   "482773": 12.3,
-  "333590": 7.79,
-  "339490": 14.23,
   "900028": 4.11,
   "406169": 24.26,
   "457283": 29.62,

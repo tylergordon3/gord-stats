@@ -7743,7 +7743,7 @@
           "id": 1392675,
           "home": "MIN",
           "away": "NY",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-01"
@@ -7754,7 +7754,7 @@
           "id": 1392675,
           "home": "MIN",
           "away": "NY",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-01"
@@ -7789,7 +7789,7 @@
           "id": 1392677,
           "home": "ATL",
           "away": "WSH",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-02"
@@ -7800,7 +7800,7 @@
           "id": 1392677,
           "home": "ATL",
           "away": "WSH",
-          "status": "pre",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-02"
