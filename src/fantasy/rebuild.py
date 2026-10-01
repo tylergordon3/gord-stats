@@ -39,6 +39,9 @@ PAGES = [
     # After "players": the board reads the week's projections for catch rates.
     ("board",        "Season projection board (ranks your own league)",
                                                           lambda: _gen("season_board")),
+    # The page only: every league's trade is played out in the browser on the
+    # board above.
+    ("trade",        "Trade Analyzer (any league, in the browser)", lambda: _gen("trade")),
     # After "matchups": the week context reads the archive that step refreshes.
     ("context",      "This week's lines, forecasts and defence-vs-position",
                                                           lambda: _gen("week_context")),

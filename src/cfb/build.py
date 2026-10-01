@@ -21,8 +21,9 @@ def projection_years() -> list[int]:
 # folded into the schedule page, which /cfb/scoreboard/ now redirects to.
 # league_power is the league's Power tab (its own page again since
 # 2026-09-29, and the build that archives its snapshots). recap before league
-# and matchups: both point at the newest one.
-PAGES = ["home", "draft_review", "recap", "league", "league_power", "matchups",
+# and matchups: both point at the newest one. trade carries the week's rosters
+# and projections, so it rebuilds with them.
+PAGES = ["home", "draft_review", "recap", "league", "league_power", "trade", "matchups",
          "power", "teams", "predictions", "schedule", "countdown", "homecards",
          "watch", "strength", "usage", "roster", "stats"]
 

@@ -487,7 +487,8 @@ def body() -> str:
         page.CSS + page.CARD_CSS
         + f"<p><strong>Week {wkd.week}</strong> &middot; {start:%b %-d} &ndash; {end:%b %-d}. "
         "One roster at a time: who to start, which slot to put him in, what he is up "
-        "against, and who on the wire would beat him.</p>"
+        "against, and who on the wire would beat him. "
+        "<a href='/cfb/trade/'>Weighing a trade?</a></p>"
         "<details class='section'><summary>How to read this page</summary>"
         "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colours what has "
         "to change to get there, by <b>GS proj</b>, this site's weekly projection (Yahoo's "

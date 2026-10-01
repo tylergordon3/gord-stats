@@ -152,6 +152,7 @@ fantasy:
     icon: "📋"
     key: myteam
     url: /fantasy/roster/
+    covers: "/fantasy/trade/"
 
   - title: Power Rankings
     short: Power
@@ -263,6 +264,7 @@ cfb_fantasy:
     icon: "📋"
     key: myteam
     url: /cfb/roster/
+    covers: "/cfb/trade/"
 
   - title: Power Rankings
     short: Power
