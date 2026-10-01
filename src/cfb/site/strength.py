@@ -21,46 +21,16 @@ import pandas as pd
 from cfb import defense, espn, in_season, predict, schools as schools_mod, yahoo
 from cfb.config import SEASON, WEB_DIR
 from cfb.site import write_page
+from gordstats import strength_page
 
-# How many weeks ahead the schedule table looks. Past this the rosters that
-# own these players will have changed anyway.
-WEEKS_AHEAD = 6
+WEEKS_AHEAD = strength_page.WEEKS_AHEAD
 POSITIONS = defense.POSITIONS
 
-_CSS = """<style>
-table.st{width:100%;border-collapse:collapse;font-size:14px}
-table.st th{background:#eef2f7;color:#334155;padding:6px 9px;text-align:center;font-size:12px;
-  text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;border:1px solid #e2e8f0}
-table.st td{padding:5px 9px;border:1px solid #eef2f7;color:#0f172a;background:#fff;
-  text-align:center;white-space:nowrap}
-table.st td.st-name{text-align:left;font-weight:600}
-table.st tbody tr:nth-child(even) td{background:#f8fafc}
-table.st td:first-child,table.st th:first-child{position:sticky;left:0;z-index:1}
-.st-note{font-size:13px;color:#4a5a68;margin:6px 0 12px;line-height:1.55}
-.st-rk{display:inline-block;min-width:18px;text-align:right;color:#64748b;font-size:11px;
-  margin-right:6px}
-.st-scroll{overflow-x:auto}
-@media (prefers-color-scheme: dark){
-  table.st th{background:#223052;color:#dde5ef;border-color:#2b3852}
-  table.st td{background:#16203a;border-color:#2b3852;color:#dde5ef}
-  table.st tbody tr:nth-child(even) td{background:#1b2540}
-  .st-note{color:#aab7c9}
-  .st-rk{color:#aab7c9}
-}
-</style>"""
-
-
-def _heat(value, low=0.85, high=1.15) -> str:
-    """Green where a schedule or a defence gives points up, red where it does
-    not - the same direction in both tables."""
-    if value is None or pd.isna(value):
-        return ""
-    span = max(high - low, 1e-9)
-    t = min(max((float(value) - low) / span, 0.0), 1.0)
-    # red (stingy) -> amber -> green (generous)
-    r, g, b = (211, 47, 47) if t < 0.5 else (46, 125, 50)
-    alpha = abs(t - 0.5) * 2 * 0.45
-    return f"background:rgba({r},{g},{b},{alpha:.2f})"
+# The look, the tables and the arithmetic are gordstats.strength_page, shared
+# with the NFL league's /fantasy/strength/. `_heat` stays importable here: the
+# team dashboard (cfb.site.roster) colours its opponent cells with it.
+_CSS = strength_page.CSS
+_heat = strength_page.heat
 
 
 def _names() -> dict:
@@ -73,21 +43,11 @@ def _names() -> dict:
 
 
 def defense_section(grid: pd.DataFrame, names: dict) -> str:
-    rows = []
     # Ranked the way the dashboards rank a matchup: 1 is the stingiest defence,
     # the last place gives up the most.
-    for rank, (team_id, row) in enumerate(grid.iloc[::-1].iterrows(), 1):
-        cells = "".join(
-            f"<td style='{_heat(row.get(pos))}'>"
-            + ("&mdash;" if pd.isna(row.get(pos)) else f"{row[pos]:.2f}") + "</td>"
-            for pos in POSITIONS)
-        rows.append(f"<tr><td class='st-name'><span class='st-rk'>{rank}</span>"
-                    f"{escape(names.get(str(team_id), str(team_id)))}</td>{cells}"
-                    f"<td style='{_heat(row['all'])}'>{row['all']:.2f}</td></tr>")
-    head = ("<tr><th>Defence</th>" + "".join(f"<th>{p}</th>" for p in POSITIONS)
-            + "<th>All</th></tr>")
-    return ("<div class='st-scroll'><table class='st'>"
-            f"<thead>{head}</thead><tbody>{''.join(rows)}</tbody></table></div>")
+    rows = [(escape(names.get(str(team_id), str(team_id))), row, row["all"])
+            for team_id, row in grid.iloc[::-1].iterrows()]
+    return strength_page.defense_table(rows, POSITIONS)
 
 
 def _roster_players(board: pd.DataFrame) -> pd.DataFrame:
@@ -130,41 +90,11 @@ def schedule_section(ratings: dict, names: dict, frame: pd.DataFrame,
         opponents[(str(g["home_id"]), int(g["week"]))] = str(g["away_id"])
         opponents[(str(g["away_id"]), int(g["week"]))] = str(g["home_id"])
 
-    rows = []
-    for manager, group in players.groupby("manager"):
-        per_week, weights = {}, {}
-        for week in weeks:
-            total = weight = 0.0
-            for _, p in group.iterrows():
-                opp = opponents.get((p["school_id"], week))
-                if not opp:
-                    continue                       # bye: no matchup to price
-                rating = (ratings.get(opp) or {}).get(p["pos"])
-                if rating is None:
-                    continue
-                total += rating * p["proj"]
-                weight += p["proj"]
-            per_week[week] = (total / weight) if weight else None
-            weights[week] = weight
-        got = [v for v in per_week.values() if v is not None]
-        rows.append({"manager": manager, "weeks": per_week,
-                     "mean": sum(got) / len(got) if got else None})
-
-    rows = [r for r in rows if r["mean"] is not None]
-    rows.sort(key=lambda r: -r["mean"])
-    body = []
-    for rank, r in enumerate(rows, 1):
-        cells = "".join(
-            f"<td style='{_heat(r['weeks'][w])}'>"
-            + ("&mdash;" if r["weeks"][w] is None else f"{r['weeks'][w]:.2f}") + "</td>"
-            for w in weeks)
-        body.append(f"<tr><td class='st-name'><span class='st-rk'>{rank}</span>"
-                    f"{escape(str(r['manager']))}</td>{cells}"
-                    f"<td style='{_heat(r['mean'])}'><b>{r['mean']:.2f}</b></td></tr>")
-    head = ("<tr><th>Team</th>" + "".join(f"<th>Wk {w}</th>" for w in weeks)
-            + "<th>Average</th></tr>")
-    return ("<div class='st-scroll'><table class='st'>"
-            f"<thead>{head}</thead><tbody>{''.join(body)}</tbody></table></div>")
+    rows = strength_page.price(
+        [{"key": p["manager"], "label": p["manager"], "team": p["school_id"],
+          "pos": p["pos"], "weight": p["proj"]} for _, p in players.iterrows()],
+        weeks, opponents, ratings)
+    return strength_page.schedule_table(rows, weeks)
 
 
 def body() -> str:

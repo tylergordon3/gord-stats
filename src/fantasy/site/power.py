@@ -69,7 +69,9 @@ SECTIONS = [
 
 INTRO = f"""<p id="pw-intro">Every Sleeper roster played through {UPCOMING_SEASON}
 ten thousand times, averaged with the FantasyPros League Analyzer. <strong>100 is
-the league average</strong>; a point is one percent better.</p>"""
+the league average</strong>; a point is one percent better.</p>
+<p>The schedule ahead - whose helps from here, and which defences give up points to each
+position - is on <a href="/fantasy/strength/">Matchup Strength</a>.</p>"""
 
 
 # --------------------------------------------------------------------------- #

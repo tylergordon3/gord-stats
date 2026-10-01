@@ -159,6 +159,7 @@ fantasy:
     icon: "⚡"
     key: power
     url: /fantasy/power/
+    covers: "/fantasy/strength/"
 
   - title: Usage
     short: Usage

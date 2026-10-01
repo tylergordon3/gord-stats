@@ -48,7 +48,7 @@ _ATTEMPTS = 3
 # a finished week re-ranks the power page and closes the week on the matchups
 # page; a game in progress refreshes only the matchups page (live points).
 PAGES = {"week": ["power", "recap", "matchups", "players", "board", "context", "roster",
-                  "usage"], "live": ["matchups"]}
+                  "strength", "usage"], "live": ["matchups"]}
 
 
 def _get(url, attempts=_ATTEMPTS):

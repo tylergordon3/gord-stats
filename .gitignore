@@ -120,6 +120,7 @@ docs/_data/cfb_countdown.json
 # filename" is not the test - "a generator writes it" is.
 docs/cfb/schedule/week-*.html
 docs/fantasy/week-context.json
+docs/fantasy/strength.json
 docs/cfb/week-games.json
 docs/cbb/star-teams.json
 docs/fantasy/recap/latest.json

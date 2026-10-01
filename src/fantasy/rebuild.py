@@ -46,6 +46,9 @@ PAGES = [
     ("context",      "This week's lines, forecasts and defence-vs-position",
                                                           lambda: _gen("week_context")),
     ("roster",       "Team Dashboard (start/sit, slot order, waiver adds)", lambda: _gen("roster")),
+    # After "matchups": it reads the week archive that step captures.
+    ("strength",     "Matchup Strength (schedule ahead, defence vs position)",
+                                                          lambda: _gen("strength")),
     ("usage",        "Usage (snap, carry and target share)", lambda: _gen("usage")),
     ("records",      "Injury Impacts (League Home's records; retires Analytics)",
                                                           lambda: _gen("records")),
