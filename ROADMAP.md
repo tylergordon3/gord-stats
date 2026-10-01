@@ -237,8 +237,8 @@ Everything below is tested; the commits carry the detail.
 - [x] **League Home leads with the week** (4b4f3f3a0): matchups with live scores and
       the standings, for whichever league is on screen.
 - [x] **Publishing** (5e632541f): the upload retried; status.json; a freshness issue
-      when the daily run goes stale - **waiting on GitHub Actions being re-enabled for
-      the account** (no workflow has ever run in this repo, tests included).
+      when the daily run goes stale. GitHub Actions is back on (2026-09-30): the tests
+      pass on every push (7cb233473) and the freshness check runs every two hours.
 - [x] **Small fixes** (41db51a58, b2601de44, 29ac0e005): NFL points file junk rows
       and two unmatched players; the sync page says when a sync was cut short; tests
       never depend on a cache's age.
