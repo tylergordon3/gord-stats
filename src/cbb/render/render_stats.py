@@ -19,6 +19,7 @@ Preseason every figure is Torvik's projection; the page says so.
     python -m cbb.render.render_stats
 """
 import time
+import warnings
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -58,7 +59,11 @@ def four_factors(refresh: bool = False) -> dict:
             print(f"  ! four factors fetch failed ({exc}); using the cache")
     if not FF_CACHE.exists():
         return {}
-    raw = pd.read_csv(FF_CACHE)
+    # Torvik's rows carry more fields than his header (trailing ones), and
+    # pandas would take the extras as an index - keying every team by a rank.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", pd.errors.ParserWarning)
+        raw = pd.read_csv(FF_CACHE, index_col=False)
     values = raw.iloc[:, 1::2]                     # skip the rank beside each figure
     out = {}
     for team, row in zip(raw.iloc[:, 0], values.itertuples(index=False)):
@@ -110,7 +115,10 @@ FOUR = [
     _c("ast", "Ast rate", "Share of made baskets assisted.", "pct", None, "offense"),
     _c("efg_d", "eFG% allowed", "Opponents' effective field goal %.", "pct", "low", "defense"),
     _c("tov_d", "TO% forced", "Opponents' turnovers per possession.", "pct", "high", "defense"),
-    _c("drb", "DR%", "Share of opponents' misses the defence rebounds.", "pct", "high", "defense"),
+    # Torvik's "DR%" is the opponents' offensive rebounding: the share of
+    # their own misses they get back. Low is the good end.
+    _c("drb", "OR% allowed", "Share of their own misses opponents rebound.", "pct", "low",
+       "defense"),
     _c("ftr_d", "FT rate allowed", "Opponents' free throws per field goal attempt.", "pct", "low",
        "defense"),
     _c("p3_d", "3P% allowed", "Opponents' three-point percentage.", "pct", "low", "defense"),

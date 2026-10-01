@@ -49,3 +49,17 @@ def test_in_season_rows_add_the_record_and_four_factors(monkeypatch):
     assert row["rec"] == "3-1" and row["sos"] == 0.61 and row["wab"] == 2.5 and row["efg"] == 0.561
     keys = [c["key"] for c in render_stats.columns(have_ff=True, played=True)]
     assert "rec" in keys and "efg_d" in keys
+
+
+def test_torvik_rows_longer_than_the_header_still_key_by_team(tmp_path, monkeypatch):
+    """Torvik's real file carries four more fields a row than its header names
+    (2026_fffinal.csv: 41 against 37). Read naively, pandas took the extras
+    for an index and keyed every team by a rank - empty columns on the page."""
+    head, row = FF.strip().split("\n")
+    cache = tmp_path / "ff.csv"
+    cache.write_text(head + "\n" + row + ",12.5,38,5.6,1\n")
+    monkeypatch.setattr(render_stats, "FF_CACHE", cache)
+    os.utime(cache, (time.time(), time.time()))
+    got = render_stats.four_factors()
+    assert list(got) == ["Duke"]
+    assert got["Duke"]["efg"] == 0.561 and got["Duke"]["ast_d"] == 0.48
