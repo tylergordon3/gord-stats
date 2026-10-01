@@ -64,7 +64,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from gordstats import paths, share_button
+from gordstats import paths, share_button, share_card
 from gordstats.frontmatter import add_front_matter
 
 ET = ZoneInfo("America/New_York")
@@ -642,14 +642,73 @@ def title(game) -> str:
             f"{game['home']['name']}")
 
 
+SPORT_NAMES = {"cfb": "College football", "nfl": "NFL", "cbb": "College basketball"}
+
+
+def _card_slug(sport: str, game_id) -> str:
+    return f"{sport}-game-{game_id}"
+
+
+def _cards_here(root: Path = None) -> bool:
+    """Whether pages written under `root` (or the site's docs) are the site's
+    own, the place share_card keeps its images - not a test's temp folder."""
+    try:
+        return share_card.OUT_DIR.resolve().is_relative_to(Path(root or paths.DOCS).resolve())
+    except (OSError, ValueError):
+        return False
+
+
+def card(game) -> dict | None:
+    """The link preview a chat shows for this game (gordstats.share_card):
+    the matchup and kickoff, our call, the book's, and the lean if there is
+    one - or the final score once it is over."""
+    call = game.get("call") or {}
+    away, home = game["away"]["name"], game["home"]["name"]
+    rows = []
+    if game.get("state") == "post" and _v(game["home"].get("score")) is not None \
+            and _v(game["away"].get("score")) is not None:
+        hs, as_ = float(game["home"]["score"]), float(game["away"]["score"])
+        win, lose = (home, away) if hs >= as_ else (away, home)
+        rows.append(("Final", f"{win} {_n(max(hs, as_))}, {lose} {_n(min(hs, as_))}", ""))
+    margin, prob = _v(call.get("margin")), _v(call.get("prob"))
+    if margin is not None:
+        pick = "Coin flip" if abs(margin) < 0.5 else \
+            f"{home if margin > 0 else away} by {_by(margin)}"
+        rows.append(("GS", pick, "" if prob is None else f"{max(prob, 1 - prob):.0%}"))
+    spread, book_total = _v(call.get("spread")), _v(call.get("book_total"))
+    if spread is not None:
+        book = "Pick'em" if abs(spread) < 0.25 else \
+            f"{home if spread < 0 else away} -{_n(abs(spread))}"
+        rows.append(("Line", book, "" if book_total is None else f"O/U {_n(book_total)}"))
+        gap = None if margin is None else margin + spread
+        if gap is not None and abs(gap) >= call.get("call_min", 0.5):
+            lean_home = gap > 0
+            strong = abs(gap) >= (call.get("edge") or 3.0)
+            rows.append(("Lean", f"{home if lean_home else away} "
+                                 f"{_signed(spread if lean_home else -spread)}",
+                         "" if strong else "slight"))
+    sub = _kick(game).replace("&middot;", "·")
+    if game.get("tv"):
+        sub += f" · {game['tv']}"
+    kicker = SPORT_NAMES.get(game["sport"], game["sport"].upper())
+    if game.get("label"):
+        kicker += f" · {game['label']}"
+    return share_card.ranked(_card_slug(game["sport"], game["id"]), kicker,
+                             f"{away} {'v' if game.get('neutral') else 'at'} {home}", sub,
+                             rows, alt=f"{away} at {home}: GordStats' call")
+
+
 def write(game, subtitle: str = "", description: str = "", root: Path = None,
           updated: datetime | bool = True) -> Path:
-    """Write one game's page; returns its path."""
+    """Write one game's page; returns its path. The link-preview card is
+    drawn only for the site's own docs (_cards_here)."""
     name = title(game)
     path = out_dir(game["sport"], root) / str(game["id"]) / "index.html"
     path.parent.mkdir(parents=True, exist_ok=True)
+    image = card(game) if _cards_here(root) else None
     path.write_text(add_front_matter(body(game, name), escape(name), subtitle or None,
-                                     description=description or None, updated=updated),
+                                     description=description or None, updated=updated,
+                                     image=image),
                     encoding="utf-8")
     return path
 
@@ -678,6 +737,13 @@ def prune(sport: str, keep: set, root: Path = None) -> list:
         page.unlink()
         d.rmdir()
         removed.append(d.name)
+        if _cards_here(root):
+            # Its link-preview card goes with it (share_card names them
+            # <slug>-<10-char hash>.png), or a season would pile them up.
+            slug = _card_slug(sport, d.name)
+            for old in share_card.OUT_DIR.glob(f"{slug}-*.png"):
+                if len(old.stem) == len(slug) + 11:
+                    old.unlink()
     return removed
 
 

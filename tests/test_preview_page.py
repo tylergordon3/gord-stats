@@ -6,6 +6,7 @@ No network and no site: games are built here in the adapters' shape.
 import pandas as pd
 
 from gordstats import preview_page as pv
+from gordstats import preview_page
 
 
 def _team(name, abbr, tid, **kw):
@@ -230,3 +231,60 @@ def test_prune_removes_only_its_own_old_pages(tmp_path):
     assert (base / "2" / "index.html").exists() and (base / "3" / "index.html").exists()
     assert (base / "4" / "index.html").exists() and (base / "about").exists()
     assert pv.prune("nfl", set(), root=tmp_path) == []            # nothing there at all
+
+
+# ----- the link-preview card ------------------------------------------------ #
+
+def _card_game(**over):
+    g = {"sport": "cfb", "id": "401", "label": "Week 5", "state": "pre",
+         "ko": "2026-10-03T19:30:00Z", "tk": True, "tv": "ABC", "neutral": False,
+         "away": {"name": "Texas"}, "home": {"name": "Georgia"},
+         "call": {"margin": 4.5, "prob": 0.66, "spread": -7.0, "book_total": 52.5,
+                  "call_min": 0.5, "watch": 88, "tags": ["Top 25 matchup"]}}
+    g.update(over)
+    return g
+
+
+def test_the_card_says_our_call_the_books_and_the_lean(monkeypatch):
+    drawn = {}
+    monkeypatch.setattr(preview_page.share_card, "ranked",
+                        lambda slug, kicker, title, sub, rows, alt="": drawn.update(
+                            slug=slug, kicker=kicker, title=title, sub=sub, rows=rows))
+    preview_page.card(_card_game())
+    assert drawn["slug"] == "cfb-game-401" and drawn["title"] == "Texas at Georgia"
+    assert drawn["kicker"] == "College football · Week 5"
+    assert drawn["sub"] == "Sat, Oct 3 · 3:30 PM ET · ABC"
+    assert drawn["rows"] == [("GS", "Georgia by 4.5", "66%"), ("Line", "Georgia -7", "O/U 52.5"),
+                             ("Lean", "Texas +7", "slight")]
+
+
+def test_a_finished_games_card_leads_with_the_score(monkeypatch):
+    drawn = {}
+    monkeypatch.setattr(preview_page.share_card, "ranked",
+                        lambda slug, kicker, title, sub, rows, alt="": drawn.update(rows=rows))
+    preview_page.card(_card_game(state="post", away={"name": "Texas", "score": 31},
+                                 home={"name": "Georgia", "score": 24}))
+    assert drawn["rows"][0] == ("Final", "Texas 31, Georgia 24", "")
+
+
+def test_cards_are_drawn_for_the_site_and_pruned_with_their_page(tmp_path, monkeypatch):
+    docs = tmp_path / "docs"
+    share = docs / "assets" / "images" / "share"
+    monkeypatch.setattr(preview_page.paths, "DOCS", docs)
+    monkeypatch.setattr(preview_page.share_card, "OUT_DIR", share)
+    preview_page.write(_card_game(), updated=False)
+    cards = list(share.glob("cfb-game-401-*.png"))
+    assert len(cards) == 1
+    page = (docs / "cfb" / "game" / "401" / "index.html").read_text()
+    assert cards[0].name in page                      # the front matter's image
+    assert preview_page.prune("cfb", keep=set()) == ["401"]
+    assert not list(share.glob("cfb-game-401-*.png"))
+
+
+def test_a_test_folder_never_gets_the_sites_cards(tmp_path):
+    before = set(preview_page.share_card.OUT_DIR.glob("*.png")) \
+        if preview_page.share_card.OUT_DIR.exists() else set()
+    preview_page.write(_card_game(id="402"), root=tmp_path, updated=False)
+    after = set(preview_page.share_card.OUT_DIR.glob("*.png")) \
+        if preview_page.share_card.OUT_DIR.exists() else set()
+    assert after == before

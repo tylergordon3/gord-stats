@@ -180,12 +180,15 @@ def ranked(slug: str, kicker: str, title: str, sub: str, rows: list,
     im, d, y = _frame(kicker, title, sub)
     rows, size, step = _rows(rows, y)
     fr, fn, fv = font(size, True), font(size, True), font(size)
+    # Ranks fit the 70px column; a word label ("Line") widens it to fit.
+    lead = max([70] + [int(d.textlength(clean(r[0]), font=fr)) + 24 for r in rows])
     for rank, name, value in rows:
         d.text((PAD, y), clean(rank), font=fr, fill=ORANGE)
         v = clean(value)
         vw = d.textlength(v, font=fv)
         d.text((W - PAD - vw, y), v, font=fv, fill=MUTED)
-        d.text((PAD + 70, y), fit(d, name, fn, W - 2 * PAD - 70 - vw - 24), font=fn, fill=WHITE)
+        d.text((PAD + lead, y), fit(d, name, fn, W - 2 * PAD - lead - vw - 24), font=fn,
+               fill=WHITE)
         y += step
     return _save(im, slug, alt or f"{title}: {sub}")
 

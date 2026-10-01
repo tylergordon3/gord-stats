@@ -17,7 +17,7 @@ from cfb import playoff
 from cfb.config import SEASON, WEB_DIR
 from cfb.site import power
 from cfb.site import teams as teams_page
-from gordstats import logos, playoff_page
+from gordstats import logos, playoff_page, share_card
 from gordstats.frontmatter import add_front_matter
 
 OUT = WEB_DIR / "playoff" / "index.html"
@@ -114,6 +114,9 @@ def _table(res, league, espn: dict) -> str:
                        "seed": float(avg[i]) if ours >= 0.01 else None},
         })
     rows.sort(key=lambda r: (-r["values"]["playoff"], -(r["values"]["fpi"] or 0)))
+    # The link preview: the five likeliest, as the table lists them.
+    _CARD["rows"] = [(str(k + 1), r["name"], f"{r['values']['playoff']:.0%}")
+                     for k, r in enumerate(rows[:5])]
     columns = [
         {"key": "playoff", "label": "Playoff", "kind": "pct",
          "tip": "Our chance of making the 12-team field"},
@@ -188,12 +191,26 @@ def body() -> str:
                              _table(res, league, espn), _method(res.n))
 
 
+_CARD: dict = {}
+
+
+def card() -> dict | None:
+    """The page's link preview (gordstats.share_card), once there are odds."""
+    rows = _CARD.get("rows")
+    if not rows:
+        return None
+    return share_card.ranked("cfb-playoff", f"College football \u00b7 {SEASON}", "CFB Playoff Odds",
+                             "Chance to make the 12-team field, on our model", rows)
+
+
 def generate():
+    _CARD.clear()
     html = body()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(add_front_matter(html, "CFB Playoff Odds",
                                     f"{SEASON} season &middot; {playoff.N_SIMS:,} simulations",
-                                    description=DESCRIPTION, updated=True), encoding="utf-8")
+                                    description=DESCRIPTION, updated=True, image=card()),
+                   encoding="utf-8")
     print(f"Wrote CFB Playoff Odds -> {OUT}")
 
 
