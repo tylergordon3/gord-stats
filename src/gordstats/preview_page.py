@@ -1,6 +1,6 @@
 """
-A preview page for one game, any sport: /cfb/game/<ESPN id>/ and
-/nfl/game/<ESPN id>/.
+A preview page for one game, any sport: /cfb/game/<ESPN id>/,
+/nfl/game/<ESPN id>/ and /cbb/game/<theScore id>/.
 
 The schedule pages already carry every book's line, the movement, the implied
 numbers, the form and the weather for each game. What none of them has is the
@@ -20,8 +20,9 @@ what a preview is for, with our pick on top. In order:
     links       both team pages, the schedule, Share
 
 Shared the way gordstats.watch_page and gordstats.stats_page are: each
-sport's adapter (cfb.site.previews, nfl.site.previews) builds its games in
-the one shape below, and everything else is here once.
+sport's adapter (cfb.site.previews, nfl.site.previews,
+cbb.render.render_previews) builds its games in the one shape below, and
+everything else is here once.
 
 A game, as the adapters build it (plain text unless marked):
 
@@ -30,7 +31,8 @@ A game, as the adapters build it (plain text unless marked):
     tv, venue, place, note (a bowl's name), neutral
     weather     {icon (HTML, the adapter's own entity), text, sub} or
                 {indoors: True} or None - see weather()
-    away / home {name, abbr, logo (URL), rank, record, href, score}
+    away / home {name, abbr, logo (URL), rank, record, href, score} and,
+                optionally, rank_text - shown in rank's place ("5 seed")
     call        {margin (home points), prob (home win chance), total,
                  spread (the book's home line), book_total, book (its name),
                  others: [(label, value, sub)], watch, tags, call_min, edge,
@@ -43,6 +45,7 @@ A game, as the adapters build it (plain text unless marked):
     words       {"off": "offence", "def": "defence"} - each sport spells them
                 as its stats page does
     schedule    the schedule page's URL for the game
+    links       optional, more [(label, URL)] for the row at the foot
     notes       [(term, what it means)] for the folded glossary
     source      where the unit numbers come from, one line
     stats       the sport's Team Stats URL, linked under the units
@@ -51,6 +54,8 @@ A game, as the adapters build it (plain text unless marked):
     prune(sport, keep)       remove pages this generator wrote for other games
     exists(sport, id)        whether a preview is on disk - the one test every
                              page linking to a preview asks first
+    built(sport)             every id with a preview on disk, for a page that
+                             draws its games in the browser
 """
 from datetime import datetime
 from html import escape
@@ -98,6 +103,16 @@ def href(sport: str, game_id, root: Path = None) -> str | None:
     return url(sport, game_id) if exists(sport, game_id, root) else None
 
 
+def built(sport: str, root: Path = None) -> list:
+    """Every game id with a preview on disk, for a page that draws its games
+    in the browser and so cannot ask exists() one game at a time (the CBB
+    watch guide reads the live scoreboard)."""
+    base = out_dir(sport, root)
+    if not base.is_dir():
+        return []
+    return sorted(d.name for d in base.iterdir() if d.is_dir() and exists(sport, d.name, root))
+
+
 # --------------------------------------------------------------------------- #
 # Numbers
 # --------------------------------------------------------------------------- #
@@ -120,6 +135,8 @@ def ordinal(n) -> str:
 
 
 def possessive(name: str) -> str:
+    if name.endswith(("'s", "\u2019s")):        # St. John's, Saint Mary's: already one
+        return name
     return f"{name}'" if name.endswith("s") else f"{name}'s"
 
 
@@ -137,6 +154,8 @@ def fmt(value, kind: str) -> str:
         return f"{v * 100:.0f}%"
     if kind == "epa":
         return f"{0.0 if round(v, 2) == 0 else v:+.2f}"
+    if kind == "pct1":                          # basketball's shares differ in tenths
+        return f"{v * 100:.1f}%"
     if kind == "num2":
         return f"{v:.2f}"
     return f"{v:.1f}"
@@ -281,9 +300,12 @@ def _kick(game) -> str:
 def _team(game, side: str) -> str:
     t = game[side]
     rank = t.get("rank")
+    # `rank_text` stands in for "#5" where the number is something else - a
+    # tournament seed ("5 seed").
+    mark = escape(t["rank_text"]) if t.get("rank_text") else (f"#{int(rank)}" if rank else "")
     logo = (f"<img src='{escape(t['logo'], quote=True)}' alt='' width='56' height='56' "
             "loading='lazy' decoding='async'>" if t.get("logo") else "<span class='pv-nologo'></span>")
-    name = (f"<span class='pv-nm'>{f'<span class=pv-rk>#{int(rank)}</span> ' if rank else ''}"
+    name = (f"<span class='pv-nm'>{f'<span class=pv-rk>{mark}</span> ' if mark else ''}"
             f"{escape(t['name'])}</span>")
     rec = f"<span class='pv-rec'>{escape(t['record'])}</span>" if t.get("record") else ""
     inner = logo + name + rec
@@ -595,7 +617,8 @@ def links_block(game, title: str) -> str:
              if game[side].get("href")]
     if game.get("schedule"):
         links.append(("Schedule", game["schedule"]))
-    row = "".join(f"<a href='{escape(h, quote=True)}'>{escape(n)} &rarr;</a>" for n, h in links)
+    links += list(game.get("links") or [])      # a sport's own: [(label, URL)]
+    row ="".join(f"<a href='{escape(h, quote=True)}'>{escape(n)} &rarr;</a>" for n, h in links)
     notes = game.get("notes") or []
     gloss = ("<details class='pv-gloss'><summary>What these numbers mean</summary><dl>"
              + "".join(f"<dt>{escape(t)}</dt><dd>{escape(d)}</dd>" for t, d in notes)

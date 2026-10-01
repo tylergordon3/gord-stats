@@ -18,6 +18,10 @@ is basketball's own:
                     (render_power.star_teams) gives each star key its name on
                     the scoreboard, and its logo - the feed carries neither.
     live            the same feed again, every three minutes while a game is on
+    previews        a men's card opens the game's preview (/cbb/game/<id>/,
+                    cbb.render.render_previews, built just before this page)
+                    when one is on disk, else the scoreboard - the ids are
+                    written in at build time, since the cards are drawn later
     no games        one line: when the next one is (ESPN's calendar, as the
                     /men/ board asks it; the season's first game when that does
                     not answer), and nothing else on the page
@@ -46,7 +50,7 @@ tournament, the NIT, the Crown; the NCAA tournament counts twice). Tagged
 import json
 
 from cbb import paths
-from gordstats import watch_page
+from gordstats import preview_page, watch_page
 from gordstats.frontmatter import add_front_matter
 
 OUT = paths.DOCS / "cbb" / "watch" / "index.html"
@@ -84,7 +88,7 @@ def config() -> dict:
             "midnight": AFTER_MIDNIGHT, "half": HALF_LIFE, "unranked": UNRANKED,
             "nocall": NO_CALL, "toss": list(TOSS_UP), "upset": UPSET_WATCH,
             "close": CLOSE, "blowout": BLOWOUT, "lateSec": LATE_SECONDS, "every": EVERY, "gameHours": GAME_HOURS,
-            "tipoff": CBB_TIPOFF.isoformat()}
+            "tipoff": CBB_TIPOFF.isoformat(), "pv": preview_page.built("cbb")}
 
 
 # The switch between the leagues sits above the engine's host, outside what
@@ -107,7 +111,8 @@ ADAPTER_JS = CSS + """<script>
   var host=document.getElementById('wg-host');
   if(!host||!window.GSWatch) return;
   var feed=null, fetchedAt=0, teams={}, W=null, turn=0, wake=null, lines={};
-  var league='men';
+  var league='men', PV={};
+  (C.pv||[]).forEach(function(id){ PV[String(id)]=1; });
   try{ if(localStorage.getItem('league')==='women') league='women'; }catch(e){}
 
   function etDate(t){ return new Date(t).toLocaleDateString('en-CA',{timeZone:'America/New_York'}); }
@@ -212,7 +217,8 @@ ADAPTER_JS = CSS + """<script>
       out.push({id:String(id), day:day, slot:slot, ko:tk?new Date(ko).toISOString():'', tk:tk,
         tv:'', note:tour?desc.replace(/\\s*\\|\\s*/g,' \\u00b7 '):'', n:g.neutral===true, state:st,
         hw:p, sp:null, lt:g.spread_close?String(g.spread_close).replace(/ -(?=\\d)/,' \\u2212'):'',
-        score:j.score, tags:j.tags, fav:j.fav, href:'/'+lg+'/', h:h2, a:a2});
+        score:j.score, tags:j.tags, fav:j.fav, h:h2, a:a2,
+        href:lg==='men'&&PV[String(id)]?'/cbb/game/'+id+'/':'/'+lg+'/'});
     });
     return out;
   }

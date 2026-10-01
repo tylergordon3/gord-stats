@@ -111,14 +111,25 @@ def _cbb_power() -> None:
     live scoreboard in the browser, so the page only has to exist, all year -
     out of season it says when the next game is.
     """
-    from cbb.render import render_power, render_stats, render_watch
+    from cbb.render import render_power, render_previews, render_stats, render_watch
 
     render_power.trank(refresh=True)
     render_power.generate()
+    # Game previews read the T-Rank table just refreshed, and go before the
+    # watch guide, which links to whichever previews are on disk. A failure
+    # here must not cost the guide or the stats page, so it is raised after.
+    failed = None
+    try:
+        render_previews.generate()
+    except Exception as exc:                      # noqa: BLE001
+        traceback.print_exc()
+        failed = exc
     render_watch.generate()
     # The team stats page reads the same T-Rank table, and Torvik's four
     # factors once he publishes them for the season.
     render_stats.generate()
+    if failed:
+        raise failed
 
 
 def _fantasy() -> None:

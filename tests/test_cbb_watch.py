@@ -71,10 +71,29 @@ def test_the_daily_run_builds_it_beside_the_rankings(monkeypatch):
     monkeypatch.setattr(render_power, "trank", lambda refresh=False: calls.append("trank"))
     monkeypatch.setattr(render_power, "generate", lambda: calls.append("power"))
     monkeypatch.setattr(watch, "generate", lambda: calls.append("watch"))
-    from cbb.render import render_stats
+    from cbb.render import render_previews, render_stats
     monkeypatch.setattr(render_stats, "generate", lambda: calls.append("stats"))
+    monkeypatch.setattr(render_previews, "generate", lambda: calls.append("previews"))
     daily._cbb_power()
-    assert calls == ["trank", "power", "watch", "stats"]
+    assert calls == ["trank", "power", "previews", "watch", "stats"]
+
+
+def test_a_failed_preview_run_still_builds_the_guide_then_says_so(monkeypatch):
+    import pytest
+    from cbb.render import render_power, render_previews, render_stats
+    from gordstats import daily
+    calls = []
+    monkeypatch.setattr(render_power, "trank", lambda refresh=False: None)
+    monkeypatch.setattr(render_power, "generate", lambda: None)
+    monkeypatch.setattr(watch, "generate", lambda: calls.append("watch"))
+    monkeypatch.setattr(render_stats, "generate", lambda: calls.append("stats"))
+
+    def boom():
+        raise RuntimeError("feed down")
+    monkeypatch.setattr(render_previews, "generate", boom)
+    with pytest.raises(RuntimeError):
+        daily._cbb_power()
+    assert calls == ["watch", "stats"]
 
 
 # --------------------------------------------------------------------------- #
