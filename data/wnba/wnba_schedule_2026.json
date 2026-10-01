@@ -7697,7 +7697,7 @@
           "id": 1392673,
           "home": "WSH",
           "away": "ATL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-30"
@@ -7708,7 +7708,7 @@
           "id": 1392673,
           "home": "WSH",
           "away": "ATL",
-          "status": "in",
+          "status": "post",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-30"
@@ -7719,7 +7719,7 @@
           "id": 1392674,
           "home": "DAL",
           "away": "GS",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-30"
@@ -7730,7 +7730,7 @@
           "id": 1392674,
           "home": "DAL",
           "away": "GS",
-          "status": "pre",
+          "status": "in",
           "home_score": null,
           "away_score": null,
           "date": "2026-09-30"
