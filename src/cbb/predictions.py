@@ -650,7 +650,8 @@ def predict(date):
     # One line and the method folded (2026-09-29 phone pass): four paragraphs
     # stood between the date and the field. The final 2026 page, which is
     # tracked, was edited to match.
-    df_html += "<p>Green: won its conference tournament, and the automatic bid with it.</p>"
+    # 2026-09-30: the key in four words, one line at 390px.
+    df_html += "<p>Green: conference tournament champion.</p>"
     df_html += ("<details class='section'><summary>How the field is built</summary>"
                 "<p><strong>Pwr</strong> is the tournament probability from machine-learning models "
                 "on KenPom and Torvik data, balanced with the ESPN BPI, NET, KenPom and Torvik "

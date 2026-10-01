@@ -147,6 +147,33 @@ table.cfb-power th:first-child{left:0;z-index:3}
   table.cfb-power th:first-child{border-top-left-radius:0}
 }
 .power-note{font-size:13px;color:#4a5a68;margin:6px 0 10px}
+/* The pinned bar is one row: the two tabs, the Since menu, the favourites
+   filter (_window_picker). */
+.pwr-pin .win-pick{display:inline-flex;align-items:center;gap:6px;margin:4px 0}
+/* The label is outside a .view-switch, so it restates that bar's label look. */
+.pwr-pin .win-pick .switch-label{min-width:0;font-weight:800;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.04em;color:#475569}
+.win-sel{font:inherit;font-size:14px;font-weight:600;color:#334155;background:#fff;
+  border:1px solid #e2e8f0;border-radius:999px;padding:6px 12px;cursor:pointer;
+  box-shadow:0 1px 2px rgba(15,23,42,.04)}
+@media (max-width:700px){
+  /* One row on a phone, never two: nothing wraps, and the widths below are
+     what makes all of it fit at 390px (the row would slide rather than wrap
+     on a narrower screen). */
+  .pin-bar.pwr-pin{flex-wrap:nowrap;column-gap:10px;overflow-x:auto;
+    padding-left:10px;padding-right:10px}
+  .pwr-pin>*{flex:none}
+  .pwr-pin .pv-switch{overflow:visible}
+  .pwr-pin .pv-switch button{padding:6px 12px}
+  .win-sel{min-height:42px;padding:6px 8px 6px 12px}
+  /* Starred, the filter is its star alone - a 42px round toggle, the count
+     dropped - and the menu gives up its label, so it still fits. */
+  .pwr-pin .fav-count{display:none}
+  .pwr-pin .fav-filter{font-size:0;min-width:42px;min-height:42px;border-radius:999px;
+    display:inline-flex;align-items:center;justify-content:center}
+  .pwr-pin .fav-filter span{font-size:18px}
+  .pwr-pin:has(.fav-filter:not([hidden])) .win-pick .switch-label{display:none}
+}
 """ + rankmoves.CSS + """
 @media (max-width:600px){
   table.cfb-power{font-size:13px}
@@ -165,6 +192,8 @@ table.cfb-power th:first-child{left:0;z-index:3}
      against the navy rows. */
   table.cfb-power td.pwr-team img{filter:drop-shadow(0 0 1px rgba(255,255,255,.6))}
   .power-note{color:#aab7c9}
+  .win-sel{background:#1b2540;border-color:#2b3852;color:#dde5ef;box-shadow:none}
+  .pwr-pin .win-pick .switch-label{color:#aab7c9}
   .power-wrap{border-color:#2b3852}
   table.cfb-power td.pwr-team .pwr-rec{color:#aab7c9}
   table.cfb-power td .gs-rk{color:#aab7c9}
@@ -194,8 +223,17 @@ if(data){try{var d=JSON.parse(data.textContent);DELTA=d.deltas;KIND=d.kinds;WHEN
 var moveTh=head.querySelector('th.mv-th'), baseTh=head.querySelector('th.sortable[data-field=gs_rank]');
 var moveI=moveTh?Array.prototype.indexOf.call(head.cells,moveTh):-1;
 var win=null, field=DEFAULT;
-var first=document.querySelector('.win-btn.active');
-if(first) win=first.getAttribute('data-win');
+var winSel=document.querySelector('.win-sel');
+if(winSel){
+  // The table is drawn for the opening window; a menu the browser restored to
+  // another one on a reload would be describing a table that is not there.
+  var opening=winSel.querySelector('option[selected]');
+  if(opening) winSel.value=opening.value;
+  win=winSel.value;
+  winSel.addEventListener('change',function(){
+    document.dispatchEvent(new CustomEvent('winchange',{detail:winSel.value}));
+  });
+}
 
 function arrow(v){
   v=Math.round(v);
@@ -595,7 +633,43 @@ def _switcher() -> str:
         f'<button class="pv-btn{" active" if i == 0 else ""}" id="pv-tab-{vid}" '
         f'data-view="{vid}">{label}</button>'
         for i, (vid, label) in enumerate(VIEWS))
-    return f'<div class="view-switch"><span class="switch-label">Show:</span>{buttons}</div>'
+    # No "Show:" label: two tabs say what they are, and the label was a third
+    # of the row the window menu now shares (see _window_picker).
+    return f'<div class="view-switch pv-switch">{buttons}</div>'
+
+
+def _window_picker(bases: dict) -> str:
+    """The change-since windows as one menu, beside the tabs.
+
+    `rankmoves.window_switch` draws each window as a button - seven clock
+    windows and the end of every week played, twelve by October - and on a
+    phone that was the pinned bar's second row, scrolling sideways under the
+    tabs (111px of bar; 2026-09-30 phone pass). A <select> holds them all in
+    the width of one button, so tabs, window and the favourites filter share a
+    single row. The script fires the same `winchange` event the buttons do.
+    """
+    if not bases:
+        return ""
+
+    def text(b) -> str:
+        if b.get("group") == "week":
+            return f"End of Wk {b['week']}"
+        label = b["label"]
+        return f"{label} ago" if label[:1].isdigit() else label
+
+    def option(win, b, first) -> str:
+        return (f'<option value="{win}"{" selected" if first else ""} '
+                f'title="{b["at"]:%b %-d, %-I:%M %p}">{escape(text(b))}</option>')
+
+    items = list(bases.items())
+    clock = "".join(option(w, b, i == 0) for i, (w, b) in enumerate(items)
+                    if b.get("group", "time") != "week")
+    weeks = "".join(option(w, b, i == 0) for i, (w, b) in enumerate(items)
+                    if b.get("group") == "week")
+    if weeks:
+        weeks = f'<optgroup label="After the week">{weeks}</optgroup>'
+    return ('<label class="win-pick"><span class="switch-label">Since</span>'
+            f'<select class="win-sel" aria-label="Change since" autocomplete="off">{clock}{weeks}</select></label>')
 
 
 def _deltas(bases: dict, teams: list) -> dict:
@@ -822,8 +896,9 @@ def body() -> str:
     if show_move:
         move_note = (" <strong>Move</strong> is the change in whichever column the table "
                      "is sorted by - places climbed in the GordStats rank until you "
-                     "sort by another, then that figure's change - since the point the buttons "
-                     f"pick. It opens on the rankings as they stood before this week's "
+                     "sort by another, then that figure's change - since the point the "
+                     "<strong>Since</strong> menu picks. It opens on the rankings as they "
+                     f"stood before this week's "
                      f"games ({first_at:%b %-d}); every build is archived, so the choice "
                      "runs from there back to the season's first, or to the end of any "
                      "week's games.")
@@ -863,13 +938,13 @@ def body() -> str:
                        "when": {win: f"{b['at']:%b %-d}" for win, b in bases.items()}},
                       separators=(",", ":"))
     return (_CSS + favorites.table_css("table.cfb-power") + intro
-            + "<div class='pin-bar'>" + _switcher() + rankmoves.window_switch(bases)
+            + "<div class='pin-bar pwr-pin'>" + _switcher() + _window_picker(bases)
             + favorites.controls() + "</div>"
             + "<div class='power-wrap'>"
             + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(rows)}</tbody></table></div>"
             + "{% raw %}<script type='application/json' id='pwr-deltas'>" + blob
-            + "</script>{% endraw %}" + _JS + rankmoves.WINDOW_JS)
+            + "</script>{% endraw %}" + _JS)
 
 
 _CARD: dict = {}

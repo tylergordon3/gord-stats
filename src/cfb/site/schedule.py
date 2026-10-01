@@ -128,7 +128,18 @@ tr.g[data-state="in"] .sc-live{display:block}
 .tag-dog{background:#fef3c7;color:#92400e}
 .tag-toss{background:#dbeafe;color:#1e40af}
 .tag-upset{background:#fee2e2;color:#991b1b}
-/* GordStats picks of the day: two cards above the current week. */
+/* GordStats picks of the day: one folded line above the current week, the
+   two cards under it. */
+.gs-picks-fold{margin:6px 0 10px}
+.gs-picks-fold>summary{cursor:pointer;padding:10px 14px;font-size:14px;color:#334155;
+  background:#fff;border:1px solid #e2e8f0;border-radius:12px;line-height:1.35;
+  box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.gs-picks-fold>summary b{color:#0f172a;font-weight:700}
+.gs-picks-fold[open]>summary{margin-bottom:6px}
+.gp-sum .gp-p{font-weight:800;color:#1a7f4b;font-variant-numeric:tabular-nums}
+.gp-sum .gp-hit{color:#1a7f4b;font-weight:800}
+.gp-sum .gp-miss{color:#b3382c;font-weight:800}
+.gs-picks-fold>.wk-note{margin:0 0 6px}
 .gs-picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));
   gap:12px;margin:8px 0 14px}
 .gs-pick{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 15px 13px;
@@ -447,6 +458,10 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .tag-toss{background:#1e3a8a;color:#bfdbfe}
   .tag-upset{background:#7f1d1d;color:#fecaca}
   .gs-pick{background:#16203a;border-color:#2b3852}
+  .gs-picks-fold>summary{background:#16203a;border-color:#2b3852;color:#c3cfdd}
+  .gs-picks-fold>summary b{color:#f1f5f9}
+  .gp-sum .gp-p,.gp-sum .gp-hit{color:#6ee7b7}
+  .gp-sum .gp-miss{color:#f87171}
   .gs-pick .gp-label,.gs-pick .gp-sub,.gs-pick .gp-note,.gs-pick .gp-book,.gs-pick .gp-legs .gp-game{color:#aab7c9}
   .gs-pick .gp-main,.gs-pick .gp-legs li a{color:#f1f5f9}
   .gs-pick .gp-legs li{border-color:#2b3852}
@@ -1631,6 +1646,7 @@ def _picks(df: pd.DataFrame, current: int) -> str:
                 else ' <span class="gp-miss">&#10007;</span>')
 
     dog_html = ""
+    line = []                     # the folded line: each pick, its chance, its grade
     d = picks.get("underdog")
     if d:
         g = by_id.get(d["game_id"])
@@ -1651,6 +1667,8 @@ def _picks(df: pd.DataFrame, current: int) -> str:
             f'<div class="gp-sub">{where} {escape(d["opp"])} · {escape(d["kick"])}'
             f' · <span class="gp-p">{d["p"]:.0%}</span> to win, {edge}</div>'
             f"<div class='gp-note'>{verdict}</div></div>")
+        line.append(f'{escape(d["team"])} +{d["line"]:.1f} '
+                    f'<span class="gp-p">{d["p"]:.0%}</span>{mark(won)}')
 
     parlay_html = ""
     legs = picks.get("legs") or []
@@ -1671,18 +1689,27 @@ def _picks(df: pd.DataFrame, current: int) -> str:
             f'<div class="gp-main">{len(legs)} legs · <span class="gp-p">{ours:.0%}</span>'
             f' <span class="gp-book">the book implied {book:.0%}</span></div>'
             f'<ul class="gp-legs">{items}</ul></div>')
+        line.append(f'Parlay <span class="gp-p">{ours:.0%}</span>'
+                    + mark({"hit": True, "missed": False}.get(state)))
 
     if not (dog_html or parlay_html):
         return ""
     # When, not how: what locking means is in the legend.
     if locked_at:
-        note = f" &middot; locked {escape(locked_at)}"
+        note = f"Locked {escape(locked_at)}"
     elif day > datetime.now(LEAGUE_TZ).date():
-        note = f" &middot; a preview until {day:%A} morning"
+        note = f"A preview until {day:%A} morning"
     else:
-        note = " &middot; set before the first kickoff"
-    return (f'<p class="wk-note"><b>GordStats picks for {day:%A}</b>{note}</p>'
-            f'<div class="gs-picks">{dog_html}{parlay_html}</div>')
+        note = "Set before the first kickoff"
+    # Folded to one line (2026-09-30 phone pass): the heading and two cards
+    # stood 350-620px tall between the week buttons and the first game on a
+    # 390px screen. The line is the picks themselves - who, how likely, and
+    # the grade once the games are in; the cards, the book's view and when
+    # they were locked open under it.
+    return (f'<details class="gs-picks-fold"><summary class="gp-sum">'
+            f'<b>{day:%a} picks</b> &middot; {" &middot; ".join(line)}</summary>'
+            f'<p class="wk-note">{note}</p>'
+            f'<div class="gs-picks">{dog_html}{parlay_html}</div></details>')
 
 
 def _live_url(week: int) -> str:
