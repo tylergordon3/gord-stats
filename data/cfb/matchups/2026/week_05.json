@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-01T01:25:38+00:00",
+ "fetched": "2026-10-01T01:48:41+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -87,14 +87,14 @@
      "name": "CCAM State",
      "points": 0.0,
      "projected": 176.59,
-     "win_probability": 0.8
+     "win_probability": 0.78
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 129.45,
-     "win_probability": 0.19999999999999996
+     "projected": 132.47,
+     "win_probability": 0.21999999999999997
     }
    ]
   },
@@ -2631,7 +2631,7 @@
   "338689": 30.67,
   "406381": 6.68,
   "456249": 11.19,
-  "900068": 6.46,
+  "900068": 9.48,
   "448820": 15.02,
   "338839": 12.85,
   "457893": 17.05,
