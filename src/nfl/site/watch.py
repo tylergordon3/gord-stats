@@ -171,7 +171,12 @@ ADAPTER_JS = """<script>
   var D=JSON.parse(document.getElementById('wg-data').textContent);
   var BOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=';
   GSWatch(D, {
-    myKey:'nflMyTeam', link:'/nfl/', pickLabel:'Your team',
+    myKey:'nflMyTeam', link:'/nfl/', pickLabel:'Your team', blowout:17,
+    /* Sunday afternoons are all CBS and FOX: a quadbox only works with
+       every game available, so the guide assumes it and says so. */
+    quadShared:true,
+    quadNote:'Every game counted as available, as with NFL Sunday Ticket; without it the '
+      +'afternoon windows are your local CBS and FOX games.',
     hint:'Star teams on the <a href="/nfl/power/">rankings</a> to put their games first, or pick your team to see your starters.',
     staleHtml:'This guide has not been rebuilt for a few days; the <a href="/nfl/">predictions page</a> is current.',
     /* A star is stored by ESPN id (nfl:<id>, as /nfl/power/ writes it); the

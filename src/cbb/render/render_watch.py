@@ -66,6 +66,7 @@ NO_CALL = 50.0             # closeness without our win chance
 TOSS_UP = (0.42, 0.58)
 UPSET_WATCH = watch_page.UPSET_WATCH
 CLOSE = 6                  # a margin that is close late
+BLOWOUT = 18               # a second-half margin that drops a game down the order
 LATE_SECONDS = 300         # "late": the last five minutes, or overtime
 EVERY = 180000             # the feed changes once a push, every ten minutes
 GAME_HOURS = 2.5           # tip to final, and then some
@@ -82,7 +83,7 @@ def config() -> dict:
             "cuts": [[key, before] for key, _label, before in SLOTS],
             "midnight": AFTER_MIDNIGHT, "half": HALF_LIFE, "unranked": UNRANKED,
             "nocall": NO_CALL, "toss": list(TOSS_UP), "upset": UPSET_WATCH,
-            "close": CLOSE, "lateSec": LATE_SECONDS, "every": EVERY, "gameHours": GAME_HOURS,
+            "close": CLOSE, "blowout": BLOWOUT, "lateSec": LATE_SECONDS, "every": EVERY, "gameHours": GAME_HOURS,
             "tipoff": CBB_TIPOFF.isoformat()}
 
 
@@ -300,7 +301,7 @@ ADAPTER_JS = CSS + """<script>
   // hint would send the reader somewhere that changes nothing here.
   var HINT='Star teams on the <a href="/cbb/power/">rankings</a> to put their games first.';
   var cfg={
-    link:'/men/', close:C.close, every:C.every, gameHours:C.gameHours,
+    link:'/men/', close:C.close, blowout:C.blowout, every:C.every, gameHours:C.gameHours,
     staleHtml:'The scoreboard has not been updated for a few days.',
     stars:function(){
       var set={}, list=[];

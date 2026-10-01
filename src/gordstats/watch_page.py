@@ -238,11 +238,46 @@ a.wg-g.done{opacity:.8}
 .wg-note.wg-empty{font-size:17px;color:var(--wg-ink);margin:8px 0 16px}
 .wg-how summary{cursor:pointer;font-size:13px;color:var(--wg-soft);min-height:36px;
   display:flex;align-items:center}
+/* The quadbox: four games for one screen, a window at a time. The frame is
+   the screen, dark in both themes; the best game sits top left with the sound. */
+.wg-view{display:inline-flex;border:1px solid var(--wg-line);border-radius:999px;overflow:hidden;
+  flex:none}
+.wg-view button{min-height:36px;padding:0 14px;border:0;background:var(--wg-card);
+  color:var(--wg-mute);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.wg-view button[aria-pressed=true]{background:var(--wg-ink);color:var(--wg-card)}
+.wg-quad{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border-radius:14px;
+  background:#0b1220}
+.wg-q{display:flex;flex-direction:column;gap:3px;min-height:104px;padding:8px 9px;
+  border-radius:9px;background:var(--wg-card);color:inherit;text-decoration:none;min-width:0}
+.wg-q.audio{box-shadow:inset 0 0 0 2px var(--wg-acc)}
+.wg-q.live{background:var(--wg-live-bg)}
+.wg-q .ch{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;
+  color:var(--wg-ink);letter-spacing:.02em;min-width:0}
+.wg-q .ch b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wg-q .aud,.wg-q .new{flex:none;font-size:10.5px;font-weight:800;padding:1px 6px;
+  border-radius:999px;letter-spacing:0}
+.wg-q .aud{background:var(--wg-acc);color:#fff;margin-left:auto}
+.wg-q .new{background:#dbeafe;color:#1e3a8a}
+.wg-q .tm{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;
+  color:var(--wg-ink);min-width:0;line-height:1.35}
+.wg-q .tm img{width:18px;height:18px;flex:none;object-fit:contain;border:0;padding:0;margin:0;
+  box-shadow:none;background:none}
+.wg-q .tm .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wg-q .tm .rk{font-size:10.5px;color:var(--wg-soft)}
+.wg-q .tm .sc{margin-left:auto;font-variant-numeric:tabular-nums}
+.wg-q .st{margin-top:auto;font-size:12px;font-weight:600;color:var(--wg-soft);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wg-q .st .hot{color:var(--wg-live)}
+.wg-bench{font-size:12.5px;color:var(--wg-mute);margin:6px 2px 0;line-height:1.5}
+.wg-bench b{color:var(--wg-ink)}
 @media (prefers-color-scheme: dark){
   .wg-t img{background:#e8edf5;border-radius:50%;padding:2px;box-sizing:border-box}
   a.wg-g.live{border-color:#7f1d1d}
   .wg-tags .hot{background:#7f1d1d;color:#fecaca}
   .wg-tags .mine{background:#1e3a8a;color:#dbeafe}
+  .wg-quad{background:#000}
+  .wg-q .tm img{background:#e8edf5;border-radius:50%;padding:1px;box-sizing:border-box}
+  .wg-q .new{background:#1e3a8a;color:#dbeafe}
 }
 </style>"""
 
@@ -260,7 +295,12 @@ a.wg-g.done{opacity:.8}
 #   link            where a card goes; a game's own `href` wins
 #   hint            a line for a reader with no stars and no team picked
 #   close           a margin that counts as close late (football 8, basketball 6)
+#   blowout         a second-half margin that drops a game down the order (21)
 #   every           milliseconds between live polls (default a minute)
+#   quadShared      true where every game can be on at once (NFL Sunday Ticket);
+#                   otherwise a quadbox never puts two games on one broadcast
+#                   channel
+#   quadNote        a line under the quadbox switch
 #
 # cfg is read each time the guide draws, so an adapter may change its hint or
 # empty line between draws (CBB does, per league). It returns {set(D),
@@ -272,7 +312,9 @@ window.GSWatch=function(D, cfg){
   if(!host) return null;
   cfg=cfg||{};
   var GAME_HOURS=cfg.gameHours||4.5, MORE=5, STALE_DAYS=3, CLOSE=cfg.close||8;
-  var live={}, timer=null, day=null;
+  var BLOWOUT=cfg.blowout||21, SWAP=15, FRESH_MS=5*60e3;
+  var live={}, timer=null, day=null, view='list', onBox=[], fresh={};
+  try{ if(localStorage.getItem('gsWatchView')==='quad') view='quad'; }catch(e){}
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"']/g,function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
@@ -294,7 +336,7 @@ window.GSWatch=function(D, cfg){
   }
   /** The watch score with the reader's part and the live part added, and why. */
   function watch(g, set, team){
-    var s=g.score, why=(g.tags||[]).slice(), hot=[], ps=players(g,team);
+    var s=g.score, why=(g.tags||[]).slice(), hot=[], ps=players(g,team), blow=false;
     var opp=team&&rosters()[team]&&rosters()[team].opp;
     var theirs=opp!=null&&rosters()[String(opp)]?players(g,String(opp)):[];
     var star=!!(set[key(g.h)]||set[key(g.a)]);
@@ -309,8 +351,10 @@ window.GSWatch=function(D, cfg){
       if(ot){ s+=40; hot.push('Overtime'); }
       else if(late&&diff<=CLOSE){ s+=30; hot.push('Close late'); }
       if(second&&((g.fav==='h'&&L.away>L.home)||(g.fav==='a'&&L.home>L.away))){ s+=15; hot.push('Upset alert'); }
+      // A second half that is decided is the first thing to turn off.
+      if(second&&!ot&&diff>=BLOWOUT){ s-=30; why.unshift('Blowout'); blow=true; }
     }
-    return {s:s, why:why, hot:hot, ps:ps, theirs:theirs, opp:opp, star:star};
+    return {s:s, why:why, hot:hot, ps:ps, theirs:theirs, opp:opp, star:star, blow:blow};
   }
   function kick(g){
     var d=new Date(g.ko);
@@ -372,6 +416,100 @@ window.GSWatch=function(D, cfg){
       +(rest.length?'<details class="wg-more"><summary>'+rest.length+' more</summary><div class="wg-list">'
         +rest.map(function(x){ return card(x,false); }).join('')+'</div></details>':'');
   }
+  // ----- the quadbox ------------------------------------------------------ //
+
+  // Streaming services show any number of games at once; a broadcast channel
+  // shows one (ABC's regional 3:30 games are the usual trap).
+  var STREAM=/\\+|peacock|prime|netflix|youtube|paramount|apple|stream|\\bmax\\b|flo|espn3|app\\b/i;
+  function channels(g){
+    if(cfg.quadShared||!g.tv) return [];
+    var parts=String(g.tv).split(/\\s*[\\/,&]\\s*/).filter(Boolean);
+    if(parts.some(function(p){ return STREAM.test(p); })) return [];
+    return parts.map(function(p){ return p.toUpperCase(); });
+  }
+  /** Up to four games, best first, never two on one channel; `keep` go in
+   *  first. The rest, in order, are the bench. */
+  function pickFour(items, keep){
+    var used={}, box=[], bench=[];
+    function free(x){ return channels(x.g).every(function(c){ return !used[c]; }); }
+    function take(x){ channels(x.g).forEach(function(c){ used[c]=1; }); box.push(x); }
+    (keep||[]).forEach(function(x){ if(box.length<4&&free(x)) take(x); });
+    items.forEach(function(x){
+      if(box.indexOf(x)>=0) return;
+      if(box.length<4&&free(x)) take(x); else bench.push(x);
+    });
+    return {box:box, bench:bench};
+  }
+  /** The games on now, in four boxes that stay put: a game keeps its box
+   *  until it ends, turns into a blowout, or something better by SWAP points
+   *  is on - nobody wants the screens reshuffled every minute. */
+  function nowFour(on){
+    var byId={};
+    on.forEach(function(x){ byId[x.g.id]=x; });
+    var kept=onBox.map(function(id){ return byId[id]; })
+      .filter(function(x){ return x&&!x.w.blow; });
+    var pick=pickFour(on, kept);
+    for(var n=0;n<4&&pick.bench.length;n++){
+      var best=pick.bench[0], weakest=pick.box.slice().sort(function(a,b){ return a.w.s-b.w.s; })[0];
+      if(!weakest||best.w.s-weakest.w.s<SWAP) break;
+      kept=pick.box.filter(function(x){ return x!==weakest; });
+      var next=pickFour([best].concat(on), kept);
+      if(next.box.indexOf(best)<0) break;
+      pick=next;
+    }
+    var pos=[null,null,null,null], had={};
+    onBox.forEach(function(id, i){
+      if(pick.box.some(function(x){ return x.g.id===id; })){ pos[i]=byId[id]; had[id]=1; }
+    });
+    pick.box.slice().sort(function(a,b){ return b.w.s-a.w.s; }).forEach(function(x){
+      if(had[x.g.id]) return;
+      if(onBox.length) fresh[x.g.id]=Date.now();
+      pos[pos.indexOf(null)]=x;
+    });
+    onBox=pos.map(function(x){ return x?x.g.id:null; });
+    return {box:pos.filter(Boolean), bench:pick.bench};
+  }
+  function qside(g, k, st){
+    var t=g[k], L=live[g.id]||{};
+    var sc=L[k==='h'?'home':'away'];
+    if(sc==null&&st!=='pre') sc=t.sc;
+    return '<div class="tm">'
+      +(t.lg?'<img src="'+esc(t.lg)+'" alt="" width="18" height="18" loading="lazy">':'')
+      +(t.rk?'<span class="rk">'+esc(t.rk)+'</span>':'')
+      +'<span class="nm">'+(k==='h'&&!g.n?'<span class="rk">at</span> ':'')+esc(t.nm)+'</span>'
+      +(st!=='pre'&&sc!=null?'<span class="sc">'+esc(sc)+'</span>':'')+'</div>';
+  }
+  function tile(x, audio){
+    var g=x.g, st=state(g), L=live[g.id]||{};
+    var when=st==='in'?esc(L.detail||'Live'):st==='post'?'Final':kick(g);
+    var isNew=fresh[g.id]&&Date.now()-fresh[g.id]<FRESH_MS;
+    var why=x.w.hot.length?' &middot; <span class="hot">'+esc(x.w.hot[0])+'</span>'
+      :(x.w.blow?' &middot; Blowout':'');
+    return '<a class="wg-q'+(audio?' audio':'')+(st==='in'?' live':'')+'" href="'
+      +esc(g.href||cfg.link||'#')+'" data-gid="'+esc(g.id)+'">'
+      +'<div class="ch"><b>'+esc(g.tv||'TV TBA')+'</b>'
+      +(isNew?'<span class="new">New</span>':'')
+      +(audio?'<span class="aud">&#x1F50A; Sound</span>':'')+'</div>'
+      +qside(g,'a',st)+qside(g,'h',st)
+      +'<div class="st">'+when+' &middot; Watch '+Math.min(100,Math.round(g.score))+why+'</div></a>';
+  }
+  function benchLine(xs, lead){
+    if(!xs.length) return '';
+    return '<p class="wg-bench">'+lead+' '+xs.slice(0,2).map(function(x){
+      return '<b>'+esc(x.g.a.nm)+(x.g.n?' v ':' at ')+esc(x.g.h.nm)+'</b> ('+esc(x.g.tv||'TBA')+')';
+    }).join(', ')+'.</p>';
+  }
+  function quad(items, now){
+    if(items.length<2) return list(items,true);
+    var pick=now?nowFour(items):pickFour(items);
+    // Every game but one on a single channel: a list says more than a grid.
+    if(pick.box.length<2) return list(items,true);
+    var top=pick.box.reduce(function(a,x){ return !a||x.w.s>a.w.s?x:a; }, null);
+    return '<div class="wg-quad">'+pick.box.map(function(x){ return tile(x, x===top); }).join('')
+      +'</div>'+benchLine(pick.bench.filter(function(x){ return !x.w.blow&&state(x.g)!=='post'; }),
+                          now?'If one gets out of hand:':'Next in line:');
+  }
+
   function days(){
     var today=etDate(Date.now()), seen={}, out=[];
     D.games.forEach(function(g){ if(g.day>=today&&!seen[g.day]){ seen[g.day]=1; out.push(g.day); } });
@@ -407,13 +545,22 @@ window.GSWatch=function(D, cfg){
     var on=items.filter(function(x){ return state(x.g)==='in'; }).sort(by);
     var done=items.filter(function(x){ return state(x.g)==='post'; }).sort(by);
     var hint=(Object.keys(set).length||team||!cfg.hint)?'':'<span>'+cfg.hint+'</span>';
+    var quadView=view==='quad';
+    var switcher='<div class="wg-view" role="group" aria-label="View">'
+      +'<button type="button" data-view="list" aria-pressed="'+!quadView+'">List</button>'
+      +'<button type="button" data-view="quad" aria-pressed="'+quadView+'">Quadbox</button></div>';
     var html=(cfg.top||'')+'<div class="wg-days" role="group" aria-label="Day">'+ds.map(function(d){
       return '<button type="button" data-day="'+d+'" aria-pressed="'+(d===day)+'">'+dayLabel(d)+'</button>'; }).join('')+'</div>'
-      +'<div class="wg-bar">'+picker(team)+hint+'</div>';
-    if(on.length) html+='<h3>On now <span class="wg-n">'+on.length+'</span></h3>'+list(on,true);
+      +'<div class="wg-bar">'+switcher+picker(team)+hint+'</div>'
+      +(quadView?'<p class="wg-note">Four games for one screen, each window: the best top left with '
+        +'the sound'+(cfg.quadShared?'.':', never two on one broadcast channel.')
+        +(cfg.quadNote?' '+cfg.quadNote:'')+'</p>':'');
+    if(on.length) html+='<h3>On now <span class="wg-n">'+on.length+'</span></h3>'
+      +(quadView?quad(on,true):list(on,true));
     D.slots.forEach(function(s){
       var xs=items.filter(function(x){ return x.g.slot===s[0]&&state(x.g)==='pre'; }).sort(by);
-      if(xs.length) html+='<h3>'+esc(s[1])+' <span class="wg-n">'+esc(s[2])+'</span></h3>'+list(xs,true);
+      if(xs.length) html+='<h3>'+esc(s[1])+' <span class="wg-n">'+esc(s[2])+'</span></h3>'
+        +(quadView?quad(xs,false):list(xs,true));
     });
     if(done.length) html+='<details class="wg-more"><summary>Final &middot; '+done.length+'</summary><div class="wg-list">'
       +done.map(function(x){ return card(x,false); }).join('')+'</div></details>';
@@ -444,8 +591,14 @@ window.GSWatch=function(D, cfg){
     });
   }
   host.addEventListener('click', function(e){
+    var v=e.target.closest('button[data-view]');
+    if(v){
+      view=v.getAttribute('data-view');
+      try{ localStorage.setItem('gsWatchView', view); }catch(err){}
+      draw(); return;
+    }
     var b=e.target.closest('button[data-day]'); if(!b) return;
-    day=b.getAttribute('data-day'); draw(); poll();
+    day=b.getAttribute('data-day'); onBox=[]; fresh={}; draw(); poll();
   });
   host.addEventListener('change', function(e){
     if(e.target.id!=='wg-team') return;
@@ -459,7 +612,7 @@ window.GSWatch=function(D, cfg){
       host.innerHTML='<p class="wg-note">'+(cfg.staleHtml||'This guide has not been rebuilt for a few days.')+'</p>';
       return;
     }
-    live={}; pickDay(); draw(); poll();
+    live={}; onBox=[]; fresh={}; pickDay(); draw(); poll();
   }
   start();
   // set: another set of games altogether (CBB's men's/women's switch) - the
