@@ -357,7 +357,8 @@ def test_move_reads_the_archive_and_opens_before_this_week(league, monkeypatch):
         (1, datetime(2026, 9, 13, 13), datetime(2026, 9, 14, 23)),
         (2, datetime(2026, 9, 20, 13), datetime(2026, 9, 21, 23))])
     html = power.body()
-    assert "data-win=\"pre2\"" in html and "Before Wk 2" in html
+    # The Since menu (shared with /cfb/power/) opens on that window.
+    assert "<option value=\"pre2\" selected" in html and "Before Wk 2" in html
     blob = json.loads(html.split("id='pwr-deltas'>")[1].split("</script>")[0])
     # Commanders 3rd -> 2nd, 49ers 2nd -> 3rd; KC's FPI rank 2 -> 1.
     assert blob["deltas"]["pre2"]["gs_rank"] == [0, 1, -1, 0]

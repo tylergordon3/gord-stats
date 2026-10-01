@@ -32,7 +32,8 @@ from html import escape
 
 import pandas as pd
 
-from cfb.site.power import (_CSS, _JS, ALL, _chg, _pct, _plain, _switcher, _td, _th)
+from cfb.site.power import (_CSS, _JS, ALL, _chg, _pct, _plain, _switcher, _td, _th,
+                             _window_picker)
 from gordstats import favorites, logos, rankmoves, share_card
 from gordstats.frontmatter import add_front_matter
 from nfl import fpi, predict
@@ -368,13 +369,14 @@ def body() -> str:
                        "when": {win: f"{b['at']:%b %-d}" for win, b in bases.items()}},
                       separators=(",", ":"))
     return (_CSS + favorites.table_css("table.cfb-power") + intro
-            + "<div class='pin-bar'>" + (_switcher() if has_odds else "")
-            + rankmoves.window_switch(bases) + favorites.controls() + "</div>"
+            # One row on a phone: the CFB page's Since menu, not a row of buttons.
+            + "<div class='pin-bar pwr-pin'>" + (_switcher() if has_odds else "")
+            + _window_picker(bases) + favorites.controls() + "</div>"
             + "<div class='power-wrap'>"
             + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(body_rows)}</tbody></table></div>"
             + "<script type='application/json' id='pwr-deltas'>" + blob + "</script>"
-            + _JS + rankmoves.WINDOW_JS)
+            + _JS)
 
 
 _CARD: dict = {}
