@@ -66,8 +66,11 @@ main() {
     log "backing out a rebase an earlier run left unfinished"
     git rebase --abort
   fi
-  # Generated output from an interrupted run would block the rebase. Everything
-  # tracked under docs/ and data/ is regenerated, so discarding it costs nothing.
+  # Uncommitted output here would block the rebase. It is never a finished
+  # run's data any more - that is committed before Jekyll (see RECORD) - so
+  # what is left is a live tick's not-yet-hourly regeneration, which this run
+  # rebuilds anyway, or the partial writes of a run that was killed mid-way,
+  # which must not be recorded.
   if ! git diff --quiet -- docs data; then
     log "discarding regenerated files left by an earlier run"
     git checkout -- docs data
@@ -76,6 +79,15 @@ main() {
     echo "❌ uncommitted changes outside docs/ and data/ — the Pi is a deploy target"
     git status --short
     exit 1
+  fi
+
+  # wrangler writes a debug log for every upload and never deletes one:
+  # 1,512 files in ~/.config/.wrangler/logs by 2026-10-02, a month into the
+  # live tick publishing up to 80 times a Saturday. Two weeks is plenty to
+  # read a failed upload back.
+  if [ -d "$HOME/.config/.wrangler/logs" ]; then
+    find "$HOME/.config/.wrangler/logs" -type f -name 'wrangler-*.log' -mtime +14 -delete \
+      2>/dev/null || true
   fi
 
   ########################################
@@ -134,6 +146,17 @@ main() {
   run_sections || SECTIONS_RC=$?
 
   ########################################
+  # RECORD
+  ########################################
+  # Committed here, locally, before anything else can fail; pushed after the
+  # upload. It used to be committed after the upload, so a failed Jekyll
+  # build or upload (both `set -e` exits) left the run's data uncommitted,
+  # and the next live tick's or daily run's clean slate threw it away - and
+  # with it captures nothing can take again: the bets record's closing lines
+  # and CLV, the odds history, gs_proj, playoff_history (the 2026-10-02 audit).
+  record_data
+
+  ########################################
   # JEKYLL
   ########################################
   # Cloudflare Pages is a direct-upload target here, not a git-connected build,
@@ -146,9 +169,12 @@ main() {
 
   log "bundle install"
   bundle install --quiet
+  # pi-live.sh never installs gems; this stamp tells it whether the Gemfile
+  # it pulled is the one installed (see gems_hash in publish.sh).
+  mkdir -p "$(dirname "$GEMS_STAMP")"
+  gems_hash > "$GEMS_STAMP"
 
-  log "jekyll build"
-  bundle exec jekyll build --source docs --destination docs/_site --quiet
+  build_site
 
   ########################################
   # PUBLISH
@@ -157,14 +183,16 @@ main() {
   # the bundle install and the Jekyll build all sit between them — so a commit
   # pushed inside that window would be published over. Rebuild rather than skip:
   # this run holds the day's fresh data, and the point is to publish both.
+  # The data is committed, so the rebase carries it over origin (pull_rebase:
+  # the Pi's copy wins a conflict) instead of discarding it first.
   git fetch --quiet origin "$BRANCH"
   if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD; then
     log "origin moved during the build — rebasing and rebuilding before publish"
-    git checkout -- docs data       # generated, and regenerated on the next line
     pull_rebase
     SECTIONS_RC=0
     run_sections || SECTIONS_RC=$?
-    bundle exec jekyll build --source docs --destination docs/_site --quiet
+    record_data
+    build_site
   fi
 
   log "deploying to Cloudflare Pages ($PROJECT)"
@@ -175,27 +203,24 @@ main() {
   printf '%s %s\n' "$STAMP_AT" "$SECTIONS_RC" > "$PWD/.last_daily_publish"
 
   ########################################
-  # COMMIT GENERATED DATA
+  # PUSH THE DATA
   ########################################
   # Publishing already happened above, with wrangler — git is not in the
-  # publish path. What is recorded here is the refreshed *data*: the archives
+  # publish path. What is pushed here is the refreshed *data*: the archives
   # that are the only record of what the page said, and the caches the next
   # build reads. The generated pages and charts are gitignored, because
   # committing them cost about 100 MB of history a month (one 4 MB page
   # rewritten 422 times in 30 days) purely so the PC could read them.
-  # The PC uses `pi pull-site` for that instead.
-  git add -A docs data
-
-  if git diff --cached --quiet; then
-    log "no data changes to record"
-  else
-    git commit -q -m "Daily refresh ($TASKS) $(date '+%Y-%m-%d %H:%M')"
+  # The PC uses `pi pull-site` for that instead. Anything unpushed goes, not
+  # just this run's commit: an earlier run that died after RECORD left its
+  # commit here.
+  if [ -n "$(git rev-list "origin/$BRANCH..HEAD")" ]; then
     if ! git push --quiet origin "$BRANCH" 2>/dev/null; then
       log "push rejected — rebasing onto origin and retrying"
       pull_rebase
       git push --quiet origin "$BRANCH"
     fi
-    log "recorded $(git rev-parse --short HEAD)"
+    log "pushed $(git rev-parse --short HEAD)"
   fi
 
   if [ "$SECTIONS_RC" -ne 0 ]; then
@@ -229,6 +254,28 @@ run_sections() {
       exit "$rc"
       ;;
   esac
+}
+
+# Commit what the sections wrote under docs/ and data/ - locally. The push
+# waits for the upload (PUSH THE DATA); the commit cannot wait for anything.
+record_data() {
+  git add -A docs data
+  if git diff --cached --quiet; then
+    log "no data changes to record"
+  else
+    git commit -q -m "Daily refresh ($TASKS) $(date '+%Y-%m-%d %H:%M')"
+    log "recorded $(git rev-parse --short HEAD) (pushed after the upload)"
+  fi
+}
+
+# Jekyll, then deploy/linkcheck.py over what it built: a page whose scripts or
+# stylesheets are not in the build stops the run here, before the upload, so
+# a broken build is never published over a working site. Missing link targets
+# are only listed.
+build_site() {
+  log "jekyll build"
+  bundle exec jekyll build --source docs --destination docs/_site --quiet
+  python deploy/linkcheck.py docs/_site
 }
 
 main "$@"

@@ -72,3 +72,14 @@ tick_trouble() {
   fi
   return 0
 }
+
+# What the Jekyll side was installed from. pi-deploy.sh runs `bundle install`
+# and then writes this to GEMS_STAMP; pi-live.sh never installs gems, so it
+# compares before building - a Gemfile.lock it pulled that the daily run has
+# not installed yet would otherwise fail every tick's build until it had (the
+# Python side has had the same stamp, .venv/.requirements-sha256, since the
+# 2026-09-28 audit). Relative to the repo root, where both scripts run.
+GEMS_STAMP="vendor/bundle/.gems-sha256"
+gems_hash() {
+  cat Gemfile Gemfile.lock | sha256sum | cut -d' ' -f1
+}

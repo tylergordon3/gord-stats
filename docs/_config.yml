@@ -58,11 +58,17 @@ future              : false
 unpublished         : false
 
 # Plugins
+#
+# No theme: slate (pages-themes/slate v0.2.0) is vendored into _sass/,
+# assets/css/style.scss, _includes/head-custom*.html and four images - see the
+# note in style.scss. As a remote_theme it was downloaded from GitHub on every
+# build, so a GitHub outage was a failed publish. Gems for anything listed here
+# come from the Gemfile; jekyll-remote-theme is still installed there but
+# unused. docs/_plugins/ (asset fingerprints) loads because `safe` is false -
+# the Pi builds locally; GitHub's safe-mode builder would skip it.
 
 plugins:
-  - jekyll-remote-theme
   - jekyll-seo-tag
-remote_theme: pages-themes/slate@v0.2.0
 
 # Conversion
 markdown            : kramdown

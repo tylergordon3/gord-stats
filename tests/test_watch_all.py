@@ -22,7 +22,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from gordstats import watch_all, watch_page
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -118,9 +118,7 @@ def _run(url, boot, steps, wait=2.5):
     """Navigate; for each JS step evaluate it, wait a beat, and keep the last value."""
     import websockets
     subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
-    proc = subprocess.Popen([CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-                             f"--remote-debugging-port={CDP}", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = launch(CHROME, CDP)
     try:
         for _ in range(60):
             try:

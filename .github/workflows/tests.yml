@@ -1,4 +1,5 @@
-# Runs the test suite on every push. The Pi is the only other place it runs,
+# Runs the test suite on every push but the Pi's data commits (see the job's
+# `if`). The Pi is the only other place it runs,
 # and the Pi finds out at 17:30 - after the site has already failed to build.
 #
 # Installs the Pi's own requirements file rather than a trimmed list, so an
@@ -16,6 +17,15 @@ permissions:
 
 jobs:
   tests:
+    # Not for the Pi's own pushes. Its "Daily refresh" and "Live update"
+    # commits carry only data the scheduled runs regenerated - ~28 a day in
+    # the week to 2026-10-02 - and each ran the whole suite, ~5 minutes,
+    # against code that was tested when it was pushed: 23 of the 40 runs on
+    # Oct 1-2. A push from the PC ends in the PC's own commit, so it still
+    # runs; pull requests have no head_commit and always run.
+    if: >-
+      ${{ !startsWith(github.event.head_commit.message, 'Daily refresh (') &&
+      !startsWith(github.event.head_commit.message, 'Live update (') }}
     runs-on: ubuntu-latest
     env:
       MPLBACKEND: Agg

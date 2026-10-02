@@ -24,7 +24,7 @@ import pytest
 
 from cbb.render import render_watch as watch
 from gordstats.watch_page import ET
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -234,9 +234,7 @@ def _run(url: str, boot: str, steps: list):
     a moment apart; the last one's value comes back."""
     import websockets
     subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
-    proc = subprocess.Popen([CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-                             f"--remote-debugging-port={CDP}", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = launch(CHROME, CDP)
     try:
         for _ in range(60):
             try:

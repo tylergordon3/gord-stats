@@ -40,7 +40,7 @@ import pytest
 from conftest import ROOT
 from gordstats import my_recap, recap
 from gordstats.recap import Player, Side, Team, Week
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -416,9 +416,7 @@ def site(tmp_path_factory):
 @pytest.fixture(scope="module")
 def chrome():
     subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
-    proc = subprocess.Popen([CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-                             f"--remote-debugging-port={CDP}", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = launch(CHROME, CDP)
     ws_url = None
     for _ in range(60):
         try:

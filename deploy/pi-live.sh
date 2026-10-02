@@ -2,16 +2,23 @@
 # Frequent refresh while something is happening. Run every 10 minutes by
 # wnba-live.timer, and on demand with `deploy/pi-live.sh`.
 #
-# Three gates, each a call or two: the WNBA scoreboard (a game live or tipping
-# within 30 minutes), the CFB scoreboard (same window — see cfb.live) and the
-# fantasy section (a week of the season fully
-# scored — see fantasy.live). If none has anything, the
+# Four gates, each a call or two: college basketball (pushes its scoreboard
+# to a Worker and never needs a build - see cbb.live), the WNBA scoreboard (a
+# game live or tipping within 30 minutes), the fantasy section (a week of the
+# season fully scored — see fantasy.live) and the CFB scoreboard (same window
+# as WNBA — see cfb.live). If none has anything, the
 # tick exits in about a second. Otherwise whichever fired regenerates its
 # pages and the tick rebuilds the site and republishes via wrangler — the same
 # direct-upload path as pi-deploy.sh. Git gets a commit at most once an hour
 # for WNBA ticks, and immediately when fantasy fires, since those are rare and
 # the power rankings archive a snapshot that should be recorded: publishing
 # doesn't need git, commits are for the PC to pull.
+#
+# Every gate runs every tick, whatever the others did, and a failure - a gate,
+# the build, the upload - goes through tick_trouble: a skipped tick, and one
+# mail an hour if it lasts. It used to stop at the first failing gate and
+# mail every tick, so from Nov 1 an expired ESPN cookie in the WNBA gate
+# would have stopped the CBB scoreboard push and sent ~87 mails a day.
 #
 # It does pull, though. The tick rebuilds and republishes the whole site, so a
 # tick running from a stale checkout republishes a stale site.
@@ -69,8 +76,10 @@ main() {
   #
   # Ticks regenerate docs/ and data/ but only commit hourly, so the tree is
   # usually dirty here and a rebase would refuse to start. Discarding is safe —
-  # everything under those paths is generated, and the gate below regenerates
-  # what this tick needs.
+  # what is left is a previous tick's in-between regeneration, which the gate
+  # below redoes. Data that has to survive is committed before any build that
+  # could fail: the daily run's always, a tick's on the hour or when a fantasy
+  # week closes (COMMIT below).
   local BRANCH
   BRANCH="$(git branch --show-current)"
   if ! git diff --quiet -- docs data; then
@@ -116,65 +125,40 @@ main() {
 
   # Each gate exits 0 (regenerated something) or 3 (nothing to do; also what
   # the gates answer when their feed is unreachable); anything else is a
-  # failure worth the notify unit. Fantasy also has 5: regenerated for a game
-  # in progress, which is not worth a commit of its own.
-  local WNBA=0 FANTASY=0 CFB=0
-  python -m wnba.wnba_live || WNBA=$?
-  if [ "$WNBA" -ne 0 ] && [ "$WNBA" -ne 3 ]; then
-    echo "❌ WNBA live refresh failed (rc=$WNBA)"
-    exit "$WNBA"
-  fi
-  python -m fantasy.live || FANTASY=$?
-  if [ "$FANTASY" -ne 0 ] && [ "$FANTASY" -ne 3 ] && [ "$FANTASY" -ne 5 ]; then
-    echo "❌ fantasy live refresh failed (rc=$FANTASY)"
-    exit "$FANTASY"
-  fi
-  python -m cfb.live || CFB=$?
-  if [ "$CFB" -ne 0 ] && [ "$CFB" -ne 3 ]; then
-    echo "❌ CFB live refresh failed (rc=$CFB)"
-    exit "$CFB"
-  fi
-  # College basketball's scoreboard is served by its own Worker, not by a
-  # rebuilt page, so its gate pushes and never asks for a build. A failure is
-  # reported at the end of the tick rather than stopping the gates that do.
-  local CBB=0
+  # failure. Fantasy also has 5: regenerated for a game in progress, which is
+  # not worth a commit of its own. A failure no longer stops the tick: the
+  # other gates still run and whatever they regenerated is still published,
+  # as the daily run publishes past a failed section (exit 4). College
+  # basketball goes first - its scoreboard lives in a Worker, not a rebuilt
+  # page, so nothing after it can cost it, and from Nov 1 it is the one with
+  # readers polling every ten minutes.
+  local CBB=0 WNBA=0 FANTASY=0 CFB=0 FAILED=""
   python -m cbb.live || CBB=$?
-  [ "$CBB" -ne 0 ] && [ "$CBB" -ne 3 ] && echo "❌ CBB live scoreboard push failed (rc=$CBB)"
-  local CBB_RC=0
-  [ "$CBB" -ne 0 ] && [ "$CBB" -ne 3 ] && CBB_RC="$CBB"
+  [ "$CBB" -eq 0 ] || [ "$CBB" -eq 3 ] || FAILED="cbb (rc=$CBB)"
+  python -m wnba.wnba_live || WNBA=$?
+  [ "$WNBA" -eq 0 ] || [ "$WNBA" -eq 3 ] || FAILED="${FAILED:+$FAILED, }wnba (rc=$WNBA)"
+  python -m fantasy.live || FANTASY=$?
+  [ "$FANTASY" -eq 0 ] || [ "$FANTASY" -eq 3 ] || [ "$FANTASY" -eq 5 ] \
+    || FAILED="${FAILED:+$FAILED, }fantasy (rc=$FANTASY)"
+  python -m cfb.live || CFB=$?
+  [ "$CFB" -eq 0 ] || [ "$CFB" -eq 3 ] || FAILED="${FAILED:+$FAILED, }cfb (rc=$CFB)"
+  [ -z "$FAILED" ] || echo "❌ live refresh failed: $FAILED"
 
-  if [ "$WNBA" -eq 3 ] && [ "$FANTASY" -eq 3 ] && [ "$CFB" -eq 3 ]; then
-    tick_trouble ok
-    exit "$CBB_RC"               # nothing to rebuild — quiet tick
-  fi
   local WHAT=""
   [ "$WNBA" -eq 0 ] && WHAT="wnba"
   { [ "$FANTASY" -eq 0 ] || [ "$FANTASY" -eq 5 ]; } && WHAT="${WHAT:+$WHAT,}fantasy"
   [ "$CFB" -eq 0 ] && WHAT="${WHAT:+$WHAT,}cfb"
-
-  ########################################
-  # BUILD + PUBLISH
-  ########################################
-  export PATH="$HOME/.local/share/gem/ruby/3.3.0/bin:$HOME/gems/bin:$PATH"
-  export BUNDLE_PATH="vendor/bundle"
-  export BUNDLE_WITHOUT="development:test"
-
-  log "jekyll build"
-  bundle exec jekyll build --source docs --destination docs/_site --quiet
-
-  log "deploying to Cloudflare Pages ($PROJECT)"
-  # The daily run's own time rides along, so the freshness check sees it.
-  local DAILY_AT="" DAILY_RC="null"
-  if [ -f "$PWD/.last_daily_publish" ]; then
-    read -r DAILY_AT DAILY_RC < "$PWD/.last_daily_publish" || true
+  if [ -z "$WHAT" ]; then
+    end_tick "$FAILED"           # nothing to rebuild — quiet tick
   fi
-  write_status "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$DAILY_AT" "$DAILY_RC"
-  publish "$PROJECT" >/dev/null
 
   ########################################
   # COMMIT: hourly, and at once when a fantasy week closes. A game in
   # progress (fantasy 5) waits for the hour: every tick of a Sunday used to
-  # commit and push (63 commits on 2026-09-27).
+  # commit and push (63 commits on 2026-09-27). Committed here, before the
+  # build, and pushed after the upload - as the daily run does: a failed
+  # build used to leave a closed week's power snapshot uncommitted for the
+  # next tick's clean slate to throw away.
   ########################################
   local STAMP="$PWD/.last_live_commit" NOW LAST=0
   NOW=$(date +%s)
@@ -186,22 +170,78 @@ main() {
       log "no data changes to record"
     else
       git commit -q -m "Live update ($WHAT) $(date '+%Y-%m-%d %H:%M')"
-      if ! git push --quiet origin "$BRANCH" 2>/dev/null; then
-        log "push rejected — rebasing onto origin and retrying"
-        if pull_rebase; then
-          git push --quiet origin "$BRANCH" || log "⚠️ push still failing — will retry next hour"
-        else
-          log "⚠️ rebase failed — leaving commit local, will retry next hour"
-        fi
-      fi
       log "recorded $(git rev-parse --short HEAD)"
     fi
     touch "$STAMP"
   fi
 
-  tick_trouble ok
+  ########################################
+  # BUILD + PUBLISH
+  ########################################
+  export PATH="$HOME/.local/share/gem/ruby/3.3.0/bin:$HOME/gems/bin:$PATH"
+  export BUNDLE_PATH="vendor/bundle"
+  export BUNDLE_WITHOUT="development:test"
+
+  # The Python stamp's twin for the Jekyll side (gems_hash, publish.sh). No
+  # stamp at all is a Pi whose daily run predates it: build, as before.
+  if [ -f "$GEMS_STAMP" ] && [ "$(cat "$GEMS_STAMP")" != "$(gems_hash)" ]; then
+    log "Ruby gems changed — not building until the daily run installs them"
+    end_tick "$FAILED"
+  fi
+
+  # A failed build or upload is the same passing trouble as a failed fetch:
+  # under `set -e` either one used to end the tick with a mail, every ten
+  # minutes, for as long as it lasted. The daily run still mails at once.
+  log "jekyll build"
+  if ! bundle exec jekyll build --source docs --destination docs/_site --quiet; then
+    echo "❌ jekyll build failed — not publishing"
+    end_tick "${FAILED:+$FAILED, }jekyll build"
+  fi
+  if ! python deploy/linkcheck.py --quiet docs/_site; then
+    echo "❌ the build is missing scripts or stylesheets — not publishing"
+    end_tick "${FAILED:+$FAILED, }link check"
+  fi
+
+  log "deploying to Cloudflare Pages ($PROJECT)"
+  # The daily run's own time rides along, so the freshness check sees it.
+  local DAILY_AT="" DAILY_RC="null"
+  if [ -f "$PWD/.last_daily_publish" ]; then
+    read -r DAILY_AT DAILY_RC < "$PWD/.last_daily_publish" || true
+  fi
+  write_status "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$DAILY_AT" "$DAILY_RC"
+  if ! publish "$PROJECT" >/dev/null; then
+    end_tick "${FAILED:+$FAILED, }upload"
+  fi
+
+  # Push whatever is unpushed: this tick's commit, or one that an earlier
+  # tick or daily run left here when its build or upload failed.
+  if [ -n "$(git rev-list "origin/$BRANCH..HEAD")" ]; then
+    if git push --quiet origin "$BRANCH" 2>/dev/null; then
+      log "pushed $(git rev-parse --short HEAD)"
+    else
+      log "push rejected — rebasing onto origin and retrying"
+      if pull_rebase && git push --quiet origin "$BRANCH"; then
+        log "pushed $(git rev-parse --short HEAD)"
+      else
+        log "⚠️ could not push — the commit stays local, a later tick retries"
+      fi
+    fi
+  fi
+
   log "✅ live tick done"
-  exit "$CBB_RC"
+  end_tick "$FAILED"
+}
+
+# The end of every tick past the gates. Nothing failed: 0, and the trouble
+# streak is cleared. Something did ($1 says what): tick_trouble's verdict - a
+# quiet 0 for the first hour, then 1 (the notify unit's mail) once an hour.
+end_tick() {
+  if [ -z "$1" ]; then
+    tick_trouble ok
+    exit 0
+  fi
+  tick_trouble || { echo "❌ the live tick has been failing for over an hour: $1"; exit 1; }
+  exit 0
 }
 
 log() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }

@@ -8,15 +8,17 @@
   <link rel="stylesheet" type="text/css" media="screen"
     href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
   {%- comment -%}
-  Every locally-served asset carries ?v=<build time>. Cloudflare serves these
-  with max-age=14400, so without it a reader who visited in the last four hours
-  keeps running the previous build's JavaScript against the current build's
-  HTML - which is exactly how the sign-in control shipped and stayed invisible
-  on a phone that had loaded the site that morning. The HTML itself
-  revalidates every request, so the version in it is always current.
+  Every locally-served CSS and JS file goes through `fingerprint`: a copy at
+  /assets/v/<content hash>/<name> (docs/_plugins/fingerprint.rb), served
+  immutable for a year (_headers). Unversioned, a reader who had the site
+  open earlier ran the previous build's JavaScript against the current
+  build's HTML - which is how the sign-in control shipped and stayed invisible
+  on a phone that had loaded the site that morning. It was ?v=<build time>
+  until 2026-10-02, which fixed that but changed on every one of ~80 Saturday
+  publishes, so nothing was ever served from cache. The HTML itself
+  revalidates every request, so the hashes in it are always current.
   {%- endcomment -%}
-  {%- assign v = site.time | date: '%s' -%}
-  <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}?v={{ v }}">
+  <link rel="stylesheet" href="{{ '/assets/css/custom.css' | fingerprint | relative_url }}">
   {% seo %}
 
   {%- comment -%}
@@ -133,24 +135,24 @@ resolution in _includes/nav.html.
     {% endif %}
   </footer>
   <!-- Fades the edge a wide table continues past, on every page that has one. -->
-  <script src="{{ '/assets/js/table-scroll.js' | relative_url }}?v={{ v }}"></script>
+  <script src="{{ '/assets/js/table-scroll.js' | fingerprint | relative_url }}"></script>
 
   <!-- Drives every countdown card on the page; the homepage carries two. -->
-  <script src="{{ '/assets/js/countdown.js' | relative_url }}?v={{ v }}"></script>
+  <script src="{{ '/assets/js/countdown.js' | fingerprint | relative_url }}"></script>
 
   <!-- Fills the footer visit counter from /api/visits. -->
-  <script src="{{ '/assets/js/visits.js' | relative_url }}?v={{ v }}" defer></script>
+  <script src="{{ '/assets/js/visits.js' | fingerprint | relative_url }}" defer></script>
 
   <!-- Stars, row highlighting and the "only my teams" filter, on every page
        whose tables carry data-fav rows. Inert everywhere else. -->
-  <script src="{{ '/assets/js/favorites.js' | relative_url }}?v={{ v }}" defer></script>
+  <script src="{{ '/assets/js/favorites.js' | fingerprint | relative_url }}" defer></script>
 
   <!-- The Share button (.gs-share): the share sheet on a phone, a copied link
        elsewhere. One listener; inert on a page without one. -->
-  <script src="{{ '/assets/js/share.js' | relative_url }}?v={{ v }}" defer></script>
-  <script src="{{ '/assets/js/stickyhead.js' | relative_url }}?v={{ v }}" defer></script>
+  <script src="{{ '/assets/js/share.js' | fingerprint | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/stickyhead.js' | fingerprint | relative_url }}" defer></script>
   <!-- "Updated ..." under the title, in the reader's clock and age (frontmatter.updated_line). -->
-  <script src="{{ '/assets/js/updated.js' | relative_url }}?v={{ v }}" defer></script>
+  <script src="{{ '/assets/js/updated.js' | fingerprint | relative_url }}" defer></script>
 
   <script>
     /**

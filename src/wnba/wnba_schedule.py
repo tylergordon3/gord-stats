@@ -135,6 +135,7 @@ def fetch_and_save_schedule(season: int = SEASON, path: Path = SCHEDULE_FILE) ->
     f"{BASE_URL}/wnba/v1/games",
     headers=HEADERS,
     params=params,
+    timeout=(10, 60),
 )
 
         # Rate limited — use existing cached schedule instead

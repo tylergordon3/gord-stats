@@ -25,7 +25,7 @@ import pytest
 
 from conftest import ROOT
 from gordstats import lineup, my_team
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -46,10 +46,7 @@ class Browser:
     """Just enough CDP to evaluate an expression."""
 
     def __init__(self):
-        self.proc = subprocess.Popen(
-            [CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-             "--remote-debugging-port=9444", "about:blank"],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.proc = launch(CHROME, 9444)
         for _ in range(60):
             try:
                 targets = json.load(urllib.request.urlopen("http://127.0.0.1:9444/json"))

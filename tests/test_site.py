@@ -205,10 +205,13 @@ def test_local_assets_are_cache_busted():
     shipped once: the sign-in control was in the markup and invisible on a
     phone that had loaded the site earlier the same day.
     """
-    for asset in re.findall(r"'(/assets/(?:js|css)/[^']+)' \| relative_url }}(\?v=\{\{ v \}\})?",
-                            LAYOUT):
-        path, version = asset
-        assert version, f"{path} is served without ?v= and will be cached stale"
+    # Versioned by content since 2026-10-02 (docs/_plugins/fingerprint.rb):
+    # every local asset goes through `fingerprint`, which fails the build on a
+    # path it does not know.
+    assets = re.findall(r"'(/assets/(?:js|css)/[^']+)' \|( fingerprint \|)? relative_url }}", LAYOUT)
+    assert assets, "the layout's asset tags were not found"
+    for path, versioned in assets:
+        assert versioned, f"{path} is served without | fingerprint and will be cached stale"
 
 
 # --------------------------------------------------------------------------- #

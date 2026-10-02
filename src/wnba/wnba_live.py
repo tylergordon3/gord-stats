@@ -15,7 +15,8 @@ Usage:
 
 Exit codes:
     0 = updated
-    3 = skipped (no active games, the offseason, or ESPN unreachable)
+    3 = skipped (no active games, the offseason, ESPN unreachable, or the
+        ESPN fantasy cookies expired)
 """
 
 import argparse
@@ -95,7 +96,17 @@ def main(argv=None) -> int:
 
     print(f"{datetime.now(ET):%F %T} — games active, running live update.")
     maybe_refresh_schedule()
-    wnba_fantasy.fetch_and_save()
+    try:
+        wnba_fantasy.fetch_and_save()
+    except (requests.RequestException, RuntimeError) as exc:
+        # ESPN down, or the league's ESPN_S2/SWID cookies expired (ESPN
+        # redirects to a login; fetch_league_data raises RuntimeError). Either
+        # way nothing here can be rebuilt, and an expired cookie is the daily
+        # run's to report - its wnba section fails on the same fetch. Escaping
+        # as exit 1 stopped every gate after this one (CBB's scoreboard push
+        # among them) and mailed every ten minutes until the cookie was renewed.
+        print(f"{datetime.now(ET):%F %T} — ESPN fantasy fetch failed ({exc}), skipping.")
+        return 3
     try:
         wnba_defense.update_cache()
     except Exception as e:

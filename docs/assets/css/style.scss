@@ -1,0 +1,13 @@
+---
+---
+
+// The slate theme (pages-themes/slate v0.2.0, CC0), vendored on 2026-10-02:
+// this file, _sass/jekyll-theme-slate.scss, _sass/rouge-github.scss,
+// _includes/head-custom*.html and the four theme images in assets/images
+// (bg_hr, blacktocat, icon_download, sprite_download). It was a
+// `remote_theme`, which jekyll-remote-theme downloads from GitHub on EVERY
+// build - ~80 live builds on a Saturday - so a codeload outage failed the
+// build, published nothing and mailed every tick. The theme's own
+// _layouts/default.html was never used (ours replaces it). The site's real
+// styling is custom.css; this is only the base it overrides.
+@import "jekyll-theme-slate";

@@ -8,4 +8,15 @@
 /*
   Strict-Transport-Security: max-age=31536000
   X-Frame-Options: DENY
-  Content-Security-Policy: frame-ancestors 'none'
+  Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'
+  X-Content-Type-Options: nosniff
+
+# Content-hashed copies of the site's CSS and JS (docs/_plugins/fingerprint.rb,
+# used by _layouts/default.html): the URL changes whenever the file does, so a
+# browser may keep each one for a year without asking again. Only this path -
+# the plain /assets/css/ and /assets/js/ names are still loaded unversioned
+# (live.js on /men/, the CBB pages' toggles) and must keep revalidating, or a
+# reader would hold a stale script for a year. They were all versioned by
+# build time, which ~80 Saturday publishes turned into no caching at all.
+/assets/v/*
+  Cache-Control: public, max-age=31536000, immutable

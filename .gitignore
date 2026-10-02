@@ -119,6 +119,9 @@ docs/_data/cfb_countdown.json
 # render on the first deploy after this change. "A generator mentions the
 # filename" is not the test - "a generator writes it" is.
 docs/cfb/schedule/week-*.html
+# Every week of each league's matchups but the current one, fetched by the
+# page when its tab is tapped (gordstats.matchup_page.write_weeks).
+docs/*/matchups/week-*.html
 docs/fantasy/week-context.json
 docs/fantasy/strength.json
 # Each sport guide's games, merged by the all-sports guide (gordstats.watch_all).
@@ -130,3 +133,22 @@ docs/fantasy/recap/latest.json
 docs/cfb/recap/latest.json
 # Written every live tick by cbb.lines; the daily run copies it to data/cbb/lines/.
 data/cbb/lines_live/
+# College basketball's pages, rewritten by every in-season daily run
+# (gordstats.daily._cbb, CBB_TIPOFF Nov 1 to season end): the two conference
+# pages (~320 KB each, cbb.render.render_conferences) and the day's
+# bracketology page (predict_<date>.html, cbb.predictions). pandas Styler
+# stamps random T_xxxxx ids, so every run would commit a whole-file rewrite.
+# The dated pages' content is kept as JSON in docs/assets/data/predictions/
+# (cbb.tools.archive_predictions, which deletes all but the newest page) -
+# that stays tracked. NOT history.html: six hand-written lines, nothing
+# writes it.
+#
+# Ignoring does not untrack. predict_2026-03-15.html leaves git by itself on
+# the first in-season run (the archive deletes it, the Pi commits that). The
+# conference pages need `git rm --cached` - but only once an in-season run has
+# rewritten them: the commit deletes them from the Pi's checkout on its next
+# pull, and before Nov 1 nothing would bring them back.
+docs/men/conference.html
+docs/women/conference.html
+docs/men/predict_*.html
+docs/women/predict_*.html

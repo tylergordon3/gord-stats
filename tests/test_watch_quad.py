@@ -22,7 +22,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from gordstats import watch_page
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -44,11 +44,14 @@ def page(tmp_path_factory):
     """Today: six games in a window later on, five on now. The kickoffs are
     placed so both windows are today in Eastern time."""
     now = datetime.now(timezone.utc)
-    today = now.astimezone(watch_page.ET).date()
-    on = now - timedelta(minutes=70)
-    later = now + timedelta(minutes=50)
-    if later.astimezone(watch_page.ET).date() != today:          # just before midnight
-        later = now + timedelta(minutes=5)
+    # Both windows must fall on today's Eastern date: CI failed at 23:59 ET
+    # ("Later" was tomorrow) and at 01:07 ET ("On now" was yesterday).
+    start = now.astimezone(watch_page.ET).replace(hour=0, minute=0, second=0, microsecond=0)
+    end = start + timedelta(days=1)
+    if now - start < timedelta(minutes=3) or end - now < timedelta(minutes=3):
+        pytest.skip("too close to midnight Eastern for both windows to be today")
+    on = max(now - timedelta(minutes=70), start + timedelta(minutes=1))
+    later = min(now + timedelta(minutes=50), end - timedelta(minutes=1))
     upcoming = [_game("u1", later, 90, "ABC", "later"), _game("u2", later, 85, "ABC", "later"),
                 _game("u3", later, 80, "ESPN", "later"), _game("u4", later, 70, "ESPN+", "later"),
                 _game("u5", later, 60, "ESPN+", "later"), _game("u6", later, 50, "FOX", "later")]
@@ -106,9 +109,7 @@ def _run(url, steps):
     """Navigate, then for each (js-before, wait seconds) read the guide."""
     import websockets
     subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
-    proc = subprocess.Popen([CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-                             f"--remote-debugging-port={CDP}", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = launch(CHROME, CDP)
     try:
         for _ in range(60):
             try:
