@@ -469,6 +469,10 @@ def render_home():
     # The graphics lead: they are the thing worth looking at today, and the
     # preview cards are navigation, which can sit under them.
     html = _my_teams(today) + _cfb_graphics(today) + _nfl_graphics(today) + html
+    # On a night college and pro football both play, what is on comes first;
+    # the card stays hidden on any other day (gordstats.watch_all).
+    from gordstats import watch_all
+    html = watch_all.teaser() + html
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)

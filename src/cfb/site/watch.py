@@ -153,6 +153,32 @@ def rosters() -> dict:
     return out
 
 
+LIVE_JS = """<script>
+window.GSWatchLive=window.GSWatchLive||{};
+/* One scoreboard call per week on now, through the site's proxy. Shared
+   with the all-sports guide (gordstats.watch_all). */
+GSWatchLive.cfb=function(games, D){
+  var asks={}, out={};
+  games.forEach(function(g){ asks[g.wk+'|'+g.st]=g; });
+  return Promise.all(Object.keys(asks).map(function(k){
+    var g=asks[k];
+    return fetch('/api/cfb-scores?week='+g.wk+'&dates='+D.season+'&seasontype='+g.st)
+      .then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
+  })).then(function(boards){
+    boards.forEach(function(b){
+      ((b&&b.events)||[]).forEach(function(e){
+        var c=(e.competitions||[])[0]; if(!c) return;
+        var s=c.status||{}, st=s.type||{};
+        var o={state:st.state||'pre', detail:st.shortDetail||'', period:s.period||0};
+        (c.competitors||[]).forEach(function(x){ o[x.homeAway]=parseInt(x.score||'0',10); });
+        out[String(e.id)]=o;
+      });
+    });
+    return out;
+  });
+};
+</script>"""
+
 ADAPTER_JS = """<script>
 (function(){
   var D=JSON.parse(document.getElementById('wg-data').textContent);
@@ -166,27 +192,8 @@ ADAPTER_JS = """<script>
       list.forEach(function(k){ if(typeof k==='string'&&k.indexOf('cfb:')===0) set[k.slice(4)]=1; });
       return set;
     },
-    /* One scoreboard call per week on now, through the site's proxy. */
-    live:function(games, D){
-      var asks={}, out={};
-      games.forEach(function(g){ asks[g.wk+'|'+g.st]=g; });
-      return Promise.all(Object.keys(asks).map(function(k){
-        var g=asks[k];
-        return fetch('/api/cfb-scores?week='+g.wk+'&dates='+D.season+'&seasontype='+g.st)
-          .then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
-      })).then(function(boards){
-        boards.forEach(function(b){
-          ((b&&b.events)||[]).forEach(function(e){
-            var c=(e.competitions||[])[0]; if(!c) return;
-            var s=c.status||{}, st=s.type||{};
-            var o={state:st.state||'pre', detail:st.shortDetail||'', period:s.period||0};
-            (c.competitors||[]).forEach(function(x){ o[x.homeAway]=parseInt(x.score||'0',10); });
-            out[String(e.id)]=o;
-          });
-        });
-        return out;
-      });
-    }
+    live:GSWatchLive.cfb,
+    top:'<p class="wg-note"><a href="/watch/">College and pro football together &rarr;</a></p>'
   });
 })();
 </script>"""
@@ -200,7 +207,7 @@ HOW = ("Each window's games, best first, by a watch score: ESPN's matchup qualit
 
 
 def body(data: dict) -> str:
-    return watch_page.body(data, ADAPTER_JS, HOW, "/cfb/watch/",
+    return watch_page.body(data, LIVE_JS + ADAPTER_JS, HOW, "/cfb/watch/",
                            "What to watch in college football today")
 
 
@@ -213,6 +220,8 @@ def generate() -> None:
         teams = {}
     data = {"season": SEASON, "generated": now.isoformat(timespec="minutes"),
             "slots": _slot_hours(), "games": games(now), "rosters": teams}
+    # The same games for the all-sports guide, which merges them in the browser.
+    watch_page.write_games(OUT.parent / "games.json", data)
     write_page(OUT, "Watch Guide", body(data), subtitle="What to have on, window by window",
                description="Every college football game of the day, grouped by kickoff and "
                            "ranked by how much it is worth watching - with live scores.")

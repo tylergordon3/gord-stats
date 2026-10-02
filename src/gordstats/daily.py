@@ -233,6 +233,13 @@ def main(argv=None) -> int:
         print("--- render home ---", flush=True)
         rh.render_home()
         rh.render_cbb_home()
+        # The all-sports watch guide is a shell over the sport guides' games;
+        # writing it here keeps it present whichever sections ran.
+        try:
+            from gordstats import watch_all
+            watch_all.generate()
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! all-sports watch guide: {exc}", flush=True)
         # Last: the profile page reads the stars every other page has just
         # written, so it cannot be built before them.
         try:

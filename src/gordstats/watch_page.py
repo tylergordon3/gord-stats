@@ -166,6 +166,13 @@ def teaser(games: list, now: datetime = None, n: int = 3) -> str:
             f"<p class='wt-day'><b>{when}</b>, best first:</p><ul class='wt'>{rows}</ul>")
 
 
+def write_games(path, data: dict) -> None:
+    """A guide's games as JSON beside its page, for the all-sports guide
+    (gordstats.watch_all) to merge in the browser."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, separators=(",", ":")), encoding="utf-8")
+
+
 def body(data: dict, adapter_js: str, how: str, share_url: str, share_text: str) -> str:
     """The page: the host the engine draws into, how it ranks, the Share
     button, the day's games as JSON (when the sport builds them here), then
@@ -254,6 +261,8 @@ a.wg-g.done{opacity:.8}
 .wg-q .ch{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;
   color:var(--wg-ink);letter-spacing:.02em;min-width:0}
 .wg-q .ch b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wg-q .ch .sp{flex:none;font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:1px 5px;
+  border-radius:4px;background:var(--wg-chip);color:var(--wg-mute)}
 .wg-q .aud,.wg-q .new{flex:none;font-size:10.5px;font-weight:800;padding:1px 6px;
   border-radius:999px;letter-spacing:0}
 .wg-q .aud{background:var(--wg-acc);color:#fff;margin-left:auto}
@@ -297,9 +306,12 @@ a.wg-g.done{opacity:.8}
 #   close           a margin that counts as close late (football 8, basketball 6)
 #   blowout         a second-half margin that drops a game down the order (21)
 #   every           milliseconds between live polls (default a minute)
-#   quadShared      true where every game can be on at once (NFL Sunday Ticket);
-#                   otherwise a quadbox never puts two games on one broadcast
-#                   channel
+#   quadShared      true where every game can be on at once (NFL Sunday Ticket),
+#                   or function(game) deciding it game by game; otherwise a
+#                   quadbox never puts two games on one broadcast channel
+#   team()          the reader's roster key, in place of the myKey picker - the
+#                   all-sports guide (gordstats.watch_all) merges two leagues
+#   blowout may be a function(game) too, where sports mix
 #   quadNote        a line under the quadbox switch
 #
 # cfg is read each time the guide draws, so an adapter may change its hint or
@@ -312,7 +324,7 @@ window.GSWatch=function(D, cfg){
   if(!host) return null;
   cfg=cfg||{};
   var GAME_HOURS=cfg.gameHours||4.5, MORE=5, STALE_DAYS=3, CLOSE=cfg.close||8;
-  var BLOWOUT=cfg.blowout||21, SWAP=15, FRESH_MS=5*60e3;
+  var BLOWOUT=(typeof cfg.blowout==='number'&&cfg.blowout)||21, SWAP=15, FRESH_MS=5*60e3;
   var live={}, timer=null, day=null, view='list', onBox=[], fresh={};
   try{ if(localStorage.getItem('gsWatchView')==='quad') view='quad'; }catch(e){}
   function esc(v){
@@ -323,6 +335,7 @@ window.GSWatch=function(D, cfg){
   function rosters(){ return D.rosters||{}; }
   function stars(){ try{ return cfg.stars?cfg.stars()||{}:{}; }catch(e){ return {}; } }
   function myTeam(){
+    if(cfg.team){ var t=cfg.team(); return t&&rosters()[t]?t:''; }
     if(!cfg.myKey) return '';
     try{ var k=localStorage.getItem(cfg.myKey); if(k&&rosters()[k]) return k; }catch(e){}
     return '';
@@ -352,7 +365,8 @@ window.GSWatch=function(D, cfg){
       else if(late&&diff<=CLOSE){ s+=30; hot.push('Close late'); }
       if(second&&((g.fav==='h'&&L.away>L.home)||(g.fav==='a'&&L.home>L.away))){ s+=15; hot.push('Upset alert'); }
       // A second half that is decided is the first thing to turn off.
-      if(second&&!ot&&diff>=BLOWOUT){ s-=30; why.unshift('Blowout'); blow=true; }
+      var bl=typeof cfg.blowout==='function'?cfg.blowout(g):BLOWOUT;
+      if(second&&!ot&&diff>=bl){ s-=30; why.unshift('Blowout'); blow=true; }
     }
     return {s:s, why:why, hot:hot, ps:ps, theirs:theirs, opp:opp, star:star, blow:blow};
   }
@@ -422,7 +436,8 @@ window.GSWatch=function(D, cfg){
   // shows one (ABC's regional 3:30 games are the usual trap).
   var STREAM=/\\+|peacock|prime|netflix|youtube|paramount|apple|stream|\\bmax\\b|flo|espn3|app\\b/i;
   function channels(g){
-    if(cfg.quadShared||!g.tv) return [];
+    var shared=typeof cfg.quadShared==='function'?cfg.quadShared(g):cfg.quadShared;
+    if(shared||!g.tv) return [];
     var parts=String(g.tv).split(/\\s*[\\/,&]\\s*/).filter(Boolean);
     if(parts.some(function(p){ return STREAM.test(p); })) return [];
     return parts.map(function(p){ return p.toUpperCase(); });
@@ -487,7 +502,8 @@ window.GSWatch=function(D, cfg){
       :(x.w.blow?' &middot; Blowout':'');
     return '<a class="wg-q'+(audio?' audio':'')+(st==='in'?' live':'')+'" href="'
       +esc(g.href||cfg.link||'#')+'" data-gid="'+esc(g.id)+'">'
-      +'<div class="ch"><b>'+esc(g.tv||'TV TBA')+'</b>'
+      +'<div class="ch">'+(g.badge?'<span class="sp">'+esc(g.badge)+'</span>':'')
+      +'<b>'+esc(g.tv||'TV TBA')+'</b>'
       +(isNew?'<span class="new">New</span>':'')
       +(audio?'<span class="aud">&#x1F50A; Sound</span>':'')+'</div>'
       +qside(g,'a',st)+qside(g,'h',st)

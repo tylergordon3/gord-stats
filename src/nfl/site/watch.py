@@ -171,10 +171,37 @@ def rosters() -> dict:
     return out
 
 
+LIVE_JS = """<script>
+window.GSWatchLive=window.GSWatchLive||{};
+/* ESPN's scoreboard answers any origin: one call per day on now. Shared
+   with the all-sports guide (gordstats.watch_all). */
+GSWatchLive.nfl=(function(){
+  var BOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=';
+  return function(games){
+    var dates={}, out={};
+    games.forEach(function(g){ dates[g.day.replace(/-/g,'')]=1; });
+    return Promise.all(Object.keys(dates).map(function(d){
+      return fetch(BOARD+d).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
+    })).then(function(boards){
+      boards.forEach(function(b){
+        ((b&&b.events)||[]).forEach(function(e){
+          var c=(e.competitions||[])[0]; if(!c) return;
+          // The clock and quarter are on the competition's status, not its type.
+          var s=c.status||e.status||{}, st=s.type||{};
+          var o={state:st.state||'pre', detail:st.shortDetail||'', period:s.period||0};
+          (c.competitors||[]).forEach(function(x){ o[x.homeAway]=parseInt(x.score||'0',10); });
+          out[String(e.id)]=o;
+        });
+      });
+      return out;
+    });
+  };
+})();
+</script>"""
+
 ADAPTER_JS = """<script>
 (function(){
   var D=JSON.parse(document.getElementById('wg-data').textContent);
-  var BOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=';
   GSWatch(D, {
     myKey:'nflMyTeam', link:'/nfl/', pickLabel:'Your team', blowout:17,
     /* Sunday afternoons are all CBS and FOX: a quadbox only works with
@@ -196,26 +223,8 @@ ADAPTER_JS = """<script>
       });
       return set;
     },
-    /* ESPN's scoreboard answers any origin: one call per day on now. */
-    live:function(games){
-      var dates={}, out={};
-      games.forEach(function(g){ dates[g.day.replace(/-/g,'')]=1; });
-      return Promise.all(Object.keys(dates).map(function(d){
-        return fetch(BOARD+d).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
-      })).then(function(boards){
-        boards.forEach(function(b){
-          ((b&&b.events)||[]).forEach(function(e){
-            var c=(e.competitions||[])[0]; if(!c) return;
-            // The clock and quarter are on the competition's status, not its type.
-            var s=c.status||e.status||{}, st=s.type||{};
-            var o={state:st.state||'pre', detail:st.shortDetail||'', period:s.period||0};
-            (c.competitors||[]).forEach(function(x){ o[x.homeAway]=parseInt(x.score||'0',10); });
-            out[String(e.id)]=o;
-          });
-        });
-        return out;
-      });
-    }
+    live:GSWatchLive.nfl,
+    top:'<p class="wg-note"><a href="/watch/">College and pro football together &rarr;</a></p>'
   });
 })();
 </script>"""
@@ -228,7 +237,7 @@ HOW = ("Each window's games, best first, by a watch score: ESPN's matchup qualit
 
 
 def body(data: dict) -> str:
-    return watch_page.body(data, ADAPTER_JS, HOW, "/nfl/watch/",
+    return watch_page.body(data, LIVE_JS + ADAPTER_JS, HOW, "/nfl/watch/",
                            "What to watch in the NFL today")
 
 
@@ -242,6 +251,8 @@ def generate() -> None:
     data = {"season": SEASON, "generated": now.isoformat(timespec="minutes"),
             "slots": watch_page.slot_hours(SLOTS), "games": games(now), "rosters": teams}
     OUT.parent.mkdir(parents=True, exist_ok=True)
+    # The same games for the all-sports guide, which merges them in the browser.
+    watch_page.write_games(OUT.parent / "games.json", data)
     OUT.write_text(add_front_matter(
         body(data), "Watch Guide", "What to have on, window by window",
         description="Every NFL game of the week, grouped by kickoff and ranked by how much it "
