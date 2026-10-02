@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-02T09:37:31+00:00",
+ "fetched": "2026-10-02T15:44:15+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -63,14 +63,14 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 181.7,
+     "projected": 181.65,
      "win_probability": 0.65
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
-     "projected": 159.34,
+     "projected": 159.35,
      "win_probability": 0.35
     }
    ]
@@ -93,7 +93,7 @@
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
      "points": 0.0,
-     "projected": 132.45,
+     "projected": 132.47,
      "win_probability": 0.21999999999999997
     }
    ]
@@ -109,15 +109,15 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 100.51,
-     "win_probability": 0.06000000000000005
+     "projected": 124.33,
+     "win_probability": 0.14
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 187.81,
-     "win_probability": 0.94
+     "projected": 185.61,
+     "win_probability": 0.86
     }
    ]
   }
@@ -921,8 +921,8 @@
     "team": "TAMU",
     "team_full": "Texas A&M Aggies",
     "bye": 9.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "WR",
     "points": 0.0,
@@ -1233,7 +1233,7 @@
     "bye": 8.0,
     "status": "Q",
     "status_full": "Questionable",
-    "injury_note": "Undisclosed",
+    "injury_note": "Lower Body",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -1697,8 +1697,8 @@
     "team": "TTU",
     "team_full": "Texas Tech Red Raiders",
     "bye": 6.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Shoulder",
     "slot": "BN",
     "points": 0.0,
@@ -2045,11 +2045,11 @@
   ],
   "474.l.21318.t.5": [
    {
-    "yahoo_id": "404544",
-    "player": "Arch Manning",
+    "yahoo_id": "404434",
+    "player": "Avery Johnson",
     "pos": "QB",
-    "team": "TEX",
-    "team_full": "Texas Longhorns",
+    "team": "KSU",
+    "team_full": "Kansas State Wildcats",
     "bye": 5.0,
     "status": "",
     "status_full": "",
@@ -2059,12 +2059,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404434",
-    "player": "Avery Johnson",
+    "yahoo_id": "407183",
+    "player": "Anthony Colandrea",
     "pos": "QB",
-    "team": "KSU",
-    "team_full": "Kansas State Wildcats",
-    "bye": 5.0,
+    "team": "NEB",
+    "team_full": "Nebraska Cornhuskers",
+    "bye": 8.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2185,6 +2185,20 @@
     "stats": {}
    },
    {
+    "yahoo_id": "404544",
+    "player": "Arch Manning",
+    "pos": "QB",
+    "team": "TEX",
+    "team_full": "Texas Longhorns",
+    "bye": 5.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
     "yahoo_id": "403802",
     "player": "Kyson Brown",
     "pos": "RB",
@@ -2255,20 +2269,6 @@
     "stats": {}
    },
    {
-    "yahoo_id": "407183",
-    "player": "Anthony Colandrea",
-    "pos": "QB",
-    "team": "NEB",
-    "team_full": "Nebraska Cornhuskers",
-    "bye": 8.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
     "yahoo_id": "900033",
     "player": "Ohio State",
     "pos": "DEF",
@@ -2327,15 +2327,15 @@
     "stats": {}
    },
    {
-    "yahoo_id": "463126",
-    "player": "Antwan Raymond",
+    "yahoo_id": "405130",
+    "player": "Jamal Roberts",
     "pos": "RB",
-    "team": "RUTG",
-    "team_full": "Rutgers Scarlet Knights",
-    "bye": 6.0,
-    "status": "Q",
-    "status_full": "Questionable",
-    "injury_note": "Undisclosed",
+    "team": "MIZZ",
+    "team_full": "Missouri Tigers",
+    "bye": 8.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "RB",
     "points": 0.0,
     "stats": {}
@@ -2411,16 +2411,30 @@
     "stats": {}
    },
    {
-    "yahoo_id": "405130",
-    "player": "Jamal Roberts",
-    "pos": "RB",
-    "team": "MIZZ",
-    "team_full": "Missouri Tigers",
-    "bye": 8.0,
+    "yahoo_id": "404143",
+    "player": "Omarion Miller",
+    "pos": "WR",
+    "team": "ASU",
+    "team_full": "Arizona State Sun Devils",
+    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "463126",
+    "player": "Antwan Raymond",
+    "pos": "RB",
+    "team": "RUTG",
+    "team_full": "Rutgers Scarlet Knights",
+    "bye": 6.0,
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -2487,20 +2501,6 @@
     "team": "ALA",
     "team_full": "Alabama Crimson Tide",
     "bye": 9.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "404143",
-    "player": "Omarion Miller",
-    "pos": "WR",
-    "team": "ASU",
-    "team_full": "Arizona State Sun Devils",
-    "bye": 4.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2591,7 +2591,7 @@
   "327462": 14.13,
   "451329": 9.03,
   "404635": 26.57,
-  "900076": 16.8,
+  "900076": 16.75,
   "337760": 25.98,
   "333511": 26.47,
   "456937": 17.25,
@@ -2605,7 +2605,7 @@
   "463325": 9.88,
   "469212": 23.58,
   "482773": 12.3,
-  "900028": 4.11,
+  "900028": 4.12,
   "406169": 24.26,
   "457283": 29.62,
   "404876": 13.74,
@@ -2631,7 +2631,8 @@
   "338689": 30.67,
   "406381": 6.68,
   "456249": 11.19,
-  "900068": 9.46,
+  "900068": 9.48,
+  "407183": 23.84,
   "448820": 15.02,
   "338839": 12.85,
   "457893": 17.05,
@@ -2644,23 +2645,22 @@
   "405205": 8.42,
   "458035": 4.99,
   "333373": 1.98,
-  "407183": 23.84,
-  "900033": 6.68,
+  "900033": 6.66,
   "333785": 29.77,
   "455480": 32.15,
   "456340": 25.43,
-  "463126": 16.41,
+  "405130": 20.67,
   "457039": 12.3,
   "470091": 13.02,
   "457038": 8.46,
   "404367": 6.93,
   "404353": 12.56,
-  "405130": 20.67,
+  "404143": 14.21,
+  "463126": 16.41,
   "457576": 22.6,
   "456218": 4.62,
   "456178": 12.5,
   "455505": 13.96,
-  "404143": 14.21,
   "900086": 10.11
  }
 }
