@@ -1,5 +1,9 @@
 # Opens an issue when the live site stops being refreshed, and closes it when
 # it recovers. See deploy/freshness.py.
+#
+# Added while GitHub Actions was off for the account, and its schedule never
+# fired once Actions came back (2026-09-30): GitHub registers a cron when the
+# workflow file is pushed, so this file was pushed again to register it.
 name: freshness
 
 on:
