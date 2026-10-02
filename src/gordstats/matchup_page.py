@@ -21,12 +21,15 @@ PLAY_CSS = """.mu-play,.mu-back{display:inline-block;font-size:10px;font-weight:
 .mu-play.fair{background:#fef3c7;color:#92400e}
 .mu-play.poor{background:#fde2dd;color:#b3382c}
 .mu-back{background:#eef2f7;color:#475569;font-weight:600}
+.mu-pt{display:inline-block;font-size:10px;font-weight:700;margin-left:4px;padding:0 4px;
+  border-radius:4px;background:#e0e7ff;color:#3730a3;text-decoration:none;white-space:nowrap}
 .mu-pav{display:flex;flex-wrap:wrap;gap:3px;margin:1px 0}
 .mu-pair .mu-play,.mu-pair .mu-back{font-size:10px;margin:0;padding:0 3px}"""
 PLAY_DARK = """  .mu-play.good{background:#123c2e;color:#8ff0bd}
   .mu-play.fair{background:#3d3214;color:#fcd34d}
   .mu-play.poor{background:#4a1f1a;color:#ffb4ab}
-  .mu-back{background:#223052;color:#c5cfdc}"""
+  .mu-back{background:#223052;color:#c5cfdc}
+  .mu-pt{background:#26245a;color:#c7d2fe}"""
 
 CSS = """<style>
 .mu-wrap{margin:8px 0 18px}

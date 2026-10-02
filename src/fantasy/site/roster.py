@@ -108,6 +108,19 @@ class Week:
         self.backs = availability.return_labels(
             [pid for pid, c in self.chances.items() if c["status"] != "Questionable"],
             UPCOMING_YEAR, after=availability.week_end(self.games))
+        # Physical therapists' takes on X about the players on the report
+        # (fantasy.league.expert_posts), linked beside their pills.
+        self.pt = {}
+        try:
+            from fantasy.league import expert_posts
+            projected = self.data.get("projections") or {}
+            names = {pid: (everyone.get(pid) or {}).get("name")
+                     or (projected.get(pid) or {}).get("name")
+                     for pid in set(self.chances) | set(self.backs)}
+            self.pt = expert_posts.links({p: n for p, n in names.items() if n},
+                                         expert_posts.refresh())
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! PT posts unavailable ({exc})")
         self.pts = {pid: v for m in self.data["matchups"] for side in m["sides"]
                     for pid, v in (side.get("players_points") or {}).items()}
 
@@ -245,6 +258,8 @@ def with_avail(wkd: Week, pid: str, card: dict) -> dict:
         card["avail"] = c
     if pid in wkd.backs:
         card["back"] = wkd.backs[pid]
+    if pid in getattr(wkd, "pt", {}):
+        card["pt"] = wkd.pt[pid]
     return card
 
 
@@ -582,7 +597,7 @@ def body() -> str:
         # in its column's width, so the widest player cell - now one with a
         # play-chance pill - overflowed into the Game column by the logo's width.
         + "<style>" + ui.PLAY_CSS + "\ntable.rd td.rd-p img{max-width:none}"
-          "\n.rd .mu-play,.rd .mu-back{font-size:11px}"
+          "\n.rd .mu-play,.rd .mu-back,.rd .mu-pt{font-size:11px}"
           "\n.rd-c-av .mu-play,.rd-c-av .mu-back{margin:0 4px 0 0;font-size:11.5px}"
           "\n@media (prefers-color-scheme: dark){\n" + ui.PLAY_DARK + "\n}</style>"
         # The reader's own league renders above, and hides the built one - the

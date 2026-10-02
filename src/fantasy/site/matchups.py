@@ -109,6 +109,18 @@ def avail_badges(card: dict) -> str:
                 f'{escape(availability.label(a["p"]))}</span>')
     if card.get("back"):
         out += f'<span class="mu-back">{escape(card["back"])}</span>'
+    pt = card.get("pt")
+    if pt:
+        # A link to the post on X, not the post: what it says stays theirs.
+        when = ""
+        try:
+            when = " \u00b7 " + (pd.Timestamp(pt["at"]).tz_convert("America/New_York")
+                                  .strftime("%b %-d, %-I:%M %p"))
+        except Exception:                                   # noqa: BLE001
+            pass
+        out += (f'<a class="mu-pt" href="{escape(pt["url"], quote=True)}" target="_blank" '
+                f'rel="noopener" title="{escape(pt["who"] + " on X" + when, quote=True)}">'
+                "PT&nbsp;&#8599;</a>")
     return out
 
 
@@ -344,7 +356,7 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     # The chance each plays (fantasy.league.availability). The badge shows
     # until his game starts; once it has and Sleeper has him in it, the chance
     # is spent and the whole projection is what is left to come.
-    avail, backs = ctx.get("avail") or {}, ctx.get("back") or {}
+    avail, backs, pt = ctx.get("avail") or {}, ctx.get("back") or {}, ctx.get("pt") or {}
     chance = {}
     for pid, c in cards.items():
         a = avail.get(pid)
@@ -355,6 +367,8 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
             c["avail"] = a
         if pid in backs:
             c["back"] = backs[pid]
+        if pid in pt:
+            c["pt"] = pt[pid]
         chance[pid] = (1.0 if state in ("in", "post")
                        and availability.playing(stats.get(pid), pts.get(pid))
                        else (a["p"] if a else 1.0))
@@ -923,9 +937,22 @@ def week_view(data: dict, ctx: dict) -> str:
         int(data.get("year") or UPCOMING_YEAR), after=availability.week_end(data["games"])))
     # A started player's GordStats number is the one recorded before his
     # kickoff, not today's, which has already seen his game (gordstats.pregame).
+    # Physical therapists' takes on X about the players on the report, linked
+    # beside their pills (fantasy.league.expert_posts; nothing without a token).
+    pt = {}
+    if not final:
+        try:
+            from fantasy.league import expert_posts
+            projected = data.get("projections") or {}
+            names = {pid: (projected.get(pid) or {}).get("name")
+                     for pid in set(chances) | set(backs)}
+            pt = expert_posts.links({p: n for p, n in names.items() if n},
+                                    expert_posts.refresh())
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! PT posts unavailable ({exc})")
     ctx = {**ctx, "by_team": data_mod.team_games(data["games"]),
            "wk": gs_week(data, ctx["board_frame"], chances),
-           "avail": chances, "back": backs,
+           "avail": chances, "back": backs, "pt": pt,
            "sd": dict(zip(bf["sleeper_id"].astype(str), bf["sd"])) if "sd" in bf else {}}
     started = data_mod.week_started(data)
     sections, rows = [], []
