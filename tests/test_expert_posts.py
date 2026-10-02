@@ -125,6 +125,19 @@ def test_names_match_in_full_or_by_an_unshared_capitalized_last_name():
     assert got["9226"]["who"] == "Jeff Mueller, PT, DPT"
 
 
+def test_a_last_name_after_someone_elses_first_name_is_not_him():
+    # The first read's posts: "Mike Hall Jr" is a defensive tackle, not
+    # Breece Hall; a lead-in word or a typo of his own first name still counts.
+    names = {"1": "Breece Hall", "2": "Mike Evans", "3": "De'Von Achane", "4": "Cam Ward"}
+    st = _state(("Officially an ankle injury?? Mike Hall Jr may have dodged a bullet.", _at(1)),
+                ("Jalen Coker And Mke Evans And Terrance Ferguson", _at(2)),
+                ("And Baker And Breece And Achane And Etienne", _at(3)),
+                ("Cameron Ward elbow, should be fine", _at(4)))
+    assert set(ep.links(names, st, now=NOW)) == {"2", "3", "4"}
+    st = _state(("Hall (ankle) limited Wednesday", _at(1)))
+    assert set(ep.links(names, st, now=NOW)) == {"1"}
+
+
 def test_the_newest_post_wins_and_old_ones_are_not_linked():
     names = {"9226": "De'Von Achane"}
     st = _state(("Achane update", _at(1)), ("Achane first look", _at(30)))

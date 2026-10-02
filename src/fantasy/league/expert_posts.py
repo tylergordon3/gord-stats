@@ -53,6 +53,13 @@ LINK_DAYS = 7               # a take older than this is not linked
 TIMEOUT = 20
 
 _SUFFIX = re.compile(r"\b(jr|sr|ii|iii|iv|v)\b\.?", re.I)
+# Capitalized words that may stand just before a last name used alone without
+# being anyone's first name ("And Achane And Etienne", "Update: Hall").
+_LEAD = {"and", "the", "for", "with", "on", "of", "at", "to", "in", "is", "but", "or", "from",
+         "per", "as", "like", "after", "before", "if", "so", "re", "update", "injury", "news",
+         "both", "also", "plus", "then", "when", "while", "now", "why", "how", "what", "rb",
+         "wr", "qb", "te"}
+_BEFORE = re.compile(r"([A-Z][A-Za-z'.-]*)\s+$")
 
 
 def _load() -> dict:
@@ -161,14 +168,42 @@ def _patterns(names: dict) -> dict:
         last_count[words[-1]] = last_count.get(words[-1], 0) + 1
     out = {}
     for pid, words in parts.items():
-        # (regex, on the plain text?) - a full name on the plain text; a last
-        # name alone only as written, capitalized, so "Brown" is a player and
-        # "brown" is not.
-        pats = [(re.compile(r"\b" + r"\s+".join(map(re.escape, words)) + r"\b"), True)]
+        # (regex, on the plain text?, his first name) - a full name on the
+        # plain text; a last name alone only as written, capitalized, so
+        # "Brown" is a player and "brown" is not, and not after another first
+        # name ("Mike Hall Jr" is not Breece Hall).
+        pats = [(re.compile(r"\b" + r"\s+".join(map(re.escape, words)) + r"\b"), True, None)]
         if last_count[words[-1]] == 1 and len(words[-1]) >= 4:
-            pats.append((re.compile(r"\b" + re.escape(words[-1].capitalize()) + r"\b"), False))
+            first = re.sub(r"[^a-z]", "", _ascii(names[pid]).lower().split()[0])
+            pats.append((re.compile(r"\b" + re.escape(words[-1].capitalize()) + r"\b"), False,
+                         first))
         out[pid] = pats
     return out
+
+
+def _near(a: str, b: str) -> bool:
+    """The same first name give or take a typo ("Mke"), or one cut short ("Cam")."""
+    if a == b or (min(len(a), len(b)) >= 3 and (a.startswith(b) or b.startswith(a))):
+        return True
+    if abs(len(a) - len(b)) > 1:
+        return False
+    i = 0
+    while i < min(len(a), len(b)) and a[i] == b[i]:
+        i += 1
+    return a[i + 1:] == b[i + 1:] or a[i + 1:] == b[i:] or a[i:] == b[i + 1:]
+
+
+def _names(regex, text: str, first: str = None) -> bool:
+    """Whether the post names him: any match of a full name; a last name alone
+    unless the capitalized word just before it is someone else's first name."""
+    for m in regex.finditer(text):
+        if first is None:
+            return True
+        before = _BEFORE.search(text[max(0, m.start() - 30):m.start()])
+        word = re.sub(r"[^a-z]", "", before.group(1).lower()) if before else ""
+        if not word or word in _LEAD or _near(word, first):
+            return True
+    return False
 
 
 def links(names: dict, state: dict = None, now: datetime = None) -> dict:
@@ -187,7 +222,7 @@ def links(names: dict, state: dict = None, now: datetime = None) -> dict:
         for pid, regexes in pats.items():
             if pid in out:
                 continue
-            if any(r.search(plain if on_plain else raw) for r, on_plain in regexes):
+            if any(_names(r, plain if on_plain else raw, first) for r, on_plain, first in regexes):
                 out[pid] = {"handle": p["handle"], "who": who.get(p["handle"], p["handle"]),
                             "url": f"https://x.com/{p['handle']}/status/{p['id']}",
                             "at": p.get("at")}
