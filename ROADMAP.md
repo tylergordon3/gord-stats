@@ -448,7 +448,15 @@ sweeps at 390/360/320 in both themes, ops/performance on the Pi), then fixes the
 - [x] **What's new** on Home and /changelog/ (gordstats.changelog): a line per user-facing
       feature, newest first; add one with every feature that ships.
 
+- [x] **Layout shift** (9c41867c2): Web Analytics had League Home at 0.31-0.43, Power 0.74,
+      Matchups 0.72, Team 0.54, trade 0.28, Home 0.13; every late-drawn block now has its room
+      (week strip, league bar, My teams prompt, sign-in invite, trade analyzer, scrollbar gutter) -
+      0.000-0.004 measured live. `pi analytics [days]` reports readers, pages, phones and speed.
+
 Open:
+- [ ] **Analytics again ~Oct 16** (`pi analytics 14`): new pages' adoption (trade, /watch/,
+      stats, playoff odds, previews) - promote or trim; confirm CLS stays under 0.1. Profile
+      signed-in still shifts ~0.05-0.16 in the first 50 ms (owner-only page; cause not found).
 - [ ] **After the first in-season CBB daily run (Nov 1+):** `git rm --cached
       docs/men/conference.html docs/women/conference.html` and commit (now in .gitignore; removing
       them before tip-off would 404 /men/conference until the run rebuilds it).
