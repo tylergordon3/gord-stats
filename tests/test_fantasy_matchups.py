@@ -180,4 +180,5 @@ def test_week_projection_zeroes_a_player_sleeper_rules_out():
               "away_implied": 24.0, "state": "pre", "detail": ""}]
     wk = data_mod.week_projections(board, games, injuries={"a": "Out", "b": "Doubtful"})
     assert wk.loc["a", "proj_week"] == 0.0
-    assert wk.loc["b", "proj_week"] == 3.0 and wk.loc["c", "proj_week"] == 12.0
+    # Doubtful: 1% of them played, 2016-2025.
+    assert abs(wk.loc["b", "proj_week"] - 0.12) < 1e-9 and wk.loc["c", "proj_week"] == 12.0

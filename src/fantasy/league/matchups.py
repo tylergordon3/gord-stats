@@ -580,11 +580,12 @@ def capture(refresh: bool = False, year: int = UPCOMING_YEAR,
 # --------------------------------------------------------------------------- #
 
 # Sleeper's injury designations and what they are worth this week. A player
-# ruled out, on a reserve list or not with the team scores nothing; Doubtful
-# players play about one week in four; Questionable ones mostly play, and
-# the projection stands.
+# ruled out, on a reserve list or not with the team scores nothing, and so,
+# near enough, does a Doubtful one: 1% of them played, 2016-2025 (measured by
+# fantasy.league.availability, which prices Questionable by role and the last
+# practice - the pages use it; this table is the floor without it).
 INJURY_FACTOR = {"Out": 0.0, "IR": 0.0, "PUP": 0.0, "NA": 0.0, "Sus": 0.0, "COV": 0.0,
-                 "DNR": 0.0, "Doubtful": 0.25}
+                 "DNR": 0.0, "Doubtful": 0.01}
 
 
 def week_projections(board: pd.DataFrame, games: list[dict],

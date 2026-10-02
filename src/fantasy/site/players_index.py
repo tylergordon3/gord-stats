@@ -104,11 +104,12 @@ def projections(week: int = None, year: int = UPCOMING_YEAR) -> dict:
     url = (f"{matchups_mod.SLEEPER_ROOT}/projections/nfl/{year}/{week}"
            f"?season_type=regular&{matchups_mod._positions_param()}&order_by=pts_ppr")
     rows = matchups_mod._get(url) or []
-    proj = {}
+    proj, pos = {}, {}
     for r in rows:
         st, pid = r.get("stats") or {}, str(r.get("player_id") or "")
         if not pid or st.get("pts_ppr") is None:
             continue
+        pos[pid] = (r.get("player") or {}).get("position") or ""
         proj[pid] = [round(float(st.get("pts_ppr") or 0), 2),
                      round(float(st.get("pts_half_ppr") or 0), 2),
                      round(float(st.get("pts_std") or 0), 2),
@@ -124,7 +125,23 @@ def projections(week: int = None, year: int = UPCOMING_YEAR) -> dict:
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! kickoffs unavailable ({exc}); lineups will not lock")
 
-    return {"week": int(week), "year": int(year), "kick": kick, "proj": proj}
+    # This week's chance each listed player plays (fantasy.league.availability:
+    # status, role and the last practice, measured 2016-2025), and when ESPN
+    # has the ones held out coming back - so a reader's own league reads the
+    # same expected points and the same pills as this site's pages.
+    play, back = {}, {}
+    try:
+        from fantasy.league import availability as av
+        chances = av.week_chances({p: v[4] for p, v in proj.items() if v[4]}, int(week),
+                                  int(year), positions=pos)
+        play = {p: round(c["p"], 3) for p, c in chances.items()
+                if c["status"] in av.PRICED and p in proj}
+        back = av.return_labels([p for p, c in chances.items() if c["status"] != "Questionable"],
+                                int(year), after=av.week_end([{"date": d} for d in kick.values()]))
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! play chances unavailable ({exc})")
+    return {"week": int(week), "year": int(year), "kick": kick, "proj": proj,
+            "play": play, "back": back}
 
 
 def season_points(year: int) -> dict:

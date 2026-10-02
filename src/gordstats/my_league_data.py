@@ -132,9 +132,15 @@ window.GSL = (function(){
   }
 
   /** {player_id: points} under one basis. */
+  /** {player_id: points} under one basis - expected points: a Questionable or
+   *  Doubtful player's projection times his chance of playing this week
+   *  (`play`, fantasy.league.availability), as this site's own pages count it. */
   function points(wk, basisIndex){
-    var out={};
-    for(var pid in wk.proj) out[pid]=wk.proj[pid][basisIndex];
+    var out={}, play=wk.play||{};
+    for(var pid in wk.proj){
+      var p=play[pid];
+      out[pid]=wk.proj[pid][basisIndex]*(typeof p==='number'?p:1);
+    }
     return out;
   }
   /** {player_id: kickoff ms} from the player's team this week. */
