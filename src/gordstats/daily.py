@@ -240,6 +240,11 @@ def main(argv=None) -> int:
             watch_all.generate()
         except Exception as exc:                        # noqa: BLE001
             print(f"  ! all-sports watch guide: {exc}", flush=True)
+        try:
+            from gordstats import changelog
+            changelog.generate()
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! changelog: {exc}", flush=True)
         # Last: the profile page reads the stars every other page has just
         # written, so it cannot be built before them.
         try:

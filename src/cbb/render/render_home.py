@@ -160,8 +160,8 @@ def _cbb_card(today: date) -> str:
      built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
      from <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
-  <p class="home-card-links">
-    <a href="/men/conference">Conference Rankings</a> ·
+  <p class="home-card-links hc-row">
+    <a href="/men/conference">Conference Rankings</a>
     <a href="/men/history">Prediction History</a>
   </p>
 </section>
@@ -187,10 +187,10 @@ def _fantasy_card() -> str:
   <p>Draft boards, values and busts, simulated power rankings, schedule
      strength, and a full waiver and trade history for the
      <a href="https://sleeper.com/leagues/1257466498994143232">Zelk Team</a> league.</p>
-  <p class="home-card-links">
-    <a href="/fantasy/matchups/">Matchups</a> ·
-    <a href="/fantasy/power/">Power Rankings</a> ·
-    <a href="/nfl/watch/">NFL Watch Guide</a> ·
+  <p class="home-card-links hc-row">
+    <a href="/fantasy/matchups/">Matchups</a>
+    <a href="/fantasy/power/">Power Rankings</a>
+    <a href="/nfl/watch/">NFL Watch Guide</a>
     <a href="/nfl/">NFL Predictions</a>
   </p>
 </section>
@@ -213,9 +213,9 @@ def _cfb_card() -> str:
   {% include cfb_countdown.html %}
   <p>The Yahoo college fantasy league, and every FBS game of the season —
      model predictions, live scores, kickoffs, TV, and ranks.</p>
-  <p class="home-card-links">
-    <a href="/cfb/watch/">Watch Guide</a> ·
-    <a href="/cfb/schedule/">CFB Schedule</a> ·
+  <p class="home-card-links hc-row">
+    <a href="/cfb/watch/">Watch Guide</a>
+    <a href="/cfb/schedule/">CFB Schedule</a>
     <a href="/cfb/league/">League Dashboard</a>
   </p>
 </section>
@@ -235,8 +235,8 @@ def _cbb_lead() -> str:
      Built on <a href="https://kenpom.com/" target="_blank">KenPom</a> and
      <a href="https://barttorvik.com/#" target="_blank">Torvik</a>, with scores
      from <a href="https://www.thescore.com/" target="_blank">TheScore</a>.</p>
-  <p class="home-card-links">
-    <a href="/men/conference">Conference Rankings</a> ·
+  <p class="home-card-links hc-row">
+    <a href="/men/conference">Conference Rankings</a>
     <a href="/men/history">Prediction History</a>
   </p>
 </section>
@@ -329,11 +329,11 @@ def _cbb_home_body(today: date) -> str:
   <div class="home-card-head">
     <h2>Everything else</h2>
   </div>
-  <p class="home-card-links">
-    <a href="/men/">Today's Scores</a> ·
-    <a href="/cbb/watch/">Watch Guide</a> ·
-    <a href="/cbb/stats/">Team Stats</a> ·
-    <a href="/men/conference">Conference Rankings</a> ·
+  <p class="home-card-links hc-row">
+    <a href="/men/">Today's Scores</a>
+    <a href="/cbb/watch/">Watch Guide</a>
+    <a href="/cbb/stats/">Team Stats</a>
+    <a href="/men/conference">Conference Rankings</a>
     <a href="/men/history">Prediction History</a>
   </p>
   {_stale_note(days) if preseason else ""}
@@ -388,7 +388,8 @@ def _cfb_graphics(today: date) -> str:
     Out of season the includes still exist but say nothing useful, so the
     whole block is left off rather than rendering two empty frames.
     """
-    if not (date(today.year, 8, 20) <= today <= date(today.year, 12, 20)):
+    # Through the CFP final (Jan 25, 2027), as My teams runs.
+    if not (today >= date(today.year, 8, 20) or today <= date(today.year, 1, 31)):
         return ""
     return """
 <section class="home-card">
@@ -473,6 +474,10 @@ def render_home():
     # the card stays hidden on any other day (gordstats.watch_all).
     from gordstats import watch_all
     html = watch_all.teaser() + html
+    # What's new closes the page: news about the site comes after the games
+    # (gordstats.changelog; /changelog/ has the rest).
+    from gordstats import changelog
+    html = html + changelog.home_card()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
