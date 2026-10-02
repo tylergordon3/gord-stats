@@ -75,6 +75,21 @@ CSS = """<style>
 .pf-msg{font-size:13px;margin:8px 0 0}
 .pf-msg.err{color:#b91c1c}
 .pf-msg.ok{color:#15803d}
+/* Review submissions (Tweets of the week): the owner's, and drawn only for
+   them, at the foot of the page so appearing moves nothing above it. */
+.pf-tw .pf-group{margin-top:12px}
+.pf-tw-item.pf-tw-item{align-items:flex-start}
+.pf-tw-main{flex:1 1 260px;min-width:0}
+.pf-tw-text{font-size:13.5px;line-height:1.45;color:#334155;margin-top:3px;white-space:pre-line;
+  overflow-wrap:anywhere}
+.pf-tw .pf-btn{min-height:40px;box-sizing:border-box}
+.pf-tw a.pf-btn{display:inline-flex;align-items:center;text-decoration:none}
+.pf-tw select{min-height:40px;font:inherit;font-size:16px;border:1px solid #cbd5e1;border-radius:8px;
+  padding:0 8px;background:#fff;color:#334155}
+@media (prefers-color-scheme: dark){
+  .pf-tw-text{color:#cbd5e1}
+  .pf-tw select{background:#16203a;border-color:#2b3852;color:#dde5ef}
+}
 @media (prefers-color-scheme: dark){
   .pf-card{background:#16203a;border-color:#2b3852}
   .pf-card p,.pf-meta,.pf-group{color:#aab7c9}
@@ -171,6 +186,102 @@ JS = """{% raw %}<script>
     });
   }
 
+  // Tweets of the week: the owner reviews what readers sent in. /api/tweets
+  // says whether this account is the owner, so the queue is asked for only
+  // then - nobody else gets a 403 - and the card shows only when the queue
+  // answers 200.
+  var TW=document.getElementById('pf-tw');
+  var TW_ID=/^[1-9][0-9]{0,19}$/, TW_H=/^[A-Za-z0-9_]{1,15}$/;
+  function twGet(status){
+    return fetch('/api/tweets?status='+status,{credentials:'same-origin'})
+      .then(function(r){ return r.status===200?r.json():null; })
+      .then(function(d){ return d&&d.ok&&Array.isArray(d.tweets)?d.tweets:null; });
+  }
+  function twItem(t, waiting){
+    var url='https://x.com/'+(TW_H.test(t.handle||'')?t.handle:'i')+'/status/'+t.tweet_id;
+    var sport=function(v,label){
+      return '<option value="'+v+'"'+(t.sport===v?' selected':'')+'>'+label+'</option>';
+    };
+    var meta=[t.handle?'@'+t.handle:'', t.has_media==2?'video':t.has_media==1?'photo or video':'',
+              waiting?(t.submitter?'from '+t.submitter:''):(t.votes|0)+((t.votes|0)===1?' vote':' votes'),
+              !waiting&&t.sport?t.sport.toUpperCase():'']
+      .filter(Boolean).join(' \u00b7 ');
+    return '<li class="pf-tw-item" data-id="'+t.id+'"><div class="pf-tw-main">'
+      +'<span class="pf-name">'+esc(t.author||'On X')+'</span> <span class="pf-meta">'+esc(meta)+'</span>'
+      +'<div class="pf-tw-text">'+esc(t.text||'(no words - a picture or video)')+'</div></div>'
+      +'<div class="pf-row">'
+      +(waiting
+        ?'<select class="pf-tw-sport" aria-label="Sport">'+sport('','Sport?')+sport('cfb','College')
+          +sport('nfl','NFL')+'</select>'
+          +'<button type="button" class="pf-btn go" data-act="approve">Approve</button>'
+          +'<button type="button" class="pf-btn danger" data-act="reject">Reject</button>'
+        :'<button type="button" class="pf-btn danger" data-act="remove">Remove</button>')
+      +'<a class="pf-btn" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Open on X</a>'
+      +'</div></li>';
+  }
+  function twDraw(waiting, live){
+    var good=function(t){ return t&&TW_ID.test(String(t.tweet_id))&&/^[1-9][0-9]{0,11}$/.test(String(t.id)); };
+    waiting=(waiting||[]).filter(good); live=(live||[]).filter(good);
+    document.getElementById('pf-tw-q').innerHTML=waiting.length
+      ?waiting.map(function(t){ return twItem(t,true); }).join('')
+      :'<li><span class="pf-meta">Nothing waiting.</span></li>';
+    document.getElementById('pf-tw-on').innerHTML=live.length
+      ?live.map(function(t){ return twItem(t,false); }).join('')
+      :'<li><span class="pf-meta">Nothing approved yet.</span></li>';
+  }
+  function twMsg(text, cls){
+    var m=document.getElementById('pf-tw-msg');
+    m.className='pf-msg'+(cls?' '+cls:'');
+    m.textContent=text;
+  }
+  function twReview(){
+    if(!TW) return;
+    fetch('/api/tweets',{credentials:'same-origin'})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){
+        if(!d||d.admin!==true) return null;
+        return Promise.all([twGet('pending'), twGet('approved')]);
+      })
+      .then(function(lists){
+        if(!lists||!lists[0]) return;
+        twDraw(lists[0], lists[1]);
+        TW.hidden=false;
+      })
+      .catch(function(e){ console.error('profile: review', e); });
+  }
+  if(TW) TW.addEventListener('click',function(ev){
+    var b=ev.target.closest&&ev.target.closest('button[data-act]');
+    var li=b&&b.closest('.pf-tw-item'), id=li&&li.getAttribute('data-id');
+    if(!id) return;
+    var act=b.getAttribute('data-act'), body={action:act};
+    var sel=li.querySelector('.pf-tw-sport');
+    if(sel&&act==='approve') body.sport=sel.value||null;
+    var buttons=li.querySelectorAll('button');
+    [].forEach.call(buttons,function(x){ x.disabled=true; });
+    fetch('/api/tweets/'+id+'/review',{method:'POST', credentials:'same-origin',
+        headers:{'content-type':'application/json'}, body:JSON.stringify(body)})
+      .then(function(r){
+        return r.json().catch(function(){ return {}; })
+          .then(function(j){ return {ok:r.ok&&!!(j&&j.ok), j:j||{}}; });
+      })
+      .then(function(a){
+        if(!a.ok){
+          twMsg(a.j.error||'That did not go through.','err');
+          [].forEach.call(buttons,function(x){ x.disabled=false; });
+          return null;
+        }
+        twMsg(act==='approve'?'Approved - it is on Home now.'
+              :act==='reject'?'Turned down.':'Taken off the site.','ok');
+        return Promise.all([twGet('pending'), twGet('approved')])
+          .then(function(l){ twDraw(l[0], l[1]); });
+      })
+      .catch(function(e){
+        console.error('profile: review', e);
+        twMsg("Couldn't reach the server.",'err');
+        [].forEach.call(buttons,function(x){ x.disabled=false; });
+      });
+  });
+
   fetch('/api/me',{credentials:'same-origin'})
     .then(function(r){ return r.json(); })
     .then(function(me){
@@ -189,6 +300,7 @@ JS = """{% raw %}<script>
       who.innerHTML='<div class="pf-row"><span class="pf-who">Signed in as <b>'
         +esc(me.email)+'</b></span>'
         +'<a class="pf-btn" href="/api/auth/logout?next=/profile/">Sign out</a></div>';
+      twReview();
     })
     .catch(function(){
       who.innerHTML='<span class="pf-meta">Could not reach the server.</span>';
@@ -213,4 +325,13 @@ def body(league_sync_body: str) -> str:
               "signed in, and are kept in this browser when you are not. You "
               "can also connect one from the bar on any league page.</p>"
             + league_sync_body
-            + "</div></div>" + JS)
+            + "</div>"
+            # Only ever shown to the owner (users.is_admin), and last, so
+            # drawing it moves nothing a reader is looking at.
+            + "<div class='pf-card pf-tw' id='pf-tw' hidden><h2>Review submissions</h2>"
+              "<p>Posts readers sent in for Tweets of the week. Approving one puts it on "
+              "Home for seven days, ranked by readers' votes.</p>"
+              "<div class='pf-group'>Waiting</div><ul class='pf-list' id='pf-tw-q'></ul>"
+              "<div class='pf-group'>On the site now</div><ul class='pf-list' id='pf-tw-on'></ul>"
+              "<p class='pf-msg' id='pf-tw-msg' role='status'></p></div>"
+            + "</div>" + JS)

@@ -19,6 +19,13 @@ CREATE TABLE IF NOT EXISTS users (
   provider_sub  TEXT NOT NULL UNIQUE,
   created_at    TEXT NOT NULL,
   last_seen_at  TEXT NOT NULL,
+  -- 1 for the site's owner: who may approve readers' posts for Tweets of the
+  -- week (functions/api/tweets.js). Set by hand, never by any endpoint:
+  --   UPDATE users SET is_admin = 1 WHERE email = '<the owner's address>';
+  -- Declared ahead of migration 004's columns, which tests/functions_harness
+  -- rebuilds by dropping them off the end; a database migrated by 005 has it
+  -- last, and nothing here reads columns by position.
+  is_admin      INTEGER NOT NULL DEFAULT 0,
   -- How many rows this reader has changed today (UTC), against the daily
   -- allowance in functions/api/_lib/limits.js. D1's free tier has one pool of
   -- writes for the whole site, and without a per-account ceiling a single
@@ -90,3 +97,50 @@ CREATE TABLE IF NOT EXISTS leagues (
   -- primary key's own index and needs no second one.
   PRIMARY KEY (user_id, provider, league_id)
 );
+
+-- --------------------------------------------------------------------------
+-- Tweets of the week (functions/api/tweets.js; deploy/d1-migrate-005-tweets.sql
+-- for a database created before 2026-10-02).
+--
+-- Readers send in posts from X, the owner (users.is_admin) approves them, and
+-- readers vote; Home shows the week's approved posts, most votes first. What
+-- is stored is what X's keyless oEmbed says about a public post - author,
+-- handle, the text as plain text, whether it carries a photo or video - so
+-- the cards draw without asking X anything. The post itself is embedded only
+-- when a reader taps one.
+--
+-- No index beyond the keys: each one is a write on every insert (see 004),
+-- and at this size a scan of the approved posts is cheaper than keeping one.
+-- `tweet_id` is X's id as text - it is past 2^53, so never a number here.
+CREATE TABLE IF NOT EXISTS tweets (
+  id            INTEGER PRIMARY KEY,
+  tweet_id      TEXT NOT NULL UNIQUE,
+  handle        TEXT,
+  author        TEXT,
+  text          TEXT,
+  -- 0 none, 1 a photo or video (oEmbed's pic.twitter.com link does not say
+  -- which), 2 a video for certain (a /video/ link).
+  has_media     INTEGER NOT NULL DEFAULT 0,
+  -- 'cfb', 'nfl' or NULL. Checked in code rather than by a CHECK, so another
+  -- sport later needs no table rebuild.
+  sport         TEXT,
+  -- Kept when the account goes: the post was approved on its own merits.
+  submitted_by  TEXT REFERENCES users(id) ON DELETE SET NULL,
+  submitted_at  TEXT NOT NULL,
+  -- 'pending', 'approved' or 'rejected'; a removed post goes back to
+  -- 'rejected', so it cannot simply be sent in again.
+  status        TEXT NOT NULL DEFAULT 'pending',
+  -- When it was approved (or turned down): "this week" counts from here.
+  reviewed_at   TEXT
+);
+
+-- One row per reader per post. WITHOUT ROWID: the primary key is the table,
+-- so a vote is one row written rather than a row plus its key's index - the
+-- difference between one write and two on every tap. The key leads with the
+-- post, which is how votes are counted; an account's own votes go with it
+-- through the cascade, a scan that runs only when an account is deleted.
+CREATE TABLE IF NOT EXISTS tweet_votes (
+  tweet_id  INTEGER NOT NULL REFERENCES tweets(id) ON DELETE CASCADE,
+  user_id   TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  PRIMARY KEY (tweet_id, user_id)
+) WITHOUT ROWID;

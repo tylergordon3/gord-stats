@@ -471,9 +471,10 @@ def render_home():
     # preview cards are navigation, which can sit under them.
     # What's new sits under the reader's own teams, above the graphics: high
     # enough to be seen (it closed the page until 2026-10-02), after what is on.
-    from gordstats import changelog
-    html = (_my_teams(today) + changelog.home_card() + _cfb_graphics(today)
-            + _nfl_graphics(today) + html)
+    # Tweets of the week under it: readers' picks, drawn from /api/tweets.
+    from gordstats import changelog, tweets_page
+    html = (_my_teams(today) + changelog.home_card() + tweets_page.home_card()
+            + _cfb_graphics(today) + _nfl_graphics(today) + html)
     # On a night college and pro football both play, what is on comes first;
     # the card stays hidden on any other day (gordstats.watch_all).
     from gordstats import watch_all

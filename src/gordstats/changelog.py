@@ -26,6 +26,9 @@ HOME_SHOWN = 3
 
 # (date, title, one line, link or None) - newest first.
 ENTRIES = [
+    ("2026-10-02", "Tweets of the week",
+     "The funniest college football and NFL posts on X, sent in by readers and voted up by "
+     "you - on Home, with a page of their own.", "/tweets/"),
     ("2026-10-02", "Pages that stay put",
      "Nothing jumps down the page while it loads: League Home, Matchups, Team, the trade "
      "analyzer and Home hold their places as the live parts draw.", None),

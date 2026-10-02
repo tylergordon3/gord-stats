@@ -245,6 +245,11 @@ def main(argv=None) -> int:
             changelog.generate()
         except Exception as exc:                        # noqa: BLE001
             print(f"  ! changelog: {exc}", flush=True)
+        try:
+            from gordstats import tweets_page
+            tweets_page.generate()
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! tweets of the week: {exc}", flush=True)
         # Last: the profile page reads the stars every other page has just
         # written, so it cannot be built before them.
         try:
