@@ -13,6 +13,21 @@ import pandas as pd
 
 from gordstats import clinch
 
+# The play-chance and return-date pills (fantasy.league.availability): the
+# matchups page draws them inside CSS, the NFL team dashboard on its own.
+PLAY_CSS = """.mu-play,.mu-back{display:inline-block;font-size:10px;font-weight:700;margin-left:4px;
+  border-radius:3px;padding:0 4px;line-height:1.5;white-space:nowrap;vertical-align:baseline}
+.mu-play.good{background:#e3f4ea;color:#166534}
+.mu-play.fair{background:#fef3c7;color:#92400e}
+.mu-play.poor{background:#fde2dd;color:#b3382c}
+.mu-back{background:#eef2f7;color:#475569;font-weight:600}
+.mu-pav{display:flex;flex-wrap:wrap;gap:3px;margin:1px 0}
+.mu-pair .mu-play,.mu-pair .mu-back{font-size:10px;margin:0;padding:0 3px}"""
+PLAY_DARK = """  .mu-play.good{background:#123c2e;color:#8ff0bd}
+  .mu-play.fair{background:#3d3214;color:#fcd34d}
+  .mu-play.poor{background:#4a1f1a;color:#ffb4ab}
+  .mu-back{background:#223052;color:#c5cfdc}"""
+
 CSS = """<style>
 .mu-wrap{margin:8px 0 18px}
 /* The fantasy section's stylesheet sizes tables inside .table-scroll to their
@@ -328,6 +343,11 @@ table.mu-roster td.mu-p .mu-hint{font-size:10px;font-weight:700;margin-left:4px;
   border-radius:3px;padding:0 4px}
 table.mu-roster td.mu-p .mu-hint.in{background:#d5efdd;color:#1a7f4b}
 table.mu-roster td.mu-p .mu-hint.out{background:#fde2dd;color:#b3382c}
+/* Beside an injury tag: the chance he plays this week (fantasy.league.
+   availability) - green likely, amber a coin flip, red unlikely - and ESPN's
+   expected return for a player held out. PLAY_CSS, shared with the NFL team
+   dashboard. */
+""" + PLAY_CSS + """
 /* The scoreboard-styled tables (the NFL page's disagreements and accuracy
    lists) carry the same logos; without this they got the theme's figure
    styling and rendered at full size. */
@@ -395,6 +415,7 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   table.mu-roster td.mu-p .inj,.mu-pair .inj{color:#ffb4ab}
   table.mu-roster td.mu-p .mu-hint.in{background:#123c2e;color:#8ff0bd}
   table.mu-roster td.mu-p .mu-hint.out{background:#4a1f1a;color:#ffb4ab}
+""" + PLAY_DARK + """
   .mu-side .rec,.mu-side .sub,.mu-mid{color:#aab7c9}
   .mu-side .sub b{color:#dde5ef}
   .mu-srcs-h{color:#aab7c9}
@@ -426,7 +447,7 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
   .mu-side .sub{font-size:12px}
   .mu-pslot,.mu-pbench-h,.mu-src-l,.mu-srcs-h{font-size:11.5px}
   .mu-pn .nm{font-size:13.5px}
-  .mu-pair .inj,.mu-pair .mu-hint{font-size:11px}
+  .mu-pair .inj,.mu-pair .mu-hint,.mu-pair .mu-play,.mu-pair .mu-back{font-size:11px}
 }
 </style>"""
 

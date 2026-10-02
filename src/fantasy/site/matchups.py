@@ -26,6 +26,7 @@ import pandas as pd
 from fantasy import paths, pregame, projections
 from fantasy.config import (LEAGUE_TZ, ROSTER_NAMES, UPCOMING_LEAGUE_ID, UPCOMING_SEASON,
                             UPCOMING_YEAR)
+from fantasy.league import availability
 from fantasy.league import ext_projections as ext
 from fantasy.league import head_to_head as h2h
 from fantasy.league import matchups as data_mod
@@ -75,6 +76,40 @@ def injury_status(data: dict) -> dict:
     """{sleeper_id: Sleeper's injury designation} as the week's archive saw it."""
     return {pid: v["injury"] for pid, v in (data.get("projections") or {}).items()
             if v.get("injury")}
+
+
+def week_chances(data: dict) -> dict:
+    """{sleeper id: {p, status, practice, role, n}} for the week's tagged
+    players - the chance each plays (fantasy.league.availability): his tag,
+    his share of the snaps, and the official report's last practice."""
+    positions = {pid: v.get("pos") or "" for pid, v in (data.get("projections") or {}).items()}
+    return availability.week_chances(injury_status(data), int(data["week"]),
+                                     int(data.get("year") or UPCOMING_YEAR), positions=positions)
+
+
+def gs_week(data: dict, board_frame: pd.DataFrame, chances: dict = None) -> pd.DataFrame:
+    """GordStats' number for the week: the projection if he plays (`proj_full`)
+    times the chance he does (`p_play`), as `proj_week` - frozen at each
+    kickoff (gordstats.pregame), so a Questionable player is scored on the
+    expected points he was given going in."""
+    chances = week_chances(data) if chances is None else chances
+    wk = data_mod.week_projections(board_frame, data["games"])
+    return pregame.freeze(int(data["week"]), availability.apply(wk, chances))
+
+
+def avail_badges(card: dict) -> str:
+    """Beside the injury tag: the chance he plays ("plays 70%") for a
+    Questionable or Doubtful player whose game is still to come, and ESPN's
+    expected return ("back ~Nov 1") for one held out."""
+    out = ""
+    a = card.get("avail")
+    if a and a.get("status") in availability.PRICED:
+        out += (f'<span class="mu-play {availability.level(a["p"])}" '
+                f'title="{escape(availability.tip(a), quote=True)}">'
+                f'{escape(availability.label(a["p"]))}</span>')
+    if card.get("back"):
+        out += f'<span class="mu-back">{escape(card["back"])}</span>'
+    return out
 
 
 def player_card(pid: str, data: dict, board: dict, registry: dict) -> dict:
@@ -249,8 +284,13 @@ def _proj_cell(v, col: str, cls: str = "") -> str:
 
 
 def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, stats: dict,
-               hint: str = "", grade: str = "", sd: float = 0.0, hproj=None) -> str:
+               hint: str = "", grade: str = "", sd: float = 0.0, hproj=None,
+               dproj=None) -> str:
+    """One roster row. `proj` is the GS cell (the pre-game expected points);
+    `dproj`, when given, is the number the live script projects him forward
+    on - the whole projection once he is seen playing, not its expected share."""
     pid, slot = row["pid"], row["slot"]
+    dproj = proj if dproj is None else dproj
     bench = slot in ("BN", "IR")
     if pid == "0":
         return (f'<tr class="starter"><td class="mu-pts">—</td>'
@@ -260,6 +300,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
     inj = card.get("injury")
     inj_html = (f'<span class="inj" title="{escape(inj)}">'
                 f'{escape(INJURY_TAGS.get(inj, inj[:3].upper()))}</span>' if inj else "")
+    inj_html += avail_badges(card)
     tag = {"in": '<span class="mu-hint in" title="Projects into the best lineup">start</span>',
            "out": '<span class="mu-hint out" title="A bench player projects higher">sit</span>'
            }.get(hint, "")
@@ -273,7 +314,7 @@ def player_row(row: dict, card: dict, g: dict | None, proj, outside: list, pts, 
     return (f'<tr class="{"bench" if bench else "starter"}{live}{done}" data-pid="{escape(pid)}" '
             f'data-team="{escape(card["team"] or "")}"{attrs} '
             f'data-nm="{escape(_short_name(card["name"]))}" data-pos="{escape(card["pos"])}" '
-            f'data-proj="{"" if proj is None else round(proj, 2)}" data-sd="{sd:.2f}" '
+            f'data-proj="{"" if dproj is None else round(dproj, 2)}" data-sd="{sd:.2f}" '
             # Sleeper's number (outside_sources puts it first), for its live
             # expected final and its win bar.
             f'data-sproj="{"" if not outside or outside[0] is None else round(float(outside[0]), 2)}" '
@@ -298,25 +339,63 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
     rows = roster_rows(side, team.get("reserve") or [], ctx["slots"])
     cards = {r["pid"]: player_card(r["pid"], data, ctx["board"], ctx["registry"])
              for r in rows if r["pid"] != "0"}
+    pts = side.get("players_points") or {}
+    stats = data.get("stats") or {}
+    # The chance each plays (fantasy.league.availability). The badge shows
+    # until his game starts; once it has and Sleeper has him in it, the chance
+    # is spent and the whole projection is what is left to come.
+    avail, backs = ctx.get("avail") or {}, ctx.get("back") or {}
+    chance = {}
+    for pid, c in cards.items():
+        a = avail.get(pid)
+        state = game_state(ctx["by_team"].get(c["team"]))
+        if a and not c["injury"]:
+            c["injury"] = a["status"]           # the official report has him; Sleeper not yet
+        if a and state == "pre":
+            c["avail"] = a
+        if pid in backs:
+            c["back"] = backs[pid]
+        chance[pid] = (1.0 if state in ("in", "post")
+                       and availability.playing(stats.get(pid), pts.get(pid))
+                       else (a["p"] if a else 1.0))
     wk = ctx["wk"]
-    proj = {}
+    has_p = "p_play" in wk.columns
+    proj, full = {}, {}
     for pid in cards:
         if pid in wk.index and not pd.isna(wk.loc[pid, "proj_week"]):
             proj[pid] = float(wk.loc[pid, "proj_week"])
+            # What he projects to if he plays: the expected points over the
+            # chance they were priced at (the frozen number's own chance).
+            p0 = float(wk.loc[pid, "p_play"]) if has_p else 1.0
+            full[pid] = (proj[pid] / p0 if p0 > 0 else float(wk.loc[pid, "proj_full"]))
         elif cards[pid]["team"] and cards[pid]["team"] not in ctx["by_team"]:
-            proj[pid] = 0.0                         # bye week, board or not
+            proj[pid] = full[pid] = 0.0             # bye week, board or not
         else:
-            proj[pid] = None
+            proj[pid] = full[pid] = None
+    # GordStats' number to run forward from: the expected points before his
+    # game, the whole projection once he is seen playing in it.
+    gnow = {pid: (None if v is None else v * chance[pid]) for pid, v in full.items()}
+    # His week's spread: plays-or-not is a spread of its own, p(1-p) mu^2 on
+    # top of the spread of a game he plays - the win bar's variance.
+    spread = {}
+    for pid in cards:
+        f = float(full.get(pid) or 0.0)
+        sd, p = _sd_for(ctx.get("sd", {}).get(pid), f), chance[pid]
+        spread[pid] = (0.0 if p <= 0 else sd if p >= 1
+                       else (p * sd * sd + p * (1 - p) * f * f) ** 0.5)
     sources = outside_sources(data)
     outside = {pid: [src.get(pid) for src in sources.values()] for pid in cards}
     cons = ext.consensus(*sources.values())
     # The projection the page tracks with (Pts cells, the median game): every
     # source that has him averaged, ours included, so no one site's lean -
-    # ours ran 5-10% light in week 1 - sets the number. The scoreboard's
-    # Consensus column stays the outside three, the yardstick GS is read against.
-    hproj = ext.consensus({pid: v for pid, v in proj.items() if v is not None}, *sources.values())
+    # ours ran 5-10% light in week 1 - sets the number - then times the chance
+    # he plays. The sources are read as what he scores if he plays, ours too,
+    # so a Questionable player is discounted once, not once per source.
+    # The scoreboard's Consensus column stays the outside three, the yardstick
+    # GS is read against.
+    hproj = {pid: v * chance.get(pid, 1.0) for pid, v in ext.consensus(
+        {pid: v for pid, v in full.items() if v is not None}, *sources.values()).items()}
     grades = (data.get("external") or {}).get("fp_rank") or {}
-    pts = side.get("players_points") or {}
     starters = [r for r in rows if r["slot"] not in ("BN", "IR")]
     bench = [r for r in rows if r["slot"] in ("BN", "IR")]
 
@@ -342,10 +421,10 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
         c = cards.get(r["pid"], {"name": "", "pos": "", "team": "", "injury": ""})
         return player_row(r, c, ctx["by_team"].get(c["team"]), proj.get(r["pid"]),
                           outside.get(r["pid"], [None] * len(sources)), pts.get(r["pid"]),
-                          (data.get("stats") or {}).get(r["pid"]) or {}, hints.get(r["pid"]),
+                          stats.get(r["pid"]) or {}, hints.get(r["pid"]),
                           (grades.get(r["pid"]) or {}).get("grade") or "",
-                          sd=_sd_for(ctx.get("sd", {}).get(r["pid"]), proj.get(r["pid"])),
-                          hproj=hproj.get(r["pid"]))
+                          sd=spread.get(r["pid"], 0.0),
+                          hproj=hproj.get(r["pid"]), dproj=gnow.get(r["pid"]))
 
     gs_total = sum(proj.get(r["pid"]) or 0 for r in starters)
     # Expected final and its variance over the starters, for the win bar.
@@ -354,8 +433,8 @@ def roster_table(side: dict, team: dict, data: dict, ctx: dict, final: bool) -> 
         if r["pid"] == "0":
             continue
         c = cards.get(r["pid"]) or {}
-        e, v = expected(pts.get(r["pid"]), proj.get(r["pid"]),
-                        ctx.get("sd", {}).get(r["pid"]), ctx["by_team"].get(c.get("team")))
+        e, v = expected(pts.get(r["pid"]), gnow.get(r["pid"]),
+                        spread.get(r["pid"]), ctx["by_team"].get(c.get("team")))
         exp_total += e
         var_total += v
     # Sleeper's expected final the same way, on the same spread: the second
@@ -457,6 +536,10 @@ def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | Non
     inj = card.get("injury")
     inj_html = (f'<span class="inj">{escape(INJURY_TAGS.get(inj, inj[:3].upper()))}</span>'
                 if inj else "")
+    # The pills get a line of their own: half a phone's width truncates the
+    # position line, and they are the part of it a reader came for.
+    badges = avail_badges(card)
+    pills = f'<span class="mu-pav">{badges}</span>' if badges else ""
     tag = {"in": '<span class="mu-hint in">start</span>',
            "out": '<span class="mu-hint out">sit</span>'}.get(hint, "")
     live = " live" if g and g.get("state") == "in" else ""
@@ -471,7 +554,7 @@ def _pair_cell(row: dict | None, card: dict | None, key: str, pts, g: dict | Non
             f'{escape(_short_name(card["name"]))}</span>'
             f'<span class="mu-pm">{escape(card["pos"])}'
             f'{" · " + escape(card["team"]) if card["team"] and card["pos"] != "DEF" else ""}'
-            f'{inj_html}{tag}</span>'
+            f'{inj_html}{tag}</span>{pills}'
             f'<span class="mu-g">{game_cell(g)}</span></div>'
             f'<div class="mu-pcol"><span class="mu-pts">{hybrid_score(pts, hproj, g)}</span>'
             f'</div></div>')
@@ -831,13 +914,19 @@ fetch:function(){
 def week_view(data: dict, ctx: dict) -> str:
     week = int(data["week"])
     bf = ctx["board_frame"].drop_duplicates("sleeper_id")
+    final = data_mod.week_final(data)
+    chances = week_chances(data)
+    # ESPN's expected return for the players it holds out, while the week is
+    # still to be decided - a finished week's tags are history.
+    backs = ({} if final else availability.return_labels(
+        [pid for pid, c in chances.items() if c["status"] != "Questionable"],
+        int(data.get("year") or UPCOMING_YEAR), after=availability.week_end(data["games"])))
     # A started player's GordStats number is the one recorded before his
     # kickoff, not today's, which has already seen his game (gordstats.pregame).
     ctx = {**ctx, "by_team": data_mod.team_games(data["games"]),
-           "wk": pregame.freeze(week, data_mod.week_projections(
-               ctx["board_frame"], data["games"], injuries=injury_status(data))),
+           "wk": gs_week(data, ctx["board_frame"], chances),
+           "avail": chances, "back": backs,
            "sd": dict(zip(bf["sleeper_id"].astype(str), bf["sd"])) if "sd" in bf else {}}
-    final = data_mod.week_final(data)
     started = data_mod.week_started(data)
     sections, rows = [], []
     for i, m in enumerate(data["matchups"], 1):
@@ -933,7 +1022,12 @@ def disagreements(data: dict, ctx: dict) -> list[dict]:
     for pid, (owner, slot) in rostered(data).items():
         if pid not in cons or pid not in wk.index or pd.isna(wk.loc[pid, "proj_week"]):
             continue
+        # Like for like: the sources price him as if he plays, so ours is the
+        # projection if he plays too. A Questionable player's chance is not a
+        # disagreement about the player; ruled out (no chance) stays at zero.
         gs = float(wk.loc[pid, "proj_week"])
+        if "p_play" in wk.columns and float(wk.loc[pid, "p_play"]) > 0:
+            gs /= float(wk.loc[pid, "p_play"])
         theirs = [src.get(pid) for src in sources.values()]
         known = [v for v in theirs if v is not None]
         # A disagreement is with the field, not with its average: the row's
@@ -994,8 +1088,7 @@ def accuracy(datas: dict, ctx: dict) -> pd.DataFrame | None:
         # Only numbers recorded before kickoff score GordStats. A week from
         # before the archive has none, and rebuilt now it had seen the games -
         # it flattered us against sources whose pre-game numbers were kept.
-        wk = pregame.freeze(w, data_mod.week_projections(
-            ctx["board_frame"], data["games"], injuries=injury_status(data)))
+        wk = gs_week(data, ctx["board_frame"])
         wk = wk[wk["pregame"]]
         for m in data["matchups"]:
             for s in m["sides"]:
@@ -1143,7 +1236,11 @@ def body() -> str:
         "this site's projection for the week: the power model's points per game for "
         "each player, tilted by the market's implied total for his team this week "
         "(a defense the other way, on what its opponent is expected to score), and "
-        "zero on a bye. Beside it, three outside projections for the same week: "
+        "zero on a bye. A Questionable or Doubtful player counts at his projection times "
+        "the chance he plays - the <b>plays 70%</b> pill by his tag, from ten seasons of "
+        "official injury reports read by his role and his last practice before the final "
+        "report; <b>back ~Nov 1</b> is ESPN's expected return for a player held out. "
+        "Beside it, three outside projections for the same week: "
         "<b>Slpr</b> is Sleeper's, <b>ESPN</b> is ESPN's, <b>FP</b> is the FantasyPros "
         "expert consensus (whose start/sit grade sits by the name); their average is "
         "the <b>Consensus</b> the scoreboard compares us against. <b>Pts</b> is the "

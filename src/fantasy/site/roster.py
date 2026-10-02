@@ -31,6 +31,7 @@ import pandas as pd
 
 from fantasy import paths
 from fantasy.config import LEAGUE_TZ, MY_MANAGER, UPCOMING_SEASON, UPCOMING_YEAR
+from fantasy.league import availability
 from fantasy.league import defense
 from fantasy.league import ext_projections as ext
 from fantasy.league import matchups as data_mod
@@ -76,13 +77,12 @@ class Week:
         self.games = self._games()
         self.by_team = data_mod.team_games(self.games)
         self.weather = {g["game_id"]: g.get("weather") for g in self.games}
-        self.wk = data_mod.week_projections(self.board_frame, self.games,
-                                            injuries=mu.injury_status(self.data))
 
         # Every source that has a player, ours included - the matchups page's
         # tracking number. Sleeper's is refetched for the whole league here,
         # since the archive keeps it for rostered players only.
         self.sources = mu.outside_sources(self.data)
+        everyone = {}
         try:
             everyone = data_mod.sleeper_projections(self.week, UPCOMING_YEAR)
             self.sleeper_all = {pid: v["pts"] for pid, v in everyone.items()
@@ -91,6 +91,25 @@ class Week:
         except Exception as exc:                            # noqa: BLE001
             print(f"[roster] rostered Sleeper projections only ({exc})")
             self.sleeper_all, self.injuries = dict(self.sources.get("sleeper") or {}), {}
+
+        # The chance each tagged player plays (fantasy.league.availability) -
+        # free agents' tags from the league-wide pull, the archive's for the
+        # rostered - and GordStats' number as the projection times it.
+        tags = {pid: t for pid, t in self.injuries.items() if t}
+        tags.update(mu.injury_status(self.data))
+        positions = {pid: v.get("pos") or "" for pid, v in everyone.items()}
+        positions.update({pid: v.get("pos") or "" for pid, v in
+                          (self.data.get("projections") or {}).items()})
+        self.chances = availability.week_chances(tags, self.week, UPCOMING_YEAR,
+                                                 positions=positions)
+        self.wk = availability.apply(data_mod.week_projections(self.board_frame, self.games),
+                                     self.chances)
+        # ESPN's expected return for anyone it holds out.
+        self.backs = availability.return_labels(
+            [pid for pid, c in self.chances.items() if c["status"] != "Questionable"],
+            UPCOMING_YEAR, after=availability.week_end(self.games))
+        self.pts = {pid: v for m in self.data["matchups"] for side in m["sides"]
+                    for pid, v in (side.get("players_points") or {}).items()}
 
         try:
             table = defense.ratings(data=defense.capture(UPCOMING_YEAR))
@@ -113,22 +132,42 @@ class Week:
                 print(f"[roster] no forecast ({exc})")
         return games
 
-    def gs(self, pid: str, team: str = ""):
-        if pid in self.wk.index and not pd.isna(self.wk.loc[pid, "proj_week"]):
-            return float(self.wk.loc[pid, "proj_week"])
+    def gs(self, pid: str, team: str = "", column: str = "proj_week"):
+        """GordStats' number: the expected points (`proj_week`, the projection
+        times the chance he plays) or the projection if he plays (`proj_full`)."""
+        if pid in self.wk.index and not pd.isna(self.wk.loc[pid, column]):
+            return float(self.wk.loc[pid, column])
         if team and team not in self.by_team:
             return 0.0                                      # a bye, board or not
         return None
 
-    def blend(self, pid: str, team: str = ""):
-        """The mean of every source that has him; a bye is zero whatever a
-        season-long source says."""
+    def chance(self, pid: str, team: str = "") -> float:
+        """The chance he plays: the injury report's until his game starts, and
+        once it has, certain if Sleeper has him in it."""
+        c = self.chances.get(pid)
+        if not c:
+            return 1.0
+        g = self.by_team.get(team)
+        if g and (g.get("state") or "pre") != "pre" and availability.playing(
+                (self.data.get("stats") or {}).get(pid), self.pts.get(pid)):
+            return 1.0
+        return float(c["p"])
+
+    def if_plays(self, pid: str, team: str = ""):
+        """The mean of every source that has him, if he plays; a bye is zero
+        whatever a season-long source says."""
         if team and team not in self.by_team:
             return 0.0
-        vals = [self.gs(pid, team), self.sleeper_all.get(pid)]
+        vals = [self.gs(pid, team, "proj_full"), self.sleeper_all.get(pid)]
         vals += [src.get(pid) for key, src in self.sources.items() if key != "sleeper"]
         vals = [v for v in vals if v is not None]
         return sum(vals) / len(vals) if vals else None
+
+    def blend(self, pid: str, team: str = ""):
+        """The number the lineup is set on: the sources' mean times the chance
+        he plays - discounted once, since every source prices him as playing."""
+        full = self.if_plays(pid, team)
+        return None if full is None else full * self.chance(pid, team)
 
 
 # --------------------------------------------------------------------------- #
@@ -195,9 +234,24 @@ def weather_cell(wkd: Week, g: dict | None) -> str:
             + " ".join(bits) + "</td>")
 
 
+def with_avail(wkd: Week, pid: str, card: dict) -> dict:
+    """The card with the chance he plays while his game is still to come, and
+    ESPN's expected return when it holds him out (mu.avail_badges draws both)."""
+    c = wkd.chances.get(pid)
+    g = wkd.by_team.get(card.get("team"))
+    if c and not card.get("injury"):
+        card["injury"] = c["status"]        # the official report has him; Sleeper not yet
+    if c and g and (g.get("state") or "pre") == "pre":
+        card["avail"] = c
+    if pid in wkd.backs:
+        card["back"] = wkd.backs[pid]
+    return card
+
+
 def player_cell(card: dict, extra: str = "") -> str:
     inj = (f"<span class='rd-inj' title='{escape(card['injury'], quote=True)}'>"
            f"{escape(_inj(card['injury']))}</span>" if card.get("injury") else "")
+    inj += mu.avail_badges(card)
     return (f"<td class='rd-p'>{mu._logo(card['team']).replace('mu-logo', 'rd-logo')}"
             f"<span class='nm'>{escape(card['name'])}</span>"
             f"<span class='rd-lbl'>{escape(card['pos'])} &middot; {escape(card['team'] or 'FA')}"
@@ -208,6 +262,16 @@ def player_cell(card: dict, extra: str = "") -> str:
 # Sections
 # --------------------------------------------------------------------------- #
 
+def _if_plays_title(wkd: Week, pid: str, card: dict) -> str:
+    """A title on a discounted projection: what he projects to if he plays."""
+    a = card.get("avail")
+    full = wkd.if_plays(pid, card.get("team") or "")
+    if not a or full is None or a["p"] >= 1:
+        return ""
+    return (f" title='{full:.1f} if he plays, times the {a['p'] * 100:.0f}% chance he "
+            "does'")
+
+
 def card_info(wkd: Week, card: dict, proj, note: str = "proj") -> dict:
     """The fields gordstats.roster_page.player_card draws, for one player."""
     g = wkd.by_team.get(card["team"])
@@ -216,6 +280,9 @@ def card_info(wkd: Week, card: dict, proj, note: str = "proj") -> dict:
             "logo": mu._logo(card["team"]).replace("mu-logo", "rd-logo"),
             "game": mu.game_cell(g), "proj": proj, "proj_note": note,
             "inj": _inj(card.get("injury") or "")}
+    badges = mu.avail_badges(card)
+    if badges:
+        info["extra"] = f"<div class='rd-c-sub rd-c-av'>{badges}</div>"
     if not g:
         return info
     info["opp_label"] = f"{'vs' if g.get('home') else '@'} {g['opp']}"
@@ -238,7 +305,8 @@ def card_info(wkd: Week, card: dict, proj, note: str = "proj") -> dict:
     if total is not None:
         bits.append(f"team total {total:.1f}" if pos != "DEF" else f"allows {total:.1f}")
     if bits:
-        info["extra"] = f"<div class='rd-c-sub'>{' &middot; '.join(bits)}</div>"
+        info["extra"] = ((info.get("extra") or "")
+                         + f"<div class='rd-c-sub'>{' &middot; '.join(bits)}</div>")
     return info
 
 
@@ -302,7 +370,7 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
             + (f"<td class='rd-spent' title='His game is over; the points "
                f"column is what he actually scored'>{ui.fmt(proj.get(pid))}</td>"
                if (actual or {}).get(pid) is not None
-               else f"<td><b>{ui.fmt(proj.get(pid))}</b></td>")
+               else f"<td{_if_plays_title(wkd, pid, card)}><b>{ui.fmt(proj.get(pid))}</b></td>")
             + f"<td>{ui.fmt(wkd.gs(pid, card['team']))}</td>"
             f"<td>{ui.fmt(wkd.sleeper_all.get(pid))}</td>" + pts_td + cover_td + "</tr>")
     head = ("<tr><th title='Where he belongs this week'>Slot</th>"
@@ -313,7 +381,8 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
             "league average. 1.00 is par; rank 1 is the toughest, the highest number gives up the most.'>Opp vs pos</th>"
             "<th>Weather</th>"
             "<th title='Every projection on record for him, averaged: GordStats, Sleeper, "
-            "ESPN and FantasyPros'>Proj</th><th>GS</th><th>Sleeper</th><th>Pts</th>"
+            "ESPN and FantasyPros - times the chance he plays when he is on the injury "
+            "report'>Proj</th><th>GS</th><th>Sleeper</th><th>Pts</th>"
             "<th title='Once the changes are made: the best bench player who could still take "
             "this slot - eligible for it and not kicking off any earlier'>Late-swap cover</th></tr>")
     phone.sort(key=lambda c: c["order"])
@@ -354,8 +423,8 @@ def adds_section(wkd: Week, cards: dict, got: dict, proj: dict, free: pd.DataFra
     body, phone = [], []
     for gain, f, value, worst in found[:ADDS_SHOWN]:
         pid = str(f["sleeper_id"])
-        card = {"name": f["player"], "pos": f["pos"], "team": f["team"],
-                "injury": wkd.injuries.get(pid) or ""}
+        card = with_avail(wkd, pid, {"name": f["player"], "pos": f["pos"], "team": f["team"],
+                                     "injury": wkd.injuries.get(pid) or ""})
         g = wkd.by_team.get(f["team"])
         info = card_info(wkd, card, value)
         info["extra"] = (info.get("extra") or "") + (
@@ -408,7 +477,8 @@ def team_view(wkd: Week, side: dict, foe: dict | None, free: pd.DataFrame,
     key = str(side["roster_id"])
     team = wkd.data["teams"].get(key) or {}
     rows = mu.roster_rows(side, team.get("reserve") or [], wkd.slots)
-    cards = {r["pid"]: mu.player_card(r["pid"], wkd.data, wkd.board, wkd.registry)
+    cards = {r["pid"]: with_avail(wkd, r["pid"], mu.player_card(r["pid"], wkd.data, wkd.board,
+                                                                 wkd.registry))
              for r in rows if r["pid"] != "0"}
     proj = {pid: wkd.blend(pid, c["team"]) for pid, c in cards.items()}
     kick = {pid: _kick(wkd.by_team.get(c["team"])) for pid, c in cards.items()}
@@ -450,9 +520,13 @@ def team_view(wkd: Week, side: dict, foe: dict | None, free: pd.DataFrame,
                             "proj": proj.get(p["id"]), "now": p["slot"],
                             "new": got["slot"][p["id"]], "when": _when(g),
                             "sort": (g or {}).get("date") or "~"})
-    warns = [f"<b>{escape(cards[pid]['name'])}</b> is <b>{escape(_inj(cards[pid]['injury']))}</b> "
-             f"and kicks off {_when(wkd.by_team.get(cards[pid]['team']))} with no eligible "
-             "bench player left to play after him &mdash; decide before the earlier games lock."
+    def odds(pid):
+        a = cards[pid].get("avail")
+        return (f" ({escape(availability.label(a['p']))})"
+                if a and a["status"] in availability.PRICED else "")
+    warns = [f"<b>{escape(cards[pid]['name'])}</b> is <b>{escape(_inj(cards[pid]['injury']))}</b>"
+             f"{odds(pid)} and kicks off {_when(wkd.by_team.get(cards[pid]['team']))} "
+             "with no eligible bench player left to play after him &mdash; decide before the earlier games lock."
              for pid in got["start"]
              if cards[pid].get("injury") and pid in got["cover"] and not got["cover"][pid]]
 
@@ -504,6 +578,13 @@ def body() -> str:
     cfg = json.dumps({"mine": mine, "teams": slugs}).replace("</", "<\\/")
     return (
         page.CSS + page.CARD_CSS
+        # The theme's img{max-width:100%} makes a cell's logo count for nothing
+        # in its column's width, so the widest player cell - now one with a
+        # play-chance pill - overflowed into the Game column by the logo's width.
+        + "<style>" + ui.PLAY_CSS + "\ntable.rd td.rd-p img{max-width:none}"
+          "\n.rd .mu-play,.rd .mu-back{font-size:11px}"
+          "\n.rd-c-av .mu-play,.rd-c-av .mu-back{margin:0 4px 0 0;font-size:11.5px}"
+          "\n@media (prefers-color-scheme: dark){\n" + ui.PLAY_DARK + "\n}</style>"
         # The reader's own league renders above, and hides the built one - the
         # projections, defence-vs-position and weather below are this league's
         # sources for this league's players.
@@ -530,9 +611,13 @@ def body() -> str:
         "<p class='rd-note'><b>Proj</b> is every projection on record for the player "
         "averaged &mdash; this site's (<b>GS</b>), Sleeper's, ESPN's and FantasyPros' &mdash; "
         "the number the <a href='/fantasy/matchups/'>matchups</a> page tracks with; free "
-        "agents have only the first two. <b>Team total</b> is his side's implied points "
-        "from the spread and total. <b>Opp vs pos</b> is what the defence across from him "
-        "has allowed to his position against the league average: 1.00 is par, green is "
+        "agents have only the first two. A Questionable or Doubtful player's Proj is that "
+        "times the chance he plays &mdash; the <b>plays 70%</b> pill, from ten seasons of "
+        "official injury reports read by his role and his last practice before the final "
+        "report; <b>back ~Nov 1</b> is ESPN's expected return for a player held out. "
+        "<b>Team total</b> is his side's implied points from the spread and total. "
+        "<b>Opp vs pos</b> is what the defence across from him has allowed to his "
+        "position against the league average: 1.00 is par, green is "
         f"soft, the rank runs from 1 (the toughest, red) to {n_def or 32} (gives up the most, "
         "green), and ratings on fewer than "
         f"{defense.FULL_WEIGHT_GAMES} games are pulled toward par. <b>Weather</b> is ESPN's "
