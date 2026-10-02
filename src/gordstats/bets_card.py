@@ -149,6 +149,11 @@ def with_edges(games: pd.DataFrame) -> pd.DataFrame:
     disagreements: `edge` (points of home margin; positive likes the home
     side) and `ou_edge` (points; positive likes the over)."""
     games = games.copy()
+    # Numbers whatever came in: a week with no line on any game (every spread
+    # None) arrives as an object column, and `-games["spread"]` raised on it
+    # and took the NFL card down. No line is NaN, and NaN is no pick.
+    for col in ("spread", "total", "pred_margin", "pred_total"):
+        games[col] = pd.to_numeric(games[col], errors="coerce").astype(float)
     # The book prices the home side; the model talks in home margin.
     games["market_margin"] = -games["spread"]
     games["edge"] = games["pred_margin"] - games["market_margin"]
@@ -262,12 +267,21 @@ def legs(weeks: list) -> list:
 # Grading
 # --------------------------------------------------------------------------- #
 
+# A sport's finals carry this for a game called off - cancelled, or postponed
+# out of the week - rather than leaving it out: left out, a locked pick on it
+# waited for a result that never came and the week never settled.
+VOID = (None, None)
+
+
 def grade(pick: dict, finals: dict):
-    """True, False, None (push) or "" for a game that has not finished."""
+    """True, False, None (push) or "" for a game that has not finished. A
+    game called off (VOID) is a push, as a book voids the bet."""
     got = finals.get(pick["game_id"])
     if got is None:
         return ""
     margin, total = got
+    if margin is None or pd.isna(margin):
+        return None
     if pick["kind"] == "spread":
         # The pick's own margin: the side it took, against the line it took.
         mine = margin if pick["home"] else -margin
@@ -387,9 +401,33 @@ def note(text: str) -> str:
     return CSS + f"<div class='hc'><p class='hc-note'>{text}</p></div>"
 
 
-def no_bet(edge_min: float) -> str:
-    return note(f"The model and the book agree to within {edge_min:.0f} points on every "
-                "game this week, so there is no bet to name.")
+def no_bet(edge_min: float, edge_max: float = None, games: pd.DataFrame = None) -> str:
+    """The card for a week with no single to name. Given the week's
+    candidates (with_edges), it says why, truthfully: "agree on every game"
+    was printed for an NFL week whose totals were 4 points off the book's
+    (the card names a parlay only beside a single) and for one whose only
+    wide spread was past `edge_max`."""
+    text = (f"The model and the book agree to within {edge_min:.0f} points on every "
+            "game this week, so there is no bet to name.")
+    if games is None:
+        return note(text)
+    spreads = games["edge"].abs() if "edge" in games else pd.Series(dtype=float)
+    totals = games["ou_edge"].abs() if "ou_edge" in games else pd.Series(dtype=float)
+    if not (spreads.notna().any() or totals.notna().any()):
+        # Every game under way, a playoff round whose teams are not set, or
+        # no line up yet: there is nothing to compare, agreed or not.
+        text = ("No game still to play this week has both our number and the book's, "
+                "so there is no bet to name.")
+    else:
+        wide_spread = bool((spreads >= edge_min).any())
+        if wide_spread and edge_max is not None:
+            text = (f"No spread this week is between {edge_min:.0f} and {edge_max:.0f} points "
+                    "off the book's - closer is agreement, further is likelier news the model "
+                    "cannot see - so there is no bet to name.")
+        elif wide_spread or bool((totals >= edge_min).any()):
+            text = (f"The model and the book agree to within {edge_min:.0f} points on every "
+                    "spread this week, so there is no bet to name.")
+    return note(text)
 
 
 def _instant(when: datetime) -> str:

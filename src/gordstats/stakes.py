@@ -32,7 +32,8 @@ CSS = """<style>
   color:var(--accent,#C2410C)}
 .gw-t{font-size:16px;font-weight:800;color:#0f172a;margin:2px 0 3px}
 .gw p{margin:0;font-size:13.5px;color:#334155;line-height:1.5}
-.gw a{white-space:nowrap}
+.gw p a{white-space:nowrap}
+.gw-t a{white-space:normal;overflow-wrap:anywhere}
 table.stk{width:100%;border-collapse:collapse;font-size:14px}
 table.stk th{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:#334155;
   background:#eef2f7;padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:center;
@@ -68,16 +69,22 @@ def teams_from(frame, key_col: str, name_col: str) -> dict:
     if "playoff_if_win" not in frame:
         return {}
     now_col = "playoff_odds" if "playoff_odds" in frame else "playoffs"
-    out = {}
+    out, dropped = {}, set()
     for _, r in frame.iterrows():
-        if r.get("playoff_if_win") != r.get("playoff_if_win"):         # NaN
+        nums = [r.get(c) for c in (now_col, "playoff_if_win", "playoff_if_loss", "win_prob")]
+        # A game so lopsided one side never lost it in any run has no "with a
+        # loss" for that side (and no "with a win" for the other): NaN, which
+        # the table's round() raised on and took the power build down. Both
+        # sides of such a game are left out - the pair, not half of it.
+        if any(v is None or v != v for v in nums):                      # NaN
+            dropped.update({str(r[key_col]), str(r.get("opponent"))})
             continue
         out[str(r[key_col])] = {"name": str(r[name_col]), "opp": str(r["opponent"]),
                                 "now": round(float(r[now_col]), 4),
                                 "win": round(float(r["playoff_if_win"]), 4),
                                 "loss": round(float(r["playoff_if_loss"]), 4),
                                 "wp": round(float(r["win_prob"]), 4)}
-    return out
+    return {k: t for k, t in out.items() if k not in dropped}
 
 
 def games(teams: dict) -> list:

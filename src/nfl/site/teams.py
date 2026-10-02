@@ -28,15 +28,16 @@ import pandas as pd
 from cfb.site.teams import _CSS, _ordinal
 from gordstats import charts, favorites, logos, stats_page
 from gordstats.frontmatter import add_front_matter
-from nfl import advanced, fpi, predict, results
+from nfl import advanced, fpi, games as games_mod, predict, results
 from nfl.config import SEASON, TZ, WEB_DIR
 
 OUT_DIR = WEB_DIR / "teams"
 
-# Playoff rounds as ESPN numbers them (seasontype 3); the Pro Bowl, week 4,
-# is never in the schedule.
-ROUNDS = {1: "WC", 2: "Div", 3: "Conf", 5: "SB"}
-ROUND_NAMES = {1: "Wild Card", 2: "Divisional", 3: "Conference", 5: "Super Bowl"}
+# Playoff rounds as ESPN numbers them (seasontype 3). The Pro Bowl is never in
+# the schedule, so the Super Bowl is week 5 to 2025 and week 4 from 2026
+# (nfl.games) - keyed 5 alone, the 2026 one read "P4".
+ROUNDS = games_mod.ROUND_SHORT
+ROUND_NAMES = games_mod.ROUND_NAMES
 
 # nflverse (the stats) and ESPN (everything else) spell two teams differently.
 _ESPN_ABBR = {"LA": "LAR", "WAS": "WSH"}
@@ -70,10 +71,11 @@ def standings(frame: pd.DataFrame, model, names: dict, asof=None) -> pd.DataFram
     """One row per team on this season's schedule: rating, rank, record.
 
     `asof` counts only games before it toward the record - the history seed
-    (nfl.site.power) rebuilds past weeks' tables with it."""
+    (nfl.site.power) rebuilds past weeks' tables with it. The record is the
+    regular season's: a playoff win made a 13-4 team 14-4 on the rankings."""
     teams = sorted({str(t) for t in pd.concat([frame["home_team"], frame["away_team"]])
                     if _real(t)})
-    done = frame[frame["played"].astype(bool)]
+    done = frame[frame["played"].astype(bool) & (frame["seasontype"] == 2)]
     if asof is not None:
         done = done[done["date"] < asof]
     rows = []
@@ -96,10 +98,13 @@ def week_label(week: int, seasontype: int) -> str:
 
 
 def expected_record(frame: pd.DataFrame, team: str) -> tuple:
-    """(wins, losses) over the whole schedule: results where a game is played
-    (a tie half of each), this model's win chance where it is not."""
+    """(wins, losses) over the whole regular season: results where a game is
+    played (a tie half of each), this model's win chance where it is not. A
+    playoff game is not the season's record, and a game called off never
+    will be played."""
     wins = losses = 0.0
-    for _, g in frame[(frame["home_team"] == team) | (frame["away_team"] == team)].iterrows():
+    season = frame[(frame["seasontype"] == 2) & ~games_mod.called_off(frame)]
+    for _, g in season[(season["home_team"] == team) | (season["away_team"] == team)].iterrows():
         at_home = g["home_team"] == team
         if g["played"]:
             m = g["actual_margin"] if at_home else -g["actual_margin"]

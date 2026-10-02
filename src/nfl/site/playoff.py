@@ -137,10 +137,13 @@ def body() -> str:
     _CARD["odds"] = {league.teams[i]: (float(res.playoff[i]), float(res.title[i]))
                      for i in range(len(league.teams))}
     state = "final" if league.final else "set" if season_over else "projected"
-    seeds = playoff.projected_bracket(res)
+    # Once the regular season is over the seeds are pinned (playoff.real_seeds)
+    # and the bracket is them, not the likeliest of a projection.
+    seeds = league.seeds or playoff.projected_bracket(res)
     if state == "final":
-        champ = next((league.names[league.teams[i]][0] for i in range(len(league.teams))
-                      if res.title[i] >= 0.999), None)
+        won = league.champion if league.champion is not None else next(
+            (i for i in range(len(league.teams)) if res.title[i] >= 0.999), None)
+        champ = None if won is None else league.names[league.teams[won]][0]
         head = "<h2>The bracket</h2>" + (
             f"<p class='po-note'>The {escape(champ)} won the Super Bowl.</p>" if champ else "")
     elif state == "set":

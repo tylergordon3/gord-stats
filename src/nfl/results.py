@@ -33,11 +33,17 @@ def capture(season: int = SEASON) -> pd.DataFrame:
     morning's run - replaced that morning's pre-kickoff prediction with one
     on_record() then threw away, leaving the game graded on Saturday's line
     or on nothing.
+
+    And only games that are real yet: not a playoff slot whose teams are
+    ESPN's TBD placeholders (207 of those had been archived, predictions for
+    nobody), nor a game whose kickoff ESPN files as a midnight TBD - its
+    archived kickoff would be a time the game is not played at.
     """
     board, _model, _names = predict.season()
     now = pd.Timestamp.now(tz="UTC")
     kick = pd.to_datetime(board["date"], utc=True)
-    games = board[~board["played"] & (kick > now)]
+    real = [not games_mod.tbd(g) and games_mod.time_known(g) for _, g in board.iterrows()]
+    games = board[~board["played"] & (kick > now) & pd.Series(real, index=board.index, dtype=bool)]
     if games.empty:
         return pd.DataFrame(columns=_COLS)
     fresh = pd.DataFrame({
@@ -78,7 +84,12 @@ def on_record(season: int = SEASON) -> pd.DataFrame:
             archive[col] = np.nan
     archive["captured_at"] = pd.to_datetime(archive["captured"], utc=True, format="ISO8601")
     archive["kickoff"] = pd.to_datetime(archive["kickoff"], utc=True)
-    before = archive[archive["captured_at"] < archive["kickoff"]]
+    # The TBD-v-TBD captures already on file (capture() no longer adds them)
+    # are a call on nobody: never the one on record for the game ESPN later
+    # fills in under the same id.
+    placeholder = (archive["home_id"].astype(str).str.startswith("-")
+                   | archive["away_id"].astype(str).str.startswith("-"))
+    before = archive[(archive["captured_at"] < archive["kickoff"]) & ~placeholder]
     return (before.sort_values("captured_at").drop_duplicates(subset="game_id", keep="last")
             .reset_index(drop=True))
 
@@ -101,10 +112,14 @@ summary = _college.summary
 
 
 def line_moves(season: int = SEASON) -> pd.DataFrame:
-    """The college archive's line_moves, on this one."""
+    """The college archive's line_moves, on this one - the TBD-v-TBD
+    captures (on_record) left out."""
     path = season_path(season)
-    return bet_record.moves(pd.read_parquet(path) if path.exists() else None,
-                            _college.BET_MIN)
+    archive = pd.read_parquet(path) if path.exists() else None
+    if archive is not None and {"home_id", "away_id"} <= set(archive.columns):
+        archive = archive[~(archive["home_id"].astype(str).str.startswith("-")
+                            | archive["away_id"].astype(str).str.startswith("-"))]
+    return bet_record.moves(archive, _college.BET_MIN)
 
 
 if __name__ == "__main__":

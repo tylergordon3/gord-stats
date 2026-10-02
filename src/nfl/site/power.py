@@ -37,7 +37,7 @@ from cfb.site.power import (_CSS, _JS, ALL, _chg, _pct, _plain, _switcher, _td, 
 from gordstats import favorites, logos, rankmoves, share_card
 from gordstats.frontmatter import add_front_matter
 from nfl import fpi, predict
-from nfl.config import DATA_DIR, SEASON, WEB_DIR
+from nfl.config import DATA_DIR, SEASON, TZ, WEB_DIR
 from nfl.site import teams as teams_page
 
 HISTORY_DIR = DATA_DIR / "power_history" / str(SEASON)
@@ -67,7 +67,8 @@ _SPLIT = {"off": "epaoffense", "def": "epadefense", "st": "epaspecialteams"}
 
 def week_number(week: int, seasontype: int) -> int:
     """One number per week for the archive: the playoff rounds follow the
-    regular season (Wild Card 19 ... Super Bowl 23), as /nfl/ keys them."""
+    regular season (Wild Card 19 ... the Super Bowl 22 from 2026, 23 before
+    it), as /nfl/ keys them."""
     return int(week) + (18 if int(seasontype) == 3 else 0)
 
 
@@ -81,12 +82,16 @@ def week_label(number: int) -> str:
 
 def week_spans(frame: pd.DataFrame) -> list:
     """(week, first kickoff, last game over) per week, in the machine's local
-    clock - the one the snapshots are named in. A game is over four hours
-    after kickoff. Unpaired playoff games (TBD) still date their round."""
+    clock - the one the snapshots are named in, Eastern on the Pi. A game is
+    over four hours after kickoff. Unpaired playoff games (TBD) still date
+    their round.
+
+    The zone, not today's offset: datetime.now().astimezone() is a fixed
+    offset (EDT, -4, in October), which put every January playoff window an
+    hour off the snapshots' EST names."""
     if frame.empty:
         return []
-    tz = datetime.now().astimezone().tzinfo
-    local = frame["date"].dt.tz_convert(tz).dt.tz_localize(None)
+    local = frame["date"].dt.tz_convert(TZ).dt.tz_localize(None)
     number = [week_number(w, s) for w, s in zip(frame["week"], frame["seasontype"])]
     spans = local.groupby(pd.Series(number, index=frame.index)).agg(["min", "max"])
     return [(int(w), r["min"].to_pydatetime(), (r["max"] + pd.Timedelta(hours=4)).to_pydatetime())
@@ -131,9 +136,12 @@ def seed_history(spans: list, now: datetime = None) -> int:
             stamp = min(stamp, spans[i + 1][1] - timedelta(minutes=1))
         if stamp <= latest:
             stamps.append(stamp)
-    tz = datetime.now().astimezone().tzinfo
     for stamp in stamps:
-        asof = pd.Timestamp(stamp).tz_localize(tz).tz_convert("UTC")
+        # In the zone (week_spans), so a stamp past November's clock change
+        # is read at its own offset; the repeated 1 AM hour reads as EDT.
+        asof = (pd.Timestamp(stamp).tz_localize(TZ, ambiguous=True,
+                                                 nonexistent="shift_forward")
+                .tz_convert("UTC"))
         frame, model, names = predict.season(asof=asof)
         table = teams_page.standings(frame, model, names, asof=asof)
         _snapshot([{"id": str(r["team"]), "abbr": r["abbr"], "rank": None,

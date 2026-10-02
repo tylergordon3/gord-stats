@@ -44,9 +44,11 @@ def history() -> tuple:
 
 def current_week(schedule: pd.DataFrame, asof: pd.Timestamp = None) -> tuple:
     """(week, seasontype) of the first regular-season or playoff game that has
-    not finished; the last one played once the season is over."""
+    not finished; the last one played once the season is over. A game called
+    off (games_mod.called_off) is closed too: it will never finish."""
     asof = asof if asof is not None else pd.Timestamp.now(tz="UTC")
-    open_games = schedule[~schedule["completed"].astype(bool)]
+    open_games = schedule[~schedule["completed"].astype(bool)
+                          & ~games_mod.called_off(schedule)]
     if open_games.empty:
         last = schedule.sort_values("date").iloc[-1]
         return int(last["week"]), int(last["seasontype"])

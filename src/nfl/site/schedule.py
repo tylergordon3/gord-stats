@@ -29,20 +29,22 @@ import pandas as pd
 from gordstats import logos, preview_page
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
-from nfl import predict, results
+from nfl import games as games_mod, predict, results
 from nfl.config import SEASON, TZ, WEB_DIR
 from nfl.site.predictions import EDGE
 
 OUT = WEB_DIR / "schedule" / "index.html"
-# The playoff rounds by ESPN's postseason week (4 is the Pro Bowl, skipped).
-ROUNDS = {1: "Wild Card", 2: "Divisional", 3: "Conference", 5: "Super Bowl"}
+# The playoff rounds by ESPN's postseason week: the Super Bowl is 5 to 2025
+# (4 was the Pro Bowl, never fetched) and 4 from 2026 (nfl.games).
+ROUNDS = games_mod.ROUND_NAMES
 REGULAR_WEEKS = 18
 
 
 def week_key(week: int, seasontype: int) -> int:
     """One number per week of the season, the playoffs after the regular
-    season (the Wild Card round is 19, the Super Bowl 23) - the predictions
-    page's week keys, so a #wk-19 means the same round on both pages."""
+    season (the Wild Card round is 19, the 2026 Super Bowl 22) - the
+    predictions page's week keys, so a #wk-19 means the same round on both
+    pages."""
     return int(week) + (REGULAR_WEEKS if int(seasontype) == 3 else 0)
 
 
@@ -53,15 +55,10 @@ def week_label(key: int) -> str:
     return f"Week {key}"
 
 
-def _tbd(g) -> bool:
-    """A playoff game before its teams are known: ESPN's -1 and -2."""
-    return str(g["home_id"]).startswith("-") or str(g["away_id"]).startswith("-")
-
-
-def _time_known(g) -> bool:
-    """ESPN files a game without a kickoff (week 18's, before the league
-    sets its slots) at midnight Eastern and says TBD."""
-    return str(g.get("detail") or "").strip().upper() != "TBD"
+# In nfl.games now, where the predictions page and the prediction archive
+# can reach them too (this module imports the predictions page).
+_tbd = games_mod.tbd
+_time_known = games_mod.time_known
 
 
 def _num(v) -> str:
@@ -79,7 +76,8 @@ def _signed(v) -> str:
 def _records(frame: pd.DataFrame) -> dict:
     """{game id: (away record, home record)} going into each game, from the
     season's own results. ESPN's record on the schedule is today's, which on
-    a week-2 card would be a week-10 record."""
+    a week-2 card would be a week-10 record. The regular season's record:
+    a playoff game is not counted into the next round's, as ESPN shows it."""
     wins, losses, ties = {}, {}, {}
 
     def say(team) -> str:
@@ -90,7 +88,7 @@ def _records(frame: pd.DataFrame) -> dict:
     for _, g in frame.sort_values("date").iterrows():
         home, away = str(g["home_id"]), str(g["away_id"])
         out[str(g["game_id"])] = (say(away), say(home))
-        if not g["played"]:
+        if not g["played"] or int(g.get("seasontype", 2)) != 2:
             continue
         margin = g["home_score"] - g["away_score"]
         if margin == 0:
@@ -236,7 +234,7 @@ def _card(g, call: dict | None, records: dict) -> str:
     # only where one is on disk.
     preview = preview_page.href("nfl", gid)
     if preview:
-        rows.append(f"<div class='ns-c'><span class='ns-lab'>Preview</span>"
+        rows.append(f"<div class='ns-c ns-pv'><span class='ns-lab'>Preview</span>"
                     f"<span class='ns-v'><a href='{preview}'>Unit vs unit, players &rarr;</a>"
                     "</span></div>")
 
@@ -374,9 +372,13 @@ _CSS = """<style>
 .ns-calls{border-top:1px solid var(--ns-line);margin-top:5px;padding-top:6px;display:grid;gap:4px}
 .ns-c{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ns-soft);
   font-variant-numeric:tabular-nums;min-height:22px}
-.ns-lab{flex:0 0 72px;font-size:10.5px;font-weight:800;text-transform:uppercase;
-  letter-spacing:.06em;color:var(--ns-mute)}
+.ns-lab{flex:0 0 84px;font-size:11.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--ns-mute)}
 .ns-v{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The preview link is one short line: padded out to a thumb-sized target,
+   the negative margin giving the room back so the card does not grow. */
+.ns-pv .ns-v{overflow:visible}
+.ns-pv .ns-v a{display:inline-block;position:relative;padding:12px 8px;margin:-12px -8px}
 .ns-c b{color:var(--ns-ink);font-weight:700}
 .ns-none{color:var(--ns-mute)}
 .ns-mk{margin-left:auto;font-size:12px;font-weight:800;line-height:1;padding:4px 8px;

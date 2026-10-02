@@ -21,7 +21,7 @@ from cfb.site.predictions import _CSS, _fmt_spread
 from gordstats import bet_record, logos, preview_page, scorecard
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
-from nfl import predict, results
+from nfl import games as games_mod, predict, results
 from nfl.config import DATA_DIR, SEASON, TZ, WEB_DIR
 
 EDGE = 3.0                      # points from the book before a lean is worth naming
@@ -66,19 +66,46 @@ def _scores(game) -> tuple:
     return int(home), int(away)
 
 
-def _side(game, side: str, winning: bool, score: int, actual=None) -> str:
-    logo = logos.img("nfl", game[f"{side}_abbr"], 26)
+def _side(game, side: str, winning: bool, score, actual=None) -> str:
+    """One team's row. `score` is our projected points, None where there is
+    no projection to show; `actual` the final's."""
+    tbd = str(game.get(f"{side}_id") or "").startswith("-")
+    logo = "" if tbd else logos.img("nfl", game[f"{side}_abbr"], 26)
     rating = game.get(f"{side}_rating")
     record = game.get(f"{side}_record") or ""
+    if actual is not None:
+        pts = ("" if score is None else f"<span class='pg-actual'>proj {score}</span>") \
+            + f"<span class='pg-score'>{int(actual)}</span>"
+    else:
+        pts = f"<span class='pg-score'>{'' if score is None else score}</span>"
     return (f"<div class='pg-row{' pg-win' if winning else ''}'>"
             f"{logo}"
             f"<span class='pg-name'>{escape(str(game[side]))}"
             + (f" <span class='pg-rank'>{escape(str(record))}</span>" if record else "")
             + "</span>"
-            f"<span class='pg-rating'>{'' if pd.isna(rating) else f'{rating:+.1f}'}</span>"
-            + (f"<span class='pg-actual'>proj {score}</span>"
-               f"<span class='pg-score'>{int(actual)}</span>" if actual is not None
-               else f"<span class='pg-score'>{score}</span>") + "</div>")
+            f"<span class='pg-rating'>{'' if tbd or pd.isna(rating) else f'{rating:+.1f}'}</span>"
+            + pts + "</div>")
+
+
+def _when(game) -> str:
+    """The card's top line: the kickoff in Eastern time - or the day alone
+    where ESPN has no time yet (it files those at midnight and the card read
+    "12:00 AM ET") - where, the network and the preview link."""
+    kick = game["date"].tz_convert(TZ)
+    at = (f"{kick:%a %-d %b, %-I:%M %p} ET" if games_mod.time_known(game)
+          else f"{kick:%a %-d %b}, time TBD")
+    where = "neutral site" if game.get("neutral") else escape(str(game.get("place") or ""))
+    tv = escape(str(game.get("tv") or "").split(",")[0])
+    # The game's preview page (nfl.site.previews), only where one is on disk.
+    preview = preview_page.href("nfl", game.get("game_id"))
+    # Kickoff and venue apart, so a narrow card cuts the venue and never the
+    # time (the shared .pg-when CSS in cfb.site.predictions).
+    return (f"<div class='pg-when'><span>{at}</span>"
+            + (f"<span class='pg-where'>&nbsp;&middot; {where}</span>" if where else "")
+            + (f"<span class='pg-tv'>{tv}</span>" if tv and not preview else "")
+            + (f"<span class='pg-tv'>{tv + ' &middot; ' if tv else ''}"
+               f"<a href='{preview}'>Preview &rarr;</a></span>" if preview else "")
+            + "</div>")
 
 
 def _card(game, record: dict) -> str:
@@ -86,6 +113,25 @@ def _card(game, record: dict) -> str:
     whether the prediction on record (results.on_record) called it."""
     played = bool(game["played"])
     rec = record.get(str(game["game_id"]))
+    when = _when(game)
+    if games_mod.tbd(game):
+        # A playoff slot before its teams are set: the fit priced ESPN's
+        # placeholder, and the card read "TBD -1.7". Nothing to call yet.
+        rows = _side(game, "away", False, None) + _side(game, "home", False, None)
+        return (f"<article class='pg'>{when}{rows}<div class='pg-line'>"
+                "<span>Teams to be decided</span></div></article>")
+    if played and rec is None:
+        # Finished with nothing on record before kickoff: the refit has seen
+        # the score, so its line and projected points are not shown as if
+        # they were the call ("called Seahawks -6.5 | no call on record").
+        rows = (_side(game, "away", game["away_score"] > game["home_score"], None,
+                      game["away_score"])
+                + _side(game, "home", game["home_score"] > game["away_score"], None,
+                        game["home_score"]))
+        return (f"<article class='pg'>{when}{rows}<div class='pg-line'><span>"
+                "<span class='pg-final push'>no call on record</span></span>"
+                f"<span>final {int(game['home_score'] + game['away_score'])}</span>"
+                "</div></article>")
     # What the page shows for a finished game is what was on record before
     # kickoff, never a refit that knows the score.
     margin = rec["pred_margin"] if rec is not None else game["pred_margin"]
@@ -101,25 +147,11 @@ def _card(game, record: dict) -> str:
     if book is not None and not pd.isna(book) and not home_wins:
         book = -book
 
-    kick = game["date"].tz_convert(TZ)
-    where = "neutral site" if game.get("neutral") else escape(str(game.get("place") or ""))
-    tv = escape(str(game.get("tv") or "").split(",")[0])
-    # The game's preview page (nfl.site.previews), only where one is on disk.
-    preview = preview_page.href("nfl", game.get("game_id"))
-    when = (f"<div class='pg-when'><span>{kick:%a %-d %b, %-I:%M %p} ET"
-            + (f" &middot; {where}" if where else "") + "</span>"
-            + (f"<span class='pg-tv'>{tv}</span>" if tv and not preview else "")
-            + (f"<span class='pg-tv'>{tv + ' &middot; ' if tv else ''}"
-               f"<a href='{preview}'>Preview &rarr;</a></span>" if preview else "")
-            + "</div>")
-
     home_score, away_score = _scores({"pred_home": (total + margin) / 2,
                                       "pred_away": (total - margin) / 2, "pred_margin": margin})
     if played:
         actual = game["home_score"] - game["away_score"]
-        if rec is None:
-            verdict = "<span class='pg-final push'>no call on record</span>"
-        elif actual == 0:
+        if actual == 0:
             verdict = "<span class='pg-final push'>tie</span>"
         else:
             ok = (margin > 0) == (actual > 0)
@@ -167,7 +199,8 @@ def _card(game, record: dict) -> str:
 def _week_label(block: pd.DataFrame) -> str:
     st, wk = int(block["seasontype"].iloc[0]), int(block["week"].iloc[0])
     if st == 3:
-        return {1: "Wild Card", 2: "Divisional", 3: "Conference", 5: "Super Bowl"}.get(wk, f"Playoffs {wk}")
+        # The Super Bowl is week 5 to 2025 and week 4 from 2026 (nfl.games).
+        return games_mod.ROUND_NAMES.get(wk, f"Playoffs {wk}")
     return f"Week {wk}"
 
 

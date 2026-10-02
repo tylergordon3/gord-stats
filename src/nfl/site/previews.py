@@ -225,8 +225,17 @@ def _games_list(frame: pd.DataFrame, record: dict) -> list:
                     "home": g["home"], "away": g["away"], "neutral": bool(g.get("neutral")),
                     "home_score": g.get("home_score"), "away_score": g.get("away_score"),
                     "played": bool(g.get("played")),
+                    "seasontype": int(g.get("seasontype") or 2),
                     "pred_margin": None if rec is None else _v(rec["pred_margin"])})
     return out
+
+
+def _records_going_in(season: list) -> dict:
+    """preview_page.records_going_in on the regular season's results: a
+    playoff win is not part of the record a team takes into the next round
+    (ESPN's 13-4, not 14-4). Recent form still counts every game."""
+    return preview_page.records_going_in(
+        [{**g, "played": g["played"] and g.get("seasontype", 2) == 2} for g in season])
 
 
 # --------------------------------------------------------------------------- #
@@ -271,7 +280,7 @@ def build(data: dict, now) -> list:
     now = pd.Timestamp(now)
     record, names = data.get("record") or {}, data.get("names") or {}
     season = _games_list(frame, record)
-    records = preview_page.records_going_in(season)
+    records = _records_going_in(season)
     ranks, rows = data.get("ranks") or {}, data.get("rows") or {}
     out = []
     for _, g in window(frame, now).sort_values("date").iterrows():

@@ -39,6 +39,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
+from nfl import games as games_mod
 from nfl.config import DATA_DIR, SEASON, TZ
 
 STALE_HOURS = 12
@@ -382,15 +383,48 @@ def players(pbp: pd.DataFrame, rosters: pd.DataFrame) -> dict:
 # The cache
 # --------------------------------------------------------------------------- #
 
+def complete_through(reg: pd.DataFrame, schedule: pd.DataFrame = None) -> int:
+    """The last week whose every game is in the play-by-play, every week
+    before it complete too. The newest week with any play was the old
+    answer, and on a Friday - Thursday night's game in, the other fifteen to
+    come - the stats page said "through Week 4". `schedule` is ESPN's
+    (nfl.games), a game called off not owed; without one, the newest week."""
+    if not len(reg):
+        return 0
+    have = reg.groupby("week")["game_id"].nunique()
+    if schedule is None or schedule.empty:
+        return int(have.index.max())
+    owed = schedule[(schedule["seasontype"] == 2) & ~games_mod.called_off(schedule)]
+    owed = owed.groupby("week").size()
+    done = 0
+    for week in sorted(owed.index):
+        if int(have.get(week, 0)) < int(owed[week]):
+            break
+        done = int(week)
+    return done
+
+
+def _scheduled(season: int) -> pd.DataFrame | None:
+    """ESPN's schedule for the season as nfl.games keeps it beside this
+    cache (data/nfl/games/), read and never fetched: the section's build has
+    refreshed it before the stats are asked for."""
+    path = DATA_DIR / games_mod.GAMES_DIR.name / f"{season}.parquet"
+    try:
+        return pd.read_parquet(path)
+    except Exception:                                   # noqa: BLE001 - the newest week, then
+        return None
+
+
 def aggregate(pbp: pd.DataFrame, rosters: pd.DataFrame, info: pd.DataFrame,
-              season: int = SEASON) -> dict:
-    """Everything the page draws, JSON-ready."""
+              season: int = SEASON, schedule: pd.DataFrame = None) -> dict:
+    """Everything the page draws, JSON-ready. `schedule` (ESPN's) says which
+    weeks are complete (complete_through)."""
     reg = regular(pbp)
     p = plays(pbp)
     g = p[~p["garbage"]]
     return {
         "season": season,
-        "through_week": int(reg["week"].max()) if len(reg) else 0,
+        "through_week": complete_through(reg, schedule),
         "games": int(reg["game_id"].nunique()),
         "league": {"epa": _num(g["epa"].mean()), "sr": _num(g["ok"].mean()),
                    "plays": int(len(p))},
@@ -418,7 +452,7 @@ def refresh(season: int = SEASON, force: bool = False) -> dict | None:
     if cached and not force and time.time() - path.stat().st_mtime < STALE_HOURS * 3600:
         return cached
     try:
-        fresh = aggregate(*_download(season), season=season)
+        fresh = aggregate(*_download(season), season=season, schedule=_scheduled(season))
     except Exception as exc:                            # noqa: BLE001
         print(f"  ! nflverse play-by-play failed ({exc}); keeping the last stats")
         return cached

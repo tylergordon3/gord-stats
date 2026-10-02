@@ -13,6 +13,7 @@ week, each team as [playoff, title] to four places, the long shots left out.
                                     "odds": {"333": [0.73, 0.11], ...}}, ...]}
 """
 import json
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -23,10 +24,38 @@ WEEK_DAYS = 6              # "a week ago": the newest snapshot at least this old
 
 
 def _load(path: Path) -> dict:
+    """The file's contents; {} when there is none yet. One that will not
+    parse is moved aside (<name>.bad-<time>) first: read as {}, it was
+    overwritten by the next snapshot and the season's history was gone -
+    and the odds cannot be rebuilt after the fact."""
+    path = Path(path)
     try:
-        return json.loads(Path(path).read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+        raw = path.read_bytes()
+    except OSError:
         return {}
+    try:
+        data = json.loads(raw.decode("utf-8"))
+        if isinstance(data, dict):
+            return data
+    except ValueError:
+        pass
+    aside = path.with_name(f"{path.name}.bad-{datetime.now(ET):%Y%m%d-%H%M%S}")
+    try:
+        path.replace(aside)
+        print(f"  ! playoff history: {path.name} would not parse; kept as {aside.name}")
+    except OSError:
+        pass
+    return {}
+
+
+def _write(path: Path, data: dict) -> None:
+    """Written whole or not at all: to a temporary file beside it, then
+    swapped in (os.replace), so a run killed mid-write leaves the last good
+    file rather than half of one."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f"{path.name}.tmp")
+    tmp.write_text(json.dumps(data, separators=(",", ":")), encoding="utf-8")
+    os.replace(tmp, path)
 
 
 def _odds(odds: dict) -> dict:
@@ -47,9 +76,7 @@ def record(path: Path, season: int, odds: dict, now: datetime = None) -> bool:
         return False
     when = (now or datetime.now(ET)).isoformat(timespec="minutes")
     data["snapshots"].append({"at": when, "odds": snap})
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, separators=(",", ":")), encoding="utf-8")
+    _write(Path(path), data)
     return True
 
 

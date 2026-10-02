@@ -29,7 +29,7 @@ import requests
 from gordstats import logos, paths, preview_page, watch_page
 from gordstats.frontmatter import add_front_matter
 from gordstats.watch_page import ET
-from nfl import predict
+from nfl import games as games_mod, predict
 from nfl.config import SEASON
 
 OUT = paths.DOCS / "nfl" / "watch" / "index.html"
@@ -91,10 +91,15 @@ def judge(g: dict) -> tuple:
 
 
 def games(now: datetime = None, espn: dict = None) -> list:
-    """Every game from the start of today (ET) to a week out, in the engine's
-    shape. `espn` is quality()'s answer; fetched here when not given."""
+    """Every game from the start of the guide's today (ET) to a week out, in
+    the engine's shape. `espn` is quality()'s answer; fetched here when not
+    given.
+
+    The guide's today, not the calendar's: its day runs to NIGHT_ENDS
+    (watch_page.game_day), and a build at 00:30 ET started the window at
+    that midnight and dropped Monday night's game while it was still on."""
     now = now or datetime.now(ET)
-    start = now.astimezone(ET).replace(hour=0, minute=0, second=0, microsecond=0)
+    start = pd.Timestamp(watch_page.game_day(pd.Timestamp(now))).tz_localize(ET)
     frame, _model, _names = predict.season()
     frame = frame[(frame["date"] >= start) & (frame["date"] < now + timedelta(days=DAYS))
                   & (frame["home_abbr"] != "TBD") & (frame["away_abbr"] != "TBD")]
@@ -114,9 +119,14 @@ def games(now: datetime = None, espn: dict = None) -> list:
         gid = str(r["game_id"])
         e = espn.get(gid) or {}
         kick = pd.Timestamp(r["date"])
+        # ESPN files a kickoff it does not know yet (week 18's) at midnight
+        # Eastern and says TBD. Taken as real, the small-hours rule moved
+        # those games to Saturday under prime time at 12:00 AM; they are on
+        # their own day, in the TBA window.
+        known = games_mod.time_known(r)
         g = {
-            "id": gid, "ko": kick.strftime("%Y-%m-%dT%H:%M:%SZ"), "tk": True,
-            "day": watch_page.game_day(kick), "slot": slot(kick),
+            "id": gid, "ko": kick.strftime("%Y-%m-%dT%H:%M:%SZ"), "tk": known,
+            "day": watch_page.game_day(kick, known), "slot": slot(kick, known),
             "tv": r.get("tv") or "", "n": bool(r.get("neutral")),
             "note": (f"at {r['venue']}" if r.get("neutral") and r.get("venue") else ""),
             "h": team(r, "home"), "a": team(r, "away"),

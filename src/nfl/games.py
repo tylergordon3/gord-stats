@@ -4,7 +4,12 @@ Every NFL game since 2014, from ESPN's scoreboard (data/nfl/games/{year}.parquet
 ESPN serves completed seasons exactly as it serves the current one, one
 request per week and no key: 18 regular-season weeks plus the four rounds of
 the playoffs, 2014-2025 is ~3,300 games in ~260 requests. The Super Bowl is a
-neutral site and says so; the Pro Bowl is postseason "week 4" and is skipped.
+neutral site and says so. Which postseason week holds which round is read
+from ESPN's own calendar (postseason_rounds): through 2025 the Pro Bowl was
+week 4 and the Super Bowl week 5; from 2026 there is no Pro Bowl week and the
+Super Bowl is week 4 - asking for week 5 that season returns nothing, which
+is how the 2026 Super Bowl went missing. The Pro Bowl is never fetched, and
+each playoff row carries the calendar's name for its round in `round`.
 
 Two traps, the same two the college archive has:
   * A cancelled game (Bills-Bengals, January 2023) is filed "post" with a 0-0
@@ -34,8 +39,22 @@ _PAUSE = 0.3
 GAMES_DIR = DATA_DIR / "games"
 FIRST_SEASON = 2014
 REGULAR_WEEKS = 18                 # 17 before 2021; the extra requests come back empty
-POSTSEASON_WEEKS = (1, 2, 3, 5)    # wild card, divisional, conference, Super Bowl
 MAX_AGE_HOURS = 3
+SUPER_BOWL = "Super Bowl"
+# The rounds when ESPN's calendar is not there to say: the Pro Bowl held
+# week 4 through the 2025 season, and from 2026 it is gone.
+_ROUNDS_TO_2025 = {1: "Wild Card", 2: "Divisional Round", 3: "Conference Championship",
+                   5: SUPER_BOWL}
+_ROUNDS_FROM_2026 = {1: "Wild Card", 2: "Divisional Round", 3: "Conference Championship",
+                     4: SUPER_BOWL}
+# The pages' names by postseason week. The Pro Bowl is never fetched, so a
+# week 4 on file is the Super Bowl (2026 on) and so is a week 5 (to 2025).
+ROUND_NAMES = {1: "Wild Card", 2: "Divisional", 3: "Conference", 4: SUPER_BOWL, 5: SUPER_BOWL}
+ROUND_SHORT = {1: "WC", 2: "Div", 3: "Conf", 4: "SB", 5: "SB"}
+# The game-row numbers that must be numbers. A week with no line anywhere
+# (every `spread` None) made an all-None column, which pandas keeps as
+# objects, and `-games["spread"]` on the bets card raised on it.
+_NUMERIC = ("home_score", "away_score", "book_spread", "book_total")
 
 
 def _get(params: dict) -> dict:
@@ -100,7 +119,9 @@ def _game_row(event: dict, week: int, seasontype: int) -> dict:
     }
 
 
-def _week_rows(season: int, week: int, seasontype: int) -> list:
+def _week(season: int, week: int, seasontype: int) -> tuple:
+    """(the week's game rows, ESPN's calendar for the season) - every
+    scoreboard answer carries the calendar, so reading it costs no request."""
     data = _get({"week": week, "dates": season, "seasontype": seasontype, "limit": 100})
     rows = []
     for event in data.get("events", []):
@@ -110,22 +131,54 @@ def _week_rows(season: int, week: int, seasontype: int) -> list:
             rows.append(_game_row(event, week, seasontype))
         except (KeyError, IndexError, TypeError):
             continue
-    return rows
+    league = (data.get("leagues") or [{}])[0] or {}
+    return rows, league.get("calendar")
+
+
+def _week_rows(season: int, week: int, seasontype: int) -> list:
+    return _week(season, week, seasontype)[0]
+
+
+def postseason_rounds(calendar, season: int) -> dict:
+    """{postseason week: round name} from ESPN's calendar (the entry valued
+    "3"), the Pro Bowl left out; the known layout for the season when the
+    calendar is missing or says nothing."""
+    for block in calendar or []:
+        if not isinstance(block, dict) or str(block.get("value")) != "3":
+            continue
+        out = {}
+        for entry in block.get("entries") or []:
+            label = str((entry or {}).get("label") or "").strip()
+            try:
+                week = int(entry.get("value"))
+            except (TypeError, ValueError):
+                continue
+            if label and "pro bowl" not in label.lower():
+                out[week] = label
+        if out:
+            return out
+    return dict(_ROUNDS_TO_2025 if season <= 2025 else _ROUNDS_FROM_2026)
 
 
 def fetch_season(season: int, postseason: bool = True) -> pd.DataFrame:
-    rows = []
+    rows, calendar = [], None
     for week in range(1, REGULAR_WEEKS + 1):
-        rows.extend(_week_rows(season, week, 2))
+        got, cal = _week(season, week, 2)
+        rows.extend(got)
+        calendar = calendar or cal
         time.sleep(_PAUSE)
     if postseason:
-        for week in POSTSEASON_WEEKS:
-            rows.extend(_week_rows(season, week, 3))
+        for week, label in sorted(postseason_rounds(calendar, season).items()):
+            for row in _week_rows(season, week, 3):
+                rows.append({**row, "round": label})
             time.sleep(_PAUSE)
     if not rows:
         return pd.DataFrame()
     frame = pd.DataFrame(rows)
     frame["season"] = season
+    frame["round"] = frame["round"].fillna("") if "round" in frame else ""
+    for col in _NUMERIC:
+        frame[col] = pd.to_numeric(frame[col], errors="coerce").astype(float)
     return frame.sort_values(["seasontype", "week", "date_utc"]).reset_index(drop=True)
 
 
@@ -156,7 +209,16 @@ def schedule(refresh: bool = False, max_age_hours: float = MAX_AGE_HOURS) -> pd.
         age = datetime.now() - datetime.fromtimestamp(path.stat().st_mtime)
         if age < timedelta(hours=max_age_hours):
             return pd.read_parquet(path)
-    frame = fetch_season(SEASON)
+    try:
+        frame = fetch_season(SEASON)
+    except (requests.RequestException, ValueError) as exc:
+        # An ESPN outage took the whole NFL section down with it, with
+        # yesterday's schedule sitting on disk: the pages are better a few
+        # hours stale than missing.
+        if not path.exists():
+            raise
+        print(f"  ! NFL schedule: ESPN failed ({exc}); using the cached copy")
+        return pd.read_parquet(path)
     if frame.empty:
         return pd.read_parquet(path) if path.exists() else frame
     GAMES_DIR.mkdir(parents=True, exist_ok=True)
@@ -181,6 +243,43 @@ def played(games: pd.DataFrame) -> pd.DataFrame:
     done = games[games["completed"].astype(bool) & (games["state"] == "post")]
     done = done.dropna(subset=["home_score", "away_score"])
     return done[(done["home_score"] > 0) | (done["away_score"] > 0)]
+
+
+def called_off(games: pd.DataFrame) -> pd.Series:
+    """A game ESPN has closed ("post") without a result to count - cancelled
+    like Bills-Bengals in January 2023 (post, completed false, 0-0) or
+    postponed off the week. It will never be played as scheduled: left open,
+    it held "the current week" on its week forever and the playoff
+    simulation played it, so the season never ended."""
+    if "state" not in games or games.empty:
+        return pd.Series(False, index=games.index)
+    return (games["state"] == "post") & ~games.index.isin(played(games).index)
+
+
+def tbd(g) -> bool:
+    """A playoff game before its teams are known: ESPN's -1 and -2."""
+    return str(g["home_id"]).startswith("-") or str(g["away_id"]).startswith("-")
+
+
+def time_known(g) -> bool:
+    """ESPN files a game without a kickoff (week 18's, before the league
+    sets its slots) at midnight Eastern and says TBD."""
+    return str(g.get("detail") or "").strip().upper() != "TBD"
+
+
+def round_of(g) -> int:
+    """A playoff game's round, 1 (Wild Card) to 4 (the Super Bowl), from the
+    calendar's name where the row carries it and ESPN's week where not - the
+    Super Bowl is week 5 to 2025 and week 4 from 2026, the Pro Bowl's week
+    never being on file."""
+    label = g.get("round")
+    if isinstance(label, str) and label:
+        if label == SUPER_BOWL:
+            return 4
+        for week, name in _ROUNDS_FROM_2026.items():
+            if name == label:
+                return week
+    return min(int(g["week"]), 4)
 
 
 def load(first: int = FIRST_SEASON, last: int = SEASON, played_only: bool = True) -> pd.DataFrame:

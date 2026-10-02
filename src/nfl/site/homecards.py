@@ -28,7 +28,8 @@ import pandas as pd
 
 from cfb.results import BET_MIN
 from gordstats import bets_card, paths
-from nfl import predict, results
+from gordstats.frontmatter import literal
+from nfl import games as games_mod, predict, results
 from nfl.config import DATA_DIR, SEASON, TZ
 from nfl.site.schedule import week_key, week_label
 
@@ -116,11 +117,16 @@ def locked_picks(frame: pd.DataFrame, key: int, first_kick: datetime,
 
 
 def _finals(frame: pd.DataFrame) -> dict:
-    """{game id: (home margin, total)} for games with a result."""
+    """{game id: (home margin, total)} for games with a result, and
+    bets_card.VOID for a game called off (games_mod.called_off) - a pick on
+    it is a push, where it used to wait for a final that never came."""
     done = frame[frame["played"].astype(bool)]
-    return {str(g["game_id"]): (float(g["home_score"] - g["away_score"]),
-                                float(g["home_score"] + g["away_score"]))
-            for _, g in done.iterrows()}
+    out = {str(g["game_id"]): (float(g["home_score"] - g["away_score"]),
+                               float(g["home_score"] + g["away_score"]))
+           for _, g in done.iterrows()}
+    for gid in frame.loc[games_mod.called_off(frame) & ~frame["played"].astype(bool), "game_id"]:
+        out[str(gid)] = bets_card.VOID
+    return out
 
 
 def _closes(now: datetime) -> dict:
@@ -150,7 +156,9 @@ def bets_html(now: datetime = None, frame: pd.DataFrame = None) -> str:
         return bets_card.note("No games scheduled.")
     picks, when, frozen = locked_picks(frame, key, first_kick, now)
     if not picks.get("single"):
-        return bets_card.no_bet(EDGE_MIN)
+        # Why there is none, from the week's own numbers: "agree on every
+        # game" was printed over totals 4 points off the book's.
+        return bets_card.no_bet(EDGE_MIN, EDGE_MAX, _candidates(frame, key, now))
     finals = _finals(frame)
     closes = _closes(now)
     return bets_card.card_html(picks, week_label(key), now, when, frozen, finals, closes,
@@ -159,7 +167,7 @@ def bets_html(now: datetime = None, frame: pd.DataFrame = None) -> str:
 
 def generate() -> None:
     BETS_OUT.parent.mkdir(parents=True, exist_ok=True)
-    BETS_OUT.write_text(bets_html(), encoding="utf-8")
+    BETS_OUT.write_text(literal(bets_html()), encoding="utf-8")
     print(f"Wrote NFL best bets card -> {BETS_OUT}")
 
 

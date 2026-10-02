@@ -175,12 +175,18 @@ def grade(frame: pd.DataFrame) -> pd.DataFrame:
     frame = frame.copy()
     frame["margin_error"] = frame["pred_margin"] - frame["actual_margin"]
     frame["total_error"] = frame["pred_total"] - frame["actual_total"]
-    frame["correct"] = ((frame["pred_margin"] > 0) == (frame["actual_margin"] > 0))
+    # A tie has no winner to call, so it is out of the winners record (NaN)
+    # for us and the book alike. Compared as it stood, "home won" was false
+    # on a tie, and every away pick was graded right - an NFL thing (college
+    # games go to overtime), and the NFL schedule page already called it a tie.
+    tie = frame["actual_margin"] == 0
+    frame["correct"] = np.where(tie, np.nan,
+                                (frame["pred_margin"] > 0) == (frame["actual_margin"] > 0))
     frame["market_error"] = -frame["market_spread"] - frame["actual_margin"]
     # The book's own winner: its favourite. A pick'em (spread of zero) names
     # nobody and stays out, as does a game the book never priced.
     book_pick = -frame["market_spread"]
-    frame["book_correct"] = np.where(book_pick.isna() | (book_pick == 0), np.nan,
+    frame["book_correct"] = np.where(book_pick.isna() | (book_pick == 0) | tie, np.nan,
                                      (book_pick > 0) == (frame["actual_margin"] > 0))
     # Did the side we leaned toward cover the number the book put up?
     edge = frame["pred_margin"] - (-frame["market_spread"])
@@ -252,10 +258,14 @@ def summary(frame: pd.DataFrame) -> dict:
     ou_all = frame["ou_called"].dropna()
     book = frame["book_correct"].dropna()
     cover = frame["our_cover"].dropna() if "our_cover" in frame else pd.Series(dtype=float)
+    # The games with a winner to call: a tie is out (grade()). Every reader of
+    # "games" divides winners called right by it, so it is this count - with
+    # the tie in it, the record read a tie as a miss.
+    called = frame["correct"].dropna()
     return {
-        "games": len(frame),
-        "correct": int(frame["correct"].sum()),
-        "winner_accuracy": float(frame["correct"].mean()),
+        "games": int(len(called)),
+        "correct": int(called.sum()),
+        "winner_accuracy": float(called.mean()) if len(called) else 0.0,
         # The book's favourite on the games it named one in, and our winner
         # on those same games - the like-for-like comparison.
         "book_games": int(len(book)),

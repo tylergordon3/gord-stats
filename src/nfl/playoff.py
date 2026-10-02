@@ -17,9 +17,17 @@ sized against 2015-2025 (RATING_SD_NOW) - and each game's own noise shrunk so
 a game next week keeps exactly the win chance /nfl/ prints. A simulated game
 is never a tie; a real one counts half a win, as the NFL counts it.
 
-**Once the regular season is over** the seeds are the real ones (every
-result is in, so every run finds the same field, bar the coin standing in
-for the steps not modelled), and a playoff game already played is decided.
+**Once the regular season is over** the seeds are pinned, the same in every
+run (real_seeds): worked out once from the final standings with one coin for
+the steps not modelled, then put right by the real bracket as soon as ESPN
+pairs the Wild Card games (the higher seed hosts, so the hosts are 2-4 and
+their visitors 7-5) and the divisional round shows who had the bye. Re-drawn
+run by run, the coin moved a tied team between seeds, so a real playoff
+result only counted when the simulated pairing happened to match it - the
+champion never reached 100% and the page never said who won. Every played
+playoff game is decided, and a team that lost one never wins again, whoever
+the bracket pairs it with. A game called off (nfl.games.called_off) is not
+in the season at all.
 
 **Tiebreaks**, the NFL's own order as far as this data reaches:
   * Division: head-to-head (the record in games among the tied clubs), then
@@ -45,6 +53,7 @@ import numpy as np
 import pandas as pd
 
 from cfb.playoff import game_noise, order, scatter, shocks, weeks_ahead
+from nfl import games as games_mod
 
 # --------------------------------------------------------------------------- #
 # The format
@@ -103,6 +112,11 @@ class League:
     ahead: int = 1                  # weeks to the playoffs
     results: dict = field(default_factory=dict)   # (i, j) -> winner, playoff games played
     final: bool = False             # the Super Bowl has been played
+    champion: int | None = None     # its winner
+    out: dict = field(default_factory=dict)       # team -> round (1-4) of the game it lost
+    wild_card: dict = field(default_factory=dict)  # conference -> [(home, away)], once paired
+    bye: dict = field(default_factory=dict)       # conference -> the 1 seed, once it plays
+    seeds: dict | None = None       # conference -> 7 teams by seed, once pinned
 
 
 def build(frame: pd.DataFrame, model, names: dict, margin_sd: float,
@@ -116,6 +130,7 @@ def build(frame: pd.DataFrame, model, names: dict, margin_sd: float,
 
     reg = frame[(frame["seasontype"] == 2) & frame["home_team"].isin(set(index))
                 & frame["away_team"].isin(set(index))]
+    reg = reg[~games_mod.called_off(reg)]
     played = reg["played"].astype(bool).to_numpy()
     margin = reg["actual_margin"].to_numpy(float)
     games = pd.DataFrame({
@@ -131,18 +146,81 @@ def build(frame: pd.DataFrame, model, names: dict, margin_sd: float,
     end = reg["date"].max() if len(reg) else anchor
     ahead = int(weeks_ahead(pd.Series([end]), anchor)[0])
 
+    # The real bracket as far as ESPN has it: the pairings once the teams are
+    # set, the results once played. The Super Bowl is found by the calendar's
+    # name (games_mod.round_of): it moved from week 5 to week 4 in 2026.
     post = frame[(frame["seasontype"] == 3) & frame["home_team"].isin(set(index))
-                 & frame["away_team"].isin(set(index)) & frame["played"].astype(bool)]
-    results, final = {}, False
-    for _, g in post.iterrows():
+                 & frame["away_team"].isin(set(index))]
+    results, out, final, champion = {}, {}, False, None
+    wild_card, divisional = {}, {}
+    for _, g in post.sort_values("date").iterrows():
         h, a = index[str(g["home_team"])], index[str(g["away_team"])]
-        results[(h, a)] = h if g["actual_margin"] > 0 else a
-        if int(g["week"]) == 5:
-            final = True
-    return League(teams=teams, names={t: names.get(t, (t, t)) for t in teams},
-                  conf=[DIVISIONS[t].split()[0] for t in teams],
-                  div=[DIVISIONS[t] for t in teams], rating=rating, home_edge=home_edge,
-                  margin_sd=margin_sd, games=games, ahead=ahead, results=results, final=final)
+        rnd = games_mod.round_of(g)
+        conf = DIVISIONS[teams[h]].split()[0]
+        if rnd == 1:
+            wild_card.setdefault(conf, []).append((h, a))
+        elif rnd == 2:
+            divisional.setdefault(conf, set()).update((h, a))
+        if not bool(g["played"]):
+            continue
+        won = h if g["actual_margin"] > 0 else a
+        results[(h, a)] = won
+        out[a if won == h else h] = rnd
+        if rnd == 4:
+            final, champion = True, won
+    # The 1 seed is the one divisional-round team that played no Wild Card game.
+    bye = {}
+    for conf, playing in divisional.items():
+        rested = playing - {t for pair in wild_card.get(conf, []) for t in pair}
+        if len(rested) == 1:
+            bye[conf] = rested.pop()
+    league = League(teams=teams, names={t: names.get(t, (t, t)) for t in teams},
+                    conf=[DIVISIONS[t].split()[0] for t in teams],
+                    div=[DIVISIONS[t] for t in teams], rating=rating, home_edge=home_edge,
+                    margin_sd=margin_sd, games=games, ahead=ahead, results=results,
+                    final=final, champion=champion, out=out, wild_card=wild_card, bye=bye)
+    league.seeds = real_seeds(league)
+    return league
+
+
+def real_seeds(league: League) -> dict | None:
+    """{conference: the seven team indices by seed} once every regular-season
+    game is in, else None - one answer for every run.
+
+    The final standings decide it, by the tiebreaks in the module docstring
+    and one fixed coin for the steps not modelled. Where ESPN has paired the
+    Wild Card games the real bracket overrides it: their hosts are seeds 2-4
+    (in our order of them) and each visitor the seed its pairing makes it
+    (7 at the 2, 6 at the 3, 5 at the 4); the 1 seed is the team the
+    divisional round shows had the bye, or else the best of the conference
+    outside those games."""
+    g = league.games
+    if not len(g) or (~g["played"]).any():
+        return None
+    T = len(league.teams)
+    st = standings(league, np.zeros((1, 0), np.float32))
+    coin = np.random.default_rng(SEED).random((1, T))
+    pct, cpct = st["all"][0], st["conf"][0]
+    pairs_needed = (SEEDS - BYES) // 2
+    out = {}
+    for c in CONFERENCES:
+        members = np.array([i for i in range(T) if league.conf[i] == c])
+        ours = [int(t) for t in
+                seed_conference(st, members, [league.div[i] for i in members], coin)[0]]
+        pairs = list(league.wild_card.get(c) or [])
+        if len(pairs) != pairs_needed:
+            out[c] = ours
+            continue
+        where = {t: k for k, t in enumerate(ours)}
+        pairs.sort(key=lambda p: (where.get(p[0], SEEDS), -pct[p[0]]))
+        playing = {t for pair in pairs for t in pair}
+        top = league.bye.get(c)
+        if top is None:
+            top = (ours[0] if ours[0] not in playing else
+                   max((int(t) for t in members if t not in playing),
+                       key=lambda t: (pct[t], cpct[t])))
+        out[c] = [top] + [h for h, _a in pairs] + [a for _h, a in reversed(pairs)]
+    return out
 
 
 @dataclass
@@ -270,18 +348,31 @@ def _chunk(league, n, rng, sd_now, drift, acc):
     for (i, j), w in league.results.items():
         forced[i, j] = 1 if w == i else -1
         forced[j, i] = -forced[i, j]
+    # The round each team went out in, for real; never, for the rest.
+    lost = np.full(T, np.inf)
+    for i, rnd in league.out.items():
+        lost[i] = rnd
 
-    def play(x, y, home_x):
-        """Winner per run of x v y; `home_x` an array or bool."""
+    def play(x, y, home_x, rnd):
+        """Winner per run of x v y in round `rnd` (1 Wild Card .. 4 Super
+        Bowl); `home_x` an array or bool. A game played for real is decided;
+        so is any pairing with a team already out by this round - the one
+        that went further wins it."""
         mg = (strength[rows, x] - strength[rows, y] + np.where(home_x, league.home_edge, 0.0)
               + noise * rng.standard_normal(n))
         f = forced[x, y]
+        lx, ly = lost[x], lost[y]
+        gone = (np.minimum(lx, ly) <= rnd) & (lx != ly)
+        f = np.where(f != 0, f, np.where(gone, np.where(lx > ly, 1, -1), 0))
         return np.where(np.where(f == 0, mg > 0, f == 1), x, y)
 
     champs = []
     for c in CONFERENCES:
         members = np.array([i for i in range(T) if league.conf[i] == c])
-        seeds = seed_conference(st, members, [league.div[i] for i in members], coin)
+        if league.seeds and c in league.seeds:
+            seeds = np.tile(np.asarray(league.seeds[c], int), (n, 1))
+        else:
+            seeds = seed_conference(st, members, [league.div[i] for i in members], coin)
         for s in range(SEEDS):
             hits = np.bincount(seeds[:, s], minlength=T)
             acc["playoff"] += hits
@@ -296,11 +387,13 @@ def _chunk(league, n, rng, sd_now, drift, acc):
         alive_s = [np.ones(n, int)]
         for hi in range(BYES, BYES + (SEEDS - BYES) // 2):
             lo = SEEDS - 1 - (hi - BYES)
-            w = play(team[hi], team[lo], True)
+            w = play(team[hi], team[lo], True, 1)
             alive_t.append(w)
             alive_s.append(np.where(w == team[hi], hi + 1, lo + 1))
         # Divisional: reseeded - the top seed left plays the lowest.
+        rnd = 1
         while len(alive_t) > 1:
+            rnd += 1
             ts, ss = np.stack(alive_t, 1), np.stack(alive_s, 1)
             by = np.argsort(ss, axis=1, kind="stable")
             ts, ss = np.take_along_axis(ts, by, 1), np.take_along_axis(ss, by, 1)
@@ -308,13 +401,13 @@ def _chunk(league, n, rng, sd_now, drift, acc):
             m = ts.shape[1]
             for p in range(m // 2):
                 x, y = ts[:, p], ts[:, m - 1 - p]
-                w = play(x, y, True)
+                w = play(x, y, True, rnd)
                 nxt_t.append(w)
                 nxt_s.append(np.where(w == x, ss[:, p], ss[:, m - 1 - p]))
             alive_t, alive_s = nxt_t, nxt_s
         acc["conf_title"] += np.bincount(alive_t[0], minlength=T)
         champs.append(alive_t[0])
-    sb = play(champs[0], champs[1], not SUPER_BOWL_NEUTRAL)
+    sb = play(champs[0], champs[1], not SUPER_BOWL_NEUTRAL, 4)
     acc["title"] += np.bincount(sb, minlength=T)
 
 
