@@ -388,3 +388,9 @@ Open:
       to your title and playoff odds, both leagues and readers' own; NFL free agents now real players only.
 - [x] **Playoff odds history** (09da6e6cf): kept build by build from 2026-10-01; a Wk column from a week on.
 - [ ] **Later in the season:** a chart of each team's playoff odds over the season, from that history.
+- [x] **NFL injuries, beyond the tag** (0d61dd29e, 4af15ac7c, 4cd418cec, 940545f65): ESPN's return dates
+      instead of IR = 4 weeks; next man up (teammates' share of an injured player's points, measured
+      2019-25) in the board, power, trades and pickups; this week's chance to play from status, role
+      and the last practice (Doubtful plays 1%, not 25%), with pills on Team and Matchups.
+- [ ] **Injuries, next:** back-from-injury dip by injury type (nflverse); expert feeds (Bluesky/Substack
+      RSS of PTs and doctors - waiting on a list of accounts); CFB conference availability reports.
