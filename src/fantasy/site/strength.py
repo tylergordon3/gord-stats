@@ -280,12 +280,18 @@ READER_JS = """{% raw %}<script>
                fetch('/fantasy/strength.json').then(function(r){ return r.ok?r.json():null; })])
     .then(function(o){
       var lg=o[0], d=o[1];
-      if(!lg||!d||!d.weeks) throw new Error('no data');
+      // No settings and no rosters is a league that could not be read (an
+      // ESPN league kept private answers so), not one with nobody on it.
+      if(!lg||(!(lg.info||{}).league_id&&!(lg.rosters||[]).length)) throw new Error('league');
+      if(!d||!d.weeks) throw new Error('no data');
       host.innerHTML=render(lg, d);
       GSStrength.mark(host, GSL.myRoster(lg, have.id));
     }).catch(function(e){
       if(e instanceof TypeError) console.error(e);
-      host.innerHTML="<p class='st-wait'>Could not read that league. The table below is "
+      // The league's trouble in the words of the site it is on.
+      var why=(e&&e.message!=='no data'&&window.GSAPI&&GSAPI.problem)
+        ? GSAPI.problem(have.id) : 'Could not read that league.';
+      host.innerHTML="<p class='st-wait'>"+why+" The table below is "
         +"the NFL's, so it still applies.</p>";
     });
 })();

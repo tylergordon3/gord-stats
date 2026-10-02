@@ -95,15 +95,25 @@ JS = """{% raw %}<script>
   if(!who) return;
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
+  /** The followed teams: favorites.js's list once it is up (it owns it, and
+   *  the account sync lands there), else what this browser stored. */
   function readFavs(){
-    try{ return JSON.parse(localStorage.getItem(FAV)||'[]')||[]; }catch(e){ return []; }
+    var list=[];
+    if(window.GSFavorites && GSFavorites.list) list=GSFavorites.list();
+    else{ try{ list=JSON.parse(localStorage.getItem(FAV)||'[]')||[]; }catch(e){} }
+    return Array.isArray(list) ? list.filter(function(k){ return typeof k==='string'; }) : [];
   }
   function writeFavs(list){
     try{ localStorage.setItem(FAV, JSON.stringify(list)); }catch(e){}
   }
+
+  // The list changes under this page: signing in brings the account's teams
+  // (favorites.js syncs after this script ran), and a star elsewhere on the
+  // page is the same list. favorites.js says so with this event.
+  document.addEventListener('gs:favorites', function(){ drawFavs(); });
 
   var NAMES={};
   fetch('/assets/favourite-teams.json')

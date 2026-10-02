@@ -38,8 +38,17 @@ table.dr-b th{background:#eef2f7;color:#334155;padding:4px 6px;font-size:11.5px;
   white-space:nowrap;text-align:left}
 table.dr-b th.rd{position:sticky;left:0;z-index:1}
 table.dr-b td{padding:4px 6px;border:1px solid #eef2f7;background:#fff;
-  color:#0f172a;white-space:nowrap;max-width:132px;overflow:hidden;
-  text-overflow:ellipsis}
+  color:#0f172a;white-space:nowrap}
+/* A pick is name, position and what it returned. Only the name gives way in
+   a narrow column - the +/- is the point of the board, so it is never the
+   part an ellipsis eats. */
+.dr-cell{display:flex;align-items:baseline;max-width:150px}
+.dr-cell .dr-nm{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.dr-cell .dr-pos,.dr-cell .dr-v{flex:none}
+/* A manager's whole team name, on two lines at most, rather than its first
+   fourteen letters ("STRICTLY DICKL"). */
+.dr-h{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+  white-space:normal;max-width:150px}
 table.dr-b td.rd{position:sticky;left:0;background:#eef2f7;font-weight:800;z-index:1}
 .dr-nm{font-weight:600}
 .dr-v{font-variant-numeric:tabular-nums;font-size:11.5px;margin-left:4px}
@@ -84,8 +93,8 @@ JS = """{% raw %}<script>
       .catch(function(){return null;});
   }
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function signed(n){
     return (n>0?'+':'')+n;
@@ -210,7 +219,8 @@ JS = """{% raw %}<script>
       +'returned beside it. A snake draft reverses every round, so the same '
       +'column is the same manager throughout.</p><div class="table-scroll">'
       +'<table class="dr-b"><thead><tr><th class="rd">Rd</th>'
-      + headers.map(function(h){return '<th>'+esc(String(h).slice(0,14))+'</th>';}).join('')
+      + headers.map(function(h){
+          return '<th><span class="dr-h" title="'+esc(h)+'">'+esc(h)+'</span></th>';}).join('')
       +'</tr></thead><tbody>';
     rounds.forEach(function(r){
       html+='<tr><td class="rd">'+r+'</td>';
@@ -218,11 +228,12 @@ JS = """{% raw %}<script>
         var p=(byRound[r]||{})[c];
         if(!p){ html+='<td></td>'; return; }
         var v=p._value;
-        html+='<td><span class="dr-nm">'+esc(p._name)+'</span>'
+        html+='<td><span class="dr-cell"><span class="dr-nm" title="'+esc(p._name)+'">'
+          +esc(p._name)+'</span>'
           +'<span class="dr-pos">'+esc(p._pos)+'</span>'
-          +(v==null?'':' <span class="dr-v '+(v>0?'dr-up':v<0?'dr-down':'')+'">'
+          +(v==null?'':'<span class="dr-v '+(v>0?'dr-up':v<0?'dr-down':'')+'">'
             +signed(v)+'</span>')
-          +'</td>';
+          +'</span></td>';
       });
       html+='</tr>';
     });
@@ -255,7 +266,8 @@ JS = """{% raw %}<script>
     .then(function(all){
       state.seasons=all.filter(Boolean);
       if(!state.seasons.length){
-        host.innerHTML='<p class="dr-none">Sleeper has no draft on record for this league.</p>';
+        host.innerHTML='<p class="dr-none">'+(window.GSAPI&&GSAPI.isEspn&&GSAPI.isEspn(have.id)
+          ? 'ESPN' : 'Sleeper')+' has no draft on record for this league.</p>';
         return;
       }
       host.innerHTML='<div class="dr-bar"><label>Season <select id="dr-season">'
@@ -273,7 +285,10 @@ JS = """{% raw %}<script>
       draw();
     })
     .catch(function(){
-      host.innerHTML='<p class="dr-none">Could not read that league from Sleeper.</p>';
+      // In the words of the site the league is on: an ESPN league kept
+      // private says how to open it.
+      host.innerHTML='<p class="dr-none">'+(window.GSAPI&&GSAPI.problem
+        ? GSAPI.problem(have.id) : 'Could not read that league.')+'</p>';
     });
 })();
 </script>{% endraw %}"""

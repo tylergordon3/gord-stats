@@ -22,9 +22,11 @@ Requires:
 import argparse
 import json
 import math
+from html import escape as esc
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from gordstats.frontmatter import literal
 from wnba import paths
 from wnba import wnba_schedule
 from wnba import wnba_fantasy
@@ -280,7 +282,7 @@ def _bracket_team_html(team, score, is_winner, tbd_label="TBD"):
     return f"""
             <div class="{cls}">
               <span class="bseed">{team.get("playoffSeed", "–")}</span>
-              <span class="bteam-name">{team["name"]} <em>({rec_s})</em></span>
+              <span class="bteam-name">{esc(team["name"])} <em>({rec_s})</em></span>
               <span class="bscore">{score_s}</span>
             </div>"""
 
@@ -392,7 +394,11 @@ def playoff_bracket_sections(fantasy_data) -> tuple[str, str]:
 
     cons = []
     if n_total - n_playoff >= 2:
+        # The muted heading (custom.css: #64748b) outranks the dark theme's
+        # .bracket-title and read 3.4:1 on the dark page; lifted here.
         cons = ['<section class="wnba-playoff-bracket">',
+                '<style>@media (prefers-color-scheme: dark){'
+                '.bracket-title.consolation-title{color:#94a3b8}}</style>',
                 '<h3 class="bracket-title consolation-title">Consolation Bracket</h3>']
         cons += _bracket_rounds_html(
             teams, seeds, cons_by_period, n_regular,
@@ -413,7 +419,7 @@ def matchup_scoreboard_html(fantasy_data, week, max_games, proj_left=None, min_l
     min_left = min_left or {}
     if matchups is None:
         matchups = get_week_matchups(fantasy_data, week)
-    all_teams = {t["id"]: t["name"] for t in fantasy_data["teams"]}
+    all_teams = {t["id"]: esc(t["name"]) for t in fantasy_data["teams"]}
 
     html = []
     html.append('<section class="wnba-fantasy-week">')
@@ -546,7 +552,7 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
         <article class="team-report">
           <details class="team-fold" open>
           <summary class="team-report-header">
-            <h3>{ft["name"]}</h3>
+            <h3>{esc(ft["name"])}</h3>
             <div class="header-stats">
               <div class="max-games">
                 <strong>{int(total)}</strong> MAX games left
@@ -581,7 +587,7 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                     html.append(f"""
                     <li class="with-proj">
                       <span class="slot">{slot_label}</span>
-                      <span class="player-name">{name}</span>
+                      <span class="player-name">{esc(name)}</span>
                       <span class="proj"{vs}>{proj:.1f}</span>
                       <span class="team-abbrev">{abbrev}</span>
                     </li>
@@ -590,7 +596,7 @@ def team_reports_html(results, week, start, end, all_dates, remaining_dates):
                     html.append(f"""
                                 <li>
                                     <span class="slot injured">OUT </span>
-                                    <span class="player-name injured"> {name}</span>
+                                    <span class="player-name injured"> {esc(name)}</span>
                                     <span class="team-abbrev injured">{abbrev}</span>
                                 </li>""")
                 html.append('</ul>')
@@ -797,9 +803,9 @@ def main(argv=None):
 
         includes = paths.DOCS / "_includes"
         with open(includes / "wnba_scoreboard.html", "w", encoding="utf-8") as f:
-            f.write("\n\n".join(scoreboard_parts))
+            f.write(literal("\n\n".join(scoreboard_parts)))
         with open(includes / "wnba_dashboard.html", "w", encoding="utf-8") as f:
-            f.write("\n\n".join(dashboard_parts))
+            f.write(literal("\n\n".join(dashboard_parts)))
         if DEBUG:
             print(f"Wrote scoreboard + dashboard includes to {includes}")
         

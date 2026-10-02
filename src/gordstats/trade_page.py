@@ -68,12 +68,16 @@ CSS = """<style>
   text-align:left;cursor:pointer;width:100%}
 .tr-p:first-child{border-top:0}
 .tr-p[aria-pressed="true"]{background:#dbeafe;box-shadow:inset 3px 0 0 #2563eb}
-.tr-pos{flex:none;width:30px;font-size:11px;font-weight:700;text-align:center;border-radius:4px;
+.tr-pos{flex:none;width:30px;font-size:12px;font-weight:700;text-align:center;border-radius:4px;
   padding:2px 0;background:#e2e8f0;color:#334155}
 .tr-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tr-short{display:none}
-.tr-tag{flex:none;font-size:11px;font-weight:700;color:#b91c1c}
-.tr-boost{flex:none;font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;
+/* The injury tag and next-man-up chip sit in line on a desktop; a phone moves
+   them to a line of their own under the name (below), or a long chip
+   ("+4.9 Achane out") squeezes the name to nothing. */
+.tr-chips{display:contents}
+.tr-tag{flex:none;font-size:12px;font-weight:700;color:#b91c1c}
+.tr-boost{flex:none;font-size:12px;font-weight:700;padding:1px 5px;border-radius:4px;
   white-space:nowrap}
 .tr-boost.up{color:#15803d;background:#dcfce7}.tr-boost.down{color:#b91c1c;background:#fee2e2}
 .tr-ppw{flex:none;font-size:13px;color:#475569;font-variant-numeric:tabular-nums}
@@ -114,7 +118,7 @@ CSS = """<style>
   font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .tr-mode button[aria-pressed=true]{background:#0f172a;color:#fff}
 .tr-teams.tr-one{grid-template-columns:minmax(0,1fr)}
-.tr-pk-wrap{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
+.tr-pk-wrap{border:1px solid #e2e8f0;border-radius:10px;overflow-x:auto}
 .tr .tr-pk{display:table;width:100%;margin:0;border:0;border-collapse:collapse;font-size:14px;
   font-variant-numeric:tabular-nums}
 .tr .tr-pk th,.tr .tr-pk td{background:none;border:0;box-shadow:none;color:inherit;
@@ -124,17 +128,30 @@ CSS = """<style>
 .tr .tr-pk thead th:first-child,.tr .tr-pk thead th:nth-child(2){text-align:left}
 .tr .tr-pk td.tr-pk-p{min-width:0}
 .tr-pk-in{display:flex;align-items:center;gap:6px;min-width:0}
-.tr .tr-pk td.tr-pk-drop{color:#64748b;font-size:13px;max-width:30vw;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap}
+.tr .tr-pk td.tr-pk-drop,.tr .tr-pk td.tr-pk-fail{color:#64748b;font-size:13px;max-width:30vw;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr-pk-sub{display:none}
 .tr .tr-pk td.tr-d{text-align:right;font-weight:700}
 .tr .tr-pk td.up{color:#15803d}.tr .tr-pk td.down{color:#b91c1c}
 .tr .tr-pk td.flat{color:#64748b;font-weight:400}
 @media (max-width:640px){
   .tr-sides,.tr-cards{gap:8px}
   .tr-p{font-size:13px;padding:3px 6px;gap:5px}
-  .tr-pos{width:26px}
+  .tr-pos{width:28px}
   .tr-full{display:none}.tr-short{display:inline}
   .tr-cards{grid-template-columns:1fr}
+  /* Name and points on the first line, the tag and chip on a second one
+     lined up under the name: the name keeps its room in a 170px column. */
+  .tr-p,.tr-pk-in{flex-wrap:wrap;align-content:center;row-gap:2px}
+  .tr-name{min-width:5em}
+  .tr-p .tr-chips,.tr-pk-in .tr-chips{display:flex;flex-wrap:wrap;gap:2px 5px;order:3;
+    flex:0 0 100%;padding-left:33px;box-sizing:border-box;align-items:baseline}
+  .tr-p .tr-boost,.tr-pk-in .tr-boost{white-space:normal;flex:0 1 auto;min-width:0}
+  /* Pick up: Drop leaves its column for a line under the player, so the
+     Playoffs and Title columns - the answer - fit a phone. */
+  .tr .tr-pk th.tr-pk-drop,.tr .tr-pk td.tr-pk-drop{display:none}
+  .tr-pk-sub{display:inline;font-size:12.5px;color:#64748b;white-space:nowrap}
+  .tr .tr-pk th,.tr .tr-pk td{padding:7px 6px}
 }
 @media (prefers-color-scheme: dark){
   .tr-teams label,.tr-side h3,.tr-msg,.tr-now,.tr-moves,.tr-note,.tr .tr-t th,.tr-ppw{color:#aab7c9}
@@ -152,8 +169,10 @@ CSS = """<style>
   .tr-mode button[aria-pressed=true]{background:#e2e8f0;color:#0f172a}
   .tr-pk-wrap{border-color:#334155}
   .tr .tr-pk th,.tr .tr-pk td{border-top-color:#1e293b}
-  .tr .tr-pk thead th,.tr .tr-pk td.tr-pk-drop{color:#aab7c9}
+  .tr .tr-pk thead th,.tr .tr-pk td.tr-pk-drop,.tr .tr-pk td.tr-pk-fail,.tr-pk-sub{color:#aab7c9}
   .tr .tr-pk td.up{color:#4ade80}.tr .tr-pk td.down{color:#f87171}
+  /* An unchanged figure ("+-0.0") kept its light-theme grey: 3.4:1 here. */
+  .tr .tr-pk td.flat,.tr .tr-t td.flat{color:#94a3b8}
 }
 </style>"""
 
@@ -164,11 +183,12 @@ window.GSTrade = function(host, adapter){
   if(!host || !adapter) return;
   var POS = {QB:0, RB:1, WR:2, TE:3, K:4, DEF:5};
   var data = null, a = null, b = null, give = {}, get = {}, seq = 0, timer = null;
+  var tapped = false, shown = false, elsewhere = '';
   var mode = /(?:^|[#&])pickup(?:&|$)/.test(location.hash) ? 'pickup' : 'trade';
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; });
+    return String(v==null?'':v).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
   }
   function pct(v){
     if(v == null || v !== v) return '&ndash;';
@@ -184,17 +204,34 @@ window.GSTrade = function(host, adapter){
 
   // ----- the deal in the address, so it can be sent to the other manager --- //
 
+  /** Which league the deal is in. It rides in the link (the fifth part), so
+   *  a deal sent from one league is never laid over another's rosters -
+   *  Sleeper numbers every league's rosters from 1. The adapter's own id
+   *  where it gives one; else the reader's league the page reads ('site' for
+   *  this site's); '' where there is no choice of league (the college page).
+   *  A link without one (sent before this) is taken as it always was. */
+  function leagueKey(){
+    if(data && data.leagueId) return String(data.leagueId);
+    if(!window.GSL || !GSL.saved) return '';
+    var h = GSL.saved();
+    return (h && h.id && !h.site) ? String(h.id) : 'site';
+  }
   function readHash(){
     var m = /(?:^|[#&])trade=([^&]*)/.exec(location.hash);
     if(!m) return null;
-    var p = decodeURIComponent(m[1]).split('~');
+    var raw;
+    // A link cut short in a chat ("%E2%8" ...) is no deal, not a broken page.
+    try{ raw = decodeURIComponent(m[1]); }catch(e){ return null; }
+    var p = raw.split('~');
     return {a:p[0], b:p[1], give:(p[2]||'').split('.').filter(Boolean),
-            get:(p[3]||'').split('.').filter(Boolean)};
+            get:(p[3]||'').split('.').filter(Boolean), league:p[4] || ''};
   }
   function dealHash(){
-    var g = keys(give), t = keys(get);
+    var g = keys(give), t = keys(get), lg = leagueKey();
+    var parts = [a, b, g.join('.'), t.join('.')];
+    if(lg) parts.push(lg);
     return (a && b && (g.length || t.length))
-      ? '#trade=' + encodeURIComponent([a, b, g.join('.'), t.join('.')].join('~')) : '';
+      ? '#trade=' + encodeURIComponent(parts.join('~')) : '';
   }
   function writeHash(){
     var h = mode === 'pickup' ? '#pickup' : dealHash();
@@ -213,10 +250,11 @@ window.GSTrade = function(host, adapter){
   }
 
   /** An injury tag, and a next-man-up chip where the adapter has one. */
-  function chips(p){
-    return (p.tag ? '<span class="tr-tag">' + esc(p.tag) + '</span>' : '')
+  function chips(p, more){
+    var html = (p.tag ? '<span class="tr-tag">' + esc(p.tag) + '</span>' : '')
       + (p.boost ? '<span class="tr-boost ' + (p.boost[0] > 0 ? 'up' : 'down') + '">'
-         + esc(p.boost[1]) + '</span>' : '');
+         + esc(p.boost[1]) + '</span>' : '') + (more || '');
+    return html ? '<span class="tr-chips">' + html + '</span>' : '';
   }
 
   function list(team, picked, side){
@@ -250,6 +288,9 @@ window.GSTrade = function(host, adapter){
       el.addEventListener('click', function(){
         var m = el.getAttribute('data-mode');
         if(m === mode) return;
+        // A tap's evaluation still waiting would otherwise fire into the
+        // other view (and, being newer, cancel its pickups part way).
+        clearTimeout(timer);
         mode = m; seq++;
         draw();
       });
@@ -270,22 +311,27 @@ window.GSTrade = function(host, adapter){
       + '<div class="tr-out" aria-live="polite"></div>'
       + (data.note ? '<p class="tr-note">' + data.note + '</p>' : '');
     bindMode();
+    // draw() ends by running the deal, so a change runs it once - a second
+    // run() after it played every trade out twice.
     host.querySelector('.tr-a').addEventListener('change', function(ev){
+      clearTimeout(timer);
       a = ev.target.value;
       if(b === a) b = first(a);
       give = {}; get = {};
       if(adapter.remember) adapter.remember(a);
-      draw(); run();
+      draw();
     });
     host.querySelector('.tr-b').addEventListener('change', function(ev){
+      clearTimeout(timer);
       b = ev.target.value; get = {};
-      draw(); run();
+      draw();
     });
     Array.prototype.forEach.call(host.querySelectorAll('.tr-p'), function(el){
       el.addEventListener('click', function(){
         var set = el.getAttribute('data-side') === 'a' ? give : get;
         var id = el.getAttribute('data-id');
         set[id] = !set[id];
+        tapped = true;
         el.setAttribute('aria-pressed', set[id] ? 'true' : 'false');
         clearTimeout(timer);
         timer = setTimeout(run, 450);
@@ -349,9 +395,16 @@ window.GSTrade = function(host, adapter){
     // Judged on the title, the thing both teams are playing for; the playoffs
     // are the headline because they move most and read most plainly.
     var mine = x1.title - x0.title, theirs = y1.title - y0.title;
-    var edge = mine - theirs, word;
-    if(Math.abs(edge) < 0.01) word = 'About even';
-    else if(mine > 0 && theirs > 0) word = 'Helps you both' + (edge > 0 ? ', you more' : ', them more');
+    var edge = mine - theirs, close = Math.abs(edge) < 0.01, word;
+    // Which way each side moves, as the line below rounds it, comes first: a
+    // deal that costs you title odds is never "Better for you" because it
+    // costs them more.
+    function way(d){ return d >= 0.005 ? 1 : d <= -0.005 ? -1 : 0; }
+    var wm = way(mine), wt = way(theirs);
+    if(wm > 0 && wt > 0) word = 'Helps you both' + (close ? '' : edge > 0 ? ', you more' : ', them more');
+    else if(wm < 0 && wt < 0) word = '<span class="down">Hurts you both</span>'
+      + (close ? '' : edge > 0 ? ', them more' : ', you more');
+    else if(close) word = 'About even';
     else word = edge > 0 ? '<span class="up">Better for you</span>'
                          : '<span class="down">Better for them</span>';
     function pts(d){
@@ -397,8 +450,12 @@ window.GSTrade = function(host, adapter){
       + (data.pickNote ? '<p class="tr-note">' + data.pickNote + '</p>' : '');
     bindMode();
     host.querySelector('.tr-a').addEventListener('change', function(ev){
+      clearTimeout(timer);
       a = ev.target.value;
       if(b === a) b = first(a);
+      // The trade picked before is between other rosters now: kept, it came
+      // back on Trade as a deal nobody made (and rode along in the link).
+      give = {}; get = {};
       if(adapter.remember) adapter.remember(a);
       drawPickup();
     });
@@ -412,15 +469,20 @@ window.GSTrade = function(host, adapter){
     var results = {}, base = null, done = 0;
     function row(id){
       var p = data.players[id] || {pos:'?'}, r = results[id];
+      var drop = r ? (r.drop ? esc(who(r.drop, true)) : 'open spot') : '';
+      // The drop is said twice: in its own column on a desktop, and on a
+      // phone on the line under the player, after any tag (CSS shows one).
       var head = '<td class="tr-pk-p"><span class="tr-pk-in"><span class="tr-pos">' + esc(p.pos) + '</span>'
         + '<span class="tr-name"><span class="tr-full">' + esc(who(id)) + '</span>'
         + '<span class="tr-short">' + esc(who(id, true)) + '</span></span>'
-        + chips(p) + '<span class="tr-ppw">' + (p.ppw == null ? '' : p.ppw.toFixed(1)) + '</span></span></td>';
+        + chips(p, r ? '<span class="tr-pk-sub">' + (r.drop ? 'Drop ' + drop : 'Into an open spot')
+                       + '</span>' : '')
+        + '<span class="tr-ppw">' + (p.ppw == null ? '' : p.ppw.toFixed(1)) + '</span></span></td>';
       if(r === undefined) return '<tr>' + head + '<td class="tr-pk-drop">&hellip;</td><td></td><td></td></tr>';
-      if(r === null) return '<tr>' + head + '<td class="tr-pk-drop" colspan="3">could not play out</td></tr>';
+      if(r === null) return '<tr>' + head + '<td class="tr-pk-fail" colspan="3">could not play out</td></tr>';
       var dp = signed(r.dp), dt = signed(r.dt);
       return '<tr>' + head
-        + '<td class="tr-pk-drop">' + (r.drop ? esc(who(r.drop, true)) : 'open spot') + '</td>'
+        + '<td class="tr-pk-drop">' + drop + '</td>'
         + '<td class="tr-d ' + dp.cls + '">' + dp.text + '</td>'
         + '<td class="tr-d ' + dt.cls + '">' + dt.text + '</td></tr>';
     }
@@ -445,7 +507,7 @@ window.GSTrade = function(host, adapter){
                     + (helps() ? 'Best pickup first, by what he does to the title odds.'
                        : '<b>None of these beats your bench right now</b> &mdash; each costs '
                          + 'more in the player dropped than he adds.') + '</p>' : ''))
-        + '<div class="tr-pk-wrap"><table class="tr-pk"><thead><tr><th>Pick up</th><th>Drop</th>'
+        + '<div class="tr-pk-wrap"><table class="tr-pk"><thead><tr><th>Pick up</th><th class="tr-pk-drop">Drop</th>'
         + '<th>Playoffs</th><th>Title</th></tr></thead><tbody>'
         + order.map(row).join('') + '</tbody></table></div>';
     }
@@ -473,14 +535,37 @@ window.GSTrade = function(host, adapter){
     })();
   }
 
+  /** On a phone the two lists stand a screen or more tall, so the verdict
+   *  lands out of sight under them. The first time a deal the reader built
+   *  (a player tapped on each side) plays out, bring it up - smoothly, and
+   *  only when it is not already on screen. Once: after that the reader
+   *  knows where it is, and a page that keeps moving is worse. */
+  function reveal(g, t){
+    if(shown || !tapped || !g.length || !t.length) return;
+    if(!window.matchMedia || !matchMedia('(max-width:640px)').matches) return;
+    shown = true;
+    var el = out(), r = el.getBoundingClientRect();
+    if(r.top >= 0 && r.top < innerHeight - 120) return;
+    var css = getComputedStyle(document.documentElement);
+    var top = (parseFloat(css.getPropertyValue('--header-h')) || 0)
+            + (parseFloat(css.getPropertyValue('--pin-h')) || 0) + 8;
+    try{ scrollTo({top: r.top + pageYOffset - top, behavior: 'smooth'}); }
+    catch(e){ scrollTo(0, r.top + pageYOffset - top); }
+  }
+
   function run(){
+    // Trades only: a timer set by a tap can come due after the reader has
+    // switched to Pick up.
+    if(mode === 'pickup' && adapter.pickup) return;
     writeHash();
     var g = keys(give), t = keys(get), me = ++seq;
     if(!g.length && !t.length){
-      out().innerHTML = '<p class="tr-msg">Tap players on both sides to see what the trade '
+      out().innerHTML = (elsewhere ? '<p class="tr-msg">' + elsewhere + '</p>' : '')
+        + '<p class="tr-msg">Tap players on both sides to see what the trade '
         + 'does to both seasons.</p>' + now();
       return;
     }
+    elsewhere = '';
     msg('Playing the season out ' + (data.sims ? data.sims.toLocaleString() + ' times ' : '')
         + 'each way&hellip;');
     adapter.evaluate({a:a, b:b, give:g, get:t}).then(function(res){
@@ -491,6 +576,7 @@ window.GSTrade = function(host, adapter){
         + card(b, false, y0, y1, (res.moves || {})[b]) + '</div>'
         + '<div class="tr-acts"><button type="button" class="tr-clear">Clear the trade</button></div>';
       share(g, t);
+      reveal(g, t);
       out().querySelector('.tr-clear').addEventListener('click', function(){
         give = {}; get = {}; draw();
       });
@@ -509,7 +595,15 @@ window.GSTrade = function(host, adapter){
       return;
     }
     var ids = d.teams.map(function(t){ return t.id; });
-    var h = readHash();
+    var h = readHash(), here = leagueKey();
+    // A deal from another league is not laid over this one's rosters (roster
+    // 3 here is somebody else entirely); the reader is told where it is from.
+    if(h && h.league && here && h.league !== here){
+      elsewhere = 'The trade in this link was made in '
+        + (h.league === 'site' ? 'this site\\u2019s league' : 'another league')
+        + ', not the one on screen. Pick that league in the bar above to see it.';
+      h = null;
+    }
     if(h && ids.indexOf(h.a) >= 0 && ids.indexOf(h.b) >= 0 && h.a !== h.b){
       a = h.a; b = h.b;
       h.give.forEach(function(id){ if((d.rosters[a] || []).indexOf(id) >= 0) give[id] = true; });
@@ -521,7 +615,11 @@ window.GSTrade = function(host, adapter){
     draw();
   }).catch(function(err){
     if(err instanceof TypeError && window.console) console.error(err);
-    msg('Could not read this league. It may be busy &mdash; try again in a minute.');
+    // In the words of the site the league is on: an ESPN league kept
+    // private says how to open it.
+    var lg = leagueKey();
+    msg(lg && lg !== 'site' && window.GSAPI && GSAPI.problem ? esc(GSAPI.problem(lg))
+        : 'Could not read this league. It may be busy &mdash; try again in a minute.');
   });
 };
 </script>{% endraw %}"""

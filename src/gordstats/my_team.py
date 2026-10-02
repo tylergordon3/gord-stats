@@ -201,8 +201,8 @@ VIEW_JS = """{% raw %}<script>
   var OUT={'Out':1,'Doubtful':1,'IR':1,'PUP':1,'NA':1,'Sus':1,'DNR':1,'COV':1};
 
   function esc(s){
-    return String(s==null?'':s).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function num(v){ return (v==null||isNaN(v))?'-':(Math.round(v*10)/10).toFixed(1); }
 
@@ -288,7 +288,14 @@ VIEW_JS = """{% raw %}<script>
     var conf=slotCounts(lg.slots);
     conf.ctx=ctx; conf.pts=(live&&live[String(rosterId)])||{};
     var here=current(roster, lg.slots);
-    var sleeper=GSL.points(wk, lg.basis.index);
+    // Sleeper's points so far for everyone in the league: a Questionable
+    // player who has scored has played, and his chance of playing is spent.
+    var seen={};
+    Object.keys(live||{}).forEach(function(r){
+      var pp=live[r]||{};
+      for(var k in pp) seen[k]=pp[k];
+    });
+    var sleeper=GSL.points(wk, lg.basis.index, seen);
     conf.sleeper=sleeper;
     var kick=GSL.kickoffs(wk);
     var now=Date.now();
@@ -355,7 +362,7 @@ VIEW_JS = """{% raw %}<script>
     // `rd-t sticky-table`, which matches nothing on this page: the table fell
     // back to the theme's default, every team logo rendered as a framed
     // thumbnail the height of a row, and the names were pushed out of sight.
-    var W=window.GSWeek, ctx=conf.ctx||{teams:{},wx:{},dvp:{},gs:{}};
+    var W=window.GSWeek, ctx=conf.ctx||W.blank();
     html+=W.legend();
     html+='<div class="rd-desk rd-scroll"><table class="rd"><thead><tr>'
       +"<th title='Where he belongs this week'>Slot</th>"
@@ -441,7 +448,9 @@ VIEW_JS = """{% raw %}<script>
     Promise.all([GSL.league(have.id), GSL.week(), GSL.players(),
                  window.GSWeek.load()])
       .then(function(o){
-        var lg=o[0], wk=o[1], index=o[2], ctx=o[3];
+        var lg=o[0], wk=o[1], index=o[2], ctx=o[3]||window.GSWeek.blank();
+        // Another week's context is none: its byes are not this week's.
+        if(ctx.week && wk.week && +ctx.week!==+wk.week) ctx=window.GSWeek.blank();
         // What everyone has actually scored this week, so the Pts column and
         // the finished-game rule have something to read. Its own request
         // because nothing else here needs it, and a failure costs one column.
@@ -460,6 +469,14 @@ VIEW_JS = """{% raw %}<script>
       .then(function(o){
         var lg=o[0], wk=o[1], index=o[2], ctx=o[3], live=o[4];
         var bar=document.getElementById('mt-bar');
+        // Nothing came back: say why, in the words of the site it is on.
+        if(!lg.info.league_id && !lg.rosters.length){
+          host.innerHTML='<p class="mt-none">'+GSAPI.problem(have.id)+'</p>';
+          return;
+        }
+        // A league saved in another season is not this week's lineup.
+        var other=GSAPI.otherSeason(lg.info, wk.year, 'mt-none');
+        if(other){ host.innerHTML=other; return; }
         var keys=Object.keys(lg.names);
         // Their own team, not roster 1. The account stores the reader's
         // Sleeper user id with each league they synced, so the roster it owns
@@ -478,8 +495,10 @@ VIEW_JS = """{% raw %}<script>
         }
         render(lg, wk, index, start, ctx, live);
       })
-      .catch(function(){
-        host.innerHTML='<p class="mt-none">Could not read that league.</p>';
+      .catch(function(e){
+        var net=e&&e.name==='TypeError'&&/fetch|network|load failed/i.test(String(e.message||''));
+        if(!net && window.console) console.error('[my-team]', e);
+        host.innerHTML='<p class="mt-none">'+GSAPI.problem(have.id)+'</p>';
       });
   }
   start();

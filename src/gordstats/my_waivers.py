@@ -79,8 +79,8 @@ JS = """{% raw %}<script>
       .catch(function(){return null;});
   }
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function when(ms){
     var d=new Date(ms);
@@ -323,7 +323,10 @@ JS = """{% raw %}<script>
       draw();
     })
     .catch(function(){
-      host.innerHTML='<p class="wv-none">Could not read that league from Sleeper.</p>';
+      // In the words of the site the league is on: an ESPN league kept
+      // private says how to open it.
+      host.innerHTML='<p class="wv-none">'+(window.GSAPI&&GSAPI.problem
+        ? GSAPI.problem(have.id) : 'Could not read that league.')+'</p>';
     });
 })();
 </script>{% endraw %}"""

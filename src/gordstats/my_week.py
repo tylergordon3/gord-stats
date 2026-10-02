@@ -41,8 +41,8 @@ window.GSWeek = (function(){
       WX_SNOW=[19,20,21,22,23,24,25,26,29,43,44];
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function fmt(v,dec){
     if(v==null||v!==v) return '\\u2014';
@@ -77,6 +77,7 @@ window.GSWeek = (function(){
    *  fantasy.site.roster._when. Rendered in the reader's own timezone, which
    *  is the one they are deciding in. */
   function when(g){
+    if(g&&g.unknown) return '';
     if(!g||!g.date) return 'bye';
     var d=new Date(g.date);
     if(isNaN(d)) return '';
@@ -101,6 +102,8 @@ window.GSWeek = (function(){
   /** "W 35-14 at GB", "Live 7-3 vs NYJ", or "at IND - Sun 1:00p". */
   function gameCell(g){
     if(!g) return '<span class="bye">Bye</span>';
+    // No schedule to read (see `known`): not a bye, just not known here.
+    if(g.unknown) return '<span title="This week&#39;s schedule could not be read">&mdash;</span>';
     var where=g.home?'vs':'at', opp=esc(g.opp||'');
     var st=g.state||'pre';
     if(st==='post'&&g.sf!=null&&g.sa!=null){
@@ -184,7 +187,7 @@ window.GSWeek = (function(){
     var g=gameFor(ctx,p.team);
     var c={name:p.name, pos:p.pos, team:p.team||'FA', logo:logo(p.team),
            game:gameCell(g), proj:proj, projNote:note||'proj', inj:p.injury||''};
-    if(!g) return c;
+    if(!g||g.unknown) return c;
     c.oppLabel=(g.home?'vs ':'@ ')+(g.opp||'');
     var row=ctx.dvp&&ctx.dvp[g.opp];
     if(row&&row[p.pos]){ c.oppValue=row[p.pos][0]; c.oppRank=row[p.pos][1]; }
@@ -225,7 +228,7 @@ window.GSWeek = (function(){
     var inj=c.inj?(" <span class='rd-inj'>"+esc(c.inj)+'</span>'):'';
     var lock=c.locked?" <span class='rd-tag lock'>locked</span>":'';
     return "<div class='rd-card "+kind+(c.off?' bn':'')+(c.done?' done':'')+"'>"
-      +"<div class='rd-c-slot "+(SLOT_CLASS[slot]||slot)+"'>"+esc(slot)
+      +"<div class='rd-c-slot "+(SLOT_CLASS[slot]||String(slot).replace(/[^A-Za-z0-9_]/g,''))+"'>"+esc(slot)
       +'<small>'+esc(slot!==c.pos?(c.pos||''):'')+'</small></div>'
       +"<div class='rd-c-main'><div class='rd-c-nm'>"+(c.logo||'')+esc(c.name)+inj+lock
       +"</div><div class='rd-c-sub'>"+esc(c.team||'')+' &middot; '+(c.game||'')+'</div>'
@@ -362,27 +365,39 @@ window.GSWeek = (function(){
 
   // ----- the week's context ----------------------------------------------- //
 
+  // No context: `teams` is null, not {}. An empty map reads as "every team
+  // is on a bye" - with the file missing or a week behind, every player on a
+  // reader's Matchups and My Team was a bye worth nothing, the median read
+  // "0.0 final" and the live poll never started (audit 2026-10-02).
+  function blank(){ return {teams:null,wx:{},dvp:{},gs:{},week:0}; }
   var cached=null;
   function load(){
     if(cached) return cached;
     cached=fetch('/fantasy/week-context.json')
       .then(function(r){ return r.ok?r.json():null; })
-      .then(function(d){ return d||{teams:{},wx:{},dvp:{},gs:{},week:0}; })
-      .catch(function(){ return {teams:{},wx:{},dvp:{},gs:{},week:0}; });
+      .then(function(d){ return d||blank(); })
+      .catch(function(){ return blank(); });
     return cached;
   }
 
-  /** One team's game, with this side's scores resolved. */
+  /** Whether the context has the week's schedule: only then is a team
+   *  missing from it on a bye. */
+  function known(ctx){
+    return !!(ctx&&ctx.teams&&Object.keys(ctx.teams).length);
+  }
+
+  /** One team's game, with this side's scores resolved. Without a schedule
+   *  every player's game is "not started, details unknown" rather than a bye. */
   function gameFor(ctx,team){
-    var g=ctx.teams&&ctx.teams[team];
-    if(!g) return null;
-    return g;
+    if(!team) return null;
+    if(!known(ctx)) return {state:'pre', unknown:true};
+    return ctx.teams[team]||null;
   }
 
   /** The blend the built page prints: the mean of the sources that have him.
    *  Fewer sources here than there - see the module note. */
   function projFor(ctx,pid,team,sleeperPts){
-    if(team && ctx.teams && !ctx.teams[team]) return 0;     // a bye
+    if(team && known(ctx) && !ctx.teams[team]) return 0;     // a bye
     var vals=[];
     var gs=ctx.gs&&ctx.gs[pid];
     if(gs!=null) vals.push(gs);
@@ -391,7 +406,8 @@ window.GSWeek = (function(){
     return vals.reduce(function(a,b){return a+b;},0)/vals.length;
   }
 
-  return {load:load, gameFor:gameFor, projFor:projFor, when:when, logo:logo,
+  return {load:load, blank:blank, known:known, gameFor:gameFor, projFor:projFor,
+          when:when, logo:logo,
           sdFor:sdFor, expected:expected, winProb:winProb,
           shortName:shortName, scoreCell:scoreCell, pairCell:pairCell,
           hybridScore:hybridScore,

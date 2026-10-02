@@ -70,9 +70,23 @@ JS = """{% raw %}<script>
   var host=document.getElementById('mm-host');
   if(!host) return;
   var WEEK=parseInt(host.dataset.week||'0',10);
+  var YEAR=parseInt(host.dataset.year||'0',10);
   var built=document.getElementById('mm-built');
   var W=window.GSWeek;
   var CTX=null, PROJ={}, WEEKPROJ={}, INDEX={}, SLOTS=[], BENCH={BN:1,IR:1,TAXI:1};
+  // The week's projection file and basis, kept so each poll can price the
+  // projections again on Sleeper's latest points (GSL.points spends a
+  // Questionable player's play chance once he has scored).
+  var WK={proj:{}}, basisNow={index:0};
+  /** Every roster's players_points for the week, as one map. */
+  function livePoints(rows){
+    var out={};
+    (rows||[]).forEach(function(r){
+      var pp=r.players_points||{};
+      for(var k in pp) out[k]=pp[k];
+    });
+    return out;
+  }
   var LEAGUE_ID='';
   var AVATAR='https://sleepercdn.com/avatars/thumbs/';
   // The week is being played: projection cells turn into expected finals, as
@@ -102,7 +116,7 @@ JS = """{% raw %}<script>
   /** This site's own projection for him, zero on a bye - the built page's
    *  rule, and the one `projFor` already applies to the blend. */
   function gsFor(c){
-    if(c.team && CTX.teams && !CTX.teams[c.team]) return 0;
+    if(c.team && W.known(CTX) && !CTX.teams[c.team]) return 0;
     var v=CTX.gs&&CTX.gs[c.id];
     return v==null?null:v;
   }
@@ -441,7 +455,7 @@ JS = """{% raw %}<script>
   function render(rows, rosters, users, info){
     var byUser={}, byRoster={};
     users.forEach(function(u){
-      var src=(u.metadata&&u.metadata.avatar)||(u.avatar?(AVATAR+u.avatar):'');
+      var src=(u.metadata&&String(u.metadata.avatar).indexOf('https://sleepercdn.com/')===0&&u.metadata.avatar)||(u.avatar?(AVATAR+u.avatar):'');
       byUser[u.user_id]={name:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',
                          mgr:u.display_name||'', avatar:src};
     });
@@ -461,8 +475,8 @@ JS = """{% raw %}<script>
     });
     var ids=Object.keys(by).sort(function(a,b){ return a-b; });
     if(!ids.length){
-      host.innerHTML='<p class="mm-note">Sleeper has no week '+WEEK
-        +' matchups for this league yet.</p>';
+      host.innerHTML='<p class="mm-note">'+(GSAPI.isEspn(LEAGUE_ID)?'ESPN':'Sleeper')
+        +' has no week '+WEEK+' matchups for this league yet.</p>';
       return;
     }
     var pairs=[];
@@ -534,26 +548,43 @@ JS = """{% raw %}<script>
     return Math.min(Math.max(((period-1)*15+(15-left))/60,0),1);
   }
 
-  /** ESPN's scoreboard folded into the week's context, team by team. */
+  /** ESPN's scoreboard folded into the week's context, team by team. With
+   *  no context to fold into (week-context.json missing, or another week's),
+   *  the scoreboard is the week's schedule: every game of the week is on it,
+   *  so a team that is not is on a bye. */
   function clocks(){
     if(!SCOREBOARD) return Promise.resolve(false);
     return fetch(SCOREBOARD).then(function(r){ return r.ok?r.json():null; })
       .then(function(d){
-        (d&&d.events||[]).forEach(function(e){
+        var events=(d&&d.events)||[];
+        var fresh=!W.known(CTX) && events.length>0;
+        if(fresh) CTX.teams={};
+        events.forEach(function(e){
           var c=(e.competitions||[])[0]; if(!c) return;
           var st=c.status||{}, state=(st.type||{}).state||'pre', cs=c.competitors||[];
           cs.forEach(function(x, i){
             var ab=x.team&&x.team.abbreviation; if(ab==='WSH') ab='WAS';
-            var g=CTX.teams&&CTX.teams[ab], o=cs[1-i]||{};
+            var o=cs[1-i]||{}, oab=o.team&&o.team.abbreviation;
+            if(oab==='WSH') oab='WAS';
+            if(fresh && ab) CTX.teams[ab]={gid:String(e.id||''), opp:oab||'',
+              home:x.homeAway==='home', date:e.date||c.date||'', state:'pre', el:0};
+            var g=CTX.teams&&CTX.teams[ab];
             if(!g) return;
             g.state=state; g.el=elapsed(state, st.period, st.displayClock);
             if(state!=='pre'){ g.sf=Number(x.score); g.sa=Number(o.score); }
           });
         });
         return !!d;
-      }).catch(function(){ return false; });
+      }).catch(function(e){ quiet(e, 'clocks'); return false; });
   }
 
+  /** A failed fetch is expected and says nothing; anything else is a bug in
+   *  the lines that ran, and an empty catch is how a feature vanishes
+   *  without a trace - so it goes to the console. */
+  function quiet(e, where){
+    var net=e&&e.name==='TypeError'&&/fetch|network|load failed/i.test(String(e.message||''));
+    if(!net && window.console) console.error('[my-matchups] '+where, e);
+  }
   function anyLive(){
     var t=CTX&&CTX.teams||{};
     return Object.keys(t).some(function(k){ return t[k].state==='in'; });
@@ -565,11 +596,13 @@ JS = """{% raw %}<script>
     BUSY=true;
     Promise.all([
       GSAPI.get(POLL.api+'/matchups/'+WEEK)
-        .catch(function(){ return null; }),
+        .catch(function(e){ quiet(e, 'poll'); return null; }),
       clocks()
     ]).then(function(out){
-      BUSY=false;
-      if(out[0]&&out[0].length) POLL.rows=out[0];
+      if(out[0]&&out[0].length){
+        POLL.rows=out[0];
+        PROJ=GSL.points(WK, basisNow.index, livePoints(POLL.rows));
+      }
       // Drawn again whole, so keep what the reader had folded away.
       var shut={};
       host.querySelectorAll('details').forEach(function(d){
@@ -581,7 +614,12 @@ JS = """{% raw %}<script>
       var asof=document.getElementById('mm-asof');
       if(asof) asof.textContent=POLL.over?'':(' \u00b7 live, as of '+h+':'+mn
         +(now.getHours()<12?' AM':' PM'));
-      next(anyLive()?60000:300000);
+    }).catch(function(e){
+      // One bad draw must not end the live updates for the rest of the day.
+      quiet(e, 'draw');
+    }).then(function(){
+      BUSY=false;
+      if(POLL && !POLL.over) next(anyLive()?60000:300000);
     });
   }
   document.addEventListener('visibilitychange', function(){
@@ -605,29 +643,42 @@ JS = """{% raw %}<script>
       // (live ticks rebuild only the built page), so ESPN's are read before
       // the first draw, not a poll later.
       W.load().then(function(ctx){
-        CTX=ctx||{teams:{},gs:{}};
+        CTX=ctx||W.blank();
+        // Another week's context is none: its teams would mark this week's
+        // byes, and its numbers are last week's.
+        if(CTX.week && +CTX.week!==+WEEK) CTX=W.blank();
         return clocks().then(function(){ return CTX; });
       })
     ]).then(function(out){
       var rows=out[0]||[], rosters=out[1]||[], users=out[2]||[];
       INDEX=out[3]||{};
       var info=out[4]||{}, wk=out[5]||{proj:{}};
+      // Nothing came back: say why in the words of the site the league is on
+      // (an ESPN league kept private says how to open it), not Sleeper's.
+      if(!info.league_id && !rosters.length){
+        host.innerHTML='<p class="mm-note">'+GSAPI.problem(id)+'</p>';
+        return;
+      }
+      // A league saved in another season is not this week's.
+      var other=GSAPI.otherSeason(info, YEAR, 'mm-note');
+      if(other){ host.innerHTML=other; return; }
       // Another week's projections (the file trails a rollover) are none.
       if(wk.week && +wk.week!==+WEEK) wk={proj:{}};
-      CTX=out[6]||{teams:{},gs:{}};
-      if(CTX.week && +CTX.week!==+WEEK) CTX={teams:{},gs:{}};
+      CTX=out[6]||W.blank();
       WEEKPROJ=wk.proj||{};
       // Sleeper's three bases, as everywhere else: a half-PPR league must not
       // be shown PPR numbers.
       var basis=GSL.basis(info);
-      PROJ=GSL.points(wk, basis.index);
+      WK=wk; basisNow=basis;
+      PROJ=GSL.points(wk, basis.index, livePoints(rows));
       EXT=(CTX.ext||{})[['ppr','half','std'][basis.index]]||{};
       SLOTS=(info.roster_positions||[]).filter(function(x){ return !BENCH[x]; });
       var bar=document.getElementById('mm-bar');
       if(bar){
         bar.innerHTML='<h2>'+esc(league.name||info.name||'Your league')
           +' &middot; week '+WEEK+'<span class="mm-note" id="mm-asof"></span></h2>'
-          +'<span class="mm-note">Live points from Sleeper, in this page\\u2019s layout. '
+          +'<span class="mm-note">Live points from '+(GSAPI.isEspn(id)?'ESPN':'Sleeper')
+          +', in this page\\u2019s layout. '
           +'<b>Pts</b> is the blend of the two projections below it until a player\\u2019s '
           +'game kicks off, then his points with the expected final under them. Scored on '
           +esc(basis.name)+(basis.custom?' (the nearest of Sleeper\\u2019s three bases to '
@@ -640,8 +691,9 @@ JS = """{% raw %}<script>
       POLL={api:API, rows:rows, rosters:rosters, users:users, info:info, over:false};
       render(rows, rosters, users, info);
       if(!POLL.over) next(anyLive()?60000:300000);
-    }).catch(function(){
-      host.innerHTML='<p class="mm-note">Could not read that league from Sleeper.</p>';
+    }).catch(function(e){
+      quiet(e, 'show');
+      host.innerHTML='<p class="mm-note">'+GSAPI.problem(id)+'</p>';
     });
   }
 

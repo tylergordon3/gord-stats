@@ -226,9 +226,12 @@ TEASER = """<style>
 (function(){
   var box=document.getElementById('gs-tonight'); if(!box) return;
   var SPORTS=[['CFB','/cfb/watch/games.json'],['NFL','/nfl/watch/games.json']];
-  var today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
-  function esc(v){ return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  // The guide's day runs to __NIGHT__ AM Eastern (watch_page.NIGHT_ENDS): at
+  // half past midnight Saturday's late games are still tonight's.
+  var today=new Date(Date.now()-__NIGHT__*3600e3)
+    .toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   Promise.all(SPORTS.map(function(s){
     return fetch(s[1]).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
   })).then(function(ds){
@@ -257,7 +260,7 @@ TEASER = """<style>
 
 def teaser() -> str:
     """The Home page's Tonight card: hidden unless both sports play today."""
-    return TEASER
+    return TEASER.replace("__NIGHT__", str(watch_page.NIGHT_ENDS))
 
 
 if __name__ == "__main__":

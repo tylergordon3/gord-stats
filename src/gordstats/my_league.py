@@ -167,8 +167,8 @@ JS = """{% raw %}<script>
       +'<option value="fa">Free agents</option>'
       +'<option value="held">Rostered</option><optgroup label="Teams">';
     keys.forEach(function(k){
-      html+='<option value="'+k+'">'+names[k].replace(/[&<>"]/g,function(c){
-        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];})+'</option>';
+      html+='<option value="'+k+'">'+names[k].replace(/[&<>"']/g,function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];})+'</option>';
     });
     sel.innerHTML=html+'</optgroup>';
     rows.forEach(function(r){ r.classList.remove('us-mine'); });
@@ -188,11 +188,18 @@ JS = """{% raw %}<script>
     location.reload();   // the built cells are the simplest thing to put back
   }
 
+  // Each load() is numbered, and only the newest may save or draw: the page's
+  // own league is read at once and the account's answer can ask for another
+  // before the first comes back - a late first answer used to write itself
+  // over the second.
+  var loads=0;
   function load(id,quiet){
+    var mine=++loads;
     msg(quiet?'':'Reading the league\\u2026');
     var path='/league/'+encodeURIComponent(id);
     return Promise.all([GSAPI.get(path+'/rosters'), GSAPI.get(path+'/users'),
                         GSAPI.get(path)]).then(function(out){
+      if(mine!==loads) return false;                 // a newer pick took over
       if(!out[0]||!out[1]) throw new Error('not found');
       var rosters=out[0]||[], users=out[1]||[], league=out[2]||{};
       var byUser={};
@@ -209,15 +216,27 @@ JS = """{% raw %}<script>
       });
       if(!Object.keys(names).length) throw new Error('empty');
       var label=league.name||('League '+id);
-      var first=!(saved()||{}).id;
+      var before=String((saved()||{}).id||'');
       save(GSAPI.isEspn(id)?{id:id, name:label, provider:'espn'}:{id:id, name:label});
       apply(held,names,label);
       msg('');
-      // Pages that render the league from this key read it once, at load.
-      if(!owns&&first) location.reload();
+      // Pages that render the league from this key read it once, at load, so
+      // whenever the saved league changes they are drawn again - not only
+      // when there was none before, which left the bar naming the account's
+      // league over a page still showing the one this browser had.
+      // (Only if it was kept: with storage blocked a reload shows the same
+      // page again, and would again ask for the reload.)
+      if(!owns && before!==String(id) && String((saved()||{}).id||'')===String(id))
+        location.reload();
       return true;
-    }).catch(function(){
-      msg('Could not read that league. Check the id.','err');
+    }).catch(function(e){
+      if(mine!==loads) return false;
+      if(e && e.name==='TypeError' && window.console) console.error('[my-league]', e);
+      // In the words of the site the league is on: ESPN's private-league
+      // advice for a league ESPN refused, not "check the id".
+      msg(GSAPI.isPrivate(id) ? GSAPI.PRIVATE
+          : GSAPI.isEspn(id) ? 'Could not read that league from ESPN. Check the id, or try again in a minute.'
+          : 'Could not read that league. Check the id.','err');
       return false;
     });
   }
@@ -235,8 +254,8 @@ JS = """{% raw %}<script>
   var signedIn=null;
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
 
   /** "League - Your Team": two leagues named the same thing are otherwise the
@@ -536,9 +555,9 @@ JS = """{% raw %}<script>
       // One entry per league, not one per season.
       // The account is the better answer when there is one: it has the team
       // names and the season history this browser's own list does not.
-      var fromAccount=leagues(d.leagues.filter(function(l){
-        return l.provider==='sleeper' || l.provider==='espn';}))
-        .map(function(g){ return g.current; });
+      var groups=leagues(d.leagues.filter(function(l){
+        return l.provider==='sleeper' || l.provider==='espn';}));
+      var fromAccount=groups.map(function(g){ return g.current; });
       if(fromAccount.length){ SYNCED=fromAccount; saveList(SYNCED); }
       if(!SYNCED.length) return;
       // A league shared by link is what this visit is for: the account's own
@@ -549,9 +568,18 @@ JS = """{% raw %}<script>
       // - they are put back on their own league instead.
       if(have&&have.site&&!isSite(have.id)) have=null;
       // Keep showing whatever this browser already had, if the account knows
-      // it; otherwise the first synced league.
+      // it - in any of its seasons: last season's id, saved before the
+      // league renewed, is that league, and moves on to its newest season
+      // rather than to whichever league the account lists first.
       var chosen=SYNCED.filter(function(l){
-        return have&&String(l.league_id)===String(have.id);})[0] || SYNCED[0];
+        return have&&String(l.league_id)===String(have.id);})[0];
+      if(!chosen && have && have.id){
+        var g=groups.filter(function(x){
+          return x.seasons.some(function(l){ return String(l.league_id)===String(have.id); });
+        })[0];
+        if(g) chosen=g.current;
+      }
+      chosen=chosen||SYNCED[0];
       if(!have||String(have.id)!==String(chosen.league_id)){
         draw(leagueLabel(chosen));
         load(chosen.league_id,true);

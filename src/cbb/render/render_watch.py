@@ -308,6 +308,9 @@ ADAPTER_JS = CSS + """<script>
   var HINT='Star teams on the <a href="/cbb/power/">rankings</a> to put their games first.';
   var cfg={
     link:'/men/', close:C.close, blowout:C.blowout, every:C.every, gameHours:C.gameHours,
+    // The guide's day ends when a tip stops counting to the night before
+    // (AFTER_MIDNIGHT), not at football's 4 AM: the two must cut at one hour.
+    nightEnds:C.midnight,
     staleHtml:'The scoreboard has not been updated for a few days.',
     stars:function(){
       var set={}, list=[];

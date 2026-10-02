@@ -54,11 +54,15 @@ export async function onRequestGet(context) {
  * kept only if it lands on this origin. A pattern on the raw string let
  * "/\evil.com" through - browsers read the backslash as a slash - so
  * /api/auth/logout?next=/%5Cevil.com signed a reader out onto another site.
+ * The path keeps one leading slash: "/.//evil.com" resolves to the path
+ * "//evil.com", which a Location header reads as another host.
  */
 function safeNext(raw, origin) {
   try {
     const to = new URL(raw || "/", origin);
-    if (to.origin === origin) return to.pathname + to.search + to.hash;
+    if (to.origin === origin) {
+      return "/" + to.pathname.replace(/^[\/\\]+/, "") + to.search + to.hash;
+    }
   } catch (e) {
     // not a URL at all
   }

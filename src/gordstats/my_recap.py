@@ -759,7 +759,7 @@ JS = r"""{% raw %}<script>
     });
     (o[3]||[]).forEach(function(u){
       byUser[u.user_id]={name:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',
-        avatar:(u.metadata&&u.metadata.avatar)||(u.avatar?AVATAR+u.avatar:'')};
+        avatar:(u.metadata&&String(u.metadata.avatar).indexOf('https://sleepercdn.com/')===0&&u.metadata.avatar)||(u.avatar?AVATAR+u.avatar:'')};
     });
     ROSTERS.forEach(function(r){
       var key=String(r.roster_id);

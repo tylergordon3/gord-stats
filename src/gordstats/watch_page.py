@@ -42,6 +42,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from gordstats import share_button
+from gordstats.jsonio import script_json
 
 ET = ZoneInfo("America/New_York")
 TBA = ("tba", "Time TBA")
@@ -67,11 +68,13 @@ def slot(kick: pd.Timestamp, slots: list, time_known: bool = True) -> str:
     return next(key for key, _label, before in slots if hour < before)
 
 
-def game_day(kick: pd.Timestamp) -> str:
+def game_day(kick: pd.Timestamp, time_known: bool = True) -> str:
     """The Eastern date a game is on the guide's day tabs, the small hours
-    counted to the night before (NIGHT_ENDS)."""
+    counted to the night before (NIGHT_ENDS) - only when the time is a real
+    one. ESPN files a game with no kickoff time yet at midnight Eastern of its
+    day, and rolled back, every untimed Saturday game sat on Friday's tab."""
     t = pd.Timestamp(kick).tz_convert(ET)
-    if t.hour < NIGHT_ENDS:
+    if time_known and t.hour < NIGHT_ENDS:
         t -= pd.Timedelta(days=1)
     return t.strftime("%Y-%m-%d")
 
@@ -179,7 +182,7 @@ def body(data: dict, adapter_js: str, how: str, share_url: str, share_text: str)
     the engine and the sport's adapter, which starts it."""
     blob = ("" if data is None else
             "<script type='application/json' id='wg-data'>"
-            + json.dumps(data, separators=(",", ":")).replace("</", "<\\/") + "</script>")
+            + script_json(data, separators=(",", ":")) + "</script>")
     return (CSS + "<div class='wg'>"
             + "<div id='wg-host'><p class='wg-note'>Loading the day's games&hellip;</p></div>"
             + "<details class='wg-how'><summary>How games are ranked</summary>"
@@ -190,19 +193,25 @@ def body(data: dict, adapter_js: str, how: str, share_url: str, share_text: str)
 
 CSS = """<style>
 .wg{--wg-line:#e2e8f0;--wg-card:#fff;--wg-ink:#0f172a;--wg-mute:#475569;--wg-soft:#64748b;
-  --wg-acc:#C2410C;--wg-live:#b3382c;--wg-live-bg:#fff5f4;--wg-chip:#eef2f7;--wg-me:#1d4ed8}
+  --wg-acc:#C2410C;--wg-live:#b3382c;--wg-live-bg:#fff5f4;--wg-chip:#eef2f7;--wg-me:#1d4ed8;
+  --wg-on-acc:#fff}
+/* --wg-on-acc: text on an accent fill. White on the dark theme's lighter
+   orange was 2.26:1 (the day chip, the Watch pill, the Sound badge); near-black
+   on it is 7.7:1 (2026-10-02). */
 @media (prefers-color-scheme: dark){
   .wg{--wg-line:#2b3852;--wg-card:#16203a;--wg-ink:#f1f5f9;--wg-mute:#c3cfdd;--wg-soft:#aab7c9;
-    --wg-acc:#fb923c;--wg-live:#ffb4ab;--wg-live-bg:#3a1f22;--wg-chip:#223052;--wg-me:#93c5fd}
+    --wg-acc:#fb923c;--wg-live:#ffb4ab;--wg-live-bg:#3a1f22;--wg-chip:#223052;--wg-me:#93c5fd;
+    --wg-on-acc:#1c1917}
 }
 .wg-days{display:flex;gap:8px;overflow-x:auto;margin:4px 0 10px;padding-bottom:2px}
 .wg-days button{flex:none;min-height:40px;padding:0 16px;border-radius:999px;font:inherit;
   font-weight:700;font-size:14px;border:1px solid var(--wg-line);background:var(--wg-card);
   color:var(--wg-ink);cursor:pointer}
-.wg-days button[aria-pressed=true]{background:var(--wg-acc);border-color:var(--wg-acc);color:#fff}
+.wg-days button[aria-pressed=true]{background:var(--wg-acc);border-color:var(--wg-acc);
+  color:var(--wg-on-acc)}
 .wg-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0 0 12px;
   font-size:13px;color:var(--wg-mute)}
-.wg-bar select{min-height:36px;font:inherit;font-size:14px;border-radius:8px;
+.wg-bar select{min-height:40px;font:inherit;font-size:14px;border-radius:8px;
   border:1px solid var(--wg-line);background:var(--wg-card);color:var(--wg-ink);padding:0 8px;
   max-width:100%}
 .wg h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--wg-soft);
@@ -233,7 +242,7 @@ a.wg-g.done{opacity:.8}
 .wg-tags{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;align-items:center}
 .wg-tags span{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;
   background:var(--wg-chip);color:var(--wg-mute)}
-.wg-tags .wg-sc{background:var(--wg-acc);color:#fff}
+.wg-tags .wg-sc{background:var(--wg-acc);color:var(--wg-on-acc)}
 .wg-tags .hot{background:#fee2e2;color:#991b1b}
 .wg-tags .mine{background:#dbeafe;color:#1e3a8a}
 .wg-me{grid-column:1 / -1;font-size:12.5px;color:var(--wg-me);font-weight:600;margin-top:2px}
@@ -243,13 +252,13 @@ a.wg-g.done{opacity:.8}
   min-height:40px;display:flex;align-items:center}
 .wg-note{font-size:13px;color:var(--wg-mute);line-height:1.5;margin:0 0 8px}
 .wg-note.wg-empty{font-size:17px;color:var(--wg-ink);margin:8px 0 16px}
-.wg-how summary{cursor:pointer;font-size:13px;color:var(--wg-soft);min-height:36px;
+.wg-how summary{cursor:pointer;font-size:13px;color:var(--wg-soft);min-height:40px;
   display:flex;align-items:center}
 /* The quadbox: four games for one screen, a window at a time. The frame is
    the screen, dark in both themes; the best game sits top left with the sound. */
 .wg-view{display:inline-flex;border:1px solid var(--wg-line);border-radius:999px;overflow:hidden;
   flex:none}
-.wg-view button{min-height:36px;padding:0 14px;border:0;background:var(--wg-card);
+.wg-view button{min-height:40px;padding:0 14px;border:0;background:var(--wg-card);
   color:var(--wg-mute);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .wg-view button[aria-pressed=true]{background:var(--wg-ink);color:var(--wg-card)}
 .wg-quad{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border-radius:14px;
@@ -261,24 +270,30 @@ a.wg-g.done{opacity:.8}
 .wg-q .ch{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;
   color:var(--wg-ink);letter-spacing:.02em;min-width:0}
 .wg-q .ch b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wg-q .ch .sp{flex:none;font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:1px 5px;
+.wg-q .ch .sp{flex:none;font-size:12px;font-weight:800;letter-spacing:.02em;padding:1px 5px;
   border-radius:4px;background:var(--wg-chip);color:var(--wg-mute)}
-.wg-q .aud,.wg-q .new{flex:none;font-size:10.5px;font-weight:800;padding:1px 6px;
+.wg-q .aud,.wg-q .new{flex:none;font-size:12px;font-weight:800;padding:1px 6px;
   border-radius:999px;letter-spacing:0}
-.wg-q .aud{background:var(--wg-acc);color:#fff;margin-left:auto}
+.wg-q .aud{background:var(--wg-acc);color:var(--wg-on-acc);margin-left:auto}
 .wg-q .new{background:#dbeafe;color:#1e3a8a}
 .wg-q .tm{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;
   color:var(--wg-ink);min-width:0;line-height:1.35}
 .wg-q .tm img{width:18px;height:18px;flex:none;object-fit:contain;border:0;padding:0;margin:0;
   box-shadow:none;background:none}
 .wg-q .tm .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wg-q .tm .rk{font-size:10.5px;color:var(--wg-soft)}
+.wg-q .tm .rk{font-size:12px;color:var(--wg-soft)}
 .wg-q .tm .sc{margin-left:auto;font-variant-numeric:tabular-nums}
 .wg-q .st{margin-top:auto;font-size:12px;font-weight:600;color:var(--wg-soft);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wg-q .st .hot{color:var(--wg-live)}
 .wg-bench{font-size:12.5px;color:var(--wg-mute);margin:6px 2px 0;line-height:1.5}
 .wg-bench b{color:var(--wg-ink)}
+/* A 320px tile is ~124px inside: at 12px the sport badge and "Sound" left
+   the channel one letter. The speaker and the tile's accent ring still say
+   which one has the sound. */
+@media (max-width:360px){
+  .wg-q .aud-w{display:none}
+}
 @media (prefers-color-scheme: dark){
   .wg-t img{background:#e8edf5;border-radius:50%;padding:2px;box-sizing:border-box}
   a.wg-g.live{border-color:#7f1d1d}
@@ -326,12 +341,24 @@ window.GSWatch=function(D, cfg){
   var GAME_HOURS=cfg.gameHours||4.5, MORE=5, STALE_DAYS=3, CLOSE=cfg.close||8;
   var BLOWOUT=(typeof cfg.blowout==='number'&&cfg.blowout)||21, SWAP=15, FRESH_MS=5*60e3;
   var live={}, timer=null, day=null, view='list', onBox=[], fresh={};
+  // A day on the guide runs to NIGHT_ENDS the next morning (game_day, in
+  // Python): Saturday's 10:30 PM kickoff is Saturday's game at 12:30 AM, and
+  // the day it is on stays on the guide until then.
+  var NIGHT=(typeof cfg.nightEnds==='number')?cfg.nightEnds:__NIGHT_ENDS__;
+  var stale=false, drawnDay=null;
   try{ if(localStorage.getItem('gsWatchView')==='quad') view='quad'; }catch(e){}
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"']/g,function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function etDate(t){ return new Date(t).toLocaleDateString('en-CA',{timeZone:'America/New_York'}); }
+  function today(){ return etDate(Date.now()-NIGHT*3600e3); }
+  /** A failed fetch says nothing; anything else is a bug, and an empty catch
+   *  is how a feature disappears without a trace. */
+  function report(e){
+    var net=e&&e.name==='TypeError'&&/fetch|network|load failed/i.test(String(e.message||''));
+    if(!net&&window.console) console.error('[watch]', e);
+  }
   function rosters(){ return D.rosters||{}; }
   function stars(){ try{ return cfg.stars?cfg.stars()||{}:{}; }catch(e){ return {}; } }
   function myTeam(){
@@ -424,10 +451,11 @@ window.GSWatch=function(D, cfg){
       +(sub?'<div class="wg-sub">'+sub+'</div>':'')+me+them
       +'<div class="wg-tags">'+tags+'</div></a>';
   }
-  function list(items, first){
+  // `k` names the "N more" fold, so a redraw can open again what was open.
+  function list(items, first, k){
     var head=items.slice(0,MORE), rest=items.slice(MORE);
     return '<div class="wg-list">'+head.map(function(x,i){ return card(x, first&&i===0); }).join('')+'</div>'
-      +(rest.length?'<details class="wg-more"><summary>'+rest.length+' more</summary><div class="wg-list">'
+      +(rest.length?'<details class="wg-more" data-k="'+esc(k||'')+'"><summary>'+rest.length+' more</summary><div class="wg-list">'
         +rest.map(function(x){ return card(x,false); }).join('')+'</div></details>':'');
   }
   // ----- the quadbox ------------------------------------------------------ //
@@ -505,7 +533,7 @@ window.GSWatch=function(D, cfg){
       +'<div class="ch">'+(g.badge?'<span class="sp">'+esc(g.badge)+'</span>':'')
       +'<b>'+esc(g.tv||'TV TBA')+'</b>'
       +(isNew?'<span class="new">New</span>':'')
-      +(audio?'<span class="aud">&#x1F50A; Sound</span>':'')+'</div>'
+      +(audio?'<span class="aud">&#x1F50A;<span class="aud-w"> Sound</span></span>':'')+'</div>'
       +qside(g,'a',st)+qside(g,'h',st)
       +'<div class="st">'+when+' &middot; Watch '+Math.min(100,Math.round(g.score))+why+'</div></a>';
   }
@@ -515,11 +543,11 @@ window.GSWatch=function(D, cfg){
       return '<b>'+esc(x.g.a.nm)+(x.g.n?' v ':' at ')+esc(x.g.h.nm)+'</b> ('+esc(x.g.tv||'TBA')+')';
     }).join(', ')+'.</p>';
   }
-  function quad(items, now){
-    if(items.length<2) return list(items,true);
+  function quad(items, now, k){
+    if(items.length<2) return list(items,true,k);
     var pick=now?nowFour(items):pickFour(items);
     // Every game but one on a single channel: a list says more than a grid.
-    if(pick.box.length<2) return list(items,true);
+    if(pick.box.length<2) return list(items,true,k);
     var top=pick.box.reduce(function(a,x){ return !a||x.w.s>a.w.s?x:a; }, null);
     return '<div class="wg-quad">'+pick.box.map(function(x){ return tile(x, x===top); }).join('')
       +'</div>'+benchLine(pick.bench.filter(function(x){ return !x.w.blow&&state(x.g)!=='post'; }),
@@ -527,13 +555,17 @@ window.GSWatch=function(D, cfg){
   }
 
   function days(){
-    var today=etDate(Date.now()), seen={}, out=[];
-    D.games.forEach(function(g){ if(g.day>=today&&!seen[g.day]){ seen[g.day]=1; out.push(g.day); } });
+    // From the guide's today (NIGHT hours into the calendar's), and any
+    // earlier day with a game still being played: a late game is not dropped
+    // at midnight while it is on.
+    var t=today(), seen={}, out=[];
+    D.games.forEach(function(g){
+      if((g.day>=t||state(g)==='in')&&!seen[g.day]){ seen[g.day]=1; out.push(g.day); } });
     return out.sort();
   }
   function dayLabel(d){
     var t=new Date(d+'T12:00:00Z');
-    return (d===etDate(Date.now())?'Today':t.toLocaleDateString(undefined,{weekday:'short',timeZone:'UTC'}))
+    return (d===today()?'Today':t.toLocaleDateString(undefined,{weekday:'short',timeZone:'UTC'}))
       +' '+t.getUTCDate();
   }
   function picker(team){
@@ -546,13 +578,25 @@ window.GSWatch=function(D, cfg){
   function pickDay(){
     // Today if there are games today; otherwise the biggest day coming - on a
     // Wednesday that is Saturday, not Thursday's two games (best_day, in Python).
-    var ds=days(), today=etDate(Date.now()), count={};
+    var ds=days(), t=today(), count={};
     D.games.forEach(function(g){ count[g.day]=(count[g.day]||0)+1; });
-    day=ds.indexOf(today)>=0?today:ds.slice().sort(function(a,b){ return count[b]-count[a]||(a<b?-1:1); })[0];
+    day=ds.indexOf(t)>=0?t:ds.slice().sort(function(a,b){ return count[b]-count[a]||(a<b?-1:1); })[0];
+  }
+  function staleNote(){
+    return '<p class="wg-note">'+(cfg.staleHtml||'This guide has not been rebuilt for a few days.')+'</p>';
   }
   function draw(){
+    // A guide not rebuilt for days says so, and keeps saying so: a later
+    // redraw (a star, the CBB feed, a return to the tab) used to paint the
+    // stale games over the notice.
+    if(stale){ host.innerHTML=staleNote(); return; }
+    // Drawn again whole every live poll: what the reader had opened ("N
+    // more", "Final") stays open, and the page stays where it was.
+    var opened={}, y=window.pageYOffset;
+    Array.prototype.forEach.call(host.querySelectorAll('details[data-k]'), function(d){
+      if(d.open) opened[d.getAttribute('data-k')]=1; });
     var ds=days();
-    if(!ds.length){ host.innerHTML=(cfg.top||'')+'<p class="wg-note wg-empty">'+(cfg.emptyHtml||'No games in the next week.')+'</p>'; return; }
+    if(!ds.length){ drawnDay=null; host.innerHTML=(cfg.top||'')+'<p class="wg-note wg-empty">'+(cfg.emptyHtml||'No games in the next week.')+'</p>'; return; }
     if(ds.indexOf(day)<0) day=ds[0];
     var set=stars(), team=myTeam();
     var items=D.games.filter(function(g){ return g.day===day; })
@@ -566,21 +610,27 @@ window.GSWatch=function(D, cfg){
       +'<button type="button" data-view="list" aria-pressed="'+!quadView+'">List</button>'
       +'<button type="button" data-view="quad" aria-pressed="'+quadView+'">Quadbox</button></div>';
     var html=(cfg.top||'')+'<div class="wg-days" role="group" aria-label="Day">'+ds.map(function(d){
-      return '<button type="button" data-day="'+d+'" aria-pressed="'+(d===day)+'">'+dayLabel(d)+'</button>'; }).join('')+'</div>'
+      return '<button type="button" data-day="'+esc(d)+'" aria-pressed="'+(d===day)+'">'+dayLabel(d)+'</button>'; }).join('')+'</div>'
       +'<div class="wg-bar">'+switcher+picker(team)+hint+'</div>'
       +(quadView?'<p class="wg-note">Four games for one screen, each window: the best top left with '
         +'the sound'+(cfg.quadShared?'.':', never two on one broadcast channel.')
         +(cfg.quadNote?' '+cfg.quadNote:'')+'</p>':'');
     if(on.length) html+='<h3>On now <span class="wg-n">'+on.length+'</span></h3>'
-      +(quadView?quad(on,true):list(on,true));
+      +(quadView?quad(on,true,'on'):list(on,true,'on'));
     D.slots.forEach(function(s){
       var xs=items.filter(function(x){ return x.g.slot===s[0]&&state(x.g)==='pre'; }).sort(by);
       if(xs.length) html+='<h3>'+esc(s[1])+' <span class="wg-n">'+esc(s[2])+'</span></h3>'
-        +(quadView?quad(xs,false):list(xs,true));
+        +(quadView?quad(xs,false,s[0]):list(xs,true,s[0]));
     });
-    if(done.length) html+='<details class="wg-more"><summary>Final &middot; '+done.length+'</summary><div class="wg-list">'
+    if(done.length) html+='<details class="wg-more" data-k="final"><summary>Final &middot; '+done.length+'</summary><div class="wg-list">'
       +done.map(function(x){ return card(x,false); }).join('')+'</div></details>';
     host.innerHTML=html;
+    if(day===drawnDay){
+      Array.prototype.forEach.call(host.querySelectorAll('details[data-k]'), function(d){
+        if(opened[d.getAttribute('data-k')]) d.open=true; });
+      if(Math.abs(window.pageYOffset-y)>1) window.scrollTo(window.pageXOffset, y);
+    }
+    drawnDay=day;
   }
   function onNow(g){
     var st=state(g), t=Date.parse(g.ko), now=Date.now();
@@ -588,6 +638,7 @@ window.GSWatch=function(D, cfg){
   }
   function poll(){
     clearTimeout(timer);
+    if(stale) return;
     var now=D.games.filter(function(g){ return g.day===day&&onNow(g); });
     if(!cfg.live) return;
     if(!now.length){
@@ -599,10 +650,12 @@ window.GSWatch=function(D, cfg){
       return;
     }
     if(document.hidden){ timer=setTimeout(poll,60000); return; }
-    Promise.resolve(cfg.live(now, D)).then(function(map){
+    Promise.resolve().then(function(){ return cfg.live(now, D); }).then(function(map){
       Object.keys(map||{}).forEach(function(k){ live[k]=map[k]; });
-    }).catch(function(){}).then(function(){
+    }).catch(report).then(function(){
       draw();
+    }).catch(report).then(function(){
+      // Whatever went wrong this time, the next poll still comes.
       timer=setTimeout(poll,cfg.every||60000);
     });
   }
@@ -623,18 +676,23 @@ window.GSWatch=function(D, cfg){
   });
   document.addEventListener('gs:favorites', function(){ draw(); });
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) poll(); });
+  function isStale(){
+    return !!(D.generated&&Date.now()-Date.parse(D.generated)>STALE_DAYS*864e5);
+  }
   function start(){
-    if(D.generated&&Date.now()-Date.parse(D.generated)>STALE_DAYS*864e5){
-      host.innerHTML='<p class="wg-note">'+(cfg.staleHtml||'This guide has not been rebuilt for a few days.')+'</p>';
-      return;
-    }
-    live={}; onBox=[]; fresh={}; pickDay(); draw(); poll();
+    stale=isStale();
+    if(stale){ clearTimeout(timer); host.innerHTML=staleNote(); return; }
+    live={}; onBox=[]; fresh={}; drawnDay=null; pickDay(); draw(); poll();
   }
   start();
   // set: another set of games altogether (CBB's men's/women's switch) - the
   // day and the live scores start over. update: the same games refreshed -
   // the reader's day and what is live stay.
   return {set:function(next){ D=next; start(); },
-          update:function(next){ D=next; draw(); poll(); }, redraw:draw};
+          update:function(next){
+            D=next;
+            if(stale!==isStale()){ start(); return; }
+            draw(); poll();
+          }, redraw:draw};
 };
-</script>"""
+</script>""".replace("__NIGHT_ENDS__", str(NIGHT_ENDS))

@@ -117,6 +117,10 @@ window.GSAPI = window.GSAPI || (function(){
 
   // ------------------------------------------------------------- fetching --
   var cache={};
+  // ESPN leagues that answered 401/403 - kept private by their commissioner -
+  // by season and league, so a page that could not read one can say why in
+  // ESPN's terms rather than Sleeper's (problem()).
+  var refused={};
   /** One request's {status, data}, made once for the page: kept `ttl`
    *  seconds (0: the whole page view), shared while it is on its way, and
    *  dropped if it fails, so the next ask tries again. */
@@ -138,6 +142,7 @@ window.GSAPI = window.GSAPI || (function(){
       : ESPN+'/leagueHistory/'+league+'?seasonId='+season+'&'+q.join('&');
     return once(url, ttl, function(){
       return fetch(url,{credentials:'omit'}).then(function(r){
+        if(r.status===401 || r.status===403) refused[season+':'+league]=1;
         if(!r.ok) return {status:r.status, data:null};
         return r.json().then(function(d){
           return {status:200, data:Array.isArray(d)?(d[0]||null):d};
@@ -266,6 +271,20 @@ window.GSAPI = window.GSAPI || (function(){
     var fin=+st.finalScoringPeriod||17, latest=+st.latestScoringPeriod||0;
     var dd=d.draftDetail||{}, done=complete(d, e.season);
     var c=(s.rosterSettings||{}).lineupSlotCounts||{};
+    // The weeks of each playoff round (bracketOf's r): ESPN's periods can be
+    // two weeks long, and a round's score is the sum of its weeks. Sleeper
+    // says the same thing with playoff_round_type (0 one week a round, 1 a
+    // two-week final, 2 two weeks a round), given here too for a page that
+    // reads only that.
+    var rw={}, lens=[];
+    Object.keys(periods).map(Number).filter(function(k){ return k>reg; })
+      .sort(function(x,y){ return x-y; }).forEach(function(k){
+        rw[k-reg]=(periods[k]||[k]).map(Number);
+        lens.push(rw[k-reg].length);
+      });
+    var rtype=!lens.length||lens.every(function(n){ return n<2; }) ? 0
+      : lens.every(function(n){ return n>=2; }) ? 2
+      : (lens[lens.length-1]>=2 && lens.slice(0,-1).every(function(n){ return n<2; })) ? 1 : 0;
     return {league_id:id, provider:'espn', sport:'nfl', season:String(e.season),
       name:s.name||('ESPN league '+e.league),
       status:done?'complete':dd.drafted?'in_season':dd.inProgress?'drafting':'pre_draft',
@@ -276,6 +295,7 @@ window.GSAPI = window.GSAPI || (function(){
         num_teams:(d.teams||[]).length, league_average_match:0,
         leg:done?fin:Math.max(1,Math.min(latest,fin)),
         last_scored_leg:done?fin:Math.max(0,Math.min(latest-1,fin)),
+        playoff_round_type:rtype, round_weeks:lens.length?rw:null,
         reserve_slots:+c[IR]||0, taxi_slots:0, type:0,
         waiver_type:acq.isUsingAcquisitionBudget?2:0,
         waiver_budget:+acq.acquisitionBudget||0}};
@@ -531,6 +551,69 @@ window.GSAPI = window.GSAPI || (function(){
     });
   }
 
+  var PRIVATE='ESPN keeps that league private. Its commissioner can open it '
+    +'to the public in the league\\u2019s settings (League Manager \\u2192 '
+    +'Basic Settings), and nothing else is needed \\u2014 no ESPN login.';
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+  }
+
+  /** Whether ESPN refused this league as private on this page view. */
+  function isPrivate(id){
+    var e=parse(id);
+    return !!(e && refused[e.season+':'+e.league]);
+  }
+  /** What to tell a reader whose league could not be read, in the words of
+   *  the site it is on: ESPN's private-league advice where ESPN refused it,
+   *  never "Sleeper may be busy" for a league that is not on Sleeper. */
+  function problem(id){
+    if(isPrivate(id)) return PRIVATE;
+    var site=parse(id)?'ESPN':'Sleeper';
+    return 'Could not read that league from '+site+'. '+site
+      +' may be busy \\u2014 try again in a minute.';
+  }
+
+  /** A league saved in another season, drawn as this week, is wrong all
+   *  over: last year's rosters, scored against this year's games. null when
+   *  `info` (the league, as get('/league/<id>') answers) is `year`'s;
+   *  otherwise a note to draw instead, with the way to this season's - a
+   *  button for ESPN, whose league keeps its id across seasons, and the bar
+   *  above for Sleeper, which issues a new id each year. */
+  function otherSeason(info, year, cls){
+    var have=+((info||{}).season)||0;
+    year=+year||0;
+    if(!have || !year || have===year) return null;
+    var e=parse(info.league_id), name=(info&&info.name)||'';
+    var how=e
+      ? '<button type="button" data-gs-season="'+esc(make(year, e.league))+'">Show its '
+        +year+' season</button>'
+      : 'Pick its '+year+' league in the bar above, or paste that league\\u2019s id there.';
+    return '<p class="'+esc(cls||'')+'" data-gs-other-season="'+have+'">This is your <b>'
+      +have+'</b> league'+(name?' ('+esc(name)+')':'')+', not this season\\u2019s, so this '
+      +'week is not drawn from it. '+how+'</p>';
+  }
+  // The button above: this season's id, checked before it is saved.
+  if(typeof document!=='undefined') document.addEventListener('click', function(ev){
+    var b=ev.target&&ev.target.closest&&ev.target.closest('[data-gs-season]');
+    if(!b) return;
+    var e=parse(b.getAttribute('data-gs-season'));
+    if(!e) return;
+    b.disabled=true;
+    resolve(e.league, e.season).then(function(res){
+      if(res.id){
+        try{ localStorage.setItem('gsSleeperLeague',
+          JSON.stringify({id:res.id, name:res.name||'', provider:'espn'})); }catch(x){}
+        location.reload();
+        return;
+      }
+      b.disabled=false;
+      b.insertAdjacentText('afterend', ' '+(res.error==='private' ? PRIVATE
+        : res.error==='network' ? 'Could not reach ESPN. Try again in a minute.'
+        : 'ESPN has no '+e.season+' season of that league yet.'));
+    });
+  });
+
   /** An ESPN league id (and season, if known) as {id, name, season}, or
    *  {error: 'private' | 'missing' | 'network'}. With no season, this one's
    *  is tried and then last year's - a league not yet renewed. */
@@ -552,10 +635,8 @@ window.GSAPI = window.GSAPI || (function(){
   }
 
   return {get:get, teams:teams, players:players, isEspn:isEspn, parse:parse,
-          parseRef:parseRef, resolve:resolve,
-          PRIVATE:'ESPN keeps that league private. Its commissioner can open it '
-            +'to the public in the league\\u2019s settings (League Manager \\u2192 '
-            +'Basic Settings), and nothing else is needed \\u2014 no ESPN login.',
+          parseRef:parseRef, resolve:resolve, isPrivate:isPrivate, problem:problem,
+          otherSeason:otherSeason, PRIVATE:PRIVATE,
           _espn:{leagueOf:leagueOf, rostersOf:rostersOf, usersOf:usersOf,
                  matchupsOf:matchupsOf, bracketOf:bracketOf, draftsOf:draftsOf,
                  picksOf:picksOf, txOf:txOf, scoring:scoring, slotsOf:slotsOf,

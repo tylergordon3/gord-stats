@@ -67,8 +67,8 @@ JS = """{% raw %}<script>
   var list=document.getElementById('ls-list');
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function msg(where,text,cls){
     var el=document.getElementById(where);

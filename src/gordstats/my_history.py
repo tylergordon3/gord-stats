@@ -157,8 +157,8 @@ JS = """{% raw %}<script>
       .catch(function(){return null;});
   }
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function pts(s){
     // Sleeper keeps points as an integer and its decimal part, separately.
@@ -195,7 +195,7 @@ JS = """{% raw %}<script>
       users.forEach(function(u){
         who[u.user_id]={team:(u.metadata&&u.metadata.team_name)||u.display_name||'Team',
                         manager:u.display_name||'',
-                        avatar:(u.metadata&&u.metadata.avatar)
+                        avatar:(u.metadata&&String(u.metadata.avatar).indexOf('https://sleepercdn.com/')===0&&u.metadata.avatar)
                           ||(u.avatar?'https://sleepercdn.com/avatars/thumbs/'+u.avatar:'')};
       });
       // The championship game is the one placing first; a season still being
@@ -214,8 +214,39 @@ JS = """{% raw %}<script>
       });
       return {season:lg.season, league_id:lg.league_id, name:lg.name,
               status:lg.status, teams:teams, bracket:bracket,
-              playoff_start:(lg.settings||{}).playoff_week_start||15};
+              playoff_start:(lg.settings||{}).playoff_week_start||15,
+              rounds:roundWeeks(lg, bracket)};
     });
+  }
+
+  /** {round: [weeks]} for a season's playoffs. A round is not always one
+   *  week: Sleeper's playoff_round_type is 0 for one week a round, 1 for a
+   *  two-week final and 2 for two weeks every round (2020 called that last
+   *  one 1), and a two-week round is decided on both weeks' points together.
+   *  An ESPN league (gordstats.league_api) carries its own periods. */
+  function roundWeeks(lg, bracket){
+    var s=(lg&&lg.settings)||{}, start=s.playoff_week_start||15, out={};
+    if(s.round_weeks){
+      Object.keys(s.round_weeks).forEach(function(r){
+        out[r]=(s.round_weeks[r]||[]).map(Number); });
+      return out;
+    }
+    var type=+s.playoff_round_type||0;
+    if(String(lg.season)==='2020' && type===1) type=2;
+    var last=(bracket||[]).reduce(function(m, g){ return Math.max(m, g.r||1); }, 1);
+    for(var r=1, w=start; r<=last; r++){
+      var n=(type===2 || (type===1 && r===last)) ? 2 : 1;
+      out[r]=[];
+      for(var i=0;i<n;i++) out[r].push(w+i);
+      w+=n;
+    }
+    return out;
+  }
+  function weeksOf(s, g){
+    var ws=s.rounds&&s.rounds[g.r||1];
+    // Without the season's rounds, one week a round: start + r - 1, as the
+    // built league's _fetch_playoffs has it.
+    return (ws&&ws.length) ? ws : [(s.playoff_start||15)+(g.r||1)-1];
   }
 
   function recordOf(t){
@@ -311,7 +342,7 @@ JS = """{% raw %}<script>
       for(var w=1; w<=last; w++) weeks[w]='regular';
       (s.bracket||[]).forEach(function(g){
         if(PLACEMENT[g.p] || !(g.t1&&g.t2)) return;
-        weeks[(s.playoff_start||15)+(g.r||1)-1]='playoff';
+        weeksOf(s, g).forEach(function(w){ weeks[w]='playoff'; });
       });
       Object.keys(weeks).forEach(function(w){
         jobs.push(get('/league/'+s.league_id+'/matchups/'+w).then(function(rows){
@@ -321,16 +352,12 @@ JS = """{% raw %}<script>
       });
     });
     return Promise.all(jobs).then(function(weeks){
-      var log=[];
+      var log=[], played={};
       weeks.forEach(function(wk){
         var pts={};
         wk.rows.forEach(function(r){ pts[r.roster_id]=r.points||0; });
         if(wk.kind==='playoff'){
-          (wk.season.bracket||[]).forEach(function(g){
-            if(PLACEMENT[g.p] || !(g.t1&&g.t2)) return;
-            if((wk.season.playoff_start||15)+(g.r||1)-1 !== wk.week) return;
-            push(log, wk, wk.owner[g.t1], wk.owner[g.t2], pts[g.t1], pts[g.t2], 'playoff');
-          });
+          (played[wk.season.league_id]=played[wk.season.league_id]||{})[wk.week]=pts;
           return;
         }
         var by={};
@@ -343,6 +370,24 @@ JS = """{% raw %}<script>
           if(pair.length!==2) return;
           push(log, wk, wk.owner[pair[0].roster_id], wk.owner[pair[1].roster_id],
                pair[0].points||0, pair[1].points||0, 'regular');
+        });
+      });
+      // A playoff game is its round: every week of it, the points summed,
+      // and only once the round's last week is over.
+      seasons.forEach(function(s){
+        var owner={};
+        s.teams.forEach(function(t){ owner[t.roster_id]=t.owner; });
+        (s.bracket||[]).forEach(function(g){
+          if(PLACEMENT[g.p] || !(g.t1&&g.t2)) return;
+          var ws=weeksOf(s, g), ap=0, bp=0, all=true;
+          ws.forEach(function(w){
+            var pts=(played[s.league_id]||{})[w];
+            if(!pts || pts[g.t1]==null || pts[g.t2]==null){ all=false; return; }
+            ap+=pts[g.t1]; bp+=pts[g.t2];
+          });
+          if(!all) return;
+          push(log, {season:s, week:ws[ws.length-1], kind:'playoff'},
+               owner[g.t1], owner[g.t2], Math.round(ap*100)/100, Math.round(bp*100)/100);
         });
       });
       return log;
@@ -667,7 +712,8 @@ JS = """{% raw %}<script>
         : seasons[0].season;
       var head='<p class="hi-note"><strong>'+esc(seasons[0].name||'This league')
         +'</strong> &middot; '+seasons.length+' season'+(seasons.length===1?'':'s')
-        +' &middot; '+esc(span)+'. Records are Sleeper\\u2019s own: a league playing '
+        +' &middot; '+esc(span)+'. Records are '
+        +(window.GSAPI&&GSAPI.isEspn(have.id)?'ESPN':'Sleeper')+'\\u2019s own: a league playing '
         +'a weekly median scores two results a week, which is why a fourteen-week '
         +'season can show a 28-game record.</p>';
       host.innerHTML=head+renderChampions(seasons)+renderAllTime(seasons)
@@ -687,8 +733,10 @@ JS = """{% raw %}<script>
         wire(slot, seasons, log);
       });
     })
-    .catch(function(){
-      host.innerHTML='<p class="hi-none">Could not read that league from Sleeper.</p>';
+    .catch(function(e){
+      var net=e&&e.name==='TypeError'&&/fetch|network|load failed/i.test(String(e.message||''));
+      if(!net && window.console) console.error('[my-history]', e);
+      host.innerHTML='<p class="hi-none">'+GSAPI.problem(have.id)+'</p>';
     });
 })();
 </script>{% endraw %}"""

@@ -252,16 +252,36 @@ function applyMedalsToGames (games, medalByDate) {
   }
 }
 
+// Seconds left on a game clock, or null when there is no reading. "4:12" is
+// minutes and seconds; under a minute the feed sends seconds alone ("45.3"),
+// which used to come back Infinity - never "late", and an Infinity in the
+// sort's arithmetic made the comparator NaN.
 function parseClockToSeconds (clock) {
-  if (!clock || typeof clock !== 'string') return Infinity
+  if (clock === null || clock === undefined) return null
+  const s = String(clock).trim()
+  if (!s) return null
+  const parts = s.split(':')
+  if (parts.length > 2) return null
+  const nums = parts.map(Number)
+  if (nums.some(n => !isFinite(n) || n < 0)) return null
+  return parts.length === 2 ? nums[0] * 60 + nums[1] : nums[0]
+}
 
-  const parts = clock.split(':')
-  if (parts.length !== 2) return Infinity
-
-  const minutes = Number(parts[0])
-  const seconds = Number(parts[1])
-
-  return minutes * 60 + seconds
+// Where a game is: the period as a number, and whether it is past
+// regulation. The feed's periods are text - "1st", "2nd", "OT", "2OT" - and
+// parseInt('OT') is NaN while parseInt('2OT') is 2, so an overtime read as
+// the first half (or the second) and was never "close late". `g.overtime` is
+// the feed's own flag.
+function periodOf (g, regulation) {
+  const p = String(g.period === null || g.period === undefined ? '' : g.period)
+    .trim().toUpperCase()
+  const m = /(\d*)\s*OT/.exec(p)
+  if (m || g.overtime === true) {
+    const extra = m && m[1] ? parseInt(m[1], 10) : 1
+    return { num: regulation + extra, ot: true }
+  }
+  const n = parseInt(p, 10)
+  return { num: isNaN(n) ? null : n, ot: false }
 }
 
 function enrichGame (g) {
@@ -280,19 +300,22 @@ function enrichGame (g) {
   const isFinal = status === 'final'
   const isHalftime = status === 'half_over'
 
-  const clockSeconds = g.clock ? parseClockToSeconds(g.clock) : null
+  const clockSeconds = parseClockToSeconds(g.clock)
 
   const isWomens = LEAGUE === 'men' ? false : true
 
   // Final regulation period
   const finalPeriod = isWomens ? 4 : 2
 
-  const periodNum = parseInt(g.period, 10)
+  const period = periodOf(g, finalPeriod)
+  // Any overtime is late: five minutes, every possession counts.
   const isLate =
     isLive &&
-    periodNum >= finalPeriod &&
-    clockSeconds !== null &&
-    clockSeconds <= 240
+    (period.ot ||
+      (period.num !== null &&
+        period.num >= finalPeriod &&
+        clockSeconds !== null &&
+        clockSeconds <= 240))
 
   g.isCloseLate = isLive && !isNaN(scoreDiff) && scoreDiff <= 8 && isLate
 
@@ -317,21 +340,27 @@ function gamePriority (g) {
   const isHalftime = status === 'half_over'
   const isFinal = status === 'final'
   const isPre = status === 'pre_game' || status === 'scheduled'
-  const isOT = status === 'OT'
+  const regulation = LEAGUE === 'men' ? 2 : 4
+  // The feed's status is lowercased above, so comparing it to 'OT' never
+  // matched: an overtime is read from the period (or the feed's flag).
+  const isOT = periodOf(g, regulation).ot
 
   function gameProgressScore (g) {
-    let currentPeriod
-    if (isOT) {
-      currentPeriod = LEAGUE === 'men' ? 3 : 5
-    } else {
-      currentPeriod = parseInt(g.period, 10) || 1
+    const period = periodOf(g, regulation)
+    const periodLength = LEAGUE === 'men' ? 1200 : 600 // 1200 sec - 20 min men | 600 sec - 10 min women
+    const left = parseClockToSeconds(g.clock)
+
+    if (period.ot) {
+      // Past all of regulation, then into the overtimes (five minutes each).
+      const extra = period.num - regulation
+      return regulation * periodLength + (extra - 1) * 300 +
+        (300 - Math.min(left === null ? 0 : left, 300))
     }
 
-    const clockSeconds = g.clock ? parseClockToSeconds(g.clock) : 0
+    const currentPeriod = period.num || 1
+    const clockSeconds = left === null ? 0 : Math.min(left, periodLength)
 
     // Estimate % complete
-    const periodLength = LEAGUE === 'men' ? 1200 : 600 // 1200 sec - 20 min men | 600 sec - 10 min women
-
     const secondsIntoGame =
       (currentPeriod - 1) * periodLength + (periodLength - clockSeconds)
     return secondsIntoGame
@@ -341,7 +370,7 @@ function gamePriority (g) {
     return gameProgressScore(g)
   }
 
-  if (isOT) return 2700
+  if (isOT && !isFinal) return gameProgressScore(g)
   // 3️⃣ Halftime
   if (isHalftime) return 0
 

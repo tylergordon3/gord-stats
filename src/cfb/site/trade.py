@@ -29,6 +29,7 @@ from cfb.config import MY_TEAM, WEB_DIR
 from cfb.site import write_page
 from cfb.site.league_power import team_rosters
 from gordstats import trade_page
+from gordstats.jsonio import script_json
 
 OUTPUT = WEB_DIR / "trade" / "index.html"
 SIMS = league_sim.SIMS
@@ -135,8 +136,8 @@ window.GSTradeAdapter = (function(){
   var PER = REG.length ? REG : D.weeks.map(function(w, i){ return i; });
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; });
+    return String(v==null?'':v).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
   }
   function p(pid){ return D.players[pid]; }
   function name(pid){ return p(pid) ? p(pid)[0] : pid; }
@@ -478,7 +479,7 @@ def body() -> str:
 def data_script(got: dict) -> str:
     """The data as an inert <script>: `</` escaped so a name cannot end it,
     and outside Liquid so a name cannot be read as a tag."""
-    blob = json.dumps(got, separators=(",", ":")).replace("</", "<\\/")
+    blob = script_json(got, separators=(",", ":"))
     return ("{% raw %}<script type='application/json' id='tr-data'>" + blob
             + "</script>{% endraw %}")
 

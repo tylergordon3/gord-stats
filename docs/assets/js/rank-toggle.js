@@ -1,4 +1,12 @@
 /* ---------- utils ---------- */
+// Storage blocked outright throws on every touch; the toggle still works for
+// this view without it.
+function rankLoad(key) {
+  try { return localStorage.getItem(key); } catch (e) { return null; }
+}
+function rankStore(key, value) {
+  try { localStorage.setItem(key, value); } catch (e) { /* this view only */ }
+}
 function normText(s) {
   return (s || "")
     .replace(/\u00A0/g, " ")
@@ -46,7 +54,7 @@ function setChange(period) {
     });
   });
 
-  localStorage.setItem("rankPeriod", period);
+  rankStore("rankPeriod", period);
 }
 
 /* ---------- events ---------- */
@@ -61,8 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const select = document.getElementById("period-select");
   if (!select) return;
 
-  const saved = localStorage.getItem("rankPeriod");
-  if (saved) select.value = saved;
+  // Only a period this page still offers: anything else left the dropdown
+  // blank.
+  const saved = rankLoad("rankPeriod");
+  if (saved && Array.prototype.some.call(select.options, o => o.value === saved)) {
+    select.value = saved;
+  }
 
   setChange(select.value);
 });

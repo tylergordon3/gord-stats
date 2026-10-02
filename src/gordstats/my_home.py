@@ -325,7 +325,10 @@ JS = """{% raw %}<script>
       });
     })
     .catch(function(){
-      metricsHost.innerHTML='<p class="mh-load">Could not read that league from Sleeper.</p>';
+      // In the words of the site the league is on: an ESPN league kept
+      // private says how to open it.
+      metricsHost.innerHTML='<p class="mh-load">'+(window.GSAPI&&GSAPI.problem
+        ? GSAPI.problem(have.id) : 'Could not read that league.')+'</p>';
       teamsHost.innerHTML='';
     });
 })();

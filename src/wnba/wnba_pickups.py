@@ -21,6 +21,7 @@ injury status and season averages come from the ESPN fantasy API.
 """
 
 import json
+from html import escape as esc
 from datetime import date, timedelta
 
 import requests
@@ -236,7 +237,7 @@ def drop_recommendations_html(by_team: dict, best_pickup: dict | None = None) ->
              "pickups above — lowest remaining value first, so the top rows are "
              "the drop candidates.")
     if best_pickup:
-        intro += (f' Best available right now: <strong>{best_pickup["name"]}</strong> '
+        intro += (f' Best available right now: <strong>{esc(best_pickup["name"])}</strong> '
                   f'({best_pickup["proj_total"]:.1f} proj pts left).')
     html.append(f'<p class="week-meta">{intro}</p>')
 
@@ -244,11 +245,11 @@ def drop_recommendations_html(by_team: dict, best_pickup: dict | None = None) ->
     html.append('<label class="drop-select-label">Team '
                 '<select id="drop-team-select">')
     for name in names:
-        html.append(f'<option value="{name}">{name}</option>')
+        html.append(f'<option value="{esc(name)}">{esc(name)}</option>')
     html.append("</select></label>")
 
     for name, rows in by_team.items():
-        html.append(f'<div class="drop-panel" data-team="{name}" style="display:none">')
+        html.append(f'<div class="drop-panel" data-team="{esc(name)}" style="display:none">')
         html.append('<div class="table-scroll"><table class="pickups-table">')
         html.append(
             "<thead><tr>"
@@ -269,7 +270,7 @@ def drop_recommendations_html(by_team: dict, best_pickup: dict | None = None) ->
             html.append(
                 "<tr>"
                 f"<td>{i}</td>"
-                f'<td class="pickup-name">{r["name"]}{tags}</td>'
+                f'<td class="pickup-name">{esc(r["name"])}{tags}</td>'
                 f"<td>{r['pos']}</td>"
                 f'<td class="team-abbrev">{r["abbrev"] or "—"}</td>'
                 f"<td>{r['n_games']}</td>"
@@ -329,7 +330,7 @@ def suggested_pickups_html(rows: list[dict], week: int) -> str:
         html.append(
             "<tr>"
             f"<td>{i}</td>"
-            f'<td class="pickup-name">{r["name"]}{tag}</td>'
+            f'<td class="pickup-name">{esc(r["name"])}{tag}</td>'
             f"<td>{r['pos']}</td>"
             f'<td class="team-abbrev">{r["abbrev"]}</td>'
             f"<td>{r['n_games']}</td>"

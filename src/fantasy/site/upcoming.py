@@ -21,6 +21,7 @@ from datetime import datetime
 import pandas as pd
 
 from gordstats.frontmatter import liquid
+from gordstats.jsonio import script_json
 
 from fantasy.config import (
     LEAGUE_TEAMS, LEAGUE_TZ, UPCOMING_SEASON, UPCOMING_YEAR,
@@ -223,7 +224,7 @@ def _rows(df: pd.DataFrame) -> list:
 
 def _table_js(rows) -> str:
     """The board's data + renderer. Wrapped in {% raw %} so Liquid leaves it alone."""
-    cfg = json.dumps({
+    cfg = script_json({
         "rows": rows,
         "sites": [_FIELDS.index(s) for s in SOURCES],
         "avg": _FIELDS.index("Avg"),
@@ -236,7 +237,7 @@ def _table_js(rows) -> str:
         "moves": {key: _FIELDS.index(spec["move"]) for key, spec in WINDOWS.items()},
         "moveHeads": {key: [spec["short"], _TIPS[spec["move"]]] for key, spec in WINDOWS.items()},
         "minMove": MIN_MOVE,
-    }, separators=(",", ":")).replace("</", "<\\/")
+    }, separators=(",", ":"))
     return """{% raw %}<script>
 (function(){
 var CFG=""" + cfg + """;

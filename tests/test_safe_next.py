@@ -30,6 +30,10 @@ CASES = {
     "javascript:alert(1)": "/",
     "https://www.gordstats.com/profile/": "/profile/",
     "/%5Cevil.com": "/%5Cevil.com",          # still encoded: a path here, harmless
+    # A path that resolves to "//host" is another site in a Location header.
+    "/.//evil.example/x": "/evil.example/x",
+    "https://www.gordstats.com//evil.example/x": "/evil.example/x",
+    "/a/..//evil.example": "/evil.example",
 }
 
 
@@ -49,3 +53,4 @@ def test_next_stays_on_this_site(browser, raw, expected):
     # And wherever it points, the browser lands on this origin.
     landed = browser.evaluate(f"new URL({json.dumps(got)}, {json.dumps(ORIGIN)}).origin")
     assert landed == ORIGIN
+    assert not got.startswith("//")

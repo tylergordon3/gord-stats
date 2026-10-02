@@ -83,12 +83,15 @@ JS = """{% raw %}<script>
   var hoops=null, hoopTeams=null, hoopTimer=null, hoopLoading=false;
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function starred(prefix){
     var list=[];
     try{ list=JSON.parse(localStorage.getItem('gs:favorites')||'[]')||[]; }catch(e){}
+    // A value some other build wrote ('{}', or one key as a bare string) is
+    // no list: the card would otherwise throw on it and never draw.
+    if(!Array.isArray(list)) list=[];
     return list.filter(function(k){ return typeof k==='string' && k.indexOf(prefix)===0; });
   }
   function cfbStars(){ return CFB_ON?starred('cfb:').map(function(k){ return k.slice(4); }):[]; }
@@ -97,12 +100,16 @@ JS = """{% raw %}<script>
     return '<img src="'+esc(src)+'" alt="" width="24" height="24" loading="lazy">';
   }
   function day(t, known){
+    if(t==null||t==='') return 'TBA';           // not 1970's Wednesday evening
     var d=new Date(t);
-    var s=d.toLocaleDateString(undefined,{weekday:'short'});
-    if(!known) return s+' &middot; TBA';
-    return s+' '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+    // A game with no time yet is filed at midnight Eastern of its day: in the
+    // reader's own zone, west of Eastern, that midnight is still Friday.
+    if(!known) return d.toLocaleDateString(undefined,{weekday:'short',timeZone:'America/New_York'})+' &middot; TBA';
+    return d.toLocaleDateString(undefined,{weekday:'short'})+' '
+      +d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
   }
   function rk(r){ return r?'<span class="rk">'+esc(r)+'</span>':''; }
+  function score(v){ return v==null||v===''?null:(Number(v)||0); }
   function result(mine, theirs, extra){
     var won=mine>theirs;
     return {when:(won?'W ':mine<theirs?'L ':'T ')+mine+'&ndash;'+theirs+(extra||''),
@@ -178,7 +185,8 @@ JS = """{% raw %}<script>
   }
   function hoopRow(x){
     var g=x.g, side=x.side, other=side==='home'?'away':'home', st=hoopState(g);
-    var mine=g[side+'_score'], theirs=g[other+'_score'];
+    // Scores reach innerHTML: numbers only, whatever the feed holds.
+    var mine=score(g[side+'_score']), theirs=score(g[other+'_score']);
     var o={href:'/men/', logo:img(encodeURI(hoopTeams[x.key][1])), me:g[side+'_team'],
            them:g[other+'_team']||'TBD', rank:g[side+'_rank'], theirRank:g[other+'_rank'],
            at:side==='home'?'vs':'at', live:st==='in', t:Date.parse(g.start_time_utc)};
@@ -250,13 +258,29 @@ JS = """{% raw %}<script>
     return isNaN(t)?0:t;
   }
 
+  /** A wake-up at the next kickoff of `ts` (ms), within a day: the card was
+   *  drawn once and showed "Sat 3:30 PM" through the game. Half a minute in,
+   *  so the scoreboard has the game going. */
+  function wake(ts, fn){
+    var now=Date.now();
+    var next=ts.filter(function(t){ return t>now; }).sort(function(a,b){ return a-b; })[0];
+    if(next==null || next-now>864e5) return null;
+    return setTimeout(fn, next-now+30000);
+  }
+
   /** Football scores for every game of the reader's on right now, from the proxy. */
   function poll(){
     clearTimeout(timer);
     if(!cfb) return;
     var set={}; cfbStars().forEach(function(i){ set[i]=1; });
-    var now=cfb.games.filter(function(g){ return (set[g.home.id]||set[g.away.id]) && cfbOnNow(g); });
-    if(!now.length) return;
+    var mine=cfb.games.filter(function(g){ return set[g.home.id]||set[g.away.id]; });
+    var now=mine.filter(cfbOnNow);
+    if(!now.length){
+      timer=wake(mine.filter(function(g){ return ((live[g.id]||{}).state||g.state)==='pre'; })
+        .map(function(g){ return Date.parse(g.kickoff); }).filter(function(t){ return !isNaN(t); }),
+        function(){ draw(); poll(); });
+      return;
+    }
     if(document.hidden){ timer=setTimeout(poll,60000); return; }
     var asks={};
     now.forEach(function(g){ asks[g.week+'|'+g.seasontype]=g; });
@@ -274,6 +298,10 @@ JS = """{% raw %}<script>
         });
       });
       draw();
+    }).catch(function(e){
+      if(window.console) console.error('[my-teams]', e);
+    }).then(function(){
+      clearTimeout(timer);
       timer=setTimeout(poll,60000);
     });
   }
@@ -300,7 +328,17 @@ JS = """{% raw %}<script>
   /** The scoreboard is pushed every ten minutes: a few polls a push is plenty. */
   function pollHoops(){
     clearTimeout(hoopTimer);
-    if(!hoops || !hoopGames().some(function(x){ return hoopOnNow(x.g); })) return;
+    if(!hoops) return;
+    var games=hoopGames();
+    if(!games.some(function(x){ return hoopOnNow(x.g); })){
+      // Nothing on: wake at the next tip-off of the reader's (the scoreboard
+      // is fetched on the poll after it, once the feed has the game going).
+      hoopTimer=wake(games.filter(function(x){ return hoopState(x.g)==='pre'; })
+        .map(function(x){ return Date.parse(x.g.start_time_utc); })
+        .filter(function(t){ return !isNaN(t); }),
+        function(){ draw(); pollHoops(); });
+      return;
+    }
     if(document.hidden){ hoopTimer=setTimeout(pollHoops,60000); return; }
     hoopTimer=setTimeout(function(){ hoopScores().then(function(){ draw(); pollHoops(); }); },180000);
   }

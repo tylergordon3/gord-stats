@@ -47,12 +47,26 @@
     select.appendChild(opt);
   });
 
-  // Restore previous selection
-  const saved = localStorage.getItem("conference");
-  if (saved) select.value = saved;
+  // Storage can be blocked outright (a browser's privacy setting), and then
+  // every touch throws - which stopped this script before the dropdown was
+  // wired up at all.
+  function load(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function store(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) { /* this view only */ }
+  }
+
+  // Restore the previous selection - only if it is still a choice. A
+  // conference saved on the other league's page (or one since renamed) set
+  // the dropdown to nothing, and every block was hidden.
+  const saved = load("conference");
+  if (saved && Array.prototype.some.call(select.options, o => o.value === saved)) {
+    select.value = saved;
+  }
 
   function updateConference() {
-    const selected = select.value;
+    const selected = select.value || "ALL";
 
     blocks.forEach(block => {
       const conf = block.dataset.conference;
@@ -60,7 +74,7 @@
         selected === "ALL" || conf === selected ? "" : "none";
     });
 
-    localStorage.setItem("conference", selected);
+    store("conference", selected);
   }
 
   select.addEventListener("change", updateConference);
