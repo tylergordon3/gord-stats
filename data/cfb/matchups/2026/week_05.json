@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-02T15:44:15+00:00",
+ "fetched": "2026-10-02T19:38:46+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -17,7 +17,7 @@
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
      "points": 0.0,
-     "projected": 181.15,
+     "projected": 181.11,
      "win_probability": 0.67
     },
     {
@@ -40,15 +40,15 @@
      "team_key": "474.l.21318.t.2",
      "name": "Mike Locksley",
      "points": 0.0,
-     "projected": 196.07,
-     "win_probability": 0.75
+     "projected": 194.02,
+     "win_probability": 0.71
     },
     {
      "team_key": "474.l.21318.t.10",
      "name": "I Stand With Diggs",
      "points": 0.0,
-     "projected": 156.43,
-     "win_probability": 0.25
+     "projected": 160.05,
+     "win_probability": 0.29000000000000004
     }
    ]
   },
@@ -63,15 +63,15 @@
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
-     "projected": 181.65,
-     "win_probability": 0.65
+     "projected": 185.81,
+     "win_probability": 0.67
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 159.35,
-     "win_probability": 0.35
+     "win_probability": 0.32999999999999996
     }
    ]
   },
@@ -109,15 +109,15 @@
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
      "points": 0.0,
-     "projected": 124.33,
-     "win_probability": 0.14
+     "projected": 125.41,
+     "win_probability": 0.15000000000000002
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 185.61,
-     "win_probability": 0.86
+     "projected": 182.95,
+     "win_probability": 0.85
     }
    ]
   }
@@ -929,12 +929,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "470796",
-    "player": "Tony Diaz",
+    "yahoo_id": "450275",
+    "player": "Yamir Knight",
     "pos": "WR",
-    "team": "IOWA",
-    "team_full": "Iowa Hawkeyes",
-    "bye": 7.0,
+    "team": "SMU",
+    "team_full": "SMU Mustangs",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -981,6 +981,20 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
+    "points": 0.0,
+    "stats": {}
+   },
+   {
+    "yahoo_id": "470796",
+    "player": "Tony Diaz",
+    "pos": "WR",
+    "team": "IOWA",
+    "team_full": "Iowa Hawkeyes",
+    "bye": 7.0,
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
+    "slot": "BN",
     "points": 0.0,
     "stats": {}
    },
@@ -1050,20 +1064,6 @@
     "status": "Q",
     "status_full": "Questionable",
     "injury_note": "Shoulder",
-    "slot": "BN",
-    "points": 0.0,
-    "stats": {}
-   },
-   {
-    "yahoo_id": "450275",
-    "player": "Yamir Knight",
-    "pos": "WR",
-    "team": "SMU",
-    "team_full": "SMU Mustangs",
-    "bye": 6.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
     "slot": "BN",
     "points": 0.0,
     "stats": {}
@@ -2536,7 +2536,7 @@
   "457379": 12.02,
   "457918": 9.75,
   "482918": 0.0,
-  "900104": 15.36,
+  "900104": 15.32,
   "405071": 22.7,
   "469436": 22.45,
   "455519": 17.81,
@@ -2550,7 +2550,7 @@
   "468459": 12.17,
   "404365": 8.88,
   "900027": 8.97,
-  "470211": 30.78,
+  "470211": 28.73,
   "405249": 27.35,
   "404522": 24.55,
   "457825": 15.43,
@@ -2573,14 +2573,14 @@
   "456220": 15.57,
   "406054": 13.27,
   "457217": 13.93,
-  "470796": 11.57,
+  "450275": 15.19,
   "405765": 8.0,
   "457872": 14.31,
   "404810": 11.53,
+  "470796": 11.57,
   "404631": 8.76,
-  "450275": 15.19,
   "900073": 6.75,
-  "470424": 24.49,
+  "470424": 28.65,
   "405815": 28.8,
   "404291": 17.74,
   "457591": 11.68,
@@ -2633,7 +2633,7 @@
   "456249": 11.19,
   "900068": 9.48,
   "407183": 23.84,
-  "448820": 15.02,
+  "448820": 16.1,
   "338839": 12.85,
   "457893": 17.05,
   "405075": 8.87,
@@ -2649,7 +2649,7 @@
   "333785": 29.77,
   "455480": 32.15,
   "456340": 25.43,
-  "405130": 20.67,
+  "405130": 17.97,
   "457039": 12.3,
   "470091": 13.02,
   "457038": 8.46,
@@ -2661,6 +2661,6 @@
   "456218": 4.62,
   "456178": 12.5,
   "455505": 13.96,
-  "900086": 10.11
+  "900086": 10.15
  }
 }
