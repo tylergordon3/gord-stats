@@ -78,10 +78,27 @@ position - is on <a href="/fantasy/strength/">Matchup Strength</a>.</p>"""
 # Rankings table
 # --------------------------------------------------------------------------- #
 
-def _record(wins: float) -> str:
+def _rules(table: pd.DataFrame) -> tuple:
+    """(regular-season weeks, playoff field) the table was simulated under -
+    Sleeper's settings as power.rankings read them, the league's usual ones
+    for a table that does not say."""
+    rules = table.attrs.get("rules") or {}
+    return (int(rules.get("weeks") or FANTASY_REG_WEEKS),
+            int(rules.get("playoff_teams") or power.PLAYOFF_TEAMS))
+
+
+def _record(wins: float, weeks: int = FANTASY_REG_WEEKS) -> str:
     """Projected wins as a record. Each week awards two: opponent and median."""
-    games = FANTASY_REG_WEEKS * 2
+    games = weeks * 2
     return f"{wins:.1f}-{games - wins:.1f}"
+
+
+def _wlt(wins: float, losses: float, ties: float = 0) -> str:
+    """The record so far as Sleeper writes it, W-L-T, from wins and losses
+    that count a tie as half of each (power.actual_results)."""
+    ties = 0 if pd.isna(ties) else int(round(float(ties)))
+    w, lost = float(wins) - ties / 2, float(losses) - ties / 2
+    return f"{w:.0f}-{lost:.0f}" + (f"-{ties}" if ties else "")
 
 
 def _signed(v) -> str:
@@ -173,8 +190,11 @@ def _rankings_table(table: pd.DataFrame) -> str:
     # record, then the playoff and title odds - with the rating the rows are
     # ranked by after it, and the movement and the parts of the blend last.
     if in_season:
-        display["Record"] = (table["wins"].astype(int).astype(str) + "-"
-                             + table["losses"].astype(int).astype(str))
+        # W-L-T: a tie is half of each in the wins, and astype(int) used to
+        # round the half away.
+        ties = table["ties"] if "ties" in table.columns else pd.Series(0, index=table.index)
+        display["Record"] = [_wlt(w, lost, t) for w, lost, t
+                             in zip(table["wins"], table["losses"], ties)]
     display["Playoffs"] = table["playoff_odds"]
     display["Title"] = table["title_odds"]
     display[rating] = table["combined"] if blended else table["power"]
@@ -182,7 +202,8 @@ def _rankings_table(table: pd.DataFrame) -> str:
     if blended:
         display["GordStats"] = table["power"]
         display[short] = table["ext_vorp"]
-    display["Proj. Record"] = table["proj_wins"].map(_record)
+    weeks, _ = _rules(table)
+    display["Proj. Record"] = table["proj_wins"].map(lambda w: _record(w, weeks))
     if in_season:
         display["Luck"] = table["luck"]
 
@@ -361,42 +382,52 @@ def _season_section() -> str:
     pivot = hist.pivot_table(index="taken", columns="manager", values=column).sort_index()
     order = [m for m in pivot.iloc[-1].sort_values(ascending=False).index]
 
-    cols = 5
-    fig_rows = int(np.ceil(len(order) / cols))
-    fig, axes = plt.subplots(fig_rows, cols, figsize=(11, 2.5 * fig_rows),
-                             sharex=True, sharey=True)
-    axes = np.atleast_1d(axes).ravel()
+    def draw(phone: bool = False):
+        # Five panels a row on a desktop; two on a phone, drawn for its width
+        # with bigger type - the five-wide grid squeezed onto a phone set its
+        # labels at about 5px.
+        cols = 2 if phone else 5
+        fig_rows = int(np.ceil(len(order) / cols))
+        size = (4.2, 1.6 * fig_rows + 0.2) if phone else (11, 2.5 * fig_rows)
+        fig, axes = plt.subplots(fig_rows, cols, figsize=size, sharex=True, sharey=True)
+        axes = np.atleast_1d(axes).ravel()
 
-    for ax, manager in zip(axes, order):
-        # Ten lines on one pair of axes is a tangle and needs ten colours nobody
-        # can tell apart. One panel each, with the rest kept as grey context, so
-        # a team is read against the league instead of against a legend.
-        for other in pivot.columns:
-            ax.plot(pivot.index, pivot[other], color=CONTEXT, linewidth=1.0, zorder=1)
-        ax.plot(pivot.index, pivot[manager], color=SOURCE_COLOURS["us"],
-                linewidth=2.0, marker="o", markersize=4, zorder=3)
-        ax.axhline(100, color=MUTED, linewidth=0.9, linestyle="--", zorder=2)
-        ax.set_title(manager, fontsize=10)
-        ax.grid(color=GRIDLINE)
-        ax.set_axisbelow(True)
-        for spine in ("top", "right"):
-            ax.spines[spine].set_visible(False)
-        ax.tick_params(labelsize=8)
-        # Ten panels share one x-axis; full ISO dates on each collide into a
-        # smear. A handful of "Sep 3" ticks is all a reader needs here.
-        ax.xaxis.set_major_locator(mdates.AutoDateLocator(minticks=2, maxticks=4))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %-d"))
-        for label in ax.get_xticklabels():
-            label.set_rotation(30)
-            label.set_horizontalalignment("right")
-    for ax in axes[len(order):]:
-        ax.set_visible(False)
+        for ax, manager in zip(axes, order):
+            # Ten lines on one pair of axes is a tangle and needs ten colours nobody
+            # can tell apart. One panel each, with the rest kept as grey context, so
+            # a team is read against the league instead of against a legend.
+            for other in pivot.columns:
+                ax.plot(pivot.index, pivot[other], color=CONTEXT, linewidth=1.0, zorder=1)
+            ax.plot(pivot.index, pivot[manager], color=SOURCE_COLOURS["us"],
+                    linewidth=2.0, marker="o", markersize=4, zorder=3)
+            ax.axhline(100, color=MUTED, linewidth=0.9, linestyle="--", zorder=2)
+            ax.set_title(manager, fontsize=11 if phone else 10)
+            ax.grid(color=GRIDLINE)
+            ax.set_axisbelow(True)
+            for spine in ("top", "right"):
+                ax.spines[spine].set_visible(False)
+            ax.tick_params(labelsize=9 if phone else 8)
+            # Ten panels share one x-axis; full ISO dates on each collide into a
+            # smear. A handful of "Sep 3" ticks is all a reader needs here.
+            ax.xaxis.set_major_locator(mdates.AutoDateLocator(minticks=2,
+                                                              maxticks=3 if phone else 4))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %-d"))
+            for label in ax.get_xticklabels():
+                label.set_rotation(30)
+                label.set_horizontalalignment("right")
+        for ax in axes[len(order):]:
+            ax.set_visible(False)
 
-    fig.suptitle("Published rating through the season, one panel per team", y=1.0)
-    fig.tight_layout()
-    chart = charts.save(_SECTION, "season-trend",
-                        alt="One small chart per team showing its rating across every "
-                            "build, with the rest of the league in grey behind it")
+        # The section's own heading says it on a phone; there the line is room.
+        if not phone:
+            fig.suptitle("Published rating through the season, one panel per team", y=1.0)
+        fig.tight_layout()
+
+    draw()
+    chart = charts.save_picture(_SECTION, "season-trend", lambda: draw(phone=True),
+                                alt="One small chart per team showing its rating across "
+                                    "every build, with the rest of the league in grey "
+                                    "behind it")
     first, last = pivot.index[0], pivot.index[-1]
     swing = (pivot.iloc[-1] - pivot.iloc[0])
     up, down = swing.idxmax(), swing.idxmin()
@@ -422,7 +453,7 @@ def _range_chart(table: pd.DataFrame) -> str:
                 markersize=7)
     ax.set_yticks(positions)
     ax.set_yticklabels(ordered["manager"])
-    ax.set_xlabel(f"projected wins (of {FANTASY_REG_WEEKS * 2})")
+    ax.set_xlabel(f"projected wins (of {_rules(table)[0] * 2})")
     ax.set_title("Projected wins, with the middle 80% of simulated seasons")
     ax.grid(axis="x", color="#e2e8f0")
     ax.set_axisbelow(True)
@@ -757,7 +788,7 @@ def body() -> str:
         return (f"<div id='pw-intro'>{PRE_DRAFT}</div>" + my_league.bar()
                 + "<section id='mine' class='pw-section'>"
                 + "<h2 id='pw-mine-h'>Your League</h2>"
-                + my_power.section() + "</section>"
+                + my_power.section(int(UPCOMING_YEAR)) + "</section>"
                 + "<div id='pw-built'>" + _TABLE_CSS + layout.details(
                     "Method &mdash; what this will measure, and how well it works",
                     _method_section(), open=True, anchor="method")
@@ -770,7 +801,7 @@ def body() -> str:
     stakes_week, stakes_teams = _stakes(table)
     stakes.write(STAKES_OUT, stakes_week, stakes_teams)
     content = {
-        "mine": my_power.section(),
+        "mine": my_power.section(int(UPCOMING_YEAR)),
         "rankings": _rankings_section(table),
         "playoffs": _playoffs_section(table, stakes_week, stakes_teams),
         "stakes": stakes.table(stakes_week, stakes_teams) if stakes_week else "",
@@ -819,7 +850,13 @@ def _stakes(table: pd.DataFrame) -> tuple:
     played. Over is either test saying so - the week's archive final (every
     game over, every side scored: what the matchups page goes by), or
     Sleeper's display week past it - since Sleeper keeps a finished week on
-    display into Tuesday."""
+    display into Tuesday.
+
+    The archive is read through week_matchups, which refetches a week not
+    yet final once its copy is a few hours old: this page builds before the
+    matchups page that keeps the archive current (rebuild.PAGES - it writes
+    the stakes that page reads), so the file alone could still be Sunday
+    evening's on Tuesday, and a decided week kept its stakes."""
     teams = stakes.teams_from(table, "roster_id", "manager")
     if not teams:
         return None, {}
@@ -827,12 +864,17 @@ def _stakes(table: pd.DataFrame) -> tuple:
     over = league_matchups.weeks_over(UPCOMING_YEAR)
     if over is not None and week <= over:
         return None, {}
-    path = league_matchups._path(week, UPCOMING_YEAR)
     try:
-        if path.exists() and league_matchups.week_final(json.loads(path.read_text())):
-            return None, {}
-    except (OSError, ValueError):
-        pass
+        data = league_matchups.week_matchups(week, UPCOMING_YEAR)
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! week {week} matchups not refreshed ({exc}); the archive as it is")
+        path = league_matchups._path(week, UPCOMING_YEAR)
+        try:
+            data = json.loads(path.read_text()) if path.exists() else {}
+        except (OSError, ValueError):
+            data = {}
+    if data and league_matchups.week_final(data):
+        return None, {}
     return week, teams
 
 
@@ -847,7 +889,8 @@ def _playoffs_section(table: pd.DataFrame, week, teams: dict) -> str:
     if "wins" not in table.columns or int(table["week"].iloc[0]) == 0:
         return ""
     played = int(table["week"].iloc[0])
-    left = 2 * max(FANTASY_REG_WEEKS - played, 0)
+    weeks, field = _rules(table)
+    left = 2 * max(weeks - played, 0)
     rows = {}
     for _, r in table.iterrows():
         key = str(int(r["roster_id"]))
@@ -856,7 +899,6 @@ def _playoffs_section(table: pd.DataFrame, week, teams: dict) -> str:
                      "losses": float(r["losses"]), "left": left,
                      "pf": float(r["points_for"]), "odds": float(r["playoff_odds"]),
                      "opp": split.get("opp"), "win": split.get("win")}
-    field = power.PLAYOFF_TEAMS
     for problem in clinch.check(rows, clinch.picture(rows, field, clinch.byes(field), True)):
         print(f"  ! playoff picture: {problem}")
     _CARD["picture"] = dict(week=week, teams=rows, spots=field, bye_spots=clinch.byes(field),

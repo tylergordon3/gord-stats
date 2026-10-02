@@ -28,7 +28,10 @@ is different:
   * **The bracket.** Six teams over three weeks with two byes is this league.
     The bracket here is built for whatever `playoff_teams` says, seeded the
     standard way, with byes for the top seeds when the field is not a power of
-    two.
+    two, and redrawn each round (best seed left against worst left) where
+    `playoff_seed_type` says the league reseeds - this one does. Once the
+    regular season is in, the playoff weeks played and the rounds Sleeper's
+    winners bracket has decided are taken as they happened.
 
   * **The median win.** This league awards one every week and most do not.
     It is `settings.league_average_match`, and quietly assuming it doubles
@@ -251,29 +254,77 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
     return Math.round(Math.log(size) / Math.LN2);
   }
 
-  /** The champion's team index, from playoff-week points and the seeding. */
-  function runBracket(points, seeds, week0){
+  /** The champion's team index, from playoff-week points and the seeding.
+   *
+   * Round one is the standard draw, byes to the top seeds. After it the
+   * bracket is fixed - the 1 seed meets the 4/5 winner - or, `reseed`
+   * (Sleeper's playoff_seed_type 1), redrawn every round so the best seed
+   * left meets the worst left. Higher points wins, the better seed on a tie.
+   * `decided` is [[team index, ...] per round]: whoever Sleeper's winners
+   * bracket says lost a round already played loses it here too, and every
+   * round after. fantasy.league.power._bracket is the same bracket in Python.
+   */
+  function runBracket(points, seeds, week0, reseed, decided){
     var size = 1;
     while(size < seeds.length) size *= 2;
     var order = bracketOrder(size);
+    // Bracket positions as seed numbers (0 is the top seed), -1 a bye.
     var field = [];
-    for(var i = 0; i < size; i++){
-      var seed = order[i];
-      field.push(seed <= seeds.length ? seeds[seed - 1] : -1);   // -1 is a bye
-    }
-    var week = week0;
+    for(var i = 0; i < size; i++) field.push(order[i] <= seeds.length ? order[i] - 1 : -1);
+    var round = 0, out = {};
     while(field.length > 1){
+      var lost = decided && decided[round];
+      if(lost) for(var q = 0; q < lost.length; q++) out[lost[q]] = 1;
+      var week = points[week0 + round] || points[points.length - 1];
       var next = [];
       for(var j = 0; j < field.length; j += 2){
         var a = field[j], b = field[j + 1];
         if(a < 0){ next.push(b); continue; }
         if(b < 0){ next.push(a); continue; }
-        next.push(points[week][a] >= points[week][b] ? a : b);
+        var pa = out[seeds[a]] ? -Infinity : week[seeds[a]];
+        var pb = out[seeds[b]] ? -Infinity : week[seeds[b]];
+        next.push(pa >= pb ? a : b);
+      }
+      if(reseed && next.length > 2){
+        // Best left against worst left: sorted, then paired from the ends.
+        next.sort(function(x, y){ return x - y; });
+        var paired = [];
+        for(var k = 0; k < next.length / 2; k++) paired.push(next[k], next[next.length - 1 - k]);
+        next = paired;
       }
       field = next;
-      week++;
+      round++;
     }
-    return field[0];
+    return seeds[field[0]];
+  }
+
+  /** One week's results added into `h2h` and `med` (arrays by team): a win
+   *  is 1 and a tie half of one, as Sleeper's W-L-T counts it in a standings
+   *  race. The median game is won by scoring above the week's median - in an
+   *  even league the mean of the middle two, so two teams level across it
+   *  take half each; an odd league's top half by rank wins it, as before.
+   *  fantasy.league.power.actual_results counts the played weeks the same. */
+  function weekWins(row, pairs, median, h2h, med){
+    var n = row.length, t;
+    if(pairs){
+      for(t = 0; t < n; t++){
+        var o = pairs[t];
+        if(o == null || o < 0 || o === t) continue;
+        if(row[t] > row[o]) h2h[t] += 1;
+        else if(row[t] === row[o]) h2h[t] += 0.5;
+      }
+    }
+    if(!median || n < 2) return;
+    var order = [];
+    for(t = 0; t < n; t++) order.push(t);
+    order.sort(function(a, b){ return row[b] - row[a]; });
+    var half = Math.floor(n / 2);
+    if(n % 2 === 0){
+      var mid = (row[order[half - 1]] + row[order[half]]) / 2;
+      for(t = 0; t < n; t++) med[t] += row[t] > mid ? 1 : row[t] === mid ? 0.5 : 0;
+    } else {
+      for(var r = 0; r < half; r++) med[order[r]] += 1;
+    }
   }
 
   /** (weeks, teams) opponent indices from a randomly rotated circle.
@@ -348,6 +399,15 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
     var played = Math.min(actual.length, regular);
     var schedule = spec.schedule || null;
     var median = !!spec.median;
+    // The bracket as the league plays it, and as far as it has been played:
+    // `playoffActual` is the real scores of the playoff weeks over, `decided`
+    // who Sleeper's winners bracket has knocked out, round by round. Both only
+    // once every regular week is in - a team knocked out stops holding title
+    // odds, as fantasy.league.power has it (playoff_points, bracket_losers).
+    var reseed = !!spec.reseed;
+    var over = played >= regular;
+    var playoffActual = over ? (spec.playoffActual || []).slice(0, playoffWeeks) : [];
+    var decided = over ? (spec.decided || null) : null;
 
     var n = players.length;
     var mu = new Float64Array(n), sd = new Float64Array(n),
@@ -444,6 +504,9 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
       for(week = 0; week < played; week++){
         for(t = 0; t < teams; t++) weekPoints[week][t] = actual[week][t];
       }
+      for(week = 0; week < playoffActual.length; week++){
+        for(t = 0; t < teams; t++) weekPoints[regular + week][t] = playoffActual[week][t] || 0;
+      }
 
       var table = schedule || roundRobin(rng, teams, regular);
       var seasonWins = new Float64Array(teams), seasonPoints = new Float64Array(teams);
@@ -453,23 +516,7 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
           seasonPoints[t] += row[t];
           if(week >= played) restPoints[t] += row[t];
         }
-        var pairs = table[week % table.length];
-        if(pairs){
-          for(t = 0; t < teams; t++){
-            var opponent = pairs[t];
-            if(opponent != null && opponent >= 0 && opponent !== t &&
-               row[t] > row[opponent]) seasonWins[t] += 1;
-          }
-        }
-        if(median){
-          // The top half of the league takes a second win. Ranking the week's
-          // scores is the same thing as comparing each to the median, and it
-          // does not need a tie-break rule of its own.
-          var order2 = [];
-          for(t = 0; t < teams; t++) order2.push(t);
-          order2.sort(function(a, b){ return row[b] - row[a]; });
-          for(var r = 0; r < Math.floor(teams/2); r++) seasonWins[order2[r]] += 1;
-        }
+        weekWins(row, table[week % table.length], median, seasonWins, seasonWins);
       }
 
       var seeded = [];
@@ -478,8 +525,8 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
         return (seasonWins[b] - seasonWins[a]) || (seasonPoints[b] - seasonPoints[a]);
       });
       var seeds = seeded.slice(0, playoffTeams);
-      for(r = 0; r < seeds.length; r++) madePlayoffs[seeds[r]] += 1;
-      if(playoffWeeks > 0) titles[runBracket(weekPoints, seeds, regular)] += 1;
+      for(var r = 0; r < seeds.length; r++) madePlayoffs[seeds[r]] += 1;
+      if(playoffWeeks > 0) titles[runBracket(weekPoints, seeds, regular, reseed, decided)] += 1;
 
       for(t = 0; t < teams; t++){
         wins[t].push(seasonWins[t]);
@@ -529,6 +576,7 @@ SIM_JS = """{% raw %}<script id="gs-power-sim">
   }
 
   root.GSPower = {run:run, bracketOrder:bracketOrder, bracketRounds:bracketRounds,
+                  runBracket:runBracket, weekWins:weekWins,
                   startingSlots:startingSlots, preparePlayers:preparePlayers,
                   slotOrders:slotOrders, ELIGIBLE:ELIGIBLE, Rng:Rng};
 
@@ -598,9 +646,69 @@ window.GSPowerLeague = (function(){
     });
   }
 
+  /** [[seat, ...] per round]: who Sleeper's winners bracket says lost each
+   *  round already decided, seats indexed by `order` - or null before any.
+   *  Only elimination games: a team is out from the round after its first
+   *  loss, and a game with an out team in it is a placement game (third,
+   *  fifth) and is not read. fantasy.league.power.bracket_losers, here. */
+  function losers(rows, order){
+    var index={}, out={}, rounds={}, res=[];
+    order.forEach(function(rid, i){ index[String(rid)]=i; });
+    (rows||[]).forEach(function(m){ if(m&&m.r!=null) rounds[+m.r]=1; });
+    Object.keys(rounds).map(Number).sort(function(a,b){ return a-b; }).forEach(function(r){
+      var lost=[];
+      rows.forEach(function(m){
+        if(!m||m.r==null||+m.r!==r) return;
+        if(typeof m.t1!=='number'||typeof m.t2!=='number') return;
+        if(out[m.t1]||out[m.t2]||m.w==null||m.l==null) return;
+        lost.push(m.l);
+      });
+      lost.forEach(function(l){ out[l]=1; });
+      res.push(lost.map(function(l){ return index[String(l)]; })
+        .filter(function(v){ return v!=null; }));
+    });
+    return res.some(function(x){ return x.length; })?res:null;
+  }
+
+  /** The playoffs as far as they have gone, once the regular season is in:
+   *  {actual: each playoff week Sleeper has scored, a score per seat (0 for a
+   *  team not playing), decided: losers(winners_bracket)}. */
+  function playoffs(id, first, rounds, scored, order){
+    var want=[];
+    for(var w=first; w<first+rounds && w<=scored; w++) want.push(w);
+    var index={};
+    order.forEach(function(rid, i){ index[String(rid)]=i; });
+    return Promise.all(want.map(function(w){
+      return get('/league/'+id+'/matchups/'+w);
+    }).concat([get('/league/'+id+'/winners_bracket')])).then(function(all){
+      var bracket=all.pop();
+      var actual=all.map(function(rows){
+        var week=order.map(function(){ return 0; });
+        (rows||[]).forEach(function(r){
+          var seat=index[String(r.roster_id)];
+          if(seat!=null&&typeof r.points==='number') week[seat]=r.points;
+        });
+        return week;
+      });
+      return {actual:actual, decided:losers(bracket||[], order)};
+    });
+  }
+
+  // The Workers running in each lane (see simulate).
+  var lanes={};
+
+  /** Stop every run in `lane`: each promise rejects with "superseded". */
+  function stop(lane){
+    (lanes[lane]||[]).slice().forEach(function(job){ job.stop(); });
+  }
+
   /** Run the simulation in a Worker built from its own <script> element,
-   *  falling back to the main thread if there is no Worker to be had. */
-  function simulate(spec){
+   *  falling back to the main thread if there is no Worker to be had.
+   *
+   *  `lane`, when given, files the run under a name that stop(lane) can end:
+   *  a reader tapping through deals should not leave a Worker grinding on
+   *  every deal passed over. Runs without one are left alone. */
+  function simulate(spec, lane){
     return new Promise(function(resolve, reject){
       var src=document.getElementById('gs-power-sim');
       var url=null, worker=null;
@@ -612,13 +720,23 @@ window.GSPowerLeague = (function(){
         try{ return resolve(window.GSPower.run(spec)); }
         catch(err){ return reject(err); }
       }
-      worker.onmessage=function(ev){
+      var job={};
+      function done(){
         worker.terminate(); URL.revokeObjectURL(url);
+        if(lane&&lanes[lane]){
+          var at=lanes[lane].indexOf(job);
+          if(at>=0) lanes[lane].splice(at, 1);
+        }
+      }
+      job.stop=function(){ done(); reject(new Error('superseded')); };
+      if(lane) (lanes[lane]=lanes[lane]||[]).push(job);
+      worker.onmessage=function(ev){
+        done();
         if(ev.data&&ev.data.ok) resolve(ev.data.result);
         else reject(new Error((ev.data&&ev.data.error)||'the simulation failed'));
       };
       worker.onerror=function(){
-        worker.terminate(); URL.revokeObjectURL(url);
+        done();
         try{ resolve(window.GSPower.run(spec)); }
         catch(err){ reject(err); }
       };
@@ -627,8 +745,15 @@ window.GSPowerLeague = (function(){
   }
 
   /** One league read into a simulation spec: {league, board, order, weeks,
-   *  played, run, spec}. The caller sets `sims` and anything else it needs. */
-  function setup(id){
+   *  played, run, spec}. The caller sets `sims` and anything else it needs.
+   *
+   *  `year` is the season the page is for (the board's, when not given). A
+   *  league saved in another season is rejected with Error('other-season'),
+   *  carrying `info` and `year` for GSAPI.otherSeason to word: last season's
+   *  rosters and schedule played out on this season's board are no season at
+   *  all. Checked before the rosters, which ESPN does not send for a season
+   *  that is over. */
+  function setup(id, year){
     return Promise.all([
       GSL.league(id),
       fetch('/fantasy/season-board.json').then(function(r){
@@ -636,7 +761,17 @@ window.GSPowerLeague = (function(){
     ]).then(function(o){
       var league=o[0], board=o[1];
       if(!board||!board.board) throw new Error('board');
+      var want=+year||+board.year||0;
+      if(league&&window.GSAPI&&GSAPI.otherSeason&&GSAPI.otherSeason(league.info, want)){
+        var other=new Error('other-season');
+        other.info=league.info; other.year=want;
+        throw other;
+      }
       if(!league||!league.rosters.length) throw new Error('league');
+      // Rosters and nobody on them: the league has not drafted. Simulated, it
+      // read as roster 1 winning every title on an empty lineup.
+      if(!league.rosters.some(function(r){ return (r.players||[]).length; }))
+        throw new Error('undrafted');
       var settings=(league.info&&league.info.settings)||{};
       var weeks=Math.max((settings.playoff_week_start||(DEFAULT_WEEKS+1))-1, 1);
       var order=league.rosters.map(function(r){ return r.roster_id; })
@@ -653,20 +788,37 @@ window.GSPowerLeague = (function(){
         // other - the rule fantasy.league.power.rankings follows.
         var scored=typeof settings.last_scored_leg==='number'?settings.last_scored_leg:weeks;
         var played=Math.min(run.played, board.week||0, weeks, scored);
+        var field=Math.min(Math.max(settings.playoff_teams||6, 2), order.length);
         var spec={board:board.board, posNames:board.pos, rosters:rosters,
                   slots:league.slots, basis:league.basis.index, weeks:weeks,
                   playoffTeams:settings.playoff_teams||6,
+                  // Sleeper's playoff_seed_type 1: the bracket is redrawn
+                  // every round, best seed left against worst left.
+                  reseed:settings.playoff_seed_type===1,
                   median:!!settings.league_average_match,
                   schedule:run.schedule,
                   actual:run.actual.slice(0, played),
                   sims:2000, seed:20260821};
-        return {league:league, board:board, order:order, weeks:weeks,
-                played:played, run:run, spec:spec};
+        var out={league:league, board:board, order:order, weeks:weeks,
+                 played:played, run:run, spec:spec};
+        if(played<weeks) return out;
+        // The regular season is in: the playoff weeks played are taken as
+        // they happened, and the rounds Sleeper has settled as it settled
+        // them - a team knocked out stops holding title odds.
+        var rounds=0;
+        while((1<<rounds)<field) rounds++;
+        return playoffs(id, weeks+1, rounds, scored, order)
+          .then(function(p){
+            spec.playoffActual=p.actual;
+            spec.decided=p.decided;
+            return out;
+          }, function(){ return out; });
       });
     });
   }
 
-  return {season:season, simulate:simulate, setup:setup};
+  return {season:season, simulate:simulate, stop:stop, setup:setup, losers:losers,
+          playoffs:playoffs};
 })();
 </script>{% endraw %}"""
 
@@ -686,6 +838,9 @@ JS = """{% raw %}<script>
     return;
   }
 
+  // The season this page ranks (section()): a league saved in another one
+  // says so rather than being simulated on this season's board.
+  var YEAR=parseInt(host.getAttribute('data-year')||'0',10)||0;
   var SIMS=10000;
   // What a reader sees while the full run finishes. Two thousand seasons is
   // a tenth of the work and lands within a point of the answer, so the table
@@ -693,8 +848,8 @@ JS = """{% raw %}<script>
   var FIRST=2000;
 
   function esc(v){
-    return String(v==null?'':v).replace(/[&<>"]/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
   }
   function pct(v){ return Math.round(v*100)+'%'; }
   // matplotlib's RdYlGn, the eleven anchors pandas interpolates between, so a
@@ -736,29 +891,33 @@ JS = """{% raw %}<script>
    *  scores deserved - fantasy.league.power.actual_records, in the browser.
    *  `actual` is one array of scores per played week, in `order`. */
   function records(actual, schedule, median){
-    var n=(actual[0]||[]).length, h2h=[], med=[], allplay=[];
-    for(var i=0;i<n;i++){ h2h.push(0); med.push(0); allplay.push(0); }
+    var n=(actual[0]||[]).length, h2h=[], med=[], ties=[], allplay=[];
+    for(var i=0;i<n;i++){ h2h.push(0); med.push(0); ties.push(0); allplay.push(0); }
     actual.forEach(function(week, w){
-      var pairs=(schedule&&schedule[w])||[];
+      // The sim's own count of a week (GSPower.weekWins): a tie is half a
+      // win, the median game is won above the median.
+      var a0=h2h.slice(), m0=med.slice();
+      GSPower.weekWins(week, (schedule&&schedule[w])||null, median, h2h, med);
       for(var a=0;a<n;a++){
-        var b=pairs[a];
-        if(b!=null&&b>=0&&week[a]>week[b]) h2h[a]+=1;
+        if(h2h[a]-a0[a]===0.5) ties[a]++;
+        if(med[a]-m0[a]===0.5) ties[a]++;
+        // All-play: a win over every team scored under, half over a level one.
+        for(var b=0;b<n;b++)
+          if(b!==a) allplay[a]+=week[a]>week[b]?1:(week[a]===week[b]?0.5:0);
       }
-      // Rank 0 is the week's top scorer, as the built page counts it.
-      var seats=[];
-      for(var i2=0;i2<n;i2++) seats.push(i2);
-      seats.sort(function(x,y){ return week[y]-week[x]; });
-      seats.forEach(function(seat, rank){
-        if(median && rank < Math.floor(n/2)) med[seat]+=1;
-        allplay[seat]+=(n-1)-rank;
-      });
     });
     var played=actual.length, perWeek=median?2:1;
     return h2h.map(function(w, i){
       var pct=played?allplay[i]/(played*(n-1)):0;
-      return {wins:w+med[i], losses:perWeek*played-(w+med[i]),
+      return {wins:w+med[i], losses:perWeek*played-(w+med[i]), ties:ties[i],
               luck:(w+med[i])-pct*perWeek*played};
     });
+  }
+  /** W-L-T, as Sleeper writes a record, from wins and losses that count a
+   *  tie as half of each. */
+  function wlt(r){
+    var t=r.ties||0;
+    return (r.wins-t/2)+'-'+(r.losses-t/2)+(t?'-'+t:'');
   }
 
   function table(result, names, order, settling, real){
@@ -782,7 +941,7 @@ JS = """{% raw %}<script>
       var mine=played&&real[seat[String(t.roster_id)]];
       return '<tr><td><span class="row-rank">'+(i+1)+'</span>'
         +esc(names[String(t.roster_id)]||('Roster '+t.roster_id))+'</td>'
-        +(played?'<td>'+(mine?mine.wins+'-'+mine.losses:'')+'</td>':'')
+        +(played?'<td>'+(mine?wlt(mine):'')+'</td>':'')
         +'<td style="'+shade(t.playoffOdds,po[0],po[1])+'">'+pct(t.playoffOdds)+'</td>'
         +'<td>'+pct(t.titleOdds)+'</td>'
         +'<td style="'+shade(t.power,pw[0],pw[1])+'">'+t.power.toFixed(1)+'</td>'
@@ -826,7 +985,7 @@ JS = """{% raw %}<script>
   host.innerHTML='<p class="mp-load">Reading '+esc(have.name||'your league')
     +'\\u2026</p>';
 
-  GSPowerLeague.setup(have.id).then(function(s){
+  GSPowerLeague.setup(have.id, YEAR).then(function(s){
     var league=s.league, order=s.order, run=s.run, spec=s.spec, played=s.played;
     spec.sims=FIRST;
     // What the played weeks actually returned, so the table can carry the
@@ -860,8 +1019,26 @@ JS = """{% raw %}<script>
     });
   }).catch(function(err){
     if(err instanceof TypeError) console.error(err);
-    host.innerHTML='<p class="mp-none">Could not rank this league. '
-      +'Sleeper may be busy \\u2014 try again in a minute.</p>';
+    var why=err&&err.message;
+    if(why==='undrafted'){
+      host.innerHTML='<p class="mp-none">'+esc(have.name||'This league')+' has not drafted '
+        +'yet. Its power rankings appear here after your draft.</p>';
+      return;
+    }
+    // Last season's league is not this season's ranking: say which it is,
+    // with the way to this season's.
+    if(why==='other-season'){
+      host.innerHTML=GSAPI.otherSeason(err.info, err.year, 'mp-none');
+      return;
+    }
+    // The league could not be read: in the words of the site it is on (an
+    // ESPN league kept private says how to open it), never "Sleeper may be
+    // busy" for a league that is not on Sleeper.
+    host.innerHTML='<p class="mp-none">'
+      +(why==='board' ? 'Could not read this site\\u2019s projections. Try again in a minute.'
+        : (why==='league'||err instanceof TypeError)&&window.GSAPI&&GSAPI.problem
+        ? GSAPI.problem(have.id)
+        : 'Could not rank this league. Try again in a minute.')+'</p>';
   });
 })();
 </script>{% endraw %}"""
@@ -872,5 +1049,9 @@ JS = """{% raw %}<script>
 JS = LEAGUE_JS + JS
 
 
-def section() -> str:
-    return CSS + "<div class='mp' id='mp-host'></div>"
+def section(year: int = 0) -> str:
+    """The host the script fills. `year` is the season the page ranks
+    (fantasy UPCOMING_YEAR): a reader's league saved in another season says
+    so instead of being simulated on this season's board."""
+    attr = f" data-year='{int(year)}'" if year else ""
+    return CSS + f"<div class='mp' id='mp-host'{attr}></div>"

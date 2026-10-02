@@ -626,8 +626,20 @@ def current_form(board: pd.DataFrame, year: int = UPCOMING_YEAR,
     try:
         weekly = weekly_points.build(year, refresh=refresh)
     except Exception as exc:
-        print(f"[projections] no {year} results yet ({exc}); staying preseason")
-        return board
+        # A refresh that fails (nflverse 404s for a while some nights) falls
+        # back to the last stored copy. Staying preseason is right only before
+        # any week is scored: a mid-season board published from the August
+        # curves moved every team's odds and was archived as a real snapshot
+        # (2026-09-30), so with weeks scored and nothing stored, fail loudly.
+        cached = weekly_points.path(year)
+        if refresh and cached.exists():
+            print(f"[projections] {year} refresh failed ({exc}); using the stored copy")
+            weekly = pd.read_parquet(cached)
+        elif through_week:
+            raise
+        else:
+            print(f"[projections] no {year} results yet ({exc}); staying preseason")
+            return board
     if through_week is not None:
         weekly = weekly[weekly["week"] <= through_week]
     if weekly.empty:

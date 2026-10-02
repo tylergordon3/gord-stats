@@ -19,7 +19,8 @@ Each simulated season:
      QB / RB / RB / WR / WR / TE / FLEX / FLEX / K / DEF.
   4. Team scores decide the week: one win against the head-to-head opponent,
      one more for finishing in the top half, which is how this league scores it.
-  5. Fourteen weeks, then six playoff teams, then a bracket.
+  5. Fourteen weeks, then six playoff teams, then a bracket - reseeded each
+     round, as the league plays it (the rules come from Sleeper: league_rules).
 
 What comes out is a distribution — projected wins, points, playoff odds,
 title odds. Player values anchor on the consensus ADP board with the usage
@@ -60,8 +61,15 @@ STARTERS = {"QB": 1, "RB": 2, "WR": 2, "TE": 1, "K": 1, "DEF": 1}
 FLEX_SLOTS = 2
 FLEX_POSITIONS = ("RB", "WR", "TE")
 
+# The league's own rules, used where Sleeper's settings will not say
+# (league_rules reads them): six teams, three weeks - quarters with two byes,
+# semis, final - and a reseeded bracket, Sleeper's playoff_seed_type 1, which
+# the league has played every season (2023-24 on). Reseeded, the top seed left
+# meets the lowest seed left each round: in 2024-25 the 6 seed's upset sent it
+# to the 1 seed in the semis, where the fixed bracket would have had it play 2.
 PLAYOFF_TEAMS = 6
 PLAYOFF_WEEKS = 3            # quarters (with two byes), semis, final
+RESEED = True
 
 # How long a player is out once he is out. Three weeks is the middle of the
 # distribution of real absences: most are one or two, a few end the season.
@@ -128,8 +136,64 @@ def matchups(league_id: str = UPCOMING_LEAGUE_ID, weeks: int = FANTASY_REG_WEEKS
     return found
 
 
+def league_rules(league_id: str = UPCOMING_LEAGUE_ID) -> dict:
+    """{weeks, playoff_teams, reseed} from Sleeper's league settings: the
+    regular season is every week before `playoff_week_start`, the field is
+    `playoff_teams`, and `playoff_seed_type` 1 reseeds the bracket each round.
+    This league's long-standing values (FANTASY_REG_WEEKS, PLAYOFF_TEAMS,
+    RESEED) stand in for anything Sleeper does not answer."""
+    rules = {"weeks": FANTASY_REG_WEEKS, "playoff_teams": PLAYOFF_TEAMS, "reseed": RESEED}
+    try:
+        settings = (_get(f"{SLEEPER_API}/league/{league_id}") or {}).get("settings") or {}
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! league settings unavailable ({exc}); the league's usual rules")
+        return rules
+    start = settings.get("playoff_week_start")
+    if isinstance(start, (int, float)) and start > 1:
+        rules["weeks"] = int(start) - 1
+    if isinstance(settings.get("playoff_teams"), (int, float)) and settings["playoff_teams"] >= 2:
+        rules["playoff_teams"] = int(settings["playoff_teams"])
+    if settings.get("playoff_seed_type") is not None:
+        rules["reseed"] = int(settings["playoff_seed_type"]) == 1
+    return rules
+
+
+def bracket_rounds(field: int) -> int:
+    """Weeks a bracket of `field` teams takes: byes fill it to a power of two."""
+    return max(int(field) - 1, 0).bit_length()
+
+
+def bracket_losers(order: list, league_id: str = UPCOMING_LEAGUE_ID, rows=None):
+    """[[team index, ...] per round]: who Sleeper's winners bracket says lost
+    each round already decided, teams indexed by `order` - or None before any.
+
+    Only elimination games count. Sleeper files placement games in the same
+    bracket (third place, fifth place, rounds of their own once reseeded), and
+    a game between two teams already beaten is one of those: so a team is out
+    from the round after its first loss, and a game with an out team in it is
+    not read. The simulation's seeds can disagree with Sleeper's on a tie
+    break; with these the bracket still sends the teams Sleeper did through.
+    """
+    rows = _get(f"{SLEEPER_API}/league/{league_id}/winners_bracket") if rows is None else rows
+    index = {int(rid): i for i, rid in enumerate(order)}
+    out, losers = set(), []
+    for rnd in sorted({int(m["r"]) for m in rows or [] if m.get("r") is not None}):
+        lost = []
+        for m in rows:
+            if m.get("r") is None or int(m["r"]) != rnd:
+                continue
+            t1, t2, loser = m.get("t1"), m.get("t2"), m.get("l")
+            if (not isinstance(t1, int) or not isinstance(t2, int) or t1 in out or t2 in out
+                    or m.get("w") is None or loser is None):
+                continue
+            lost.append(int(loser))
+        out |= set(lost)
+        losers.append([index[rid] for rid in lost if rid in index])
+    return losers if any(losers) else None
+
+
 def playoff_points(order: list, over: int | None, league_id: str = UPCOMING_LEAGUE_ID,
-                   first: int = FANTASY_REG_WEEKS + 1):
+                   first: int = FANTASY_REG_WEEKS + 1, rounds: int = PLAYOFF_WEEKS):
     """(played playoff weeks, teams) real scores, teams in `order` - for the
     playoff weeks Sleeper's clock has moved past - or None before any.
 
@@ -140,7 +204,7 @@ def playoff_points(order: list, over: int | None, league_id: str = UPCOMING_LEAG
     team with no score that week (eliminated, or on a bye) counts 0; the
     bracket never reads it.
     """
-    weeks = [w for w in range(first, first + PLAYOFF_WEEKS) if over is not None and w <= over]
+    weeks = [w for w in range(first, first + rounds) if over is not None and w <= over]
     if not weeks:
         return None
     index = {int(rid): i for i, rid in enumerate(order)}
@@ -207,6 +271,12 @@ def actual_results(league_id: str = UPCOMING_LEAGUE_ID, through_week: int = 0,
     A week only counts once every team has a score on it: nflverse says a
     week is published, but Sleeper can show a Thursday night's points on a
     week that is otherwise still to be played.
+
+    A tie is half a win and half a loss, as Sleeper's W-L-T counts it in a
+    standings race (`ties` says how many): a level head-to-head game used to
+    be a loss for both sides, and a score level with the median a win or a
+    loss on the order an argsort happened to leave the two in. The median
+    game is won by scoring above the week's median, strictly.
     """
     if through_week <= 0:
         return None
@@ -219,6 +289,7 @@ def actual_results(league_id: str = UPCOMING_LEAGUE_ID, through_week: int = 0,
     index = {rid: i for i, rid in enumerate(order)}
     n = len(order)
     points, h2h, median, allplay = [], np.zeros(n), np.zeros(n), np.zeros(n)
+    ties = np.zeros(n)
 
     for week in weeks:
         rows = posted[week]
@@ -237,9 +308,15 @@ def actual_results(league_id: str = UPCOMING_LEAGUE_ID, through_week: int = 0,
                     h2h[a] += 1
                 elif scores[b] > scores[a]:
                     h2h[b] += 1
-        ranks = (-scores).argsort().argsort()       # 0 = top scorer
-        median += ranks < n // 2
-        allplay += (n - 1) - ranks
+                else:
+                    h2h[[a, b]] += 0.5
+                    ties[[a, b]] += 1
+        mid = np.median(scores)
+        median += (scores > mid) + 0.5 * (scores == mid)
+        ties += scores == mid
+        # All-play: a win over every team scored under, half over every level.
+        allplay += ((scores[:, None] > scores[None, :]).sum(axis=1)
+                    + 0.5 * ((scores[:, None] == scores[None, :]).sum(axis=1) - 1))
         points.append(scores)
 
     if not points:
@@ -249,7 +326,7 @@ def actual_results(league_id: str = UPCOMING_LEAGUE_ID, through_week: int = 0,
     allplay_pct = allplay / (played * (n - 1))
     return {
         "order": order, "points": points, "weeks": played,
-        "h2h_wins": h2h, "median_wins": median, "wins": h2h + median,
+        "h2h_wins": h2h, "median_wins": median, "wins": h2h + median, "ties": ties,
         "losses": 2 * played - (h2h + median),
         "points_for": points.sum(axis=0), "allplay_pct": allplay_pct,
         # What the all-play record says the team should have: win two a week
@@ -354,6 +431,25 @@ def injury_designations(year: int = UPCOMING_YEAR) -> dict:
             if v.get("injury")}
 
 
+def seen_playing(year: int, week: int) -> set:
+    """Rostered players the week's matchups archive already has in a game -
+    a stat line with a game played, or points (availability.playing) - from
+    the file alone; empty when the week is not archived."""
+    import json
+    from fantasy.league import availability
+    path = matchups_mod._path(week, year)
+    if week < 1 or not path.exists():
+        return set()
+    data = json.loads(path.read_text())
+    pts = {}
+    for m in data.get("matchups") or []:
+        for side in m.get("sides") or []:
+            pts.update(side.get("players_points") or {})
+    stats = data.get("stats") or {}
+    return {str(pid) for pid in set(stats) | set(pts)
+            if availability.playing(stats.get(pid), pts.get(pid))}
+
+
 def _availability(players: pd.DataFrame, weeks: int, sims: int,
                   rng: np.random.Generator, from_week: int = 0) -> np.ndarray:
     """(sims, weeks, players) of who is playing, byes included.
@@ -370,12 +466,17 @@ def _availability(players: pd.DataFrame, weeks: int, sims: int,
     Except where we know better: `out_weeks` (from FORCED_OUT, when the frame
     carries it) holds a player out from `from_week` - the week being played
     next - for that many weeks, and the chain resumes from the out state.
+    `out_from`, where the frame carries it, starts that many weeks later: a
+    player already seen playing in the week the model has yet to count was
+    hurt after it, and his absence begins the week after.
     """
     avail = players["avail"].to_numpy(float)
     bye = players["bye"].to_numpy(int)
     n = len(avail)
     out_weeks = (players["out_weeks"].fillna(0).to_numpy(int) if "out_weeks" in players
                  else np.zeros(n, dtype=int))
+    start = from_week + (players["out_from"].fillna(0).to_numpy(int) if "out_from" in players
+                         else np.zeros(n, dtype=int))
 
     back = 1.0 / MEAN_ABSENCE_WEEKS                    # out -> available
     out = np.clip(back * (1.0 - avail) / np.maximum(avail, 1e-9), 0.0, 1.0)
@@ -385,7 +486,7 @@ def _availability(players: pd.DataFrame, weeks: int, sims: int,
     for week in range(weeks):
         draw = rng.random((sims, n))
         playing = np.where(playing, draw >= out[None, :], draw < back)
-        held = (week >= from_week) & (week < from_week + out_weeks)
+        held = (week >= start) & (week < start + out_weeks)
         if held.any():
             playing = playing & ~held[None, :]
         states[:, week, :] = playing
@@ -442,31 +543,70 @@ def _round_robin(rng: np.random.Generator, teams: int, weeks: int) -> np.ndarray
     return table
 
 
-def _bracket(points: np.ndarray, seeds: np.ndarray) -> np.ndarray:
-    """Title winner per sim, from playoff-week points and the six seeds.
+def bracket_order(size: int) -> list:
+    """Seed numbers in bracket order, so adjacent pairs are the standard
+    meeting: [1, 4, 2, 3] for four, [1, 8, 4, 5, 2, 7, 3, 6] for eight. Seeds
+    past the field are byes, which is how six teams give the top two a week
+    off. gordstats.my_power's bracketOrder, for the browser's twin."""
+    order = [1]
+    while len(order) < size:
+        n = len(order) * 2
+        order = [s for seed in order for s in (seed, n + 1 - seed)]
+    return order
 
-    Seeds 1 and 2 sit out the first round; 3 plays 6 and 4 plays 5; the two
-    winners meet the byes; the survivors play for it. Higher points wins, which
-    is how the league's bracket already works.
+
+def _bracket(points: np.ndarray, seeds: np.ndarray, reseed: bool = False,
+             decided: list = None) -> np.ndarray:
+    """Title winner per sim, from playoff-week points and the seeds.
+
+    `seeds` is (sims, field) team indices, best first; `points` (sims, rounds,
+    teams). The top seeds sit out round one until the field is a power of two
+    (six teams: 1 and 2 rest, 3 plays 6, 4 plays 5). After that the bracket is
+    either fixed - the 1 seed meets the 4/5 winner - or, `reseed`, redrawn each
+    round so the best seed left meets the worst left, which is how this league
+    plays it (Sleeper's playoff_seed_type 1). Higher points wins, the better
+    seed on a tie.
+
+    `decided` is bracket_losers: whoever lost a round Sleeper has decided
+    loses it here too, and every round after - the real result over anything
+    the seeding or the points would say.
+
+    gordstats.my_power's runBracket is the same bracket in the browser; the
+    two are held to each other in tests.
     """
-    sims = seeds.shape[0]
-    rows = np.arange(sims)
-
-    def better(week, left, right):
-        return np.where(points[rows, week, left] >= points[rows, week, right],
-                        left, right)
-
-    quarter_a = better(0, seeds[:, 2], seeds[:, 5])
-    quarter_b = better(0, seeds[:, 3], seeds[:, 4])
-    semi_a = better(1, seeds[:, 0], quarter_b)
-    semi_b = better(1, seeds[:, 1], quarter_a)
-    return better(2, semi_a, semi_b)
+    sims, field = seeds.shape
+    size = 1 << bracket_rounds(field)
+    rows = np.arange(sims)[:, None]
+    # Bracket positions as seed numbers (0 is the top seed), -1 a bye.
+    pos = np.tile([s - 1 if s <= field else -1 for s in bracket_order(size)], (sims, 1))
+    out = np.zeros(points.shape[2], dtype=bool)
+    rnd = 0
+    while pos.shape[1] > 1:
+        if decided is not None and rnd < len(decided) and len(decided[rnd]):
+            out[np.asarray(decided[rnd], dtype=int)] = True
+        a, b = pos[:, 0::2], pos[:, 1::2]
+        ta = np.take_along_axis(seeds, np.maximum(a, 0), axis=1)
+        tb = np.take_along_axis(seeds, np.maximum(b, 0), axis=1)
+        week = points[:, min(rnd, points.shape[1] - 1), :]
+        pa = np.where(out[ta], -np.inf, week[rows, ta])
+        pb = np.where(out[tb], -np.inf, week[rows, tb])
+        pos = np.where(b < 0, a, np.where(a < 0, b, np.where(pa >= pb, a, b)))
+        if reseed and pos.shape[1] > 2:
+            # Best left against worst left: sorted, then paired from the ends.
+            pos = np.sort(pos, axis=1)
+            k = pos.shape[1]
+            ends = np.column_stack([np.arange(k // 2), np.arange(k - 1, k // 2 - 1, -1)])
+            pos = pos[:, ends.ravel()]
+        rnd += 1
+    return np.take_along_axis(seeds, pos, axis=1)[:, 0]
 
 
 def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
              weeks: int = FANTASY_REG_WEEKS, sims: int = DEFAULT_SIMS,
              fixed_schedule=None, actual_points=None, seed: int = 20260821,
-             injuries: dict = None, playoff_points=None, held: dict = None) -> pd.DataFrame:
+             injuries: dict = None, playoff_points=None, held: dict = None,
+             held_from: dict = None, playoff_teams: int = PLAYOFF_TEAMS,
+             reseed: bool = False, decided: list = None) -> pd.DataFrame:
     """Run the season `sims` times and summarize each team's outcomes.
 
     `actual_points` is a (played weeks, teams) array of real scores, in
@@ -477,7 +617,12 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     held out of the next weeks (FORCED_OUT) instead of opening healthy. `held`,
     {sleeper_id: weeks}, says how many where it is known - ESPN's expected
     return dates (fantasy.league.injury_report.held_out) - and replaces the
-    tag's flat count.
+    tag's flat count; `held_from`, {sleeper_id: weeks}, starts that hold later
+    (a player hurt in a game of the week the model has yet to count).
+
+    The bracket takes `playoff_teams` (byes for the top seeds) and is fixed
+    unless `reseed` - rankings passes the league's own rules (league_rules);
+    `decided` is bracket_losers, the rounds Sleeper has already settled.
 
     With a fixed schedule and a regular-season week still to play, each team's
     playoff odds are also split on the next week's head-to-head game - the
@@ -493,6 +638,9 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     else:
         players["out_weeks"] = (players["sleeper_id"].astype(str)
                                 .map(lambda pid: FORCED_OUT.get((injuries or {}).get(pid, ""), 0)))
+    if held_from:
+        players["out_from"] = players["sleeper_id"].astype(str).map(
+            lambda pid: int(held_from.get(pid, 0)))
     played = min(len(actual_points), weeks) if actual_points is not None and len(actual_points) else 0
     missing = players["mu"].isna()
     if missing.any():
@@ -520,43 +668,48 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     stakes = np.zeros((4, n_teams))
     done = 0
 
+    field = min(int(playoff_teams), n_teams)
+    rounds = bracket_rounds(field)
     while done < sims:
         batch = min(SIM_CHUNK, sims - done)
-        total_weeks = weeks + PLAYOFF_WEEKS
+        total_weeks = weeks + rounds
         scores, available = _weekly_scores(players, total_weeks, batch, rng, from_week=played)
 
         team_points = np.stack(
             [_lineup_points(scores[:, :, team.slice], available[:, :, team.slice], team)
              for team in teams], axis=-1)
         if playoff_points is not None and len(playoff_points):
-            k = min(len(playoff_points), PLAYOFF_WEEKS)
+            k = min(len(playoff_points), rounds)
             team_points[:, weeks:weeks + k, :] = playoff_points[None, :k, :]
         regular = team_points[:, :weeks, :]
         if actual_points is not None and len(actual_points):
             played = min(len(actual_points), weeks)
             regular[:, :played, :] = actual_points[None, :played, :]
 
-        # Top half of the league takes a win, same as the league's median rule.
-        ranks = (-regular).argsort(axis=-1).argsort(axis=-1)
-        median_wins = (ranks < n_teams // 2).sum(axis=1).astype(float)
+        # Above the week's median takes a win, the league's median rule; a
+        # score level with it (and a level head-to-head game) is half of one,
+        # as actual_results counts the weeks already played.
+        mid = np.median(regular, axis=-1, keepdims=True)
+        median_wins = ((regular > mid) + 0.5 * (regular == mid)).sum(axis=1)
 
         if fixed_schedule is not None:
             opponents = fixed_schedule
             opponent_points = regular[:, np.arange(weeks)[:, None], opponents]
-            h2h = (regular > opponent_points).sum(axis=1).astype(float)
+            h2h = ((regular > opponent_points) + 0.5 * (regular == opponent_points)).sum(axis=1)
         else:
             h2h = np.zeros((batch, n_teams))
             for sim in range(batch):
                 table = _round_robin(rng, n_teams, weeks)
                 opponent_points = regular[sim][np.arange(weeks)[:, None], table]
-                h2h[sim] = (regular[sim] > opponent_points).sum(axis=0)
+                h2h[sim] = ((regular[sim] > opponent_points)
+                            + 0.5 * (regular[sim] == opponent_points)).sum(axis=0)
 
         batch_wins = h2h + median_wins
         batch_points = regular.sum(axis=1)
 
         # Seed on wins, then points for — the league's tiebreaker.
         order = np.lexsort((-batch_points, -batch_wins), axis=-1)
-        seeds = order[:, :PLAYOFF_TEAMS]
+        seeds = order[:, :field]
         made_playoffs += np.bincount(seeds.ravel(), minlength=n_teams)
         if stakes_week is not None:
             made = np.zeros((batch, n_teams), dtype=bool)
@@ -567,7 +720,7 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
         for position in range(n_teams):
             seed_counts[:, position] += np.bincount(order[:, position], minlength=n_teams)
 
-        champion = _bracket(team_points[:, weeks:, :], seeds)
+        champion = _bracket(team_points[:, weeks:, :], seeds, reseed=reseed, decided=decided)
         titles += np.bincount(champion, minlength=n_teams)
 
         wins = np.vstack([wins, batch_wins])
@@ -750,7 +903,11 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
             "No rosters yet — the draft has not happened, or Sleeper has not "
             "published its picks. Nothing to rank.")
 
-    posted = matchups()
+    # The season's length, the field and the bracket's rules, as Sleeper has
+    # them this year (the league's long-standing ones if it will not say).
+    rules = league_rules()
+    weeks = rules["weeks"]
+    posted = matchups(weeks=weeks)
     # A week is "played" only when Sleeper has scored all of it AND nflverse
     # has published it; each source gets ahead of the other in its own way.
     over = matchups_mod.weeks_over(year)
@@ -771,16 +928,32 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     actual = actual_results(through_week=through, posted=posted)
     points = actual["points"] if actual else None
     # With the regular season in, the bracket's played weeks are taken as
-    # they happened too - a team knocked out stops holding title odds.
-    playoff = (playoff_points(actual["order"], over)
-               if actual and actual["weeks"] >= FANTASY_REG_WEEKS else None)
+    # they happened too - a team knocked out stops holding title odds - and
+    # so are the rounds Sleeper has settled: who went through, whatever the
+    # simulation's seeding or the points would say.
+    playoff = decided = None
+    if actual and actual["weeks"] >= weeks:
+        rounds = bracket_rounds(rules["playoff_teams"])
+        playoff = playoff_points(actual["order"], over, first=weeks + 1, rounds=rounds)
+        try:
+            decided = bracket_losers(actual["order"])
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! winners bracket unavailable ({exc}); the points alone")
     # How long each injured player is out: ESPN's expected return date where
     # its report has one, the Sleeper tag's flat count where it does not.
+    # The model counts a week a day or two after it ends (nflverse), so the
+    # week it plays next can be one some players have played already: one
+    # seen in it was hurt after his game, and his absence starts the week
+    # after - not in a game he played (held_from).
     tags = injury_designations(year)
+    from_week = actual["weeks"] if actual else 0
+    held_from = None
     try:
         from fantasy.league import injury_report
-        held = injury_report.held_out(tags, from_week=actual["weeks"] if actual else 0,
-                                      weeks=NFL_WEEKS, year=year)
+        seen = seen_playing(year, from_week + 1)
+        held = injury_report.held_out(tags, from_week=from_week, weeks=NFL_WEEKS, year=year,
+                                      seen=seen)
+        held_from = {pid: 1 for pid in held if pid in seen} or None
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! injury return dates unavailable ({exc}); Sleeper's tags alone")
         held = None
@@ -796,15 +969,17 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
                 depth=depth_charts()))
         except Exception as exc:                            # noqa: BLE001
             print(f"  ! next-man-up boosts not applied ({exc})")
-    summary = simulate(board, roster_frame, sims=sims, fixed_schedule=fixed,
-                       actual_points=points, injuries=tags, held=held,
-                       playoff_points=playoff)
+    summary = simulate(board, roster_frame, weeks=weeks, sims=sims, fixed_schedule=fixed,
+                       actual_points=points, injuries=tags, held=held, held_from=held_from,
+                       playoff_points=playoff, playoff_teams=rules["playoff_teams"],
+                       reseed=rules["reseed"], decided=decided)
 
     week = actual["weeks"] if actual else 0
     summary["week"] = week
     if actual:
         facts = pd.DataFrame({
             "roster_id": actual["order"], "wins": actual["wins"], "losses": actual["losses"],
+            "ties": actual["ties"],
             "points_for": actual["points_for"], "allplay_pct": actual["allplay_pct"],
             "luck": actual["luck"],
         })
@@ -818,6 +993,8 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
 
     summary = with_movement(summary, year)
     write_snapshot(summary, year, week)
+    # The rules it was played under, for the page's games left and its field.
+    summary.attrs["rules"] = rules
     return summary, board, roster_frame
 
 
@@ -843,7 +1020,7 @@ def backtest(season_str: str, season_year: int, sims: int = 3000) -> pd.DataFram
     from fantasy import paths
 
     board = projections.build(season_year)
-    table = simulate(board, draft_day_rosters(season_str), sims=sims)
+    table = simulate(board, draft_day_rosters(season_str), sims=sims, reseed=RESEED)
 
     actual = pd.read_json(paths.SEASON_DIR / f"{season_str}.json")
     actual = actual[actual["week"] == FANTASY_REG_WEEKS][

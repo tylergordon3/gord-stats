@@ -118,11 +118,14 @@ window.GSL = (function(){
       });
   }
 
-  /** Which of Sleeper's three published bases this league is closest to. */
+  /** Which of Sleeper's three published bases this league is closest to.
+   *  A league whose settings could not be read is PPR, the basis every number
+   *  here is published in - not standard, which a missing `rec` used to
+   *  fall through to, quietly taking every catch off. */
   function basis(info){
     var sc=(info&&info.scoring_settings)||{};
     var rec=sc.rec;
-    var i = (rec>=0.75)?0 : (rec>=0.25)?1 : 2;          // ppr / half / standard
+    var i = (typeof rec!=='number')?0 : (rec>=0.75)?0 : (rec>=0.25)?1 : 2;  // ppr / half / std
     // Anything materially off the default is flagged so the page can say the
     // numbers are close rather than exact.
     var custom = (sc.pass_td!=null && Math.abs(sc.pass_td-4)>0.01)
@@ -131,14 +134,22 @@ window.GSL = (function(){
     return {index:i, name:['PPR','half-PPR','standard'][i], custom:!!custom};
   }
 
-  /** {player_id: points} under one basis. */
   /** {player_id: points} under one basis - expected points: a Questionable or
    *  Doubtful player's projection times his chance of playing this week
-   *  (`play`, fantasy.league.availability), as this site's own pages count it. */
-  function points(wk, basisIndex){
+   *  (`play`, fantasy.league.availability), as this site's own pages count it.
+   *
+   *  Once he is seen playing the chance is spent and the whole projection is
+   *  what is left to come, as fantasy.site.matchups has it. The file only
+   *  carries `play` for players not yet seen in a game when it was built
+   *  (fantasy.site.players_index), and `live` - Sleeper's players_points for
+   *  the week, where the caller has it - spends it for anyone with points
+   *  since. Kickoff alone is not enough: an inactive player's game kicks off
+   *  without him. */
+  function points(wk, basisIndex, live){
     var out={}, play=wk.play||{};
     for(var pid in wk.proj){
       var p=play[pid];
+      if(live&&live[pid]) p=1;
       out[pid]=wk.proj[pid][basisIndex]*(typeof p==='number'?p:1);
     }
     return out;

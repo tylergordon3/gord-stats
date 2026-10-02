@@ -81,17 +81,19 @@ def test_record_and_luck_are_the_built_definition():
 
     js = my_power.JS[my_power.JS.index("function records("):]
     js = js[:js.index("\n  function table(")]
-    assert "allplay[seat]+=(n-1)-rank" in js, "the all-play count drifted"
-    assert "rank < Math.floor(n/2)" in js, "the median win drifted"
+    # One week's wins, ties as halves, are counted by the sim's own
+    # GSPower.weekWins (since the 2026-10-02 audit; the browser and Python
+    # agreeing on a tie is test_audit_1002_fantasy's
+    # test_the_browser_counts_a_tie_as_python_does).
+    assert "GSPower.weekWins(" in js, "the reader's record stopped using the sim's count"
     # Not every league plays the median game; this one does, and assuming it
     # doubles everybody's record.
-    assert "if(median &&" in js
     assert "perWeek=median?2:1" in js
 
     from fantasy.league import power as built
     src = open(built.__file__).read()
-    assert "allplay += (n - 1) - ranks" in src, "the Python moved; the port has not"
-    assert "median += ranks < n // 2" in src
+    assert "median += (scores > mid) + 0.5 * (scores == mid)" in src, \
+        "the Python moved; the port has not"
 
 
 def test_the_gradient_is_the_one_pandas_uses():

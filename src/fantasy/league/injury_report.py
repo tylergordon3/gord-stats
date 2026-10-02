@@ -39,6 +39,10 @@ URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries"
 CACHE = paths.DATA_DIR / "players" / "injury_report.json"
 HOURS = 2.0
 TIMEOUT = 20
+# The oldest copy a failed fetch falls back to. A day-old return date beats
+# none, but every held status costs at least the week at hand, so a copy of
+# any age would hold out whoever it listed: next August, last season's IR.
+STALE_DAYS = 3
 
 # ESPN's statuses that keep a player off the field until his return date.
 # Questionable is a this-week question (fantasy.league.availability's), not a
@@ -75,8 +79,11 @@ def _trim(payload: dict, ids: dict) -> dict:
 
 def report(refresh: bool = False) -> dict:
     """{sleeper id: {status, back, part, updated}} - the cached copy unless it
-    is stale or `refresh`; the last good copy if the fetch fails."""
-    fresh = CACHE.exists() and time.time() - CACHE.stat().st_mtime < HOURS * 3600
+    is stale or `refresh`; the last good copy if the fetch fails or comes back
+    empty, as long as it is under STALE_DAYS old - past that, nothing, and
+    the simulations fall back on Sleeper's tags."""
+    age = time.time() - CACHE.stat().st_mtime if CACHE.exists() else None
+    fresh = age is not None and age < HOURS * 3600
     if refresh or not fresh:
         try:
             r = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=TIMEOUT)
@@ -91,8 +98,15 @@ def report(refresh: bool = False) -> dict:
                 else:
                     CACHE.touch()
                 return trimmed
+            print("  ! ESPN injury report came back empty")
         except Exception as exc:                            # noqa: BLE001
-            print(f"  ! ESPN injury report unavailable ({exc}); using the last copy")
+            print(f"  ! ESPN injury report unavailable ({exc})")
+        if age is None:
+            return {}
+        if age > STALE_DAYS * 86400:
+            print(f"  ! last injury report copy is {age / 86400:.0f} days old; not used")
+            return {}
+        print(f"  ! using the last injury report copy ({age / 3600:.0f}h old)")
     try:
         return json.loads(CACHE.read_text(encoding="utf-8"))
     except (OSError, ValueError):
@@ -148,11 +162,18 @@ def weeks_out(entry: dict, from_week: int, week_days: dict, weeks: int) -> int |
 
 
 def held_out(sleeper_tags: dict, from_week: int, weeks: int, year: int,
-             entries: dict = None, week_days: dict = None) -> dict:
+             entries: dict = None, week_days: dict = None, seen=()) -> dict:
     """{sleeper id: weeks held out} for the season simulations: ESPN's return
     date where the report has one, Sleeper's tag priced by power.FORCED_OUT
     where it does not. `sleeper_tags` is {id: Sleeper designation} (any
-    players; the report adds those Sleeper has not tagged yet)."""
+    players; the report adds those Sleeper has not tagged yet).
+
+    The weeks count from from_week + 1 - except for a player in `seen`,
+    already seen playing in that week (power.seen_playing): he was hurt after
+    his game, so his count starts the week after it, and the simulation
+    starts holding him there too (power.simulate's held_from). Counted from
+    the week he played, a Thursday or Sunday injury cost a week twice over
+    until nflverse posted the week, a day or two later."""
     from fantasy.league.power import FORCED_OUT
     entries = report() if entries is None else entries
     if week_days is None:
@@ -161,9 +182,11 @@ def held_out(sleeper_tags: dict, from_week: int, weeks: int, year: int,
         except Exception as exc:                            # noqa: BLE001
             print(f"  ! no NFL schedule for injury return dates ({exc})")
             week_days = {}
+    seen = {str(pid) for pid in seen or ()}
     out = {}
     for pid in set(sleeper_tags) | set(entries):
-        n = weeks_out(entries.get(pid), from_week, week_days, weeks) if week_days else None
+        start = from_week + 1 if str(pid) in seen else from_week
+        n = weeks_out(entries.get(pid), start, week_days, weeks) if week_days else None
         if n is None:
             n = FORCED_OUT.get(sleeper_tags.get(pid, ""), 0)
         if n:

@@ -30,7 +30,7 @@ from cfb import league_sim
 from cfb.site import trade as cfb_trade
 from fantasy.site import trade as nfl_trade
 from gordstats import my_power, trade_page
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -50,10 +50,7 @@ class Browser:
 
     def __init__(self):
         subprocess.run(["fuser", "-k", f"{PORT}/tcp"], capture_output=True)
-        self.proc = subprocess.Popen(
-            [CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-             f"--remote-debugging-port={PORT}", "about:blank"],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.proc = launch(CHROME, PORT)
         for _ in range(60):
             try:
                 targets = json.load(urllib.request.urlopen(f"http://127.0.0.1:{PORT}/json"))

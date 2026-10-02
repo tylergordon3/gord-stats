@@ -136,12 +136,39 @@ def projections(week: int = None, year: int = UPCOMING_YEAR) -> dict:
                                   int(year), positions=pos)
         play = {p: round(c["p"], 3) for p, c in chances.items()
                 if c["status"] in av.PRICED and p in proj}
+        play = _unspent(play, proj, kick, int(week), int(year))
         back = av.return_labels([p for p, c in chances.items() if c["status"] != "Questionable"],
                                 int(year), after=av.week_end([{"date": d} for d in kick.values()]))
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! play chances unavailable ({exc})")
     return {"week": int(week), "year": int(year), "kick": kick, "proj": proj,
             "play": play, "back": back}
+
+
+def _unspent(play: dict, proj: dict, kick: dict, week: int, year: int, now=None,
+             stats: dict = None) -> dict:
+    """`play` less anyone already seen in his game - Sleeper's stat line for
+    the week has him (availability.playing): his chance is spent and the
+    whole projection is what is left to come, as this site's own pages have
+    it. Only a game that has kicked off is asked about, and only then is the
+    stats feed read. Readers' pages multiplied the chance in all week."""
+    from fantasy.league import availability as av
+    from fantasy.league import matchups as matchups_mod
+    now = now or pd.Timestamp.now(tz="UTC")
+    begun = set()
+    for team, when in kick.items():
+        try:
+            if pd.Timestamp(when) <= now:
+                begun.add(team)
+        except (TypeError, ValueError):
+            continue
+    maybe = [p for p in play if (proj.get(p) or [None] * 4)[3] in begun]
+    if not maybe:
+        return play
+    if stats is None:
+        stats = matchups_mod.sleeper_stats(week, year, only=set(maybe))
+    seen = {p for p in maybe if av.playing(stats.get(p), (stats.get(p) or {}).get("pts_ppr"))}
+    return {p: v for p, v in play.items() if p not in seen}
 
 
 def season_points(year: int) -> dict:
