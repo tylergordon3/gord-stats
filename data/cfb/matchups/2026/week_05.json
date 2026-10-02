@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-02T00:31:09+00:00",
+ "fetched": "2026-10-02T00:50:57+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 0.0,
-     "projected": 187.78,
+     "projected": 187.81,
      "win_probability": 0.94
     }
    ]
@@ -2661,6 +2661,6 @@
   "456178": 12.5,
   "455505": 13.96,
   "404143": 14.21,
-  "900086": 10.08
+  "900086": 10.11
  }
 }

@@ -13,70 +13,70 @@
       "team_id": 7,
       "rank": 1,
       "score": 100,
-      "vorp": 114.81
+      "vorp": 114.93
     },
     {
       "team": "Professional Fratson",
       "team_id": 3,
       "rank": 2,
       "score": 97,
-      "vorp": 111.66
+      "vorp": 111.97
     },
     {
       "team": "CCAM’s Convicts",
       "team_id": 1,
       "rank": 3,
-      "score": 96,
-      "vorp": 109.92
+      "score": 95,
+      "vorp": 109.67
     },
     {
       "team": "DRINK MAYE",
       "team_id": 2,
       "rank": 4,
       "score": 94,
-      "vorp": 107.49
+      "vorp": 107.75
     },
     {
       "team": "3 big balls",
       "team_id": 9,
       "rank": 5,
       "score": 92,
-      "vorp": 105.23
+      "vorp": 105.27
     },
     {
       "team": "Fuck Strictly Dickly",
       "team_id": 10,
       "rank": 6,
       "score": 89,
-      "vorp": 102.46
+      "vorp": 102.86
     },
     {
       "team": "Lotta Cox (Balls Too)",
       "team_id": 5,
       "rank": 7,
-      "score": 80,
-      "vorp": 92.38
-    },
-    {
-      "team": "Strictly Dickly",
-      "team_id": 4,
-      "rank": 8,
-      "score": 78,
-      "vorp": 89.48
+      "score": 81,
+      "vorp": 92.53
     },
     {
       "team": "The Standard",
       "team_id": 6,
+      "rank": 8,
+      "score": 77,
+      "vorp": 88.61
+    },
+    {
+      "team": "Strictly Dickly",
+      "team_id": 4,
       "rank": 9,
       "score": 77,
-      "vorp": 88.92
+      "vorp": 88.61
     },
     {
       "team": "FX’s The Bear(s)",
       "team_id": 8,
       "rank": 10,
       "score": 68,
-      "vorp": 77.65
+      "vorp": 77.81
     }
   ]
 }
