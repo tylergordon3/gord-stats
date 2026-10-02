@@ -21,6 +21,12 @@ It polls once a minute only while a game is on, and never on a hidden tab.
 CSS = """<style>
 .ws{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;margin:12px 0 22px}
 @media (max-width:760px){.ws{grid-template-columns:minmax(0,1fr)}}
+/* In season the card's height is held until it draws: drawn into an empty div,
+   it pushed League Home down 432px a moment after it painted (Cloudflare's
+   layout-shift score 0.31 there, 2026-10-02). The script drops the hold
+   whichever way it finishes, so the offseason leaves no gap. */
+.ws-wait:empty{min-height:432px}
+@media (max-width:760px){.ws-wait:empty{min-height:1000px}}
 .ws-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;min-width:0}
 .ws-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 8px}
 .ws-head h2{margin:0;font-size:17px;border:0;padding:0}
@@ -82,7 +88,8 @@ table.ws-st tr.me td{background:#f0fdf4}
 JS = """{% raw %}<script>
 (function(){
   var host=document.getElementById('ws-host');
-  if(!host||!window.GSL) return;
+  function settle(){ if(host) host.classList.remove('ws-wait'); }
+  if(!host||!window.GSL){ settle(); return; }
   // The league on screen: the reader's, or this site's own.
   var have=GSL.saved();
   var ID=String((have&&have.id)||'__SITE_LEAGUE__');
@@ -202,6 +209,7 @@ JS = """{% raw %}<script>
     ctx.proj=GSL.points(ctx.wk, ctx.basis, seen);
     var week=drawWeek(rows);
     var median=!!((ctx.info.settings||{}).league_average_match);
+    settle();
     host.innerHTML='<div class="ws">'
       +'<div class="ws-card"><div class="ws-head"><h2>This week</h2>'
       +'<span class="ws-sub">Week '+ctx.week+'</span>'
@@ -247,7 +255,7 @@ JS = """{% raw %}<script>
     var state=o[0]||{}, info=o[1], rosters=o[2]||[], users=o[3]||[], wk=o[4]||{proj:{},kick:{}};
     var week=parseInt(state.display_week||state.week||wk.week||0,10);
     if(!info||!rosters.length||!week||String(info.season)!==String(state.season)){
-      host.innerHTML=''; return;                 // offseason, or a league Sleeper cannot find
+      settle(); host.innerHTML=''; return;       // offseason, or a league Sleeper cannot find
     }
     // The site's week file trails Sleeper for a few hours at a rollover: last
     // week's kickoffs drew the new week's games as "0.0-0.0 final". Another
@@ -265,11 +273,11 @@ JS = """{% raw %}<script>
          proj:GSL.points(wk, GSL.basis(info).index), mine:mine?String(mine):null};
     return get('/league/'+ID+'/matchups/'+week).then(function(rows){
       if(rows) render(rows);
-      else { fails++; later(60000); }              // asked again, as a poll is
+      else { fails++; settle(); later(60000); }    // asked again, as a poll is
     });
   }).catch(function(e){
     if(window.console) console.error('[week-strip]', e);
-    host.innerHTML='';
+    settle(); host.innerHTML='';
   });
   }
   boot(0);
@@ -285,6 +293,11 @@ def _site_league() -> str:
 JS = JS.replace("__SITE_LEAGUE__", _site_league())
 
 
-def section() -> str:
-    """The container the script fills; empty in the offseason."""
-    return CSS + "<div id='ws-host'></div>"
+def section(today=None) -> str:
+    """The container the script fills; empty in the offseason. From September
+    to mid-February (the NFL season, fantasy playoffs and all) it holds the
+    card's height while the script draws it."""
+    from datetime import date
+    today = today or date.today()
+    held = today.month in (9, 10, 11, 12, 1) or (today.month == 2 and today.day <= 15)
+    return CSS + ("<div id='ws-host' class='ws-wait'></div>" if held else "<div id='ws-host'></div>")

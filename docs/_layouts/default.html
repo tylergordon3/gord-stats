@@ -122,6 +122,20 @@ resolution in _includes/nav.html.
   <!-- MAIN CONTENT -->
   <main id="main_content_wrap" class="outer">
     <section id="main_content" class="custom-inner">
+      {%- comment -%}
+      The sign-in invite is part of the page rather than inserted once /api/me
+      answers: inserted, it pushed every page down ~45px a moment after it
+      drew (Cloudflare's layout-shift score, 2026-10-02). The script under it
+      removes it before the first paint for a reader who closed it or whose
+      last answer from /api/me was "signed in" or "no accounts here"
+      (favorites.js caches that as gs:acct); favorites.js wires it up or
+      removes it once the account is known. Not on the profile page, nor on a
+      page with the fantasy league bar, which offers sign-in itself.
+      {%- endcomment -%}
+      {%- unless page.url contains '/profile' or content contains "id='ml-bar'" %}
+      <aside id="gs-invite" class="gs-invite"><p class="gs-invite-text">Follow teams and keep your fantasy leagues on every device.</p><p class="gs-invite-links"><a class="gs-invite-go" href="/api/auth/login">Sign in</a><a class="gs-invite-more" href="/profile/">What you get</a></p><button type="button" class="gs-invite-shut" aria-label="Dismiss">&times;</button></aside>
+      <script>(function(){var b=document.getElementById('gs-invite');if(!b)return;try{var a=localStorage.getItem('gs:acct');if(localStorage.getItem('gs:invite')==='off'||a==='in'||a==='off'){b.remove();return;}}catch(e){}b.querySelector('.gs-invite-go').href='/api/auth/login?next='+encodeURIComponent(location.pathname+location.search);})();</script>
+      {%- endunless %}
       {{ content }}
     </section>
   </main>

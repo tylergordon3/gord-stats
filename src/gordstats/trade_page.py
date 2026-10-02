@@ -52,6 +52,11 @@ from gordstats import share_button
 
 CSS = """<style>
 .tr{margin:6px 0 24px}
+/* Most of a screen is held for the analyzer until it draws: drawn into an empty
+   div - and through a one-line "Reading the league..." first - it carried "How
+   it works" up and down the first screen (layout shift 0.12-0.2, the
+   2026-10-02 check). The script drops the hold once it has drawn or given up. */
+.tr-wait{min-height:80vh}
 .tr-teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
 .tr-teams label{display:flex;flex-direction:column;gap:3px;font-size:12px;font-weight:600;
   color:#64748b;min-width:0}
@@ -297,7 +302,9 @@ window.GSTrade = function(host, adapter){
     });
   }
 
+  function settle(){ host.classList.remove('tr-wait'); }
   function draw(){
+    settle();
     if(mode === 'pickup' && adapter.pickup) return drawPickup();
     host.innerHTML = modeBar() + '<div class="tr-teams">'
       + '<label>Your team<select class="tr-a">' + options(a) + '</select></label>'
@@ -591,6 +598,7 @@ window.GSTrade = function(host, adapter){
   adapter.load().then(function(d){
     data = d;
     if(!d || !d.teams || d.teams.length < 2){
+      settle();
       msg(d && d.empty ? d.empty : 'This league has no rosters to trade between yet.');
       return;
     }
@@ -618,6 +626,7 @@ window.GSTrade = function(host, adapter){
     // In the words of the site the league is on: an ESPN league kept
     // private says how to open it.
     var lg = leagueKey();
+    settle();
     msg(lg && lg !== 'site' && window.GSAPI && GSAPI.problem ? esc(GSAPI.problem(lg))
         : 'Could not read this league. It may be busy &mdash; try again in a minute.');
   });
@@ -630,7 +639,7 @@ def section(path: str, host_id: str = "tr-host", league: bool = False) -> str:
     Share button it hands the deal to is a template: the script sets its
     address (the page plus the deal) each time a deal is played, and `league`
     adds the reader's league to it (gordstats.share_button)."""
-    return (CSS + f"<div class='tr' id='{host_id}'></div>"
+    return (CSS + f"<div class='tr tr-wait' id='{host_id}'></div>"
             + "<template id='tr-share'>"
             + share_button.button(path, label="Send this trade", league=league)
             + "</template>")

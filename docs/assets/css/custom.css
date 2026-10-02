@@ -22,6 +22,15 @@ a {
   display: none !important;
 }
 
+/* Room for the scrollbar whether or not the page scrolls yet. On a desktop
+   with classic scrollbars (Windows), a page that grows past the screen after
+   its script draws - the trade analyzer, the profile - gained a scrollbar and
+   shifted everything sideways by its width (layout shift 0.26 on /cfb/trade/,
+   2026-10-02). Phones' overlay scrollbars take no room, so nothing changes there. */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Slate draws every table as a grid of 1px #373737 - `table` and `td` on all
    four sides. Most tables here rule only the line under a row, so the theme's
    sides and tops came through as heavy black bars: down the fantasy

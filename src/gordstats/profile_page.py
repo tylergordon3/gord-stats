@@ -52,6 +52,10 @@ CSS = """<style>
 .pf-card h2{margin:0 0 3px;font-size:17px}
 .pf-card p{margin:0 0 11px;font-size:13.5px;color:#475569;line-height:1.5}
 .pf-who{font-size:14px;color:#0f172a}
+/* The account line is drawn once /api/me answers; "Checking..." holds the
+   height of the signed-in row it usually becomes, so the cards under it stay
+   put (the 2026-10-02 layout-shift check). */
+#pf-who{min-height:36px}
 .pf-who b{font-weight:800}
 .pf-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .pf-btn{font:inherit;font-size:13px;font-weight:700;padding:7px 15px;border-radius:8px;

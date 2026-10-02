@@ -77,6 +77,11 @@
   // accounts wired at all, and the page must look exactly as it did before
   // any of this existed - no sign-in control, no network chatter.
   var account = { signedIn: false, configured: false };
+  // Whether /api/me has answered. Until it has, the invite the page drew is
+  // left alone: removing it on the first paint (account still unknown) and
+  // putting it back a moment later was the layout shift it was drawn to avoid.
+  var known = false;
+  var ACCT_KEY = "gs:acct";
   var SYNC_KEY = "gs:favorites:sync";
 
   function readSyncedAs() {
@@ -183,9 +188,18 @@
 
   function sync() {
     fetch("/api/me", { credentials: "same-origin" })
-      .then(function (r) { return r.json(); })
+      // No API at this address (a local build, a pages.dev deployment) is an
+      // answer too: no accounts here.
+      .then(function (r) { return r.ok === false ? { configured: false, signedIn: false } : r.json(); })
       .then(function (me) {
         account = me || account;
+        known = true;
+        // For the layout's inline check on the next page: drop the invite
+        // before it paints for a reader it is not for.
+        try {
+          window.localStorage.setItem(ACCT_KEY, !account.configured ? "off"
+            : (account.signedIn ? "in" : "out"));
+        } catch (e) {}
         if (!account.configured || !account.signedIn) return null;
         return fetch("/api/favorites", { credentials: "same-origin" })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -421,8 +435,29 @@
     }
   }
 
+  // The invite's dismiss button and its way back here, on whichever invite is
+  // on the page - the one the layout drew, or one built below.
+  function wireInvite(bar) {
+    if (bar.getAttribute("data-wired")) return;
+    bar.setAttribute("data-wired", "1");
+    var go = bar.querySelector(".gs-invite-go");
+    if (go) go.href = "/api/auth/login?next="
+      + encodeURIComponent(location.pathname + location.search);
+    var shut = bar.querySelector(".gs-invite-shut");
+    if (shut) shut.addEventListener("click", function () {
+      try {
+        window.localStorage.setItem(INVITE_KEY, "off");
+      } catch (e) {}
+      bar.remove();
+    });
+  }
+
   function paintInvite() {
     var bar = document.getElementById("gs-invite");
+    if (!known) {
+      if (bar) wireInvite(bar);
+      return;
+    }
     var wanted = account.configured && !account.signedIn && !inviteDismissed()
       // The profile page makes this offer itself, in more room than a banner
       // has, and so does every fantasy page's league bar (#ml-bar, with a
@@ -435,7 +470,10 @@
       if (bar) bar.remove();
       return;
     }
-    if (bar) return;
+    if (bar) {
+      wireInvite(bar);
+      return;
+    }
 
     var host = document.getElementById("main_content");
     if (!host) return;
@@ -472,15 +510,10 @@
     shut.className = "gs-invite-shut";
     shut.setAttribute("aria-label", "Dismiss");
     shut.textContent = "\u00d7";
-    shut.addEventListener("click", function () {
-      try {
-        window.localStorage.setItem(INVITE_KEY, "off");
-      } catch (e) {}
-      bar.remove();
-    });
     bar.appendChild(shut);
 
     host.insertBefore(bar, host.firstChild);
+    wireInvite(bar);
   }
 
   // A menu that only closes by clicking the badge again is a menu people leave

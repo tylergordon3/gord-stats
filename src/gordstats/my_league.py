@@ -29,6 +29,10 @@ back to their own.
 from gordstats import league_api
 
 CSS = """<style>
+/* Its line is held while the script has not drawn it: drawn into an empty div it
+   pushed every fantasy page down 34px a moment after it painted (the 2026-10-02
+   layout-shift check). 40px on a phone, where its controls are thumb-sized. */
+.ml-bar:empty{min-height:34px}
 .ml-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 9px;
   font-size:13px;color:#475569}
 .ml-who{font-weight:700;color:#0f172a}
@@ -72,6 +76,7 @@ CSS = """<style>
      what is left - Sign in, the id box, Show - shares the row at a size a
      thumb can hit. It was 136px of chrome above every fantasy page. */
   .ml-bar{gap:6px;flex-wrap:nowrap}
+  .ml-bar:empty{min-height:40px}
   .ml-bar .ml-label,.ml-bar .ml-or{display:none}
   .ml-bar:has(.ml-msg:not(:empty)){flex-wrap:wrap}
   .ml-bar input{min-width:0;flex:1;min-height:40px;box-sizing:border-box;font-size:16px}

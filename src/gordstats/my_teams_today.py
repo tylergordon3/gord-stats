@@ -367,6 +367,14 @@ def section(cfb: bool = True, cbb: bool = False) -> str:
     title = "My teams" if cbb else "My teams this week"
     link = ('<a class="home-card-link" href="/cfb/schedule/">Full schedule &rarr;</a>' if cfb
             else '<a class="home-card-link" href="/men/">Scoreboard &rarr;</a>')
+    # The prompt the script draws for a reader with no stars - most readers -
+    # is drawn with the page: drawn by the script, it pushed Home down 32-128px
+    # a moment after it painted (the 2026-10-02 layout-shift check).
+    where = ((['<a href="/cfb/power/">college football</a>'] if cfb else [])
+             + (['<a href="/cbb/power/">college basketball</a>'] if cbb else []))
+    prompt = ('<p class="mt-none">Star teams (&#9734;) on the ' + " or ".join(where)
+              + " rankings and their games show up here, with "
+              + ("our pick and " if cfb else "") + "the live score.</p>")
     return (CSS + '<section class="home-card" id="my-teams">'
             f'<div class="home-card-head"><h2>{title}</h2>{link}</div>'
-            f'<div id="mt-host" data-cfb="{int(cfb)}" data-cbb="{int(cbb)}"></div></section>' + JS)
+            f'<div id="mt-host" data-cfb="{int(cfb)}" data-cbb="{int(cbb)}">{prompt}</div></section>' + JS)

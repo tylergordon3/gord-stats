@@ -26,6 +26,9 @@ HOME_SHOWN = 3
 
 # (date, title, one line, link or None) - newest first.
 ENTRIES = [
+    ("2026-10-02", "Pages that stay put",
+     "Nothing jumps down the page while it loads: League Home, Matchups, Team, the trade "
+     "analyzer and Home hold their places as the live parts draw.", None),
     ("2026-10-02", "Faster, steadier pages",
      "Matchups pages a third the size; no sideways scrolling on a phone; logos you can see in "
      "dark mode; the fantasy playoff bracket reseeds the way Sleeper does.", None),
