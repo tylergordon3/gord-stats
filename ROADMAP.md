@@ -452,9 +452,8 @@ Open:
 - [ ] **After the first in-season CBB daily run (Nov 1+):** `git rm --cached
       docs/men/conference.html docs/women/conference.html` and commit (now in .gitignore; removing
       them before tip-off would 404 /men/conference until the run rebuilds it).
-- [ ] **First deploy of these changes:** run `pi deploy gord-stats` twice (the first runs the old
-      script); expect `linkcheck: N pages`, `vendor/bundle/.gems-sha256`, a data commit before
-      Jekyll, and `cache-control: ... immutable` on `/assets/v/<hash>/custom.css`.
+- [x] **First deploy of these changes** (2026-10-02, twice): data recorded before Jekyll, `linkcheck:
+      427 pages`, the gems stamp written, `/assets/v/<hash>/custom.css` served immutable.
 - [ ] **Git growth (~8 MB/day on the Pi):** whole-season files rewritten in full
       (cfb usage/gameinfo/boxscores/predictions, nfl predictions, wnba_defense) - partition by week
       or move re-derivable caches out of git; stop rewriting wnba_defense for its stamp.
