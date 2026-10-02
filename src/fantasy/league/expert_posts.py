@@ -60,6 +60,20 @@ _LEAD = {"and", "the", "for", "with", "on", "of", "at", "to", "in", "is", "but",
          "both", "also", "plus", "then", "when", "while", "now", "why", "how", "what", "rb",
          "wr", "qb", "te"}
 _BEFORE = re.compile(r"([A-Z][A-Za-z'.-]*)\s+$")
+# What makes a post an injury take. The two accounts post streams, promos and
+# chatter too - 24 of the first 65 posts read had any of this - and a post
+# that only named a player was linked beside his injury pill all the same. A
+# post is linked to a player only with one of these within WINDOW characters
+# of his name. Works on the plain text as well (hyphens there are spaces).
+INJURY = re.compile(
+    r"(?i)\b(injur\w*|hamstring|hammy|ankle|knee|acl|mcl|pcl|meniscus|achilles|concuss\w*"
+    r"|shoulder|groin|calf|quads?|hip|foot|feet|toe|wrist|thumb|finger|hand injury|elbow|ribs?"
+    r"|oblique|pecs?|pectoral|lisfranc|sprain\w*|strain\w*|tear|torn|fractur\w*|broken"
+    r"|surgery|surgical|ir|injured reserve|pup|rehab\w*|recover\w*|setback|aggravat\w*"
+    r"|mri|x[- ]?rays?|imaging|limited|dnp|did not practice|practic\w*|questionable"
+    r"|doubtful|out for|ruled out|week[- ]to[- ]week|day[- ]to[- ]day|game[- ]time"
+    r"|soft tissue|bone bruise|dislocat\w*|contusion|illness|return\w*|timeline)\b")
+WINDOW = 200
 
 
 def _load() -> dict:
@@ -193,22 +207,33 @@ def _near(a: str, b: str) -> bool:
     return a[i + 1:] == b[i + 1:] or a[i + 1:] == b[i:] or a[i:] == b[i + 1:]
 
 
-def _names(regex, text: str, first: str = None) -> bool:
-    """Whether the post names him: any match of a full name; a last name alone
-    unless the capitalized word just before it is someone else's first name."""
+def _named_at(regex, text: str, first: str = None):
+    """Where the post names him (the offset), or None: any match of a full
+    name; a last name alone unless the capitalized word just before it is
+    someone else's first name."""
     for m in regex.finditer(text):
         if first is None:
-            return True
+            return m.start()
         before = _BEFORE.search(text[max(0, m.start() - 30):m.start()])
         word = re.sub(r"[^a-z]", "", before.group(1).lower()) if before else ""
         if not word or word in _LEAD or _near(word, first):
-            return True
-    return False
+            return m.start()
+    return None
+
+
+def _names(regex, text: str, first: str = None) -> bool:
+    return _named_at(regex, text, first) is not None
+
+
+def _about_injury(text: str, at: int) -> bool:
+    """An injury word within WINDOW characters of the name at `at`."""
+    return bool(INJURY.search(text[max(0, at - WINDOW):at + WINDOW]))
 
 
 def links(names: dict, state: dict = None, now: datetime = None) -> dict:
     """{player id: {"handle", "who", "url", "at"}}: the newest kept post naming
-    each player in `names` ({id: full name}), from the last LINK_DAYS."""
+    each player in `names` ({id: full name}) with an injury word near his name
+    (INJURY, WINDOW), from the last LINK_DAYS."""
     state = _load() if state is None else state
     now = now or datetime.now(timezone.utc)
     cutoff = now - timedelta(days=LINK_DAYS)
@@ -222,7 +247,10 @@ def links(names: dict, state: dict = None, now: datetime = None) -> dict:
         for pid, regexes in pats.items():
             if pid in out:
                 continue
-            if any(_names(r, plain if on_plain else raw, first) for r, on_plain, first in regexes):
+            if any(_about_injury(t, at) for t, at in
+                   ((plain if on_plain else raw,
+                     _named_at(r, plain if on_plain else raw, first))
+                    for r, on_plain, first in regexes) if at is not None):
                 out[pid] = {"handle": p["handle"], "who": who.get(p["handle"], p["handle"]),
                             "url": f"https://x.com/{p['handle']}/status/{p['id']}",
                             "at": p.get("at")}

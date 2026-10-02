@@ -2,7 +2,7 @@
 What's new: the site's changelog, newest first.
 
 Home carries the latest few as a "What's new" card (home_card(), placed by
-cbb.render.render_home) and /changelog/ lists them all (generate(), built in
+cbb.render.render_home under the reader's My teams card) and /changelog/ lists them all (generate(), built in
 the daily run's render-home block).
 
 The list is written by hand, in readers' words: what they can now see or do,
@@ -110,6 +110,8 @@ CSS = """<style>
 .cl-t{color:#0f172a}
 .cl-t a{color:inherit}
 .cl-x{display:block;margin-top:2px}
+/* Near the top of Home each entry is two lines at most; /changelog/ has it whole. */
+.gs-whatsnew .cl-x{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cl-day{margin:22px 0 4px;font-size:13px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
   color:var(--gs-muted,#5d6b7e)}
 @media (prefers-color-scheme: dark){

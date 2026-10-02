@@ -130,8 +130,8 @@ def test_a_last_name_after_someone_elses_first_name_is_not_him():
     # Breece Hall; a lead-in word or a typo of his own first name still counts.
     names = {"1": "Breece Hall", "2": "Mike Evans", "3": "De'Von Achane", "4": "Cam Ward"}
     st = _state(("Officially an ankle injury?? Mike Hall Jr may have dodged a bullet.", _at(1)),
-                ("Jalen Coker And Mke Evans And Terrance Ferguson", _at(2)),
-                ("And Baker And Breece And Achane And Etienne", _at(3)),
+                ("Injury updates: Jalen Coker And Mke Evans And Terrance Ferguson", _at(2)),
+                ("Limited in practice: And Baker And Breece And Achane And Etienne", _at(3)),
                 ("Cameron Ward elbow, should be fine", _at(4)))
     assert set(ep.links(names, st, now=NOW)) == {"2", "3", "4"}
     st = _state(("Hall (ankle) limited Wednesday", _at(1)))
@@ -140,9 +140,9 @@ def test_a_last_name_after_someone_elses_first_name_is_not_him():
 
 def test_the_newest_post_wins_and_old_ones_are_not_linked():
     names = {"9226": "De'Von Achane"}
-    st = _state(("Achane update", _at(1)), ("Achane first look", _at(30)))
+    st = _state(("Achane hamstring update", _at(1)), ("Achane first look at the injury", _at(30)))
     assert ep.links(names, st, now=NOW)["9226"]["url"].endswith("/1")
-    stale = _state(("Achane", _at(24 * (ep.LINK_DAYS + 1))))
+    stale = _state(("Achane ankle", _at(24 * (ep.LINK_DAYS + 1))))
     assert ep.links(names, stale, now=NOW) == {}
 
 
@@ -153,3 +153,18 @@ def test_the_page_links_to_the_post_and_shows_none_of_it():
     assert "class=\"mu-pt\"" in html and "PT&nbsp;&#8599;" in html
     assert "<script>" not in html and "&quot;&gt;&lt;script&gt;" in html
     assert "Jeff Mueller, PT, DPT on X" in html
+
+
+def test_only_a_post_about_an_injury_is_linked():
+    """The accounts post streams and promos too (41 of their first 65 posts had
+    no injury word in them); naming a player is not a take on his injury."""
+    names = {"9226": "De'Von Achane", "1": "Breece Hall"}
+    st = _state(("Live tonight at 9! Talking Achane, Hall and more - subscribe", _at(1)),)
+    assert ep.links(names, st, now=NOW) == {}
+    st = _state(("Achane hamstring: tight Thursday, I'd expect him to play", _at(1)),
+                ("Breece Hall " + "and a long way of talking about other things " * 6
+                 + "while somebody else's ACL is the news", _at(2)))
+    assert set(ep.links(names, st, now=NOW)) == {"9226"}, "an injury word 200+ characters off"
+    # Plain-text forms count: "x-ray" written "x ray", "week-to-week".
+    st = _state(("Breece Hall week-to-week per the x-ray", _at(1)),)
+    assert set(ep.links(names, st, now=NOW)) == {"1"}

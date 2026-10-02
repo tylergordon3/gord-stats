@@ -469,15 +469,15 @@ def render_home():
              ("cfb", _cfb_card())])
     # The graphics lead: they are the thing worth looking at today, and the
     # preview cards are navigation, which can sit under them.
-    html = _my_teams(today) + _cfb_graphics(today) + _nfl_graphics(today) + html
+    # What's new sits under the reader's own teams, above the graphics: high
+    # enough to be seen (it closed the page until 2026-10-02), after what is on.
+    from gordstats import changelog
+    html = (_my_teams(today) + changelog.home_card() + _cfb_graphics(today)
+            + _nfl_graphics(today) + html)
     # On a night college and pro football both play, what is on comes first;
     # the card stays hidden on any other day (gordstats.watch_all).
     from gordstats import watch_all
     html = watch_all.teaser() + html
-    # What's new closes the page: news about the site comes after the games
-    # (gordstats.changelog; /changelog/ has the rest).
-    from gordstats import changelog
-    html = html + changelog.home_card()
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
