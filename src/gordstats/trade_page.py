@@ -73,6 +73,9 @@ CSS = """<style>
 .tr-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tr-short{display:none}
 .tr-tag{flex:none;font-size:11px;font-weight:700;color:#b91c1c}
+.tr-boost{flex:none;font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;
+  white-space:nowrap}
+.tr-boost.up{color:#15803d;background:#dcfce7}.tr-boost.down{color:#b91c1c;background:#fee2e2}
 .tr-ppw{flex:none;font-size:13px;color:#475569;font-variant-numeric:tabular-nums}
 .tr-out{margin:14px 0 0}
 .tr-msg{font-size:14px;color:#475569;margin:0}
@@ -141,6 +144,7 @@ CSS = """<style>
   .tr-p[aria-pressed="true"]{background:#1e3a5f;box-shadow:inset 3px 0 0 #60a5fa}
   .tr-pos{background:#1e293b;color:#cbd5e1}
   .tr-tag{color:#fca5a5}
+  .tr-boost.up{color:#4ade80;background:#14532d}.tr-boost.down{color:#fca5a5;background:#450a0a}
   .tr .tr-t td.tr-was{color:#94a3b8}
   .tr .tr-t td.up,.tr-verdict .up{color:#4ade80}.tr .tr-t td.down,.tr-verdict .down{color:#f87171}
   .tr-clear{color:#60a5fa}
@@ -208,6 +212,13 @@ window.GSTrade = function(host, adapter){
     }).join('');
   }
 
+  /** An injury tag, and a next-man-up chip where the adapter has one. */
+  function chips(p){
+    return (p.tag ? '<span class="tr-tag">' + esc(p.tag) + '</span>' : '')
+      + (p.boost ? '<span class="tr-boost ' + (p.boost[0] > 0 ? 'up' : 'down') + '">'
+         + esc(p.boost[1]) + '</span>' : '');
+  }
+
   function list(team, picked, side){
     var ids = (data.rosters[team] || []).slice().sort(function(x, y){
       var p = data.players[x] || {}, q = data.players[y] || {};
@@ -221,7 +232,7 @@ window.GSTrade = function(host, adapter){
         + '<span class="tr-pos">' + esc(p.pos) + '</span>'
         + '<span class="tr-name"><span class="tr-full">' + esc(p.name) + '</span>'
         + '<span class="tr-short">' + esc(p.short || p.name) + '</span></span>'
-        + (p.tag ? '<span class="tr-tag">' + esc(p.tag) + '</span>' : '')
+        + chips(p)
         + '<span class="tr-ppw">' + (p.ppw == null ? '' : p.ppw.toFixed(1)) + '</span>'
         + '</button>';
     }).join('');
@@ -404,7 +415,7 @@ window.GSTrade = function(host, adapter){
       var head = '<td class="tr-pk-p"><span class="tr-pk-in"><span class="tr-pos">' + esc(p.pos) + '</span>'
         + '<span class="tr-name"><span class="tr-full">' + esc(who(id)) + '</span>'
         + '<span class="tr-short">' + esc(who(id, true)) + '</span></span>'
-        + '<span class="tr-ppw">' + (p.ppw == null ? '' : p.ppw.toFixed(1)) + '</span></span></td>';
+        + chips(p) + '<span class="tr-ppw">' + (p.ppw == null ? '' : p.ppw.toFixed(1)) + '</span></span></td>';
       if(r === undefined) return '<tr>' + head + '<td class="tr-pk-drop">&hellip;</td><td></td><td></td></tr>';
       if(r === null) return '<tr>' + head + '<td class="tr-pk-drop" colspan="3">could not play out</td></tr>';
       var dp = signed(r.dp), dt = signed(r.dt);

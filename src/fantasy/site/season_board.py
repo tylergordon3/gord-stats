@@ -63,6 +63,12 @@ OUT = paths.WEB_FANTASY_DIR / "season-board.json"
 # Sleeper's designations go stale the moment the fetch fails, so the last good
 # copy is kept: an out-of-date injury is a better input than no injury at all.
 INJURY_CACHE = paths.DATA_DIR / "players" / "injury_status.json"
+# Each team's depth order from the same table, for the next-man-up boosts
+# (fantasy.league.opportunity) - the power rankings read it too.
+DEPTH_CACHE = paths.DATA_DIR / "players" / "depth_charts.json"
+# The weeks a reader's season is drawn over at most: the regular season and
+# a three-week bracket.
+SEASON_WEEKS = 17
 
 POSITIONS = ["QB", "RB", "WR", "TE", "K", "DEF"]
 FIELDS = ["pos", "bye", "mu", "sd", "mu_se", "avail", "rec", "out"]
@@ -80,6 +86,15 @@ def injury_status() -> dict:
         raw = Players().get_all_players(sport="nfl") or {}
         out = {str(pid): p.get("injury_status") for pid, p in raw.items()
                if p.get("injury_status")}
+        try:
+            from fantasy.league import opportunity
+            depth = opportunity.depth_charts(raw)
+            if depth:
+                DEPTH_CACHE.parent.mkdir(parents=True, exist_ok=True)
+                DEPTH_CACHE.write_text(json.dumps(depth, separators=(",", ":")),
+                                       encoding="utf-8")
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! depth charts not kept ({exc})")
         if out:
             INJURY_CACHE.parent.mkdir(parents=True, exist_ok=True)
             INJURY_CACHE.write_text(json.dumps(out, separators=(",", ":")),
@@ -231,6 +246,14 @@ def absorbed_weeks(year: int = UPCOMING_YEAR) -> int:
     return weeks - 1
 
 
+def depth_charts() -> dict | None:
+    """The depth charts injury_status() last kept, or None."""
+    try:
+        return json.loads(DEPTH_CACHE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
 def build(year: int = UPCOMING_YEAR) -> dict:
     """The published board, as the browser reads it."""
     from fantasy.league.power import FORCED_OUT, NFL_WEEKS
@@ -251,6 +274,18 @@ def build(year: int = UPCOMING_YEAR) -> dict:
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! injury return dates unavailable ({exc}); Sleeper's tags alone")
         held = {pid: FORCED_OUT.get(tag, 0) for pid, tag in injuries.items()}
+    # Next man up: an injured player's work goes to the teammates behind him
+    # (fantasy.league.opportunity, measured on 2019-25) for as long as he is
+    # out - spread over the season here, since the board holds one rate.
+    next_up = {}
+    try:
+        from fantasy.league import opportunity
+        next_up = opportunity.for_board(board, held, year, weeks,
+                                        weeks_left=max(SEASON_WEEKS - weeks, 1),
+                                        depth=depth_charts())
+        board = opportunity.apply(board, next_up)
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! next-man-up boosts not applied ({exc})")
 
     # A position's median catch rate, for the players Sleeper is not projecting
     # this week - deep bench, and the ones a bye or an injury has taken off the
@@ -278,8 +313,14 @@ def build(year: int = UPCOMING_YEAR) -> dict:
             _catch_rate(pid, row.pos, row.mu, rec, past, median),
             int(held.get(pid, 0)),
         ]
+    # The measured effect for the pages to name ("+4.9 with Achane out"):
+    # {teammate: [points a game, the injured player, weeks]}, the ones worth
+    # saying. Its own key, not a field: fields are read by position.
+    named = {pid: [round(float(v["full"]), 1), str(v["because"]), int(v["weeks"])]
+             for pid, v in next_up.items()
+             if pid in out and abs(float(v.get("full") or 0)) >= 0.5}
     return {"year": int(year), "week": int(weeks),
-            "fields": FIELDS, "pos": POSITIONS, "board": out}
+            "fields": FIELDS, "pos": POSITIONS, "board": out, "next": named}
 
 
 def generate(year: int = UPCOMING_YEAR) -> None:

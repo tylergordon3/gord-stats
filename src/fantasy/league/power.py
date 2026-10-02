@@ -784,6 +784,18 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! injury return dates unavailable ({exc}); Sleeper's tags alone")
         held = None
+    # And the other half of an injury: his work goes to the teammates behind
+    # him for as long as he is out (fantasy.league.opportunity).
+    if held:
+        try:
+            from fantasy.league import opportunity
+            from fantasy.site.season_board import SEASON_WEEKS, depth_charts
+            played_weeks = actual["weeks"] if actual else 0
+            board = opportunity.apply(board, opportunity.for_board(
+                board, held, year, scored, weeks_left=max(SEASON_WEEKS - played_weeks, 1),
+                depth=depth_charts()))
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! next-man-up boosts not applied ({exc})")
     summary = simulate(board, roster_frame, sims=sims, fixed_schedule=fixed,
                        actual_points=points, injuries=tags, held=held,
                        playoff_points=playoff)

@@ -1,0 +1,139 @@
+{
+ "about": "Next-man-up shares (fantasy.league.opportunity). same[pos][d-1]: share of an injured player's PPR points a game that the healthy teammate d depth steps below him gains; qb_out[pos]: share of each catcher's own points that a starting QB's absence moves. backup_qb is measured, not applied.",
+ "fitted": "2026-10-01",
+ "seasons": [
+  2018,
+  2019,
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "min_mu": 5.0,
+ "prior_games": 5.0,
+ "same": {
+  "RB": [
+   0.324,
+   0.1502,
+   0.1096
+  ],
+  "WR": [
+   0.148,
+   0.1119,
+   0.0765,
+   0.0739
+  ],
+  "TE": [
+   0.2701,
+   0.1408
+  ]
+ },
+ "qb_out": {
+  "RB": -0.0845,
+  "WR": -0.108,
+  "TE": 0.01
+ },
+ "backup_qb": 0.1562,
+ "validation": {
+  "train": [
+   2019,
+   2020,
+   2021,
+   2022
+  ],
+  "test": [
+   2023,
+   2024,
+   2025
+  ],
+  "injury_weeks": {
+   "n": 11925,
+   "rmse_none": 5.9397,
+   "rmse_rule": 5.8706
+  },
+  "moved_a_point": {
+   "n": 1932,
+   "rmse_none": 6.6869,
+   "rmse_rule": 6.3276,
+   "mse_gain": 4.676,
+   "mse_gain_95": [
+    3.337,
+    5.94
+   ]
+  },
+  "by_effect": [
+   {
+    "from": -99,
+    "to": -1,
+    "n": 269,
+    "predicted": -1.45,
+    "observed": -2.44,
+    "rmse_none": 8.228,
+    "rmse_rule": 7.8087
+   },
+   {
+    "from": -1,
+    "to": -0.25,
+    "n": 829,
+    "predicted": -0.57,
+    "observed": -0.6,
+    "rmse_none": 7.2288,
+    "rmse_rule": 7.223
+   },
+   {
+    "from": 0.25,
+    "to": 1,
+    "n": 1382,
+    "predicted": 0.64,
+    "observed": 0.3,
+    "rmse_none": 4.2851,
+    "rmse_rule": 4.2689
+   },
+   {
+    "from": 1,
+    "to": 2,
+    "n": 1147,
+    "predicted": 1.42,
+    "observed": 1.23,
+    "rmse_none": 5.6877,
+    "rmse_rule": 5.5532
+   },
+   {
+    "from": 2,
+    "to": 99,
+    "n": 516,
+    "predicted": 2.92,
+    "observed": 3.25,
+    "rmse_none": 7.7599,
+    "rmse_rule": 7.041
+   }
+  ],
+  "coefficients": {
+   "same": {
+    "RB": [
+     0.3092,
+     0.1368,
+     0.1081
+    ],
+    "WR": [
+     0.1505,
+     0.1014,
+     0.0727,
+     0.066
+    ],
+    "TE": [
+     0.2347,
+     0.1618
+    ]
+   },
+   "qb_out": {
+    "RB": -0.0548,
+    "WR": -0.1044,
+    "TE": 0.013
+   },
+   "backup_qb": 0.1383
+  }
+ }
+}

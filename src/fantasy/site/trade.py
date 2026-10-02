@@ -73,6 +73,15 @@ window.GSTradeAdapter = (function(){
     var p = ix[pid];
     return p ? p[0] : pid;
   }
+  /** The next-man-up effect the board names for a player ([points a game,
+   *  the injured teammate, weeks]), as a chip: "+4.9 Achane out". */
+  function boost(pid){
+    var v = (st.board.next || {})[pid];
+    if(!v) return null;
+    var who = String(name(v[1]) || '').split(' ').slice(-1)[0];
+    var a = Math.abs(v[0]).toFixed(1);
+    return [v[0], (v[0] > 0 ? '+' : '\u2212') + a + ' ' + who + ' out'];
+  }
   function roster(rid){
     return st.league.rosters.filter(function(r){ return String(r.roster_id) === String(rid); })[0] || {};
   }
@@ -205,13 +214,14 @@ window.GSTradeAdapter = (function(){
         rosters[rid].forEach(function(pid){
           var row = st.board.board[pid], m = mu(pid), out = row ? row[7] : 0;
           players[pid] = {name:name(pid), short:short(name(pid), pos(pid)), pos:pos(pid),
-                          ppw:m, tag: aside[pid] ? 'IR' : (out ? 'Out ' + out + 'w' : '')};
+                          ppw:m, tag: aside[pid] ? 'IR' : (out ? 'Out ' + out + 'w' : ''),
+                          boost:boost(pid)};
         });
       });
       picks.forEach(function(pid){
         var row = st.board.board[pid], out = row ? row[7] : 0;
         players[pid] = {name:name(pid), short:short(name(pid), pos(pid)), pos:pos(pid),
-                        ppw:mu(pid), tag: out ? 'Out ' + out + 'w' : ''};
+                        ppw:mu(pid), tag: out ? 'Out ' + out + 'w' : '', boost:boost(pid)};
       });
       var teams = st.order.map(function(rid){
         return {id:String(rid), name:league.names[String(rid)] || ('Roster ' + rid)};
