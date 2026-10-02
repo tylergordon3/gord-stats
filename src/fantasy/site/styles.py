@@ -1,7 +1,12 @@
 """
 Pandas Styler helpers for generated tables (ported from py/html_util.py, subset
 needed by the homepage).
+
+Render every Styler with `to_html(styler)` below, never `styler.to_html()`:
+pandas' own output is mostly per-cell ids and per-cell CSS rules.
 """
+import hashlib
+import html
 import re
 
 import matplotlib as mpl
@@ -62,6 +67,147 @@ def default_style(df, gradient_cols, cmap: str = "RdYlGn"):
             .background_gradient(text_color_threshold=GRADIENT_INK, cmap=cmap, subset=gradient_cols)
             .set_table_styles([GRID_TD, GRID_TH, TABLE_STYLE], overwrite=False)
             .set_table_attributes('class="sticky-table"'))
+
+
+# --- Compact rendering -------------------------------------------------------- #
+#
+# pandas gives every cell an id (`T_<random uuid>_row3_col2`) and paints each
+# coloured cell with an ID rule in the table's <style> block - one rule per
+# gradient cell, its selector spelled out in full. On the draft page that was
+# 9,318 ids and ~168 KB of CSS, half of a 1 MB page. `to_html` renders the same
+# table with the colour as a style attribute on the cells that carry one, no id
+# on the cells that don't, and a uuid that is a hash of the table (so a rebuild
+# with the same data is byte-identical).
+#
+# The cascade is unchanged. An ID rule (1,0,0) and a style attribute both beat
+# every class rule the site has, and lose to the same !important ones, so the
+# only rules that ranked between the two are the table's own (`#T_x td`, 1,0,1),
+# which outrank the per-cell rule but not the attribute. A cell whose colour
+# could collide with one of those - same property, or a shorthand of it - keeps
+# its ID rule, exactly as pandas wrote it.
+#
+# pandas' bookkeeping classes go too (`data row3 col2`, `col_heading level0`):
+# nothing on the site selects them - no stylesheet, script or test - except a
+# table's own rules (schedule's `td.col0`), and a class those name is kept.
+# Indentation between table tags goes as well; a cell's content is untouched.
+
+_PLACEHOLDER = "gs0uuid0"
+_STYLE_BLOCK = re.compile(r'\s*<style type="text/css">\n(.*?)</style>\n', re.S)
+_CSS_RULE = re.compile(r"([^{}]+)\{([^{}]*)\}")
+_CSS_DECL = re.compile(r"^[ \t]*([^:\s][^:\n]*?)[ \t]*:[ \t]*(.*?)[ \t]*;?[ \t]*$", re.M)
+# A cell's opening tag up to its class, then whether the tag closes there.
+_CELL_TAG = re.compile(r'<(td|th)(?: id="T_' + _PLACEHOLDER + r'_([^"]+)")? class="([^"]*)" ?(>?)')
+_PANDAS_CLASS = re.compile(r"^(?:data|blank|index_name|col_heading|row_heading|"
+                           r"level\d+|row\d+|col\d+|col_trim|row_trim)$")
+_COMPOUND = re.compile(r"^(td|th|tr|thead|tbody)?((?:\.[\w-]+)*)$")
+_IMPORTANT = re.compile(r"!\s*important\s*$", re.I)
+_TABLE_WS = re.compile(r"\n[ \t]*(?=</?(?:table|thead|tbody|tr|th|td)\b)")
+
+
+def _may_match(rest: str, tag: str, classes: set, in_head: bool) -> bool:
+    """Could the table rule `#T_x <rest>` select this cell? Unsure means yes."""
+    if not rest:
+        return False                      # the table itself
+    if "," in rest:
+        return True
+    parts = rest.split()
+    last = _COMPOUND.match(parts[-1])
+    if not last:
+        return True
+    if last.group(1) and last.group(1) != tag:
+        return False
+    if not set(filter(None, last.group(2).split("."))) <= classes:
+        return False
+    for part in parts[:-1]:
+        anc = _COMPOUND.match(part)
+        if not anc or anc.group(2):
+            return True
+        if (anc.group(1) == "thead" and not in_head) or (anc.group(1) == "tbody" and in_head):
+            return False
+    return True
+
+
+def _overlaps(p: str, q: str) -> bool:
+    return p == q or p.startswith(q + "-") or q.startswith(p + "-")
+
+
+def _inlinable(decls, info, table_rules) -> bool:
+    """True when moving these declarations into a style attribute can't change
+    what wins: nothing in the table's own rules competes, or the cell's side is
+    !important and the table's is not (inline !important wins all the same)."""
+    tag, classes, in_head = info
+    for rest, tdecls in table_rules:
+        if not _may_match(rest, tag, classes, in_head):
+            continue
+        for p, v in decls:
+            for q, w in tdecls:
+                if _overlaps(p, q) and not (_IMPORTANT.search(v) and not _IMPORTANT.search(w)):
+                    return False
+    return True
+
+
+def _css(decls) -> str:
+    return ";".join(f"{p}:{v}" for p, v in decls)
+
+
+def to_html(styler, uuid: str | None = None) -> str:
+    """Render a Styler compactly: colours inline, ids only where a rule needs
+    one, no unused pandas classes, a stable table id. Same look as
+    `styler.to_html()`, a fraction of the bytes. `uuid` names the table; the
+    default is a hash of its markup."""
+    styler.cell_ids = False
+    raw = styler.to_html(table_uuid=_PLACEHOLDER)
+    m = _STYLE_BLOCK.match(raw)
+    if not m:                             # an unfamiliar template: leave it be
+        out = raw
+    else:
+        tid = f"#T_{_PLACEHOLDER}"
+        table_rules, cell_rules = [], []  # (selector, decls), ([ids], decls)
+        for rule in _CSS_RULE.finditer(m.group(1)):
+            sel = " ".join(rule.group(1).split())
+            decls = _CSS_DECL.findall(rule.group(2))
+            parts = [s.strip() for s in sel.split(",")]
+            if all(s.startswith(tid + "_") and " " not in s for s in parts):
+                cell_rules.append(([s[len(tid) + 1:] for s in parts], decls))
+            else:
+                table_rules.append((sel, decls))
+        body = raw[m.end():]
+        head_end = body.find("</thead>")
+        cells = {c.group(2): (c.group(1), set(c.group(3).split()), c.start() < head_end)
+                 for c in _CELL_TAG.finditer(body) if c.group(2)}
+        tables = [(sel[len(tid):].strip(), decls) for sel, decls in table_rules
+                  if sel == tid or sel.startswith(tid + " ")]
+        unknown = [d for sel, d in table_rules if not (sel == tid or sel.startswith(tid + " "))]
+        per_cell: dict = {}
+        for ids, decls in cell_rules:
+            for eid in ids:
+                per_cell.setdefault(eid, []).extend(decls)
+        inline = {eid: decls for eid, decls in per_cell.items()
+                  if eid in cells and not unknown
+                  and _inlinable(decls, cells[eid], tables)}
+        named = set(re.findall(r"\.([\w-]+)", " ".join(sel for sel, _ in table_rules)))
+
+        def tag(c):
+            eid, attrs = c.group(2), ""
+            if eid in inline:
+                attrs = f' style="{html.escape(_css(inline[eid]), quote=True)}"'
+            elif eid:
+                attrs = f' id="T_{_PLACEHOLDER}_{eid}"'
+            keep = [k for k in c.group(3).split() if k in named or not _PANDAS_CLASS.match(k)]
+            if keep:
+                attrs += f' class="{" ".join(keep)}"'
+            return f"<{c.group(1)}{attrs}{c.group(4) or ' '}"
+
+        body = _CELL_TAG.sub(tag, _TABLE_WS.sub("", body))
+        rules = [f"{sel}{{{_css(decls)}}}" for sel, decls in table_rules]
+        for ids, decls in cell_rules:
+            kept = [eid for eid in ids if eid not in inline]
+            if kept:
+                rules.append(", ".join(f"{tid}_{eid}" for eid in kept) + f"{{{_css(decls)}}}")
+        style = f'<style type="text/css">\n{chr(10).join(rules)}\n</style>\n' if rules else ""
+        out = style + body
+    name = uuid or hashlib.sha1(out.encode("utf-8")).hexdigest()[:8]
+    return out.replace(f"T_{_PLACEHOLDER}", f"T_{name}")
 
 
 # --- Win-Loss record helpers (for all-play / schedule-comparison tables) ----- #

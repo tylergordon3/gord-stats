@@ -119,7 +119,7 @@ def _style(df: pd.DataFrame):
 
 def metrics_section() -> str:
     """The All-Time Metrics block of the homepage (legend, table)."""
-    table = _style(all_time_metrics()).to_html()
+    table = styles.to_html(_style(all_time_metrics()))
     # One line per column. "Read = Weaker Teams" was a typo for Red that had
     # stood here since the page was ported.
     return f"""<p><strong>PF / PA</strong>: points for and against, all seasons.</p>

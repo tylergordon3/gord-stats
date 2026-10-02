@@ -242,7 +242,7 @@ def waiver_watch() -> str:
                   .hide(axis="index").format({"Proj": "{:.1f}", "Over repl.": "{:+.1f}"})
                   .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r" if gradient_low else "RdYlGn",
                                        subset=["Over repl."]))
-        return f'<div class="table-scroll">{styled.to_html()}</div>'
+        return f'<div class="table-scroll">{styles.to_html(styled)}</div>'
 
     return (
         '<h2>Waiver Watch</h2>'
@@ -313,8 +313,8 @@ def trade_log(tx: pd.DataFrame, names: dict) -> pd.DataFrame:
 # --------------------------------------------------------------------------- #
 
 def _table(frame: pd.DataFrame) -> str:
-    return (frame.style.set_table_styles(_GRID).set_table_attributes('class="sticky-table"')
-            .hide(axis="index").to_html())
+    return styles.to_html(frame.style.set_table_styles(_GRID).set_table_attributes('class="sticky-table"')
+                          .hide(axis="index"))
 
 
 def _current_view(names: dict) -> str:
@@ -336,20 +336,20 @@ def _season_view(season_str: str, names: dict, tx: pd.DataFrame = None,
     tx = _load_tx(season_str) if tx is None else tx
     # reset_index() keeps Manager as a real column — a styled index renders
     # its name as a phantom second header row.
-    act = (activity(tx).reset_index().style.set_table_styles(_GRID)
-           .set_table_attributes('class="sticky-table"')
-           .hide(axis="index").to_html())
+    act = styles.to_html(activity(tx).reset_index().style.set_table_styles(_GRID)
+                         .set_table_attributes('class="sticky-table"')
+                         .hide(axis="index"))
 
     pickups = best_pickups(season_str, tx, names, starters=starters, max_week=max_week)
-    pickups_html = (pickups.style.set_table_styles(_GRID)
-                    .set_table_attributes('class="sticky-table"')
-                    .hide(axis="index").format({"Starter Pts": "{:.1f}"}).to_html()
+    pickups_html = (styles.to_html(pickups.style.set_table_styles(_GRID)
+                                   .set_table_attributes('class="sticky-table"')
+                                   .hide(axis="index").format({"Starter Pts": "{:.1f}"}))
                     if not pickups.empty else "<p><em>No pickups started yet this season.</em></p>")
 
     trades = trade_log(tx, names)
-    trades_html = (trades.style.set_table_styles(_GRID)
-                   .set_table_attributes('class="sticky-table"')
-                   .hide(axis="index").to_html()
+    trades_html = (styles.to_html(trades.style.set_table_styles(_GRID)
+                                  .set_table_attributes('class="sticky-table"')
+                                  .hide(axis="index"))
                    if not trades.empty else "<p><em>No trades this season. Cowards.</em></p>")
 
     faab_note = ("<p><strong>FAAB Spent</strong>: total winning free-agent budget bids.</p>"
@@ -373,9 +373,9 @@ def _all_time_view(names: dict, seasons: list) -> str:
     combined = pd.concat(frames)          # pre-FAAB seasons lack the FAAB column -> NaN
     total = combined.groupby("Manager").sum().astype(int).sort_values(
         ["Total Adds", "Waiver Claims"], ascending=False)
-    html = (total.reset_index().style.set_table_styles(_GRID)
-            .set_table_attributes('class="sticky-table"')
-            .hide(axis="index").to_html())
+    html = styles.to_html(total.reset_index().style.set_table_styles(_GRID)
+                          .set_table_attributes('class="sticky-table"')
+                          .hide(axis="index"))
     return (
         '<h2>All-Time Manager Activity</h2>'
         f'<p>Every completed move across all {len(seasons)} seasons. '

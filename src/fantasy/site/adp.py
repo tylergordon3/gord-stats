@@ -119,10 +119,10 @@ def _style(df, value_fmt, cmap, grad_col):
     fmt = {grad_col: value_fmt}
     if "ADP" in df.columns:
         fmt["ADP"] = "{:.1f}"
-    return (df.style.hide(axis="index").format(fmt)
+    return styles.to_html(df.style.hide(axis="index").format(fmt)
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap=cmap, subset=[grad_col])
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
 
 def _assemble(values, busts):
@@ -159,10 +159,10 @@ def _ranked(frame, value_col, cols, rename, best: bool, value_fmt, adp_fmt):
     fmt = {grad: value_fmt, "ADP Value": adp_fmt}
     if "ADP" in df.columns:
         fmt["ADP"] = "{:.1f}"
-    return (df.style.hide(axis="index").format(fmt, na_rep="—")
+    return styles.to_html(df.style.hide(axis="index").format(fmt, na_rep="—")
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="Greens" if best else "Reds_r", subset=[grad])
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
 
 def _overall_view(matched):
@@ -231,11 +231,11 @@ def _manager_summary(df):
     g = g.rename(columns={"AvgFinish": "Avg Finish vs Pick", "Busts": "Busts (>10)",
                           "Values": "Values (>10)", "AvgADP": "Avg Value vs ADP"})
     g = g.sort_values("Avg Finish vs Pick", ascending=False)
-    return (g.style.hide(axis="index")
+    return styles.to_html(g.style.hide(axis="index")
             .format({"Avg Finish vs Pick": "{:+.1f}", "Avg Value vs ADP": "{:+.1f}"})
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Avg Finish vs Pick"])
             .set_table_styles(_GRID + [styles.TABLE_STYLE], overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
 
 def all_time_section() -> str:

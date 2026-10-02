@@ -13,7 +13,10 @@ best lineup by that projection is not the one set, the page says which swap
 and what it is worth - ahead of kickoff only; after the week it is history.
 
 Every week the league has played is archived (cfb.yahoo.week_matchups) and
-stays on the page, so a finished week reads exactly as it ended.
+stays on the page, so a finished week reads exactly as it ended. Only the
+current week is in the page itself; the others are fragments beside it
+(docs/cfb/matchups/week-N.html), fetched when their tab is tapped
+(gordstats.matchup_page.week_switch) - each week is ~270 KB.
 
     python -m cfb.site.matchups     # rebuild the page
 """
@@ -28,6 +31,10 @@ from cfb.site import write_page
 from gordstats import clinch, logos, matchup_page as ui, share_button, share_card, stakes
 
 OUTPUT = WEB_DIR / "matchups" / "index.html"
+#: Where a week other than the current one is fetched from: requested without
+#: its .html, which Cloudflare Pages answers with a redirect (week_switch falls
+#: back to the file where the bare path is not served).
+WEEK_URL = "/cfb/matchups/week-%s"
 
 # A lineup hint is worth printing past this many projected points.
 SWAP_MIN = 1.0
@@ -647,8 +654,22 @@ def tracker_side(side: dict, wk: pd.DataFrame) -> dict:
             "left": left}
 
 
+# The week's Yahoo points through the site's proxy, or none: a proxy that
+# failed (a 502, or ok:false from Yahoo) reached the shared updater as a
+# payload, and every started player read "0.0 final".
+API_JS = ("function muCfbApi(week){"
+          "return fetch('/api/cfb-matchups?week='+week+'&_='+Date.now())"
+          ".then(function(r){return r.ok?r.json():null;})"
+          ".then(function(d){return d&&d.ok!==false&&d.teams?d:{teams:{}};})"
+          ".catch(function(){return {teams:{}};});}")
+
+
 def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
-              to_school: dict, espn: dict, teams: dict, extremes: dict = None) -> str:
+              to_school: dict, espn: dict, teams: dict, extremes: dict = None,
+              poll: bool = True) -> str:
+    """One week's view. `poll`: carry the live updater - the week the page
+    opens on only. The others are fetched fragments, whose scripts never run,
+    and window.MU_LIVE is one global the current week's sets last anyway."""
     week = int(data["week"])
     statuses = {p["yahoo_id"]: p["status"] for roster in data["rosters"].values()
                 for p in roster if p.get("status")}
@@ -705,10 +726,9 @@ def week_view(data: dict, lg: dict, board: pd.DataFrame, frame: pd.DataFrame,
     # The week still being played polls Yahoo through the site's own proxy
     # (functions/api/cfb-matchups.js): a minute apart while games are on,
     # five minutes before they start.
-    live = ("" if final else
-            "<script>" + ui.LIVE_GAMES_JS + ui.LIVE_LEFT_JS + "window.MU_LIVE={fetch:function(){"
-            "var api=fetch('/api/cfb-matchups?week="
-            f"{week}&_='+Date.now()).then(function(r){{return r.json();}}).catch(function(){{return {{teams:{{}}}};}});"
+    live = ("" if final or not poll else
+            "<script>" + ui.LIVE_GAMES_JS + ui.LIVE_LEFT_JS + API_JS + "window.MU_LIVE={fetch:function(){"
+            f"var api=muCfbApi({week});"
             "var sb=muGames('https://site.api.espn.com/apis/site/v2/sports/football/college-football/"
             f"scoreboard?groups=80&limit=500&week={espn_week}&dates={SEASON}&seasontype=2');"
             "return Promise.all([api,sb]).then(function(x){"
@@ -820,12 +840,14 @@ def _recap_teaser() -> str:
     return recap.teaser()
 
 
-def body() -> str:
+def build() -> tuple:
+    """(page html, {week: view}) - every week's view, the current one's in the
+    page and the rest written beside it (generate)."""
     lg = yahoo.league()
     weeks = yahoo.archived_weeks()
     if not weeks:
         return (ui.CSS + "<p>No matchups yet — the page fills in on the first "
-                "rebuild once Yahoo has scheduled week 1.</p>")
+                "rebuild once Yahoo has scheduled week 1.</p>"), {}
     frame, _model, _names = predict.season()
     board = in_season.board(frame=frame)
     to_school = schools_mod.yahoo_school()
@@ -837,7 +859,8 @@ def body() -> str:
         if any(not yahoo.week_final(d) for d in datas.values()) else weeks[-1]
     extremes = position_extremes(datas)
     _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
-    views = {w: week_view(datas[w], lg, board, frame, to_school, espn, teams, extremes)
+    views = {w: week_view(datas[w], lg, board, frame, to_school, espn, teams, extremes,
+                          poll=w == current)
              for w in weeks}
     views[current] = _game_of_week(current) + _playoff_news(current) + views[current]
 
@@ -845,7 +868,7 @@ def body() -> str:
     info = _CARDS.get(current)
     share = share_button.row("/cfb/matchups/", share_card.matchups_line(
         current, info["pairs"], info["started"], info["final"]) if info else "")
-    return (
+    html = (
         ui.CSS + share
         # One line: the recap teaser under it says the rest.
         + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> — every '
@@ -871,8 +894,13 @@ def body() -> str:
         'record. Standings and waivers are on the <a href="/cfb/league/">league '
         'dashboard</a>, season-long roster strength on the '
         '<a href="/cfb/league/power/">power rankings</a>.</p></details>'
-        + ui.week_switch(weeks, current, views) + accuracy_section(datas)
+        + ui.week_switch(weeks, current, views, src=WEEK_URL) + accuracy_section(datas)
         + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS)
+    return html, views
+
+
+def body() -> str:
+    return build()[0]
 
 
 # The week each week_view drew, for the page's link-preview card: which week
@@ -917,8 +945,13 @@ def card() -> dict | None:
 
 
 def generate():
-    html = body()
+    html, views = build()
     write_page(OUTPUT, f"CFB League Matchups {SEASON}", html, image=card())
+    # Plain fragments beside the page, every week but the one in it. The live
+    # tick runs this too, so a week that has just finished is there to fetch.
+    if views:
+        n = ui.write_weeks(OUTPUT.parent, views, _CARDS["current"])
+        print(f"  {len(views) - 1} other weeks beside it ({n} rewritten), fetched on demand")
 
 
 if __name__ == "__main__":

@@ -68,11 +68,11 @@ def _bar(df, title, ylabel, key) -> str:
 def _style_summary(g):
     d = g.rename(columns={"ADPValue": "Avg ADP Value", "FinishValue": "Avg vs Finish"})
     d = d[["Manager", "Picks", "Avg vs Finish", "Avg ADP Value"]]
-    return (d.style.hide(axis="index")
+    return styles.to_html(d.style.hide(axis="index")
             .format({"Avg ADP Value": "{:+.1f}", "Avg vs Finish": "{:+.1f}"})
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Avg vs Finish"])
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
 
 def _style_pivot(p):
@@ -81,11 +81,11 @@ def _style_pivot(p):
     # reset_index() makes Manager a real, labelled column — a styled index
     # renders its name as a phantom second header row.
     pos = list(p.columns)
-    return (p.reset_index().style.hide(axis="index")
+    return styles.to_html(p.reset_index().style.hide(axis="index")
             .format("{:+.1f}", na_rep="—", subset=pos)
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", axis=None, vmin=-bound, vmax=bound, subset=pos)
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
 
 def _section(title, desc, chart, table) -> str:

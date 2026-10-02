@@ -142,16 +142,16 @@ def _clock_tables(first):
     # reset_index() makes Manager a real, labelled column — a styled index
     # renders its name as a phantom second header row.
     # Each position on its own scale: green = goes earliest, red = waits longest.
-    heat = (avg.reset_index().style.hide(axis="index")
+    heat = styles.to_html(avg.reset_index().style.hide(axis="index")
             .format("{:.1f}", na_rep="—", subset=pos)
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", axis=0, subset=pos)
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
     detail = earliest.astype(str) + " - " + latest.astype(str)
-    detail = (detail.reset_index().style.hide(axis="index")
+    detail = styles.to_html(detail.reset_index().style.hide(axis="index")
               .set_table_styles(_GRID, overwrite=False)
-              .set_table_attributes('class="sticky-table"')).to_html()
+              .set_table_attributes('class="sticky-table"'))
     return avg, earliest, heat, detail
 
 
@@ -219,20 +219,20 @@ def early_blueprint(df) -> str:
 
     # reset_index() makes Manager a real, labelled column — a styled index
     # renders its name as a phantom second header row.
-    grid = (counts.reset_index().style.hide(axis="index")
+    grid = styles.to_html(counts.reset_index().style.hide(axis="index")
             .format("{:d}", subset=list(counts.columns))
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="Blues", axis=None, subset=list(counts.columns))
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
     # What each manager opens with.
     opener = df.sort_values("overall_pick").groupby(["Manager", "Season"], as_index=False).first()
     opens = _pivot(opener, "overall_pick", "count").fillna(0).astype(int)
-    opens_html = (opens.reset_index().style.hide(axis="index")
+    opens_html = styles.to_html(opens.reset_index().style.hide(axis="index")
                   .format("{:d}", subset=list(opens.columns))
                   .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="Blues", axis=None, subset=list(opens.columns))
                   .set_table_styles(_GRID, overwrite=False)
-                  .set_table_attributes('class="sticky-table"')).to_html()
+                  .set_table_attributes('class="sticky-table"'))
 
     share = (counts.div(counts.sum(axis=1), axis=0) * 100).round(0)
     rb_heavy = share["RB"].idxmax() if "RB" in share else None
@@ -285,14 +285,14 @@ def health_table(df) -> pd.DataFrame:
 def health(df) -> str:
     table = health_table(df)
     shown = table.drop(columns=["RawRank", "AdjRank", "Move"])
-    html = (shown.style.hide(axis="index")
+    html = styles.to_html(shown.style.hide(axis="index")
             .format({"Starter Hit %": "{:.0f}%", "Healthy Hit %": "{:.0f}%", "Swing": "{:+.0f}"})
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Weeks Lost"])
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["High-Impact Weeks Lost"])
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Est. Pts Lost"])
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Healthy Hit %"])
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
     worst = table.loc[table["Est. Pts Lost"].idxmax()]
     best = table.loc[table["Est. Pts Lost"].idxmin()]
@@ -402,12 +402,12 @@ def _champ_picks_table(df, season) -> str:
     c["Player"] = [f'<span class="row-rank">{int(p)}</span>{escape(n)}'
                    for p, n in zip(c["overall_pick"], c["Player"])]
     d = c[_CHAMP_PICK_COLS].rename(columns=_CHAMP_PICK_RENAME)
-    return (d.style.hide(axis="index")
+    return styles.to_html(d.style.hide(axis="index")
             .format({"ADP": "{:.1f}", "Finish vs Pick": "{:+.0f}"}, na_rep="—")
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Pos Finish"])
             .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Finish vs Pick"])
             .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table"')).to_html()
+            .set_table_attributes('class="sticky-table"'))
 
 
 def _unhealthiest_champ(champ, field) -> str:
@@ -423,14 +423,14 @@ def _unhealthiest_champ(champ, field) -> str:
 
 def champion_blueprint(df) -> str:
     vs = _champ_vs_field(df)
-    vs_html = (vs.style.hide(axis="index")
+    vs_html = styles.to_html(vs.style.hide(axis="index")
                .format({"Starter Hit %": "{:.0f}%", "Weeks Lost / Pick": "{:.1f}",
                         "Avg Finish vs Pick": "{:+.1f}", "Avg ADP Value": "{:+.1f}"})
                .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Starter Hit %"])
                .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn", subset=["Avg Finish vs Pick"])
                .background_gradient(text_color_threshold=styles.GRADIENT_INK, cmap="RdYlGn_r", subset=["Weeks Lost / Pick"])
                .set_table_styles(_GRID, overwrite=False)
-               .set_table_attributes('class="sticky-table"')).to_html()
+               .set_table_attributes('class="sticky-table"'))
 
     first = _first_at_position(df)
     timing = _pivot(first, "round", "mean", index="Champ").round(1)
@@ -438,10 +438,10 @@ def champion_blueprint(df) -> str:
     # first column ("Who", matching the table above) instead of a styled index.
     timing.index = timing.index.map({True: "Champions", False: "Everyone else"})
     timing = timing.rename_axis("Who").reset_index()
-    timing_html = (timing.style.hide(axis="index")
+    timing_html = styles.to_html(timing.style.hide(axis="index")
                    .format("{:.1f}", na_rep="—", subset=[c for c in timing.columns if c != "Who"])
                    .set_table_styles(_GRID, overwrite=False)
-                   .set_table_attributes('class="sticky-table"')).to_html()
+                   .set_table_attributes('class="sticky-table"'))
 
     champ = vs[vs["Who"] == "Champion"].set_index("Season")
     field = vs[vs["Who"] == "Everyone else"].set_index("Season")

@@ -233,18 +233,18 @@ def _season_view(season_str: str) -> str:
     html = (
         '<h2>Schedule Difficulty</h2>' + schedule_luck.html(frame, names)
         + '<h2>All-Play Standings</h2><p>Whole league goes H2H, every week.</p>'
-        f'<div class="table-scroll">{all_play(season_str).to_html()}</div>'
+        f'<div class="table-scroll">{styles.to_html(all_play(season_str))}</div>'
         '<h2>Strength of Schedule & Victory</h2>'
         '<p><strong>SOS:</strong> Strength of Schedule - difficulty of schedule '
         '(<a href="https://hackastat.eu/en/learn-a-stat-strength-of-schedule-sos/">Learn More</a>)</p>'
         '<p><strong>SOV:</strong> Strength of Victory - combined win-loss % of defeated opponents</p>'
         '<p><strong>Exp Wins:</strong> Expected wins (vs actual) via Pythagorean expectation on PF/PA</p>'
         '<p>*Sorted by SOS</p>'
-        f'<div class="table-scroll">{schedule_metrics(season_str).to_html()}</div>'
+        f'<div class="table-scroll">{styles.to_html(schedule_metrics(season_str))}</div>'
         '<h2>Records vs Every Schedule</h2>'
         '<p>Left to right - all teams (columns) compared to 1 schedule (row)</p>'
         '<p>Top to bottom - 1 team (column) compared to every schedule (row)</p>'
-        f'<div class="table-scroll">{schedule_compare(season_str).to_html()}</div>'
+        f'<div class="table-scroll">{styles.to_html(schedule_compare(season_str))}</div>'
     )
     return html
 

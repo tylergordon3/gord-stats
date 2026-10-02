@@ -14,7 +14,10 @@ roster's best lineup by our projection is not the one set, the swap is
 spelled out under the table.
 
 The data and the weekly projection are fantasy.league.matchups; the look is
-gordstats.matchup_page, shared with the college league's page.
+gordstats.matchup_page, shared with the college league's page. Only the week
+the page opens on is in it; every other week is a fragment beside it
+(docs/fantasy/matchups/week-N.html), fetched when its tab is tapped
+(gordstats.matchup_page.week_switch) - each week is ~280 KB.
 
     python -m fantasy.site.matchups     # rebuild the page
 """
@@ -37,6 +40,10 @@ from gordstats import clinch, share_button, share_card, stakes
 from gordstats.frontmatter import add_front_matter
 
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
+#: Where a week other than the current one is fetched from: requested without
+#: its .html, which Cloudflare Pages answers with a redirect (week_switch falls
+#: back to the file where the bare path is not served).
+WEEK_URL = "/fantasy/matchups/week-%s"
 
 SWAP_MIN = 1.0
 INJURY_TAGS = {"Questionable": "Q", "Doubtful": "D", "Out": "O", "IR": "IR", "PUP": "PUP",
@@ -91,10 +98,27 @@ def gs_week(data: dict, board_frame: pd.DataFrame, chances: dict = None) -> pd.D
     """GordStats' number for the week: the projection if he plays (`proj_full`)
     times the chance he does (`p_play`), as `proj_week` - frozen at each
     kickoff (gordstats.pregame), so a Questionable player is scored on the
-    expected points he was given going in."""
+    expected points he was given going in, at the chance he was given then.
+
+    A started player with no pre-game record (weeks 1-3 of 2026, before the
+    archive began) is priced on tags read after the games: Zay Flowers, hurt
+    in his game and tagged Out after it, read GS 0.0 beside his 26 points. One
+    the week's stat line or points have in his game played it - his chance
+    was 1. Such a row is still not `pregame`, and nothing scores it."""
     chances = week_chances(data) if chances is None else chances
     wk = data_mod.week_projections(board_frame, data["games"])
-    return pregame.freeze(int(data["week"]), availability.apply(wk, chances))
+    wk = pregame.freeze(int(data["week"]), availability.apply(wk, chances))
+    late = wk.index[~wk["pregame"].astype(bool) & (wk["p_play"] < 1)]
+    if len(late):
+        stats, pts = data.get("stats") or {}, {}
+        for m in data.get("matchups") or []:
+            for s in m.get("sides") or []:
+                pts.update(s.get("players_points") or {})
+        for pid in late:
+            if availability.playing(stats.get(pid), pts.get(pid)):
+                wk.at[pid, "p_play"] = 1.0
+                wk.at[pid, "proj_week"] = wk.at[pid, "proj_full"]
+    return wk
 
 
 def avail_badges(card: dict) -> str:
@@ -912,20 +936,29 @@ compute:function(rows,games){
 },
 fetch:function(){
   var self=this;
-  var sleeper=fetch('__SLEEPER__').then(function(r){return r.json();});
-  var espn=fetch('__ESPN__').then(function(r){return r.json();}).then(function(d){
-    var games={};(d.events||[]).forEach(function(e){var c=(e.competitions||[])[0];if(!c)return;var st=c.status||{};
+  // A failed read is "nothing new this tick", never an empty week: a 5xx body
+  // drawn as the week's points read every started player as 0.0 final.
+  var sleeper=fetch('__SLEEPER__').then(function(r){return r.ok?r.json():null;})
+    .catch(function(){return null;});
+  var espn=fetch('__ESPN__').then(function(r){return r.ok?r.json():{};}).then(function(d){
+    var games={};((d&&d.events)||[]).forEach(function(e){var c=(e.competitions||[])[0];if(!c)return;var st=c.status||{};
       var cs=c.competitors||[];cs.forEach(function(x,i){var ab=x.team&&x.team.abbreviation;if(ab==='WSH')ab='WAS';
         var o=cs[1-i]||{};
         games[ab]={state:(st.type||{}).state||'pre',period:st.period,clock:st.displayClock,
           detail:(st.type||{}).shortDetail,score:x.score,opp_score:o.score};});});
     return games;}).catch(function(){return {};});
-  return Promise.all([sleeper,espn]).then(function(both){var out=self.compute(both[0],both[1]);
+  return Promise.all([sleeper,espn]).then(function(both){
+    if(!Array.isArray(both[0])||!both[0].length)return {teams:{}};
+    var out=self.compute(both[0],both[1]);
     if(window.muMedTrack)window.muMedTrack.update(__WEEK__,out,document.getElementById('mm-built'));return out;});
 }};"""
 
 
-def week_view(data: dict, ctx: dict) -> str:
+def week_view(data: dict, ctx: dict, poll: bool = True) -> str:
+    """One week's page. `poll`: carry the live updater - one week only, the
+    one the page opens on, since window.MU_LIVE is a single global and every
+    unfinished week setting it left the last one polling while the page
+    showed the first."""
     week = int(data["week"])
     bf = ctx["board_frame"].drop_duplicates("sleeper_id")
     final = data_mod.week_final(data)
@@ -1000,7 +1033,7 @@ def week_view(data: dict, ctx: dict) -> str:
     # being played polls its matchups for live points: every minute while
     # games are on, every five before they start. Stat lines wait for the
     # ten-minute rebuild; Sleeper's stats feed is too big to poll.
-    live = ("" if final else
+    live = ("" if final or not poll else
             "<script>" + ui.LIVE_GAMES_JS + _LIVE_FETCH_JS
             .replace("__SLEEPER__", f"{data_mod.SLEEPER_API}/league/{UPCOMING_LEAGUE_ID}/matchups/{week}")
             .replace("__ESPN__", f"{data_mod.ESPN_SCOREBOARD}?week={week}&dates={UPCOMING_YEAR}&seasontype=2")
@@ -1017,6 +1050,13 @@ def week_view(data: dict, ctx: dict) -> str:
 # --------------------------------------------------------------------------- #
 
 DISAGREE_N = 12
+# The chance from which ours is read "if he plays" against the sources. They
+# price a Questionable player as playing and zero a Doubtful one, and the two
+# never meet: the least a Questionable player is given (0.28, new to the role
+# and no practice) is nine times the most a Doubtful one is (0.03). Divided by
+# a 1% chance, a Doubtful player's expected 0.2 became 18.6 "if he plays"
+# against ESPN's 0.0, and led the list (Caleb Williams, week 4).
+IF_PLAYS_FROM = 0.2
 
 
 def rostered(data: dict) -> dict:
@@ -1049,12 +1089,18 @@ def disagreements(data: dict, ctx: dict) -> list[dict]:
     for pid, (owner, slot) in rostered(data).items():
         if pid not in cons or pid not in wk.index or pd.isna(wk.loc[pid, "proj_week"]):
             continue
-        # Like for like: the sources price him as if he plays, so ours is the
-        # projection if he plays too. A Questionable player's chance is not a
-        # disagreement about the player; ruled out (no chance) stays at zero.
+        # Only a number made before his kickoff is a call to compare: a
+        # started player with no pre-game record was rebuilt after the game.
+        if "pregame" in wk.columns and not bool(wk.loc[pid, "pregame"]):
+            continue
+        # Like for like: the sources price a Questionable player as if he
+        # plays, so ours is the projection if he plays too - his chance is not
+        # a disagreement about the player. Below IF_PLAYS_FROM they price him
+        # out, and expected points are compared with expected points.
         gs = float(wk.loc[pid, "proj_week"])
-        if "p_play" in wk.columns and float(wk.loc[pid, "p_play"]) > 0:
-            gs /= float(wk.loc[pid, "p_play"])
+        p = float(wk.loc[pid, "p_play"]) if "p_play" in wk.columns else 1.0
+        if IF_PLAYS_FROM <= p < 1:
+            gs /= p
         theirs = [src.get(pid) for src in sources.values()]
         known = [v for v in theirs if v is not None]
         # A disagreement is with the field, not with its average: the row's
@@ -1191,10 +1237,26 @@ def _recap_teaser() -> str:
     return recap.teaser()
 
 
-def body() -> str:
-    # Fetch for itself, the way the power page does: the current week
-    # refetches when its cache is older than a few hours, finished weeks
-    # never do, and an unreachable Sleeper leaves whatever is on disk.
+def current_view(weeks: list, datas: dict) -> int:
+    """The week the page opens on, and the one it polls: the latest unfinished
+    week already under way, else the first unfinished one (a week waiting on
+    a postponed game, or not yet started), else the last week. Two unfinished
+    weeks are rare - a postponed game, a refetch that failed - but then a
+    stale week 4 must not hold the page while week 5's games are on."""
+    open_weeks = [w for w in weeks if not data_mod.week_final(datas[w])]
+    if not open_weeks:
+        return weeks[-1]
+    going = [w for w in open_weeks if data_mod.week_started(datas[w])]
+    return going[-1] if going else open_weeks[0]
+
+
+def build() -> tuple:
+    """(page html, {week: view}) - every week's view, the current one's in the
+    page and the rest written beside it (generate).
+
+    Fetches for itself, the way the power page does: the current week
+    refetches when its cache is older than a few hours, finished weeks
+    never do, and an unreachable Sleeper leaves whatever is on disk."""
     try:
         weeks = data_mod.capture(year=UPCOMING_YEAR)
     except Exception as exc:                            # noqa: BLE001
@@ -1202,7 +1264,7 @@ def body() -> str:
         weeks = data_mod.archived_weeks(UPCOMING_YEAR)
     if not weeks:
         return (ui.CSS + f"<p>No matchups yet — Sleeper posts the {UPCOMING_SEASON} schedule "
-                "once the draft is done, and this page fills in on the next rebuild.</p>")
+                "once the draft is done, and this page fills in on the next rebuild.</p>"), {}
     lg = data_mod.league()
     datas = {w: data_mod.week_matchups(w, UPCOMING_YEAR) for w in weeks}
     # Pictures are presentation, not history: a finished week's archive keeps
@@ -1226,15 +1288,14 @@ def body() -> str:
     ctx["extremes"] = position_extremes(ctx["registry"], datas)
     for d in datas.values():
         d["roster_positions"] = lg["roster_positions"]
-    open_weeks = [w for w in weeks if not data_mod.week_final(datas[w])]
-    current = open_weeks[0] if open_weeks else weeks[-1]
+    current = current_view(weeks, datas)
     _CARDS["current"], _CARDS["league"] = current, lg.get("name") or ""
-    views = {w: week_view(datas[w], ctx) for w in weeks}
+    views = {w: week_view(datas[w], ctx, poll=w == current) for w in weeks}
     views[current] = _game_of_week(current) + _playoff_news(current) + views[current]
     scored = accuracy_section(datas, ctx)
 
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
-    return (
+    html = (
         ui.CSS
         + my_league.bar()
         # A reader's league shares itself: shown only while it is on screen.
@@ -1281,10 +1342,15 @@ def body() -> str:
         f"ten minutes while games are on (last: {built}); finished weeks stay on "
         "record. Season-long standing lives on the "
         '<a href="/fantasy/power/">power rankings</a>.</p></details>'
-        + scored + ui.week_switch(weeks, current, views)
+        + scored + ui.week_switch(weeks, current, views, src=WEEK_URL)
         + "</div>"
         + MEDIAN_TRACKER_JS + ui.LIVE_JS + my_league.JS
         + my_league_data.JS + my_week.JS + my_matchups.JS)
+    return html, views
+
+
+def body() -> str:
+    return build()[0]
 
 
 # The week each week_view drew, for the page's link-preview card: which week
@@ -1337,12 +1403,17 @@ def card() -> dict | None:
 
 
 def generate():
-    html = body()
+    html, views = build()
     page = add_front_matter(layout.HEAD + html, "Weekly Matchups", image=card())
     out = paths.WEB_MATCHUPS
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote Weekly Matchups -> {out}")
+    # Plain fragments beside the page, every week but the one in it. The live
+    # tick runs this too, so a week that has just finished is there to fetch.
+    if views:
+        n = ui.write_weeks(out.parent, views, _CARDS["current"])
+        print(f"  {len(views) - 1} other weeks beside it ({n} rewritten), fetched on demand")
 
 
 if __name__ == "__main__":

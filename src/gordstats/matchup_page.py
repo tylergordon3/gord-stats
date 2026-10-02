@@ -21,8 +21,13 @@ PLAY_CSS = """.mu-play,.mu-back{display:inline-block;font-size:10px;font-weight:
 .mu-play.fair{background:#fef3c7;color:#92400e}
 .mu-play.poor{background:#fde2dd;color:#b3382c}
 .mu-back{background:#eef2f7;color:#475569;font-weight:600}
-.mu-pt{display:inline-block;font-size:10px;font-weight:700;margin-left:4px;padding:0 4px;
-  border-radius:4px;background:#e0e7ff;color:#3730a3;text-decoration:none;white-space:nowrap}
+/* The link to the beat writer's post. At 10px it was a 32x12 target beside the
+   pill (2026-10-02): readable type now, and an invisible ::after takes the
+   tappable area to about 44x40 without moving the row. */
+.mu-pt{position:relative;display:inline-block;font-size:12px;font-weight:700;margin-left:6px;
+  padding:1px 6px;line-height:1.35;border-radius:4px;background:#e0e7ff;color:#3730a3;
+  text-decoration:none;white-space:nowrap;vertical-align:baseline}
+.mu-pt::after{content:"";position:absolute;inset:-11px -6px}
 .mu-pav{display:flex;flex-wrap:wrap;gap:3px;margin:1px 0}
 .mu-pair .mu-play,.mu-pair .mu-back{font-size:10px;margin:0;padding:0 3px}"""
 PLAY_DARK = """  .mu-play.good{background:#123c2e;color:#8ff0bd}
@@ -141,7 +146,8 @@ table.mu-board td b.lead{color:#1a7f4b}
 .mu-src-sleeper{--src:#b45309}
 .mu-src-yahoo{--src:#6001d2}
 @media (max-width:600px){
-  .mu-src{grid-template-columns:70px 44px minmax(0,1fr) 44px;gap:6px;padding:5px 7px}
+  /* 76px: at 70 "GORDSTATS" ran a pixel over and read "GORDSTA..." (2026-10-02). */
+  .mu-src{grid-template-columns:76px 44px minmax(0,1fr) 44px;gap:6px;padding:5px 7px}
   .mu-src-l{font-size:10.5px;letter-spacing:0}
   .mu-src-a,.mu-src-b{font-size:14px}
   .mu-src-a.hi::after,.mu-src-b.hi::before{display:none}
@@ -456,52 +462,127 @@ table.mu-board td.mu-t.r img.mu-tlogo{margin:0 0 0 6px}
 
 JS = """<script>
 (function(){
-  function show(w){
-    var views=document.querySelectorAll('.wk-view');
-    for(var i=0;i<views.length;i++){views[i].style.display='none';}
-    var v=document.getElementById('wk-view-'+w);if(!v)return;
-    v.style.display='';
-    var btns=document.querySelectorAll('.wk-btn');
-    for(var j=0;j<btns.length;j++){btns[j].classList.remove('active');}
-    var b=document.getElementById('wk-tab-'+w);if(b)b.classList.add('active');
-    if(history.replaceState){history.replaceState(null,'','#wk-'+w);}
-  }
-  window.show_wk=show;
-  var m=(location.hash||'').match(/^#wk-(\\d+)$/);
-  if(m&&document.getElementById('wk-view-'+m[1]))show(m[1]);
-})();
-(function(){
-  // A matchup opened by its link on the scoreboard, or by an address with its
-  // anchor, is opened rather than scrolled to shut.
-  function openHash(){
-    var id=(location.hash||'').slice(1), d=id&&document.getElementById(id);
-    if(d&&d.tagName==='DETAILS') d.open=true;
-  }
-  window.addEventListener('hashchange', openHash);
+  // A page built with week_switch(src=...) carries only the week it opens on.
+  // Every other week is a fragment beside the page, named by its view's
+  // data-src and fetched the first time its tab is tapped or its address is
+  // opened (#wk-3, or a matchup's #wk3-m2). Inline, the whole season was 1.4 MB
+  // and 27,000 elements by week 5 - on a phone, ~5 MB by the playoffs - to show
+  // one week. A week that arrives gets what the page did to the inline one on
+  // load: the phone folds, the median tracker, the scroll fades and stars. The
+  // live poll stays with the week being played, which is always the inline one.
+  var phone=!!(window.matchMedia&&matchMedia('(max-width:600px)').matches);
+  // Fetched weeks kept in the page: a reader paging back through the season
+  // would otherwise rebuild the DOM this exists to avoid. An evicted week costs
+  // one small request to come back; the one on screen is never dropped.
+  var KEEP=3,kept=[];
+  function views(){return document.querySelectorAll('.wk-view');}
   // On a phone every matchup open made the page 9,000-12,000px, 1,700px a
   // matchup: there, only the ones a reader came for stay open - their own
   // (the team picked on My Team), the game of the week - or the first of the
   // week when neither is on it. The scoreboard above lists every score and
   // opens the rest.
-  if(window.matchMedia&&matchMedia('(max-width:600px)').matches){
+  function fold(view){
+    if(!phone)return;
     var mine={};
     try{ ['cfbMyTeam','nflMyTeam'].forEach(function(k){ var v=localStorage.getItem(k); if(v) mine[v]=1; }); }catch(e){}
     var gw=document.querySelector('.gw a[href^="#"]'), keep=gw?gw.getAttribute('href').slice(1):'';
-    var views=document.querySelectorAll('.wk-view');
-    for(var i=0;i<views.length;i++){
-      var secs=[].filter.call(views[i].querySelectorAll('details.section'),function(d){ return d.querySelector('.mu-head'); });
-      var any=false;
-      secs.forEach(function(d){
-        var own=[].some.call(d.querySelectorAll('.mu-head [data-num]'),function(x){ return mine[x.getAttribute('data-num')]; });
-        d.open=own||d.id===keep;
-        any=any||d.open;
-      });
-      if(!any&&secs.length) secs[0].open=true;
+    var secs=[].filter.call(view.querySelectorAll('details.section'),function(d){ return d.querySelector('.mu-head'); });
+    var any=false;
+    secs.forEach(function(d){
+      var own=[].some.call(d.querySelectorAll('.mu-head [data-num]'),function(x){ return mine[x.getAttribute('data-num')]; });
+      d.open=own||d.id===keep;
+      any=any||d.open;
+    });
+    if(!any&&secs.length) secs[0].open=true;
+  }
+  // A matchup opened by its link on the scoreboard, or by an address with its
+  // anchor, is opened rather than scrolled to shut.
+  // `scroll`: the matchup arrived after the browser looked for it, so the jump
+  // is made here - to below the pinned header and week bar, not under them.
+  function openHash(scroll){
+    var id=(location.hash||'').slice(1), d=id&&document.getElementById(id);
+    if(!d||d.tagName!=='DETAILS') return;
+    d.open=true;
+    if(!scroll) return;
+    var cs=getComputedStyle(document.documentElement);
+    var off=(parseFloat(cs.getPropertyValue('--header-h'))||0)+(parseFloat(cs.getPropertyValue('--pin-h'))||0);
+    window.scrollTo(0, Math.max(0, d.getBoundingClientRect().top+window.pageYOffset-off-8));
+  }
+  function settle(view){
+    fold(view);
+    function rest(){
+      if(window.muMedTrack&&muMedTrack.init) muMedTrack.init(view);
+      if(window.GSFavorites&&GSFavorites.repaint) GSFavorites.repaint();
+      // table-scroll.js measures its scrollers again on a resize.
+      try{ window.dispatchEvent(new Event('resize')); }catch(e){}
+    }
+    // The tracker's script comes later in the page than this one.
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',rest); else rest();
+  }
+  function load(view){
+    var src=view.getAttribute('data-src');
+    if(!src) return view._loading||Promise.resolve(view);
+    view.setAttribute('data-was',src);
+    view.removeAttribute('data-src');
+    // The bare path first - Cloudflare Pages serves week-3.html there, and
+    // answers the .html address with a redirect - then the file itself.
+    view._loading=fetch(src).then(function(r){
+      if(r.ok) return r.text();
+      return fetch(src+'.html').then(function(r2){ if(!r2.ok) throw new Error(r2.status); return r2.text(); });
+    }).then(function(html){
+      view.innerHTML=html; view._loading=null; settle(view); return view;
+    }).catch(function(){
+      view.innerHTML='<p class="mu-note">That week could not be loaded. Check your connection and tap its tab again.</p>';
+      view.setAttribute('data-src',src); view._loading=null; return view;
+    });
+    return view._loading;
+  }
+  function evict(){
+    while(kept.length>KEEP){
+      var v=document.getElementById('wk-view-'+kept.shift());
+      if(!v||v.style.display!=='none'||v._loading||!v.getAttribute('data-was')) continue;
+      v.innerHTML=''; v.setAttribute('data-src',v.getAttribute('data-was'));
     }
   }
+  // Shows week `w` at once - its placeholder, if it is still to come - and
+  // resolves once its view is filled. `keepHash`: a matchup's address stays.
+  function show(w,keepHash){
+    w=String(w);
+    var v=document.getElementById('wk-view-'+w);if(!v)return Promise.resolve(null);
+    var vs=views();
+    for(var i=0;i<vs.length;i++){vs[i].style.display='none';}
+    v.style.display='';
+    var btns=document.querySelectorAll('.wk-btn');
+    for(var j=0;j<btns.length;j++){btns[j].classList.remove('active');}
+    var b=document.getElementById('wk-tab-'+w);if(b)b.classList.add('active');
+    if(!keepHash&&history.replaceState){history.replaceState(null,'','#wk-'+w);}
+    if(v.getAttribute('data-src')) v.innerHTML='<p class="mu-note">Loading week '+w+'\\u2026</p>';
+    return load(v).then(function(){
+      if(v.getAttribute('data-was')){ var at=kept.indexOf(w); if(at>=0) kept.splice(at,1); kept.push(w); evict(); }
+      return v;
+    });
+  }
+  window.show_wk=function(w){ return show(w); };
+  // #wk-3 opens week 3; #wk3-m2 opens week 3 and its second matchup.
+  function route(){
+    var h=(location.hash||'').slice(1), tab=h.match(/^wk-(\\d+)$/), mu=h.match(/^wk(\\d+)-m\\d+$/);
+    var w=tab?tab[1]:mu?mu[1]:null, v=w&&document.getElementById('wk-view-'+w);
+    if(!v) return false;
+    if(tab){ show(w); return true; }
+    if(v.style.display!=='none'&&!v.getAttribute('data-src')) return false;
+    show(w,true).then(function(){ openHash(true); });
+    return true;
+  }
+  var vs=views();
+  for(var i=0;i<vs.length;i++){ if(!vs[i].getAttribute('data-src')) fold(vs[i]); }
+  route();
+  window.addEventListener('hashchange', function(){ if(!route()) openHash(); });
   openHash();
 })();
 </script>"""
+
+#: A week's fragment beside its page (week_switch's `src`, write_weeks).
+WEEK_FILE = "week-%s.html"
 
 
 def fmt(v, dec: int = 1) -> str:
@@ -543,19 +624,60 @@ def playoff_callout(path, week: int, names: dict = None, more: str = "") -> str:
                           bool(pic.get("median")), names=names, more=more)
 
 
-def week_switch(weeks: list, current: int, views: dict) -> str:
+def week_switch(weeks: list, current: int, views: dict, src: str = "") -> str:
     """The week buttons and one view per week, the current one showing.
-    `.view-switch` styling is the site's (custom.css)."""
+    `.view-switch` styling is the site's (custom.css).
+
+    `src` is the address pattern of the weeks' fragments ("/cfb/matchups/
+    week-%s"): given one, only the current week's view is in the page and the
+    others are fetched when asked for (JS); the page writes them with
+    write_weeks. Without JavaScript the tabs are links to the fragments."""
     buttons = "".join(
         f'<button class="wk-btn{" active" if w == current else ""}" '
         f"onclick=\"show_wk('{w}')\" id=\"wk-tab-{w}\">{w}</button>" for w in weeks)
-    divs = "".join(
-        f'<div id="wk-view-{w}" class="wk-view"'
-        f'{"" if w == current else " style=\'display:none\'"}>{views[w]}</div>' for w in weeks)
+
+    def view(w):
+        if w == current:
+            return f'<div id="wk-view-{w}" class="wk-view">{views[w]}</div>'
+        if src:
+            return (f'<div id="wk-view-{w}" class="wk-view" style=\'display:none\' '
+                    f"data-src='{src % w}'></div>")
+        return f'<div id="wk-view-{w}" class="wk-view" style=\'display:none\'>{views[w]}</div>'
+
+    divs = "".join(view(w) for w in weeks)
+    others = [w for w in weeks if w != current]
+    noscript = ("" if not (src and others) else
+                '<noscript><p class="mu-note">Other weeks: '
+                + " &middot; ".join(f'<a href="{src % w}">Week {w}</a>' for w in others)
+                + "</p></noscript>")
     switch = ("" if len(weeks) == 1 else
               '<div class="pin-bar"><div class="view-switch">'
               f'<span class="switch-label">Week:</span>{buttons}</div></div>')
-    return f'<div class="mu-wrap">{switch}<div id="mu-weeks">{divs}</div></div>' + JS
+    return f'<div class="mu-wrap">{switch}{noscript}<div id="mu-weeks">{divs}</div></div>' + JS
+
+
+def write_weeks(folder, views: dict, current: int) -> int:
+    """Every week but `current` as a bare fragment in `folder` (WEEK_FILE), for
+    week_switch's `src` to fetch; how many files changed. No front matter:
+    Jekyll copies a file it cannot parse as a page straight through. A week
+    whose fragment already says the same is left alone - finished weeks are
+    rebuilt on every live tick and never change."""
+    from pathlib import Path
+    folder = Path(folder)
+    folder.mkdir(parents=True, exist_ok=True)
+    changed = 0
+    for w, html in views.items():
+        if w == current:
+            continue
+        path = folder / (WEEK_FILE % w)
+        try:
+            if path.read_text(encoding="utf-8") == html:
+                continue
+        except FileNotFoundError:
+            pass
+        path.write_text(html, encoding="utf-8")
+        changed += 1
+    return changed
 
 
 def board_cards(rows: list, started: bool, final: bool) -> str:
@@ -769,6 +891,10 @@ LIVE_JS = """<script>
   function each(sel,fn){var els=root.querySelectorAll(sel);for(var i=0;i<els.length;i++)fn(els[i]);}
   // score_cell in the browser; null leaves a pre-game projection standing.
   function score(p){var st=p.state,pts=p.points;
+    // No points in the payload (the points feed failed and the scoreboard did
+    // not, muMergeGames): the cell keeps what it has. Drawing pts||0 put
+    // "0.0 final" on every started player.
+    if(pts===null||pts===undefined)return null;
     if(st==='post')return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp">final</span>';
     if(st==='in'){var e=(p.hexp!==undefined&&p.hexp!==null)?p.hexp:p.live;
       return '<b class="mu-now">'+fmt(pts||0)+'</b><span class="mu-exp live">'+((e!==undefined&&e!==null)?'\u2192 '+fmt(e):'live')+'</span>';}
@@ -889,7 +1015,10 @@ LIVE_JS = """<script>
     if(unseen()){next(cfg.interval||60000);return;}
     busy=true;
     cfg.fetch().then(function(data){busy=false;apply(data);next(cfg.interval||60000);})
-      .catch(function(){busy=false;next(120000);});
+      .catch(function(e){busy=false;next(120000);
+        // A failed fetch says nothing; a bug in apply() must not vanish.
+        if(!(e&&e.name==='TypeError'&&/fetch|network|load failed/i.test(String(e.message||'')))&&window.console)
+          console.error('[matchups live]',e);});
   }
   document.addEventListener('visibilitychange',function(){if(!document.hidden)poll();});
   timer=setTimeout(poll,cfg.delay||8000);
@@ -983,12 +1112,40 @@ MEDIAN_TRACKER_JS = """<style>
 @media (max-width:600px){
   .mu-medt-ps,.mu-medt-line,.mu-medt-row .fig span{font-size:12px}
 }
+/* Each team's need line and players (render's `sub`) sit in a fold whose
+   summary is the team's name and status. On a wider screen it is always open
+   and the summary is plain text - the tracker reads as it always has. On a
+   phone those lines were 1,900-2,300px of the tracker while a week was on,
+   before the first matchup (2026-10-02): there each team is shut until the
+   reader taps its name, and the tracker is one short row a team. */
+.mu-medt-row .nm,.mu-medt-row .st{display:block}
+.mu-medt-more>summary{display:block;list-style:none;pointer-events:none;cursor:default}
+.mu-medt-more>summary::-webkit-details-marker{display:none}
+@media (max-width:600px){
+  .mu-medt-more>summary{pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  /* A no-break space: the arrow never wraps onto a line of its own. */
+  .mu-medt-more>summary .st::after{content:"\\00a0▸";color:#64748b;font-weight:400}
+  .mu-medt-more[open]>summary .st::after{content:"\\00a0▾"}
+}
+@media (max-width:600px) and (prefers-color-scheme: dark){
+  .mu-medt-more>summary .st::after{color:#aab7c9}
+}
 </style><script>
 window.muMedTrack=(function(){
+  var MQ=window.matchMedia&&matchMedia('(max-width:600px)');
+  function phone(){return !!(MQ&&MQ.matches);}
+  // The teams a reader has opened on a phone, by tracker and team: the live
+  // poll draws the tracker again every minute (and the reader's league draws
+  // its whole page again), and each team's fold has to come back as it was.
+  var OPEN={};
+  document.addEventListener('toggle',function(e){var d=e.target;
+    if(d&&d.classList&&d.classList.contains('mu-medt-more')&&phone())OPEN[d.getAttribute('data-mt')]=d.open;},true);
+  function scope(el){var s=el.closest&&el.closest('[id]');return s?s.id:'';}
   function fmt(v){return (Math.round(v*10)/10).toFixed(1);}
   function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function render(el,d){
     var ts=d.teams.slice(),n=ts.length;if(n<3)return;
+    var where=scope(el)+'|'+(el.getAttribute('data-medt-week')||'');
     // Ceiling and floor: every starter still to play at his position's best
     // (less what he already has) or worst week in league history.
     var ext=d.ext||{},hi=ext.max||{},lo=ext.min||{},top=0,bot=0;
@@ -1056,27 +1213,42 @@ window.muMedTrack=(function(){
           return '<span class="'+(p.live?'lv':'')+'">'+esc(p.n)+' '+fmt(p.r)+'</span>';}).join(' · ');
         sub=(t.lock?'':'<div class="mu-medt-need">'+(need>0?'Needs <b>'+fmt(need)+'</b> · ':'')+t.left.length+' left, proj '+fmt(t.rem)+(isFinite(t.ceil)?' · hypothetical max '+fmt(t.ceil):'')+'</div>')
           +'<div class="mu-medt-ps">'+ps+'</div>';}
+      var head='<span class="nm">'+esc(t.name)+'</span><span class="st">'+status+'</span>';
+      if(sub){
+        // Shut on a phone (the CSS above) unless the reader opened it; `key`
+        // finds it again after a redraw.
+        var key=where+'|'+t.k,open=!phone()||OPEN[key]===true;
+        head='<details class="mu-medt-more" data-mt="'+esc(key)+'" id="mt-'+esc(key.replace(/[^\\w-]/g,'_'))+'"'
+          +(open?' open':'')+'><summary>'+head+'</summary>'+sub+'</details>';}
       if(i===cut)html.push('<div class="mu-medt-line"><span>median '+fmt(d.started&&!done?medNow:mid)+'</span></div>');
       html.push('<div class="mu-medt-row '+(up?'up':'down')+(t.lock?' lock':'')+'">'
         +'<span class="rk">'+(i+1)+'</span>'+(t.logo||'')
-        +'<div class="mid"><div class="nm">'+esc(t.name)+'</div><div class="st">'+status+'</div>'+sub+'</div>'
+        +'<div class="mid">'+head+'</div>'
         +'<div class="fig"><b>'+fmt(t.pts)+'</b>'+(done||!t.left.length?'':'<span>→ '+fmt(t.proj)+'</span>')+'</div></div>');
     });
     el.innerHTML=html.join('');}
-  function init(){var els=document.querySelectorAll('[data-medt]');
-    for(var i=0;i<els.length;i++){try{render(els[i],JSON.parse(els[i].getAttribute('data-medt')));}catch(e){}}}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  // Every tracker in `root` (a week fetched after load), else in the page.
+  function init(root){var els=((root&&root.querySelectorAll)?root:document).querySelectorAll('[data-medt]');
+    for(var i=0;i<els.length;i++){try{render(els[i],JSON.parse(els[i].getAttribute('data-medt')));}
+      catch(e){if(window.console)console.error('[median tracker]',e);}}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){init();});else init();
+  // Across the phone breakpoint (a turned tablet, a resized window) the folds
+  // change meaning, so every tracker is drawn again.
+  if(MQ){var redo=function(){init();};if(MQ.addEventListener)MQ.addEventListener('change',redo);else if(MQ.addListener)MQ.addListener(redo);}
   // `init` is exposed because a reader's own league builds its tracker after
   // this has already run - the blob is fetched from Sleeper rather than
   // rendered into the page - and it needs the same renderer, not a second one.
+  // A week fetched after load (week_switch's `src`) passes its view as `root`.
   // `root` keeps the update to the page's own league: a reader's league on the
   // same page renders a tracker with the same week number, and it comes first.
   return {init:init, update:function(week,live,root){
     var el=(root||document).querySelector('[data-medt-week="'+week+'"]');if(!el||!live||!live.teams)return;
     var d;try{d=JSON.parse(el.getAttribute('data-medt'));}catch(e){return;}
     var any=false;
-    d.teams.forEach(function(t){var u=live.teams[t.k];if(!u||!u.left)return;any=true;
-      t.pts=u.points||0;t.left=u.left;});
+    // A team the payload has no points for is left as it was, not zeroed.
+    d.teams.forEach(function(t){var u=live.teams[t.k];
+      if(!u||!u.left||u.points===null||u.points===undefined)return;any=true;
+      t.pts=u.points;t.left=u.left;});
     if(!any)return;
     d.started=d.teams.some(function(t){return t.pts>0;});
     el.setAttribute('data-medt',JSON.stringify(d));render(el,d);}};

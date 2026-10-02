@@ -135,7 +135,7 @@ def pick_table(df) -> str:
               .set_table_styles([styles.GRID_TD, styles.GRID_TH, styles.TABLE_STYLE],
                                 overwrite=False)
               .set_table_attributes('class="sticky-table"'))
-    return styled.to_html()
+    return styles.to_html(styled)
 
 
 # --------------------------------------------------------------------------- #
