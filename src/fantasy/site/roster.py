@@ -109,7 +109,7 @@ class Week:
         self.backs = availability.return_labels(
             [pid for pid, c in self.chances.items() if c["status"] != "Questionable"],
             UPCOMING_YEAR, after=availability.week_end(self.games))
-        # Physical therapists' takes on X about the players on the report
+        # Injury posts on X - experts' takes, else insiders' news - about the players on the report
         # (fantasy.league.expert_posts), linked beside their pills.
         self.pt = {}
         try:

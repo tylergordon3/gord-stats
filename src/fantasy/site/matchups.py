@@ -142,9 +142,11 @@ def avail_badges(card: dict) -> str:
                                   .strftime("%b %-d, %-I:%M %p"))
         except Exception:                                   # noqa: BLE001
             pass
+        # "PT", "Dr" or "News": whose post it is (fantasy.league.expert_posts).
+        label = pt.get("label") if pt.get("label") in ("PT", "Dr", "News") else "PT"
         out += (f'<a class="mu-pt" href="{escape(pt["url"], quote=True)}" target="_blank" '
                 f'rel="noopener" title="{escape(pt["who"] + " on X" + when, quote=True)}">'
-                "PT&nbsp;&#8599;</a>")
+                f"{label}&nbsp;&#8599;</a>")
     return out
 
 
@@ -970,7 +972,7 @@ def week_view(data: dict, ctx: dict, poll: bool = True) -> str:
         int(data.get("year") or UPCOMING_YEAR), after=availability.week_end(data["games"])))
     # A started player's GordStats number is the one recorded before his
     # kickoff, not today's, which has already seen his game (gordstats.pregame).
-    # Physical therapists' takes on X about the players on the report, linked
+    # Injury posts on X (experts' takes, else insiders' news) about the players on the report, linked
     # beside their pills (fantasy.league.expert_posts; nothing without a token).
     pt = {}
     if not final:

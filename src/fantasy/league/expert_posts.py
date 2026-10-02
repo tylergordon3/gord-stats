@@ -1,24 +1,37 @@
 """
-Injury takes from physical therapists on X, matched to the players they are
-about - the Team and Matchups pages link to the newest one beside a player's
-injury pills ("PT ↗").
+Injury posts on X, matched to the players they are about - the Team and
+Matchups pages link to one beside a player's injury pills ("PT ↗", "Dr ↗",
+"News ↗").
 
-    jmthrivept      Jeff Mueller, PT, DPT
-    TheFantasyPT    The Fantasy PT
+Two kinds of account (ACCOUNTS):
+
+  experts   physical therapists and a team doctor, whose posts are analysis -
+            how long, how bad, what it means;
+  news      national insiders and Underdog's NFL desk, whose posts are status
+            lines for nearly every fantasy-relevant player ("Ladd McConkey
+            (foot) listed questionable for Week 4").
+
+A player with both gets the expert's take: his pill already says the status.
 
 X's API (v2), app-only: a bearer token in X_BEARER_TOKEN, which the Pi's
 builds read from ~/secrets/gord-stats.env. Without one this does nothing and
 the pages carry no links - the site never depends on it.
 
-X bills each post read (pay per use, 2026), so the reader is careful:
+X bills each post read (pay per use, about half a cent a post, 2026), and the
+budget is MONTHLY_CAP posts (the owner's $15), so the reader asks for exactly
+what it wants and nothing else:
 
-  * only new posts: each account is asked for what came after the newest post
-    already kept (since_id), so a post is paid for once;
+  * one recent search per kind of account - `from:` the accounts, AND injury
+    words, no reposts - so only injury posts are read and billed (the two PTs'
+    timelines were 63% streams and promos; the insiders post dozens a day);
+  * only new posts: each search continues from the newest post already read
+    (since_id), so a post is paid for once;
   * at most every REFRESH_MINUTES, however often the pages rebuild;
-  * a first read takes the last FIRST_READ posts, not a timeline's worth;
-  * a monthly cap (MONTHLY_CAP posts read); past it nothing more is fetched
-    until the month turns, and the build says so;
-  * user ids are looked up once and kept.
+  * a first search takes one page (FIRST_READ), never the whole week;
+  * a day's allowance - twice the day's even share of what is left of the
+    month - so a Sunday can spend more than a Tuesday but cannot spend the
+    month; and the monthly cap itself, past which nothing is fetched until
+    the month turns.
 
 What is kept (data/fantasy/players/expert_posts.json, git-ignored, the Pi's
 own): the last KEEP_DAYS of posts - id, account, time, and the text, which is
@@ -26,10 +39,11 @@ used only to find the players named in it. The pages show a link to the post
 on X, never the post itself.
 
     refresh()        fetch what is new, within the limits
-    links(names)     {player id: newest post about him}, for the names given
+    links(names)     {player id: the post to link}, for the names given
 
     python -m fantasy.league.expert_posts      # refresh and print the matches
 """
+import calendar
 import json
 import os
 import re
@@ -40,17 +54,43 @@ import requests
 
 from fantasy import paths
 
-ACCOUNTS = (("jmthrivept", "Jeff Mueller, PT, DPT"),
-            ("TheFantasyPT", "The Fantasy PT"))
+# (handle, who, kind, label) - every handle checked against X's user lookup
+# on 2026-10-02 (guessed handles for two other analysts were empty accounts).
+ACCOUNTS = (
+    ("jmthrivept", "Jeff Mueller, PT, DPT", "experts", "PT"),
+    ("TheFantasyPT", "Matthew Betz, PT (The Fantasy PT)", "experts", "PT"),
+    ("FBInjuryDoc", "Edwin Porras, DPT", "experts", "PT"),
+    ("ProFootballDoc", "Dr. David Chao, former NFL team doctor", "experts", "Dr"),
+    ("AdamSchefter", "Adam Schefter, ESPN", "news", "News"),
+    ("RapSheet", "Ian Rapoport, NFL Network", "news", "News"),
+    ("TomPelissero", "Tom Pelissero", "news", "News"),
+    ("UnderdogNFL", "Underdog NFL", "news", "News"),
+)
+# What each search asks X for besides the accounts. The experts write about
+# bodies; the news accounts' injury posts are status lines, and asking them for
+# body parts would pay for every "a foot in the end zone".
+TERMS = {
+    "experts": ('injury OR injured OR hamstring OR ankle OR knee OR ACL OR MCL OR concussion '
+                'OR shoulder OR groin OR calf OR quad OR hip OR foot OR toe OR wrist OR elbow '
+                'OR Achilles OR IR OR surgery OR MRI OR sprain OR strain OR torn OR fracture '
+                'OR rehab OR setback OR timeline'),
+    "news": ('questionable OR doubtful OR "ruled out" OR "will not play" OR "out for" '
+             'OR "will miss" OR "expected to miss" OR "placed on IR" OR "injured reserve" '
+             'OR "did not practice" OR DNP OR "limited practice" OR "day-to-day" '
+             'OR "week-to-week" OR surgery OR torn OR MRI OR concussion'),
+}
 API = "https://api.x.com/2"
 TOKEN_ENV = "X_BEARER_TOKEN"
 CACHE = paths.DATA_DIR / "players" / "expert_posts.json"
 REFRESH_MINUTES = 30
-FIRST_READ = 20
+FIRST_READ = 100            # a first search: a page - about a week of a news desk's
+                            # injury lines, once (~$0.50), so coverage starts full
 MONTHLY_CAP = 3000          # posts read a month: ~$15 at half a cent a post
+PAGES = 3                   # pages of 100 a search may take in one refresh
 KEEP_DAYS = 14
-LINK_DAYS = 7               # a take older than this is not linked
+LINK_DAYS = 7               # a post older than this is not linked
 TIMEOUT = 20
+QUERY_MAX = 512             # X's longest search query on this plan
 
 _SUFFIX = re.compile(r"\b(jr|sr|ii|iii|iv|v)\b\.?", re.I)
 # Capitalized words that may stand just before a last name used alone without
@@ -95,10 +135,23 @@ def _get(path: str, token: str, params: dict = None) -> dict:
     return r.json()
 
 
+def query(kind: str) -> str:
+    """The search for one kind of account: from them, about an injury, no reposts."""
+    handles = " OR ".join(f"from:{h}" for h, _w, k, _l in ACCOUNTS if k == kind)
+    return f"({handles}) ({TERMS[kind]}) -is:retweet"
+
+
+def _day_budget(state: dict, now: datetime) -> int:
+    """Twice the day's even share of what is left of the month."""
+    days = calendar.monthrange(now.year, now.month)[1]
+    left = max(0, MONTHLY_CAP - state.get("reads", 0))
+    return int(2 * left / (days - now.day + 1))
+
+
 def refresh(force: bool = False, now: datetime = None) -> dict:
-    """Fetch each account's new posts, within the limits above. Returns the
-    kept state; a missing token, a cap reached or an error leaves it as it
-    was."""
+    """Search each kind of account for new injury posts, within the limits
+    above. Returns the kept state; a missing token, a spent budget or an
+    error leaves it as it was."""
     state = _load()
     token = os.getenv(TOKEN_ENV)
     if not token:
@@ -111,34 +164,53 @@ def refresh(force: bool = False, now: datetime = None) -> dict:
                 return state
         except ValueError:
             pass
-    month = now.strftime("%Y-%m")
+    month, day = now.strftime("%Y-%m"), now.strftime("%Y-%m-%d")
     if state.get("month") != month:
         state["month"], state["reads"] = month, 0
-    users, since = state.setdefault("users", {}), state.setdefault("since", {})
+    if state.get("day") != day:
+        state["day"], state["day_reads"] = day, 0
+        state["day_budget"] = _day_budget(state, now)
+    since = state.setdefault("search_since", {})
     posts = state.setdefault("posts", [])
-    for handle, _name in ACCOUNTS:
-        if state.get("reads", 0) >= MONTHLY_CAP:
-            print(f"  ! X posts: the month's cap of {MONTHLY_CAP} reads is reached; "
-                  "nothing more fetched until next month")
-            break
-        try:
-            if handle not in users:
-                users[handle] = _get(f"/users/by/username/{handle}", token)["data"]["id"]
-            params = {"tweet.fields": "created_at", "exclude": "retweets",
-                      "max_results": 100 if since.get(handle) else FIRST_READ}
-            if since.get(handle):
-                params["since_id"] = since[handle]
-            got = _get(f"/users/{users[handle]}/tweets", token, params)
-        except Exception as exc:                            # noqa: BLE001
-            print(f"  ! X posts for @{handle} unavailable ({exc})")
-            continue
-        new = got.get("data") or []
-        state["reads"] = state.get("reads", 0) + len(new)
-        newest = (got.get("meta") or {}).get("newest_id")
+
+    def left():
+        return min(MONTHLY_CAP - state.get("reads", 0),
+                   state.get("day_budget", 0) - state.get("day_reads", 0))
+
+    for kind in TERMS:
+        params = {"query": query(kind), "tweet.fields": "created_at,author_id",
+                  "expansions": "author_id", "user.fields": "username"}
+        if since.get(kind):
+            params["since_id"] = since[kind]
+        first, newest = True, None
+        for _page in range(PAGES if since.get(kind) else 1):
+            room = left()
+            if room < 10:                       # X will not return fewer than 10
+                print(f"  ! X posts: today's share of the month's {MONTHLY_CAP} reads is "
+                      "spent; nothing more fetched until tomorrow")
+                break
+            params["max_results"] = (min(100, room) if since.get(kind)
+                                     else max(10, min(FIRST_READ, room)))
+            try:
+                got = _get("/tweets/search/recent", token, params)
+            except Exception as exc:                        # noqa: BLE001
+                print(f"  ! X posts ({kind}) unavailable ({exc})")
+                break
+            new = got.get("data") or []
+            state["reads"] = state.get("reads", 0) + len(new)
+            state["day_reads"] = state.get("day_reads", 0) + len(new)
+            names = {u["id"]: u["username"] for u in (got.get("includes") or {}).get("users", [])}
+            posts.extend({"id": p["id"], "handle": names.get(p.get("author_id"), "?"),
+                          "at": p.get("created_at"), "text": p.get("text") or ""} for p in new)
+            meta = got.get("meta") or {}
+            if first:
+                newest = meta.get("newest_id")
+                first = False
+            if not meta.get("next_token"):
+                break
+            params["pagination_token"] = meta["next_token"]
         if newest:
-            since[handle] = newest
-        posts.extend({"id": p["id"], "handle": handle, "at": p.get("created_at"),
-                      "text": p.get("text") or ""} for p in new)
+            since[kind] = newest
     cutoff = now - timedelta(days=KEEP_DAYS)
     seen, kept = set(), []
     for p in sorted(posts, key=lambda p: p.get("at") or "", reverse=True):
@@ -231,16 +303,22 @@ def _about_injury(text: str, at: int) -> bool:
 
 
 def links(names: dict, state: dict = None, now: datetime = None) -> dict:
-    """{player id: {"handle", "who", "url", "at"}}: the newest kept post naming
-    each player in `names` ({id: full name}) with an injury word near his name
-    (INJURY, WINDOW), from the last LINK_DAYS."""
+    """{player id: {"handle", "who", "label", "url", "at"}}: for each player in
+    `names` ({id: full name}), the newest kept post from the last LINK_DAYS
+    that names him with an injury word near his name (INJURY, WINDOW) - an
+    expert's take before a news account's, since his pill already says the
+    status. Posts from accounts no longer read are not linked."""
     state = _load() if state is None else state
     now = now or datetime.now(timezone.utc)
     cutoff = now - timedelta(days=LINK_DAYS)
-    who = dict(ACCOUNTS)
+    acct = {h.lower(): (h, w, k, lbl) for h, w, k, lbl in ACCOUNTS}
     pats = _patterns(names)
     out = {}
-    for p in sorted(state.get("posts") or [], key=lambda p: p.get("at") or "", reverse=True):
+    rank = {"experts": 0, "news": 1}
+    ordered = sorted((p for p in state.get("posts") or [] if p.get("handle", "").lower() in acct),
+                     key=lambda p: p.get("at") or "", reverse=True)
+    ordered.sort(key=lambda p: rank[acct[p["handle"].lower()][2]])     # stable: newest within each
+    for p in ordered:
         if not _within(p.get("at"), cutoff):
             continue
         plain, raw = _plain(p.get("text") or ""), _ascii(p.get("text") or "")
@@ -251,8 +329,9 @@ def links(names: dict, state: dict = None, now: datetime = None) -> dict:
                    ((plain if on_plain else raw,
                      _named_at(r, plain if on_plain else raw, first))
                     for r, on_plain, first in regexes) if at is not None):
-                out[pid] = {"handle": p["handle"], "who": who.get(p["handle"], p["handle"]),
-                            "url": f"https://x.com/{p['handle']}/status/{p['id']}",
+                handle, who, _kind, label = acct[p["handle"].lower()]
+                out[pid] = {"handle": handle, "who": who, "label": label,
+                            "url": f"https://x.com/{handle}/status/{p['id']}",
                             "at": p.get("at")}
     return out
 
@@ -260,4 +339,5 @@ def links(names: dict, state: dict = None, now: datetime = None) -> dict:
 if __name__ == "__main__":
     st = refresh(force=True)
     print(f"{len(st.get('posts') or [])} posts kept; {st.get('reads', 0)} read this month "
-          f"(cap {MONTHLY_CAP})" if os.getenv(TOKEN_ENV) else f"no {TOKEN_ENV}: nothing fetched")
+          f"(cap {MONTHLY_CAP}); today {st.get('day_reads', 0)} of {st.get('day_budget', 0)}"
+          if os.getenv(TOKEN_ENV) else f"no {TOKEN_ENV}: nothing fetched")
