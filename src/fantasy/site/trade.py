@@ -163,11 +163,13 @@ window.GSTradeAdapter = (function(){
       var wk = o[2] || {proj:{}, kick:{}};
       /** A free agent worth signing: priced on real data (the board's
        *  stand-in rows for players it has none on carry no uncertainty -
-       *  retired players among them), not on long-term IR, and either
-       *  projected this week, on bye, or briefly hurt. */
+       *  retired players among them), back before the regular season ends,
+       *  and either projected this week, on bye, or hurt for a while. */
       function available(pid){
         var row = st.board.board[pid];
-        if(!row || !(row[4] > 0) || (row[7] || 0) >= 4) return false;
+        // Out for the rest of the regular season (ESPN's return date): no use.
+        var rest = Math.max(st.weeks - st.played, 1);
+        if(!row || !(row[4] > 0) || (row[7] || 0) >= rest) return false;
         var team = ix[pid] && ix[pid][2];
         return !!((wk.proj || {})[pid] || (row[7] || 0) > 0
                   || (team && wk.kick && !wk.kick[team]));

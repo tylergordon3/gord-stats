@@ -334,6 +334,9 @@ def _lineup_points(scores: np.ndarray, available: np.ndarray,
 # takes over from the out state, so a player on IR comes back at the usual
 # rate rather than on the dot.
 FORCED_OUT = {"IR": 4, "PUP": 4, "NA": 4, "Sus": 4, "DNR": 4, "Out": 1, "Doubtful": 1, "COV": 1}
+# Return dates are counted against the NFL's regular season; a date after it
+# is the rest of the year.
+NFL_WEEKS = 18
 
 
 def injury_designations(year: int = UPCOMING_YEAR) -> dict:
@@ -463,7 +466,7 @@ def _bracket(points: np.ndarray, seeds: np.ndarray) -> np.ndarray:
 def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
              weeks: int = FANTASY_REG_WEEKS, sims: int = DEFAULT_SIMS,
              fixed_schedule=None, actual_points=None, seed: int = 20260821,
-             injuries: dict = None, playoff_points=None) -> pd.DataFrame:
+             injuries: dict = None, playoff_points=None, held: dict = None) -> pd.DataFrame:
     """Run the season `sims` times and summarize each team's outcomes.
 
     `actual_points` is a (played weeks, teams) array of real scores, in
@@ -471,7 +474,10 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     simulation and only the rest of the season is drawn. `playoff_points` is
     the same for the playoff weeks already played (see playoff_points). `injuries` is
     {sleeper_id: Sleeper injury status} today; a player on a reserve list is
-    held out of the next weeks (FORCED_OUT) instead of opening healthy.
+    held out of the next weeks (FORCED_OUT) instead of opening healthy. `held`,
+    {sleeper_id: weeks}, says how many where it is known - ESPN's expected
+    return dates (fantasy.league.injury_report.held_out) - and replaces the
+    tag's flat count.
 
     With a fixed schedule and a regular-season week still to play, each team's
     playoff odds are also split on the next week's head-to-head game - the
@@ -481,8 +487,12 @@ def simulate(board: pd.DataFrame, roster_frame: pd.DataFrame,
     game of the week and the power page's stakes table read it.
     """
     players = roster_frame.merge(board, on="sleeper_id", how="left")
-    players["out_weeks"] = (players["sleeper_id"].astype(str)
-                            .map(lambda pid: FORCED_OUT.get((injuries or {}).get(pid, ""), 0)))
+    if held is not None:
+        players["out_weeks"] = players["sleeper_id"].astype(str).map(
+            lambda pid: int(held.get(pid, 0)))
+    else:
+        players["out_weeks"] = (players["sleeper_id"].astype(str)
+                                .map(lambda pid: FORCED_OUT.get((injuries or {}).get(pid, ""), 0)))
     played = min(len(actual_points), weeks) if actual_points is not None and len(actual_points) else 0
     missing = players["mu"].isna()
     if missing.any():
@@ -764,8 +774,18 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
     # they happened too - a team knocked out stops holding title odds.
     playoff = (playoff_points(actual["order"], over)
                if actual and actual["weeks"] >= FANTASY_REG_WEEKS else None)
+    # How long each injured player is out: ESPN's expected return date where
+    # its report has one, the Sleeper tag's flat count where it does not.
+    tags = injury_designations(year)
+    try:
+        from fantasy.league import injury_report
+        held = injury_report.held_out(tags, from_week=actual["weeks"] if actual else 0,
+                                      weeks=NFL_WEEKS, year=year)
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! injury return dates unavailable ({exc}); Sleeper's tags alone")
+        held = None
     summary = simulate(board, roster_frame, sims=sims, fixed_schedule=fixed,
-                       actual_points=points, injuries=injury_designations(year),
+                       actual_points=points, injuries=tags, held=held,
                        playoff_points=playoff)
 
     week = actual["weeks"] if actual else 0

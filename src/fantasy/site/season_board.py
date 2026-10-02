@@ -233,7 +233,7 @@ def absorbed_weeks(year: int = UPCOMING_YEAR) -> int:
 
 def build(year: int = UPCOMING_YEAR) -> dict:
     """The published board, as the browser reads it."""
-    from fantasy.league.power import FORCED_OUT
+    from fantasy.league.power import FORCED_OUT, NFL_WEEKS
 
     board = projections.load(year)
     weeks = absorbed_weeks(year)
@@ -241,6 +241,16 @@ def build(year: int = UPCOMING_YEAR) -> dict:
     board = projections.with_sleeper(board, year, through_week=weeks)
     rec, past = receptions_per_week(year)
     injuries = injury_status()
+    # Weeks out: ESPN's expected return date where its report has one (every
+    # league's players, keyed by Sleeper id), the Sleeper tag's flat count
+    # otherwise - counted from the weeks the board has absorbed, which is
+    # where a reader's simulation starts drawing.
+    try:
+        from fantasy.league import injury_report
+        held = injury_report.held_out(injuries, from_week=weeks, weeks=NFL_WEEKS, year=year)
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! injury return dates unavailable ({exc}); Sleeper's tags alone")
+        held = {pid: FORCED_OUT.get(tag, 0) for pid, tag in injuries.items()}
 
     # A position's median catch rate, for the players Sleeper is not projecting
     # this week - deep bench, and the ones a bye or an injury has taken off the
@@ -266,7 +276,7 @@ def build(year: int = UPCOMING_YEAR) -> dict:
             round(float(row.mu_se), 2),
             round(float(row.avail), 3),
             _catch_rate(pid, row.pos, row.mu, rec, past, median),
-            FORCED_OUT.get(injuries.get(pid, ""), 0),
+            int(held.get(pid, 0)),
         ]
     return {"year": int(year), "week": int(weeks),
             "fields": FIELDS, "pos": POSITIONS, "board": out}
