@@ -381,3 +381,6 @@ Open:
       November), OR% allowed low-good, Siena's logo.
 - [ ] **CBB previews, first real day (Nov 3):** check /cbb/game/ pages appear and the guide links them;
       women's previews need the women's T-Rank/four factors cached first.
+- [x] **College and pro football together** (bf19fe541): /watch/ merges both watch guides (one list, one
+      quadbox, both fantasy teams, live scores), and Home leads with a Tonight card on nights both play.
+- [ ] **At tip-off:** put CBB in /watch/ and the Tonight card (its guide reads the live Worker feed).
