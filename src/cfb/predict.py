@@ -92,12 +92,30 @@ def _current_season_games() -> pd.DataFrame:
     played = schedule[(schedule["state"] == "post")
                       & schedule["home_score"].notna()
                       & schedule["away_score"].notna()
-                      & (schedule["home_score"] + schedule["away_score"] > 0)
+                      & ~cancelled(schedule)
                       & (schedule["week"] != espn.POSTSEASON_WEEK)].copy()
     if played.empty:
         return pd.DataFrame()
     played["season"] = SEASON
     return played
+
+
+def cancelled(schedule: pd.DataFrame) -> pd.Series:
+    """Games ESPN has closed without playing them.
+
+    A cancelled or postponed game is filed as state=post with a 0-0 score
+    (CFB has had no ties since 1996) or a status that says so, and a
+    rescheduled meeting is a separate event - so one of these left in the
+    schedule is a game simulated, projected and priced that nobody will play,
+    and the replay counted a second time. The same test as
+    cfb.site.schedule._abandoned and cfb.site.previews._played.
+    """
+    post = schedule["state"] == "post"
+    scoreless = schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) <= 0
+    detail = (schedule["detail"] if "detail" in schedule
+              else pd.Series("", index=schedule.index))
+    said = detail.fillna("").astype(str).str.contains("Cancel|Postpon")
+    return post & (scoreless | said)
 
 
 def _placeholder(ids: pd.Series) -> pd.Series:
@@ -156,6 +174,13 @@ def history() -> tuple:
     names = games_mod.team_names(past)
     names.update(dict(zip(schedule["home_id"], schedule["home"])))
     names.update(dict(zip(schedule["away_id"], schedule["away"])))
+
+    # A game called off is not a game still to play: out of everything built
+    # on this schedule (the playoff simulation, team pages' projected records,
+    # the fantasy weeks), after it has counted towards membership above - a
+    # school's schedule says it is FBS whether or not a storm cancelled one
+    # Saturday of it.
+    schedule = schedule[~cancelled(schedule)]
     return frame.sort_values("date").reset_index(drop=True), schedule, names
 
 
@@ -203,6 +228,7 @@ def season(asof: pd.Timestamp = None) -> pd.DataFrame:
     One fit and one pass, rather than a fit per week, because a team page wants
     the whole schedule and there is no reason for the rating behind week three
     to differ from the rating behind week ten when both are being shown today.
+    A cancelled or postponed game is in neither half: `history` has dropped it.
     """
     frame, schedule, names = history()
     asof = asof if asof is not None else pd.Timestamp.now(tz="UTC")

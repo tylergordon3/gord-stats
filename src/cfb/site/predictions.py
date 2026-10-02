@@ -82,12 +82,18 @@ table.cfb-pred tbody tr:nth-child(even) td{background:#f8fafc}
   gap:14px;margin:6px 0 28px}
 .pg{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px 11px;
   box-shadow:0 1px 2px rgba(15,23,42,.05)}
-.pg-when{font-size:11.5px;color:#64748b;display:flex;justify-content:space-between;
-  gap:10px;margin-bottom:9px;white-space:nowrap;overflow:hidden}
-/* The flex container clips; the ellipsis has to live on the child that
-   actually overflows (venue), never the TV badge. */
-.pg-when>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.pg-when .pg-tv{color:#0f172a;font-weight:600}
+/* Kickoff, venue, then the TV and Preview link at the right. The kickoff is
+   never cut; the venue gives way first (ellipsis), and on a phone too narrow
+   for kickoff and TV side by side the TV line wraps under it instead of
+   running over it. */
+.pg-when{font-size:12.5px;color:#64748b;display:flex;flex-wrap:wrap;align-items:baseline;
+  row-gap:2px;margin-bottom:9px;white-space:nowrap}
+.pg-when>span:first-child{flex:none}
+.pg-when .pg-where{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.pg-when .pg-tv{color:#0f172a;font-weight:600;flex:none;margin-left:auto;padding-left:10px}
+/* The Preview link is one line of small text: pad it out to a thumb-sized
+   target without moving anything (the negative margin gives the room back). */
+.pg-when .pg-tv a{display:inline-block;position:relative;padding:13px 8px;margin:-13px -8px}
 .pg-row{display:flex;align-items:center;gap:9px;padding:4px 0}
 .pg-row.pg-win .pg-name{font-weight:700;color:#0f172a}
 .pg-row .pg-name a{color:inherit;text-decoration:none}
@@ -354,16 +360,22 @@ def _card(game) -> str:
     at = f"{kick:%a %-d %b, %-I:%M %p} ET" if timed else f"{kick:%a %-d %b} &middot; time TBA"
     # The game's preview page (cfb.site.previews), only where one is on disk.
     preview = preview_page.href("cfb", game.get("game_id"))
-    when = (f"<div class='pg-when'><span>{at}"
-            + (f" &middot; {where}" if where else "") + "</span>"
+    # Kickoff and venue are separate spans so a narrow card cuts the venue,
+    # never the time (the CSS above).
+    when = (f"<div class='pg-when'><span>{at}</span>"
+            + (f"<span class='pg-where'>&nbsp;&middot; {where}</span>" if where else "")
             + (f"<span class='pg-tv'>{tv}</span>" if tv and not preview else "")
             + (f"<span class='pg-tv'>{tv + ' &middot; ' if tv else ''}"
                f"<a href='{preview}'>Preview &rarr;</a></span>" if preview else "")
             + "</div>")
 
     ours = f"<b>{escape(str(favourite))} {-abs(game['pred_margin']):.1f}</b>"
-    market = ("" if pd.isna(game.get("market_spread"))
-              else f"<span>book {_fmt_spread(game['market_spread'])}</span>")
+    # The book's number is the home line; ours is the favourite's. Flip it when
+    # we favour the visitors, or "Notre Dame -20.9 · book +21.5" read as a
+    # 40-point disagreement over what is a 0.6-point one (the NFL card's rule).
+    book = game.get("market_spread")
+    market = ("" if book is None or pd.isna(book)
+              else f"<span>book {_fmt_spread(book if home_wins else -book)}</span>")
     home_score, away_score = _scores(game)
     return (f"<article class='pg'{favorites.many_attr('cfb', (game.get('home_id'), game.get('away_id')))}>"
             + when
@@ -533,7 +545,8 @@ def _result_rows(frame: pd.DataFrame) -> str:
             f"<td>{g['pred_margin']:+.1f}</td>"
             f"<td>{g['actual_margin']:+.0f}</td>"
             f"<td>{abs(g['margin_error']):.1f}</td>"
-            + _mark(bool(g["correct"]))
+            # NaN (a tie, no winner to call) is a dash: bool(NaN) is True.
+            + _mark(None if pd.isna(g["correct"]) else bool(g["correct"]))
             # The three calls at the top of the page, so the log is their
             # working: the ticks in each column add up to the record above.
             # Spread and Total are the recommended bets - gated at three

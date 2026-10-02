@@ -278,6 +278,7 @@ class League:
     cfp_seeds: list = None           # the real field, seed order, once it is out
     cfp_results: dict = field(default_factory=dict)  # (i, j) -> winner, CFP games played
     final: bool = False              # the title game has been played
+    record: dict = field(default_factory=dict)     # i -> (wins, losses), every game played
 
 
 def _is_placeholder(team_id) -> bool:
@@ -377,7 +378,24 @@ def build(frame: pd.DataFrame, model, names: dict, conf: dict, division: dict,
                   division=[division.get(t, "") for t in teams],
                   rating=rating, home_edge=home_edge, margin_sd=margin_sd, games=games,
                   title=title, ahead=ahead, next_week=next_week, cfp_seeds=cfp_seeds,
-                  cfp_results=cfp_results, final=final)
+                  cfp_results=cfp_results, final=final, record=_record(frame, index))
+
+
+def _record(frame: pd.DataFrame, index: dict) -> dict:
+    """{team index: (wins, losses)} over every game played, whatever its week:
+    the regular season, the title games, Army-Navy the Saturday after them,
+    the bowls and the CFP - the record a team page prints. `games` stops at
+    the title week, and a 12-0 champion read 12-0 from it all December."""
+    w, l = np.zeros(len(index), int), np.zeros(len(index), int)
+    done = frame[frame["played"].astype(bool) & frame["actual_margin"].notna()]
+    for side, sign in (("home", 1), ("away", -1)):
+        i = done[f"{side}_team"].astype(str).map(index)
+        mine = i.notna()
+        at = i[mine].astype(int).to_numpy()
+        won = (done.loc[mine, "actual_margin"].to_numpy(float) * sign) > 0
+        np.add.at(w, at, won.astype(int))
+        np.add.at(l, at, (~won).astype(int))
+    return {k: (int(w[k]), int(l[k])) for k in range(len(index))}
 
 
 def _real_field(schedule: pd.DataFrame, index: dict) -> tuple:
@@ -703,7 +721,12 @@ def projected_field(res: Result, fmt: Format = FORMAT) -> list:
 
 
 def records(league: League) -> dict:
-    """{team index: (wins, losses)} from the games played."""
+    """{team index: (wins, losses)} from the games played: the schedule's
+    whole record where build() read one (League.record), else - a League put
+    together by hand - the regular season's games, the title games and the
+    CFP's."""
+    if league.record:
+        return dict(league.record)
     g = league.games[league.games["played"]]
     w = np.zeros(len(league.teams) + 1)
     l = np.zeros(len(league.teams) + 1)
@@ -711,6 +734,11 @@ def records(league: League) -> dict:
     np.add.at(l, g["home"].to_numpy(int), 1 - g["home_won"].to_numpy(float))
     np.add.at(w, g["away"].to_numpy(int), 1 - g["home_won"].to_numpy(float))
     np.add.at(l, g["away"].to_numpy(int), g["home_won"].to_numpy(float))
+    played = [(t["pair"], t["winner"]) for t in league.title.values()
+              if t.get("pair") and t.get("winner") is not None]
+    for pair, winner in played + list(league.cfp_results.items()):
+        loser = pair[0] if winner == pair[1] else pair[1]
+        w[winner], l[loser] = w[winner] + 1, l[loser] + 1
     return {i: (int(w[i]), int(l[i])) for i in range(len(league.teams))}
 
 

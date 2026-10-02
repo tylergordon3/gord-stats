@@ -16,6 +16,9 @@ are ~2 MB a day, too much to commit every run) and refreshed every HOURS:
     ppa_players   each player's EPA per play ("PPA", CFBD's name for it),
                   passing and rushing, garbage time excluded
 
+Tempo (plays a game) is the one figure from elsewhere: cfb.efficiency's
+per-game archive, which counts every snap.
+
 EPA is expected points added: how many points a play was worth, from where
 the offence stood before it to where it stood after. Success is a play that
 gains 50% of the yards needed on first down, 70% on second, 100% on third or
@@ -27,6 +30,8 @@ fourth. Explosiveness is the average EPA of the successful plays.
     python -m cfb.advanced            # refresh what is stale
     python -m cfb.advanced --refresh
 """
+import pandas as pd
+
 from cfb import cfbd
 from cfb.config import SEASON
 
@@ -166,6 +171,24 @@ def _rate(stats: dict, made: str, tried: str):
     return None if not b or a is None else round(a / b, 4)
 
 
+def _plays_per_game() -> dict:
+    """{CFBD team: offensive plays a game, every snap counted} from
+    cfb.efficiency's per-game archive (CFBD /stats/game/advanced, garbage time
+    in; refreshed with every fit and committed, so no call of its own).
+
+    Not the season table's plays: those leave garbage time out, which reads
+    backwards as tempo - a team thirty up at half runs few plays that count,
+    and Georgia, 61 snaps a game, was "38 plays a game (137th most)"."""
+    from cfb.efficiency import ARCHIVE
+    try:
+        games = pd.read_parquet(ARCHIVE / f"{SEASON}.parquet", columns=["team", "offense_plays"])
+    except Exception:                         # noqa: BLE001 - the column goes blank
+        return {}
+    games = games[games["offense_plays"] > 0]
+    return {str(t): round(float(v), 1)
+            for t, v in games.groupby("team")["offense_plays"].mean().items()}
+
+
 def teams() -> list:
     """One dict per FBS team (the teams CFBD adjusts - FBS only), keyed as the
     page's columns are."""
@@ -173,6 +196,7 @@ def teams() -> list:
     box, talent = _load("season_stats"), _load("talent")
     talent_rank = {t: i for i, (t, _v) in enumerate(
         sorted(((t, v) for t, v in talent.items() if v is not None), key=lambda x: -x[1]), 1)}
+    plays = _plays_per_game()
     out = []
     for name, w in wepa.items():
         a = adv.get(name) or {}
@@ -199,7 +223,8 @@ def teams() -> list:
             "off_havoc": o.get("havoc"), "def_havoc": d.get("havoc"),
             "def_havoc_f7": d.get("havoc_f7"), "def_havoc_db": d.get("havoc_db"),
             "pass_rate": o.get("pass_rate"),
-            "plays_pg": None if not g or not o.get("plays") else round(o["plays"] / g, 1),
+            # Tempo: every snap (see _plays_per_game), not the raw splits'.
+            "plays_pg": plays.get(name),
             # The box score
             "third": _rate(s, "thirdDownConversions", "thirdDowns"),
             "third_a": _rate(s, "thirdDownConversionsOpponent", "thirdDownsOpponent"),

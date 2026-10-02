@@ -31,6 +31,7 @@ from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, SEASON
 from cfb.site import power, teams as teams_page
 from gordstats import bets_card, logos, paths
+from gordstats.frontmatter import literal
 
 ET = ZoneInfo("America/New_York")
 TOP25_OUT = paths.DOCS / "_includes" / "cfb_top25.html"
@@ -109,21 +110,25 @@ td.hc-tc img{width:22px;height:22px;object-fit:contain;border:none;padding:0;
   td.hc-tc img{background:var(--hc-disc);border-radius:50%;padding:2px;
     box-sizing:border-box;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
 }
-td.hc-tc .hc-tm{font-weight:500}
+td.hc-tc .hc-tm,td.hc-tc .hc-sh{font-weight:500}
+/* A long name's phone form ("Miss State"), shown under 560px (below). */
+td.hc-tc .hc-sh{display:none}
 /* Where the lists part company: the column that rates a team highest carries
    a green bar, the one that rates it lowest a red one. A bar rather than a
    wash behind the text - a tinted fill on the dark theme reads as muddy and
    costs the name its contrast. */
 table.hc-t25 td.hc-tc.hc-hi{border-left-color:var(--hc-up);background:var(--hc-hi-bg)}
 table.hc-t25 td.hc-tc.hc-lo{border-left-color:var(--hc-down);background:var(--hc-lo-bg)}
-td.hc-tc.hc-hi .hc-tm,td.hc-tc.hc-lo .hc-tm{font-weight:700}
+td.hc-tc.hc-hi .hc-tm,td.hc-tc.hc-lo .hc-tm,
+td.hc-tc.hc-hi .hc-sh,td.hc-tc.hc-lo .hc-sh{font-weight:700}
 /* Hover (or tap) a team and the rest of the table steps back, so its three
    placements line up on their own. The rank column stays lit - the whole
    point is which rows the team sits on. */
 table.hc-t25.hc-following td.hc-tc{opacity:.22;transition:opacity .12s ease}
 table.hc-t25.hc-following td.hc-tc.hc-on{opacity:1;background:var(--hc-focus);
   border-left-color:var(--hc-accent)}
-table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm{font-weight:700}
+table.hc-t25.hc-following td.hc-tc.hc-on .hc-tm,
+table.hc-t25.hc-following td.hc-tc.hc-on .hc-sh{font-weight:700}
 .hc-key{display:inline-flex;align-items:center;gap:6px;font-size:12px;
   color:var(--hc-mute);margin-right:14px}
 .hc-key i{width:3px;height:14px;border-radius:2px;display:inline-block}
@@ -138,6 +143,10 @@ _T25_PHONE_CSS = """@media (max-width:560px){
   /* A third of 390px is about 115px, and a logo eats a fifth of it:
      "Notre Dame" became "Notre D...". The name is the information. */
   td.hc-tc img{display:none}
+  /* A column is 70-90px here: a long name goes by its short form
+     ("Mississippi S..." was the audit's), the rest stay whole. */
+  td.hc-tc .hc-sh{display:inline}
+  td.hc-tc .hc-sh+.hc-tm{display:none}
 }
 """
 _CSS = ("<style>\n" + bets_card.VARS_CSS + _T25_CSS + bets_card.BETS_CSS
@@ -167,7 +176,49 @@ def _rankings() -> tuple:
         for team_id, rank in ap_ranks.items():
             teams.setdefault(team_id, {"name": team_id, "logo": None, "fpi": None,
                                        "ap": None, "gs": None})["ap"] = int(rank)
+    # ESPN's own short names ("Mississippi St", "W Michigan"), off the season's
+    # schedule, for the phone's narrow columns (_short_name).
+    try:
+        sched = espn.schedule()
+        espn_short = {**dict(zip(sched["away_id"].astype(str), sched["away"])),
+                      **dict(zip(sched["home_id"].astype(str), sched["home"]))}
+    except Exception:                                           # noqa: BLE001
+        espn_short = {}
+    for team_id, team in teams.items():
+        team["short"] = _short_name(team["name"], espn_short.get(str(team_id)))
     return teams, show_ap
+
+
+# Long names a phone's third of the card cannot hold, as a fan would shorten
+# them. Anything else long goes by ESPN's short name when that is short enough.
+_SHORT_NAMES = {
+    "Mississippi State": "Miss State", "South Carolina": "S Carolina",
+    "Virginia Tech": "Va Tech", "James Madison": "JMU", "North Carolina": "UNC",
+    "West Virginia": "WVU", "South Florida": "USF", "East Carolina": "ECU",
+    "Boston College": "BC", "San Diego State": "SDSU", "Louisiana Tech": "La Tech",
+    "Washington State": "Wash State", "South Alabama": "S Alabama",
+    "Old Dominion": "ODU", "Southern Miss": "So Miss", "New Mexico State": "NMSU",
+    "Bowling Green": "BGSU", "Sacramento State": "Sac State", "Northwestern": "N'western",
+    "Georgia Tech": "Ga Tech", "North Dakota State": "NDSU",
+    "Florida International": "FIU", "Florida Atlantic": "FAU", "Middle Tennessee": "MTSU",
+    "Western Kentucky": "WKU", "Oklahoma State": "Okla State", "Michigan State": "Mich State",
+    "Arkansas State": "Ark State", "Missouri State": "Mo State", "Colorado State": "Colo State",
+    "Kennesaw State": "Kennesaw", "San José State": "SJSU", "Georgia Southern": "Ga Southern",
+    "Wake Forest": "Wake", "North Texas": "UNT", "Sam Houston": "SHSU",
+}
+# About what a column holds at 12px on a 320px phone ("Oklahoma St" ran 6px over).
+_SHORT_MAX = 10
+
+
+def _short_name(name, espn_short=None):
+    """The phone form of a long school name, or None when it fits as it is."""
+    name = str(name)
+    if len(name) <= 10:
+        return None
+    short = _SHORT_NAMES.get(name)
+    if not short and espn_short and len(str(espn_short)) <= _SHORT_MAX:
+        short = str(espn_short)
+    return short if short and len(short) < len(name) else None
 
 
 def _cell(rank) -> str:
@@ -244,10 +295,13 @@ def top25_html(limit: int = 25) -> str:
                 elif marks.get(key) == worst:
                     mark = " hc-lo"
             logo = logos.img("ncaa", team_id, 22)
+            # The phone form first: CSS shows it in place of the name under 560px.
+            short = team.get("short")
+            short = f"<span class='hc-sh'>{escape(str(short))}</span>" if short else ""
             cells.append(
                 f"<td class='hc-tc{mark}' data-team='{escape(str(team_id), quote=True)}' "
                 f"title=\"{escape(where(team), quote=True)}\">"
-                f"{logo}<span class='hc-tm'>{escape(str(team['name']))}</span></td>")
+                f"{logo}{short}<span class='hc-tm'>{escape(str(team['name']))}</span></td>")
         rows.append(f"<tr><td class='hc-rk'>{rank}</td>{''.join(cells)}</tr>")
 
     head = ("<tr><th></th>"
@@ -359,9 +413,16 @@ def _finals() -> dict:
     """{game_id: (home margin, total)} for games with a result."""
     frame, _model, _names = predict.season()
     done = frame[frame["played"]]
-    return {str(g["game_id"]): (float(g["home_score"] - g["away_score"]),
-                                float(g["home_score"] + g["away_score"]))
-            for _, g in done.iterrows()}
+    out = {str(g["game_id"]): (float(g["home_score"] - g["away_score"]),
+                               float(g["home_score"] + g["away_score"]))
+           for _, g in done.iterrows()}
+    # A game called off (predict.cancelled - gone from the season frame) is a
+    # push, as a book voids the bet: a pick on it used to wait for a final
+    # that never came, and the week's parlay never settled.
+    sched = espn.schedule()
+    for gid in sched.loc[predict.cancelled(sched), "game_id"]:
+        out.setdefault(str(gid), bets_card.VOID)
+    return out
 
 
 def _closes(game_ids) -> dict:
@@ -444,7 +505,11 @@ def week_games(now: datetime = None) -> dict:
     the schedule, so a starred team with no game can be named on its bye."""
     import json
     now = now or datetime.now(ET)
-    start = now.astimezone(ET).replace(hour=0, minute=0, second=0, microsecond=0)
+    # From the start of the night's day, as the watch guide counts it: a start
+    # at midnight dropped Saturday's late kickoffs while they were being played.
+    from gordstats.watch_page import NIGHT_ENDS
+    start = (now.astimezone(ET) - timedelta(hours=NIGHT_ENDS)).replace(
+        hour=0, minute=0, second=0, microsecond=0)
     frame, _model, _names = predict.season()
     frame = frame[(frame["date"] >= start) & (frame["date"] < now + timedelta(days=WEEK_GAMES_DAYS))]
     board = odds_mod.latest(SEASON)
@@ -487,9 +552,9 @@ def generate() -> None:
     WEEK_GAMES_OUT.write_text(json.dumps(week_games(), separators=(",", ":")), encoding="utf-8")
     print(f"Wrote CFB week games -> {WEEK_GAMES_OUT}")
     TOP25_OUT.parent.mkdir(parents=True, exist_ok=True)
-    TOP25_OUT.write_text(top25_html(), encoding="utf-8")
+    TOP25_OUT.write_text(literal(top25_html()), encoding="utf-8")
     print(f"Wrote CFB top 25 card -> {TOP25_OUT}")
-    BETS_OUT.write_text(bets_html(), encoding="utf-8")
+    BETS_OUT.write_text(literal(bets_html()), encoding="utf-8")
     print(f"Wrote CFB best bets card -> {BETS_OUT}")
 
 

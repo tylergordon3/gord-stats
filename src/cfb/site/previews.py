@@ -27,7 +27,7 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from cfb import advanced, espn, gameinfo, results
+from cfb import advanced, espn, gameinfo, predict, results
 from cfb.site import schedule, teams as teams_page, watch
 from gordstats import logos, preview_page
 from gordstats.preview_page import ordinal
@@ -83,8 +83,12 @@ def _v(x):
 
 def _fbs(frame: pd.DataFrame) -> set:
     """ESPN ids on this season's schedule often enough to be FBS - the test
-    cfb.predict uses to decide who gets a rating of their own."""
-    counts = pd.concat([frame["home_id"], frame["away_id"]]).astype(str).value_counts()
+    cfb.predict uses to decide who gets a rating of their own. Never one of
+    ESPN's placeholders: every bowl and CFP game is filed as -1 against -2
+    ("TBD") until it is paired, which is fifty-odd appearances, and counted
+    here they built "TBD at TBD" previews through December."""
+    ids = pd.concat([frame["home_id"], frame["away_id"]]).astype(str)
+    counts = ids[~predict._placeholder(ids)].value_counts()
     return set(counts[counts >= FBS_GAMES].index)
 
 

@@ -80,14 +80,20 @@ def record(leagues: dict, season: int = None) -> None:
 
 
 def publish(season: int = None) -> int:
-    """Copy the live file over the record; returns how many games it holds.
-    The live file only ever grows, so it is the whole season."""
+    """Fold the live file into the record; returns how many games the record
+    holds. The live file only ever grows - until it doesn't: it is untracked,
+    so a fresh clone, a cleaned checkout or a lost disk starts it again from
+    nothing, and copied over the record it took every game before that with
+    it. The record keeps what it has; a game in both takes the live file's
+    newer fields over its own."""
     from datetime import date
     season = season or utils.season_year(date.today())
     live = _load(_path(LIVE_DIR, season))
     if not live:
         return 0
     path = _path(RECORD_DIR, season)
-    if _load(path) != live:
-        _write(path, live)
-    return len(live)
+    kept = _load(path)
+    merged = {**kept, **{k: {**(kept.get(k) or {}), **row} for k, row in live.items()}}
+    if kept != merged:
+        _write(path, merged)
+    return len(merged)

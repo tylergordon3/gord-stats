@@ -1959,6 +1959,13 @@ window.show_wk=function(w){
   if(!view) return Promise.resolve(null);
   if(view.getAttribute('data-src'))view.innerHTML='<p class="sc-intro">Loading week '+w+'\u2026</p>';
   return loadWeek(view).then(function(){
+    // A week picked since: this one was slower to arrive than the reader was
+    // to change their mind (7, then 5, and 7 landed on top of tab 5). It is
+    // kept, as the first to drop, and not shown.
+    if(current!==+w){
+      if(shownOrder.indexOf(+w)<0){shownOrder.unshift(+w);evict();}
+      return null;
+    }
     Array.prototype.forEach.call(document.querySelectorAll('.wk-view'),function(e){e.style.display='none';});
     view.style.display='';
     var at=shownOrder.indexOf(+w);
@@ -2018,8 +2025,20 @@ function apply(ev){
   return {state:state,kick:ev.date,changed:changed};
 }
 
+// One loop, ever, and none in a hidden tab. Coming back to the tab polls at
+// once - but not while a fetch is out: its timer has already fired, so
+// clearing it did nothing and every return mid-fetch started a second loop.
+var busy=false;
 function poll(){
-  fetch(LIVE_URL).then(function(r){return r.json();}).then(function(data){
+  if(busy)return;
+  clearTimeout(timer);timer=null;
+  if(document.hidden)return;                  // visibilitychange starts it again
+  busy=true;
+  fetch(LIVE_URL).then(function(r){
+    if(!r.ok)throw new Error(r.status);
+    return r.json();
+  }).then(function(data){
+    busy=false;
     var live=false,next=null,now=Date.now(),changed=false;
     (data.events||[]).forEach(function(ev){
       var r=apply(ev);if(!r)return;
@@ -2040,7 +2059,7 @@ function poll(){
     else if(next!==null)delay=Math.min(next-now-40*60e3,30*60e3);
     else return;
     timer=setTimeout(poll,Math.max(delay,30e3));
-  }).catch(function(){timer=setTimeout(poll,120e3);});
+  }).catch(function(){busy=false;timer=setTimeout(poll,120e3);});
 }
 
 chips.forEach(function(b){
@@ -2074,15 +2093,15 @@ document.addEventListener('click',function(ev){
   setOpen(row,!row.classList.contains('open'));
 });
 document.addEventListener('visibilitychange',function(){
-  if(!document.hidden){clearTimeout(timer);poll();}
+  if(!document.hidden)poll();
 });
 
 readHash();
 applyAll();
 // A deep link can name a game in a week whose rows are not here yet, so the
 // scroll waits for the fetch rather than looking for a row that cannot exist.
-window.show_wk(current).then(function(){
-  if(!openGame)return;
+window.show_wk(current).then(function(view){
+  if(!view||!openGame)return;               // another week picked before this one came
   var row=document.getElementById('g-'+openGame);
   if(!row)return;
   setOpen(row,true);

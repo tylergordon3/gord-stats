@@ -17,7 +17,7 @@ from datetime import datetime
 import pandas as pd
 import requests
 
-from cfb.config import DATA_DIR, SEASON
+from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON
 from gordstats import stable
 
 _SCOREBOARD = ("https://site.api.espn.com/apis/site/v2/sports/football/"
@@ -181,7 +181,9 @@ def week_spans(df: pd.DataFrame = None) -> list[tuple]:
     if not len(df):
         return []
     when = pd.to_datetime(df["date_utc"], utc=True)
-    local = when.dt.tz_convert(datetime.now().astimezone().tzinfo).dt.tz_localize(None)
+    # The zone, not today's offset: a fixed offset moved every window before
+    # Nov 1 by an hour once the clocks went back (nfl.site.power had the same).
+    local = when.dt.tz_convert(LEAGUE_TZ).dt.tz_localize(None)
     spans = local.groupby(df["week"]).agg(["min", "max"])
     return [(int(week), row["min"].to_pydatetime(),
              (row["max"] + pd.Timedelta(hours=4)).to_pydatetime())

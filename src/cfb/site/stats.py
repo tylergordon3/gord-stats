@@ -90,7 +90,7 @@ COLUMNS = [
     _c("sacks_pg", "Sacks/g", "Sacks per game.", "num1", "high", "defense"),
     _c("tfl_pg", "TFL/g", "Tackles for loss per game.", "num1", "high", "defense"),
     # Situational
-    _c("plays_pg", "Plays/g", "Offensive plays per game, garbage time out - tempo.", "num1", None,
+    _c("plays_pg", "Plays/g", "Offensive plays per game, every snap - tempo.", "num1", None,
        "situational"),
     _c("pass_rate", "Pass rate", "Share of offensive plays that were passes.", "pct", None,
        "situational"),
@@ -167,7 +167,8 @@ def body() -> str:
             "<p><b>EPA</b> (expected points added) is what a play was worth in points, from the "
             "down, distance and field position before it to those after it. Figures marked "
             "adjusted are CollegeFootballData's opponent-adjusted ones; the rest are as played, "
-            "with garbage time left out. Source: CollegeFootballData.com.</p>"))
+            "the splits with garbage time left out, the box score and plays a game with every "
+            "snap. Source: CollegeFootballData.com.</p>"))
 
 
 def generate() -> None:

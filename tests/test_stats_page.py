@@ -22,7 +22,7 @@ import urllib.request
 import pytest
 
 from gordstats import stats_page
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -97,6 +97,9 @@ def _caches(monkeypatch):
             {"name": "QB FCS", "pos": "QB", "team": "Maine", "pass": 0.9, "pass_n": 120, "rush": None, "rush_n": 0}],
     }
     monkeypatch.setattr(advanced, "_load", lambda name: caches[name])
+    # Plays a game come from the per-game archive (every snap, garbage time
+    # included) since the 2026-10-02 audit; pin it rather than read the disk.
+    monkeypatch.setattr(advanced, "_plays_per_game", lambda *a, **k: {"Alabama": 70.0})
     return advanced
 
 
@@ -136,9 +139,7 @@ def site(tmp_path_factory):
 def _run(url: str, expression: str):
     import websockets
     subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
-    proc = subprocess.Popen([CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-                             f"--remote-debugging-port={CDP}", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = launch(CHROME, CDP)
     try:
         for _ in range(60):
             try:

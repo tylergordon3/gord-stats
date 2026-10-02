@@ -78,10 +78,14 @@ def _playoff_odds() -> dict:
 
 
 def games(now: datetime = None) -> list:
-    """Every game from the start of today (ET) to a week out, with what the
-    browser needs to rank and draw it."""
+    """Every game from the start of the guide's day (ET) to a week out, with
+    what the browser needs to rank and draw it."""
     now = now or datetime.now(ET)
-    start = now.astimezone(ET).replace(hour=0, minute=0, second=0, microsecond=0)
+    # The guide's day runs to NIGHT_ENDS (watch_page.game_day): at 12:30 AM
+    # it is still Saturday night, and a start at midnight dropped Saturday's
+    # 10:30 kickoffs from the live tick's guide while they were being played.
+    start = (now.astimezone(ET) - timedelta(hours=watch_page.NIGHT_ENDS)).replace(
+        hour=0, minute=0, second=0, microsecond=0)
     frame, _model, _names = predict.season()
     frame = frame[(frame["date"] >= start) & (frame["date"] < now + timedelta(days=DAYS))]
     if frame.empty:
@@ -103,7 +107,7 @@ def games(now: datetime = None) -> list:
         g = {
             "id": gid, "wk": q["week"], "st": q["seasontype"],
             "ko": kick.strftime("%Y-%m-%dT%H:%M:%SZ"), "tk": known,
-            "day": watch_page.game_day(kick), "slot": slot(kick, known),
+            "day": watch_page.game_day(kick, known), "slot": slot(kick, known),
             "tv": r.get("tv") or "", "note": r.get("note") or "", "n": bool(r.get("neutral")),
             "h": {"id": str(r["home_id"]), "nm": r["home"], "rk": _num(r.get("home_rank"), 0),
                   "lg": logos.url("ncaa", r["home_id"], 80),
