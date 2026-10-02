@@ -394,3 +394,80 @@ Open:
       and the last practice (Doubtful plays 1%, not 25%), with pills on Team and Matchups.
 - [ ] **Injuries, next:** back-from-injury dip by injury type (nflverse); expert feeds (Bluesky/Substack
       RSS of PTs and doctors - waiting on a list of accounts); CFB conference availability reports.
+
+## 9. Audit, 2026-10-02
+
+Seven reviews (security, fantasy/NFL code, CFB/CBB code, browser JS on 52 live pages, two phone
+sweeps at 390/360/320 in both themes, ops/performance on the Pi), then fixes the same day:
+
+- [x] **Security:** WNBA team names escaped and every generated include literal to Jekyll; the
+      sign-in `next` can't resolve to `//host`; every JS `esc()` escapes `'`; Sleeper slot names
+      can't break out of a class; CBB feed scores and days escaped; JSON in `<script>` through
+      `jsonio.script_json`; Sleeper custom avatars only from sleepercdn.com; cross-site API writes
+      refused (Sec-Fetch-Site / Origin); `nosniff`, `object-src 'none'`, `base-uri 'self'`.
+- [x] **Wrong numbers, NFL:** the 2026 Super Bowl is ESPN week 4 (postseason weeks from ESPN's
+      calendar); playoff odds pin the real seeds after week 18 and knock out real losers; an ESPN
+      outage serves the cached schedule; a called-off game no longer freezes the week; power/team
+      records are regular season only; TBD kickoffs on the watch guide and cards; ties are no
+      winner to call; the bets card survives a week with no lines; a cancelled pick is a push.
+- [x] **Wrong numbers, fantasy:** the bracket reseeds as Sleeper does (Python and the browser) and
+      takes decided rounds; ties are half a win; Doubtful players out of Disagreements; weeks 1-3
+      GS 0.0 for players who played; frozen projections keep their frozen play chance; IR in
+      trades; dropped players no longer shift the trade sim's draws; played playoff weeks in the
+      browser sim; an nflverse blip falls back to the stored points instead of publishing (and
+      archiving) preseason-only power (the 2026-09-30 23:36 snapshot).
+- [x] **Wrong numbers, CFB/CBB:** cancelled/postponed games dropped at the source (no double
+      meeting with the replay); no "TBD at TBD" previews; the predictions card quoted the book on
+      the other team's side for every away favourite; untimed Saturday games filed under Friday;
+      playoff records count title games and the CFP; plays a game count every snap; CBB lines
+      publish merges.
+- [x] **Browser JS:** reader Matchups/Team showed everyone on bye when week-context was missing
+      or a week old; the watch guides dropped Saturday's late games at midnight ET; a failed
+      Yahoo proxy wrote "0.0 final" over every started player; trade-page timers, phantom trades
+      and league-tagged share links; the league bar and the page could show different leagues;
+      last season's league drawn as this week; home cards and the league strip wake at kickoff;
+      CBB overtime; conference dropdown with a stale saved value or blocked storage.
+- [x] **Phone:** /cfb|nfl|cbb/stats/ and /cfb/matchups/ scrolled sideways; Home's empty bar
+      (`[hidden]` vs the theme); sticky header copies keep the frozen column when swiped; usage
+      and DvP tables keep their column names; the theme's black table lines; trade analyzer's
+      Pick up columns and squeezed names; dark logos and watch chips; 12px floor; ~40px targets;
+      a 2-column phone chart on both power pages; real names on /fantasy/injuries/.
+- [x] **Ops:** the Pi commits each run's data before Jekyll (a failed build no longer discards
+      the captures); the theme is vendored (no GitHub download per build); CSS/JS hashed under
+      /assets/v/ and cached for a year; the live tick runs CBB first, every gate every tick,
+      failures through tick_trouble; timeouts on every HTTP call; deploy/linkcheck.py before each
+      upload; wrangler logs pruned; CI skips the Pi's data commits and each Chromium gets its own
+      profile; the watch-quad test no longer fails 23:00-01:10 ET.
+- [x] **Page weight:** both matchups pages carry only the current week, the rest fetched on tap
+      from docs/<section>/matchups/week-N.html (/cfb/matchups/ 1.45 MB -> 368 KB and 27.6k -> 5.7k
+      elements; /fantasy/matchups/ 1.36 MB -> 516 KB - and no longer growing toward ~5 MB by the
+      playoffs); the Median Tracker folds each team on a phone (1,888 -> 787px); /fantasy/draft/
+      1.08 MB -> 514 KB, transactions 119 -> 40 KB, schedule 155 -> 93 KB
+      (fantasy.site.styles.to_html: no per-cell ids or rules, same look).
+
+- [x] **What's new** on Home and /changelog/ (gordstats.changelog): a line per user-facing
+      feature, newest first; add one with every feature that ships.
+
+Open:
+- [ ] **After the first in-season CBB daily run (Nov 1+):** `git rm --cached
+      docs/men/conference.html docs/women/conference.html` and commit (now in .gitignore; removing
+      them before tip-off would 404 /men/conference until the run rebuilds it).
+- [ ] **First deploy of these changes:** run `pi deploy gord-stats` twice (the first runs the old
+      script); expect `linkcheck: N pages`, `vendor/bundle/.gems-sha256`, a data commit before
+      Jekyll, and `cache-control: ... immutable` on `/assets/v/<hash>/custom.css`.
+- [ ] **Git growth (~8 MB/day on the Pi):** whole-season files rewritten in full
+      (cfb usage/gameinfo/boxscores/predictions, nfl predictions, wnba_defense) - partition by week
+      or move re-derivable caches out of git; stop rewriting wnba_defense for its stamp.
+- [ ] **Live ticks drop pregame captures** between hourly commits (they start from
+      `git checkout -- docs data`): an ignored live file the daily run merges, like cbb/lines_live.
+- [ ] **Inline JS repeated on every fantasy page** (GSAPI + league bar + GSL ~50 KB, GSRecap,
+      GSWatch): move to /assets/js/ now that assets are content-hashed.
+- [ ] **/fantasy/power/** still renders pandas' own Styler HTML (203 KB, 426 ids): use
+      `styles.to_html` and update test_phone_tables' shading test. Usage tables repeat
+      `class="v-overall v-rb v-wr v-te"` on every cell (~300 KB on /cfb/usage/).
+- [ ] **Security, low:** a global daily D1 write cap (not just per account); session revocation
+      (an epoch in the token); throttle failed league-sync lookups; a Report-Only `script-src`.
+- [ ] **SEO:** 38 pages share the site description; Home and /cbb/ have no h1; game previews
+      404 a week after the game (a fallback to the schedule).
+- [ ] **Readers' injury board** still counts a hold from the lagging week (needs a new board
+      field); Sleeper two-week playoff rounds in the power sim; ESPN leagues have no reseed flag.
