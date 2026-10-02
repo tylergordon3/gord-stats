@@ -30,13 +30,18 @@ from gordstats.frontmatter import add_front_matter
 
 OUT = paths.WEB_FANTASY_DIR / "trade" / "index.html"
 SIMS = 5000
+PICK_SIMS = 2000
 
 ADAPTER_JS = """{% raw %}<script>
 window.GSTradeAdapter = (function(){
   'use strict';
   var SITE = '__SITE__', SITE_MINE = '__MINE__', SIMS = __SIMS__, FA_PER_POS = 3;
+  // Pick up: the free agents tried for the reader's team, and how many seasons
+  // each - fewer than a trade's, since a wire of them is played out in turn;
+  // the shared draws keep the difference steady.
+  var PICK = {QB:2, RB:5, WR:5, TE:3, K:1, DEF:1}, PICK_SIMS = __PICK_SIMS__;
   var CATCH = [1.0, 0.5, 0.0];
-  var st = null, ix = {}, id = null, fa = [];
+  var st = null, ix = {}, id = null, fa = [], picks = [], pickBase = null;
 
   function leagueId(){
     var have = GSL.saved();
@@ -101,7 +106,7 @@ window.GSTradeAdapter = (function(){
   }
 
   /** One side of the deal made legal: drops when full, signings when short. */
-  function settle(rid, ids, sent, got, signed, lines){
+  function settle(rid, ids, sent, got, signed, lines, cut){
     var aside = reserved(rid);
     var active = ids.filter(function(p){ return !aside[p]; });
     var limit = activeLimit();
@@ -109,10 +114,11 @@ window.GSTradeAdapter = (function(){
     var was = starters(ids.filter(function(p){ return got.indexOf(p) < 0; }).concat(sent));
     if(active.length > limit){
       var start = {}; line.forEach(function(p){ start[p] = 1; });
-      var cut = active.filter(function(p){ return !start[p] && got.indexOf(p) < 0; })
+      var dropped = active.filter(function(p){ return !start[p] && got.indexOf(p) < 0; })
         .sort(function(x, y){ return (mu(x) || 0) - (mu(y) || 0); })
         .slice(0, active.length - limit);
-      cut.forEach(function(p){
+      dropped.forEach(function(p){
+        if(cut) cut.push(p);
         ids.splice(ids.indexOf(p), 1);
         lines.push('Drops ' + esc(name(p)) + ' (' + esc(pos(p)) + ') to make room.');
       });
@@ -152,14 +158,26 @@ window.GSTradeAdapter = (function(){
 
   function load(){
     id = leagueId();
-    return Promise.all([GSPowerLeague.setup(id), GSL.players()]).then(function(o){
+    return Promise.all([GSPowerLeague.setup(id), GSL.players(), GSL.week()]).then(function(o){
       st = o[0]; ix = o[1] || {};
+      var wk = o[2] || {proj:{}, kick:{}};
+      /** A free agent worth signing: priced on real data (the board's
+       *  stand-in rows for players it has none on carry no uncertainty -
+       *  retired players among them), not on long-term IR, and either
+       *  projected this week, on bye, or briefly hurt. */
+      function available(pid){
+        var row = st.board.board[pid];
+        if(!row || !(row[4] > 0) || (row[7] || 0) >= 4) return false;
+        var team = ix[pid] && ix[pid][2];
+        return !!((wk.proj || {})[pid] || (row[7] || 0) > 0
+                  || (team && wk.kick && !wk.kick[team]));
+      }
       var league = st.league, settings = (league.info && league.info.settings) || {};
       // The free agents a deal could sign: the best few at each position that
       // nobody in this league holds.
       var by = {};
       Object.keys(st.board.board).forEach(function(pid){
-        if(league.held[pid]) return;
+        if(league.held[pid] || !available(pid)) return;
         var p = pos(pid);
         (by[p] = by[p] || []).push(pid);
       });
@@ -168,8 +186,14 @@ window.GSTradeAdapter = (function(){
         fa = fa.concat(by[p].sort(function(x, y){ return mu(y) - mu(x); }).slice(0, FA_PER_POS));
       });
       fa.sort(function(x, y){ return mu(y) - mu(x); });
+      picks = [];
+      Object.keys(PICK).forEach(function(p){
+        picks = picks.concat((by[p] || []).slice(0, PICK[p]));
+      });
+      picks.sort(function(x, y){ return mu(y) - mu(x); });
       st.spec.stable = true;
-      st.spec.pool = fa.slice();
+      // Every free agent either mode may add is drawn in every run.
+      st.spec.pool = fa.concat(picks.filter(function(p){ return fa.indexOf(p) < 0; }));
       st.spec.sims = SIMS;
 
       var players = {}, rosters = {};
@@ -181,6 +205,11 @@ window.GSTradeAdapter = (function(){
           players[pid] = {name:name(pid), short:short(name(pid), pos(pid)), pos:pos(pid),
                           ppw:m, tag: aside[pid] ? 'IR' : (out ? 'Out ' + out + 'w' : '')};
         });
+      });
+      picks.forEach(function(pid){
+        var row = st.board.board[pid], out = row ? row[7] : 0;
+        players[pid] = {name:name(pid), short:short(name(pid), pos(pid)), pos:pos(pid),
+                        ppw:mu(pid), tag: out ? 'Out ' + out + 'w' : ''};
       });
       var teams = st.order.map(function(rid){
         return {id:String(rid), name:league.names[String(rid)] || ('Roster ' + rid)};
@@ -212,7 +241,12 @@ window.GSTradeAdapter = (function(){
         }
         return {league:league.info.name, teams:teams, mine:mine, players:players,
                 rosters:rosters, before:stats(res), sims:SIMS, unit:'Pts/wk',
-                note:notes.join(' ')};
+                note:notes.join(' '),
+                pickNote:'Each free agent added to your team, your lowest-projected bench '
+                  + 'player dropped when the roster is full, and the rest of the season played '
+                  + PICK_SIMS.toLocaleString() + ' times each way with the same luck. Points '
+                  + 'are a game on this site\u2019s board, in ' + esc(league.basis.name)
+                  + ' scoring.'};
       });
     });
   }
@@ -237,18 +271,48 @@ window.GSTradeAdapter = (function(){
     });
   }
 
+  function candidates(){ return picks.slice(); }
+
+  /** One free agent onto `rid`'s roster, played out against the same
+   *  number of seasons with nobody added. */
+  function pickup(rid, pid){
+    if(!pickBase){
+      var base = {};
+      for(var k in st.spec) base[k] = st.spec[k];
+      base.sims = PICK_SIMS;
+      pickBase = GSPowerLeague.simulate(base).then(stats);
+    }
+    var rosters = st.spec.rosters.map(function(r){
+      return {roster_id:r.roster_id, players:(r.players || []).map(String)};
+    });
+    var mine = rosters.filter(function(r){ return String(r.roster_id) === String(rid); })[0];
+    mine.players = mine.players.concat([pid]);
+    var cut = [];
+    settle(String(rid), mine.players, [], [pid], {}, [], cut);
+    var spec = {};
+    for(var k2 in st.spec) spec[k2] = st.spec[k2];
+    spec.rosters = rosters;
+    spec.sims = PICK_SIMS;
+    return pickBase.then(function(before){
+      return GSPowerLeague.simulate(spec).then(function(res){
+        return {before:before[String(rid)], after:stats(res)[String(rid)], drop:cut[0] || null};
+      });
+    });
+  }
+
   function remember(rid){
     if(id === SITE){ try{ localStorage.setItem('nflMyTeam', String(rid)); }catch(e){} }
     else GSL.remember(id, rid);
   }
 
-  return {load:load, evaluate:evaluate, remember:remember};
+  return {load:load, evaluate:evaluate, remember:remember,
+          candidates:candidates, pickup:pickup};
 })();
 </script>{% endraw %}"""
 
-INTRO = ("<p>Pick a deal and see what it does to both teams: points a week, record, and the "
-         "chance of making the playoffs and winning it all. Works for your own Sleeper or "
-         "ESPN league too &mdash; pick it above.</p>")
+INTRO = ("<p>Pick a deal, or a free agent, and see what it does to the season: points a "
+         "week, record, and the chance of making the playoffs and winning it all. Works for your "
+         "own Sleeper or ESPN league too &mdash; pick it above.</p>")
 
 METHOD = ("<p>The rest of the season is played out " + f"{SIMS:,}" + " times with the rosters as "
           "they are and " + f"{SIMS:,}" + " times as they would be, with the same luck both "
@@ -263,7 +327,8 @@ def adapter_js() -> str:
     # The site's own manager opens on his own team, as on the Team tab.
     mine = next((str(k) for k, v in ROSTER_NAMES.items() if v == MY_MANAGER), "")
     return (ADAPTER_JS.replace("__SITE__", str(UPCOMING_LEAGUE_ID))
-            .replace("__MINE__", mine).replace("__SIMS__", str(SIMS)))
+            .replace("__MINE__", mine).replace("__SIMS__", str(SIMS))
+            .replace("__PICK_SIMS__", str(PICK_SIMS)))
 
 
 def body() -> str:
@@ -276,11 +341,11 @@ def body() -> str:
 def generate():
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(add_front_matter(
-        layout.HEAD + body(), "Trade Analyzer", updated=False,
-        description="What a trade does to both teams' seasons: points a week, record, "
-                    "playoff and title odds, before and after."),
+        layout.HEAD + body(), "Trades & Pickups", updated=False,
+        description="What a trade or a waiver pickup does to a season: points a week, "
+                    "record, playoff and title odds, before and after."),
         encoding="utf-8")
-    print(f"Wrote Trade Analyzer -> {OUT}")
+    print(f"Wrote Trades & Pickups -> {OUT}")
 
 
 if __name__ == "__main__":

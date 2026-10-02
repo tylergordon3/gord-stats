@@ -147,6 +147,9 @@ def college():
         players[str(pid)] = [f"Free {pid}", pos, "School",
                              [round(9.0 + pid % 5, 2)] * len(WEEKS), ""]
         free.append(str(pid))
+    pid += 1                                          # a free agent nobody would start
+    players[str(pid)] = ["Free weak", "WR", "School", [0.1] * len(WEEKS), ""]
+    free.append(str(pid))
     pairs = _round_robin(keys, [w for w in WEEKS if w < PLAYOFF_START])
     teams = [{"key": k, "name": f"Team {k}", "wins": float(rng.integers(3, 7)), "ties": 0.0,
               "losses": 0.0, "pf": round(float(500 + 60 * rng.random()), 2)} for k in keys]
@@ -374,7 +377,10 @@ def _load_nfl(browser, nfl):
         players: function(){{ return Promise.resolve(__L.index); }}
       }};
       window.fetch = function(url){{
-        var body = /season-board/.test(url) ? __L.board : {{}};
+        // This week's projections: none, and no kickoffs - every team on
+        // bye, so a free agent counts as available on the board alone.
+        var body = /season-board/.test(url) ? __L.board
+          : /week-projections/.test(url) ? {{week:3, kick:{{}}, proj:{{}}}} : {{}};
         return Promise.resolve({{ok:true, json:function(){{ return Promise.resolve(body); }}}});
       }};
       true
@@ -522,3 +528,78 @@ def test_college_flex_is_left_empty_rather_than_filled_with_a_zero(browser, coll
     assert got["v"] == pytest.approx((league_sim._sd(p) ** 2).sum())
     # The tight end on a bye still starts; the back on one does not flex.
     assert ids[6] in got["starters"] and ids[3] not in got["starters"]
+
+
+# ----- pick up: the waiver wire in playoff odds ------------------------------ #
+
+def test_college_pickup_drops_the_worst_bench_player_with_the_same_luck(browser, college):
+    _load_college(browser, college)
+    weak = college["free"][-1]
+    got = browser.evaluate(
+        "GSTradeAdapter.load().then(function(d){ var c = GSTradeAdapter.candidates('t1');"
+        f" return GSTradeAdapter.pickup('t1', {json.dumps(weak)}).then(function(r){{"
+        " return {c:c, r:r, before:d.before.t1}; }); })")
+    assert got["c"] == college["free"]
+    # t1's roster is full: the unrated player (nothing a week) goes.
+    unrated = [p for p in college["rosters"]["t1"] if college["players"][p][3] is None]
+    assert got["r"]["drop"] == unrated[0]
+    # Neither starts, so the season is the same season, to the last decimal.
+    assert got["r"]["before"] == got["before"] and got["r"]["after"] == got["before"]
+
+
+def test_college_pickup_of_a_real_player_moves_the_odds(browser, college):
+    _load_college(browser, college)
+    got = browser.evaluate(
+        "GSTradeAdapter.load().then(function(){ return Promise.all(GSTradeAdapter.candidates('t8')"
+        ".map(function(id){ return GSTradeAdapter.pickup('t8', id).then(function(r){"
+        " return [id, r.after.ppw - r.before.ppw]; }); })); })")
+    gains = dict(got)
+    assert max(gains.values()) > 0          # somebody on the wire beats t8's worst starter
+    assert gains[college["free"][-1]] == 0  # and the useless one changes nothing
+
+
+def test_nfl_pickup_candidates_are_real_free_agents(browser, nfl):
+    _load_nfl(browser, nfl)
+    got = browser.evaluate(
+        "GSTradeAdapter.load().then(function(){ var c = GSTradeAdapter.candidates('1');"
+        " return Promise.all([GSTradeAdapter.pickup('1', c[0]), GSTradeAdapter.pickup('1', c[1])])"
+        ".then(function(rs){ return {c:c, rs:rs}; }); })")
+    held = {p for r in nfl["rosters"] for p in r["players"]}
+    board = nfl["board"]["board"]
+    assert got["c"] and not set(got["c"]) & held
+    assert all(nfl["index"][p][0].startswith("Free") for p in got["c"])
+    mus = [board[p][2] for p in got["c"]]
+    assert mus == sorted(mus, reverse=True)
+    # One baseline for every pickup, and a full roster drops somebody.
+    a, b = got["rs"]
+    assert a["before"] == b["before"]
+    assert a["drop"] in nfl["rosters"][0]["players"]
+
+
+def test_the_pick_up_view_ranks_the_wire_by_title_odds(browser, nfl):
+    _load_nfl(browser, nfl)
+    section = trade_page.section("/fantasy/trade/", league=True)
+    got = browser.evaluate("""
+      new Promise(function(done){
+        document.body.insertAdjacentHTML('beforeend', """ + json.dumps(section) + """);
+        var host = document.getElementById('tr-host'), tries = 0, tapped = false;
+        window.GSTrade(host, window.GSTradeAdapter);
+        (function wait(){
+          var btn = host.querySelector('.tr-mode [data-mode=pickup]');
+          if(btn && !tapped){ tapped = true; btn.click(); }
+          if(tapped && host.querySelector('.tr-out .tr-now')){
+            var rows = Array.prototype.map.call(host.querySelectorAll('.tr-pk tbody tr'),
+              function(tr){ var c = tr.querySelectorAll('td'); return c[c.length - 1].textContent; });
+            return done({rows: rows, mode: host.querySelector('.tr-mode [aria-pressed=true]').textContent,
+                         n: GSTradeAdapter.candidates('1').length});
+          }
+          if(++tries > 600) return done('timed out');
+          setTimeout(wait, 50);
+        })();
+      })
+    """)
+    assert isinstance(got, dict), got
+    assert got["mode"] == "Pick up" and len(got["rows"]) == got["n"]
+    val = lambda t: 0.0 if t.startswith("\u00b1") else float(t.replace("\u2212", "-"))
+    vals = [val(t) for t in got["rows"]]
+    assert vals == sorted(vals, reverse=True)

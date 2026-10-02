@@ -32,7 +32,7 @@ from gordstats import trade_page
 
 OUTPUT = WEB_DIR / "trade" / "index.html"
 SIMS = league_sim.SIMS
-FA_PER_POS = 3
+FA_PER_POS = 5                 # the free agents a trade may sign, and Pick up tries
 RESERVE = ("IL", "IR")
 
 
@@ -332,7 +332,7 @@ window.GSTradeAdapter = (function(){
   var FREE = D.free.slice();
   function starters(ids){ return lineup(ids, ppw).starters; }
 
-  function settle(key, ids, sent, got, signed, lines){
+  function settle(key, ids, sent, got, signed, lines, cut){
     var aside = {};
     (D.reserve[key] || []).forEach(function(pid){ aside[pid] = 1; });
     var active = ids.filter(function(pid){ return !aside[pid]; });
@@ -345,6 +345,7 @@ window.GSTradeAdapter = (function(){
         .sort(function(x, y){ return (ppw(x) || 0) - (ppw(y) || 0); })
         .slice(0, active.length - D.active)
         .forEach(function(pid){
+          if(cut) cut.push(pid);
           ids.splice(ids.indexOf(pid), 1);
           lines.push('Drops ' + esc(name(pid)) + ' (' + esc(pos(pid)) + ') to make room.');
         });
@@ -389,6 +390,11 @@ window.GSTradeAdapter = (function(){
                           ppw:ppw(pid), tag:tag};
         });
       });
+      FREE.forEach(function(pid){
+        var q = p(pid) || [pid, '?', '', null, ''];
+        players[pid] = {name:q[0], short:pos(pid) === 'DEF' ? q[0] : short(q[0]), pos:q[1],
+                        ppw:ppw(pid), tag:q[4] && q[4] !== 'Q' ? q[4] : ''};
+      });
       var mine = null;
       try{ mine = localStorage.getItem('cfbMyTeam'); }catch(e){}
       if(!mine || keys.indexOf(mine) < 0) mine = D.mine;
@@ -399,7 +405,11 @@ window.GSTradeAdapter = (function(){
                  mine:mine, players:players, rosters:D.rosters, before:before,
                  sims:D.sims, unit:'Pts/wk',
                  note:'Points are a week over the regular season left, on this site\\u2019s '
-                      + 'weekly projections, byes counted as nothing.'});
+                      + 'weekly projections, byes counted as nothing.',
+                 pickNote:'Each free agent added to your team, your lowest-projected bench '
+                      + 'player dropped when the roster is full, and the rest of the season '
+                      + 'played ' + D.sims.toLocaleString() + ' times each way with the same '
+                      + 'luck. Points are a week over the regular season left.'});
       }, 30);
     });
   }
@@ -418,15 +428,31 @@ window.GSTradeAdapter = (function(){
     });
   }
 
+  function candidates(){ return FREE.slice(); }
+
+  /** One free agent onto `key`'s roster, against the same seasons as now. */
+  function pickup(key, pid){
+    var rosters = {};
+    keys.forEach(function(k){ rosters[k] = (D.rosters[k] || []).slice(); });
+    rosters[key] = rosters[key].concat([pid]);
+    var cut = [];
+    settle(key, rosters[key], [], [pid], {}, [], cut);
+    return new Promise(function(resolve){
+      setTimeout(function(){
+        resolve({before:before[key], after:simulate(rosters, D.sims)[key], drop:cut[0] || null});
+      }, 0);
+    });
+  }
+
   function remember(key){ try{ localStorage.setItem('cfbMyTeam', key); }catch(e){} }
 
-  return {load:load, evaluate:evaluate, remember:remember,
+  return {load:load, evaluate:evaluate, remember:remember, candidates:candidates, pickup:pickup,
           _simulate:simulate, _means:means, _lineup:lineup, _bracket:bracket};
 })();
 </script>{% endraw %}"""
 
-INTRO = ("<p>Pick a deal and see what it does to both teams: points a week, record, and the "
-         "chance of making the playoffs and winning it all.</p>")
+INTRO = ("<p>Pick a deal, or a free agent, and see what it does to the season: points a "
+         "week, record, and the chance of making the playoffs and winning it all.</p>")
 
 METHOD = ("<p>The rest of the season is played out " + f"{SIMS:,}" + " times with the rosters "
           "as they are and " + f"{SIMS:,}" + " times as they would be, with the same luck both "
@@ -458,7 +484,7 @@ def data_script(got: dict) -> str:
 
 
 def generate():
-    write_page(OUTPUT, "Trade Analyzer", body(),
+    write_page(OUTPUT, "Trades & Pickups", body(),
                description="What a trade does to both teams' seasons in the college fantasy "
                            "league: points a week, record, playoff and title odds.")
 

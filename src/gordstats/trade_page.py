@@ -31,6 +31,14 @@ league supplies an adapter, `window.GSTradeAdapter`, with two calls:
     evaluate(trade) -> Promise of {after: {teamId: Stat},
                        moves: {teamId: [html]}}
     remember(teamId)   optional: store the reader's team
+    candidates(teamId) optional, with pickup: the free agents worth trying
+    pickup(teamId, pid) -> Promise of {before: Stat, after: Stat, drop: pid}
+                       one free agent added (the worst bench player dropped
+                       when the roster is full), the same luck both ways
+
+With the last two the page has a second mode, Pick up (#pickup): every
+candidate played out for the reader's team, ranked by what he does to the
+title odds - the waiver wire priced in playoff chances rather than points.
 
 where trade is {a, b, give: [pid from a], get: [pid from b]} and a Stat is
 {ppw, wins, losses, playoffs, title}.
@@ -97,6 +105,27 @@ CSS = """<style>
 .tr-clear{font:inherit;font-size:13px;border:0;background:none;color:#2563eb;cursor:pointer;
   padding:8px 0;min-height:40px}
 .tr-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 0}
+.tr-mode{display:inline-flex;border:1px solid #cbd5e1;border-radius:999px;overflow:hidden;
+  margin:0 0 12px}
+.tr-mode button{min-height:40px;padding:0 18px;border:0;background:#fff;color:#475569;
+  font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.tr-mode button[aria-pressed=true]{background:#0f172a;color:#fff}
+.tr-teams.tr-one{grid-template-columns:minmax(0,1fr)}
+.tr-pk-wrap{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
+.tr .tr-pk{display:table;width:100%;margin:0;border:0;border-collapse:collapse;font-size:14px;
+  font-variant-numeric:tabular-nums}
+.tr .tr-pk th,.tr .tr-pk td{background:none;border:0;box-shadow:none;color:inherit;
+  padding:7px 8px;border-top:1px solid #eef2f7}
+.tr .tr-pk thead th{border-top:0;font-size:11px;font-weight:600;color:#64748b;
+  text-transform:uppercase;letter-spacing:.03em;text-align:right}
+.tr .tr-pk thead th:first-child,.tr .tr-pk thead th:nth-child(2){text-align:left}
+.tr .tr-pk td.tr-pk-p{min-width:0}
+.tr-pk-in{display:flex;align-items:center;gap:6px;min-width:0}
+.tr .tr-pk td.tr-pk-drop{color:#64748b;font-size:13px;max-width:30vw;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.tr .tr-pk td.tr-d{text-align:right;font-weight:700}
+.tr .tr-pk td.up{color:#15803d}.tr .tr-pk td.down{color:#b91c1c}
+.tr .tr-pk td.flat{color:#64748b;font-weight:400}
 @media (max-width:640px){
   .tr-sides,.tr-cards{gap:8px}
   .tr-p{font-size:13px;padding:3px 6px;gap:5px}
@@ -115,6 +144,12 @@ CSS = """<style>
   .tr .tr-t td.tr-was{color:#94a3b8}
   .tr .tr-t td.up,.tr-verdict .up{color:#4ade80}.tr .tr-t td.down,.tr-verdict .down{color:#f87171}
   .tr-clear{color:#60a5fa}
+  .tr-mode{border-color:#334155}.tr-mode button{background:#0f172a;color:#aab7c9}
+  .tr-mode button[aria-pressed=true]{background:#e2e8f0;color:#0f172a}
+  .tr-pk-wrap{border-color:#334155}
+  .tr .tr-pk th,.tr .tr-pk td{border-top-color:#1e293b}
+  .tr .tr-pk thead th,.tr .tr-pk td.tr-pk-drop{color:#aab7c9}
+  .tr .tr-pk td.up{color:#4ade80}.tr .tr-pk td.down{color:#f87171}
 }
 </style>"""
 
@@ -125,6 +160,7 @@ window.GSTrade = function(host, adapter){
   if(!host || !adapter) return;
   var POS = {QB:0, RB:1, WR:2, TE:3, K:4, DEF:5};
   var data = null, a = null, b = null, give = {}, get = {}, seq = 0, timer = null;
+  var mode = /(?:^|[#&])pickup(?:&|$)/.test(location.hash) ? 'pickup' : 'trade';
 
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"]/g, function(c){
@@ -157,7 +193,8 @@ window.GSTrade = function(host, adapter){
       ? '#trade=' + encodeURIComponent([a, b, g.join('.'), t.join('.')].join('~')) : '';
   }
   function writeHash(){
-    try{ history.replaceState(null, '', location.pathname + location.search + dealHash()); }
+    var h = mode === 'pickup' ? '#pickup' : dealHash();
+    try{ history.replaceState(null, '', location.pathname + location.search + h); }
     catch(e){}
   }
 
@@ -190,8 +227,27 @@ window.GSTrade = function(host, adapter){
     }).join('');
   }
 
+  function modeBar(){
+    if(!adapter.pickup) return '';
+    return '<div class="tr-mode" role="group" aria-label="Mode">'
+      + '<button type="button" data-mode="trade" aria-pressed="' + (mode === 'trade') + '">Trade</button>'
+      + '<button type="button" data-mode="pickup" aria-pressed="' + (mode === 'pickup') + '">Pick up</button>'
+      + '</div>';
+  }
+  function bindMode(){
+    Array.prototype.forEach.call(host.querySelectorAll('.tr-mode button'), function(el){
+      el.addEventListener('click', function(){
+        var m = el.getAttribute('data-mode');
+        if(m === mode) return;
+        mode = m; seq++;
+        draw();
+      });
+    });
+  }
+
   function draw(){
-    host.innerHTML = '<div class="tr-teams">'
+    if(mode === 'pickup' && adapter.pickup) return drawPickup();
+    host.innerHTML = modeBar() + '<div class="tr-teams">'
       + '<label>Your team<select class="tr-a">' + options(a) + '</select></label>'
       + '<label>Trading with<select class="tr-b">' + options(b, a) + '</select></label>'
       + '</div>'
@@ -202,6 +258,7 @@ window.GSTrade = function(host, adapter){
       + '</div></div></div>'
       + '<div class="tr-out" aria-live="polite"></div>'
       + (data.note ? '<p class="tr-note">' + data.note + '</p>' : '');
+    bindMode();
     host.querySelector('.tr-a').addEventListener('change', function(ev){
       a = ev.target.value;
       if(b === a) b = first(a);
@@ -306,6 +363,103 @@ window.GSTrade = function(host, adapter){
     btn.setAttribute('data-text', 'Trade idea: ' + (g.length ? names(g) : 'nothing') + ' for '
                      + (t.length ? names(t) : 'nothing') + '.');
     acts.insertBefore(btn, acts.firstChild);
+  }
+
+  // ----- pick up: the waiver wire in playoff odds ---------------------------- //
+
+  /** A change in points of percentage: a tenth under ten, whole above. */
+  function signed(d){
+    var r = Math.round(d*1000)/10, a = Math.abs(r);
+    return {text:(r > 0 ? '+' : r < 0 ? '\u2212' : '\u00b1') + (a < 10 ? a.toFixed(1) : Math.round(a)),
+            cls:r > 0 ? 'up' : r < 0 ? 'down' : 'flat'};
+  }
+  function who(id, short){
+    var p = data.players[id] || {name:id, pos:'?'};
+    return short ? (p.short || p.name) : p.name;
+  }
+
+  function drawPickup(){
+    host.innerHTML = modeBar()
+      + '<div class="tr-teams tr-one"><label>Your team<select class="tr-a">' + options(a)
+      + '</select></label></div>'
+      + '<div class="tr-out" aria-live="polite"></div>'
+      + (data.pickNote ? '<p class="tr-note">' + data.pickNote + '</p>' : '');
+    bindMode();
+    host.querySelector('.tr-a').addEventListener('change', function(ev){
+      a = ev.target.value;
+      if(b === a) b = first(a);
+      if(adapter.remember) adapter.remember(a);
+      drawPickup();
+    });
+    runPickups();
+  }
+
+  function runPickups(){
+    writeHash();
+    var me = ++seq, cands = (adapter.candidates && adapter.candidates(a)) || [];
+    if(!cands.length){ msg('No free agents on the board to try.'); return; }
+    var results = {}, base = null, done = 0;
+    function row(id){
+      var p = data.players[id] || {pos:'?'}, r = results[id];
+      var head = '<td class="tr-pk-p"><span class="tr-pk-in"><span class="tr-pos">' + esc(p.pos) + '</span>'
+        + '<span class="tr-name"><span class="tr-full">' + esc(who(id)) + '</span>'
+        + '<span class="tr-short">' + esc(who(id, true)) + '</span></span>'
+        + '<span class="tr-ppw">' + (p.ppw == null ? '' : p.ppw.toFixed(1)) + '</span></span></td>';
+      if(r === undefined) return '<tr>' + head + '<td class="tr-pk-drop">&hellip;</td><td></td><td></td></tr>';
+      if(r === null) return '<tr>' + head + '<td class="tr-pk-drop" colspan="3">could not play out</td></tr>';
+      var dp = signed(r.dp), dt = signed(r.dt);
+      return '<tr>' + head
+        + '<td class="tr-pk-drop">' + (r.drop ? esc(who(r.drop, true)) : 'open spot') + '</td>'
+        + '<td class="tr-d ' + dp.cls + '">' + dp.text + '</td>'
+        + '<td class="tr-d ' + dt.cls + '">' + dt.text + '</td></tr>';
+    }
+    function helps(){
+      return cands.some(function(id){
+        var r = results[id];
+        return r && (Math.round(r.dt*1000) > 0 || Math.round(r.dp*1000) > 0);
+      });
+    }
+    function render(){
+      var order = cands.slice();
+      if(done === cands.length){
+        order.sort(function(x, y){
+          var p = results[x] || {dt:-1, dp:-1}, q = results[y] || {dt:-1, dp:-1};
+          return (q.dt - p.dt) || (q.dp - p.dp);
+        });
+      }
+      out().innerHTML = (done < cands.length
+          ? '<p class="tr-msg">Playing each pickup out&hellip; ' + done + ' of ' + cands.length + '</p>'
+          : (base ? '<p class="tr-now">Now: ' + esc(team(a).name) + ' ' + pct(base.playoffs)
+                    + ' to make the playoffs, ' + pct(base.title) + ' to win it all. '
+                    + (helps() ? 'Best pickup first, by what he does to the title odds.'
+                       : '<b>None of these beats your bench right now</b> &mdash; each costs '
+                         + 'more in the player dropped than he adds.') + '</p>' : ''))
+        + '<div class="tr-pk-wrap"><table class="tr-pk"><thead><tr><th>Pick up</th><th>Drop</th>'
+        + '<th>Playoffs</th><th>Title</th></tr></thead><tbody>'
+        + order.map(row).join('') + '</tbody></table></div>';
+    }
+    render();
+    // One at a time: a phone never has two simulations going at once.
+    var i = 0;
+    (function next(){
+      if(me !== seq) return;
+      if(i >= cands.length) return;
+      var id = cands[i++];
+      adapter.pickup(a, id).then(function(r){
+        if(me !== seq) return;
+        base = r.before;
+        results[id] = {dp:r.after.playoffs - r.before.playoffs, dt:r.after.title - r.before.title,
+                       drop:r.drop};
+      }, function(err){
+        if(err instanceof TypeError && window.console) console.error(err);
+        results[id] = null;
+      }).then(function(){
+        if(me !== seq) return;
+        done++;
+        render();
+        next();
+      });
+    })();
   }
 
   function run(){

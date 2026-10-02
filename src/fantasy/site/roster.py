@@ -511,8 +511,8 @@ def body() -> str:
         + my_team.section()
         # Outside the built block, so a reader's own league keeps it too: the
         # trade page reads whichever league the bar has picked.
-        + "<p class='rd-note'><a href='/fantasy/trade/'>Weighing a trade? Play it out "
-          "&rarr;</a></p>"
+        + "<p class='rd-note'>Weighing a <a href='/fantasy/trade/'>trade</a> or a "
+          "<a href='/fantasy/trade/#pickup'>pickup</a>? Play it out.</p>"
         + '<div id="mt-built">'
         + f"<p><strong>Week {wkd.week}</strong>. One roster at a time: who to start, which "
         "slot to put him in, what he is up against, and who on the wire would beat him.</p>"
