@@ -74,7 +74,10 @@ def fmt_team_logo(team):
             for index, file in enumerate(files_strip):
                 if file in names:
                     link = f'/assets/images/{file}' 
-                    return f'<img src="{link}" class="team-logo" >'
+                    # The site's one logo tag (cbb.html_util.image_formatter):
+                    # lazy, sized, and alt-empty beside the name it labels.
+                    return (f'<img src="{link}" class="team-logo" loading="lazy" '
+                            f'decoding="async" width="40" height="40" alt="">')
     except:
         print(f'render_teams fmt_team_web :: Error in function for: {team}')
         url = '/assets/images/default.png' 

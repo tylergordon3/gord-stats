@@ -43,6 +43,7 @@ from gordstats import my_league, my_league_data, my_team, my_week
 from gordstats import matchup_page as ui
 from gordstats import roster_page as page
 from gordstats.frontmatter import add_front_matter
+from gordstats.jsonio import script_json
 
 FLEX = "FLEX"
 OFF = {"BN", "IR", "TAXI"}
@@ -443,7 +444,9 @@ def adds_section(wkd: Week, cards: dict, got: dict, proj: dict, free: pd.DataFra
         g = wkd.by_team.get(f["team"])
         info = card_info(wkd, card, value)
         info["extra"] = (info.get("extra") or "") + (
-            f"<div class='rd-c-do' style='color:#15803d'>+{gain:.1f} over "
+            # A class, not an inline colour: the dark theme's green (rd-gain)
+            # could not reach a style attribute, and #15803d was 3.2:1 there.
+            f"<div class='rd-c-do rd-gain'>+{gain:.1f} over "
             f"{escape(cards[worst]['name'])} ({ui.fmt(proj.get(worst))})</div>")
         phone.append({**info, "slot": f["pos"], "new": f["pos"], "kind": ""})
         body.append(
@@ -590,7 +593,7 @@ def body() -> str:
                       for k in slugs)
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     n_def = len(wkd.dvp)
-    cfg = json.dumps({"mine": mine, "teams": slugs}).replace("</", "<\\/")
+    cfg = script_json({"mine": mine, "teams": slugs})
     return (
         page.CSS + page.CARD_CSS
         # The theme's img{max-width:100%} makes a cell's logo count for nothing

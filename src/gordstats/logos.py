@@ -44,7 +44,10 @@ def img(league: str, key, shown: int, cls: str = "") -> str:
     # all: nothing, rather than a request for a logo that does not exist.
     if key is None or str(key).strip() in ("", "nan", "None") or str(key).startswith("-"):
         return ""
-    klass = f" class='{escape(cls, quote=True)}'" if cls else ""
+    # gs-logo on every one: on the dark theme custom.css sets each mark on a
+    # pale disc, since Ohio State's, Army's, the Raiders' and a dozen others
+    # are near-black and vanished into the navy (2026-10-02).
+    klass = f" class='{escape(' '.join(['gs-logo', cls]).strip(), quote=True)}'"
     src = escape(url(league, key, fetch_px(shown)), quote=True)
     return (f"<img{klass} src='{src}' alt='' width='{shown}' height='{shown}' "
             f"loading='lazy' decoding='async'>")

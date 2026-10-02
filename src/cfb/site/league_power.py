@@ -221,42 +221,54 @@ def _season_section(names: dict) -> str:
 
     order = pivot.iloc[-1].sort_values(ascending=invert).index.tolist()
     span_days = max(1, (pivot.index[-1] - pivot.index[0]).days + 1)
-    cols = 5
-    fig_rows = int(np.ceil(len(order) / cols))
-    fig, axes = plt.subplots(fig_rows, cols, figsize=(11, 2.5 * fig_rows),
-                             sharex=True, sharey=True)
-    axes = np.atleast_1d(axes).ravel()
-    for ax, team in zip(axes, order):
-        for other in pivot.columns:
-            ax.plot(pivot.index, pivot[other], color=palette.CONTEXT, linewidth=1.0, zorder=1)
-        ax.plot(pivot.index, pivot[team], color=palette.BLUE, linewidth=2.0,
-                marker="o", markersize=4, zorder=3)
-        if base is not None:
-            ax.axhline(base, color=palette.MUTED, linewidth=0.9, linestyle="--", zorder=2)
-        # Yahoo team names run long; a panel is 2 inches wide.
-        ax.set_title(team if len(team) <= 22 else team[:21] + "\u2026", fontsize=9)
-        ax.grid(color=palette.GRIDLINE)
-        ax.set_axisbelow(True)
-        for spine in ("top", "right"):
-            ax.spines[spine].set_visible(False)
-        ax.tick_params(labelsize=8)
-        # Whole days, a handful of them: the auto locator falls back to 12-hour
-        # ticks on a young archive and prints the same date twice.
-        ax.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, span_days // 4)))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %-d"))
-        for label in ax.get_xticklabels():
-            label.set_rotation(30)
-            label.set_horizontalalignment("right")
-    if invert:
-        axes[0].invert_yaxis()
-        axes[0].yaxis.set_major_locator(plt.MaxNLocator(integer=True))
-    for ax in axes[len(order):]:
-        ax.set_visible(False)
-    fig.suptitle(f"Published {what} through the season, one panel per team", y=1.0)
-    fig.tight_layout()
-    chart = charts.save(_SECTION, "season-trend",
-                        alt=f"One small chart per team showing its {what} across every "
-                            "build, with the rest of the league in grey behind it")
+    def draw(phone: bool = False):
+        # Five panels a row on a desktop; two on a phone, drawn for its width
+        # with bigger type (fantasy.site.power's chart, the same rule).
+        cols = 2 if phone else 5
+        fig_rows = int(np.ceil(len(order) / cols))
+        size = (4.2, 1.6 * fig_rows + 0.2) if phone else (11, 2.5 * fig_rows)
+        fig, axes = plt.subplots(fig_rows, cols, figsize=size, sharex=True, sharey=True)
+        axes = np.atleast_1d(axes).ravel()
+        longest = 19 if phone else 22
+        for ax, team in zip(axes, order):
+            for other in pivot.columns:
+                ax.plot(pivot.index, pivot[other], color=palette.CONTEXT, linewidth=1.0,
+                        zorder=1)
+            ax.plot(pivot.index, pivot[team], color=palette.BLUE, linewidth=2.0,
+                    marker="o", markersize=4, zorder=3)
+            if base is not None:
+                ax.axhline(base, color=palette.MUTED, linewidth=0.9, linestyle="--", zorder=2)
+            # Yahoo team names run long; a panel is 2 inches wide.
+            ax.set_title(team if len(team) <= longest else team[:longest - 1] + "\u2026",
+                         fontsize=10.5 if phone else 9)
+            ax.grid(color=palette.GRIDLINE)
+            ax.set_axisbelow(True)
+            for spine in ("top", "right"):
+                ax.spines[spine].set_visible(False)
+            ax.tick_params(labelsize=9 if phone else 8)
+            # Whole days, a handful of them: the auto locator falls back to 12-hour
+            # ticks on a young archive and prints the same date twice.
+            ax.xaxis.set_major_locator(
+                mdates.DayLocator(interval=max(1, span_days // (3 if phone else 4))))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %-d"))
+            for label in ax.get_xticklabels():
+                label.set_rotation(30)
+                label.set_horizontalalignment("right")
+        if invert:
+            axes[0].invert_yaxis()
+            axes[0].yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+        for ax in axes[len(order):]:
+            ax.set_visible(False)
+        # The section's own heading says it on a phone; there the line is room.
+        if not phone:
+            fig.suptitle(f"Published {what} through the season, one panel per team", y=1.0)
+        fig.tight_layout()
+
+    draw()
+    chart = charts.save_picture(_SECTION, "season-trend", lambda: draw(phone=True),
+                                alt=f"One small chart per team showing its {what} across "
+                                    "every build, with the rest of the league in grey "
+                                    "behind it")
 
     first, last = pivot.index[0], pivot.index[-1]
     swing = pivot.iloc[-1] - pivot.iloc[0]

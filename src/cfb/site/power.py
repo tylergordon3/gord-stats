@@ -173,6 +173,17 @@ table.cfb-power th:first-child{left:0;z-index:3}
     display:inline-flex;align-items:center;justify-content:center}
   .pwr-pin .fav-filter span{font-size:18px}
   .pwr-pin:has(.fav-filter:not([hidden])) .win-pick .switch-label{display:none}
+  /* The menu is the one thing in the row that can give: it narrows (its text
+     clipped by the select itself) before the row runs off the bar. */
+  .pwr-pin>.win-pick{flex:0 1 auto;min-width:0}
+  .win-sel{min-width:0;max-width:100%}
+}
+/* Under 380px (a 360 or 320 phone) the Since label is what does not fit
+   beside the tabs and the menu; the menu keeps its aria-label. */
+@media (max-width:380px){
+  .pwr-pin .win-pick .switch-label{display:none}
+  .pwr-pin .pv-switch button{padding:6px 10px}
+  .win-sel{padding-left:10px;padding-right:4px}
 }
 """ + rankmoves.CSS + """
 @media (max-width:600px){

@@ -19,6 +19,7 @@ NOTE: that per-season missing_df is still produced by the legacy draft pipeline;
 migrating its *computation* belongs with the draft page, not the homepage.
 """
 import json
+import re
 
 import matplotlib
 matplotlib.use("Agg")          # non-interactive backend (no Qt/GUI needed)
@@ -180,6 +181,40 @@ def _table(missing: pd.DataFrame, detail: pd.DataFrame):
     return styles.default_style(grouped[cols], gradient_cols, cmap="RdYlGn_r")
 
 
+def _player_names() -> dict:
+    """{(lookup key, position): full name} from the player table the build
+    keeps, retired players included - the archive's seasons go back years.
+    Empty when the table is not on disk (the names then fall back to
+    display_name's spacing)."""
+    from fantasy import paths, stats
+    try:
+        frame = pd.read_parquet(paths.DATA_DIR / "players" / "sleeper.parquet",
+                                columns=["full_name", "position"])
+    except Exception:                                           # noqa: BLE001
+        return {}
+    frame = frame.dropna(subset=["full_name"])
+    frame = frame.assign(key=stats.cleaned_name(frame["full_name"]))
+    names = {}
+    for key, pos, full in zip(frame["key"], frame["position"], frame["full_name"]):
+        names.setdefault((key, pos), full)
+        names.setdefault((key, None), full)
+    return names
+
+
+def display_name(key: str, pos: str = None, names: dict = None) -> str:
+    """The archive names a player by his lookup key, the first two name
+    tokens run together with the punctuation gone ("JaMarrChase",
+    "JKDobbins"). The player table gives the name back ("Ja'Marr Chase",
+    "J.K. Dobbins"); failing that, the key is split where a capital starts a
+    word ("JK Dobbins")."""
+    key = str(key)
+    names = _player_names() if names is None else names
+    full = names.get((key, pos)) or names.get((key, None))
+    if full:
+        return str(full)
+    return re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", key)
+
+
 def top_injuries(detail: pd.DataFrame, n: int = 12):
     """Styled table of the n most damaging individual injuries by Est. Pts Lost,
     or None when no per-player detail has been archived yet."""
@@ -187,6 +222,8 @@ def top_injuries(detail: pd.DataFrame, n: int = 12):
         return None
     hurt = detail[detail["Games Missed"] > 0].copy()
     hurt = hurt.sort_values("Est. Pts Lost", ascending=False).head(n)
+    names = _player_names()
+    hurt["Name"] = [display_name(k, p, names) for k, p in zip(hurt["Name"], hurt["Pos."])]
     hurt["Med PPG"] = hurt["Med PPG"].map("{:.1f}".format)
     hurt["Est. Pts Lost"] = hurt["Est. Pts Lost"].round(0).astype(int)
     # Player first so the frozen column names the row; "Drafted" is the draft

@@ -151,7 +151,8 @@ def image_formatter(url):
     :return: Logo HTML
     :rtype: str
     """
-    return f'<img src="{url}" class="team-logo" >'
+    # The one logo tag (lazy, sized, alt), not a second eager one.
+    return html_util.image_formatter(url)
 
 
 def getRecord(x, winloss):

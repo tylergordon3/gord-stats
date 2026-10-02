@@ -29,7 +29,7 @@ import pandas as pd
 import pytest
 
 from gordstats import strength_page as sp
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -82,7 +82,8 @@ def test_the_defence_table_ranks_toughest_first_and_shades_both_ways():
     assert "<td style=''>&mdash;</td>" in html                    # missing: a dash, unshaded
     assert "rgba(211,47,47" in html and "rgba(46,125,50" in html  # red stingy, green generous
     assert "<th title='it&#x27;s &lt;backs&gt;'>RB</th>" in html
-    assert "<table class='st'>" in html
+    # Phone padding and a header that follows the 139 college rows down (2026-10-02).
+    assert "<table class='st st-fit' data-sticky-head>" in html
 
 
 def test_the_phone_layout_puts_the_average_beside_the_name():
@@ -117,9 +118,11 @@ def test_the_heat_scale_is_the_dashboards():
 # --------------------------------------------------------------------------- #
 
 # What cfb.site.strength drew for these fixtures before its tables moved into
-# gordstats.strength_page (rendered by that version of the module).
+# gordstats.strength_page (rendered by that version of the module) - the
+# defence table since with the phone padding and the following header
+# (2026-10-02 phone audit).
 OLD_DEFENCE = (
-    "<div class='st-scroll'><table class='st'><thead><tr><th>Defence</th><th>QB</th><th>RB</th>"
+    "<div class='st-scroll'><table class='st st-fit' data-sticky-head><thead><tr><th>Defence</th><th>QB</th><th>RB</th>"
     "<th>WR</th><th>TE</th><th>All</th></tr></thead><tbody><tr><td class='st-name'><span "
     "class='st-rk'>1</span>33</td><td style=''>&mdash;</td><td style='background:rgba(46,125,50,"
     "0.15)'>1.05</td><td style='background:rgba(211,47,47,0.45)'>0.70</td><td style='background:"
@@ -404,9 +407,7 @@ def _run(pages: list) -> list:
     """Load each (url, expression) in headless Chromium and return the values."""
     import websockets
     subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
-    proc = subprocess.Popen([CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-                             f"--remote-debugging-port={CDP}", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = launch(CHROME, CDP)
     try:
         ws_url = None
         for _ in range(60):

@@ -27,6 +27,7 @@ from cfb.site import write_page
 from gordstats.usage_page import CSS as _CSS, JS as _JS, bar as _bar, num as _num
 from gordstats.usage_page import options as _options, pct as _pct, pin as _pin, v as _v
 from gordstats.usage_page import views_bar as _views_bar
+from gordstats.jsonio import script_json
 
 RECENT_WEEKS = 3
 MIN_TOUCHES = 4                 # below this a share is one carry of noise
@@ -181,8 +182,8 @@ def body() -> str:
             f"<th data-k='n' class='{ALL}' title='League fantasy points per game played'>"
             f"FPts/G</th>"
             f"<th data-k='n' class='{ALL}'>PPA</th></tr>")
-    cfg = json.dumps({"mine": mine, "teams": league_teams, "storage": "cfbMyTeam",
-                      "sort": 7, "views": VIEWS}).replace("</", "<\\/")
+    cfg = script_json({"mine": mine, "teams": league_teams, "storage": "cfbMyTeam",
+                      "sort": 7, "views": VIEWS})
     return (
         _CSS
         # One sentence above the table: the subtitle already says what the
@@ -205,7 +206,8 @@ def body() -> str:
         "College snap counts are not free, so share of touches stands in.</p></details>"
         + _views_bar(VIEWS)
         + controls
-        + f"<div class='us-scroll'><table class='us view-overall'><thead>{head}</thead>"
+        + f"<div class='us-scroll'><table class='us view-overall' data-sticky-head>"
+        f"<thead>{head}</thead>"
         f"<tbody>{_rows(recent, season, conf)}</tbody></table></div>"
         + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + _JS)
 

@@ -24,6 +24,7 @@ from fantasy.league import usage as usage_mod
 from fantasy.site import layout
 from gordstats import my_league, usage_page as ui
 from gordstats.frontmatter import add_front_matter
+from gordstats.jsonio import script_json
 
 RECENT_WEEKS = 3
 MIN_TOUCHES = 3                 # carries + targets; below it a share is noise
@@ -202,8 +203,8 @@ def body() -> str:
             f"RZ looks</th>"
             f"<th data-k='n' class='{ALL}'>Yds</th><th data-k='n' class='{ALL}'>TD</th>"
             f"<th data-k='n' class='{ALL}' title='PPR points per game played'>PPR/G</th></tr>")
-    cfg = json.dumps({"mine": mine, "teams": names, "storage": "nflMyTeam",
-                      "sort": SORT_COLUMN, "views": VIEWS}).replace("</", "<\\/")
+    cfg = script_json({"mine": mine, "teams": names, "storage": "nflMyTeam",
+                      "sort": SORT_COLUMN, "views": VIEWS})
     return (
         ui.CSS
         # One sentence above the table (the subtitle already names the
@@ -232,7 +233,8 @@ def body() -> str:
         + ui.views_bar(VIEWS)
         + my_league.bar()
         + controls
-        + f"<div class='us-scroll'><table class='us view-overall'><thead>{head}</thead>"
+        + f"<div class='us-scroll'><table class='us view-overall' data-sticky-head>"
+        f"<thead>{head}</thead>"
         f"<tbody>{_rows(recent, season, held, names)}</tbody></table></div>"
         + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + ui.JS
         + my_league.JS)

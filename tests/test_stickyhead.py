@@ -21,7 +21,7 @@ import urllib.request
 import pytest
 
 from conftest import ROOT
-from browser_util import reap
+from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -58,9 +58,7 @@ def site(tmp_path_factory):
 def _run(url: str, expression: str):
     import websockets
     subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
-    proc = subprocess.Popen([CHROME, "--headless=new", "--no-sandbox", "--disable-gpu",
-                             f"--remote-debugging-port={CDP}", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = launch(CHROME, CDP)
     try:
         for _ in range(60):
             try:
@@ -109,7 +107,7 @@ def test_the_header_follows_a_long_table(site):
       var widths=[].map.call(real,function(t,i){ return Math.round(t.getBoundingClientRect().width)
         ===Math.round(copy[i].getBoundingClientRect().width); });
       document.querySelector('.power-wrap').scrollLeft=120; await wait();
-      var slid=box.querySelector('table').style.transform;
+      var slid=box.scrollLeft;
       copy[0].click(); await wait();
       window.scrollTo(0,0); await wait();
       return JSON.stringify({before:before, shown:shown, top:top, widths:widths, slid:slid,
@@ -119,6 +117,6 @@ def test_the_header_follows_a_long_table(site):
     assert got["before"] is True                   # the real header is in view
     assert got["shown"] and got["top"] == 50       # under the 50px pinned bar
     assert all(got["widths"]) and len(got["widths"]) == 4
-    assert got["slid"] == "translateX(-120px)"
+    assert got["slid"] == 120                      # scrolled with the table's scroller
     assert got["sorted"] == 1                       # the tap reached the real header
     assert got["after"] is True

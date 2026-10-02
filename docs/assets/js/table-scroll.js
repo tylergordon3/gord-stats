@@ -31,11 +31,17 @@
   // Under this, the hint is noise: the reader can see most of the table and a
   // short nudge sideways reveals the rest.
   var HINT_MIN_OVERFLOW = 120;
+  // How far past its box a strip has to run before it counts as scrolling. A
+  // table hidden by 3px is still hiding a column edge; a row of buttons 3px
+  // over (the CFB matchups week strip at 320px) shows every button whole, and
+  // the fade only washed out the current week's chip at the end (2026-10-02).
+  var STRIP_SLACK = 12;
 
   function edges(box) {
     var over = box.scrollWidth - box.clientWidth;
+    var slack = box.dataset.scrollSlack ? +box.dataset.scrollSlack : 2;
     box.classList.remove("scroll-start", "scroll-mid", "scroll-end");
-    if (over <= 2) {
+    if (over <= slack) {
       box.classList.remove("is-scrollable");
       return;
     }
@@ -88,6 +94,7 @@
   function wire(box, withHint) {
     if (!box.dataset.scrollWired) {
       box.dataset.scrollWired = "1";
+      if (!withHint) box.dataset.scrollSlack = String(STRIP_SLACK);
       box.addEventListener("scroll", function () { edges(box); }, { passive: true });
     }
     pinOffset(box);                              // column widths move with the viewport

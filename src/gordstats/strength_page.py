@@ -40,14 +40,14 @@ table.st td.st-name{text-align:left;font-weight:600}
 table.st tbody tr:nth-child(even) td{background:#f8fafc}
 table.st td:first-child,table.st th:first-child{position:sticky;left:0;z-index:1}
 .st-note{font-size:13px;color:#4a5a68;margin:6px 0 12px;line-height:1.55}
-.st-rk{display:inline-block;min-width:18px;text-align:right;color:#64748b;font-size:11px;
+.st-rk{display:inline-block;min-width:18px;text-align:right;color:#64748b;font-size:12px;
   margin-right:6px}
 .st-scroll{overflow-x:auto}
 /* Below: only the NFL page uses these (logos, bye counts, the reader's team). */
 table.st img.st-logo{display:inline-block;width:16px;height:16px;object-fit:contain;
   vertical-align:-3px;margin:0 5px 0 0;border:none;padding:0;box-shadow:none;background:none;
   border-radius:0;filter:drop-shadow(0 0 1px rgba(255,255,255,.7))}
-.st-bye{display:block;font-size:10.5px;line-height:1.2;color:#475569;font-weight:400}
+.st-bye{display:block;font-size:12px;line-height:1.2;color:#475569;font-weight:400}
 table.st tr.st-mine td.st-name{box-shadow:inset 3px 0 0 var(--accent,#C2410C)}
 table.st tr.st-mine td{font-weight:700}
 .st-tn{display:inline-block;max-width:150px;overflow:hidden;text-overflow:ellipsis;
@@ -81,9 +81,12 @@ def _num(value) -> str:
     return "&mdash;" if value is None or pd.isna(value) else f"{value:.2f}"
 
 
-def _wrap(head: str, body: list, fit: bool = False) -> str:
+def _wrap(head: str, body: list, fit: bool = False, sticky: bool = False) -> str:
     cls = "st st-fit" if fit else "st"
-    return (f"<div class='st-scroll'><table class='{cls}'>"
+    # data-sticky-head: assets/js/stickyhead.js keeps a copy of the column
+    # names in view down a long table (the college one is 139 rows).
+    attr = " data-sticky-head" if sticky else ""
+    return (f"<div class='st-scroll'><table class='{cls}'{attr}>"
             f"<thead>{head}</thead><tbody>{''.join(body)}</tbody></table></div>")
 
 
@@ -91,10 +94,13 @@ def _wrap(head: str, body: list, fit: bool = False) -> str:
 # Defence vs position
 # --------------------------------------------------------------------------- #
 
-def defense_table(rows: list, positions, titles: dict = None, fit: bool = False) -> str:
+def defense_table(rows: list, positions, titles: dict = None, fit: bool = True) -> str:
     """The league-wide table. `rows` are (label html, {position: rating},
     overall rating), toughest first; the label is already escaped. `titles`
-    puts a tooltip on a position's header."""
+    puts a tooltip on a position's header.
+
+    Fit (the phone padding) by default: at 390px the college table's All
+    column ran 9px past the screen on the wider padding (2026-10-02)."""
     titles = titles or {}
     body = []
     for rank, (label, values, overall) in enumerate(rows, 1):
@@ -107,7 +113,7 @@ def defense_table(rows: list, positions, titles: dict = None, fit: bool = False)
             + "".join(f"<th title='{escape(titles[p], quote=True)}'>{p}</th>" if p in titles
                       else f"<th>{p}</th>" for p in positions)
             + "<th>All</th></tr>")
-    return _wrap(head, body, fit)
+    return _wrap(head, body, fit, sticky=True)
 
 
 # --------------------------------------------------------------------------- #

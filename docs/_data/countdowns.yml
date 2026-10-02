@@ -14,10 +14,16 @@
 # expired what the card says once target passes. It is also the signal to stop
 #         rendering the card at all on the next build — see the include.
 
+# The first game, not the usual Monday: 2026-27 opens Sunday Nov 1 with
+# Notre Dame-Villanova in Rome (men and women), a day before the rest of
+# Division I. The scoreboards (/men/, /women/, /cbb/watch/) say "No games until
+# Sun, Nov 1" off cbb.render.render_home.CBB_TIPOFF, and a clock reading
+# "Monday, November 2" above them disagreed with a real game (2026-10-02 phone
+# audit). Keep this and CBB_TIPOFF on the same day.
 cbb:
   eyebrow: 2026-2027 SEASON
-  title: Monday, November 2
-  target: "2026-11-02T00:00:00"
+  title: Sunday, November 1
+  target: "2026-11-01T00:00:00"
   expired: Tip-off. The season is here.
 
 # The draft (Aug 21) came and went; the clock now points at the NFL season

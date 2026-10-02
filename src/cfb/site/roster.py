@@ -39,6 +39,7 @@ from cfb.site.schedule import _merge_weather, _wx_icon
 from cfb.site.strength import _heat
 from cfb.site.usage import RECENT_WEEKS
 from gordstats import lineup as shared_lineup, matchup_page as ui, roster_page as page
+from gordstats.jsonio import script_json
 
 OUTPUT = WEB_DIR / "roster" / "index.html"
 ADDS_SHOWN = 8
@@ -389,7 +390,9 @@ def adds_section(wkd: Week, roster: list, got: dict, free: pd.DataFrame) -> str:
         ros = wkd.season_proj.get(pid)
         card = card_info(wkd, p, g, value)
         card["extra"] = (card.get("extra") or "") + (
-            f"<div class='rd-c-do' style='color:#15803d'>+{gain:.1f} over "
+            # A class, not an inline colour: the dark theme's green (rd-gain)
+            # could not reach a style attribute, and #15803d was 3.2:1 there.
+            f"<div class='rd-c-do rd-gain'>+{gain:.1f} over "
             f"{escape(worst['player'])} ({ui.fmt(wkd.proj(worst['yahoo_id']))})</div>")
         cards.append({**card, "slot": pos, "new": pos, "kind": ""})
         body.append(
@@ -482,7 +485,7 @@ def body() -> str:
     start = datetime.strptime(wkd.data["week_start"], "%Y-%m-%d")
     end = datetime.strptime(wkd.data["week_end"], "%Y-%m-%d")
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
-    cfg = json.dumps({"mine": mine, "teams": slugs}).replace("</", "<\\/")
+    cfg = script_json({"mine": mine, "teams": slugs})
     return (
         page.CSS + page.CARD_CSS
         + f"<p><strong>Week {wkd.week}</strong> &middot; {start:%b %-d} &ndash; {end:%b %-d}. "

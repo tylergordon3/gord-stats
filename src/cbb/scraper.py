@@ -52,7 +52,9 @@ def getUrl(name):
 def image_formatter(url):
     if url is None:
         return ""
-    return f'<img src="{url}" class="team-logo" >'
+    # The one logo tag (lazy, sized, alt): cbb.html_util.image_formatter.
+    from cbb import html_util
+    return html_util.image_formatter(url)
 
 
 def getTeamRanks():
@@ -161,7 +163,7 @@ def getHTML(link, retries=5, base_delay=1.0):
     :rtype: BeautiulSoup | NoneType
     """
     for attempt in range(retries):
-        response = requests.get(link)
+        response = requests.get(link, timeout=(10, 60))
         if response.status_code == 429:
             if attempt < retries - 1:
                 delay = base_delay * (2**attempt) + random.uniform(0, 0.2)

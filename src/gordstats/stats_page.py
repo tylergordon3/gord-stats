@@ -194,6 +194,9 @@ CSS = """<style>
 .st-flt{display:flex;align-items:center;gap:6px;font-size:13px;color:#475569}
 .st-flt select{min-height:40px;font:inherit;font-size:14px;border-radius:8px;border:1px solid #cbd5e1;
   background:#fff;color:#0f172a;padding:0 8px;max-width:200px}
+/* The table scrolls in its own box; .power-wrap is styled per page, not here,
+   so on a phone the whole page scrolled sideways (the 2026-10-02 audit). */
+.st-wrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:10px}
 table.st-t{border-collapse:collapse;font-size:14px;width:100%;min-width:560px;
   font-variant-numeric:tabular-nums}
 table.st-t th{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:#334155;
@@ -235,6 +238,7 @@ table.st-t td.h{background:hsl(calc(var(--p) * 120) 70% 45% / .17)}
   .st-tabs button{padding:0 10px;font-size:13px}
 }
 @media (prefers-color-scheme: dark){
+  .st-wrap{border-color:#2b3852}
   .st-tabs button{background:#16203a;border-color:#2b3852;color:#dde5ef}
   .st-tabs button[aria-pressed=true]{background:#e2e8f0;border-color:#e2e8f0;color:#0f172a}
   .st-flt{color:#aab7c9}

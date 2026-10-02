@@ -277,10 +277,13 @@ CARD_CSS = """<style>
   .rd-head .rd-tiles{display:none}
   .rd-moves{font-size:13px;padding:8px 10px}
   .rd-moves .rd-lbl{display:block;margin:0 0 2px 76px}
-  .rd-pick{flex-wrap:nowrap}
-  .rd-pick label{display:flex;align-items:center;gap:6px;min-width:0}
-  .rd-pick select{min-width:0;max-width:52vw}
-  .rd-pick button{white-space:nowrap}
+  /* The team menu gives way, not the page: at 320px the row was 300px in a
+     274px bar, and the page scrolled sideways 3-18px (2026-10-02). */
+  .rd-pick{flex-wrap:nowrap;min-width:0;max-width:100%}
+  .rd-pick label{display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto}
+  .rd-pick select{min-width:0;flex:1 1 auto;max-width:52vw}
+  .rd-pick button{white-space:nowrap;flex:none;min-height:40px}
+  .rd-seg button{min-height:40px}
 }
 .rd-toggle{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0 12px}
 .rd-toggle .rd-tot{text-align:center;line-height:1.15;min-width:58px}
@@ -376,6 +379,14 @@ CARD_CSS = """<style>
 @media (max-width:600px){
   .rd-c-slot,.rd-c-slot small,.rd-c-opp,.rd-c-proj small,.rd-c-do,.rd-tag,.rd-pill,
   .rd-toggle .rd-tot span{font-size:12px}
+}
+/* Last, so it wins on equal specificity. */
+@media (max-width:360px){
+  .rd-pick select{max-width:44vw}
+  .rd-seg button{padding:6px 10px}
+  /* "+5.4" under the best total rather than beside it: beside, it pushed the
+     toggle row 18px past a 320px screen. */
+  .rd-toggle .rd-tot i{display:table;margin:2px auto 0}
 }
 </style>"""
 

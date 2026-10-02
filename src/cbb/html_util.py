@@ -97,17 +97,25 @@ def bold_row(row, conf_champ_dict, bid_dict):
         return ["font-weight: normal"] * len(row)
 
 
-def image_formatter(url):
+def image_formatter(url, alt=""):
     """
-    Creates html for team logo
+    Creates html for team logo - the one tag every CBB table uses.
+
+    Lazy and sized: a conference page lists all 365 teams, and loaded eagerly
+    with no size every logo was fetched up front and the rows jumped as they
+    landed. `alt` is empty by default because the logo sits beside the team's
+    name - a screen reader should read the name once, not a filename first.
 
     :param url: Path to team logo
+    :param alt: Text for the image when it is the only label
     :return: Logo HTML
     :rtype: str
     """
     if not url:
         return ""
-    return f'<img src="{url}" class="team-logo" loading="lazy" width="40" height="40">'
+    alt = str(alt).replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
+    return (f'<img src="{url}" class="team-logo" loading="lazy" decoding="async" '
+            f'width="40" height="40" alt="{alt}">')
 
 
 def logo_urls() -> dict:

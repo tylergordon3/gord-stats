@@ -8,8 +8,8 @@
  * numbers under the pinned controls. This draws a copy of the header under
  * whatever is pinned (the .pin-bar, when it is stuck) while the real one is
  * out of sight: the same table classes, so the same styles and the same
- * hidden columns; the same widths, measured off the real cells; slid
- * sideways with the scroller. A tap on a copied header taps the real one, so
+ * hidden columns; the same widths, measured off the real cells; scrolled
+ * sideways with the scroller, frozen first column and all. A tap on a copied header taps the real one, so
  * sorting still works from it.
  *
  * Opt-in by position (a table directly inside .power-wrap) or by attribute
@@ -72,16 +72,28 @@
     items.forEach(function (it) {
       var head = it.t.tHead.getBoundingClientRect();
       var body = it.t.getBoundingClientRect();
-      var show = head.top < off && body.bottom > off + head.height * 2;
+      // A wrapper that scrolls up and down itself (the usage table's 70vh box
+      // on a desktop) keeps its own position:sticky header in view; a copy
+      // would only float a second one above it. The slack is for wrappers
+      // that are a pixel or two over from borders and rounding (/cfb/power/).
+      var own = it.wrap.scrollHeight > it.wrap.clientHeight + 40;
+      var show = !own && head.top < off && body.bottom > off + head.height * 2;
+      it.box.hidden = !show;
       if (show) {
         if (it.dirty || !it.inner) build(it);
         var w = it.wrap.getBoundingClientRect();
         it.box.style.top = off + "px";
-        it.box.style.left = w.left + "px";
+        // Inside the wrapper's border, where its scrolled content starts.
+        it.box.style.left = (w.left + it.wrap.clientLeft) + "px";
         it.box.style.width = it.wrap.clientWidth + "px";
-        it.inner.style.transform = "translateX(" + (-it.wrap.scrollLeft) + "px)";
+        // Scrolled, not slid: the box is a scroller of its own (overflow
+        // hidden), so a copied cell that is position:sticky - the frozen Team
+        // column - pins inside it exactly as the real one pins in the table's
+        // scroller. A transform moved the whole copy, and after a sideways
+        // swipe the frozen column's name slid off with the rest (2026-10-02).
+        // Set after the box is shown: a hidden box has nothing to scroll.
+        it.box.scrollLeft = it.wrap.scrollLeft;
       }
-      it.box.hidden = !show;
     });
   }
   function soon() { if (!frame) frame = requestAnimationFrame(update); }

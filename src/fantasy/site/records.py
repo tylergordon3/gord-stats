@@ -26,7 +26,7 @@ import pandas as pd
 
 from fantasy import paths
 from fantasy.config import FORMAL_SEASON, LEAGUE_IDS, ROSTER_NAMES
-from fantasy.site import adp, injuries, layout, schedule, transactions
+from fantasy.site import adp, injuries, layout, schedule, styles, transactions
 from fantasy.site.draft import PICKUP_MIN_WEEKS
 from gordstats import hub, schedule_luck
 from gordstats.recap import ordinal
@@ -46,11 +46,6 @@ def _quiet(fn):
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! records finding {fn.__name__}: {type(exc).__name__}: {exc}")
         return ""
-
-
-def _spaced(name: str) -> str:
-    """The injury archive keeps names run together ("AnthonyRichardson")."""
-    return re.sub(r"(?<=[a-z])(?=[A-Z])", " ", str(name))
 
 
 def _year(season: str) -> str:
@@ -101,7 +96,8 @@ def injury_finding() -> str:
     hurt = detail[detail["Games Missed"] > 0].sort_values("Est. Pts Lost", ascending=False)
     top = hurt.iloc[0]
     manager = ROSTER_NAMES.get(int(top["roster_id"]), top.get("Owner", ""))
-    return (f"Costliest injury: {_spaced(top['Name'])} ({manager}, {_year(top['season'])}), "
+    name = injuries.display_name(top["Name"], top.get("Pos") or top.get("Position"))
+    return (f"Costliest injury: {name} ({manager}, {_year(top['season'])}), "
             f"{int(top['Games Missed'])} games, about {int(round(top['Est. Pts Lost']))} points")
 
 
@@ -155,7 +151,7 @@ def injury_section() -> str:
 <strong>Drafted</strong> is where the manager got the player: the draft slot (round.pick), or the
 week a pickup was added.</p>
 <div class="table-scroll">
-{top.to_html()}
+{styles.to_html(top)}
 </div>"""
     return f"""<p>Eligible players: drafted by a team (accountable all {injuries.REG_WEEKS} weeks), plus
     waiver / free-agent pickups held at least {PICKUP_MIN_WEEKS} weeks — a pickup only answers for games
@@ -170,7 +166,7 @@ don't count as starter production).<br>
 <strong>Est. Pts Lost</strong> — games missed &times; the player's median weekly score, so losing a stud
 costs far more than losing a bench stash.</p>
 <div class="table-scroll">
-{table.to_html()}
+{styles.to_html(table)}
 </div>
 {top_html}
 <h2>Injury Breakdown by Season</h2>

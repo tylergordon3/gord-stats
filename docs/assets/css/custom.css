@@ -7,6 +7,48 @@ body {
   color: #334155;
 }
 
+/* Slate's link blue, #0F79D0, is 4.27:1 on this page's #f7f9fc and 4.11:1 on
+   the #f1f5f9 panels - under AA for the body-size text most links are. A
+   shade deeper clears it on every light ground (5.2:1 on the page). The dark
+   theme sets its own link colour further down. */
+a {
+  color: #0b6bbd;
+}
+
+/* The theme sets section, article, details... {display:block}, which beats
+   the browser's own [hidden] rule: Home's hidden Tonight card showed as an
+   empty bar (the 2026-10-02 audit). */
+[hidden] {
+  display: none !important;
+}
+
+/* Slate draws every table as a grid of 1px #373737 - `table` and `td` on all
+   four sides. Most tables here rule only the line under a row, so the theme's
+   sides and tops came through as heavy black bars: down the fantasy
+   standings, the stakes and recap-accuracy tables, history, draft review,
+   schedule difficulty, the stats tables, the WNBA pickups, and as a black
+   frame round the power tables (the 2026-10-02 phone audit). The base is a
+   light rule under each row; a table that wants a grid draws one in its own
+   CSS, which outranks these bare element selectors. */
+table {
+  border: 0;
+}
+
+td,
+th {
+  border-top-width: 0;
+  border-right-width: 0;
+  border-left-width: 0;
+  border-bottom-color: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+  td,
+  th {
+    border-bottom-color: #2b3852;
+  }
+}
+
 /* De-emphasised text: ranks, records, projections, venues, column notes.
    It was #94a3b8 across the site, 2.4-2.6:1 on the light grounds - the
    figures that were meant to be quiet were unreadable in daylight. This
@@ -377,12 +419,13 @@ body {
   }
 }
 
-/* Extremely small phones (old iPhones) */
+/* Extremely small phones (old iPhones). Tighter padding only: the type
+   holds at the 12px floor set above - 11px bought a sliver of a column and
+   cost the reader the row (2026-10-02). */
 @media (max-width: 320px) {
   .sticky-table th,
   .sticky-table td {
     padding: 3px 4px;
-    font-size: 11px;
   }
 }
 
@@ -517,6 +560,29 @@ img.team-logo {
   margin-top: 0;
   margin-bottom: 0;
   background: none;
+}
+
+/* ESPN team logos (gordstats.logos.img tags every one gs-logo). Ohio State,
+   Army, Purdue, the Raiders and a dozen others ship a near-black mark, which
+   on the dark theme was a hole in the schedule, power, matchups and
+   predictions tables (2026-10-02). A pale disc works for every mark - a halo
+   leaves dark-on-dark dark. border-box keeps the drawn size; the padding stops
+   a square mark filling the circle. Important because each page resets its
+   logos' padding and background against Slate's img frame, with selectors
+   this cannot outrank one by one. */
+@media (prefers-color-scheme: dark) {
+  img.gs-logo {
+    background: #e8edf5 !important;
+    border-radius: 50% !important;
+    padding: 2px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* The roster tables' 14-18px marks: 2px a side left a 10px logo. */
+  img.gs-logo[width="16"],
+  img.gs-logo[width="18"] {
+    padding: 1px !important;
+  }
 }
 
 .conf-table {
@@ -1009,7 +1075,7 @@ img.team-logo {
   .conf-table th,
   .conf-table td {
     padding: 3px 4px;
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -2589,6 +2655,16 @@ h3 {
   font-weight: 700;
 }
 
+/* A row of page links with no separators in the text: the gap spaces them.
+   Literal " · " between inline links wrapped to a line on its own end, a dot
+   dangling after the last link that fit (2026-10-02). */
+.home-card-links.hc-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 14px;
+}
+
 .dashboard-cta {
   max-width: 1200px;
   margin: 18px auto;
@@ -3828,6 +3904,13 @@ img {
     white-space: nowrap;
   }
 
+  /* A flex item that may shrink: "Jump to:" broke over two lines while the
+     links beside it scrolled (2026-10-02). */
+  .section-nav strong {
+    flex: none;
+    white-space: nowrap;
+  }
+
   h1 {
     font-size: 1.5rem;
   }
@@ -3914,6 +3997,48 @@ img {
   #league-toggle-btn {
     padding-top: 4px;
     padding-bottom: 4px;
+  }
+
+  /* Measured 2026-10-02: links that stand alone but were drawn as text - the
+     team pages' schedule opponents (16px), the fantasy home's "Matchups ->"
+     and "Power ->" (20px), the recap's "Every roster, player by player ->"
+     (14px), the watch guide's "College and pro football together ->" (15px).
+     Equal padding and negative margin make each a 40px+ target while its
+     margin box, and so the line and the row, stay exactly as they were.
+     Selectors outrank the pages' own rules, which load after this sheet. */
+  table.tm td.tm-name a,
+  div.ws-head > a,
+  #wg-host > p.wg-note > a:only-child {
+    display: inline-block;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-top: -12px;
+    margin-bottom: -12px;
+  }
+
+  /* A table row can only lend its own height: the next row paints over
+     anything that hangs below it. The team pages' rows were 35px. */
+  table.tm td.tm-name {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  /* The recap's link sits directly on the week chips, which would take the
+     lower half of a hanging target; it gets a line of its own height. */
+  .rc > p.rc-note > a:only-child {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  /* The recap's week chips were 34px. */
+  nav.rc-weeks a,
+  nav.rc-weeks span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    box-sizing: border-box;
   }
 }
 
@@ -4268,6 +4393,32 @@ img {
   .sub-nav a {
     font-size: 0.76rem;
     padding: 0 5px;
+  }
+}
+
+/* 320px. The college and NFL rows were 2px short of one line, so "Schedule"
+   (CFB) and "Stats" (NFL) wrapped onto a second; the fantasy row, which shares
+   its line with the league switcher, was 29px short and dropped "Usage"
+   (2026-10-02). The links' leftover 4px margins go (the row's gap already
+   spaces them), and the fantasy links and league chips give up side padding -
+   never type size, which stays at the 12px floor. */
+@media (max-width: 340px) {
+  .sub-nav a {
+    margin-right: 0;
+  }
+
+  .fl-line .sub-nav a {
+    padding: 0 2px;
+  }
+
+  /* Some slack for a phone whose font sets a hair wider than the 214px the
+     five links measured here. */
+  .fl-leagues a.fl-league {
+    padding: 0 4px;
+  }
+
+  .fl-row {
+    margin-right: 2px;
   }
 }
 
@@ -4965,8 +5116,9 @@ body.sec-cfb, body.sec-fantasy, body.sec-wnba {
   /* Muted, but never invisible. An earlier version faded these to opacity 0
      until the row was hovered, which read as a tidier table and meant a
      reader had no way to discover the feature existed - and no way at all on
-     a device with no hover. Quiet is the most it gets to be. */
-  color: #9aa4b5;
+     a device with no hover. Quiet is the most it gets to be - and quiet
+     still clears 3:1, which #9aa4b5 (2.3-2.5:1) did not (2026-10-02). */
+  color: #7c8799;
   vertical-align: baseline;
   transition: color .12s ease, transform .12s ease;
 }

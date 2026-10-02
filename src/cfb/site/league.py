@@ -75,6 +75,8 @@ table.lg-table img.lg-logo{width:22px;height:22px;border-radius:50%;
   table.lg-table td{background:#16203a;border-color:#2b3852;color:#dde5ef}
   table.lg-table tbody tr:nth-child(even) td{background:#1b2540}
   .mu-note{color:#aab7c9}
+  /* The school beside a waiver pick ("PITT") was #64748b: 3.2:1 on the rows. */
+  .wv-col .mu-meta{color:#94a3b8}
   .inj{color:#ffb4ab}
 }
 /* A phone gets the name capped and the numbers beside it: the standings'

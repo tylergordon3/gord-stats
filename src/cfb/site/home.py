@@ -80,12 +80,12 @@ def body() -> str:
   <div class="home-card-head">
     <h2>Everything else</h2>
   </div>
-  <p class="home-card-links">
-    <a href="/cfb/predictions/">Predictions</a> ·
-    <a href="/cfb/power/">Rankings</a> ·
-    <a href="/cfb/stats/">Team Stats</a> ·
-    <a href="/cfb/watch/">Watch Guide</a> ·
-    <a href="/cfb/schedule/">Schedule &amp; Scores</a> ·
+  <p class="home-card-links hc-row">
+    <a href="/cfb/predictions/">Predictions</a>
+    <a href="/cfb/power/">Rankings</a>
+    <a href="/cfb/stats/">Team Stats</a>
+    <a href="/cfb/watch/">Watch Guide</a>
+    <a href="/cfb/schedule/">Schedule &amp; Scores</a>
     <a href="/cfb/strength/">Strength of Schedule</a>
   </p>
   <p class="home-card-links">

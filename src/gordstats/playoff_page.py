@@ -190,15 +190,23 @@ table.po-t td.po-chg.flat{color:#64748b;font-weight:400}
 .po-method p{font-size:14px;line-height:1.55;margin:8px 0}
 @media (max-width:600px){
   table.po-t{font-size:13.5px}
-  table.po-t th{padding:8px 3px;font-size:10.5px;letter-spacing:0}
+  /* 12px, the site's floor (it was 10.5px); 2px sides so the CFB table
+     still fits a 390px screen without a swipe. */
+  table.po-t th{padding:8px 2px;font-size:12px;letter-spacing:0}
   table.po-t th[aria-sort]::after{content:"\\25BE"}
   table.po-t th[aria-sort=ascending]::after{content:"\\25B4"}
-  table.po-t td{padding:8px 3px}
+  table.po-t td{padding:10px 3px}
   table.po-t th:first-child,table.po-t td:first-child{padding-left:6px}
   table.po-t th:last-child,table.po-t td:last-child{padding-right:7px}
   table.po-t .po-tn{max-width:108px}
   table.po-t .po-tn a,table.po-t .po-tn .po-nm{margin-left:6px}
   table.po-t .po-rec{display:none}
+  /* Thumb-sized team links (2026-10-02: the names were 16-20px targets). The
+     link's ::after covers its row of the bracket, or its table cell - both
+     positioned, so the overlay escapes the name's ellipsis clip. The star
+     keeps its own target: it is lifted above this on phones (custom.css). */
+  .po-line{position:relative}
+  .po-name a::after,table.po-t .po-tn a::after{content:"";position:absolute;inset:-2px 0}
 }
 @media (prefers-color-scheme: dark){
   .po-card{background:#1b2540;border-color:#2b3852;box-shadow:none}
