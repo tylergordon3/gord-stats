@@ -29,6 +29,7 @@ import pandas as pd
 import pytest
 
 from gordstats import strength_page as sp
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -441,7 +442,7 @@ def _run(pages: list) -> list:
         return asyncio.run(go())
     finally:
         proc.terminate()
-        proc.wait(timeout=10)
+        reap(proc)
 
 
 @pytest.mark.skipif(CHROME is None, reason="no Chromium to run the JS in")

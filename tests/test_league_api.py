@@ -25,6 +25,7 @@ from datetime import date
 import pytest
 
 from gordstats import league_api
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -241,7 +242,7 @@ class Browser:
 
     def close(self):
         self.proc.terminate()
-        self.proc.wait(timeout=10)
+        reap(self.proc)
 
     def run(self, expression):
         """Evaluate, awaiting a promise, and return the value."""

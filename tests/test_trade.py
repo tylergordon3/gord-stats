@@ -30,6 +30,7 @@ from cfb import league_sim
 from cfb.site import trade as cfb_trade
 from fantasy.site import trade as nfl_trade
 from gordstats import my_power, trade_page
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -65,7 +66,7 @@ class Browser:
 
     def close(self):
         self.proc.terminate()
-        self.proc.wait(timeout=10)
+        reap(self.proc)
         subprocess.run(["fuser", "-k", f"{PORT}/tcp"], capture_output=True)
 
     def evaluate(self, expression):

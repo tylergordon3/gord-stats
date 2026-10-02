@@ -25,6 +25,7 @@ import pytest
 
 from conftest import ROOT
 from gordstats import share_button
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -149,7 +150,7 @@ def chrome():
         raise RuntimeError("Chromium did not come up")
     yield ws_url
     proc.terminate()
-    proc.wait(timeout=10)
+    reap(proc)
 
 
 def drive(ws_url, steps, timeout=15):

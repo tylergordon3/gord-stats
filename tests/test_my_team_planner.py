@@ -25,6 +25,7 @@ import pytest
 
 from conftest import ROOT
 from gordstats import lineup, my_team
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -61,7 +62,7 @@ class Browser:
 
     def close(self):
         self.proc.terminate()
-        self.proc.wait(timeout=10)
+        reap(self.proc)
 
     def evaluate(self, expression):
         import websockets

@@ -29,6 +29,7 @@ from gordstats import favorites, rankmoves
 from nfl import fpi
 from nfl.site import power
 from nfl.site import teams as teams_page
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -454,7 +455,7 @@ def _run(url: str, boot: str, expression: str):
         return asyncio.run(go())
     finally:
         proc.terminate()
-        proc.wait(timeout=10)
+        reap(proc)
         subprocess.run(["fuser", "-k", f"{CDP}/tcp"], capture_output=True)
 
 

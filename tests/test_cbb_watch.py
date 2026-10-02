@@ -24,6 +24,7 @@ import pytest
 
 from cbb.render import render_watch as watch
 from gordstats.watch_page import ET
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -270,7 +271,7 @@ def _run(url: str, boot: str, steps: list):
         return asyncio.run(go())
     finally:
         proc.terminate()
-        proc.wait(timeout=10)
+        reap(proc)
 
 
 needs_chrome = pytest.mark.skipif(CHROME is None, reason="no Chromium to run the JS in")

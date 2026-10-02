@@ -22,6 +22,7 @@ import pandas as pd
 import pytest
 
 from cfb.site import watch
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -183,7 +184,7 @@ def _run(url: str, boot: str, expression: str):
         return asyncio.run(go())
     finally:
         proc.terminate()
-        proc.wait(timeout=10)
+        reap(proc)
 
 
 @pytest.mark.skipif(CHROME is None, reason="no Chromium to run the JS in")

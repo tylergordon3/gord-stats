@@ -33,6 +33,7 @@ import pytest
 
 from fantasy.league import power
 from gordstats import my_power
+from browser_util import reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
@@ -75,7 +76,7 @@ class Browser:
 
     def close(self):
         self.proc.terminate()
-        self.proc.wait(timeout=10)
+        reap(self.proc)
 
     def evaluate(self, expression):
         import websockets
