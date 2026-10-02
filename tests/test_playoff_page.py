@@ -184,3 +184,36 @@ def test_the_nfl_page_before_a_game_and_after_the_season(nfl_stub):
     nfl_stub["value"] = (res, done)
     html = nfl_page.body()
     assert "The regular season is over" in html and "win the Super Bowl" in html
+
+
+# --------------------------------------------------------------------------- #
+# The week's change, from the season's history (gordstats.playoff_history)
+# --------------------------------------------------------------------------- #
+
+def test_the_week_column_appears_once_there_is_a_week_old_snapshot(cfb_stub, monkeypatch):
+    from datetime import datetime
+    from gordstats import playoff_history
+    res, lg, _payload = cfb_stub["value"]
+    html = cfb_page.body()
+    assert "data-k='wk'" not in html                     # no history yet: no column
+    i = lg.teams.index("s1")
+    then = float(res.playoff[i]) - 0.07
+    monkeypatch.setattr(cfb_page, "_BASE", {"when": datetime(2026, 9, 27),
+                                            "odds": {"s1": [then, 0.0]}})
+    html = cfb_page.body()
+    assert "data-k='wk'" in html and "since Sep 27" in html
+    assert "class='po-chg up' data-v='0.0700'>+7<" in html
+    # A team the old snapshot left out counted from zero, not left blank.
+    other = next(t for t in lg.teams if t != "s1")
+    j = lg.teams.index(other)
+    want = playoff_history.change(res.playoff[j], {"s1": [then, 0.0]}, other)
+    assert f"data-v='{want:.4f}'" in html
+
+
+def test_a_test_build_neither_reads_nor_writes_the_seasons_history(cfb_stub, monkeypatch,
+                                                                   tmp_path):
+    hist = tmp_path / "hist.json"
+    monkeypatch.setattr(cfb_page, "HISTORY", hist)
+    monkeypatch.setattr(cfb_page, "OUT", tmp_path / "playoff" / "index.html")
+    cfb_page.generate()
+    assert not hist.exists()

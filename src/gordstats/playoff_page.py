@@ -12,7 +12,9 @@ A table row:
      "link": "/cfb/teams/alabama/", "logo": "<img ...>", "record": "4-0",
      "values": {"playoff": 0.85, "fpi": 0.73, "seed": 4.2, ...}}
 
-A column: {"key", "label", "tip", "kind": "pct" | "seed"}. A pct column is
+A column: {"key", "label", "tip", "kind": "pct" | "seed" | "chg"}. A chg column
+is a change in percentage points (the week's move, gordstats.playoff_history).
+A pct column is
 shaded by its own value - the chance itself, not a rank - so ours and ESPN's
 read side by side; a value of None prints nothing (a team ESPN does not
 list). The shade is an inset shadow rather than a background so a starred
@@ -47,6 +49,13 @@ def pct_text(v) -> str:
 
 
 def _cell(value, kind: str) -> str:
+    if kind == "chg":
+        if value is None:
+            return "<td class='po-chg'></td>"
+        pts = round(value * 100)
+        cls = "up" if pts > 0 else "down" if pts < 0 else "flat"
+        text = f"+{pts}" if pts > 0 else (f"\u2212{-pts}" if pts < 0 else "\u00b7")
+        return f"<td class='po-chg {cls}' data-v='{value:.4f}'>{text}</td>"
     if kind == "seed":
         if value is None or value != value:
             return "<td class='po-seedavg'></td>"
@@ -173,6 +182,9 @@ table.po-t .po-tn a,table.po-t .po-tn .po-nm{min-width:0;overflow:hidden;text-ov
   white-space:nowrap;color:inherit;text-decoration:none;margin-left:7px}
 table.po-t .po-tn .po-rec{flex:none}
 table.po-t td.po-seedavg{color:var(--gs-muted,#5d6b7e)}
+table.po-t td.po-chg{font-size:13px;font-weight:700}
+table.po-t td.po-chg.up{color:#15803d}table.po-t td.po-chg.down{color:#b91c1c}
+table.po-t td.po-chg.flat{color:#64748b;font-weight:400}
 .po-zero{color:#64748b}
 .po-wrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px}
 .po-method p{font-size:14px;line-height:1.55;margin:8px 0}
@@ -198,6 +210,8 @@ table.po-t td.po-seedavg{color:var(--gs-muted,#5d6b7e)}
   table.po-t th{background:#223052;color:#dde5ef;border-color:#2b3852}
   table.po-t td{background:#16203a;color:#e6edf6;border-color:#2b3852}
   table.po-t td.h{box-shadow:inset 0 0 0 60px hsl(213 90% 62% / calc(var(--p) * .30))}
+  table.po-t td.po-chg.up{color:#4ade80}table.po-t td.po-chg.down{color:#f87171}
+  table.po-t td.po-chg.flat{color:#94a3b8}
   .po-wrap{border-color:#2b3852}
   .po-zero{color:#94a3b8}
 }

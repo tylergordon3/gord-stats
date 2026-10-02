@@ -14,10 +14,10 @@ after the title game it is the final bracket with the losers greyed.
 from html import escape
 
 from cfb import playoff
-from cfb.config import SEASON, WEB_DIR
+from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import power
 from cfb.site import teams as teams_page
-from gordstats import logos, playoff_page, share_card
+from gordstats import logos, playoff_history, playoff_page, share_card
 from gordstats.frontmatter import add_front_matter
 
 OUT = WEB_DIR / "playoff" / "index.html"
@@ -117,9 +117,16 @@ def _table(res, league, espn: dict) -> str:
     # The link preview: the five likeliest, as the table lists them.
     _CARD["rows"] = [(str(k + 1), r["name"], f"{r['values']['playoff']:.0%}")
                      for k, r in enumerate(rows[:5])]
+    base = _BASE.get("odds")
+    for r in rows:
+        r["values"]["wk"] = (playoff_history.change(r["values"]["playoff"], base, r["id"])
+                             if base is not None else None)
     columns = [
         {"key": "playoff", "label": "Playoff", "kind": "pct",
          "tip": "Our chance of making the 12-team field"},
+    ] + ([{"key": "wk", "label": "Wk", "kind": "chg",
+            "tip": "Change in our playoff chance since " + f"{_BASE['when']:%b %-d}"}]
+         if base is not None else []) + [
         {"key": "fpi", "label": "FPI", "kind": "pct",
          "tip": "ESPN FPI's chance of making the playoff, from its own simulations"},
         {"key": "bye", "label": "Bye", "kind": "pct",
@@ -171,6 +178,9 @@ def body() -> str:
         return playoff_page.page(playoff_page.empty(
             "The projection starts once the first week of games is played."))
     espn = fpi_odds(payload)
+    # Every team's odds as printed, for the season's history (generate()).
+    _CARD["odds"] = {league.teams[i]: (float(res.playoff[i]), float(res.title[i]))
+                     for i in range(len(league.teams))}
     state = "final" if league.final else "set" if league.cfp_seeds else "projected"
     field = playoff.projected_field(res)
     if state == "final":
@@ -203,9 +213,24 @@ def card() -> dict | None:
                              "Chance to make the 12-team field, on our model", rows)
 
 
+HISTORY = DATA_DIR / "playoff_history" / f"{SEASON}.json"
+_BASE: dict = {}
+
+
 def generate():
+    # The odds are kept build by build, and a week's change read back - but
+    # only on the site's own build: a test writing the page somewhere else
+    # neither reads nor adds to the season's history.
+    site = OUT.resolve().is_relative_to(WEB_DIR.resolve())
+    _BASE.clear()
+    if site:
+        when, odds = playoff_history.baseline(HISTORY, SEASON)
+        if odds is not None:
+            _BASE.update(when=when, odds=odds)
     _CARD.clear()
     html = body()
+    if site and _CARD.get("odds"):
+        playoff_history.record(HISTORY, SEASON, _CARD["odds"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(add_front_matter(html, "CFB Playoff Odds",
                                     f"{SEASON} season &middot; {playoff.N_SIMS:,} simulations",
