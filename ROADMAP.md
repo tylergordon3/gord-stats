@@ -384,3 +384,7 @@ Open:
 - [x] **College and pro football together** (bf19fe541): /watch/ merges both watch guides (one list, one
       quadbox, both fantasy teams, live scores), and Home leads with a Tonight card on nights both play.
 - [ ] **At tip-off:** put CBB in /watch/ and the Tonight card (its guide reads the live Worker feed).
+- [x] **Waiver impact** (8761a06c3): Trades & Pickups' Pick up mode ranks the free agents by what each does
+      to your title and playoff odds, both leagues and readers' own; NFL free agents now real players only.
+- [x] **Playoff odds history** (09da6e6cf): kept build by build from 2026-10-01; a Wk column from a week on.
+- [ ] **Later in the season:** a chart of each team's playoff odds over the season, from that history.
