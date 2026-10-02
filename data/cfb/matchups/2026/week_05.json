@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-01T23:31:02+00:00",
+ "fetched": "2026-10-02T00:31:09+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -1443,9 +1443,9 @@
     "team": "IND",
     "team_full": "Indiana Hoosiers",
     "bye": 10.0,
-    "status": "",
-    "status_full": "",
-    "injury_note": "",
+    "status": "Q",
+    "status_full": "Questionable",
+    "injury_note": "Undisclosed",
     "slot": "W/R/T",
     "points": 0.0,
     "stats": {}
