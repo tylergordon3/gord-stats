@@ -19,15 +19,64 @@ chance, which can have learned something after kickoff: a player listed on
 the official report a day after his game read 9.0 / 0.649 = 13.9 "if he
 plays". An archive from before the chances were kept has no such file, and
 its started players keep today's chance, as they always did.
+
+On the Pi a kept number also has an untracked copy (sidecar(); switched on by
+GS_PREGAME_SIDECAR, which deploy/publish.sh exports). The live ticks commit
+once an hour and start each run from `git checkout -- docs data`, so a number
+kept at 12:50 for a 1:00 kickoff was thrown away by the 1:00 tick unless an
+hourly commit fell in between - and after kickoff it can never be kept again.
+The untracked copy survives the checkout; load() reads it over the tracked
+file, and every write puts the merged numbers back in the tracked file, so
+the next commit records them. Without the switch (the PC, the tests) only the
+tracked file exists, as before.
 """
 import json
+import os
 from pathlib import Path
 
 import pandas as pd
 
+SIDECAR_ENV = "GS_PREGAME_SIDECAR"
+
+
+def _read(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text()) if path.exists() else {}
+    except ValueError:
+        return {}
+
+
+def sidecar(path: Path):
+    """The untracked copy of a kept file (data/<sport>/gs_proj_live/... for
+    data/<sport>/gs_proj/...), or None where the switch is off."""
+    if not os.environ.get(SIDECAR_ENV):
+        return None
+    parts = list(path.parts)
+    if "gs_proj" in parts:
+        parts[parts.index("gs_proj")] = "gs_proj_live"
+        return Path(*parts)
+    return path.with_name(path.stem + ".live" + path.suffix)
+
 
 def load(path: Path) -> dict:
-    return json.loads(path.read_text()) if path.exists() else {}
+    """The kept numbers: the tracked file, with the untracked copy over it."""
+    kept = _read(path)
+    side = sidecar(path)
+    if side is not None:
+        kept.update(_read(side))
+    return kept
+
+
+def _store(path: Path, kept: dict) -> None:
+    """Write `kept` wherever it differs from what is there - the tracked file
+    included when a checkout has rolled it back, so a commit records it."""
+    text = json.dumps(kept, indent=0, sort_keys=True)
+    for where in (path, sidecar(path)):
+        if where is None:
+            continue
+        if not where.exists() or _read(where) != kept:
+            where.parent.mkdir(parents=True, exist_ok=True)
+            where.write_text(text)
 
 
 def chances_path(path: Path) -> Path:
@@ -66,12 +115,14 @@ def freeze_at(path: Path, wk: pd.DataFrame) -> pd.DataFrame:
             wk.at[pid, "pregame"] = True
             if str(pid) in chances:
                 wk.at[pid, "p_play"] = chances[str(pid)]
-    if changed:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(kept, indent=0, sort_keys=True))
-    if changed_p:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        chances_path(path).write_text(json.dumps(chances, indent=0, sort_keys=True))
+    # Written when something changed, or when the tracked file lags the merged
+    # numbers (a checkout rolled it back) - _store writes only what differs.
+    if changed or sidecar(path) is not None:
+        if kept or path.exists():
+            _store(path, kept)
+    if has_p and (changed_p or sidecar(path) is not None):
+        if chances or chances_path(path).exists():
+            _store(chances_path(path), chances)
     return wk
 
 

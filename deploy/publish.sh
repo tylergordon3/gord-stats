@@ -2,6 +2,12 @@
 # the status file the freshness check reads. Both callers run from the repo
 # root with `set -euo pipefail` and define log().
 
+# Every run on the Pi keeps an untracked copy of the pre-kickoff projections
+# (gordstats.pregame.sidecar): a live tick starts from `git checkout -- docs
+# data` and commits once an hour, so a number kept at 12:50 for a 1:00
+# kickoff used to be thrown away by the 1:00 tick - and can't be kept again.
+export GS_PREGAME_SIDECAR=1
+
 # wrangler's upload fails now and then on a network blip - "fetch failed", on
 # 2026-09-27, after a build that was fine - and nothing retried it: the site
 # stayed a run behind until the next timer. Three tries, a pause between.

@@ -133,6 +133,10 @@ docs/fantasy/recap/latest.json
 docs/cfb/recap/latest.json
 # Written every live tick by cbb.lines; the daily run copies it to data/cbb/lines/.
 data/cbb/lines_live/
+# The Pi's untracked copy of each pre-kickoff projection (gordstats.pregame):
+# it survives the live tick's `git checkout -- docs data`, which a number kept
+# between hourly commits did not.
+data/*/gs_proj_live/
 # College basketball's pages, rewritten by every in-season daily run
 # (gordstats.daily._cbb, CBB_TIPOFF Nov 1 to season end): the two conference
 # pages (~320 KB each, cbb.render.render_conferences) and the day's
