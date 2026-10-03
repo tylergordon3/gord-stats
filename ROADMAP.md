@@ -259,7 +259,8 @@ Everything below is tested; the commits carry the detail.
       (week and season). NFL max points equal Sleeper's own for every team. Projection
       awards start with the first week the pregame archive fully covers (NFL week 4,
       CFB week 5). Possible next: the same for readers' synced leagues, in the browser.
-- [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason
+- [x] **CBB rehearsal rerun 2026-10-03** (clock at Nov 2): fixed flat watch scores (T-Rank rank on the feed until GordStats ranks exist), TBA tips shown as 1:00 PM (255 of 516 men's games untimed), last season's ATS served as this one's, women's feeds holding back men's predictions (per-league gating in daily_data), /cbb/ linking last season's bracketology unmarked.
+- [ ] Late October: rerun the CBB rehearsal once KenPom posts 2027 preseason (still 400 on 2026-10-03; until it posts, the in-season `cbb` task fails and mails)
       ratings (it answers 400 until then).
 - [ ] Nov 3: check the Pi's first in-season CBB run, and that Torvik publishes
       `2027_fffinal.csv` and `ncaaw/2027_team_results.csv` (both 404 today).
@@ -379,11 +380,11 @@ Open:
 - [x] **Matchup Strength for the NFL league** (30b74a476): /fantasy/strength/, readers' leagues too.
 - [x] **CBB stats fixes** (8fb302345): Torvik's four factors read by team (would have been empty in
       November), OR% allowed low-good, Siena's logo.
-- [ ] **CBB previews, first real day (Nov 3):** check /cbb/game/ pages appear and the guide links them;
+- [ ] **CBB previews, first real day (Mon Nov 2 - the real opener, 180 men's + 163 women's games; women's previews built and wait only on Torvik's ncaaw/2027_team_results.csv):** check /cbb/game/ pages appear and the guide links them;
       women's previews need the women's T-Rank/four factors cached first.
 - [x] **College and pro football together** (bf19fe541): /watch/ merges both watch guides (one list, one
       quadbox, both fantasy teams, live scores), and Home leads with a Tonight card on nights both play.
-- [ ] **At tip-off:** put CBB in /watch/ and the Tonight card (its guide reads the live Worker feed).
+- [x] **At tip-off** (2026-10-03: docs/cbb/watch/games.json, watch_all.cbb_on() gates it at build time, Tonight card drawn at build): put CBB in /watch/ and the Tonight card (its guide reads the live Worker feed).
 - [x] **Waiver impact** (8761a06c3): Trades & Pickups' Pick up mode ranks the free agents by what each does
       to your title and playoff odds, both leagues and readers' own; NFL free agents now real players only.
 - [x] **Playoff odds history** (09da6e6cf): kept build by build from 2026-10-01; a Wk column from a week on.
@@ -457,7 +458,7 @@ Open:
 - [ ] **Analytics again ~Oct 16** (`pi analytics 14`): new pages' adoption (trade, /watch/,
       stats, playoff odds, previews) - promote or trim; confirm CLS stays under 0.1. Profile
       signed-in still shifts ~0.05-0.16 in the first 50 ms (owner-only page; cause not found).
-- [ ] **After the first in-season CBB daily run (Nov 1+):** `git rm --cached
+- [ ] **After the first CBB run that actually builds predictions (needs KenPom 2027 + Torvik 2027_fffinal.csv, not just Nov 1):** `git rm --cached
       docs/men/conference.html docs/women/conference.html` and commit (now in .gitignore; removing
       them before tip-off would 404 /men/conference until the run rebuilds it).
 - [x] **First deploy of these changes** (2026-10-02, twice): data recorded before Jekyll, `linkcheck:
@@ -476,5 +477,5 @@ Open:
       (an epoch in the token); throttle failed league-sync lookups; a Report-Only `script-src`.
 - [x] **SEO:** (0de537bc2: a description per page, h1s, previews kept all season + a 404 for expired ones) 38 pages share the site description; Home and /cbb/ have no h1; game previews
       404 a week after the game (a fallback to the schedule).
-- [ ] **Readers' injury board** still counts a hold from the lagging week (needs a new board
+- [x] **Readers' injury board** (2026-10-03: board field `out_from` + `holdWeek`; Sleeper `playoff_round_type` two-week rounds; ESPN `playoffReseed` mapped; the site's own Python sim is still one week a round, fine while the site league is type 0) still counts a hold from the lagging week (needs a new board
       field); Sleeper two-week playoff rounds in the power sim; ESPN leagues have no reseed flag.

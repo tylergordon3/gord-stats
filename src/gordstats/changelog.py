@@ -26,6 +26,23 @@ HOME_SHOWN = 3
 
 # (date, title, one line, link or None) - newest first.
 ENTRIES = [
+    ("2026-10-03", "Pick'em",
+     "Pick the winner of every NFL game and the week's ten biggest college games, rank them by "
+     "confidence, and try to beat the GordStats model on the weekly and season leaderboards.",
+     "/pickem/"),
+    ("2026-10-03", "Sharper college predictions",
+     "Every FCS team now gets its own rating from its own games instead of one shared FCS "
+     "rating, and each team is pulled toward its conference's level. Replayed over this "
+     "season's first five weeks, the average miss drops from 13.7 to 12.7 points.",
+     "/cfb/predictions/"),
+    ("2026-10-03", "Your league's playoffs, as it plays them",
+     "Power rankings and the trade analyzer for your own league now score two-week playoff "
+     "rounds on both weeks, reseed ESPN brackets that reseed, and no longer count a player out "
+     "of the game they got hurt in.", "/fantasy/power/"),
+    ("2026-10-03", "College basketball in the watch guide",
+     "From tip-off on Nov 2, the all-sports watch guide and Home's Tonight card add the day's "
+     "best men's and women's college basketball games with live scores, and women's games get "
+     "previews too.", "/watch/"),
     ("2026-10-03", "Live win probability",
      "While a college or NFL game is on, its schedule card shows ESPN's live win chance, and "
      "the game's page charts it play by play.", "/cfb/schedule/"),
