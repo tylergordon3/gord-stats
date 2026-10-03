@@ -25,11 +25,15 @@ has.
 Under the table, the Playoff Picture (gordstats.clinch, shared with the NFL
 league's power page): who has clinched a place or a bye, who is out, and what
 the rest need, from the standings and games left the simulation started from.
+Then every team's playoff and title odds a week at a time (gordstats.odds_chart,
+read back from the same snapshots), above the season chart.
 
     python -m cfb.site.league_power     # writes docs/cfb/league/power/
 """
 
+import json
 import shutil
+from datetime import datetime, timedelta
 from html import escape
 
 import matplotlib
@@ -39,11 +43,11 @@ import matplotlib.pyplot as plt                      # noqa: E402
 import numpy as np                                   # noqa: E402
 import pandas as pd                                  # noqa: E402
 
-from cfb import in_season, league_sim, projections, yahoo  # noqa: E402
-from cfb.config import DATA_DIR, SEASON, WEB_DIR             # noqa: E402
+from cfb import espn, in_season, league_sim, projections, yahoo  # noqa: E402
+from cfb.config import DATA_DIR, LEAGUE_TZ, MY_TEAM, SEASON, WEB_DIR  # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import (charts, clinch, palette, rankmoves, share_button,  # noqa: E402
-                       share_card, stakes)
+from gordstats import (charts, clinch, odds_chart, palette, rankmoves,  # noqa: E402
+                       share_button, share_card, stakes)
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
 OUTPUT = WEB_DIR / "league" / "power" / "index.html"
@@ -286,6 +290,72 @@ def _season_section(names: dict) -> str:
             f"<div class='lg-chart'>{chart}</div>")
 
 
+def week_starts() -> list:
+    """[(week, first kickoff, last day)] for every league week on record, in
+    the snapshots' clock (Eastern, naive).
+
+    The windows are Yahoo's (the week archive's week_start/week_end: week 1
+    ran Thursday to Labor Day, week 2 Tuesday to Saturday, then Sunday to
+    Saturday); the kickoff is the first FBS game inside one, from the season
+    schedule already on disk. A build belongs to the latest week that had
+    kicked off: the backfilled snapshots sit at 05:00 on a window's first
+    day, before its football, and a Sunday-to-Wednesday build has none of
+    the new week in it either. Without the schedule, noon on the window's
+    first day stands in."""
+    out = []
+    try:
+        games = espn.schedule(max_age_hours=float("inf"))
+        kicks = (pd.to_datetime(games["date_utc"], utc=True).dt.tz_convert(LEAGUE_TZ)
+                 .dt.tz_localize(None))
+    except Exception as exc:                              # noqa: BLE001
+        print(f"  ! odds chart: no schedule ({exc}); week windows alone")
+        kicks = pd.Series(dtype="datetime64[ns]")
+    for path in sorted(yahoo.MATCHUPS_DIR.glob("week_*.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            week = int(data.get("week") or path.stem.split("_")[1])
+            start = datetime.strptime(data["week_start"], "%Y-%m-%d")
+            end = datetime.strptime(data["week_end"], "%Y-%m-%d")
+        except (OSError, ValueError, KeyError, TypeError):
+            continue
+        inside = kicks[(kicks >= start) & (kicks < end + timedelta(days=1))]
+        first = inside.min().to_pydatetime() if len(inside) else start + timedelta(hours=12)
+        out.append((week, first, end.date()))
+    return out
+
+
+def _odds_section(rows: list, has_odds: bool, now: datetime = None) -> str:
+    """Every team's playoff and title odds, a point a week (gordstats.odds_chart):
+    the last build before each week's first kickoff - the week before it,
+    played out - and, while a week is on, its newest build, provisional.
+    This build's odds stand in as the newest: the archive keeps one build in
+    twelve hours, and the chart's end must agree with the table."""
+    if not has_odds:
+        return ""
+    now = now or datetime.now(LEAGUE_TZ).replace(tzinfo=None)
+    hist = rankmoves.history(HISTORY_DIR)
+    cur = pd.DataFrame({"key": [r["key"] for r in rows if r["sim"] is not None],
+                        "playoffs": [float(r["sim"]["playoffs"]) for r in rows
+                                     if r["sim"] is not None],
+                        "title": [float(r["sim"]["title"]) for r in rows
+                                  if r["sim"] is not None]}).assign(taken=now)
+    cols = ["taken", "key", "playoffs", "title"]
+    both = pd.concat([f[cols] for f in (hist, cur) if not f.empty and set(cols) <= set(f.columns)],
+                     ignore_index=True)
+    starts = week_starts()
+    kicks = [(w, k) for w, k, _ in starts]
+    both["week"] = both["taken"].map(lambda t: odds_chart.week_of(t, kicks))
+    data = odds_chart.by_week(both.rename(columns={"playoffs": "playoff"}))
+    current = odds_chart.week_of(now, kicks)
+    live = any(w == current and now.date() <= last for w, _, last in starts)
+    names = {r["key"]: r["team"].get("name") or r["key"] for r in rows}
+    mine = next((k for k, n in names.items() if n == MY_TEAM), "")
+    return ("<h3 id='odds'>Playoff and Title Odds</h3>"
+            + odds_chart.section(data, names, mine=mine, storage="cfbMyTeam",
+                                 sid="oc-cfb", live=live)
+            + odds_chart.JS_TAG)
+
+
 def _pct(p) -> str:
     """A chance as the table prints it: never a flat 0% or 100% for something
     that is merely very unlikely or very likely."""
@@ -447,6 +517,7 @@ def section() -> str:
     playoffs = _playoffs_section(sim, lg, {r["key"]: r["team"].get("name") or r["key"]
                                            for r in rows})
     _leave_picture()
+    odds = _odds_section(rows, has_odds)
 
     field = lg.get("num_playoff_teams") or 0
     return (
@@ -469,7 +540,7 @@ def section() -> str:
         f"{move_heads}{bye_head}"
         "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
         "<th>Bench</th><th>Anchor</th></tr></thead>"
-        f'<tbody>{"".join(cells)}</tbody></table></div>' + playoffs + season)
+        f'<tbody>{"".join(cells)}</tbody></table></div>' + playoffs + odds + season)
 
 
 def _playoffs_section(sim: pd.DataFrame, lg: dict, names: dict) -> str:

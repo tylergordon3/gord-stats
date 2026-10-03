@@ -26,6 +26,21 @@ HOME_SHOWN = 3
 
 # (date, title, one line, link or None) - newest first.
 ENTRIES = [
+    ("2026-10-02", "Back from injury, a little lower",
+     "A player's first games back are projected below his usual rate - about 8% after one "
+     "missed game, 17% then 12% after a longer absence - as returning players have scored "
+     "since 2019. In the power rankings, trades and your team page.", "/fantasy/power/"),
+    ("2026-10-02", "Faster pages on a phone",
+     "The CFB schedule opens in half the time, the usage tables are half the size, and the "
+     "fantasy pages share their code, so after the first one each loads about half as much.",
+     "/cfb/schedule/"),
+    ("2026-10-02", "Injury news for more players",
+     "The link beside an injury pill now comes from four injury experts and the national "
+     "insiders - PT, Dr or News - and only when the post is about the injury.",
+     "/fantasy/roster/"),
+    ("2026-10-02", "Playoff odds over the season",
+     "Both fantasy leagues' Power pages chart every team's playoff and title odds week by week, "
+     "with your team picked out.", "/fantasy/power/"),
     ("2026-10-02", "Tweets of the week",
      "The funniest college football and NFL posts on X, sent in by readers and voted up by "
      "you - on Home, with a page of their own.", "/tweets/"),

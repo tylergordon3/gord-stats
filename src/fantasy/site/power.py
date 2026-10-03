@@ -11,7 +11,8 @@ Method are open on the page - they are the page; Method is reference:
   * The rankings, with record, playoff odds and the projected-wins range.
   * The playoff picture: who has clinched, who is out, what the rest need.
   * The frozen three-source draft-week rankings.
-  * Every team's rating build by build.
+  * Every team's playoff and title odds week by week (gordstats.odds_chart),
+    and its rating build by build.
   * Where each team's strength sits, position by position, starters and
     bench, on Sleeper's season projections.
   * Method, with player accuracy and the roster backtest.
@@ -31,12 +32,13 @@ import pandas as pd              # noqa: E402
 
 from fantasy import paths                                      # noqa: E402
 from fantasy.config import (                                   # noqa: E402
-    FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, UPCOMING_SEASON, UPCOMING_YEAR,
+    FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, MY_MANAGER, UPCOMING_SEASON, UPCOMING_YEAR,
 )
 from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
 from gordstats import charts, clinch, palette, share_button, share_card, stakes  # noqa: E402
+from gordstats import odds_chart                                # noqa: E402
 from gordstats import my_league, my_league_data, my_power       # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
 
@@ -368,6 +370,28 @@ def draft_consensus_section() -> str:
               "grade-sorted rank).</p>")
     return (note + _draft_chart(rows)
             + f"<div class='table-scroll'>{styled.to_html()}</div>{legend}")
+
+
+def _odds_section(table: pd.DataFrame) -> str:
+    """Every team's playoff and title odds, a point a week (gordstats.odds_chart):
+    the last archived table of each week the model had counted (the snapshot's
+    `week`, which moves only once a week is final), with this build's table as
+    the newest - the archive skips a build that comes within a few hours of the
+    last, and the chart's end must agree with the table above it."""
+    cols = ["taken", "week", "roster_id", "playoff_odds", "title_odds"]
+    hist = power.history(int(UPCOMING_YEAR))
+    now = table.assign(taken=datetime.now())
+    both = pd.concat([f[cols] for f in (hist, now) if not f.empty and set(cols) <= set(f.columns)],
+                     ignore_index=True)
+    rows = pd.DataFrame({"taken": both["taken"], "week": both["week"],
+                         "key": both["roster_id"].astype(int).astype(str),
+                         "playoff": both["playoff_odds"], "title": both["title_odds"]})
+    names = {str(int(r)): str(m) for r, m in zip(table["roster_id"], table["manager"])}
+    mine = next((k for k, m in names.items() if m == MY_MANAGER), "")
+    return ("<h3>Playoff and title odds</h3>"
+            + odds_chart.section(odds_chart.by_week(rows), names, mine=mine,
+                                 storage="nflMyTeam", sid="oc-nfl")
+            + odds_chart.JS_TAG)
 
 
 def _season_section() -> str:
@@ -793,8 +817,8 @@ def body() -> str:
                     "Method &mdash; what this will measure, and how well it works",
                     _method_section(), open=True, anchor="method")
                 + "</div>"
-                + my_league_data.JS + my_league.JS
-                + my_power.SIM_JS + my_power.JS)
+                + my_league_data.JS_TAG + my_league.JS_TAG
+                + my_power.SIM_JS_TAG + my_power.JS_TAG)
 
     charts.clear(_SECTION)            # only now: a failed run keeps the last page's charts
     _CARD["table"] = table
@@ -806,7 +830,10 @@ def body() -> str:
         "playoffs": _playoffs_section(table, stakes_week, stakes_teams),
         "stakes": stakes.table(stakes_week, stakes_teams) if stakes_week else "",
         "draft-consensus": draft_consensus_section(),
-        "season": _season_section(),
+        # How the season has moved: the odds a week at a time, then the rating
+        # build by build.
+        "season": (_odds_section(table) + "<h3>Rating, build by build</h3>"
+                   + _season_section()),
         "positions": _positions_section(rosters, table),
         "method": _method_section(),
     }
@@ -828,7 +855,7 @@ def body() -> str:
             + "<section id='mine' class='pw-section'>"
             + "<h2 id='pw-mine-h'>Your League</h2>" + content["mine"] + "</section>"
             + f"<div id='pw-built'>{_TABLE_CSS}{nav}{rest}</div>"
-            + my_league_data.JS + my_league.JS + my_power.SIM_JS + my_power.JS)
+            + my_league_data.JS_TAG + my_league.JS_TAG + my_power.SIM_JS_TAG + my_power.JS_TAG)
 
 
 def _reader_share() -> str:
