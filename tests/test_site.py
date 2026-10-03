@@ -215,8 +215,8 @@ def test_local_assets_are_cache_busted():
 
 
 # --------------------------------------------------------------------------- #
-# Usage tables: a column is hidden by class, so the header and the body have to
-# agree about which classes a column carries.
+# Usage tables: a column is hidden by its position, so the header and the body
+# have to be hidden by the same rule.
 # --------------------------------------------------------------------------- #
 
 USAGE_PAGES = ["fantasy/usage/index.html", "cfb/usage/index.html"]
@@ -232,6 +232,19 @@ def _usage_table(path):
     return ths, rows
 
 
+def _usage_hidden(css, scope):
+    """{"th": {column}, "td": {column}} (1-based) that `{display:none}` rules
+    written for `table.us<scope>` hide."""
+    out = {"th": set(), "td": set()}
+    for sels in re.findall(r"([^{}]+)\{display:none\}", css):
+        for sel in sels.split(","):
+            m = re.fullmatch(r"\s*table\.us" + re.escape(scope)
+                             + r" (th|td):(?:nth-child\((\d+)\)|first-child)\s*", sel)
+            if m:
+                out[m.group(1)].add(int(m.group(2) or 1))
+    return out
+
+
 @pytest.mark.parametrize("path", USAGE_PAGES)
 @needs_built_site
 def test_usage_rows_have_one_cell_per_column(path):
@@ -244,27 +257,35 @@ def test_usage_rows_have_one_cell_per_column(path):
 @pytest.mark.parametrize("path", USAGE_PAGES)
 @needs_built_site
 def test_usage_headers_hide_with_their_column(path):
-    """Every class that hides a cell - the position views and the two the phone
-    layout drops - has to be on the header too.
+    """A column a position view hides, or a phone drops, is hidden in the
+    header and in the body alike.
 
-    A header without its column's class stays visible when the cells go, and
-    every column right of it reads under the wrong heading. That shipped once:
-    on a phone the owner cell was hidden and its "Fantasy" header was not, so
-    games sat under Fantasy and carries under G.
+    A header left showing when its cells go puts every column right of it
+    under the wrong heading. That shipped once: on a phone the owner cell was
+    hidden and its "Fantasy" header was not, so games sat under Fantasy and
+    carries under G. Columns are hidden by position now (the per-cell view
+    classes were half the page), so the check is that every hiding rule names
+    the header and the cells of the same columns, and that no body cell has
+    gone back to carrying a view of its own.
     """
+    doc = (DOCS / path).read_text()
+    css = "".join(re.findall(r"<style>(.*?)</style>", doc, re.S))
     ths, rows = _usage_table(path)
-    hiders = re.compile(r"\b(v-overall|v-rb|v-wr|v-te|us-own|us-lead)\b")
-
-    def marks(tag):
-        cls = re.search(r"class=[\"']([^\"']*)[\"']", tag)
-        return set(hiders.findall(cls.group(1))) if cls else set()
-
-    head_marks = [marks(t) for t in ths]
+    labels = re.findall(r"<th[^>]*>(.*?)</th>", re.search(r"<thead>(.*?)</thead>", doc, re.S)[1])
+    for view in ("overall", "rb", "wr", "te"):
+        hidden = _usage_hidden(css, f".view-{view}")
+        assert hidden["th"] == hidden["td"], (
+            f"{path} {view}: headers {sorted(hidden['th'])}, cells {sorted(hidden['td'])}")
+        assert hidden["th"] and max(hidden["th"]) <= len(ths), (path, view)
+    phone = css[css.index("@media (max-width:560px){"):]
+    hidden = _usage_hidden(phone[:phone.index("}") + 1], "")
+    assert hidden["th"] == hidden["td"], f"{path} phone: {hidden}"
+    assert {labels[i - 1] for i in hidden["th"]} == {"Fantasy", "Season"}, path
     for i, row in enumerate(rows):
         for col, td in enumerate(re.findall(r"<td[^>]*>", row)):
-            assert marks(td) == head_marks[col], (
-                f"{path} row {i} column {col}: cell has {marks(td) or '{}'}, "
-                f"header has {head_marks[col] or '{}'}")
+            cls = re.search(r"class=[\"']([^\"']*)[\"']", td)
+            assert not cls or cls.group(1) == "us-own", (
+                f"{path} row {i} column {col}: a body cell carries {cls.group(1)!r}")
 
 
 # --------------------------------------------------------------------------- #
@@ -312,7 +333,8 @@ def test_pages_behind_a_hub_are_still_reachable():
 # "Show my league" on the usage page
 # --------------------------------------------------------------------------- #
 
-MY_LEAGUE = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+MY_LEAGUE = ((ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    + (ROOT / "docs" / "assets" / "js" / "gs-league-bar.js").read_text())
 
 
 def test_the_league_override_works_without_an_account():
@@ -368,7 +390,8 @@ def test_usage_rows_carry_the_player_id_the_override_needs():
 # "Your league this week" on the matchups page
 # --------------------------------------------------------------------------- #
 
-MY_MATCHUPS = (ROOT / "src" / "gordstats" / "my_matchups.py").read_text()
+MY_MATCHUPS = ((ROOT / "src" / "gordstats" / "my_matchups.py").read_text()
+    + (ROOT / "docs" / "assets" / "js" / "gs-matchups.js").read_text())
 
 
 @needs_built_site
@@ -426,7 +449,8 @@ def test_the_matchups_page_and_the_usage_page_share_one_league():
 # "Your team this week" on the dashboard
 # --------------------------------------------------------------------------- #
 
-MY_TEAM = (ROOT / "src" / "gordstats" / "my_team.py").read_text()
+MY_TEAM = ((ROOT / "src" / "gordstats" / "my_team.py").read_text()
+    + (ROOT / "docs" / "assets" / "js" / "gs-team.js").read_text())
 
 
 def test_the_reader_s_team_is_rendered_apart_from_the_built_one():
@@ -441,7 +465,8 @@ def test_the_reader_s_team_is_rendered_apart_from_the_built_one():
 def test_the_scoring_basis_comes_from_the_league_not_from_us():
     """This site plays PPR. A half-PPR league reading PPR numbers is wrong on
     every row and says nothing about it, which is the worst way to be wrong."""
-    data = (ROOT / "src" / "gordstats" / "my_league_data.py").read_text()
+    data = ((ROOT / "src" / "gordstats" / "my_league_data.py").read_text()
+        + (ROOT / "docs" / "assets" / "js" / "gs-league-data.js").read_text())
     assert "scoring_settings" in data
     assert "['PPR','half-PPR','standard']" in data
     # And a league further off than that is told, rather than quietly rounded.
@@ -453,6 +478,14 @@ def test_every_league_shares_one_stored_league():
     each remembering their own league is a bug you meet on the second one."""
     for src in (MY_TEAM, MY_LEAGUE, MY_MATCHUPS):
         assert "gsSleeperLeague" in src or "GSL.saved()" in src
+
+
+def _built(path) -> str:
+    """A built page and the libraries it loads by tag (gordstats.js_assets):
+    the code a reader's browser runs, inline or from a file."""
+    doc = (DOCS / path).read_text()
+    names = re.findall(r"\{\{ '/assets/js/([\w.-]+\.js)' \| fingerprint", doc)
+    return doc + "".join((DOCS / "assets" / "js" / n).read_text() for n in names)
 
 
 LEAGUE_PAGES = {
@@ -472,7 +505,7 @@ def test_the_league_control_has_its_script_on_every_page(name, path):
     to choose a league from the page that most needed one. It only looked fine
     in testing because the league had been put into localStorage by hand.
     """
-    doc = (DOCS / path).read_text()
+    doc = _built(path)
     assert "ml-bar" in doc, f"{name} has no league control"
     assert "function restore()" in doc, f"{name} has the control but not its script"
     assert "SYNCED" in doc, f"{name} cannot offer a synced league"
@@ -483,7 +516,7 @@ def test_the_league_control_has_its_script_on_every_page(name, path):
 def test_a_reader_in_two_leagues_can_reach_both(name, path):
     """Picking the first synced league and ignoring the rest is invisible until
     somebody syncs a second one - which is the normal case for anyone in two."""
-    doc = (DOCS / path).read_text()
+    doc = _built(path)
     assert "ml-pick" in doc, f"{name} offers no way to switch between synced leagues"
 
 
@@ -533,12 +566,13 @@ def test_every_keyed_season_has_its_data_file():
 # League history
 # --------------------------------------------------------------------------- #
 
-MY_HISTORY = (ROOT / "src" / "gordstats" / "my_history.py").read_text()
+MY_HISTORY = ((ROOT / "src" / "gordstats" / "my_history.py").read_text()
+    + (ROOT / "docs" / "assets" / "js" / "gs-history.js").read_text())
 
 
 @needs_built_site
 def test_history_reads_the_readers_league_not_this_one():
-    doc = (DOCS / "fantasy" / "history" / "index.html").read_text()
+    doc = _built("fantasy/history/index.html")
     assert "hi-host" in doc and "previous_league_id" in doc, \
         "the history page does not walk the reader's own seasons"
     assert "ml-bar" in doc and "function restore()" in doc, \
@@ -574,12 +608,13 @@ def test_the_history_walk_is_bounded():
 # Waivers and trades, and connecting a league
 # --------------------------------------------------------------------------- #
 
-MY_WAIVERS = (ROOT / "src" / "gordstats" / "my_waivers.py").read_text()
+MY_WAIVERS = ((ROOT / "src" / "gordstats" / "my_waivers.py").read_text()
+    + (ROOT / "docs" / "assets" / "js" / "gs-waivers.js").read_text())
 
 
 @needs_built_site
 def test_waivers_reads_the_readers_league():
-    doc = (DOCS / "fantasy" / "waivers" / "index.html").read_text()
+    doc = _built("fantasy/waivers/index.html")
     assert "wv-host" in doc and "previous_league_id" in doc
     assert "ml-bar" in doc and "function restore()" in doc, "no league control"
 
@@ -604,14 +639,16 @@ def test_defences_resolve_like_players():
 def test_a_league_can_be_connected_without_leaving_the_page():
     """It used to mean finding the Analytics hub and then a settings page. The
     reader is already looking at a page that would show their league."""
-    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    picker = ((ROOT / "src" / "gordstats" / "my_league.py").read_text()
+        + (ROOT / "docs" / "assets" / "js" / "gs-league-bar.js").read_text())
     assert "function connect(" in picker
     assert "/user/" in picker and "/leagues/nfl/" in picker
     # And it works signed out, so the account stays a convenience.
     assert "gsSleeperLeagues" in picker, "the found leagues are not kept locally"
 
 
-MY_DRAFT = (ROOT / "src" / "gordstats" / "my_draft.py").read_text()
+MY_DRAFT = ((ROOT / "src" / "gordstats" / "my_draft.py").read_text()
+    + (ROOT / "docs" / "assets" / "js" / "gs-draft.js").read_text())
 
 
 def test_draft_value_is_measured_against_results_not_our_adp():
@@ -678,7 +715,8 @@ def test_the_profile_page_does_not_own_the_favourites_list():
 
 def test_two_leagues_named_the_same_are_never_the_same_entry():
     """An option list with the same words twice is a choice nobody can make."""
-    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    picker = ((ROOT / "src" / "gordstats" / "my_league.py").read_text()
+        + (ROOT / "docs" / "assets" / "js" / "gs-league-bar.js").read_text())
     assert "function labelsFor(" in picker
     assert "team_name" in picker
 

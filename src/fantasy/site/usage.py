@@ -28,7 +28,6 @@ from gordstats.jsonio import script_json
 
 RECENT_WEEKS = 3
 MIN_TOUCHES = 3                 # carries + targets; below it a share is noise
-SORT_COLUMN = 5                 # snap share
 
 # Quarterbacks, kickers and defences are not what this page is for: it is about
 # who the ball goes to among the backs and receivers. QB usage is a passing
@@ -72,12 +71,41 @@ def owners(year: int = UPCOMING_YEAR) -> tuple:
 # Which views each column belongs to. A back's page does not need air-yard
 # share and a receiver's does not need carries, so a column a view has no use
 # for is hidden rather than printed empty.
-ALL = "v-overall v-rb v-wr v-te"
-POSV = "v-rb v-wr v-te"                 # the rank column: position views only
-OVR = "v-overall"
-RUSH = "v-overall v-rb"
-CATCH = "v-overall v-wr v-te"
-RECV = "v-wr v-te"
+ALL = "overall rb wr te"
+POSV = "rb wr te"                       # the rank column: position views only
+OVR = "overall"
+RUSH = "overall rb"
+CATCH = "overall wr te"
+RECV = "wr te"
+
+# The table, left to right. `_rows` writes its cells in this order.
+COLUMNS = [
+    ui.Col("#", POSV, role="rank", title="Rank in this view, among players past the minimum"),
+    ui.Col("Player", ALL, "text", "name"),
+    ui.Col("Team", ALL, "text", "team"),
+    ui.Col("Pos", OVR, "text"),
+    ui.Col("Fantasy", ALL, "text", "own"),
+    ui.Col("G", ALL, "n"),
+    ui.Col("Snap share", ALL, "n", field="snap_share",
+           title="Offensive snaps played out of the team's"),
+    ui.Col("Season", ALL, "n", "lead"),
+    ui.Col("Car", RUSH, "n", field="car"),
+    ui.Col("Car share", RUSH, "n", field="car_share"),
+    ui.Col("Season", RUSH, "n", "lead"),
+    ui.Col("Tgt", ALL, "n", field="tgt"),
+    ui.Col("Tgt share", ALL, "n", field="tgt_share"),
+    ui.Col("Season", ALL, "n", "lead"),
+    ui.Col("Tgt/snap", RECV, "n", field="tgt_per_snap",
+           title="Targets per offensive snap - the closest stand-in we can publish for a "
+                 "target rate, since routes run is charted data no free source carries"),
+    ui.Col("Rec", CATCH, "n"),
+    ui.Col("Air share", CATCH, "n", title="Share of the team's air yards: how far "
+                                          "downfield the targets are, not just how many"),
+    ui.Col("RZ looks", ALL, "n", title="Red-zone carries plus red-zone targets"),
+    ui.Col("Yds", ALL, "n"),
+    ui.Col("TD", ALL, "n"),
+    ui.Col("PPR/G", ALL, "n", title="PPR points per game played"),
+]
 
 
 def _rows(recent: pd.DataFrame, season: pd.DataFrame, held: dict, names: dict) -> str:
@@ -100,32 +128,21 @@ def _rows(recent: pd.DataFrame, season: pd.DataFrame, held: dict, names: dict) -
         snaps = r.get("off_snp")
         per_snap = (r["rec_tgt"] / snaps) if snaps else None
         out.append(
-            f'<tr data-team="{escape(r["team"], quote=True)}" data-conf=""'
+            f'<tr data-team="{escape(r["team"], quote=True)}"'
             f' data-pos="{escape(r["pos"], quote=True)}" data-own="{escape(own, quote=True)}"'
             f' data-pid="{escape(str(r["sleeper_id"]), quote=True)}"'
-            f' data-car="{int(r["rush_att"])}" data-tgt="{int(r["rec_tgt"])}"'
-            f' data-name="{escape(str(r["player"]).lower(), quote=True)}">'
-            f'<td class="us-rank {POSV}"></td>'
-            f'<td class="us-name {ALL}">{escape(str(r["player"]))}</td>'
-            f'<td class="us-team {ALL}">{escape(r["team"])}</td>'
-            f'<td class="{OVR}">{escape(r["pos"])}</td>'
-            f'<td class="us-own {ALL}">{label}</td>' + ui.num(r["games"], cls=ALL)
-            + f'<td class="{ALL}" data-v="{ui.v(r["snap_share"])}">{ui.bar(r["snap_share"])}</td>'
-            f'<td class="us-lead {ALL}" data-v="{ui.v(before("snap_share"))}">{ui.pct(before("snap_share"))}</td>'
-            + ui.num(r["rush_att"], cls=RUSH)
-            + f'<td class="{RUSH}" data-v="{ui.v(r["car_share"])}">{ui.bar(r["car_share"])}</td>'
-            f'<td class="us-lead {RUSH}" data-v="{ui.v(before("car_share"))}">{ui.pct(before("car_share"))}</td>'
-            + ui.num(r["rec_tgt"], cls=ALL)
-            + f'<td class="{ALL}" data-v="{ui.v(r["tgt_share"])}">{ui.bar(r["tgt_share"])}</td>'
-            f'<td class="us-lead {ALL}" data-v="{ui.v(before("tgt_share"))}">{ui.pct(before("tgt_share"))}</td>'
-            + f'<td class="{RECV}" data-v="{ui.v(per_snap)}">'
-            + ("&mdash;" if per_snap is None else f"{per_snap:.2f}") + "</td>"
-            + ui.num(r["rec"], cls=CATCH)
-            + f'<td class="{CATCH}" data-v="{ui.v(r["air_share"])}">{ui.pct(r["air_share"])}</td>'
-            + ui.num(rz, cls=ALL) + ui.num(r["rush_yd"] + r["rec_yd"], cls=ALL)
-            + ui.num(r["rush_td"] + r["rec_td"], cls=ALL)
-            + f'<td class="{ALL}" data-v="{ui.v(per_game)}">'
-            + ("&mdash;" if per_game is None else f"{per_game:.1f}") + "</td></tr>")
+            f' data-car="{int(r["rush_att"])}" data-tgt="{int(r["rec_tgt"])}">'
+            "<td></td>"
+            + ui.cell(escape(str(r["player"]))) + ui.cell(escape(r["team"]))
+            + ui.cell(escape(r["pos"])) + ui.cell(label, cls="us-own")
+            + ui.num(r["games"]) + ui.bar(r["snap_share"]) + ui.pct(before("snap_share"))
+            + ui.num(r["rush_att"]) + ui.bar(r["car_share"]) + ui.pct(before("car_share"))
+            + ui.num(r["rec_tgt"]) + ui.bar(r["tgt_share"]) + ui.pct(before("tgt_share"))
+            + ui.fixed(per_snap, "{:.2f}")
+            + ui.num(r["rec"]) + ui.pct(r["air_share"])
+            + ui.num(rz) + ui.num(r["rush_yd"] + r["rec_yd"])
+            + ui.num(r["rush_td"] + r["rec_td"])
+            + ui.fixed(per_game, "{:.1f}") + "</tr>")
     return "".join(out)
 
 
@@ -151,7 +168,7 @@ def body() -> str:
         print(f"[usage] using the archive only ({exc})")
         frame = usage_mod.load(UPCOMING_YEAR)
     if frame.empty:
-        return (ui.CSS + f"<p>No {UPCOMING_SEASON} games have been played yet — this page "
+        return (ui.css() + f"<p>No {UPCOMING_SEASON} games have been played yet — this page "
                 "fills in after the first one.</p>")
     weeks = sorted(int(w) for w in frame["week"].unique())
     recent_weeks = weeks[-RECENT_WEEKS:]
@@ -176,37 +193,10 @@ def body() -> str:
         "<button id='us-reset' type='button'>Reset</button>")
     span = (f"week {recent_weeks[0]}" if len(recent_weeks) == 1
             else f"weeks {recent_weeks[0]}&ndash;{recent_weeks[-1]}")
-    head = (f"<tr><th class='{POSV}' title='Rank in this view, among players past the "
-            f"minimum'>#</th>"
-            f"<th data-k='text' class='us-name {ALL}'>Player</th>"
-            f"<th data-k='text' class='{ALL}'>Team</th>"
-            f"<th data-k='text' class='{OVR}'>Pos</th>"
-            f"<th data-k='text' class='us-own {ALL}'>Fantasy</th>"
-            f"<th data-k='n' class='{ALL}'>G</th>"
-            f"<th data-k='n' class='{ALL}' data-field='snap_share' "
-            f"title='Offensive snaps played out of the team&#39;s'>Snap share</th>"
-            f"<th data-k='n' class='us-lead {ALL}'>Season</th>"
-            f"<th data-k='n' class='{RUSH}' data-field='car'>Car</th>"
-            f"<th data-k='n' class='{RUSH}' data-field='car_share'>Car share</th>"
-            f"<th data-k='n' class='us-lead {RUSH}'>Season</th>"
-            f"<th data-k='n' class='{ALL}' data-field='tgt'>Tgt</th>"
-            f"<th data-k='n' class='{ALL}' data-field='tgt_share'>Tgt share</th>"
-            f"<th data-k='n' class='us-lead {ALL}'>Season</th>"
-            f"<th data-k='n' class='{RECV}' data-field='tgt_per_snap' "
-            f"title='Targets per offensive snap - the closest stand-in we can publish "
-            f"for a target rate, since routes run is charted data no free source carries'>"
-            f"Tgt/snap</th>"
-            f"<th data-k='n' class='{CATCH}'>Rec</th>"
-            f"<th data-k='n' class='{CATCH}' title='Share of the team&#39;s air yards: how "
-            f"far downfield the targets are, not just how many'>Air share</th>"
-            f"<th data-k='n' class='{ALL}' title='Red-zone carries plus red-zone targets'>"
-            f"RZ looks</th>"
-            f"<th data-k='n' class='{ALL}'>Yds</th><th data-k='n' class='{ALL}'>TD</th>"
-            f"<th data-k='n' class='{ALL}' title='PPR points per game played'>PPR/G</th></tr>")
     cfg = script_json({"mine": mine, "teams": names, "storage": "nflMyTeam",
-                      "sort": SORT_COLUMN, "views": VIEWS})
+                      "sort": ui.sort_index(COLUMNS, "snap_share"), "views": VIEWS})
     return (
-        ui.CSS
+        ui.css(COLUMNS)
         # One sentence above the table (the subtitle already names the
         # columns); the rest waits, folded, for whoever asks.
         + f"<p>Over <strong>{span}</strong>, the season share beside each in grey: a back "
@@ -234,10 +224,10 @@ def body() -> str:
         + my_league.bar()
         + controls
         + f"<div class='us-scroll'><table class='us view-overall' data-sticky-head>"
-        f"<thead>{head}</thead>"
+        f"<thead>{ui.head(COLUMNS)}</thead>"
         f"<tbody>{_rows(recent, season, held, names)}</tbody></table></div>"
         + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + ui.JS
-        + my_league.JS)
+        + my_league.JS_TAG)
 
 
 def generate():

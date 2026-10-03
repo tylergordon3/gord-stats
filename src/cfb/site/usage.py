@@ -24,9 +24,10 @@ import pandas as pd
 from cfb import espn, ownership, players, schools as schools_mod, usage as usage_mod, yahoo
 from cfb.config import MY_TEAM, SEASON, WEB_DIR, league_school
 from cfb.site import write_page
-from gordstats.usage_page import CSS as _CSS, JS as _JS, bar as _bar, num as _num
-from gordstats.usage_page import options as _options, pct as _pct, pin as _pin, v as _v
-from gordstats.usage_page import views_bar as _views_bar
+from gordstats.usage_page import JS as _JS, Col, bar as _bar, cell as _cell, css as _css
+from gordstats.usage_page import fixed as _fixed, head as _head, num as _num
+from gordstats.usage_page import options as _options, pct as _pct, pin as _pin
+from gordstats.usage_page import sort_index as _sort_index, views_bar as _views_bar
 from gordstats.jsonio import script_json
 
 RECENT_WEEKS = 3
@@ -54,11 +55,35 @@ VIEWS = [
 
 # Which views own which columns. College has no published snap counts, so the
 # receiver views lead on target share rather than on snaps.
-ALL = "v-overall v-rb v-wr v-te"
-POSV = "v-rb v-wr v-te"
-OVR = "v-overall"
-RUSH = "v-overall v-rb"
-CATCH = "v-overall v-wr v-te"
+ALL = "overall rb wr te"
+POSV = "rb wr te"                       # the rank column: position views only
+OVR = "overall"
+RUSH = "overall rb"
+CATCH = "overall wr te"
+
+# The table, left to right. `_rows` writes its cells in this order.
+COLUMNS = [
+    Col("#", POSV, role="rank", title="Rank in this view, among players past the minimum"),
+    Col("Player", ALL, "text", "name"),
+    Col("School", ALL, "text", "team"),
+    Col("Pos", OVR, "text"),
+    Col("Fantasy", ALL, "text", "own"),
+    Col("G", ALL, "n"),
+    Col("Car", RUSH, "n", field="car"),
+    Col("Car share", RUSH, "n", field="car_share"),
+    Col("Season", RUSH, "n", "lead"),
+    Col("Tgt", ALL, "n", field="tgt"),
+    Col("Tgt share", ALL, "n", field="tgt_share"),
+    Col("Season", ALL, "n", "lead"),
+    Col("Rec", CATCH, "n"),
+    Col("Rec share", CATCH, "n"),
+    Col("Catch%", CATCH, "n", title="Catches per target"),
+    Col("Yds", ALL, "n"),
+    Col("TD", ALL, "n"),
+    Col("FPts/G", ALL, "n", title="League fantasy points per game played"),
+    Col("PPA", ALL, "n"),
+]
+
 
 def _conferences() -> dict:
     """CFBD school name -> this season's conference. ESPN's FPI pull knows the
@@ -93,34 +118,23 @@ def _rows(recent: pd.DataFrame, season: pd.DataFrame, conf: dict) -> str:
             f' data-conf="{escape(conf.get(r["team"], ""), quote=True)}"'
             f' data-pos="{escape(str(r["pos"]), quote=True)}"'
             f' data-own="{escape(str(r["team_key"]), quote=True)}"'
-            f' data-car="{int(r["carries"])}" data-tgt="{int(r["targets"])}"'
-            f' data-name="{escape(str(r["player"]).lower(), quote=True)}">'
-            f'<td class="us-rank {POSV}"></td>'
-            f'<td class="us-name {ALL}">{escape(str(r["player"]))}</td>'
-            f'<td class="us-team {ALL}">{escape(str(r["team"]))}</td>'
-            f'<td class="{OVR}">{escape(str(r["pos"]))}</td>'
-            f'<td class="us-own {ALL}">{own}</td>'
-            + _num(r["games"], cls=ALL) + _num(r["carries"], cls=RUSH)
-            + f'<td class="{RUSH}" data-v="{_v(r["car_share"])}">{_bar(r["car_share"])}</td>'
-            f'<td class="us-lead {RUSH}" data-v="{_v(was("car_share"))}">{_pct(was("car_share"))}</td>'
-            + _num(r["targets"], cls=ALL)
-            + f'<td class="{ALL}" data-v="{_v(r["tgt_share"])}">{_bar(r["tgt_share"])}</td>'
-            f'<td class="us-lead {ALL}" data-v="{_v(was("tgt_share"))}">{_pct(was("tgt_share"))}</td>'
-            + _num(r["rec"], cls=CATCH)
-            + f'<td class="{CATCH}" data-v="{_v(r["rec_share"])}">{_pct(r["rec_share"])}</td>'
-            f'<td class="{CATCH}" data-v="{_v(catch)}">{_pct(catch)}</td>'
-            + _num(yards, cls=ALL) + _num(tds, cls=ALL)
-            + f'<td class="{ALL}" data-v="{_v(per_game)}">'
-            + ("&mdash;" if per_game is None or pd.isna(per_game) else f"{per_game:.1f}") + "</td>"
-            f'<td class="{ALL}" data-v="{_v(r["ppa"])}">'
-            + ("&mdash;" if pd.isna(r["ppa"]) else f"{r['ppa']:+.2f}") + "</td></tr>")
+            f' data-car="{int(r["carries"])}" data-tgt="{int(r["targets"])}">'
+            "<td></td>"
+            + _cell(escape(str(r["player"]))) + _cell(escape(str(r["team"])))
+            + _cell(escape(str(r["pos"]))) + _cell(own, cls="us-own")
+            + _num(r["games"]) + _num(r["carries"]) + _bar(r["car_share"])
+            + _pct(was("car_share"))
+            + _num(r["targets"]) + _bar(r["tgt_share"]) + _pct(was("tgt_share"))
+            + _num(r["rec"]) + _pct(r["rec_share"]) + _pct(catch)
+            + _num(yards) + _num(tds)
+            + _fixed(per_game, "{:.1f}") + _fixed(r["ppa"], "{:+.2f}") + "</tr>")
     return "".join(out)
 
 
 def body() -> str:
     frame = usage_mod.load()
     if frame.empty:
-        return (_CSS + "<p>No games have been played yet — this page fills in once "
+        return (_css() + "<p>No games have been played yet — this page fills in once "
                 "<code>python -m cfb.usage</code> has a week to read.</p>")
     # Only schools whose players this league can roster: CFBD's box scores
     # cover all of FBS, and a Sun Belt back leading his team in carries is
@@ -162,30 +176,10 @@ def body() -> str:
 
     span = (f"week {recent_weeks[0]}" if len(recent_weeks) == 1
             else f"weeks {recent_weeks[0]}&ndash;{recent_weeks[-1]}")
-    head = (f"<tr><th class='{POSV}' title='Rank in this view, among players past the "
-            f"minimum'>#</th>"
-            f"<th data-k='text' class='us-name {ALL}'>Player</th>"
-            f"<th data-k='text' class='{ALL}'>School</th>"
-            f"<th data-k='text' class='{OVR}'>Pos</th>"
-            f"<th data-k='text' class='us-own {ALL}'>Fantasy</th>"
-            f"<th data-k='n' class='{ALL}'>G</th>"
-            f"<th data-k='n' class='{RUSH}' data-field='car'>Car</th>"
-            f"<th data-k='n' class='{RUSH}' data-field='car_share'>Car share</th>"
-            f"<th data-k='n' class='us-lead {RUSH}'>Season</th>"
-            f"<th data-k='n' class='{ALL}' data-field='tgt'>Tgt</th>"
-            f"<th data-k='n' class='{ALL}' data-field='tgt_share'>Tgt share</th>"
-            f"<th data-k='n' class='us-lead {ALL}'>Season</th>"
-            f"<th data-k='n' class='{CATCH}'>Rec</th>"
-            f"<th data-k='n' class='{CATCH}'>Rec share</th>"
-            f"<th data-k='n' class='{CATCH}' title='Catches per target'>Catch%</th>"
-            f"<th data-k='n' class='{ALL}'>Yds</th><th data-k='n' class='{ALL}'>TD</th>"
-            f"<th data-k='n' class='{ALL}' title='League fantasy points per game played'>"
-            f"FPts/G</th>"
-            f"<th data-k='n' class='{ALL}'>PPA</th></tr>")
     cfg = script_json({"mine": mine, "teams": league_teams, "storage": "cfbMyTeam",
-                      "sort": 7, "views": VIEWS})
+                      "sort": _sort_index(COLUMNS, "car_share"), "views": VIEWS})
     return (
-        _CSS
+        _css(COLUMNS)
         # One sentence above the table: the subtitle already says what the
         # columns are, so the intro only says which weeks and how to read the
         # two shares together. The rest waits, folded, for whoever asks.
@@ -207,7 +201,7 @@ def body() -> str:
         + _views_bar(VIEWS)
         + controls
         + f"<div class='us-scroll'><table class='us view-overall' data-sticky-head>"
-        f"<thead>{head}</thead>"
+        f"<thead>{_head(COLUMNS)}</thead>"
         f"<tbody>{_rows(recent, season, conf)}</tbody></table></div>"
         + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + _JS)
 

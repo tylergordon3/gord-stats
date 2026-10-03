@@ -203,7 +203,7 @@ table.cfb-sched table.lnt td:first-child{padding-left:4px}
 .sc-stat .l5{width:14px;height:14px;line-height:14px;font-size:10px;margin-right:1px}
 .call{margin-top:5px;font-size:12.5px;color:#334155}
 .call b{color:#0f172a}
-.call .strong b{color:var(--accent-dark,#1e40af)}
+.call b.strong{color:var(--accent-dark,#1e40af)}
 .call .mv{margin-left:3px}
 .frm-scroll{overflow-x:auto;max-width:100%}
 table.cfb-sched table.frt td{padding:2px 7px 2px 0}
@@ -241,7 +241,7 @@ td.na{color:var(--gs-muted,#5d6b7e)}
      becomes the row's minimum and it runs off the bar instead of scrolling. */
   .sc-weekrow{order:-1;justify-content:flex-start;min-width:0}
   .sc-weekrow .view-switch{flex:1 1 auto;min-width:0;margin:0;flex-wrap:nowrap;overflow-x:auto}
-  .sc-weekrow .view-switch button{flex:none}
+  .sc-weekrow .view-switch button{flex:none;min-width:40px}
   .sc-weekrow .switch-label{display:none}
   .sc-pin .sc-fold{display:none;min-width:0}
   .sc-pin.sc-open .sc-fold{display:block}
@@ -290,6 +290,10 @@ td.na{color:var(--gs-muted,#5d6b7e)}
 .sc-legend ul{margin:6px 0 0 18px;padding:0}
 .sc-legend li{margin:3px 0}
 tr.g.hide,tr.hdr.hide{display:none}
+/* A game opened from a link (#g= from a preview or the watch guide, or a
+   pick's jump) lands below the pinned bar, not under it: it used to hide the
+   card's first team line on a phone. */
+table.cfb-sched tr.g{scroll-margin-top:calc(var(--header-h,0px) + var(--pin-h,0px) + 6px)}
 /* The More panel: a second row per game, shown on demand. */
 .det-btn{border:none;background:none;padding:0;margin-left:auto;cursor:pointer;
   font-size:11px;font-weight:700;color:#2a78d6;letter-spacing:.02em}
@@ -339,23 +343,25 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   table.cfb-sched>tbody>tr.g{padding:6px 8px 5px;margin:6px 0}
   table.cfb-sched .sc-row img{width:18px;height:18px}
   .sc-mu{gap:0}
-  /* The whole team line is the link, 36px tall: the name alone was a 15px
-     target and the logo beside it an 18px one. */
-  .sc-team{min-height:36px}
+  /* The whole team line is the link, 40px tall: the name alone was a 15px
+     target and the logo beside it an 18px one (36px until the 2026-10-02
+     pass, which set 40 as the floor for anything a thumb presses). */
+  .sc-team{min-height:40px}
   /* This block used to shrink the labels below their desktop size to fit
      more in. On the device where reading is hardest that is the wrong
      trade, and it is the complaint this site started from - a tag at
      9.5px is not a size anyone reads standing in a car park. So nothing
-     here goes under 12px, the W/L and weather pills under 11.5px, and a
-     figure the desktop sets smaller is raised to that for a phone. The
-     room it takes comes out of what a card shows folded, not the type. */
+     here goes under 12px - the W/L and weather pills, 11.5px until the
+     2026-10-02 pass, included - and a figure the desktop sets smaller is
+     raised to that for a phone. The room it takes comes out of what a card
+     shows folded, not the type. */
   .sc-name{font-size:14px}
   .sc-pts{font-size:15px}
   table.cfb-sched .rk,.sc-rec,.sc-joiner,.sc-play,.sc-sit{font-size:12px}
   .sc-row.sc-ball .sc-name::after{font-size:12px}
   .sc-meta{font-size:12px;margin-top:2px;gap:3px 6px}
   .sc-venue{display:none}
-  .tag{font-size:11.5px;padding:0 6px}
+  .tag{font-size:12px;padding:0 6px}
   .sub,.t-wx .sub,.mlx,.mv{font-size:12px}
   .t-tv{font-size:12px}
   table.cfb-sched tr.hdr.sec td{font-size:12px}
@@ -369,7 +375,7 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   table.cfb-sched table.frt td .mv{display:none}
   .sc-stat{margin:-4px 0 4px 26px;font-size:12px}
   table.cfb-sched table.frt td{padding-right:6px}
-  .l5,.sc-stat .l5{width:16px;height:16px;line-height:16px;font-size:11.5px;margin-right:1px}
+  .l5,.sc-stat .l5{width:16px;height:16px;line-height:16px;font-size:12px;margin-right:1px}
   .call{font-size:13px}
   /* A 14px-tall link is not a thumb target: padding makes it about 40px,
      the negative margins keep the card's line where it was. It is the one
@@ -381,6 +387,8 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   /* The picks' jumps to their games, 15-21px tall as text: padded to a
      thumb, margined back so the cards keep their lines. */
   .gs-pick .gp-main a,.gs-pick .gp-legs li a{display:inline-block;padding:12px 0;margin:-12px 0}
+  /* The same for the More panel's "Full preview", a 14px line of text. */
+  .det-line a{display:inline-block;padding:13px 0;margin:-13px 0}
   /* Folded, a card is the matchup, the kickoff and the two lines that
      matter - GordStats' and DraftKings' - with More unfolding the rest in
      place: ratings and form under each team, the forecast, every read of
@@ -414,6 +422,15 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   table.cfb-sched>thead{display:none}
   table.cfb-sched>tbody>tr.g{border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;
     padding:8px 10px 7px;background:#fff}
+  /* A card off the screen is not styled or laid out until it nears it: a
+     week is fifty-odd cards and a phone shows four, and opening the page,
+     every week tab, filter and sort used to lay out all of them (the tab
+     back to the current week took 130ms of a throttled phone's time, 50ms
+     with this). The estimate is a folded card's content box (193px less
+     padding and border); `auto` keeps each card's real height once drawn,
+     so nothing moves when it is scrolled back to. Safari before 18 ignores
+     it and lays out every card as before. */
+  table.cfb-sched>tbody>tr.g{content-visibility:auto;contain-intrinsic-size:auto 176px}
   table.cfb-sched>tbody>tr.g>td,table.cfb-sched>tbody>tr.g:nth-child(even)>td{border:none;
     padding:2px 0;background:transparent}
   table.cfb-sched td.mu{position:static;padding-bottom:6px;border-bottom:1px solid #eef2f7;
@@ -480,7 +497,7 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .sc-stat{color:#8fa0b8}
   .sc-stat b{color:#c3cfdd}
   .call{color:#c3cfdd}
-  .call .strong b{color:var(--accent-text,#bfdbfe)}
+  .call b.strong{color:var(--accent-text,#bfdbfe)}
   .sub{color:#8fa0b8}
   .bar{background:#223052}
   .mk.hit{color:#4ade80}
@@ -913,7 +930,7 @@ def _kick_cell(g) -> str:
     else:
         when = local.strftime("%-I:%M %p")
     tv = f'<span class="t-tv">{escape(str(g.tv))}</span>' if g.tv else ""
-    return (f'<td class="t d" data-l="Kick" data-s="Kick"><div class="c">{day}'
+    return (f'<td class="t d" data-s="Kick"><div class="c">{day}'
             f'<span class="t-when{live}">{when}</span>{tv}{_wx_text(g)}</div></td>')
 
 
@@ -981,7 +998,7 @@ def _lines_cell(g, home_won, sp_margin) -> str:
     dk_spread, dk_total = _v(g.dk_spread), _v(g.dk_total)
     gs_total, fpi = _v(g.gs_total), _v(g.fpi_wp)
     if margin is None and dk_spread is None and fpi is None and sp_margin is None:
-        return '<td class="ln na no-sum d" data-l="Lines" data-s="Lines">&mdash;</td>'
+        return '<td class="ln na no-sum d" data-s="Lines">&mdash;</td>'
 
     final_margin = final_total = None
     if home_won is not None:
@@ -989,7 +1006,8 @@ def _lines_cell(g, home_won, sp_margin) -> str:
         final_total = float(g.home_score + g.away_score)
 
     def row(label, spread_txt, total_txt, win_txt, cls=""):
-        return (f'<tr class="{cls}"><td class="k">{label}</td><td>{spread_txt}</td>'
+        tr = f'<tr class="{cls}">' if cls else "<tr>"
+        return (f'{tr}<td class="k">{label}</td><td>{spread_txt}</td>'
                 f"<td>{total_txt}</td><td>{win_txt}</td></tr>")
 
     rows = []
@@ -1034,7 +1052,8 @@ def _lines_cell(g, home_won, sp_margin) -> str:
             if final_margin is not None:
                 cover = (final_margin + dk_spread) * (1 if lean_home else -1)
                 mark = _tick(None if cover == 0 else cover > 0)
-            recs.append(f'<b class="{"strong" if abs(gap) >= 3 else ""}" '
+            strong = ' class="strong"' if abs(gap) >= 3 else ""
+            recs.append(f'<b{strong} '
                         f'title="The model and the book differ by {abs(gap):.1f} points">'
                         f"{escape(str(abbr))} {number:+g}</b>{mark}")
         else:
@@ -1069,7 +1088,7 @@ def _lines_cell(g, home_won, sp_margin) -> str:
         sentence = ""
     call = f'<div class="call">{sentence}</div>' if sentence else ""
     summary = _lines_summary(g, home_won)
-    return (f'<td class="ln d{"" if summary else " no-sum"}" data-l="Lines" data-s="Lines">'
+    return (f'<td class="ln d{"" if summary else " no-sum"}" data-s="Lines">'
             f'{summary}<div class="c">{table}{call}</div></td>')
 
 
@@ -1131,7 +1150,7 @@ def _form_cell(g) -> str:
     """Both teams' results this season, away over home: record, against-the-
     spread and over/under records, points for and against per game. Ratings
     and the last five sit under each name in the matchup cell."""
-    return ('<td class="frm d" data-l="Season" data-s="Season"><div class="c">'
+    return ('<td class="frm d" data-s="Season"><div class="c">'
             '<div class="frm-scroll"><table class="frt"><tr><th></th>'
             '<th title="Record">Rec</th><th title="Against the spread this season">ATS</th>'
             '<th title="Over-under this season">O/U</th>'
@@ -1217,7 +1236,16 @@ def _wx_text(g) -> str:
             + "</span>")
 
 
-def _row(g, idx: int, records: dict) -> str:
+def _row(g, idx: int, records: dict, panels: list = None) -> str:
+    """A game's card, and the empty row its More panel opens into.
+
+    The panel itself (`_detail`) goes on `panels` when one is given - the
+    week's panels are a file of their own (MORE_FILE), a quarter of the
+    page's weight that most readers never open - and otherwise waits inline
+    in that row, as a <template>. The empty row stays where it always was, so
+    the cards' order and stripes are untouched; without JS no panel was ever
+    shown.
+    """
     final = g.state == "post" and not _abandoned(g)
     ranked = not (pd.isna(g.home_rank) and pd.isna(g.away_rank))
     dk_spread, gs_margin = _v(g.dk_spread), _v(g.gs_margin)
@@ -1297,9 +1325,16 @@ def _row(g, idx: int, records: dict) -> str:
         + f' data-tossup="{int(toss_up)}">'
         f'<td class="mu"><div class="sc-mu">{_side_row(g, "away", records)}'
         f'{_side_row(g, "home", records)}</div>{meta}{venue}'
-        '<div class="sc-live"><div class="sc-sit"></div><div class="sc-play"></div></div></td>'
+        + (_LIVE_BOX if g.state == "in" else "") + "</td>"
         + _kick_cell(g) + _lines_cell(g, home_won, sp_margin) + _form_cell(g)
-        + "</tr>" + _detail(g, spread, gs_margin, home_won, sp_margin))
+        + "</tr>" + _det_row(g, _detail(g, spread, gs_margin, home_won, sp_margin), panels))
+
+
+def _det_row(g, panel: str, panels: list = None) -> str:
+    if panels is not None:
+        panels.append(panel)
+        panel = ""
+    return f'<tr class="det" data-for="g-{escape(str(g.game_id))}">{panel}</tr>'
 
 
 def _mv(now, opened, signed=True) -> str:
@@ -1426,12 +1461,20 @@ def _detail(g, spread, gs_margin, home_won, sp_margin) -> str:
         opinions += (f'<div class="det-line"><a href="{preview}">Full preview &rarr;</a>'
                      ' <span class="mv">unit vs unit, players, form</span></div>')
 
-    return (f'<tr class="det" data-for="g-{escape(str(g.game_id))}"><td colspan="{_COLS}">'
-            '<div class="det-wrap">'
+    # A <template>: parsed, never part of the page until More is pressed
+    # (`fill` in _JS), so it costs no style or layout. See _row for where it
+    # is kept.
+    return (f'<template data-for="g-{escape(str(g.game_id))}">'
+            f'<td colspan="{_COLS}"><div class="det-wrap">'
             f'<div class="det-block"><h4>Lines</h4>{books}{"".join(lines)}</div>'
             f'<div class="det-block"><h4>Opinions</h4>{opinions}</div>'
-            "</div></td></tr>")
+            "</div></td></template>")
 
+
+# The drive line under a game in progress. Built only for the games that are
+# on when the page is; the live poll adds it to a game that kicks off later
+# (`liveBox` in _JS), so the other fifty-odd cards carry nothing for it.
+_LIVE_BOX = '<div class="sc-live"><div class="sc-sit"></div><div class="sc-play"></div></div>'
 
 _HEAD = ('<thead><tr><th>Matchup</th><th>Kick (ET) &middot; TV &middot; Weather</th>'
          '<th>Lines &middot; GordStats pick</th><th>Season</th></tr></thead>')
@@ -1442,7 +1485,7 @@ def _hdr(text: str, idx: int, kind: str) -> str:
     return f'<tr class="hdr {kind}"><td colspan="{_COLS}">{text}</td></tr>'
 
 
-def _week_table(games: pd.DataFrame, records: dict) -> str:
+def _week_table(games: pd.DataFrame, records: dict, panels: list = None) -> str:
     """One table for the week: game rows in kickoff order, sectioned Live /
     Still to play / Final with a day header inside each - the same layout the
     page's script rebuilds from the rows' data attributes after every sort,
@@ -1459,15 +1502,16 @@ def _week_table(games: pd.DataFrame, records: dict) -> str:
             rows.append(_hdr(titles[state], 0, "sec"))
         for day, day_games in grp.groupby(grp["local"].dt.date, sort=True):
             rows.append(_hdr(pd.Timestamp(day).strftime("%A, %B %-d"), 0, "day"))
-            rows.extend(_row(g, int(g.Index), records) for g in day_games.itertuples())
+            rows.extend(_row(g, int(g.Index), records, panels) for g in day_games.itertuples())
     return (f'<div class="table-scroll"><table class="cfb-sched">{_HEAD}'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
-def _week_view(games: pd.DataFrame, records: dict, picks: str = "") -> str:
+def _week_view(games: pd.DataFrame, records: dict, picks: str = "",
+               panels: list = None) -> str:
     ranked = int((games["home_rank"].notna() | games["away_rank"].notna()).sum())
     return (picks + f'<p class="wk-note"><span class="wk-count">{len(games)} games</span>, '
-            f'{ranked} with a ranked team.</p>' + _week_table(games, records))
+            f'{ranked} with a ranked team.</p>' + _week_table(games, records, panels))
 
 
 # --------------------------------------------------------------------------- #
@@ -1794,14 +1838,22 @@ function hdr(kind,text){
 }
 
 /* Rebuild one week from its rows: order (kickoff within Live / Still to play /
-   Final, or the chosen sort), filters, then fresh section and day headers
-   over whatever is left. The build-time headers are thrown away first. */
+   Final, or the chosen sort), filters, then section and day headers over
+   whatever is left. Only what is out of place moves. An unsorted, unfiltered
+   week comes out in the order it was built in, so opening the page or a week,
+   or a filter that keeps the order, moves no row at all, and a header still
+   wanted is the one already there. Moving every row used to make the browser
+   restyle and lay out the whole week again on each of those. */
 function layout(view){
   var tbody=view.querySelector('tbody');if(!tbody)return;
-  Array.prototype.slice.call(tbody.querySelectorAll('tr.hdr')).forEach(function(h){
-    h.parentNode.removeChild(h);});
-  var all=Array.prototype.slice.call(tbody.rows),dets={};
-  all.forEach(function(r){if(r.classList.contains('det'))dets[r.getAttribute('data-for')]=r;});
+  var all=Array.prototype.slice.call(tbody.rows),dets={},pool={};
+  all.forEach(function(r){
+    if(r.classList.contains('det'))dets[r.getAttribute('data-for')]=r;
+    else if(r.classList.contains('hdr')){
+      var k=r.className+'|'+r.textContent;(pool[k]=pool[k]||[]).push(r);}
+  });
+  function header(kind,text){
+    var p=pool['hdr '+kind+'|'+text];return p&&p.length?p.shift():hdr(kind,text);}
   var rows=all.filter(function(r){return r.classList.contains('g');});
   var spec=SORTS[sortSel.value];
   rows.sort(function(a,b){
@@ -1824,22 +1876,26 @@ function layout(view){
     total++;var ok=passes(r);r.classList.toggle('hide',!ok);
     if(ok){shown++;states[r.getAttribute('data-state')||'pre']=1;}
   });
-  var split=Object.keys(states).length>1,lastState=null,lastDay=null;
+  var split=Object.keys(states).length>1,lastState=null,lastDay=null,seq=[];
   rows.forEach(function(r){
     if(!spec&&!r.classList.contains('hide')){
       var st=r.getAttribute('data-state')||'pre',day=r.getAttribute('data-day');
-      if(split&&st!==lastState){tbody.appendChild(hdr('sec',SEC[st]||st));lastDay=null;}
-      if(day!==lastDay)tbody.appendChild(hdr('day',day));
+      if(split&&st!==lastState){seq.push(header('sec',SEC[st]||st));lastDay=null;}
+      if(day!==lastDay)seq.push(header('day',day));
       lastState=st;lastDay=day;
     }
-    tbody.appendChild(r);
+    seq.push(r);
     var d=dets[r.id];
-    if(d){tbody.appendChild(d);
+    if(d){seq.push(d);
       d.classList.toggle('show',!r.classList.contains('hide')&&r.classList.contains('open'));}
   });
+  var at=tbody.firstChild;
+  seq.forEach(function(n){if(n===at)at=n.nextSibling;else tbody.insertBefore(n,at);});
+  while(at){var nx=at.nextSibling;tbody.removeChild(at);at=nx;}   // headers no longer wanted
   view.querySelector('table').classList.toggle('sorted',!!spec);
   var count=view.querySelector('.wk-count');
-  if(count)count.textContent=(shown===total?total+' games':shown+' of '+total+' games');
+  var said=(shown===total?total+' games':shown+' of '+total+' games');
+  if(count&&count.textContent!==said)count.textContent=said;
 }
 
 function applyAll(){
@@ -1972,11 +2028,23 @@ window.show_wk=function(w){
     if(at>=0) shownOrder.splice(at,1);
     shownOrder.push(+w);                  // most recently read, last
     evict();
+    prefetch(+w);                         // its More panels, once it has settled
     return view;
   });
 };
 
 /* ---- live scores for the current week ---- */
+// The drive line is built with the page only for games already on; one that
+// kicks off later gets it here, at the foot of its matchup cell.
+function liveBox(row){
+  var box=row.querySelector('.sc-live');
+  if(!box){
+    box=document.createElement('div');box.className='sc-live';
+    box.innerHTML='<div class="sc-sit"></div><div class="sc-play"></div>';
+    var mu=row.querySelector('td.mu');if(mu)mu.appendChild(box);
+  }
+  return box;
+}
 function apply(ev){
   var row=document.getElementById('g-'+ev.id);if(!row)return null;
   var comp=(ev.competitions||[])[0]||{};
@@ -2016,9 +2084,10 @@ function apply(ev){
     row.setAttribute('data-final','1');
   }
   if(state==='in'){
-    row.querySelector('.sc-sit').textContent=
+    var box=liveBox(row);
+    box.querySelector('.sc-sit').textContent=
       [sit.downDistanceText,sit.possessionText].filter(Boolean).join(' \\u00b7 ');
-    row.querySelector('.sc-play').textContent=(sit.lastPlay||{}).text||'';
+    box.querySelector('.sc-play').textContent=(sit.lastPlay||{}).text||'';
   }
   var changed=row.getAttribute('data-state')!==state;
   row.setAttribute('data-state',state);
@@ -2079,13 +2148,66 @@ document.getElementById('sc-clear').addEventListener('click',function(){
 sortSel.addEventListener('change',applyAll);
 confSel.addEventListener('change',applyAll);
 search.addEventListener('input',applyAll);
+/* ---- the More panels ----
+   Not in the page: each week's are a file of their own (MORE_URL), a quarter
+   of the page's weight that most readers never open. A week's file is read
+   once - when the page has settled, so the first More is usually instant, or
+   at that first More if it comes sooner - and kept. A panel parsed inline in
+   its row as a <template> (a week drawn without the file) is used as is. */
+var MORE_URL=__MORE_URL__,panels={},ready={};
+function panelsFor(w){
+  if(panels[w])return panels[w];
+  var src=MORE_URL.replace('%%s',w);
+  panels[w]=fetch(src).then(function(r){
+    if(r.ok)return r.text();
+    return fetch(src+'.html').then(function(r2){
+      if(!r2.ok)throw new Error(r2.status);
+      return r2.text();
+    });
+  }).then(function(html){
+    var box=document.createElement('div'),map={};
+    box.innerHTML=html;
+    Array.prototype.forEach.call(box.querySelectorAll('template[data-for]'),function(t){
+      map[t.getAttribute('data-for')]=t;});
+    return (ready[w]=map);
+  });
+  panels[w].catch(function(){delete panels[w];});      // the next More asks again
+  return panels[w];
+}
+function prefetch(w){
+  var go=function(){panelsFor(w).catch(function(){});};
+  if(window.requestIdleCallback)requestIdleCallback(go,{timeout:3000});else setTimeout(go,1200);
+}
+function put(d,map){
+  var t=map[d.getAttribute('data-for')];
+  d.innerHTML='';
+  if(t)d.appendChild(t.content.cloneNode(true));
+  else d.innerHTML='<td colspan="'+COLS+'"><div class="det-line">Nothing more on this game yet.</div></td>';
+  d._done=true;
+}
+function fill(d){
+  if(d._done)return Promise.resolve();
+  var t=d.querySelector('template');
+  if(t){d.appendChild(t.content);d.removeChild(t);d._done=true;return Promise.resolve();}
+  var v=d.closest('.wk-view'),w=v?v.id.replace('wk-view-',''):String(current);
+  if(ready[w]){put(d,ready[w]);return Promise.resolve();}
+  if(d._fill)return d._fill;
+  d.innerHTML='<td colspan="'+COLS+'"><div class="det-line">Loading the lines\u2026</div></td>';
+  d._fill=panelsFor(w).then(function(map){put(d,map);},function(){
+    d.innerHTML='<td colspan="'+COLS+'"><div class="det-line">The lines could not be loaded. '
+      +'Press Less, then More, to try again.</div></td>';
+  }).then(function(){d._fill=null;});
+  return d._fill;
+}
 function setOpen(row,open){
   row.classList.toggle('open',open);
   var btn=row.querySelector('.det-btn');
   if(btn){btn.setAttribute('aria-expanded',open?'true':'false');
     btn.innerHTML=open?'Less \u25b4':'More \u25be';}
   var d=row.parentNode.querySelector('tr.det[data-for="'+row.id+'"]');
-  if(d)d.classList.toggle('show',open);
+  if(!d)return Promise.resolve();
+  d.classList.toggle('show',open);
+  return open?fill(d):Promise.resolve();
 }
 document.addEventListener('click',function(ev){
   var btn=ev.target.closest('.det-btn');if(!btn)return;
@@ -2104,9 +2226,13 @@ window.show_wk(current).then(function(view){
   if(!view||!openGame)return;               // another week picked before this one came
   var row=document.getElementById('g-'+openGame);
   if(!row)return;
-  setOpen(row,true);
-  if(!noScroll)row.scrollIntoView({block:'start'});
+  // The panel first, then the scroll: one filled in under the reader's eyes
+  // would push every card below it down the screen.
+  return setOpen(row,true).then(function(){
+    if(!noScroll)row.scrollIntoView({block:'start'});});
 });
+if(document.readyState==='complete')prefetch(current);
+else window.addEventListener('load',function(){prefetch(current);});
 poll();
 })();
 </script>"""
@@ -2175,16 +2301,30 @@ def _switcher(week_ids: list[int], current: int, views: dict[int, str],
 WEEK_URL = "/cfb/schedule/week-%s"
 WEEK_FILE = "week-%s.html"
 
+#: Each week's More panels, every week the current one included: a quarter
+#: of the page's weight (about 100 KB of a 410 KB page), which most readers
+#: never open. The script fetches a week's panels once the page has settled,
+#: or at the first More, whichever comes first (`panelsFor` in _JS). Named
+#: inside the week-*.html pattern, so git ignores them and Jekyll copies them
+#: through exactly as it does the week fragments.
+MORE_URL = "/cfb/schedule/week-%s-more"
+MORE_FILE = "week-%s-more.html"
+# Into the script as a literal, with its % doubled for the formatting the
+# script goes through in build().
+_JS = _JS.replace("__MORE_URL__", json.dumps(MORE_URL).replace("%", "%%"))
+
 
 def build() -> tuple:
-    """(page html, {week: its rows}) - the fragments are written beside it."""
+    """(page html, {week: its rows}, {week: its More panels}) - the
+    fragments and the panels are written beside the page."""
     df = _frame()
     week_ids = sorted(int(w) for w in df["week"].unique())
     current = _current_week(df)
     records = _records(current)
     picks = _picks(df, current)
+    panels = {int(w): [] for w in week_ids}
     views = {int(w): _week_view(grp.sort_values("local"), records if int(w) == current else {},
-                                picks if int(w) == current else "")
+                                picks if int(w) == current else "", panels[int(w)])
              for w, grp in df.groupby("week")}
     built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     # One short sentence. This was 110 words - most of the first screen on a
@@ -2200,8 +2340,10 @@ def build() -> tuple:
     html = (_CSS + favorites.table_css("table.cfb-sched tbody") + _NOSCRIPT + intro + legend
             + _switcher(week_ids, current, views, controls=_controls(espn.conferences()))
             + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
-                     "url": json.dumps(_live_url(current))})
-    return html, {w: v for w, v in views.items() if w != current}
+                     "url": json.dumps(_live_url(current)),
+                     "more": json.dumps(MORE_URL.replace("%s", ""))})
+    return (html, {w: v for w, v in views.items() if w != current},
+            {w: "".join(p) for w, p in panels.items()})
 
 
 def body() -> str:
@@ -2209,14 +2351,20 @@ def body() -> str:
 
 
 def generate():
-    html, fragments = build()
+    html, fragments, panels = build()
     out = WEB_DIR / "schedule"
+    out.mkdir(parents=True, exist_ok=True)
+    # The panels first: a page is never served ahead of the file its More
+    # buttons read.
+    for week, more in panels.items():
+        (out / (MORE_FILE % week)).write_text(more, encoding="utf-8")
     write_page(out / "index.html", f"CFB Schedule & Scores {SEASON}", html)
     # Plain fragments, no front matter: Jekyll copies a file it cannot parse as
     # a page straight through, which is what these want to be.
     for week, view in fragments.items():
         (out / (WEEK_FILE % week)).write_text(view, encoding="utf-8")
-    print(f"  {len(fragments)} weeks written beside it, fetched on demand")
+    print(f"  {len(fragments)} weeks written beside it, fetched on demand, "
+          f"and every week's More panels")
 
 
 if __name__ == "__main__":
