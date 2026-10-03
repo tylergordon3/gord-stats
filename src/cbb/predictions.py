@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from pytz import timezone
 
-from gordstats import frontmatter
+from gordstats import frontmatter, how
 from cbb import change, constants, scraper, utils
 from cbb import paths
 from cbb import html_util, teams
@@ -375,6 +375,8 @@ def predict_womens(date):
     time_obj = datetime.now(tz)
     time = time_obj.strftime("Last Update: %A %m/%d/%y %I:%M %p")
     df_html = f"<p>{time}</p>"
+    # How the field is built: the cbb-rankings explainer (gordstats.how).
+    df_html += how.section_note("cbb-rankings")
     df_html += '<div class="filter-bar">'
     df_html += frontmatter.liquid("{% include global-toggle.html %}") + " "
     df_html += "</div>"
@@ -385,7 +387,7 @@ def predict_womens(date):
     df_html += '<div class="table-container">'
     df_html += first_out.to_html()
     df_html += "</div>"
-    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
+    df_html += "<script src='/assets/js/rank-toggle.js'></script>" + how.JS_TAG
 
     # MAIN -> DF with Conf col data
     path = paths.WEB_W_DIR / f"predict_{date}.html"
@@ -656,10 +658,9 @@ def predict(date):
     # tracked, was edited to match.
     # 2026-09-30: the key in four words, one line at 390px.
     df_html += "<p>Green: conference tournament champion.</p>"
-    df_html += ("<details class='section'><summary>How the field is built</summary>"
-                "<p><strong>Pwr</strong> is the tournament probability from machine-learning models "
-                "on KenPom and Torvik data, balanced with the ESPN BPI, NET, KenPom and Torvik "
-                "rankings to rank and seed the teams.</p></details>")
+    # How the field is built is the cbb-rankings explainer (gordstats.how),
+    # opened in a dialog from this chip (2026-10-02).
+    df_html += how.section_note("cbb-rankings")
     df_html += '<div class="filter-bar">'
     df_html += frontmatter.liquid("{% include global-toggle.html %}") + " "
     df_html += "</div>"
@@ -670,7 +671,7 @@ def predict(date):
     df_html += '<div class="table-container">'
     df_html += first_out.to_html()
     df_html += "</div>"
-    df_html += "<script src='/assets/js/rank-toggle.js'></script>"
+    df_html += "<script src='/assets/js/rank-toggle.js'></script>" + how.JS_TAG
 
     # MAIN -> DF with Conf col data
     path = paths.WEB_M_DIR / f"predict_{date}.html"

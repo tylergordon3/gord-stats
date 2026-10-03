@@ -9,14 +9,13 @@ spread without ever seeing one, and it has no betting edge whatsoever.
 
 That second half is not modesty, it is the measurement. Across six held-out
 seasons the games where this model disagreed with the line by three points or
-more went 48% against the spread -- worse than a coin flip, and well under the
+more went 49.3% against the spread -- worse than a coin flip, and well under the
 52.4% that standard juice requires. Its error grows with the size of the
 disagreement while the market's does not. So the market column is here as the
 better number, not as something to bet into.
 
     python -m cfb.site.predictions
 """
-import json
 from html import escape
 from zoneinfo import ZoneInfo
 
@@ -30,10 +29,10 @@ from cfb import espn                                 # noqa: E402
 from cfb import odds as odds_mod                     # noqa: E402
 from cfb import predict                              # noqa: E402
 from cfb import results                              # noqa: E402
-from cfb.config import DATA_DIR, SEASON, WEB_DIR     # noqa: E402
+from cfb.config import SEASON, WEB_DIR               # noqa: E402
 from cfb.site import teams as teams_page              # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import bet_record, scorecard            # noqa: E402
+from gordstats import bet_record, how, scorecard       # noqa: E402
 from gordstats import charts, favorites, logos, palette, preview_page  # noqa: E402
 
 _SECTION = "cfb-predictions"
@@ -270,16 +269,6 @@ h3.pred-sub{border-top-color:#2b3852}
   table.cfb-pred td.pred-match .pm-final{color:#8fa0b8}
 }
 </style>""").replace("{accent}", ACCENT)
-
-
-def _validation() -> dict:
-    path = DATA_DIR / "model_validation.json"
-    if not path.exists():
-        return {}
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return {}
 
 
 def _with_market(games: pd.DataFrame) -> pd.DataFrame:
@@ -598,9 +587,9 @@ def _record_band(frame: pd.DataFrame) -> str:
     if frame.empty:
         return ""
     stat = results.summary(frame)
-    return (f"<p class='pred-note'>Every prediction is archived before kickoff and "
-            f"scored against the result - {stat['games']} finished game"
-            f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}.</p>"
+    return (f"<p class='pred-note'>{stat['games']} finished game"
+            f"{'s' if stat['games'] != 1 else ''}, {_span(frame)}, each graded on the "
+            f"call saved before kickoff.</p>"
             + scorecard.band(stat, break_even=BREAK_EVEN,
                              clv=bet_record.summary(results.line_moves()))
             + "<p class='pred-note rec-more'><a href='#how-it-has-gone'>How close the "
@@ -747,57 +736,13 @@ def _agreement_chart(games: pd.DataFrame) -> str:
             + "</div>")
 
 
-def _method(games: pd.DataFrame) -> str:
-    record = _validation()
-    overall = record.get("overall", {})
-    market = record.get("versus_market", {})
-    if not overall:
-        return ""
-
-    scored = record.get("scored_on", "held-out seasons")
-    lines = [
-        f"<p class='pred-note'>Ridge team ratings fitted to every result since 2014 - "
-        f"one number per team, chosen so the gap between two of them plus home field "
-        f"best explains the margins actually played. Margin and total are modeled "
-        f"separately and the score rebuilt from the two. Games decay on a "
-        f"{record.get('hyperparameters', {}).get('half_life_days', 180):.0f}-day "
-        f"half-life, so by November the evidence is almost all this season's. The "
-        f"margin is then corrected by how each side has been playing - EPA per play, "
-        f"success rate, explosiveness and line yards, opponent-adjusted, from "
-        f"CollegeFootballData's box scores.</p>",
-        f"<p class='pred-note'>Scored once on {scored}, predicting each week from only "
-        f"what had finished before it: <strong>{overall.get('margin_rmse', 0):.1f}</strong> "
-        f"points of margin RMSE against <strong>"
-        f"{overall.get('baseline_home_rmse', 0):.1f}</strong> for knowing nothing but who "
-        f"is at home, and the winner right "
-        f"<strong>{overall.get('winner_accuracy', 0):.0%}</strong> of the time. It is "
-        f"least reliable on lopsided lines, where it has historically overstated the "
-        f"favorite.</p>",
-    ]
-    if market:
-        lines.append(
-            f"<p class='pred-note'><strong>It does not beat the market.</strong> On the "
-            f"{market.get('games', 0):,} games with a closing line it managed "
-            f"{market.get('our_margin_rmse', 0):.2f} against the book's "
-            f"{market.get('market_margin_rmse', 0):.2f}. But where the two disagreed by "
-            f"three points or more it went "
-            f"<strong>{market.get('ats_when_we_disagree_by_3', 0):.1%}</strong> against "
-            f"the spread - "
-            + ("under a coin flip, and " if market.get('ats_when_we_disagree_by_3', 0) < 0.5
-               else "")
-            + f"under the "
-            f"{market.get('break_even_at_minus_110', 0.524):.1%} standard juice needs. "
-            f"Read this as a description of who is strong, not as a tip.</p>")
-    return "<h2>How it Works</h2>" + "".join(lines)
-
-
 def body() -> str:
     games = predict.week()
     scored = results.scored()
     if games.empty:
         return (_CSS + "<p class='pred-note'>No games scheduled in the next week. "
                 "Predictions return when the season does.</p>"
-                + _results_section(scored) + _method(games))
+                + how.section_note("cfb-predictions") + _results_section(scored) + how.JS_TAG)
 
     games = _with_market(games)
     matched = games["market_spread"].notna().sum()
@@ -807,11 +752,14 @@ def body() -> str:
     intro = (f"<p class='pred-note'>Every FBS game in the next seven days, "
              f"{len(games)} of them.</p>")
 
-    parts = [_CSS, _record_band(scored), f"<h2>{_week_label(games)}</h2>", intro,
+    # How the predictions are made is an explainer of its own (gordstats.how),
+    # opened from the chip beside the week's heading.
+    parts = [_CSS, _record_band(scored),
+             f"<h2>{_week_label(games)} {how.button('cfb-predictions')}</h2>", intro,
              _tiles(games), _cards(games), _results_section(scored)]
     if matched >= 5:
         parts.append(_agreement_chart(games))
-    parts.append(_method(games))
+    parts.append(how.JS_TAG)
     return "".join(parts)
 
 

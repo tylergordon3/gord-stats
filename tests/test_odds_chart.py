@@ -193,7 +193,9 @@ def test_nfl_ends_on_this_builds_table(monkeypatch):
     table = pd.DataFrame({"roster_id": [1, 2], "manager": ["Tyler", "Max"], "week": [1, 1],
                           "playoff_odds": [0.75, 0.35], "title_odds": [0.25, 0.04]})
     html = page._odds_section(table)
-    assert "<h3>Playoff and title odds</h3>" in html and "gs-odds-chart.js" in html
+    from gordstats import how
+    assert (f"<h3>Playoff and title odds {how.button('fantasy-stakes')}</h3>" in html
+            and "gs-odds-chart.js" in html)
     box = _tags(html, "div", "oc")[0]
     assert box["data-on"] == "1" and box["data-store"] == "nflMyTeam"   # MY_MANAGER
     assert ">75%</span>" in html and "60%\u00a0\u2192\u00a075%" in html

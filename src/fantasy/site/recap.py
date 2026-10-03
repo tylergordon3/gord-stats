@@ -21,7 +21,7 @@ from fantasy.config import UPCOMING_YEAR
 from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from fantasy.site import matchups as mu
-from gordstats import my_league, my_league_data, my_recap, my_team, pregame as frozen, recap
+from gordstats import how, my_league, my_league_data, my_recap, my_team, pregame as frozen, recap
 from gordstats.frontmatter import add_front_matter
 
 BASE = "/fantasy/recap/"
@@ -175,7 +175,10 @@ def _with_reader(built: str, week: int = 0, css: bool = False) -> str:
             + "<div id='rc-built'>" + built + "</div>"
             + my_league.takeover("rc-mine", "rc-built")
             + my_league_data.JS_TAG + my_league.JS_TAG + my_team.PLANNER_JS_TAG
-            + my_recap.CORE_JS_TAG + my_recap.JS_TAG)
+            + my_recap.CORE_JS_TAG + my_recap.JS_TAG
+            # The reader's recap carries the same "How this works" chips; the
+            # built one (recap.page) loads their script already.
+            + ("" if how.JS_TAG in built else how.JS_TAG))
 
 
 def _write(path, week: recap.Week, all_weeks: list, league_name: str, pinned: int = 0) -> None:

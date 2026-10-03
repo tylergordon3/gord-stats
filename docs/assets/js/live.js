@@ -185,7 +185,7 @@ function hasCurrentGames (games) {
   return Object.values(games).some(g => g && (!g.date || g.date >= cutoff))
 }
 
-// The chips, Expand All, the legend and the polling rate all act on games;
+// The chips, Expand All and the polling rate all act on games;
 // with none they are only chrome. style.display rather than `hidden`: the
 // bar's CSS display would beat the attribute.
 function showControls (on) {
@@ -960,7 +960,7 @@ function renderGames (games, medalByDate = {}) {
               ${isP5 ? `<span class="game-badge p5">P5</span>` : ''}
               ${
                 medal
-                  ? `<span class="game-badge medal ${medalClass}" title="Top 3 rating">${medal}</span>`
+                  ? `<span class="game-badge medal ${medalClass}" title="One of the day's three best-rated games">${medal}</span>`
                   : ''
               }
             </div>
@@ -1148,39 +1148,6 @@ async function start () {
 }
 
 start()
-
-document.addEventListener('DOMContentLoaded', () => {
-  const legendOverlay = document.getElementById('legend-overlay')
-  const openLegend = document.getElementById('open-legend')
-  const closeLegend = document.getElementById('close-legend')
-
-  if (!legendOverlay || !openLegend || !closeLegend) return
-
-  openLegend.addEventListener('click', () => {
-    legendOverlay.hidden = false
-    document.body.style.overflow = 'hidden'
-  })
-
-  closeLegend.addEventListener('click', () => {
-    legendOverlay.hidden = true
-    document.body.style.overflow = ''
-  })
-
-  legendOverlay.addEventListener('click', e => {
-    if (e.target === legendOverlay) {
-      legendOverlay.hidden = true
-      document.body.style.overflow = ''
-    }
-  })
-
-  // ESC key support (nice UX)
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !legendOverlay.hidden) {
-      legendOverlay.hidden = true
-      document.body.style.overflow = ''
-    }
-  })
-})
 
 document.querySelectorAll('.sort-chip[data-sort]').forEach(btn => {
   btn.addEventListener('click', () => {

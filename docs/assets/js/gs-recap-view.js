@@ -15,6 +15,9 @@
   var BASE=location.pathname.replace(/week-\d+\/?$/, '');
   // share_button.row('', '', league=True), set by the page (GSCFG).
   var SHARE=String((window.GSCFG||{}).recapShare||'');
+  // gordstats.how.button('recaps'), set by the page (GSCFG): the chip the
+  // built recap's Awards and Lineup accuracy headings carry.
+  var HOW=String((window.GSCFG||{}).recapHow||'');
   var CTX=null, NAME='', WEEKS=[], ROSTERS=[], CUR=0;
   // Kept for the page view: a week read once is drawn again from memory, and
   // the season columns reuse every week the reader has already opened.
@@ -162,7 +165,8 @@
     host.classList.toggle('rc-noav', !Object.keys(CTX.teams).some(function(t){
       return CTX.teams[t].avatar; }));
     host.innerHTML=share(k, w)+R.view(w, WEEKS, whole?R.season(span):null,
-                          {pending:!settled && !DONE[k], mine:yours, foot:foot(span, yours)});
+                          {pending:!settled && !DONE[k], mine:yours, foot:foot(span, yours),
+                           how:HOW});
     initials();
     busy(!settled && !DONE[k]);
     retitle(k);

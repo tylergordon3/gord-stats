@@ -26,7 +26,7 @@ import statistics
 from dataclasses import dataclass, field
 from html import escape
 
-from gordstats import share_button
+from gordstats import how, share_button
 
 
 @dataclass
@@ -449,11 +449,10 @@ def _accuracy(week: Week, to_date: list) -> str:
             f'<th>Wk {week.number}</th><th>Left</th><th>Season</th><th>Left</th>'
             '<th class="pf" title="Weeks with the best possible lineup">Perfect</th></tr></thead><tbody>'
             + "".join(rows) + "</tbody></table></div>"
-            '<p class="rc-note">Share of the best possible lineup each team started: points '
-            'started over the most its roster could have scored that week, by what every '
-            'player actually scored (injured reserve left out). <b>Left</b> is the '
-            'difference - points left on the bench. The season figure is total points over '
-            'total maximum.</p>')
+            # How the best lineup is found is the recaps explainer
+            # (gordstats.how), opened from the chip on the heading.
+            '<p class="rc-note">Share of the best possible lineup each team started; '
+            '<b>Left</b> is the points left on the bench.</p>')
 
 
 def week_nav(numbers: list, current: int, base: str) -> str:
@@ -474,9 +473,9 @@ def page(week: Week, weeks: list, base: str, links: str = "") -> str:
             + f'<p class="rc-lead">{escape(headline(week))}</p>' + links
             + week_nav([w.number for w in weeks], week.number, base)
             + "<h2>Scores</h2>" + _games(week)
-            + "<h2>Awards</h2>" + _awards(week)
-            + "<h2>Lineup accuracy</h2>" + _accuracy(week, to_date)
-            + "</div>")
+            + f"<h2>Awards {how.button('recaps')}</h2>" + _awards(week)
+            + f"<h2>Lineup accuracy {how.button('recaps')}</h2>" + _accuracy(week, to_date)
+            + "</div>" + how.JS_TAG)
 
 
 # --------------------------------------------------------------------------- #

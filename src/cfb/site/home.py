@@ -16,7 +16,7 @@ from cfb import yahoo
 from cfb.config import SEASON, WEB_DIR
 from cfb.site import write_page
 from cfb.site.draft import _draft_when, _roster_line
-from gordstats import my_teams_today
+from gordstats import how, my_teams_today
 from gordstats.frontmatter import liquid
 
 
@@ -62,7 +62,7 @@ def body() -> str:
 
 <section class="home-card"{"" if in_season else " hidden"}>
   <div class="home-card-head">
-    <h2>This week's bets</h2>
+    <h2>This week's bets {how.button('bets-record')}</h2>
     <a class="home-card-link" href="/cfb/predictions/">Every game &rarr;</a>
   </div>
   {liquid('{% include cfb_bets.html %}')}
@@ -70,7 +70,7 @@ def body() -> str:
 
 <section class="home-card"{"" if in_season else " hidden"}>
   <div class="home-card-head">
-    <h2>Top 25 Comparison</h2>
+    <h2>Top 25 Comparison {how.button('cfb-rankings')}</h2>
     <a class="home-card-link" href="/cfb/power/">All FBS teams &rarr;</a>
   </div>
   {liquid('{% include cfb_top25.html %}')}
@@ -97,6 +97,7 @@ def body() -> str:
     <a href="/cfb/usage/">Usage</a>
   </p>
 </section>
+{how.JS_TAG}
 """
 
 

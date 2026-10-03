@@ -28,7 +28,7 @@ from cfb import in_season, league_sim, predict, weekly, yahoo
 from cfb.config import MY_TEAM, WEB_DIR
 from cfb.site import write_page
 from cfb.site.league_power import team_rosters
-from gordstats import trade_page
+from gordstats import how, trade_page
 from gordstats.jsonio import script_json
 
 OUTPUT = WEB_DIR / "trade" / "index.html"
@@ -452,17 +452,11 @@ window.GSTradeAdapter = (function(){
 })();
 </script>{% endraw %}"""
 
+# How a deal is played out is the trade-analyzer explainer (gordstats.how),
+# opened in a dialog from the chip at the end of the intro.
 INTRO = ("<p>Pick a deal, or a free agent, and see what it does to the season: points a "
-         "week, record, and the chance of making the playoffs and winning it all.</p>")
-
-METHOD = ("<p>The rest of the season is played out " + f"{SIMS:,}" + " times with the rosters "
-          "as they are and " + f"{SIMS:,}" + " times as they would be, with the same luck both "
-          "times, so the difference is the trade. It is the simulation behind the Power tab: "
-          "each week's best lineup on this site's weekly projections (byes, opponents, injury "
-          "tags), the median game, and the bracket with its byes and reseeding. A week already "
-          "being played stays as it is. A team taking more players than it sends drops its "
-          "lowest-projected bench player; one sending more signs the best free agent at the "
-          "position it gave up.</p>")
+         "week, record, and the chance of making the playoffs and winning it all. "
+         + how.button("trade-analyzer") + "</p>")
 
 
 def body() -> str:
@@ -470,10 +464,8 @@ def body() -> str:
     if not got:
         return (trade_page.CSS + "<p>The trade analyzer opens once the season has rosters "
                 "and a schedule.</p>")
-    return (INTRO + trade_page.section('/cfb/trade/')
-            + "<details class='section' id='method'><summary>How it works</summary>"
-            + METHOD + "</details>" + data_script(got)
-            + trade_page.JS_TAG + ADAPTER_JS + trade_page.start())
+    return (INTRO + trade_page.section('/cfb/trade/') + data_script(got)
+            + trade_page.JS_TAG + ADAPTER_JS + trade_page.start() + how.JS_TAG)
 
 
 def data_script(got: dict) -> str:

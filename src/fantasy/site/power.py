@@ -7,7 +7,10 @@ and it does it without looking at where anyone was drafted — see
 `fantasy.league.power` for the simulation that turns projections into wins.
 
 Sections, each kept to its table or chart plus a line of context. All but
-Method are open on the page - they are the page; Method is reference:
+the frozen draft rankings and Model Accuracy are open on the page - they are
+the page; those two are reference. How the model works is the "How this
+works" explainers (gordstats.how: fantasy-power, fantasy-stakes), opened in a
+dialog from the chips on the section headings - not prose on the page:
   * The rankings, with record, playoff odds and the projected-wins range.
   * The playoff picture: who has clinched, who is out, what the rest need.
   * The frozen three-source draft-week rankings.
@@ -15,7 +18,7 @@ Method are open on the page - they are the page; Method is reference:
     and its rating build by build.
   * Where each team's strength sits, position by position, starters and
     bench, on Sleeper's season projections.
-  * Method, with player accuracy and the roster backtest.
+  * Model Accuracy: player accuracy and the roster backtest.
 
     python -m fantasy.site.power
 """
@@ -37,7 +40,7 @@ from fantasy.config import (                                   # noqa: E402
 from fantasy.league import consensus, external, power, validation  # noqa: E402
 from fantasy.league import matchups as league_matchups         # noqa: E402
 from fantasy.site import layout, styles                        # noqa: E402
-from gordstats import charts, clinch, palette, share_button, share_card, stakes  # noqa: E402
+from gordstats import charts, clinch, how, palette, share_button, share_card, stakes  # noqa: E402
 from gordstats import odds_chart                                # noqa: E402
 from gordstats import my_league, my_league_data, my_power       # noqa: E402
 from gordstats.frontmatter import add_front_matter             # noqa: E402
@@ -56,8 +59,9 @@ CONTEXT = palette.CONTEXT
 # (anchor, heading, jump-bar label, collapsible). The playoff picture - who
 # has clinched, who is out, what the rest need - sits right under the
 # rankings, and how the rankings have moved after it; the draft-week table,
-# frozen on draft week, folds away with Method - it is the fixed point later
-# ratings are read against, and by October a reference rather than the news.
+# frozen on draft week, folds away with Model Accuracy - it is the fixed point
+# later ratings are read against, and by October a reference rather than the
+# news. The anchor stays "method" for links made before it was renamed.
 SECTIONS = [
     ("mine", "Your League", "Yours", False),
     ("rankings", "Power Rankings", "Rankings", False),
@@ -66,8 +70,11 @@ SECTIONS = [
     ("stakes", "This Week's Stakes", "Stakes", False),
     ("positions", "Positional Strength", "Positions", False),
     ("draft-consensus", "Draft Rankings (frozen)", "Draft", True),
-    ("method", "Method", "Method", True),
+    ("method", "Model Accuracy", "Accuracy", True),
 ]
+# The "How this works" explainer (gordstats.how) each section's heading
+# carries a chip for.
+HOW = {"rankings": "fantasy-power", "playoffs": "fantasy-stakes", "stakes": "fantasy-stakes"}
 
 INTRO = f"""<p id="pw-intro">Every Sleeper roster played through {UPCOMING_SEASON}
 ten thousand times, averaged with the FantasyPros League Analyzer. <strong>100 is
@@ -388,7 +395,7 @@ def _odds_section(table: pd.DataFrame) -> str:
                          "playoff": both["playoff_odds"], "title": both["title_odds"]})
     names = {str(int(r)): str(m) for r, m in zip(table["roster_id"], table["manager"])}
     mine = next((k for k, m in names.items() if m == MY_MANAGER), "")
-    return ("<h3>Playoff and title odds</h3>"
+    return (f"<h3>Playoff and title odds {how.button('fantasy-stakes')}</h3>"
             + odds_chart.section(odds_chart.by_week(rows), names, mine=mine,
                                  storage="nflMyTeam", sid="oc-nfl")
             + odds_chart.JS_TAG)
@@ -694,7 +701,7 @@ def _positions_section(rosters: pd.DataFrame, table: pd.DataFrame) -> str:
 
 
 # --------------------------------------------------------------------------- #
-# Method + backtest
+# Model accuracy: the player projections and the roster backtest
 # --------------------------------------------------------------------------- #
 
 def _player_accuracy_section(scored: dict) -> str:
@@ -750,28 +757,10 @@ def _backtest_section(scored: dict) -> str:
 
 
 def _method_section() -> str:
+    """How well the model has done. How it works is the fantasy-power
+    explainer (gordstats.how) - the method's prose bullets used to be here."""
     scored = validation.load()
-    from fantasy.projections import MARKET_WEIGHT
-
-    market_pct = round(MARKET_WEIGHT * 100)
-    return ("<ul>"
-            f"<li><strong>Projection:</strong> {market_pct}% consensus ADP (turned into "
-            f"points by a per-position curve), {100 - market_pct}% a usage ridge regression "
-            "on last season's targets, carries, air yards and WOPR. Consensus correlated "
-            "0.81 with actual points in held-out seasons vs 0.53 for usage alone.</li>"
-            "<li><strong>Rookies</strong> without an ADP line: NFL draft capital. "
-            "<strong>K and DEF</strong>: positional mean (no predictive signal).</li>"
-            "<li><strong>In season:</strong> each player's actual points per game are "
-            "weighed against five games of the preseason projection, and a back's, "
-            "receiver's or tight end's rate is then taken halfway to Sleeper's own "
-            "projections for the last three weeks - on 2023-25 the blend predicted the "
-            "next month better than either alone. Played weeks are locked in and only "
-            "the rest is simulated.</li>"
-            "<li><strong>Injuries</strong> persist for weeks at a time; Sleeper's "
-            "Out/IR/PUP designations start a player out. Every simulated season draws each "
-            "player's true rate from his projection's error bar.</li>"
-            "</ul>"
-            "<h3>Player accuracy</h3>"
+    return ("<h3>Player accuracy</h3>"
             "<p>Correlation of projected with actual points per game, each season "
             "rebuilt from prior years only.</p>"
             + _player_accuracy_section(scored)
@@ -788,8 +777,7 @@ def _method_section() -> str:
 PRE_DRAFT = f"""<p>The {UPCOMING_SEASON} draft has not happened yet, so there are no
 rosters to rank. This page fills in as soon as the last pick is in &mdash; it reads
 the draft straight from Sleeper, the same way the
-{layout.internal_link('/fantasy/draft/', 'draft page')} does.</p>
-<p>What it will show, and how it gets there, is below.</p>"""
+{layout.internal_link('/fantasy/draft/', 'draft page')} does.</p>"""
 
 
 def body() -> str:
@@ -809,16 +797,16 @@ def body() -> str:
     except power.NoRosters as exc:
         print(f"[power] no rankings yet: {exc}")
         charts.clear(_SECTION)
-        return (f"<div id='pw-intro'>{PRE_DRAFT}</div>" + my_league.bar()
+        return (f"<div id='pw-intro'>{PRE_DRAFT}{how.section_note('fantasy-power')}</div>"
+                + my_league.bar()
                 + "<section id='mine' class='pw-section'>"
                 + "<h2 id='pw-mine-h'>Your League</h2>"
                 + my_power.section(int(UPCOMING_YEAR)) + "</section>"
                 + "<div id='pw-built'>" + _TABLE_CSS + layout.details(
-                    "Method &mdash; what this will measure, and how well it works",
-                    _method_section(), open=True, anchor="method")
+                    "Model Accuracy", _method_section(), open=True, anchor="method")
                 + "</div>"
                 + my_league_data.JS_TAG + my_league.JS_TAG
-                + my_power.SIM_JS_TAG + my_power.JS_TAG)
+                + my_power.SIM_JS_TAG + my_power.JS_TAG + how.JS_TAG)
 
     charts.clear(_SECTION)            # only now: a failed run keeps the last page's charts
     _CARD["table"] = table
@@ -846,16 +834,25 @@ def body() -> str:
     # the page over: somebody who has synced a league is here for that league,
     # and two rankings of two different leagues on one page only invites the
     # question of whose numbers are on screen. my_power hides this.
+    def head(anchor: str, summary: str) -> str:
+        topic = HOW.get(anchor)
+        return f"<h2>{summary}" + (f" {how.button(topic)}" if topic else "") + "</h2>"
+
     rest = "".join(
         layout.details(summary, content[anchor], anchor=anchor) if folds
-        else f"<section id='{anchor}' class='pw-section'><h2>{summary}</h2>{content[anchor]}</section>"
+        else (f"<section id='{anchor}' class='pw-section'>{head(anchor, summary)}"
+              f"{content[anchor]}</section>")
         for anchor, summary, _, folds in SECTIONS
         if anchor != "mine" and content[anchor])
+    # The reader's own league: gs-power.js rewrites the heading's text with
+    # the league's name, so the chip sits on a line of its own under it.
     return (INTRO + my_league.bar() + _reader_share()
             + "<section id='mine' class='pw-section'>"
-            + "<h2 id='pw-mine-h'>Your League</h2>" + content["mine"] + "</section>"
+            + "<h2 id='pw-mine-h'>Your League</h2>" + how.section_note("fantasy-power")
+            + content["mine"] + "</section>"
             + f"<div id='pw-built'>{_TABLE_CSS}{nav}{rest}</div>"
-            + my_league_data.JS_TAG + my_league.JS_TAG + my_power.SIM_JS_TAG + my_power.JS_TAG)
+            + my_league_data.JS_TAG + my_league.JS_TAG + my_power.SIM_JS_TAG + my_power.JS_TAG
+            + how.JS_TAG)
 
 
 def _reader_share() -> str:

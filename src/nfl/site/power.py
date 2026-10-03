@@ -34,7 +34,7 @@ import pandas as pd
 
 from cfb.site.power import (_CSS, _JS, ALL, _chg, _pct, _plain, _switcher, _td, _th,
                              _window_picker)
-from gordstats import favorites, logos, rankmoves, share_card
+from gordstats import favorites, how, logos, rankmoves, share_card
 from gordstats.frontmatter import add_front_matter
 from nfl import fpi, predict
 from nfl.config import DATA_DIR, SEASON, TZ, WEB_DIR
@@ -354,25 +354,13 @@ def body() -> str:
             field=field, extra=(" mv-th" if label == "Move" else ""))
         for views, label, tip, direction, _cell, field in cols)
 
-    move_note = ""
-    if show_move:
-        move_note = (" <strong>Move</strong> is the change in whichever column the table is "
-                     "sorted by since the point the buttons pick; it opens on "
-                     f"<em>{bases[first_win]['label']}</em> ({first_at:%b %-d}).")
-    intro = (
-        "<details class='section'><summary>About these rankings</summary>"
-        "<p class='power-note'><strong>GordStats</strong> is <a href='/nfl/'>this site's own "
-        "rating</a> - points better than an average team on a neutral field - and the order "
-        "the table opens in. <strong>FPI</strong> is ESPN's version of the same idea; "
-        "<strong>Off</strong>, <strong>Def</strong> and <strong>ST</strong> split it into "
-        f"what each unit adds.{move_note}</p>"
-        "<p class='power-note'><strong>Odds</strong> is ESPN's season simulations: the "
-        "projected record, and the chance of the playoffs, the division, the Super Bowl "
-        "(<strong>Conf%</strong>) and winning it (<strong>SB%</strong>). <strong>SOS</strong> "
-        "is strength-of-schedule rank, hardest first. Tap a header to sort, again to "
-        "reverse; each team's page has its schedule and projected record.</p></details>"
-        "<p class='power-note'><a href='/nfl/playoff/'>Playoff odds</a>: who makes the field, "
-        "on our model beside ESPN's.</p>")
+    # How the ratings are made is an explainer of its own (gordstats.how),
+    # opened from the chip; each column is defined in its header's tooltip.
+    move_note = ("<p class='power-note'><strong>Move</strong> is the sorted column's change "
+                 "since the <strong>Since</strong> menu's pick.</p>" if show_move else "")
+    intro = (how.section_note("nfl-rankings") + move_note
+             + "<p class='power-note'><a href='/nfl/playoff/'>Playoff odds</a>: who makes the "
+             "field, on our model beside ESPN's.</p>")
 
     _snapshot(teams)
     blob = json.dumps({"deltas": deltas, "kinds": kinds, "chg": {"fpi": 1, "gs": 1},
@@ -386,7 +374,7 @@ def body() -> str:
             + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(body_rows)}</tbody></table></div>"
             + "<script type='application/json' id='pwr-deltas'>" + blob + "</script>"
-            + _JS)
+            + _JS + how.JS_TAG)
 
 
 _CARD: dict = {}

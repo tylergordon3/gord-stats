@@ -33,7 +33,7 @@ from fantasy.league import defense
 from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from fantasy.site import matchups as mu
-from gordstats import logos, my_league, my_league_data
+from gordstats import how, logos, my_league, my_league_data
 from gordstats import strength_page as page
 from gordstats.frontmatter import add_front_matter
 
@@ -324,22 +324,19 @@ def body(league: League = None) -> str:
                else "<p class='st-wait'>No finished week to rate a defense on yet.</p>")
     return (
         page.CSS
+        # How the ratings are made is the schedule-strength explainer
+        # (gordstats.how), opened from the chip beside the par line.
         + "<p><strong>1.00 is par</strong>: above 1, a defense to attack; below 1, one "
-        f"to avoid. From {weeks_word} so far.</p>"
-        "<details class='section'><summary>How this is worked out</summary>"
-        "<p class='st-note'>Fantasy points each defense has allowed to a position, from "
-        "Sleeper's weekly stats in this league's PPR scoring, against the league average "
-        "at that position - 1.00 is a defense giving up exactly the average. Ratings on "
-        f"fewer than {defense.FULL_WEIGHT_GAMES} games are pulled toward par, so one "
-        "shootout does not brand a defense for the season.</p>"
-        "<p class='st-note'>The schedule weights each player by his projected points per "
-        "game, so a schedule is only easy where a roster starts somebody. A player on a "
-        "bye is left out of that week; the count under a rating is how many of the "
-        "roster's usual starters are off.</p></details>"
+        f"to avoid. From {weeks_word} so far. " + how.button("schedule-strength") + "</p>"
         + my_league.bar()
         + "<h2 id='schedule'>Schedule ahead</h2>"
-        "<p class='st-note'>Each roster's next weeks, priced by who its players face. "
-        "Higher is easier.</p>"
+        # price() weighs every player on the roster but the reserve list - the
+        # bench too - by his projection; `starter` only counts the byes.
+        "<p class='st-note'>Each roster's next weeks, priced by who its players face: every "
+        "player on the roster, bench included (injured reserve aside), weighted by his "
+        "projected points per game. Higher is easier. A player on a bye is left out of that "
+        "week; the count under a rating is how many of the roster's usual starters are "
+        "off.</p>"
         "<div id='st-mine-wrap' hidden><div id='st-mine'></div></div>"
         f"<div id='st-built'>{schedule}</div>"
         + my_league.takeover("st-mine-wrap", "st-built")
@@ -349,7 +346,7 @@ def body(league: League = None) -> str:
         "hands a defense.</p>"
         + defence
         + page.SCHEDULE_JS + _mark_built(lg.mine())
-        + my_league_data.JS_TAG + my_league.JS_TAG + READER_JS)
+        + my_league_data.JS_TAG + my_league.JS_TAG + READER_JS + how.JS_TAG)
 
 
 def generate():

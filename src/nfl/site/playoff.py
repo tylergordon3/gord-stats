@@ -1,8 +1,9 @@
 """
 NFL playoff odds (docs/nfl/playoff/): the field projected on this site's own
 model (nfl.playoff), drawn by the shared renderer (gordstats.playoff_page) -
-the likeliest seven a conference, every team's chances beside ESPN FPI's, and
-the method, folded. The college page's twin (cfb.site.playoff).
+the likeliest seven a conference and every team's chances beside ESPN FPI's;
+the method is the "How this works" explainer (gordstats.how, playoff-odds)
+the chip by the bracket opens. The college page's twin (cfb.site.playoff).
 
 Before Week 1 there is nothing to project and it says so. Once the regular
 season is over the seeds are the real ones and the figure becomes the chance
@@ -101,27 +102,6 @@ def _table(res, league, espn: dict) -> str:
     return playoff_page.odds_table(rows, columns, "nfl", sort_key="playoff")
 
 
-def _method(n: int) -> str:
-    return playoff_page.method([
-        f"Every game left is played {n:,} times on <a href='/nfl/'>the GordStats model</a>, "
-        "with the win chances the predictions page prints. Each team's rating also drifts "
-        "from run to run, a little more for every week ahead - sized to how far teams really "
-        "strayed from the model in 2015-2025 - so a team better than we think wins its games "
-        "together. A simulated game is never a tie; a real one counts half.",
-        "<strong>Seeds:</strong> the four division winners are 1-4 by record, then three wild "
-        "cards; the 1 seed alone has a bye. Wild Card weekend is 2 vs 7, 3 vs 6 and 4 vs 5, the "
-        "divisional round reseeds, and the higher seed hosts until the Super Bowl.",
-        "<strong>Tiebreaks</strong>, the NFL's own order as far as it goes here: in a division "
-        "head-to-head, then division record, then conference record; for seeds and wild cards "
-        "head-to-head (with three or more teams only a sweep counts), then conference record - "
-        "a wild-card tie inside one division settled the division's way first. Common games, "
-        "strength of victory and the rest are not modeled: a coin stands in for them.",
-        "The bracket above takes each division's likeliest winner and the three likeliest of the "
-        "rest, seeded by their average seeds. <strong>FPI</strong> is ESPN's own simulation's "
-        "playoff chance.",
-    ])
-
-
 def body() -> str:
     res, league = playoff.project()
     if res is None:
@@ -144,18 +124,20 @@ def body() -> str:
         won = league.champion if league.champion is not None else next(
             (i for i in range(len(league.teams)) if res.title[i] >= 0.999), None)
         champ = None if won is None else league.names[league.teams[won]][0]
-        head = "<h2>The bracket</h2>" + (
+        head = playoff_page.heading("The bracket") + (
             f"<p class='po-note'>The {escape(champ)} won the Super Bowl.</p>" if champ else "")
     elif state == "set":
-        head = ("<h2>The bracket</h2><p class='po-note'>The regular season is over. % is the "
+        head = (playoff_page.heading("The bracket")
+                + "<p class='po-note'>The regular season is over. % is the "
                 "chance to win the Super Bowl.</p>")
     else:
-        head = ("<h2>Projected bracket</h2><p class='po-note'>The likeliest seven a "
+        head = (playoff_page.heading("Projected bracket")
+                + "<p class='po-note'>The likeliest seven a "
                 "conference; % is each team's chance to make it.</p>")
     table_head = ("<h2>Every team</h2><p class='po-note'>Chances in percent, ours beside "
                   "ESPN FPI's. Tap a column to sort.</p>")
     return playoff_page.page(head, _bracket(res, league, seeds, state), table_head,
-                             _table(res, league, espn), _method(res.n))
+                             _table(res, league, espn))
 
 
 _CARD: dict = {}

@@ -368,21 +368,13 @@ ADAPTER_JS = CSS + """<script>
 </script>"""
 
 
-HOW = (f"Each window's games, best first, by a watch score out of 100: how good both teams are "
-       f"by GordStats rank (#1 counts 100, #{HALF_LIFE + 1} half that, #{2 * HALF_LIFE + 1} a "
-       f"quarter; the weaker team weighs most), all of it for a coin flip by our model and half "
-       f"for a sure thing. A Top 25 matchup and a tournament game each close a quarter of the "
-       f"gap to 100 (the NCAA tournament twice). Toss-up: {TOSS_UP[0]:.0%}-{TOSS_UP[1]:.0%}. "
-       f"Upset watch: the underdog at {UPSET_WATCH:.0%}+. Your starred teams go first; while games "
-       f"are on, one within {CLOSE} in the last five minutes, an overtime or an underdog ahead in "
-       f"the second half jumps the line.")
 
 
 def body(cfg: dict = None) -> str:
     """The page: no games in it (the browser reads them), only the adapter
     with `cfg` (config(), or a test's) where it says __CONFIG__."""
     adapter = ADAPTER_JS.replace("__CONFIG__", json.dumps(cfg or config(), separators=(",", ":")))
-    return watch_page.body(None, adapter, HOW, "/cbb/watch/",
+    return watch_page.body(None, adapter, "cbb-watch", "/cbb/watch/",
                            "What to watch in college basketball today")
 
 

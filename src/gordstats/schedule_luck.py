@@ -149,13 +149,13 @@ def html(frame: pd.DataFrame, names: dict, season_label: str = "") -> str:
                else "the strongest opponents of anyone")
         lead = (f"<p class='sl-note'><b>Hardest: {escape(str(names.get(worst.team, worst.team)))}"
                 f"</b>, {-worst['schedule']:.1f} wins lost - {why}.</p>")
+    # How it is worked out is the schedule-strength explainer (gordstats.how),
+    # opened from a chip the page puts by this section's heading; each column
+    # says what it is in its header's tooltip.
     legend = (f"<p class='sl-note'>{season_label + '. ' if season_label else ''}"
-              f"<b>Schedule</b> is what the schedule has cost (&minus;) or given (+) over "
-              f"{games} game{'s' if games != 1 else ''}, in wins: the head-to-head record "
-              "against what the team's scores would have won against the whole league. It "
-              "splits into <b>Opp. strength</b>, how good the teams faced normally are, and "
-              "<b>Opp. timing</b> - the luck - opponents scoring above (&minus;) or below (+) "
-              "their normal against it. The median game is left out; no schedule changes it.</p>")
+              f"Wins the schedule has cost (&minus;) or given (+) over {games} "
+              f"game{'s' if games != 1 else ''}, split into the opponents' strength and "
+              "their timing.</p>")
     head = "".join((f"<th title='{escape(tip, quote=True)}'>" if tip else "<th>") + f"{label}</th>"
                    for label, tip in (
         ("Team", ""),

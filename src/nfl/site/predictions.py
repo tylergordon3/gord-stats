@@ -6,23 +6,23 @@ the other league.
 One card per game, a week at a time, the week being played open: this
 site's line beside the book's, the projected score, and once a game is
 final the score and whether the call was right. Above the cards, the
-season's record so far; below them, the ratings the model runs on and how it
-did on six held-out seasons before it was allowed to say anything here.
+season's record so far; below them, the ratings the model runs on. How the
+model works and how it tested is its "How this works" explainer
+(gordstats.how, nfl-predictions), opened from the chip by the scorecard.
 
     python -m nfl.site.predictions
 """
-import json
 from html import escape
 
 import numpy as np
 import pandas as pd
 
 from cfb.site.predictions import _CSS, _fmt_spread
-from gordstats import bet_record, logos, preview_page, scorecard
+from gordstats import bet_record, how, logos, preview_page, scorecard
 from gordstats import matchup_page as ui
 from gordstats.frontmatter import add_front_matter
 from nfl import games as games_mod, predict, results
-from nfl.config import DATA_DIR, SEASON, TZ, WEB_DIR
+from nfl.config import SEASON, TZ, WEB_DIR
 
 EDGE = 3.0                      # points from the book before a lean is worth naming
 BREAK_EVEN = 0.524
@@ -47,13 +47,6 @@ table.cfb-pred td.rt-name img{width:22px;height:22px;vertical-align:-6px;margin:
   .pg-actual{color:#aab7c9}.pg-lean{color:#ffb457}.rt-bar{background:#2b3852}
 }
 </style>"""
-
-
-def _validation() -> dict:
-    try:
-        return json.loads((DATA_DIR / "model_validation.json").read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
 
 
 def _scores(game) -> tuple:
@@ -270,27 +263,6 @@ def _ratings_table(model, names: dict, schedule: pd.DataFrame) -> str:
             f"<tbody>{''.join(rows)}</tbody></table></div>")
 
 
-def _method(model, valid: dict) -> str:
-    overall = valid.get("overall") or {}
-    hp = valid.get("hyperparameters") or {}
-    return (
-        "<h2>How it Works</h2>"
-        "<p class='pred-note'>The same model as the <a href='/cfb/predictions/'>college "
-        "page</a>: one strength number per team plus home field "
-        f"(<b>{model.hfa:.1f}</b> points), fitted by ridge regression to every game since "
-        f"2014, with older games fading on a {hp.get('half_life_days', 180):.0f}-day "
-        "half-life. Margin and total are modeled separately; the scores and the win "
-        "probability fall out of them.</p>"
-        + (f"<p class='pred-note'><b>Before this page existed</b> it was scored "
-           f"walk-forward on {overall.get('games', 0)} games: margin RMSE "
-           f"<b>{overall.get('margin_rmse', 0):.2f}</b>, winners "
-           f"<b>{overall.get('winner_accuracy', 0):.1%}</b>. The closing line runs about "
-           "13.3 and 66-67% over the same years - there are no injuries, no weather and "
-           "no quarterback news in this model, and the book has all three. Where the two "
-           "differ by a field goal the card says <i>lean</i>.</p>"
-           if overall else ""))
-
-
 def _bets_card() -> str:
     """This week's bets, as Home carries them (nfl.site.homecards writes the
     include). Only once the include exists: a missing one fails the whole
@@ -299,7 +271,8 @@ def _bets_card() -> str:
     from gordstats.frontmatter import liquid
     if not homecards.BETS_OUT.exists():
         return ""
-    return "<h2>This week's bets</h2>" + liquid("{% include nfl_bets.html %}")
+    return (f"<h2>This week's bets {how.button('bets-record')}</h2>"
+            + liquid("{% include nfl_bets.html %}"))
 
 
 def body() -> str:
@@ -307,7 +280,6 @@ def body() -> str:
     record = {str(r["game_id"]): r for _, r in results.on_record(SEASON).iterrows()}
     scored = results.scored(SEASON)
     week, seasontype = predict.current_week(frame)
-    valid = _validation()
 
     blocks = [(key, block) for key, block in frame.groupby(["seasontype", "week"], sort=True)]
     views, weeks, labels = {}, [], {}
@@ -328,17 +300,19 @@ def body() -> str:
         _CSS + _EXTRA_CSS
         # The subtitle under the title already says what the page is; saying it
         # again in the first line of the body is the Top 25 card's old problem.
-        + "<h2>Season scorecard</h2>" + _record_band(scored)
+        # How the model works is an explainer of its own (gordstats.how),
+        # opened from the chips beside the scorecard and the ratings.
+        + f"<h2>Season scorecard {how.button('nfl-predictions')}</h2>" + _record_band(scored)
         + _bets_card()
         + f"<h2>{escape(labels[current])}</h2>"
         + switch
-        + "<h2>Ratings</h2>"
+        + f"<h2>Ratings {how.button('nfl-rankings')}</h2>"
         "<p class='pred-note'>Points better than an average team on a neutral field; "
         "Off and Def are what the model expects a team to score and allow against an "
         "average opponent.</p>"
         + _ratings_table(model, names, frame)
         + _closeness(scored)
-        + _method(model, valid))
+        + how.JS_TAG)
 
 
 def generate():

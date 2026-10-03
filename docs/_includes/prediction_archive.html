@@ -1,7 +1,10 @@
 <!-- One line up top and the key folded (2026-09-29 phone pass: 93 words
      stood between the title and the date picker). -->
 <p class="week-meta">The projected field as it stood on any day of any season. The newest is on
-the <a class="league-route no-rewrite" data-page="bracketology" href="#">Bracketology page</a>.</p>
+the <a class="league-route no-rewrite" data-page="bracketology" href="#">Bracketology page</a>.
+<!-- How the field is built: the cbb-rankings explainer (gordstats.how), the
+     chip being how.button("cbb-rankings") as it is (tests/test_how_pages.py). -->
+<a class='gs-how' href='/how/cbb-rankings/' data-how='cbb-rankings' data-how-title='How the college basketball rankings work' aria-haspopup='dialog' aria-label='How this works: college basketball rankings'><span class='gs-how-chip'><span class='gs-how-i' aria-hidden='true'>i</span>How this works</span></a></p>
 
 <details class="section">
 <summary>What the columns mean</summary>
@@ -99,3 +102,4 @@ that window (<strong>NR</strong> = newly ranked, <strong>-</strong> = no change)
     .catch(function () { fail("Archive manifest unavailable."); });
 })();
 </script>
+<script defer src="{{ '/assets/js/gs-how.js' | fingerprint | relative_url }}"></script>

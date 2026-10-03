@@ -87,7 +87,10 @@ def test_the_table_leads_with_the_biggest_swing_and_marks_the_game():
     rows = re.findall(r"<td class='t'>([^<]*)</td>", html[html.index("<tbody>"):])
     # swings 36, 29, 20, 8
     assert rows == ["Mike Locksley", "I Stand With Diggs", "Puntaholics", "Too B1G"]
-    assert html.count("class=gw-row") == 2 and "<th>Swing</th>" in html
+    assert html.count("class=gw-row") == 2 and ">Swing</th>" in html
+    # Swing's meaning is its header's tooltip; the method is the explainer's.
+    assert "in percentage points'>Swing</th>" in html
+    assert "split on that game" not in html
 
 
 def test_the_file_the_matchups_page_reads_is_for_its_week_only(tmp_path):

@@ -36,7 +36,7 @@ from fantasy.league import matchups as data_mod
 from fantasy.site import layout
 from gordstats import logos, matchup_page as ui
 from gordstats import my_league, my_league_data, my_matchups, my_week
-from gordstats import clinch, share_button, share_card, stakes
+from gordstats import clinch, how, share_button, share_card, stakes
 from gordstats.frontmatter import add_front_matter
 
 LEAGUE_URL = f"https://sleeper.com/leagues/{UPCOMING_LEAGUE_ID}"
@@ -1309,7 +1309,10 @@ def build() -> tuple:
     views[current] = _game_of_week(current) + _playoff_news(current) + views[current]
     scored = accuracy_section(datas, ctx)
 
-    built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
+    # How the projections, the injury pricing and the win chances are made is
+    # an explainer of its own (gordstats.how: fantasy-projections), opened
+    # from the chip in the intro; "How to read this page" keeps only what
+    # reading the tables needs.
     html = (
         ui.CSS
         + my_league.bar()
@@ -1320,7 +1323,8 @@ def build() -> tuple:
                               "&seasontype=2")
         + '<div id="mm-built">' + _share_row() + _recap_teaser()
         + f'<p><a href="{LEAGUE_URL}"><strong>{escape(lg["name"] or "The league")}</strong></a> '
-        f"— every {UPCOMING_SEASON} matchup, live while games are on.</p>"
+        f"— every {UPCOMING_SEASON} matchup, live while games are on. "
+        + how.button("fantasy-projections") + "</p>"
         "<details class='section'><summary>How to read this page</summary>"
         "<p>The <b>Median Tracker</b> ranks every team by points so far (by projection "
         "before kickoff), each with its expected final (points plus what its unfinished "
@@ -1335,32 +1339,19 @@ def build() -> tuple:
         "finishes against the others' ceilings and floors. "
         "<b>Med</b> is each team's margin against the week's median score - the league "
         "plays a second game against it every week - live once games are on, on the "
-        "expected finals before. <b>GS Proj</b> is "
-        "this site's projection for the week: the power model's points per game for "
-        "each player, tilted by the market's implied total for his team this week "
-        "(a defense the other way, on what its opponent is expected to score), and "
-        "zero on a bye. A Questionable or Doubtful player counts at his projection times "
-        "the chance he plays - the <b>plays 70%</b> pill by his tag, from ten seasons of "
-        "official injury reports read by his role and his last practice before the final "
-        "report; <b>back ~Nov 1</b> is ESPN's expected return for a player held out. "
-        "Beside it, three outside projections for the same week: "
-        "<b>Slpr</b> is Sleeper's, <b>ESPN</b> is ESPN's, <b>FP</b> is the FantasyPros "
-        "expert consensus (whose start/sit grade sits by the name); their average is "
-        "the <b>Consensus</b> the scoreboard compares us against. <b>Pts</b> is the "
-        "blended projection (gray) - GordStats, Sleeper, ESPN and FantasyPros averaged, "
-        "so no one source's lean sets it - until a player's game kicks off, then his points "
-        "with the expected final under them (points plus the unplayed share of the "
-        "blend), refreshed about once a minute, then <i>final</i>. The Median Tracker "
-        "and <b>Med</b> run on the same blend; the win bars are GordStats alone. "
-        "Ahead of the final whistle a roster whose bench out-projects a starter gets "
-        f"the swap spelled out under the table. Rebuilt several times a day and every "
-        f"ten minutes while games are on (last: {built}); finished weeks stay on "
-        "record. Season-long standing lives on the "
-        '<a href="/fantasy/power/">power rankings</a>.</p></details>'
+        "expected finals before.</p>"
+        "<p><b>GS Proj</b> is this site's projection; <b>Slpr</b>, <b>ESPN</b> and <b>FP</b> "
+        "are Sleeper's, ESPN's and FantasyPros' (FP's start/sit grade sits by the name), and "
+        "<b>Consensus</b> their average. <b>Pts</b> (gray) is all four averaged until a "
+        "player's game kicks off, then his points, then <i>final</i>. The win bars are "
+        "GordStats alone. Ahead of the final whistle a roster whose bench out-projects a "
+        "starter gets the swap spelled out under the table. Finished weeks stay on record; "
+        'season-long standing is on the <a href="/fantasy/power/">power rankings</a>.</p>'
+        "</details>"
         + scored + ui.week_switch(weeks, current, views, src=WEEK_URL)
         + "</div>"
         + MEDIAN_TRACKER_JS + ui.LIVE_JS + my_league.JS_TAG
-        + my_league_data.JS_TAG + my_week.JS_TAG + my_matchups.JS_TAG)
+        + my_league_data.JS_TAG + my_week.JS_TAG + my_matchups.JS_TAG + how.JS_TAG)
     return html, views
 
 

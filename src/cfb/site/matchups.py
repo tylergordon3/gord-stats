@@ -28,7 +28,7 @@ import pandas as pd
 from cfb import in_season, predict, pregame, projections, schools as schools_mod, weekly, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import write_page
-from gordstats import clinch, logos, matchup_page as ui, share_button, share_card, stakes
+from gordstats import clinch, how, logos, matchup_page as ui, share_button, share_card, stakes
 
 OUTPUT = WEB_DIR / "matchups" / "index.html"
 #: Where a week other than the current one is fetched from: requested without
@@ -864,38 +864,32 @@ def build() -> tuple:
              for w in weeks}
     views[current] = _game_of_week(current) + _playoff_news(current) + views[current]
 
-    built = datetime.now(LEAGUE_TZ).strftime("%b %-d, %-I:%M %p %Z")
     info = _CARDS.get(current)
     share = share_button.row("/cfb/matchups/", share_card.matchups_line(
         current, info["pairs"], info["started"], info["final"]) if info else "")
+    # How GS Proj is made is the fantasy-projections explainer (gordstats.how),
+    # opened from the chip in the intro; "How to read this page" keeps only
+    # what reading the tables needs.
     html = (
         ui.CSS + share
         # One line: the recap teaser under it says the rest.
         + f'<p><a href="{escape(lg["url"], quote=True)}"><strong>{escape(lg["name"])}</strong></a> — every '
-        "matchup, live while games are on.</p>"
+        "matchup, live while games are on. " + how.button("fantasy-projections") + "</p>"
         + _recap_teaser()
         + "<details class='section'><summary>How to read this page</summary>"
-        "<p><b>GS Proj</b> is this site's own "
-        "projection for the week: each player's season projection spread over "
-        "his school's games, tilted by what the game model expects of this "
-        "week's game, and zero on a bye. <b>Pts</b> is the projection (gray) "
-        "until a player's game kicks off, then his Yahoo points with the expected final "
-        "under them, then <i>final</i>. <b>Med</b> is each "
-        "team's margin against the week's median score - the league plays a second game "
-        "against it every week - live once games are on, on projection before. <b>Yahoo</b> is "
-        "Yahoo's own projection for the player (Rotowire's numbers, read from the league's "
-        "team pages), whose starters add up to the Yahoo team total in each header; the "
-        "start/sit advice runs on GS Proj. A player past our board's depth shows "
-        "&mdash; under GS Proj but still plays. While games are on, points, stat lines "
-        "and each source's expected final and win chance refresh in place about once a minute. Ahead of "
-        "kickoff a roster whose bench "
-        "out-projects a starter gets the swap spelled out under the table. "
-        f"Rebuilt several times a day (last: {built}); finished weeks stay on "
-        'record. Standings and waivers are on the <a href="/cfb/league/">league '
-        'dashboard</a>, season-long roster strength on the '
-        '<a href="/cfb/league/power/">power rankings</a>.</p></details>'
+        "<p><b>GS Proj</b> is this site's projection for the week, <b>Yahoo</b> Yahoo's "
+        "(Rotowire's numbers), whose starters add up to the Yahoo team total in each header; "
+        "the start/sit advice runs on GS Proj. <b>Pts</b> is the projection (gray) until a "
+        "player's game kicks off, then his Yahoo points with the expected final under them, "
+        "then <i>final</i>. <b>Med</b> is each team's margin against the week's median score "
+        "- the league plays a second game against it every week - live once games are on, on "
+        "projection before. A player past our board's depth shows &mdash; under GS Proj but "
+        "still plays. Ahead of kickoff a roster whose bench out-projects a starter gets the "
+        "swap spelled out under the table. Finished weeks stay on record. Standings and "
+        'waivers are on the <a href="/cfb/league/">league dashboard</a>, season-long roster '
+        'strength on the <a href="/cfb/league/power/">power rankings</a>.</p></details>'
         + ui.week_switch(weeks, current, views, src=WEEK_URL) + accuracy_section(datas)
-        + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS)
+        + ui.MEDIAN_TRACKER_JS + ui.LIVE_JS + how.JS_TAG)
     return html, views
 
 

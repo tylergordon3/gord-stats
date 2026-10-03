@@ -308,10 +308,11 @@ def _cbb_home_body(today: date) -> str:
   {_top_ten()}
 </section>
 """
+    from gordstats import how
     bracket = f"""
 <section class="home-card">
   <div class="home-card-head">
-    <h2>Bracketology</h2>
+    <h2>Bracketology {how.button('cbb-rankings')}</h2>
     <a class="home-card-link" href="{href}">{label}</a>
   </div>
   <p>The projected tournament field: seeds, bubble, and the teams on the wrong
@@ -338,6 +339,7 @@ def _cbb_home_body(today: date) -> str:
   </p>
   {_stale_note(days) if preseason else ""}
 </section>
+{how.LIQUID_TAG}
 """
 
 
@@ -391,21 +393,22 @@ def _cfb_graphics(today: date) -> str:
     # Through the CFP final (Jan 25, 2027), as My teams runs.
     if not (today >= date(today.year, 8, 20) or today <= date(today.year, 1, 31)):
         return ""
-    return """
+    from gordstats import how
+    return f"""
 <section class="home-card">
   <div class="home-card-head">
-    <h2>Top 25 Comparison</h2>
+    <h2>Top 25 Comparison {how.button('cfb-rankings')}</h2>
     <a class="home-card-link" href="/cfb/power/">All 138 teams &rarr;</a>
   </div>
-  {% include cfb_top25.html %}
+  {{% include cfb_top25.html %}}
 </section>
 
 <section class="home-card">
   <div class="home-card-head">
-    <h2>This week's CFB bets</h2>
+    <h2>This week's CFB bets {how.button('bets-record')}</h2>
     <a class="home-card-link" href="/cfb/predictions/">Every game &rarr;</a>
   </div>
-  {% include cfb_bets.html %}
+  {{% include cfb_bets.html %}}
 </section>
 """
 
@@ -421,13 +424,14 @@ def _nfl_graphics(today: date) -> str:
         return ""
     if not (paths.DOCS / "_includes" / "nfl_bets.html").exists():
         return ""
-    return """
+    from gordstats import how
+    return f"""
 <section class="home-card">
   <div class="home-card-head">
-    <h2>This week's NFL bets</h2>
+    <h2>This week's NFL bets {how.button('bets-record')}</h2>
     <a class="home-card-link" href="/nfl/">Every game &rarr;</a>
   </div>
-  {% include nfl_bets.html %}
+  {{% include nfl_bets.html %}}
 </section>
 """
 
@@ -473,8 +477,14 @@ def render_home():
     # enough to be seen (it closed the page until 2026-10-02), after what is on.
     # Tweets of the week under it: readers' picks, drawn from /api/tweets.
     from gordstats import changelog, tweets_page
+    graphics = _cfb_graphics(today) + _nfl_graphics(today)
     html = (_my_teams(today) + changelog.home_card() + tweets_page.home_card()
-            + _cfb_graphics(today) + _nfl_graphics(today) + html)
+            + graphics + html)
+    # The graphics' "How this works" chips open in a dialog (gordstats.how):
+    # Home writes its own front matter, so the script goes in as Liquid.
+    if graphics:
+        from gordstats import how
+        html += how.LIQUID_TAG
     # On a night college and pro football both play, what is on comes first;
     # the card stays hidden on any other day (gordstats.watch_all).
     from gordstats import watch_all

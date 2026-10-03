@@ -312,6 +312,7 @@ def build(data: dict, now) -> list:
             "schedule": f"/nfl/schedule/#wk-{key}",
             "notes": NOTES,
             "source": "From nflverse play-by-play.", "stats": "/nfl/stats/",
+            "how": {"call": "nfl-predictions", "units": "game-previews"},
         })
     return out
 

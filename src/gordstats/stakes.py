@@ -141,13 +141,15 @@ def table(week: int, teams: dict) -> str:
         f"<td>{escape(teams[t['opp']]['name']) if t['opp'] in teams else ''}</td></tr>"
         for k, t in rows)
     a, b, _ = ranked[0]
-    lead = (f"<p>What week {week}'s game is worth to each team: its playoff odds with a win and "
-            "with a loss, from the same simulated seasons split on that game. <b>Swing</b> is "
-            "the gap, in percentage points. The game of the week, highlighted, is the one "
-            "expected to move the odds most - a big swing on a game that could go either way: "
-            f"{escape(teams[a]['name'])} vs {escape(teams[b]['name'])}.</p>")
+    # How stakes and the game of the week are worked out is the
+    # fantasy-stakes explainer (gordstats.how), opened from the chip on the
+    # section's heading; the lead says only what the table is.
+    lead = (f"<p>Each team's playoff odds with a win and with a loss in week {week}. Game of "
+            f"the week, highlighted: {escape(teams[a]['name'])} vs "
+            f"{escape(teams[b]['name'])}.</p>")
     return (CSS + lead + "<div class='table-scroll'><table class='stk'><thead><tr>"
-            "<th>Team</th><th>Swing</th><th>With a win</th><th>With a loss</th>"
+            "<th>Team</th><th title='Playoff odds with a win minus with a loss, in percentage "
+            "points'>Swing</th><th>With a win</th><th>With a loss</th>"
             "<th>Playoffs now</th><th>Win chance</th><th>Plays</th></tr></thead>"
             f"<tbody>{body}</tbody></table></div>")
 

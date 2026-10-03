@@ -83,6 +83,17 @@ def test_names_cannot_close_the_data_block():
     assert "</script><b>" not in blob[:blob.index("</script>")]
 
 
+def test_how_games_are_ranked_is_a_chip_not_a_fold():
+    """The method is the watch-guide explainer (gordstats.how), opened in a
+    dialog from the chip under the games; the page carries none of it."""
+    from gordstats import how
+    html = watch.body({"season": 2026, "generated": "2026-10-03T08:00-04:00", "slots": [],
+                       "games": [], "rosters": {}})
+    assert "<div class='wg-how'>" + how.section_note("watch-guide") + "</div>" in html
+    assert html.count(how.JS_TAG) == 1
+    assert "How games are ranked" not in html and "matchup quality" not in html
+
+
 # --------------------------------------------------------------------------- #
 # In the browser
 # --------------------------------------------------------------------------- #

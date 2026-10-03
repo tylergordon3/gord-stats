@@ -39,7 +39,7 @@ from fantasy.league import suggestions
 from fantasy.site import layout
 from fantasy.site import matchups as mu
 from gordstats import lineup as planner
-from gordstats import my_league, my_league_data, my_team, my_week
+from gordstats import how, my_league, my_league_data, my_team, my_week
 from gordstats import matchup_page as ui
 from gordstats import roster_page as page
 from gordstats.frontmatter import add_front_matter
@@ -636,10 +636,9 @@ def body() -> str:
         "<p class='rd-note'><b>Proj</b> is every projection on record for the player "
         "averaged &mdash; this site's (<b>GS</b>), Sleeper's, ESPN's and FantasyPros' &mdash; "
         "the number the <a href='/fantasy/matchups/'>matchups</a> page tracks with; free "
-        "agents have only the first two. A Questionable or Doubtful player's Proj is that "
-        "times the chance he plays &mdash; the <b>plays 70%</b> pill, from ten seasons of "
-        "official injury reports read by his role and his last practice before the final "
-        "report; <b>back ~Nov 1</b> is ESPN's expected return for a player held out. "
+        "agents have only the first two. On the injury report, the <b>plays 70%</b> pill is "
+        "a player's chance to play, and his Proj is cut to match; <b>back ~Nov 1</b> is "
+        "ESPN's expected return for a player held out. " + how.button("injuries") + " "
         "<b>Team total</b> is his side's implied points from the spread and total. "
         "<b>Opp vs pos</b> is what the defense across from him has allowed to his "
         "position against the league average: 1.00 is par, green is "
@@ -657,7 +656,7 @@ def body() -> str:
         + page.switch_js(STORAGE_KEY) + page.CARD_JS
         + "</div>"
         + my_league.JS_TAG + my_league_data.JS_TAG + my_week.JS_TAG
-        + my_team.PLANNER_JS_TAG + my_team.VIEW_JS_TAG)
+        + my_team.PLANNER_JS_TAG + my_team.VIEW_JS_TAG + how.JS_TAG)
 
 
 def generate():

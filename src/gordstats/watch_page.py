@@ -41,7 +41,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from gordstats import js_assets, share_button
+from gordstats import how, js_assets, share_button
 from gordstats.jsonio import script_json
 
 ET = ZoneInfo("America/New_York")
@@ -176,19 +176,21 @@ def write_games(path, data: dict) -> None:
     path.write_text(json.dumps(data, separators=(",", ":")), encoding="utf-8")
 
 
-def body(data: dict, adapter_js: str, how: str, share_url: str, share_text: str) -> str:
-    """The page: the host the engine draws into, how it ranks, the Share
-    button, the day's games as JSON (when the sport builds them here), then
-    the engine and the sport's adapter, which starts it."""
+def body(data: dict, adapter_js: str, topic: str, share_url: str, share_text: str) -> str:
+    """The page: the host the engine draws into, the "How this works" chip
+    for `topic` (the gordstats.how explainer of how the sport's games are
+    ranked: "watch-guide", "cbb-watch"), the Share button, the day's games as
+    JSON (when the sport builds them here), then the engine and the sport's
+    adapter, which starts it. The chip's line is .wg-how: an adapter with no
+    games hides it with the Share row."""
     blob = ("" if data is None else
             "<script type='application/json' id='wg-data'>"
             + script_json(data, separators=(",", ":")) + "</script>")
     return (CSS + "<div class='wg'>"
             + "<div id='wg-host'><p class='wg-note'>Loading the day's games&hellip;</p></div>"
-            + "<details class='wg-how'><summary>How games are ranked</summary>"
-            + f"<p class='wg-note'>{how}</p></details>"
+            + f"<div class='wg-how'>{how.section_note(topic)}</div>"
             + share_button.row(share_url, share_text) + "</div>"
-            + blob + ENGINE_JS_TAG + adapter_js)
+            + blob + ENGINE_JS_TAG + adapter_js + how.JS_TAG)
 
 
 CSS = """<style>
@@ -252,8 +254,6 @@ a.wg-g.done{opacity:.8}
   min-height:40px;display:flex;align-items:center}
 .wg-note{font-size:13px;color:var(--wg-mute);line-height:1.5;margin:0 0 8px}
 .wg-note.wg-empty{font-size:17px;color:var(--wg-ink);margin:8px 0 16px}
-.wg-how summary{cursor:pointer;font-size:13px;color:var(--wg-soft);min-height:40px;
-  display:flex;align-items:center}
 /* The quadbox: four games for one screen, a window at a time. The frame is
    the screen, dark in both themes; the best game sits top left with the sound. */
 .wg-view{display:inline-flex;border:1px solid var(--wg-line);border-radius:999px;overflow:hidden;

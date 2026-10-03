@@ -24,6 +24,7 @@ import pandas as pd
 from cfb import espn, ownership, players, schools as schools_mod, usage as usage_mod, yahoo
 from cfb.config import MY_TEAM, SEASON, WEB_DIR, league_school
 from cfb.site import write_page
+from gordstats import how
 from gordstats.usage_page import JS as _JS, Col, bar as _bar, cell as _cell, css as _css
 from gordstats.usage_page import fixed as _fixed, head as _head, num as _num
 from gordstats.usage_page import options as _options, pct as _pct, pin as _pin
@@ -70,18 +71,20 @@ COLUMNS = [
     Col("Fantasy", ALL, "text", "own"),
     Col("G", ALL, "n"),
     Col("Car", RUSH, "n", field="car"),
-    Col("Car share", RUSH, "n", field="car_share"),
-    Col("Season", RUSH, "n", "lead"),
+    Col("Car share", RUSH, "n", field="car_share", title="Share of his team's carries"),
+    Col("Season", RUSH, "n", "lead", title="His carry share over the whole season"),
     Col("Tgt", ALL, "n", field="tgt"),
-    Col("Tgt share", ALL, "n", field="tgt_share"),
-    Col("Season", ALL, "n", "lead"),
+    Col("Tgt share", ALL, "n", field="tgt_share", title="Share of his team's targets"),
+    Col("Season", ALL, "n", "lead", title="His target share over the whole season"),
     Col("Rec", CATCH, "n"),
-    Col("Rec share", CATCH, "n"),
+    Col("Rec share", CATCH, "n", title="Share of his team's catches"),
     Col("Catch%", CATCH, "n", title="Catches per target"),
     Col("Yds", ALL, "n"),
     Col("TD", ALL, "n"),
-    Col("FPts/G", ALL, "n", title="League fantasy points per game played"),
-    Col("PPA", ALL, "n"),
+    Col("FPts/G", ALL, "n", title="League fantasy points per game played, in the league's "
+                                  "scoring without interceptions and fumbles"),
+    Col("PPA", ALL, "n", title="Predicted points added per play (CollegeFootballData's "
+                               "expected points added)"),
 ]
 
 
@@ -182,28 +185,18 @@ def body() -> str:
         _css(COLUMNS)
         # One sentence above the table: the subtitle already says what the
         # columns are, so the intro only says which weeks and how to read the
-        # two shares together. The rest waits, folded, for whoever asks.
+        # two shares together. Where the numbers come from is the usage
+        # explainer (gordstats.how), opened from the chip; each column says
+        # what it is in its header's tooltip.
         + f"<p>Over <strong>{span}</strong>, with the season share beside it: a back at 55% "
-        "of the carries lately against 40% on the season is taking the job.</p>"
-        "<details class='section'><summary>How to read it</summary>"
-        "<p class='us-note'>Tap a column to sort, again to reverse. <strong>Fantasy</strong> "
-        "narrows to one roster, everyone rostered, or the <span class='us-fa'>FA</span> free "
-        "agents (<em>My team</em> is the one picked on the <a href='/cfb/roster/'>team "
-        "dashboard</a>). For a conference's backfields: the conference, the RB view, and "
-        "<strong>Group by school</strong>. The filters live in the page address, so a view "
-        "can be shared.</p>"
-        "<p class='us-note'>Shares divide by the team's own players, so none can exceed what "
-        "the team ran. <strong>Targets</strong> are not published; they are counted from the "
-        "play-by-play, so a pass whose receiver cannot be matched counts for the team only. "
-        "<strong>FPts/G</strong> is the league's scoring without interceptions and fumbles; "
-        "<strong>PPA</strong> is CollegeFootballData's predicted points added per play. "
-        "College snap counts are not free, so share of touches stands in.</p></details>"
+        "of the carries lately against 40% on the season is taking the job. "
+        + how.button("usage") + "</p>"
         + _views_bar(VIEWS)
         + controls
         + f"<div class='us-scroll'><table class='us view-overall' data-sticky-head>"
         f"<thead>{_head(COLUMNS)}</thead>"
         f"<tbody>{_rows(recent, season, conf)}</tbody></table></div>"
-        + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + _JS)
+        + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + _JS + how.JS_TAG)
 
 
 def generate():

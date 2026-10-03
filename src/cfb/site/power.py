@@ -42,7 +42,7 @@ from cfb import cfbd, espn, predict
 from cfb.config import DATA_DIR, SEASON, WEB_DIR
 from cfb.site import teams as teams_page
 from cfb.site import write_page
-from gordstats import favorites, logos, rankmoves, share_card
+from gordstats import favorites, how, logos, rankmoves, share_card
 
 _URL = ("https://site.web.api.espn.com/apis/fitt/v3/sports/football/"
         "college-football/powerindex")
@@ -903,41 +903,15 @@ def body() -> str:
             field=field, extra=(" mv-th" if label == "Move" else ""))
         for views, label, tip, direction, _cell, field in cols)
 
-    move_note = ""
-    if show_move:
-        move_note = (" <strong>Move</strong> is the change in whichever column the table "
-                     "is sorted by - places climbed in the GordStats rank until you "
-                     "sort by another, then that figure's change - since the point the "
-                     "<strong>Since</strong> menu picks. It opens on the rankings as they "
-                     f"stood before this week's "
-                     f"games ({first_at:%b %-d}); every build is archived, so the choice "
-                     "runs from there back to the season's first, or to the end of any "
-                     "week's games.")
-
+    # How the ratings are made is an explainer of its own (gordstats.how),
+    # opened from the chip; what stays is what a reader needs to read the
+    # table: what Move and the shading mean. SOS, Rem SOS and SOR are defined
+    # in their headers' tooltips.
+    move_note = (" <strong>Move</strong> is the sorted column's change since the "
+                 "<strong>Since</strong> menu's pick." if show_move else "")
     intro = (
-        "<details class='section'><summary>About these rankings</summary>"
-        "<p class='power-note'><strong>GordStats</strong> is "
-        "<a href='/cfb/predictions/'>this site's own rating</a> - points better than an "
-        "average FBS team - and the order the table opens in. <strong>FPI</strong> is "
-        "ESPN's version of the same idea, and <strong>AP</strong> the writers' poll. "
-        "<strong>SP+</strong> (Bill Connelly) and <strong>Elo</strong> come from "
-        f"CollegeFootballData.{move_note}</p>"
-        "<p class='power-note'><strong>Rating</strong> is the ratings, each with its rank, "
-        "and what the schedule has been worth; <strong>Odds</strong> "
-        "what ESPN's simulations give each team. Projected records - ESPN's and "
-        "ours - are on each team's page. "
-        "Click a figure's header to sort by it; click again to reverse. Top 25 "
-        "highlighted - the highlight follows the team, so the FPI top 25 stay "
-        "marked however the table is sorted. "
-        "<strong>SOS</strong> is strength-of-schedule rank (hardest first) and "
-        "<strong>Rem SOS</strong> the same for the games still to play; "
-        "<strong>SOR</strong> is strength of record - where an average top-25 "
-        "team would sit with this resume.</p>"
-        + ("" if live("accomplishmentrank") else
-           "<p class='power-note'>The resume ranks ESPN computes from results - "
-           "strength of record - appear here once games have been "
-           "played.</p>")
-        + "</details>"
+        how.section_note("cfb-rankings")
+        + f"<p class='power-note'>Shaded rows are FPI's top 25.{move_note}</p>"
         + "<p class='power-note'><a href='/cfb/playoff/'>Playoff odds</a>: who makes the field, "
         "on our model beside ESPN's.</p>")
 
@@ -957,7 +931,7 @@ def body() -> str:
             + f"<table class='cfb-power view-rating'><thead><tr>{head}</tr></thead>"
             + f"<tbody>{''.join(rows)}</tbody></table></div>"
             + "{% raw %}<script type='application/json' id='pwr-deltas'>" + blob
-            + "</script>{% endraw %}" + _JS)
+            + "</script>{% endraw %}" + _JS + how.JS_TAG)
 
 
 _CARD: dict = {}

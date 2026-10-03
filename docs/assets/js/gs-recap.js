@@ -442,11 +442,8 @@ window.GSRecap=(function(){
       +'<th>Wk '+week.number+'</th><th>Left</th><th>Season</th><th>Left</th>'
       +'<th class="pf" title="Weeks with the best possible lineup">Perfect</th></tr></thead><tbody>'
       +rows.join('')+'</tbody></table></div>'
-      +'<p class="rc-note">Share of the best possible lineup each team started: points '
-      +'started over the most its roster could have scored that week, by what every '
-      +'player actually scored (injured reserve left out). <b>Left</b> is the '
-      +'difference - points left on the bench. The season figure is total points over '
-      +'total maximum.'
+      +'<p class="rc-note">Share of the best possible lineup each team started; '
+      +'<b>Left</b> is the points left on the bench.'
       +(toDate?'':o.pending?' The season columns fill in as the earlier weeks are read.'
                 :' Not every earlier week could be read, so there is no season figure.')
       +'</p>';
@@ -461,14 +458,17 @@ window.GSRecap=(function(){
   }
 
   /** One week's recap - recap.page, less the share button, which the page
-   *  adds (its address is the reader's league's, not this site's week). */
+   *  adds (its address is the reader's league's, not this site's week).
+   *  o.how is the "How this works" chip for the Awards and Lineup accuracy
+   *  headings (gordstats.how's markup, handed over by the page). */
   function view(week, numbers, toDate, o){
     o=o||{};
+    var how=o.how?' '+o.how:'';
     return '<p class="rc-lead">'+esc(headline(week))+'</p>'
       +weekNav(numbers, week.number)
       +'<h2>Scores</h2>'+games(week)
-      +'<h2>Awards</h2>'+awardCards(week)
-      +'<h2>Lineup accuracy</h2>'+accuracy(week, toDate, o)
+      +'<h2>Awards'+how+'</h2>'+awardCards(week)
+      +'<h2>Lineup accuracy'+how+'</h2>'+accuracy(week, toDate, o)
       +(o.foot||'');
   }
 

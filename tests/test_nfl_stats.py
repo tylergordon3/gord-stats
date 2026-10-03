@@ -275,7 +275,11 @@ def test_page_renders(tmp_path, monkeypatch):
     assert "<option value='NFC'>NFC</option>" in html
     assert "data-f='AFC West AFC'" in html
     assert "Player leaders" in html and "Starter Quarterback" in html
-    assert "What the columns mean" in html and "garbage time" in html
+    assert "What the columns mean" in html and "lower is better there" in html
+    # How the figures are made is the team-stats explainer, opened from the
+    # intro's chip (gordstats.how) - not prose on the page.
+    assert "href='/how/team-stats/'" in html and "gs-how.js" in html
+    assert "opponents are pulled toward average" not in html
     # Opens on the Overview, sorted by adjusted net EPA.
     assert "table class='st-t view-overview'" in html
     assert "data-k='net_adj'" in html

@@ -52,7 +52,7 @@ What the browser cannot have, and so is not here:
     lineup is still judged; one on the bench cannot be placed at all.
 """
 
-from gordstats import js_assets, recap, share_button
+from gordstats import how, js_assets, recap, share_button
 
 CSS = """<style>
 /* The rest is the built recap's own (gordstats.recap.CSS): only what the
@@ -92,7 +92,9 @@ CORE_JS_TAG = js_assets.tag("gs-recap.js")
 
 # The code is docs/assets/js/gs-recap-view.js (gordstats.js_assets): JS is it inline,
 # for the browser tests; JS_TAG is what the pages carry.
-_CFG = {"recapShare": share_button.row("", "", league=True)}
+# recapHow: the "How this works" chip the built recap puts on its Awards and
+# Lineup accuracy headings (gordstats.how), so the reader's carries the same.
+_CFG = {"recapShare": share_button.row("", "", league=True), "recapHow": how.button("recaps")}
 JS = js_assets.inline("gs-recap-view.js", _CFG)
 JS_TAG = js_assets.tag("gs-recap-view.js", _CFG)
 

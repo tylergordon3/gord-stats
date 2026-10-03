@@ -12,6 +12,7 @@ import functools
 import http.server
 import json
 import math
+import re
 import shutil
 import socketserver
 import subprocess
@@ -43,11 +44,19 @@ def test_windows_are_eastern_tip_offs():
 
 
 def test_the_words_carry_the_numbers_the_page_uses():
-    how = watch.HOW
-    assert "#101 half that" in how and "#201 a quarter" in how
-    assert "42%-58%" in how and "35%+" in how and "within 6" in how
+    """How games are ranked is the cbb-watch explainer (gordstats.how), opened
+    from the chip under the guide: its numbers are the ones the page runs on."""
+    from gordstats import how
     cfg = watch.config()
     assert (cfg["half"], cfg["toss"], cfg["upset"], cfg["close"]) == (100, [0.42, 0.58], 0.35, 6)
+    text = re.sub(r"<[^>]+>", "", how.article("cbb-watch"))
+    numbers = set(re.findall(r"#?\d+%?", text))
+    assert {f"#{cfg['half'] + 1}", f"#{2 * cfg['half'] + 1}"} <= numbers, numbers
+    assert {f"{cfg['toss'][0]:.0%}", f"{cfg['toss'][1]:.0%}", f"{cfg['upset']:.0%}"} <= numbers
+    assert f"within {cfg['close']} points" in text
+    page = expand(watch.body())
+    assert "class='wg-how'" in page and "href='/how/cbb-watch/'" in page
+    assert "How games are ranked" not in page
 
 
 def test_the_page_carries_no_games_only_the_adapter():

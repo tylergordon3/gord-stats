@@ -169,11 +169,6 @@ ADAPTER_JS = """<script>
 </script>"""
 
 
-HOW = ("College and pro football together, each window's games best first by the watch score "
-       "both sports' guides use: ESPN's matchup quality (0-100, how good the teams are and how "
-       "close it should be), nudged for big games. Starred teams go first, and games with "
-       "players from your fantasy teams in either league move up. During the day a close game "
-       "late, an overtime or an underdog ahead in the second half jumps the line.")
 
 
 def adapter_js() -> str:
@@ -185,8 +180,8 @@ def adapter_js() -> str:
 
 
 def body() -> str:
-    return watch_page.body(None, cfb_watch.LIVE_JS + nfl_watch.LIVE_JS + adapter_js(), HOW,
-                           "/watch/", "What to watch tonight, college and pro")
+    return watch_page.body(None, cfb_watch.LIVE_JS + nfl_watch.LIVE_JS + adapter_js(),
+                           "watch-guide", "/watch/", "What to watch tonight, college and pro")
 
 
 def generate() -> None:

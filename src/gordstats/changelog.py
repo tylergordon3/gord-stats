@@ -26,6 +26,10 @@ HOME_SHOWN = 3
 
 # (date, title, one line, link or None) - newest first.
 ENTRIES = [
+    ("2026-10-02", "How this works",
+     "Tap the small \"How this works\" button beside a ranking, prediction or fantasy number "
+     "for a short, plain explanation of how it's made, instead of paragraphs on the page.",
+     "/how/"),
     ("2026-10-02", "Back from injury, a little lower",
      "A player's first games back are projected below his usual rate - about 8% after one "
      "missed game, 17% then 12% after a longer absence - as returning players have scored "

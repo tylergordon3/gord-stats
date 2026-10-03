@@ -2,7 +2,8 @@
 College football playoff odds (docs/cfb/playoff/): the College Football
 Playoff projected on this site's own model (cfb.playoff), drawn by the shared
 renderer (gordstats.playoff_page) - the likeliest bracket, then every
-contender's chances beside ESPN FPI's, then the method, folded.
+contender's chances beside ESPN FPI's; the method is the "How this works"
+explainer (gordstats.how, playoff-odds) the chip by the bracket opens.
 
 The page has three states. Before a game is played there is nothing to
 project from and it says so. Once the CFP games have teams in them the
@@ -141,33 +142,6 @@ def _table(res, league, espn: dict) -> str:
     return playoff_page.odds_table(rows, columns, "cfb", sort_key="playoff")
 
 
-def _method(n: int) -> str:
-    fmt = playoff.FORMAT
-    return playoff_page.method([
-        f"Every game left is played {n:,} times on <a href='/cfb/predictions/'>the GordStats "
-        "model</a>, with the win chances the predictions page prints. Each team's rating also "
-        "drifts from run to run, a little more for every week ahead - sized to how far teams "
-        "really strayed from the model in 2015-2025 - so a team better than we think wins its "
-        "games together and a game in November is less certain than Saturday's.",
-        "<strong>Conference title games</strong> pair the two best conference records (the Sun "
-        "Belt: East vs West). A tie goes to the record in games among the tied teams, then to our "
-        "rating, standing in for the computer rankings conferences use late in their lists. "
-        "Common opponents are not modeled.",
-        "<strong>Selection.</strong> The committee has no formula, so a stand-in picks the field: "
-        "strength of record (wins above what an average top-25 team would expect against the "
-        f"same schedule) plus our rating, {playoff.RATING_PER_WIN:.0f} points of it counting as "
-        f"one win. The {', '.join(fmt.power[:-1])} and {fmt.power[-1]} champions are in, so is the "
-        "best Group of Six team, champion or not, and Notre Dame if it ranks in the top 12; the "
-        f"best of the rest fill the {fmt.field}.",
-        f"<strong>Seeding</strong> is straight off that order: the top {fmt.byes} get byes, "
-        f"{fmt.byes + 1}-{fmt.field} play on the higher seed's field, and the bracket is fixed. "
-        "The bracket above takes each Power 4 conference's likeliest champion and the likeliest "
-        "Group of Six team, fills it with the likeliest of the rest and seeds by average seed.",
-        "<strong>FPI</strong> is ESPN's own simulation's playoff chance. The format is "
-        "2026-27's (collegefootballplayoff.com, NCAA.com).",
-    ])
-
-
 def body() -> str:
     res, league, payload = playoff.project()
     if league is None:
@@ -186,19 +160,19 @@ def body() -> str:
     if state == "final":
         champ = next((league.names[league.teams[i]] for i in range(len(league.teams))
                       if res.title[i] >= 0.999), None)
-        head = "<h2>The bracket</h2>" + (
+        head = playoff_page.heading("The bracket") + (
             f"<p class='po-note'>{escape(champ)} won the national title.</p>" if champ else "")
     elif state == "set":
-        head = ("<h2>The bracket</h2><p class='po-note'>The real field. % is the chance "
-                "to win the title.</p>")
+        head = (playoff_page.heading("The bracket")
+                + "<p class='po-note'>The real field. % is the chance to win the title.</p>")
     else:
-        head = ("<h2>Projected bracket</h2><p class='po-note'>The likeliest field; % is each "
-                "team's chance to make it.</p>")
+        head = (playoff_page.heading("Projected bracket")
+                + "<p class='po-note'>The likeliest field; % is each team's chance to make it.</p>")
     table_head = ("<h2>Every contender</h2><p class='po-note'>Chances in percent, ours "
                   "beside ESPN FPI's, for every team at 1% or better by either. Tap a column "
                   "to sort.</p>")
     return playoff_page.page(head, _bracket(res, league, field, state), table_head,
-                             _table(res, league, espn), _method(res.n))
+                             _table(res, league, espn))
 
 
 _CARD: dict = {}

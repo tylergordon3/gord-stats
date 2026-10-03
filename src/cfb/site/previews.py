@@ -8,8 +8,8 @@ ESPN's FPI and the forecast are the schedule page's own (cfb.site.schedule's
 frame: today's fit for a game still to play, the line on record before
 kickoff for one that is over); the watch score is the watch guide's
 (cfb.site.watch.judge on the same inputs); the units and players are
-CollegeFootballData's opponent-adjusted season figures (cfb.advanced), ranked
-across FBS.
+CollegeFootballData's season figures (cfb.advanced) - opponent-adjusted where
+CFBD adjusts them, see SOURCE - ranked across FBS.
 
 Which games: last week's, this week's, and next week's once the book has a
 line on them - FBS against FBS only. An FCS side has no rating of its own (the
@@ -74,7 +74,14 @@ NOTES = [
     ("Players", "EPA per play with garbage time out; ranked among FBS players with enough "
      "plays (QBs 80 dropbacks, backs 35 carries, receivers 15 targets)."),
 ]
-SOURCE = "Opponent-adjusted season figures from CollegeFootballData."
+# EPA, success rate, explosiveness and line yards are CFBD's opponent-adjusted
+# figures; havoc and points per trip its raw splits, garbage time out; third
+# downs the box score (cfb.advanced).
+SOURCE = ("From CollegeFootballData: EPA, success rate, explosiveness and line yards "
+          "adjusted for the opponents faced; havoc and points per trip as played, "
+          "garbage time out; third downs from the box score.")
+# The explainers (gordstats.how) the call's and the units' chips open.
+HOW = {"call": "cfb-predictions", "units": "game-previews"}
 
 
 def _v(x):
@@ -285,6 +292,7 @@ def build(data: dict, now) -> list:
             "words": {"off": "offense", "def": "defense"},
             "schedule": f"/cfb/schedule/#w={int(g['week'])}&g={gid}",
             "notes": NOTES, "source": SOURCE, "stats": "/cfb/stats/",
+            "how": HOW,
         })
     return out
 

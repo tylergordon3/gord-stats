@@ -25,7 +25,7 @@ What the adapter adds to the simulation:
 from fantasy import paths
 from fantasy.config import MY_MANAGER, ROSTER_NAMES, UPCOMING_LEAGUE_ID
 from fantasy.site import layout
-from gordstats import my_league, my_league_data, my_power, trade_page
+from gordstats import how, my_league, my_league_data, my_power, trade_page
 from gordstats.frontmatter import add_front_matter
 
 OUT = paths.WEB_FANTASY_DIR / "trade" / "index.html"
@@ -403,17 +403,12 @@ window.GSTradeAdapter = (function(){
 })();
 </script>{% endraw %}"""
 
+# How a deal is played out is the trade-analyzer explainer (gordstats.how),
+# opened in a dialog from the chip at the end of the intro.
 INTRO = ("<p>Pick a deal, or a free agent, and see what it does to the season: points a "
          "week, record, and the chance of making the playoffs and winning it all. Works for your "
-         "own Sleeper or ESPN league too &mdash; pick it above.</p>")
-
-METHOD = ("<p>The rest of the season is played out " + f"{SIMS:,}" + " times with the rosters as "
-          "they are and " + f"{SIMS:,}" + " times as they would be, with the same luck both "
-          "times, so the difference is the trade. It is the simulation behind the Power tab: "
-          "this site's rest-of-season projections, each league's own slots, schedule, median "
-          "game and bracket, byes and injuries. A team taking more players than it sends drops "
-          "its lowest-projected bench player; one sending more signs the best free agent at the "
-          "position it gave up.</p>")
+         "own Sleeper or ESPN league too &mdash; pick it above. " + how.button("trade-analyzer")
+         + "</p>")
 
 
 def adapter_js() -> str:
@@ -426,9 +421,9 @@ def adapter_js() -> str:
 
 def body() -> str:
     return (INTRO + my_league.bar() + trade_page.section('/fantasy/trade/', league=True)
-            + layout.details("How it works", METHOD, anchor="method")
             + my_league_data.JS_TAG + my_league.JS_TAG + my_power.SIM_JS_TAG
-            + my_power.LEAGUE_JS_TAG + trade_page.JS_TAG + adapter_js() + trade_page.start())
+            + my_power.LEAGUE_JS_TAG + trade_page.JS_TAG + adapter_js() + trade_page.start()
+            + how.JS_TAG)
 
 
 def generate():

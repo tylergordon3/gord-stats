@@ -46,7 +46,7 @@ import pandas as pd                                  # noqa: E402
 from cfb import espn, in_season, league_sim, projections, yahoo  # noqa: E402
 from cfb.config import DATA_DIR, LEAGUE_TZ, MY_TEAM, SEASON, WEB_DIR  # noqa: E402
 from cfb.site import write_page                      # noqa: E402
-from gordstats import (charts, clinch, odds_chart, palette, rankmoves,  # noqa: E402
+from gordstats import (charts, clinch, how, odds_chart, palette, rankmoves,  # noqa: E402
                        share_button, share_card, stakes)
 
 HISTORY_DIR = DATA_DIR / "league_power_history" / str(SEASON)
@@ -350,7 +350,7 @@ def _odds_section(rows: list, has_odds: bool, now: datetime = None) -> str:
     live = any(w == current and now.date() <= last for w, _, last in starts)
     names = {r["key"]: r["team"].get("name") or r["key"] for r in rows}
     mine = next((k for k, n in names.items() if n == MY_TEAM), "")
-    return ("<h3 id='odds'>Playoff and Title Odds</h3>"
+    return (f"<h3 id='odds'>Playoff and Title Odds {how.button('fantasy-stakes')}</h3>"
             + odds_chart.section(data, names, mine=mine, storage="cfbMyTeam",
                                  sid="oc-cfb", live=live)
             + odds_chart.JS_TAG)
@@ -519,27 +519,23 @@ def section() -> str:
     _leave_picture()
     odds = _odds_section(rows, has_odds)
 
-    field = lg.get("num_playoff_teams") or 0
+    # How the season is played out is the cfb-league explainer (gordstats.how),
+    # opened from the chip under the lead; the columns say what they are in
+    # their headers' tooltips.
     return (
         f"<p>The rest of the season played out {league_sim.SIMS:,} times, ranked by "
         "<b>Pts/wk</b>: each roster's best lineup, projected a week from here on.</p>"
-        "<details class='section'><summary>How it works</summary>"
-        "<p class='mu-note'>Every week left, each roster starts its best lineup on that "
-        "week's projections - byes, opponents and injuries included - with each "
-        "player's preseason projection updated by his real points per game (weighed "
-        f"against {in_season.PRIOR_GAMES:.0f} games of the projection). A week is won head "
-        "to head and against the median, on top of Yahoo's standings"
-        + (f"; the top {field} make the bracket" if field else "")
-        + ". <b>Proj.</b> is the final record; <b>Bench</b> the value over replacement "
-        "behind the starters; <b>Move</b>/<b>7d</b> the places climbed since the last "
-        "build / a week ago.</p></details>"
-        '<div class="table-scroll"><table class="lg-table">'
+        + how.section_note("cfb-league")
+        + '<div class="table-scroll"><table class="lg-table">'
         f"<thead><tr><th>Team</th><th>Record</th>{odds_heads}"
         "<th title='Projected lineup points a week, rest of the regular season'>Pts/wk</th>"
         "<th title='Projected final record'>Proj.</th>"
         f"{move_heads}{bye_head}"
-        "<th>±Avg</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
-        "<th>Bench</th><th>Anchor</th></tr></thead>"
+        "<th title='Pts/wk against the league average'>±Avg</th>"
+        "<th>QB</th><th>RB</th><th>WR</th><th>TE</th><th>DEF</th>"
+        "<th title='Value over a replacement-level player behind the starters'>Bench</th>"
+        "<th title='The starter worth the most over a replacement-level player'>Anchor</th>"
+        "</tr></thead>"
         f'<tbody>{"".join(cells)}</tbody></table></div>' + playoffs + odds + season)
 
 
@@ -568,7 +564,7 @@ def _playoffs_section(sim: pd.DataFrame, lg: dict, names: dict) -> str:
         print(f"  ! playoff picture: {problem}")
     _CARD["picture"] = dict(week=week, teams=teams, spots=field, bye_spots=clinch.byes(field),
                             median=median)
-    return ("<h3 id='playoffs'>Playoff Picture</h3>"
+    return (f"<h3 id='playoffs'>Playoff Picture {how.button('fantasy-stakes')}</h3>"
             + clinch.section(teams, field, clinch.byes(field), median=median, week=week))
 
 
@@ -588,13 +584,14 @@ def body() -> str:
     html = section()
     week, teams = _CARD.get("stakes") or (None, {})
     if week:
-        html += "<h2 id='stakes'>This Week's Stakes</h2>" + stakes.table(week, teams)
+        html += (f"<h2 id='stakes'>This Week's Stakes {how.button('fantasy-stakes')}</h2>"
+                 + stakes.table(week, teams))
     top = ", ".join(f"{r[0]}. {r[1]}" for r in (_CARD.get("rows") or [])[:3])
     share = share_button.row("/cfb/league/power/",
                              f"CFB league power rankings: {top}" if top else "")
     return (_CSS + share + "<p class='mu-note'>The schedule ahead - whose helps from here, and "
             "which defenses give up points to each position - is on "
-            "<a href='/cfb/strength/'>Matchup Strength</a>.</p>" + html)
+            "<a href='/cfb/strength/'>Matchup Strength</a>.</p>" + html + how.JS_TAG)
 
 
 def generate():

@@ -282,6 +282,15 @@ def test_preseason_says_projections():
     assert "preseason projections" in g["source"]
 
 
+def test_the_call_is_explained_by_its_chip_not_the_glossary():
+    """How the call is made is the cbb-predictions explainer (gordstats.how),
+    opened from the chip on "The call"; the glossary keeps the unit figures."""
+    g = rp.build(_data(), NOW)[0]
+    assert g["how"] == {"call": "cbb-predictions"}
+    assert "The call" not in [term for term, _ in g["notes"]]
+    assert "Adj. efficiency" in [term for term, _ in g["notes"]]
+
+
 # --------------------------------------------------------------------------- #
 # The pages
 # --------------------------------------------------------------------------- #
@@ -290,6 +299,18 @@ def test_preseason_says_projections():
 def docs(tmp_path, monkeypatch):
     monkeypatch.setattr(gs_paths, "DOCS", tmp_path)
     return tmp_path
+
+
+# The one Liquid a preview runs: gs-how.js by its hashed URL, for the chip
+# on "The call" (gordstats.how). Everything else is inside {% raw %}.
+HOW_JS = "{{ '/assets/js/gs-how.js' | fingerprint | relative_url }}"
+
+
+def _liquid(body: str) -> list:
+    """What Jekyll would run in a page body: everything outside its raw blocks."""
+    import re
+    outside = re.sub(r"\{% raw %\}.*?\{% endraw %\}", "\n", body, flags=re.S)
+    return [part.strip() for part in outside.split("\n") if part.strip()]
 
 
 def _old_page(docs, gid="99"):
@@ -309,7 +330,7 @@ def test_generate_writes_the_window_and_prunes_the_rest(docs, monkeypatch, capsy
     assert "title: Bravo at Alpha" in page and "Men's college basketball preview" in page
     assert preview_page.MARK in page and "ESPN2, ESPN+" in page
     body = page.split("---", 2)[2]
-    assert body.strip().startswith("{% raw %}") and body.count("{% raw %}") == 1
+    assert body.strip().startswith("{% raw %}") and _liquid(body) == [HOW_JS]
     assert len(page) < 25_000                                       # one small page
     assert "Wrote 4 CBB game previews" in capsys.readouterr().out
     assert preview_page.built("cbb", docs) == ["101", "103", "104", "108"]
@@ -328,7 +349,7 @@ def test_names_from_the_feed_are_text(docs, monkeypatch):
     # is a JSON string (jekyll-seo-tag escapes it), as on the CFB and NFL pages.
     assert "<i onmouseover" not in body and "&lt;i onmouseover=1&gt;" in body
     assert "title: Bra{{vo}} &lt;i onmouseover=1&gt; at Alpha" in front
-    assert body.count("{% raw %}") == 1 and body.strip().startswith("{% raw %}")
+    assert _liquid(body) == [HOW_JS] and body.strip().startswith("{% raw %}")
 
 
 def test_off_season_is_a_line_and_nothing_written(docs, monkeypatch, capsys):

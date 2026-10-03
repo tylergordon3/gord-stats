@@ -9,7 +9,7 @@ from its cache (which it refreshes from nflverse when stale).
 """
 from datetime import datetime
 
-from gordstats import logos, paths, stats_page
+from gordstats import how, logos, paths, stats_page
 from gordstats.frontmatter import add_front_matter
 from nfl import advanced
 from nfl.config import SEASON
@@ -91,7 +91,7 @@ GLOSSARY = [
      "the offense could expect from the drive, given down, distance, field position and clock. "
      "League average this season is about zero; +0.10 is very good, +0.20 elite."},
     {"label": "Adj EPA", "tip": "EPA/play less how much better or worse than average the "
-     "defenses a team has met have been (on defense, the offenses it has met) - see above."},
+     "defenses a team has met have been (on defense, the offenses it has met)."},
     {"label": "Pass EPA / Rush EPA", "tip": "EPA per dropback (passes, sacks and scrambles) and "
      "per designed run."},
     {"label": "Success (SR)", "tip": "Share of plays with positive EPA - how often a snap "
@@ -114,6 +114,8 @@ GLOSSARY = [
      "what nflverse's model expects from down, distance, field position and clock."},
     {"label": "Sec/Play", "tip": "Seconds of game clock between an offense's snaps in neutral "
      "situations. Incompletions stop the clock, so pass-heavy teams read quicker."},
+    {"label": "CPOE", "tip": "A QB's completion percentage over expected."},
+    {"label": "aDOT", "tip": "A receiver's average depth of target."},
 ]
 
 
@@ -179,25 +181,11 @@ def leader_groups(data: dict) -> list:
     ] if g["rows"]]
 
 
-def _explainer() -> str:
-    return (
-        "<p>Defense columns are the same figures for what opponents did against a team: lower "
-        "is better there, except takeaways and sacks.</p>"
-        f"<p>EPA, success and explosive rates leave out garbage time &mdash; fourth-quarter snaps "
-        f"with the offense's win chance under {advanced.GARBAGE_WP:.0%} or over "
-        f"{1 - advanced.GARBAGE_WP:.0%}. The rest count every snap. A play is a dropback or a "
-        "designed run, penalties that wiped one out included; two-point tries, kneels and spikes "
-        "are not. Regular season only.</p>"
-        "<p><strong>Adjusted</strong> EPA takes off how much better or worse than average the "
-        "defenses a team has faced were in their other games (on defense, the offenses faced), "
-        "those games adjusted the same way. A few weeks of any team is mostly noise &mdash; "
-        "defense most of all &mdash; so opponents are pulled toward average until there is "
-        "more of them, and the adjustment starts small and grows through the season.</p>"
-        "<p><strong>Players</strong> leave out garbage time and plays a penalty wiped out. "
-        "QBs are rated on nflverse's qb_epa, which does not charge a passer for his receiver's "
-        "fumble; CPOE is completion percentage over expected. aDOT is average depth of target. "
-        "Minimums grow with the season. From "
-        "<a href='https://github.com/nflverse'>nflverse</a> play-by-play.</p>")
+# How EPA, garbage time and the opponent adjustment work is the team-stats
+# explainer (gordstats.how), opened from the chip in the intro; the glossary
+# keeps what reading the table needs.
+_DEFENSE = ("<p>Defense columns are the same figures for what opponents did against a team: "
+            "lower is better there, except takeaways and sacks.</p>")
 
 
 def body(data: dict) -> str:
@@ -209,11 +197,12 @@ def body(data: dict) -> str:
     return (
         f"<p>Every NFL offense and defense{f' through Week {week}' if week else ''} by expected "
         "points added, adjusted for the opponents faced. Tap a column to sort; the shading is "
-        "where a team ranks.</p>"
+        "where a team ranks. " + how.button("team-stats") + "</p>"
         + table
         + "<h2>Player leaders</h2>"
         + stats_page.leaders(leader_groups(data), top=15)
-        + stats_page.glossary(GLOSSARY, _explainer()))
+        + stats_page.glossary(GLOSSARY, _DEFENSE)
+        + how.JS_TAG)
 
 
 def generate():

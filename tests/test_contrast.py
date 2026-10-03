@@ -43,7 +43,6 @@ LIGHT_SURFACES = re.compile(
 # until that component is themed.
 LIGHT_ISLANDS = {
     ".game-card": "CBB scoreboard card — untreated, see KNOWN GAP above",
-    ".legend-modal": "CBB scoreboard legend modal — untreated",
     ".date-header": "CBB scoreboard date divider — untreated",
     ".lock-tag": "CBB bracket lock pill — untreated",
     ".st-unk": "CBB scoreboard status pill — sits on .game-card, carries its own dark text",
@@ -64,7 +63,7 @@ LIGHT_ISLANDS = {
 ISLAND_TEXT = {
     ".meta", ".meta-upcoming", ".lock-tag", ".date-header", ".matchup-status",
     ".max-games strong", ".injured", ".ir-tag", ".tourney-bar.conf-sec",
-    ".game-badge.ap", ".legend-pill.ap", ".sort-chip.active", ".proj",
+    ".game-badge.ap", ".sort-chip.active", ".proj",
     ".st-live", ".st-ht", ".st-final", ".st-pre", ".st-delay",
     ".value span.better", ".value.better",
 }

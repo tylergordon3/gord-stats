@@ -246,6 +246,11 @@ def main(argv=None) -> int:
         except Exception as exc:                        # noqa: BLE001
             print(f"  ! changelog: {exc}", flush=True)
         try:
+            from gordstats import how
+            how.generate()
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! how this works: {exc}", flush=True)
+        try:
             from gordstats import tweets_page
             tweets_page.generate()
         except Exception as exc:                        # noqa: BLE001

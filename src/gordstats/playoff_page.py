@@ -1,7 +1,9 @@
 """
 Projected playoff pages for any sport (/cfb/playoff/, /nfl/playoff/): the
 likeliest bracket as a stack of cards, then every contender's odds in one
-sortable table, then a folded note on how it is worked out. The sport's
+sortable table. How it is worked out is an explainer of its own
+(gordstats.how, playoff-odds), opened from the chip heading() puts beside
+the bracket's title. The sport's
 adapter (cfb.site.playoff, nfl.site.playoff) runs its simulation (cfb.playoff,
 nfl.playoff) and hands over plain rows; everything drawn lives here once, as
 gordstats.stats_page does for the stats pages.
@@ -27,7 +29,7 @@ On a phone the groups stack; wider, they sit side by side.
 """
 from html import escape
 
-from gordstats import favorites
+from gordstats import favorites, how
 
 
 def pct_text(v) -> str:
@@ -119,10 +121,9 @@ def bracket(groups: list, sport: str) -> str:
     return f"<div class='po-bracket'>{''.join(out)}</div>"
 
 
-def method(paragraphs: list, summary: str = "How this works") -> str:
-    """The folded note. Paragraphs are HTML the adapter wrote."""
-    return (f"<details class='section po-method'><summary>{escape(summary)}</summary>"
-            + "".join(f"<p>{p}</p>" for p in paragraphs) + "</details>")
+def heading(title: str) -> str:
+    """The bracket's heading, with the "How this works" chip beside it."""
+    return f"<h2>{escape(title)} {how.button('playoff-odds')}</h2>"
 
 
 def empty(text: str) -> str:
@@ -130,7 +131,9 @@ def empty(text: str) -> str:
 
 
 def page(*parts: str) -> str:
-    return CSS + "<div class='po'>" + "".join(parts) + "</div>" + JS
+    body = "".join(parts)
+    return (CSS + "<div class='po'>" + body + "</div>" + JS
+            + (how.JS_TAG if "class='gs-how'" in body else ""))
 
 
 CSS = """<style>
@@ -187,7 +190,6 @@ table.po-t td.po-chg.up{color:#15803d}table.po-t td.po-chg.down{color:#b91c1c}
 table.po-t td.po-chg.flat{color:#64748b;font-weight:400}
 .po-zero{color:#64748b}
 .po-wrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px}
-.po-method p{font-size:14px;line-height:1.55;margin:8px 0}
 @media (max-width:600px){
   table.po-t{font-size:13.5px}
   /* 12px, the site's floor (it was 10.5px); 2px sides so the CFB table

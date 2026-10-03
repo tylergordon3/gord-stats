@@ -22,7 +22,7 @@ from fantasy.config import MY_MANAGER, UPCOMING_SEASON, UPCOMING_YEAR
 from fantasy.league import matchups as matchups_mod
 from fantasy.league import usage as usage_mod
 from fantasy.site import layout
-from gordstats import my_league, usage_page as ui
+from gordstats import how, my_league, usage_page as ui
 from gordstats.frontmatter import add_front_matter
 from gordstats.jsonio import script_json
 
@@ -88,13 +88,13 @@ COLUMNS = [
     ui.Col("G", ALL, "n"),
     ui.Col("Snap share", ALL, "n", field="snap_share",
            title="Offensive snaps played out of the team's"),
-    ui.Col("Season", ALL, "n", "lead"),
+    ui.Col("Season", ALL, "n", "lead", title="His snap share over the whole season"),
     ui.Col("Car", RUSH, "n", field="car"),
-    ui.Col("Car share", RUSH, "n", field="car_share"),
-    ui.Col("Season", RUSH, "n", "lead"),
+    ui.Col("Car share", RUSH, "n", field="car_share", title="Share of his team's carries"),
+    ui.Col("Season", RUSH, "n", "lead", title="His carry share over the whole season"),
     ui.Col("Tgt", ALL, "n", field="tgt"),
-    ui.Col("Tgt share", ALL, "n", field="tgt_share"),
-    ui.Col("Season", ALL, "n", "lead"),
+    ui.Col("Tgt share", ALL, "n", field="tgt_share", title="Share of his team's targets"),
+    ui.Col("Season", ALL, "n", "lead", title="His target share over the whole season"),
     ui.Col("Tgt/snap", RECV, "n", field="tgt_per_snap",
            title="Targets per offensive snap - the closest stand-in we can publish for a "
                  "target rate, since routes run is charted data no free source carries"),
@@ -198,28 +198,12 @@ def body() -> str:
     return (
         ui.css(COLUMNS)
         # One sentence above the table (the subtitle already names the
-        # columns); the rest waits, folded, for whoever asks.
+        # columns). Where the numbers come from is the usage explainer
+        # (gordstats.how), opened from the chip; each column says what it is
+        # in its header's tooltip.
         + f"<p>Over <strong>{span}</strong>, the season share beside each in gray: a back "
-        "whose snap share climbs while his carries stay flat is about to get the carries.</p>"
-        "<details class='section'><summary>How to read it</summary>"
-        "<p class='us-note'><strong>Overall / RB / WR / TE</strong> picks the players and "
-        "the columns, and ranks only players past a minimum (a back with two carries could "
-        "top a carry-share table); the rest show grayed, unranked, and <strong>Qualified "
-        "only</strong> hides them. Tap a column to sort, again to reverse. "
-        "<strong>Fantasy</strong> narrows to one roster, everyone rostered, or the "
-        "<span class='us-fa'>FA</span> free agents (<em>My team</em> is the one picked on the "
-        "<a href='/fantasy/roster/'>team dashboard</a>). <strong>Your Sleeper league</strong> "
-        "points that column at your own league: the id is the long number in its web "
-        "address, kept in this browser, and <a href='/fantasy/sync/'>syncing it to an "
-        "account</a> carries it to another device. For one backfield, the NFL team and the "
-        "RB view; for all of them, <strong>Group by team</strong>. The filters live in the "
-        "page address, so a view can be shared.</p>"
-        "<p class='us-note'>From Sleeper's weekly stats; a week being played counts what "
-        "has been played. <strong>Snap share</strong> is offensive snaps out of the team's; "
-        "the other shares divide by the team's own players. <strong>RZ looks</strong> are "
-        "carries and targets inside the twenty. <strong>Tgt/snap</strong> stands in for a "
-        "target rate, since routes run is charted data no free source publishes.</p>"
-        "</details>"
+        "whose snap share climbs while his carries stay flat is about to get the carries. "
+        + how.button("usage") + "</p>"
         + ui.views_bar(VIEWS)
         + my_league.bar()
         + controls
@@ -227,7 +211,7 @@ def body() -> str:
         f"<thead>{ui.head(COLUMNS)}</thead>"
         f"<tbody>{_rows(recent, season, held, names)}</tbody></table></div>"
         + f"<script type='application/json' id='us-cfg'>{cfg}</script>" + ui.JS
-        + my_league.JS_TAG)
+        + my_league.JS_TAG + how.JS_TAG)
 
 
 def generate():

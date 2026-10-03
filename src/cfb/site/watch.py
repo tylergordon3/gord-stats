@@ -202,16 +202,10 @@ ADAPTER_JS = """<script>
 })();
 </script>"""
 
-HOW = ("Each window's games, best first, by a watch score: ESPN's matchup quality (0-100, how "
-       "good the teams are and how close it should be), nudged up for a Top 25 matchup and for "
-       "playoff stakes (ESPN FPI gives both teams a 10%+ playoff chance, or one 25%+ in a game it "
-       "could lose). Your starred teams go first, and games with players from your Yahoo team "
-       "move up. During the day, a close game late, an overtime or an underdog ahead in the "
-       "second half jumps the line.")
 
 
 def body(data: dict) -> str:
-    return watch_page.body(data, LIVE_JS + ADAPTER_JS, HOW, "/cfb/watch/",
+    return watch_page.body(data, LIVE_JS + ADAPTER_JS, "watch-guide", "/cfb/watch/",
                            "What to watch in college football today")
 
 

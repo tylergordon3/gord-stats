@@ -149,6 +149,23 @@ def test_unit_rows_draw_both_ranks_and_bars():
     assert "Texas: 70 plays a game" in html and "href='/cfb/stats/'" in html
 
 
+def test_the_call_and_the_units_carry_the_adapters_how_this_works_chips():
+    """How the call and the units are made is an explainer each (gordstats.how),
+    opened from a chip on the section's heading; the adapter names which. A
+    section it names none for has no chip, and a page with none has no script."""
+    from gordstats import how
+    units = {"away": pv.pair_units(UNITS, {"off_rush": (0.21, 4, 130)},
+                                   {"def_rush": (0.12, 98, 130)}), "home": []}
+    g = _game(units=units, how={"call": "cfb-predictions", "units": "game-previews"})
+    assert f"<h2>The call {how.button('cfb-predictions')}</h2>" in pv.call_block(g)
+    assert f"<h2>Unit vs unit {how.button('game-previews')}</h2>" in pv.units_block(g)
+    assert pv.body(g).count(how.JS_TAG) == 1
+    bare = _game(units=units, how={"call": "cbb-predictions"})
+    assert "<h2>Unit vs unit</h2>" in pv.units_block(bare)
+    assert "<h2>The call</h2>" in pv.call_block(_game(units=units))
+    assert how.JS_TAG not in pv.body(_game(units=units))
+
+
 # --------------------------------------------------------------------------- #
 # Records and form
 # --------------------------------------------------------------------------- #

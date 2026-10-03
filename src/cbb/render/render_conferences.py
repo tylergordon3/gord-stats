@@ -1,6 +1,6 @@
 import pandas as pd
 
-from gordstats import frontmatter
+from gordstats import frontmatter, how
 from cbb import paths
 from cbb import html_util
 from cbb.scrape import bpi
@@ -50,7 +50,9 @@ def main(df, gender):
         f"is better); <strong>Ovr</strong> is overall rank with projected tournament seed; "
         f"<strong>&Delta;</strong> is movement in overall rank over the selected window "
         f"(&uarr;/&darr; places, <strong>NR</strong> = newly ranked, "
-        f"<strong>-</strong> = no change).</p>"
+        f"<strong>-</strong> = no change). "
+        # How the rating is made: the cbb-rankings explainer (gordstats.how).
+        + how.button("cbb-rankings") + "</p>"
     )
 
     for k, v in conf_dict.items():
@@ -70,7 +72,7 @@ def main(df, gender):
         html += "</div>"
 
     html += "<script src='/assets/js/rank-toggle.js'></script>"
-    html += "<script src='/assets/js/conf-toggle.js'></script>"
+    html += "<script src='/assets/js/conf-toggle.js'></script>" + how.JS_TAG
 
     # -------------------
     # Corrected Path Logic

@@ -46,7 +46,12 @@ A game, as the adapters build it (plain text unless marked):
                 as its stats page does
     schedule    the schedule page's URL for the game
     links       optional, more [(label, URL)] for the row at the foot
-    notes       [(term, what it means)] for the folded glossary
+    notes       [(term, what it means)] for the folded glossary: the unit and
+                player figures only - how the call is made is the sport's
+                predictions explainer (gordstats.how), opened from a chip
+    how         {"call": topic, "units": topic} - the gordstats.how explainer
+                each section's "How this works" chip opens; a section with
+                no topic has no chip
     source      where the unit numbers come from, one line
     stats       the sport's Team Stats URL, linked under the units
 
@@ -64,7 +69,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from gordstats import paths, share_button, share_card
+from gordstats import how, paths, share_button, share_card
 from gordstats.frontmatter import add_front_matter
 
 ET = ZoneInfo("America/New_York")
@@ -425,6 +430,13 @@ def verdict(game) -> str:
     return out
 
 
+def _heading(game, text: str, section: str) -> str:
+    """A section's <h2>, with the "How this works" chip for the explainer the
+    adapter names for it (game["how"]), if any."""
+    topic = (game.get("how") or {}).get(section)
+    return f"<h2>{text}" + (f" {how.button(topic)}" if topic else "") + "</h2>"
+
+
 def _tile(label: str, value: str, sub: str = "", cls: str = "") -> str:
     return (f"<div class='pv-tile{(' ' + cls) if cls else ''}'><span class='pv-tl'>{label}</span>"
             f"<b>{value}</b>" + (f"<small>{sub}</small>" if sub else "") + "</div>")
@@ -474,7 +486,8 @@ def call_block(game) -> str:
                f"{(1 - prob) * 100:.1f}%'></span><span class='pv-wph{fh}'></span></div>")
     if not tiles and not bar:
         return ""
-    return ("<section class='pv-sec pv-call'><h2>The call</h2>" + verdict(game) + bar
+    return ("<section class='pv-sec pv-call'>" + _heading(game, "The call", "call")
+            + verdict(game) + bar
             + f"<div class='pv-tiles'>{''.join(tiles)}</div></section>")
 
 
@@ -554,7 +567,7 @@ def units_block(game) -> str:
     source = escape(game.get("source") or "")
     if game.get("stats"):
         source += (f" Every team: <a href='{escape(game['stats'], quote=True)}'>Team Stats</a>.")
-    return ("<section class='pv-sec'><h2>Unit vs unit</h2>" + lead
+    return ("<section class='pv-sec'>" + _heading(game, "Unit vs unit", "units") + lead
             + "<p class='pv-note'>National rank on each side, 1st the best; the longer bar has the "
             "edge.</p>" + "".join(parts)
             + (f"<p class='pv-fine'>{source.strip()}</p>" if source else "") + "</section>")
@@ -631,9 +644,10 @@ def body(game, title: str = "") -> str:
     """The page body for one game."""
     title = title or f"{game['away']['name']} {'vs' if game.get('neutral') else 'at'} " \
         f"{game['home']['name']}"
+    inner = (header(game) + call_block(game) + units_block(game) + players_block(game)
+             + form_block(game) + links_block(game, title))
     return (CSS + f"<div class='pv' {MARK}='{escape(str(game['id']), quote=True)}'>"
-            + header(game) + call_block(game) + units_block(game) + players_block(game)
-            + form_block(game) + links_block(game, title) + "</div>")
+            + inner + "</div>" + (how.JS_TAG if "class='gs-how'" in inner else ""))
 
 
 def title(game) -> str:

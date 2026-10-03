@@ -27,7 +27,7 @@ import pytest
 
 from browser_util import launch, reap
 from conftest import DOCS, ROOT
-from gordstats import (js_assets, league_api, my_draft, my_history, my_home, my_league,
+from gordstats import (how, js_assets, league_api, my_draft, my_history, my_home, my_league,
                        my_league_data, my_matchups, my_power, my_recap, my_team, my_waivers,
                        my_week, trade_page, watch_page, week_strip)
 
@@ -54,7 +54,11 @@ LIBRARIES = [
     (week_strip, "JS", "gs-week-strip.js", "getElementById('ws-host')"),
     (trade_page, "JS", "gs-trade.js", "window.GSTrade = function("),
     (watch_page, "ENGINE_JS", "gs-watch.js", "window.GSWatch=function("),
+    (how, "JS", "gs-how.js", "window.GSHow"),
 ]
+# Loaded defer: no inline script on the page calls into it (it listens for
+# taps on the "How this works" chips), so it need not hold the page up.
+DEFERRED = {"gs-how.js"}
 IDS = [f"{mod.__name__.split('.')[-1]}.{attr}" for mod, attr, _f, _s in LIBRARIES]
 FILES = sorted({name for _m, _a, name, _s in LIBRARIES})
 
@@ -99,7 +103,7 @@ def test_the_tag_loads_the_file_by_its_hashed_url(mod, attr, name, code):
     assert _files(tag)[-1] == name
     assert code not in tag, "the library is still inline in its tag"
     # In order with the inline scripts after it, as when it was inline itself.
-    assert " defer" not in tag and " async" not in tag
+    assert (" defer" in tag) == (name in DEFERRED) and " async" not in tag
     # A frontmatter.liquid() mark, so add_front_matter lets Jekyll run it.
     assert "' | fingerprint | relative_url }}" in tag
 
@@ -133,7 +137,8 @@ def test_the_page_says_what_the_build_used_to_write_into_the_scripts():
     assert _config(my_home.JS_TAG) == {"expwRatio": EXPW_RATIO}
     assert _config(watch_page.ENGINE_JS_TAG) == {"nightEnds": watch_page.NIGHT_ENDS}
     assert _config(my_week.JS_TAG) == {"nflLogo": logos.url("nfl", "{abbr}")}
-    assert _config(my_recap.JS_TAG) == {"recapShare": share_button.row("", "", league=True)}
+    assert _config(my_recap.JS_TAG) == {"recapShare": share_button.row("", "", league=True),
+                                        "recapHow": how.button("recaps")}
     # And the inline twins carry the same, so a test runs what a page runs.
     for mod, attr in ((my_league, "JS"), (my_history, "JS"), (my_draft, "JS"),
                       (week_strip, "JS"), (my_home, "JS"), (watch_page, "ENGINE_JS"),
@@ -171,8 +176,8 @@ def test_the_league_pages_load_the_libraries_in_their_old_order():
 
 
 def test_the_watch_guide_loads_its_engine_before_the_adapter():
-    html = watch_page.body(None, "<script>GSWatch(D, {});</script>", "how", "/x/", "x")
-    assert _files(html) == ["gs-watch.js"]
+    html = watch_page.body(None, "<script>GSWatch(D, {});</script>", "watch-guide", "/x/", "x")
+    assert _files(html) == ["gs-watch.js", "gs-how.js"]
     assert "window.GSWatch=function(" not in html
     assert html.index("gs-watch.js") < html.index("GSWatch(D, {})")
     assert html.index("nightEnds") < html.index("gs-watch.js")
@@ -183,7 +188,7 @@ def test_the_watch_guide_loads_its_engine_before_the_adapter():
 INLINE_OK = set()
 ATTR = re.compile(r"\b(league_api|my_league|my_league_data|my_week|my_team|my_recap|my_power|"
                   r"my_history|my_home|my_matchups|my_waivers|my_draft|week_strip|trade_page|"
-                  r"watch_page)\.(JS|SIM_JS|LEAGUE_JS|PLANNER_JS|VIEW_JS|CORE_JS|ENGINE_JS)\b")
+                  r"watch_page|how)\.(JS|SIM_JS|LEAGUE_JS|PLANNER_JS|VIEW_JS|CORE_JS|ENGINE_JS)\b")
 
 
 def test_no_page_inlines_a_shared_library():

@@ -31,7 +31,7 @@ from html import escape
 from cfb import waivers, yahoo
 from cfb.config import LEAGUE_TZ, SEASON, WEB_DIR
 from cfb.site import recap, write_page
-from gordstats import hub, schedule_luck
+from gordstats import how, hub, schedule_luck
 from gordstats.frontmatter import liquid
 
 _CSS = """<style>
@@ -347,7 +347,8 @@ def schedule_section(lg: dict) -> str:
             rows += [(week, a["team_key"], b["team_key"], pa, pb),
                      (week, b["team_key"], a["team_key"], pb, pa)]
     names = {t["team_key"]: t["name"] for t in lg["teams"]}
-    return schedule_luck.html(schedule_luck.table(rows), names)
+    return how.section_note("schedule-strength") + schedule_luck.html(
+        schedule_luck.table(rows), names)
 
 
 def records_section() -> str:
@@ -360,7 +361,8 @@ def records_section() -> str:
 
 
 def generate():
-    write_page(WEB_DIR / "league" / "index.html", f"CFB League Dashboard {SEASON}", body())
+    write_page(WEB_DIR / "league" / "index.html", f"CFB League Dashboard {SEASON}",
+               body() + how.JS_TAG)
 
 
 if __name__ == "__main__":

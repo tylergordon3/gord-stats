@@ -92,10 +92,9 @@ UNITS = [
 BETTER = {**{u["off"]: "high" for u in UNITS}, **{u["def"]: "low" for u in UNITS},
           "tov": "low", "tov_d": "high", "tempo": "high"}
 
+# How the call is made is the cbb-predictions explainer (gordstats.how), opened
+# from the chip on "The call"; the glossary is the units' figures only.
 NOTES = [
-    ("The call", "GordStats' margin and win chance: each side's adjusted offense against the "
-     "other's adjusted defense at the two teams' pace, with 2.5 points for home court - the "
-     "scoreboard's own numbers. The book's line is theScore's."),
     ("Adj. efficiency", "Points per 100 possessions against an average D-I team on a neutral "
      "floor: the offense's scored, the defense's allowed."),
     ("Effective FG%", "Field-goal percentage with a made three counted as 1.5 makes."),
@@ -398,6 +397,7 @@ def build(data: dict, now) -> list:
                        + ("." if played else " - his preseason projections until games are "
                           "played.")),
             "stats": "/cbb/stats/",
+            "how": {"call": "cbb-predictions"},
         })
     return out
 

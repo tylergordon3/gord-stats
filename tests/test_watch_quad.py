@@ -81,7 +81,7 @@ def page(tmp_path_factory):
     (root / "index.html").write_text(
         "<!doctype html><html><body>"
         "<script>localStorage.setItem('gsWatchView','quad');</script>"
-        + expand(watch_page.body(data, adapter, "how", "/x/", "x")) + "</body></html>")
+        + expand(watch_page.body(data, adapter, "watch-guide", "/x/", "x")) + "</body></html>")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
     handler.log_message = lambda *a: None
     server = socketserver.TCPServer(("127.0.0.1", 0), handler)

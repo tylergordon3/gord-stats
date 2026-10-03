@@ -97,7 +97,11 @@ def test_the_college_page_projects_a_twelve_team_bracket_beside_fpi(cfb_stub):
     # The feed's name is escaped wherever it is drawn.
     assert "<script>x" not in html and "&lt;script&gt;" in html
     assert 'data-fav="cfb:s1"' in html
-    assert "collegefootballplayoff.com" in html          # the format's source, in the note
+    # How it is worked out is the playoff-odds explainer, opened from the chip
+    # by the bracket's heading (gordstats.how) - no folded note on the page.
+    from gordstats import how
+    assert f"Projected bracket {how.button('playoff-odds')}</h2>" in html
+    assert html.count(how.JS_TAG) == 1 and "po-method" not in html
 
 
 def test_the_college_page_before_a_game_says_so(cfb_stub):

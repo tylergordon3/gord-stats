@@ -16,7 +16,7 @@ are as played.
 from cfb import advanced, cfbd, espn
 from cfb.config import SEASON, WEB_DIR
 from cfb.site import teams as teams_page, write_page
-from gordstats import logos, stats_page
+from gordstats import how, logos, stats_page
 
 OUT = WEB_DIR / "stats" / "index.html"
 
@@ -157,18 +157,16 @@ def body() -> str:
     filters = [("", "All FBS"), ("Power4", "Power 4")] + [(c, CONFERENCES.get(c, c)) for c in confs]
     return (
         "<p>Every FBS offense and defense on expected points and success rate, adjusted for the "
-        "opponents faced. Tap a column to sort; the shading is where a team ranks.</p>"
+        "opponents faced. Tap a column to sort; the shading is where a team ranks. "
+        + how.button("team-stats") + "</p>"
         + stats_page.table(table_rows, COLUMNS, filters=filters, filter_label="Show",
                            sort_key="adj_net")
         + "<h2>Player leaders</h2>"
         + _leaders({r["name"] for r in table_rows})
-        + stats_page.glossary(
-            COLUMNS,
-            "<p><b>EPA</b> (expected points added) is what a play was worth in points, from the "
-            "down, distance and field position before it to those after it. Figures marked "
-            "adjusted are CollegeFootballData's opponent-adjusted ones; the rest are as played, "
-            "the splits with garbage time left out, the box score and plays a game with every "
-            "snap. Source: CollegeFootballData.com.</p>"))
+        # What EPA is and which figures are adjusted is the team-stats
+        # explainer (gordstats.how), opened from the chip in the intro.
+        + stats_page.glossary(COLUMNS)
+        + how.JS_TAG)
 
 
 def generate() -> None:

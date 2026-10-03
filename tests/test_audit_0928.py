@@ -40,11 +40,13 @@ def test_only_this_run_can_mark_a_tag():
 def test_every_intended_liquid_tag_is_marked():
     """An include or relative_url written bare into a body wrapped by
     add_front_matter would now print as text. The two home pages that write
-    their own front matter (no member-supplied text) are the exceptions."""
+    their own front matter (no member-supplied text) are the exceptions, and
+    gordstats.how's LIQUID_TAG, the script tag for exactly those pages and
+    the hand-written ones Jekyll runs as they are."""
     import re
     bare = []
     for path in sorted((ROOT / "src").rglob("*.py")):
-        if path.name in ("render_home.py", "frontmatter.py", "pipeline.py"):
+        if path.name in ("render_home.py", "frontmatter.py", "pipeline.py", "how.py"):
             continue
         for n, line in enumerate(path.read_text().splitlines(), 1):
             if re.search(r"\{%-? *include|\| *relative_url", line) and "liquid(" not in line \

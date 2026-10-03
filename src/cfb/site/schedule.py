@@ -57,7 +57,7 @@ import pandas as pd
 from cfb import cfbd, espn, gameinfo, predict, results
 from cfb import odds as odds_mod
 from cfb.config import DATA_DIR, LEAGUE_TZ, SEASON, WEB_DIR
-from gordstats import favorites, logos, preview_page
+from gordstats import favorites, how, logos, preview_page
 from cfb.site import write_page
 from cfb.site.teams import team_slug
 
@@ -564,7 +564,10 @@ _NOSCRIPT = ("<noscript><style>.det-btn,.sc-filt{display:none}"
 # what a card shows, how the picks are set, when the page was built - lives
 # here rather than above the first game, where on a phone it ran to about
 # eighty words before a single score.
+# How the pick is made is an explainer of its own (gordstats.how): the
+# legend reads the cards, the chip at its top explains the model.
 _LEGEND = """<details class="sc-legend"><summary>How to read it</summary>
+""" + how.section_note("cfb-predictions") + """
 <p>Each game carries this site's <b>GordStats</b> pick beside the <b>DraftKings</b> line.
 On a phone a card opens folded to those two; <b>More</b> unfolds the rest &mdash; FPI and
 SP+, the forecast, the season, every book's line. Scores update live while games are on;
@@ -581,11 +584,8 @@ would take &mdash; <i>GordStats projects 19&ndash;34, recommend M-OH +16.5 and U
 47.5</i>. Hover either number for how far the model and the book are apart; three points
 or more is a strong lean and gets the <i>Strong leans</i> filter. Within half a point it
 says the model agrees with the book, and names nothing. A finished game shows what was on
-record before kickoff, never a refit, with &#10003; or &#10007; on each. Read these as
-where the model disagrees with the book rather than as tips: on the games scored so far it
-is <b>under break-even</b> against the spread, which the
-<a href="/cfb/predictions/#how-it-has-gone">predictions page</a> keeps an honest count
-of.</li>
+record before kickoff, never a refit, with &#10003; or &#10007; on each; the
+<a href="/cfb/predictions/#how-it-has-gone">predictions page</a> keeps the count.</li>
 <li><b>Under each team</b> &mdash; GordStats rating (points better than an average
 FBS team), FPI and SP+ rank (hover for the rating, and SP+ offense and defense ranks), and
 the last five results as W/L chips with the score on hover.</li>
@@ -2343,7 +2343,8 @@ def build() -> tuple:
             + _switcher(week_ids, current, views, controls=_controls(espn.conferences()))
             + _JS % {"upset": json.dumps(UPSET_WATCH), "current": current, "cols": _COLS,
                      "url": json.dumps(_live_url(current)),
-                     "more": json.dumps(MORE_URL.replace("%s", ""))})
+                     "more": json.dumps(MORE_URL.replace("%s", ""))}
+            + how.JS_TAG)
     return (html, {w: v for w, v in views.items() if w != current},
             {w: "".join(p) for w, p in panels.items()})
 

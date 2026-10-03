@@ -4,13 +4,10 @@ title: Men's Live Scores
 league: men
 ---
 
-<h1>NCAAM Live Scoreboard</h1>
+<h1>NCAAM Live Scoreboard <a class='gs-how' href='/how/cbb-rankings/' data-how='cbb-rankings' data-how-title='How the college basketball rankings work' aria-haspopup='dialog' aria-label='How this works: college basketball rankings'><span class='gs-how-chip'><span class='gs-how-i' aria-hidden='true'>i</span>How this works</span></a></h1>
 <div id="scoreboard" data-league="{{ page.league }}">
 
   <div class="meta-bar">
-    <button class="legend-btn" id="open-legend" aria-label="Open legend">
-      ℹ️ Legend
-    </button>
     <div class="sort-bar">
       <span class="sort-label">Sort:</span>
 
@@ -30,6 +27,5 @@ league: men
 
 </div>
 
-{% include modal.html %}
-
 <script src="{{ '/assets/js/live.js' | relative_url }}"></script>
+<script defer src="{{ '/assets/js/gs-how.js' | fingerprint | relative_url }}"></script>

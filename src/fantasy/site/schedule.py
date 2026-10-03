@@ -22,7 +22,7 @@ from fantasy.config import (
     EXPW_RATIO, FANTASY_REG_WEEKS, FORMAL_SEASON, LEAGUE_IDS, ROOT, ROSTER_NAMES, SEASON_DIR,
 )
 from fantasy.site import layout, styles
-from gordstats import schedule_luck
+from gordstats import how, schedule_luck
 from gordstats.frontmatter import add_front_matter
 
 _GRID = [styles.GRID_TD, styles.GRID_TH]
@@ -231,7 +231,8 @@ def _season_view(season_str: str) -> str:
     """One season's three tables, with the first column frozen on h-scroll."""
     frame, names = difficulty(season_str)
     html = (
-        '<h2>Schedule Difficulty</h2>' + schedule_luck.html(frame, names)
+        f"<h2>Schedule Difficulty {how.button('schedule-strength')}</h2>"
+        + schedule_luck.html(frame, names)
         + '<h2>All-Play Standings</h2><p>Whole league goes H2H, every week.</p>'
         f'<div class="table-scroll">{styles.to_html(all_play(season_str))}</div>'
         '<h2>Strength of Schedule & Victory</h2>'
@@ -254,7 +255,7 @@ def generate():
     views = [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS]
     body = layout.HEAD + _CSS + layout.view_switcher(views, group="season", label="Season:",
                                                      pin=True)
-    page = add_front_matter(body, "Schedule Stats")
+    page = add_front_matter(body + how.JS_TAG, "Schedule Stats")
 
     out = paths.WEB_SCHEDULE
     out.parent.mkdir(parents=True, exist_ok=True)
