@@ -98,22 +98,25 @@ def predict(home: str, away: str, table: dict, neutral: bool = False,
 
 def today_table(gender: str = "M", day: date = None) -> dict:
     """This season's newest Torvik table as ratings(), or {} - never last
-    season's (utils.latest_this_season). The men fall back on T-Rank's own
-    table until the daily snapshots begin (its preseason projections)."""
+    season's (utils.latest_this_season). Both leagues fall back on T-Rank's
+    own table until the daily snapshots begin (its preseason projections,
+    then its current ratings): the daily snapshot needs Torvik's four-factor
+    file, which he posts only once games are played."""
     folder = paths.M_TOR_DIR if gender == "M" else paths.W_TOR_DIR
     path = utils.latest_this_season(folder, day)
     if path:
         return ratings(json.loads(path.read_text(encoding="utf-8")))
-    return trank_table(day) if gender == "M" else {}
+    return trank_table(day) if gender == "M" else trank_table(day, "W")
 
 
-def trank_table(day: date = None) -> dict:
-    """ratings() from T-Rank's team results - the CBB power page's cache,
-    refreshed twice a day all year - if it is this season's."""
+def trank_table(day: date = None, gender: str = "M") -> dict:
+    """ratings() from T-Rank's team results - the CBB power page's cache
+    (the women's beside it, render_power.trank_women), refreshed twice a day
+    all year - if it is this season's."""
     import pandas as pd
     from cbb.render import render_power
 
-    path = render_power._cache_path()
+    path = render_power._cache_path() if gender == "M" else render_power._cache_path_w()
     if render_power.TRANK_YEAR != utils.season_year(day or date.today()) or not path.exists():
         return {}
     df = pd.read_csv(path, usecols=["team", "adjoe", "adjde", "adjt"])
@@ -122,6 +125,30 @@ def trank_table(day: date = None) -> dict:
         name = constants.TORVIK_RENAMES.get(str(r.team).strip(), str(r.team).strip())
         if not any(pd.isna(v) for v in (r.adjoe, r.adjde, r.adjt)):
             out[name] = (float(r.adjoe), float(r.adjde), float(r.adjt))
+    return out
+
+
+def trank_ranks(gender: str = "M", day: date = None) -> dict:
+    """{site team name: T-Rank's rank} from the same cache as trank_table, if
+    it is this season's, else {}. The scoreboard carries it beside GordStats'
+    own rank, which needs the bracketology models' inputs (KenPom's season and
+    Torvik's four factors) and so is blank for the first week or more of a
+    season: the watch guide ranks games on T-Rank's until it is there."""
+    from cbb.render import render_power
+
+    if render_power.TRANK_YEAR != utils.season_year(day or date.today()):
+        return {}
+    df = render_power.cached(gender)
+    if df is None or "rank" not in df or "team" not in df:
+        return {}
+    out = {}
+    for team, rank in zip(df["team"], df["rank"]):
+        try:
+            rank = int(rank)
+        except (TypeError, ValueError):
+            continue
+        name = str(team).strip()
+        out[constants.TORVIK_RENAMES.get(name, name)] = rank
     return out
 
 

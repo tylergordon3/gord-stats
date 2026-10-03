@@ -414,7 +414,8 @@ TOPICS: list[Topic] = [
                 "favorite trailing in the second half adds 15, and a blowout (21 points in "
                 "college, 17 in the NFL) takes off 30. Each fantasy starter adds 5, each bench "
                 "player 2, up to 20. Without ESPN's matchup quality, the closeness of the "
-                "spread stands in.",
+                "spread stands in. In basketball season the all-sports guide adds each day's "
+                "20 best men's and women's college basketball games, scored the CBB guide's way.",
         pages=(("All sports", "/watch/"), ("CFB watch guide", "/cfb/watch/"),
                ("NFL watch guide", "/nfl/watch/")),
         related=("game-previews", "cbb-watch"),
@@ -927,8 +928,9 @@ TOPICS: list[Topic] = [
             "second half, and drops for a blowout.</p>",
         ),
         limits=_p(
-            "<p>It's a guess at entertainment, not a ranking of the teams. A team GORD doesn't "
-            "rank counts as #365.</p>",
+            "<p>It's a guess at entertainment, not a ranking of the teams. Early in the season, "
+            "before GORD has ranked anyone, Bart Torvik's T-Rank stands in; a team neither "
+            "ranks counts as #365.</p>",
         ),
         updates="Live scores every three minutes while a game is on; the day's games with the "
                 "daily update.",

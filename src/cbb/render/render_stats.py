@@ -35,6 +35,9 @@ from gordstats.frontmatter import add_front_matter
 OUT = paths.DOCS / "cbb" / "stats" / "index.html"
 FF_URL = f"https://barttorvik.com/{TRANK_YEAR}_fffinal.csv"
 FF_CACHE = paths.DATA / "cbb" / f"fffinal_{TRANK_YEAR}.csv"
+# The women's, for the women's previews (cbb.render.render_previews).
+FF_URL_W = f"https://barttorvik.com/ncaaw/{TRANK_YEAR}_fffinal.csv"
+FF_CACHE_W = paths.DATA / "cbb" / f"fffinal_w_{TRANK_YEAR}.csv"
 MAX_AGE_HOURS = 12
 
 # The fffinal file is value, rank, value, rank... under repeated "Rk" headers;
@@ -45,25 +48,27 @@ FF_FIELDS = ["efg", "efg_d", "ftr", "ftr_d", "orb", "drb", "tov", "tov_d", "p3",
 POWER_CONFS = {"ACC", "B10", "B12", "SEC", "BE"}
 
 
-def four_factors(refresh: bool = False) -> dict:
+def four_factors(refresh: bool = False, gender: str = "M") -> dict:
     """{team: {field: value}} from Torvik's four-factors file, or {} before he
-    publishes it for the season. Cached beside the T-Rank table."""
-    fresh = FF_CACHE.exists() and time.time() - FF_CACHE.stat().st_mtime < MAX_AGE_HOURS * 3600
+    publishes it for the season. Cached beside the T-Rank table; `gender`
+    "W" is the women's."""
+    url, cache = (FF_URL, FF_CACHE) if gender == "M" else (FF_URL_W, FF_CACHE_W)
+    fresh = cache.exists() and time.time() - cache.stat().st_mtime < MAX_AGE_HOURS * 3600
     if not fresh or refresh:
         try:
-            r = requests.get(FF_URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
+            r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=25)
             if r.status_code == 200 and r.text.lstrip().startswith("TeamName"):
-                FF_CACHE.parent.mkdir(parents=True, exist_ok=True)
-                FF_CACHE.write_text(r.text, encoding="utf-8")
+                cache.parent.mkdir(parents=True, exist_ok=True)
+                cache.write_text(r.text, encoding="utf-8")
         except requests.RequestException as exc:
             print(f"  ! four factors fetch failed ({exc}); using the cache")
-    if not FF_CACHE.exists():
+    if not cache.exists():
         return {}
     # Torvik's rows carry more fields than his header (trailing ones), and
     # pandas would take the extras as an index - keying every team by a rank.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", pd.errors.ParserWarning)
-        raw = pd.read_csv(FF_CACHE, index_col=False)
+        raw = pd.read_csv(cache, index_col=False)
     values = raw.iloc[:, 1::2]                     # skip the rank beside each figure
     out = {}
     for team, row in zip(raw.iloc[:, 0], values.itertuples(index=False)):

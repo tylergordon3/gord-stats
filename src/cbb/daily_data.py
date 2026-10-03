@@ -19,7 +19,23 @@ def check_scrape(path):
     return path.exists()
 
 
+# Which league's predictions each feed is an input to (cbb.predictions): a
+# women's feed that is late holds back the women's predictions only. In
+# 2025-26 the women's Torvik tables started five weeks after the men's
+# (data/women/torvik from Dec 17), and Torvik's 2027 women's files were not
+# up a month before tip-off.
+LEAGUE = {"Men's Torvik": "M", "Men's ATS": "M", "KenPom": "M", "Men's Net Rankings": "M",
+          "ESPN BPI": "M", "Men's Schedules": "M",
+          "Women's Net Rankings": "W", "Women's Torvik": "W", "Women's Schedules": "W"}
+
+
 def main():
+    """True when every feed scraped (or is not out for the season yet)."""
+    return not failures()
+
+
+def failures() -> list:
+    """Scrape the day's feeds; the names (LEAGUE's keys) of those that failed."""
     now = datetime.now().replace(tzinfo=pytz.timezone("US/Eastern"))
     today = now.strftime("%Y-%m-%d")
     fp = Path(f"{today}.json")
@@ -38,7 +54,7 @@ def main():
         "Women's Schedules" : (paths.W_SCHEDULE, lambda: season.last_night_results("W"))
     }
 
-    success = True
+    failed = []
 
     for name, (path, func) in targets.items():
         if path == paths.W_SCHEDULE:
@@ -59,14 +75,14 @@ def main():
             continue
         except Exception as e:
             print(f"Error scraping {name} : {e}")
-            success = False
+            failed.append(name)
             continue
         if check_scrape(path):
             print(f"Scraped {name} for {today}.")
         else:
             print(f"Ran {name} for {today} but encountered an error.")
-            success = False
-    return success
+            failed.append(name)
+    return failed
 
 
 def get_data():

@@ -219,7 +219,7 @@ import pytz
 EASTERN = pytz.timezone("US/Eastern")
 
 
-def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender, model=None):
+def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender, model=None, tranks=None):
     # ---- parse datetime ----
     dt = None
     if g.get("game_date"):
@@ -228,6 +228,13 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender, model=None):
     game_date = dt_local.date().isoformat() if dt_local else None
     start_time = dt_local.strftime("%I:%M %p").lstrip("0") if dt_local else None
     start_time_utc = dt.isoformat() if dt else None
+    # theScore files a game with no tip time yet at 18:00 UTC and says so in
+    # `tba`: 83 of the 180 men's games on the 2026 opening Monday a month
+    # out, every one of them a "1:00 PM" tip on the scoreboard and the guides
+    # (the 2026-10-03 rehearsal). The placeholder stays as the day's anchor.
+    tba = g.get("tba") is True
+    if tba:
+        start_time = "TBA"
    
     # ---- mens lookup dicts ----
     ats_lookup = {}
@@ -263,6 +270,12 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender, model=None):
     # is a blank on the card, not a KeyError that loses the whole board.
     home_model = ranks.get(home_name, {}).get("Ovr", "") if home_name else ""
     away_model = ranks.get(away_name, {}).get("Ovr", "") if away_name else ""
+    # T-Rank's rank beside it (game_model.trank_ranks): GordStats' is blank
+    # until the bracketology has this season's inputs, and the watch guide
+    # ranks games on T-Rank's until then.
+    tranks = tranks or {}
+    home_trank = tranks.get(home_name) if home_name else None
+    away_trank = tranks.get(away_name) if away_name else None
 
     hm_safe = safe_float(home_model)
     am_safe = safe_float(away_model)
@@ -368,6 +381,7 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender, model=None):
         "date": game_date,
         "start_time": start_time,
         "start_time_utc": start_time_utc,
+        "tba": tba,
         "status": status,
         "rating": rating,
         "home_team": home_name,
@@ -381,6 +395,8 @@ def format_event(g, ranks, master, ats, net, bpi, tor_dict, gender, model=None):
         "away_score": away_score,
         "away_model": away_model,
         "home_model": home_model,
+        "home_trank": home_trank,
+        "away_trank": away_trank,
         "ats_away": ats_away,
         "ats_home": ats_home,
         "ou_away": ou_away,
@@ -534,6 +550,7 @@ def get_current_live_dataset(league_key):
 
     # This season's Torvik table for GordStats' calls; none before it exists.
     model = game_model.today_table(gender)
+    tranks = game_model.trank_ranks(gender)
 
     for g in events:
         game_id = g.get("id")
@@ -541,7 +558,7 @@ def get_current_live_dataset(league_key):
             continue
 
         games[str(game_id)] = format_event(
-            g, ranks, master, ats_dict, net_dict, bpi_dict, tor_dict, gender, model
+            g, ranks, master, ats_dict, net_dict, bpi_dict, tor_dict, gender, model, tranks
         )
 
     return {

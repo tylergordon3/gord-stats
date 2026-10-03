@@ -196,7 +196,7 @@ JS = """{% raw %}<script>
       o.when='Live '+(mine||0)+'&ndash;'+(theirs||0)+(clock?' &middot; '+esc(clock):''); o.cls='live';
     } else if(st==='post' && mine!=null && theirs!=null){
       var r=result(mine,theirs,g.overtime?' OT':''); o.when=r.when; o.cls=r.cls;
-    } else if(st==='pre'){ o.when=day(g.start_time_utc,true); }
+    } else if(st==='pre'){ o.when=day(g.start_time_utc,g.tba!==true); }   // theScore's time-TBA
     else { o.when=esc(String(g.status).replace(/_/g,' ')); }
     var pick='';
     // GordStats' call (cbb.game_model) like football's; the ranks where there

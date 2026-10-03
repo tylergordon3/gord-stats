@@ -325,7 +325,7 @@ a.wg-g.done{opacity:.8}
 #                   quadbox never puts two games on one broadcast channel
 #   team()          the reader's roster key, in place of the myKey picker - the
 #                   all-sports guide (gordstats.watch_all) merges two leagues
-#   blowout may be a function(game) too, where sports mix
+#   blowout and close may be a function(game) too, where sports mix
 #   quadNote        a line under the quadbox switch
 #
 # cfg is read each time the guide draws, so an adapter may change its hint or

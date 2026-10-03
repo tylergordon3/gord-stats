@@ -4,7 +4,7 @@ window.GSWatch=function(D, cfg){
   var host=document.getElementById('wg-host');
   if(!host) return null;
   cfg=cfg||{};
-  var GAME_HOURS=cfg.gameHours||4.5, MORE=5, STALE_DAYS=3, CLOSE=cfg.close||8;
+  var GAME_HOURS=cfg.gameHours||4.5, MORE=5, STALE_DAYS=3, CLOSE=(typeof cfg.close==='number'&&cfg.close)||8;
   var BLOWOUT=(typeof cfg.blowout==='number'&&cfg.blowout)||21, SWAP=15, FRESH_MS=5*60e3;
   var live={}, timer=null, day=null, view='list', onBox=[], fresh={};
   // A day on the guide runs to NIGHT_ENDS the next morning (game_day, in
@@ -57,7 +57,7 @@ window.GSWatch=function(D, cfg){
       var late=L.late!=null?L.late:L.period>=4, ot=L.ot!=null?L.ot:L.period>=5;
       var second=L.second!=null?L.second:L.period>=3;
       if(ot){ s+=40; hot.push('Overtime'); }
-      else if(late&&diff<=CLOSE){ s+=30; hot.push('Close late'); }
+      else if(late&&diff<=(typeof cfg.close==='function'?cfg.close(g):CLOSE)){ s+=30; hot.push('Close late'); }
       if(second&&((g.fav==='h'&&L.away>L.home)||(g.fav==='a'&&L.home>L.away))){ s+=15; hot.push('Upset alert'); }
       // A second half that is decided is the first thing to turn off.
       var bl=typeof cfg.blowout==='function'?cfg.blowout(g):BLOWOUT;

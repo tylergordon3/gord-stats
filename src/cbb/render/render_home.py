@@ -263,6 +263,23 @@ def _stale_note(days: int, what: str = "") -> str:
             "season starts.</p>")
 
 
+def _waiting_note(today: date) -> str:
+    """In season, while the newest bracket is still last season's: the
+    bracketology needs KenPom's and Torvik's numbers for the new season (his
+    four factors only once games are played), so at first the link is to last
+    March's final bracket - said so, not left to look current."""
+    dates = sorted(f.name.removeprefix("predict_").removesuffix(".html")
+                   for f in paths.WEB_M_DIR.glob("predict_*.html"))
+    try:
+        old = not dates or utils.season_year(dates[-1]) < utils.season_year(today)
+    except ValueError:
+        return ""
+    if not old:
+        return ""
+    return ('<p class="home-card-stale">Last season&rsquo;s final bracket: this season&rsquo;s '
+            "starts once KenPom and Torvik post their numbers for it.</p>")
+
+
 def _latest_predict_date() -> str:
     """The date the newest bracketology page was predicted for, from its own
     name - which is the real prediction date, not a file timestamp."""
@@ -317,7 +334,7 @@ def _cbb_home_body(today: date) -> str:
   </div>
   <p>The projected tournament field: seeds, bubble, and the teams on the wrong
      side of the cut.</p>
-  {_stale_note(days, _latest_predict_date())}
+  {_stale_note(days, _latest_predict_date()) or _waiting_note(today)}
 </section>
 """
     return f"""

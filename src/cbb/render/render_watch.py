@@ -18,7 +18,7 @@ is basketball's own:
                     (render_power.star_teams) gives each star key its name on
                     the scoreboard, and its logo - the feed carries neither.
     live            the same feed again, every three minutes while a game is on
-    previews        a men's card opens the game's preview (/cbb/game/<id>/,
+    previews        a card opens the game's preview (/cbb/game/<id>/,
                     cbb.render.render_previews, built just before this page)
                     when one is on disk, else the scoreboard - the ids are
                     written in at build time, since the cards are drawn later
@@ -44,10 +44,28 @@ the engine's nudges (watch_page.judge), each closing a quarter of the gap to
 NIT, where theScore's ranking is the seed) and a tournament game (a conference
 tournament, the NIT, the Crown; the NCAA tournament counts twice). Tagged
 "Toss-up" at 42-58% and "Upset watch" when the underdog has 35% or more.
+GordStats' rank waits for the bracketology's inputs (KenPom's season and
+Torvik's four factors, a week or more into a season); until a team has one,
+T-Rank's (`home_trank` in the feed) stands in, so opening night is not every
+game graded as two unranked teams.
+
+The all-sports guide (/watch/, gordstats.watch_all) takes basketball from
+here too, but from a file: games.json beside this page (games(), written by
+each daily run) holds the best PER_DAY games of each league for the guide's
+today and tomorrow, scored the same way in Python
+(render_previews.watch_score) - a few KB for Home's Tonight card to read,
+where the whole feed is a megabyte. The live half (LIVE_JS) is shared, and
+refreshes those games' states from the feed when /watch/ opens. Out of
+season the file has no games, and the all-sports pages leave basketball out.
 
     python -m cbb.render.render_watch
 """
 import json
+import re
+from datetime import datetime, timedelta
+from urllib.parse import quote
+
+import pandas as pd
 
 from cbb import paths
 from gordstats import preview_page, watch_page
@@ -55,6 +73,11 @@ from gordstats.frontmatter import add_front_matter
 
 OUT = paths.DOCS / "cbb" / "watch" / "index.html"
 FEED = "https://cbb-live-scores.tmgordon33.workers.dev/scores?league=men"
+PER_DAY = 20               # a league's games a day in the all-sports guide, best first
+DAYS = 2                   # ... for the guide's today and tomorrow
+# The all-sports guide's chip for a game: the men's are its "CBB"
+# (watch_all.CBB), the women's say so.
+BADGE = {"men": "", "women": "WCBB"}
 
 # Windows by Eastern tip-off: (key, label, starts before this hour). A tip
 # after midnight (Hawaii at home, 12:30 ET) is the night before's late game,
@@ -105,6 +128,77 @@ CSS = """<style>
 .wg-empty{font-size:17px;color:var(--wg-ink)}
 </style>"""
 
+# The live half, apart from the adapter so the all-sports guide
+# (gordstats.watch_all) loads it too: GSWatchLive.cbbOf reads a feed game's
+# state and phase; GSWatchLive.cbb(games) answers the engine's live() for
+# games with a theScore `id` and a `league`, from the Worker, read at most
+# once per EVERY (the feed changes once a push, every ten minutes) - and once
+# for any number of callers asking at the same moment.
+LIVE_JS = """<script>
+window.GSWatchLive=window.GSWatchLive||{};
+GSWatchLive.cbbOf=(function(){
+  var LATE=__LATE__;
+  function num(v){ var n=parseFloat(v); return isFinite(n)?n:null; }
+  /* theScore's status, as the engine's three states; a game called off is
+     no game to watch. */
+  function state(s){
+    s=String(s||'').toLowerCase();
+    if(s==='final'||s==='closed') return 'post';
+    if(!s||s==='pre_game'||s==='scheduled') return 'pre';
+    if(/postpon|cancel|forfeit/.test(s)) return null;
+    return 'in';
+  }
+  function seconds(clock){
+    var c=String(clock||''), m=c.split(':');
+    return m.length===2?(+m[0])*60+parseFloat(m[1]):(c?parseFloat(c):NaN);
+  }
+  /* Where a game is: the feed's period is "1st"/"2nd" for the men's halves,
+     "1st"-"4th" for the women's quarters, "OT" (or "2OT") after. */
+  function phase(g, women){
+    var per=String(g.period||''), n=parseInt(per,10), half=/half/.test(String(g.status).toLowerCase());
+    var reg=women?4:2, ot=g.overtime===true||/OT/i.test(per)||n>reg;
+    var secs=seconds(g.clock);
+    return {detail:half?'Half':[per,g.clock].filter(Boolean).join(' '), period:n||0, ot:!half&&ot,
+            second:!half&&(ot||n>=(women?3:2)), late:!half&&(ot||(n>=reg&&secs<=LATE))};
+  }
+  function of(g, women){
+    var p=phase(g, women), st=state(g.status);
+    return {state:st, detail:p.detail, period:p.period, home:num(g.home_score), away:num(g.away_score),
+            late:p.late, ot:p.ot, second:p.second};
+  }
+  return {state:state, of:of};
+})();
+GSWatchLive.cbb=(function(){
+  var FEED=__FEED__, EVERY=__EVERY__, got=null, at=0, asking=null;
+  function feed(){
+    if(asking) return asking;
+    if(got&&Date.now()-at<EVERY) return Promise.resolve(got);
+    asking=fetch(FEED).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; })
+      .then(function(d){ if(d&&d.leagues){ got=d; at=Date.now(); } asking=null; return got; });
+    return asking;
+  }
+  return function(games){
+    return feed().then(function(d){
+      var out={};
+      (games||[]).forEach(function(g){
+        var lg=g.league==='women'?'women':'men';
+        var x=d&&d.leagues&&d.leagues[lg]&&d.leagues[lg][String(g.id)];
+        if(!x) return;
+        var L=GSWatchLive.cbbOf.of(x, lg==='women');
+        if(L.state) out[String(g.id)]=L;
+      });
+      return out;
+    });
+  };
+})();
+</script>"""
+
+
+def live_js() -> str:
+    return (LIVE_JS.replace("__LATE__", str(LATE_SECONDS))
+            .replace("__FEED__", json.dumps(FEED)).replace("__EVERY__", str(EVERY)))
+
+
 ADAPTER_JS = CSS + """<script>
 (function(){
   var C=__CONFIG__;
@@ -140,33 +234,9 @@ ADAPTER_JS = CSS + """<script>
       .replace(/^-+|-+$/g,'');
   }
 
-  /* theScore's status, as the engine's three states; a game called off is
-     no game to watch. */
-  function state(s){
-    s=String(s||'').toLowerCase();
-    if(s==='final'||s==='closed') return 'post';
-    if(!s||s==='pre_game'||s==='scheduled') return 'pre';
-    if(/postpon|cancel|forfeit/.test(s)) return null;
-    return 'in';
-  }
-  function seconds(clock){
-    var c=String(clock||''), m=c.split(':');
-    return m.length===2?(+m[0])*60+parseFloat(m[1]):(c?parseFloat(c):NaN);
-  }
-  /* Where a game is: the feed's period is "1st"/"2nd" for the men's halves,
-     "1st"-"4th" for the women's quarters, "OT" (or "2OT") after. */
-  function phase(g, women){
-    var per=String(g.period||''), n=parseInt(per,10), half=/half/.test(String(g.status).toLowerCase());
-    var reg=women?4:2, ot=g.overtime===true||/OT/i.test(per)||n>reg;
-    var secs=seconds(g.clock);
-    return {detail:half?'Half':[per,g.clock].filter(Boolean).join(' '), period:n||0, ot:!half&&ot,
-            second:!half&&(ot||n>=(women?3:2)), late:!half&&(ot||(n>=reg&&secs<=C.lateSec))};
-  }
-  function liveOf(g, women){
-    var p=phase(g, women), st=state(g.status);
-    return {state:st, detail:p.detail, period:p.period, home:num(g.home_score), away:num(g.away_score),
-            late:p.late, ot:p.ot, second:p.second};
-  }
+  // theScore's status and a game's live state: shared with the all-sports
+  // guide (LIVE_JS, GSWatchLive.cbbOf).
+  var state=GSWatchLive.cbbOf.state, liveOf=GSWatchLive.cbbOf.of;
 
   function grade(rank){ return 100*Math.pow(0.5,((rank||C.unranked)-1)/C.half); }
   /** The watch score before the reader's part: the module docstring's formula. */
@@ -186,10 +256,12 @@ ADAPTER_JS = CSS + """<script>
   function team(g, side, women){
     var nm=g[side+'_team']||'TBD', t=teams[nm]||{};
     var rk=num(g[side+'_rank']);
+    // GordStats' rank, else T-Rank's (render_previews.rank_of): GordStats'
+    // is blank until the bracketology has the season's inputs.
     return {id:nm, nm:nm, lg:t.lg||'', rk:rk&&rk>0?rk:null, rec:g[side+'_record']||'',
             sc:num(g[side+'_score']), pr:num(g['pred_'+side]),
             k:(women?'cbb-women:':'cbb-men:')+(t.slug||slug(nm)),
-            gs:num(g[side+'_model'])};
+            gs:num(g[side+'_model'])||num(g[side+'_trank'])};
   }
   /** One league's games from the feed, in the engine's shape. */
   function games(lg){
@@ -198,7 +270,8 @@ ADAPTER_JS = CSS + """<script>
     Object.keys(src).forEach(function(id){
       var g=src[id]||{}, st=state(g.status);
       if(!st) return;
-      var ko=g.start_time_utc?Date.parse(g.start_time_utc):NaN, tk=!isNaN(ko);
+      // A time-TBA game (theScore's `tba`) is filed at a placeholder hour.
+      var ko=g.start_time_utc?Date.parse(g.start_time_utc):NaN, tk=!isNaN(ko)&&g.tba!==true;
       var day=g.date||(tk?etDate(ko):''), slot='tba';
       if(tk){
         var h=etHour(ko);
@@ -218,7 +291,7 @@ ADAPTER_JS = CSS + """<script>
         tv:'', note:tour?desc.replace(/\\s*\\|\\s*/g,' \\u00b7 '):'', n:g.neutral===true, state:st,
         hw:p, sp:null, lt:g.spread_close?String(g.spread_close).replace(/ -(?=\\d)/,' \\u2212'):'',
         score:j.score, tags:j.tags, fav:j.fav, h:h2, a:a2,
-        href:lg==='men'&&PV[String(id)]?'/cbb/game/'+id+'/':'/'+lg+'/'});
+        href:PV[String(id)]?'/cbb/game/'+id+'/':'/'+lg+'/'});
     });
     return out;
   }
@@ -370,11 +443,132 @@ ADAPTER_JS = CSS + """<script>
 
 
 
+# --------------------------------------------------------------------------- #
+# games.json, for the all-sports guide
+# --------------------------------------------------------------------------- #
+
+def _teams() -> dict:
+    """{scoreboard name: (star slug, logo URL)} from /cbb/star-teams.json
+    (render_power.star_teams, written just before this by the daily run) -
+    what the browser half reads for the same two things."""
+    from cbb.render import render_power
+    try:
+        raw = json.loads(render_power.STAR_TEAMS_OUT.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for key, v in (raw or {}).items():
+        if v and v[0]:
+            out[v[0]] = (key.split(":", 1)[1], quote(v[1]) if len(v) > 1 and v[1] else "")
+    return out
+
+
+def games(feed: dict, now=None, tranks: dict = None, teams: dict = None, pv=(),
+          tv: dict = None) -> list:
+    """The PER_DAY best games of each league on each of the guide's DAYS (its
+    day runs to watch_page.NIGHT_ENDS, as the all-sports guide's does), in the
+    engine's shape, best first. `feed` is the Worker's leagues; `tranks`
+    {league: {name: T-Rank rank}} stands in for a missing GordStats rank;
+    `teams` _teams(); `pv` the games with a preview; `tv` {id: channels}."""
+    from cbb.render import render_previews as rp
+    from gordstats import favorites
+
+    now = pd.Timestamp(now) if now is not None else pd.Timestamp.now(tz=watch_page.ET)
+    if now.tzinfo is None:
+        now = now.tz_localize(watch_page.ET)
+    first = datetime.strptime(watch_page.game_day(now), "%Y-%m-%d")
+    days = [(first + timedelta(days=d)).strftime("%Y-%m-%d") for d in range(DAYS)]
+    teams, tv, pv = teams or {}, tv or {}, {str(x) for x in pv}
+    out = []
+    for league in ("men", "women"):
+        trank = (tranks or {}).get(league) or {}
+        by_day = {}
+        for gid, g in ((feed or {}).get(league) or {}).items():
+            st = rp.state(g.get("status"))
+            if st is None:
+                continue
+            ko = pd.Timestamp(g["start_time_utc"]) if g.get("start_time_utc") else None
+            tk = ko is not None and g.get("tba") is not True      # theScore's placeholder hour
+            day = watch_page.game_day(ko) if tk else str(g.get("date") or "")
+            if day not in days:
+                continue
+            p = rp._v(g.get("home_win_prob"))
+            hr, ar = rp.rank_of(g, "home", trank), rp.rank_of(g, "away", trank)
+            # Nothing to rank it on - no rank either side, no AP poll, no
+            # call: the women's opening night before Torvik's women's table,
+            # when every such game scores alike and the cut would be at random.
+            if hr is None and ar is None and p is None \
+                    and not rp._v(g.get("home_rank")) and not rp._v(g.get("away_rank")):
+                continue
+            mm, nit = g.get("is_mm") is True, g.get("is_nit") is True
+            tour = rp.tournament(g)
+            top25 = (not mm and not nit and bool(rp._v(g.get("home_rank")))
+                     and bool(rp._v(g.get("away_rank"))))
+            score, tags = rp.watch_score(hr, ar, p, top25, tour)
+
+            def team(side):
+                nm = str(g.get(f"{side}_team") or "TBD")
+                slug, logo = teams.get(nm) or (None, "")
+                rk = rp._v(g.get(f"{side}_rank"))
+                return {"id": nm, "nm": nm, "lg": logo, "rk": int(rk) if rk and rk > 0 else None,
+                        "rec": str(g.get(f"{side}_record") or ""),
+                        "sc": rp._v(g.get(f"{side}_score")), "pr": rp._v(g.get(f"pred_{side}")),
+                        "k": (f"cbb-{league}:{slug}" if slug
+                              else favorites.name_key(f"cbb-{league}", nm))}
+            desc = str(g.get("game_description") or "")
+            line = str(g.get("spread_close") or "").strip()
+            by_day.setdefault(day, []).append({
+                "id": str(gid), "league": league, "badge": BADGE[league], "day": day,
+                "slot": watch_page.slot(ko, SLOTS) if tk else watch_page.TBA[0],
+                "ko": ko.tz_convert("UTC").strftime("%Y-%m-%dT%H:%M:%SZ") if ko is not None else "",
+                "tk": tk, "tv": tv.get(str(gid), ""),
+                "note": " · ".join(x.strip() for x in desc.split("|")) if tour else "",
+                "n": g.get("neutral") is True, "state": st, "hw": p, "sp": None,
+                "lt": re.sub(r" -(?=\d)", " \u2212", line),
+                "score": score, "tags": tags,
+                "fav": None if p is None or p == 0.5 else ("h" if p > 0.5 else "a"),
+                "h": team("home"), "a": team("away"),
+                "href": f"/cbb/game/{gid}/" if str(gid) in pv else f"/{league}/"})
+        for day in sorted(by_day):
+            out += sorted(by_day[day], key=lambda x: (-x["score"], x["ko"] or "~"))[:PER_DAY]
+    return out
+
+
+def write_games(now=None) -> int:
+    """games.json beside the page: the feed's best games for the all-sports
+    guide. Returns how many; -1 (and the last file kept) when the feed does
+    not load."""
+    from cbb import game_model, utils
+    from cbb.render import render_previews as rp
+
+    try:
+        got = rp.feed()
+    except Exception as exc:                       # noqa: BLE001 - the page stands without it
+        print(f"  ! CBB watch games: the scoreboard feed did not load ({exc}); kept the last")
+        return -1
+    now = pd.Timestamp(now) if now is not None else pd.Timestamp.now(tz=watch_page.ET)
+    tranks = {"men": game_model.trank_ranks("M"), "women": game_model.trank_ranks("W")}
+    picked = games(got["leagues"], now, tranks, _teams(), preview_page.built("cbb"))
+    tv = {}
+    for league, path in (("men", "ncaab"), ("women", "wcbk")):
+        ids = [g["id"] for g in picked if g["league"] == league and g["state"] != "post"]
+        if ids:
+            tv.update(rp.tv(ids, path))
+    for g in picked:
+        g["tv"] = tv.get(g["id"], "")
+    out = OUT.parent / "games.json"
+    watch_page.write_games(out, {
+        "season": utils.season_year(now.date()), "generated": now.isoformat(timespec="minutes"),
+        "slots": watch_page.slot_hours(SLOTS), "games": picked})
+    print(f"Wrote {len(picked)} CBB games for the all-sports guide -> {out}")
+    return len(picked)
+
+
 def body(cfg: dict = None) -> str:
     """The page: no games in it (the browser reads them), only the adapter
     with `cfg` (config(), or a test's) where it says __CONFIG__."""
     adapter = ADAPTER_JS.replace("__CONFIG__", json.dumps(cfg or config(), separators=(",", ":")))
-    return watch_page.body(None, adapter, "cbb-watch", "/cbb/watch/",
+    return watch_page.body(None, live_js() + adapter, "cbb-watch", "/cbb/watch/",
                            "What to watch in college basketball today")
 
 
@@ -386,6 +580,7 @@ def generate() -> None:
                     "tip-off and ranked by how much it is worth watching - with live scores."),
         encoding="utf-8")
     print(f"Wrote CBB watch guide -> {OUT}")
+    write_games()
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 """
-CBB game previews (/cbb/game/<theScore id>/): one page per men's game, our
-call against the book's and the matchup unit by unit - the college basketball
-twin of /cfb/game/ and /nfl/game/, drawn by the shared gordstats.preview_page.
+CBB game previews (/cbb/game/<theScore id>/): one page per game, men's and
+women's, our call against the book's and the matchup unit by unit - the
+college basketball twin of /cfb/game/ and /nfl/game/, drawn by the shared
+gordstats.preview_page.
 
 Everything here is read, not refitted:
 
@@ -29,7 +30,7 @@ Everything here is read, not refitted:
                 run keeps (cbb.scrape.season), with the margin against our
                 line from the table published before each game.
 
-Which games: men's games from yesterday through tomorrow (Eastern), both
+Which games: games from yesterday through tomorrow (Eastern), both
 teams Division I (T-Rank rates both - otherwise there is no call and no
 units, only a header), and at least one of them in T-Rank's top TOP or the
 game a tournament's. Last season that was 23 games a day on average, 45 on
@@ -37,9 +38,16 @@ the 90th-percentile day and 81 at most, so ~70 pages are up at a time and
 ~200 on the busiest days, ~15 KB each; every two-team-from-the-bottom-half
 game a day is left to the scoreboard. A finished game keeps its page for a
 day, with the final and the marks; then prune() removes it, so the deploy
-holds three days and never grows. The women's games are left out: the T-Rank
-table and four-factors file this section caches are the men's, so a women's
-page would be the call and nothing under it.
+holds three days and never grows.
+
+The women's games are the same pages on the women's tables: T-Rank's women's
+team results and four factors (render_power.trank_women,
+render_stats.four_factors(gender="W"), cached by the daily run beside the
+men's), the women's Torvik snapshots and results file, gender "W" in the
+model. Until Torvik posts the season's women's team results (not up in
+October 2026) no women's team is rated, so no women's game gets a page - the
+men's are untouched. theScore numbers men's and women's events in one
+sequence, so the two never share an address.
 
 Builds after the rankings (it reads their T-Rank cache) and before the watch
 guide, which links each card to its preview when one is on disk
@@ -61,13 +69,21 @@ from gordstats import preview_meta, preview_page
 from gordstats.preview_page import ET, ordinal
 
 SPORT = "cbb"
+# Each league's own: the model's gender, its Torvik snapshots and results,
+# theScore's path (for TV), the scoreboard page.
+LEAGUES = {
+    "men": {"gender": "M", "tor": paths.M_TOR_DIR, "schedule": paths.M_SCHEDULE,
+            "score": "ncaab", "scores": "/men/", "label": "", "name": "Men's"},
+    "women": {"gender": "W", "tor": paths.W_TOR_DIR, "schedule": paths.W_SCHEDULE,
+              "score": "wcbk", "scores": "/women/", "label": "Women's", "name": "Women's"},
+}
 TOP = 150                  # T-Rank places: a game needs a team this high (or a tournament)
 FORM_GAMES = 4
 # Points between our margin and the book's before a lean is named - the NFL
 # page's rule. The model is not yet graded against lines (cbb.lines keeps
 # them from 2026-27), so no record link and no "slight" leans.
 EDGE = 3.0
-SCORE_EVENTS = "https://api.thescore.com/ncaab/events"
+SCORE_EVENTS = "https://api.thescore.com/{path}/events"
 SCORE_HEADERS = {"User-Agent": "Mozilla/5.0", "Accept": "application/json",
                  "Referer": "https://www.thescore.com/"}
 
@@ -191,13 +207,14 @@ def _days(now) -> list:
     return [(today + timedelta(days=d)).isoformat() for d in (-1, 0, 1)]
 
 
-def window(feed: dict, now, trank: dict) -> list:
-    """[(id, game)] that get a page: men's, yesterday to tomorrow (Eastern),
-    not called off, both teams rated by T-Rank (`trank`: {site name: rank}),
-    one of them in its top TOP or the game a tournament's."""
+def window(feed: dict, now, trank: dict, league: str = "men") -> list:
+    """[(id, game)] that get a page: the league's, yesterday to tomorrow
+    (Eastern), not called off, both teams rated by T-Rank (`trank`: {site
+    name: rank}, the league's), one of them in its top TOP or the game a
+    tournament's."""
     days = set(_days(now))
     out = []
-    for gid, g in ((feed or {}).get("men") or {}).items():
+    for gid, g in ((feed or {}).get(league) or {}).items():
         if g.get("date") not in days or state(g.get("status")) is None:
             continue
         hr, ar = trank.get(g.get("home_team")), trank.get(g.get("away_team"))
@@ -211,6 +228,20 @@ def window(feed: dict, now, trank: dict) -> list:
 # --------------------------------------------------------------------------- #
 # The watch score: the guide's (render_watch's docstring), in Python
 # --------------------------------------------------------------------------- #
+
+def rank_of(g: dict, side: str, trank: dict = None):
+    """The rank the watch score grades a team on: GordStats' (`home_model`),
+    else T-Rank's - the feed's `home_trank`, or `trank` ({site name: rank})
+    for a feed pushed before it carried one. GordStats' rank waits for the
+    bracketology's inputs (KenPom's season, Torvik's four factors), so on
+    opening night every game would otherwise grade as two unranked teams."""
+    for v in (g.get(f"{side}_model"), g.get(f"{side}_trank"),
+              (trank or {}).get(g.get(f"{side}_team"))):
+        r = _v(v)
+        if r and r > 0:
+            return r
+    return None
+
 
 def watch_score(hm, am, p, top25: bool = False, tour: int = 0) -> tuple:
     """(score, tags) for one game from the two GordStats ranks and our home
@@ -258,7 +289,8 @@ def record_before(log: dict, day: str) -> str:
     return f"{w}-{l}" if w or l else ""
 
 
-def form(logs: dict, team: str, day: str, table_on, neutral_on=None) -> list:
+def form(logs: dict, team: str, day: str, table_on, neutral_on=None,
+         gender: str = "M") -> list:
     """The team's last FORM_GAMES before `day`, newest first, in the shared
     form rows' shape - each with the margin against our line from the table
     published by its own day (none against a team T-Rank does not rate).
@@ -273,7 +305,7 @@ def form(logs: dict, team: str, day: str, table_on, neutral_on=None) -> list:
         h, a = (team, g["opponent"]) if home else (g["opponent"], team)
         hs, as_ = (g["score"], g["opponent_score"]) if home else (g["opponent_score"], g["score"])
         neutral = bool(neutral_on and neutral_on(d, h, a))
-        pick = game_model.predict(h, a, table_on(d), neutral=neutral, gender="M")
+        pick = game_model.predict(h, a, table_on(d), neutral=neutral, gender=gender)
         games.append({"date": d, "home_id": h, "away_id": a, "home": h, "away": a,
                       "home_score": hs, "away_score": as_, "played": True, "neutral": neutral,
                       "pred_margin": None if not pick else pick["pred_home"] - pick["pred_away"]})
@@ -309,10 +341,12 @@ def _status(g, st: str) -> str:
     return ""
 
 
-def _call(g, st: str, table: dict, lk: dict, archive: dict, gid: str, tour: int) -> dict:
+def _call(g, st: str, table: dict, lk: dict, archive: dict, gid: str, tour: int,
+          league: str = "men", trank: dict = None) -> dict:
     home, away = g.get("home_team"), g.get("away_team")
     neutral = g.get("neutral") is True
-    pick = game_model.predict(home, away, table, neutral=neutral, gender="M") or {}
+    pick = game_model.predict(home, away, table, neutral=neutral,
+                              gender=LEAGUES[league]["gender"]) or {}
     margin = total = prob = None
     if pick:
         margin = round(pick["pred_home"] - pick["pred_away"], 1)
@@ -320,7 +354,7 @@ def _call(g, st: str, table: dict, lk: dict, archive: dict, gid: str, tour: int)
         prob = pick["home_win_prob"]
     # Before tip-off the feed's line is the latest; after it, the archive's is
     # the close (cbb.lines keeps only pregame lines), the feed's the fallback.
-    kept = archive.get(f"men:{gid}") or {}
+    kept = archive.get(f"{league}:{gid}") or {}
     live = (home_line(g.get("spread_close"), home, away, lk["alias"]), _v(g.get("total_close")))
     close = (home_line(kept.get("spread"), home, away, lk["alias"]), _v(kept.get("total")))
     first, second = (live, close) if st == "pre" else (close, live)
@@ -333,8 +367,8 @@ def _call(g, st: str, table: dict, lk: dict, archive: dict, gid: str, tour: int)
         mm, nit = g.get("is_mm") is True, g.get("is_nit") is True
         # In the NCAA tournament and the NIT theScore's ranking is the seed.
         top25 = not mm and not nit and bool(_v(g.get("home_rank"))) and bool(_v(g.get("away_rank")))
-        call["watch"], call["tags"] = watch_score(g.get("home_model"), g.get("away_model"),
-                                                  prob, top25, tour)
+        call["watch"], call["tags"] = watch_score(rank_of(g, "home", trank),
+                                                  rank_of(g, "away", trank), prob, top25, tour)
     return call
 
 
@@ -350,8 +384,11 @@ def _style(ranks: dict, row: dict) -> str:
     return " · ".join(bits)
 
 
-def build(data: dict, now) -> list:
-    """The window's games in preview_page's shape. `data` is load()'s."""
+def build(data: dict, now, league: str = None) -> list:
+    """The window's games in preview_page's shape. `data` is load()'s, for
+    `league` (its own "league", else the men's)."""
+    league = league or data.get("league") or "men"
+    lg = LEAGUES[league]
     lk = data.get("lookup") or {"alias": {}, "logo": {}}
     trank = data.get("trank") or {}
     ranks, rows = data.get("ranks") or {}, data.get("rows") or {}
@@ -362,7 +399,7 @@ def build(data: dict, now) -> list:
     archive = data.get("lines") or {}
     played = data.get("played", True)
     out = []
-    for gid, g in window(data.get("feed"), now, trank):
+    for gid, g in window(data.get("feed"), now, trank, league):
         st = state(g.get("status"))
         day = str(g["date"])
         tour = tournament(g)
@@ -372,31 +409,33 @@ def build(data: dict, now) -> list:
         ko = g.get("start_time_utc")
         desc = str(g.get("game_description") or "")
         out.append({
-            "sport": SPORT, "id": gid, "label": "",
+            "sport": SPORT, "id": gid, "label": lg["label"], "league": league,
             "state": st, "status": _status(g, st),
-            "ko": pd.Timestamp(ko) if ko else None, "tk": bool(ko),
+            # theScore's time-TBA games sit at a placeholder hour (`tba`).
+            "ko": pd.Timestamp(ko) if ko else None, "tk": bool(ko) and g.get("tba") is not True,
             "tv": tv.get(gid, ""), "venue": str(g.get("venue") or ""),
             "place": str(g.get("location") or ""),
             "note": desc.replace(" | ", " · ") if tour else "",
             "neutral": g.get("neutral") is True, "weather": None,
             "away": away, "home": home,
-            "call": _call(g, st, table_on(day), lk, archive, gid, tour),
+            "call": _call(g, st, table_on(day), lk, archive, gid, tour, league, trank),
             "units": {"away": preview_page.pair_units(UNITS, ranks.get(aid), ranks.get(hid)),
                       "home": preview_page.pair_units(UNITS, ranks.get(hid), ranks.get(aid))},
             "style": {side: _style(ranks.get(t["id"]) or {}, rows.get(t["id"]) or {})
                       for side, t in (("away", away), ("home", home))},
             "players": {},
-            "form": {side: form(logs, t["id"], day, table_on, neutral_on)
+            "form": {side: form(logs, t["id"], day, table_on, neutral_on, lg["gender"])
                      for side, t in (("away", away), ("home", home))},
             "words": {"off": "offense", "def": "defense"},
             "schedule": None,
-            "links": [("Scores", "/men/"), ("Watch Guide", "/cbb/watch/"),
-                      ("Rankings", "/cbb/power/")],
+            # The rankings and the team stats pages are the men's.
+            "links": [("Scores", lg["scores"]), ("Watch Guide", "/cbb/watch/")]
+                     + ([("Rankings", "/cbb/power/")] if league == "men" else []),
             "notes": NOTES,
             "source": ("Bart Torvik's adjusted figures, ranked across Division I"
                        + ("." if played else " - his preseason projections until games are "
                           "played.")),
-            "stats": "/cbb/stats/",
+            "stats": "/cbb/stats/" if league == "men" else None,
             "how": {"call": "cbb-predictions"},
         })
     return out
@@ -416,14 +455,16 @@ def feed() -> dict:
     return {"leagues": data.get("leagues") or {}, "generated": data.get("generated")}
 
 
-def tv(ids: list) -> dict:
+def tv(ids: list, path: str = "ncaab") -> dict:
     """{id: "ESPN2, ESPN+"} from theScore's US listings, a batch of events at
-    a time; whatever it could not read is left out."""
+    a time; whatever it could not read is left out. `path` is the league's
+    on theScore (LEAGUES' "score": ncaab, wcbk)."""
     import requests
     out = {}
     for i in range(0, len(ids), 120):
         try:
-            r = requests.get(SCORE_EVENTS, params={"id.in": ",".join(ids[i:i + 120])},
+            r = requests.get(SCORE_EVENTS.format(path=path),
+                             params={"id.in": ",".join(ids[i:i + 120])},
                              headers=SCORE_HEADERS, timeout=15)
             r.raise_for_status()
             events = r.json()
@@ -440,11 +481,12 @@ def tv(ids: list) -> dict:
     return out
 
 
-def tables(folder=paths.M_TOR_DIR):
+def tables(folder=paths.M_TOR_DIR, gender: str = "M"):
     """table_on(day): cbb.game_model.ratings() of the newest Torvik table in
     `folder` dated on or before `day` in its season - what the scoreboard's
     call used that day (game_model.today_table) - else T-Rank's own table
-    (its preseason projections) while it is that season's."""
+    (its preseason projections) while it is that season's; `gender` "W" the
+    women's."""
     files = []
     for f in sorted(folder.glob("*.json")):
         try:
@@ -465,12 +507,13 @@ def tables(folder=paths.M_TOR_DIR):
                 cache[key] = game_model.ratings(json.loads(pick.read_text(encoding="utf-8")))
             else:
                 from datetime import date
-                cache[key] = game_model.trank_table(date.fromisoformat(day))
+                cache[key] = (game_model.trank_table(date.fromisoformat(day)) if gender == "M"
+                              else game_model.trank_table(date.fromisoformat(day), "W"))
         return cache[key]
     return table_on
 
 
-def neutral_sites(archive: dict):
+def neutral_sites(archive: dict, league: str = "men"):
     """neutral_on(date, home, away) from the lines archive: a tournament game,
     which the scoreboard calls without home court. False for a game it does
     not hold."""
@@ -478,7 +521,7 @@ def neutral_sites(archive: dict):
     for row in (archive or {}).values():
         desc = str(row.get("game_description") or "")
         # cbb.live_scraper.format_event's rule for the call's neutral floor.
-        if row.get("league") == "men" and ("Tournament" in desc or "NIT" in desc):
+        if row.get("league") == league and ("Tournament" in desc or "NIT" in desc):
             tour.add((row.get("date"), row.get("home_team"), row.get("away_team")))
     return lambda d, h, a: (d, h, a) in tour
 
@@ -491,25 +534,30 @@ def _lines(season: int) -> dict:
     return out
 
 
-def load(now, got: dict) -> dict:
-    """Everything build() reads, around the feed (`got`, feed()'s): the
-    caches the daily run has just filled, and TV for the window's games."""
+def load(now, got: dict, league: str = "men") -> dict:
+    """Everything build() reads for `league`, around the feed (`got`,
+    feed()'s): the caches the daily run has just filled, and TV for the
+    window's games. The women's before Torvik posts their table: no team
+    rated, so no game in the window and nothing else read."""
     from cbb.render import render_power, render_stats
 
+    lg = LEAGUES[league]
     master = json.loads(paths.MASTER_DICT.read_text(encoding="utf-8"))
     lk = master_lookup(master)
-    df = render_power.trank()
-    trank = {site_name(str(t), lk["alias"]): int(r) for t, r in zip(df["team"], df["rank"])}
-    data = {"feed": got["leagues"], "generated": got["generated"], "lookup": lk, "trank": trank}
-    games = window(got["leagues"], now, trank)
+    df = render_power.trank() if league == "men" else render_power.trank_women()
+    trank = ({} if df is None else
+             {site_name(str(t), lk["alias"]): int(r) for t, r in zip(df["team"], df["rank"])})
+    data = {"feed": got["leagues"], "generated": got["generated"], "lookup": lk,
+            "trank": trank, "league": league}
+    games = window(got["leagues"], now, trank, league)
     if not games:
         return data
-    ff = render_stats.four_factors()
+    ff = render_stats.four_factors(gender=lg["gender"])
     rows = []
     for r in render_stats.rows(df, ff):
         rows.append({**r, "id": site_name(r["name"], lk["alias"])})
     try:
-        logs = json.loads(paths.M_SCHEDULE.read_text(encoding="utf-8"))
+        logs = json.loads(lg["schedule"].read_text(encoding="utf-8"))
     except (OSError, ValueError):
         logs = {}
     season = utils.season_year(pd.Timestamp(now).tz_convert(ET).date().isoformat())
@@ -517,8 +565,9 @@ def load(now, got: dict) -> dict:
     data.update({
         "ranks": preview_page.rank_table(rows, BETTER), "rows": {r["id"]: r for r in rows},
         "played": df["record"].astype(str).str.split("-").str[0].astype(int).sum() > 0,
-        "logs": logs, "table_on": tables(), "lines": archive,
-        "neutral_on": neutral_sites(archive), "tv": tv([gid for gid, _g in games]),
+        "logs": logs, "table_on": tables(lg["tor"], lg["gender"]), "lines": archive,
+        "neutral_on": neutral_sites(archive, league),
+        "tv": tv([gid for gid, _g in games], lg["score"]),
     })
     return data
 
@@ -535,20 +584,27 @@ def generate(now=None) -> list:
         print(f"CBB previews: the scoreboard feed did not load ({exc}); "
               "nothing written, nothing removed")
         return []
-    data = load(now, got)
-    games = build(data, now)
-    for g in games:
-        preview_page.write(g, subtitle="Men's college basketball preview",
-                           description=preview_meta.describe(g))
+    games, count = [], {}
+    for league, lg in LEAGUES.items():
+        mine = build(load(now, got, league), now, league)
+        count[league] = len(mine)
+        for g in mine:
+            describe = preview_meta.describe(g)
+            if lg["label"]:
+                describe = describe.rstrip(".") + f" - {lg['label'].lower()} college basketball."
+            preview_page.write(g, subtitle=f"{lg['name']} college basketball preview",
+                               description=describe)
+        games += mine
     removed = preview_page.prune(SPORT, {g["id"] for g in games})
     tail = f"; removed {len(removed)} old" if removed else ""
     if not games:
         days = _days(now)
-        pushed = str(data.get("generated") or "?")[:10]
-        print(f"CBB previews: no men's games from {days[0]} to {days[-1]} in the scoreboard "
+        pushed = str(got.get("generated") or "?")[:10]
+        print(f"CBB previews: no rated games from {days[0]} to {days[-1]} in the scoreboard "
               f"feed (pushed {pushed}); nothing written{tail}")
         return []
-    print(f"Wrote {len(games)} CBB game previews -> {preview_page.out_dir(SPORT)}{tail}")
+    print(f"Wrote {len(games)} CBB game previews ({count['men']} men's, {count['women']} "
+          f"women's) -> {preview_page.out_dir(SPORT)}{tail}")
     return [g["id"] for g in games]
 
 

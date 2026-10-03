@@ -127,6 +127,7 @@ docs/fantasy/strength.json
 # Each sport guide's games, merged by the all-sports guide (gordstats.watch_all).
 docs/cfb/watch/games.json
 docs/nfl/watch/games.json
+docs/cbb/watch/games.json
 docs/cfb/week-games.json
 docs/cbb/star-teams.json
 docs/fantasy/recap/latest.json

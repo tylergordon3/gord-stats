@@ -42,6 +42,10 @@ TRANK_YEAR = 2027
 SEASON_LABEL = "2026-27"
 
 _URL = f"https://barttorvik.com/{TRANK_YEAR}_team_results.csv"
+# The women's table, in the same shape: the women's previews and the
+# scoreboard's women's calls read it (trank_women). Torvik posts it later
+# than the men's - not before tip-off in 2026 - and it 404s until then.
+_URL_W = f"https://barttorvik.com/ncaaw/{TRANK_YEAR}_team_results.csv"
 _HEADERS = {"User-Agent": "Mozilla/5.0"}
 _BPI_URL = ("https://site.web.api.espn.com/apis/fitt/v3/sports/basketball/"
             "mens-college-basketball/powerindex")
@@ -128,6 +132,10 @@ table.cbb-power .row-rank{font-size:12px}
 
 def _cache_path():
     return paths.DATA / "cbb" / f"trank_{TRANK_YEAR}.csv"
+
+
+def _cache_path_w():
+    return paths.DATA / "cbb" / f"trank_w_{TRANK_YEAR}.csv"
 
 
 def _cached_json(url: str, cache_name: str, params: dict, refresh: bool = False):
@@ -220,23 +228,47 @@ def _tidy(text: str) -> str:
     return df.to_csv(index=False, lineterminator="\n")
 
 
-def trank(refresh: bool = False) -> pd.DataFrame:
-    """The T-Rank table, cached under data/cbb/ and refreshed twice a day
-    (and by every daily run); the file is rewritten only when it changed."""
-    cache = _cache_path()
+def _fetched(url: str, cache, refresh: bool, what: str) -> pd.DataFrame:
     fresh = cache.exists() and (time.time() - cache.stat().st_mtime) < MAX_AGE_HOURS * 3600
     if cache.exists() and (fresh and not refresh):
         return pd.read_csv(cache)
     try:
-        r = requests.get(_URL, headers=_HEADERS, timeout=25)
+        r = requests.get(url, headers=_HEADERS, timeout=25)
         r.raise_for_status()
         assert r.text.lstrip().startswith("rank,"), "unexpected payload"
         stable.write_text(_tidy(r.text), cache)
     except Exception as exc:
         if not cache.exists():
             raise
-        print(f"  ! T-Rank fetch failed ({exc}); using the cached copy")
+        print(f"  ! {what} fetch failed ({exc}); using the cached copy")
     return pd.read_csv(cache)
+
+
+def trank(refresh: bool = False) -> pd.DataFrame:
+    """The T-Rank table, cached under data/cbb/ and refreshed twice a day
+    (and by every daily run); the file is rewritten only when it changed."""
+    return _fetched(_URL, _cache_path(), refresh, "T-Rank")
+
+
+def trank_women(refresh: bool = False) -> pd.DataFrame | None:
+    """The women's T-Rank table, cached beside the men's on the same rhythm,
+    or None while Torvik has not published the season's (a 404 until then,
+    which is not a failure: the women's previews and calls wait for it)."""
+    try:
+        return _fetched(_URL_W, _cache_path_w(), refresh, "Women's T-Rank")
+    except Exception as exc:                      # noqa: BLE001
+        print(f"  women's T-Rank: none for {TRANK_YEAR} yet ({exc})")
+        return None
+
+
+def cached(gender: str = "M") -> pd.DataFrame | None:
+    """The league's T-Rank table as last cached - no request, for the live
+    tick, which runs every ten minutes - or None if there is none."""
+    path = _cache_path() if gender == "M" else _cache_path_w()
+    try:
+        return pd.read_csv(path)
+    except (OSError, ValueError):
+        return None
 
 
 def ranked():

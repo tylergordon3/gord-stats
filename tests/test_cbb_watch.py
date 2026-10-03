@@ -80,13 +80,15 @@ def test_the_daily_run_builds_it_beside_the_rankings(monkeypatch):
     from gordstats import daily
     calls = []
     monkeypatch.setattr(render_power, "trank", lambda refresh=False: calls.append("trank"))
+    monkeypatch.setattr(render_power, "trank_women",
+                        lambda refresh=False: calls.append("trank_women"))
     monkeypatch.setattr(render_power, "generate", lambda: calls.append("power"))
     monkeypatch.setattr(watch, "generate", lambda: calls.append("watch"))
     from cbb.render import render_previews, render_stats
     monkeypatch.setattr(render_stats, "generate", lambda: calls.append("stats"))
     monkeypatch.setattr(render_previews, "generate", lambda: calls.append("previews"))
     daily._cbb_power()
-    assert calls == ["trank", "power", "previews", "watch", "stats"]
+    assert calls == ["trank", "trank_women", "power", "previews", "watch", "stats"]
 
 
 def test_a_failed_preview_run_still_builds_the_guide_then_says_so(monkeypatch):
@@ -95,6 +97,7 @@ def test_a_failed_preview_run_still_builds_the_guide_then_says_so(monkeypatch):
     from gordstats import daily
     calls = []
     monkeypatch.setattr(render_power, "trank", lambda refresh=False: None)
+    monkeypatch.setattr(render_power, "trank_women", lambda refresh=False: None)
     monkeypatch.setattr(render_power, "generate", lambda: None)
     monkeypatch.setattr(watch, "generate", lambda: calls.append("watch"))
     monkeypatch.setattr(render_stats, "generate", lambda: calls.append("stats"))
@@ -363,3 +366,112 @@ def test_no_games_is_one_line(site):
     got = _run(site + "preseason.html", _boot(april), [READ])
     soon = datetime.now(ET).date() + timedelta(days=10)
     assert got["_text"] == f"No games until {soon:%a, %b} {soon.day}."
+
+
+# --------------------------------------------------------------------------- #
+# games.json, for the all-sports guide (gordstats.watch_all)
+# --------------------------------------------------------------------------- #
+
+def _fx(home, away, kick, hm="", am="", p=None, status="pre_game", ht=None, at=None,
+        ranks=(None, None), **kw):
+    """A feed game at `kick` (Eastern), as cbb.live_scraper.format_event writes one."""
+    import pandas as pd
+    k = pd.Timestamp(kick, tz=ET)
+    g = {"date": k.strftime("%Y-%m-%d"), "start_time_utc": k.tz_convert("UTC").isoformat(),
+         "status": status, "home_team": home, "away_team": away, "home_model": hm,
+         "away_model": am, "home_trank": ht, "away_trank": at, "home_rank": ranks[0],
+         "away_rank": ranks[1], "home_record": "", "away_record": "", "home_win_prob": p,
+         "pred_home": None, "pred_away": None, "spread_close": None, "home_score": None,
+         "away_score": None, "game_description": "", "game_type": "", "is_mm": False,
+         "is_nit": False, "neutral": False}
+    g.update(kw)
+    return g
+
+
+def _opening_night():
+    """Monday Nov 2, 2026: GordStats' ranks still blank (the bracketology has
+    no 2026-27 inputs yet), T-Rank's on the feed, no women's table at all."""
+    return {"men": {
+        "11": _fx("Duke", "Army", "2026-11-02 19:00", p=0.99, ht=1, at=353, spread_close="DUKE -30.5"),
+        "12": _fx("Gonzaga", "Purdue", "2026-11-02 21:00", p=0.55, ht=6, at=4),
+        "13": _fx("Florida", "Miami FL", "2026-11-02 19:30", p=0.70, ht=8, at=45),
+        # 12:30 AM Tuesday in Hawaii's gym: Monday night's game on the guide.
+        "14": _fx("Hawaii", "Utah St.", "2026-11-03 00:30", p=0.40, ht=150, at=40),
+        "15": _fx("Kansas", "Texas", "2026-11-03 19:00", p=0.60, ht=10, at=30),
+        "16": _fx("Kentucky", "Duke", "2026-11-04 19:00", p=0.50, ht=12, at=1),   # the day after
+        "17": _fx("Texas Tech", "Rice", "2026-11-02 20:00", p=0.9, ht=20, at=200,
+                  status="postponed"),
+        # GordStats' rank, once there is one, before T-Rank's.
+        "18": _fx("Houston", "Tulane", "2026-11-03 20:00", hm=2, am=150, p=0.95, ht=50, at=60)},
+        "women": {
+        "21": _fx("South Carolina", "Clemson", "2026-11-02 18:00", ranks=(1, None)),
+        # No rank, no poll, no call: every such game scores alike - left out.
+        "22": _fx("Oakland", "Cleary University", "2026-11-02 18:00")}}
+
+
+def test_the_all_sports_file_is_each_leagues_best_of_today_and_tomorrow(monkeypatch):
+    import pandas as pd
+    from cbb.render import render_previews as rp
+    now = pd.Timestamp("2026-11-02 11:40", tz=ET)
+    teams = {"Duke": ("duke", "/assets/images/duke.png")}
+    got = watch.games(_opening_night(), now, {}, teams, pv=["12"])
+    by = {g["id"]: g for g in got}
+    # Monday's four (Hawaii's 12:30 AM tip counts to Monday) and Tuesday's
+    # two; not Wednesday's, nor the postponed game.
+    assert by["14"]["day"] == "2026-11-02" and by["15"]["day"] == "2026-11-03"
+    assert set(by) == {"11", "12", "13", "14", "15", "18", "21"}
+    # Best first within a league's day, on T-Rank's ranks while GordStats'
+    # are blank - and the cut is the best PER_DAY: Duke's 30-point cupcake goes.
+    monday = [g["id"] for g in got if g["league"] == "men" and g["day"] == "2026-11-02"]
+    assert monday == ["12", "13", "14", "11"]
+    monkeypatch.setattr(watch, "PER_DAY", 3)
+    assert [g["id"] for g in watch.games(_opening_night(), now)
+            if g["day"] == "2026-11-02" and g["league"] == "men"] == ["12", "13", "14"]
+    assert by["12"]["score"] == rp.watch_score(6, 4, 0.55)[0]
+    assert by["18"]["score"] == rp.watch_score(2, 150, 0.95)[0]
+    # The women's: the AP-ranked team's game, tagged; the unrankable one left out.
+    assert set(g["id"] for g in got if g["league"] == "women") == {"21"}
+    assert by["21"]["badge"] == "WCBB" and by["11"]["badge"] == ""
+    # Keys as the browser half makes them; a preview where there is one.
+    assert by["11"]["h"]["k"] == "cbb-men:duke" and by["11"]["h"]["lg"] == "/assets/images/duke.png"
+    assert by["11"]["a"]["k"] == "cbb-men:army" and by["21"]["h"]["k"] == "cbb-women:south-carolina"
+    assert by["12"]["href"] == "/cbb/game/12/" and by["11"]["href"] == "/men/"
+    assert by["21"]["href"] == "/women/"
+    assert by["11"]["lt"] == "DUKE −30.5" and by["11"]["fav"] == "h"
+    assert by["11"]["ko"] == "2026-11-03T00:00:00Z" and by["11"]["tk"] is True
+
+
+def test_a_feed_without_trank_ranks_on_the_cached_table():
+    """A push from before the feed carried `home_trank`: the caller's map."""
+    import pandas as pd
+    from cbb.render import render_previews as rp
+    feed = {"men": {"12": _fx("Gonzaga", "Purdue", "2026-11-02 21:00", p=0.55)}}
+    now = pd.Timestamp("2026-11-02 11:40", tz=ET)
+    got = watch.games(feed, now, {"men": {"Gonzaga": 6, "Purdue": 4}})
+    assert got[0]["score"] == rp.watch_score(6, 4, 0.55)[0]
+    feed["men"]["12"]["home_win_prob"] = None
+    assert watch.games(feed, now, {}) == [], "nothing to rank it on"
+
+
+def test_write_games_beside_the_page_and_keeps_the_last_when_the_feed_fails(tmp_path, monkeypatch):
+    import pandas as pd
+    import requests
+    from cbb import game_model
+    from cbb.render import render_previews as rp
+    monkeypatch.setattr(watch, "OUT", tmp_path / "cbb" / "watch" / "index.html")
+    monkeypatch.setattr(rp, "feed", lambda: {"leagues": _opening_night(), "generated": "x"})
+    monkeypatch.setattr(rp, "tv", lambda ids, path="ncaab": {i: "ESPN2" for i in ids})
+    monkeypatch.setattr(game_model, "trank_ranks", lambda gender="M", day=None: {})
+    now = pd.Timestamp("2026-11-02 11:40", tz=ET)
+    assert watch.write_games(now) == 7
+    out = tmp_path / "cbb" / "watch" / "games.json"
+    data = json.loads(out.read_text())
+    assert data["season"] == 2027 and data["generated"].startswith("2026-11-02T11:40")
+    assert {g["tv"] for g in data["games"]} == {"ESPN2"}
+    assert len(out.read_text()) < 6000, "a few KB for Home's Tonight card"
+
+    def down():
+        raise requests.ConnectionError("no route")
+    monkeypatch.setattr(rp, "feed", down)
+    before = out.read_text()
+    assert watch.write_games(now) == -1 and out.read_text() == before

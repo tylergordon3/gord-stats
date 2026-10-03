@@ -75,7 +75,30 @@ def test_before_the_daily_tables_the_men_use_trank(tmp_path, monkeypatch):
     monkeypatch.setattr(render_power, "_cache_path", lambda: csv)
     monkeypatch.setattr(render_power, "TRANK_YEAR", 2027)
     monkeypatch.setattr(cbb_paths, "M_TOR_DIR", tmp_path / "none")
+    monkeypatch.setattr(cbb_paths, "W_TOR_DIR", tmp_path / "none")
+    monkeypatch.setattr(render_power, "_cache_path_w", lambda: tmp_path / "trank_w_2027.csv")
     table = game_model.today_table("M", date(2026, 11, 1))
     assert set(table) == {"Duke", "SIUE"}
     assert game_model.today_table("M", date(2027, 11, 1)) == {}, "a stale season's T-Rank"
+    # The women's table is not out yet: no calls rather than the men's.
     assert game_model.today_table("W", date(2026, 11, 1)) == {}
+
+
+def test_the_women_use_their_own_trank_once_torvik_posts_it(tmp_path, monkeypatch):
+    """Torvik's women's daily snapshot waits for his four-factor file, posted
+    only once games are played; his women's team results come first, and the
+    women's calls start from them (render_power.trank_women's cache)."""
+    from datetime import date
+    from cbb import paths as cbb_paths
+    from cbb.render import render_power
+    w = tmp_path / "trank_w_2027.csv"
+    w.write_text("team,adjoe,adjde,adjt\nSouth Carolina,118,70,72\nConnecticut,120,68,70\n")
+    monkeypatch.setattr(render_power, "_cache_path_w", lambda: w)
+    monkeypatch.setattr(render_power, "_cache_path", lambda: tmp_path / "no-men.csv")
+    monkeypatch.setattr(render_power, "TRANK_YEAR", 2027)
+    monkeypatch.setattr(cbb_paths, "W_TOR_DIR", tmp_path / "none")
+    table = game_model.today_table("W", date(2026, 11, 2))
+    assert set(table) == {"South Carolina", "Connecticut"}
+    pick = game_model.predict("Connecticut", "South Carolina", table, gender="W")
+    assert pick and pick["home_win_prob"] > 0.5
+    assert game_model.today_table("M", date(2026, 11, 2)) == {}, "the women's are not the men's"

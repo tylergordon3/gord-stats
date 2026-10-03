@@ -284,22 +284,32 @@ def test_an_unknown_ceiling_is_unbounded_not_zero():
     assert "t.lock=t.foes.length<cut-i?'up':'';" in js
 
 
-def test_the_cbb_home_leads_with_what_is_actually_live():
+def test_the_cbb_home_leads_with_what_is_actually_live(tmp_path, monkeypatch):
     """Out of season the bracket, the conference table and the scoreboard all
     need games nobody has played. The power rankings are built from Torvik's
     preseason projections and rebuild every day of the year, so preseason they
-    go first - and the rest say they are last season's."""
+    go first - and the rest say they are last season's. In season the bracket
+    is only current once this season's exists: until KenPom and Torvik post,
+    the link is still to last March's, and says so."""
     from datetime import date
 
-    from cbb.render.render_home import CBB_TIPOFF, _cbb_home_body, _stale_note
+    from cbb import paths
+    from cbb.render.render_home import CBB_TIPOFF, _cbb_home_body
 
     pre = _cbb_home_body(CBB_TIPOFF - date.resolution * 30)
     assert pre.index("Power Rankings") < pre.index("Bracketology"), \
         "preseason, the live page is not first"
     assert "home-card-stale" in pre
 
-    during = _cbb_home_body(CBB_TIPOFF + date.resolution * 30)
-    assert "home-card-stale" not in during, "in season, nothing is stale"
+    monkeypatch.setattr(paths, "WEB_M_DIR", tmp_path)
+    in_season = CBB_TIPOFF + date.resolution * 30
+    (tmp_path / "predict_2026-03-15.html").write_text("")          # last March's only
+    waiting = _cbb_home_body(in_season)
+    assert "Last season&rsquo;s final bracket" in waiting
+
+    (tmp_path / f"predict_{in_season - date.resolution:%Y-%m-%d}.html").write_text("")
+    during = _cbb_home_body(in_season)
+    assert "home-card-stale" not in during, "in season, with this season's bracket, nothing is stale"
     assert during.index("Bracketology") < during.index("Today's Scores")
 
 

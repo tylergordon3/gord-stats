@@ -322,9 +322,11 @@ def _old_page(docs, gid="99"):
 def test_generate_writes_the_window_and_prunes_the_rest(docs, monkeypatch, capsys):
     old = _old_page(docs)
     monkeypatch.setattr(rp, "feed", lambda: {"leagues": _feed(), "generated": "x"})
-    monkeypatch.setattr(rp, "load", lambda now, got: _data())
+    monkeypatch.setattr(rp, "load", lambda now, got, league="men": _data(league=league))
     ids = rp.generate(NOW)
-    assert sorted(ids) == ["101", "103", "104", "108"]
+    # The men's four, and the women's game on the women's tables (theScore's
+    # ids are one sequence across the two leagues, so one address space).
+    assert sorted(ids) == ["101", "103", "104", "108", "201"]
     assert not old.exists()
     page = (docs / "cbb" / "game" / "101" / "index.html").read_text(encoding="utf-8")
     assert "title: Bravo at Alpha" in page and "Men's college basketball preview" in page
@@ -332,8 +334,14 @@ def test_generate_writes_the_window_and_prunes_the_rest(docs, monkeypatch, capsy
     body = page.split("---", 2)[2]
     assert body.strip().startswith("{% raw %}") and _liquid(body) == [HOW_JS]
     assert len(page) < 25_000                                       # one small page
-    assert "Wrote 4 CBB game previews" in capsys.readouterr().out
-    assert preview_page.built("cbb", docs) == ["101", "103", "104", "108"]
+    women = (docs / "cbb" / "game" / "201" / "index.html").read_text(encoding="utf-8")
+    assert "Women's college basketball preview" in women
+    assert "women's college basketball." in women.split("---", 2)[1]   # its description
+    assert "href='/women/'>Scores" in women and "href='/men/'>Scores" not in women
+    # The rankings and team stats are the men's: not offered on a women's page.
+    assert "/cbb/power/" not in women and "/cbb/stats/" not in women
+    assert "Wrote 5 CBB game previews (4 men's, 1 women's)" in capsys.readouterr().out
+    assert preview_page.built("cbb", docs) == ["101", "103", "104", "108", "201"]
 
 
 def test_names_from_the_feed_are_text(docs, monkeypatch):
@@ -341,7 +349,8 @@ def test_names_from_the_feed_are_text(docs, monkeypatch):
     feed["men"]["101"]["away_team"] = "Bra{{vo}} <i onmouseover=1>"
     data = _data(feed=feed, trank={**TRANK, "Bra{{vo}} <i onmouseover=1>": 30})
     monkeypatch.setattr(rp, "feed", lambda: {"leagues": feed, "generated": "x"})
-    monkeypatch.setattr(rp, "load", lambda now, got: data)
+    monkeypatch.setattr(rp, "load", lambda now, got, league="men":
+                        data if league == "men" else _data(trank={}))
     rp.generate(NOW)
     page = (docs / "cbb" / "game" / "101" / "index.html").read_text(encoding="utf-8")
     front, body = page.split("---", 2)[1:]
@@ -364,7 +373,7 @@ def test_off_season_is_a_line_and_nothing_written(docs, monkeypatch, capsys):
     later = pd.Timestamp("2026-09-30 12:00", tz=ET)
     assert rp.generate(later) == []
     out = capsys.readouterr().out
-    assert "no men's games from 2026-09-29 to 2026-10-01" in out and "pushed 2026-04-08" in out
+    assert "no rated games from 2026-09-29 to 2026-10-01" in out and "pushed 2026-04-08" in out
     assert not old.exists()                     # yesterday's page went with its window
     assert preview_page.built("cbb", docs) == []
 
@@ -458,5 +467,7 @@ def test_a_card_opens_its_preview_in_the_browser(guide):
     assert evening["v1"] == "/cbb/game/v1/"                 # a preview on disk
     assert evening["v2"] == "/men/"                         # none: the scoreboard
     women = _run(guide, _boot(watch_feed(), league="women"), [READ])
-    # The previews are the men's: a women's id never opens one.
-    assert all(g["href"] == "/women/" for g in women["Evening"])
+    # The women's open theirs too (one id space across the leagues), and the
+    # women's scoreboard where there is none.
+    hrefs = {g["id"]: g["href"] for g in women["Evening"]}
+    assert hrefs["w1"] == "/cbb/game/w1/" and hrefs["w2"] == "/women/"

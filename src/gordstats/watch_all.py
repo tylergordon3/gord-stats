@@ -26,12 +26,31 @@ What the merge does:
   * the quadbox: a college game never shares a broadcast channel; NFL games
     are taken as available, as on the NFL guide (Sunday Ticket).
 
-The Home page carries a "Tonight" card (teaser()) on days both sports play.
+College basketball joins once it has games (CBB below): its guide is built
+in the browser from the live scoreboard Worker, so for this page it also
+writes docs/cbb/watch/games.json - the best PER_DAY games of each league for
+today and tomorrow (cbb.render.render_watch.games), men's tagged CBB and
+women's WCBB, ids theScore's (one sequence for both leagues). Its live scores
+come from the Worker (GSWatchLive.cbb, cbb.render.render_watch.LIVE_JS),
+which also refreshes the file's states when the page opens - the file is as
+old as the last daily run, and a slate runs noon to midnight. Whether it is
+in is decided when the page is built (cbb_on): out of season, or with the
+file absent or past, these pages are football's alone, fetching nothing more.
+
+The Home page carries a "Tonight" card (teaser()) on days two sports play,
+drawn by the build from the same files (tonight()) so the page does not jump
+when its script redraws it.
 
     python -m gordstats.watch_all
 """
 import json
+from datetime import datetime
+from html import escape
+from pathlib import Path
 
+import pandas as pd
+
+from cbb.render import render_watch as cbb_watch
 from cfb.site import watch as cfb_watch
 from gordstats import paths, watch_page
 from gordstats.frontmatter import add_front_matter
@@ -49,11 +68,58 @@ SPORTS = [
     {"key": "nfl", "badge": "NFL", "data": "/nfl/watch/games.json", "link": "/nfl/",
      "blowout": 17, "team": "nflMyTeam"},
 ]
+# Basketball, on the days it has games: a close finish is 6, not 8, and a
+# game is over in about 2.5 hours (render_watch's). No fantasy team.
+CBB = {"key": "cbb", "badge": "CBB", "data": "/cbb/watch/games.json", "link": "/cbb/watch/",
+       "blowout": cbb_watch.BLOWOUT, "close": cbb_watch.CLOSE, "team": None,
+       "hours": cbb_watch.GAME_HOURS}
+# Home's Tonight card takes basketball's best few, not a 60-game slate.
+CBB_TONIGHT = 2
+
+
+def cbb_on(now=None) -> bool:
+    """Whether college basketball's games.json (render_watch.write_games) has
+    a game from the guide's today (watch_page.game_day) on."""
+    try:
+        data = json.loads((cbb_watch.OUT.parent / "games.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    today = watch_page.game_day(pd.Timestamp(now or datetime.now(watch_page.ET)))
+    return any(str(g.get("day") or "") >= today for g in (data or {}).get("games") or [])
+
+
+def sports(now=None) -> list:
+    """The sports on these pages: football's two, and basketball when it has games."""
+    return SPORTS + [CBB] if cbb_on(now) else SPORTS
+
+
+def _words(on: list) -> dict:
+    """What the page says, by whether basketball is in."""
+    hoops = any(s["key"] == "cbb" for s in on)
+    return {
+        "empty": ("No games in the next week." if hoops
+                  else "No college or NFL games in the next week."),
+        "hint": ('Star teams on the <a href="/cfb/power/">CFB</a>'
+                 + (', <a href="/nfl/power/">NFL</a> and <a href="/cbb/power/">CBB</a>' if hoops
+                    else ' and <a href="/nfl/power/">NFL</a>')
+                 + ' rankings, and pick your teams on each fantasy league\u2019s Team tab, '
+                 'to put your games first.'),
+        "subtitle": ("Football and basketball, window by window" if hoops
+                     else "College and pro football, window by window"),
+        "description": ("Every college and NFL game of the day and the best of college "
+                        "basketball in one guide, grouped by start time and ranked by how much "
+                        "it is worth watching - with live scores." if hoops else
+                        "Every college and NFL game of the day in one guide, grouped by kickoff "
+                        "and ranked by how much it is worth watching - with live scores."),
+        "share": ("What to watch tonight, football and basketball" if hoops
+                  else "What to watch tonight, college and pro"),
+    }
 
 ADAPTER_JS = """<script>
 (function(){
-  var SPORTS=__SPORTS__, SLOTS=__SLOTS__, BREAKS=__BREAKS__, NIGHT_ENDS=__NIGHT__;
+  var SPORTS=__SPORTS__, SLOTS=__SLOTS__, BREAKS=__BREAKS__, NIGHT_ENDS=__NIGHT__, WORDS=__WORDS__;
   var host=document.getElementById('wg-host');
+  function sportOf(g){ return SPORTS.filter(function(x){ return x.key===g.sport; })[0]; }
 
   function hourET(t){
     var parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',
@@ -84,8 +150,8 @@ ADAPTER_JS = """<script>
       if(d.generated&&(!newest||Date.parse(d.generated)>Date.parse(newest))) newest=d.generated;
       (d.games||[]).forEach(function(g0){
         var g=JSON.parse(JSON.stringify(g0));
-        g.oid=g0.id; g.id=s.key+':'+g0.id; g.sport=s.key; g.badge=s.badge;
-        g.tags=[s.badge].concat(g0.tags||[]);
+        g.oid=g0.id; g.id=s.key+':'+g0.id; g.sport=s.key; g.badge=g0.badge||s.badge;
+        g.tags=[g.badge].concat(g0.tags||[]);
         g.slot=slotOf(g0);
         g.href=g0.href||s.link;
         ['h','a'].forEach(function(x){
@@ -102,7 +168,7 @@ ADAPTER_JS = """<script>
       });
     });
     if(!games.length){
-      host.innerHTML='<p class="wg-note wg-empty">No college or NFL games in the next week.</p>';
+      host.innerHTML='<p class="wg-note wg-empty">'+WORDS.empty+'</p>';
       return;
     }
     games.sort(function(a,b){ return Date.parse(a.ko)-Date.parse(b.ko); });
@@ -112,6 +178,7 @@ ADAPTER_JS = """<script>
     var me={n:'Your teams', p:[], opp:'them'}, them={n:'Your opponent', p:[]};
     SPORTS.forEach(function(s){
       var k=null;
+      if(!s.team) return;
       try{ k=localStorage.getItem(s.team); }catch(e){}
       var r=k&&rosters[s.key+':'+k];
       if(!r) return;
@@ -121,19 +188,15 @@ ADAPTER_JS = """<script>
     });
     var mine=me.p.length>0;
 
-    GSWatch({generated:newest, slots:SLOTS, games:games,
-             rosters:mine?{me:me, them:them}:{}}, {
+    var D={generated:newest, slots:SLOTS, games:games, rosters:mine?{me:me, them:them}:{}};
+    var W=GSWatch(D, {
       team:function(){ return mine?'me':''; },
       link:'/watch/',
-      hint:'Star teams on the <a href="/cfb/power/">CFB</a> and <a href="/nfl/power/">NFL</a> '
-        +'rankings, and pick your teams on each fantasy league\\u2019s Team tab, to put your '
-        +'games first.',
+      hint:WORDS.hint,
       staleHtml:'This guide has not been rebuilt for a few days; the '
         +'<a href="/cfb/watch/">CFB</a> and <a href="/nfl/watch/">NFL</a> guides say why.',
-      blowout:function(g){
-        var s=SPORTS.filter(function(x){ return x.key===g.sport; })[0];
-        return s?s.blowout:21;
-      },
+      blowout:function(g){ var s=sportOf(g); return s?s.blowout:21; },
+      close:function(g){ var s=sportOf(g); return (s&&s.close)||8; },
       quadShared:function(g){ return g.sport==='nfl'; },
       quadNote:'NFL games are counted as available, as with Sunday Ticket.',
       stars:function(){
@@ -143,6 +206,7 @@ ADAPTER_JS = """<script>
           if(typeof k!=='string') return;
           if(k.indexOf('cfb:')===0) set['cfb:'+k.slice(4)]=1;
           else if(k.indexOf('nfl:')===0) nfl[k.slice(4)]=1;
+          else if(/^cbb-(wo)?men:/.test(k)) set['cbb:'+k]=1;      // render_watch's team keys
         });
         // NFL stars are ESPN ids; the guide knows a team by its key.
         (bySport.nfl||[]).forEach(function(g){
@@ -164,6 +228,23 @@ ADAPTER_JS = """<script>
         })).then(function(){ return out; });
       }
     });
+    // Basketball's file is as old as the last daily run, and its slate runs
+    // from noon to midnight: what has tipped or finished since comes from
+    // the feed, once, as the page opens (the engine asks only for games on
+    // now, so a 1:00 tip left "pre" would sit under Early all evening).
+    var hoops=(bySport.cbb||[]).map(function(g){ var c={}; for(var k in g) c[k]=g[k]; c.id=g.oid; return c; });
+    if(W&&hoops.length&&window.GSWatchLive&&GSWatchLive.cbb){
+      Promise.resolve(GSWatchLive.cbb(hoops)).then(function(map){
+        var moved=false;
+        bySport.cbb.forEach(function(g){
+          var L=map&&map[g.oid]; if(!L||!L.state) return;
+          if(L.state!==g.state){ g.state=L.state; moved=true; }
+          if(L.home!=null&&L.home!==g.h.sc){ g.h.sc=L.home; moved=true; }
+          if(L.away!=null&&L.away!==g.a.sc){ g.a.sc=L.away; moved=true; }
+        });
+        if(moved) W.update(D);
+      }).catch(function(){});
+    }
   });
 })();
 </script>"""
@@ -171,27 +252,36 @@ ADAPTER_JS = """<script>
 
 
 
-def adapter_js() -> str:
+def adapter_js(on: list = None) -> str:
+    on = SPORTS if on is None else on
+    words = _words(on)
     return (ADAPTER_JS
-            .replace("__SPORTS__", json.dumps(SPORTS))
+            .replace("__SPORTS__", json.dumps(on))
             .replace("__SLOTS__", json.dumps(watch_page.slot_hours(SLOTS)))
             .replace("__BREAKS__", json.dumps([[k, before] for k, _l, before in SLOTS]))
-            .replace("__NIGHT__", str(watch_page.NIGHT_ENDS)))
+            .replace("__NIGHT__", str(watch_page.NIGHT_ENDS))
+            .replace("__WORDS__", json.dumps({"empty": words["empty"], "hint": words["hint"]})))
 
 
-def body() -> str:
-    return watch_page.body(None, cfb_watch.LIVE_JS + nfl_watch.LIVE_JS + adapter_js(),
-                           "watch-guide", "/watch/", "What to watch tonight, college and pro")
+def body(on: list = None) -> str:
+    """The page for the sports `on` (sports(), by default)."""
+    on = sports() if on is None else on
+    hoops = any(s["key"] == "cbb" for s in on)
+    live = cfb_watch.LIVE_JS + nfl_watch.LIVE_JS + (cbb_watch.live_js() if hoops else "")
+    return watch_page.body(None, live + adapter_js(on), "watch-guide", "/watch/",
+                           _words(on)["share"])
 
 
 def generate() -> None:
+    on = sports()
+    words = _words(on)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(add_front_matter(
-        body(), "Watch Guide", "College and pro football, window by window", updated=False,
-        description="Every college and NFL game of the day in one guide, grouped by kickoff "
-                    "and ranked by how much it is worth watching - with live scores."),
+        body(on), "Watch Guide", words["subtitle"], updated=False,
+        description=words["description"]),
         encoding="utf-8")
-    print(f"Wrote all-sports watch guide -> {OUT}")
+    print(f"Wrote all-sports watch guide -> {OUT}"
+          + (" (with college basketball)" if len(on) > len(SPORTS) else ""))
 
 
 # --------------------------------------------------------------------------- #
@@ -216,11 +306,12 @@ TEASER = """<style>
   .gs-tonight li{color:#f1f5f9}.gs-tonight li b,.gs-tonight li span{color:#c3cfdd}
 }
 </style>
-<section class="gs-tonight" id="gs-tonight" hidden></section>
+<section class="gs-tonight" id="gs-tonight"__HIDDEN__>__CARD__</section>
 <script>
 (function(){
   var box=document.getElementById('gs-tonight'); if(!box) return;
-  var SPORTS=[['CFB','/cfb/watch/games.json'],['NFL','/nfl/watch/games.json']];
+  // [badge, games.json, best few only, hours a game lasts, kind] (teaser()).
+  var SPORTS=__TSPORTS__;
   // The guide's day runs to __NIGHT__ AM Eastern (watch_page.NIGHT_ENDS): at
   // half past midnight Saturday's late games are still tonight's.
   var today=new Date(Date.now()-__NIGHT__*3600e3)
@@ -230,32 +321,121 @@ TEASER = """<style>
   Promise.all(SPORTS.map(function(s){
     return fetch(s[1]).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
   })).then(function(ds){
-    var rows=[], sports=0;
+    // Nothing read (offline): the card as the build drew it stands.
+    if(!ds.some(function(d){ return d; })) return;
+    var rows=[], sports=0, count=0, kinds={}, best=null, now=Date.now();
     ds.forEach(function(d, i){
-      var gs=((d&&d.games)||[]).filter(function(g){ return g.day===today&&g.state!=='post'; });
-      if(gs.length) sports++;
-      gs.forEach(function(g){ rows.push({s:SPORTS[i][0], g:g}); });
+      var s=SPORTS[i];
+      // A file is as old as the last daily run: a basketball game (s[3], the
+      // hours a game lasts) whose tip is further back than that has finished
+      // since, and one with no time yet may have too.
+      var gs=((d&&d.games)||[]).filter(function(g){ return g.day===today&&g.state!=='post'
+        &&(!s[3]||(g.tk&&Date.parse(g.ko)+s[3]*3600e3>=now)); });
+      if(gs.length){ sports++; kinds[s[4]]=1; }
+      count+=gs.length;
+      // Basketball's slate is dozens of games: its best few (s[2]), by watch score.
+      if(s[2]) gs=gs.slice().sort(function(a,b){ return b.score-a.score; }).slice(0,s[2]);
+      gs.forEach(function(g, j){
+        var x={s:g.badge||s[0], g:g}; rows.push(x);
+        if(s[2]&&j===0) best=x;
+      });
     });
-    // Only on a day both sports play: otherwise each sport's own guide is the page.
-    if(sports<2) return;
+    // Only on a day two sports play: otherwise each sport's own guide is the page.
+    // (The build draws the card when it finds two; past midnight's 4 AM the
+    // day has moved on, and it goes.)
+    if(sports<2){ box.hidden=true; box.innerHTML=''; return; }
     // In kickoff order: this card is what is on tonight, the guide ranks it.
-    rows.sort(function(a,b){ return Date.parse(a.g.ko)-Date.parse(b.g.ko); });
-    var top=rows.slice(0,4).map(function(x){
+    var order=function(a,b){ return Date.parse(a.g.ko)-Date.parse(b.g.ko); };
+    rows.sort(order);
+    var top=rows.slice(0,4);
+    // Basketball's best keeps a place when football's kickoffs fill the four.
+    if(best&&top.indexOf(best)<0){ top[top.length-1]=best; top.sort(order); }
+    top=top.map(function(x){
       var t=new Date(x.g.ko).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
       return '<li><b>'+x.s+'</b>'+esc(x.g.a.nm)+' at '+esc(x.g.h.nm)
         +'<span>'+(x.g.tk?t:'TBA')+(x.g.tv?' &middot; '+esc(x.g.tv):'')+'</span></li>';
     }).join('');
     box.innerHTML='<h2>Tonight</h2><ul>'+top+'</ul>'
-      +'<a class="all" href="/watch/">All '+rows.length+' games, college and pro &rarr;</a>';
+      +'<a class="all" href="/watch/">All '+count+' games, '
+      +(kinds.basketball?'football and basketball':'college and pro')+' &rarr;</a>';
     box.hidden=false;
   });
 })();
 </script>"""
 
 
-def teaser() -> str:
-    """The Home page's Tonight card: hidden unless both sports play today."""
-    return TEASER.replace("__NIGHT__", str(watch_page.NIGHT_ENDS))
+def _text(v) -> str:
+    """A name for Home's body, which Jekyll runs Liquid over: escaped, and
+    its braces as entities, so no name can open a Liquid tag."""
+    return escape(str(v if v is not None else "")).replace("{", "&#123;").replace("}", "&#125;")
+
+
+def tonight(on: list, now=None, docs: Path = None) -> str:
+    """The card's inside as its script draws it (TEASER), from the games files
+    this build finds under `docs` - so on a night two sports play the card is
+    on the page as it loads, not pushed in above everything else after it
+    (in basketball season that is most nights). '' when fewer than two play;
+    the script decides again in the browser either way, its times in the
+    reader's own clock where these are Eastern."""
+    now = pd.Timestamp(now) if now is not None else pd.Timestamp.now(tz=watch_page.ET)
+    if now.tzinfo is None:
+        now = now.tz_localize(watch_page.ET)
+    today = watch_page.game_day(now)
+    rows, sports, count, kinds, best = [], 0, 0, set(), None
+
+    def kick(g):
+        try:
+            t = pd.Timestamp(g.get("ko"))
+        except (TypeError, ValueError):
+            t = pd.NaT
+        return pd.Timestamp.max.tz_localize("UTC") if pd.isna(t) else t
+    for s in on:
+        try:
+            data = json.loads((Path(docs or paths.DOCS) / s["data"].lstrip("/"))
+                              .read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        hours, few = s.get("hours") or 0, CBB_TONIGHT if s["key"] == "cbb" else 0
+        gs = [g for g in (data or {}).get("games") or []
+              if g.get("day") == today and g.get("state") != "post"
+              and (not hours or (g.get("tk") and kick(g) + pd.Timedelta(hours=hours) >= now))]
+        if gs:
+            sports += 1
+            kinds.add("basketball" if s["key"] == "cbb" else "football")
+        count += len(gs)
+        if few:
+            gs = sorted(gs, key=lambda g: -(g.get("score") or 0))[:few]
+        for j, g in enumerate(gs):
+            rows.append((g.get("badge") or s["badge"], g))
+            if few and j == 0:
+                best = rows[-1]
+    if sports < 2:
+        return ""
+    rows.sort(key=lambda x: kick(x[1]))
+    top = rows[:4]
+    if best is not None and best not in top:
+        top[-1] = best
+        top.sort(key=lambda x: kick(x[1]))
+    items = "".join(
+        f"<li><b>{_text(b)}</b>{_text(g['a']['nm'])} at {_text(g['h']['nm'])}<span>"
+        + (kick(g).tz_convert(watch_page.ET).strftime("%-I:%M %p") if g.get("tk") else "TBA")
+        + (f" &middot; {_text(g['tv'])}" if g.get("tv") else "") + "</span></li>"
+        for b, g in top)
+    return (f"<h2>Tonight</h2><ul>{items}</ul><a class=\"all\" href=\"/watch/\">All {count} games, "
+            f"{'football and basketball' if 'basketball' in kinds else 'college and pro'} &rarr;</a>")
+
+
+def teaser(on: list = None, now=None, docs: Path = None) -> str:
+    """The Home page's Tonight card: shown when two of the sports `on`
+    (sports(), by default) play today - drawn by the build (tonight()) and
+    kept current by its script."""
+    on = sports(now) if on is None else on
+    rows = [[s["badge"], s["data"], CBB_TONIGHT if s["key"] == "cbb" else 0,
+             s.get("hours") or 0, "basketball" if s["key"] == "cbb" else "football"] for s in on]
+    card = tonight(on, now, docs)
+    return (TEASER.replace("__NIGHT__", str(watch_page.NIGHT_ENDS))
+            .replace("__TSPORTS__", json.dumps(rows))
+            .replace("__HIDDEN__", "" if card else " hidden").replace("__CARD__", card))
 
 
 if __name__ == "__main__":

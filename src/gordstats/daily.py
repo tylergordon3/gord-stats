@@ -83,21 +83,30 @@ def _cbb() -> None:
     # daily_data reports rather than raises, so a partial scrape has to be
     # turned into a failure here: predictions built on half the feeds are
     # worse than no update at all. main() records the task as failed and
-    # still renders the homepage, so the rest of the site publishes.
-    if not daily_data.main():
-        raise RuntimeError("one or more college basketball feeds failed to scrape")
+    # still renders the homepage, so the rest of the site publishes. Each
+    # league waits only for its own feeds: the women's Torvik tables used to
+    # hold back the men's bracketology (and its ranks on the scoreboard).
+    # A feed LEAGUE does not name is taken as both leagues'.
+    failed = daily_data.failures()
+    ready = {g: not any(daily_data.LEAGUE.get(n, g) == g for n in failed) for g in ("M", "W")}
 
-    _, mens = predictions.predict(today)
-    _, womens = predictions.predict_womens(today)
-
-    rc.main(mens, "M")
-    rc.main(womens, "W")
+    if ready["M"]:
+        _, mens = predictions.predict(today)
+        rc.main(mens, "M")
+    if ready["W"]:
+        _, womens = predictions.predict_womens(today)
+        rc.main(womens, "W")
 
     # Each day writes a new predict_<date>.html. Fold every one into the JSON
     # archive the history pages read, and keep only the newest as a page —
     # the tool did this by hand at season end, which left the dailies piling up.
-    from cbb.tools import archive_predictions
-    archive_predictions.archive()
+    if ready["M"] or ready["W"]:
+        from cbb.tools import archive_predictions
+        archive_predictions.archive()
+    if failed:
+        waiting = [lg for g, lg in (("M", "men's"), ("W", "women's")) if not ready[g]]
+        raise RuntimeError(f"college basketball feeds failed to scrape ({', '.join(failed)}); "
+                           f"no {' or '.join(waiting)} predictions today")
 
 
 def _cbb_power() -> None:
@@ -114,6 +123,9 @@ def _cbb_power() -> None:
     from cbb.render import render_power, render_previews, render_stats, render_watch
 
     render_power.trank(refresh=True)
+    # The women's table too (None until Torvik posts the season's): the
+    # women's previews and the scoreboard's women's calls read its cache.
+    render_power.trank_women(refresh=True)
     render_power.generate()
     # Game previews read the T-Rank table just refreshed, and go before the
     # watch guide, which links to whichever previews are on disk. A failure
