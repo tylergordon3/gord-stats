@@ -277,7 +277,10 @@ def all_time_section() -> str:
 
 def _match_note(m, matched) -> str:
     """What was left out of this season, and why: no ADP, or too hurt to judge."""
-    unmatched = list(m[m["adp"].isna()]["Player"])
+    # The archive keys players with their names run together ("JKDobbins");
+    # say them as names (fantasy.site.injuries.display_name), escaped.
+    from fantasy.site.injuries import display_name
+    unmatched = [escape(display_name(p)) for p in m[m["adp"].isna()]["Player"]]
     hurt = sorted(m[m["adp"].notna() & m["Injured"]]["adp_player"].dropna())
     note = (f"<p>{len(matched)} of {len(m)} picks shown"
             + (f" (no ADP for: {', '.join(unmatched)})." if unmatched else "."))
