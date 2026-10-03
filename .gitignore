@@ -156,3 +156,12 @@ docs/men/conference.html
 docs/women/conference.html
 docs/men/predict_*.html
 docs/women/predict_*.html
+# Caches that are not archives: cfb.boxscores (ESPN box scores, keyless) and
+# cfb.usage (CFBD, 3 calls a played week). Each run fetches whatever the file
+# lacks, so a fresh clone - or a Pi that lost them - rebuilds the season in
+# one run. Tracked, each was rewritten whole after every game, and git cannot
+# delta a parquet file. Ignored files survive the deploy's `git checkout -- data`.
+data/cfb/cache/
+# A data file being written (cfb.partitions writes <name>.partial, then
+# renames it into place).
+*.partial

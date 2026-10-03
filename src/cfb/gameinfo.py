@@ -14,12 +14,20 @@ days out. Matchup quality - ESPN's 0-100 "worth watching" number - lives on a
 second, core-API endpoint and is fetched for games inside the forecast window
 only.
 
-The cache is data/cfb/gameinfo_{season}.json, one entry per game id, and an
-entry is frozen once its game kicks off. That is not tidiness: after the game
-ESPN's summary drops the predictor and prices the moneyline at -100000, so a
-line refetched on Sunday would overwrite the one that was actually offered
-with junk. The schedule page shows a finished game the numbers that were on
-record before it started, which is the only version of them worth showing.
+The cache is data/cfb/gameinfo/{season}/week_NN.json, one entry per game id
+filed under its ESPN week, and an entry is frozen once its game kicks off.
+That is not tidiness: after the game ESPN's summary drops the predictor and
+prices the moneyline at -100000, so a line refetched on Sunday would overwrite
+the one that was actually offered with junk. The schedule page shows a
+finished game the numbers that were on record before it started, which is the
+only version of them worth showing - and the honest bets record takes its
+closing line from them, so these files are an archive, not a cache.
+
+Split by week because a run refetches the next three weeks and nothing else:
+as one 720 KB season file (data/cfb/gameinfo_{season}.json, still read if a
+machine has it) it was rewritten ~15 times a day, ~1 MB of history a day; a
+played week's file now never changes again. `load()` still returns the whole
+season as one dict.
 
     python -m cfb.gameinfo              # refresh the window, print coverage
     python -m cfb.gameinfo --refresh
@@ -32,7 +40,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import requests
 
-from cfb import espn
+from cfb import espn, partitions
 from cfb.config import DATA_DIR, SEASON
 
 _SUMMARY = ("https://site.api.espn.com/apis/site/v2/sports/football/"
@@ -68,18 +76,110 @@ _SNOW = {19, 20, 21, 22, 23, 24, 25, 26, 29, 43, 44}
 
 
 def cache_path(season: int = SEASON):
+    """The season's single file from before the split by week - read if a
+    machine still has one, folded into the weeks by the next save."""
     return DATA_DIR / f"gameinfo_{season}.json"
+
+
+def week_dir(season: int = SEASON):
+    return DATA_DIR / "gameinfo" / str(season)
+
+
+def _week_path(season: int, week: int):
+    return week_dir(season) / f"week_{int(week):02d}.json"
+
+
+def _read_json(path) -> dict:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _later(a: dict, b: dict) -> bool:
+    """Whether entry `a` was captured after `b` (ISO stamps, one format)."""
+    return str(a.get("captured") or "") > str(b.get("captured") or "")
+
+
+def _week_files(season: int) -> list:
+    folder = week_dir(season)
+    return sorted(folder.glob("week_*.json")) if folder.is_dir() else []
+
+
+def _load(season: int) -> tuple:
+    """(game id -> entry, game id -> the week file it was read from)."""
+    cache, filed = {}, {}
+    legacy = cache_path(season)
+    if legacy.exists():
+        cache.update(_read_json(legacy))
+    for path in _week_files(season):
+        week = int(path.stem.split("_", 1)[1])
+        for gid, entry in _read_json(path).items():
+            if gid not in cache or not _later(cache[gid], entry):
+                cache[gid] = entry
+                filed[gid] = week
+    return cache, filed
 
 
 def load(season: int = SEASON) -> dict:
     """game id -> captured entry (see `_parse` for the keys)."""
-    path = cache_path(season)
-    if not path.exists():
+    return _load(season)[0]
+
+
+def save(cache: dict, season: int = SEASON, weeks: dict = None) -> list:
+    """Write `cache` one file per ESPN week; a week whose entries did not
+    change is not touched. `weeks` is game id -> week (the schedule's); a game
+    it does not name stays in the week it was filed under (or week 0). The
+    single season file, if this machine still has one, is removed once every
+    entry it held is on disk in a week file. Returns the files written."""
+    _, filed = _load(season)
+    weeks = weeks or {}
+    groups = {}
+    for gid, entry in cache.items():
+        week = weeks.get(gid, filed.get(gid, 0))
+        groups.setdefault(int(week), {})[gid] = entry
+    wrote = []
+    for week, entries in sorted(groups.items()):
+        # Sorted by id: the same entries always make the same bytes.
+        text = json.dumps({gid: entries[gid] for gid in sorted(entries)}, indent=0)
+        if partitions.write_text(_week_path(season, week), text):
+            wrote.append(_week_path(season, week))
+    for path in _week_files(season):
+        # A week left with no games (all moved by a reschedule) - its entries
+        # were just written under their new week.
+        if int(path.stem.split("_", 1)[1]) not in groups:
+            path.unlink()
+    legacy = cache_path(season)
+    if legacy.exists():
+        on_disk = {}
+        for path in _week_files(season):
+            on_disk.update(_read_json(path))
+        # Every entry it held is in a week file, as it was or captured since.
+        if all(gid in on_disk and (on_disk[gid] == entry or _later(on_disk[gid], entry))
+               for gid, entry in _read_json(legacy).items()):
+            legacy.unlink()
+        else:
+            print(f"  ! {legacy.name}: week files do not hold every entry; keeping it")
+    return wrote
+
+
+def _weeks(schedule: pd.DataFrame) -> dict:
+    if schedule is None or schedule.empty:
         return {}
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return {}
+    return dict(zip(schedule["game_id"].astype(str), schedule["week"].astype(int)))
+
+
+def migrate(season: int = SEASON) -> bool:
+    """Split the single season file into week files (python -m cfb.partitions).
+    Weeks come from the cached schedule - no network."""
+    legacy = cache_path(season)
+    if not legacy.exists():
+        return False
+    save(load(season), season, _weeks(espn.schedule(max_age_hours=None)))
+    if legacy.exists():
+        raise SystemExit(f"{legacy} was not split cleanly")
+    print(f"  {legacy.name} split into {len(_week_files(season))} week files")
+    return True
 
 
 def _get(url: str, params: dict = None) -> dict:
@@ -228,6 +328,7 @@ def capture(refresh: bool = False, season: int = SEASON) -> dict:
     cache = load(season)
     if schedule.empty:
         return cache
+    weeks = _weeks(schedule)
 
     now = datetime.now(timezone.utc)
     horizon = now + timedelta(days=WINDOW_DAYS)
@@ -245,6 +346,8 @@ def capture(refresh: bool = False, season: int = SEASON) -> dict:
                           "away_id": str(g.away_id), "date_utc": str(g.date_utc)},
                          near))
     if not todo:
+        if cache_path(season).exists():
+            save(cache, season, weeks)          # fold the old single file in
         return cache
 
     with ThreadPoolExecutor(_WORKERS) as pool:
@@ -254,8 +357,7 @@ def capture(refresh: bool = False, season: int = SEASON) -> dict:
         if entry is not None:
             cache[game["game_id"]] = _merge(cache.get(game["game_id"]), entry)
 
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    cache_path(season).write_text(json.dumps(cache, indent=0), encoding="utf-8")
+    save(cache, season, weeks)
     return cache
 
 

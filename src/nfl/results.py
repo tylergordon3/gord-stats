@@ -1,7 +1,9 @@
 """
 The NFL model's record: every prediction archived before kickoff, graded
-against the final - data/nfl/predictions/{season}.parquet, the college
-archive's shape (cfb.results) with ESPN's book line beside each one.
+against the final - data/nfl/predictions/{season}/<capture day>.parquet, the
+college archive's shape (cfb.results) with ESPN's book line beside each one.
+Every run captures every game still to play (~250 rows), so one file per
+capture day (cfb.partitions) is what keeps a run from rewriting the season.
 
     python -m nfl.results              # capture this week's board, then score
     python -m nfl.results --score
@@ -11,17 +13,25 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from cfb import results as _college
+from cfb import partitions, results as _college
 from nfl import games as games_mod, predict
 from nfl.config import DATA_DIR, SEASON
-from gordstats import bet_record, stable
+from gordstats import bet_record
 
 PRED_DIR = DATA_DIR / "predictions"
 _COLS = _college._COLS + ["seasontype"]
+KEY = ["game_id"]                 # one row per game per capture day
 
 
 def season_path(season: int = SEASON):
+    """The season's single file from before the split (read if present);
+    the archive is the folder beside it."""
     return PRED_DIR / f"{season}.parquet"
+
+
+def load(season: int = SEASON):
+    """Every capture this season, oldest first; None when there are none."""
+    return partitions.read(season_path(season), KEY)
 
 
 def capture(season: int = SEASON) -> pd.DataFrame:
@@ -60,25 +70,16 @@ def capture(season: int = SEASON) -> pd.DataFrame:
         "market_spread": games["book_spread"].astype(float),
         "market_total": games["book_total"].astype(float),
     })
-    PRED_DIR.mkdir(parents=True, exist_ok=True)
-    path = season_path(season)
-    if path.exists():
-        old = pd.read_parquet(path)
-        # Unchanged same-day captures keep the row already there (cfb.results).
-        fresh = pd.concat([old, stable.drop_repeats(old, fresh, ["game_id"])],
-                          ignore_index=True)
-    fresh["day"] = fresh["captured"].str[:10]
-    fresh = fresh.drop_duplicates(subset=["game_id", "day"], keep="last")
-    stable.write_parquet(fresh.drop(columns="day"), path)
-    return fresh
+    # Into today's file only; unchanged same-day captures keep the row
+    # already there (cfb.results).
+    return partitions.record(season_path(season), fresh, KEY)
 
 
 def on_record(season: int = SEASON) -> pd.DataFrame:
     """The last prediction archived before each game's kickoff."""
-    path = season_path(season)
-    if not path.exists():
+    archive = load(season)
+    if archive is None or archive.empty:
         return pd.DataFrame(columns=_COLS)
-    archive = pd.read_parquet(path)
     for col in _COLS:
         if col not in archive.columns:
             archive[col] = np.nan
@@ -114,8 +115,7 @@ summary = _college.summary
 def line_moves(season: int = SEASON) -> pd.DataFrame:
     """The college archive's line_moves, on this one - the TBD-v-TBD
     captures (on_record) left out."""
-    path = season_path(season)
-    archive = pd.read_parquet(path) if path.exists() else None
+    archive = load(season)
     if archive is not None and {"home_id", "away_id"} <= set(archive.columns):
         archive = archive[~(archive["home_id"].astype(str).str.startswith("-")
                             | archive["away_id"].astype(str).str.startswith("-"))]

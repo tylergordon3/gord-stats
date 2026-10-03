@@ -7,7 +7,8 @@ is the only version a reader can check.
 
 That requires archiving them *before* kickoff, because a prediction made after
 a game is not a prediction. `capture()` appends the current board to
-data/cfb/predictions/{season}.parquet with the moment it was taken, and
+data/cfb/predictions/{season}/<capture day>.parquet (cfb.partitions: a run
+rewrites only its own day) with the moment it was taken, and
 `scored()` keeps, for each game, the last capture stamped strictly earlier than
 the kickoff it belongs to. Everything else is ignored -- including a capture
 that landed mid-game, which is exactly the kind of thing that would flatter
@@ -24,9 +25,9 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from cfb import espn, odds as odds_mod, predict
+from cfb import espn, odds as odds_mod, partitions, predict
 from cfb.config import DATA_DIR, SEASON
-from gordstats import bet_record, stable
+from gordstats import bet_record
 
 PRED_DIR = DATA_DIR / "predictions"
 
@@ -45,12 +46,24 @@ _COLS = ["captured", "season", "week", "game_id", "kickoff", "home_id", "away_id
          "home_win_prob", "market_spread", "market_total"]
 
 
+# One row per game per capture day.
+KEY = ["game_id"]
+
+
 def season_path(season: int = SEASON):
+    """The season's single file as it was before the split - read if a
+    machine still has one; the archive itself is the folder beside it
+    (cfb.partitions)."""
     return PRED_DIR / f"{season}.parquet"
 
 
+def load(season: int = SEASON):
+    """Every capture this season, oldest first; None when there are none."""
+    return partitions.read(season_path(season), KEY)
+
+
 def capture(season: int = SEASON) -> pd.DataFrame:
-    """Append the current board to the archive. Returns what was added."""
+    """Append the current board to the archive. Returns the whole season."""
     games = predict.week()
     if games.empty:
         return pd.DataFrame(columns=_COLS)
@@ -84,19 +97,10 @@ def capture(season: int = SEASON) -> pd.DataFrame:
         "market_total": games["market_total"].astype(float),
     })
 
-    PRED_DIR.mkdir(parents=True, exist_ok=True)
-    path = season_path(season)
-    if path.exists():
-        old = pd.read_parquet(path)
-        # A same-day capture that says what the last one said keeps the last
-        # one (and its time), so an unchanged board is an unchanged file.
-        fresh = pd.concat([old, stable.drop_repeats(old, fresh, ["game_id"])],
-                          ignore_index=True)
-    # One row per game per capture run; running twice in a day is not new data.
-    fresh["day"] = fresh["captured"].str[:10]
-    fresh = fresh.drop_duplicates(subset=["game_id", "day"], keep="last")
-    stable.write_parquet(fresh.drop(columns="day"), path)
-    return fresh
+    # Into today's file only. A same-day capture that says what the last one
+    # said keeps the last one (and its time), so an unchanged board is an
+    # unchanged file; otherwise one row per game per day, the latest.
+    return partitions.record(season_path(season), fresh, KEY)
 
 
 def _finals(season: int = SEASON) -> pd.DataFrame:
@@ -125,13 +129,9 @@ def on_record(season: int = SEASON) -> pd.DataFrame:
     for a finished game - the line that was on record, not a refit after the
     fact - and what `scored` grades.
     """
-    path = season_path(season)
-    if not path.exists():
+    archive = load(season)
+    if archive is None or archive.empty:
         return pd.DataFrame(columns=_COLS)
-    archive = pd.read_parquet(path)
-    if archive.empty:
-        return pd.DataFrame(columns=_COLS)
-    archive = archive.copy()
     # Rows captured before a column existed simply have not got it. Backfilling
     # here rather than at every use keeps `scored` free of column-presence
     # checks, and NaN is the honest value: we did not record it at the time.
@@ -151,8 +151,7 @@ def on_record(season: int = SEASON) -> pd.DataFrame:
 def line_moves(season: int = SEASON) -> pd.DataFrame:
     """Each call made on the early-week line and how far the book's number
     moved toward it by kickoff (gordstats.bet_record)."""
-    path = season_path(season)
-    return bet_record.moves(pd.read_parquet(path) if path.exists() else None, BET_MIN)
+    return bet_record.moves(load(season), BET_MIN)
 
 
 def scored(season: int = SEASON) -> pd.DataFrame:

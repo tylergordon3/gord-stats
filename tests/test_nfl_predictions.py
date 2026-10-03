@@ -83,5 +83,5 @@ def test_a_game_already_under_way_is_not_captured_over_its_pre_game_line(tmp_pat
 
     monkeypatch.setattr(results.predict, "season", lambda: (board(3.0), None, None))
     results.capture(2026)
-    archived = pd.read_parquet(tmp_path / "2026.parquet")
+    archived = results.load(2026)         # one file per capture day (cfb.partitions)
     assert list(archived["game_id"]) == ["late"], "a game in progress was archived"

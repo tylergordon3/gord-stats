@@ -1,5 +1,5 @@
 """
-Per-game player box scores (data/cfb/boxscores_{season}.parquet).
+Per-game player box scores (data/cfb/cache/boxscores_{season}.parquet).
 
 Everything on the fantasy side of this section runs on season projections
 divided by games. That cannot answer the two questions the league actually
@@ -19,6 +19,14 @@ not name is typed from where he shows up: a passer is a QB, a runner an RB,
 a receiver a WR - which is right often enough for a defence's totals and is
 marked `guessed` so nothing downstream mistakes it for a fact.
 
+A cache, not an archive, so it is not in git (data/cfb/cache/ is ignored):
+every finished game's box score is still on ESPN, keyless, and a run fetches
+whatever the file lacks - so a fresh clone, or a Pi that lost the file,
+rebuilds the season in one run (~70 requests a played week, six at a time).
+Tracked, it was rewritten whole after every finished game, ~0.3-0.9 MB of
+history a day that git deltas poorly (62 versions came to 2.4 MB even fully
+repacked). Positions come from the tracked roster cache either way.
+
     python -m cfb.boxscores              # fetch what's missing, print coverage
     python -m cfb.boxscores --refresh    # refetch every finished game
 """
@@ -30,7 +38,7 @@ from concurrent.futures import ThreadPoolExecutor
 import pandas as pd
 import requests
 
-from cfb import espn
+from cfb import espn, partitions
 from cfb.config import DATA_DIR, SEASON
 
 _SUMMARY = ("https://site.api.espn.com/apis/site/v2/sports/football/"
@@ -59,7 +67,20 @@ STAT_COLS = sorted({c for m in _CATEGORIES.values() for c in m.values()})
 
 
 def path(season: int = SEASON):
-    return DATA_DIR / f"boxscores_{season}.parquet"
+    return DATA_DIR / "cache" / f"boxscores_{season}.parquet"
+
+
+def _read(out) -> pd.DataFrame:
+    """The cache, or an empty frame when it is missing or unreadable - an
+    untracked file is not put back by `git checkout`, so a torn one must
+    mean "fetch it all again", not "fail every run"."""
+    if not out.exists():
+        return pd.DataFrame()
+    try:
+        return pd.read_parquet(out)
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! {out.name} unreadable ({exc}); refetching")
+        return pd.DataFrame()
 
 
 def _roster_path(season: int = SEASON):
@@ -172,7 +193,7 @@ def capture(season: int = SEASON, refresh: bool = False,
     done = schedule[(schedule["state"] == "post")
                     & (schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) > 0)]
     out = path(season)
-    have = pd.read_parquet(out) if out.exists() else pd.DataFrame()
+    have = _read(out)
     seen = set(have["game_id"].astype(str)) if len(have) else set()
     latest = int(done["week"].max()) if len(done) else None
     todo = [(str(g["game_id"]), int(g["week"])) for _, g in done.iterrows()
@@ -197,14 +218,12 @@ def capture(season: int = SEASON, refresh: bool = False,
         have = have[~have["game_id"].astype(str).isin(set(new["game_id"].astype(str)))]
     frame = pd.concat([have, new], ignore_index=True) if len(have) else new
     frame = frame.drop_duplicates(subset=["game_id", "team_id", "athlete_id"], keep="last")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    frame.to_parquet(out, index=False)
+    partitions.write_parquet(frame, out)
     return frame
 
 
 def load(season: int = SEASON) -> pd.DataFrame:
-    out = path(season)
-    return pd.read_parquet(out) if out.exists() else pd.DataFrame()
+    return _read(path(season))
 
 
 if __name__ == "__main__":

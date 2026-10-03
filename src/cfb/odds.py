@@ -5,7 +5,8 @@ ESPN's scoreboard carries a DraftKings spread and total for nearly every
 upcoming game, free and keyless, on the request `cfb.espn` already makes. Its
 *historical* odds are not available — `pickcenter` comes back empty for games
 already played — so a line that is not captured before kickoff is gone. This
-archives them, one file per season, appending each time it runs.
+archives them, appending each time it runs: data/cfb/odds/{season}/<capture
+day>.parquet, one file per day (cfb.partitions), so a run rewrites only today's.
 
 Read `odds[0]["spread"]`, never `details`. The details string names the
 favourite by an abbreviation that is not always ESPN's own: Buffalo appears as
@@ -21,11 +22,22 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from cfb import espn
+from cfb import espn, partitions
 from cfb.config import DATA_DIR, SEASON
-from gordstats import stable
 
 ODDS_DIR = DATA_DIR / "odds"
+# One line per game per capture day.
+ARCHIVE_KEY = ["season", "week", "home_id", "away_id"]
+
+
+def season_path(season: int = SEASON):
+    """The season's single file from before the split (read if present)."""
+    return ODDS_DIR / f"{season}.parquet"
+
+
+def load(season: int = SEASON):
+    """Every capture this season, oldest first; None when there are none."""
+    return partitions.read(season_path(season), ARCHIVE_KEY)
 
 
 def _rows(week: int, season: int) -> list:
@@ -96,18 +108,9 @@ def capture(weeks=None, season: int = SEASON) -> pd.DataFrame:
     if fresh.empty:
         return fresh
 
-    ODDS_DIR.mkdir(parents=True, exist_ok=True)
-    path = ODDS_DIR / f"{season}.parquet"
-    key = ["season", "week", "home_id", "away_id"]
-    if path.exists():
-        old = pd.read_parquet(path)
-        # An unchanged same-day line keeps the row already there (cfb.results).
-        fresh = pd.concat([old, stable.drop_repeats(old, fresh, key)], ignore_index=True)
-    # One line per game per capture run; re-running the same day is not new data.
-    fresh["day"] = fresh["captured"].str[:10]
-    fresh = fresh.drop_duplicates(subset=key + ["day"], keep="last")
-    stable.write_parquet(fresh.drop(columns="day"), path)
-    return fresh
+    # Into today's file only. An unchanged same-day line keeps the row already
+    # there (cfb.results); one line per game per day otherwise, the latest.
+    return partitions.record(season_path(season), fresh, ARCHIVE_KEY)
 
 
 # A game is (week, home, away), never (home, away) alone: every season has a
@@ -123,10 +126,10 @@ _LATEST_COLS = ["week", "home_id", "away_id", "spread", "total", "book", "spread
 def latest(season: int = SEASON) -> pd.DataFrame:
     """The most recent captured line per game: game key, spread, total, and
     the open/moneyline columns (NaN on rows captured before those existed)."""
-    path = ODDS_DIR / f"{season}.parquet"
-    if not path.exists():
+    frame = load(season)
+    if frame is None:
         return pd.DataFrame(columns=_LATEST_COLS)
-    frame = pd.read_parquet(path).sort_values("captured")
+    frame = frame.sort_values("captured")
     for col in _LATEST_COLS:
         if col not in frame.columns:
             frame[col] = pd.NA
@@ -136,10 +139,10 @@ def latest(season: int = SEASON) -> pd.DataFrame:
 
 def history(season: int = SEASON) -> pd.DataFrame:
     """Every capture of every game, oldest first - for a line-movement strip."""
-    path = ODDS_DIR / f"{season}.parquet"
-    if not path.exists():
+    frame = load(season)
+    if frame is None:
         return pd.DataFrame(columns=["week", "home_id", "away_id", "captured", "spread", "total"])
-    return pd.read_parquet(path).sort_values("captured")
+    return frame.sort_values("captured")
 
 
 if __name__ == "__main__":

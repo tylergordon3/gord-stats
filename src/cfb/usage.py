@@ -1,5 +1,5 @@
 """
-Who is actually getting the ball (data/cfb/usage_{season}.parquet).
+Who is actually getting the ball (data/cfb/cache/usage_{season}.parquet).
 
 College backfields are committees - two or three backs, a share that moves
 week to week - and a season projection divided by games cannot see that. This
@@ -18,7 +18,11 @@ offence's own roster. A pass whose receiver cannot be matched is counted for
 the team but not for a player, so shares never exceed what was thrown.
 
 A finished week never changes, so each is fetched once and read from the
-parquet after that.
+parquet after that. The parquet is a cache, not an archive, and not in git
+(data/cfb/cache/ is ignored): CFBD keeps every week, so a fresh clone or a Pi
+that lost the file rebuilds the season in one run, three calls a played week
+against a 75,000-a-month key, matched on the same tracked roster file. Tracked,
+it was rewritten whole every run of a game weekend.
 
     python -m cfb.usage             # fetch any missing weeks, print the top backfields
     python -m cfb.usage --refresh
@@ -30,9 +34,8 @@ import unicodedata
 
 import pandas as pd
 
-from cfb import cfbd, espn
+from cfb import cfbd, espn, partitions
 from cfb.config import DATA_DIR, SEASON
-from gordstats import stable
 
 # "to #0 E.Mitchell caught at ..." / "incomplete short left to #1 P.Billups II"
 _TARGET = re.compile(r"\bto #(\d+) ([A-Z][\w.'-]*(?: [\w.'-]+)*?)(?=,| caught| thrown| for |$)")
@@ -121,7 +124,19 @@ NUMERIC = sorted(set(_STATS.values())) + ["pass_att", "targets", "team_carries",
 
 
 def path(season: int = SEASON):
-    return DATA_DIR / f"usage_{season}.parquet"
+    return DATA_DIR / "cache" / f"usage_{season}.parquet"
+
+
+def _read(out) -> pd.DataFrame:
+    """The cache, or an empty frame when it is missing or unreadable (an
+    untracked file is never restored by git, so torn means refetch)."""
+    if not out.exists():
+        return pd.DataFrame()
+    try:
+        return pd.read_parquet(out)
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! {out.name} unreadable ({exc}); refetching")
+        return pd.DataFrame()
 
 
 def _roster_path(season: int = SEASON):
@@ -273,7 +288,7 @@ def capture(season: int = SEASON, refresh: bool = False) -> pd.DataFrame:
                     & (schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) > 0)]
     weeks = sorted({int(w) for w in done["week"].dropna().unique()})
     out = path(season)
-    have = pd.read_parquet(out) if out.exists() else pd.DataFrame()
+    have = _read(out)
     seen = set(have["week"].unique()) if len(have) else set()
     # The newest played week is refetched once more: a game finishing after the
     # build would otherwise be missing from it for good.
@@ -295,13 +310,13 @@ def capture(season: int = SEASON, refresh: bool = False) -> pd.DataFrame:
         frame = pd.concat([have, frame], ignore_index=True)
     # Sorted, and written only if different: CFBD's rows arrive in any order,
     # and five identical-but-reordered copies a day were ~21 MB a week of history.
-    stable.write_parquet(frame, out, sort_by=["week", "game_id", "team", "athlete_id", "player"])
+    partitions.write_parquet(frame, out,
+                             sort_by=["week", "game_id", "team", "athlete_id", "player"])
     return frame
 
 
 def load(season: int = SEASON) -> pd.DataFrame:
-    out = path(season)
-    return pd.read_parquet(out) if out.exists() else pd.DataFrame()
+    return _read(path(season))
 
 
 def shares(frame: pd.DataFrame, weeks: int = None) -> pd.DataFrame:
