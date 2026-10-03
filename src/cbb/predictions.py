@@ -323,8 +323,11 @@ def predict_womens(date):
             df.loc[idx, "Bid"] = 1
 
         else:
-            # fallback to power rating
-            idx = df.loc[df["Conf"] == conf, "Ovr"].idxmax()
+            # fallback: the conference's best-rated team. Ovr is a rank (1 is
+            # best) - idxmax gave every conference without a champion its
+            # worst team as the auto-bid (the men's fallback uses Pwr, a
+            # score, where idxmax is right).
+            idx = df.loc[df["Conf"] == conf, "Ovr"].idxmin()
             idx = [idx]
 
         df.loc[idx, "ConfChamp"] = 1
