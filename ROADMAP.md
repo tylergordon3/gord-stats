@@ -387,12 +387,12 @@ Open:
 - [x] **Waiver impact** (8761a06c3): Trades & Pickups' Pick up mode ranks the free agents by what each does
       to your title and playoff odds, both leagues and readers' own; NFL free agents now real players only.
 - [x] **Playoff odds history** (09da6e6cf): kept build by build from 2026-10-01; a Wk column from a week on.
-- [ ] **Later in the season:** a chart of each team's playoff odds over the season, from that history.
+- [x] **Later in the season:** a chart of each team's playoff odds (da6de656b, both fantasy Power pages) over the season, from that history.
 - [x] **NFL injuries, beyond the tag** (0d61dd29e, 4af15ac7c, 4cd418cec, 940545f65): ESPN's return dates
       instead of IR = 4 weeks; next man up (teammates' share of an injured player's points, measured
       2019-25) in the board, power, trades and pickups; this week's chance to play from status, role
       and the last practice (Doubtful plays 1%, not 25%), with pills on Team and Matchups.
-- [ ] **Injuries, next:** back-from-injury dip by injury type (nflverse); expert feeds (Bluesky/Substack
+- [x] **Injuries, next:** back-from-injury dip (9509baaad: by games missed - type adds nothing); expert feeds (Bluesky/Substack
       RSS of PTs and doctors - waiting on a list of accounts); CFB conference availability reports.
 
 ## 9. Audit, 2026-10-02
@@ -462,17 +462,17 @@ Open:
       them before tip-off would 404 /men/conference until the run rebuilds it).
 - [x] **First deploy of these changes** (2026-10-02, twice): data recorded before Jekyll, `linkcheck:
       427 pages`, the gems stamp written, `/assets/v/<hash>/custom.css` served immutable.
-- [ ] **Git growth (~8 MB/day on the Pi):** whole-season files rewritten in full
+- [x] **Git growth (~8 MB/day on the Pi):** (96a6e1880: archives by day/week, CFB caches ignored - ~0.7 MB/day) whole-season files rewritten in full
       (cfb usage/gameinfo/boxscores/predictions, nfl predictions, wnba_defense) - partition by week
       or move re-derivable caches out of git; stop rewriting wnba_defense for its stamp.
-- [ ] **Live ticks drop pregame captures** between hourly commits (they start from
+- [x] **Live ticks drop pregame captures** (6d8383388: gs_proj_live sidecar on the Pi) between hourly commits (they start from
       `git checkout -- docs data`): an ignored live file the daily run merges, like cbb/lines_live.
-- [ ] **Inline JS repeated on every fantasy page** (GSAPI + league bar + GSL ~50 KB, GSRecap,
+- [x] **Inline JS repeated on every fantasy page** (20d82b61a: docs/assets/js/gs-*.js) (GSAPI + league bar + GSL ~50 KB, GSRecap,
       GSWatch): move to /assets/js/ now that assets are content-hashed.
 - [ ] **/fantasy/power/** still renders pandas' own Styler HTML (203 KB, 426 ids): use
       `styles.to_html` and update test_phone_tables' shading test. Usage tables repeat
       `class="v-overall v-rb v-wr v-te"` on every cell (~300 KB on /cfb/usage/).
-- [ ] **Security, low:** a global daily D1 write cap (not just per account); session revocation
+- [x] **Security, low:** (db8657c01: site write ceiling, session epoch, __Host- cookie; Report-Only CSP still open) a global daily D1 write cap (not just per account); session revocation
       (an epoch in the token); throttle failed league-sync lookups; a Report-Only `script-src`.
 - [ ] **SEO:** 38 pages share the site description; Home and /cbb/ have no h1; game previews
       404 a week after the game (a fallback to the schedule).
