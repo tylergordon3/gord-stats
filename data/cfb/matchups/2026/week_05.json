@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-03T02:41:01+00:00",
+ "fetched": "2026-10-03T03:02:50+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -62,16 +62,16 @@
     {
      "team_key": "474.l.21318.t.3",
      "name": "Jackson's Brilliant Team",
-     "points": 1.0,
+     "points": 4.6,
      "projected": 185.81,
-     "win_probability": 0.64
+     "win_probability": 0.66
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 159.34,
-     "win_probability": 0.36
+     "win_probability": 0.33999999999999997
     }
    ]
   },
@@ -108,14 +108,14 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 5.1,
+     "points": 5.3,
      "projected": 125.43,
      "win_probability": 0.13
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 3.3,
+     "points": 4.3,
      "projected": 182.92,
      "win_probability": 0.87
     }
@@ -577,10 +577,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "BN",
-    "points": 7.7,
+    "points": 7.9,
     "stats": {
-     "8": 3.0,
-     "9": 17.0,
+     "8": 4.0,
+     "9": 19.0,
      "10": 1.0
     }
    },
@@ -1688,7 +1688,7 @@
     "slot": "W/R/T",
     "points": 8.7,
     "stats": {
-     "8": 16.0,
+     "8": 17.0,
      "9": 46.0,
      "11": 5.0,
      "12": 36.0,
@@ -2189,10 +2189,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 5.1,
+    "points": 5.3,
     "stats": {
-     "8": 7.0,
-     "9": 30.0,
+     "8": 8.0,
+     "9": 32.0,
      "11": 2.0,
      "12": 11.0
     }
@@ -2420,10 +2420,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 3.3,
+    "points": 4.3,
     "stats": {
-     "11": 2.0,
-     "12": 23.0
+     "11": 3.0,
+     "12": 28.0
     }
    },
    {
