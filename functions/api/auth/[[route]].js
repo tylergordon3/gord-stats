@@ -4,6 +4,8 @@
  *   GET /api/auth/login?next=/cfb/power/   -> Google's consent screen
  *   GET /api/auth/callback?code=&state=    -> sets the session, returns to `next`
  *   GET /api/auth/logout?next=/            -> clears it
+ *   POST /api/auth/logout-everywhere       -> ends every session of this
+ *                                             account, this one included
  *
  * Authorization-code flow with a client secret. The one thing worth explaining
  * is what this deliberately does *not* do: it never verifies the ID token's
@@ -22,8 +24,8 @@
  * deploying this before any of that is configured changes nothing on the site.
  */
 import {
-  SESSION_COOKIE, SESSION_DAYS, TYP, cookies, configured, json,
-  setCookie, sign, verify,
+  SESSION_DAYS, TYP, checkSession, clearSessionCookies, cookies, configured, json,
+  sessionCookies, setCookie, sign, verify, withCookies,
 } from "../_lib/session.js";
 
 const AUTH = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -45,6 +47,16 @@ export async function onRequestGet(context) {
   if (route === "login") return login(url, env);
   if (route === "callback") return callback(request, url, env);
   if (route === "logout") return logout(request, url);
+  return json({ ok: false, error: "not found" }, 404);
+}
+
+export async function onRequestPost(context) {
+  const { request, env } = context;
+  const route = (context.params.route || []).join("/");
+  if (!configured(env)) {
+    return json({ ok: false, error: "accounts are not configured" }, 503);
+  }
+  if (route === "logout-everywhere") return logoutEverywhere(request, env);
   return json({ ok: false, error: "not found" }, 404);
 }
 
@@ -126,15 +138,17 @@ async function callback(request, url, env) {
   if (problem) return fail(url, problem);
 
   const user = await upsert(env.DB, claims);
+  // `ep` is the account's session epoch now: the session lasts until it
+  // expires or the epoch moves on (_lib/session.js).
   const session = await sign({
     uid: user.id,
     email: claims.email,
+    ep: user.epoch,
     exp: Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400,
   }, env.SESSION_SECRET, TYP.session);
 
   const headers = new Headers({ location: safeNext(stamp.next, url.origin), "cache-control": "no-store" });
-  headers.append("set-cookie",
-    setCookie(SESSION_COOKIE, session, { maxAge: SESSION_DAYS * 86400 }));
+  for (const c of sessionCookies(session, SESSION_DAYS * 86400)) headers.append("set-cookie", c);
   headers.append("set-cookie", setCookie(STATE_COOKIE, "", { maxAge: 0 }));
   return new Response(null, { status: 302, headers });
 }
@@ -191,16 +205,22 @@ function claimsOf(idToken) {
 /**
  * One row per Google subject. A returning reader keeps their id - and so their
  * favourites - even if the address on the account has changed.
+ * -> { id, epoch }
+ *
+ * Signing in is the one write that is never metered by the site's ceiling
+ * (_lib/limits.js): the ceiling exists to leave room for it.
  */
 async function upsert(db, claims) {
   const now = new Date().toISOString();
-  const found = await db.prepare("SELECT id FROM users WHERE provider_sub = ?")
+  // Every column, so that a database without session_epoch yet (before
+  // migration 006) reads as epoch 0 rather than failing the sign-in.
+  const found = await db.prepare("SELECT * FROM users WHERE provider_sub = ?")
     .bind(claims.sub).first();
 
   if (found) {
     await db.prepare("UPDATE users SET email = ?, last_seen_at = ? WHERE id = ?")
       .bind(claims.email, now, found.id).run();
-    return { id: found.id };
+    return { id: found.id, epoch: Number(found.session_epoch ?? 0) };
   }
 
   const id = crypto.randomUUID();
@@ -208,7 +228,7 @@ async function upsert(db, claims) {
     "INSERT INTO users (id, email, provider_sub, created_at, last_seen_at) "
     + "VALUES (?, ?, ?, ?, ?)")
     .bind(id, claims.email, claims.sub, now, now).run();
-  return { id };
+  return { id, epoch: 0 };
 }
 
 /**
@@ -228,14 +248,48 @@ function logout(request, url) {
   if (crossSite(request)) {
     return json({ ok: false, error: "sign out from the site itself" }, 403);
   }
-  return new Response(null, {
-    status: 302,
-    headers: {
-      location: safeNext(url.searchParams.get("next"), url.origin),
-      "set-cookie": setCookie(SESSION_COOKIE, "", { maxAge: 0 }),
-      "cache-control": "no-store",
-    },
+  const headers = new Headers({
+    location: safeNext(url.searchParams.get("next"), url.origin),
+    "cache-control": "no-store",
   });
+  for (const c of clearSessionCookies()) headers.append("set-cookie", c);
+  return new Response(null, { status: 302, headers });
+}
+
+/**
+ * "Sign out everywhere": move the account's session epoch on, which ends
+ * every session issued before - a lost phone's, a leaked cookie's, and this
+ * browser's own, whose cookie is cleared too. Signing in again issues one at
+ * the new epoch.
+ *
+ * This browser goes as well, on purpose: keeping it would mean issuing it a
+ * new session, and then one script could move the epoch - one row written -
+ * as often as it liked. As it is, each one costs a sign-in with Google. The
+ * UPDATE moves the epoch only from the one this session holds, so the same
+ * request sent twice at once moves it once.
+ *
+ * A POST, unlike /logout: it changes the account, not just this browser.
+ * The middleware refuses it from another site; so does this.
+ */
+async function logoutEverywhere(request, env) {
+  if (crossSite(request)) {
+    return json({ ok: false, error: "sign out from the site itself" }, 403);
+  }
+  const { session, stale } = await checkSession(request, env);
+  if (!session) {
+    const res = json({ ok: false, error: "not signed in" }, 401);
+    return stale ? withCookies(res, clearSessionCookies()) : res;
+  }
+  try {
+    await env.DB.prepare(
+      "UPDATE users SET session_epoch = session_epoch + 1 WHERE id = ? AND session_epoch = ?")
+      .bind(session.uid, Number(session.user.session_epoch ?? 0)).run();
+  } catch (err) {
+    if (!/no such column/i.test(String(err && err.message || err))) throw err;
+    return json({ ok: false, migrating: true,
+      error: "Signing out everywhere is not switched on for this site yet." }, 503);
+  }
+  return withCookies(json({ ok: true }), clearSessionCookies());
 }
 
 /** Back to the page they came from, with something the UI can show. */

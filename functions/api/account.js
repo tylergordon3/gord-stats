@@ -5,22 +5,28 @@
  * email address, being able to remove it stops being optional. The favourites
  * go with the row through ON DELETE CASCADE, and the session cookie is cleared
  * so the browser does not keep presenting a token for a user that is gone.
+ * Sessions on the reader's other devices end with the row: readSession checks
+ * every session against it (_lib/session.js).
+ *
+ * Never metered by the site's write ceiling (_lib/limits.js): leaving must
+ * always work.
  */
 import {
-  SESSION_COOKIE, configured, json, readSession, setCookie,
+  checkSession, clearSessionCookies, configured, json, withCookies,
 } from "./_lib/session.js";
 
 export async function onRequestDelete({ request, env }) {
   if (!configured(env)) return json({ ok: false, error: "accounts are not configured" }, 503);
-  const session = await readSession(request, env);
-  if (!session) return json({ ok: false, error: "not signed in" }, 401);
+  const { session, stale } = await checkSession(request, env);
+  if (!session) {
+    const res = json({ ok: false, error: "not signed in" }, 401);
+    return stale ? withCookies(res, clearSessionCookies()) : res;
+  }
 
   await env.DB.batch([
     env.DB.prepare("DELETE FROM favorites WHERE user_id = ?").bind(session.uid),
     env.DB.prepare("DELETE FROM users WHERE id = ?").bind(session.uid),
   ]);
 
-  return json({ ok: true }, 200, {
-    "set-cookie": setCookie(SESSION_COOKIE, "", { maxAge: 0 }),
-  });
+  return withCookies(json({ ok: true }), clearSessionCookies());
 }

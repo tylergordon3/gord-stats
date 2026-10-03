@@ -26,6 +26,12 @@ CREATE TABLE IF NOT EXISTS users (
   -- rebuilds by dropping them off the end; a database migrated by 005 has it
   -- last, and nothing here reads columns by position.
   is_admin      INTEGER NOT NULL DEFAULT 0,
+  -- Signed into every session (as `ep`); a session is good only while it
+  -- matches (functions/api/_lib/session.js). "Sign out everywhere" adds one,
+  -- which ends every session issued before. Old sessions carry none and count
+  -- as 0. Declared here, ahead of 004's columns, for the reason is_admin is;
+  -- a database migrated by 006 has it last.
+  session_epoch INTEGER NOT NULL DEFAULT 0,
   -- How many rows this reader has changed today (UTC), against the daily
   -- allowance in functions/api/_lib/limits.js. D1's free tier has one pool of
   -- writes for the whole site, and without a per-account ceiling a single
@@ -144,3 +150,22 @@ CREATE TABLE IF NOT EXISTS tweet_votes (
   user_id   TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   PRIMARY KEY (tweet_id, user_id)
 ) WITHOUT ROWID;
+
+-- --------------------------------------------------------------------------
+-- The site's own daily ceiling on writes (functions/api/_lib/limits.js;
+-- deploy/d1-migrate-006-ceiling-and-sessions.sql for a database created
+-- before 2026-10-02).
+--
+-- D1's free tier is 100,000 rows written a day for the whole database, and
+-- sign-in writes too. Each account has its own daily allowance (users.
+-- write_count), but some twenty accounts at theirs would still spend the
+-- site's day and leave nobody able to sign in. One row counts what the
+-- metered endpoints - favourites, leagues, Tweets of the week - have written
+-- today (estimated in D1's own rows, indexes included), and they stop at a
+-- ceiling well short of the quota. Taken with one conditional upsert per
+-- request, as the account's allowance is; the row makes itself on the first.
+CREATE TABLE IF NOT EXISTS site_writes (
+  id       INTEGER PRIMARY KEY CHECK (id = 1),   -- one row, ever
+  day      TEXT NOT NULL,                        -- UTC, as D1's quota day
+  written  INTEGER NOT NULL DEFAULT 0
+);

@@ -13,13 +13,14 @@
  * starring one team rewrote all of them - up to 500 rows, three writes each
  * with the old index - and a few dozen scripted PUTs spent D1's whole day of
  * writes, which is also the day nobody could sign in. What a PUT may change
- * is capped per account per day as well (_lib/limits.js).
+ * is capped per account per day as well, and by the site's own daily ceiling
+ * (_lib/limits.js): over that, a 503 with Retry-After and nothing written.
  *
  * Keys are "sport:team_id" on the wire and split across two columns in the
  * table - see deploy/d1-schema.sql for why.
  */
 import { configured, json, readSession } from "./_lib/session.js";
-import { spend } from "./_lib/limits.js";
+import { refusal, spend } from "./_lib/limits.js";
 
 // A reader following more teams than this has hit a bug or is probing; either
 // way the row count per user stays bounded.
@@ -100,11 +101,7 @@ export async function onRequestPut({ request, env }) {
   if (!added.length && !removed.length) return json({ ok: true, count: want.length });
 
   const allowed = await spend(env.DB, session.uid, added.length + removed.length);
-  if (!allowed.ok) {
-    return json({ ok: false, error: "too many changes today",
-      retry_after: allowed.retryAfter }, 429,
-      { "retry-after": String(allowed.retryAfter) });
-  }
+  if (!allowed.ok) return refusal(allowed, "too many changes today");
 
   const statements = [];
   if (removed.length) {

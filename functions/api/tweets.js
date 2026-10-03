@@ -25,13 +25,15 @@
  * signed-in reader's carries their own votes and is never cached. A
  * submission is a row; five a day an account, counted inside the INSERT so
  * that parallel requests cannot pass it. A vote is a row, and is taken from
- * the per-account daily allowance in _lib/limits.js like every other write.
+ * the per-account daily allowance in _lib/limits.js like every other write -
+ * and from the site's daily ceiling there, over which both are a 503.
  * The owner is whoever has users.is_admin = 1, read from the database on each
- * request - never from the session, which a sign-in issued before the flag
- * was set would still carry.
+ * request - from the account row readSession reads to check the session,
+ * never from the signed token, which a sign-in issued before the flag was set
+ * would still carry.
  */
 import { configured, json, readSession } from "./_lib/session.js";
-import { secondsToMidnight, spend, utcDay } from "./_lib/limits.js";
+import { refusal, secondsToMidnight, spend, utcDay } from "./_lib/limits.js";
 import { cached } from "./_lib/cache.js";
 
 export const WEEK_DAYS = 7;
@@ -205,21 +207,18 @@ async function guard(request, env) {
   return session;
 }
 
-/** Whether this account is the owner. A database before 005 has no owner. */
-export async function isAdmin(DB, uid) {
-  try {
-    const row = await DB.prepare("SELECT is_admin FROM users WHERE id = ?").bind(uid).first();
-    return Number(row?.is_admin) === 1;
-  } catch (err) {
-    if (/no such column/i.test(String(err && err.message || err))) return false;
-    throw err;
-  }
+/**
+ * Whether a session's account is the owner, from the row readSession read
+ * for it this request. A database before 005 has no is_admin, so no owner.
+ */
+export function isAdmin(session) {
+  return Number(session?.user?.is_admin) === 1;
 }
 
 async function owner(request, env) {
   const session = await guard(request, env);
   if (session instanceof Response) return session;
-  if (!(await isAdmin(env.DB, session.uid))) {
+  if (!isAdmin(session)) {
     return json({ ok: false, error: "Only the site's owner can review posts." }, 403);
   }
   return session;
@@ -300,7 +299,7 @@ export async function onRequestGet(context) {
     got = { tweets: [], week: 0, migrating: true };
   }
   return json({ ok: true, configured: true, signedIn: true,
-                admin: await isAdmin(env.DB, session.uid), ...got });
+                admin: isAdmin(session), ...got });
 }
 
 const QUEUE = (order) =>
@@ -357,9 +356,10 @@ const INSERT =
    ON CONFLICT (tweet_id) DO NOTHING`;
 const TODAY = "SELECT COUNT(*) AS n FROM tweets WHERE submitted_by = ? AND submitted_at >= ?";
 const SEEN = "SELECT status FROM tweets WHERE tweet_id = ?";
-// The same, and whether the session's account still exists: a cookie signed
-// before the account was deleted still verifies, and spend() would read the
-// missing row as "allowance used up".
+// The same, and whether the session's account still exists. readSession has
+// already turned away a cookie whose account is gone; this catches one
+// deleted in the moment since, which spend() would read as "allowance used
+// up".
 const SEEN_BY =
   `SELECT (SELECT status FROM tweets WHERE tweet_id = ?1) AS status,
           EXISTS (SELECT 1 FROM users WHERE id = ?2) AS known`;
@@ -418,10 +418,7 @@ export async function onRequestPost({ request, env }) {
     // Taken before asking X, so that the allowance also bounds how often one
     // account can make this Function call out - deleted posts included.
     const allowed = await spend(env.DB, session.uid, 1, now);
-    if (!allowed.ok) {
-      return json({ ok: false, error: "Too many changes today - try again tomorrow.",
-        retry_after: allowed.retryAfter }, 429, { "retry-after": String(allowed.retryAfter) });
-    }
+    if (!allowed.ok) return refusal(allowed, "Too many changes today - try again tomorrow.");
 
     const card = await oembed(post.id);
     if (!card.ok) {
@@ -464,8 +461,7 @@ export async function vote({ request, env }, id) {
     }
     const allowed = await spend(env.DB, session.uid, 1);
     if (!allowed.ok) {
-      return json({ ok: false, error: "That's a lot of votes for one day - try again tomorrow.",
-        retry_after: allowed.retryAfter }, 429, { "retry-after": String(allowed.retryAfter) });
+      return refusal(allowed, "That's a lot of votes for one day - try again tomorrow.");
     }
     // Off if it was on, else on: one statement each way, and the delete's
     // own count says which way this went.

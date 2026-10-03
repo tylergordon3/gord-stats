@@ -56,6 +56,10 @@ CSS = """<style>
    height of the signed-in row it usually becomes, so the cards under it stay
    put (the 2026-10-02 layout-shift check). */
 #pf-who{min-height:36px}
+/* On a phone both answers take two rows - the sign-in invitation, and the
+   address with Sign out and Sign out everywhere (measured 70 and 72px at
+   360-390px wide) - so the hold is two rows there. */
+@media (max-width:520px){#pf-who{min-height:72px}}
 .pf-who b{font-weight:800}
 .pf-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .pf-btn{font:inherit;font-size:13px;font-weight:700;padding:7px 15px;border-radius:8px;
@@ -282,8 +286,40 @@ JS = """{% raw %}<script>
       });
   });
 
+  // "Sign out everywhere" ends every session of the account, this browser's
+  // included (POST /api/auth/logout-everywhere). The page then reloads, so
+  // the header and every card agree it is signed out, and says what happened
+  // once - the marker comes off the address straight away.
+  var EVERYWHERE='signedout=everywhere';
+  var gone=/[?&]signedout=everywhere(&|$)/.test(location.search);
+  if(gone){
+    try{ history.replaceState(null,'',location.pathname+location.hash); }catch(e){}
+  }
+  function everywhere(){
+    var b=document.getElementById('pf-everywhere'), m=document.getElementById('pf-everywhere-msg');
+    b.disabled=true; m.hidden=true;
+    fetch('/api/auth/logout-everywhere',{method:'POST',credentials:'same-origin'})
+      .then(function(r){
+        return r.json().catch(function(){ return {}; })
+          .then(function(j){ return {ok:r.ok&&!!(j&&j.ok), status:r.status, j:j||{}}; });
+      })
+      .then(function(a){
+        // 401: this session was already ended from somewhere else - which is
+        // the outcome asked for.
+        if(a.ok||a.status===401){ location.replace(location.pathname+'?'+EVERYWHERE); return; }
+        m.textContent=a.j.error||'That did not go through. Try again in a minute.';
+        m.hidden=false; b.disabled=false;
+      })
+      .catch(function(e){
+        console.error('profile: sign out everywhere', e);
+        m.textContent="Couldn't reach the server."; m.hidden=false; b.disabled=false;
+      });
+  }
+
   fetch('/api/me',{credentials:'same-origin'})
-    .then(function(r){ return r.json(); })
+    // Not 2xx is "could not tell" (the database did not answer), never
+    // "signed out": that would offer a sign-in to a reader who is.
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(me){
       if(!me.configured){
         who.innerHTML='<span class="pf-meta">Accounts are not enabled on this '
@@ -291,7 +327,8 @@ JS = """{% raw %}<script>
         return;
       }
       if(!me.signedIn){
-        who.innerHTML='<div class="pf-row"><a class="pf-btn go" href="/api/auth/login'
+        who.innerHTML=(gone?'<p class="pf-msg ok" role="status">Signed out on every device.</p>':'')
+          +'<div class="pf-row"><a class="pf-btn go" href="/api/auth/login'
           +'?next='+encodeURIComponent(location.pathname)+'">Sign in with Google</a>'
           +'<span class="pf-meta">Signing in carries your leagues and followed '
           +'teams between devices. Everything works without it, in this browser.</span></div>';
@@ -299,7 +336,12 @@ JS = """{% raw %}<script>
       }
       who.innerHTML='<div class="pf-row"><span class="pf-who">Signed in as <b>'
         +esc(me.email)+'</b></span>'
-        +'<a class="pf-btn" href="/api/auth/logout?next=/profile/">Sign out</a></div>';
+        +'<a class="pf-btn" href="/api/auth/logout?next=/profile/">Sign out</a>'
+        +'<button type="button" class="pf-btn" id="pf-everywhere" title="Ends this account\\u2019s '
+        +'session on every phone and computer, this one included - for a lost device or '
+        +'one that isn\\u2019t yours. You can sign straight back in.">Sign out everywhere</button></div>'
+        +'<p class="pf-msg err" id="pf-everywhere-msg" role="status" hidden></p>';
+      document.getElementById('pf-everywhere').addEventListener('click', everywhere);
       twReview();
     })
     .catch(function(){

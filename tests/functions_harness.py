@@ -31,10 +31,11 @@ ROOT = Path(__file__).resolve().parents[1]
 FUNCTIONS = ROOT / "functions"
 SCHEMA = ROOT / "deploy" / "d1-schema.sql"
 MIGRATION_004 = ROOT / "deploy" / "d1-migrate-004-write-limits.sql"
+MIGRATION_006 = ROOT / "deploy" / "d1-migrate-006-ceiling-and-sessions.sql"
 SECRET = "test-secret"
 
-__all__ = ["CHROME", "FUNCTIONS", "MIGRATION_004", "ROOT", "SCHEMA", "SECRET",
-           "Sqlite", "Worker", "before_004"]
+__all__ = ["CHROME", "FUNCTIONS", "MIGRATION_004", "MIGRATION_006", "ROOT", "SCHEMA",
+           "SECRET", "Sqlite", "Worker", "before_004", "before_006"]
 
 
 def before_004() -> str:
@@ -53,6 +54,19 @@ def before_004() -> str:
         sql += f"\nALTER TABLE {table} DROP COLUMN {col};"
     return sql + ("\nCREATE INDEX favorites_by_user ON favorites (user_id);"
                   "\nCREATE INDEX leagues_by_user ON leagues (user_id);")
+
+
+def before_006() -> str:
+    """The schema as a database that has not had migration 006 yet: no
+    site_writes, no users.session_epoch. Built backwards from today's schema,
+    like before_004, from what 006 itself creates and adds."""
+    sql = re.sub(r"--[^\n]*", "", SCHEMA.read_text())
+    text = re.sub(r"--[^\n]*", "", MIGRATION_006.read_text())
+    for table in re.findall(r"CREATE TABLE IF NOT EXISTS (\w+)", text):
+        sql += f"\nDROP TABLE {table};"
+    for table, col in re.findall(r"ALTER TABLE (\w+) ADD COLUMN (\w+)", text):
+        sql += f"\nALTER TABLE {table} DROP COLUMN {col};"
+    return sql
 
 
 class Sqlite:
@@ -347,7 +361,11 @@ class Worker(Browser):
         return f"Object.assign({{ DB: T.db(SQL) }}, {json.dumps(base)})"
 
     def user(self, uid: str = "u1") -> dict:
-        """A users row, and the Cookie header of a session for it."""
+        """A users row, and the Cookie header of a session for it.
+
+        The session is signed without an epoch, as every one issued before
+        epochs existed was: it counts as epoch 0, which is where a new
+        account starts. Under the cookie name session.js issues today."""
         self.sql.execute(
             "INSERT INTO users (id, email, provider_sub, created_at, last_seen_at) "
             "VALUES (?, ?, ?, '2026-09-01T00:00:00Z', '2026-09-01T00:00:00Z')",
@@ -356,7 +374,7 @@ class Worker(Browser):
             "return await session.sign({ typ: 'session', uid: %s, email: %s,"
             " exp: Math.floor(Date.now() / 1000) + 3600 }, %s, 'session');"
             % (json.dumps(uid), json.dumps(f"{uid}@example.com"), json.dumps(SECRET)))
-        return {"cookie": "gs_session=" + token}
+        return {"cookie": self.js("return session.SESSION_COOKIE;") + "=" + token}
 
     def call(self, fn: str, url: str, *, method: str = "GET", headers: dict | None = None,
              body=None, env: str | None = None, ctx: str = "{}") -> dict:

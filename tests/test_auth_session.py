@@ -27,6 +27,14 @@ pytestmark = pytest.mark.skipif(CHROME is None, reason="no Chromium to run the J
 
 AUTH = "https://www.gordstats.com/api/auth"
 ME = "https://www.gordstats.com/api/me"
+# The session cookie is issued as __Host-gs_session; gs_session is the name it
+# had before, still read and always cleared with it (tests/test_session_epoch.py).
+SESSION_NAMES = ("__Host-gs_session", "gs_session")
+
+
+def sets_session(cookie):
+    """A Set-Cookie that gives this browser a session, under either name."""
+    return cookie.split("=", 1)[0] in SESSION_NAMES and "Max-Age=0" not in cookie
 
 # A token signed the way sessions were before `typ`: this is written out
 # independently of session.js on purpose, so the test does not share its bugs.
@@ -113,7 +121,7 @@ def test_a_session_is_not_a_state_stamp(worker):
       exp: Math.floor(Date.now() / 1000) + 600 }}, {json.dumps(SECRET)}, "session");""")
     got = callback(worker, state, "gs_oauth=" + forged, good_claims(worker))
     assert "signin=failed" in got["headers"]["location"]
-    assert not any(c.startswith("gs_session=") and "Max-Age=0" not in c for c in got["cookies"])
+    assert not any(sets_session(c) for c in got["cookies"])
 
 
 def test_sessions_signed_before_typ_still_work_if_they_are_sessions(worker):
@@ -133,12 +141,16 @@ def test_a_good_callback_signs_in_with_a_typed_session(worker):
     state, stamp = login(worker)
     got = callback(worker, state, stamp, good_claims(worker))
     assert got["status"] == 302 and got["headers"]["location"] == "/profile/"
-    session = next(c for c in got["cookies"] if c.startswith("gs_session="))
+    session = next(c for c in got["cookies"] if c.startswith("__Host-gs_session="))
+    assert "Path=/" in session and "Secure" in session and "Domain" not in session
+    # The old name is cleared in the same answer.
+    assert any(c.startswith("gs_session=;") and "Max-Age=0" in c for c in got["cookies"])
     token = session.split(";")[0].split("=", 1)[1]
     payload = worker.js(f"return JSON.parse(atob({json.dumps(token.split('.')[0])}"
                         ".replace(/-/g, '+').replace(/_/g, '/')));")
     assert payload["typ"] == "session" and payload["email"] == "reader@example.com"
-    assert me(worker, f"gs_session={token}")["signedIn"] is True
+    assert payload["ep"] == 0
+    assert me(worker, f"__Host-gs_session={token}")["signedIn"] is True
     assert worker.sql.rows("SELECT email, provider_sub FROM users") == [
         {"email": "reader@example.com", "provider_sub": "g-123"}]
 
@@ -159,7 +171,7 @@ def test_a_callback_with_bad_claims_signs_nobody_in(worker, over, why):
     where = urlparse(got["headers"]["location"])
     assert parse_qs(where.query)["signin"] == ["failed"]
     assert why in parse_qs(where.query)["why"][0]
-    assert not any(c.startswith("gs_session=") for c in got["cookies"])
+    assert not any(sets_session(c) for c in got["cookies"])
     assert worker.sql.rows("SELECT id FROM users") == []
 
 
@@ -173,6 +185,7 @@ def test_logout_refuses_other_sites(worker, site, signed_out):
                       headers=headers, ctx=route("logout"))
     if signed_out:
         assert got["status"] == 302 and got["headers"]["location"] == "/profile/"
-        assert got["cookies"][0].startswith("gs_session=;") and "Max-Age=0" in got["cookies"][0]
+        cleared = {c.split("=", 1)[0] for c in got["cookies"] if "Max-Age=0" in c}
+        assert cleared == set(SESSION_NAMES)
     else:
         assert got["status"] == 403 and got["cookies"] == []

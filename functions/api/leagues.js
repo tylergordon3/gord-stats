@@ -40,10 +40,11 @@
  * parallel POSTs all passed and which deleting a league reset. And rows: MAX
  * leagues and MAX_ROWS rows for the account as a whole, not per sync, only
  * the rows that changed written, all inside the daily allowance in
- * _lib/limits.js.
+ * _lib/limits.js - and inside the site's daily ceiling there, which is
+ * checked first of all, before Sleeper is asked anything.
  */
 import { configured, json, readSession } from "./_lib/session.js";
-import { claim, secondsLeft, spend, waiting } from "./_lib/limits.js";
+import { claim, refusal, secondsLeft, siteFull, spend } from "./_lib/limits.js";
 
 /**
  * The leagues table arrives in a migration, which is applied by hand and can
@@ -91,15 +92,13 @@ const USERNAME = /^[A-Za-z0-9_.-]{1,64}$/;
 const CLAIM = "last_league_sync";
 
 export async function onRequestGet({ request, env }) {
+  if (!configured(env)) return json({ ok: false, error: "accounts are not configured" }, 503);
   // Signed out is an answer here, not an error: every fantasy page asks this
   // on load, and a 401 put a red console error on each of them for every
   // reader who never signs in (the 2026-09-28 phone audit). POST and DELETE
-  // still answer 401.
-  if (configured(env) && !(await readSession(request, env))) {
-    return json({ ok: true, signedIn: false, leagues: [] });
-  }
-  const session = await guard(request, env);
-  if (session instanceof Response) return session;
+  // still answer 401. One readSession: it reads the account's row.
+  const session = await readSession(request, env);
+  if (!session) return json({ ok: true, signedIn: false, leagues: [] });
 
   const got = await db(() => env.DB.prepare(
     `SELECT provider, sport, league_id, name, season, team_name, lineage_id,
@@ -124,6 +123,11 @@ export async function onRequestPost({ request, env }) {
 
   const provider = String(body?.provider || "").toLowerCase();
   if (!SHAPES[provider]) return json({ ok: false, error: "unknown provider" }, 400);
+
+  // The site's day is full: say so before Sleeper or ESPN is asked anything
+  // and before the refresh limit is claimed, both of which this would waste.
+  const full = await siteFull(env.DB);
+  if (full) return refusal(full);
 
   const username = String(body?.username || "").trim();
   if (username) return syncAll(env, session, provider, username);
@@ -348,15 +352,17 @@ export function plan(stored, fetched, maxLeagues = MAX, maxRows = MAX_ROWS) {
 }
 
 /**
- * The early answer, from a plain read: 429 if this account synced too
- * recently, 503 if the leagues table is not there yet, otherwise null.
+ * The early answer: 429 if this account synced too recently, 503 if the
+ * leagues table is not there yet, otherwise null. The refresh stamp comes off
+ * the account's row, which readSession has already read.
  *
  * Before migration 004 there is no users.last_league_sync; the old per-row
  * timestamps stand in for it, so deploying ahead of the migration is no
  * weaker than what ran before.
  */
-async function tooSoon(env, uid, seconds, legacy) {
-  let left = await waiting(env.DB, uid, CLAIM, seconds);
+async function tooSoon(env, session, seconds, legacy) {
+  let left = CLAIM in session.user
+    ? secondsLeft(session.user[CLAIM], seconds, new Date()) : null;
   if (left === null) {
     const got = await db(() => legacy.first());
     if (!got.ok) return got.response;
@@ -381,7 +387,7 @@ async function store(env, session, provider, stored, fetched) {
   const { write, kept, dropped } = plan(stored, fetched);
 
   const allowed = await spend(env.DB, session.uid, write.length);
-  if (!allowed.ok) return wait(allowed.retryAfter, "too many changes today");
+  if (!allowed.ok) return refusal(allowed, "too many changes today");
 
   const now = new Date().toISOString();
   if (write.length) {
@@ -426,7 +432,7 @@ function unfinished(parts) {
 
 /** One league by id, with the seasons behind it. */
 async function addOne(env, session, provider, leagueId) {
-  const early = await tooSoon(env, session.uid, ADD_SECONDS, env.DB.prepare(
+  const early = await tooSoon(env, session, ADD_SECONDS, env.DB.prepare(
     "SELECT last_synced_at AS at FROM leagues WHERE user_id = ? AND provider = ? AND league_id = ?")
     .bind(session.uid, provider, leagueId));
   if (early) return early;
@@ -501,7 +507,7 @@ async function espnLeague(season, league) {
  */
 async function addEspn(env, session, raw) {
   const [, given, league] = SHAPES.espn.exec(raw);
-  const early = await tooSoon(env, session.uid, ADD_SECONDS, env.DB.prepare(
+  const early = await tooSoon(env, session, ADD_SECONDS, env.DB.prepare(
     `SELECT MAX(last_synced_at) AS at FROM leagues
       WHERE user_id = ? AND provider = 'espn' AND league_id LIKE ?`)
     .bind(session.uid, `espn:%:${league}`));
@@ -569,7 +575,7 @@ async function syncAll(env, session, provider, username) {
     return json({ ok: false, error: "That does not look like a Sleeper username." }, 400);
   }
 
-  const early = await tooSoon(env, session.uid, REFRESH_SECONDS, env.DB.prepare(
+  const early = await tooSoon(env, session, REFRESH_SECONDS, env.DB.prepare(
     "SELECT MAX(last_synced_at) AS at FROM leagues WHERE user_id = ?").bind(session.uid));
   if (early) return early;
 
