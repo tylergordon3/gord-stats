@@ -18,7 +18,15 @@ from gordstats import contrast
 
 
 def _heads(html: str) -> list[str]:
-    return re.findall(r'<th[^>]*class="col_heading[^"]*"[^>]*>([^<]*)</th>', html)
+    head = html[html.index("<thead>"):html.index("</thead>")]
+    return re.findall(r"<th[^>]*>([^<]*)</th>", head)
+
+
+def _body_cells(html: str) -> list[list[str]]:
+    """Each body row's cells as their opening tags, so a cell's own inline
+    style can be read (fantasy.site.styles.to_html puts the shading there)."""
+    body = html[html.index("<tbody>"):html.index("</tbody>")]
+    return [re.findall(r"<td[^>]*>", row) for row in re.findall(r"<tr>(.*?)</tr>", body, re.S)]
 
 
 def _power_table(week: int = 4) -> pd.DataFrame:
@@ -47,13 +55,18 @@ def test_fantasy_power_shading_is_a_wash_the_theme_shows_through():
     from fantasy.site import power
 
     html = power._rankings_table(_power_table())
-    style = html.split("</style>")[0]
-    assert "background-color" not in style
-    assert "var(--heat" in style
+    assert "background-color" not in html
+    # Rendered compactly (fantasy.site.styles.to_html): the wash is a style
+    # attribute on the cell, not a per-cell ID rule - pandas' own output was
+    # most of the page's bytes.
+    assert not re.search(r"_row\d+_col\d+", html), "pandas' per-cell ids are back"
     heads = _heads(html)
+    rows = _body_cells(html)
     for col in ("Move", "Rating"):
-        assert f"_row1_col{heads.index(col)}" not in style, f"the middle {col} is shaded"
-        assert f"_row0_col{heads.index(col)}" in style, f"the top {col} is not"
+        top, middle = rows[0][heads.index(col)], rows[1][heads.index(col)]
+        assert "style=" not in middle, f"the middle {col} is shaded"
+        assert "background-image:linear-gradient(" in top and "var(--heat" in top, \
+            f"the top {col} is not"
 
 
 def test_the_wash_keeps_the_ink_readable_in_both_themes():

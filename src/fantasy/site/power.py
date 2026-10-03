@@ -229,8 +229,8 @@ def _rankings_table(table: pd.DataFrame) -> str:
     if in_season:
         bound = max(1.0, float(table["luck"].abs().max()))
         styled = styled.apply(_heat, subset=["Luck"], vmin=-bound, vmax=bound)
-    return (styled.set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
-            .set_table_attributes('class="sticky-table pw-table"')).to_html()
+    return styles.to_html(styled.set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
+                          .set_table_attributes('class="sticky-table pw-table"'))
 
 
 def _with_external(table: pd.DataFrame) -> pd.DataFrame:
@@ -376,7 +376,7 @@ def draft_consensus_section() -> str:
               "Fantasy Footballers' projected points per game (their points, not their "
               "grade-sorted rank).</p>")
     return (note + _draft_chart(rows)
-            + f"<div class='table-scroll'>{styled.to_html()}</div>{legend}")
+            + f"<div class='table-scroll'>{styles.to_html(styled)}</div>{legend}")
 
 
 def _odds_section(table: pd.DataFrame) -> str:
@@ -716,10 +716,10 @@ def _player_accuracy_section(scored: dict) -> str:
     pivot.columns = [str(c) for c in pivot.columns]
     pivot.index.name = "Position"
 
-    html = (pivot.style.format("{:+.2f}")
-            .apply(_heat, vmin=-0.8, vmax=0.8)
-            .set_table_styles(_GRID, overwrite=False)
-            .set_table_attributes('class="sticky-table pw-table"')).to_html()
+    html = styles.to_html(pivot.style.format("{:+.2f}")
+                          .apply(_heat, vmin=-0.8, vmax=0.8)
+                          .set_table_styles(_GRID, overwrite=False)
+                          .set_table_attributes('class="sticky-table pw-table"'))
     return f"<div class='table-scroll'>{html}</div>"
 
 
@@ -736,11 +736,11 @@ def _backtest_section(scored: dict) -> str:
         display = display.rename(columns={
             "manager": "Manager", "proj_rank": "Projected", "proj_points": "Proj. Points",
             "actual_rank": "Actual", "PF": "Actual Points", "total_wins": "Wins"})
-        html = (display.style.hide(axis="index")
-                .format({"Proj. Points": "{:,.0f}", "Actual Points": "{:,.0f}"})
-                .apply(_heat, cmap="RdYlGn_r", subset=["Projected", "Actual"])
-                .set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
-                .set_table_attributes('class="sticky-table pw-table"')).to_html()
+        html = styles.to_html(display.style.hide(axis="index")
+                              .format({"Proj. Points": "{:,.0f}", "Actual Points": "{:,.0f}"})
+                              .apply(_heat, cmap="RdYlGn_r", subset=["Projected", "Actual"])
+                              .set_table_styles(_GRID + _NAME_LEFT, overwrite=False)
+                              .set_table_attributes('class="sticky-table pw-table"'))
         blocks.append((season_str, FORMAL_SEASON[season_str],
                        f"<p>Rank correlation: <strong>{spearman:+.2f}</strong>.</p>"
                        f"<div class='table-scroll'>{html}</div>"))
@@ -957,7 +957,7 @@ def card() -> dict | None:
 
 def generate():
     html = body()
-    page = add_front_matter(layout.HEAD + html, "Power Rankings", image=card())
+    page = add_front_matter(layout.HEAD + html, "Power Rankings", image=card(), description="Fantasy football power rankings from simulating the rest of the season: playoff and title odds, the playoff picture, this week's stakes and team strength.")
     out = paths.WEB_POWER
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")

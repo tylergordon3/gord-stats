@@ -168,8 +168,8 @@ export async function spend(db, uid, n, now = new Date(), limit = DAILY_CHANGES,
   const day = utcDay(now);
   const cost = siteCost(n);
 
-  // A refusal from here on costs reads only - favorites.js asks again every
-  // 15 seconds while a change is unsaved, whatever Retry-After says.
+  // A refusal from here on costs reads only - favorites.js asks again while a
+  // change is unsaved, after Retry-After (capped at an hour) or its back-off.
   const used = await siteUsed(db, day);
   if (used === null) out.siteUnmetered = true;
   else if (used + cost > ceiling) return siteRefusal(now);

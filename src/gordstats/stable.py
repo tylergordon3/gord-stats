@@ -13,6 +13,9 @@ new time and a last-decimal wobble.
                                               already holds this frame (the
                                               mtime is still touched, since
                                               several caches age on it)
+    write_text(text, path)                    the same for a text file (the
+                                              caller makes the text
+                                              deterministic first)
     drop_repeats(old, fresh, key)             an archive's new captures, less
                                               the ones that only restate the
                                               same day's last capture
@@ -47,6 +50,23 @@ def write_parquet(frame: pd.DataFrame, path, sort_by=None) -> bool:
         except Exception:                                   # noqa: BLE001
             pass                          # unreadable or a different shape: rewrite
     frame.to_parquet(path, index=False)
+    return True
+
+
+def write_text(text: str, path) -> bool:
+    """Write `text` to `path` unless the file already says exactly it.
+    Returns whether it wrote; an unchanged file still has its mtime touched,
+    like write_parquet, for the caches that age on it."""
+    path = Path(path)
+    if path.exists():
+        try:
+            if path.read_text(encoding="utf-8") == text:
+                os.utime(path)
+                return False
+        except (OSError, UnicodeDecodeError):
+            pass
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
     return True
 
 

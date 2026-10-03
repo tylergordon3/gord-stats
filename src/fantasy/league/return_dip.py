@@ -87,14 +87,33 @@ On the board the season simulations use while he is held out (form blended
 with Sleeper's projections from before the injury): 5.88 -> 5.72 (-0.28..-0.04)
 and 5.95 -> 5.70 (-0.34..-0.17) the other way, RMSE 7.48 -> 7.37 / 7.42 -> 7.24.
 
+Sleeper
+-------
 Sleeper already knows some of this. Its weekly projection for a player's
 first game back is 10.7% under its projections for him before the injury
-(7.8% after one game missed, 21.6% after four or more), and against that
-projection his first game back is only -4.2% (-9.9..+0.9). That matters for
-one board: projections.with_sleeper blends backs', receivers' and tight ends'
-rates halfway to Sleeper's projections for the coming week and the two before
-it, so once a returning player is due back, Sleeper's discounted number is in
-his rate - for every week left, which takes off more than the dip does.
+(7.8% after one game missed, 21.6% after four or more; then 5.9% and 5.5%
+under on his second and third), and against that projection his first game
+back is only -4.2% (-9.9..+0.9). projections.with_sleeper blends backs',
+receivers' and tight ends' rates halfway to Sleeper's projections for the
+coming week and the two before it, so for the three builds or so around his
+return the shaded numbers are in his rate for every week left.
+
+That looked like a leak, and until 2026-10-03 the dips skipped those players
+to avoid taking the injury twice. Replayed (every build of 2019-2025, each
+RB/WR/TE with a form of 5+, scored on his next four games and on the rest
+of his season (RoS); tables fitted on the other half, both ways round), it is
+not one:
+  - Leaving his games back out of the window (his three latest healthy
+    weeks' projections in their place) made the 1,732 / 2,910 changed
+    player-builds worse: next-four MAE +0.04 (-0.03..+0.11) and +0.09
+    (+0.02..+0.15), RoS RMSE 4.84 -> 4.88 / 5.25 -> 5.36. Falling back on form
+    alone where the window empties, worse still (+0.09, +0.11; both clear of
+    zero). Returners run under even Sleeper's shaded rate (bias +0.29 / +0.62).
+  - Taking the dips on top of the blend instead - dropping the skip - helped
+    the 274 / 207 player-builds it moves: next-four MAE -0.11 (-0.20..-0.04)
+    and -0.17 (-0.25..-0.09), RMSE 6.95 -> 6.90 / 7.04 -> 6.94, bias +0.52 ->
+    -0.04 / +1.26 -> +0.80; over every player-build, nothing worse.
+So the window stays as it is and every returner takes his dips.
 
 Applying it
 -----------
@@ -105,8 +124,7 @@ his held weeks, with the games already missed counted in; a player due back
 this week, or who came back last week, is part-way through. It skips a player
 whose absence is not an injury (a suspension, the not-with-team list) or who
 has been out since before the season (the market priced that before the board
-was built, as opportunity does), and, for the positions with_sleeper blends,
-one whose Sleeper projection for a game back is already in the board.
+was built, as opportunity does).
 
 The season simulations hold one rate per player, so the dips are spread the
 way next-man-up boosts are: `season` = the sum of his dips over the games he
@@ -660,8 +678,8 @@ def _state(mine: dict, team_weeks: list, upcoming: int, listed=None) -> tuple | 
 
 
 def dips(board: pd.DataFrame, held: dict, weeks_left: int, played: pd.DataFrame,
-         upcoming: int, reports: dict = None, sleeper_weeks: dict = None, skip=(),
-         table: dict = None, min_mu: float = MIN_MU) -> dict:
+         upcoming: int, reports: dict = None, skip=(), table: dict = None,
+         min_mu: float = MIN_MU) -> dict:
     """{sleeper id: {missed, games, season, week}} for every player whose
     first games back are still ahead of a simulation drawing from week
     `upcoming` for `weeks_left` weeks.
@@ -675,11 +693,12 @@ def dips(board: pd.DataFrame, held: dict, weeks_left: int, played: pd.DataFrame,
                    .official_reports): the evidence that a player who is not
                    held now missed his games hurt. Without it only held
                    players are moved.
-    sleeper_weeks  {week: {sleeper id: projected pts}} for the weeks
-                   projections.with_sleeper blended. A back, receiver or tight
-                   end Sleeper projected for a game back is skipped: its
-                   discounted projection is already in his rate.
     skip           ids held for something other than an injury (NOT_INJURY).
+
+    A back, receiver or tight end whose rate is half Sleeper's
+    (projections.with_sleeper) is moved like anyone else, though Sleeper's
+    projections for his games back are already shaded: see "Sleeper" in the
+    module notes for why both.
 
     missed   games of the absence (so far + held ahead)
     games    [[game back, weeks from `upcoming` (0 = that week), dip]] ahead
@@ -687,14 +706,11 @@ def dips(board: pd.DataFrame, held: dict, weeks_left: int, played: pd.DataFrame,
              for a simulation that holds one mu per player
     week     the multiplier on `upcoming` itself (1.0 if it is no game back)
     """
-    from fantasy import projections
-
     table = TABLE if table is None else table
     if board is None or board.empty or played is None or played.empty:
         return {}
     held = {str(k): int(v) for k, v in (held or {}).items() if v}
     skip = {str(p) for p in skip or ()}
-    sleeper_weeks = sleeper_weeks or {}
     frame = played.dropna(subset=["sleeper_id"]).copy()
     frame["sleeper_id"] = frame["sleeper_id"].astype(str)
     frame = frame[frame["week"] < upcoming]
@@ -725,7 +741,7 @@ def dips(board: pd.DataFrame, held: dict, weeks_left: int, played: pd.DataFrame,
             state = _state(mine, by_team.get(team, []), upcoming)
             so_far = state[0] if state and not state[1] else 0
             missed = so_far + hold - (1 if upcoming <= bye < upcoming + hold else 0)
-            first, at, returned = 1, hold, None
+            first, at = 1, hold
         else:
             if reports is None:
                 continue
@@ -733,7 +749,7 @@ def dips(board: pd.DataFrame, held: dict, weeks_left: int, played: pd.DataFrame,
             if state is None:
                 continue
             missed, since, gap = state
-            first, at, returned = since + 1, 0, max(gap) + 1
+            first, at = since + 1, 0
         if missed < 1:
             continue
         games = []
@@ -746,10 +762,6 @@ def dips(board: pd.DataFrame, held: dict, weeks_left: int, played: pd.DataFrame,
             at += 1
         if not games:
             continue
-        if returned is not None and pos in projections.SLEEPER_POSITIONS and any(
-                ((sleeper_weeks.get(w) or {}).get(pid) or 0) > 0
-                for w in sleeper_weeks if w >= returned):
-            continue                            # Sleeper's discount is in his rate already
         playable = max(int(weeks_left) - hold, 1)
         out[pid] = {"missed": int(missed),
                     "games": [[int(k), int(a), round(float(d), 3)] for k, a, d in games],
@@ -793,23 +805,6 @@ def season_played(year: int, through_week: int) -> pd.DataFrame:
     return frame.drop_duplicates(["week", "sleeper_id"])
 
 
-def _sleeper_weeks(year: int, through_week: int) -> dict:
-    """{week: {id: pts}} for the window projections.with_sleeper blends after
-    `through_week` (its own cached fetch, so nothing is fetched twice)."""
-    from fantasy import projections
-
-    if not through_week:
-        return {}
-    upcoming = min(int(through_week) + 1, 18)
-    out = {}
-    for week in range(max(1, upcoming - projections.SLEEPER_WEEKS + 1), upcoming + 1):
-        try:
-            out[week] = projections._sleeper_week(int(year), week)
-        except Exception as exc:                            # noqa: BLE001
-            print(f"  ! Sleeper week {week} unavailable for the return dip ({exc})")
-    return out
-
-
 def not_injured(tags: dict = None, report: dict = None) -> set:
     """Ids held for something other than an injury, from Sleeper's tags and
     ESPN's report (fantasy.league.injury_report.report())."""
@@ -826,20 +821,19 @@ def _reports(year: int) -> dict | None:
 
 def for_board(board: pd.DataFrame, held: dict, year: int, through_week: int,
               weeks_left: int, tags: dict = None, sleeper_through: int = None) -> dict:
-    """`dips` with this season's games, the official reports, Sleeper's window
-    and the non-injury holds filled in - what a builder holding the board
+    """`dips` with this season's games, the official reports and the
+    non-injury holds filled in - what a builder holding the board
     (current_form + with_sleeper) and injury_report.held_out(..., from_week=
-    `through_week`) calls, beside opportunity.for_board. `sleeper_through` is
-    the week with_sleeper was given, where it is not `through_week`."""
+    `through_week`) calls, beside opportunity.for_board. `sleeper_through`
+    (the week with_sleeper was given) is no longer read: Sleeper's window
+    stopped mattering here when the skip went (2026-10-03)."""
     try:
         from fantasy.league import injury_report
         report = injury_report.report()
     except Exception:                                       # noqa: BLE001
         report = {}
-    window = through_week if sleeper_through is None else sleeper_through
     return dips(board, held, weeks_left, played=season_played(year, through_week),
                 upcoming=int(through_week) + 1, reports=_reports(year),
-                sleeper_weeks=_sleeper_weeks(year, window),
                 skip=not_injured(tags, report))
 
 
@@ -848,8 +842,7 @@ def week_factors(board: pd.DataFrame, year: int, week: int, played: pd.DataFrame
     """{sleeper id: multiplier} on the projection for `week` of every player
     for whom it is a game back - for the pages that project one week from the
     form-only board (matchups' GordStats column, the Team page); pass it to
-    availability.apply(..., dips=). Nobody Sleeper's window has to be skipped
-    for: those pages do not blend Sleeper's projections."""
+    availability.apply(..., dips=)."""
     played = season_played(year, int(week) - 1) if played is None else played
     reports = _reports(year) if reports is None else reports
     got = dips(board, {}, 1, played=played, upcoming=int(week), reports=reports,

@@ -52,10 +52,17 @@ CSS = """<style>
 .pf-card h2{margin:0 0 3px;font-size:17px}
 .pf-card p{margin:0 0 11px;font-size:13.5px;color:#475569;line-height:1.5}
 .pf-who{font-size:14px;color:#0f172a}
-/* The account line is drawn once /api/me answers; "Checking..." holds the
-   height of the signed-in row it usually becomes, so the cards under it stay
-   put (the 2026-10-02 layout-shift check). */
+/* The account line is drawn from what this browser last heard (gs:acct) as
+   the page is read, and again when /api/me answers. Only a first visit shows
+   "Checking...", which holds the height of the signed-in row it usually
+   becomes (the 2026-10-02 layout-shift check). */
 #pf-who{min-height:36px}
+/* The followed teams are drawn as the page is read, from this browser's list,
+   with the names held back until the names file answers: the rows are their
+   final height from the first paint. Drawing the whole list ~30-100ms in was
+   the page's layout shift - every card below it moved (0.05-0.21 on a
+   desktop, 2026-10-03). */
+.pf-wait .pf-name{visibility:hidden}
 /* On a phone both answers take two rows - the sign-in invitation, and the
    address with Sign out and Sign out everywhere (measured 70 and 72px at
    360-390px wide) - so the hold is two rows there. */
@@ -138,17 +145,18 @@ JS = """{% raw %}<script>
   // page is the same list. favorites.js says so with this event.
   document.addEventListener('gs:favorites', function(){ drawFavs(); });
 
-  var NAMES={};
+  var NAMES={}, named=false;
+  function gotNames(d){ NAMES=d||{}; named=true; drawFavs(); }
   fetch('/assets/favourite-teams.json')
     .then(function(r){ return r.ok?r.json():{}; })
-    .then(function(d){ NAMES=d||{}; drawFavs(); })
-    .catch(function(){ drawFavs(); });
+    .then(gotNames, function(){ gotNames({}); });
 
   var LABELS={"cfb":"College football","cbb-men":"College basketball",
               "cbb-women":"College basketball (women)","nfl":"NFL","wnba":"WNBA"};
 
   function drawFavs(){
     var keys=readFavs();
+    favSlot.classList.toggle('pf-wait', !named);
     if(!keys.length){
       favSlot.innerHTML='<p class="pf-meta">No teams followed yet. The star '
         +'beside a team on any rankings or schedule page follows it.</p>';
@@ -316,37 +324,57 @@ JS = """{% raw %}<script>
       });
   }
 
+  function drawOff(){
+    who.innerHTML='<span class="pf-meta">Accounts are not enabled on this '
+      +'deployment. Leagues and followed teams are kept in this browser.</span>';
+  }
+  function drawOut(){
+    who.innerHTML=(gone?'<p class="pf-msg ok" role="status">Signed out on every device.</p>':'')
+      +'<div class="pf-row"><a class="pf-btn go" href="/api/auth/login'
+      +'?next='+encodeURIComponent(location.pathname)+'">Sign in with Google</a>'
+      +'<span class="pf-meta">Signing in carries your leagues and followed '
+      +'teams between devices. Everything works without it, in this browser.</span></div>';
+  }
+  function drawIn(email){
+    who.innerHTML='<div class="pf-row"><span class="pf-who">Signed in as <b>'
+      +esc(email)+'</b></span>'
+      +'<a class="pf-btn" href="/api/auth/logout?next=/profile/">Sign out</a>'
+      +'<button type="button" class="pf-btn" id="pf-everywhere" title="Ends this account\\u2019s '
+      +'session on every phone and computer, this one included - for a lost device or '
+      +'one that isn\\u2019t yours. You can sign straight back in.">Sign out everywhere</button></div>'
+      +'<p class="pf-msg err" id="pf-everywhere-msg" role="status" hidden></p>';
+    document.getElementById('pf-everywhere').addEventListener('click', everywhere);
+  }
+
+  // What this browser last heard - favorites.js keeps the account's state
+  // (gs:acct) and the address its stars last synced with - drawn before the
+  // first paint, so the answer below redraws the same line rather than
+  // growing one: the signed-out invitation is two rows on a desktop where
+  // "Checking..." held one (26px of shift, 2026-10-03). A first visit has
+  // neither and waits; a stale guess is corrected by the answer.
+  var seen='', last='';
+  try{ seen=localStorage.getItem('gs:acct')||''; last=localStorage.getItem('gs:favorites:sync')||''; }
+  catch(e){}
+  if(seen==='in' && last) drawIn(last);
+  else if(seen==='out') drawOut();
+  else if(seen==='off') drawOff();
+
   fetch('/api/me',{credentials:'same-origin'})
     // Not 2xx is "could not tell" (the database did not answer), never
     // "signed out": that would offer a sign-in to a reader who is.
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(me){
-      if(!me.configured){
-        who.innerHTML='<span class="pf-meta">Accounts are not enabled on this '
-          +'deployment. Leagues and followed teams are kept in this browser.</span>';
-        return;
-      }
-      if(!me.signedIn){
-        who.innerHTML=(gone?'<p class="pf-msg ok" role="status">Signed out on every device.</p>':'')
-          +'<div class="pf-row"><a class="pf-btn go" href="/api/auth/login'
-          +'?next='+encodeURIComponent(location.pathname)+'">Sign in with Google</a>'
-          +'<span class="pf-meta">Signing in carries your leagues and followed '
-          +'teams between devices. Everything works without it, in this browser.</span></div>';
-        return;
-      }
-      who.innerHTML='<div class="pf-row"><span class="pf-who">Signed in as <b>'
-        +esc(me.email)+'</b></span>'
-        +'<a class="pf-btn" href="/api/auth/logout?next=/profile/">Sign out</a>'
-        +'<button type="button" class="pf-btn" id="pf-everywhere" title="Ends this account\\u2019s '
-        +'session on every phone and computer, this one included - for a lost device or '
-        +'one that isn\\u2019t yours. You can sign straight back in.">Sign out everywhere</button></div>'
-        +'<p class="pf-msg err" id="pf-everywhere-msg" role="status" hidden></p>';
-      document.getElementById('pf-everywhere').addEventListener('click', everywhere);
+      if(!me.configured){ drawOff(); return; }
+      if(!me.signedIn){ drawOut(); return; }
+      drawIn(me.email);
       twReview();
     })
     .catch(function(){
       who.innerHTML='<span class="pf-meta">Could not reach the server.</span>';
     });
+
+  // The followed teams, from this browser's list, before the first paint.
+  drawFavs();
 })();
 </script>{% endraw %}"""
 

@@ -360,7 +360,12 @@ CSS = """<style>
 .rc-wrap{overflow-x:auto}
 .rc-note{font-size:12.5px;color:#64748b;line-height:1.5;margin:8px 0 0}
 @media (max-width:600px){
-  .rc-acc .tmw{max-width:118px}
+  /* The name wraps instead of trailing off: at 390px a 118px cap left 89px
+     for it, and "Jackson's Brilliant Team" read "Jackson's Bri...". The
+     numbers keep their one line; the name takes what they leave. */
+  .rc-acc td:first-child{white-space:normal}
+  .rc-acc .tmw{max-width:none}
+  .rc-acc .tmw span{overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.25}
   .rc-acc th,.rc-acc td{padding:6px 5px}
   .rc-acc .pf{display:none}
 }

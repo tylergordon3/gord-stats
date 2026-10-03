@@ -103,7 +103,15 @@ JS = """{% raw %}<script>
     });
   }
 
+  // The list as last drawn, kept so the next visit draws it as the page is
+  // read: shown only once /api/leagues answered, it grew from nothing and
+  // pushed every card below it down (the profile's layout shift, 2026-10-03).
+  var KEEP='gs:ls-rows';
   function render(rows){
+    try{ localStorage.setItem(KEEP, JSON.stringify(rows.map(function(l){
+      return {provider:l.provider, league_id:l.league_id, lineage_id:l.lineage_id, name:l.name,
+              season:l.season, team_name:l.team_name, last_synced_at:l.last_synced_at};
+    }))); }catch(e){}
     if(!rows.length){
       list.innerHTML='<li><span class="ls-meta">No league synced yet.</span></li>';
       return;
@@ -206,27 +214,50 @@ JS = """{% raw %}<script>
       .catch(function(){ btn.disabled=false; msg('ls-user-msg','Network error.','err'); });
   }
 
+  var wired=false;
+  function open(){
+    gate.hidden=true; main.hidden=false;
+    if(wired) return;
+    wired=true;
+    document.getElementById('ls-sleeper-go').addEventListener('click',function(){
+      add('sleeper','ls-sleeper','ls-sleeper-msg',this);});
+    document.getElementById('ls-espn-go').addEventListener('click',function(){
+      add('espn','ls-espn','ls-espn-msg',this);});
+    document.getElementById('ls-user-go').addEventListener('click',function(){
+      findAll(this);});
+    document.getElementById('ls-user').addEventListener('keydown',function(e){
+      if(e.key==='Enter') findAll(document.getElementById('ls-user-go'));});
+  }
+  function shut(text){
+    main.hidden=true; gate.hidden=false; gate.textContent=text;
+  }
+
+  // A reader this browser last saw signed in (favorites.js keeps gs:acct)
+  // gets the forms and the list as they were, before the first paint; the
+  // answers below confirm them or take them back. Revealing all of it only
+  // once /api/me answered was most of the profile page's layout shift.
+  try{
+    if(localStorage.getItem('gs:acct')==='in'){
+      open();
+      var kept=JSON.parse(localStorage.getItem(KEEP)||'null');
+      if(Array.isArray(kept)) render(kept);
+    }
+  }catch(e){}
+
   // Inert unless this deploy has accounts and the reader is signed in - the
   // same rule the header's account control follows.
   fetch('/api/me',{credentials:'same-origin'})
     .then(function(r){return r.json();})
     .then(function(me){
-      if(!me.configured){ gate.textContent=
-        'Accounts are not enabled on this deployment yet.'; return; }
-      if(!me.signedIn){ gate.innerHTML=
-        'Sign in (top right) to attach a league to your account.'; return; }
-      gate.hidden=true; main.hidden=false;
-      document.getElementById('ls-sleeper-go').addEventListener('click',function(){
-        add('sleeper','ls-sleeper','ls-sleeper-msg',this);});
-      document.getElementById('ls-espn-go').addEventListener('click',function(){
-        add('espn','ls-espn','ls-espn-msg',this);});
-      document.getElementById('ls-user-go').addEventListener('click',function(){
-        findAll(this);});
-      document.getElementById('ls-user').addEventListener('keydown',function(e){
-        if(e.key==='Enter') findAll(document.getElementById('ls-user-go'));});
+      if(!me.configured){ shut('Accounts are not enabled on this deployment yet.'); return; }
+      if(!me.signedIn){
+        try{ localStorage.removeItem(KEEP); }catch(e){}   // not left for the next reader
+        shut('Sign in (top right) to attach a league to your account.'); return;
+      }
+      open();
       load();
     })
-    .catch(function(){ gate.textContent='Could not reach the server.'; });
+    .catch(function(){ shut('Could not reach the server.'); });
 })();
 </script>{% endraw %}"""
 
@@ -288,6 +319,9 @@ def generate(out, title: str = "Sync your league") -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(body(), title,
                                     "Attach your own fantasy league to your account",
+                                    description="Attach your own Sleeper or public ESPN fantasy "
+                                    "league to your GordStats account, so its matchups, power "
+                                    "rankings and team dashboard follow you everywhere.",
                                     updated=False),
                    encoding="utf-8")
     print(f"Wrote {title} -> {out}")

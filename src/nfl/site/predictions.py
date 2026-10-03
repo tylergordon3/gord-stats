@@ -41,6 +41,7 @@ table.cfb-pred td.rt-name img{width:22px;height:22px;vertical-align:-6px;margin:
   vertical-align:middle;margin-left:8px;overflow:hidden;position:relative}
 .rt-bar i{position:absolute;top:0;height:100%;background:#2a78d6}
 .rt-bar i.neg{background:#dc2626}
+.rt-more{margin:6px 0 0;font-weight:700;font-size:14px}
 @media (prefers-color-scheme: dark){
   .pg-final.ok{background:#14532d;color:#bbf7d0}.pg-final.no{background:#5f1d1d;color:#fecaca}
   .pg-final.push{background:#2b3852;color:#cbd5e1}
@@ -230,9 +231,13 @@ def _closeness(scored: pd.DataFrame) -> str:
                 for label, value, sub in tiles) + "</div>")
 
 
-def _ratings_table(model, names: dict, schedule: pd.DataFrame) -> str:
+def _ratings_table(model, names: dict, schedule: pd.DataFrame, top: int = 10) -> str:
+    """The model's `top` teams, and a link to the rest. All 32 rows are
+    /nfl/power/'s table (with the market's line and the moves); repeating
+    them here was a phone's worth of scrolling past the week's games."""
     table = model.table()
     table = table[table["team"].isin(names)]
+    teams = len(table)
     # Points for and against an average opponent on a neutral field, out of
     # the same two numbers the cards use.
     base = model.total_base / 2
@@ -245,7 +250,7 @@ def _ratings_table(model, names: dict, schedule: pd.DataFrame) -> str:
                 records[str(tid)] = rec
     span = max(abs(table["rating"].min()), abs(table["rating"].max()), 1e-9)
     rows = []
-    for n, r in enumerate(table.itertuples(index=False), 1):
+    for n, r in enumerate(table.head(top).itertuples(index=False), 1):
         name, abbr = names[r.team]
         width = abs(r.rating) / span * 50
         bar = (f"<span class='rt-bar'><i class='{'neg' if r.rating < 0 else ''}' style='"
@@ -259,8 +264,10 @@ def _ratings_table(model, names: dict, schedule: pd.DataFrame) -> str:
             "<th title='Points better than an average team on a neutral field'>Rating</th>"
             "<th title='Points scored against an average defense'>Off</th>"
             "<th title='Points allowed to an average offense'>Def</th></tr>")
+    more = (f"<p class='rt-more'><a href='/nfl/power/'>All {teams} teams &rarr;</a></p>"
+            if teams > top else "")
     return (f"<div class='pred-scroll'><table class='cfb-pred'><thead>{head}</thead>"
-            f"<tbody>{''.join(rows)}</tbody></table></div>")
+            f"<tbody>{''.join(rows)}</tbody></table></div>" + more)
 
 
 def _bets_card() -> str:
@@ -319,7 +326,7 @@ def generate():
     WEB_DIR.mkdir(parents=True, exist_ok=True)
     out = WEB_DIR / "index.html"
     out.write_text(add_front_matter(body(), f"NFL Predictions {SEASON}",
-                                    "Every game, with the book's line beside ours"),
+                                    "Every game, with the book's line beside ours", description="Every NFL game this season with GordStats' predicted score, spread and win chance beside the betting line, the week's best bets and our record so far."),
                    encoding="utf-8")
     print(f"Wrote NFL Predictions -> {out}")
 

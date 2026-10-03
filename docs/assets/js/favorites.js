@@ -141,6 +141,52 @@
 
   var pushTimer = null;
 
+  // A refused save waits as long as the server asks. A 429 is this account's
+  // day of changes spent, a 503 with site_limit the whole site's; both say
+  // when to come back in Retry-After (UTC midnight), and asking every 15
+  // seconds meanwhile only spent the server's reads on a known "no". Anything
+  // else that failed without saying (a 500, a 503 from a sick deploy) backs
+  // off from 15 seconds, doubling. Either way never past RETRY_MAX, so a tab
+  // left open across midnight still saves within the hour. The time is kept
+  // in storage: the next page has the same unsaved change, and would
+  // otherwise spend a request learning the same answer.
+  var RETRY_KEY = "gs:favorites:retry";
+  var RETRY_MIN = 15000;
+  var RETRY_MAX = 3600000;
+  var failures = 0;
+
+  function retryAt() {
+    try {
+      var at = Number(window.localStorage.getItem(RETRY_KEY)) || 0;
+      // Clamped, so a value from a clock that has since been corrected (or a
+      // broken write) can never hold saves off for longer than the cap.
+      return Math.min(at, Date.now() + RETRY_MAX);
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function setRetryAt(at) {
+    try {
+      if (at) window.localStorage.setItem(RETRY_KEY, String(at));
+      else window.localStorage.removeItem(RETRY_KEY);
+    } catch (e) {}
+  }
+
+  // Milliseconds to wait after the refusal `r`: its Retry-After (seconds or
+  // an HTTP date) if it sent one, the doubling back-off if not.
+  function backoff(r) {
+    var said = r.headers && r.headers.get ? r.headers.get("retry-after") : null;
+    var ms = NaN;
+    if (said) {
+      said = String(said).trim();
+      ms = /^\d+$/.test(said) ? Number(said) * 1000 : Date.parse(said) - Date.now();
+    }
+    failures++;
+    if (!(ms >= 0)) ms = RETRY_MIN * Math.pow(2, Math.min(failures - 1, 10));
+    return Math.min(RETRY_MAX, Math.max(RETRY_MIN, ms));
+  }
+
   function send(keepalive) {
     // The list is sent as it stands when the request goes, and the flag is only
     // cleared if nothing changed while it was in flight.
@@ -152,31 +198,45 @@
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ favorites: sent }),
     }).then(function (r) {
-      if (r.ok && JSON.stringify(sent) === JSON.stringify(favorites)) setDirty(false);
-      else if (!r.ok && r.status !== 401) setTimeout(push, 15000);   // throttled or down
+      if (r.ok) {
+        failures = 0;
+        setRetryAt(0);
+        if (JSON.stringify(sent) === JSON.stringify(favorites)) setDirty(false);
+      } else if (r.status !== 401) {                 // throttled, full or down
+        var wait = backoff(r);
+        setRetryAt(Date.now() + wait);
+        later(wait);
+      }
     }).catch(function () {
       /* Offline; the flag stays set and the next load sends it. */
     });
   }
 
-  // Starring five teams in five seconds is one write, not five. The local list
-  // is already saved and already painted by the time this fires, so a slow or
-  // failed push costs the reader nothing on this device.
-  function push() {
-    if (!account.signedIn) return;
+  function later(ms) {
     if (pushTimer) clearTimeout(pushTimer);
     pushTimer = setTimeout(function () {
       pushTimer = null;
       send(false);
-    }, 600);
+    }, ms);
+  }
+
+  // Starring five teams in five seconds is one write, not five. The local list
+  // is already saved and already painted by the time this fires, so a slow or
+  // failed push costs the reader nothing on this device. Inside a refusal's
+  // wait, a new star waits with it.
+  function push() {
+    if (!account.signedIn) return;
+    later(Math.max(600, retryAt() - Date.now()));
   }
 
   // Leaving inside the debounce: send now, with keepalive so the request
-  // outlives the page.
+  // outlives the page - unless the server has asked for quiet, when the
+  // change stays marked unsaved and a later page sends it.
   window.addEventListener("pagehide", function () {
     if (!pushTimer) return;
     clearTimeout(pushTimer);
     pushTimer = null;
+    if (retryAt() > Date.now()) return;
     send(true);
   });
 

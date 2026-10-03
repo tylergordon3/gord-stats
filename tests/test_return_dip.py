@@ -266,17 +266,20 @@ def test_a_player_due_back_this_week_needs_the_report_to_say_he_was_hurt():
     assert got["season"] == pytest.approx(rd.TABLE[1][1] / 14, abs=1e-4)
 
 
-def test_sleepers_discount_is_not_taken_twice_for_the_blended_positions():
+def test_the_blended_positions_take_their_dips_too():
+    """Sleeper's shaded projections for a game back are in a back's,
+    receiver's and tight end's blended rate, and the dip comes off on top:
+    replayed on 2019-25 that beat skipping them, and beat leaving his games
+    back out of the blend (the module notes, "Sleeper")."""
     played = _played(_team_rows("AAA", [1, 2, 3])
                      + [(w, pid, "AAA") for w in (1,) for pid in ("rb", "qb", "wr")])
     board = _board(("rb", "RB", 14.0, 10), ("qb", "QB", 18.0, 10), ("wr", "WR", 12.0, 10))
     reports = {w: {pid: {"status": "Out"} for pid in ("rb", "qb", "wr")} for w in (2, 3)}
-    sleeper = {2: {}, 3: {}, 4: {"rb": 11.0, "qb": 15.0, "wr": None}}   # wr not projected
-    got = rd.dips(board, {}, 14, played, upcoming=4, reports=reports, sleeper_weeks=sleeper)
-    assert set(got) == {"qb", "wr"}                 # with_sleeper does not blend quarterbacks
-    # Held players are never absorbed: Sleeper projects nothing for a week he is out.
-    held = rd.dips(board, {"rb": 1}, 14, played, upcoming=4, sleeper_weeks=sleeper)
-    assert "rb" in held
+    got = rd.dips(board, {}, 14, played, upcoming=4, reports=reports)
+    assert set(got) == {"rb", "qb", "wr"}
+    assert got["rb"]["games"][0] == [1, 0, rd.TABLE[2][1]]
+    import inspect
+    assert "sleeper_weeks" not in inspect.signature(rd.dips).parameters
 
 
 def test_the_second_game_back_after_two_missed():

@@ -692,6 +692,8 @@ def with_sleeper(board: pd.DataFrame, year: int = UPCOMING_YEAR,
     end's rate halfway to Sleeper's: the mean of its projections for the week
     coming up and the two before it. A bye or a player ruled out projects
     nothing and says nothing about his rate, so only positive numbers count.
+    A returning player's shaded projections for his games back stay in:
+    leaving them out was measured worse (fantasy.league.return_dip, "Sleeper").
     Before kickoff, or with Sleeper unreachable, the board is unchanged."""
     if not through_week:
         return board

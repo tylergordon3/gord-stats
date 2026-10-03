@@ -23,6 +23,7 @@ Around the spine, the dynamic parts:
     python -m cbb.render.render_power --refresh   # refetch everything
 """
 import argparse
+import io
 import json
 import re
 import time
@@ -32,7 +33,7 @@ import pandas as pd
 import requests
 
 from cbb import constants, paths
-from gordstats import favorites, rankmoves
+from gordstats import favorites, rankmoves, stable
 from gordstats.frontmatter import add_front_matter
 
 # The season being ranked, in Torvik's convention (2027 = the 2026-27 season).
@@ -191,8 +192,37 @@ def ap_poll(refresh: bool = False):
     return None, None
 
 
+# The columns the site reads (the power page, CBB stats, previews, the game
+# model's preseason ratings), each at the decimals worth keeping: one finer
+# than any page shows, and far finer than a spread can feel. Torvik's file
+# has ~45 columns at 16 digits and re-solves every team each time it is
+# asked, so the raw copy differed on every line every run and the Pi
+# committed all 147 KB of it ~4 times a day. Trimmed and rounded it is 33 KB,
+# and a refetch that moves nothing kept here leaves the file alone.
+# "Fun Rk" alone reshuffled every row: before tipoff every FUN is 0, so its
+# rank is a tie broken at random each time.
+# Add a column here before reading it anywhere.
+_KEEP = {"rank": None, "team": None, "conf": None, "record": None,
+         "adjoe": 2, "adjde": 2, "barthag": 4, "adjt": 2,
+         "proj. W": 2, "Proj. L": 2, "Pro Con W": 2, "Pro Con L": 2,
+         "sos": 3, "ncsos": 3, "Proj. SOS": 3, "Proj. Noncon SOS": 3, "WAB": 2}
+
+
+def _tidy(text: str) -> str:
+    """Torvik's CSV as the cache keeps it: the _KEEP columns, rounded, in
+    rank order - the same text whenever the numbers that matter are the same."""
+    df = pd.read_csv(io.StringIO(text))
+    df = df[[c for c in _KEEP if c in df.columns]].copy()
+    for col, places in _KEEP.items():
+        if places is not None and col in df.columns and df[col].dtype.kind == "f":
+            df[col] = df[col].round(places)
+    df = df.sort_values(["rank", "team"], kind="mergesort")
+    return df.to_csv(index=False, lineterminator="\n")
+
+
 def trank(refresh: bool = False) -> pd.DataFrame:
-    """The T-Rank table, cached under data/cbb/ and refreshed twice a day."""
+    """The T-Rank table, cached under data/cbb/ and refreshed twice a day
+    (and by every daily run); the file is rewritten only when it changed."""
     cache = _cache_path()
     fresh = cache.exists() and (time.time() - cache.stat().st_mtime) < MAX_AGE_HOURS * 3600
     if cache.exists() and (fresh and not refresh):
@@ -201,8 +231,7 @@ def trank(refresh: bool = False) -> pd.DataFrame:
         r = requests.get(_URL, headers=_HEADERS, timeout=25)
         r.raise_for_status()
         assert r.text.lstrip().startswith("rank,"), "unexpected payload"
-        cache.parent.mkdir(parents=True, exist_ok=True)
-        cache.write_text(r.text, encoding="utf-8")
+        stable.write_text(_tidy(r.text), cache)
     except Exception as exc:
         if not cache.exists():
             raise
@@ -411,7 +440,7 @@ def generate():
     # rebuilt: out of season the build runs daily on a cached table.
     fetched = datetime.fromtimestamp(_cache_path().stat().st_mtime)
     out.write_text(add_front_matter(body(), "CBB Power Rankings",
-                                    f"{SEASON_LABEL} season", updated=fetched),
+                                    f"{SEASON_LABEL} season", updated=fetched, description="Every Division I men's basketball team ranked on Bart Torvik's T-Rank and ESPN's BPI, with the AP poll, records, conferences and who is rising or falling."),
                    encoding="utf-8")
     print(f"Wrote CBB power rankings -> {out}")
     STAR_TEAMS_OUT.write_text(json.dumps(star_teams(trank()["team"]), separators=(",", ":")),
