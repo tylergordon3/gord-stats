@@ -11,16 +11,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 0.0,
+     "points": 10.0,
      "projected": 181.11,
-     "win_probability": 0.6799999999999999
+     "win_probability": 0.69
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 152.89,
-     "win_probability": 0.32000000000000006
+     "win_probability": 0.31000000000000005
     }
    ]
   },
@@ -59,14 +59,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
      "projected": 185.81,
-     "win_probability": 0.67
+     "win_probability": 0.66
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 159.34,
-     "win_probability": 0.32999999999999996
+     "win_probability": 0.33999999999999997
     }
    ]
   },
@@ -80,16 +80,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 0.0,
+     "points": 8.0,
      "projected": 176.41,
-     "win_probability": 0.78
+     "win_probability": 0.79
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 0.0,
+     "points": 6.3,
      "projected": 132.47,
-     "win_probability": 0.21999999999999997
+     "win_probability": 0.20999999999999996
     }
    ]
   },
@@ -103,7 +103,7 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 0.0,
+     "points": 3.6,
      "projected": 125.43,
      "win_probability": 0.15000000000000002
     },

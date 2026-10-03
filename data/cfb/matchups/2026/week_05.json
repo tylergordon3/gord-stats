@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-03T00:40:59+00:00",
+ "fetched": "2026-10-03T01:06:09+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -16,7 +16,7 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 9.9,
+     "points": 10.0,
      "projected": 181.11,
      "win_probability": 0.69
     },
@@ -85,7 +85,7 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 7.5,
+     "points": 8.0,
      "projected": 176.41,
      "win_probability": 0.79
     },
@@ -163,10 +163,10 @@
     "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "RB",
-    "points": 9.9,
+    "points": 10.0,
     "stats": {
-     "8": 4.0,
-     "9": 24.0,
+     "8": 5.0,
+     "9": 25.0,
      "10": 1.0,
      "11": 2.0,
      "12": 5.0
@@ -1679,10 +1679,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 7.5,
+    "points": 8.0,
     "stats": {
-     "8": 7.0,
-     "9": 36.0,
+     "8": 9.0,
+     "9": 41.0,
      "11": 3.0,
      "12": 24.0
     }
