@@ -940,7 +940,10 @@ def card() -> dict | None:
 
 def generate():
     html, views = build()
-    write_page(OUTPUT, f"CFB League Matchups {SEASON}", html, image=card())
+    write_page(OUTPUT, f"CFB League Matchups {SEASON}", html, image=card(),
+               description="Every college fantasy matchup this week, player by player: "
+                           "GordStats' projections, live Yahoo points, the stat lines and the "
+                           "lineup swaps worth making.")
     # Plain fragments beside the page, every week but the one in it. The live
     # tick runs this too, so a week that has just finished is there to fetch.
     if views:

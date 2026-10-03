@@ -20,9 +20,8 @@ from nfl.config import DATA_DIR, SEASON, WEB_DIR
 from nfl.site import teams as teams_page
 
 OUT = WEB_DIR / "playoff" / "index.html"
-DESCRIPTION = ("Who makes the NFL playoffs: every team's chance of a playoff spot, the "
-               "division, the 1 seed and the Super Bowl from 10,000 simulations on the "
-               "GordStats model, the projected bracket, and ESPN FPI's chances beside ours.")
+DESCRIPTION = ("Every NFL team's chance to make the playoffs, win its division, earn the 1 "
+               "seed and win the Super Bowl, from 10,000 simulations, with the projected bracket.")
 
 
 def _record(rec) -> str:

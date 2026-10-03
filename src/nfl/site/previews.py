@@ -13,8 +13,10 @@ zone, sacks and giveaways - ranked across the 32; the forecast is the one the
 fantasy matchups archive keeps from ESPN's scoreboard.
 
 Which games: last week's, this week's, and next week's once the book has a
-line. Last week's are rebuilt with the final and the marks; older ones are
-removed (preview_page.prune).
+line. Last week's are rebuilt with the final and the marks; after that a
+finished game's page stays as it was for the rest of the season (finished(),
+as cfb.site.previews), and prune removes only games never played and, once
+next season's schedule loads, last season's.
 
 Builds after the team pages (it links to them) and before the pages that link
 here - predictions, watch, schedule - which ask preview_page.exists() first.
@@ -26,7 +28,7 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from gordstats import logos, preview_page
+from gordstats import logos, preview_meta, preview_page
 from gordstats.preview_page import ordinal
 from nfl import advanced, predict, results
 from nfl.config import SEASON
@@ -317,6 +319,15 @@ def build(data: dict, now) -> list:
     return out
 
 
+def finished(frame: pd.DataFrame) -> set:
+    """This season's games that have been played: their pages stay up after
+    the window moves on, as last written - with the final, since a game is in
+    the window for the week after it (cfb.site.previews.finished)."""
+    if frame is None or frame.empty or "played" not in frame:
+        return set()
+    return set(frame.loc[frame["played"].fillna(False).astype(bool), "game_id"].astype(str))
+
+
 def generate(now=None) -> None:
     now = pd.Timestamp(now) if now is not None else pd.Timestamp(datetime.now(timezone.utc))
     data = load(now)
@@ -325,12 +336,9 @@ def generate(now=None) -> None:
         return
     games = build(data, now)
     for g in games:
-        kick = pd.Timestamp(g["ko"]).tz_convert(preview_page.ET)
-        preview_page.write(
-            g, subtitle=f"{g['label']} preview",
-            description=(f"{preview_page.title(g)}, {kick:%a %b %-d}: GordStats' pick against "
-                         "the line, and how the offenses and defenses match up."))
-    removed = preview_page.prune(SPORT, {g["id"] for g in games})
+        preview_page.write(g, subtitle=f"{g['label']} preview",
+                           description=preview_meta.describe(g))
+    removed = preview_page.prune(SPORT, {g["id"] for g in games} | finished(data["frame"]))
     print(f"Wrote {len(games)} NFL game previews -> {preview_page.out_dir(SPORT)}"
           + (f"; removed {len(removed)} old" if removed else ""))
 

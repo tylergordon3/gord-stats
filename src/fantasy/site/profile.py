@@ -28,7 +28,10 @@ def generate():
     out.write_text(
         add_front_matter(layout.HEAD + profile_page.body(league_sync.body()),
                          "Your profile",
-                         "Your account, leagues and followed teams", updated=False),
+                         "Your account, leagues and followed teams", updated=False,
+                         description="Your GordStats account: the fantasy leagues you have synced "
+                                     "and the college teams you follow, kept on every device you "
+                                     "sign in on."),
         encoding="utf-8")
     print(f"Wrote profile -> {out}")
 

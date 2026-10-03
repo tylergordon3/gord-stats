@@ -54,7 +54,10 @@ def body() -> str:
 
 def generate():
     """Build and write the combined draft page."""
-    page = add_front_matter(layout.HEAD + body(), "Draft Analytics")
+    page = add_front_matter(
+        layout.HEAD + body(), "Draft Analytics",
+        description="Our fantasy league's drafts, season by season: the full draft board, the "
+                    "best values and biggest busts against ADP, and each manager's report card.")
     out = paths.WEB_DRAFT
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")

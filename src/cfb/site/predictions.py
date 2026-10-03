@@ -767,7 +767,10 @@ def generate() -> None:
     charts.clear(_SECTION)
     write_page(WEB_DIR / "predictions" / "index.html",
                "CFB Predictions", body(),
-               subtitle="Every game this week, with the book's line beside ours")
+               subtitle="Every game this week, with the book's line beside ours",
+               description="Every FBS game this week with GordStats' predicted score, spread "
+                           "and win chance beside the betting line, and how our picks have "
+                           "done all season.")
 
 
 if __name__ == "__main__":

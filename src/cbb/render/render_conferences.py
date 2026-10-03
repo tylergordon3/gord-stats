@@ -87,8 +87,13 @@ def main(df, gender):
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
+    league = "men" if gender == "M" else "women"
     html = frontmatter.add_front_matter(
-        html, "Men's Conferences" if gender == "M" else "Women's Conferences")
+        html, "Men's Conferences" if gender == "M" else "Women's Conferences",
+        description=f"{league.capitalize()}'s college basketball conferences team by team: "
+                    "conference record, the GordStats power rating, projected NCAA tournament "
+                    "seed and each team's movement.",
+        canonical=f"/{league}/conference")   # written as conference.html, served without it
 
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)

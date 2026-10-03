@@ -24,7 +24,10 @@ def generate():
     out = paths.WEB_DRAFT_REVIEW_OWN
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(layout.HEAD + body(), "Draft Review",
-                                    "Your league's drafts, and what each pick returned"),
+                                    "Your league's drafts, and what each pick returned",
+                                    description="Review the drafts of your own Sleeper league: "
+                                    "every pick, what each player returned against where he was "
+                                    "taken, and every manager's best and worst picks."),
                    encoding="utf-8")
     print(f"Wrote Draft Review -> {out}")
 

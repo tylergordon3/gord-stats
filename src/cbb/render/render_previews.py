@@ -57,7 +57,7 @@ import pandas as pd
 
 from cbb import constants, game_model, paths, utils
 from cbb.render import render_watch
-from gordstats import preview_page
+from gordstats import preview_meta, preview_page
 from gordstats.preview_page import ET, ordinal
 
 SPORT = "cbb"
@@ -538,12 +538,8 @@ def generate(now=None) -> list:
     data = load(now, got)
     games = build(data, now)
     for g in games:
-        kick = pd.Timestamp(g["ko"]).tz_convert(ET) if g.get("ko") is not None else None
-        when = f", {kick:%a %b %-d}" if kick is not None else ""
-        preview_page.write(
-            g, subtitle="Men's college basketball preview",
-            description=(f"{preview_page.title(g)}{when}: GordStats' pick against the line, "
-                         "and how the offenses and defenses match up."))
+        preview_page.write(g, subtitle="Men's college basketball preview",
+                           description=preview_meta.describe(g))
     removed = preview_page.prune(SPORT, {g["id"] for g in games})
     tail = f"; removed {len(removed)} old" if removed else ""
     if not games:

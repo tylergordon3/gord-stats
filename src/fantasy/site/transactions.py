@@ -396,7 +396,10 @@ def generate():
         seasons.insert(0, CURRENT)
     views.append(("all", "All-Time", _all_time_view(names, seasons)))
     body = layout.HEAD + layout.view_switcher(views, group="season", label="Season:", pin=True)
-    page = add_front_matter(body, "Waivers & Trades")
+    page = add_front_matter(
+        body, "Waivers & Trades",
+        description="Every waiver claim, free-agent add and trade in our fantasy league, season by "
+                    "season: the best pickups by points started and each manager's FAAB spending.")
 
     out = paths.WEB_TRANSACTIONS
     out.parent.mkdir(parents=True, exist_ok=True)

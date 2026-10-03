@@ -213,9 +213,9 @@ def generate():
     OUT.write_text(add_front_matter(
         body(data), "Team Stats",
         subtitle=f"NFL {season}{f' &middot; through Week {week}' if week else ''}",
-        description=(f"Every NFL team's {season} EPA per play, opponent-adjusted, with success "
-                     "and explosive rates, third-down and red-zone rates, pace, and QB, RB and "
-                     "receiver leaderboards, from nflverse play-by-play."),
+        description=(f"Every NFL team's {season} opponent-adjusted EPA per play, success and "
+                     "explosive rates, third-down and red-zone rates and pace, with QB, RB and "
+                     "receiver leaders."),
         updated=updated), encoding="utf-8")
     print(f"Wrote NFL Team Stats -> {OUT}")
 

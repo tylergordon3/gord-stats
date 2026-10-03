@@ -1410,7 +1410,10 @@ def card() -> dict | None:
 
 def generate():
     html, views = build()
-    page = add_front_matter(layout.HEAD + html, "Weekly Matchups", image=card())
+    page = add_front_matter(
+        layout.HEAD + html, "Weekly Matchups", image=card(),
+        description="Every fantasy matchup this week, player by player: our projections beside "
+                    "Sleeper, ESPN and FantasyPros, live points and the lineup swaps worth making.")
     out = paths.WEB_MATCHUPS
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")

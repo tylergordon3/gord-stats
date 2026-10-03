@@ -525,7 +525,10 @@ def body() -> str:
 
 def generate():
     write_page(OUTPUT, f"CFB Team Dashboard {SEASON}", body(),
-               subtitle="Start/sit, slot order, matchups, weather and waiver adds")
+               subtitle="Start/sit, slot order, matchups, weather and waiver adds",
+               description="Start/sit help for every college fantasy roster: the best lineup "
+                           "by our weekly projections, the flex saved for late kickoffs, "
+                           "matchups, weather and pickups.")
 
 
 if __name__ == "__main__":

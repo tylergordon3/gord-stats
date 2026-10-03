@@ -952,7 +952,10 @@ def card() -> dict | None:
 def generate():
     html = body()
     write_page(WEB_DIR / "power" / "index.html", "CFB Rankings", html,
-               subtitle=f"{SEASON} season", image=card())
+               subtitle=f"{SEASON} season", image=card(),
+               description="Every FBS team ranked by the GordStats rating beside ESPN's FPI, "
+                           "SP+, Elo and the AP poll, with strength of schedule and playoff, "
+                           "conference and title odds.")
 
 
 if __name__ == "__main__":

@@ -598,8 +598,9 @@ def generate():
     html = body()
     week = yahoo.league().get("current_week")
     write_page(OUTPUT, f"CFB League Power Rankings {SEASON}", html,
-               description="The college fantasy league's rosters ranked, the rest of the "
-                           "season played out.",
+               description="Power rankings for the college fantasy league: every roster priced "
+                           "as its best lineup and the rest of the season simulated, with "
+                           "playoff and title odds.",
                image=card(int(week) if week else None))
     # The pages this replaced, generated on the Pi and never committed: gone,
     # so docs/_redirects is what answers their addresses.

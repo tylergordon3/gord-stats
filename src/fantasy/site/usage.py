@@ -218,7 +218,10 @@ def generate():
     out = paths.WEB_USAGE
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(layout.HEAD + body(), "NFL Usage",
-                                    "Snap, carry and target share, and who owns them"),
+                                    "Snap, carry and target share, and who owns them",
+                                    description="Snap, carry, target and air-yard share for every "
+                                    "NFL skill player over the last three weeks and the season, "
+                                    "with red-zone looks and fantasy ownership."),
                    encoding="utf-8")
     print(f"Wrote NFL Usage -> {out}")
 

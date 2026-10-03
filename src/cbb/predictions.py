@@ -188,6 +188,13 @@ def getWinPer(record):
     return wins / total if total else 0.0
 
 
+def _bracket_description(league: str, date) -> str:
+    """A bracketology page's line in search results and link previews."""
+    return (f"GordStats' {league} NCAA tournament bracketology for "
+            f"{pd.Timestamp(date):%B %-d, %Y}: every projected seed, the automatic bids, "
+            "and the first four and next four out.")
+
+
 def _this_season_net(net_dir, date):
     """The latest NET table if it belongs to `date`'s season, else None.
 
@@ -393,7 +400,9 @@ def predict_womens(date):
     path = paths.WEB_W_DIR / f"predict_{date}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
     html = frontmatter.add_front_matter(df_html, "NCAAW Bracketology", f"{date} Prediction",
-                                        updated=False)   # its own "Last Update" line is the archive's key
+                                        updated=False,   # its own "Last Update" line is the archive's key
+                                        description=_bracket_description("women's", date),
+                                        canonical=f"/women/predict_{date}")
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")
@@ -677,7 +686,9 @@ def predict(date):
     path = paths.WEB_M_DIR / f"predict_{date}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
     html = frontmatter.add_front_matter(df_html, "NCAAM Bracketology", f"{date} Prediction",
-                                        updated=False)   # its own "Last Update" line is the archive's key
+                                        updated=False,   # its own "Last Update" line is the archive's key
+                                        description=_bracket_description("men's", date),
+                                        canonical=f"/men/predict_{date}")
     with open(path, "w") as f:
         f.write(html)
         print(f"Wrote to: {path} for {date}")

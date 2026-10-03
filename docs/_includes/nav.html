@@ -11,18 +11,13 @@ has to declare which section it belongs to.
 
 Latest prediction date per league is computed from the predict_*.html pages
 that actually exist — nothing to update when a new daily lands or old pages
-are archived away.
+are archived away. Worked out once per build by _plugins/latest_predict.rb:
+a loop over site.pages here ran on every page, and the build grew with the
+square of the page count.
 {% endcomment %}
 
-{% assign latest_m = '' %}
-{% assign latest_w = '' %}
-{% for p in site.pages %}
-  {% if p.name contains 'predict_' %}
-    {% assign d = p.name | remove: 'predict_' | remove: '.html' %}
-    {% if p.dir == '/men/' and d > latest_m %}{% assign latest_m = d %}{% endif %}
-    {% if p.dir == '/women/' and d > latest_w %}{% assign latest_w = d %}{% endif %}
-  {% endif %}
-{% endfor %}
+{% assign latest_m = site.data.latest_predict.men | default: '' %}
+{% assign latest_w = site.data.latest_predict.women | default: '' %}
 
 {% comment %}
 The 404 page is served for ANY unmatched path, so its section can't be known

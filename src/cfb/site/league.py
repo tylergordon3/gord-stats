@@ -362,7 +362,10 @@ def records_section() -> str:
 
 def generate():
     write_page(WEB_DIR / "league" / "index.html", f"CFB League Dashboard {SEASON}",
-               body() + how.JS_TAG)
+               body() + how.JS_TAG,
+               description="The Yahoo college fantasy league: standings, this week's "
+                           "scoreboard, schedule luck, the best waiver adds at each position, "
+                           "and every add, drop and trade.")
 
 
 if __name__ == "__main__":

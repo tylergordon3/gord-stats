@@ -179,8 +179,9 @@ def generate():
     INJURIES_OUT.write_text(add_front_matter(
         layout.HEAD + injury_section(), "Injury Impacts",
         f"What injuries cost each manager, {seasons[0]} to {seasons[-1]}",
-        description="Games and points each manager in the league has lost to injuries, "
-                    "every season."), encoding="utf-8")
+        description="How many games and fantasy points each manager in the league has lost "
+                    "to injured players, season by season, and the injuries that hurt most."),
+        encoding="utf-8")
     print(f"Wrote Injury Impacts -> {INJURIES_OUT}")
     if OLD_ANALYTICS.exists():
         shutil.rmtree(OLD_ANALYTICS)

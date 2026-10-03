@@ -223,8 +223,8 @@ def _cfb_card() -> str:
 
 
 def _cbb_lead() -> str:
+    # No <h1> of its own: the page's one is HOME_H1, in every season.
     return """
-<h1>CBB</h1>
 <section class="home-card">
   <div class="home-card-head">
     <h2>March Madness Predictions</h2>
@@ -375,10 +375,32 @@ def render_cbb_home():
     path = paths.DOCS / "cbb" / "index.html"
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    fm = "---\nlayout: default\ntitle: CBB\n---\n"
+    # The h1 every other section landing gets from add_front_matter (/cfb/'s
+    # is "CFB"); this page writes its own front matter, its body being Liquid.
+    fm = ("---\nlayout: default\ntitle: CBB\n"
+          f"description: {json.dumps(CBB_DESCRIPTION)}\n---\n")
     with open(path, "w", encoding="utf-8") as f:
-        f.write(fm + html.lstrip())
+        f.write(fm + "<h1>CBB</h1>\n" + html.lstrip())
     print(f"Wrote CBB home -> {path}")
+
+
+# Each page's line in search results and link previews (jekyll-seo-tag);
+# without one a page shows the site's description from _config.yml.
+HOME_DESCRIPTION = ("College football and NFL picks against the betting line, the week's best "
+                    "bets, college basketball rankings and fantasy football tools, updated every day.")
+CBB_DESCRIPTION = ("College basketball power rankings for every Division I team, March Madness "
+                   "bracketology, live scores and a daily guide to the games worth watching.")
+
+# Home's one <h1>. The page has no title of its own (the tab is the site's
+# name and tagline), so the heading is the tagline: a small muted line over
+# the first card rather than a banner, so a phone still opens on the cards.
+# Short enough for one line at 360px; the whole tagline wrapped a lone
+# "football" onto a second.
+HOME_H1 = (
+    "<style>#main_content h1.home-h1{margin:0 0 12px;font-size:13px;font-weight:600;"
+    "line-height:1.4;letter-spacing:0;text-align:center;text-wrap:balance;"
+    "color:var(--gs-muted,#5d6b7e)}</style>"
+    "<h1 class=\"home-h1\">College football, NFL, college basketball and fantasy</h1>\n")
 
 
 # The two football graphics. Both are written by cfb.site.homecards as
@@ -488,13 +510,13 @@ def render_home():
     # On a night college and pro football both play, what is on comes first;
     # the card stays hidden on any other day (gordstats.watch_all).
     from gordstats import watch_all
-    html = watch_all.teaser() + html
+    html = HOME_H1 + watch_all.teaser() + html
 
     path = paths.WEB_HOME
     path.parent.mkdir(parents=True, exist_ok=True)
 
     # No page title: jekyll-seo-tag then renders the site title and tagline,
     # which is a better tab than "GordStats Home | GordStats".
-    fm = "---\nlayout: default\n---\n"
+    fm = f"---\nlayout: default\ndescription: {json.dumps(HOME_DESCRIPTION)}\n---\n"
     with open(path, "w", encoding="utf-8") as f:
         f.write(fm + html.lstrip())

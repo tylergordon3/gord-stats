@@ -23,7 +23,10 @@ def generate():
     out = paths.WEB_WAIVERS
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(layout.HEAD + body(), "Your League's Waivers & Trades",
-                                    "Every claim, add and trade in your league"),
+                                    "Every claim, add and trade in your league",
+                                    description="Every waiver claim, free-agent add, drop and trade "
+                                    "in your own Sleeper fantasy league, season by season, with "
+                                    "FAAB bids and the claims that lost out."),
                    encoding="utf-8")
     print(f"Wrote Waivers & Trades -> {out}")
 

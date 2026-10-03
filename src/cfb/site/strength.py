@@ -127,7 +127,10 @@ def body() -> str:
 
 def generate():
     write_page(WEB_DIR / "strength" / "index.html", "CFB Matchup Strength", body(),
-               subtitle=f"{SEASON} — fantasy points allowed by position, schedule-adjusted")
+               subtitle=f"{SEASON} — fantasy points allowed by position, schedule-adjusted",
+               description="Which college football defenses give up fantasy points to QBs, "
+                           "running backs and receivers, schedule-adjusted, and whose roster "
+                           "has the easiest games ahead.")
 
 
 if __name__ == "__main__":

@@ -129,15 +129,21 @@ def test_cfb_units_players_and_form(cfbp):
 
 
 def test_cfb_generate_writes_pages_and_prunes_the_old(cfbp, monkeypatch, tmp_path):
+    """A finished game's page outlives the window, so a shared link or a search
+    result still opens; a page for a game not played this season goes."""
     monkeypatch.setattr(preview_page.paths, "DOCS", tmp_path)
     monkeypatch.setattr(cfbp, "load", lambda: _cfb_data(cfbp))
-    old = preview_page.write({**_stub_game("cfb", "31")}, root=tmp_path, updated=False)
+    kept = preview_page.write({**_stub_game("cfb", "31")}, root=tmp_path, updated=False)
+    gone = preview_page.write({**_stub_game("cfb", "29")}, root=tmp_path, updated=False)
     cfbp.generate(now=CFB_NOW)
     base = tmp_path / "cfb" / "game"
-    assert sorted(p.name for p in base.iterdir()) == ["41", "42", "51", "52", "61"]
-    assert not old.exists()
+    assert sorted(p.name for p in base.iterdir()) == ["31", "41", "42", "51", "52", "61"]
+    assert kept.exists() and not gone.exists()
     page = (base / "51" / "index.html").read_text()
     assert "title: Bravo at Charlie" in page and "Week 5 preview" in page
+    assert "description: \"Bravo at Charlie, Sat, Oct 3: GordStats' pick against" in page
+    final = (base / "41" / "index.html").read_text()
+    assert "description: \"Charlie 31, Alpha 28 (Sat, Sep 26): how GordStats' pick" in final
 
 
 # --------------------------------------------------------------------------- #

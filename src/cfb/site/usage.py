@@ -201,7 +201,10 @@ def body() -> str:
 
 def generate():
     write_page(WEB_DIR / "usage" / "index.html", "CFB Usage", body(),
-               subtitle=f"{SEASON} — carry, target and catch share, and who owns them")
+               subtitle=f"{SEASON} — carry, target and catch share, and who owns them",
+               description="Who gets the carries, targets and catches on every FBS team, over "
+                           "the last three weeks and the season, with efficiency and fantasy "
+                           "ownership.")
 
 
 if __name__ == "__main__":

@@ -663,7 +663,10 @@ def generate():
     out = paths.WEB_ROSTER
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(layout.HEAD + body(), "Team Dashboard",
-                                    "Start/sit, slot order, matchups, weather and waiver adds"),
+                                    "Start/sit, slot order, matchups, weather and waiver adds",
+                                    description="Start/sit help for your fantasy football roster: "
+                                    "the best lineup by our projections, the flex saved for late "
+                                    "kickoffs, matchups, weather and waiver adds."),
                    encoding="utf-8")
     print(f"Wrote Team Dashboard -> {out}")
 

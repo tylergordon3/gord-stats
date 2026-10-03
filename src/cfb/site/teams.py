@@ -382,7 +382,9 @@ def generate() -> None:
         slug = team_slug(row["name"])
         write_page(WEB_DIR / "teams" / slug / "index.html",
                    escape(str(row["name"])), _team_page(row, frame, table, names, espn_proj, adv),
-                   description=f"{row['name']} ratings, schedule and projected results")
+                   description=f"{row['name']} football in {SEASON}: the GordStats rating and "
+                               "rank, projected record, advanced stats, and every game's result "
+                               "or projected score.")
 
 
 if __name__ == "__main__":

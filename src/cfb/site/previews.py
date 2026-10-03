@@ -16,7 +16,13 @@ line on them - FBS against FBS only. An FCS side has no rating of its own (the
 model pools FCS into one team), no CFBD figures and no team page, so its
 preview would be a page of dashes. Last week's pages are rebuilt with the
 final and the marks, so a link from the week just finished still lands on
-something true; a game older than that loses its page (prune).
+something true. After that a finished game's page is left as it was - final,
+marks and all, not rebuilt - for the rest of the season (finished()), so a
+shared link or a search result still opens; prune removes only the pages of
+games never played (postponed, cancelled) and, once next season's schedule
+loads, last season's. A season is ~850 pages of ~20 KB, uploaded once each
+(wrangler sends only changed files); the Jekyll build stays linear in pages
+because the nav no longer loops over them (docs/_plugins/latest_predict.rb).
 
 Builds after the team pages (it links to them) and before the pages that link
 here - predictions, schedule, watch - which ask preview_page.exists() first.
@@ -29,7 +35,7 @@ import pandas as pd
 
 from cfb import advanced, espn, gameinfo, predict, results
 from cfb.site import schedule, teams as teams_page, watch
-from gordstats import logos, preview_page
+from gordstats import logos, preview_meta, preview_page
 from gordstats.preview_page import ordinal
 
 SPORT = "cfb"
@@ -297,6 +303,16 @@ def build(data: dict, now) -> list:
     return out
 
 
+def finished(frame: pd.DataFrame) -> set:
+    """This season's games that have been played. Their pages stay up after
+    the window moves on (prune keeps them), as they were last written: with
+    the final, since a game is in the window for the week after it."""
+    if frame is None or frame.empty:
+        return set()
+    played = frame.apply(_played, axis=1)
+    return set(frame.loc[played, "game_id"].astype(str))
+
+
 def generate(now=None) -> None:
     now = pd.Timestamp(now) if now is not None else pd.Timestamp(datetime.now(timezone.utc))
     data = load()
@@ -305,12 +321,9 @@ def generate(now=None) -> None:
         return
     games = build(data, now)
     for g in games:
-        kick = pd.Timestamp(g["ko"]).tz_convert(preview_page.ET)
-        preview_page.write(
-            g, subtitle=f"{g['label']} preview",
-            description=(f"{preview_page.title(g)}, {kick:%a %b %-d}: GordStats' pick against "
-                         "the line, and how the offenses and defenses match up."))
-    removed = preview_page.prune(SPORT, {g["id"] for g in games})
+        preview_page.write(g, subtitle=f"{g['label']} preview",
+                           description=preview_meta.describe(g))
+    removed = preview_page.prune(SPORT, {g["id"] for g in games} | finished(data["frame"]))
     print(f"Wrote {len(games)} CFB game previews -> {preview_page.out_dir(SPORT)}"
           + (f"; removed {len(removed)} old" if removed else ""))
 

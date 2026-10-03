@@ -354,7 +354,10 @@ def generate():
     html = body(lg)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(add_front_matter(layout.HEAD + html, "NFL Matchup Strength",
-                                    f"{UPCOMING_YEAR} — fantasy points allowed by position"),
+                                    f"{UPCOMING_YEAR} — fantasy points allowed by position",
+                                    description="Which NFL defenses give up fantasy points to "
+                                    "each position, schedule-adjusted, and whose fantasy roster "
+                                    "has the easiest matchups over the coming weeks."),
                    encoding="utf-8")
     print(f"Wrote NFL Matchup Strength -> {OUT}")
     # Kept from the last good build when a source is missing; written with no

@@ -1,12 +1,64 @@
 ---
 layout: default
 title: "Page Not Found"
+description: "That page is not on GordStats. College football and NFL predictions, rankings and fantasy football tools are a tap away in the menu."
 permalink: /404.html
 ---
 
-<div style="text-align: center; padding: 50px;">
-  <h1>404</h1>
-  <p>Oops! The page you’re looking for doesn’t exist.</p>
-  <p>Pick a section from the menu above, or head back to the
-     <a href="{{ '/' | relative_url }}">Homepage</a>.</p>
+<style>
+.nf{text-align:center;padding:40px 0 24px}
+.nf-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 0 8px;
+  padding:0;list-style:none}
+.nf-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;
+  border:1px solid #e2e8f0;border-radius:999px;font-weight:700;font-size:14px;
+  text-decoration:none}
+@media (prefers-color-scheme: dark){.nf-links a{border-color:#2b3852}}
+</style>
+
+<div class="nf">
+  <h1 id="nf-title">404</h1>
+  <div id="nf-any">
+    <p>Oops! The page you’re looking for doesn’t exist.</p>
+    <p>Pick a section from the menu above, or head back to the
+       <a href="{{ '/' | relative_url }}">Homepage</a>.</p>
+  </div>
+  {%- comment -%}
+  A game preview's address after the page has come down: /cbb/game/<id>/ the
+  day after the game (cbb.render.render_previews), /cfb/game/<id>/ and
+  /nfl/game/<id>/ when the season they were played in is over, or for a game
+  that was never played (the adapters' finished() and prune). Links to one
+  live on in texts and search results, so say what happened and where the
+  game is now, rather than "doesn't exist". The id alone does not say which
+  teams played, so the links are the section's own pages.
+  {%- endcomment %}
+  <div id="nf-game" hidden>
+    <p id="nf-game-text"></p>
+    <ul class="nf-links" id="nf-game-links"></ul>
+  </div>
 </div>
+
+<script>
+(function(){
+  var m=location.pathname.match(/^\/(cfb|nfl|cbb)\/game\/\d+\/?$/);
+  if(!m) return;
+  var SPORTS={
+    cfb:["The page for this college football game is no longer up. Its score is on the schedule, and every team has a page of its own from the rankings.",
+         [["/cfb/schedule/","Schedule & scores"],["/cfb/predictions/","This week’s predictions"],["/cfb/power/","Rankings & team pages"]]],
+    nfl:["The page for this NFL game is no longer up. Its score is on the schedule, and every team has a page of its own from the rankings.",
+         [["/nfl/schedule/","Schedule & scores"],["/nfl/","This week’s predictions"],["/nfl/power/","Rankings & team pages"]]],
+    cbb:["College basketball previews come down the day after the game. Today’s games and scores are here.",
+         [["/men/","Today’s scores"],["/cbb/watch/","Watch guide"],["/cbb/power/","Power rankings"]]]
+  };
+  var s=SPORTS[m[1]];
+  document.getElementById('nf-title').textContent='This preview has passed';
+  document.getElementById('nf-game-text').textContent=s[0];
+  var ul=document.getElementById('nf-game-links');
+  s[1].forEach(function(l){
+    var li=document.createElement('li'),a=document.createElement('a');
+    a.href=l[0];a.textContent=l[1];li.appendChild(a);ul.appendChild(li);
+  });
+  document.title='This preview has passed | GordStats';
+  document.getElementById('nf-any').hidden=true;
+  document.getElementById('nf-game').hidden=false;
+})();
+</script>

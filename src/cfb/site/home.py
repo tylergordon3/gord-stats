@@ -102,7 +102,10 @@ def body() -> str:
 
 
 def generate():
-    write_page(WEB_DIR / "index.html", "CFB", body())
+    write_page(WEB_DIR / "index.html", "CFB", body(),
+               description="College football this week: the games worth watching, GordStats' "
+                           "picks against the spread, our Top 25 beside the AP poll and ESPN's "
+                           "FPI, and your teams.")
 
 
 if __name__ == "__main__":

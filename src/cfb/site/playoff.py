@@ -25,9 +25,8 @@ OUT = WEB_DIR / "playoff" / "index.html"
 # Who the table lists: a 1% chance by our count or by ESPN's.
 OURS_AT_LEAST = 0.01
 FPI_AT_LEAST = 0.01
-DESCRIPTION = ("Who makes the 12-team College Football Playoff: every contender's odds "
-               "from 10,000 simulations of the rest of the season on the GordStats model, "
-               "the projected bracket, and ESPN FPI's chances beside ours.")
+DESCRIPTION = ("Every contender's chance to make the 12-team College Football Playoff, from "
+               "10,000 simulations of the rest of the season, with the projected bracket.")
 
 
 def fpi_odds(payload: dict) -> dict:

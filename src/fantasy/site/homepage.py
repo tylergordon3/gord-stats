@@ -183,7 +183,10 @@ def generate(output=OUTPUT):
             + my_league_data.JS_TAG + my_league.JS_TAG + my_history.JS_TAG + my_home.JS_TAG
             + week_strip.JS_TAG)
 
-    page = add_front_matter(body, "Fantasy Football")
+    page = add_front_matter(
+        body, "Fantasy Football",
+        description="Fantasy football league home: this week's games, league records, all-time "
+                    "standings and metrics, and a profile of every manager, for our league or yours.")
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(page, encoding="utf-8")
     print(f"Wrote homepage -> {output}")

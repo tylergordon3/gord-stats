@@ -22,6 +22,10 @@ from zoneinfo import ZoneInfo
 
 ET = ZoneInfo("America/New_York")
 
+# The site's address (`url` in docs/_config.yml). A canonical_url is written
+# into the page exactly as given, so it has to be absolute.
+SITE_URL = "https://www.gordstats.com"
+
 # A fresh token per process: a marker cannot be written into a team name ahead
 # of time, so nothing but liquid() can open a hole in the raw wrapping.
 _TOKEN = secrets.token_hex(8)
@@ -71,7 +75,7 @@ def updated_line(when: datetime | None = None) -> str:
 
 def add_front_matter(html: str, title: str, subtitle: str | None = None,
                      description: str | None = None, image: dict | None = None,
-                     updated: datetime | bool = True) -> str:
+                     updated: datetime | bool = True, canonical: str | None = None) -> str:
     """Prepend Jekyll front matter and an <h1> title to a page body.
 
     `subtitle` renders as a small muted line under the title — used for things
@@ -90,10 +94,17 @@ def add_front_matter(html: str, title: str, subtitle: str | None = None,
     `updated` puts the "Updated ..." line under the title (updated_line):
     True for the build's own time, a datetime for the data's, False for a
     page with nothing that goes out of date (profile, sync).
+
+    `canonical` is the site path to give search engines and link previews
+    when it is not the page's own: a page written as name.html is served at
+    /name (Cloudflare Pages 308s the .html address), so its canonical is the
+    clean one - otherwise jekyll-seo-tag names the address that redirects.
     """
     desc = f"description: {json.dumps(description)}\n" if description else ""
     if image:
         desc += f"image: {json.dumps(image)}\n"
+    if canonical:
+        desc += f"canonical_url: {json.dumps(SITE_URL + canonical)}\n"
     fm = f"""---
 layout: default
 title: {title}

@@ -520,7 +520,10 @@ def body() -> str:
 
 
 def generate():
-    write_page(OUTPUT, f"CFB Draft Review {SEASON}", body())
+    write_page(OUTPUT, f"CFB Draft Review {SEASON}", body(),
+               description=f"How the college fantasy league's {SEASON} draft went: every "
+                           "roster graded by GordStats and by Yahoo, the steals and the "
+                           "reaches, and every pick priced.")
 
 
 if __name__ == "__main__":

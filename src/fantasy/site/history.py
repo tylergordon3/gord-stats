@@ -24,7 +24,10 @@ def generate():
     out = paths.WEB_HISTORY
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(add_front_matter(layout.HEAD + body(), "League History",
-                                    "Champions, records and head-to-head"),
+                                    "Champions, records and head-to-head",
+                                    description="Your Sleeper fantasy league's history: champions "
+                                    "season by season, all-time records and standings, and every "
+                                    "manager's head-to-head record against the rest."),
                    encoding="utf-8")
     print(f"Wrote League History -> {out}")
 

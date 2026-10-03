@@ -255,7 +255,10 @@ def generate():
     views = [(s, FORMAL_SEASON[s], _season_view(s)) for s in LEAGUE_IDS]
     body = layout.HEAD + _CSS + layout.view_switcher(views, group="season", label="Season:",
                                                      pin=True)
-    page = add_front_matter(body + how.JS_TAG, "Schedule Stats")
+    page = add_front_matter(
+        body + how.JS_TAG, "Schedule Stats",
+        description="How much the schedule has helped or hurt each fantasy team: schedule luck in "
+                    "wins, all-play standings, strength of schedule and records vs every schedule.")
 
     out = paths.WEB_SCHEDULE
     out.parent.mkdir(parents=True, exist_ok=True)
