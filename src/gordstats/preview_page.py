@@ -13,6 +13,10 @@ what a preview is for, with our pick on top. In order:
                 and total, ESPN's view, the watch score, and one sentence
                 saying where the two disagree - the numbers the schedule and
                 the watch guide already compute, never a second model
+    win prob    once the game is on (and after it), ESPN's live win chance
+                and a chart of it play by play - drawn in the browser from
+                ESPN's game summary by docs/assets/js/gs-winprob.js; CFB and
+                NFL only (ESPN_LEAGUES)
     units       each offence against the other defence as butterfly bars on
                 national percentile, and the biggest mismatch said in words
     players     a few per team to watch, with their EPA rank
@@ -69,7 +73,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from gordstats import how, paths, share_button, share_card
+from gordstats import how, js_assets, paths, share_button, share_card
 from gordstats.frontmatter import add_front_matter
 
 ET = ZoneInfo("America/New_York")
@@ -491,6 +495,74 @@ def call_block(game) -> str:
             + f"<div class='pv-tiles'>{''.join(tiles)}</div></section>")
 
 
+# --------------------------------------------------------------------------- #
+# Live win probability
+# --------------------------------------------------------------------------- #
+
+#: ESPN's league path for the sports whose preview ids are ESPN event ids:
+#: gs-winprob.js reads the game summary under it. CBB's ids are theScore's,
+#: so its previews have no live section.
+ESPN_LEAGUES = {"cfb": "college-football", "nfl": "nfl"}
+
+# The chart's script, by its hashed URL. Deferred: nothing on the page calls
+# into it. (The browser tests run the file itself, js_assets.source.)
+WINPROB_JS_TAG = js_assets.tag("gs-winprob.js", attrs=" defer")
+
+# Runs as the section is parsed, before the first paint: once the game has
+# kicked off (or the build already saw it under way or over), the section is
+# shown at once at its full, fixed height, and the chart fills a box that was
+# already there - nothing under it moves. Before kickoff it stays hidden and
+# takes no room; gs-winprob.js opens it at kickoff if the page is still open.
+_REVEAL = ("<script>(function(s){var k=Date.parse(s.getAttribute('data-ko'));"
+           "if(s.getAttribute('data-state')!=='pre'||(s.getAttribute('data-tk')==='1'"
+           "&&Date.now()>=k-60e3))s.hidden=false;})"
+           "(document.currentScript.previousElementSibling);</script>")
+
+
+def _iso(ko) -> str:
+    t = pd.Timestamp(ko)
+    t = t.tz_localize("UTC") if t.tzinfo is None else t.tz_convert("UTC")
+    return f"{t:%Y-%m-%dT%H:%M:%SZ}"
+
+
+def winprob_block(game) -> str:
+    """ESPN's live win probability: the leader's chance, where the game is,
+    and a chart of the home team's chance play by play - drawn in the
+    browser from ESPN's game summary (docs/assets/js/gs-winprob.js) while
+    the game is on and after it. The page's own pregame number stays ours,
+    in The call; this one is labeled ESPN's. Nothing for a sport without
+    ESPN ids, or a game with no kickoff."""
+    league = ESPN_LEAGUES.get(game.get("sport"))
+    if not league or not game.get("id") or game.get("ko") is None:
+        return ""
+    try:
+        ko = _iso(game["ko"])
+    except (TypeError, ValueError):
+        return ""
+    away, home = game["away"], game["home"]
+    names = {side: escape(str(t.get("abbr") or t["name"]), quote=True)
+             for side, t in (("away", away), ("home", home))}
+    state = game.get("state") or "pre"
+    # The chip opens the previews explainer, which says where the number comes
+    # from: the topic the adapter names for it, else the one for the units.
+    topics = game.get("how") or {}
+    topic = topics.get("winprob") or topics.get("units")
+    chip = f" {how.button(topic)}" if topic else ""
+    return (f"<section class='pv-sec pv-lwp' data-gs-wp data-league='{league}' "
+            f"data-id='{escape(str(game['id']), quote=True)}' data-ko='{ko}' "
+            f"data-tk='{int(bool(game.get('tk', True)))}' "
+            f"data-state='{escape(state, quote=True)}' "
+            f"data-home='{names['home']}' data-away='{names['away']}' hidden>"
+            f"<h2>Win probability{chip}</h2>"
+            # The label starts empty: text after the figure would be nudged
+            # sideways when the figure fills in, and an empty box never moves.
+            "<p class='pv-lwp-now'><b class='pv-lwp-big'>&nbsp;</b>"
+            "<span class='pv-lwp-lab'></span></p>"
+            "<p class='pv-lwp-at'>Loading ESPN&rsquo;s win probability&hellip;</p>"
+            "<p class='pv-lwp-play'></p>"
+            "<div class='pv-lwp-chart'></div></section>" + _REVEAL)
+
+
 def _side_rank(cell, cls: str, kind: str) -> str:
     """A side's national rank, its figure under it."""
     value, rank, of = cell
@@ -644,10 +716,12 @@ def body(game, title: str = "") -> str:
     """The page body for one game."""
     title = title or f"{game['away']['name']} {'vs' if game.get('neutral') else 'at'} " \
         f"{game['home']['name']}"
-    inner = (header(game) + call_block(game) + units_block(game) + players_block(game)
+    live = winprob_block(game)
+    inner = (header(game) + live + call_block(game) + units_block(game) + players_block(game)
              + form_block(game) + links_block(game, title))
     return (CSS + f"<div class='pv' {MARK}='{escape(str(game['id']), quote=True)}'>"
-            + inner + "</div>" + (how.JS_TAG if "class='gs-how'" in inner else ""))
+            + inner + "</div>" + (how.JS_TAG if "class='gs-how'" in inner else "")
+            + (WINPROB_JS_TAG if live else ""))
 
 
 def title(game) -> str:
@@ -764,11 +838,13 @@ def prune(sport: str, keep: set, root: Path = None) -> list:
 CSS = """<style>
 .pv{--pv-line:#e2e8f0;--pv-card:#fff;--pv-ink:#0f172a;--pv-mute:#475569;--pv-soft:#5d6b7e;
   --pv-acc:#C2410C;--pv-track:#eef2f7;--pv-o:#2563eb;--pv-d:#c2410c;--pv-good:#15803d;
-  --pv-bad:#b91c1c;--pv-chip:#eef2f7;--pv-live:#b3382c}
+  --pv-bad:#b91c1c;--pv-chip:#eef2f7;--pv-live:#b3382c;--pv-wh:#2563eb;--pv-wa:#c2410c;
+  --pv-surf:#f7f9fc}
 @media (prefers-color-scheme: dark){
   .pv{--pv-line:#2b3852;--pv-card:#16203a;--pv-ink:#f1f5f9;--pv-mute:#c3cfdd;--pv-soft:#aab7c9;
     --pv-acc:#fb923c;--pv-track:#223052;--pv-o:#60a5fa;--pv-d:#fb923c;--pv-good:#4ade80;
-    --pv-bad:#f87171;--pv-chip:#223052;--pv-live:#ffb4ab}
+    --pv-bad:#f87171;--pv-chip:#223052;--pv-live:#ffb4ab;--pv-wh:#3b82f6;--pv-wa:#ea580c;
+    --pv-surf:#16203a}
 }
 .pv{color:var(--pv-ink);max-width:760px}
 .pv b{font-weight:700}
@@ -870,6 +946,41 @@ a.pv-team:hover .pv-nm{text-decoration:underline}
   display:flex;align-items:center}
 .pv-gloss dt{font-weight:700;font-size:13px;margin-top:6px}
 .pv-gloss dd{margin:0;font-size:13px;color:var(--pv-mute);line-height:1.45}
+/* Live win probability (gs-winprob.js). Every line has a fixed height, and
+   the chart box too: the section is shown at full size before its data
+   comes, and a refresh, a longer play or a hover never moves the page. The
+   two sides' colors (--pv-wh home, --pv-wa away) are the site's blue and
+   orange, a step deeper in the dark theme than the unit bars' so both stay
+   in the lightness band a colorblind reader can tell apart there. */
+.pv-lwp-now{display:flex;align-items:baseline;gap:0 8px;height:32px;margin:0;overflow:hidden;
+  white-space:nowrap}
+.pv-lwp-big{font-size:24px;font-weight:800;line-height:32px;font-variant-numeric:tabular-nums}
+.pv-lwp-lab{font-size:13px;color:var(--pv-soft);overflow:hidden;text-overflow:ellipsis;min-width:0}
+.pv-lwp-at{height:20px;line-height:20px;margin:0;font-size:13.5px;font-weight:600;
+  color:var(--pv-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-variant-numeric:tabular-nums}
+.pv-lwp-play{height:36px;line-height:18px;margin:0 0 6px;font-size:13px;color:var(--pv-soft);
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pv-lwp-chart{height:170px;touch-action:pan-y;cursor:crosshair;-webkit-user-select:none;
+  user-select:none}
+.pv-lwp-chart:empty{background:var(--pv-track);border-radius:8px;opacity:.6}
+.pv-lwp-chart svg{display:block;overflow:visible;outline:none}
+.pv-lwp-chart svg:focus-visible{outline:2px solid var(--pv-wh);outline-offset:2px;border-radius:4px}
+.pv-lwp .wp-grid,.pv-lwp .wp-q{stroke:var(--pv-line);stroke-width:1}
+.pv-lwp .wp-half{stroke:var(--pv-soft);stroke-opacity:.45}
+.pv-lwp .wp-mid{stroke:var(--pv-soft);stroke-width:1;stroke-opacity:.8}
+.pv-lwp .wp-yl,.pv-lwp .wp-ql{fill:var(--pv-soft);font-size:12px;font-weight:700}
+.pv-lwp .wp-yl-m{font-weight:500}
+.pv-lwp .wp-key-h,.pv-lwp .wp-dot-h{fill:var(--pv-wh)}
+.pv-lwp .wp-key-a,.pv-lwp .wp-dot-a{fill:var(--pv-wa)}
+.pv-lwp .wp-fill-h{fill:var(--pv-wh);fill-opacity:.14}
+.pv-lwp .wp-fill-a{fill:var(--pv-wa);fill-opacity:.14}
+.pv-lwp .wp-line-h,.pv-lwp .wp-line-a{fill:none;stroke-width:2;stroke-linejoin:round;
+  stroke-linecap:round}
+.pv-lwp .wp-line-h{stroke:var(--pv-wh)}
+.pv-lwp .wp-line-a{stroke:var(--pv-wa)}
+.pv-lwp .wp-dot,.pv-lwp .wp-xd{stroke:var(--pv-surf);stroke-width:2}
+.pv-lwp .wp-xl{stroke:var(--pv-ink);stroke-width:1;stroke-opacity:.55}
 @media (prefers-color-scheme: dark){
   .pv-team img{background:#e8edf5;border-radius:50%;padding:4px;box-sizing:border-box}
   .pv-mk.ok,.pv-r.w{background:#14532d;color:#bbf7d0}

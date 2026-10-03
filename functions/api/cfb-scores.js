@@ -18,6 +18,12 @@
  * Answers are shared for CACHE_SECONDS through the Workers cache
  * (_lib/cache.js): the page polls every 30 s at its fastest, so readers in
  * one data centre now share one call to ESPN rather than making one each.
+ *
+ * ESPN's body goes through whole (about 800 KB for a Saturday, ~60 KB
+ * compressed on the way out). The schedule reads the scores, the status, and
+ * competitions[0].situation while a game is on: the drive line and ESPN's
+ * live win chance, situation.lastPlay.probability.homeWinPercentage. Any
+ * trimming added here must keep those.
  */
 import { cached } from "./_lib/cache.js";
 

@@ -16,8 +16,9 @@ the archive began says so rather than borrowing one.
 
 It is the scoreboard too. The page is rebuilt with the section; while a game
 on the week on screen is on, the browser reads ESPN's NFL scoreboard (it
-answers any origin) once a minute and moves the scores, the clock and, at the
-final whistle, the ticks. It stops when the week's games are over and pauses
+answers any origin) once a minute and moves the scores, the clock and ESPN's
+live win chance (beside the clock while a game is on) and, at the final
+whistle, the ticks. It stops when the week's games are over and pauses
 while the tab is hidden.
 
     python -m nfl.site.schedule
@@ -358,6 +359,12 @@ _CSS = """<style>
   background:var(--ns-live);margin:0 6px 1px 0;vertical-align:middle}
 .ns-at::before{content:" \u00b7 "}
 .ns-tv{font-weight:600;flex:none}
+/* ESPN's live win chance, on the status line beside the clock while a game
+   is on (the live script adds it): a line every card already has, so the
+   number arriving never moves the card. Gone again at the final. */
+.ns-wp{flex:none;margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.ns-wp b{color:var(--ns-ink);font-weight:700}
+.ns-wp:empty,.ns-g:not([data-state="in"]) .ns-wp{display:none}
 .ns-t{display:flex;align-items:center;gap:10px;min-height:38px}
 /* The theme frames every <img>; a logo is just a mark here. */
 .ns-t img{width:28px;height:28px;object-fit:contain;flex:none;border:0;padding:0;margin:0;
@@ -474,7 +481,24 @@ _JS = """<script>
       w.classList.toggle('ns-live',st==='in');
     }
     g.setAttribute('data-state',st);
+    if(st==='in') winProb(g,c);
     if(st==='post'&&t.completed!==false) grade(g,pts.home,pts.away);
+  }
+  // ESPN's win chance after the last play, the leader's: "ESPN win prob:
+  // KC 78%". Ours stays the pregame pick below. A read without one keeps the
+  // last number.
+  function wpText(p){ return p>=1?'100%':p>=0.995?'>99%':Math.round(p*100)+'%'; }
+  function winProb(g,c){
+    var h=parseFloat((((c.situation||{}).lastPlay||{}).probability||{}).homeWinPercentage);
+    if(!isFinite(h)) return;
+    var top=g.querySelector('.ns-top'); if(!top) return;
+    var el=top.querySelector('.ns-wp');
+    if(!el){ el=document.createElement('span'); el.className='ns-wp'; top.insertBefore(el,top.querySelector('.ns-tv')); }
+    var side=h>=0.5?'home':'away', p=Math.max(h,1-h), abbr='';
+    (c.competitors||[]).forEach(function(x){ if(x.homeAway===side) abbr=(x.team||{}).abbreviation||''; });
+    el.setAttribute('data-p',p.toFixed(3));
+    el.textContent='ESPN win prob: ';
+    var b=document.createElement('b'); b.textContent=(abbr?abbr+' ':'')+wpText(p); el.appendChild(b);
   }
   function sleep(){
     clearTimeout(timer); timer=null;

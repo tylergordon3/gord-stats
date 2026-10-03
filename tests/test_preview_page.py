@@ -3,6 +3,8 @@ The shared game preview (gordstats.preview_page): the call in words, unit
 against unit, the form against our line, and the pages it writes and removes.
 No network and no site: games are built here in the adapters' shape.
 """
+import re
+
 import pandas as pd
 
 from gordstats import preview_page as pv
@@ -220,7 +222,11 @@ def test_names_are_escaped_and_the_body_is_liquid_safe(tmp_path):
     assert "<A&M>" not in html and "&lt;A&amp;M&gt;" in html
     assert "title: Tex{{as}} &lt;A&amp;M&gt; at Georgia" in html
     body = html.split("---", 2)[2]
-    # Everything after the front matter is inside one raw block: Liquid runs nothing.
+    # Everything after the front matter is inside one raw block: Liquid runs
+    # nothing but the hashed URL of a script the page loads (js_assets.tag -
+    # the live win probability's gs-winprob.js).
+    body = re.sub(r"\{% endraw %\}\{\{ '/assets/js/[\w.-]+\.js' \| fingerprint \| relative_url \}\}"
+                  r"\{% raw %\}", "", body)
     assert body.strip().startswith("{% raw %}") and body.count("{% raw %}") == 1
     assert pv.MARK in html
 

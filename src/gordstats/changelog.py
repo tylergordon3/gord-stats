@@ -26,6 +26,9 @@ HOME_SHOWN = 3
 
 # (date, title, one line, link or None) - newest first.
 ENTRIES = [
+    ("2026-10-03", "Live win probability",
+     "While a college or NFL game is on, its schedule card shows ESPN's live win chance, and "
+     "the game's page charts it play by play.", "/cfb/schedule/"),
     ("2026-10-02", "How this works",
      "Tap the small \"How this works\" button beside a ranking, prediction or fantasy number "
      "for a short, plain explanation of how it's made, instead of paragraphs on the page.",

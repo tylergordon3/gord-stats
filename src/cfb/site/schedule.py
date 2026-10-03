@@ -11,7 +11,9 @@ by the Pi's live tick (cfb.live) while games are on. The page then keeps the
 current week current: a script polls ESPN's scoreboard through our Pages
 Function proxy (functions/api/cfb-scores.js - ESPN strips CORS for browsers)
 every ~30s during games, updating scores, clock, records, possession, down &
-distance and last play, and re-sectioning rows as games kick off and finish.
+distance, last play and ESPN's live win chance (situation.lastPlay.probability
+- ESPN's number, labeled as such; ours stays the pregame one), and
+re-sectioning rows as games kick off and finish.
 No JS still gets the build-time snapshot. The old /cfb/scoreboard/ URL
 redirects here.
 
@@ -115,9 +117,19 @@ a.sc-team:hover .sc-tn{text-decoration:underline}
 /* The drive line, only while a game is on. */
 .sc-live{display:none;margin-top:5px;padding-top:5px;border-top:1px dashed #e2e8f0}
 tr.g[data-state="in"] .sc-live{display:block}
-.sc-sit{font-size:12px;font-weight:600;color:#0f172a}
-.sc-play{font-size:11.5px;color:#64748b;margin-top:1px;white-space:normal;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* Every line of the box has a fixed height - ESPN's live win chance, the
+   down and distance, two lines of the last play - so the box is its full
+   size from the moment it is drawn, empty, and no poll moves a card: not the
+   first one filling it in, nor a last play that runs to one line or two.
+   The win chance is hidden, not absent, until ESPN sends a number. */
+.sc-wp{height:16px;line-height:16px;font-size:12px;color:#475569;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.sc-wp b{color:#0f172a;font-weight:700}
+.sc-wp:not([data-p]){visibility:hidden}
+.sc-sit{font-size:12px;font-weight:600;color:#0f172a;height:16px;line-height:16px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-play{font-size:11.5px;color:#64748b;margin-top:1px;white-space:normal;line-height:15px;
+  height:30px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .sc-meta{margin-top:4px;font-size:11.5px;color:#64748b;display:flex;flex-wrap:wrap;
   gap:4px 6px;align-items:center}
 /* Where: stadium over city, one line each, clipped rather than wrapped. */
@@ -469,6 +481,8 @@ table.det-t td.k{font-weight:600;color:#0f172a}
   .sc-meta{color:#8fa0b8}
   .sc-rec{color:#7f8ea3}
   .sc-live{border-color:#2b3852}
+  .sc-wp{color:#aab7c9}
+  .sc-wp b{color:#f1f5f9}
   .sc-sit{color:#f1f5f9}
   .sc-play{color:#8fa0b8}
   .tag-dog{background:#4a3208;color:#fcd34d}
@@ -1476,7 +1490,8 @@ def _detail(g, spread, gs_margin, home_won, sp_margin) -> str:
 # The drive line under a game in progress. Built only for the games that are
 # on when the page is; the live poll adds it to a game that kicks off later
 # (`liveBox` in _JS), so the other fifty-odd cards carry nothing for it.
-_LIVE_BOX = '<div class="sc-live"><div class="sc-sit"></div><div class="sc-play"></div></div>'
+_LIVE_BOX = ('<div class="sc-live"><div class="sc-wp"></div><div class="sc-sit"></div>'
+             '<div class="sc-play"></div></div>')
 
 _HEAD = ('<thead><tr><th>Matchup</th><th>Kick (ET) &middot; TV &middot; Weather</th>'
          '<th>Lines &middot; GordStats pick</th><th>Season</th></tr></thead>')
@@ -2042,10 +2057,25 @@ function liveBox(row){
   var box=row.querySelector('.sc-live');
   if(!box){
     box=document.createElement('div');box.className='sc-live';
-    box.innerHTML='<div class="sc-sit"></div><div class="sc-play"></div>';
+    box.innerHTML='<div class="sc-wp"></div><div class="sc-sit"></div><div class="sc-play"></div>';
     var mu=row.querySelector('td.mu');if(mu)mu.appendChild(box);
   }
   return box;
+}
+// ESPN's win chance after the last play ("ESPN win prob: ALA 78%%"), the
+// leader's. Our own pregame number stays in the Lines cell. A poll without
+// one keeps the last; the line is hidden, with its room kept, until the first.
+function wpText(p){return p>=1?'100%%':p>=0.995?'>99%%':Math.round(p*100)+'%%';}
+function winProb(box,comp,sit){
+  var el=box.querySelector('.sc-wp');
+  if(!el){el=document.createElement('div');el.className='sc-wp';box.insertBefore(el,box.firstChild);}
+  var h=parseFloat(((sit.lastPlay||{}).probability||{}).homeWinPercentage);
+  if(!isFinite(h))return;
+  var side=h>=0.5?'home':'away',p=Math.max(h,1-h),abbr='';
+  (comp.competitors||[]).forEach(function(c){if(c.homeAway===side)abbr=(c.team||{}).abbreviation||'';});
+  el.setAttribute('data-p',p.toFixed(3));
+  el.textContent='ESPN win prob: ';
+  var b=document.createElement('b');b.textContent=(abbr?abbr+' ':'')+wpText(p);el.appendChild(b);
 }
 function apply(ev){
   var row=document.getElementById('g-'+ev.id);if(!row)return null;
@@ -2087,6 +2117,7 @@ function apply(ev){
   }
   if(state==='in'){
     var box=liveBox(row);
+    winProb(box,comp,sit);
     box.querySelector('.sc-sit').textContent=
       [sit.downDistanceText,sit.possessionText].filter(Boolean).join(' \\u00b7 ');
     box.querySelector('.sc-play').textContent=(sit.lastPlay||{}).text||'';
@@ -2361,7 +2392,7 @@ def generate():
     # buttons read.
     for week, more in panels.items():
         (out / (MORE_FILE % week)).write_text(more, encoding="utf-8")
-    write_page(out / "index.html", f"CFB Schedule & Scores {SEASON}", html)
+    write_page(out / "index.html", f"CFB Schedule & Scores {SEASON}", html, description=f"Every FBS game of the {SEASON} college football season by week: kickoff times, TV, live scores, the betting line and GordStats' pick, with a game preview.")
     # Plain fragments, no front matter: Jekyll copies a file it cannot parse as
     # a page straight through, which is what these want to be.
     for week, view in fragments.items():

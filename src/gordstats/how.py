@@ -165,6 +165,8 @@ TOPICS: list[Topic] = [
             "<p>It knows nothing about injuries, weather or depth charts.</p>",
         ),
         updates=f"{DAILY_}, with every newly finished game and the latest lines.",
+        curious="During a game, the schedule and each game page also show ESPN's live win "
+                "probability, labeled as ESPN's; ours stays the number we set before kickoff.",
         pages=(("CFB predictions", "/cfb/predictions/"), ("CFB schedule", "/cfb/schedule/")),
         related=("cfb-rankings", "bets-record", "game-previews"),
     ),
@@ -234,6 +236,8 @@ TOPICS: list[Topic] = [
             "quarterback news.</p>",
         ),
         updates=f"{DAILY_}, with every newly finished game and the latest lines.",
+        curious="During a game, the schedule and each game page also show ESPN's live win "
+                "probability, labeled as ESPN's; ours stays the number we set before kickoff.",
         pages=(("NFL predictions", "/nfl/"), ("NFL schedule", "/nfl/schedule/")),
         related=("nfl-rankings", "bets-record", "game-previews"),
     ),
@@ -321,7 +325,9 @@ TOPICS: list[Topic] = [
     # gordstats.preview_page (The call, Unit vs unit with national ranks and
     # percentile bars, the biggest gap named at a 0.3 percentile gap, players
     # to watch, last 4 games against our line); cfb/nfl site.previews (which
-    # games: last week, this week, next week once lined; CFB FBS v FBS).
+    # games: last week, this week, next week once lined; CFB FBS v FBS);
+    # gs-winprob.js (ESPN summary `winprobability`, read every 60 s while live,
+    # shown from kickoff; ours stays the pregame call).
     Topic(
         id="game-previews", group="Game day", name="game previews",
         title="What a game preview shows",
@@ -341,6 +347,8 @@ TOPICS: list[Topic] = [
             "and the two busiest receivers, with how efficient each has been.</li>"
             "<li><strong>Recent form:</strong> the last four games, and how each finished "
             "against our pregame line.</li>"
+            "<li><strong>Win probability:</strong> once a game starts, ESPN's live win "
+            "chance, charted play by play.</li>"
             "<li><strong>Watch score:</strong> how worth watching it should be, from the "
             "<a href='/how/watch-guide/'>watch guide</a>.</li></ul>",
         ),
@@ -352,7 +360,8 @@ TOPICS: list[Topic] = [
                 "once they have a line.",
         curious="College stats come from CollegeFootballData, NFL stats from nflverse's free "
                 "play-by-play data. For what they mean, see <a href='/how/team-stats/'>the team "
-                "stats explainer</a>.",
+                "stats explainer</a>. The live chart is ESPN's own model, read from ESPN about "
+                "once a minute during the game; our pregame number stays in The call.",
         pages=(("CFB schedule", "/cfb/schedule/"), ("NFL schedule", "/nfl/schedule/")),
         related=("team-stats", "watch-guide", "cfb-predictions", "nfl-predictions"),
     ),
