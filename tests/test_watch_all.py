@@ -34,7 +34,7 @@ CDP = 9485
 def _game(gid, ko, score, tv, home, away, hk, ak, day=None):
     ko = ko.astimezone(timezone.utc)
     return {"id": gid, "wk": 5, "st": 2, "ko": ko.strftime("%Y-%m-%dT%H:%M:%SZ"), "tk": True,
-            "day": day or ko.astimezone(watch_page.ET).strftime("%Y-%m-%d"), "slot": "x",
+            "day": day or watch_page.game_day(ko), "slot": "x",
             "tv": tv, "note": "", "n": False, "state": "pre", "score": score, "tags": [],
             "fav": "h", "hw": 0.6, "sp": -3.0,
             "h": {"id": hk, "k": hk, "nm": home, "sc": 0},
@@ -47,8 +47,11 @@ def site(tmp_path_factory):
     college games and an NFL one, at 8:00, 8:25 and 9:30 Eastern."""
     root = tmp_path_factory.mktemp("watchall")
     now = datetime.now(watch_page.ET)
-    today = now.strftime("%Y-%m-%d")
-    tomorrow = (now + timedelta(days=1)).replace(minute=0, second=0, microsecond=0)
+    # The guide's day, which runs to 4 AM Eastern (watch_page.NIGHT_ENDS) - at
+    # 12:53 AM it is still last night, and so is "today" here.
+    today = watch_page.game_day(now)
+    tomorrow = (datetime.strptime(today, "%Y-%m-%d").replace(tzinfo=watch_page.ET)
+                + timedelta(days=1))
 
     def at(h, m=0):
         return tomorrow.replace(hour=h, minute=m).astimezone(timezone.utc)
@@ -202,7 +205,7 @@ def test_the_tonight_card_stays_hidden_on_a_one_sport_day(tmp_path):
     now = datetime.now(watch_page.ET)
     (tmp_path / "cfb" / "watch" / "games.json").write_text(json.dumps({"games": [
         _game("1", now.astimezone(timezone.utc), 30, "ESPN", "A", "B", "1", "2",
-              now.strftime("%Y-%m-%d"))]}))
+              watch_page.game_day(now))]}))
     (tmp_path / "index.html").write_text("<!doctype html><html><body>" + watch_all.teaser()
                                          + "</body></html>")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(tmp_path))

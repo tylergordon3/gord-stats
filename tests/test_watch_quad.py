@@ -33,7 +33,7 @@ CDP = 9483
 
 def _game(gid, kick, score, tv, slot, home=None, away=None):
     return {"id": gid, "ko": kick.strftime("%Y-%m-%dT%H:%M:%SZ"), "tk": True,
-            "day": kick.astimezone(watch_page.ET).strftime("%Y-%m-%d"), "slot": slot,
+            "day": watch_page.game_day(kick), "slot": slot,
             "tv": tv, "note": "", "n": False, "state": "pre", "score": score, "tags": [],
             "fav": "h", "hw": 0.6, "sp": -3.0,
             "h": {"id": f"h{gid}", "nm": home or f"Home {gid}", "rk": None, "sc": 0},
@@ -43,14 +43,18 @@ def _game(gid, kick, score, tv, slot, home=None, away=None):
 @pytest.fixture(scope="module")
 def page(tmp_path_factory):
     """Today: six games in a window later on, five on now. The kickoffs are
-    placed so both windows are today in Eastern time."""
+    placed so both windows are on the guide's day."""
     now = datetime.now(timezone.utc)
-    # Both windows must fall on today's Eastern date: CI failed at 23:59 ET
-    # ("Later" was tomorrow) and at 01:07 ET ("On now" was yesterday).
-    start = now.astimezone(watch_page.ET).replace(hour=0, minute=0, second=0, microsecond=0)
+    # Both windows must fall on the guide's day, which runs from NIGHT_ENDS
+    # (4 AM Eastern) to NIGHT_ENDS, not midnight to midnight: CI failed at 23:59
+    # ET ("Later" was tomorrow) and, once the guide kept Saturday's late games
+    # past midnight, at 00:53 ET (the games were on the calendar's new day).
+    et = now.astimezone(watch_page.ET)
+    start = (et - timedelta(hours=watch_page.NIGHT_ENDS)).replace(
+        hour=watch_page.NIGHT_ENDS, minute=0, second=0, microsecond=0)
     end = start + timedelta(days=1)
     if now - start < timedelta(minutes=3) or end - now < timedelta(minutes=3):
-        pytest.skip("too close to midnight Eastern for both windows to be today")
+        pytest.skip("too close to the guide's day turning over for both windows to be today")
     on = max(now - timedelta(minutes=70), start + timedelta(minutes=1))
     later = min(now + timedelta(minutes=50), end - timedelta(minutes=1))
     upcoming = [_game("u1", later, 90, "ABC", "later"), _game("u2", later, 85, "ABC", "later"),
