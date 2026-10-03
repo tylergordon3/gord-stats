@@ -94,6 +94,18 @@ def week_chances(data: dict) -> dict:
                                      int(data.get("year") or UPCOMING_YEAR), positions=positions)
 
 
+def _return_dips(data: dict, board_frame: pd.DataFrame) -> dict:
+    """{sleeper id: multiplier} for whoever this week is a game back from an
+    injury (fantasy.league.return_dip; the form-only board, so in full)."""
+    try:
+        from fantasy.league import return_dip
+        return return_dip.week_factors(board_frame, int(data.get("year") or UPCOMING_YEAR),
+                                       int(data["week"]), tags=injury_status(data))
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! return-from-injury dips not applied ({exc})")
+        return {}
+
+
 def gs_week(data: dict, board_frame: pd.DataFrame, chances: dict = None) -> pd.DataFrame:
     """GordStats' number for the week: the projection if he plays (`proj_full`)
     times the chance he does (`p_play`), as `proj_week` - frozen at each
@@ -107,7 +119,8 @@ def gs_week(data: dict, board_frame: pd.DataFrame, chances: dict = None) -> pd.D
     was 1. Such a row is still not `pregame`, and nothing scores it."""
     chances = week_chances(data) if chances is None else chances
     wk = data_mod.week_projections(board_frame, data["games"])
-    wk = pregame.freeze(int(data["week"]), availability.apply(wk, chances))
+    wk = pregame.freeze(int(data["week"]),
+                        availability.apply(wk, chances, dips=_return_dips(data, board_frame)))
     late = wk.index[~wk["pregame"].astype(bool) & (wk["p_play"] < 1)]
     if len(late):
         stats, pts = data.get("stats") or {}, {}
@@ -1346,8 +1359,8 @@ def build() -> tuple:
         '<a href="/fantasy/power/">power rankings</a>.</p></details>'
         + scored + ui.week_switch(weeks, current, views, src=WEEK_URL)
         + "</div>"
-        + MEDIAN_TRACKER_JS + ui.LIVE_JS + my_league.JS
-        + my_league_data.JS + my_week.JS + my_matchups.JS)
+        + MEDIAN_TRACKER_JS + ui.LIVE_JS + my_league.JS_TAG
+        + my_league_data.JS_TAG + my_week.JS_TAG + my_matchups.JS_TAG)
     return html, views
 
 

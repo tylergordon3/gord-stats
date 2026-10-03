@@ -969,6 +969,18 @@ def rankings(year: int = UPCOMING_YEAR, sims: int = DEFAULT_SIMS,
                 depth=depth_charts()))
         except Exception as exc:                            # noqa: BLE001
             print(f"  ! next-man-up boosts not applied ({exc})")
+    # And when he comes back, his first games are part-time ones
+    # (fantasy.league.return_dip, measured 2019-25): his rate gives up those
+    # games' dips, spread over the weeks he can play, as the boosts are.
+    if held is not None:
+        try:
+            from fantasy.league import return_dip
+            from fantasy.site.season_board import SEASON_WEEKS
+            board = return_dip.apply(board, return_dip.for_board(
+                board, held, year, from_week, weeks_left=max(SEASON_WEEKS - from_week, 1),
+                tags=tags, sleeper_through=scored))
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! return-from-injury dips not applied ({exc})")
     summary = simulate(board, roster_frame, weeks=weeks, sims=sims, fixed_schedule=fixed,
                        actual_points=points, injuries=tags, held=held, held_from=held_from,
                        playoff_points=playoff, playoff_teams=rules["playoff_teams"],

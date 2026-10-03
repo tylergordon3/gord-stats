@@ -476,13 +476,20 @@ def week_chances(tags: dict, week: int, year: int = UPCOMING_YEAR, positions: di
     return out
 
 
-def apply(wk: pd.DataFrame, chances: dict) -> pd.DataFrame:
+def apply(wk: pd.DataFrame, chances: dict, dips: dict = None) -> pd.DataFrame:
     """`wk` (fantasy.league.matchups.week_projections, computed without its
     injury factor) with `proj_full` - the projection if he plays - `p_play`,
-    and proj_week = proj_full x p_play."""
+    and proj_week = proj_full x p_play.
+
+    `dips` is {sleeper id: multiplier} for players whose game this week is
+    one of their first back from an injury (fantasy.league.return_dip
+    .week_factors): if he plays, he plays part of the game, so it comes off
+    proj_full. Kept as `dip` (1.0 for everyone else)."""
     wk = wk.copy()
     p = pd.Series({str(k): float(v["p"]) for k, v in chances.items()}, dtype=float)
-    wk["proj_full"] = wk["proj_week"]
+    dip = pd.Series({str(k): float(v) for k, v in (dips or {}).items()}, dtype=float)
+    wk["dip"] = dip.reindex(wk.index.astype(str)).fillna(1.0).to_numpy()
+    wk["proj_full"] = wk["proj_week"] * wk["dip"]
     wk["p_play"] = p.reindex(wk.index.astype(str)).fillna(1.0).to_numpy()
     wk["proj_week"] = wk["proj_full"] * wk["p_play"]
     return wk

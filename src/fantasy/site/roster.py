@@ -103,8 +103,15 @@ class Week:
                           (self.data.get("projections") or {}).items()})
         self.chances = availability.week_chances(tags, self.week, UPCOMING_YEAR,
                                                  positions=positions)
+        # A game back from an injury runs below his rate (fantasy.league.return_dip).
+        dips = {}
+        try:
+            from fantasy.league import return_dip
+            dips = return_dip.week_factors(self.board_frame, UPCOMING_YEAR, self.week, tags=tags)
+        except Exception as exc:                            # noqa: BLE001
+            print(f"  ! return-from-injury dips not applied ({exc})")
         self.wk = availability.apply(data_mod.week_projections(self.board_frame, self.games),
-                                     self.chances)
+                                     self.chances, dips=dips)
         # ESPN's expected return for anyone it holds out.
         self.backs = availability.return_labels(
             [pid for pid, c in self.chances.items() if c["status"] != "Questionable"],
@@ -649,8 +656,8 @@ def body() -> str:
         + f"<script type='application/json' id='rd-cfg'>{cfg}</script>"
         + page.switch_js(STORAGE_KEY) + page.CARD_JS
         + "</div>"
-        + my_league.JS + my_league_data.JS + my_week.JS
-        + my_team.PLANNER_JS + my_team.VIEW_JS)
+        + my_league.JS_TAG + my_league_data.JS_TAG + my_week.JS_TAG
+        + my_team.PLANNER_JS_TAG + my_team.VIEW_JS_TAG)
 
 
 def generate():

@@ -286,6 +286,16 @@ def build(year: int = UPCOMING_YEAR) -> dict:
         board = opportunity.apply(board, next_up)
     except Exception as exc:                                # noqa: BLE001
         print(f"  ! next-man-up boosts not applied ({exc})")
+    # Back from injury: a player's first games back run below his rate - about
+    # 8% after one missed game, 17% then 12% after more (fantasy.league.
+    # return_dip, measured on 2019-25) - spread like next man up, since the
+    # board holds one rate; the trade analyzer and readers' power read it here.
+    try:
+        from fantasy.league import return_dip
+        board = return_dip.apply(board, return_dip.for_board(
+            board, held, year, weeks, weeks_left=max(SEASON_WEEKS - weeks, 1), tags=injuries))
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! return-from-injury dips not applied ({exc})")
 
     # A position's median catch rate, for the players Sleeper is not projecting
     # this week - deep bench, and the ones a bye or an injury has taken off the
