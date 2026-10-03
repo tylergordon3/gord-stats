@@ -557,3 +557,18 @@ def test_on_a_desktop_it_is_centered_and_on_a_phone_a_sheet_from_the_bottom(runs
     assert r["left"] == 0 and r["width"] == p["vw"]
     assert abs(r["bottom"] - p["vh"]) <= 1, "the sheet does not sit on the bottom edge"
     assert abs(r["height"] - p["vh"] * 0.88) <= 1
+
+
+def test_a_heading_with_a_chip_keeps_its_title_centered_and_clear_of_the_rule():
+    """The owner's screenshot (2026-10-02): centered as a group with the chip,
+    a heading's title sat left of every heading without one, and the pill -
+    taller than the letters - sat on the theme's dotted rule. Measured after
+    the fix: titles 0px off center on a desktop, 4-15px above the rule."""
+    css = CSS.read_text()
+    pad = re.search(r":is\(h1, h2, h3\):has\(> \.gs-how\) \{\s*padding-bottom: (\d+)px;", css)
+    assert pad and int(pad.group(1)) >= 16, "the pill reaches the dotted rule"
+    grid = css[css.index("@media (min-width: 641px) {\n  :is(h1, h2, h3):has(> .gs-how)"):]
+    grid = grid[:grid.index("\n}\n")]
+    assert "grid-template-columns: 1fr auto 1fr" in grid, "equal outer columns center the title"
+    assert ':not(.home-card-head h2)' in grid, "Home's card heads are left-aligned rows"
+    assert 'content: ""' in grid and "justify-self: start" in grid

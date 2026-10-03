@@ -5556,6 +5556,36 @@ a.acct-out:hover { text-decoration: underline; }
 }
 
 /* A line of its own, under a section: "How these are made". */
+/* A heading with a chip. The title stays centered on the page - centered as a
+   group with the chip, it sat left of every heading without one - and the
+   pill, taller than the heading's letters, keeps clear of the theme's dotted
+   rule, which is drawn at the bottom of the text line (bg_hr.png's dots are
+   10px up a 21px image; h2 has 10px of bottom padding). Three columns, the
+   outer two equal, center the title exactly with the chip just after it; on
+   a phone the title and chip stay inline, where a fixed side column would
+   squeeze a long title. Home's card heads are left-aligned rows: left alone. */
+:is(h1, h2, h3):has(> .gs-how) {
+  padding-bottom: 16px;
+}
+
+@media (min-width: 641px) {
+  :is(h1, h2, h3):has(> .gs-how):not(.home-card-head h2) {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    column-gap: 10px;
+  }
+
+  :is(h1, h2, h3):has(> .gs-how):not(.home-card-head h2)::before {
+    content: "";
+  }
+
+  :is(h1, h2, h3):has(> .gs-how):not(.home-card-head h2) > .gs-how {
+    justify-self: start;
+    margin: -7px 0;
+  }
+}
+
 .gs-how-note {
   margin: 4px 0 12px;
 }
