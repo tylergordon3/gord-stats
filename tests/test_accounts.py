@@ -207,14 +207,16 @@ def test_each_league_stores_the_team_in_it():
     assert "team_name" in LEAGUES
     leagues_table = SCHEMA[SCHEMA.index("CREATE TABLE IF NOT EXISTS leagues"):]
     assert "team_name" in leagues_table
-    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    picker = ((ROOT / "src" / "gordstats" / "my_league.py").read_text()
+        + (ROOT / "docs" / "assets" / "js" / "gs-league-bar.js").read_text())
     assert "leagueLabel" in picker and "team_name" in picker
 
 
 def test_the_league_lookup_does_not_swallow_its_own_bugs():
     """An empty catch around the account lookup hid a TypeError - a function
     shadowed by a parameter - and the picker just silently never appeared."""
-    picker = (ROOT / "src" / "gordstats" / "my_league.py").read_text()
+    picker = ((ROOT / "src" / "gordstats" / "my_league.py").read_text()
+        + (ROOT / "docs" / "assets" / "js" / "gs-league-bar.js").read_text())
     lookup = picker[picker.index("fetch('/api/leagues',{credentials:'same-origin'})"):]
     assert ".catch(function(){});" not in lookup, \
         "the account lookup swallows its own errors again"
@@ -243,7 +245,8 @@ def test_the_history_walk_cannot_loop_or_run_away():
 def test_seasons_group_under_their_league_everywhere_they_are_shown():
     """A league with four years of history is four rows. Listed raw that reads
     as four leagues, in a picker it is four near-identical entries."""
-    for path in ("src/gordstats/my_league.py", "src/gordstats/league_sync.py"):
+    # The league bar's script is its own file (gordstats.js_assets).
+    for path in ("docs/assets/js/gs-league-bar.js", "src/gordstats/league_sync.py"):
         src = (ROOT / path).read_text()
         assert "lineage_id" in src, f"{path} does not group seasons"
 

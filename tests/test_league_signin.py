@@ -106,8 +106,11 @@ def test_the_four_sections_share_one_empty_state():
     # History and drafts are Sleeper's for any league, this site's included:
     # with none picked they show this one rather than an empty state.
     from fantasy.config import UPCOMING_LEAGUE_ID
+    # This site's league reaches the script through the page (GSCFG).
     for mod in (my_history, my_draft):
-        assert f"if(!have||!have.id) have={{id:'{UPCOMING_LEAGUE_ID}'" in mod.JS, mod.__name__
+        assert "if(!have||!have.id) have={id:String((window.GSCFG||{}).siteLeague" in mod.JS, \
+            mod.__name__
+        assert f'"siteLeague":"{UPCOMING_LEAGUE_ID}"' in mod.JS_TAG, mod.__name__
 
 
 def test_the_empty_state_asks_a_signed_out_reader_to_sign_in():
@@ -132,7 +135,7 @@ def test_a_section_without_the_control_still_says_something():
     from gordstats import my_history
 
     # It no longer needs one: with no league picked it reads this site's.
-    assert "have={id:'" in my_history.JS
+    assert "have={id:String((window.GSCFG||{}).siteLeague" in my_history.JS
 
 
 def test_the_picker_survives_showing_this_sites_league():

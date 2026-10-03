@@ -18,6 +18,7 @@ from cbb.render import render_previews as rp
 from cbb.render import render_watch as watch
 from gordstats import paths as gs_paths
 from gordstats import preview_page
+from gordstats.js_assets import expand
 
 ET = preview_page.ET
 NOW = pd.Timestamp("2027-01-15 12:00", tz=ET)
@@ -418,7 +419,7 @@ def guide(tmp_path_factory):
     (root / "index.html").write_text(
         "<!doctype html><html><head><meta charset='utf-8'></head><body>"
         "<p class='page-updated' data-updated='2026-09-01T08:00-04:00'>Updated</p>"
-        + watch.body(cfg) + "</body></html>", encoding="utf-8")
+        + expand(watch.body(cfg)) + "</body></html>", encoding="utf-8")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
     handler.log_message = lambda *a: None
     server = socketserver.TCPServer(("127.0.0.1", 0), handler)

@@ -17,7 +17,7 @@ from gordstats.frontmatter import add_front_matter
 def body() -> str:
     return (my_league.bar()
             + my_draft.section()
-            + my_league_data.JS + my_league.JS + my_draft.JS)
+            + my_league_data.JS_TAG + my_league.JS_TAG + my_draft.JS_TAG)
 
 
 def generate():

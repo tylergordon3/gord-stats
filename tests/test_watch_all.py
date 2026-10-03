@@ -22,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from gordstats import watch_all, watch_page
+from gordstats.js_assets import expand
 from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
@@ -68,7 +69,7 @@ def site(tmp_path_factory):
         (root / sport / "watch" / "games.json").write_text(json.dumps(data))
     (root / "watch").mkdir()
     (root / "watch" / "index.html").write_text(
-        "<!doctype html><html><body>" + watch_all.body() + "</body></html>")
+        "<!doctype html><html><body>" + expand(watch_all.body()) + "</body></html>")
     (root / "index.html").write_text(
         "<!doctype html><html><body>" + watch_all.teaser() + "</body></html>")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))

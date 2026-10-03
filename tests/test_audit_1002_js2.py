@@ -430,6 +430,7 @@ def test_the_cbb_guide_ends_its_night_at_its_own_hour(browser):
                "  set:function(f){ real=f; }}); })();</script>")
     feed = {"generated": "2026-12-01T12:00:00Z", "leagues": {"men": {}, "women": {}}}
     routes = [["workers\\.dev", 200, feed], ["star-teams", 200, {}]]
-    body = "<div class='page-updated'></div>" + capture + watch.body()
+    from gordstats.js_assets import expand
+    body = "<div class='page-updated'></div>" + capture + expand(watch.body())
     browser.open(body, routes, {}, wait="!!window.__cfg")
     assert browser.ev("window.__cfg.nightEnds") == watch.AFTER_MIDNIGHT == 3

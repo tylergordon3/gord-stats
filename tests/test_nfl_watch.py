@@ -22,6 +22,7 @@ import pandas as pd
 import pytest
 
 from gordstats import watch_page
+from gordstats.js_assets import expand
 from nfl.site import watch
 from browser_util import launch, reap
 
@@ -110,7 +111,8 @@ def site(tmp_path_factory):
             "rosters": {"1": {"n": "Tyler", "opp": "2", "p": [["Dak Prescott", "QB", "DAL", True]]},
                         "2": {"n": "George", "opp": "1", "p": [["Caleb Williams", "QB", "CHI", True]]}}}
     root = tmp_path_factory.mktemp("nflwatch")
-    (root / "index.html").write_text("<!doctype html><html><body>" + watch.body(data) + "</body></html>")
+    (root / "index.html").write_text("<!doctype html><html><body>" + expand(watch.body(data))
+                                     + "</body></html>")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
     handler.log_message = lambda *a: None
     server = socketserver.TCPServer(("127.0.0.1", 0), handler)

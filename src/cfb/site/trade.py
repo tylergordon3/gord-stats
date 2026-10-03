@@ -473,7 +473,7 @@ def body() -> str:
     return (INTRO + trade_page.section('/cfb/trade/')
             + "<details class='section' id='method'><summary>How it works</summary>"
             + METHOD + "</details>" + data_script(got)
-            + trade_page.JS + ADAPTER_JS + trade_page.start())
+            + trade_page.JS_TAG + ADAPTER_JS + trade_page.start())
 
 
 def data_script(got: dict) -> str:

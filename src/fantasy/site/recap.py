@@ -174,8 +174,8 @@ def _with_reader(built: str, week: int = 0, css: bool = False) -> str:
             + "<div id='rc-mine' hidden>" + my_recap.section(week, css) + "</div>"
             + "<div id='rc-built'>" + built + "</div>"
             + my_league.takeover("rc-mine", "rc-built")
-            + my_league_data.JS + my_league.JS + my_team.PLANNER_JS
-            + my_recap.CORE_JS + my_recap.JS)
+            + my_league_data.JS_TAG + my_league.JS_TAG + my_team.PLANNER_JS_TAG
+            + my_recap.CORE_JS_TAG + my_recap.JS_TAG)
 
 
 def _write(path, week: recap.Week, all_weeks: list, league_name: str, pinned: int = 0) -> None:

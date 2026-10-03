@@ -33,6 +33,7 @@ import pytest
 
 from fantasy.league import power
 from gordstats import my_power
+from gordstats.js_assets import expand
 from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
@@ -317,7 +318,7 @@ def page_html(monkeypatch_module):
     monkeypatch_module.setattr(model, "rankings", unavailable)
     monkeypatch_module.setattr(charts, "clear", lambda *a, **k: None)
     monkeypatch_module.setattr(page.charts, "clear", lambda *a, **k: None)
-    return page.body()
+    return expand(page.body())
 
 
 def test_the_page_carries_the_container_and_every_script(page_html):

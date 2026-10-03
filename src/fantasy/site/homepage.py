@@ -180,8 +180,8 @@ def generate(output=OUTPUT):
             + mine_section() + built + my_league.takeover("lh-mine", "lh-built")
             # my_history's script carries the Sleeper reading my_home draws
             # from (window.GSHist); its own section is not on this page.
-            + my_league_data.JS + my_league.JS + my_history.JS + my_home.JS
-            + week_strip.JS)
+            + my_league_data.JS_TAG + my_league.JS_TAG + my_history.JS_TAG + my_home.JS_TAG
+            + week_strip.JS_TAG)
 
     page = add_front_matter(body, "Fantasy Football")
     output.parent.mkdir(parents=True, exist_ok=True)

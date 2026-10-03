@@ -26,7 +26,7 @@ def test_it_is_on_league_home_first_and_reads_the_site_league_by_default():
     src = open(homepage.__file__).read()
     assert "+ week_strip.section()\n            + mine_section()" in src
     assert "+ week_strip.JS" in src
-    assert f"'{UPCOMING_LEAGUE_ID}'" in week_strip.JS
+    assert f'"siteLeague":"{UPCOMING_LEAGUE_ID}"' in week_strip.JS_TAG
 
 
 @needs_chrome

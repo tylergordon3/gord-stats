@@ -26,6 +26,7 @@ import pandas as pd
 import pytest
 
 from gordstats import favorites, rankmoves
+from gordstats.js_assets import expand
 from nfl import fpi
 from nfl.site import power
 from nfl.site import teams as teams_page
@@ -394,7 +395,7 @@ def guide(tmp_path_factory):
                       game("3", "Texans", "Colts", "34", "11", "HOU", "IND", 60.0)],
             "rosters": {}}
     root = tmp_path_factory.mktemp("nflstars")
-    (root / "index.html").write_text("<!doctype html><html><body>" + watch.body(data)
+    (root / "index.html").write_text("<!doctype html><html><body>" + expand(watch.body(data))
                                      + "</body></html>")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
     handler.log_message = lambda *a: None

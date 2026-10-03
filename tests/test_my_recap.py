@@ -39,6 +39,7 @@ import pytest
 
 from conftest import ROOT
 from gordstats import my_recap, recap
+from gordstats.js_assets import expand
 from gordstats.recap import Player, Side, Team, Week
 from browser_util import launch, reap
 
@@ -69,7 +70,7 @@ def _page(pinned=0):
             "<meta name='viewport' content='width=device-width,initial-scale=1'>"
             "<title>NFL Week 3 Recap</title></head><body>"
             "<h1>NFL Week 3 Recap</h1><p class='page-sub'>Site League</p>"
-            + RAW.sub("", body) + "</body></html>")
+            + RAW.sub("", expand(body)) + "</body></html>")
 
 
 def test_the_page_carries_both_recaps_and_picks_before_paint():

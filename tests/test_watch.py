@@ -22,6 +22,7 @@ import pandas as pd
 import pytest
 
 from cfb.site import watch
+from gordstats.js_assets import expand
 from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
@@ -114,7 +115,8 @@ def site(tmp_path_factory):
             "rosters": {"t.1": {"n": "CCAM", "p": [["Kansas Back", "RB", "kansas", True],
                                                    ["Utah End", "TE", "utah", False]]}}}
     root = tmp_path_factory.mktemp("watch")
-    (root / "index.html").write_text("<!doctype html><html><body>" + watch.body(data) + "</body></html>")
+    (root / "index.html").write_text("<!doctype html><html><body>" + expand(watch.body(data))
+                                     + "</body></html>")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
     handler.log_message = lambda *a: None
     server = socketserver.TCPServer(("127.0.0.1", 0), handler)

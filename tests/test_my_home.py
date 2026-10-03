@@ -30,14 +30,15 @@ def _scripts() -> str:
 def test_the_page_carries_the_reading_and_the_drawing_in_order():
     from fantasy.site import homepage
     src = open(homepage.__file__).read()
-    assert "my_history.JS + my_home.JS" in src, "my_home runs before GSHist exists"
+    assert "my_history.JS_TAG + my_home.JS_TAG" in src, "my_home runs before GSHist exists"
     section = homepage.mine_section()
     assert 'id="mh-metrics"' in section and 'id="mh-teams"' in section
     assert "/fantasy/history/" in section and "/fantasy/draft-review/" in section
     # The built profiles' markup, so team_profiles.CSS dresses both.
     for cls in ("tp-card", "tp-tiles", "tp-rivals", "tp-vs", "tp-seasons", "strip-wide"):
         assert cls in my_home.JS, cls
-    assert f"var RATIO={EXPW_RATIO};" in my_home.JS
+    assert "var RATIO=(window.GSCFG||{}).expwRatio;" in my_home.JS
+    assert f'"expwRatio":{EXPW_RATIO}' in my_home.JS and f'"expwRatio":{EXPW_RATIO}' in my_home.JS_TAG
 
 
 def _built_formulas(records, games):

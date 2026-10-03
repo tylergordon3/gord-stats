@@ -23,6 +23,7 @@ from datetime import datetime, time as dtime, timedelta, timezone
 import pytest
 
 from cbb.render import render_watch as watch
+from gordstats.js_assets import expand
 from gordstats.watch_page import ET
 from browser_util import launch, reap
 
@@ -50,7 +51,7 @@ def test_the_words_carry_the_numbers_the_page_uses():
 
 
 def test_the_page_carries_no_games_only_the_adapter():
-    html = watch.body()
+    html = expand(watch.body())
     assert "id='wg-data'" not in html
     assert "__CONFIG__" not in html and watch.FEED in html
     assert html.index("window.GSWatch=") < html.index("GSWatch(D, cfg)")
@@ -220,7 +221,7 @@ def site(tmp_path_factory):
             "<!doctype html><html><head><meta charset='utf-8'>"
             "<style>.gs-share-row{display:flex}</style></head><body>"
             "<p class='page-updated' data-updated='2026-09-01T08:00-04:00'>Updated</p>"
-            + watch.body(cfg) + "</body></html>", encoding="utf-8")
+            + expand(watch.body(cfg)) + "</body></html>", encoding="utf-8")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
     handler.log_message = lambda *a: None
     server = socketserver.TCPServer(("127.0.0.1", 0), handler)

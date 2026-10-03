@@ -349,7 +349,7 @@ def body(league: League = None) -> str:
         "hands a defence.</p>"
         + defence
         + page.SCHEDULE_JS + _mark_built(lg.mine())
-        + my_league_data.JS + my_league.JS + READER_JS)
+        + my_league_data.JS_TAG + my_league.JS_TAG + READER_JS)
 
 
 def generate():

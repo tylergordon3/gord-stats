@@ -22,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from gordstats import watch_page
+from gordstats.js_assets import expand
 from browser_util import launch, reap
 
 CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
@@ -80,7 +81,7 @@ def page(tmp_path_factory):
     (root / "index.html").write_text(
         "<!doctype html><html><body>"
         "<script>localStorage.setItem('gsWatchView','quad');</script>"
-        + watch_page.body(data, adapter, "how", "/x/", "x") + "</body></html>")
+        + expand(watch_page.body(data, adapter, "how", "/x/", "x")) + "</body></html>")
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
     handler.log_message = lambda *a: None
     server = socketserver.TCPServer(("127.0.0.1", 0), handler)
