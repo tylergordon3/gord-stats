@@ -543,9 +543,12 @@
    },
    "added": "2026-10-03T18:53:14Z",
    "watch": 96.5,
-   "st": "pre",
-   "det": "10/3 - 3:30 PM EDT",
-   "score": null,
+   "st": "in",
+   "det": "4:17 - 1st",
+   "score": {
+    "h": 3,
+    "a": 10
+   },
    "res": null,
    "gs": {
     "s": "a",
@@ -579,9 +582,12 @@
    },
    "added": "2026-10-03T18:53:14Z",
    "watch": 92.5,
-   "st": "pre",
-   "det": "10/3 - 3:50 PM EDT",
-   "score": null,
+   "st": "in",
+   "det": "6:20 - 1st",
+   "score": {
+    "h": 0,
+    "a": 3
+   },
    "res": null,
    "gs": {
     "s": "a",
@@ -614,9 +620,12 @@
    },
    "added": "2026-10-03T18:53:14Z",
    "watch": 87.0,
-   "st": "pre",
-   "det": "10/3 - 3:30 PM EDT",
-   "score": null,
+   "st": "in",
+   "det": "1:02 - 1st",
+   "score": {
+    "h": 0,
+    "a": 0
+   },
    "res": null,
    "gs": {
     "s": "h",
@@ -824,9 +833,12 @@
    },
    "added": "2026-10-03T18:53:14Z",
    "watch": 72.0,
-   "st": "pre",
-   "det": "10/3 - 3:30 PM EDT",
-   "score": null,
+   "st": "in",
+   "det": "1:55 - 1st",
+   "score": {
+    "h": 0,
+    "a": 7
+   },
    "res": null,
    "gs": {
     "s": "a",
@@ -870,5 +882,5 @@
    }
   }
  ],
- "v": 1
+ "v": 5
 }
