@@ -166,3 +166,8 @@ data/cfb/cache/
 # A data file being written (cfb.partitions writes <name>.partial, then
 # renames it into place).
 *.partial
+# Pick'em's published slates and season file (gordstats.pickem); the record
+# is data/pickem/, and data/pickem_live/ is its untracked copy on the Pi.
+docs/pickem/**/*.json
+docs/pickem/*.json
+data/pickem_live/

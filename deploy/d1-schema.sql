@@ -169,3 +169,44 @@ CREATE TABLE IF NOT EXISTS site_writes (
   day      TEXT NOT NULL,                        -- UTC, as D1's quota day
   written  INTEGER NOT NULL DEFAULT 0
 );
+
+-- --------------------------------------------------------------------------
+-- Reader pick'em (functions/api/pickem.js; deploy/d1-migrate-007-pickem.sql
+-- for a database created before 2026-10-03).
+--
+-- Each week readers pick the winners of about ten college games and every NFL
+-- game, ranked by confidence (1..N, each value once). The slate, its lock
+-- times and the finals are not here: the pipeline publishes them as static
+-- files (gordstats.pickem) and the Function grades at read time.
+--
+-- The name a reader plays under. The leaderboard shows only this - never the
+-- email. `name_key` is the name lowercased with everything but letters and
+-- digits taken out: names are unique ignoring case and punctuation, so
+-- "Big Ten" and "bigten" cannot both play.
+CREATE TABLE IF NOT EXISTS pickem_players (
+  user_id    TEXT NOT NULL PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  name       TEXT NOT NULL,
+  name_key   TEXT NOT NULL UNIQUE,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+) WITHOUT ROWID;
+
+-- One row per reader per week: the week's picks as JSON,
+-- {"<sport>:<ESPN id>": ["h" | "a", confidence, epoch seconds it was set]}.
+-- One row rather than one per pick because a save rewrites the week (a
+-- confidence change is usually a swap): one D1 write instead of up to ~26
+-- plus index entries, and atomic, so two tabs saving at once cannot leave two
+-- picks on one value. `rev` is the optimistic lock each save writes against.
+-- WITHOUT ROWID: the key is the table, so a save is one write. The key leads
+-- with the season (the leaderboard reads a season) then the reader (their own
+-- week, or their season, is a range of it); an account's rows go with it
+-- through the cascade.
+CREATE TABLE IF NOT EXISTS pickem_entries (
+  season     INTEGER NOT NULL,
+  user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  week       INTEGER NOT NULL,
+  picks      TEXT NOT NULL,
+  rev        INTEGER NOT NULL DEFAULT 1,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (season, user_id, week)
+) WITHOUT ROWID;

@@ -267,6 +267,13 @@ def main(argv=None) -> int:
             tweets_page.generate()
         except Exception as exc:                        # noqa: BLE001
             print(f"  ! tweets of the week: {exc}", flush=True)
+        # Pick'em's slates and page: after the sections, whose schedules,
+        # watch-guide games and prediction archives it reads.
+        try:
+            from gordstats import pickem
+            pickem.generate()
+        except Exception as exc:                        # noqa: BLE001
+            print(f"  ! pick'em: {exc}", flush=True)
         # Last: the profile page reads the stars every other page has just
         # written, so it cannot be built before them.
         try:

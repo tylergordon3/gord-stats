@@ -223,6 +223,15 @@ cfb:
     url: /cfb/schedule/
     group: reference
 
+  # The weekly pick'em (college and NFL together, so it lives at /pickem/).
+  # Off the phone row, which holds five; Home's Pick'em card is the way in there.
+  - title: Pick'em
+    short: Pick'em
+    icon: "✅"
+    url: /pickem/
+    group: reference
+    phone: false
+
 
 nfl:
   - title: Predictions
@@ -259,6 +268,13 @@ nfl:
     short: Stats
     icon: "📊"
     url: /nfl/stats/
+
+  # Off the phone row, which holds five; Home's Pick'em card is the way in there.
+  - title: Pick'em
+    short: Pick'em
+    icon: "✅"
+    url: /pickem/
+    phone: false
 
 
 # The Yahoo college fantasy league, shown under Fantasy > CFB.

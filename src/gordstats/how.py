@@ -459,6 +459,49 @@ TOPICS: list[Topic] = [
         pages=(("CFB team stats", "/cfb/stats/"), ("NFL team stats", "/nfl/stats/")),
         related=("game-previews", "cfb-rankings", "nfl-rankings"),
     ),
+    # ----------------------------------------------------------------- pick'em
+    # gordstats.pickem: the week Tue-Mon ET, week 1 = the NFL opener's; every
+    # NFL game + FEATURED (10) college games by the watch score; slate only
+    # appended to; lock = kickoff, never moved once passed; 'v' (no points)
+    # for a tie, cancelled/postponed, moved out of the week, unplayed 3 days
+    # on; GordStats = the favorite by the last archived pre-kickoff chance
+    # (cfb/nfl.results.on_record), values re-ranked among open games each run.
+    # functions/api/pickem.js: locks on the server's clock, each value once,
+    # ties ranked by most right picks; the CFB live tick posts college finals.
+    Topic(
+        id="pickem", group="Game day", name="pick'em",
+        title="How the weekly picks contest works",
+        summary="How confidence points score, which games are in a week, when picks lock and "
+                "how the GordStats entry picks.",
+        lede="Pick'em is a free weekly contest: pick the winner of every NFL game and the "
+             "week's ten biggest college games, then rank your picks by how sure you are.",
+        how=_p(
+            "<p><strong>Confidence points:</strong> with 25 games, each pick gets a different "
+            "value from 1 to 25. A right pick scores its value, a wrong one nothing, so put "
+            "your biggest numbers on your surest picks.</p>",
+            "<p><strong>The games:</strong> every NFL game plus the ten college games the "
+            "<a href='/how/watch-guide/'>watch guide</a> rates highest. Once a week opens, a "
+            "game can be added but never dropped.</p>",
+            "<p><strong>Locks:</strong> each game locks at its own kickoff, by our server's "
+            "clock. Its pick and value are then fixed; your other values stay free for the "
+            "games still to come.</p>",
+            "<p><strong>GordStats plays too:</strong> it takes our model's favorite in every "
+            "game, giving its biggest values to the games it's surest of, from its last "
+            "prediction before kickoff.</p>",
+        ),
+        limits=_p(
+            "<p>A tie, or a canceled or postponed game, scores nothing for anyone, and so "
+            "does a game you leave unpicked. Equal points on the leaderboard go to whoever "
+            "has more right picks.</p>",
+        ),
+        updates=f"Picks save as you make them. College finals post within minutes on game "
+                f"days; NFL finals {DAILY}.",
+        curious="A week runs Tuesday through Monday, so a midweek NFL game never falls between "
+                "two weeks, and week 1 is the NFL's opening week. The leaderboard shows the name "
+                "you choose, never your email.",
+        pages=(("Pick'em", "/pickem/"),),
+        related=("watch-guide", "nfl-predictions", "cfb-predictions"),
+    ),
     # ----------------------------------------------------------- fantasy power
     # fantasy.league.power: DEFAULT_SIMS 10,000; true rate mu + N(0, mu_se);
     # gamma weekly scores; two-state injury chain, MEAN_ABSENCE_WEEKS 3; ESPN

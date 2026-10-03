@@ -59,6 +59,7 @@ PLACED = {
     "gordstats/my_recap.py": {"recaps"},
     "cbb/predictions.py": {"cbb-rankings"},
     "cbb/render/render_conferences.py": {"cbb-rankings"},
+    "gordstats/pickem_page.py": {"pickem"},
 }
 # A generator whose chips the shared module drawing its page loads the script for.
 SCRIPT_FROM = {
@@ -221,7 +222,9 @@ def test_the_footer_links_every_explainer():
 
 def test_the_changelog_says_so():
     from gordstats import changelog
-    assert any(link == "/how/" for *_, link in changelog.ENTRIES[:3])
+    # Announced; it was in Home's top three at launch, and newer features
+    # have since pushed it down the list.
+    assert any(link == "/how/" for *_, link in changelog.ENTRIES)
 
 
 def test_the_playoff_heading_carries_the_chip_and_the_page_its_script():

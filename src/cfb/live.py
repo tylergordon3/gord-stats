@@ -101,6 +101,12 @@ def main(force: bool = False) -> int:
     from cfb.site import countdown, matchups, schedule
     schedule.generate()
     countdown.generate()
+    # Pick'em grades its college games from the schedule just patched.
+    try:
+        from gordstats import pickem
+        pickem.generate()
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! pick'em live refresh failed ({exc})")
     # The league's live points ride the same window: refetch the current
     # week's Yahoo rosters (eleven calls) and redraw the matchups page.
     try:

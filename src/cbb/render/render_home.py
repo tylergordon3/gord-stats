@@ -515,10 +515,11 @@ def render_home():
     # What's new sits under the reader's own teams, above the graphics: high
     # enough to be seen (it closed the page until 2026-10-02), after what is on.
     # Tweets of the week under it: readers' picks, drawn from /api/tweets.
-    from gordstats import changelog, tweets_page
+    # Then Pick'em's small static card, in the NFL season.
+    from gordstats import changelog, pickem_page, tweets_page
     graphics = _cfb_graphics(today) + _nfl_graphics(today)
     html = (_my_teams(today) + changelog.home_card() + tweets_page.home_card()
-            + graphics + html)
+            + pickem_page.home_card(today) + graphics + html)
     # The graphics' "How this works" chips open in a dialog (gordstats.how):
     # Home writes its own front matter, so the script goes in as Liquid.
     if graphics:

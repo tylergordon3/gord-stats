@@ -36,6 +36,7 @@
 import { configured, json, readSession } from "./_lib/session.js";
 import { refusal, secondsToMidnight, spend, utcDay } from "./_lib/limits.js";
 import { cached } from "./_lib/cache.js";
+import { readBody } from "./_lib/body.js";
 
 export const WEEK_DAYS = 7;
 // Fewer than this many posts this week and earlier weeks' best fill it out.
@@ -209,24 +210,6 @@ function answerFor(err) {
   }
   if (err instanceof SignedOut) return json({ ok: false, error: "Sign in again to do that." }, 401);
   throw err;
-}
-
-/** The JSON body of a small write -> { data } | { error: Response }. */
-export async function readBody(request, max = MAX_BODY) {
-  const said = Number(request.headers.get("content-length") || 0);
-  if (said > max) return { error: json({ ok: false, error: "too large" }, 413) };
-  let text;
-  try {
-    text = await request.text();
-  } catch {
-    return { error: json({ ok: false, error: "expected JSON" }, 400) };
-  }
-  if (text.length > max) return { error: json({ ok: false, error: "too large" }, 413) };
-  try {
-    return { data: JSON.parse(text) };
-  } catch {
-    return { error: json({ ok: false, error: "expected JSON" }, 400) };
-  }
 }
 
 async function guard(request, env) {
@@ -435,7 +418,7 @@ export async function onRequestPost({ request, env }) {
   const session = await guard(request, env);
   if (session instanceof Response) return session;
 
-  const read = await readBody(request);
+  const read = await readBody(request, MAX_BODY);
   if (read.error) return read.error;
   const body = read.data;
   const post = tweetId(body?.url);
@@ -549,7 +532,7 @@ const ACTIONS = { approve: "approved", reject: "rejected", remove: "rejected" };
 export async function review({ request, env }, id) {
   const who = await owner(request, env);
   if (who instanceof Response) return who;
-  const read = await readBody(request);
+  const read = await readBody(request, MAX_BODY);
   if (read.error) return read.error;
   const body = read.data;
   const status = ACTIONS[String(body?.action || "")];
