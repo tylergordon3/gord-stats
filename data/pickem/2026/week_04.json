@@ -1,0 +1,874 @@
+{
+ "season": 2026,
+ "week": 4,
+ "label": "Week 4",
+ "sub": "NFL Week 4 · CFB Week 5",
+ "start": "2026-09-29T00:00:00-04:00",
+ "end": "2026-10-06T00:00:00-04:00",
+ "opened": "2026-10-03T18:53:14Z",
+ "n": 25,
+ "games": [
+  {
+   "id": "nfl:401872965",
+   "sp": "nfl",
+   "ko": "2026-10-04T13:30:00Z",
+   "tk": true,
+   "lock": "2026-10-04T13:30:00Z",
+   "tv": "NFL Net",
+   "note": "",
+   "n": true,
+   "h": {
+    "id": "28",
+    "nm": "Commanders",
+    "ab": "WSH",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/wsh.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "a": {
+    "id": "11",
+    "nm": "Colts",
+    "ab": "IND",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ind.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 9:30 AM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 7,
+    "p": 0.431
+   }
+  },
+  {
+   "id": "nfl:401872966",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "19",
+    "nm": "Giants",
+    "ab": "NYG",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/nyg.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "a": {
+    "id": "22",
+    "nm": "Cardinals",
+    "ab": "ARI",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ari.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 6,
+    "p": 0.559
+   }
+  },
+  {
+   "id": "nfl:401872967",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "FOX",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "34",
+    "nm": "Texans",
+    "ab": "HOU",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/hou.png&w=80&h=80",
+    "rec": "0-3"
+   },
+   "a": {
+    "id": "6",
+    "nm": "Cowboys",
+    "ab": "DAL",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/dal.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 15,
+    "p": 0.643
+   }
+  },
+  {
+   "id": "nfl:401872968",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "FOX",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "27",
+    "nm": "Buccaneers",
+    "ab": "TB",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/tb.png&w=80&h=80",
+    "rec": "0-3"
+   },
+   "a": {
+    "id": "9",
+    "nm": "Packers",
+    "ab": "GB",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/gb.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 2,
+    "p": 0.543
+   }
+  },
+  {
+   "id": "nfl:401872969",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "4",
+    "nm": "Bengals",
+    "ab": "CIN",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/cin.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "a": {
+    "id": "30",
+    "nm": "Jaguars",
+    "ab": "JAX",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/jax.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 11,
+    "p": 0.389
+   }
+  },
+  {
+   "id": "nfl:401872970",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "FOX",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "21",
+    "nm": "Eagles",
+    "ab": "PHI",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/phi.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "a": {
+    "id": "14",
+    "nm": "Rams",
+    "ab": "LAR",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lar.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 3,
+    "p": 0.455
+   }
+  },
+  {
+   "id": "nfl:401872971",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "2",
+    "nm": "Bills",
+    "ab": "BUF",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/buf.png&w=80&h=80",
+    "rec": "3-0"
+   },
+   "a": {
+    "id": "17",
+    "nm": "Patriots",
+    "ab": "NE",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ne.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 13,
+    "p": 0.628
+   }
+  },
+  {
+   "id": "nfl:401872972",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "FOX",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "3",
+    "nm": "Bears",
+    "ab": "CHI",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/chi.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "a": {
+    "id": "20",
+    "nm": "Jets",
+    "ab": "NYJ",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/nyj.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 19,
+    "p": 0.77
+   }
+  },
+  {
+   "id": "nfl:401872973",
+   "sp": "nfl",
+   "ko": "2026-10-04T17:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T17:00:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "33",
+    "nm": "Ravens",
+    "ab": "BAL",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/bal.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "a": {
+    "id": "10",
+    "nm": "Titans",
+    "ab": "TEN",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/ten.png&w=80&h=80",
+    "rec": "0-3"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 1:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 22,
+    "p": 0.798
+   }
+  },
+  {
+   "id": "nfl:401872974",
+   "sp": "nfl",
+   "ko": "2026-10-04T20:05:00Z",
+   "tk": true,
+   "lock": "2026-10-04T20:05:00Z",
+   "tv": "FOX",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "16",
+    "nm": "Vikings",
+    "ab": "MIN",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/min.png&w=80&h=80",
+    "rec": "3-0"
+   },
+   "a": {
+    "id": "15",
+    "nm": "Dolphins",
+    "ab": "MIA",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/mia.png&w=80&h=80",
+    "rec": "0-3"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 4:05 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 20,
+    "p": 0.772
+   }
+  },
+  {
+   "id": "nfl:401872975",
+   "sp": "nfl",
+   "ko": "2026-10-04T20:25:00Z",
+   "tk": true,
+   "lock": "2026-10-04T20:25:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "25",
+    "nm": "49ers",
+    "ab": "SF",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sf.png&w=80&h=80",
+    "rec": "3-0"
+   },
+   "a": {
+    "id": "7",
+    "nm": "Broncos",
+    "ab": "DEN",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/den.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 4:25 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 10,
+    "p": 0.607
+   }
+  },
+  {
+   "id": "nfl:401872976",
+   "sp": "nfl",
+   "ko": "2026-10-04T20:25:00Z",
+   "tk": true,
+   "lock": "2026-10-04T20:25:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "13",
+    "nm": "Raiders",
+    "ab": "LV",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lv.png&w=80&h=80",
+    "rec": "3-0"
+   },
+   "a": {
+    "id": "12",
+    "nm": "Chiefs",
+    "ab": "KC",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/kc.png&w=80&h=80",
+    "rec": "3-0"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 4:25 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 12,
+    "p": 0.378
+   }
+  },
+  {
+   "id": "nfl:401872977",
+   "sp": "nfl",
+   "ko": "2026-10-04T20:25:00Z",
+   "tk": true,
+   "lock": "2026-10-04T20:25:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "26",
+    "nm": "Seahawks",
+    "ab": "SEA",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sea.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "a": {
+    "id": "24",
+    "nm": "Chargers",
+    "ab": "LAC",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/lac.png&w=80&h=80",
+    "rec": "0-3"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 4:25 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 21,
+    "p": 0.792
+   }
+  },
+  {
+   "id": "nfl:401872978",
+   "sp": "nfl",
+   "ko": "2026-10-05T00:20:00Z",
+   "tk": true,
+   "lock": "2026-10-05T00:20:00Z",
+   "tv": "NBC",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "29",
+    "nm": "Panthers",
+    "ab": "CAR",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/car.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "a": {
+    "id": "8",
+    "nm": "Lions",
+    "ab": "DET",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/det.png&w=80&h=80",
+    "rec": "2-1"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/4 - 8:20 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 9,
+    "p": 0.413
+   }
+  },
+  {
+   "id": "nfl:401872979",
+   "sp": "nfl",
+   "ko": "2026-10-06T00:15:00Z",
+   "tk": true,
+   "lock": "2026-10-06T00:15:00Z",
+   "tv": "ESPN",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "18",
+    "nm": "Saints",
+    "ab": "NO",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/no.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "a": {
+    "id": "1",
+    "nm": "Falcons",
+    "ab": "ATL",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/atl.png&w=80&h=80",
+    "rec": "1-2"
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "st": "pre",
+   "det": "10/5 - 8:15 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 8,
+    "p": 0.579
+   }
+  },
+  {
+   "id": "cfb:401858473",
+   "sp": "cfb",
+   "ko": "2026-10-03T19:30:00Z",
+   "tk": true,
+   "lock": "2026-10-03T19:30:00Z",
+   "tv": "CBS",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "2294",
+    "nm": "Iowa",
+    "ab": "IOWA",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/2294.png&w=80&h=80",
+    "rk": 14
+   },
+   "a": {
+    "id": "194",
+    "nm": "Ohio State",
+    "ab": "OSU",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/194.png&w=80&h=80",
+    "rk": 5
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 96.5,
+   "st": "pre",
+   "det": "10/3 - 3:30 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 16,
+    "p": 0.348
+   },
+   "gotw": true
+  },
+  {
+   "id": "cfb:401856708",
+   "sp": "cfb",
+   "ko": "2026-10-03T19:50:00Z",
+   "tk": true,
+   "lock": "2026-10-03T19:50:00Z",
+   "tv": "ABC",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "142",
+    "nm": "Missouri",
+    "ab": "MIZ",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/142.png&w=80&h=80",
+    "rk": 25
+   },
+   "a": {
+    "id": "57",
+    "nm": "Florida",
+    "ab": "FLA",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/57.png&w=80&h=80",
+    "rk": 8
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 92.5,
+   "st": "pre",
+   "det": "10/3 - 3:50 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 5,
+    "p": 0.443
+   }
+  },
+  {
+   "id": "cfb:401856710",
+   "sp": "cfb",
+   "ko": "2026-10-03T19:30:00Z",
+   "tk": true,
+   "lock": "2026-10-03T19:30:00Z",
+   "tv": "ESPN",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "2633",
+    "nm": "Tennessee",
+    "ab": "TENN",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/2633.png&w=80&h=80",
+    "rk": 17
+   },
+   "a": {
+    "id": "2",
+    "nm": "Auburn",
+    "ab": "AUB",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/2.png&w=80&h=80",
+    "rk": null
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 87.0,
+   "st": "pre",
+   "det": "10/3 - 3:30 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 17,
+    "p": 0.657
+   }
+  },
+  {
+   "id": "cfb:401858249",
+   "sp": "cfb",
+   "ko": "2026-10-03T23:30:00Z",
+   "tk": true,
+   "lock": "2026-10-03T23:30:00Z",
+   "tv": "ABC",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "228",
+    "nm": "Clemson",
+    "ab": "CLEM",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/228.png&w=80&h=80",
+    "rk": null
+   },
+   "a": {
+    "id": "2390",
+    "nm": "Miami",
+    "ab": "MIA",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/2390.png&w=80&h=80",
+    "rk": 4
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 87.0,
+   "st": "pre",
+   "det": "10/3 - 7:30 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 24,
+    "p": 0.146
+   }
+  },
+  {
+   "id": "cfb:401856818",
+   "sp": "cfb",
+   "ko": "2026-10-03T23:00:00Z",
+   "tk": true,
+   "lock": "2026-10-03T23:00:00Z",
+   "tv": "ESPN, Disney+",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "2628",
+    "nm": "TCU",
+    "ab": "TCU",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/2628.png&w=80&h=80",
+    "rk": null
+   },
+   "a": {
+    "id": "252",
+    "nm": "BYU",
+    "ab": "BYU",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/252.png&w=80&h=80",
+    "rk": 10
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 81.2,
+   "st": "pre",
+   "det": "10/3 - 7:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 14,
+    "p": 0.365
+   }
+  },
+  {
+   "id": "cfb:401858478",
+   "sp": "cfb",
+   "ko": "2026-10-03T23:30:00Z",
+   "tk": true,
+   "lock": "2026-10-03T23:30:00Z",
+   "tv": "NBC",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "30",
+    "nm": "USC",
+    "ab": "USC",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/30.png&w=80&h=80",
+    "rk": 18
+   },
+   "a": {
+    "id": "264",
+    "nm": "Washington",
+    "ab": "WASH",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/264.png&w=80&h=80",
+    "rk": null
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 74.0,
+   "st": "pre",
+   "det": "10/3 - 7:30 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 18,
+    "p": 0.744
+   }
+  },
+  {
+   "id": "cfb:401858477",
+   "sp": "cfb",
+   "ko": "2026-10-04T00:00:00Z",
+   "tk": true,
+   "lock": "2026-10-04T00:00:00Z",
+   "tv": "BTN",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "164",
+    "nm": "Rutgers",
+    "ab": "RUTG",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/164.png&w=80&h=80",
+    "rk": null
+   },
+   "a": {
+    "id": "84",
+    "nm": "Indiana",
+    "ab": "IU",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/84.png&w=80&h=80",
+    "rk": 6
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 74.0,
+   "st": "pre",
+   "det": "10/3 - 8:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 25,
+    "p": 0.048
+   }
+  },
+  {
+   "id": "cfb:401856709",
+   "sp": "cfb",
+   "ko": "2026-10-03T20:15:00Z",
+   "tk": true,
+   "lock": "2026-10-03T20:15:00Z",
+   "tv": "SEC Network",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "2579",
+    "nm": "South Carolina",
+    "ab": "SC",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/2579.png&w=80&h=80",
+    "rk": null
+   },
+   "a": {
+    "id": "96",
+    "nm": "Kentucky",
+    "ab": "UK",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/96.png&w=80&h=80",
+    "rk": 24
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 73.0,
+   "st": "pre",
+   "det": "10/3 - 4:15 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 4,
+    "p": 0.55
+   }
+  },
+  {
+   "id": "cfb:401858253",
+   "sp": "cfb",
+   "ko": "2026-10-03T19:30:00Z",
+   "tk": true,
+   "lock": "2026-10-03T19:30:00Z",
+   "tv": "ESPN2",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "52",
+    "nm": "Florida St",
+    "ab": "FSU",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/52.png&w=80&h=80",
+    "rk": null
+   },
+   "a": {
+    "id": "258",
+    "nm": "Virginia",
+    "ab": "UVA",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/258.png&w=80&h=80",
+    "rk": null
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 72.0,
+   "st": "pre",
+   "det": "10/3 - 3:30 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "a",
+    "c": 1,
+    "p": 0.478
+   }
+  },
+  {
+   "id": "cfb:401856711",
+   "sp": "cfb",
+   "ko": "2026-10-03T23:00:00Z",
+   "tk": true,
+   "lock": "2026-10-03T23:00:00Z",
+   "tv": "ESPN2",
+   "note": "",
+   "n": false,
+   "h": {
+    "id": "245",
+    "nm": "Texas A&M",
+    "ab": "TA&M",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/245.png&w=80&h=80",
+    "rk": null
+   },
+   "a": {
+    "id": "8",
+    "nm": "Arkansas",
+    "ab": "ARK",
+    "lg": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/8.png&w=80&h=80",
+    "rk": null
+   },
+   "added": "2026-10-03T18:53:14Z",
+   "watch": 72.0,
+   "st": "pre",
+   "det": "10/3 - 7:00 PM EDT",
+   "score": null,
+   "res": null,
+   "gs": {
+    "s": "h",
+    "c": 23,
+    "p": 0.846
+   }
+  }
+ ],
+ "v": 1
+}
