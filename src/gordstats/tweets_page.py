@@ -11,9 +11,14 @@ a post approved at noon is on Home at noon, not at the next build.
 The cards are light on purpose - author, handle, the words, a media badge,
 votes - drawn from what X's keyless oEmbed said when the post was sent in.
 The post itself (photos, video, X's own markup) is X's embed, and it loads
-only when a reader taps a card: widgets.js once, on the first tap, then
-twttr.widgets.createTweet for that one post, in a dialog over the page. Never
-oEmbed's HTML, which would be X's markup inside ours.
+only when a reader taps a card: X's embed page in a sandboxed iframe, in a
+dialog over the page. Never widgets.js and never oEmbed's HTML: either would
+run X's script or markup inside this site, where it could act as the
+signed-in reader. The iframe keeps X's code on X's origin; the page takes
+three things from it - the height, "rendered" and "no results" - and only in
+messages from that frame, from X's origin (checked 2026-10-03: X's
+Tweet.html posts twttr.private.resize / rendered / no_results to its parent
+without widgets.js).
 
 Nothing here moves the page as it loads (the 2026-10-02 layout-shift work):
 the row holds its height from the first paint - placeholder cards, then the
@@ -32,13 +37,21 @@ from gordstats.jsonio import script_json
 OUT = paths.DOCS / "tweets" / "index.html"
 HOME_MAX = 10        # cards in Home's row; the page has every one the API sends
 PAGE_MAX = 40        # functions/api/tweets.js MAX_LIST
-WIDGETS = "https://platform.twitter.com/widgets.js"
+# X's own embed page, the one widgets.js would put in an iframe for us.
+EMBED = "https://platform.twitter.com/embed/Tweet.html"
+# What the embed may do: run its script on its own origin and open X in a new
+# tab. Not navigate this page, not submit forms here, not open modals.
+SANDBOX = "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
 
 HOW = "The last seven days' picks, most votes first. Vote for the ones that got you."
 
 CONFIG = {
     "api": "/api/tweets",
-    "widgets": WIDGETS,
+    "embed": EMBED,
+    "sandbox": SANDBOX,
+    # How long the embed has to say it drew before the dialog says it is
+    # blocked: an iframe reports no error for a page that never comes.
+    "wait": 15000,
     "sports": {"cfb": "CFB", "nfl": "NFL"},
     "say": "Readers send them in, we pick, you vote.",
     "empty": ("Nothing picked yet this week. Seen a funny college football or NFL post on X? "
@@ -146,6 +159,9 @@ dialog.tw-dlg::backdrop{background:rgba(15,23,42,.55)}
 .tw-dlg-x{flex:0 0 40px;width:40px;height:40px;border:0;background:transparent;color:inherit;
   font-size:26px;line-height:1;cursor:pointer}
 .tw-dlg-body{padding:8px 12px;min-height:220px}
+/* No height until X says how tall the post is: the wait line holds the room. */
+.tw-dlg-body iframe.tw-embed{display:block;width:100%;max-width:550px;height:0;margin:0 auto;
+  border:0;color-scheme:normal}
 .tw-dlg-wait{margin:70px 8px;text-align:center;font-size:14px;color:var(--gs-muted,#5d6b7e)}
 .tw-dlg-foot{margin:0;padding:6px 16px 14px;font-size:13.5px}
 .tw-dlg-foot a{display:inline-flex;align-items:center;min-height:40px;font-weight:700}
@@ -328,28 +344,25 @@ JS = """<script>
     }).then(function(){ btn.disabled=false; });
   }
 
-  // X's embed: widgets.js once, on the first tap, then one post at a time in
-  // a dialog - the top layer, so nothing on the page moves when it grows.
-  var W=null, dlg=null, seq=0;
-  function widgets(){
-    if(W) return W;
-    W=new Promise(function(ok, no){
-      var tw=window.twttr;
-      if(tw&&tw.widgets&&tw.widgets.createTweet){ ok(tw); return; }
-      var s=document.createElement('script');
-      s.src=CFG.widgets; s.async=true; s.charset='utf-8';
-      s.onload=function(){
-        var t=window.twttr;
-        if(t&&t.widgets&&t.widgets.createTweet) ok(t);
-        else if(t&&typeof t.ready==='function') t.ready(function(x){ ok(x&&x.widgets?x:window.twttr); });
-        else no(new Error('widgets.js came without twttr'));
-      };
-      s.onerror=function(){ no(new Error('widgets.js did not load')); };
-      document.head.appendChild(s);
-    });
-    W.catch(function(){ W=null; });          // a later tap tries again
-    return W;
-  }
+  // X's embed, one post at a time in a dialog - the top layer, so nothing on
+  // the page moves when it grows - as X's own page in a sandboxed iframe.
+  // Its messages are read only from that frame and X's origin, and only for
+  // a height and whether the post drew.
+  var dlg=null, seq=0, embed=null, EMBED_ORIGIN='';
+  try{ EMBED_ORIGIN=new URL(CFG.embed, location.href).origin; }catch(e){}
+  window.addEventListener('message',function(e){
+    if(!embed||e.origin!==EMBED_ORIGIN||e.source!==embed.frame.contentWindow) return;
+    var m=null;
+    try{ m=(typeof e.data==='string'?JSON.parse(e.data):e.data||{})['twttr.embed']; }catch(x){ return; }
+    if(!m||typeof m.method!=='string') return;
+    var p=(Array.isArray(m.params)&&m.params[0])||{};
+    if(m.method==='twttr.private.resize'){
+      var h=Number(p.height);
+      if(isFinite(h)&&h>0){ embed.frame.style.height=Math.min(Math.ceil(h), 4000)+'px'; embed.drew(); }
+    }
+    else if(m.method==='twttr.private.rendered') embed.drew();
+    else if(m.method==='twttr.private.no_results') embed.gone();
+  });
   function dialog(){
     if(dlg) return dlg;
     dlg=document.createElement('dialog');
@@ -366,14 +379,14 @@ JS = """<script>
     // event is queued, so a post opened since must not be emptied by it.
     dlg.addEventListener('close',function(){
       if(dlg.open) return;
-      seq++;
+      seq++; embed=null;
       dlg.querySelector('.tw-dlg-body').innerHTML='';
     });
     document.body.appendChild(dlg);
     return dlg;
   }
   function shut(){
-    seq++;
+    seq++; embed=null;
     dlg.querySelector('.tw-dlg-body').innerHTML='';
     if(typeof dlg.close==='function'&&dlg.open) dlg.close();
     else dlg.removeAttribute('open');
@@ -388,28 +401,26 @@ JS = """<script>
     if(typeof d.showModal==='function'){ if(!d.open) d.showModal(); }
     else d.setAttribute('open','');
     function fail(text){
-      if(mine===seq) body.innerHTML='<p class="tw-dlg-wait">'+esc(text)+'</p>';
-    }
-    var timer=setTimeout(function(){
-      if(body.querySelector('.tw-dlg-wait')&&!body.querySelector('iframe')) fail(CFG.blocked);
-    }, 15000);
-    var dark=!!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
-    widgets().then(function(tw){
-      if(mine!==seq) return null;
-      var host=document.createElement('div');
-      host.className='tw-embed';
-      body.appendChild(host);
-      return tw.widgets.createTweet(t.tweet_id, host, {dnt:true, theme:dark?'dark':'light', align:'center'});
-    }).then(function(el){
-      clearTimeout(timer);
       if(mine!==seq) return;
-      if(el){ var w=body.querySelector('.tw-dlg-wait'); if(w) w.parentNode.removeChild(w); }
-      else fail(CFG.gone);
-    }, function(e){
-      clearTimeout(timer);
-      console.warn('tweets: embed', e);
-      fail(CFG.blocked);
-    });
+      embed=null;
+      body.innerHTML='<p class="tw-dlg-wait">'+esc(text)+'</p>';
+    }
+    var dark=!!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+    var f=document.createElement('iframe');
+    f.className='tw-embed';
+    f.title='Post from X';
+    f.setAttribute('sandbox', CFG.sandbox);
+    f.setAttribute('scrolling','no');
+    // Only checked parts: the id passed ID above, the theme is one of two words.
+    f.src=CFG.embed+'?id='+encodeURIComponent(t.tweet_id)+'&dnt=true&lang=en&theme='+(dark?'dark':'light');
+    var timer=setTimeout(function(){ fail(CFG.blocked); }, CFG.wait);
+    embed={frame:f,
+      drew:function(){
+        clearTimeout(timer);
+        var w=body.querySelector('.tw-dlg-wait'); if(w) w.parentNode.removeChild(w);
+      },
+      gone:function(){ clearTimeout(timer); fail(CFG.gone); }};
+    body.appendChild(f);
   }
 
   boxes.forEach(function(b){

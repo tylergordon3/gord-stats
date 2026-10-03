@@ -47,6 +47,13 @@ export const DAILY_SUBMISSIONS = 5;
 // stuck script. The per-account write allowance in _lib/limits.js still applies.
 export const OWNER_SUBMISSIONS = 100;
 const QUEUE_MAX = 100;
+// The most posts waiting for review at once, from everyone. Five a day an
+// account still lets many accounts bury the queue; past this a reader is
+// asked to come back, before X is called. The owner's own never wait.
+export const PENDING_MAX = 200;
+// A submission is a link and a word; a review is two words. Anything much
+// bigger is not one of ours, and is refused before it is parsed.
+export const MAX_BODY = 2048;
 const CACHE_SECONDS = 60;
 const MAX_TEXT = 400;
 const MAX_AUTHOR = 80;
@@ -204,6 +211,24 @@ function answerFor(err) {
   throw err;
 }
 
+/** The JSON body of a small write -> { data } | { error: Response }. */
+export async function readBody(request, max = MAX_BODY) {
+  const said = Number(request.headers.get("content-length") || 0);
+  if (said > max) return { error: json({ ok: false, error: "too large" }, 413) };
+  let text;
+  try {
+    text = await request.text();
+  } catch {
+    return { error: json({ ok: false, error: "expected JSON" }, 400) };
+  }
+  if (text.length > max) return { error: json({ ok: false, error: "too large" }, 413) };
+  try {
+    return { data: JSON.parse(text) };
+  } catch {
+    return { error: json({ ok: false, error: "expected JSON" }, 400) };
+  }
+}
+
 async function guard(request, env) {
   if (!configured(env)) return json({ ok: false, error: "accounts are not configured" }, 503);
   const session = await readSession(request, env);
@@ -350,6 +375,11 @@ function duplicate(status) {
   return json({ ok: false, duplicate: true, status, error: SAID[status] || SAID.pending }, 409);
 }
 
+function queueFull() {
+  return json({ ok: false, error: "Lots of posts are waiting for review right now. "
+    + "Try again in a day or two." }, 503, { "retry-after": "86400" });
+}
+
 function tooMany(now, cap = DAILY_SUBMISSIONS) {
   const wait = secondsToMidnight(now);
   return json({ ok: false, error: `That's ${cap} for today - thanks! Send more tomorrow.`,
@@ -366,7 +396,9 @@ const INSERT =
                        submitted_by, submitted_at, status, reviewed_at)
    SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?11, ?12
     WHERE (SELECT COUNT(*) FROM tweets WHERE submitted_by = ?7 AND submitted_at >= ?9) < ?10
+      AND (?11 = 'approved' OR (SELECT COUNT(*) FROM tweets WHERE status = 'pending') < ?13)
    ON CONFLICT (tweet_id) DO NOTHING`;
+const WAITING = "SELECT COUNT(*) AS n FROM tweets WHERE status = 'pending'";
 const TODAY = "SELECT COUNT(*) AS n FROM tweets WHERE submitted_by = ? AND submitted_at >= ?";
 const SEEN = "SELECT status FROM tweets WHERE tweet_id = ?";
 // The same, and whether the session's account still exists. readSession has
@@ -403,12 +435,9 @@ export async function onRequestPost({ request, env }) {
   const session = await guard(request, env);
   if (session instanceof Response) return session;
 
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return json({ ok: false, error: "expected JSON" }, 400);
-  }
+  const read = await readBody(request);
+  if (read.error) return read.error;
+  const body = read.data;
   const post = tweetId(body?.url);
   if (!post) {
     return json({ ok: false, error: "That isn't a link to a post. Copy it from X with Share "
@@ -430,6 +459,10 @@ export async function onRequestPost({ request, env }) {
     if (seen.status) return duplicate(seen.status);
     const today = await db(() => env.DB.prepare(TODAY).bind(session.uid, dayStart).first());
     if (Number(today?.n || 0) >= cap) return tooMany(now, cap);
+    if (!admin) {
+      const waiting = await db(() => env.DB.prepare(WAITING).first());
+      if (Number(waiting?.n || 0) >= PENDING_MAX) return queueFull();
+    }
 
     // Taken before asking X, so that the allowance also bounds how often one
     // account can make this Function call out - deleted posts included.
@@ -448,7 +481,7 @@ export async function onRequestPost({ request, env }) {
     const stamp = now.toISOString();
     const put = await db(() => env.DB.prepare(INSERT).bind(
       post.id, t.handle, t.author, t.text, t.has_media, sport, session.uid,
-      stamp, dayStart, cap, status, admin ? stamp : null).run());
+      stamp, dayStart, cap, status, admin ? stamp : null, PENDING_MAX).run());
     if (put?.meta?.changes) {
       return json({ ok: true, status,
         message: admin
@@ -458,9 +491,14 @@ export async function onRequestPost({ request, env }) {
                  has_media: t.has_media, sport } }, 201);
     }
     // Nothing went in: the same post arrived a moment ago, or today's five
-    // filled up in parallel.
+    // (or the queue) filled up in parallel.
     const again = await db(() => env.DB.prepare(SEEN).bind(post.id).first());
-    return again ? duplicate(again.status) : tooMany(now, cap);
+    if (again) return duplicate(again.status);
+    if (!admin) {
+      const waiting = await db(() => env.DB.prepare(WAITING).first());
+      if (Number(waiting?.n || 0) >= PENDING_MAX) return queueFull();
+    }
+    return tooMany(now, cap);
   } catch (err) {
     return answerFor(err);
   }
@@ -511,12 +549,9 @@ const ACTIONS = { approve: "approved", reject: "rejected", remove: "rejected" };
 export async function review({ request, env }, id) {
   const who = await owner(request, env);
   if (who instanceof Response) return who;
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return json({ ok: false, error: "expected JSON" }, 400);
-  }
+  const read = await readBody(request);
+  if (read.error) return read.error;
+  const body = read.data;
   const status = ACTIONS[String(body?.action || "")];
   if (!status) return json({ ok: false, error: "action is approve, reject or remove" }, 400);
   const setSport = body && Object.prototype.hasOwnProperty.call(body, "sport");

@@ -4,9 +4,10 @@ review on /profile/ (gordstats.tweets_page, gordstats.profile_page).
 
 Headless Chromium (CDP port 9570) against a local server on a port the OS
 picks, which serves small pages built from the real markup and answers
-/api/* from the test - no network. X's widgets.js is served by the same
-server (the module's CONFIG points the pages at it), so the test can count
-exactly when it is asked for: only once a reader taps a card.
+/api/* from the test - no network. X's embed page is played by the same
+server (the module's CONFIG points the pages at it): it posts X's messages to
+its parent as X's Tweet.html does, so the test can count exactly when it is
+asked for - only once a reader taps a card - and what the page takes from it.
 """
 import inspect
 import json
@@ -34,19 +35,18 @@ CLS = ("<script>window.__cls=0;window.__shifts=[];try{new PerformanceObserver(fu
        "__shifts.push(e.value);}});}).observe({type:'layout-shift',buffered:true});}catch(e){}"
        "</script>")
 
-FAKE_WIDGETS = """
-window.__wjs = (window.__wjs || 0) + 1;
-window.__created = window.__created || [];
-window.twttr = { ready: function (cb) { cb(window.twttr); }, widgets: {
-  createTweet: function (id, el, opts) {
-    window.__created.push([id, opts]);
-    if (id === '404404') return Promise.resolve(undefined);
-    var f = document.createElement('iframe');
-    f.setAttribute('data-tweet-id', id); f.style.height = '420px';
-    el.appendChild(f);
-    return Promise.resolve(f);
-  } } };
-"""
+# X's Tweet.html as the page meets it: the messages it posts to its parent
+# (seen from the real one, 2026-10-03). Id 404404 is a post X no longer has.
+FAKE_EMBED = """<!doctype html><html><body style="margin:0"><div id="t">post</div><script>
+var id = new URLSearchParams(location.search).get('id');
+function say(method, params) {
+  parent.postMessage(JSON.stringify({'twttr.embed': {jsonrpc: '2.0', method: method,
+    id: 'embed-0', params: [Object.assign({data: {tweet_id: id}}, params || {})]}}), '*');
+}
+say('twttr.private.initialized');
+if (id === '404404') { say('twttr.private.no_results'); }
+else { say('twttr.private.resize', {width: 535, height: 420}); say('twttr.private.rendered'); }
+</script></body></html>"""
 
 
 def post(i, **over):
@@ -74,11 +74,11 @@ def _doc(body: str) -> str:
 
 
 class Site:
-    """Pages, /api answers and widgets.js, with a log of every request."""
+    """Pages, /api answers and X's embed page, with a log of every request."""
 
     def __init__(self):
         self.pages, self.api, self.log = {}, {}, []
-        self.widgets = (200, FAKE_WIDGETS)
+        self.embed = (200, FAKE_EMBED)
         outer = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -89,9 +89,9 @@ class Site:
                 path = self.path
                 if path in outer.pages and method == "GET":
                     return self._send(200, outer.pages[path], "text/html; charset=utf-8")
-                if path == "/widgets.js":
-                    status, js = outer.widgets
-                    return self._send(status, js, "text/javascript")
+                if path.split("?")[0] == "/embed.html":
+                    status, page = outer.embed
+                    return self._send(status, page, "text/html; charset=utf-8")
                 hit = outer.api.get((method, path))
                 if hit is None:
                     return self._send(404, '{"ok":false}', "application/json")
@@ -195,14 +195,16 @@ def browser():
     if CHROME is None:
         pytest.skip("no Chromium to run the JS in")
     site = Site()
-    keep = tweets_page.CONFIG["widgets"]
-    tweets_page.CONFIG["widgets"] = "/widgets.js"
+    keep = dict(tweets_page.CONFIG)
+    # Served here; and a blocked embed is called after 1.5 s, not 15.
+    tweets_page.CONFIG.update(embed="/embed.html", wait=1500)
     try:
         site.pages["/home.html"] = _doc(tweets_page.home_card())
         site.pages["/grid.html"] = _doc(tweets_page.body())
         site.pages["/profile.html"] = _doc(profile_page.body(""))
     finally:
-        tweets_page.CONFIG["widgets"] = keep
+        tweets_page.CONFIG.clear()
+        tweets_page.CONFIG.update(keep)
     tab = Tab()
     try:
         yield tab, site
@@ -216,7 +218,7 @@ def page(browser):
     tab, site = browser
     site.api.clear()
     site.log.clear()
-    site.widgets = (200, FAKE_WIDGETS)
+    site.embed = (200, FAKE_EMBED)
     return tab, site
 
 
@@ -243,10 +245,13 @@ def test_the_card_is_literal_holds_its_room_and_loads_nothing_from_x():
     assert card.count("tw-card tw-ghost") == 3
     assert '<form class="tw-form" id="tw-form-home" hidden' in card
     assert "Tweets of the week" in card and "href=\"/tweets/\"" in card
-    # X is asked for nothing until a tap: no script tag, no oEmbed markup.
-    assert tweets_page.CONFIG["widgets"] == "https://platform.twitter.com/widgets.js"
+    # X is asked for nothing until a tap: no script tag, no oEmbed markup -
+    # and never X's script in this page at all, only its page in a sandbox.
+    assert tweets_page.CONFIG["embed"] == "https://platform.twitter.com/embed/Tweet.html"
     assert "<script src" not in card and "twitter-tweet" not in card
-    assert "createTweet(t.tweet_id, host, {dnt:true" in card
+    assert "widgets.js" not in card and "createTweet" not in card
+    assert "allow-top-navigation" not in tweets_page.SANDBOX
+    assert "allow-forms" not in tweets_page.SANDBOX
     assert "WNBA" not in card
 
 
@@ -340,6 +345,9 @@ def test_nothing_moves_as_the_row_fills(page, width, height):
                               "return r.scrollWidth > r.clientWidth; })()")
 
 
+EMBEDS = "document.querySelectorAll('dialog.tw-dlg iframe.tw-embed')"
+
+
 def test_the_embed_loads_only_on_tap(page):
     tab, site = page
     site.api[("GET", "/api/tweets")] = (200, {"ok": True, "configured": True, "signedIn": False,
@@ -347,28 +355,31 @@ def test_the_embed_loads_only_on_tap(page):
     tab.open(site.origin + "/home.html")
     drawn(tab)
     time.sleep(0.3)
-    assert site.asked("GET", "/widgets.js") == []
-    assert tab.ev("document.querySelectorAll('script[src*=\"widgets\"], iframe').length") == 0
+    assert site.asked("GET", "/embed.html") == []
+    assert tab.ev("document.querySelectorAll('iframe').length") == 0
 
     tab.ev("document.querySelectorAll('.tw-card')[1].querySelector('.tw-show').click()")
-    tab.wait("!!document.querySelector('dialog.tw-dlg[open] iframe')")
-    assert len(site.asked("GET", "/widgets.js")) == 1
-    assert tab.ev("window.__created") == [[post(2)["tweet_id"],
-                                          {"dnt": True, "theme": "light", "align": "center"}]]
+    tab.wait("!document.querySelector('.tw-dlg-wait')")
+    [(_, path, _)] = site.asked("GET", "/embed.html")
+    assert path == f"/embed.html?id={post(2)['tweet_id']}&dnt=true&lang=en&theme=light"
+    frame = tab.ev(f"(function(f){{return [f.getAttribute('sandbox'), f.style.height, "
+                   f"f.title];}})({EMBEDS}[0])")
+    assert frame == [tweets_page.SANDBOX, "420px", "Post from X"]
     assert tab.ev("document.querySelector('.tw-dlg-t').textContent") == "Author 2"
     assert tab.ev("document.querySelector('.tw-dlg-go').href") == \
         f"https://x.com/user2/status/{post(2)['tweet_id']}"
     assert tab.ev("document.querySelectorAll('.tw-list iframe').length") == 0, "one post only"
+    # Nothing of X's runs in this page.
+    assert tab.ev("[!!window.twttr, document.querySelectorAll('script[src]').length]") == [False, 0]
 
     tab.ev("document.querySelector('.tw-dlg-x').click()")
     assert tab.ev("[document.querySelector('dialog.tw-dlg').open, "
                   "document.querySelector('.tw-dlg-body').innerHTML]") == [False, ""]
 
-    # The card itself is the other way in; widgets.js is not fetched twice.
+    # The card itself is the other way in.
     tab.ev("document.querySelectorAll('.tw-card')[0].querySelector('.tw-text').click()")
-    tab.wait("window.__created.length === 2 && !!document.querySelector('dialog[open] iframe')")
-    assert tab.ev("window.__created[1][0]") == post(1)["tweet_id"]
-    assert len(site.asked("GET", "/widgets.js")) == 1
+    tab.wait(f"{EMBEDS}.length === 1 && !document.querySelector('.tw-dlg-wait')")
+    assert site.asked("GET", "/embed.html")[-1][1].startswith(f"/embed.html?id={post(1)['tweet_id']}&")
     tab.ev("document.querySelector('.tw-dlg-x').click()")
 
     # The vote button and the X link are not "show me".
@@ -378,22 +389,47 @@ def test_the_embed_loads_only_on_tap(page):
     # A post X will not render (deleted since) says so.
     tab.ev("document.querySelectorAll('.tw-card')[2].querySelector('.tw-show').click()")
     tab.wait("/deleted/.test(document.querySelector('.tw-dlg-body').textContent)")
+    assert tab.ev(f"{EMBEDS}.length") == 0
+
+
+def test_only_the_embeds_own_messages_count(page):
+    """Anything else on the page - this window, another frame - saying it is X
+    changes nothing: no height, no "deleted", no "drawn"."""
+    tab, site = page
+    site.api[("GET", "/api/tweets")] = (200, listing(1))
+    site.embed = (200, "<!doctype html><p>slow</p>")       # an embed that says nothing
+    tab.open(site.origin + "/home.html")
+    drawn(tab)
+    tab.ev("document.querySelector('.tw-show').click()")
+    tab.wait(f"{EMBEDS}.length === 1")
+    forged = ("JSON.stringify({'twttr.embed': {method: 'twttr.private.%s', "
+              "params: [{height: 9999}]}})")
+    tab.ev(f"window.postMessage({forged % 'resize'}, '*');"
+           f"window.postMessage({forged % 'no_results'}, '*');"
+           "var f=document.createElement('iframe');"
+           "f.srcdoc='<script>parent.postMessage(' + JSON.stringify(" + (forged % 'rendered')
+           + ") + ', \"*\")<\\/script>';"
+           "document.body.appendChild(f);")
+    time.sleep(0.4)            # well inside CONFIG wait (1.5 s here)
+    assert tab.ev(f"{EMBEDS}[0].style.height") in ("", "0px")
+    assert "Loading" in tab.ev("document.querySelector('.tw-dlg-body').textContent")
+    tab.ev("document.querySelector('.tw-dlg-x').click()")
 
 
 def test_a_blocked_embed_says_so_and_a_later_tap_tries_again(page):
     tab, site = page
     site.api[("GET", "/api/tweets")] = (200, listing(2))
-    site.widgets = (404, "")
+    site.embed = (404, "")
     tab.open(site.origin + "/home.html")
     drawn(tab)
     tab.ev("document.querySelector('.tw-show').click()")
     tab.wait("/content blocker/.test(document.querySelector('.tw-dlg-body').textContent)")
     assert tab.ev("document.querySelector('.tw-dlg-go').href").startswith("https://x.com/user1/")
     tab.ev("document.querySelector('.tw-dlg-x').click()")
-    site.widgets = (200, FAKE_WIDGETS)
+    site.embed = (200, FAKE_EMBED)
     tab.ev("document.querySelector('.tw-show').click()")
-    tab.wait("!!document.querySelector('dialog[open] iframe')")
-    assert len(site.asked("GET", "/widgets.js")) == 2
+    tab.wait(f"{EMBEDS}.length === 1 && !document.querySelector('.tw-dlg-wait')")
+    assert len(site.asked("GET", "/embed.html")) == 2
 
 
 def test_votes_need_a_reader_and_go_to_the_api(page):

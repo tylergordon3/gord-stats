@@ -267,6 +267,35 @@ def test_the_owner_is_told_how_many_are_waiting(worker):
     assert "pending" not in worker.call("tw.onRequestGet", URL)["json"]
 
 
+def test_a_body_bigger_than_a_link_is_refused_before_it_is_read(worker):
+    who, admin = worker.user(), owner(worker)
+    stub_oembed(worker, {ID: (200, oembed_body(ID))})
+    big = {"url": f"https://x.com/a/status/{ID}", "pad": "x" * 3000}
+    assert submit(worker, who, big["url"])["status"] == 201       # the normal size is fine
+    got = worker.call("tw.onRequestPost", URL, method="POST", headers=who, body=big)
+    assert got["status"] == 413
+    pid = worker.sql.rows("SELECT id FROM tweets")[0]["id"]
+    assert on_post(worker, admin, pid, "review", {"action": "approve", "pad": "y" * 3000})["status"] == 413
+    assert worker.sql.rows("SELECT status FROM tweets")[0]["status"] == "pending"
+
+
+def test_a_full_queue_turns_readers_away_before_x_is_asked(worker):
+    who, admin = worker.user(), owner(worker)
+    # Fill the queue to the cap from other accounts, straight into the table.
+    for i in range(200):
+        add(worker, str(10**17 + i), status="pending", days_ago=0)
+    stub_oembed(worker, {ID: (200, oembed_body(ID)), "777": (200, oembed_body("777"))})
+    full = submit(worker, who, f"https://x.com/a/status/{ID}")
+    assert full["status"] == 503 and "waiting for review" in full["json"]["error"]
+    assert oembed_calls(worker) == []
+    # The owner's own never wait, so the cap is not theirs.
+    assert submit(worker, admin, f"https://x.com/a/status/{ID}")["json"]["status"] == "approved"
+    # One reviewed, and there is room again.
+    first = worker.sql.rows("SELECT id FROM tweets WHERE status = 'pending' LIMIT 1")[0]["id"]
+    on_post(worker, admin, first, "review", {"action": "reject"})
+    assert submit(worker, who, "https://x.com/a/status/777")["status"] == 201
+
+
 def test_duplicates_are_turned_away_kindly_without_asking_x(worker):
     who, admin = worker.user(), owner(worker)
     stub_oembed(worker, {ID: (200, oembed_body(ID))})

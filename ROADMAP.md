@@ -469,12 +469,12 @@ Open:
       `git checkout -- docs data`): an ignored live file the daily run merges, like cbb/lines_live.
 - [x] **Inline JS repeated on every fantasy page** (20d82b61a: docs/assets/js/gs-*.js) (GSAPI + league bar + GSL ~50 KB, GSRecap,
       GSWatch): move to /assets/js/ now that assets are content-hashed.
-- [ ] **/fantasy/power/** still renders pandas' own Styler HTML (203 KB, 426 ids): use
+- [x] **/fantasy/power/** (ed575e647: styles.to_html, no per-cell ids; usage pages trimmed earlier) still renders pandas' own Styler HTML (203 KB, 426 ids): use
       `styles.to_html` and update test_phone_tables' shading test. Usage tables repeat
       `class="v-overall v-rb v-wr v-te"` on every cell (~300 KB on /cfb/usage/).
 - [x] **Security, low:** (db8657c01: site write ceiling, session epoch, __Host- cookie; Report-Only CSP still open) a global daily D1 write cap (not just per account); session revocation
       (an epoch in the token); throttle failed league-sync lookups; a Report-Only `script-src`.
-- [ ] **SEO:** 38 pages share the site description; Home and /cbb/ have no h1; game previews
+- [x] **SEO:** (0de537bc2: a description per page, h1s, previews kept all season + a 404 for expired ones) 38 pages share the site description; Home and /cbb/ have no h1; game previews
       404 a week after the game (a fallback to the schedule).
 - [ ] **Readers' injury board** still counts a hold from the lagging week (needs a new board
       field); Sleeper two-week playoff rounds in the power sim; ESPN leagues have no reseed flag.
