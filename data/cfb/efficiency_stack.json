@@ -1,32 +1,32 @@
 {
-  "intercept": 0.7758646379829126,
+  "intercept": 0.7634661722437519,
   "coef": {
-    "pred_margin": 0.7837149251179727,
-    "d_ppa": -2.601040795030957,
-    "d_successRate": 15.357140543273252,
-    "d_explosiveness": 1.4830315955069437,
-    "d_rushingPlays_ppa": -1.7549172023673005,
-    "d_passingPlays_ppa": 2.152023391249963,
-    "d_standardDowns_successRate": 9.23175000920746,
-    "d_passingDowns_successRate": 2.104560227234927,
-    "d_lineYards": 0.6801669065675185,
-    "d_secondLevelYards": 2.5839581720826983,
-    "d_openFieldYards": 0.1612490793504957,
-    "d_stuffRate": -9.029161657625846,
-    "d_powerSuccess": -0.9186767686523005,
-    "d_plays": -0.04158209333915497
+    "pred_margin": 0.7589366819470725,
+    "d_ppa": -3.0764405383155498,
+    "d_successRate": 16.282869394986847,
+    "d_explosiveness": 1.5432289912700998,
+    "d_rushingPlays_ppa": -1.1624301319863406,
+    "d_passingPlays_ppa": 2.560956455283624,
+    "d_standardDowns_successRate": 10.767325709769572,
+    "d_passingDowns_successRate": 3.3192512613620373,
+    "d_lineYards": 0.5600171343847803,
+    "d_secondLevelYards": 2.5900129229048385,
+    "d_openFieldYards": 0.1661329538032832,
+    "d_stuffRate": -10.13187804056977,
+    "d_powerSuccess": -0.5790295931351004,
+    "d_plays": -0.04145416298019233
   },
   "alpha": 1.7782794100389228,
   "fitted_on": "2015-2025",
   "games": 7884,
   "half_life_days": 60.0,
   "alpha_team": 1.0,
-  "written": "2026-09-28",
+  "written": "2026-10-03",
   "validation": {
     "scored_on": "2020-2025",
     "games": 4238,
-    "margin_rmse": 16.0718,
-    "ratings_alone_rmse": 16.1775,
-    "winner_accuracy": 0.7187
+    "margin_rmse": 15.879,
+    "ratings_alone_rmse": 16.0398,
+    "winner_accuracy": 0.7258
   }
 }

@@ -25,7 +25,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from cfb import efficiency
+from cfb import efficiency, fcs
 from cfb import games as games_mod
 from cfb import ratings as ratings_mod
 
@@ -34,13 +34,17 @@ MIN_TRAIN_GAMES = 400
 
 def walk_forward(games: pd.DataFrame, first: int, last: int,
                  alpha: float = None, half_life: float = None,
-                 total_alpha: float = None, total_half_life: float = None
-                 ) -> pd.DataFrame:
+                 total_alpha: float = None, total_half_life: float = None,
+                 fcs_rows: pd.DataFrame = None) -> pd.DataFrame:
     """Predict every week of `first`..`last` from what was known beforehand.
 
     The margin and total models are tuned apart, because they want different
     things: strength is a recent, lightly-shrunk quantity, while how many
     points a team plays to is steadier and wants a longer memory.
+
+    With `fcs_rows` (cfb.fcs.load()) the FCS's own games join every fit and
+    teams are pulled toward their conferences - the model cfb.predict uses -
+    with each season's FBS and FCS membership as that season had it.
     """
     alpha = ratings_mod.DEFAULT_ALPHA if alpha is None else alpha
     half_life = ratings_mod.DEFAULT_HALF_LIFE if half_life is None else half_life
@@ -48,18 +52,29 @@ def walk_forward(games: pd.DataFrame, first: int, last: int,
     total_half_life = (ratings_mod.DEFAULT_TOTAL_HALF_LIFE
                        if total_half_life is None else total_half_life)
 
+    structured = fcs_rows is not None and not fcs_rows.empty
+    history = fcs.conference_history(games, fcs_rows) if structured else {}
+
     out = []
     for season in range(first, last + 1):
         target_season = games[games["season"] == season]
+        fbs_conf = fcs.fbs_conferences(games, season, history) if structured else {}
         for week in sorted(target_season["week"].unique()):
             target = target_season[target_season["week"] == week]
             asof = target["date"].min()
             train = games[games["date"] < asof]
             if len(train) < MIN_TRAIN_GAMES:
                 continue
-            model = ratings_mod.fit(train, asof=asof, alpha=alpha,
-                                    half_life=half_life, total_alpha=total_alpha,
-                                    total_half_life=total_half_life)
+            knobs = {"alpha": alpha, "half_life": half_life, "total_alpha": total_alpha,
+                     "total_half_life": total_half_life}
+            prepared = (fcs.prepare(train, asof, fbs_conf, season, rows=fcs_rows)
+                        if structured else None)
+            if prepared is None:
+                model = ratings_mod.fit(train, asof=asof, **knobs)
+            else:
+                fit_on, levels, divisions = prepared
+                model = ratings_mod.fit(fit_on, asof=asof, levels=levels,
+                                        divisions=divisions, **knobs)
             preds = model.predict(target)
             out.append(target[["season", "week", "date", "home_team", "away_team",
                                "home", "away", "neutral", "margin", "total"]]
@@ -134,7 +149,8 @@ def report(games: pd.DataFrame, dev=(2015, 2019), test=(2020, 2025)) -> dict:
     # The ratings from the first season the correction can learn on, so every
     # test season has seasons behind it to fit the correction; each is then
     # corrected by a stack fitted only on the seasons before it.
-    base = walk_forward(games, efficiency.STACK_FIRST, test[1])
+    rows_fcs = fcs.load()
+    base = walk_forward(games, efficiency.STACK_FIRST, test[1], fcs_rows=rows_fcs)
     rows = efficiency.walk_forward_features(games, base)
     alone = fbs_only(base[base["season"].between(*test)])
     fbs = fbs_only(efficiency.validate(rows, test))[base.columns]
@@ -153,10 +169,13 @@ def report(games: pd.DataFrame, dev=(2015, 2019), test=(2020, 2025)) -> dict:
 
     record = {
         "model": ("ridge team ratings, margin and total fitted separately; margins "
-                  "corrected by opponent-adjusted efficiency (cfb.efficiency)"),
+                  "corrected by opponent-adjusted efficiency (cfb.efficiency)"
+                  + ("; the FCS's own games in the fit, each team pulled toward its "
+                     "conference (cfb.fcs)" if not rows_fcs.empty else "")),
         "tuned_on": f"{dev[0]}-{dev[1]}",
         "scored_on": f"{test[0]}-{test[1]}",
         "scored_games": "FBS vs FBS only; FCS opponents train the ratings but are not scored",
+        "fcs_games": bool(not rows_fcs.empty),
         "hyperparameters": {
             "alpha": ratings_mod.DEFAULT_ALPHA,
             "half_life_days": ratings_mod.DEFAULT_HALF_LIFE,
@@ -259,7 +278,7 @@ if __name__ == "__main__":
             print(f"  {row['season']}  n={row['games']:>4}  margin RMSE "
                   f"{row['margin_rmse']:>6.2f}  winner {row['winner_accuracy']:.1%}")
     else:
-        preds = walk_forward(games, args.test_first, args.test_last)
+        preds = walk_forward(games, args.test_first, args.test_last, fcs_rows=fcs.load())
         for label, subset in (("all games", preds), ("FBS vs FBS", fbs_only(preds))):
             print(f"\n--- {label} ---")
             for k, v in score(subset).items():

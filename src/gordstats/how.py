@@ -86,10 +86,13 @@ DAILY_ = DAILY[0].upper() + DAILY[1:]
 TOPICS: list[Topic] = [
     # ------------------------------------------------------------ CFB rankings
     # cfb.ratings: ridge regression on margins (alpha 0.25), 180-day half-life,
-    # home field fitted and unpenalized; cfb.games: ESPN FBS scoreboard since
-    # 2014, regular season only, non-FBS pooled as one "FCS" team;
-    # cfb.efficiency: 13 CFBD per-game metrics, each opponent-adjusted, stacked
-    # as 0.7837 x rating + efficiency value (16.18 -> 16.07 RMSE on 2020-25);
+    # home field fitted and unpenalized, each team shrunk toward its conference
+    # (unpenalized conference levels, _fit_levels); cfb.games + cfb.fcs: ESPN
+    # FBS and FCS scoreboards since 2014, regular season only, below-D1 teams
+    # pooled; cfb.efficiency: 13 CFBD per-game metrics, each opponent-adjusted,
+    # stacked as ~0.78 x rating + efficiency value; RMSE on 2020-25 FBS games
+    # 16.18 -> 16.07 (efficiency) -> 15.88 (FCS + conferences, cfb.backtest
+    # --report 2026-10-03); home edge ~3.0 = 0.78 x 2.83 + 0.78 intercept;
     # cfb.site.power: AP (ESPN), FPI (ESPN), SP+ and Elo (CFBD).
     Topic(
         id="cfb-rankings", group="Rankings and predictions", name="CFB rankings",
@@ -100,13 +103,14 @@ TOPICS: list[Topic] = [
              "would be on a neutral field: a +14 team would be a two-touchdown favorite over "
              "an average one.",
         how=_p(
-            "<p>Using every FBS game since 2014, the model finds the one number per team that "
-            "best fits all the final margins at once, plus a home-field edge (a little over 3 "
-            "points lately). Because every team is rated together, beating a good team counts "
-            "more than beating a bad one.</p>",
+            "<p>Using every FBS and FCS game since 2014, the model finds the one number per "
+            "team that best fits all the final margins at once, plus a home-field edge (about "
+            "3 points lately). Because every team is rated together, beating a good team counts "
+            "more than beating a bad one, and an FCS opponent counts as itself, not as a "
+            "generic one.</p>",
             "<p>Recent games count most: a game counts half as much after 180 days. A pull "
-            "toward average keeps a team with few games from swinging wildly (ridge "
-            "regression).</p>",
+            "toward its conference's average keeps a team with few games from swinging wildly "
+            "(ridge regression).</p>",
             "<p>It's then blended with how well a team plays snap to snap, adjusted for "
             "opponents: expected points added per play (EPA), success rate, explosiveness and "
             "more (<a href='/how/team-stats/'>what these mean</a>).</p>",
@@ -121,21 +125,25 @@ TOPICS: list[Topic] = [
         ),
         updates=f"{DAILY_}.",
         curious="Scores come from ESPN, the efficiency stats from CollegeFootballData. Tested on "
-                "every 2020-25 game, each predicted only from earlier games, the efficiency "
+                "every 2020-25 FBS game, each predicted only from earlier games, the efficiency "
                 "blend cut the typical miss (root-mean-square error, RMSE) from 16.18 to 16.07 "
-                "points. Blowouts count in full (no cap on margin), and garbage time stays in: "
+                "points, and rating FCS teams individually with the conference pull took it to "
+                "15.88. Blowouts count in full (no cap on margin), and garbage time stays in: "
                 "taking it out tested worse.",
         pages=(("CFB rankings", "/cfb/power/"),),
         related=("cfb-predictions", "playoff-odds", "team-stats"),
     ),
     # --------------------------------------------------------- CFB predictions
-    # cfb.ratings (margin = rating gap + home field; total = base + two pace
-    # numbers, a separate ridge, alpha 4.0); cfb.predict (win chance =
-    # Phi(margin / 16.0734), sigma from data/cfb/model_validation.json);
-    # validation: 4,238 FBS games 2020-25, RMSE 16.07, winners 71.9%, closing
-    # line 15.38, 3+ point calls 49.3% ATS; cfb.results (graded on the last
-    # prediction archived before kickoff; spread calls need 3+ points);
-    # cfb.odds (ESPN's DraftKings line).
+    # cfb.ratings (margin = rating gap + home field, FCS sides by their own
+    # rating via cfb.fcs; total = base + two pace numbers, a separate ridge,
+    # alpha 4.0, FCS still pooled there); cfb.predict (win chance =
+    # Phi(margin / sigma), sigma from data/cfb/model_validation.json: 15.88
+    # once `cfb.backtest --report` is rerun with the FCS archive, 16.07
+    # before); validation (2026-10-03 report): 4,238 FBS games 2020-25, RMSE
+    # 15.88, winners 72.6%, closing line 15.38, 3+ point calls 49.1% ATS
+    # (1,783); 2026 weeks 1-5 replayed: 13.7 -> 12.7 MAE vs the book's 11.6;
+    # cfb.results (graded on the last prediction archived before kickoff;
+    # spread calls need 3+ points); cfb.odds (ESPN's DraftKings line).
     Topic(
         id="cfb-predictions", group="Rankings and predictions", name="CFB predictions",
         title="How the CFB predictions work",
@@ -150,7 +158,7 @@ TOPICS: list[Topic] = [
             "typical game's total.</p>",
             "<p><strong>Win chance:</strong> on games it hadn't seen, the model typically missed "
             "by about 16 points. Allowing for misses that size (a normal distribution with a "
-            "16.07-point standard deviation), a 7-point favorite wins about 67% of the "
+            "15.88-point standard deviation), a 7-point favorite wins about 67% of the "
             "time.</p>",
             "<p><strong>The record:</strong> each prediction is saved before kickoff and graded "
             "on that number. Against the spread (DraftKings, via ESPN), a pick counts only "
@@ -158,15 +166,18 @@ TOPICS: list[Topic] = [
         ),
         limits=_p(
             "<p>Predicting all 4,238 FBS-vs-FBS games of 2020-25 from earlier games only, it "
-            "picked 71.9% of winners. The closing line (the last line before kickoff) is "
-            "sharper: its typical miss is 15.4 points to our 16.1, and our 3+ point "
-            "disagreements won 49.3% against "
+            "picked 72.6% of winners. The closing line (the last line before kickoff) is "
+            "sharper: its typical miss is 15.4 points to our 15.9, and our 3+ point "
+            "disagreements won 49.1% against "
             "the spread, short of the 52.4% needed to profit.</p>",
             "<p>It knows nothing about injuries, weather or depth charts.</p>",
         ),
         updates=f"{DAILY_}, with every newly finished game and the latest lines.",
         curious="During a game, the schedule and each game page also show ESPN's live win "
-                "probability, labeled as ESPN's; ours stays the number we set before kickoff.",
+                "probability, labeled as ESPN's; ours stays the number we set before kickoff. "
+                "For the first five weeks of 2026 every FCS team was priced as one generic "
+                "opponent, which cost those games about 2 points a game; the record keeps "
+                "those predictions as they were made.",
         pages=(("CFB predictions", "/cfb/predictions/"), ("CFB schedule", "/cfb/schedule/")),
         related=("cfb-rankings", "bets-record", "game-previews"),
     ),
@@ -270,7 +281,7 @@ TOPICS: list[Topic] = [
             "moved our way\" counts how often it moved toward us after our first look.</p>",
         ),
         limits=_p(
-            "<p>In testing (2020-25), the model's college disagreements of 3+ points won 49.3% "
+            "<p>In testing (2020-25), the model's college disagreements of 3+ points won 49.1% "
             "against the spread, below the 52.4% needed to profit. Not gambling advice.</p>",
         ),
         updates=f"Graded {DAILY}, as games finish.",

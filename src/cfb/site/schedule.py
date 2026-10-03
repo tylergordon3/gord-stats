@@ -1559,10 +1559,11 @@ def _day_games(df: pd.DataFrame, current: int) -> tuple:
     their state: today's if the day has games, else the next day that does.
     (frame, date).
 
-    FBS against FBS only, as the predictions page scores it: the model rates
-    every FCS opponent as one generic FCS team, so a Montana State or a UC
-    Davis reads as a 30-point mismatch it never is, and those games would
-    fill every slot here with the model's blind spot.
+    FBS against FBS only, as the predictions page scores it. Until 2026-10-03
+    the model rated every FCS opponent as one generic FCS team (a Montana
+    State read as a 30-point mismatch it never was); each is rated from its
+    own games now (cfb.fcs), but the book still beats us by more on them, so
+    these slots stay FBS.
     """
     fbs = df["home_conf"].astype(str).ne("") & df["away_conf"].astype(str).ne("")
     lined = df[(df["week"] == current) & fbs & df["dk_spread"].notna() & df["gs_margin"].notna()]

@@ -1,8 +1,9 @@
 {
-  "model": "ridge team ratings, margin and total fitted separately; margins corrected by opponent-adjusted efficiency (cfb.efficiency)",
+  "model": "ridge team ratings, margin and total fitted separately; margins corrected by opponent-adjusted efficiency (cfb.efficiency); the FCS's own games in the fit, each team pulled toward its conference (cfb.fcs)",
   "tuned_on": "2015-2019",
   "scored_on": "2020-2025",
   "scored_games": "FBS vs FBS only; FCS opponents train the ratings but are not scored",
+  "fcs_games": true,
   "hyperparameters": {
     "alpha": 0.25,
     "half_life_days": 180.0,
@@ -11,22 +12,22 @@
   },
   "overall": {
     "games": 4238,
-    "margin_mae": 12.7738,
-    "margin_rmse": 16.0718,
-    "margin_sd": 16.0734,
-    "total_mae": 12.9254,
-    "total_rmse": 16.2761,
-    "winner_accuracy": 0.7187,
+    "margin_mae": 12.6164,
+    "margin_rmse": 15.879,
+    "margin_sd": 15.8808,
+    "total_mae": 12.9214,
+    "total_rmse": 16.2674,
+    "winner_accuracy": 0.7258,
     "baseline_home_rmse": 20.4934
   },
   "ratings_alone": {
     "games": 4238,
-    "margin_mae": 12.8716,
-    "margin_rmse": 16.1775,
-    "margin_sd": 16.1794,
-    "total_mae": 12.9254,
-    "total_rmse": 16.2761,
-    "winner_accuracy": 0.7154,
+    "margin_mae": 12.7646,
+    "margin_rmse": 16.0398,
+    "margin_sd": 16.0411,
+    "total_mae": 12.9214,
+    "total_rmse": 16.2674,
+    "winner_accuracy": 0.7187,
     "baseline_home_rmse": 20.4934
   },
   "efficiency": {
@@ -38,60 +39,60 @@
     {
       "season": 2020,
       "games": 508,
-      "margin_rmse": 16.624,
-      "margin_mae": 13.249,
+      "margin_rmse": 16.674,
+      "margin_mae": 13.275,
       "total_rmse": 17.455,
-      "winner_accuracy": 0.7283
+      "winner_accuracy": 0.7421
     },
     {
       "season": 2021,
       "games": 732,
-      "margin_rmse": 16.404,
-      "margin_mae": 13.213,
+      "margin_rmse": 16.094,
+      "margin_mae": 12.954,
       "total_rmse": 16.31,
-      "winner_accuracy": 0.724
+      "winner_accuracy": 0.7309
     },
     {
       "season": 2022,
       "games": 734,
-      "margin_rmse": 16.145,
-      "margin_mae": 12.789,
-      "total_rmse": 15.955,
-      "winner_accuracy": 0.688
+      "margin_rmse": 15.902,
+      "margin_mae": 12.577,
+      "total_rmse": 15.954,
+      "winner_accuracy": 0.7003
     },
     {
       "season": 2023,
       "games": 750,
-      "margin_rmse": 15.712,
-      "margin_mae": 12.474,
-      "total_rmse": 16.364,
-      "winner_accuracy": 0.7373
+      "margin_rmse": 15.502,
+      "margin_mae": 12.295,
+      "total_rmse": 16.325,
+      "winner_accuracy": 0.7453
     },
     {
       "season": 2024,
       "games": 752,
-      "margin_rmse": 16.204,
-      "margin_mae": 12.931,
-      "total_rmse": 16.284,
+      "margin_rmse": 15.974,
+      "margin_mae": 12.76,
+      "total_rmse": 16.27,
       "winner_accuracy": 0.6968
     },
     {
       "season": 2025,
       "games": 762,
-      "margin_rmse": 15.514,
-      "margin_mae": 12.16,
-      "total_rmse": 15.627,
-      "winner_accuracy": 0.7402
+      "margin_rmse": 15.371,
+      "margin_mae": 12.066,
+      "total_rmse": 15.633,
+      "winner_accuracy": 0.7441
     }
   ],
   "versus_market": {
     "games": 4238,
-    "our_margin_rmse": 16.072,
+    "our_margin_rmse": 15.879,
     "market_margin_rmse": 15.383,
-    "our_total_rmse": 16.276,
-    "gap_rmse": 0.689,
-    "ats_when_we_disagree_by_3": 0.4932,
-    "ats_sample": 1906,
+    "our_total_rmse": 16.267,
+    "gap_rmse": 0.496,
+    "ats_when_we_disagree_by_3": 0.4907,
+    "ats_sample": 1783,
     "break_even_at_minus_110": 0.5238,
     "verdict": "Within a point of the closing line without using it, but the disagreements are noise: below break-even against the spread, and our error grows with the size of the disagreement while the market's does not. No betting edge."
   }

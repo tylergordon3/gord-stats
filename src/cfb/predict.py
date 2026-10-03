@@ -23,6 +23,12 @@ success rate and the rest from CFBD's box scores (cfb.efficiency) - worth a
 tenth of a point of margin error on 2020-2025. A team's rating is on that
 corrected scale.
 
+The FCS's own games join the fit (`fit`, cfb.fcs), so an FCS opponent is
+priced as itself rather than as one generic FCS team - the largest single
+gain this model has had: two points a game on 2026's FCS games, a fifth of a
+point on FBS-vs-FBS. The schedule still names an FCS side only as FCS; the
+fitted model reads which one from its ESPN id.
+
     python -m cfb.predict                # this week
     python -m cfb.predict --week 3
 """
@@ -32,7 +38,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
-from cfb import efficiency, espn, games as games_mod, ratings as ratings_mod
+from cfb import efficiency, espn, fcs, games as games_mod, ratings as ratings_mod
 from cfb.config import SEASON
 
 WINDOW_DAYS = 7
@@ -184,6 +190,52 @@ def history() -> tuple:
     return frame.sort_values("date").reset_index(drop=True), schedule, names
 
 
+def fbs_conferences(frame: pd.DataFrame, schedule: pd.DataFrame) -> dict:
+    """This season's FBS teams (the ids `history` kept as themselves) ->
+    their conference id on ESPN's schedule ("" where it names none)."""
+    teams = set()
+    for table in (frame, schedule):
+        for side in ("home_team", "away_team"):
+            if side in table.columns:
+                teams |= set(table[side].astype(str))
+    teams.discard(games_mod.FCS)
+    conf = {}
+    if {"home_conf_id", "away_conf_id"} <= set(schedule.columns):
+        conf = fcs.most_common(pd.concat([
+            schedule[["home_id", "home_conf_id"]].set_axis(["id", "conf"], axis=1),
+            schedule[["away_id", "away_conf_id"]].set_axis(["id", "conf"], axis=1)
+        ]).fillna(""))
+    return {t: conf.get(t, "") for t in teams}
+
+
+def fit(frame: pd.DataFrame, schedule: pd.DataFrame, asof: pd.Timestamp):
+    """The ratings as of `asof`, from every game before it.
+
+    With the FCS archive on disk (cfb.fcs) the FCS's own games join the fit
+    and every team is rated as itself, pulled toward its own conference - the
+    model the backtest scores. Without it, or should preparing it fail, the
+    plain fit on the FBS archive, as before the archive existed.
+    """
+    train = frame[frame["date"] < asof]
+    try:
+        prepared = fcs.prepare(train, asof, fbs_conferences(frame, schedule), SEASON)
+    except Exception as exc:                            # noqa: BLE001
+        print(f"  ! FCS games left out of the ratings ({exc}); FBS archive alone")
+        prepared = None
+    if prepared is None:
+        return ratings_mod.fit(train, asof=asof)
+    games, levels, divisions = prepared
+    return ratings_mod.fit(games, asof=asof, levels=levels, divisions=divisions)
+
+
+def side_ratings(model, frame: pd.DataFrame, side: str) -> pd.Series:
+    """Each row's rating on one side - an FCS team's own, where the model
+    rates it, rather than the generic FCS opponent's."""
+    sides = getattr(model, "sides", None)
+    teams = sides(frame, side) if sides else frame[f"{side}_team"]
+    return teams.map(model.rating)
+
+
 def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
     """Predicted score, spread and win probability for one week's games."""
     frame, schedule, names = history()
@@ -201,8 +253,7 @@ def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
     if upcoming.empty:
         return pd.DataFrame()
 
-    train = frame[frame["date"] < upcoming["date"].min()]
-    model = ratings_mod.fit(train, asof=upcoming["date"].min())
+    model = fit(frame, schedule, upcoming["date"].min())
     # The margins corrected by how each side has been playing, not only what
     # it has scored (cfb.efficiency) - as of the same moment.
     model = efficiency.corrected(model, frame, upcoming["date"].min())
@@ -213,8 +264,8 @@ def week(number: int = None, asof: pd.Timestamp = None) -> pd.DataFrame:
     carry = ["week", "game_id", "date", "time_valid", "home", "away", "neutral",
              "home_id", "away_id", "home_rank", "away_rank", "tv", "venue", "place", "note"]
     out = upcoming[[c for c in carry if c in upcoming.columns]].join(preds)
-    out["home_rating"] = upcoming["home_team"].map(model.rating)
-    out["away_rating"] = upcoming["away_team"].map(model.rating)
+    out["home_rating"] = side_ratings(model, upcoming, "home")
+    out["away_rating"] = side_ratings(model, upcoming, "away")
     out = floor_scores(out)
     out["home_win_prob"] = norm.cdf(out["pred_margin"] / margin_sd())
     # Sportsbook convention: a favourite is quoted negative.
@@ -236,14 +287,13 @@ def season(asof: pd.Timestamp = None) -> pd.DataFrame:
     played = schedule["state"] == "post"
     real = played & (schedule["home_score"].fillna(0) + schedule["away_score"].fillna(0) > 0)
 
-    train = frame[frame["date"] < asof]
-    model = efficiency.corrected(ratings_mod.fit(train, asof=asof), frame, asof)
+    model = efficiency.corrected(fit(frame, schedule, asof), frame, asof)
     preds = model.predict(schedule)
 
     out = floor_scores(schedule.copy().join(preds))
     out["played"] = real
-    out["home_rating"] = schedule["home_team"].map(model.rating)
-    out["away_rating"] = schedule["away_team"].map(model.rating)
+    out["home_rating"] = side_ratings(model, schedule, "home")
+    out["away_rating"] = side_ratings(model, schedule, "away")
     out["home_win_prob"] = norm.cdf(out["pred_margin"] / margin_sd())
     out["actual_margin"] = np.where(real, out["home_score"] - out["away_score"], np.nan)
     return out.sort_values("date").reset_index(drop=True), model, names

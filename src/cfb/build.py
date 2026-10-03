@@ -33,7 +33,7 @@ PAGES = ["home", "draft_review", "recap", "league", "league_power", "trade", "ma
 
 def build_all(refresh: bool = False) -> list[str]:
     """Fetch (or reuse) the data, build every page; returns failed page names."""
-    from cfb import (advanced, boxscores, cfbd, espn, gameinfo, odds, players, results,
+    from cfb import (advanced, boxscores, cfbd, espn, fcs, gameinfo, odds, players, results,
                      schools, usage, yahoo)
 
     # Fetch up front so one network failure surfaces once, not per page, and a
@@ -48,6 +48,9 @@ def build_all(refresh: bool = False) -> list[str]:
                         # per week; only the current week refetches.
                         ("yahoo matchups", lambda: yahoo.capture_matchups(refresh=refresh)),
                         ("espn schedule", lambda: espn.schedule(refresh=refresh)),
+                        # The FCS's own games, so the ratings know which FCS
+                        # team an FBS side is playing (cfb.fcs).
+                        ("espn fcs games", lambda: fcs.capture(refresh=refresh)),
                         # FPI win chance, DraftKings moneyline and the forecast,
                         # per game. Frozen at kickoff: ESPN's post-game payload
                         # drops the projection and prices the moneyline at

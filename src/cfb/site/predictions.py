@@ -317,8 +317,9 @@ def _side(game, side: str, winning: bool, score: int) -> str:
     rating = game.get(f"{side}_rating")
     rating_txt = "" if pd.isna(rating) else f"{rating:+.1f}"
     logo = logos.img("ncaa", game[f"{side}_id"], 26)
-    # Only FBS teams get a page; an FCS visitor is pooled and has no rating to
-    # show, so it gets a badge and no link rather than a link to nothing. Team
+    # Only FBS teams get a page; an FCS visitor is rated in the fit (cfb.fcs,
+    # 2026-10-03) but is not on the ratings table and has no page, so it gets
+    # a badge and no link rather than a link to nothing. Team
     # pages are built before this one -- see cfb.build.PAGES -- so the file is
     # already on disk when this asks.
     slug = teams_page.team_slug(str(game[side]))
