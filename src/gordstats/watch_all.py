@@ -173,7 +173,7 @@ HOW = ("College and pro football together, each window's games best first by the
        "both sports' guides use: ESPN's matchup quality (0-100, how good the teams are and how "
        "close it should be), nudged for big games. Starred teams go first, and games with "
        "players from your fantasy teams in either league move up. During the day a close game "
-       "late, an overtime or an underdog ahead in the second half jumps the queue.")
+       "late, an overtime or an underdog ahead in the second half jumps the line.")
 
 
 def adapter_js() -> str:
@@ -246,7 +246,7 @@ TEASER = """<style>
     // In kickoff order: this card is what is on tonight, the guide ranks it.
     rows.sort(function(a,b){ return Date.parse(a.g.ko)-Date.parse(b.g.ko); });
     var top=rows.slice(0,4).map(function(x){
-      var t=new Date(x.g.ko).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+      var t=new Date(x.g.ko).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
       return '<li><b>'+x.s+'</b>'+esc(x.g.a.nm)+' at '+esc(x.g.h.nm)
         +'<span>'+(x.g.tk?t:'TBA')+(x.g.tv?' &middot; '+esc(x.g.tv):'')+'</span></li>';
     }).join('');

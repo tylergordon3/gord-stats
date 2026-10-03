@@ -362,7 +362,7 @@ def _health_caveat() -> str:
         "counts absences of every kind &mdash; injury, benching, a release &mdash; not injuries "
         "specifically. The league's weekly injury reports (data/injuries) can't fill that gap: "
         "they list players ruled <em>Out</em> week by week, and a player lost for the season "
-        "drops off the report entirely, so they under-count the absences that matter most. "
+        "drops off the report entirely, so they undercount the absences that matter most. "
         "Nick Chubb's two-game 2023 and Brandon Aiyuk's lost 2025 appear nowhere in them. "
         "Weeks active catches both.</p>"
     )
@@ -656,8 +656,8 @@ def body(report_href: str = "/fantasy/draft-report/") -> str:
         "championship drafts had in common.</p>"
         f"<p><strong>Sample size:</strong> {n_drafts} drafts, {n_picks} picks in total, so roughly "
         f"{n_picks // len(ROSTER_NAMES)} picks per manager. That is enough to describe a habit "
-        "and not enough to prove one &mdash; read the 'never before round N' lines as "
-        "'hasn't yet', not as a law. Kickers and defenses are excluded throughout.</p>"
+        "and not enough to prove one &mdash; read the &ldquo;never before round N&rdquo; lines as "
+        "&ldquo;hasn't yet&rdquo;, not as a law. Kickers and defenses are excluded throughout.</p>"
     )
 
     nav = layout.section_nav([(a, title.split(" - ")[0]) for a, title, _ in sections])

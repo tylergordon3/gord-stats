@@ -41,20 +41,20 @@ FORM_GAMES = 4
 # without them is shown but never named.
 UNITS = [
     {"label": "EPA per play", "off": "adj_off", "def": "adj_def", "fmt": "epa",
-     "off_phrase": "offence", "def_phrase": "defence"},
+     "off_phrase": "offense", "def_phrase": "defense"},
     {"label": "Run EPA", "off": "adj_off_rush", "def": "adj_def_rush", "fmt": "epa",
-     "off_phrase": "run game", "def_phrase": "run defence"},
+     "off_phrase": "run game", "def_phrase": "run defense"},
     {"label": "Pass EPA", "off": "adj_off_pass", "def": "adj_def_pass", "fmt": "epa",
-     "off_phrase": "passing game", "def_phrase": "pass defence"},
+     "off_phrase": "passing game", "def_phrase": "pass defense"},
     {"label": "Success rate", "off": "adj_sr", "def": "adj_sr_a", "fmt": "pct"},
     {"label": "Explosiveness", "off": "adj_expl", "def": "adj_expl_a", "fmt": "num2",
-     "off_phrase": "big-play offence", "def_phrase": "big-play defence"},
+     "off_phrase": "big-play offense", "def_phrase": "big-play defense"},
     {"label": "Line yards", "off": "adj_line", "def": "adj_line_a", "fmt": "num2",
      "off_phrase": "offensive line", "def_phrase": "defensive front"},
     {"label": "Havoc", "off": "off_havoc", "def": "def_havoc", "fmt": "pct"},
     {"label": "Points per trip", "off": "off_ppo", "def": "def_ppo", "fmt": "num2"},
     {"label": "Third downs", "off": "third", "def": "third_a", "fmt": "pct",
-     "off_phrase": "third-down offence", "def_phrase": "third-down defence"},
+     "off_phrase": "third-down offense", "def_phrase": "third-down defense"},
 ]
 # Which way is better, for the ranks: offences high, defences low - but havoc
 # is the defence's to make and the offence's to avoid.
@@ -69,7 +69,7 @@ NOTES = [
     ("Explosiveness", "The average EPA of the successful plays: how big the good ones are."),
     ("Line yards", "Rushing yards credited to the offensive line, per carry."),
     ("Havoc", "Plays ending in a tackle for loss, a forced fumble, an interception or a pass "
-     "broken up: the defence's rate made, the offence's allowed."),
+     "broken up: the defense's rate made, the offense's allowed."),
     ("Points per trip", "Points per drive that reaches the opponent's 40."),
     ("Players", "EPA per play with garbage time out; ranked among FBS players with enough "
      "plays (QBs 80 dropbacks, backs 35 carries, receivers 15 targets)."),
@@ -282,7 +282,7 @@ def build(data: dict, now) -> list:
             "players": players,
             "form": {side: preview_page.recent_form(season, t["id"], g["date_utc"], FORM_GAMES)
                      for side, t in (("away", away), ("home", home))},
-            "words": {"off": "offence", "def": "defence"},
+            "words": {"off": "offense", "def": "defense"},
             "schedule": f"/cfb/schedule/#w={int(g['week'])}&g={gid}",
             "notes": NOTES, "source": SOURCE, "stats": "/cfb/stats/",
         })
@@ -301,7 +301,7 @@ def generate(now=None) -> None:
         preview_page.write(
             g, subtitle=f"{g['label']} preview",
             description=(f"{preview_page.title(g)}, {kick:%a %b %-d}: GordStats' pick against "
-                         "the line, and how the offences and defences match up."))
+                         "the line, and how the offenses and defenses match up."))
     removed = preview_page.prune(SPORT, {g["id"] for g in games})
     print(f"Wrote {len(games)} CFB game previews -> {preview_page.out_dir(SPORT)}"
           + (f"; removed {len(removed)} old" if removed else ""))

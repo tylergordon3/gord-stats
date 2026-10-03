@@ -243,7 +243,7 @@ HOW = ("Each window's games, best first, by a watch score: ESPN's matchup qualit
        "good the teams are and how close it should be), nudged up when both teams have winning "
        "records. Pick your team and the games with your starters move up and name them, with "
        "your opponent's this week beside them. During the day, a close game in the fourth, an "
-       "overtime or an underdog ahead in the second half jumps the queue.")
+       "overtime or an underdog ahead in the second half jumps the line.")
 
 
 def body(data: dict) -> str:

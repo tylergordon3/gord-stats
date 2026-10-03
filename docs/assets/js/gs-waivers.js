@@ -28,7 +28,7 @@
   }
   function when(ms){
     var d=new Date(ms);
-    return isNaN(d)?'':d.toLocaleDateString([], {year:'numeric', month:'short', day:'numeric'});
+    return isNaN(d)?'':d.toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'});
   }
 
   function chain(id){

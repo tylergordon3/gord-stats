@@ -29,7 +29,7 @@ def _game(**kw):
                   "tags": ["Top 25 matchup"], "call_min": 0.5, "edge": 3.0,
                   "record_url": "/cfb/predictions/"},
          "units": {"away": [], "home": []}, "style": {}, "players": {}, "form": {},
-         "words": {"off": "offence", "def": "defence"}, "schedule": "/cfb/schedule/#g=401",
+         "words": {"off": "offense", "def": "defense"}, "schedule": "/cfb/schedule/#g=401",
          "notes": [("EPA", "Expected points added.")], "source": "CFBD.", "stats": "/cfb/stats/"}
     g.update(kw)
     return g
@@ -103,7 +103,7 @@ def test_the_tiles_carry_ours_the_book_and_the_watch_score():
 # --------------------------------------------------------------------------- #
 
 UNITS = [{"label": "Run EPA", "off": "off_rush", "def": "def_rush", "fmt": "epa",
-          "off_phrase": "run game", "def_phrase": "run defence"},
+          "off_phrase": "run game", "def_phrase": "run defense"},
          {"label": "Havoc", "off": "off_havoc", "def": "def_havoc", "fmt": "pct"}]
 
 
@@ -126,14 +126,14 @@ def test_pair_units_needs_both_sides():
 def test_the_biggest_mismatch_is_said_in_words_the_right_way_round():
     run = lambda o, d: {"label": "Run EPA", "fmt": "epa", "off": (0.2, o, 130),
                         "def": (0.1, d, 130), "off_phrase": "run game",
-                        "def_phrase": "run defence"}
+                        "def_phrase": "run defense"}
     g = _game(units={"away": [run(4, 98)],          # Texas's run game has the edge
-                     "home": [run(110, 3)]})        # Texas's run defence has it
+                     "home": [run(110, 3)]})        # Texas's run defense has it
     said = [t for _s, t in pv.mismatches(g)]
     assert len(said) == 2
     text = [_text(t) for t in said]
-    assert "Texas' run game (4th) meets Georgia's run defence (98th)." in text, text
-    assert "Texas' run defence (3rd) meets Georgia's run game (110th)." in text, text
+    assert "Texas' run game (4th) meets Georgia's run defense (98th)." in text, text
+    assert "Texas' run defense (3rd) meets Georgia's run game (110th)." in text, text
     # Close ranks are not a mismatch.
     assert pv.mismatches(_game(units={"away": [run(40, 60)], "home": []})) == []
 
@@ -145,7 +145,7 @@ def test_unit_rows_draw_both_ranks_and_bars():
     html = pv.units_block(g)
     assert "<b>4th</b><small>+0.21</small>" in html and "<b>98th</b>" in html
     assert "i class='o win'" in html and "i class='d lose'" in html
-    assert "Texas offence <span>vs</span> Georgia defence" in html
+    assert "Texas offense <span>vs</span> Georgia defense" in html
     assert "Texas: 70 plays a game" in html and "href='/cfb/stats/'" in html
 
 

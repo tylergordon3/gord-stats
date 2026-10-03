@@ -34,10 +34,10 @@ COLUMNS = [
     _c("rec", "Rec", "Won-lost this season.", "rec", None, "overview"),
     _c("adj_net", "Net EPA", "Offensive EPA per play minus defensive EPA per play allowed, adjusted "
        "for opponents: points better than the opponent per snap.", "epa", "high", "overview"),
-    _c("adj_off", "Off EPA", "Expected points added per offensive play, adjusted for the defences "
+    _c("adj_off", "Off EPA", "Expected points added per offensive play, adjusted for the defenses "
        "faced.", "epa", "high", "overview", "offense"),
     _c("adj_def", "Def EPA", "Expected points added per play by opponents, adjusted for the "
-       "offences faced. Lower is better.", "epa", "low", "overview", "defense"),
+       "offenses faced. Lower is better.", "epa", "low", "overview", "defense"),
     _c("adj_sr", "Success", "Share of offensive plays that were a success - 50% of the yards needed "
        "on first down, 70% on second, all of them on third and fourth. Opponent-adjusted.",
        "pct", "high", "overview", "offense"),
@@ -63,7 +63,7 @@ COLUMNS = [
     _c("off_havoc", "Havoc allowed", "Share of plays that ended in a tackle for loss, a forced "
        "fumble, an interception or a pass defended.", "pct", "low", "offense"),
     _c("third", "3rd down", "Third downs converted.", "pct", "high", "offense"),
-    _c("off_start", "Start", "Average starting field position, as the offence's own yard line.",
+    _c("off_start", "Start", "Average starting field position, as the offense's own yard line.",
        "num1", "high", "offense"),
     # Defence
     _c("adj_def_pass", "Pass EPA allowed", "Opponents' EPA per passing play, adjusted.",
@@ -80,7 +80,7 @@ COLUMNS = [
        "num2", "low", "defense"),
     _c("def_stuff", "Stuff rate", "Share of opponents' runs stopped at or behind the line.",
        "pct", "high", "defense"),
-    _c("def_havoc", "Havoc", "Share of plays the defence ended in a tackle for loss, a forced "
+    _c("def_havoc", "Havoc", "Share of plays the defense ended in a tackle for loss, a forced "
        "fumble, an interception or a pass defended.", "pct", "high", "defense"),
     _c("def_havoc_f7", "Front 7 havoc", "Havoc by the defensive line and linebackers.",
        "pct", "high", "defense"),
@@ -156,7 +156,7 @@ def body() -> str:
                    key=lambda c: (c not in POWER4, CONFERENCES.get(c, c)))
     filters = [("", "All FBS"), ("Power4", "Power 4")] + [(c, CONFERENCES.get(c, c)) for c in confs]
     return (
-        "<p>Every FBS offence and defence on expected points and success rate, adjusted for the "
+        "<p>Every FBS offense and defense on expected points and success rate, adjusted for the "
         "opponents faced. Tap a column to sort; the shading is where a team ranks.</p>"
         + stats_page.table(table_rows, COLUMNS, filters=filters, filter_label="Show",
                            sort_key="adj_net")
@@ -173,7 +173,7 @@ def body() -> str:
 
 def generate() -> None:
     write_page(OUT, "Team Stats", body(), subtitle=f"{SEASON} season, the advanced numbers",
-               description="Every FBS team's offence and defence on EPA, success rate, "
+               description="Every FBS team's offense and defense on EPA, success rate, "
                            "explosiveness, havoc and more - opponent-adjusted - with player "
                            "leaders.")
 

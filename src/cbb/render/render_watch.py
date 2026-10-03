@@ -243,7 +243,7 @@ ADAPTER_JS = CSS + """<script>
       var next=days.filter(function(x){ return x>=today; })[0]||(C.tipoff>today?C.tipoff:'');
       if(!next) return 'No games today.';
       if(next===today) return 'Today\\u2019s games aren\\u2019t posted yet.';
-      return 'No games until '+new Date(next+'T12:00:00').toLocaleDateString(undefined,
+      return 'No games until '+new Date(next+'T12:00:00').toLocaleDateString('en-US',
         {weekday:'short',month:'short',day:'numeric'})+'.';
     });
     lines[lg]={day:today, text:text};
@@ -279,7 +279,7 @@ ADAPTER_JS = CSS + """<script>
     var min=Math.max(0,Math.round((Date.now()-t)/60000)), hr=Math.round(min/60);
     up.setAttribute('data-updated', new Date(t).toISOString());
     up.textContent='Updated '+(min<1?'just now':min<60?min+' min ago':hr<36?hr+' hr ago':Math.round(hr/24)+' days ago')
-      +' \\u00b7 '+new Date(t).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',
+      +' \\u00b7 '+new Date(t).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',
         hour:'numeric',minute:'2-digit'});
   }
   function chrome(any){
@@ -375,7 +375,7 @@ HOW = (f"Each window's games, best first, by a watch score out of 100: how good 
        f"gap to 100 (the NCAA tournament twice). Toss-up: {TOSS_UP[0]:.0%}-{TOSS_UP[1]:.0%}. "
        f"Upset watch: the underdog at {UPSET_WATCH:.0%}+. Your starred teams go first; while games "
        f"are on, one within {CLOSE} in the last five minutes, an overtime or an underdog ahead in "
-       f"the second half jumps the queue.")
+       f"the second half jumps the line.")
 
 
 def body(cfg: dict = None) -> str:

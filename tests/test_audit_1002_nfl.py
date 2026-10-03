@@ -502,7 +502,7 @@ def test_an_unset_playoff_game_and_an_untimed_kickoff_are_not_dressed_as_real():
                                   home_score=None, away_score=None, detail="TBD",
                                   date=pd.Timestamp("2027-01-17T05:00Z")), {})
     assert "Teams to be decided" in tbd
-    assert "TBD -" not in tbd and "12:00 AM" not in tbd and "Sun 17 Jan, time TBD" in tbd
+    assert "TBD -" not in tbd and "12:00 AM" not in tbd and "Sun, Jan 17, time TBD" in tbd
     assert "tbd.png" not in tbd                           # (B) no logo to 404
     untimed = predictions._card(_card(played=False, home_score=None, away_score=None,
                                       detail="TBD", date=pd.Timestamp("2027-01-10T05:00Z")), {})

@@ -104,9 +104,9 @@ JS = """{% raw %}<script>
     var d=new Date(t);
     // A game with no time yet is filed at midnight Eastern of its day: in the
     // reader's own zone, west of Eastern, that midnight is still Friday.
-    if(!known) return d.toLocaleDateString(undefined,{weekday:'short',timeZone:'America/New_York'})+' &middot; TBA';
-    return d.toLocaleDateString(undefined,{weekday:'short'})+' '
-      +d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+    if(!known) return d.toLocaleDateString('en-US',{weekday:'short',timeZone:'America/New_York'})+' &middot; TBA';
+    return d.toLocaleDateString('en-US',{weekday:'short'})+' '
+      +d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   }
   function rk(r){ return r?'<span class="rk">'+esc(r)+'</span>':''; }
   function score(v){ return v==null||v===''?null:(Number(v)||0); }

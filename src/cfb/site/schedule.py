@@ -572,9 +572,9 @@ the rest was rebuilt {built}.</p>
 <ul>
 <li><b>Lines</b> &mdash; every read of the game stacked so they can be compared: the
 <b>GS</b> row is this site's <a href="/cfb/predictions/">model</a> and is highlighted because
-it is the pick (favourite, projected total, and that team's win chance); <b>DK</b> is the
+it is the pick (favorite, projected total, and that team's win chance); <b>DK</b> is the
 DraftKings spread, total and moneylines as ESPN carries them, captured before kickoff and
-frozen; <b>FPI</b> is ESPN's Football Power Index favourite and win chance; <b>SP+</b> is
+frozen; <b>FPI</b> is ESPN's Football Power Index favorite and win chance; <b>SP+</b> is
 Bill Connelly's ratings read as a spread with home field added. Under the table is the
 call, in one line: the score the model expects, then the DraftKings spread and total it
 would take &mdash; <i>GordStats projects 19&ndash;34, recommend M-OH +16.5 and Under
@@ -587,7 +587,7 @@ is <b>under break-even</b> against the spread, which the
 <a href="/cfb/predictions/#how-it-has-gone">predictions page</a> keeps an honest count
 of.</li>
 <li><b>Under each team</b> &mdash; GordStats rating (points better than an average
-FBS team), FPI and SP+ rank (hover for the rating, and SP+ offence and defence ranks), and
+FBS team), FPI and SP+ rank (hover for the rating, and SP+ offense and defense ranks), and
 the last five results as W/L chips with the score on hover.</li>
 <li><b>Season</b> &mdash; away team over home: record, against-the-spread and over/under
 records this season (counted here against the closing DraftKings line, since ESPN
@@ -598,8 +598,8 @@ storms or snow, a 50%+ chance of rain, gusts of 25+ mph, or a kickoff at or belo
 freezing.</li>
 <li><b>Tags</b> &mdash; <i>Home dog</i>: the home team is the underdog on the book's line
 (the model's, if there is no book line yet). <i>Toss-up</i>: the spread is three points or
-fewer. <i>Upset</i>: the favourite lost. <i>Upset watch</i> in the filters: the model or
-FPI gives the underdog at least a 35% chance, or the two disagree on who is favoured.</li>
+fewer. <i>Upset</i>: the favorite lost. <i>Upset watch</i> in the filters: the model or
+FPI gives the underdog at least a 35% chance, or the two disagree on who is favored.</li>
 <li><b>More</b> on any game opens every book's line (DraftKings from ESPN; Bovada and
 others from CollegeFootballData) with how each has moved since it opened, our archive of
 the DraftKings line day by day, the implied final score and moneyline chance, and where
@@ -895,7 +895,7 @@ def _stat_line(g, side: str) -> str:
         bits.append(f'<span title="ESPN FPI rank ({fpi["rating"]:+.1f})">FPI <b>#{fpi["rank"]}</b></span>')
     sp = _CTX.get("sp", {}).get(tid)
     if sp and sp.get("rank"):
-        od = (f", offence #{sp['off_rank']}, defence #{sp['def_rank']}"
+        od = (f", offense #{sp['off_rank']}, defense #{sp['def_rank']}"
               if sp.get("off_rank") and sp.get("def_rank") else "")
         bits.append(f'<span title="SP+ rank ({sp["rating"]:+.1f}{od})">SP+ <b>#{sp["rank"]}</b></span>')
     last5 = getattr(g, f"last5_{side}")
@@ -1153,7 +1153,7 @@ def _form_cell(g) -> str:
     return ('<td class="frm d" data-s="Season"><div class="c">'
             '<div class="frm-scroll"><table class="frt"><tr><th></th>'
             '<th title="Record">Rec</th><th title="Against the spread this season">ATS</th>'
-            '<th title="Over-under this season">O/U</th>'
+            '<th title="Over/under this season">O/U</th>'
             '<th title="Points scored and allowed per game">PF&ndash;PA</th></tr>'
             + _form_row(g, "away") + _form_row(g, "home") + "</table></div></div></td>")
 
@@ -1389,9 +1389,11 @@ def _detail(g, spread, gs_margin, home_won, sp_margin) -> str:
                               _v(g.bd_total_open), _v(g.ml_home), _v(g.ml_away),
                               _v(g.bd_ml_home_open), _v(g.bd_ml_away_open)))
     for b in _CTX.get("books", {}).get(str(g.game_id), []):
-        if b["book"] == "DraftKings" and rows:
+        # CFBD spelled it "Draft Kings" early in 2026: the same book, one name.
+        book = "DraftKings" if b["book"] == "Draft Kings" else b["book"]
+        if book == "DraftKings" and rows:
             continue
-        rows.append(_book_row(g, b["book"], b.get("spread"), b.get("spread_open"),
+        rows.append(_book_row(g, book, b.get("spread"), b.get("spread_open"),
                               b.get("total"), b.get("total_open"),
                               b.get("ml_home"), b.get("ml_away")))
     books = ('<div class="det-scroll"><table class="det-t"><tr><th>Book</th><th>Spread</th>'

@@ -254,7 +254,7 @@ def waiver_watch() -> str:
         "running back and always will.</p>"
         '<h3>Worth adding</h3>' + table(adds_html, False)
         + '<h3>Weakest rostered</h3>'
-        '<p>Kickers and defences are left out &mdash; every roster needs one of each.</p>'
+        '<p>Kickers and defenses are left out &mdash; every roster needs one of each.</p>'
         + table(drops_html, True))
 
 

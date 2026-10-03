@@ -161,7 +161,7 @@ def _controls(has_movement: bool) -> str:
 
 _HEADERS = [
     ("pick", "Pick", 8, f"Round and pick this board slot lands on in a "
-                        f"{LEAGUE_TEAMS}-team draft, with the overall slot in brackets"),
+                        f"{LEAGUE_TEAMS}-team draft, with the overall slot in parentheses"),
     ("name", "Player", 0, "Player"),
     ("", "Pos", 9, "Position, and where he ranks in it on this board"),
     ("", "School", 2, "School"),

@@ -108,7 +108,7 @@ def built_cards() -> str:
          "Schedule difficulty - opponents' strength and timing - all-play records and every "
          "schedule swapped, each season"),
         ("/fantasy/transactions/", "Waivers & trades", _quiet(transactions_finding),
-         "Every claim, add and trade, and what the players did afterwards"),
+         "Every claim, add and trade, and what the players did afterward"),
         ("/fantasy/draft/", "Draft values & busts", _quiet(draft_finding),
          "Each draft's board, what every pick returned, and each manager's habits"),
         ("/fantasy/injuries/", "Injury impacts", _quiet(injury_finding),

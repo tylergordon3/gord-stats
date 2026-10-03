@@ -207,7 +207,7 @@ HOW = ("Each window's games, best first, by a watch score: ESPN's matchup qualit
        "playoff stakes (ESPN FPI gives both teams a 10%+ playoff chance, or one 25%+ in a game it "
        "could lose). Your starred teams go first, and games with players from your Yahoo team "
        "move up. During the day, a close game late, an overtime or an underdog ahead in the "
-       "second half jumps the queue.")
+       "second half jumps the line.")
 
 
 def body(data: dict) -> str:

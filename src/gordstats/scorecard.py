@@ -90,7 +90,7 @@ def _lean(bias) -> str:
     if abs(bias) < 0.25:
         return "we are not leaning either way"
     side = "too many" if bias > 0 else "too few"
-    return f"we give favourites {abs(bias):.1f} pts {side}"
+    return f"we give favorites {abs(bias):.1f} pts {side}"
 
 
 def _signed(v: float, places: int = 1) -> str:
@@ -130,7 +130,7 @@ def band(stat: dict, *, min_for_pct: int = MIN_FOR_PCT,
                  if stat.get("book_games") else None)
     cells = [
         _cell("Winners called right", stat["correct"], stat["games"], "games",
-              book_rate, "the book's favourite", min_for_pct=min_for_pct),
+              book_rate, "the book's favorite", min_for_pct=min_for_pct),
         _cell("Our projected spread", stat.get("cover_wins", 0),
               stat.get("cover_games", 0), "games the side we picked beat our number",
               0.50, "even money", target=True,

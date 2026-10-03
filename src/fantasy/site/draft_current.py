@@ -203,13 +203,13 @@ def view() -> str:
         _CSS
         + "<h2>Draft Board</h2>"
         f"<p>The {UPCOMING_SEASON} draft, pick by pick. No finishes yet — the season "
-        "has not started — so instead each cell is coloured by position and carries "
+        "has not started — so instead each cell is colored by position and carries "
         "the pick against the player's rank on the multi-site ADP board "
         f"(pulled {when}): <span class='v up' style='font-weight:700;color:#1a7f4b'>+</span> "
         "lasted longer than the market said, "
         "<span style='font-weight:700;color:#b3382c'>−</span> a reach, shown past "
         f"{NUDGE} picks either way. Snake order, so even rounds run right to left."
-        + (f" {ungraded} pick{'s' if ungraded != 1 else ''} had no ADP row and are ungraded."
+        + (f" {ungraded} pick{'s' if ungraded != 1 else ''} had no ADP row and {'are' if ungraded != 1 else 'is'} ungraded."
            if ungraded else "")
         + "</p>"
         f'<div class="table-scroll">{grid(df)}</div>'

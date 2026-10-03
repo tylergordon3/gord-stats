@@ -28,7 +28,7 @@
       var p = lines[i];
       var t = Date.parse(p.getAttribute("data-updated"));
       if (isNaN(t)) continue;
-      var when = new Date(t).toLocaleString(undefined, {
+      var when = new Date(t).toLocaleString("en-US", {
         weekday: "short", month: "short", day: "numeric",
         hour: "numeric", minute: "2-digit"
       });

@@ -150,9 +150,9 @@ def _method(n: int) -> str:
         "really strayed from the model in 2015-2025 - so a team better than we think wins its "
         "games together and a game in November is less certain than Saturday's.",
         "<strong>Conference title games</strong> pair the two best conference records (the Sun "
-        "Belt: East v West). A tie goes to the record in games among the tied teams, then to our "
+        "Belt: East vs West). A tie goes to the record in games among the tied teams, then to our "
         "rating, standing in for the computer rankings conferences use late in their lists. "
-        "Common opponents are not modelled.",
+        "Common opponents are not modeled.",
         "<strong>Selection.</strong> The committee has no formula, so a stand-in picks the field: "
         "strength of record (wins above what an average top-25 team would expect against the "
         f"same schedule) plus our rating, {playoff.RATING_PER_WIN:.0f} points of it counting as "

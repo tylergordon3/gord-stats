@@ -168,7 +168,7 @@ def _schedule_rows(frame: pd.DataFrame, team: str, names: dict) -> str:
         # one against a team you follow, not every row on the page.
         rows.append(f"<tr{favorites.row_attr('cfb', opp_id)}><td class='tm-name'>"
                     f"<span class='row-rank'>{int(g['week'])}</span>{cell}</td>"
-                    f"<td>{g['date'].astimezone(ET):%-d %b}</td>"
+                    f"<td>{g['date'].astimezone(ET):%b %-d}</td>"
                     f"<td>{result}</td><td>{expected}</td><td>{chance}</td></tr>")
     head = ("<tr><th>Opponent</th><th>Date</th>"
             "<th>Result</th><th>Expected</th><th>Win</th></tr>")

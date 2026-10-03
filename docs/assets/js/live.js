@@ -209,7 +209,7 @@ async function nextGameText (today) {
     if (!next) return 'No games today.'
     // They arrive with the Worker's first push of the day, at 11 ET.
     if (next === today) return 'Today’s games aren’t posted yet.'
-    const when = new Date(next + 'T12:00:00').toLocaleDateString(undefined, {
+    const when = new Date(next + 'T12:00:00').toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric'
@@ -389,7 +389,7 @@ function gameTime (g) {
 
 function formatDateHeader (isoDate) {
   const d = new Date(isoDate + 'T00:00:00')
-  return d.toLocaleDateString(undefined, {
+  return d.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric'

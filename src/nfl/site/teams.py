@@ -229,7 +229,7 @@ def _schedule_rows(frame: pd.DataFrame, team: str, names: dict, record: dict) ->
         rows.append(f"<tr{favorites.row_attr('nfl', opp_id) if _real(opp_id) else ''}>"
                     f"<td class='tm-name'><span class='row-rank'>"
                     f"{week_label(g['week'], g['seasontype'])}</span>{cell}</td>"
-                    f"<td>{g['date'].tz_convert(TZ):%-d %b}</td>"
+                    f"<td>{g['date'].tz_convert(TZ):%b %-d}</td>"
                     f"<td>{result}</td><td>{margin:+.1f}</td><td>{chance}</td></tr>")
     head = ("<tr><th>Opponent</th><th>Date</th>"
             "<th>Result</th><th>Expected</th><th>Win</th></tr>")

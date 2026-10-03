@@ -307,7 +307,7 @@ def body() -> str:
         "(FantasyPros PPR, averaged across ESPN/Sleeper/Yahoo/CBS/NFL) and <strong>ADP Value</strong> "
         "(pick minus ADP, + = taken later than consensus) are on each row as draft-day context. "
         "<strong>By Position</strong> does the same on positional ranks, which is the fairer "
-        "comparison across positions: an overall finish always favours quarterbacks.</p>"
+        "comparison across positions: an overall finish always favors quarterbacks.</p>"
         f"<p>Players who played fewer than {LOST_SEASON_GAMES} games and finished below "
         "their ADP are left out: a season lost to injury says nothing about the pick. Each "
         "season notes who was dropped.</p>"

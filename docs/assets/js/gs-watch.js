@@ -67,7 +67,7 @@ window.GSWatch=function(D, cfg){
   }
   function kick(g){
     var d=new Date(g.ko);
-    return g.tk?d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'TBA';
+    return g.tk?d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'TBA';
   }
   function side(g, k, st){
     var t=g[k], L=live[g.id]||{}, o=k==='h'?'a':'h';
@@ -233,7 +233,7 @@ window.GSWatch=function(D, cfg){
   }
   function dayLabel(d){
     var t=new Date(d+'T12:00:00Z');
-    return (d===today()?'Today':t.toLocaleDateString(undefined,{weekday:'short',timeZone:'UTC'}))
+    return (d===today()?'Today':t.toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'}))
       +' '+t.getUTCDate();
   }
   function picker(team){

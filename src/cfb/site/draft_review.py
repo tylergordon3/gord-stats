@@ -228,7 +228,7 @@ def team_grades(df: pd.DataFrame, lg: dict) -> str:
         "as the best starting lineup it can field, in projected season points "
         "under this league's scoring. <b>VORP</b> is the total value over "
         "replacement drafted, bench included; <b>vs ADP</b> is the average "
-        "picks of market value captured per selection; a value or a reach is "
+        "number of picks of market value captured per selection; a value or a reach is "
         f"a pick {NUDGE}+ spots past either side of this board's rank.</p>"
         '<div class="table-scroll"><table class="lg-table">'
         "<thead><tr><th>Team</th><th>Lineup</th><th>±Avg</th>"

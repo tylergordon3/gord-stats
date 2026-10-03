@@ -103,11 +103,11 @@ window.GSWeek = (function(){
   function oppCell(ctx,g,pos){
     if(!g) return '<td>&mdash;</td>';
     var row=ctx.dvp&&ctx.dvp[g.opp];
-    if(!row||!row[pos]) return "<td title='No finished week to rate this defence on yet'>&mdash;</td>";
+    if(!row||!row[pos]) return "<td title='No finished week to rate this defense on yet'>&mdash;</td>";
     var v=row[pos][0], rank=row[pos][1], games=row.games, n=ctx.dvp.n||32;
     return "<td style='"+heat(v)+"' title='Fantasy points "+esc(g.opp)
       +' has allowed to '+pos+'s against the league average, over '+games+' game'
-      +(games===1?'':'s')+"; 1.00 is par. Rank 1 is the toughest defence; the higher "
+      +(games===1?'':'s')+"; 1.00 is par. Rank 1 is the toughest defense; the higher "
       +"the number the more it gives up.'>"+v.toFixed(2)
       +'<span class="rd-rk">'+ordinal(rank)+' of '+n+'</span></td>';
   }

@@ -109,13 +109,13 @@ def _method(n: int) -> str:
         "strayed from the model in 2015-2025 - so a team better than we think wins its games "
         "together. A simulated game is never a tie; a real one counts half.",
         "<strong>Seeds:</strong> the four division winners are 1-4 by record, then three wild "
-        "cards; the 1 seed alone has a bye. Wild Card weekend is 2 v 7, 3 v 6 and 4 v 5, the "
+        "cards; the 1 seed alone has a bye. Wild Card weekend is 2 vs 7, 3 vs 6 and 4 vs 5, the "
         "divisional round reseeds, and the higher seed hosts until the Super Bowl.",
         "<strong>Tiebreaks</strong>, the NFL's own order as far as it goes here: in a division "
         "head-to-head, then division record, then conference record; for seeds and wild cards "
         "head-to-head (with three or more teams only a sweep counts), then conference record - "
         "a wild-card tie inside one division settled the division's way first. Common games, "
-        "strength of victory and the rest are not modelled: a coin stands in for them.",
+        "strength of victory and the rest are not modeled: a coin stands in for them.",
         "The bracket above takes each division's likeliest winner and the three likeliest of the "
         "rest, seeded by their average seeds. <strong>FPI</strong> is ESPN's own simulation's "
         "playoff chance.",

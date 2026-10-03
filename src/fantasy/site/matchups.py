@@ -1347,7 +1347,7 @@ def build() -> tuple:
         "<b>Slpr</b> is Sleeper's, <b>ESPN</b> is ESPN's, <b>FP</b> is the FantasyPros "
         "expert consensus (whose start/sit grade sits by the name); their average is "
         "the <b>Consensus</b> the scoreboard compares us against. <b>Pts</b> is the "
-        "blended projection (grey) - GordStats, Sleeper, ESPN and FantasyPros averaged, "
+        "blended projection (gray) - GordStats, Sleeper, ESPN and FantasyPros averaged, "
         "so no one source's lean sets it - until a player's game kicks off, then his points "
         "with the expected final under them (points plus the unplayed share of the "
         "blend), refreshed about once a minute, then <i>final</i>. The Median Tracker "

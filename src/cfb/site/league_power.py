@@ -271,7 +271,7 @@ def _season_section(names: dict) -> str:
     draw()
     chart = charts.save_picture(_SECTION, "season-trend", lambda: draw(phone=True),
                                 alt=f"One small chart per team showing its {what} across "
-                                    "every build, with the rest of the league in grey "
+                                    "every build, with the rest of the league in gray "
                                     "behind it")
 
     first, last = pivot.index[0], pivot.index[-1]
@@ -495,7 +495,7 @@ def section() -> str:
 
     move_heads = ("<th title='Since the previous build'>Move</th>" if prev is not None else "") \
         + ("<th title='Since a week ago'>7d</th>" if week is not None else "")
-    odds_heads = ("<th title='Chance of a playoff place'>Playoffs</th>"
+    odds_heads = ("<th title='Chance of a playoff spot'>Playoffs</th>"
                   "<th title='Chance of winning the title'>Title</th>") if has_odds else ""
     bye_head = "<th title='Chance of a first-round bye'>Bye</th>" if has_odds else ""
 
@@ -593,7 +593,7 @@ def body() -> str:
     share = share_button.row("/cfb/league/power/",
                              f"CFB league power rankings: {top}" if top else "")
     return (_CSS + share + "<p class='mu-note'>The schedule ahead - whose helps from here, and "
-            "which defences give up points to each position - is on "
+            "which defenses give up points to each position - is on "
             "<a href='/cfb/strength/'>Matchup Strength</a>.</p>" + html)
 
 

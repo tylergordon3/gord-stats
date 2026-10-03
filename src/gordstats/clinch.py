@@ -391,7 +391,7 @@ def section(teams: dict, spots: int, bye_spots: int = 0, median: bool = False,
 
     heads = ("<th>Team</th><th>W-L</th>"
              + ("<th>Status</th>" if any_chip else
-                "<th title='Wins that clinch a place, whatever else happens'>Magic</th>"
+                "<th title='Wins that clinch a spot, whatever else happens'>Magic</th>"
                 if show_need else "")
              + ("<th>Playoffs</th>" if show_odds else ""))
     lead = (f"<p>The top {spots} make the playoffs"
@@ -401,7 +401,7 @@ def section(teams: dict, spots: int, bye_spots: int = 0, median: bool = False,
     notes = ["Seeded as things stand, on wins and then points for: the solid line is the "
              "playoff cut" + (", the dashed one the byes" if bye_spots else "") + "."]
     if "magic" in shown:
-        notes.append("<b>Magic</b>: more wins that clinch a place whatever anyone else does "
+        notes.append("<b>Magic</b>: more wins that clinch a spot whatever anyone else does "
                      "(losses by the teams chasing can bring it down too); &mdash; means the "
                      "team needs results elsewhere.")
     if any(chips[k][1] not in (None, "near") for k in order):

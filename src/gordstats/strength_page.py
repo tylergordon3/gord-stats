@@ -109,7 +109,7 @@ def defense_table(rows: list, positions, titles: dict = None, fit: bool = True) 
         body.append(f"<tr><td class='st-name'><span class='st-rk'>{rank}</span>"
                     f"{label}</td>{cells}"
                     f"<td style='{heat(overall)}'>{overall:.2f}</td></tr>")
-    head = ("<tr><th>Defence</th>"
+    head = ("<tr><th>Defense</th>"
             + "".join(f"<th title='{escape(titles[p], quote=True)}'>{p}</th>" if p in titles
                       else f"<th>{p}</th>" for p in positions)
             + "<th>All</th></tr>")

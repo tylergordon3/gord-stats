@@ -134,16 +134,16 @@ def opp_cell(wkd: Week, g, pos: str) -> str:
         pts = g.get("pred_against")
         if pts is None or pd.isna(pts):
             return "<td>&mdash;</td>"
-        return (f"<td title='Points this site's model expects the opposing offence to score'>"
+        return (f"<td title='Points this site's model expects the opposing offense to score'>"
                 f"{float(pts):.0f}<span class='rd-rk'>opp proj pts</span></td>")
     opp_id = g.get("opp_id")
     row = wkd.ratings.get(str(opp_id))
     value = None if row is None else row.get(pos)
     if value is None or pd.isna(value):
-        return "<td title='No rating: an FCS defence, or no games yet'>&mdash;</td>"
+        return "<td title='No rating: an FCS defense, or no games yet'>&mdash;</td>"
     rank = int(wkd.ranks[pos].get(str(opp_id)))
     return (f"<td style='{_heat(value)}' title='Fantasy points allowed to {pos}s against "
-            f"expectation; 1.00 is par. Rank 1 is the toughest defence; the higher the number the more it gives up.'>{value:.2f}"
+            f"expectation; 1.00 is par. Rank 1 is the toughest defense; the higher the number the more it gives up.'>{value:.2f}"
             f"<span class='rd-rk'>{_ordinal(rank)} of {wkd.n_def}</span></td>")
 
 
@@ -339,7 +339,7 @@ def lineup_table(wkd: Week, roster: list, got: dict, now_total: float,
             + pts_td + usage_cells(wkd, pid, p["pos"]) + cover_td + "</tr>")
     head = ("<tr><th title='Where he belongs this week'>Slot</th>"
             "<th title='What it takes to get him there'>Change</th><th>Player</th><th>Game</th>"
-            "<th title='What the opposing defence allows to this position, against "
+            "<th title='What the opposing defense allows to this position, against "
             "expectation. 1.00 is par; rank 1 is the toughest, the highest number gives up the most.'>Opp vs pos</th>"
             "<th>Weather</th><th title='This site&#39;s projection for the week'>GS proj</th>"
             "<th>Yahoo</th><th>Pts</th>"
@@ -494,7 +494,7 @@ def body() -> str:
         "Weighing a <a href='/cfb/trade/'>trade</a> or a "
         "<a href='/cfb/trade/#pickup'>pickup</a>?</p>"
         "<details class='section'><summary>How to read this page</summary>"
-        "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colours what has "
+        "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colors what has "
         "to change to get there, by <b>GS proj</b>, this site's weekly projection (Yahoo's "
         "own sits beside it). <b class='rd-key-g'>Green</b> comes off the bench into "
         "the slot named; <b class='rd-key-r'>red</b> goes to the bench; "
@@ -507,9 +507,9 @@ def body() -> str:
         "player whose game has started is <i>locked</i> where he sits.</p>"
         "<p class='rd-note'><b>Opp vs pos</b> is the opponent's row on the "
         "<a href='/cfb/strength/'>matchup strength</a> page: fantasy points allowed to that "
-        "position against what the offences it faced should have scored. 1.00 is par, green "
+        "position against what the offenses it faced should have scored. 1.00 is par, green "
         f"is soft, and the rank runs from 1 (the toughest, red) to {wkd.n_def} (gives up the most, "
-        "green); FCS defences have "
+        "green); FCS defenses have "
         "no rating. <b>Weather</b> is the forecast for the game, in amber when it is bad "
         "enough to matter (rain, storms, snow, or gusts past 25 mph). <b>Car%</b> and "
         f"<b>Tgt%</b> are the last {RECENT_WEEKS} played weeks from the "

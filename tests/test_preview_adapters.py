@@ -117,7 +117,7 @@ def test_cfb_units_players_and_form(cfbp):
     run = next(r for r in g["units"]["away"] if r["label"] == "Run EPA")
     assert run["off"][1] == 1 and run["def"][1] == 4          # Bravo's run game vs the worst
     said = preview_page.mismatches(g)
-    assert "Bravo&#x27;s offence (1st)</b> meets Charlie&#x27;s defence (4th)" in said[0][1]
+    assert "Bravo&#x27;s offense (1st)</b> meets Charlie&#x27;s defense (4th)" in said[0][1]
     players = g["players"]["away"]
     assert [p["name"] for p in players] == ["Q One", "R Back", "W One", "T End"]
     assert players[0]["rank"] == "1st of 1 QBs" and players[1]["rank"] == ""

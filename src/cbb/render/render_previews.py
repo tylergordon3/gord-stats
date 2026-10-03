@@ -73,9 +73,9 @@ SCORE_HEADERS = {"User-Agent": "Mozilla/5.0", "Accept": "application/json",
 
 UNITS = [
     {"label": "Adj. efficiency", "off": "adjoe", "def": "adjde", "fmt": "num1",
-     "off_phrase": "offence", "def_phrase": "defence"},
+     "off_phrase": "offense", "def_phrase": "defense"},
     {"label": "Effective FG%", "off": "efg", "def": "efg_d", "fmt": "pct1",
-     "off_phrase": "shooting", "def_phrase": "shot defence"},
+     "off_phrase": "shooting", "def_phrase": "shot defense"},
     {"label": "Turnovers", "off": "tov", "def": "tov_d", "fmt": "pct1",
      "off_phrase": "ball security", "def_phrase": "ball pressure"},
     {"label": "Offensive rebounding", "off": "orb", "def": "drb", "fmt": "pct1",
@@ -83,7 +83,7 @@ UNITS = [
     {"label": "Free-throw rate", "off": "ftr", "def": "ftr_d", "fmt": "pct1",
      "off_phrase": "free-throw rate", "def_phrase": "foul rate"},
     {"label": "3-point %", "off": "p3", "def": "p3_d", "fmt": "pct1",
-     "off_phrase": "three-point shooting", "def_phrase": "three-point defence"},
+     "off_phrase": "three-point shooting", "def_phrase": "three-point defense"},
 ]
 # Offences high, defences low - except turnovers, which an offence avoids and
 # a defence forces. Torvik's "DR%" (drb) is the share of their misses the
@@ -93,17 +93,17 @@ BETTER = {**{u["off"]: "high" for u in UNITS}, **{u["def"]: "low" for u in UNITS
           "tov": "low", "tov_d": "high", "tempo": "high"}
 
 NOTES = [
-    ("The call", "GordStats' margin and win chance: each side's adjusted offence against the "
-     "other's adjusted defence at the two teams' pace, with 2.5 points for home court - the "
+    ("The call", "GordStats' margin and win chance: each side's adjusted offense against the "
+     "other's adjusted defense at the two teams' pace, with 2.5 points for home court - the "
      "scoreboard's own numbers. The book's line is theScore's."),
     ("Adj. efficiency", "Points per 100 possessions against an average D-I team on a neutral "
-     "floor: the offence's scored, the defence's allowed."),
+     "floor: the offense's scored, the defense's allowed."),
     ("Effective FG%", "Field-goal percentage with a made three counted as 1.5 makes."),
-    ("Turnovers", "Per possession: the offence's committed, the defence's forced."),
-    ("Offensive rebounding", "The share of its own misses the offence gets back, against the "
-     "share the defence lets its opponents get back."),
-    ("Free-throw rate", "Free throws attempted per field-goal attempt: drawn by the offence, "
-     "allowed by the defence."),
+    ("Turnovers", "Per possession: the offense's committed, the defense's forced."),
+    ("Offensive rebounding", "The share of its own misses the offense gets back, against the "
+     "share the defense lets its opponents get back."),
+    ("Free-throw rate", "Free throws attempted per field-goal attempt: drawn by the offense, "
+     "allowed by the defense."),
 ]
 
 
@@ -389,7 +389,7 @@ def build(data: dict, now) -> list:
             "players": {},
             "form": {side: form(logs, t["id"], day, table_on, neutral_on)
                      for side, t in (("away", away), ("home", home))},
-            "words": {"off": "offence", "def": "defence"},
+            "words": {"off": "offense", "def": "defense"},
             "schedule": None,
             "links": [("Scores", "/men/"), ("Watch Guide", "/cbb/watch/"),
                       ("Rankings", "/cbb/power/")],
@@ -543,7 +543,7 @@ def generate(now=None) -> list:
         preview_page.write(
             g, subtitle="Men's college basketball preview",
             description=(f"{preview_page.title(g)}{when}: GordStats' pick against the line, "
-                         "and how the offences and defences match up."))
+                         "and how the offenses and defenses match up."))
     removed = preview_page.prune(SPORT, {g["id"] for g in games})
     tail = f"; removed {len(removed)} old" if removed else ""
     if not games:

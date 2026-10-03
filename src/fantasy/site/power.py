@@ -72,7 +72,7 @@ SECTIONS = [
 INTRO = f"""<p id="pw-intro">Every Sleeper roster played through {UPCOMING_SEASON}
 ten thousand times, averaged with the FantasyPros League Analyzer. <strong>100 is
 the league average</strong>; a point is one percent better.</p>
-<p>The schedule ahead - whose helps from here, and which defences give up points to each
+<p>The schedule ahead - whose helps from here, and which defenses give up points to each
 position - is on <a href="/fantasy/strength/">Matchup Strength</a>.</p>"""
 
 
@@ -450,7 +450,7 @@ def _season_section() -> str:
     draw()
     chart = charts.save_picture(_SECTION, "season-trend", lambda: draw(phone=True),
                                 alt="One small chart per team showing its rating across "
-                                    "every build, with the rest of the league in grey "
+                                    "every build, with the rest of the league in gray "
                                     "behind it")
     first, last = pivot.index[0], pivot.index[-1]
     swing = (pivot.iloc[-1] - pivot.iloc[0])
@@ -776,7 +776,7 @@ def _method_section() -> str:
             "rebuilt from prior years only.</p>"
             + _player_accuracy_section(scored)
             + "<h3>Roster backtest</h3>"
-            "<p>This page run on past draft-day rosters: projected finish vs points "
+            "<p>This page, run on past draft-day rosters: projected finish vs points "
             "actually scored.</p>"
             + _backtest_section(scored))
 

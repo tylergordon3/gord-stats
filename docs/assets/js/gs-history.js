@@ -492,7 +492,7 @@
       +'<div class="hi-tile"><b>'+(avg(losses)==null?'&mdash;':avg(losses).toFixed(1))
       +'</b><span>Average loss</span></div></div>';
     var cards='<div class="hi-rivals">'+card('rival','Rival',rv.rival)
-      +card('nemesis','Nemesis',rv.nemesis)+card('victim','Favourite opponent',rv.victim)
+      +card('nemesis','Nemesis',rv.nemesis)+card('victim','Favorite opponent',rv.victim)
       +'</div>';
     var rows=splits(games).sort(function(a,b){ return b.games-a.games; })
       .map(function(s){

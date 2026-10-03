@@ -530,7 +530,7 @@ def units_block(game) -> str:
     units = game.get("units") or {}
     if not units.get("away") and not units.get("home"):
         return ""
-    words = game.get("words") or {"off": "offence", "def": "defence"}
+    words = game.get("words") or {"off": "offense", "def": "defense"}
     said = mismatches(game)
     lead = ("<ul class='pv-mm'>" + "".join(f"<li>{t}</li>" for _s, t in said) + "</ul>" if said
             else "<p class='pv-note'>No unit has a big edge over the one it faces.</p>")

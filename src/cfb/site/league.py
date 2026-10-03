@@ -273,7 +273,7 @@ def waiver_section(sb: dict) -> str:
     return (
         f'<p class="mu-note">The best available player at each position for '
         f'<strong>week {week}</strong>, on this site\'s own weekly projection, and the '
-        'weakest player each roster is holding. Defences are left off the drop list '
+        'weakest player each roster is holding. Defenses are left off the drop list '
         '(every roster has to field one) and anyone Yahoo has flagged sorts to the top '
         'of his team\'s row - an injured player is the roster spot doing nothing.</p>'
         f'<div class="wv-grid">{"".join(cols)}</div>'

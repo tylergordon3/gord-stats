@@ -113,26 +113,26 @@ def body() -> str:
         _CSS
         # One line up top; the rest of what used to be two paragraphs before the
         # first table is one tap away.
-        + "<p><strong>1.00 is par</strong>: above 1, a defence to attack; below 1, one "
+        + "<p><strong>1.00 is par</strong>: above 1, a defense to attack; below 1, one "
         f"to avoid. From {played} games so far.</p>"
         "<details class='section'><summary>How this is worked out</summary>"
         "<p class='st-note'>Fantasy points allowed per position, in this league's own "
-        "scoring, against what this site's model said the opposing offence should have "
-        "scored - 1.00 is a defence giving up exactly what its schedule implies.</p>"
+        "scoring, against what this site's model said the opposing offense should have "
+        "scored - 1.00 is a defense giving up exactly what its schedule implies.</p>"
         "<p class='st-note'>Every finished game's ESPN box score is scored with the "
         "league's modifiers, then each position's haul is set against the share of the "
-        "opposing offence's <em>predicted</em> points that position normally takes. That "
-        "adjustment is the whole point: three weeks of FCS visitors make any defence look "
-        "elite, and this asks instead whether it held offences to less than they should "
+        "opposing offense's <em>predicted</em> points that position normally takes. That "
+        "adjustment is the whole point: three weeks of FCS visitors make any defense look "
+        "elite, and this asks instead whether it held offenses to less than they should "
         "have managed. Ratings on fewer than five games are pulled toward par, so one "
-        "shootout in September does not brand a defence for the season.</p></details>"
+        "shootout in September does not brand a defense for the season.</p></details>"
         "<h2>Schedule ahead</h2>"
         "<p class='st-note'>Each roster's next weeks, priced by who its players face "
         "(weighted by what each is projected to be worth). Higher is easier; a bye is "
         "left out.</p>"
         + schedule_section(ratings, names, frame, board)
-        + "<h2>Defence vs position</h2>"
-        "<p class='st-note'>Every FBS defence, toughest first: 1 gives up the least against expectation, the last place the most.</p>"
+        + "<h2>Defense vs position</h2>"
+        "<p class='st-note'>Every FBS defense, toughest first: 1 gives up the least against expectation, the last place the most.</p>"
         + defense_section(grid, names))
 
 

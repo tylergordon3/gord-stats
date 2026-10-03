@@ -122,7 +122,7 @@ def test_the_heat_scale_is_the_dashboards():
 # defence table since with the phone padding and the following header
 # (2026-10-02 phone audit).
 OLD_DEFENCE = (
-    "<div class='st-scroll'><table class='st st-fit' data-sticky-head><thead><tr><th>Defence</th><th>QB</th><th>RB</th>"
+    "<div class='st-scroll'><table class='st st-fit' data-sticky-head><thead><tr><th>Defense</th><th>QB</th><th>RB</th>"
     "<th>WR</th><th>TE</th><th>All</th></tr></thead><tbody><tr><td class='st-name'><span "
     "class='st-rk'>1</span>33</td><td style=''>&mdash;</td><td style='background:rgba(46,125,50,"
     "0.15)'>1.05</td><td style='background:rgba(211,47,47,0.45)'>0.70</td><td style='background:"

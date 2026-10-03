@@ -463,12 +463,12 @@ def card_html(picks: dict, label: str, now: datetime, when: datetime, frozen: bo
     # lines of small print nobody read on a phone; it belongs with the rest of
     # the record, one tap away on the predictions page.
     if frozen:
-        timing = (f"<span>Generated {when:%a %-d %b, %-I:%M %p ET}</span>"
+        timing = (f"<span>Generated {when:%a, %b %-d, %-I:%M %p ET}</span>"
                   f"<span class='hc-lock hc-locked'>Locked</span>")
     else:
         # Emitted as an instant, not a wall clock: the reader may not be
         # Eastern.
-        timing = (f"<span>Generated {now:%a %-d %b, %-I:%M %p ET}</span>"
+        timing = (f"<span>Generated {now:%a, %b %-d, %-I:%M %p ET}</span>"
                   f"<span class='hc-lock' data-lock='{_instant(when)}'>"
                   f"Locks {when:%a %-I %p ET}</span>")
     foot = (f"<div class='hc-when-row'><span>{escape(label)}</span>{timing}</div>"

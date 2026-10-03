@@ -181,8 +181,8 @@
       +"<th title='What it takes to get him there'>Change</th>"
       +'<th>Player</th><th>Game</th>'
       +"<th title='His team’s implied points from the spread and total; for a "
-      +"defence, what it is expected to allow'>Team total</th>"
-      +"<th title='What the opposing defence has allowed to this position against "
+      +"defense, what it is expected to allow'>Team total</th>"
+      +"<th title='What the opposing defense has allowed to this position against "
       +"the league average. 1.00 is par; rank 1 is the toughest.'>Opp vs pos</th>"
       +'<th>Weather</th><th>Proj</th><th>GS</th><th>Sleeper</th><th>Pts</th>'
       +"<th title='The best bench player who could still take his place'>Late-swap cover</th>"

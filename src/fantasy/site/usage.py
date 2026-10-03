@@ -199,12 +199,12 @@ def body() -> str:
         ui.css(COLUMNS)
         # One sentence above the table (the subtitle already names the
         # columns); the rest waits, folded, for whoever asks.
-        + f"<p>Over <strong>{span}</strong>, the season share beside each in grey: a back "
+        + f"<p>Over <strong>{span}</strong>, the season share beside each in gray: a back "
         "whose snap share climbs while his carries stay flat is about to get the carries.</p>"
         "<details class='section'><summary>How to read it</summary>"
         "<p class='us-note'><strong>Overall / RB / WR / TE</strong> picks the players and "
         "the columns, and ranks only players past a minimum (a back with two carries could "
-        "top a carry-share table); the rest show greyed, unranked, and <strong>Qualified "
+        "top a carry-share table); the rest show grayed, unranked, and <strong>Qualified "
         "only</strong> hides them. Tap a column to sort, again to reverse. "
         "<strong>Fantasy</strong> narrows to one roster, everyone rostered, or the "
         "<span class='us-fa'>FA</span> free agents (<em>My team</em> is the one picked on the "

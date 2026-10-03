@@ -216,13 +216,13 @@ def opp_cell(wkd: Week, g: dict | None, pos: str) -> str:
         return "<td>&mdash;</td>"
     table = wkd.dvp
     if table.empty or g["opp"] not in table.index or pos not in table:
-        return "<td title='No finished week to rate this defence on yet'>&mdash;</td>"
+        return "<td title='No finished week to rate this defense on yet'>&mdash;</td>"
     value = float(table.loc[g["opp"], pos])
     rank = wkd.dvp_ranks[pos][g["opp"]]
     games = int(table.loc[g["opp"], "games"])
     return (f"<td style='{page.heat(value)}' title='Fantasy points {escape(g['opp'])} has "
             f"allowed to {pos}s against the league average, over {games} game"
-            f"{'' if games == 1 else 's'}; 1.00 is par. Rank 1 is the toughest defence; the higher the number the more it gives up.'>{value:.2f}"
+            f"{'' if games == 1 else 's'}; 1.00 is par. Rank 1 is the toughest defense; the higher the number the more it gives up.'>{value:.2f}"
             f"<span class='rd-rk'>{page.ordinal(rank)} of {len(table)}</span></td>")
 
 
@@ -399,8 +399,8 @@ def lineup_table(wkd: Week, rows: list, cards: dict, got: dict, proj: dict, pts:
     head = ("<tr><th title='Where he belongs this week'>Slot</th>"
             "<th title='What it takes to get him there'>Change</th><th>Player</th><th>Game</th>"
             "<th title='His team&#39;s implied points from the spread and total; for a "
-            "defence, what it is expected to allow'>Team total</th>"
-            "<th title='What the opposing defence has allowed to this position against the "
+            "defense, what it is expected to allow'>Team total</th>"
+            "<th title='What the opposing defense has allowed to this position against the "
             "league average. 1.00 is par; rank 1 is the toughest, the highest number gives up the most.'>Opp vs pos</th>"
             "<th>Weather</th>"
             "<th title='Every projection on record for him, averaged: GordStats, Sleeper, "
@@ -623,7 +623,7 @@ def body() -> str:
         + f"<p><strong>Week {wkd.week}</strong>. One roster at a time: who to start, which "
         "slot to put him in, what he is up against, and who on the wire would beat him.</p>"
         "<details class='section'><summary>How to read this page</summary>"
-        "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colours what has "
+        "<p class='rd-note'><b>Start / sit</b> shows the lineup to set and colors what has "
         "to change to get there. <b class='rd-key-g'>Green</b> comes off the bench into "
         "the slot named; <b class='rd-key-r'>red</b> goes to the bench; "
         "<b class='rd-key-b'>blue</b> stays a starter but changes slot for the kickoff "
@@ -641,7 +641,7 @@ def body() -> str:
         "official injury reports read by his role and his last practice before the final "
         "report; <b>back ~Nov 1</b> is ESPN's expected return for a player held out. "
         "<b>Team total</b> is his side's implied points from the spread and total. "
-        "<b>Opp vs pos</b> is what the defence across from him has allowed to his "
+        "<b>Opp vs pos</b> is what the defense across from him has allowed to his "
         "position against the league average: 1.00 is par, green is "
         f"soft, the rank runs from 1 (the toughest, red) to {n_def or 32} (gives up the most, "
         "green), and ratings on fewer than "

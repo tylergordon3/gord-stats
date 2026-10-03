@@ -143,7 +143,7 @@ def table(week: int, teams: dict) -> str:
     a, b, _ = ranked[0]
     lead = (f"<p>What week {week}'s game is worth to each team: its playoff odds with a win and "
             "with a loss, from the same simulated seasons split on that game. <b>Swing</b> is "
-            "the gap, in points of percentage. The game of the week, highlighted, is the one "
+            "the gap, in percentage points. The game of the week, highlighted, is the one "
             "expected to move the odds most - a big swing on a game that could go either way: "
             f"{escape(teams[a]['name'])} vs {escape(teams[b]['name'])}.</p>")
     return (CSS + lead + "<div class='table-scroll'><table class='stk'><thead><tr>"

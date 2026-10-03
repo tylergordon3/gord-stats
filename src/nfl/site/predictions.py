@@ -92,8 +92,8 @@ def _when(game) -> str:
     where ESPN has no time yet (it files those at midnight and the card read
     "12:00 AM ET") - where, the network and the preview link."""
     kick = game["date"].tz_convert(TZ)
-    at = (f"{kick:%a %-d %b, %-I:%M %p} ET" if games_mod.time_known(game)
-          else f"{kick:%a %-d %b}, time TBD")
+    at = (f"{kick:%a, %b %-d, %-I:%M %p} ET" if games_mod.time_known(game)
+          else f"{kick:%a, %b %-d}, time TBD")
     where = "neutral site" if game.get("neutral") else escape(str(game.get("place") or ""))
     tv = escape(str(game.get("tv") or "").split(",")[0])
     # The game's preview page (nfl.site.previews), only where one is on disk.
@@ -264,8 +264,8 @@ def _ratings_table(model, names: dict, schedule: pd.DataFrame) -> str:
                     f"<td>{r.rating:+.1f}{bar}</td><td>{r.off:.1f}</td><td>{r.dfn:.1f}</td></tr>")
     head = ("<tr><th>#</th><th>Team</th><th>Record</th>"
             "<th title='Points better than an average team on a neutral field'>Rating</th>"
-            "<th title='Points scored against an average defence'>Off</th>"
-            "<th title='Points allowed to an average offence'>Def</th></tr>")
+            "<th title='Points scored against an average defense'>Off</th>"
+            "<th title='Points allowed to an average offense'>Def</th></tr>")
     return (f"<div class='pred-scroll'><table class='cfb-pred'><thead>{head}</thead>"
             f"<tbody>{''.join(rows)}</tbody></table></div>")
 
@@ -279,7 +279,7 @@ def _method(model, valid: dict) -> str:
         "page</a>: one strength number per team plus home field "
         f"(<b>{model.hfa:.1f}</b> points), fitted by ridge regression to every game since "
         f"2014, with older games fading on a {hp.get('half_life_days', 180):.0f}-day "
-        "half-life. Margin and total are modelled separately; the scores and the win "
+        "half-life. Margin and total are modeled separately; the scores and the win "
         "probability fall out of them.</p>"
         + (f"<p class='pred-note'><b>Before this page existed</b> it was scored "
            f"walk-forward on {overall.get('games', 0)} games: margin RMSE "

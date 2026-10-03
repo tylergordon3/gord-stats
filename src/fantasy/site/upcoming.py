@@ -398,7 +398,7 @@ def _controls(has_movement: bool) -> str:
 _LABELS = {"player": "Player", "PosRk": "Pos", "team": "Tm",
            "Ovr": "Ovr", "Pick": "Pick"}
 _TIPS = dict({
-    "Ovr": f"Round and pick in a {LEAGUE_TEAMS}-team draft, with the overall pick in brackets",
+    "Ovr": f"Round and pick in a {LEAGUE_TEAMS}-team draft, with the overall pick in parentheses",
     "Pick": f"Round and pick that lands on in a {LEAGUE_TEAMS}-team draft",
     "PosRk": "Position, and where he ranks in it on this board",
     "Avg": "Average of the site ADPs in this row",

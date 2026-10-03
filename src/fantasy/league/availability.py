@@ -77,8 +77,8 @@ ROLES = ("lead", "share", "depth", "new", "kick")
 PRACTICE = {"Full Participation in Practice": "Full",
             "Limited Participation in Practice": "Limited",
             "Did Not Participate In Practice": "DNP"}
-PRACTICE_WORDS = {"Full": "practised in full", "Limited": "limited in practice",
-                  "DNP": "did not practise"}
+PRACTICE_WORDS = {"Full": "practiced in full", "Limited": "limited in practice",
+                  "DNP": "did not practice"}
 ROLE_WORDS = {"lead": "a lead player", "share": "a part-time player",
               "depth": "a depth player", "new": "a player with no snaps yet",
               "kick": "a kicker"}

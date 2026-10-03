@@ -28,7 +28,7 @@ CHROME = next((p for p in ("/usr/bin/chromium-browser", "/usr/bin/chromium",
                            "/usr/bin/google-chrome") if shutil.which(p)), None)
 CDP = 9457
 
-COLS = [{"key": "off", "label": "Off EPA", "tip": "offence", "fmt": "epa", "better": "high",
+COLS = [{"key": "off", "label": "Off EPA", "tip": "offense", "fmt": "epa", "better": "high",
          "views": ("overview", "offense")},
         {"key": "dfn", "label": "Def EPA", "tip": "defence", "fmt": "epa", "better": "low",
          "views": ("overview", "defense")},
@@ -68,7 +68,7 @@ def test_leaders_and_glossary():
     html = stats_page.leaders([{"key": "qb", "label": "Quarterbacks", "metric": "EPA", "fmt": "epa",
                                 "rows": [{"name": "A <b>", "team": "X", "value": 0.8, "vol": "90 plays"}]}])
     assert "A &lt;b&gt;" in html and "+0.80" in html and "data-lbs" in html
-    assert "<dt>Off EPA</dt><dd>offence</dd>" in stats_page.glossary(COLS)
+    assert "<dt>Off EPA</dt><dd>offense</dd>" in stats_page.glossary(COLS)
 
 
 # --------------------------------------------------------------------------- #

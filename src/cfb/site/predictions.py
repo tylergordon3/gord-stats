@@ -357,7 +357,7 @@ def _card(game) -> str:
     # a dozen or more games a week, sorted to the top of the day (the audit).
     timed = game.get("time_valid")
     timed = True if timed is None or pd.isna(timed) else bool(timed)
-    at = f"{kick:%a %-d %b, %-I:%M %p} ET" if timed else f"{kick:%a %-d %b} &middot; time TBA"
+    at = f"{kick:%a, %b %-d, %-I:%M %p} ET" if timed else f"{kick:%a, %b %-d} &middot; time TBA"
     # The game's preview page (cfb.site.previews), only where one is on disk.
     preview = preview_page.href("cfb", game.get("game_id"))
     # Kickoff and venue are separate spans so a narrow card cuts the venue,
@@ -473,8 +473,8 @@ def _span(frame: pd.DataFrame) -> str:
     first = frame["kickoff"].min().astimezone(ET)
     last = frame["kickoff"].max().astimezone(ET)
     if first.date() == last.date():
-        return f"{first:%-d %b}"
-    return f"{first:%-d %b} &ndash; {last:%-d %b}"
+        return f"{first:%b %-d}"
+    return f"{first:%b %-d} &ndash; {last:%b %-d}"
 
 
 def _plain_tile(label: str, value: str, sub: str, extra: str = "") -> str:
@@ -732,7 +732,7 @@ def _agreement_chart(games: pd.DataFrame) -> str:
     ax.set_xlim(low, high)
     ax.set_ylim(low, high)
     ax.set_aspect("equal")            # so agreement really is the 45-degree line
-    ax.set_xlabel("our line (negative = home favoured)")
+    ax.set_xlabel("our line (negative = home favored)")
     ax.set_ylabel("the market's line")
     ax.set_title("Where we agree with the book, and where we do not")
     ax.grid(color=GRIDLINE)
@@ -758,7 +758,7 @@ def _method(games: pd.DataFrame) -> str:
     lines = [
         f"<p class='pred-note'>Ridge team ratings fitted to every result since 2014 - "
         f"one number per team, chosen so the gap between two of them plus home field "
-        f"best explains the margins actually played. Margin and total are modelled "
+        f"best explains the margins actually played. Margin and total are modeled "
         f"separately and the score rebuilt from the two. Games decay on a "
         f"{record.get('hyperparameters', {}).get('half_life_days', 180):.0f}-day "
         f"half-life, so by November the evidence is almost all this season's. The "
@@ -772,7 +772,7 @@ def _method(games: pd.DataFrame) -> str:
         f"is at home, and the winner right "
         f"<strong>{overall.get('winner_accuracy', 0):.0%}</strong> of the time. It is "
         f"least reliable on lopsided lines, where it has historically overstated the "
-        f"favourite.</p>",
+        f"favorite.</p>",
     ]
     if market:
         lines.append(

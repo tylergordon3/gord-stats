@@ -417,9 +417,9 @@ _JS = """<script>
     for(var i=0;i<els.length;i++){
       try{
         var d=new Date(els[i].closest('.ns-g').getAttribute('data-ko'));
-        var t=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+        var t=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZoneName:'short'});
         if(d.toLocaleDateString('en-US',{timeZone:'America/New_York'})!==d.toLocaleDateString('en-US'))
-          t=d.toLocaleDateString([],{weekday:'short'})+' '+t;
+          t=d.toLocaleDateString('en-US',{weekday:'short'})+' '+t;
         els[i].textContent=t;
       }catch(e){}
     }

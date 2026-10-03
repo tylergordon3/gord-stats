@@ -84,7 +84,7 @@ BASE = [
     _c("net", "Net", "Adjusted offensive efficiency minus adjusted defensive efficiency: points per "
        "100 possessions better than an average D-I team would be against the same schedule.",
        "num1", "high", "overview"),
-    _c("adjoe", "AdjO", "Points scored per 100 possessions, adjusted for the defences faced and "
+    _c("adjoe", "AdjO", "Points scored per 100 possessions, adjusted for the defenses faced and "
        "where the games were played.", "num1", "high", "overview", "offense"),
     _c("adjde", "AdjD", "Points allowed per 100 possessions, adjusted. Lower is better.",
        "num1", "low", "overview", "defense"),
@@ -106,7 +106,7 @@ BASE = [
 FOUR = [
     _c("efg", "eFG%", "Effective field goal %: made threes count 1.5.", "pct", "high", "offense"),
     _c("tov", "TO%", "Turnovers per possession.", "pct", "low", "offense"),
-    _c("orb", "OR%", "Share of its own misses the offence rebounds.", "pct", "high", "offense"),
+    _c("orb", "OR%", "Share of its own misses the offense rebounds.", "pct", "high", "offense"),
     _c("ftr", "FT rate", "Free throws attempted per field goal attempt.", "pct", "high", "offense"),
     _c("p3", "3P%", "Three-point percentage.", "pct", "high", "offense"),
     _c("p2", "2P%", "Two-point percentage.", "pct", "high", "offense"),
@@ -216,7 +216,7 @@ def generate() -> None:
                                      tz=ZoneInfo("America/New_York"))
     OUT.write_text(add_front_matter(
         body(), "Team Stats", f"{SEASON_LABEL} season, Torvik's numbers", updated=fetched,
-        description="Every Division I basketball team's adjusted offence, defence, tempo and "
+        description="Every Division I basketball team's adjusted offense, defense, tempo and "
                     "schedule, and the four factors once games are played."),
         encoding="utf-8")
     print(f"Wrote CBB team stats -> {OUT}")

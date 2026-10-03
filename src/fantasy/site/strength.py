@@ -208,8 +208,8 @@ def defense_section(table: pd.DataFrame) -> str:
     rows = [(logos.img("nfl", team, 16, cls="st-logo") + escape(str(team)),
              {p: row[p] for p in POSITIONS if p in row}, row["all"])
             for team, row in ranked.iterrows()]
-    titles = {"DEF": "What this team's offence hands the defence across from it - "
-                     "the number a defence facing it is priced on"}
+    titles = {"DEF": "What this team's offense hands the defense across from it - "
+                     "the number a defense facing it is priced on"}
     return page.defense_table(rows, POSITIONS, titles=titles, fit=True)
 
 
@@ -321,17 +321,17 @@ def body(league: League = None) -> str:
         schedule = page.schedule_table(rows, lg.weeks, byes=True, keyed=True, fit=True)
     weeks_word = f"{lg.played} week{'' if lg.played == 1 else 's'}"
     defence = (defense_section(lg.table) if not lg.table.empty
-               else "<p class='st-wait'>No finished week to rate a defence on yet.</p>")
+               else "<p class='st-wait'>No finished week to rate a defense on yet.</p>")
     return (
         page.CSS
-        + "<p><strong>1.00 is par</strong>: above 1, a defence to attack; below 1, one "
+        + "<p><strong>1.00 is par</strong>: above 1, a defense to attack; below 1, one "
         f"to avoid. From {weeks_word} so far.</p>"
         "<details class='section'><summary>How this is worked out</summary>"
-        "<p class='st-note'>Fantasy points each defence has allowed to a position, from "
+        "<p class='st-note'>Fantasy points each defense has allowed to a position, from "
         "Sleeper's weekly stats in this league's PPR scoring, against the league average "
-        "at that position - 1.00 is a defence giving up exactly the average. Ratings on "
+        "at that position - 1.00 is a defense giving up exactly the average. Ratings on "
         f"fewer than {defense.FULL_WEIGHT_GAMES} games are pulled toward par, so one "
-        "shootout does not brand a defence for the season.</p>"
+        "shootout does not brand a defense for the season.</p>"
         "<p class='st-note'>The schedule weights each player by his projected points per "
         "game, so a schedule is only easy where a roster starts somebody. A player on a "
         "bye is left out of that week; the count under a rating is how many of the "
@@ -343,10 +343,10 @@ def body(league: League = None) -> str:
         "<div id='st-mine-wrap' hidden><div id='st-mine'></div></div>"
         f"<div id='st-built'>{schedule}</div>"
         + my_league.takeover("st-mine-wrap", "st-built")
-        + "<h2 id='defence'>Defence vs position</h2>"
-        "<p class='st-note'>Every NFL defence, toughest first: 1 gives up the least, the "
-        "last place the most. <b>DEF</b> runs the other way: what that team's offence "
-        "hands a defence.</p>"
+        + "<h2 id='defence'>Defense vs position</h2>"
+        "<p class='st-note'>Every NFL defense, toughest first: 1 gives up the least, the "
+        "last place the most. <b>DEF</b> runs the other way: what that team's offense "
+        "hands a defense.</p>"
         + defence
         + page.SCHEDULE_JS + _mark_built(lg.mine())
         + my_league_data.JS_TAG + my_league.JS_TAG + READER_JS)

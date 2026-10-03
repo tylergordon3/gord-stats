@@ -85,7 +85,7 @@ JS = """{% raw %}<script>
   function when(iso){
     if(!iso) return '';
     var d=new Date(iso);
-    return isNaN(d)?'':d.toLocaleString([], {month:'short', day:'numeric',
+    return isNaN(d)?'':d.toLocaleString('en-US', {month:'short', day:'numeric',
       hour:'numeric', minute:'2-digit'});
   }
   /** One entry per league, its seasons folded in - a league with four years

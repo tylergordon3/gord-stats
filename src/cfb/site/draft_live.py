@@ -1399,7 +1399,7 @@ def _recs_section() -> str:
         '<div class="body"><div id="ld-positions"></div>'
         '<p class="ld-note">The best player available at each position, what he '
         "adds to your lineup now, and what that position should still be worth "
-        "when your next pick comes round. A big <b>Wait</b> number is a position "
+        "when your next pick comes around. A big <b>Wait</b> number is a position "
         "that is about to get worse; a small one is a position you can leave "
         "alone.</p></div></div>")
 
@@ -1433,7 +1433,7 @@ def _roster_section() -> str:
 
 def _grid_section() -> str:
     return ('<h2>The Board</h2>'
-            '<p class="ld-note">Every pick of the draft, coloured by position. '
+            '<p class="ld-note">Every pick of the draft, colored by position. '
             'Your column is marked; the outlined cell is on the clock.</p>'
             '<div class="table-scroll"><table class="ld-grid" id="ld-grid"></table></div>')
 
@@ -1465,7 +1465,7 @@ def _how_it_works(board: pd.DataFrame, league: dict) -> str:
         "settings &mdash; so it prices a quarterback for the average league, "
         "not for this one, and the gap is the edge.</p>"
         "<p><b>This site's game model.</b> The predictions page already forecasts "
-        "every score of the season, so the board knows which offences are about "
+        "every score of the season, so the board knows which offenses are about "
         "to be good and whose schedule is soft in weeks "
         f"{league.get('playoff_start_week')}&ndash;{league.get('end_week')}. It is "
         "applied as a tilt of at most a tenth either way, because Yahoo's rank is "
@@ -1481,7 +1481,7 @@ def _how_it_works(board: pd.DataFrame, league: dict) -> str:
         "undrafted at all. The pair with the best total wins. That is what turns "
         "\"he is the highest ranked\" into \"take the quarterback, the running "
         "backs will still be here\".</p>"
-        f"<p><b>What is not on this board.</b> Yahoo ranks team offence units, "
+        f"<p><b>What is not on this board.</b> Yahoo ranks team offense units, "
         "and this league has no slot to start one, so they are dropped and every "
         "rank below them closed up &mdash; a player Yahoo shows at 150 is really "
         f"going a few picks sooner than that here. {len(board)} players remain: "

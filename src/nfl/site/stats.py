@@ -104,7 +104,7 @@ GLOSSARY = [
      "defense, takeaways."},
     {"label": "Sack %", "tip": "Sacks per dropback (scrambles count as dropbacks)."},
     {"label": "Plays/G", "tip": "Dropbacks and runs per game - style, not quality, so not "
-     "coloured."},
+     "colored."},
     {"label": "3rd %", "tip": "Third downs converted, by a gain or a penalty."},
     {"label": "RZ TD %", "tip": "Possessions with a snap inside the opponent's 20 that end in a "
      "touchdown."},
