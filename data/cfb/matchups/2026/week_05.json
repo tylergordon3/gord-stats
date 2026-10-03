@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-02T23:40:57+00:00",
+ "fetched": "2026-10-03T00:40:59+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -16,16 +16,16 @@
     {
      "team_key": "474.l.21318.t.1",
      "name": "Puntaholics",
-     "points": 0.0,
+     "points": 9.9,
      "projected": 181.11,
-     "win_probability": 0.66
+     "win_probability": 0.69
     },
     {
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
      "projected": 152.89,
-     "win_probability": 0.33999999999999997
+     "win_probability": 0.31000000000000005
     }
    ]
   },
@@ -64,14 +64,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 0.0,
      "projected": 185.81,
-     "win_probability": 0.67
+     "win_probability": 0.66
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 159.34,
-     "win_probability": 0.32999999999999996
+     "win_probability": 0.33999999999999997
     }
    ]
   },
@@ -85,16 +85,16 @@
     {
      "team_key": "474.l.21318.t.4",
      "name": "CCAM State",
-     "points": 2.8,
+     "points": 7.5,
      "projected": 176.41,
-     "win_probability": 0.78
+     "win_probability": 0.79
     },
     {
      "team_key": "474.l.21318.t.6",
      "name": "Max's Majestic Team",
-     "points": 3.8,
+     "points": 6.3,
      "projected": 132.47,
-     "win_probability": 0.21999999999999997
+     "win_probability": 0.20999999999999996
     }
    ]
   },
@@ -108,7 +108,7 @@
     {
      "team_key": "474.l.21318.t.5",
      "name": "Austin's Best Team",
-     "points": 1.3,
+     "points": 3.6,
      "projected": 125.43,
      "win_probability": 0.15000000000000002
     },
@@ -163,9 +163,13 @@
     "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "RB",
-    "points": 0.0,
+    "points": 9.9,
     "stats": {
-     "8": 1.0
+     "8": 4.0,
+     "9": 24.0,
+     "10": 1.0,
+     "11": 2.0,
+     "12": 5.0
     }
    },
    {
@@ -273,8 +277,8 @@
     "team": "NEB",
     "team_full": "Nebraska Cornhuskers",
     "bye": 8.0,
-    "status": "D",
-    "status_full": "Doubtful",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
@@ -795,8 +799,8 @@
     "team": "UMD",
     "team_full": "Maryland Terrapins",
     "bye": 8.0,
-    "status": "Q",
-    "status_full": "Questionable",
+    "status": "P",
+    "status_full": "Probable",
     "injury_note": "Undisclosed",
     "slot": "BN",
     "points": 0.0,
@@ -923,8 +927,8 @@
     "team": "TAMU",
     "team_full": "Texas A&M Aggies",
     "bye": 9.0,
-    "status": "P",
-    "status_full": "Probable",
+    "status": "Q",
+    "status_full": "Questionable",
     "injury_note": "Undisclosed",
     "slot": "WR",
     "points": 0.0,
@@ -1347,9 +1351,9 @@
     "team": "MSST",
     "team_full": "Mississippi State Bulldogs",
     "bye": 6.0,
-    "status": "P",
-    "status_full": "Probable",
-    "injury_note": "Undisclosed",
+    "status": "",
+    "status_full": "",
+    "injury_note": "",
     "slot": "RB",
     "points": 0.0,
     "stats": {}
@@ -1675,10 +1679,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 2.8,
+    "points": 7.5,
     "stats": {
-     "8": 4.0,
-     "9": 28.0
+     "8": 7.0,
+     "9": 36.0,
+     "11": 3.0,
+     "12": 24.0
     }
    },
    {
@@ -1918,10 +1924,10 @@
     "status_full": "",
     "injury_note": "",
     "slot": "TE",
-    "points": 3.8,
+    "points": 6.3,
     "stats": {
-     "11": 2.0,
-     "12": 28.0
+     "11": 3.0,
+     "12": 48.0
     }
    },
    {
@@ -2175,12 +2181,12 @@
     "status_full": "",
     "injury_note": "",
     "slot": "W/R/T",
-    "points": 1.3,
+    "points": 3.6,
     "stats": {
-     "8": 1.0,
-     "9": 6.0,
-     "11": 1.0,
-     "12": 2.0
+     "8": 4.0,
+     "9": 15.0,
+     "11": 2.0,
+     "12": 11.0
     }
    },
    {
