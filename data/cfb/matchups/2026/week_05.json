@@ -4,7 +4,7 @@
  "week_end": "2026-10-03",
  "status": "midevent",
  "is_playoffs": false,
- "fetched": "2026-10-03T04:56:05+00:00",
+ "fetched": "2026-10-03T09:42:18+00:00",
  "matchups": [
   {
    "week": 5.0,
@@ -24,7 +24,7 @@
      "team_key": "474.l.21318.t.7",
      "name": "Too B1G Too Strong Too Fast",
      "points": 0.0,
-     "projected": 152.89,
+     "projected": 152.88,
      "win_probability": 0.30000000000000004
     }
    ]
@@ -116,7 +116,7 @@
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
      "points": 7.0,
-     "projected": 182.92,
+     "projected": 182.9,
      "win_probability": 0.88
     }
    ]
@@ -1296,12 +1296,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "404437",
-    "player": "Joe Jackson",
-    "pos": "RB",
-    "team": "KSU",
-    "team_full": "Kansas State Wildcats",
-    "bye": 5.0,
+    "yahoo_id": "406200",
+    "player": "Randy Pittman Jr.",
+    "pos": "TE",
+    "team": "SMU",
+    "team_full": "SMU Mustangs",
+    "bye": 6.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2284,12 +2284,12 @@
     "stats": {}
    },
    {
-    "yahoo_id": "333373",
-    "player": "Brody Foley",
-    "pos": "TE",
-    "team": "LOU",
-    "team_full": "Louisville Cardinals",
-    "bye": 8.0,
+    "yahoo_id": "333842",
+    "player": "Katin Houser",
+    "pos": "QB",
+    "team": "ILL",
+    "team_full": "Illinois Fighting Illini",
+    "bye": 7.0,
     "status": "",
     "status_full": "",
     "injury_note": "",
@@ -2581,7 +2581,7 @@
   "469439": 13.11,
   "468459": 12.17,
   "404365": 8.88,
-  "900027": 8.97,
+  "900027": 8.96,
   "470211": 28.73,
   "405249": 27.35,
   "404522": 24.55,
@@ -2623,6 +2623,7 @@
   "327462": 14.13,
   "451329": 9.03,
   "404635": 26.57,
+  "406200": 7.88,
   "900076": 16.75,
   "337760": 25.98,
   "333511": 26.47,
@@ -2676,7 +2677,7 @@
   "403802": 14.89,
   "405205": 8.42,
   "458035": 4.99,
-  "333373": 1.98,
+  "333842": 25.82,
   "900033": 6.68,
   "333785": 29.77,
   "455480": 32.15,
@@ -2693,6 +2694,6 @@
   "456218": 4.62,
   "456178": 12.5,
   "455505": 13.96,
-  "900086": 10.12
+  "900086": 10.1
  }
 }

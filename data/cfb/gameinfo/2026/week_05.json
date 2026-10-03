@@ -1,6 +1,6 @@
 {
 "401856705": {
-"espn_home_wp": 0.9540000000000001,
+"espn_home_wp": 0.955,
 "book": "DraftKings",
 "spread": -25.5,
 "total": 50.5,
@@ -9,12 +9,12 @@
 "weather": {
 "temp": 79.0,
 "cond": 4,
-"gust": 6.0,
-"precip": 34.0
+"gust": 7.0,
+"precip": 20.0
 },
-"mq": 79.505,
+"mq": 79.193,
 "kickoff": "2026-10-03T16:45Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -88,14 +88,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 79.0,
+"temp": 81.0,
 "cond": 15,
 "gust": 12.0,
-"precip": 73.0
+"precip": 69.0
 },
-"mq": 49.71,
+"mq": 49.707,
 "kickoff": "2026-10-03T23:45Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -165,18 +165,18 @@
 "espn_home_wp": 0.257,
 "book": "DraftKings",
 "spread": 5.5,
-"total": 60.5,
+"total": 61.5,
 "ml_home": 180.0,
 "ml_away": -218.0,
 "weather": {
-"temp": 80.0,
-"cond": 16,
-"gust": 8.0,
-"precip": 63.0
+"temp": 79.0,
+"cond": 4,
+"gust": 7.0,
+"precip": 20.0
 },
-"mq": 94.275,
+"mq": 94.265,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -252,12 +252,12 @@
 "weather": {
 "temp": 73.0,
 "cond": 2,
-"gust": 10.0,
+"gust": 12.0,
 "precip": 0.0
 },
-"mq": 85.122,
+"mq": 85.106,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -324,21 +324,21 @@
 ]
 },
 "401856709": {
-"espn_home_wp": 0.579,
+"espn_home_wp": 0.578,
 "book": "DraftKings",
 "spread": -2.5,
 "total": 53.5,
 "ml_home": -142.0,
 "ml_away": 120.0,
 "weather": {
-"temp": 79.0,
-"cond": 15,
-"gust": 6.0,
-"precip": 71.0
+"temp": 81.0,
+"cond": 7,
+"gust": 7.0,
+"precip": 45.0
 },
-"mq": 73.144,
+"mq": 73.128,
 "kickoff": "2026-10-03T20:15Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -405,21 +405,21 @@
 ]
 },
 "401856710": {
-"espn_home_wp": 0.71,
+"espn_home_wp": 0.711,
 "book": "DraftKings",
 "spread": -6.5,
 "total": 53.5,
 "ml_home": -258.0,
 "ml_away": 210.0,
 "weather": {
-"temp": 77.0,
-"cond": 16,
+"temp": 74.0,
+"cond": 4,
 "gust": 7.0,
-"precip": 57.0
+"precip": 47.0
 },
-"mq": 86.626,
+"mq": 86.585,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -493,14 +493,14 @@
 "ml_home": -625.0,
 "ml_away": 455.0,
 "weather": {
-"temp": 80.0,
+"temp": 78.0,
 "cond": 4,
-"gust": 17.0,
-"precip": 19.0
+"gust": 15.0,
+"precip": 24.0
 },
-"mq": 72.053,
+"mq": 72.039,
 "kickoff": "2026-10-03T23:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -567,21 +567,21 @@
 ]
 },
 "401856807": {
-"espn_home_wp": 0.892,
+"espn_home_wp": 0.893,
 "book": "DraftKings",
 "spread": -20.5,
 "total": 51.5,
 "ml_home": -1450.0,
 "ml_away": 850.0,
 "weather": {
-"temp": 62.0,
+"temp": 63.0,
 "cond": 1,
-"gust": 10.0,
+"gust": 9.0,
 "precip": 0.0
 },
-"mq": 33.423,
+"mq": 33.361,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -648,21 +648,21 @@
 ]
 },
 "401856817": {
-"espn_home_wp": 0.47600000000000003,
+"espn_home_wp": 0.474,
 "book": "DraftKings",
 "spread": -3.5,
 "total": 48.5,
 "ml_home": -185.0,
 "ml_away": 154.0,
 "weather": {
-"temp": 92.0,
+"temp": 93.0,
 "cond": 33,
 "gust": 12.0,
 "precip": 0.0
 },
-"mq": 63.075,
+"mq": 63.138,
 "kickoff": "2026-10-04T02:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -736,14 +736,14 @@
 "ml_home": 190.0,
 "ml_away": -230.0,
 "weather": {
-"temp": 70.0,
-"cond": 4,
-"gust": 12.0,
-"precip": 34.0
+"temp": 71.0,
+"cond": 13,
+"gust": 13.0,
+"precip": 65.0
 },
-"mq": 75.5,
+"mq": 75.49,
 "kickoff": "2026-10-03T23:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -810,21 +810,21 @@
 ]
 },
 "401856819": {
-"espn_home_wp": 0.722,
+"espn_home_wp": 0.7240000000000001,
 "book": "DraftKings",
 "spread": -10.5,
 "total": 50.5,
 "ml_home": -425.0,
 "ml_away": 330.0,
 "weather": {
-"temp": 81.0,
-"cond": 15,
-"gust": 12.0,
-"precip": 66.0
+"temp": 82.0,
+"cond": 6,
+"gust": 13.0,
+"precip": 20.0
 },
-"mq": 72.135,
+"mq": 72.073,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -898,14 +898,14 @@
 "ml_home": -250.0,
 "ml_away": 205.0,
 "weather": {
-"temp": 79.0,
+"temp": 80.0,
 "cond": 33,
 "gust": 12.0,
 "precip": 0.0
 },
-"mq": 65.318,
+"mq": 65.322,
 "kickoff": "2026-10-04T03:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -972,21 +972,21 @@
 ]
 },
 "401856821": {
-"espn_home_wp": 0.13,
+"espn_home_wp": 0.13699999999999998,
 "book": "DraftKings",
 "spread": 13.5,
 "total": 49.5,
 "ml_home": 425.0,
 "ml_away": -575.0,
 "weather": {
-"temp": 82.0,
+"temp": 81.0,
 "cond": 2,
-"gust": 14.0,
+"gust": 15.0,
 "precip": 0.0
 },
-"mq": 70.704,
+"mq": 71.187,
 "kickoff": "2026-10-03T23:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -1053,21 +1053,21 @@
 ]
 },
 "401856822": {
-"espn_home_wp": 0.623,
+"espn_home_wp": 0.625,
 "book": "DraftKings",
 "spread": -3.0,
 "total": 53.5,
 "ml_home": -155.0,
 "ml_away": 130.0,
 "weather": {
-"temp": 59.0,
+"temp": 62.0,
 "cond": 2,
-"gust": 20.0,
+"gust": 21.0,
 "precip": 0.0
 },
-"mq": 58.809,
+"mq": 58.73,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -1215,21 +1215,21 @@
 ]
 },
 "401858246": {
-"espn_home_wp": 0.897,
+"espn_home_wp": 0.8959999999999999,
 "book": "DraftKings",
 "spread": -21.0,
 "total": 55.5,
 "ml_home": -1800.0,
 "ml_away": 1000.0,
 "weather": {
-"temp": 70.0,
-"cond": 13,
-"gust": 9.0,
-"precip": 60.0
+"temp": 71.0,
+"cond": 7,
+"gust": 10.0,
+"precip": 40.0
 },
-"mq": 57.353,
+"mq": 57.405,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -1308,9 +1308,9 @@
 "gust": 6.0,
 "precip": 0.0
 },
-"mq": 46.972,
+"mq": 46.97,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -1377,21 +1377,21 @@
 ]
 },
 "401858248": {
-"espn_home_wp": 0.32799999999999996,
+"espn_home_wp": 0.325,
 "book": "DraftKings",
 "spread": 3.0,
 "total": 57.5,
 "ml_home": 140.0,
 "ml_away": -166.0,
 "weather": {
-"temp": 77.0,
-"cond": 7,
+"temp": 75.0,
+"cond": 15,
 "gust": 12.0,
-"precip": 34.0
+"precip": 66.0
 },
-"mq": 66.206,
+"mq": 66.096,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -1465,14 +1465,14 @@
 "ml_home": 525.0,
 "ml_away": -750.0,
 "weather": {
-"temp": 76.0,
+"temp": 75.0,
 "cond": 16,
 "gust": 8.0,
-"precip": 64.0
+"precip": 51.0
 },
-"mq": 86.525,
+"mq": 86.521,
 "kickoff": "2026-10-03T23:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -1543,17 +1543,17 @@
 "book": "DraftKings",
 "spread": 21.0,
 "total": 46.5,
-"ml_home": 950.0,
-"ml_away": -1650.0,
+"ml_home": 1000.0,
+"ml_away": -1800.0,
 "weather": {
-"temp": 75.0,
-"cond": 4,
-"gust": 21.0,
-"precip": 47.0
+"temp": 76.0,
+"cond": 6,
+"gust": 18.0,
+"precip": 15.0
 },
-"mq": 85.247,
+"mq": 85.238,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -1629,12 +1629,12 @@
 "weather": {
 "temp": 71.0,
 "cond": 4,
-"gust": 15.0,
+"gust": 14.0,
 "precip": 34.0
 },
-"mq": 52.091,
+"mq": 52.11,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -1701,7 +1701,7 @@
 ]
 },
 "401858252": {
-"espn_home_wp": 0.29100000000000004,
+"espn_home_wp": 0.292,
 "book": "DraftKings",
 "spread": 6.5,
 "total": 50.5,
@@ -1710,12 +1710,12 @@
 "weather": {
 "temp": 68.0,
 "cond": 1,
-"gust": 15.0,
+"gust": 14.0,
 "precip": 0.0
 },
-"mq": 45.106,
+"mq": 45.049,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -1782,7 +1782,7 @@
 ]
 },
 "401858253": {
-"espn_home_wp": 0.429,
+"espn_home_wp": 0.439,
 "book": "DraftKings",
 "spread": 1.5,
 "total": 51.5,
@@ -1790,13 +1790,13 @@
 "ml_away": -118.0,
 "weather": {
 "temp": 84.0,
-"cond": 6,
-"gust": 10.0,
-"precip": 34.0
+"cond": 15,
+"gust": 8.0,
+"precip": 57.0
 },
-"mq": 72.385,
+"mq": 71.996,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -1870,14 +1870,14 @@
 "ml_home": -375.0,
 "ml_away": 295.0,
 "weather": {
-"temp": 70.0,
-"cond": 2,
-"gust": 16.0,
+"temp": 71.0,
+"cond": 1,
+"gust": 15.0,
 "precip": 0.0
 },
-"mq": 56.127,
+"mq": 56.123,
 "kickoff": "2026-10-03T20:15Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -1944,21 +1944,21 @@
 ]
 },
 "401858473": {
-"espn_home_wp": 0.171,
+"espn_home_wp": 0.17,
 "book": "DraftKings",
 "spread": 14.5,
 "total": 45.5,
 "ml_home": 455.0,
 "ml_away": -625.0,
 "weather": {
-"temp": 67.0,
+"temp": 68.0,
 "cond": 2,
-"gust": 17.0,
+"gust": 20.0,
 "precip": 0.0
 },
-"mq": 93.38,
+"mq": 93.377,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -2032,14 +2032,14 @@
 "ml_home": 185.0,
 "ml_away": -225.0,
 "weather": {
-"temp": 59.0,
+"temp": 56.0,
 "cond": 3,
-"gust": 20.0,
-"precip": 20.0
+"gust": 24.0,
+"precip": 7.0
 },
-"mq": 68.272,
+"mq": 68.275,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -2113,14 +2113,14 @@
 "ml_home": -700.0,
 "ml_away": 500.0,
 "weather": {
-"temp": 71.0,
+"temp": 72.0,
 "cond": 2,
-"gust": 24.0,
+"gust": 25.0,
 "precip": 0.0
 },
-"mq": 68.808,
+"mq": 68.854,
 "kickoff": "2026-10-03T20:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -2268,21 +2268,21 @@
 ]
 },
 "401858477": {
-"espn_home_wp": 0.043,
+"espn_home_wp": 0.040999999999999995,
 "book": "DraftKings",
 "spread": 24.5,
 "total": 56.5,
 "ml_home": 1200.0,
 "ml_away": -2400.0,
 "weather": {
-"temp": 64.0,
+"temp": 63.0,
 "cond": 34,
 "gust": 9.0,
 "precip": 0.0
 },
-"mq": 73.945,
+"mq": 74.155,
 "kickoff": "2026-10-04T00:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -2356,14 +2356,14 @@
 "ml_home": -360.0,
 "ml_away": 285.0,
 "weather": {
-"temp": 97.0,
+"temp": 98.0,
 "cond": 1,
-"gust": 10.0,
+"gust": 12.0,
 "precip": 0.0
 },
-"mq": 73.904,
+"mq": 73.907,
 "kickoff": "2026-10-03T23:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -2430,21 +2430,21 @@
 ]
 },
 "401858479": {
-"espn_home_wp": 0.6729999999999999,
+"espn_home_wp": 0.664,
 "book": "DraftKings",
-"spread": -9.5,
+"spread": -8.5,
 "total": 43.5,
 "ml_home": -360.0,
 "ml_away": 285.0,
 "weather": {
-"temp": 56.0,
-"cond": 1,
-"gust": 16.0,
+"temp": 59.0,
+"cond": 2,
+"gust": 15.0,
 "precip": 0.0
 },
-"mq": 63.752,
+"mq": 63.288,
 "kickoff": "2026-10-03T16:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -2518,14 +2518,14 @@
 "ml_home": -1450.0,
 "ml_away": 850.0,
 "weather": {
-"temp": 86.0,
+"temp": 85.0,
 "cond": 1,
-"gust": 6.0,
+"gust": 7.0,
 "precip": 0.0
 },
-"mq": 57.091,
+"mq": 57.095,
 "kickoff": "2026-10-03T23:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -2599,14 +2599,14 @@
 "ml_home": 210.0,
 "ml_away": -258.0,
 "weather": {
-"temp": 86.0,
+"temp": 85.0,
 "cond": 2,
-"gust": 25.0,
+"gust": 28.0,
 "precip": 0.0
 },
-"mq": 45.342,
+"mq": 45.343,
 "kickoff": "2026-10-03T22:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -2680,14 +2680,14 @@
 "ml_home": 280.0,
 "ml_away": -355.0,
 "weather": {
-"temp": 93.0,
+"temp": 92.0,
 "cond": 33,
 "gust": 7.0,
 "precip": 0.0
 },
-"mq": 44.287,
+"mq": 44.323,
 "kickoff": "2026-10-04T02:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -2763,12 +2763,12 @@
 "weather": {
 "temp": 71.0,
 "cond": 1,
-"gust": 9.0,
+"gust": 7.0,
 "precip": 0.0
 },
-"mq": 43.749,
+"mq": 43.75,
 "kickoff": "2026-10-04T01:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -2923,14 +2923,14 @@
 "ml_home": 850.0,
 "ml_away": -1450.0,
 "weather": {
-"temp": 78.0,
+"temp": 76.0,
 "cond": 4,
-"gust": 6.0,
-"precip": 34.0
+"gust": 5.0,
+"precip": 35.0
 },
-"mq": 29.413,
+"mq": 29.412,
 "kickoff": "2026-10-03T15:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3004,14 +3004,14 @@
 "ml_home": 390.0,
 "ml_away": -520.0,
 "weather": {
-"temp": 80.0,
-"cond": 7,
+"temp": 83.0,
+"cond": 15,
 "gust": 14.0,
-"precip": 49.0
+"precip": 51.0
 },
-"mq": 35.898,
+"mq": 35.889,
 "kickoff": "2026-10-03T23:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3085,14 +3085,14 @@
 "ml_home": null,
 "ml_away": null,
 "weather": {
-"temp": 86.0,
+"temp": 87.0,
 "cond": 4,
-"gust": 20.0,
+"gust": 18.0,
 "precip": 47.0
 },
-"mq": 23.217,
+"mq": 23.207,
 "kickoff": "2026-10-03T22:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3163,17 +3163,17 @@
 "book": "DraftKings",
 "spread": -3.0,
 "total": 45.5,
-"ml_home": -155.0,
-"ml_away": 130.0,
+"ml_home": -148.0,
+"ml_away": 124.0,
 "weather": {
-"temp": 68.0,
+"temp": 69.0,
 "cond": 2,
-"gust": 9.0,
+"gust": 10.0,
 "precip": 0.0
 },
-"mq": 38.182,
+"mq": 38.184,
 "kickoff": "2026-10-03T16:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3240,7 +3240,7 @@
 ]
 },
 "401862792": {
-"espn_home_wp": 0.687,
+"espn_home_wp": 0.6970000000000001,
 "book": "DraftKings",
 "spread": -6.0,
 "total": 48.5,
@@ -3248,13 +3248,13 @@
 "ml_away": 190.0,
 "weather": {
 "temp": 81.0,
-"cond": 4,
-"gust": 10.0,
-"precip": 47.0
+"cond": 16,
+"gust": 8.0,
+"precip": 63.0
 },
-"mq": 44.844,
+"mq": 44.343,
 "kickoff": "2026-10-03T23:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3324,18 +3324,18 @@
 "espn_home_wp": 0.9129999999999999,
 "book": "DraftKings",
 "spread": -30.5,
-"total": 52.5,
+"total": 53.5,
 "ml_home": -9000.0,
 "ml_away": 3500.0,
 "weather": {
-"temp": 87.0,
+"temp": 86.0,
 "cond": 4,
 "gust": 7.0,
-"precip": 34.0
+"precip": 49.0
 },
-"mq": 16.786,
+"mq": 16.787,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -3402,7 +3402,7 @@
 ]
 },
 "401864513": {
-"espn_home_wp": 0.672,
+"espn_home_wp": 0.6729999999999999,
 "book": "DraftKings",
 "spread": -3.0,
 "total": 50.5,
@@ -3410,13 +3410,13 @@
 "ml_away": 124.0,
 "weather": {
 "temp": 82.0,
-"cond": 4,
-"gust": 21.0,
+"cond": 3,
+"gust": 23.0,
 "precip": 0.0
 },
-"mq": 23.636,
+"mq": 23.638,
 "kickoff": "2026-10-04T03:59Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -3490,14 +3490,14 @@
 "ml_home": -2100.0,
 "ml_away": 1100.0,
 "weather": {
-"temp": 69.0,
+"temp": 68.0,
 "cond": 1,
 "gust": 5.0,
 "precip": 0.0
 },
-"mq": 34.291,
+"mq": 34.298,
 "kickoff": "2026-10-03T20:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3566,19 +3566,19 @@
 "401864515": {
 "espn_home_wp": 0.915,
 "book": "DraftKings",
-"spread": -17.5,
+"spread": -16.5,
 "total": 44.5,
 "ml_home": -1050.0,
 "ml_away": 675.0,
 "weather": {
 "temp": 65.0,
 "cond": 7,
-"gust": 18.0,
+"gust": 16.0,
 "precip": 43.0
 },
-"mq": 31.491,
+"mq": 31.495,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3652,14 +3652,14 @@
 "ml_home": -258.0,
 "ml_away": 210.0,
 "weather": {
-"temp": 61.0,
+"temp": 65.0,
 "cond": 2,
-"gust": 6.0,
+"gust": 12.0,
 "precip": 0.0
 },
-"mq": 9.467,
+"mq": 9.473,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3726,7 +3726,7 @@
 ]
 },
 "401866431": {
-"espn_home_wp": 0.06,
+"espn_home_wp": 0.062,
 "book": "DraftKings",
 "spread": 21.0,
 "total": 51.5,
@@ -3734,13 +3734,13 @@
 "ml_away": -1450.0,
 "weather": {
 "temp": 66.0,
-"cond": 2,
+"cond": 1,
 "gust": 21.0,
 "precip": 0.0
 },
-"mq": 26.151,
+"mq": 26.224,
 "kickoff": "2026-10-03T18:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3807,21 +3807,21 @@
 ]
 },
 "401866432": {
-"espn_home_wp": 0.156,
+"espn_home_wp": 0.149,
 "book": "DraftKings",
 "spread": 12.5,
 "total": 45.5,
 "ml_home": 400.0,
 "ml_away": -535.0,
 "weather": {
-"temp": 63.0,
+"temp": 62.0,
 "cond": 1,
-"gust": 8.0,
+"gust": 14.0,
 "precip": 0.0
 },
-"mq": 26.611,
+"mq": 26.099,
 "kickoff": "2026-10-03T17:00Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:24+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3888,7 +3888,7 @@
 ]
 },
 "401866433": {
-"espn_home_wp": 0.8290000000000001,
+"espn_home_wp": 0.83,
 "book": "DraftKings",
 "spread": -5.5,
 "total": 48.5,
@@ -3900,9 +3900,9 @@
 "gust": 12.0,
 "precip": 0.0
 },
-"mq": 21.135,
+"mq": 21.112,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -3969,21 +3969,21 @@
 ]
 },
 "401866434": {
-"espn_home_wp": 0.23199999999999998,
+"espn_home_wp": 0.233,
 "book": "DraftKings",
 "spread": 3.5,
 "total": 50.5,
 "ml_home": 145.0,
 "ml_away": -175.0,
 "weather": {
-"temp": 66.0,
+"temp": 65.0,
 "cond": 2,
 "gust": 15.0,
 "precip": 0.0
 },
-"mq": 14.324,
+"mq": 14.352,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -4053,18 +4053,18 @@
 "espn_home_wp": 0.8740000000000001,
 "book": "DraftKings",
 "spread": -12.5,
-"total": 42.5,
+"total": 43.5,
 "ml_home": -500.0,
 "ml_away": 380.0,
 "weather": {
 "temp": 68.0,
 "cond": 2,
-"gust": 16.0,
+"gust": 18.0,
 "precip": 0.0
 },
-"mq": 20.489,
+"mq": 20.45,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -4131,21 +4131,21 @@
 ]
 },
 "401869842": {
-"espn_home_wp": 0.49,
+"espn_home_wp": 0.49200000000000005,
 "book": "DraftKings",
 "spread": 1.5,
 "total": 46.5,
 "ml_home": 102.0,
 "ml_away": -122.0,
 "weather": {
-"temp": 78.0,
+"temp": 79.0,
 "cond": 4,
-"gust": 13.0,
-"precip": 49.0
+"gust": 12.0,
+"precip": 23.0
 },
-"mq": 42.686,
+"mq": 42.618,
 "kickoff": "2026-10-03T23:30Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "W",
@@ -4215,18 +4215,18 @@
 "espn_home_wp": 0.755,
 "book": "DraftKings",
 "spread": -6.5,
-"total": 47.5,
+"total": 48.5,
 "ml_home": -230.0,
 "ml_away": 190.0,
 "weather": {
 "temp": 78.0,
 "cond": 15,
-"gust": 9.0,
-"precip": 73.0
+"gust": 6.0,
+"precip": 69.0
 },
-"mq": 37.014,
+"mq": 37.015,
 "kickoff": "2026-10-04T00:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:26+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -4293,21 +4293,21 @@
 ]
 },
 "401869942": {
-"espn_home_wp": 0.436,
+"espn_home_wp": 0.433,
 "book": "DraftKings",
 "spread": 2.5,
 "total": 53.5,
 "ml_home": 105.0,
 "ml_away": -125.0,
 "weather": {
-"temp": 76.0,
-"cond": 15,
-"gust": 6.0,
-"precip": 51.0
+"temp": 77.0,
+"cond": 7,
+"gust": 8.0,
+"precip": 45.0
 },
-"mq": 30.708,
+"mq": 30.551,
 "kickoff": "2026-10-03T23:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -4374,21 +4374,21 @@
 ]
 },
 "401869956": {
-"espn_home_wp": 0.649,
+"espn_home_wp": 0.6459999999999999,
 "book": "DraftKings",
 "spread": -2.5,
 "total": 51.5,
 "ml_home": -135.0,
 "ml_away": 114.0,
 "weather": {
-"temp": 82.0,
+"temp": 81.0,
 "cond": 4,
-"gust": 8.0,
-"precip": 34.0
+"gust": 7.0,
+"precip": 21.0
 },
-"mq": 32.383,
+"mq": 32.479,
 "kickoff": "2026-10-03T19:30Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -4455,21 +4455,21 @@
 ]
 },
 "401869962": {
-"espn_home_wp": 0.93,
+"espn_home_wp": 0.935,
 "book": "DraftKings",
 "spread": -18.5,
 "total": 55.5,
 "ml_home": -1100.0,
 "ml_away": 700.0,
 "weather": {
-"temp": 59.0,
-"cond": 4,
+"temp": 58.0,
+"cond": 18,
 "gust": 7.0,
-"precip": 20.0
+"precip": 63.0
 },
-"mq": 41.848,
+"mq": 41.599,
 "kickoff": "2026-10-03T19:45Z",
-"captured": "2026-10-03T04:56:11+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",
@@ -4705,14 +4705,14 @@
 "ml_home": -625.0,
 "ml_away": 455.0,
 "weather": {
-"temp": 78.0,
-"cond": 7,
-"gust": 9.0,
-"precip": 49.0
+"temp": 77.0,
+"cond": 15,
+"gust": 10.0,
+"precip": 69.0
 },
-"mq": 18.942,
+"mq": 18.943,
 "kickoff": "2026-10-03T23:00Z",
-"captured": "2026-10-03T04:56:12+00:00",
+"captured": "2026-10-03T09:42:25+00:00",
 "last5_home": [
 {
 "r": "L",

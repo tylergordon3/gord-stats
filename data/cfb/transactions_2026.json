@@ -1,5 +1,55 @@
 [
  {
+  "id": 107.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1791013970.0,
+  "faab_bid": 0.0,
+  "players": [
+   {
+    "player": "Randy Pittman Jr.",
+    "pos": "TE",
+    "team": "SMU",
+    "type": "add",
+    "source": null,
+    "destination": "Jackson's Brilliant Team"
+   },
+   {
+    "player": "Joe Jackson",
+    "pos": "RB",
+    "team": "KSU",
+    "type": "drop",
+    "source": "Jackson's Brilliant Team",
+    "destination": null
+   }
+  ]
+ },
+ {
+  "id": 106.0,
+  "type": "add/drop",
+  "status": "successful",
+  "timestamp": 1791013970.0,
+  "faab_bid": 5.0,
+  "players": [
+   {
+    "player": "Katin Houser",
+    "pos": "QB",
+    "team": "ILL",
+    "type": "add",
+    "source": null,
+    "destination": "Austin's Best Team"
+   },
+   {
+    "player": "Brody Foley",
+    "pos": "TE",
+    "team": "LOU",
+    "type": "drop",
+    "source": "Austin's Best Team",
+    "destination": null
+   }
+  ]
+ },
+ {
   "id": 105.0,
   "type": "add/drop",
   "status": "successful",
