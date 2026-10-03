@@ -27,8 +27,11 @@ def payload() -> dict:
 def test_every_row_matches_the_declared_fields(payload):
     """The browser reads these by index. A field added in the middle without
     the client knowing would shift every number one place along, which no
-    other test on either side would notice."""
-    assert payload["fields"] == season_board.FIELDS
+    other test on either side would notice. So fields are only appended, and
+    a board published before the newest one (a local copy pulled from the Pi
+    before it rebuilt) is the start of today's list, never a reordering."""
+    assert payload["fields"] == season_board.FIELDS[:len(payload["fields"])]
+    assert len(payload["fields"]) >= season_board.FIELDS.index("out") + 1
     assert payload["pos"] == season_board.POSITIONS
     width = len(payload["fields"])
     assert payload["board"]
@@ -53,6 +56,8 @@ def test_the_numbers_are_in_ranges_a_simulation_can_use(payload):
         assert 0 <= row[fields["bye"]] <= 18, pid
         assert row[fields["rec"]] >= 0, pid
         assert row[fields["out"]] >= 0, pid
+        if "out_from" in fields:
+            assert row[fields["out_from"]] in (0, 1), pid
 
 
 def test_a_catch_is_never_worth_more_than_the_points_it_came_with(payload):

@@ -29,9 +29,18 @@ is different:
     The bracket here is built for whatever `playoff_teams` says, seeded the
     standard way, with byes for the top seeds when the field is not a power of
     two, and redrawn each round (best seed left against worst left) where
-    `playoff_seed_type` says the league reseeds - this one does. Once the
-    regular season is in, the playoff weeks played and the rounds Sleeper's
-    winners bracket has decided are taken as they happened.
+    `playoff_seed_type` says the league reseeds - this one does, and an ESPN
+    league's playoffReseed arrives as the same flag (gordstats.league_api).
+    A round lasts the weeks the league gives it - Sleeper's
+    `playoff_round_type` (a two-week final, or two weeks every round), ESPN's
+    matchup periods - and a two-week round is won on both weeks' points
+    together. Once the regular season is in, the playoff weeks played and the
+    rounds Sleeper's winners bracket has decided are taken as they happened.
+
+  * **Injuries.** The board counts each hold from its own `week`, and says
+    when it starts (`out_from`: a week later for a player already seen in the
+    week it has not absorbed), so a hold lands on the NFL weeks it is about
+    however far a reader's league has got.
 
   * **The median win.** This league awards one every week and most do not.
     It is `settings.league_average_match`, and quietly assuming it doubles

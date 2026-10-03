@@ -14,14 +14,15 @@ model runs here, as it always has, and publishes its answer:
 
     docs/fantasy/season-board.json
     {"year": 2026, "week": 3,
-     "fields": ["pos","bye","mu","sd","mu_se","avail","rec","out"],
+     "fields": ["pos","bye","mu","sd","mu_se","avail","rec","out","out_from"],
      "pos": ["QB","RB","WR","TE","K","DEF"],
-     "board": {"9221": [1, 6, 23.9, 13.65, 3.6, 0.85, 4.3, 0], ...}}
+     "board": {"9221": [1, 6, 23.9, 13.65, 3.6, 0.85, 4.3, 0, 0], ...}}
 
 About 1,200 players, 47 KB, 12 KB over the wire — smaller than the player index
-the same pages already fetch.
+the same pages already fetch. Fields are only ever appended: the browser reads
+them by position, so an old page keeps reading the ones it knows.
 
-Two of the eight fields are not in the board the site's own page uses, and both
+Three of the nine fields are not in the board the site's own page uses, and all
 exist because a reader's league is not this one:
 
 `rec` — projected receptions a week. `mu` is PPR, because this league plays
@@ -43,7 +44,19 @@ is a deep-bench flier whose scoring basis decides nothing.
 injury designation through `power.FORCED_OUT`. The site's own page reads this
 off the matchups archive, but that archive only holds this league's rostered
 players, and a reader's league has different ones. So it is taken from
-Sleeper's player table instead, which knows about everybody.
+Sleeper's player table instead, which knows about everybody. It counts from the
+board's `week`, the last week the board has absorbed - not from wherever a
+reader's league happens to have got to - so the browser places the hold on
+those NFL weeks.
+
+`out_from` - weeks after that the hold starts: 0, or 1 for a player already
+seen playing in the week after `week`. The board absorbs a week a day or two
+after it ends, so from Thursday night to about Tuesday the week it would hold
+an injured player out of next is one some have played already: a receiver hurt
+in Sunday's game was held out of the game he got hurt in, a week twice over.
+The site's own ranking fixed this with `power.seen_playing` / `held_from`; this
+is the same rule for every player, from Sleeper's stat feed for that week
+(`seen_in_week`), since a reader's league holds players this one does not.
 
 The board is published *after* `projections.current_form`, so a reader's league
 is simulated from the same in-season numbers as the page next to it rather than
@@ -71,7 +84,8 @@ DEPTH_CACHE = paths.DATA_DIR / "players" / "depth_charts.json"
 SEASON_WEEKS = 17
 
 POSITIONS = ["QB", "RB", "WR", "TE", "K", "DEF"]
-FIELDS = ["pos", "bye", "mu", "sd", "mu_se", "avail", "rec", "out"]
+# Append only: the browser reads a row by position (gs-power-sim.js).
+FIELDS = ["pos", "bye", "mu", "sd", "mu_se", "avail", "rec", "out", "out_from"]
 
 
 def injury_status() -> dict:
@@ -254,10 +268,51 @@ def depth_charts() -> dict | None:
         return None
 
 
+def seen_in_week(year: int, week: int) -> set:
+    """Every player Sleeper's stat feed already has in a game of `week` - a
+    game played or points (availability.playing) - whoever's roster he is on.
+    `power.seen_playing` is the same question asked of this league's matchups
+    archive, which holds only its own ~150 players. Empty before a game, past
+    the season, or when Sleeper will not answer: the hold then starts with the
+    week, as it always did."""
+    if week < 1:
+        return set()
+    try:
+        from fantasy.league import availability, matchups
+        stats = matchups.sleeper_stats(week, year)
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! week {week} stats unavailable ({exc}); holds start with the week")
+        return set()
+    return {str(pid) for pid, line in (stats or {}).items()
+            if availability.playing(line, (line or {}).get("pts_ppr"))}
+
+
+def holds(injuries: dict, weeks: int, year: int, seen: set = None, **report) -> tuple:
+    """({sleeper id: weeks held out}, {sleeper id: 1}) - the board's `out`
+    and `out_from`, counted from `weeks`, the last week the board absorbed.
+
+    Weeks out are ESPN's expected return date where its report has one
+    (injury_report.held_out; `report` passes its entries/week_days through),
+    the Sleeper tag's flat count otherwise. A player in `seen` - already in a
+    game of week `weeks + 1` (seen_in_week, by default) - was hurt after it:
+    his weeks count from the week after, and his hold starts there
+    (`out_from` 1), as `power.rankings` holds the site's own league
+    (`held_from`)."""
+    from fantasy.league.power import FORCED_OUT, NFL_WEEKS
+    seen = seen_in_week(year, weeks + 1) if seen is None else {str(p) for p in seen}
+    try:
+        from fantasy.league import injury_report
+        held = injury_report.held_out(injuries, from_week=weeks, weeks=NFL_WEEKS, year=year,
+                                      seen=seen, **report)
+    except Exception as exc:                                # noqa: BLE001
+        print(f"  ! injury return dates unavailable ({exc}); Sleeper's tags alone")
+        held = {pid: FORCED_OUT.get(tag, 0) for pid, tag in injuries.items()}
+        held = {pid: n for pid, n in held.items() if n}
+    return held, {pid: 1 for pid in held if pid in seen}
+
+
 def build(year: int = UPCOMING_YEAR) -> dict:
     """The published board, as the browser reads it."""
-    from fantasy.league.power import FORCED_OUT, NFL_WEEKS
-
     board = projections.load(year)
     weeks = absorbed_weeks(year)
     board = projections.current_form(board, year, through_week=weeks)
@@ -266,14 +321,9 @@ def build(year: int = UPCOMING_YEAR) -> dict:
     injuries = injury_status()
     # Weeks out: ESPN's expected return date where its report has one (every
     # league's players, keyed by Sleeper id), the Sleeper tag's flat count
-    # otherwise - counted from the weeks the board has absorbed, which is
-    # where a reader's simulation starts drawing.
-    try:
-        from fantasy.league import injury_report
-        held = injury_report.held_out(injuries, from_week=weeks, weeks=NFL_WEEKS, year=year)
-    except Exception as exc:                                # noqa: BLE001
-        print(f"  ! injury return dates unavailable ({exc}); Sleeper's tags alone")
-        held = {pid: FORCED_OUT.get(tag, 0) for pid, tag in injuries.items()}
+    # otherwise - counted from the weeks the board has absorbed, and a week
+    # later for a player already seen in the next one (holds, out_from).
+    held, held_from = holds(injuries, weeks, year)
     # Next man up: an injured player's work goes to the teammates behind him
     # (fantasy.league.opportunity, measured on 2019-25) for as long as he is
     # out - spread over the season here, since the board holds one rate.
@@ -322,6 +372,7 @@ def build(year: int = UPCOMING_YEAR) -> dict:
             round(float(row.avail), 3),
             _catch_rate(pid, row.pos, row.mu, rec, past, median),
             int(held.get(pid, 0)),
+            int(held_from.get(pid, 0)),
         ]
     # The measured effect for the pages to name ("+4.9 with Achane out"):
     # {teammate: [points a game, the injured player, weeks]}, the ones worth
@@ -344,9 +395,11 @@ def generate(year: int = UPCOMING_YEAR) -> None:
         return
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
-    held = sum(1 for v in payload["board"].values() if v[-1])
-    print(f"Wrote season board ({len(payload['board'])} players, {held} held out) "
-          f"-> {OUT}")
+    out, late = FIELDS.index("out"), FIELDS.index("out_from")
+    held = sum(1 for v in payload["board"].values() if v[out])
+    after = sum(1 for v in payload["board"].values() if v[out] and v[late])
+    print(f"Wrote season board ({len(payload['board'])} players, {held} held out, "
+          f"{after} of them from the week after) -> {OUT}")
 
 
 if __name__ == "__main__":

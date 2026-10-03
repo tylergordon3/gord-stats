@@ -502,8 +502,9 @@ TOPICS: list[Topic] = [
                 "Sleeper's recent weekly projections. Each run first draws every player's true "
                 "scoring rate, since we can't be sure of it, then each week's score around it "
                 "(a gamma distribution). New injuries in the simulation last three weeks on "
-                "average. Your own league's page runs the same model in your browser, without "
-                "the FantasyPros blend.",
+                "average. Your own league's page runs the same model in your browser, with "
+                "your league's playoff format (reseeding, two-week rounds) and without the "
+                "FantasyPros blend.",
         pages=(("Fantasy power rankings", "/fantasy/power/"),),
         related=("fantasy-stakes", "injuries", "trade-analyzer", "cfb-league"),
     ),

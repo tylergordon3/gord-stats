@@ -74,12 +74,33 @@ window.GSPowerLeague = (function(){
     return res.some(function(x){ return x.length; })?res:null;
   }
 
+  /** Weeks each of `rounds` playoff rounds lasts, in round order, from the
+   *  league's settings. Sleeper's playoff_round_type: 0 one week a round, 1
+   *  a two-week final, 2 two weeks every round (2020 called that last one 1,
+   *  as gs-history's roundWeeks has it) - checked against real leagues'
+   *  brackets, where a two-week round goes to the higher two-week total. An
+   *  ESPN league (GSAPI) gives its matchup periods instead, as round_weeks
+   *  {round: [weeks]}. */
+  function roundLengths(info, rounds){
+    var s=(info&&info.settings)||{}, rw=s.round_weeks, out=[];
+    var type=+s.playoff_round_type||0;
+    if(String(info&&info.season)==='2020' && type===1) type=2;
+    for(var r=1; r<=rounds; r++){
+      var n=rw ? ((rw[r]||rw[String(r)]||[]).length||1)
+        : (type===2 || (type===1 && r===rounds)) ? 2 : 1;
+      out.push(n);
+    }
+    return out;
+  }
+
   /** The playoffs as far as they have gone, once the regular season is in:
    *  {actual: each playoff week Sleeper has scored, a score per seat (0 for a
-   *  team not playing), decided: losers(winners_bracket)}. */
-  function playoffs(id, first, rounds, scored, order){
+   *  team not playing), decided: losers(winners_bracket)}. `weeks` is how
+   *  many weeks the bracket takes - more than its rounds where a round is
+   *  two weeks long. */
+  function playoffs(id, first, weeks, scored, order){
     var want=[];
-    for(var w=first; w<first+rounds && w<=scored; w++) want.push(w);
+    for(var w=first; w<first+weeks && w<=scored; w++) want.push(w);
     var index={};
     order.forEach(function(rid, i){ index[String(rid)]=i; });
     return Promise.all(want.map(function(w){
@@ -198,12 +219,20 @@ window.GSPowerLeague = (function(){
         var scored=typeof settings.last_scored_leg==='number'?settings.last_scored_leg:weeks;
         var played=Math.min(run.played, board.week||0, weeks, scored);
         var field=Math.min(Math.max(settings.playoff_teams||6, 2), order.length);
+        var rounds=0;
+        while((1<<rounds)<field) rounds++;
+        var lens=roundLengths(league.info, rounds);
         var spec={board:board.board, posNames:board.pos, rosters:rosters,
                   slots:league.slots, basis:league.basis.index, weeks:weeks,
                   playoffTeams:settings.playoff_teams||6,
-                  // Sleeper's playoff_seed_type 1: the bracket is redrawn
-                  // every round, best seed left against worst left.
-                  reseed:settings.playoff_seed_type===1,
+                  // playoff_seed_type 1 (Sleeper's; GSAPI maps ESPN's
+                  // playoffReseed to it): the bracket is redrawn every
+                  // round, best seed left against worst left.
+                  reseed:+settings.playoff_seed_type===1,
+                  // Two-week rounds are won on both weeks together.
+                  roundWeeks:lens,
+                  // The board's holds count from its own week.
+                  holdWeek:board.week||0,
                   median:!!settings.league_average_match,
                   schedule:run.schedule,
                   actual:run.actual.slice(0, played),
@@ -214,9 +243,8 @@ window.GSPowerLeague = (function(){
         // The regular season is in: the playoff weeks played are taken as
         // they happened, and the rounds Sleeper has settled as it settled
         // them - a team knocked out stops holding title odds.
-        var rounds=0;
-        while((1<<rounds)<field) rounds++;
-        return playoffs(id, weeks+1, rounds, scored, order)
+        var span=lens.reduce(function(a, b){ return a+b; }, 0);
+        return playoffs(id, weeks+1, span, scored, order)
           .then(function(p){
             spec.playoffActual=p.actual;
             spec.decided=p.decided;
@@ -227,5 +255,5 @@ window.GSPowerLeague = (function(){
   }
 
   return {season:season, simulate:simulate, stop:stop, setup:setup, losers:losers,
-          playoffs:playoffs};
+          playoffs:playoffs, roundLengths:roundLengths};
 })();

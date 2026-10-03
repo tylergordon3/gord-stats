@@ -80,13 +80,17 @@
           // variation is partly his catches, so the spread scales with the
           // mean rather than being carried over from PPR whole.
           var shrink = row[2] > 0 ? mu / row[2] : 1;
+          // `out` weeks held out, starting `from` weeks after the board's
+          // week (fantasy.site.season_board: 1 for a player already seen in
+          // the week the board has not absorbed yet; an older board has no
+          // such field, and its holds start with the week).
           players.push({id:pid, team:t, pos:posNames[row[0]], bye:row[1],
                         mu:mu, sd:Math.max(row[3]*shrink, MIN_SD),
                         muSe:row[4]*shrink, avail:row[5], out:row[7] || 0,
-                        known:true});
+                        from:row[8] || 0, known:true});
         } else {
           players.push({id:pid, team:t, pos:'WR', bye:0, mu:3.0, sd:3.0,
-                        muSe:3.0, avail:0.6, out:0, known:false});
+                        muSe:3.0, avail:0.6, out:0, from:0, known:false});
         }
       }
     }
@@ -167,28 +171,54 @@
     return Math.round(Math.log(size) / Math.LN2);
   }
 
+  /** Weeks each of `rounds` playoff rounds lasts, from `spec.roundWeeks`
+   *  (GSPowerLeague.roundLengths: Sleeper's playoff_round_type, ESPN's
+   *  matchup periods). One week a round wherever it says nothing. */
+  function roundLengths(given, rounds){
+    var out = [];
+    for(var r = 0; r < rounds; r++){
+      var n = given && given[r];
+      out.push(n >= 2 ? Math.floor(n) : 1);
+    }
+    return out;
+  }
+
   /** The champion's team index, from playoff-week points and the seeding.
    *
    * Round one is the standard draw, byes to the top seeds. After it the
    * bracket is fixed - the 1 seed meets the 4/5 winner - or, `reseed`
-   * (Sleeper's playoff_seed_type 1), redrawn every round so the best seed
-   * left meets the worst left. Higher points wins, the better seed on a tie.
-   * `decided` is [[team index, ...] per round]: whoever Sleeper's winners
-   * bracket says lost a round already played loses it here too, and every
-   * round after. fantasy.league.power._bracket is the same bracket in Python.
+   * (Sleeper's playoff_seed_type 1, ESPN's playoffReseed), redrawn every
+   * round so the best seed left meets the worst left. Higher points wins,
+   * the better seed on a tie. `decided` is [[team index, ...] per round]:
+   * whoever Sleeper's winners bracket says lost a round already played loses
+   * it here too, and every round after. `lens` is the weeks each round lasts
+   * (one where not given): a two-week round is won on both weeks' points
+   * together, as Sleeper and ESPN decide it, and the next round starts after
+   * both. fantasy.league.power._bracket is the same bracket in Python, one
+   * week a round.
    */
-  function runBracket(points, seeds, week0, reseed, decided){
+  function runBracket(points, seeds, week0, reseed, decided, lens){
     var size = 1;
     while(size < seeds.length) size *= 2;
     var order = bracketOrder(size);
     // Bracket positions as seed numbers (0 is the top seed), -1 a bye.
     var field = [];
     for(var i = 0; i < size; i++) field.push(order[i] <= seeds.length ? order[i] - 1 : -1);
-    var round = 0, out = {};
+    var round = 0, at = week0, out = {};
     while(field.length > 1){
       var lost = decided && decided[round];
       if(lost) for(var q = 0; q < lost.length; q++) out[lost[q]] = 1;
-      var week = points[week0 + round] || points[points.length - 1];
+      var span = (lens && lens[round] >= 2) ? Math.floor(lens[round]) : 1;
+      var week = points[at] || points[points.length - 1];
+      if(span > 1){
+        // The round's score is the sum of its weeks.
+        var sum = Array.prototype.slice.call(week);
+        for(var k = 1; k < span; k++){
+          var more = points[at + k] || points[points.length - 1];
+          for(var z = 0; z < sum.length; z++) sum[z] += more[z];
+        }
+        week = sum;
+      }
       var next = [];
       for(var j = 0; j < field.length; j += 2){
         var a = field[j], b = field[j + 1];
@@ -206,6 +236,7 @@
         next = paired;
       }
       field = next;
+      at += span;
       round++;
     }
     return seeds[field[0]];
@@ -302,7 +333,12 @@
     var slots = found.slots;
     var regular = Math.max(spec.weeks || 14, 1);
     var playoffTeams = Math.min(Math.max(spec.playoffTeams || 6, 2), teams);
-    var playoffWeeks = bracketRounds(playoffTeams);
+    var rounds = bracketRounds(playoffTeams);
+    // A round can be two weeks (Sleeper's playoff_round_type, ESPN's
+    // matchup periods): the bracket then takes more weeks than it has rounds.
+    var lens = roundLengths(spec.roundWeeks, rounds);
+    var playoffWeeks = 0;
+    for(var lr = 0; lr < lens.length; lr++) playoffWeeks += lens[lr];
     var total = regular + playoffWeeks;
     var orders = slotOrders(players, teams, slots);
     var sims = Math.max(spec.sims || 2000, 1);
@@ -321,16 +357,24 @@
     var over = played >= regular;
     var playoffActual = over ? (spec.playoffActual || []).slice(0, playoffWeeks) : [];
     var decided = over ? (spec.decided || null) : null;
+    // The week the board counts its holds from (its own `week`, the last NFL
+    // week it absorbed), so a hold lands on the NFL weeks it is about however
+    // far this league has got - one whose scores lag, or whose regular season
+    // is over, would otherwise slide every hold onto the wrong weeks. Without
+    // it, the weeks played, as before.
+    var holdWeek = (spec.holdWeek != null && isFinite(+spec.holdWeek))
+      ? Math.max(Math.floor(+spec.holdWeek), 0) : played;
 
     var n = players.length;
     var mu = new Float64Array(n), sd = new Float64Array(n),
         muSe = new Float64Array(n), avail = new Float64Array(n),
         leave = new Float64Array(n), held = new Int32Array(n),
-        bye = new Int32Array(n);
+        heldFrom = new Int32Array(n), bye = new Int32Array(n);
     for(var i = 0; i < n; i++){
       mu[i] = players[i].mu; sd[i] = Math.max(players[i].sd, MIN_SD);
       muSe[i] = players[i].muSe; avail[i] = players[i].avail;
       held[i] = players[i].out; bye[i] = players[i].bye;
+      heldFrom[i] = holdWeek + (players[i].from || 0);
       // The chain's two rates: `back` comes out of MEAN_ABSENCE, and `leave`
       // is whatever makes the long-run share of weeks played come to `avail`.
       leave[i] = Math.min(Math.max((1/MEAN_ABSENCE) * (1 - avail[i]) /
@@ -389,7 +433,8 @@
           var draw = rng.next();
           playing[i] = playing[i] ? (draw >= leave[i] ? 1 : 0)
                                   : (draw < back ? 1 : 0);
-          var sidelined = (week >= played) && (week < played + held[i]);
+          var sidelined = (week >= played) && (week >= heldFrom[i]) &&
+                          (week < heldFrom[i] + held[i]);
           var on = playing[i] && !sidelined && (week + 1) !== bye[i];
           score[i] = on ? gamma(i) : -1;              // -1 marks unavailable
         }
@@ -439,7 +484,7 @@
       });
       var seeds = seeded.slice(0, playoffTeams);
       for(var r = 0; r < seeds.length; r++) madePlayoffs[seeds[r]] += 1;
-      if(playoffWeeks > 0) titles[runBracket(weekPoints, seeds, regular, reseed, decided)] += 1;
+      if(playoffWeeks > 0) titles[runBracket(weekPoints, seeds, regular, reseed, decided, lens)] += 1;
 
       for(t = 0; t < teams; t++){
         wins[t].push(seasonWins[t]);
@@ -483,13 +528,14 @@
     var missing = 0;
     for(i = 0; i < players.length; i++) if(!players[i].known && players[i].team >= 0) missing++;
     return {teams:out, sims:sims, weeks:regular, playoffWeeks:playoffWeeks,
+            playoffRounds:rounds, roundWeeks:lens,
             playoffTeams:playoffTeams, slots:slots.map(function(s){ return s.name; }),
             unsupported:found.unsupported, unknownPlayers:missing,
             played:played, median:median};
   }
 
   root.GSPower = {run:run, bracketOrder:bracketOrder, bracketRounds:bracketRounds,
-                  runBracket:runBracket, weekWins:weekWins,
+                  roundLengths:roundLengths, runBracket:runBracket, weekWins:weekWins,
                   startingSlots:startingSlots, preparePlayers:preparePlayers,
                   slotOrders:slotOrders, ELIGIBLE:ELIGIBLE, Rng:Rng};
 

@@ -221,6 +221,11 @@ window.GSAPI = window.GSAPI || (function(){
     var rtype=!lens.length||lens.every(function(n){ return n<2; }) ? 0
       : lens.every(function(n){ return n>=2; }) ? 2
       : (lens[lens.length-1]>=2 && lens.slice(0,-1).every(function(n){ return n<2; })) ? 1 : 0;
+    // Whether the bracket is redrawn after each round, best seed left
+    // against worst left: ESPN's scheduleSettings.playoffReseed, Sleeper's
+    // playoff_seed_type 1. Checked on real 2025 leagues: with it, a 6 seed
+    // that won its first game met the 1 seed; without it, the 2 seed.
+    var reseed=sch.playoffReseed===true ? 1 : 0;
     return {league_id:id, provider:'espn', sport:'nfl', season:String(e.season),
       name:s.name||('ESPN league '+e.league),
       status:done?'complete':dd.drafted?'in_season':dd.inProgress?'drafting':'pre_draft',
@@ -232,6 +237,7 @@ window.GSAPI = window.GSAPI || (function(){
         leg:done?fin:Math.max(1,Math.min(latest,fin)),
         last_scored_leg:done?fin:Math.max(0,Math.min(latest-1,fin)),
         playoff_round_type:rtype, round_weeks:lens.length?rw:null,
+        playoff_seed_type:reseed,
         reserve_slots:+c[IR]||0, taxi_slots:0, type:0,
         waiver_type:acq.isUsingAcquisitionBudget?2:0,
         waiver_budget:+acq.acquisitionBudget||0}};

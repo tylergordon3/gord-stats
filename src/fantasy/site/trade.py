@@ -240,8 +240,9 @@ window.GSTradeAdapter = (function(){
       function available(pid){
         var row = st.board.board[pid];
         // Out for the rest of the regular season (ESPN's return date): no use.
+        // row[8] is the week his hold starts after (season_board out_from).
         var rest = Math.max(st.weeks - st.played, 1);
-        if(!row || !(row[4] > 0) || (row[7] || 0) >= rest) return false;
+        if(!row || !(row[4] > 0) || (row[7] || 0) + (row[8] || 0) >= rest) return false;
         var team = ix[pid] && ix[pid][2];
         return !!((wk.proj || {})[pid] || (row[7] || 0) > 0
                   || (team && wk.kick && !wk.kick[team]));
