@@ -1,6 +1,6 @@
 {
  "season": 2026,
- "updated": "2026-10-01T23:36:33.115108-04:00",
+ "updated": "2026-10-02T23:38:52.076959-04:00",
  "games": {
   "401856890": {
    "date": "2026-05-08",
@@ -40455,6 +40455,110 @@
       "Mai Yamamoto",
       "G",
       4.0
+     ]
+    ]
+   }
+  },
+  "401918294": {
+   "date": "2026-10-03",
+   "allowed": {
+    "DAL": {
+     "G": 91.0,
+     "FC": 72.0
+    },
+    "GS": {
+     "G": 86.0,
+     "FC": 59.0
+    }
+   },
+   "players": {
+    "DAL": [
+     [
+      "Jessica Shepard",
+      "FC",
+      26.0
+     ],
+     [
+      "Maddy Siegrist",
+      "FC",
+      6.0
+     ],
+     [
+      "Awak Kuier",
+      "FC",
+      17.0
+     ],
+     [
+      "Arike Ogunbowale",
+      "G",
+      42.0
+     ],
+     [
+      "Paige Bueckers",
+      "G",
+      33.0
+     ],
+     [
+      "Alysha Clark",
+      "FC",
+      10.0
+     ],
+     [
+      "Odyssey Sims",
+      "G",
+      9.0
+     ],
+     [
+      "Aziaha James",
+      "G",
+      2.0
+     ]
+    ],
+    "GS": [
+     [
+      "Kayla Thornton",
+      "FC",
+      1.0
+     ],
+     [
+      "Gabby Williams",
+      "FC",
+      32.0
+     ],
+     [
+      "Cecilia Zandalasini",
+      "FC",
+      7.0
+     ],
+     [
+      "Kiah Stokes",
+      "FC",
+      28.0
+     ],
+     [
+      "Veronica Burton",
+      "G",
+      33.0
+     ],
+     [
+      "Janelle Salaun",
+      "FC",
+      4.0
+     ],
+     [
+      "Tiffany Hayes",
+      "G",
+      30.0
+     ],
+     [
+      "Kaila Charles",
+      "G",
+      25.0
+     ],
+     [
+      "Kaitlyn Chen",
+      "G",
+      3.0
      ]
     ]
    }

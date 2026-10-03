@@ -59,14 +59,14 @@
      "name": "Jackson's Brilliant Team",
      "points": 4.6,
      "projected": 185.81,
-     "win_probability": 0.66
+     "win_probability": 0.65
     },
     {
      "team_key": "474.l.21318.t.8",
      "name": "Cameron's Choice Team",
      "points": 0.0,
      "projected": 159.34,
-     "win_probability": 0.33999999999999997
+     "win_probability": 0.35
     }
    ]
   },
@@ -105,14 +105,14 @@
      "name": "Austin's Best Team",
      "points": 5.3,
      "projected": 125.43,
-     "win_probability": 0.13
+     "win_probability": 0.12
     },
     {
      "team_key": "474.l.21318.t.9",
      "name": "Benjamin Brahman",
-     "points": 4.3,
+     "points": 7.0,
      "projected": 182.92,
-     "win_probability": 0.87
+     "win_probability": 0.88
     }
    ]
   }
