@@ -1,5 +1,5 @@
 {
-  "fetched_on": "2026-10-02",
+  "fetched_on": "2026-10-03",
   "season": 2026,
   "total_games": 362,
   "schedule": {
@@ -7852,20 +7852,22 @@
           "date": "2026-10-04"
         }
       ],
-      "TBD": [
+      "GS": [
         {
           "id": 1392680,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-04"
-        },
+        }
+      ],
+      "LV": [
         {
           "id": 1392680,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -7896,20 +7898,22 @@
           "date": "2026-10-07"
         }
       ],
-      "TBD": [
+      "GS": [
         {
           "id": 1392688,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-07"
-        },
+        }
+      ],
+      "LV": [
         {
           "id": 1392688,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -7940,20 +7944,22 @@
           "date": "2026-10-09"
         }
       ],
-      "TBD": [
+      "LV": [
         {
           "id": 1392696,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "GS",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-09"
-        },
+        }
+      ],
+      "GS": [
         {
           "id": 1392696,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "GS",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -7984,20 +7990,22 @@
           "date": "2026-10-11"
         }
       ],
-      "TBD": [
+      "LV": [
         {
           "id": 1392698,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "GS",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-11"
-        },
+        }
+      ],
+      "GS": [
         {
           "id": 1392698,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "LV",
+          "away": "GS",
           "status": "pre",
           "home_score": null,
           "away_score": null,
@@ -8028,20 +8036,22 @@
           "date": "2026-10-14"
         }
       ],
-      "TBD": [
+      "GS": [
         {
           "id": 1392706,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,
           "date": "2026-10-14"
-        },
+        }
+      ],
+      "LV": [
         {
           "id": 1392706,
-          "home": "TBD",
-          "away": "TBD",
+          "home": "GS",
+          "away": "LV",
           "status": "pre",
           "home_score": null,
           "away_score": null,

@@ -1,0 +1,49 @@
+{
+ "day": "2026-10-03",
+ "locked_at": "Sat Oct 3, 12:57 AM",
+ "games": 51,
+ "picks": {
+  "underdog": {
+   "game_id": "401858252",
+   "side": "home",
+   "team": "UConn",
+   "opp": "Syracuse",
+   "p": 0.6357,
+   "book_p": 0.3042,
+   "ml": 215.0,
+   "line": 6.5,
+   "kick": "Sat 12:00p"
+  },
+  "legs": [
+   {
+    "kind": "ml",
+    "side": "away",
+    "p": 0.8093,
+    "book": 0.6092,
+    "text": "Ohio ML -175",
+    "game_id": "401866434",
+    "game": "OHIO at KENT \u00b7 Sat 3:30p"
+   },
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": -18.5,
+    "p": 0.8043,
+    "book": 0.5,
+    "text": "James Madison -18.5",
+    "game_id": "401869962",
+    "game": "MRSH at JMU \u00b7 Sat 3:45p"
+   },
+   {
+    "kind": "spread",
+    "side": "home",
+    "line": 6.5,
+    "p": 0.7738,
+    "book": 0.5,
+    "text": "UConn +6.5",
+    "game_id": "401858252",
+    "game": "SYR at CONN \u00b7 Sat 12:00p"
+   }
+  ]
+ }
+}
