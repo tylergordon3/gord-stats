@@ -258,6 +258,9 @@ JS = """{% raw %}<script>
         if(!lists||!lists[0]) return;
         twDraw(lists[0], lists[1]);
         TW.hidden=false;
+        // Home's Tweets card links here when posts are waiting. The card was
+        // hidden when the browser looked for the anchor, so go to it now.
+        if(location.hash==='#pf-tw') TW.scrollIntoView();
       })
       .catch(function(e){ console.error('profile: review', e); });
   }

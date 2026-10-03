@@ -464,6 +464,39 @@ def test_sending_one_in_shows_the_servers_answer(page):
     assert tab.ev("document.querySelector('.tw-signin').hidden") is False
 
 
+def test_the_owner_is_pointed_at_the_queue_and_sees_their_own_post_go_on(page):
+    tab, site = page
+    site.api[("GET", "/api/tweets")] = (200, listing(1, signed_in=True, admin=True, pending=3))
+    tab.open(site.origin + "/home.html")
+    drawn(tab)
+    say = "document.querySelector('.tw-say')"
+    assert tab.ev(f"{say}.textContent") == "3 posts waiting for your review. Review"
+    assert tab.ev(f"{say}.querySelector('a').getAttribute('href')") == "/profile/#pf-tw"
+
+    # Posted straight on: the list is asked for again and draws the new one.
+    site.api[("POST", "/api/tweets")] = (201, {"ok": True, "status": "approved",
+                                               "message": "Posted - it's on the list now."})
+    site.api[("GET", "/api/tweets")] = (200, listing(2, signed_in=True, admin=True, pending=0))
+    before = len(site.asked("GET", "/api/tweets"))
+    tab.ev("document.querySelector('.tw-open').click()")
+    tab.ev(f"""document.querySelector('.tw-url').value = 'https://x.com/a/status/{TID}';
+               document.querySelector('.tw-form .tw-send').click()""")
+    tab.wait("document.querySelectorAll('.tw-card:not(.tw-ghost)').length === 2")
+    assert len(site.asked("GET", "/api/tweets")) == before + 1
+    assert "on the list now" in tab.ev("document.querySelector('.tw-said').textContent")
+    # Nothing waiting any more: the line goes back to the invitation.
+    assert tab.ev(f"{say}.textContent") == "Readers send them in, we pick, you vote."
+
+
+def test_a_reader_is_never_shown_the_queue(page):
+    tab, site = page
+    site.api[("GET", "/api/tweets")] = (200, listing(1, signed_in=True, admin=False, pending=4))
+    tab.open(site.origin + "/home.html")
+    drawn(tab)
+    assert tab.ev("document.querySelector('.tw-say').textContent") == \
+        "Readers send them in, we pick, you vote."
+
+
 @pytest.mark.parametrize("admin", [False, True])
 def test_review_shows_only_for_the_owner(page, admin):
     tab, site = page

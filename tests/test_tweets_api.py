@@ -240,6 +240,33 @@ def test_a_post_goes_in_pending_from_xs_fixed_address(worker):
     assert len(worker.sql.rows("SELECT * FROM tweets")) == 1
 
 
+def test_the_owners_own_go_straight_on_the_list(worker):
+    admin = owner(worker)
+    ids = [str(int(ID) + i) for i in range(7)]
+    stub_oembed(worker, {i: (200, oembed_body(i)) for i in ids})
+    got = submit(worker, admin, f"https://x.com/a/status/{ids[0]}", sport="nfl")
+    assert got["status"] == 201 and got["json"]["status"] == "approved"
+    assert "on the list" in got["json"]["message"]
+    row = worker.sql.rows("SELECT status, submitted_at, reviewed_at FROM tweets")[0]
+    assert row["status"] == "approved" and row["reviewed_at"] == row["submitted_at"]
+    assert [t["tweet_id"] for t in worker.call("tw.onRequestGet", URL)["json"]["tweets"]] == [ids[0]]
+    # No reader's five a day: the sixth and seventh go in too.
+    for i in ids[1:]:
+        assert submit(worker, admin, f"https://x.com/a/status/{i}")["status"] == 201
+    assert worker.sql.rows("SELECT COUNT(*) AS n FROM tweets WHERE status = 'approved'")[0]["n"] == 7
+
+
+def test_the_owner_is_told_how_many_are_waiting(worker):
+    reader, admin = worker.user(), owner(worker)
+    stub_oembed(worker, {ID: (200, oembed_body(ID))})
+    assert worker.call("tw.onRequestGet", URL, headers=admin)["json"]["pending"] == 0
+    assert submit(worker, reader, f"https://x.com/a/status/{ID}")["json"]["status"] == "pending"
+    assert worker.call("tw.onRequestGet", URL, headers=admin)["json"]["pending"] == 1
+    # Only the owner's answer carries it.
+    assert "pending" not in worker.call("tw.onRequestGet", URL, headers=reader)["json"]
+    assert "pending" not in worker.call("tw.onRequestGet", URL)["json"]
+
+
 def test_duplicates_are_turned_away_kindly_without_asking_x(worker):
     who, admin = worker.user(), owner(worker)
     stub_oembed(worker, {ID: (200, oembed_body(ID))})

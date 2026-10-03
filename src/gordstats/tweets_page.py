@@ -179,7 +179,7 @@ JS = """<script>
   // submit control starts right, and /api/tweets' own answer settles it.
   var guess=null;
   try{ guess=localStorage.getItem('gs:acct'); }catch(e){}
-  var state={configured:guess!=='off', signedIn:guess==='in', byId:{}};
+  var state={configured:guess!=='off', signedIn:guess==='in', byId:{}, rest:esc(CFG.say)};
   var login='/api/auth/login?next='+encodeURIComponent(location.pathname+location.search);
 
   function xUrl(t){
@@ -233,6 +233,14 @@ JS = """<script>
     });
     state.byId={};
     list.forEach(function(t){ t.tweet_id=String(t.tweet_id); state.byId[t.id]=t; });
+    // The owner is told when readers' posts are waiting: the review list is
+    // at the foot of /profile/, and nothing else on the site leads to it.
+    var waiting=d.admin===true?Math.max(0, d.pending|0):0;
+    state.rest=waiting
+      ?waiting+(waiting===1?' post':' posts')+' waiting for your review. '
+        +'<a href="/profile/#pf-tw">Review</a>'
+      :esc(CFG.say);
+    boxes.forEach(function(b){ b.querySelector('.tw-say').innerHTML=state.rest; });
     fill(function(b){
       var max=+b.getAttribute('data-max')||list.length;
       return list.length?list.slice(0,max).map(card).join('')
@@ -247,7 +255,7 @@ JS = """<script>
     var el=b.querySelector('.tw-say');
     el.innerHTML=html;
     clearTimeout(sayTimer);
-    sayTimer=setTimeout(function(){ el.textContent=CFG.say; }, 9000);
+    sayTimer=setTimeout(function(){ el.innerHTML=state.rest; }, 9000);
   }
   function said(el, text, cls, signin){
     el.className='tw-said'+(cls?' '+cls:'');
@@ -307,6 +315,8 @@ JS = """<script>
       if(a.ok&&a.j.ok){
         said(out, a.j.message||"Thanks \\u2013 it's in the queue.",'ok');
         input.value=''; sport.value='';
+        // The owner's own go straight on the list: show it there now.
+        if(a.j.status==='approved') load();
         return;
       }
       if(a.status===401){
@@ -431,12 +441,15 @@ JS = """<script>
     form.addEventListener('submit',function(ev){ ev.preventDefault(); send(b); });
   });
 
+  function load(){
+    return fetch(CFG.api,{credentials:'same-origin'})
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(draw, function(e){ console.warn('tweets: no list', e); failed(); })
+      // Anything thrown while drawing is a bug, and says so.
+      .catch(function(e){ console.error('tweets:', e); failed(); });
+  }
   paintSubmit();
-  fetch(CFG.api,{credentials:'same-origin'})
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(draw, function(e){ console.warn('tweets: no list', e); failed(); })
-    // Anything thrown while drawing is a bug, and says so.
-    .catch(function(e){ console.error('tweets:', e); failed(); });
+  load();
 
   window.GSTweets={draw:draw, show:show, state:state};
 })();

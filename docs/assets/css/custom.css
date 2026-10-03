@@ -116,6 +116,13 @@ th {
   gap: 8px;
 }
 
+/* The theme underlines every link on hover and focus (a:hover, a:focus,
+   which outranks .site-brand), and a tap leaves the logo focused on a phone. */
+.site-brand:hover,
+.site-brand:focus {
+  text-decoration: none;
+}
+
 /* The orange rule between GORD and STATS, matching the app icon. Drawn rather
    than shipped as an image so it stays crisp and follows the theme. */
 .site-brand span::before {

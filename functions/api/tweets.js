@@ -5,7 +5,8 @@
  *   GET  /api/tweets                         -> the week's approved posts, most votes first
  *   GET  /api/tweets?status=pending          -> the review queue (owner only; also
  *                                               approved | rejected)
- *   POST /api/tweets  <- { url, sport? }     send one in (signed in)
+ *   POST /api/tweets  <- { url, sport? }     send one in (signed in); the owner's
+ *                                            own go straight on the list
  *   POST /api/tweets/<id>/vote               toggle this reader's vote (tweets/[[route]].js)
  *   POST /api/tweets/<id>/review <- { action: approve | reject | remove, sport? }
  *                                            owner only (tweets/[[route]].js)
@@ -42,6 +43,9 @@ export const FILL_TO = 6;
 // The most one list carries: Home shows a row, /tweets/ the lot.
 export const MAX_LIST = 40;
 export const DAILY_SUBMISSIONS = 5;
+// The owner's own need no review and no reader's cap; this only stops a
+// stuck script. The per-account write allowance in _lib/limits.js still applies.
+export const OWNER_SUBMISSIONS = 100;
 const QUEUE_MAX = 100;
 const CACHE_SECONDS = 60;
 const MAX_TEXT = 400;
@@ -291,15 +295,22 @@ export async function onRequestGet(context) {
     });
   }
 
+  const admin = isAdmin(session);
   let got;
   try {
     got = await listing(env.DB, session.uid);
+    // The owner's card points at the queue when readers have sent posts in:
+    // the review list is at the foot of /profile/, which nothing else leads to.
+    if (admin) {
+      const waiting = await db(() => env.DB.prepare(
+        "SELECT COUNT(*) AS n FROM tweets WHERE status = 'pending'").first());
+      got.pending = Number(waiting?.n || 0);
+    }
   } catch (err) {
     if (!(err instanceof Migrating)) throw err;
     got = { tweets: [], week: 0, migrating: true };
   }
-  return json({ ok: true, configured: true, signedIn: true,
-                admin: isAdmin(session), ...got });
+  return json({ ok: true, configured: true, signedIn: true, admin, ...got });
 }
 
 const QUEUE = (order) =>
@@ -339,19 +350,21 @@ function duplicate(status) {
   return json({ ok: false, duplicate: true, status, error: SAID[status] || SAID.pending }, 409);
 }
 
-function tooMany(now) {
+function tooMany(now, cap = DAILY_SUBMISSIONS) {
   const wait = secondsToMidnight(now);
-  return json({ ok: false, error: `That's ${DAILY_SUBMISSIONS} for today - thanks! Send more tomorrow.`,
+  return json({ ok: false, error: `That's ${cap} for today - thanks! Send more tomorrow.`,
     retry_after: wait }, 429, { "retry-after": String(wait) });
 }
 
 // The day's count is inside the INSERT: of any number of submissions racing,
 // only those that still fit go in. ON CONFLICT covers two readers sending the
-// same post at once - the second is told it is already waiting.
+// same post at once - the second is told it is already waiting. The owner's
+// go in approved, stamped now: the owner is the one who would approve them,
+// and a post waiting on its own sender's review is a post nobody ever sees.
 const INSERT =
   `INSERT INTO tweets (tweet_id, handle, author, text, has_media, sport,
-                       submitted_by, submitted_at, status)
-   SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'pending'
+                       submitted_by, submitted_at, status, reviewed_at)
+   SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?11, ?12
     WHERE (SELECT COUNT(*) FROM tweets WHERE submitted_by = ?7 AND submitted_at >= ?9) < ?10
    ON CONFLICT (tweet_id) DO NOTHING`;
 const TODAY = "SELECT COUNT(*) AS n FROM tweets WHERE submitted_by = ? AND submitted_at >= ?";
@@ -406,6 +419,9 @@ export async function onRequestPost({ request, env }) {
 
   const now = new Date();
   const dayStart = `${utcDay(now)}T00:00:00.000Z`;
+  const admin = isAdmin(session);
+  const cap = admin ? OWNER_SUBMISSIONS : DAILY_SUBMISSIONS;
+  const status = admin ? "approved" : "pending";
   try {
     // Every refusal that costs nothing comes before anything that costs: a
     // post already here, or a reader already at today's five, never reaches X.
@@ -413,7 +429,7 @@ export async function onRequestPost({ request, env }) {
     if (!seen?.known) return json({ ok: false, error: "Sign in again to do that." }, 401);
     if (seen.status) return duplicate(seen.status);
     const today = await db(() => env.DB.prepare(TODAY).bind(session.uid, dayStart).first());
-    if (Number(today?.n || 0) >= DAILY_SUBMISSIONS) return tooMany(now);
+    if (Number(today?.n || 0) >= cap) return tooMany(now, cap);
 
     // Taken before asking X, so that the allowance also bounds how often one
     // account can make this Function call out - deleted posts included.
@@ -429,19 +445,22 @@ export async function onRequestPost({ request, env }) {
     }
     const t = fromOembed(card.data);
 
+    const stamp = now.toISOString();
     const put = await db(() => env.DB.prepare(INSERT).bind(
       post.id, t.handle, t.author, t.text, t.has_media, sport, session.uid,
-      now.toISOString(), dayStart, DAILY_SUBMISSIONS).run());
+      stamp, dayStart, cap, status, admin ? stamp : null).run());
     if (put?.meta?.changes) {
-      return json({ ok: true, status: "pending",
-        message: "Thanks - it's in the queue. Once it's picked, it shows up here for everyone to vote on.",
+      return json({ ok: true, status,
+        message: admin
+          ? "Posted - it's on the list now."
+          : "Thanks - it's in the queue. Once it's picked, it shows up here for everyone to vote on.",
         tweet: { tweet_id: post.id, handle: t.handle, author: t.author, text: t.text,
                  has_media: t.has_media, sport } }, 201);
     }
     // Nothing went in: the same post arrived a moment ago, or today's five
     // filled up in parallel.
     const again = await db(() => env.DB.prepare(SEEN).bind(post.id).first());
-    return again ? duplicate(again.status) : tooMany(now);
+    return again ? duplicate(again.status) : tooMany(now, cap);
   } catch (err) {
     return answerFor(err);
   }
